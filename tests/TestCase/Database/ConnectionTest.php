@@ -200,10 +200,10 @@ class ConnectionTest extends TestCase {
 
 		$this->assertEquals($connectionWithPrefix->fullFieldName('id'), 'id');
 
-		$expected = new TableNameExpression('users', 'prefix_', 'id');
+		$expected = new TableNameExpression('users.id', 'prefix_');
 		$this->assertEquals($connectionWithPrefix->fullFieldName('users.id'), $expected);
 
-		$expected = new TableNameExpression('prefix_', 'prefix_', 'id');
+		$expected = new TableNameExpression('prefix_.id', 'prefix_');
 		$this->assertEquals($connectionWithPrefix->fullFieldName('prefix_.id'), $expected);
 	}
 

@@ -301,8 +301,7 @@ class Connection {
 		$prefix = $this->getPrefix();
 
 		if (is_string($field) && strpos($field, '.') !== false) {
-			list($tableName, $fieldName) = explode('.', $field);
-			$field = new TableNameExpression($tableName, $prefix, $fieldName);
+			$field = new TableNameExpression($field, $prefix);
 		}
 
 		return $field;

@@ -417,8 +417,40 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['title'])
+			->from(['a' => 'articles'])
+			->where(['a.id' => 1, 'a.title' => 'First Article'])
+			->execute();
+		$this->assertCount(1, $result);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title'])
+			->from('articles')
+			->where(['articles.id' => 1, 'articles.title' => 'First Article'])
+			->execute();
+		$this->assertCount(1, $result);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title'])
 			->from('articles')
 			->where(['id' => 100], ['id' => 'integer'])
+			->execute();
+		$this->assertCount(0, $result);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title'])
+			->from(['a' => 'articles'])
+			->where(['a.id' => 100], ['a.id' => 'integer'])
+			->execute();
+		$this->assertCount(0, $result);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title'])
+			->from('articles')
+			->where(['articles.id' => 100], ['articles.id' => 'integer'])
 			->execute();
 		$this->assertCount(0, $result);
 	}
@@ -434,6 +466,24 @@ class QueryTest extends TestCase {
 			->select(['title'])
 			->from('articles')
 			->where(['id >' => 1])
+			->execute();
+		$this->assertCount(2, $result);
+		$this->assertEquals(array('title' => 'Second Article'), $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title'])
+			->from(['a' => 'articles'])
+			->where(['a.id >' => 1])
+			->execute();
+		$this->assertCount(2, $result);
+		$this->assertEquals(array('title' => 'Second Article'), $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title'])
+			->from('articles')
+			->where(['articles.id >' => 1])
 			->execute();
 		$this->assertCount(2, $result);
 		$this->assertEquals(array('title' => 'Second Article'), $result->fetch('assoc'));
@@ -524,6 +574,24 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
+			->from(['Comment' => 'comments'])
+			->where(['Comment.created' => new \DateTime('2007-03-18 10:45:23')], ['Comment.created' => 'datetime'])
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(['comments.created' => new \DateTime('2007-03-18 10:45:23')], ['comments.created' => 'datetime'])
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
 			->from('comments')
 			->where(['created >' => new \DateTime('2007-03-18 10:46:00')], ['created' => 'datetime'])
 			->execute();
@@ -593,6 +661,26 @@ class QueryTest extends TestCase {
 		$this->assertCount(2, $result);
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from(['Comment' => 'comments'])
+			->where(['Comment.id' => ['1', '3']], ['Comment.id' => 'integer[]'])
+			->execute();
+		$this->assertCount(2, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(['comments.id' => ['1', '3']], ['comments.id' => 'integer[]'])
+			->execute();
+		$this->assertCount(2, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 	}
 
 /**
@@ -607,6 +695,22 @@ class QueryTest extends TestCase {
 			->select(['id'])
 			->from('comments')
 			->where(['id' => []], ['id' => 'integer[]'])
+			->execute();
+		$this->assertCount(0, $result);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from(['Comment' => 'comments'])
+			->where(['Comment.id' => []], ['Comment.id' => 'integer[]'])
+			->execute();
+		$this->assertCount(0, $result);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(['comments.id' => []], ['comments.id' => 'integer[]'])
 			->execute();
 		$this->assertCount(0, $result);
 	}
@@ -627,6 +731,28 @@ class QueryTest extends TestCase {
 		$this->assertCount(2, $result);
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from(['Comment' => 'comments'])
+			->where(['Comment.created' => new \DateTime('2007-03-18 10:45:23')], ['Comment.created' => 'datetime'])
+			->orWhere(['Comment.created' => new \DateTime('2007-03-18 10:47:23')], ['Comment.created' => 'datetime'])
+			->execute();
+		$this->assertCount(2, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+		$query = new Query($this->connection);
+
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(['comments.created' => new \DateTime('2007-03-18 10:45:23')], ['comments.created' => 'datetime'])
+			->orWhere(['comments.created' => new \DateTime('2007-03-18 10:47:23')], ['comments.created' => 'datetime'])
+			->execute();
+		$this->assertCount(2, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 	}
 
 /**
@@ -641,6 +767,26 @@ class QueryTest extends TestCase {
 			->from('comments')
 			->where(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
 			->andWhere(['id' => 1])
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from(['Comment' => 'comments'])
+			->where(['Comment.created' => new \DateTime('2007-03-18 10:45:23')], ['Comment.created' => 'datetime'])
+			->andWhere(['Comment.id' => 1])
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(['comments.created' => new \DateTime('2007-03-18 10:45:23')], ['comments.created' => 'datetime'])
+			->andWhere(['comments.id' => 1])
 			->execute();
 		$this->assertCount(1, $result);
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
@@ -677,6 +823,30 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
+			->from(['Comment' => 'comments'])
+			->where(['Comment.created' => new \DateTime('2007-03-18 10:45:23')], ['Comment.created' => 'datetime'])
+			->orWhere(['Comment.id' => 2])
+			->andWhere(['Comment.created >=' => new \DateTime('2007-03-18 10:40:00')], ['Comment.created' => 'datetime'])
+			->execute();
+		$this->assertCount(2, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(['comments.created' => new \DateTime('2007-03-18 10:45:23')], ['comments.created' => 'datetime'])
+			->orWhere(['comments.id' => 2])
+			->andWhere(['comments.created >=' => new \DateTime('2007-03-18 10:40:00')], ['comments.created' => 'datetime'])
+			->execute();
+		$this->assertCount(2, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
 			->from('comments')
 			->where(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
 			->orWhere(['id' => 2])
@@ -705,6 +875,28 @@ class QueryTest extends TestCase {
 		$this->assertCount(2, $result);
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from(['Comment' => 'comments'])
+			->orWhere(['Comment.created' => new \DateTime('2007-03-18 10:45:23')], ['Comment.created' => 'datetime'])
+			->orWhere(['Comment.created' => new \DateTime('2007-03-18 10:47:23')], ['Comment.created' => 'datetime'])
+			->execute();
+		$this->assertCount(2, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->orWhere(['comments.created' => new \DateTime('2007-03-18 10:45:23')], ['comments.created' => 'datetime'])
+			->orWhere(['comments.created' => new \DateTime('2007-03-18 10:47:23')], ['comments.created' => 'datetime'])
+			->execute();
+		$this->assertCount(2, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 	}
 
 /**
@@ -719,6 +911,26 @@ class QueryTest extends TestCase {
 			->from('comments')
 			->andWhere(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
 			->andWhere(['id' => 1])
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from(['Comment' => 'comments'])
+			->andWhere(['Comment.created' => new \DateTime('2007-03-18 10:45:23')], ['Comment.created' => 'datetime'])
+			->andWhere(['Comment.id' => 1])
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->andWhere(['comments.created' => new \DateTime('2007-03-18 10:45:23')], ['comments.created' => 'datetime'])
+			->andWhere(['comments.id' => 1])
 			->execute();
 		$this->assertCount(1, $result);
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
@@ -737,6 +949,28 @@ class QueryTest extends TestCase {
 			->from('comments')
 			->where(function ($exp) {
 				return $exp->eq('id', 1);
+			})
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from(['Comment' => 'comments'])
+			->where(function ($exp) {
+				return $exp->eq('Comment.id', 1);
+			})
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(function ($exp) {
+				return $exp->eq('comments.id', 1);
 			})
 			->execute();
 		$this->assertCount(1, $result);
@@ -792,6 +1026,44 @@ class QueryTest extends TestCase {
 			$result,
 			true
 		);
+
+		$query = new Query($this->connection);
+		$query->select(['id'])
+			->from(['Comment' => 'comments'])
+			->where([
+				'OR' => [
+					'Comment.id' => 1,
+					function ($exp) {
+						return $exp->eq('Comment.id', 2);
+					}
+				]
+			]);
+
+		$result = $query->sql();
+		$this->assertQuotedQuery(
+			$this->applyConnectionPrefix('SELECT <id> FROM <~comments> Comment WHERE \(<Comment.id> = :c0 OR <Comment.id> = :c1\)'),
+			$result,
+			true
+		);
+
+		$query = new Query($this->connection);
+		$query->select(['id'])
+			->from('comments')
+			->where([
+				'OR' => [
+					'comments.id' => 1,
+					function ($exp) {
+						return $exp->eq('comments.id', 2);
+					}
+				]
+			]);
+
+		$result = $query->sql();
+		$this->assertQuotedQuery(
+			$this->applyConnectionPrefix('SELECT <id> FROM <~comments> WHERE \(<~comments.id> = :c0 OR <~comments.id> = :c1\)'),
+			$result,
+			true
+		);
 	}
 
 /**
@@ -808,6 +1080,30 @@ class QueryTest extends TestCase {
 			->where(['id' => '1'])
 			->andWhere(function ($exp) {
 				return $exp->eq('created', new \DateTime('2007-03-18 10:45:23'), 'datetime');
+			})
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from(['Comment' => 'comments'])
+			->where(['Comment.id' => '1'])
+			->andWhere(function ($exp) {
+				return $exp->eq('Comment.created', new \DateTime('2007-03-18 10:45:23'), 'datetime');
+			})
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(['comments.id' => '1'])
+			->andWhere(function ($exp) {
+				return $exp->eq('comments.created', new \DateTime('2007-03-18 10:45:23'), 'datetime');
 			})
 			->execute();
 		$this->assertCount(1, $result);
@@ -854,6 +1150,34 @@ class QueryTest extends TestCase {
 				return $exp
 					->eq('created', new \DateTime('2012-12-22 12:00'), 'datetime')
 					->eq('id', 3);
+			})
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from(['Comment' => 'comments'])
+			->where(['Comment.id' => '1'])
+			->orWhere(function ($exp) {
+				return $exp
+					->eq('Comment.created', new \DateTime('2012-12-22 12:00'), 'datetime')
+					->eq('Comment.id', 3);
+			})
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(['comments.id' => '1'])
+			->orWhere(function ($exp) {
+				return $exp
+					->eq('comments.created', new \DateTime('2012-12-22 12:00'), 'datetime')
+					->eq('comments.id', 3);
 			})
 			->execute();
 		$this->assertCount(1, $result);
@@ -992,9 +1316,49 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
+			->from(['Comment' => 'comments'])
+			->where(function ($exp) {
+				return $exp->isNull('Comment.published');
+			})
+			->execute();
+		$this->assertCount(0, $result);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(function ($exp) {
+				return $exp->isNull('comments.published');
+			})
+			->execute();
+		$this->assertCount(0, $result);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
 			->from('comments')
 			->where(function ($exp) {
 				return $exp->isNotNull('published');
+			})
+			->execute();
+		$this->assertCount(6, $result);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from(['Comment' => 'comments'])
+			->where(function ($exp) {
+				return $exp->isNotNull('Comment.published');
+			})
+			->execute();
+		$this->assertCount(6, $result);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(function ($exp) {
+				return $exp->isNotNull('comments.published');
 			})
 			->execute();
 		$this->assertCount(6, $result);
@@ -1148,6 +1512,38 @@ class QueryTest extends TestCase {
 
 		$second = $result->fetch('assoc');
 		$this->assertEquals(6, $second['id']);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from(['Comment' => 'comments'])
+			->where(function ($exp) {
+				return $exp->between('Comment.id', 5, 6, 'integer');
+			})
+			->execute();
+
+		$this->assertCount(2, $result);
+		$first = $result->fetch('assoc');
+		$this->assertEquals(5, $first['id']);
+
+		$second = $result->fetch('assoc');
+		$this->assertEquals(6, $second['id']);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(function ($exp) {
+				return $exp->between('comments.id', 5, 6, 'integer');
+			})
+			->execute();
+
+		$this->assertCount(2, $result);
+		$first = $result->fetch('assoc');
+		$this->assertEquals(5, $first['id']);
+
+		$second = $result->fetch('assoc');
+		$this->assertEquals(6, $second['id']);
 	}
 
 /**
@@ -1189,6 +1585,40 @@ class QueryTest extends TestCase {
 			->from('comments')
 			->where(function ($exp, $q) {
 				$field = $q->newExpr('COALESCE(id, 1)');
+				return $exp->between($field, 5, 6, 'integer');
+			})
+			->execute();
+
+		$this->assertCount(2, $result);
+		$first = $result->fetch('assoc');
+		$this->assertEquals(5, $first['id']);
+
+		$second = $result->fetch('assoc');
+		$this->assertEquals(6, $second['id']);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from(['Comment' => 'comments'])
+			->where(function ($exp, $q) {
+				$field = $q->newExpr('COALESCE(Comment.id, 1)');
+				return $exp->between($field, 5, 6, 'integer');
+			})
+			->execute();
+
+		$this->assertCount(2, $result);
+		$first = $result->fetch('assoc');
+		$this->assertEquals(5, $first['id']);
+
+		$second = $result->fetch('assoc');
+		$this->assertEquals(6, $second['id']);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(function ($exp, $q) {
+				$field = $q->newExpr('COALESCE(comments.id, 1)');
 				return $exp->between($field, 5, 6, 'integer');
 			})
 			->execute();
@@ -1298,6 +1728,34 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
+			->from(['Comment' => 'comments'])
+			->where(function ($exp) {
+				return $exp->not(
+					$exp->and_(['Comment.id' => 2, 'Comment.created' => new \DateTime('2007-03-18 10:47:23')], ['Comment.created' => 'datetime'])
+				);
+			})
+			->execute();
+		$this->assertCount(5, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(function ($exp) {
+				return $exp->not(
+					$exp->and_(['comments.id' => 2, 'comments.created' => new \DateTime('2007-03-18 10:47:23')], ['comments.created' => 'datetime'])
+				);
+			})
+			->execute();
+		$this->assertCount(5, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
 			->from('comments')
 			->where(function ($exp) {
 				return $exp->not(
@@ -1336,7 +1794,27 @@ class QueryTest extends TestCase {
 		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
 
-		$result = $query->order(['id' => 'asc'])->execute();
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from(['a' => 'articles'])
+			->order(['a.id' => 'desc'])
+			->execute();
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('articles')
+			->order(['articles.id' => 'desc'])
+			->execute();
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$result = $query->order(['articles.id' => 'asc'])->execute();
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
@@ -1517,6 +1995,17 @@ class QueryTest extends TestCase {
 		$expected = [['total' => 1, 'author_id' => 3]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['total' => 'count(author_id)', 'author_id'])
+			->from('articles')
+			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+			->group('author_id')
+			->having(['count(articles.author_id) <' => 2], ['count(articles.author_id)' => 'integer'])
+			->execute();
+		$expected = [['total' => 1, 'author_id' => 3]];
+		$this->assertEquals($expected, $result->fetchAll('assoc'));
+
 		$result = $query->having(['count(author_id)' => 2], ['count(author_id)' => 'integer'], true)
 			->execute();
 		$expected = [['total' => 2, 'author_id' => 1]];
@@ -1545,6 +2034,18 @@ class QueryTest extends TestCase {
 			->group('author_id')
 			->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
 			->orHaving(['count(author_id) <' => 2], ['count(author_id)' => 'integer'])
+			->execute();
+		$expected = [['total' => 1, 'author_id' => 3]];
+		$this->assertEquals($expected, $result->fetchAll('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['total' => 'count(author_id)', 'author_id'])
+			->from('articles')
+			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+			->group('author_id')
+			->having(['count(articles.author_id) >' => 2], ['count(articles.author_id)' => 'integer'])
+			->orHaving(['count(articles.author_id) <' => 2], ['count(articles.author_id)' => 'integer'])
 			->execute();
 		$expected = [['total' => 1, 'author_id' => 3]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
@@ -1591,6 +2092,17 @@ class QueryTest extends TestCase {
 			->group('author_id')
 			->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
 			->andHaving(['count(author_id) <' => 2], ['count(author_id)' => 'integer'])
+			->execute();
+		$this->assertCount(0, $result);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['total' => 'count(author_id)', 'author_id'])
+			->from('articles')
+			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+			->group('author_id')
+			->having(['count(articles.author_id) >' => 2], ['count(articles.author_id)' => 'integer'])
+			->andHaving(['count(articles.author_id) <' => 2], ['count(articles.author_id)' => 'integer'])
 			->execute();
 		$this->assertCount(0, $result);
 

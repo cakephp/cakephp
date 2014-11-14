@@ -71,6 +71,26 @@ class UnaryExpression implements ExpressionInterface {
 	}
 
 /**
+ * Sets value which the unary expression operates
+ *
+ * @param string $value The value
+ * @return void
+ */
+	public function value($value) {
+		$this->_value = $value;
+	}
+
+/**
+ * Gets value which the unary expression operates
+ *
+ * @param string $value The value
+ * @return void
+ */
+	public function getValue() {
+		return $this->_value;
+	}
+
+/**
  * Converts the expression to its string representation
  *
  * @param \Cake\Database\ValueBinder $generator Placeholder generator object
@@ -96,6 +116,7 @@ class UnaryExpression implements ExpressionInterface {
 	public function traverse(callable $callable) {
 		if ($this->_value instanceof ExpressionInterface) {
 			$callable($this->_value);
+			$this->_value->traverse($callable);
 		}
 	}
 

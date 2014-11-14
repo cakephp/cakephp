@@ -51,7 +51,7 @@ class QueryCompiler {
  *
  * @var array
  */
-	protected $_fullFieldsParts = ['order', 'group', 'having'];
+	protected $_fullFieldsParts = ['where', 'order', 'group', 'having'];
 
 /**
  * The list of query clauses to traverse for generating a SELECT statement
@@ -153,10 +153,87 @@ class QueryCompiler {
  * @param \Cake\Database\ValueBinder $generator The placeholder and value binder object
  * @return array|ExpressionInterface The variable $parts modified
  */
+	protected function _whereFullFieldsName($parts, $query, $generator) {
+		$parts->traverse(function ($condition) use ($query) {
+			if ($condition instanceof ExpressionInterface) {
+				switch (get_class($condition)) {
+					case 'Cake\Database\Expression\Comparison':
+					case 'Cake\Database\Expression\BetweenExpression':
+						$field = $condition->getField();
+
+						if (is_string($field) && strpos($field, '.') !== false) {
+							list($tableName, $fieldName) = explode('.', $field);
+
+							if ($query->hasTableAlias($tableName) === false) {
+								$field = $query->connection()->fullFieldName($field);
+								$condition->field($field);
+							}
+						}
+
+						break;
+					case 'Cake\Database\Expression\UnaryExpression':
+						$value = $condition->getValue();
+
+						if (is_string($value) && strpos($value, '.') !== false) {
+							list($tableName, $fieldName) = explode('.', $value);
+
+							if ($query->hasTableAlias($tableName) === false) {
+								$value = $query->connection()->fullFieldName($value);
+								$condition->value($value);
+							}
+						}
+						break;
+					case 'Cake\Database\Expression\IdentifierExpression':
+						$identifier = $condition->getIdentifier();
+
+						if (is_string($identifier) && strpos($identifier, '.') !== false) {
+							list($tableName, $fieldName) = explode('.', $identifier);
+
+							if ($query->hasTableAlias($tableName) === false) {
+								$identifier = $query->connection()->fullFieldName($identifier);
+								$condition->setIdentifier($identifier);
+							}
+						}
+
+						break;
+					case 'Cake\Database\Expression\QueryExpression':
+						$condition->iterateParts(function ($queryExpCondition) use ($query) {
+							if (is_string($queryExpCondition)) {
+								$queryExpCondition = new TableNameExpression(
+									$queryExpCondition,
+									$query->connection()->getPrefix(),
+									true,
+									$query->tablesAliases
+								);
+							}
+							return $queryExpCondition;
+						});
+						break;
+					default:
+						break;
+				}
+			}
+
+			return $condition;
+		});
+
+		return $parts;
+	}
+
+/**
+ * Helper function used to apply full field name (meaning applying the connection prefix if the field names in
+ * the order clause contains the table name)
+ * This functions is only applied on ORDER clause
+ *
+ * @param ExpressionInterface $parts Parts of the query clause
+ * @param \Cake\Database\Query $query The query that is being compiled
+ * @param \Cake\Database\ValueBinder $generator The placeholder and value binder object
+ * @return array|ExpressionInterface The variable $parts modified
+ */
 	protected function _orderFullFieldsName($parts, $query, $generator) {
 		if ($parts instanceof ExpressionInterface) {
 			$parts->iterateParts(function ($condition, &$key) use ($parts, $query, $generator) {
-				if ($query->hasTableAlias($key) === false) {
+				if ($query->hasTableAlias($key) === false && $query->connection()->isTableNamePrefixed($key) === false) {
 					$key = $query->connection()->fullFieldName($key);
 
 					if ($key instanceof ExpressionInterface) {
