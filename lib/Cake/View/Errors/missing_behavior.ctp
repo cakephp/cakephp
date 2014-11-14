@@ -23,6 +23,11 @@ $pluginDot = empty($plugin) ? null : $plugin . '.';
 </p>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
+	<?php echo __d('cake_dev', 'If the Behavior is from a plugin, make sure composer is able to autoload its classes.'); ?>
+	<a href="http://book.cakephp.org/3.0/en/plugins.html#autoloading-plugin-classes">Plugins - autoloading plugin classes</a>
+</p>
+<p class="error">
+	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
 	<?php echo __d('cake_dev', 'Create the class %s below in file: %s', '<em>' . h($class) . '</em>', (empty($plugin) ? APP_DIR . DS : CakePlugin::path($plugin)) . 'Model' . DS . 'Behavior' . DS . h($class) . '.php'); ?>
 </p>
 <pre>
