@@ -49,9 +49,9 @@ class BakeView extends View {
 			' ?>' => " CakePHPBakePhpCloseTag>"
 		],
 		'replacements' => [
-			'/\n[ \t]+<%- /' =>  "\n<% ",
-			'/-%>[ \t]+\n/' =>  "%>\n",
-			'/<%=(.*)\%>\n(.)/' =>  "<%=$1%>\n\n$2",
+			'/\n[ \t]+<%- /' => "\n<% ",
+			'/-%>[ \t]+\n/' => "%>\n",
+			'/<%=(.*)\%>\n(.)/' => "<%=$1%>\n\n$2",
 			'<%=' => '<?=',
 			'<%' => '<?php',
 			'%>' => '?>'
@@ -128,7 +128,7 @@ class BakeView extends View {
 
 		$replacements = array_merge($this->config('phpTagReplacements') + $this->config('replacements'));
 
-		foreach($replacements as $find => $replace) {
+		foreach ($replacements as $find => $replace) {
 			if ($this->_isRegex($find)) {
 				$viewString = preg_replace($find, $replace, $viewString);
 			} else {
@@ -182,7 +182,7 @@ class BakeView extends View {
  *
  * Use preg_match to detect invalid regexes
  *
- * @param string $maybeRegex
+ * @param string $maybeRegex a fixed string or a regex
  * @return bool
  */
 	protected function _isRegex($maybeRegex) {
