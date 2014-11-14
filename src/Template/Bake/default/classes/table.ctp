@@ -115,7 +115,7 @@ foreach ($validation as $field => $rules):
 				);
 			else:
 				$validationMethods[] = sprintf(
-					"->validatePresence('%s', 'create')",
+					"->requirePresence('%s', 'create')",
 					$field
 				);
 				$validationMethods[] = sprintf(

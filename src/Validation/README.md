@@ -13,14 +13,14 @@ use Cake\Validation\Validator;
 
 $validator = new Validator();
 $validator
-    ->validatePresence('email')
+    ->requirePresence('email')
     ->add('email', 'validFormat', [
         'rule' => 'email',
         'message' => 'E-mail must be valid'
     ])
-    ->validatePresence('name')
+    ->requirePresence('name')
     ->notEmpty('name', 'We need your name.')
-    ->validatePresence('comment')
+    ->requirePresence('comment')
     ->notEmpty('comment', 'You need to give a comment.');
 
 $errors = $validator->errors($_POST);

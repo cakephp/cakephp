@@ -319,16 +319,30 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * @param string $field the name of the field
  * @param bool|string $mode Valid values are true, false, 'create', 'update'
- * @param string $message The validation message to show if the field presence
- * is required.
+ * @param string $message The message to show if the field presence validation fails.
  * @return Validator this instance
  */
-	public function validatePresence($field, $mode = true, $message = null) {
+	public function requirePresence($field, $mode = true, $message = null) {
 		$this->field($field)->isPresenceRequired($mode);
 		if ($message) {
 			$this->_presenceMessages[$field] = $message;
 		}
 		return $this;
+	}
+
+/**
+ * Sets whether a field is required to be present in data array.
+ *
+ * Alias for requirePresence().
+ *
+ * @param string $field the name of the field
+ * @param bool|string $mode Valid values are true, false, 'create', 'update'
+ * @param string $message The message to show if the field presence validation fails.
+ * @return Validator this instance
+ * @deprecated 3.0.0 Will be removed in 3.0.0.
+ */
+	public function validatePresence($field, $mode = true, $message = null) {
+		return $this->requirePresence($field, $mode, $message);
 	}
 
 /**
