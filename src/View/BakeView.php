@@ -152,24 +152,6 @@ class BakeView extends View {
 	}
 
 /**
- * Returns filename of given template file (.ctp) as a string.
- * CamelCased template names will be under_scored! This means that you can have
- * LongTemplateNames that refer to long_template_names.ctp views.
- *
- * Also allows rendering a template string directly
- *
- * @param string $name Bake template name
- * @return string Template filename or a Bake template string
- * @throws \Cake\View\Exception\MissingTemplateException when a view file could not be found.
- */
-	protected function _getViewFileName($name = null) {
-		if (strpos($name, '<') !== false) {
-			return $name;
-		}
-		return parent::_getViewFileName($name);
-	}
-
-/**
  * Get the contents of the template file
  *
  * @param string $name A template name or a Bake template string
