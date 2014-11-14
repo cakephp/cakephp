@@ -58,8 +58,8 @@ class FallbackPasswordHasherTest extends TestCase {
 	}
 
 /**
- * Tests that the check method will work with configured hashers including configs
- * per hasher.
+ * Tests that the check method will work with configured hashers including different
+ * configs per hasher.
  *
  * @return void
  */
