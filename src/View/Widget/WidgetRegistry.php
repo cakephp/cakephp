@@ -65,6 +65,9 @@ class WidgetRegistry {
 			$this->add($widgets);
 		}
 		$this->_widgets['_view'] = $view;
+		debug($this->_widgets);
+		exit();
+
 	}
 
 /**
@@ -104,7 +107,7 @@ class WidgetRegistry {
  * @throws \RuntimeException When class does not implement WidgetInterface.
  */
 	public function add(array $widgets) {
-		foreach ($widgets as $object) {
+		foreach ($widgets as $key=>$object) {
 			if (gettype($object) === 'object' &&
 				!($object instanceof WidgetInterface)
 			) {
@@ -113,9 +116,10 @@ class WidgetRegistry {
 				);
 			} elseif (is_string($object)){
 				$this->load($object);
+				unset($widgets[$key]);
 			}
 		}
-		$this->_widgets = $widgets + $this->_widgets;
+		$this->_widgets += $widgets;
 	}
 
 /**
