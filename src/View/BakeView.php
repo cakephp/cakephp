@@ -15,11 +15,46 @@
 namespace Cake\View;
 
 use Cake\Core\ConventionsTrait;
+use Cake\Core\InstanceConfigTrait;
 use Cake\Utility\Inflector;
 
 class BakeView extends View {
 
 	use ConventionsTrait;
+	use InstanceConfigTrait;
+
+/**
+ * Default class config
+ *
+ * This config is read when evaluating a template file.
+ *
+ * phpTagReplacements are applied to the contents of a bake template, to allow php tags
+ * to be treated as plain text
+ *
+ * replacements are applied in order on the template contents before the template is evaluated
+ * In order these:
+ * 	swallow leading whitespace for standard tempalte open tags
+ * 	Add an extra newline to short-echo tags, to counter act php automatically removing a newline
+ * 	Replace remaining short echo tags with php short echo tags
+ * 	Replace open tags with php open tags
+ * 	Replace close tags with php close tags
+ *
+ * @var array
+ */
+	protected $_defaultConfig = [
+		'phpTagReplacements' => [
+			'<?=' => "<CakePHPBakePhpOpenTag=",
+			'<?php' => "<CakePHPBakePhpOpenTag",
+			' ?>' => " CakePHPBakePhpCloseTag>"
+		],
+		'replacements' => [
+			'/\n[ \t]+<% /' =>  "\n<% ",
+			'/<%=(.*)\%>\n(.)/' =>  "<%=$1%>\n\n$2",
+			'<%=' => '<?=',
+			'<%' => '<?php',
+			'%>' => '?>'
+		]
+	];
 
 /**
  * Renders view for given view file and layout.
@@ -89,27 +124,20 @@ class BakeView extends View {
 	protected function _evaluate($viewFile, $dataForView) {
 		$viewString = $this->_getViewFileContents($viewFile);
 
-		$randomString = sha1($viewString);
-		$unPhp = [
-			'<?=' => "<$randomString=",
-			'<?php' => "<$randomString",
-			' ?>' => " $randomString>"
-		];
-		$templatify = [
-			'<%=' => '<?=',
-			'<%' => '<?php',
-			'%>' => '?>'
-		];
+		$replacements = array_merge($this->config('phpTagReplacements') + $this->config('replacements'));
 
-		$viewString = str_replace(array_keys($unPhp), array_values($unPhp), $viewString);
-		$viewString = preg_replace('/\n[ \t]+<% /', "\n<% ", $viewString);
-		$viewString = str_replace(array_keys($templatify), array_values($templatify), $viewString);
-		$viewString = preg_replace('/<\?=(.*)\?>\n(.)/', "<?=$1?>\n\n$2", $viewString);
+		foreach($replacements as $find => $replace) {
+			if ($this->_isRegex($find)) {
+				$viewString = preg_replace($find, $replace, $viewString);
+			} else {
+				$viewString = str_replace($find, $replace, $viewString);
+			}
+		}
 
 		$this->__viewFile = TMP . Inflector::slug(preg_replace('@.*Template[/\\\\]@', '', $viewFile)) . '.php';
 		file_put_contents($this->__viewFile, $viewString);
 
-		unset($randomString, $templatify, $viewFile, $viewString);
+		unset($viewFile, $viewString, $replacements, $find, $replace);
 		extract($dataForView);
 		ob_start();
 
@@ -120,6 +148,7 @@ class BakeView extends View {
 
 		$content = ob_get_clean();
 
+		$unPhp = $this->config('phpTagReplacements');
 		return str_replace(array_values($unPhp), array_keys($unPhp), $content);
 	}
 
@@ -165,5 +194,29 @@ class BakeView extends View {
 			$path .= 'Bake' . DS;
 		}
 		return $paths;
+	}
+
+/**
+ * Check if a replacement pattern is a regex
+ *
+ * Run a simple check to avoid needless preg_match calls - otherwise
+ * Use preg_match, which will return false for an invalid regex
+ *
+ * @param string $maybeRegex
+ * @return bool
+ */
+	protected function _isRegex($maybeRegex) {
+		$first = substr($maybeRegex, 0, 1);
+		$last = substr($maybeRegex, -1, 1);
+
+		if ($first !== $last) {
+			return false;
+		}
+
+		// @codingStandardsIgnoreStart
+		$isRegex = @preg_match($maybeRegex, '');
+		// @codingStandardsIgnoreEnd
+
+		return $isRegex !== false;
 	}
 }
