@@ -50,7 +50,7 @@ class FallbackPasswordHasher extends AbstractPasswordHasher {
 	public function __construct(array $config = array()) {
 		parent::__construct($config);
 		foreach ($this->_config['hashers'] as $key => $hasher) {
-			if (!is_int($key)) {
+			if (!is_string($hasher)) {
 				$hasher += [
 					'className' => $key,
 				];
