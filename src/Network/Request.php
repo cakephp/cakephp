@@ -1087,7 +1087,7 @@ class Request implements \ArrayAccess {
  *
  * @param string $key The key you want to read/write from/to.
  * @param string $value Value to set. Default null.
- * @return null|string|\Cake\Network\Request Request instance if used as setter,
+ * @return $this|string|null This instance if used as setter,
  *   if used as getter either the environment value, or null if the value doesn't exist.
  */
 	public function env($key, $value = null) {

@@ -170,7 +170,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * @param string $name  The name under which the provider should be set.
  * @param null|object|string $object Provider object or class name.
- * @return Validator|object|string|null
+ * @return $this|object|string|null
  */
 	public function provider($name, $object = null) {
 		if ($object === null) {
@@ -272,7 +272,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * @param string $field The name of the field from which the rule will be removed
  * @param array|string $name The alias for a single rule or multiple rules array
  * @param array|\Cake\Validation\ValidationRule $rule the rule to add
- * @return Validator this instance
+ * @return $this
  */
 	public function add($field, $name, $rule = []) {
 		$field = $this->field($field);
@@ -303,7 +303,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * @param string $field The name of the field from which the rule will be removed
  * @param string $rule the name of the rule to be removed
- * @return Validator this instance
+ * @return $this
  */
 	public function remove($field, $rule = null) {
 		if ($rule === null) {
@@ -320,7 +320,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * @param string $field the name of the field
  * @param bool|string $mode Valid values are true, false, 'create', 'update'
  * @param string $message The message to show if the field presence validation fails.
- * @return Validator this instance
+ * @return $this
  */
 	public function requirePresence($field, $mode = true, $message = null) {
 		$this->field($field)->isPresenceRequired($mode);
@@ -338,7 +338,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * @param string $field the name of the field
  * @param bool|string $mode Valid values are true, false, 'create', 'update'
  * @param string $message The message to show if the field presence validation fails.
- * @return Validator this instance
+ * @return $this
  * @deprecated 3.0.0 Will be removed in 3.0.0.
  */
 	public function validatePresence($field, $mode = true, $message = null) {
@@ -377,7 +377,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * @param bool|string|callable $when Indicates when the field is allowed to be empty
  * Valid values are true (always), 'create', 'update'. If a callable is passed then
  * the field will allowed to be empty only when the callaback returns true.
- * @return Validator this instance
+ * @return $this
  */
 	public function allowEmpty($field, $when = true) {
 		$this->field($field)->isEmptyAllowed($when);
@@ -419,7 +419,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * to be empty. Valid values are true (always), 'create', 'update'. If a
  * callable is passed then the field will allowed be empty only when
  * the callaback returns false.
- * @return Validator this instance
+ * @return $this
  */
 	public function notEmpty($field, $message = null, $when = false) {
 		if ($when === 'create' || $when === 'update') {
