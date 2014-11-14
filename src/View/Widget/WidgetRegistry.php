@@ -62,11 +62,7 @@ class WidgetRegistry {
 	public function __construct(StringTemplate $templates, View $view, $widgets = []) {
 		$this->_templates = $templates;
 		if (!empty($widgets)) {
-			if (is_string($widgets)) {
-				$this->load($widgets);
-			} else {
-				$this->add($widgets);
-			}
+			$this->add($widgets);
 		}
 		$this->_widgets['_view'] = $view;
 	}
@@ -115,6 +111,8 @@ class WidgetRegistry {
 				throw new \RuntimeException(
 					'Widget objects must implement Cake\View\Widget\WidgetInterface.'
 				);
+			} elseif (is_string($object)){
+				$this->load($object);
 			}
 		}
 		$this->_widgets = $widgets + $this->_widgets;

@@ -202,7 +202,8 @@ class FormHelper extends Helper {
 			unset($config['registry']);
 		}
 		if (isset($config['widgets'])) {
-			$widgets = $config['widgets'] + $widgets;
+			if (is_string($config['widgets'])) $config['widgets'] = [$config['widgets']];
+			$widgets = $widgets + $config['widgets'];
 			unset($config['widgets']);
 		}
 
