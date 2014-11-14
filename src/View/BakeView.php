@@ -33,11 +33,12 @@ class BakeView extends View {
  *
  * replacements are applied in order on the template contents before the template is evaluated
  * In order these:
- * 	swallow leading whitespace for standard tempalte open tags
- * 	Add an extra newline to short-echo tags, to counter act php automatically removing a newline
- * 	Replace remaining short echo tags with php short echo tags
- * 	Replace open tags with php open tags
- * 	Replace close tags with php close tags
+ * 	swallow leading whitespace for <%- tags
+ * 	swallow trailing whitespace for -%> tags
+ * 	Add an extra newline to <%=, to counteract php automatically removing a newline
+ * 	Replace remaining <=% with php short echo tags
+ * 	Replace <% with php open tags
+ * 	Replace %> with php close tags
  *
  * @var array
  */
@@ -48,7 +49,8 @@ class BakeView extends View {
 			' ?>' => " CakePHPBakePhpCloseTag>"
 		],
 		'replacements' => [
-			'/\n[ \t]+<% /' =>  "\n<% ",
+			'/\n[ \t]+<%- /' =>  "\n<% ",
+			'/-%>[ \t]+\n/' =>  "%>\n",
 			'/<%=(.*)\%>\n(.)/' =>  "<%=$1%>\n\n$2",
 			'<%=' => '<?=',
 			'<%' => '<?php',
