@@ -180,20 +180,12 @@ class BakeView extends View {
 /**
  * Check if a replacement pattern is a regex
  *
- * Run a simple check to avoid needless preg_match calls - otherwise
- * Use preg_match, which will return false for an invalid regex
+ * Use preg_match to detect invalid regexes
  *
  * @param string $maybeRegex
  * @return bool
  */
 	protected function _isRegex($maybeRegex) {
-		$first = substr($maybeRegex, 0, 1);
-		$last = substr($maybeRegex, -1, 1);
-
-		if ($first !== $last) {
-			return false;
-		}
-
 		// @codingStandardsIgnoreStart
 		$isRegex = @preg_match($maybeRegex, '');
 		// @codingStandardsIgnoreEnd
