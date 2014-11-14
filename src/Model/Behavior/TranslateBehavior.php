@@ -312,7 +312,7 @@ class TranslateBehavior extends Behavior {
 	protected function _rowMapper($results, $locale) {
 		return $results->map(function ($row) use ($locale) {
 			if ($row === null) {
-				return $row;	
+				return $row;
 			}
 			$hydrated = !is_array($row);
 
