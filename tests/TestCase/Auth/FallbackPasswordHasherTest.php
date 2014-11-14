@@ -58,6 +58,24 @@ class FallbackPasswordHasherTest extends TestCase {
 	}
 
 /**
+ * Tests that the check method will work with configured hashers including different
+ * configs per hasher.
+ *
+ * @return void
+ */
+	public function testCheckWithConfigs() {
+		$hasher = new FallbackPasswordHasher(['hashers' => ['Default', 'Weak' => ['hashType' => 'md5']]]);
+		$legacy = new WeakPasswordHasher(['hashType' => 'md5']);
+		$simple = new DefaultPasswordHasher();
+
+		$hash = $simple->hash('foo');
+		$legacyHash = $legacy->hash('foo');
+		$this->assertTrue($hash !== $legacyHash);
+		$this->assertTrue($hasher->check('foo', $hash));
+		$this->assertTrue($hasher->check('foo', $legacyHash));
+	}
+
+/**
  * Tests that the password only needs to be re-built according to the first hasher
  *
  * @return void
