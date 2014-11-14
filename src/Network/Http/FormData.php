@@ -74,7 +74,7 @@ class FormData implements \Countable {
  *
  * @param string $name The name of the part.
  * @param mixed $value The value for the part.
- * @return FormData this
+ * @return $this
  */
 	public function add($name, $value) {
 		if (is_array($value)) {
@@ -95,7 +95,7 @@ class FormData implements \Countable {
  * Iterates the parameter and adds all the key/values.
  *
  * @param array $data Array of data to add.
- * @return FormData this
+ * @return $this
  */
 	public function addMany(array $data) {
 		foreach ($data as $name => $value) {

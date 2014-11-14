@@ -88,7 +88,7 @@ trait QueryTrait {
  * and this query object will be returned for chaining.
  *
  * @param \Cake\Datasource\RepositoryInterface $table The default table object to use
- * @return \Cake\Datasource\RepositoryInterface|\Cake\ORM\Query
+ * @return \Cake\Datasource\RepositoryInterface|$this
  */
 	public function repository(RepositoryInterface $table = null) {
 		if ($table === null) {
@@ -108,7 +108,7 @@ trait QueryTrait {
  * This method is most useful when combined with results stored in a persistent cache.
  *
  * @param \Cake\Datasource\ResultSetInterface $results The results this query should return.
- * @return \Cake\ORM\Query The query instance.
+ * @return $this The query instance.
  */
 	public function setResult($results) {
 		$this->_results = $results;
@@ -161,7 +161,7 @@ trait QueryTrait {
  *   When using a function, this query instance will be supplied as an argument.
  * @param string|\Cake\Cache\CacheEngine $config Either the name of the cache config to use, or
  *   a cache config instance.
- * @return \Cake\Datasource\QueryTrait This same object
+ * @return $this This instance
  */
 	public function cache($key, $config = 'default') {
 		if ($key === false) {
@@ -177,7 +177,7 @@ trait QueryTrait {
  * passed, the current configured query `_eagerLoaded` value is returned.
  *
  * @param bool $value Whether or not to eager load.
- * @return \Cake\ORM\Query
+ * @return $this|\Cake\ORM\Query
  */
 	public function eagerLoaded($value = null) {
 		if ($value === null) {
@@ -248,7 +248,7 @@ trait QueryTrait {
  * @param callable $mapper The mapper callable.
  * @param callable $reducer The reducing function.
  * @param bool $overwrite Set to true to overwrite existing map + reduce functions.
- * @return \Cake\Datasource\QueryTrait|array
+ * @return $this|array
  * @see \Cake\Collection\Iterator\MapReduce for details on how to use emit data to the map reducer.
  */
 	public function mapReduce(callable $mapper = null, callable $reducer = null, $overwrite = false) {
@@ -299,7 +299,7 @@ trait QueryTrait {
  *
  * @param callable $formatter The formatting callable.
  * @param bool|int $mode Whether or not to overwrite, append or prepend the formatter.
- * @return \Cake\Datasource\QueryTrait|array
+ * @return $this|array
  */
 	public function formatResults(callable $formatter = null, $mode = 0) {
 		if ($mode === self::OVERWRITE) {

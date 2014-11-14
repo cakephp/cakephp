@@ -205,7 +205,7 @@ trait EntityTrait {
  * first argument is also an array, in which case will be treated as $options
  * @param array $options options to be used for setting the property. Allowed option
  * keys are `setter` and `guard`
- * @return \Cake\Datasource\EntityInterface this object
+ * @return $this
  * @throws \InvalidArgumentException
  */
 	public function set($property, $value = null, $options = []) {
@@ -307,7 +307,7 @@ trait EntityTrait {
  * $entity->has('last_name'); // false
  * }}}
  *
- * When checking multiple properties. All properties must not be null 
+ * When checking multiple properties. All properties must not be null
  * in order for true to be returned.
  *
  * @param string|array $property The property or properties to check.
@@ -333,7 +333,7 @@ trait EntityTrait {
  * }}}
  *
  * @param string|array $property The property to unset.
- * @return \Cake\DataSource\EntityInterface
+ * @return $this
  */
 	public function unsetProperty($property) {
 		$property = (array)$property;
@@ -352,7 +352,7 @@ trait EntityTrait {
  * will be returned. Otherwise the hidden properties will be set.
  *
  * @param null|array $properties Either an array of properties to hide or null to get properties
- * @return array|\Cake\DataSource\EntityInterface
+ * @return array|$this
  */
 	public function hiddenProperties($properties = null) {
 		if ($properties === null) {
@@ -369,7 +369,7 @@ trait EntityTrait {
  * will be returned. Otherwise the virtual properties will be set.
  *
  * @param null|array $properties Either an array of properties to treat as virtual or null to get properties
- * @return array|\Cake\DataSource\EntityInterface
+ * @return array|$this
  */
 	public function virtualProperties($properties = null) {
 		if ($properties === null) {
@@ -630,7 +630,7 @@ trait EntityTrait {
  *
  * @param string|array $field The field to get errors for, or the array of errors to set.
  * @param string|array $errors The errors to be set for $field
- * @return array|\Cake\Datasource\EntityInterface
+ * @return array|$this
  */
 	public function errors($field = null, $errors = null) {
 		if ($field === null) {
@@ -750,7 +750,7 @@ trait EntityTrait {
  * @param string|array $property single or list of properties to change its accessibility
  * @param bool $set true marks the property as accessible, false will
  * mark it as protected.
- * @return \Cake\Datasource\EntityInterface|bool
+ * @return $this|bool
  */
 	public function accessible($property, $set = null) {
 		if ($set === null) {

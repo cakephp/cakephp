@@ -59,7 +59,7 @@ class Request extends Message {
  * Get/Set the HTTP method.
  *
  * @param string|null $method The method for the request.
- * @return mixed Either this or the current method.
+ * @return $this|string Either this or the current method.
  * @throws \Cake\Core\Exception\Exception On invalid methods.
  */
 	public function method($method = null) {
@@ -78,7 +78,7 @@ class Request extends Message {
  * Get/Set the url for the request.
  *
  * @param string|null $url The url for the request. Leave null for get
- * @return mixed Either $this or the url value.
+ * @return $this|string Either $this or the url value.
  */
 	public function url($url = null) {
 		if ($url === null) {
