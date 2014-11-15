@@ -45,10 +45,9 @@ class OrangeComponent extends Component {
  * startup method
  *
  * @param Event $event
- * @param Controller $controller
  * @return string
  */
 	public function startup(Event $event) {
-		$controller->foo = 'pass';
+		$this->Controller->foo = 'pass';
 	}
 }
