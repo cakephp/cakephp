@@ -63,9 +63,14 @@ class WidgetRegistry {
 		$this->_templates = $templates;
 		if (!empty($widgets)) {
 			$this->add($widgets);
+			foreach ($this->_widgets as $key => $widget) {
+				if(is_string($widget) && !class_exists($widget)) {
+					$this->load($widget);
+					unset($this->_widgets[$key]);
+				}
+			}
 		}
 		$this->_widgets['_view'] = $view;
-
 	}
 
 /**
@@ -105,19 +110,16 @@ class WidgetRegistry {
  * @throws \RuntimeException When class does not implement WidgetInterface.
  */
 	public function add(array $widgets) {
-		foreach ($widgets as $key=>$object) {
+		foreach ($widgets as $object) {
 			if (gettype($object) === 'object' &&
 				!($object instanceof WidgetInterface)
 			) {
 				throw new \RuntimeException(
 					'Widget objects must implement Cake\View\Widget\WidgetInterface.'
 				);
-			} elseif (is_string($object)){
-				$this->load($object);
-				unset($widgets[$key]);
 			}
 		}
-		$this->_widgets += $widgets;
+		$this->_widgets = $widgets + $this->_widgets;
 	}
 
 /**
