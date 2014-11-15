@@ -256,7 +256,11 @@ class Controller implements EventListenerInterface {
 		if (!$this->viewPath) {
 			$viewPath = $this->name;
 			if (isset($request->params['prefix'])) {
-				$viewPath = Inflector::camelize($request->params['prefix']) . DS . $viewPath;
+				$prefixes = array_map(
+					'Cake\Utility\Inflector::camelize',
+					explode('/', $request->params['prefix'])
+				);
+				$viewPath = implode('/', $prefixes) . DS . $viewPath;
 			}
 			$this->viewPath = $viewPath;
 		}

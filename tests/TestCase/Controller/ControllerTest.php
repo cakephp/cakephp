@@ -812,6 +812,13 @@ class ControllerTest extends TestCase {
 		$Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
 		$this->assertEquals('Admin' . DS . 'Posts', $Controller->viewPath);
 
+		$request->addParams(array(
+			'prefix' => 'admin/super'
+		));
+		$response = $this->getMock('Cake\Network\Response');
+		$Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
+		$this->assertEquals('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewPath);
+
 		$request = new Request('pages/home');
 		$Controller = new \TestApp\Controller\PagesController($request, $response);
 		$this->assertEquals('Pages', $Controller->viewPath);
