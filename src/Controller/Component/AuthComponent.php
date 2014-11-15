@@ -31,7 +31,7 @@ use Cake\Utility\Hash;
  *
  * Binds access control with user authentication and session management.
  *
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html
+ * @link http://book.cakephp.org/3.0/en/controllers/components/authentication.html
  */
 class AuthComponent extends Component {
 
@@ -531,7 +531,7 @@ class AuthComponent extends Component {
  *
  * @param string|array $actions Controller action name or array of actions
  * @return void
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#making-actions-public
+ * @link http://book.cakephp.org/3.0/en/controllers/components/authentication.html#making-actions-public
  */
 	public function allow($actions = null) {
 		if ($actions === null) {
@@ -554,7 +554,7 @@ class AuthComponent extends Component {
  * @param string|array $actions Controller action name or array of actions
  * @return void
  * @see AuthComponent::allow()
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#making-actions-require-authorization
+ * @link http://book.cakephp.org/3.0/en/controllers/components/authentication.html#making-actions-require-authorization
  */
 	public function deny($actions = null) {
 		if ($actions === null) {
@@ -578,7 +578,7 @@ class AuthComponent extends Component {
  *
  * @param array $user Array of user data.
  * @return void
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#identifying-users-and-logging-them-in
+ * @link http://book.cakephp.org/3.0/en/controllers/components/authentication.html#identifying-users-and-logging-them-in
  */
 	public function setUser(array $user) {
 		$this->session->renew();
@@ -595,7 +595,7 @@ class AuthComponent extends Component {
  * This helps mitigate issues with session replays.
  *
  * @return string Normalized config `logoutRedirect`
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#logging-users-out
+ * @link http://book.cakephp.org/3.0/en/controllers/components/authentication.html#logging-users-out
  */
 	public function logout() {
 		$this->_setDefaults();
@@ -619,7 +619,7 @@ class AuthComponent extends Component {
  *
  * @param string $key field to retrieve. Leave null to get entire User record
  * @return array|null Either User record or null if no user is logged in.
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#accessing-the-logged-in-user
+ * @link http://book.cakephp.org/3.0/en/controllers/components/authentication.html#accessing-the-logged-in-user
  */
 	public function user($key = null) {
 		if (!empty($this->_user)) {
