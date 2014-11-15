@@ -2438,7 +2438,7 @@ class QueryTest extends TestCase {
  *
  * @return void
  */
-	public function testsHasTableAlias() {
+	public function testsIsTableName() {
 		$query = new Query($this->connection);
 		$tables = [
 			'a' => 'articles',
@@ -2450,16 +2450,16 @@ class QueryTest extends TestCase {
 						['table' => 'comments', 'alias' => 'Comment', 'conditions' => 'a.id = Comment.article_id']
 					);
 
-		$expected = ['a' => 'a', 'Comment' => 'Comment'];
-		$this->assertEquals($query->tablesAliases, $expected);
+		$expected = ['users' => 'users'];
+		$this->assertEquals($query->tablesNames, $expected);
 
-		$this->assertTrue($query->hasTableAlias('a'));
-		$this->assertTrue($query->hasTableAlias('Comment'));
-		$this->assertFalse($query->hasTableAlias('users'));
+		$this->assertFalse($query->hasTableName('a'));
+		$this->assertFalse($query->hasTableName('Comment'));
+		$this->assertTrue($query->hasTableName('users'));
 
-		$this->assertTrue($query->hasTableAlias('a.id'));
-		$this->assertTrue($query->hasTableAlias('Comment.content'));
-		$this->assertFalse($query->hasTableAlias('users.active'));
+		$this->assertFalse($query->hasTableName('a.id'));
+		$this->assertFalse($query->hasTableName('Comment.content'));
+		$this->assertTrue($query->hasTableName('users.active'));
 	}
 
 /**

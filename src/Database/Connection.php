@@ -297,11 +297,15 @@ class Connection {
  *
  * @see \Cake\Database\Expression\TableNameExpression
  */
-	public function fullFieldName($field) {
+	public function fullFieldName($field, $tablesNames = null) {
 		$prefix = $this->getPrefix();
 
 		if (is_string($field) && strpos($field, '.') !== false) {
-			$field = new TableNameExpression($field, $prefix);
+			if ($tablesNames === null) {
+				$field = new TableNameExpression($field, $prefix);
+			} else {
+				$field = new TableNameExpression($field, $prefix, true, $tablesNames);
+			}
 		}
 
 		return $field;
@@ -315,16 +319,14 @@ class Connection {
  * @param string $exclude String to be excluded as a table name
  * @return string
  */
-	public function applyFullTableName($condition, $exclude = false) {
+	public function applyFullTableName($condition, $targets) {
 		$prefix = $this->getPrefix();
 
 		if ($prefix !== '') {
 			if (is_string($condition)) {
-				if (!empty($exclude)) {
-					$pattern = '/\b(?!(?:' . implode('|', $exclude) . ')\b)([\w-]+)(\.[\w-]+)/';
+				if (!empty($targets)) {
+					$pattern = '/\b(?=(?:' . implode('|', $targets) . ')\b)([\w-]+)(\.[\w-]+)/';
 					$condition = preg_replace($pattern, $prefix . "$1$2", $condition);
-				} else {
-					$condition = preg_replace('/([\w-]+)(\.[\w-])+/', $prefix . "$1$2", $condition);
 				}
 			}
 		}

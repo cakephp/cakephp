@@ -162,10 +162,8 @@ class QueryCompiler {
 						$field = $condition->getField();
 
 						if (is_string($field) && strpos($field, '.') !== false) {
-							list($tableName, $fieldName) = explode('.', $field);
-
-							if ($query->hasTableAlias($tableName) === false) {
-								$field = $query->connection()->fullFieldName($field);
+							if ($query->hasTableName($field) === true) {
+								$field = $query->connection()->fullFieldName($field, $query->tablesNames);
 								$condition->field($field);
 							}
 						}
@@ -175,10 +173,8 @@ class QueryCompiler {
 						$value = $condition->getValue();
 
 						if (is_string($value) && strpos($value, '.') !== false) {
-							list($tableName, $fieldName) = explode('.', $value);
-
-							if ($query->hasTableAlias($tableName) === false) {
-								$value = $query->connection()->fullFieldName($value);
+							if ($query->hasTableName($value) === true) {
+								$value = $query->connection()->fullFieldName($value, $query->tablesNames);
 								$condition->value($value);
 							}
 						}
@@ -187,10 +183,8 @@ class QueryCompiler {
 						$identifier = $condition->getIdentifier();
 
 						if (is_string($identifier) && strpos($identifier, '.') !== false) {
-							list($tableName, $fieldName) = explode('.', $identifier);
-
-							if ($query->hasTableAlias($tableName) === false) {
-								$identifier = $query->connection()->fullFieldName($identifier);
+							if ($query->hasTableName($identifier) === true) {
+								$identifier = $query->connection()->fullFieldName($identifier, $query->tablesNames);
 								$condition->setIdentifier($identifier);
 							}
 						}
@@ -203,7 +197,7 @@ class QueryCompiler {
 									$queryExpCondition,
 									$query->connection()->getPrefix(),
 									true,
-									$query->tablesAliases
+									$query->tablesNames
 								);
 							}
 							return $queryExpCondition;
@@ -233,8 +227,8 @@ class QueryCompiler {
 	protected function _orderFullFieldsName($parts, $query, $generator) {
 		if ($parts instanceof ExpressionInterface) {
 			$parts->iterateParts(function ($condition, &$key) use ($parts, $query, $generator) {
-				if ($query->hasTableAlias($key) === false && $query->connection()->isTableNamePrefixed($key) === false) {
-					$key = $query->connection()->fullFieldName($key);
+				if ($query->hasTableName($key) === true && $query->connection()->isTableNamePrefixed($key) === false) {
+					$key = $query->connection()->fullFieldName($key, $query->tablesNames);
 
 					if ($key instanceof ExpressionInterface) {
 						$key = $key->sql($generator);
@@ -260,7 +254,7 @@ class QueryCompiler {
 	protected function _groupFullFieldsName($parts, $query, $generator) {
 		if (!empty($parts)) {
 			foreach ($parts as $key => $part) {
-				if ($query->hasTableAlias($part) === false) {
+				if ($query->hasTableName($part) === true) {
 					$parts[$key] = $query->connection()->fullFieldName($part);
 				}
 			}
@@ -284,15 +278,20 @@ class QueryCompiler {
 			$parts->traverse(function ($condition) use ($query) {
 				if ($condition instanceof Comparison) {
 					$field = $condition->getField();
-					if ($query->hasTableAlias($field) === false) {
-						$field = $query->connection()->applyFullTableName($condition->getField());
-						$condition->field($field);
+
+					if (is_string($field) && strpos($field, '.') !== false) {
+						if ($query->hasTableName($field) === true) {
+							$field = $query->connection()->fullFieldName($field, $query->tablesNames);
+							$condition->field($field);
+						}
 					}
 				} elseif ($condition instanceof QueryExpression) {
 					$condition->iterateParts(function ($condition) use ($query) {
-						if ($query->hasTableAlias($condition) === false) {
-							return $query->connection()->applyFullTableName($condition);
+						if ($query->hasTableName($condition) === true) {
+							return $query->connection()->applyFullTableName($condition, $query->tablesNames);
 						}
+
+						return $condition;
 					});
 				}
 
@@ -323,7 +322,7 @@ class QueryCompiler {
 		$normalized = [];
 
 		foreach ($parts as $alias => $part) {
-			if ($query->hasTableAlias($part) === false) {
+			if ($query->hasTableName($part) === true) {
 				$parts[$alias] = $query->connection()->fullFieldName($part);
 			}
 		}
@@ -395,7 +394,7 @@ class QueryCompiler {
 			if ($join['conditions'] instanceof QueryExpression) {
 				$join['conditions']->iterateParts(function ($condition, $key) use ($query) {
 					if (is_string($condition)) {
-						$condition = $query->connection()->applyFullTableName($condition, $query->tablesAliases);
+						$condition = $query->connection()->applyFullTableName($condition, $query->tablesNames);
 					}
 					return $condition;
 				});

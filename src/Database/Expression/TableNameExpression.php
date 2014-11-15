@@ -47,11 +47,11 @@ class TableNameExpression implements ExpressionInterface {
 	protected $_field = null;
 
 /**
- * Holds the lists of table aliases for the Query this expression is used in
+ * Holds the lists of table names for the Query this expression is used in
  *
  * @var array
  */
-	protected $_tablesAliases = [];
+	protected $_tablesNames = [];
 
 /**
  * Tells whether the current $_value is quoted or not
@@ -114,7 +114,7 @@ class TableNameExpression implements ExpressionInterface {
  *
  * @return void
  */
-	public function __construct($name, $prefix, $snippet = false, $tablesAliases = []) {
+	public function __construct($name, $prefix, $snippet = false, $tablesNames = []) {
 		if ($snippet === false) {
 			if (strpos($name, '.') !== false) {
 				list($name, $field) = explode('.', $name);
@@ -124,7 +124,7 @@ class TableNameExpression implements ExpressionInterface {
 		$this->setName($name);
 		$this->setPrefix($prefix);
 		$this->_snippet = $snippet;
-		$this->_tablesAliases = $tablesAliases;
+		$this->_tablesNames = $tablesNames;
 
 		if (!empty($field)) {
 			$this->_field = $field;
@@ -167,11 +167,10 @@ class TableNameExpression implements ExpressionInterface {
 			}
 		} elseif ($this->_snippet === true) {
 			if (is_string($this->_value)) {
-				if (!empty($this->_tablesAliases)) {
-					$pattern = '/\b(?!(?:' . implode('|', $this->_tablesAliases) . ')\b)([\w-]+)(\.[\w-]+)/';
-					$sql = preg_replace($pattern, $this->_prefix . "$1$2", $this->_value);
-				} else {
-					$sql = preg_replace('/([\w-]+)(\.[\w-])+/', $this->_prefix . "$1$2", $this->_value);
+				$sql = $this->_value;
+				if (!empty($this->_tablesNames)) {
+					$pattern = '/\b(?=(?:' . implode('|', $this->_tablesNames) . ')\b)([\w-]+)(\.[\w-]+)/';
+					$sql = preg_replace($pattern, $this->_prefix . "$1$2", $sql);
 				}
 			}
 		}

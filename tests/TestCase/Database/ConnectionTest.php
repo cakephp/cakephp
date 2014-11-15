@@ -221,33 +221,33 @@ class ConnectionTest extends TestCase {
 
 		$condition = 'users.id';
 		$expected = 'prefix_users.id';
-		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition), $expected);
+		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, ['users']), $expected);
 
 		$expected = 'users.id';
-		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, ['users']), $expected);
+		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, []), $expected);
 
 		$condition = 'users.id = articles.user_id';
 		$expected = 'prefix_users.id = prefix_articles.user_id';
-		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition), $expected);
+		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, ['users', 'articles']), $expected);
 
 		$expected = 'users.id = prefix_articles.user_id';
-		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, ['users']), $expected);
-
-		$expected = 'prefix_users.id = articles.user_id';
 		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, ['articles']), $expected);
 
+		$expected = 'prefix_users.id = articles.user_id';
+		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, ['users']), $expected);
+
 		$expected = 'users.id = articles.user_id';
-		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, ['articles', 'users']), $expected);
+		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, []), $expected);
 
 		$condition = 'users.id = articles.user_id AND (articles.published = 1 OR users.status = 2)';
 		$expected = 'prefix_users.id = prefix_articles.user_id AND (prefix_articles.published = 1 OR prefix_users.status = 2)';
-		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition), $expected);
+		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, ['users', 'articles']), $expected);
 
 		$expected = 'users.id = prefix_articles.user_id AND (prefix_articles.published = 1 OR users.status = 2)';
-		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, ['users']), $expected);
+		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, ['articles']), $expected);
 
 		$expected = 'users.id = articles.user_id AND (articles.published = 1 OR users.status = 2)';
-		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, ['users', 'articles']), $expected);
+		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, []), $expected);
 	}
 
 /**

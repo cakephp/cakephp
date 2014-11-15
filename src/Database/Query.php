@@ -47,11 +47,11 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	protected $_type = 'select';
 
 /**
- * Stores the tables aliases used in this query
+ * Stores the tables names used in this query
  *
  * @var array
  */
-	public $tablesAliases = array();
+	public $tablesNames = array();
 
 /**
  * List of SQL parts that will be used to build this query.
@@ -384,7 +384,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			$tables = [$tables];
 		}
 
-		$this->_extractTableAliases($tables);
+		$this->_extractTableNames($tables);
 
 		if ($overwrite) {
 			$this->_parts['from'] = $tables;
@@ -509,11 +509,8 @@ class Query implements ExpressionInterface, IteratorAggregate {
 
 			$joins[$alias ?: $i++] = $t + ['type' => 'INNER', 'alias' => $alias];
 
-			if (!empty($alias)) {
-				$this->tablesAliases[$alias] = $alias;
-			}
-			if (!empty($t['alias'])) {
-				$this->tablesAliases[$t['alias']] = $t['alias'];
+			if (empty($alias) && empty($t['alias'])) {
+				$this->tablesNames[$t['table']] = $t['table'];
 			}
 		}
 
@@ -1563,15 +1560,11 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @return $this
  */
-	protected function _extractTableAliases($tables) {
+	protected function _extractTableNames($tables) {
 		if (!empty($tables)) {
-			if (!is_array($tables)) {
-				$tables = array($tables);
-			}
-
 			foreach ($tables as $alias => $table) {
-				if (!is_numeric($alias)) {
-					$this->tablesAliases[$alias] = $alias;
+				if (is_numeric($alias) && is_string($table)) {
+					$this->tablesNames[$table] = $table;
 				}
 			}
 		}
@@ -1580,19 +1573,17 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	}
 
 /**
- * Checks wheter $name is or contain (e.g. 'table.field') a aliased table name.
+ * Checks wheter $name is or contain (e.g. 'table.field') a table name.
  *
- * @param string $name Table or field name
+ * @param string $name Table or field name or SQL snippet
  *
  * @return bool
  */
-	public function hasTableAlias($name) {
-		if (is_string($name)) {
-			if (strpos($name, '.') !== false) {
-				list($name, $fieldName) = explode('.', $name);
-			}
+	public function hasTableName($name) {
+		if (is_string($name) && !empty($this->tablesNames)) {
+			$pattern = '/\b(?=(?:' . implode('|', $this->tablesNames) . ')\b)([\w-]+)(\.[\w-]+)/';
 
-			return isset($this->tablesAliases[$name]);
+			return isset($this->tablesNames[$name]) || preg_match_all($pattern, $name) > 0;
 		}
 
 		return false;
