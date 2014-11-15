@@ -64,7 +64,7 @@ class WidgetRegistry {
 		if (!empty($widgets)) {
 			$this->add($widgets);
 			foreach ($this->_widgets as $key => $widget) {
-				if(is_string($widget) && !class_exists($widget)) {
+				if (is_string($widget) && !class_exists($widget)) {
 					$this->load($widget);
 					unset($this->_widgets[$key]);
 				}
