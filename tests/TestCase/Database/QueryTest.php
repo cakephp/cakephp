@@ -1871,6 +1871,16 @@ class QueryTest extends TestCase {
 		$expected = [['total' => 2, 'author_id' => 1], ['total' => '1', 'author_id' => 3]];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['total' => 'count(articles.author_id)', 'articles.author_id'])
+			->from('articles')
+			->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+			->group('articles.author_id')
+			->execute();
+		$expected = [['total' => 2, 'author_id' => 1], ['total' => '1', 'author_id' => 3]];
+		$this->assertEquals($expected, $result->fetchAll('assoc'));
+
 		$result = $query->select(['total' => 'count(title)', 'name'], true)
 			->group(['name'], true)
 			->order(['total' => 'asc'])

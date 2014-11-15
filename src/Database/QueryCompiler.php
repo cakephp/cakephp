@@ -255,7 +255,7 @@ class QueryCompiler {
 		if (!empty($parts)) {
 			foreach ($parts as $key => $part) {
 				if ($query->hasTableName($part) === true) {
-					$parts[$key] = $query->connection()->fullFieldName($part);
+					$parts[$key] = $query->connection()->fullFieldName($part, $query->tablesNames);
 				}
 			}
 		}
@@ -323,7 +323,7 @@ class QueryCompiler {
 
 		foreach ($parts as $alias => $part) {
 			if ($query->hasTableName($part) === true) {
-				$parts[$alias] = $query->connection()->fullFieldName($part);
+				$parts[$alias] = $query->connection()->fullFieldName($part, $query->tablesNames);
 			}
 		}
 
