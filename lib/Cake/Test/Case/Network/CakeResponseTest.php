@@ -1219,7 +1219,7 @@ class CakeResponseTest extends CakeTestCase {
 		$result = $response->send();
 		$output = ob_get_clean();
 		$this->assertEquals("/* this is the test asset css file */\n", $output);
-		$this->assertNotSame($result, false);
+		$this->assertNotSame(false, $result);
 	}
 
 /**
@@ -1276,7 +1276,7 @@ class CakeResponseTest extends CakeTestCase {
 		$result = $response->send();
 		$output = ob_get_clean();
 		$this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
-		$this->assertNotSame($result, false);
+		$this->assertNotSame(false, $result);
 		if ($currentUserAgent !== null) {
 			$_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
 		}
@@ -1340,7 +1340,7 @@ class CakeResponseTest extends CakeTestCase {
 		$result = $response->send();
 		$output = ob_get_clean();
 		$this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
-		$this->assertNotSame($result, false);
+		$this->assertNotSame(false, $result);
 		if ($currentUserAgent !== null) {
 			$_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
 		}
@@ -1406,7 +1406,7 @@ class CakeResponseTest extends CakeTestCase {
 		$result = $response->send();
 		$output = ob_get_clean();
 		$this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
-		$this->assertNotSame($result, false);
+		$this->assertNotSame(false, $result);
 		if ($currentUserAgent !== null) {
 			$_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
 		}
@@ -1676,7 +1676,7 @@ class CakeResponseTest extends CakeTestCase {
 		$output = ob_get_clean();
 		$this->assertEquals(206, $response->statusCode());
 		$this->assertEquals("is the test asset ", $output);
-		$this->assertNotSame($result, false);
+		$this->assertNotSame(false, $result);
 	}
 
 /**
@@ -1814,7 +1814,7 @@ class CakeResponseTest extends CakeTestCase {
 		$output = ob_get_clean();
 		$this->assertEquals(206, $response->statusCode());
 		$this->assertEquals("is the test asset ", $output);
-		$this->assertNotSame($result, false);
+		$this->assertNotSame(false, $result);
 	}
 
 /**
