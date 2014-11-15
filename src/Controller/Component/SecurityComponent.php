@@ -31,7 +31,7 @@ use Cake\Utility\Security;
  * - Requiring that SSL be used.
  * - Limiting cross controller communication.
  *
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html
+ * @link http://book.cakephp.org/3.0/en/controllers/components/security-component.html
  */
 class SecurityComponent extends Component {
 
@@ -144,7 +144,6 @@ class SecurityComponent extends Component {
  *
  * @param string|array $actions Actions list
  * @return void
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requireSecure
  */
 	public function requireSecure($actions = null) {
 		$this->_requireMethod('Secure', (array)$actions);
@@ -159,7 +158,6 @@ class SecurityComponent extends Component {
  *
  * @param string|array $actions Actions list
  * @return void
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requireAuth
  */
 	public function requireAuth($actions) {
 		$this->_requireMethod('Auth', (array)$actions);
@@ -173,7 +171,7 @@ class SecurityComponent extends Component {
  * @param string $error Error method
  * @return mixed If specified, controller blackHoleCallback's response, or no return otherwise
  * @see SecurityComponent::$blackHoleCallback
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#handling-blackhole-callbacks
+ * @link http://book.cakephp.org/3.0/en/controllers/components/security-component.html#handling-blackhole-callbacks
  * @throws \Cake\Network\Exception\BadRequestException
  */
 	public function blackHole(Controller $controller, $error = '') {

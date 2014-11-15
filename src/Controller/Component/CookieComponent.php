@@ -31,7 +31,7 @@ use Cake\Utility\Security;
  * - Store non-scalar data.
  * - Use hash compatible syntax to read/write/delete values.
  *
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html
+ * @link http://book.cakephp.org/3.0/en/controllers/components/cookie.html
  */
 class CookieComponent extends Component {
 
@@ -204,7 +204,6 @@ class CookieComponent extends Component {
  * @param string|array $key Key for the value
  * @param mixed $value Value
  * @return void
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::write
  */
 	public function write($key, $value = null) {
 		if (!is_array($key)) {
@@ -233,7 +232,6 @@ class CookieComponent extends Component {
  *
  * @param string $key Key of the value to be obtained.
  * @return string or null, value for specified key
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::read
  */
 	public function read($key = null) {
 		$this->_load($key);
@@ -288,7 +286,6 @@ class CookieComponent extends Component {
  *
  * @param string $key Key of the value to be deleted
  * @return void
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::delete
  */
 	public function delete($key) {
 		$this->_load($key);
