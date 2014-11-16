@@ -46,7 +46,7 @@ class HelperTask extends SimpleBakeTask {
  * {@inheritDoc}
  */
 	public function template() {
-		return 'helper';
+		return 'View/helper';
 	}
 
 }

@@ -18,7 +18,13 @@ use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\ConventionsTrait;
 use Cake\Core\Plugin;
+use Cake\Event\Event;
+use Cake\Event\EventManager;
 use Cake\Filesystem\Folder;
+use Cake\Network\Request;
+use Cake\Network\Response;
+use Cake\View\BakeView;
+use Cake\View\Exception\MissingTemplateException;
 use Cake\View\ViewVarsTrait;
 
 /**
@@ -28,146 +34,60 @@ use Cake\View\ViewVarsTrait;
 class TemplateTask extends Shell {
 
 	use ConventionsTrait;
+
 	use ViewVarsTrait;
 
 /**
- * Paths to look for templates on.
- * Contains a list of $template => $path
+ * BakeView instance
  *
- * @var array
+ * @var Cake\View\BakeView
  */
-	public $templatePaths = [];
+	public $View;
 
 /**
- * Initialize callback. Setup paths for the template task.
+ * Get view instance
  *
- * @return void
+ * @return \Cake\View\View
  */
-	public function initialize() {
-		$this->templatePaths = $this->_findTemplates();
-	}
-
-/**
- * Find the paths to all the installed shell templates in the app.
- *
- * Bake templates are directories under `Template/Bake` path.
- * They are listed in this order: app -> plugin -> default
- *
- * @return array Array of bake templates that are installed.
- */
-	protected function _findTemplates() {
-		$paths = App::path('Template');
-
-		$plugins = Plugin::loaded();
-		foreach ($plugins as $plugin) {
-			$paths[] = Plugin::classPath($plugin) . 'Template' . DS;
+	public function getView() {
+		if ($this->View) {
+			return $this->View;
 		}
 
-		$core = current(App::core('Template'));
-		$Folder = new Folder($core . 'Bake' . DS . 'default');
+		$theme = isset($this->params['theme']) ? $this->params['theme'] : '';
 
-		$contents = $Folder->read();
-		$templateFolders = $contents[0];
+		$viewOptions = [
+			'helpers' => ['Bake'],
+			'theme' => $theme
+		];
+		$view = new BakeView(new Request(), new Response(), null, $viewOptions);
+		$event = new Event('Bake.initialize', $view);
+		EventManager::instance()->dispatch($event);
+		$this->View = $event->subject;
 
-		$paths[] = $core;
-
-		foreach ($paths as $i => $path) {
-			$paths[$i] = rtrim($path, DS) . DS;
-		}
-
-		$this->_io->verbose('Found the following bake templates:');
-
-		$templates = [];
-		foreach ($paths as $path) {
-			$Folder = new Folder($path . 'Bake', false);
-			$contents = $Folder->read();
-			$subDirs = $contents[0];
-			foreach ($subDirs as $dir) {
-				$Folder = new Folder($path . 'Bake' . DS . $dir);
-				$contents = $Folder->read();
-				$subDirs = $contents[0];
-				if (array_intersect($contents[0], $templateFolders)) {
-					$templateDir = $path . 'Bake' . DS . $dir . DS;
-					$templates[$dir] = $templateDir;
-
-					$this->_io->verbose(sprintf("- %s -> %s", $dir, $templateDir));
-				}
-			}
-		}
-		return $templates;
+		return $this->View;
 	}
 
 /**
  * Runs the template
  *
- * @param string $directory directory / type of thing you want
- * @param string $filename template name
+ * @param string $template bake template to render
  * @param array $vars Additional vars to set to template scope.
  * @return string contents of generated code template
  */
-	public function generate($directory, $filename, $vars = null) {
+	public function generate($template, $vars = null) {
 		if ($vars !== null) {
 			$this->set($vars);
 		}
-		if (empty($this->templatePaths)) {
-			$this->initialize();
-		}
-		$templatePath = $this->getTemplatePath();
-		$templateFile = $this->_findTemplate($templatePath, $directory, $filename);
-		if ($templateFile) {
-			extract($this->viewVars);
-			ob_start();
-			ob_implicit_flush(0);
-			include $templateFile;
-			$content = ob_get_clean();
-			return $content;
-		}
-		return '';
-	}
 
-/**
- * Find the template name for the current operation.
- * If there is only one template in $templatePaths it will be used.
- * If there is a -template param in the cli args, it will be used.
- * If there is more than one installed template user interaction will happen
- *
- * @return string returns the path to the selected template.
- * @throws \RuntimeException When the chosen template cannot be found.
- */
-	public function getTemplatePath() {
-		if (empty($this->params['template'])) {
-			$this->params['template'] = 'default';
-		}
-		if (!isset($this->templatePaths[$this->params['template']])) {
-			$msg = sprintf('Unable to locate "%s" bake template', $this->params['template']);
-			throw new \RuntimeException($msg);
-		}
-		$this->_io->verbose(sprintf('Using "%s" bake template', $this->params['template']));
-		return $this->templatePaths[$this->params['template']];
-	}
+		$this->getView()->set($this->viewVars);
 
-/**
- * Find a template inside a directory inside a path.
- * Will scan all other template dirs if the template is not found in the first directory.
- *
- * @param string $path The initial path to look for the file on. If it is not found fallbacks will be used.
- * @param string $directory Subdirectory to look for ie. 'views', 'objects'
- * @param string $filename lower_case_underscored filename you want.
- * @return string filename will exit program if template is not found.
- */
-	protected function _findTemplate($path, $directory, $filename) {
-		$templateFile = $path . $directory . DS . $filename . '.ctp';
-		if (file_exists($templateFile)) {
-			return $templateFile;
+		try {
+			return $this->View->render($template);
+		} catch (MissingTemplateException $e) {
+			$this->_io->verbose(sprintf('No bake template found for "%s"', $template));
+			return '';
 		}
-		foreach ($this->templatePaths as $path) {
-			$templatePath = $path . $directory . DS . $filename . '.ctp';
-			if (file_exists($templatePath)) {
-				return $templatePath;
-			}
-		}
-		$this->err('Could not find template for %s', $filename);
-		return false;
 	}
 
 }

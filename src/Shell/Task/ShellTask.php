@@ -46,7 +46,7 @@ class ShellTask extends SimpleBakeTask {
  * {@inheritDoc}
  */
 	public function template() {
-		return 'shell';
+		return 'Shell/shell';
 	}
 
 }

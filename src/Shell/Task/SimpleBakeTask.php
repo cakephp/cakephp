@@ -91,7 +91,7 @@ abstract class SimpleBakeTask extends BakeTask {
 	public function bake($name) {
 		$this->Template->set('name', $name);
 		$this->Template->set($this->templateData());
-		$contents = $this->Template->generate('classes', $this->template());
+		$contents = $this->Template->generate($this->template());
 
 		$filename = $this->getPath() . $this->fileName($name);
 		$this->createFile($filename, $contents);

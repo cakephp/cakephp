@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Shell\Task;
 
 use Cake\Core\App;
+use Cake\Core\Plugin;
 use Cake\Shell\Task\TemplateTask;
 use Cake\TestSuite\TestCase;
 
@@ -46,55 +47,7 @@ class TemplateTaskTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		unset($this->Task);
-	}
-
-/**
- * test finding templates installed in
- *
- * @return void
- */
-	public function testFindingInstalledTemplatesForBake() {
-		$consoleLibs = CAKE . 'Template' . DS;
-		$this->Task->initialize();
-		$this->assertPathEquals($this->Task->templatePaths['default'], $consoleLibs . 'Bake/default/');
-	}
-
-/**
- * test using an invalid template name.
- *
- * @expectedException \RuntimeException
- * @expectedExceptionMessage Unable to locate "nope" bake template
- * @return void
- */
-	public function testGetTemplatePathInvalid() {
-		$defaultTemplate = CAKE . 'Template/Bake/default/';
-		$this->Task->templatePaths = ['default' => $defaultTemplate];
-		$this->Task->params['template'] = 'nope';
-		$this->Task->getTemplatePath();
-	}
-
-/**
- * test getting the correct template name. Ensure that with only one template, or a template param
- * that the user is not bugged. If there are more, find and return the correct template name
- *
- * @return void
- */
-	public function testGetTemplatePath() {
-		$defaultTemplate = CAKE . 'Template/Bake/default/';
-		$this->Task->templatePaths = ['default' => $defaultTemplate];
-
-		$result = $this->Task->getTemplatePath();
-		$this->assertEquals($defaultTemplate, $result);
-
-		$this->Task->templatePaths = ['other' => '/some/path', 'default' => $defaultTemplate];
-		$this->Task->params['template'] = 'other';
-		$result = $this->Task->getTemplatePath();
-		$this->assertEquals('/some/path', $result);
-
-		$this->Task->params = array();
-		$result = $this->Task->getTemplatePath();
-		$this->assertEquals($defaultTemplate, $result);
-		$this->assertEquals('default', $this->Task->params['template']);
+		Plugin::unload();
 	}
 
 /**
@@ -103,14 +56,27 @@ class TemplateTaskTest extends TestCase {
  * @return void
  */
 	public function testGenerate() {
-		$this->Task->initialize();
 		$this->Task->expects($this->any())->method('in')->will($this->returnValue(1));
 
-		$result = $this->Task->generate('classes', 'test_object', array('test' => 'foo'));
+		$result = $this->Task->generate('classes/test_object', array('test' => 'foo'));
 		$expected = "I got rendered\nfoo";
 		$this->assertTextEquals($expected, $result);
 	}
 
+/**
+ * test generate with an overriden template it gets used
+ *
+ * @return void
+ */
+	public function testGenerateWithTemplateOverride() {
+		Plugin::load('TestBakeTheme');
+		$this->Task->params['theme'] = 'TestBakeTheme';
+		$this->Task->set(array(
+			'plugin' => 'Special'
+		));
+		$result = $this->Task->generate('config/routes');
+		$this->assertContains('These are my routes. There are many like them but these are my own.', $result);
+	}
 /**
  * test generate with a missing template in the chosen template.
  * ensure fallback to default works.
@@ -118,8 +84,8 @@ class TemplateTaskTest extends TestCase {
  * @return void
  */
 	public function testGenerateWithTemplateFallbacks() {
-		$this->Task->initialize();
-		$this->Task->params['template'] = 'test';
+		Plugin::load('TestBakeTheme');
+		$this->Task->params['theme'] = 'TestBakeTheme';
 		$this->Task->set(array(
 			'name' => 'Articles',
 			'table' => 'articles',
@@ -128,7 +94,7 @@ class TemplateTaskTest extends TestCase {
 			'schema' => '',
 			'namespace' => ''
 		));
-		$result = $this->Task->generate('classes', 'fixture');
+		$result = $this->Task->generate('tests/fixture');
 		$this->assertRegExp('/ArticlesFixture extends .*TestFixture/', $result);
 	}
 }

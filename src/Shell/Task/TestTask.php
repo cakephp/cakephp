@@ -202,7 +202,7 @@ class TestTask extends BakeTask {
 			'realType', 'preConstruct', 'postConstruct', 'construction',
 			'uses', 'baseNamespace', 'subNamespace', 'namespace'
 		));
-		$out = $this->Template->generate('classes', 'test');
+		$out = $this->Template->generate('tests/test_case');
 
 		$filename = $this->testCaseFileName($type, $fullClassName);
 		$emptyFile = $this->getPath() . $this->getSubspacePath($type) . DS . 'empty';
