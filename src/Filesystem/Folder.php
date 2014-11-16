@@ -491,16 +491,23 @@ class Folder {
 	}
 
 /**
- * Create a directory structure recursively. Can be used to create
- * deep path structures like `/foo/bar/baz/shoe/horn`
+ * Create a directory structure recursively.
  *
- * @param string $pathname The directory structure to create
+ * Can be used to create deep path structures like `/foo/bar/baz/shoe/horn`
+ *
+ * @param string $pathname The directory structure to create. Either an absolute or relative
+ *   path. If the path is relative and exists in the process' cwd it will not be created.
+ *   Otherwise relative paths will be prefixed with the current pwd().
  * @param int $mode octal value 0755
  * @return bool Returns TRUE on success, FALSE on failure
  */
 	public function create($pathname, $mode = false) {
 		if (is_dir($pathname) || empty($pathname)) {
 			return true;
+		}
+
+		if (!self::isAbsolute($pathname)) {
+			$pathname = self::addPathElement($this->pwd(), $pathname);
 		}
 
 		if (!$mode) {

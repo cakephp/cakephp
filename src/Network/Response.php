@@ -1393,18 +1393,17 @@ class Response {
 				$name = $options['name'];
 			}
 			$this->download($name);
-			$this->header('Accept-Ranges', 'bytes');
 			$this->header('Content-Transfer-Encoding', 'binary');
+		}
 
-			$httpRange = env('HTTP_RANGE');
-			if (isset($httpRange)) {
-				$this->_fileRange($file, $httpRange);
-			} else {
-				$this->header('Content-Length', $fileSize);
-			}
+		$this->header('Accept-Ranges', 'bytes');
+		$httpRange = env('HTTP_RANGE');
+		if (isset($httpRange)) {
+			$this->_fileRange($file, $httpRange);
 		} else {
 			$this->header('Content-Length', $fileSize);
 		}
+
 		$this->_clearBuffer();
 		$this->_file = $file;
 	}

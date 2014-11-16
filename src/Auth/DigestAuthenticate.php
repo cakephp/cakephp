@@ -142,7 +142,7 @@ class DigestAuthenticate extends BasicAuthenticate {
  * Parse the digest authentication headers and split them up.
  *
  * @param string $digest The raw digest authentication headers.
- * @return array An array of digest authentication headers
+ * @return array|null An array of digest authentication headers
  */
 	public function parseAuthData($digest) {
 		if (substr($digest, 0, 7) === 'Digest ') {

@@ -171,7 +171,7 @@ class HtmlHelper extends Helper {
  *  - xhtml11: XHTML1.1.
  *
  * @param string $type Doctype to use.
- * @return string Doctype string
+ * @return string|null Doctype string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::docType
  */
 	public function docType($type = 'html5') {
@@ -576,7 +576,6 @@ class HtmlHelper extends Helper {
 		$options += array('safe' => true, 'block' => null);
 		$this->_scriptBlockOptions = $options;
 		ob_start();
-		return null;
 	}
 
 /**
@@ -635,7 +634,7 @@ class HtmlHelper extends Helper {
  * @param string $separator Text to separate crumbs.
  * @param string|array|bool $startText This will be the first crumb, if false it defaults to first crumb in array. Can
  *   also be an array, see above for details.
- * @return string Composed bread crumbs
+ * @return string|null Composed bread crumbs
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
  */
 	public function getCrumbs($separator = '&raquo;', $startText = false) {
@@ -670,7 +669,7 @@ class HtmlHelper extends Helper {
  * @param array $options Array of html attributes to apply to the generated list elements.
  * @param string|array|bool $startText This will be the first crumb, if false it defaults to first crumb in array. Can
  *   also be an array, see `HtmlHelper::getCrumbs` for details.
- * @return string breadcrumbs html list
+ * @return string|null breadcrumbs html list
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
  */
 	public function getCrumbList(array $options = array(), $startText = false) {
