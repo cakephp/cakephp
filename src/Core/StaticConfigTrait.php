@@ -235,7 +235,7 @@ trait StaticConfigTrait {
  * @param array|null $map Additions/edits to the class map to apply
  * @return array
  */
-	public static function dsnClassMap($map = null) {
+	public static function dsnClassMap(array $map = null) {
 		if ($map !== null) {
 			static::$_dsnClassMap = $map + static::$_dsnClassMap;
 		}
