@@ -121,7 +121,7 @@ $pk = "\$$singularVar->{$primaryKey[0]}";
 <% foreach ($groupedFields['text'] as $field) : %>
 	<div class="row texts">
 		<div class="columns large-9">
-			<h6 class="subheader"><?= __('<$= Inflector::humanize($field) %>') ?></h6>
+			<h6 class="subheader"><?= __('<%= Inflector::humanize($field) %>') ?></h6>
 			<?= $this->Text->autoParagraph(h($<%= $singularVar %>-><%= $field %>)); ?>
 
 		</div>
@@ -148,11 +148,11 @@ foreach ($relations as $alias => $details):
 		</tr>
 		<?php foreach ($<%= $singularVar %>-><%= $details['property'] %> as $<%= $otherSingularVar %>): ?>
 		<tr>
-			<% foreach ($details['fields'] as $field): %>
+			<%- foreach ($details['fields'] as $field): %>
 			<td><?= h($<%= $otherSingularVar %>-><%= $field %>) ?></td>
-			<% endforeach; %>
+			<%- endforeach; %>
 
-			<% $otherPk = "\${$otherSingularVar}->{$details['primaryKey'][0]}"; %>
+			<%- $otherPk = "\${$otherSingularVar}->{$details['primaryKey'][0]}"; %>
 			<td class="actions">
 				<?= $this->Html->link(__('View'), ['controller' => '<%= $details['controller'] %>', 'action' => 'view', <%= $otherPk %>]) %>
 				<?= $this->Html->link(__('Edit'), ['controller' => '<%= $details['controller'] %>', 'action' => 'edit', <%= $otherPk %>]) %>
