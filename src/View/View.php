@@ -906,9 +906,13 @@ class View {
 
 		$layoutPaths = ['Layout' . DS . $subDir];
 		if (!empty($this->request->params['prefix'])) {
+			$prefixPath = array_map(
+				'Cake\Utility\Inflector::camelize',
+				explode('/', $this->request->params['prefix'])
+			);
 			array_unshift(
 				$layoutPaths,
-				Inflector::camelize($this->request->params['prefix']) . DS . $layoutPaths[0]
+				implode('/', $prefixPath) . DS . $layoutPaths[0]
 			);
 		}
 
