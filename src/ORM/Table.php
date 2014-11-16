@@ -1182,6 +1182,10 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			'associated' => true
 		]);
 
+		if ($entity->errors()) {
+			return false;
+		}
+
 		if ($entity->isNew() === false && !$entity->dirty()) {
 			return $entity;
 		}

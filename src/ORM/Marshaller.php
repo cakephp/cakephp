@@ -95,6 +95,7 @@ class Marshaller {
  * @see \Cake\ORM\Table::newEntity()
  */
 	public function one(array $data, array $options = []) {
+		$options += ['validate' => true];
 		$propertyMap = $this->_buildPropertyMap($options);
 
 		$schema = $this->_table->schema();
@@ -111,6 +112,13 @@ class Marshaller {
 			foreach ((array)$options['accessibleFields'] as $key => $value) {
 				$entity->accessible($key, $value);
 			}
+		}
+
+		$errors = [];
+		if ($options['validate']) {
+			$type = is_string($options['validate']) ? $options['validate'] : 'default';
+			$validator = $this->_table->validator($type);
+			$errors = $validator->errors($data, $entity->isNew());
 		}
 
 		$primaryKey = $schema->primaryKey();
@@ -132,6 +140,7 @@ class Marshaller {
 
 		if (!isset($options['fieldList'])) {
 			$entity->set($properties);
+			$entity->errors($errors);
 			return $entity;
 		}
 
@@ -141,6 +150,7 @@ class Marshaller {
 			}
 		}
 
+		$entity->errors($errors);
 		return $entity;
 	}
 
