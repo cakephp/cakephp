@@ -1178,7 +1178,6 @@ class Table implements RepositoryInterface, EventListenerInterface {
 	public function save(EntityInterface $entity, $options = []) {
 		$options = new \ArrayObject($options + [
 			'atomic' => true,
-			'validate' => true,
 			'associated' => true
 		]);
 
@@ -1223,11 +1222,6 @@ class Table implements RepositoryInterface, EventListenerInterface {
 		}
 
 		$options['associated'] = $this->_associations->normalizeKeys($options['associated']);
-		$validate = $options['validate'];
-
-		if ($validate && !$this->validate($entity, $options)) {
-			return false;
-		}
 		$event = $this->dispatchEvent('Model.beforeSave', compact('entity', 'options'));
 
 		if ($event->isStopped()) {
@@ -1238,7 +1232,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			$this,
 			$entity,
 			$options['associated'],
-			['validate' => false] + $options->getArrayCopy()
+			$options->getArrayCopy()
 		);
 
 		if (!$saved && $options['atomic']) {
@@ -1259,7 +1253,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 				$this,
 				$entity,
 				$options['associated'],
-				['validate' => (bool)$validate] + $options->getArrayCopy()
+				$options->getArrayCopy()
 			);
 			if ($success || !$options['atomic']) {
 				$entity->clean();
