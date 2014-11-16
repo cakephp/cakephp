@@ -93,7 +93,7 @@ $pk = "\$$singularVar->{$primaryKey[0]}";
 		</div>
 <% endif; %>
 <% if ($groupedFields['number']) : %>
-		<div class="large-2 large-offset-1 columns numbers end">
+		<div class="large-2 columns numbers end">
 <% foreach ($groupedFields['number'] as $field) : %>
 			<h6 class="subheader"><?= __('<%= Inflector::humanize($field) %>') ?></h6>
 			<p><?= $this->Number->format($<%= $singularVar %>-><%= $field %>) ?></p>
