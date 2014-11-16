@@ -45,7 +45,7 @@ $fields = collection($fields)
 	<thead>
 		<tr>
 	<% foreach ($fields as $field): %>
-		<th><?= $this->Paginator->sort('<%= $field %>') %>"; ?></th>
+		<th><?= $this->Paginator->sort('<%= $field %>') ?></th>
 	<% endforeach; %>
 		<th class="actions"><?= __('Actions') ?></th>
 		</tr>
@@ -71,7 +71,7 @@ $fields = collection($fields)
 			if ($isKey !== true) {
 				if (!in_array($schema->columnType($field), ['integer', 'biginteger', 'decimal', 'float'])) {
 %>
-			<td><?= h($<%= $singularVar %>-><%= $field %>) '></td>
+			<td><?= h($<%= $singularVar %>-><%= $field %>) ?></td>
 <%
 				} else {
 %>
@@ -81,7 +81,7 @@ $fields = collection($fields)
 			}
 		}
 
-		$pk = "\$<%= $singularVar %>-><%= $primaryKey[0] %>";
+		$pk = '$' . $singularVar . '->' . $primaryKey[0];
 %>
 			<td class="actions">
 				<?= $this->Html->link(__('View'), ['action' => 'view', <%= $pk %>]) ?>
@@ -96,7 +96,7 @@ $fields = collection($fields)
 	<div class="paginator">
 		<ul class="pagination">
 			<?= $this->Paginator->prev('< ' . __('previous')); ?>
-			<?= this->Paginator->numbers(); ?>
+			<?= $this->Paginator->numbers(); ?>
 			<?=	$this->Paginator->next(__('next') . ' >'); ?>
 		</ul>
 		<p><?= $this->Paginator->counter(); ?></p>
