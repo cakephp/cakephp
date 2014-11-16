@@ -39,7 +39,7 @@ class TimeHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function fromString($dateString, $timezone = null) {
-		return (new Time($dateString))->timezone($timezone);
+		return new Time($dateString, $timezone);
 	}
 
 /**
@@ -189,7 +189,7 @@ class TimeHelper extends Helper {
  */
 	public function toAtom($dateString, $timezone = null) {
 		$timezone = $timezone ?: date_default_timezone_get();
-		return (new Time($dateString))->timezone($timezone)->toAtomString();
+		return (new Time($dateString, $timezone))->toAtomString();
 	}
 
 /**
@@ -202,7 +202,7 @@ class TimeHelper extends Helper {
  */
 	public function toRss($dateString, $timezone = null) {
 		$timezone = $timezone ?: date_default_timezone_get();
-		return (new Time($dateString))->timezone($timezone)->toRssString();
+		return (new Time($dateString, $timezone))->toRssString();
 	}
 
 /**
