@@ -17,8 +17,6 @@ namespace Cake\Validation;
 /**
  * ValidationSet object. Holds all validation rules for a field and exposes
  * methods to dynamically add or remove validation rules
- *
- * @link          http://book.cakephp.org/2.0/en/data-validation.html
  */
 class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
 

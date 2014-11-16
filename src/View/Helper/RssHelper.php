@@ -20,8 +20,8 @@ use Cake\View\Helper;
 /**
  * RSS Helper class for easy output RSS structures.
  *
- * @property      TimeHelper $Time
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html
+ * @property TimeHelper $Time
+ * @link http://book.cakephp.org/3.0/en/views/helpers/rss.html
  */
 class RssHelper extends Helper {
 
@@ -94,7 +94,6 @@ class RssHelper extends Helper {
  * @param array $attrib `<rss />` tag attributes
  * @param string $content Tag content.
  * @return string An RSS document
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::document
  */
 	public function document($attrib = array(), $content = null) {
 		if ($content === null) {
@@ -115,7 +114,6 @@ class RssHelper extends Helper {
  * @param array $elements Named array elements which are converted to tags
  * @param string $content Content (`<item />`'s belonging to this channel
  * @return string An RSS `<channel />`
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::channel
  */
 	public function channel($attrib = array(), $elements = array(), $content = null) {
 		if (!isset($elements['link'])) {
@@ -160,7 +158,6 @@ class RssHelper extends Helper {
  * @param string|array $callback A string function name, or array containing an object
  *     and a string method name
  * @return string A set of RSS `<item />` elements
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::items
  */
 	public function items($items, $callback = null) {
 		if ($callback) {
@@ -182,7 +179,6 @@ class RssHelper extends Helper {
  * @param array $att The attributes of the `<item />` element
  * @param array $elements The list of elements contained in this `<item />`
  * @return string An RSS `<item />` element
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::item
  */
 	public function item($att = array(), $elements = array()) {
 		$content = null;
@@ -272,7 +268,6 @@ class RssHelper extends Helper {
  * @param int|string|\DateTime $time UNIX timestamp or valid time string or DateTime object.
  * @return string An RSS-formatted timestamp
  * @see TimeHelper::toRSS
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::time
  */
 	public function time($time) {
 		return $this->Time->toRSS($time);
@@ -286,7 +281,6 @@ class RssHelper extends Helper {
  * @param string|array $content XML element content
  * @param bool $endTag Whether the end tag of the element should be printed
  * @return string XML
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::elem
  */
 	public function elem($name, $attrib = array(), $content = null, $endTag = true) {
 		$namespace = null;

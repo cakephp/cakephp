@@ -20,7 +20,7 @@ namespace Cake\Utility;
  * Inflector pluralizes and singularizes English nouns.
  * Used by CakePHP's naming conventions throughout the framework.
  *
- * @link          http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html
+ * @link http://book.cakephp.org/3.0/en/core-libraries/inflector.html
  */
 class Inflector {
 
@@ -493,7 +493,7 @@ class Inflector {
  *
  * @param string $word Word in singular
  * @return string Word in plural
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::pluralize
+ * @link http://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-plural-singular-forms
  */
 	public static function pluralize($word) {
 		if (isset(static::$_cache['pluralize'][$word])) {
@@ -532,7 +532,7 @@ class Inflector {
  *
  * @param string $word Word in plural
  * @return string Word in singular
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::singularize
+ * @link http://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-plural-singular-forms
  */
 	public static function singularize($word) {
 		if (isset(static::$_cache['singularize'][$word])) {
@@ -573,7 +573,7 @@ class Inflector {
  *
  * @param string $lowerCaseAndUnderscoredWord Word to camelize
  * @return string Camelized word. LikeThis.
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::camelize
+ * @link http://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-camelcase-and-under-scored-forms
  */
 	public static function camelize($lowerCaseAndUnderscoredWord) {
 		if (!($result = static::_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord))) {
@@ -588,7 +588,7 @@ class Inflector {
  *
  * @param string $camelCasedWord Camel-cased word to be "underscorized"
  * @return string Underscore-syntaxed version of the $camelCasedWord
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::underscore
+ * @link http://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-camelcase-and-under-scored-forms
  */
 	public static function underscore($camelCasedWord) {
 		if (!($result = static::_cache(__FUNCTION__, $camelCasedWord))) {
@@ -621,7 +621,7 @@ class Inflector {
  *
  * @param string $lowerCaseAndUnderscoredWord String to be made more readable
  * @return string Human-readable string
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::humanize
+ * @link http://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-human-readable-forms
  */
 	public static function humanize($lowerCaseAndUnderscoredWord) {
 		if (!($result = static::_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord))) {
@@ -636,7 +636,7 @@ class Inflector {
  *
  * @param string $className Name of class to get database table name for
  * @return string Name of the database table for given class
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::tableize
+ * @link http://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-table-and-class-name-forms
  */
 	public static function tableize($className) {
 		if (!($result = static::_cache(__FUNCTION__, $className))) {
@@ -651,7 +651,7 @@ class Inflector {
  *
  * @param string $tableName Name of database table to get class name for
  * @return string Class name
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::classify
+ * @link http://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-table-and-class-name-forms
  */
 	public static function classify($tableName) {
 		if (!($result = static::_cache(__FUNCTION__, $tableName))) {
@@ -666,7 +666,7 @@ class Inflector {
  *
  * @param string $string String to convert.
  * @return string in variable form
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::variable
+ * @link http://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-variable-names
  */
 	public static function variable($string) {
 		if (!($result = static::_cache(__FUNCTION__, $string))) {
@@ -685,7 +685,7 @@ class Inflector {
  * @param string $string the string you want to slug
  * @param string $replacement will replace keys in map
  * @return string
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::slug
+ * @link http://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-url-safe-strings
  */
 	public static function slug($string, $replacement = '-') {
 		$quotedReplacement = preg_quote($replacement, '/');

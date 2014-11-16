@@ -22,7 +22,7 @@ use Cake\View\Helper\StringTemplateTrait;
  *
  * Session reading from the view.
  *
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html
+ * @link http://book.cakephp.org/3.0/en/views/helpers/session.html
  */
 class SessionHelper extends Helper {
 
@@ -47,7 +47,6 @@ class SessionHelper extends Helper {
  *
  * @param string $name the name of the session key you want to read
  * @return mixed values from the session vars
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::read
  */
 	public function read($name = null) {
 		return $this->request->session()->read($name);
@@ -60,7 +59,6 @@ class SessionHelper extends Helper {
  *
  * @param string $name Session key to check.
  * @return bool
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::check
  */
 	public function check($name) {
 		return $this->request->session()->check($name);
@@ -112,7 +110,6 @@ class SessionHelper extends Helper {
  *    Supports the 'params', and 'element' keys that are used in the helper.
  * @return string
  * @deprecated 3.0 Use FlashHelper::render() instead.
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::flash
  */
 	public function flash($key = 'flash', $attrs = []) {
 		$flash = $this->request->session()->read('Flash.' . $key);
