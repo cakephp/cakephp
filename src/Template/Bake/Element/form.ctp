@@ -50,7 +50,7 @@ $fields = collection($fields)
 <div class="<%= $pluralVar %> form large-10 medium-9 columns">
 <?= $this->Form->create($<%= $singularVar %>); ?>
 	<fieldset>
-		<legend><?= __('<%= Inflector::humanize($action) %> <%= $singularHumanName %>) ?></legend>
+		<legend><?= __('<%= Inflector::humanize($action) %> <%= $singularHumanName %>') ?></legend>
 		<?php
 <%
 		foreach ($fields as $field) {
