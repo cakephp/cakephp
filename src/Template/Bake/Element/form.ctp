@@ -48,7 +48,7 @@ $fields = collection($fields)
 	</ul>
 </div>
 <div class="<%= $pluralVar %> form large-10 medium-9 columns">
-<?= $this->Form->create($<%= $singularVar %>); ?>
+	<?= $this->Form->create($<%= $singularVar %>); ?>
 	<fieldset>
 		<legend><?= __('<%= Inflector::humanize($action) %> <%= $singularHumanName %>') ?></legend>
 		<?php
@@ -59,25 +59,25 @@ $fields = collection($fields)
 			}
 			if (isset($keyFields[$field])) {
 %>
-		echo $this->Form->input('<%= $field %>', ['options' => $<%= $keyFields[$field] %>]);
+			echo $this->Form->input('<%= $field %>', ['options' => $<%= $keyFields[$field] %>]);
 <%
 				continue;
 			}
 			if (!in_array($field, ['created', 'modified', 'updated'])) {
 %>
-		echo $this->Form->input('<%= $field %>');
+			echo $this->Form->input('<%= $field %>');
 <%
 			}
 		}
 		if (!empty($associations['BelongsToMany'])) {
 			foreach ($associations['BelongsToMany'] as $assocName => $assocData) {
 %>
-		echo $this->Form->input('<%= $assocData['property'] %>._ids', ['options' => $<%= $assocData['variable'] %>]);
+			echo $this->Form->input('<%= $assocData['property'] %>._ids', ['options' => $<%= $assocData['variable'] %>]);
 <%
 			}
 		}
 %>
-	?>
+		?>
 	</fieldset>
 	<?= $this->Form->button(__('Submit')) ?>
 	<?= $this->Form->end() ?>
