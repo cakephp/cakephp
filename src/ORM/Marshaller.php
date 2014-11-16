@@ -124,6 +124,9 @@ class Marshaller {
 		$primaryKey = $schema->primaryKey();
 		$properties = [];
 		foreach ($data as $key => $value) {
+			if (!empty($errors[$key])) {
+				continue;
+			}
 			$columnType = $schema->columnType($key);
 			if (isset($propertyMap[$key])) {
 				$assoc = $propertyMap[$key]['association'];
