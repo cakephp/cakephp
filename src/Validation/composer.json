@@ -1,0 +1,20 @@
+{
+	"name": "cakephp/validation",
+	"description": "CakePHP Validation library",
+	"license": "MIT",
+	"authors": [
+		{
+		"name": "CakePHP Community",
+		"homepage": "http://cakephp.org"
+	}
+	],
+	"autoload": {
+		"psr-4": {
+			"Cake\\Validation\\": "."
+		}
+	},
+	"require": {
+		"cakephp/utility": "dev-master"
+	},
+	"minimum-stability": "dev"
+}

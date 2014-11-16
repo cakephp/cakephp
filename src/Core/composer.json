@@ -1,0 +1,21 @@
+{
+	"name": "cakephp/core",
+	"description": "CakePHP Framework Core classes",
+	"license": "MIT",
+	"authors": [
+		{
+		"name": "CakePHP Community",
+		"homepage": "http://cakephp.org"
+	}
+	],
+	"require": {
+		"cakephp/utility": "dev-master"
+	},
+	"autoload": {
+		"psr-4": {
+			"Cake\\Core\\": "."
+		},
+		"files": ["functions.php"]
+	},
+	"minimum-stability": "dev"
+}
