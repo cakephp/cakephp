@@ -488,7 +488,7 @@ class Time extends Carbon implements JsonSerializable {
  * $time = new Time('2014-04-20 22:10');
  * $time->i18nFormat(); // outputs '4/20/14, 10:10 PM' for the en-US locale
  * $time->i18nFormat(\IntlDateFormatter::FULL); // Use the full date and time format
- * $time->i18nFormat([\IntlDateFormatter::FULL, \IntlDateFormatter::Short]); // Use full date but short time format
+ * $time->i18nFormat([\IntlDateFormatter::FULL, \IntlDateFormatter::SHORT]); // Use full date but short time format
  * $time->i18nFormat('YYYY-MM-dd HH:mm:ss'); // outputs '2014-04-20 22:10'
  * }}}
  *
