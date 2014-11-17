@@ -23,7 +23,7 @@ use Cake\View\Helper\StringTemplateTrait;
  *
  * Manipulation of time data.
  *
- * @link http://book.cakephp.org/3.0/en/core-libraries/helpers/time.html
+ * @link http://book.cakephp.org/3.0/en/views/helpers/time.html
  * @see \Cake\I18n\Time
  */
 class TimeHelper extends Helper {
