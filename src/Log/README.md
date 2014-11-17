@@ -35,7 +35,7 @@ Log::config('production', [
 It is also possible to create loggers by providing a closure.
 
 ```php
-Log::config('special', function() {
+Log::config('special', function () {
 	// Return any PSR-3 compatible logger
 	return new MyPSR3CompatibleLogger();
 });
