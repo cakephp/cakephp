@@ -1269,7 +1269,7 @@ SQL;
  * @param array $binding
  * @return void
  */
-	protected function &_prepareAssociationQuery(Model $model, &$queryData, $binding) {
+	protected function _prepareAssociationQuery(Model $model, &$queryData, $binding) {
 		$type = $binding['type'];
 		$assoc = $binding['model'];
 		$assocData = $model->{$type}[$assoc];

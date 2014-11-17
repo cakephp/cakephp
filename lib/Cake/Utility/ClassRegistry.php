@@ -308,7 +308,7 @@ class ClassRegistry {
  * @param string $class Class name.
  * @return bool
  */
-	protected function &_duplicate($alias, $class) {
+	protected function _duplicate($alias, $class) {
 		$duplicate = false;
 		if ($this->isKeySet($alias)) {
 			$model = $this->getObject($alias);
