@@ -409,7 +409,11 @@ class StaticConfigTraitTest extends TestCase {
 			'path' => '/',
 			'scheme' => 'file',
 		];
-		$this->assertEquals($expected, TestLogStaticConfig::parseDsn($dsn));
+		$this->assertEquals(
+			$expected,
+			TestLogStaticConfig::parseDsn($dsn),
+			sprintf('Failed to parse a simple file dsn - using pcre %s', PCRE_VERSION)
+		);
 
 		$dsn = 'file:///?path=/tmp/persistent/';
 		$expected = [
