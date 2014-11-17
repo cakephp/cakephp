@@ -42,13 +42,18 @@ class Number {
 /**
  * Formats a number with a level of precision.
  *
+ * Options:
+ *
+ * - `locale`: The locale name to use for formatting the number, e.g. fr_FR
+ *
  * @param float $value A floating point number.
  * @param int $precision The precision of the returned number.
+ * @param array $options Additional options
  * @return string Formatted float.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::precision
  */
-	public static function precision($value, $precision = 3) {
-		$formatter = static::formatter(['precision' => $precision, 'places' => $precision]);
+	public static function precision($value, $precision = 3, array $options = array()) {
+		$formatter = static::formatter(['precision' => $precision, 'places' => $precision] + $options);
 		return $formatter->format($value);
 	}
 
@@ -80,6 +85,7 @@ class Number {
  * Options:
  *
  * - `multiply`: Multiply the input value by 100 for decimal percentages.
+ * - `locale`: The locale name to use for formatting the number, e.g. fr_FR
  *
  * @param float $value A floating point number
  * @param int $precision The precision of the returned number
@@ -92,7 +98,7 @@ class Number {
 		if ($options['multiply']) {
 			$value *= 100;
 		}
-		return static::precision($value, $precision) . '%';
+		return static::precision($value, $precision, $options) . '%';
 	}
 
 /**
