@@ -151,7 +151,7 @@ class MessagesFileLoader {
 			$locale['language']
 		];
 
-		$searchPath = [];
+		$searchPaths = [];
 
 		$localePaths = App::path('Locale');
 		if (empty($localePaths)) {
@@ -159,7 +159,7 @@ class MessagesFileLoader {
 		}
 		foreach ($localePaths as $path) {
 			foreach ($folders as $folder) {
-				$searchPath[] = $path . $folder . DS;
+				$searchPaths[] = $path . $folder . DS;
 			}
 		}
 
@@ -168,11 +168,11 @@ class MessagesFileLoader {
 		if (Plugin::loaded($pluginName)) {
 			$basePath = Plugin::classPath($pluginName) . 'Locale' . DS;
 			foreach ($folders as $folder) {
-				$searchPath[] = $basePath . $folder . DS;
+				$searchPaths[] = $basePath . $folder . DS;
 			}
 		}
 
-		return $searchPath;
+		return $searchPaths;
 	}
 
 }
