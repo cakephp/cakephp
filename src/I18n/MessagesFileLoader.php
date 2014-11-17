@@ -151,15 +151,20 @@ class MessagesFileLoader {
 			$locale['language']
 		];
 
-		// If space is not added after slash, the character after it remains lowercased
-		$pluginName = Inflector::camelize(str_replace('/', '/ ', $this->_name));
-		$basePath = APP . 'Locale' . DS;
 		$searchPath = [];
 
-		foreach ($folders as $folder) {
-			$searchPath[] = $basePath . $folder . DS;
+		$localePaths = App::path('Locale');
+		if (empty($localePaths)) {
+			$localePaths[] = APP . 'Locale' . DS;
+		}
+		foreach ($localePaths as $path) {
+			foreach ($folders as $folder) {
+				$searchPath[] = $path . $folder . DS;
+			}
 		}
 
+		// If space is not added after slash, the character after it remains lowercased
+		$pluginName = Inflector::camelize(str_replace('/', '/ ', $this->_name));
 		if (Plugin::loaded($pluginName)) {
 			$basePath = Plugin::classPath($pluginName) . 'Locale' . DS;
 			foreach ($folders as $folder) {

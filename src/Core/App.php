@@ -114,6 +114,9 @@ class App {
 		if ($type === 'Plugin') {
 			return (array)Configure::read('App.paths.plugins');
 		}
+		if (empty($plugin) && $type === 'Locale') {
+			return (array)Configure::read('App.paths.locales');
+		}
 		if (empty($plugin) && $type === 'Template') {
 			return (array)Configure::read('App.paths.templates');
 		}
