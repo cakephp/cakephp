@@ -111,6 +111,8 @@ class TableNameExpression implements ExpressionInterface {
  * @param string $name Table name
  * @param string $prefix Prefix to prepend
  * @param bool $snippet Whether this expression represents a SQL snippet or just a table name (optionnaly with a prefix)
+ * @param array $tablesNames Lists of table names involved in the Query Expressions tree this expression belongs to
+ * This tables names are the one that will need to be prefixed
  *
  * @return void
  */

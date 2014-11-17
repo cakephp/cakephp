@@ -71,7 +71,7 @@ class UnaryExpression implements ExpressionInterface {
 	}
 
 /**
- * Sets value which the unary expression operates
+ * Sets the value which the unary expression operates
  *
  * @param string $value The value
  * @return void
@@ -81,9 +81,8 @@ class UnaryExpression implements ExpressionInterface {
 	}
 
 /**
- * Gets value which the unary expression operates
+ * Gets the value which the unary expression operates
  *
- * @param string $value The value
  * @return void
  */
 	public function getValue() {

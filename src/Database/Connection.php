@@ -290,9 +290,10 @@ class Connection {
 	}
 
 /**
- * Wrap the table name associated to the field in a TableNameExpression with the current config prefix
+ * Wrap the field name associated to the field in a TableNameExpression with the current config prefix
  *
  * @param string $field The field
+ * @param array $tablesNames Lists of tables names that needs to be prefixed
  * @return TableNameExpression Full field names
  *
  * @see \Cake\Database\Expression\TableNameExpression
@@ -316,7 +317,7 @@ class Connection {
  * Will replace string such as `articles.id` to `prefix_articles.id`
  *
  * @param string $condition Condition extracted from a QueryExpression
- * @param string $exclude String to be excluded as a table name
+ * @param string $targets Table names that need to be prefixed
  * @return string
  */
 	public function applyFullTableName($condition, $targets) {
