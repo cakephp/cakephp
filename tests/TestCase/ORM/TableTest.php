@@ -433,7 +433,7 @@ class TableTest extends TestCase {
 
 		$query = $table->find('all');
 		$query->limit(1);
-		$this->assertEquals($expected, $query->all());
+		$this->assertEquals($expected, $query->all()->toArray());
 	}
 
 /**
