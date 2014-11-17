@@ -52,7 +52,7 @@ class Number {
  * @return string Formatted float.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::precision
  */
-	public static function precision($value, $precision = 3, array $options = array()) {
+	public static function precision($value, $precision = 3, array $options = []) {
 		$formatter = static::formatter(['precision' => $precision, 'places' => $precision] + $options);
 		return $formatter->format($value);
 	}
