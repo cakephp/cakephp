@@ -23,7 +23,7 @@
 /**
  * Test suite bootstrap for <%= $plugin %>.
  */
-function find_root($root) {
+$findRoot = function($root) {
 	do {
 		$lastRoot = $root;
 		$root = dirname($root);
@@ -33,9 +33,9 @@ function find_root($root) {
 	} while($root !== $lastRoot);
 
 	throw new Exception("Cannot find the root of the application, unable to run tests");
-}
-
-$root = find_root(__FILE__);
+};
+$root = $findRoot(__FILE__);
+unset($findRoot);
 
 chdir($root);
 require $root . '/config/bootstrap.php';
