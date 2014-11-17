@@ -397,6 +397,14 @@ class StaticConfigTraitTest extends TestCase {
 		$this->assertEquals($expected, TestLogStaticConfig::parseDsn($dsn));
 	}
 
+	public function testPCREVersion() {
+		$this->assertSame(
+			'8.32 2012-11-30',
+			PCRE_VERSION,
+			'Using a different version of pcre to the box that fails'
+		);
+	}
+
 /**
  * Tests loading a single plugin
  *
