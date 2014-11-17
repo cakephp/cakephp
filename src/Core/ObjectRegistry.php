@@ -66,7 +66,7 @@ abstract class ObjectRegistry {
  * @return mixed
  */
 	public function load($objectName, $config = []) {
-		list($plugin, $name) = pluginSplit($objectName);
+		list(, $name) = pluginSplit($objectName);
 		$loaded = isset($this->_loaded[$name]);
 		if ($loaded && !empty($config)) {
 			$this->_checkDuplicate($name, $config);
@@ -235,7 +235,7 @@ abstract class ObjectRegistry {
  * @return void
  */
 	public function set($objectName, $object) {
-		list($plugin, $name) = pluginSplit($objectName);
+		list(, $name) = pluginSplit($objectName);
 		$this->unload($objectName);
 		if (isset($this->_eventManager)) {
 			$this->eventManager()->attach($object);

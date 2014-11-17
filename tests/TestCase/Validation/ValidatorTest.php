@@ -94,22 +94,22 @@ class ValidatorTest extends TestCase {
 	}
 
 /**
- * Tests the validatePresence method
+ * Tests the requirePresence method
  *
  * @return void
  */
-	public function testValidatePresence() {
+	public function testRequirePresence() {
 		$validator = new Validator;
-		$this->assertSame($validator, $validator->validatePresence('title'));
+		$this->assertSame($validator, $validator->requirePresence('title'));
 		$this->assertTrue($validator->field('title')->isPresenceRequired());
 
-		$validator->validatePresence('title', false);
+		$validator->requirePresence('title', false);
 		$this->assertFalse($validator->field('title')->isPresenceRequired());
 
-		$validator->validatePresence('title', 'create');
+		$validator->requirePresence('title', 'create');
 		$this->assertEquals('create', $validator->field('title')->isPresenceRequired());
 
-		$validator->validatePresence('title', 'update');
+		$validator->requirePresence('title', 'update');
 		$this->assertEquals('update', $validator->field('title')->isPresenceRequired());
 	}
 
@@ -120,19 +120,19 @@ class ValidatorTest extends TestCase {
  */
 	public function testIsPresenceRequired() {
 		$validator = new Validator;
-		$this->assertSame($validator, $validator->validatePresence('title'));
+		$this->assertSame($validator, $validator->requirePresence('title'));
 		$this->assertTrue($validator->isPresenceRequired('title', true));
 		$this->assertTrue($validator->isPresenceRequired('title', false));
 
-		$validator->validatePresence('title', false);
+		$validator->requirePresence('title', false);
 		$this->assertFalse($validator->isPresenceRequired('title', true));
 		$this->assertFalse($validator->isPresenceRequired('title', false));
 
-		$validator->validatePresence('title', 'create');
+		$validator->requirePresence('title', 'create');
 		$this->assertTrue($validator->isPresenceRequired('title', true));
 		$this->assertFalse($validator->isPresenceRequired('title', false));
 
-		$validator->validatePresence('title', 'update');
+		$validator->requirePresence('title', 'update');
 		$this->assertTrue($validator->isPresenceRequired('title', false));
 		$this->assertFalse($validator->isPresenceRequired('title', true));
 	}
@@ -144,14 +144,14 @@ class ValidatorTest extends TestCase {
  */
 	public function testErrorsWithPresenceRequired() {
 		$validator = new Validator;
-		$validator->validatePresence('title');
+		$validator->requirePresence('title');
 		$errors = $validator->errors(['foo' => 'something']);
 		$expected = ['title' => ['This field is required']];
 		$this->assertEquals($expected, $errors);
 
 		$this->assertEmpty($validator->errors(['title' => 'bar']));
 
-		$validator->validatePresence('title', false);
+		$validator->requirePresence('title', false);
 		$this->assertEmpty($validator->errors(['foo' => 'bar']));
 	}
 
@@ -162,7 +162,7 @@ class ValidatorTest extends TestCase {
  */
 	public function testCustomErrorsWithPresenceRequired() {
 		$validator = new Validator;
-		$validator->validatePresence('title', true, 'Custom message');
+		$validator->requirePresence('title', true, 'Custom message');
 		$errors = $validator->errors(['foo' => 'something']);
 		$expected = ['title' => ['Custom message']];
 		$this->assertEquals($expected, $errors);

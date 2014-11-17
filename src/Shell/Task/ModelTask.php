@@ -225,7 +225,6 @@ class ModelTask extends BakeTask {
 				continue;
 			}
 
-			$assoc = false;
 			if ($fieldName === 'parent_id') {
 				$className = ($this->plugin) ? $this->plugin . '.' . $model->alias() : $model->alias();
 				$assoc = [
@@ -595,7 +594,7 @@ class ModelTask extends BakeTask {
 		];
 
 		$this->Template->set($data);
-		$out = $this->Template->generate('classes', 'entity');
+		$out = $this->Template->generate('Model/entity');
 
 		$path = $this->getPath();
 		$filename = $path . 'Entity' . DS . $name . '.php';
@@ -640,7 +639,7 @@ class ModelTask extends BakeTask {
 		];
 
 		$this->Template->set($data);
-		$out = $this->Template->generate('classes', 'table');
+		$out = $this->Template->generate('Model/table');
 
 		$path = $this->getPath();
 		$filename = $path . 'Table' . DS . $name . 'Table.php';
@@ -693,7 +692,6 @@ class ModelTask extends BakeTask {
  *   does not have a schemaCollection method.
  */
 	protected function _getAllTables() {
-		$tables = [];
 		$db = ConnectionManager::get($this->connection);
 		if (!method_exists($db, 'schemaCollection')) {
 			$this->err(

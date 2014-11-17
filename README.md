@@ -34,10 +34,10 @@ Assuming you have PHPUnit installed system wide using one of the methods stated
 [here](http://phpunit.de/manual/current/en/installation.html), you can run the
 tests for cakephp by doing the following:
 
-1. Copy `phpunit.xml.dist` to `phpunit.xml`
-2. Add the relevant database credentials to your phpunit.xml if you want to run tests against
+1. Copy `phpunit.xml.dist` to `phpunit.xml`.
+2. Add the relevant database credentials to your `phpunit.xml` if you want to run tests against
    a non-SQLite datasource.
-3. Run `phpunit`
+3. Run `phpunit`.
 
 ## Contributing
 

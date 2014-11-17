@@ -1427,7 +1427,7 @@ podeís adquirirla.</span></p>
 /**
  * testparseFileSizeException
  *
- * @expectedException InvalidArgumentException
+ * @expectedException \InvalidArgumentException
  * @return void
  */
 	public function testparseFileSizeException() {

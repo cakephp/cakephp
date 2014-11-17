@@ -220,7 +220,7 @@ class DebuggerTest extends TestCase {
 /**
  * Test that choosing a non-existent format causes an exception
  *
- * @expectedException InvalidArgumentException
+ * @expectedException \InvalidArgumentException
  * @return void
  */
 	public function testOutputAsException() {
@@ -492,7 +492,7 @@ TEXT;
 		$val = array(
 			'test' => array('key' => 'val')
 		);
-		Debugger::log($val, LOG_DEBUG, 0);
+		Debugger::log($val, 'debug', 0);
 	}
 
 /**

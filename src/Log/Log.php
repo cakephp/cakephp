@@ -133,24 +133,24 @@ class Log {
 	protected static $_registry;
 
 /**
- * Log levels as detailed in RFC 5424
- * http://tools.ietf.org/html/rfc5424
+ * Handled log levels
  *
  * @var array
  */
 	protected static $_levels = array(
-		LOG_EMERG => 'emergency',
-		LOG_ALERT => 'alert',
-		LOG_CRIT => 'critical',
-		LOG_ERR => 'error',
-		LOG_WARNING => 'warning',
-		LOG_NOTICE => 'notice',
-		LOG_INFO => 'info',
-		LOG_DEBUG => 'debug',
+		'emergency',
+		'alert',
+		'critical',
+		'error',
+		'warning',
+		'notice',
+		'info',
+		'debug'
 	);
 
 /**
- * Mapped log levels
+ * Log levels as detailed in RFC 5424
+ * http://tools.ietf.org/html/rfc5424
  *
  * @var array
  */
@@ -336,8 +336,8 @@ class Log {
  */
 	public static function write($level, $message, $context = []) {
 		static::_init();
-		if (is_int($level) && isset(static::$_levels[$level])) {
-			$level = static::$_levels[$level];
+		if (is_int($level) && in_array($level, static::$_levelMap)) {
+			$level = array_search($level, static::$_levelMap);
 		}
 
 		if (!in_array($level, static::$_levels)) {
@@ -384,7 +384,7 @@ class Log {
  * @return bool Success
  */
 	public static function emergency($message, $context = array()) {
-		return static::write(static::$_levelMap['emergency'], $message, $context);
+		return static::write('emergency', $message, $context);
 	}
 
 /**
@@ -399,7 +399,7 @@ class Log {
  * @return bool Success
  */
 	public static function alert($message, $context = array()) {
-		return static::write(static::$_levelMap['alert'], $message, $context);
+		return static::write('alert', $message, $context);
 	}
 
 /**
@@ -414,7 +414,7 @@ class Log {
  * @return bool Success
  */
 	public static function critical($message, $context = array()) {
-		return static::write(static::$_levelMap['critical'], $message, $context);
+		return static::write('critical', $message, $context);
 	}
 
 /**
@@ -429,7 +429,7 @@ class Log {
  * @return bool Success
  */
 	public static function error($message, $context = array()) {
-		return static::write(static::$_levelMap['error'], $message, $context);
+		return static::write('error', $message, $context);
 	}
 
 /**
@@ -444,7 +444,7 @@ class Log {
  * @return bool Success
  */
 	public static function warning($message, $context = array()) {
-		return static::write(static::$_levelMap['warning'], $message, $context);
+		return static::write('warning', $message, $context);
 	}
 
 /**
@@ -459,7 +459,7 @@ class Log {
  * @return bool Success
  */
 	public static function notice($message, $context = array()) {
-		return static::write(static::$_levelMap['notice'], $message, $context);
+		return static::write('notice', $message, $context);
 	}
 
 /**
@@ -474,7 +474,7 @@ class Log {
  * @return bool Success
  */
 	public static function debug($message, $context = array()) {
-		return static::write(static::$_levelMap['debug'], $message, $context);
+		return static::write('debug', $message, $context);
 	}
 
 /**
@@ -489,7 +489,7 @@ class Log {
  * @return bool Success
  */
 	public static function info($message, $context = array()) {
-		return static::write(static::$_levelMap['info'], $message, $context);
+		return static::write('info', $message, $context);
 	}
 
 }

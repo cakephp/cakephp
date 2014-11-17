@@ -45,7 +45,6 @@ use LogicException;
  * template file `plugins/SuperHot/Template/Posts/index.ctp`. If a theme template
  * is not found for the current action the default app template file is used.
  *
- * @property      \Cake\View\Helper\CacheHelper $Cache
  * @property      \Cake\View\Helper\FormHelper $Form
  * @property      \Cake\View\Helper\HtmlHelper $Html
  * @property      \Cake\View\Helper\NumberHelper $Number
@@ -361,8 +360,6 @@ class View {
  *   is false.
  */
 	public function element($name, array $data = array(), array $options = array()) {
-		$file = $plugin = null;
-
 		if (!isset($options['callbacks'])) {
 			$options['callbacks'] = false;
 		}
@@ -909,9 +906,13 @@ class View {
 
 		$layoutPaths = ['Layout' . DS . $subDir];
 		if (!empty($this->request->params['prefix'])) {
+			$prefixPath = array_map(
+				'Cake\Utility\Inflector::camelize',
+				explode('/', $this->request->params['prefix'])
+			);
 			array_unshift(
 				$layoutPaths,
-				Inflector::camelize($this->request->params['prefix']) . DS . $layoutPaths[0]
+				implode('/', $prefixPath) . DS . $layoutPaths[0]
 			);
 		}
 

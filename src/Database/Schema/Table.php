@@ -296,7 +296,7 @@ class Table {
  *
  * @param string $name The name of the column
  * @param array $attrs The attributes for the column.
- * @return Table this
+ * @return $this
  */
 	public function addColumn($name, $attrs) {
 		if (is_string($attrs)) {
@@ -379,7 +379,7 @@ class Table {
  *
  * @param string $name The name of the index.
  * @param array $attrs The attributes for the index.
- * @return Table this
+ * @return $this
  * @throws \Cake\Database\Exception
  */
 	public function addIndex($name, $attrs) {
@@ -466,7 +466,7 @@ class Table {
  *
  * @param string $name The name of the constraint.
  * @param array $attrs The attributes for the constraint.
- * @return Table this
+ * @return $this
  * @throws \Cake\Database\Exception
  */
 	public function addConstraint($name, $attrs) {

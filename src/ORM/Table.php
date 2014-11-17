@@ -1020,7 +1020,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
  *	return $validator
  *	->add('email', 'valid-email', ['rule' => 'email'])
  *	->add('password', 'valid', ['rule' => 'notEmpty'])
- *	->validatePresence('username');
+ *	->requirePresence('username');
  * }
  * }}}
  *
@@ -1528,7 +1528,6 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			$fields = substr($method, strlen($matches[0]));
 			$findType = Inflector::variable($matches[1]);
 		}
-		$conditions = [];
 		$hasOr = strpos($fields, '_or_');
 		$hasAnd = strpos($fields, '_and_');
 
@@ -1536,7 +1535,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			$conditions = [];
 			if (count($args) < count($fields)) {
 				throw new BadMethodCallException(sprintf(
-					'Not enough arguments to magic finder. Got %s required %s',
+					'Not enough arguments for magic finder. Got %s required %s',
 					count($args),
 					count($fields)
 				));

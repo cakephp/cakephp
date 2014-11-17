@@ -103,9 +103,7 @@ class ClassLoader {
 		}
 
 		foreach ($this->_prefixes[$prefix] as $baseDir) {
-			$file = $baseDir .
-				str_replace('\\', DIRECTORY_SEPARATOR, $relativeClass) . '.php';
-			$file = $baseDir . str_replace('\\', '/', $relativeClass) . '.php';
+			$file = $baseDir . str_replace('\\', DIRECTORY_SEPARATOR, $relativeClass) . '.php';
 
 			if ($this->_requireFile($file)) {
 				return $file;

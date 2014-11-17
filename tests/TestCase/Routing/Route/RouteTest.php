@@ -1085,4 +1085,29 @@ class RouteTest extends TestCase {
 		$this->assertEquals('/books/reviews', $route->staticPath());
 	}
 
+/**
+ * Test for __set_state magic method on CakeRoute
+ *
+ * @return void
+ */
+	public function testSetState() {
+		$route = Route::__set_state([
+			'keys' => [],
+			'options' => [],
+			'defaults' => [
+				'controller' => 'pages',
+				'action' => 'display',
+				'home',
+			],
+			'template' => '/',
+			'_greedy' => false,
+			'_compiledRoute' => null,
+		]);
+		$this->assertInstanceOf('Cake\Routing\Route\Route', $route);
+		$this->assertSame('/', $route->match(['controller' => 'pages', 'action' => 'display', 'home']));
+		$this->assertFalse($route->match(['controller' => 'pages', 'action' => 'display', 'about']));
+		$expected = ['controller' => 'pages', 'action' => 'display', 'pass' => ['home']];
+		$this->assertEquals($expected, $route->parse('/'));
+	}
+
 }

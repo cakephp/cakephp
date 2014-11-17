@@ -33,7 +33,6 @@ class UrlHelper extends Helper {
  *    the reverse routing features of CakePHP.
  * @param bool $full If true, the full base URL will be prepended to the result
  * @return string Full translated URL with base path.
- * @link http://book.cakephp.org/2.0/en/views/helpers.html
  */
 	public function build($url = null, $full = false) {
 		return h(Router::url($url, $full));
@@ -155,7 +154,7 @@ class UrlHelper extends Helper {
 				$file = str_replace('/', '\\', $file);
 			}
 
-			if (file_exists(Configure::read('App.www_root') . $theme . $file)) {
+			if (file_exists(Configure::read('App.wwwRoot') . $theme . $file)) {
 				$webPath = $this->request->webroot . $theme . $asset[0];
 			} else {
 				$themePath = Plugin::path($this->theme);

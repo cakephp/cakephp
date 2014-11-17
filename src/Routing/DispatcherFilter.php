@@ -136,7 +136,7 @@ class DispatcherFilter implements EventListenerInterface {
  */
 	public function handle(Event $event) {
 		$name = $event->name();
-		list($unused, $method) = explode('.', $name);
+		list(, $method) = explode('.', $name);
 		if (empty($this->_config['for']) && empty($this->_config['when'])) {
 			return $this->{$method}($event);
 		}

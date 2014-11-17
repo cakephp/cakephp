@@ -635,9 +635,20 @@ class ViewTest extends TestCase {
 		$View = new TestView();
 
 		// Prefix specific layout
-		$View->request->params['prefix'] = 'FooPrefix';
+		$View->request->params['prefix'] = 'foo_prefix';
 		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS .
 			'FooPrefix' . DS . 'Layout' . DS . 'default.ctp';
+		$result = $View->getLayoutFileName();
+		$this->assertPathEquals($expected, $result);
+
+		$View->request->params['prefix'] = 'FooPrefix';
+		$result = $View->getLayoutFileName();
+		$this->assertPathEquals($expected, $result);
+
+		// Nested prefix layout
+		$View->request->params['prefix'] = 'foo_prefix/bar_prefix';
+		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS .
+			'FooPrefix' . DS . 'BarPrefix' . DS . 'Layout' . DS . 'default.ctp';
 		$result = $View->getLayoutFileName();
 		$this->assertPathEquals($expected, $result);
 
@@ -772,7 +783,7 @@ class ViewTest extends TestCase {
 /**
  * Test elementInexistent method
  *
- * @expectedException Cake\View\Exception\MissingElementException
+ * @expectedException \Cake\View\Exception\MissingElementException
  * @return void
  */
 	public function testElementInexistent() {
@@ -782,7 +793,7 @@ class ViewTest extends TestCase {
 /**
  * Test elementInexistent3 method
  *
- * @expectedException Cake\View\Exception\MissingElementException
+ * @expectedException \Cake\View\Exception\MissingElementException
  * @return void
  */
 	public function testElementInexistent3() {
@@ -1367,7 +1378,7 @@ class ViewTest extends TestCase {
  * This should produce a "Object of class TestObjectWithoutToString could not be converted to string" error
  * which gets thrown as a PHPUnit_Framework_Error Exception by PHPUnit.
  *
- * @expectedException PHPUnit_Framework_Error
+ * @expectedException \PHPUnit_Framework_Error
  * @return void
  */
 	public function testBlockSetObjectWithoutToString() {
@@ -1420,7 +1431,7 @@ class ViewTest extends TestCase {
  * This should produce a "Object of class TestObjectWithoutToString could not be converted to string" error
  * which gets thrown as a PHPUnit_Framework_Error Exception by PHPUnit.
  *
- * @expectedException PHPUnit_Framework_Error
+ * @expectedException \PHPUnit_Framework_Error
  * @return void
  */
 	public function testBlockAppendObjectWithoutToString() {
@@ -1450,7 +1461,7 @@ class ViewTest extends TestCase {
  * This should produce a "Object of class TestObjectWithoutToString could not be converted to string" error
  * which gets thrown as a PHPUnit_Framework_Error Exception by PHPUnit.
  *
- * @expectedException PHPUnit_Framework_Error
+ * @expectedException \PHPUnit_Framework_Error
  * @return void
  */
 	public function testBlockPrependObjectWithoutToString() {

@@ -99,7 +99,7 @@ class ControllerTask extends BakeTask {
 			'plugin', 'admin', 'pluralName', 'singularName',
 			'singularHumanName', 'pluralHumanName', 'modelObj', 'currentModelName'
 		));
-		$actions = $this->Template->generate('actions', 'controller_actions');
+		$actions = $this->Template->generate('Controller/actions');
 		return $actions;
 	}
 
@@ -161,7 +161,7 @@ class ControllerTask extends BakeTask {
 
 		$this->Template->set($data);
 
-		$contents = $this->Template->generate('classes', 'controller');
+		$contents = $this->Template->generate('Controller/controller');
 
 		$path = $this->getPath();
 		$filename = $path . $controllerName . 'Controller.php';

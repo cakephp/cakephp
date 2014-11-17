@@ -131,7 +131,7 @@ class SmtpTransportTest extends TestCase {
 /**
  * testConnectEhloTlsOnNonTlsServer method
  *
- * @expectedException Cake\Network\Exception\SocketException
+ * @expectedException \Cake\Network\Exception\SocketException
  * @expectedExceptionMessage SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.
  * @return void
  */
@@ -152,7 +152,7 @@ class SmtpTransportTest extends TestCase {
 /**
  * testConnectEhloNoTlsOnRequiredTlsServer method
  *
- * @expectedException Cake\Network\Exception\SocketException
+ * @expectedException \Cake\Network\Exception\SocketException
  * @expectedExceptionMessage SMTP authentication method not allowed, check if SMTP server requires TLS.
  * @return void
  */
@@ -191,7 +191,7 @@ class SmtpTransportTest extends TestCase {
 /**
  * testConnectFail method
  *
- * @expectedException Cake\Network\Exception\SocketException
+ * @expectedException \Cake\Network\Exception\SocketException
  * @expectedExceptionMessage SMTP server did not accept the connection.
  * @return void
  */

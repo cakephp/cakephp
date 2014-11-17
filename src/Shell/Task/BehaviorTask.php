@@ -46,7 +46,7 @@ class BehaviorTask extends SimpleBakeTask {
  * {@inheritDoc}
  */
 	public function template() {
-		return 'behavior';
+		return 'Model/behavior';
 	}
 
 }

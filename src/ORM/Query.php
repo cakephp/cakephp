@@ -107,6 +107,13 @@ class Query extends DatabaseQuery implements JsonSerializable {
 	protected $_eagerLoader;
 
 /**
+ * True if the beforeFind event has already been triggered for this query
+ *
+ * @var bool
+ */
+	protected $_beforeFindFired = false;
+
+/**
  * Constructor
  *
  * @param \Cake\Database\Connection $connection The connection object
@@ -222,22 +229,27 @@ class Query extends DatabaseQuery implements JsonSerializable {
  * ### Example:
  *
  * {{{
- *  // Set options for the articles that will be eagerly loaded for an author
- *	$query->contain([
- *		'Articles' => [
- *			'fields' => ['title']
- *		]
- *	]);
+ * // Set options for the hasMany articles that will be eagerly loaded for an author
+ * $query->contain([
+ *   'Articles' => [
+ *     'fields' => ['title', 'author_id']
+ *   ]
+ * ]);
+ * }}}
  *
- *	// Use special join conditions for getting an article author's 'likes'
- *	$query->contain([
- *		'Likes' => [
- *			'foreignKey' => false,
- *			'queryBuilder' => function ($q) {
- *				return $q->where(...); // Add full filtering conditions
- *			}
- *		]
- *	]);
+ * When containing associations, it is important to include foreign key columns.
+ * Failing to do so will trigger exceptions.
+ *
+ * {{{
+ * // Use special join conditions for getting an author's hasMany 'likes'
+ * $query->contain([
+ *   'Likes' => [
+ *     'foreignKey' => false,
+ *     'queryBuilder' => function ($q) {
+ *       return $q->where(...); // Add full filtering conditions
+ *     }
+ *   ]
+ * ]);
  * }}}
  *
  * If called with no arguments, this function will return an array with
@@ -469,7 +481,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
 	}
 
 /**
- * Creates a copy of this current query and resets some state.
+ * Creates a copy of this current query, triggers beforeFind and resets some state.
  *
  * The following state will be cleared:
  *
@@ -487,6 +499,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
  */
 	public function cleanCopy() {
 		$query = clone $this;
+		$query->triggerBeforeFind();
 		$query->autoFields(false);
 		$query->limit(null);
 		$query->order([], true);
@@ -511,13 +524,15 @@ class Query extends DatabaseQuery implements JsonSerializable {
 		}
 
 		$count = ['count' => $query->func()->count('*')];
-		if (!count($query->clause('group')) && !$query->clause('distinct')) {
+		$complex = count($query->clause('group')) || $query->clause('distinct');
+		$complex = $complex || count($query->clause('union'));
+
+		if (!$complex) {
 			$statement = $query
 				->select($count, true)
+				->autoFields(false)
 				->execute();
 		} else {
-			// Forcing at least one field to be selected
-			$query->select(['_one_' => $query->newExpr()->add('1')]);
 			$statement = $this->connection()->newQuery()
 				->select($count)
 				->from(['count_source' => $query])
@@ -596,19 +611,29 @@ class Query extends DatabaseQuery implements JsonSerializable {
 	}
 
 /**
- * {@inheritDoc}
+ * Trigger the beforeFind event on the query's repository object.
+ *
+ * Will not trigger more than once, and only for select queries.
+ *
+ * @return void
  */
-	public function sql(ValueBinder $binder = null) {
-		$this->_transformQuery();
-		return parent::sql($binder);
+	public function triggerBeforeFind() {
+		if (!$this->_beforeFindFired && $this->_type === 'select') {
+			$table = $this->repository();
+			$table->dispatchEvent('Model.beforeFind', [$this, $this->_options, !$this->eagerLoaded()]);
+			$this->_beforeFindFired = true;
+		}
 	}
 
 /**
  * {@inheritDoc}
  */
-	public function execute() {
+	public function sql(ValueBinder $binder = null) {
+		$this->triggerBeforeFind();
+
 		$this->_transformQuery();
-		return parent::execute();
+		$sql = parent::sql($binder);
+		return $sql;
 	}
 
 /**
@@ -619,6 +644,11 @@ class Query extends DatabaseQuery implements JsonSerializable {
  * @return \Cake\ORM\ResultSet
  */
 	protected function _execute() {
+		$this->triggerBeforeFind();
+		if ($this->_results) {
+			$decorator = $this->_decoratorClass();
+			return new $decorator($this->_results);
+		}
 		$statement = $this->eagerLoader()->loadExternal($this, $this->execute());
 		return new ResultSet($this, $statement);
 	}

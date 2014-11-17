@@ -30,7 +30,7 @@ class DateTimeWidget implements WidgetInterface {
 /**
  * Select box widget.
  *
- * @var \Cake\View\Widget\SelectBox
+ * @var \Cake\View\Widget\SelectBoxWidget
  */
 	protected $_select;
 
@@ -177,7 +177,7 @@ class DateTimeWidget implements WidgetInterface {
 /**
  * Deconstructs the passed date value into all time units
  *
- * @param string|int|array|DateTime $value Value to deconstruct.
+ * @param string|int|array|\DateTime $value Value to deconstruct.
  * @param array $options Options for conversion.
  * @return array
  */
@@ -527,12 +527,22 @@ class DateTimeWidget implements WidgetInterface {
 	}
 
 /**
- * {@inheritDoc}
+ * Returns a list of fields that need to be secured for this widget.
+ *
+ * When the hour picker is in 24hr mode (null or format=24) the meridian
+ * picker will be omitted.
+ *
+ * @param array $data The data to render.
+ * @return array Array of fields to secure.
  */
 	public function secureFields(array $data) {
 		$fields = [];
+		$hourFormat = isset($data['hour']['format']) ? $data['hour']['format'] : null;
 		foreach ($this->_selects as $type) {
-			if ($data[$type] !== false) {
+			if ($type === 'meridian' && ($hourFormat === null || $hourFormat === 24)) {
+				continue;
+			}
+			if (!isset($data[$type]) || $data[$type] !== false) {
 				$fields[] = $data['name'] . '[' . $type . ']';
 			}
 		}

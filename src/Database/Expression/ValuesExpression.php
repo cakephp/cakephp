@@ -93,7 +93,7 @@ class ValuesExpression implements ExpressionInterface {
  * the currently stored columns
  *
  * @param array $cols arrays with columns to be inserted
- * @return array|ValuesExpression
+ * @return array|$this
  */
 	public function columns($cols = null) {
 		if ($cols === null) {
@@ -108,7 +108,7 @@ class ValuesExpression implements ExpressionInterface {
  * the currently stored values
  *
  * @param array $values arrays with values to be inserted
- * @return array|ValuesExpression
+ * @return array|$this
  */
 	public function values($values = null) {
 		if ($values === null) {

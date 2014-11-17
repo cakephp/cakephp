@@ -251,7 +251,7 @@ class EmailTest extends TestCase {
  * testBuildInvalidData
  *
  * @dataProvider invalidEmails
- * @expectedException InvalidArgumentException
+ * @expectedException \InvalidArgumentException
  * @return void
  */
 	public function testInvalidEmail($value) {
@@ -262,7 +262,7 @@ class EmailTest extends TestCase {
  * testBuildInvalidData
  *
  * @dataProvider invalidEmails
- * @expectedException InvalidArgumentException
+ * @expectedException \InvalidArgumentException
  * @return void
  */
 	public function testInvalidEmailAdd($value) {
@@ -331,6 +331,25 @@ class EmailTest extends TestCase {
 			'.extend.@example.com' => '.extend.@example.com',
 			'.docomo@example.com' => '.docomo@example.com',
 		), $this->CakeEmail->to());
+	}
+
+/**
+ * Tests that it is possible to unset the email pattern and make use of filter_var() instead.
+ *
+ * @return void
+ *
+ * @expectedException \InvalidArgumentException
+ * @expectedExceptionMessage Invalid email: "fail.@example.com"
+ */
+	public function testUnsetEmailPattern() {
+		$email = new Email();
+		$this->assertSame(Email::EMAIL_PATTERN, $email->emailPattern());
+
+		$email->emailPattern(null);
+		$this->assertNull($email->emailPattern());
+
+		$email->to('pass@example.com');
+		$email->to('fail.@example.com');
 	}
 
 /**
@@ -456,7 +475,7 @@ class EmailTest extends TestCase {
  * testMessageIdInvalid method
  *
  * @return void
- * @expectedException InvalidArgumentException
+ * @expectedException \InvalidArgumentException
  */
 	public function testMessageIdInvalid() {
 		$this->CakeEmail->messageId('my-email@localhost');
@@ -731,7 +750,7 @@ class EmailTest extends TestCase {
 /**
  * Test that using unknown transports fails.
  *
- * @expectedException InvalidArgumentException
+ * @expectedException \InvalidArgumentException
  * @expectedExceptionMessage Transport config "Invalid" is missing.
  */
 	public function testTransportInvalid() {
@@ -741,7 +760,7 @@ class EmailTest extends TestCase {
 /**
  * Test that using classes with no send method fails.
  *
- * @expectedException LogicException
+ * @expectedException \LogicException
  */
 	public function testTransportInstanceInvalid() {
 		$this->CakeEmail->transport(new \StdClass());
@@ -750,7 +769,7 @@ class EmailTest extends TestCase {
 /**
  * Test that using unknown transports fails.
  *
- * @expectedException InvalidArgumentException
+ * @expectedException \InvalidArgumentException
  * @expectedExceptionMessage The value passed for the "$name" argument must be either a string, or an object, integer given.
  */
 	public function testTransportTypeInvalid() {
@@ -800,7 +819,7 @@ class EmailTest extends TestCase {
 /**
  * Test that exceptions are raised when duplicate transports are configured.
  *
- * @expectedException BadMethodCallException
+ * @expectedException \BadMethodCallException
  */
 	public function testConfigTransportErrorOnDuplicate() {
 		Email::dropTransport('debug');
@@ -856,7 +875,7 @@ class EmailTest extends TestCase {
 /**
  * Test that exceptions are raised on duplicate config set.
  *
- * @expectedException BadMethodCallException
+ * @expectedException \BadMethodCallException
  * @return void
  */
 	public function testConfigErrorOnDuplicate() {
@@ -887,7 +906,7 @@ class EmailTest extends TestCase {
 /**
  * Test that using an invalid profile fails.
  *
- * @expectedException InvalidArgumentException
+ * @expectedException \InvalidArgumentException
  * @expectedExceptionMessage Unknown email configuration "derp".
  */
 	public function testProfileInvalid() {
@@ -995,7 +1014,7 @@ class EmailTest extends TestCase {
 /**
  * testSendWithoutFrom method
  *
- * @expectedException BadMethodCallException
+ * @expectedException \BadMethodCallException
  * @return void
  */
 	public function testSendWithoutFrom() {
@@ -1009,7 +1028,7 @@ class EmailTest extends TestCase {
 /**
  * testSendWithoutTo method
  *
- * @expectedException BadMethodCallException
+ * @expectedException \BadMethodCallException
  * @return void
  */
 	public function testSendWithoutTo() {
@@ -1023,7 +1042,7 @@ class EmailTest extends TestCase {
 /**
  * test send without a transport method
  *
- * @expectedException BadMethodCallException
+ * @expectedException \BadMethodCallException
  * @expectedExceptionMessage Cannot send email, transport was not defined.
  * @return void
  */

@@ -26,7 +26,7 @@ use InvalidArgumentException;
  *
  * Debugger overrides PHP's default error handling to provide stack traces and enhanced logging
  *
- * @link          http://book.cakephp.org/2.0/en/development/debugging.html#debugger-class
+ * @link http://book.cakephp.org/3.0/en/development/debugging.html#namespace-Cake\Error
  */
 class Debugger {
 
@@ -170,7 +170,7 @@ class Debugger {
  * @param int $depth The depth to output to. Defaults to 3.
  * @return void
  * @see Debugger::exportVar()
- * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::dump
+ * @link http://book.cakephp.org/3.0/en/development/debugging.html#outputting-values
  */
 	public static function dump($var, $depth = 3) {
 		pr(static::exportVar($var, $depth));
@@ -181,12 +181,11 @@ class Debugger {
  * as well as export the variable using exportVar. By default the log is written to the debug log.
  *
  * @param mixed $var Variable or content to log
- * @param int $level type of log to use. Defaults to LOG_DEBUG
+ * @param int|string $level type of log to use. Defaults to 'debug'
  * @param int $depth The depth to output to. Defaults to 3.
  * @return void
- * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::log
  */
-	public static function log($var, $level = LOG_DEBUG, $depth = 3) {
+	public static function log($var, $level = 'debug', $depth = 3) {
 		$source = static::trace(array('start' => 1)) . "\n";
 		Log::write($level, "\n" . $source . static::exportVar($var, $depth));
 	}
@@ -274,17 +273,17 @@ class Debugger {
  *
  * @param array $options Format for outputting stack trace
  * @return mixed Formatted stack trace
- * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::trace
+ * @link http://book.cakephp.org/3.0/en/development/debugging.html#generating-stack-traces
  */
 	public static function trace(array $options = array()) {
 		$self = Debugger::getInstance();
 		$defaults = array(
-			'depth'		=> 999,
-			'format'	=> $self->_outputFormat,
-			'args'		=> false,
-			'start'		=> 0,
-			'scope'		=> null,
-			'exclude'	=> array('call_user_func_array', 'trigger_error')
+			'depth' => 999,
+			'format' => $self->_outputFormat,
+			'args' => false,
+			'start' => 0,
+			'scope' => null,
+			'exclude' => array('call_user_func_array', 'trigger_error')
 		);
 		$options = Hash::merge($defaults, $options);
 
@@ -386,7 +385,7 @@ class Debugger {
  * @param int $context Number of lines of context to extract above and below $line
  * @return array Set of lines highlighted
  * @see http://php.net/highlight_string
- * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::excerpt
+ * @link http://book.cakephp.org/3.0/en/development/debugging.html#getting-an-excerpt-from-a-file
  */
 	public static function excerpt($file, $line, $context = 2) {
 		$lines = array();
@@ -464,7 +463,6 @@ class Debugger {
  * @param string $var Variable to convert
  * @param int $depth The depth to output to. Defaults to 3.
  * @return string Variable as a formatted string
- * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::exportVar
  */
 	public static function exportVar($var, $depth = 3) {
 		return static::_export($var, $depth, 0);

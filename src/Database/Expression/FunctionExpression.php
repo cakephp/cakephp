@@ -68,7 +68,7 @@ class FunctionExpression extends QueryExpression {
  * if no value is passed it will return current name
  *
  * @param string $name The name of the function
- * @return string
+ * @return string|$this
  */
 	public function name($name = null) {
 		if ($name === null) {
@@ -87,7 +87,7 @@ class FunctionExpression extends QueryExpression {
  * passed arguments
  * @param bool $prepend Whether to prepend or append to the list of arguments
  * @see FunctionExpression::__construct() for more details.
- * @return FunctionExpression
+ * @return $this
  */
 	public function add($params, $types = [], $prepend = false) {
 		$put = $prepend ? 'array_unshift' : 'array_push';

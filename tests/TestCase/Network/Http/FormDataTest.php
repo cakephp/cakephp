@@ -55,10 +55,11 @@ class FormDataTest extends TestCase {
 	public function testAddSimple() {
 		$data = new FormData();
 		$data->add('test', 'value')
+			->add('empty', '')
 			->add('int', 1)
 			->add('float', 2.3);
 
-		$this->assertCount(3, $data);
+		$this->assertCount(4, $data);
 		$boundary = $data->boundary();
 		$result = (string)$data;
 		$expected = array(
@@ -66,6 +67,10 @@ class FormDataTest extends TestCase {
 			'Content-Disposition: form-data; name="test"',
 			'',
 			'value',
+			'--' . $boundary,
+			'Content-Disposition: form-data; name="empty"',
+			'',
+			'',
 			'--' . $boundary,
 			'Content-Disposition: form-data; name="int"',
 			'',

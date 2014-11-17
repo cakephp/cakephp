@@ -54,7 +54,7 @@ class SimpleBakeTaskTest extends TestCase {
 
 		$this->Task->expects($this->any())
 			->method('template')
-			->will($this->returnValue('behavior'));
+			->will($this->returnValue('Model/behavior'));
 
 		$this->Task->expects($this->any())
 			->method('fileName')

@@ -42,7 +42,7 @@ use Cake\Error\Debugger;
 		if (!empty($stack['args'])):
 			foreach ((array)$stack['args'] as $arg):
 				$args[] = Debugger::getType($arg);
-				$params[] = Debugger::exportVar($arg, 2);
+				$params[] = Debugger::exportVar($arg, 4);
 			endforeach;
 		endif;
 

@@ -53,7 +53,7 @@ class DateTypeTest extends TestCase {
 /**
  * Tests that passing invalid data will throw an exception
  *
- * @expectedException InvalidArgumentException
+ * @expectedException \InvalidArgumentException
  * @return void
  */
 	public function testToPHPError() {

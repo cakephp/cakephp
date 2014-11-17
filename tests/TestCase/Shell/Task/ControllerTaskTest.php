@@ -67,7 +67,6 @@ class ControllerTaskTest extends TestCase {
 		$this->Task->connection = 'test';
 
 		$this->Task->Template = new TemplateTask($io);
-		$this->Task->Template->params['theme'] = 'default';
 
 		$this->Task->Model = $this->getMock('Cake\Shell\Task\ModelTask',
 			array('in', 'out', 'err', 'createFile', '_stop'),

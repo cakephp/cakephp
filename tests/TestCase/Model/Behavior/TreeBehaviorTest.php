@@ -670,7 +670,7 @@ class TreeBehaviorTest extends TestCase {
 /**
  * Tests that trying to create a cycle throws an exception
  *
- * @expectedException RuntimeException
+ * @expectedException \RuntimeException
  * @expectedExceptionMessage Cannot use node "5" as parent for entity "2"
  * @return void
  */

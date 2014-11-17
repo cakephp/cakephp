@@ -8,7 +8,6 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -199,7 +198,7 @@ abstract class ControllerTestCase extends TestCase {
  *
  * @param string $name The name of the function
  * @param array $arguments Array of arguments
- * @return the return of _testAction
+ * @return mixed the return of _testAction
  * @throws \BadMethodCallException when you call methods that don't exist.
  */
 	public function __call($name, $arguments) {

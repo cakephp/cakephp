@@ -30,14 +30,4 @@ class BananaComponent extends Component {
  */
 	public $testField = 'BananaField';
 
-/**
- * startup method
- *
- * @param Event $event
- * @param Controller $controller
- * @return string
- */
-	public function startup(Event $event) {
-		$controller->bar = 'fail';
-	}
 }

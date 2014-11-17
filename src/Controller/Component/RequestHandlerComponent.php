@@ -34,7 +34,7 @@ use Cake\Utility\Xml;
  * and the like. These units have no use for Ajax requests, and this Component can tell how Cake
  * should respond to the different needs of a handheld computer and a desktop machine.
  *
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/request-handling.html
+ * @link http://book.cakephp.org/3.0/en/controllers/components/request-handling.html
  */
 class RequestHandlerComponent extends Component {
 
@@ -578,7 +578,6 @@ class RequestHandlerComponent extends Component {
 		$options += $defaults;
 
 		$cType = $type;
-		$request = $this->request;
 		$response = $this->response;
 		if (strpos($type, '/') === false) {
 			$cType = $response->getMimeType($type);

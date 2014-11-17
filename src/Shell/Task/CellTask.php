@@ -46,7 +46,7 @@ class CellTask extends SimpleBakeTask {
  * {@inheritDoc}
  */
 	public function template() {
-		return 'cell';
+		return 'View/cell';
 	}
 
 /**

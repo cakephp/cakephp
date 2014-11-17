@@ -8,7 +8,6 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -257,7 +256,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  *
  * @param string $string An HTML/XHTML/XML string
  * @param array $expected An array, see above
- * @param string $fullDebug Whether or not more verbose output should be used.
+ * @param bool $fullDebug Whether or not more verbose output should be used.
  * @return void
  * @deprecated 3.0. Use assertHtml() instead.
  */
@@ -306,7 +305,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  *
  * @param array $expected An array, see above
  * @param string $string An HTML/XHTML/XML string
- * @param string $fullDebug Whether or not more verbose output should be used.
+ * @param bool $fullDebug Whether or not more verbose output should be used.
  * @return void
  */
 	public function assertHtml($expected, $string, $fullDebug = false) {
@@ -563,7 +562,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 		$connectionName = $options['className']::defaultConnectionName();
 		$connection = ConnectionManager::get($connectionName);
 
-		list($plugin, $baseClass) = pluginSplit($alias);
+		list(, $baseClass) = pluginSplit($alias);
 		$options += ['alias' => $baseClass, 'connection' => $connection];
 		$options += TableRegistry::config($alias);
 

@@ -18,6 +18,7 @@ use Cake\Cache\Cache;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\Core\ConventionsTrait;
+use Cake\Core\Plugin;
 use Cake\Filesystem\File;
 
 /**
@@ -128,7 +129,6 @@ class BakeTask extends Shell {
 			$this->error('Could not start subprocess.');
 			return false;
 		}
-		$output = $error = '';
 		fclose($pipes[0]);
 
 		$output = stream_get_contents($pipes[1]);
@@ -184,6 +184,15 @@ class BakeTask extends Shell {
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
+
+		$bakeThemes = [];
+		foreach (Plugin::loaded() as $plugin) {
+			$path = Plugin::classPath($plugin);
+			if (is_dir($path . 'Template' . DS . 'Bake')) {
+				$bakeThemes[] = $plugin;
+			}
+		}
+
 		$parser->addOption('plugin', [
 			'short' => 'p',
 			'help' => 'Plugin to bake into.'
@@ -195,11 +204,12 @@ class BakeTask extends Shell {
 			'short' => 'c',
 			'default' => 'default',
 			'help' => 'The datasource connection to get data from.'
-		])->addOption('template', [
+		])->addOption('theme', [
 			'short' => 't',
-			'default' => 'default',
-			'help' => 'Template to use when baking code.'
+			'help' => 'The theme to use when baking code.',
+			'choices' => $bakeThemes
 		]);
+
 		return $parser;
 	}
 

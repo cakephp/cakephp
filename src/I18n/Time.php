@@ -286,7 +286,7 @@ class Time extends Carbon implements JsonSerializable {
 			list($future['H'], $future['i'], $future['s'], $future['d'], $future['m'], $future['Y']) = explode('/', date('H/i/s/d/m/Y', $futureTime));
 
 			list($past['H'], $past['i'], $past['s'], $past['d'], $past['m'], $past['Y']) = explode('/', date('H/i/s/d/m/Y', $pastTime));
-			$years = $months = $weeks = $days = $hours = $minutes = $seconds = 0;
+			$weeks = $days = $hours = $minutes = $seconds = 0;
 
 			$years = $future['Y'] - $past['Y'];
 			$months = $future['m'] + ((12 * $years) - $past['m']);
@@ -488,7 +488,7 @@ class Time extends Carbon implements JsonSerializable {
  * $time = new Time('2014-04-20 22:10');
  * $time->i18nFormat(); // outputs '4/20/14, 10:10 PM' for the en-US locale
  * $time->i18nFormat(\IntlDateFormatter::FULL); // Use the full date and time format
- * $time->i18nFormat([\IntlDateFormatter::FULL, \IntlDateFormatter::Short]); // Use full date but short time format
+ * $time->i18nFormat([\IntlDateFormatter::FULL, \IntlDateFormatter::SHORT]); // Use full date but short time format
  * $time->i18nFormat('YYYY-MM-dd HH:mm:ss'); // outputs '2014-04-20 22:10'
  * }}}
  *
@@ -593,7 +593,6 @@ class Time extends Carbon implements JsonSerializable {
  * @param bool $group If true (default value) groups the identifiers list by primary region
  * @return array List of timezone identifiers
  * @since 2.2
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::listTimezones
  */
 	public static function listTimezones($filter = null, $country = null, $group = true) {
 		$regex = null;

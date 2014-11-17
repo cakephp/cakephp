@@ -15,7 +15,6 @@
 namespace Cake\Controller;
 
 use Cake\Controller\Exception\MissingActionException;
-use Cake\Controller\Exception\PrivateActionException;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManagerTrait;
@@ -98,7 +97,6 @@ class Controller implements EventListenerInterface {
  * Set automatically using conventions in Controller::__construct().
  *
  * @var string
- * @link http://book.cakephp.org/2.0/en/controllers.html#controller-attributes
  */
 	public $name = null;
 
@@ -109,7 +107,7 @@ class Controller implements EventListenerInterface {
  * Example: `public $helpers = ['Form', 'Html', 'Time'];`
  *
  * @var mixed
- * @link http://book.cakephp.org/2.0/en/controllers.html#components-helpers-and-uses
+ * @link http://book.cakephp.org/3.0/en/controllers.html#configuring-helpers-to-load
  */
 	public $helpers = array();
 
@@ -119,7 +117,7 @@ class Controller implements EventListenerInterface {
  * additional information about the request.
  *
  * @var \Cake\Network\Request
- * @link http://book.cakephp.org/2.0/en/controllers/request-response.html#Request
+ * @link http://book.cakephp.org/3.0/en/controllers/request-response.html#request
  */
 	public $request;
 
@@ -127,7 +125,7 @@ class Controller implements EventListenerInterface {
  * An instance of a Response object that contains information about the impending response
  *
  * @var \Cake\Network\Response
- * @link http://book.cakephp.org/2.0/en/controllers/request-response.html#cakeresponse
+ * @link http://book.cakephp.org/3.0/en/controllers/request-response.html#response
  */
 	public $response;
 
@@ -171,7 +169,7 @@ class Controller implements EventListenerInterface {
  * Example: `public $components = array('Session', 'RequestHandler', 'Acl');`
  *
  * @var array
- * @link http://book.cakephp.org/2.0/en/controllers/components.html
+ * @link http://book.cakephp.org/3.0/en/controllers/components.html
  */
 	public $components = array();
 
@@ -257,7 +255,11 @@ class Controller implements EventListenerInterface {
 		if (!$this->viewPath) {
 			$viewPath = $this->name;
 			if (isset($request->params['prefix'])) {
-				$viewPath = Inflector::camelize($request->params['prefix']) . DS . $viewPath;
+				$prefixes = array_map(
+					'Cake\Utility\Inflector::camelize',
+					explode('/', $request->params['prefix'])
+				);
+				$viewPath = implode('/', $prefixes) . DS . $viewPath;
 			}
 			$this->viewPath = $viewPath;
 		}
@@ -569,7 +571,7 @@ class Controller implements EventListenerInterface {
  * @param string $view View to use for rendering
  * @param string $layout Layout to use
  * @return \Cake\Network\Response A response object containing the rendered view.
- * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::render
+ * @link http://book.cakephp.org/3.0/en/controllers.html#rendering-a-view
  */
 	public function render($view = null, $layout = null) {
 		if (!empty($this->request->params['bare'])) {
@@ -597,7 +599,6 @@ class Controller implements EventListenerInterface {
  * @param string $default Default URL to use if HTTP_REFERER cannot be read from headers
  * @param bool $local If true, restrict referring URLs to local server
  * @return string Referring URL
- * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::referer
  */
 	public function referer($default = null, $local = false) {
 		if (!$this->request) {
@@ -679,7 +680,7 @@ class Controller implements EventListenerInterface {
  *
  * @param Event $event An Event instance
  * @return void
- * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
+ * @link http://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
  */
 	public function beforeFilter(Event $event) {
 	}
@@ -690,7 +691,7 @@ class Controller implements EventListenerInterface {
  *
  * @param Event $event An Event instance
  * @return void
- * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
+ * @link http://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
  */
 	public function beforeRender(Event $event) {
 	}
@@ -709,7 +710,7 @@ class Controller implements EventListenerInterface {
  *     or an absolute URL
  * @param \Cake\Network\Response $response The response object.
  * @return void
- * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
+ * @link http://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
  */
 	public function beforeRedirect(Event $event, $url, Response $response) {
 	}
@@ -719,7 +720,7 @@ class Controller implements EventListenerInterface {
  *
  * @param Event $event An Event instance
  * @return void
- * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
+ * @link http://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
  */
 	public function afterFilter(Event $event) {
 	}

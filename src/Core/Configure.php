@@ -27,7 +27,7 @@ use Cake\Utility\Hash;
  * as methods for loading additional configuration files or storing runtime configuration
  * for future use.
  *
- * @link          http://book.cakephp.org/2.0/en/development/configuration.html#configure-class
+ * @link http://book.cakephp.org/3.0/en/development/configuration.html
  */
 class Configure {
 
@@ -77,7 +77,7 @@ class Configure {
  * Alternatively can be an array containing key(s) and value(s).
  * @param mixed $value Value to set for var
  * @return bool True if write was successful
- * @link http://book.cakephp.org/2.0/en/development/configuration.html#Configure::write
+ * @link http://book.cakephp.org/3.0/en/development/configuration.html#writing-configuration-data
  */
 	public static function write($config, $value = null) {
 		if (!is_array($config)) {
@@ -111,7 +111,7 @@ class Configure {
  *
  * @param string $var Variable to obtain. Use '.' to access array elements.
  * @return mixed value stored in configure, or null.
- * @link http://book.cakephp.org/2.0/en/development/configuration.html#Configure::read
+ * @link http://book.cakephp.org/3.0/en/development/configuration.html#reading-configuration-data
  */
 	public static function read($var = null) {
 		if ($var === null) {
@@ -144,7 +144,7 @@ class Configure {
  *
  * @param string $var the var to be deleted
  * @return void
- * @link http://book.cakephp.org/2.0/en/development/configuration.html#Configure::delete
+ * @link http://book.cakephp.org/3.0/en/development/configuration.html#deleting-configuration-data
  */
 	public static function delete($var = null) {
 		static::$_values = Hash::remove(static::$_values, $var);
@@ -242,7 +242,7 @@ class Configure {
  * @param string $config Name of the configured engine to use to read the resource identified by $key.
  * @param bool $merge if config files should be merged instead of simply overridden
  * @return mixed false if file not found, void if load successful.
- * @link http://book.cakephp.org/2.0/en/development/configuration.html#Configure::load
+ * @link http://book.cakephp.org/3.0/en/development/configuration.html#reading-and-writing-configuration-files
  */
 	public static function load($key, $config = 'default', $merge = true) {
 		$engine = static::_getEngine($config);

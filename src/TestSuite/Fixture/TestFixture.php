@@ -8,7 +8,6 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -90,7 +89,6 @@ class TestFixture {
  * @throws \Cake\Core\Exception\Exception on invalid datasource usage.
  */
 	public function __construct() {
-		$connection = 'test';
 		if (!empty($this->connection)) {
 			$connection = $this->connection;
 			if (strpos($connection, 'test') !== 0) {
@@ -113,7 +111,7 @@ class TestFixture {
  */
 	public function init() {
 		if ($this->table === null) {
-			list($namespace, $class) = namespaceSplit(get_class($this));
+			list(, $class) = namespaceSplit(get_class($this));
 			preg_match('/^(.*)Fixture$/', $class, $matches);
 			$table = $class;
 			if (isset($matches[1])) {
