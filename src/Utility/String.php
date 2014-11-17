@@ -362,7 +362,7 @@ class String {
  * @param string|array $phrase The phrase or phrases that will be searched.
  * @param array $options An array of html attributes and options.
  * @return string The highlighted text
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::highlight
+ * @link http://book.cakephp.org/3.0/en/core-libraries/string.html#highlighting-substrings
  */
 	public static function highlight($text, $phrase, array $options = array()) {
 		if (empty($phrase)) {
@@ -407,7 +407,6 @@ class String {
  *
  * @param string $text Text
  * @return string The text without links
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::stripLinks
  */
 	public static function stripLinks($text) {
 		return preg_replace('|<a\s+[^>]+>|im', '', preg_replace('|<\/a>|im', '', $text));
@@ -465,7 +464,7 @@ class String {
  * @param int $length Length of returned string, including ellipsis.
  * @param array $options An array of html attributes and options.
  * @return string Trimmed string.
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::truncate
+ * @link http://book.cakephp.org/3.0/en/core-libraries/string.html#truncating-text
  */
 	public static function truncate($text, $length = 100, array $options = array()) {
 		$default = array(
@@ -579,7 +578,7 @@ class String {
  * @param int $radius The amount of characters that will be returned on each side of the founded phrase
  * @param string $ellipsis Ending that will be appended
  * @return string Modified string
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::excerpt
+ * @link http://book.cakephp.org/3.0/en/core-libraries/string.html#extracting-an-excerpt
  */
 	public static function excerpt($text, $phrase, $radius = 100, $ellipsis = '...') {
 		if (empty($text) || empty($phrase)) {
@@ -621,7 +620,7 @@ class String {
  * @param string $and The word used to join the last and second last items together with. Defaults to 'and'.
  * @param string $separator The separator used to join all the other items together. Defaults to ', '.
  * @return string The glued together string.
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::toList
+ * @link http://book.cakephp.org/3.0/en/core-libraries/string.html#converting-an-array-to-sentence-form
  */
 	public static function toList(array $list, $and = null, $separator = ', ') {
 		if ($and === null) {
