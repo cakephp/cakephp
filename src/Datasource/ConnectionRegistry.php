@@ -68,10 +68,6 @@ class ConnectionRegistry extends ObjectRegistry {
  * @return object A connection with the correct settings.
  */
 	protected function _create($class, $alias, $settings) {
-		if (is_object($class)) {
-			$instance = $class;
-		}
-
 		unset($settings['className']);
 		return new $class($settings);
 	}
