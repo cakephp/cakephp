@@ -161,32 +161,26 @@ class QueryCompiler {
 					case 'Cake\Database\Expression\BetweenExpression':
 						$field = $condition->getField();
 
-						if (is_string($field) && strpos($field, '.') !== false) {
-							if ($query->hasTableName($field) === true) {
-								$field = $query->connection()->fullFieldName($field, $query->tablesNames);
-								$condition->field($field);
-							}
+						if (is_string($field) && strpos($field, '.') !== false && $query->hasTableName($field) === true) {
+							$field = $query->connection()->fullFieldName($field, $query->tablesNames);
+							$condition->field($field);
 						}
 
 						break;
 					case 'Cake\Database\Expression\UnaryExpression':
 						$value = $condition->getValue();
 
-						if (is_string($value) && strpos($value, '.') !== false) {
-							if ($query->hasTableName($value) === true) {
-								$value = $query->connection()->fullFieldName($value, $query->tablesNames);
-								$condition->value($value);
-							}
+						if (is_string($value) && strpos($value, '.') !== false && $query->hasTableName($value) === true) {
+							$value = $query->connection()->fullFieldName($value, $query->tablesNames);
+							$condition->value($value);
 						}
 						break;
 					case 'Cake\Database\Expression\IdentifierExpression':
 						$identifier = $condition->getIdentifier();
 
-						if (is_string($identifier) && strpos($identifier, '.') !== false) {
-							if ($query->hasTableName($identifier) === true) {
-								$identifier = $query->connection()->fullFieldName($identifier, $query->tablesNames);
-								$condition->setIdentifier($identifier);
-							}
+						if (is_string($identifier) && strpos($identifier, '.') !== false && $query->hasTableName($identifier) === true) {
+							$identifier = $query->connection()->fullFieldName($identifier, $query->tablesNames);
+							$condition->setIdentifier($identifier);
 						}
 
 						break;
@@ -279,11 +273,9 @@ class QueryCompiler {
 				if ($condition instanceof Comparison) {
 					$field = $condition->getField();
 
-					if (is_string($field) && strpos($field, '.') !== false) {
-						if ($query->hasTableName($field) === true) {
-							$field = $query->connection()->fullFieldName($field, $query->tablesNames);
-							$condition->field($field);
-						}
+					if (is_string($field) && strpos($field, '.') !== false && $query->hasTableName($field) === true) {
+						$field = $query->connection()->fullFieldName($field, $query->tablesNames);
+						$condition->field($field);
 					}
 				} elseif ($condition instanceof QueryExpression) {
 					$condition->iterateParts(function ($condition) use ($query) {

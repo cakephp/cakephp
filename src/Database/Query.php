@@ -1561,11 +1561,13 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return $this
  */
 	protected function _extractTableNames($tables) {
-		if (!empty($tables)) {
-			foreach ($tables as $alias => $table) {
-				if (is_numeric($alias) && is_string($table)) {
-					$this->tablesNames[$table] = $table;
-				}
+		if (empty($tables)) {
+			return $this;
+		}
+
+		foreach ($tables as $alias => $table) {
+			if (is_numeric($alias) && is_string($table)) {
+				$this->tablesNames[$table] = $table;
 			}
 		}
 

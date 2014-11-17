@@ -227,11 +227,7 @@ class Connection {
 	public function isTableNamePrefixed($tableName) {
 		$prefix = $this->getPrefix();
 
-		if ($prefix !== '' && strpos($tableName, $prefix) === 0 && $tableName !== $prefix) {
-			return true;
-		}
-
-		return false;
+		return ($prefix !== '' && strpos($tableName, $prefix) === 0 && $tableName !== $prefix);
 	}
 
 /**
@@ -323,13 +319,9 @@ class Connection {
 	public function applyFullTableName($condition, $targets) {
 		$prefix = $this->getPrefix();
 
-		if ($prefix !== '') {
-			if (is_string($condition)) {
-				if (!empty($targets)) {
-					$pattern = '/\b(?=(?:' . implode('|', $targets) . ')\b)([\w-]+)(\.[\w-]+)/';
-					$condition = preg_replace($pattern, $prefix . "$1$2", $condition);
-				}
-			}
+		if ($prefix !== '' && is_string($condition) && !empty($targets)) {
+			$pattern = '/\b(?=(?:' . implode('|', $targets) . ')\b)([\w-]+)(\.[\w-]+)/';
+			$condition = preg_replace($pattern, $prefix . "$1$2", $condition);
 		}
 
 		return $condition;

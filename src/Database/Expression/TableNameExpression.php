@@ -117,10 +117,8 @@ class TableNameExpression implements ExpressionInterface {
  * @return void
  */
 	public function __construct($name, $prefix, $snippet = false, $tablesNames = []) {
-		if ($snippet === false) {
-			if (strpos($name, '.') !== false) {
-				list($name, $field) = explode('.', $name);
-			}
+		if ($snippet === false && strpos($name, '.') !== false) {
+			list($name, $field) = explode('.', $name);
 		}
 
 		$this->setName($name);
@@ -141,11 +139,7 @@ class TableNameExpression implements ExpressionInterface {
  * @return void
  */
 	public function setQuoted($quoted = true) {
-		if ($quoted === true) {
-			$this->_quoted = true;
-		} else {
-			$this->_quoted = false;
-		}
+		$this->_quoted = (bool)$quoted;
 	}
 
 /**
