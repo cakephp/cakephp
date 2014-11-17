@@ -1162,7 +1162,7 @@ class ViewTest extends TestCase {
 		$View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
 		$result = $View->render('index');
 
-		$this->assertRegExp("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/>\s*<title>/", $result);
+		$this->assertRegExp("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\"\/>\s*<title>/", $result);
 		$this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
 		$this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
 
@@ -1180,7 +1180,7 @@ class ViewTest extends TestCase {
 		$View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
 		$result = $View->render('index');
 
-		$this->assertRegExp("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/>\s*<title>/", $result);
+		$this->assertRegExp("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\"\/>\s*<title>/", $result);
 		$this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
 	}
 
