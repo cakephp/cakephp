@@ -203,13 +203,6 @@ trait QueryTrait {
 			return $this->_results;
 		}
 
-		$table = $this->repository();
-		$table->dispatchEvent('Model.beforeFind', [$this, $this->_options, !$this->eagerLoaded()]);
-
-		if (isset($this->_results)) {
-			return $this->_results;
-		}
-
 		if ($this->_cache) {
 			$results = $this->_cache->fetch($this);
 		}

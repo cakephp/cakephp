@@ -644,6 +644,11 @@ class Query extends DatabaseQuery implements JsonSerializable {
  * @return \Cake\ORM\ResultSet
  */
 	protected function _execute() {
+		$this->triggerBeforeFind();
+		if ($this->_results) {
+			$decorator = $this->_decoratorClass();
+			return new $decorator($this->_results);
+		}
 		$statement = $this->eagerLoader()->loadExternal($this, $this->execute());
 		return new ResultSet($this, $statement);
 	}
