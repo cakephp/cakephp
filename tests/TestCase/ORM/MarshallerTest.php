@@ -21,6 +21,7 @@ use Cake\ORM\Marshaller;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use Cake\Validation\Validator;
 
 /**
  * Test entity for mass assignment.
@@ -1491,5 +1492,62 @@ class MarshallerTest extends TestCase {
 		$this->assertTrue($entity->tags[1]->dirty('_joinData'));
 	}
 
+/**
+ * Tests marshalling with validation errors
+ *
+ * @return void
+ */
+	public function testValidationFail() {
+		$data = [
+			'title' => 'Thing',
+			'body' => 'hey'
+		];
+
+		$this->articles->validator()->requirePresence('thing');
+		$marshall = new Marshaller($this->articles);
+		$entity = $marshall->one($data);
+		$this->assertNotEmpty($entity->errors('thing'));
+	}
+
+/**
+ * Tests that associations are validated and custom validators can be used
+ *
+ * @return void
+ */
+	public function testValidateWithAssociationsAndCustomValidator() {
+		$data = [
+			'title' => 'foo',
+			'body' => 'bar',
+			'user' => [
+				'name' => 'Susan'
+			],
+			'comments' => [
+				[
+					'comment' => 'foo'
+				]
+			]
+		];
+		$validator = (new Validator)->add('body', 'numeric', ['rule' => 'numeric']);
+		$this->articles->validator('custom', $validator);
+
+		$validator2 = (new Validator)->requirePresence('thing');
+		$this->articles->Users->validator('customThing', $validator2);
+
+		$entity = (new Marshaller($this->articles))->one($data, [
+			'validate' => 'custom',
+			'associated' => ['Users']
+		]);
+		$this->assertNotEmpty($entity->errors('body'), 'custom was not used');
+		$this->assertNull($entity->body);
+		$this->assertEmpty($entity->user->errors('thing'));
+
+		$entity = (new Marshaller($this->articles))->one($data, [
+			'validate' => 'custom',
+			'associated' => ['Users' => ['validate' => 'customThing']]
+		]);
+		$this->assertNotEmpty($entity->errors('body'));
+		$this->assertNull($entity->body);
+		$this->assertNotEmpty($entity->user->errors('thing'), 'customThing was not used');
+	}
 
 }
