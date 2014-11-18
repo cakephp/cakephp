@@ -2417,6 +2417,25 @@ HTML;
 	}
 
 /**
+ * testZeroOnlyLinesNotBeingEmptied()
+ *
+ * @return void
+ */
+	public function testZeroOnlyLinesNotBeingEmptied() {
+		$message = "Lorem\r\n0\r\n0\r\nipsum";
+
+		$this->CakeEmail->reset();
+		$this->CakeEmail->transport('Debug');
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to('cake@cakephp.org');
+		$this->CakeEmail->subject('Wordwrap Test');
+		$this->CakeEmail->config(array('empty'));
+		$result = $this->CakeEmail->send($message);
+		$expected = "{$message}\r\n\r\n";
+		$this->assertEquals($expected, $result['message']);
+	}
+
+/**
  * CakeEmailTest::assertLineLengths()
  *
  * @param string $message
