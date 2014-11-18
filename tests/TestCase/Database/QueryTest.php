@@ -1041,7 +1041,7 @@ class QueryTest extends TestCase {
 
 		$result = $query->sql();
 		$this->assertQuotedQuery(
-			$this->applyConnectionPrefix('SELECT <id> FROM <~comments> <Comment> WHERE \(<Comment>.<id> = :c0 OR <Comment.id> = :c1\)'),
+			$this->applyConnectionPrefix('SELECT <id> FROM <~comments> <Comment> WHERE \(<Comment>.<id> = :c0 OR <Comment>.<id> = :c1\)'),
 			$result,
 			true
 		);
@@ -1060,7 +1060,7 @@ class QueryTest extends TestCase {
 
 		$result = $query->sql();
 		$this->assertQuotedQuery(
-			$this->applyConnectionPrefix('SELECT <id> FROM <~comments> WHERE \(<~comments>.<id> = :c0 OR <~comments.id> = :c1\)'),
+			$this->applyConnectionPrefix('SELECT <id> FROM <~comments> WHERE \(<~comments>.<id> = :c0 OR <~comments>.<id> = :c1\)'),
 			$result,
 			true
 		);
