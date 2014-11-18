@@ -2764,7 +2764,7 @@ class RouterTest extends TestCase {
 		Router::reload();
 		Router::defaultRouteClass('DashedRoute');
 		Router::scope('/', function ($routes) {
-			$routes->fallbacks('InflectedRoute');
+			$routes->fallbacks();
 		});
 
 		$result = Router::url(['controller' => 'FooBar', 'action' => 'index']);
