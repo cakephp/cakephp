@@ -53,15 +53,15 @@ if (!empty($filePresent)):
 <a href="https://trac.cakephp.org/wiki/notes/1.2.x.x"><?= __d('cake', 'Read the release notes and get the latest version'); ?> </a>
 <h2><?= __d('cake', 'Editing this Page'); ?></h2>
 <p>
-<?= __d('cake', 'To change the content of this page, create: /app/View/Pages/home.ctp.'); ?><br />
-<?= __d('cake', 'To change its layout, create: /app/View/Layout/default.ctp.'); ?><br />
-<a href="http://manual.cakephp.org/"><?= __d('cake', 'See the views section of the manual for more info.'); ?> </a><br />
+<?= __d('cake', 'To change the content of this page, create: /app/View/Pages/home.ctp.'); ?><br/>
+<?= __d('cake', 'To change its layout, create: /app/View/Layout/default.ctp.'); ?><br/>
+<a href="http://manual.cakephp.org/"><?= __d('cake', 'See the views section of the manual for more info.'); ?> </a><br/>
 <?= __d('cake', 'You can also add some CSS styles for your pages at: app/webroot/css/.'); ?>
 </p>
 <h2><?= __d('cake', 'Getting Started'); ?></h2>
 <p>
-<a href="http://manual.cakephp.org/appendix/blog_tutorial"><?= __d('cake', 'The 15 min Blog Tutorial'); ?></a><br />
-<a href="http://www-128.ibm.com/developerworks/edu/os-dw-os-php-cake1.html"><?= __d('cake', 'Cook up Web sites fast with CakePHP'); ?></a><br />
+<a href="http://manual.cakephp.org/appendix/blog_tutorial"><?= __d('cake', 'The 15 min Blog Tutorial'); ?></a><br/>
+<a href="http://www-128.ibm.com/developerworks/edu/os-dw-os-php-cake1.html"><?= __d('cake', 'Cook up Web sites fast with CakePHP'); ?></a><br/>
 <a href="http://www-128.ibm.com/developerworks/edu/os-dw-os-php-wiki1.html"><?= __d('cake', 'Create an interactive production wiki using PHP'); ?></a>
 </p>
 <h2><?= __d('cake', 'More about CakePHP'); ?></h2>
