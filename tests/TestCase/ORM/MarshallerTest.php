@@ -1533,21 +1533,25 @@ class MarshallerTest extends TestCase {
 		$validator2 = (new Validator)->requirePresence('thing');
 		$this->articles->Users->validator('customThing', $validator2);
 
+		$this->articles->Comments->validator('default', $validator2);
+
 		$entity = (new Marshaller($this->articles))->one($data, [
 			'validate' => 'custom',
-			'associated' => ['Users']
+			'associated' => ['Users', 'Comments']
 		]);
 		$this->assertNotEmpty($entity->errors('body'), 'custom was not used');
 		$this->assertNull($entity->body);
 		$this->assertEmpty($entity->user->errors('thing'));
+		$this->assertNotEmpty($entity->comments[0]->errors('thing'));
 
 		$entity = (new Marshaller($this->articles))->one($data, [
 			'validate' => 'custom',
-			'associated' => ['Users' => ['validate' => 'customThing']]
+			'associated' => ['Users' => ['validate' => 'customThing'], 'Comments']
 		]);
 		$this->assertNotEmpty($entity->errors('body'));
 		$this->assertNull($entity->body);
 		$this->assertNotEmpty($entity->user->errors('thing'), 'customThing was not used');
+		$this->assertNotEmpty($entity->comments[0]->errors('thing'));
 	}
 
 }
