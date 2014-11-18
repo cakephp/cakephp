@@ -397,6 +397,14 @@ class StaticConfigTraitTest extends TestCase {
 		$this->assertEquals($expected, TestLogStaticConfig::parseDsn($dsn));
 	}
 
+	public function testPCREVersion() {
+		$this->assertSame(
+			'8.32 2012-11-30',
+			PCRE_VERSION,
+			'Using a different version of pcre to the box that fails'
+		);
+	}
+
 /**
  * Tests loading a single plugin
  *
@@ -409,7 +417,11 @@ class StaticConfigTraitTest extends TestCase {
 			'path' => '/',
 			'scheme' => 'file',
 		];
-		$this->assertEquals($expected, TestLogStaticConfig::parseDsn($dsn));
+		$this->assertEquals(
+			$expected,
+			TestLogStaticConfig::parseDsn($dsn),
+			sprintf('Failed to parse a simple file dsn - using pcre %s', PCRE_VERSION)
+		);
 
 		$dsn = 'file:///?path=/tmp/persistent/';
 		$expected = [
