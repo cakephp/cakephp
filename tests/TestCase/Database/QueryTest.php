@@ -1599,9 +1599,9 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
-			->from(['C' => 'comments'])
+			->from(['c' => 'comments'])
 			->where(function ($exp, $q) {
-				$field = $q->newExpr('COALESCE(C.id, 1)');
+				$field = $q->newExpr('COALESCE(c.id, 1)');
 				return $exp->between($field, 5, 6, 'integer');
 			})
 			->execute();
