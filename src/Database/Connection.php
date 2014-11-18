@@ -243,7 +243,10 @@ class Connection {
 
 		if (is_string($names) || $names instanceof TableNameExpression) {
 			$names = $this->_fullTableName($names);
-		} elseif (is_array($names) && !empty($names)) {
+			return $names;
+		}
+
+		if (is_array($names) && !empty($names)) {
 			foreach ($names as $alias => $tableName) {
 				if (is_string($tableName)) {
 					$tableName = $this->_fullTableName($tableName);
