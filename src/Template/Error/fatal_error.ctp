@@ -18,11 +18,11 @@
 <p class="error">
 	<strong>Error: </strong>
 	<?= h($error->getMessage()); ?>
-	<br>
+	<br/>
 
 	<strong>File</strong>
 	<?= h($error->getFile()); ?>
-	<br>
+	<br/>
 	<strong>Line: </strong>
 	<?= h($error->getLine()); ?>
 </p>

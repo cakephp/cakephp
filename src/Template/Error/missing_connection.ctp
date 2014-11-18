@@ -17,7 +17,7 @@
 <p class="error">
 	<strong>Error: </strong>
 	<?= sprintf('A Database connection using "%s" was missing or unable to connect.', h($class)); ?>
-	<br />
+	<br/>
 	<?php
 	if (isset($message)):
 		echo sprintf('The database server returned this error: %s', h($message));
