@@ -38,6 +38,7 @@ class Article extends Entity {
 	public function isRequired() {
 		return true;
 	}
+
 }
 
 /**
