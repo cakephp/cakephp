@@ -2,10 +2,6 @@
 /**
  * Tests bootstrap file
  *
- * Allow a plugin to run its own tests whether CakePHP is installed directly
- * as a vendor for the plugin, or if the plugin has itself been installed as
- * a dependency for an application
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -22,6 +18,10 @@
 <?php
 /**
  * Test suite bootstrap for <%= $plugin %>.
+ *
+ * This function is used to find the location of CakePHP whether CakePHP
+ * has been installed as a dependency of the plugin, or the plugin is itself
+ * installed as a dependency of an application.
  */
 $findRoot = function($root) {
 	do {
