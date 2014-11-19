@@ -449,11 +449,11 @@ class HtmlHelper extends AppHelper {
 			return;
 		}
 
-		if ($options['once'] && isset($this->_includedAssets[$path])) {
+		if ($options['once'] && isset($this->_includedAssets[__METHOD__][$path])) {
 			return '';
 		}
 		unset($options['once']);
-		$this->_includedAssets[$path] = true;
+		$this->_includedAssets[__METHOD__][$path] = true;
 
 		if (strpos($path, '//') !== false) {
 			$url = $path;
@@ -552,10 +552,10 @@ class HtmlHelper extends AppHelper {
 			}
 			return null;
 		}
-		if ($options['once'] && isset($this->_includedAssets[$url])) {
+		if ($options['once'] && isset($this->_includedAssets[__METHOD__][$url])) {
 			return null;
 		}
-		$this->_includedAssets[$url] = true;
+		$this->_includedAssets[__METHOD__][$url] = true;
 
 		if (strpos($url, '//') === false) {
 			$url = $this->assetUrl($url, $options + array('pathPrefix' => Configure::read('App.jsBaseUrl'), 'ext' => '.js'));

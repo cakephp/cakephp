@@ -900,6 +900,22 @@ class HtmlHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Resource names must be treated differently for css() and script()
+ *
+ * @return void
+ */
+	public function testBufferedCssAndScriptWithIdenticalResourceName() {
+		$this->View->expects($this->at(0))
+			->method('append')
+			->with('css', $this->stringContains('test.min.css'));
+		$this->View->expects($this->at(1))
+			->method('append')
+			->with('script', $this->stringContains('test.min.js'));
+		$this->Html->css('test.min', array('inline' => false));
+		$this->Html->script('test.min', array('inline' => false));
+	}
+
+/**
  * test timestamp enforcement for script tags.
  *
  * @return void
