@@ -71,8 +71,12 @@ class WidgetRegistryTestCase extends TestCase {
  *
  * @return void
  */
-	public function testLoadInConstructor() {
-		$inputs = new WidgetRegistry($this->templates, $this->view, 'test_widgets');
+	public function testAddWidgetsFromConfigInConstuctor() {
+		$widgets = [
+			'text' => ['Cake\View\Widget\BasicWidget'],
+			'test_widgets',
+		];
+		$inputs = new WidgetRegistry($this->templates, $this->view, $widgets);
 		$this->assertInstanceOf('Cake\View\Widget\LabelWidget', $inputs->get('text'));
 	}
 
@@ -81,9 +85,13 @@ class WidgetRegistryTestCase extends TestCase {
  *
  * @return void
  */
-	public function testLoadPluginInConstuctor() {
+	public function testAddPluginWidgetsFromConfigInConstuctor() {
 		Plugin::load('TestPlugin');
-		$inputs = new WidgetRegistry($this->templates, $this->view, 'TestPlugin.test_widgets');
+		$widgets = [
+			'text' => ['Cake\View\Widget\BasicWidget'],
+			'TestPlugin.test_widgets',
+		];
+		$inputs = new WidgetRegistry($this->templates, $this->view, $widgets);
 		$this->assertInstanceOf('Cake\View\Widget\LabelWidget', $inputs->get('text'));
 	}
 
