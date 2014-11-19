@@ -354,7 +354,7 @@ class Postgres extends DboSource {
 			if (isset($this->_sequenceMap[$table]) && $reset != true) {
 				foreach ($this->_sequenceMap[$table] as $sequence) {
 					$quoted = $this->name($sequence);
-					$this->_execute("ALTER SEQUENCE {$sequence} RESTART WITH 1");
+					$this->_execute("ALTER SEQUENCE {$quoted} RESTART WITH 1");
 				}
 			}
 			return true;
