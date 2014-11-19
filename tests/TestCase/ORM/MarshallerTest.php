@@ -1554,4 +1554,35 @@ class MarshallerTest extends TestCase {
 		$this->assertNotEmpty($entity->comments[0]->errors('thing'));
 	}
 
+/**
+ * Tests that validation can be bypassed
+ *
+ * @return void
+ */
+	public function testSkipValidation() {
+		$data = [
+			'title' => 'foo',
+			'body' => 'bar',
+			'user' => [
+				'name' => 'Susan'
+			],
+		];
+		$validator = (new Validator)->requirePresence('thing');
+		$this->articles->validator('default', $validator);
+		$this->articles->Users->validator('default', $validator);
+
+		$entity = (new Marshaller($this->articles))->one($data, [
+			'validate' => false,
+			'associated' => ['Users']
+		]);
+		$this->assertEmpty($entity->errors('thing'));
+		$this->assertNotEmpty($entity->user->errors('thing'));
+
+		$entity = (new Marshaller($this->articles))->one($data, [
+			'associated' => ['Users' => ['validate' => false]]
+		]);
+		$this->assertNotEmpty($entity->errors('thing'));
+		$this->assertEmpty($entity->user->errors('thing'));
+	}
+
 }
