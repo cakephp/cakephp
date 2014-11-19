@@ -32,11 +32,7 @@ if (!empty($plugin) && !Plugin::loaded($plugin)) {
 <p class="error">
 	<strong>Error: </strong>
 	<?= sprintf('<em>%s</em> could not be found.', h($pluginDot . $class)); ?>
-	<?php
-		if (!empty($plugin) && !Plugin::loaded($plugin)):
-			echo sprintf('Make sure your plugin <em>%s</em> is in the %s directory and was loaded.', h($plugin), $pluginPath);
-		endif;
-	?>
+	<?= $this->element('plugin_class_error'); ?>
 </p>
 <p class="error">
 	<strong>Error: </strong>
