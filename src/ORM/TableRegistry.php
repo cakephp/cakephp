@@ -215,6 +215,7 @@ class TableRegistry {
  * @return \Cake\ORM\Table
  */
 	public static function set($alias, Table $object) {
+		list(, $alias) = pluginSplit($alias);
 		return static::$_instances[$alias] = $object;
 	}
 
