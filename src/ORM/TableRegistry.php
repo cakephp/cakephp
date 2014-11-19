@@ -99,6 +99,7 @@ class TableRegistry {
  * @throws RuntimeException When you attempt to configure an existing table instance.
  */
 	public static function config($alias = null, $options = null) {
+		list(, $alias) = pluginSplit($alias);
 		if ($alias === null) {
 			return static::$_config;
 		}
