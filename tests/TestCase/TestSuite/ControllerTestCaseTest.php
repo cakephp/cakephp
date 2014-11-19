@@ -108,6 +108,7 @@ class ControllerTestCaseTest extends TestCase {
 		));
 
 		$this->assertInstanceOf('TestApp\Model\Table\PostsTable', $Posts->Posts);
+		$this->assertInstanceOf('PHPUnit_Framework_MockObject_MockObject', $Posts->Posts);
 		$this->assertNull($Posts->Posts->deleteAll(array()));
 		$this->assertNull($Posts->Posts->find('all'));
 		$this->assertNull($Posts->RequestHandler->isXml());
@@ -180,9 +181,11 @@ class ControllerTestCaseTest extends TestCase {
 		));
 		$this->assertEquals('Tests', $Tests->name);
 		$this->assertInstanceOf('TestPlugin\Controller\Component\PluginsComponent', $Tests->Plugins);
+		$this->assertInstanceOf('PHPUnit_Framework_MockObject_MockObject', $Tests->Plugins);
 
 		$result = TableRegistry::get('TestPlugin.TestPluginComments');
 		$this->assertInstanceOf('TestPlugin\Model\Table\TestPluginCommentsTable', $result);
+		$this->assertInstanceOf('PHPUnit_Framework_MockObject_MockObject', $result);
 	}
 
 /**
