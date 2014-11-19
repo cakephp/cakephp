@@ -401,12 +401,12 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * }}}
  *
  * It is possible to conditionally disallow emptiness on a field by passing a callback
- * as a second argument. The callback will receive the validation context array as
+ * as the third argument. The callback will receive the validation context array as
  * argument:
  *
  * {{{
- * $validator->notEmpty('email', function ($context) {
- *	return $context['newRecord'] && $context['data']['role'] !== 'admin';
+ * $validator->notEmpty('email', 'Email is required', function ($context) {
+ *   return $context['newRecord'] && $context['data']['role'] !== 'admin';
  * });
  * }}}
  *
