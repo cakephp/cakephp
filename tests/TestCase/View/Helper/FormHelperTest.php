@@ -210,37 +210,14 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testConstructWithWidgets() {
-		$expected = [
-			'button' => ['Cake\View\Widget\ButtonWidget'],
-			'checkbox' => ['Cake\View\Widget\CheckboxWidget'],
-			'file' => ['Cake\View\Widget\FileWidget'],
-			'label' => ['Cake\View\Widget\LabelWidget'],
-			'nestingLabel' => ['Cake\View\Widget\NestingLabelWidget'],
-			'multicheckbox' => ['Cake\View\Widget\MultiCheckboxWidget', 'nestingLabel'],
-			'radio' => ['Cake\View\Widget\RadioWidget', 'nestingLabel'],
-			'select' => ['Cake\View\Widget\SelectBoxWidget'],
-			'textarea' => ['Cake\View\Widget\TextareaWidget'],
-			'datetime' => ['MyPlugin\View\Widget\DateTimeWidget', 'select'],
-			'_default' => ['Cake\View\Widget\BasicWidget']
-		];
-
-		$helper = $this->getMock(
-			'Cake\View\Helper\FormHelper',
-			['widgetRegistry'],
-			[],
-			'',
-			false
-		);
-		$helper->expects($this->once())
-			->method('widgetRegistry')
-			->with(null, $expected);
-
 		$config = [
 			'widgets' => [
-				'datetime' => ['MyPlugin\View\Widget\DateTimeWidget', 'select']
+				'datetime' => ['Cake\View\Widget\LabelWidget', 'select']
 			]
 		];
-		$helper->__construct($this->View, $config);
+		$helper = new FormHelper($this->View, $config);
+		$registry = $helper->widgetRegistry();
+		$this->assertInstanceOf('Cake\View\Widget\LabelWidget', $registry->get('datetime'));
 	}
 
 /**
@@ -250,36 +227,9 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testConstructWithWidgetsConfig() {
-		$expected = [
-			'button' => ['Cake\View\Widget\ButtonWidget'],
-			'checkbox' => ['Cake\View\Widget\CheckboxWidget'],
-			'file' => ['Cake\View\Widget\FileWidget'],
-			'label' => ['Cake\View\Widget\LabelWidget'],
-			'nestingLabel' => ['Cake\View\Widget\NestingLabelWidget'],
-			'multicheckbox' => ['Cake\View\Widget\MultiCheckboxWidget', 'nestingLabel'],
-			'radio' => ['Cake\View\Widget\RadioWidget', 'nestingLabel'],
-			'select' => ['Cake\View\Widget\SelectBoxWidget'],
-			'textarea' => ['Cake\View\Widget\TextareaWidget'],
-			'datetime' => ['Cake\View\Widget\DateTimeWidget', 'select'],
-			'_default' => ['Cake\View\Widget\BasicWidget'],
-			0 => 'test_widgets',
-		];
-
-		$helper = $this->getMock(
-			'Cake\View\Helper\FormHelper',
-			['widgetRegistry'],
-			[],
-			'',
-			false
-		);
-		$helper->expects($this->once())
-			->method('widgetRegistry')
-			->with(null, $expected);
-
-		$config = [
-			'widgets' => 'test_widgets'
-		];
-		$helper->__construct($this->View, $config);
+		$helper = new FormHelper($this->View, ['widgets' => ['test_widgets']]);
+		$registry = $helper->widgetRegistry();
+		$this->assertInstanceOf('Cake\View\Widget\LabelWidget', $registry->get('text'));
 	}
 
 /**
