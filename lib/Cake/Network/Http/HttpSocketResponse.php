@@ -221,28 +221,29 @@ class HttpSocketResponse implements ArrayAccess {
 		$chunkLength = null;
 
 		while ($chunkLength !== 0) {
-			if (!preg_match('/^([0-9a-f]+) *(?:;(.+)=(.+))?(?:\r\n|\n)/iU', $body, $match)) {
-				throw new SocketException(__d('cake_dev', 'HttpSocket::_decodeChunkedBody - Could not parse malformed chunk.'));
+			if (!preg_match('/^([0-9a-f]+)[ ]*(?:;(.+)=(.+))?(?:\r\n|\n)/iU', $body, $match)) {
+				// Handle remaining invalid data as one big chunk.
+				preg_match('/^(.*?)\r\n/', $body, $invalidMatch);
+				$length = isset($invalidMatch[1]) ? strlen($invalidMatch[1]) : 0;
+				$match = array(
+					0 => '',
+					1 => dechex($length)
+				);
 			}
-
 			$chunkSize = 0;
 			$hexLength = 0;
-			$chunkExtensionValue = '';
 			if (isset($match[0])) {
 				$chunkSize = $match[0];
 			}
 			if (isset($match[1])) {
 				$hexLength = $match[1];
 			}
-			if (isset($match[3])) {
-				$chunkExtensionValue = $match[3];
-			}
 
-			$body = substr($body, strlen($chunkSize));
 			$chunkLength = hexdec($hexLength);
-			$chunk = substr($body, 0, $chunkLength);
-			$decodedBody .= $chunk;
-			if ($chunkLength !== 0) {
+			$body = substr($body, strlen($chunkSize));
+
+			$decodedBody .= substr($body, 0, $chunkLength);
+			if ($chunkLength) {
 				$body = substr($body, $chunkLength + strlen("\r\n"));
 			}
 		}
