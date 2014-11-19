@@ -29,6 +29,15 @@ use Cake\View\Form\EntityContext;
  * Test stub.
  */
 class Article extends Entity {
+
+/**
+ * Testing stub method.
+ *
+ * @return bool
+ */
+	public function isRequired() {
+		return true;
+	}
 }
 
 /**
@@ -648,6 +657,37 @@ class EntityContextTest extends TestCase {
 	}
 
 /**
+ * Test isRequired on associated entities with custom validators.
+ *
+ * Ensures that missing associations use the correct entity class
+ * so provider methods work correctly.
+ *
+ * @return void
+ */
+	public function testIsRequiredAssociatedCustomValidator() {
+		$this->_setupTables();
+		$users = TableRegistry::get('Users');
+		$articles = TableRegistry::get('Articles');
+
+		$validator = $articles->validator();
+		$validator->notEmpty('title', 'nope', function ($context) {
+			return $context['providers']['entity']->isRequired();
+		});
+		$articles->validator('default', $validator);
+
+		$row = new Entity([
+			'username' => 'mark'
+		]);
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+			'table' => 'Users',
+			'validator' => 'default',
+		]);
+
+		$this->assertTrue($context->isRequired('articles.0.title'));
+	}
+
+/**
  * Test isRequired on associated entities.
  *
  * @return void
@@ -943,6 +983,7 @@ class EntityContextTest extends TestCase {
 		$articles = TableRegistry::get('Articles');
 		$articles->belongsTo('Users');
 		$articles->hasMany('Comments');
+		$articles->entityClass(__NAMESPACE__ . '\Article');
 
 		$comments = TableRegistry::get('Comments');
 		$users = TableRegistry::get('Users');
