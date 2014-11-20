@@ -377,6 +377,7 @@ class TestCaseTest extends TestCase {
 		$TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComments', array('save'));
 
 		$this->assertInstanceOf('\TestPlugin\Model\Table\TestPluginCommentsTable', $TestPluginComment);
+		$this->assertEquals('\Cake\ORM\Entity', $TestPluginComment->entityClass());
 		$TestPluginComment->expects($this->at(0))
 			->method('save')
 			->will($this->returnValue(true));
@@ -387,6 +388,10 @@ class TestCaseTest extends TestCase {
 		$entity = new \Cake\ORM\Entity(array());
 		$this->assertTrue($TestPluginComment->save($entity));
 		$this->assertFalse($TestPluginComment->save($entity));
+
+		$TestPluginAuthors = $this->getMockForModel('TestPlugin.Authors', array('doSomething'));
+		$this->assertInstanceOf('\TestPlugin\Model\Table\AuthorsTable', $TestPluginAuthors);
+		$this->assertEquals('TestPlugin\Model\Entity\Author', $TestPluginAuthors->entityClass());
 	}
 
 /**
