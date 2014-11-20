@@ -567,6 +567,16 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 		$options += TableRegistry::config($alias);
 
 		$mock = $this->getMock($options['className'], $methods, [$options]);
+
+		if (empty($options['entityClass']) && $mock->entityClass() === '\Cake\ORM\Entity') {
+			$parts = explode('\\', $options['className']);
+			$entityAlias = Inflector::singularize(substr(array_pop($parts), 0, -5));
+			$entityClass = implode('\\', array_slice($parts, 0, -1)) . '\Entity\\' . $entityAlias;
+			if (class_exists($entityClass)) {
+				$mock->entityClass($entityClass);
+			}
+		}
+
 		TableRegistry::set($baseClass, $mock);
 		return $mock;
 	}
