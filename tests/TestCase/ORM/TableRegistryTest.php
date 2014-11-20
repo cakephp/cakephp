@@ -82,6 +82,28 @@ class TableRegistryTest extends TestCase {
 	}
 
 /**
+ * Test config() method with plugin syntax aliases
+ *
+ * @return void
+ */
+	public function testConfigPlugin() {
+		Plugin::load('TestPlugin');
+
+		$data = [
+			'connection' => 'testing',
+			'entityClass' => 'TestPlugin\Model\Entity\Comment',
+		];
+
+
+		$result = TableRegistry::config('TestPlugin.TestPluginComments', $data);
+		$this->assertEquals($data, $result, 'Returns config data.');
+
+		$result = TableRegistry::config();
+		$expected = ['TestPluginComments' => $data];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Test calling config() on existing instances throws an error.
  *
  * @expectedException \RuntimeException
