@@ -319,6 +319,21 @@ class TableRegistryTest extends TestCase {
 	}
 
 /**
+ * Test setting an instance with plugin syntax aliases
+ *
+ * @return void
+ */
+	public function testSetPlugin() {
+		Plugin::load('TestPlugin');
+
+		$mock = $this->getMock('TestPlugin\Model\Table\CommentsTable');
+
+		$this->assertSame($mock, TableRegistry::set('TestPlugin.Comments', $mock));
+		$this->assertSame($mock, TableRegistry::get('TestPlugin.Comments'));
+		$this->assertSame($mock, TableRegistry::get('Comments'));
+	}
+
+/**
  * Tests genericInstances
  *
  * @return void
