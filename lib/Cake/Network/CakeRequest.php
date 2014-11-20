@@ -542,7 +542,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Detects if a specific header is present.
  *
- * @param $detect Detector options array.
+ * @param array $detect Detector options array.
  * @return bool Whether or not the request is the type you are checking.
  */
 	protected function _headerDetector($detect) {
@@ -558,7 +558,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Detects if a specific header is present
  *
- * @param $detect Detector options array.
+ * @param array $detect Detector options array.
  * @return bool Whether or not the request is the type you are checking.
  */
 	protected function _paramDetector($detect) {
@@ -576,7 +576,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Detects if a specific header is present
  *
- * @param $detect Detector options array.
+ * @param array $detect Detector options array.
  * @return bool Whether or not the request is the type you are checking.
  */
 	protected function _environmentDetector($detect) {
