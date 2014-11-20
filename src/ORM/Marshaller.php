@@ -114,13 +114,7 @@ class Marshaller {
 			}
 		}
 
-		$errors = [];
-		if ($options['validate']) {
-			$type = is_string($options['validate']) ? $options['validate'] : 'default';
-			$validator = $this->_table->validator($type);
-			$errors = $validator->errors($data, $entity->isNew());
-		}
-
+		$errors = $this->_validate($data, $options, true);
 		$primaryKey = $schema->primaryKey();
 		$properties = [];
 		foreach ($data as $key => $value) {
@@ -155,6 +149,30 @@ class Marshaller {
 
 		$entity->errors($errors);
 		return $entity;
+	}
+
+/**
+ * Returns the validation errors for a data set based on the passed options
+ *
+ * @param array $data The data to validate.
+ * @param array $options The options passed to this marshaller.
+ * @param bool $isNew Whether it is a new entity or one to be updated.
+ * @return array The list of validation errors.
+ */
+	protected function _validate($data, $options, $isNew) {
+		if (!$options['validate']) {
+			return [];
+		}
+
+		if ($options['validate'] === true) {
+			$options['validate'] = $this->_table->validator('default');
+		}
+
+		if (is_string($options['validate'])) {
+			$options['validate'] = $this->_table->validator($options['validate']);
+		}
+
+		return $options['validate']->errors($data, $isNew);
 	}
 
 /**

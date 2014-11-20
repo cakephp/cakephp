@@ -1585,4 +1585,22 @@ class MarshallerTest extends TestCase {
 		$this->assertEmpty($entity->user->errors('thing'));
 	}
 
+/**
+ * Tests that it is possible to pass a validator directly in the options
+ *
+ * @return void
+ */
+	public function testPassingCustomValidator() {
+		$data = [
+			'title' => 'Thing',
+			'body' => 'hey'
+		];
+
+		$validator = clone $this->articles->validator();
+		$validator->requirePresence('thing');
+		$marshall = new Marshaller($this->articles);
+		$entity = $marshall->one($data, ['validate' => $validator]);
+		$this->assertNotEmpty($entity->errors('thing'));
+	}
+
 }
