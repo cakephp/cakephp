@@ -339,10 +339,14 @@ class TestCaseTest extends TestCase {
 			->method('save')
 			->will($this->returnValue('mocked'));
 		$this->assertEquals('mocked', $Posts->save($entity));
+		$this->assertEquals('\Cake\ORM\Entity', $Posts->entityClass());
 
 		$Posts = $this->getMockForModel('Posts', ['doSomething']);
 		$this->assertInstanceOf('Cake\Database\Connection', $Posts->connection());
 		$this->assertEquals('test', $Posts->connection()->configName());
+
+		$Tags = $this->getMockForModel('Tags', ['doSomething']);
+		$this->assertEquals('TestApp\Model\Entity\Tag', $Tags->entityClass());
 	}
 
 /**
