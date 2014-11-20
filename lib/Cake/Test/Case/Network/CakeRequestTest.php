@@ -61,6 +61,7 @@ class TestCakeRequest extends CakeRequest {
 	public function headerDetector($detect) {
 		return $this->_headerDetector($detect);
 	}
+
 }
 
 /**
