@@ -52,6 +52,15 @@ class TestCakeRequest extends CakeRequest {
 		$this->here = $this->base . '/' . $this->url;
 	}
 
+/**
+ * Detects if a specific header is present.
+ *
+ * @param $detect Detector options array.
+ * @return bool Whether or not the request is the type you are checking.
+ */
+	public function headerDetector($detect) {
+		return $this->_headerDetector($detect);
+	}
 }
 
 /**
@@ -87,6 +96,23 @@ class CakeRequestTest extends CakeTestCase {
 			$_GET['case'] = $this->_case;
 		}
 		Configure::write('App', $this->_app);
+	}
+
+/**
+ * Test the header detector.
+ *
+ * @return void
+ */
+	public function testHeaderDetector() {
+		$request = $this->getMock('TestCakeRequest', array('getAcceptHeaders'));
+		$_SERVER['HTTP_ACCEPT'] = 'application/json';
+		$detector = array('header' => array('application/json'), 'param' => 'ext', 'value' => 'json');
+		$request->expects($this->once())
+			->method('getAcceptHeaders')
+			->will($this->returnValue(array(
+				'application/json'
+			)));
+		$this->assertTrue($request->headerDetector($detector));
 	}
 
 /**

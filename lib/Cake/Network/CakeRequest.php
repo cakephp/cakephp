@@ -522,19 +522,34 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Detects if a specific header is present
+ * Gets the accept header from the current request.
+ *
+ * @return bool Returns an array of accept header values.
+ */
+	public function getAcceptHeaders() {
+		$headers = array();
+		if (function_exists('getallheaders')) {
+			$headers = getallheaders();
+			$headers = explode(',', $headers['Accept']);
+		} else {
+			if (isset($_SERVER['HTTP_ACCEPT'])) {
+				$headers = explode(',', $_SERVER['HTTP_ACCEPT']);
+			}
+		}
+		return $headers;
+	}
+
+/**
+ * Detects if a specific header is present.
  *
  * @param $detect Detector options array.
  * @return bool Whether or not the request is the type you are checking.
  */
 	protected function _headerDetector($detect) {
-		$headers = getallheaders();
-		if (isset($headers['Accept'])) {
-			$headers = explode(',', $headers['Accept']);
-			foreach ($detect['header'] as $header) {
-				if (in_array($header, $headers)) {
-					return true;
-				}
+		$headers = $this->getAcceptHeaders();
+		foreach ($detect['header'] as $header) {
+			if (in_array($header, $headers)) {
+				return true;
 			}
 		}
 		return false;
