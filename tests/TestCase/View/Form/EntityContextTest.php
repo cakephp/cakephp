@@ -593,6 +593,32 @@ class EntityContextTest extends TestCase {
 	}
 
 /**
+ * Test validator for boolean fields.
+ *
+ * @return void
+ */
+	public function testIsRequiredBooleanField() {
+		$this->_setupTables();
+
+		$context = new EntityContext($this->request, [
+			'entity' => new Entity(),
+			'table' => 'Articles',
+		]);
+		$articles = TableRegistry::get('Articles');
+		$articles->schema()->addColumn('comments_on', [
+			'type' => 'boolean'
+		]);
+
+		$validator = $articles->validator();
+		$validator->add('comments_on', 'is_bool', [
+			'rule' => 'boolean'
+		]);
+		$articles->validator('default', $validator);
+
+		$this->assertFalse($context->isRequired('title'));
+	}
+
+/**
  * Test validator as a string.
  *
  * @return void
