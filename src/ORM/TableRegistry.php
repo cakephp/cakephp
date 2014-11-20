@@ -99,6 +99,7 @@ class TableRegistry {
  * @throws RuntimeException When you attempt to configure an existing table instance.
  */
 	public static function config($alias = null, $options = null) {
+		list(, $alias) = pluginSplit($alias);
 		if ($alias === null) {
 			return static::$_config;
 		}
@@ -214,6 +215,7 @@ class TableRegistry {
  * @return \Cake\ORM\Table
  */
 	public static function set($alias, Table $object) {
+		list(, $alias) = pluginSplit($alias);
 		return static::$_instances[$alias] = $object;
 	}
 
