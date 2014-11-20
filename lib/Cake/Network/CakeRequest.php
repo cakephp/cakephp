@@ -111,7 +111,9 @@ class CakeRequest implements ArrayAccess {
 			'portalmmm', 'Plucker', 'ReqwirelessWeb', 'SonyEricsson', 'Symbian', 'UP\\.Browser',
 			'webOS', 'Windows CE', 'Windows Phone OS', 'Xiino'
 		)),
-		'requested' => array('param' => 'requested', 'value' => 1)
+		'requested' => array('param' => 'requested', 'value' => 1),
+		'json' => array('header' => array('application/json'), 'param' => 'ext', 'value' => 'json'),
+		'xml' => array('header' => array('application/xml', 'text/xml'), 'param' => 'ext', 'value' => 'xml'),
 	);
 
 /**
@@ -499,6 +501,71 @@ class CakeRequest implements ArrayAccess {
 		}
 		$detect = $this->_detectors[$type];
 		if (isset($detect['env'])) {
+			if ($this->_environmentDetector($detect)) {
+				return true;
+			}
+		}
+		if (isset($detect['header'])) {
+			if ($this->_environmentDetector($detect)) {
+				return true;
+			}
+		}
+		if (isset($detect['param'])) {
+			if ($this->_paramDetector($detect)) {
+				return true;
+			}
+		}
+		if (isset($detect['callback']) && is_callable($detect['callback'])) {
+			return call_user_func($detect['callback'], $this);
+		}
+		return false;
+	}
+
+/**
+ * Detects if a specific header is present
+ *
+ * @param $detect Detector options array.
+ * @return bool Whether or not the request is the type you are checking.
+ */
+	protected function _headerDetector($detect) {
+		$headers = getallheaders();
+		if (isset($headers['Accept'])) {
+			$headers = explode(',', $headers['Accept']);
+			foreach ($detect['header'] as $header) {
+				if (in_array($header, $headers)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+/**
+ * Detects if a specific header is present
+ *
+ * @param $detect Detector options array.
+ * @return bool Whether or not the request is the type you are checking.
+ */
+	protected function _paramDetector($detect) {
+		$key = $detect['param'];
+		if (isset($detect['value'])) {
+			$value = $detect['value'];
+			return isset($this->params[$key]) ? $this->params[$key] == $value : false;
+		}
+		if (isset($detect['options'])) {
+			return isset($this->params[$key]) ? in_array($this->params[$key], $detect['options']) : false;
+		}
+		return false;
+	}
+
+/**
+ * Detects if a specific header is present
+ *
+ * @param $detect Detector options array.
+ * @return bool Whether or not the request is the type you are checking.
+ */
+	protected function _environmentDetector($detect) {
+		if (isset($detect['env'])) {
 			if (isset($detect['value'])) {
 				return env($detect['env']) == $detect['value'];
 			}
@@ -509,19 +576,6 @@ class CakeRequest implements ArrayAccess {
 				$pattern = '/' . implode('|', $detect['options']) . '/i';
 				return (bool)preg_match($pattern, env($detect['env']));
 			}
-		}
-		if (isset($detect['param'])) {
-			$key = $detect['param'];
-			if (isset($detect['value'])) {
-				$value = $detect['value'];
-				return isset($this->params[$key]) ? $this->params[$key] == $value : false;
-			}
-			if (isset($detect['options'])) {
-				return isset($this->params[$key]) ? in_array($this->params[$key], $detect['options']) : false;
-			}
-		}
-		if (isset($detect['callback']) && is_callable($detect['callback'])) {
-			return call_user_func($detect['callback'], $this);
 		}
 		return false;
 	}
