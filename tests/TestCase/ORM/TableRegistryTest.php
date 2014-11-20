@@ -94,7 +94,6 @@ class TableRegistryTest extends TestCase {
 			'entityClass' => 'TestPlugin\Model\Entity\Comment',
 		];
 
-
 		$result = TableRegistry::config('TestPlugin.TestPluginComments', $data);
 		$this->assertEquals($data, $result, 'Returns config data.');
 
