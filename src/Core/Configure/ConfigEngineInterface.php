@@ -36,6 +36,6 @@ interface ConfigEngineInterface {
  * @param array $data The data to dump.
  * @return bool True on success or false on failure.
  */
-	public function dump($key, $data);
+	public function dump($key, array $data);
 
 }
