@@ -467,7 +467,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *	$query->join(['something' => 'different_table'], [], true); // resets joins list
  * }}}
  *
- * @param array|string $tables list of tables to be joined in the query
+ * @param array|string|null $tables list of tables to be joined in the query
  * @param array $types associative array of type names used to bind values to query
  * @param bool $overwrite whether to reset joins with passed list or not
  * @see \Cake\Database\Type
@@ -724,7 +724,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * If you use string conditions make sure that your values are correctly quoted.
  * The safest thing you can do is to never use string conditions.
  *
- * @param string|array|ExpressionInterface|callback $conditions The conditions to filter on.
+ * @param string|array|\Cake\Database\ExpressionInterface|callback|null $conditions The conditions to filter on.
  * @param array $types associative array of type names used to bind values to query
  * @param bool $overwrite whether to reset conditions with passed list or not
  * @see \Cake\Database\Type
