@@ -803,10 +803,13 @@ class View {
  * @throws \Cake\View\Exception\MissingTemplateException when a view file could not be found.
  */
 	protected function _getViewFileName($name = null) {
-		$subDir = null;
+		$viewPath = $subDir = '';
 
 		if ($this->subDir !== null) {
 			$subDir = $this->subDir . DS;
+		}
+		if ($this->viewPath) {
+			$viewPath = $this->viewPath . DS;
 		}
 
 		if ($name === null) {
@@ -817,7 +820,7 @@ class View {
 		$name = str_replace('/', DS, $name);
 
 		if (strpos($name, DS) === false && $name[0] !== '.') {
-			$name = $this->viewPath . DS . $subDir . Inflector::underscore($name);
+			$name = $viewPath . $subDir . Inflector::underscore($name);
 		} elseif (strpos($name, DS) !== false) {
 			if ($name[0] === DS || $name[1] === ':') {
 				if (is_file($name)) {
@@ -825,7 +828,7 @@ class View {
 				}
 				$name = trim($name, DS);
 			} elseif (!$plugin || $this->viewPath !== $this->name) {
-				$name = $this->viewPath . DS . $subDir . $name;
+				$name = $viewPath . $subDir . $name;
 			} else {
 				$name = DS . $subDir . $name;
 			}
