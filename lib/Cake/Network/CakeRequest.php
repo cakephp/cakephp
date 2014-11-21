@@ -500,20 +500,14 @@ class CakeRequest implements ArrayAccess {
 			return false;
 		}
 		$detect = $this->_detectors[$type];
-		if (isset($detect['env'])) {
-			if ($this->_environmentDetector($detect)) {
-				return true;
-			}
+		if (isset($detect['env']) && $this->_environmentDetector($detect)) {
+			return true;
 		}
-		if (isset($detect['header'])) {
-			if ($this->_environmentDetector($detect)) {
-				return true;
-			}
+		if (isset($detect['header']) && $this->_environmentDetector($detect)) {
+			return true;
 		}
-		if (isset($detect['param'])) {
-			if ($this->_paramDetector($detect)) {
-				return true;
-			}
+		if (isset($detect['param']) && $this->_paramDetector($detect)) {
+			return true;
 		}
 		if (isset($detect['callback']) && is_callable($detect['callback'])) {
 			return call_user_func($detect['callback'], $this);
@@ -528,13 +522,11 @@ class CakeRequest implements ArrayAccess {
  */
 	public function getAcceptHeaders() {
 		$headers = array();
-		if (function_exists('getallheaders')) {
+		if (isset($_SERVER['HTTP_ACCEPT'])) {
+			$headers = explode(',', $_SERVER['HTTP_ACCEPT']);
+		} elseif (function_exists('getallheaders')) {
 			$headers = getallheaders();
 			$headers = explode(',', $headers['Accept']);
-		} else {
-			if (isset($_SERVER['HTTP_ACCEPT'])) {
-				$headers = explode(',', $_SERVER['HTTP_ACCEPT']);
-			}
 		}
 		return $headers;
 	}
