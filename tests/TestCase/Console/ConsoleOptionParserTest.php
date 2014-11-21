@@ -659,7 +659,7 @@ TEXT;
 	}
 
 /**
- * Test toArray()
+ * Tests toArray()
  *
  * @return void
  */
@@ -695,6 +695,7 @@ TEXT;
 	}
 
 /**
+ * Tests merge()
  *
  * @return void
  */

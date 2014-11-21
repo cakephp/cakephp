@@ -230,7 +230,7 @@ class ConsoleOptionParser {
  * @return $this
  */
 	public function merge($spec) {
-		if (is_object($spec) && $spec instanceof ConsoleOptionParser) {
+		if ($spec instanceof ConsoleOptionParser) {
 			$spec = $spec->toArray();
 		}
 		if (!empty($spec['arguments'])) {
@@ -324,7 +324,7 @@ class ConsoleOptionParser {
  * @return $this
  */
 	public function addOption($name, $options = []) {
-		if (is_object($name) && $name instanceof ConsoleInputOption) {
+		if ($name instanceof ConsoleInputOption) {
 			$option = $name;
 			$name = $option->name();
 		} else {
@@ -375,7 +375,7 @@ class ConsoleOptionParser {
  * @return $this
  */
 	public function addArgument($name, $params = []) {
-		if (is_object($name) && $name instanceof ConsoleInputArgument) {
+		if ($name instanceof ConsoleInputArgument) {
 			$arg = $name;
 			$index = count($this->_args);
 		} else {
@@ -406,7 +406,7 @@ class ConsoleOptionParser {
  */
 	public function addArguments(array $args) {
 		foreach ($args as $name => $params) {
-			if (is_object($params) && $params instanceof ConsoleInputArgument) {
+			if ($params instanceof ConsoleInputArgument) {
 				$name = $params;
 				$params = [];
 			}
@@ -425,7 +425,7 @@ class ConsoleOptionParser {
  */
 	public function addOptions(array $options) {
 		foreach ($options as $name => $params) {
-			if (is_object($params) && $params instanceof ConsoleInputOption) {
+			if ($params instanceof ConsoleInputOption) {
 				$name = $params;
 				$params = [];
 			}
@@ -450,7 +450,7 @@ class ConsoleOptionParser {
  * @return $this
  */
 	public function addSubcommand($name, $options = []) {
-		if (is_object($name) && $name instanceof ConsoleInputSubcommand) {
+		if ($name instanceof ConsoleInputSubcommand) {
 			$command = $name;
 			$name = $command->name();
 		} else {
@@ -485,7 +485,7 @@ class ConsoleOptionParser {
  */
 	public function addSubcommands(array $commands) {
 		foreach ($commands as $name => $params) {
-			if (is_object($params) && $params instanceof ConsoleInputSubcommand) {
+			if ($params instanceof ConsoleInputSubcommand) {
 				$name = $params;
 				$params = [];
 			}
