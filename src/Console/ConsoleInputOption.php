@@ -145,7 +145,7 @@ class ConsoleInputOption {
  * @return string
  */
 	public function usage() {
-		$name = strlen($this->_short) < 1 ? '--' . $this->_name : '-' . $this->_short;
+		$name = (strlen($this->_short) > 0) ? ('-' . $this->_short) : ('--' . $this->_name);
 		$default = '';
 		if (!empty($this->_default) && $this->_default !== true) {
 			$default = ' ' . $this->_default;
