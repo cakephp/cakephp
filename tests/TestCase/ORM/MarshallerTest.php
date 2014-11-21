@@ -1603,4 +1603,40 @@ class MarshallerTest extends TestCase {
 		$this->assertNotEmpty($entity->errors('thing'));
 	}
 
+/**
+ * Test merge with validation error
+ *
+ * @return void
+ */
+	public function testMergeWithValidation() {
+		$data = [
+			'title' => 'My title',
+			'author_id' => 'foo',
+		];
+		$marshall = new Marshaller($this->articles);
+		$entity = new Entity([
+			'title' => 'Foo',
+			'body' => 'My Content',
+			'author_id' => 1
+		]);
+		$entity->accessible('*', true);
+		$entity->isNew(false);
+		$entity->clean();
+
+		$this->articles->validator()
+			->requirePresence('thing', 'update')
+			->add('author_id', 'numeric', ['rule' => 'numeric']);
+
+		$expected = clone $entity;
+		$result = $marshall->merge($expected, $data, []);
+
+		$this->assertSame($expected, $result);
+		$this->assertSame(1, $result->author_id);
+		$this->assertNotEmpty($result->errors('thing'));
+
+		$this->articles->validator()->requirePresence('thing', 'create');
+		$result = $marshall->merge($entity, $data, []);
+		$this->assertEmpty($result->errors('thing'));
+	}
+
 }

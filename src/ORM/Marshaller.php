@@ -307,6 +307,7 @@ class Marshaller {
  * @return \Cake\Datasource\EntityInterface
  */
 	public function merge(EntityInterface $entity, array $data, array $options = []) {
+		$options += ['validate' => true];
 		$propertyMap = $this->_buildPropertyMap($options);
 		$tableName = $this->_table->alias();
 
@@ -314,9 +315,14 @@ class Marshaller {
 			$data = $data[$tableName];
 		}
 
+		$errors = $this->_validate($data, $options, false);
 		$schema = $this->_table->schema();
 		$properties = [];
 		foreach ($data as $key => $value) {
+			if (!empty($errors[$key])) {
+				continue;
+			}
+
 			$columnType = $schema->columnType($key);
 			$original = $entity->get($key);
 
@@ -340,6 +346,7 @@ class Marshaller {
 
 		if (!isset($options['fieldList'])) {
 			$entity->set($properties);
+			$entity->errors($errors);
 			return $entity;
 		}
 
@@ -349,6 +356,7 @@ class Marshaller {
 			}
 		}
 
+		$entity->errors($errors);
 		return $entity;
 	}
 
