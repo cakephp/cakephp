@@ -658,4 +658,62 @@ TEXT;
 		$this->assertEquals($expected, $result, 'Sub parser did not parse request.');
 	}
 
+/**
+ * Test toArray()
+ *
+ * @return void
+ */
+	public function testToArray() {
+		$spec = array(
+			'command' => 'test',
+			'arguments' => array(
+				'name' => array('help' => 'The name'),
+				'other' => array('help' => 'The other arg')
+			),
+			'options' => array(
+				'name' => array('help' => 'The name'),
+				'other' => array('help' => 'The other arg')
+			),
+			'subcommands' => array(
+				'initdb' => array('help' => 'make database')
+			),
+			'description' => 'description text',
+			'epilog' => 'epilog text'
+		);
+		$parser = ConsoleOptionParser::buildFromArray($spec);
+		$result = $parser->toArray();
+
+		$this->assertEquals($spec['description'], $result['description']);
+		$this->assertEquals($spec['epilog'], $result['epilog']);
+
+		$options = $result['options'];
+		$this->assertTrue(isset($options['name']));
+		$this->assertTrue(isset($options['other']));
+
+		$this->assertEquals(2, count($result['arguments']));
+		$this->assertEquals(1, count($result['subcommands']));
+	}
+
+/**
+ *
+ * @return void
+ */
+	public function testMerge() {
+		$parser = new ConsoleOptionParser('test');
+		$parser->addOption('test', array('short' => 't', 'boolean' => true));
+
+		$parserTwo = new ConsoleOptionParser('test');
+		$parserTwo->addOption('file', array('short' => 'f', 'boolean' => true))
+			->addOption('output', array('short' => 'o', 'boolean' => true));
+
+		$parser->merge($parserTwo);
+		$result = $parser->toArray();
+
+		$options = $result['options'];
+		$this->assertTrue(isset($options['quiet']));
+		$this->assertTrue(isset($options['test']));
+		$this->assertTrue(isset($options['file']));
+		$this->assertTrue(isset($options['output']));
+	}
+
 }

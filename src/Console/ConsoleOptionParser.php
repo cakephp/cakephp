@@ -207,7 +207,52 @@ class ConsoleOptionParser {
 	}
 
 /**
+ * Returns an array representation of this parser.
+ *
+ * @return array
+ */
+	public function toArray() {
+		$result = [
+			'command' => $this->_command,
+			'arguments' => $this->_args,
+			'options' => $this->_options,
+			'subcommands' => $this->_subcommands,
+			'description' => $this->_description,
+			'epilog' => $this->_epilog
+		];
+		return $result;
+	}
+
+/**
  * Get or set the command name for shell/task.
+ *
+ * @param array|\Cake\Console\ConsoleOptionParser $parser ConsoleOptionParser or spec to merge with.
+ * @return string|$this If reading, the value of the command. If setting $this will be returned.
+ */
+	public function merge($spec) {
+		if (is_object($spec) && $spec instanceof ConsoleOptionParser) {
+			$spec = $spec->toArray();
+		}
+		if (!empty($spec['arguments'])) {
+			$this->addArguments($spec['arguments']);
+		}
+		if (!empty($spec['options'])) {
+			$this->addOptions($spec['options']);
+		}
+		if (!empty($spec['subcommands'])) {
+			$this->addSubcommands($spec['subcommands']);
+		}
+		if (!empty($spec['description'])) {
+			$this->description($spec['description']);
+		}
+		if (!empty($spec['epilog'])) {
+			$this->epilog($spec['epilog']);
+		}
+		return $this;
+	}
+
+/**
+ * Gets or sets the command name for shell/task.
  *
  * @param string $text The text to set, or null if you want to read
  * @return string|$this If reading, the value of the command. If setting $this will be returned.
@@ -361,6 +406,10 @@ class ConsoleOptionParser {
  */
 	public function addArguments(array $args) {
 		foreach ($args as $name => $params) {
+			if (is_object($params) && $params instanceof ConsoleInputArgument) {
+				$name = $params;
+				$params = [];
+			}
 			$this->addArgument($name, $params);
 		}
 		return $this;
@@ -376,6 +425,10 @@ class ConsoleOptionParser {
  */
 	public function addOptions(array $options) {
 		foreach ($options as $name => $params) {
+			if (is_object($params) && $params instanceof ConsoleInputOption) {
+				$name = $params;
+				$params = [];
+			}
 			$this->addOption($name, $params);
 		}
 		return $this;
@@ -432,6 +485,10 @@ class ConsoleOptionParser {
  */
 	public function addSubcommands(array $commands) {
 		foreach ($commands as $name => $params) {
+			if (is_object($params) && $params instanceof ConsoleInputSubcommand) {
+				$name = $params;
+				$params = [];
+			}
 			$this->addSubcommand($name, $params);
 		}
 		return $this;
