@@ -127,7 +127,7 @@ class ConsoleOptionParser {
 /**
  * Construct an OptionParser so you can define its behavior
  *
- * @param string $command|null The command name this parser is for. The command name is used for generating help.
+ * @param string|null $command The command name this parser is for. The command name is used for generating help.
  * @param bool $defaultOptions Whether you want the verbose and quiet options set. Setting
  *  this to false will prevent the addition of `--verbose` & `--quiet` options.
  */
