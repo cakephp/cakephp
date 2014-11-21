@@ -184,10 +184,11 @@ class ConsoleOptionParser {
  * }}}
  *
  * @param array $spec The spec to build the OptionParser with.
+ * @param bool $defaultOptions Whether you want the verbose and quiet options set.
  * @return ConsoleOptionParser
  */
-	public static function buildFromArray($spec) {
-		$parser = new ConsoleOptionParser($spec['command']);
+	public static function buildFromArray($spec, $defaultOptions = true) {
+		$parser = new ConsoleOptionParser($spec['command'], $defaultOptions);
 		if (!empty($spec['arguments'])) {
 			$parser->addArguments($spec['arguments']);
 		}
@@ -593,10 +594,12 @@ class ConsoleOptionParser {
 			$subparser->command($this->command() . ' ' . $subparser->command());
 			return $subparser->help(null, $format, $width);
 		}
+
 		$formatter = new HelpFormatter($this);
-		if ($format === 'text' || $format === true) {
+		if ($format === 'text') {
 			return $formatter->text($width);
-		} elseif ($format === 'xml') {
+		}
+		if ($format === 'xml') {
 			return $formatter->xml();
 		}
 	}
