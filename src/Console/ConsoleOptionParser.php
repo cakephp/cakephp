@@ -127,7 +127,7 @@ class ConsoleOptionParser {
 /**
  * Construct an OptionParser so you can define its behavior
  *
- * @param string $command The command name this parser is for. The command name is used for generating help.
+ * @param string $command|null The command name this parser is for. The command name is used for generating help.
  * @param bool $defaultOptions Whether you want the verbose and quiet options set. Setting
  *  this to false will prevent the addition of `--verbose` & `--quiet` options.
  */
@@ -156,7 +156,7 @@ class ConsoleOptionParser {
 /**
  * Static factory method for creating new OptionParsers so you can chain methods off of them.
  *
- * @param string $command The command name this parser is for. The command name is used for generating help.
+ * @param string|null $command The command name this parser is for. The command name is used for generating help.
  * @param bool $defaultOptions Whether you want the verbose and quiet options set.
  * @return ConsoleOptionParser
  */
@@ -209,7 +209,7 @@ class ConsoleOptionParser {
 /**
  * Get or set the command name for shell/task.
  *
- * @param string $text The text to set, or null if you want to read
+ * @param string|null $text The text to set, or null if you want to read
  * @return string|$this If reading, the value of the command. If setting $this will be returned.
  */
 	public function command($text = null) {
@@ -223,8 +223,8 @@ class ConsoleOptionParser {
 /**
  * Get or set the description text for shell/task.
  *
- * @param string|array $text The text to set, or null if you want to read. If an array the
- *   text will be imploded with "\n"
+ * @param string|array|null $text The text to set, or null if you want to read. If an array the
+ *   text will be imploded with "\n".
  * @return string|$this If reading, the value of the description. If setting $this will be returned.
  */
 	public function description($text = null) {
@@ -242,7 +242,8 @@ class ConsoleOptionParser {
  * Get or set an epilog to the parser. The epilog is added to the end of
  * the options and arguments listing when help is generated.
  *
- * @param string|array $text Text when setting or null when reading. If an array the text will be imploded with "\n"
+ * @param string|array|null $text Text when setting or null when reading. If an array the text will
+ *   be imploded with "\n".
  * @return string|$this If reading, the value of the epilog. If setting $this will be returned.
  */
 	public function epilog($text = null) {

@@ -172,7 +172,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable {
  * chaining.
  *
  * @param string|array $field The field to get errors for.
- * @param string|array $errors The errors to be set for $field
+ * @param string|array|null $errors The errors to be set for $field
  * @return array|\Cake\Datasource\EntityInterface
  */
 	public function errors($field = null, $errors = null);
@@ -185,7 +185,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable {
  * will be accessible by default.
  *
  * @param string|array $property Either a single or list of properties to change its accessibility.
- * @param bool $set true marks the property as accessible, false will
+ * @param bool|null $set true marks the property as accessible, false will
  * mark it as protected.
  * @return \Cake\Datasource\EntityInterface|bool
  */

@@ -399,7 +399,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
  * the result under a single array.
  *
  * @param array $fields The fields to alias
- * @param string $defaultAlias The default alias
+ * @param string|null $defaultAlias The default alias
  * @return array
  */
 	public function aliasFields($fields, $defaultAlias = null) {

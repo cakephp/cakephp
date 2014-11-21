@@ -81,7 +81,7 @@ abstract class CacheEngine {
  *
  * Permanently remove all expired and deleted data
  *
- * @param int $expires [optional] An expires timestamp, invalidating all data before.
+ * @param int|null $expires [optional] An expires timestamp, invalidating all data before.
  * @return void
  */
 	public function gc($expires = null) {

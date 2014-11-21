@@ -169,7 +169,7 @@ class Cache {
  * Permanently remove all expired and deleted data
  *
  * @param string $config [optional] The config name you wish to have garbage collected. Defaults to 'default'
- * @param int $expires [optional] An expires timestamp. Defaults to NULL
+ * @param int|null $expires [optional] An expires timestamp. Defaults to NULL
  * @return void
  */
 	public static function gc($config = 'default', $expires = null) {
@@ -411,7 +411,7 @@ class Cache {
  *
  * $config will equal to `['posts' => ['daily', 'weekly']]`
  *
- * @param string $group group name or null to retrieve all group mappings
+ * @param string|null $group group name or null to retrieve all group mappings
  * @return array map of group and all configuration that has the same group
  * @throws \InvalidArgumentException
  */

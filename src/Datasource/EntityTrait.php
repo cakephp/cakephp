@@ -574,7 +574,7 @@ trait EntityTrait {
  * true means that the instance is not yet persisted in the database, false
  * that it already is.
  *
- * @param bool $new true if it is known this instance was persisted
+ * @param bool|null $new true if it is known this instance was persisted
  * @return bool Whether or not the entity has been persisted.
  */
 	public function isNew($new = null) {
@@ -628,8 +628,8 @@ trait EntityTrait {
  * When used as a setter, this method will return this entity instance for method
  * chaining.
  *
- * @param string|array $field The field to get errors for, or the array of errors to set.
- * @param string|array $errors The errors to be set for $field
+ * @param string|array|null $field The field to get errors for, or the array of errors to set.
+ * @param string|array|null $errors The errors to be set for $field
  * @return array|$this
  */
 	public function errors($field = null, $errors = null) {
