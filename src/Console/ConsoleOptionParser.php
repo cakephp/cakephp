@@ -227,7 +227,7 @@ class ConsoleOptionParser {
  * Get or set the command name for shell/task.
  *
  * @param array|\Cake\Console\ConsoleOptionParser $parser ConsoleOptionParser or spec to merge with.
- * @return string|$this If reading, the value of the command. If setting $this will be returned.
+ * @return $this
  */
 	public function merge($spec) {
 		if (is_object($spec) && $spec instanceof ConsoleOptionParser) {
