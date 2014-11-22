@@ -227,7 +227,7 @@ class ConsoleOptionParser {
 /**
  * Get or set the command name for shell/task.
  *
- * @param array|\Cake\Console\ConsoleOptionParser $parser ConsoleOptionParser or spec to merge with.
+ * @param array|\Cake\Console\ConsoleOptionParser $spec ConsoleOptionParser or spec to merge with.
  * @return $this
  */
 	public function merge($spec) {
