@@ -77,7 +77,7 @@ class ConsoleInputOption {
  * @param array $choices Valid choices for this option.
  * @throws \Cake\Console\Exception\ConsoleException
  */
-	public function __construct($name, $short = null, $help = '', $boolean = false, $default = '', $choices = []) {
+	public function __construct($name, $short = '', $help = '', $boolean = false, $default = '', $choices = []) {
 		if (is_array($name) && isset($name['name'])) {
 			foreach ($name as $key => $value) {
 				$this->{'_' . $key} = $value;
@@ -145,7 +145,7 @@ class ConsoleInputOption {
  * @return string
  */
 	public function usage() {
-		$name = empty($this->_short) ? '--' . $this->_name : '-' . $this->_short;
+		$name = (strlen($this->_short) > 0) ? ('-' . $this->_short) : ('--' . $this->_name);
 		$default = '';
 		if (!empty($this->_default) && $this->_default !== true) {
 			$default = ' ' . $this->_default;
@@ -204,7 +204,7 @@ class ConsoleInputOption {
 		$option = $parent->addChild('option');
 		$option->addAttribute('name', '--' . $this->_name);
 		$short = '';
-		if (strlen($this->_short)) {
+		if (strlen($this->_short) > 0) {
 			$short = $this->_short;
 		}
 		$option->addAttribute('short', '-' . $short);

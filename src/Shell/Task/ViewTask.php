@@ -96,9 +96,9 @@ class ViewTask extends BakeTask {
 /**
  * Execution method always used for tasks
  *
- * @param string $name The name of the controller to bake views for.
- * @param string $template The template to bake with.
- * @param string $action The action to bake with.
+ * @param string|null $name The name of the controller to bake views for.
+ * @param string|null $template The template to bake with.
+ * @param string|null $action The action to bake with.
  * @return mixed
  */
 	public function main($name = null, $template = null, $action = null) {
@@ -161,7 +161,7 @@ class ViewTask extends BakeTask {
  * Set the controller related properties.
  *
  * @param string $table The table/model that is being baked.
- * @param string $controller The controller name if specified.
+ * @param string|null $controller The controller name if specified.
  * @return void
  */
 	public function controller($table, $controller = null) {
@@ -349,7 +349,7 @@ class ViewTask extends BakeTask {
  * Builds content from template and variables
  *
  * @param string $action name to generate content to
- * @param array $vars passed for use in templates
+ * @param array|null $vars passed for use in templates
  * @return string content from template
  */
 	public function getContent($action, $vars = null) {

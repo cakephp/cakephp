@@ -117,7 +117,7 @@ class BelongsToMany extends Association {
  * Sets the name of the field representing the foreign key to the target table.
  * If no parameters are passed current field is returned
  *
- * @param string $key the key to be used to link both tables together
+ * @param string|null $key the key to be used to link both tables together
  * @return string
  */
 	public function targetForeignKey($key = null) {
@@ -134,7 +134,7 @@ class BelongsToMany extends Association {
  * Sets the table instance for the junction relation. If no arguments
  * are passed, the current configured table instance is returned
  *
- * @param string|\Cake\ORM\Table $table Name or instance for the join table
+ * @param string|\Cake\ORM\Table|null $table Name or instance for the join table
  * @return \Cake\ORM\Table
  */
 	public function junction($table = null) {
@@ -345,7 +345,7 @@ class BelongsToMany extends Association {
  * Sets the strategy that should be used for saving. If called with no
  * arguments, it will return the currently configured strategy
  *
- * @param string $strategy the strategy name to be used
+ * @param string|null $strategy the strategy name to be used
  * @throws \InvalidArgumentException if an invalid strategy name is passed
  * @return string the strategy to be used for saving
  */
@@ -929,7 +929,7 @@ class BelongsToMany extends Association {
  * If no arguments are passed the current configured name is returned. A default
  * name based of the associated tables will be generated if none found.
  *
- * @param string $name The name of the junction table.
+ * @param string|null $name The name of the junction table.
  * @return string
  */
 	protected function _junctionTableName($name = null) {

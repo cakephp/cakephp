@@ -13,7 +13,7 @@
 /**
  * View method
  *
- * @param string $id
+ * @param string|null $id
  * @return void
  * @throws \Cake\Network\Exception\NotFoundException
  */
@@ -47,7 +47,7 @@
 /**
  * Edit method
  *
- * @param string $id
+ * @param string|null $id
  * @return void
  * @throws \Cake\Network\Exception\NotFoundException
  */
@@ -72,7 +72,7 @@
 /**
  * Delete method
  *
- * @param string $id
+ * @param string|null $id
  * @return void
  * @throws \Cake\Network\Exception\NotFoundException
  */

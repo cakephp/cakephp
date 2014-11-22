@@ -261,7 +261,7 @@ class Hash {
  *
  * @param array $data The data to insert into.
  * @param string $path The path to insert at.
- * @param array $values The values to insert.
+ * @param array|null $values The values to insert.
  * @return array The data with $values inserted.
  * @link http://book.cakephp.org/3.0/en/core-libraries/hash.html#Hash::insert
  */
@@ -402,8 +402,8 @@ class Hash {
  *
  * @param array $data Array from where to extract keys and values
  * @param string $keyPath A dot-separated string.
- * @param string $valuePath A dot-separated string.
- * @param string $groupPath A dot-separated string.
+ * @param string|null $valuePath A dot-separated string.
+ * @param string|null $groupPath A dot-separated string.
  * @return array Combined array
  * @link http://book.cakephp.org/3.0/en/core-libraries/hash.html#Hash::combine
  * @throws \RuntimeException  When keys and values count is unequal.
@@ -920,7 +920,7 @@ class Hash {
  * Squashes an array to a single hash so it can be sorted.
  *
  * @param array $data The data to squash.
- * @param string $key The key for the data.
+ * @param string|null $key The key for the data.
  * @return array
  */
 	protected static function _squash(array $data, $key = null) {

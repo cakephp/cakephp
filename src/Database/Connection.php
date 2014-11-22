@@ -145,13 +145,13 @@ class Connection {
  *
  * If no params are passed it will return the current driver instance.
  *
- * @param string|\Cake\Database\Driver $driver The driver instance to use.
- * @param array|null $config Either config for a new driver or null.
+ * @param \Cake\Database\Driver|string|null $driver The driver instance to use.
+ * @param array $config Either config for a new driver or null.
  * @throws \Cake\Database\Exception\MissingDriverException When a driver class is missing.
  * @throws \Cake\Database\Exception\MissingExtensionException When a driver's PHP extension is missing.
  * @return \Cake\Database\Driver
  */
-	public function driver($driver = null, $config = null) {
+	public function driver($driver = null, $config = []) {
 		if ($driver === null) {
 			return $this->_driver;
 		}
@@ -288,7 +288,7 @@ class Connection {
 /**
  * Gets or sets a Schema\Collection object for this connection.
  *
- * @param \Cake\Database\Schema\Collection $collection The schema collection object
+ * @param \Cake\Database\Schema\Collection|null $collection The schema collection object
  * @return \Cake\Database\Schema\Collection
  */
 	public function schemaCollection(SchemaCollection $collection = null) {

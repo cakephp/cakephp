@@ -71,7 +71,7 @@ class ModelTask extends BakeTask {
 /**
  * Execution method always used for tasks
  *
- * @param string $name The name of the table to bake.
+ * @param string|null $name The name of the table to bake.
  * @return void
  */
 	public function main($name = null) {
@@ -776,7 +776,7 @@ class ModelTask extends BakeTask {
  * Interact with FixtureTask to automatically bake fixtures when baking models.
  *
  * @param string $className Name of class to bake fixture for
- * @param string $useTable Optional table name for fixture to use.
+ * @param string|null $useTable Optional table name for fixture to use.
  * @return void
  * @see FixtureTask::bake
  */

@@ -26,8 +26,8 @@ class PDOStatement extends StatementDecorator {
 /**
  * Constructor
  *
- * @param \PDOStatement $statement Original statement to be decorated.
- * @param \Cake\Database\Driver $driver Driver instance.
+ * @param \PDOStatement|null $statement Original statement to be decorated.
+ * @param \Cake\Database\Driver|null $driver Driver instance.
  */
 	public function __construct(Statement $statement = null, $driver = null) {
 		$this->_statement = $statement;

@@ -150,7 +150,7 @@ class PostgresSchema extends BaseSchema {
  * Postgres includes sequence data and casting information in default values.
  * We need to remove those.
  *
- * @param string $default The default value.
+ * @param string|null $default The default value.
  * @return string|null
  */
 	protected function _defaultValue($default) {

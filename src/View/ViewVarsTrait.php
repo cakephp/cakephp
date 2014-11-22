@@ -34,7 +34,7 @@ trait ViewVarsTrait {
 /**
  * Get view instance
  *
- * @param string $viewClass View class name or null to use $viewClass
+ * @param string|null $viewClass View class name or null to use $viewClass
  * @return \Cake\View\View
  * @throws \Cake\View\Exception\MissingViewException If view class was not found.
  */
@@ -72,7 +72,7 @@ trait ViewVarsTrait {
 /**
  * Constructs the view class instance based on object properties.
  *
- * @param string $viewClass Optional namespaced class name of the View class to instantiate.
+ * @param string|null $viewClass Optional namespaced class name of the View class to instantiate.
  * @return \Cake\View\View
  * @throws \Cake\View\Exception\MissingViewException If view class was not found.
  */
@@ -96,7 +96,7 @@ trait ViewVarsTrait {
  * Saves a variable for use inside a template.
  *
  * @param string|array $name A string or an array of data.
- * @param string|array $val Value in case $name is a string (which then works as the key).
+ * @param string|array|null $val Value in case $name is a string (which then works as the key).
  *   Unused if $name is an associative array, otherwise serves as the values to $name's keys.
  * @return void
  */
@@ -118,7 +118,7 @@ trait ViewVarsTrait {
  * created as an empty array if it is not set. If called without any parameters it will
  * return the current list of valid view options. See `createView()`.
  *
- * @param string|array $options string or array of string to be appended to _validViewOptions.
+ * @param string|array|null $options string or array of string to be appended to _validViewOptions.
  * @param bool $merge Whether to merge with or override existing valid View options.
  *   Defaults to `true`.
  * @return array The updated view options as an array.

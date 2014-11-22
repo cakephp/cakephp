@@ -122,7 +122,7 @@ class EagerLoader {
  * `matching` option.
  *
  * @param string $assoc A single association or a dot separated path of associations.
- * @param callable $builder the callback function to be used for setting extra
+ * @param callable|null $builder the callback function to be used for setting extra
  * options to the filtering query
  * @return array The resulting containments array
  */

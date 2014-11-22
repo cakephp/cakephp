@@ -20,7 +20,7 @@ $belongsToMany = $this->Bake->aliasExtractor($modelObj, 'BelongsToMany');
 /**
  * Edit method
  *
- * @param string $id
+ * @param string|null $id
  * @return void
  * @throws \Cake\Network\Exception\NotFoundException
  */

@@ -288,7 +288,7 @@ class Response extends Message {
 /**
  * Read single/multiple header value(s) out.
  *
- * @param string $name The name of the header you want. Leave
+ * @param string|null $name The name of the header you want. Leave
  *   null to get all headers.
  * @return mixed Null when the header doesn't exist. An array
  *   will be returned when getting all headers or when getting
@@ -309,7 +309,7 @@ class Response extends Message {
 /**
  * Read single/multiple cookie values out.
  *
- * @param string $name The name of the cookie you want. Leave
+ * @param string|null $name The name of the cookie you want. Leave
  *   null to get all cookies.
  * @param bool $all Get all parts of the cookie. When false only
  *   the value will be returned.
@@ -338,7 +338,7 @@ class Response extends Message {
  *
  * `$body = $response->body('json_decode');`
  *
- * @param callable $parser The callback to use to decode
+ * @param callable|null $parser The callback to use to decode
  *   the response body.
  * @return mixed The response body.
  */

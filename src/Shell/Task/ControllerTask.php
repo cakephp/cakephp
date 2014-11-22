@@ -41,7 +41,7 @@ class ControllerTask extends BakeTask {
 /**
  * Execution method always used for tasks
  *
- * @param string $name The name of the controller to bake.
+ * @param string|null $name The name of the controller to bake.
  * @return void
  */
 	public function main($name = null) {
