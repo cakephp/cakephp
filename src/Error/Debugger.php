@@ -147,7 +147,7 @@ class Debugger {
 /**
  * Returns a reference to the Debugger singleton object instance.
  *
- * @param string $class Class name.
+ * @param string|null $class Class name.
  * @return object
  */
 	public static function getInstance($class = null) {
@@ -195,9 +195,9 @@ class Debugger {
  *
  * @param int $code Code of error
  * @param string $description Error description
- * @param string $file File on which error occurred
- * @param int $line Line that triggered the error
- * @param array $context Context
+ * @param string|null $file File on which error occurred
+ * @param int|null $line Line that triggered the error
+ * @param array|null $context Context
  * @return bool true if error was handled
  * @deprecated 3.0.0 Will be removed in 3.0. This function is superseded by Debugger::outputError().
  */
@@ -609,7 +609,7 @@ class Debugger {
 /**
  * Get/Set the output format for Debugger error rendering.
  *
- * @param string $format The format you want errors to be output as.
+ * @param string|null $format The format you want errors to be output as.
  *   Leave null to get the current format.
  * @return mixed Returns null when setting. Returns the current format when getting.
  * @throws \InvalidArgumentException when choosing a format that doesn't exist.

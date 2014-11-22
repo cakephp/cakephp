@@ -551,7 +551,7 @@ class FormHelper extends Helper {
  * unlocking a field once its been added to the list of secured fields will remove
  * it from the list of fields.
  *
- * @param string $name The dot separated name for the field.
+ * @param string|null $name The dot separated name for the field.
  * @return mixed Either null, or the list of fields.
  * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#working-with-securitycomponent
  */
@@ -2321,6 +2321,7 @@ class FormHelper extends Helper {
 	public function context($context = null) {
 		if ($context instanceof ContextInterface) {
 			$this->_context = $context;
+			return null;
 		}
 		return $this->_getContext();
 	}

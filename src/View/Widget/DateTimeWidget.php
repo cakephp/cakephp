@@ -177,7 +177,7 @@ class DateTimeWidget implements WidgetInterface {
 /**
  * Deconstructs the passed date value into all time units
  *
- * @param string|int|array|\DateTime $value Value to deconstruct.
+ * @param string|int|array|\DateTime|null $value Value to deconstruct.
  * @param array $options Options for conversion.
  * @return array
  */

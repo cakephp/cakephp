@@ -735,7 +735,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
  * This changes the query type to be 'update'.
  * Can be combined with set() and where() methods to create update queries.
  *
- * @param string $table Unused parameter.
+ * @param string|null $table Unused parameter.
  * @return $this
  */
 	public function update($table = null) {
@@ -749,7 +749,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
  * This changes the query type to be 'delete'.
  * Can be combined with the where() method to create delete queries.
  *
- * @param string $table Unused parameter.
+ * @param string|null $table Unused parameter.
  * @return $this
  */
 	public function delete($table = null) {
@@ -824,7 +824,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
  * By default calling select() will disable auto-fields. You can re-enable
  * auto-fields with this method.
  *
- * @param bool $value The value to set or null to read the current value.
+ * @param bool|null $value The value to set or null to read the current value.
  * @return bool|$this Either the current value or the query object.
  */
 	public function autoFields($value = null) {

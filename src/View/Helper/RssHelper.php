@@ -92,7 +92,7 @@ class RssHelper extends Helper {
  * Returns an RSS document wrapped in `<rss />` tags
  *
  * @param array $attrib `<rss />` tag attributes
- * @param string $content Tag content.
+ * @param string|null $content Tag content.
  * @return string An RSS document
  */
 	public function document($attrib = array(), $content = null) {
@@ -112,7 +112,7 @@ class RssHelper extends Helper {
  *
  * @param array $attrib `<channel />` tag attributes
  * @param array $elements Named array elements which are converted to tags
- * @param string $content Content (`<item />`'s belonging to this channel
+ * @param string|null $content Content (`<item />`'s belonging to this channel
  * @return string An RSS `<channel />`
  */
 	public function channel($attrib = array(), $elements = array(), $content = null) {
@@ -155,7 +155,7 @@ class RssHelper extends Helper {
  * of `<item />` tags
  *
  * @param array $items The list of items to be mapped
- * @param string|array $callback A string function name, or array containing an object
+ * @param string|array|null $callback A string function name, or array containing an object
  *     and a string method name
  * @return string A set of RSS `<item />` elements
  */

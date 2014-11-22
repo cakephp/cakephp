@@ -468,7 +468,7 @@ class Request implements \ArrayAccess {
  * If a session object is passed as first argument it will be set as
  * the session to use for this request
  *
- * @param \Cake\Network\Session $session the session object to use
+ * @param \Cake\Network\Session|null $session the session object to use
  * @return \Cake\Network\Session
  */
 	public function session(Session $session = null) {
@@ -876,7 +876,7 @@ class Request implements \ArrayAccess {
  * This method will order the returned content types by the preference values indicated
  * by the client.
  *
- * @param string $type The content type to check for. Leave null to get all types a client accepts.
+ * @param string|null $type The content type to check for. Leave null to get all types a client accepts.
  * @return mixed Either an array of all the types the client accepts or a boolean if they accept the
  *   provided type.
  */
@@ -916,7 +916,7 @@ class Request implements \ArrayAccess {
  *
  * {{{ \Cake\Network\Request::acceptLanguage('es-es'); }}}
  *
- * @param string $language The language to test.
+ * @param string|null $language The language to test.
  * @return mixed If a $language is provided, a boolean. Otherwise the array of accepted languages.
  */
 	public function acceptLanguage($language = null) {
@@ -1052,7 +1052,7 @@ class Request implements \ArrayAccess {
  *
  * Any additional parameters are applied to the callback in the order they are given.
  *
- * @param string $callback A decoding callback that will convert the string data to another
+ * @param string|null $callback A decoding callback that will convert the string data to another
  *     representation. Leave empty to access the raw input data. You can also
  *     supply additional parameters for the decoding callback using var args, see above.
  * @return string The decoded/processed request data.
@@ -1086,7 +1086,7 @@ class Request implements \ArrayAccess {
  * Fallback to using env() if key not set in $environment property.
  *
  * @param string $key The key you want to read/write from/to.
- * @param string $value Value to set. Default null.
+ * @param string|null $value Value to set. Default null.
  * @return $this|string|null This instance if used as setter,
  *   if used as getter either the environment value, or null if the value doesn't exist.
  */

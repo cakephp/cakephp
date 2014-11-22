@@ -27,7 +27,7 @@ class RecordNotFoundException extends RuntimeException {
  *
  * @param string $message The error message
  * @param int $code The code of the error, is also the HTTP status code for the error.
- * @param \Exception $previous the previous exception.
+ * @param \Exception|null $previous the previous exception.
  */
 	public function __construct($message, $code = 404, $previous = null) {
 		parent::__construct($message, $code, $previous);

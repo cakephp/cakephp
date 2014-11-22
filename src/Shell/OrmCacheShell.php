@@ -32,7 +32,7 @@ class OrmCacheShell extends Shell {
 /**
  * Build metadata.
  *
- * @param string $name The name of the table to build cache data for.
+ * @param string|null $name The name of the table to build cache data for.
  * @return bool
  */
 	public function build($name = null) {
@@ -55,7 +55,7 @@ class OrmCacheShell extends Shell {
 /**
  * Clear metadata.
  *
- * @param string $name The name of the table to clear cache data for.
+ * @param string|null $name The name of the table to clear cache data for.
  * @return bool
  */
 	public function clear($name = null) {

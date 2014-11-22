@@ -106,8 +106,8 @@ class Request extends Message {
  *
  * `$request->header(['Connection' => 'close', 'User-Agent' => 'CakePHP']);`
  *
- * @param string|array $name The name to get, or array of multiple values to set.
- * @param string $value The value to set for the header.
+ * @param string|array|null $name The name to get, or array of multiple values to set.
+ * @param string|null $value The value to set for the header.
  * @return mixed Either $this when setting or header value when getting.
  */
 	public function header($name = null, $value = null) {

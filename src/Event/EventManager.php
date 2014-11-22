@@ -155,7 +155,7 @@ class EventManager {
  * Removes a listener from the active listeners.
  *
  * @param callback|\Cake\Event\EventListenerInterface $callable any valid PHP callback type or an instance of EventListenerInterface
- * @param string $eventKey The event unique identifier name with which the callback has been associated
+ * @param string|null $eventKey The event unique identifier name with which the callback has been associated
  * @return void
  */
 	public function detach($callable, $eventKey = null) {
@@ -185,7 +185,7 @@ class EventManager {
  * Auxiliary function to help detach all listeners provided by an object implementing EventListenerInterface
  *
  * @param \Cake\Event\EventListenerInterface $subscriber the subscriber to be detached
- * @param string $eventKey optional event key name to unsubscribe the listener from
+ * @param string|null $eventKey optional event key name to unsubscribe the listener from
  * @return void
  */
 	protected function _detachSubscriber(EventListenerInterface $subscriber, $eventKey = null) {

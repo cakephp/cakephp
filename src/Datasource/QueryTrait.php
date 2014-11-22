@@ -87,7 +87,7 @@ trait QueryTrait {
  * When called with a Table argument, the default table object will be set
  * and this query object will be returned for chaining.
  *
- * @param \Cake\Datasource\RepositoryInterface $table The default table object to use
+ * @param \Cake\Datasource\RepositoryInterface|null $table The default table object to use
  * @return \Cake\Datasource\RepositoryInterface|$this
  */
 	public function repository(RepositoryInterface $table = null) {
@@ -176,7 +176,7 @@ trait QueryTrait {
  * Sets the query instance to be the eager loaded query. If no argument is
  * passed, the current configured query `_eagerLoaded` value is returned.
  *
- * @param bool $value Whether or not to eager load.
+ * @param bool|null $value Whether or not to eager load.
  * @return $this|\Cake\ORM\Query
  */
 	public function eagerLoaded($value = null) {

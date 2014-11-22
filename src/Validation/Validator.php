@@ -138,7 +138,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * before
  *
  * @param string $name [optional] The fieldname to fetch.
- * @param \Cake\Validation\ValidationSet $set The set of rules for field
+ * @param \Cake\Validation\ValidationSet|null $set The set of rules for field
  * @return \Cake\Validation\ValidationSet
  */
 	public function field($name, ValidationSet $set = null) {
@@ -302,7 +302,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * }}}
  *
  * @param string $field The name of the field from which the rule will be removed
- * @param string $rule the name of the rule to be removed
+ * @param string|null $rule the name of the rule to be removed
  * @return $this
  */
 	public function remove($field, $rule = null) {
@@ -319,7 +319,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * @param string $field the name of the field
  * @param bool|string $mode Valid values are true, false, 'create', 'update'
- * @param string $message The message to show if the field presence validation fails.
+ * @param string|null $message The message to show if the field presence validation fails.
  * @return $this
  */
 	public function requirePresence($field, $mode = true, $message = null) {
@@ -337,7 +337,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * @param string $field the name of the field
  * @param bool|string $mode Valid values are true, false, 'create', 'update'
- * @param string $message The message to show if the field presence validation fails.
+ * @param string|null $message The message to show if the field presence validation fails.
  * @return $this
  * @deprecated 3.0.0 Will be removed in 3.0.0.
  */

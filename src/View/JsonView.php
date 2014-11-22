@@ -109,9 +109,9 @@ class JsonView extends View {
  *   - Setting it to a string value, uses the provided query string parameter for finding the
  *     JSONP callback name.
  *
- * @param string $view The view being rendered.
- * @param string $layout The layout being rendered.
- * @return string The rendered view.
+ * @param string|null $view The view being rendered.
+ * @param string|null $layout The layout being rendered.
+ * @return string|null The rendered view.
  */
 	public function render($view = null, $layout = null) {
 		$return = null;

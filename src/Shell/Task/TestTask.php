@@ -83,8 +83,8 @@ class TestTask extends BakeTask {
 /**
  * Execution method always used for tasks
  *
- * @param string $type Class type.
- * @param string $name Name.
+ * @param string|null $type Class type.
+ * @param string|null $name Name.
  * @return void
  */
 	public function main($type = null, $name = null) {

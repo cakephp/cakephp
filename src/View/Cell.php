@@ -140,7 +140,7 @@ abstract class Cell {
 /**
  * Render the cell.
  *
- * @param string $template Custom template name to render. If not provided (null), the last
+ * @param string|null $template Custom template name to render. If not provided (null), the last
  * value will be used. This value is automatically set by `CellTrait::cell()`.
  * @return string The rendered cell
  * @throws \Cake\View\Exception\MissingCellViewException When a MissingTemplateException is raised during rendering.

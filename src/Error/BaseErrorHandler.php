@@ -101,10 +101,10 @@ abstract class BaseErrorHandler {
  *
  * @param int $code Code of error
  * @param string $description Error description
- * @param string $file File on which error occurred
- * @param int $line Line that triggered the error
- * @param array $context Context
- * @return bool true if error was handled
+ * @param string|null $file File on which error occurred
+ * @param int|null $line Line that triggered the error
+ * @param array|null $context Context
+ * @return bool True if error was handled
  */
 	public function handleError($code, $description, $file = null, $line = null, $context = null) {
 		if (error_reporting() === 0) {

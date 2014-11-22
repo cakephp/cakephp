@@ -16,7 +16,7 @@
 /**
  * Delete method
  *
- * @param string $id
+ * @param string|null $id
  * @return void
  * @throws \Cake\Network\Exception\NotFoundException
  */

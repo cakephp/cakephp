@@ -345,7 +345,7 @@ abstract class ControllerTestCase extends TestCase {
  *
  * @param string $controller Controller name
  * @param array $mocks List of classes and methods to mock
- * @param \Cake\Network\Request $request A request object to build the controller with.
+ * @param \Cake\Network\Request|null $request A request object to build the controller with.
  *   This parameter is required when mocking prefixed controllers.
  * @return \Cake\Controller\Controller Mocked controller
  * @throws \Cake\Routing\Exception\MissingControllerException When controllers could not be created.
