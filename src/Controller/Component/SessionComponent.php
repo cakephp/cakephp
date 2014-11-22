@@ -114,7 +114,7 @@ class SessionComponent extends Component {
  * @return void
  * @deprecated 3.0 Use FlashComponent::set() instead.
  */
-	public function setFlash($message, $element = null, array $params = array(), $key = 'flash') {
+	public function setFlash($message, $element = '', array $params = array(), $key = 'flash') {
 		$this->_session->write('Flash.' . $key, [
 			'message' => $message,
 			'key' => $key,

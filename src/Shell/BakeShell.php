@@ -121,7 +121,7 @@ class BakeShell extends Shell {
  * @param array $tasks The task list to modify and return.
  * @param string $path The base path to look in.
  * @param string $namespace The base namespace.
- * @param string $prefix The prefix to append.
+ * @param string|null $prefix The prefix to append.
  * @return array Updated tasks.
  */
 	protected function _findTasks($tasks, $path, $namespace, $prefix = null) {
@@ -187,7 +187,7 @@ class BakeShell extends Shell {
 /**
  * Quickly bake the MVC
  *
- * @param string $name Name.
+ * @param string|null $name Name.
  * @return void
  */
 	public function all($name = null) {

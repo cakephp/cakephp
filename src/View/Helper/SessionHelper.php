@@ -45,7 +45,7 @@ class SessionHelper extends Helper {
  * In your view: `$this->Session->read('Controller.sessKey');`
  * Calling the method without a param will return all session vars
  *
- * @param string $name the name of the session key you want to read
+ * @param string|null $name the name of the session key you want to read
  * @return mixed values from the session vars
  */
 	public function read($name = null) {

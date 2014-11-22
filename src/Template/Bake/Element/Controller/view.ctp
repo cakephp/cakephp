@@ -22,7 +22,7 @@ $allAssociations = array_merge(
 /**
  * View method
  *
- * @param string $id
+ * @param string|null $id
  * @return void
  * @throws \Cake\Network\Exception\NotFoundException
  */

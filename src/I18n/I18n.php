@@ -102,8 +102,8 @@ class I18n {
  * }}}
  *
  * @param string $name The domain of the translation messages.
- * @param string $locale The locale for the translator.
- * @param callable $loader A callback function or callable class responsible for
+ * @param string|null $locale The locale for the translator.
+ * @param callable|null $loader A callback function or callable class responsible for
  * constructing a translations package instance.
  * @return \Aura\Intl\Translator The configured translator.
  */
@@ -196,7 +196,7 @@ class I18n {
  * When called with no arguments it will return the currently configure
  * locale as stored in the `intl.default_locale` PHP setting.
  *
- * @param string $locale The name of the locale to set as default.
+ * @param string|null $locale The name of the locale to set as default.
  * @return string|null The name of the default locale.
  */
 	public static function locale($locale = null) {
@@ -238,7 +238,7 @@ class I18n {
  *
  * If called with no arguments, it will return the currently configured value.
  *
- * @param string $name The name of the formatter to use.
+ * @param string|null $name The name of the formatter to use.
  * @return string The name of the formatter.
  */
 	public static function defaultFormatter($name = null) {

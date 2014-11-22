@@ -72,7 +72,7 @@ class TemplateTask extends Shell {
  * Runs the template
  *
  * @param string $template bake template to render
- * @param array $vars Additional vars to set to template scope.
+ * @param array|null $vars Additional vars to set to template scope.
  * @return string contents of generated code template
  */
 	public function generate($template, $vars = null) {

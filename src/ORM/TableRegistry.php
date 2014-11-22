@@ -93,8 +93,8 @@ class TableRegistry {
  * If no arguments are passed it will return the full configuration array for
  * all aliases
  *
- * @param string $alias Name of the alias
- * @param null|array $options list of options for the alias
+ * @param string|null $alias Name of the alias
+ * @param array|null $options list of options for the alias
  * @return array The config data.
  * @throws RuntimeException When you attempt to configure an existing table instance.
  */

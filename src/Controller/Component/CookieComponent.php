@@ -230,7 +230,7 @@ class CookieComponent extends Component {
  * This method will also allow you to read cookies that have been written in this
  * request, but not yet sent to the client.
  *
- * @param string $key Key of the value to be obtained.
+ * @param string|null $key Key of the value to be obtained.
  * @return string or null, value for specified key
  */
 	public function read($key = null) {
@@ -265,7 +265,7 @@ class CookieComponent extends Component {
 /**
  * Returns true if given key is set in the cookie.
  *
- * @param string $key Key to check for
+ * @param string|null $key Key to check for
  * @return bool True if the key exists
  */
 	public function check($key = null) {

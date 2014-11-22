@@ -64,7 +64,7 @@ interface CollectionInterface extends Iterator, JsonSerializable {
  * });
  * }}}
  *
- * @param callable $c the method that will receive each of the elements and
+ * @param callable|null $c the method that will receive each of the elements and
  *   returns true whether or not they should be in the resulting collection.
  *   If left null, a callback that filters out falsey values will be used.
  * @return \Cake\Collection\CollectionInterface
@@ -569,7 +569,7 @@ interface CollectionInterface extends Iterator, JsonSerializable {
  * or a function returning the indexing key out of the provided element
  * @param callable|string $valuePath the column name path to use as the array value
  * or a function returning the value out of the provided element
- * @param callable|string $groupPath the column name path to use as the parent
+ * @param callable|string|null $groupPath the column name path to use as the parent
  * grouping key or a function returning the key out of the provided element
  * @return \Cake\Collection\CollectionInterface
  */

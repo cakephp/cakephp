@@ -165,7 +165,7 @@ class Number {
  *   currency code.
  *
  * @param float $value Value to format.
- * @param string $currency International currency name such as 'USD', 'EUR', 'JPY', 'CAD'
+ * @param string|null $currency International currency name such as 'USD', 'EUR', 'JPY', 'CAD'
  * @param array $options Options list.
  * @return string Number formatted as a currency.
  */
@@ -193,7 +193,7 @@ class Number {
 /**
  * Getter/setter for default currency
  *
- * @param string|bool $currency Default currency string to be used by currency()
+ * @param string|bool|null $currency Default currency string to be used by currency()
  * if $currency argument is not provided. If boolean false is passed, it will clear the
  * currently stored value
  * @return string Currency

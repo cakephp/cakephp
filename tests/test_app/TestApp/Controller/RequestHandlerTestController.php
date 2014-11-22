@@ -44,8 +44,8 @@ class RequestHandlerTestController extends Controller {
 /**
  * test method for ajax redirection + parameter parsing
  *
- * @param string $one
- * @param string $two
+ * @param string|null $one
+ * @param string|null $two
  * @return void
  */
 	public function param_method($one = null, $two = null) {

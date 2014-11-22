@@ -232,7 +232,7 @@ class Session {
  * If no arguments are passed it will return the currently configured handler instance
  * or null if none exists.
  *
- * @param string|\SessionHandlerInterface $class The session handler to use
+ * @param string|\SessionHandlerInterface|null $class The session handler to use
  * @param array $options the options to pass to the SessionHandler constructor
  * @return \SessionHandlerInterface|null
  * @throws \InvalidArgumentException
@@ -339,7 +339,7 @@ class Session {
 /**
  * Returns true if given variable name is set in session.
  *
- * @param string $name Variable name to check for
+ * @param string|null $name Variable name to check for
  * @return bool True if variable is there
  */
 	public function check($name = null) {
@@ -361,7 +361,7 @@ class Session {
 /**
  * Returns given session variable, or all of them, if no parameters given.
  *
- * @param string|array $name The name of the session variable (or a path as sent to Set.extract)
+ * @param string|array|null $name The name of the session variable (or a path as sent to Set.extract)
  * @return mixed The value of the session variable, null if session not available,
  *   session not started, or provided name not found in the session.
  */
@@ -389,7 +389,7 @@ class Session {
  * Writes value to given session variable name.
  *
  * @param string|array $name Name of variable
- * @param string $value Value to write
+ * @param string|null $value Value to write
  * @return bool True if the write was successful, false if the write failed
  */
 	public function write($name, $value = null) {
@@ -425,7 +425,7 @@ class Session {
  * within the session id. For example, the file session handler only allows
  * characters in the range a-z A-Z 0-9 , (comma) and - (minus).
  *
- * @param string $id Id to replace the current session id
+ * @param string|null $id Id to replace the current session id
  * @return string Session id
  */
 	public function id($id = null) {

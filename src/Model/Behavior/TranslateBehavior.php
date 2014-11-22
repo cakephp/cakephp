@@ -256,7 +256,7 @@ class TranslateBehavior extends Behavior {
  * the passed locale. If no value is passed, it returns the currently configured
  * locale
  *
- * @param string $locale The locale to use for fetching translated records
+ * @param string|null $locale The locale to use for fetching translated records
  * @return string
  */
 	public function locale($locale = null) {

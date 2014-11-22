@@ -229,8 +229,8 @@ class StringTemplate {
  * these templates uses the `name` and `value` variables. You can modify these
  * templates to change how attributes are formatted.
  *
- * @param array $options Array of options.
- * @param null|array $exclude Array of options to be excluded, the options here will not be part of the return.
+ * @param array|null $options Array of options.
+ * @param array|null $exclude Array of options to be excluded, the options here will not be part of the return.
  * @return string Composed attributes.
  */
 	public function formatAttributes($options, $exclude = null) {

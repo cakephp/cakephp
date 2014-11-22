@@ -100,11 +100,11 @@ class Folder {
 /**
  * Constructor.
  *
- * @param string $path Path to folder
+ * @param string|null $path Path to folder
  * @param bool $create Create folder if not found
- * @param string|bool $mode Mode (CHMOD) to apply to created folder, false to ignore
+ * @param int|bool $mode Mode (CHMOD) to apply to created folder, false to ignore
  */
-	public function __construct($path = false, $create = false, $mode = false) {
+	public function __construct($path = null, $create = false, $mode = false) {
 		if (empty($path)) {
 			$path = TMP;
 		}
@@ -375,7 +375,7 @@ class Folder {
  * Change the mode on a directory structure recursively. This includes changing the mode on files as well.
  *
  * @param string $path The path to chmod.
- * @param int $mode Octal value, e.g. 0755.
+ * @param int|bool $mode Octal value, e.g. 0755.
  * @param bool $recursive Chmod recursively, set to false to only change the current directory.
  * @param array $exceptions Array of files, directories to skip.
  * @return bool Success.
@@ -429,10 +429,10 @@ class Folder {
 /**
  * Returns an array of nested directories and files in each directory
  *
- * @param string $path the directory path to build the tree from
+ * @param string|null $path the directory path to build the tree from
  * @param array|bool $exceptions Either an array of files/folder to exclude
  *   or boolean true to not grab dot files/folders
- * @param string $type either 'file' or 'dir'. null returns both files and directories
+ * @param string|null $type either 'file' or 'dir'. Null returns both files and directories
  * @return mixed array of nested directories and files in each directory
  */
 	public function tree($path = null, $exceptions = false, $type = null) {
@@ -575,7 +575,7 @@ class Folder {
 /**
  * Recursively Remove directories if the system allows.
  *
- * @param string $path Path of directory to delete
+ * @param string|null $path Path of directory to delete
  * @return bool Success
  */
 	public function delete($path = null) {

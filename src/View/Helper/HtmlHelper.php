@@ -145,7 +145,7 @@ class HtmlHelper extends Helper {
  * Adds a link to the breadcrumbs array.
  *
  * @param string $name Text for link
- * @param string $link URL for link (if empty it won't be a link)
+ * @param string|null $link URL for link (if empty it won't be a link)
  * @param string|array $options Link attributes e.g. array('id' => 'selected')
  * @return $this
  * @see HtmlHelper::link() for details on $options that can be used.
@@ -206,7 +206,7 @@ class HtmlHelper extends Helper {
  *   custom block name.
  *
  * @param string|array $type The title of the external resource
- * @param string|array $content The address of the external resource or string for content attribute
+ * @param string|array|null $content The address of the external resource or string for content attribute
  * @param array $options Other attributes for the generated tag. If the type attribute is html,
  *    rss, atom, or icon, the mime-type is returned.
  * @return string A completed `<link />` element.
@@ -280,7 +280,7 @@ class HtmlHelper extends Helper {
 /**
  * Returns a charset META-tag.
  *
- * @param string $charset The character set to be used in the meta tag. If empty,
+ * @param string|null $charset The character set to be used in the meta tag. If empty,
  *  The App.encoding value will be used. Example: "utf-8".
  * @return string A meta tag containing the specified character set.
  * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-charset-tags
@@ -311,7 +311,7 @@ class HtmlHelper extends Helper {
  * - `confirm` JavaScript confirmation message.
  *
  * @param string $title The content to be wrapped by <a> tags.
- * @param string|array $url Cake-relative URL or array of URL parameters, or
+ * @param string|array|null $url Cake-relative URL or array of URL parameters, or
  *   external URL (starts with http://)
  * @param array $options Array of options and HTML attributes.
  * @return string An `<a />` element.
@@ -718,7 +718,7 @@ class HtmlHelper extends Helper {
 /**
  * Prepends startText to crumbs array if set
  *
- * @param string $startText Text to prepend
+ * @param string|array|bool $startText Text to prepend
  * @param bool $escape If the output should be escaped or not
  * @return array Crumb list including startText (if provided)
  */
@@ -801,8 +801,8 @@ class HtmlHelper extends Helper {
  *
  * @param array $names Array of tablenames. Each tablename also can be a key that points to an array with a set
  *     of attributes to its specific tag
- * @param array $trOptions HTML options for TR elements.
- * @param array $thOptions HTML options for TH elements.
+ * @param array|null $trOptions HTML options for TR elements.
+ * @param array|null $thOptions HTML options for TH elements.
  * @return string Completed table headers
  * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-table-headings
  */
