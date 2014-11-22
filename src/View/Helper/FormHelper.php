@@ -2321,7 +2321,6 @@ class FormHelper extends Helper {
 	public function context($context = null) {
 		if ($context instanceof ContextInterface) {
 			$this->_context = $context;
-			return null;
 		}
 		return $this->_getContext();
 	}
