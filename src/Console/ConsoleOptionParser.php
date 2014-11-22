@@ -235,6 +235,7 @@ class ConsoleOptionParser {
 			$spec = $spec->toArray();
 		}
 		if (!empty($spec['arguments'])) {
+			$this->_args = array();
 			$this->addArguments($spec['arguments']);
 		}
 		if (!empty($spec['options'])) {
