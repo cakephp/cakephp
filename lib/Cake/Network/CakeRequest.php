@@ -112,8 +112,8 @@ class CakeRequest implements ArrayAccess {
 			'webOS', 'Windows CE', 'Windows Phone OS', 'Xiino'
 		)),
 		'requested' => array('param' => 'requested', 'value' => 1),
-		'json' => array('header' => array('application/json'), 'param' => 'ext', 'value' => 'json'),
-		'xml' => array('header' => array('application/xml', 'text/xml'), 'param' => 'ext', 'value' => 'xml'),
+		'json' => array('header' => array('application/json')),
+		'xml' => array('header' => array('application/xml', 'text/xml')),
 	);
 
 /**
@@ -524,9 +524,6 @@ class CakeRequest implements ArrayAccess {
 		$headers = array();
 		if (isset($_SERVER['HTTP_ACCEPT'])) {
 			$headers = explode(',', $_SERVER['HTTP_ACCEPT']);
-		} elseif (function_exists('getallheaders')) {
-			$headers = getallheaders();
-			$headers = explode(',', $headers['Accept']);
 		}
 		return $headers;
 	}
@@ -538,9 +535,9 @@ class CakeRequest implements ArrayAccess {
  * @return bool Whether or not the request is the type you are checking.
  */
 	protected function _headerDetector($detect) {
-		$headers = $this->getAcceptHeaders();
+		$acceptHeaders = $this->getAcceptHeaders();
 		foreach ($detect['header'] as $header) {
-			if (in_array($header, $headers)) {
+			if (in_array($header, $acceptHeaders)) {
 				return true;
 			}
 		}
@@ -548,7 +545,7 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Detects if a specific header is present
+ * Detects if a specific request parameter is present.
  *
  * @param array $detect Detector options array.
  * @return bool Whether or not the request is the type you are checking.
@@ -566,7 +563,7 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Detects if a specific header is present
+ * Detects if a specific environment variable is present.
  *
  * @param array $detect Detector options array.
  * @return bool Whether or not the request is the type you are checking.
