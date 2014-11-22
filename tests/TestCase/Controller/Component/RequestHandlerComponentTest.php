@@ -616,6 +616,9 @@ class RequestHandlerComponentTest extends TestCase {
 		$result = $this->RequestHandler->requestedWith(array('rss', 'atom'));
 		$this->assertFalse($result);
 
+		$this->request->env('REQUEST_METHOD', 'PATCH');
+		$this->assertEquals('json', $this->RequestHandler->requestedWith());
+
 		$this->request->env('REQUEST_METHOD', 'DELETE');
 		$this->assertEquals('json', $this->RequestHandler->requestedWith());
 
