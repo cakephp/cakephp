@@ -21,6 +21,7 @@ App::uses('AuthComponent', 'Controller/Component');
 App::uses('AclComponent', 'Controller/Component');
 App::uses('BaseAuthenticate', 'Controller/Component/Auth');
 App::uses('FormAuthenticate', 'Controller/Component/Auth');
+App::uses('CakeEvent', 'Event');
 
 /**
  * TestFormAuthenticate class
@@ -64,6 +65,7 @@ class TestBaseAuthenticate extends BaseAuthenticate {
 			'username' => 'mark'
 		);
 	}
+
 }
 
 /**
@@ -506,7 +508,6 @@ class AuthComponentTest extends CakeTestCase {
 		$auth = $this->Auth->getAuthenticateObject(0);
 		$listener = $this->getMock('AuthEventTestListener');
 		$auth->afterIdentifyCallable = array($listener, 'listenerFunction');
-		App::uses('CakeEvent', 'Event');
 		$event = new CakeEvent('Auth.afterIdentify', $this->Auth, array('user' => $user));
 		$listener->expects($this->once())->method('listenerFunction')->with($event);
 
