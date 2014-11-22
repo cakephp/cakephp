@@ -106,7 +106,7 @@ class CakeRequestTest extends CakeTestCase {
  */
 	public function testHeaderDetector() {
 		$request = $this->getMock('TestCakeRequest', array('getAcceptHeaders'));
-		$_SERVER['HTTP_ACCEPT'] = 'application/json';
+		$_SERVER['HTTP_ACCEPT'] = 'application/json, text/plain, */*';
 		$detector = array('header' => array('application/json'), 'param' => 'ext', 'value' => 'json');
 		$request->expects($this->once())
 			->method('getAcceptHeaders')
@@ -774,6 +774,24 @@ class CakeRequestTest extends CakeTestCase {
 
 		$_SERVER['REQUEST_METHOD'] = 'delete';
 		$this->assertFalse($request->is('delete'));
+	}
+
+/**
+ * Test is() with json and xml.
+ *
+ * @return void
+ */
+	public function testIsJsonAndXml() {
+		$request = new CakeRequest('some/path');
+
+		$_SERVER['HTTP_ACCEPT'] = 'application/json, text/plain, */*';
+		$this->assertTrue($request->is(array('json')));
+
+		$_SERVER['HTTP_ACCEPT'] = 'application/xml, text/plain, */*';
+		$this->assertTrue($request->is(array('xml')));
+
+		$_SERVER['HTTP_ACCEPT'] = 'text/xml, */*';
+		$this->assertTrue($request->is(array('xml')));
 	}
 
 /**

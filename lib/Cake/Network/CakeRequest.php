@@ -503,7 +503,7 @@ class CakeRequest implements ArrayAccess {
 		if (isset($detect['env']) && $this->_environmentDetector($detect)) {
 			return true;
 		}
-		if (isset($detect['header']) && $this->_environmentDetector($detect)) {
+		if (isset($detect['header']) && $this->_headerDetector($detect)) {
 			return true;
 		}
 		if (isset($detect['param']) && $this->_paramDetector($detect)) {
