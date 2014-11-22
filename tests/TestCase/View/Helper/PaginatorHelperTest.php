@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Core\Configure;
+use Cake\I18n\I18n;
 use Cake\Network\Request;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -59,6 +60,8 @@ class PaginatorHelperTest extends TestCase {
 		Router::reload();
 		Router::connect('/:controller/:action/*');
 		Router::connect('/:plugin/:controller/:action/*');
+
+		$this->locale = I18n::locale();
 	}
 
 /**
@@ -69,6 +72,8 @@ class PaginatorHelperTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		unset($this->View, $this->Paginator);
+
+		I18n::locale($this->locale);
 	}
 
 /**
@@ -1895,6 +1900,12 @@ class PaginatorHelperTest extends TestCase {
 
 		$expected = 'Page 1,523 of 1,000, showing 1,230 records out of 234,567 total, ';
 		$expected .= 'starting on record 4,566,001, ending on 234,567';
+		$result = $this->Paginator->counter($input);
+		$this->assertEquals($expected, $result);
+
+		I18n::locale('de-DE');
+		$expected = 'Page 1.523 of 1.000, showing 1.230 records out of 234.567 total, ';
+		$expected .= 'starting on record 4.566.001, ending on 234.567';
 		$result = $this->Paginator->counter($input);
 		$this->assertEquals($expected, $result);
 	}
