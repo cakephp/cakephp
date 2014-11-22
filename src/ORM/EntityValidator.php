@@ -99,7 +99,7 @@ class EntityValidator {
 				continue;
 			}
 
-			$validator = $association->target()->entityValidator();
+			$validator = new self($association->target());
 			if ($isOne) {
 				$valid = $validator->one($value, $assoc['options']) && $valid;
 			} else {
