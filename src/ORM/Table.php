@@ -1178,7 +1178,8 @@ class Table implements RepositoryInterface, EventListenerInterface {
 	public function save(EntityInterface $entity, $options = []) {
 		$options = new \ArrayObject($options + [
 			'atomic' => true,
-			'associated' => true
+			'associated' => true,
+			'domainCheck' => true
 		]);
 
 		if ($entity->errors()) {
@@ -1219,6 +1220,10 @@ class Table implements RepositoryInterface, EventListenerInterface {
 				$conditions["$alias.$k"] = $v;
 			}
 			$entity->isNew(!$this->exists($conditions));
+		}
+
+		if ($options['checkDomain'] && !$this->checkDomainRules($entity)) {
+			return false;
 		}
 
 		$options['associated'] = $this->_associations->normalizeKeys($options['associated']);
@@ -1826,6 +1831,20 @@ class Table implements RepositoryInterface, EventListenerInterface {
 		}
 
 		return !$this->exists($conditions);
+	}
+
+	public function checkDomainRules($entity) {
+		$rules = $this->domainRules();
+
+		if ($entity->isNew()) {
+			return $rules->checkCreate($entity);
+		}
+
+		return $rules->checkUpdate($entity);
+	}
+
+	public function domainRules() {
+		return new DomainChecker;
 	}
 
 /**
