@@ -29,6 +29,7 @@ use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\BehaviorRegistry;
+use Cake\ORM\DomainChecker;
 use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Exception\RecordNotFoundException;
 use Cake\ORM\Marshaller;
@@ -179,6 +180,14 @@ class Table implements RepositoryInterface, EventListenerInterface {
  * @var array
  */
 	protected $_validators = [];
+
+
+/**
+ * The domain rules to be applied to entities saved by this table
+ *
+ * @var \Cake\ORM\DomainChecker
+ */
+	protected $_domainChecker;
 
 /**
  * Initializes a new instance
@@ -1222,7 +1231,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			$entity->isNew(!$this->exists($conditions));
 		}
 
-		if ($options['checkDomain'] && !$this->checkDomainRules($entity)) {
+		if ($options['domainCheck'] && !$this->checkDomainRules($entity)) {
 			return false;
 		}
 
@@ -1844,7 +1853,14 @@ class Table implements RepositoryInterface, EventListenerInterface {
 	}
 
 	public function domainRules() {
-		return new DomainChecker;
+		if ($this->_domainChecker !== null) {
+			return $this->_domainChecker;
+		}
+		return $this->_domainChecker = $this->buildDomainRules(new DomainChecker);
+	}
+
+	public function buildDomainRules(DomainChecker $rules) {
+		return $rules;
 	}
 
 /**

@@ -30,14 +30,17 @@ class DomainChecker {
 
 	public function add(callable $rule) {
 		$this->_rules[] = $rule;
+		return $this;
 	}
 
 	public function addCreate(callable $rule) {
 		$this->_createRules[] = $rule;
+		return $this;
 	}
 
 	public function addUpdate(callable $rule) {
 		$this->_updateRules[] = $rule;
+		return $this;
 	}
 
 	public function checkCreate(EntityInterface $entity) {
@@ -45,7 +48,7 @@ class DomainChecker {
 		foreach (array_merge($this->_rules, $this->_createRules) as $rule) {
 			$success = $rule($entity) && $success;
 		}
-		return $succcess;
+		return $success;
 	}
 
 	public function checkUpdate(EntityInterface $entity) {
@@ -53,7 +56,7 @@ class DomainChecker {
 		foreach (array_merge($this->_rules, $this->_updateRules) as $rule) {
 			$success = $rule($entity) && $success;
 		}
-		return $succcess;
+		return $success;
 	}
 
 }
