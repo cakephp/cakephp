@@ -1323,7 +1323,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			->values($data)
 			->execute();
 
-		if ($statement->rowCount() > 0) {
+		if ($statement->rowCount() !== 0) {
 			$success = $entity;
 			$entity->set($filteredKeys, ['guard' => false]);
 			foreach ($primary as $key => $v) {
