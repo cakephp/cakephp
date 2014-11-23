@@ -44,9 +44,8 @@ class BakeView extends View {
  */
 	protected $_defaultConfig = [
 		'phpTagReplacements' => [
-			'<?=' => "<CakePHPBakePhpOpenTag=",
-			'<?php' => "<CakePHPBakePhpOpenTag",
-			' ?>' => " CakePHPBakePhpCloseTag>"
+			'<?' => "<CakePHPBakeOpenTag",
+			'?>' => "CakePHPBakeCloseTag>"
 		],
 		'replacements' => [
 			'/\n[ \t]+<%- /' => "\n<% ",
