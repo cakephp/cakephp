@@ -43,7 +43,6 @@ class ErrorController extends Controller {
 		if (isset($this->Security)) {
 			$eventManager->detach($this->Security);
 		}
-		$this->cacheAction = false;
 		$this->viewPath = 'Error';
 	}
 
