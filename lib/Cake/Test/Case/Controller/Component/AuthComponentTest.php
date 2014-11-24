@@ -69,50 +69,6 @@ class TestBaseAuthenticate extends BaseAuthenticate {
 }
 
 /**
- * TestFormAuthenticate class
- *
- * @package       Cake.Test.Case.Controller.Component
- */
-class TestBaseAuthenticate extends BaseAuthenticate {
-
-/**
- * Implemented events
- *
- * @return array of events => callbacks.
- */
-	public function implementedEvents() {
-		return array(
-			'Auth.afterIdentify' => 'afterIdentify'
-		);
-	}
-
-	public $afterIdentifyCallable = null;
-
-/**
- * Test function to be used in event dispatching
- *
- * @return void
- */
-	public function afterIdentify($event) {
-		call_user_func($this->afterIdentifyCallable, $event);
-	}
-
-/**
- * Authenticate a user based on the request information.
- *
- * @param CakeRequest $request Request to get authentication information from.
- * @param CakeResponse $response A response object that can have headers added.
- * @return array|bool Either false on failure, or an array of user data on success.
- */
-	public function authenticate(CakeRequest $request, CakeResponse $response) {
-		return array(
-			'id' => 1,
-			'username' => 'mark'
-		);
-	}
-}
-
-/**
  * TestAuthComponent class
  *
  * @package       Cake.Test.Case.Controller.Component
