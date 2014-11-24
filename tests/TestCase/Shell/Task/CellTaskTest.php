@@ -123,9 +123,9 @@ class CellTaskTest extends TestCase {
 			);
 
 		$result = $this->Task->bake('Example');
-		$this->assertContains('namespace TestPlugin\View\Cell;', $result);
-		$this->assertContains('use Cake\View\Cell;', $result);
-		$this->assertContains('class ExampleCell extends Cell {', $result);
+
+		$expected = file_get_contents(CORE_TESTS . '/bake_compare/View/Cell/ExampleCell.php');
+		$this->assertTextEquals($expected, $result);
 	}
 
 }
