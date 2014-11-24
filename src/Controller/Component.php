@@ -114,7 +114,7 @@ class Component implements EventListenerInterface {
  * Implement this method to avoid having to overwrite
  * the constructor and call parent.
  *
- * @param array $config The configuration array this component is using.
+ * @param array $config The configuration settings provided to this component.
  * @return void
  */
 	public function initialize(array $config) {
