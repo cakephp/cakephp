@@ -99,14 +99,8 @@ class FixtureTaskTest extends TestCase {
 
 		$result = $this->Task->bake('Articles');
 
-		$this->assertContains('namespace App\Test\Fixture;', $result);
-		$this->assertContains('use Cake\TestSuite\Fixture\TestFixture;', $result);
-		$this->assertContains('class ArticlesFixture extends TestFixture', $result);
-		$this->assertContains('public $records', $result);
-		$this->assertContains('public $import', $result);
-		$this->assertContains("'title' => 'First Article'", $result, 'Missing import data %s');
-		$this->assertContains('Second Article', $result, 'Missing import data %s');
-		$this->assertContains('Third Article', $result, 'Missing import data %s');
+		$expected = file_get_contents(CORE_TESTS . '/bake_compare/test/Fixture/ArticleImportWithConditionsFixture.php');
+		$this->assertTextEquals($expected, $result);
 	}
 
 /**
@@ -118,7 +112,9 @@ class FixtureTaskTest extends TestCase {
 		$this->Task->connection = 'test';
 		$this->Task->params = ['schema' => true];
 		$result = $this->Task->bake('Article');
-		$this->assertContains("'connection' => 'test'", $result);
+
+		$expected = file_get_contents(CORE_TESTS . '/bake_compare/test/Fixture/ArticleAlternateConnectionFixture.php');
+		$this->assertTextEquals($expected, $result);
 	}
 
 /**
@@ -133,7 +129,9 @@ class FixtureTaskTest extends TestCase {
 		$this->Task->connection = 'test';
 		$this->Task->params = ['schema' => 'true', 'records' => true];
 		$result = $this->Task->bake('Article');
-		$this->assertContains("'body' => 'Body \"value\"'", $result, 'Data has bad escaping');
+
+		$expected = file_get_contents(CORE_TESTS . '/bake_compare/test/Fixture/ArticleNoEscapingFixture.php');
+		$this->assertTextEquals($expected, $result, 'Data has bad escaping');
 	}
 
 /**
@@ -318,7 +316,11 @@ class FixtureTaskTest extends TestCase {
 				$this->logicalNot($this->stringContains('public $fields')),
 				$this->logicalNot($this->stringContains('public $records'))
 			));
-		$this->Task->bake('Article', 'comments');
+
+		$result = $this->Task->bake('Article', 'comments');
+
+		$expected = file_get_contents(CORE_TESTS . '/bake_compare/test/Fixture/ArticleCommentsFixture.php');
+		$this->assertTextEquals($expected, $result);
 	}
 
 /**
@@ -330,14 +332,13 @@ class FixtureTaskTest extends TestCase {
 		$this->Task->connection = 'test';
 
 		$result = $this->Task->bake('Article', 'datatypes');
-		$this->assertContains("'float_field' => 1", $result);
-		$this->assertContains("'bool' => 1", $result);
-		$this->assertContains("_constraints", $result);
-		$this->assertContains("'primary' => ['type' => 'primary'", $result);
-		$this->assertContains("'columns' => ['id']", $result);
+
+		$expected = file_get_contents(CORE_TESTS . '/bake_compare/test/Fixture/ArticleDatatypesFixture.php');
+		$this->assertTextEquals($expected, $result);
 
 		$result = $this->Task->bake('Article', 'binary_tests');
-		$this->assertContains("'data' => 'Lorem ipsum dolor sit amet'", $result);
+		$expected = file_get_contents(CORE_TESTS . '/bake_compare/test/Fixture/ArticleBinaryTestFixture.php');
+		$this->assertTextEquals($expected, $result);
 	}
 
 /**
