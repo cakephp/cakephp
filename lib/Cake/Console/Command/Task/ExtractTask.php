@@ -180,11 +180,12 @@ class ExtractTask extends AppShell {
 			$this->_exclude = array_merge($this->_exclude, App::path('plugins'));
 		}
 
-		if (!empty($this->params['ignore-model-validation']) || (!$this->_isExtractingApp() && empty($plugin))) {
-			$this->_extractValidation = false;
-		}
 		if (!empty($this->params['validation-domain'])) {
 			$this->_validationDomain = $this->params['validation-domain'];
+		} else {
+			if (!$this->_isExtractingApp() && empty($plugin)) {
+				$this->_extractValidation = false;
+			}
 		}
 
 		if ($this->_extractCore) {
