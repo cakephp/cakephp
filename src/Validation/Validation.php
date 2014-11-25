@@ -640,6 +640,7 @@ class Validation {
  * @param string|null $regex Regular expression to use
  * @param string $country Country code (defaults to 'all')
  * @return bool Success
+ * @deprecated 3.0.0 Will be removed in 3.0.0. Please use the Localized plugin instead.
  */
 	public static function phone($check, $regex = null, $country = 'all') {
 		if (is_array($check)) {
@@ -682,6 +683,7 @@ class Validation {
  * @param string|null $regex Regular expression to use
  * @param string $country Country to use for formatting
  * @return bool Success
+ * @deprecated 3.0.0 Will be removed in 3.0.0. Please use the Localized plugin instead.
  */
 	public static function postal($check, $regex = null, $country = 'us') {
 		if (is_array($check)) {
