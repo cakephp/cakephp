@@ -408,11 +408,11 @@ class ViewTaskTest extends TestCase {
 		$this->Task->expects($this->at(0))
 			->method('createFile')
 			->with(
-				$this->_normalizePath(APP . 'Template/ViewTaskComments/view.ctp'),
-				$this->stringContains('View Task Comments')
+				$this->_normalizePath(APP . 'Template/ViewTaskComments/view.ctp')
 			);
 
-		$this->Task->bake('view', true);
+		$result = $this->Task->bake('view', true);
+		$this->assertSameAsFile(__FUNCTION__ . '.ctp', $result);
 	}
 
 /**
@@ -427,8 +427,7 @@ class ViewTaskTest extends TestCase {
 
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with(
-				$this->_normalizePath(APP . 'Template/ViewTaskComments/edit.ctp'),
-				$this->anything()
+				$this->_normalizePath(APP . 'Template/ViewTaskComments/edit.ctp')
 			);
 		$result = $this->Task->bake('edit', true);
 		$this->assertSameAsFile(__FUNCTION__ . '.ctp', $result);
@@ -446,10 +445,10 @@ class ViewTaskTest extends TestCase {
 
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with(
-				$this->_normalizePath(APP . 'Template/ViewTaskComments/index.ctp'),
-				$this->stringContains("\$viewTaskComment->article->title")
+				$this->_normalizePath(APP . 'Template/ViewTaskComments/index.ctp')
 			);
-		$this->Task->bake('index', true);
+		$result = $this->Task->bake('index', true);
+		$this->assertSameAsFile(__FUNCTION__ . '.ctp', $result);
 	}
 
 /**
@@ -553,8 +552,7 @@ class ViewTaskTest extends TestCase {
 
 		$this->Task->expects($this->once())->method('createFile')
 			->with(
-				$this->_normalizePath(APP . 'Template/ViewTaskComments/my_action.ctp'),
-				$this->anything()
+				$this->_normalizePath(APP . 'Template/ViewTaskComments/my_action.ctp')
 			);
 
 		$this->Task->customAction();
@@ -691,8 +689,7 @@ class ViewTaskTest extends TestCase {
 		foreach ($views as $i => $view) {
 			$this->Task->expects($this->at($i))->method('createFile')
 				->with(
-					$this->_normalizePath(APP . 'Template/Blog/' . $view),
-					$this->anything()
+					$this->_normalizePath(APP . 'Template/Blog/' . $view)
 				);
 		}
 		$this->Task->main('Posts');
@@ -713,8 +710,7 @@ class ViewTaskTest extends TestCase {
 		foreach ($views as $i => $view) {
 			$this->Task->expects($this->at($i))->method('createFile')
 				->with(
-					$this->_normalizePath(APP . 'Template/Admin/Posts/' . $view),
-					$this->anything()
+					$this->_normalizePath(APP . 'Template/Admin/Posts/' . $view)
 				);
 		}
 		$this->Task->main('Posts');
