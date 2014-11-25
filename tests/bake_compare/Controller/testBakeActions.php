@@ -41,7 +41,7 @@ class BakeArticlesController extends AppController {
 /**
  * View method
  *
- * @param string|null $id
+ * @param string|null $id Bake Article id
  * @return void
  * @throws \Cake\Network\Exception\NotFoundException
  */
@@ -75,7 +75,7 @@ class BakeArticlesController extends AppController {
 /**
  * Edit method
  *
- * @param string|null $id
+ * @param string|null $id Bake Article id
  * @return void
  * @throws \Cake\Network\Exception\NotFoundException
  */
@@ -100,7 +100,7 @@ class BakeArticlesController extends AppController {
 /**
  * Delete method
  *
- * @param string|null $id
+ * @param string|null $id Bake Article id
  * @return void
  * @throws \Cake\Network\Exception\NotFoundException
  */

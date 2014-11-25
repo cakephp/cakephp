@@ -21,7 +21,7 @@ $compact = ["'" . $singularName . "'"];
 /**
  * Edit method
  *
- * @param string|null $id
+ * @param string|null $id <%= $singularHumanName %> id
  * @return void
  * @throws \Cake\Network\Exception\NotFoundException
  */
