@@ -21,6 +21,7 @@ use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Shell\Task\TemplateTask;
 use Cake\Shell\Task\ViewTask;
+use Cake\TestSuite\StringCompareTrait;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -77,6 +78,8 @@ class ViewTaskCommentsController extends Controller {
  * ViewTaskTest class
  */
 class ViewTaskTest extends TestCase {
+
+	use StringCompareTrait;
 
 /**
  * Fixtures
@@ -298,15 +301,7 @@ class ViewTaskTest extends TestCase {
 			'keyFields' => [],
 		);
 		$result = $this->Task->getContent('view', $vars);
-
-		$this->assertContains('Delete Test View Model', $result);
-		$this->assertContains('Edit Test View Model', $result);
-		$this->assertContains('List Test View Models', $result);
-		$this->assertContains('New Test View Model', $result);
-
-		$this->assertContains('$testViewModel->id', $result);
-		$this->assertContains('$testViewModel->name', $result);
-		$this->assertContains('$testViewModel->body', $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.ctp', $result);
 	}
 
 /**
@@ -342,13 +337,7 @@ class ViewTaskTest extends TestCase {
 			'keyFields' => [],
 		);
 		$result = $this->Task->getContent('view', $vars);
-
-		$this->assertContains('Delete View Task Comment', $result);
-		$this->assertContains('Edit View Task Comment', $result);
-		$this->assertContains('List Authors', $result);
-		$this->assertContains('New Author', $result);
-
-		$this->assertContains("'controller' => 'ViewTaskAuthors'", $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.ctp', $result);
 	}
 
 /**
@@ -399,20 +388,10 @@ class ViewTaskTest extends TestCase {
 		);
 		$this->Task->params['prefix'] = 'Admin';
 		$result = $this->Task->getContent('view', $vars);
-
-		$this->assertContains('Delete Test View Model', $result);
-		$this->assertContains('Edit Test View Model', $result);
-		$this->assertContains('List Test View Models', $result);
-		$this->assertContains('New Test View Model', $result);
-
-		$this->assertContains('$testViewModel->id', $result);
-		$this->assertContains('$testViewModel->name', $result);
-		$this->assertContains('$testViewModel->body', $result);
+		$this->assertSameAsFile(__FUNCTION__ . '-view.ctp', $result);
 
 		$result = $this->Task->getContent('add', $vars);
-		$this->assertContains("input('name')", $result);
-		$this->assertContains("input('body')", $result);
-		$this->assertContains('List Test View Models', $result);
+		$this->assertSameAsFile(__FUNCTION__ . '-add.ctp', $result);
 	}
 
 /**
@@ -451,9 +430,7 @@ class ViewTaskTest extends TestCase {
 				$this->anything()
 			);
 		$result = $this->Task->bake('edit', true);
-
-		$this->assertNotContains("Form->input('id')", $result);
-		$this->assertContains("Form->input('article_id', ['options' => \$articles])", $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.ctp', $result);
 	}
 
 /**

@@ -17,12 +17,15 @@ namespace Cake\Test\TestCase\Shell\Task;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\Shell\Task\TemplateTask;
+use Cake\TestSuite\StringCompareTrait;
 use Cake\TestSuite\TestCase;
 
 /**
  * TemplateTaskTest class
  */
 class TemplateTaskTest extends TestCase {
+
+	use StringCompareTrait;
 
 /**
  * setUp method
@@ -59,8 +62,7 @@ class TemplateTaskTest extends TestCase {
 		$this->Task->expects($this->any())->method('in')->will($this->returnValue(1));
 
 		$result = $this->Task->generate('classes/test_object', array('test' => 'foo'));
-		$expected = "I got rendered\nfoo";
-		$this->assertTextEquals($expected, $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -75,7 +77,7 @@ class TemplateTaskTest extends TestCase {
 			'plugin' => 'Special'
 		));
 		$result = $this->Task->generate('config/routes');
-		$this->assertContains('These are my routes. There are many like them but these are my own.', $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 /**
  * test generate with a missing template in the chosen template.
@@ -95,6 +97,6 @@ class TemplateTaskTest extends TestCase {
 			'namespace' => ''
 		));
 		$result = $this->Task->generate('tests/fixture');
-		$this->assertRegExp('/ArticlesFixture extends .*TestFixture/', $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 }

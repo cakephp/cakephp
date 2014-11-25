@@ -21,6 +21,7 @@ use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Shell\Task\ControllerTask;
 use Cake\Shell\Task\TemplateTask;
+use Cake\TestSuite\StringCompareTrait;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper;
 
@@ -43,6 +44,8 @@ class BakeArticlesTable extends Table {
  */
 class ControllerTaskTest extends TestCase {
 
+	use StringCompareTrait;
+
 /**
  * fixtures
  *
@@ -57,7 +60,7 @@ class ControllerTaskTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-
+		$this->_compareBasePath = CORE_TESTS . 'bake_compare' . DS . 'Controller' . DS;
 		$io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 		$this->Task = $this->getMock('Cake\Shell\Task\ControllerTask',
 			array('in', 'out', 'err', 'hr', 'createFile', '_stop'),
@@ -153,8 +156,7 @@ class ControllerTaskTest extends TestCase {
 		$this->Task->params['components'] = 'Csrf, Auth';
 
 		$result = $this->Task->bake('BakeArticles');
-		$expected = file_get_contents(CORE_TESTS . '/bake_compare/Controller/NoActions.ctp');
-		$this->assertTextEquals($expected, $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -236,8 +238,7 @@ class ControllerTaskTest extends TestCase {
  */
 	public function testBakeActionsContent() {
 		$result = $this->Task->bakeActions('BakeArticles');
-		$expected = file_get_contents(CORE_TESTS . 'bake_compare/Controller/Actions.ctp');
-		$this->assertTextEquals($expected, $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**

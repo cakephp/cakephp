@@ -19,6 +19,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\ORM\TableRegistry;
 use Cake\Shell\Task\FixtureTask;
 use Cake\Shell\Task\TemplateTask;
+use Cake\TestSuite\StringCompareTrait;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -26,6 +27,8 @@ use Cake\TestSuite\TestCase;
  *
  */
 class FixtureTaskTest extends TestCase {
+
+	use StringCompareTrait;
 
 /**
  * fixtures
@@ -41,6 +44,7 @@ class FixtureTaskTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
+		$this->_compareBasePath = CORE_TESTS . 'bake_compare' . DS . 'Fixture' . DS;
 		$io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
 		$this->Task = $this->getMock('Cake\Shell\Task\FixtureTask',
@@ -98,9 +102,7 @@ class FixtureTaskTest extends TestCase {
 		$this->Task->params = ['schema' => true, 'records' => true];
 
 		$result = $this->Task->bake('Articles');
-
-		$expected = file_get_contents(CORE_TESTS . '/bake_compare/test/Fixture/ArticleImportWithConditionsFixture.php');
-		$this->assertTextEquals($expected, $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -112,9 +114,7 @@ class FixtureTaskTest extends TestCase {
 		$this->Task->connection = 'test';
 		$this->Task->params = ['schema' => true];
 		$result = $this->Task->bake('Article');
-
-		$expected = file_get_contents(CORE_TESTS . '/bake_compare/test/Fixture/ArticleAlternateConnectionFixture.php');
-		$this->assertTextEquals($expected, $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -129,9 +129,7 @@ class FixtureTaskTest extends TestCase {
 		$this->Task->connection = 'test';
 		$this->Task->params = ['schema' => 'true', 'records' => true];
 		$result = $this->Task->bake('Article');
-
-		$expected = file_get_contents(CORE_TESTS . '/bake_compare/test/Fixture/ArticleNoEscapingFixture.php');
-		$this->assertTextEquals($expected, $result, 'Data has bad escaping');
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -318,9 +316,7 @@ class FixtureTaskTest extends TestCase {
 			));
 
 		$result = $this->Task->bake('Article', 'comments');
-
-		$expected = file_get_contents(CORE_TESTS . '/bake_compare/test/Fixture/ArticleCommentsFixture.php');
-		$this->assertTextEquals($expected, $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -332,13 +328,10 @@ class FixtureTaskTest extends TestCase {
 		$this->Task->connection = 'test';
 
 		$result = $this->Task->bake('Article', 'datatypes');
-
-		$expected = file_get_contents(CORE_TESTS . '/bake_compare/test/Fixture/ArticleDatatypesFixture.php');
-		$this->assertTextEquals($expected, $result);
+		$this->assertSameAsFile(__FUNCTION__ . '-datatypes.php', $result);
 
 		$result = $this->Task->bake('Article', 'binary_tests');
-		$expected = file_get_contents(CORE_TESTS . '/bake_compare/test/Fixture/ArticleBinaryTestFixture.php');
-		$this->assertTextEquals($expected, $result);
+		$this->assertSameAsFile(__FUNCTION__ . '-binary-tests.php', $result);
 	}
 
 /**
@@ -355,8 +348,7 @@ class FixtureTaskTest extends TestCase {
 			->with($filename, $this->stringContains('ArticlesFixture'));
 
 		$result = $this->Task->generateFixtureFile('Articles', []);
-		$this->assertContains('<?php', $result);
-		$this->assertContains('namespace App\Test\Fixture;', $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -374,8 +366,7 @@ class FixtureTaskTest extends TestCase {
 			->with($filename, $this->stringContains('class Articles'));
 
 		$result = $this->Task->generateFixtureFile('Articles', []);
-		$this->assertContains('<?php', $result);
-		$this->assertContains('namespace TestPlugin\Test\Fixture;', $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 }
