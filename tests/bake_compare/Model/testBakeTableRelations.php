@@ -19,24 +19,23 @@ class BakeArticlesTable extends Table {
 	public function initialize(array $config) {
 		$this->primaryKey('id');
 		$this->belongsTo('SomethingElse', [
-			'alias' => 'SomethingElse', 
+			'alias' => 'SomethingElse',
 			'foreignKey' => 'something_else_id'
 		]);
 		$this->belongsTo('BakeUser', [
-			'alias' => 'BakeUser', 
+			'alias' => 'BakeUser',
 			'foreignKey' => 'bake_user_id'
 		]);
 		$this->hasMany('BakeComment', [
-			'alias' => 'BakeComment', 
+			'alias' => 'BakeComment',
 			'foreignKey' => 'parent_id'
 		]);
 		$this->belongsToMany('BakeTag', [
-			'alias' => 'BakeTag', 
-			'foreignKey' => 'bake_article_id', 
-			'joinTable' => 'bake_articles_bake_tags', 
+			'alias' => 'BakeTag',
+			'foreignKey' => 'bake_article_id',
+			'joinTable' => 'bake_articles_bake_tags',
 			'targetForeignKey' => 'bake_tag_id'
 		]);
 	}
-
 
 }

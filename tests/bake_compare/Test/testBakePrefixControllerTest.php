@@ -1,8 +1,8 @@
 <?php
 namespace TestApp\Test\TestCase\Controller\Admin;
 
-use TestApp\Controller\Admin\PostsController;
 use Cake\TestSuite\IntegrationTestCase;
+use TestApp\Controller\Admin\PostsController;
 
 /**
  * TestApp\Controller\Admin\PostsController Test Case

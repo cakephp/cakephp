@@ -23,5 +23,4 @@ class BakeArticlesTable extends Table {
 		$this->addBehavior('Timestamp');
 	}
 
-
 }

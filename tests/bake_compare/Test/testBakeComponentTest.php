@@ -2,8 +2,8 @@
 namespace TestApp\Test\TestCase\Controller\Component;
 
 use Cake\Controller\ComponentRegistry;
-use TestApp\Controller\Component\AppleComponent;
 use Cake\TestSuite\TestCase;
+use TestApp\Controller\Component\AppleComponent;
 
 /**
  * TestApp\Controller\Component\AppleComponent Test Case
@@ -18,9 +18,7 @@ class AppleComponentTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$registry = new ComponentRegistry();
-
 		$this->Apple = new AppleComponent($registry);
-
 	}
 
 /**

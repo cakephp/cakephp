@@ -456,18 +456,18 @@ class TestTaskTest extends TestCase {
 
 		$result = $this->Task->generateConstructor('table', 'App\Model\\Table\PostsTable');
 		$expected = [
-			"\$config = TableRegistry::exists('Posts') ? [] : ['className' => 'App\Model\\Table\PostsTable'];\n",
-			"TableRegistry::get('Posts', \$config);\n",
+			"\$config = TableRegistry::exists('Posts') ? [] : ['className' => 'App\Model\\Table\PostsTable'];",
+			"TableRegistry::get('Posts', \$config);",
 			''
 		];
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Task->generateConstructor('helper', 'FormHelper');
-		$expected = ["\$view = new View();\n", "new FormHelper(\$view);\n", ''];
+		$expected = ["\$view = new View();", "new FormHelper(\$view);", ''];
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Task->generateConstructor('entity', 'TestPlugin\Model\Entity\Article');
-		$expected = ["", "new Article();\n", ''];
+		$expected = ["", "new Article();", ''];
 		$this->assertEquals($expected, $result);
 	}
 

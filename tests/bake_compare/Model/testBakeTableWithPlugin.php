@@ -20,5 +20,4 @@ class BakeArticlesTable extends Table {
 		$this->primaryKey('id');
 	}
 
-
 }

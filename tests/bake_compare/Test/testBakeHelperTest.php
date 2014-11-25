@@ -1,9 +1,9 @@
 <?php
 namespace App\Test\TestCase\View\Helper;
 
-use Cake\View\View;
 use App\View\Helper\ExampleHelper;
 use Cake\TestSuite\TestCase;
+use Cake\View\View;
 
 /**
  * App\View\Helper\ExampleHelper Test Case
@@ -18,9 +18,7 @@ class ExampleHelperTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$view = new View();
-
 		$this->Example = new ExampleHelper($view);
-
 	}
 
 /**

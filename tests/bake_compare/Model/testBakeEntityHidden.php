@@ -8,7 +8,6 @@ use Cake\ORM\Entity;
  */
 class BakeUser extends Entity {
 
-
 /**
  * Fields that are excluded from JSON an array versions of the entity.
  *
@@ -17,4 +16,5 @@ class BakeUser extends Entity {
 	protected $_hidden = [
 		'password'
 	];
+
 }
