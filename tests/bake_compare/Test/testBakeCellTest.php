@@ -18,7 +18,6 @@ class ArticlesCellTest extends TestCase {
 		parent::setUp();
 		$this->request = $this->getMock('Cake\Network\Request');
 		$this->response = $this->getMock('Cake\Network\Response');
-
 		$this->Articles = new ArticlesCell($this->request, $this->response);
 	}
 

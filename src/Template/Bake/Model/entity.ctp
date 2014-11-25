@@ -22,8 +22,8 @@ use Cake\ORM\Entity;
  * <%= $name %> Entity.
  */
 class <%= $name %> extends Entity {
-
 <% if (!empty($fields)): %>
+
 /**
  * Fields that can be mass assigned using newEntity() or patchEntity().
  *
@@ -34,7 +34,6 @@ class <%= $name %> extends Entity {
 		'<%= $field %>' => true,
 <% endforeach; %>
 	];
-
 <% endif %>
 <% if (!empty($hidden)): %>
 
@@ -45,4 +44,5 @@ class <%= $name %> extends Entity {
  */
 	protected $_hidden = [<%= $this->Bake->stringifyList($hidden) %>];
 <% endif %>
+
 }

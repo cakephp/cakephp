@@ -17,9 +17,7 @@ class ArticlesShellTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->io = $this->getMock('Cake\Console\ConsoleIo');
-
 		$this->Articles = new ArticlesShell($this->io);
-
 	}
 
 /**
