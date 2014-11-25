@@ -24,6 +24,7 @@ use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Shell\Task\TemplateTask;
 use Cake\Shell\Task\TestTask;
+use Cake\TestSuite\StringCompareTrait;
 use Cake\TestSuite\TestCase;
 use TestApp\Controller\PostsController;
 use TestApp\Model\Table\ArticlesTable;
@@ -34,6 +35,8 @@ use TestApp\Model\Table\CategoryThreadsTable;
  *
  */
 class TestTaskTest extends TestCase {
+
+	use StringCompareTrait;
 
 /**
  * Fixtures
@@ -55,6 +58,7 @@ class TestTaskTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
+		$this->_compareBasePath = CORE_TESTS . 'bake_compare' . DS . 'Test' . DS;
 		$this->io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
 		$this->Task = $this->getMock('Cake\Shell\Task\TestTask',
@@ -318,12 +322,7 @@ class TestTaskTest extends TestCase {
 
 		$this->Task->params['fixtures'] = 'app.posts, app.comments , app.users ,';
 		$result = $this->Task->bake('Table', 'Articles');
-
-		$this->assertContains('public $fixtures = [', $result);
-		$this->assertContains('app.posts', $result);
-		$this->assertContains('app.comments', $result);
-		$this->assertContains('app.users', $result);
-		$this->assertNotContains("''", $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -337,14 +336,7 @@ class TestTaskTest extends TestCase {
 			->will($this->returnValue(true));
 
 		$result = $this->Task->bake('Cell', 'Articles');
-
-		$this->assertContains("use App\View\Cell\ArticlesCell", $result);
-		$this->assertContains('class ArticlesCellTest extends TestCase', $result);
-
-		$this->assertContains('function setUp()', $result);
-		$this->assertContains("\$this->request = \$this->getMock('Cake\Network\Request')", $result);
-		$this->assertContains("\$this->response = \$this->getMock('Cake\Network\Response')", $result);
-		$this->assertContains("\$this->Articles = new ArticlesCell(\$this->request, \$this->response", $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -358,16 +350,7 @@ class TestTaskTest extends TestCase {
 			->will($this->returnValue(true));
 
 		$result = $this->Task->bake('Table', 'Articles');
-
-		$this->assertContains("use App\Model\Table\ArticlesTable", $result);
-		$this->assertContains('class ArticlesTableTest extends TestCase', $result);
-
-		$this->assertContains('function setUp()', $result);
-		$this->assertContains("\$config = TableRegistry::exists('Articles') ?", $result);
-		$this->assertContains("\$this->Articles = TableRegistry::get('Articles', \$config", $result);
-
-		$this->assertContains('function tearDown()', $result);
-		$this->assertContains('unset($this->Articles)', $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -383,17 +366,7 @@ class TestTaskTest extends TestCase {
 			->will($this->returnValue(true));
 
 		$result = $this->Task->bake('Controller', 'PostsController');
-
-		$this->assertContains("use TestApp\Controller\PostsController", $result);
-		$this->assertContains('class PostsControllerTest extends IntegrationTestCase', $result);
-
-		$this->assertNotContains('function setUp()', $result);
-		$this->assertNotContains("\$this->Posts = new PostsController()", $result);
-
-		$this->assertNotContains('function tearDown()', $result);
-		$this->assertNotContains('unset($this->Posts)', $result);
-
-		$this->assertContains("'app.posts'", $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -410,15 +383,7 @@ class TestTaskTest extends TestCase {
 			->will($this->returnValue(true));
 
 		$result = $this->Task->bake('controller', 'Admin\Posts');
-
-		$this->assertContains("use TestApp\Controller\Admin\PostsController", $result);
-		$this->assertContains('class PostsControllerTest extends IntegrationTestCase', $result);
-
-		$this->assertNotContains('function setUp()', $result);
-		$this->assertNotContains("\$this->Posts = new PostsController()", $result);
-
-		$this->assertNotContains('function tearDown()', $result);
-		$this->assertNotContains('unset($this->Posts)', $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -434,20 +399,7 @@ class TestTaskTest extends TestCase {
 			->will($this->returnValue(true));
 
 		$result = $this->Task->bake('Component', 'Apple');
-
-		$this->assertContains('use Cake\Controller\ComponentRegistry', $result);
-		$this->assertContains('use TestApp\Controller\Component\AppleComponent', $result);
-		$this->assertContains('class AppleComponentTest extends TestCase', $result);
-
-		$this->assertContains('function setUp()', $result);
-		$this->assertContains("\$registry = new ComponentRegistry()", $result);
-		$this->assertContains("\$this->Apple = new AppleComponent(\$registry)", $result);
-
-		$this->assertContains('function testStartup()', $result);
-		$this->assertContains('$this->markTestIncomplete(\'Not implemented yet.\')', $result);
-
-		$this->assertContains('function tearDown()', $result);
-		$this->assertContains('unset($this->Apple)', $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -461,15 +413,7 @@ class TestTaskTest extends TestCase {
 			->will($this->returnValue(true));
 
 		$result = $this->Task->bake('Behavior', 'Example');
-
-		$this->assertContains("use App\Model\Behavior\ExampleBehavior;", $result);
-		$this->assertContains('class ExampleBehaviorTest extends TestCase', $result);
-
-		$this->assertContains('function setUp()', $result);
-		$this->assertContains("\$this->Example = new ExampleBehavior()", $result);
-
-		$this->assertContains('function tearDown()', $result);
-		$this->assertContains('unset($this->Example)', $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -483,17 +427,7 @@ class TestTaskTest extends TestCase {
 			->will($this->returnValue(true));
 
 		$result = $this->Task->bake('Helper', 'Example');
-
-		$this->assertContains("use Cake\View\View;", $result);
-		$this->assertContains("use App\View\Helper\ExampleHelper;", $result);
-		$this->assertContains('class ExampleHelperTest extends TestCase', $result);
-
-		$this->assertContains('function setUp()', $result);
-		$this->assertContains("\$view = new View()", $result);
-		$this->assertContains("\$this->Example = new ExampleHelper(\$view)", $result);
-
-		$this->assertContains('function tearDown()', $result);
-		$this->assertContains('unset($this->Example)', $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -507,16 +441,7 @@ class TestTaskTest extends TestCase {
 			->will($this->returnValue(true));
 
 		$result = $this->Task->bake('Shell', 'Articles');
-
-		$this->assertContains("use App\Shell\ArticlesShell", $result);
-		$this->assertContains('class ArticlesShellTest extends TestCase', $result);
-
-		$this->assertContains('function setUp()', $result);
-		$this->assertContains("\$this->io = \$this->getMock('Cake\Console\ConsoleIo');", $result);
-		$this->assertContains("\$this->Articles = new ArticlesShell(\$this->io);", $result);
-
-		$this->assertContains('function tearDown()', $result);
-		$this->assertContains('unset($this->Articles)', $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**

@@ -17,12 +17,15 @@ namespace Cake\Test\TestCase\Shell\Task;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Shell\Task\TemplateTask;
+use Cake\TestSuite\StringCompareTrait;
 use Cake\TestSuite\TestCase;
 
 /**
  * CellTaskTest class
  */
 class CellTaskTest extends TestCase {
+
+	use StringCompareTrait;
 
 /**
  * setup method
@@ -31,6 +34,7 @@ class CellTaskTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
+		$this->_compareBasePath = CORE_TESTS . 'bake_compare' . DS . 'Cell' . DS;
 		$io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
 		$this->Task = $this->getMock(
@@ -123,9 +127,7 @@ class CellTaskTest extends TestCase {
 			);
 
 		$result = $this->Task->bake('Example');
-		$this->assertContains('namespace TestPlugin\View\Cell;', $result);
-		$this->assertContains('use Cake\View\Cell;', $result);
-		$this->assertContains('class ExampleCell extends Cell {', $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 }
