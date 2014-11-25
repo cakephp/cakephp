@@ -19,7 +19,6 @@ use Cake\Datasource\ConnectionManager;
 use Cake\ORM\TableRegistry;
 use Cake\Shell\Task\FixtureTask;
 use Cake\Shell\Task\TemplateTask;
-use Cake\TestSuite\StringCompareTrait;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -27,8 +26,6 @@ use Cake\TestSuite\TestCase;
  *
  */
 class FixtureTaskTest extends TestCase {
-
-	use StringCompareTrait;
 
 /**
  * fixtures
@@ -44,7 +41,6 @@ class FixtureTaskTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->_compareBasePath = CORE_TESTS . 'bake_compare' . DS . 'Fixture' . DS;
 		$io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
 		$this->Task = $this->getMock('Cake\Shell\Task\FixtureTask',
@@ -102,7 +98,15 @@ class FixtureTaskTest extends TestCase {
 		$this->Task->params = ['schema' => true, 'records' => true];
 
 		$result = $this->Task->bake('Articles');
-		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
+
+		$this->assertContains('namespace App\Test\Fixture;', $result);
+		$this->assertContains('use Cake\TestSuite\Fixture\TestFixture;', $result);
+		$this->assertContains('class ArticlesFixture extends TestFixture', $result);
+		$this->assertContains('public $records', $result);
+		$this->assertContains('public $import', $result);
+		$this->assertContains("'title' => 'First Article'", $result, 'Missing import data %s');
+		$this->assertContains('Second Article', $result, 'Missing import data %s');
+		$this->assertContains('Third Article', $result, 'Missing import data %s');
 	}
 
 /**
@@ -114,7 +118,7 @@ class FixtureTaskTest extends TestCase {
 		$this->Task->connection = 'test';
 		$this->Task->params = ['schema' => true];
 		$result = $this->Task->bake('Article');
-		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
+		$this->assertContains("'connection' => 'test'", $result);
 	}
 
 /**
@@ -129,7 +133,7 @@ class FixtureTaskTest extends TestCase {
 		$this->Task->connection = 'test';
 		$this->Task->params = ['schema' => 'true', 'records' => true];
 		$result = $this->Task->bake('Article');
-		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
+		$this->assertContains("'body' => 'Body \"value\"'", $result, 'Data has bad escaping');
 	}
 
 /**
@@ -314,9 +318,7 @@ class FixtureTaskTest extends TestCase {
 				$this->logicalNot($this->stringContains('public $fields')),
 				$this->logicalNot($this->stringContains('public $records'))
 			));
-
-		$result = $this->Task->bake('Article', 'comments');
-		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
+		$this->Task->bake('Article', 'comments');
 	}
 
 /**
@@ -328,10 +330,14 @@ class FixtureTaskTest extends TestCase {
 		$this->Task->connection = 'test';
 
 		$result = $this->Task->bake('Article', 'datatypes');
-		$this->assertSameAsFile(__FUNCTION__ . '-datatypes.php', $result);
+		$this->assertContains("'float_field' => 1", $result);
+		$this->assertContains("'bool' => 1", $result);
+		$this->assertContains("_constraints", $result);
+		$this->assertContains("'primary' => ['type' => 'primary'", $result);
+		$this->assertContains("'columns' => ['id']", $result);
 
 		$result = $this->Task->bake('Article', 'binary_tests');
-		$this->assertSameAsFile(__FUNCTION__ . '-binary-tests.php', $result);
+		$this->assertContains("'data' => 'Lorem ipsum dolor sit amet'", $result);
 	}
 
 /**
@@ -348,7 +354,8 @@ class FixtureTaskTest extends TestCase {
 			->with($filename, $this->stringContains('ArticlesFixture'));
 
 		$result = $this->Task->generateFixtureFile('Articles', []);
-		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
+		$this->assertContains('<?php', $result);
+		$this->assertContains('namespace App\Test\Fixture;', $result);
 	}
 
 /**
@@ -366,7 +373,8 @@ class FixtureTaskTest extends TestCase {
 			->with($filename, $this->stringContains('class Articles'));
 
 		$result = $this->Task->generateFixtureFile('Articles', []);
-		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
+		$this->assertContains('<?php', $result);
+		$this->assertContains('namespace TestPlugin\Test\Fixture;', $result);
 	}
 
 }
