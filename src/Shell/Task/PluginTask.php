@@ -323,7 +323,7 @@ class PluginTask extends BakeTask {
 		)->addArgument('name', [
 			'help' => 'CamelCased name of the plugin to create.'
 		])->addOption('composer', [
-			'default' => ROOT . '/composer.phar',
+			'default' => ROOT . DS . 'composer.phar',
 			'help' => 'The path to the composer executable.'
 		])->removeOption('plugin');
 

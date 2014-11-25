@@ -170,7 +170,7 @@ class ProjectTask extends BakeTask {
 				'short' => 't',
 				'help' => 'Template to use when baking code.'
 			])->addOption('composer', [
-				'default' => ROOT . '/composer.phar',
+				'default' => ROOT . DS . 'composer.phar',
 				'help' => 'The path to the composer executable.'
 			])->removeOption('plugin');
 	}
