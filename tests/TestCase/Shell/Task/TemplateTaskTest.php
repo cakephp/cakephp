@@ -34,6 +34,7 @@ class TemplateTaskTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
+		$this->_compareBasePath = CORE_TESTS . 'bake_compare' . DS . 'Template' . DS;
 		$io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
 		$this->Task = $this->getMock('Cake\Shell\Task\TemplateTask',
@@ -62,7 +63,7 @@ class TemplateTaskTest extends TestCase {
 		$this->Task->expects($this->any())->method('in')->will($this->returnValue(1));
 
 		$result = $this->Task->generate('classes/test_object', array('test' => 'foo'));
-		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.ctp', $result);
 	}
 
 /**
@@ -77,7 +78,7 @@ class TemplateTaskTest extends TestCase {
 			'plugin' => 'Special'
 		));
 		$result = $this->Task->generate('config/routes');
-		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.ctp', $result);
 	}
 /**
  * test generate with a missing template in the chosen template.
@@ -97,6 +98,6 @@ class TemplateTaskTest extends TestCase {
 			'namespace' => ''
 		));
 		$result = $this->Task->generate('tests/fixture');
-		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.ctp', $result);
 	}
 }
