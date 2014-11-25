@@ -39,10 +39,6 @@ trait StringCompareTrait {
  */
 	public function assertSameAsFile($path, $result) {
 		$path = $this->_compareBasePath . $path;
-		if (!is_dir(dirname($path))) {
-			mkdir(dirname($path), 0777, true);
-		}
-		file_put_contents($path, $result);
 
 		$expected = file_get_contents($path);
 		$this->assertTextEquals($expected, $result);
