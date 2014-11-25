@@ -17,7 +17,8 @@ namespace Cake\TestSuite;
 /**
  * Compare a string to the contents of a file
  *
- * Implementing objects are expected to declare a `$_compareBasePath` property.
+ * Implementing objects are expected to modify the `$_compareBasePath` property
+ * before use.
  */
 trait StringCompareTrait {
 
