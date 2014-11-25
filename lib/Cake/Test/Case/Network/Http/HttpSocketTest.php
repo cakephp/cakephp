@@ -138,8 +138,8 @@ class TestHttpSocket extends HttpSocket {
  * @param string $versionToken The version token to use, defaults to HTTP/1.1
  * @return string Request line
  */
-	public function buildRequestLine($request = array(), $versionToken = 'HTTP/1.1') {
-		return parent::_buildRequestLine($request, $versionToken);
+	public function buildRequestLine($request = array()) {
+		return parent::_buildRequestLine($request);
 	}
 
 /**
@@ -525,6 +525,7 @@ class HttpSocketTest extends CakeTestCase {
 			),
 			array(
 				'request' => array(
+					'version' => '1.0',
 					'method' => 'POST',
 					'uri' => 'https://www.cakephp.org/posts/add',
 					'body' => array('name' => 'HttpSocket-is-released', 'date' => 'today'),
@@ -532,6 +533,8 @@ class HttpSocketTest extends CakeTestCase {
 				),
 				'expectation' => array(
 					'request' => array(
+						'version' => '1.0',
+						'line' => "POST /posts/add HTTP/1.0\r\n",
 						'header' => "Host: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 38\r\nCookie: foo=bar\r\n",
 						'cookies' => array(
 							'foo' => array('value' => 'bar'),
@@ -1245,9 +1248,6 @@ class HttpSocketTest extends CakeTestCase {
 		$r = $this->Socket->buildRequestLine($request);
 		$this->assertEquals("GET /search?q=socket HTTP/1.1\r\n", $r);
 
-		$r = $this->Socket->buildRequestLine($request, 'CAKE-HTTP/0.1');
-		$this->assertEquals("GET /search?q=socket CAKE-HTTP/0.1\r\n", $r);
-
 		$request = array('method' => 'OPTIONS', 'uri' => '*');
 		$r = $this->Socket->buildRequestLine($request);
 		$this->assertEquals("OPTIONS * HTTP/1.1\r\n", $r);
@@ -1259,6 +1259,17 @@ class HttpSocketTest extends CakeTestCase {
 
 		$r = $this->Socket->buildRequestLine("GET * HTTP/1.1\r\n");
 		$this->assertEquals("GET * HTTP/1.1\r\n", $r);
+
+		$request = array(
+			'version' => '1.0',
+			'method' => 'GET',
+			'uri' => array(
+				'path' => '/search',
+				'query' => array('q' => 'socket')
+			)
+		);
+		$r = $this->Socket->buildRequestLine($request);
+		$this->assertEquals("GET /search?q=socket HTTP/1.0\r\n", $r);
 	}
 
 /**
