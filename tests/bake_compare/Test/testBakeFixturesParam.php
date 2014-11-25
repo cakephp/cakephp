@@ -1,8 +1,8 @@
 <?php
 namespace App\Test\TestCase\Model\Table;
 
-use Cake\ORM\TableRegistry;
 use App\Model\Table\ArticlesTable;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -16,8 +16,8 @@ class ArticlesTableTest extends TestCase {
  * @var array
  */
 	public $fixtures = [
-		'app.posts', 
-		'app.comments', 
+		'app.posts',
+		'app.comments',
 		'app.users'
 	];
 
@@ -31,7 +31,6 @@ class ArticlesTableTest extends TestCase {
 		$config = TableRegistry::exists('Articles') ? [] : ['className' => 'App\Model\Table\ArticlesTable'];
 
 		$this->Articles = TableRegistry::get('Articles', $config);
-
 	}
 
 /**

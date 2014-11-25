@@ -4,6 +4,6 @@
  */
 use Cake\Routing\Router;
 
-Router::plugin('Special', function($routes) {
+Router::plugin('Special', function ($routes) {
 	$routes->fallbacks();
 });

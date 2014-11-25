@@ -20,7 +20,6 @@ class ArticlesCellTest extends TestCase {
 		$this->response = $this->getMock('Cake\Network\Response');
 
 		$this->Articles = new ArticlesCell($this->request, $this->response);
-
 	}
 
 /**

@@ -18,7 +18,6 @@ class ExampleBehaviorTest extends TestCase {
 		parent::setUp();
 
 		$this->Example = new ExampleBehavior();
-
 	}
 
 /**

@@ -23,7 +23,7 @@ class BakeArticlesTable extends Table {
 /**
  * Default validation rules.
  *
- * @param \Cake\Validation\Validator $validator
+ * @param \Cake\Validation\Validator $validator instance
  * @return \Cake\Validation\Validator
  */
 	public function validationDefault(Validator $validator) {
