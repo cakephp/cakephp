@@ -877,11 +877,10 @@ class HttpSocket extends CakeSocket {
  * Builds a request line according to HTTP/1.1 specs. Activate quirks mode to work outside specs.
  *
  * @param array $request Needs to contain a 'uri' key. Should also contain a 'method' key, otherwise defaults to GET.
- * @param string $versionToken The version token to use, defaults to HTTP/1.1
  * @return string Request line
  * @throws SocketException
  */
-	protected function _buildRequestLine($request = array(), $versionToken = 'HTTP/1.1') {
+	protected function _buildRequestLine($request = array()) {
 		$asteriskMethods = array('OPTIONS');
 
 		if (is_string($request)) {
@@ -907,7 +906,8 @@ class HttpSocket extends CakeSocket {
 		if (!$this->quirksMode && $request['uri'] === '*' && !in_array($request['method'], $asteriskMethods)) {
 			throw new SocketException(__d('cake_dev', 'HttpSocket::_buildRequestLine - The "*" asterisk character is only allowed for the following methods: %s. Activate quirks mode to work outside of HTTP/1.1 specs.', implode(',', $asteriskMethods)));
 		}
-		return $request['method'] . ' ' . $request['uri'] . ' ' . $versionToken . "\r\n";
+		$version = isset($request['version']) ? $request['version'] : '1.1';
+		return $request['method'] . ' ' . $request['uri'] . ' HTTP/' . $version . "\r\n";
 	}
 
 /**
