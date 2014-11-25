@@ -176,12 +176,7 @@ class ControllerTaskTest extends TestCase {
 				$this->stringContains('class BakeArticlesController')
 			);
 		$result = $this->Task->bake('BakeArticles');
-
-		$this->assertTextContains('public function add(', $result);
-		$this->assertTextContains('public function index(', $result);
-		$this->assertTextContains('public function view(', $result);
-		$this->assertTextContains('public function edit(', $result);
-		$this->assertTextContains('public function delete(', $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -225,8 +220,7 @@ class ControllerTaskTest extends TestCase {
 			)->will($this->returnValue(true));
 
 		$result = $this->Task->bake('BakeArticles');
-		$this->assertContains('namespace ControllerTest\Controller;', $result);
-		$this->assertContains('use ControllerTest\Controller\AppController;', $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 		Plugin::unload();
 	}
 
@@ -237,7 +231,7 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testBakeActionsContent() {
-		$result = $this->Task->bakeActions('BakeArticles');
+		$result = $this->Task->bake('BakeArticles');
 		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 

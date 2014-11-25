@@ -19,6 +19,7 @@ $allAssociations = array_merge(
 	$this->Bake->aliasExtractor($modelObj, 'HasMany')
 );
 %>
+
 /**
  * View method
  *
