@@ -155,14 +155,21 @@ abstract class ObjectRegistry {
 	abstract protected function _create($class, $alias, $config);
 
 /**
- * Get the loaded object list, or check whether or not a given object is loaded.
+ * Get the list of loaded objects.
  *
- * @param null|string $name The object name to get or null.
- * @return array|\Cake\View\Helper Either a list of object names, or a loaded object.
+ * @return array List of object names.
  */
-	public function loaded($name = null) {
-		if (!empty($name)) {
-			return isset($this->_loaded[$name]);
+	public function loaded() {
+		if (func_num_args() > 0) {
+			$class = get_class($this);
+			trigger_error(
+				sprintf(
+					"%s::loaded() doesn't take object name as argument any more. Use %s::has() instead.",
+					$class,
+					$class
+				),
+				E_USER_ERROR
+			);
 		}
 		return array_keys($this->_loaded);
 	}
