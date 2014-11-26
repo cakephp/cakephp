@@ -51,6 +51,7 @@ class EntityValidator {
 			return [];
 		}
 
+		$map = [];
 		foreach ($include['associated'] as $key => $options) {
 			if (is_int($key) && is_scalar($options)) {
 				$key = $options;
@@ -66,7 +67,6 @@ class EntityValidator {
 				];
 			}
 		}
-
 		return $map;
 	}
 
