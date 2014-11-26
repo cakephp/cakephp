@@ -185,16 +185,26 @@ abstract class ObjectRegistry {
 	}
 
 /**
+ * Get loaded object instance.
+ *
+ * @param string $name Name of object.
+ * @return object|null Object instance if loaded else null.
+ */
+	public function get($name) {
+		if (isset($this->_loaded[$name])) {
+			return $this->_loaded[$name];
+		}
+		return null;
+	}
+
+/**
  * Provide public read access to the loaded objects
  *
  * @param string $name Name of property to read
  * @return mixed
  */
 	public function __get($name) {
-		if (isset($this->_loaded[$name])) {
-			return $this->_loaded[$name];
-		}
-		return null;
+		return $this->get($name);
 	}
 
 /**
