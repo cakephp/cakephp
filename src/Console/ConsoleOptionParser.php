@@ -326,7 +326,8 @@ class ConsoleOptionParser {
  * - `choices` A list of valid choices for this argument. If left empty all values are valid..
  *   An exception will be raised when parse() encounters an invalid value.
  *
- * @param ConsoleInputArgument|string $name The name of the argument. Will also accept an instance of ConsoleInputArgument
+ * @param \Cake\Console\ConsoleInputArgument|string $name The name of the argument.
+ *   Will also accept an instance of ConsoleInputArgument.
  * @param array $params Parameters for the argument, see above.
  * @return $this
  */
