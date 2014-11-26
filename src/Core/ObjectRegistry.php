@@ -155,16 +155,46 @@ abstract class ObjectRegistry {
 	abstract protected function _create($class, $alias, $config);
 
 /**
- * Get the loaded object list, or check whether or not a given object is loaded.
+ * Get the list of loaded objects.
  *
- * @param null|string $name The object name to get or null.
- * @return array|\Cake\View\Helper Either a list of object names, or a loaded object.
+ * @return array List of object names.
  */
-	public function loaded($name = null) {
-		if (!empty($name)) {
-			return isset($this->_loaded[$name]);
+	public function loaded() {
+		if (func_num_args() > 0) {
+			$class = get_class($this);
+			trigger_error(
+				sprintf(
+					"%s::loaded() doesn't take object name as argument any more. Use %s::has() instead.",
+					$class,
+					$class
+				),
+				E_USER_ERROR
+			);
 		}
 		return array_keys($this->_loaded);
+	}
+
+/**
+ * Check whether or not a given object is loaded.
+ *
+ * @param string $name The object name to check for.
+ * @return bool True is object is loaded else false.
+ */
+	public function has($name) {
+		return isset($this->_loaded[$name]);
+	}
+
+/**
+ * Get loaded object instance.
+ *
+ * @param string $name Name of object.
+ * @return object|null Object instance if loaded else null.
+ */
+	public function get($name) {
+		if (isset($this->_loaded[$name])) {
+			return $this->_loaded[$name];
+		}
+		return null;
 	}
 
 /**
@@ -174,10 +204,7 @@ abstract class ObjectRegistry {
  * @return mixed
  */
 	public function __get($name) {
-		if (isset($this->_loaded[$name])) {
-			return $this->_loaded[$name];
-		}
-		return null;
+		return $this->get($name);
 	}
 
 /**

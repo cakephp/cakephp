@@ -542,7 +542,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
  * @return array
  */
 	public function hasBehavior($name) {
-		return $this->_behaviors->loaded($name);
+		return $this->_behaviors->has($name);
 	}
 
 /**
