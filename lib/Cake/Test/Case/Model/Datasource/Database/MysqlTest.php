@@ -2384,6 +2384,10 @@ SQL;
 		$expected = " WHERE ((`User`.`user` = 'mariano') OR (`User`.`user` = 'nate'))";
 		$this->assertEquals($expected, $result);
 
+		$result = $this->Dbo->conditions(array('User.user RLIKE' => 'mariano|nate'));
+		$expected = " WHERE `User`.`user` RLIKE 'mariano|nate'";
+		$this->assertEquals($expected, $result);
+
 		$result = $this->Dbo->conditions(array('or' => array(
 			'score BETWEEN ? AND ?' => array('4', '5'), 'rating >' => '20'
 		)));
