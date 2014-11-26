@@ -235,7 +235,6 @@ class ConsoleOptionParser {
 			$spec = $spec->toArray();
 		}
 		if (!empty($spec['arguments'])) {
-			$this->_args = array();
 			$this->addArguments($spec['arguments']);
 		}
 		if (!empty($spec['options'])) {
@@ -393,6 +392,11 @@ class ConsoleOptionParser {
 			$index = $options['index'];
 			unset($options['index']);
 			$arg = new ConsoleInputArgument($options);
+		}
+		foreach ($this->_args as $k => $a) {
+			if ($a->isEqualTo($arg)) {
+				return $this;
+			}
 		}
 		$this->_args[$index] = $arg;
 		ksort($this->_args);

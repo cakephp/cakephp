@@ -701,11 +701,14 @@ TEXT;
  */
 	public function testMerge() {
 		$parser = new ConsoleOptionParser('test');
-		$parser->addOption('test', array('short' => 't', 'boolean' => true));
+		$parser->addOption('test', array('short' => 't', 'boolean' => true))
+			->addArgument('one', array('required' => true, 'choices' => array('a', 'b')))
+			->addArgument('two', array('required' => true));
 
 		$parserTwo = new ConsoleOptionParser('test');
 		$parserTwo->addOption('file', array('short' => 'f', 'boolean' => true))
-			->addOption('output', array('short' => 'o', 'boolean' => true));
+			->addOption('output', array('short' => 'o', 'boolean' => true))
+			->addArgument('one', array('required' => true, 'choices' => array('a', 'b')));
 
 		$parser->merge($parserTwo);
 		$result = $parser->toArray();
@@ -715,6 +718,9 @@ TEXT;
 		$this->assertTrue(isset($options['test']));
 		$this->assertTrue(isset($options['file']));
 		$this->assertTrue(isset($options['output']));
+
+		$this->assertEquals(2, count($result['arguments']));
+		$this->assertEquals(6, count($result['options']));
 	}
 
 }

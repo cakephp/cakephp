@@ -83,6 +83,16 @@ class ConsoleInputArgument {
 	}
 
 /**
+ * Checks if this argument is equal to another argument.
+ *
+ * @param \Cake\Console\ConsoleInputArgument $argument ConsoleInputArgument to compare to.
+ * @return bool
+ */
+	public function isEqualTo(ConsoleInputArgument $argument) {
+		return $this->usage() === $argument->usage();
+	}
+
+/**
  * Generate the help for this argument.
  *
  * @param int $width The width to make the name of the option.
