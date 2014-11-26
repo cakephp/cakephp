@@ -155,7 +155,7 @@ abstract class ObjectRegistry {
 	abstract protected function _create($class, $alias, $config);
 
 /**
- * Get the loaded object list, or get the object instance at a given name.
+ * Get the loaded object list, or check whether or not a given object is loaded.
  *
  * @param null|string $name The object name to get or null.
  * @return array|\Cake\View\Helper Either a list of object names, or a loaded object.
