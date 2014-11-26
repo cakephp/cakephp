@@ -159,6 +159,46 @@ class EntityValidatorTest extends TestCase {
 	}
 
 /**
+ * test one() with associations that are not entities.
+ *
+ * This can happen when request data is not completely marshalled.
+ * incomplete associations should not cause warnings or fatal errors.
+ *
+ * @return void
+ */
+	public function testOneAssociationsNoEntities() {
+		$article = $this->getMock('\Cake\ORM\Entity', ['validate']);
+		$comment1 = ['comment' => 'test'];
+		$comment2 = ['comment' => 'omg'];
+		$user = $this->getMock('\Cake\ORM\Entity', ['validate']);
+		$article->set('comments', [$comment1, $comment2]);
+
+		$validator1 = $this->getMock('\Cake\Validation\Validator');
+		$validator2 = $this->getMock('\Cake\Validation\Validator');
+
+		$validator1->expects($this->once())
+			->method('count')
+			->will($this->returnValue(1));
+
+		// Should not be called as comments are not entities.
+		$validator2->expects($this->never())
+			->method('count');
+
+		$this->articles->validator('default', $validator1);
+		$this->comments->validator('default', $validator2);
+
+		$entityValidator = new EntityValidator($this->articles);
+
+		$article->expects($this->once())
+			->method('validate')
+			->with($validator1)
+			->will($this->returnValue(true));
+
+		$options = ['associated' => ['Comments']];
+		$this->assertFalse($entityValidator->one($article, $options));
+	}
+
+/**
  * test one() with association data and one of them failing  validation.
  *
  * @return void
