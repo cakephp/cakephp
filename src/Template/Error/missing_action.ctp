@@ -32,31 +32,33 @@ if (empty($plugin)) {
 	$path = Plugin::classPath($plugin) . 'Controller' . DS . $prefix . h($controller) . '.php';
 }
 ?>
-<h2><?= sprintf('Missing Method in %s', h($controller)); ?></h2> <p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('The action <em>%s</em> is not defined in controller <em>%s</em>', h($action), h($controller)); ?>
-</p>
-<p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('Create <em>%s::%s()</em> in file: %s.', h($controller),  h($action), $path); ?>
-</p>
-<pre>
-&lt;?php
-namespace <?= h($namespace); ?>\Controller<?= h($prefixNs); ?>;
+<div class="columns large-10 large-push-2">
+	<h2><?= sprintf('Missing Method in %s', h($controller)); ?></h2> <p class="error">
+		<strong>Error: </strong>
+		<?= sprintf('The action <em>%s</em> is not defined in controller <em>%s</em>', h($action), h($controller)); ?>
+	</p>
+	<p class="error">
+		<strong>Error: </strong>
+		<?= sprintf('Create <em>%s::%s()</em> in file: %s.', h($controller),  h($action), $path); ?>
+	</p>
+	<pre>
+	&lt;?php
+	namespace <?= h($namespace); ?>\Controller<?= h($prefixNs); ?>;
 
-use <?= h($namespace); ?>\Controller\AppController;
+	use <?= h($namespace); ?>\Controller\AppController;
 
-class <?= h($controller); ?> extends AppController {
+	class <?= h($controller); ?> extends AppController {
 
-<strong>
-	public function <?= h($action); ?>() {
+	<strong>
+		public function <?= h($action); ?>() {
 
+		}
+	</strong>
 	}
-</strong>
-}
-</pre>
-<p class="notice">
-	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_action.ctp'); ?>
-</p>
+	</pre>
+	<p class="notice">
+		<strong>Notice: </strong>
+		<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_action.ctp'); ?>
+	</p>
+</div>
 <?= $this->element('exception_stack_trace'); ?>

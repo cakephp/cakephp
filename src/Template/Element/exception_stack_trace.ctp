@@ -16,55 +16,79 @@
  */
 use Cake\Error\Debugger;
 ?>
-<h3>Stack Trace</h3>
-<ul class="cake-stack-trace">
-<?php foreach ($error->getTrace() as $i => $stack): ?>
-	<li><?php
-	$excerpt = $arguments = '';
-	$params = array();
+<div class="exception-stack-trace columns large-2 large-pull-10">
+	<h3>Stack Trace</h3>
+	<ul>
+	<?php foreach ($error->getTrace() as $i => $stack): ?>
+		<li class="cake-stack-frame"><?php
+		$excerpt = $arguments = '';
+		$params = array();
+
+		if (isset($stack['file']) && isset($stack['line'])):
+			printf(
+				'<a href="#" onclick="cakeExpand(event, \'stack-frame-%s\')">%s line %s</a>',
+				$i,
+				Debugger::trimPath($stack['file']),
+				$stack['line']
+			);
+		else:
+			echo '<a href="#">[internal function]</a>';
+		endif;
+		?></li>
+	<?php endforeach; ?>
+	</ul>
+</div>
+
+<div class="columns large-12">
+<?php
+foreach ($error->getTrace() as $i => $stack):
+	$excerpt = $params = [];
 
 	if (isset($stack['file']) && isset($stack['line'])):
-		printf(
-			'<a href="#" onclick="traceToggle(event, \'file-excerpt-%s\')">%s line %s</a>',
-			$i,
-			Debugger::trimPath($stack['file']),
-			$stack['line']
-		);
-		$excerpt = sprintf('<div id="file-excerpt-%s" class="cake-code-dump" style="display:none;"><pre>', $i);
-		$excerpt .= implode("\n", Debugger::excerpt($stack['file'], $stack['line'] - 1, 2));
-		$excerpt .= '</pre></div> ';
-	else:
-		echo '<a href="#">[internal function]</a>';
+		// TODO add line numbers
+		$excerpt = Debugger::excerpt($stack['file'], $stack['line'] - 1, 2);
 	endif;
-	echo ' &rarr; ';
+
+	if (isset($stack['file'])):
+		$file = $stack['file'];
+	else:
+		$file = '[internal function]';
+	endif;
+
 	if ($stack['function']):
-		$args = array();
 		if (!empty($stack['args'])):
 			foreach ((array)$stack['args'] as $arg):
-				$args[] = Debugger::getType($arg);
 				$params[] = Debugger::exportVar($arg, 4);
 			endforeach;
+		else:
+			$params[] = 'No arguments';
 		endif;
-
-		$called = isset($stack['class']) ? $stack['class'] . $stack['type'] . $stack['function'] : $stack['function'];
-
-		printf(
-			'<a href="#" onclick="traceToggle(event, \'trace-args-%s\')">%s(%s)</a> ',
-			$i,
-			$called,
-			h(implode(', ', $args))
-		);
-		$arguments = sprintf('<div id="trace-args-%s" class="cake-code-dump" style="display: none;"><pre>', $i);
-		$arguments .= h(implode("\n", $params));
-		$arguments .= '</pre></div>';
 	endif;
-	echo $excerpt;
-	echo $arguments;
-	?></li>
+?>
+	<div id="stack-frame-<?= $i ?>" style="display:none;" class="cake-stack-details">
+		<span class="stack-frame-file"><?= h($file) ?></span>
+		<a href="#" onclick="cakeToggle(event, 'stack-args-<?= $i ?>')">show arguments</a>
+		<div class="cake-code-dump">
+			<pre><?= implode("\n", $excerpt) ?></pre>
+		</div>
+		<div class="cake-code-dump" id="stack-args-<?= $i ?>" style="display: none;">
+			<pre><?= implode("\n", $params) ?></pre>
+		</div>
+	</div>
 <?php endforeach; ?>
-</ul>
+</div>
+
 <script type="text/javascript">
-function traceToggle(event, id) {
+function cakeExpand(event, id) {
+	var el = document.getElementById(id);
+
+	var others = document.getElementsByClassName('cake-stack-details');
+	for (var i = 0, len = others.length; i < len; i++) {
+		others[i].style.display = 'none';
+	}
+	return cakeToggle(event, id);
+}
+function cakeToggle(event, id) {
 	var el = document.getElementById(id);
 	el.style.display = (el.style.display === 'block') ? 'none' : 'block';
 	event.preventDefault();
