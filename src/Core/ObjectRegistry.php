@@ -168,6 +168,16 @@ abstract class ObjectRegistry {
 	}
 
 /**
+ * Check whether or not a given object is loaded.
+ *
+ * @param string $name The object name to check for.
+ * @return bool True is object is loaded else false.
+ */
+	public function has($name) {
+		return isset($this->_loaded[$name]);
+	}
+
+/**
  * Provide public read access to the loaded objects
  *
  * @param string $name Name of property to read
