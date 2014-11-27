@@ -112,8 +112,8 @@ class CakeRequest implements ArrayAccess {
 			'webOS', 'Windows CE', 'Windows Phone OS', 'Xiino'
 		)),
 		'requested' => array('param' => 'requested', 'value' => 1),
-		'json' => array('header' => array('application/json')),
-		'xml' => array('header' => array('application/xml', 'text/xml')),
+		'json' => array('accept' => array('application/json'), 'param' => 'ext', 'value' => 'json'),
+		'xml' => array('accept' => array('application/xml', 'text/xml'), 'param' => 'ext', 'value' => 'xml'),
 	);
 
 /**
@@ -506,6 +506,9 @@ class CakeRequest implements ArrayAccess {
 		if (isset($detect['header']) && $this->_headerDetector($detect)) {
 			return true;
 		}
+		if (isset($detect['accept']) && $this->_acceptHeaderDetector($detect)) {
+			return true;
+		}
 		if (isset($detect['param']) && $this->_paramDetector($detect)) {
 			return true;
 		}
@@ -529,16 +532,51 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
+ * Detects if an URL extension is present.
+ *
+ * @param array $detect Detector options array.
+ * @return bool Whether or not the request is the type you are checking.
+ */
+	protected function _extensionDetector($detect) {
+		if (is_string($detect['extension'])) {
+			$detect['extension'] = array($detect['extension']);
+		}
+		if (in_array($this->params['ext'], $detect['extension'])) {
+			return true;
+		}
+		return false;
+	}
+
+/**
+ * Detects if a specific accept header is present.
+ *
+ * @param array $detect Detector options array.
+ * @return bool Whether or not the request is the type you are checking.
+ */
+	protected function _acceptHeaderDetector($detect) {
+		$acceptHeaders = $this->getAcceptHeaders();
+		foreach ($detect['accept'] as $header) {
+			if (in_array($header, $acceptHeaders)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+/**
  * Detects if a specific header is present.
  *
  * @param array $detect Detector options array.
  * @return bool Whether or not the request is the type you are checking.
  */
 	protected function _headerDetector($detect) {
-		$acceptHeaders = $this->getAcceptHeaders();
-		foreach ($detect['header'] as $header) {
-			if (in_array($header, $acceptHeaders)) {
-				return true;
+		foreach ($detect['header'] as $header => $value) {
+			$header = 'HTTP_' . strtoupper($header);
+			if (isset($_SERVER[$header])) {
+				if (is_callable($value)) {
+					return call_user_func($value, $_SERVER[$header]);
+				}
+				return ($_SERVER[$header] === $value);
 			}
 		}
 		return false;

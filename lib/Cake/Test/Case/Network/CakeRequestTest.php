@@ -52,16 +52,6 @@ class TestCakeRequest extends CakeRequest {
 		$this->here = $this->base . '/' . $this->url;
 	}
 
-/**
- * Detects if a specific header is present.
- *
- * @param $detect Detector options array.
- * @return bool Whether or not the request is the type you are checking.
- */
-	public function headerDetector($detect) {
-		return $this->_headerDetector($detect);
-	}
-
 }
 
 /**
@@ -105,15 +95,42 @@ class CakeRequestTest extends CakeTestCase {
  * @return void
  */
 	public function testHeaderDetector() {
-		$request = $this->getMock('TestCakeRequest', array('getAcceptHeaders'));
+		$request = new CakeRequest('some/path');
+		$request->addDetector('host', array('header' => array('host' => 'cakephp.org')));
+
+		$_SERVER['HTTP_HOST'] = 'cakephp.org';
+		$this->assertTrue($request->is('host'));
+
+		$_SERVER['HTTP_HOST'] = 'php.net';
+		$this->assertFalse($request->is('host'));
+	}
+
+/**
+ * Test the accept header detector.
+ *
+ * @return void
+ */
+	public function testExtensionDetector() {
+		$request = new CakeRequest('some/path');
+		$request->params['ext'] = 'json';
+		$this->assertTrue($request->is('json'));
+
+		$request->params['ext'] = 'xml';
+		$this->assertFalse($request->is('json'));
+	}
+
+/**
+ * Test the accept header detector.
+ *
+ * @return void
+ */
+	public function testAcceptHeaderDetector() {
+		$request = new CakeRequest('some/path');
 		$_SERVER['HTTP_ACCEPT'] = 'application/json, text/plain, */*';
-		$detector = array('header' => array('application/json'), 'param' => 'ext', 'value' => 'json');
-		$request->expects($this->once())
-			->method('getAcceptHeaders')
-			->will($this->returnValue(array(
-				'application/json'
-			)));
-		$this->assertTrue($request->headerDetector($detector));
+		$this->assertTrue($request->is('json'));
+
+		$_SERVER['HTTP_ACCEPT'] = 'text/plain, */*';
+		$this->assertFalse($request->is('json'));
 	}
 
 /**
