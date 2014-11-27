@@ -14,7 +14,7 @@
 	<div class="row">
 		<div class="large-5 columns strings">
 			<h6 class="subheader"><?= __('Article') ?></h6>
-			<p><?= $viewTaskComment->has('article') ? $this->Html->link($viewTaskComment->article->title, ['controller' => 'Articles', 'action' => 'view', $viewTaskComment->article->id]) : '' ?>" ?></p>
+			<p><?= $viewTaskComment->has('article') ? $this->Html->link($viewTaskComment->article->title, ['controller' => 'Articles', 'action' => 'view', $viewTaskComment->article->id]) : '' ?></p>
 			<h6 class="subheader"><?= __('Published') ?></h6>
 			<p><?= h($viewTaskComment->published) ?></p>
 		</div>
