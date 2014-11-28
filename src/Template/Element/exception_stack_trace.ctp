@@ -39,7 +39,7 @@ use Cake\Error\Debugger;
 	</ul>
 </div>
 
-<div class="columns large-12">
+<div class="columns large-10 large-push-2">
 <?php
 foreach ($error->getTrace() as $i => $stack):
 	$excerpt = $params = [];
