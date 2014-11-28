@@ -16,30 +16,7 @@
  */
 use Cake\Error\Debugger;
 ?>
-<div class="exception-stack-trace columns large-2 large-pull-10">
-	<h3>Stack Trace</h3>
-	<ul>
-	<?php foreach ($error->getTrace() as $i => $stack): ?>
-		<li class="cake-stack-frame"><?php
-		$excerpt = $arguments = '';
-		$params = array();
 
-		if (isset($stack['file']) && isset($stack['line'])):
-			printf(
-				'<a href="#" onclick="cakeExpand(event, \'stack-frame-%s\')">%s line %s</a>',
-				$i,
-				Debugger::trimPath($stack['file']),
-				$stack['line']
-			);
-		else:
-			echo '<a href="#">[internal function]</a>';
-		endif;
-		?></li>
-	<?php endforeach; ?>
-	</ul>
-</div>
-
-<div class="columns large-10 large-push-2">
 <?php
 foreach ($error->getTrace() as $i => $stack):
 	$excerpt = $params = [];
@@ -65,33 +42,14 @@ foreach ($error->getTrace() as $i => $stack):
 		endif;
 	endif;
 ?>
-	<div id="stack-frame-<?= $i ?>" style="display:none;" class="cake-stack-details">
+	<div id="stack-frame-<?= $i ?>" style="display:none;" class="stack-details">
 		<span class="stack-frame-file"><?= h($file) ?></span>
-		<a href="#" onclick="cakeToggle(event, 'stack-args-<?= $i ?>')">show arguments</a>
-		<div class="cake-code-dump">
+		<a href="#" class="stack-frame-args" data-target="stack-args-<?= $i ?>">show arguments</a>
+		<div class="code-dump">
 			<pre><?= implode("\n", $excerpt) ?></pre>
 		</div>
-		<div class="cake-code-dump" id="stack-args-<?= $i ?>" style="display: none;">
+		<div class="code-dump" id="stack-args-<?= $i ?>" style="display: none;">
 			<pre><?= implode("\n", $params) ?></pre>
 		</div>
 	</div>
 <?php endforeach; ?>
-</div>
-
-<script type="text/javascript">
-function cakeExpand(event, id) {
-	var el = document.getElementById(id);
-
-	var others = document.getElementsByClassName('cake-stack-details');
-	for (var i = 0, len = others.length; i < len; i++) {
-		others[i].style.display = 'none';
-	}
-	return cakeToggle(event, id);
-}
-function cakeToggle(event, id) {
-	var el = document.getElementById(id);
-	el.style.display = (el.style.display === 'block') ? 'none' : 'block';
-	event.preventDefault();
-	return false;
-}
-</script>

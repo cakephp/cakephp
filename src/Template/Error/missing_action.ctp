@@ -32,13 +32,9 @@ if (empty($plugin)) {
 	$path = Plugin::classPath($plugin) . 'Controller' . DS . $prefix . h($controller) . '.php';
 }
 
-$this->extend('dev_error');
+$this->layout = 'dev_error';
 
-$heading = sprintf('Missing Method in %s', h($controller));
-
-$this->assign('title', $heading);
-$this->assign('heading', $heading);
-
+$this->assign('title', sprintf('Missing Method in %s', h($controller)));
 $this->assign(
 	'subheading',
 	sprintf('The action <em>%s</em> is not defined in controller <em>%s</em>', h($action), h($controller))
