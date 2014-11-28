@@ -1256,7 +1256,7 @@ class EmailTest extends TestCase {
 			"\r\n" .
 			"\r\n" .
 			"--rel-$boundary\r\n" .
-			"Content-Disposition: inline; filename=\"cake.png\"\r\n";
+			"Content-Disposition: inline; filename=\"cake.png\"\r\n" .
 			"Content-Type: application/octet-stream\r\n" .
 			"Content-Transfer-Encoding: base64\r\n" .
 			"Content-ID: <abc123>\r\n" .
