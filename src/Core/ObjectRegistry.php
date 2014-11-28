@@ -114,10 +114,11 @@ abstract class ObjectRegistry {
 		if (!$hasConfig) {
 			throw new RuntimeException($msg);
 		}
-		unset($config['enabled']);
-		if ($hasConfig && array_diff_assoc($config, $existing->config()) != []) {
+		$existingConfig = $existing->config();
+		unset($config['enabled'], $existingConfig['enabled']);
+		if ($hasConfig && json_encode($config) !== json_encode($existingConfig)) {
 			$msg .= ' with the following config: ';
-			$msg .= var_export($this->{$name}->config(), true);
+			$msg .= var_export($existingConfig, true);
 			$msg .= ' which differs from ' . var_export($config, true);
 			throw new RuntimeException($msg);
 		}
