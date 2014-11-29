@@ -38,7 +38,6 @@ use Cake\Error\Debugger;
 
 	<div class="error-contents">
 		<p class="error-subheading">
-			<strong>Error: </strong>
 			<?= $this->fetch('subheading') ?>
 		</p>
 
@@ -50,8 +49,8 @@ use Cake\Error\Debugger;
 
 		<?php if ($this->fetch('templateName')): ?>
 		<p class="notice">
-			<em>Notice:</em>
-			<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . $this->fetch('templateName')); ?>
+			If you want to customize this error message, create
+			<em><?= APP_DIR . DS . 'Template' . DS . 'Error' . DS . $this->fetch('templateName') ?></em>
 		</p>
 		<?php endif; ?>
 	</div>
