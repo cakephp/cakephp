@@ -116,6 +116,11 @@ abstract class ObjectRegistry {
 		}
 		$existingConfig = $existing->config();
 		unset($config['enabled'], $existingConfig['enabled']);
+
+		if (empty($config)) {
+			return;
+		}
+
 		if ($hasConfig && json_encode($config) !== json_encode($existingConfig)) {
 			$msg .= ' with the following config: ';
 			$msg .= var_export($existingConfig, true);
