@@ -228,7 +228,7 @@ class HelperRegistryTest extends TestCase {
  * Loading a helper with no config should "just work"
  *
  * The addToAssertionCount call is to record that no exception was thrown
-
+ *
  * @return void
  */
 	public function testLoadMultipleTimesNoConfig() {
