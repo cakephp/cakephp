@@ -90,6 +90,50 @@ class CakeRequestTest extends CakeTestCase {
 	}
 
 /**
+ * Test the header detector.
+ *
+ * @return void
+ */
+	public function testHeaderDetector() {
+		$request = new CakeRequest('some/path');
+		$request->addDetector('host', array('header' => array('host' => 'cakephp.org')));
+
+		$_SERVER['HTTP_HOST'] = 'cakephp.org';
+		$this->assertTrue($request->is('host'));
+
+		$_SERVER['HTTP_HOST'] = 'php.net';
+		$this->assertFalse($request->is('host'));
+	}
+
+/**
+ * Test the accept header detector.
+ *
+ * @return void
+ */
+	public function testExtensionDetector() {
+		$request = new CakeRequest('some/path');
+		$request->params['ext'] = 'json';
+		$this->assertTrue($request->is('json'));
+
+		$request->params['ext'] = 'xml';
+		$this->assertFalse($request->is('json'));
+	}
+
+/**
+ * Test the accept header detector.
+ *
+ * @return void
+ */
+	public function testAcceptHeaderDetector() {
+		$request = new CakeRequest('some/path');
+		$_SERVER['HTTP_ACCEPT'] = 'application/json, text/plain, */*';
+		$this->assertTrue($request->is('json'));
+
+		$_SERVER['HTTP_ACCEPT'] = 'text/plain, */*';
+		$this->assertFalse($request->is('json'));
+	}
+
+/**
  * Test that the autoparse = false constructor works.
  *
  * @return void
@@ -747,6 +791,24 @@ class CakeRequestTest extends CakeTestCase {
 
 		$_SERVER['REQUEST_METHOD'] = 'delete';
 		$this->assertFalse($request->is('delete'));
+	}
+
+/**
+ * Test is() with json and xml.
+ *
+ * @return void
+ */
+	public function testIsJsonAndXml() {
+		$request = new CakeRequest('some/path');
+
+		$_SERVER['HTTP_ACCEPT'] = 'application/json, text/plain, */*';
+		$this->assertTrue($request->is(array('json')));
+
+		$_SERVER['HTTP_ACCEPT'] = 'application/xml, text/plain, */*';
+		$this->assertTrue($request->is(array('xml')));
+
+		$_SERVER['HTTP_ACCEPT'] = 'text/xml, */*';
+		$this->assertTrue($request->is(array('xml')));
 	}
 
 /**

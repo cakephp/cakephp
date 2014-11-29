@@ -111,7 +111,9 @@ class CakeRequest implements ArrayAccess {
 			'portalmmm', 'Plucker', 'ReqwirelessWeb', 'SonyEricsson', 'Symbian', 'UP\\.Browser',
 			'webOS', 'Windows CE', 'Windows Phone OS', 'Xiino'
 		)),
-		'requested' => array('param' => 'requested', 'value' => 1)
+		'requested' => array('param' => 'requested', 'value' => 1),
+		'json' => array('accept' => array('application/json'), 'param' => 'ext', 'value' => 'json'),
+		'xml' => array('accept' => array('application/xml', 'text/xml'), 'param' => 'ext', 'value' => 'xml'),
 	);
 
 /**
@@ -498,6 +500,100 @@ class CakeRequest implements ArrayAccess {
 			return false;
 		}
 		$detect = $this->_detectors[$type];
+		if (isset($detect['env']) && $this->_environmentDetector($detect)) {
+			return true;
+		}
+		if (isset($detect['header']) && $this->_headerDetector($detect)) {
+			return true;
+		}
+		if (isset($detect['accept']) && $this->_acceptHeaderDetector($detect)) {
+			return true;
+		}
+		if (isset($detect['param']) && $this->_paramDetector($detect)) {
+			return true;
+		}
+		if (isset($detect['callback']) && is_callable($detect['callback'])) {
+			return call_user_func($detect['callback'], $this);
+		}
+		return false;
+	}
+
+/**
+ * Detects if a URL extension is present.
+ *
+ * @param array $detect Detector options array.
+ * @return bool Whether or not the request is the type you are checking.
+ */
+	protected function _extensionDetector($detect) {
+		if (is_string($detect['extension'])) {
+			$detect['extension'] = array($detect['extension']);
+		}
+		if (in_array($this->params['ext'], $detect['extension'])) {
+			return true;
+		}
+		return false;
+	}
+
+/**
+ * Detects if a specific accept header is present.
+ *
+ * @param array $detect Detector options array.
+ * @return bool Whether or not the request is the type you are checking.
+ */
+	protected function _acceptHeaderDetector($detect) {
+		$acceptHeaders = explode(',', (string)env('HTTP_ACCEPT'));
+		foreach ($detect['accept'] as $header) {
+			if (in_array($header, $acceptHeaders)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+/**
+ * Detects if a specific header is present.
+ *
+ * @param array $detect Detector options array.
+ * @return bool Whether or not the request is the type you are checking.
+ */
+	protected function _headerDetector($detect) {
+		foreach ($detect['header'] as $header => $value) {
+			$header = env('HTTP_' . strtoupper($header));
+			if (!is_null($header)) {
+				if (!is_string($value) && !is_bool($value) && is_callable($value)) {
+					return call_user_func($value, $header);
+				}
+				return ($header === $value);
+			}
+		}
+		return false;
+	}
+
+/**
+ * Detects if a specific request parameter is present.
+ *
+ * @param array $detect Detector options array.
+ * @return bool Whether or not the request is the type you are checking.
+ */
+	protected function _paramDetector($detect) {
+		$key = $detect['param'];
+		if (isset($detect['value'])) {
+			$value = $detect['value'];
+			return isset($this->params[$key]) ? $this->params[$key] == $value : false;
+		}
+		if (isset($detect['options'])) {
+			return isset($this->params[$key]) ? in_array($this->params[$key], $detect['options']) : false;
+		}
+		return false;
+	}
+
+/**
+ * Detects if a specific environment variable is present.
+ *
+ * @param array $detect Detector options array.
+ * @return bool Whether or not the request is the type you are checking.
+ */
+	protected function _environmentDetector($detect) {
 		if (isset($detect['env'])) {
 			if (isset($detect['value'])) {
 				return env($detect['env']) == $detect['value'];
@@ -509,19 +605,6 @@ class CakeRequest implements ArrayAccess {
 				$pattern = '/' . implode('|', $detect['options']) . '/i';
 				return (bool)preg_match($pattern, env($detect['env']));
 			}
-		}
-		if (isset($detect['param'])) {
-			$key = $detect['param'];
-			if (isset($detect['value'])) {
-				$value = $detect['value'];
-				return isset($this->params[$key]) ? $this->params[$key] == $value : false;
-			}
-			if (isset($detect['options'])) {
-				return isset($this->params[$key]) ? in_array($this->params[$key], $detect['options']) : false;
-			}
-		}
-		if (isset($detect['callback']) && is_callable($detect['callback'])) {
-			return call_user_func($detect['callback'], $this);
 		}
 		return false;
 	}
