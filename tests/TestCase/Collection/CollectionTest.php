@@ -517,7 +517,7 @@ class CollectionTest extends TestCase {
  * Tests that only arrays and Traversables are allowed in the constructor
  *
  * @expectedException \InvalidArgumentException
- * @expectedExceptionMessage Only array or \Traversable are allowed for Collection
+ * @expectedExceptionMessage Only an array or \Traversable is allowed for Collection
  * @return void
  */
 	public function testInvalidConstructorArgument() {
