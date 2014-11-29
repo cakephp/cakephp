@@ -47,19 +47,22 @@ $this->start('file');
 	<strong>Error: </strong>
 	<?= sprintf('Create <em>%s::%s()</em> in file: %s.', h($controller),  h($action), $path); ?>
 </p>
-<pre>
-&lt;?php
-namespace <?= h($namespace); ?>\Controller<?= h($prefixNs); ?>;
 
-use <?= h($namespace); ?>\Controller\AppController;
+<?php
+$code = <<<PHP
+<?php
+namespace {$namespace}\Controller{$prefixNs};
 
-class <?= h($controller); ?> extends AppController {
+use {$namespace}\Controller\AppController;
 
-<strong>
-	public function <?= h($action); ?>() {
+class {$controller} extends AppController {
+
+	public function {$action}() {
 
 	}
-</strong>
 }
-</pre>
+PHP;
+?>
+
+<div class="code-dump"><?php highlight_string($code) ?></div>
 <?php $this->end() ?>

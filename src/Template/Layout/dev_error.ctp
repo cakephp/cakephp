@@ -118,6 +118,8 @@ body {
 	margin: 0;
 	max-height: 100%;
 }
+
+.code-dump,
 pre {
 	background: #fefefe;
 	border: 1px solid #ddd;
