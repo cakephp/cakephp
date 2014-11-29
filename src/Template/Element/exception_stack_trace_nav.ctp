@@ -19,13 +19,14 @@ use Cake\Error\Debugger;
 	<li class="stack-frame">
 	<?php if (isset($stack['file']) && isset($stack['line'])): ?>
 		<a href="#" data-target="stack-frame-<?= $i ?>">
-			<span class="stack-file"><?= Debugger::trimPath($stack['file']) ?></span>
+			<span class="stack-file"><?= h(Debugger::trimPath($stack['file'])) ?></span>
 			<?php if (!isset($stack['class'])): ?>
 				<span class="stack-function"><?= h($stack['function']) ?></span>
 			<?php else: ?>
 				<span class="stack-function"><?= h($stack['class']) ?>::<?= h($stack['function']) ?></span>
 			<?php endif; ?>
-			<span class="stack-line">line <?= $stack['line'] ?></span>
+			, line
+			<span class="stack-line"><?= $stack['line'] ?></span>
 		</a>
 	<?php else: ?>
 		<a href="#">[internal function]</a>

@@ -50,7 +50,7 @@ use Cake\Error\Debugger;
 
 		<?php if ($this->fetch('templateName')): ?>
 		<p class="notice">
-			<strong>Notice: </strong>
+			<em>Notice:</em>
 			<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . $this->fetch('templateName')); ?>
 		</p>
 		<?php endif; ?>
@@ -67,7 +67,9 @@ $(document).ready(function() {
 		var el = $(this);
 		var target = el.data('target');
 		$('#' + target).toggle();
+		return false;
 	});
+
 	var frames = $('.stack-frame');
 	var details = $('.stack-details');
 	frames.find('a').on('click', function() {
@@ -79,7 +81,9 @@ $(document).ready(function() {
 
 		var target = el.data('target');
 		$('#' + target).toggle();
+		return false;
 	});
+
 });
 </script>
 
@@ -91,6 +95,11 @@ body {
 	padding:0;
 	margin: 0;
 	max-height: 100%;
+}
+pre {
+	background: #fefefe;
+	border: 1px solid #ddd;
+	padding: 5px;
 }
 
 header {
@@ -124,26 +133,26 @@ header {
 
 .error-nav {
 	float: left;
-	width: 25%;
+	width: 30%;
 }
 .error-contents {
 	padding: 10px 1%;
 	float: right;
-	width: 73%;
+	width: 68%;
 }
 
+.error,
 .error-subheading {
 	font-size: 18px;
 	margin-top: 0;
 	padding: 10px;
+}
+.error-subheading {
 	background: #1798A5;
 	color: #fff;
 }
-
-pre {
-	background: #fefefe;
-	border: 1px solid #ddd;
-	padding: 5px;
+.error {
+	background: #ffd54f;
 }
 
 .stack-trace {
@@ -167,8 +176,7 @@ pre {
 }
 
 .stack-frame-file,
-.stack-file,
-.stack-function {
+.stack-file {
 	font-family: consolas, monospace;
 }
 
@@ -176,19 +184,35 @@ pre {
 	background: #ececec;
 	box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 	padding: 10px;
-}
-.stack-details pre {
-	margin-bottom: 0;
+	margin-bottom: 18px;
 }
 .stack-frame-args {
 	float: right;
 }
 
+.code-excerpt {
+	width: 100%;
+	margin: 5px 0;
+	background: #fefefe;
+}
 .code-highlight {
 	display: block;
-	background: yellow;
+	background: #fff59d;
 }
-
+.excerpt-line {
+	padding-left: 2px;
+}
+.excerpt-number {
+	background: #f6f6f6;
+	width: 50px;
+	text-align: right;
+	color: #666;
+	border-right: 1px solid #ddd;
+	padding: 2px;
+}
+.excerpt-number:after {
+	content: attr(data-number);
+}
 </style>
 
 </body>
