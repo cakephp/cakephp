@@ -59,30 +59,53 @@ use Cake\Error\Debugger;
 		<?= $this->element('exception_stack_trace_nav') ?>
 	</div>
 
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript">
-$(document).ready(function() {
-	$('.stack-frame-args').on('click', function() {
-		var el = $(this);
-		var target = el.data('target');
-		$('#' + target).toggle();
+function bindEvent(selector, eventName, listener) {
+	var els = document.querySelectorAll(selector);
+	for (var i = 0, len = els.length; i < len; i++) {
+		els[i].addEventListener(eventName, listener, false);
+	}
+}
+
+function toggleElement(el) {
+	if (el.style.display === 'none') {
+		el.style.display = 'block';
+	} else {
+		el.style.display = 'none';
+	}
+}
+
+function each(els, cb) {
+	var i, len;
+	for (i = 0, len = els.length; i < len; i++) {
+		cb(els[i], i);
+	}
+}
+
+window.addEventListener('load', function() {
+	bindEvent('.stack-frame-args', 'click', function() {
+		var target = this.dataset['target'];
+		var el = document.getElementById(target);
+		toggleElement(el);
 		return false;
 	});
 
-	var frames = $('.stack-frame');
-	var details = $('.stack-details');
-	frames.find('a').on('click', function() {
-		var el = $(this);
-		frames.removeClass('active');
-		el.parent().addClass('active');
+	var details = document.querySelectorAll('.stack-details');
+	var frames = document.querySelectorAll('.stack-frame');
+	bindEvent('.stack-frame a', 'click', function() {
+		each(frames, function(el) {
+			el.classList.remove('active');
+		});
+		this.parentNode.classList.add('active');
 
-		details.hide();
+		each(details, function(el) {
+			el.style.display = 'none';
+		});
 
-		var target = el.data('target');
-		$('#' + target).toggle();
+		var target = document.getElementById(this.dataset['target']);
+		toggleElement(target);
 		return false;
 	});
-
 });
 </script>
 
