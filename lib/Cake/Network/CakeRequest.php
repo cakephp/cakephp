@@ -519,20 +519,7 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Gets the accept header from the current request.
- *
- * @return bool Returns an array of accept header values.
- */
-	public function getAcceptHeaders() {
-		$headers = array();
-		if (isset($_SERVER['HTTP_ACCEPT'])) {
-			$headers = explode(',', $_SERVER['HTTP_ACCEPT']);
-		}
-		return $headers;
-	}
-
-/**
- * Detects if an URL extension is present.
+ * Detects if a URL extension is present.
  *
  * @param array $detect Detector options array.
  * @return bool Whether or not the request is the type you are checking.
@@ -554,7 +541,7 @@ class CakeRequest implements ArrayAccess {
  * @return bool Whether or not the request is the type you are checking.
  */
 	protected function _acceptHeaderDetector($detect) {
-		$acceptHeaders = $this->getAcceptHeaders();
+		$acceptHeaders = explode(',', (string)env('HTTP_ACCEPT'));
 		foreach ($detect['accept'] as $header) {
 			if (in_array($header, $acceptHeaders)) {
 				return true;
@@ -571,12 +558,12 @@ class CakeRequest implements ArrayAccess {
  */
 	protected function _headerDetector($detect) {
 		foreach ($detect['header'] as $header => $value) {
-			$header = 'HTTP_' . strtoupper($header);
-			if (isset($_SERVER[$header])) {
-				if (is_callable($value)) {
-					return call_user_func($value, $_SERVER[$header]);
+			$header = env('HTTP_' . strtoupper($header));
+			if (!is_null($header)) {
+				if (!is_string($value) && !is_bool($value) && is_callable($value)) {
+					return call_user_func($value, $header);
 				}
-				return ($_SERVER[$header] === $value);
+				return ($header === $value);
 			}
 		}
 		return false;
