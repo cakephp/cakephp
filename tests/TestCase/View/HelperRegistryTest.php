@@ -224,4 +224,38 @@ class HelperRegistryTest extends TestCase {
 		$this->assertCount(0, $this->Events->listeners('View.beforeRender'));
 	}
 
+/**
+ * Loading a helper with no config should "just work"
+ *
+ * @return void
+ */
+	public function testLoadMultipleTimesNoConfig() {
+		$this->Helpers->load('Html');
+		$this->Helpers->load('Html');
+		$this->assertTrue(true, 'Unable to load the same helper with no config');
+	}
+
+/**
+ * Loading a helper with bespoke config, where the subsequent load specifies no
+ * config should "just work"
+ *
+ * @return void
+ */
+	public function testLoadMultipleTimesAlreadyConfigured() {
+		$this->Helpers->load('Html', ['same' => 'stuff']);
+		$this->Helpers->load('Html');
+		$this->assertTrue(true, 'Unable to load an already-configured helper with no config');
+	}
+
+/**
+ * Loading a helper with different config, should bark
+ *
+ * @expectedException RuntimeException
+ * @return void
+ */
+	public function testLoadMultipleTimesDifferentConfigured() {
+		$this->Helpers->load('Html');
+		$this->Helpers->load('Html', ['same' => 'stuff']);
+	}
+
 }
