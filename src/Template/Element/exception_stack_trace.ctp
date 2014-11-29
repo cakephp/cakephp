@@ -22,7 +22,6 @@ foreach ($error->getTrace() as $i => $stack):
 	$excerpt = $params = [];
 
 	if (isset($stack['file']) && isset($stack['line'])):
-		// TODO add line numbers
 		$excerpt = Debugger::excerpt($stack['file'], $stack['line'] - 1, 2);
 	endif;
 
