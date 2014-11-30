@@ -98,6 +98,7 @@ class BakeHelper extends Helper {
  *
  * The returned array holds the following keys:
  *
+ * - `fqn` (the fully qualified name)
  * - `namespace` (the full namespace without leading separator)
  * - `class` (the class name)
  * - `plugin` (either the name of the plugin, or `null`)
@@ -118,12 +119,14 @@ class BakeHelper extends Helper {
 		}
 		$base = str_replace('/', '\\', trim($base, '\\'));
 		$sub = '\\' . str_replace('/', '\\', trim($type, '\\'));
+		$qn = $sub . '\\' . $name . $suffix;
 
-		if (class_exists('\Cake' . $sub . '\\' . $name . $suffix)) {
+		if (class_exists('\Cake' . $qn)) {
 			$base = 'Cake';
 		}
 
 		return [
+			'fqn' => '\\' . $base . $qn,
 			'namespace' => $base . $sub,
 			'plugin' => $plugin,
 			'class' => $name . $suffix,

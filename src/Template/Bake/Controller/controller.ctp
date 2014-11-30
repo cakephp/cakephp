@@ -33,7 +33,7 @@ use <%= $namespace %>\Controller\AppController;
 foreach ($components as $component):
 	$classInfo = $this->Bake->classInfo($component, 'Controller/Component', 'Component');
 %>
- * @property \<%= $classInfo['namespace'] %>\<%= $classInfo['class'] %> $<%= $classInfo['name'] %>
+ * @property <%= $classInfo['fqn'] %> $<%= $classInfo['name'] %>
 <% endforeach; %>
  */
 class <%= $name %>Controller extends AppController {
