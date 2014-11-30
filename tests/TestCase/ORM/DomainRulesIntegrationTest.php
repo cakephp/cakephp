@@ -294,6 +294,7 @@ class DomainRulesIntegrationTest extends TestCase {
 		$rules->add($rules->isUnique(['name']));
 
 		$this->assertFalse($table->save($entity));
+		$this->assertEquals(['This value is already in use'], $entity->errors('name'));
 
 		$entity->name = 'jose';
 		$this->assertSame($entity, $table->save($entity));
@@ -317,10 +318,12 @@ class DomainRulesIntegrationTest extends TestCase {
 
 		$table = TableRegistry::get('Articles');
 		$rules = $table->domainRules();
-		$rules->add($rules->isUnique(['author_id', 'title']));
+		$rules->add($rules->isUnique(['title', 'author_id']));
 
 		$this->assertFalse($table->save($entity));
+		$this->assertEquals(['title' => ['This value is already in use']], $entity->errors());
 
+		$entity->clean();
 		$entity->author_id = 2;
 		$this->assertSame($entity, $table->save($entity));
 	}

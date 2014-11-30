@@ -35,18 +35,18 @@ class DomainChecker {
 		$this->_options = $options;
 	}
 
-	public function add(callable $rule) {
-		$this->_rules[] = $rule;
+	public function add(callable $rule, array $options = []) {
+		$this->_rules[] = $this->_addError($rule, $options);
 		return $this;
 	}
 
-	public function addCreate(callable $rule) {
-		$this->_createRules[] = $rule;
+	public function addCreate(callable $rule, array $options = []) {
+		$this->_createRules[] = $this->_addError($rule, $options);
 		return $this;
 	}
 
-	public function addUpdate(callable $rule) {
-		$this->_updateRules[] = $rule;
+	public function addUpdate(callable $rule, array $options = []) {
+		$this->_updateRules[] = $this->_addError($rule, $options);
 		return $this;
 	}
 
@@ -66,8 +66,23 @@ class DomainChecker {
 		return $success;
 	}
 
-	public function isUnique(array $fields) {
-		return new IsUnique($fields);
+	public function isUnique(array $fields, $message = 'This value is already in use') {
+		$errorField = current($fields);
+		return $this->_addError(new IsUnique($fields), compact('errorField', 'message'));
+	}
+
+	protected function _addError($rule, $options) {
+		return function ($entity, $scope) use ($rule, $options) {
+			$pass = $rule($entity, $options + $scope);
+
+			if ($pass || empty($options['errorField'])) {
+				return $pass;
+			}
+			
+			$message = isset($options['message']) ? $options['message'] : 'invalid';
+			$entity->errors($options['errorField'], (array)$message);
+			return $pass;
+		};
 	}
 
 }
