@@ -278,4 +278,25 @@ class DomainRulesIntegrationTest extends TestCase {
 		$this->assertEquals(5, $entity->tags[1]->_joinData->tag_id);
 	}
 
+/**
+ * Tests the isUnique domain rule
+ *
+ * @group save
+ * @return void
+ */
+	public function testIsUniqueDomainRule() {
+		$entity = new Entity([
+			'name' => 'larry'
+		]);
+
+		$table = TableRegistry::get('Authors');
+		$rules = $table->domainRules();
+		$rules->add($rules->isUnique(['name']));
+
+		$this->assertFalse($table->save($entity));
+
+		$entity->name = 'jose';
+		$this->assertSame($entity, $table->save($entity));
+	}
+
 }

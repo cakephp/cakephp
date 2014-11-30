@@ -15,6 +15,7 @@
 namespace Cake\ORM;
 
 use Cake\Datasource\EntityInterface;
+use Cake\ORM\Rule\IsUnique;
 
 /**
  * Contains logic for storing and checking domain rules on entities
@@ -63,6 +64,10 @@ class DomainChecker {
 			$success = $rule($entity, $this->_options) && $success;
 		}
 		return $success;
+	}
+
+	public function isUnique(array $fields) {
+		return new IsUnique($fields);
 	}
 
 }
