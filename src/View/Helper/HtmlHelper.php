@@ -418,11 +418,11 @@ class HtmlHelper extends Helper {
 			$options = array_diff_key($options, array('fullBase' => null, 'pathPrefix' => null));
 		}
 
-		if ($options['once'] && isset($this->_includedAssets[$url])) {
+		if ($options['once'] && isset($this->_includedAssets[__METHOD__][$path])) {
 			return '';
 		}
 		unset($options['once']);
-		$this->_includedAssets[$url] = true;
+		$this->_includedAssets[__METHOD__][$path] = true;
 		$templater = $this->templater();
 
 		if ($options['rel'] === 'import') {
@@ -501,11 +501,11 @@ class HtmlHelper extends Helper {
 			$url = $this->Url->assetUrl($url, $options + array('pathPrefix' => Configure::read('App.jsBaseUrl'), 'ext' => '.js'));
 			$options = array_diff_key($options, array('fullBase' => null, 'pathPrefix' => null));
 		}
-
-		if ($options['once'] && isset($this->_includedAssets[$url])) {
+		if ($options['once'] && isset($this->_includedAssets[__METHOD__][$url])) {
 			return null;
 		}
-		$this->_includedAssets[$url] = true;
+		$this->_includedAssets[__METHOD__][$url] = true;
+
 
 		$out = $this->formatTemplate('javascriptlink', [
 			'url' => $url,

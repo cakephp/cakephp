@@ -57,6 +57,52 @@ class RequestTest extends TestCase {
 	}
 
 /**
+ * Test the header detector.
+ *
+ * @return void
+ */
+	public function testHeaderDetector() {
+		$request = new Request();
+		$request->addDetector('host', array('header' => array('host' => 'cakephp.org')));
+
+		$request->env('HTTP_HOST', 'cakephp.org');
+		$this->assertTrue($request->is('host'));
+
+		$request->env('HTTP_HOST', 'php.net');
+		$this->assertFalse($request->is('host'));
+	}
+
+/**
+ * Test the accept header detector.
+ *
+ * @return void
+ */
+	public function testExtensionDetector() {
+		$request = new Request();
+		$request->params['_ext'] = 'json';
+		$this->assertTrue($request->is('json'));
+
+		$request = new Request();
+		$request->params['_ext'] = 'xml';
+		$this->assertFalse($request->is('json'));
+	}
+
+/**
+ * Test the accept header detector.
+ *
+ * @return void
+ */
+	public function testAcceptHeaderDetector() {
+		$request = new Request();
+		$request->env('HTTP_ACCEPT', 'application/json, text/plain, */*');
+		$this->assertTrue($request->is('json'));
+
+		$request = new Request();
+		$request->env('HTTP_ACCEPT', 'text/plain, */*');
+		$this->assertFalse($request->is('json'));
+	}
+
+/**
  * Test that the autoparse = false constructor works.
  *
  * @return void
@@ -536,6 +582,25 @@ class RequestTest extends TestCase {
 	}
 
 /**
+ * Test is() with json and xml.
+ *
+ * @return void
+ */
+	public function testIsJsonAndXml() {
+		$request = new Request();
+		$request->env('HTTP_ACCEPT', 'application/json, text/plain, */*');
+		$this->assertTrue($request->is('json'));
+
+		$request = new Request();
+		$request->env('HTTP_ACCEPT', 'application/xml, text/plain, */*');
+		$this->assertTrue($request->is('xml'));
+
+		$request = new Request();
+		$request->env('HTTP_ACCEPT', 'text/xml, */*');
+		$this->assertTrue($request->is('xml'));
+	}
+
+/**
  * Test is() with multiple types.
  *
  * @return void
@@ -843,9 +908,8 @@ class RequestTest extends TestCase {
 		$request->env('HTTP_USER_AGENT', 'Imagination land');
 		$this->assertTrue($request->isMobile());
 
-		Request::addDetector('callme', array('env' => 'TEST_VAR', 'callback' => array($this, 'detectCallback')));
-
 		Request::addDetector('index', array('param' => 'action', 'value' => 'index'));
+
 		$request->params['action'] = 'index';
 		$request->clearDetectorCache();
 		$this->assertTrue($request->isIndex());
@@ -854,25 +918,17 @@ class RequestTest extends TestCase {
 		$request->clearDetectorCache();
 		$this->assertFalse($request->isIndex());
 
-		$request->return = true;
-		$request->clearDetectorCache();
-		$this->assertTrue($request->isCallMe());
-
-		$request->return = false;
-		$request->clearDetectorCache();
-		$this->assertFalse($request->isCallMe());
-
 		Request::addDetector('callme', array($this, 'detectCallback'));
 		$request->return = true;
 		$request->clearDetectorCache();
 		$this->assertTrue($request->isCallMe());
 
-		Request::addDetector('extension', array('param' => 'ext', 'options' => array('pdf', 'png', 'txt')));
-		$request->params['ext'] = 'pdf';
+		Request::addDetector('extension', array('param' => '_ext', 'options' => array('pdf', 'png', 'txt')));
+		$request->params['_ext'] = 'pdf';
 		$request->clearDetectorCache();
 		$this->assertTrue($request->is('extension'));
 
-		$request->params['ext'] = 'exe';
+		$request->params['_ext'] = 'exe';
 		$request->clearDetectorCache();
 		$this->assertFalse($request->isExtension());
 	}
