@@ -60,7 +60,8 @@ class DomainRulesIntegrationTest extends TestCase {
 		$table->association('authors')
 			->target()
 			->domainRules()
-			->add(function (Entity $author) {
+			->add(function (Entity $author, array $options) use ($table) {
+				$this->assertSame($options['scope'], $table->association('authors')->target());
 				$author->errors('name', ['This is an error']);
 				return false;
 			});
