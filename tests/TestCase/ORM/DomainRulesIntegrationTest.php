@@ -62,9 +62,8 @@ class DomainRulesIntegrationTest extends TestCase {
 			->domainRules()
 			->add(function (Entity $author, array $options) use ($table) {
 				$this->assertSame($options['repository'], $table->association('authors')->target());
-				$author->errors('name', ['This is an error']);
 				return false;
-			});
+			}, ['errorField' => 'name', 'message' => 'This is an error']);
 
 		$this->assertFalse($table->save($entity));
 		$this->assertTrue($entity->isNew());
@@ -95,9 +94,8 @@ class DomainRulesIntegrationTest extends TestCase {
 			->target()
 			->domainRules()
 			->add(function (Entity $entity) {
-				$entity->errors('title', ['Some error']);
 				return false;
-			});
+			}, ['errorField' => 'title', 'message' => 'This is an error']);
 
 		$this->assertFalse($table->save($entity));
 		$this->assertTrue($entity->isNew());
@@ -136,12 +134,8 @@ class DomainRulesIntegrationTest extends TestCase {
 			->target()
 			->domainRules()
 			->add(function (Entity $entity) {
-				if ($entity->title !== '1') {
-					$entity->errors('title', ['an error']);
-					return false;
-				}
-				return true;
-			});
+				return $entity->title === '1';
+			}, ['errorField' => 'title', 'message' => 'This is an error']);
 
 		$this->assertFalse($table->save($entity));
 		$this->assertTrue($entity->isNew());
@@ -183,12 +177,8 @@ class DomainRulesIntegrationTest extends TestCase {
 			->target()
 			->domainRules()
 			->add(function (Entity $article) {
-				if (!is_numeric($article->title)) {
-					$article->errors('title', ['an error']);
-					return false;
-				}
-				return true;
-			});
+				return is_numeric($article->title);
+			}, ['errorField' => 'title', 'message' => 'This is an error']);
 
 		$result = $table->save($entity, ['atomic' => false]);
 		$this->assertSame($entity, $result);
