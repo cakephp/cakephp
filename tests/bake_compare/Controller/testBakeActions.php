@@ -6,9 +6,9 @@ use App\Controller\AppController;
 /**
  * BakeArticles Controller
  *
- * @property App\Model\Table\BakeArticlesTable $BakeArticles
- * @property CsrfComponent $Csrf
- * @property AuthComponent $Auth
+ * @property \App\Model\Table\BakeArticlesTable $BakeArticles
+ * @property \Cake\Controller\Component\CsrfComponent $Csrf
+ * @property \Cake\Controller\Component\AuthComponent $Auth
  */
 class BakeArticlesController extends AppController {
 

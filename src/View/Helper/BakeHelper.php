@@ -1,6 +1,7 @@
 <?php
 namespace Cake\View\Helper;
 
+use Cake\Core\Configure;
 use Cake\Core\ConventionsTrait;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
@@ -90,6 +91,45 @@ class BakeHelper extends Helper {
 		};
 
 		return array_map($extractor, $table->associations()->type($assoc));
+	}
+
+/**
+ * Returns details about the given class.
+ *
+ * The returned array holds the following keys:
+ *
+ * - `namespace` (the full namespace without leading separator)
+ * - `class` (the class name)
+ * - `plugin` (either the name of the plugin, or `null`)
+ * - `name` (the name of the component without suffix)
+ * - `fullName` (the full name of the class, including possible vendor and plugin name)
+ *
+ * @param string $class Class name
+ * @param string $type Class type/sub-namespace
+ * @param string $suffix Class name suffix
+ * @return array Class info
+ */
+	public function classInfo($class, $type, $suffix) {
+		list($plugin, $name) = \pluginSplit($class);
+
+		$base = Configure::read('App.namespace');
+		if ($plugin !== null) {
+			$base = $plugin;
+		}
+		$base = str_replace('/', '\\', trim($base, '\\'));
+		$sub = '\\' . str_replace('/', '\\', trim($type, '\\'));
+
+		if (class_exists('\Cake' . $sub . '\\' . $name . $suffix)) {
+			$base = 'Cake';
+		}
+
+		return [
+			'namespace' => $base . $sub,
+			'plugin' => $plugin,
+			'class' => $name . $suffix,
+			'name' => $name,
+			'fullName' => $class
+		];
 	}
 
 }

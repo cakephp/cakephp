@@ -28,9 +28,12 @@ use <%= $namespace %>\Controller\AppController;
 /**
  * <%= $name %> Controller
  *
- * @property <%= $namespace %>\Model\Table\<%= $defaultModel %>Table $<%= $defaultModel %>
-<% foreach ($components as $component): %>
- * @property <%= $component %>Component $<%= $component %>
+ * @property \<%= $namespace %>\Model\Table\<%= $defaultModel %>Table $<%= $defaultModel %>
+<%
+foreach ($components as $component):
+	$classInfo = $this->Bake->classInfo($component, 'Controller/Component', 'Component');
+%>
+ * @property \<%= $classInfo['namespace'] %>\<%= $classInfo['class'] %> $<%= $classInfo['name'] %>
 <% endforeach; %>
  */
 class <%= $name %>Controller extends AppController {
