@@ -190,6 +190,7 @@ class EventManagerTest extends TestCase {
  * Tests event dispatching
  *
  * @return void
+ * @triggers fake.event
  */
 	public function testDispatch() {
 		$manager = new EventManager();
@@ -224,6 +225,7 @@ class EventManagerTest extends TestCase {
  * Tests event dispatching with a return value
  *
  * @return void
+ * @triggers fake.event
  */
 	public function testDispatchReturnValue() {
 		$this->skipIf(
@@ -251,6 +253,7 @@ class EventManagerTest extends TestCase {
  * Tests that returning false in a callback stops the event
  *
  * @return void
+ * @triggers fake.event
  */
 	public function testDispatchFalseStopsEvent() {
 		$this->skipIf(
@@ -278,6 +281,7 @@ class EventManagerTest extends TestCase {
  * Tests event dispatching using priorities
  *
  * @return void
+ * @triggers fake.event
  */
 	public function testDispatchPrioritized() {
 		$manager = new EventManager();
@@ -295,6 +299,8 @@ class EventManagerTest extends TestCase {
  * Tests subscribing a listener object and firing the events it subscribed to
  *
  * @return void
+ * @triggers fake.event
+ * @triggers another.event $this, array(some => data)
  */
 	public function testAttachSubscriber() {
 		$manager = new EventManager();
@@ -318,6 +324,7 @@ class EventManagerTest extends TestCase {
  * Test implementedEvents binding multiple callbacks to the same event name.
  *
  * @return void
+ * @triggers multiple.handlers
  */
 	public function testAttachSubscriberMultiple() {
 		$manager = new EventManager();
@@ -372,6 +379,7 @@ class EventManagerTest extends TestCase {
  * Tests that the global event manager gets the event too from any other manager
  *
  * @return void
+ * @triggers fake.event
  */
 	public function testDispatchWithGlobal() {
 		$generalManager = $this->getMock('Cake\Event\EventManager', array('prioritisedListeners'));
@@ -388,6 +396,7 @@ class EventManagerTest extends TestCase {
  * Tests that stopping an event will not notify the rest of the listeners
  *
  * @return void
+ * @triggers fake.event
  */
 	public function testStopPropagation() {
 		$generalManager = $this->getMock('Cake\Event\EventManager');
@@ -415,6 +424,7 @@ class EventManagerTest extends TestCase {
  * Tests event dispatching using priorities
  *
  * @return void
+ * @triggers fake.event
  */
 	public function testDispatchPrioritizedWithGlobal() {
 		$generalManager = $this->getMock('Cake\Event\EventManager');
@@ -446,6 +456,7 @@ class EventManagerTest extends TestCase {
  * Tests event dispatching using priorities
  *
  * @return void
+ * @triggers fake.event
  */
 	public function testDispatchGlobalBeforeLocal() {
 		$generalManager = $this->getMock('Cake\Event\EventManager');
@@ -482,6 +493,7 @@ class EventManagerTest extends TestCase {
 /**
  * Tests events dispatched by a local manager can be handled by
  * handler registered in the global event manager
+ * @triggers my_event $manager
  */
 	public function testDispatchLocalHandledByGlobal() {
 		$callback = array($this, 'onMyEvent');
@@ -497,6 +509,7 @@ class EventManagerTest extends TestCase {
  * listeners at the same priority.
  *
  * @return void
+ * @triggers fake.event $this)
  */
 	public function testDispatchWithGlobalAndLocalEvents() {
 		$listener = new CustomTestEventListenerInterface();
