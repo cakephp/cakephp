@@ -39,6 +39,7 @@ class AssetDispatcherTest extends CakeTestCase {
  * test that asset filters work for theme and plugin assets
  *
  * @return void
+ * @triggers DispatcherTest $this, compact('request', 'response')
  */
 	public function testAssetFilterForThemeAndPlugins() {
 		$filter = new AssetDispatcher();
@@ -88,6 +89,7 @@ class AssetDispatcherTest extends CakeTestCase {
  * by Routing.
  *
  * @return void
+ * @triggers DispatcherTest $this, compact('request', 'response')
  */
 	public function testNoHandleRoutedExtension() {
 		$filter = new AssetDispatcher();
@@ -115,6 +117,7 @@ class AssetDispatcherTest extends CakeTestCase {
  * file dispatching
  *
  * @return void
+ * @triggers DispatcherTest $this, compact('request', 'response')
  */
 	public function testNotModified() {
 		$filter = new AssetDispatcher();
@@ -160,6 +163,7 @@ class AssetDispatcherTest extends CakeTestCase {
  * Test that no exceptions are thrown for //index.php type URLs.
  *
  * @return void
+ * @triggers Dispatcher.beforeRequest $this, compact('request', 'response')
  */
 	public function test404OnDoubleSlash() {
 		$filter = new AssetDispatcher();
@@ -176,6 +180,7 @@ class AssetDispatcherTest extends CakeTestCase {
  * Test that attempts to traverse directories are prevented.
  *
  * @return void
+ * @triggers Dispatcher.beforeRequest $this, compact('request', 'response')
  */
 	public function test404OnDoubleDot() {
 		App::build(array(
@@ -198,6 +203,7 @@ class AssetDispatcherTest extends CakeTestCase {
  * Test that attempts to traverse directories with urlencoded paths fail.
  *
  * @return void
+ * @triggers Dispatcher.beforeRequest $this, compact('request', 'response')
  */
 	public function test404OnDoubleDotEncoded() {
 		App::build(array(
