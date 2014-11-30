@@ -46,6 +46,7 @@ class Postgres extends DboSource {
 		'schema' => 'public',
 		'port' => 5432,
 		'encoding' => '',
+		'sslmode' => 'allow',
 		'flags' => array()
 	);
 
@@ -118,7 +119,7 @@ class Postgres extends DboSource {
 
 		try {
 			$this->_connection = new PDO(
-				"pgsql:host={$config['host']};port={$config['port']};dbname={$config['database']}",
+				"pgsql:host={$config['host']};port={$config['port']};dbname={$config['database']};sslmode={$config['sslmode']}",
 				$config['login'],
 				$config['password'],
 				$flags
@@ -353,8 +354,8 @@ class Postgres extends DboSource {
 		if ($this->execute('DELETE FROM ' . $this->fullTableName($table))) {
 			if (isset($this->_sequenceMap[$table]) && $reset != true) {
 				foreach ($this->_sequenceMap[$table] as $sequence) {
-					list($schema, $sequence) = explode('.', $sequence);
-					$this->_execute("ALTER SEQUENCE \"{$schema}\".\"{$sequence}\" RESTART WITH 1");
+					$quoted = $this->name($sequence);
+					$this->_execute("ALTER SEQUENCE {$quoted} RESTART WITH 1");
 				}
 			}
 			return true;

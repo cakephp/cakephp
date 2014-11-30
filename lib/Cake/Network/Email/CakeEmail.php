@@ -1359,7 +1359,7 @@ class CakeEmail {
 		$cut = ($wrapLength == CakeEmail::LINE_LENGTH_MUST);
 
 		foreach ($lines as $line) {
-			if (empty($line)) {
+			if (empty($line) && $line !== '0') {
 				$formatted[] = '';
 				continue;
 			}
