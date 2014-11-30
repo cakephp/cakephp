@@ -535,6 +535,7 @@ class ObjectCollectionTest extends CakeTestCase {
  * tests that passing an instance of CakeEvent to trigger will prepend the subject to the list of arguments
  *
  * @return void
+ * @triggers callback $subjectClass, array('first argument')
  */
 	public function testDispatchEventWithSubject() {
 		$this->_makeMockClasses();
@@ -560,6 +561,7 @@ class ObjectCollectionTest extends CakeTestCase {
  * will NOT prepend the subject to the list of arguments
  *
  * @return void
+ * @triggers callback $subjectClass, array('first argument')
  */
 	public function testDispatchEventNoSubject() {
 		$this->_makeMockClasses();
