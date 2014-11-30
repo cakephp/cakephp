@@ -15,7 +15,9 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-require_once 'PHPUnit/TextUI/TestRunner.php';
+if (!defined('__PHPUNIT_PHAR__')) {
+	require_once 'PHPUnit/TextUI/TestRunner.php';
+}
 
 App::uses('CakeFixtureManager', 'TestSuite/Fixture');
 
