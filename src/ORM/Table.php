@@ -1856,7 +1856,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 		if ($this->_domainChecker !== null) {
 			return $this->_domainChecker;
 		}
-		return $this->_domainChecker = $this->buildDomainRules(new DomainChecker(['scope' => $this]));
+		return $this->_domainChecker = $this->buildDomainRules(new DomainChecker(['repository' => $this]));
 	}
 
 	public function buildDomainRules(DomainChecker $rules) {
