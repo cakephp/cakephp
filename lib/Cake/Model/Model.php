@@ -2594,7 +2594,7 @@ class Model extends Object implements CakeEventListener {
  * @param bool $cascade Set to true to delete records that depend on this record
  * @return bool True on success
  * @triggers Model.beforeDelete $this, array($cascade)
- * @triggers Model.afterDelete $this)
+ * @triggers Model.afterDelete $this
  * @link http://book.cakephp.org/2.0/en/models/deleting-data.html
  */
 	public function delete($id = null, $cascade = true) {

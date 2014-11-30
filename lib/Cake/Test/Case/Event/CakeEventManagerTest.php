@@ -518,7 +518,7 @@ class CakeEventManagerTest extends CakeTestCase {
  * listeners at the same priority.
  *
  * @return void
- * @triggers fake.event $this)
+ * @triggers fake.event $this
  */
 	public function testDispatchWithGlobalAndLocalEvents() {
 		$listener = new CustomTestEventListener();
