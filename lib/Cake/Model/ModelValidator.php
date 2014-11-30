@@ -235,6 +235,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  *
  * @param string $options An optional array of custom options to be made available in the beforeValidate callback
  * @return array Array of invalid fields
+ * @triggers Model.afterValidate $model
  * @see ModelValidator::validates()
  */
 	public function errors($options = array()) {
@@ -444,6 +445,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  *
  * @param array $options Options to pass to callback.
  * @return bool
+ * @triggers Model.beforeValidate $model, array($options)
  */
 	protected function _triggerBeforeValidate($options = array()) {
 		$model = $this->getModel();
