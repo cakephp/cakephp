@@ -506,7 +506,6 @@ class HtmlHelper extends Helper {
 		}
 		$this->_includedAssets[__METHOD__][$url] = true;
 
-
 		$out = $this->formatTemplate('javascriptlink', [
 			'url' => $url,
 			'attrs' => $this->templater()->formatAttributes($options, ['block', 'once']),
