@@ -16,6 +16,7 @@ namespace Cake\ORM;
 
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Rule\IsUnique;
+use Cake\ORM\Rule\ExistsIn;
 
 /**
  * Contains logic for storing and checking domain rules on entities
@@ -69,6 +70,11 @@ class DomainChecker {
 	public function isUnique(array $fields, $message = 'This value is already in use') {
 		$errorField = current($fields);
 		return $this->_addError(new IsUnique($fields), compact('errorField', 'message'));
+	}
+
+	public function existsIn($field, $table, $message = 'This value does not exist') {
+		$errorField = $field;
+		return $this->_addError(new ExistsIn($field, $table), compact('errorField', 'message'));
 	}
 
 	protected function _addError($rule, $options) {

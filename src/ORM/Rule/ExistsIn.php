@@ -17,41 +17,40 @@ namespace Cake\ORM\Rule;
 use Cake\Datasource\EntityInterface;
 
 /**
- * Checks that a list of fields from an entity are unique in the table
+ * Checks that the value provided in a field exists as the primary key of another
+ * table.
  */
-class IsUnique {
-
-/**
- * The list of fields to check
- *
- * @var array
- */
-	protected $_fields;
+class ExistsIn {
 
 /**
  * Constructor.
  *
- * @param array $fields The list of fields to check uniqueness for
+ * @param string $field The field to check existance for.
+ * @param object|string $repository The repository where the field will be looked for,
+ * or the association name for the repository.
  */
-	public function __construct(array $fields) {
-		$this->_fields = $fields;
+	public function __construct($field, $repository) {
+		$this->_field = $field;
+		$this->_repository = $repository;
 	}
 
 /**
- * Performs the uniqueness check
+ * Performs the existance check
  *
  * @param \Cake\Datasource\EntityInterface $entity The entity form where to extract the fields
  * @param array $options Options passed to the check,
  * where the `repository` key is required.
  */
 	public function __invoke(EntityInterface $entity, array $options) {
-		$conditions = $entity->extract($this->_fields);
-		if ($entity->isNew() === false) {
-			$keys = (array)$options['repository']->primaryKey();
-			$conditions['NOT'] = $entity->extract($keys);
+		if (is_string($this->_repository)) {
+			$this->_repository = $options['repository']->association($this->_repository);
 		}
 
-		return !$options['repository']->exists($conditions);
+		$conditions = array_combine(
+			(array)$this->_repository->primaryKey(),
+			$entity->extract((array)$this->_field)
+		);
+		return $this->_repository->exists($conditions);
 	}
 
 }

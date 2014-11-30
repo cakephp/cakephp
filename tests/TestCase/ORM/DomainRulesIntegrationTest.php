@@ -308,14 +308,55 @@ class DomainRulesIntegrationTest extends TestCase {
 
 		$table = TableRegistry::get('Articles');
 		$rules = $table->domainRules();
-		$rules->add($rules->isUnique(['title', 'author_id']));
+		$rules->add($rules->isUnique(['title', 'author_id'], 'Nope'));
 
 		$this->assertFalse($table->save($entity));
-		$this->assertEquals(['title' => ['This value is already in use']], $entity->errors());
+		$this->assertEquals(['title' => ['Nope']], $entity->errors());
 
 		$entity->clean();
 		$entity->author_id = 2;
 		$this->assertSame($entity, $table->save($entity));
+	}
+
+/**
+ * Tests the existsIn domain rule
+ *
+ * @group save
+ * @return void
+ */
+	public function testExistsInDomainRule() {
+		$entity = new Entity([
+			'title' => 'An Article',
+			'author_id' => 500
+		]);
+
+		$table = TableRegistry::get('Articles');
+		$table->belongsTo('Authors');
+		$rules = $table->domainRules();
+		$rules->add($rules->existsIn('author_id', 'Authors'));
+
+		$this->assertFalse($table->save($entity));
+		$this->assertEquals(['This value does not exist'], $entity->errors('author_id'));
+	}
+
+/**
+ * Tests the existsIn domain rule when passing an object
+ *
+ * @group save
+ * @return void
+ */
+	public function testExistsInDomainRuleWithObject() {
+		$entity = new Entity([
+			'title' => 'An Article',
+			'author_id' => 500
+		]);
+
+		$table = TableRegistry::get('Articles');
+		$rules = $table->domainRules();
+		$rules->add($rules->existsIn('author_id', TableRegistry::get('Authors'), 'Nope'));
+
+		$this->assertFalse($table->save($entity));
+		$this->assertEquals(['Nope'], $entity->errors('author_id'));
 	}
 
 }
