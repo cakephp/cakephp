@@ -262,4 +262,15 @@ class HelperRegistryTest extends TestCase {
 		$this->Helpers->load('Html', ['same' => 'stuff']);
 	}
 
+/**
+ * Loading a helper with different config, should throw an exception
+ *
+ * @expectedException RuntimeException
+ * @return void
+ */
+	public function testLoadMultipleTimesDifferentConfigValues() {
+		$this->Helpers->load('Html', ['key' => 'value']);
+		$this->Helpers->load('Html', ['key' => 'new value']);
+	}
+
 }

@@ -114,14 +114,24 @@ abstract class ObjectRegistry {
 		if (!$hasConfig) {
 			throw new RuntimeException($msg);
 		}
-		$existingConfig = $existing->config();
-		unset($config['enabled'], $existingConfig['enabled']);
-
 		if (empty($config)) {
 			return;
 		}
+		$existingConfig = $existing->config();
+		unset($config['enabled'], $existingConfig['enabled']);
 
-		if ($hasConfig && json_encode($config) !== json_encode($existingConfig)) {
+		$fail = false;
+		foreach ($config as $key => $value) {
+			if (isset($existingConfig[$key]) && $existingConfig[$key] !== $value) {
+				$fail = true;
+				break;
+			}
+			if (!array_key_exists($key, $existingConfig)) {
+				$fail = true;
+				break;
+			}
+		}
+		if ($fail) {
 			$msg .= ' with the following config: ';
 			$msg .= var_export($existingConfig, true);
 			$msg .= ' which differs from ' . var_export($config, true);
