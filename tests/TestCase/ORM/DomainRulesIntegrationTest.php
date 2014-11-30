@@ -13,19 +13,22 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\ORM;
+
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+
 /**
  * Tests the integration between the ORM and the doamin rules cheker
  */
 class DomainRulesIntegrationTest extends TestCase {
+
 /**
  * Fixtures to be loaded
  *
  * @var array
  */
-	public $fixtures = ['core.articles', 'core.authors'];
+	public $fixtures = ['core.articles', 'core.authors', 'core.tags', 'core.articles_tags'];
 
 /**
  * Tear down
@@ -194,6 +197,84 @@ class DomainRulesIntegrationTest extends TestCase {
 		$this->assertEquals(4, $entity->articles[1]->id);
 		$this->assertNull($entity->articles[0]->id);
 		$this->assertNotEmpty($entity->articles[0]->errors('title'));
+	}
+
+/**
+ * Tests saving belongsToMany records with a validation error in a joint entity
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveBelongsToManyWithValidationErrorInJointEntity() {
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'A Title',
+			'body' => 'A body'
+		]);
+		$entity->tags = [
+			new \Cake\ORM\Entity([
+				'name' => 'Something New'
+			]),
+			new \Cake\ORM\Entity([
+				'name' => '100'
+			])
+		];
+		$table = TableRegistry::get('articles');
+		$table->belongsToMany('tags');
+		$table->association('tags')
+			->junction()
+			->domainRules()
+			->add(function (Entity $entity) {
+				return $entity->article_id > 4;
+			});
+
+		$this->assertFalse($table->save($entity));
+		$this->assertTrue($entity->isNew());
+		$this->assertTrue($entity->tags[0]->isNew());
+		$this->assertTrue($entity->tags[1]->isNew());
+		$this->assertNull($entity->tags[0]->id);
+		$this->assertNull($entity->tags[1]->id);
+		$this->assertNull($entity->tags[0]->_joinData);
+		$this->assertNull($entity->tags[1]->_joinData);
+	}
+
+/**
+ * Tests saving belongsToMany records with a validation error in a joint entity
+ * and atomic set to false
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveBelongsToManyWithValidationErrorInJointEntityNonAtomic() {
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'A Title',
+			'body' => 'A body'
+		]);
+		$entity->tags = [
+			new \Cake\ORM\Entity([
+				'name' => 'Something New'
+			]),
+			new \Cake\ORM\Entity([
+				'name' => 'New one'
+			])
+		];
+		$table = TableRegistry::get('articles');
+		$table->belongsToMany('tags');
+		$table->association('tags')
+			->junction()
+			->domainRules()
+			->add(function (Entity $entity) {
+				return $entity->tag_id > 4;
+			});
+
+		$this->assertSame($entity, $table->save($entity, ['atomic' => false]));
+		$this->assertFalse($entity->isNew());
+		$this->assertFalse($entity->tags[0]->isNew());
+		$this->assertFalse($entity->tags[1]->isNew());
+		$this->assertEquals(4, $entity->tags[0]->id);
+		$this->assertEquals(5, $entity->tags[1]->id);
+		$this->assertTrue($entity->tags[0]->_joinData->isNew());
+		$this->assertEquals(4, $entity->tags[1]->_joinData->article_id);
+		$this->assertEquals(5, $entity->tags[1]->_joinData->tag_id);
 	}
 
 }
