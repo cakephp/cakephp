@@ -297,6 +297,32 @@ class DomainRulesIntegrationTest extends TestCase {
 
 		$entity->name = 'jose';
 		$this->assertSame($entity, $table->save($entity));
+
+		$entity = $table->get(1);
+		$entity->dirty('name', true);
+		$this->assertSame($entity, $table->save($entity));
+	}
+
+/**
+ * Tests isUnique with multiple fields
+ *
+ * @group save
+ * @return void
+ */
+	public function testIsUniqueMultipleFields() {
+		$entity = new Entity([
+			'author_id' => 1,
+			'title' => 'First Article'
+		]);
+
+		$table = TableRegistry::get('Articles');
+		$rules = $table->domainRules();
+		$rules->add($rules->isUnique(['author_id', 'title']));
+
+		$this->assertFalse($table->save($entity));
+
+		$entity->author_id = 2;
+		$this->assertSame($entity, $table->save($entity));
 	}
 
 }
