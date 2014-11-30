@@ -763,8 +763,8 @@ class HtmlHelperTest extends TestCase {
 		$this->View->expects($this->at(1))
 			->method('append')
 			->with('script', $this->stringContains('test.min.js'));
-		$this->Html->css('test.min', array('inline' => false));
-		$this->Html->script('test.min', array('inline' => false));
+		$this->Html->css('test.min', array('block' => true));
+		$this->Html->script('test.min', array('block' => true));
 	}
 
 /**
