@@ -188,6 +188,7 @@ header {
 	padding: 10px;
 }
 .stack-frame a {
+	display: block;
 	color: #626262;
 }
 .stack-frame.active {
@@ -202,6 +203,12 @@ header {
 .stack-frame-file,
 .stack-file {
 	font-family: consolas, monospace;
+}
+.stack-function {
+	font-weight: bold;
+}
+.stack-file {
+	font-size: 0.9em;
 }
 
 .stack-details {
