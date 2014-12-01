@@ -402,7 +402,8 @@ class Debugger {
 		if (!isset($data[$line])) {
 			return $lines;
 		}
-		for ($i = $line - ($context + 1); $i < $line + $context; $i++) {
+		$line = $line - 1;
+		for ($i = $line - $context; $i < $line + $context + 1; $i++) {
 			if (!isset($data[$i])) {
 				continue;
 			}
