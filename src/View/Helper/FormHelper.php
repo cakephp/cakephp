@@ -1176,7 +1176,9 @@ class FormHelper extends Helper {
 
 		if ($allowOverride && substr($fieldName, -5) === '._ids') {
 			$options['type'] = 'select';
-			$options['multiple'] = true;
+			if (empty($options['multiple'])) {
+				$options['multiple'] = true;
+			}
 		}
 
 		if ($options['type'] === 'select' && array_key_exists('step', $options)) {
