@@ -201,9 +201,6 @@ header {
 .stack-frame a:hover {
 	text-decoration: underline;
 }
-/*.stack-frame.active a {
-	border: 1px solid #212121;
-}*/
 .stack-file,
 .stack-function {
 	display: block;
