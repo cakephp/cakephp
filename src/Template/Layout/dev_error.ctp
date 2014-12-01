@@ -189,7 +189,7 @@ header {
 }
 .stack-frame a {
 	display: block;
-	color: #626262;
+	color: #212121;
 }
 .stack-frame.active {
 	background: #f5f5f5;
