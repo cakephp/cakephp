@@ -46,7 +46,7 @@ foreach ($error->getTrace() as $i => $stack):
 		<a href="#" class="stack-frame-args" data-target="stack-args-<?= $i ?>">toggle arguments</a>
 
 		<table class="code-excerpt" cellspacing="0" cellpadding="0">
-		<?php $lineno = $stack['line'] - 4 ?>
+		<?php $lineno = isset($stack['line']) ? $stack['line'] - 4 : 0 ?>
 		<?php foreach ($excerpt as $l => $line): ?>
 			<tr>
 				<td class="excerpt-number" data-number="<?= $lineno + $l ?>"></td>
