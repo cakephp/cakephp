@@ -113,7 +113,7 @@ window.addEventListener('load', function() {
 body {
 	font: 14px helvetica, arial, sans-serif;
 	color: #222;
-	background-color: #D4D4D4;
+	background-color: #fff;
 	padding:0;
 	margin: 0;
 	max-height: 100%;
@@ -170,10 +170,12 @@ header {
 	font-size: 18px;
 	margin-top: 0;
 	padding: 10px;
+	border: 1px solid #EDBD26;
 }
 .error-subheading {
 	background: #1798A5;
 	color: #fff;
+	border: 1px solid #02808C;
 }
 .error {
 	background: #ffd54f;
@@ -190,10 +192,18 @@ header {
 .stack-frame a {
 	display: block;
 	color: #212121;
+	text-decoration: none;
+	border-bottom: 1px solid #212121;
 }
 .stack-frame.active {
-	background: #f5f5f5;
+	background: #e5e5e5;
 }
+.stack-frame a:hover {
+	text-decoration: underline;
+}
+/*.stack-frame.active a {
+	border: 1px solid #212121;
+}*/
 .stack-file,
 .stack-function {
 	display: block;
@@ -214,6 +224,7 @@ header {
 .stack-details {
 	background: #ececec;
 	box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+	border: 1px solid #ababab;
 	padding: 10px;
 	margin-bottom: 18px;
 }

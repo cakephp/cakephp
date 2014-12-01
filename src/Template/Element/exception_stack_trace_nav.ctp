@@ -20,16 +20,16 @@ use Cake\Error\Debugger;
 	<?php if (isset($stack['file']) && isset($stack['line'])): ?>
 		<a href="#" data-target="stack-frame-<?= $i ?>">
 			<?php if (!isset($stack['class'])): ?>
-				<span class="stack-function"><?= h($stack['function']) ?></span>
+				<span class="stack-function">&rang; <?= h($stack['function']) ?></span>
 			<?php else: ?>
-				<span class="stack-function"><?= h($stack['class']) ?>::<?= h($stack['function']) ?></span>
+				<span class="stack-function">&rang; <?= h($stack['class']) ?>::<?= h($stack['function']) ?></span>
 			<?php endif; ?>
 			<span class="stack-file">
 				<?= h(Debugger::trimPath($stack['file'])) ?>, line <?= $stack['line'] ?>
 			</span>
 		</a>
 	<?php else: ?>
-		<a href="#">[internal function]</a>
+		<a href="#">&rang; [internal function]</a>
 	<?php endif; ?>
 	</li>
 <?php endforeach; ?>
