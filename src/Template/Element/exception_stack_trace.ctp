@@ -22,7 +22,7 @@ foreach ($error->getTrace() as $i => $stack):
 	$excerpt = $params = [];
 
 	if (isset($stack['file']) && isset($stack['line'])):
-		$excerpt = Debugger::excerpt($stack['file'], $stack['line'] - 1, 2);
+		$excerpt = Debugger::excerpt($stack['file'], $stack['line'] - 1, 4);
 	endif;
 
 	if (isset($stack['file'])):
@@ -46,7 +46,7 @@ foreach ($error->getTrace() as $i => $stack):
 		<a href="#" class="stack-frame-args" data-target="stack-args-<?= $i ?>">toggle arguments</a>
 
 		<table class="code-excerpt" cellspacing="0" cellpadding="0">
-		<?php $lineno = $stack['line'] - 3 ?>
+		<?php $lineno = $stack['line'] - 4 ?>
 		<?php foreach ($excerpt as $l => $line): ?>
 			<tr>
 				<td class="excerpt-number" data-number="<?= $lineno + $l ?>"></td>
