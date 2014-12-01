@@ -252,9 +252,22 @@ class HelperRegistryTest extends TestCase {
 	}
 
 /**
+ * Loading a helper overriding defaults to default value
+ * should "just work"
+ *
+ * @return void
+ */
+	public function testLoadMultipleTimesDefaultConfigValuesWorks() {
+		$this->Helpers->load('Number', ['engine' => 'Cake\I18n\Number']);
+		$this->Helpers->load('Number');
+		$this->addToAssertionCount(1);
+	}
+
+/**
  * Loading a helper with different config, should throw an exception
  *
  * @expectedException RuntimeException
+ * @expectedExceptionMessage The "Html" alias has already been loaded with the following
  * @return void
  */
 	public function testLoadMultipleTimesDifferentConfigured() {
@@ -266,6 +279,7 @@ class HelperRegistryTest extends TestCase {
  * Loading a helper with different config, should throw an exception
  *
  * @expectedException RuntimeException
+ * @expectedExceptionMessage The "Html" alias has already been loaded with the following
  * @return void
  */
 	public function testLoadMultipleTimesDifferentConfigValues() {

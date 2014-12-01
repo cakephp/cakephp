@@ -122,11 +122,11 @@ abstract class ObjectRegistry {
 
 		$fail = false;
 		foreach ($config as $key => $value) {
-			if (isset($existingConfig[$key]) && $existingConfig[$key] !== $value) {
+			if (!array_key_exists($key, $existingConfig)) {
 				$fail = true;
 				break;
 			}
-			if (!array_key_exists($key, $existingConfig)) {
+			if (isset($existingConfig[$key]) && $existingConfig[$key] !== $value) {
 				$fail = true;
 				break;
 			}
