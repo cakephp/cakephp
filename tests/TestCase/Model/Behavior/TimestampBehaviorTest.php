@@ -81,6 +81,7 @@ class TimestampBehaviorTest extends TestCase {
  * testCreatedAbsent
  *
  * @return void
+ * @triggers Model.beforeSave
  */
 	public function testCreatedAbsent() {
 		$table = $this->getMock('Cake\ORM\Table');
@@ -101,6 +102,7 @@ class TimestampBehaviorTest extends TestCase {
  * testCreatedPresent
  *
  * @return void
+ * @triggers Model.beforeSave
  */
 	public function testCreatedPresent() {
 		$table = $this->getMock('Cake\ORM\Table');
@@ -121,6 +123,7 @@ class TimestampBehaviorTest extends TestCase {
  * testCreatedNotNew
  *
  * @return void
+ * @triggers Model.beforeSave
  */
 	public function testCreatedNotNew() {
 		$table = $this->getMock('Cake\ORM\Table');
@@ -141,6 +144,7 @@ class TimestampBehaviorTest extends TestCase {
  * testModifiedAbsent
  *
  * @return void
+ * @triggers Model.beforeSave
  */
 	public function testModifiedAbsent() {
 		$table = $this->getMock('Cake\ORM\Table');
@@ -162,6 +166,7 @@ class TimestampBehaviorTest extends TestCase {
  * testModifiedPresent
  *
  * @return void
+ * @triggers Model.beforeSave
  */
 	public function testModifiedPresent() {
 		$table = $this->getMock('Cake\ORM\Table');
@@ -187,6 +192,7 @@ class TimestampBehaviorTest extends TestCase {
  * @expectedException \UnexpectedValueException
  * @expectedExceptionMessage When should be one of "always", "new" or "existing". The passed value "fat fingers" is invalid
  * @return void
+ * @triggers Model.beforeSave
  */
 	public function testInvalidEventConfig() {
 		$table = $this->getMock('Cake\ORM\Table');

@@ -31,6 +31,7 @@ class EventTest extends TestCase {
  * Tests the name() method
  *
  * @return void
+ * @triggers fake.event
  */
 	public function testName() {
 		$event = new Event('fake.event');
@@ -41,6 +42,8 @@ class EventTest extends TestCase {
  * Tests the subject() method
  *
  * @return void
+ * @triggers fake.event $this
+ * @triggers fake.event
  */
 	public function testSubject() {
 		$event = new Event('fake.event', $this);
@@ -54,6 +57,7 @@ class EventTest extends TestCase {
  * Tests the event propagation stopping property
  *
  * @return void
+ * @triggers fake.event
  */
 	public function testPropagation() {
 		$event = new Event('fake.event');
@@ -66,6 +70,7 @@ class EventTest extends TestCase {
  * Tests that it is possible to get/set custom data in a event
  *
  * @return void
+ * @triggers fake.event $this, array('some' => 'data')
  */
 	public function testEventData() {
 		$event = new Event('fake.event', $this, array('some' => 'data'));
@@ -76,6 +81,7 @@ class EventTest extends TestCase {
  * Tests that it is possible to get the name and subject directly
  *
  * @return void
+ * @triggers fake.event $this
  */
 	public function testEventDirectPropertyAccess() {
 		$event = new Event('fake.event', $this);

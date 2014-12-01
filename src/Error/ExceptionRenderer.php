@@ -95,6 +95,7 @@ class ExceptionRenderer {
  * a bare controller will be used.
  *
  * @return \Cake\Controller\Controller
+ * @triggers Controller.startup $controller
  */
 	protected function _getController() {
 		if (!$request = Router::getRequest(true)) {

@@ -215,6 +215,7 @@ class EventManager {
  *
  * @param string|\Cake\Event\Event $event the event key name or instance of Event
  * @return \Cake\Event\Event
+ * @triggers $event
  */
 	public function dispatch($event) {
 		if (is_string($event)) {

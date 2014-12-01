@@ -75,6 +75,10 @@ class DispatcherFilterTest extends TestCase {
  * Test basic matching with for option.
  *
  * @return void
+ * @triggers Dispatcher.beforeDispatch $this, compact('request')
+ * @triggers Dispatcher.beforeDispatch $this, compact('request')
+ * @triggers Dispatcher.beforeDispatch $this, compact('request')
+ * @triggers Dispatcher.beforeDispatch $this, compact('request')
  */
 	public function testMatchesWithFor() {
 		$request = new Request(['url' => '/articles/view']);
@@ -100,6 +104,7 @@ class DispatcherFilterTest extends TestCase {
  * Test matching with when option.
  *
  * @return void
+ * @triggers Dispatcher.beforeDispatch $this, compact('response', 'request')
  */
 	public function testMatchesWithWhen() {
 		$matcher = function ($request, $response) {
@@ -125,6 +130,7 @@ class DispatcherFilterTest extends TestCase {
  * Test matching with for & when option.
  *
  * @return void
+ * @triggers Dispatcher.beforeDispatch $this, compact('response', 'request')
  */
 	public function testMatchesWithForAndWhen() {
 		$request = new Request(['url' => '/articles/view']);
@@ -154,6 +160,8 @@ class DispatcherFilterTest extends TestCase {
  * Test event bindings have use condition checker
  *
  * @return void
+ * @triggers Dispatcher.beforeDispatch $this, compact('response', 'request')
+ * @triggers Dispatcher.afterDispatch $this, compact('response', 'request')
  */
 	public function testImplementedEventsMethodName() {
 		$request = new Request(['url' => '/articles/view']);
@@ -178,6 +186,7 @@ class DispatcherFilterTest extends TestCase {
  * Test handle applies for conditions
  *
  * @return void
+ * @triggers Dispatcher.beforeDispatch $this, compact('response', 'request')
  */
 	public function testHandleAppliesFor() {
 		$request = new Request(['url' => '/articles/view']);
@@ -200,6 +209,7 @@ class DispatcherFilterTest extends TestCase {
  * Test handle applies when conditions
  *
  * @return void
+ * @triggers Dispatcher.beforeDispatch $this, compact('response', 'request')
  */
 	public function testHandleAppliesWhen() {
 		$request = new Request(['url' => '/articles/view']);

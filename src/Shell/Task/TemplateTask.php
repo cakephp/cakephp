@@ -48,6 +48,7 @@ class TemplateTask extends Shell {
  * Get view instance
  *
  * @return \Cake\View\View
+ * @triggers Bake.initialize $view
  */
 	public function getView() {
 		if ($this->View) {

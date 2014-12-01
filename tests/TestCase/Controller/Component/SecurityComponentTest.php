@@ -166,6 +166,7 @@ class SecurityComponentTest extends TestCase {
  *
  * @expectedException \Cake\Network\Exception\BadRequestException
  * @return void
+ * @triggers Controller.startup $Controller, $this->Controller
  */
 	public function testBlackholeWithBrokenCallback() {
 		$request = new Request([
@@ -189,6 +190,7 @@ class SecurityComponentTest extends TestCase {
  * action results in an exception.
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testExceptionWhenActionIsBlackholeCallback() {
 		$this->Controller->request->addParams(array(
@@ -219,6 +221,7 @@ class SecurityComponentTest extends TestCase {
  * testStartup method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testStartup() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -230,6 +233,7 @@ class SecurityComponentTest extends TestCase {
  * testRequireSecureFail method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testRequireSecureFail() {
 		$_SERVER['HTTPS'] = 'off';
@@ -245,6 +249,7 @@ class SecurityComponentTest extends TestCase {
  * testRequireSecureSucceed method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testRequireSecureSucceed() {
 		$_SERVER['HTTPS'] = 'on';
@@ -260,6 +265,7 @@ class SecurityComponentTest extends TestCase {
  * testRequireSecureEmptyFail method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testRequireSecureEmptyFail() {
 		$_SERVER['HTTPS'] = 'off';
@@ -275,6 +281,7 @@ class SecurityComponentTest extends TestCase {
  * testRequireSecureEmptySucceed method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testRequireSecureEmptySucceed() {
 		$_SERVER['HTTPS'] = 'on';
@@ -290,6 +297,7 @@ class SecurityComponentTest extends TestCase {
  * testRequireAuthFail method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testRequireAuthFail() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -321,6 +329,7 @@ class SecurityComponentTest extends TestCase {
  * testRequireAuthSucceed method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testRequireAuthSucceed() {
 		$_SERVER['REQUEST_METHOD'] = 'AUTH';
@@ -349,6 +358,7 @@ class SecurityComponentTest extends TestCase {
  * Simple hash validation test
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testValidatePost() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -368,6 +378,7 @@ class SecurityComponentTest extends TestCase {
  * Test that validatePost fails if you are missing the session information.
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testValidatePostNoSession() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -387,6 +398,7 @@ class SecurityComponentTest extends TestCase {
  * test that validatePost fails if any of its required fields are missing.
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testValidatePostFormHacking() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -406,6 +418,7 @@ class SecurityComponentTest extends TestCase {
  * attacks. Thanks to Felix Wilhelm
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testValidatePostObjectDeserialize() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -429,6 +442,7 @@ class SecurityComponentTest extends TestCase {
  * Tests validation post data ignores `_csrfToken`.
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testValidatePostIgnoresCsrfToken() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -449,6 +463,7 @@ class SecurityComponentTest extends TestCase {
  * Tests validation of checkbox arrays
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testValidatePostArray() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -468,6 +483,7 @@ class SecurityComponentTest extends TestCase {
  * testValidatePostNoModel method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testValidatePostNoModel() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -489,6 +505,7 @@ class SecurityComponentTest extends TestCase {
  * testValidatePostSimple method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testValidatePostSimple() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -510,6 +527,7 @@ class SecurityComponentTest extends TestCase {
  * Tests hash validation for multiple records, including locked fields
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testValidatePostComplex() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -539,6 +557,7 @@ class SecurityComponentTest extends TestCase {
  * test ValidatePost with multiple select elements.
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testValidatePostMultipleSelect() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -585,6 +604,7 @@ class SecurityComponentTest extends TestCase {
  * Second block tests checked checkbox
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testValidatePostCheckbox() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -626,6 +646,7 @@ class SecurityComponentTest extends TestCase {
  * testValidatePostHidden method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testValidatePostHidden() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -648,6 +669,7 @@ class SecurityComponentTest extends TestCase {
  * testValidatePostWithDisabledFields method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testValidatePostWithDisabledFields() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -671,6 +693,7 @@ class SecurityComponentTest extends TestCase {
  * test validating post data with posted unlocked fields.
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testValidatePostDisabledFieldsInData() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -696,6 +719,7 @@ class SecurityComponentTest extends TestCase {
  * test that missing 'unlocked' input causes failure
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testValidatePostFailNoDisabled() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -720,6 +744,7 @@ class SecurityComponentTest extends TestCase {
  * Test that validatePost fails when unlocked fields are changed.
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testValidatePostFailDisabledFieldTampering() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -748,6 +773,7 @@ class SecurityComponentTest extends TestCase {
  * testValidateHiddenMultipleModel method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testValidateHiddenMultipleModel() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -769,6 +795,7 @@ class SecurityComponentTest extends TestCase {
  * testValidateHasManyModel method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testValidateHasManyModel() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -799,6 +826,7 @@ class SecurityComponentTest extends TestCase {
  * testValidateHasManyRecordsPass method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testValidateHasManyRecordsPass() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -841,6 +869,7 @@ class SecurityComponentTest extends TestCase {
  * Test that values like Foo.0.1
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testValidateNestedNumericSets() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -866,6 +895,7 @@ class SecurityComponentTest extends TestCase {
  * validatePost should fail, hidden fields have been changed.
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testValidateHasManyRecordsFail() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -908,6 +938,7 @@ class SecurityComponentTest extends TestCase {
  * testFormDisabledFields method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testFormDisabledFields() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -939,6 +970,7 @@ class SecurityComponentTest extends TestCase {
  * test validatePost with radio buttons
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testValidatePostRadio() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -978,6 +1010,7 @@ class SecurityComponentTest extends TestCase {
  * test validatePost uses here() as a hash input.
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testValidatePostUrlAsHashInput() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -1012,6 +1045,7 @@ class SecurityComponentTest extends TestCase {
  *
  * @link https://cakephp.lighthouseapp.com/projects/42648/tickets/214
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testBlackHoleNotDeletingSessionInformation() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -1038,6 +1072,7 @@ class SecurityComponentTest extends TestCase {
  * Test unlocked actions
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testUnlockedActions() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
