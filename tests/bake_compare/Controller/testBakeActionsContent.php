@@ -6,7 +6,7 @@ use App\Controller\AppController;
 /**
  * BakeArticles Controller
  *
- * @property App\Model\Table\BakeArticlesTable $BakeArticles
+ * @property \App\Model\Table\BakeArticlesTable $BakeArticles
  */
 class BakeArticlesController extends AppController {
 

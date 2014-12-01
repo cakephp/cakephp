@@ -142,6 +142,23 @@ class ControllerTaskTest extends TestCase {
 	}
 
 /**
+ * test bake with various component name variants
+ *
+ * @return void
+ */
+	public function testBakeComponents() {
+		$this->Task->expects($this->any())
+			->method('createFile')
+			->will($this->returnValue(true));
+
+		$this->Task->params['no-actions'] = true;
+		$this->Task->params['components'] = 'Csrf, Auth, Company/TestPluginThree.Something, TestPlugin.Other, Apple, NonExistent';
+
+		$result = $this->Task->bake('BakeArticles');
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
+	}
+
+/**
  * test the bake method
  *
  * @return void

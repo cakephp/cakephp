@@ -6,7 +6,7 @@ use ControllerTest\Controller\AppController;
 /**
  * BakeArticles Controller
  *
- * @property ControllerTest\Model\Table\BakeArticlesTable $BakeArticles
+ * @property \ControllerTest\Model\Table\BakeArticlesTable $BakeArticles
  */
 class BakeArticlesController extends AppController {
 
