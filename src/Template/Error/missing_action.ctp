@@ -37,7 +37,7 @@ $this->layout = 'dev_error';
 $this->assign('title', sprintf('Missing Method in %s', h($controller)));
 $this->assign(
 	'subheading',
-	sprintf('The action <em>%s</em> is not defined in controller <em>%s</em>', h($action), h($controller))
+	sprintf('The action <em>%s</em> is not defined in <em>%s</em>', h($action), h($controller))
 );
 $this->assign('templateName', 'missing_action.ctp');
 
