@@ -22,7 +22,7 @@ foreach ($error->getTrace() as $i => $stack):
 	$excerpt = $params = [];
 
 	if (isset($stack['file']) && isset($stack['line'])):
-		$excerpt = Debugger::excerpt($stack['file'], $stack['line'] - 1, 4);
+		$excerpt = Debugger::excerpt($stack['file'], $stack['line'], 4);
 	endif;
 
 	if (isset($stack['file'])):
