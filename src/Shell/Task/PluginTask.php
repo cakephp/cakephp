@@ -85,7 +85,6 @@ class PluginTask extends BakeTask {
 		if (count($pathOptions) > 1) {
 			$this->findPath($pathOptions);
 		}
-		$this->hr();
 		$this->out(sprintf("<info>Plugin Name:</info> %s", $plugin));
 		$this->out(sprintf("<info>Plugin Directory:</info> %s", $this->path . $plugin));
 		$this->hr();
