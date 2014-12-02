@@ -837,7 +837,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
 	}
 
 /**
- * Get the first result from the executing query or raist an exception.
+ * Get the first result from the executing query or raise an exception.
  *
  * @throws \Cake\ORM\RecordNotFoundException When there is no first record.
  * @return mixed The first result from the ResultSet.
@@ -847,13 +847,9 @@ class Query extends DatabaseQuery implements JsonSerializable {
 		if ($entity) {
 			return $entity;
 		}
-		$binder = new ValueBinder();
-		$conditions = $this->clause('where');
-
 		throw new RecordNotFoundException(sprintf(
-			'Record not found in table "%s" for conditions "%s"',
-			$this->repository()->table(),
-			$conditions->sql($binder)
+			'Record not found in table "%s"',
+			$this->repository()->table()
 		));
 	}
 
