@@ -588,10 +588,6 @@ class Table implements RepositoryInterface, EventListenerInterface {
  * @see \Cake\ORM\Table::belongsToMany()
  */
 	public function addAssociations(array $params) {
-		if ($params === null) {
-			return $this->_associations;
-		}
-
 		foreach ($params as $assocType => $tables) {
 			foreach ($tables as $associated => $options) {
 				if (is_numeric($associated)) {
