@@ -21,7 +21,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Tests the integration between the ORM and the doamin rules cheker
  */
-class DomainRulesIntegrationTest extends TestCase {
+class RulesCheckerIntegrationTest extends TestCase {
 
 /**
  * Fixtures to be loaded

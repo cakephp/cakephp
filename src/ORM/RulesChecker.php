@@ -22,7 +22,7 @@ use Cake\ORM\Rule\ExistsIn;
  * Contains logic for storing and checking domain rules on entities
  *
  */
-class DomainChecker {
+class RulesChecker {
 
 	protected $_rules = [];
 
