@@ -837,23 +837,6 @@ class Query extends DatabaseQuery implements JsonSerializable {
 	}
 
 /**
- * Get the first result from the executing query or raise an exception.
- *
- * @throws \Cake\ORM\RecordNotFoundException When there is no first record.
- * @return mixed The first result from the ResultSet.
- */
-	public function firstOrFail() {
-		$entity = $this->first();
-		if ($entity) {
-			return $entity;
-		}
-		throw new RecordNotFoundException(sprintf(
-			'Record not found in table "%s"',
-			$this->repository()->table()
-		));
-	}
-
-/**
  * Decorates the results iterator with MapReduce routines and formatters
  *
  * @param \Traversable $result Original results

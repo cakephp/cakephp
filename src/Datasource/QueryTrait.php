@@ -15,6 +15,7 @@
 namespace Cake\Datasource;
 
 use Cake\Collection\Iterator\MapReduce;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Datasource\QueryCacher;
 use Cake\Datasource\RepositoryInterface;
 
@@ -326,6 +327,23 @@ trait QueryTrait {
 			$this->limit(1);
 		}
 		return $this->all()->first();
+	}
+
+/**
+ * Get the first result from the executing query or raise an exception.
+ *
+ * @throws \Cake\Datasource\RecordNotFoundException When there is no first record.
+ * @return mixed The first result from the ResultSet.
+ */
+	public function firstOrFail() {
+		$entity = $this->first();
+		if ($entity) {
+			return $entity;
+		}
+		throw new RecordNotFoundException(sprintf(
+			'Record not found in table "%s"',
+			$this->repository()->table()
+		));
 	}
 
 /**
