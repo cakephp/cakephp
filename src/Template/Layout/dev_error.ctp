@@ -119,7 +119,6 @@ body {
 	max-height: 100%;
 }
 
-.code-dump,
 pre {
 	background: #fefefe;
 	border: 1px solid #ddd;
@@ -188,12 +187,15 @@ header {
 }
 .stack-frame {
 	padding: 10px;
+	border-bottom: 1px solid #212121;
+}
+.stack-frame:last-child {
+	border-bottom: none;
 }
 .stack-frame a {
 	display: block;
 	color: #212121;
 	text-decoration: none;
-	border-bottom: 1px solid #212121;
 }
 .stack-frame.active {
 	background: #e5e5e5;
