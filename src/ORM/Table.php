@@ -1188,7 +1188,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 		$options = new \ArrayObject($options + [
 			'atomic' => true,
 			'associated' => true,
-			'domainCheck' => true
+			'checkRules' => true
 		]);
 
 		if ($entity->errors()) {
@@ -1231,7 +1231,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			$entity->isNew(!$this->exists($conditions));
 		}
 
-		if ($options['domainCheck'] && !$this->checkDomainRules($entity)) {
+		if ($options['checkRules'] && !$this->checkDomainRules($entity)) {
 			return false;
 		}
 

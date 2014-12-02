@@ -359,4 +359,23 @@ class RulesCheckerIntegrationTest extends TestCase {
 		$this->assertEquals(['Nope'], $entity->errors('author_id'));
 	}
 
+/**
+ * Tests the checkRules save option
+ *
+ * @group save
+ * @return void
+ */
+	public function testSkipRulesChecking() {
+		$entity = new Entity([
+			'title' => 'An Article',
+			'author_id' => 500
+		]);
+
+		$table = TableRegistry::get('Articles');
+		$rules = $table->domainRules();
+		$rules->add($rules->existsIn('author_id', TableRegistry::get('Authors'), 'Nope'));
+
+		$this->assertSame($entity, $table->save($entity, ['checkRules' => false]));
+	}
+
 }
