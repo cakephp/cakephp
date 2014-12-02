@@ -36,6 +36,7 @@ class QueryCompiler {
  */
 	protected $_templates = [
 		'delete' => 'DELETE',
+        'update' => 'UPDATE %s',
 		'where' => ' WHERE %s',
 		'group' => ' GROUP BY %s ',
 		'having' => ' HAVING %s ',
@@ -44,14 +45,6 @@ class QueryCompiler {
 		'offset' => ' OFFSET %s',
 		'epilog' => ' %s'
 	];
-
-/**
- * List of query clauses that need to have the connection prefix applied
- * to their fields name
- *
- * @var array
- */
-	protected $_fullFieldsParts = ['where', 'order', 'group', 'having'];
 
 /**
  * The list of query clauses to traverse for generating a SELECT statement
@@ -116,9 +109,6 @@ class QueryCompiler {
 			if (!count($parts)) {
 				return;
 			}
-			if (in_array($name, $this->_fullFieldsParts)) {
-				$parts = $this->_fullFieldsName($name, $parts, $query, $generator);
-			}
 			if ($parts instanceof ExpressionInterface) {
 				$parts = [$parts->sql($generator)];
 			}
@@ -128,170 +118,6 @@ class QueryCompiler {
 			}
 			return $sql .= $this->{'_build' . ucfirst($name) . 'Part'}($parts, $query, $generator);
 		};
-	}
-
-/**
- * Calls specific helper function on parts that needs to have their composed field name (e.g. tableName.fieldName)
- *
- * @param string $name Name of the query clause being processed
- * @param array|ExpressionInterface $parts Parts of the query clause
- * @param \Cake\Database\Query $query The query that is being compiled
- * @param \Cake\Database\ValueBinder $generator The placeholder and value binder object
- * @return array|ExpressionInterface The variable $parts modified
- */
-	protected function _fullFieldsName($name, $parts, $query, $generator) {
-		return $this->{'_' . $name . 'FullFieldsName'}($parts, $query, $generator);
-	}
-
-/**
- * Helper function used to apply full field name (meaning applying the connection prefix if the field names in
- * the order clause contains the table name)
- * This functions is only applied on ORDER clause
- *
- * @param ExpressionInterface $parts Parts of the query clause
- * @param \Cake\Database\Query $query The query that is being compiled
- * @param \Cake\Database\ValueBinder $generator The placeholder and value binder object
- * @return array|ExpressionInterface The variable $parts modified
- */
-	protected function _whereFullFieldsName($parts, $query, $generator) {
-		$parts->traverse(function ($condition) use ($query) {
-			if ($condition instanceof ExpressionInterface) {
-				switch (get_class($condition)) {
-					case 'Cake\Database\Expression\Comparison':
-					case 'Cake\Database\Expression\BetweenExpression':
-						$field = $condition->getField();
-
-						if (is_string($field) && strpos($field, '.') !== false && $query->hasTableName($field) === true) {
-							$field = $query->connection()->fullFieldName($field, $query->tablesNames);
-							$condition->field($field);
-						}
-
-						break;
-					case 'Cake\Database\Expression\UnaryExpression':
-						$value = $condition->getValue();
-
-						if (is_string($value) && strpos($value, '.') !== false && $query->hasTableName($value) === true) {
-							$value = $query->connection()->fullFieldName($value, $query->tablesNames);
-							$condition->value($value);
-						}
-						break;
-					case 'Cake\Database\Expression\IdentifierExpression':
-						$identifier = $condition->getIdentifier();
-
-						if (is_string($identifier) && strpos($identifier, '.') !== false && $query->hasTableName($identifier) === true) {
-							$identifier = $query->connection()->fullFieldName($identifier, $query->tablesNames);
-							$condition->setIdentifier($identifier);
-						}
-
-						break;
-					case 'Cake\Database\Expression\QueryExpression':
-						$condition->iterateParts(function ($queryExpCondition) use ($query) {
-							if (is_string($queryExpCondition)) {
-								$queryExpCondition = new TableNameExpression(
-									$queryExpCondition,
-									$query->connection()->getPrefix(),
-									true,
-									$query->tablesNames
-								);
-							}
-							return $queryExpCondition;
-						});
-						break;
-					default:
-						break;
-				}
-			}
-
-			return $condition;
-		});
-
-		return $parts;
-	}
-
-/**
- * Helper function used to apply full field name (meaning applying the connection prefix if the field names in
- * the order clause contains the table name)
- * This functions is only applied on ORDER clause
- *
- * @param ExpressionInterface $parts Parts of the query clause
- * @param \Cake\Database\Query $query The query that is being compiled
- * @param \Cake\Database\ValueBinder $generator The placeholder and value binder object
- * @return array|ExpressionInterface The variable $parts modified
- */
-	protected function _orderFullFieldsName($parts, $query, $generator) {
-		if ($parts instanceof ExpressionInterface) {
-			$parts->iterateParts(function ($condition, &$key) use ($parts, $query, $generator) {
-				if ($query->hasTableName($key) === true && $query->connection()->isTableNamePrefixed($key) === false) {
-					$key = $query->connection()->fullFieldName($key, $query->tablesNames);
-
-					if ($key instanceof ExpressionInterface) {
-						$key = $key->sql($generator);
-					}
-				}
-				return $condition;
-			});
-		}
-
-		return $parts;
-	}
-
-/**
- * Helper function used to apply full field name (meaning applying the connection prefix if the field names in
- * the group clause contains the table name)
- * This functions is only applied on GROUP clause
- *
- * @param array $parts Parts of the query clause
- * @param \Cake\Database\Query $query The query that is being compiled
- * @param \Cake\Database\ValueBinder $generator The placeholder and value binder object
- * @return array|ExpressionInterface The variable $parts modified
- */
-	protected function _groupFullFieldsName($parts, $query, $generator) {
-		if (!empty($parts)) {
-			foreach ($parts as $key => $part) {
-				if ($query->hasTableName($part) === true) {
-					$parts[$key] = $query->connection()->fullFieldName($part, $query->tablesNames);
-				}
-			}
-		}
-
-		return $parts;
-	}
-
-/**
- * Helper function used to apply full field name (meaning applying the connection prefix if the field names in
- * the order clause contains the table name)
- * This functions is only applied on HAVING clause
- *
- * @param ExpressionInterface $parts Parts of the query clause
- * @param \Cake\Database\Query $query The query that is being compiled
- * @param \Cake\Database\ValueBinder $generator The placeholder and value binder object
- * @return array|ExpressionInterface The variable $parts modified
- */
-	protected function _havingFullFieldsName($parts, $query, $generator) {
-		if ($parts instanceof ExpressionInterface) {
-			$parts->traverse(function ($condition) use ($query) {
-				if ($condition instanceof Comparison) {
-					$field = $condition->getField();
-
-					if (is_string($field) && strpos($field, '.') !== false && $query->hasTableName($field) === true) {
-						$field = $query->connection()->fullFieldName($field, $query->tablesNames);
-						$condition->field($field);
-					}
-				} elseif ($condition instanceof QueryExpression) {
-					$condition->iterateParts(function ($condition) use ($query) {
-						if ($query->hasTableName($condition) === true) {
-							return $query->connection()->applyFullTableName($condition, $query->tablesNames);
-						}
-
-						return $condition;
-					});
-				}
-
-				return $condition;
-			});
-		}
-
-		return $parts;
 	}
 
 /**
@@ -312,12 +138,6 @@ class QueryCompiler {
 		$modifiers = $query->clause('modifier') ?: null;
 
 		$normalized = [];
-
-		foreach ($parts as $alias => $part) {
-			if ($query->hasTableName($part) === true) {
-				$parts[$alias] = $query->connection()->fullFieldName($part, $query->tablesNames);
-			}
-		}
 
 		$parts = $this->_stringifyExpressions($parts, $generator);
 		foreach ($parts as $k => $p) {
@@ -357,8 +177,6 @@ class QueryCompiler {
 		$select = ' FROM %s';
 		$normalized = [];
 
-		$parts = $query->connection()->fullTableName($parts);
-
 		$parts = $this->_stringifyExpressions($parts, $generator);
 		foreach ($parts as $k => $p) {
 			if (!is_numeric($k)) {
@@ -383,16 +201,6 @@ class QueryCompiler {
 	protected function _buildJoinPart($parts, $query, $generator) {
 		$joins = '';
 		foreach ($parts as $join) {
-			if ($join['conditions'] instanceof QueryExpression) {
-				$join['conditions']->iterateParts(function ($condition, $key) use ($query) {
-					if (is_string($condition)) {
-						$condition = $query->connection()->applyFullTableName($condition, $query->tablesNames);
-					}
-					return $condition;
-				});
-			}
-
-			$join['table'] = $query->connection()->fullTableName($join['table']);
 			$join['table'] = $this->_stringifyExpression($join['table'], $generator);
 			$joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
 			if (isset($join['conditions']) && count($join['conditions'])) {
@@ -402,20 +210,6 @@ class QueryCompiler {
 			}
 		}
 		return $joins;
-	}
-
-/**
- * Helper function to generate SQL for UPDATE expressions.
- *
- * @param array $parts List of tables to update.
- * @param \Cake\Database\Query $query The query that is being compiled
- * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
- * @return string
- */
-	protected function _buildUpdatePart($parts, $query, $generator) {
-		$parts = $query->connection()->fullTableName($parts);
-		$parts = $this->_stringifyExpressions($parts, $generator);
-		return sprintf('UPDATE %s', implode(', ', $parts));
 	}
 
 /**
@@ -468,7 +262,6 @@ class QueryCompiler {
  * @return string SQL fragment.
  */
 	protected function _buildInsertPart($parts, $query, $generator) {
-		$parts[0] = $query->connection()->fullTableName($parts[0]);
 		$table = $this->_stringifyExpression($parts[0], $generator);
 		$columns = $this->_stringifyExpressions($parts[1], $generator);
 		return sprintf('INSERT INTO %s (%s)', $table, implode(', ', $columns));

@@ -239,8 +239,6 @@ class Connection {
  * @see \Cake\Database\Expression\TableNameExpression
  */
 	public function fullTableName($names) {
-		$prefix = $this->getPrefix();
-
 		if (is_string($names) || $names instanceof TableNameExpression) {
 			$names = $this->_fullTableName($names);
 			return $names;

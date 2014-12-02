@@ -14,10 +14,12 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\Expression\TableNameExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
+use Cake\ORM\Table;
 
 /**
  * Contains all the logic related to quoting identifiers in a Query object
@@ -83,6 +85,11 @@ class IdentifierQuoter {
 
 		if ($expression instanceof IdentifierExpression) {
 			$this->_quoteIdentifierExpression($expression);
+			return;
+		}
+
+		if ($expression instanceof TableNameExpression) {
+			$this->_quoteTableNameExpression($expression);
 			return;
 		}
 	}
@@ -164,7 +171,12 @@ class IdentifierQuoter {
  */
 	protected function _quoteInsert($query) {
 		list($table, $columns) = $query->clause('insert');
-		$table = $this->_driver->quoteIdentifier($table);
+
+        if ($table instanceof TableNameExpression) {
+            $table = $this->_quoteTableNameExpression($table);
+        } else {
+            $table = $this->_driver->quoteIdentifier($table);
+        }
 		foreach ($columns as &$column) {
 			if (is_string($column)) {
 				$column = $this->_driver->quoteIdentifier($column);
@@ -219,6 +231,19 @@ class IdentifierQuoter {
 		$expression->setIdentifier(
 			$this->_driver->quoteIdentifier($expression->getIdentifier())
 		);
+	}
+
+/**
+ * Quotes TableNameExpressions
+ *
+ * @param \Cake\Database\Expression\TableNameExpression $expression The table name to quote.
+ * @return void
+ */
+	protected function _quoteTableNameExpression(TableNameExpression $expression) {
+        $expression->setName($this->_driver->quoteIdentifier($expression->getName()));
+        $expression->setQuoted();
+
+        return $expression;
 	}
 
 }

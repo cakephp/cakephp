@@ -509,7 +509,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 
 			$joins[$alias ?: $i++] = $t + ['type' => 'INNER', 'alias' => $alias];
 
-			if (empty($alias) && empty($t['alias'])) {
+			if (empty($alias) && empty($t['alias']) && is_string($t['table'])) {
 				$this->tablesNames[$t['table']] = $t['table'];
 			}
 		}
@@ -1203,7 +1203,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 /**
  * Set the table name for insert queries.
  *
- * @param string $table The table name to insert into.
+ * @param string|\Cake\Database\Expression\TableNameExpression $table The table name to insert into.
  * @return $this
  */
 	public function into($table) {
@@ -1252,7 +1252,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * Can be combined with set() and where() methods to create update queries.
  *
- * @param string $table The table you want to update.
+ * @param string|\Cake\Database\Expression\TableNameExpression $table The table you want to update.
  * @return $this
  */
 	public function update($table) {

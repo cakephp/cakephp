@@ -80,6 +80,11 @@ trait SqlDialectTrait {
  */
 	public function queryTranslator($type) {
 		return function ($query) use ($type) {
+            $dbPrefix = $query->connection()->getPrefix();
+            if ($dbPrefix !== '') {
+                $query = (new TableNamePrefixer($this))->prefix($query);
+            }
+
 			if ($this->autoQuoting()) {
 				$query = (new IdentifierQuoter($this))->quote($query);
 			}
