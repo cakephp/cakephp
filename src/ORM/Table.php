@@ -571,14 +571,12 @@ class Table implements RepositoryInterface, EventListenerInterface {
  * as argument:
  *
  * {{{
- * $this->Comment->associations([
+ * $this->Posts->associations([
  * 		'belongsTo' => [
- * 			'Comments',
  * 			'Users' => ['className' => 'App\Model\Table\UsersTable']
  * 		],
- * 		'belongsToMany' => [
- * 			'Tags'
- * 		]
+ * 		'hasMany' => ['Comments'],
+ * 		'belongsToMany' => ['Tags']
  * ]);
  * }}}
  *
