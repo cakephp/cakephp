@@ -24,33 +24,119 @@ use Cake\ORM\Rule\ExistsIn;
  */
 class RulesChecker {
 
+/**
+ * The list of rules to be checked on every case
+ *
+ * @var array
+ */
 	protected $_rules = [];
 
+/**
+ * The list of rules to check during create operations
+ *
+ * @var array
+ */
 	protected $_createRules = [];
 
+/**
+ * The list of rules to check during update operations
+ *
+ * @var array
+ */
 	protected $_updateRules = [];
 
+/**
+ * List of options to pass to every callable rule
+ *
+ * @var array
+ */
 	protected $_options = [];
 
+/**
+ * Constructor. Takes the options to be passed to all rules.
+ *
+ * @param array $options The options to pass to every rule
+ */
 	public function __construct(array $options) {
 		$this->_options = $options;
 	}
 
+/**
+ * Adds a rule that will be applied to the entity both on create and update
+ * operations.
+ *
+ * ### Options
+ *
+ * The options array accept the following special keys:
+ *
+ * - `errorField`: The name of the entity field that will be marked as invalid
+ *    if the rule does not pass.
+ * - `message`: The error message to set to `errorField` if the rule does not pass.
+ *
+ * @param callable $rule A callable function or object that will return whether
+ * the entity is valid or not.
+ * @param array $options List of extra options to pass to the rule callable as
+ * second argument.
+ * @return $this
+ */
 	public function add(callable $rule, array $options = []) {
 		$this->_rules[] = $this->_addError($rule, $options);
 		return $this;
 	}
 
+/**
+ * Adds a rule that will be applied to the entity both on create
+ * operations.
+ *
+ * ### Options
+ *
+ * The options array accept the following special keys:
+ *
+ * - `errorField`: The name of the entity field that will be marked as invalid
+ *    if the rule does not pass.
+ * - `message`: The error message to set to `errorField` if the rule does not pass.
+ *
+ * @param callable $rule A callable function or object that will return whether
+ * the entity is valid or not.
+ * @param array $options List of extra options to pass to the rule callable as
+ * second argument.
+ * @return $this
+ */
 	public function addCreate(callable $rule, array $options = []) {
 		$this->_createRules[] = $this->_addError($rule, $options);
 		return $this;
 	}
 
+/**
+ * Adds a rule that will be applied to the entity both on update
+ * operations.
+ *
+ * ### Options
+ *
+ * The options array accept the following special keys:
+ *
+ * - `errorField`: The name of the entity field that will be marked as invalid
+ *    if the rule does not pass.
+ * - `message`: The error message to set to `errorField` if the rule does not pass.
+ *
+ * @param callable $rule A callable function or object that will return whether
+ * the entity is valid or not.
+ * @param array $options List of extra options to pass to the rule callable as
+ * second argument.
+ * @return $this
+ */
 	public function addUpdate(callable $rule, array $options = []) {
 		$this->_updateRules[] = $this->_addError($rule, $options);
 		return $this;
 	}
 
+/**
+ * Runs each of the rules by passing the provided entity and returns true if all
+ * of them pass. The rules selected will be only those specified to be run on 'create'
+ *
+ * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.
+ * @return bool
+ */
 	public function checkCreate(EntityInterface $entity) {
 		$success = true;
 		foreach (array_merge($this->_rules, $this->_createRules) as $rule) {
@@ -59,6 +145,13 @@ class RulesChecker {
 		return $success;
 	}
 
+/**
+ * Runs each of the rules by passing the provided entity and returns true if all
+ * of them pass. The rules selected will be only those specified to be run on 'update'
+ *
+ * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.
+ * @return bool
+ */
 	public function checkUpdate(EntityInterface $entity) {
 		$success = true;
 		foreach (array_merge($this->_rules, $this->_updateRules) as $rule) {
@@ -67,10 +160,19 @@ class RulesChecker {
 		return $success;
 	}
 
+/**
+ * Returns a callable that can be used as a rule for checking the uniqueness of a value
+ * in the table.
+ *
+ * @param array $fields The list of fields to check for uniqueness.
+ * @param string $message The error message to show in case the rule does not pass.
+ * @return callable
+ */
 	public function isUnique(array $fields, $message = 'This value is already in use') {
 		$errorField = current($fields);
 		return $this->_addError(new IsUnique($fields), compact('errorField', 'message'));
 	}
+
 
 	public function existsIn($field, $table, $message = 'This value does not exist') {
 		$errorField = $field;
