@@ -905,8 +905,6 @@ class Table implements RepositoryInterface, EventListenerInterface {
 /**
  * {@inheritDoc}
  *
- * @throws \Cake\ORM\Exception\RecordNotFoundException if no record can be found given
- * a primary key value.
  * @throws \InvalidArgumentException When $primaryKey has an incorrect number of elements.
  */
 	public function get($primaryKey, $options = []) {

@@ -332,7 +332,7 @@ trait QueryTrait {
 /**
  * Get the first result from the executing query or raise an exception.
  *
- * @throws \Cake\Datasource\RecordNotFoundException When there is no first record.
+ * @throws \Cake\Datasource\Exception\RecordNotFoundException When there is no first record.
  * @return mixed The first result from the ResultSet.
  */
 	public function firstOrFail() {

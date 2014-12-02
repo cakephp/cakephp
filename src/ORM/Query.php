@@ -20,7 +20,6 @@ use Cake\Datasource\QueryTrait;
 use Cake\ORM\EagerLoader;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
-use Cake\ORM\Exception\RecordNotFoundException;
 use JsonSerializable;
 
 /**
