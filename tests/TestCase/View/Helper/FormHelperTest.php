@@ -2821,6 +2821,43 @@ class FormHelperTest extends TestCase {
 			'/div'
 		);
 		$this->assertHtml($expected, $result);
+
+		// make sure that for HABTM the multiple option is not being overwritten in case it's truly
+		$options = array(
+			1 => 'blue',
+			2 => 'red'
+		);
+		$result = $this->Form->input('tags._ids', ['options' => $options, 'multiple' => 'checkbox']);
+		$expected = array(
+			'div' => array('class' => 'input select'),
+			'label' => array('for' => 'tags-ids'),
+			'Tags',
+			'/label',
+			'input' => array('type' => 'hidden', 'name' => 'tags[_ids]', 'value' => ''),
+
+			array('div' => array('class' => 'checkbox')),
+			array('label' => array('for' => 'tags-ids-1')),
+			array('input' => array(
+				'id' => 'tags-ids-1', 'type' => 'checkbox',
+				'value' => '1', 'name' => 'tags[_ids][]'
+			)),
+			'blue',
+			'/label',
+			'/div',
+
+			array('div' => array('class' => 'checkbox')),
+			array('label' => array('for' => 'tags-ids-2')),
+			array('input' => array(
+				'id' => 'tags-ids-2', 'type' => 'checkbox',
+				'value' => '2', 'name' => 'tags[_ids][]'
+			)),
+			'red',
+			'/label',
+			'/div',
+
+			'/div'
+		);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
