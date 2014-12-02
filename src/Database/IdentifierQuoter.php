@@ -172,11 +172,11 @@ class IdentifierQuoter {
 	protected function _quoteInsert($query) {
 		list($table, $columns) = $query->clause('insert');
 
-        if ($table instanceof TableNameExpression) {
-            $table = $this->_quoteTableNameExpression($table);
-        } else {
-            $table = $this->_driver->quoteIdentifier($table);
-        }
+		if ($table instanceof TableNameExpression) {
+			$table = $this->_quoteTableNameExpression($table);
+		} else {
+			$table = $this->_driver->quoteIdentifier($table);
+		}
 		foreach ($columns as &$column) {
 			if (is_string($column)) {
 				$column = $this->_driver->quoteIdentifier($column);
@@ -240,10 +240,10 @@ class IdentifierQuoter {
  * @return void
  */
 	protected function _quoteTableNameExpression(TableNameExpression $expression) {
-        $expression->setName($this->_driver->quoteIdentifier($expression->getName()));
-        $expression->setQuoted();
+		$expression->setName($this->_driver->quoteIdentifier($expression->getName()));
+		$expression->setQuoted();
 
-        return $expression;
+		return $expression;
 	}
 
 }

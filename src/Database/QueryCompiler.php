@@ -14,8 +14,6 @@
  */
 namespace Cake\Database;
 
-use Cake\Database\Expression\Comparison;
-use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TableNameExpression;
 use Cake\Database\Query;
 use Cake\Database\ValueBinder;
@@ -36,7 +34,7 @@ class QueryCompiler {
  */
 	protected $_templates = [
 		'delete' => 'DELETE',
-        'update' => 'UPDATE %s',
+		'update' => 'UPDATE %s',
 		'where' => ' WHERE %s',
 		'group' => ' GROUP BY %s ',
 		'having' => ' HAVING %s ',
@@ -138,7 +136,6 @@ class QueryCompiler {
 		$modifiers = $query->clause('modifier') ?: null;
 
 		$normalized = [];
-
 		$parts = $this->_stringifyExpressions($parts, $generator);
 		foreach ($parts as $k => $p) {
 			if (!is_numeric($k)) {
@@ -176,7 +173,6 @@ class QueryCompiler {
 	protected function _buildFromPart($parts, $query, $generator) {
 		$select = ' FROM %s';
 		$normalized = [];
-
 		$parts = $this->_stringifyExpressions($parts, $generator);
 		foreach ($parts as $k => $p) {
 			if (!is_numeric($k)) {
