@@ -1231,7 +1231,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			$entity->isNew(!$this->exists($conditions));
 		}
 
-		if ($options['checkRules'] && !$this->checkDomainRules($entity)) {
+		if ($options['checkRules'] && !$this->checkRules($entity)) {
 			return false;
 		}
 
@@ -1842,17 +1842,30 @@ class Table implements RepositoryInterface, EventListenerInterface {
 		return !$this->exists($conditions);
 	}
 
-	public function checkDomainRules($entity) {
-		$rules = $this->domainRules();
+	public function checkRules($entity) {
+		$rules = $this->rulesChecker();
+		$event = $this->dispatchEvent('Model.beforeRules', compact('entity', 'rules'));
 
+		if ($event->isStopped()) {
+			return $event->result;
+		}
+		
 		if ($entity->isNew()) {
-			return $rules->checkCreate($entity);
+			$result = $rules->checkCreate($entity);
+		} else {
+			$result = $rules->checkUpdate($entity);
 		}
 
-		return $rules->checkUpdate($entity);
+		$event = $this->dispatchEvent('Model.afterRules', compact('entity', 'rules', 'result'));
+
+		if ($event->isStopped()) {
+			return $event->result;
+		}
+
+		return $result;
 	}
 
-	public function domainRules() {
+	public function rulesChecker() {
 		if ($this->_rulesChecker !== null) {
 			return $this->_rulesChecker;
 		}
@@ -1881,8 +1894,8 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			'Model.afterSave' => 'afterSave',
 			'Model.beforeDelete' => 'beforeDelete',
 			'Model.afterDelete' => 'afterDelete',
-			'Model.beforeValidate' => 'beforeValidate',
-			'Model.afterValidate' => 'afterValidate',
+			'Model.beforeRules' => 'beforeRules',
+			'Model.afterRules' => 'afterRules',
 		];
 		$events = [];
 

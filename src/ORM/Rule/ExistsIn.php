@@ -37,7 +37,7 @@ class ExistsIn {
  * or the association name for the repository.
  */
 	public function __construct($fields, $repository) {
-		$this->_field = (array)$fields;
+		$this->_fields = (array)$fields;
 		$this->_repository = $repository;
 	}
 

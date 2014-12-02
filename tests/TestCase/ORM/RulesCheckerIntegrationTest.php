@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\ORM\Entity;
+use Cake\ORM\RulesChecker;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
@@ -59,7 +60,7 @@ class RulesCheckerIntegrationTest extends TestCase {
 		$table->belongsTo('authors');
 		$table->association('authors')
 			->target()
-			->domainRules()
+			->rulesChecker()
 			->add(function (Entity $author, array $options) use ($table) {
 				$this->assertSame($options['repository'], $table->association('authors')->target());
 				return false;
@@ -92,7 +93,7 @@ class RulesCheckerIntegrationTest extends TestCase {
 		$table->hasOne('articles');
 		$table->association('articles')
 			->target()
-			->domainRules()
+			->rulesChecker()
 			->add(function (Entity $entity) {
 				return false;
 			}, ['errorField' => 'title', 'message' => 'This is an error']);
@@ -132,7 +133,7 @@ class RulesCheckerIntegrationTest extends TestCase {
 		$table->hasMany('articles');
 		$table->association('articles')
 			->target()
-			->domainRules()
+			->rulesChecker()
 			->add(function (Entity $entity) {
 				return $entity->title === '1';
 			}, ['errorField' => 'title', 'message' => 'This is an error']);
@@ -175,7 +176,7 @@ class RulesCheckerIntegrationTest extends TestCase {
 		$table->hasMany('articles');
 		$table->association('articles')
 			->target()
-			->domainRules()
+			->rulesChecker()
 			->add(function (Entity $article) {
 				return is_numeric($article->title);
 			}, ['errorField' => 'title', 'message' => 'This is an error']);
@@ -213,7 +214,7 @@ class RulesCheckerIntegrationTest extends TestCase {
 		$table->belongsToMany('tags');
 		$table->association('tags')
 			->junction()
-			->domainRules()
+			->rulesChecker()
 			->add(function (Entity $entity) {
 				return $entity->article_id > 4;
 			});
@@ -252,7 +253,7 @@ class RulesCheckerIntegrationTest extends TestCase {
 		$table->belongsToMany('tags');
 		$table->association('tags')
 			->junction()
-			->domainRules()
+			->rulesChecker()
 			->add(function (Entity $entity) {
 				return $entity->tag_id > 4;
 			});
@@ -280,7 +281,7 @@ class RulesCheckerIntegrationTest extends TestCase {
 		]);
 
 		$table = TableRegistry::get('Authors');
-		$rules = $table->domainRules();
+		$rules = $table->rulesChecker();
 		$rules->add($rules->isUnique(['name']));
 
 		$this->assertFalse($table->save($entity));
@@ -307,7 +308,7 @@ class RulesCheckerIntegrationTest extends TestCase {
 		]);
 
 		$table = TableRegistry::get('Articles');
-		$rules = $table->domainRules();
+		$rules = $table->rulesChecker();
 		$rules->add($rules->isUnique(['title', 'author_id'], 'Nope'));
 
 		$this->assertFalse($table->save($entity));
@@ -332,7 +333,7 @@ class RulesCheckerIntegrationTest extends TestCase {
 
 		$table = TableRegistry::get('Articles');
 		$table->belongsTo('Authors');
-		$rules = $table->domainRules();
+		$rules = $table->rulesChecker();
 		$rules->add($rules->existsIn('author_id', 'Authors'));
 
 		$this->assertFalse($table->save($entity));
@@ -352,7 +353,7 @@ class RulesCheckerIntegrationTest extends TestCase {
 		]);
 
 		$table = TableRegistry::get('Articles');
-		$rules = $table->domainRules();
+		$rules = $table->rulesChecker();
 		$rules->add($rules->existsIn('author_id', TableRegistry::get('Authors'), 'Nope'));
 
 		$this->assertFalse($table->save($entity));
@@ -372,10 +373,60 @@ class RulesCheckerIntegrationTest extends TestCase {
 		]);
 
 		$table = TableRegistry::get('Articles');
-		$rules = $table->domainRules();
+		$rules = $table->rulesChecker();
 		$rules->add($rules->existsIn('author_id', TableRegistry::get('Authors'), 'Nope'));
 
 		$this->assertSame($entity, $table->save($entity, ['checkRules' => false]));
 	}
 
+/**
+ * Tests the beforeRules event
+ *
+ * @group save
+ * @return void
+ */
+	public function testUseBeforeRules() {
+		$entity = new Entity([
+			'title' => 'An Article',
+			'author_id' => 500
+		]);
+
+		$table = TableRegistry::get('Articles');
+		$rules = $table->rulesChecker();
+		$rules->add($rules->existsIn('author_id', TableRegistry::get('Authors'), 'Nope'));
+
+		$table->eventManager()->attach(function ($event, Entity $entity, RulesChecker $check) {
+			$this->assertSame($event->subject()->rulesChecker(), $check);
+			$event->stopPropagation();
+			return true;
+		}, 'Model.beforeRules');
+
+		$this->assertSame($entity, $table->save($entity));
+	}
+
+/**
+ * Tests the afterRules event
+ *
+ * @group save
+ * @return void
+ */
+	public function testUseAfterRules() {
+		$entity = new Entity([
+			'title' => 'An Article',
+			'author_id' => 500
+		]);
+
+		$table = TableRegistry::get('Articles');
+		$rules = $table->rulesChecker();
+		$rules->add($rules->existsIn('author_id', TableRegistry::get('Authors'), 'Nope'));
+
+		$table->eventManager()->attach(function ($event, Entity $entity, RulesChecker $check, $result) {
+			$this->assertSame($event->subject()->rulesChecker(), $check);
+			$this->assertFalse($result);
+			$event->stopPropagation();
+			return true;
+		}, 'Model.afterRules');
+
+		$this->assertSame($entity, $table->save($entity));
+	}
 }
