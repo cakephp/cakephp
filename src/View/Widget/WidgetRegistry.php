@@ -62,10 +62,12 @@ class WidgetRegistry {
 	public function __construct(StringTemplate $templates, View $view, $widgets = []) {
 		$this->_templates = $templates;
 		if (!empty($widgets)) {
-			if (is_string($widgets)) {
-				$this->load($widgets);
-			} else {
-				$this->add($widgets);
+			$this->add($widgets);
+			foreach ($this->_widgets as $key => $widget) {
+				if (is_string($widget) && !class_exists($widget)) {
+					$this->load($widget);
+					unset($this->_widgets[$key]);
+				}
 			}
 		}
 		$this->_widgets['_view'] = $view;

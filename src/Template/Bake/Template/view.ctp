@@ -84,7 +84,7 @@ $pk = "\$$singularVar->{$primaryKey[0]}";
 			$details = $associationFields[$field];
 %>
 			<h6 class="subheader"><?= __('<%= Inflector::humanize($details['property']) %>') ?></h6>
-			<p><?= $<%= $singularVar %>->has('<%= $details['property'] %>') ? $this->Html->link($<%= $singularVar %>-><%= $details['property'] %>-><%= $details['displayField'] %>, ['controller' => '<%= $details['controller'] %>', 'action' => 'view', $<%= $singularVar %>-><%= $details['property'] %>-><%= $details['primaryKey'][0] %>]) : '' %>" ?></p>
+			<p><?= $<%= $singularVar %>->has('<%= $details['property'] %>') ? $this->Html->link($<%= $singularVar %>-><%= $details['property'] %>-><%= $details['displayField'] %>, ['controller' => '<%= $details['controller'] %>', 'action' => 'view', $<%= $singularVar %>-><%= $details['property'] %>-><%= $details['primaryKey'][0] %>]) : '' ?></p>
 <% else : %>
 			<h6 class="subheader"><?= __('<%= Inflector::humanize($field) %>') ?></h6>
 			<p><?= h($<%= $singularVar %>-><%= $field %>) ?></p>

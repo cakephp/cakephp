@@ -17,6 +17,13 @@
 use Cake\Utility\Inflector;
 
 $isController = strtolower($type) === 'controller';
+
+if ($isController) {
+	$uses[] = 'Cake\TestSuite\IntegrationTestCase';
+} else {
+	$uses[] = 'Cake\TestSuite\TestCase';
+}
+sort($uses);
 %>
 <?php
 namespace <%= $baseNamespace; %>\Test\TestCase\<%= $subNamespace %>;
@@ -24,11 +31,6 @@ namespace <%= $baseNamespace; %>\Test\TestCase\<%= $subNamespace %>;
 <% foreach ($uses as $dependency): %>
 use <%= $dependency; %>;
 <% endforeach; %>
-<% if ($isController): %>
-use Cake\TestSuite\IntegrationTestCase;
-<% else: %>
-use Cake\TestSuite\TestCase;
-<% endif; %>
 
 /**
  * <%= $fullClassName %> Test Case
@@ -56,9 +58,13 @@ class <%= $className %>Test extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-<%= $preConstruct ? "\t\t" . $preConstruct : '' %>
+	<%- if ($preConstruct): %>
+		<%= $preConstruct %>
+	<%- endif; %>
 		$this-><%= $subject . ' = ' . $construction %>
-<%= $postConstruct ? "\t\t" . $postConstruct : '' %>
+	<%- if ($postConstruct): %>
+		<%= $postConstruct %>
+	<%- endif; %>
 	}
 
 /**

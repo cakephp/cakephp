@@ -24,11 +24,12 @@ $prefixNs = '';
 if (!empty($prefix)) {
 	$prefix = Inflector::camelize($prefix);
 	$prefixNs = '\\' . $prefix;
+	$prefix .= DS;
 }
 if (empty($plugin)) {
-	$path = APP_DIR . DS . 'Controller' . DS . $prefix . DS . h($controller) . '.php' ;
+	$path = APP_DIR . DS . 'Controller' . DS . $prefix . h($controller) . '.php' ;
 } else {
-	$path = Plugin::classPath($plugin) . 'Controller' . DS . $prefix . DS . h($controller) . '.php';
+	$path = Plugin::classPath($plugin) . 'Controller' . DS . $prefix . h($controller) . '.php';
 }
 ?>
 <h2><?= sprintf('Missing Method in %s', h($controller)); ?></h2> <p class="error">

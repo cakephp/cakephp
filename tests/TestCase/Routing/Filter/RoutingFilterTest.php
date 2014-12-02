@@ -29,6 +29,7 @@ class RoutingFilterTest extends TestCase {
  * test setting parameters in beforeDispatch method
  *
  * @return void
+ * @triggers __CLASS__ $this, compact(request)
  */
 	public function testBeforeDispatchSkipWhenControllerSet() {
 		$filter = new RoutingFilter();
@@ -46,6 +47,7 @@ class RoutingFilterTest extends TestCase {
  * test setting parameters in beforeDispatch method
  *
  * @return void
+ * @triggers __CLASS__ $this, compact(request)
  */
 	public function testBeforeDispatchSetsParameters() {
 		Router::connect('/:controller/:action/*');
@@ -67,6 +69,8 @@ class RoutingFilterTest extends TestCase {
  * test setting parameters in beforeDispatch method
  *
  * @return void
+ * @triggers __CLASS__ $this, compact(request)
+ * @triggers __CLASS__ $this, compact(request)
  */
 	public function testQueryStringOnRoot() {
 		Router::reload();

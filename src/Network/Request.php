@@ -129,7 +129,9 @@ class Request implements \ArrayAccess {
 		'ssl' => array('env' => 'HTTPS', 'options' => [1, 'on']),
 		'ajax' => array('env' => 'HTTP_X_REQUESTED_WITH', 'value' => 'XMLHttpRequest'),
 		'flash' => array('env' => 'HTTP_USER_AGENT', 'pattern' => '/^(Shockwave|Adobe) Flash/'),
-		'requested' => array('param' => 'requested', 'value' => 1)
+		'requested' => array('param' => 'requested', 'value' => 1),
+		'json' => array('accept' => array('application/json'), 'param' => '_ext', 'value' => 'json'),
+		'xml' => array('accept' => array('application/xml', 'text/xml'), 'param' => '_ext', 'value' => 'xml'),
 	);
 
 /**
@@ -468,7 +470,7 @@ class Request implements \ArrayAccess {
  * If a session object is passed as first argument it will be set as
  * the session to use for this request
  *
- * @param \Cake\Network\Session $session the session object to use
+ * @param \Cake\Network\Session|null $session the session object to use
  * @return \Cake\Network\Session
  */
 	public function session(Session $session = null) {
@@ -621,6 +623,97 @@ class Request implements \ArrayAccess {
 		if (is_callable($detect)) {
 			return call_user_func($detect, $this);
 		}
+		if (isset($detect['env']) && $this->_environmentDetector($detect)) {
+			return true;
+		}
+		if (isset($detect['header']) && $this->_headerDetector($detect)) {
+			return true;
+		}
+		if (isset($detect['accept']) && $this->_acceptHeaderDetector($detect)) {
+			return true;
+		}
+		if (isset($detect['param']) && $this->_paramDetector($detect)) {
+			return true;
+		}
+		return false;
+	}
+
+/**
+ * Detects if a URL extension is present.
+ *
+ * @param array $detect Detector options array.
+ * @return bool Whether or not the request is the type you are checking.
+ */
+	protected function _extensionDetector($detect) {
+		if (is_string($detect['extension'])) {
+			$detect['extension'] = array($detect['extension']);
+		}
+		if (in_array($this->params['_ext'], $detect['extension'])) {
+			return true;
+		}
+		return false;
+	}
+
+/**
+ * Detects if a specific accept header is present.
+ *
+ * @param array $detect Detector options array.
+ * @return bool Whether or not the request is the type you are checking.
+ */
+	protected function _acceptHeaderDetector($detect) {
+		$acceptHeaders = explode(',', $this->env('HTTP_ACCEPT'));
+		foreach ($detect['accept'] as $header) {
+			if (in_array($header, $acceptHeaders)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+/**
+ * Detects if a specific header is present.
+ *
+ * @param array $detect Detector options array.
+ * @return bool Whether or not the request is the type you are checking.
+ */
+	protected function _headerDetector($detect) {
+		foreach ($detect['header'] as $header => $value) {
+			$header = $this->env('http_' . $header);
+			if (!is_null($header)) {
+				if (!is_string($value) && !is_bool($value) && is_callable($value)) {
+					return call_user_func($value, $header);
+				}
+				return ($header === $value);
+			}
+		}
+		return false;
+	}
+
+/**
+ * Detects if a specific request parameter is present.
+ *
+ * @param array $detect Detector options array.
+ * @return bool Whether or not the request is the type you are checking.
+ */
+	protected function _paramDetector($detect) {
+		$key = $detect['param'];
+		if (isset($detect['value'])) {
+			$value = $detect['value'];
+			return isset($this->params[$key]) ? $this->params[$key] == $value : false;
+		}
+		if (isset($detect['options'])) {
+			return isset($this->params[$key]) ? in_array($this->params[$key], $detect['options']) : false;
+		}
+		return false;
+	}
+
+/**
+ * Detects if a specific environment variable is present.
+ *
+ * @param array $detect Detector options array.
+ * @return bool Whether or not the request is the type you are checking.
+ */
+	protected function _environmentDetector($detect) {
 		if (isset($detect['env'])) {
 			if (isset($detect['value'])) {
 				return $this->env($detect['env']) == $detect['value'];
@@ -632,19 +725,6 @@ class Request implements \ArrayAccess {
 				$pattern = '/' . implode('|', $detect['options']) . '/i';
 				return (bool)preg_match($pattern, $this->env($detect['env']));
 			}
-		}
-		if (isset($detect['param'])) {
-			$key = $detect['param'];
-			if (isset($detect['value'])) {
-				$value = $detect['value'];
-				return isset($this->params[$key]) ? $this->params[$key] == $value : false;
-			}
-			if (isset($detect['options'])) {
-				return isset($this->params[$key]) ? in_array($this->params[$key], $detect['options']) : false;
-			}
-		}
-		if (isset($detect['callback']) && is_callable($detect['callback'])) {
-			return call_user_func($detect['callback'], $this);
 		}
 		return false;
 	}
@@ -876,7 +956,7 @@ class Request implements \ArrayAccess {
  * This method will order the returned content types by the preference values indicated
  * by the client.
  *
- * @param string $type The content type to check for. Leave null to get all types a client accepts.
+ * @param string|null $type The content type to check for. Leave null to get all types a client accepts.
  * @return mixed Either an array of all the types the client accepts or a boolean if they accept the
  *   provided type.
  */
@@ -916,7 +996,7 @@ class Request implements \ArrayAccess {
  *
  * {{{ \Cake\Network\Request::acceptLanguage('es-es'); }}}
  *
- * @param string $language The language to test.
+ * @param string|null $language The language to test.
  * @return mixed If a $language is provided, a boolean. Otherwise the array of accepted languages.
  */
 	public function acceptLanguage($language = null) {
@@ -1052,7 +1132,7 @@ class Request implements \ArrayAccess {
  *
  * Any additional parameters are applied to the callback in the order they are given.
  *
- * @param string $callback A decoding callback that will convert the string data to another
+ * @param string|null $callback A decoding callback that will convert the string data to another
  *     representation. Leave empty to access the raw input data. You can also
  *     supply additional parameters for the decoding callback using var args, see above.
  * @return string The decoded/processed request data.
@@ -1086,7 +1166,7 @@ class Request implements \ArrayAccess {
  * Fallback to using env() if key not set in $environment property.
  *
  * @param string $key The key you want to read/write from/to.
- * @param string $value Value to set. Default null.
+ * @param string|null $value Value to set. Default null.
  * @return $this|string|null This instance if used as setter,
  *   if used as getter either the environment value, or null if the value doesn't exist.
  */

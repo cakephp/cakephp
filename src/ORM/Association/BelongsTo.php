@@ -35,7 +35,7 @@ class BelongsTo extends Association {
  * Sets the name of the field representing the foreign key to the target table.
  * If no parameters are passed current field is returned
  *
- * @param string $key the key to be used to link both tables together
+ * @param string|null $key the key to be used to link both tables together
  * @return string
  */
 	public function foreignKey($key = null) {
@@ -66,7 +66,7 @@ class BelongsTo extends Association {
  * in the source table record.
  * If no arguments are passed, currently configured type is returned.
  *
- * @param string $name The property name, use null to read the current property.
+ * @param string|null $name The property name, use null to read the current property.
  * @return string
  */
 	public function property($name = null) {

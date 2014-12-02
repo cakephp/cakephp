@@ -15,12 +15,13 @@
 
 $belongsTo = $this->Bake->aliasExtractor($modelObj, 'BelongsTo');
 $belongsToMany = $this->Bake->aliasExtractor($modelObj, 'BelongsToMany');
+$compact = ["'" . $singularName . "'"];
 %>
-<% $compact = ["'" . $singularName . "'"]; %>
+
 /**
  * Edit method
  *
- * @param string $id
+ * @param string|null $id <%= $singularHumanName %> id
  * @return void
  * @throws \Cake\Network\Exception\NotFoundException
  */

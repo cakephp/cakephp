@@ -22,7 +22,7 @@
 		"ext-intl": "*",
 		"ext-mcrypt": "*",
 		"ext-mbstring": "*",
-		"nesbot/Carbon": "1.8.*",
+		"nesbot/Carbon": "1.13.*",
 		"ircmaxell/password-compat": "1.0.*",
 		"aura/intl": "1.1.*",
 		"psr/log": "1.0"

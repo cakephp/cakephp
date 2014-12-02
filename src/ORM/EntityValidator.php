@@ -15,9 +15,16 @@
 namespace Cake\ORM;
 
 use ArrayObject;
+use Cake\Datasource\EntityInterface;
+use Cake\ORM\Association;
+use Cake\ORM\Table;
 
 /**
- * Contains logic for validating entities and their associations
+ * Contains logic for validating entities and their associations.
+ *
+ * This class is generally used by the internals of the ORM. It
+ * provides methods for traversing a set of entities and their associated
+ * properties.
  *
  * @see \Cake\ORM\Table::validate()
  * @see \Cake\ORM\Table::validateMany()
@@ -51,6 +58,7 @@ class EntityValidator {
 			return [];
 		}
 
+		$map = [];
 		foreach ($include['associated'] as $key => $options) {
 			if (is_int($key) && is_scalar($options)) {
 				$key = $options;
@@ -66,7 +74,6 @@ class EntityValidator {
 				];
 			}
 		}
-
 		return $map;
 	}
 
@@ -75,12 +82,13 @@ class EntityValidator {
  * the table and traverses associations passed in $options to validate them
  * as well.
  *
- * @param \Cake\ORM\Entity $entity The entity to be validated
+ * @param \Cake\Datasource\EntityInterface $entity The entity to be validated
  * @param array|\ArrayObject $options options for validation, including an optional key of
- * associations to also be validated.
+ *   associations to also be validated. This argument should use the same format as the $options
+ *   argument to \Cake\ORM\Table::save().
  * @return bool true if all validations passed, false otherwise
  */
-	public function one(Entity $entity, $options = []) {
+	public function one(EntityInterface $entity, $options = []) {
 		$valid = true;
 		$types = [Association::ONE_TO_ONE, Association::MANY_TO_ONE];
 		$propertyMap = $this->_buildPropertyMap($options);
@@ -94,7 +102,7 @@ class EntityValidator {
 				continue;
 			}
 			$isOne = in_array($association->type(), $types);
-			if ($isOne && !($value instanceof Entity)) {
+			if ($isOne && !($value instanceof EntityInterface)) {
 				$valid = false;
 				continue;
 			}
@@ -117,14 +125,21 @@ class EntityValidator {
  * Validates a list of entities by getting the correct validator for the related
  * table and traverses associations passed in $include to validate them as well.
  *
+ * If any of the entities in `$entities` does not implement `Cake\Datasource\EntityInterface`,
+ * it will be treated as an invalid result.
+ *
  * @param array $entities List of entities to be validated
  * @param array|\ArrayObject $options options for validation, including an optional key of
- * associations to also be validated.
+ *   associations to also be validated. This argument should use the same format as the $options
+ *   argument to \Cake\ORM\Table::save().
  * @return bool true if all validations passed, false otherwise
  */
 	public function many(array $entities, $options = []) {
 		$valid = true;
 		foreach ($entities as $entity) {
+			if (!($entity instanceof EntityInterface)) {
+				return false;
+			}
 			$valid = $this->one($entity, $options) && $valid;
 		}
 		return $valid;
@@ -156,7 +171,6 @@ class EntityValidator {
 		$success = $entity->validate($validator);
 
 		$event = $this->_table->dispatchEvent('Model.afterValidate', $pass);
-
 		if ($event->isStopped()) {
 			$success = (bool)$event->result;
 		}

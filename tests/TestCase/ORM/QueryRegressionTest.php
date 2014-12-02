@@ -535,4 +535,18 @@ class QueryRegressionTest extends TestCase {
 		$this->assertEquals(2, $query->count());
 	}
 
+/**
+ * Integration test when selecting no fields on the primary table.
+ *
+ * @return void
+ */
+	public function testSelectNoFieldsOnPrimaryAlias() {
+		$table = TableRegistry::get('Articles');
+		$table->belongsTo('Users');
+		$query = $table->find()
+			->select(['Users__id' => 'id']);
+		$results = $query->toArray();
+		$this->assertCount(3, $results);
+	}
+
 }

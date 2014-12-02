@@ -53,6 +53,7 @@ class CsrfComponentTest extends TestCase {
  * Test setting the cookie value
  *
  * @return void
+ * @triggers Controller.startup $controller
  */
 	public function testSettingCookie() {
 		$_SERVER['REQUEST_METHOD'] = 'GET';
@@ -89,6 +90,7 @@ class CsrfComponentTest extends TestCase {
  *
  * @dataProvider httpMethodProvider
  * @return void
+ * @triggers Controller.startup $controller
  */
 	public function testValidTokenInHeader($method) {
 		$_SERVER['REQUEST_METHOD'] = $method;
@@ -109,6 +111,7 @@ class CsrfComponentTest extends TestCase {
  * @dataProvider httpMethodProvider
  * @expectedException \Cake\Network\Exception\ForbiddenException
  * @return void
+ * @triggers Controller.startup $controller
  */
 	public function testInvalidTokenInHeader($method) {
 		$_SERVER['REQUEST_METHOD'] = $method;
@@ -129,6 +132,7 @@ class CsrfComponentTest extends TestCase {
  *
  * @dataProvider httpMethodProvider
  * @return void
+ * @triggers Controller.startup $controller
  */
 	public function testValidTokenRequestData($method) {
 		$_SERVER['REQUEST_METHOD'] = $method;
@@ -151,6 +155,7 @@ class CsrfComponentTest extends TestCase {
  * @dataProvider httpMethodProvider
  * @expectedException \Cake\Network\Exception\ForbiddenException
  * @return void
+ * @triggers Controller.startup $controller
  */
 	public function testInvalidTokenRequestData($method) {
 		$_SERVER['REQUEST_METHOD'] = $method;
@@ -170,6 +175,7 @@ class CsrfComponentTest extends TestCase {
  * Test that CSRF checks are not applied to request action requests.
  *
  * @return void
+ * @triggers Controller.startup $controller
  */
 	public function testCsrfValidationSkipsRequestAction() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
@@ -192,6 +198,7 @@ class CsrfComponentTest extends TestCase {
  * Test that the configuration options work.
  *
  * @return void
+ * @triggers Controller.startup $controller
  */
 	public function testConfigurationCookieCreate() {
 		$_SERVER['REQUEST_METHOD'] = 'GET';
@@ -222,6 +229,7 @@ class CsrfComponentTest extends TestCase {
  * Test that the configuration options work.
  *
  * @return void
+ * @triggers Controller.startup $controller
  */
 	public function testConfigurationValidate() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';

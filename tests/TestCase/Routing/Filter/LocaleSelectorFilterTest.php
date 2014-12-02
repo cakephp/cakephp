@@ -49,6 +49,9 @@ class LocaleSelectorFilterTest extends TestCase {
  * Tests selecting a language from a http header
  *
  * @return void
+ * @triggers name null, [request => $request])
+ * @triggers name null, [request => $request])
+ * @triggers name null, [request => $request])
  */
 	public function testSimpleSelection() {
 		$filter = new LocaleSelectorFilter();
@@ -75,6 +78,8 @@ class LocaleSelectorFilterTest extends TestCase {
  * Tests selecting a language from a http header and filtering by a whitelist
  *
  * @return void
+ * @triggers name null, [request => $request])
+ * @triggers name null, [request => $request])
  */
 	public function testWithWhitelist() {
 		Locale::setDefault('en_US');

@@ -48,8 +48,8 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
 /**
  * Constructor
  *
- * @param \Cake\Database\StatementInterface $statement Statement implementation such as PDOStatement
- * @param \Cake\Database\Driver $driver Driver instance
+ * @param \Cake\Database\StatementInterface|null $statement Statement implementation such as PDOStatement
+ * @param \Cake\Database\Driver|null $driver Driver instance
  */
 	public function __construct($statement = null, $driver = null) {
 		$this->_statement = $statement;
@@ -145,7 +145,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
  * that binding parameters from this method will not perform any custom type conversion
  * as it would normally happen when calling `bindValue`.
  *
- * @param array $params list of values to be bound to query
+ * @param array|null $params list of values to be bound to query
  * @return bool true on success, false otherwise
  */
 	public function execute($params = null) {
@@ -267,8 +267,8 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
 /**
  * Returns the latest primary inserted using this statement.
  *
- * @param string $table table name or sequence to get last insert value from
- * @param string $column the name of the column representing the primary key
+ * @param string|null $table table name or sequence to get last insert value from
+ * @param string|null $column the name of the column representing the primary key
  * @return string
  */
 	public function lastInsertId($table = null, $column = null) {
@@ -276,7 +276,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
 		if ($column && $this->columnCount()) {
 			$row = $this->fetch('assoc');
 		}
-		if ($column && $row) {
+		if (isset($row[$column])) {
 			return $row[$column];
 		}
 		return $this->_driver->lastInsertId($table, $column);

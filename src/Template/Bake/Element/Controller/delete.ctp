@@ -13,10 +13,11 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 %>
+
 /**
  * Delete method
  *
- * @param string $id
+ * @param string|null $id <%= $singularHumanName %> id
  * @return void
  * @throws \Cake\Network\Exception\NotFoundException
  */

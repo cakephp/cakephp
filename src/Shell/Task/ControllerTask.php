@@ -41,7 +41,7 @@ class ControllerTask extends BakeTask {
 /**
  * Execution method always used for tasks
  *
- * @param string $name The name of the controller to bake.
+ * @param string|null $name The name of the controller to bake.
  * @return void
  */
 	public function main($name = null) {
@@ -73,37 +73,6 @@ class ControllerTask extends BakeTask {
 	}
 
 /**
- * Bake scaffold actions
- *
- * @param string $controllerName Controller name
- * @return string Baked actions
- */
-	public function bakeActions($controllerName) {
-		if (!empty($this->params['no-actions'])) {
-			return '';
-		}
-		$currentModelName = $controllerName;
-		$plugin = $this->plugin;
-		if ($plugin) {
-			$plugin .= '.';
-		}
-
-		$modelObj = TableRegistry::get($currentModelName);
-
-		$pluralName = $this->_variableName($currentModelName);
-		$singularName = $this->_singularName($currentModelName);
-		$singularHumanName = $this->_singularHumanName($controllerName);
-		$pluralHumanName = $this->_variableName($controllerName);
-
-		$this->Template->set(compact(
-			'plugin', 'admin', 'pluralName', 'singularName',
-			'singularHumanName', 'pluralHumanName', 'modelObj', 'currentModelName'
-		));
-		$actions = $this->Template->generate('Controller/actions');
-		return $actions;
-	}
-
-/**
  * Assembles and writes a Controller file
  *
  * @param string $controllerName Controller name already pluralized and correctly cased.
@@ -112,7 +81,11 @@ class ControllerTask extends BakeTask {
 	public function bake($controllerName) {
 		$this->out("\n" . sprintf('Baking controller class for %s...', $controllerName), 1, Shell::QUIET);
 
-		$actions = $this->bakeActions($controllerName);
+		$actions = [];
+		if (empty($this->params['no-actions'])) {
+			$actions = ['index', 'view', 'add', 'edit', 'delete'];
+		}
+
 		$helpers = $this->getHelpers();
 		$components = $this->getComponents();
 
@@ -126,12 +99,33 @@ class ControllerTask extends BakeTask {
 			$namespace = str_replace('/', '\\', $this->plugin);
 		}
 
+		$currentModelName = $controllerName;
+		$plugin = $this->plugin;
+		if ($plugin) {
+			$plugin .= '.';
+		}
+
+		$modelObj = TableRegistry::get($currentModelName);
+
+		$pluralName = $this->_variableName($currentModelName);
+		$singularName = $this->_singularName($currentModelName);
+		$singularHumanName = $this->_singularHumanName($controllerName);
+		$pluralHumanName = $this->_variableName($controllerName);
+
 		$data = compact(
-			'prefix',
 			'actions',
-			'helpers',
+			'admin',
 			'components',
-			'namespace'
+			'currentModelName',
+			'helpers',
+			'modelObj',
+			'namespace',
+			'plugin',
+			'pluralHumanName',
+			'pluralName',
+			'prefix',
+			'singularHumanName',
+			'singularName'
 		);
 		$data['name'] = $controllerName;
 

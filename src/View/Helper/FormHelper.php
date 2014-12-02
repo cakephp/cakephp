@@ -202,6 +202,9 @@ class FormHelper extends Helper {
 			unset($config['registry']);
 		}
 		if (isset($config['widgets'])) {
+			if (is_string($config['widgets'])) {
+				$config['widgets'] = (array)$config['widgets'];
+			}
 			$widgets = $config['widgets'] + $widgets;
 			unset($config['widgets']);
 		}
@@ -548,7 +551,7 @@ class FormHelper extends Helper {
  * unlocking a field once its been added to the list of secured fields will remove
  * it from the list of fields.
  *
- * @param string $name The dot separated name for the field.
+ * @param string|null $name The dot separated name for the field.
  * @return mixed Either null, or the list of fields.
  * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#working-with-securitycomponent
  */
@@ -1173,7 +1176,9 @@ class FormHelper extends Helper {
 
 		if ($allowOverride && substr($fieldName, -5) === '._ids') {
 			$options['type'] = 'select';
-			$options['multiple'] = true;
+			if (empty($options['multiple'])) {
+				$options['multiple'] = true;
+			}
 		}
 
 		if ($options['type'] === 'select' && array_key_exists('step', $options)) {

@@ -162,7 +162,7 @@ class Behavior implements EventListenerInterface {
  * Implement this method to avoid having to overwrite
  * the constructor and call parent.
  *
- * @param array $config The configuration array this behavior is using.
+ * @param array $config The configuration settings provided to this behavior.
  * @return void
  */
 	public function initialize(array $config) {

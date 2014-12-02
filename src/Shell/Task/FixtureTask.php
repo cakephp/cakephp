@@ -91,7 +91,7 @@ class FixtureTask extends BakeTask {
  * Execution method always used for tasks
  * Handles dispatching to interactive, named, or all processes.
  *
- * @param string $name The name of the fixture to bake.
+ * @param string|null $name The name of the fixture to bake.
  * @return void
  */
 	public function main($name = null) {
@@ -131,7 +131,7 @@ class FixtureTask extends BakeTask {
  * Assembles and writes a Fixture file
  *
  * @param string $model Name of model to bake.
- * @param string $useTable Name of table to use.
+ * @param string|null $useTable Name of table to use.
  * @return string Baked fixture content
  * @throws \RuntimeException
  */
@@ -379,7 +379,7 @@ class FixtureTask extends BakeTask {
  * to build a fixture.
  *
  * @param string $modelName name of the model to take records from.
- * @param string $useTable Name of table to use.
+ * @param string|null $useTable Name of table to use.
  * @return array Array of records.
  */
 	protected function _getRecordsFromTable($modelName, $useTable = null) {

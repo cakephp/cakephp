@@ -19,10 +19,11 @@ $allAssociations = array_merge(
 	$this->Bake->aliasExtractor($modelObj, 'HasMany')
 );
 %>
+
 /**
  * View method
  *
- * @param string $id
+ * @param string|null $id <%= $singularHumanName %> id
  * @return void
  * @throws \Cake\Network\Exception\NotFoundException
  */

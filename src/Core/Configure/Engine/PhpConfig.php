@@ -37,10 +37,10 @@ class PhpConfig implements ConfigEngineInterface {
 /**
  * Constructor for PHP Config file reading.
  *
- * @param string $path The path to read config files from. Defaults to CONFIG.
+ * @param string|null $path The path to read config files from. Defaults to CONFIG.
  */
 	public function __construct($path = null) {
-		if (!$path) {
+		if ($path === null) {
 			$path = CONFIG;
 		}
 		$this->_path = $path;
@@ -84,7 +84,7 @@ class PhpConfig implements ConfigEngineInterface {
  * @param array $data Data to dump.
  * @return int Bytes saved.
  */
-	public function dump($key, $data) {
+	public function dump($key, array $data) {
 		$contents = '<?php' . "\n" . '$config = ' . var_export($data, true) . ';';
 
 		$filename = $this->_getFilePath($key);

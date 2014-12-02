@@ -210,37 +210,26 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testConstructWithWidgets() {
-		$expected = [
-			'button' => ['Cake\View\Widget\ButtonWidget'],
-			'checkbox' => ['Cake\View\Widget\CheckboxWidget'],
-			'file' => ['Cake\View\Widget\FileWidget'],
-			'label' => ['Cake\View\Widget\LabelWidget'],
-			'nestingLabel' => ['Cake\View\Widget\NestingLabelWidget'],
-			'multicheckbox' => ['Cake\View\Widget\MultiCheckboxWidget', 'nestingLabel'],
-			'radio' => ['Cake\View\Widget\RadioWidget', 'nestingLabel'],
-			'select' => ['Cake\View\Widget\SelectBoxWidget'],
-			'textarea' => ['Cake\View\Widget\TextareaWidget'],
-			'datetime' => ['MyPlugin\View\Widget\DateTimeWidget', 'select'],
-			'_default' => ['Cake\View\Widget\BasicWidget']
-		];
-
-		$helper = $this->getMock(
-			'Cake\View\Helper\FormHelper',
-			['widgetRegistry'],
-			[],
-			'',
-			false
-		);
-		$helper->expects($this->once())
-			->method('widgetRegistry')
-			->with(null, $expected);
-
 		$config = [
 			'widgets' => [
-				'datetime' => ['MyPlugin\View\Widget\DateTimeWidget', 'select']
+				'datetime' => ['Cake\View\Widget\LabelWidget', 'select']
 			]
 		];
-		$helper->__construct($this->View, $config);
+		$helper = new FormHelper($this->View, $config);
+		$registry = $helper->widgetRegistry();
+		$this->assertInstanceOf('Cake\View\Widget\LabelWidget', $registry->get('datetime'));
+	}
+
+/**
+ * Test that when specifying custom widgets config file and it should be
+ * added to widgets array. WidgetRegistry will load widgets in constructor.
+ *
+ * @return void
+ */
+	public function testConstructWithWidgetsConfig() {
+		$helper = new FormHelper($this->View, ['widgets' => ['test_widgets']]);
+		$registry = $helper->widgetRegistry();
+		$this->assertInstanceOf('Cake\View\Widget\LabelWidget', $registry->get('text'));
 	}
 
 /**
@@ -2829,6 +2818,43 @@ class FormHelperTest extends TestCase {
 			)),
 			'User',
 			'/label',
+			'/div'
+		);
+		$this->assertHtml($expected, $result);
+
+		// make sure that for HABTM the multiple option is not being overwritten in case it's truly
+		$options = array(
+			1 => 'blue',
+			2 => 'red'
+		);
+		$result = $this->Form->input('tags._ids', ['options' => $options, 'multiple' => 'checkbox']);
+		$expected = array(
+			'div' => array('class' => 'input select'),
+			'label' => array('for' => 'tags-ids'),
+			'Tags',
+			'/label',
+			'input' => array('type' => 'hidden', 'name' => 'tags[_ids]', 'value' => ''),
+
+			array('div' => array('class' => 'checkbox')),
+			array('label' => array('for' => 'tags-ids-1')),
+			array('input' => array(
+				'id' => 'tags-ids-1', 'type' => 'checkbox',
+				'value' => '1', 'name' => 'tags[_ids][]'
+			)),
+			'blue',
+			'/label',
+			'/div',
+
+			array('div' => array('class' => 'checkbox')),
+			array('label' => array('for' => 'tags-ids-2')),
+			array('input' => array(
+				'id' => 'tags-ids-2', 'type' => 'checkbox',
+				'value' => '2', 'name' => 'tags[_ids][]'
+			)),
+			'red',
+			'/label',
+			'/div',
+
 			'/div'
 		);
 		$this->assertHtml($expected, $result);

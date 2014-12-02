@@ -106,6 +106,25 @@ class ComponentTest extends TestCase {
 	}
 
 /**
+ * Test a duplicate component being loaded more than once with same and differing configurations.
+ *
+ * @expectedException RuntimeException
+ * @expectedExceptionMessage The "Banana" alias has already been loaded with the following config:
+ * @return void
+ */
+	public function testDuplicateComponentInitialize() {
+		$Collection = new ComponentRegistry();
+		$Collection->load('Banana', ['property' => ['closure' => function () {
+		}]]);
+		$Collection->load('Banana', ['property' => ['closure' => function () {
+		}]]);
+
+		$this->assertInstanceOf('TestApp\Controller\Component\BananaComponent', $Collection->Banana, 'class is wrong');
+
+		$Collection->load('Banana', ['property' => ['differs']]);
+	}
+
+/**
  * Test mutually referencing components.
  *
  * @return void

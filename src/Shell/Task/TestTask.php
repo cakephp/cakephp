@@ -83,8 +83,8 @@ class TestTask extends BakeTask {
 /**
  * Execution method always used for tasks
  *
- * @param string $type Class type.
- * @param string $name Name.
+ * @param string|null $type Class type.
+ * @param string|null $name Name.
  * @return void
  */
 	public function main($type = null, $name = null) {
@@ -424,28 +424,28 @@ class TestTask extends BakeTask {
 		$pre = $construct = $post = '';
 		if ($type === 'table') {
 			$className = str_replace('Table', '', $className);
-			$pre = "\$config = TableRegistry::exists('{$className}') ? [] : ['className' => '{$fullClassName}'];\n";
-			$construct = "TableRegistry::get('{$className}', \$config);\n";
+			$pre = "\$config = TableRegistry::exists('{$className}') ? [] : ['className' => '{$fullClassName}'];";
+			$construct = "TableRegistry::get('{$className}', \$config);";
 		}
 		if ($type === 'behavior' || $type === 'entity') {
-			$construct = "new {$className}();\n";
+			$construct = "new {$className}();";
 		}
 		if ($type === 'helper') {
-			$pre = "\$view = new View();\n";
-			$construct = "new {$className}(\$view);\n";
+			$pre = "\$view = new View();";
+			$construct = "new {$className}(\$view);";
 		}
 		if ($type === 'component') {
-			$pre = "\$registry = new ComponentRegistry();\n";
-			$construct = "new {$className}(\$registry);\n";
+			$pre = "\$registry = new ComponentRegistry();";
+			$construct = "new {$className}(\$registry);";
 		}
 		if ($type === 'shell') {
-			$pre = "\$this->io = \$this->getMock('Cake\Console\ConsoleIo');\n";
-			$construct = "new {$className}(\$this->io);\n";
+			$pre = "\$this->io = \$this->getMock('Cake\Console\ConsoleIo');";
+			$construct = "new {$className}(\$this->io);";
 		}
 		if ($type === 'cell') {
 			$pre = "\$this->request = \$this->getMock('Cake\Network\Request');\n";
-			$pre .= "\t\t\$this->response = \$this->getMock('Cake\Network\Response');\n";
-			$construct = "new {$className}(\$this->request, \$this->response);\n";
+			$pre .= "\t\t\$this->response = \$this->getMock('Cake\Network\Response');";
+			$construct = "new {$className}(\$this->request, \$this->response);";
 		}
 		return [$pre, $construct, $post];
 	}

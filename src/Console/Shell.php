@@ -446,8 +446,8 @@ class Shell {
  * Prompts the user for input, and returns it.
  *
  * @param string $prompt Prompt text.
- * @param string|array $options Array or string of options.
- * @param string $default Default input value.
+ * @param string|array|null $options Array or string of options.
+ * @param string|null $default Default input value.
  * @return mixed Either the default value, or the user-provided input.
  * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::in
  */
@@ -492,7 +492,7 @@ class Shell {
  * present in most shells. Using Shell::QUIET for a message means it will always display.
  * While using Shell::VERBOSE means it will only display when verbose output is toggled.
  *
- * @param string|array $message A string or an array of strings to output
+ * @param string|array|null $message A string or an array of strings to output
  * @param int $newlines Number of newlines to append
  * @param int $level The message's output level, see above.
  * @return int|bool Returns the number of bytes returned from writing to stdout.
@@ -506,7 +506,7 @@ class Shell {
  * Outputs a single or multiple error messages to stderr. If no parameters
  * are passed outputs just a newline.
  *
- * @param string|array $message A string or an array of strings to output
+ * @param string|array|null $message A string or an array of strings to output
  * @param int $newlines Number of newlines to append
  * @return void
  */
@@ -542,7 +542,7 @@ class Shell {
  * and exits the application with status code 1
  *
  * @param string $title Title of the error
- * @param string $message An optional error message
+ * @param string|null $message An optional error message
  * @return void
  * @link http://book.cakephp.org/3.0/en/console-and-shells.html#styling-output
  */

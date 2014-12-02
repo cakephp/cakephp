@@ -268,7 +268,8 @@ class EntityContext implements ContextInterface {
 			$isLast = ($i === $last);
 
 			if (!$isLast && $next === null && $prop !== '_ids') {
-				return new Entity();
+				$table = $this->_getTable($path);
+				return $table->newEntity();
 			}
 
 			$isTraversable = (
@@ -331,8 +332,10 @@ class EntityContext implements ContextInterface {
 		if (!$validator->hasField($field)) {
 			return false;
 		}
-		$allowed = $validator->isEmptyAllowed($field, $isNew);
-		return $allowed === false;
+		if ($this->type($field) !== 'boolean') {
+			return $validator->isEmptyAllowed($field, $isNew) === false;
+		}
+		return false;
 	}
 
 /**

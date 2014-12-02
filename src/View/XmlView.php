@@ -72,9 +72,9 @@ class XmlView extends View {
 /**
  * Constructor
  *
- * @param \Cake\Network\Request $request Request instance
- * @param \Cake\Network\Response $response Response instance
- * @param \Cake\Event\EventManager $eventManager Event Manager
+ * @param \Cake\Network\Request|null $request Request instance
+ * @param \Cake\Network\Response|null $response Response instance
+ * @param \Cake\Event\EventManager|null $eventManager Event Manager
  * @param array $viewOptions View options.
  */
 	public function __construct(Request $request = null, Response $response = null,
@@ -106,8 +106,8 @@ class XmlView extends View {
  * XML responses very easy. You can omit the '_serialize' parameter,
  * and use a normal view + layout as well.
  *
- * @param string $view The view being rendered.
- * @param string $layout The layout being rendered.
+ * @param string|null $view The view being rendered.
+ * @param string|null $layout The layout being rendered.
  * @return string The rendered view.
  */
 	public function render($view = null, $layout = null) {

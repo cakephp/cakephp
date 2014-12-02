@@ -93,12 +93,13 @@ class TableRegistry {
  * If no arguments are passed it will return the full configuration array for
  * all aliases
  *
- * @param string $alias Name of the alias
- * @param null|array $options list of options for the alias
+ * @param string|null $alias Name of the alias
+ * @param array|null $options list of options for the alias
  * @return array The config data.
  * @throws RuntimeException When you attempt to configure an existing table instance.
  */
 	public static function config($alias = null, $options = null) {
+		list(, $alias) = pluginSplit($alias);
 		if ($alias === null) {
 			return static::$_config;
 		}
@@ -214,6 +215,7 @@ class TableRegistry {
  * @return \Cake\ORM\Table
  */
 	public static function set($alias, Table $object) {
+		list(, $alias) = pluginSplit($alias);
 		return static::$_instances[$alias] = $object;
 	}
 

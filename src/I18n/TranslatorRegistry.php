@@ -45,7 +45,7 @@ class TranslatorRegistry extends TranslatorLocator {
  * Gets a translator from the registry by package for a locale.
  *
  * @param string $name The translator package to retrieve.
- * @param string $locale The locale to use; if empty, uses the default
+ * @param string|null $locale The locale to use; if empty, uses the default
  * locale.
  * @return \Aura\Intl\TranslatorInterface A translator object.
  * @throws \Aura\Intl\Exception If no translator with that name could be found
@@ -102,7 +102,7 @@ class TranslatorRegistry extends TranslatorLocator {
  *
  * If called with no arguments, it will return the currently configured value.
  *
- * @param string $name The name of the formatter to use.
+ * @param string|null $name The name of the formatter to use.
  * @return string The name of the formatter.
  */
 	public function defaultFormatter($name = null) {

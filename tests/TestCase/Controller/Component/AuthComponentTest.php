@@ -103,6 +103,7 @@ class AuthComponentTest extends TestCase {
  * testIsErrorOrTests
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testIsErrorOrTests() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -159,6 +160,7 @@ class AuthComponentTest extends TestCase {
  * testRedirectVarClearing method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testRedirectVarClearing() {
 		$this->Controller->request['controller'] = 'auth_test';
@@ -180,6 +182,7 @@ class AuthComponentTest extends TestCase {
  * testAuthorizeFalse method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testAuthorizeFalse() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -374,6 +377,7 @@ class AuthComponentTest extends TestCase {
  * Tests that deny always takes precedence over allow
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testAllowDenyAll() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -433,6 +437,7 @@ class AuthComponentTest extends TestCase {
  * test that deny() converts camel case inputs to lowercase.
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testDenyWithCamelCaseMethods() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -455,6 +460,7 @@ class AuthComponentTest extends TestCase {
  * test that allow() and allowedActions work with camelCase method names.
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testAllowedActionsWithCamelCaseMethods() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -507,6 +513,7 @@ class AuthComponentTest extends TestCase {
  * testLoginRedirect method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testLoginRedirect() {
 		$url = '/auth_test/camelCase';
@@ -652,6 +659,7 @@ class AuthComponentTest extends TestCase {
  * testNoLoginRedirectForAuthenticatedUser method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testNoLoginRedirectForAuthenticatedUser() {
 		$this->Controller->request['controller'] = 'auth_test';
@@ -678,6 +686,7 @@ class AuthComponentTest extends TestCase {
  * Default to loginRedirect, if set, on authError.
  *
  * @return void
+ * @triggers Controller.startup $Controller
  */
 	public function testDefaultToLoginRedirect() {
 		$url = '/party/on';
@@ -709,6 +718,7 @@ class AuthComponentTest extends TestCase {
  * testRedirectToUnauthorizedRedirect
  *
  * @return void
+ * @triggers Controller.startup $Controller
  */
 	public function testRedirectToUnauthorizedRedirect() {
 		$url = '/party/on';
@@ -750,6 +760,7 @@ class AuthComponentTest extends TestCase {
  * testRedirectToUnauthorizedRedirectSuppressedAuthError
  *
  * @return void
+ * @triggers Controller.startup $Controller
  */
 	public function testRedirectToUnauthorizedRedirectSuppressedAuthError() {
 		$url = '/party/on';
@@ -788,6 +799,7 @@ class AuthComponentTest extends TestCase {
  *
  * @expectedException \Cake\Network\Exception\ForbiddenException
  * @return void
+ * @triggers Controller.startup $Controller
  */
 	public function testForbiddenException() {
 		$url = '/party/on';
@@ -814,6 +826,7 @@ class AuthComponentTest extends TestCase {
  * Test that no redirects or authorization tests occur on the loginAction
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testNoRedirectOnLoginAction() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -839,6 +852,7 @@ class AuthComponentTest extends TestCase {
  * And the user doesn't have a session.
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testNoRedirectOn404() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -852,6 +866,7 @@ class AuthComponentTest extends TestCase {
  * testAdminRoute method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testAdminRoute() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -884,6 +899,7 @@ class AuthComponentTest extends TestCase {
  * testAjaxLogin method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testAjaxLogin() {
 		$this->Controller->request = new Request([
@@ -910,6 +926,7 @@ class AuthComponentTest extends TestCase {
  * testLoginActionRedirect method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testLoginActionRedirect() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -952,6 +969,7 @@ class AuthComponentTest extends TestCase {
  * accessed by $this->user().
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testStatelessAuthWorksWithUser() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -1077,6 +1095,7 @@ class AuthComponentTest extends TestCase {
  * test flash settings.
  *
  * @return void
+ * @triggers Controller.startup $this->Controller)
  */
 	public function testFlashSettings() {
 		$this->Auth->Flash = $this->getMock(
@@ -1261,6 +1280,7 @@ class AuthComponentTest extends TestCase {
  * @expectedException \Cake\Network\Exception\UnauthorizedException
  * @expectedExceptionCode 401
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testStatelessAuthNoRedirect() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -1277,6 +1297,7 @@ class AuthComponentTest extends TestCase {
  * testStatelessAuthRedirect method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testStatelessFollowedByStatefulAuth() {
 		$event = new Event('Controller.startup', $this->Controller);

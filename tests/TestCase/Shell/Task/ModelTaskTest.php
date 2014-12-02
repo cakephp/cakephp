@@ -20,6 +20,7 @@ use Cake\Model\Model;
 use Cake\ORM\TableRegistry;
 use Cake\Shell\Task\ModelTask;
 use Cake\Shell\Task\TemplateTask;
+use Cake\TestSuite\StringCompareTrait;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
@@ -28,6 +29,8 @@ use Cake\Utility\Inflector;
  * ModelTaskTest class
  */
 class ModelTaskTest extends TestCase {
+
+	use StringCompareTrait;
 
 /**
  * fixtures
@@ -48,6 +51,7 @@ class ModelTaskTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
+		$this->_compareBasePath = CORE_TESTS . 'bake_compare' . DS . 'Model' . DS;
 		$io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
 		$this->Task = $this->getMock('Cake\Shell\Task\ModelTask',
@@ -781,20 +785,7 @@ class ModelTaskTest extends TestCase {
 		];
 		$model = TableRegistry::get('BakeArticles');
 		$result = $this->Task->bakeTable($model, compact('validation'));
-
-		$this->assertContains('namespace App\Model\Table;', $result);
-		$this->assertContains('use Cake\ORM\Table;', $result);
-		$this->assertContains('use Cake\Validation\Validator;', $result);
-		$this->assertContains('class BakeArticlesTable extends Table {', $result);
-		$this->assertContains('public function validationDefault(Validator $validator) {', $result);
-		$this->assertContains("->add('id', 'valid', ['rule' => 'numeric'])", $result);
-		$this->assertContains("->add('email', 'valid', ['rule' => 'email'])", $result);
-		$this->assertContains(
-			"->add('email', 'unique', ['rule' => 'validateUnique', 'provider' => 'table'])",
-			$result);
-		$this->assertContains("->allowEmpty('id', 'create')", $result);
-		$this->assertContains("->allowEmpty('email')", $result);
-		$this->assertContains("->requirePresence('name', 'create')", $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -811,13 +802,7 @@ class ModelTaskTest extends TestCase {
 		];
 		$model = TableRegistry::get('BakeArticles');
 		$result = $this->Task->bakeTable($model, $config);
-
-		$this->assertContains('public function initialize(array $config) {', $result);
-		$this->assertContains("this->primaryKey('id');\n", $result);
-		$this->assertContains("this->displayField('title');\n", $result);
-		$this->assertContains("this->addBehavior('Timestamp');\n", $result);
-		$this->assertContains("this->table('articles');\n", $result);
-		$this->assertContains('use Cake\Validation\Validator;', $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -854,11 +839,7 @@ class ModelTaskTest extends TestCase {
 		];
 		$model = TableRegistry::get('BakeArticles');
 		$result = $this->Task->bakeTable($model, compact('associations'));
-		$this->assertContains("this->hasMany('BakeComment', [", $result);
-		$this->assertContains("this->belongsTo('SomethingElse', [", $result);
-		$this->assertContains("this->belongsTo('BakeUser', [", $result);
-		$this->assertContains("this->belongsToMany('BakeTag', [", $result);
-		$this->assertContains("'joinTable' => 'bake_articles_bake_tags',", $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -872,11 +853,7 @@ class ModelTaskTest extends TestCase {
 		];
 		$model = TableRegistry::get('BakeArticles');
 		$result = $this->Task->bakeEntity($model, $config);
-
-		$this->assertContains('namespace App\Model\Entity;', $result);
-		$this->assertContains('use Cake\ORM\Entity;', $result);
-		$this->assertContains('class BakeArticle extends Entity {', $result);
-		$this->assertNotContains('$_accessible', $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -890,12 +867,7 @@ class ModelTaskTest extends TestCase {
 		];
 		$model = TableRegistry::get('BakeArticles');
 		$result = $this->Task->bakeEntity($model, $config);
-
-		$this->assertContains("protected \$_accessible = [", $result);
-		$this->assertContains("'title' => true,", $result);
-		$this->assertContains("'body' => true,", $result);
-		$this->assertContains("'published' => true", $result);
-		$this->assertNotContains("protected \$_hidden", $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -909,10 +881,7 @@ class ModelTaskTest extends TestCase {
 			'hidden' => ['password'],
 		];
 		$result = $this->Task->bakeEntity($model, $config);
-
-		$this->assertContains("protected \$_hidden = [", $result);
-		$this->assertContains("'password'", $result);
-		$this->assertNotContains("protected \$_accessible", $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -927,14 +896,11 @@ class ModelTaskTest extends TestCase {
 		Plugin::load('ControllerTest', array('path' => APP . 'Plugin' . DS . 'ControllerTest' . DS));
 		$path = $this->_normalizePath(APP . 'Plugin/ControllerTest/src/Model/Table/BakeArticlesTable.php');
 		$this->Task->expects($this->once())->method('createFile')
-			->with($path, $this->logicalAnd(
-				$this->stringContains('namespace ControllerTest\\Model\\Table;'),
-				$this->stringContains('use Cake\\ORM\\Table;'),
-				$this->stringContains('class BakeArticlesTable extends Table {')
-			));
+			->with($path);
 
 		$model = TableRegistry::get('BakeArticles');
-		$this->Task->bakeTable($model);
+		$result = $this->Task->bakeTable($model);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -950,14 +916,11 @@ class ModelTaskTest extends TestCase {
 		$path = APP . 'Plugin' . DS . 'ControllerTest' . DS . 'src' . DS . 'Model' . DS . 'Entity' . DS . 'BakeArticle.php';
 		$path = $this->_normalizePath($path);
 		$this->Task->expects($this->once())->method('createFile')
-			->with($path, $this->logicalAnd(
-				$this->stringContains('namespace ControllerTest\\Model\\Entity;'),
-				$this->stringContains('use Cake\\ORM\\Entity;'),
-				$this->stringContains('class BakeArticle extends Entity {')
-			));
+			->with($path);
 
 		$model = TableRegistry::get('BakeArticles');
-		$this->Task->bakeEntity($model);
+		$result = $this->Task->bakeEntity($model);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**

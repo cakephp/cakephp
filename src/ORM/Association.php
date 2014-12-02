@@ -209,7 +209,7 @@ abstract class Association {
  * Sets the name for this association. If no argument is passed then the current
  * configured name will be returned
  *
- * @param string $name Name to be assigned
+ * @param string|null $name Name to be assigned
  * @return string
  */
 	public function name($name = null) {
@@ -223,7 +223,7 @@ abstract class Association {
  * Sets whether or not cascaded deletes should also fire callbacks. If no
  * arguments are passed, the current configured value is returned
  *
- * @param bool $cascadeCallbacks cascade callbacks switch value
+ * @param bool|null $cascadeCallbacks cascade callbacks switch value
  * @return bool
  */
 	public function cascadeCallbacks($cascadeCallbacks = null) {
@@ -237,7 +237,7 @@ abstract class Association {
  * Sets the table instance for the source side of the association. If no arguments
  * are passed, the current configured table instance is returned
  *
- * @param \Cake\ORM\Table $table the instance to be assigned as source side
+ * @param \Cake\ORM\Table|null $table the instance to be assigned as source side
  * @return \Cake\ORM\Table
  */
 	public function source(Table $table = null) {
@@ -251,7 +251,7 @@ abstract class Association {
  * Sets the table instance for the target side of the association. If no arguments
  * are passed, the current configured table instance is returned
  *
- * @param \Cake\ORM\Table $table the instance to be assigned as target side
+ * @param \Cake\ORM\Table|null $table the instance to be assigned as target side
  * @return \Cake\ORM\Table
  */
 	public function target(Table $table = null) {
@@ -277,7 +277,7 @@ abstract class Association {
  * Sets a list of conditions to be always included when fetching records from
  * the target association. If no parameters are passed the current list is returned
  *
- * @param array $conditions list of conditions to be used
+ * @param array|null $conditions list of conditions to be used
  * @see \Cake\Database\Query::where() for examples on the format of the array
  * @return array
  */
@@ -292,7 +292,7 @@ abstract class Association {
  * Sets the name of the field representing the foreign key to the target table.
  * If no parameters are passed the current field is returned
  *
- * @param string $key the key to be used to link both tables together
+ * @param string|null $key the key to be used to link both tables together
  * @return string|array
  */
 	public function foreignKey($key = null) {
@@ -310,7 +310,7 @@ abstract class Association {
  *
  * If no parameters are passed the current setting is returned.
  *
- * @param bool $dependent Set the dependent mode. Use null to read the current state.
+ * @param bool|null $dependent Set the dependent mode. Use null to read the current state.
  * @return bool
  */
 	public function dependent($dependent = null) {
@@ -350,7 +350,7 @@ abstract class Association {
  * in the source table record.
  * If no arguments are passed, the currently configured type is returned.
  *
- * @param string $name The name of the association property. Use null to read the current value.
+ * @param string|null $name The name of the association property. Use null to read the current value.
  * @return string
  */
 	public function property($name = null) {
@@ -370,7 +370,7 @@ abstract class Association {
  * rendering any changes to this setting void.
  * If no arguments are passed, the currently configured strategy is returned.
  *
- * @param string $name The strategy type. Use null to read the current value.
+ * @param string|null $name The strategy type. Use null to read the current value.
  * @return string
  * @throws \InvalidArgumentException When an invalid strategy is provided.
  */
@@ -392,7 +392,7 @@ abstract class Association {
  * If no parameters are passed, it will return the currently configured
  * finder name.
  *
- * @param string $finder the finder name to use
+ * @param string|null $finder the finder name to use
  * @return string
  */
 	public function finder($finder = null) {
