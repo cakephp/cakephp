@@ -584,7 +584,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
  *
  * @param array $params Set of associations to bind (indexed by association type)
  * @return void
- * @see \Cake\ORM\Table::belongsToMany()
+ * @see \Cake\ORM\Table::belongsTo()
  * @see \Cake\ORM\Table::hasOne()
  * @see \Cake\ORM\Table::hasMany()
  * @see \Cake\ORM\Table::belongsToMany()
