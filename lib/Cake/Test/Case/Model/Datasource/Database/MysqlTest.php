@@ -1193,7 +1193,7 @@ SQL;
 		$binding = array('type' => 'belongsTo', 'model' => 'TestModel4Parent');
 		$queryData = array();
 
-		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$params = $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$_queryData = $queryData;
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external']);
@@ -1267,9 +1267,9 @@ SQL;
  * @param Model $model
  * @param array $queryData
  * @param array $binding
- * @return void
+ * @return array The prepared association query
  */
-	protected function &_prepareAssociationQuery(Model $model, &$queryData, $binding) {
+	protected function _prepareAssociationQuery(Model $model, &$queryData, $binding) {
 		$type = $binding['type'];
 		$assoc = $binding['model'];
 		$assocData = $model->{$type}[$assoc];
@@ -1387,7 +1387,7 @@ SQL;
 		$binding = array('type' => 'hasOne', 'model' => 'TestModel9');
 		$queryData = array();
 
-		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$params = $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external']);
 		$this->assertTrue($result);
 
@@ -1411,7 +1411,7 @@ SQL;
 		$binding = array('type' => 'belongsTo', 'model' => 'TestModel8');
 		$queryData = array();
 
-		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$params = $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external']);
 		$this->assertTrue($result);
 
@@ -1435,7 +1435,7 @@ SQL;
 		$binding = array('type' => 'belongsTo', 'model' => 'TestModel4Parent');
 		$queryData = array('conditions' => array('TestModel4Parent.name !=' => 'mariano'));
 
-		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$params = $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external']);
 		$this->assertTrue($result);
@@ -1463,7 +1463,7 @@ SQL;
 		$binding = array('type' => 'belongsTo', 'model' => 'ArticleFeatured2');
 		$queryData = array('conditions' => array());
 
-		$params = &$this->_prepareAssociationQuery($this->Featured2, $queryData, $binding);
+		$params = $this->_prepareAssociationQuery($this->Featured2, $queryData, $binding);
 
 		$result = $this->Dbo->generateAssociationQuery($this->Featured2, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external']);
 		$this->assertTrue($result);
@@ -1493,7 +1493,7 @@ SQL;
 
 		$queryData = array();
 
-		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$params = $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external']);
 		$this->assertTrue($result);
@@ -1524,7 +1524,7 @@ SQL;
 
 		$queryData = array('conditions' => array('TestModel5.name !=' => 'mariano'));
 
-		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$params = $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external']);
 		$this->assertTrue($result);
@@ -1550,7 +1550,7 @@ SQL;
 		$binding = array('type' => 'belongsTo', 'model' => 'TestModel4');
 		$queryData = array();
 
-		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$params = $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external']);
 		$this->assertTrue($result);
@@ -1580,7 +1580,7 @@ SQL;
 		$binding = array('type' => 'belongsTo', 'model' => 'TestModel4');
 		$queryData = array('conditions' => array('TestModel5.name !=' => 'mariano'));
 
-		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$params = $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external']);
 		$this->assertTrue($result);
@@ -1610,7 +1610,7 @@ SQL;
 		$binding = array('type' => 'hasMany', 'model' => 'TestModel6');
 		$queryData = array();
 
-		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$params = $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external']);
 
@@ -1639,7 +1639,7 @@ SQL;
 		$binding = array('type' => 'hasMany', 'model' => 'TestModel6');
 		$queryData = array();
 
-		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$params = $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external']);
 		$this->assertRegExp(
@@ -1674,7 +1674,7 @@ SQL;
 		$binding = array('type' => 'hasMany', 'model' => 'TestModel6');
 		$queryData = array('conditions' => array('TestModel5.name !=' => 'mariano'));
 
-		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$params = $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external']);
 		$this->assertRegExp('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
@@ -1705,7 +1705,7 @@ SQL;
 		$binding = array('type' => 'hasMany', 'model' => 'TestModel6');
 		$queryData = array();
 
-		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$params = $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external']);
 
@@ -1739,7 +1739,7 @@ SQL;
 
 		$binding = array('type' => 'hasMany', 'model' => 'TestModel6');
 
-		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$params = $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external']);
 		$this->assertRegExp('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
@@ -1768,7 +1768,7 @@ SQL;
 		$binding = array('type' => 'hasMany', 'model' => 'TestModel6');
 		$queryData = array('fields' => array('`TestModel5`.`name`'));
 
-		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$params = $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external']);
 		$this->assertRegExp('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
@@ -1783,7 +1783,7 @@ SQL;
 		$binding = array('type' => 'hasMany', 'model' => 'TestModel6');
 		$queryData = array('fields' => array('`TestModel5`.`id`, `TestModel5`.`name`'));
 
-		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$params = $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external']);
 		$this->assertRegExp('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
@@ -1798,7 +1798,7 @@ SQL;
 		$binding = array('type' => 'hasMany', 'model' => 'TestModel6');
 		$queryData = array('fields' => array('`TestModel5`.`name`', '`TestModel5`.`created`'));
 
-		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$params = $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external']);
 		$this->assertRegExp('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
@@ -1815,7 +1815,7 @@ SQL;
 		$binding = array('type' => 'hasMany', 'model' => 'TestModel6');
 		$queryData = array('fields' => array('`TestModel5`.`id`', '`TestModel5`.`name`'));
 
-		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$params = $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external']);
 		$this->assertRegExp('/^SELECT\s+`TestModel6`\.`name`, `TestModel6`\.`test_model5_id`\s+/', $result);
@@ -1834,7 +1834,7 @@ SQL;
 		$binding = array('type' => 'hasMany', 'model' => 'TestModel6');
 		$queryData = array('fields' => array('`TestModel5`.`id`', '`TestModel5`.`name`'));
 
-		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$params = $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external']);
 		$this->assertRegExp('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`name`, `TestModel6`\.`test_model5_id`\s+/', $result);
@@ -1853,7 +1853,7 @@ SQL;
 		$binding = array('type' => 'hasMany', 'model' => 'TestModel6');
 		$queryData = array('fields' => array('`TestModel5`.`id`', '`TestModel5`.`name`'));
 
-		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$params = $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external']);
 		$this->assertRegExp('/^SELECT\s+`TestModel6`\.`test_model5_id`, `TestModel6`\.`name`\s+/', $result);
@@ -1880,7 +1880,7 @@ SQL;
 
 		$binding = array('type' => 'hasMany', 'model' => 'TestModel6');
 		$queryData = array('fields' => array('MIN(`TestModel5`.`test_model4_id`)'));
-		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$params = $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 		$this->Model->recursive = 0;
 
 		$result = $this->Dbo->buildAssociationQuery($this->Model, $queryData);
@@ -1960,7 +1960,7 @@ SQL;
 		$binding = array('type' => 'hasAndBelongsToMany', 'model' => 'TestModel7');
 		$queryData = array();
 
-		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$params = $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external']);
 		$this->assertRegExp('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`, `TestModel4TestModel7`\.`test_model4_id`, `TestModel4TestModel7`\.`test_model7_id`\s+/', $result);
@@ -1994,7 +1994,7 @@ SQL;
 		$binding = array('type' => 'hasAndBelongsToMany', 'model' => 'TestModel7');
 		$queryData = array();
 
-		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$params = $this->_prepareAssociationQuery($this->Model, $queryData, $binding);
 
 		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external']);
 		$this->assertRegExp('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`, `TestModel4TestModel7`\.`test_model4_id`, `TestModel4TestModel7`\.`test_model7_id`\s+/', $result);
