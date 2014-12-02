@@ -30,7 +30,6 @@ use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Exception\MissingEntityException;
-use Cake\ORM\Exception\RecordNotFoundException;
 use Cake\ORM\Marshaller;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
@@ -941,17 +940,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			}
 			$query->cache($cacheKey, $cacheConfig);
 		}
-
-		$entity = $query->first();
-
-		if ($entity) {
-			return $entity;
-		}
-		throw new RecordNotFoundException(sprintf(
-			'Record "%s" not found in table "%s"',
-			implode(',', (array)$primaryKey),
-			$this->table()
-		));
+		return $query->firstOrFail();
 	}
 
 /**

@@ -20,6 +20,7 @@ use Cake\Datasource\QueryTrait;
 use Cake\ORM\EagerLoader;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
+use Cake\ORM\Exception\RecordNotFoundException;
 use JsonSerializable;
 
 /**
@@ -833,6 +834,27 @@ class Query extends DatabaseQuery implements JsonSerializable {
 		}
 		$this->_autoFields = (bool)$value;
 		return $this;
+	}
+
+/**
+ * Get the first result from the executing query or raist an exception.
+ *
+ * @throws \Cake\ORM\RecordNotFoundException When there is no first record.
+ * @return mixed The first result from the ResultSet.
+ */
+	public function firstOrFail() {
+		$entity = $this->first();
+		if ($entity) {
+			return $entity;
+		}
+		$binder = new ValueBinder();
+		$conditions = $this->clause('where');
+
+		throw new RecordNotFoundException(sprintf(
+			'Record not found in table "%s" for conditions "%s"',
+			$this->repository()->table(),
+			$conditions->sql($binder)
+		));
 	}
 
 /**

@@ -3389,7 +3389,7 @@ class TableTest extends TestCase {
 
 		$query = $this->getMock(
 			'\Cake\ORM\Query',
-			['addDefaultTypes', 'first', 'where', 'cache'],
+			['addDefaultTypes', 'firstOrFail', 'where', 'cache'],
 			[$this->connection, $table]
 		);
 
@@ -3404,7 +3404,7 @@ class TableTest extends TestCase {
 			->with([$table->alias() . '.bar' => 10])
 			->will($this->returnSelf());
 		$query->expects($this->never())->method('cache');
-		$query->expects($this->once())->method('first')
+		$query->expects($this->once())->method('firstOrFail')
 			->will($this->returnValue($entity));
 		$result = $table->get(10, $options);
 		$this->assertSame($entity, $result);
@@ -3449,7 +3449,7 @@ class TableTest extends TestCase {
 
 		$query = $this->getMock(
 			'\Cake\ORM\Query',
-			['addDefaultTypes', 'first', 'where', 'cache'],
+			['addDefaultTypes', 'firstOrFail', 'where', 'cache'],
 			[$this->connection, $table]
 		);
 
@@ -3466,7 +3466,7 @@ class TableTest extends TestCase {
 		$query->expects($this->once())->method('cache')
 			->with($cacheKey, $cacheConfig)
 			->will($this->returnSelf());
-		$query->expects($this->once())->method('first')
+		$query->expects($this->once())->method('firstOrFail')
 			->will($this->returnValue($entity));
 		$result = $table->get(10, $options);
 		$this->assertSame($entity, $result);
@@ -3476,7 +3476,7 @@ class TableTest extends TestCase {
  * Tests that get() will throw an exception if the record was not found
  *
  * @expectedException \Cake\ORM\Exception\RecordNotFoundException
- * @expectedExceptionMessage Record "10" not found in table "articles"
+ * @expectedExceptionMessage Record not found in table "articles" for conditions "articles.id = :c0"
  * @return void
  */
 	public function testGetNotFoundException() {
