@@ -40,7 +40,7 @@ class IsUnique {
 /**
  * Performs the uniqueness check
  *
- * @param \Cake\Datasource\EntityInterface $entity The entity form where to extract the fields
+ * @param \Cake\Datasource\EntityInterface $entity The entity from where to extract the fields
  * @param array $options Options passed to the check,
  * where the `repository` key is required.
  */

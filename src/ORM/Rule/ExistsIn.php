@@ -23,21 +23,28 @@ use Cake\Datasource\EntityInterface;
 class ExistsIn {
 
 /**
+ * The list of fields to check
+ *
+ * @var array
+ */
+	protected $_fields;
+
+/**
  * Constructor.
  *
- * @param string $field The field to check existance for.
+ * @param string|array $fields The field or fields to check existance as primary key.
  * @param object|string $repository The repository where the field will be looked for,
  * or the association name for the repository.
  */
-	public function __construct($field, $repository) {
-		$this->_field = $field;
+	public function __construct($fields, $repository) {
+		$this->_field = (array)$fields;
 		$this->_repository = $repository;
 	}
 
 /**
  * Performs the existance check
  *
- * @param \Cake\Datasource\EntityInterface $entity The entity form where to extract the fields
+ * @param \Cake\Datasource\EntityInterface $entity The entity from where to extract the fields
  * @param array $options Options passed to the check,
  * where the `repository` key is required.
  */
@@ -48,7 +55,7 @@ class ExistsIn {
 
 		$conditions = array_combine(
 			(array)$this->_repository->primaryKey(),
-			$entity->extract((array)$this->_field)
+			$entity->extract($this->_fields)
 		);
 		return $this->_repository->exists($conditions);
 	}

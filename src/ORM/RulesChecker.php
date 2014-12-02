@@ -19,7 +19,7 @@ use Cake\ORM\Rule\IsUnique;
 use Cake\ORM\Rule\ExistsIn;
 
 /**
- * Contains logic for storing and checking domain rules on entities
+ * Contains logic for storing and checking rules on entities
  *
  */
 class RulesChecker {
