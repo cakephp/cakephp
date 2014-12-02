@@ -565,6 +565,47 @@ class Table implements RepositoryInterface, EventListenerInterface {
 	}
 
 /**
+ * Setup associations.
+ *
+ * It takes an array containing set of table names indexed by association type
+ * as argument:
+ *
+ * {{{
+ * $this->Comment->associations([
+ * 		'belongsTo' => [
+ * 			'Comments',
+ * 			'Users' => ['className' => 'App\Model\Table\UsersTable']
+ * 		],
+ * 		'belongsToMany' => [
+ * 			'Tags'
+ * 		]
+ * ]);
+ * }}}
+ *
+ * @param array $params Set of associations to bind (indexed by association type)
+ * @return void
+ * @see \Cake\ORM\Table::belongsToMany()
+ * @see \Cake\ORM\Table::hasOne()
+ * @see \Cake\ORM\Table::hasMany()
+ * @see \Cake\ORM\Table::belongsToMany()
+ */
+	public function addAssociations(array $params) {
+		if ($params === null) {
+			return $this->_associations;
+		}
+
+		foreach ($params as $assocType => $tables) {
+			foreach ($tables as $associated => $options) {
+				if (is_numeric($associated)) {
+					$associated = $options;
+					$options = [];
+				}
+				$this->{$assocType}($associated, $options);
+			}
+		}
+	}
+
+/**
  * Creates a new BelongsTo association between this table and a target
  * table. A "belongs to" association is a N-1 relationship where this table
  * is the N side, and where there is a single associated record in the target
