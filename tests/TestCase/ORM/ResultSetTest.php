@@ -303,4 +303,28 @@ class ResultSetTest extends TestCase {
 		$this->assertNotEmpty($article['title']);
 	}
 
+/**
+ * Test that fetching rows does not fail when no fields were selected
+ * on the default alias.
+ *
+ * @return void
+ */
+	public function testFetchMissingDefaultAlias() {
+		$comments = TableRegistry::get('Comments');
+		$query = $comments->find();
+		$query->autoFields(false);
+
+		$row = ['Other__field' => 'test'];
+		$statement = $this->getMock('Cake\Database\StatementInterface');
+		$statement->method('fetch')
+			->will($this->onConsecutiveCalls($row, $row));
+		$statement->method('rowCount')
+			->will($this->returnValue(1));
+
+		$result = new ResultSet($query, $statement);
+
+		$result->valid();
+		$data = $result->current();
+	}
+
 }
