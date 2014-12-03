@@ -1841,7 +1841,14 @@ class Table implements RepositoryInterface, EventListenerInterface {
 		return !$this->exists($conditions);
 	}
 
-	public function checkRules($entity) {
+/**
+ * Returns whether or not the passed entity complies with all the rules stored in
+ * the rules checker.
+ *
+ * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.
+ * @return bool
+ */
+	public function checkRules(EntityInterface $entity) {
 		$rules = $this->rulesChecker();
 		$event = $this->dispatchEvent('Model.beforeRules', compact('entity', 'rules'));
 
@@ -1849,12 +1856,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			return $event->result;
 		}
 		
-		if ($entity->isNew()) {
-			$result = $rules->checkCreate($entity);
-		} else {
-			$result = $rules->checkUpdate($entity);
-		}
-
+		$result = $entity->isNew() ? $rules->checkCreate($entity) : $rules->checkUpdate($entity);
 		$event = $this->dispatchEvent('Model.afterRules', compact('entity', 'rules', 'result'));
 
 		if ($event->isStopped()) {
@@ -1864,6 +1866,14 @@ class Table implements RepositoryInterface, EventListenerInterface {
 		return $result;
 	}
 
+/**
+ * Returns the rule checker for this table. A rules checker object is used to
+ * test an entity for validity on rules that may involve complex logic or data that
+ * needs to be fetched from the database or other sources.
+ *
+ * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.
+ * @return \Cake\ORM\RulesChecker
+ */
 	public function rulesChecker() {
 		if ($this->_rulesChecker !== null) {
 			return $this->_rulesChecker;
@@ -1871,6 +1881,14 @@ class Table implements RepositoryInterface, EventListenerInterface {
 		return $this->_rulesChecker = $this->buildRules(new RulesChecker(['repository' => $this]));
 	}
 
+/**
+ * Returns rules chaker object after modifying the one that was passed. Subclasses
+ * can override this method in order to initialize the rules to be applied to
+ * entities saved by this table.
+ *
+ * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+ * @return \Cake\ORM\RulesChecker
+ */
 	public function buildRules(RulesChecker $rules) {
 		return $rules;
 	}
