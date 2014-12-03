@@ -802,16 +802,16 @@ class EntityTest extends TestCase {
 		$this->assertEquals([], $entity->errors('boo'));
 
 		$entity->errors('foo', 'other error');
-		$this->assertEquals(['other error'], $entity->errors('foo'));
+		$this->assertEquals(['bar', 'other error'], $entity->errors('foo'));
 
 		$entity->errors('bar', ['something', 'bad']);
 		$this->assertEquals(['something', 'bad'], $entity->errors('bar'));
 
-		$expected = ['foo' => ['other error'], 'bar' => ['something', 'bad']];
+		$expected = ['foo' => ['bar', 'other error'], 'bar' => ['something', 'bad']];
 		$this->assertEquals($expected, $entity->errors());
 
 		$errors = ['foo' => ['something'], 'bar' => 'else', 'baz' => ['error']];
-		$this->assertSame($entity, $entity->errors($errors));
+		$this->assertSame($entity, $entity->errors($errors, null, true));
 		$errors['bar'] = ['else'];
 		$this->assertEquals($errors, $entity->errors());
 	}

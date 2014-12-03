@@ -630,9 +630,10 @@ trait EntityTrait {
  *
  * @param string|array $field The field to get errors for, or the array of errors to set.
  * @param string|array $errors The errors to be set for $field
+ * @param bool $overwrite Whether or not to overwite pre-existing errors for $field
  * @return array|$this
  */
-	public function errors($field = null, $errors = null) {
+	public function errors($field = null, $errors = null, $overwrite = false) {
 		if ($field === null) {
 			return $this->_errors;
 		}
@@ -650,8 +651,12 @@ trait EntityTrait {
 		}
 
 		foreach ($field as $f => $error) {
-			$this->_errors[$f] = (array)$error;
+			$this->_errors += [$f => []];
+			$this->_errors[$f] = $overwrite ?
+				(array)$error :
+				array_merge($this->_errors[$f], (array)$error);
 		}
+
 		return $this;
 	}
 
