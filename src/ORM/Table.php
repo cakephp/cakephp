@@ -565,20 +565,24 @@ class Table implements RepositoryInterface, EventListenerInterface {
 	}
 
 /**
- * Setup associations.
+ * Setup multiple associations.
  *
  * It takes an array containing set of table names indexed by association type
  * as argument:
  *
  * {{{
  * $this->Posts->associations([
- * 		'belongsTo' => [
- * 			'Users' => ['className' => 'App\Model\Table\UsersTable']
- * 		],
- * 		'hasMany' => ['Comments'],
- * 		'belongsToMany' => ['Tags']
+ *   'belongsTo' => [
+ *     'Users' => ['className' => 'App\Model\Table\UsersTable']
+ *   ],
+ *   'hasMany' => ['Comments'],
+ *   'belongsToMany' => ['Tags']
  * ]);
  * }}}
+ *
+ * Each association type accepts multiple associations where the keys
+ * are the aliases, and the values are association config data. If numeric
+ * keys are used the values will be treated as association aliases.
  *
  * @param array $params Set of associations to bind (indexed by association type)
  * @return void
