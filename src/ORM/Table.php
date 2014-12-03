@@ -571,7 +571,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
  * as argument:
  *
  * {{{
- * $this->Posts->associations([
+ * $this->Posts->addAssociations([
  *   'belongsTo' => [
  *     'Users' => ['className' => 'App\Model\Table\UsersTable']
  *   ],
