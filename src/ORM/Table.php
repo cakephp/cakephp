@@ -83,12 +83,13 @@ use RuntimeException;
  *   $primary parameter indicates whether or not this is the root query,
  *   or an associated query.
  *
- * - `beforeValidate(Event $event, Entity $entity, ArrayObject $options, Validator $validator)`
- *   Fired before an entity is validated. By stopping this event, you can abort
- *   the validate + save operations.
+ * - `beforeRules(Event $event, Entity $entity, RulesChecker $rules)`
+ *   Fired before an entity is validated using the rules checker. By stopping this event,
+ *   you can return the final value of the rules checking operation.
  *
- * - `afterValidate(Event $event, Entity $entity, ArrayObject $options, Validator $validator)`
- *   Fired after an entity is validated.
+ * - `afterRules(Event $event, Entity $entity,RulesChecker $rules, bool $result)`
+ *   Fired after the rules have been checked on the entity.By stopping this event,
+ *   you can return the final value of the rules checking operation.
  *
  * - `beforeSave(Event $event, Entity $entity, ArrayObject $options)`
  *   Fired before each entity is saved. Stopping this event will abort the save
@@ -1113,10 +1114,8 @@ class Table implements RepositoryInterface, EventListenerInterface {
  *
  * - atomic: Whether to execute the save and callbacks inside a database
  * transaction (default: true)
- * - validate: Whether or not validate the entity before saving, if validation
- * fails, it will abort the save operation. If this key is set to a string value,
- * the validator object registered in this table under the provided name will be
- * used instead of the default one. (default:true)
+ * - checkRules: Whether or not to check the rules on entity before saving, if the checking
+ * fails, it will abort the save operation. (default:true)
  * - associated: If true it will save all associated entities as they are found
  * in the passed `$entity` whenever the property defined for the association
  * is marked as dirty. Associated records are saved recursively unless told
@@ -1129,15 +1128,15 @@ class Table implements RepositoryInterface, EventListenerInterface {
  *
  * When saving, this method will trigger four events:
  *
- * - Model.beforeValidate: Will be triggered right before any validation is done
- * for the passed entity if the validate key in $options is not set to false.
- * Listeners will receive as arguments the entity, the options array and the
- * validation object to be used for validating the entity. If the event is
- * stopped the validation result will be set to the result of the event itself.
- * - Model.afterValidate: Will be triggered right after the `validate()` method is
- * called in the entity. Listeners will receive as arguments the entity, the
- * options array and the validation object to be used for validating the entity.
- * If the event is stopped the validation result will be set to the result of
+ * - Model.beforeRules: Will be triggered right before any rule checking is done
+ * for the passed entity if the `checkRules` key in $options is not set to false.
+ * Listeners will receive as arguments the entity and the
+ * RulesChecker object to be used for validating the entity. If the event is
+ * stopped the checking result will be set to the result of the event itself.
+ * - Model.afterRules: Will be triggered right after the `checkRules()` method is
+ * called for the entity. Listeners will receive as arguments the entity, the
+ * RulesChecker object that was used and the result of checking the rules.
+ * If the event is stopped the checking result will be set to the result of
  * the event itself.
  * - Model.beforeSave: Will be triggered just before the list of fields to be
  * persisted is calculated. It receives both the entity and the options as
@@ -1169,12 +1168,12 @@ class Table implements RepositoryInterface, EventListenerInterface {
  * $articles->save($entity, ['associated' => ['Comments']);
  *
  * // Save the company, the employees and related addresses for each of them.
- * // For employees use the 'special' validation group
+ * // For employees do not check the entity rules
  * $companies->save($entity, [
  *   'associated' => [
  *     'Employees' => [
  *       'associated' => ['Addresses'],
- *       'validate' => 'special'
+ *       'checkRules' => false
  *     ]
  *   ]
  * ]);
