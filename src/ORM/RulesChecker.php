@@ -164,6 +164,12 @@ class RulesChecker {
  * Returns a callable that can be used as a rule for checking the uniqueness of a value
  * in the table.
  *
+ * ### Example:
+ *
+ * {{{
+ * $rules->add($rules->isUnique('email', 'The email should be unique'));
+ * }}}
+ *
  * @param array $fields The list of fields to check for uniqueness.
  * @param string $message The error message to show in case the rule does not pass.
  * @return callable
@@ -173,12 +179,38 @@ class RulesChecker {
 		return $this->_addError(new IsUnique($fields), compact('errorField', 'message'));
 	}
 
-
+/**
+ * Returns a callable that can be used as a rule for checking that the values
+ * extracted from the entity to check exist as the primary key in another table.
+ *
+ * This is useful for enforcing foreign key integrity checks.
+ *
+ * ### Example:
+ *
+ * {{{
+ * $rules->add($rules->existsIn('author_id', 'Authors', 'Invalid Author'));
+ *
+ * $rules->add($rules->existsIn('site_id', new SitesTable(), 'Invalid Site'));
+ * }}}
+ *
+ * @param string|array $fields The field or list of fields to check for existance by
+ * primary key lookup in the other table.
+ * @param string $message The error message to show in case the rule does not pass.
+ * @return callable
+ */
 	public function existsIn($field, $table, $message = 'This value does not exist') {
 		$errorField = $field;
 		return $this->_addError(new ExistsIn($field, $table), compact('errorField', 'message'));
 	}
 
+/**
+ * Utility method for decorating any callable so that if it returns false, the correct
+ * property in the entity is marked as invalid.
+ *
+ * @param callable $rule The rule to decorate
+ * @param array $options The options containing the error message and field
+ * @return callable
+ */
 	protected function _addError($rule, $options) {
 		return function ($entity, $scope) use ($rule, $options) {
 			$pass = $rule($entity, $options + $scope);
