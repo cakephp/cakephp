@@ -104,7 +104,6 @@ class TableNamePrefixer {
 	protected function _prefixInsertParts($query, $parts) {
 		$parts = $query->connection()->fullTableName($parts);
 		$query->into($parts[0]);
-		return;
 	}
 
 /**
@@ -117,7 +116,6 @@ class TableNamePrefixer {
 	protected function _prefixUpdateParts($query, $parts) {
 		$parts = $query->connection()->fullTableName($parts);
 		$query->update($parts[0]);
-		return;
 	}
 
 /**
@@ -130,7 +128,6 @@ class TableNamePrefixer {
 	protected function _prefixFromParts($query, $parts) {
 		$parts = $query->connection()->fullTableName($parts);
 		$query->from($parts, true);
-		return;
 	}
 
 /**
@@ -151,8 +148,6 @@ class TableNamePrefixer {
 
 			$query->select($parts, true);
 		}
-
-		return;
 	}
 
 /**
@@ -187,8 +182,6 @@ class TableNamePrefixer {
 
 			$query->join($parts, [], true);
 		}
-
-		return;
 	}
 
 /**
@@ -250,8 +243,6 @@ class TableNamePrefixer {
 
 			return $condition;
 		});
-
-		return;
 	}
 
 /**
@@ -272,7 +263,6 @@ class TableNamePrefixer {
 		}
 
 		$query->group($parts, true);
-		return;
 	}
 
 /**
@@ -308,7 +298,6 @@ class TableNamePrefixer {
 		}
 
 		$query->having($parts, [], true);
-		return;
 	}
 
 /**
@@ -333,8 +322,6 @@ class TableNamePrefixer {
 				return $condition;
 			});
 		}
-
-		return;
 	}
 
 }

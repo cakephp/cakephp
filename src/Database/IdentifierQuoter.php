@@ -14,11 +14,11 @@
  */
 namespace Cake\Database;
 
-use Cake\Database\Expression\TableNameExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
+use Cake\Database\Expression\TableNameExpression;
 use Cake\ORM\Table;
 
 /**
