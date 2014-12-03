@@ -19,6 +19,7 @@ define('TIME_START', microtime(true));
 class_alias('Cake\Error\Debugger', 'Cake\Utility\Debugger');
 class_alias('Cake\Core\Configure\Engine\PhpConfig', 'Cake\Configure\Engine\PhpConfig');
 class_alias('Cake\Core\Configure\Engine\IniConfig', 'Cake\Configure\Engine\IniConfig');
+class_alias('Cake\Datasource\Exception\RecordNotFoundException', 'Cake\ORM\Exception\RecordNotFoundException');
 class_alias('Cake\ORM\Exception\RecordNotFoundException', 'Cake\ORM\Error\RecordNotFoundException');
 class_alias('Cake\Network\Exception\BadRequestException', 'Cake\Error\BadRequestException');
 class_alias('Cake\Network\Exception\ForbiddenException', 'Cake\Error\ForbiddenException');
