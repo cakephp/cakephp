@@ -81,19 +81,17 @@ abstract class BaseSchema {
 			if ($quoted === true) {
 				$tableName = $this->_driver->quoteIdentifier($tableName);
 			}
-		} elseif ($tableName instanceof TableNameExpression) {
-			$_tableName = $tableName;
-			$name = $tableName->getName();
-			if (is_string($name) && $quoted === true) {
-				$quoted = $this->_driver->quoteIdentifier($name);
-				$_tableName->setName($quoted);
-				$_tableName->setQuoted();
+
+			return $tableName;
+		}
+
+		if ($tableName instanceof TableNameExpression) {
+			$name = $tableName->sql(new ValueBinder);
+			if ($quoted === true) {
+				$name = $this->_driver->quoteIdentifier($name);
 			}
 
-			$tableName = $_tableName->sql(new ValueBinder);
-
-			$_tableName->setName($name);
-			$_tableName->setQuoted(false);
+			return $name;
 		}
 
 		return $tableName;
