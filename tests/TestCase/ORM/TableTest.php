@@ -3732,4 +3732,17 @@ class TableTest extends TestCase {
 		EventManager::instance()->detach($cb, 'Model.initialize');
 	}
 
+/**
+ * Tests the hasFinder method
+ *
+ * @return void
+ */
+	public function testHasFinder() {
+		$table = TableRegistry::get('articles');
+		$table->addBehavior('Sluggable');
+
+		$this->assertTrue($table->hasFinder('list'));
+		$this->assertTrue($table->hasFinder('noSlug'));
+		$this->assertFalse($table->hasFinder('noFind'));
+	}
 }
