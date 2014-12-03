@@ -1482,6 +1482,19 @@ class Table implements RepositoryInterface, EventListenerInterface {
 	}
 
 /**
+ * Returns true if the finder exists for the table
+ *
+ * @param string $type name of finder to check
+ *
+ * @return bool
+ */
+	public function hasFinder($type) {
+		$finder = 'find' . $type;
+
+		return method_exists($this, $finder) || ($this->_behaviors && $this->_behaviors->hasFinder($type));
+	}
+
+/**
  * Calls a finder method directly and applies it to the passed query,
  * if no query is passed a new one will be created and returned
  *
