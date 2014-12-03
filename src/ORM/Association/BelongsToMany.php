@@ -277,6 +277,7 @@ class BelongsToMany extends Association {
  * @param \Cake\ORM\Query $fetchQuery The query to get results from
  * @param array $options The options passed to the eager loader
  * @return array
+ * @throws \RuntimeException when the association property is not part of the results set.
  */
 	protected function _buildResultMap($fetchQuery, $options) {
 		$resultMap = [];
@@ -285,6 +286,12 @@ class BelongsToMany extends Association {
 		$hydrated = $fetchQuery->hydrate();
 
 		foreach ($fetchQuery->all() as $result) {
+			if (!isset($result[$property])) {
+				throw new \RuntimeException(sprintf(
+					'"%s" is missing from the belongsToMany results. Results cannot be created.',
+					$property
+				));
+			}
 			$result[$this->_junctionProperty] = $result[$property];
 			unset($result[$property]);
 
