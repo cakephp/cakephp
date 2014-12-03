@@ -19,7 +19,6 @@ use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\TableNameExpression;
-use Cake\ORM\Table;
 
 /**
  * Contains all the logic related to quoting identifiers in a Query object
