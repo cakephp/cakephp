@@ -925,9 +925,10 @@ class Table implements RepositoryInterface, EventListenerInterface {
 
 		$cacheConfig = isset($options['cache']) ? $options['cache'] : false;
 		$cacheKey = isset($options['key']) ? $options['key'] : false;
-		unset($options['key'], $options['cache']);
+		$finder = isset($options['finder']) ? $options['finder'] : 'all';
+		unset($options['cache'], $options['key'], $options['finder']);
 
-		$query = $this->find('all', $options)->where($conditions);
+		$query = $this->find($finder, $options)->where($conditions);
 
 		if ($cacheConfig) {
 			if (!$cacheKey) {
