@@ -32,7 +32,7 @@ class ExistsIn {
 /**
  * Constructor.
  *
- * @param string|array $fields The field or fields to check existance as primary key.
+ * @param string|array $fields The field or fields to check existence as primary key.
  * @param object|string $repository The repository where the field will be looked for,
  * or the association name for the repository.
  */
@@ -42,7 +42,7 @@ class ExistsIn {
 	}
 
 /**
- * Performs the existance check
+ * Performs the existence check
  *
  * @param \Cake\Datasource\EntityInterface $entity The entity from where to extract the fields
  * @param array $options Options passed to the check,

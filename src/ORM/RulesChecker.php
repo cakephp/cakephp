@@ -85,8 +85,7 @@ class RulesChecker {
 	}
 
 /**
- * Adds a rule that will be applied to the entity both on create
- * operations.
+ * Adds a rule that will be applied to the entity on create operations.
  *
  * ### Options
  *
@@ -108,8 +107,7 @@ class RulesChecker {
 	}
 
 /**
- * Adds a rule that will be applied to the entity both on update
- * operations.
+ * Adds a rule that will be applied to the entity on update operations.
  *
  * ### Options
  *
@@ -193,7 +191,7 @@ class RulesChecker {
  * $rules->add($rules->existsIn('site_id', new SitesTable(), 'Invalid Site'));
  * }}}
  *
- * @param string|array $fields The field or list of fields to check for existance by
+ * @param string|array $fields The field or list of fields to check for existence by
  * primary key lookup in the other table.
  * @param string $message The error message to show in case the rule does not pass.
  * @return callable

@@ -20,7 +20,7 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
- * Tests the integration between the ORM and the doamin checker
+ * Tests the integration between the ORM and the domain checker
  */
 class RulesCheckerIntegrationTest extends TestCase {
 
