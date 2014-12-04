@@ -517,6 +517,49 @@ class TableTest extends TestCase {
 	}
 
 /**
+ * Test addAssociations()
+ *
+ * @return void
+ */
+	public function testAddAssociations() {
+		$params = [
+			'belongsTo' => [
+				'users' => ['foreignKey' => 'fake_id', 'conditions' => ['a' => 'b']]
+			],
+			'hasOne' => ['profiles'],
+			'hasMany' => ['authors'],
+			'belongsToMany' => [
+				'tags' => ['joinTable' => 'things_tags']
+			]
+		];
+
+		$table = new Table(['table' => 'dates']);
+		$table->addAssociations($params);
+
+		$associations = $table->associations();
+
+		$belongsTo = $associations->get('users');
+		$this->assertInstanceOf('\Cake\ORM\Association\BelongsTo', $belongsTo);
+		$this->assertEquals('users', $belongsTo->name());
+		$this->assertEquals('fake_id', $belongsTo->foreignKey());
+		$this->assertEquals(['a' => 'b'], $belongsTo->conditions());
+		$this->assertSame($table, $belongsTo->source());
+
+		$hasOne = $associations->get('profiles');
+		$this->assertInstanceOf('\Cake\ORM\Association\HasOne', $hasOne);
+		$this->assertEquals('profiles', $hasOne->name());
+
+		$hasMany = $associations->get('authors');
+		$this->assertInstanceOf('\Cake\ORM\Association\hasMany', $hasMany);
+		$this->assertEquals('authors', $hasMany->name());
+
+		$belongsToMany = $associations->get('tags');
+		$this->assertInstanceOf('\Cake\ORM\Association\BelongsToMany', $belongsToMany);
+		$this->assertEquals('tags', $belongsToMany->name());
+		$this->assertSame('things_tags', $belongsToMany->junction()->table());
+	}
+
+/**
  * Test basic multi row updates.
  *
  * @return void
@@ -3732,4 +3775,17 @@ class TableTest extends TestCase {
 		EventManager::instance()->detach($cb, 'Model.initialize');
 	}
 
+/**
+ * Tests the hasFinder method
+ *
+ * @return void
+ */
+	public function testHasFinder() {
+		$table = TableRegistry::get('articles');
+		$table->addBehavior('Sluggable');
+
+		$this->assertTrue($table->hasFinder('list'));
+		$this->assertTrue($table->hasFinder('noSlug'));
+		$this->assertFalse($table->hasFinder('noFind'));
+	}
 }

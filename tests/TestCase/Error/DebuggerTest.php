@@ -91,24 +91,30 @@ class DebuggerTest extends TestCase {
 	public function testExcerpt() {
 		$result = Debugger::excerpt(__FILE__, __LINE__, 2);
 		$this->assertTrue(is_array($result));
-		$this->assertEquals(5, count($result));
+		$this->assertCount(5, $result);
 		$this->assertRegExp('/function(.+)testExcerpt/', $result[1]);
 
 		$result = Debugger::excerpt(__FILE__, 2, 2);
 		$this->assertTrue(is_array($result));
-		$this->assertEquals(4, count($result));
+		$this->assertCount(4, $result);
 
 		$pattern = '/<code>.*?<span style\="color\: \#\d+">.*?&lt;\?php/';
 		$this->assertRegExp($pattern, $result[0]);
 
 		$result = Debugger::excerpt(__FILE__, 11, 2);
-		$this->assertEquals(5, count($result));
+		$this->assertCount(5, $result);
 
 		$pattern = '/<span style\="color\: \#\d{6}">\*<\/span>/';
 		$this->assertRegExp($pattern, $result[0]);
 
 		$return = Debugger::excerpt('[internal]', 2, 2);
 		$this->assertTrue(empty($return));
+
+		$result = Debugger::excerpt(__FILE__, __LINE__, 5);
+		$this->assertCount(11, $result);
+		$this->assertContains('Debugger', $result[5]);
+		$this->assertContains('excerpt', $result[5]);
+		$this->assertContains('__FILE__', $result[5]);
 	}
 
 /**
