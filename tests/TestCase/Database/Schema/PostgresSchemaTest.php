@@ -597,6 +597,17 @@ SQL;
 				['type' => 'boolean', 'default' => true, 'null' => false],
 				'"checked" BOOLEAN NOT NULL DEFAULT TRUE'
 			],
+			// Boolean
+			[
+				'checked',
+				['type' => 'boolean', 'default' => 0],
+				'"checked" BOOLEAN DEFAULT FALSE'
+			],
+			[
+				'checked',
+				['type' => 'boolean', 'default' => 1, 'null' => false],
+				'"checked" BOOLEAN NOT NULL DEFAULT TRUE'
+			],
 			// datetimes
 			[
 				'created',

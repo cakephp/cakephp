@@ -378,7 +378,11 @@ class PostgresSchema extends BaseSchema {
 			unset($data['default']);
 		}
 		if (isset($data['default']) && $data['type'] !== 'timestamp') {
-			$out .= ' DEFAULT ' . $this->_driver->schemaValue($data['default']);
+			$defaultValue = $data['default'];
+			if ($data['type'] === 'boolean') {
+				$defaultValue = (boolean)$defaultValue;
+			}
+			$out .= ' DEFAULT ' . $this->_driver->schemaValue($defaultValue);
 		}
 		return $out;
 	}
