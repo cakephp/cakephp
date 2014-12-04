@@ -30,6 +30,13 @@ class ExistsIn {
 	protected $_fields;
 
 /**
+ * The repository where the field will be looked for
+ *
+ * @var array
+ */
+	protected $_repository;
+
+/**
  * Constructor.
  *
  * @param string|array $fields The field or fields to check existence as primary key.
@@ -47,6 +54,7 @@ class ExistsIn {
  * @param \Cake\Datasource\EntityInterface $entity The entity from where to extract the fields
  * @param array $options Options passed to the check,
  * where the `repository` key is required.
+ * @return bool
  */
 	public function __invoke(EntityInterface $entity, array $options) {
 		if (is_string($this->_repository)) {

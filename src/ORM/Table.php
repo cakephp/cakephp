@@ -182,7 +182,6 @@ class Table implements RepositoryInterface, EventListenerInterface {
  */
 	protected $_validators = [];
 
-
 /**
  * The domain rules to be applied to entities saved by this table
  *
@@ -1855,7 +1854,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 		if ($event->isStopped()) {
 			return $event->result;
 		}
-		
+
 		$result = $entity->isNew() ? $rules->checkCreate($entity) : $rules->checkUpdate($entity);
 		$event = $this->dispatchEvent('Model.afterRules', compact('entity', 'rules', 'result'));
 
@@ -1871,7 +1870,6 @@ class Table implements RepositoryInterface, EventListenerInterface {
  * test an entity for validity on rules that may involve complex logic or data that
  * needs to be fetched from the database or other sources.
  *
- * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.
  * @return \Cake\ORM\RulesChecker
  */
 	public function rulesChecker() {

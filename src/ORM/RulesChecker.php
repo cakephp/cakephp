@@ -15,8 +15,8 @@
 namespace Cake\ORM;
 
 use Cake\Datasource\EntityInterface;
-use Cake\ORM\Rule\IsUnique;
 use Cake\ORM\Rule\ExistsIn;
+use Cake\ORM\Rule\IsUnique;
 
 /**
  * Contains logic for storing and checking rules on entities
@@ -191,8 +191,9 @@ class RulesChecker {
  * $rules->add($rules->existsIn('site_id', new SitesTable(), 'Invalid Site'));
  * }}}
  *
- * @param string|array $fields The field or list of fields to check for existence by
+ * @param string|array $field The field or list of fields to check for existence by
  * primary key lookup in the other table.
+ * @param object|string $table The table name where the fields existence will be checked.
  * @param string $message The error message to show in case the rule does not pass.
  * @return callable
  */
@@ -216,7 +217,7 @@ class RulesChecker {
 			if ($pass || empty($options['errorField'])) {
 				return $pass;
 			}
-			
+
 			$message = isset($options['message']) ? $options['message'] : 'invalid';
 			$entity->errors($options['errorField'], (array)$message);
 			return $pass;
