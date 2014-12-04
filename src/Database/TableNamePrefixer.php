@@ -14,9 +14,12 @@
  */
 namespace Cake\Database;
 
-use Cake\Database\Expression\Comparison;
+use Cake\Database\Expression\FieldInterface;
+use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TableNameExpression;
+use Cake\Database\Expression\UnaryExpression;
 
 /**
  * Contains all the logic related to prefixing table names in a Query object
@@ -27,6 +30,13 @@ use Cake\Database\Expression\TableNameExpression;
 class TableNamePrefixer {
 
 /**
+ * The Query instance used of the current query
+ *
+ * @var \Cake\Database\Query
+ */
+	protected $_query;
+
+/**
  * The ValueBinder instance used in the current query
  *
  * @var \Cake\Database\ValueBinder
@@ -34,54 +44,157 @@ class TableNamePrefixer {
 	protected $_binder;
 
 /**
- * The driver instance used to do the table names prefixing
- *
- * @var \Cake\Database\Driver
- */
-	protected $_driver;
-
-/**
  * List of the query parts to prefix
  *
  * @var array
  */
-	protected $_partsToPrefix = ['select', 'from', 'join', 'where', 'group', 'having', 'order', 'update', 'insert'];
-
-/**
- * Constructor
- *
- * @param \Cake\Database\Driver $driver The driver instance used to do the identifier quoting
- */
-	public function __construct(Driver $driver) {
-		$this->_driver = $driver;
-	}
+	protected $_partsToPrefix = ['select', 'from', 'join', 'group', 'update', 'insert'];
 
 /**
  * Iterates over each of the clauses in a query looking for table names and
  * prefix them
  *
- * @param \Cake\Database\Query $query The query to have its table names prefixed quoted
+ * @param \Cake\Database\Query $query The query to have its table names prefixed
  * @return \Cake\Database\Query
  */
 	public function prefix(Query $query) {
 		$this->_binder = $query->valueBinder();
+		$this->_query = $query;
 		$query->valueBinder(false);
 
-		$this->_prefixParts($query);
+		$this->_prefixParts();
 
+		$query->traverseExpressions([$this, 'prefixExpression']);
 		$query->valueBinder($this->_binder);
 		return $query;
 	}
 
 /**
- * Quotes all identifiers in each of the clauses of a query
+ * Prefixes table name or field name inside Expression objects
  *
- * @param \Cake\Database\Query $query The query to quote.
+ * @param \Cake\Database\ExpressionInterface $expression The expression object to traverse and prefix
  * @return void
  */
-	protected function _prefixParts(Query $query) {
+	public function prefixExpression($expression) {
+		if ($expression instanceof FieldInterface) {
+			$this->_prefixFieldInterface($expression);
+			return;
+		}
+
+		if ($expression instanceof OrderByExpression) {
+			$this->_prefixOrderByExpression($expression);
+			return;
+		}
+
+		if ($expression instanceof UnaryExpression) {
+			$this->_prefixUnaryExpression($expression);
+		}
+
+		if ($expression instanceof IdentifierExpression) {
+			$this->_prefixIdentifierExpression($expression);
+		}
+
+		if ($expression instanceof QueryExpression) {
+			$this->_prefixQueryExpression($expression);
+			return;
+		}
+	}
+
+/**
+ * Prefix Expressions implementing the FieldInterface
+ *
+ * @param \Cake\Database\Expression\FieldInterface $expression The expression to prefix
+ * @return void
+ */
+	protected function _prefixFieldInterface(FieldInterface $expression) {
+		$field = $expression->getField();
+
+		if (is_string($field) && strpos($field, '.') !== false && $this->_query->hasTableName($field) === true) {
+			$field = $this->_query->connection()->fullFieldName($field, $this->_query->tablesNames);
+			$expression->field($field);
+		}
+	}
+
+/**
+ * Prefix OrderByExpression object
+ *
+ * @param \Cake\Database\Expression\OrderByExpression $expression The expression to prefix
+ * @return void
+ */
+	protected function _prefixOrderByExpression(OrderByExpression $expression) {
+		$query = $this->_query;
+		$binder = $this->_binder;
+		$expression->iterateParts(function ($condition, &$key) use ($query, $binder) {
+			if ($query->hasTableName($key) === true && $query->connection()->isTableNamePrefixed($key) === false) {
+				$key = $query->connection()->fullFieldName($key, $query->tablesNames);
+
+				if ($key instanceof ExpressionInterface) {
+					$key = $key->sql($binder);
+				}
+			}
+			return $condition;
+		});
+	}
+
+/**
+ * Prefix UnaryExpression object
+ *
+ * @param \Cake\Database\Expression\UnaryExpression $expression The expression to prefix
+ * @return void
+ */
+	protected function _prefixUnaryExpression(UnaryExpression $expression) {
+		$value = $expression->getValue();
+
+		if (is_string($value) && strpos($value, '.') !== false && $this->_query->hasTableName($value) === true) {
+			$value = $this->_query->connection()->fullFieldName($value, $this->_query->tablesNames);
+			$expression->value($value);
+		}
+	}
+
+/**
+ * Prefix IdentifierExpression object
+ *
+ * @param \Cake\Database\Expression\IdentifierExpression $expression The expression to prefix
+ * @return void
+ */
+	protected function _prefixIdentifierExpression(IdentifierExpression $expression) {
+		$identifier = $expression->getIdentifier();
+
+		if (is_string($identifier) && strpos($identifier, '.') !== false && $this->_query->hasTableName($identifier) === true) {
+			$identifier = $this->_query->connection()->fullFieldName($identifier, $this->_query->tablesNames);
+			$expression->setIdentifier($identifier);
+		}
+	}
+
+/**
+ * Prefix QueryExpression object
+ *
+ * @param \Cake\Database\Expression\QueryExpression $expression The expression to prefix
+ * @return void
+ */
+	protected function _prefixQueryExpression(QueryExpression $expression) {
+		$query = $this->_query;
+		$expression->iterateParts(function ($condition, $key) use ($query) {
+			if (is_string($condition) && $this->_query->hasTableName($condition)) {
+				$condition = new TableNameExpression(
+					$condition,
+					$query->connection()->getPrefix(),
+					true,
+					$query->tablesNames
+				);
+			}
+			return $condition;
+		});
+	}
+
+/**
+ * Quotes all identifiers in each of the clauses of a query
+ *
+ * @return void
+ */
+	protected function _prefixParts() {
 		foreach ($this->_partsToPrefix as $part) {
-			$contents = $query->clause($part);
+			$contents = $this->_query->clause($part);
 
 			if (empty($contents)) {
 				continue;
@@ -89,7 +202,7 @@ class TableNamePrefixer {
 
 			$methodName = '_prefix' . ucfirst($part) . 'Parts';
 			if (method_exists($this, $methodName)) {
-				$this->{$methodName}($query, $contents);
+				$this->{$methodName}($contents);
 			}
 		}
 	}
@@ -97,231 +210,91 @@ class TableNamePrefixer {
 /**
  * Prefixes the table name in the "update" clause
  *
- * @param \Cake\Database\Query $query Query instance
  * @param array $parts the parts of the query to prefix
  * @return array
  */
-	protected function _prefixInsertParts($query, $parts) {
-		$parts = $query->connection()->fullTableName($parts);
-		$query->into($parts[0]);
+	protected function _prefixInsertParts($parts) {
+		$parts = $this->_query->connection()->fullTableName($parts);
+		$this->_query->into($parts[0]);
 	}
 
 /**
  * Prefixes the table name in the "update" clause
  *
- * @param \Cake\Database\Query $query Query instance
  * @param array $parts the parts of the query to prefix
  * @return array
  */
-	protected function _prefixUpdateParts($query, $parts) {
-		$parts = $query->connection()->fullTableName($parts);
-		$query->update($parts[0]);
+	protected function _prefixUpdateParts($parts) {
+		$parts = $this->_query->connection()->fullTableName($parts);
+		$this->_query->update($parts[0]);
 	}
 
 /**
  * Prefixes the table name in clause of the Query having a basic forms
  *
- * @param \Cake\Database\Query $query Query instance
  * @param array $parts the parts of the query to prefix
  * @return array
  */
-	protected function _prefixFromParts($query, $parts) {
-		$parts = $query->connection()->fullTableName($parts);
-		$query->from($parts, true);
+	protected function _prefixFromParts($parts) {
+		$parts = $this->_query->connection()->fullTableName($parts);
+		$this->_query->from($parts, true);
 	}
 
 /**
  * Prefixes the table names for the "select" clause
  *
- * @param \Cake\Database\Query $query Query instance
  * @param array $parts The parts of the query to prefix
  *
  * @return void
  */
-	protected function _prefixSelectParts($query, $parts) {
+	protected function _prefixSelectParts($parts) {
 		if (!empty($parts)) {
 			foreach ($parts as $alias => $part) {
-				if ($query->hasTableName($part) === true) {
-					$parts[$alias] = $query->connection()->fullFieldName($part, $query->tablesNames);
+				if ($this->_query->hasTableName($part) === true) {
+					$parts[$alias] = $this->_query->connection()->fullFieldName($part, $this->_query->tablesNames);
 				}
 			}
 
-			$query->select($parts, true);
+			$this->_query->select($parts, true);
 		}
 	}
 
 /**
  * Prefixes the table names for the "join" clause
  *
- * @param \Cake\Database\Query $query Query instance
  * @param array $parts The parts of the query to prefix
  *
  * @return void
  */
-	protected function _prefixJoinParts($query, $parts) {
+	protected function _prefixJoinParts($parts) {
 		if (!empty($parts)) {
 			foreach ($parts as $alias => $join) {
-				if ($join['conditions'] instanceof QueryExpression) {
-					$join['conditions']->iterateParts(function ($condition, $key) use ($query) {
-						if (is_string($condition)) {
-							$condition = new TableNameExpression(
-								$condition,
-								$query->connection()->getPrefix(),
-								true,
-								$query->tablesNames
-							);
-						}
-						return $condition;
-					});
-				}
-
-				$join['table'] = $query->connection()->fullTableName($join['table']);
+				$join['table'] = $this->_query->connection()->fullTableName($join['table']);
 
 				$parts[$alias] = $join;
 			}
 
-			$query->join($parts, [], true);
+			$this->_query->join($parts, [], true);
 		}
 	}
 
 /**
- * Prefixes the table names for the "where" clause
+ * Prefixes the table names for the "group" clause
  *
- * @param \Cake\Database\Query $query Query instance
  * @param array $parts The parts of the query to prefix
  *
  * @return void
  */
-	protected function _prefixWhereParts($query, $parts) {
-		$parts->traverse(function ($condition) use ($query) {
-			if ($condition instanceof ExpressionInterface) {
-				switch (get_class($condition)) {
-					case 'Cake\Database\Expression\Comparison':
-					case 'Cake\Database\Expression\BetweenExpression':
-						$field = $condition->getField();
-
-						if (is_string($field) && strpos($field, '.') !== false && $query->hasTableName($field) === true) {
-							$field = $query->connection()->fullFieldName($field, $query->tablesNames);
-							$condition->field($field);
-						}
-
-						break;
-					case 'Cake\Database\Expression\UnaryExpression':
-						$value = $condition->getValue();
-
-						if (is_string($value) && strpos($value, '.') !== false && $query->hasTableName($value) === true) {
-							$value = $query->connection()->fullFieldName($value, $query->tablesNames);
-							$condition->value($value);
-						}
-						break;
-					case 'Cake\Database\Expression\IdentifierExpression':
-						$identifier = $condition->getIdentifier();
-
-						if (is_string($identifier) && strpos($identifier, '.') !== false && $query->hasTableName($identifier) === true) {
-							$identifier = $query->connection()->fullFieldName($identifier, $query->tablesNames);
-							$condition->setIdentifier($identifier);
-						}
-
-						break;
-					case 'Cake\Database\Expression\QueryExpression':
-						$condition->iterateParts(function ($queryExpCondition) use ($query) {
-							if (is_string($queryExpCondition)) {
-								$queryExpCondition = new TableNameExpression(
-									$queryExpCondition,
-									$query->connection()->getPrefix(),
-									true,
-									$query->tablesNames
-								);
-							}
-							return $queryExpCondition;
-						});
-						break;
-					default:
-						break;
-				}
-			}
-
-			return $condition;
-		});
-	}
-
-/**
- * Prefixes the table names for the "join" clause
- *
- * @param \Cake\Database\Query $query Query instance
- * @param array $parts The parts of the query to prefix
- *
- * @return void
- */
-	protected function _prefixGroupParts($query, $parts) {
+	protected function _prefixGroupParts($parts) {
 		if (!empty($parts)) {
 			foreach ($parts as $key => $part) {
-				if ($query->hasTableName($part) === true) {
-					$parts[$key] = $query->connection()->fullFieldName($part, $query->tablesNames);
+				if ($this->_query->hasTableName($part) === true) {
+					$parts[$key] = $this->_query->connection()->fullFieldName($part, $this->_query->tablesNames);
 				}
 			}
 		}
 
-		$query->group($parts, true);
-	}
-
-/**
- * Prefixes the table names for the "having" clause
- *
- * @param \Cake\Database\Query $query Query instance
- * @param array $parts The parts of the query to prefix
- *
- * @return void
- */
-	protected function _prefixHavingParts($query, $parts) {
-		if ($parts instanceof ExpressionInterface) {
-			$parts->traverse(function ($condition) use ($query) {
-				if ($condition instanceof Comparison) {
-					$field = $condition->getField();
-
-					if (is_string($field) && strpos($field, '.') !== false && $query->hasTableName($field) === true) {
-						$field = $query->connection()->fullFieldName($field, $query->tablesNames);
-						$condition->field($field);
-					}
-				} elseif ($condition instanceof QueryExpression) {
-					$condition->iterateParts(function ($condition) use ($query) {
-						if ($query->hasTableName($condition) === true) {
-							return $query->connection()->applyFullTableName($condition, $query->tablesNames);
-						}
-
-						return $condition;
-					});
-				}
-
-				return $condition;
-			});
-		}
-
-		$query->having($parts, [], true);
-	}
-
-/**
- * Prefixes the table names for the "order" clause
- *
- * @param \Cake\Database\Query $query Query instance
- * @param array $parts The parts of the query to prefix
- *
- * @return void
- */
-	protected function _prefixOrderParts($query, $parts) {
-		$binder = $this->_binder;
-		if ($parts instanceof ExpressionInterface) {
-			$parts->iterateParts(function ($condition, &$key) use ($parts, $query, $binder) {
-				if ($query->hasTableName($key) === true && $query->connection()->isTableNamePrefixed($key) === false) {
-					$key = $query->connection()->fullFieldName($key, $query->tablesNames);
-
-					if ($key instanceof ExpressionInterface) {
-						$key = $key->sql($binder);
-					}
-				}
-				return $condition;
-			});
-		}
+		$this->_query->group($parts, true);
 	}
 
 }
