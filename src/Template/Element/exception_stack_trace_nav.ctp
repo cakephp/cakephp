@@ -14,9 +14,12 @@
  */
 use Cake\Error\Debugger;
 ?>
+<a href="#" class="toggle-link toggle-vendor-frames">toggle vendor stack frames</a>
+
 <ul class="stack-trace">
 <?php foreach ($error->getTrace() as $i => $stack): ?>
-	<li class="stack-frame">
+	<?php $class = (isset($stack['file']) && strpos(APP, $stack['file']) === false) ? 'vendor-frame' : 'app-frame'; ?>
+	<li class="stack-frame <?= $class ?>">
 	<?php if (isset($stack['file']) && isset($stack['line'])): ?>
 		<a href="#" data-target="stack-frame-<?= $i ?>">
 			<?php if (!isset($stack['class'])): ?>

@@ -83,16 +83,16 @@ function each(els, cb) {
 }
 
 window.addEventListener('load', function() {
-	bindEvent('.stack-frame-args', 'click', function() {
+	bindEvent('.stack-frame-args', 'click', function(event) {
 		var target = this.dataset['target'];
 		var el = document.getElementById(target);
 		toggleElement(el);
-		return false;
+		event.preventDefault();
 	});
 
 	var details = document.querySelectorAll('.stack-details');
 	var frames = document.querySelectorAll('.stack-frame');
-	bindEvent('.stack-frame a', 'click', function() {
+	bindEvent('.stack-frame a', 'click', function(event) {
 		each(frames, function(el) {
 			el.classList.remove('active');
 		});
@@ -104,7 +104,16 @@ window.addEventListener('load', function() {
 
 		var target = document.getElementById(this.dataset['target']);
 		toggleElement(target);
-		return false;
+		event.preventDefault();
+	});
+
+	bindEvent('.toggle-vendor-frames', 'click', function(event) {
+		each(frames, function(el) {
+			if (el.classList.contains('vendor-frame')) {
+				toggleElement(el);
+			}
+		});
+		event.preventDefault();
 	});
 });
 </script>
@@ -113,12 +122,13 @@ window.addEventListener('load', function() {
 body {
 	font: 14px helvetica, arial, sans-serif;
 	color: #222;
-	background-color: #fff;
+	background-color: #f8f8f8;
 	padding:0;
 	margin: 0;
 	max-height: 100%;
 }
 
+.code-dump,
 pre {
 	background: #fefefe;
 	border: 1px solid #ddd;
@@ -229,6 +239,19 @@ header {
 }
 .stack-frame-args {
 	float: right;
+}
+
+.toggle-link {
+	color: #1798A5;
+	text-decoration: none;
+}
+.toggle-link:hover {
+	text-decoration: underline;
+}
+.toggle-vendor-frames {
+	padding: 5px;
+	display: block;
+	text-align: center;
 }
 
 .code-excerpt {
