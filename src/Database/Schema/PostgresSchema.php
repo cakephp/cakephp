@@ -380,7 +380,7 @@ class PostgresSchema extends BaseSchema {
 		if (isset($data['default']) && $data['type'] !== 'timestamp') {
 			$defaultValue = $data['default'];
 			if ($data['type'] === 'boolean') {
-				$defaultValue = (boolean)$defaultValue;
+				$defaultValue = (bool)$defaultValue;
 			}
 			$out .= ' DEFAULT ' . $this->_driver->schemaValue($defaultValue);
 		}
