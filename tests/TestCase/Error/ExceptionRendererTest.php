@@ -484,7 +484,7 @@ class ExceptionRendererTest extends TestCase {
 					'plugin' => '',
 				)),
 				array(
-					'/<h2>Missing Method in PostsController<\/h2>/',
+					'/Missing Method in PostsController/',
 					'/<em>PostsController::index\(\)<\/em>/'
 				),
 				404
