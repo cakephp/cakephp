@@ -2170,7 +2170,7 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertHtml($expected, $result);
 
-		$entity->errors('field', ['minLength']);
+		$entity->errors('field', ['minLength'], true);
 		$result = $this->Form->input('field', array(
 			'error' => array(
 				'minLength' => 'Le login doit contenir au moins 2 caractères',
@@ -2190,7 +2190,7 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertHtml($expected, $result);
 
-		$entity->errors('field', ['maxLength']);
+		$entity->errors('field', ['maxLength'], true);
 		$result = $this->Form->input('field', array(
 			'error' => array(
 				'minLength' => 'Le login doit contenir au moins 2 caractères',
