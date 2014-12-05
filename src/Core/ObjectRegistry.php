@@ -114,10 +114,26 @@ abstract class ObjectRegistry {
 		if (!$hasConfig) {
 			throw new RuntimeException($msg);
 		}
-		unset($config['enabled']);
-		if ($hasConfig && array_diff_assoc($config, $existing->config()) != []) {
+		if (empty($config)) {
+			return;
+		}
+		$existingConfig = $existing->config();
+		unset($config['enabled'], $existingConfig['enabled']);
+
+		$fail = false;
+		foreach ($config as $key => $value) {
+			if (!array_key_exists($key, $existingConfig)) {
+				$fail = true;
+				break;
+			}
+			if (isset($existingConfig[$key]) && $existingConfig[$key] !== $value) {
+				$fail = true;
+				break;
+			}
+		}
+		if ($fail) {
 			$msg .= ' with the following config: ';
-			$msg .= var_export($this->{$name}->config(), true);
+			$msg .= var_export($existingConfig, true);
 			$msg .= ' which differs from ' . var_export($config, true);
 			throw new RuntimeException($msg);
 		}
@@ -155,16 +171,46 @@ abstract class ObjectRegistry {
 	abstract protected function _create($class, $alias, $config);
 
 /**
- * Get the loaded object list, or get the object instance at a given name.
+ * Get the list of loaded objects.
  *
- * @param null|string $name The object name to get or null.
- * @return array|\Cake\View\Helper Either a list of object names, or a loaded object.
+ * @return array List of object names.
  */
-	public function loaded($name = null) {
-		if (!empty($name)) {
-			return isset($this->_loaded[$name]);
+	public function loaded() {
+		if (func_num_args() > 0) {
+			$class = get_class($this);
+			trigger_error(
+				sprintf(
+					"%s::loaded() doesn't take object name as argument any more. Use %s::has() instead.",
+					$class,
+					$class
+				),
+				E_USER_ERROR
+			);
 		}
 		return array_keys($this->_loaded);
+	}
+
+/**
+ * Check whether or not a given object is loaded.
+ *
+ * @param string $name The object name to check for.
+ * @return bool True is object is loaded else false.
+ */
+	public function has($name) {
+		return isset($this->_loaded[$name]);
+	}
+
+/**
+ * Get loaded object instance.
+ *
+ * @param string $name Name of object.
+ * @return object|null Object instance if loaded else null.
+ */
+	public function get($name) {
+		if (isset($this->_loaded[$name])) {
+			return $this->_loaded[$name];
+		}
+		return null;
 	}
 
 /**
@@ -174,10 +220,7 @@ abstract class ObjectRegistry {
  * @return mixed
  */
 	public function __get($name) {
-		if (isset($this->_loaded[$name])) {
-			return $this->_loaded[$name];
-		}
-		return null;
+		return $this->get($name);
 	}
 
 /**

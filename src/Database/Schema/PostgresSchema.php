@@ -150,7 +150,7 @@ class PostgresSchema extends BaseSchema {
  * Postgres includes sequence data and casting information in default values.
  * We need to remove those.
  *
- * @param string $default The default value.
+ * @param string|null $default The default value.
  * @return string|null
  */
 	protected function _defaultValue($default) {
@@ -378,7 +378,11 @@ class PostgresSchema extends BaseSchema {
 			unset($data['default']);
 		}
 		if (isset($data['default']) && $data['type'] !== 'timestamp') {
-			$out .= ' DEFAULT ' . $this->_driver->schemaValue($data['default']);
+			$defaultValue = $data['default'];
+			if ($data['type'] === 'boolean') {
+				$defaultValue = (bool)$defaultValue;
+			}
+			$out .= ' DEFAULT ' . $this->_driver->schemaValue($defaultValue);
 		}
 		return $out;
 	}

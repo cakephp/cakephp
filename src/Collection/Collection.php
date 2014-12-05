@@ -41,7 +41,7 @@ class Collection extends IteratorIterator implements CollectionInterface {
 		}
 
 		if (!($items instanceof \Traversable)) {
-			$msg = 'Only array or \Traversable are allowed for Collection';
+			$msg = 'Only an array or \Traversable is allowed for Collection';
 			throw new InvalidArgumentException($msg);
 		}
 

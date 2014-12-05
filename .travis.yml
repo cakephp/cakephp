@@ -5,6 +5,8 @@ php:
   - 5.5
   - 5.6
 
+sudo: false
+
 env:
   - DB=mysql db_dsn='mysql://travis@0.0.0.0/cakephp_test'
   - DB=pgsql db_dsn='postgres://postgres@127.0.0.1/cakephp_test'
@@ -28,22 +30,19 @@ matrix:
 before_script:
   - composer self-update
   - composer install --prefer-dist --no-interaction --dev
-  - sh -c "if [ '$PHPCS' != '1' ]; then sudo locale-gen de_DE; fi"
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test2;'; fi"
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test3;'; fi"
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi"
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi"
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi"
-  - sh -c "if [ '$PHPCS' != '1' ]; then sudo apt-get install lighttpd; fi"
-  - sh -c "if [ '$PHPCS' = '1' ]; then sudo vendor/bin/phpcs --config-set installed_paths vendor/cakephp/cakephp-codesniffer; fi"
   - sh -c "if [ '$HHVM' != '1' ]; then echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
   - phpenv rehash
   - set +H
 
 script:
   - sh -c "if [ '$PHPCS' != '1' ]; then phpunit; fi"
-  - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=CakePHP ./src ./tests; fi"
+  - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi"
 
 notifications:
   email: false

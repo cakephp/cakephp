@@ -635,7 +635,7 @@ class TreeBehavior extends Behavior {
  *
  * @param int $counter The Last left column value that was assigned
  * @param mixed $parentId the parent id of the level to be recovered
- * @return int Ne next value to use for the left column
+ * @return int The next value to use for the left column
  */
 	protected function _recoverTree($counter = 0, $parentId = null) {
 		$config = $this->config();

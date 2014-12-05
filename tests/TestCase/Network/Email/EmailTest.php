@@ -1256,7 +1256,7 @@ class EmailTest extends TestCase {
 			"\r\n" .
 			"\r\n" .
 			"--rel-$boundary\r\n" .
-			"Content-Disposition: inline; filename=\"cake.png\"\r\n";
+			"Content-Disposition: inline; filename=\"cake.png\"\r\n" .
 			"Content-Type: application/octet-stream\r\n" .
 			"Content-Transfer-Encoding: base64\r\n" .
 			"Content-ID: <abc123>\r\n" .
@@ -2474,6 +2474,24 @@ HTML;
 		$em = new Email('default');
 
 		$this->assertSame($mock, $em->transport());
+	}
+
+/**
+ * testZeroOnlyLinesNotBeingEmptied()
+ *
+ * @return void
+ */
+	public function testZeroOnlyLinesNotBeingEmptied() {
+		$message = "Lorem\r\n0\r\n0\r\nipsum";
+
+		$this->CakeEmail->reset();
+		$this->CakeEmail->transport('debug');
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to('cake@cakephp.org');
+		$this->CakeEmail->subject('Wordwrap Test');
+		$result = $this->CakeEmail->send($message);
+		$expected = "{$message}\r\n\r\n";
+		$this->assertEquals($expected, $result['message']);
 	}
 
 /**

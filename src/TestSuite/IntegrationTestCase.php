@@ -8,13 +8,13 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\TestSuite;
 
 use Cake\Core\Configure;
+use Cake\Event\EventManager;
 use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\Routing\DispatcherFactory;
@@ -89,6 +89,16 @@ abstract class IntegrationTestCase extends TestCase {
  * @var \Cake\Network\Session
  */
 	protected $_requestSession;
+
+/**
+ * Reset the EventManager for before each test.
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		EventManager::instance(new EventManager());
+	}
 
 /**
  * Clear the state used for requests.

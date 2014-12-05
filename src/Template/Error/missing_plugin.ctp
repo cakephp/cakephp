@@ -1,6 +1,5 @@
 <?php
 /**
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -24,7 +23,7 @@ $pluginPath = Configure::read('App.paths.plugins.0');
 </p>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('Make sure your plugin <em>%s</em> is in the %s directory and was loaded', h($plugin), $pluginPath) ?>
+	<?= $this->element('plugin_class_error'); ?>
 </p>
 <pre>
 &lt;?php

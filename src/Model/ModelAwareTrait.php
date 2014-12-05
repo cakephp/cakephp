@@ -68,7 +68,7 @@ trait ModelAwareTrait {
  * If a repository provider does not return an object a MissingModelException will
  * be thrown.
  *
- * @param string $modelClass Name of model class to load. Defaults to $this->modelClass
+ * @param string|null $modelClass Name of model class to load. Defaults to $this->modelClass
  * @param string $type The type of repository to load. Defaults to 'Table' which
  *   delegates to Cake\ORM\TableRegistry.
  * @return object The model instance created.

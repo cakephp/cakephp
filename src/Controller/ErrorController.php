@@ -26,8 +26,8 @@ class ErrorController extends Controller {
 /**
  * Constructor
  *
- * @param \Cake\Network\Request $request Request instance.
- * @param \Cake\Network\Response $response Reponse instance.
+ * @param \Cake\Network\Request|null $request Request instance.
+ * @param \Cake\Network\Response|null $response Reponse instance.
  */
 	public function __construct($request = null, $response = null) {
 		parent::__construct($request, $response);
@@ -43,7 +43,6 @@ class ErrorController extends Controller {
 		if (isset($this->Security)) {
 			$eventManager->detach($this->Security);
 		}
-		$this->cacheAction = false;
 		$this->viewPath = 'Error';
 	}
 

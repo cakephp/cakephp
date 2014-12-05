@@ -68,7 +68,7 @@ abstract class SimpleBakeTask extends BakeTask {
 /**
  * Execute method
  *
- * @param string $name The name of the object to bake.
+ * @param string|null $name The name of the object to bake.
  * @return void
  */
 	public function main($name = null) {

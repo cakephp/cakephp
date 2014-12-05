@@ -145,7 +145,7 @@ class PluginTaskTest extends TestCase {
 
 		$file = $path . DS . 'config' . DS . 'routes.php';
 		$this->Task->expects($this->at(2))->method('createFile')
-			->with($file, $this->stringContains("Router::plugin('BakeTestPlugin', function(\$routes)"));
+			->with($file, $this->stringContains("Router::plugin('BakeTestPlugin', function (\$routes)"));
 
 		$file = $path . DS . 'phpunit.xml';
 		$this->Task->expects($this->at(3))->method('createFile')

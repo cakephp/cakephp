@@ -82,6 +82,27 @@ class TableRegistryTest extends TestCase {
 	}
 
 /**
+ * Test config() method with plugin syntax aliases
+ *
+ * @return void
+ */
+	public function testConfigPlugin() {
+		Plugin::load('TestPlugin');
+
+		$data = [
+			'connection' => 'testing',
+			'entityClass' => 'TestPlugin\Model\Entity\Comment',
+		];
+
+		$result = TableRegistry::config('TestPlugin.TestPluginComments', $data);
+		$this->assertEquals($data, $result, 'Returns config data.');
+
+		$result = TableRegistry::config();
+		$expected = ['TestPluginComments' => $data];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Test calling config() on existing instances throws an error.
  *
  * @expectedException \RuntimeException
@@ -294,6 +315,21 @@ class TableRegistryTest extends TestCase {
 		$mock = $this->getMock('Cake\ORM\Table');
 		$this->assertSame($mock, TableRegistry::set('Articles', $mock));
 		$this->assertSame($mock, TableRegistry::get('Articles'));
+	}
+
+/**
+ * Test setting an instance with plugin syntax aliases
+ *
+ * @return void
+ */
+	public function testSetPlugin() {
+		Plugin::load('TestPlugin');
+
+		$mock = $this->getMock('TestPlugin\Model\Table\CommentsTable');
+
+		$this->assertSame($mock, TableRegistry::set('TestPlugin.Comments', $mock));
+		$this->assertSame($mock, TableRegistry::get('TestPlugin.Comments'));
+		$this->assertSame($mock, TableRegistry::get('Comments'));
 	}
 
 /**

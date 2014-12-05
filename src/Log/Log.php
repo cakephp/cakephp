@@ -191,7 +191,7 @@ class Log {
 			if (isset($properties['engine'])) {
 				$properties['className'] = $properties['engine'];
 			}
-			if (!static::$_registry->loaded($name)) {
+			if (!static::$_registry->has($name)) {
 				static::$_registry->load($name, $properties);
 			}
 		}
@@ -257,7 +257,7 @@ class Log {
  * `Log::config($arrayOfConfig);`
  *
  * @param string|array $key The name of the logger config, or an array of multiple configs.
- * @param array $config An array of name => config data for adapter.
+ * @param array|null $config An array of name => config data for adapter.
  * @return mixed null when adding configuration and an array of configuration data when reading.
  * @throws \BadMethodCallException When trying to modify an existing config.
  */

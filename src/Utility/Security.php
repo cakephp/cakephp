@@ -50,13 +50,13 @@ class Security {
  * Create a hash from string using given method.
  *
  * @param string $string String to hash
- * @param string $type Hashing algo to use (i.e. sha1, sha256 etc.).
+ * @param string|null $type Hashing algo to use (i.e. sha1, sha256 etc.).
  *   Can be any valid algo included in list returned by hash_algos().
  *   If no value is passed the type specified by `Security::$hashType` is used.
  * @param mixed $salt If true, automatically prepends the application's salt
  *   value to $string (Security.salt).
  * @return string Hash
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/security.html#Security::hash
+ * @link http://book.cakephp.org/3.0/en/core-libraries/security.html#hashing-data
  */
 	public static function hash($string, $type = null, $salt = false) {
 		if (empty($type)) {
@@ -129,7 +129,7 @@ class Security {
  *
  * @param string $plain The value to encrypt.
  * @param string $key The 256 bit/32 byte key to use as a cipher key.
- * @param string $hmacSalt The salt to use for the HMAC process. Leave null to use Security.salt.
+ * @param string|null $hmacSalt The salt to use for the HMAC process. Leave null to use Security.salt.
  * @return string Encrypted data.
  * @throws \InvalidArgumentException On invalid data or key.
  */
@@ -174,7 +174,7 @@ class Security {
  *
  * @param string $cipher The ciphertext to decrypt.
  * @param string $key The 256 bit/32 byte key to use as a cipher key.
- * @param string $hmacSalt The salt to use for the HMAC process. Leave null to use Security.salt.
+ * @param string|null $hmacSalt The salt to use for the HMAC process. Leave null to use Security.salt.
  * @return string Decrypted data. Any trailing null bytes will be removed.
  * @throws InvalidArgumentException On invalid data or key.
  */
@@ -214,7 +214,7 @@ class Security {
  * Gets or sets the HMAC salt to be used for encryption/decryption
  * routines.
  *
- * @param string $salt The salt to use for encryption routines
+ * @param string|null $salt The salt to use for encryption routines. If null returns current salt.
  * @return string The currently configured salt
  */
 	public static function salt($salt = null) {

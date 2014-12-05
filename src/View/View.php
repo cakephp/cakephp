@@ -292,9 +292,9 @@ class View {
 /**
  * Constructor
  *
- * @param \Cake\Network\Request $request Request instance.
- * @param \Cake\Network\Response $response Response instance.
- * @param \Cake\Event\EventManager $eventManager Event manager instance.
+ * @param \Cake\Network\Request|null $request Request instance.
+ * @param \Cake\Network\Response|null $response Response instance.
+ * @param \Cake\Event\EventManager|null $eventManager Event manager instance.
  * @param array $viewOptions View options. See View::$_passedVars for list of
  *   options which get set as class properties.
  */
@@ -413,8 +413,8 @@ class View {
  * a plugin view/layout can be used instead of the app ones. If the chosen plugin is not found
  * the view will be located along the regular view path cascade.
  *
- * @param string $view Name of view file to use
- * @param string $layout Layout to use.
+ * @param string|null $view Name of view file to use
+ * @param string|null $layout Layout to use.
  * @return string|null Rendered content or null if content already rendered and returned earlier.
  * @throws \Cake\Core\Exception\Exception If there is an error in the view.
  */
@@ -445,7 +445,7 @@ class View {
  * Several variables are created for use in layout.
  *
  * @param string $content Content to render in a view, wrapped by the surrounding layout.
- * @param string $layout Layout name
+ * @param string|null $layout Layout name
  * @return mixed Rendered output, or false on error
  * @throws \Cake\Core\Exception\Exception if there is an error in the view.
  */
@@ -798,15 +798,18 @@ class View {
  * CamelCased action names will be under_scored! This means that you can have
  * LongActionNames that refer to long_action_names.ctp views.
  *
- * @param string $name Controller action to find template filename for
+ * @param string|null $name Controller action to find template filename for
  * @return string Template filename
  * @throws \Cake\View\Exception\MissingTemplateException when a view file could not be found.
  */
 	protected function _getViewFileName($name = null) {
-		$subDir = null;
+		$viewPath = $subDir = '';
 
 		if ($this->subDir !== null) {
 			$subDir = $this->subDir . DS;
+		}
+		if ($this->viewPath) {
+			$viewPath = $this->viewPath . DS;
 		}
 
 		if ($name === null) {
@@ -817,7 +820,7 @@ class View {
 		$name = str_replace('/', DS, $name);
 
 		if (strpos($name, DS) === false && $name[0] !== '.') {
-			$name = $this->viewPath . DS . $subDir . Inflector::underscore($name);
+			$name = $viewPath . $subDir . Inflector::underscore($name);
 		} elseif (strpos($name, DS) !== false) {
 			if ($name[0] === DS || $name[1] === ':') {
 				if (is_file($name)) {
@@ -825,7 +828,7 @@ class View {
 				}
 				$name = trim($name, DS);
 			} elseif (!$plugin || $this->viewPath !== $this->name) {
-				$name = $this->viewPath . DS . $subDir . $name;
+				$name = $viewPath . $subDir . $name;
 			} else {
 				$name = DS . $subDir . $name;
 			}
@@ -889,7 +892,7 @@ class View {
 /**
  * Returns layout filename for this template as a string.
  *
- * @param string $name The name of the layout to find.
+ * @param string|null $name The name of the layout to find.
  * @return string Filename for layout file (.ctp).
  * @throws \Cake\View\Exception\MissingLayoutException when a layout cannot be located
  */
@@ -906,9 +909,13 @@ class View {
 
 		$layoutPaths = ['Layout' . DS . $subDir];
 		if (!empty($this->request->params['prefix'])) {
+			$prefixPath = array_map(
+				'Cake\Utility\Inflector::camelize',
+				explode('/', $this->request->params['prefix'])
+			);
 			array_unshift(
 				$layoutPaths,
-				Inflector::camelize($this->request->params['prefix']) . DS . $layoutPaths[0]
+				implode('/', $prefixPath) . DS . $layoutPaths[0]
 			);
 		}
 
@@ -946,7 +953,7 @@ class View {
 /**
  * Return all possible paths to find view files in order
  *
- * @param string $plugin Optional plugin name to scan for view files.
+ * @param string|null $plugin Optional plugin name to scan for view files.
  * @param bool $cached Set to false to force a refresh of view paths. Default true.
  * @return array paths
  */

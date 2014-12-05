@@ -41,4 +41,3 @@ phpunit.xml.dist export-ignore
 tests/test_app export-ignore
 tests/TestCase export-ignore
 tests/bake_compare export-ignore
-tests/bootstrap.php export-ignore

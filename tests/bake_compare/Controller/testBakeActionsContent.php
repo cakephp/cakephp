@@ -1,3 +1,15 @@
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+/**
+ * BakeArticles Controller
+ *
+ * @property \App\Model\Table\BakeArticlesTable $BakeArticles
+ */
+class BakeArticlesController extends AppController {
+
 /**
  * Index method
  *
@@ -13,7 +25,7 @@
 /**
  * View method
  *
- * @param string $id
+ * @param string|null $id Bake Article id
  * @return void
  * @throws \Cake\Network\Exception\NotFoundException
  */
@@ -47,7 +59,7 @@
 /**
  * Edit method
  *
- * @param string $id
+ * @param string|null $id Bake Article id
  * @return void
  * @throws \Cake\Network\Exception\NotFoundException
  */
@@ -72,7 +84,7 @@
 /**
  * Delete method
  *
- * @param string $id
+ * @param string|null $id Bake Article id
  * @return void
  * @throws \Cake\Network\Exception\NotFoundException
  */
@@ -86,3 +98,5 @@
 		}
 		return $this->redirect(['action' => 'index']);
 	}
+
+}

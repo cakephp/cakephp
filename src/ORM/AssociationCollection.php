@@ -43,8 +43,8 @@ class AssociationCollection {
  * This makes using plugins simpler as the Plugin.Class syntax is frequently used.
  *
  * @param string $alias The association alias
- * @param Association $association The association to add.
- * @return Association The association object being added.
+ * @param \Cake\ORM\Association $association The association to add.
+ * @return \Cake\ORM\Association The association object being added.
  */
 	public function add($alias, Association $association) {
 		list(, $alias) = pluginSplit($alias);
@@ -55,7 +55,7 @@ class AssociationCollection {
  * Fetch an attached association by name.
  *
  * @param string $alias The association alias to get.
- * @return Association|null Either the association or null.
+ * @return \Cake\ORM\Association|null Either the association or null.
  */
 	public function get($alias) {
 		$alias = strtolower($alias);
@@ -69,7 +69,7 @@ class AssociationCollection {
  * Fetch an association by property name.
  *
  * @param string $prop The property to find an association by.
- * @return Association|null Either the association or null.
+ * @return \Cake\ORM\Association|null Either the association or null.
  */
 	public function getByProperty($prop) {
 		foreach ($this->_items as $assoc) {
@@ -144,8 +144,8 @@ class AssociationCollection {
  * Parent associations include any association where the given table
  * is the owning side.
  *
- * @param Table $table The table entity is for.
- * @param Entity $entity The entity to save associated data for.
+ * @param \Cake\ORM\Table $table The table entity is for.
+ * @param \Cake\ORM\Entity $entity The entity to save associated data for.
  * @param array $associations The list of associations to save parents from.
  *   associations not in this list will not be saved.
  * @param array $options The options for the save operation.
@@ -164,8 +164,8 @@ class AssociationCollection {
  * Child associations include any association where the given table
  * is not the owning side.
  *
- * @param Table $table The table entity is for.
- * @param Entity $entity The entity to save associated data for.
+ * @param \Cake\ORM\Table $table The table entity is for.
+ * @param \Cake\ORM\Entity $entity The entity to save associated data for.
  * @param array $associations The list of associations to save children from.
  *   associations not in this list will not be saved.
  * @param array $options The options for the save operation.
@@ -181,8 +181,8 @@ class AssociationCollection {
 /**
  * Helper method for saving an association's data.
  *
- * @param Table $table The table the save is currently operating on
- * @param Entity $entity The entity to save
+ * @param \Cake\ORM\Table $table The table the save is currently operating on
+ * @param \Cake\ORM\Entity $entity The entity to save
  * @param array $associations Array of associations to save.
  * @param array $options Original options
  * @param bool $owningSide Compared with association classes'
@@ -219,8 +219,8 @@ class AssociationCollection {
 /**
  * Helper method for saving an association's data.
  *
- * @param Association $association The association object to save with.
- * @param Entity $entity The entity to save
+ * @param \Cake\ORM\Association $association The association object to save with.
+ * @param \Cake\ORM\Entity $entity The entity to save
  * @param array $nested Options for deeper associations
  * @param array $options Original options
  * @return bool Success
@@ -238,7 +238,7 @@ class AssociationCollection {
 /**
  * Cascade a delete across the various associations.
  *
- * @param Entity $entity The entity to delete associations for.
+ * @param \Cake\ORM\Entity $entity The entity to delete associations for.
  * @param array $options The options used in the delete operation.
  * @return void
  */

@@ -73,20 +73,20 @@ class Exception extends \RuntimeException {
  *
  * See also Cake\Network\Response::header()
  *
- * @param string|array $header An array of header strings or a single header string
+ * @param string|array|null $header An array of header strings or a single header string
  *	- an associative array of "header name" => "header value"
  *	- an array of string headers is also accepted
  * @param string $value The header value.
  * @return array
  */
 	public function responseHeader($header = null, $value = null) {
-		if ($header) {
-			if (is_array($header)) {
-				return $this->_responseHeaders = $header;
-			}
-			$this->_responseHeaders = array($header => $value);
+		if ($header === null) {
+			return $this->_responseHeaders;
 		}
-		return $this->_responseHeaders;
+		if (is_array($header)) {
+			return $this->_responseHeaders = $header;
+		}
+		$this->_responseHeaders = array($header => $value);
 	}
 
 }

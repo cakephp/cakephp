@@ -134,7 +134,7 @@ class BehaviorRegistry extends ObjectRegistry {
 		$methods = array_change_key_case($instance->implementedMethods());
 
 		foreach ($finders as $finder => $methodName) {
-			if (isset($this->_finderMap[$finder]) && $this->loaded($this->_finderMap[$finder][0])) {
+			if (isset($this->_finderMap[$finder]) && $this->has($this->_finderMap[$finder][0])) {
 				$duplicate = $this->_finderMap[$finder];
 				$error = sprintf(
 					'%s contains duplicate finder "%s" which is already provided by "%s"',
@@ -148,7 +148,7 @@ class BehaviorRegistry extends ObjectRegistry {
 		}
 
 		foreach ($methods as $method => $methodName) {
-			if (isset($this->_methodMap[$method]) && $this->loaded($this->_methodMap[$method][0])) {
+			if (isset($this->_methodMap[$method]) && $this->has($this->_methodMap[$method][0])) {
 				$duplicate = $this->_methodMap[$method];
 				$error = sprintf(
 					'%s contains duplicate method "%s" which is already provided by "%s"',
@@ -202,7 +202,7 @@ class BehaviorRegistry extends ObjectRegistry {
  */
 	public function call($method, array $args = []) {
 		$method = strtolower($method);
-		if ($this->hasMethod($method) && $this->loaded($this->_methodMap[$method][0])) {
+		if ($this->hasMethod($method) && $this->has($this->_methodMap[$method][0])) {
 			list($behavior, $callMethod) = $this->_methodMap[$method];
 			return call_user_func_array([$this->_loaded[$behavior], $callMethod], $args);
 		}
@@ -223,7 +223,7 @@ class BehaviorRegistry extends ObjectRegistry {
 	public function callFinder($type, array $args = []) {
 		$type = strtolower($type);
 
-		if ($this->hasFinder($type) && $this->loaded($this->_finderMap[$type][0])) {
+		if ($this->hasFinder($type) && $this->has($this->_finderMap[$type][0])) {
 			list($behavior, $callMethod) = $this->_finderMap[$type];
 			return call_user_func_array([$this->_loaded[$behavior], $callMethod], $args);
 		}

@@ -15,6 +15,7 @@
 namespace Cake\Datasource;
 
 use Cake\Collection\Iterator\MapReduce;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Datasource\QueryCacher;
 use Cake\Datasource\RepositoryInterface;
 
@@ -87,7 +88,7 @@ trait QueryTrait {
  * When called with a Table argument, the default table object will be set
  * and this query object will be returned for chaining.
  *
- * @param \Cake\Datasource\RepositoryInterface $table The default table object to use
+ * @param \Cake\Datasource\RepositoryInterface|null $table The default table object to use
  * @return \Cake\Datasource\RepositoryInterface|$this
  */
 	public function repository(RepositoryInterface $table = null) {
@@ -176,7 +177,7 @@ trait QueryTrait {
  * Sets the query instance to be the eager loaded query. If no argument is
  * passed, the current configured query `_eagerLoaded` value is returned.
  *
- * @param bool $value Whether or not to eager load.
+ * @param bool|null $value Whether or not to eager load.
  * @return $this|\Cake\ORM\Query
  */
 	public function eagerLoaded($value = null) {
@@ -199,13 +200,6 @@ trait QueryTrait {
  * @return \Cake\Datasource\ResultSetInterface
  */
 	public function all() {
-		if (isset($this->_results)) {
-			return $this->_results;
-		}
-
-		$table = $this->repository();
-		$table->dispatchEvent('Model.beforeFind', [$this, $this->_options, !$this->eagerLoaded()]);
-
 		if (isset($this->_results)) {
 			return $this->_results;
 		}
@@ -245,8 +239,8 @@ trait QueryTrait {
  * If the third argument is set to true, it will erase previous map reducers
  * and replace it with the arguments passed.
  *
- * @param callable $mapper The mapper callable.
- * @param callable $reducer The reducing function.
+ * @param callable|null $mapper The mapper callable.
+ * @param callable|null $reducer The reducing function.
  * @param bool $overwrite Set to true to overwrite existing map + reduce functions.
  * @return $this|array
  * @see \Cake\Collection\Iterator\MapReduce for details on how to use emit data to the map reducer.
@@ -297,7 +291,7 @@ trait QueryTrait {
  * });
  * }}}
  *
- * @param callable $formatter The formatting callable.
+ * @param callable|null $formatter The formatting callable.
  * @param bool|int $mode Whether or not to overwrite, append or prepend the formatter.
  * @return $this|array
  */
@@ -333,6 +327,23 @@ trait QueryTrait {
 			$this->limit(1);
 		}
 		return $this->all()->first();
+	}
+
+/**
+ * Get the first result from the executing query or raise an exception.
+ *
+ * @throws \Cake\Datasource\Exception\RecordNotFoundException When there is no first record.
+ * @return mixed The first result from the ResultSet.
+ */
+	public function firstOrFail() {
+		$entity = $this->first();
+		if ($entity) {
+			return $entity;
+		}
+		throw new RecordNotFoundException(sprintf(
+			'Record not found in table "%s"',
+			$this->repository()->table()
+		));
 	}
 
 /**

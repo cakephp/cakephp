@@ -52,6 +52,8 @@ class AssetFilterTest extends TestCase {
  * file dispatching
  *
  * @return void
+ * @triggers DispatcherTest $this, compact('request', 'response')
+ * @triggers DispatcherTest $this, compact('request', 'response')
  */
 	public function testNotModified() {
 		$filter = new AssetFilter();
@@ -89,6 +91,7 @@ class AssetFilterTest extends TestCase {
  * Test that no exceptions are thrown for //index.php type URLs.
  *
  * @return void
+ * @triggers Dispatcher.beforeRequest $this, compact('request', 'response')
  */
 	public function test404OnDoubleSlash() {
 		$filter = new AssetFilter();
@@ -105,6 +108,8 @@ class AssetFilterTest extends TestCase {
  * Test that 404's are returned when .. is in the URL
  *
  * @return voi
+ * @triggers Dispatcher.beforeRequest $this, compact('request', 'response')
+ * @triggers Dispatcher.beforeRequest $this, compact('request', 'response')
  */
 	public function test404OnDoubleDot() {
 		$filter = new AssetFilter();
@@ -215,6 +220,7 @@ class AssetFilterTest extends TestCase {
  *
  * @dataProvider assetProvider
  * @return void
+ * @triggers Dispatcher.beforeDispatch $this, compact('request', 'response')
  */
 	public function testAsset($url, $file) {
 		Plugin::load(array('Company/TestPluginThree', 'TestPlugin', 'PluginJs'));

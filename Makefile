@@ -12,8 +12,8 @@ CURRENT_BRANCH=$(shell git branch | grep '*' | tr -d '* ')
 # Github settings
 UPLOAD_HOST=https://uploads.github.com
 API_HOST=https://api.github.com
-OWNER="cakephp"
-REMOTE="origin"
+OWNER=cakephp
+REMOTE=origin
 
 ifdef GITHUB_TOKEN
 	AUTH=-H 'Authorization: token $(GITHUB_TOKEN)'
@@ -177,7 +177,7 @@ tag-component-%: component-% guard-VERSION guard-GITHUB_USER
 	@echo "Creating tag for the $* component"
 	git checkout $*
 	curl $(AUTH) -XPOST $(API_HOST)/repos/$(OWNER)/$*/git/refs -d '{ \
-		"refs": "refs\/tags\/$(VERSION)", \
+		"ref": "refs\/tags\/$(VERSION)", \
 		"sha": "$(shell git rev-parse $*)" \
 	}'
 	git checkout $(CURRENT_BRANCH) > /dev/null

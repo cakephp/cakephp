@@ -134,7 +134,7 @@ trait SelectableAssociationTrait {
  * @return \Cake\ORM\Query
  */
 	public function _addFilteringJoin($query, $key, $subquery) {
-		$filter = $fields = [];
+		$filter = [];
 		$aliasedTable = $subquery->repository()->alias();
 
 		foreach ($subquery->clause('select') as $aliasedField => $field) {

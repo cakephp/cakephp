@@ -27,6 +27,7 @@ use Cake\Datasource\Exception\MissingDatasourceException;
 use Cake\Error;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\Event;
+use Cake\Event\EventManager;
 use Cake\Network\Exception\InternalErrorException;
 use Cake\Network\Exception\MethodNotAllowedException;
 use Cake\Network\Exception\NotFoundException;
@@ -483,7 +484,7 @@ class ExceptionRendererTest extends TestCase {
 					'plugin' => '',
 				)),
 				array(
-					'/<h2>Missing Method in PostsController<\/h2>/',
+					'/Missing Method in PostsController/',
 					'/<em>PostsController::index\(\)<\/em>/'
 				),
 				404
@@ -757,6 +758,50 @@ class ExceptionRendererTest extends TestCase {
 
 		$this->assertContains('Internal Error', $result->body());
 		$this->assertEquals(500, $result->statusCode());
+	}
+
+/**
+ * Test that rendering exceptions triggers shutdown events.
+ *
+ * @return void
+ */
+	public function testRenderShutdownEvents() {
+		$fired = [];
+		$listener = function ($event) use (&$fired) {
+			$fired[] = $event->name();
+		};
+		$events = EventManager::instance();
+		$events->attach($listener, 'Controller.shutdown');
+		$events->attach($listener, 'Dispatcher.afterDispatch');
+
+		$exception = new \Exception('Terrible');
+		$renderer = new ExceptionRenderer($exception);
+		$renderer->render();
+
+		$expected = ['Controller.shutdown', 'Dispatcher.afterDispatch'];
+		$this->assertEquals($expected, $fired);
+	}
+
+/**
+ * test that subclass methods fire shutdown events.
+ *
+ * @return void
+ */
+	public function testSubclassTriggerShutdownEvents() {
+		$fired = [];
+		$listener = function ($event) use (&$fired) {
+			$fired[] = $event->name();
+		};
+		$events = EventManager::instance();
+		$events->attach($listener, 'Controller.shutdown');
+		$events->attach($listener, 'Dispatcher.afterDispatch');
+
+		$exception = new MissingWidgetThingException('Widget not found');
+		$renderer = $this->_mockResponse(new MyCustomExceptionRenderer($exception));
+		$renderer->render();
+
+		$expected = ['Controller.shutdown', 'Dispatcher.afterDispatch'];
+		$this->assertEquals($expected, $fired);
 	}
 
 /**

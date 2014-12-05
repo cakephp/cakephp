@@ -258,8 +258,8 @@ class ConsoleOutput {
  *
  * `$this->output->styles('annoy', false);`
  *
- * @param string $style The style to get or create.
- * @param array $definition The array definition of the style to change or create a style
+ * @param string|null $style The style to get or create.
+ * @param array|bool|null $definition The array definition of the style to change or create a style
  *   or false to remove a style.
  * @return mixed If you are getting styles, the style or null will be returned. If you are creating/modifying
  *   styles true will be returned.
@@ -282,7 +282,7 @@ class ConsoleOutput {
 /**
  * Get/Set the output type to use. The output type how formatting tags are treated.
  *
- * @param int $type The output type to use. Should be one of the class constants.
+ * @param int|null $type The output type to use. Should be one of the class constants.
  * @return mixed Either null or the value if getting.
  */
 	public function outputAs($type = null) {

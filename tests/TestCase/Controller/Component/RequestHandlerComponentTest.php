@@ -314,6 +314,7 @@ class RequestHandlerComponentTest extends TestCase {
  * Verify that isAjax is set on the request params for ajax requests
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testIsAjaxParams() {
 		$this->request->env('HTTP_X_REQUESTED_WITH', 'XMLHttpRequest');
@@ -328,6 +329,7 @@ class RequestHandlerComponentTest extends TestCase {
  * testAutoAjaxLayout method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testAutoAjaxLayout() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -349,6 +351,7 @@ class RequestHandlerComponentTest extends TestCase {
  * test custom JsonView class is loaded and correct.
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testJsonViewLoaded() {
 		Router::extensions(['json', 'xml', 'ajax'], false);
@@ -366,6 +369,7 @@ class RequestHandlerComponentTest extends TestCase {
  * test custom XmlView class is loaded and correct.
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testXmlViewLoaded() {
 		Router::extensions(['json', 'xml', 'ajax'], false);
@@ -383,6 +387,7 @@ class RequestHandlerComponentTest extends TestCase {
  * test custom AjaxView class is loaded and correct.
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testAjaxViewLoaded() {
 		Router::extensions(['json', 'xml', 'ajax'], false);
@@ -399,6 +404,7 @@ class RequestHandlerComponentTest extends TestCase {
  * test configured extension but no view class set.
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testNoViewClassExtension() {
 		Router::extensions(['json', 'xml', 'ajax', 'csv'], false);
@@ -414,6 +420,7 @@ class RequestHandlerComponentTest extends TestCase {
  * testStartupCallback method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testStartupCallback() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -429,6 +436,7 @@ class RequestHandlerComponentTest extends TestCase {
  * testStartupCallback with charset.
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testStartupCallbackCharset() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -444,6 +452,7 @@ class RequestHandlerComponentTest extends TestCase {
  * Test mapping a new type and having startup process it.
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testStartupCustomTypeProcess() {
 		if (!function_exists('str_getcsv')) {
@@ -468,6 +477,7 @@ class RequestHandlerComponentTest extends TestCase {
  * testNonAjaxRedirect method
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testNonAjaxRedirect() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -480,6 +490,7 @@ class RequestHandlerComponentTest extends TestCase {
  * test that redirects with ajax and no URL don't do anything.
  *
  * @return void
+ * @triggers Controller.startup $this->Controller
  */
 	public function testAjaxRedirectWithNoUrl() {
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
@@ -616,6 +627,9 @@ class RequestHandlerComponentTest extends TestCase {
 		$result = $this->RequestHandler->requestedWith(array('rss', 'atom'));
 		$this->assertFalse($result);
 
+		$this->request->env('REQUEST_METHOD', 'PATCH');
+		$this->assertEquals('json', $this->RequestHandler->requestedWith());
+
 		$this->request->env('REQUEST_METHOD', 'DELETE');
 		$this->assertEquals('json', $this->RequestHandler->requestedWith());
 
@@ -743,6 +757,7 @@ class RequestHandlerComponentTest extends TestCase {
  * test that ajax requests involving redirects trigger requestAction instead.
  *
  * @return void
+ * @triggers Controller.beforeRedirect $this->Controller
  */
 	public function testAjaxRedirectAsRequestAction() {
 		Configure::write('App.namespace', 'TestApp');
@@ -772,6 +787,7 @@ class RequestHandlerComponentTest extends TestCase {
  * this would cause the ajax layout to not be rendered.
  *
  * @return void
+ * @triggers Controller.beforeRedirect $this->Controller
  */
 	public function testAjaxRedirectAsRequestActionStillRenderingLayout() {
 		Configure::write('App.namespace', 'TestApp');
@@ -804,6 +820,7 @@ class RequestHandlerComponentTest extends TestCase {
  *
  * @link https://cakephp.lighthouseapp.com/projects/42648-cakephp-1x/tickets/276
  * @return void
+ * @triggers Controller.beforeRender $this->Controller
  */
 	public function testBeforeRedirectCallbackWithArrayUrl() {
 		Configure::write('App.namespace', 'TestApp');
@@ -844,6 +861,7 @@ class RequestHandlerComponentTest extends TestCase {
  * Test checkNotModified method
  *
  * @return void
+ * @triggers Controller.beforeRender $this->Controller
  */
 	public function testCheckNotModifiedByEtagStar() {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = '*';
@@ -859,6 +877,7 @@ class RequestHandlerComponentTest extends TestCase {
  * Test checkNotModified method
  *
  * @return void
+ * @triggers Controller.beforeRender
  */
 	public function testCheckNotModifiedByEtagExact() {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
@@ -874,6 +893,7 @@ class RequestHandlerComponentTest extends TestCase {
  * Test checkNotModified method
  *
  * @return void
+ * @triggers Controller.beforeRender $this->Controller
  */
 	public function testCheckNotModifiedByEtagAndTime() {
 		$_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
@@ -891,6 +911,7 @@ class RequestHandlerComponentTest extends TestCase {
  * Test checkNotModified method
  *
  * @return void
+ * @triggers Controller.beforeRender $this->Controller
  */
 	public function testCheckNotModifiedNoInfo() {
 		$event = new Event('Controller.beforeRender', $this->Controller);

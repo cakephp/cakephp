@@ -17,8 +17,6 @@ namespace Cake\Validation;
 /**
  * ValidationSet object. Holds all validation rules for a field and exposes
  * methods to dynamically add or remove validation rules
- *
- * @link          http://book.cakephp.org/2.0/en/data-validation.html
  */
 class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
 
@@ -48,7 +46,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * If no argument is passed the currently set `validatePresent` value will be returned.
  *
- * @param bool|string $validatePresent Valid values are true, false, 'create', 'update'
+ * @param bool|string|null $validatePresent Valid values are true, false, 'create', 'update'
  * @return bool|string
  */
 	public function isPresenceRequired($validatePresent = null) {
@@ -63,7 +61,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * If no argument is passed the currently set `allowEmpty` value will be returned.
  *
- * @param bool|string|callable $allowEmpty Valid values are true, false,
+ * @param bool|string|callable|null $allowEmpty Valid values are true, false,
  * 'create', 'update'
  * @return bool|string|callable
  */

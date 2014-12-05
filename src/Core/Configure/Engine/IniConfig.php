@@ -72,12 +72,12 @@ class IniConfig implements ConfigEngineInterface {
  * Build and construct a new ini file parser. The parser can be used to read
  * ini files that are on the filesystem.
  *
- * @param string $path Path to load ini config files from. Defaults to CONFIG.
- * @param string $section Only get one section, leave null to parse and fetch
+ * @param string|null $path Path to load ini config files from. Defaults to CONFIG.
+ * @param string|null $section Only get one section, leave null to parse and fetch
  *     all sections in the ini file.
  */
 	public function __construct($path = null, $section = null) {
-		if (!$path) {
+		if ($path === null) {
 			$path = CONFIG;
 		}
 		$this->_path = $path;
@@ -154,7 +154,7 @@ class IniConfig implements ConfigEngineInterface {
  * @param array $data The data to convert to ini file.
  * @return int Bytes saved.
  */
-	public function dump($key, $data) {
+	public function dump($key, array $data) {
 		$result = array();
 		foreach ($data as $k => $value) {
 			$isSection = false;

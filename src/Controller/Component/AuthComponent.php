@@ -442,8 +442,8 @@ class AuthComponent extends Component {
  * Each adapter will be checked in sequence, if any of them return true, then the user will
  * be authorized for the request.
  *
- * @param array $user The user to check the authorization of. If empty the user in the session will be used.
- * @param \Cake\Network\Request $request The request to authenticate for. If empty, the current request will be used.
+ * @param array|null $user The user to check the authorization of. If empty the user in the session will be used.
+ * @param \Cake\Network\Request|null $request The request to authenticate for. If empty, the current request will be used.
  * @return bool True if $user is authorized, otherwise false
  */
 	public function isAuthorized($user = null, Request $request = null) {

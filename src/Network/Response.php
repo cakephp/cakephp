@@ -535,7 +535,7 @@ class Response {
  * Sends a header to the client.
  *
  * @param string $name the header name
- * @param string $value the header value
+ * @param string|null $value the header value
  * @return void
  */
 	protected function _sendHeader($name, $value = null) {
@@ -577,10 +577,10 @@ class Response {
  *  e.g `header('WWW-Authenticate: Negotiate'); header('WWW-Authenticate: Not-Negotiate');`
  * will have the same effect as only doing `header('WWW-Authenticate: Not-Negotiate');`
  *
- * @param string|array $header An array of header strings or a single header string
+ * @param string|array|null $header An array of header strings or a single header string
  *	- an associative array of "header name" => "header value" is also accepted
  *	- an array of string headers is also accepted
- * @param string|array $value The header value(s)
+ * @param string|array|null $value The header value(s)
  * @return array list of headers to be sent
  */
 	public function header($header = null, $value = null) {
@@ -622,7 +622,7 @@ class Response {
  * Buffers the response message to be sent
  * if $content is null the current buffer is returned
  *
- * @param string $content the string message to be sent
+ * @param string|null $content the string message to be sent
  * @return string current message buffer if $content param is passed as null
  */
 	public function body($content = null) {
@@ -636,7 +636,7 @@ class Response {
  * Sets the HTTP status code to be sent
  * if $code is null the current code is returned
  *
- * @param int $code the HTTP status code
+ * @param int|null $code the HTTP status code
  * @return int current status code
  * @throws \InvalidArgumentException When an unknown status code is reached.
  */
@@ -653,7 +653,7 @@ class Response {
 /**
  * Queries & sets valid HTTP response codes & messages.
  *
- * @param int|array $code If $code is an integer, then the corresponding code/message is
+ * @param int|array|null $code If $code is an integer, then the corresponding code/message is
  *        returned if it exists, null if it does not exist. If $code is an array, then the
  *        keys are used as codes and the values as messages to add to the default HTTP
  *        codes. The codes must be integers greater than 99 and less than 1000. Keep in
@@ -722,7 +722,7 @@ class Response {
  *
  * e.g `type(array('jpg' => 'text/plain'));`
  *
- * @param string $contentType Content type key.
+ * @param string|null $contentType Content type key.
  * @return mixed Current content type or false if supplied an invalid content type
  */
 	public function type($contentType = null) {
@@ -785,7 +785,7 @@ class Response {
  * Sets the response charset
  * if $charset is null the current charset is returned
  *
- * @param string $charset Character set string.
+ * @param string|null $charset Character set string.
  * @return string current charset
  */
 	public function charset($charset = null) {
@@ -833,10 +833,10 @@ class Response {
  * This method controls the `public` or `private` directive in the Cache-Control
  * header
  *
- * @param bool $public If set to true, the Cache-Control header will be set as public
+ * @param bool|null $public If set to true, the Cache-Control header will be set as public
  *   if set to false, the response will be set to private
  *   if no value is provided, it will return whether the response is sharable or not
- * @param int $time time in seconds after which the response should no longer be considered fresh
+ * @param int|null $time time in seconds after which the response should no longer be considered fresh
  * @return bool|null
  */
 	public function sharable($public = null, $time = null) {
@@ -871,7 +871,7 @@ class Response {
  * a good candidate to be fetched from a shared cache (like in a proxy server).
  * If called with no parameters, this function will return the current max-age value if any
  *
- * @param int $seconds if null, the method will return the current s-maxage value
+ * @param int|null $seconds if null, the method will return the current s-maxage value
  * @return int|null
  */
 	public function sharedMaxAge($seconds = null) {
@@ -891,7 +891,7 @@ class Response {
  * a good candidate to be fetched from the local (client) cache.
  * If called with no parameters, this function will return the current max-age value if any
  *
- * @param int $seconds if null, the method will return the current max-age value
+ * @param int|null $seconds if null, the method will return the current max-age value
  * @return int|null
  */
 	public function maxAge($seconds = null) {
@@ -912,7 +912,7 @@ class Response {
  * with the origin.
  * If called with no parameters, this function will return whether must-revalidate is present.
  *
- * @param bool $enable if null, the method will return the current
+ * @param bool|null $enable if null, the method will return the current
  *   must-revalidate value. If boolean sets or unsets the directive.
  * @return bool
  */
@@ -954,7 +954,7 @@ class Response {
  * `$response->expires(new DateTime('+1 day'))` Will set the expiration in next 24 hours
  * `$response->expires()` Will return the current expiration header value
  *
- * @param string|\DateTime $time Valid time string or \DateTime instance.
+ * @param string|\DateTime|null $time Valid time string or \DateTime instance.
  * @return string|null
  */
 	public function expires($time = null) {
@@ -978,7 +978,7 @@ class Response {
  * `$response->modified(new DateTime('+1 day'))` Will set the modification date in the past 24 hours
  * `$response->modified()` Will return the current Last-Modified header value
  *
- * @param string|\DateTime $time Valid time string or \DateTime instance.
+ * @param string|\DateTime|null $time Valid time string or \DateTime instance.
  * @return string|null
  */
 	public function modified($time = null) {
@@ -1022,7 +1022,7 @@ class Response {
  * parameters are passed, then an array with the current Vary header
  * value is returned
  *
- * @param string|array $cacheVariances a single Vary string or an array
+ * @param string|array|null $cacheVariances a single Vary string or an array
  *   containing the list for variances.
  * @return array|null
  */
@@ -1053,7 +1053,7 @@ class Response {
  *
  * If no parameters are passed, current Etag header is returned.
  *
- * @param string $hash the unique hash that identifies this response
+ * @param string|null $hash the unique hash that identifies this response
  * @param bool $weak whether the response is semantically the same as
  *   other with the same hash or not
  * @return string|null
@@ -1072,7 +1072,7 @@ class Response {
  * Returns a DateTime object initialized at the $time param and using UTC
  * as timezone
  *
- * @param string|int|\DateTime $time Valid time string or \DateTime instance.
+ * @param string|int|\DateTime|null $time Valid time string or \DateTime instance.
  * @return \DateTime
  */
 	protected function _getUTCDate($time = null) {
@@ -1124,7 +1124,7 @@ class Response {
  * Sets the protocol to be used when sending the response. Defaults to HTTP/1.1
  * If called with no arguments, it will return the current configured protocol
  *
- * @param string $protocol Protocol to be used for sending response.
+ * @param string|null $protocol Protocol to be used for sending response.
  * @return string protocol currently set
  */
 	public function protocol($protocol = null) {
@@ -1138,7 +1138,7 @@ class Response {
  * Sets the Content-Length header for the response
  * If called with no arguments returns the last Content-Length set
  *
- * @param int $bytes Number of bytes
+ * @param int|null $bytes Number of bytes
  * @return int|null
  */
 	public function length($bytes = null) {
@@ -1206,10 +1206,7 @@ class Response {
  * If the method is called with an array as argument, it will set the cookie
  * configuration to the cookie container.
  *
- * @param array|null $options Either null to get all cookies, string for a specific cookie
- *  or array to set cookie.
- *
- * ### Options (when setting a configuration)
+ *  ### Options (when setting a configuration)
  *  - name: The Cookie name
  *  - value: Value of the cookie
  *  - expire: Time the cookie expires in
@@ -1232,6 +1229,8 @@ class Response {
  *
  * `$this->cookie((array) $options)`
  *
+ * @param array|null $options Either null to get all cookies, string for a specific cookie
+ *  or array to set cookie.
  * @return mixed
  */
 	public function cookie($options = null) {
@@ -1521,7 +1520,9 @@ class Response {
 	protected function _flushBuffer() {
 		//@codingStandardsIgnoreStart
 		@flush();
-		@ob_flush();
+		if (ob_get_level()) {
+			@ob_flush();
+		}
 		//@codingStandardsIgnoreEnd
 	}
 

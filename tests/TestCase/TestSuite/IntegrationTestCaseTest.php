@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Core\Configure;
+use Cake\Event\EventManager;
 use Cake\Network\Response;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
@@ -192,6 +193,29 @@ class IntegrationTestCaseTest extends IntegrationTestCase {
 		$this->_response->body('Some content');
 
 		$this->assertResponseContains('content');
+	}
+
+/**
+ * Test that works in tandem with testEventManagerReset2 to 
+ * test the EventManager reset.
+ *
+ * The return value is passed to testEventManagerReset2 as 
+ * an arguments.
+ *
+ * @return \Cake\Event\EventManager
+ */
+	public function testEventManagerReset1() {
+		return EventManager::instance();
+	}
+
+/**
+ * Test if the EventManager is reset between tests.
+ *
+ * @depends testEventManagerReset1
+ * @return void
+ */
+	public function testEventManagerReset2($prevEventManager) {
+		$this->assertNotSame($prevEventManager, EventManager::instance());
 	}
 
 }

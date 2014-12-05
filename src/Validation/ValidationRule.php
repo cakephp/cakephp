@@ -21,8 +21,6 @@ namespace Cake\Validation;
 /**
  * ValidationRule object. Represents a validation method, error message and
  * rules for applying such method to a field.
- *
- * @link          http://book.cakephp.org/2.0/en/data-validation.html
  */
 class ValidationRule {
 

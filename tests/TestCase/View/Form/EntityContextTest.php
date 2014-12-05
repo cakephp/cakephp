@@ -29,6 +29,16 @@ use Cake\View\Form\EntityContext;
  * Test stub.
  */
 class Article extends Entity {
+
+/**
+ * Testing stub method.
+ *
+ * @return bool
+ */
+	public function isRequired() {
+		return true;
+	}
+
 }
 
 /**
@@ -593,6 +603,32 @@ class EntityContextTest extends TestCase {
 	}
 
 /**
+ * Test validator for boolean fields.
+ *
+ * @return void
+ */
+	public function testIsRequiredBooleanField() {
+		$this->_setupTables();
+
+		$context = new EntityContext($this->request, [
+			'entity' => new Entity(),
+			'table' => 'Articles',
+		]);
+		$articles = TableRegistry::get('Articles');
+		$articles->schema()->addColumn('comments_on', [
+			'type' => 'boolean'
+		]);
+
+		$validator = $articles->validator();
+		$validator->add('comments_on', 'is_bool', [
+			'rule' => 'boolean'
+		]);
+		$articles->validator('default', $validator);
+
+		$this->assertFalse($context->isRequired('title'));
+	}
+
+/**
  * Test validator as a string.
  *
  * @return void
@@ -645,6 +681,37 @@ class EntityContextTest extends TestCase {
 		$this->assertFalse($context->isRequired('comments.0.other'));
 		$this->assertFalse($context->isRequired('user.0.other'));
 		$this->assertFalse($context->isRequired(''));
+	}
+
+/**
+ * Test isRequired on associated entities with custom validators.
+ *
+ * Ensures that missing associations use the correct entity class
+ * so provider methods work correctly.
+ *
+ * @return void
+ */
+	public function testIsRequiredAssociatedCustomValidator() {
+		$this->_setupTables();
+		$users = TableRegistry::get('Users');
+		$articles = TableRegistry::get('Articles');
+
+		$validator = $articles->validator();
+		$validator->notEmpty('title', 'nope', function ($context) {
+			return $context['providers']['entity']->isRequired();
+		});
+		$articles->validator('default', $validator);
+
+		$row = new Entity([
+			'username' => 'mark'
+		]);
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+			'table' => 'Users',
+			'validator' => 'default',
+		]);
+
+		$this->assertTrue($context->isRequired('articles.0.title'));
 	}
 
 /**
@@ -943,6 +1010,7 @@ class EntityContextTest extends TestCase {
 		$articles = TableRegistry::get('Articles');
 		$articles->belongsTo('Users');
 		$articles->hasMany('Comments');
+		$articles->entityClass(__NAMESPACE__ . '\Article');
 
 		$comments = TableRegistry::get('Comments');
 		$users = TableRegistry::get('Users');

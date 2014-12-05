@@ -30,7 +30,6 @@ use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Exception\MissingEntityException;
-use Cake\ORM\Exception\RecordNotFoundException;
 use Cake\ORM\Marshaller;
 use Cake\ORM\RulesChecker;
 use Cake\Utility\Inflector;
@@ -284,7 +283,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 /**
  * Returns the database table name or sets a new one
  *
- * @param string $table the new table name
+ * @param string|null $table the new table name
  * @return string
  */
 	public function table($table = null) {
@@ -305,7 +304,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 /**
  * Returns the table alias or sets a new one
  *
- * @param string $alias the new table alias
+ * @param string|null $alias the new table alias
  * @return string
  */
 	public function alias($alias = null) {
@@ -323,7 +322,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 /**
  * Returns the connection instance or sets a new one
  *
- * @param \Cake\Database\Connection $conn the new connection instance
+ * @param \Cake\Database\Connection|null $conn The new connection instance
  * @return \Cake\Database\Connection
  */
 	public function connection($conn = null) {
@@ -342,7 +341,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
  * If an array is passed, a new \Cake\Database\Schema\Table will be constructed
  * out of it and used as the schema for this table.
  *
- * @param array|\Cake\Database\Schema\Table $schema new schema to be used for this table
+ * @param array|\Cake\Database\Schema\Table|null $schema New schema to be used for this table
  * @return \Cake\Database\Schema\Table
  */
 	public function schema($schema = null) {
@@ -416,7 +415,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 /**
  * Returns the primary key field name or sets a new one
  *
- * @param string|array $key sets a new name to be used as primary key
+ * @param string|array|null $key sets a new name to be used as primary key
  * @return string|array
  */
 	public function primaryKey($key = null) {
@@ -436,7 +435,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 /**
  * Returns the display field or sets a new one
  *
- * @param string $key sets a new name to be used as display field
+ * @param string|null $key sets a new name to be used as display field
  * @return string
  */
 	public function displayField($key = null) {
@@ -461,7 +460,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
  * Returns the class used to hydrate rows for this table or sets
  * a new one
  *
- * @param string $name the name of the class to use
+ * @param string|null $name the name of the class to use
  * @throws \Cake\ORM\Exception\MissingEntityException when the entity class cannot be found
  * @return string
  */
@@ -557,7 +556,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
  * @return array
  */
 	public function hasBehavior($name) {
-		return $this->_behaviors->loaded($name);
+		return $this->_behaviors->has($name);
 	}
 
 /**
@@ -577,6 +576,45 @@ class Table implements RepositoryInterface, EventListenerInterface {
  */
 	public function associations() {
 		return $this->_associations;
+	}
+
+/**
+ * Setup multiple associations.
+ *
+ * It takes an array containing set of table names indexed by association type
+ * as argument:
+ *
+ * {{{
+ * $this->Posts->addAssociations([
+ *   'belongsTo' => [
+ *     'Users' => ['className' => 'App\Model\Table\UsersTable']
+ *   ],
+ *   'hasMany' => ['Comments'],
+ *   'belongsToMany' => ['Tags']
+ * ]);
+ * }}}
+ *
+ * Each association type accepts multiple associations where the keys
+ * are the aliases, and the values are association config data. If numeric
+ * keys are used the values will be treated as association aliases.
+ *
+ * @param array $params Set of associations to bind (indexed by association type)
+ * @return void
+ * @see \Cake\ORM\Table::belongsTo()
+ * @see \Cake\ORM\Table::hasOne()
+ * @see \Cake\ORM\Table::hasMany()
+ * @see \Cake\ORM\Table::belongsToMany()
+ */
+	public function addAssociations(array $params) {
+		foreach ($params as $assocType => $tables) {
+			foreach ($tables as $associated => $options) {
+				if (is_numeric($associated)) {
+					$associated = $options;
+					$options = [];
+				}
+				$this->{$assocType}($associated, $options);
+			}
+		}
 	}
 
 /**
@@ -921,8 +959,6 @@ class Table implements RepositoryInterface, EventListenerInterface {
 /**
  * {@inheritDoc}
  *
- * @throws \Cake\ORM\Exception\RecordNotFoundException if no record can be found given
- * a primary key value.
  * @throws \InvalidArgumentException When $primaryKey has an incorrect number of elements.
  */
 	public function get($primaryKey, $options = []) {
@@ -956,17 +992,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			}
 			$query->cache($cacheKey, $cacheConfig);
 		}
-
-		$entity = $query->first();
-
-		if ($entity) {
-			return $entity;
-		}
-		throw new RecordNotFoundException(sprintf(
-			'Record "%s" not found in table "%s"',
-			implode(',', (array)$primaryKey),
-			$this->table()
-		));
+		return $query->firstOrFail();
 	}
 
 /**
@@ -978,7 +1004,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
  * the $defaults. When a new entity is created, it will be saved.
  *
  * @param array $search The criteria to find existing records by.
- * @param callable $callback A callback that will be invoked for newly
+ * @param callable|null $callback A callback that will be invoked for newly
  *   created entities. This callback will be called *before* the entity
  *   is persisted.
  * @return \Cake\Datasource\EntityInterface An entity.
@@ -1055,7 +1081,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
  * set is specified.
  *
  * @param string $name the name of the validation set to return
- * @param \Cake\Validation\Validator $validator The validator instance to store,
+ * @param \Cake\Validation\Validator|null $validator The validator instance to store,
  *   use null to get a validator.
  * @return \Cake\Validation\Validator
  */
@@ -1340,7 +1366,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			->values($data)
 			->execute();
 
-		if ($statement->rowCount() > 0) {
+		if ($statement->rowCount() !== 0) {
 			$success = $entity;
 			$entity->set($filteredKeys, ['guard' => false]);
 			foreach ($primary as $key => $v) {
@@ -1496,6 +1522,19 @@ class Table implements RepositoryInterface, EventListenerInterface {
 		]);
 
 		return $success;
+	}
+
+/**
+ * Returns true if the finder exists for the table
+ *
+ * @param string $type name of finder to check
+ *
+ * @return bool
+ */
+	public function hasFinder($type) {
+		$finder = 'find' . $type;
+
+		return method_exists($this, $finder) || ($this->_behaviors && $this->_behaviors->hasFinder($type));
 	}
 
 /**

@@ -126,10 +126,10 @@ class Time extends Carbon implements JsonSerializable {
  *
  * The format to be used is stored in the static property `Time::niceFormat`.
  *
- * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
+ * @param string|\DateTimeZone|null $timezone Timezone string or DateTimeZone object
  * in which the date will be displayed. The timezone stored for this object will not
  * be changed.
- * @param string $locale The locale name in which the date should be displayed (e.g. pt-BR)
+ * @param string|null $locale The locale name in which the date should be displayed (e.g. pt-BR)
  * @return string Formatted date string
  */
 	public function nice($timezone = null, $locale = null) {
@@ -425,7 +425,7 @@ class Time extends Carbon implements JsonSerializable {
  * See `Time::timeAgoInWords()` for a full list of options that can be passed
  * to this method.
  *
- * @param \Carbon\Carbon $other the date to diff with
+ * @param \Carbon\Carbon|null $other the date to diff with
  * @param array $options options accepted by timeAgoInWords
  * @return string
  * @see Time::timeAgoInWords()
@@ -488,7 +488,7 @@ class Time extends Carbon implements JsonSerializable {
  * $time = new Time('2014-04-20 22:10');
  * $time->i18nFormat(); // outputs '4/20/14, 10:10 PM' for the en-US locale
  * $time->i18nFormat(\IntlDateFormatter::FULL); // Use the full date and time format
- * $time->i18nFormat([\IntlDateFormatter::FULL, \IntlDateFormatter::Short]); // Use full date but short time format
+ * $time->i18nFormat([\IntlDateFormatter::FULL, \IntlDateFormatter::SHORT]); // Use full date but short time format
  * $time->i18nFormat('YYYY-MM-dd HH:mm:ss'); // outputs '2014-04-20 22:10'
  * }}}
  *
@@ -518,11 +518,11 @@ class Time extends Carbon implements JsonSerializable {
  * `Time::$defaultLocale` to a  valid locale string. If empty, the default will be
  * taken from the `intl.default_locale` ini config.
  *
- * @param string|int $format Format string.
- * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
+ * @param string|int|null $format Format string.
+ * @param string|\DateTimeZone|null $timezone Timezone string or DateTimeZone object
  * in which the date will be displayed. The timezone stored for this object will not
  * be changed.
- * @param string $locale The locale name in which the date should be displayed (e.g. pt-BR)
+ * @param string|null $locale The locale name in which the date should be displayed (e.g. pt-BR)
  * @return string Formatted and translated date string
  */
 	public function i18nFormat($format = null, $timezone = null, $locale = null) {
@@ -593,7 +593,6 @@ class Time extends Carbon implements JsonSerializable {
  * @param bool $group If true (default value) groups the identifiers list by primary region
  * @return array List of timezone identifiers
  * @since 2.2
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::listTimezones
  */
 	public static function listTimezones($filter = null, $country = null, $group = true) {
 		$regex = null;

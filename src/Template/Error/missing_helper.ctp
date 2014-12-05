@@ -37,6 +37,7 @@ if (!empty($plugin) && !Plugin::loaded($plugin)) {
 			echo sprintf('Make sure your plugin <em>%s</em> is in the %s directory and was loaded.', h($plugin), $pluginPath);
 		endif;
 	?>
+	<?= $this->element('plugin_class_error'); ?>
 </p>
 <p class="error">
 	<strong>Error: </strong>

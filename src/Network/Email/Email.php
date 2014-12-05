@@ -365,7 +365,7 @@ class Email {
 /**
  * Constructor
  *
- * @param array|string $config Array of configs, or string to load configs from email.php
+ * @param array|string|null $config Array of configs, or string to load configs from email.php
  */
 	public function __construct($config = null) {
 		$this->_appCharset = Configure::read('App.encoding');
@@ -388,9 +388,9 @@ class Email {
 /**
  * From
  *
- * @param string|array $email Null to get, String with email,
+ * @param string|array|null $email Null to get, String with email,
  *   Array with email as key, name as value or email as value (without name)
- * @param string $name Name
+ * @param string|null $name Name
  * @return array|$this
  * @throws \InvalidArgumentException
  */
@@ -404,9 +404,9 @@ class Email {
 /**
  * Sender
  *
- * @param string|array $email Null to get, String with email,
+ * @param string|array|null $email Null to get, String with email,
  *   Array with email as key, name as value or email as value (without name)
- * @param string $name Name
+ * @param string|null $name Name
  * @return array|$this
  * @throws \InvalidArgumentException
  */
@@ -420,9 +420,9 @@ class Email {
 /**
  * Reply-To
  *
- * @param string|array $email Null to get, String with email,
+ * @param string|array|null $email Null to get, String with email,
  *   Array with email as key, name as value or email as value (without name)
- * @param string $name Name
+ * @param string|null $name Name
  * @return array|$this
  * @throws \InvalidArgumentException
  */
@@ -436,9 +436,9 @@ class Email {
 /**
  * Read Receipt (Disposition-Notification-To header)
  *
- * @param string|array $email Null to get, String with email,
+ * @param string|array|null $email Null to get, String with email,
  *   Array with email as key, name as value or email as value (without name)
- * @param string $name Name
+ * @param string|null $name Name
  * @return array|$this
  * @throws \InvalidArgumentException
  */
@@ -452,9 +452,9 @@ class Email {
 /**
  * Return Path
  *
- * @param string|array $email Null to get, String with email,
+ * @param string|array|null $email Null to get, String with email,
  *   Array with email as key, name as value or email as value (without name)
- * @param string $name Name
+ * @param string|null $name Name
  * @return array|$this
  * @throws \InvalidArgumentException
  */
@@ -468,9 +468,9 @@ class Email {
 /**
  * To
  *
- * @param string|array $email Null to get, String with email,
+ * @param string|array|null $email Null to get, String with email,
  *   Array with email as key, name as value or email as value (without name)
- * @param string $name Name
+ * @param string|null $name Name
  * @return array|$this
  */
 	public function to($email = null, $name = null) {
@@ -485,7 +485,7 @@ class Email {
  *
  * @param string|array $email Null to get, String with email,
  *   Array with email as key, name as value or email as value (without name)
- * @param string $name Name
+ * @param string|null $name Name
  * @return $this
  */
 	public function addTo($email, $name = null) {
@@ -495,9 +495,9 @@ class Email {
 /**
  * Cc
  *
- * @param string|array $email Null to get, String with email,
+ * @param string|array|null $email Null to get, String with email,
  *   Array with email as key, name as value or email as value (without name)
- * @param string $name Name
+ * @param string|null $name Name
  * @return array|$this
  */
 	public function cc($email = null, $name = null) {
@@ -512,7 +512,7 @@ class Email {
  *
  * @param string|array $email Null to get, String with email,
  *   Array with email as key, name as value or email as value (without name)
- * @param string $name Name
+ * @param string|null $name Name
  * @return $this
  */
 	public function addCc($email, $name = null) {
@@ -522,9 +522,9 @@ class Email {
 /**
  * Bcc
  *
- * @param string|array $email Null to get, String with email,
+ * @param string|array|null $email Null to get, String with email,
  *   Array with email as key, name as value or email as value (without name)
- * @param string $name Name
+ * @param string|null $name Name
  * @return array|$this
  */
 	public function bcc($email = null, $name = null) {
@@ -539,7 +539,7 @@ class Email {
  *
  * @param string|array $email Null to get, String with email,
  *   Array with email as key, name as value or email as value (without name)
- * @param string $name Name
+ * @param string|null $name Name
  * @return $this
  */
 	public function addBcc($email, $name = null) {
@@ -549,7 +549,7 @@ class Email {
 /**
  * Charset setter/getter
  *
- * @param string $charset Character set.
+ * @param string|null $charset Character set.
  * @return string this->charset
  */
 	public function charset($charset = null) {
@@ -566,7 +566,7 @@ class Email {
 /**
  * HeaderCharset setter/getter
  *
- * @param string $charset Character set.
+ * @param string|null $charset Character set.
  * @return string this->charset
  */
 	public function headerCharset($charset = null) {
@@ -696,7 +696,7 @@ class Email {
 /**
  * Get/Set Subject.
  *
- * @param string $subject Subject string.
+ * @param string|null $subject Subject string.
  * @return string|$this
  */
 	public function subject($subject = null) {
@@ -870,7 +870,7 @@ class Email {
 /**
  * View class for render
  *
- * @param string $viewClass View class name.
+ * @param string|null $viewClass View class name.
  * @return string|$this
  */
 	public function viewRender($viewClass = null) {
@@ -884,7 +884,7 @@ class Email {
 /**
  * Variables to be set on render
  *
- * @param array $viewVars Variables to set for view.
+ * @param array|null $viewVars Variables to set for view.
  * @return array|$this
  */
 	public function viewVars($viewVars = null) {
@@ -898,7 +898,7 @@ class Email {
 /**
  * Theme to use when rendering
  *
- * @param string $theme Theme name.
+ * @param string|null $theme Theme name.
  * @return string|$this
  */
 	public function theme($theme = null) {
@@ -912,7 +912,7 @@ class Email {
 /**
  * Helpers to be used in render
  *
- * @param array $helpers Helpers list.
+ * @param array|null $helpers Helpers list.
  * @return array|$this
  */
 	public function helpers($helpers = null) {
@@ -926,7 +926,7 @@ class Email {
 /**
  * Email format
  *
- * @param string $format Formatting string.
+ * @param string|null $format Formatting string.
  * @return string|$this
  * @throws \InvalidArgumentException
  */
@@ -947,7 +947,7 @@ class Email {
  * When setting the transport you can either use the name
  * of a configured transport or supply a constructed transport.
  *
- * @param string|AbstractTransport $name Either the name of a configured
+ * @param string|AbstractTransport|null $name Either the name of a configured
  *   transport, or a transport instance.
  * @return \Cake\Network\Email\AbstractTransport|$this
  * @throws \LogicException When the chosen transport lacks a send method.
@@ -1007,7 +1007,7 @@ class Email {
 /**
  * Message-ID
  *
- * @param bool|string $message True to generate a new Message-ID, False to ignore (not send in email), String to set as Message-ID
+ * @param bool|string|null $message True to generate a new Message-ID, False to ignore (not send in email), String to set as Message-ID
  * @return bool|string|$this
  * @throws \InvalidArgumentException
  */
@@ -1029,7 +1029,7 @@ class Email {
 /**
  * Domain as top level (the part after @)
  *
- * @param string $domain Manually set the domain for CLI mailing
+ * @param string|null $domain Manually set the domain for CLI mailing
  * @return string|$this
  */
 	public function domain($domain = null) {
@@ -1083,7 +1083,7 @@ class Email {
  * The `contentDisposition` key allows you to disable the `Content-Disposition` header, this can improve
  * attachment compatibility with outlook email clients.
  *
- * @param string|array $attachments String with the filename or array with filenames
+ * @param string|array|null $attachments String with the filename or array with filenames
  * @return array|$this Either the array of attachments when getting or $this when setting.
  * @throws \InvalidArgumentException
  */
@@ -1141,7 +1141,7 @@ class Email {
 /**
  * Get generated message (used by transport classes)
  *
- * @param string $type Use MESSAGE_* constants or null to return the full message as array
+ * @param string|null $type Use MESSAGE_* constants or null to return the full message as array
  * @return string|array String if have type, array if type is null
  */
 	public function message($type = null) {
@@ -1170,7 +1170,7 @@ class Email {
  *
  * @param string|array $key The configuration name to read/write. Or
  *   an array of multiple transports to set.
- * @param array|AbstractTransport $config Either an array of configuration
+ * @param array|AbstractTransport|null $config Either an array of configuration
  *   data, or a transport instance.
  * @return mixed Either null when setting or an array of data when reading.
  * @throws \BadMethodCallException When modifying an existing configuration.
@@ -1233,7 +1233,7 @@ class Email {
 /**
  * Send an email using the specified content, template and layout
  *
- * @param string|array $content String with message or array with messages
+ * @param string|array|null $content String with message or array with messages
  * @return array
  * @throws \BadMethodCallException
  */
@@ -1458,7 +1458,7 @@ class Email {
 		$cut = ($wrapLength == Email::LINE_LENGTH_MUST);
 
 		foreach ($lines as $line) {
-			if (empty($line)) {
+			if (empty($line) && $line !== '0') {
 				$formatted[] = '';
 				continue;
 			}
@@ -1562,7 +1562,7 @@ class Email {
 /**
  * Attach non-embedded files by adding file contents inside boundaries.
  *
- * @param string $boundary Boundary to use. If null, will default to $this->_boundary
+ * @param string|null $boundary Boundary to use. If null, will default to $this->_boundary
  * @return array An array of lines to add to the message
  */
 	protected function _attachFiles($boundary = null) {
@@ -1610,7 +1610,7 @@ class Email {
 /**
  * Attach inline/embedded files to the message.
  *
- * @param string $boundary Boundary to use. If null, will default to $this->_boundary
+ * @param string|null $boundary Boundary to use. If null, will default to $this->_boundary
  * @return array An array of lines to add to the message
  */
 	protected function _attachInlineFiles($boundary = null) {

@@ -626,7 +626,7 @@ class Router {
  * and expect the router to produce links using the new setting, you are
  * required to call this method passing such value again.
  *
- * @param string $base the prefix for URLs generated containing the domain.
+ * @param string|null $base the prefix for URLs generated containing the domain.
  * For example: ``http://example.com``
  * @return string
  */
@@ -849,7 +849,7 @@ class Router {
  *   to all routes connected in the scoped collection.
  * @param array|callable $params An array of routing defaults to add to each connected route.
  *   If you have no parameters, this argument can be a callable.
- * @param callable $callback The callback to invoke with the scoped collection.
+ * @param callable|null $callback The callback to invoke with the scoped collection.
  * @throws \InvalidArgumentException When an invalid callable is provided.
  * @return void
  */
@@ -899,7 +899,7 @@ class Router {
  *
  * @param string $name The plugin name to build routes for
  * @param array|callable $options Either the options to use, or a callback
- * @param callable $callback The callback to invoke that builds the plugin routes.
+ * @param callable|null $callback The callback to invoke that builds the plugin routes.
  *   Only required when $options is defined
  * @return void
  */

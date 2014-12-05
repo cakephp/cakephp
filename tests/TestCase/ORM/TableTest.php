@@ -433,7 +433,7 @@ class TableTest extends TestCase {
 
 		$query = $table->find('all');
 		$query->limit(1);
-		$this->assertEquals($expected, $query->all());
+		$this->assertEquals($expected, $query->all()->toArray());
 	}
 
 /**
@@ -513,6 +513,49 @@ class TableTest extends TestCase {
 		$this->assertEquals(['b' => 'c'], $belongsToMany->conditions());
 		$this->assertEquals(['foo' => 'asc'], $belongsToMany->sort());
 		$this->assertSame($table, $belongsToMany->source());
+		$this->assertSame('things_tags', $belongsToMany->junction()->table());
+	}
+
+/**
+ * Test addAssociations()
+ *
+ * @return void
+ */
+	public function testAddAssociations() {
+		$params = [
+			'belongsTo' => [
+				'users' => ['foreignKey' => 'fake_id', 'conditions' => ['a' => 'b']]
+			],
+			'hasOne' => ['profiles'],
+			'hasMany' => ['authors'],
+			'belongsToMany' => [
+				'tags' => ['joinTable' => 'things_tags']
+			]
+		];
+
+		$table = new Table(['table' => 'dates']);
+		$table->addAssociations($params);
+
+		$associations = $table->associations();
+
+		$belongsTo = $associations->get('users');
+		$this->assertInstanceOf('\Cake\ORM\Association\BelongsTo', $belongsTo);
+		$this->assertEquals('users', $belongsTo->name());
+		$this->assertEquals('fake_id', $belongsTo->foreignKey());
+		$this->assertEquals(['a' => 'b'], $belongsTo->conditions());
+		$this->assertSame($table, $belongsTo->source());
+
+		$hasOne = $associations->get('profiles');
+		$this->assertInstanceOf('\Cake\ORM\Association\HasOne', $hasOne);
+		$this->assertEquals('profiles', $hasOne->name());
+
+		$hasMany = $associations->get('authors');
+		$this->assertInstanceOf('\Cake\ORM\Association\hasMany', $hasMany);
+		$this->assertEquals('authors', $hasMany->name());
+
+		$belongsToMany = $associations->get('tags');
+		$this->assertInstanceOf('\Cake\ORM\Association\BelongsToMany', $belongsToMany);
+		$this->assertEquals('tags', $belongsToMany->name());
 		$this->assertSame('things_tags', $belongsToMany->junction()->table());
 	}
 
@@ -2818,7 +2861,7 @@ class TableTest extends TestCase {
 
 		$query = $this->getMock(
 			'\Cake\ORM\Query',
-			['addDefaultTypes', 'first', 'where', 'cache'],
+			['addDefaultTypes', 'firstOrFail', 'where', 'cache'],
 			[$this->connection, $table]
 		);
 
@@ -2833,7 +2876,7 @@ class TableTest extends TestCase {
 			->with([$table->alias() . '.bar' => 10])
 			->will($this->returnSelf());
 		$query->expects($this->never())->method('cache');
-		$query->expects($this->once())->method('first')
+		$query->expects($this->once())->method('firstOrFail')
 			->will($this->returnValue($entity));
 		$result = $table->get(10, $options);
 		$this->assertSame($entity, $result);
@@ -2878,7 +2921,7 @@ class TableTest extends TestCase {
 
 		$query = $this->getMock(
 			'\Cake\ORM\Query',
-			['addDefaultTypes', 'first', 'where', 'cache'],
+			['addDefaultTypes', 'firstOrFail', 'where', 'cache'],
 			[$this->connection, $table]
 		);
 
@@ -2895,7 +2938,7 @@ class TableTest extends TestCase {
 		$query->expects($this->once())->method('cache')
 			->with($cacheKey, $cacheConfig)
 			->will($this->returnSelf());
-		$query->expects($this->once())->method('first')
+		$query->expects($this->once())->method('firstOrFail')
 			->will($this->returnValue($entity));
 		$result = $table->get(10, $options);
 		$this->assertSame($entity, $result);
@@ -2905,7 +2948,7 @@ class TableTest extends TestCase {
  * Tests that get() will throw an exception if the record was not found
  *
  * @expectedException \Cake\ORM\Exception\RecordNotFoundException
- * @expectedExceptionMessage Record "10" not found in table "articles"
+ * @expectedExceptionMessage Record not found in table "articles"
  * @return void
  */
 	public function testGetNotFoundException() {
@@ -3057,6 +3100,20 @@ class TableTest extends TestCase {
 
 		$this->assertEquals(1, $count, 'Callback should be called');
 		EventManager::instance()->detach($cb, 'Model.initialize');
+	}
+
+/**
+ * Tests the hasFinder method
+ *
+ * @return void
+ */
+	public function testHasFinder() {
+		$table = TableRegistry::get('articles');
+		$table->addBehavior('Sluggable');
+
+		$this->assertTrue($table->hasFinder('list'));
+		$this->assertTrue($table->hasFinder('noSlug'));
+		$this->assertFalse($table->hasFinder('noFind'));
 	}
 
 /**

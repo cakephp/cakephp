@@ -41,7 +41,7 @@ trait EventManagerTrait {
  * You can use this instance to register any new listeners or callbacks to the
  * object events, or create your own events and trigger them at will.
  *
- * @param \Cake\Event\EventManager $eventManager the eventManager to set
+ * @param \Cake\Event\EventManager|null $eventManager the eventManager to set
  * @return \Cake\Event\EventManager
  */
 	public function eventManager(EventManager $eventManager = null) {
@@ -59,10 +59,9 @@ trait EventManagerTrait {
  * Returns a dispatched event.
  *
  * @param string $name Name of the event.
- * @param array $data Any value you wish to be transported with this event to
+ * @param array|null $data Any value you wish to be transported with this event to
  * it can be read by listeners.
- *
- * @param object $subject The object that this event applies to
+ * @param object|null $subject The object that this event applies to
  * ($this by default).
  *
  * @return \Cake\Event\Event

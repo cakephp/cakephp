@@ -635,9 +635,20 @@ class ViewTest extends TestCase {
 		$View = new TestView();
 
 		// Prefix specific layout
-		$View->request->params['prefix'] = 'FooPrefix';
+		$View->request->params['prefix'] = 'foo_prefix';
 		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS .
 			'FooPrefix' . DS . 'Layout' . DS . 'default.ctp';
+		$result = $View->getLayoutFileName();
+		$this->assertPathEquals($expected, $result);
+
+		$View->request->params['prefix'] = 'FooPrefix';
+		$result = $View->getLayoutFileName();
+		$this->assertPathEquals($expected, $result);
+
+		// Nested prefix layout
+		$View->request->params['prefix'] = 'foo_prefix/bar_prefix';
+		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS .
+			'FooPrefix' . DS . 'BarPrefix' . DS . 'Layout' . DS . 'default.ctp';
 		$result = $View->getLayoutFileName();
 		$this->assertPathEquals($expected, $result);
 
@@ -1151,7 +1162,7 @@ class ViewTest extends TestCase {
 		$View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
 		$result = $View->render('index');
 
-		$this->assertRegExp("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/>\s*<title>/", $result);
+		$this->assertRegExp("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\"\/>\s*<title>/", $result);
 		$this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
 		$this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
 
@@ -1169,7 +1180,7 @@ class ViewTest extends TestCase {
 		$View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
 		$result = $View->render('index');
 
-		$this->assertRegExp("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/>\s*<title>/", $result);
+		$this->assertRegExp("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\"\/>\s*<title>/", $result);
 		$this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
 	}
 

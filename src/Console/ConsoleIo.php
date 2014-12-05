@@ -88,9 +88,9 @@ class ConsoleIo {
 /**
  * Constructor
  *
- * @param \Cake\Console\ConsoleOutput $out A ConsoleOutput object for stdout.
- * @param \Cake\Console\ConsoleOutput $err A ConsoleOutput object for stderr.
- * @param \Cake\Console\ConsoleInput $in A ConsoleInput object for stdin.
+ * @param \Cake\Console\ConsoleOutput|null $out A ConsoleOutput object for stdout.
+ * @param \Cake\Console\ConsoleOutput|null $err A ConsoleOutput object for stderr.
+ * @param \Cake\Console\ConsoleInput|null $in A ConsoleInput object for stdin.
  */
 	public function __construct(ConsoleOutput $out = null, ConsoleOutput $err = null, ConsoleInput $in = null) {
 		$this->_out = $out ? $out : new ConsoleOutput('php://stdout');
@@ -228,7 +228,7 @@ class ConsoleIo {
  * Prompts the user for input, and returns it.
  *
  * @param string $prompt Prompt text.
- * @param string $default Default input value.
+ * @param string|null $default Default input value.
  * @return mixed Either the default value, or the user-provided input.
  */
 	public function ask($prompt, $default = null) {
@@ -250,7 +250,7 @@ class ConsoleIo {
  * Add a new output style or get defined styles.
  *
  * @param string $style The style to get or create.
- * @param array $definition The array definition of the style to change or create a style
+ * @param array|bool|null $definition The array definition of the style to change or create a style
  *   or false to remove a style.
  * @return mixed If you are getting styles, the style or null will be returned. If you are creating/modifying
  *   styles true will be returned.
@@ -265,7 +265,7 @@ class ConsoleIo {
  *
  * @param string $prompt Prompt text.
  * @param string|array $options Array or string of options.
- * @param string $default Default input value.
+ * @param string|null $default Default input value.
  * @return mixed Either the default value, or the user-provided input.
  */
 	public function askChoice($prompt, $options, $default = null) {
@@ -296,8 +296,8 @@ class ConsoleIo {
  * Prompts the user for input, and returns it.
  *
  * @param string $prompt Prompt text.
- * @param string|array $options Array or string of options.
- * @param string $default Default input value.
+ * @param string|null $options String of options. Pass null to omit.
+ * @param string|null $default Default input value. Pass null to omit.
  * @return string Either the default value, or the user-provided input.
  */
 	protected function _getInput($prompt, $options, $default) {

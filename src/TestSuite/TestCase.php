@@ -8,7 +8,6 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -568,7 +567,17 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 		$options += TableRegistry::config($alias);
 
 		$mock = $this->getMock($options['className'], $methods, [$options]);
-		TableRegistry::set($alias, $mock);
+
+		if (empty($options['entityClass']) && $mock->entityClass() === '\Cake\ORM\Entity') {
+			$parts = explode('\\', $options['className']);
+			$entityAlias = Inflector::singularize(substr(array_pop($parts), 0, -5));
+			$entityClass = implode('\\', array_slice($parts, 0, -1)) . '\Entity\\' . $entityAlias;
+			if (class_exists($entityClass)) {
+				$mock->entityClass($entityClass);
+			}
+		}
+
+		TableRegistry::set($baseClass, $mock);
 		return $mock;
 	}
 

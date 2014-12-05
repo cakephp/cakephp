@@ -237,11 +237,11 @@ class Controller implements EventListenerInterface {
  * Sets a number of properties based on conventions if they are empty. To override the
  * conventions CakePHP uses you can define properties in your class declaration.
  *
- * @param \Cake\Network\Request $request Request object for this controller. Can be null for testing,
+ * @param \Cake\Network\Request|null $request Request object for this controller. Can be null for testing,
  *   but expect that features that use the request parameters will not work.
- * @param \Cake\Network\Response $response Response object for this controller.
- * @param string $name Override the name useful in testing when using mocks.
- * @param \Cake\Event\EventManager $eventManager The event manager. Defaults to a new instance.
+ * @param \Cake\Network\Response|null $response Response object for this controller.
+ * @param string|null $name Override the name useful in testing when using mocks.
+ * @param \Cake\Event\EventManager|null $eventManager The event manager. Defaults to a new instance.
  */
 	public function __construct(Request $request = null, Response $response = null, $name = null, $eventManager = null) {
 		if ($this->name === null && $name === null) {
@@ -255,7 +255,11 @@ class Controller implements EventListenerInterface {
 		if (!$this->viewPath) {
 			$viewPath = $this->name;
 			if (isset($request->params['prefix'])) {
-				$viewPath = Inflector::camelize($request->params['prefix']) . DS . $viewPath;
+				$prefixes = array_map(
+					'Cake\Utility\Inflector::camelize',
+					explode('/', $request->params['prefix'])
+				);
+				$viewPath = implode('/', $prefixes) . DS . $viewPath;
 			}
 			$this->viewPath = $viewPath;
 		}
@@ -592,7 +596,7 @@ class Controller implements EventListenerInterface {
 /**
  * Returns the referring URL for this request.
  *
- * @param string $default Default URL to use if HTTP_REFERER cannot be read from headers
+ * @param string|null $default Default URL to use if HTTP_REFERER cannot be read from headers
  * @param bool $local If true, restrict referring URLs to local server
  * @return string Referring URL
  */
@@ -616,7 +620,7 @@ class Controller implements EventListenerInterface {
  *
  * This method will also make the PaginatorHelper available in the view.
  *
- * @param \Cake\ORM\Table|string|\Cake\ORM\Query $object Table to paginate
+ * @param \Cake\ORM\Table|string|\Cake\ORM\Query|null $object Table to paginate
  * (e.g: Table instance, 'TableName' or a Query object)
  * @return \Cake\ORM\ResultSet Query results
  * @link http://book.cakephp.org/3.0/en/controllers.html#Controller::paginate

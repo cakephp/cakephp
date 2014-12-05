@@ -373,11 +373,13 @@ class ResultSet implements ResultSetInterface {
 			$results[$table][$field] = $value;
 		}
 
+		if (isset($presentAliases[$defaultAlias])) {
+			$results[$defaultAlias] = $this->_castValues(
+				$this->_defaultTable,
+				$results[$defaultAlias]
+			);
+		}
 		unset($presentAliases[$defaultAlias]);
-		$results[$defaultAlias] = $this->_castValues(
-			$this->_defaultTable,
-			$results[$defaultAlias]
-		);
 
 		$options = [
 			'useSetters' => false,
@@ -390,7 +392,6 @@ class ResultSet implements ResultSetInterface {
 			$alias = $assoc['nestKey'];
 			$instance = $assoc['instance'];
 
-			// Doing this before we're sure the root assoc has data is the problem.
 			if (!isset($results[$alias])) {
 				$results = $instance->defaultRowValue($results, $assoc['canBeJoined']);
 				continue;

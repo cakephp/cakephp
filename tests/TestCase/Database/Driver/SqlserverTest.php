@@ -210,4 +210,32 @@ class SqlserverTest extends TestCase {
 		$this->assertEquals($expected, $query->sql());
 	}
 
+/**
+ * Test that insert queries have results available to them.
+ *
+ * @return void
+ */
+	public function testInsertUsesOutput() {
+		$driver = $this->getMock(
+			'Cake\Database\Driver\Sqlserver',
+			['_connect', 'connection'],
+			[[]]
+		);
+		$connection = $this->getMock(
+			'\Cake\Database\Connection',
+			['connect', 'driver'],
+			[['log' => false]]
+		);
+		$connection
+			->expects($this->any())
+			->method('driver')
+			->will($this->returnValue($driver));
+		$query = new \Cake\Database\Query($connection);
+		$query->insert(['title'])
+			->into('articles')
+			->values(['title' => 'A new article']);
+		$expected = 'INSERT INTO articles (title) OUTPUT INSERTED.* VALUES (:c0)';
+		$this->assertEquals($expected, $query->sql());
+	}
+
 }

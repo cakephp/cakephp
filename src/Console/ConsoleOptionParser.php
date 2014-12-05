@@ -127,7 +127,7 @@ class ConsoleOptionParser {
 /**
  * Construct an OptionParser so you can define its behavior
  *
- * @param string $command The command name this parser is for. The command name is used for generating help.
+ * @param string|null $command The command name this parser is for. The command name is used for generating help.
  * @param bool $defaultOptions Whether you want the verbose and quiet options set. Setting
  *  this to false will prevent the addition of `--verbose` & `--quiet` options.
  */
@@ -156,7 +156,7 @@ class ConsoleOptionParser {
 /**
  * Static factory method for creating new OptionParsers so you can chain methods off of them.
  *
- * @param string $command The command name this parser is for. The command name is used for generating help.
+ * @param string|null $command The command name this parser is for. The command name is used for generating help.
  * @param bool $defaultOptions Whether you want the verbose and quiet options set.
  * @return ConsoleOptionParser
  */
@@ -184,10 +184,11 @@ class ConsoleOptionParser {
  * }}}
  *
  * @param array $spec The spec to build the OptionParser with.
+ * @param bool $defaultOptions Whether you want the verbose and quiet options set.
  * @return ConsoleOptionParser
  */
-	public static function buildFromArray($spec) {
-		$parser = new ConsoleOptionParser($spec['command']);
+	public static function buildFromArray($spec, $defaultOptions = true) {
+		$parser = new ConsoleOptionParser($spec['command'], $defaultOptions);
 		if (!empty($spec['arguments'])) {
 			$parser->addArguments($spec['arguments']);
 		}
@@ -207,9 +208,54 @@ class ConsoleOptionParser {
 	}
 
 /**
+ * Returns an array representation of this parser.
+ *
+ * @return array
+ */
+	public function toArray() {
+		$result = [
+			'command' => $this->_command,
+			'arguments' => $this->_args,
+			'options' => $this->_options,
+			'subcommands' => $this->_subcommands,
+			'description' => $this->_description,
+			'epilog' => $this->_epilog
+		];
+		return $result;
+	}
+
+/**
  * Get or set the command name for shell/task.
  *
- * @param string $text The text to set, or null if you want to read
+ * @param array|\Cake\Console\ConsoleOptionParser $spec ConsoleOptionParser or spec to merge with.
+ * @return $this
+ */
+	public function merge($spec) {
+		if ($spec instanceof ConsoleOptionParser) {
+			$spec = $spec->toArray();
+		}
+		if (!empty($spec['arguments'])) {
+			$this->addArguments($spec['arguments']);
+		}
+		if (!empty($spec['options'])) {
+			$this->addOptions($spec['options']);
+		}
+		if (!empty($spec['subcommands'])) {
+			$this->addSubcommands($spec['subcommands']);
+		}
+		if (!empty($spec['description'])) {
+			$this->description($spec['description']);
+		}
+		if (!empty($spec['epilog'])) {
+			$this->epilog($spec['epilog']);
+		}
+		return $this;
+	}
+
+/**
+ * Gets or sets the command name for shell/task.
+ *
+ * @param string|null $text The text to set, or null if you want to read
  * @return string|$this If reading, the value of the command. If setting $this will be returned.
  */
 	public function command($text = null) {
@@ -223,8 +269,8 @@ class ConsoleOptionParser {
 /**
  * Get or set the description text for shell/task.
  *
- * @param string|array $text The text to set, or null if you want to read. If an array the
- *   text will be imploded with "\n"
+ * @param string|array|null $text The text to set, or null if you want to read. If an array the
+ *   text will be imploded with "\n".
  * @return string|$this If reading, the value of the description. If setting $this will be returned.
  */
 	public function description($text = null) {
@@ -242,7 +288,8 @@ class ConsoleOptionParser {
  * Get or set an epilog to the parser. The epilog is added to the end of
  * the options and arguments listing when help is generated.
  *
- * @param string|array $text Text when setting or null when reading. If an array the text will be imploded with "\n"
+ * @param string|array|null $text Text when setting or null when reading. If an array the text will
+ *   be imploded with "\n".
  * @return string|$this If reading, the value of the epilog. If setting $this will be returned.
  */
 	public function epilog($text = null) {
@@ -279,7 +326,7 @@ class ConsoleOptionParser {
  * @return $this
  */
 	public function addOption($name, $options = []) {
-		if (is_object($name) && $name instanceof ConsoleInputOption) {
+		if ($name instanceof ConsoleInputOption) {
 			$option = $name;
 			$name = $option->name();
 		} else {
@@ -325,12 +372,13 @@ class ConsoleOptionParser {
  * - `choices` A list of valid choices for this argument. If left empty all values are valid..
  *   An exception will be raised when parse() encounters an invalid value.
  *
- * @param ConsoleInputArgument|string $name The name of the argument. Will also accept an instance of ConsoleInputArgument
+ * @param \Cake\Console\ConsoleInputArgument|string $name The name of the argument.
+ *   Will also accept an instance of ConsoleInputArgument.
  * @param array $params Parameters for the argument, see above.
  * @return $this
  */
 	public function addArgument($name, $params = []) {
-		if (is_object($name) && $name instanceof ConsoleInputArgument) {
+		if ($name instanceof ConsoleInputArgument) {
 			$arg = $name;
 			$index = count($this->_args);
 		} else {
@@ -345,6 +393,11 @@ class ConsoleOptionParser {
 			$index = $options['index'];
 			unset($options['index']);
 			$arg = new ConsoleInputArgument($options);
+		}
+		foreach ($this->_args as $k => $a) {
+			if ($a->isEqualTo($arg)) {
+				return $this;
+			}
 		}
 		$this->_args[$index] = $arg;
 		ksort($this->_args);
@@ -361,6 +414,10 @@ class ConsoleOptionParser {
  */
 	public function addArguments(array $args) {
 		foreach ($args as $name => $params) {
+			if ($params instanceof ConsoleInputArgument) {
+				$name = $params;
+				$params = [];
+			}
 			$this->addArgument($name, $params);
 		}
 		return $this;
@@ -376,6 +433,10 @@ class ConsoleOptionParser {
  */
 	public function addOptions(array $options) {
 		foreach ($options as $name => $params) {
+			if ($params instanceof ConsoleInputOption) {
+				$name = $params;
+				$params = [];
+			}
 			$this->addOption($name, $params);
 		}
 		return $this;
@@ -397,7 +458,7 @@ class ConsoleOptionParser {
  * @return $this
  */
 	public function addSubcommand($name, $options = []) {
-		if (is_object($name) && $name instanceof ConsoleInputSubcommand) {
+		if ($name instanceof ConsoleInputSubcommand) {
 			$command = $name;
 			$name = $command->name();
 		} else {
@@ -432,6 +493,10 @@ class ConsoleOptionParser {
  */
 	public function addSubcommands(array $commands) {
 		foreach ($commands as $name => $params) {
+			if ($params instanceof ConsoleInputSubcommand) {
+				$name = $params;
+				$params = [];
+			}
 			$this->addSubcommand($name, $params);
 		}
 		return $this;
@@ -536,10 +601,12 @@ class ConsoleOptionParser {
 			$subparser->command($this->command() . ' ' . $subparser->command());
 			return $subparser->help(null, $format, $width);
 		}
+
 		$formatter = new HelpFormatter($this);
-		if ($format === 'text' || $format === true) {
+		if ($format === 'text') {
 			return $formatter->text($width);
-		} elseif ($format === 'xml') {
+		}
+		if ($format === 'xml') {
 			return $formatter->xml();
 		}
 	}

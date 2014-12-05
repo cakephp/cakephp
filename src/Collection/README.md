@@ -15,7 +15,7 @@ $collection = new Collection($items);
 
 // Create a new collection containing elements
 // with a value greater than one.
-$overOne = $collection->filter(function($value, $key, $iterator) {
+$overOne = $collection->filter(function ($value, $key, $iterator) {
     return $value > 1;
 });
 ```

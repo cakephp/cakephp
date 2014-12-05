@@ -53,7 +53,7 @@ class PluginTask extends BakeTask {
 /**
  * Execution method always used for tasks
  *
- * @param string $name The name of the plugin to bake.
+ * @param string|null $name The name of the plugin to bake.
  * @return void
  */
 	public function main($name = null) {
@@ -85,7 +85,6 @@ class PluginTask extends BakeTask {
 		if (count($pathOptions) > 1) {
 			$this->findPath($pathOptions);
 		}
-		$this->hr();
 		$this->out(sprintf("<info>Plugin Name:</info> %s", $plugin));
 		$this->out(sprintf("<info>Plugin Directory:</info> %s", $this->path . $plugin));
 		$this->hr();
@@ -323,7 +322,7 @@ class PluginTask extends BakeTask {
 		)->addArgument('name', [
 			'help' => 'CamelCased name of the plugin to create.'
 		])->addOption('composer', [
-			'default' => ROOT . '/composer.phar',
+			'default' => ROOT . DS . 'composer.phar',
 			'help' => 'The path to the composer executable.'
 		])->removeOption('plugin');
 

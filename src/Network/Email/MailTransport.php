@@ -59,7 +59,7 @@ class MailTransport extends AbstractTransport {
  * @param string $subject email's subject
  * @param string $message email's body
  * @param string $headers email's custom headers
- * @param string $params additional params for sending email
+ * @param string|null $params additional params for sending email
  * @throws \Cake\Network\Exception\SocketException if mail could not be sent
  * @return void
  */

@@ -417,6 +417,7 @@ class RequestHandlerComponent extends Component {
 		$request = $this->request;
 		if (!$request->is('post') &&
 			!$request->is('put') &&
+			!$request->is('patch') &&
 			!$request->is('delete')
 		) {
 			return null;
@@ -663,8 +664,8 @@ class RequestHandlerComponent extends Component {
 /**
  * Getter/setter for viewClassMap
  *
- * @param array|string $type The type string or array with format `array('type' => 'viewClass')` to map one or more
- * @param array $viewClass The viewClass to be used for the type without `View` appended
+ * @param array|string|null $type The type string or array with format `array('type' => 'viewClass')` to map one or more
+ * @param array|null $viewClass The viewClass to be used for the type without `View` appended
  * @return array|string Returns viewClass when only string $type is set, else array with viewClassMap
  */
 	public function viewClassMap($type = null, $viewClass = null) {

@@ -48,6 +48,7 @@ class TemplateTask extends Shell {
  * Get view instance
  *
  * @return \Cake\View\View
+ * @triggers Bake.initialize $view
  */
 	public function getView() {
 		if ($this->View) {
@@ -72,7 +73,7 @@ class TemplateTask extends Shell {
  * Runs the template
  *
  * @param string $template bake template to render
- * @param array $vars Additional vars to set to template scope.
+ * @param array|null $vars Additional vars to set to template scope.
  * @return string contents of generated code template
  */
 	public function generate($template, $vars = null) {

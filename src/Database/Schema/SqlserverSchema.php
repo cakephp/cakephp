@@ -63,9 +63,9 @@ class SqlserverSchema extends BaseSchema {
  * Cake\Database\Type can handle.
  *
  * @param string $col The column type
- * @param int $length the column length
- * @param int $precision The column precision
- * @param int $scale The column scale
+ * @param int|null $length the column length
+ * @param int|null $precision The column precision
+ * @param int|null $scale The column scale
  * @return array Array of column information.
  * @link http://technet.microsoft.com/en-us/library/ms187752.aspx
  */

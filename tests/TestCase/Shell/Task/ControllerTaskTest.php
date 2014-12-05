@@ -21,6 +21,7 @@ use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Shell\Task\ControllerTask;
 use Cake\Shell\Task\TemplateTask;
+use Cake\TestSuite\StringCompareTrait;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper;
 
@@ -43,6 +44,8 @@ class BakeArticlesTable extends Table {
  */
 class ControllerTaskTest extends TestCase {
 
+	use StringCompareTrait;
+
 /**
  * fixtures
  *
@@ -57,7 +60,7 @@ class ControllerTaskTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-
+		$this->_compareBasePath = CORE_TESTS . 'bake_compare' . DS . 'Controller' . DS;
 		$io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 		$this->Task = $this->getMock('Cake\Shell\Task\ControllerTask',
 			array('in', 'out', 'err', 'hr', 'createFile', '_stop'),
@@ -139,6 +142,23 @@ class ControllerTaskTest extends TestCase {
 	}
 
 /**
+ * test bake with various component name variants
+ *
+ * @return void
+ */
+	public function testBakeComponents() {
+		$this->Task->expects($this->any())
+			->method('createFile')
+			->will($this->returnValue(true));
+
+		$this->Task->params['no-actions'] = true;
+		$this->Task->params['components'] = 'Csrf, Auth, Company/TestPluginThree.Something, TestPlugin.Other, Apple, NonExistent';
+
+		$result = $this->Task->bake('BakeArticles');
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
+	}
+
+/**
  * test the bake method
  *
  * @return void
@@ -153,8 +173,7 @@ class ControllerTaskTest extends TestCase {
 		$this->Task->params['components'] = 'Csrf, Auth';
 
 		$result = $this->Task->bake('BakeArticles');
-		$expected = file_get_contents(CORE_TESTS . '/bake_compare/Controller/NoActions.ctp');
-		$this->assertTextEquals($expected, $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -174,12 +193,7 @@ class ControllerTaskTest extends TestCase {
 				$this->stringContains('class BakeArticlesController')
 			);
 		$result = $this->Task->bake('BakeArticles');
-
-		$this->assertTextContains('public function add(', $result);
-		$this->assertTextContains('public function index(', $result);
-		$this->assertTextContains('public function view(', $result);
-		$this->assertTextContains('public function edit(', $result);
-		$this->assertTextContains('public function delete(', $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**
@@ -223,8 +237,7 @@ class ControllerTaskTest extends TestCase {
 			)->will($this->returnValue(true));
 
 		$result = $this->Task->bake('BakeArticles');
-		$this->assertContains('namespace ControllerTest\Controller;', $result);
-		$this->assertContains('use ControllerTest\Controller\AppController;', $result);
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 		Plugin::unload();
 	}
 
@@ -235,9 +248,8 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testBakeActionsContent() {
-		$result = $this->Task->bakeActions('BakeArticles');
-		$expected = file_get_contents(CORE_TESTS . 'bake_compare/Controller/Actions.ctp');
-		$this->assertTextEquals($expected, $result);
+		$result = $this->Task->bake('BakeArticles');
+		$this->assertSameAsFile(__FUNCTION__ . '.php', $result);
 	}
 
 /**

@@ -128,7 +128,7 @@ class Validation {
  *    if an array is used only the values of the array are checked.
  *    Example: array('amex', 'bankcard', 'maestro')
  * @param bool $deep set to true this will check the Luhn algorithm of the credit card.
- * @param string $regex A custom regex can also be passed, this will be used instead of the defined regex values
+ * @param string|null $regex A custom regex can also be passed, this will be used instead of the defined regex values
  * @return bool Success
  * @see Validation::luhn()
  */
@@ -259,7 +259,7 @@ class Validation {
  *
  * @param string|array $check When used as a string, $regex must also be a valid regular expression.
  *    As and array: array('check' => value, 'regex' => 'valid regular expression')
- * @param string $regex If $check is passed as a string, $regex must also be set to valid regular expression
+ * @param string|null $regex If $check is passed as a string, $regex must also be set to valid regular expression
  * @return bool Success
  */
 	public static function custom($check, $regex = null) {
@@ -294,7 +294,7 @@ class Validation {
  * @param string|\DateTime $check a valid date string/object
  * @param string|array $format Use a string or an array of the keys above.
  *    Arrays should be passed as array('dmy', 'mdy', etc)
- * @param string $regex If a custom regular expression is used this is the only validation that will occur.
+ * @param string|null $regex If a custom regular expression is used this is the only validation that will occur.
  * @return bool Success
  */
 	public static function date($check, $format = 'ymd', $regex = null) {
@@ -350,7 +350,7 @@ class Validation {
  *
  * @param string|\DateTime $check Value to check
  * @param string|array $dateFormat Format of the date part. See Validation::date for more information.
- * @param string $regex Regex for the date part. If a custom regular expression is used this is the only validation that will occur.
+ * @param string|null $regex Regex for the date part. If a custom regular expression is used this is the only validation that will occur.
  * @return bool True if the value is valid, false otherwise
  * @see Validation::date
  * @see Validation::time
@@ -406,7 +406,7 @@ class Validation {
  *
  * @param float $check The value the test for decimal.
  * @param int $places Decimal places.
- * @param string $regex If a custom regular expression is used, this is the only validation that will occur.
+ * @param string|null $regex If a custom regular expression is used, this is the only validation that will occur.
  * @return bool Success
  */
 	public static function decimal($check, $places = null, $regex = null) {
@@ -637,9 +637,10 @@ class Validation {
  * Checks that a value is a valid phone number.
  *
  * @param string|array $check Value to check (string or array)
- * @param string $regex Regular expression to use
+ * @param string|null $regex Regular expression to use
  * @param string $country Country code (defaults to 'all')
  * @return bool Success
+ * @deprecated 3.0.0 Will be removed in 3.0.0. Please use the Localized plugin instead.
  */
 	public static function phone($check, $regex = null, $country = 'all') {
 		if (is_array($check)) {
@@ -679,9 +680,10 @@ class Validation {
  * Checks that a given value is a valid postal code.
  *
  * @param string|array $check Value to check
- * @param string $regex Regular expression to use
+ * @param string|null $regex Regular expression to use
  * @param string $country Country to use for formatting
  * @return bool Success
+ * @deprecated 3.0.0 Will be removed in 3.0.0. Please use the Localized plugin instead.
  */
 	public static function postal($check, $regex = null, $country = 'us') {
 		if (is_array($check)) {
@@ -722,8 +724,8 @@ class Validation {
  * legal finite on this platform.
  *
  * @param string $check Value to check
- * @param int|float $lower Lower limit
- * @param int|float $upper Upper limit
+ * @param int|float|null $lower Lower limit
+ * @param int|float|null $upper Upper limit
  * @return bool Success
  */
 	public static function range($check, $lower = null, $upper = null) {
@@ -788,7 +790,7 @@ class Validation {
  * @param string|array $check value that will be validated in user-defined methods.
  * @param object $object class that holds validation method
  * @param string $method class method name for validation to run
- * @param array $args arguments to send to method
+ * @param array|null $args arguments to send to method
  * @return mixed user-defined class class method returns
  */
 	public static function userDefined($check, $object, $method, $args = null) {
@@ -921,8 +923,8 @@ class Validation {
  * Checks the filesize
  *
  * @param string|array $check Value to check.
- * @param string $operator See `Validation::comparison()`.
- * @param int|string $size Size in bytes or human readable string like '5MB'.
+ * @param string|null $operator See `Validation::comparison()`.
+ * @param int|string|null $size Size in bytes or human readable string like '5MB'.
  * @return bool Success
  */
 	public static function fileSize($check, $operator = null, $size = null) {

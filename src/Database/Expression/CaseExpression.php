@@ -138,7 +138,7 @@ class CaseExpression implements ExpressionInterface {
 /**
  * Sets the default value
  *
- * @param string|ExpressionInterface|array $value Value to set
+ * @param \Cake\Database\ExpressionInterface|string|array|null $value Value to set
  * @param string $type Type of value
  *
  * @return void
@@ -157,7 +157,7 @@ class CaseExpression implements ExpressionInterface {
 /**
  * Compiles the relevant parts into sql
  *
- * @param array|string|ExpressionInterface $part The part to compile
+ * @param array|string|\Cake\Database\ExpressionInterface $part The part to compile
  * @param ValueBinder $generator Sql generator
  *
  * @return string

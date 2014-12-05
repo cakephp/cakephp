@@ -66,7 +66,7 @@ trait StaticConfigTrait {
  *
  * @param string|array $key The name of the configuration, or an array of multiple configs.
  * @param array $config An array of name => configuration data for adapter.
- * @return mixed null when adding configuration and an array of configuration data when reading.
+ * @return array|null Null when adding configuration or an array of configuration data when reading.
  * @throws \BadMethodCallException When trying to modify an existing config.
  */
 	public static function config($key, $config = null) {
@@ -112,7 +112,7 @@ trait StaticConfigTrait {
  * will also be unloaded from the registry.
  *
  * @param string $config An existing configuration you wish to remove.
- * @return bool success of the removal, returns false when the config does not exist.
+ * @return bool Success of the removal, returns false when the config does not exist.
  */
 	public static function drop($config) {
 		if (!isset(static::$_config[$config])) {
@@ -230,13 +230,13 @@ trait StaticConfigTrait {
 	}
 
 /**
- * return or update the dsn class map for this class
+ * Returns or updates the DSN class map for this class
  *
- * @param array|null $map additions/edits to the class map to apply
+ * @param array|null $map Additions/edits to the class map to apply
  * @return array
  */
-	public static function dsnClassMap($map = null) {
-		if ($map) {
+	public static function dsnClassMap(array $map = null) {
+		if ($map !== null) {
 			static::$_dsnClassMap = $map + static::$_dsnClassMap;
 		}
 		return static::$_dsnClassMap;

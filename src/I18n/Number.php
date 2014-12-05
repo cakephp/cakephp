@@ -21,7 +21,7 @@ use NumberFormatter;
  *
  * Methods to make numbers more readable.
  *
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html
+ * @link http://book.cakephp.org/3.0/en/core-libraries/number.html
  */
 class Number {
 
@@ -42,13 +42,18 @@ class Number {
 /**
  * Formats a number with a level of precision.
  *
+ * Options:
+ *
+ * - `locale`: The locale name to use for formatting the number, e.g. fr_FR
+ *
  * @param float $value A floating point number.
  * @param int $precision The precision of the returned number.
+ * @param array $options Additional options
  * @return string Formatted float.
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::precision
+ * @link http://book.cakephp.org/3.0/en/core-libraries/number.html#formatting-floating-point-numbers
  */
-	public static function precision($value, $precision = 3) {
-		$formatter = static::formatter(['precision' => $precision, 'places' => $precision]);
+	public static function precision($value, $precision = 3, array $options = []) {
+		$formatter = static::formatter(['precision' => $precision, 'places' => $precision] + $options);
 		return $formatter->format($value);
 	}
 
@@ -57,7 +62,7 @@ class Number {
  *
  * @param int $size Size in bytes
  * @return string Human readable size
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::toReadableSize
+ * @link http://book.cakephp.org/3.0/en/core-libraries/number.html#interacting-with-human-readable-values
  */
 	public static function toReadableSize($size) {
 		switch (true) {
@@ -80,19 +85,20 @@ class Number {
  * Options:
  *
  * - `multiply`: Multiply the input value by 100 for decimal percentages.
+ * - `locale`: The locale name to use for formatting the number, e.g. fr_FR
  *
  * @param float $value A floating point number
  * @param int $precision The precision of the returned number
  * @param array $options Options
  * @return string Percentage string
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::toPercentage
+ * @link http://book.cakephp.org/3.0/en/core-libraries/number.html#formatting-percentages
  */
 	public static function toPercentage($value, $precision = 2, array $options = array()) {
 		$options += array('multiply' => false);
 		if ($options['multiply']) {
 			$value *= 100;
 		}
-		return static::precision($value, $precision) . '%';
+		return static::precision($value, $precision, $options) . '%';
 	}
 
 /**
@@ -159,7 +165,7 @@ class Number {
  *   currency code.
  *
  * @param float $value Value to format.
- * @param string $currency International currency name such as 'USD', 'EUR', 'JPY', 'CAD'
+ * @param string|null $currency International currency name such as 'USD', 'EUR', 'JPY', 'CAD'
  * @param array $options Options list.
  * @return string Number formatted as a currency.
  */
@@ -187,7 +193,7 @@ class Number {
 /**
  * Getter/setter for default currency
  *
- * @param string|bool $currency Default currency string to be used by currency()
+ * @param string|bool|null $currency Default currency string to be used by currency()
  * if $currency argument is not provided. If boolean false is passed, it will clear the
  * currently stored value
  * @return string Currency

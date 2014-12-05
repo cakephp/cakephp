@@ -147,7 +147,7 @@ class Debugger {
 /**
  * Returns a reference to the Debugger singleton object instance.
  *
- * @param string $class Class name.
+ * @param string|null $class Class name.
  * @return object
  */
 	public static function getInstance($class = null) {
@@ -184,7 +184,6 @@ class Debugger {
  * @param int|string $level type of log to use. Defaults to 'debug'
  * @param int $depth The depth to output to. Defaults to 3.
  * @return void
- * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::log
  */
 	public static function log($var, $level = 'debug', $depth = 3) {
 		$source = static::trace(array('start' => 1)) . "\n";
@@ -196,9 +195,9 @@ class Debugger {
  *
  * @param int $code Code of error
  * @param string $description Error description
- * @param string $file File on which error occurred
- * @param int $line Line that triggered the error
- * @param array $context Context
+ * @param string|null $file File on which error occurred
+ * @param int|null $line Line that triggered the error
+ * @param array|null $context Context
  * @return bool true if error was handled
  * @deprecated 3.0.0 Will be removed in 3.0. This function is superseded by Debugger::outputError().
  */
@@ -403,7 +402,8 @@ class Debugger {
 		if (!isset($data[$line])) {
 			return $lines;
 		}
-		for ($i = $line - ($context + 1); $i < $line + $context; $i++) {
+		$line = $line - 1;
+		for ($i = $line - $context; $i < $line + $context + 1; $i++) {
 			if (!isset($data[$i])) {
 				continue;
 			}
@@ -436,7 +436,7 @@ class Debugger {
 		$highlight = highlight_string($str, true);
 		if ($added) {
 			$highlight = str_replace(
-				'&lt;?php&nbsp;<br />',
+				['&lt;?php&nbsp;<br/>', '&lt;?php&nbsp;<br />'],
 				'',
 				$highlight
 			);
@@ -610,7 +610,7 @@ class Debugger {
 /**
  * Get/Set the output format for Debugger error rendering.
  *
- * @param string $format The format you want errors to be output as.
+ * @param string|null $format The format you want errors to be output as.
  *   Leave null to get the current format.
  * @return mixed Returns null when setting. Returns the current format when getting.
  * @throws \InvalidArgumentException when choosing a format that doesn't exist.

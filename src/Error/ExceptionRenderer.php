@@ -23,6 +23,7 @@ use Cake\Event\Event;
 use Cake\Network\Exception\HttpException;
 use Cake\Network\Request;
 use Cake\Network\Response;
+use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingTemplateException;
@@ -94,6 +95,7 @@ class ExceptionRenderer {
  * a bare controller will be used.
  *
  * @return \Cake\Controller\Controller
+ * @triggers Controller.startup $controller
  */
 	protected function _getController() {
 		if (!$request = Router::getRequest(true)) {
@@ -165,6 +167,7 @@ class ExceptionRenderer {
  */
 	protected function _customMethod($method, $exception) {
 		$result = call_user_func([$this, $method], $exception);
+		$this->_shutdown();
 		if (is_string($result)) {
 			$this->controller->response->body($result);
 			$result = $this->controller->response;
@@ -267,9 +270,7 @@ class ExceptionRenderer {
 	protected function _outputMessage($template) {
 		try {
 			$this->controller->render($template);
-			$event = new Event('Controller.shutdown', $this->controller);
-			$this->controller->afterFilter($event);
-			return $this->controller->response;
+			return $this->_shutdown();
 		} catch (MissingTemplateException $e) {
 			$attributes = $e->getAttributes();
 			if (isset($attributes['file']) && strpos($attributes['file'], 'error500') !== false) {
@@ -305,6 +306,24 @@ class ExceptionRenderer {
 		$this->controller->response->body($view->render($template, 'error'));
 		$this->controller->response->type('html');
 		return $this->controller->response;
+	}
+
+/**
+ * Run the shutdown events.
+ *
+ * Triggers the afterFilter and afterDispatch events.
+ *
+ * @return \Cake\Network\Response The response to serve.
+ */
+	protected function _shutdown() {
+		$this->controller->dispatchEvent('Controller.shutdown');
+		$dispatcher = DispatcherFactory::create();
+		$args = [
+			'request' => $this->controller->request,
+			'response' => $this->controller->response
+		];
+		$result = $dispatcher->dispatchEvent('Dispatcher.afterDispatch', $args);
+		return $result->data['response'];
 	}
 
 }

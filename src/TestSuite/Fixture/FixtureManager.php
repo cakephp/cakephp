@@ -259,11 +259,18 @@ class FixtureManager {
 		$dbs = $this->_fixtureConnections($fixtures);
 		foreach ($dbs as $connection => $fixtures) {
 			$db = ConnectionManager::get($connection, false);
+			$logQueries = $db->logQueries();
+			if ($logQueries) {
+				$db->logQueries(false);
+			}
 			$db->transactional(function ($db) use ($fixtures, $operation) {
 				$db->disableForeignKeys();
 				$operation($db, $fixtures);
 				$db->enableForeignKeys();
 			});
+			if ($logQueries) {
+				$db->logQueries(true);
+			}
 		}
 	}
 

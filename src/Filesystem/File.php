@@ -136,7 +136,7 @@ class File {
 /**
  * Return the contents of this file as a string.
  *
- * @param string $bytes where to start
+ * @param string|bool $bytes where to start
  * @param string $mode A `fread` compatible mode.
  * @param bool $force If true then the file will be re-opened even if its already opened, otherwise it won't
  * @return mixed string on success, false on failure
@@ -333,9 +333,9 @@ class File {
 /**
  * Makes file name safe for saving
  *
- * @param string $name The name of the file to make safe if different from $this->name
- * @param string $ext The name of the extension to make safe if different from $this->ext
- * @return string ext The extension of the file
+ * @param string|null $name The name of the file to make safe if different from $this->name
+ * @param string|null $ext The name of the extension to make safe if different from $this->ext
+ * @return string The extension of the file
  */
 	public function safe($name = null, $ext = null) {
 		if (!$name) {

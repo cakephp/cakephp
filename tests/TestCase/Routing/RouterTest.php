@@ -804,7 +804,6 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testUrlGenerationWithPrefix() {
-		Configure::write('Routing.prefixes', array('admin'));
 		Router::reload();
 
 		Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
@@ -993,6 +992,26 @@ class RouterTest extends TestCase {
 		});
 		$result = Router::url(['prefix' => 'admin', 'plugin' => 'MyPlugin', 'controller' => 'Forms', 'action' => 'edit', 2]);
 		$expected = '/admin/my_plugin/forms/edit/2';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test URL generation with multiple prefixes.
+ *
+ * @return void
+ */
+	public function testUrlGenerationMultiplePrefixes() {
+		Router::prefix('admin', function ($routes) {
+			$routes->prefix('backoffice', function ($routes) {
+				$routes->fallbacks();
+			});
+		});
+		$result = Router::url([
+			'prefix' => 'admin/backoffice',
+			'controller' => 'Dashboards',
+			'action' => 'home'
+		]);
+		$expected = '/admin/backoffice/dashboards/home';
 		$this->assertEquals($expected, $result);
 	}
 

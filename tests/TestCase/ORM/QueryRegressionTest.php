@@ -80,6 +80,20 @@ class QueryRegressionTest extends TestCase {
 	}
 
 /**
+ * Tests that eagerloading belongsToMany with find list fails with a helpful message.
+ *
+ * @expectedException \RuntimeException
+ * @return void
+ */
+	public function testEagerLoadingBelongsToManyList() {
+		$table = TableRegistry::get('Articles');
+		$table->belongsToMany('Tags', [
+			'finder' => 'list'
+		]);
+		$table->find()->contain('Tags')->toArray();
+	}
+
+/**
  * Tests that duplicate aliases in contain() can be used, even when they would
  * naturally be attached to the query instead of eagerly loaded. What should
  * happen here is that One of the duplicates will be changed to be loaded using
@@ -533,6 +547,20 @@ class QueryRegressionTest extends TestCase {
 		$query2 = $table->find()->where(['id' => 2]);
 		$query->union($query2);
 		$this->assertEquals(2, $query->count());
+	}
+
+/**
+ * Integration test when selecting no fields on the primary table.
+ *
+ * @return void
+ */
+	public function testSelectNoFieldsOnPrimaryAlias() {
+		$table = TableRegistry::get('Articles');
+		$table->belongsTo('Users');
+		$query = $table->find()
+			->select(['Users__id' => 'id']);
+		$results = $query->toArray();
+		$this->assertCount(3, $results);
 	}
 
 }
