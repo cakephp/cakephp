@@ -20,15 +20,19 @@ use Cake\Error\Debugger;
 <?php foreach ($error->getTrace() as $i => $stack): ?>
 	<?php $class = (isset($stack['file']) && strpos(APP, $stack['file']) === false) ? 'vendor-frame' : 'app-frame'; ?>
 	<li class="stack-frame <?= $class ?>">
-	<?php if (isset($stack['file']) && isset($stack['line'])): ?>
+	<?php if (isset($stack['function'])): ?>
 		<a href="#" data-target="stack-frame-<?= $i ?>">
-			<?php if (!isset($stack['class'])): ?>
-				<span class="stack-function">&rang; <?= h($stack['function']) ?></span>
+			<?php if (isset($stack['class'])): ?>
+				<span class="stack-function">&rang; <?= h($stack['class'] . $stack['type'] . $stack['function']) ?></span>
 			<?php else: ?>
-				<span class="stack-function">&rang; <?= h($stack['class']) ?>::<?= h($stack['function']) ?></span>
+				<span class="stack-function">&rang; <?= h($stack['function']) ?></span>
 			<?php endif; ?>
 			<span class="stack-file">
+			<?php if (isset($stack['file'], $stack['line'])): ?>
 				<?= h(Debugger::trimPath($stack['file'])) ?>, line <?= $stack['line'] ?>
+			<?php else: ?>
+				[internal function]
+			<?php endif ?>
 			</span>
 		</a>
 	<?php else: ?>
