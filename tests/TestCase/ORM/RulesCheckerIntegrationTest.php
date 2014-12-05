@@ -429,4 +429,25 @@ class RulesCheckerIntegrationTest extends TestCase {
 
 		$this->assertSame($entity, $table->save($entity));
 	}
+
+/**
+ * Tests that rules can be changed using the buildRules event
+ *
+ * @group save
+ * @return void
+ */
+	public function testUseBuildRulesEvent() {
+		$entity = new Entity([
+			'title' => 'An Article',
+			'author_id' => 500
+		]);
+
+		$table = TableRegistry::get('Articles');
+		$table->eventManager()->attach(function ($event, $rules) {
+			$rules->add($rules->existsIn('author_id', TableRegistry::get('Authors'), 'Nope'));
+		}, 'Model.buildRules');
+
+		$this->assertFalse($table->save($entity));
+	}
+
 }

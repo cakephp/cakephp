@@ -83,6 +83,9 @@ use RuntimeException;
  *   $primary parameter indicates whether or not this is the root query,
  *   or an associated query.
  *
+ *   - `buildRules(Event $event, RulesChecker $rules)`
+ *   Allows listeners to modify the rules checker by adding more rules.
+ *
  * - `beforeRules(Event $event, Entity $entity, RulesChecker $rules)`
  *   Fired before an entity is validated using the rules checker. By stopping this event,
  *   you can return the final value of the rules checking operation.
@@ -1876,7 +1879,9 @@ class Table implements RepositoryInterface, EventListenerInterface {
 		if ($this->_rulesChecker !== null) {
 			return $this->_rulesChecker;
 		}
-		return $this->_rulesChecker = $this->buildRules(new RulesChecker(['repository' => $this]));
+		$this->_rulesChecker = $this->buildRules(new RulesChecker(['repository' => $this]));
+		$this->dispatchEvent('Model.buildRules', ['rules' => $this->_rulesChecker]);
+		return $this->_rulesChecker;
 	}
 
 /**
