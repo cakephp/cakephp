@@ -53,8 +53,13 @@ use Cake\Event\EventListenerInterface;
  *   $primary parameter indicates whether or not this is the root query,
  *   or an associated query.
  *
+ * - `buildValidator(Event $event, Validator $validator, string $name)`
+ *   Fired when the validator object identified by $name is being built. Yiu can use this
+ *   callback to add validation rules or add validation providers.
+ *
  * - `buildRules(Event $event, RulesChecker $rules)`
- *   Allows listeners to modify the rules checker by adding more rules.
+ *   Fired when the rules checking object for the table is being built. You can use this
+ *   callback to add more rules to the set.
  *
  * - `beforeRules(Event $event, Entity $entity, RulesChecker $rules)`
  *   Fired before an entity is validated using the rules checker. By stopping this event,
@@ -243,6 +248,7 @@ class Behavior implements EventListenerInterface {
 			'Model.afterSave' => 'afterSave',
 			'Model.beforeDelete' => 'beforeDelete',
 			'Model.afterDelete' => 'afterDelete',
+			'Model.buildValidator' => 'buildValidator',
 			'Model.buildRules' => 'buildRules',
 			'Model.beforeRules' => 'beforeRules',
 			'Model.afterRules' => 'afterRules',
