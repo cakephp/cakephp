@@ -287,9 +287,25 @@ class CakeTestFixture {
 				$fields = array_unique($fields);
 				$default = array_fill_keys($fields, null);
 				foreach ($this->records as $record) {
-					$merge = array_values(array_merge($default, $record));
+                                        $merge_data = array_merge( $default, $record );
+					$merge = array_values( $temporal );                                        
 					if (count($fields) !== count($merge)) {
-						throw new CakeException('Fixture invalid: Count of fields does not match count of values in ' . get_class($this));
+
+                                                $merge_fields = array_keys( $merge_data );
+                                                $remove = array();
+                                                
+                                                foreach( $fields as $f ) {
+                                                    if( in_array( $f, $merge_fields ) ) {
+                                                        $remove[] = $f;
+                                                    }
+                                                }
+                                                $merge_fields = array_diff( $merge_fields, $remove );
+                                                $message = 'Fixture invalid: Count of fields does not match count of values in ' . get_class($this)."\n";
+                                                foreach( $merge_fields as $field ) {
+                                                    $message .= "The field '".$field."' is not in the fixture used in the schema."."\n";
+                                                }
+                                                
+                                                throw new CakeException( $message );
 					}
 					$values[] = $merge;
 				}
