@@ -3059,4 +3059,23 @@ class TableTest extends TestCase {
 		EventManager::instance()->detach($cb, 'Model.initialize');
 	}
 
+/**
+ * Tests that calling validator() trigger the buildValidator event
+ *
+ * @return void
+ */
+	public function testBuildValidatorEvent() {
+		$count = 0;
+		$cb = function ($event) use (&$count){
+			$count++;
+		};
+		EventManager::instance()->attach($cb, 'Model.buildValidator');
+		$articles = TableRegistry::get('Articles');
+		$articles->validator();
+		$this->assertEquals(1, $count, 'Callback should be called');
+
+		$articles->validator();
+		$this->assertEquals(1, $count, 'Callback should be called only once');
+	}
+
 }

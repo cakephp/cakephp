@@ -83,7 +83,10 @@ use RuntimeException;
  *   $primary parameter indicates whether or not this is the root query,
  *   or an associated query.
  *
- *   - `buildRules(Event $event, RulesChecker $rules)`
+ * - `buildValidator(Event $event, Validator $validator, string $name)`
+ *   Allows listeners to modify validation rules for the provided named validator.
+ *
+ * - `buildRules(Event $event, RulesChecker $rules)`
  *   Allows listeners to modify the rules checker by adding more rules.
  *
  * - `beforeRules(Event $event, Entity $entity, RulesChecker $rules)`
@@ -1064,6 +1067,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 		if ($validator === null) {
 			$validator = new Validator();
 			$validator = $this->{'validation' . ucfirst($name)}($validator);
+			$this->dispatchEvent('Model.buildValidator', compact('validator', 'name'));
 		}
 
 		$validator->provider('table', $this);
