@@ -291,7 +291,7 @@ class CakeTestFixture {
 					$merge = array_values( $mergeData );
 					if (count($fields) !== count($merge)) {
 
-						$mergeFields = array_keys( $merge_data );
+						$mergeFields = array_keys( $mergeData );
 						$remove = array();
 
 						foreach ($fields as $k => $f) {
@@ -301,7 +301,7 @@ class CakeTestFixture {
 							}
 						}
 						$mergeFields = array_diff( $mergeFields, $remove );
-						$message = 'Fixture invalid: Count of fields does not match count of values in ' . get_class($this)."\n";
+						$message = 'Fixture invalid: Count of fields does not match count of values in ' . get_class($this) . "\n";
 						foreach ($mergeFields as $field) {
 							$message .= "The field '" . $field . "' is in the data fixture but not in the schema." . "\n";
 						}
