@@ -288,7 +288,7 @@ class CakeTestFixture {
 				$default = array_fill_keys($fields, null);
 				foreach ($this->records as $record) {
                                         $merge_data = array_merge( $default, $record );
-					$merge = array_values( $temporal );                                        
+					$merge = array_values( $merge_data );                                        
 					if (count($fields) !== count($merge)) {
 
                                                 $merge_fields = array_keys( $merge_data );
