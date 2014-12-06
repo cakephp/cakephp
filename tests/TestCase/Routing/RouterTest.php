@@ -987,7 +987,7 @@ class RouterTest extends TestCase {
 	public function testUrlGenerationPrefixedPlugin() {
 		Router::prefix('admin', function ($routes) {
 			$routes->plugin('MyPlugin', function ($routes) {
-				$routes->fallbacks();
+				$routes->fallbacks('InflectedRoute');
 			});
 		});
 		$result = Router::url(['prefix' => 'admin', 'plugin' => 'MyPlugin', 'controller' => 'Forms', 'action' => 'edit', 2]);
@@ -1003,7 +1003,7 @@ class RouterTest extends TestCase {
 	public function testUrlGenerationMultiplePrefixes() {
 		Router::prefix('admin', function ($routes) {
 			$routes->prefix('backoffice', function ($routes) {
-				$routes->fallbacks();
+				$routes->fallbacks('InflectedRoute');
 			});
 		});
 		$result = Router::url([
@@ -1062,7 +1062,7 @@ class RouterTest extends TestCase {
 	public function testUrlGenerationWithExtensionInCurrentRequest() {
 		Router::extensions('rss');
 		Router::scope('/', function ($r) {
-			$r->fallbacks();
+			$r->fallbacks('InflectedRoute');
 		});
 		$request = new Request();
 		$request->addParams(['controller' => 'Tasks', 'action' => 'index', '_ext' => 'rss']);
@@ -2778,7 +2778,7 @@ class RouterTest extends TestCase {
  */
 	protected function _connectDefaultRoutes() {
 		Router::scope('/', function ($routes) {
-			$routes->fallbacks();
+			$routes->fallbacks('InflectedRoute');
 		});
 	}
 
