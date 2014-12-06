@@ -15,7 +15,7 @@
 namespace Cake\Utility;
 
 use Cake\Utility\Exception\XmlException;
-use \DOMDocument;
+use DOMDocument;
 
 /**
  * XML handling for CakePHP.

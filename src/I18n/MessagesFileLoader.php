@@ -18,7 +18,7 @@ use Aura\Intl\Package;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
-use \Locale;
+use Locale;
 
 /**
  * A generic translations package factory that will load translations files

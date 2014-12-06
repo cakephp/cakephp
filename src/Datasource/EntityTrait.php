@@ -16,7 +16,7 @@ namespace Cake\Datasource;
 
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
-use \Traversable;
+use Traversable;
 
 /**
  * An entity represents a single result row from a repository. It exposes the
