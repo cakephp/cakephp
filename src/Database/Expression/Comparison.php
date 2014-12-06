@@ -77,6 +77,7 @@ class Comparison implements ExpressionInterface, FieldInterface {
  * @deprecated 3.0.0 Will be removed in 3.0.0 stable. Use setValue() instead.
  */
 	public function value($value) {
+		trigger_error('value() has been deprecated. Use setValue() instead.', E_USER_WARNING);
 		return $this->setValue($value);
 	}
 

@@ -39,6 +39,7 @@ trait FieldTrait {
  * @deprecated 3.0.0 Will be removed in 3.0.0 stable. Use setField() instead.
  */
 	public function field($field) {
+		trigger_error('field() has been deprecated. Use setField() instead.', E_USER_WARNING);
 		$this->setField($field);
 	}
 
