@@ -71,6 +71,7 @@ class RulesCheckerIntegrationTest extends TestCase {
 		$this->assertTrue($entity->author->isNew());
 		$this->assertNull($entity->get('author_id'));
 		$this->assertNotEmpty($entity->author->errors('name'));
+		$this->assertEquals(['This is an error'], $entity->author->errors('name'));
 	}
 
 /**

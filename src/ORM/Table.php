@@ -1929,7 +1929,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 	}
 
 /**
- * Returns rules chaker object after modifying the one that was passed. Subclasses
+ * Returns rules checker object after modifying the one that was passed. Subclasses
  * can override this method in order to initialize the rules to be applied to
  * entities saved by this table.
  *
