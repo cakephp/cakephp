@@ -182,13 +182,13 @@ class IdentifierQuoter {
 	protected function _quoteComparison(FieldInterface $expression) {
 		$field = $expression->getField();
 		if (is_string($field)) {
-			$expression->field($this->_driver->quoteIdentifier($field));
+			$expression->setField($this->_driver->quoteIdentifier($field));
 		} elseif (is_array($field)) {
 			$quoted = [];
 			foreach ($field as $f) {
 				$quoted[] = $this->_driver->quoteIdentifier($f);
 			}
-			$expression->field($quoted);
+			$expression->setField($quoted);
 		} elseif ($field instanceof ExpressionInterface) {
 			$this->quoteExpression($field);
 		}

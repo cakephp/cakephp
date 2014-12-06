@@ -174,7 +174,7 @@ trait SqlDialectTrait {
 				$field = $condition->getField();
 				if (strpos($field, '.') !== false) {
 					list(, $field) = explode('.', $field);
-					$condition->field($field);
+					$condition->setField($field);
 				}
 				return $condition;
 			});
