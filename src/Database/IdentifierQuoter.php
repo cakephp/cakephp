@@ -227,9 +227,11 @@ class IdentifierQuoter {
  * @return void
  */
 	protected function _quoteIdentifierExpression(IdentifierExpression $expression) {
-		$expression->setIdentifier(
-			$this->_driver->quoteIdentifier($expression->getIdentifier())
-		);
+		if (is_string($expression->getIdentifier())) {
+			$expression->setIdentifier(
+				$this->_driver->quoteIdentifier($expression->getIdentifier())
+			);
+		}
 	}
 
 /**
@@ -239,8 +241,12 @@ class IdentifierQuoter {
  * @return void
  */
 	protected function _quoteTableNameExpression(TableNameExpression $expression) {
-		$expression->setName($this->_driver->quoteIdentifier($expression->getName()));
-		$expression->setQuoted();
+		if ($expression->isSnippet() === false) {
+			$expression->setValue(
+				$this->_driver->quoteIdentifier($expression->getValue())
+			);
+			$expression->setQuoted();
+		}
 
 		return $expression;
 	}

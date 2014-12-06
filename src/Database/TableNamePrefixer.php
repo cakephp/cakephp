@@ -86,10 +86,6 @@ class TableNamePrefixer {
 			return;
 		}
 
-		if ($expression instanceof UnaryExpression) {
-			$this->_prefixUnaryExpression($expression);
-		}
-
 		if ($expression instanceof IdentifierExpression) {
 			$this->_prefixIdentifierExpression($expression);
 		}
@@ -137,21 +133,6 @@ class TableNamePrefixer {
 	}
 
 /**
- * Prefix UnaryExpression object
- *
- * @param \Cake\Database\Expression\UnaryExpression $expression The expression to prefix
- * @return void
- */
-	protected function _prefixUnaryExpression(UnaryExpression $expression) {
-		$value = $expression->getValue();
-
-		if (is_string($value) && strpos($value, '.') !== false && $this->_query->hasTableName($value) === true) {
-			$value = $this->_query->connection()->fullFieldName($value, $this->_query->tablesNames);
-			$expression->value($value);
-		}
-	}
-
-/**
  * Prefix IdentifierExpression object
  *
  * @param \Cake\Database\Expression\IdentifierExpression $expression The expression to prefix
@@ -179,8 +160,10 @@ class TableNamePrefixer {
 				$condition = new TableNameExpression(
 					$condition,
 					$query->connection()->getPrefix(),
-					true,
-					$query->tablesNames
+					[
+						'snippet' => true, 'tablesNames' => $query->tablesNames,
+						'quoteStrings' => $this->_query->connection()->driver()->getQuoteStrings()
+					]
 				);
 			}
 			return $condition;

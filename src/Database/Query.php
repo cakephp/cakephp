@@ -1575,7 +1575,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	}
 
 /**
- * Checks wheter $name is or contain (e.g. 'table.field') a table name.
+ * Checks whether $name is or contain (e.g. 'table.field') a table name.
  *
  * @param string $name Table or field name or SQL snippet
  *
@@ -1583,8 +1583,21 @@ class Query implements ExpressionInterface, IteratorAggregate {
  */
 	public function hasTableName($name) {
 		if (is_string($name) && !empty($this->tablesNames)) {
-			$pattern = '/\b(?=(?:' . implode('|', $this->tablesNames) . ')\b)([\w-]+)(\.[\w-]+)/';
+			$lookAhead = implode('|', $this->tablesNames);
+			$wordPattern = '[\w-]+';
+			list($startQuote, $endQuote) = $this->_connection->driver()->getQuoteStrings();
 
+			if (strpos($name, $startQuote) === 0) {
+				$lookAhead = $startQuote . implode($endQuote . '|' . $startQuote, $this->tablesNames) . $endQuote;
+
+				if ($startQuote === $endQuote) {
+					$wordPattern = '[\w-' . $startQuote . ']+';
+				} else {
+					$wordPattern = '[\w-' . $startQuote . $endQuote . ']+';
+				}
+			}
+
+			$pattern = '/(?=(?:' . $lookAhead . '))(' . $wordPattern . ')(\.' . $wordPattern . ')/';
 			return isset($this->tablesNames[$name]) || preg_match_all($pattern, $name) > 0;
 		}
 

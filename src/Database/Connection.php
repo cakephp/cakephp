@@ -280,7 +280,8 @@ class Connection {
 		}
 
 		if ($this->_driver instanceof \Cake\Database\Driver && $this->_driver->autoQuoting()) {
-			$expression->setQuoted();
+//			$expression->setName($this->_driver->quoteIdentifier($expression->getName()));
+//			$expression->setQuoted();
 		}
 
 		return $expression;
@@ -302,30 +303,18 @@ class Connection {
 			if ($tablesNames === null) {
 				$field = new TableNameExpression($field, $prefix);
 			} else {
-				$field = new TableNameExpression($field, $prefix, true, $tablesNames);
+				$field = new TableNameExpression(
+					$field,
+					$prefix,
+					[
+						'snippet' => true, 'tablesNames' => $tablesNames,
+						'quoteStrings' => $this->driver()->getQuoteStrings()
+					]
+				);
 			}
 		}
 
 		return $field;
-	}
-
-/**
- * Apply the full table name on conditions string
- * Will replace string such as `articles.id` to `prefix_articles.id`
- *
- * @param string $condition Condition extracted from a QueryExpression
- * @param string $targets Table names that need to be prefixed
- * @return string
- */
-	public function applyFullTableName($condition, $targets) {
-		$prefix = $this->getPrefix();
-
-		if ($prefix !== '' && is_string($condition) && !empty($targets)) {
-			$pattern = '/\b(?=(?:' . implode('|', $targets) . ')\b)([\w-]+)(\.[\w-]+)/';
-			$condition = preg_replace($pattern, $prefix . "$1$2", $condition);
-		}
-
-		return $condition;
 	}
 
 /**

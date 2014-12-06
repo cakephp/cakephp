@@ -47,25 +47,23 @@ class TableNameExpression implements ExpressionInterface {
 	protected $_field = null;
 
 /**
- * Holds the lists of table names for the Query this expression is used in
+ * Holds the parameters needed by the Expression
+ * Params can be of the following :
+ *
+ * - `snippet` Bool that states whether the given $name is a SQL snippet or simply a table name.
+ * default to false
+ * - `tablesNames` Array of the tables names that are being used in the Query object this Expression
+ * belongs to
+ * - `quoted` Bool that states whether the current $_value is quoted or not
  *
  * @var array
  */
-	protected $_tablesNames = [];
-
-/**
- * Tells whether the current $_value is quoted or not
- *
- * @var bool
- */
-	protected $_quoted = false;
-
-/**
- * Tells whether the current $_value is a SQL snippet (as opposed to just a single table name)
- *
- * @var bool
- */
-	protected $_snippet = false;
+	protected $_params = [
+		'snippet' => false,
+		'tablesNames' => [],
+		'quoted' => false,
+		'quoteStrings' => ['', '']
+	];
 
 /**
  * Sets the table name this expression represents
@@ -73,7 +71,7 @@ class TableNameExpression implements ExpressionInterface {
  * @param string $name Name of the table
  * @return void
  */
-	public function setName($name) {
+	public function setValue($name) {
 		$this->_value = $name;
 	}
 
@@ -82,7 +80,7 @@ class TableNameExpression implements ExpressionInterface {
  *
  * @return string Table name this expression represents
  */
-	public function getName() {
+	public function getValue() {
 		return $this->_value;
 	}
 
@@ -105,26 +103,26 @@ class TableNameExpression implements ExpressionInterface {
 		return $this->_prefix;
 	}
 
+	public function isSnippet() {
+		return $this->_params['snippet'];
+	}
+
 /**
  * Constructor
  *
  * @param string $name Table name
  * @param string $prefix Prefix to prepend
- * @param bool $snippet Whether this expression represents a SQL snippet or just a table name (optionnaly with a prefix)
- * @param array $tablesNames Lists of table names involved in the Query Expressions tree this expression belongs to
+ * @param array $params Various parameters for the expression
  * This tables names are the one that will need to be prefixed
- *
- * @return void
  */
-	public function __construct($name, $prefix, $snippet = false, $tablesNames = []) {
-		if ($snippet === false && strpos($name, '.') !== false) {
+	public function __construct($name, $prefix, $params = []) {
+		$this->_params = array_merge($this->_params, $params);
+		if ($this->_params['snippet'] === false && strpos($name, '.') !== false) {
 			list($name, $field) = explode('.', $name);
 		}
 
-		$this->setName($name);
+		$this->setValue($name);
 		$this->setPrefix($prefix);
-		$this->_snippet = $snippet;
-		$this->_tablesNames = $tablesNames;
 
 		if (!empty($field)) {
 			$this->_field = $field;
@@ -139,7 +137,7 @@ class TableNameExpression implements ExpressionInterface {
  * @return void
  */
 	public function setQuoted($quoted = true) {
-		$this->_quoted = (bool)$quoted;
+		$this->_params['quoted'] = (bool)$quoted;
 	}
 
 /**
@@ -151,23 +149,68 @@ class TableNameExpression implements ExpressionInterface {
 	public function sql(ValueBinder $generator) {
 		$sql = "";
 
-		if (is_string($this->_value) && $this->_snippet === false) {
-			if ($this->_quoted) {
-				$sql = $this->_value[0] . $this->_prefix . substr($this->_value, 1);
-			} else {
-				$sql = $this->_prefix . $this->_value;
-			}
+		if (is_string($this->_value) && $this->_params['snippet'] === false) {
+			return $this->_sqlValue();
+		}
 
-			if ($this->_field !== null) {
-				$sql .= '.' . $this->_field;
-			}
-		} elseif ($this->_snippet === true) {
-			if (is_string($this->_value)) {
-				$sql = $this->_value;
-				if (!empty($this->_tablesNames)) {
-					$pattern = '/\b(?=(?:' . implode('|', $this->_tablesNames) . ')\b)([\w-]+)(\.[\w-]+)/';
-					$sql = preg_replace($pattern, $this->_prefix . "$1$2", $sql);
+		if ($this->_params['snippet'] === true) {
+			return $this->_sqlSnippet();
+		}
+
+		return $sql;
+	}
+
+/**
+ * Create the SQL string when self::$_value is not a snippet
+ *
+ * @return string
+ */
+	protected function _sqlValue() {
+		if ($this->_params['quoted'] === true) {
+			$sql = $this->_value[0] . $this->_prefix . substr($this->_value, 1);
+		} else {
+			$sql = $this->_prefix . $this->_value;
+		}
+
+		if ($this->_field !== null) {
+			$sql .= '.' . $this->_field;
+		}
+
+		return $sql;
+	}
+
+/**
+ * Create the SQL string when self::$_value is a snippet
+ *
+ * @return string
+ */
+	protected function _sqlSnippet() {
+		$sql = "";
+		if (is_string($this->_value)) {
+			$sql = $this->_value;
+
+			if (!empty($this->_params['tablesNames'])) {
+				$lookAhead = implode('|', $this->_params['tablesNames']);
+				$wordPattern = '[\w-]+';
+				$tableNamePattern = '([\w-]+)';
+				$replacePattern = $this->_prefix . '$1$2';
+
+				list($startQuote, $endQuote) = $this->_params['quoteStrings'];
+
+				if ($this->_params['quoted'] === true && !empty($startQuote) && !empty($endQuote)) {
+					$lookAhead = $startQuote . implode($endQuote . '|' . $startQuote, $this->_params['tablesNames']) . $endQuote;
+					$tableNamePattern = '[' . $startQuote . ']' . $tableNamePattern . '[' . $endQuote . ']';
+					$replacePattern = $startQuote . $this->_prefix . '$1' . $endQuote . '$2';
+
+					if ($startQuote === $endQuote) {
+						$wordPattern = '[\w-' . $startQuote . ']+';
+					} else {
+						$wordPattern = '[\w-' . $startQuote . $endQuote . ']+';
+					}
 				}
+
+				$pattern = '/(?=(?:' . $lookAhead . '))' . $tableNamePattern . '(\.' . $wordPattern . ')/';
+				$sql = preg_replace($pattern, $replacePattern, $sql);
 			}
 		}
 

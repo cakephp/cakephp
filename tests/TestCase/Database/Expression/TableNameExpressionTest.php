@@ -35,9 +35,9 @@ class TableNameExpressionTest extends TestCase {
  */
 	public function testGetAndSetName() {
 		$expression = new TableNameExpression('foo', '');
-		$this->assertEquals('foo', $expression->getName());
-		$expression->setName('bar');
-		$this->assertEquals('bar', $expression->getName());
+		$this->assertEquals('foo', $expression->getValue());
+		$expression->setValue('bar');
+		$this->assertEquals('bar', $expression->getValue());
 	}
 
 /**
@@ -72,15 +72,15 @@ class TableNameExpressionTest extends TestCase {
 
 		$name = "foo";
 		$expression = new TableNameExpression($name, 'prefix_');
-		$quoted = $connection->quoteIdentifier($expression->getName());
-		$expression->setName($quoted);
+		$quoted = $connection->quoteIdentifier($expression->getValue());
+		$expression->setValue($quoted);
 		$expression->setQuoted();
 		$this->assertQuotedString('<prefix_foo>', $expression->sql(new ValueBinder));
 
 		$name = "bar";
 		$expression = new TableNameExpression($name, '');
-		$quoted = $connection->quoteIdentifier($expression->getName());
-		$expression->setName($quoted);
+		$quoted = $connection->quoteIdentifier($expression->getValue());
+		$expression->setValue($quoted);
 		$this->assertQuotedString('<bar>', $expression->sql(new ValueBinder));
 	}
 

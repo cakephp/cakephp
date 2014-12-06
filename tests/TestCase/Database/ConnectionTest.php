@@ -208,49 +208,6 @@ class ConnectionTest extends TestCase {
 	}
 
 /**
- * Tests full table name resolution in strings such as join condition
- *
- * @return void
- */
-	public function testApplyFullTableName() {
-		$config = ConnectionManager::config('test');
-		if (!isset($config['prefix']) || $config['prefix'] === '') {
-			$config['prefix'] = 'prefix_';
-		}
-		$connectionWithPrefix = new Connection($config);
-
-		$condition = 'users.id';
-		$expected = 'prefix_users.id';
-		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, ['users']), $expected);
-
-		$expected = 'users.id';
-		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, []), $expected);
-
-		$condition = 'users.id = articles.user_id';
-		$expected = 'prefix_users.id = prefix_articles.user_id';
-		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, ['users', 'articles']), $expected);
-
-		$expected = 'users.id = prefix_articles.user_id';
-		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, ['articles']), $expected);
-
-		$expected = 'prefix_users.id = articles.user_id';
-		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, ['users']), $expected);
-
-		$expected = 'users.id = articles.user_id';
-		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, []), $expected);
-
-		$condition = 'users.id = articles.user_id AND (articles.published = 1 OR users.status = 2)';
-		$expected = 'prefix_users.id = prefix_articles.user_id AND (prefix_articles.published = 1 OR prefix_users.status = 2)';
-		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, ['users', 'articles']), $expected);
-
-		$expected = 'users.id = prefix_articles.user_id AND (prefix_articles.published = 1 OR users.status = 2)';
-		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, ['articles']), $expected);
-
-		$expected = 'users.id = articles.user_id AND (articles.published = 1 OR users.status = 2)';
-		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, []), $expected);
-	}
-
-/**
  * Tests the Connection::isTableNamePrefixed() method
  *
  * @return void
