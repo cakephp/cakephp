@@ -819,7 +819,7 @@ class ExceptionRendererTest extends TestCase {
 
 		$result = $ExceptionRenderer->render()->body();
 
-		$this->assertContains('<h2>Database Error</h2>', $result);
+		$this->assertContains('Database Error', $result);
 		$this->assertContains('There was an error in the SQL query', $result);
 		$this->assertContains(h('SELECT * from poo_query < 5 and :seven'), $result);
 		$this->assertContains("'seven' => (int) 7", $result);
