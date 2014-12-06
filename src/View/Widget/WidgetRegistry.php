@@ -19,7 +19,7 @@ use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\View\StringTemplate;
 use Cake\View\View;
 use Cake\View\Widget\WidgetInterface;
-use \ReflectionClass;
+use ReflectionClass;
 
 /**
  * A registry/factory for input widgets.
