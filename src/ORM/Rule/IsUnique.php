@@ -46,6 +46,10 @@ class IsUnique {
  * @return bool
  */
 	public function __invoke(EntityInterface $entity, array $options) {
+		if (!$entity->extract($this->_fields, true)) {
+			return true;
+		}
+
 		$conditions = $entity->extract($this->_fields);
 		if ($entity->isNew() === false) {
 			$keys = (array)$options['repository']->primaryKey();

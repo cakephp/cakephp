@@ -61,6 +61,10 @@ class ExistsIn {
 			$this->_repository = $options['repository']->association($this->_repository);
 		}
 
+		if (!$entity->extract($this->_fields, true)) {
+			return true;
+		}
+
 		$conditions = array_combine(
 			(array)$this->_repository->primaryKey(),
 			$entity->extract($this->_fields)

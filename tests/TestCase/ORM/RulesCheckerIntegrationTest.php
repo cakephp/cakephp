@@ -451,4 +451,42 @@ class RulesCheckerIntegrationTest extends TestCase {
 		$this->assertFalse($table->save($entity));
 	}
 
+/**
+ * Tests isUnique with untouched fields
+ *
+ * @group save
+ * @return void
+ */
+	public function testIsUniqueWithCleanFields() {
+		$table = TableRegistry::get('Articles');
+		$entity = $table->get(1);
+		$rules = $table->rulesChecker();
+		$rules->add($rules->isUnique(['title', 'author_id'], 'Nope'));
+
+		$entity->body = 'Foo';
+		$this->assertSame($entity, $table->save($entity));
+
+		$entity->title = 'Third Article';
+		$this->assertFalse($table->save($entity));
+	}
+
+/**
+ * Tests the existsIn rule when passing non dirty fields
+ *
+ * @group save
+ * @return void
+ */
+	public function testExistsInWithCleanFields() {
+		$table = TableRegistry::get('Articles');
+		$table->belongsTo('Authors');
+		$rules = $table->rulesChecker();
+		$rules->add($rules->existsIn('author_id', 'Authors'));
+
+		$entity = $table->get(1);
+		$entity->title = 'Foo';
+		$entity->author_id = 1000;
+		$entity->dirty('author_id', false);
+		$this->assertSame($entity, $table->save($entity));
+	}
+
 }
