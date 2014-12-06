@@ -93,7 +93,7 @@ use RuntimeException;
  *   you can return the final value of the rules checking operation.
  *
  * - `afterRules(Event $event, Entity $entity,RulesChecker $rules, bool $result)`
- *   Fired after the rules have been checked on the entity.By stopping this event,
+ *   Fired after the rules have been checked on the entity. By stopping this event,
  *   you can return the final value of the rules checking operation.
  *
  * - `beforeSave(Event $event, Entity $entity, ArrayObject $options)`
@@ -1145,48 +1145,49 @@ class Table implements RepositoryInterface, EventListenerInterface {
  * The options array can receive the following keys:
  *
  * - atomic: Whether to execute the save and callbacks inside a database
- * transaction (default: true)
+ *   transaction (default: true)
  * - checkRules: Whether or not to check the rules on entity before saving, if the checking
- * fails, it will abort the save operation. (default:true)
+ *   fails, it will abort the save operation. (default:true)
  * - associated: If true it will save all associated entities as they are found
- * in the passed `$entity` whenever the property defined for the association
- * is marked as dirty. Associated records are saved recursively unless told
- * otherwise. If an array, it will be interpreted as the list of associations
- * to be saved. It is possible to provide different options for saving on associated
- * table objects using this key by making the custom options the array value.
- * If false no associated records will be saved. (default: true)
+ *   in the passed `$entity` whenever the property defined for the association
+ *   is marked as dirty. Associated records are saved recursively unless told
+ *   otherwise. If an array, it will be interpreted as the list of associations
+ *   to be saved. It is possible to provide different options for saving on associated
+ *   table objects using this key by making the custom options the array value.
+ *   If false no associated records will be saved. (default: true)
  *
  * ### Events
  *
  * When saving, this method will trigger four events:
  *
  * - Model.beforeRules: Will be triggered right before any rule checking is done
- * for the passed entity if the `checkRules` key in $options is not set to false.
- * Listeners will receive as arguments the entity and the
- * RulesChecker object to be used for validating the entity. If the event is
- * stopped the checking result will be set to the result of the event itself.
+ *   for the passed entity if the `checkRules` key in $options is not set to false.
+ *   Listeners will receive as arguments the entity and the
+ *   RulesChecker object to be used for validating the entity. If the event is
+ *   stopped the checking result will be set to the result of the event itself.
  * - Model.afterRules: Will be triggered right after the `checkRules()` method is
- * called for the entity. Listeners will receive as arguments the entity, the
- * RulesChecker object that was used and the result of checking the rules.
- * If the event is stopped the checking result will be set to the result of
- * the event itself.
+ *   called for the entity. Listeners will receive as arguments the entity, the
+ *   RulesChecker object that was used and the result of checking the rules.
+ *   If the event is stopped the checking result will be set to the result of
+ *   the event itself.
  * - Model.beforeSave: Will be triggered just before the list of fields to be
- * persisted is calculated. It receives both the entity and the options as
- * arguments. The options array is passed as an ArrayObject, so any changes in
- * it will be reflected in every listener and remembered at the end of the event
- * so it can be used for the rest of the save operation. Returning false in any
- * of the listeners will abort the saving process. If the event is stopped
- * using the event API, the event object's `result` property will be returned.
- * This can be useful when having your own saving strategy implemented inside a
- * listener.
+ *   persisted is calculated. It receives both the entity and the options as
+ *   arguments. The options array is passed as an ArrayObject, so any changes in
+ *   it will be reflected in every listener and remembered at the end of the event
+ *   so it can be used for the rest of the save operation. Returning false in any
+ *   of the listeners will abort the saving process. If the event is stopped
+ *   using the event API, the event object's `result` property will be returned.
+ *   This can be useful when having your own saving strategy implemented inside a
+ *   listener.
  * - Model.afterSave: Will be triggered after a successful insert or save,
- * listeners will receive the entity and the options array as arguments. The type
- * of operation performed (insert or update) can be determined by checking the
- * entity's method `isNew`, true meaning an insert and false an update.
+ *   listeners will receive the entity and the options array as arguments. The type
+ *   of operation performed (insert or update) can be determined by checking the
+ *   entity's method `isNew`, true meaning an insert and false an update.
  *
  * This method will determine whether the passed entity needs to be
  * inserted or updated in the database. It does that by checking the `isNew`
- * method on the entity.
+ * method on the entity. If the entity to be saved returns a non-empty value from
+ * its `errors()` method, it will not be saved.
  *
  * ### Saving on associated tables
  *
