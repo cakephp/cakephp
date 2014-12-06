@@ -13,13 +13,19 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Utility\Inflector;
+
+$this->layout = 'dev_error';
+
+$this->assign('title', 'Missing Template');
+$this->assign('templateName', 'missing_template.ctp');
+
+$this->start('subheading');
 ?>
-<h2>Missing Template</h2>
-<p class="error">
 	<strong>Error: </strong>
 	<?= sprintf('The view for <em>%sController::%s()</em> was not found.', h(Inflector::camelize($this->request->controller)), h($this->request->action)); ?>
-</p>
+<?php $this->end() ?>
 
+<?php $this->start('file') ?>
 <p>
 	<?= sprintf('Confirm you have created the file: "%s"', h($file)) ?>
 	in one of the following paths:
@@ -35,10 +41,4 @@ use Cake\Utility\Inflector;
 	endforeach;
 ?>
 </ul>
-
-<p class="notice">
-	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_template.ctp') ?>
-</p>
-
-<?= $this->element('exception_stack_trace'); ?>
+<?php $this->end() ?>

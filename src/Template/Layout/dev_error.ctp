@@ -48,7 +48,7 @@ use Cake\Error\Debugger;
 		</div>
 
 		<?php if ($this->fetch('templateName')): ?>
-		<p class="notice">
+		<p class="customize">
 			If you want to customize this error message, create
 			<em><?= APP_DIR . DS . 'Template' . DS . 'Error' . DS . $this->fetch('templateName') ?></em>
 		</p>
@@ -189,6 +189,9 @@ header {
 .error {
 	background: #ffd54f;
 }
+.customize {
+	opacity: 0.6;
+}
 
 .stack-trace {
 	list-style: none;
@@ -276,6 +279,16 @@ header {
 }
 .excerpt-number:after {
 	content: attr(data-number);
+}
+
+table {
+	text-align: left;
+}
+th, td {
+	padding: 4px;
+}
+th {
+	border-bottom: 1px solid #ccc;
 }
 </style>
 
