@@ -279,11 +279,6 @@ class Connection {
 			$expression = new TableNameExpression($table, $prefix);
 		}
 
-		if ($this->_driver instanceof \Cake\Database\Driver && $this->_driver->autoQuoting()) {
-//			$expression->setName($this->_driver->quoteIdentifier($expression->getName()));
-//			$expression->setQuoted();
-		}
-
 		return $expression;
 	}
 
