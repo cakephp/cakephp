@@ -31,15 +31,56 @@ class PluralForms {
  */
 	protected $_operators;
 
+	protected function _moduloOperator($a, $b) {
+		if ($b == 0) {
+			throw new CakeException(__d('cake_dev', 'Division by zero in plural formula '.
+			                                        'of the translation file header.'));
+		} else {
+			return $a % $b;
+		}
+	}
+
+	protected function _lowerThanOperator($a, $b) {
+		return (int)($a < $b);
+	}
+
+	protected function _greaterThanOperator($a, $b) {
+		return (int)($a > $b);
+	}
+
+	protected function _lowerOrEqualOperator($a, $b) {
+		return (int)($a <= $b);
+	}
+
+	protected function _greaterOrEqualOperator($a, $b) {
+		return (int)($a >= $b);
+	}
+
+	protected function _equalOperator($a, $b) {
+		return (int)($a == $b);
+	}
+
+	protected function _notEqualOperator($a, $b) {
+		return (int)($a != $b);
+	}
+
+	protected function _andOperator($a, $b) {
+		return (int)($a && $b);
+	}
+
+	protected function _orOperator($a, $b) {
+		return (int)($a || $b);
+	}
+
+	protected function _ternaryOperator($a, $b, $c) {
+		return $a ? $b : $c;
+	}
+
 /**
- * Generates a C-like operator function with two operands.
- *
- * @param string $op A PHP operator.
- * @return string a function that applies its two parameters to $op
- *                and returns the result casted to int.
+ * Used in array sorting function.
  */
-	protected function _simpleOperator($op) {
-		return create_function('$a, $b', "return (int)(\$a $op \$b);");
+	protected function _sortByLength($a, $b) {
+		return strlen($b) - strlen($a);
 	}
 
 /**
@@ -49,44 +90,32 @@ class PluralForms {
 		$this->_operators = array(
 			'(' => array('prec' => 0, 'func' => null),
 			')' => array('prec' => 0, 'func' => null),
-			'%' => array(
-				'prec' => 2,
-				'nargs' => 2,
-				'func' => function ($a, $b) {
-					if ($b == 0) {
-						throw new CakeException(__d('cake_dev', 'Division by zero in plural formula '.
-						                                        'of the translation file header.'));
-					} else {
-						return $a % $b;
-					}
-				},
-			),
-			'<' => array('prec' => 5),
-			'>' => array('prec' => 5),
-			'<=' => array('prec' => 5),
-			'>=' => array('prec' => 5),
-			'==' => array('prec' => 6),
-			'!=' => array('prec' => 6),
-			'&&' => array('prec' => 10),
-			'||' => array('prec' => 11),
+			'%' => array('prec' => 2, 'func' => array($this, '_moduloOperator')),
+			'<' => array('prec' => 5, 'func' => array($this, '_lowerThanOperator')),
+			'>' => array('prec' => 5, 'func' => array($this, '_greaterThanOperator')),
+			'<=' => array('prec' => 5, 'func' => array($this, '_lowerOrEqualOperator')),
+			'>=' => array('prec' => 5, 'func' => array($this, '_greaterOrEqualOperator')),
+			'==' => array('prec' => 6, 'func' => array($this, '_equalOperator')),
+			'!=' => array('prec' => 6, 'func' => array($this, '_notEqualOperator')),
+			'&&' => array('prec' => 10, 'func' => array($this, '_andOperator')),
+			'||' => array('prec' => 11, 'func' => array($this, '_orOperator')),
 			':' => array('prec' => 12, 'func' => null),
 			'?' => array(
 				'prec' => 12,
 				'nargs' => 3,
-				'func' => function($a, $b, $c) { return $a ? $b : $c; },
+				'func' => array($this, '_ternaryOperator')
 			),
 	        );
 		/* Complete operators definitions with default values */
 		foreach ($this->_operators as $op => &$definition) {
-			if (!array_key_exists('func', $definition)) {
-				$definition['func'] = $this->_simpleOperator($op);
+			if (!array_key_exists('nargs', $definition)) {
 				$definition['nargs'] = 2;
 			}
 		}
 
 		/* Make the array regex-friendly. We want to have '<=' before '<'
 		 * and the like for the regex in _tokenize() */
-		uksort($this->_operators, function($a, $b) { return strlen($b) - strlen($a); });
+		uksort($this->_operators, array($this, '_sortByLength'));
 	}
 
 /**
