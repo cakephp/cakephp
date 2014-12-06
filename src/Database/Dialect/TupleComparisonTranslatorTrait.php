@@ -62,7 +62,7 @@ trait TupleComparisonTranslatorTrait {
 				$value->andWhere([$field . " $op" => new IdentifierExpression($selected[$i])]);
 			}
 			$value->select($true, true);
-			$expression->field($true);
+			$expression->setField($true);
 			$expression->setOperator('=');
 			return;
 		}
@@ -84,8 +84,8 @@ trait TupleComparisonTranslatorTrait {
 			});
 		}
 
-		$expression->field($true);
-		$expression->value($surrogate);
+		$expression->setField($true);
+		$expression->setValue($surrogate);
 		$expression->setOperator('=');
 	}
 
