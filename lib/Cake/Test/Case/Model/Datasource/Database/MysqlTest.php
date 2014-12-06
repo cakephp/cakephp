@@ -1267,7 +1267,7 @@ SQL;
  * @param Model $model
  * @param array $queryData
  * @param array $binding
- * @return void
+ * @return array The prepared association query
  */
 	protected function &_prepareAssociationQuery(Model $model, &$queryData, $binding) {
 		$type = $binding['type'];
