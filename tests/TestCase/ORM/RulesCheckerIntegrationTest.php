@@ -489,4 +489,21 @@ class RulesCheckerIntegrationTest extends TestCase {
 		$this->assertSame($entity, $table->save($entity));
 	}
 
+/**
+ * Tests using rules to prevent delete operations
+ *
+ * @group delete
+ * @return void
+ */
+	public function testDeleteRules() {
+		$table = TableRegistry::get('Articles');
+		$rules = $table->rulesChecker();
+		$rules->addDelete(function ($entity) {
+			return false;
+		});
+
+		$entity = $table->get(1);
+		$this->assertFalse($table->delete($entity));
+	}
+
 }

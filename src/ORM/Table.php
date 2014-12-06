@@ -1263,7 +1263,8 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			$entity->isNew(!$this->exists($conditions));
 		}
 
-		if ($options['checkRules'] && !$this->checkRules($entity)) {
+		$mode = $entity->isNew() ? RulesChecker::CREATE : RulesChecker::UPDATE;
+		if ($options['checkRules'] && !$this->checkRules($entity, $mode)) {
 			return false;
 		}
 
@@ -1448,6 +1449,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
  * ### Options
  *
  * - `atomic` Defaults to true. When true the deletion happens within a transaction.
+ * - `checkRules` Defaults to true. Check deletion rules before deleting the record.
  *
  * ### Events
  *
@@ -1462,7 +1464,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
  *
  */
 	public function delete(EntityInterface $entity, $options = []) {
-		$options = new \ArrayObject($options + ['atomic' => true]);
+		$options = new \ArrayObject($options + ['atomic' => true, 'checkRules' => true]);
 
 		$process = function () use ($entity, $options) {
 			return $this->_processDelete($entity, $options);
@@ -1487,14 +1489,6 @@ class Table implements RepositoryInterface, EventListenerInterface {
  * @return bool success
  */
 	protected function _processDelete($entity, $options) {
-		$event = $this->dispatchEvent('Model.beforeDelete', [
-			'entity' => $entity,
-			'options' => $options
-		]);
-		if ($event->isStopped()) {
-			return $event->result;
-		}
-
 		if ($entity->isNew()) {
 			return false;
 		}
@@ -1504,6 +1498,20 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			$msg = 'Deleting requires all primary key values.';
 			throw new \InvalidArgumentException($msg);
 		}
+
+		if ($options['checkRules'] && !$this->checkRules($entity, RulesChecker::DELETE)) {
+			return false;
+		}
+
+		$event = $this->dispatchEvent('Model.beforeDelete', [
+			'entity' => $entity,
+			'options' => $options
+		]);
+
+		if ($event->isStopped()) {
+			return $event->result;
+		}
+
 		$this->_associations->cascadeDelete($entity, $options->getArrayCopy());
 
 		$query = $this->query();
@@ -1894,16 +1902,22 @@ class Table implements RepositoryInterface, EventListenerInterface {
  * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.
  * @return bool
  */
-	public function checkRules(EntityInterface $entity) {
+	public function checkRules(EntityInterface $entity, $operation = RulesChecker::CREATE) {
 		$rules = $this->rulesChecker();
-		$event = $this->dispatchEvent('Model.beforeRules', compact('entity', 'rules'));
+		$event = $this->dispatchEvent(
+			'Model.beforeRules',
+			compact('entity', 'rules', 'operation')
+		);
 
 		if ($event->isStopped()) {
 			return $event->result;
 		}
 
-		$result = $entity->isNew() ? $rules->checkCreate($entity) : $rules->checkUpdate($entity);
-		$event = $this->dispatchEvent('Model.afterRules', compact('entity', 'rules', 'result'));
+		$result = $rules->check($entity, $operation);
+		$event = $this->dispatchEvent(
+			'Model.afterRules',
+			compact('entity', 'rules', 'result', 'operation')
+		);
 
 		if ($event->isStopped()) {
 			return $event->result;

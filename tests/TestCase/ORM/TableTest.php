@@ -1944,7 +1944,7 @@ class TableTest extends TestCase {
  */
 	public function testDeleteCallbacks() {
 		$entity = new \Cake\ORM\Entity(['id' => 1, 'name' => 'mark']);
-		$options = new \ArrayObject(['atomic' => true]);
+		$options = new \ArrayObject(['atomic' => true, 'checkRules' => false]);
 
 		$mock = $this->getMock('Cake\Event\EventManager');
 
@@ -1976,7 +1976,7 @@ class TableTest extends TestCase {
 
 		$table = TableRegistry::get('users', ['eventManager' => $mock]);
 		$entity->isNew(false);
-		$table->delete($entity);
+		$table->delete($entity, ['checkRules' => false]);
 	}
 
 /**
@@ -1997,7 +1997,7 @@ class TableTest extends TestCase {
 
 		$table = TableRegistry::get('users', ['eventManager' => $mock]);
 		$entity->isNew(false);
-		$result = $table->delete($entity);
+		$result = $table->delete($entity, ['checkRules' => false]);
 		$this->assertNull($result);
 	}
 
@@ -2020,7 +2020,7 @@ class TableTest extends TestCase {
 
 		$table = TableRegistry::get('users', ['eventManager' => $mock]);
 		$entity->isNew(false);
-		$result = $table->delete($entity);
+		$result = $table->delete($entity, ['checkRules' => false]);
 		$this->assertEquals('got stopped', $result);
 	}
 
