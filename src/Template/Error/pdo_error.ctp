@@ -13,12 +13,19 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Error\Debugger;
+
+$this->layout = 'dev_error';
+
+$this->assign('title', 'Database Error');
+$this->assign('templateName', 'pdo_error.ctp');
+
+$this->start('subheading');
 ?>
-<h2>Database Error</h2>
-<p class="error">
 	<strong>Error: </strong>
 	<?= $message; ?>
-</p>
+<?php $this->end() ?>
+
+<?php $this->start('file') ?>
 <p class="notice">
 	If you are using SQL keywords as table column names, you can enable identifier
 	quoting for your database connection in config/app.php.
@@ -26,16 +33,12 @@ use Cake\Error\Debugger;
 <?php if (!empty($error->queryString)) : ?>
 	<p class="notice">
 		<strong>SQL Query: </strong>
-		<?= h($error->queryString); ?>
 	</p>
+	<pre><?= h($error->queryString); ?></pre>
 <?php endif; ?>
 <?php if (!empty($error->params)) : ?>
 		<strong>SQL Query Params: </strong>
-		<?= Debugger::dump($error->params); ?>
+		<pre><?= Debugger::dump($error->params); ?></pre>
 <?php endif; ?>
 <?= $this->element('auto_table_warning'); ?>
-<p class="notice">
-	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'pdo_error.ctp'); ?>
-</p>
-<?= $this->element('exception_stack_trace'); ?>
+<?php $this->end() ?>

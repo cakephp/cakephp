@@ -133,6 +133,7 @@ pre {
 	background: #fefefe;
 	border: 1px solid #ddd;
 	padding: 5px;
+	white-space: pre-wrap;
 }
 
 header {
