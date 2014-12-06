@@ -21,6 +21,22 @@ use Cake\ORM\Rule\IsUnique;
 /**
  * Contains logic for storing and checking rules on entities
  *
+ * RulesCheckers are used by Table classes to ensure that the
+ * current entity state satifies the application logic and business rules.
+ *
+ * RulesCheckers afford different rules to be applied in the create and update
+ * scenario.
+ *
+ * ### Adding rules
+ *
+ * Rules must be callable objects that return true/false depending on whether or
+ * not the rule has been satisified. You can use RulesChecker::add(), RulesChecker::addCreate()
+ * and RulesChecker::addUpdate() to add rules to a checker.
+ *
+ * ### Running checks
+ *
+ * Generally a Table object will invoke the rules objects, but you can manually
+ * invoke the checks by calling RulesChecker::checkCreate() or RulesChecker::checkUpdate().
  */
 class RulesChecker {
 
