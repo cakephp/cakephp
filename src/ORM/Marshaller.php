@@ -21,6 +21,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\AssociationsNormalizerTrait;
 use Cake\ORM\Table;
+use \RuntimeException;
 
 /**
  * Contains logic to convert array data into entities.
@@ -158,18 +159,22 @@ class Marshaller {
  * @param array $options The options passed to this marshaller.
  * @param bool $isNew Whether it is a new entity or one to be updated.
  * @return array The list of validation errors.
+ * @throws \RuntimeException If no validator can be created.
  */
 	protected function _validate($data, $options, $isNew) {
 		if (!$options['validate']) {
 			return [];
 		}
-
 		if ($options['validate'] === true) {
 			$options['validate'] = $this->_table->validator('default');
 		}
-
 		if (is_string($options['validate'])) {
 			$options['validate'] = $this->_table->validator($options['validate']);
+		}
+		if (!is_object($options['validate'])) {
+			throw new RuntimeException(
+				sprintf('validate must be a boolean, a string or an object. Got %s.', gettype($options['validate']))
+			);
 		}
 
 		return $options['validate']->errors($data, $isNew);
@@ -297,6 +302,8 @@ class Marshaller {
  * ### Options:
  *
  * * associated: Associations listed here will be marshalled as well.
+ * * validate: Whether or not to validate data before hydrating the entities. Can
+ *   also be set to a string to use a specific validator. Defaults to true/default.
  * * fieldList: A whitelist of fields to be assigned to the entity. If not present
  *   the accessible fields list in the entity will be used.
  *

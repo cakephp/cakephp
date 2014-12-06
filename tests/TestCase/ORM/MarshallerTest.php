@@ -1510,6 +1510,20 @@ class MarshallerTest extends TestCase {
 	}
 
 /**
+ * Test that invalid validate options raise exceptions
+ *
+ * @expectedException \RuntimeException
+ * @return void
+ */
+	public function testValidateInvalidType() {
+		$data = ['title' => 'foo'];
+		$marshaller = new Marshaller($this->articles);
+		$marshaller->one($data, [
+			'validate' => ['derp'],
+		]);
+	}
+
+/**
  * Tests that associations are validated and custom validators can be used
  *
  * @return void
