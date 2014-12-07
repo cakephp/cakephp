@@ -274,6 +274,9 @@ class Table implements RepositoryInterface, EventListenerInterface {
 	public function table($table = null) {
 		if ($table !== null) {
 			$this->_table = $table;
+			if ($table === false) {
+		        	$this->schema([]);
+		        }
 		}
 		if ($this->_table === null) {
 			$table = namespaceSplit(get_class($this));
