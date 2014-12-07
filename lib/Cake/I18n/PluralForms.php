@@ -170,7 +170,8 @@ class PluralForms {
 		if (!isset($parts[1])) {
 			throw new CakeException(__d(
 				'cake_dev',
-				'Syntax error in the Plural-Forms header of the translation file.'
+				"Syntax error in the Plural-Forms header '%s' of the translation file.",
+				$header
 			));
 		}
 		$pluralFormula = $parts[1];
@@ -179,7 +180,8 @@ class PluralForms {
 		if (!isset($parts[1])) {
 			throw new CakeException(__d(
 				'cake_dev',
-				'Syntax error in the Plural-Forms header of the translation file.'
+				"Syntax error in the Plural-Forms header '%s' of the translation file.",
+				$header
 			));
 		}
 		return $parts[1];
@@ -243,7 +245,8 @@ class PluralForms {
 		if (count($stack) < $nargs) {
 			throw new CakeException(__d(
 				'cake_dev',
-				'Syntax error in plural formula of the translation file header.'
+				"Syntax error in plural formula of the translation file header near the use of '%s'.",
+				$op
 			));
 		}
 		$args = array();
