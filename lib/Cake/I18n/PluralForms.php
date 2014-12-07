@@ -37,9 +37,9 @@ class PluralForms {
 				'cake_dev',
 				'Division by zero in plural formula of the translation file header.'
 			));
-		} else {
-			return $a % $b;
 		}
+
+		return $a % $b;
 	}
 
 /**
