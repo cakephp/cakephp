@@ -33,13 +33,18 @@ class PluralForms {
 
 	protected function _moduloOperator($a, $b) {
 		if ($b == 0) {
-			throw new CakeException(__d('cake_dev', 'Division by zero in plural formula '.
-			                                        'of the translation file header.'));
+			throw new CakeException(__d(
+				'cake_dev',
+				'Division by zero in plural formula of the translation file header.'
+			));
 		} else {
 			return $a % $b;
 		}
 	}
 
+/**
+ * Operators functions.
+ */
 	protected function _lowerThanOperator($a, $b) {
 		return (int)($a < $b);
 	}
@@ -105,7 +110,7 @@ class PluralForms {
 				'nargs' => 3,
 				'func' => array($this, '_ternaryOperator')
 			),
-	        );
+		);
 		/* Complete operators definitions with default values */
 		foreach ($this->_operators as $op => &$definition) {
 			if (!array_key_exists('nargs', $definition)) {
@@ -139,15 +144,19 @@ class PluralForms {
 	protected function _extractPluralExpr($header) {
 		$parts = explode(';', $header);
 		if (!isset($parts[1])) {
-			throw new CakeException(__d('cake_dev', 'Syntax error in the Plural-Forms '.
-			                                        'header of the translation file.'));
+			throw new CakeException(__d(
+				'cake_dev',
+				'Syntax error in the Plural-Forms header of the translation file.'
+			));
 		}
 		$pluralFormula = $parts[1];
 
 		$parts = explode('=', $pluralFormula, 2);
 		if (!isset($parts[1])) {
-			throw new CakeException(__d('cake_dev', 'Syntax error in the Plural-Forms '.
-			                                        'header of the translation file.'));
+			throw new CakeException(__d(
+				'cake_dev',
+				'Syntax error in the Plural-Forms header of the translation file.'
+			));
 		}
 		return $parts[1];
 	}
@@ -170,7 +179,7 @@ class PluralForms {
 				array_pop($stack);
 			} elseif (isset($this->_operators[$token])) {
 				while ($stack && end($stack) != '(' && $token != '('
-				       && $this->_operators[end($stack)]['prec'] < $this->_operators[$token]['prec']) {
+					&& $this->_operators[end($stack)]['prec'] < $this->_operators[$token]['prec']) {
 					array_push($postfix, array_pop($stack));
 				}
 				array_push($stack, $token);
@@ -208,8 +217,10 @@ class PluralForms {
 	protected function _callOperator($op, &$stack) {
 		$nargs = $this->_operators[$op]['nargs'];
 		if (count($stack) < $nargs) {
-			throw new CakeException(__d('cake_dev', 'Syntax error in plural formula '.
-			                                        'of the translation file header.'));
+			throw new CakeException(__d(
+				'cake_dev',
+				'Syntax error in plural formula of the translation file header.'
+			));
 		}
 		$args = array();
 		for ($i = 1; $i <= $nargs; $i++) {
@@ -248,8 +259,10 @@ class PluralForms {
 			}
 		}
 		if (count($stack) != 1) {
-			throw new CakeException(__d('cake_dev', 'Syntax error in plural formula '.
-			                                        'of the translation file header.'));
+			throw new CakeException(__d(
+				'cake_dev',
+				'Syntax error in plural formula of the translation file header.'
+			));
 		}
 		return $stack[0];
 	}
