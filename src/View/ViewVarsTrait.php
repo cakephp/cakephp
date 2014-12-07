@@ -59,7 +59,7 @@ trait ViewVarsTrait {
 		$this->viewClass = $viewClass;
 		$className = App::className($this->viewClass, 'View', 'View');
 		if (!$className) {
-			throw new Exception\MissingViewException([$viewClass]);
+			throw new Exception\MissingViewException(['class' => $viewClass]);
 		}
 
 		if ($this->View && $this->View instanceof $className) {
