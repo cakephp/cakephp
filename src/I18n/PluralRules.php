@@ -66,7 +66,7 @@ class PluralRules {
 		'hr' => 3,
 		'hu' => 1,
 		'id' => 0,
-		'is' => 1,
+		'is' => 15,
 		'it' => 1,
 		'ja' => 0,
 		'jv' => 0,
@@ -191,6 +191,8 @@ class PluralRules {
 				return $n == 1 ? 0 :
 					($n == 2 ? 1 :
 					($n != 8 && $n != 11 ? 2 : 3));
+			case 15:
+				return ($n % 10 != 1 || $n % 100 == 11) ? 1 : 0;
 		}
 	}
 
