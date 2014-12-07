@@ -43,40 +43,64 @@ class PluralForms {
 	}
 
 /**
- * Operators functions.
+ * C-like $a < $b comparison.
  */
 	protected function _lowerThanOperator($a, $b) {
 		return (int)($a < $b);
 	}
 
+/**
+ * C-like $a > $b comparison.
+ */
 	protected function _greaterThanOperator($a, $b) {
 		return (int)($a > $b);
 	}
 
+/**
+ * C-like $a <= $b comparison.
+ */
 	protected function _lowerOrEqualOperator($a, $b) {
 		return (int)($a <= $b);
 	}
 
+/**
+ * C-like $a >= $b comparison.
+ */
 	protected function _greaterOrEqualOperator($a, $b) {
 		return (int)($a >= $b);
 	}
 
+/**
+ * C-like $a == $b comparison.
+ */
 	protected function _equalOperator($a, $b) {
 		return (int)($a == $b);
 	}
 
+/**
+ * C-like $a != $b comparison.
+ */
 	protected function _notEqualOperator($a, $b) {
 		return (int)($a != $b);
 	}
 
+/**
+ * C-like $a && $b comparison.
+ */
 	protected function _andOperator($a, $b) {
 		return (int)($a && $b);
 	}
 
+/**
+ * C-like $a || $b comparison.
+ */
 	protected function _orOperator($a, $b) {
 		return (int)($a || $b);
 	}
 
+/**
+ * Returns $a if $b else $c.
+ */
 	protected function _ternaryOperator($a, $b, $c) {
 		return $a ? $b : $c;
 	}
@@ -111,15 +135,15 @@ class PluralForms {
 				'func' => array($this, '_ternaryOperator')
 			),
 		);
-		/* Complete operators definitions with default values */
+		// Complete operators definitions with default values
 		foreach ($this->_operators as $op => &$definition) {
 			if (!array_key_exists('nargs', $definition)) {
 				$definition['nargs'] = 2;
 			}
 		}
 
-		/* Make the array regex-friendly. We want to have '<=' before '<'
-		 * and the like for the regex in _tokenize() */
+		// Make the array regex-friendly. We want to have '<=' before '<'
+		// and the like for the regex in _tokenize()
 		uksort($this->_operators, array($this, '_sortByLength'));
 	}
 
