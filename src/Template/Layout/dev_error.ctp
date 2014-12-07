@@ -211,9 +211,11 @@ use Cake\Error\Debugger;
 	</header>
 
 	<div class="error-contents">
+		<?php if ($this->fetch('subheading')): ?>
 		<p class="error-subheading">
 			<?= $this->fetch('subheading') ?>
 		</p>
+		<?php endif; ?>
 
 		<?= $this->element('exception_stack_trace'); ?>
 
