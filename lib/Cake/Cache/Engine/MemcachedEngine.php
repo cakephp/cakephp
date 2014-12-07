@@ -133,6 +133,7 @@ class MemcachedEngine extends CacheEngine {
 					__d('cake_dev', 'Memcached extension is not build with SASL support')
 				);
 			}
+			$this->_Memcached->setOption(Memcached::OPT_BINARY_PROTOCOL, true);
 			$this->_Memcached->setSaslAuthData($this->settings['login'], $this->settings['password']);
 		}
 		if (is_array($this->settings['options'])) {
