@@ -790,7 +790,9 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	public function testNotNullOnEnum() {
-		$this->skipIf($this->db instanceof Sqlserver, 'This test is not compatible with SQL Server.');
+		if ( ! $this->db instanceof Mysql) {
+			$this->markTestSkipped('This test can only run on MySQL');
+		}
 		$name = $this->db->fullTableName('enum_tests');
 		$query = "CREATE TABLE {$name} (mood ENUM('','happy','sad','ok') NOT NULL);";
 		$result = $this->db->query($query);
