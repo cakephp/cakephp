@@ -311,7 +311,8 @@ class I18n {
  * @param string $header Type
  * @param int $n Number
  * @return int plural match
- * @see
+ * @link http://localization-guide.readthedocs.org/en/latest/l10n/pluralforms.html
+ * @link https://developer.mozilla.org/en-US/docs/Mozilla/Localization/Localization_and_Plurals#List_of_Plural_Rules
  */
 	protected function _pluralGuess($header, $n) {
 		if (!is_string($header) || $header === "nplurals=1;plural=0;" || !isset($header[0])) {
