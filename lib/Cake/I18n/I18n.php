@@ -19,6 +19,7 @@
 App::uses('CakePlugin', 'Core');
 App::uses('L10n', 'I18n');
 App::uses('Multibyte', 'I18n');
+App::uses('PluralForms', 'I18n');
 App::uses('CakeSession', 'Model/Datasource');
 
 /**
@@ -34,6 +35,13 @@ class I18n {
  * @var L10n
  */
 	public $l10n = null;
+
+/**
+ * Instance of the PluralForms class for plural formulas
+ *
+ * @var PluralForms
+ */
+	public $pluralForms = null;
 
 /**
  * Default domain of translation
@@ -161,6 +169,7 @@ class I18n {
  */
 	public function __construct() {
 		$this->l10n = new L10n();
+		$this->pluralForms = new PluralForms();
 	}
 
 /**
@@ -247,8 +256,8 @@ class I18n {
 		if (!isset($count)) {
 			$plurals = 0;
 		} elseif (!empty($_this->_domains[$domain][$_this->_lang][$_this->category]["%plural-c"]) && $_this->_noLocale === false) {
-			$header = $_this->_domains[$domain][$_this->_lang][$_this->category]["%plural-c"];
-			$plurals = $_this->_pluralGuess($header, $count);
+			$formula = $_this->_domains[$domain][$_this->_lang][$_this->category]["%plural-c"];
+			$plurals = $_this->pluralForms->getPlural($formula, $count);
 		} else {
 			if ($count != 1) {
 				$plurals = 1;
@@ -308,55 +317,6 @@ class I18n {
 	public static function domains() {
 		$self = I18n::getInstance();
 		return $self->_domains;
-	}
-
-/**
- * Attempts to find the plural form of a string.
- *
- * @param string $header Type
- * @param int $n Number
- * @return int plural match
- */
-	protected function _pluralGuess($header, $n) {
-		if (!is_string($header) || $header === "nplurals=1;plural=0;" || !isset($header[0])) {
-			return 0;
-		}
-
-		if ($header === "nplurals=2;plural=n!=1;") {
-			return $n != 1 ? 1 : 0;
-		} elseif ($header === "nplurals=2;plural=n>1;") {
-			return $n > 1 ? 1 : 0;
-		}
-
-		if (strpos($header, "plurals=3")) {
-			if (strpos($header, "100!=11")) {
-				if (strpos($header, "10<=4")) {
-					return $n % 10 == 1 && $n % 100 != 11 ? 0 : ($n % 10 >= 2 && $n % 10 <= 4 && ($n % 100 < 10 || $n % 100 >= 20) ? 1 : 2);
-				} elseif (strpos($header, "100<10")) {
-					return $n % 10 == 1 && $n % 100 != 11 ? 0 : ($n % 10 >= 2 && ($n % 100 < 10 || $n % 100 >= 20) ? 1 : 2);
-				}
-				return $n % 10 == 1 && $n % 100 != 11 ? 0 : ($n != 0 ? 1 : 2);
-			} elseif (strpos($header, "n==2")) {
-				return $n == 1 ? 0 : ($n == 2 ? 1 : 2);
-			} elseif (strpos($header, "n==0")) {
-				return $n == 1 ? 0 : ($n == 0 || ($n % 100 > 0 && $n % 100 < 20) ? 1 : 2);
-			} elseif (strpos($header, "n>=2")) {
-				return $n == 1 ? 0 : ($n >= 2 && $n <= 4 ? 1 : 2);
-			} elseif (strpos($header, "10>=2")) {
-				return $n == 1 ? 0 : ($n % 10 >= 2 && $n % 10 <= 4 && ($n % 100 < 10 || $n % 100 >= 20) ? 1 : 2);
-			}
-			return $n % 10 == 1 ? 0 : ($n % 10 == 2 ? 1 : 2);
-		} elseif (strpos($header, "plurals=4")) {
-			if (strpos($header, "100==2")) {
-				return $n % 100 == 1 ? 0 : ($n % 100 == 2 ? 1 : ($n % 100 == 3 || $n % 100 == 4 ? 2 : 3));
-			} elseif (strpos($header, "n>=3")) {
-				return $n == 1 ? 0 : ($n == 2 ? 1 : ($n == 0 || ($n >= 3 && $n <= 10) ? 2 : 3));
-			} elseif (strpos($header, "100>=1")) {
-				return $n == 1 ? 0 : ($n == 0 || ($n % 100 >= 1 && $n % 100 <= 10) ? 1 : ($n % 100 >= 11 && $n % 100 <= 20 ? 2 : 3));
-			}
-		} elseif (strpos($header, "plurals=5")) {
-			return $n == 1 ? 0 : ($n == 2 ? 1 : ($n >= 3 && $n <= 6 ? 2 : ($n >= 7 && $n <= 10 ? 3 : 4)));
-		}
 	}
 
 /**
@@ -447,8 +407,8 @@ class I18n {
 			}
 
 			if (isset($this->_domains[$domain][$this->_lang][$this->category]["%po-header"]["plural-forms"])) {
-				$switch = preg_replace("/(?:[() {}\\[\\]^\\s*\\]]+)/", "", $this->_domains[$domain][$this->_lang][$this->category]["%po-header"]["plural-forms"]);
-				$this->_domains[$domain][$this->_lang][$this->category]["%plural-c"] = $switch;
+				$formula = $this->pluralForms->parsePluralForms($this->_domains[$domain][$this->_lang][$this->category]["%po-header"]["plural-forms"]);
+				$this->_domains[$domain][$this->_lang][$this->category]["%plural-c"] = $formula;
 				unset($this->_domains[$domain][$this->_lang][$this->category]["%po-header"]);
 			}
 			$this->_domains = Hash::mergeDiff($this->_domains, $merge);
