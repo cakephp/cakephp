@@ -28,6 +28,10 @@ $allAssociations = array_merge(
  * @throws \Cake\Network\Exception\NotFoundException
  */
 	public function view($id = null) {
+		if (!$id) {
+			throw new NotFoundException(__('Invalid <%= strtolower($singularHumanName) %>'));
+		}
+
 		$<%= $singularName%> = $this-><%= $currentModelName %>->get($id, [
 			'contain' => [<%= $this->Bake->stringifyList($allAssociations, ['indent' => false]) %>]
 		]);
