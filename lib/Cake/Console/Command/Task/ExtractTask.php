@@ -366,7 +366,7 @@ class ExtractTask extends AppShell {
 
 			$this->_tokens = array();
 			foreach ($allTokens as $token) {
-				if (!is_array($token) || ($token[0] != T_WHITESPACE && $token[0] != T_INLINE_HTML)) {
+				if (!is_array($token) || ($token[0] !== T_WHITESPACE && $token[0] !== T_INLINE_HTML)) {
 					$this->_tokens[] = $token;
 				}
 			}
