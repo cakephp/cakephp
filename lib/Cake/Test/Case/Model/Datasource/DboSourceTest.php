@@ -785,6 +785,33 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
+ * Test NOT NULL on ENUM data type with empty string as a value
+ *
+ * @return void
+ */
+	public function testNotNullOnEnum() {
+		$this->skipIf($this->db instanceof Sqlserver, 'This test is not compatible with SQL Server.');
+		$name = $this->db->fullTableName('enum_tests');
+		$query = "CREATE TABLE {$name} (mood ENUM('','happy','sad','ok') NOT NULL);";
+		$result = $this->db->query($query);
+		$this->assertTrue($result);
+
+		$EnumTest = ClassRegistry::init('EnumTest');
+		$testResult = $EnumTest->save(array('mood' => ''));
+
+		$query = "DROP TABLE {$name};";
+		$result = $this->db->query($query);
+		$this->assertTrue($result);
+		
+		$this->assertEquals($testResult, array(
+			'EnumTest' => array(
+				'mood' => '',
+				'id' => '0'
+			)
+		));
+	}
+
+/**
  * test order to generate query order clause for virtual fields
  *
  * @return void
