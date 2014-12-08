@@ -318,8 +318,8 @@ class PostgresTest extends CakeTestCase {
 		$this->assertEquals("0", $this->Dbo->value('0', 'integer'));
 		$this->assertEquals('NULL', $this->Dbo->value('', 'integer'));
 		$this->assertEquals('NULL', $this->Dbo->value('', 'float'));
-		$this->assertEquals("NULL", $this->Dbo->value('', 'integer', false));
-		$this->assertEquals("NULL", $this->Dbo->value('', 'float', false));
+		$this->assertEquals('""', $this->Dbo->value('', 'integer', false));
+		$this->assertEquals('""', $this->Dbo->value('', 'float', false));
 		$this->assertEquals("'0.0'", $this->Dbo->value('0.0', 'float'));
 
 		$this->assertEquals("'TRUE'", $this->Dbo->value('t', 'boolean'));
