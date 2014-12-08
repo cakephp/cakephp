@@ -359,7 +359,7 @@ class ExtractTask extends AppShell {
 	protected function _extractTokens() {
 		foreach ($this->_files as $file) {
 			$this->_file = $file;
-			$this->out(__d('cake_console', 'Processing %s...', $file));
+			$this->out(__d('cake_console', 'Processing %s...', $file), 1, Shell::VERBOSE);
 
 			$code = file_get_contents($file);
 			$allTokens = token_get_all($code);
