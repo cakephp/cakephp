@@ -311,6 +311,7 @@ class I18n {
  * @param string $header Type
  * @param int $n Number
  * @return int plural match
+ * @see
  */
 	protected function _pluralGuess($header, $n) {
 		if (!is_string($header) || $header === "nplurals=1;plural=0;" || !isset($header[0])) {
@@ -351,7 +352,15 @@ class I18n {
 			}
 		} elseif (strpos($header, "plurals=5")) {
 			return $n == 1 ? 0 : ($n == 2 ? 1 : ($n >= 3 && $n <= 6 ? 2 : ($n >= 7 && $n <= 10 ? 3 : 4)));
+		} elseif (strpos($header, "plurals=6")) {
+			return $n == 0 ? 0 :
+				($n == 1 ? 1 :
+				($n == 2 ? 2 :
+				($n % 100 >= 3 && $n % 100 <= 10 ? 3 :
+				($n % 100 >= 11 ? 4 : 5))));
 		}
+
+		return 0;
 	}
 
 /**
