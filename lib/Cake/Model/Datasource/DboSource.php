@@ -997,8 +997,8 @@ class DboSource extends DataSource {
 		$count = count($fields);
 
 		for ($i = 0; $i < $count; $i++) {
-			$describe = $this->describe($Model);
-			$valueInsert[] = $this->value($values[$i], $Model->getColumnType($fields[$i]), $describe[$fields[$i]]['null']);
+			$schema = $Model->schema();
+			$valueInsert[] = $this->value($values[$i], $Model->getColumnType($fields[$i]), isset($schema[$fields[$i]]) ? $schema[$fields[$i]]['null'] : true);
 			$fieldInsert[] = $this->name($fields[$i]);
 			if ($fields[$i] === $Model->primaryKey) {
 				$id = $values[$i];
@@ -2068,7 +2068,7 @@ class DboSource extends DataSource {
  */
 	protected function _prepareUpdateFields(Model $Model, $fields, $quoteValues = true, $alias = false) {
 		$quotedAlias = $this->startQuote . $Model->alias . $this->endQuote;
-		$describe = $this->describe($Model);
+		$schema = $Model->schema();
 
 		$updates = array();
 		foreach ($fields as $field => $value) {
@@ -2089,7 +2089,7 @@ class DboSource extends DataSource {
 			$update = $quoted . ' = ';
 
 			if ($quoteValues) {
-				$update .= $this->value($value, $Model->getColumnType($field), $describe[$field]['null']);
+				$update .= $this->value($value, $Model->getColumnType($field), isset($schema[$field]) ? $schema[$field]['null'] : true);
 			} elseif ($Model->getColumnType($field) === 'boolean' && (is_int($value) || is_bool($value))) {
 				$update .= $this->boolean($value, true);
 			} elseif (!$alias) {
