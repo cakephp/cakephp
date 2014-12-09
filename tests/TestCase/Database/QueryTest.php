@@ -2867,10 +2867,33 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Tests that case statements work correctly for various use-cases.
+ * Tests that using the IS NOT operator will automatically translate to the best
+ * possible operator depending on the passed value
  *
  * @return void
  */
+	public function testDirectIsNotNull() {
+		$sql = (new Query($this->connection))
+			->select(['name'])
+			->from(['authors'])
+			->where(['name IS NOT' => null])
+			->sql();
+		$this->assertQuotedQuery('WHERE \(<name>\) IS NOT NULL', $sql, true);
+
+		$results = (new Query($this->connection))
+			->select(['name'])
+			->from(['authors'])
+			->where(['name IS NOT' => 'larry'])
+			->execute();
+		$this->assertCount(3, $results);
+		$this->assertNotEquals(['name' => 'larry'], $results->fetch('assoc'));
+	}
+
+	/**
+	 * Tests that case statements work correctly for various use-cases.
+	 *
+	 * @return void
+	 */
 	public function testSqlCaseStatement() {
 		$query = new Query($this->connection);
 		$publishedCase = $query
