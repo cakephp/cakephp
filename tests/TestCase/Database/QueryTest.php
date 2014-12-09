@@ -2889,11 +2889,11 @@ class QueryTest extends TestCase {
 		$this->assertNotEquals(['name' => 'larry'], $results->fetch('assoc'));
 	}
 
-	/**
-	 * Tests that case statements work correctly for various use-cases.
-	 *
-	 * @return void
-	 */
+/**
+ * Tests that case statements work correctly for various use-cases.
+ *
+ * @return void
+ */
 	public function testSqlCaseStatement() {
 		$query = new Query($this->connection);
 		$publishedCase = $query
