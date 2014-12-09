@@ -18,6 +18,8 @@
 App::uses('AppShell', 'Console/Command');
 App::uses('BakeTask', 'Console/Command/Task');
 App::uses('ClassRegistry', 'Utility');
+App::uses('Model', 'Model');
+App::uses('Controller', 'Controller');
 
 /**
  * Task class for creating and updating test files.
@@ -38,7 +40,7 @@ class TestTask extends BakeTask {
  *
  * @var array
  */
-	public $tasks = array('Template');
+	public $tasks = array('DbConfig', 'Model', 'Controller', 'Template');
 
 /**
  * class types that methods can be generated for
@@ -77,28 +79,54 @@ class TestTask extends BakeTask {
 
 /**
  * Execution method always used for tasks
+ * Handles dispatching to interactive, named, or all processes.
  *
  * @return void
  */
 	public function execute() {
 		parent::execute();
-		$count = count($this->args);
-		if (!$count) {
+		if (empty($this->args)) {
 			$this->_interactive();
 		}
 
-		if ($count === 1) {
-			$this->_interactive($this->args[0]);
-		}
-
-		if ($count > 1) {
-			$type = Inflector::classify($this->args[0]);
-			if ($this->bake($type, $this->args[1])) {
-				$this->out('<success>Done</success>');
+		if (isset($this->args[0])) {
+			$this->interactive = false;
+			if (!isset($this->connection)) {
+				$this->connection = 'default';
 			}
+			if (strtolower($this->args[0]) === 'all') {
+				return $this->all();
+			}
+			$model = $this->_modelName($this->args[0]);
+			$this->bake('Model', $model);
 		}
 	}
 
+/**
+ * Bake All the Tests at once. Will only bake tests for models and controllers that exist.
+ *
+ * @return void
+ */
+	public function all() {
+		$this->interactive = false;
+		$this->Model->interactive = false;
+		$tables = $this->Model->listAll($this->connection, false);
+		$controllers = $this->Controller->listAll($this->connection);
+
+		foreach ($tables as $table) {
+			$model = $this->_modelName($table);
+			$importOptions = array();
+			if (!empty($this->params['schema'])) {
+				$importOptions['schema'] = $model;
+			}
+			$this->bake('Model', $model);
+		}
+
+		foreach ($controllers as $controller) {
+			$controller = $this->_controllerName($controller);
+			$this->bake('Controller', $controller);
+		}
+	}
 /**
  * Handles interactive baking
  *
@@ -553,13 +581,14 @@ class TestTask extends BakeTask {
 		$parser->description(
 			__d('cake_console', 'Bake test case skeletons for classes.')
 		)->addArgument('type', array(
-			'help' => __d('cake_console', 'Type of class to bake, can be any of the following: controller, model, helper, component or behavior.'),
+			'help' => __d('cake_console', 'Type of class to bake, can be any of the following: controller, model, helper, component or behavior. You can use `bake test all` to bake all controller and model tests.'),
 			'choices' => array(
 				'Controller', 'controller',
 				'Model', 'model',
 				'Helper', 'helper',
 				'Component', 'component',
-				'Behavior', 'behavior'
+				'Behavior', 'behavior',
+				'All', 'all'
 			)
 		))->addArgument('name', array(
 			'help' => __d('cake_console', 'An existing class to bake tests for.')
