@@ -295,7 +295,7 @@ class CakeTestFixture {
 
 						$message = 'Fixture invalid: Count of fields does not match count of values in ' . get_class($this) . "\n";
 						foreach ($mergeFields as $field) {
-						    $message .= "The field '" . $field . "' is in the data fixture but not in the schema." . "\n";
+							$message .= "The field '" . $field . "' is in the data fixture but not in the schema." . "\n";
 						}
 
 						throw new CakeException( $message );
