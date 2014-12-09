@@ -21,6 +21,8 @@ $this->layout = 'dev_error';
 $this->assign('title', 'Missing Route');
 $this->assign('templateName', 'missing_route.ctp');
 
+$attributes = $error->getAttributes();
+
 $this->start('subheading');
 ?>
 	<strong>Error: </strong>
@@ -30,6 +32,13 @@ $this->start('subheading');
 <?php $this->start('file') ?>
 <p>None of the currently connected routes match the given URL or parameters.
 Add a matching route to <?= 'config' . DS . 'routes.php' ?></p>
+
+<?php if (!empty($attributes['context'])): ?>
+<p>The passed context was:</p>
+<pre>
+<?=  Debugger::exportVar($attributes['context']); ?>
+</pre>
+<?php endif; ?>
 
 <h3>Connected Routes</h3>
 <table cellspacing="0" cellpadding="0">
