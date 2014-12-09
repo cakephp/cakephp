@@ -1513,6 +1513,127 @@ class I18nTest extends CakeTestCase {
 	}
 
 /**
+ * testMoRulesFifteen method
+ *
+ * @return void
+ */
+	public function testMoRulesFifteen() {
+		Configure::write('Config.language', 'rule_15_mo');
+		$this->assertRulesFifteen();
+	}
+
+/**
+ * testPoRulesFifteen method
+ *
+ * @return void
+ */
+	public function testPoRulesFifteen() {
+		Configure::write('Config.language', 'rule_15_po');
+		$this->assertRulesFifteen();
+	}
+
+/**
+ * Assertions for plural rules fifteen
+ *
+ * @return void
+ */
+	public function assertRulesFifteen() {
+		$singular = $this->_singular();
+		$this->assertEquals('Plural Rule 15 (translated)', $singular);
+
+		$plurals = $this->_plural(111);
+		$this->assertTrue(in_array('0 is 0 (translated)', $plurals));
+		$this->assertTrue(in_array('1 is 1 (translated)', $plurals));
+		$this->assertTrue(in_array('2 is 2 (translated)', $plurals));
+		$this->assertTrue(in_array('3 ends with 03-10 (translated)', $plurals));
+		$this->assertTrue(in_array('4 ends with 03-10 (translated)', $plurals));
+		$this->assertTrue(in_array('5 ends with 03-10 (translated)', $plurals));
+		$this->assertTrue(in_array('6 ends with 03-10 (translated)', $plurals));
+		$this->assertTrue(in_array('7 ends with 03-10 (translated)', $plurals));
+		$this->assertTrue(in_array('8 ends with 03-10 (translated)', $plurals));
+		$this->assertTrue(in_array('9 ends with 03-10 (translated)', $plurals));
+		$this->assertTrue(in_array('10 ends with 03-10 (translated)', $plurals));
+		$this->assertTrue(in_array('11 ends with 11-99 (translated)', $plurals));
+		$this->assertTrue(in_array('12 ends with 11-99 (translated)', $plurals));
+		$this->assertTrue(in_array('13 ends with 11-99 (translated)', $plurals));
+		$this->assertTrue(in_array('14 ends with 11-99 (translated)', $plurals));
+		$this->assertTrue(in_array('15 ends with 11-99 (translated)', $plurals));
+		$this->assertTrue(in_array('16 ends with 11-99 (translated)', $plurals));
+		$this->assertTrue(in_array('17 ends with 11-99 (translated)', $plurals));
+		$this->assertTrue(in_array('18 ends with 11-99 (translated)', $plurals));
+		$this->assertTrue(in_array('19 ends with 11-99 (translated)', $plurals));
+		$this->assertTrue(in_array('20 ends with 11-99 (translated)', $plurals));
+		$this->assertTrue(in_array('31 ends with 11-99 (translated)', $plurals));
+		$this->assertTrue(in_array('42 ends with 11-99 (translated)', $plurals));
+		$this->assertTrue(in_array('53 ends with 11-99 (translated)', $plurals));
+		$this->assertTrue(in_array('64 ends with 11-99 (translated)', $plurals));
+		$this->assertTrue(in_array('75 ends with 11-99 (translated)', $plurals));
+		$this->assertTrue(in_array('86 ends with 11-99 (translated)', $plurals));
+		$this->assertTrue(in_array('97 ends with 11-99 (translated)', $plurals));
+		$this->assertTrue(in_array('98 ends with 11-99 (translated)', $plurals));
+		$this->assertTrue(in_array('99 ends with 11-99 (translated)', $plurals));
+		$this->assertTrue(in_array('100 everything else (translated)', $plurals));
+		$this->assertTrue(in_array('101 everything else (translated)', $plurals));
+		$this->assertTrue(in_array('102 everything else (translated)', $plurals));
+		$this->assertTrue(in_array('103 ends with 03-10 (translated)', $plurals));
+		$this->assertTrue(in_array('104 ends with 03-10 (translated)', $plurals));
+		$this->assertTrue(in_array('105 ends with 03-10 (translated)', $plurals));
+		$this->assertTrue(in_array('106 ends with 03-10 (translated)', $plurals));
+		$this->assertTrue(in_array('107 ends with 03-10 (translated)', $plurals));
+		$this->assertTrue(in_array('108 ends with 03-10 (translated)', $plurals));
+		$this->assertTrue(in_array('109 ends with 03-10 (translated)', $plurals));
+		$this->assertTrue(in_array('110 ends with 03-10 (translated)', $plurals));
+		$this->assertTrue(in_array('111 ends with 11-99 (translated)', $plurals));
+
+		$coreSingular = $this->_singularFromCore();
+		$this->assertEquals('Plural Rule 15 (from core translated)', $coreSingular);
+
+		$corePlurals = $this->_pluralFromCore(111);
+		$this->assertTrue(in_array('0 is 0 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('1 is 1 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('2 is 2 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('3 ends with 03-10 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('4 ends with 03-10 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('5 ends with 03-10 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('6 ends with 03-10 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('7 ends with 03-10 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('8 ends with 03-10 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('9 ends with 03-10 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('10 ends with 03-10 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('11 ends with 11-99 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('12 ends with 11-99 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('13 ends with 11-99 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('14 ends with 11-99 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('15 ends with 11-99 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('16 ends with 11-99 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('17 ends with 11-99 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('18 ends with 11-99 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('19 ends with 11-99 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('20 ends with 11-99 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('31 ends with 11-99 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('42 ends with 11-99 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('53 ends with 11-99 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('64 ends with 11-99 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('75 ends with 11-99 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('86 ends with 11-99 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('97 ends with 11-99 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('98 ends with 11-99 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('99 ends with 11-99 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('100 everything else (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('101 everything else (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('102 everything else (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('103 ends with 03-10 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('104 ends with 03-10 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('105 ends with 03-10 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('106 ends with 03-10 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('107 ends with 03-10 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('108 ends with 03-10 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('109 ends with 03-10 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('110 ends with 03-10 (from core translated)', $corePlurals));
+		$this->assertTrue(in_array('111 ends with 11-99 (from core translated)', $corePlurals));
+	}
+
+/**
  * testSetLanguageWithSession method
  *
  * @return void
@@ -1948,11 +2069,12 @@ class I18nTest extends CakeTestCase {
 /**
  * Plural method
  *
+ * @param int $upTo For numbers upto (default to 25)
  * @return void
  */
-	protected function _plural() {
+	protected function _plural($upTo = 25) {
 		$plurals = array();
-		for ($number = 0; $number <= 25; $number++) {
+		for ($number = 0; $number <= $upTo; $number++) {
 			$plurals[] = sprintf(__n('%d = 1', '%d = 0 or > 1', (float)$number), (float)$number);
 		}
 		return $plurals;
@@ -1971,11 +2093,12 @@ class I18nTest extends CakeTestCase {
 /**
  * pluralFromCore method
  *
+ * @param int $upTo For numbers upto (default to 25)
  * @return void
  */
-	protected function _pluralFromCore() {
+	protected function _pluralFromCore($upTo = 25) {
 		$plurals = array();
-		for ($number = 0; $number <= 25; $number++) {
+		for ($number = 0; $number <= $upTo; $number++) {
 			$plurals[] = sprintf(__n('%d = 1 (from core)', '%d = 0 or > 1 (from core)', (float)$number), (float)$number);
 		}
 		return $plurals;
