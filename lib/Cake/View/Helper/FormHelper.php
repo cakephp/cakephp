@@ -534,8 +534,7 @@ class FormHelper extends AppHelper {
 			}
 			$out .= $this->submit($submit, $submitOptions);
 		}
-		if (
-			$this->requestType !== 'get' &&
+		if ($this->requestType !== 'get' &&
 			isset($this->request['_Token']) &&
 			!empty($this->request['_Token'])
 		) {
@@ -1199,8 +1198,7 @@ class FormHelper extends AppHelper {
 			if ($fieldKey === $primaryKey) {
 				$options['type'] = 'hidden';
 			}
-			if (
-				$options['type'] === 'number' &&
+			if ($options['type'] === 'number' &&
 				!isset($options['step'])
 			) {
 				if ($type === 'decimal') {
@@ -1318,8 +1316,7 @@ class FormHelper extends AppHelper {
 		} elseif (is_array($div)) {
 			$divOptions = array_merge($divOptions, $div);
 		}
-		if (
-			$this->_extractOption('required', $options) !== false &&
+		if ($this->_extractOption('required', $options) !== false &&
 			$this->_introspectModel($this->model(), 'validates', $this->field())
 		) {
 			$divOptions = $this->addClass($divOptions, 'required');
@@ -1362,8 +1359,7 @@ class FormHelper extends AppHelper {
 		$idKey = null;
 		if ($options['type'] === 'date' || $options['type'] === 'datetime') {
 			$firstInput = 'M';
-			if (
-				array_key_exists('dateFormat', $options) &&
+			if (array_key_exists('dateFormat', $options) &&
 				($options['dateFormat'] === null || $options['dateFormat'] === 'NONE')
 			) {
 				$firstInput = 'H';
@@ -1444,8 +1440,7 @@ class FormHelper extends AppHelper {
 		$value = current($this->value($valueOptions));
 		$output = '';
 
-		if (
-			(!isset($options['checked']) && !empty($value) && $value == $options['value']) ||
+		if ((!isset($options['checked']) && !empty($value) && $value == $options['value']) ||
 			!empty($options['checked'])
 		) {
 			$options['checked'] = 'checked';
@@ -2086,8 +2081,7 @@ class FormHelper extends AppHelper {
 			$hasOptions = (count($options) > 0 || $showEmpty);
 			// Secure the field if there are options, or its a multi select.
 			// Single selects with no options don't submit, but multiselects do.
-			if (
-				(!isset($secure) || $secure) &&
+			if ((!isset($secure) || $secure) &&
 				empty($attributes['disabled']) &&
 				(!empty($attributes['multiple']) || $hasOptions)
 			) {
@@ -2761,8 +2755,7 @@ class FormHelper extends AppHelper {
 
 			if ($name !== null) {
 				$isNumeric = is_numeric($name);
-				if (
-					(!$selectedIsArray && !$selectedIsEmpty && (string)$attributes['value'] == (string)$name) ||
+				if ((!$selectedIsArray && !$selectedIsEmpty && (string)$attributes['value'] == (string)$name) ||
 					($selectedIsArray && in_array((string)$name, $attributes['value'], !$isNumeric))
 				) {
 					if ($attributes['style'] === 'checkbox') {
@@ -2782,8 +2775,7 @@ class FormHelper extends AppHelper {
 							$disabledIsNumeric = is_numeric($name);
 						}
 					}
-					if (
-						$hasDisabled &&
+					if ($hasDisabled &&
 						$disabledIsArray &&
 						in_array((string)$name, $attributes['disabled'], !$disabledIsNumeric)
 					) {
@@ -2902,8 +2894,7 @@ class FormHelper extends AppHelper {
 				if ($min > $max) {
 					list($min, $max) = array($max, $min);
 				}
-				if (
-					!empty($options['value']) &&
+				if (!empty($options['value']) &&
 					(int)$options['value'] < $min &&
 					(int)$options['value'] > 0
 				) {

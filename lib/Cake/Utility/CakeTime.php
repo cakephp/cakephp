@@ -322,8 +322,7 @@ class CakeTime {
 
 		if (is_int($dateString) || is_numeric($dateString)) {
 			$date = (int)$dateString;
-		} elseif (
-			$dateString instanceof DateTime &&
+		} elseif ($dateString instanceof DateTime &&
 			$dateString->getTimezone()->getName() != date_default_timezone_get()
 		) {
 			$clone = clone $dateString;

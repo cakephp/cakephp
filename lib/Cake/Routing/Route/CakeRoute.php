@@ -448,8 +448,7 @@ class CakeRoute {
 			}
 
 			// pull out named params if named params are greedy or a rule exists.
-			if (
-				($greedyNamed || isset($allowedNamedParams[$key])) &&
+			if (($greedyNamed || isset($allowedNamedParams[$key])) &&
 				($value !== false && $value !== null) &&
 				(!in_array($key, $prefixes))
 			) {
