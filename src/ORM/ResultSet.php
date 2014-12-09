@@ -248,33 +248,6 @@ class ResultSet implements ResultSetInterface {
 	}
 
 /**
- * Returns the first result in this set and blocks the set so that no other
- * results can be fetched.
- *
- * When using serialized results, the index will be incremented past the
- * end of the results simulating the behavior when the result set is backed
- * by a statement.
- *
- * @return array|object|null
- */
-	public function first() {
-		if (isset($this->_results[0])) {
-			return $this->_results[0];
-		}
-
-		if ($this->valid()) {
-			if ($this->_statement) {
-				$this->_statement->closeCursor();
-			}
-			if (!$this->_statement && $this->_results) {
-				$this->_index = count($this->_results);
-			}
-			return $this->_current;
-		}
-		return null;
-	}
-
-/**
  * Gives the number of rows in the result set.
  *
  * Part of the Countable interface.
