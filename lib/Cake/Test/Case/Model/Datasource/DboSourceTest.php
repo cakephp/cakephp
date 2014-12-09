@@ -790,7 +790,7 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	public function testNotNullOnEnum() {
-		if ( ! $this->db instanceof Mysql) {
+		if (!$this->db instanceof Mysql) {
 			$this->markTestSkipped('This test can only run on MySQL');
 		}
 		$name = $this->db->fullTableName('enum_tests');
@@ -804,7 +804,7 @@ class DboSourceTest extends CakeTestCase {
 		$query = "DROP TABLE {$name};";
 		$result = $this->db->query($query);
 		$this->assertTrue($result);
-		
+
 		$this->assertEquals($testResult, array(
 			'EnumTest' => array(
 				'mood' => '',
