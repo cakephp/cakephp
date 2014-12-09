@@ -287,26 +287,15 @@ class CakeTestFixture {
 				$fields = array_unique($fields);
 				$default = array_fill_keys($fields, null);
 				foreach ($this->records as $record) {
-					$mergeData = array_merge( $default, $record );
-					$merge = array_values( $mergeData );
+					$mergeData = array_merge($default, $record);
+					$merge = array_values($mergeData);
 					if (count($fields) !== count($merge)) {
 
-						$mergeFields = array_keys( $mergeData );
-						$remove = array();
+						$mergeFields = array_diff_key(array_keys($mergeData), $fields);
 
-						foreach ($fields as $k => $f) {
-							if (in_array( $f, $mergeFields )) {
-								$remove[] = $f;
-								unset( $fields[$k] );
-							}
-						}
-						$mergeFields = array_diff( $mergeFields, $remove );
-						$message = 'Fixture invalid: Count of fields does not match count of values in ' . get_class($this) . "\n";
+						$message = 'Fixture invalid: Count of fields does not match count of values in ' . get_class($this)."\n";
 						foreach ($mergeFields as $field) {
-							$message .= "The field '" . $field . "' is in the data fixture but not in the schema." . "\n";
-						}
-						foreach ($fields as $field) {
-							$message .= "The field '" . $field . "' is in the fixture but not in the data." . "\n";
+						    $message .= "The field '".$field."' is in the data fixture but not in the schema."."\n";
 						}
 
 						throw new CakeException( $message );
