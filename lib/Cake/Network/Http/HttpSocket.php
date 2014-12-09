@@ -311,8 +311,7 @@ class HttpSocket extends CakeSocket {
 			if (isset($this->request['uri']['port'])) {
 				$port = $this->request['uri']['port'];
 			}
-			if (
-				($scheme === 'http' && $port != 80) ||
+			if (($scheme === 'http' && $port != 80) ||
 				($scheme === 'https' && $port != 443) ||
 				($port != 80 && $port != 443)
 			) {
