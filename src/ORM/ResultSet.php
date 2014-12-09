@@ -299,8 +299,9 @@ class ResultSet implements ResultSetInterface {
  */
 	protected function _calculateAssociationMap() {
 		$contain = $this->_query->eagerLoader()->normalized($this->_defaultTable);
+		$contain = $contain ?: [];
 		if (!$contain) {
-			return;
+			//return;
 		}
 
 		$map = [];
@@ -319,6 +320,7 @@ class ResultSet implements ResultSetInterface {
 			}
 		};
 		$visitor($contain, []);
+		$this->_query->eagerLoader()->_matching ? $visitor($this->_query->eagerLoader()->_matching->normalized($this->_defaultTable), []) : [];
 		$this->_associationMap = $map;
 	}
 

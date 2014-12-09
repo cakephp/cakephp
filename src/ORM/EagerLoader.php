@@ -77,6 +77,8 @@ class EagerLoader {
  */
 	protected $_aliasList = [];
 
+	public $_matching = null;
+
 /**
  * Sets the list of associations that should be eagerly loaded along for a
  * specific table using when a query is provided. The list of associated tables
@@ -127,6 +129,10 @@ class EagerLoader {
  * @return array The resulting containments array
  */
 	public function matching($assoc, callable $builder = null) {
+		if ($this->_matching === null) {
+			$this->_matching = new self();
+		}
+
 		$assocs = explode('.', $assoc);
 		$last = array_pop($assocs);
 		$containments = [];
@@ -138,7 +144,7 @@ class EagerLoader {
 		}
 
 		$pointer[$last] = ['queryBuilder' => $builder, 'matching' => true];
-		return $this->contain($containments);
+		return $this->_matching->contain($containments);
 	}
 
 /**
@@ -242,7 +248,7 @@ class EagerLoader {
  * @return void
  */
 	public function attachAssociations(Query $query, Table $repository, $includeFields) {
-		if (empty($this->_containments)) {
+		if (empty($this->_containments) && $this->_matching === null) {
 			return;
 		}
 
@@ -270,7 +276,8 @@ class EagerLoader {
  */
 	public function attachableAssociations(Table $repository) {
 		$contain = $this->normalized($repository);
-		return $this->_resolveJoins($contain);
+		$matching = $this->_matching ? $this->_matching->normalized($repository) : [];
+		return $this->_resolveJoins($contain, $matching);
 	}
 
 /**
@@ -290,7 +297,7 @@ class EagerLoader {
 		}
 
 		$contain = $this->normalized($repository);
-		$this->_resolveJoins($contain);
+		$this->_resolveJoins($contain, []);
 		return $this->_loadExternal;
 	}
 
@@ -409,13 +416,19 @@ class EagerLoader {
  * @param array $associations list of associations for $source
  * @return array
  */
-	protected function _resolveJoins($associations) {
+	protected function _resolveJoins($associations, $matching = []) {
 		$result = [];
+		foreach ($matching as $table => $options) {
+			$result[$table] = $options;
+			$result += $this->_resolveJoins($options['associations'], []);
+		}
 		foreach ($associations as $table => $options) {
-			if ($options['canBeJoined']) {
+			$inMatching = isset($matching[$table]);
+			if (!$inMatching && $options['canBeJoined']) {
 				$result[$table] = $options;
-				$result += $this->_resolveJoins($options['associations']);
+				$result += $this->_resolveJoins($options['associations'], $inMatching ? $mathching[$table] : []);
 			} else {
+				$options['canBeJoined'] = false;
 				$this->_loadExternal[] = $options;
 			}
 		}
