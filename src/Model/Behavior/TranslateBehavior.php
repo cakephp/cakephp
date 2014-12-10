@@ -127,7 +127,7 @@ class TranslateBehavior extends Behavior {
 		$this->_table->hasMany($table, [
 			'foreignKey' => 'foreign_key',
 			'strategy' => 'subquery',
-			'conditions' => ["$table.model" => $alias],
+			'conditions' => ["$table.model" => $model],
 			'propertyName' => '_i18n',
 			'dependent' => true
 		]);
