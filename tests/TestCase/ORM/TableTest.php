@@ -571,7 +571,7 @@ class TableTest extends TestCase {
 		]);
 		$fields = ['username' => 'mark'];
 		$result = $table->updateAll($fields, ['id <' => 4]);
-		$this->assertTrue($result);
+		$this->assertSame(3, $result);
 
 		$result = $table->find('all')
 			->select(['username'])
@@ -617,7 +617,7 @@ class TableTest extends TestCase {
 			'connection' => $this->connection,
 		]);
 		$result = $table->deleteAll(['id <' => 4]);
-		$this->assertTrue($result);
+		$this->assertSame(3, $result);
 
 		$result = $table->find('all')->toArray();
 		$this->assertCount(1, $result, 'Only one record should remain');
@@ -636,7 +636,7 @@ class TableTest extends TestCase {
 			'connection' => $this->connection,
 		]);
 		$result = $table->deleteAll(['Managers.id <' => 4]);
-		$this->assertTrue($result);
+		$this->assertSame(3, $result);
 
 		$result = $table->find('all')->toArray();
 		$this->assertCount(1, $result, 'Only one record should remain');
