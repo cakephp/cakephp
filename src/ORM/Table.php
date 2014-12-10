@@ -1024,9 +1024,8 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			->set($fields)
 			->where($conditions);
 		$statement = $query->execute();
-		$success = $statement->rowCount() > 0;
 		$statement->closeCursor();
-		return $success;
+		return $statement->rowCount();
 	}
 
 /**
@@ -1104,9 +1103,8 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			->delete()
 			->where($conditions);
 		$statement = $query->execute();
-		$success = $statement->rowCount() > 0;
 		$statement->closeCursor();
-		return $success;
+		return $statement->rowCount();
 	}
 
 /**

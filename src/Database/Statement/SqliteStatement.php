@@ -32,7 +32,7 @@ class SqliteStatement extends BufferedStatement {
 			$changes->execute();
 			$count = $changes->fetch()[0];
 			$changes->closeCursor();
-			return $count;
+			return (int)$count;
 		}
 		return parent::rowCount();
 	}
