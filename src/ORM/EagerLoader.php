@@ -77,7 +77,12 @@ class EagerLoader {
  */
 	protected $_aliasList = [];
 
-	public $_matching = null;
+/**
+ * Another EagerLoader instance that will be used for 'matching' associations.
+ *
+ * @var \Cake\ORM\EagerLoader
+ */
+	protected $_matching;
 
 /**
  * Sets the list of associations that should be eagerly loaded along for a
@@ -486,8 +491,8 @@ class EagerLoader {
  * - alias: The association alias
  * - instance: The association instance
  * - canBeJoined: Whether or not the association will be loaded using a JOIN
- * - entityClass: The entity that should eb used for hydrating the results
- * - nestKey: A dottet path that can be used to inserting the data in the correct nesting.
+ * - entityClass: The entity that should be used for hydrating the results
+ * - nestKey: A dotted path that can be used to inserting the data in the correct nesting.
  *
  * @param \Cake\ORM\Table $repository The table containing the association that
  * will be normalized
