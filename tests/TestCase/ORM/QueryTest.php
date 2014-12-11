@@ -1895,7 +1895,8 @@ class QueryTest extends TestCase {
 			'buffered' => false,
 			'formatters' => 1,
 			'mapReducers' => 1,
-			'contain' => [
+			'contain' => [],
+			'matching' => [
 				'articles' => [
 					'queryBuilder' => null,
 					'matching' => true

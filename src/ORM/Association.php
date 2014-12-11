@@ -664,15 +664,15 @@ abstract class Association {
  * @return void
  */
 	protected function _bindNewAssociations($query, $surrogate, $options) {
-		$contain = $surrogate->contain();
-		$matching = $surrogate->eagerLoader()->matching();
+		$loader = $surrogate->eagerLoader();
+		$contain = $loader->contain();
+		$matching = $loader->matching();
 		$target = $this->_targetTable;
 
 		if (!$contain && !$matching) {
 			return;
 		}
 
-		$loader = $surrogate->eagerLoader();
 		$loader->attachAssociations($query, $target, $options['includeFields']);
 		$newContain = [];
 		foreach ($contain as $alias => $value) {
