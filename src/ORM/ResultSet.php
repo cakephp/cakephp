@@ -298,30 +298,7 @@ class ResultSet implements ResultSetInterface {
  * @return void
  */
 	protected function _calculateAssociationMap() {
-		$contain = $this->_query->eagerLoader()->normalized($this->_defaultTable);
-		$contain = $contain ?: [];
-		if (!$contain) {
-			//return;
-		}
-
-		$map = [];
-		$visitor = function ($level) use (&$visitor, &$map) {
-			foreach ($level as $assoc => $meta) {
-				$map[$meta['aliasPath']] = [
-					'alias' => $assoc,
-					'instance' => $meta['instance'],
-					'canBeJoined' => $meta['canBeJoined'],
-					'entityClass' => $meta['instance']->target()->entityClass(),
-					'nestKey' => $meta['canBeJoined'] ? $assoc : $meta['aliasPath']
-				];
-				if ($meta['canBeJoined'] && !empty($meta['associations'])) {
-					$visitor($meta['associations']);
-				}
-			}
-		};
-		$visitor($contain, []);
-		$this->_query->eagerLoader()->_matching ? $visitor($this->_query->eagerLoader()->_matching->normalized($this->_defaultTable), []) : [];
-		$this->_associationMap = $map;
+		return $this->_associationMap = $this->_query->eagerLoader()->associationsMap($this->_defaultTable);
 	}
 
 /**

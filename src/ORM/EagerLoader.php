@@ -480,6 +480,46 @@ class EagerLoader {
 	}
 
 /**
+ * Returns an array having as keys a dotted path of associations that participate
+ * in this eager loader. The values of the array will contain the following keys
+ *
+ * - alias: The association alias
+ * - instance: The association instance
+ * - canBeJoined: Whether or not the association will be loaded using a JOIN
+ * - entityClass: The entity that should eb used for hydrating the results
+ * - nestKey: A dottet path that can be used to inserting the data in the correct nesting.
+ *
+ * @param \Cake\ORM\Table $repository The table containing the association that
+ * will be normalized
+ * @return array
+ */
+	public function associationsMap($table) {
+		$map = [];
+
+		if (!$this->matching() && !$this->contain()) {
+			return $map;
+		}
+
+		$visitor = function ($level) use (&$visitor, &$map) {
+			foreach ($level as $assoc => $meta) {
+				$map[$meta['aliasPath']] = [
+					'alias' => $assoc,
+					'instance' => $meta['instance'],
+					'canBeJoined' => $meta['canBeJoined'],
+					'entityClass' => $meta['instance']->target()->entityClass(),
+					'nestKey' => $meta['canBeJoined'] ? $assoc : $meta['aliasPath']
+				];
+				if ($meta['canBeJoined'] && !empty($meta['associations'])) {
+					$visitor($meta['associations']);
+				}
+			}
+		};
+		$visitor($this->normalized($table), []);
+		$visitor($this->_matching->normalized($table), []);
+		return $map;
+	}
+
+/**
  * Helper function used to return the keys from the query records that will be used
  * to eagerly load associations.
  *
