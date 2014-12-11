@@ -17,6 +17,9 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
+use TestApp\Model\Entity\Author;
+use TestApp\Model\Entity\Owner;
+use TestApp\Model\Entity\User;
 
 /**
  * Entity test case.
@@ -822,30 +825,34 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testErrorsDeep() {
-		$entity2 = new Entity;
-		$entity3 = new Entity;
-		$entity = new Entity([
+		$user = new User();
+		$owner = new Owner();
+		$author = new Author([
 			'foo' => 'bar',
 			'thing' => 'baz',
-			'user' => $entity2,
-			'owner' => $entity3
+			'user' => $user,
+			'owner' => $owner
 		]);
-		$entity->errors('thing', ['this is a mistake']);
-		$entity2->errors(['a' => ['error1'], 'b' => ['error2']]);
-		$entity3->errors(['c' => ['error3'], 'd' => ['error4']]);
+		$author->errors('thing', ['this is a mistake']);
+		$user->errors(['a' => ['error1'], 'b' => ['error2']]);
+		$owner->errors(['c' => ['error3'], 'd' => ['error4']]);
 
 		$expected = ['a' => ['error1'], 'b' => ['error2']];
-		$this->assertEquals($expected, $entity->errors('user'));
+		$this->assertEquals($expected, $author->errors('user'));
 
 		$expected = ['c' => ['error3'], 'd' => ['error4']];
-		$this->assertEquals($expected, $entity->errors('owner'));
+		$this->assertEquals($expected, $author->errors('owner'));
 
-		$entity->set('multiple', [$entity2, $entity3]);
+		$author->set('multiple', [$user, $owner]);
 		$expected = [
 			['a' => ['error1'], 'b' => ['error2']],
 			['c' => ['error3'], 'd' => ['error4']]
 		];
-		$this->assertEquals($expected, $entity->errors('multiple'));
+		$this->assertEquals($expected, $author->errors('multiple'));
+
+		$user->set('author', $author);
+		$expected = ['thing' => ['this is a mistake']];
+		$this->assertEquals($expected, $author->errors('multiple.0.author'));
 	}
 
 /**

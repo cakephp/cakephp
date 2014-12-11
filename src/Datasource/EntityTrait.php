@@ -674,7 +674,7 @@ trait EntityTrait {
 		while ($len) {
 			$part = array_shift($path);
 			$len = count($path);
-			if ($entity instanceof static) {
+			if ($entity instanceof self) {
 				$val = $entity->get($part);
 			} elseif (is_array($entity)) {
 				$val = isset($entity[$part]) ? $entity[$part] : false;
@@ -683,7 +683,7 @@ trait EntityTrait {
 			if (
 				is_array($val) ||
 				$val instanceof Traversable ||
-				$val instanceof static
+				$val instanceof self
 			) {
 				$entity = $val;
 			} else {
@@ -705,12 +705,12 @@ trait EntityTrait {
  * @return array
  */
 	protected function _readError($object, $path = null) {
-		if ($object instanceof static) {
+		if ($object instanceof self) {
 			return $object->errors($path);
 		}
 		if (is_array($object)) {
 			$array = array_map(function ($val) {
-				if ($val instanceof static) {
+				if ($val instanceof self) {
 					return $val->errors();
 				}
 			}, $object);
