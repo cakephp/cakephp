@@ -589,6 +589,17 @@ class View {
 	}
 
 /**
+ * Check if a block exists
+ *
+ * @param string $name Name of the block
+ *
+ * @return bool
+ */
+	public function exists($name) {
+		return $this->Blocks->exists($name);
+	}
+
+/**
  * Provides view or element extension/inheritance. Views can extends a
  * parent view and populate blocks in the parent template.
  *

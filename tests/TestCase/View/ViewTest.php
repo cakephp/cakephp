@@ -1349,6 +1349,17 @@ class ViewTest extends TestCase {
 	}
 
 /**
+ * Test checking a block's existance.
+ *
+ * @return void
+ */
+	public function testBlockExist() {
+		$this->assertFalse($this->View->exists('test'));
+		$this->View->assign('test', 'Block content');
+		$this->assertTrue($this->View->exists('test'));
+	}
+
+/**
  * Test setting a block's content to null
  *
  * @return void
