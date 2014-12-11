@@ -1993,6 +1993,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testConflitingAliases() {
+		$this->markTestIncomplete('Needs an actual conflicting case');
 		$table = TableRegistry::get('ArticlesTags');
 		$table->belongsTo('Articles')->target()->belongsTo('Authors');
 		$table->belongsTo('Tags');
@@ -2000,7 +2001,7 @@ class QueryTest extends TestCase {
 		$table->find()
 			->contain(['Articles.Authors'])
 			->matching('Tags.Authors')
-			->all();
+			->sql();
 	}
 
 /**

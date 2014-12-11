@@ -128,9 +128,13 @@ class EagerLoader {
  * options to the filtering query
  * @return array The resulting containments array
  */
-	public function matching($assoc, callable $builder = null) {
+	public function matching($assoc = null, callable $builder = null) {
 		if ($this->_matching === null) {
 			$this->_matching = new self();
+		}
+
+		if ($assoc === null) {
+			return $this->_matching->contain();
 		}
 
 		$assocs = explode('.', $assoc);
