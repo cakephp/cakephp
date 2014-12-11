@@ -849,10 +849,6 @@ class EntityTest extends TestCase {
 			['c' => ['error3'], 'd' => ['error4']]
 		];
 		$this->assertEquals($expected, $author->errors('multiple'));
-
-		$user->set('author', $author);
-		$expected = ['thing' => ['this is a mistake']];
-		$this->assertEquals($expected, $author->errors('multiple.0.author'));
 	}
 
 /**
@@ -861,8 +857,8 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testErrorPathReading() {
-		$assoc = new Entity;
-		$entity = new Entity([
+		$assoc = new User;
+		$entity = new Author([
 			'field' => 'value',
 			'one' => $assoc,
 			'many' => [$assoc]
