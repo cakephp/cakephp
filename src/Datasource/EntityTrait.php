@@ -407,12 +407,12 @@ trait EntityTrait {
 		$result = [];
 		foreach ($this->visibleProperties() as $property) {
 			$value = $this->get($property);
-			if (is_array($value) && isset($value[0]) && $value[0] instanceof self) {
+			if (is_array($value) && isset($value[0]) && $value[0] instanceof EntityInterface) {
 				$result[$property] = [];
 				foreach ($value as $k => $entity) {
 					$result[$property][$k] = $entity->toArray();
 				}
-			} elseif ($value instanceof self) {
+			} elseif ($value instanceof EntityInterface) {
 				$result[$property] = $value->toArray();
 			} else {
 				$result[$property] = $value;
@@ -674,7 +674,7 @@ trait EntityTrait {
 		while ($len) {
 			$part = array_shift($path);
 			$len = count($path);
-			if ($entity instanceof self) {
+			if ($entity instanceof EntityInterface) {
 				$val = $entity->get($part);
 			} elseif (is_array($entity)) {
 				$val = isset($entity[$part]) ? $entity[$part] : false;
@@ -683,7 +683,7 @@ trait EntityTrait {
 			if (
 				is_array($val) ||
 				$val instanceof Traversable ||
-				$val instanceof self
+				$val instanceof EntityInterface
 			) {
 				$entity = $val;
 			} else {
@@ -705,12 +705,12 @@ trait EntityTrait {
  * @return array
  */
 	protected function _readError($object, $path = null) {
-		if ($object instanceof self) {
+		if ($object instanceof EntityInterface) {
 			return $object->errors($path);
 		}
 		if (is_array($object)) {
 			$array = array_map(function ($val) {
-				if ($val instanceof self) {
+				if ($val instanceof EntityInterface) {
 					return $val->errors();
 				}
 			}, $object);

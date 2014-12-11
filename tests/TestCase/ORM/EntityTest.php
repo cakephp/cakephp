@@ -17,9 +17,8 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
-use TestApp\Model\Entity\Author;
-use TestApp\Model\Entity\Owner;
-use TestApp\Model\Entity\User;
+use TestApp\Model\Entity\Extending;
+use TestApp\Model\Entity\NonExtending;
 
 /**
  * Entity test case.
@@ -659,10 +658,10 @@ class EntityTest extends TestCase {
  */
 	public function testToArrayRecursive() {
 		$data = ['id' => 1, 'name' => 'James', 'age' => 20, 'phones' => ['123', '457']];
-		$user = new Entity($data);
+		$user = new Extending($data);
 		$comments = [
-			new Entity(['user_id' => 1, 'body' => 'Comment 1']),
-			new Entity(['user_id' => 1, 'body' => 'Comment 2']),
+			new NonExtending(['user_id' => 1, 'body' => 'Comment 1']),
+			new NonExtending(['user_id' => 1, 'body' => 'Comment 2']),
 		];
 		$user->comments = $comments;
 		$user->profile = new Entity(['email' => 'mark@example.com']);
@@ -825,9 +824,9 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testErrorsDeep() {
-		$user = new User();
-		$owner = new Owner();
-		$author = new Author([
+		$user = new Entity();
+		$owner = new NonExtending();
+		$author = new Extending([
 			'foo' => 'bar',
 			'thing' => 'baz',
 			'user' => $user,
@@ -857,14 +856,16 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testErrorPathReading() {
-		$assoc = new User;
-		$entity = new Author([
+		$assoc = new Entity();
+		$assoc2 = new NonExtending();
+		$entity = new Extending([
 			'field' => 'value',
 			'one' => $assoc,
-			'many' => [$assoc]
+			'many' => [$assoc2]
 		]);
 		$entity->errors('wrong', 'Bad stuff');
 		$assoc->errors('nope', 'Terrible things');
+		$assoc2->errors('nope', 'Terrible things');
 
 		$this->assertEquals(['Bad stuff'], $entity->errors('wrong'));
 		$this->assertEquals(['Terrible things'], $entity->errors('many.0.nope'));
