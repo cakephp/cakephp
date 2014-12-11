@@ -819,31 +819,30 @@ class TranslateBehaviorTest extends TestCase {
 	}
 
 /**
-* Tests the use of `model` config option.
-* 
-* @return void
-* 
-*/
+ * Tests the use of `model` config option.
+ * 
+ * @return void
+ */
 	public function testChangingModelFieldValue() {
 		$table = TableRegistry::get('Articles');
 
 		$table->hasMany('OtherComments', ['className' => 'Comments']);
 		$table->OtherComments->addBehavior('Translate', ['fields' => ['comment'], 'model' => 'Comments']);
-		
+
 		$items = $table->OtherComments->associations();
 		$association = $items->getByProperty('comment_translation');
 		$this->assertNotEmpty($association, 'Translation association not found');
-		
+
 		$found = false;
 		foreach ($association->conditions() as $key => $value) {
-			
+
 			if (strpos($key, 'comment_translation.model') !== false) {
 				$found = true;
 				$this->assertEquals('Comments', $value);
 				break;
 			}
 		}
-		
+
 		$this->assertTrue($found, '`model` field condition on a Translation association was not found');
 	}
 }
