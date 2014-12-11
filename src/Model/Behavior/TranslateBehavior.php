@@ -65,7 +65,8 @@ class TranslateBehavior extends Behavior {
 		'implementedMethods' => ['locale' => 'locale'],
 		'fields' => [],
 		'translationTable' => 'i18n',
-		'defaultLocale' => ''
+		'defaultLocale' => '',
+		'model' => ''
 	];
 
 /**
@@ -88,7 +89,8 @@ class TranslateBehavior extends Behavior {
 	public function initialize(array $config) {
 		$this->setupFieldAssociations(
 			$this->_config['fields'],
-			$this->_config['translationTable']
+			$this->_config['translationTable'],
+			$this->_config['model'] ? $this->_config['model'] : $this->_table->alias()
 		);
 	}
 
@@ -101,10 +103,10 @@ class TranslateBehavior extends Behavior {
  *
  * @param array $fields list of fields to create associations for
  * @param string $table the table name to use for storing each field translation
+ * @param string $model the model field value
  * @return void
  */
-	public function setupFieldAssociations($fields, $table) {
-		$alias = $this->_table->alias();
+	public function setupFieldAssociations($fields, $table, $model) {
 		foreach ($fields as $field) {
 			$name = $this->_table->alias() . '_' . $field . '_translation';
 			$target = TableRegistry::get($name);
@@ -115,7 +117,7 @@ class TranslateBehavior extends Behavior {
 				'foreignKey' => 'foreign_key',
 				'joinType' => 'LEFT',
 				'conditions' => [
-					$name . '.model' => $alias,
+					$name . '.model' => $model,
 					$name . '.field' => $field,
 				],
 				'propertyName' => $field . '_translation'
@@ -125,7 +127,7 @@ class TranslateBehavior extends Behavior {
 		$this->_table->hasMany($table, [
 			'foreignKey' => 'foreign_key',
 			'strategy' => 'subquery',
-			'conditions' => ["$table.model" => $alias],
+			'conditions' => ["$table.model" => $model],
 			'propertyName' => '_i18n',
 			'dependent' => true
 		]);
