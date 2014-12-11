@@ -909,14 +909,13 @@ SQL;
 		$this->Dbo->execute('DROP TABLE ' . $name);
 
 		$this->assertNull($result['limit_date']['default']);
-		$this->assertTrue($result['limit_date']['null']);
 
 		$schema = new CakeSchema(array(
 			'connection' => 'test',
 			'testdescribes' => $result
 		));
 		$result = $this->Dbo->createSchema($schema);
-		$this->assertContains('`limit_date` timestamp NULL,', $result);
+		$this->assertContains('`limit_date` timestamp NOT NULL,', $result);
 	}
 
 /**

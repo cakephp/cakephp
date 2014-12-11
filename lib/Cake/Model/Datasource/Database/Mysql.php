@@ -353,7 +353,6 @@ class Mysql extends DboSource {
 			}
 			if ($fields[$column->Field]['type'] === 'timestamp' && strtoupper($column->Default) === 'CURRENT_TIMESTAMP') {
 				$fields[$column->Field]['default'] = null;
-				$fields[$column->Field]['null'] = true;
 			}
 			if (!empty($column->Key) && isset($this->index[$column->Key])) {
 				$fields[$column->Field]['key'] = $this->index[$column->Key];
