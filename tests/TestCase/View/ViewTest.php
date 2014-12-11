@@ -1359,7 +1359,7 @@ class ViewTest extends TestCase {
 		$this->assertTrue($this->View->exists('test'));
 	}
 
-	/**
+/**
  * Test setting a block's content to null
  *
  * @return void
