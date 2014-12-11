@@ -298,7 +298,7 @@ class CakeTestFixture {
 							$message .= "The field '" . $field . "' is in the data fixture but not in the schema." . "\n";
 						}
 
-						throw new CakeException( $message );
+						throw new CakeException($message);
 					}
 					$values[] = $merge;
 				}
