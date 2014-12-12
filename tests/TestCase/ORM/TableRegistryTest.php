@@ -191,14 +191,14 @@ class TableRegistryTest extends TestCase {
  */
 	public function testGetWithConventions() {
 		$table = TableRegistry::get('articles');
-		$this->assertInstanceOf('\TestApp\Model\Table\ArticlesTable', $table);
+		$this->assertInstanceOf('TestApp\Model\Table\ArticlesTable', $table);
 		$table = TableRegistry::get('Articles');
-		$this->assertInstanceOf('\TestApp\Model\Table\ArticlesTable', $table);
+		$this->assertInstanceOf('TestApp\Model\Table\ArticlesTable', $table);
 
 		$table = TableRegistry::get('authors');
-		$this->assertInstanceOf('\TestApp\Model\Table\AuthorsTable', $table);
+		$this->assertInstanceOf('TestApp\Model\Table\AuthorsTable', $table);
 		$table = TableRegistry::get('Authors');
-		$this->assertInstanceOf('\TestApp\Model\Table\AuthorsTable', $table);
+		$this->assertInstanceOf('TestApp\Model\Table\AuthorsTable', $table);
 	}
 
 /**

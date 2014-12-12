@@ -122,7 +122,7 @@ class StringTemplateTraitTest extends TestCase {
 		];
 		$this->Template->templates($templates);
 		$result = $this->Template->templater();
-		$this->assertInstanceOf('\Cake\View\StringTemplate', $result);
+		$this->assertInstanceOf('Cake\View\StringTemplate', $result);
 	}
 
 }
