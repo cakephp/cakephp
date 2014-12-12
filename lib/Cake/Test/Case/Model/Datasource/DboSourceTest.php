@@ -799,18 +799,18 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertTrue($result);
 
 		$EnumTest = ClassRegistry::init('EnumTest');
-		$testResult = $EnumTest->save(array('mood' => ''));
+		$enumResult = $EnumTest->save(array('mood' => ''));
 
 		$query = "DROP TABLE {$name};";
 		$result = $this->db->query($query);
 		$this->assertTrue($result);
 
-		$this->assertEquals($testResult, array(
+		$this->assertEquals(array(
 			'EnumTest' => array(
 				'mood' => '',
 				'id' => '0'
 			)
-		));
+		), $enumResult);
 	}
 
 /**
