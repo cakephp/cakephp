@@ -64,8 +64,9 @@ class ViewVarsTraitTest extends TestCase {
  * @return void
  */
 	public function testSetChained() {
-		$this->subject->set('testing', 'value')
+		$result = $this->subject->set('testing', 'value')
 			->set('foo', 'bar');
+		$this->assertInstanceOf('Cake\View\ViewVarsTrait', $result);
 		$this->assertEquals(['testing' => 'value', 'foo' => 'bar'], $this->subject->viewVars);
 	}
 
