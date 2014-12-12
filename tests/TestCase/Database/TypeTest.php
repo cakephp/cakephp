@@ -67,7 +67,7 @@ class TypeTest extends TestCase {
  */
 	public function testBuildBasicTypes($name) {
 		$type = Type::build($name);
-		$this->assertInstanceOf('\Cake\Database\Type', $type);
+		$this->assertInstanceOf('Cake\Database\Type', $type);
 		$this->assertEquals($name, $type->getName());
 	}
 

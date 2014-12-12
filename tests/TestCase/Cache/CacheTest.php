@@ -100,12 +100,12 @@ class CacheTest extends TestCase {
 		$config = ['engine' => 'TestAppCache', 'path' => TMP, 'prefix' => 'cake_test_'];
 		Cache::config('libEngine', $config);
 		$engine = Cache::engine('libEngine');
-		$this->assertInstanceOf('\TestApp\Cache\Engine\TestAppCacheEngine', $engine);
+		$this->assertInstanceOf('TestApp\Cache\Engine\TestAppCacheEngine', $engine);
 
 		$config = ['engine' => 'TestPlugin.TestPluginCache', 'path' => TMP, 'prefix' => 'cake_test_'];
 		$result = Cache::config('pluginLibEngine', $config);
 		$engine = Cache::engine('pluginLibEngine');
-		$this->assertInstanceOf('\TestPlugin\Cache\Engine\TestPluginCacheEngine', $engine);
+		$this->assertInstanceOf('TestPlugin\Cache\Engine\TestPluginCacheEngine', $engine);
 
 		Cache::drop('libEngine');
 		Cache::drop('pluginLibEngine');

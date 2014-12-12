@@ -33,7 +33,7 @@ class ValidatorTest extends TestCase {
 		$validator = new Validator;
 		$validator->add('title', 'not-empty', ['rule' => 'notEmpty']);
 		$set = $validator->field('title');
-		$this->assertInstanceOf('\Cake\Validation\ValidationSet', $set);
+		$this->assertInstanceOf('Cake\Validation\ValidationSet', $set);
 		$this->assertCount(1, $set);
 
 		$validator->add('title', 'another', ['rule' => 'alphanumeric']);
@@ -54,7 +54,7 @@ class ValidatorTest extends TestCase {
 		$this->assertFalse($validator->hasField('foo'));
 
 		$field = $validator->field('foo');
-		$this->assertInstanceOf('\Cake\Validation\ValidationSet', $field);
+		$this->assertInstanceOf('Cake\Validation\ValidationSet', $field);
 		$this->assertCount(0, $field);
 		$this->assertTrue($validator->hasField('foo'));
 	}
@@ -635,7 +635,7 @@ class ValidatorTest extends TestCase {
 			]
 		]);
 		$set = $validator->field('title');
-		$this->assertInstanceOf('\Cake\Validation\ValidationSet', $set);
+		$this->assertInstanceOf('Cake\Validation\ValidationSet', $set);
 		$this->assertCount(2, $set);
 	}
 

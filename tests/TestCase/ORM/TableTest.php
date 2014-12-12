@@ -445,7 +445,7 @@ class TableTest extends TestCase {
 		$options = ['foreignKey' => 'fake_id', 'conditions' => ['a' => 'b']];
 		$table = new Table(['table' => 'dates']);
 		$belongsTo = $table->belongsTo('user', $options);
-		$this->assertInstanceOf('\Cake\ORM\Association\BelongsTo', $belongsTo);
+		$this->assertInstanceOf('Cake\ORM\Association\BelongsTo', $belongsTo);
 		$this->assertSame($belongsTo, $table->association('user'));
 		$this->assertEquals('user', $belongsTo->name());
 		$this->assertEquals('fake_id', $belongsTo->foreignKey());
@@ -462,7 +462,7 @@ class TableTest extends TestCase {
 		$options = ['foreignKey' => 'user_id', 'conditions' => ['b' => 'c']];
 		$table = new Table(['table' => 'users']);
 		$hasOne = $table->hasOne('profile', $options);
-		$this->assertInstanceOf('\Cake\ORM\Association\HasOne', $hasOne);
+		$this->assertInstanceOf('Cake\ORM\Association\HasOne', $hasOne);
 		$this->assertSame($hasOne, $table->association('profile'));
 		$this->assertEquals('profile', $hasOne->name());
 		$this->assertEquals('user_id', $hasOne->foreignKey());
@@ -483,7 +483,7 @@ class TableTest extends TestCase {
 		];
 		$table = new Table(['table' => 'authors']);
 		$hasMany = $table->hasMany('article', $options);
-		$this->assertInstanceOf('\Cake\ORM\Association\HasMany', $hasMany);
+		$this->assertInstanceOf('Cake\ORM\Association\HasMany', $hasMany);
 		$this->assertSame($hasMany, $table->association('article'));
 		$this->assertEquals('article', $hasMany->name());
 		$this->assertEquals('author_id', $hasMany->foreignKey());
@@ -506,7 +506,7 @@ class TableTest extends TestCase {
 		];
 		$table = new Table(['table' => 'authors', 'connection' => $this->connection]);
 		$belongsToMany = $table->belongsToMany('tag', $options);
-		$this->assertInstanceOf('\Cake\ORM\Association\BelongsToMany', $belongsToMany);
+		$this->assertInstanceOf('Cake\ORM\Association\BelongsToMany', $belongsToMany);
 		$this->assertSame($belongsToMany, $table->association('tag'));
 		$this->assertEquals('tag', $belongsToMany->name());
 		$this->assertEquals('thing_id', $belongsToMany->foreignKey());
@@ -539,22 +539,22 @@ class TableTest extends TestCase {
 		$associations = $table->associations();
 
 		$belongsTo = $associations->get('users');
-		$this->assertInstanceOf('\Cake\ORM\Association\BelongsTo', $belongsTo);
+		$this->assertInstanceOf('Cake\ORM\Association\BelongsTo', $belongsTo);
 		$this->assertEquals('users', $belongsTo->name());
 		$this->assertEquals('fake_id', $belongsTo->foreignKey());
 		$this->assertEquals(['a' => 'b'], $belongsTo->conditions());
 		$this->assertSame($table, $belongsTo->source());
 
 		$hasOne = $associations->get('profiles');
-		$this->assertInstanceOf('\Cake\ORM\Association\HasOne', $hasOne);
+		$this->assertInstanceOf('Cake\ORM\Association\HasOne', $hasOne);
 		$this->assertEquals('profiles', $hasOne->name());
 
 		$hasMany = $associations->get('authors');
-		$this->assertInstanceOf('\Cake\ORM\Association\hasMany', $hasMany);
+		$this->assertInstanceOf('Cake\ORM\Association\hasMany', $hasMany);
 		$this->assertEquals('authors', $hasMany->name());
 
 		$belongsToMany = $associations->get('tags');
-		$this->assertInstanceOf('\Cake\ORM\Association\BelongsToMany', $belongsToMany);
+		$this->assertInstanceOf('Cake\ORM\Association\BelongsToMany', $belongsToMany);
 		$this->assertEquals('tags', $belongsToMany->name());
 		$this->assertSame('things_tags', $belongsToMany->junction()->table());
 	}
@@ -1162,7 +1162,7 @@ class TableTest extends TestCase {
 	public function testBehaviors() {
 		$table = TableRegistry::get('article');
 		$result = $table->behaviors();
-		$this->assertInstanceOf('\Cake\ORM\BehaviorRegistry', $result);
+		$this->assertInstanceOf('Cake\ORM\BehaviorRegistry', $result);
 	}
 
 /**
@@ -2066,7 +2066,7 @@ class TableTest extends TestCase {
 		$table = new Table();
 		$validator = $table->validator();
 		$this->assertSame($table, $validator->provider('table'));
-		$this->assertInstanceOf('\Cake\Validation\Validator', $validator);
+		$this->assertInstanceOf('Cake\Validation\Validator', $validator);
 		$default = $table->validator('default');
 		$this->assertSame($validator, $default);
 	}
@@ -2081,7 +2081,7 @@ class TableTest extends TestCase {
 		$table->expects($this->once())->method('validationForOtherStuff')
 			->will($this->returnArgument(0));
 		$other = $table->validator('forOtherStuff');
-		$this->assertInstanceOf('\Cake\Validation\Validator', $other);
+		$this->assertInstanceOf('Cake\Validation\Validator', $other);
 		$this->assertNotSame($other, $table->validator());
 		$this->assertSame($table, $other->provider('table'));
 	}
