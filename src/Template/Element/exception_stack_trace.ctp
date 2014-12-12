@@ -56,7 +56,7 @@ foreach ($error->getTrace() as $i => $stack):
 		</table>
 
 		<div id="stack-args-<?= $i ?>" style="display: none;">
-			<pre><?= implode("\n", $params) ?></pre>
+			<pre><?= h(implode("\n", $params)) ?></pre>
 		</div>
 	</div>
 <?php endforeach; ?>

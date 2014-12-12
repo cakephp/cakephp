@@ -22,7 +22,7 @@ $this->assign('templateName', 'pdo_error.ctp');
 $this->start('subheading');
 ?>
 	<strong>Error: </strong>
-	<?= $message; ?>
+	<?= h($message); ?>
 <?php $this->end() ?>
 
 <?php $this->start('file') ?>
@@ -38,7 +38,7 @@ $this->start('subheading');
 <?php endif; ?>
 <?php if (!empty($error->params)) : ?>
 		<strong>SQL Query Params: </strong>
-		<pre><?= Debugger::dump($error->params); ?></pre>
+		<pre><?= h(Debugger::dump($error->params)); ?></pre>
 <?php endif; ?>
 <?= $this->element('auto_table_warning'); ?>
 <?php $this->end() ?>
