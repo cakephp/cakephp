@@ -153,9 +153,14 @@ class ExceptionRenderer {
 			try {
 				$controller = new CakeErrorController($request, $response);
 				$controller->startupProcess();
+				$startup = true;
 			} catch (Exception $e) {
-				if (!empty($controller) && $controller->Components->enabled('RequestHandler')) {
+				$startup = false;
+			}
+			if ($startup === false && !empty($controller) && $controller->Components->enabled('RequestHandler')) {
+				try {
 					$controller->RequestHandler->startup($controller);
+				} catch (Exception $e) {
 				}
 			}
 		}
