@@ -15,7 +15,7 @@
 namespace Cake\Error;
 
 use Cake\Controller\Controller;
-use Cake\Controller\ErrorController;
+use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception as CakeException;
 use Cake\Core\Exception\MissingPluginException;
@@ -104,7 +104,8 @@ class ExceptionRenderer {
 		$response = new Response();
 
 		try {
-			$controller = new ErrorController($request, $response);
+			$class = App::className('Error', 'Controller', 'Controller');
+			$controller = new $class($request, $response);
 			$controller->startupProcess();
 		} catch (Exception $e) {
 			if (!empty($controller) && isset($controller->RequestHandler)) {
