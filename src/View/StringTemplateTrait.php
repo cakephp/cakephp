@@ -12,7 +12,7 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\View\Helper;
+namespace Cake\View;
 
 /**
  * Adds string template functionality to any class by providing methods to
