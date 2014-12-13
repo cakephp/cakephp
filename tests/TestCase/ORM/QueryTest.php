@@ -2280,4 +2280,29 @@ class QueryTest extends TestCase {
 		$this->assertNull($articles[2]->author);
 	}
 
+/**
+ * Tests that it is possible to call matching and contain on the same
+ * association.
+ *
+ * @return void
+ */
+	public function testMatchingWithContain() {
+		$query = new Query($this->connection, $this->table);
+		$table = TableRegistry::get('authors');
+		$table->hasMany('articles');
+		TableRegistry::get('articles')->belongsToMany('tags');
+
+		$result = $query->repository($table)
+			->select()
+			->matching('articles.tags', function ($q) {
+				return $q->where(['tags.id' => 2]);
+			})
+			->contain('articles')
+			->first();
+
+		$this->assertEquals(1, $result->id);
+		$this->assertCount(2, $result->articles);
+		$this->assertEquals(2, $result->_matchingData['tags']->id);
+	}
+
 }
