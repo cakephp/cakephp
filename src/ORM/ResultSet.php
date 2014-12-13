@@ -402,6 +402,12 @@ class ResultSet implements ResultSetInterface {
 				$results[$alias] = $entity;
 			}
 
+			if ($assoc['matching']) {
+				$results['_matchingData'][$alias] = $results[$alias];
+				unset($results[$alias]);
+				continue;
+			}
+
 			$results = $instance->transformRow($results, $alias, $assoc['canBeJoined']);
 		}
 
@@ -410,6 +416,10 @@ class ResultSet implements ResultSetInterface {
 				continue;
 			}
 			$results[$defaultAlias][$alias] = $results[$alias];
+		}
+
+		if (isset($results['_matchingData'])) {
+			$results[$defaultAlias]['_matchingData'] = $results['_matchingData'];
 		}
 
 		$options['source'] = $defaultAlias;

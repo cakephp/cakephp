@@ -637,12 +637,14 @@ class QueryTest extends TestCase {
 			[
 				'id' => 3,
 				'name' => 'larry',
-				'articles' => [
-					'id' => 2,
-					'title' => 'Second Article',
-					'body' => 'Second Article Body',
-					'author_id' => 3,
-					'published' => 'Y',
+				'_matchingData' => [
+					'articles' => [
+						'id' => 2,
+						'title' => 'Second Article',
+						'body' => 'Second Article Body',
+						'author_id' => 3,
+						'published' => 'Y',
+					]
 				]
 			]
 		];
@@ -678,10 +680,12 @@ class QueryTest extends TestCase {
 				'title' => 'Second Article',
 				'body' => 'Second Article Body',
 				'published' => 'Y',
-				'tags' => [
-					'id' => 3,
-					'name' => 'tag3',
-					'_joinData' => ['article_id' => 2, 'tag_id' => 3]
+				'_matchingData' => [
+					'Tags' => [
+						'id' => 3,
+						'name' => 'tag3',
+						'articles_tags' => ['article_id' => 2, 'tag_id' => 3]
+					]
 				]
 			]
 		];
@@ -701,10 +705,12 @@ class QueryTest extends TestCase {
 				'body' => 'First Article Body',
 				'author_id' => 1,
 				'published' => 'Y',
-				'tags' => [
-					'id' => 2,
-					'name' => 'tag2',
-					'_joinData' => ['article_id' => 1, 'tag_id' => 2]
+				'_matchingData' => [
+					'Tags' => [
+						'id' => 2,
+						'name' => 'tag2',
+						'articles_tags' => ['article_id' => 1, 'tag_id' => 2]
+					]
 				]
 			]
 		];
@@ -734,16 +740,21 @@ class QueryTest extends TestCase {
 			[
 				'id' => 1,
 				'name' => 'mariano',
-				'articles' => [
-					'id' => 1,
-					'title' => 'First Article',
-					'body' => 'First Article Body',
-					'author_id' => 1,
-					'published' => 'Y',
+				'_matchingData' => [
 					'tags' => [
 						'id' => 2,
 						'name' => 'tag2',
-						'_joinData' => ['article_id' => 1, 'tag_id' => 2]
+						'articles_tags' => [
+							'article_id' => 1,
+							'tag_id' => 2
+						]
+					],
+					'articles' => [
+						'id' => 1,
+						'author_id' => 1,
+						'title' => 'First Article',
+						'body' => 'First Article Body',
+						'published' => 'Y'
 					]
 				]
 			]
@@ -1856,7 +1867,7 @@ class QueryTest extends TestCase {
 
 		$results = $query->toArray();
 		$this->assertCount(1, $results);
-		$this->assertEquals('tag3', $results[0]->articles->articles_tags->tag->name);
+		$this->assertEquals('tag3', $results[0]->_matchingData['tags']->name);
 	}
 
 /**
