@@ -16,6 +16,7 @@ namespace Cake\ORM;
 
 use Cake\Database\Statement\BufferedStatement;
 use Cake\Database\Statement\CallbackStatement;
+use Cake\ORM\Association;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Closure;
@@ -84,6 +85,12 @@ class EagerLoader {
  */
 	protected $_matching;
 
+/**
+ * A map of table aliases pointing to the association objects they represent
+ * for the query.
+ *
+ * @var array
+ */
 	protected $_joinsMap = [];
 
 /**
@@ -521,7 +528,17 @@ class EagerLoader {
 		return $map;
 	}
 
-	public function addToJoinsMap($alias, $assoc) {
+/**
+ * Registers a table alias, typically loaded as a join in a query, as belonging to
+ * an association. This helps hydrators know what to do with the columns coming
+ * from such joined table.
+ *
+ * @param string $alias The table alias as it appears in the query.
+ * @param \Cake\ORM\Association $assoc The association object the alias represents.
+ * will be normalized
+ * @return void
+ */
+	public function addToJoinsMap($alias, Association $assoc) {
 		$this->_joinsMap[$alias] = [
 			'aliasPath' => $alias,
 			'instance' => $assoc,
