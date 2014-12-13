@@ -424,7 +424,8 @@ class EagerLoader {
  * Helper function used to compile a list of all associations that can be
  * joined in the query.
  *
- * @param array $associations list of associations for $source
+ * @param array $associations list of associations from which to obtain joins
+ * @param array $matching list of associations that should be forcedly joined
  * @return array
  */
 	protected function _resolveJoins($associations, $matching = []) {
@@ -496,7 +497,7 @@ class EagerLoader {
  * - entityClass: The entity that should be used for hydrating the results
  * - nestKey: A dotted path that can be used to inserting the data in the correct nesting.
  *
- * @param \Cake\ORM\Table $repository The table containing the association that
+ * @param \Cake\ORM\Table $table The table containing the association that
  * will be normalized
  * @return array
  */
