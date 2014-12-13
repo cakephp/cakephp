@@ -113,7 +113,7 @@ class CompletionShellTest extends TestCase {
 		$output = $this->out->output;
 
 		$expected = "TestPlugin.example TestPlugin.sample " .
-			"TestPluginTwo.example TestPluginTwo.welcome bake i18n orm_cache server test sample\n";
+			"TestPluginTwo.example TestPluginTwo.welcome i18n orm_cache server test sample\n";
 		$this->assertTextEquals($expected, $output);
 	}
 
@@ -149,10 +149,10 @@ class CompletionShellTest extends TestCase {
  * @return void
  */
 	public function testOptions() {
-		$this->Shell->runCommand(['options', 'bake']);
+		$this->Shell->runCommand(['options', 'orm_cache']);
 		$output = $this->out->output;
 
-		$expected = "--help -h --verbose -v --quiet -q --connection -c --theme -t\n";
+		$expected = "--help -h --verbose -v --quiet -q --connection -c\n";
 		$this->assertTextEquals($expected, $output);
 	}
 
@@ -162,10 +162,10 @@ class CompletionShellTest extends TestCase {
  * @return void
  */
 	public function testSubCommandsCorePlugin() {
-		$this->Shell->runCommand(['subcommands', 'CORE.bake']);
+		$this->Shell->runCommand(['subcommands', 'CORE.orm_cache']);
 		$output = $this->out->output;
 
-		$expected = "behavior cell component controller fixture helper model plugin project shell test view widget zerg\n";
+		$expected = "build clear\n";
 		$this->assertTextEquals($expected, $output);
 	}
 
@@ -227,10 +227,10 @@ class CompletionShellTest extends TestCase {
  * @return void
  */
 	public function testSubCommands() {
-		$this->Shell->runCommand(['subcommands', 'bake']);
+		$this->Shell->runCommand(['subcommands', 'orm_cache']);
 		$output = $this->out->output;
 
-		$expected = "behavior cell component controller fixture helper model plugin project shell test view widget zerg\n";
+		$expected = "build clear\n";
 		$this->assertTextEquals($expected, $output);
 	}
 
