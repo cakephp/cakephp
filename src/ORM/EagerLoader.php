@@ -409,13 +409,6 @@ class EagerLoader {
 			return $config;
 		}
 
-		if (!empty($config['config']['matching'])) {
-			throw new \RuntimeException(sprintf(
-				'Cannot use "matching" on "%s" as there is another association with the same alias',
-				$alias
-			));
-		}
-
 		$config['canBeJoined'] = false;
 		$config['config']['strategy'] = $config['instance']::STRATEGY_SELECT;
 	}

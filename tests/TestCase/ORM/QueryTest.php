@@ -1997,26 +1997,6 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Tests that it is not allowed to use matching on an association
- * that is already added to containments.
- *
- * @expectedException \RuntimeException
- * @expectedExceptionMessage Cannot use "matching" on "Authors" as there is another association with the same alias
- * @return void
- */
-	public function testConflitingAliases() {
-		$this->markTestIncomplete('Needs an actual conflicting case');
-		$table = TableRegistry::get('ArticlesTags');
-		$table->belongsTo('Articles')->target()->belongsTo('Authors');
-		$table->belongsTo('Tags');
-		$table->Tags->target()->hasOne('Authors');
-		$table->find()
-			->contain(['Articles.Authors'])
-			->matching('Tags.Authors')
-			->sql();
-	}
-
-/**
  * Tests that a hasOne association using the select strategy will still have the
  * key present in the results when no match is found
  *
