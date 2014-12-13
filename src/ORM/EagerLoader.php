@@ -84,6 +84,8 @@ class EagerLoader {
  */
 	protected $_matching;
 
+	protected $_joinsMap = [];
+
 /**
  * Sets the list of associations that should be eagerly loaded along for a
  * specific table using when a query is provided. The list of associated tables
@@ -501,27 +503,38 @@ class EagerLoader {
 	public function associationsMap($table) {
 		$map = [];
 
-		if (!$this->matching() && !$this->contain()) {
+		if (!$this->matching() && !$this->contain() && empty($this->_joinsMap)) {
 			return $map;
 		}
 
-		$visitor = function ($level) use (&$visitor, &$map) {
+		$visitor = function ($level, $matching = false) use (&$visitor, &$map) {
 			foreach ($level as $assoc => $meta) {
 				$map[$meta['aliasPath']] = [
 					'alias' => $assoc,
 					'instance' => $meta['instance'],
 					'canBeJoined' => $meta['canBeJoined'],
 					'entityClass' => $meta['instance']->target()->entityClass(),
-					'nestKey' => $meta['canBeJoined'] ? $assoc : $meta['aliasPath']
+					'nestKey' => $meta['canBeJoined'] ? $assoc : $meta['aliasPath'],
+					'matching' => $matching
 				];
 				if ($meta['canBeJoined'] && !empty($meta['associations'])) {
-					$visitor($meta['associations']);
+					$visitor($meta['associations'], $matching);
 				}
 			}
 		};
-		$visitor($this->normalized($table), []);
-		$visitor($this->_matching->normalized($table), []);
+		$visitor($this->_matching->normalized($table), true);
+		$visitor($this->normalized($table));
+		$visitor($this->_joinsMap);
 		return $map;
+	}
+
+	public function addToJoinsMap($alias, $assoc) {
+		$this->_joinsMap[$alias] = [
+			'aliasPath' => $alias,
+			'instance' => $assoc,
+			'canBeJoined' => true,
+			'associations' => []
+		];
 	}
 
 /**

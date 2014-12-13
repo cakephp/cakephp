@@ -401,6 +401,7 @@ class ResultSet implements ResultSetInterface {
 				$entity->clean();
 				$results[$alias] = $entity;
 			}
+
 			$results = $instance->transformRow($results, $alias, $assoc['canBeJoined']);
 		}
 
