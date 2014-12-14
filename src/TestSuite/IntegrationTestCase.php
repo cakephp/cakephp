@@ -372,6 +372,16 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
+ * Assert a specific response status code.
+ *
+ * @return void
+ */
+	public function assertResponse($code) {
+		$actual = $this->_response->statusCode();
+		$this->_assertStatus($code, $code, 'Status code is not ' . $code . ' but ' . $actual);
+	}
+
+/**
  * Helper method for status assertions.
  *
  * @param int $min Min status code.
