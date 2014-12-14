@@ -19,33 +19,72 @@ namespace Cake\Form;
  */
 class Schema {
 
+/**
+ * The fields in this schema.
+ *
+ * @var array
+ */
 	protected $_fields = [];
 
+/**
+ * The default values for fields.
+ *
+ * @var array
+ */
 	protected $_fieldDefaults = [
 		'type' => null,
 		'length' => null,
 		'required' => false,
 	];
 
+/**
+ * Adds a field to the schema.
+ *
+ * @param string $name The field name.
+ * @param string|array $attrs The attributes for the field, or the type
+ *   as a string.
+ * @return $this
+ */
 	public function addField($name, $attrs) {
+		if (is_string($attrs)) {
+			$attrs = ['type' => $attrs];
+		}
 		$attrs = array_intersect_key($attrs, $this->_fieldDefaults);
 		$this->_fields[$name] = $attrs + $this->_fieldDefaults;
 		return $this;
 	}
 
+/**
+ * Removes a field to the schema.
+ *
+ * @param string $name The field to remove.
+ * @return $this
+ */
 	public function removeField($name) {
 		unset($this->_fields[$name]);
 		return $this;
 	}
 
+/**
+ * Get the list of fields in the schema.
+ *
+ * @return array The list of field names.
+ */
 	public function fields() {
 		return array_keys($this->_fields);
 	}
 
+/**
+ * Get the attributes for a given field.
+ *
+ * @param string $name The field name.
+ * @return null|array The attributes for a field, or null.
+ */
 	public function field($name) {
 		if (!isset($this->_fields[$name])) {
 			return null;
 		}
 		return $this->_fields[$name];
 	}
+
 }

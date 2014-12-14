@@ -37,6 +37,14 @@ class SchemaTest extends TestCase {
 		$res = $schema->field('name');
 		$expected = ['type' => 'string', 'length' => null, 'required' => false];
 		$this->assertEquals($expected, $res);
+
+		$res = $schema->addField('email', 'string');
+		$this->assertSame($schema, $res, 'Should be chainable');
+
+		$this->assertEquals(['name', 'email'], $schema->fields());
+		$res = $schema->field('email');
+		$expected = ['type' => 'string', 'length' => null, 'required' => false];
+		$this->assertEquals($expected, $res);
 	}
 
 /**
