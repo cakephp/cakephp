@@ -68,6 +68,13 @@ class Form {
 	}
 
 	public function execute($data) {
+		if (!$this->isValid($data)) {
+			return false;
+		}
+		return $this->_execute($data);
+	}
+
+	protected function _execute($data) {
 	}
 
 }

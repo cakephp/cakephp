@@ -82,10 +82,64 @@ class FormTest extends TestCase {
 		$this->assertCount(0, $form->errors());
 	}
 
+/**
+ * Test the errors methods.
+ *
+ * @return void
+ */
+	public function testErrors() {
+		$form = new Form();
+		$form->validator()
+			->add('email', 'format', [
+				'message' => 'Must be a valid email',
+				'rule' => 'email'
+			])
+			->add('body', 'length', [
+				'message' => 'Must be so long',
+				'rule' => ['minLength', 12],
+			]);
+
+		$data = [
+			'email' => 'rong',
+			'body' => 'too short'
+		];
+		$form->isValid($data);
+		$errors = $form->errors();
+		$this->assertCount(2, $errors);
+		$this->assertEquals('Must be a valid email', $errors['email']['format']);
+		$this->assertEquals('Must be so long', $errors['body']['length']);
+	}
+
+/**
+ * Test _execute is skipped on validation failure.
+ *
+ * @return void
+ */
 	public function testExecuteInvalid() {
+		$form = $this->getMock('Cake\Form\Form', ['_execute']);
+		$form->validator()
+			->add('email', 'format', ['rule' => 'email']);
+		$data = [
+			'email' => 'rong'
+		];
+		$form->expects($this->never())
+			->method('_execute');
+
+		$this->assertFalse($form->execute($data));
 	}
 
 	public function testExecuteValid() {
+		$form = $this->getMock('Cake\Form\Form', ['_execute']);
+		$form->validator()
+			->add('email', 'format', ['rule' => 'email']);
+		$data = [
+			'email' => 'test@example.com'
+		];
+		$form->expects($this->once())
+			->method('_execute')
+			->with($data);
+
+		$this->assertNull($form->execute($data));
 	}
 
 }
