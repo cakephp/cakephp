@@ -18,6 +18,9 @@ $allAssociations = array_merge(
 	$this->Bake->aliasExtractor($modelObj, 'HasOne'),
 	$this->Bake->aliasExtractor($modelObj, 'HasMany')
 );
+$belongsTo = $this->Bake->aliasExtractor($modelObj, 'BelongsTo');
+$belongsToMany = $this->Bake->aliasExtractor($modelObj, 'BelongsToMany');
+$compact = ["'" . $singularName . "'"];
 %>
 
 /**
@@ -28,8 +31,23 @@ $allAssociations = array_merge(
  * @throws \Cake\Network\Exception\NotFoundException
  */
 	public function view($id = null) {
+		if (!$id) {
+			throw new NotFoundException(__('Invalid <%= strtolower($singularHumanName) %>'));
+		}
+
 		$<%= $singularName%> = $this-><%= $currentModelName %>->get($id, [
 			'contain' => [<%= $this->Bake->stringifyList($allAssociations, ['indent' => false]) %>]
 		]);
-		$this->set('<%= $singularName %>', $<%= $singularName %>);
+<%
+		foreach (array_merge($belongsTo, $belongsToMany) as $assoc):
+			$association = $modelObj->association($assoc);
+			$otherName = $association->target()->alias();
+			$otherPlural = $this->_variableName($otherName);
+%>
+		$<%= $otherPlural %> = $this-><%= $currentModelName %>-><%= $otherName %>->find('list');
+<%
+			$compact[] = "'$otherPlural'";
+		endforeach;
+%>
+		$this->set(compact(<%= join(', ', $compact) %>));
 	}

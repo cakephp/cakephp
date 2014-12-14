@@ -26,6 +26,10 @@ $compact = ["'" . $singularName . "'"];
  * @throws \Cake\Network\Exception\NotFoundException
  */
 	public function edit($id = null) {
+		if (!$id) {
+			throw new NotFoundException(__('Invalid <%= strtolower($singularHumanName) %>'));
+		}
+
 		$<%= $singularName %> = $this-><%= $currentModelName %>->get($id, [
 			'contain' => [<%= $this->Bake->stringifyList($belongsToMany, ['indent' => false]) %>]
 		]);
