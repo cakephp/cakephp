@@ -12,12 +12,11 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\View\Helper;
+namespace Cake\Test\TestCase\View;
 
 use Cake\Core\InstanceConfigTrait;
 use Cake\TestSuite\TestCase;
-use Cake\View\Helper\StringTemplate;
-use Cake\View\Helper\StringTemplateTrait;
+use Cake\View\StringTemplateTrait;
 
 /**
  * TestStringTemplate
