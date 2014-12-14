@@ -424,8 +424,8 @@ class EagerLoader {
  * Helper function used to compile a list of all associations that can be
  * joined in the query.
  *
- * @param array $associations list of associations from which to obtain joins
- * @param array $matching list of associations that should be forcedly joined
+ * @param array $associations list of associations from which to obtain joins.
+ * @param array $matching list of associations that should be forcibly joined.
  * @return array
  */
 	protected function _resolveJoins($associations, $matching = []) {
@@ -495,7 +495,7 @@ class EagerLoader {
  * - instance: The association instance
  * - canBeJoined: Whether or not the association will be loaded using a JOIN
  * - entityClass: The entity that should be used for hydrating the results
- * - nestKey: A dotted path that can be used to inserting the data in the correct nesting.
+ * - nestKey: A dotted path that can be used to correctly insert the data into the results.
  *
  * @param \Cake\ORM\Table $table The table containing the association that
  * will be normalized
@@ -535,7 +535,7 @@ class EagerLoader {
  * from such joined table.
  *
  * @param string $alias The table alias as it appears in the query.
- * @param \Cake\ORM\Association $assoc The association object the alias represents.
+ * @param \Cake\ORM\Association $assoc The association object the alias represents;
  * will be normalized
  * @return void
  */
