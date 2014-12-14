@@ -174,7 +174,7 @@ abstract class IntegrationTestCase extends TestCase {
  * a property. You can use various assert methods to check the
  * response.
  *
- * @param string $url The url to request.
+ * @param string|array $url The URL to request.
  * @return void
  */
 	public function get($url) {
@@ -188,7 +188,7 @@ abstract class IntegrationTestCase extends TestCase {
  * a property. You can use various assert methods to check the
  * response.
  *
- * @param string $url The url to request.
+ * @param string|array $url The URL to request.
  * @param array $data The data for the request.
  * @return void
  */
@@ -203,7 +203,7 @@ abstract class IntegrationTestCase extends TestCase {
  * a property. You can use various assert methods to check the
  * response.
  *
- * @param string $url The url to request.
+ * @param string|array $url The URL to request.
  * @param array $data The data for the request.
  * @return void
  */
@@ -218,7 +218,7 @@ abstract class IntegrationTestCase extends TestCase {
  * a property. You can use various assert methods to check the
  * response.
  *
- * @param string $url The url to request.
+ * @param string|array $url The URL to request.
  * @param array $data The data for the request.
  * @return void
  */
@@ -233,7 +233,7 @@ abstract class IntegrationTestCase extends TestCase {
  * a property. You can use various assert methods to check the
  * response.
  *
- * @param string $url The url to request.
+ * @param string|array $url The URL to request.
  * @return void
  */
 	public function delete($url) {
@@ -245,7 +245,7 @@ abstract class IntegrationTestCase extends TestCase {
  *
  * Receives and stores the response for future inspection.
  *
- * @param string $url The url
+ * @param string|array $url The URL
  * @param string $method The HTTP method
  * @param array|null $data The request data.
  * @return void
@@ -313,7 +313,7 @@ abstract class IntegrationTestCase extends TestCase {
 /**
  * Create a request object with the configured options and parameters.
  *
- * @param string $url The url
+ * @param string|array $url The URL
  * @param string $method The HTTP method
  * @param array|null $data The request data.
  * @return \Cake\Network\Request The built request.
@@ -326,7 +326,7 @@ abstract class IntegrationTestCase extends TestCase {
 		$session->write($this->_session);
 
 		$props = [
-			'url' => $url,
+			'url' => Router::url($url),
 			'post' => $data,
 			'cookies' => $this->_cookie,
 			'session' => $session,
