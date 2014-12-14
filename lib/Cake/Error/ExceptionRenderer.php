@@ -158,7 +158,7 @@ class ExceptionRenderer {
 				$startup = false;
 			}
 			// Retry RequestHandler, as another aspect of startupProcess()
-			// could have failed. Ignore any exceptions out of startup, as 
+			// could have failed. Ignore any exceptions out of startup, as
 			// there could be userland input data parsers.
 			if ($startup === false &&
 				!empty($controller) &&
