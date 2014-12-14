@@ -168,7 +168,7 @@ class Request implements \ArrayAccess {
 		list($base, $webroot) = static::_base();
 		$sessionConfig = (array)Configure::read('Session') + [
 			'defaults' => 'php',
-			'cookiePath' => $base
+			'cookiePath' => $webroot
 		];
 
 		$config = array(
