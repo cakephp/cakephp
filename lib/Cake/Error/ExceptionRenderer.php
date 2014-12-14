@@ -157,7 +157,13 @@ class ExceptionRenderer {
 			} catch (Exception $e) {
 				$startup = false;
 			}
-			if ($startup === false && !empty($controller) && $controller->Components->enabled('RequestHandler')) {
+			// Retry RequestHandler, as another aspect of startupProcess()
+			// could have failed. Ignore any exceptions out of startup, as 
+			// there could be userland input data parsers.
+			if ($startup === false &&
+				!empty($controller) &&
+				$controller->Components->enabled('RequestHandler')
+			) {
 				try {
 					$controller->RequestHandler->startup($controller);
 				} catch (Exception $e) {
