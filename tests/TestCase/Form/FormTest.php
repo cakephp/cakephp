@@ -128,6 +128,11 @@ class FormTest extends TestCase {
 		$this->assertFalse($form->execute($data));
 	}
 
+/**
+ * test execute() when data is valid.
+ *
+ * @return void
+ */
 	public function testExecuteValid() {
 		$form = $this->getMock('Cake\Form\Form', ['_execute']);
 		$form->validator()
@@ -137,9 +142,10 @@ class FormTest extends TestCase {
 		];
 		$form->expects($this->once())
 			->method('_execute')
-			->with($data);
+			->with($data)
+			->will($this->returnValue(true));
 
-		$this->assertNull($form->execute($data));
+		$this->assertTrue($form->execute($data));
 	}
 
 }
