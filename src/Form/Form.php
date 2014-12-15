@@ -19,7 +19,7 @@ use Cake\Validation\Validator;
 
 /**
  * Form abstraction used to create forms not tied to ORM backed models,
- * or to other permanent datastores. Ideal for implement forms on top of
+ * or to other permanent datastores. Ideal for implementing forms on top of
  * API services, or contact forms.
  *
  * ### Building a form
@@ -53,7 +53,7 @@ class Form {
 /**
  * The validator used by this form.
  *
- * @var \Cake\Valiation\Validator;
+ * @var \Cake\Validation\Validator;
  */
 	protected $_validator;
 
@@ -87,7 +87,7 @@ class Form {
  * @param \Cake\Form\Schema $schema The schema to customize.
  * @return \Cake\Form\Schema The schema to use.
  */
-	protected function _buildSchema($schema) {
+	protected function _buildSchema(Schema $schema) {
 		return $schema;
 	}
 
@@ -121,7 +121,7 @@ class Form {
  * @param \Cake\Validation\Validator $validator The validator to customize.
  * @return \Cake\Validation\Validator The validator to use.
  */
-	protected function _buildValidator($validator) {
+	protected function _buildValidator(Validator $validator) {
 		return $validator;
 	}
 
@@ -131,7 +131,7 @@ class Form {
  * @param array $data The data to check.
  * @return bool Whether or not the data is valid.
  */
-	public function isValid($data) {
+	public function isValid(array $data) {
 		$validator = $this->validator();
 		$this->_errors = $validator->errors($data);
 		return count($this->_errors) === 0;
@@ -157,10 +157,11 @@ class Form {
  * the action of the form. This may be sending email, interacting
  * with a remote API, or anything else you may need.
  *
+ * @param array $data Form data.
  * @return bool False on validation failure, otherwise returns the
  *   result of the `_execute()` method.
  */
-	public function execute($data) {
+	public function execute(array $data) {
 		if (!$this->isValid($data)) {
 			return false;
 		}
@@ -172,9 +173,10 @@ class Form {
  *
  * Used by `execute()` to execute the form's action.
  *
+ * @param array $data Form data.
  * @return bool
  */
-	protected function _execute($data) {
+	protected function _execute(array $data) {
 		return true;
 	}
 
