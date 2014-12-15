@@ -196,11 +196,11 @@ class FolderTest extends TestCase {
  * @return void
  */
 	public function testOperations() {
-		$path = CAKE . 'Template/Bake';
+		$path = CAKE . 'Template';
 		$Folder = new Folder($path);
 
-		$result = is_dir($Folder->pwd());
-		$this->assertTrue($result);
+		$result = $Folder->pwd();
+		$this->assertSame($path, $result);
 
 		$new = TMP . 'tests' . DS . 'test_folder_new';
 		$result = $Folder->create($new);
