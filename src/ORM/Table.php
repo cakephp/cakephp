@@ -957,7 +957,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 		$primaryKey = (array)$primaryKey;
 		if (count($key) !== count($primaryKey)) {
 			$primaryKey = $primaryKey ?: [null];
-			$primaryKey = array_map(function($key) {
+			$primaryKey = array_map(function ($key) {
 				return var_export($key, true);
 			}, $primaryKey);
 
