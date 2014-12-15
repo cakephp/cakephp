@@ -3534,17 +3534,33 @@ class TableTest extends TestCase {
 /**
  * Test that an exception is raised when there are not enough keys.
  *
- * @expectedException \InvalidArgumentException
- * @expectedExceptionMessage Incorrect number of primary key values. Expected 1 got 0.
+ * @expectedException Cake\Datasource\Exception\RecordNotFoundException
+ * @expectedExceptionMessage Invalid primary key, record not found in table "articles" with primary key [NULL]
  * @return void
  */
-	public function testGetExceptionOnIncorrectData() {
+	public function testGetExceptionOnNoData() {
 		$table = new Table([
 			'name' => 'Articles',
 			'connection' => $this->connection,
 			'table' => 'articles',
 		]);
 		$table->get(null);
+	}
+
+/**
+ * Test that an exception is raised when there are too many keys.
+ *
+ * @expectedException Cake\Datasource\Exception\RecordNotFoundException
+ * @expectedExceptionMessage Invalid primary key, record not found in table "articles" with primary key [1, 'two']
+ * @return void
+ */
+	public function testGetExceptionOnTooMuchData() {
+		$table = new Table([
+			'name' => 'Articles',
+			'connection' => $this->connection,
+			'table' => 'articles',
+		]);
+		$table->get([1, 'two']);
 	}
 
 /**
