@@ -328,11 +328,43 @@ class ResultSet implements ResultSetInterface {
 	protected function _groupResult($row) {
 		$defaultAlias = $this->_defaultTable->alias();
 		$results = $presentAliases = [];
+		$options = [
+			'useSetters' => false,
+			'markClean' => true,
+			'markNew' => false,
+			'guard' => false
+		];
+
+		foreach (collection($this->_associationMap)->match(['matching' => true]) as $matching) {
+			foreach ($row as $key => $value) {
+				if (strpos($key, $matching['alias'] . '__') !== 0) {
+					continue;
+				}
+				list($table, $field) = explode('__', $key);
+				$results['_matchingData'][$table][$field] = $value;
+				unset($row[$key]);
+			}
+			if (empty($results['_matchingData'][$matching['alias']])) {
+				continue;
+			}
+
+			$results['_matchingData'][$matching['alias']] = $this->_castValues(
+				$matching['instance']->target(),
+				$results['_matchingData'][$matching['alias']]
+			);
+
+			if ($this->_hydrate) {
+				$entity = new $matching['entityClass']($results['_matchingData'][$matching['alias']], $options);
+				$entity->clean();
+				$results['_matchingData'][$matching['alias']] = $entity;
+			}
+		}
+
 		foreach ($row as $key => $value) {
 			$table = $defaultAlias;
 			$field = $key;
 
-			if (isset($this->_associationMap[$key])) {
+			if (!is_scalar($value)) {
 				$results[$key] = $value;
 				continue;
 			}
@@ -360,14 +392,7 @@ class ResultSet implements ResultSetInterface {
 		}
 		unset($presentAliases[$defaultAlias]);
 
-		$options = [
-			'useSetters' => false,
-			'markClean' => true,
-			'markNew' => false,
-			'guard' => false
-		];
-
-		foreach (array_reverse($this->_associationMap) as $assoc) {
+		foreach (collection(array_reverse($this->_associationMap))->match(['matching' => false]) as $assoc) {
 			$alias = $assoc['nestKey'];
 			$instance = $assoc['instance'];
 
@@ -400,12 +425,6 @@ class ResultSet implements ResultSetInterface {
 				$entity = new $assoc['entityClass']($results[$alias], $options);
 				$entity->clean();
 				$results[$alias] = $entity;
-			}
-
-			if ($assoc['matching']) {
-				$results['_matchingData'][$alias] = $results[$alias];
-				unset($results[$alias]);
-				continue;
 			}
 
 			$results = $instance->transformRow($results, $alias, $assoc['canBeJoined']);

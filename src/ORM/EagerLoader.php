@@ -510,7 +510,7 @@ class EagerLoader {
 
 		$visitor = function ($level, $matching = false) use (&$visitor, &$map) {
 			foreach ($level as $assoc => $meta) {
-				$map[$meta['aliasPath']] = [
+				$map[] = [
 					'alias' => $assoc,
 					'instance' => $meta['instance'],
 					'canBeJoined' => $meta['canBeJoined'],
