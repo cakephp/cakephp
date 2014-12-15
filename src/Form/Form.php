@@ -131,7 +131,7 @@ class Form {
  * @param array $data The data to check.
  * @return bool Whether or not the data is valid.
  */
-	public function isValid(array $data) {
+	public function validate(array $data) {
 		$validator = $this->validator();
 		$this->_errors = $validator->errors($data);
 		return count($this->_errors) === 0;
@@ -141,7 +141,7 @@ class Form {
  * Get the errors in the form
  *
  * Will return the errors from the last call
- * to `isValid()` or `execute()`.
+ * to `validate()` or `execute()`.
  *
  * @return array Last set validation errors.
  */
@@ -162,7 +162,7 @@ class Form {
  *   result of the `_execute()` method.
  */
 	public function execute(array $data) {
-		if (!$this->isValid($data)) {
+		if (!$this->validate($data)) {
 			return false;
 		}
 		return $this->_execute($data);

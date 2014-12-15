@@ -57,11 +57,11 @@ class FormTest extends TestCase {
 	}
 
 /**
- * Test isValid method.
+ * Test validate method.
  *
  * @return void
  */
-	public function testIsValid() {
+	public function testValidate() {
 		$form = new Form();
 		$form->validator()
 			->add('email', 'format', ['rule' => 'email'])
@@ -71,14 +71,14 @@ class FormTest extends TestCase {
 			'email' => 'rong',
 			'body' => 'too short'
 		];
-		$this->assertFalse($form->isValid($data));
+		$this->assertFalse($form->validate($data));
 		$this->assertCount(2, $form->errors());
 
 		$data = [
 			'email' => 'test@example.com',
 			'body' => 'Some content goes here'
 		];
-		$this->assertTrue($form->isValid($data));
+		$this->assertTrue($form->validate($data));
 		$this->assertCount(0, $form->errors());
 	}
 
@@ -103,7 +103,7 @@ class FormTest extends TestCase {
 			'email' => 'rong',
 			'body' => 'too short'
 		];
-		$form->isValid($data);
+		$form->validate($data);
 		$errors = $form->errors();
 		$this->assertCount(2, $errors);
 		$this->assertEquals('Must be a valid email', $errors['email']['format']);
