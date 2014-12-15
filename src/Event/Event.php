@@ -113,7 +113,7 @@ class Event {
  * @return void
  */
 	public function stopPropagation() {
-		return $this->_stopped = true;
+		$this->_stopped = true;
 	}
 
 /**

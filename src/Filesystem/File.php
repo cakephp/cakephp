@@ -490,7 +490,7 @@ class File {
 /**
  * Returns the current folder.
  *
- * @return Folder Current folder
+ * @return \Cake\Filesystem\Folder Current folder
  */
 	public function folder() {
 		return $this->Folder;
@@ -544,10 +544,10 @@ class File {
  */
 	public function clearStatCache($all = false) {
 		if ($all === false) {
-			return clearstatcache(true, $this->path);
+			clearstatcache(true, $this->path);
 		}
 
-		return clearstatcache();
+		clearstatcache();
 	}
 
 /**

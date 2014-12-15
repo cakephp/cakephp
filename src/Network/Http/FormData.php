@@ -110,7 +110,7 @@ class FormData implements \Countable {
  *
  * @param string $name The name to use.
  * @param mixed $value Either a string filename, or a filehandle.
- * @return void
+ * @return \Cake\Network\Http\FormData\Part
  */
 	public function addFile($name, $value) {
 		$filename = false;

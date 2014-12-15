@@ -378,7 +378,7 @@ class EagerLoader {
  *
  * @param array &$config The association config
  * @param string $alias the name of the association to evaluate
- * @return void
+ * @return void|array
  * @throws \RuntimeException if a duplicate association in the same chain is detected
  * but is not possible to change the strategy due to conflicting settings
  */
