@@ -38,6 +38,19 @@ class Schema {
 	];
 
 /**
+ * Add multiple fields to the schema.
+ *
+ * @param array $fields The fields to add.
+ * @return $this
+ */
+	public function addFields(array $fields) {
+		foreach ($fields as $name => $attrs) {
+			$this->addField($name, $attrs);
+		}
+		return $this;
+	}
+
+/**
  * Adds a field to the schema.
  *
  * @param string $name The field name.

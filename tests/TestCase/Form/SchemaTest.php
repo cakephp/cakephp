@@ -23,6 +23,22 @@ use Cake\TestSuite\TestCase;
 class SchemaTest extends TestCase {
 
 /**
+ * Test adding multiple fields.
+ *
+ * @return void
+ */
+	public function testAddingMultipleFields() {
+		$schema = new Schema();
+		$schema->addFields([
+			'email' => 'string',
+			'body' => ['type' => 'string', 'length' => 1000]
+		]);
+		$this->assertEquals(['email', 'body'], $schema->fields());
+		$this->assertEquals('string', $schema->field('email')['type']);
+		$this->assertEquals('string', $schema->field('body')['type']);
+	}
+
+/**
  * test adding fields.
  *
  * @return void
