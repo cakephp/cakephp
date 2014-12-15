@@ -153,6 +153,9 @@ class IntegrationTestCaseTest extends IntegrationTestCase {
 
 		$this->_response->statusCode(505);
 		$this->assertResponseFailure();
+
+		$this->_response->statusCode(301);
+		$this->assertResponseCode(301);
 	}
 
 /**
