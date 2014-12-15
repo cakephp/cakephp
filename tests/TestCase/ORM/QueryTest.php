@@ -684,8 +684,8 @@ class QueryTest extends TestCase {
 					'Tags' => [
 						'id' => 3,
 						'name' => 'tag3',
-						'articles_tags' => ['article_id' => 2, 'tag_id' => 3]
-					]
+					],
+					'ArticlesTags' => ['article_id' => 2, 'tag_id' => 3]
 				]
 			]
 		];
@@ -709,8 +709,8 @@ class QueryTest extends TestCase {
 					'Tags' => [
 						'id' => 2,
 						'name' => 'tag2',
-						'articles_tags' => ['article_id' => 1, 'tag_id' => 2]
-					]
+					],
+					'ArticlesTags' => ['article_id' => 1, 'tag_id' => 2]
 				]
 			]
 		];
@@ -744,10 +744,6 @@ class QueryTest extends TestCase {
 					'tags' => [
 						'id' => 2,
 						'name' => 'tag2',
-						'articles_tags' => [
-							'article_id' => 1,
-							'tag_id' => 2
-						]
 					],
 					'articles' => [
 						'id' => 1,
@@ -755,7 +751,11 @@ class QueryTest extends TestCase {
 						'title' => 'First Article',
 						'body' => 'First Article Body',
 						'published' => 'Y'
-					]
+					],
+					'ArticlesTags' => [
+							'article_id' => 1,
+							'tag_id' => 2
+						]
 				]
 			]
 		];

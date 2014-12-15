@@ -235,7 +235,7 @@ class BelongsToMany extends Association {
 		$options['foreignKey'] = $this->targetForeignKey();
 		$assoc = $this->_targetTable->association($junction->alias());
 		$assoc->attachTo($query, $options);
-		$query->eagerLoader()->addToJoinsMap($junction->alias(), $assoc);
+		$query->eagerLoader()->addToJoinsMap($junction->alias(), $assoc, true);
 	}
 
 /**

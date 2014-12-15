@@ -516,7 +516,7 @@ class EagerLoader {
 					'canBeJoined' => $meta['canBeJoined'],
 					'entityClass' => $meta['instance']->target()->entityClass(),
 					'nestKey' => $meta['canBeJoined'] ? $assoc : $meta['aliasPath'],
-					'matching' => $matching
+					'matching' => isset($meta['matching']) ? $meta['matching'] : $matching
 				];
 				if ($meta['canBeJoined'] && !empty($meta['associations'])) {
 					$visitor($meta['associations'], $matching);
@@ -537,13 +537,16 @@ class EagerLoader {
  * @param string $alias The table alias as it appears in the query.
  * @param \Cake\ORM\Association $assoc The association object the alias represents.
  * will be normalized
+ * @param bool $asMatching Whether or not this join results should be treated as a
+ * 'matching' association.
  * @return void
  */
-	public function addToJoinsMap($alias, Association $assoc) {
+	public function addToJoinsMap($alias, Association $assoc, $asMatching = false) {
 		$this->_joinsMap[$alias] = [
 			'aliasPath' => $alias,
 			'instance' => $assoc,
 			'canBeJoined' => true,
+			'matching' => $asMatching,
 			'associations' => []
 		];
 	}
