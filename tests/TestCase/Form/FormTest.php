@@ -51,7 +51,7 @@ class FormTest extends TestCase {
 		$this->assertInstanceOf('Cake\Validation\Validator', $validator);
 		$this->assertSame($validator, $form->validator(), 'Same instance each time');
 
-		$schema = $this->getMock('Cake\Validation\Validator');
+		$validator = $this->getMock('Cake\Validation\Validator');
 		$this->assertSame($validator, $form->validator($validator));
 		$this->assertSame($validator, $form->validator());
 	}
