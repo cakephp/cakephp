@@ -2195,6 +2195,10 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testInsertSimple() {
+		$this->skipIf(
+			$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
+			'Isolated for SqlServer'
+		);
 		$query = new Query($this->connection);
 		$query->insert(['title', 'body'])
 			->into('articles')
@@ -2232,6 +2236,10 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testInsertSparseRow() {
+		$this->skipIf(
+			$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
+			'Isolated for SqlServer'
+		);
 		$query = new Query($this->connection);
 		$query->insert(['title', 'body'])
 			->into('articles')
@@ -2267,6 +2275,10 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testInsertMultipleRowsSparse() {
+		$this->skipIf(
+			$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
+			'Isolated for SqlServer'
+		);
 		$query = new Query($this->connection);
 		$query->insert(['title', 'body'])
 			->into('articles')
@@ -2305,6 +2317,10 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testInsertFromSelect() {
+		$this->skipIf(
+			$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
+			'Isolated for SqlServer'
+		);
 		$select = (new Query($this->connection))->select(['name', "'some text'", 99])
 			->from('authors')
 			->where(['id' => 1]);
@@ -2375,6 +2391,10 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testInsertExpressionValues() {
+		$this->skipIf(
+			$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
+			'Isolated for SqlServer'
+		);
 		$query = new Query($this->connection);
 		$query->insert(['title'])
 			->into('articles')
@@ -2895,6 +2915,10 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testSqlCaseStatement() {
+		$this->skipIf(
+			$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
+			'Isolated for SqlServer'
+		);
 		$query = new Query($this->connection);
 		$publishedCase = $query
 			->newExpr()

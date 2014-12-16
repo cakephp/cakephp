@@ -1405,6 +1405,10 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testInsert() {
+		$this->skipIf(
+			$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
+			'Isolated for SqlServer'
+		);
 		$table = TableRegistry::get('articles');
 
 		$result = $table->query()
