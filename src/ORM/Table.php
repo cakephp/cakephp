@@ -19,7 +19,7 @@ use Cake\Core\App;
 use Cake\Database\Schema\Table as Schema;
 use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
-use Cake\Datasource\Exception\RecordNotFoundException;
+use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
@@ -945,7 +945,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 /**
  * {@inheritDoc}
  *
- * @throws Cake\Datasource\Exception\RecordNotFoundException When $primaryKey has an
+ * @throws Cake\Datasource\Exception\InvalidPrimaryKeyException When $primaryKey has an
  * 		incorrect number of elements.
  */
 	public function get($primaryKey, $options = []) {
@@ -961,8 +961,8 @@ class Table implements RepositoryInterface, EventListenerInterface {
 				return var_export($key, true);
 			}, $primaryKey);
 
-			throw new RecordNotFoundException(sprintf(
-				'Invalid primary key, record not found in table "%s" with primary key [%s]',
+			throw new InvalidPrimaryKeyException(sprintf(
+				'Record not found in table "%s" with primary key [%s]',
 				$this->table(),
 				implode($primaryKey, ', ')
 			));
