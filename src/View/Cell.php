@@ -116,6 +116,13 @@ abstract class Cell {
 	protected $_validCellOptions = [];
 
 /**
+ * Caching setup.
+ *
+ * @var array|bool
+ */
+	protected $_cache = false;
+
+/**
  * Constructor.
  *
  * @param \Cake\Network\Request $request the request to use in the cell
@@ -135,6 +142,9 @@ abstract class Cell {
 				$this->{$var} = $cellOptions[$var];
 			}
 		}
+		if (!empty($cellOptions['cache'])) {
+			$this->_cache = $cellOptions['cache'];
+		}
 	}
 
 /**
@@ -152,21 +162,58 @@ abstract class Cell {
 		if ($template === null) {
 			$template = $this->template;
 		}
-
 		$this->View = null;
 		$this->getView();
-
 		$this->View->layout = false;
-		$className = explode('\\', get_class($this));
-		$className = array_pop($className);
-		$name = substr($className, 0, strpos($className, 'Cell'));
-		$this->View->subDir = 'Cell' . DS . $name;
 
-		try {
-			return $this->View->render($template);
-		} catch (MissingTemplateException $e) {
-			throw new MissingCellViewException(['file' => $template, 'name' => $name]);
+		$cache = [];
+		if ($this->_cache) {
+			$cache = $this->_cacheConfig($template);
 		}
+
+		$render = function () use ($template) {
+			$className = explode('\\', get_class($this));
+			$className = array_pop($className);
+			$name = substr($className, 0, strpos($className, 'Cell'));
+			$this->View->subDir = 'Cell' . DS . $name;
+
+			try {
+				return $this->View->render($template);
+			} catch (MissingTemplateException $e) {
+				throw new MissingCellViewException(['file' => $template, 'name' => $name]);
+			}
+		};
+
+		if ($cache) {
+			return $this->View->cache(function() use ($render) {
+				echo $render();
+			}, $cache);
+		}
+		return $render();
+	}
+
+/**
+ * Generate the cache key to use for this cell.
+ *
+ * If the key is undefined, the cell class and template will be used.
+ *
+ * @param string $template The template being rendered.
+ * @return array The cache configuration.
+ */
+	protected function _cacheConfig($template) {
+		if (empty($this->_cache)) {
+			return [];
+		}
+		$key = 'cell_' . Inflector::underscore(get_class($this)) . '_' . $template;
+		$key = str_replace('\\', '_', $key);
+		$default = [
+			'config' => 'default',
+			'key' => $key
+		];
+		if ($this->_cache === true) {
+			return $default;
+		}
+		return $this->_cache + $default;
 	}
 
 /**
