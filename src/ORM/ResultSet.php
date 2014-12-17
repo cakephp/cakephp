@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM;
 
+use Cake\Collection\Collection;
 use Cake\Collection\CollectionTrait;
 use Cake\Database\Exception;
 use Cake\Database\Type;
@@ -68,11 +69,20 @@ class ResultSet implements ResultSetInterface {
 	protected $_defaultTable;
 
 /**
- * List of associations that should be eager loaded
+ * List of associations that should be placed under the `_matchingData`
+ * result key.
  *
  * @var array
  */
-	protected $_associationMap = [];
+	protected $_matchingMap = [];
+
+/**
+ * List of associations that should be eager loaded.
+ *
+ * @var array
+ */
+	protected $_containMap = [];
+
 
 /**
  * Map of fields that are fetched from the statement with
@@ -298,7 +308,14 @@ class ResultSet implements ResultSetInterface {
  * @return void
  */
 	protected function _calculateAssociationMap() {
-		return $this->_associationMap = $this->_query->eagerLoader()->associationsMap($this->_defaultTable);
+		$map = $this->_query->eagerLoader()->associationsMap($this->_defaultTable);
+		$this->_matchingMap = (new Collection($map))
+			->match(['matching' => true])
+			->compile();
+
+		$this->_containMap = (new Collection(array_reverse($map)))
+			->match(['matching' => false])
+			->compile();
 	}
 
 /**
@@ -335,7 +352,7 @@ class ResultSet implements ResultSetInterface {
 			'guard' => false
 		];
 
-		foreach (collection($this->_associationMap)->match(['matching' => true]) as $matching) {
+		foreach ($this->_matchingMap as $matching) {
 			foreach ($row as $key => $value) {
 				if (strpos($key, $matching['alias'] . '__') !== 0) {
 					continue;
@@ -364,7 +381,7 @@ class ResultSet implements ResultSetInterface {
 			$table = $defaultAlias;
 			$field = $key;
 
-			if (!is_scalar($value)) {
+			if ($value !== null && !is_scalar($value)) {
 				$results[$key] = $value;
 				continue;
 			}
@@ -392,7 +409,7 @@ class ResultSet implements ResultSetInterface {
 		}
 		unset($presentAliases[$defaultAlias]);
 
-		foreach (collection(array_reverse($this->_associationMap))->match(['matching' => false]) as $assoc) {
+		foreach ($this->_containMap as $assoc) {
 			$alias = $assoc['nestKey'];
 			$instance = $assoc['instance'];
 
