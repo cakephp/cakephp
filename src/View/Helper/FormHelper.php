@@ -85,12 +85,12 @@ class FormHelper extends Helper {
 			'errorItem' => '<li>{{text}}</li>',
 			'file' => '<input type="file" name="{{name}}"{{attrs}}>',
 			'fieldset' => '<fieldset>{{content}}</fieldset>',
-			'formstart' => '<form{{attrs}}>',
-			'formend' => '</form>',
+			'formStart' => '<form{{attrs}}>',
+			'formEnd' => '</form>',
 			'formGroup' => '{{label}}{{input}}',
-			'hiddenblock' => '<div style="display:none;">{{content}}</div>',
+			'hiddenBlock' => '<div style="display:none;">{{content}}</div>',
 			'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
-			'inputsubmit' => '<input type="{{type}}"{{attrs}}>',
+			'inputSubmit' => '<input type="{{type}}"{{attrs}}>',
 			'inputContainer' => '<div class="input {{type}}{{required}}">{{content}}</div>',
 			'inputContainerError' => '<div class="input {{type}}{{required}} error">{{content}}{{error}}</div>',
 			'label' => '<label{{attrs}}>{{text}}</label>',
@@ -379,11 +379,11 @@ class FormHelper extends Helper {
 		}
 
 		if (!empty($append)) {
-			$append = $templater->format('hiddenblock', ['content' => $append]);
+			$append = $templater->format('hiddenBlock', ['content' => $append]);
 		}
 
 		$actionAttr = $templater->formatAttributes(['action' => $action, 'escape' => false]);
-		return $templater->format('formstart', [
+		return $templater->format('formStart', [
 			'attrs' => $templater->formatAttributes($htmlAttributes) . $actionAttr
 		]) . $append;
 	}
@@ -482,7 +482,7 @@ class FormHelper extends Helper {
 			$this->fields = array();
 		}
 		$templater = $this->templater();
-		$out .= $templater->format('formend', []);
+		$out .= $templater->format('formEnd', []);
 
 		$templater->pop();
 		$this->requestType = null;
@@ -542,7 +542,7 @@ class FormHelper extends Helper {
 			'value' => urlencode($unlocked),
 		));
 		$out .= $this->hidden('_Token.unlocked', $tokenUnlocked);
-		return $this->formatTemplate('hiddenblock', ['content' => $out]);
+		return $this->formatTemplate('hiddenBlock', ['content' => $out]);
 	}
 
 /**
@@ -1569,7 +1569,7 @@ class FormHelper extends Helper {
 
 		$this->_lastAction($url);
 
-		$out = $this->formatTemplate('formstart', [
+		$out = $this->formatTemplate('formStart', [
 			'attrs' => $this->templater()->formatAttributes($formOptions)
 		]);
 		$out .= $this->hidden('_method', ['value' => $requestMethod]);
@@ -1584,7 +1584,7 @@ class FormHelper extends Helper {
 			unset($options['data']);
 		}
 		$out .= $this->secure($fields);
-		$out .= $this->formatTemplate('formend', []);
+		$out .= $this->formatTemplate('formEnd', []);
 
 		if ($options['block']) {
 			if ($options['block'] === true) {
@@ -1671,7 +1671,7 @@ class FormHelper extends Helper {
 			$options['value'] = $caption;
 		}
 
-		$input = $this->formatTemplate('inputsubmit', [
+		$input = $this->formatTemplate('inputSubmit', [
 			'type' => $type,
 			'attrs' => $this->templater()->formatAttributes($options),
 		]);
