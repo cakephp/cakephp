@@ -203,6 +203,7 @@ class RulesChecker {
  *
  * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.
  * @return bool
+ * @param string $mode Either 'create, 'update' or 'delete'.
  * @throws \InvalidArgumentException if an invalid mode is passed.
  */
 	public function check(EntityInterface $entity, $mode) {
