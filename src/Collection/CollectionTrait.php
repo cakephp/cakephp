@@ -27,7 +27,9 @@ use Cake\Collection\Iterator\ReplaceIterator;
 use Cake\Collection\Iterator\SortIterator;
 use Cake\Collection\Iterator\StoppableIterator;
 use Cake\Collection\Iterator\TreeIterator;
+use Cake\Collection\Iterator\UnfoldIterator;
 use LimitIterator;
+use RecursiveIteratorIterator;
 
 /**
  * Offers a handful of method to manipulate iterators
@@ -439,4 +441,11 @@ trait CollectionTrait {
 		return new StoppableIterator($this, $condition);
 	}
 
+	public function unfold(callable $unfolder) {
+		return new Collection(
+			new RecursiveIteratorIterator(
+				new UnfoldIterator($this, $unfolder), RecursiveIteratorIterator::LEAVES_ONLY
+			)
+		);
+	}
 }

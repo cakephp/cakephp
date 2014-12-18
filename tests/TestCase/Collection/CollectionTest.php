@@ -995,4 +995,20 @@ class CollectionTest extends TestCase {
 		$this->assertEquals([['foo' => 'bar']], $collection->toArray());
 	}
 
+	public function testUnfold() {
+		$items = [
+			[1, 2, 3, 4],
+			[5, 6],
+			[7, 8]
+		];
+
+		$collection = (new Collection($items))->unfold(function ($item) {
+			return $item;
+		});
+
+		$this->assertEquals(range(1, 8), $collection->toArray(false));
+
+
+	}
+
 }
