@@ -235,7 +235,7 @@ class RouteCollection {
 			if ($out) {
 				return $out;
 			}
-			throw new MissingRouteException(['url' => $name]);
+			throw new MissingRouteException(['url' => $name, 'context' => $context]);
 		}
 
 		foreach ($this->_getNames($url) as $name) {
@@ -249,7 +249,7 @@ class RouteCollection {
 				}
 			}
 		}
-		throw new MissingRouteException(['url' => var_export($url, true)]);
+		throw new MissingRouteException(['url' => var_export($url, true), 'context' => $context]);
 	}
 
 /**

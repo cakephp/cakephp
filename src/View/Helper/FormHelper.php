@@ -28,7 +28,7 @@ use Cake\View\Form\EntityContext;
 use Cake\View\Form\NullContext;
 use Cake\View\Helper;
 use Cake\View\Helper\IdGeneratorTrait;
-use Cake\View\Helper\StringTemplateTrait;
+use Cake\View\StringTemplateTrait;
 use Cake\View\View;
 use Cake\View\Widget\WidgetRegistry;
 use DateTime;

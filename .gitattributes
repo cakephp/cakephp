@@ -40,4 +40,3 @@ phpunit.xml.dist export-ignore
 .travis.yml export-ignore
 tests/test_app export-ignore
 tests/TestCase export-ignore
-tests/bake_compare export-ignore

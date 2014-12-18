@@ -563,4 +563,17 @@ class QueryRegressionTest extends TestCase {
 		$this->assertCount(3, $results);
 	}
 
+/**
+ * Tests that calling first on the query results will not remove all other results
+ * from the set.
+ *
+ * @return void
+ */
+	public function testFirstOnResultSet() {
+		$results = TableRegistry::get('Articles')->find()->all();
+		$this->assertEquals(3, $results->count());
+		$this->assertNotNull($results->first());
+		$this->assertCount(3, $results->toArray());
+	}
+
 }

@@ -484,8 +484,7 @@ class Response {
 		);
 
 		$charset = false;
-		if (
-			$this->_charset &&
+		if ($this->_charset &&
 			(strpos($this->_contentType, 'text/') === 0 || in_array($this->_contentType, $whitelist))
 		) {
 			$charset = true;

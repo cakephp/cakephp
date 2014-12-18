@@ -593,8 +593,7 @@ class ConsoleOptionParser {
  * @return string Generated help.
  */
 	public function help($subcommand = null, $format = 'text', $width = 72) {
-		if (
-			isset($this->_subcommands[$subcommand]) &&
+		if (isset($this->_subcommands[$subcommand]) &&
 			$this->_subcommands[$subcommand]->parser() instanceof self
 		) {
 			$subparser = $this->_subcommands[$subcommand]->parser();

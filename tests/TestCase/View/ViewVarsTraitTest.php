@@ -59,6 +59,18 @@ class ViewVarsTraitTest extends TestCase {
 	}
 
 /**
+ * test chainable set()
+ *
+ * @return void
+ */
+	public function testSetChained() {
+		$result = $this->subject->set('testing', 'value')
+			->set('foo', 'bar');
+		$this->assertSame($this->subject, $result);
+		$this->assertEquals(['testing' => 'value', 'foo' => 'bar'], $this->subject->viewVars);
+	}
+
+/**
  * test set() with 2 params in combine mode
  *
  * @return void

@@ -168,7 +168,7 @@ class Request implements \ArrayAccess {
 		list($base, $webroot) = static::_base();
 		$sessionConfig = (array)Configure::read('Session') + [
 			'defaults' => 'php',
-			'cookiePath' => $base
+			'cookiePath' => $webroot
 		];
 
 		$config = array(
@@ -270,8 +270,7 @@ class Request implements \ArrayAccess {
  */
 	protected function _processPost($data) {
 		$method = $this->env('REQUEST_METHOD');
-		if (
-			in_array($method, array('PUT', 'DELETE', 'PATCH')) &&
+		if (in_array($method, array('PUT', 'DELETE', 'PATCH')) &&
 			strpos($this->env('CONTENT_TYPE'), 'application/x-www-form-urlencoded') === 0
 		) {
 			$data = $this->input();
@@ -347,8 +346,7 @@ class Request implements \ArrayAccess {
 		}
 		$endsWithIndex = '/webroot/index.php';
 		$endsWithLength = strlen($endsWithIndex);
-		if (
-			strlen($uri) >= $endsWithLength &&
+		if (strlen($uri) >= $endsWithLength &&
 			substr($uri, -$endsWithLength) === $endsWithIndex
 		) {
 			$uri = '/';

@@ -861,7 +861,7 @@ class ViewTest extends TestCase {
 			'path' => CACHE . 'views/',
 			'prefix' => ''
 		]);
-		Cache::clear(true, 'test_view');
+		Cache::clear(false, 'test_view');
 
 		$View = $this->PostsController->createView();
 		$View->elementCache = 'test_view';
@@ -1346,6 +1346,17 @@ class ViewTest extends TestCase {
 		$this->View->assign('test', '');
 		$result = $this->View->fetch('test', 'This should not be returned');
 		$this->assertSame('', $result);
+	}
+
+/**
+ * Test checking a block's existance.
+ *
+ * @return void
+ */
+	public function testBlockExist() {
+		$this->assertFalse($this->View->exists('test'));
+		$this->View->assign('test', 'Block content');
+		$this->assertTrue($this->View->exists('test'));
 	}
 
 /**

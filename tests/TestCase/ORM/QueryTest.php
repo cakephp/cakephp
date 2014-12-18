@@ -1070,7 +1070,7 @@ class QueryTest extends TestCase {
 
 		$this->assertCount(3, $results);
 		foreach ($results as $r) {
-			$this->assertInstanceOf('\Cake\ORM\Entity', $r);
+			$this->assertInstanceOf('Cake\ORM\Entity', $r);
 		}
 
 		$first = $results[0];
@@ -1100,7 +1100,7 @@ class QueryTest extends TestCase {
 
 		$first = $results[0];
 		foreach ($first->articles as $r) {
-			$this->assertInstanceOf('\Cake\ORM\Entity', $r);
+			$this->assertInstanceOf('Cake\ORM\Entity', $r);
 		}
 
 		$this->assertCount(2, $first->articles);
@@ -1143,7 +1143,7 @@ class QueryTest extends TestCase {
 
 		$first = $results[0];
 		foreach ($first->tags as $r) {
-			$this->assertInstanceOf('\Cake\ORM\Entity', $r);
+			$this->assertInstanceOf('Cake\ORM\Entity', $r);
 		}
 
 		$this->assertCount(2, $first->tags);
@@ -1181,7 +1181,7 @@ class QueryTest extends TestCase {
 
 		$this->assertCount(3, $results);
 		$first = $results[0];
-		$this->assertInstanceOf('\Cake\ORM\Entity', $first->author);
+		$this->assertInstanceOf('Cake\ORM\Entity', $first->author);
 		$expected = ['id' => 1, 'name' => 'mariano'];
 		$this->assertEquals($expected, $first->author->toArray());
 	}
@@ -1208,7 +1208,7 @@ class QueryTest extends TestCase {
 
 		$this->assertCount(4, $results);
 		$first = $results[0];
-		$this->assertInstanceOf('\Cake\ORM\Entity', $first->articles[0]->author);
+		$this->assertInstanceOf('Cake\ORM\Entity', $first->articles[0]->author);
 		$expected = ['id' => 1, 'name' => 'mariano'];
 		$this->assertEquals($expected, $first->articles[0]->author->toArray());
 		$this->assertTrue(isset($results[3]->articles));
@@ -1413,8 +1413,15 @@ class QueryTest extends TestCase {
 			->values(['title' => 'Second'])
 			->execute();
 
+		$result->closeCursor();
+
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
-		$this->assertEquals(2, $result->rowCount());
+		//PDO_SQLSRV returns -1 for successful inserts when using INSERT ... OUTPUT
+		if (!$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver) {
+			$this->assertEquals(2, $result->rowCount());
+		} else {
+			$this->assertEquals(-1, $result->rowCount());
+		}
 	}
 
 /**
@@ -1630,7 +1637,7 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection, $table);
 		$query->select()->formatResults(function ($results, $q) use ($query) {
 			$this->assertSame($query, $q);
-			$this->assertInstanceOf('\Cake\ORM\ResultSet', $results);
+			$this->assertInstanceOf('Cake\ORM\ResultSet', $results);
 			return $results->indexBy('id');
 		});
 		$this->assertEquals([1, 2, 3, 4], array_keys($query->toArray()));
@@ -1646,7 +1653,7 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection, $table);
 		$query->select()->formatResults(function ($results, $q) use ($query) {
 			$this->assertSame($query, $q);
-			$this->assertInstanceOf('\Cake\ORM\ResultSet', $results);
+			$this->assertInstanceOf('Cake\ORM\ResultSet', $results);
 			return $results->indexBy('id');
 		});
 

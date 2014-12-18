@@ -19,6 +19,7 @@ use Cake\Core\App;
 use Cake\Database\Schema\Table as Schema;
 use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
@@ -959,7 +960,8 @@ class Table implements RepositoryInterface, EventListenerInterface {
 /**
  * {@inheritDoc}
  *
- * @throws \InvalidArgumentException When $primaryKey has an incorrect number of elements.
+ * @throws Cake\Datasource\Exception\InvalidPrimaryKeyException When $primaryKey has an
+ * 		incorrect number of elements.
  */
 	public function get($primaryKey, $options = []) {
 		$key = (array)$this->primaryKey();
@@ -969,10 +971,15 @@ class Table implements RepositoryInterface, EventListenerInterface {
 		}
 		$primaryKey = (array)$primaryKey;
 		if (count($key) !== count($primaryKey)) {
-			throw new \InvalidArgumentException(sprintf(
-				"Incorrect number of primary key values. Expected %d got %d.",
-				count($key),
-				count($primaryKey)
+			$primaryKey = $primaryKey ?: [null];
+			$primaryKey = array_map(function ($key) {
+				return var_export($key, true);
+			}, $primaryKey);
+
+			throw new InvalidPrimaryKeyException(sprintf(
+				'Record not found in table "%s" with primary key [%s]',
+				$this->table(),
+				implode($primaryKey, ', ')
 			));
 		}
 		$conditions = array_combine($key, $primaryKey);
@@ -1039,9 +1046,8 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			->set($fields)
 			->where($conditions);
 		$statement = $query->execute();
-		$success = $statement->rowCount() > 0;
 		$statement->closeCursor();
-		return $success;
+		return $statement->rowCount();
 	}
 
 /**
@@ -1120,9 +1126,8 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			->delete()
 			->where($conditions);
 		$statement = $query->execute();
-		$success = $statement->rowCount() > 0;
 		$statement->closeCursor();
-		return $success;
+		return $statement->rowCount();
 	}
 
 /**

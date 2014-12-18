@@ -41,13 +41,13 @@ class LoggingStatement extends StatementDecorator {
  * Wrapper for the execute function to calculate time spent
  * and log the query afterwards.
  *
- * @param array $params list of values to be bound to query
- * @return bool true on success, false otherwise
+ * @param array $params List of values to be bound to query
+ * @return bool True on success, false otherwise
  * @throws \Exception Re-throws any exception raised during query execution.
  */
 	public function execute($params = null) {
 		$t = microtime(true);
-		$query = new LoggedQuery;
+		$query = new LoggedQuery();
 
 		try {
 			$result = parent::execute($params);
@@ -68,8 +68,8 @@ class LoggingStatement extends StatementDecorator {
  * to the logging system.
  *
  * @param \Cake\Database\Log\LoggedQuery $query The query to log.
- * @param array $params list of values to be bound to query
- * @param float $startTime the microtime when the query was executed
+ * @param array $params List of values to be bound to query.
+ * @param float $startTime The microtime when the query was executed.
  * @return void
  */
 	protected function _log($query, $params, $startTime) {
@@ -83,9 +83,9 @@ class LoggingStatement extends StatementDecorator {
  * Wrapper for bindValue function to gather each parameter to be later used
  * in the logger function.
  *
- * @param string|int $column name or param position to be bound
+ * @param string|int $column Name or param position to be bound
  * @param mixed $value The value to bind to variable in query
- * @param string|int $type PDO type or name of configured Type class
+ * @param string|int|null $type PDO type or name of configured Type class
  * @return void
  */
 	public function bindValue($column, $value, $type = 'string') {
@@ -103,8 +103,8 @@ class LoggingStatement extends StatementDecorator {
  * Sets the logger object instance. When called with no arguments
  * it returns the currently setup logger instance
  *
- * @param object $instance logger object instance
- * @return object logger instance
+ * @param object|null $instance Logger object instance.
+ * @return object Logger instance
  */
 	public function logger($instance = null) {
 		if ($instance === null) {

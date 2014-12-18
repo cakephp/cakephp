@@ -91,7 +91,7 @@ abstract class IntegrationTestCase extends TestCase {
 	protected $_requestSession;
 
 /**
- * Reset the EventManager for before each test.
+ * Resets the EventManager for before each test.
  *
  * @return void
  */
@@ -101,7 +101,7 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Clear the state used for requests.
+ * Clears the state used for requests.
  *
  * @return void
  */
@@ -118,7 +118,7 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Configure the data for the *next* request.
+ * Configures the data for the *next* request.
  *
  * This data is cleared in the tearDown() method.
  *
@@ -133,7 +133,7 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Set session data.
+ * Sets session data.
  *
  * This method lets you configure the session data
  * you want to be used for requests that follow. The session
@@ -150,7 +150,7 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Set a request cookie for future requests.
+ * Sets a request cookie for future requests.
  *
  * This method lets you configure the session data
  * you want to be used for requests that follow. The session
@@ -168,13 +168,13 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Perform a GET request using the current request data.
+ * Performs a GET request using the current request data.
  *
  * The response of the dispatched request will be stored as
  * a property. You can use various assert methods to check the
  * response.
  *
- * @param string $url The url to request.
+ * @param string|array $url The URL to request.
  * @return void
  */
 	public function get($url) {
@@ -182,13 +182,13 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Perform a POST request using the current request data.
+ * Performs a POST request using the current request data.
  *
  * The response of the dispatched request will be stored as
  * a property. You can use various assert methods to check the
  * response.
  *
- * @param string $url The url to request.
+ * @param string|array $url The URL to request.
  * @param array $data The data for the request.
  * @return void
  */
@@ -197,13 +197,13 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Perform a PATCH request using the current request data.
+ * Performs a PATCH request using the current request data.
  *
  * The response of the dispatched request will be stored as
  * a property. You can use various assert methods to check the
  * response.
  *
- * @param string $url The url to request.
+ * @param string|array $url The URL to request.
  * @param array $data The data for the request.
  * @return void
  */
@@ -212,13 +212,13 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Perform a PUT request using the current request data.
+ * Performs a PUT request using the current request data.
  *
  * The response of the dispatched request will be stored as
  * a property. You can use various assert methods to check the
  * response.
  *
- * @param string $url The url to request.
+ * @param string|array $url The URL to request.
  * @param array $data The data for the request.
  * @return void
  */
@@ -227,13 +227,13 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Perform a DELETE request using the current request data.
+ * Performs a DELETE request using the current request data.
  *
  * The response of the dispatched request will be stored as
  * a property. You can use various assert methods to check the
  * response.
  *
- * @param string $url The url to request.
+ * @param string|array $url The URL to request.
  * @return void
  */
 	public function delete($url) {
@@ -241,11 +241,11 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Create and send the request into a Dispatcher instance.
+ * Creates and send the request into a Dispatcher instance.
  *
  * Receives and stores the response for future inspection.
  *
- * @param string $url The url
+ * @param string|array $url The URL
  * @param string $method The HTTP method
  * @param array|null $data The request data.
  * @return void
@@ -272,7 +272,7 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Add additional event spies to the controller/view event manager.
+ * Adds additional event spies to the controller/view event manager.
  *
  * @param \Cake\Event\Event $event A dispatcher event.
  * @return void
@@ -292,7 +292,7 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Attempt to render an error response for a given exception.
+ * Attempts to render an error response for a given exception.
  *
  * This method will attempt to use the configured exception renderer.
  * If that class does not exist, the built-in renderer will be used.
@@ -311,9 +311,9 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Create a request object with the configured options and parameters.
+ * Creates a request object with the configured options and parameters.
  *
- * @param string $url The url
+ * @param string|array $url The URL
  * @param string $method The HTTP method
  * @param array|null $data The request data.
  * @return \Cake\Network\Request The built request.
@@ -326,7 +326,7 @@ abstract class IntegrationTestCase extends TestCase {
 		$session->write($this->_session);
 
 		$props = [
-			'url' => $url,
+			'url' => Router::url($url),
 			'post' => $data,
 			'cookies' => $this->_cookie,
 			'session' => $session,
@@ -345,7 +345,25 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Assert that the response status code is in the 2xx range.
+ * Fetches a view variable by name.
+ *
+ * If the view variable does not exist, null will be returned.
+ *
+ * @param string $name The view variable to get.
+ * @return mixed The view variable if set.
+ */
+	public function viewVariable($name) {
+		if (empty($this->_controller->viewVars)) {
+			$this->fail('There are no view variables, perhaps you need to run a request?');
+		}
+		if (isset($this->_controller->viewVars[$name])) {
+			return $this->_controller->viewVars[$name];
+		}
+		return null;
+	}
+
+/**
+ * Asserts that the response status code is in the 2xx range.
  *
  * @return void
  */
@@ -354,7 +372,7 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Assert that the response status code is in the 4xx range.
+ * Asserts that the response status code is in the 4xx range.
  *
  * @return void
  */
@@ -363,12 +381,23 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Assert that the response status code is in the 5xx range.
+ * Asserts that the response status code is in the 5xx range.
  *
  * @return void
  */
 	public function assertResponseFailure() {
 		$this->_assertStatus(500, 505, 'Status code is not between 500 and 505');
+	}
+
+/**
+ * Asserts a specific response status code.
+ *
+ * @param int $code Status code to assert.
+ * @return void
+ */
+	public function assertResponseCode($code) {
+		$actual = $this->_response->statusCode();
+		$this->_assertStatus($code, $code, 'Status code is not ' . $code . ' but ' . $actual);
 	}
 
 /**
@@ -389,7 +418,7 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Assert that the Location header is correct.
+ * Asserts that the Location header is correct.
  *
  * @param string|array $url The url you expected the client to go to. This
  *   can either be a string URL or an array compatible with Router::url()
@@ -408,7 +437,7 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Assert response headers
+ * Asserts response headers
  *
  * @param string $header The header to check
  * @param string $content The content to check for.
@@ -427,7 +456,7 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Assert content type
+ * Asserts content type
  *
  * @param string $type The content-type to check for.
  * @param string $message The failure message that will be appended to the generated message.
@@ -446,7 +475,7 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Assert content exists in the response body.
+ * Asserts content exists in the response body.
  *
  * @param string $content The content to check for.
  * @param string $message The failure message that will be appended to the generated message.
@@ -460,7 +489,7 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Assert that the search string was in the template name.
+ * Asserts that the search string was in the template name.
  *
  * @param string $content The content to check for.
  * @param string $message The failure message that will be appended to the generated message.
@@ -474,7 +503,7 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Assert that the search string was in the layout name.
+ * Asserts that the search string was in the layout name.
  *
  * @param string $content The content to check for.
  * @param string $message The failure message that will be appended to the generated message.
@@ -488,25 +517,7 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Fetch a view variable by name.
- *
- * If the view variable does not exist null will be returned.
- *
- * @param string $name The view variable to get.
- * @return mixed The view variable if set.
- */
-	public function viewVariable($name) {
-		if (empty($this->_controller->viewVars)) {
-			$this->fail('There are no view variables, perhaps you need to run a request?');
-		}
-		if (isset($this->_controller->viewVars[$name])) {
-			return $this->_controller->viewVars[$name];
-		}
-		return null;
-	}
-
-/**
- * Assert session contents
+ * Asserts session contents
  *
  * @param string $expected The expected contents.
  * @param string $path The session data path. Uses Hash::get() compatible notation
@@ -522,7 +533,7 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Assert cookie values
+ * Asserts cookie values
  *
  * @param string $expected The expected contents.
  * @param string $name The cookie name.

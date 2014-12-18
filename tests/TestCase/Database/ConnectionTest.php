@@ -634,7 +634,7 @@ class ConnectionTest extends TestCase {
  */
 	public function testLoggerDefault() {
 		$logger = $this->connection->logger();
-		$this->assertInstanceOf('\Cake\Database\Log\QueryLogger', $logger);
+		$this->assertInstanceOf('Cake\Database\Log\QueryLogger', $logger);
 		$this->assertSame($logger, $this->connection->logger());
 	}
 
@@ -659,7 +659,7 @@ class ConnectionTest extends TestCase {
 		$this->connection->logQueries(true);
 		$this->connection->logger($logger);
 		$st = $this->connection->prepare('SELECT 1');
-		$this->assertInstanceOf('\Cake\Database\Log\LoggingStatement', $st);
+		$this->assertInstanceOf('Cake\Database\Log\LoggingStatement', $st);
 		$this->assertSame($logger, $st->logger());
 
 		$this->connection->logQueries(false);

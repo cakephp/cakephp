@@ -59,7 +59,7 @@ class CsrfComponentTest extends TestCase {
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 
 		$controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
-		$controller->request = new Request(['base' => '/dir']);
+		$controller->request = new Request(['webroot' => '/dir/']);
 		$controller->response = new Response();
 
 		$event = new Event('Controller.startup', $controller);
@@ -69,7 +69,7 @@ class CsrfComponentTest extends TestCase {
 		$this->assertNotEmpty($cookie, 'Should set a token.');
 		$this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
 		$this->assertEquals(0, $cookie['expiry'], 'session duration.');
-		$this->assertEquals('/dir', $cookie['path'], 'session path.');
+		$this->assertEquals('/dir/', $cookie['path'], 'session path.');
 
 		$this->assertEquals($cookie['value'], $controller->request->params['_csrfToken']);
 	}
@@ -204,7 +204,7 @@ class CsrfComponentTest extends TestCase {
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 
 		$controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
-		$controller->request = new Request(['base' => '/dir']);
+		$controller->request = new Request(['webroot' => '/dir/']);
 		$controller->response = new Response();
 
 		$component = new CsrfComponent($this->registry, [
@@ -221,7 +221,7 @@ class CsrfComponentTest extends TestCase {
 		$this->assertNotEmpty($cookie, 'Should set a token.');
 		$this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
 		$this->assertEquals(90, $cookie['expiry'], 'session duration.');
-		$this->assertEquals('/dir', $cookie['path'], 'session path.');
+		$this->assertEquals('/dir/', $cookie['path'], 'session path.');
 		$this->assertTrue($cookie['secure'], 'cookie security flag missing');
 	}
 

@@ -40,7 +40,7 @@ class FunctionsBuilderTest extends TestCase {
  */
 	public function testArbitrary() {
 		$function = $this->functions->MyFunc(['b' => 'literal']);
-		$this->assertInstanceOf('\Cake\Database\Expression\FunctionExpression', $function);
+		$this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
 		$this->assertEquals('MyFunc', $function->name());
 		$this->assertEquals('MyFunc(b)', $function->sql(new ValueBinder));
 	}
@@ -52,7 +52,7 @@ class FunctionsBuilderTest extends TestCase {
  */
 	public function testSum() {
 		$function = $this->functions->sum('total');
-		$this->assertInstanceOf('\Cake\Database\Expression\FunctionExpression', $function);
+		$this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
 		$this->assertEquals('SUM(total)', $function->sql(new ValueBinder));
 	}
 
@@ -63,7 +63,7 @@ class FunctionsBuilderTest extends TestCase {
  */
 	public function testAvg() {
 		$function = $this->functions->avg('salary');
-		$this->assertInstanceOf('\Cake\Database\Expression\FunctionExpression', $function);
+		$this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
 		$this->assertEquals('AVG(salary)', $function->sql(new ValueBinder));
 	}
 
@@ -74,7 +74,7 @@ class FunctionsBuilderTest extends TestCase {
  */
 	public function testMAX() {
 		$function = $this->functions->max('created');
-		$this->assertInstanceOf('\Cake\Database\Expression\FunctionExpression', $function);
+		$this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
 		$this->assertEquals('MAX(created)', $function->sql(new ValueBinder));
 	}
 
@@ -85,7 +85,7 @@ class FunctionsBuilderTest extends TestCase {
  */
 	public function testMin() {
 		$function = $this->functions->min('created');
-		$this->assertInstanceOf('\Cake\Database\Expression\FunctionExpression', $function);
+		$this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
 		$this->assertEquals('MIN(created)', $function->sql(new ValueBinder));
 	}
 
@@ -96,7 +96,7 @@ class FunctionsBuilderTest extends TestCase {
  */
 	public function testCount() {
 		$function = $this->functions->count('*');
-		$this->assertInstanceOf('\Cake\Database\Expression\FunctionExpression', $function);
+		$this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
 		$this->assertEquals('COUNT(*)', $function->sql(new ValueBinder));
 	}
 
@@ -107,7 +107,7 @@ class FunctionsBuilderTest extends TestCase {
  */
 	public function testConcat() {
 		$function = $this->functions->concat(['title' => 'literal', ' is a string']);
-		$this->assertInstanceOf('\Cake\Database\Expression\FunctionExpression', $function);
+		$this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
 		$this->assertEquals("CONCAT(title, :c0)", $function->sql(new ValueBinder));
 	}
 
@@ -118,7 +118,7 @@ class FunctionsBuilderTest extends TestCase {
  */
 	public function testCoalesce() {
 		$function = $this->functions->coalesce(['NULL' => 'literal', '1', '2']);
-		$this->assertInstanceOf('\Cake\Database\Expression\FunctionExpression', $function);
+		$this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
 		$this->assertEquals("COALESCE(NULL, :c0, :c1)", $function->sql(new ValueBinder));
 	}
 
@@ -129,15 +129,15 @@ class FunctionsBuilderTest extends TestCase {
  */
 	public function testNow() {
 		$function = $this->functions->now();
-		$this->assertInstanceOf('\Cake\Database\Expression\FunctionExpression', $function);
+		$this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
 		$this->assertEquals("NOW()", $function->sql(new ValueBinder));
 
 		$function = $this->functions->now('date');
-		$this->assertInstanceOf('\Cake\Database\Expression\FunctionExpression', $function);
+		$this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
 		$this->assertEquals("CURRENT_DATE()", $function->sql(new ValueBinder));
 
 		$function = $this->functions->now('time');
-		$this->assertInstanceOf('\Cake\Database\Expression\FunctionExpression', $function);
+		$this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
 		$this->assertEquals("CURRENT_TIME()", $function->sql(new ValueBinder));
 	}
 }

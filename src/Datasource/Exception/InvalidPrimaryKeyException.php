@@ -12,14 +12,25 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Datasource\Exception;
 
-class_alias('Cake\View\StringTemplateTrait', 'Cake\View\Helper\StringTemplateTrait');
+use RuntimeException;
 
-trigger_error(
-	sprintf(
-		'%s has been moved. Use %s instead.',
-		'Cake\View\Helper\StringTemplateTrait',
-		'Cake\View\StringTemplateTrait'
-	),
-	E_USER_WARNING
-);
+/**
+ * Exception raised when a particular record was not found
+ *
+ */
+class InvalidPrimaryKeyException extends RuntimeException {
+
+/**
+ * Constructor.
+ *
+ * @param string $message The error message
+ * @param int $code The code of the error, is also the HTTP status code for the error.
+ * @param \Exception|null $previous the previous exception.
+ */
+	public function __construct($message, $code = 404, $previous = null) {
+		parent::__construct($message, $code, $previous);
+	}
+
+}

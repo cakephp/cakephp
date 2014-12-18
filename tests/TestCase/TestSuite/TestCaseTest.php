@@ -372,11 +372,11 @@ class TestCaseTest extends TestCase {
 		$TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComments');
 
 		$result = TableRegistry::get('TestPlugin.TestPluginComments');
-		$this->assertInstanceOf('\TestPlugin\Model\Table\TestPluginCommentsTable', $result);
+		$this->assertInstanceOf('TestPlugin\Model\Table\TestPluginCommentsTable', $result);
 
 		$TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComments', array('save'));
 
-		$this->assertInstanceOf('\TestPlugin\Model\Table\TestPluginCommentsTable', $TestPluginComment);
+		$this->assertInstanceOf('TestPlugin\Model\Table\TestPluginCommentsTable', $TestPluginComment);
 		$this->assertEquals('\Cake\ORM\Entity', $TestPluginComment->entityClass());
 		$TestPluginComment->expects($this->at(0))
 			->method('save')
@@ -390,7 +390,7 @@ class TestCaseTest extends TestCase {
 		$this->assertFalse($TestPluginComment->save($entity));
 
 		$TestPluginAuthors = $this->getMockForModel('TestPlugin.Authors', array('doSomething'));
-		$this->assertInstanceOf('\TestPlugin\Model\Table\AuthorsTable', $TestPluginAuthors);
+		$this->assertInstanceOf('TestPlugin\Model\Table\AuthorsTable', $TestPluginAuthors);
 		$this->assertEquals('TestPlugin\Model\Entity\Author', $TestPluginAuthors->entityClass());
 	}
 

@@ -15,7 +15,7 @@
 namespace Cake\View\Helper;
 
 use Cake\View\Helper;
-use Cake\View\Helper\StringTemplateTrait;
+use Cake\View\StringTemplateTrait;
 
 /**
  * Session Helper.

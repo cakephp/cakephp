@@ -15,7 +15,7 @@
 namespace Cake\Error;
 
 use Cake\Controller\Controller;
-use Cake\Controller\ErrorController;
+use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception as CakeException;
 use Cake\Core\Exception\MissingPluginException;
@@ -104,12 +104,22 @@ class ExceptionRenderer {
 		$response = new Response();
 
 		try {
-			$controller = new ErrorController($request, $response);
+			$class = App::className('Error', 'Controller', 'Controller');
+			$controller = new $class($request, $response);
 			$controller->startupProcess();
+			$startup = true;
 		} catch (Exception $e) {
-			if (!empty($controller) && isset($controller->RequestHandler)) {
+			$startup = false;
+		}
+
+		// Retry RequestHandler, as another aspect of startupProcess()
+		// could have failed. Ignore any exceptions out of startup, as
+		// there could be userland input data parsers.
+		if ($startup === false && !empty($controller) && isset($controller->RequestHandler)) {
+			try {
 				$event = new Event('Controller.startup', $controller);
 				$controller->RequestHandler->startup($event);
+			} catch (Exception $e) {
 			}
 		}
 		if (empty($controller)) {

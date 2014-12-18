@@ -141,7 +141,7 @@ class BelongsToManyTest extends TestCase {
 			'targetTable' => $this->tag
 		]);
 		$junction = $assoc->junction();
-		$this->assertInstanceOf('\Cake\ORM\Table', $junction);
+		$this->assertInstanceOf('Cake\ORM\Table', $junction);
 		$this->assertEquals('ArticlesTags', $junction->alias());
 		$this->assertEquals('articles_tags', $junction->table());
 		$this->assertSame($this->article, $junction->association('Articles')->target());

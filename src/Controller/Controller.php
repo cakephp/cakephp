@@ -259,7 +259,7 @@ class Controller implements EventListenerInterface {
 					'Cake\Utility\Inflector::camelize',
 					explode('/', $request->params['prefix'])
 				);
-				$viewPath = implode('/', $prefixes) . DS . $viewPath;
+				$viewPath = implode(DS, $prefixes) . DS . $viewPath;
 			}
 			$this->viewPath = $viewPath;
 		}
