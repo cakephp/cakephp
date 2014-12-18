@@ -2285,4 +2285,27 @@ class QueryTest extends TestCase {
 		$this->assertEquals(2, $result->_matchingData['tags']->id);
 	}
 
+/**
+ * Tests that it is possible to call matching and contain on the same
+ * association with only onle level of depth.
+ *
+ * @return void
+ */
+	public function testNotSoFarMatchingWithContainOnTheSameAssociation() {
+		$table = TableRegistry::get('articles');
+		$table->belongsToMany('tags');
+
+		$result = $table
+			->find()
+			->matching('tags', function ($q) {
+				return $q->where(['tags.id' => 2]);
+			})
+				->contain('tags')
+				->first();
+
+		$this->assertEquals(1, $result->id);
+		$this->assertCount(2, $result->tags);
+		$this->assertEquals(2, $result->_matchingData['tags']->id);
+	}
+
 }
