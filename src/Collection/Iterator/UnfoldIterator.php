@@ -14,54 +14,60 @@
  */
 namespace Cake\Collection\Iterator;
 
-use Cake\Collection\Collection;
+use Cake\Collection\Iterator\NoChildrenIterator;
 use IteratorIterator;
 use RecursiveIterator;
 
 /**
- * 
+ * An iterator that can be used to generate nested iterators out of each of
+ * applying an function to each of the elements in this iterator.
  */
 class UnfoldIterator extends IteratorIterator implements RecursiveIterator {
 
 /**
- * 
+ * A functions that gets passed each of the elements of this iterator and
+ * that must return an array or Traversable object.
  *
  * @var callable
  */
 	protected $_unfolder;
 
 /**
+ * Creates the iterator that will genere children iterators out of each of the
+ * elements it was constructed with.
  *
  * @param array|\Traversable $items The list of values to iterate
- * @param callable $unfolder
+ * @param callable $unfolder A callable function that will receive the
+ * current item and key. It must return an array or Traversable object
+ * out of which the nested iterators will be yielded.
  */
 	public function __construct($items, callable $unfolder) {
 		$this->_unfolder = $unfolder;
 		parent::__construct($items);
 	}
 
+/**
+ * Returns true as each of the elements in the array represent a
+ * list of items
+ *
+ * @return bool
+ */
 	public function hasChildren() {
 		return true;
 	}
 
+/**
+ * Returns an iterator containing the items generated out of transforming
+ * the current value with the callable function.
+ *
+ * @return \RecursiveIterator
+ */
 	public function getChildren() {
 		$current = $this->current();
 		$key = $this->key();
 		$unfolder = $this->_unfolder;
 
 		return new NoChildrenIterator($unfolder($current, $key, $this));
-	}
-
-}
-
-class NoChildrenIterator extends Collection implements RecursiveIterator {
-
-	public function hasChildren() {
-		return false;
-	}
-
-	public function getChildren() {
-		return null;
 	}
 
 }

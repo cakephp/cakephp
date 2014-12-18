@@ -441,16 +441,20 @@ trait CollectionTrait {
 		return new StoppableIterator($this, $condition);
 	}
 
-	public function unfold(callable $unfolder = null) {
-		if ($unfolder === null) {
-			$unfolder = function ($item) {
+/**
+ * {@inheritDoc}
+ *
+ */
+	public function unfold(callable $transformer = null) {
+		if ($transformer === null) {
+			$transformer = function ($item) {
 				return $item;
 			};
 		}
 
 		return new Collection(
 			new RecursiveIteratorIterator(
-				new UnfoldIterator($this, $unfolder), RecursiveIteratorIterator::LEAVES_ONLY
+				new UnfoldIterator($this, $transformer), RecursiveIteratorIterator::LEAVES_ONLY
 			)
 		);
 	}
