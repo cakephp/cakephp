@@ -795,7 +795,7 @@ class PaginatorComponentTest extends TestCase {
 		$table->expects($this->once())
 			->method('query')
 			->will($this->returnValue($query));
-		
+
 		$query->expects($this->once())->method('applyOptions')
 			->with(['limit' => 2, 'page' => 1, 'order' => [], 'whitelist' => ['limit', 'sort', 'page', 'direction']]);
 		$this->Paginator->paginate($table, $settings);
