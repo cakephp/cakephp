@@ -428,7 +428,7 @@ class FormHelperTest extends TestCase {
 	public function testCreateTemplatesArray() {
 		$result = $this->Form->create($this->article, [
 			'templates' => [
-				'formstart' => '<form class="form-horizontal"{{attrs}}>',
+				'formStart' => '<form class="form-horizontal"{{attrs}}>',
 			]
 		]);
 		$expected = [
