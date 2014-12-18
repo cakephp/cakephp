@@ -140,7 +140,7 @@ class EagerLoader {
  * If called with no arguments it will return the current tree of associations to
  * be matched.
  *
- * @param string $assoc|null A single association or a dot separated path of associations.
+ * @param string|null $assoc A single association or a dot separated path of associations.
  * @param callable|null $builder the callback function to be used for setting extra
  * options to the filtering query
  * @return array The resulting containments array

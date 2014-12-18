@@ -83,7 +83,6 @@ class ResultSet implements ResultSetInterface {
  */
 	protected $_containMap = [];
 
-
 /**
  * Map of fields that are fetched from the statement with
  * their type and the table they belong to
