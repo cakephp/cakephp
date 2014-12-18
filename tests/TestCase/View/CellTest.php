@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\View;
 
+use Cake\Cache\Cache;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -245,6 +246,52 @@ class CellTest extends TestCase {
 		$view = new CustomJsonView($request, $response);
 		$cell = $view->cell('Articles');
 		$this->assertSame('TestApp\View\CustomJsonView', $cell->viewClass);
+	}
+
+/**
+ * Test cached render.
+ *
+ * @return void
+ */
+	public function testCachedRenderSimple() {
+		$mock = $this->getMock('Cake\Cache\CacheEngine');
+		$mock->method('init')
+			->will($this->returnValue(true));
+		$mock->method('read')
+			->will($this->returnValue(false));
+		$mock->expects($this->once())
+			->method('write')
+			->with('cell_test_app_view_cell_articles_cell_display', "dummy\n");
+		Cache::config('default', $mock);
+
+		$cell = $this->View->cell('Articles', [], ['cache' => true]);
+		$result = $cell->render();
+		$this->assertEquals("dummy\n", $result);
+		Cache::drop('default');
+	}
+
+/**
+ * Test cached render array config
+ *
+ * @return void
+ */
+	public function testCachedRenderArrayConfig() {
+		$mock = $this->getMock('Cake\Cache\CacheEngine');
+		$mock->method('init')
+			->will($this->returnValue(true));
+		$mock->method('read')
+			->will($this->returnValue(false));
+		$mock->expects($this->once())
+			->method('write')
+			->with('my_key', "dummy\n");
+		Cache::config('cell', $mock);
+
+		$cell = $this->View->cell('Articles', [], [
+			'cache' => ['key' => 'my_key', 'config' => 'cell']
+		]);
+		$result = $cell->render();
+		$this->assertEquals("dummy\n", $result);
+		Cache::drop('cell');
 	}
 
 }
