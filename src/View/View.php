@@ -29,6 +29,7 @@ use Cake\View\CellTrait;
 use Cake\View\ViewVarsTrait;
 use InvalidArgumentException;
 use LogicException;
+use RuntimeException;
 
 /**
  * View, the V in the MVC triad. View interacts with Helpers and view variables passed
@@ -358,7 +359,7 @@ class View {
 
 		$file = $this->_getElementFilename($name);
 		if ($file && $options['cache']) {
-			return $this->cache(function() use ($file, $data, $options) {
+			return $this->cache(function () use ($file, $data, $options) {
 				echo $this->_renderElement($file, $data, $options);
 			}, $options['cache']);
 		}
@@ -386,11 +387,12 @@ class View {
  * @param callable $block The block of code that you want to cache the output of.
  * @param array $options The options defining the cache key etc.
  * @return string The rendered content.
+ * @throws \RuntimeException When $options is lacking a 'key' option.
  */
 	public function cache(callable $block, array $options = []) {
 		$options += ['key' => '', 'config' => $this->elementCache];
 		if (empty($options['key'])) {
-			throw new \RuntimeException('Cannot cache content with an empty key');
+			throw new RuntimeException('Cannot cache content with an empty key');
 		}
 		$result = Cache::read($options['key'], $options['config']);
 		if ($result) {

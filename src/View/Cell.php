@@ -185,7 +185,7 @@ abstract class Cell {
 		};
 
 		if ($cache) {
-			return $this->View->cache(function() use ($render) {
+			return $this->View->cache(function () use ($render) {
 				echo $render();
 			}, $cache);
 		}
