@@ -730,4 +730,39 @@ interface CollectionInterface extends Iterator, JsonSerializable {
  */
 	public function listNested($dir = 'desc', $nestingKey = 'children');
 
+/**
+ * Creates a new collection that when iterated will stop yielding results if
+ * the provided condition evaluates to false.
+ *
+ * This is handy for dealing with infinite iterators or any generator that
+ * could start returning invalid elements at a certain point. For example,
+ * when reading lines from a file stream you may want to stop the iteration
+ * after a certain value is reached.
+ *
+ * ### Example:
+ *
+ * Get an array of lines in a CSV file until the timestamp column is less than a date
+ *
+ * {{{
+ * $lines = (new Collection($fileLines))->stopWhen(function ($value, $key) {
+ *  return (new DateTime($value))->format('Y') < 2012;
+ * })
+ * ->toArray();
+ * }}}
+ *
+ * Get elements until the first unapproved message is found:
+ *
+ * {{{
+ * $comments = (new Collection($comments))->stopWhen(['is_approved' => false]);
+ * }}}
+ *
+ * @param callable|array $condition the method that will receive each of the elements and
+ * returns false when the iteration should be stopped.
+ * If an array, it will be interpreted as a key-value list of conditions where
+ * the key is a property path as accepted by `Collection::extract,
+ * and the value the condition against with each element will be matched.
+ * @return \Cake\Collection\CollectionInterface
+ */
+	public function stopWhen($condition);
+
 }

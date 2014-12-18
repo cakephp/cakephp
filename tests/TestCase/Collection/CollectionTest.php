@@ -967,4 +967,32 @@ class CollectionTest extends TestCase {
 		$this->assertEquals(600, $sum);
 	}
 
+/**
+ * Tests the stopWhen method with a callable
+ *
+ * @return void
+ */
+	public function testStopWhenCallable() {
+		$items = [10, 20, 40, 10, 5];
+		$collection = (new Collection($items))->stopWhen(function ($v) {
+			return $v > 20;
+		});
+		$this->assertEquals([10, 20], $collection->toArray());
+	}
+
+/**
+ * Tests the stopWhen method with a matching array
+ *
+ * @return void
+ */
+	public function testStopWhenWithArray() {
+		$items = [
+			['foo' => 'bar'],
+			['foo' => 'baz'],
+			['foo' => 'foo']
+		];
+		$collection = (new Collection($items))->stopWhen(['foo' => 'baz']);
+		$this->assertEquals([['foo' => 'bar']], $collection->toArray());
+	}
+
 }
