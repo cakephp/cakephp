@@ -121,11 +121,11 @@ class PaginatorComponentTest extends TestCase {
 				'order' => array('PaginatorPosts.id' => 'ASC')
 			),
 		);
-		$table = $this->_getMockPosts(['find']);
+		$table = $this->_getMockPosts(['query']);
 		$query = $this->_getMockFindQuery();
+
 		$table->expects($this->once())
-			->method('find')
-			->with('all')
+			->method('query')
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())
@@ -203,13 +203,13 @@ class PaginatorComponentTest extends TestCase {
 			'maxLimit' => 10,
 		);
 
-		$table = $this->_getMockPosts(['find']);
+		$table = $this->_getMockPosts(['query']);
 		$query = $this->_getMockFindQuery();
 
 		$table->expects($this->once())
-			->method('find')
-			->with('all')
+			->method('query')
 			->will($this->returnValue($query));
+
 		$query->expects($this->once())
 			->method('applyOptions')
 			->with([
@@ -233,13 +233,13 @@ class PaginatorComponentTest extends TestCase {
 			'maxLimit' => 10,
 		);
 
-		$table = $this->_getMockPosts(['find']);
+		$table = $this->_getMockPosts(['query']);
 		$query = $this->_getMockFindQuery();
 
 		$table->expects($this->once())
-			->method('find')
-			->with('all')
+			->method('query')
 			->will($this->returnValue($query));
+
 		$query->expects($this->once())
 			->method('applyOptions')
 			->with([
@@ -418,13 +418,13 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testValidateSortInvalid() {
-		$table = $this->_getMockPosts(['find']);
+		$table = $this->_getMockPosts(['query']);
 		$query = $this->_getMockFindQuery();
 
 		$table->expects($this->once())
-			->method('find')
-			->with('all')
+			->method('query')
 			->will($this->returnValue($query));
+
 		$query->expects($this->once())->method('applyOptions')
 			->with([
 				'limit' => 20,
@@ -789,13 +789,13 @@ class PaginatorComponentTest extends TestCase {
 			'finder' => 'published',
 			'limit' => 2
 		);
-		$table = $this->_getMockPosts(['find']);
+		$table = $this->_getMockPosts(['query']);
 		$query = $this->_getMockFindQuery();
-		$table->expects($this->once())
-			->method('find')
-			->with('published')
-			->will($this->returnValue($query));
 
+		$table->expects($this->once())
+			->method('query')
+			->will($this->returnValue($query));
+		
 		$query->expects($this->once())->method('applyOptions')
 			->with(['limit' => 2, 'page' => 1, 'order' => [], 'whitelist' => ['limit', 'sort', 'page', 'direction']]);
 		$this->Paginator->paginate($table, $settings);

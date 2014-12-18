@@ -159,9 +159,10 @@ class PaginatorComponent extends Component {
 
 		if (empty($query)) {
 			$query = $object->find($finder, $options);
+		} else {
+			$query->applyOptions($options);
 		}
 
-		$query->applyOptions($options);
 		$results = $query->all();
 		$numResults = count($results);
 		$count = $numResults ? $query->count() : 0;
