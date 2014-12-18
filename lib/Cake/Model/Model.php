@@ -1312,8 +1312,7 @@ class Model extends Object implements CakeEventListener {
 			return null;
 		}
 
-		if (
-			isset($data['hour']) &&
+		if (isset($data['hour']) &&
 			isset($data['meridian']) &&
 			!empty($data['hour']) &&
 			$data['hour'] != 12 &&

@@ -157,8 +157,7 @@ class TranslateBehavior extends ModelBehavior {
 			);
 			foreach ($fields as $key => $value) {
 				$field = (is_numeric($key)) ? $value : $key;
-				if (
-					$isAllFields ||
+				if ($isAllFields ||
 					in_array($Model->alias . '.' . $field, $query['fields']) ||
 					in_array($field, $query['fields'])
 				) {
