@@ -441,7 +441,13 @@ trait CollectionTrait {
 		return new StoppableIterator($this, $condition);
 	}
 
-	public function unfold(callable $unfolder) {
+	public function unfold(callable $unfolder = null) {
+		if ($unfolder === null) {
+			$unfolder = function ($item) {
+				return $item;
+			};
+		}
+
 		return new Collection(
 			new RecursiveIteratorIterator(
 				new UnfoldIterator($this, $unfolder), RecursiveIteratorIterator::LEAVES_ONLY

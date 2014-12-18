@@ -1002,13 +1002,8 @@ class CollectionTest extends TestCase {
 			[7, 8]
 		];
 
-		$collection = (new Collection($items))->unfold(function ($item) {
-			return $item;
-		});
-
+		$collection = (new Collection($items))->unfold();
 		$this->assertEquals(range(1, 8), $collection->toArray(false));
-
-
 	}
 
 }
