@@ -16,6 +16,7 @@ namespace Cake\Datasource;
 
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
+use Cake\Collection\Collection;
 use Traversable;
 
 /**
@@ -607,7 +608,8 @@ trait EntityTrait {
  * Sets the error messages for a field or a list of fields. When called
  * without the second argument it returns the validation
  * errors for the specified fields. If called with no arguments it returns
- * all the validation error messages stored in this entity.
+ * all the validation error messages stored in this entity and any other nested
+ * entity.
  *
  * ### Example
  *
@@ -635,7 +637,16 @@ trait EntityTrait {
  */
 	public function errors($field = null, $errors = null, $overwrite = false) {
 		if ($field === null) {
-			return $this->_errors;
+			$diff = array_diff_key($this->_properties, $this->_errors);
+			return $this->_errors + (new Collection($diff))
+				->filter(function ($value) {
+					return is_array($value) || $value instanceof EntityInterface;
+				})
+				->map(function ($value) {
+					return $this->_readError($value);
+				})
+				->filter()
+				->toArray();
 		}
 
 		if (is_string($field) && $errors === null) {

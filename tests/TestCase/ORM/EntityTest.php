@@ -848,6 +848,14 @@ class EntityTest extends TestCase {
 			['c' => ['error3'], 'd' => ['error4']]
 		];
 		$this->assertEquals($expected, $author->errors('multiple'));
+
+		$expected = [
+			'thing' => $author->errors('thing'),
+			'user' => $author->errors('user'),
+			'owner' => $author->errors('owner'),
+			'multiple' => $author->errors('multiple')
+		];
+		$this->assertEquals($expected, $author->errors());
 	}
 
 /**
