@@ -465,7 +465,7 @@ class ExceptionRendererTest extends TestCase {
 		$result = $ExceptionRenderer->render()->body();
 
 		$this->assertEquals('missingController', $ExceptionRenderer->template);
-		$this->assertContains('<h2>Missing Controller</h2>', $result);
+		$this->assertContains('Missing Controller', $result);
 		$this->assertContains('<em>PostsController</em>', $result);
 	}
 
@@ -507,7 +507,7 @@ class ExceptionRendererTest extends TestCase {
 			array(
 				new MissingHelperException(array('class' => 'MyCustomHelper')),
 				array(
-					'/<h2>Missing Helper<\/h2>/',
+					'/Missing Helper/',
 					'/<em>MyCustomHelper<\/em> could not be found./',
 					'/Create the class <em>MyCustomHelper<\/em> below in file:/',
 					'/(\/|\\\)MyCustomHelper.php/'
@@ -517,7 +517,7 @@ class ExceptionRendererTest extends TestCase {
 			array(
 				new MissingBehaviorException(array('class' => 'MyCustomBehavior')),
 				array(
-					'/<h2>Missing Behavior<\/h2>/',
+					'/Missing Behavior/',
 					'/Create the class <em>MyCustomBehavior<\/em> below in file:/',
 					'/(\/|\\\)MyCustomBehavior.php/'
 				),
@@ -526,7 +526,7 @@ class ExceptionRendererTest extends TestCase {
 			array(
 				new MissingComponentException(array('class' => 'SideboxComponent')),
 				array(
-					'/<h2>Missing Component<\/h2>/',
+					'/Missing Component/',
 					'/Create the class <em>SideboxComponent<\/em> below in file:/',
 					'/(\/|\\\)SideboxComponent.php/'
 				),
@@ -535,7 +535,7 @@ class ExceptionRendererTest extends TestCase {
 			array(
 				new MissingDatasourceConfigException(array('name' => 'MyDatasourceConfig')),
 				array(
-					'/<h2>Missing Datasource Configuration<\/h2>/',
+					'/Missing Datasource Configuration/',
 					'/<em>MyDatasourceConfig<\/em> was not found/'
 				),
 				500
@@ -543,7 +543,7 @@ class ExceptionRendererTest extends TestCase {
 			array(
 				new MissingDatasourceException(array('class' => 'MyDatasource', 'plugin' => 'MyPlugin')),
 				array(
-					'/<h2>Missing Datasource<\/h2>/',
+					'/Missing Datasource/',
 					'/<em>MyPlugin.MyDatasource<\/em> could not be found./'
 				),
 				500
@@ -819,7 +819,7 @@ class ExceptionRendererTest extends TestCase {
 
 		$result = $ExceptionRenderer->render()->body();
 
-		$this->assertContains('<h2>Database Error</h2>', $result);
+		$this->assertContains('Database Error', $result);
 		$this->assertContains('There was an error in the SQL query', $result);
 		$this->assertContains(h('SELECT * from poo_query < 5 and :seven'), $result);
 		$this->assertContains("'seven' => (int) 7", $result);

@@ -60,8 +60,8 @@ class Comparison implements ExpressionInterface, FieldInterface {
  * @param string $operator the operator used for comparing field and value
  */
 	public function __construct($field, $value, $type, $operator) {
-		$this->field($field);
-		$this->value($value);
+		$this->setField($field);
+		$this->setValue($value);
 		$this->_operator = $operator;
 
 		if (is_string($type)) {
@@ -74,8 +74,20 @@ class Comparison implements ExpressionInterface, FieldInterface {
  *
  * @param mixed $value The value to compare
  * @return void
+ * @deprecated 3.0.0 Will be removed in 3.0.0 stable. Use setValue() instead.
  */
 	public function value($value) {
+		trigger_error('value() has been deprecated. Use setValue() instead.', E_USER_WARNING);
+		return $this->setValue($value);
+	}
+
+/**
+ * Sets the value
+ *
+ * @param mixed $value The value to compare
+ * @return void
+ */
+	public function setValue($value) {
 		$this->_value = $value;
 	}
 
@@ -89,15 +101,6 @@ class Comparison implements ExpressionInterface, FieldInterface {
 	}
 
 /**
- * Returns the operator used for comparison
- *
- * @return string
- */
-	public function getOperator() {
-		return $this->_operator;
-	}
-
-/**
  * Sets the operator to use for the comparison
  *
  * @param string $operator The operator to be used for the comparison.
@@ -105,6 +108,15 @@ class Comparison implements ExpressionInterface, FieldInterface {
  */
 	public function setOperator($operator) {
 		$this->_operator = $operator;
+	}
+
+/**
+ * Returns the operator used for comparison
+ *
+ * @return string
+ */
+	public function getOperator() {
+		return $this->_operator;
 	}
 
 /**

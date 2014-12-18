@@ -15,7 +15,7 @@
 namespace Cake\Core;
 
 use Cake\Core\ClassLoader;
-use \DirectoryIterator;
+use DirectoryIterator;
 
 /**
  * Plugin is used to load and locate plugins.
