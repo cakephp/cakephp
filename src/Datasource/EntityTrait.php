@@ -14,9 +14,9 @@
  */
 namespace Cake\Datasource;
 
+use Cake\Collection\Collection;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
-use Cake\Collection\Collection;
 use Traversable;
 
 /**

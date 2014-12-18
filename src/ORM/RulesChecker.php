@@ -202,8 +202,8 @@ class RulesChecker {
  * can only be RulesChecker::CREATE, RulesChecker::UPDATE or RulesChecker::DELETE
  *
  * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.
- * @return bool
  * @param string $mode Either 'create, 'update' or 'delete'.
+ * @return bool
  * @throws \InvalidArgumentException if an invalid mode is passed.
  */
 	public function check(EntityInterface $entity, $mode) {
