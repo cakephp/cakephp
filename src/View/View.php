@@ -583,16 +583,6 @@ class View {
 	}
 
 /**
- * Check if a block exists
- *
- * @param string $name Name of the block
- * @return bool
- */
-	public function exists($name) {
-		return $this->Blocks->exists($name);
-	}
-
-/**
  * End a capturing block. The compliment to View::start()
  *
  * @return void
