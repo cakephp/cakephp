@@ -26,6 +26,7 @@ App::uses('Hash', 'Utility');
 App::uses('CakeSession', 'Model/Datasource');
 App::uses('BaseAuthorize', 'Controller/Component/Auth');
 App::uses('BaseAuthenticate', 'Controller/Component/Auth');
+App::uses('CakeEvent', 'Event');
 
 /**
  * Authentication control component class
@@ -608,6 +609,8 @@ class AuthComponent extends Component {
 		if ($user) {
 			$this->Session->renew();
 			$this->Session->write(self::$sessionKey, $user);
+			$event = new CakeEvent('Auth.afterIdentify', $this, array('user' => $user));
+			$this->_Collection->getController()->getEventManager()->dispatch($event);
 		}
 		return (bool)$this->user();
 	}
@@ -796,7 +799,9 @@ class AuthComponent extends Component {
 				throw new CakeException(__d('cake_dev', 'Authentication objects must implement an %s method.', 'authenticate()'));
 			}
 			$settings = array_merge($global, (array)$settings);
-			$this->_authenticateObjects[] = new $className($this->_Collection, $settings);
+			$auth = new $className($this->_Collection, $settings);
+			$this->_Collection->getController()->getEventManager()->attach($auth);
+			$this->_authenticateObjects[] = $auth;
 		}
 		return $this->_authenticateObjects;
 	}
