@@ -137,7 +137,10 @@ class EagerLoader {
  * parameter, this will translate in setting all those associations with the
  * `matching` option.
  *
- * @param string $assoc A single association or a dot separated path of associations.
+ * If called with no arguments it will return the current tree of associations to
+ * be matched.
+ *
+ * @param string $assoc|null A single association or a dot separated path of associations.
  * @param callable|null $builder the callback function to be used for setting extra
  * options to the filtering query
  * @return array The resulting containments array
@@ -496,6 +499,7 @@ class EagerLoader {
  * - canBeJoined: Whether or not the association will be loaded using a JOIN
  * - entityClass: The entity that should be used for hydrating the results
  * - nestKey: A dotted path that can be used to correctly insert the data into the results.
+ * - mathcing: Whether or not it is an association loaded through `matching()`.
  *
  * @param \Cake\ORM\Table $table The table containing the association that
  * will be normalized
