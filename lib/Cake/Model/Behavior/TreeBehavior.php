@@ -494,8 +494,8 @@ class TreeBehavior extends ModelBehavior {
 		$item = $result[0];
 		$results = $Model->find('all', array(
 			'conditions' => array($scope, $Model->escapeField($left) . ' <=' => $item[$left], $Model->escapeField($right) . ' >=' => $item[$right]),
-			'fields' => $fields, 'order' => array($Model->escapeField($left) => 'asc'),
-			'order' => false,
+			'fields' => $fields,
+			'order' => array($Model->escapeField($left) => 'asc'),
 			'recursive' => $recursive
 		));
 		return $results;
