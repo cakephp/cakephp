@@ -233,9 +233,9 @@ class BelongsToMany extends Association {
 		unset($options['queryBuilder']);
 		$options = ['conditions' => [$cond]] + compact('includeFields');
 		$options['foreignKey'] = $this->targetForeignKey();
-		$this->_targetTable
-			->association($junction->alias())
-			->attachTo($query, $options);
+		$assoc = $this->_targetTable->association($junction->alias());
+		$assoc->attachTo($query, $options);
+		$query->eagerLoader()->addToJoinsMap($junction->alias(), $assoc, true);
 	}
 
 /**
@@ -868,7 +868,9 @@ class BelongsToMany extends Association {
 /**
  * Auxiliary function to construct a new Query object to return all the records
  * in the target table that are associated to those specified in $options from
- * the source table
+ * the source table.
+ *
+ * This is used for eager loading records on the target table based on conditions.
  *
  * @param array $options options accepted by eagerLoader()
  * @return \Cake\ORM\Query
@@ -888,8 +890,14 @@ class BelongsToMany extends Association {
 			]
 		];
 
-		$joins = $matching + $joins;
-		$query->join($joins, [], true)->matching($name);
+		$assoc = $this->target()->association($name);
+		$query
+			->join($matching + $joins, [], true)
+			->autoFields($query->clause('select') === [])
+			->select($query->aliasFields((array)$assoc->foreignKey(), $name));
+
+		$query->eagerLoader()->addToJoinsMap($name, $assoc);
+		$assoc->attachTo($query);
 		return $query;
 	}
 

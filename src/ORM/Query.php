@@ -796,12 +796,14 @@ class Query extends DatabaseQuery implements JsonSerializable {
  * {@inheritDoc}
  */
 	public function __debugInfo() {
+		$eagerLoader = $this->eagerLoader();
 		return parent::__debugInfo() + [
 			'hydrate' => $this->_hydrate,
 			'buffered' => $this->_useBufferedResults,
 			'formatters' => count($this->_formatters),
 			'mapReducers' => count($this->_mapReduce),
-			'contain' => $this->contain(),
+			'contain' => $eagerLoader->contain(),
+			'matching' => $eagerLoader->matching(),
 			'extraOptions' => $this->_options,
 			'repository' => $this->_repository
 		];

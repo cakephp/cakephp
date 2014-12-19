@@ -16,6 +16,7 @@ namespace Cake\ORM;
 
 use Cake\Database\Statement\BufferedStatement;
 use Cake\Database\Statement\CallbackStatement;
+use Cake\ORM\Association;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Closure;
@@ -78,6 +79,21 @@ class EagerLoader {
 	protected $_aliasList = [];
 
 /**
+ * Another EagerLoader instance that will be used for 'matching' associations.
+ *
+ * @var \Cake\ORM\EagerLoader
+ */
+	protected $_matching;
+
+/**
+ * A map of table aliases pointing to the association objects they represent
+ * for the query.
+ *
+ * @var array
+ */
+	protected $_joinsMap = [];
+
+/**
  * Sets the list of associations that should be eagerly loaded along for a
  * specific table using when a query is provided. The list of associated tables
  * passed to this method must have been previously set as associations using the
@@ -121,12 +137,23 @@ class EagerLoader {
  * parameter, this will translate in setting all those associations with the
  * `matching` option.
  *
- * @param string $assoc A single association or a dot separated path of associations.
+ * If called with no arguments it will return the current tree of associations to
+ * be matched.
+ *
+ * @param string|null $assoc A single association or a dot separated path of associations.
  * @param callable|null $builder the callback function to be used for setting extra
  * options to the filtering query
  * @return array The resulting containments array
  */
-	public function matching($assoc, callable $builder = null) {
+	public function matching($assoc = null, callable $builder = null) {
+		if ($this->_matching === null) {
+			$this->_matching = new self();
+		}
+
+		if ($assoc === null) {
+			return $this->_matching->contain();
+		}
+
 		$assocs = explode('.', $assoc);
 		$last = array_pop($assocs);
 		$containments = [];
@@ -138,7 +165,7 @@ class EagerLoader {
 		}
 
 		$pointer[$last] = ['queryBuilder' => $builder, 'matching' => true];
-		return $this->contain($containments);
+		return $this->_matching->contain($containments);
 	}
 
 /**
@@ -242,7 +269,7 @@ class EagerLoader {
  * @return void
  */
 	public function attachAssociations(Query $query, Table $repository, $includeFields) {
-		if (empty($this->_containments)) {
+		if (empty($this->_containments) && $this->_matching === null) {
 			return;
 		}
 
@@ -270,7 +297,8 @@ class EagerLoader {
  */
 	public function attachableAssociations(Table $repository) {
 		$contain = $this->normalized($repository);
-		return $this->_resolveJoins($contain);
+		$matching = $this->_matching ? $this->_matching->normalized($repository) : [];
+		return $this->_resolveJoins($contain, $matching);
 	}
 
 /**
@@ -290,7 +318,7 @@ class EagerLoader {
 		}
 
 		$contain = $this->normalized($repository);
-		$this->_resolveJoins($contain);
+		$this->_resolveJoins($contain, []);
 		return $this->_loadExternal;
 	}
 
@@ -391,13 +419,6 @@ class EagerLoader {
 			return $config;
 		}
 
-		if (!empty($config['config']['matching'])) {
-			throw new \RuntimeException(sprintf(
-				'Cannot use "matching" on "%s" as there is another association with the same alias',
-				$alias
-			));
-		}
-
 		$config['canBeJoined'] = false;
 		$config['config']['strategy'] = $config['instance']::STRATEGY_SELECT;
 	}
@@ -406,16 +427,23 @@ class EagerLoader {
  * Helper function used to compile a list of all associations that can be
  * joined in the query.
  *
- * @param array $associations list of associations for $source
+ * @param array $associations list of associations from which to obtain joins.
+ * @param array $matching list of associations that should be forcibly joined.
  * @return array
  */
-	protected function _resolveJoins($associations) {
+	protected function _resolveJoins($associations, $matching = []) {
 		$result = [];
+		foreach ($matching as $table => $options) {
+			$result[$table] = $options;
+			$result += $this->_resolveJoins($options['associations'], []);
+		}
 		foreach ($associations as $table => $options) {
-			if ($options['canBeJoined']) {
+			$inMatching = isset($matching[$table]);
+			if (!$inMatching && $options['canBeJoined']) {
 				$result[$table] = $options;
-				$result += $this->_resolveJoins($options['associations']);
+				$result += $this->_resolveJoins($options['associations'], $inMatching ? $mathching[$table] : []);
 			} else {
+				$options['canBeJoined'] = false;
 				$this->_loadExternal[] = $options;
 			}
 		}
@@ -460,6 +488,71 @@ class EagerLoader {
 			$statement = new CallbackStatement($statement, $driver, $f);
 		}
 		return $statement;
+	}
+
+/**
+ * Returns an array having as keys a dotted path of associations that participate
+ * in this eager loader. The values of the array will contain the following keys
+ *
+ * - alias: The association alias
+ * - instance: The association instance
+ * - canBeJoined: Whether or not the association will be loaded using a JOIN
+ * - entityClass: The entity that should be used for hydrating the results
+ * - nestKey: A dotted path that can be used to correctly insert the data into the results.
+ * - mathcing: Whether or not it is an association loaded through `matching()`.
+ *
+ * @param \Cake\ORM\Table $table The table containing the association that
+ * will be normalized
+ * @return array
+ */
+	public function associationsMap($table) {
+		$map = [];
+
+		if (!$this->matching() && !$this->contain() && empty($this->_joinsMap)) {
+			return $map;
+		}
+
+		$visitor = function ($level, $matching = false) use (&$visitor, &$map) {
+			foreach ($level as $assoc => $meta) {
+				$map[] = [
+					'alias' => $assoc,
+					'instance' => $meta['instance'],
+					'canBeJoined' => $meta['canBeJoined'],
+					'entityClass' => $meta['instance']->target()->entityClass(),
+					'nestKey' => $meta['canBeJoined'] ? $assoc : $meta['aliasPath'],
+					'matching' => isset($meta['matching']) ? $meta['matching'] : $matching
+				];
+				if ($meta['canBeJoined'] && !empty($meta['associations'])) {
+					$visitor($meta['associations'], $matching);
+				}
+			}
+		};
+		$visitor($this->_matching->normalized($table), true);
+		$visitor($this->normalized($table));
+		$visitor($this->_joinsMap);
+		return $map;
+	}
+
+/**
+ * Registers a table alias, typically loaded as a join in a query, as belonging to
+ * an association. This helps hydrators know what to do with the columns coming
+ * from such joined table.
+ *
+ * @param string $alias The table alias as it appears in the query.
+ * @param \Cake\ORM\Association $assoc The association object the alias represents;
+ * will be normalized
+ * @param bool $asMatching Whether or not this join results should be treated as a
+ * 'matching' association.
+ * @return void
+ */
+	public function addToJoinsMap($alias, Association $assoc, $asMatching = false) {
+		$this->_joinsMap[$alias] = [
+			'aliasPath' => $alias,
+			'instance' => $assoc,
+			'canBeJoined' => true,
+			'matching' => $asMatching,
+			'associations' => []
+		];
 	}
 
 /**

@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM;
 
+use Cake\Collection\Collection;
 use Cake\Collection\CollectionTrait;
 use Cake\Database\Exception;
 use Cake\Database\Type;
@@ -68,11 +69,19 @@ class ResultSet implements ResultSetInterface {
 	protected $_defaultTable;
 
 /**
- * List of associations that should be eager loaded
+ * List of associations that should be placed under the `_matchingData`
+ * result key.
  *
  * @var array
  */
-	protected $_associationMap = [];
+	protected $_matchingMap = [];
+
+/**
+ * List of associations that should be eager loaded.
+ *
+ * @var array
+ */
+	protected $_containMap = [];
 
 /**
  * Map of fields that are fetched from the statement with
@@ -271,28 +280,14 @@ class ResultSet implements ResultSetInterface {
  * @return void
  */
 	protected function _calculateAssociationMap() {
-		$contain = $this->_query->eagerLoader()->normalized($this->_defaultTable);
-		if (!$contain) {
-			return;
-		}
+		$map = $this->_query->eagerLoader()->associationsMap($this->_defaultTable);
+		$this->_matchingMap = (new Collection($map))
+			->match(['matching' => true])
+			->compile();
 
-		$map = [];
-		$visitor = function ($level) use (&$visitor, &$map) {
-			foreach ($level as $assoc => $meta) {
-				$map[$meta['aliasPath']] = [
-					'alias' => $assoc,
-					'instance' => $meta['instance'],
-					'canBeJoined' => $meta['canBeJoined'],
-					'entityClass' => $meta['instance']->target()->entityClass(),
-					'nestKey' => $meta['canBeJoined'] ? $assoc : $meta['aliasPath']
-				];
-				if ($meta['canBeJoined'] && !empty($meta['associations'])) {
-					$visitor($meta['associations']);
-				}
-			}
-		};
-		$visitor($contain, []);
-		$this->_associationMap = $map;
+		$this->_containMap = (new Collection(array_reverse($map)))
+			->match(['matching' => false])
+			->compile();
 	}
 
 /**
@@ -322,11 +317,43 @@ class ResultSet implements ResultSetInterface {
 	protected function _groupResult($row) {
 		$defaultAlias = $this->_defaultTable->alias();
 		$results = $presentAliases = [];
+		$options = [
+			'useSetters' => false,
+			'markClean' => true,
+			'markNew' => false,
+			'guard' => false
+		];
+
+		foreach ($this->_matchingMap as $matching) {
+			foreach ($row as $key => $value) {
+				if (strpos($key, $matching['alias'] . '__') !== 0) {
+					continue;
+				}
+				list($table, $field) = explode('__', $key);
+				$results['_matchingData'][$table][$field] = $value;
+				unset($row[$key]);
+			}
+			if (empty($results['_matchingData'][$matching['alias']])) {
+				continue;
+			}
+
+			$results['_matchingData'][$matching['alias']] = $this->_castValues(
+				$matching['instance']->target(),
+				$results['_matchingData'][$matching['alias']]
+			);
+
+			if ($this->_hydrate) {
+				$entity = new $matching['entityClass']($results['_matchingData'][$matching['alias']], $options);
+				$entity->clean();
+				$results['_matchingData'][$matching['alias']] = $entity;
+			}
+		}
+
 		foreach ($row as $key => $value) {
 			$table = $defaultAlias;
 			$field = $key;
 
-			if (isset($this->_associationMap[$key])) {
+			if ($value !== null && !is_scalar($value)) {
 				$results[$key] = $value;
 				continue;
 			}
@@ -354,14 +381,7 @@ class ResultSet implements ResultSetInterface {
 		}
 		unset($presentAliases[$defaultAlias]);
 
-		$options = [
-			'useSetters' => false,
-			'markClean' => true,
-			'markNew' => false,
-			'guard' => false
-		];
-
-		foreach (array_reverse($this->_associationMap) as $assoc) {
+		foreach ($this->_containMap as $assoc) {
 			$alias = $assoc['nestKey'];
 			$instance = $assoc['instance'];
 
@@ -395,6 +415,7 @@ class ResultSet implements ResultSetInterface {
 				$entity->clean();
 				$results[$alias] = $entity;
 			}
+
 			$results = $instance->transformRow($results, $alias, $assoc['canBeJoined']);
 		}
 
@@ -403,6 +424,10 @@ class ResultSet implements ResultSetInterface {
 				continue;
 			}
 			$results[$defaultAlias][$alias] = $results[$alias];
+		}
+
+		if (isset($results['_matchingData'])) {
+			$results[$defaultAlias]['_matchingData'] = $results['_matchingData'];
 		}
 
 		$options['source'] = $defaultAlias;

@@ -664,20 +664,26 @@ abstract class Association {
  * @return void
  */
 	protected function _bindNewAssociations($query, $surrogate, $options) {
-		$contain = $surrogate->contain();
+		$loader = $surrogate->eagerLoader();
+		$contain = $loader->contain();
+		$matching = $loader->matching();
 		$target = $this->_targetTable;
 
-		if (!$contain) {
+		if (!$contain && !$matching) {
 			return;
 		}
 
-		$loader = $surrogate->eagerLoader();
 		$loader->attachAssociations($query, $target, $options['includeFields']);
-		$newBinds = [];
+		$newContain = [];
 		foreach ($contain as $alias => $value) {
-			$newBinds[$options['aliasPath'] . '.' . $alias] = $value;
+			$newContain[$options['aliasPath'] . '.' . $alias] = $value;
 		}
-		$query->contain($newBinds);
+
+		$query->contain($newContain);
+
+		foreach ($matching as $alias => $value) {
+			$query->matching($options['aliasPath'] . '.' . $alias, $value['queryBuilder']);
+		}
 	}
 
 /**
