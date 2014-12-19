@@ -1024,7 +1024,7 @@ class CollectionTest extends TestCase {
  * @return void
  */
 	public function testUnfoldEmptyLevels() {
-		$items = [[], [1 , 2], []];
+		$items = [[], [1, 2], []];
 		$collection = (new Collection($items))->unfold();
 		$this->assertEquals(range(1, 2), $collection->toArray(false));
 
