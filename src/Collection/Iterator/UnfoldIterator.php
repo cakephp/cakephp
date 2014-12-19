@@ -21,6 +21,9 @@ use RecursiveIterator;
 /**
  * An iterator that can be used to generate nested iterators out of each of
  * applying an function to each of the elements in this iterator.
+ *
+ * @internal
+ * @see Collection::unfold()
  */
 class UnfoldIterator extends IteratorIterator implements RecursiveIterator {
 
@@ -33,7 +36,7 @@ class UnfoldIterator extends IteratorIterator implements RecursiveIterator {
 	protected $_unfolder;
 
 /**
- * Creates the iterator that will genere children iterators out of each of the
+ * Creates the iterator that will generate child iterators from each of the
  * elements it was constructed with.
  *
  * @param array|\Traversable $items The list of values to iterate

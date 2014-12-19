@@ -20,6 +20,9 @@ use Cake\Collection\Collection;
  * Creates an iterator from another iterator that will verify a condition on each
  * step. If the condition evaluates to false, the iterator will not yield more
  * results.
+ *
+ * @internal
+ * @see Collection::stopWhen()
  */
 class StoppableIterator extends Collection {
 
@@ -38,7 +41,7 @@ class StoppableIterator extends Collection {
  * as arguments, in that order.
  *
  * @param array|\Traversable $items The list of values to iterate
- * @param callable $condition A function that will be called for ech item in
+ * @param callable $condition A function that will be called for each item in
  * the collection, if the result evaluates to false, no more items will be
  * yielded from this iterator.
  */
@@ -49,7 +52,7 @@ class StoppableIterator extends Collection {
 
 /**
  * Evaluates the condition and returns its result, this controls
- * whther or not more results are yielded
+ * whether or not more results will be yielded.
  *
  * @return bool
  */
