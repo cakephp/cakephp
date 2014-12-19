@@ -580,7 +580,7 @@ class Response {
  *	- an associative array of "header name" => "header value" is also accepted
  *	- an array of string headers is also accepted
  * @param string|array|null $value The header value(s)
- * @return array list of headers to be sent
+ * @return array List of headers to be sent
  */
 	public function header($header = null, $value = null) {
 		if ($header === null) {
@@ -622,7 +622,7 @@ class Response {
  * if $content is null the current buffer is returned
  *
  * @param string|null $content the string message to be sent
- * @return string current message buffer if $content param is passed as null
+ * @return string Current message buffer if $content param is passed as null
  */
 	public function body($content = null) {
 		if ($content === null) {
@@ -636,7 +636,7 @@ class Response {
  * if $code is null the current code is returned
  *
  * @param int|null $code the HTTP status code
- * @return int current status code
+ * @return int Current status code
  * @throws \InvalidArgumentException When an unknown status code is reached.
  */
 	public function statusCode($code = null) {
@@ -676,7 +676,7 @@ class Response {
  *
  *        For more on HTTP status codes see: http://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1
  *
- * @return mixed associative array of the HTTP codes as keys, and the message
+ * @return mixed Associative array of the HTTP codes as keys, and the message
  *    strings as values, or null of the given $code does not exist.
  * @throws \InvalidArgumentException If an attempt is made to add an invalid status code
  */
@@ -785,7 +785,7 @@ class Response {
  * if $charset is null the current charset is returned
  *
  * @param string|null $charset Character set string.
- * @return string current charset
+ * @return string Current charset
  */
 	public function charset($charset = null) {
 		if ($charset === null) {
@@ -1021,7 +1021,7 @@ class Response {
  * parameters are passed, then an array with the current Vary header
  * value is returned
  *
- * @param string|array|null $cacheVariances a single Vary string or an array
+ * @param string|array|null $cacheVariances A single Vary string or an array
  *   containing the list for variances.
  * @return array|null
  */
@@ -1052,8 +1052,8 @@ class Response {
  *
  * If no parameters are passed, current Etag header is returned.
  *
- * @param string|null $hash the unique hash that identifies this response
- * @param bool $weak whether the response is semantically the same as
+ * @param string|null $hash The unique hash that identifies this response
+ * @param bool $weak Whether the response is semantically the same as
  *   other with the same hash or not
  * @return string|null
  */
@@ -1112,7 +1112,7 @@ class Response {
 /**
  * Sets the correct headers to instruct the browser to download the response as a file.
  *
- * @param string $filename the name of the file as the browser will download the response
+ * @param string $filename The name of the file as the browser will download the response
  * @return void
  */
 	public function download($filename) {
@@ -1124,7 +1124,7 @@ class Response {
  * If called with no arguments, it will return the current configured protocol
  *
  * @param string|null $protocol Protocol to be used for sending response.
- * @return string protocol currently set
+ * @return string Protocol currently set
  */
 	public function protocol($protocol = null) {
 		if ($protocol !== null) {
@@ -1161,7 +1161,7 @@ class Response {
  * a comparison will not be possible.
  *
  * @param \Cake\Network\Request $request Request object
- * @return bool whether the response was marked as not modified or not.
+ * @return bool Whether the response was marked as not modified or not.
  */
 	public function checkNotModified(Request $request) {
 		$etags = preg_split('/\s*,\s*/', $request->header('If-None-Match'), null, PREG_SPLIT_NO_EMPTY);
@@ -1529,7 +1529,7 @@ class Response {
  * Stop execution of the current script. Wraps exit() making
  * testing easier.
  *
- * @param int|string $status see http://php.net/exit for values
+ * @param int|string $status See http://php.net/exit for values
  * @return void
  */
 	public function stop($status = 0) {
