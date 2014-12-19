@@ -107,7 +107,7 @@ class TableNamePrefixer {
 
 		if (is_string($field) && strpos($field, '.') !== false && $this->_query->hasTableName($field) === true) {
 			$field = $this->_query->connection()->fullFieldName($field, $this->_query->tablesNames);
-			$expression->field($field);
+			$expression->setField($field);
 		}
 	}
 
