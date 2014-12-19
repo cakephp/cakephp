@@ -25,6 +25,7 @@ use Cake\Collection\Iterator\MapReduce;
 use Cake\Collection\Iterator\NestIterator;
 use Cake\Collection\Iterator\ReplaceIterator;
 use Cake\Collection\Iterator\SortIterator;
+use Cake\Collection\Iterator\StoppableIterator;
 use Cake\Collection\Iterator\TreeIterator;
 use LimitIterator;
 
@@ -254,22 +255,7 @@ trait CollectionTrait {
  *
  */
 	public function match(array $conditions) {
-		$matchers = [];
-		foreach ($conditions as $property => $value) {
-			$extractor = $this->_propertyExtractor($property);
-			$matchers[] = function ($v) use ($extractor, $value) {
-				return $extractor($v) == $value;
-			};
-		}
-
-		$filter = function ($value) use ($matchers) {
-			$valid = true;
-			foreach ($matchers as $match) {
-				$valid = $valid && $match($value);
-			}
-			return $valid;
-		};
-		return $this->filter($filter);
+		return $this->filter($this->_createMatcherFilter($conditions));
 	}
 
 /**
@@ -439,6 +425,18 @@ trait CollectionTrait {
 			new NestIterator($this, $nestingKey),
 			isset($modes[$dir]) ? $modes[$dir] : $dir
 		);
+	}
+
+/**
+ * {@inheritDoc}
+ *
+ * @return \Cake\Collection\Iterator\StoppableIterator
+ */
+	public function stopWhen($condition) {
+		if (!is_callable($condition)) {
+			$condition = $this->_createMatcherFilter($condition);
+		}
+		return new StoppableIterator($this, $condition);
 	}
 
 }

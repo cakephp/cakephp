@@ -60,4 +60,31 @@ trait ExtractTrait {
 		return $value;
 	}
 
+/**
+ * Returns a callable that receives a value and will return whether or not
+ * it matches certain condition.
+ *
+ * @param array $conditions A key-value list of conditions to match where the
+ * key is the property path to get from the current item and the value is the
+ * value to be compared the item with.
+ * @return callable
+ */
+	protected function _createMatcherFilter(array $conditions) {
+		$matchers = [];
+		foreach ($conditions as $property => $value) {
+			$extractor = $this->_propertyExtractor($property);
+			$matchers[] = function ($v) use ($extractor, $value) {
+				return $extractor($v) == $value;
+			};
+		}
+
+		return function ($value) use ($matchers) {
+			$valid = true;
+			foreach ($matchers as $match) {
+				$valid = $valid && $match($value);
+			}
+			return $valid;
+		};
+	}
+
 }
