@@ -759,7 +759,7 @@ interface CollectionInterface extends Iterator, JsonSerializable {
  * @param callable|array $condition the method that will receive each of the elements and
  * returns false when the iteration should be stopped.
  * If an array, it will be interpreted as a key-value list of conditions where
- * the key is a property path as accepted by `Collection::extract,
+ * the key is a property path as accepted by `Collection::extract`,
  * and the value the condition against with each element will be matched.
  * @return \Cake\Collection\CollectionInterface
  */
