@@ -25,8 +25,11 @@ use Cake\Collection\Iterator\MapReduce;
 use Cake\Collection\Iterator\NestIterator;
 use Cake\Collection\Iterator\ReplaceIterator;
 use Cake\Collection\Iterator\SortIterator;
+use Cake\Collection\Iterator\StoppableIterator;
 use Cake\Collection\Iterator\TreeIterator;
+use Cake\Collection\Iterator\UnfoldIterator;
 use LimitIterator;
+use RecursiveIteratorIterator;
 
 /**
  * Offers a handful of method to manipulate iterators
@@ -254,22 +257,7 @@ trait CollectionTrait {
  *
  */
 	public function match(array $conditions) {
-		$matchers = [];
-		foreach ($conditions as $property => $value) {
-			$extractor = $this->_propertyExtractor($property);
-			$matchers[] = function ($v) use ($extractor, $value) {
-				return $extractor($v) == $value;
-			};
-		}
-
-		$filter = function ($value) use ($matchers) {
-			$valid = true;
-			foreach ($matchers as $match) {
-				$valid = $valid && $match($value);
-			}
-			return $valid;
-		};
-		return $this->filter($filter);
+		return $this->filter($this->_createMatcherFilter($conditions));
 	}
 
 /**
@@ -441,4 +429,33 @@ trait CollectionTrait {
 		);
 	}
 
+/**
+ * {@inheritDoc}
+ *
+ * @return \Cake\Collection\Iterator\StoppableIterator
+ */
+	public function stopWhen($condition) {
+		if (!is_callable($condition)) {
+			$condition = $this->_createMatcherFilter($condition);
+		}
+		return new StoppableIterator($this, $condition);
+	}
+
+/**
+ * {@inheritDoc}
+ *
+ */
+	public function unfold(callable $transformer = null) {
+		if ($transformer === null) {
+			$transformer = function ($item) {
+				return $item;
+			};
+		}
+
+		return new Collection(
+			new RecursiveIteratorIterator(
+				new UnfoldIterator($this, $transformer), RecursiveIteratorIterator::LEAVES_ONLY
+			)
+		);
+	}
 }

@@ -13,15 +13,20 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Utility\Inflector;
-?>
-<h2>Missing Cell View</h2>
-<p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('The view for <em>%sCell</em> was not found.', h(Inflector::camelize($name))) ?>
-</p>
 
+$this->layout = 'dev_error';
+
+$this->assign('templateName', 'missing_cell_view.ctp');
+$this->assign('title', 'Missing Cell View');
+
+$this->start('subheading');
+printf('The view for <em>%sCell</em> was not be found.', h(Inflector::camelize($name)));
+$this->end();
+
+$this->start('file');
+?>
 <p>
-	<?= sprintf('Confirm you have created the file: "%s"', h($file . $this->_ext)) ?>
+	Confirm you have created the file: "<?= h($file . $this->_ext) ?>"
 	in one of the following paths:
 </p>
 <ul>
@@ -35,10 +40,4 @@ use Cake\Utility\Inflector;
 	endforeach;
 ?>
 </ul>
-
-<p class="notice">
-	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_view.ctp'); ?>
-</p>
-
-<?= $this->element('exception_stack_trace'); ?>
+<?php $this->end(); ?>

@@ -14,32 +14,42 @@
  */
 use Cake\Core\Configure;
 
-$pluginPath = Configure::read('App.paths.plugins.0');
-?>
-<h2>Missing Plugin</h2>
-<p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('The application is trying to load a file from the <em>%s</em> plugin', h($plugin)); ?>
-</p>
-<p class="error">
-	<strong>Error: </strong>
-	<?= $this->element('plugin_class_error'); ?>
-</p>
-<pre>
-&lt;?php
-Plugin::load('<?= h($plugin)?>');
+$this->layout = 'dev_error';
 
-</pre>
+$pluginPath = Configure::read('App.paths.plugins.0');
+
+$this->assign('title', 'Missing Plugin');
+$this->assign('templateName', 'missing_plugin.ctp');
+
+$this->start('subheading');
+?>
+	<strong>Error: </strong>
+	The application is trying to load a file from the <em><?= h($plugin) ?></em> plugin.
+	<br>
+	<br>
+	Make sure your plugin <em><?= h($plugin) ?></em> is in the <?= h($pluginPath) ?> directory and was loaded.
+<?php $this->end() ?>
+
+<?php $this->start('file') ?>
+<?php
+$code = <<<PHP
+<?php
+Plugin::load('{$plugin}');
+PHP;
+
+?>
+<div class="code-dump"><?php highlight_string($code) ?></div>
+
 <p class="notice">
 	<strong>Loading all plugins: </strong>
 	<?= sprintf('If you wish to load all plugins at once, use the following line in your %s file', 'config' . DS . 'bootstrap.php'); ?>
 </p>
-<pre>
-Plugin::loadAll();
-</pre>
-<p class="notice">
-	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_plugin.ctp'); ?>
-</p>
 
-<?= $this->element('exception_stack_trace'); ?>
+<?php
+$code = <<<PHP
+<?php
+Plugin::loadAll();
+PHP;
+?>
+<div class="code-dump"><?php highlight_string($code) ?></div>
+<?php $this->end() ?>

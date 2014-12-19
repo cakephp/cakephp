@@ -16,6 +16,7 @@ namespace Cake\View\Helper;
 
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
+use Cake\View\StringTemplateTrait;
 use Cake\View\View;
 
 /**

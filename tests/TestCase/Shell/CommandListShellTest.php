@@ -94,7 +94,7 @@ class CommandListShellTest extends TestCase {
 		$expected = "/\[.*TestPluginTwo.*\] example, welcome/";
 		$this->assertRegExp($expected, $output);
 
-		$expected = "/\[.*CORE.*\] bake, i18n, orm_cache, server, test/";
+		$expected = "/\[.*CORE.*\] i18n, orm_cache, server, test/";
 		$this->assertRegExp($expected, $output);
 
 		$expected = "/\[.*app.*\] sample/";
@@ -116,7 +116,7 @@ class CommandListShellTest extends TestCase {
 		$find = '<shell name="sample" call_as="sample" provider="app" help="sample -h"/>';
 		$this->assertContains($find, $output);
 
-		$find = '<shell name="bake" call_as="bake" provider="CORE" help="bake -h"/>';
+		$find = '<shell name="orm_cache" call_as="orm_cache" provider="CORE" help="orm_cache -h"/>';
 		$this->assertContains($find, $output);
 
 		$find = '<shell name="welcome" call_as="TestPluginTwo.welcome" provider="TestPluginTwo" help="TestPluginTwo.welcome -h"/>';

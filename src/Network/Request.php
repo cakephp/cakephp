@@ -168,7 +168,7 @@ class Request implements \ArrayAccess {
 		list($base, $webroot) = static::_base();
 		$sessionConfig = (array)Configure::read('Session') + [
 			'defaults' => 'php',
-			'cookiePath' => $base
+			'cookiePath' => $webroot
 		];
 
 		$config = array(
@@ -189,7 +189,7 @@ class Request implements \ArrayAccess {
  * Create a new request object.
  *
  * You can supply the data as either an array or as a string.  If you use
- * a string you can only supply the url for the request.  Using an array will
+ * a string you can only supply the URL for the request.  Using an array will
  * let you provide the following keys:
  *
  * - `post` POST data or non query string data
@@ -197,8 +197,8 @@ class Request implements \ArrayAccess {
  * - `files` Uploaded file data formatted like $_FILES.
  * - `cookies` Cookies for this request.
  * - `environment` $_SERVER and $_ENV data.
- * - `url` The url without the base path for the request.
- * - `base` The base url for the request.
+ * - `url` The URL without the base path for the request.
+ * - `base` The base URL for the request.
  * - `webroot` The webroot directory for the request.
  * - `input` The data that would come from php://input this is useful for simulating
  * - `session` An instance of a Session object
@@ -270,8 +270,7 @@ class Request implements \ArrayAccess {
  */
 	protected function _processPost($data) {
 		$method = $this->env('REQUEST_METHOD');
-		if (
-			in_array($method, array('PUT', 'DELETE', 'PATCH')) &&
+		if (in_array($method, array('PUT', 'DELETE', 'PATCH')) &&
 			strpos($this->env('CONTENT_TYPE'), 'application/x-www-form-urlencoded') === 0
 		) {
 			$data = $this->input();
@@ -347,8 +346,7 @@ class Request implements \ArrayAccess {
 		}
 		$endsWithIndex = '/webroot/index.php';
 		$endsWithLength = strlen($endsWithIndex);
-		if (
-			strlen($uri) >= $endsWithLength &&
+		if (strlen($uri) >= $endsWithLength &&
 			substr($uri, -$endsWithLength) === $endsWithIndex
 		) {
 			$uri = '/';

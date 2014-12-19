@@ -52,12 +52,12 @@ class TaskRegistryTest extends TestCase {
  * @return void
  */
 	public function testLoad() {
-		$result = $this->Tasks->load('Project');
-		$this->assertInstanceOf('Cake\Shell\Task\ProjectTask', $result);
-		$this->assertInstanceOf('Cake\Shell\Task\ProjectTask', $this->Tasks->Project);
+		$result = $this->Tasks->load('Command');
+		$this->assertInstanceOf('Cake\Shell\Task\CommandTask', $result);
+		$this->assertInstanceOf('Cake\Shell\Task\CommandTask', $this->Tasks->Command);
 
 		$result = $this->Tasks->loaded();
-		$this->assertEquals(['Project'], $result, 'loaded() results are wrong.');
+		$this->assertEquals(['Command'], $result, 'loaded() results are wrong.');
 	}
 
 /**
@@ -95,19 +95,19 @@ class TaskRegistryTest extends TestCase {
 	public function testLoadWithAlias() {
 		Plugin::load('TestPlugin');
 
-		$result = $this->Tasks->load('ProjectAliased', array('className' => 'Project'));
-		$this->assertInstanceOf('Cake\Shell\Task\ProjectTask', $result);
-		$this->assertInstanceOf('Cake\Shell\Task\ProjectTask', $this->Tasks->ProjectAliased);
+		$result = $this->Tasks->load('CommandAliased', array('className' => 'Command'));
+		$this->assertInstanceOf('Cake\Shell\Task\CommandTask', $result);
+		$this->assertInstanceOf('Cake\Shell\Task\CommandTask', $this->Tasks->CommandAliased);
 
 		$result = $this->Tasks->loaded();
-		$this->assertEquals(array('ProjectAliased'), $result, 'loaded() results are wrong.');
+		$this->assertEquals(array('CommandAliased'), $result, 'loaded() results are wrong.');
 
 		$result = $this->Tasks->load('SomeTask', array('className' => 'TestPlugin.OtherTask'));
 		$this->assertInstanceOf('TestPlugin\Shell\Task\OtherTaskTask', $result);
 		$this->assertInstanceOf('TestPlugin\Shell\Task\OtherTaskTask', $this->Tasks->SomeTask);
 
 		$result = $this->Tasks->loaded();
-		$this->assertEquals(array('ProjectAliased', 'SomeTask'), $result, 'loaded() results are wrong.');
+		$this->assertEquals(array('CommandAliased', 'SomeTask'), $result, 'loaded() results are wrong.');
 	}
 
 }

@@ -93,6 +93,16 @@ class IntegrationTestCaseTest extends IntegrationTestCase {
 	}
 
 /**
+ * Test array URLs
+ *
+ * @return void
+ */
+	public function testArrayUrls() {
+		$this->post(['controller' => 'Posts', 'action' => 'index']);
+		$this->assertEquals('value', $this->viewVariable('test'));
+	}
+
+/**
  * Test flash and cookie assertions
  *
  * @return void
@@ -143,6 +153,9 @@ class IntegrationTestCaseTest extends IntegrationTestCase {
 
 		$this->_response->statusCode(505);
 		$this->assertResponseFailure();
+
+		$this->_response->statusCode(301);
+		$this->assertResponseCode(301);
 	}
 
 /**
@@ -196,10 +209,10 @@ class IntegrationTestCaseTest extends IntegrationTestCase {
 	}
 
 /**
- * Test that works in tandem with testEventManagerReset2 to 
+ * Test that works in tandem with testEventManagerReset2 to
  * test the EventManager reset.
  *
- * The return value is passed to testEventManagerReset2 as 
+ * The return value is passed to testEventManagerReset2 as
  * an arguments.
  *
  * @return \Cake\Event\EventManager

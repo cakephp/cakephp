@@ -55,8 +55,7 @@ class ConsoleLog extends BaseLog {
  * @throws \InvalidArgumentException
  */
 	public function __construct(array $config = array()) {
-		if (
-			(DS === '\\' && !(bool)env('ANSICON')) ||
+		if ((DS === '\\' && !(bool)env('ANSICON')) ||
 			(function_exists('posix_isatty') && !posix_isatty($this->_output))
 		) {
 			$this->_defaultConfig['outputAs'] = ConsoleOutput::PLAIN;

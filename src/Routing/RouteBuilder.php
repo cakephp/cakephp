@@ -546,13 +546,12 @@ class RouteBuilder {
  *
  * This is a shortcut method for connecting fallback routes in a given scope.
  *
+ * @param string $routeClass the route class to use, uses the default routeClass
+ *   if not specified
  * @return void
  */
-	public function fallbacks() {
-		$routeClass = $this->_routeClass;
-		if ($routeClass === 'Cake\Routing\Route\Route') {
-			$routeClass = 'InflectedRoute';
-		}
+	public function fallbacks($routeClass = null) {
+		$routeClass = $routeClass ?: $this->_routeClass;
 		$this->connect('/:controller', ['action' => 'index'], compact('routeClass'));
 		$this->connect('/:controller/:action/*', [], compact('routeClass'));
 	}

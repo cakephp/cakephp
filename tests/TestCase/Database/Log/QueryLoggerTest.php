@@ -50,15 +50,15 @@ class QueryLoggerTest extends TestCase {
  *
  * @return void
  */
-	public function testStingInterpolation() {
+	public function testStringInterpolation() {
 		$logger = $this->getMock('\Cake\Database\Log\QueryLogger', ['_log']);
 		$query = new LoggedQuery;
-		$query->query = 'SELECT a FROM b where a = :p1 AND b = :p2 AND c = :p3';
-		$query->params = ['p1' => 'string', 'p3' => null, 'p2' => 3];
+		$query->query = 'SELECT a FROM b where a = :p1 AND b = :p2 AND c = :p3 AND d = :p4 AND e = :p5 AND f = :p6';
+		$query->params = ['p1' => 'string', 'p3' => null, 'p2' => 3, 'p4' => true, 'p5' => false, 'p6' => 0];
 
 		$logger->expects($this->once())->method('_log')->with($query);
 		$logger->log($query);
-		$expected = "SELECT a FROM b where a = 'string' AND b = 3 AND c = NULL";
+		$expected = "SELECT a FROM b where a = 'string' AND b = 3 AND c = NULL AND d = 1 AND e = 0 AND f = 0";
 		$this->assertEquals($expected, (string)$query);
 	}
 
@@ -67,15 +67,15 @@ class QueryLoggerTest extends TestCase {
  *
  * @return void
  */
-	public function testStingInterpolation2() {
+	public function testStringInterpolation2() {
 		$logger = $this->getMock('\Cake\Database\Log\QueryLogger', ['_log']);
 		$query = new LoggedQuery;
-		$query->query = 'SELECT a FROM b where a = ? AND b = ? AND c = ?';
-		$query->params = ['string', '3', null];
+		$query->query = 'SELECT a FROM b where a = ? AND b = ? AND c = ? AND d = ? AND e = ? AND f = ?';
+		$query->params = ['string', '3', null, true, false, 0];
 
 		$logger->expects($this->once())->method('_log')->with($query);
 		$logger->log($query);
-		$expected = "SELECT a FROM b where a = 'string' AND b = '3' AND c = NULL";
+		$expected = "SELECT a FROM b where a = 'string' AND b = '3' AND c = NULL AND d = 1 AND e = 0 AND f = 0";
 		$this->assertEquals($expected, (string)$query);
 	}
 

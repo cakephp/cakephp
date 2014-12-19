@@ -637,12 +637,14 @@ class QueryTest extends TestCase {
 			[
 				'id' => 3,
 				'name' => 'larry',
-				'articles' => [
-					'id' => 2,
-					'title' => 'Second Article',
-					'body' => 'Second Article Body',
-					'author_id' => 3,
-					'published' => 'Y',
+				'_matchingData' => [
+					'articles' => [
+						'id' => 2,
+						'title' => 'Second Article',
+						'body' => 'Second Article Body',
+						'author_id' => 3,
+						'published' => 'Y',
+					]
 				]
 			]
 		];
@@ -678,10 +680,12 @@ class QueryTest extends TestCase {
 				'title' => 'Second Article',
 				'body' => 'Second Article Body',
 				'published' => 'Y',
-				'tags' => [
-					'id' => 3,
-					'name' => 'tag3',
-					'_joinData' => ['article_id' => 2, 'tag_id' => 3]
+				'_matchingData' => [
+					'Tags' => [
+						'id' => 3,
+						'name' => 'tag3',
+					],
+					'ArticlesTags' => ['article_id' => 2, 'tag_id' => 3]
 				]
 			]
 		];
@@ -701,10 +705,12 @@ class QueryTest extends TestCase {
 				'body' => 'First Article Body',
 				'author_id' => 1,
 				'published' => 'Y',
-				'tags' => [
-					'id' => 2,
-					'name' => 'tag2',
-					'_joinData' => ['article_id' => 1, 'tag_id' => 2]
+				'_matchingData' => [
+					'Tags' => [
+						'id' => 2,
+						'name' => 'tag2',
+					],
+					'ArticlesTags' => ['article_id' => 1, 'tag_id' => 2]
 				]
 			]
 		];
@@ -734,17 +740,22 @@ class QueryTest extends TestCase {
 			[
 				'id' => 1,
 				'name' => 'mariano',
-				'articles' => [
-					'id' => 1,
-					'title' => 'First Article',
-					'body' => 'First Article Body',
-					'author_id' => 1,
-					'published' => 'Y',
+				'_matchingData' => [
 					'tags' => [
 						'id' => 2,
 						'name' => 'tag2',
-						'_joinData' => ['article_id' => 1, 'tag_id' => 2]
-					]
+					],
+					'articles' => [
+						'id' => 1,
+						'author_id' => 1,
+						'title' => 'First Article',
+						'body' => 'First Article Body',
+						'published' => 'Y'
+					],
+					'ArticlesTags' => [
+							'article_id' => 1,
+							'tag_id' => 2
+						]
 				]
 			]
 		];
@@ -1070,7 +1081,7 @@ class QueryTest extends TestCase {
 
 		$this->assertCount(3, $results);
 		foreach ($results as $r) {
-			$this->assertInstanceOf('\Cake\ORM\Entity', $r);
+			$this->assertInstanceOf('Cake\ORM\Entity', $r);
 		}
 
 		$first = $results[0];
@@ -1100,7 +1111,7 @@ class QueryTest extends TestCase {
 
 		$first = $results[0];
 		foreach ($first->articles as $r) {
-			$this->assertInstanceOf('\Cake\ORM\Entity', $r);
+			$this->assertInstanceOf('Cake\ORM\Entity', $r);
 		}
 
 		$this->assertCount(2, $first->articles);
@@ -1143,7 +1154,7 @@ class QueryTest extends TestCase {
 
 		$first = $results[0];
 		foreach ($first->tags as $r) {
-			$this->assertInstanceOf('\Cake\ORM\Entity', $r);
+			$this->assertInstanceOf('Cake\ORM\Entity', $r);
 		}
 
 		$this->assertCount(2, $first->tags);
@@ -1181,7 +1192,7 @@ class QueryTest extends TestCase {
 
 		$this->assertCount(3, $results);
 		$first = $results[0];
-		$this->assertInstanceOf('\Cake\ORM\Entity', $first->author);
+		$this->assertInstanceOf('Cake\ORM\Entity', $first->author);
 		$expected = ['id' => 1, 'name' => 'mariano'];
 		$this->assertEquals($expected, $first->author->toArray());
 	}
@@ -1208,7 +1219,7 @@ class QueryTest extends TestCase {
 
 		$this->assertCount(4, $results);
 		$first = $results[0];
-		$this->assertInstanceOf('\Cake\ORM\Entity', $first->articles[0]->author);
+		$this->assertInstanceOf('Cake\ORM\Entity', $first->articles[0]->author);
 		$expected = ['id' => 1, 'name' => 'mariano'];
 		$this->assertEquals($expected, $first->articles[0]->author->toArray());
 		$this->assertTrue(isset($results[3]->articles));
@@ -1413,8 +1424,15 @@ class QueryTest extends TestCase {
 			->values(['title' => 'Second'])
 			->execute();
 
+		$result->closeCursor();
+
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
-		$this->assertEquals(2, $result->rowCount());
+		//PDO_SQLSRV returns -1 for successful inserts when using INSERT ... OUTPUT
+		if (!$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver) {
+			$this->assertEquals(2, $result->rowCount());
+		} else {
+			$this->assertEquals(-1, $result->rowCount());
+		}
 	}
 
 /**
@@ -1630,7 +1648,7 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection, $table);
 		$query->select()->formatResults(function ($results, $q) use ($query) {
 			$this->assertSame($query, $q);
-			$this->assertInstanceOf('\Cake\ORM\ResultSet', $results);
+			$this->assertInstanceOf('Cake\ORM\ResultSet', $results);
 			return $results->indexBy('id');
 		});
 		$this->assertEquals([1, 2, 3, 4], array_keys($query->toArray()));
@@ -1646,7 +1664,7 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection, $table);
 		$query->select()->formatResults(function ($results, $q) use ($query) {
 			$this->assertSame($query, $q);
-			$this->assertInstanceOf('\Cake\ORM\ResultSet', $results);
+			$this->assertInstanceOf('Cake\ORM\ResultSet', $results);
 			return $results->indexBy('id');
 		});
 
@@ -1856,7 +1874,7 @@ class QueryTest extends TestCase {
 
 		$results = $query->toArray();
 		$this->assertCount(1, $results);
-		$this->assertEquals('tag3', $results[0]->articles->articles_tags->tag->name);
+		$this->assertEquals('tag3', $results[0]->_matchingData['tags']->name);
 	}
 
 /**
@@ -1895,7 +1913,8 @@ class QueryTest extends TestCase {
 			'buffered' => false,
 			'formatters' => 1,
 			'mapReducers' => 1,
-			'contain' => [
+			'contain' => [],
+			'matching' => [
 				'articles' => [
 					'queryBuilder' => null,
 					'matching' => true
@@ -1982,25 +2001,6 @@ class QueryTest extends TestCase {
 		$this->assertNotEmpty($results[1]['article']);
 		$this->assertNotEmpty($results[2]['tag']['articles']);
 		$this->assertNotEmpty($results[2]['article']);
-	}
-
-/**
- * Tests that it is not allowed to use matching on an association
- * that is already added to containments.
- *
- * @expectedException \RuntimeException
- * @expectedExceptionMessage Cannot use "matching" on "Authors" as there is another association with the same alias
- * @return void
- */
-	public function testConflitingAliases() {
-		$table = TableRegistry::get('ArticlesTags');
-		$table->belongsTo('Articles')->target()->belongsTo('Authors');
-		$table->belongsTo('Tags');
-		$table->Tags->target()->hasOne('Authors');
-		$table->find()
-			->contain(['Articles.Authors'])
-			->matching('Tags.Authors')
-			->all();
 	}
 
 /**
@@ -2265,6 +2265,53 @@ class QueryTest extends TestCase {
 
 		$this->assertNull($articles[0]->author);
 		$this->assertNull($articles[2]->author);
+	}
+
+/**
+ * Tests that it is possible to call matching and contain on the same
+ * association.
+ *
+ * @return void
+ */
+	public function testMatchingWithContain() {
+		$query = new Query($this->connection, $this->table);
+		$table = TableRegistry::get('authors');
+		$table->hasMany('articles');
+		TableRegistry::get('articles')->belongsToMany('tags');
+
+		$result = $query->repository($table)
+			->select()
+			->matching('articles.tags', function ($q) {
+				return $q->where(['tags.id' => 2]);
+			})
+			->contain('articles')
+			->first();
+
+		$this->assertEquals(1, $result->id);
+		$this->assertCount(2, $result->articles);
+		$this->assertEquals(2, $result->_matchingData['tags']->id);
+	}
+
+/**
+ * Tests that it is possible to call matching and contain on the same
+ * association with only one level of depth.
+ *
+ * @return void
+ */
+	public function testNotSoFarMatchingWithContainOnTheSameAssociation() {
+		$table = TableRegistry::get('articles');
+		$table->belongsToMany('tags');
+
+		$result = $table->find()
+			->matching('tags', function ($q) {
+				return $q->where(['tags.id' => 2]);
+			})
+			->contain('tags')
+			->first();
+
+		$this->assertEquals(1, $result->id);
+		$this->assertCount(2, $result->tags);
+		$this->assertEquals(2, $result->_matchingData['tags']->id);
 	}
 
 }

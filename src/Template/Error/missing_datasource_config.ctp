@@ -13,15 +13,13 @@
  * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-?>
-<h2>Missing Datasource Configuration</h2>
-<p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('The datasource configuration <em>%s</em> was not found in %s.', h($name), 'config' . DS . 'app.php'); ?>
-</p>
-<p class="notice">
-	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_datasource_config.ctp'); ?>
-</p>
+$this->layout = 'dev_error';
 
-<?= $this->element('exception_stack_trace'); ?>
+$this->assign('title', 'Missing Datasource Configuration');
+$this->assign('templateName', 'missing_datasource_config.ctp');
+
+$this->start('subheading');
+?>
+	<strong>Error: </strong>
+	The datasource configuration <em><?= h($name) ?></em> was not found in config<?= DS . 'app.php' ?>.
+<?php $this->end() ?>

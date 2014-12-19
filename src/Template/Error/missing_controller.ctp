@@ -36,29 +36,34 @@ if (empty($plugin)) {
 	$path = Plugin::classPath($plugin) . 'Controller' . DS . $prefixPath . h($class) . 'Controller.php';
 }
 
+$this->layout = 'dev_error';
+
+$this->assign('title', 'Missing Controller');
+$this->assign('templateName', 'missing_controller.php');
+
+$this->start('subheading');
 ?>
-<h2>Missing Controller</h2>
-<p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('<em>%sController</em> could not be found.', h($pluginDot . $class)); ?>
-</p>
-<p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('Create the class <em>%sController</em> below in file: %s', h($class), $path); ?>
-</p>
-<pre>
-&lt;?php
-namespace <?= h($namespace); ?>\Controller<?= h($prefixNs); ?>;
+<strong>Error: </strong>
+<em><?= h($pluginDot . $class) ?>Controller</em> could not be found.
+<?php $this->end() ?>
 
-use <?= h($namespace); ?>\Controller\AppController;
+<?php $this->start('file') ?>
+<p class="error">
+    <strong>Error: </strong>
+	Create the class <em><?= h($class) ?>Controller</em> below in file: <?= h($path) ?>
+</p>
 
-class <?= h($class) . 'Controller extends'; ?> AppController {
+<?php
+$code = <<<PHP
+<?php
+namespace {$namespace}\Controller{$prefixNs};
+
+use {$namespace}\Controller\AppController;
+
+class {$class}Controller extends AppController {
 
 }
-</pre>
-<p class="notice">
-	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_controller.ctp'); ?>
-</p>
-
-<?= $this->element('exception_stack_trace'); ?>
+PHP;
+?>
+<div class="code-dump"><?php highlight_string($code) ?></div>
+<?php $this->end() ?>

@@ -428,7 +428,7 @@ class FormHelperTest extends TestCase {
 	public function testCreateTemplatesArray() {
 		$result = $this->Form->create($this->article, [
 			'templates' => [
-				'formstart' => '<form class="form-horizontal"{{attrs}}>',
+				'formStart' => '<form class="form-horizontal"{{attrs}}>',
 			]
 		]);
 		$expected = [
@@ -1859,6 +1859,60 @@ class FormHelperTest extends TestCase {
 			],
 			['div' => ['class' => 'error-message']],
 			[],
+			'/div',
+			'/div'
+		];
+		$this->assertHtml($expected, $result);
+	}
+
+/**
+ * Test validation errors, when calling input() overriding validation messages
+ *
+ * @return void
+ */
+	public function testInputErrorMessage() {
+		$this->article['errors'] = [
+			'title' => ['error message']
+		];
+		$this->Form->create($this->article);
+
+		$result = $this->Form->input('title', [
+			'error' => 'Custom error!'
+		]);
+		$expected = [
+			'div' => ['class' => 'input text required error'],
+			'label' => ['for' => 'title'],
+			'Title',
+			'/label',
+			'input' => [
+				'type' => 'text', 'name' => 'title',
+				'id' => 'title', 'class' => 'form-error',
+				'required' => 'required',
+			],
+			['div' => ['class' => 'error-message']],
+			'Custom error!',
+			'/div',
+			'/div'
+		];
+		$this->assertHtml($expected, $result);
+
+		$result = $this->Form->input('title', [
+			'error' => ['error message' => 'Custom error!']
+		]);
+		$expected = [
+			'div' => ['class' => 'input text required error'],
+			'label' => ['for' => 'title'],
+			'Title',
+			'/label',
+			'input' => [
+				'type' => 'text',
+				'name' => 'title',
+				'id' => 'title',
+				'class' => 'form-error',
+				'required' => 'required'
+			],
+			['div' => ['class' => 'error-message']],
+			'Custom error!',
 			'/div',
 			'/div'
 		];

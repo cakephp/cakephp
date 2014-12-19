@@ -98,7 +98,7 @@ class CollectionTest extends TestCase {
 			return $value > 2;
 		});
 
-		$this->assertInstanceOf('\Cake\Collection\Collection', $filtered);
+		$this->assertInstanceOf('Cake\Collection\Collection', $filtered);
 		$filtered->each($callable);
 	}
 
@@ -115,7 +115,7 @@ class CollectionTest extends TestCase {
 			return $v > 2;
 		});
 		$this->assertEquals(['a' => 1, 'b' => 2], iterator_to_array($result));
-		$this->assertInstanceOf('\Cake\Collection\Collection', $result);
+		$this->assertInstanceOf('Cake\Collection\Collection', $result);
 	}
 
 /**
@@ -234,7 +234,7 @@ class CollectionTest extends TestCase {
 			$this->assertSame($collection, $it);
 			return $v * $v;
 		});
-		$this->assertInstanceOf('\Cake\Collection\Iterator\ReplaceIterator', $map);
+		$this->assertInstanceOf('Cake\Collection\Iterator\ReplaceIterator', $map);
 		$this->assertEquals(['a' => 1, 'b' => 4, 'c' => 9], iterator_to_array($map));
 	}
 
@@ -271,7 +271,7 @@ class CollectionTest extends TestCase {
 		$items = [['a' => ['b' => ['c' => 1]]], 2];
 		$collection = new Collection($items);
 		$map = $collection->extract('a.b.c');
-		$this->assertInstanceOf('\Cake\Collection\Iterator\ExtractIterator', $map);
+		$this->assertInstanceOf('Cake\Collection\Iterator\ExtractIterator', $map);
 		$this->assertEquals([1, null], iterator_to_array($map));
 	}
 
@@ -288,7 +288,7 @@ class CollectionTest extends TestCase {
 		];
 		$collection = new Collection($items);
 		$map = $collection->sortBy('a.b.c');
-		$this->assertInstanceOf('\Cake\Collection\Collection', $map);
+		$this->assertInstanceOf('Cake\Collection\Collection', $map);
 		$expected = [
 			2 => ['a' => ['b' => ['c' => 10]]],
 			1 => ['a' => ['b' => ['c' => 6]]],
@@ -355,7 +355,7 @@ class CollectionTest extends TestCase {
 			]
 		];
 		$this->assertEquals($expected, iterator_to_array($grouped));
-		$this->assertInstanceOf('\Cake\Collection\Collection', $grouped);
+		$this->assertInstanceOf('Cake\Collection\Collection', $grouped);
 
 		$grouped = $collection->groupBy(function ($element) {
 			return $element['parent_id'];
@@ -407,7 +407,7 @@ class CollectionTest extends TestCase {
 			2 => ['id' => 2, 'name' => 'bar', 'parent_id' => 11],
 		];
 		$this->assertEquals($expected, iterator_to_array($grouped));
-		$this->assertInstanceOf('\Cake\Collection\Collection', $grouped);
+		$this->assertInstanceOf('Cake\Collection\Collection', $grouped);
 
 		$grouped = $collection->indexBy(function ($element) {
 			return $element['id'];
@@ -453,7 +453,7 @@ class CollectionTest extends TestCase {
 			11 => 1
 		];
 		$this->assertEquals($expected, iterator_to_array($grouped));
-		$this->assertInstanceOf('\Cake\Collection\Collection', $grouped);
+		$this->assertInstanceOf('Cake\Collection\Collection', $grouped);
 
 		$grouped = $collection->countBy(function ($element) {
 			return $element['parent_id'];
@@ -876,7 +876,7 @@ class CollectionTest extends TestCase {
 		$items = [['a' => 1], ['b' => 2]];
 		$collection = new Collection($items);
 		$iterator = $collection->insert('c', [3, 4]);
-		$this->assertInstanceOf('\Cake\Collection\Iterator\InsertIterator', $iterator);
+		$this->assertInstanceOf('Cake\Collection\Iterator\InsertIterator', $iterator);
 		$this->assertEquals(
 			[['a' => 1, 'c' => 3], ['b' => 2, 'c' => 4]],
 			iterator_to_array($iterator)
@@ -965,6 +965,86 @@ class CollectionTest extends TestCase {
 			return $v['invoice']['total'] * 2;
 		});
 		$this->assertEquals(600, $sum);
+	}
+
+/**
+ * Tests the stopWhen method with a callable
+ *
+ * @return void
+ */
+	public function testStopWhenCallable() {
+		$items = [10, 20, 40, 10, 5];
+		$collection = (new Collection($items))->stopWhen(function ($v) {
+			return $v > 20;
+		});
+		$this->assertEquals([10, 20], $collection->toArray());
+	}
+
+/**
+ * Tests the stopWhen method with a matching array
+ *
+ * @return void
+ */
+	public function testStopWhenWithArray() {
+		$items = [
+			['foo' => 'bar'],
+			['foo' => 'baz'],
+			['foo' => 'foo']
+		];
+		$collection = (new Collection($items))->stopWhen(['foo' => 'baz']);
+		$this->assertEquals([['foo' => 'bar']], $collection->toArray());
+	}
+
+/**
+ * Tests the unfold method
+ *
+ * @return void
+ */
+	public function testUnfold() {
+		$items = [
+			[1, 2, 3, 4],
+			[5, 6],
+			[7, 8]
+		];
+
+		$collection = (new Collection($items))->unfold();
+		$this->assertEquals(range(1, 8), $collection->toArray(false));
+
+		$items = [
+			[1, 2],
+			new Collection([3, 4])
+		];
+		$collection = (new Collection($items))->unfold();
+		$this->assertEquals(range(1, 4), $collection->toArray(false));
+	}
+
+/**
+ * Tests the unfold method with empty levels
+ *
+ * @return void
+ */
+	public function testUnfoldEmptyLevels() {
+		$items = [[], [1, 2], []];
+		$collection = (new Collection($items))->unfold();
+		$this->assertEquals(range(1, 2), $collection->toArray(false));
+
+		$items = [];
+		$collection = (new Collection($items))->unfold();
+		$this->assertEmpty($collection->toArray(false));
+	}
+
+/**
+ * Tests the unfold when passing a callable
+ *
+ * @return void
+ */
+	public function testUnfoldWithCallable() {
+		$items = [1, 2, 3];
+		$collection = (new Collection($items))->unfold(function ($item) {
+			return range($item, $item * 2);
+		});
+		$expected = [1, 2, 2, 3, 4, 3, 4, 5, 6];
+		$this->assertEquals($expected, $collection->toArray(false));
 	}
 
 }

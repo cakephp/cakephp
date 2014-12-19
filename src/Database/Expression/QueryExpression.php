@@ -539,8 +539,16 @@ class QueryExpression implements ExpressionInterface, Countable {
 			return new UnaryExpression('IS NULL', $expression, UnaryExpression::POSTFIX);
 		}
 
+		if ($operator === 'is not' && $value === null) {
+			return new UnaryExpression('IS NOT NULL', $expression, UnaryExpression::POSTFIX);
+		}
+
 		if ($operator === 'is' && $value !== null) {
 			$operator = '=';
+		}
+
+		if ($operator === 'is not' && $value !== null) {
+			$operator = '!=';
 		}
 
 		return new Comparison($expression, $value, $type, $operator);

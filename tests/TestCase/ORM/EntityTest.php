@@ -17,6 +17,8 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
+use TestApp\Model\Entity\Extending;
+use TestApp\Model\Entity\NonExtending;
 
 /**
  * Entity test case.
@@ -656,10 +658,10 @@ class EntityTest extends TestCase {
  */
 	public function testToArrayRecursive() {
 		$data = ['id' => 1, 'name' => 'James', 'age' => 20, 'phones' => ['123', '457']];
-		$user = new Entity($data);
+		$user = new Extending($data);
 		$comments = [
-			new Entity(['user_id' => 1, 'body' => 'Comment 1']),
-			new Entity(['user_id' => 1, 'body' => 'Comment 2']),
+			new NonExtending(['user_id' => 1, 'body' => 'Comment 1']),
+			new NonExtending(['user_id' => 1, 'body' => 'Comment 2']),
 		];
 		$user->comments = $comments;
 		$user->profile = new Entity(['email' => 'mark@example.com']);
@@ -822,30 +824,30 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testErrorsDeep() {
-		$entity2 = new Entity;
-		$entity3 = new Entity;
-		$entity = new Entity([
+		$user = new Entity();
+		$owner = new NonExtending();
+		$author = new Extending([
 			'foo' => 'bar',
 			'thing' => 'baz',
-			'user' => $entity2,
-			'owner' => $entity3
+			'user' => $user,
+			'owner' => $owner
 		]);
-		$entity->errors('thing', ['this is a mistake']);
-		$entity2->errors(['a' => ['error1'], 'b' => ['error2']]);
-		$entity3->errors(['c' => ['error3'], 'd' => ['error4']]);
+		$author->errors('thing', ['this is a mistake']);
+		$user->errors(['a' => ['error1'], 'b' => ['error2']]);
+		$owner->errors(['c' => ['error3'], 'd' => ['error4']]);
 
 		$expected = ['a' => ['error1'], 'b' => ['error2']];
-		$this->assertEquals($expected, $entity->errors('user'));
+		$this->assertEquals($expected, $author->errors('user'));
 
 		$expected = ['c' => ['error3'], 'd' => ['error4']];
-		$this->assertEquals($expected, $entity->errors('owner'));
+		$this->assertEquals($expected, $author->errors('owner'));
 
-		$entity->set('multiple', [$entity2, $entity3]);
+		$author->set('multiple', [$user, $owner]);
 		$expected = [
 			['a' => ['error1'], 'b' => ['error2']],
 			['c' => ['error3'], 'd' => ['error4']]
 		];
-		$this->assertEquals($expected, $entity->errors('multiple'));
+		$this->assertEquals($expected, $author->errors('multiple'));
 	}
 
 /**
@@ -854,14 +856,16 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testErrorPathReading() {
-		$assoc = new Entity;
-		$entity = new Entity([
+		$assoc = new Entity();
+		$assoc2 = new NonExtending();
+		$entity = new Extending([
 			'field' => 'value',
 			'one' => $assoc,
-			'many' => [$assoc]
+			'many' => [$assoc2]
 		]);
 		$entity->errors('wrong', 'Bad stuff');
 		$assoc->errors('nope', 'Terrible things');
+		$assoc2->errors('nope', 'Terrible things');
 
 		$this->assertEquals(['Bad stuff'], $entity->errors('wrong'));
 		$this->assertEquals(['Terrible things'], $entity->errors('many.0.nope'));

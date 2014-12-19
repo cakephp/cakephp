@@ -2780,7 +2780,7 @@ class QueryTest extends TestCase {
 		$result = $query->sql();
 		$this->assertQuotedQuery(
 			$this->applyConnectionPrefix(
-				'INSERT INTO <~articles> \(<title>, <body>\) ' .
+				'INSERT INTO <~articles> \(<title>, <body>\) (OUTPUT INSERTED\.\* )?' .
 				'VALUES \(:c0, :c1\)'
 			),
 			$result,
@@ -2788,7 +2788,12 @@ class QueryTest extends TestCase {
 		);
 
 		$result = $query->execute();
-		$this->assertCount(1, $result, '1 row should be inserted');
+		$result->closeCursor();
+
+		//PDO_SQLSRV returns -1 for successful inserts when using INSERT ... OUTPUT
+		if (!$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver) {
+			$this->assertCount(1, $result, '1 row should be inserted');
+		}
 
 		$expected = [
 			[
@@ -2818,7 +2823,7 @@ class QueryTest extends TestCase {
 		$result = $query->sql();
 		$this->assertQuotedQuery(
 			$this->applyConnectionPrefix(
-				'INSERT INTO <~articles> \(<title>, <body>\) ' .
+				'INSERT INTO <~articles> \(<title>, <body>\) (OUTPUT INSERTED\.\* )?' .
 				'VALUES \(:c0, :c1\)'
 			),
 			$result,
@@ -2826,7 +2831,12 @@ class QueryTest extends TestCase {
 		);
 
 		$result = $query->execute();
-		$this->assertCount(1, $result, '1 row should be inserted');
+		$result->closeCursor();
+
+		//PDO_SQLSRV returns -1 for successful inserts when using INSERT ... OUTPUT
+		if (!$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver) {
+			$this->assertCount(1, $result, '1 row should be inserted');
+		}
 
 		$expected = [
 			[
@@ -2857,7 +2867,12 @@ class QueryTest extends TestCase {
 			]);
 
 		$result = $query->execute();
-		$this->assertCount(2, $result, '2 rows should be inserted');
+		$result->closeCursor();
+
+		//PDO_SQLSRV returns -1 for successful inserts when using INSERT ... OUTPUT
+		if (!$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver) {
+			$this->assertCount(2, $result, '2 rows should be inserted');
+		}
 
 		$expected = [
 			[
@@ -2898,7 +2913,7 @@ class QueryTest extends TestCase {
 
 		$result = $query->sql();
 		$this->assertQuotedQuery(
-			$this->applyConnectionPrefix('INSERT INTO <~articles> \(<title>, <body>, <author_id>\) SELECT'),
+			$this->applyConnectionPrefix('INSERT INTO <~articles> \(<title>, <body>, <author_id>\) (OUTPUT INSERTED\.\* )?SELECT'),
 			$result,
 			true
 		);
@@ -2908,8 +2923,13 @@ class QueryTest extends TestCase {
 			true
 		);
 		$result = $query->execute();
+		$result->closeCursor();
 
-		$this->assertCount(1, $result);
+		//PDO_SQLSRV returns -1 for successful inserts when using INSERT ... OUTPUT
+		if (!$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver) {
+			$this->assertCount(1, $result);
+		}
+
 		$result = (new Query($this->connection))->select('*')
 			->from('articles')
 			->where(['author_id' => 99])
@@ -2958,12 +2978,31 @@ class QueryTest extends TestCase {
  */
 	public function testInsertExpressionValues() {
 		$query = new Query($this->connection);
-		$query->insert(['title'])
+		$query->insert(['title', 'author_id'])
 			->into('articles')
-			->values(['title' => $query->newExpr("SELECT 'jose'")]);
+			->values(['title' => $query->newExpr("SELECT 'jose'"), 'author_id' => 99]);
 
 		$result = $query->execute();
+		$result->closeCursor();
+
+		//PDO_SQLSRV returns -1 for successful inserts when using INSERT ... OUTPUT
+		if (!$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver) {
+			$this->assertCount(1, $result);
+		}
+
+		$result = (new Query($this->connection))->select('*')
+			->from('articles')
+			->where(['author_id' => 99])
+			->execute();
 		$this->assertCount(1, $result);
+		$expected = [
+			'id' => 4,
+			'title' => 'jose',
+			'body' => null,
+			'author_id' => '99',
+			'published' => 'N',
+		];
+		$this->assertEquals($expected, $result->fetch('assoc'));
 
 		$subquery = new Query($this->connection);
 		$subquery->select(['name'])
@@ -2971,11 +3010,29 @@ class QueryTest extends TestCase {
 			->where(['id' => 1]);
 
 		$query = new Query($this->connection);
-		$query->insert(['title'])
+		$query->insert(['title', 'author_id'])
 			->into('articles')
-			->values(['title' => $subquery]);
+			->values(['title' => $subquery, 'author_id' => 100]);
 		$result = $query->execute();
+		$result->closeCursor();
+		//PDO_SQLSRV returns -1 for successful inserts when using INSERT ... OUTPUT
+		if (!$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver) {
+			$this->assertCount(1, $result);
+		}
+
+		$result = (new Query($this->connection))->select('*')
+			->from('articles')
+			->where(['author_id' => 100])
+			->execute();
 		$this->assertCount(1, $result);
+		$expected = [
+			'id' => 5,
+			'title' => 'mariano',
+			'body' => null,
+			'author_id' => '100',
+			'published' => 'N',
+		];
+		$this->assertEquals($expected, $result->fetch('assoc'));
 	}
 
 /**
@@ -3455,6 +3512,29 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests that using the IS NOT operator will automatically translate to the best
+ * possible operator depending on the passed value
+ *
+ * @return void
+ */
+	public function testDirectIsNotNull() {
+		$sql = (new Query($this->connection))
+			->select(['name'])
+			->from(['authors'])
+			->where(['name IS NOT' => null])
+			->sql();
+		$this->assertQuotedQuery('WHERE \(<name>\) IS NOT NULL', $sql, true);
+
+		$results = (new Query($this->connection))
+			->select(['name'])
+			->from(['authors'])
+			->where(['name IS NOT' => 'larry'])
+			->execute();
+		$this->assertCount(3, $results);
+		$this->assertNotEquals(['name' => 'larry'], $results->fetch('assoc'));
+	}
+
+/**
  * Tests that case statements work correctly for various use-cases.
  *
  * @return void
@@ -3502,7 +3582,8 @@ class QueryTest extends TestCase {
 				'comment' => 'In limbo',
 				'published' => 'L'
 			])
-			->execute();
+			->execute()
+			->closeCursor();
 
 		$query = new Query($this->connection);
 		$conditions = [

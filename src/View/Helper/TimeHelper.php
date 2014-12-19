@@ -16,7 +16,7 @@ namespace Cake\View\Helper;
 
 use Cake\I18n\Time;
 use Cake\View\Helper;
-use Cake\View\Helper\StringTemplateTrait;
+use Cake\View\StringTemplateTrait;
 
 /**
  * Time Helper class for easy use of time data.

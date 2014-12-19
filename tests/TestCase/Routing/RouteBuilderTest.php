@@ -435,6 +435,21 @@ class RouteBuilderTest extends TestCase {
 		$all = $this->collection->routes();
 		$this->assertEquals('/api/:controller', $all[0]->template);
 		$this->assertEquals('/api/:controller/:action/*', $all[1]->template);
+		$this->assertInstanceOf('Cake\Routing\Route\Route', $all[0]);
+	}
+
+/**
+ * Test connecting fallback routes with specific route class
+ *
+ * @return void
+ */
+	public function testFallbacksWithClass() {
+		$routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'api']);
+		$routes->fallbacks('InflectedRoute');
+
+		$all = $this->collection->routes();
+		$this->assertEquals('/api/:controller', $all[0]->template);
+		$this->assertEquals('/api/:controller/:action/*', $all[1]->template);
 		$this->assertInstanceOf('Cake\Routing\Route\InflectedRoute', $all[0]);
 	}
 

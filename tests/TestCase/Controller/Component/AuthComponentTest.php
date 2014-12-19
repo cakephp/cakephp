@@ -65,7 +65,7 @@ class AuthComponentTest extends TestCase {
 		Configure::write('App.namespace', 'TestApp');
 
 		Router::scope('/', function ($routes) {
-			$routes->fallbacks();
+			$routes->fallbacks('InflectedRoute');
 		});
 
 		$request = new Request();
@@ -872,10 +872,10 @@ class AuthComponentTest extends TestCase {
 		$event = new Event('Controller.startup', $this->Controller);
 		Router::reload();
 		Router::prefix('admin', function ($routes) {
-			$routes->fallbacks();
+			$routes->fallbacks('InflectedRoute');
 		});
 		Router::scope('/', function ($routes) {
-			$routes->fallbacks();
+			$routes->fallbacks('InflectedRoute');
 		});
 
 		$url = '/admin/auth_test/add';
@@ -932,10 +932,10 @@ class AuthComponentTest extends TestCase {
 		$event = new Event('Controller.startup', $this->Controller);
 		Router::reload();
 		Router::prefix('admin', function ($routes) {
-			$routes->fallbacks();
+			$routes->fallbacks('InflectedRoute');
 		});
 		Router::scope('/', function ($routes) {
-			$routes->fallbacks();
+			$routes->fallbacks('InflectedRoute');
 		});
 
 		$url = '/admin/auth_test/login';

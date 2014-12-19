@@ -29,6 +29,7 @@ use Cake\View\CellTrait;
 use Cake\View\ViewVarsTrait;
 use InvalidArgumentException;
 use LogicException;
+use RuntimeException;
 
 /**
  * View, the V in the MVC triad. View interacts with Helpers and view variables passed
@@ -207,15 +208,6 @@ class View {
 	public $elementCache = 'default';
 
 /**
- * Element cache settings
- *
- * @var array
- * @see View::_elementCache();
- * @see View::_renderElement
- */
-	public $elementCacheSettings = array();
-
-/**
  * List of variables to collect from the associated controller.
  *
  * @var array
@@ -360,18 +352,17 @@ class View {
  *   is false.
  */
 	public function element($name, array $data = array(), array $options = array()) {
-		if (!isset($options['callbacks'])) {
-			$options['callbacks'] = false;
-		}
-
+		$options += ['callbacks' => false, 'cache' => null];
 		if (isset($options['cache'])) {
-			$contents = $this->_elementCache($name, $data, $options);
-			if ($contents !== false) {
-				return $contents;
-			}
+			$options['cache'] = $this->_elementCache($name, $data, $options);
 		}
 
 		$file = $this->_getElementFilename($name);
+		if ($file && $options['cache']) {
+			return $this->cache(function () use ($file, $data, $options) {
+				echo $this->_renderElement($file, $data, $options);
+			}, $options['cache']);
+		}
 		if ($file) {
 			return $this->_renderElement($file, $data, $options);
 		}
@@ -382,6 +373,37 @@ class View {
 			$file = $plugin . 'Element' . DS . $name . $this->_ext;
 			throw new Exception\MissingElementException($file);
 		}
+	}
+
+/**
+ * Create a cached block of view logic.
+ *
+ * This allows you to cache a block of view output into the cache
+ * defined in `elementCache`.
+ *
+ * This method will attempt to read the cache first. If the cache
+ * is empty, the $block will be run and the output stored.
+ *
+ * @param callable $block The block of code that you want to cache the output of.
+ * @param array $options The options defining the cache key etc.
+ * @return string The rendered content.
+ * @throws \RuntimeException When $options is lacking a 'key' option.
+ */
+	public function cache(callable $block, array $options = []) {
+		$options += ['key' => '', 'config' => $this->elementCache];
+		if (empty($options['key'])) {
+			throw new RuntimeException('Cannot cache content with an empty key');
+		}
+		$result = Cache::read($options['key'], $options['config']);
+		if ($result) {
+			return $result;
+		}
+		ob_start();
+		$block();
+		$result = ob_get_clean();
+
+		Cache::write($options['key'], $result, $options['config']);
+		return $result;
 	}
 
 /**
@@ -417,6 +439,8 @@ class View {
  * @param string|null $layout Layout to use.
  * @return string|null Rendered content or null if content already rendered and returned earlier.
  * @throws \Cake\Core\Exception\Exception If there is an error in the view.
+ * @triggers View.beforeRender $this, array($viewFileName)
+ * @triggers View.afterRender $this, array($viewFileName)
  */
 	public function render($view = null, $layout = null) {
 		if ($this->hasRendered) {
@@ -448,6 +472,8 @@ class View {
  * @param string|null $layout Layout name
  * @return mixed Rendered output, or false on error
  * @throws \Cake\Core\Exception\Exception if there is an error in the view.
+ * @triggers View.beforeLayout $this, array($layoutFileName)
+ * @triggers View.afterLayout $this, array($layoutFileName)
  */
 	public function renderLayout($content, $layout = null) {
 		$layoutFileName = $this->_getLayoutFileName($layout);
@@ -589,6 +615,17 @@ class View {
 	}
 
 /**
+ * Check if a block exists
+ *
+ * @param string $name Name of the block
+ *
+ * @return bool
+ */
+	public function exists($name) {
+		return $this->Blocks->exists($name);
+	}
+
+/**
  * Provides view or element extension/inheritance. Views can extends a
  * parent view and populate blocks in the parent template.
  *
@@ -696,6 +733,8 @@ class View {
  *   View::$viewVars will be used.
  * @return string Rendered output
  * @throws \LogicException When a block is left open.
+ * @triggers View.beforeRenderFile $this, array($viewFile)
+ * @triggers View.afterRenderFile $this, array($viewFile, $content)
  */
 	protected function _render($viewFile, $data = array()) {
 		if (empty($data)) {
@@ -993,12 +1032,12 @@ class View {
 	}
 
 /**
- * Checks if an element is cached and returns the cached data if present
+ * Generate the cache configuration options for an element.
  *
  * @param string $name Element name
  * @param array $data Data
  * @param array $options Element options
- * @return string|null
+ * @return array Element Cache configuration.
  */
 	protected function _elementCache($name, $data, $options) {
 		$plugin = null;
@@ -1008,20 +1047,24 @@ class View {
 		if ($plugin) {
 			$underscored = Inflector::underscore($plugin);
 		}
-		$keys = array_merge(array($underscored, $name), array_keys($options), array_keys($data));
-		$this->elementCacheSettings = array(
+		$keys = array_merge(
+			array($underscored, $name),
+			array_keys($options),
+			array_keys($data)
+		);
+		$config = array(
 			'config' => $this->elementCache,
 			'key' => implode('_', $keys)
 		);
 		if (is_array($options['cache'])) {
 			$defaults = array(
 				'config' => $this->elementCache,
-				'key' => $this->elementCacheSettings['key']
+				'key' => $config['key']
 			);
-			$this->elementCacheSettings = $options['cache'] + $defaults;
+			$config = $options['cache'] + $defaults;
 		}
-		$this->elementCacheSettings['key'] = 'element_' . $this->elementCacheSettings['key'];
-		return Cache::read($this->elementCacheSettings['key'], $this->elementCacheSettings['config']);
+		$config['key'] = 'element_' . $config['key'];
+		return $config;
 	}
 
 /**
@@ -1032,6 +1075,8 @@ class View {
  * @param array $data Data to render
  * @param array $options Element options
  * @return string
+ * @triggers View.beforeRender $this, array($file)
+ * @triggers View.afterRender $this, array($file, $element)
  */
 	protected function _renderElement($file, $data, $options) {
 		$current = $this->_current;
@@ -1051,9 +1096,6 @@ class View {
 		$this->_currentType = $restore;
 		$this->_current = $current;
 
-		if (isset($options['cache'])) {
-			Cache::write($this->elementCacheSettings['key'], $element, $this->elementCacheSettings['config']);
-		}
 		return $element;
 	}
 
