@@ -2287,7 +2287,7 @@ class QueryTest extends TestCase {
 
 /**
  * Tests that it is possible to call matching and contain on the same
- * association with only onle level of depth.
+ * association with only one level of depth.
  *
  * @return void
  */
@@ -2295,13 +2295,12 @@ class QueryTest extends TestCase {
 		$table = TableRegistry::get('articles');
 		$table->belongsToMany('tags');
 
-		$result = $table
-			->find()
+		$result = $table->find()
 			->matching('tags', function ($q) {
 				return $q->where(['tags.id' => 2]);
 			})
-				->contain('tags')
-				->first();
+			->contain('tags')
+			->first();
 
 		$this->assertEquals(1, $result->id);
 		$this->assertCount(2, $result->tags);
