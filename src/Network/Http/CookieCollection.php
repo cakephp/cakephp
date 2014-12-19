@@ -69,12 +69,12 @@ class CookieCollection {
 	}
 
 /**
- * Get stored cookies for a url.
+ * Get stored cookies for a URL.
  *
  * Finds matching stored cookies and returns a simple array
  * of name => value
  *
- * @param string $url The url to find cookies for.
+ * @param string $url The URL to find cookies for.
  * @return array
  */
 	public function get($url) {
