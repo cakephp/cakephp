@@ -79,11 +79,12 @@ trait ExtractTrait {
 		}
 
 		return function ($value) use ($matchers) {
-			$valid = true;
 			foreach ($matchers as $match) {
-				$valid = $valid && $match($value);
+				if (!$match($value)) {
+					return false;
+				}
 			}
-			return $valid;
+			return true;
 		};
 	}
 
