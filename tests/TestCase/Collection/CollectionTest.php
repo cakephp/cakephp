@@ -967,4 +967,84 @@ class CollectionTest extends TestCase {
 		$this->assertEquals(600, $sum);
 	}
 
+/**
+ * Tests the stopWhen method with a callable
+ *
+ * @return void
+ */
+	public function testStopWhenCallable() {
+		$items = [10, 20, 40, 10, 5];
+		$collection = (new Collection($items))->stopWhen(function ($v) {
+			return $v > 20;
+		});
+		$this->assertEquals([10, 20], $collection->toArray());
+	}
+
+/**
+ * Tests the stopWhen method with a matching array
+ *
+ * @return void
+ */
+	public function testStopWhenWithArray() {
+		$items = [
+			['foo' => 'bar'],
+			['foo' => 'baz'],
+			['foo' => 'foo']
+		];
+		$collection = (new Collection($items))->stopWhen(['foo' => 'baz']);
+		$this->assertEquals([['foo' => 'bar']], $collection->toArray());
+	}
+
+/**
+ * Tests the unfold method
+ *
+ * @return void
+ */
+	public function testUnfold() {
+		$items = [
+			[1, 2, 3, 4],
+			[5, 6],
+			[7, 8]
+		];
+
+		$collection = (new Collection($items))->unfold();
+		$this->assertEquals(range(1, 8), $collection->toArray(false));
+
+		$items = [
+			[1, 2],
+			new Collection([3, 4])
+		];
+		$collection = (new Collection($items))->unfold();
+		$this->assertEquals(range(1, 4), $collection->toArray(false));
+	}
+
+/**
+ * Tests the unfold method with empty levels
+ *
+ * @return void
+ */
+	public function testUnfoldEmptyLevels() {
+		$items = [[], [1, 2], []];
+		$collection = (new Collection($items))->unfold();
+		$this->assertEquals(range(1, 2), $collection->toArray(false));
+
+		$items = [];
+		$collection = (new Collection($items))->unfold();
+		$this->assertEmpty($collection->toArray(false));
+	}
+
+/**
+ * Tests the unfold when passing a callable
+ *
+ * @return void
+ */
+	public function testUnfoldWithCallable() {
+		$items = [1, 2, 3];
+		$collection = (new Collection($items))->unfold(function ($item) {
+			return range($item, $item * 2);
+		});
+		$expected = [1, 2, 2, 3, 4, 3, 4, 5, 6];
+		$this->assertEquals($expected, $collection->toArray(false));
+	}
+
 }
