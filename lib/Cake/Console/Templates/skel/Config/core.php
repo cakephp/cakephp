@@ -131,13 +131,14 @@
  * and their associated controller actions:
  *
  * Set to an array of prefixes you want to use in your application. Use for
- * admin or other prefixed routes.
+ * admin or other prefixed routes. It is possible to have different prefixes
+ * for the URL and the controller action by specifying the URL as a key.
  *
- * 	Routing.prefixes = array('admin', 'manager');
+ * 	Routing.prefixes = array('admin', 'executive' => 'manager');
  *
  * Enables:
  *	`admin_index()` and `/admin/controller/index`
- *	`manager_index()` and `/manager/controller/index`
+ *	`manager_index()` and `/executive/controller/index`
  *
  */
 	//Configure::write('Routing.prefixes', array('admin'));
