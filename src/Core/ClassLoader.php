@@ -50,8 +50,8 @@ class ClassLoader {
 	public function addNamespace($prefix, $baseDir, $prepend = false) {
 		$prefix = trim($prefix, '\\') . '\\';
 
-		$baseDir = rtrim($baseDir, '/') . DIRECTORY_SEPARATOR;
-		$baseDir = rtrim($baseDir, DIRECTORY_SEPARATOR) . '/';
+		$baseDir = rtrim($baseDir, '/') . DS;
+		$baseDir = rtrim($baseDir, DS) . '/';
 
 		if (!isset($this->_prefixes[$prefix])) {
 			$this->_prefixes[$prefix] = [];
@@ -103,7 +103,7 @@ class ClassLoader {
 		}
 
 		foreach ($this->_prefixes[$prefix] as $baseDir) {
-			$file = $baseDir . str_replace('\\', DIRECTORY_SEPARATOR, $relativeClass) . '.php';
+			$file = $baseDir . str_replace('\\', DS, $relativeClass) . '.php';
 
 			if ($this->_requireFile($file)) {
 				return $file;
