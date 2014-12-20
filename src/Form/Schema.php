@@ -116,4 +116,19 @@ class Schema {
 		return (bool) $field['required'];
 	}
 
+/**
+ * Get the type of the named field.
+ *
+ * @param string $field The name of the field.
+ * @return string|null Either the field type or null if the
+ *   field does not exist.
+ */
+	public function fieldType($name) {
+		$field = $this->field($name);
+		if (!$field) {
+			return null;
+		}
+		return $field['type'];
+	}
+
 }

@@ -111,4 +111,23 @@ class SchemaTest extends TestCase {
 		$this->assertFalse($schema->isRequired('nope'));
 	}
 
+/**
+ * test fieldType
+ *
+ * @return void
+ */
+	public function testFieldType() {
+		$schema = new Schema();
+
+		$schema->addField('name', 'string')
+			->addField('numbery', [
+				'type' => 'decimal',
+				'required' => true
+			]);
+		$this->assertEquals('string', $schema->fieldType('name'));
+		$this->assertEquals('decimal', $schema->fieldType('numbery'));
+		$this->assertNull($schema->fieldType('nope'));
+	}
+
+
 }
