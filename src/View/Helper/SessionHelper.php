@@ -16,6 +16,7 @@ namespace Cake\View\Helper;
 
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
+use Cake\View\View;
 
 /**
  * Session Helper.
@@ -23,6 +24,7 @@ use Cake\View\StringTemplateTrait;
  * Session reading from the view.
  *
  * @link http://book.cakephp.org/3.0/en/views/helpers/session.html
+ * @deprecated 3.0.0 Use request->session() instead.
  */
 class SessionHelper extends Helper {
 
@@ -38,6 +40,17 @@ class SessionHelper extends Helper {
 			'flash' => '<div id="{{key}}-message" class="message-{{class}}">{{message}}</div>'
 		]
 	];
+
+/**
+ *  Constructor
+ *
+ * @param \Cake\View\View $View The View this helper is being attached to.
+ * @param array $config Configuration settings for the helper.
+ */
+	public function __construct(View $View, array $config = array()) {
+		trigger_error('SessionHelper has been deprecated. Use request->session() instead.', E_USER_WARNING);
+		parent::__construct($View, $config);
+	}
 
 /**
  * Reads a session value for a key or returns values for all keys.
