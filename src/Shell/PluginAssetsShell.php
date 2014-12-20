@@ -27,7 +27,7 @@ class PluginAssetsShell extends Shell {
 
 /**
  * Attempt to symlink plugin assets to app's webroot. If symlinking fails it
- * fallback to copying the assets. For vendor namespaced plugin, parent folder
+ * fallbacks to copying the assets. For vendor namespaced plugin, parent folder
  * for vendor name are created if required.
  *
  * @param string|string $name Name of plugin for which to symlink assets.
@@ -36,6 +36,18 @@ class PluginAssetsShell extends Shell {
  */
 	public function symlink($name = null) {
 		$this->_process($this->_list($name));
+	}
+
+/**
+ * Copying plugin assets to app's webroot. For vendor namespaced plugin,
+ * parent folder for vendor name are created if required.
+ *
+ * @param string|string $name Name of plugin for which to symlink assets.
+ *   If null all plugins will be processed.
+ * @return void
+ */
+	public function copy($name = null) {
+		$this->_process($this->_list($name), true);
 	}
 
 /**
@@ -95,9 +107,10 @@ class PluginAssetsShell extends Shell {
  * Process plugins
  *
  * @param array $plugins List of plugins to process
+ * @param bool $copy Force copy mode. Default false.
  * @return void
  */
-	protected function _process($plugins) {
+	protected function _process($plugins, $copy = false) {
 		foreach ($plugins as $plugin => $config) {
 			$path = Plugin::path($plugin) . 'webroot';
 
@@ -121,12 +134,14 @@ class PluginAssetsShell extends Shell {
 				continue;
 			}
 
-			$result = $this->_createSymlink(
-				$config['srcPath'],
-				$config['destDir'] . $config['link']
-			);
-			if ($result) {
-				continue;
+			if (!$copy) {
+				$result = $this->_createSymlink(
+					$config['srcPath'],
+					$config['destDir'] . $config['link']
+				);
+				if ($result) {
+					continue;
+				}
 			}
 
 			$this->_copyDirectory(
@@ -208,7 +223,9 @@ class PluginAssetsShell extends Shell {
 		$parser = parent::getOptionParser();
 
 		$parser->addSubcommand('symlink', [
-			'help' => 'Symlink / copy assets to app\'s webroot.'
+			'help' => 'Symlink (copy as fallback) plugin assets to app\'s webroot.'
+		])->addSubcommand('copy', [
+			'help' => 'Copy plugin assets to app\'s webroot.'
 		])->addArgument('name', [
 			'help' => 'A specific plugin you want to symlink assets for.',
 			'optional' => true,

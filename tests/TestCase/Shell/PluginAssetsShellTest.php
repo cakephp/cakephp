@@ -164,11 +164,40 @@ class PluginAssetsShellTest extends TestCase {
 		$path = WWW_ROOT . 'test_plugin';
 		$link = new \SplFileInfo($path);
 		$this->assertTrue(file_exists($path . DS . 'root.js'));
+		unlink($path);
 
 		$path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
 		$link = new \SplFileInfo($path);
 		$this->assertFalse($link->isDir());
 		$this->assertFalse($link->isLink());
+	}
+
+/**
+ * testCopy
+ *
+ * @return void
+ */
+	public function testCopy() {
+		Plugin::load('TestPlugin');
+		Plugin::load('Company/TestPluginThree');
+
+		$this->shell->copy();
+
+		$path = WWW_ROOT . 'test_plugin';
+		$dir = new \SplFileInfo($path);
+		$this->assertTrue($dir->isDir());
+		$this->assertTrue(file_exists($path . DS . 'root.js'));
+
+		$folder = new Folder($path);
+		$folder->delete();
+
+		$path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
+		$link = new \SplFileInfo($path);
+		$this->assertTrue($link->isDir());
+		$this->assertTrue(file_exists($path . DS . 'css' . DS . 'company.css'));
+
+		$folder = new Folder(WWW_ROOT . 'company');
+		$folder->delete();
 	}
 
 }
