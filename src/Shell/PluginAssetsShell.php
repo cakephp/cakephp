@@ -30,20 +30,31 @@ class PluginAssetsShell extends Shell {
  * fallback to copying the assets. For vendor namespaced plugin, parent folder
  * for vendor name are created if required.
  *
+ * @param string|string $name Name of plugin for which to symlink assets.
+ *   If null all plugins will be processed.
  * @return void
  */
-	public function symlink() {
-		$this->_process($this->_list());
+	public function symlink($name = null) {
+		$this->_process($this->_list($name));
 	}
 
 /**
  * Get list of plugins to process. Plugins without a webroot directory are skipped.
  *
- * @return array
+ * @param string|string $name Name of plugin for which to symlink assets.
+ *   If null all plugins will be processed.
+ * @return array List of plugins with meta data.
  */
-	protected function _list() {
+	protected function _list($name = null) {
+		if ($name === null) {
+			$pluginsList = Plugin::loaded();
+		} else {
+			$pluginsList = [$name];
+		}
+
 		$plugins = [];
-		foreach (Plugin::loaded() as $plugin) {
+
+		foreach ($pluginsList as $plugin) {
 			$path = Plugin::path($plugin) . 'webroot';
 			if (!is_dir($path)) {
 				$this->out('', 1, Shell::VERBOSE);
@@ -72,6 +83,7 @@ class PluginAssetsShell extends Shell {
 				'namespaced' => $namespaced
 			];
 		}
+
 		return $plugins;
 	}
 
@@ -192,7 +204,10 @@ class PluginAssetsShell extends Shell {
 		$parser = parent::getOptionParser();
 
 		$parser->addSubcommand('symlink', [
-			'help' => 'Symlink / copy assets to app\'s webroot'
+			'help' => 'Symlink / copy assets to app\'s webroot.'
+		])->addArgument('name', [
+			'help' => 'A specific plugin you want to symlink assets for.',
+			'optional' => true,
 		]);
 
 		return $parser;

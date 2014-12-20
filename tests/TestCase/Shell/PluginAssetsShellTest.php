@@ -36,7 +36,7 @@ class PluginAssetsShellTest extends TestCase {
 		parent::setUp();
 
 		$this->skipIf(
-			DIRECTORY_SEPARATOR === '\\',
+			DS === '\\',
 			'Skip PluginAssetsShell tests on windows to prevent side effects for UrlHelper tests on AppVeyor.'
 		);
 
@@ -74,7 +74,7 @@ class PluginAssetsShellTest extends TestCase {
 		$path = WWW_ROOT . 'test_plugin';
 		$link = new \SplFileInfo($path);
 		$this->assertTrue(file_exists($path . DS . 'root.js'));
-		if (DIRECTORY_SEPARATOR === '\\') {
+		if (DS === '\\') {
 			$this->assertTrue($link->isDir());
 			$folder = new Folder($path);
 			$folder->delete();
@@ -107,7 +107,7 @@ class PluginAssetsShellTest extends TestCase {
 		$this->shell->symlink();
 		$path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
 		$link = new \SplFileInfo($path);
-		if (DIRECTORY_SEPARATOR === '\\') {
+		if (DS === '\\') {
 			$this->assertTrue($link->isDir());
 		} else {
 			$this->assertTrue($link->isLink());
@@ -148,6 +148,27 @@ class PluginAssetsShellTest extends TestCase {
 
 		$this->shell->symlink();
 		$this->assertFalse(file_exists(WWW_ROOT . 'test_plugin_two'));
+	}
+
+/**
+ * testSymlinkingSpecifiedPlugin
+ *
+ * @return void
+ */
+	public function testSymlinkingSpecifiedPlugin() {
+		Plugin::load('TestPlugin');
+		Plugin::load('Company/TestPluginThree');
+
+		$this->shell->symlink('TestPlugin');
+
+		$path = WWW_ROOT . 'test_plugin';
+		$link = new \SplFileInfo($path);
+		$this->assertTrue(file_exists($path . DS . 'root.js'));
+
+		$path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
+		$link = new \SplFileInfo($path);
+		$this->assertFalse($link->isDir());
+		$this->assertFalse($link->isLink());
 	}
 
 }
