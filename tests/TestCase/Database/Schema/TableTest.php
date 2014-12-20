@@ -164,11 +164,13 @@ class TableTest extends TestCase {
 			'default' => 'A title'
 		])->addColumn('body', [
 			'type' => 'text',
+			'default' => null,
 		]);
 		$result = $table->defaultValues();
 		$expected = [
 			'id' => 0,
-			'title' => 'A title'
+			'title' => 'A title',
+			'body' => null
 		];
 		$this->assertEquals($expected, $result);
 	}
