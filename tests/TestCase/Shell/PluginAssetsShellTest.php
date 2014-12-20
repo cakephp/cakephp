@@ -34,6 +34,12 @@ class PluginAssetsShellTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
+
+		$this->skipIf(
+			DIRECTORY_SEPARATOR === '\\',
+			'Skip PluginAssetsShell tests on windows to prevent side effects for UrlHelper tests on AppVeyor.'
+		);
+
 		$this->io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
 		$this->shell = $this->getMock(
@@ -96,9 +102,7 @@ class PluginAssetsShellTest extends TestCase {
 	public function testSymlinkWhenVendorDirectoryExits() {
 		Plugin::load('Company/TestPluginThree');
 
-		// @codingStandardsIgnoreStart
-		@mkdir(WWW_ROOT . 'company'); // Appveyor is unable to delete the folder in testSymlink() method
-		// @codingStandardsIgnoreEnd
+		mkdir(WWW_ROOT . 'company');
 
 		$this->shell->symlink();
 		$path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
