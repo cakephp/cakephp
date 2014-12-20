@@ -162,8 +162,13 @@ class TableTest extends TestCase {
 		])->addColumn('title', [
 			'type' => 'string',
 			'default' => 'A title'
+		])->addColumn('name', [
+			'type' => 'string',
+			'null' => false,
+			'default' => null,
 		])->addColumn('body', [
 			'type' => 'text',
+			'null' => true,
 			'default' => null,
 		]);
 		$result = $table->defaultValues();

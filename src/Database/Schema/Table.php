@@ -342,9 +342,13 @@ class Table {
 	public function defaultValues() {
 		$defaults = [];
 		foreach ($this->_columns as $name => $data) {
-			if (array_key_exists('default', $data)) {
-				$defaults[$name] = $data['default'];
+			if (!array_key_exists('default', $data)) {
+				continue;
 			}
+			if ($data['default'] === null && $data['null'] !== true) {
+				continue;
+			}
+			$defaults[$name] = $data['default'];
 		}
 		return $defaults;
 	}
