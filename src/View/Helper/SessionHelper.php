@@ -40,20 +40,20 @@ class SessionHelper extends Helper {
 	];
 
 /**
- * Used to read a session values set in a controller for a key or return values for all keys.
+ * Reads a session value for a key or returns values for all keys.
  *
  * In your view: `$this->Session->read('Controller.sessKey');`
  * Calling the method without a param will return all session vars
  *
- * @param string|null $name the name of the session key you want to read
- * @return mixed values from the session vars
+ * @param string|null $name The name of the session key you want to read
+ * @return mixed Values from the session vars
  */
 	public function read($name = null) {
 		return $this->request->session()->read($name);
 	}
 
 /**
- * Used to check is a session key has been set
+ * Checks if a session key has been set.
  *
  * In your view: `$this->Session->check('Controller.sessKey');`
  *
@@ -65,7 +65,7 @@ class SessionHelper extends Helper {
 	}
 
 /**
- * Used to render the message set in Controller::$this->request->session()->setFlash()
+ * Renders the message set in Controller::$this->request->session()->setFlash()
  *
  * In your view: $this->Session->flash('somekey');
  * Will default to flash if no param is passed
