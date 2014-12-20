@@ -35,7 +35,6 @@ class Schema {
 		'type' => null,
 		'length' => null,
 		'precision' => null,
-		'required' => false,
 	];
 
 /**
