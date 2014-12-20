@@ -396,10 +396,10 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * to be joined, unless the third argument is set to true.
  *
  * When no join type is specified an INNER JOIN is used by default:
- * ``$query->join(['authors'])`` Will produce INNER JOIN authors ON (1 = 1)
+ * ``$query->join(['authors'])`` Will produce ``INNER JOIN authors ON 1 = 1``
  *
  * It is also possible to alias joins using the array key:
- * ``$query->join(['a' => 'authors'])`` Will produce INNER JOIN authors a ON (1 = 1)
+ * ``$query->join(['a' => 'authors'])`` Will produce ``INNER JOIN authors a ON 1 = 1``
  *
  * A join can be fully described and aliased using the array notation:
  *
@@ -411,7 +411,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *			'conditions' => 'a.id = b.author_id'
  *		]
  *	]);
- *  // Produces LEFT JOIN authors a ON (a.id = b.author_id)
+ *  // Produces LEFT JOIN authors a ON a.id = b.author_id
  * }}}
  *
  * You can even specify multiple joins in an array, including the full description:
@@ -424,13 +424,13 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *			'conditions' => 'a.id = b.author_id'
  *		],
  *		'p' => [
- *			'table' => 'products',
+ *			'table' => 'publishers',
  *			'type' => 'INNER',
- *			'conditions' => 'a.owner_id = p.id
+ *			'conditions' => 'b.publisher_id = p.id AND p.name = "Cake Software Foundation"'
  *		]
  *	]);
- *	// LEFT JOIN authors a ON (a.id = b.author_id)
- *	// INNER JOIN products p (a.owner_id = p.id)
+ *	// LEFT JOIN authors a ON a.id = b.author_id
+ *	// INNER JOIN publishers p ON b.publisher_id = p.id AND p.name = "Cake Software Foundation"
  * }}}
  *
  * ### Using conditions and types
@@ -448,7 +448,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *		'table' => 'articles',
  *		'conditions' => [
  *			'a.posted >=' => new DateTime('-3 days'),
- *			'a.published' => true
+ *			'a.published' => true,
  *			'a.author_id = authors.id'
  *		]
  *	]], ['a.posted' => 'datetime', 'a.published' => 'boolean'])
@@ -514,16 +514,16 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Adds a single LEFT JOIN clause to the query.
  *
  * {{{
- * // LEFT JOIN authors ON posts.author_id' = authors.id
- * $query->leftJoin('authors', ['posts.author_id' = authors.id']);
+ * // LEFT JOIN authors ON posts.author_id = authors.id
+ * $query->leftJoin('authors', ['posts.author_id = authors.id']);
  * }}}
  *
  * You can pass an array in the first parameter if you need to alias
  * the table for the join:
  *
  * {{{
- * // LEFT JOIN authors a ON posts.author_id' = a.id
- * $query->leftJoin(['a' => 'authors'], ['posts.author_id' = 'a.id']);
+ * // LEFT JOIN authors a ON posts.author_id = a.id
+ * $query->leftJoin(['a' => 'authors'], ['posts.author_id = a.id']);
  * }}}
  *
  * @param string|array $table The table to join with
@@ -541,16 +541,16 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Adds a single RIGHT JOIN clause to the query.
  *
  * {{{
- * // RIGHT JOIN authors ON posts.author_id' = authors.id
- * $query->rightJoin('authors', ['posts.author_id' = authors.id']);
+ * // RIGHT JOIN authors ON posts.author_id = authors.id
+ * $query->rightJoin('authors', ['posts.author_id = authors.id']);
  * }}}
  *
  * You can pass an array in the first parameter if you need to alias
  * the table for the join:
  *
  * {{{
- * // RIGHT JOIN authors a ON posts.author_id' = a.id
- * $query->righJoin(['a' => 'authors'], ['posts.author_id' = 'a.id']);
+ * // RIGHT JOIN authors a ON posts.author_id = a.id
+ * $query->righJoin(['a' => 'authors'], ['posts.author_id = a.id']);
  * }}}
  *
  * @param string|array $table The table to join with
@@ -568,16 +568,16 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Adds a single INNER JOIN clause to the query.
  *
  * {{{
- * // INNER JOIN authors ON posts.author_id' = authors.id
- * $query->innerJoin('authors', ['posts.author_id' = authors.id']);
+ * // INNER JOIN authors ON posts.author_id = authors.id
+ * $query->innerJoin('authors', ['posts.author_id = authors.id']);
  * }}}
  *
  * You can pass an array in the first parameter if you need to alias
  * the table for the join:
  *
  * {{{
- * // INNER JOIN authors a ON posts.author_id' = a.id
- * $query->innerJoin(['a' => 'authors'], ['posts.author_id' = 'a.id']);
+ * // INNER JOIN authors a ON posts.author_id = a.id
+ * $query->innerJoin(['a' => 'authors'], ['posts.author_id = a.id']);
  * }}}
  *
  * @param string|array $table The table to join with
