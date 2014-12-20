@@ -49,6 +49,10 @@ class PluginAssetsShell extends Shell {
 		if ($name === null) {
 			$pluginsList = Plugin::loaded();
 		} else {
+			if (!Plugin::loaded($name)) {
+				$this->err(sprintf('Plugin %s is not loaded.', $name));
+				return [];
+			}
 			$pluginsList = [$name];
 		}
 
