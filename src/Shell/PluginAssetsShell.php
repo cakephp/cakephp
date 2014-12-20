@@ -30,7 +30,7 @@ class PluginAssetsShell extends Shell {
  * fallbacks to copying the assets. For vendor namespaced plugin, parent folder
  * for vendor name are created if required.
  *
- * @param string|string $name Name of plugin for which to symlink assets.
+ * @param string|null $name Name of plugin for which to symlink assets.
  *   If null all plugins will be processed.
  * @return void
  */
@@ -42,7 +42,7 @@ class PluginAssetsShell extends Shell {
  * Copying plugin assets to app's webroot. For vendor namespaced plugin,
  * parent folder for vendor name are created if required.
  *
- * @param string|string $name Name of plugin for which to symlink assets.
+ * @param string|null $name Name of plugin for which to symlink assets.
  *   If null all plugins will be processed.
  * @return void
  */
