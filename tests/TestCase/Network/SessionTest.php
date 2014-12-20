@@ -226,6 +226,34 @@ class SessionTest extends TestCase {
 	}
 
 /**
+ * Test consuming session data.
+ *
+ * @return void
+ */
+	public function testConsume() {
+		$session = new Session();
+		$session->write('Some.string', 'value');
+		$session->write('Some.array', ['key1' => 'value1', 'key2' => 'value2']);
+
+		$this->assertEquals('value', $session->read('Some.string'));
+
+		$value = $session->consume('Some.string');
+		$this->assertEquals('value', $value);
+		$this->assertFalse($session->check('Some.string'));
+
+		$value = $session->consume('');
+		$this->assertNull($value);
+
+		$value = $session->consume(null);
+		$this->assertNull($value);
+
+		$value = $session->consume('Some.array');
+		$expected = ['key1' => 'value1', 'key2' => 'value2'];
+		$this->assertEquals($expected, $value);
+		$this->assertFalse($session->check('Some.array'));
+	}
+
+/**
  * testId method
  *
  * @return void
