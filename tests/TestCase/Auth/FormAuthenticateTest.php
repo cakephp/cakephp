@@ -51,6 +51,8 @@ class FormAuthenticateTest extends TestCase {
 			'userModel' => 'Users'
 		]);
 		$password = password_hash('password', PASSWORD_DEFAULT);
+
+		TableRegistry::clear();
 		$Users = TableRegistry::get('Users');
 		$Users->updateAll(['password' => $password], []);
 		$this->response = $this->getMock('Cake\Network\Response');
@@ -198,6 +200,31 @@ class FormAuthenticateTest extends TestCase {
 		$expected = [
 			'id' => 1,
 			'username' => 'mariano',
+			'created' => new Time('2007-03-17 01:16:23'),
+			'updated' => new Time('2007-03-17 01:18:31')
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test that authenticate() includes virtual fields.
+ *
+ * @return void
+ */
+	public function testAuthenticateIncludesVirtualFields() {
+		$users = TableRegistry::get('Users');
+		$users->entityClass('TestApp\Model\Entity\VirtualUser');
+
+		$request = new Request('posts/index');
+		$request->data = [
+			'username' => 'mariano',
+			'password' => 'password'
+		];
+		$result = $this->auth->authenticate($request, $this->response);
+		$expected = [
+			'id' => 1,
+			'username' => 'mariano',
+			'bonus' => 'bonus',
 			'created' => new Time('2007-03-17 01:16:23'),
 			'updated' => new Time('2007-03-17 01:18:31')
 		];

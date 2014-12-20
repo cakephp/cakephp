@@ -119,7 +119,6 @@ abstract class BaseAuthenticate implements EventListenerInterface {
 
 		$result = $table
 			->where($conditions)
-			->hydrate(false)
 			->first();
 
 		if (empty($result)) {
@@ -128,16 +127,16 @@ abstract class BaseAuthenticate implements EventListenerInterface {
 
 		if ($password !== null) {
 			$hasher = $this->passwordHasher();
-			$hashedPassword = $result[$fields['password']];
+			$hashedPassword = $result->get($fields['password']);
 			if (!$hasher->check($password, $hashedPassword)) {
 				return false;
 			}
 
 			$this->_needsPasswordRehash = $hasher->needsRehash($hashedPassword);
-			unset($result[$fields['password']]);
+			$result->unsetProperty($fields['password']);
 		}
 
-		return $result;
+		return $result->toArray();
 	}
 
 /**
