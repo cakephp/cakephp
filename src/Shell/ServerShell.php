@@ -91,7 +91,7 @@ class ServerShell extends Shell {
 			$this->_documentRoot = $this->params['document_root'];
 		}
 
-		// for windows
+		// For Windows
 		if (substr($this->_documentRoot, -1, 1) === DS) {
 			$this->_documentRoot = substr($this->_documentRoot, 0, strlen($this->_documentRoot) - 1);
 		}
