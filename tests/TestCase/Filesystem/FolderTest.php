@@ -172,7 +172,7 @@ class FolderTest extends TestCase {
  * @return void
  */
 	public function testRecursiveCreateFailure() {
-		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'Cant perform operations using permissions on windows.');
+		$this->skipIf(DS === '\\', 'Cant perform operations using permissions on windows.');
 
 		$path = TMP . 'tests/one';
 		mkdir($path, 0777, true);
@@ -267,7 +267,7 @@ class FolderTest extends TestCase {
  * @return void
  */
 	public function testChmod() {
-		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'Folder permissions tests not supported on Windows.');
+		$this->skipIf(DS === '\\', 'Folder permissions tests not supported on Windows.');
 
 		$path = TMP . 'tests/';
 		$Folder = new Folder($path);

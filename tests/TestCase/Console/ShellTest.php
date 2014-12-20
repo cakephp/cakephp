@@ -481,7 +481,7 @@ class ShellTest extends TestCase {
  * @return void
  */
 	public function testCreateFileNoPermissions() {
-		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'Cant perform operations using permissions on windows.');
+		$this->skipIf(DS === '\\', 'Cant perform operations using permissions on windows.');
 
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'no_perms';
