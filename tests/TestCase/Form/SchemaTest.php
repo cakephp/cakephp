@@ -93,4 +93,22 @@ class SchemaTest extends TestCase {
 		$this->assertNull($schema->field('name'));
 	}
 
+/**
+ * test isRequired
+ *
+ * @return void
+ */
+	public function testIsRequired() {
+		$schema = new Schema();
+
+		$schema->addField('name', ['type' => 'string'])
+			->addField('email', [
+				'type' => 'string',
+				'required' => true
+			]);
+		$this->assertFalse($schema->isRequired('name'));
+		$this->assertTrue($schema->isRequired('email'));
+		$this->assertFalse($schema->isRequired('nope'));
+	}
+
 }

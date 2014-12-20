@@ -100,4 +100,20 @@ class Schema {
 		return $this->_fields[$name];
 	}
 
+/**
+ * Check whether or not a field is required.
+ *
+ * Fields that are not defined in the schema are not required.
+ *
+ * @param string $name The name of the field.
+ * @return bool Whether or not a field is required.
+ */
+	public function isRequired($name) {
+		$field = $this->field($name);
+		if (!$field) {
+			return false;
+		}
+		return (bool) $field['required'];
+	}
+
 }
