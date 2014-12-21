@@ -437,6 +437,26 @@ abstract class IntegrationTestCase extends TestCase {
 	}
 
 /**
+ * Asserts that the Location header is not set.
+ *
+ * @param string $message The failure message that will be appended to the generated message.
+ * @return void
+ */
+	public function assertNoRedirect($message = '') {
+		if (!$this->_response) {
+			$this->fail('No response set, cannot assert location header. ' . $message);
+		}
+		$result = $this->_response->header();
+		if (!$message) {
+			$message = 'Redirect header set';
+		}
+		if (!empty($result['Location'])) {
+			$message .= ': ' . $result['Location'];
+		}
+		$this->assertEmpty($result['Location'], $message);
+	}
+
+/**
  * Asserts response headers
  *
  * @param string $header The header to check
