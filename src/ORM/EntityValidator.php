@@ -174,7 +174,7 @@ class EntityValidator {
 			return true;
 		}
 
-		$success = empty($entity->validate($validator));
+		$success = !$entity->validate($validator);
 
 		$event = $this->_table->dispatchEvent('Model.afterValidate', $pass);
 		if ($event->isStopped()) {
