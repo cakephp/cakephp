@@ -17,6 +17,7 @@ namespace Cake\View\Helper;
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
+use Cake\Form\Form;
 use Cake\ORM\Entity;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
@@ -25,6 +26,7 @@ use Cake\Utility\Security;
 use Cake\View\Form\ArrayContext;
 use Cake\View\Form\ContextInterface;
 use Cake\View\Form\EntityContext;
+use Cake\View\Form\FormContext;
 use Cake\View\Form\NullContext;
 use Cake\View\Helper;
 use Cake\View\Helper\IdGeneratorTrait;
@@ -251,6 +253,12 @@ class FormHelper extends Helper {
 			}
 			if (is_array($data['entity']) && empty($data['entity']['schema'])) {
 				return new EntityContext($request, $data);
+			}
+		});
+
+		$this->addContextProvider('form', function ($request, $data) {
+			if ($data['entity'] instanceof Form) {
+				return new FormContext($request, $data);
 			}
 		});
 

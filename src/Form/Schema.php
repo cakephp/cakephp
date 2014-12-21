@@ -34,7 +34,7 @@ class Schema {
 	protected $_fieldDefaults = [
 		'type' => null,
 		'length' => null,
-		'required' => false,
+		'precision' => null,
 	];
 
 /**
@@ -98,6 +98,21 @@ class Schema {
 			return null;
 		}
 		return $this->_fields[$name];
+	}
+
+/**
+ * Get the type of the named field.
+ *
+ * @param string $name The name of the field.
+ * @return string|null Either the field type or null if the
+ *   field does not exist.
+ */
+	public function fieldType($name) {
+		$field = $this->field($name);
+		if (!$field) {
+			return null;
+		}
+		return $field['type'];
 	}
 
 }

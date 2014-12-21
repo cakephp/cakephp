@@ -19,6 +19,7 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Form\Form;
 use Cake\Network\Request;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
@@ -346,6 +347,7 @@ class FormHelperTest extends TestCase {
 				'title' => ['type' => 'string']
 			]
 		];
+		$form = new Form();
 
 		return [
 			'entity' => [$entity, 'Cake\View\Form\EntityContext'],
@@ -353,6 +355,7 @@ class FormHelperTest extends TestCase {
 			'empty_collection' => [$emptyCollection, 'Cake\View\Form\NullContext'],
 			'array' => [$data, 'Cake\View\Form\ArrayContext'],
 			'array_object' => [$arrayObject, 'Cake\View\Form\NullContext'],
+			'form' => [$form, 'Cake\View\Form\FormContext'],
 			'none' => [null, 'Cake\View\Form\NullContext'],
 			'false' => [false, 'Cake\View\Form\NullContext'],
 		];

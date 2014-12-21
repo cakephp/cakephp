@@ -51,7 +51,7 @@ class SchemaTest extends TestCase {
 
 		$this->assertEquals(['name'], $schema->fields());
 		$res = $schema->field('name');
-		$expected = ['type' => 'string', 'length' => null, 'required' => false];
+		$expected = ['type' => 'string', 'length' => null, 'precision' => null];
 		$this->assertEquals($expected, $res);
 
 		$res = $schema->addField('email', 'string');
@@ -59,7 +59,7 @@ class SchemaTest extends TestCase {
 
 		$this->assertEquals(['name', 'email'], $schema->fields());
 		$res = $schema->field('email');
-		$expected = ['type' => 'string', 'length' => null, 'required' => false];
+		$expected = ['type' => 'string', 'length' => null, 'precision' => null];
 		$this->assertEquals($expected, $res);
 	}
 
@@ -72,7 +72,7 @@ class SchemaTest extends TestCase {
 		$schema = new Schema();
 
 		$schema->addField('name', ['derp' => 'derp', 'type' => 'string']);
-		$expected = ['type' => 'string', 'length' => null, 'required' => false];
+		$expected = ['type' => 'string', 'length' => null, 'precision' => null];
 		$this->assertEquals($expected, $schema->field('name'));
 	}
 
@@ -91,6 +91,24 @@ class SchemaTest extends TestCase {
 		$this->assertSame($schema, $res, 'Should be chainable');
 		$this->assertEquals([], $schema->fields());
 		$this->assertNull($schema->field('name'));
+	}
+
+/**
+ * test fieldType
+ *
+ * @return void
+ */
+	public function testFieldType() {
+		$schema = new Schema();
+
+		$schema->addField('name', 'string')
+			->addField('numbery', [
+				'type' => 'decimal',
+				'required' => true
+			]);
+		$this->assertEquals('string', $schema->fieldType('name'));
+		$this->assertEquals('decimal', $schema->fieldType('numbery'));
+		$this->assertNull($schema->fieldType('nope'));
 	}
 
 }
