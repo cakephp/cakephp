@@ -172,6 +172,17 @@ class IntegrationTestCaseTest extends IntegrationTestCase {
 	}
 
 /**
+ * Test the location header assertion.
+ *
+ * @return void
+ */
+	public function testAssertNoRedirect() {
+		$this->_response = new Response();
+
+		$this->assertNoRedirect();
+	}
+
+/**
  * Test the header assertion.
  *
  * @return void
