@@ -19,6 +19,7 @@ use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use TestApp\Model\Entity\Extending;
 use TestApp\Model\Entity\NonExtending;
+use TestApp\Model\Entity\ValidatableEntity;
 
 /**
  * Entity test case.
@@ -741,7 +742,7 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testValidateMissingFields() {
-		$entity = $this->getMockBuilder('\Cake\ORM\Entity')
+		$entity = $this->getMockBuilder('TestApp\Model\Entity\ValidatableEntity')
 			->setMethods(['getSomething'])
 			->disableOriginalConstructor()
 			->getMock();
@@ -756,7 +757,7 @@ class EntityTest extends TestCase {
 		$validator->expects($this->once())->method('errors')
 			->with(['a' => 'b'], true)
 			->will($this->returnValue(['a' => ['not valid']]));
-		$this->assertFalse($entity->validate($validator));
+		$this->assertNotEmpty($entity->validate($validator));
 		$this->assertEquals(['a' => ['not valid']], $entity->errors());
 	}
 
@@ -772,7 +773,7 @@ class EntityTest extends TestCase {
 			'cool' => false,
 			'something' => true
 		];
-		$entity = new Entity($data);
+		$entity = new ValidatableEntity($data);
 		$entity->isNew(true);
 
 		$validator->expects($this->once())
@@ -781,7 +782,7 @@ class EntityTest extends TestCase {
 		$validator->expects($this->once())->method('errors')
 			->with($data, true)
 			->will($this->returnValue([]));
-		$this->assertTrue($entity->validate($validator));
+		$this->assertEmpty($entity->validate($validator));
 		$this->assertEquals([], $entity->errors());
 	}
 

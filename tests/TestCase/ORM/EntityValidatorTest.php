@@ -63,7 +63,7 @@ class EntityValidatorTest extends TestCase {
  * @return void
  */
 	public function testOneSuccess() {
-		$entity = $this->getMock('\Cake\ORM\Entity', ['validate']);
+		$entity = $this->getMock('TestApp\Model\Entity\ValidatableEntity', ['validate']);
 		$validator = $this->getMock('\Cake\Validation\Validator');
 		$this->articles->validator('default', $validator);
 		$entityValidator = new EntityValidator($this->articles);
@@ -74,7 +74,7 @@ class EntityValidatorTest extends TestCase {
 		$entity->expects($this->once())
 			->method('validate')
 			->with($validator)
-			->will($this->returnValue(true));
+			->will($this->returnValue([]));
 
 		$this->assertTrue($entityValidator->one($entity));
 	}
@@ -85,7 +85,7 @@ class EntityValidatorTest extends TestCase {
  * @return void
  */
 	public function testOneFail() {
-		$entity = $this->getMock('\Cake\ORM\Entity', ['validate']);
+		$entity = $this->getMock('TestApp\Model\Entity\ValidatableEntity', ['validate']);
 		$validator = $this->getMock('\Cake\Validation\Validator');
 		$this->articles->validator('default', $validator);
 		$entityValidator = new EntityValidator($this->articles);
@@ -96,7 +96,7 @@ class EntityValidatorTest extends TestCase {
 		$entity->expects($this->once())
 			->method('validate')
 			->with($validator)
-			->will($this->returnValue(false));
+			->will($this->returnValue(['one' => ['error']]));
 
 		$this->assertFalse($entityValidator->one($entity));
 	}
@@ -107,10 +107,11 @@ class EntityValidatorTest extends TestCase {
  * @return void
  */
 	public function testOneAssociationsSuccess() {
-		$article = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$comment1 = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$comment2 = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$user = $this->getMock('\Cake\ORM\Entity', ['validate']);
+		$class = 'TestApp\Model\Entity\ValidatableEntity';
+		$article = $this->getMock($class, ['validate']);
+		$comment1 = $this->getMock($class, ['validate']);
+		$comment2 = $this->getMock($class, ['validate']);
+		$user = $this->getMock($class, ['validate']);
 		$article->set('comments', [$comment1, $comment2]);
 		$article->set('user', $user);
 
@@ -137,22 +138,22 @@ class EntityValidatorTest extends TestCase {
 		$article->expects($this->once())
 			->method('validate')
 			->with($validator1)
-			->will($this->returnValue(true));
+			->will($this->returnValue([]));
 
 		$comment1->expects($this->once())
 			->method('validate')
 			->with($validator2)
-			->will($this->returnValue(true));
+			->will($this->returnValue([]));
 
 		$comment2->expects($this->once())
 			->method('validate')
 			->with($validator2)
-			->will($this->returnValue(true));
+			->will($this->returnValue([]));
 
 		$user->expects($this->once())
 			->method('validate')
 			->with($validator3)
-			->will($this->returnValue(true));
+			->will($this->returnValue([]));
 
 		$options = ['associated' => ['Comments', 'Users']];
 		$this->assertTrue($entityValidator->one($article, $options));
@@ -167,10 +168,11 @@ class EntityValidatorTest extends TestCase {
  * @return void
  */
 	public function testOneAssociationsNoEntities() {
-		$article = $this->getMock('\Cake\ORM\Entity', ['validate']);
+		$class = 'TestApp\Model\Entity\ValidatableEntity';
+		$article = $this->getMock($class, ['validate']);
 		$comment1 = ['comment' => 'test'];
 		$comment2 = ['comment' => 'omg'];
-		$user = $this->getMock('\Cake\ORM\Entity', ['validate']);
+		$user = $this->getMock($class, ['validate']);
 		$article->set('comments', [$comment1, $comment2]);
 
 		$validator1 = $this->getMock('\Cake\Validation\Validator');
@@ -192,7 +194,7 @@ class EntityValidatorTest extends TestCase {
 		$article->expects($this->once())
 			->method('validate')
 			->with($validator1)
-			->will($this->returnValue(true));
+			->will($this->returnValue([]));
 
 		$options = ['associated' => ['Comments']];
 		$this->assertFalse($entityValidator->one($article, $options));
@@ -204,10 +206,11 @@ class EntityValidatorTest extends TestCase {
  * @return void
  */
 	public function testOneAssociationsFail() {
-		$article = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$comment1 = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$comment2 = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$user = $this->getMock('\Cake\ORM\Entity', ['validate']);
+		$class = 'TestApp\Model\Entity\ValidatableEntity';
+		$article = $this->getMock($class, ['validate']);
+		$comment1 = $this->getMock($class, ['validate']);
+		$comment2 = $this->getMock($class, ['validate']);
+		$user = $this->getMock($class, ['validate']);
 		$article->set('comments', [$comment1, $comment2]);
 		$article->set('user', $user);
 
@@ -234,22 +237,22 @@ class EntityValidatorTest extends TestCase {
 		$article->expects($this->once())
 			->method('validate')
 			->with($validator1)
-			->will($this->returnValue(true));
+			->will($this->returnValue([]));
 
 		$comment1->expects($this->once())
 			->method('validate')
 			->with($validator2)
-			->will($this->returnValue(true));
+			->will($this->returnValue([]));
 
 		$comment2->expects($this->once())
 			->method('validate')
 			->with($validator2)
-			->will($this->returnValue(false));
+			->will($this->returnValue(['some' => ['error']]));
 
 		$user->expects($this->once())
 			->method('validate')
 			->with($validator3)
-			->will($this->returnValue(true));
+			->will($this->returnValue([]));
 
 		$options = ['associated' => ['Comments', 'Users']];
 		$this->assertFalse($entityValidator->one($article, $options));
@@ -262,9 +265,10 @@ class EntityValidatorTest extends TestCase {
  * @return void
  */
 	public function testOneDeepAssociationsAndCustomValidators() {
-		$comment = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$article = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$user = $this->getMock('\Cake\ORM\Entity', ['validate']);
+		$class = 'TestApp\Model\Entity\ValidatableEntity';
+		$comment = $this->getMock($class, ['validate']);
+		$article = $this->getMock($class, ['validate']);
+		$user = $this->getMock($class, ['validate']);
 
 		$comment->set('article', $article);
 		$article->set('user', $user);
@@ -291,17 +295,17 @@ class EntityValidatorTest extends TestCase {
 		$comment->expects($this->once())
 			->method('validate')
 			->with($validator2)
-			->will($this->returnValue(true));
+			->will($this->returnValue([]));
 
 		$article->expects($this->once())
 			->method('validate')
 			->with($validator1)
-			->will($this->returnValue(true));
+			->will($this->returnValue([]));
 
 		$user->expects($this->once())
 			->method('validate')
 			->with($validator3)
-			->will($this->returnValue(true));
+			->will($this->returnValue([]));
 
 		$this->assertTrue($entityValidator->one($comment, [
 			'associated' => [
@@ -319,8 +323,9 @@ class EntityValidatorTest extends TestCase {
  * @return void
  */
 	public function testManySuccess() {
-		$comment1 = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$comment2 = $this->getMock('\Cake\ORM\Entity', ['validate']);
+		$class = 'TestApp\Model\Entity\ValidatableEntity';
+		$comment1 = $this->getMock($class, ['validate']);
+		$comment2 = $this->getMock($class, ['validate']);
 		$validator = $this->getMock('\Cake\Validation\Validator');
 		$data = [$comment1, $comment2];
 		$this->comments->validator('default', $validator);
@@ -332,12 +337,12 @@ class EntityValidatorTest extends TestCase {
 		$comment1->expects($this->once())
 			->method('validate')
 			->with($validator)
-			->will($this->returnValue(true));
+			->will($this->returnValue([]));
 
 		$comment2->expects($this->once())
 			->method('validate')
 			->with($validator)
-			->will($this->returnValue(true));
+			->will($this->returnValue([]));
 
 		$this->assertTrue($entityValidator->many($data));
 	}
@@ -348,8 +353,9 @@ class EntityValidatorTest extends TestCase {
  * @return void
  */
 	public function testManyFailure() {
-		$comment1 = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$comment2 = $this->getMock('\Cake\ORM\Entity', ['validate']);
+		$class = 'TestApp\Model\Entity\ValidatableEntity';
+		$comment1 = $this->getMock($class, ['validate']);
+		$comment2 = $this->getMock($class, ['validate']);
 		$validator = $this->getMock('\Cake\Validation\Validator');
 		$data = [$comment1, $comment2];
 		$this->comments->validator('default', $validator);
@@ -362,12 +368,12 @@ class EntityValidatorTest extends TestCase {
 		$comment1->expects($this->once())
 			->method('validate')
 			->with($validator)
-			->will($this->returnValue(false));
+			->will($this->returnValue(['some' => ['error']]));
 
 		$comment2->expects($this->once())
 			->method('validate')
 			->with($validator)
-			->will($this->returnValue(true));
+			->will($this->returnValue([]));
 
 		$this->assertFalse($entityValidator->many($data));
 	}

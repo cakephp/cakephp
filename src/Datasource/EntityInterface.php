@@ -150,19 +150,6 @@ interface EntityInterface extends ArrayAccess, JsonSerializable {
 	public function isNew($new = null);
 
 /**
- * Validates the internal properties using a validator object. The resulting
- * errors will be copied inside this entity and can be retrieved using the
- * `errors` method.
- *
- * This function returns true if there were no validation errors or false
- * otherwise.
- *
- * @param \Cake\Validation\Validator $validator The validator to use when validating the entity.
- * @return bool
- */
-	public function validate(Validator $validator);
-
-/**
  * Sets the error messages for a field or a list of fields. When called
  * without the second argument it returns the validation
  * errors for the specified fields. If called with no arguments it returns

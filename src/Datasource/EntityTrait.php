@@ -16,7 +16,6 @@ namespace Cake\Datasource;
 
 use Cake\Collection\Collection;
 use Cake\Utility\Inflector;
-use Cake\Validation\Validator;
 use Traversable;
 
 /**
@@ -583,25 +582,6 @@ trait EntityTrait {
 			return $this->_new;
 		}
 		return $this->_new = (bool)$new;
-	}
-
-/**
- * Validates the internal properties using a validator object. The resulting
- * errors will be copied inside this entity and can be retrieved using the
- * `errors` method.
- *
- * This function returns true if there were no validation errors or false
- * otherwise.
- *
- * @param \Cake\Validation\Validator $validator The validator to use when validating the entity.
- * @return bool
- */
-	public function validate(Validator $validator) {
-		$data = $this->_properties;
-		$new = $this->isNew();
-		$validator->provider('entity', $this);
-		$this->errors($validator->errors($data, $new === null ? true : $new));
-		return empty($this->_errors);
 	}
 
 /**

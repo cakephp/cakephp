@@ -18,6 +18,7 @@ use ArrayObject;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
+use Cake\Validation\ValidatableInterface;
 
 /**
  * Contains logic for validating entities and their associations.
@@ -118,6 +119,11 @@ class EntityValidator {
 		if (!isset($options['validate'])) {
 			$options['validate'] = true;
 		}
+
+		if (!($entity instanceof ValidatableInterface)) {
+			return $valid;
+		}
+
 		return $this->_processValidation($entity, $options) && $valid;
 	}
 
@@ -168,7 +174,7 @@ class EntityValidator {
 			return true;
 		}
 
-		$success = $entity->validate($validator);
+		$success = empty($entity->validate($validator));
 
 		$event = $this->_table->dispatchEvent('Model.afterValidate', $pass);
 		if ($event->isStopped()) {
