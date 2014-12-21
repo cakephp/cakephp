@@ -280,7 +280,7 @@ class ResultSet implements ResultSetInterface {
  * @return \Cake\ORM\Query Original query from where results were generated
  */
 	public function query($query = null) {
-		if ($query != null) {
+		if ($query !== null) {
 			$this->_query = $query;
 		}
 		return $this->_query;
