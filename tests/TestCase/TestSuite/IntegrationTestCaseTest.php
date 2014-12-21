@@ -20,6 +20,7 @@ use Cake\Network\Response;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestCase;
+use Cake\Test\Fixture\AssertIntegrationTestCase;
 
 /**
  * Self test of the IntegrationTestCase
@@ -180,6 +181,19 @@ class IntegrationTestCaseTest extends IntegrationTestCase {
 		$this->_response = new Response();
 
 		$this->assertNoRedirect();
+	}
+
+/**
+ * Test the location header assertion.
+ *
+ * @return void
+ */
+	public function testAssertNoRedirectFail() {
+		$test = new AssertIntegrationTestCase('testBadAssertNoRedirect');
+		$result = $test->run();
+		ob_start();
+		$this->assertFalse($result->wasSuccessful());
+		$this->assertEquals(1, $result->failureCount());
 	}
 
 /**
