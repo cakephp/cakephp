@@ -68,7 +68,7 @@ class FileLogTest extends TestCase {
 	public function testLogFileWriting() {
 		$this->_deleteLogs(LOGS);
 
-		$log = new FileLog();
+		$log = new FileLog(['path' => LOGS]);
 		$log->log('warning', 'Test warning');
 		$this->assertTrue(file_exists(LOGS . 'error.log'));
 

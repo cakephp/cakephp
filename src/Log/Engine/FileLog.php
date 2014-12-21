@@ -44,7 +44,7 @@ class FileLog extends BaseLog {
  * @var array
  */
 	protected $_defaultConfig = [
-		'path' => LOGS,
+		'path' => null,
 		'file' => null,
 		'types' => null,
 		'levels' => [],
@@ -86,7 +86,10 @@ class FileLog extends BaseLog {
 		if (!empty($this->_config['path'])) {
 			$this->_path = $this->_config['path'];
 		}
-		if (Configure::read('debug') && !is_dir($this->_path)) {
+		if ($this->_path !== null &&
+			Configure::read('debug') &&
+			!is_dir($this->_path)
+		) {
 			mkdir($this->_path, 0775, true);
 		}
 
