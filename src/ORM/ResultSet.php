@@ -274,6 +274,15 @@ class ResultSet implements ResultSetInterface {
 	}
 
 /**
+ * Return the original query
+ *
+ * @return Query Original query from where results were generated
+ */
+	public function query() {
+		return $this->_query;
+	}
+
+/**
  * Calculates the list of associations that should get eager loaded
  * when fetching each record
  *
