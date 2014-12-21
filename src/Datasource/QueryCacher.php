@@ -60,6 +60,7 @@ class QueryCacher {
 		if (empty($result)) {
 			return null;
 		}
+		$result->query($query);
 		return $result;
 	}
 
