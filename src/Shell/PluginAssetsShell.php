@@ -27,23 +27,50 @@ class PluginAssetsShell extends Shell {
 
 /**
  * Attempt to symlink plugin assets to app's webroot. If symlinking fails it
- * fallback to copying the assets. For vendor namespaced plugin, parent folder
+ * fallbacks to copying the assets. For vendor namespaced plugin, parent folder
  * for vendor name are created if required.
  *
+ * @param string|null $name Name of plugin for which to symlink assets.
+ *   If null all plugins will be processed.
  * @return void
  */
-	public function symlink() {
-		$this->_process($this->_list());
+	public function symlink($name = null) {
+		$this->_process($this->_list($name));
+	}
+
+/**
+ * Copying plugin assets to app's webroot. For vendor namespaced plugin,
+ * parent folder for vendor name are created if required.
+ *
+ * @param string|null $name Name of plugin for which to symlink assets.
+ *   If null all plugins will be processed.
+ * @return void
+ */
+	public function copy($name = null) {
+		$this->_process($this->_list($name), true);
 	}
 
 /**
  * Get list of plugins to process. Plugins without a webroot directory are skipped.
  *
- * @return array
+ * @param string|string $name Name of plugin for which to symlink assets.
+ *   If null all plugins will be processed.
+ * @return array List of plugins with meta data.
  */
-	protected function _list() {
+	protected function _list($name = null) {
+		if ($name === null) {
+			$pluginsList = Plugin::loaded();
+		} else {
+			if (!Plugin::loaded($name)) {
+				$this->err(sprintf('Plugin %s is not loaded.', $name));
+				return [];
+			}
+			$pluginsList = [$name];
+		}
+
 		$plugins = [];
-		foreach (Plugin::loaded() as $plugin) {
+
+		foreach ($pluginsList as $plugin) {
 			$path = Plugin::path($plugin) . 'webroot';
 			if (!is_dir($path)) {
 				$this->out('', 1, Shell::VERBOSE);
@@ -72,6 +99,7 @@ class PluginAssetsShell extends Shell {
 				'namespaced' => $namespaced
 			];
 		}
+
 		return $plugins;
 	}
 
@@ -79,9 +107,10 @@ class PluginAssetsShell extends Shell {
  * Process plugins
  *
  * @param array $plugins List of plugins to process
+ * @param bool $copy Force copy mode. Default false.
  * @return void
  */
-	protected function _process($plugins) {
+	protected function _process($plugins, $copy = false) {
 		foreach ($plugins as $plugin => $config) {
 			$path = Plugin::path($plugin) . 'webroot';
 
@@ -105,12 +134,14 @@ class PluginAssetsShell extends Shell {
 				continue;
 			}
 
-			$result = $this->_createSymlink(
-				$config['srcPath'],
-				$config['destDir'] . $config['link']
-			);
-			if ($result) {
-				continue;
+			if (!$copy) {
+				$result = $this->_createSymlink(
+					$config['srcPath'],
+					$config['destDir'] . $config['link']
+				);
+				if ($result) {
+					continue;
+				}
 			}
 
 			$this->_copyDirectory(
@@ -192,7 +223,12 @@ class PluginAssetsShell extends Shell {
 		$parser = parent::getOptionParser();
 
 		$parser->addSubcommand('symlink', [
-			'help' => 'Symlink / copy assets to app\'s webroot'
+			'help' => 'Symlink (copy as fallback) plugin assets to app\'s webroot.'
+		])->addSubcommand('copy', [
+			'help' => 'Copy plugin assets to app\'s webroot.'
+		])->addArgument('name', [
+			'help' => 'A specific plugin you want to symlink assets for.',
+			'optional' => true,
 		]);
 
 		return $parser;
