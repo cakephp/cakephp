@@ -103,7 +103,7 @@ class Schema {
 /**
  * Get the type of the named field.
  *
- * @param string $field The name of the field.
+ * @param string $name The name of the field.
  * @return string|null Either the field type or null if the
  *   field does not exist.
  */

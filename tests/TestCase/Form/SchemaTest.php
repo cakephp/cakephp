@@ -111,5 +111,4 @@ class SchemaTest extends TestCase {
 		$this->assertNull($schema->fieldType('nope'));
 	}
 
-
 }

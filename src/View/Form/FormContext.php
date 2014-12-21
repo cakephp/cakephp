@@ -84,7 +84,7 @@ class FormContext implements ContextInterface {
 			return false;
 		}
 		if ($this->type($field) !== 'boolean') {
-			return $validator->isEmptyAllowed($field, true) === false;
+			return $validator->isEmptyAllowed($field, $this->isCreate()) === false;
 		}
 		return false;
 	}
@@ -93,16 +93,14 @@ class FormContext implements ContextInterface {
  * {@inheritDoc}
  */
 	public function fieldNames() {
-		$schema = $this->_form->schema();
-		return $schema->fields();
+		return $this->_form->schema()->fields();
 	}
 
 /**
  * {@inheritDoc}
  */
 	public function type($field) {
-		$schema = $this->_form->schema();
-		return $schema->fieldType($field);
+		return $this->_form->schema()->fieldType($field);
 	}
 
 /**
