@@ -274,11 +274,15 @@ class ResultSet implements ResultSetInterface {
 	}
 
 /**
- * Return the original query
+ * Set or get the original query
  *
+ * @param Query $query The query to be set as the original query for the results
  * @return Query Original query from where results were generated
  */
-	public function query() {
+	public function query($query = null) {
+		if($query != null) {
+			$this->_query = $query;
+		}
 		return $this->_query;
 	}
 
