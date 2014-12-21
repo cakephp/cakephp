@@ -15,10 +15,12 @@
 use Cake\Core\Configure;
 
 if (!defined('DS')) {
-	/**
-	 * Define DS as short form of DIRECTORY_SEPARATOR.
-	 */
+
+/**
+ * Define DS as short form of DIRECTORY_SEPARATOR.
+ */
 	define('DS', DIRECTORY_SEPARATOR);
+
 }
 
 if (!function_exists('h')) {
