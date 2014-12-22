@@ -46,7 +46,7 @@ class FileEngine extends CacheEngine {
  * - `isWindows` Automatically populated with whether the host is windows or not
  * - `lock` Used by FileCache. Should files be locked before writing to them?
  * - `mask` The mask used for created files
- * - `path` Path to where cachefiles should be saved.
+ * - `path` Path to where cachefiles should be saved. Defaults to system's temp dir.
  * - `prefix` Prepended to all entries. Good for when you need to share a keyspace
  *    with either another cache config or another application.
  * - `probability` Probability of hitting a cache gc cleanup. Setting to 0 will disable
@@ -61,7 +61,7 @@ class FileEngine extends CacheEngine {
 		'isWindows' => false,
 		'lock' => true,
 		'mask' => 0664,
-		'path' => CACHE,
+		'path' => null,
 		'prefix' => 'cake_',
 		'probability' => 100,
 		'serialize' => true
@@ -85,6 +85,9 @@ class FileEngine extends CacheEngine {
 	public function init(array $config = []) {
 		parent::init($config);
 
+		if ($this->_config['path'] === null) {
+			$this->_config['path'] = sys_get_temp_dir();
+		}
 		if (DS === '\\') {
 			$this->_config['isWindows'] = true;
 		}

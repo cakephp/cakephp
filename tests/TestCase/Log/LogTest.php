@@ -145,7 +145,7 @@ class LogTest extends TestCase {
 				'className' => 'File',
 				'path' => TMP . 'tests',
 			]],
-			'Direct instance' => [new FileLog()],
+			'Direct instance' => [new FileLog(['path' => LOGS])],
 		];
 	}
 
@@ -240,11 +240,13 @@ class LogTest extends TestCase {
 		}
 		Log::config('spam', array(
 			'engine' => 'File',
+			'path' => LOGS,
 			'types' => 'debug',
 			'file' => 'spam',
 		));
 		Log::config('eggs', array(
 			'engine' => 'File',
+			'path' => LOGS,
 			'types' => array('eggs', 'debug', 'error', 'warning'),
 			'file' => 'eggs',
 		));
@@ -274,11 +276,13 @@ class LogTest extends TestCase {
 	protected function _resetLogConfig() {
 		Log::config('debug', array(
 			'engine' => 'File',
+			'path' => LOGS,
 			'types' => array('notice', 'info', 'debug'),
 			'file' => 'debug',
 		));
 		Log::config('error', array(
 			'engine' => 'File',
+			'path' => LOGS,
 			'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
 			'file' => 'error',
 		));
@@ -315,6 +319,7 @@ class LogTest extends TestCase {
 		$this->_resetLogConfig();
 		Log::config('shops', array(
 			'engine' => 'File',
+			'path' => LOGS,
 			'types' => array('info', 'debug', 'warning'),
 			'scopes' => array('transactions', 'orders'),
 			'file' => 'shops',
@@ -361,6 +366,7 @@ class LogTest extends TestCase {
 		$this->_resetLogConfig();
 		Log::config('shops', array(
 			'engine' => 'File',
+			'path' => LOGS,
 			'types' => array('info', 'debug', 'notice', 'warning'),
 			'scopes' => array('transactions', 'orders'),
 			'file' => 'shops',
@@ -400,12 +406,14 @@ class LogTest extends TestCase {
 
 		Log::config('shops', array(
 			'engine' => 'File',
+			'path' => LOGS,
 			'types' => array('debug', 'notice', 'warning'),
 			'scopes' => array('transactions', 'orders'),
 			'file' => 'shops.log',
 		));
 		Log::config('eggs', array(
 			'engine' => 'File',
+			'path' => LOGS,
 			'types' => array('debug', 'notice', 'warning'),
 			'scopes' => array('eggs'),
 			'file' => 'eggs.log',
@@ -432,6 +440,7 @@ class LogTest extends TestCase {
 
 		Log::config('scope_test', [
 			'engine' => 'TestApp',
+			'path' => LOGS,
 			'types' => array('notice', 'info', 'debug'),
 			'scopes' => array('foo', 'bar'),
 		]);
@@ -457,11 +466,13 @@ class LogTest extends TestCase {
 
 		Log::config('debug', array(
 			'engine' => 'File',
+			'path' => LOGS,
 			'types' => array('notice', 'info', 'debug'),
 			'file' => 'debug',
 		));
 		Log::config('error', array(
 			'engine' => 'File',
+			'path' => LOGS,
 			'types' => array('emergency', 'alert', 'critical', 'error', 'warning'),
 			'file' => 'error',
 		));
