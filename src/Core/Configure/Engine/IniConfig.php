@@ -205,17 +205,11 @@ class IniConfig implements ConfigEngineInterface {
  * @return string Full file path
  */
 	protected function _getFilePath($key) {
-		if (substr($key, -8) === '.ini.php') {
-			$key = substr($key, 0, -8);
-			list($plugin, $key) = pluginSplit($key);
-			$key .= '.ini.php';
-		} else {
-			if (substr($key, -4) === '.ini') {
-				$key = substr($key, 0, -4);
-			}
-			list($plugin, $key) = pluginSplit($key);
-			$key .= '.ini';
+		if (substr($key, -4) === '.ini') {
+			$key = substr($key, 0, -4);
 		}
+		list($plugin, $key) = pluginSplit($key);
+		$key .= '.ini';
 
 		if ($plugin) {
 			$file = Plugin::configPath($plugin) . $key;

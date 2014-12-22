@@ -97,20 +97,6 @@ class IniConfigTest extends TestCase {
 	}
 
 /**
- * Test reading acl.ini.php.
- *
- * @return void
- */
-	public function testReadSpecialAclIniPhp() {
-		$engine = new IniConfig($this->path);
-		$config = $engine->read('acl.ini.php');
-
-		$this->assertTrue(isset($config['admin']));
-		$this->assertTrue(isset($config['paul']['groups']));
-		$this->assertEquals('ads', $config['admin']['deny']);
-	}
-
-/**
  * Test without section.
  *
  * @return void
@@ -224,22 +210,6 @@ class IniConfigTest extends TestCase {
 
 		$result = $engine->read('TestPlugin.nested.ini');
 		$this->assertEquals('foo', $result['database']['db']['password']);
-		Plugin::unload();
-	}
-
-/**
- * Test reading acl.ini.php from plugins.
- *
- * @return void
- */
-	public function testReadPluginSpecialAclIniPhpValue() {
-		Plugin::load('TestPlugin');
-		$engine = new IniConfig($this->path);
-		$result = $engine->read('TestPlugin.acl.ini.php');
-
-		$this->assertTrue(isset($result['admin']));
-		$this->assertTrue(isset($result['paul']['groups']));
-		$this->assertEquals('ads', $result['admin']['deny']);
 		Plugin::unload();
 	}
 
