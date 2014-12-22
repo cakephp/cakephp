@@ -346,11 +346,11 @@ class TableRegistryTest extends TestCase {
 	}
 
 /**
- * Tests deleting an instance
+ * Tests remove an instance
  *
  * @return void
  */
-	public function testDelete() {
+	public function testRemove() {
 		Plugin::load('TestPlugin');
 
 		$pluginTable = TableRegistry::get('TestPlugin.Comments');
@@ -359,7 +359,7 @@ class TableRegistryTest extends TestCase {
 		$this->assertTrue(TableRegistry::exists('Comments'));
 		$this->assertSame($pluginTable, $cachedTable);
 
-		TableRegistry::delete('Comments');
+		TableRegistry::remove('Comments');
 		$this->assertFalse(TableRegistry::exists('Comments'));
 
 		$appTable = TableRegistry::get('Comments');
