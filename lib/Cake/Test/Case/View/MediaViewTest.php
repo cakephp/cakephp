@@ -77,9 +77,6 @@ class MediaViewTest extends CakeTestCase {
 				array('name' => null, 'download' => null)
 			);
 
-		$this->MediaView->response->expects($this->once())
-			->method('send');
-
 		$this->MediaView->render();
 	}
 
@@ -115,9 +112,6 @@ class MediaViewTest extends CakeTestCase {
 				)
 			);
 
-		$this->MediaView->response->expects($this->once())
-			->method('send');
-
 		$this->MediaView->render();
 	}
 
@@ -136,10 +130,6 @@ class MediaViewTest extends CakeTestCase {
 			->method('type')
 			->with('jpg')
 			->will($this->returnArgument(0));
-
-		$this->MediaView->response->expects($this->at(0))
-			->method('send')
-			->will($this->returnValue(true));
 
 		$this->MediaView->render();
 	}
