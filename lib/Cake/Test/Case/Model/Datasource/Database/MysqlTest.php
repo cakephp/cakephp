@@ -906,8 +906,16 @@ SQL;
 			'alias' => 'TimestampDefaultValue'
 		));
 		$result = $this->Dbo->describe($model);
-		$this->assertEquals('', $result['limit_date']['default']);
 		$this->Dbo->execute('DROP TABLE ' . $name);
+
+		$this->assertNull($result['limit_date']['default']);
+
+		$schema = new CakeSchema(array(
+			'connection' => 'test',
+			'testdescribes' => $result
+		));
+		$result = $this->Dbo->createSchema($schema);
+		$this->assertContains('`limit_date` timestamp NOT NULL,', $result);
 	}
 
 /**
