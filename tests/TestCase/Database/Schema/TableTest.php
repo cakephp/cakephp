@@ -162,13 +162,20 @@ class TableTest extends TestCase {
 		])->addColumn('title', [
 			'type' => 'string',
 			'default' => 'A title'
+		])->addColumn('name', [
+			'type' => 'string',
+			'null' => false,
+			'default' => null,
 		])->addColumn('body', [
 			'type' => 'text',
+			'null' => true,
+			'default' => null,
 		]);
 		$result = $table->defaultValues();
 		$expected = [
 			'id' => 0,
-			'title' => 'A title'
+			'title' => 'A title',
+			'body' => null
 		];
 		$this->assertEquals($expected, $result);
 	}
