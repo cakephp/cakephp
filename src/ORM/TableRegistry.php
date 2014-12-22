@@ -243,15 +243,15 @@ class TableRegistry {
 	}
 
 /**
- * Deletes an instance from the registry.
+ * Removes an instance from the registry.
  *
  * Plugin name will be trimmed off of aliases as instances
  * stored in the registry will be without the plugin name as well.
  *
- * @param string $alias The alias to delete.
+ * @param string $alias The alias to remove.
  * @return void
  */
-	public static function delete($alias) {
+	public static function remove($alias) {
 		list(, $alias) = pluginSplit($alias);
 
 		if (isset(static::$_instances[$alias])) {
