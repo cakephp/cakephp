@@ -329,6 +329,28 @@ class CakeSessionTest extends CakeTestCase {
 	}
 
 /**
+ * Test consuming session data.
+ *
+ * @return void
+ */
+	public function testConsume() {
+		TestCakeSession::write('Some.string', 'value');
+		TestCakeSession::write('Some.array', array('key1' => 'value1', 'key2' => 'value2'));
+		$this->assertEquals('value', TestCakeSession::read('Some.string'));
+		$value = TestCakeSession::consume('Some.string');
+		$this->assertEquals('value', $value);
+		$this->assertFalse(TestCakeSession::check('Some.string'));
+		$value = TestCakeSession::consume('');
+		$this->assertNull($value);
+		$value = TestCakeSession::consume(null);
+		$this->assertNull($value);
+		$value = TestCakeSession::consume('Some.array');
+		$expected = array('key1' => 'value1', 'key2' => 'value2');
+		$this->assertEquals($expected, $value);
+		$this->assertFalse(TestCakeSession::check('Some.array'));
+	}
+
+/**
  * testId method
  *
  * @return void

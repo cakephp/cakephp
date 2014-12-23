@@ -433,6 +433,24 @@ class CakeSession {
 	}
 
 /**
+ * Reads and deletes a variable from session.
+ *
+ * @param string $name The key to read and remove (or a path as sent to Hash.extract).
+ * @return mixed The value of the session variable, null if session not available,
+ *   session not started, or provided name not found in the session.
+ */
+	public static function consume($name) {
+		if (empty($name)) {
+			return null;
+		}
+		$value = self::read($name);
+		if ($value !== null) {
+			self::_overwrite($_SESSION, Hash::remove($_SESSION, $name));
+		}
+		return $value;
+	}
+
+/**
  * Helper method to destroy invalid sessions.
  *
  * @return void
