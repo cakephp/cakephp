@@ -926,7 +926,7 @@ class ModelTask extends BakeTask {
 				$tableIsGood = $this->in(__d('cake_console', 'Do you want to use this table?'), array('y', 'n'), 'y');
 			}
 			if (strtolower($tableIsGood) === 'n') {
-				$useTable = $this->in(__d('cake_console', 'What is the name of the table?'));
+				$useTable = $this->in(__d('cake_console', 'What is the name of the table (without prefix)?'));
 			}
 		}
 		return $useTable;
