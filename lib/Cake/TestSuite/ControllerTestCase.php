@@ -210,7 +210,7 @@ abstract class ControllerTestCase extends CakeTestCase {
  *     - `result` Get the return value of the controller action. Useful
  *       for testing requestAction methods.
  *
- * @param string|array $url The url to test
+ * @param string|array $url The URL to test.
  * @param array $options See options
  * @return mixed The specified return type.
  * @triggers ControllerTestCase $Dispatch, array('request' => $request)
