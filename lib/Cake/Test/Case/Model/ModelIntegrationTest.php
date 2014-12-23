@@ -240,6 +240,32 @@ class ModelIntegrationTest extends BaseModelTest {
 	}
 
 /**
+ * testTreeWithContainable method
+ *
+ * @return void
+ */
+	public function testTreeWithContainable() {
+		$this->loadFixtures('Ad', 'Campaign');
+		$TestModel = new Ad();
+		$TestModel->Behaviors->load('Tree');
+		$TestModel->Behaviors->load('Containable');
+
+		$node = $TestModel->findById(2);
+		$node['Ad']['parent_id'] = 1;
+		$TestModel->save($node);
+
+		$result = $TestModel->getParentNode(array('id' => 2, 'contain' => 'Campaign'));
+		$this->assertTrue(array_key_exists('Campaign', $result));
+
+		$result = $TestModel->children(array('id' => 1, 'contain' => 'Campaign'));
+		$this->assertTrue(array_key_exists('Campaign', $result[0]));
+
+		$result = $TestModel->getPath(array('id' => 2, 'contain' => 'Campaign'));
+		$this->assertTrue(array_key_exists('Campaign', $result[0]));
+		$this->assertTrue(array_key_exists('Campaign', $result[1]));
+	}
+
+/**
  * testFindWithJoinsOption method
  *
  * @return void
