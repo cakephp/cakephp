@@ -1759,6 +1759,30 @@ class I18nTest extends CakeTestCase {
 	}
 
 /**
+ * Test that Configure::read('I18n.preferApp') will prefer app.
+ *
+ * @return void
+ */
+	public function testPluginTranslationPreferApp() {
+		// Reset internally stored entries
+		I18n::clear();
+		Cache::clear(false, '_cake_core_');
+
+		Configure::write('I18n.preferApp', true);
+
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		));
+
+		Configure::write('Config.language', 'po');
+		$singular = $this->_domainSingular();
+		$this->assertEquals('Plural Rule 1', $singular);
+
+		$plurals = $this->_domainPlural();
+		$this->assertTrue(in_array('0 = 0 or > 1', $plurals));
+	}
+
+/**
  * testPoMultipleLineTranslation method
  *
  * @return void
