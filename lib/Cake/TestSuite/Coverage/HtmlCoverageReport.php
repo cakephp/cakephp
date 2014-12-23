@@ -200,8 +200,8 @@ HTML;
  * @return string
  */
 	public function coverageHeader($filename, $percent) {
+		$hash = md5($filename);
 		$filename = basename($filename);
-        $hash = md5( $filename.$percent);
 		list($file) = explode('.', $filename);
 		$display = in_array($file, $this->_testNames) ? 'block' : 'none';
 		$primary = $display === 'block' ? 'primary' : '';
