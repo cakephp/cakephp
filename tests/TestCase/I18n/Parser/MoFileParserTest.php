@@ -66,4 +66,39 @@ class MoFileParserTest extends TestCase {
 		$this->assertEquals($expected, $messages);
 	}
 
+/**
+ * Tests parsing a file with plurals and message context
+ *
+ * @return void
+ */
+	public function testParseFull() {
+		$parser = new MoFileParser;
+		$file = APP . 'Locale' . DS . 'rule_0_mo' . DS . 'default.mo';
+		$messages = $parser->parse($file);
+		$this->assertCount(5, $messages);
+		$expected = [
+			'Plural Rule 1' => 'Plural Rule 1 (translated)',
+			'%d = 1' => [
+				'_context' => [
+					'This is the context' => 'First Context trasnlation',
+					'Another Context' => '%d = 1 (translated)'
+				]
+			],
+			'%d = 0 or > 1' => [
+				'_context' => [
+					'Another Context' => [
+						0 => '%d = 1 (translated)',
+						1 => '%d = 0 or > 1 (translated)'
+					]
+				]
+			],
+			'%-5d = 1' => '%-5d = 1 (translated)',
+			'%-5d = 0 or > 1' => [
+				'%-5d = 1 (translated)',
+				'%-5d = 0 or > 1 (translated)'
+			]
+		];
+		$this->assertEquals($expected, $messages);
+	}
+
 }
