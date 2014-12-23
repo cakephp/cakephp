@@ -1,0 +1,115 @@
+<?php
+/**
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         2.3.0
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
+
+namespace Cake\Shell;
+
+use Cake\Console\Shell;
+use Cake\Core\Configure;
+
+use Cake\Routing\Router;
+
+/**
+ * built-in Routes Shell
+ *
+ */
+class RoutesShell extends Shell {
+
+/**
+ * Override main() to handle action
+ * Displays all routes in an application.
+ *
+ * @return void
+ */
+	public function main() {
+		// Forces routes object to initialise.
+		Router::parse(null);
+
+		$routes = Router::routes();
+		$output = array();
+		foreach($routes as $route) {
+			$output[] = array($route->getName(), $route->template, $this->stringifyDefaults($route->defaults));
+		}
+
+		$this->outWithColumns($output);
+	}
+
+/**
+ * Checks a url for the route that will be applied.
+ *
+ * @param $url
+ */
+	public function check($url) {
+		$route = Router::parse($url);
+		$this->outWithColumns(array($url, $this->stringifyDefaults($route)));
+	}
+
+/**
+ * Takes an array to represent rows, of arrays to represent columns.
+ * Will pad strings to the maximum character length of each column.
+ *
+ * @param $rows
+ */
+	private function outWithColumns($rows) {
+		if(!is_array($rows[0])) {
+			$rows = array($rows);
+		}
+		$maxCharacterLength = array();
+
+		foreach($rows as $line) {
+			for($i = 0; $i < count($line); $i++) {
+				$elementLength = strlen($line[$i]);
+				if($elementLength > (isset($maxCharacterLength[$i]) ? $maxCharacterLength[$i] : 0)) {
+					$maxCharacterLength[$i] = $elementLength;
+				}
+			}
+		}
+
+		foreach($rows as $line) {
+			for($i = 0; $i < count($line); $i++) {
+				$line[$i] = str_pad($line[$i], $maxCharacterLength[$i], " ", STR_PAD_RIGHT);
+			}
+			$this->out(implode('	', $line));
+		}
+
+		$this->out();
+	}
+
+/**
+ * Takes defaults from the route object and
+ *
+ * @param $defaults
+ * @return string
+ */
+	private function stringifyDefaults($defaults) {
+		$results = array();
+		if(!empty($defaults['controller'])) {
+			$results['controller'] = $defaults['controller'];
+		}
+		if(!empty($defaults['action'])) {
+			$results['action'] = $defaults['action'];
+		}
+		if(!empty($defaults[0])) {
+			$pass = array(); 
+			$i = 0;
+			while(!empty($defaults[$i])) {
+				$pass[$i] = $defaults[$i];
+				$i++;
+			}
+			$results['pass'] = $pass;
+		}
+
+		return json_encode($results);
+	}
+}
