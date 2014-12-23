@@ -300,6 +300,17 @@ class ControllerTestCaseTest extends CakeTestCase {
 	}
 
 /**
+ * Test array URLs with testAction()
+ *
+ * @return void
+ */
+	public function testTestActionArrayUrls() {
+		$Controller = $this->Case->generate('TestsApps');
+		$this->Case->testAction(array('controller' => 'tests_apps', 'action' => 'index'));
+		$this->assertInternalType('array', $this->Case->controller->viewVars);
+	}
+
+/**
  * Make sure testAction() can hit plugin controllers.
  *
  * @return void
