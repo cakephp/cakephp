@@ -14,6 +14,8 @@
  */
 namespace Cake\Utility;
 
+use Cake\Utility\Crypto\Mcrypt;
+use Cake\Utility\Crypto\OpenSsl;
 use InvalidArgumentException;
 
 /**
@@ -87,6 +89,21 @@ class Security {
 	}
 
 /**
+ * Get the crypto implementation based on the loaded extensions.
+ *
+ * @return object Crypto instance.
+ */
+	public static function engine() {
+		if (extension_loaded('openssl')) {
+			// return new Openssl();
+		}
+		if (extension_loaded('mcrypt')) {
+			return new Mcrypt();
+		}
+		throw new InvalidArgumentException('No compatible crypto engine loaded. Load either mcrypt or openssl');
+	}
+
+/**
  * Encrypts/Decrypts a text using the given key using rijndael method.
  *
  * @param string $text Encrypted string to decrypt, normal string to encrypt
@@ -105,19 +122,8 @@ class Security {
 		if (strlen($key) < 32) {
 			throw new InvalidArgumentException('You must use a key larger than 32 bytes for Security::rijndael()');
 		}
-		$algorithm = MCRYPT_RIJNDAEL_256;
-		$mode = MCRYPT_MODE_CBC;
-		$ivSize = mcrypt_get_iv_size($algorithm, $mode);
-
-		$cryptKey = substr($key, 0, 32);
-
-		if ($operation === 'encrypt') {
-			$iv = mcrypt_create_iv($ivSize, MCRYPT_DEV_URANDOM);
-			return $iv . '$$' . mcrypt_encrypt($algorithm, $cryptKey, $text, $mode, $iv);
-		}
-		$iv = substr($text, 0, $ivSize);
-		$text = substr($text, $ivSize + 2);
-		return rtrim(mcrypt_decrypt($algorithm, $cryptKey, $text, $mode, $iv), "\0");
+		$crypto = static::engine();
+		return $crypto->rijndael($text, $key, $operation);
 	}
 
 /**
@@ -139,18 +145,11 @@ class Security {
 		if ($hmacSalt === null) {
 			$hmacSalt = static::$_salt;
 		}
-
 		// Generate the encryption and hmac key.
 		$key = substr(hash('sha256', $key . $hmacSalt), 0, 32);
 
-		$algorithm = MCRYPT_RIJNDAEL_128;
-		$mode = MCRYPT_MODE_CBC;
-
-		$ivSize = mcrypt_get_iv_size($algorithm, $mode);
-		$iv = mcrypt_create_iv($ivSize, MCRYPT_DEV_URANDOM);
-		$ciphertext = $iv . mcrypt_encrypt($algorithm, $key, $plain, $mode, $iv);
-		$hmac = hash_hmac('sha256', $ciphertext, $key);
-		return $hmac . $ciphertext;
+		$crypto = static::engine();
+		return $crypto->encrypt($plain, $key);
 	}
 
 /**
@@ -190,24 +189,8 @@ class Security {
 		// Generate the encryption and hmac key.
 		$key = substr(hash('sha256', $key . $hmacSalt), 0, 32);
 
-		// Split out hmac for comparison
-		$macSize = 64;
-		$hmac = substr($cipher, 0, $macSize);
-		$cipher = substr($cipher, $macSize);
-
-		$compareHmac = hash_hmac('sha256', $cipher, $key);
-		if ($hmac !== $compareHmac) {
-			return false;
-		}
-
-		$algorithm = MCRYPT_RIJNDAEL_128;
-		$mode = MCRYPT_MODE_CBC;
-		$ivSize = mcrypt_get_iv_size($algorithm, $mode);
-
-		$iv = substr($cipher, 0, $ivSize);
-		$cipher = substr($cipher, $ivSize);
-		$plain = mcrypt_decrypt($algorithm, $key, $cipher, $mode, $iv);
-		return rtrim($plain, "\0");
+		$crypto = static::engine();
+		return $crypto->decrypt($cipher, $key);
 	}
 
 /**
