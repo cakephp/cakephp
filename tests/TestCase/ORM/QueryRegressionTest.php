@@ -576,4 +576,23 @@ class QueryRegressionTest extends TestCase {
 		$this->assertCount(3, $results->toArray());
 	}
 
+/**
+ * Checks that matching and contain can be called for the same belongsTo association
+ *
+ * @see https://github.com/cakephp/cakephp/issues/5463
+ * @return void
+ */
+	public function testFindMatchingAndContain() {
+		$table = TableRegistry::get('Articles');
+		$table->belongsTo('Authors');
+		$article = $table->find()
+			->contain('Authors')
+			->matching('Authors', function ($q) {
+				return $q->where(['Authors.id' => 1]);
+			})
+			->first();
+		$this->assertNotNull($article->author);
+		$this->assertEquals($article->author, $article->_matchingData['Authors']);
+	}
+
 }

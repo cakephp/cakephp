@@ -283,11 +283,12 @@ class ResultSet implements ResultSetInterface {
 		$map = $this->_query->eagerLoader()->associationsMap($this->_defaultTable);
 		$this->_matchingMap = (new Collection($map))
 			->match(['matching' => true])
-			->compile();
+			->toArray();
 
 		$this->_containMap = (new Collection(array_reverse($map)))
 			->match(['matching' => false])
-			->compile();
+			->indexBy('nestKey')
+			->toArray();
 	}
 
 /**
@@ -331,7 +332,10 @@ class ResultSet implements ResultSetInterface {
 				}
 				list($table, $field) = explode('__', $key);
 				$results['_matchingData'][$table][$field] = $value;
-				unset($row[$key]);
+
+				if (!isset($this->_containMap[$table])) {
+					unset($row[$key]);
+				}
 			}
 			if (empty($results['_matchingData'][$matching['alias']])) {
 				continue;
@@ -343,6 +347,7 @@ class ResultSet implements ResultSetInterface {
 			);
 
 			if ($this->_hydrate) {
+				$options['source'] = $matching['alias'];
 				$entity = new $matching['entityClass']($results['_matchingData'][$matching['alias']], $options);
 				$entity->clean();
 				$results['_matchingData'][$matching['alias']] = $entity;
