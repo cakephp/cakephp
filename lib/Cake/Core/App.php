@@ -361,7 +361,7 @@ class App {
  * @param string $plugin CamelCased/lower_cased plugin name to find the path of.
  * @return string full path to the plugin.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::pluginPath
- * @deprecated 3.0.0 Use CakePlugin::path() instead.
+ * @deprecated 3.0.0 Use `CakePlugin::path()` instead.
  */
 	public static function pluginPath($plugin) {
 		return CakePlugin::path($plugin);

@@ -534,8 +534,7 @@ class FormHelper extends AppHelper {
 			}
 			$out .= $this->submit($submit, $submitOptions);
 		}
-		if (
-			$this->requestType !== 'get' &&
+		if ($this->requestType !== 'get' &&
 			isset($this->request['_Token']) &&
 			!empty($this->request['_Token'])
 		) {
@@ -696,7 +695,7 @@ class FormHelper extends AppHelper {
  * @param string|array $text Error message as string or array of messages.
  *   If array contains `attributes` key it will be used as options for error container
  * @param array $options Rendering options for <div /> wrapper tag
- * @return string If there are errors this method returns an error message, otherwise null.
+ * @return string|null If there are errors this method returns an error message, otherwise null.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::error
  */
 	public function error($field, $text = null, $options = array()) {
@@ -1125,6 +1124,8 @@ class FormHelper extends AppHelper {
 			$options = $this->_optionsOptions($options);
 		}
 
+		$options = $this->_maxLength($options);
+
 		if (isset($options['rows']) || isset($options['cols'])) {
 			$options['type'] = 'textarea';
 		}
@@ -1199,8 +1200,7 @@ class FormHelper extends AppHelper {
 			if ($fieldKey === $primaryKey) {
 				$options['type'] = 'hidden';
 			}
-			if (
-				$options['type'] === 'number' &&
+			if ($options['type'] === 'number' &&
 				!isset($options['step'])
 			) {
 				if ($type === 'decimal') {
@@ -1228,7 +1228,7 @@ class FormHelper extends AppHelper {
 		if ($options['type'] === 'select' && array_key_exists('step', $options)) {
 			unset($options['step']);
 		}
-		$options = $this->_maxLength($options);
+
 		return $options;
 	}
 
@@ -1286,10 +1286,11 @@ class FormHelper extends AppHelper {
 			!array_key_exists('maxlength', $options) &&
 			isset($fieldDef['length']) &&
 			is_scalar($fieldDef['length']) &&
+			$fieldDef['length'] < 1000000 &&
 			$options['type'] !== 'select'
 		);
 		if ($autoLength &&
-			in_array($options['type'], array('text', 'email', 'tel', 'url', 'search'))
+			in_array($options['type'], array('text', 'textarea', 'email', 'tel', 'url', 'search'))
 		) {
 			$options['maxlength'] = $fieldDef['length'];
 		}
@@ -1318,8 +1319,7 @@ class FormHelper extends AppHelper {
 		} elseif (is_array($div)) {
 			$divOptions = array_merge($divOptions, $div);
 		}
-		if (
-			$this->_extractOption('required', $options) !== false &&
+		if ($this->_extractOption('required', $options) !== false &&
 			$this->_introspectModel($this->model(), 'validates', $this->field())
 		) {
 			$divOptions = $this->addClass($divOptions, 'required');
@@ -1362,8 +1362,7 @@ class FormHelper extends AppHelper {
 		$idKey = null;
 		if ($options['type'] === 'date' || $options['type'] === 'datetime') {
 			$firstInput = 'M';
-			if (
-				array_key_exists('dateFormat', $options) &&
+			if (array_key_exists('dateFormat', $options) &&
 				($options['dateFormat'] === null || $options['dateFormat'] === 'NONE')
 			) {
 				$firstInput = 'H';
@@ -1444,8 +1443,7 @@ class FormHelper extends AppHelper {
 		$value = current($this->value($valueOptions));
 		$output = '';
 
-		if (
-			(!isset($options['checked']) && !empty($value) && $value == $options['value']) ||
+		if ((!isset($options['checked']) && !empty($value) && $value == $options['value']) ||
 			!empty($options['checked'])
 		) {
 			$options['checked'] = 'checked';
@@ -1789,7 +1787,8 @@ class FormHelper extends AppHelper {
  * @param string $title The content to be wrapped by <a> tags.
  * @param string|array $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)
  * @param array $options Array of HTML attributes.
- * @param bool|string $confirmMessage JavaScript confirmation message.
+ * @param bool|string $confirmMessage JavaScript confirmation message. This
+ *   argument is deprecated as of 2.6. Use `confirm` key in $options instead.
  * @return string An `<a />` element.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::postLink
  */
@@ -2086,8 +2085,7 @@ class FormHelper extends AppHelper {
 			$hasOptions = (count($options) > 0 || $showEmpty);
 			// Secure the field if there are options, or its a multi select.
 			// Single selects with no options don't submit, but multiselects do.
-			if (
-				(!isset($secure) || $secure) &&
+			if ((!isset($secure) || $secure) &&
 				empty($attributes['disabled']) &&
 				(!empty($attributes['multiple']) || $hasOptions)
 			) {
@@ -2761,8 +2759,7 @@ class FormHelper extends AppHelper {
 
 			if ($name !== null) {
 				$isNumeric = is_numeric($name);
-				if (
-					(!$selectedIsArray && !$selectedIsEmpty && (string)$attributes['value'] == (string)$name) ||
+				if ((!$selectedIsArray && !$selectedIsEmpty && (string)$attributes['value'] == (string)$name) ||
 					($selectedIsArray && in_array((string)$name, $attributes['value'], !$isNumeric))
 				) {
 					if ($attributes['style'] === 'checkbox') {
@@ -2782,8 +2779,7 @@ class FormHelper extends AppHelper {
 							$disabledIsNumeric = is_numeric($name);
 						}
 					}
-					if (
-						$hasDisabled &&
+					if ($hasDisabled &&
 						$disabledIsArray &&
 						in_array((string)$name, $attributes['disabled'], !$disabledIsNumeric)
 					) {
@@ -2902,8 +2898,7 @@ class FormHelper extends AppHelper {
 				if ($min > $max) {
 					list($min, $max) = array($max, $min);
 				}
-				if (
-					!empty($options['value']) &&
+				if (!empty($options['value']) &&
 					(int)$options['value'] < $min &&
 					(int)$options['value'] > 0
 				) {

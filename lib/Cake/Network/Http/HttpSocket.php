@@ -294,6 +294,7 @@ class HttpSocket extends CakeSocket {
 		if (isset($host)) {
 			$this->config['host'] = $host;
 		}
+
 		$this->_setProxy();
 		$this->request['proxy'] = $this->_proxy;
 
@@ -311,8 +312,7 @@ class HttpSocket extends CakeSocket {
 			if (isset($this->request['uri']['port'])) {
 				$port = $this->request['uri']['port'];
 			}
-			if (
-				($scheme === 'http' && $port != 80) ||
+			if (($scheme === 'http' && $port != 80) ||
 				($scheme === 'https' && $port != 443) ||
 				($port != 80 && $port != 443)
 			) {
@@ -342,6 +342,9 @@ class HttpSocket extends CakeSocket {
 
 		if (!empty($this->request['body']) && !isset($this->request['header']['Content-Length'])) {
 			$this->request['header']['Content-Length'] = strlen($this->request['body']);
+		}
+		if (isset($this->request['uri']['scheme']) && $this->request['uri']['scheme'] === 'https' && in_array($this->config['protocol'], array(false, 'tcp'))) {
+			$this->config['protocol'] = 'ssl';
 		}
 
 		$connectionType = null;
@@ -460,6 +463,32 @@ class HttpSocket extends CakeSocket {
 		}
 
 		$request = Hash::merge(array('method' => 'GET', 'uri' => $uri), $request);
+		return $this->request($request);
+	}
+
+/**
+ * Issues a HEAD request to the specified URI, query, and request.
+ *
+ * By definition HEAD request are identical to GET request except they return no response body. This means that all
+ * information and examples relevant to GET also applys to HEAD.
+ *
+ * @param string|array $uri URI to request. Either a string URI, or a URI array, see HttpSocket::_parseUri()
+ * @param array $query Querystring parameters to append to URI
+ * @param array $request An indexed array with indexes such as 'method' or uri
+ * @return mixed Result of request, either false on failure or the response to the request.
+ */
+	public function head($uri = null, $query = array(), $request = array()) {
+		if (!empty($query)) {
+			$uri = $this->_parseUri($uri, $this->config['request']['uri']);
+			if (isset($uri['query'])) {
+				$uri['query'] = array_merge($uri['query'], $query);
+			} else {
+				$uri['query'] = $query;
+			}
+			$uri = $this->_buildUri($uri);
+		}
+
+		$request = Hash::merge(array('method' => 'HEAD', 'uri' => $uri), $request);
 		return $this->request($request);
 	}
 
@@ -1034,3 +1063,4 @@ class HttpSocket extends CakeSocket {
 	}
 
 }
+

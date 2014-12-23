@@ -298,15 +298,14 @@ class CakeTestFixture {
 							$message .= "The field '" . $field . "' is in the data fixture but not in the schema." . "\n";
 						}
 
-						throw new CakeException( $message );
+						throw new CakeException($message);
 					}
 					$values[] = $merge;
 				}
 				$nested = $db->useNestedTransactions;
 				$db->useNestedTransactions = false;
 				$result = $db->insertMulti($this->table, $fields, $values);
-				if (
-					$this->primaryKey &&
+				if ($this->primaryKey &&
 					isset($this->fields[$this->primaryKey]['type']) &&
 					in_array($this->fields[$this->primaryKey]['type'], array('integer', 'biginteger'))
 				) {

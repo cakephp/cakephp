@@ -767,7 +767,7 @@ class ModelValidationTest extends BaseModelTest {
 					'last' => false
 				),
 				'between' => array(
-					'rule' => array('between', 5, 15),
+					'rule' => array('lengthBetween', 5, 15),
 					'message' => array('You may enter up to %s chars (minimum is %s chars)', 14, 6)
 				)
 			)
@@ -1844,7 +1844,7 @@ class ModelValidationTest extends BaseModelTest {
 
 		$set = array(
 			'numeric' => array('rule' => 'numeric', 'allowEmpty' => false),
-			'range' => array('rule' => array('between', 1, 5), 'allowEmpty' => false),
+			'between' => array('rule' => array('lengthBetween', 1, 5), 'allowEmpty' => false),
 		);
 		$Validator['other'] = $set;
 		$rules = $Validator['other'];
@@ -1853,7 +1853,7 @@ class ModelValidationTest extends BaseModelTest {
 		$validators = $rules->getRules();
 		$this->assertCount(2, $validators);
 		$this->assertEquals('numeric', $validators['numeric']->rule);
-		$this->assertEquals(array('between', 1, 5), $validators['range']->rule);
+		$this->assertEquals(array('lengthBetween', 1, 5), $validators['between']->rule);
 
 		$Validator['new'] = new CakeValidationSet('new', $set, array());
 		$rules = $Validator['new'];
@@ -1862,7 +1862,7 @@ class ModelValidationTest extends BaseModelTest {
 		$validators = $rules->getRules();
 		$this->assertCount(2, $validators);
 		$this->assertEquals('numeric', $validators['numeric']->rule);
-		$this->assertEquals(array('between', 1, 5), $validators['range']->rule);
+		$this->assertEquals(array('lengthBetween', 1, 5), $validators['between']->rule);
 	}
 
 /**
@@ -1917,7 +1917,7 @@ class ModelValidationTest extends BaseModelTest {
 
 		$set = array(
 			'numeric' => array('rule' => 'numeric', 'allowEmpty' => false),
-			'range' => array('rule' => array('between', 1, 5), 'allowEmpty' => false),
+			'range' => array('rule' => array('lengthBetween', 1, 5), 'allowEmpty' => false),
 		);
 		$Validator['other'] = $set;
 		$this->assertCount(4, $Validator);
@@ -1938,14 +1938,14 @@ class ModelValidationTest extends BaseModelTest {
 		$Validator = $TestModel->validator();
 
 		$Validator->add('other', 'numeric', array('rule' => 'numeric', 'allowEmpty' => false));
-		$Validator->add('other', 'range', array('rule' => array('between', 1, 5), 'allowEmpty' => false));
+		$Validator->add('other', 'between', array('rule' => array('lengthBetween', 1, 5), 'allowEmpty' => false));
 		$rules = $Validator['other'];
 		$this->assertEquals('other', $rules->field);
 
 		$validators = $rules->getRules();
 		$this->assertCount(2, $validators);
 		$this->assertEquals('numeric', $validators['numeric']->rule);
-		$this->assertEquals(array('between', 1, 5), $validators['range']->rule);
+		$this->assertEquals(array('lengthBetween', 1, 5), $validators['between']->rule);
 	}
 
 /**
@@ -1962,13 +1962,13 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertFalse(isset($Validator['title']));
 
 		$Validator->add('other', 'numeric', array('rule' => 'numeric', 'allowEmpty' => false));
-		$Validator->add('other', 'range', array('rule' => array('between', 1, 5), 'allowEmpty' => false));
+		$Validator->add('other', 'between', array('rule' => array('lengthBetween', 1, 5), 'allowEmpty' => false));
 		$this->assertTrue(isset($Validator['other']));
 
 		$Validator->remove('other', 'numeric');
 		$this->assertTrue(isset($Validator['other']));
 		$this->assertFalse(isset($Validator['other']['numeric']));
-		$this->assertTrue(isset($Validator['other']['range']));
+		$this->assertTrue(isset($Validator['other']['between']));
 	}
 
 /**
@@ -2126,7 +2126,7 @@ class ModelValidationTest extends BaseModelTest {
 
 		$set = array(
 			'numeric' => array('rule' => 'numeric', 'allowEmpty' => false),
-			'range' => array('rule' => array('between', 1, 5), 'allowEmpty' => false),
+			'between' => array('rule' => array('lengthBetween', 1, 5), 'allowEmpty' => false),
 		);
 
 		$Validator->add('other', $set);
@@ -2136,11 +2136,11 @@ class ModelValidationTest extends BaseModelTest {
 		$validators = $rules->getRules();
 		$this->assertCount(2, $validators);
 		$this->assertEquals('numeric', $validators['numeric']->rule);
-		$this->assertEquals(array('between', 1, 5), $validators['range']->rule);
+		$this->assertEquals(array('lengthBetween', 1, 5), $validators['between']->rule);
 
 		$set = new CakeValidationSet('other', array(
 			'a' => array('rule' => 'numeric', 'allowEmpty' => false),
-			'b' => array('rule' => array('between', 1, 5), 'allowEmpty' => false),
+			'b' => array('rule' => array('lengthBetween', 1, 5), 'allowEmpty' => false),
 		));
 
 		$Validator->add('other', $set);

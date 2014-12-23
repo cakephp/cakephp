@@ -19,7 +19,54 @@
 App::uses('Controller', 'Controller');
 App::uses('AuthComponent', 'Controller/Component');
 App::uses('AclComponent', 'Controller/Component');
+App::uses('BaseAuthenticate', 'Controller/Component/Auth');
 App::uses('FormAuthenticate', 'Controller/Component/Auth');
+App::uses('CakeEvent', 'Event');
+
+/**
+ * TestFormAuthenticate class
+ *
+ * @package       Cake.Test.Case.Controller.Component
+ */
+class TestBaseAuthenticate extends BaseAuthenticate {
+
+/**
+ * Implemented events
+ *
+ * @return array of events => callbacks.
+ */
+	public function implementedEvents() {
+		return array(
+			'Auth.afterIdentify' => 'afterIdentify'
+		);
+	}
+
+	public $afterIdentifyCallable = null;
+
+/**
+ * Test function to be used in event dispatching
+ *
+ * @return void
+ */
+	public function afterIdentify($event) {
+		call_user_func($this->afterIdentifyCallable, $event);
+	}
+
+/**
+ * Authenticate a user based on the request information.
+ *
+ * @param CakeRequest $request Request to get authentication information from.
+ * @param CakeResponse $response A response object that can have headers added.
+ * @return mixed Either false on failure, or an array of user data on success.
+ */
+	public function authenticate(CakeRequest $request, CakeResponse $response) {
+		return array(
+			'id' => 1,
+			'username' => 'mark'
+		);
+	}
+
+}
 
 /**
  * TestAuthComponent class
@@ -39,11 +86,22 @@ class TestAuthComponent extends AuthComponent {
  * Helper method to add/set an authenticate object instance
  *
  * @param int $index The index at which to add/set the object
- * @param Object $object The object to add/set
+ * @param object $object The object to add/set
  * @return void
  */
 	public function setAuthenticateObject($index, $object) {
 		$this->_authenticateObjects[$index] = $object;
+	}
+
+/**
+ * Helper method to get an authenticate object instance
+ *
+ * @param int $index The index at which to get the object
+ * @return object $object
+ */
+	public function getAuthenticateObject($index) {
+		$this->constructAuthenticate();
+		return isset($this->_authenticateObjects[$index]) ? $this->_authenticateObjects[$index] : null;
 	}
 
 /**
@@ -267,6 +325,27 @@ class AjaxAuthController extends Controller {
 }
 
 /**
+ * Mock class used to test event dispatching
+ *
+ * @package Cake.Test.Case.Event
+ */
+class AuthEventTestListener {
+
+	public $callStack = array();
+
+/**
+ * Test function to be used in event dispatching
+ *
+ * @return void
+ */
+	public function listenerFunction() {
+		$this->callStack[] = __FUNCTION__;
+	}
+
+}
+
+
+/**
  * AuthComponentTest class
  *
  * @package       Cake.Test.Case.Controller.Component
@@ -407,6 +486,33 @@ class AuthComponentTest extends CakeTestCase {
 		$result = $this->Auth->login();
 		$this->assertTrue($result);
 
+		$this->assertTrue($this->Auth->loggedIn());
+		$this->assertEquals($user, $this->Auth->user());
+	}
+
+/**
+ * testLogin afterIdentify event method
+ *
+ * @return void
+ */
+	public function testLoginAfterIdentify() {
+		$this->Auth->authenticate = array(
+			'TestBase',
+		);
+
+		$user = array(
+			'id' => 1,
+			'username' => 'mark'
+		);
+
+		$auth = $this->Auth->getAuthenticateObject(0);
+		$listener = $this->getMock('AuthEventTestListener');
+		$auth->afterIdentifyCallable = array($listener, 'listenerFunction');
+		$event = new CakeEvent('Auth.afterIdentify', $this->Auth, array('user' => $user));
+		$listener->expects($this->once())->method('listenerFunction')->with($event);
+
+		$result = $this->Auth->login();
+		$this->assertTrue($result);
 		$this->assertTrue($this->Auth->loggedIn());
 		$this->assertEquals($user, $this->Auth->user());
 	}
@@ -1303,6 +1409,45 @@ class AuthComponentTest extends CakeTestCase {
 			->method('logout');
 
 		$this->Auth->logout();
+	}
+
+/**
+ * Test mapActions as a getter
+ *
+ * @return void
+ */
+	public function testMapActions() {
+		$MapActionMockAuthorize = $this->getMock(
+			'BaseAuthorize',
+			array('authorize'),
+			array(),
+			'',
+			false
+		);
+		$this->Auth->authorize = array('MapActionAuthorize');
+		$this->Auth->setAuthorizeObject(0, $MapActionMockAuthorize);
+
+		$actions = array('my_action' => 'create');
+		$this->Auth->mapActions($actions);
+		$actions = array(
+			'create' => array('my_other_action'),
+			'update' => array('updater')
+		);
+		$this->Auth->mapActions($actions);
+
+		$actions = $this->Auth->mapActions();
+
+		$result = $actions['my_action'];
+		$expected = 'create';
+		$this->assertEquals($expected, $result);
+
+		$result = $actions['my_other_action'];
+		$expected = 'create';
+		$this->assertEquals($expected, $result);
+
+		$result = $actions['updater'];
+		$expected = 'update';
+		$this->assertEquals($expected, $result);
 	}
 
 /**

@@ -20,6 +20,7 @@ require_once CAKE . 'basics.php';
 
 App::uses('Folder', 'Utility');
 App::uses('CakeResponse', 'Network');
+App::uses('Debugger', 'Utility');
 
 /**
  * BasicsTest class
@@ -384,8 +385,8 @@ class BasicsTest extends CakeTestCase {
 		$expected = 'Some string with %s and a null argument';
 		$this->assertEquals($expected, $result);
 
-		$result = __('Some string with multiple %s%s, first beeing null', null, 'arguments');
-		$expected = 'Some string with multiple arguments, first beeing null';
+		$result = __('Some string with multiple %s%s, first being null', null, 'arguments');
+		$expected = 'Some string with multiple arguments, first being null';
 		$this->assertEquals($expected, $result);
 
 		$result = __('Some string with %s %s', array('multiple', 'arguments'));
@@ -1146,6 +1147,24 @@ EXPECTED;
 			'g' => "te'''st"
 			);
 		$this->assertEquals($expected, stripslashes_deep($nested));
+	}
+
+/**
+ * Tests that the stackTrace() method is a shortcut for Debugger::trace()
+ *
+ * @return void
+ */
+	public function testStackTrace() {
+		ob_start();
+		list(, $expected) = array(stackTrace(), Debugger::trace());
+		$result = ob_get_clean();
+		$this->assertEquals($expected, $result);
+
+		$opts = array('args' => true);
+		ob_start();
+		list(, $expected) = array(stackTrace($opts), Debugger::trace($opts));
+		$result = ob_get_clean();
+		$this->assertEquals($expected, $result);
 	}
 
 /**

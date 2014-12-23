@@ -162,8 +162,7 @@ class CakeRequest implements ArrayAccess {
 	protected function _processPost() {
 		if ($_POST) {
 			$this->data = $_POST;
-		} elseif (
-			($this->is('put') || $this->is('delete')) &&
+		} elseif (($this->is('put') || $this->is('delete')) &&
 			strpos(env('CONTENT_TYPE'), 'application/x-www-form-urlencoded') === 0
 		) {
 				$data = $this->_readInput();
@@ -261,8 +260,7 @@ class CakeRequest implements ArrayAccess {
 		}
 		$endsWithIndex = '/webroot/index.php';
 		$endsWithLength = strlen($endsWithIndex);
-		if (
-			strlen($uri) >= $endsWithLength &&
+		if (strlen($uri) >= $endsWithLength &&
 			substr($uri, -$endsWithLength) === $endsWithIndex
 		) {
 			$uri = '/';
@@ -874,8 +872,13 @@ class CakeRequest implements ArrayAccess {
  *   return false if the parameter doesn't exist or is falsey.
  */
 	public function param($name) {
+		$args = func_get_args();
+		if (count($args) === 2) {
+			$this->params = Hash::insert($this->params, $name, $args[1]);
+			return $this;
+		}
 		if (!isset($this->params[$name])) {
-			return false;
+			return Hash::get($this->params, $name, false);
 		}
 		return $this->params[$name];
 	}
@@ -908,6 +911,17 @@ class CakeRequest implements ArrayAccess {
 			return call_user_func_array($callback, $args);
 		}
 		return $input;
+	}
+
+/**
+ * Modify data originally from `php://input`. Useful for altering json/xml data
+ * in middleware or DispatcherFilters before it gets to RequestHandlerComponent
+ *
+ * @param string $input A string to replace original parsed data from input()
+ * @return void
+ */
+	public function setInput($input) {
+		$this->_input = $input;
 	}
 
 /**

@@ -129,8 +129,7 @@ abstract class ObjectCollection {
 			if ($options['collectReturn'] === true) {
 				$collected[] = $result;
 			}
-			if (
-				$options['break'] && ($result === $options['breakOn'] ||
+			if ($options['break'] && ($result === $options['breakOn'] ||
 				(is_array($options['breakOn']) && in_array($result, $options['breakOn'], true)))
 			) {
 				return $result;

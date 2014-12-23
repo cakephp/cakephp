@@ -157,8 +157,7 @@ class TranslateBehavior extends ModelBehavior {
 			);
 			foreach ($fields as $key => $value) {
 				$field = (is_numeric($key)) ? $value : $key;
-				if (
-					$isAllFields ||
+				if ($isAllFields ||
 					in_array($Model->alias . '.' . $field, $query['fields']) ||
 					in_array($field, $query['fields'])
 				) {
@@ -437,6 +436,10 @@ class TranslateBehavior extends ModelBehavior {
 			$tempData = $this->_prepareTranslations($Model, $tempData);
 		}
 		$locale = $this->_getLocale($Model);
+		$atomic = array();
+		if (isset($options['atomic'])) {
+			$atomic = array('atomic' => $options['atomic']);
+		}
 
 		foreach ($tempData as $field => $value) {
 			unset($conditions['content']);
@@ -466,10 +469,11 @@ class TranslateBehavior extends ModelBehavior {
 					$RuntimeModel->save(array(
 						$RuntimeModel->alias => array_merge(
 							$conditions, array('id' => $translations[$_locale])
-						)
+						),
+						$atomic
 					));
 				} else {
-					$RuntimeModel->save(array($RuntimeModel->alias => $conditions));
+					$RuntimeModel->save(array($RuntimeModel->alias => $conditions), $atomic);
 				}
 			}
 		}
@@ -585,7 +589,8 @@ class TranslateBehavior extends ModelBehavior {
 		$RuntimeModel = $this->translateModel($Model);
 		$default = array(
 			'className' => $RuntimeModel->alias,
-			'foreignKey' => 'foreign_key'
+			'foreignKey' => 'foreign_key',
+			'order' => 'id'
 		);
 
 		foreach ($fields as $key => $value) {

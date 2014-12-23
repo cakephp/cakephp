@@ -55,6 +55,16 @@ if (!defined('APP_DIR')) {
 //define('CAKE_CORE_INCLUDE_PATH', __CAKE_PATH__);
 
 /**
+ * This auto-detects CakePHP as a composer installed library.
+ * You may remove this if you are not planning to use composer (not recommended, though).
+ */
+$vendorPath = ROOT . DS . APP_DIR . DS . 'Vendor' . DS . 'cakephp' . DS . 'cakephp' . DS . 'lib';
+$dispatcher = 'Cake' . DS . 'Console' . DS . 'ShellDispatcher.php';
+if (!defined('CAKE_CORE_INCLUDE_PATH') && file_exists($vendorPath . DS . $dispatcher)) {
+	define('CAKE_CORE_INCLUDE_PATH', $vendorPath);
+}
+
+/**
  * Editing below this line should NOT be necessary.
  * Change at your own risk.
  *

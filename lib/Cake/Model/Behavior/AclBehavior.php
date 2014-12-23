@@ -73,7 +73,7 @@ class AclBehavior extends ModelBehavior {
  * @param Model $model Model using this behavior.
  * @param string|array|Model $ref Array with 'model' and 'foreign_key', model object, or string value
  * @param string $type Only needed when Acl is set up as 'both', specify 'Aro' or 'Aco' to get the correct node
- * @return array|null
+ * @return array
  * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/acl.html#node
  */
 	public function node(Model $model, $ref = null, $type = null) {
@@ -81,7 +81,7 @@ class AclBehavior extends ModelBehavior {
 			$type = $this->_typeMaps[$this->settings[$model->name]['type']];
 			if (is_array($type)) {
 				trigger_error(__d('cake_dev', 'AclBehavior is setup with more then one type, please specify type parameter for node()'), E_USER_WARNING);
-				return null;
+				return array();
 			}
 		}
 		if (empty($ref)) {
@@ -104,7 +104,7 @@ class AclBehavior extends ModelBehavior {
 			$types = array($types);
 		}
 		foreach ($types as $type) {
-			$parent = $model->parentNode();
+			$parent = $model->parentNode($type);
 			if (!empty($parent)) {
 				$parent = $this->node($model, $parent, $type);
 			}

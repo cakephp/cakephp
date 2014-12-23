@@ -707,6 +707,258 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * testSaveAtomic method
+ *
+ * @return void
+ */
+	public function testSaveAtomic() {
+		$this->loadFixtures('Article');
+		$TestModel = new Article();
+
+		// Create record with 'atomic' = false
+
+		$data = array(
+			'Article' => array(
+				'user_id' => '1',
+				'title' => 'Fourth Article',
+				'body' => 'Fourth Article Body',
+				'published' => 'Y'
+			)
+		);
+		$TestModel->create();
+		$result = $TestModel->save($data, array('atomic' => false));
+		$this->assertTrue((bool)$result);
+
+		// Check record we created
+
+		$TestModel->recursive = -1;
+		$result = $TestModel->read(array('id', 'user_id', 'title', 'body', 'published'), 4);
+		$expected = array(
+			'Article' => array(
+				'id' => '4',
+				'user_id' => '1',
+				'title' => 'Fourth Article',
+				'body' => 'Fourth Article Body',
+				'published' => 'Y'
+			)
+		);
+		$this->assertEquals($expected, $result);
+
+		// Create record with 'atomic' = true
+
+		$data = array(
+			'Article' => array(
+				'user_id' => '4',
+				'title' => 'Fifth Article',
+				'body' => 'Fifth Article Body',
+				'published' => 'Y'
+			)
+		);
+		$TestModel->create();
+		$result = $TestModel->save($data, array('atomic' => true));
+		$this->assertTrue((bool)$result);
+
+		// Check record we created
+
+		$TestModel->recursive = -1;
+		$result = $TestModel->read(array('id', 'user_id', 'title', 'body', 'published'), 5);
+		$expected = array(
+			'Article' => array(
+				'id' => '5',
+				'user_id' => '4',
+				'title' => 'Fifth Article',
+				'body' => 'Fifth Article Body',
+				'published' => 'Y'
+			)
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test save with transaction and ensure there is no missing rollback.
+ *
+ * @return void
+ */
+	public function testSaveTransactionNoRollback() {
+		$this->loadFixtures('Post', 'Article');
+
+		$db = $this->getMock('DboSource', array('begin', 'connect', 'rollback', 'describe'));
+
+		$db->expects($this->once())
+			->method('describe')
+			->will($this->returnValue(array()));
+		$db->expects($this->once())
+			->method('begin')
+			->will($this->returnValue(true));
+		$db->expects($this->once())
+			->method('rollback');
+
+		$Post = new TestPost();
+		$Post->setDataSourceObject($db);
+
+		$callback = array($this, 'callbackForTestSaveTransaction');
+		$Post->getEventManager()->attach($callback, 'Model.beforeSave');
+
+		$data = array(
+			'Post' => array(
+				'author_id' => 1,
+				'title' => 'New Fourth Post'
+			)
+		);
+		$Post->save($data, array('atomic' => true));
+	}
+
+/**
+ * test callback used in testSaveTransaction method
+ *
+ * @return bool false to stop event propagation
+ */
+	public function callbackForTestSaveTransaction($event) {
+		$TestModel = new Article();
+
+		// Create record. Do not use same model as in testSaveTransaction
+		// to avoid infinite loop.
+
+		$data = array(
+			'Article' => array(
+				'user_id' => '1',
+				'title' => 'Fourth Article',
+				'body' => 'Fourth Article Body',
+				'published' => 'Y'
+			)
+		);
+		$TestModel->create();
+		$result = $TestModel->save($data);
+		$this->assertTrue((bool)$result);
+
+		// force transaction to be rolled back in Post model
+		$event->stopPropagation();
+		return false;
+	}
+
+/**
+ * testSaveTransaction method
+ *
+ * @return void
+ */
+	public function testSaveTransaction() {
+		$this->loadFixtures('Post', 'Article');
+		$PostModel = new Post();
+
+		// Check if Database supports transactions
+
+		$PostModel->validate = array('title' => 'notEmpty');
+		$data = array(
+			array('author_id' => 1, 'title' => 'New Fourth Post'),
+			array('author_id' => 1, 'title' => 'New Fifth Post'),
+			array('author_id' => 1, 'title' => '')
+		);
+		$this->assertFalse($PostModel->saveAll($data));
+
+		$result = $PostModel->find('all', array('recursive' => -1));
+		$expectedPosts = array(
+			array(
+				'Post' => array(
+					'id' => '1',
+					'author_id' => 1,
+					'title' => 'First Post',
+					'body' => 'First Post Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31'
+				)
+			),
+			array(
+				'Post' => array(
+					'id' => '2',
+					'author_id' => 3,
+					'title' => 'Second Post',
+					'body' => 'Second Post Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31'
+				)
+			),
+			array(
+				'Post' => array(
+					'id' => '3',
+					'author_id' => 1,
+					'title' => 'Third Post',
+					'body' => 'Third Post Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:43:23',
+					'updated' => '2007-03-18 10:45:31'
+				)
+			)
+		);
+
+		$this->skipIf(count($result) !== 3, 'Database does not support transactions.');
+
+		$this->assertEquals($expectedPosts, $result);
+
+		// Database supports transactions --> continue tests
+
+		$data = array(
+			'Post' => array(
+				'author_id' => 1,
+				'title' => 'New Fourth Post'
+			)
+		);
+
+		$callback = array($this, 'callbackForTestSaveTransaction');
+		$PostModel->getEventManager()->attach($callback, 'Model.beforeSave');
+
+		$PostModel->create();
+		$result = $PostModel->save($data, array('atomic' => true));
+		$this->assertFalse($result);
+
+		$result = $PostModel->find('all', array('recursive' => -1));
+		$this->assertEquals($expectedPosts, $result);
+
+		// Check record we created in callbackForTestSaveTransaction method.
+		// record should not exist due to rollback
+
+		$ArticleModel = new Article();
+		$result = $ArticleModel->find('all', array('recursive' => -1));
+		$expectedArticles = array(
+			array(
+				'Article' => array(
+					'user_id' => '1',
+					'title' => 'First Article',
+					'body' => 'First Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31',
+					'id' => '1'
+				)
+			),
+			array(
+				'Article' => array(
+					'user_id' => '3',
+					'title' => 'Second Article',
+					'body' => 'Second Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31',
+					'id' => '2'
+				)
+			),
+			array(
+				'Article' => array(
+					'user_id' => '1',
+					'title' => 'Third Article',
+					'body' => 'Third Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:43:23',
+					'updated' => '2007-03-18 10:45:31',
+					'id' => '3'
+				)
+			)
+		);
+		$this->assertEquals($expectedArticles, $result);
+	}
+
+/**
  * testSaveField method
  *
  * @return void
@@ -1869,7 +2121,9 @@ class ModelWriteTest extends BaseModelTest {
 
 		$data = array('Item' => array('Item' => array(1, 2)));
 		$TestModel->id = 2;
-		$TestModel->save($data);
+		$result = $TestModel->save($data);
+		$this->assertTrue((bool)$result);
+
 		$result = $TestModel->findById(2);
 		$result['Item'] = Hash::sort($result['Item'], '{n}.id', 'asc');
 		$expected = array(

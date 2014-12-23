@@ -168,6 +168,14 @@ class Shell extends Object {
 	public $stdin;
 
 /**
+ * The number of bytes last written to the output stream
+ * used when overwriting the previous message.
+ *
+ * @var int
+ */
+	protected $_lastWritten = 0;
+
+/**
  *  Constructs this Shell instance.
  *
  * @param ConsoleOutput $stdout A ConsoleOutput object for stdout.
@@ -609,9 +617,42 @@ class Shell extends Object {
 			$currentLevel = Shell::QUIET;
 		}
 		if ($level <= $currentLevel) {
-			return $this->stdout->write($message, $newlines);
+			$this->_lastWritten = $this->stdout->write($message, $newlines);
+			return $this->_lastWritten;
 		}
 		return true;
+	}
+
+/**
+ * Overwrite some already output text.
+ *
+ * Useful for building progress bars, or when you want to replace
+ * text already output to the screen with new text.
+ *
+ * **Warning** You cannot overwrite text that contains newlines.
+ *
+ * @param array|string $message The message to output.
+ * @param int $newlines Number of newlines to append.
+ * @param int $size The number of bytes to overwrite. Defaults to the
+ *    length of the last message output.
+ * @return int|bool Returns the number of bytes returned from writing to stdout.
+ */
+	public function overwrite($message, $newlines = 1, $size = null) {
+		$size = $size ? $size : $this->_lastWritten;
+
+		// Output backspaces.
+		$this->out(str_repeat("\x08", $size), 0);
+
+		$newBytes = $this->out($message, 0);
+
+		// Fill any remaining bytes with spaces.
+		$fill = $size - $newBytes;
+		if ($fill > 0) {
+			$this->out(str_repeat(' ', $fill), 0);
+		}
+		if ($newlines) {
+			$this->out($this->nl($newlines), 0);
+		}
 	}
 
 /**

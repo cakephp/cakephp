@@ -227,8 +227,7 @@ class Router {
  * @throws RouterException
  */
 	protected static function _validateRouteClass($routeClass) {
-		if (
-			$routeClass !== 'CakeRoute' &&
+		if ($routeClass !== 'CakeRoute' &&
 			(!class_exists($routeClass) || !is_subclass_of($routeClass, 'CakeRoute'))
 		) {
 			throw new RouterException(__d('cake_dev', 'Route class not found, or route class is not a subclass of CakeRoute'));
@@ -355,9 +354,8 @@ class Router {
 				break;
 			}
 		}
-		if (isset($defaults['prefix'])) {
+		if (isset($defaults['prefix']) && !in_array($defaults['prefix'], self::$_prefixes)) {
 			self::$_prefixes[] = $defaults['prefix'];
-			self::$_prefixes = array_keys(array_flip(self::$_prefixes));
 		}
 		$defaults += array('plugin' => null);
 		if (empty($options['action'])) {
@@ -610,11 +608,9 @@ class Router {
 
 		extract(self::_parseExtension($url));
 
-		for ($i = 0, $len = count(self::$routes); $i < $len; $i++) {
-			$route =& self::$routes[$i];
-
+		foreach (self::$routes as $route) {
 			if (($r = $route->parse($url)) !== false) {
-				self::$_currentRoute[] =& $route;
+				self::$_currentRoute[] = $route;
 				$out = $r;
 				break;
 			}
@@ -734,7 +730,7 @@ class Router {
  *
  * @param string $name Parameter name
  * @param bool $current Current parameter, useful when using requestAction
- * @return string Parameter value
+ * @return string|null Parameter value
  */
 	public static function getParam($name = 'controller', $current = false) {
 		$params = Router::getParams($current);
@@ -906,12 +902,12 @@ class Router {
 
 			$match = false;
 
-			for ($i = 0, $len = count(self::$routes); $i < $len; $i++) {
+			foreach (self::$routes as $route) {
 				$originalUrl = $url;
 
-				$url = self::$routes[$i]->persistParams($url, $params);
+				$url = $route->persistParams($url, $params);
 
-				if ($match = self::$routes[$i]->match($url)) {
+				if ($match = $route->match($url)) {
 					$output = trim($match, '/');
 					break;
 				}
@@ -995,12 +991,10 @@ class Router {
 		);
 
 		$keys = array_values(array_diff(array_keys($url), $skip));
-		$count = count($keys);
 
 		// Remove this once parsed URL parameters can be inserted into 'pass'
-		for ($i = 0; $i < $count; $i++) {
-			$key = $keys[$i];
-			if (is_numeric($keys[$i])) {
+		foreach ($keys as $key) {
+			if (is_numeric($key)) {
 				$args[] = $url[$key];
 			} else {
 				$named[$key] = $url[$key];

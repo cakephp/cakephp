@@ -1481,8 +1481,7 @@ class CakeEmail {
 			$msg[] = '--' . $boundary;
 			$msg[] = 'Content-Type: ' . $fileInfo['mimetype'];
 			$msg[] = 'Content-Transfer-Encoding: base64';
-			if (
-				!isset($fileInfo['contentDisposition']) ||
+			if (!isset($fileInfo['contentDisposition']) ||
 				$fileInfo['contentDisposition']
 			) {
 				$msg[] = 'Content-Disposition: attachment; filename="' . $filename . '"';

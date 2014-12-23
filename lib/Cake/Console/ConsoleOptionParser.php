@@ -411,6 +411,17 @@ class ConsoleOptionParser {
 	}
 
 /**
+ * Remove a subcommand from the option parser.
+ *
+ * @param string $name The subcommand name to remove.
+ * @return $this
+ */
+	public function removeSubcommand($name) {
+		unset($this->_subcommands[$name]);
+		return $this;
+	}
+
+/**
  * Add multiple subcommands at once.
  *
  * @param array $commands Array of subcommands.
@@ -510,8 +521,7 @@ class ConsoleOptionParser {
  * @return string Generated help.
  */
 	public function help($subcommand = null, $format = 'text', $width = 72) {
-		if (
-			isset($this->_subcommands[$subcommand]) &&
+		if (isset($this->_subcommands[$subcommand]) &&
 			$this->_subcommands[$subcommand]->parser() instanceof self
 		) {
 			$subparser = $this->_subcommands[$subcommand]->parser();

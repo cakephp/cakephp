@@ -186,6 +186,10 @@ class InflectorTest extends CakeTestCase {
  * @return void
  */
 	public function testInflectingPlurals() {
+		$this->assertEquals(Inflector::pluralize('axman'), 'axmen');
+		$this->assertEquals(Inflector::pluralize('man'), 'men');
+		$this->assertEquals(Inflector::pluralize('woman'), 'women');
+		$this->assertEquals(Inflector::pluralize('human'), 'humans');
 		$this->assertEquals(Inflector::pluralize('categoria'), 'categorias');
 		$this->assertEquals(Inflector::pluralize('house'), 'houses');
 		$this->assertEquals(Inflector::pluralize('powerhouse'), 'powerhouses');
