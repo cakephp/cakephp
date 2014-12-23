@@ -25,8 +25,7 @@ class Mcrypt {
  * @param string $text Encrypted string to decrypt, normal string to encrypt
  * @param string $key Key to use as the encryption key for encrypted data.
  * @param string $operation Operation to perform, encrypt or decrypt
- * @throws \InvalidArgumentException When there are errors.
- * @return string Encrypted/Decrypted string
+ * @throws \LogicException When there are errors.
  */
 	public static function rijndael($text, $key, $operation) {
 		$algorithm = MCRYPT_RIJNDAEL_256;
@@ -53,7 +52,6 @@ class Mcrypt {
  *
  * @param string $plain The value to encrypt.
  * @param string $key The 256 bit/32 byte key to use as a cipher key.
- * @param string|null $hmacSalt The salt to use for the HMAC process. Leave null to use Security.salt.
  * @return string Encrypted data.
  * @throws \InvalidArgumentException On invalid data or key.
  */
@@ -73,7 +71,6 @@ class Mcrypt {
  *
  * @param string $cipher The ciphertext to decrypt.
  * @param string $key The 256 bit/32 byte key to use as a cipher key.
- * @param string|null $hmacSalt The salt to use for the HMAC process. Leave null to use Security.salt.
  * @return string Decrypted data. Any trailing null bytes will be removed.
  * @throws InvalidArgumentException On invalid data or key.
  */
@@ -99,4 +96,3 @@ class Mcrypt {
 		return rtrim($plain, "\0");
 	}
 }
-

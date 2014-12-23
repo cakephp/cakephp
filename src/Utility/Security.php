@@ -40,6 +40,13 @@ class Security {
 	protected static $_salt;
 
 /**
+ * The crypto implementation to use.
+ *
+ * @var object
+ */
+	protected static $_instance;
+
+/**
  * Generate authorization hash.
  *
  * @return string Hash
@@ -91,14 +98,22 @@ class Security {
 /**
  * Get the crypto implementation based on the loaded extensions.
  *
+ * @param object $instance The crypto instance to use.
  * @return object Crypto instance.
  */
-	public static function engine() {
-		if (extension_loaded('openssl')) {
-			// return new Openssl();
+	public static function engine($instance = null) {
+		if ($instance === null && static::$_instance === null) {
+			if (extension_loaded('openssl')) {
+				$instance = new Openssl();
+			} elseif (extension_loaded('mcrypt')) {
+				$instance = new Mcrypt();
+			}
 		}
-		if (extension_loaded('mcrypt')) {
-			return new Mcrypt();
+		if ($instance) {
+			static::$_instance = $instance;
+		}
+		if (isset(static::$_instance)) {
+			return static::$_instance;
 		}
 		throw new InvalidArgumentException('No compatible crypto engine loaded. Load either mcrypt or openssl');
 	}
