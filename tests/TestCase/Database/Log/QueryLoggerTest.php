@@ -23,82 +23,87 @@ use Cake\TestSuite\TestCase;
  * Tests QueryLogger class
  *
  */
-class QueryLoggerTest extends TestCase {
+class QueryLoggerTest extends TestCase
+{
 
-/**
- * Set up
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		Log::reset();
-	}
+    /**
+     * Set up
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        Log::reset();
+    }
 
-/**
- * Tear down
- *
- * @return void
- */
-	public function tearDown() {
-		parent::tearDown();
-		Log::reset();
-	}
+    /**
+     * Tear down
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        Log::reset();
+    }
 
-/**
- * Tests that query placeholders are replaced when logged
- *
- * @return void
- */
-	public function testStringInterpolation() {
-		$logger = $this->getMock('\Cake\Database\Log\QueryLogger', ['_log']);
-		$query = new LoggedQuery;
-		$query->query = 'SELECT a FROM b where a = :p1 AND b = :p2 AND c = :p3 AND d = :p4 AND e = :p5 AND f = :p6';
-		$query->params = ['p1' => 'string', 'p3' => null, 'p2' => 3, 'p4' => true, 'p5' => false, 'p6' => 0];
+    /**
+     * Tests that query placeholders are replaced when logged
+     *
+     * @return void
+     */
+    public function testStringInterpolation()
+    {
+        $logger = $this->getMock('\Cake\Database\Log\QueryLogger', ['_log']);
+        $query = new LoggedQuery;
+        $query->query = 'SELECT a FROM b where a = :p1 AND b = :p2 AND c = :p3 AND d = :p4 AND e = :p5 AND f = :p6';
+        $query->params = ['p1' => 'string', 'p3' => null, 'p2' => 3, 'p4' => true, 'p5' => false, 'p6' => 0];
 
-		$logger->expects($this->once())->method('_log')->with($query);
-		$logger->log($query);
-		$expected = "SELECT a FROM b where a = 'string' AND b = 3 AND c = NULL AND d = 1 AND e = 0 AND f = 0";
-		$this->assertEquals($expected, (string)$query);
-	}
+        $logger->expects($this->once())->method('_log')->with($query);
+        $logger->log($query);
+        $expected = "SELECT a FROM b where a = 'string' AND b = 3 AND c = NULL AND d = 1 AND e = 0 AND f = 0";
+        $this->assertEquals($expected, (string)$query);
+    }
 
-/**
- * Tests that positional placeholders are replaced when logging a query
- *
- * @return void
- */
-	public function testStringInterpolation2() {
-		$logger = $this->getMock('\Cake\Database\Log\QueryLogger', ['_log']);
-		$query = new LoggedQuery;
-		$query->query = 'SELECT a FROM b where a = ? AND b = ? AND c = ? AND d = ? AND e = ? AND f = ?';
-		$query->params = ['string', '3', null, true, false, 0];
+    /**
+     * Tests that positional placeholders are replaced when logging a query
+     *
+     * @return void
+     */
+    public function testStringInterpolation2()
+    {
+        $logger = $this->getMock('\Cake\Database\Log\QueryLogger', ['_log']);
+        $query = new LoggedQuery;
+        $query->query = 'SELECT a FROM b where a = ? AND b = ? AND c = ? AND d = ? AND e = ? AND f = ?';
+        $query->params = ['string', '3', null, true, false, 0];
 
-		$logger->expects($this->once())->method('_log')->with($query);
-		$logger->log($query);
-		$expected = "SELECT a FROM b where a = 'string' AND b = '3' AND c = NULL AND d = 1 AND e = 0 AND f = 0";
-		$this->assertEquals($expected, (string)$query);
-	}
+        $logger->expects($this->once())->method('_log')->with($query);
+        $logger->log($query);
+        $expected = "SELECT a FROM b where a = 'string' AND b = '3' AND c = NULL AND d = 1 AND e = 0 AND f = 0";
+        $this->assertEquals($expected, (string)$query);
+    }
 
-/**
- * Tests that the logged query object is passed to the built-in logger using
- * the correct scope
- *
- * @return void
- */
-	public function testLogFunction() {
-		$logger = new QueryLogger;
-		$query = new LoggedQuery;
-		$query->query = 'SELECT a FROM b where a = ? AND b = ? AND c = ?';
-		$query->params = ['string', '3', null];
+    /**
+     * Tests that the logged query object is passed to the built-in logger using
+     * the correct scope
+     *
+     * @return void
+     */
+    public function testLogFunction()
+    {
+        $logger = new QueryLogger;
+        $query = new LoggedQuery;
+        $query->query = 'SELECT a FROM b where a = ? AND b = ? AND c = ?';
+        $query->params = ['string', '3', null];
 
-		$engine = $this->getMock('\Cake\Log\Engine\BaseLog', ['log'], ['scopes' => ['queriesLog']]);
-		Log::engine('queryLoggerTest', $engine);
+        $engine = $this->getMock('\Cake\Log\Engine\BaseLog', ['log'], ['scopes' => ['queriesLog']]);
+        Log::engine('queryLoggerTest', $engine);
 
-		$engine2 = $this->getMock('\Cake\Log\Engine\BaseLog', ['log'], ['scopes' => ['foo']]);
-		Log::engine('queryLoggerTest2', $engine2);
+        $engine2 = $this->getMock('\Cake\Log\Engine\BaseLog', ['log'], ['scopes' => ['foo']]);
+        Log::engine('queryLoggerTest2', $engine2);
 
-		$engine2->expects($this->never())->method('log');
-		$logger->log($query);
-	}
-
+        $engine2->expects($this->never())->method('log');
+        $logger->log($query);
+    }
 }

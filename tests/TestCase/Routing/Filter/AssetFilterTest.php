@@ -25,223 +25,230 @@ use Cake\TestSuite\TestCase;
 /**
  * Asset filter test case.
  */
-class AssetFilterTest extends TestCase {
+class AssetFilterTest extends TestCase
+{
 
-/**
- * setUp method
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		Plugin::load(['TestTheme']);
-	}
+    /**
+     * setUp method
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        Plugin::load(['TestTheme']);
+    }
 
-/**
- * tearDown method
- *
- * @return void
- */
-	public function tearDown() {
-		parent::tearDown();
-		Plugin::unload();
-	}
+    /**
+     * tearDown method
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        Plugin::unload();
+    }
 
-/**
- * Tests that $response->checkNotModified() is called and bypasses
- * file dispatching
- *
- * @return void
- * @triggers DispatcherTest $this, compact('request', 'response')
- * @triggers DispatcherTest $this, compact('request', 'response')
- */
-	public function testNotModified() {
-		$filter = new AssetFilter();
-		$time = filemtime(Plugin::path('TestTheme') . 'webroot/img/cake.power.gif');
-		$time = new \DateTime('@' . $time);
+    /**
+     * Tests that $response->checkNotModified() is called and bypasses
+     * file dispatching
+     *
+     * @return void
+     * @triggers DispatcherTest $this, compact('request', 'response')
+     * @triggers DispatcherTest $this, compact('request', 'response')
+     */
+    public function testNotModified()
+    {
+        $filter = new AssetFilter();
+        $time = filemtime(Plugin::path('TestTheme') . 'webroot/img/cake.power.gif');
+        $time = new \DateTime('@' . $time);
 
-		$response = $this->getMock('Cake\Network\Response', array('send', 'checkNotModified'));
-		$request = new Request('test_theme/img/cake.power.gif');
+        $response = $this->getMock('Cake\Network\Response', array('send', 'checkNotModified'));
+        $request = new Request('test_theme/img/cake.power.gif');
 
-		$response->expects($this->once())->method('checkNotModified')
-			->with($request)
-			->will($this->returnValue(true));
-		$event = new Event('DispatcherTest', $this, compact('request', 'response'));
+        $response->expects($this->once())->method('checkNotModified')
+            ->with($request)
+            ->will($this->returnValue(true));
+        $event = new Event('DispatcherTest', $this, compact('request', 'response'));
 
-		ob_start();
-		$this->assertSame($response, $filter->beforeDispatch($event));
-		ob_end_clean();
-		$this->assertEquals(200, $response->statusCode());
-		$this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->modified());
+        ob_start();
+        $this->assertSame($response, $filter->beforeDispatch($event));
+        ob_end_clean();
+        $this->assertEquals(200, $response->statusCode());
+        $this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->modified());
 
-		$response = $this->getMock('Cake\Network\Response', array('_sendHeader', 'checkNotModified'));
-		$request = new Request('test_theme/img/cake.power.gif');
+        $response = $this->getMock('Cake\Network\Response', array('_sendHeader', 'checkNotModified'));
+        $request = new Request('test_theme/img/cake.power.gif');
 
-		$response->expects($this->once())->method('checkNotModified')
-			->with($request)
-			->will($this->returnValue(true));
-		$response->expects($this->never())->method('send');
-		$event = new Event('DispatcherTest', $this, compact('request', 'response'));
+        $response->expects($this->once())->method('checkNotModified')
+            ->with($request)
+            ->will($this->returnValue(true));
+        $response->expects($this->never())->method('send');
+        $event = new Event('DispatcherTest', $this, compact('request', 'response'));
 
-		$this->assertSame($response, $filter->beforeDispatch($event));
-		$this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->modified());
-	}
+        $this->assertSame($response, $filter->beforeDispatch($event));
+        $this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->modified());
+    }
 
-/**
- * Test that no exceptions are thrown for //index.php type URLs.
- *
- * @return void
- * @triggers Dispatcher.beforeRequest $this, compact('request', 'response')
- */
-	public function test404OnDoubleSlash() {
-		$filter = new AssetFilter();
+    /**
+     * Test that no exceptions are thrown for //index.php type URLs.
+     *
+     * @return void
+     * @triggers Dispatcher.beforeRequest $this, compact('request', 'response')
+     */
+    public function test404OnDoubleSlash()
+    {
+        $filter = new AssetFilter();
 
-		$response = $this->getMock('Response', array('_sendHeader'));
-		$request = new Request('//index.php');
-		$event = new Event('Dispatcher.beforeRequest', $this, compact('request', 'response'));
+        $response = $this->getMock('Response', array('_sendHeader'));
+        $request = new Request('//index.php');
+        $event = new Event('Dispatcher.beforeRequest', $this, compact('request', 'response'));
 
-		$this->assertNull($filter->beforeDispatch($event));
-		$this->assertFalse($event->isStopped());
-	}
+        $this->assertNull($filter->beforeDispatch($event));
+        $this->assertFalse($event->isStopped());
+    }
 
-/**
- * Test that 404's are returned when .. is in the URL
- *
- * @return voi
- * @triggers Dispatcher.beforeRequest $this, compact('request', 'response')
- * @triggers Dispatcher.beforeRequest $this, compact('request', 'response')
- */
-	public function test404OnDoubleDot() {
-		$filter = new AssetFilter();
+    /**
+     * Test that 404's are returned when .. is in the URL
+     *
+     * @return voi
+     * @triggers Dispatcher.beforeRequest $this, compact('request', 'response')
+     * @triggers Dispatcher.beforeRequest $this, compact('request', 'response')
+     */
+    public function test404OnDoubleDot()
+    {
+        $filter = new AssetFilter();
 
-		$response = $this->getMock('Response', array('_sendHeader'));
-		$request = new Request('test_theme/../webroot/css/test_asset.css');
-		$event = new Event('Dispatcher.beforeRequest', $this, compact('request', 'response'));
+        $response = $this->getMock('Response', array('_sendHeader'));
+        $request = new Request('test_theme/../webroot/css/test_asset.css');
+        $event = new Event('Dispatcher.beforeRequest', $this, compact('request', 'response'));
 
-		$this->assertNull($filter->beforeDispatch($event));
-		$this->assertFalse($event->isStopped());
+        $this->assertNull($filter->beforeDispatch($event));
+        $this->assertFalse($event->isStopped());
 
-		$request = new Request('test_theme/%3e./webroot/css/test_asset.css');
-		$event = new Event('Dispatcher.beforeRequest', $this, compact('request', 'response'));
+        $request = new Request('test_theme/%3e./webroot/css/test_asset.css');
+        $event = new Event('Dispatcher.beforeRequest', $this, compact('request', 'response'));
 
-		$this->assertNull($filter->beforeDispatch($event));
-		$this->assertFalse($event->isStopped());
-	}
+        $this->assertNull($filter->beforeDispatch($event));
+        $this->assertFalse($event->isStopped());
+    }
 
-/**
- * Data provider for asset filter
- *
- * - theme assets.
- * - plugin assets.
- * - plugin assets in sub directories.
- * - unknown plugin assets.
- *
- * @return array
- */
-	public static function assetProvider() {
-		return array(
-			array(
-				'test_theme/flash/theme_test.swf',
-				'Plugin/TestTheme/webroot/flash/theme_test.swf'
-			),
-			array(
-				'test_theme/pdfs/theme_test.pdf',
-				'Plugin/TestTheme/webroot/pdfs/theme_test.pdf'
-			),
-			array(
-				'test_theme/img/test.jpg',
-				'Plugin/TestTheme/webroot/img/test.jpg'
-			),
-			array(
-				'test_theme/css/test_asset.css',
-				'Plugin/TestTheme/webroot/css/test_asset.css'
-			),
-			array(
-				'test_theme/js/theme.js',
-				'Plugin/TestTheme/webroot/js/theme.js'
-			),
-			array(
-				'test_theme/js/one/theme_one.js',
-				'Plugin/TestTheme/webroot/js/one/theme_one.js'
-			),
-			array(
-				'test_theme/space%20image.text',
-				'Plugin/TestTheme/webroot/space image.text'
-			),
-			array(
-				'test_plugin/root.js',
-				'Plugin/TestPlugin/webroot/root.js'
-			),
-			array(
-				'test_plugin/flash/plugin_test.swf',
-				'Plugin/TestPlugin/webroot/flash/plugin_test.swf'
-			),
-			array(
-				'test_plugin/pdfs/plugin_test.pdf',
-				'Plugin/TestPlugin/webroot/pdfs/plugin_test.pdf'
-			),
-			array(
-				'test_plugin/js/test_plugin/test.js',
-				'Plugin/TestPlugin/webroot/js/test_plugin/test.js'
-			),
-			array(
-				'test_plugin/css/test_plugin_asset.css',
-				'Plugin/TestPlugin/webroot/css/test_plugin_asset.css'
-			),
-			array(
-				'test_plugin/img/cake.icon.gif',
-				'Plugin/TestPlugin/webroot/img/cake.icon.gif'
-			),
-			array(
-				'plugin_js/js/plugin_js.js',
-				'Plugin/PluginJs/webroot/js/plugin_js.js'
-			),
-			array(
-				'plugin_js/js/one/plugin_one.js',
-				'Plugin/PluginJs/webroot/js/one/plugin_one.js'
-			),
-			array(
-				'test_plugin/css/unknown.extension',
-				'Plugin/TestPlugin/webroot/css/unknown.extension'
-			),
-			array(
-				'test_plugin/css/theme_one.htc',
-				'Plugin/TestPlugin/webroot/css/theme_one.htc'
-			),
-			array(
-				'company/test_plugin_three/css/company.css',
-				'Plugin/Company/TestPluginThree/webroot/css/company.css'
-			),
-		);
-	}
+    /**
+     * Data provider for asset filter
+     *
+     * - theme assets.
+     * - plugin assets.
+     * - plugin assets in sub directories.
+     * - unknown plugin assets.
+     *
+     * @return array
+     */
+    public static function assetProvider()
+    {
+        return array(
+            array(
+                'test_theme/flash/theme_test.swf',
+                'Plugin/TestTheme/webroot/flash/theme_test.swf'
+            ),
+            array(
+                'test_theme/pdfs/theme_test.pdf',
+                'Plugin/TestTheme/webroot/pdfs/theme_test.pdf'
+            ),
+            array(
+                'test_theme/img/test.jpg',
+                'Plugin/TestTheme/webroot/img/test.jpg'
+            ),
+            array(
+                'test_theme/css/test_asset.css',
+                'Plugin/TestTheme/webroot/css/test_asset.css'
+            ),
+            array(
+                'test_theme/js/theme.js',
+                'Plugin/TestTheme/webroot/js/theme.js'
+            ),
+            array(
+                'test_theme/js/one/theme_one.js',
+                'Plugin/TestTheme/webroot/js/one/theme_one.js'
+            ),
+            array(
+                'test_theme/space%20image.text',
+                'Plugin/TestTheme/webroot/space image.text'
+            ),
+            array(
+                'test_plugin/root.js',
+                'Plugin/TestPlugin/webroot/root.js'
+            ),
+            array(
+                'test_plugin/flash/plugin_test.swf',
+                'Plugin/TestPlugin/webroot/flash/plugin_test.swf'
+            ),
+            array(
+                'test_plugin/pdfs/plugin_test.pdf',
+                'Plugin/TestPlugin/webroot/pdfs/plugin_test.pdf'
+            ),
+            array(
+                'test_plugin/js/test_plugin/test.js',
+                'Plugin/TestPlugin/webroot/js/test_plugin/test.js'
+            ),
+            array(
+                'test_plugin/css/test_plugin_asset.css',
+                'Plugin/TestPlugin/webroot/css/test_plugin_asset.css'
+            ),
+            array(
+                'test_plugin/img/cake.icon.gif',
+                'Plugin/TestPlugin/webroot/img/cake.icon.gif'
+            ),
+            array(
+                'plugin_js/js/plugin_js.js',
+                'Plugin/PluginJs/webroot/js/plugin_js.js'
+            ),
+            array(
+                'plugin_js/js/one/plugin_one.js',
+                'Plugin/PluginJs/webroot/js/one/plugin_one.js'
+            ),
+            array(
+                'test_plugin/css/unknown.extension',
+                'Plugin/TestPlugin/webroot/css/unknown.extension'
+            ),
+            array(
+                'test_plugin/css/theme_one.htc',
+                'Plugin/TestPlugin/webroot/css/theme_one.htc'
+            ),
+            array(
+                'company/test_plugin_three/css/company.css',
+                'Plugin/Company/TestPluginThree/webroot/css/company.css'
+            ),
+        );
+    }
 
-/**
- * Test assets
- *
- * @dataProvider assetProvider
- * @return void
- * @triggers Dispatcher.beforeDispatch $this, compact('request', 'response')
- */
-	public function testAsset($url, $file) {
-		Plugin::load(array('Company/TestPluginThree', 'TestPlugin', 'PluginJs'));
+    /**
+     * Test assets
+     *
+     * @dataProvider assetProvider
+     * @return void
+     * @triggers Dispatcher.beforeDispatch $this, compact('request', 'response')
+     */
+    public function testAsset($url, $file)
+    {
+        Plugin::load(array('Company/TestPluginThree', 'TestPlugin', 'PluginJs'));
 
-		$filter = new AssetFilter();
-		$response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
-		$request = new Request($url);
-		$event = new Event('Dispatcher.beforeDispatch', $this, compact('request', 'response'));
+        $filter = new AssetFilter();
+        $response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
+        $request = new Request($url);
+        $event = new Event('Dispatcher.beforeDispatch', $this, compact('request', 'response'));
 
-		ob_start();
-		$filter->beforeDispatch($event);
-		$result = ob_get_contents();
-		ob_end_clean();
+        ob_start();
+        $filter->beforeDispatch($event);
+        $result = ob_get_contents();
+        ob_end_clean();
 
-		$path = TEST_APP . str_replace('/', DS, $file);
-		$file = file_get_contents($path);
-		$this->assertEquals($file, $result);
+        $path = TEST_APP . str_replace('/', DS, $file);
+        $file = file_get_contents($path);
+        $this->assertEquals($file, $result);
 
-		$expected = filesize($path);
-		$headers = $response->header();
-		$this->assertEquals($expected, $headers['Content-Length']);
-	}
-
+        $expected = filesize($path);
+        $headers = $response->header();
+        $this->assertEquals($expected, $headers['Content-Length']);
+    }
 }

@@ -20,51 +20,54 @@ namespace Cake\Database\Statement;
  *
  * This is used by CakePHP to eagerly load association data.
  */
-class CallbackStatement extends StatementDecorator {
+class CallbackStatement extends StatementDecorator
+{
 
-/**
- * A callback function to be applied to results.
- *
- * @var callable
- */
-	protected $_callback;
+    /**
+     * A callback function to be applied to results.
+     *
+     * @var callable
+     */
+    protected $_callback;
 
-/**
- * Constructor
- *
- * @param \Cake\Database\StatementInterface $statement The statement to decorate.
- * @param \Cake\Database\Driver $driver The driver instance used by the statement.
- * @param callable $callback The callback to apply to results before they are returned.
- */
-	public function __construct($statement, $driver, $callback) {
-		parent::__construct($statement, $driver);
-		$this->_callback = $callback;
-	}
+    /**
+     * Constructor
+     *
+     * @param \Cake\Database\StatementInterface $statement The statement to decorate.
+     * @param \Cake\Database\Driver $driver The driver instance used by the statement.
+     * @param callable $callback The callback to apply to results before they are returned.
+     */
+    public function __construct($statement, $driver, $callback)
+    {
+        parent::__construct($statement, $driver);
+        $this->_callback = $callback;
+    }
 
-/**
- * Fetch a row from the statement.
- *
- * The result will be processed by the callback when it is not `false`.
- *
- * @param string $type Either 'num' or 'assoc' to indicate the result format you would like.
- * @return mixed
- */
-	public function fetch($type = 'num') {
-		$callback = $this->_callback;
-		$row = $this->_statement->fetch($type);
-		return $row === false ? $row : $callback($row);
-	}
+    /**
+     * Fetch a row from the statement.
+     *
+     * The result will be processed by the callback when it is not `false`.
+     *
+     * @param string $type Either 'num' or 'assoc' to indicate the result format you would like.
+     * @return mixed
+     */
+    public function fetch($type = 'num')
+    {
+        $callback = $this->_callback;
+        $row = $this->_statement->fetch($type);
+        return $row === false ? $row : $callback($row);
+    }
 
-/**
- * Fetch all rows from the statement.
- *
- * Each row in the result will be processed by the callback when it is not `false.
- *
- * @param string $type Either 'num' or 'assoc' to indicate the result format you would like.
- * @return mixed
- */
-	public function fetchAll($type = 'num') {
-		return array_map($this->_callback, $this->_statement->fetchAll($type));
-	}
-
+    /**
+     * Fetch all rows from the statement.
+     *
+     * Each row in the result will be processed by the callback when it is not `false.
+     *
+     * @param string $type Either 'num' or 'assoc' to indicate the result format you would like.
+     * @return mixed
+     */
+    public function fetchAll($type = 'num')
+    {
+        return array_map($this->_callback, $this->_statement->fetchAll($type));
+    }
 }

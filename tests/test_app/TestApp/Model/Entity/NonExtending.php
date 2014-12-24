@@ -9,38 +9,39 @@ use Cake\Datasource\EntityTrait;
  * Tests entity class used for asserting correct loading
  *
  */
-class NonExtending implements EntityInterface {
+class NonExtending implements EntityInterface
+{
 
-	use EntityTrait;
+    use EntityTrait;
 
-	public function __construct(array $properties = [], array $options = []) {
-		$options += [
-			'useSetters' => true,
-			'markClean' => false,
-			'markNew' => null,
-			'guard' => false,
-			'source' => null
-		];
-		$this->_className = get_class($this);
+    public function __construct(array $properties = [], array $options = [])
+    {
+        $options += [
+            'useSetters' => true,
+            'markClean' => false,
+            'markNew' => null,
+            'guard' => false,
+            'source' => null
+        ];
+        $this->_className = get_class($this);
 
-		if (!empty($properties)) {
-			$this->set($properties, [
-				'setter' => $options['useSetters'],
-				'guard' => $options['guard']
-			]);
-		}
+        if (!empty($properties)) {
+            $this->set($properties, [
+                'setter' => $options['useSetters'],
+                'guard' => $options['guard']
+            ]);
+        }
 
-		if ($options['markClean']) {
-			$this->clean();
-		}
+        if ($options['markClean']) {
+            $this->clean();
+        }
 
-		if ($options['markNew'] !== null) {
-			$this->isNew($options['markNew']);
-		}
+        if ($options['markNew'] !== null) {
+            $this->isNew($options['markNew']);
+        }
 
-		if (!empty($options['source'])) {
-			$this->source($options['source']);
-		}
-	}
-
+        if (!empty($options['source'])) {
+            $this->source($options['source']);
+        }
+    }
 }

@@ -18,8 +18,8 @@ use Cake\Core\Exception\Exception;
  * Used when a layout file cannot be found.
  *
  */
-class MissingLayoutException extends Exception {
+class MissingLayoutException extends Exception
+{
 
-	protected $_messageTemplate = 'Layout file "%s" is missing.';
-
+    protected $_messageTemplate = 'Layout file "%s" is missing.';
 }

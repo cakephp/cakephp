@@ -21,5 +21,6 @@
  */
 namespace TestPlugin\Lib\Custom\Package;
 
-class CustomLibClass {
+class CustomLibClass
+{
 }

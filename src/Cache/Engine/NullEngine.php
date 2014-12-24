@@ -21,85 +21,97 @@ use Cake\Cache\CacheEngine;
  *
  * This is used internally for when Cache::disable() has been called.
  */
-class NullEngine extends CacheEngine {
+class NullEngine extends CacheEngine
+{
 
-/**
- * {@inheritDoc}
- */
-	public function init(array $config = []) {
-		return true;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function init(array $config = [])
+    {
+        return true;
+    }
 
-/**
- * {@inheritDoc}
- */
-	public function gc($expires = null) {
-		return false;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function gc($expires = null)
+    {
+        return false;
+    }
 
-/**
- * {@inheritDoc}
- */
-	public function write($key, $value) {
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function write($key, $value)
+    {
+    }
 
-/**
- * {@inheritDoc}
- */
-	public function writeMany($data) {
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function writeMany($data)
+    {
+    }
 
-/**
- * {@inheritDoc}
- */
-	public function read($key) {
-		return false;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function read($key)
+    {
+        return false;
+    }
 
-/**
- * {@inheritDoc}
- */
-	public function readMany($keys) {
-		return false;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function readMany($keys)
+    {
+        return false;
+    }
 
-/**
- * {@inheritDoc}
- */
-	public function increment($key, $offset = 1) {
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function increment($key, $offset = 1)
+    {
+    }
 
-/**
- * {@inheritDoc}
- */
-	public function decrement($key, $offset = 1) {
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function decrement($key, $offset = 1)
+    {
+    }
 
-/**
- * {@inheritDoc}
- */
-	public function delete($key) {
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function delete($key)
+    {
+    }
 
-/**
- * {@inheritDoc}
- */
-	public function deleteMany($keys) {
-		return false;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function deleteMany($keys)
+    {
+        return false;
+    }
 
-/**
- * {@inheritDoc}
- */
-	public function clear($check) {
-		return false;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function clear($check)
+    {
+        return false;
+    }
 
-/**
- * {@inheritDoc}
- */
-	public function clearGroup($group) {
-		return false;
-	}
-
+    /**
+     * {@inheritDoc}
+     */
+    public function clearGroup($group)
+    {
+        return false;
+    }
 }

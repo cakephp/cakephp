@@ -22,5 +22,6 @@ trigger_error('EventListener is deprecated, use EventListenerInterface instead.'
  *
  * @deprecated 3.0.0 Use EventListenerInterface instead.
  */
-interface EventListener extends EventListenerInterface {
+interface EventListener extends EventListenerInterface
+{
 }

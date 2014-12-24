@@ -19,29 +19,31 @@ use Cake\Controller\Controller;
  * TestDispatchPagesController class
  *
  */
-class TestDispatchPagesController extends Controller {
+class TestDispatchPagesController extends Controller
+{
 
-/**
- * uses property
- *
- * @var array
- */
-	public $uses = array();
+    /**
+     * uses property
+     *
+     * @var array
+     */
+    public $uses = array();
 
-/**
- * admin_index method
- *
- * @return void
- */
-	public function admin_index() {
-	}
+    /**
+     * admin_index method
+     *
+     * @return void
+     */
+    public function admin_index()
+    {
+    }
 
-/**
- * camelCased method
- *
- * @return void
- */
-	public function camelCased() {
-	}
-
+    /**
+     * camelCased method
+     *
+     * @return void
+     */
+    public function camelCased()
+    {
+    }
 }

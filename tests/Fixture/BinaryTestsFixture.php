@@ -20,23 +20,24 @@ use Cake\TestSuite\Fixture\TestFixture;
  * Short description for class.
  *
  */
-class BinaryTestsFixture extends TestFixture {
+class BinaryTestsFixture extends TestFixture
+{
 
-/**
- * fields property
- *
- * @var array
- */
-	public $fields = array(
-		'id' => ['type' => 'integer'],
-		'data' => ['type' => 'binary', 'length' => 300],
-		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
-	);
+    /**
+     * fields property
+     *
+     * @var array
+     */
+    public $fields = array(
+        'id' => ['type' => 'integer'],
+        'data' => ['type' => 'binary', 'length' => 300],
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+    );
 
-/**
- * records property
- *
- * @var array
- */
-	public $records = array();
+    /**
+     * records property
+     *
+     * @var array
+     */
+    public $records = array();
 }

@@ -19,28 +19,28 @@ use Cake\TestSuite\Fixture\TestFixture;
 /**
  * Plugin article fixture.
  */
-class ArticlesFixture extends TestFixture {
+class ArticlesFixture extends TestFixture
+{
 
-/**
- * fields property
- *
- * @var array
- */
-	public $fields = [
-		'id' => ['type' => 'integer'],
-		'author_id' => ['type' => 'integer', 'null' => true],
-		'title' => ['type' => 'string', 'null' => true],
-		'body' => 'text',
-		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
-	];
+    /**
+     * fields property
+     *
+     * @var array
+     */
+    public $fields = [
+        'id' => ['type' => 'integer'],
+        'author_id' => ['type' => 'integer', 'null' => true],
+        'title' => ['type' => 'string', 'null' => true],
+        'body' => 'text',
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+    ];
 
-/**
- * records property
- *
- * @var array
- */
-	public $records = [
-		['author_id' => 1, 'title' => 'Plugin Article', 'body' => 'Plugin Article Body'],
-	];
-
+    /**
+     * records property
+     *
+     * @var array
+     */
+    public $records = [
+        ['author_id' => 1, 'title' => 'Plugin Article', 'body' => 'Plugin Article Body'],
+    ];
 }

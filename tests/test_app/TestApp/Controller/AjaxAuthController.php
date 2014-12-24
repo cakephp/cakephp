@@ -20,48 +20,51 @@ use Cake\Event\Event;
  * AjaxAuthController class
  *
  */
-class AjaxAuthController extends Controller {
+class AjaxAuthController extends Controller
+{
 
-/**
- * components property
- *
- * @var array
- */
-	public $components = array('Session', 'TestAuth');
+    /**
+     * components property
+     *
+     * @var array
+     */
+    public $components = array('Session', 'TestAuth');
 
-/**
- * uses property
- *
- * @var array
- */
-	public $uses = array();
+    /**
+     * uses property
+     *
+     * @var array
+     */
+    public $uses = array();
 
-/**
- * testUrl property
- *
- * @var mixed
- */
-	public $testUrl = null;
+    /**
+     * testUrl property
+     *
+     * @var mixed
+     */
+    public $testUrl = null;
 
-/**
- * add method
- *
- * @return void
- */
-	public function add() {
-		echo 'Added Record';
-	}
+    /**
+     * add method
+     *
+     * @return void
+     */
+    public function add()
+    {
+        echo 'Added Record';
+    }
 
-/**
- * redirect method
- *
- * @param mixed $url
- * @param mixed $status
- * @param mixed $exit
- * @return void
- */
-	public function redirect($url, $status = null, $exit = true) {
-		$this->testUrl = Router::url($url);
-		return false;
-	}
+    /**
+     * redirect method
+     *
+     * @param mixed $url
+     * @param mixed $status
+     * @param mixed $exit
+     * @return void
+     */
+    public function redirect($url, $status = null, $exit = true)
+    {
+        $this->testUrl = Router::url($url);
+        return false;
+    }
 }

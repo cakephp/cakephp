@@ -21,5 +21,6 @@
  */
 namespace TestApp\Utility;
 
-class TestUtilityClass {
+class TestUtilityClass
+{
 }

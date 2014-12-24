@@ -19,89 +19,94 @@ use Cake\TestSuite\TestCase;
 /**
  * Testing stub.
  */
-class Stub {
+class Stub
+{
 
-	use ModelAwareTrait;
+    use ModelAwareTrait;
 
-	public function setProps($name) {
-		$this->_setModelClass($name);
-	}
-
+    public function setProps($name)
+    {
+        $this->_setModelClass($name);
+    }
 }
 
 /**
  * ModelAwareTrait test case
  */
-class ModelAwareTraitTest extends TestCase {
+class ModelAwareTraitTest extends TestCase
+{
 
-/**
- * Test set modelClass
- *
- * @return void
- */
-	public function testSetModelClass() {
-		$stub = new Stub();
-		$this->assertNull($stub->modelClass);
+    /**
+     * Test set modelClass
+     *
+     * @return void
+     */
+    public function testSetModelClass()
+    {
+        $stub = new Stub();
+        $this->assertNull($stub->modelClass);
 
-		$stub->setProps('StubArticles');
-		$this->assertEquals('StubArticles', $stub->modelClass);
-	}
+        $stub->setProps('StubArticles');
+        $this->assertEquals('StubArticles', $stub->modelClass);
+    }
 
-/**
- * test loadModel()
- *
- * @return void
- */
-	public function testLoadModel() {
-		$stub = new Stub();
-		$stub->setProps('Articles');
-		$stub->modelFactory('Table', ['\Cake\ORM\TableRegistry', 'get']);
+    /**
+     * test loadModel()
+     *
+     * @return void
+     */
+    public function testLoadModel()
+    {
+        $stub = new Stub();
+        $stub->setProps('Articles');
+        $stub->modelFactory('Table', ['\Cake\ORM\TableRegistry', 'get']);
 
-		$result = $stub->loadModel();
-		$this->assertInstanceOf('Cake\ORM\Table', $result);
-		$this->assertInstanceOf('Cake\ORM\Table', $stub->Articles);
+        $result = $stub->loadModel();
+        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertInstanceOf('Cake\ORM\Table', $stub->Articles);
 
-		$result = $stub->loadModel('Comments');
-		$this->assertInstanceOf('Cake\ORM\Table', $result);
-		$this->assertInstanceOf('Cake\ORM\Table', $stub->Comments);
-	}
+        $result = $stub->loadModel('Comments');
+        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertInstanceOf('Cake\ORM\Table', $stub->Comments);
+    }
 
-/**
- * test alternate model factories.
- *
- * @return void
- */
-	public function testModelFactory() {
-		$stub = new Stub();
-		$stub->setProps('Articles');
+    /**
+     * test alternate model factories.
+     *
+     * @return void
+     */
+    public function testModelFactory()
+    {
+        $stub = new Stub();
+        $stub->setProps('Articles');
 
-		$stub->modelFactory('Test', function ($name) {
-			$mock = new \StdClass();
-			$mock->name = $name;
-			return $mock;
-		});
+        $stub->modelFactory('Test', function ($name) {
+            $mock = new \StdClass();
+            $mock->name = $name;
+            return $mock;
+        });
 
-		$result = $stub->loadModel('Magic', 'Test');
-		$this->assertInstanceOf('\StdClass', $result);
-		$this->assertInstanceOf('\StdClass', $stub->Magic);
-		$this->assertEquals('Magic', $stub->Magic->name);
-	}
+        $result = $stub->loadModel('Magic', 'Test');
+        $this->assertInstanceOf('\StdClass', $result);
+        $this->assertInstanceOf('\StdClass', $stub->Magic);
+        $this->assertEquals('Magic', $stub->Magic->name);
+    }
 
-/**
- * test MissingModelException being thrown
- *
- * @return void
- * @expectedException \Cake\Model\Exception\MissingModelException
- * @expectedExceptionMessage Model class "Magic" of type "Test" could not be found.
- */
-	public function testMissingModelException() {
-		$stub = new Stub();
+    /**
+     * test MissingModelException being thrown
+     *
+     * @return void
+     * @expectedException \Cake\Model\Exception\MissingModelException
+     * @expectedExceptionMessage Model class "Magic" of type "Test" could not be found.
+     */
+    public function testMissingModelException()
+    {
+        $stub = new Stub();
 
-		$stub->modelFactory('Test', function ($name) {
-			return false;
-		});
+        $stub->modelFactory('Test', function ($name) {
+            return false;
+        });
 
-		$stub->loadModel('Magic', 'Test');
-	}
-
+        $stub->loadModel('Magic', 'Test');
+    }
 }

@@ -22,38 +22,40 @@ use Cake\TestSuite\TestCase;
  * Test case for PasswordHasherFactory
  *
  */
-class PasswordHasherFactoryTest extends TestCase {
+class PasswordHasherFactoryTest extends TestCase
+{
 
-/**
- * test passwordhasher instance building
- *
- * @return void
- */
-	public function testBuild() {
-		$hasher = PasswordHasherFactory::build('Default');
-		$this->assertInstanceof('Cake\Auth\DefaultPasswordHasher', $hasher);
+    /**
+     * test passwordhasher instance building
+     *
+     * @return void
+     */
+    public function testBuild()
+    {
+        $hasher = PasswordHasherFactory::build('Default');
+        $this->assertInstanceof('Cake\Auth\DefaultPasswordHasher', $hasher);
 
-		$hasher = PasswordHasherFactory::build([
-			'className' => 'Default',
-			'hashOptions' => ['foo' => 'bar']
-		]);
-		$this->assertInstanceof('Cake\Auth\DefaultPasswordHasher', $hasher);
-		$this->assertEquals(['foo' => 'bar'], $hasher->config('hashOptions'));
+        $hasher = PasswordHasherFactory::build([
+            'className' => 'Default',
+            'hashOptions' => ['foo' => 'bar']
+        ]);
+        $this->assertInstanceof('Cake\Auth\DefaultPasswordHasher', $hasher);
+        $this->assertEquals(['foo' => 'bar'], $hasher->config('hashOptions'));
 
-		Plugin::load('TestPlugin');
-		$hasher = PasswordHasherFactory::build('TestPlugin.Legacy');
-		$this->assertInstanceof('TestPlugin\Auth\LegacyPasswordHasher', $hasher);
-	}
+        Plugin::load('TestPlugin');
+        $hasher = PasswordHasherFactory::build('TestPlugin.Legacy');
+        $this->assertInstanceof('TestPlugin\Auth\LegacyPasswordHasher', $hasher);
+    }
 
-/**
- * test build() throws exception for non existent hasher
- *
- * @expectedException \RuntimeException
- * @expectedExceptionMessage Password hasher class "FooBar" was not found.
- * @return void
- */
-	public function testBuildException() {
-		$hasher = PasswordHasherFactory::build('FooBar');
-	}
-
+    /**
+     * test build() throws exception for non existent hasher
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Password hasher class "FooBar" was not found.
+     * @return void
+     */
+    public function testBuildException()
+    {
+        $hasher = PasswordHasherFactory::build('FooBar');
+    }
 }

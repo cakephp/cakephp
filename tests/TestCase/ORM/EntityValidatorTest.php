@@ -23,353 +23,363 @@ use Cake\TestSuite\TestCase;
 /**
  * EntityValidator test
  */
-class EntityValidatorTest extends TestCase {
+class EntityValidatorTest extends TestCase
+{
 
-/**
- * setup
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		$articles = TableRegistry::get('Articles');
-		$users = TableRegistry::get('Users');
-		$articles->belongsTo('Users');
-		$articles->hasMany('Comments');
+    /**
+     * setup
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $articles = TableRegistry::get('Articles');
+        $users = TableRegistry::get('Users');
+        $articles->belongsTo('Users');
+        $articles->hasMany('Comments');
 
-		$comments = TableRegistry::get('Comments');
-		$comments->belongsTo('Articles');
-		$comments->belongsTo('Users');
+        $comments = TableRegistry::get('Comments');
+        $comments->belongsTo('Articles');
+        $comments->belongsTo('Users');
 
-		$this->articles = $articles;
-		$this->comments = $comments;
-		$this->users = $users;
-	}
+        $this->articles = $articles;
+        $this->comments = $comments;
+        $this->users = $users;
+    }
 
-/**
- * Teardown
- *
- * @return void
- */
-	public function tearDown() {
-		parent::tearDown();
-		TableRegistry::clear();
-		unset($this->articles, $this->comments, $this->users);
-	}
+    /**
+     * Teardown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        TableRegistry::clear();
+        unset($this->articles, $this->comments, $this->users);
+    }
 
-/**
- * Test one() with successful validate
- *
- * @return void
- */
-	public function testOneSuccess() {
-		$entity = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$validator = $this->getMock('\Cake\Validation\Validator');
-		$this->articles->validator('default', $validator);
-		$entityValidator = new EntityValidator($this->articles);
+    /**
+     * Test one() with successful validate
+     *
+     * @return void
+     */
+    public function testOneSuccess()
+    {
+        $entity = $this->getMock('\Cake\ORM\Entity', ['validate']);
+        $validator = $this->getMock('\Cake\Validation\Validator');
+        $this->articles->validator('default', $validator);
+        $entityValidator = new EntityValidator($this->articles);
 
-		$validator->expects($this->once())
-			->method('count')
-			->will($this->returnValue(1));
-		$entity->expects($this->once())
-			->method('validate')
-			->with($validator)
-			->will($this->returnValue(true));
+        $validator->expects($this->once())
+            ->method('count')
+            ->will($this->returnValue(1));
+        $entity->expects($this->once())
+            ->method('validate')
+            ->with($validator)
+            ->will($this->returnValue(true));
 
-		$this->assertTrue($entityValidator->one($entity));
-	}
+        $this->assertTrue($entityValidator->one($entity));
+    }
 
-/**
- * Test one() with failing validate
- *
- * @return void
- */
-	public function testOneFail() {
-		$entity = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$validator = $this->getMock('\Cake\Validation\Validator');
-		$this->articles->validator('default', $validator);
-		$entityValidator = new EntityValidator($this->articles);
+    /**
+     * Test one() with failing validate
+     *
+     * @return void
+     */
+    public function testOneFail()
+    {
+        $entity = $this->getMock('\Cake\ORM\Entity', ['validate']);
+        $validator = $this->getMock('\Cake\Validation\Validator');
+        $this->articles->validator('default', $validator);
+        $entityValidator = new EntityValidator($this->articles);
 
-		$validator->expects($this->once())
-			->method('count')
-			->will($this->returnValue(1));
-		$entity->expects($this->once())
-			->method('validate')
-			->with($validator)
-			->will($this->returnValue(false));
+        $validator->expects($this->once())
+            ->method('count')
+            ->will($this->returnValue(1));
+        $entity->expects($this->once())
+            ->method('validate')
+            ->with($validator)
+            ->will($this->returnValue(false));
 
-		$this->assertFalse($entityValidator->one($entity));
-	}
+        $this->assertFalse($entityValidator->one($entity));
+    }
 
-/**
- * test one() with association data.
- *
- * @return void
- */
-	public function testOneAssociationsSuccess() {
-		$article = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$comment1 = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$comment2 = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$user = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$article->set('comments', [$comment1, $comment2]);
-		$article->set('user', $user);
+    /**
+     * test one() with association data.
+     *
+     * @return void
+     */
+    public function testOneAssociationsSuccess()
+    {
+        $article = $this->getMock('\Cake\ORM\Entity', ['validate']);
+        $comment1 = $this->getMock('\Cake\ORM\Entity', ['validate']);
+        $comment2 = $this->getMock('\Cake\ORM\Entity', ['validate']);
+        $user = $this->getMock('\Cake\ORM\Entity', ['validate']);
+        $article->set('comments', [$comment1, $comment2]);
+        $article->set('user', $user);
 
-		$validator1 = $this->getMock('\Cake\Validation\Validator');
-		$validator2 = $this->getMock('\Cake\Validation\Validator');
-		$validator3 = $this->getMock('\Cake\Validation\Validator');
+        $validator1 = $this->getMock('\Cake\Validation\Validator');
+        $validator2 = $this->getMock('\Cake\Validation\Validator');
+        $validator3 = $this->getMock('\Cake\Validation\Validator');
 
-		$validator1->expects($this->once())
-			->method('count')
-			->will($this->returnValue(1));
-		$validator2->expects($this->exactly(2))
-			->method('count')
-			->will($this->returnValue(1));
-		$validator3->expects($this->once())
-			->method('count')
-			->will($this->returnValue(1));
+        $validator1->expects($this->once())
+            ->method('count')
+            ->will($this->returnValue(1));
+        $validator2->expects($this->exactly(2))
+            ->method('count')
+            ->will($this->returnValue(1));
+        $validator3->expects($this->once())
+            ->method('count')
+            ->will($this->returnValue(1));
 
-		$this->articles->validator('default', $validator1);
-		$this->comments->validator('default', $validator2);
-		$this->users->validator('default', $validator3);
+        $this->articles->validator('default', $validator1);
+        $this->comments->validator('default', $validator2);
+        $this->users->validator('default', $validator3);
 
-		$entityValidator = new EntityValidator($this->articles);
+        $entityValidator = new EntityValidator($this->articles);
 
-		$article->expects($this->once())
-			->method('validate')
-			->with($validator1)
-			->will($this->returnValue(true));
+        $article->expects($this->once())
+            ->method('validate')
+            ->with($validator1)
+            ->will($this->returnValue(true));
 
-		$comment1->expects($this->once())
-			->method('validate')
-			->with($validator2)
-			->will($this->returnValue(true));
+        $comment1->expects($this->once())
+            ->method('validate')
+            ->with($validator2)
+            ->will($this->returnValue(true));
 
-		$comment2->expects($this->once())
-			->method('validate')
-			->with($validator2)
-			->will($this->returnValue(true));
+        $comment2->expects($this->once())
+            ->method('validate')
+            ->with($validator2)
+            ->will($this->returnValue(true));
 
-		$user->expects($this->once())
-			->method('validate')
-			->with($validator3)
-			->will($this->returnValue(true));
+        $user->expects($this->once())
+            ->method('validate')
+            ->with($validator3)
+            ->will($this->returnValue(true));
 
-		$options = ['associated' => ['Comments', 'Users']];
-		$this->assertTrue($entityValidator->one($article, $options));
-	}
+        $options = ['associated' => ['Comments', 'Users']];
+        $this->assertTrue($entityValidator->one($article, $options));
+    }
 
-/**
- * test one() with associations that are not entities.
- *
- * This can happen when request data is not completely marshalled.
- * incomplete associations should not cause warnings or fatal errors.
- *
- * @return void
- */
-	public function testOneAssociationsNoEntities() {
-		$article = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$comment1 = ['comment' => 'test'];
-		$comment2 = ['comment' => 'omg'];
-		$user = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$article->set('comments', [$comment1, $comment2]);
+    /**
+     * test one() with associations that are not entities.
+     *
+     * This can happen when request data is not completely marshalled.
+     * incomplete associations should not cause warnings or fatal errors.
+     *
+     * @return void
+     */
+    public function testOneAssociationsNoEntities()
+    {
+        $article = $this->getMock('\Cake\ORM\Entity', ['validate']);
+        $comment1 = ['comment' => 'test'];
+        $comment2 = ['comment' => 'omg'];
+        $user = $this->getMock('\Cake\ORM\Entity', ['validate']);
+        $article->set('comments', [$comment1, $comment2]);
 
-		$validator1 = $this->getMock('\Cake\Validation\Validator');
-		$validator2 = $this->getMock('\Cake\Validation\Validator');
+        $validator1 = $this->getMock('\Cake\Validation\Validator');
+        $validator2 = $this->getMock('\Cake\Validation\Validator');
 
-		$validator1->expects($this->once())
-			->method('count')
-			->will($this->returnValue(1));
+        $validator1->expects($this->once())
+            ->method('count')
+            ->will($this->returnValue(1));
 
-		// Should not be called as comments are not entities.
-		$validator2->expects($this->never())
-			->method('count');
+        // Should not be called as comments are not entities.
+        $validator2->expects($this->never())
+            ->method('count');
 
-		$this->articles->validator('default', $validator1);
-		$this->comments->validator('default', $validator2);
+        $this->articles->validator('default', $validator1);
+        $this->comments->validator('default', $validator2);
 
-		$entityValidator = new EntityValidator($this->articles);
+        $entityValidator = new EntityValidator($this->articles);
 
-		$article->expects($this->once())
-			->method('validate')
-			->with($validator1)
-			->will($this->returnValue(true));
+        $article->expects($this->once())
+            ->method('validate')
+            ->with($validator1)
+            ->will($this->returnValue(true));
 
-		$options = ['associated' => ['Comments']];
-		$this->assertFalse($entityValidator->one($article, $options));
-	}
+        $options = ['associated' => ['Comments']];
+        $this->assertFalse($entityValidator->one($article, $options));
+    }
 
-/**
- * test one() with association data and one of them failing  validation.
- *
- * @return void
- */
-	public function testOneAssociationsFail() {
-		$article = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$comment1 = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$comment2 = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$user = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$article->set('comments', [$comment1, $comment2]);
-		$article->set('user', $user);
+    /**
+     * test one() with association data and one of them failing  validation.
+     *
+     * @return void
+     */
+    public function testOneAssociationsFail()
+    {
+        $article = $this->getMock('\Cake\ORM\Entity', ['validate']);
+        $comment1 = $this->getMock('\Cake\ORM\Entity', ['validate']);
+        $comment2 = $this->getMock('\Cake\ORM\Entity', ['validate']);
+        $user = $this->getMock('\Cake\ORM\Entity', ['validate']);
+        $article->set('comments', [$comment1, $comment2]);
+        $article->set('user', $user);
 
-		$validator1 = $this->getMock('\Cake\Validation\Validator');
-		$validator2 = $this->getMock('\Cake\Validation\Validator');
-		$validator3 = $this->getMock('\Cake\Validation\Validator');
+        $validator1 = $this->getMock('\Cake\Validation\Validator');
+        $validator2 = $this->getMock('\Cake\Validation\Validator');
+        $validator3 = $this->getMock('\Cake\Validation\Validator');
 
-		$validator1->expects($this->once())
-			->method('count')
-			->will($this->returnValue(1));
-		$validator2->expects($this->exactly(2))
-			->method('count')
-			->will($this->returnValue(1));
-		$validator3->expects($this->once())
-			->method('count')
-			->will($this->returnValue(1));
+        $validator1->expects($this->once())
+            ->method('count')
+            ->will($this->returnValue(1));
+        $validator2->expects($this->exactly(2))
+            ->method('count')
+            ->will($this->returnValue(1));
+        $validator3->expects($this->once())
+            ->method('count')
+            ->will($this->returnValue(1));
 
-		$this->articles->validator('default', $validator1);
-		$this->comments->validator('default', $validator2);
-		$this->users->validator('default', $validator3);
+        $this->articles->validator('default', $validator1);
+        $this->comments->validator('default', $validator2);
+        $this->users->validator('default', $validator3);
 
-		$entityValidator = new EntityValidator($this->articles);
+        $entityValidator = new EntityValidator($this->articles);
 
-		$article->expects($this->once())
-			->method('validate')
-			->with($validator1)
-			->will($this->returnValue(true));
+        $article->expects($this->once())
+            ->method('validate')
+            ->with($validator1)
+            ->will($this->returnValue(true));
 
-		$comment1->expects($this->once())
-			->method('validate')
-			->with($validator2)
-			->will($this->returnValue(true));
+        $comment1->expects($this->once())
+            ->method('validate')
+            ->with($validator2)
+            ->will($this->returnValue(true));
 
-		$comment2->expects($this->once())
-			->method('validate')
-			->with($validator2)
-			->will($this->returnValue(false));
+        $comment2->expects($this->once())
+            ->method('validate')
+            ->with($validator2)
+            ->will($this->returnValue(false));
 
-		$user->expects($this->once())
-			->method('validate')
-			->with($validator3)
-			->will($this->returnValue(true));
+        $user->expects($this->once())
+            ->method('validate')
+            ->with($validator3)
+            ->will($this->returnValue(true));
 
-		$options = ['associated' => ['Comments', 'Users']];
-		$this->assertFalse($entityValidator->one($article, $options));
-	}
+        $options = ['associated' => ['Comments', 'Users']];
+        $this->assertFalse($entityValidator->one($article, $options));
+    }
 
-/**
- * Test one() with deeper associations and passing the name for custom
- * validators
- *
- * @return void
- */
-	public function testOneDeepAssociationsAndCustomValidators() {
-		$comment = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$article = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$user = $this->getMock('\Cake\ORM\Entity', ['validate']);
+    /**
+     * Test one() with deeper associations and passing the name for custom
+     * validators
+     *
+     * @return void
+     */
+    public function testOneDeepAssociationsAndCustomValidators()
+    {
+        $comment = $this->getMock('\Cake\ORM\Entity', ['validate']);
+        $article = $this->getMock('\Cake\ORM\Entity', ['validate']);
+        $user = $this->getMock('\Cake\ORM\Entity', ['validate']);
 
-		$comment->set('article', $article);
-		$article->set('user', $user);
+        $comment->set('article', $article);
+        $article->set('user', $user);
 
-		$validator1 = $this->getMock('\Cake\Validation\Validator');
-		$validator2 = $this->getMock('\Cake\Validation\Validator');
-		$validator3 = $this->getMock('\Cake\Validation\Validator');
+        $validator1 = $this->getMock('\Cake\Validation\Validator');
+        $validator2 = $this->getMock('\Cake\Validation\Validator');
+        $validator3 = $this->getMock('\Cake\Validation\Validator');
 
-		$validator1->expects($this->once())
-			->method('count')
-			->will($this->returnValue(1));
-		$validator2->expects($this->once())
-			->method('count')
-			->will($this->returnValue(1));
-		$validator3->expects($this->once())
-			->method('count')
-			->will($this->returnValue(1));
+        $validator1->expects($this->once())
+            ->method('count')
+            ->will($this->returnValue(1));
+        $validator2->expects($this->once())
+            ->method('count')
+            ->will($this->returnValue(1));
+        $validator3->expects($this->once())
+            ->method('count')
+            ->will($this->returnValue(1));
 
-		$this->articles->validator('crazy', $validator1);
-		$this->comments->validator('default', $validator2);
-		$this->users->validator('funky', $validator3);
+        $this->articles->validator('crazy', $validator1);
+        $this->comments->validator('default', $validator2);
+        $this->users->validator('funky', $validator3);
 
-		$entityValidator = new EntityValidator($this->comments);
-		$comment->expects($this->once())
-			->method('validate')
-			->with($validator2)
-			->will($this->returnValue(true));
+        $entityValidator = new EntityValidator($this->comments);
+        $comment->expects($this->once())
+            ->method('validate')
+            ->with($validator2)
+            ->will($this->returnValue(true));
 
-		$article->expects($this->once())
-			->method('validate')
-			->with($validator1)
-			->will($this->returnValue(true));
+        $article->expects($this->once())
+            ->method('validate')
+            ->with($validator1)
+            ->will($this->returnValue(true));
 
-		$user->expects($this->once())
-			->method('validate')
-			->with($validator3)
-			->will($this->returnValue(true));
+        $user->expects($this->once())
+            ->method('validate')
+            ->with($validator3)
+            ->will($this->returnValue(true));
 
-		$this->assertTrue($entityValidator->one($comment, [
-			'associated' => [
-				'Articles' => [
-					'validate' => 'crazy',
-					'associated' => ['Users' => ['validate' => 'funky']]
-				]
-			]
-		]));
-	}
+        $this->assertTrue($entityValidator->one($comment, [
+            'associated' => [
+                'Articles' => [
+                    'validate' => 'crazy',
+                    'associated' => ['Users' => ['validate' => 'funky']]
+                ]
+            ]
+        ]));
+    }
 
-/**
- * Test many() with successful validate
- *
- * @return void
- */
-	public function testManySuccess() {
-		$comment1 = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$comment2 = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$validator = $this->getMock('\Cake\Validation\Validator');
-		$data = [$comment1, $comment2];
-		$this->comments->validator('default', $validator);
-		$entityValidator = new EntityValidator($this->comments);
+    /**
+     * Test many() with successful validate
+     *
+     * @return void
+     */
+    public function testManySuccess()
+    {
+        $comment1 = $this->getMock('\Cake\ORM\Entity', ['validate']);
+        $comment2 = $this->getMock('\Cake\ORM\Entity', ['validate']);
+        $validator = $this->getMock('\Cake\Validation\Validator');
+        $data = [$comment1, $comment2];
+        $this->comments->validator('default', $validator);
+        $entityValidator = new EntityValidator($this->comments);
 
-		$validator->expects($this->exactly(2))
-			->method('count')
-			->will($this->returnValue(1));
-		$comment1->expects($this->once())
-			->method('validate')
-			->with($validator)
-			->will($this->returnValue(true));
+        $validator->expects($this->exactly(2))
+            ->method('count')
+            ->will($this->returnValue(1));
+        $comment1->expects($this->once())
+            ->method('validate')
+            ->with($validator)
+            ->will($this->returnValue(true));
 
-		$comment2->expects($this->once())
-			->method('validate')
-			->with($validator)
-			->will($this->returnValue(true));
+        $comment2->expects($this->once())
+            ->method('validate')
+            ->with($validator)
+            ->will($this->returnValue(true));
 
-		$this->assertTrue($entityValidator->many($data));
-	}
+        $this->assertTrue($entityValidator->many($data));
+    }
 
-/**
- * Test many() with failure
- *
- * @return void
- */
-	public function testManyFailure() {
-		$comment1 = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$comment2 = $this->getMock('\Cake\ORM\Entity', ['validate']);
-		$validator = $this->getMock('\Cake\Validation\Validator');
-		$data = [$comment1, $comment2];
-		$this->comments->validator('default', $validator);
-		$entityValidator = new EntityValidator($this->comments);
+    /**
+     * Test many() with failure
+     *
+     * @return void
+     */
+    public function testManyFailure()
+    {
+        $comment1 = $this->getMock('\Cake\ORM\Entity', ['validate']);
+        $comment2 = $this->getMock('\Cake\ORM\Entity', ['validate']);
+        $validator = $this->getMock('\Cake\Validation\Validator');
+        $data = [$comment1, $comment2];
+        $this->comments->validator('default', $validator);
+        $entityValidator = new EntityValidator($this->comments);
 
-		$validator->expects($this->exactly(2))
-			->method('count')
-			->will($this->returnValue(1));
+        $validator->expects($this->exactly(2))
+            ->method('count')
+            ->will($this->returnValue(1));
 
-		$comment1->expects($this->once())
-			->method('validate')
-			->with($validator)
-			->will($this->returnValue(false));
+        $comment1->expects($this->once())
+            ->method('validate')
+            ->with($validator)
+            ->will($this->returnValue(false));
 
-		$comment2->expects($this->once())
-			->method('validate')
-			->with($validator)
-			->will($this->returnValue(true));
+        $comment2->expects($this->once())
+            ->method('validate')
+            ->with($validator)
+            ->will($this->returnValue(true));
 
-		$this->assertFalse($entityValidator->many($data));
-	}
-
+        $this->assertFalse($entityValidator->many($data));
+    }
 }

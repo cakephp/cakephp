@@ -26,111 +26,117 @@ use Cake\Utility\String;
  * Integration tests for Table class with uuid primary keys.
  *
  */
-class TableUuidTest extends TestCase {
+class TableUuidTest extends TestCase
+{
 
-/**
- * Fixtures
- *
- * @var array
- */
-	public $fixtures = [
-		'core.uuiditems', 'core.uuidportfolios'
-	];
+    /**
+     * Fixtures
+     *
+     * @var array
+     */
+    public $fixtures = [
+        'core.uuiditems', 'core.uuidportfolios'
+    ];
 
-/**
- * setup
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		$this->connection = ConnectionManager::get('test');
-		Configure::write('App.namespace', 'TestApp');
-	}
+    /**
+     * setup
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->connection = ConnectionManager::get('test');
+        Configure::write('App.namespace', 'TestApp');
+    }
 
-/**
- * teardown
- *
- * @return void
- */
-	public function tearDown() {
-		parent::tearDown();
-		TableRegistry::clear();
-	}
+    /**
+     * teardown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        TableRegistry::clear();
+    }
 
-/**
- * Test saving new records sets uuids
- *
- * @return void
- */
-	public function testSaveNew() {
-		$entity = new \Cake\ORM\Entity([
-			'name' => 'shiny new',
-			'published' => true,
-		]);
-		$table = TableRegistry::get('uuiditems');
-		$this->assertSame($entity, $table->save($entity));
-		$this->assertRegExp('/^[a-f0-9-]{36}$/', $entity->id, 'Should be 36 characters');
+    /**
+     * Test saving new records sets uuids
+     *
+     * @return void
+     */
+    public function testSaveNew()
+    {
+        $entity = new \Cake\ORM\Entity([
+            'name' => 'shiny new',
+            'published' => true,
+        ]);
+        $table = TableRegistry::get('uuiditems');
+        $this->assertSame($entity, $table->save($entity));
+        $this->assertRegExp('/^[a-f0-9-]{36}$/', $entity->id, 'Should be 36 characters');
 
-		$row = $table->find('all')->where(['id' => $entity->id])->first();
-		$row->id = strtolower($row->id);
-		$this->assertEquals($entity->toArray(), $row->toArray());
-	}
+        $row = $table->find('all')->where(['id' => $entity->id])->first();
+        $row->id = strtolower($row->id);
+        $this->assertEquals($entity->toArray(), $row->toArray());
+    }
 
-/**
- * Test saving existing records works
- *
- * @return void
- */
-	public function testSaveUpdate() {
-		$id = '481fc6d0-b920-43e0-a40d-6d1740cf8569';
-		$entity = new \Cake\ORM\Entity([
-			'id' => $id,
-			'name' => 'shiny update',
-			'published' => true,
-		]);
+    /**
+     * Test saving existing records works
+     *
+     * @return void
+     */
+    public function testSaveUpdate()
+    {
+        $id = '481fc6d0-b920-43e0-a40d-6d1740cf8569';
+        $entity = new \Cake\ORM\Entity([
+            'id' => $id,
+            'name' => 'shiny update',
+            'published' => true,
+        ]);
 
-		$table = TableRegistry::get('uuiditems');
-		$this->assertSame($entity, $table->save($entity));
-		$this->assertEquals($id, $entity->id, 'Should be 36 characters');
+        $table = TableRegistry::get('uuiditems');
+        $this->assertSame($entity, $table->save($entity));
+        $this->assertEquals($id, $entity->id, 'Should be 36 characters');
 
-		$row = $table->find('all')->where(['id' => $entity->id])->first();
-		$row->id = strtolower($row->id);
-		$this->assertEquals($entity->toArray(), $row->toArray());
-	}
+        $row = $table->find('all')->where(['id' => $entity->id])->first();
+        $row->id = strtolower($row->id);
+        $this->assertEquals($entity->toArray(), $row->toArray());
+    }
 
-/**
- * Test delete with string pk.
- *
- * @return void
- */
-	public function testDelete() {
-		$id = '481fc6d0-b920-43e0-a40d-6d1740cf8569';
-		$table = TableRegistry::get('uuiditems');
-		$entity = $table->find('all')->where(['id' => $id])->first();
+    /**
+     * Test delete with string pk.
+     *
+     * @return void
+     */
+    public function testDelete()
+    {
+        $id = '481fc6d0-b920-43e0-a40d-6d1740cf8569';
+        $table = TableRegistry::get('uuiditems');
+        $entity = $table->find('all')->where(['id' => $id])->first();
 
-		$this->assertTrue($table->delete($entity));
-		$query = $table->find('all')->where(['id' => $id]);
-		$this->assertCount(0, $query->execute(), 'No rows left');
-	}
+        $this->assertTrue($table->delete($entity));
+        $query = $table->find('all')->where(['id' => $id]);
+        $this->assertCount(0, $query->execute(), 'No rows left');
+    }
 
-/**
- * Tests that sql server does not error when an empty uuid is bound
- *
- * @return void
- */
-	public function testEmptyUuid() {
-		$this->skipIf(
-			!$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
-			'Empty UUIDs only affect SQLServer uniqueidentifier field types'
-		);
-		$id = '';
-		$table = TableRegistry::get('uuiditems');
-		$entity = $table->find('all')
-			->where(['id' => $id])
-			->first();
+    /**
+     * Tests that sql server does not error when an empty uuid is bound
+     *
+     * @return void
+     */
+    public function testEmptyUuid()
+    {
+        $this->skipIf(
+            !$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
+            'Empty UUIDs only affect SQLServer uniqueidentifier field types'
+        );
+        $id = '';
+        $table = TableRegistry::get('uuiditems');
+        $entity = $table->find('all')
+            ->where(['id' => $id])
+            ->first();
 
-		$this->assertNull($entity);
-	}
-
+        $this->assertNull($entity);
+    }
 }

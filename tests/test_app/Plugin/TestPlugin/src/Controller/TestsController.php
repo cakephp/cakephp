@@ -19,19 +19,21 @@
  */
 namespace TestPlugin\Controller;
 
-class TestsController extends TestPluginAppController {
+class TestsController extends TestPluginAppController
+{
 
-	public $helpers = array('TestPlugin.OtherHelper', 'Html');
+    public $helpers = array('TestPlugin.OtherHelper', 'Html');
 
-	public $components = array('TestPlugin.Plugins');
+    public $components = array('TestPlugin.Plugins');
 
-	public function index() {
-		$this->set('test_value', 'It is a variable');
-	}
+    public function index()
+    {
+        $this->set('test_value', 'It is a variable');
+    }
 
-	public function some_method() {
-		$this->response->body(25);
-		return $this->response;
-	}
-
+    public function some_method()
+    {
+        $this->response->body(25);
+        return $this->response;
+    }
 }

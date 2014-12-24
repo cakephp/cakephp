@@ -19,43 +19,45 @@ use Cake\Database\TypeMap;
 /*
  * Represents a class that holds a TypeMap object
  */
-trait TypeMapTrait {
+trait TypeMapTrait
+{
 
-/**
- * @var \Cake\Database\TypeMap
- */
-	protected $_typeMap;
+    /**
+     * @var \Cake\Database\TypeMap
+     */
+    protected $_typeMap;
 
-/**
- * Creates a new TypeMap if $typeMap is an array, otherwise returns the existing type map
- * or exchanges it for the given one.
- *
- * @param array|TypeMap $typeMap Creates a TypeMap if array, otherwise sets the given TypeMap
- * @return $this|TypeMap
- */
-	public function typeMap($typeMap = null) {
-		if (!$this->_typeMap) {
-			$this->_typeMap = new TypeMap();
-		}
-		if ($typeMap === null) {
-			return $this->_typeMap;
-		}
-		$this->_typeMap = is_array($typeMap) ? new TypeMap($typeMap) : $typeMap;
-		return $this;
-	}
+    /**
+     * Creates a new TypeMap if $typeMap is an array, otherwise returns the existing type map
+     * or exchanges it for the given one.
+     *
+     * @param array|TypeMap $typeMap Creates a TypeMap if array, otherwise sets the given TypeMap
+     * @return $this|TypeMap
+     */
+    public function typeMap($typeMap = null)
+    {
+        if (!$this->_typeMap) {
+            $this->_typeMap = new TypeMap();
+        }
+        if ($typeMap === null) {
+            return $this->_typeMap;
+        }
+        $this->_typeMap = is_array($typeMap) ? new TypeMap($typeMap) : $typeMap;
+        return $this;
+    }
 
-/**
- * Allows setting default types when chaining query
- *
- * @param array $types The array of types to set.
- * @return $this|array
- */
-	public function defaultTypes(array $types = null) {
-		if ($types === null) {
-			return $this->typeMap()->defaults();
-		}
-		$this->typeMap()->defaults($types);
-		return $this;
-	}
-
+    /**
+     * Allows setting default types when chaining query
+     *
+     * @param array $types The array of types to set.
+     * @return $this|array
+     */
+    public function defaultTypes(array $types = null)
+    {
+        if ($types === null) {
+            return $this->typeMap()->defaults();
+        }
+        $this->typeMap()->defaults($types);
+        return $this;
+    }
 }

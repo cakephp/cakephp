@@ -20,33 +20,34 @@ use Cake\TestSuite\Fixture\TestFixture;
  * Short description for class.
  *
  */
-class DataTestsFixture extends TestFixture {
+class DataTestsFixture extends TestFixture
+{
 
-/**
- * Fields property
- *
- * @var array
- */
-	public $fields = array(
-		'id' => ['type' => 'integer'],
-		'count' => ['type' => 'integer', 'default' => 0],
-		'float' => ['type' => 'float', 'default' => 0],
-		'created' => ['type' => 'datetime', 'default' => null],
-		'updated' => ['type' => 'datetime', 'default' => null],
-		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
-	);
+    /**
+     * Fields property
+     *
+     * @var array
+     */
+    public $fields = array(
+        'id' => ['type' => 'integer'],
+        'count' => ['type' => 'integer', 'default' => 0],
+        'float' => ['type' => 'float', 'default' => 0],
+        'created' => ['type' => 'datetime', 'default' => null],
+        'updated' => ['type' => 'datetime', 'default' => null],
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+    );
 
-/**
- * Records property
- *
- * @var array
- */
-	public $records = array(
-		array(
-			'count' => 2,
-			'float' => 2.4,
-			'created' => '2010-09-06 12:28:00',
-			'updated' => '2010-09-06 12:28:00'
-		)
-	);
+    /**
+     * Records property
+     *
+     * @var array
+     */
+    public $records = array(
+        array(
+            'count' => 2,
+            'float' => 2.4,
+            'created' => '2010-09-06 12:28:00',
+            'updated' => '2010-09-06 12:28:00'
+        )
+    );
 }

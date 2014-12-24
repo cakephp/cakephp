@@ -22,12 +22,13 @@ use Cake\Log\Engine\BaseLog;
  * Test Suite Test App Logging stream class.
  *
  */
-class TestAppLog extends BaseLog {
+class TestAppLog extends BaseLog
+{
 
-	public $passedScope = null;
+    public $passedScope = null;
 
-	public function log($level, $message, array $context = []) {
-		$this->passedScope = $context;
-	}
-
+    public function log($level, $message, array $context = [])
+    {
+        $this->passedScope = $context;
+    }
 }

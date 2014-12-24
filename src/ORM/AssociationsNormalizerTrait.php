@@ -18,49 +18,50 @@ namespace Cake\ORM;
  * Contains methods for parsing the associated tables array that is typically
  * passed to  a save operation
  */
-trait AssociationsNormalizerTrait {
+trait AssociationsNormalizerTrait
+{
 
-/**
- * Returns an array out of the original passed associations list where dot notation
- * is transformed into nested arrays so that they can be parsed by other routines
- *
- * @param array $associations The array of included associations.
- * @return array An array having dot notation transformed into nested arrays
- */
-	protected function _normalizeAssociations($associations) {
-		$result = [];
-		foreach ($associations as $table => $options) {
-			$pointer =& $result;
+    /**
+     * Returns an array out of the original passed associations list where dot notation
+     * is transformed into nested arrays so that they can be parsed by other routines
+     *
+     * @param array $associations The array of included associations.
+     * @return array An array having dot notation transformed into nested arrays
+     */
+    protected function _normalizeAssociations($associations)
+    {
+        $result = [];
+        foreach ($associations as $table => $options) {
+            $pointer =& $result;
 
-			if (is_int($table)) {
-				$table = $options;
-				$options = [];
-			}
+            if (is_int($table)) {
+                $table = $options;
+                $options = [];
+            }
 
-			if (!strpos($table, '.')) {
-				$result[$table] = $options;
-				continue;
-			}
+            if (!strpos($table, '.')) {
+                $result[$table] = $options;
+                continue;
+            }
 
-			$path = explode('.', $table);
-			$table = array_pop($path);
-			$first = array_shift($path);
-			$pointer += [$first => []];
-			$pointer =& $pointer[$first];
-			$pointer += ['associated' => []];
+            $path = explode('.', $table);
+            $table = array_pop($path);
+            $first = array_shift($path);
+            $pointer += [$first => []];
+            $pointer =& $pointer[$first];
+            $pointer += ['associated' => []];
 
-			foreach ($path as $t) {
-				$pointer += ['associated' => []];
-				$pointer['associated'] += [$t => []];
-				$pointer['associated'][$t] += ['associated' => []];
-				$pointer =& $pointer['associated'][$t];
-			}
+            foreach ($path as $t) {
+                $pointer += ['associated' => []];
+                $pointer['associated'] += [$t => []];
+                $pointer['associated'][$t] += ['associated' => []];
+                $pointer =& $pointer['associated'][$t];
+            }
 
-			$pointer['associated'] += [$table => []];
-			$pointer['associated'][$table] = $options + $pointer['associated'][$table];
-		}
+            $pointer['associated'] += [$table => []];
+            $pointer['associated'][$table] = $options + $pointer['associated'][$table];
+        }
 
-		return isset($result['associated']) ? $result['associated'] : $result;
-	}
-
+        return isset($result['associated']) ? $result['associated'] : $result;
+    }
 }

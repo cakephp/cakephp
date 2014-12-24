@@ -20,17 +20,18 @@ use RuntimeException;
  * Exception raised when a particular record was not found
  *
  */
-class InvalidPrimaryKeyException extends RuntimeException {
+class InvalidPrimaryKeyException extends RuntimeException
+{
 
-/**
- * Constructor.
- *
- * @param string $message The error message
- * @param int $code The code of the error, is also the HTTP status code for the error.
- * @param \Exception|null $previous the previous exception.
- */
-	public function __construct($message, $code = 404, $previous = null) {
-		parent::__construct($message, $code, $previous);
-	}
-
+    /**
+     * Constructor.
+     *
+     * @param string $message The error message
+     * @param int $code The code of the error, is also the HTTP status code for the error.
+     * @param \Exception|null $previous the previous exception.
+     */
+    public function __construct($message, $code = 404, $previous = null)
+    {
+        parent::__construct($message, $code, $previous);
+    }
 }

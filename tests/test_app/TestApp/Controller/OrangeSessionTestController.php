@@ -19,29 +19,31 @@ use Cake\Controller\Controller;
  * OrangeSessionTestController class
  *
  */
-class OrangeSessionTestController extends Controller {
+class OrangeSessionTestController extends Controller
+{
 
-/**
- * uses property
- *
- * @var array
- */
-	public $uses = array();
+    /**
+     * uses property
+     *
+     * @var array
+     */
+    public $uses = array();
 
-/**
- * List of components
- *
- * @var array
- */
-	public $components = ['Session'];
+    /**
+     * List of components
+     *
+     * @var array
+     */
+    public $components = ['Session'];
 
-/**
- * session_id method
- *
- * @return \Cake\Network\Session
- */
-	public function session_id() {
-		$this->response->body($this->Session->id());
-		return $this->response;
-	}
+    /**
+     * session_id method
+     *
+     * @return \Cake\Network\Session
+     */
+    public function session_id()
+    {
+        $this->response->body($this->Session->id());
+        return $this->response;
+    }
 }

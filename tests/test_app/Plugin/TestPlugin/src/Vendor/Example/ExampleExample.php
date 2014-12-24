@@ -1,4 +1,4 @@
 <?php
-class ExampleExample {
-
+class ExampleExample
+{
 }

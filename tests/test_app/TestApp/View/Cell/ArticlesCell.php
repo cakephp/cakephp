@@ -17,46 +17,49 @@ namespace TestApp\View\Cell;
  * TagCloudCell class
  *
  */
-class ArticlesCell extends \Cake\View\Cell {
+class ArticlesCell extends \Cake\View\Cell
+{
 
-/**
- * valid cell options.
- *
- * @var array
- */
-	protected $_validCellOptions = ['limit', 'page'];
+    /**
+     * valid cell options.
+     *
+     * @var array
+     */
+    protected $_validCellOptions = ['limit', 'page'];
 
-/**
- * Default cell action.
- *
- * @return void
- */
-	public function display() {
-	}
+    /**
+     * Default cell action.
+     *
+     * @return void
+     */
+    public function display()
+    {
+    }
 
-/**
- * Renders articles in teaser view mode.
- *
- * @return void
- */
-	public function teaserList() {
-		$this->set('articles', [
-			['title' => 'Lorem ipsum', 'body' => 'dolorem sit amet'],
-			['title' => 'Usectetur adipiscing eli', 'body' => 'tortor, in tincidunt sem dictum vel'],
-			['title' => 'Topis semper blandit eu non', 'body' => 'alvinar diam convallis non. Nullam pu'],
-			['title' => 'Suspendisse gravida neque', 'body' => 'pellentesque sed scelerisque libero'],
-		]);
-	}
+    /**
+     * Renders articles in teaser view mode.
+     *
+     * @return void
+     */
+    public function teaserList()
+    {
+        $this->set('articles', [
+            ['title' => 'Lorem ipsum', 'body' => 'dolorem sit amet'],
+            ['title' => 'Usectetur adipiscing eli', 'body' => 'tortor, in tincidunt sem dictum vel'],
+            ['title' => 'Topis semper blandit eu non', 'body' => 'alvinar diam convallis non. Nullam pu'],
+            ['title' => 'Suspendisse gravida neque', 'body' => 'pellentesque sed scelerisque libero'],
+        ]);
+    }
 
-/**
- * Simple echo.
- *
- * @param string $msg1
- * @param string $msg2
- * @return void
- */
-	public function doEcho($msg1, $msg2) {
-		$this->set('msg', $msg1 . $msg2);
-	}
-
+    /**
+     * Simple echo.
+     *
+     * @param string $msg1
+     * @param string $msg2
+     * @return void
+     */
+    public function doEcho($msg1, $msg2)
+    {
+        $this->set('msg', $msg1 . $msg2);
+    }
 }

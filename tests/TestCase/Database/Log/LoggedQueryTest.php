@@ -21,17 +21,18 @@ use Cake\TestSuite\TestCase;
  * Tests LoggedQuery class
  *
  */
-class LoggedQueryTest extends TestCase {
+class LoggedQueryTest extends TestCase
+{
 
-/**
- * Tests that LoggedQuery can be converted to string
- *
- * @return void
- */
-	public function testStringConversion() {
-		$logged = new LoggedQuery;
-		$logged->query = 'SELECT foo FROM bar';
-		$this->assertEquals('SELECT foo FROM bar', (string)$logged);
-	}
-
+    /**
+     * Tests that LoggedQuery can be converted to string
+     *
+     * @return void
+     */
+    public function testStringConversion()
+    {
+        $logged = new LoggedQuery;
+        $logged->query = 'SELECT foo FROM bar';
+        $this->assertEquals('SELECT foo FROM bar', (string)$logged);
+    }
 }
