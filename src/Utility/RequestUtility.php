@@ -30,7 +30,8 @@ class RequestUtility {
  *
  * {{{ \Cake\Network\Request::acceptLanguage('es-es'); }}}
  *
- * @param string|null $language The language to test.
+ * @param string $acceptLanguage Header to parse.
+ * @param string|null $checkLanguage The language to test.
  * @return mixed If a $language is provided, a boolean. Otherwise the array of accepted languages.
  */
 	public static function acceptLanguage($acceptLanguage, $checkLanguage = null) {
