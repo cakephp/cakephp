@@ -1014,7 +1014,7 @@ class Request implements \ArrayAccess
      * Generally you want to use Cake\Network\Request::accept() to get a simple list
      * of the accepted content types.
      *
-     * @return array An array of prefValue => array(content/types)
+     * @return array An array of prefValue => [content/types]
      */
     public function parseAccept()
     {

@@ -57,11 +57,11 @@ class SocketTest extends TestCase
         $this->Socket = new Socket();
         $config = $this->Socket->config();
         $this->assertSame($config, array(
-            'persistent'    => false,
-            'host'            => 'localhost',
-            'protocol'        => 'tcp',
-            'port'            => 80,
-            'timeout'        => 30
+            'persistent' => false,
+            'host' => 'localhost',
+            'protocol' => 'tcp',
+            'port' => 80,
+            'timeout' => 30
         ));
 
         $this->Socket->reset();

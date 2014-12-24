@@ -189,7 +189,7 @@ class TableTest extends TestCase
 
     /**
      * Test adding an constraint.
-     *>
+     *
      * @return void
      */
     public function testAddConstraint()

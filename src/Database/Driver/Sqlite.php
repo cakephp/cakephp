@@ -72,7 +72,6 @@ class Sqlite extends \Cake\Database\Driver
      *
      * @return bool true if it is valid to use this driver
      */
-
     public function enabled()
     {
         return in_array('sqlite', PDO::getAvailableDrivers());
