@@ -87,6 +87,8 @@ class MoFileParser {
 		for ($i = 0; $i < $count; $i++) {
 			$pluralId = null;
 			$translated = null;
+			$context = null;
+			$plurals = null;
 
 			fseek($stream, $offsetId + $i * 8);
 
@@ -100,6 +102,10 @@ class MoFileParser {
 			fseek($stream, $offset);
 			$singularId = fread($stream, $length);
 
+			if (strpos($singularId, "\x04") !== false) {
+				list($context, $singularId) = explode("\x04", $singularId);
+			}
+
 			if (strpos($singularId, "\000") !== false) {
 				list($singularId, $pluralId) = explode("\000", $singularId);
 			}
@@ -110,15 +116,24 @@ class MoFileParser {
 			fseek($stream, $offset);
 			$translated = fread($stream, $length);
 
-			if (strpos($translated, "\000") === false) {
-				$messages[$singularId] = stripcslashes($translated);
+			if (strpos($translated, "\000") !== false) {
+				$translated = explode("\000", $translated);
+				$plurals = $pluralId !== null ? array_map('stripcslashes', $translated) : null;
+				$translated = $translated[0];
+			}
+
+			$singular = stripcslashes($translated);
+			if ($context !== null) {
+				$messages[$singularId]['_context'][$context] = $singular;
+				if ($pluralId !== null) {
+					$messages[$pluralId]['_context'][$context] = $plurals;
+				}
 				continue;
 			}
 
-			$translated = explode("\000", $translated);
-			$messages[$singularId] = stripcslashes($translated[0]);
+			$messages[$singularId] = $singular;
 			if ($pluralId !== null) {
-				$messages[$pluralId] = array_map('stripcslashes', $translated);
+				$messages[$pluralId] = $plurals;
 			}
 		}
 
@@ -139,4 +154,5 @@ class MoFileParser {
 
 		return (int)substr($result, -8);
 	}
+
 }
