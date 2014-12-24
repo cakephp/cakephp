@@ -199,12 +199,11 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		if (!empty($this->params['case'])) {
 			$query['case'] = $this->params['case'];
 		}
-		$show = $this->_queryString($show);
-		$query = $this->_queryString($query);
+		list($show, $query) = $this->_getQueryLink();
 
 		echo "<p><a href='" . $this->baseUrl() . $show . "'>Run more tests</a> | <a href='" . $this->baseUrl() . $query . "&amp;show_passes=1'>Show Passes</a> | \n";
 		echo "<a href='" . $this->baseUrl() . $query . "&amp;debug=1'>Enable Debug Output</a> | \n";
-		echo "<a href='" . $this->baseUrl() . $query . "&amp;code_coverage=true'>Analyze Code Coverage</a></p>\n";
+		echo "<a href='" . $this->baseUrl() . $query . "&amp;code_coverage=true'>Analyze Code Coverage</a> | \n";
 		echo "<a href='" . $this->baseUrl() . $query . "&amp;code_coverage=true&amp;show_passes=1&amp;debug=1'>All options enabled</a></p>\n";
 	}
 
@@ -249,7 +248,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  */
 	public function paintFail($message, $test) {
 		$trace = $this->_getStackTrace($message);
-		$testName = get_class($test) . '(' . $test->getName() . ')';
+		$testName = get_class($test) . '::' . $test->getName() . '()';
 
 		$actualMsg = $expectedMsg = null;
 		if (method_exists($message, 'getComparisonFailure')) {
@@ -270,6 +269,8 @@ class CakeHtmlReporter extends CakeBaseReporter {
 
 		echo "</pre></div>\n";
 		echo "<div class='msg'>" . __d('cake_dev', 'Test case: %s', $testName) . "</div>\n";
+		list($show, $query) = $this->_getQueryLink();
+		echo "<div class='msg'><a href='" . $this->baseUrl() . $query . "&amp;filter=" . $test->getName() . "'>" . __d('cake_dev', 'Rerun only this test: %s', $testName) . "</a></div>\n";
 		echo "<div class='msg'>" . __d('cake_dev', 'Stack trace:') . '<br />' . $trace . "</div>\n";
 		echo "</li>\n";
 	}
@@ -379,6 +380,34 @@ class CakeHtmlReporter extends CakeBaseReporter {
 			echo $this->paintHeader();
 		}
 		echo '<h2>' . __d('cake_dev', 'Running  %s', $suite->getName()) . '</h2>';
+	}
+
+/**
+ * Returns the query string formatted for ouput in links
+ * 
+ * @return string
+ */
+	protected function _getQueryLink() {
+		$show = $query = array();
+		if (!empty($this->params['case'])) {
+			$show['show'] = 'cases';
+		}
+
+		if (!empty($this->params['core'])) {
+			$show['core'] = $query['core'] = 'true';
+		}
+		if (!empty($this->params['plugin'])) {
+			$show['plugin'] = $query['plugin'] = $this->params['plugin'];
+		}
+		if (!empty($this->params['case'])) {
+			$query['case'] = $this->params['case'];
+		}
+		if (!empty($this->params['filter'])) {
+			$query['filter'] = $this->params['filter'];
+		}
+		$show = $this->_queryString($show);
+		$query = $this->_queryString($query);
+		return array( $show, $query );
 	}
 
 }
