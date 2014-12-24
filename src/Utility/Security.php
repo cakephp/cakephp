@@ -98,6 +98,8 @@ class Security {
 /**
  * Get the crypto implementation based on the loaded extensions.
  *
+ * You can use this method to forcibly decide between mcrypt/openssl/custom implementations.
+ *
  * @param object $instance The crypto instance to use.
  * @return object Crypto instance.
  */
@@ -115,7 +117,9 @@ class Security {
 		if (isset(static::$_instance)) {
 			return static::$_instance;
 		}
-		throw new InvalidArgumentException('No compatible crypto engine loaded. Load either mcrypt or openssl');
+		throw new InvalidArgumentException(
+			'No compatible crypto engine available. ' .
+			'Load either the openssl or mcrypt extensions');
 	}
 
 /**
@@ -164,7 +168,9 @@ class Security {
 		$key = substr(hash('sha256', $key . $hmacSalt), 0, 32);
 
 		$crypto = static::engine();
-		return $crypto->encrypt($plain, $key);
+		$ciphertext = $crypto->encrypt($plain, $key);
+		$hmac = hash_hmac('sha256', $ciphertext, $key);
+		return $hmac . $ciphertext;
 	}
 
 /**
@@ -203,6 +209,16 @@ class Security {
 
 		// Generate the encryption and hmac key.
 		$key = substr(hash('sha256', $key . $hmacSalt), 0, 32);
+
+		// Split out hmac for comparison
+		$macSize = 64;
+		$hmac = substr($cipher, 0, $macSize);
+		$cipher = substr($cipher, $macSize);
+
+		$compareHmac = hash_hmac('sha256', $cipher, $key);
+		if ($hmac !== $compareHmac) {
+			return false;
+		}
 
 		$crypto = static::engine();
 		return $crypto->decrypt($cipher, $key);

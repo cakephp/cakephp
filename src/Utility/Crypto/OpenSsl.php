@@ -19,6 +19,11 @@ namespace Cake\Utility\Crypto;
  *
  * OpenSSL should be favored over mcrypt as it is actively maintained and
  * more widely available.
+ *
+ * This class is not intended to be used directly and should only
+ * be used in the context of Cake\Utility\Security.
+ *
+ * @internal
  */
 class OpenSsl {
 
@@ -49,12 +54,11 @@ class OpenSsl {
  * @throws \InvalidArgumentException On invalid data or key.
  */
 	public static function encrypt($plain, $key, $hmacSalt = null) {
-		$method = 'AES-128-CBC';
+		$method = 'AES-256-CBC';
 		$ivSize = openssl_cipher_iv_length($method);
+
 		$iv = openssl_random_pseudo_bytes($ivSize);
-		$ciphertext = $iv . openssl_encrypt($plain, $method, $key, 0, $iv);
-		$hmac = hash_hmac('sha256', $ciphertext, $key);
-		return $hmac . $ciphertext;
+		return $iv . openssl_encrypt($plain, $method, $key, true, $iv);
 	}
 
 /**
@@ -66,23 +70,13 @@ class OpenSsl {
  * @throws InvalidArgumentException On invalid data or key.
  */
 	public static function decrypt($cipher, $key) {
-		// Split out hmac for comparison
-		$macSize = 64;
-		$hmac = substr($cipher, 0, $macSize);
-		$cipher = substr($cipher, $macSize);
-
-		$compareHmac = hash_hmac('sha256', $cipher, $key);
-		// TODO time constant comparison?
-		if ($hmac !== $compareHmac) {
-			return false;
-		}
-		$method = 'AES-128-CBC';
+		$method = 'aes-256-cbc';
 		$ivSize = openssl_cipher_iv_length($method);
 
 		$iv = substr($cipher, 0, $ivSize);
+
 		$cipher = substr($cipher, $ivSize);
-		$plain = openssl_decrypt($cipher, $method, $key, 0, $iv);
-		return rtrim($plain, "\0");
+		return openssl_decrypt($cipher, $method, $key, true, $iv);
 	}
 }
 

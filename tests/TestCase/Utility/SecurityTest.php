@@ -15,6 +15,8 @@
 namespace Cake\Test\TestCase\Utility;
 
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Crypto\Mcrypt;
+use Cake\Utility\Crypto\OpenSsl;
 use Cake\Utility\Security;
 
 /**
@@ -82,14 +84,14 @@ class SecurityTest extends TestCase {
  */
 	public function testRijndael() {
 		$this->skipIf(!function_exists('mcrypt_encrypt'));
+		$engine = Security::engine();
+
+		Security::engine(new Mcrypt());
 		$txt = 'The quick brown fox jumped over the lazy dog.';
 		$key = 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi';
 
 		$result = Security::rijndael($txt, $key, 'encrypt');
 		$this->assertEquals($txt, Security::rijndael($result, $key, 'decrypt'));
-
-		$result = Security::rijndael($key, $txt, 'encrypt');
-		$this->assertEquals($key, Security::rijndael($result, $txt, 'decrypt'));
 
 		$result = Security::rijndael('', $key, 'encrypt');
 		$this->assertEquals('', Security::rijndael($result, $key, 'decrypt'));
@@ -97,6 +99,8 @@ class SecurityTest extends TestCase {
 		$key = 'this is my key of over 32 chars, yes it is';
 		$result = Security::rijndael($txt, $key, 'encrypt');
 		$this->assertEquals($txt, Security::rijndael($result, $key, 'decrypt'));
+
+		Security::engine($engine);
 	}
 
 /**
@@ -243,6 +247,32 @@ class SecurityTest extends TestCase {
 		$txt = '';
 		$key = 'This is a key that is long enough to be ok.';
 		Security::decrypt($txt, $key);
+	}
+
+/**
+ * Test that values encrypted with open ssl can be decrypted with mcrypt and the reverse.
+ *
+ * @return void
+ */
+	public function testEngineEquivalence() {
+		$restore = Security::engine();
+		$txt = "Obi-wan you're our only hope";
+		$key = 'This is my secret key phrase it is quite long.';
+		$salt = 'A tasty salt that is delicious';
+
+		Security::engine(new Mcrypt());
+		$cipher = Security::encrypt($txt, $key, $salt);
+		$this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
+
+		Security::engine(new OpenSsl());
+		$this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
+
+		Security::engine(new OpenSsl());
+		$cipher = Security::encrypt($txt, $key, $salt);
+		$this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
+
+		Security::engine(new Mcrypt());
+		$this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
 	}
 
 /**

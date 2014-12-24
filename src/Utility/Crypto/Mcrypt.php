@@ -16,6 +16,11 @@ namespace Cake\Utility\Crypto;
 
 /**
  * Mcrypt implementation of crypto features for Cake\Utility\Security
+ *
+ * This class is not intended to be used directly and should only
+ * be used in the context of Cake\Utility\Security.
+ *
+ * @internal
  */
 class Mcrypt {
 
@@ -55,15 +60,18 @@ class Mcrypt {
  * @return string Encrypted data.
  * @throws \InvalidArgumentException On invalid data or key.
  */
-	public static function encrypt($plain, $key, $hmacSalt = null) {
+	public static function encrypt($plain, $key) {
 		$algorithm = MCRYPT_RIJNDAEL_128;
 		$mode = MCRYPT_MODE_CBC;
 
 		$ivSize = mcrypt_get_iv_size($algorithm, $mode);
 		$iv = mcrypt_create_iv($ivSize, MCRYPT_DEV_URANDOM);
-		$ciphertext = $iv . mcrypt_encrypt($algorithm, $key, $plain, $mode, $iv);
-		$hmac = hash_hmac('sha256', $ciphertext, $key);
-		return $hmac . $ciphertext;
+
+		// Pad out plain to make it AES compatible.
+		$pad = ($ivSize - (strlen($plain) % $ivSize));
+		$plain .= str_repeat(chr($pad), $pad);
+
+		return $iv . mcrypt_encrypt($algorithm, $key, $plain, $mode, $iv);
 	}
 
 /**
@@ -75,17 +83,6 @@ class Mcrypt {
  * @throws InvalidArgumentException On invalid data or key.
  */
 	public static function decrypt($cipher, $key) {
-		// Split out hmac for comparison
-		$macSize = 64;
-		$hmac = substr($cipher, 0, $macSize);
-		$cipher = substr($cipher, $macSize);
-
-		$compareHmac = hash_hmac('sha256', $cipher, $key);
-		// TODO time constant comparison?
-		if ($hmac !== $compareHmac) {
-			return false;
-		}
-
 		$algorithm = MCRYPT_RIJNDAEL_128;
 		$mode = MCRYPT_MODE_CBC;
 		$ivSize = mcrypt_get_iv_size($algorithm, $mode);
@@ -93,6 +90,10 @@ class Mcrypt {
 		$iv = substr($cipher, 0, $ivSize);
 		$cipher = substr($cipher, $ivSize);
 		$plain = mcrypt_decrypt($algorithm, $key, $cipher, $mode, $iv);
-		return rtrim($plain, "\0");
+
+		// Remove PKCS#7 padding
+		$padChar = substr($plain, -1);
+		$padLen = ord($padChar);
+		return substr($plain, 0, -$padLen);
 	}
 }
