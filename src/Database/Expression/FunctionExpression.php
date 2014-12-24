@@ -92,7 +92,7 @@ class FunctionExpression extends QueryExpression {
 	public function add($params, $types = [], $prepend = false) {
 		$put = $prepend ? 'array_unshift' : 'array_push';
 		foreach ($params as $k => $p) {
-			if (is_string($k) && $p === 'literal') {
+			if ($p === 'literal') {
 				$put($this->_conditions, $k);
 				continue;
 			}
