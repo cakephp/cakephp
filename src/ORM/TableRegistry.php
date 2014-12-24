@@ -254,9 +254,11 @@ class TableRegistry {
 	public static function remove($alias) {
 		list(, $alias) = pluginSplit($alias);
 
-		unset(static::$_instances[$alias]);
-		unset(static::$_config[$alias]);
-		unset(static::$_fallbacked[$alias]);
+		unset(
+			static::$_instances[$alias],
+			static::$_config[$alias],
+			static::$_fallbacked[$alias]
+		);
 	}
 
 }
