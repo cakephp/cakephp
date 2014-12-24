@@ -21,31 +21,32 @@ use Cake\TestSuite\TestCase;
  * ReplaceIterator Test
  *
  */
-class ReplaceIteratorTest extends TestCase {
+class ReplaceIteratorTest extends TestCase
+{
 
-/**
- * Tests that the iterator works correctly
- *
- * @return void
- */
-	public function testReplace() {
-		$items = new \ArrayIterator([1, 2, 3]);
-		$callable = $this->getMock('stdClass', ['__invoke']);
-		$callable->expects($this->at(0))
-			->method('__invoke')
-			->with(1, 0, $items)
-			->will($this->returnValue(1));
-		$callable->expects($this->at(1))
-			->method('__invoke')
-			->with(2, 1, $items)
-			->will($this->returnValue(4));
-		$callable->expects($this->at(2))
-			->method('__invoke')
-			->with(3, 2, $items)
-			->will($this->returnValue(9));
+    /**
+     * Tests that the iterator works correctly
+     *
+     * @return void
+     */
+    public function testReplace()
+    {
+        $items = new \ArrayIterator([1, 2, 3]);
+        $callable = $this->getMock('stdClass', ['__invoke']);
+        $callable->expects($this->at(0))
+            ->method('__invoke')
+            ->with(1, 0, $items)
+            ->will($this->returnValue(1));
+        $callable->expects($this->at(1))
+            ->method('__invoke')
+            ->with(2, 1, $items)
+            ->will($this->returnValue(4));
+        $callable->expects($this->at(2))
+            ->method('__invoke')
+            ->with(3, 2, $items)
+            ->will($this->returnValue(9));
 
-		$map = new ReplaceIterator($items, $callable);
-		$this->assertEquals([1, 4, 9], iterator_to_array($map));
-	}
-
+        $map = new ReplaceIterator($items, $callable);
+        $this->assertEquals([1, 4, 9], iterator_to_array($map));
+    }
 }

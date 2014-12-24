@@ -22,106 +22,112 @@ use Cake\View\StringTemplateTrait;
  * TestStringTemplate
  *
  */
-class TestStringTemplate {
+class TestStringTemplate
+{
 
-	use InstanceConfigTrait;
-	use StringTemplateTrait;
+    use InstanceConfigTrait;
+    use StringTemplateTrait;
 
-/**
- * _defaultConfig
- *
- * @var array
- */
-	protected $_defaultConfig = [];
+    /**
+     * _defaultConfig
+     *
+     * @var array
+     */
+    protected $_defaultConfig = [];
 }
 
 /**
  * StringTemplateTraitTest class
  *
  */
-class StringTemplateTraitTest extends TestCase {
+class StringTemplateTraitTest extends TestCase
+{
 
-/**
- * setUp method
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		$this->Template = new TestStringTemplate;
-	}
+    /**
+     * setUp method
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->Template = new TestStringTemplate;
+    }
 
-/**
- * testInitStringTemplates
- *
- * @return void
- */
-	public function testInitStringTemplates() {
-		$templates = [
-			'text' => '<p>{{text}}</p>',
-		];
-		$this->Template->templates($templates);
+    /**
+     * testInitStringTemplates
+     *
+     * @return void
+     */
+    public function testInitStringTemplates()
+    {
+        $templates = [
+            'text' => '<p>{{text}}</p>',
+        ];
+        $this->Template->templates($templates);
 
-		$this->assertEquals(
-			[
-				'text' => '<p>{{text}}</p>'
-			],
-			$this->Template->templates(),
-			'newly added template should be included in template list'
-		);
-	}
+        $this->assertEquals(
+            [
+                'text' => '<p>{{text}}</p>'
+            ],
+            $this->Template->templates(),
+            'newly added template should be included in template list'
+        );
+    }
 
-/**
- * test settings['templates']
- *
- * @return void
- */
-	public function testInitStringTemplatesArrayForm() {
-		$this->Template->config(
-			'templates.text',
-			'<p>{{text}}</p>'
-		);
+    /**
+     * test settings['templates']
+     *
+     * @return void
+     */
+    public function testInitStringTemplatesArrayForm()
+    {
+        $this->Template->config(
+            'templates.text',
+            '<p>{{text}}</p>'
+        );
 
-		$this->assertEquals(
-			[
-				'text' => '<p>{{text}}</p>'
-			],
-			$this->Template->templates(),
-			'Configured templates should be included in template list'
-		);
-	}
+        $this->assertEquals(
+            [
+                'text' => '<p>{{text}}</p>'
+            ],
+            $this->Template->templates(),
+            'Configured templates should be included in template list'
+        );
+    }
 
-/**
- * testFormatStringTemplate
- *
- * @return void
- */
-	public function testFormatStringTemplate() {
-		$templates = [
-			'text' => '<p>{{text}}</p>',
-		];
-		$this->Template->templates($templates);
-		$result = $this->Template->formatTemplate('text', [
-			'text' => 'CakePHP'
-		]);
-		$this->assertEquals(
-			'<p>CakePHP</p>',
-			$result
-		);
-	}
+    /**
+     * testFormatStringTemplate
+     *
+     * @return void
+     */
+    public function testFormatStringTemplate()
+    {
+        $templates = [
+            'text' => '<p>{{text}}</p>',
+        ];
+        $this->Template->templates($templates);
+        $result = $this->Template->formatTemplate('text', [
+            'text' => 'CakePHP'
+        ]);
+        $this->assertEquals(
+            '<p>CakePHP</p>',
+            $result
+        );
+    }
 
-/**
- * testGetTemplater
- *
- * @return void
- */
-	public function testGetTemplater() {
-		$templates = [
-			'text' => '<p>{{text}}</p>',
-		];
-		$this->Template->templates($templates);
-		$result = $this->Template->templater();
-		$this->assertInstanceOf('Cake\View\StringTemplate', $result);
-	}
-
+    /**
+     * testGetTemplater
+     *
+     * @return void
+     */
+    public function testGetTemplater()
+    {
+        $templates = [
+            'text' => '<p>{{text}}</p>',
+        ];
+        $this->Template->templates($templates);
+        $result = $this->Template->templater();
+        $this->assertInstanceOf('Cake\View\StringTemplate', $result);
+    }
 }

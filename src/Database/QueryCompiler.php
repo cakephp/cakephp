@@ -22,277 +22,287 @@ use Cake\Database\ValueBinder;
  *
  * @internal
  */
-class QueryCompiler {
+class QueryCompiler
+{
 
-/**
- * List of sprintf templates that will be used for compiling the SQL for
- * this query. There are some clauses that can be built as just as the
- * direct concatenation of the internal parts, those are listed here.
- *
- * @var array
- */
-	protected $_templates = [
-		'delete' => 'DELETE',
-		'update' => 'UPDATE %s',
-		'where' => ' WHERE %s',
-		'group' => ' GROUP BY %s ',
-		'having' => ' HAVING %s ',
-		'order' => ' %s',
-		'limit' => ' LIMIT %s',
-		'offset' => ' OFFSET %s',
-		'epilog' => ' %s'
-	];
+    /**
+     * List of sprintf templates that will be used for compiling the SQL for
+     * this query. There are some clauses that can be built as just as the
+     * direct concatenation of the internal parts, those are listed here.
+     *
+     * @var array
+     */
+    protected $_templates = [
+        'delete' => 'DELETE',
+        'update' => 'UPDATE %s',
+        'where' => ' WHERE %s',
+        'group' => ' GROUP BY %s ',
+        'having' => ' HAVING %s ',
+        'order' => ' %s',
+        'limit' => ' LIMIT %s',
+        'offset' => ' OFFSET %s',
+        'epilog' => ' %s'
+    ];
 
-/**
- * The list of query clauses to traverse for generating a SELECT statement
- *
- * @var array
- */
-	protected $_selectParts = [
-		'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
-		'offset', 'union', 'epilog'
-	];
+    /**
+     * The list of query clauses to traverse for generating a SELECT statement
+     *
+     * @var array
+     */
+    protected $_selectParts = [
+        'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
+        'offset', 'union', 'epilog'
+    ];
 
-/**
- * The list of query clauses to traverse for generating an UPDATE statement
- *
- * @var array
- */
-	protected $_updateParts = ['update', 'set', 'where', 'epilog'];
+    /**
+     * The list of query clauses to traverse for generating an UPDATE statement
+     *
+     * @var array
+     */
+    protected $_updateParts = ['update', 'set', 'where', 'epilog'];
 
-/**
- * The list of query clauses to traverse for generating a DELETE statement
- *
- * @var array
- */
-	protected $_deleteParts = ['delete', 'from', 'where', 'epilog'];
+    /**
+     * The list of query clauses to traverse for generating a DELETE statement
+     *
+     * @var array
+     */
+    protected $_deleteParts = ['delete', 'from', 'where', 'epilog'];
 
-/**
- * The list of query clauses to traverse for generating an INSERT statement
- *
- * @var array
- */
-	protected $_insertParts = ['insert', 'values', 'epilog'];
+    /**
+     * The list of query clauses to traverse for generating an INSERT statement
+     *
+     * @var array
+     */
+    protected $_insertParts = ['insert', 'values', 'epilog'];
 
-/**
- * Returns the SQL representation of the provided query after generating
- * the placeholders for the bound values using the provided generator
- *
- * @param \Cake\Database\Query $query The query that is being compiled
- * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
- * @return \Closure
- */
-	public function compile(Query $query, ValueBinder $generator) {
-		$sql = '';
-		$type = $query->type();
-		$query->traverse(
-			$this->_sqlCompiler($sql, $query, $generator),
-			$this->{'_' . $type . 'Parts'}
-		);
-		return $sql;
-	}
+    /**
+     * Returns the SQL representation of the provided query after generating
+     * the placeholders for the bound values using the provided generator
+     *
+     * @param \Cake\Database\Query $query The query that is being compiled
+     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+     * @return \Closure
+     */
+    public function compile(Query $query, ValueBinder $generator)
+    {
+        $sql = '';
+        $type = $query->type();
+        $query->traverse(
+            $this->_sqlCompiler($sql, $query, $generator),
+            $this->{'_' . $type . 'Parts'}
+        );
+        return $sql;
+    }
 
-/**
- * Returns a callable object that can be used to compile a SQL string representation
- * of this query.
- *
- * @param string &$sql initial sql string to append to
- * @param \Cake\Database\Query $query The query that is being compiled
- * @param \Cake\Database\ValueBinder $generator The placeholder and value binder object
- * @return \Closure
- */
-	protected function _sqlCompiler(&$sql, $query, $generator) {
-		return function ($parts, $name) use (&$sql, $query, $generator) {
-			if (!count($parts)) {
-				return;
-			}
-			if ($parts instanceof ExpressionInterface) {
-				$parts = [$parts->sql($generator)];
-			}
-			if (isset($this->_templates[$name])) {
-				$parts = $this->_stringifyExpressions((array)$parts, $generator);
-				return $sql .= sprintf($this->_templates[$name], implode(', ', $parts));
-			}
-			return $sql .= $this->{'_build' . ucfirst($name) . 'Part'}($parts, $query, $generator);
-		};
-	}
+    /**
+     * Returns a callable object that can be used to compile a SQL string representation
+     * of this query.
+     *
+     * @param string &$sql initial sql string to append to
+     * @param \Cake\Database\Query $query The query that is being compiled
+     * @param \Cake\Database\ValueBinder $generator The placeholder and value binder object
+     * @return \Closure
+     */
+    protected function _sqlCompiler(&$sql, $query, $generator)
+    {
+        return function ($parts, $name) use (&$sql, $query, $generator) {
+            if (!count($parts)) {
+                return;
+            }
+            if ($parts instanceof ExpressionInterface) {
+                $parts = [$parts->sql($generator)];
+            }
+            if (isset($this->_templates[$name])) {
+                $parts = $this->_stringifyExpressions((array)$parts, $generator);
+                return $sql .= sprintf($this->_templates[$name], implode(', ', $parts));
+            }
+            return $sql .= $this->{'_build' . ucfirst($name) . 'Part'}($parts, $query, $generator);
+        };
+    }
 
-/**
- * Helper function used to build the string representation of a SELECT clause,
- * it constructs the field list taking care of aliasing and
- * converting expression objects to string. This function also constructs the
- * DISTINCT clause for the query.
- *
- * @param array $parts list of fields to be transformed to string
- * @param \Cake\Database\Query $query The query that is being compiled
- * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
- * @return string
- */
-	protected function _buildSelectPart($parts, $query, $generator) {
-		$driver = $query->connection()->driver();
-		$select = 'SELECT %s%s%s';
-		$distinct = $query->clause('distinct');
-		$modifiers = $query->clause('modifier') ?: null;
+    /**
+     * Helper function used to build the string representation of a SELECT clause,
+     * it constructs the field list taking care of aliasing and
+     * converting expression objects to string. This function also constructs the
+     * DISTINCT clause for the query.
+     *
+     * @param array $parts list of fields to be transformed to string
+     * @param \Cake\Database\Query $query The query that is being compiled
+     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+     * @return string
+     */
+    protected function _buildSelectPart($parts, $query, $generator)
+    {
+        $driver = $query->connection()->driver();
+        $select = 'SELECT %s%s%s';
+        $distinct = $query->clause('distinct');
+        $modifiers = $query->clause('modifier') ?: null;
 
-		$normalized = [];
-		$parts = $this->_stringifyExpressions($parts, $generator);
-		foreach ($parts as $k => $p) {
-			if (!is_numeric($k)) {
-				$p = $p . ' AS ' . $driver->quoteIdentifier($k);
-			}
-			$normalized[] = $p;
-		}
+        $normalized = [];
+        $parts = $this->_stringifyExpressions($parts, $generator);
+        foreach ($parts as $k => $p) {
+            if (!is_numeric($k)) {
+                $p = $p . ' AS ' . $driver->quoteIdentifier($k);
+            }
+            $normalized[] = $p;
+        }
 
-		if ($distinct === true) {
-			$distinct = 'DISTINCT ';
-		}
+        if ($distinct === true) {
+            $distinct = 'DISTINCT ';
+        }
 
-		if (is_array($distinct)) {
-			$distinct = $this->_stringifyExpressions($distinct, $generator);
-			$distinct = sprintf('DISTINCT ON (%s) ', implode(', ', $distinct));
-		}
-		if ($modifiers !== null) {
-			$modifiers = $this->_stringifyExpressions($modifiers, $generator);
-			$modifiers = implode(' ', $modifiers) . ' ';
-		}
+        if (is_array($distinct)) {
+            $distinct = $this->_stringifyExpressions($distinct, $generator);
+            $distinct = sprintf('DISTINCT ON (%s) ', implode(', ', $distinct));
+        }
+        if ($modifiers !== null) {
+            $modifiers = $this->_stringifyExpressions($modifiers, $generator);
+            $modifiers = implode(' ', $modifiers) . ' ';
+        }
 
-		return sprintf($select, $modifiers, $distinct, implode(', ', $normalized));
-	}
+        return sprintf($select, $modifiers, $distinct, implode(', ', $normalized));
+    }
 
-/**
- * Helper function used to build the string representation of a FROM clause,
- * it constructs the tables list taking care of aliasing and
- * converting expression objects to string.
- *
- * @param array $parts list of tables to be transformed to string
- * @param \Cake\Database\Query $query The query that is being compiled
- * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
- * @return string
- */
-	protected function _buildFromPart($parts, $query, $generator) {
-		$select = ' FROM %s';
-		$normalized = [];
-		$parts = $this->_stringifyExpressions($parts, $generator);
-		foreach ($parts as $k => $p) {
-			if (!is_numeric($k)) {
-				$p = $p . ' ' . $k;
-			}
-			$normalized[] = $p;
-		}
-		return sprintf($select, implode(', ', $normalized));
-	}
+    /**
+     * Helper function used to build the string representation of a FROM clause,
+     * it constructs the tables list taking care of aliasing and
+     * converting expression objects to string.
+     *
+     * @param array $parts list of tables to be transformed to string
+     * @param \Cake\Database\Query $query The query that is being compiled
+     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+     * @return string
+     */
+    protected function _buildFromPart($parts, $query, $generator)
+    {
+        $select = ' FROM %s';
+        $normalized = [];
+        $parts = $this->_stringifyExpressions($parts, $generator);
+        foreach ($parts as $k => $p) {
+            if (!is_numeric($k)) {
+                $p = $p . ' ' . $k;
+            }
+            $normalized[] = $p;
+        }
+        return sprintf($select, implode(', ', $normalized));
+    }
 
-/**
- * Helper function used to build the string representation of multiple JOIN clauses,
- * it constructs the joins list taking care of aliasing and converting
- * expression objects to string in both the table to be joined and the conditions
- * to be used.
- *
- * @param array $parts list of joins to be transformed to string
- * @param \Cake\Database\Query $query The query that is being compiled
- * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
- * @return string
- */
-	protected function _buildJoinPart($parts, $query, $generator) {
-		$joins = '';
-		foreach ($parts as $join) {
-			if ($join['table'] instanceof ExpressionInterface) {
-				$join['table'] = '(' . $join['table']->sql($generator) . ')';
-			}
-			$joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
-			if (isset($join['conditions']) && count($join['conditions'])) {
-				$joins .= sprintf(' ON %s', $join['conditions']->sql($generator));
-			} else {
-				$joins .= ' ON 1 = 1';
-			}
-		}
-		return $joins;
-	}
+    /**
+     * Helper function used to build the string representation of multiple JOIN clauses,
+     * it constructs the joins list taking care of aliasing and converting
+     * expression objects to string in both the table to be joined and the conditions
+     * to be used.
+     *
+     * @param array $parts list of joins to be transformed to string
+     * @param \Cake\Database\Query $query The query that is being compiled
+     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+     * @return string
+     */
+    protected function _buildJoinPart($parts, $query, $generator)
+    {
+        $joins = '';
+        foreach ($parts as $join) {
+            if ($join['table'] instanceof ExpressionInterface) {
+                $join['table'] = '(' . $join['table']->sql($generator) . ')';
+            }
+            $joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
+            if (isset($join['conditions']) && count($join['conditions'])) {
+                $joins .= sprintf(' ON %s', $join['conditions']->sql($generator));
+            } else {
+                $joins .= ' ON 1 = 1';
+            }
+        }
+        return $joins;
+    }
 
-/**
- * Helper function to generate SQL for SET expressions.
- *
- * @param array $parts List of keys & values to set.
- * @param \Cake\Database\Query $query The query that is being compiled
- * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
- * @return string
- */
-	protected function _buildSetPart($parts, $query, $generator) {
-		$set = [];
-		foreach ($parts as $part) {
-			if ($part instanceof ExpressionInterface) {
-				$part = $part->sql($generator);
-			}
-			if ($part[0] === '(') {
-				$part = substr($part, 1, -1);
-			}
-			$set[] = $part;
-		}
-		return ' SET ' . implode('', $set);
-	}
+    /**
+     * Helper function to generate SQL for SET expressions.
+     *
+     * @param array $parts List of keys & values to set.
+     * @param \Cake\Database\Query $query The query that is being compiled
+     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+     * @return string
+     */
+    protected function _buildSetPart($parts, $query, $generator)
+    {
+        $set = [];
+        foreach ($parts as $part) {
+            if ($part instanceof ExpressionInterface) {
+                $part = $part->sql($generator);
+            }
+            if ($part[0] === '(') {
+                $part = substr($part, 1, -1);
+            }
+            $set[] = $part;
+        }
+        return ' SET ' . implode('', $set);
+    }
 
-/**
- * Builds the SQL string for all the UNION clauses in this query, when dealing
- * with query objects it will also transform them using their configured SQL
- * dialect.
- *
- * @param array $parts list of queries to be operated with UNION
- * @param \Cake\Database\Query $query The query that is being compiled
- * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
- * @return string
- */
-	protected function _buildUnionPart($parts, $query, $generator) {
-		$parts = array_map(function ($p) use ($generator) {
-			$p['query'] = $p['query']->sql($generator);
-			$p['query'] = $p['query'][0] === '(' ? trim($p['query'], '()') : $p['query'];
-			return $p['all'] ? 'ALL ' . $p['query'] : $p['query'];
-		}, $parts);
-		return sprintf("\nUNION %s", implode("\nUNION ", $parts));
-	}
+    /**
+     * Builds the SQL string for all the UNION clauses in this query, when dealing
+     * with query objects it will also transform them using their configured SQL
+     * dialect.
+     *
+     * @param array $parts list of queries to be operated with UNION
+     * @param \Cake\Database\Query $query The query that is being compiled
+     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+     * @return string
+     */
+    protected function _buildUnionPart($parts, $query, $generator)
+    {
+        $parts = array_map(function ($p) use ($generator) {
+            $p['query'] = $p['query']->sql($generator);
+            $p['query'] = $p['query'][0] === '(' ? trim($p['query'], '()') : $p['query'];
+            return $p['all'] ? 'ALL ' . $p['query'] : $p['query'];
+        }, $parts);
+        return sprintf("\nUNION %s", implode("\nUNION ", $parts));
+    }
 
-/**
- * Builds the SQL fragment for INSERT INTO.
- *
- * @param array $parts The insert parts.
- * @param \Cake\Database\Query $query The query that is being compiled
- * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
- * @return string SQL fragment.
- */
-	protected function _buildInsertPart($parts, $query, $generator) {
-		$table = $parts[0];
-		$columns = $this->_stringifyExpressions($parts[1], $generator);
-		return sprintf('INSERT INTO %s (%s)', $table, implode(', ', $columns));
-	}
+    /**
+     * Builds the SQL fragment for INSERT INTO.
+     *
+     * @param array $parts The insert parts.
+     * @param \Cake\Database\Query $query The query that is being compiled
+     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+     * @return string SQL fragment.
+     */
+    protected function _buildInsertPart($parts, $query, $generator)
+    {
+        $table = $parts[0];
+        $columns = $this->_stringifyExpressions($parts[1], $generator);
+        return sprintf('INSERT INTO %s (%s)', $table, implode(', ', $columns));
+    }
 
-/**
- * Builds the SQL fragment for INSERT INTO.
- *
- * @param array $parts The values parts.
- * @param \Cake\Database\Query $query The query that is being compiled
- * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
- * @return string SQL fragment.
- */
-	protected function _buildValuesPart($parts, $query, $generator) {
-		return implode('', $this->_stringifyExpressions($parts, $generator));
-	}
+    /**
+     * Builds the SQL fragment for INSERT INTO.
+     *
+     * @param array $parts The values parts.
+     * @param \Cake\Database\Query $query The query that is being compiled
+     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+     * @return string SQL fragment.
+     */
+    protected function _buildValuesPart($parts, $query, $generator)
+    {
+        return implode('', $this->_stringifyExpressions($parts, $generator));
+    }
 
-/**
- * Helper function used to covert ExpressionInterface objects inside an array
- * into their string representation.
- *
- * @param array $expressions list of strings and ExpressionInterface objects
- * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
- * @return array
- */
-	protected function _stringifyExpressions($expressions, $generator) {
-		$result = [];
-		foreach ($expressions as $k => $expression) {
-			if ($expression instanceof ExpressionInterface) {
-				$expression = '(' . $expression->sql($generator) . ')';
-			}
-			$result[$k] = $expression;
-		}
-		return $result;
-	}
-
+    /**
+     * Helper function used to covert ExpressionInterface objects inside an array
+     * into their string representation.
+     *
+     * @param array $expressions list of strings and ExpressionInterface objects
+     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+     * @return array
+     */
+    protected function _stringifyExpressions($expressions, $generator)
+    {
+        $result = [];
+        foreach ($expressions as $k => $expression) {
+            if ($expression instanceof ExpressionInterface) {
+                $expression = '(' . $expression->sql($generator) . ')';
+            }
+            $result[$k] = $expression;
+        }
+        return $result;
+    }
 }

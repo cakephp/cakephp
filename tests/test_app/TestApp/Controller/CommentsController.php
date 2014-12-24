@@ -19,6 +19,6 @@ use TestApp\Controller\AppController;
  * ControllerPostsController class
  *
  */
-class CommentsController extends AppController {
-
+class CommentsController extends AppController
+{
 }

@@ -23,42 +23,43 @@ use Cake\Network\Request;
  *
  * @see AuthComponent::$authenticate
  */
-abstract class BaseAuthorize {
+abstract class BaseAuthorize
+{
 
-	use InstanceConfigTrait;
+    use InstanceConfigTrait;
 
-/**
- * ComponentRegistry instance for getting more components.
- *
- * @var ComponentRegistry
- */
-	protected $_registry;
+    /**
+     * ComponentRegistry instance for getting more components.
+     *
+     * @var ComponentRegistry
+     */
+    protected $_registry;
 
-/**
- * Default config for authorize objects.
- *
- * @var array
- */
-	protected $_defaultConfig = [];
+    /**
+     * Default config for authorize objects.
+     *
+     * @var array
+     */
+    protected $_defaultConfig = [];
 
-/**
- * Constructor
- *
- * @param ComponentRegistry $registry The controller for this request.
- * @param array $config An array of config. This class does not use any config.
- */
-	public function __construct(ComponentRegistry $registry, array $config = array()) {
-		$this->_registry = $registry;
-		$this->config($config);
-	}
+    /**
+     * Constructor
+     *
+     * @param ComponentRegistry $registry The controller for this request.
+     * @param array $config An array of config. This class does not use any config.
+     */
+    public function __construct(ComponentRegistry $registry, array $config = array())
+    {
+        $this->_registry = $registry;
+        $this->config($config);
+    }
 
-/**
- * Checks user authorization.
- *
- * @param array $user Active user data
- * @param \Cake\Network\Request $request Request instance.
- * @return bool
- */
-	abstract public function authorize($user, Request $request);
-
+    /**
+     * Checks user authorization.
+     *
+     * @param array $user Active user data
+     * @param \Cake\Network\Request $request Request instance.
+     * @return bool
+     */
+    abstract public function authorize($user, Request $request);
 }

@@ -81,101 +81,107 @@ use Exception;
  *
  * @see ExceptionRenderer for more information on how to customize exception rendering.
  */
-class ErrorHandler extends BaseErrorHandler {
+class ErrorHandler extends BaseErrorHandler
+{
 
-/**
- * Options to use for the Error handling.
- *
- * @var array
- */
-	protected $_options = [];
+    /**
+     * Options to use for the Error handling.
+     *
+     * @var array
+     */
+    protected $_options = [];
 
-/**
- * Constructor
- *
- * @param array $options The options for error handling.
- */
-	public function __construct($options = []) {
-		$defaults = [
-			'log' => true,
-			'trace' => false,
-			'exceptionRenderer' => 'Cake\Error\ExceptionRenderer',
-		];
-		$this->_options = $options + $defaults;
-	}
+    /**
+     * Constructor
+     *
+     * @param array $options The options for error handling.
+     */
+    public function __construct($options = [])
+    {
+        $defaults = [
+            'log' => true,
+            'trace' => false,
+            'exceptionRenderer' => 'Cake\Error\ExceptionRenderer',
+        ];
+        $this->_options = $options + $defaults;
+    }
 
-/**
- * Display an error.
- *
- * Template method of BaseErrorHandler.
- *
- * Only when debug > 2 will a formatted error be displayed.
- *
- * @param array $error An array of error data.
- * @param bool $debug Whether or not the app is in debug mode.
- * @return void
- */
-	protected function _displayError($error, $debug) {
-		if (!$debug) {
-			return;
-		}
-		Debugger::getInstance()->outputError($error);
-	}
+    /**
+     * Display an error.
+     *
+     * Template method of BaseErrorHandler.
+     *
+     * Only when debug > 2 will a formatted error be displayed.
+     *
+     * @param array $error An array of error data.
+     * @param bool $debug Whether or not the app is in debug mode.
+     * @return void
+     */
+    protected function _displayError($error, $debug)
+    {
+        if (!$debug) {
+            return;
+        }
+        Debugger::getInstance()->outputError($error);
+    }
 
-/**
- * Displays an exception response body.
- *
- * @param \Exception $exception The exception to display
- * @return void
- * @throws \Exception When the chosen exception renderer is invalid.
- */
-	protected function _displayException($exception) {
-		$renderer = App::className($this->_options['exceptionRenderer'], 'Error');
-		try {
-			if (!$renderer) {
-				throw new Exception("$renderer is an invalid class.");
-			}
-			$error = new $renderer($exception);
-			$response = $error->render();
-			$this->_clearOutput();
-			$this->_sendResponse($response);
-		} catch (Exception $e) {
-			// Disable trace for internal errors.
-			$this->_options['trace'] = false;
-			$message = sprintf("[%s] %s\n%s", // Keeping same message format
-				get_class($e),
-				$e->getMessage(),
-				$e->getTraceAsString()
-			);
-			trigger_error($message, E_USER_ERROR);
-		}
-	}
+    /**
+     * Displays an exception response body.
+     *
+     * @param \Exception $exception The exception to display
+     * @return void
+     * @throws \Exception When the chosen exception renderer is invalid.
+     */
+    protected function _displayException($exception)
+    {
+        $renderer = App::className($this->_options['exceptionRenderer'], 'Error');
+        try {
+            if (!$renderer) {
+                throw new Exception("$renderer is an invalid class.");
+            }
+            $error = new $renderer($exception);
+            $response = $error->render();
+            $this->_clearOutput();
+            $this->_sendResponse($response);
+        } catch (Exception $e) {
+            // Disable trace for internal errors.
+            $this->_options['trace'] = false;
+            $message = sprintf(
+                "[%s] %s\n%s", // Keeping same message format
+                get_class($e),
+                $e->getMessage(),
+                $e->getTraceAsString()
+            );
+            trigger_error($message, E_USER_ERROR);
+        }
+    }
 
-/**
- * Clear output buffers so error pages display properly.
- *
- * Easily stubbed in testing.
- *
- * @return void
- */
-	protected function _clearOutput() {
-		while (ob_get_level()) {
-			ob_end_clean();
-		}
-	}
+    /**
+     * Clear output buffers so error pages display properly.
+     *
+     * Easily stubbed in testing.
+     *
+     * @return void
+     */
+    protected function _clearOutput()
+    {
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+    }
 
-/**
- * Method that can be easily stubbed in testing.
- *
- * @param string|\Cake\Network\Response $response Either the message or response object.
- * @return void
- */
-	protected function _sendResponse($response) {
-		if (is_string($response)) {
-			echo $response;
-			return;
-		}
-		$response->send();
-	}
-
+    /**
+     * Method that can be easily stubbed in testing.
+     *
+     * @param string|\Cake\Network\Response $response Either the message or response object.
+     * @return void
+     */
+    protected function _sendResponse($response)
+    {
+        if (is_string($response)) {
+            echo $response;
+            return;
+        }
+        $response->send();
+    }
 }

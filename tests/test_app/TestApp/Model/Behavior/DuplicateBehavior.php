@@ -19,21 +19,23 @@ use Cake\ORM\Behavior;
 /**
  * Test class for trigging duplicate method errors.
  */
-class DuplicateBehavior extends Behavior {
+class DuplicateBehavior extends Behavior
+{
 
-	protected $_defaultConfig = [
-		'implementedFinders' => [
-			'children' => 'findChildren',
-		],
-		'implementedMethods' => [
-			'slugify' => 'slugify',
-		]
-	];
+    protected $_defaultConfig = [
+        'implementedFinders' => [
+            'children' => 'findChildren',
+        ],
+        'implementedMethods' => [
+            'slugify' => 'slugify',
+        ]
+    ];
 
-	public function findChildren() {
-	}
+    public function findChildren()
+    {
+    }
 
-	public function slugify() {
-	}
-
+    public function slugify()
+    {
+    }
 }

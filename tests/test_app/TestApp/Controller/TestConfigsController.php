@@ -18,12 +18,12 @@ namespace TestApp\Controller;
 
 use Cake\Controller\ErrorController;
 
-class TestConfigsController extends ErrorController {
+class TestConfigsController extends ErrorController
+{
 
-	public $components = array(
-		'RequestHandler' => array(
-			'some' => 'config'
-		)
-	);
-
+    public $components = array(
+        'RequestHandler' => array(
+            'some' => 'config'
+        )
+    );
 }

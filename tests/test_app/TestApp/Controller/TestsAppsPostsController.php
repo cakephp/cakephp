@@ -21,64 +21,69 @@
  */
 namespace TestApp\Controller;
 
-class TestsAppsPostsController extends AppController {
+class TestsAppsPostsController extends AppController
+{
 
-	public $viewPath = 'TestsApps';
+    public $viewPath = 'TestsApps';
 
-/**
- * add method
- *
- * @return void
- */
-	public function add() {
-		$this->loadModel('Posts');
-		$entity = $this->Posts->newEntity($this->request->data);
-		if ($entity) {
-			$this->Posts->save($entity);
-		}
-		$this->set('posts', $this->Posts->find('all'));
-		$this->render('index');
-	}
+    /**
+     * add method
+     *
+     * @return void
+     */
+    public function add()
+    {
+        $this->loadModel('Posts');
+        $entity = $this->Posts->newEntity($this->request->data);
+        if ($entity) {
+            $this->Posts->save($entity);
+        }
+        $this->set('posts', $this->Posts->find('all'));
+        $this->render('index');
+    }
 
-/**
- * check URL params
- *
- * @return void
- */
-	public function url_var() {
-		$this->set('params', $this->request->params);
-		$this->render('index');
-	}
+    /**
+     * check URL params
+     *
+     * @return void
+     */
+    public function url_var()
+    {
+        $this->set('params', $this->request->params);
+        $this->render('index');
+    }
 
-/**
- * post var testing
- *
- * @return void
- */
-	public function post_var() {
-		$this->set('data', $this->request->data);
-		$this->render('index');
-	}
+    /**
+     * post var testing
+     *
+     * @return void
+     */
+    public function post_var()
+    {
+        $this->set('data', $this->request->data);
+        $this->render('index');
+    }
 
-/**
- * input_data()
- *
- * @return void
- */
-	public function input_data() {
-		$this->set('data', $this->request->input('json_decode', true));
-		$this->render('index');
-	}
+    /**
+     * input_data()
+     *
+     * @return void
+     */
+    public function input_data()
+    {
+        $this->set('data', $this->request->input('json_decode', true));
+        $this->render('index');
+    }
 
-/**
- * Fixturized action for testAction()
- *
- * @return void
- */
-	public function fixtured() {
-		$this->loadModel('Posts');
-		$this->set('posts', $this->Posts->find('all'));
-		$this->render('index');
-	}
-
+    /**
+     * Fixturized action for testAction()
+     *
+     * @return void
+     */
+    public function fixtured()
+    {
+        $this->loadModel('Posts');
+        $this->set('posts', $this->Posts->find('all'));
+        $this->render('index');
+    }
 }

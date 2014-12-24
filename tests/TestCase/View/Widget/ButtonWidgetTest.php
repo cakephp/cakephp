@@ -21,106 +21,111 @@ use Cake\View\Widget\ButtonWidget;
 /**
  * Basic input test.
  */
-class ButtonWidgetTest extends TestCase {
+class ButtonWidgetTest extends TestCase
+{
 
-	public function setUp() {
-		parent::setUp();
-		$templates = [
-			'button' => '<button{{attrs}}>{{text}}</button>',
-		];
-		$this->templates = new StringTemplate($templates);
-		$this->context = $this->getMock('Cake\View\Form\ContextInterface');
-	}
+    public function setUp()
+    {
+        parent::setUp();
+        $templates = [
+            'button' => '<button{{attrs}}>{{text}}</button>',
+        ];
+        $this->templates = new StringTemplate($templates);
+        $this->context = $this->getMock('Cake\View\Form\ContextInterface');
+    }
 
-/**
- * Test render in a simple case.
- *
- * @return void
- */
-	public function testRenderSimple() {
-		$button = new ButtonWidget($this->templates);
-		$result = $button->render(['name' => 'my_input'], $this->context);
-		$expected = [
-			'button' => ['type' => 'submit', 'name' => 'my_input'],
-			'/button'
-		];
-		$this->assertHtml($expected, $result);
-	}
+    /**
+     * Test render in a simple case.
+     *
+     * @return void
+     */
+    public function testRenderSimple()
+    {
+        $button = new ButtonWidget($this->templates);
+        $result = $button->render(['name' => 'my_input'], $this->context);
+        $expected = [
+            'button' => ['type' => 'submit', 'name' => 'my_input'],
+            '/button'
+        ];
+        $this->assertHtml($expected, $result);
+    }
 
-/**
- * Test render with custom type
- *
- * @return void
- */
-	public function testRenderType() {
-		$button = new ButtonWidget($this->templates);
-		$data = [
-			'name' => 'my_input',
-			'type' => 'button',
-			'text' => 'Some button'
-		];
-		$result = $button->render($data, $this->context);
-		$expected = [
-			'button' => ['type' => 'button', 'name' => 'my_input'],
-			'Some button',
-			'/button'
-		];
-		$this->assertHtml($expected, $result);
-	}
+    /**
+     * Test render with custom type
+     *
+     * @return void
+     */
+    public function testRenderType()
+    {
+        $button = new ButtonWidget($this->templates);
+        $data = [
+            'name' => 'my_input',
+            'type' => 'button',
+            'text' => 'Some button'
+        ];
+        $result = $button->render($data, $this->context);
+        $expected = [
+            'button' => ['type' => 'button', 'name' => 'my_input'],
+            'Some button',
+            '/button'
+        ];
+        $this->assertHtml($expected, $result);
+    }
 
-/**
- * Test render with a text
- *
- * @return void
- */
-	public function testRenderWithText() {
-		$button = new ButtonWidget($this->templates);
-		$data = [
-			'text' => 'Some <value>'
-		];
-		$result = $button->render($data, $this->context);
-		$expected = [
-			'button' => ['type' => 'submit'],
-			'Some <value>',
-			'/button'
-		];
-		$this->assertHtml($expected, $result);
+    /**
+     * Test render with a text
+     *
+     * @return void
+     */
+    public function testRenderWithText()
+    {
+        $button = new ButtonWidget($this->templates);
+        $data = [
+            'text' => 'Some <value>'
+        ];
+        $result = $button->render($data, $this->context);
+        $expected = [
+            'button' => ['type' => 'submit'],
+            'Some <value>',
+            '/button'
+        ];
+        $this->assertHtml($expected, $result);
 
-		$data['escape'] = true;
-		$result = $button->render($data, $this->context);
-		$expected = [
-			'button' => ['type' => 'submit'],
-			'Some &lt;value&gt;',
-			'/button'
-		];
-		$this->assertHtml($expected, $result);
-	}
+        $data['escape'] = true;
+        $result = $button->render($data, $this->context);
+        $expected = [
+            'button' => ['type' => 'submit'],
+            'Some &lt;value&gt;',
+            '/button'
+        ];
+        $this->assertHtml($expected, $result);
+    }
 
-/**
- * Test render with additional attributes.
- *
- * @return void
- */
-	public function testRenderAttributes() {
-		$button = new ButtonWidget($this->templates);
-		$data = [
-			'name' => 'my_input',
-			'text' => 'Go',
-			'class' => 'btn',
-			'required' => true
-		];
-		$result = $button->render($data, $this->context);
-		$expected = [
-			'button' => [
-				'type' => 'submit',
-				'name' => 'my_input',
-				'class' => 'btn',
-				'required' => 'required'
-			],
-			'Go',
-			'/button'
-		];
-		$this->assertHtml($expected, $result);
-	}
-
+    /**
+     * Test render with additional attributes.
+     *
+     * @return void
+     */
+    public function testRenderAttributes()
+    {
+        $button = new ButtonWidget($this->templates);
+        $data = [
+            'name' => 'my_input',
+            'text' => 'Go',
+            'class' => 'btn',
+            'required' => true
+        ];
+        $result = $button->render($data, $this->context);
+        $expected = [
+            'button' => [
+                'type' => 'submit',
+                'name' => 'my_input',
+                'class' => 'btn',
+                'required' => 'required'
+            ],
+            'Go',
+            '/button'
+        ];
+        $this->assertHtml($expected, $result);
+    }
 }

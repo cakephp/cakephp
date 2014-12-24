@@ -18,17 +18,19 @@ use Cake\ORM\Table;
  * Author table class
  *
  */
-class AuthorsTable extends Table {
+class AuthorsTable extends Table
+{
 
-	public function initialize(array $config) {
-		$this->hasMany('articles');
-	}
+    public function initialize(array $config)
+    {
+        $this->hasMany('articles');
+    }
 
-	public function findByAuthor(Query $query, array $options = []) {
-		if (isset($options['author_id'])) {
-			$query->where(['Articles.id' => $options['author_id']]);
-		}
-		return $query;
-	}
-
+    public function findByAuthor(Query $query, array $options = [])
+    {
+        if (isset($options['author_id'])) {
+            $query->where(['Articles.id' => $options['author_id']]);
+        }
+        return $query;
+    }
 }

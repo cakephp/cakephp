@@ -17,6 +17,6 @@ use Cake\ORM\Table;
  * AuthUser class
  *
  */
-class AuthUsersTable extends Table {
-
+class AuthUsersTable extends Table
+{
 }

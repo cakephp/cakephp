@@ -22,183 +22,194 @@ use Cake\View\Form\FormContext;
 /**
  * Form context test case.
  */
-class FormContextTest extends TestCase {
+class FormContextTest extends TestCase
+{
 
-/**
- * setup method.
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		$this->request = new Request();
-	}
+    /**
+     * setup method.
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->request = new Request();
+    }
 
-/**
- * Test getting the primary key.
- *
- * @return void
- */
-	public function testPrimaryKey() {
-		$context = new FormContext($this->request, ['entity' => new Form()]);
-		$this->assertEquals([], $context->primaryKey());
-	}
+    /**
+     * Test getting the primary key.
+     *
+     * @return void
+     */
+    public function testPrimaryKey()
+    {
+        $context = new FormContext($this->request, ['entity' => new Form()]);
+        $this->assertEquals([], $context->primaryKey());
+    }
 
-/**
- * Test isPrimaryKey.
- *
- * @return void
- */
-	public function testIsPrimaryKey() {
-		$context = new FormContext($this->request, ['entity' => new Form()]);
-		$this->assertFalse($context->isPrimaryKey('id'));
-	}
+    /**
+     * Test isPrimaryKey.
+     *
+     * @return void
+     */
+    public function testIsPrimaryKey()
+    {
+        $context = new FormContext($this->request, ['entity' => new Form()]);
+        $this->assertFalse($context->isPrimaryKey('id'));
+    }
 
-/**
- * Test the isCreate method.
- *
- * @return void
- */
-	public function testIsCreate() {
-		$context = new FormContext($this->request, ['entity' => new Form()]);
-		$this->assertTrue($context->isCreate());
-	}
+    /**
+     * Test the isCreate method.
+     *
+     * @return void
+     */
+    public function testIsCreate()
+    {
+        $context = new FormContext($this->request, ['entity' => new Form()]);
+        $this->assertTrue($context->isCreate());
+    }
 
-/**
- * Test reading values from the request & defaults.
- */
-	public function testValPresent() {
-		$this->request->data = [
-			'Articles' => [
-				'title' => 'New title',
-				'body' => 'My copy',
-			]
-		];
-		$context = new FormContext($this->request, ['entity' => new Form()]);
-		$this->assertEquals('New title', $context->val('Articles.title'));
-		$this->assertEquals('My copy', $context->val('Articles.body'));
-		$this->assertNull($context->val('Articles.nope'));
-	}
+    /**
+     * Test reading values from the request & defaults.
+     */
+    public function testValPresent()
+    {
+        $this->request->data = [
+            'Articles' => [
+                'title' => 'New title',
+                'body' => 'My copy',
+            ]
+        ];
+        $context = new FormContext($this->request, ['entity' => new Form()]);
+        $this->assertEquals('New title', $context->val('Articles.title'));
+        $this->assertEquals('My copy', $context->val('Articles.body'));
+        $this->assertNull($context->val('Articles.nope'));
+    }
 
-/**
- * Test getting values when the request and defaults are missing.
- *
- * @return void
- */
-	public function testValMissing() {
-		$context = new FormContext($this->request, ['entity' => new Form()]);
-		$this->assertNull($context->val('Comments.field'));
-	}
+    /**
+     * Test getting values when the request and defaults are missing.
+     *
+     * @return void
+     */
+    public function testValMissing()
+    {
+        $context = new FormContext($this->request, ['entity' => new Form()]);
+        $this->assertNull($context->val('Comments.field'));
+    }
 
-/**
- * Test isRequired
- *
- * @return void
- */
-	public function testIsRequired() {
-		$form = new Form();
-		$form->validator()
-			->requirePresence('name')
-			->add('email', 'format', ['rule' => 'email']);
+    /**
+     * Test isRequired
+     *
+     * @return void
+     */
+    public function testIsRequired()
+    {
+        $form = new Form();
+        $form->validator()
+            ->requirePresence('name')
+            ->add('email', 'format', ['rule' => 'email']);
 
-		$context = new FormContext($this->request, [
-			'entity' => $form
-		]);
-		$this->assertTrue($context->isRequired('name'));
-		$this->assertTrue($context->isRequired('email'));
-		$this->assertFalse($context->isRequired('body'));
-		$this->assertFalse($context->isRequired('Prefix.body'));
-	}
+        $context = new FormContext($this->request, [
+            'entity' => $form
+        ]);
+        $this->assertTrue($context->isRequired('name'));
+        $this->assertTrue($context->isRequired('email'));
+        $this->assertFalse($context->isRequired('body'));
+        $this->assertFalse($context->isRequired('Prefix.body'));
+    }
 
-/**
- * Test the type method.
- *
- * @return void
- */
-	public function testType() {
-		$form = new Form();
-		$form->schema()
-			->addField('email', 'string')
-			->addField('user_id', 'integer');
+    /**
+     * Test the type method.
+     *
+     * @return void
+     */
+    public function testType()
+    {
+        $form = new Form();
+        $form->schema()
+            ->addField('email', 'string')
+            ->addField('user_id', 'integer');
 
-		$context = new FormContext($this->request, [
-			'entity' => $form
-		]);
-		$this->assertNull($context->type('undefined'));
-		$this->assertEquals('integer', $context->type('user_id'));
-		$this->assertEquals('string', $context->type('email'));
-		$this->assertNull($context->type('Prefix.email'));
-	}
+        $context = new FormContext($this->request, [
+            'entity' => $form
+        ]);
+        $this->assertNull($context->type('undefined'));
+        $this->assertEquals('integer', $context->type('user_id'));
+        $this->assertEquals('string', $context->type('email'));
+        $this->assertNull($context->type('Prefix.email'));
+    }
 
-/**
- * Test fetching attributes.
- *
- * @return void
- */
-	public function testAttributes() {
-		$form = new Form();
-		$form->schema()
-			->addField('email', [
-				'type' => 'string',
-				'length' => 10,
-			])
-			->addField('amount', [
-				'type' => 'decimal',
-				'length' => 5,
-				'precision' => 2,
-			]);
-		$context = new FormContext($this->request, [
-			'entity' => $form
-		]);
-		$this->assertEquals([], $context->attributes('id'));
-		$this->assertEquals(['length' => 10, 'precision' => null], $context->attributes('email'));
-		$this->assertEquals(['precision' => 2, 'length' => 5], $context->attributes('amount'));
-	}
+    /**
+     * Test fetching attributes.
+     *
+     * @return void
+     */
+    public function testAttributes()
+    {
+        $form = new Form();
+        $form->schema()
+            ->addField('email', [
+                'type' => 'string',
+                'length' => 10,
+            ])
+            ->addField('amount', [
+                'type' => 'decimal',
+                'length' => 5,
+                'precision' => 2,
+            ]);
+        $context = new FormContext($this->request, [
+            'entity' => $form
+        ]);
+        $this->assertEquals([], $context->attributes('id'));
+        $this->assertEquals(['length' => 10, 'precision' => null], $context->attributes('email'));
+        $this->assertEquals(['precision' => 2, 'length' => 5], $context->attributes('amount'));
+    }
 
-/**
- * Test fetching errors.
- *
- * @return void
- */
-	public function testError() {
-		$form = new Form();
-		$form->validator()
-			->add('email', 'format', ['rule' => 'email'])
-			->add('name', 'length', ['rule' => ['minLength', 10]]);
-		$form->validate([
-			'email' => 'derp',
-			'name' => 'derp'
-		]);
+    /**
+     * Test fetching errors.
+     *
+     * @return void
+     */
+    public function testError()
+    {
+        $form = new Form();
+        $form->validator()
+            ->add('email', 'format', ['rule' => 'email'])
+            ->add('name', 'length', ['rule' => ['minLength', 10]]);
+        $form->validate([
+            'email' => 'derp',
+            'name' => 'derp'
+        ]);
 
-		$context = new FormContext($this->request, ['entity' => $form]);
-		$this->assertEquals([], $context->error('empty'));
-		$this->assertEquals(['The provided value is invalid'], $context->error('email'));
-		$this->assertEquals(['The provided value is invalid'], $context->error('name'));
+        $context = new FormContext($this->request, ['entity' => $form]);
+        $this->assertEquals([], $context->error('empty'));
+        $this->assertEquals(['The provided value is invalid'], $context->error('email'));
+        $this->assertEquals(['The provided value is invalid'], $context->error('name'));
 
-		$this->assertEquals([], $context->error('Alias.name'));
-		$this->assertEquals([], $context->error('nope.nope'));
-	}
+        $this->assertEquals([], $context->error('Alias.name'));
+        $this->assertEquals([], $context->error('nope.nope'));
+    }
 
-/**
- * Test checking errors.
- *
- * @return void
- */
-	public function testHasError() {
-		$form = new Form();
-		$form->validator()
-			->add('email', 'format', ['rule' => 'email'])
-			->add('name', 'length', ['rule' => ['minLength', 10]]);
-		$form->validate([
-			'email' => 'derp',
-			'name' => 'derp'
-		]);
+    /**
+     * Test checking errors.
+     *
+     * @return void
+     */
+    public function testHasError()
+    {
+        $form = new Form();
+        $form->validator()
+            ->add('email', 'format', ['rule' => 'email'])
+            ->add('name', 'length', ['rule' => ['minLength', 10]]);
+        $form->validate([
+            'email' => 'derp',
+            'name' => 'derp'
+        ]);
 
-		$context = new FormContext($this->request, ['entity' => $form]);
-		$this->assertTrue($context->hasError('email'));
-		$this->assertTrue($context->hasError('name'));
-		$this->assertFalse($context->hasError('nope'));
-		$this->assertFalse($context->hasError('nope.nope'));
-	}
-
+        $context = new FormContext($this->request, ['entity' => $form]);
+        $this->assertTrue($context->hasError('email'));
+        $this->assertTrue($context->hasError('name'));
+        $this->assertFalse($context->hasError('nope'));
+        $this->assertFalse($context->hasError('nope.nope'));
+    }
 }

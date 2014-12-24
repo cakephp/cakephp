@@ -22,8 +22,8 @@ use Cake\Core\Exception\Exception;
  * Exception raised when an Entity could not be found.
  *
  */
-class MissingEntityException extends Exception {
+class MissingEntityException extends Exception
+{
 
-	protected $_messageTemplate = 'Entity class %s could not be found.';
-
+    protected $_messageTemplate = 'Entity class %s could not be found.';
 }

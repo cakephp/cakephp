@@ -19,28 +19,30 @@ use Cake\Controller\Component\AuthComponent;
  * TestAuthComponent class
  *
  */
-class TestAuthComponent extends AuthComponent {
+class TestAuthComponent extends AuthComponent
+{
 
-/**
- * Helper method to add/set an authenticate object instance
- *
- * @param int $index The index at which to add/set the object
- * @param Object $object The object to add/set
- * @return void
- */
-	public function setAuthenticateObject($index, $object) {
-		$this->_authenticateObjects[$index] = $object;
-	}
+    /**
+     * Helper method to add/set an authenticate object instance
+     *
+     * @param int $index The index at which to add/set the object
+     * @param Object $object The object to add/set
+     * @return void
+     */
+    public function setAuthenticateObject($index, $object)
+    {
+        $this->_authenticateObjects[$index] = $object;
+    }
 
-/**
- * Helper method to add/set an authorize object instance
- *
- * @param int $index The index at which to add/set the object
- * @param Object $object The object to add/set
- * @return void
- */
-	public function setAuthorizeObject($index, $object) {
-		$this->_authorizeObjects[$index] = $object;
-	}
-
+    /**
+     * Helper method to add/set an authorize object instance
+     *
+     * @param int $index The index at which to add/set the object
+     * @param Object $object The object to add/set
+     * @return void
+     */
+    public function setAuthorizeObject($index, $object)
+    {
+        $this->_authorizeObjects[$index] = $object;
+    }
 }

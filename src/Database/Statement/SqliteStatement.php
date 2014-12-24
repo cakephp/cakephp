@@ -19,22 +19,23 @@ namespace Cake\Database\Statement;
  *
  * @internal
  */
-class SqliteStatement extends BufferedStatement {
+class SqliteStatement extends BufferedStatement
+{
 
-/**
- * Returns the number of rows returned of affected by last execution
- *
- * @return int
- */
-	public function rowCount() {
-		if (preg_match('/^(?:DELETE|UPDATE|INSERT)/i', $this->_statement->queryString)) {
-			$changes = $this->_driver->prepare('SELECT CHANGES()');
-			$changes->execute();
-			$count = $changes->fetch()[0];
-			$changes->closeCursor();
-			return (int)$count;
-		}
-		return parent::rowCount();
-	}
-
+    /**
+     * Returns the number of rows returned of affected by last execution
+     *
+     * @return int
+     */
+    public function rowCount()
+    {
+        if (preg_match('/^(?:DELETE|UPDATE|INSERT)/i', $this->_statement->queryString)) {
+            $changes = $this->_driver->prepare('SELECT CHANGES()');
+            $changes->execute();
+            $count = $changes->fetch()[0];
+            $changes->closeCursor();
+            return (int)$count;
+        }
+        return parent::rowCount();
+    }
 }

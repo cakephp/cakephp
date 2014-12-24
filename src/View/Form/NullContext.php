@@ -23,93 +23,104 @@ use Cake\View\Form\ContextInterface;
  * This context provider simply fulfils the interface requirements
  * that FormHelper has and allows access to the request data.
  */
-class NullContext implements ContextInterface {
+class NullContext implements ContextInterface
+{
 
-/**
- * The request object.
- *
- * @var \Cake\Network\Request
- */
-	protected $_request;
+    /**
+     * The request object.
+     *
+     * @var \Cake\Network\Request
+     */
+    protected $_request;
 
-/**
- * Constructor.
- *
- * @param \Cake\Network\Request $request The request object.
- * @param array $context Context info.
- */
-	public function __construct(Request $request, array $context) {
-		$this->_request = $request;
-	}
+    /**
+     * Constructor.
+     *
+     * @param \Cake\Network\Request $request The request object.
+     * @param array $context Context info.
+     */
+    public function __construct(Request $request, array $context)
+    {
+        $this->_request = $request;
+    }
 
-/**
- * {@inheritDoc}
- */
-	public function primaryKey() {
-		return [];
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function primaryKey()
+    {
+        return [];
+    }
 
-/**
- * {@inheritDoc}
- */
-	public function isPrimaryKey($field) {
-		return false;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function isPrimaryKey($field)
+    {
+        return false;
+    }
 
-/**
- * {@inheritDoc}
- */
-	public function isCreate() {
-		return true;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function isCreate()
+    {
+        return true;
+    }
 
-/**
- * {@inheritDoc}
- */
-	public function val($field) {
-		return $this->_request->data($field);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function val($field)
+    {
+        return $this->_request->data($field);
+    }
 
-/**
- * {@inheritDoc}
- */
-	public function isRequired($field) {
-		return false;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function isRequired($field)
+    {
+        return false;
+    }
 
-/**
- * {@inheritDoc}
- */
-	public function fieldNames() {
-		return [];
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function fieldNames()
+    {
+        return [];
+    }
 
-/**
- * {@inheritDoc}
- */
-	public function type($field) {
-		return null;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function type($field)
+    {
+        return null;
+    }
 
-/**
- * {@inheritDoc}
- */
-	public function attributes($field) {
-		return [];
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function attributes($field)
+    {
+        return [];
+    }
 
-/**
- * {@inheritDoc}
- */
-	public function hasError($field) {
-		return false;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function hasError($field)
+    {
+        return false;
+    }
 
-/**
- * {@inheritDoc}
- */
-	public function error($field) {
-		return [];
-	}
-
+    /**
+     * {@inheritDoc}
+     */
+    public function error($field)
+    {
+        return [];
+    }
 }

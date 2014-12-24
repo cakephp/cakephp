@@ -17,8 +17,8 @@ namespace TestApp\Model\Table;
 
 use Cake\ORM\Table;
 
-class PostsTable extends Table {
+class PostsTable extends Table
+{
 
-	protected $_table = 'posts';
-
+    protected $_table = 'posts';
 }

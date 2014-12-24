@@ -20,5 +20,6 @@ use Cake\Core\Exception\Exception;
  * catch blocks can be specifically typed.
  *
  */
-abstract class HttpException extends Exception {
+abstract class HttpException extends Exception
+{
 }

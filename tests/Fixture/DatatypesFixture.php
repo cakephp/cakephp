@@ -20,29 +20,29 @@ use Cake\TestSuite\Fixture\TestFixture;
  * Short description for class.
  *
  */
-class DatatypesFixture extends TestFixture {
+class DatatypesFixture extends TestFixture
+{
 
-/**
- * Fields property
- *
- * @var array
- */
-	public $fields = array(
-		'id' => ['type' => 'integer', 'null' => false],
-		'decimal_field' => ['type' => 'decimal', 'length' => '6', 'precision' => 3, 'default' => '0.000'],
-		'float_field' => ['type' => 'float', 'length' => '5,2', 'null' => false, 'default' => null],
-		'huge_int' => ['type' => 'biginteger'],
-		'bool' => ['type' => 'boolean', 'null' => false, 'default' => false],
-		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
-	);
+    /**
+     * Fields property
+     *
+     * @var array
+     */
+    public $fields = array(
+        'id' => ['type' => 'integer', 'null' => false],
+        'decimal_field' => ['type' => 'decimal', 'length' => '6', 'precision' => 3, 'default' => '0.000'],
+        'float_field' => ['type' => 'float', 'length' => '5,2', 'null' => false, 'default' => null],
+        'huge_int' => ['type' => 'biginteger'],
+        'bool' => ['type' => 'boolean', 'null' => false, 'default' => false],
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+    );
 
-/**
- * Records property
- *
- * @var array
- */
-	public $records = [
-		['float_field' => 42.23, 'huge_int' => '1234567891234567891', 'bool' => 0],
-	];
-
+    /**
+     * Records property
+     *
+     * @var array
+     */
+    public $records = [
+        ['float_field' => 42.23, 'huge_int' => '1234567891234567891', 'bool' => 0],
+    ];
 }

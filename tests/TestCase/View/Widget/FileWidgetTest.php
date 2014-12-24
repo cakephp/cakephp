@@ -21,49 +21,52 @@ use Cake\View\Widget\FileWidget;
 /**
  * File input test.
  */
-class FileWidgetTest extends TestCase {
+class FileWidgetTest extends TestCase
+{
 
-/**
- * setup
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		$templates = [
-			'file' => '<input type="file" name="{{name}}"{{attrs}}>',
-		];
-		$this->templates = new StringTemplate($templates);
-		$this->context = $this->getMock('Cake\View\Form\ContextInterface');
-	}
+    /**
+     * setup
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $templates = [
+            'file' => '<input type="file" name="{{name}}"{{attrs}}>',
+        ];
+        $this->templates = new StringTemplate($templates);
+        $this->context = $this->getMock('Cake\View\Form\ContextInterface');
+    }
 
-/**
- * Test render in a simple case.
- *
- * @return void
- */
-	public function testRenderSimple() {
-		$input = new FileWidget($this->templates);
-		$result = $input->render(['name' => 'image'], $this->context);
-		$expected = [
-			'input' => ['type' => 'file', 'name' => 'image'],
-		];
-		$this->assertHtml($expected, $result);
-	}
+    /**
+     * Test render in a simple case.
+     *
+     * @return void
+     */
+    public function testRenderSimple()
+    {
+        $input = new FileWidget($this->templates);
+        $result = $input->render(['name' => 'image'], $this->context);
+        $expected = [
+            'input' => ['type' => 'file', 'name' => 'image'],
+        ];
+        $this->assertHtml($expected, $result);
+    }
 
-/**
- * Test render with a value
- *
- * @return void
- */
-	public function testRenderAttributes() {
-		$input = new FileWidget($this->templates);
-		$data = ['name' => 'image', 'required' => true, 'val' => 'nope'];
-		$result = $input->render($data, $this->context);
-		$expected = [
-			'input' => ['type' => 'file', 'required' => 'required', 'name' => 'image'],
-		];
-		$this->assertHtml($expected, $result);
-	}
-
+    /**
+     * Test render with a value
+     *
+     * @return void
+     */
+    public function testRenderAttributes()
+    {
+        $input = new FileWidget($this->templates);
+        $data = ['name' => 'image', 'required' => true, 'val' => 'nope'];
+        $result = $input->render($data, $this->context);
+        $expected = [
+            'input' => ['type' => 'file', 'required' => 'required', 'name' => 'image'],
+        ];
+        $this->assertHtml($expected, $result);
+    }
 }

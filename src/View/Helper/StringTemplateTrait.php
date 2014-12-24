@@ -16,10 +16,10 @@
 class_alias('Cake\View\StringTemplateTrait', 'Cake\View\Helper\StringTemplateTrait');
 
 trigger_error(
-	sprintf(
-		'%s has been moved. Use %s instead.',
-		'Cake\View\Helper\StringTemplateTrait',
-		'Cake\View\StringTemplateTrait'
-	),
-	E_USER_WARNING
+    sprintf(
+        '%s has been moved. Use %s instead.',
+        'Cake\View\Helper\StringTemplateTrait',
+        'Cake\View\StringTemplateTrait'
+    ),
+    E_USER_WARNING
 );

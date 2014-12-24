@@ -19,24 +19,24 @@ use Cake\View\Form\ContextInterface;
 /**
  * Interface for input widgets.
  */
-interface WidgetInterface {
+interface WidgetInterface
+{
 
-/**
- * Converts the $data into one or many HTML elements.
- *
- * @param array $data The data to render.
- * @param \Cake\View\Form\ContextInterface $context The current form context.
- * @return string Generated HTML for the widget element.
- */
-	public function render(array $data, ContextInterface $context);
+    /**
+     * Converts the $data into one or many HTML elements.
+     *
+     * @param array $data The data to render.
+     * @param \Cake\View\Form\ContextInterface $context The current form context.
+     * @return string Generated HTML for the widget element.
+     */
+    public function render(array $data, ContextInterface $context);
 
-/**
- * Returns a list of fields that need to be secured for
- * this widget. Fields are in the form of Model[field][suffix]
- *
- * @param array $data The data to render.
- * @return array Array of fields to secure.
- */
-	public function secureFields(array $data);
-
+    /**
+     * Returns a list of fields that need to be secured for
+     * this widget. Fields are in the form of Model[field][suffix]
+     *
+     * @param array $data The data to render.
+     * @return array Array of fields to secure.
+     */
+    public function secureFields(array $data);
 }

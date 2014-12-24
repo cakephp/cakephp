@@ -21,13 +21,13 @@ use Cake\Event\Event;
  * BananaComponent class
  *
  */
-class BananaComponent extends Component {
+class BananaComponent extends Component
+{
 
-/**
- * testField property
- *
- * @var string
- */
-	public $testField = 'BananaField';
-
+    /**
+     * testField property
+     *
+     * @var string
+     */
+    public $testField = 'BananaField';
 }

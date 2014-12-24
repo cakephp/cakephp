@@ -23,52 +23,56 @@ use Cake\View\Widget\WidgetInterface;
  * This class is intended as an internal implementation detail
  * of Cake\View\Helper\FormHelper and is not intended for direct use.
  */
-class TextareaWidget implements WidgetInterface {
+class TextareaWidget implements WidgetInterface
+{
 
-/**
- * Constructor
- *
- * @param \Cake\View\StringTemplate $templates Templates list.
- */
-	public function __construct($templates) {
-		$this->_templates = $templates;
-	}
+    /**
+     * Constructor
+     *
+     * @param \Cake\View\StringTemplate $templates Templates list.
+     */
+    public function __construct($templates)
+    {
+        $this->_templates = $templates;
+    }
 
-/**
- * Render a text area form widget.
- *
- * Data supports the following keys:
- *
- * - `name` - Set the input name.
- * - `val` - A string of the option to mark as selected.
- * - `escape` - Set to false to disable HTML escaping.
- *
- * All other keys will be converted into HTML attributes.
- *
- * @param array $data The data to build a textarea with.
- * @param \Cake\View\Form\ContextInterface $context The current form context.
- * @return string HTML elements.
- */
-	public function render(array $data, ContextInterface $context) {
-		$data += [
-			'val' => '',
-			'name' => '',
-			'escape' => true,
-		];
-		return $this->_templates->format('textarea', [
-			'name' => $data['name'],
-			'value' => $data['escape'] ? h($data['val']) : $data['val'],
-			'attrs' => $this->_templates->formatAttributes(
-				$data, ['name', 'val']
-			)
-		]);
-	}
+    /**
+     * Render a text area form widget.
+     *
+     * Data supports the following keys:
+     *
+     * - `name` - Set the input name.
+     * - `val` - A string of the option to mark as selected.
+     * - `escape` - Set to false to disable HTML escaping.
+     *
+     * All other keys will be converted into HTML attributes.
+     *
+     * @param array $data The data to build a textarea with.
+     * @param \Cake\View\Form\ContextInterface $context The current form context.
+     * @return string HTML elements.
+     */
+    public function render(array $data, ContextInterface $context)
+    {
+        $data += [
+            'val' => '',
+            'name' => '',
+            'escape' => true,
+        ];
+        return $this->_templates->format('textarea', [
+            'name' => $data['name'],
+            'value' => $data['escape'] ? h($data['val']) : $data['val'],
+            'attrs' => $this->_templates->formatAttributes(
+                $data,
+                ['name', 'val']
+            )
+        ]);
+    }
 
-/**
- * {@inheritDoc}
- */
-	public function secureFields(array $data) {
-		return [$data['name']];
-	}
-
+    /**
+     * {@inheritDoc}
+     */
+    public function secureFields(array $data)
+    {
+        return [$data['name']];
+    }
 }
