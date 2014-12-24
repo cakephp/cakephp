@@ -248,7 +248,8 @@ class CakeHtmlReporter extends CakeBaseReporter {
  */
 	public function paintFail($message, $test) {
 		$trace = $this->_getStackTrace($message);
-		$testName = get_class($test) . '::' . $test->getName() . '()';
+		$className = get_class($test);
+		$testName = $className . '::' . $test->getName() . '()';
 
 		$actualMsg = $expectedMsg = null;
 		if (method_exists($message, 'getComparisonFailure')) {
@@ -269,8 +270,10 @@ class CakeHtmlReporter extends CakeBaseReporter {
 
 		echo "</pre></div>\n";
 		echo "<div class='msg'>" . __d('cake_dev', 'Test case: %s', $testName) . "</div>\n";
-		list($show, $query) = $this->_getQueryLink();
-		echo "<div class='msg'><a href='" . $this->baseUrl() . $query . "&amp;filter=" . $test->getName() . "'>" . __d('cake_dev', 'Rerun only this test: %s', $testName) . "</a></div>\n";
+		if (strpos($className, "PHPUnit_") === false) {
+			list($show, $query) = $this->_getQueryLink();
+			echo "<div class='msg'><a href='" . $this->baseUrl() . $query . "&amp;filter=" . $test->getName() . "'>" . __d('cake_dev', 'Rerun only this test: %s', $testName) . "</a></div>\n";
+		}
 		echo "<div class='msg'>" . __d('cake_dev', 'Stack trace:') . '<br />' . $trace . "</div>\n";
 		echo "</li>\n";
 	}
@@ -407,7 +410,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		}
 		$show = $this->_queryString($show);
 		$query = $this->_queryString($query);
-		return array( $show, $query );
+		return array($show, $query);
 	}
 
 }
