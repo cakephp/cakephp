@@ -76,4 +76,19 @@ class FunctionExpressionTest extends TestCase {
 		$g = new FunctionExpression('Wrapper', ['bar' => 'literal', $f]);
 		$this->assertEquals("Wrapper(bar, MyFunction(:c0, :c1))", $g->sql($binder));
 	}
+
+/**
+ * Tests that it is possible to use a number as a literal in a function.
+ *
+ * @return void
+ */
+	public function testNumericLiteral() {
+		$binder = new ValueBinder;
+		$f = new FunctionExpression('MyFunction', ['a_field' => 'literal', '32' => 'literal']);
+		$this->assertEquals('MyFunction(a_field, 32)', $f->sql($binder));
+
+		$f = new FunctionExpression('MyFunction', ['a_field' => 'literal', 32 => 'literal']);
+		$this->assertEquals('MyFunction(a_field, 32)', $f->sql($binder));
+	}
+
 }
