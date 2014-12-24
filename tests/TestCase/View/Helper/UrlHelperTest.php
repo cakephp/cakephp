@@ -149,7 +149,8 @@ class UrlHelperTest extends TestCase
         Router::connect('/:controller/:action/*');
 
         $this->Helper->webroot = '';
-        $result = $this->Helper->assetUrl(array(
+        $result = $this->Helper->assetUrl(
+            array(
                 'controller' => 'js',
                 'action' => 'post',
                 '_ext' => 'js'

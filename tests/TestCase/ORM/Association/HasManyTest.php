@@ -394,7 +394,10 @@ class HasManyTest extends TestCase
             ->will($this->returnValue($results));
 
         $tuple = new TupleComparison(
-            ['Articles.author_id', 'Articles.site_id'], $keys, [], 'IN'
+            ['Articles.author_id', 'Articles.site_id'],
+            $keys,
+            [],
+            'IN'
         );
         $query->expects($this->once())->method('andWhere')
             ->with($tuple)

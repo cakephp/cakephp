@@ -291,9 +291,12 @@ class View
      * @param array $viewOptions View options. See View::$_passedVars for list of
      *   options which get set as class properties.
      */
-    public function __construct(Request $request = null, Response $response = null,
-        EventManager $eventManager = null, array $viewOptions = [])
-    {
+    public function __construct(
+        Request $request = null,
+        Response $response = null,
+        EventManager $eventManager = null,
+        array $viewOptions = []
+    ) {
         foreach ($this->_passedVars as $var) {
             if (isset($viewOptions[$var])) {
                 $this->{$var} = $viewOptions[$var];

@@ -63,7 +63,8 @@ class FileWidget implements WidgetInterface
         return $this->_templates->format('file', [
             'name' => $data['name'],
             'attrs' => $this->_templates->formatAttributes(
-                $data, ['name', 'val']
+                $data,
+                ['name', 'val']
             )
         ]);
     }

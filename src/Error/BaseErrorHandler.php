@@ -203,7 +203,8 @@ abstract class BaseErrorHandler
      */
     protected function _logError($level, $data)
     {
-        $message = sprintf('%s (%s): %s in [%s, line %s]',
+        $message = sprintf(
+            '%s (%s): %s in [%s, line %s]',
             $data['error'],
             $data['code'],
             $data['description'],
@@ -252,7 +253,8 @@ abstract class BaseErrorHandler
      */
     protected function _getMessage(\Exception $exception)
     {
-        $message = sprintf("[%s] %s",
+        $message = sprintf(
+            "[%s] %s",
             get_class($exception),
             $exception->getMessage()
         );

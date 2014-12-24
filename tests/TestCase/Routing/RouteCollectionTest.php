@@ -169,7 +169,8 @@ class RouteCollectionTest extends TestCase
 
         $result = $this->collection->match(
             ['id' => 'thing', 'plugin' => null, 'controller' => 'Articles', 'action' => 'view'],
-            $context);
+            $context
+        );
         $this->assertEquals('b/thing', $result);
     }
 

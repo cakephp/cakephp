@@ -46,29 +46,29 @@ class MenuLinkTreesFixture extends TestFixture
      *
      * # main-menu:
      *
-     *	- Link 1:1
-     *		- Link 2:2
-     *		- Link 3:3
-     *			- Link 4:4
-     *				- Link 5:5
-     *	- Link 6:6
-     *		- Link 7:7
-     *	- Link 8:8
+     *    - Link 1:1
+     *        - Link 2:2
+     *        - Link 3:3
+     *            - Link 4:4
+     *                - Link 5:5
+     *    - Link 6:6
+     *        - Link 7:7
+     *    - Link 8:8
      *
      * ***
      *
      * # categories:
      *
-     *	- electronics:9
-     *		- televisions:10
-     *			- tube:11
-     *			- lcd:12
-     *			- plasma:13
-     *		- portable:14
-     *			- mp3:15
-     *				- flash:16
-     *			- cd:17
-     *			- radios:18
+     *    - electronics:9
+     *        - televisions:10
+     *            - tube:11
+     *            - lcd:12
+     *            - plasma:13
+     *        - portable:14
+     *            - mp3:15
+     *                - flash:16
+     *            - cd:17
+     *            - radios:18
      *
      * **Note:** title:id
      */

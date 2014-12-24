@@ -29,13 +29,13 @@ interface EventListenerInterface
      * ### Example:
      *
      * {{{
-     *	public function implementedEvents() {
-     *		return array(
-     *			'Order.complete' => 'sendEmail',
-     *			'Article.afterBuy' => 'decrementInventory',
-     *			'User.onRegister' => array('callable' => 'logRegistration', 'priority' => 20, 'passParams' => true)
-     *		);
-     *	}
+     *    public function implementedEvents() {
+     *        return array(
+     *            'Order.complete' => 'sendEmail',
+     *            'Article.afterBuy' => 'decrementInventory',
+     *            'User.onRegister' => array('callable' => 'logRegistration', 'priority' => 20, 'passParams' => true)
+     *        );
+     *    }
      * }}}
      *
      * @return array associative array or event key names pointing to the function

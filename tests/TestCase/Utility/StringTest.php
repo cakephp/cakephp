@@ -244,7 +244,9 @@ class StringTest extends TestCase
         ));
         $this->assertEquals('', $result);
 
-        $result = String::cleanInsert(':incomplete', array(
+        $result = String::cleanInsert(
+            ':incomplete',
+            array(
             'clean' => array('method' => 'text', 'replacement' => 'complete'),
             'before' => ':', 'after' => '')
         );
@@ -255,7 +257,9 @@ class StringTest extends TestCase
         ));
         $this->assertEquals('', $result);
 
-        $result = String::cleanInsert(':in.complete and', array(
+        $result = String::cleanInsert(
+            ':in.complete and',
+            array(
             'clean' => true, 'before' => ':', 'after' => '')
         );
         $this->assertEquals('', $result);

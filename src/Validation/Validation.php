@@ -691,7 +691,7 @@ class Validation
                     // Local number and extension
                     $regex .= '?([0-9]{4})';
                     $regex .= '(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/';
-                break;
+                    break;
             }
         }
 

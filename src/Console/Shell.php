@@ -287,7 +287,7 @@ class Shell
      *
      * With a string command:
      *
-     *	`return $this->dispatchShell('schema create DbAcl');`
+     *    `return $this->dispatchShell('schema create DbAcl');`
      *
      * Avoid using this form if you have string arguments, with spaces in them.
      * The dispatched will be invoked incorrectly. Only use this form for simple

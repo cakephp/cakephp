@@ -26,12 +26,12 @@ use SplHeap;
  * {{{
  * $items = [$user1, $user2, $user3];
  * $sorted = new SortIterator($items, function ($user) {
- *	return $user->age;
+ *    return $user->age;
  * });
  *
  * // output all user name order by their age in descending order
  * foreach ($sorted as $user) {
- *	echo $user->name;
+ *    echo $user->name;
  * }
  * }}}
  *

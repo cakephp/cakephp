@@ -1537,7 +1537,8 @@ class QueryTest extends TestCase
     public function testCollectionProxy($method, $arg)
     {
         $query = $this->getMock(
-            '\Cake\ORM\Query', ['all'],
+            '\Cake\ORM\Query',
+            ['all'],
             [$this->connection, $this->table]
         );
         $query->select();
@@ -1590,7 +1591,8 @@ class QueryTest extends TestCase
     public function testCacheReadIntegration()
     {
         $query = $this->getMock(
-            '\Cake\ORM\Query', ['execute'],
+            '\Cake\ORM\Query',
+            ['execute'],
             [$this->connection, $this->table]
         );
         $resultSet = $this->getMock('\Cake\ORM\ResultSet', [], [$query, null]);

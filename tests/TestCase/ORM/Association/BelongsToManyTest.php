@@ -42,7 +42,9 @@ class BelongsToManyTest extends TestCase
     {
         parent::setUp();
         $this->tag = $this->getMock(
-            'Cake\ORM\Table', ['find', 'delete'], [['alias' => 'Tags', 'table' => 'tags']]
+            'Cake\ORM\Table',
+            ['find', 'delete'],
+            [['alias' => 'Tags', 'table' => 'tags']]
         );
         $this->tag->schema([
             'id' => ['type' => 'integer'],
@@ -52,7 +54,9 @@ class BelongsToManyTest extends TestCase
             ]
         ]);
         $this->article = $this->getMock(
-            'Cake\ORM\Table', ['find', 'delete'], [['alias' => 'Articles', 'table' => 'articles']]
+            'Cake\ORM\Table',
+            ['find', 'delete'],
+            [['alias' => 'Articles', 'table' => 'articles']]
         );
         $this->article->schema([
             'id' => ['type' => 'integer'],

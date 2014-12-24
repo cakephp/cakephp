@@ -66,17 +66,17 @@ class TreeIterator extends RecursiveIteratorIterator
      * ### Example
      *
      * {{{
-     *	$printer = (new Collection($treeStructure))->listNested()->printer('name');
+     *    $printer = (new Collection($treeStructure))->listNested()->printer('name');
      * }}}
      *
      * Using a closure:
      *
      * {{{
-     *	$printer = (new Collection($treeStructure))
-     *		->listNested()
-     *		->printer(function ($item, $key, $iterator) {
-     *			return $item->name;
-     *		});
+     *    $printer = (new Collection($treeStructure))
+     *        ->listNested()
+     *        ->printer(function ($item, $key, $iterator) {
+     *            return $item->name;
+     *        });
      * }}}
      *
      * @param string|callable $valuePath The property to extract or a callable to return

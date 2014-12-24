@@ -1128,17 +1128,17 @@ class FormHelper extends Helper
         $fieldName = array_slice(explode('.', $fieldName), -1)[0];
 
         switch (true) {
-            case isset($options['checked']) :
+            case isset($options['checked']):
                 return 'checkbox';
-            case isset($options['options']) :
+            case isset($options['options']):
                 return 'select';
-            case in_array($fieldName, ['passwd', 'password']) :
+            case in_array($fieldName, ['passwd', 'password']):
                 return 'password';
-            case in_array($fieldName, ['tel', 'telephone', 'phone']) :
+            case in_array($fieldName, ['tel', 'telephone', 'phone']):
                 return 'tel';
             case $fieldName === 'email':
                 return 'email';
-            case isset($options['rows']) || isset($options['cols']) :
+            case isset($options['rows']) || isset($options['cols']):
                 return 'textarea';
         }
 
@@ -1483,7 +1483,8 @@ class FormHelper extends Helper
         unset($options['secure']);
 
         $options = $this->_initInputField($fieldName, array_merge(
-            $options, array('secure' => static::SECURE_SKIP)
+            $options,
+            array('secure' => static::SECURE_SKIP)
         ));
 
         if ($secure === true) {

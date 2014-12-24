@@ -256,11 +256,11 @@ class Table implements RepositoryInterface, EventListenerInterface
      * define validation and do any other initialization logic you need.
      *
      * {{{
-     *	public function initialize(array $config) {
-     *		$this->belongsTo('Users');
-     *		$this->belongsToMany('Tagging.Tags');
-     *		$this->primaryKey('something_else');
-     *	}
+     *    public function initialize(array $config) {
+     *        $this->belongsTo('Users');
+     *        $this->belongsToMany('Tagging.Tags');
+     *        $this->primaryKey('something_else');
+     *    }
      * }}}
      *
      * @param array $config Configuration options passed to the constructor
@@ -832,9 +832,9 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * {{{
      * [
-     *	1 => 'value for id 1',
-     *	2 => 'value for id 2',
-     *	4 => 'value for id 4'
+     *    1 => 'value for id 1',
+     *    2 => 'value for id 2',
+     *    4 => 'value for id 4'
      * ]
      * }}}
      *
@@ -844,8 +844,8 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * {{{
      * $table->find('list', [
-     *	'idField' => 'name',
-     *	'valueField' => 'age'
+     *    'idField' => 'name',
+     *    'valueField' => 'age'
      * ]);
      * }}}
      *
@@ -854,7 +854,7 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * {{{
      * $table->find('list', [
-     *	'groupField' => 'category_id',
+     *    'groupField' => 'category_id',
      * ]);
      * }}}
      *
@@ -862,13 +862,13 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * {{{
      * [
-     *	'group_1' => [
-     *		1 => 'value for id 1',
-     *		2 => 'value for id 2',
-     *	]
-     *	'group_2' => [
-     *		4 => 'value for id 4'
-     *	]
+     *    'group_1' => [
+     *        1 => 'value for id 1',
+     *        2 => 'value for id 2',
+     *    ]
+     *    'group_2' => [
+     *        4 => 'value for id 4'
+     *    ]
      * ]
      * }}}
      *
@@ -911,8 +911,8 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * {{{
      * $table->find('threaded', [
-     *	'idField' => 'id',
-     *	'parentField' => 'ancestor_id'
+     *    'idField' => 'id',
+     *    'parentField' => 'ancestor_id'
      * ]);
      * }}}
      *
@@ -975,7 +975,7 @@ class Table implements RepositoryInterface, EventListenerInterface
      * {@inheritDoc}
      *
      * @throws Cake\Datasource\Exception\InvalidPrimaryKeyException When $primaryKey has an
-     * 		incorrect number of elements.
+     *         incorrect number of elements.
      */
     public function get($primaryKey, $options = [])
     {
@@ -1009,7 +1009,9 @@ class Table implements RepositoryInterface, EventListenerInterface
             if (!$cacheKey) {
                 $cacheKey = sprintf(
                     "get:%s.%s%s",
-                    $this->connection()->configName(), $this->table(), json_encode($primaryKey)
+                    $this->connection()->configName(),
+                    $this->table(),
+                    json_encode($primaryKey)
                 );
             }
             $query->cache($cacheKey, $cacheConfig);
@@ -1082,10 +1084,10 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * {{{
      * public function validationForSubscription($validator) {
-     *	return $validator
-     *	->add('email', 'valid-email', ['rule' => 'email'])
-     *	->add('password', 'valid', ['rule' => 'notEmpty'])
-     *	->requirePresence('username');
+     *    return $validator
+     *    ->add('email', 'valid-email', ['rule' => 'email'])
+     *    ->add('password', 'valid', ['rule' => 'notEmpty'])
+     *    ->requirePresence('username');
      * }
      * }}}
      *
@@ -1094,9 +1096,9 @@ class Table implements RepositoryInterface, EventListenerInterface
      * {{{
      * $validator = new \Cake\Validation\Validator($table);
      * $validator
-     *	->add('email', 'valid-email', ['rule' => 'email'])
-     *	->add('password', 'valid', ['rule' => 'notEmpty'])
-     *	->allowEmpty('bio');
+     *    ->add('email', 'valid-email', ['rule' => 'email'])
+     *    ->add('password', 'valid', ['rule' => 'notEmpty'])
+     *    ->allowEmpty('bio');
      * $table->validator('forSubscription', $validator);
      * }}}
      *
@@ -1155,12 +1157,14 @@ class Table implements RepositoryInterface, EventListenerInterface
      */
     public function exists($conditions)
     {
-        return (bool)count($this->find('all')
+        return (bool)count(
+            $this->find('all')
             ->select(['existing' => 1])
             ->where($conditions)
             ->limit(1)
             ->hydrate(false)
-            ->toArray());
+            ->toArray()
+        );
     }
 
     /**
@@ -1809,9 +1813,9 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * {{{
      * $articles = $this->Articles->newEntities($this->request->data(), [
-     *	'fieldList' => ['title', 'body'],
-     *	'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
-     *	]
+     *    'fieldList' => ['title', 'body'],
+     *    'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
+     *    ]
      * );
      * }}}
      *
@@ -1837,9 +1841,9 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * {{{
      * $articles = $this->Articles->patchEntity($article, $this->request->data(), [
-     *	'fieldList' => ['title', 'body'],
-     *	'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
-     *	]
+     *    'fieldList' => ['title', 'body'],
+     *    'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
+     *    ]
      * );
      * }}}
      */
@@ -1868,9 +1872,9 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * {{{
      * $articles = $this->Articles->patchEntities($articles, $this->request->data(), [
-     *	'fieldList' => ['title', 'body'],
-     *	'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
-     *	]
+     *    'fieldList' => ['title', 'body'],
+     *    'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
+     *    ]
      * );
      * }}}
      */
@@ -1908,13 +1912,13 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * {{{
      * $articles->validate($article, [
-     *	'associated' => [
-     *		'Tags',
-     *		'Comments' => [
-     *			'validate' => 'myCustomSet',
-     *			'associated' => ['Users']
-     *		]
-     *	]
+     *    'associated' => [
+     *        'Tags',
+     *        'Comments' => [
+     *            'validate' => 'myCustomSet',
+     *            'associated' => ['Users']
+     *        ]
+     *    ]
      * ]);
      * }}}
      *
@@ -1960,13 +1964,13 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * {{{
      * $articles->validateMany([$article1, $article2], [
-     *	'associated' => [
-     *		'Tags',
-     *		'Comments' => [
-     *			'validate' => 'myCustomSet',
-     *			'associated' => ['Users']
-     *		]
-     *	]
+     *    'associated' => [
+     *        'Tags',
+     *        'Comments' => [
+     *            'validate' => 'myCustomSet',
+     *            'associated' => ['Users']
+     *        ]
+     *    ]
      * ]);
      * }}}
      *
@@ -1996,7 +2000,7 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * {{{
      * $validator->add('email', [
-     *	'unique' => ['rule' => 'validateUnique', 'provider' => 'table']
+     *    'unique' => ['rule' => 'validateUnique', 'provider' => 'table']
      * ])
      * }}}
      *
@@ -2004,10 +2008,10 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * {{{
      * $validator->add('email', [
-     *	'unique' => [
-     *		'rule' => ['validateUnique', ['scope' => 'site_id']],
-     *		'provider' => 'table'
-     *	]
+     *    'unique' => [
+     *        'rule' => ['validateUnique', ['scope' => 'site_id']],
+     *        'provider' => 'table'
+     *    ]
      * ]);
      * }}}
      *

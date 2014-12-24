@@ -25,12 +25,12 @@ use Cake\Network\Request;
  * return a boolean to indicate whether or not the user is authorized.
  *
  * {{{
- *	public function isAuthorized($user) {
- *		if ($this->request->param('admin')) {
- *			return $user['role'] === 'admin';
- *		}
- *		return !empty($user);
- *	}
+ *    public function isAuthorized($user) {
+ *        if ($this->request->param('admin')) {
+ *            return $user['role'] === 'admin';
+ *        }
+ *        return !empty($user);
+ *    }
  * }}}
  *
  * The above is simple implementation that would only authorize users of the

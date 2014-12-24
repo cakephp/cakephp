@@ -307,7 +307,7 @@ class MysqlSchema extends BaseSchema
                     if (!isset($data['length'])) {
                         $data['length'] = 255;
                     }
-                break;
+                    break;
             }
         }
         $hasLength = ['integer', 'string'];

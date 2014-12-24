@@ -78,9 +78,12 @@ class XmlView extends View
      * @param \Cake\Event\EventManager|null $eventManager Event Manager
      * @param array $viewOptions View options.
      */
-    public function __construct(Request $request = null, Response $response = null,
-        EventManager $eventManager = null, array $viewOptions = [])
-    {
+    public function __construct(
+        Request $request = null,
+        Response $response = null,
+        EventManager $eventManager = null,
+        array $viewOptions = []
+    ) {
         parent::__construct($request, $response, $eventManager, $viewOptions);
 
         if ($response && $response instanceof Response) {

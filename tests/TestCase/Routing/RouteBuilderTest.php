@@ -92,7 +92,10 @@ class RouteBuilderTest extends TestCase
      */
     public function testRouteClass()
     {
-        $routes = new RouteBuilder($this->collection, '/l', [],
+        $routes = new RouteBuilder(
+            $this->collection,
+            '/l',
+            [],
             ['routeClass' => 'InflectedRoute']
         );
         $routes->connect('/:controller', ['action' => 'index']);
@@ -167,7 +170,10 @@ class RouteBuilderTest extends TestCase
      */
     public function testConnectExtensions()
     {
-        $routes = new RouteBuilder($this->collection, '/l', [],
+        $routes = new RouteBuilder(
+            $this->collection,
+            '/l',
+            [],
             ['extensions' => ['json']]
         );
         $this->assertEquals(['json'], $routes->extensions());
@@ -206,7 +212,10 @@ class RouteBuilderTest extends TestCase
      */
     public function testConnectErrorInvalidRouteClass()
     {
-        $routes = new RouteBuilder($this->collection, '/l', [],
+        $routes = new RouteBuilder(
+            $this->collection,
+            '/l',
+            [],
             ['extensions' => ['json']]
         );
         $routes->connect('/:controller', [], ['routeClass' => '\StdClass']);

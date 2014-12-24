@@ -380,11 +380,11 @@ class Response
      * Constructor
      *
      * @param array $options list of parameters to setup the response. Possible values are:
-     *	- body: the response text that should be sent to the client
-     *	- statusCodes: additional allowable response codes
-     *	- status: the HTTP status code to respond with
-     *	- type: a complete mime-type string or an extension mapped in this class
-     *	- charset: the charset for the response body
+     *    - body: the response text that should be sent to the client
+     *    - statusCodes: additional allowable response codes
+     *    - status: the HTTP status code to respond with
+     *    - type: a complete mime-type string or an extension mapped in this class
+     *    - charset: the charset for the response body
      */
     public function __construct(array $options = array())
     {
@@ -468,8 +468,13 @@ class Response
     {
         foreach ($this->_cookies as $name => $c) {
             setcookie(
-                $name, $c['value'], $c['expire'], $c['path'],
-                $c['domain'], $c['secure'], $c['httpOnly']
+                $name,
+                $c['value'],
+                $c['expire'],
+                $c['path'],
+                $c['domain'],
+                $c['secure'],
+                $c['httpOnly']
             );
         }
     }
@@ -587,8 +592,8 @@ class Response
      * will have the same effect as only doing `header('WWW-Authenticate: Not-Negotiate');`
      *
      * @param string|array|null $header An array of header strings or a single header string
-     *	- an associative array of "header name" => "header value" is also accepted
-     *	- an array of string headers is also accepted
+     *    - an associative array of "header name" => "header value" is also accepted
+     *    - an array of string headers is also accepted
      * @param string|array|null $value The header value(s)
      * @return array List of headers to be sent
      */

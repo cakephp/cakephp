@@ -45,7 +45,7 @@ class FunctionExpression extends QueryExpression
      *
      * ### Examples:
      *
-     *	``$f = new FunctionExpression('CONCAT', ['CakePHP', ' rules']);``
+     *    ``$f = new FunctionExpression('CONCAT', ['CakePHP', ' rules']);``
      *
      * Previous line will generate ``CONCAT('CakePHP', ' rules')``
      *

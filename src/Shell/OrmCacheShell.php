@@ -94,9 +94,11 @@ class OrmCacheShell extends Shell
     {
         $source = ConnectionManager::get($this->params['connection']);
         if (!method_exists($source, 'schemaCollection')) {
-            $msg = sprintf('The "%s" connection is not compatible with orm caching, ' .
+            $msg = sprintf(
+                'The "%s" connection is not compatible with orm caching, ' .
                 'as it does not implement a "schemaCollection()" method.',
-                $this->params['connection']);
+                $this->params['connection']
+            );
             $this->error($msg);
             return false;
         }

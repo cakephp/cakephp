@@ -365,8 +365,8 @@ trait QueryTrait
      * ### Example:
      *
      * {{{
-     *	$query->applyOptions(['doABarrelRoll' => true, 'fields' => ['id', 'name']);
-     *	$query->getOptions(); // Returns ['doABarrelRoll' => true]
+     *    $query->applyOptions(['doABarrelRoll' => true, 'fields' => ['id', 'name']);
+     *    $query->getOptions(); // Returns ['doABarrelRoll' => true]
      * }}}
      *
      * @see \Cake\ORM\Query::applyOptions() to read about the options that will

@@ -30,9 +30,9 @@ interface StatementInterface
      *
      * ### Examples:
      *
-     *	`$statement->bindValue(1, 'a title');`
-     *	`$statement->bindValue('active', true, 'boolean');`
-     *	`$statement->bindValue(5, new \DateTime(), 'date');`
+     *    `$statement->bindValue(1, 'a title');`
+     *    `$statement->bindValue('active', true, 'boolean');`
+     *    `$statement->bindValue(5, new \DateTime(), 'date');`
      *
      * @param string|int $column name or param position to be bound
      * @param mixed $value The value to bind to variable in query
@@ -56,9 +56,9 @@ interface StatementInterface
      * ### Example:
      *
      * {{{
-     *	$statement = $connection->prepare('SELECT id, title from articles');
-     *	$statement->execute();
-     *	echo $statement->columnCount(); // outputs 2
+     *    $statement = $connection->prepare('SELECT id, title from articles');
+     *    $statement->execute();
+     *    echo $statement->columnCount(); // outputs 2
      * }}}
      *
      * @return int
@@ -99,9 +99,9 @@ interface StatementInterface
      * ### Example:
      *
      * {{{
-     *	$statement = $connection->prepare('SELECT id, title from articles');
-     *	$statement->execute();
-     *	print_r($statement->fetch('assoc')); // will show array('id' => 1, 'title' => 'a title')
+     *    $statement = $connection->prepare('SELECT id, title from articles');
+     *    $statement->execute();
+     *    print_r($statement->fetch('assoc')); // will show array('id' => 1, 'title' => 'a title')
      * }}}
      *
      * @param string $type 'num' for positional columns, assoc for named columns
@@ -116,9 +116,9 @@ interface StatementInterface
      * ### Example:
      *
      * {{{
-     *	$statement = $connection->prepare('SELECT id, title from articles');
-     *	$statement->execute();
-     *	print_r($statement->fetchAll('assoc')); // will show [0 => ['id' => 1, 'title' => 'a title']]
+     *    $statement = $connection->prepare('SELECT id, title from articles');
+     *    $statement->execute();
+     *    print_r($statement->fetchAll('assoc')); // will show [0 => ['id' => 1, 'title' => 'a title']]
      * }}}
      *
      * @param string $type num for fetching columns as positional keys or assoc for column names as keys
@@ -132,9 +132,9 @@ interface StatementInterface
      * ### Example:
      *
      * {{{
-     *	$statement = $connection->prepare('SELECT id, title from articles');
-     *	$statement->execute();
-     *	print_r($statement->rowCount()); // will show 1
+     *    $statement = $connection->prepare('SELECT id, title from articles');
+     *    $statement->execute();
+     *    print_r($statement->rowCount()); // will show 1
      * }}}
      *
      * @return int

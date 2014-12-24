@@ -77,9 +77,12 @@ class JsonView extends View
      * @param \Cake\Event\EventManager $eventManager EventManager instance.
      * @param array $viewOptions An array of view options
      */
-    public function __construct(Request $request = null, Response $response = null,
-        EventManager $eventManager = null, array $viewOptions = [])
-    {
+    public function __construct(
+        Request $request = null,
+        Response $response = null,
+        EventManager $eventManager = null,
+        array $viewOptions = []
+    ) {
         parent::__construct($request, $response, $eventManager, $viewOptions);
 
         if ($response && $response instanceof Response) {

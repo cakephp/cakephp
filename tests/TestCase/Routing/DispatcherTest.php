@@ -453,7 +453,8 @@ class DispatcherTest extends TestCase
 
         $filter = $this->getMock(
             'Cake\Routing\DispatcherFilter',
-            ['beforeDispatch', 'afterDispatch']);
+            ['beforeDispatch', 'afterDispatch']
+        );
         $filter->expects($this->once())
             ->method('beforeDispatch')
             ->will($this->returnValue($response));
@@ -480,7 +481,8 @@ class DispatcherTest extends TestCase
 
         $filter = $this->getMock(
             'Cake\Routing\DispatcherFilter',
-            ['beforeDispatch', 'afterDispatch']);
+            ['beforeDispatch', 'afterDispatch']
+        );
 
         $filter->expects($this->once())
             ->method('afterDispatch')

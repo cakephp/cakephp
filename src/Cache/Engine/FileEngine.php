@@ -401,7 +401,8 @@ class FileEngine extends CacheEngine
             ) {
                 trigger_error(sprintf(
                     'Could not apply permission mask "%s" on cache file "%s"',
-                    $this->_File->getPathname(), $this->_config['mask']
+                    $this->_File->getPathname(),
+                    $this->_config['mask']
                 ), E_USER_WARNING);
             }
         }
@@ -424,7 +425,8 @@ class FileEngine extends CacheEngine
         if ($this->_init && !($dir->isDir() && $dir->isWritable())) {
             $this->_init = false;
             trigger_error(sprintf(
-                '%s is not writable', $this->_config['path']
+                '%s is not writable',
+                $this->_config['path']
             ), E_USER_WARNING);
             return false;
         }

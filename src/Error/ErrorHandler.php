@@ -146,7 +146,8 @@ class ErrorHandler extends BaseErrorHandler
         } catch (Exception $e) {
             // Disable trace for internal errors.
             $this->_options['trace'] = false;
-            $message = sprintf("[%s] %s\n%s", // Keeping same message format
+            $message = sprintf(
+                "[%s] %s\n%s", // Keeping same message format
                 get_class($e),
                 $e->getMessage(),
                 $e->getTraceAsString()

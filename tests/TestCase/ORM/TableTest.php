@@ -2489,7 +2489,8 @@ class TableTest extends TestCase
         $this->assertInstanceOf('Cake\ORM\Query', $result);
 
         $expected = new QueryExpression([], $this->usersTypeMap);
-        $expected->add([
+        $expected->add(
+            [
             'OR' => [
                 'username' => 'garrett',
                 'id' => 4

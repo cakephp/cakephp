@@ -1096,10 +1096,10 @@ class Email
      *
      * {{{
      * $email->attachments(array('custom_name.png' => array(
-     *		'file' => 'path/to/file',
-     *		'mimetype' => 'image/png',
-     *		'contentId' => 'abc123',
-     *		'contentDisposition' => false
+     *        'file' => 'path/to/file',
+     *        'mimetype' => 'image/png',
+     *        'contentId' => 'abc123',
+     *        'contentDisposition' => false
      * ));
      * }}}
      *
@@ -1107,8 +1107,8 @@ class Email
      *
      * {{{
      * $email->attachments(array('custom_name.png' => array(
-     *		'data' => file_get_contents('path/to/file'),
-     *		'mimetype' => 'image/png'
+     *        'data' => file_get_contents('path/to/file'),
+     *        'mimetype' => 'image/png'
      * ));
      * }}}
      *

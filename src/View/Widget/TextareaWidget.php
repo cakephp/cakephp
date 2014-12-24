@@ -62,7 +62,8 @@ class TextareaWidget implements WidgetInterface
             'name' => $data['name'],
             'value' => $data['escape'] ? h($data['val']) : $data['val'],
             'attrs' => $this->_templates->formatAttributes(
-                $data, ['name', 'val']
+                $data,
+                ['name', 'val']
             )
         ]);
     }

@@ -130,7 +130,10 @@ class AuthComponentTest extends TestCase
     {
         $AuthLoginFormAuthenticate = $this->getMock(
             'Cake\Controller\Component\Auth\FormAuthenticate',
-            array('authenticate'), array(), '', false
+            array('authenticate'),
+            array(),
+            '',
+            false
         );
         $this->Auth->authenticate = array(
             'AuthLoginForm' => array(
@@ -235,15 +238,24 @@ class AuthComponentTest extends TestCase
     {
         $AuthMockOneAuthorize = $this->getMock(
             'Cake\Controller\Component\BaseAuthorize',
-            array('authorize'), array(), '', false
+            array('authorize'),
+            array(),
+            '',
+            false
         );
         $AuthMockTwoAuthorize = $this->getMock(
             'Cake\Controller\Component\Auth\BaseAuthorize',
-            array('authorize'), array(), '', false
+            array('authorize'),
+            array(),
+            '',
+            false
         );
         $AuthMockThreeAuthorize = $this->getMock(
             'Cake\Controller\Component\Auth\BaseAuthorize',
-            array('authorize'), array(), '', false
+            array('authorize'),
+            array(),
+            '',
+            false
         );
 
         $this->Auth->setAuthorizeObject(0, $AuthMockOneAuthorize);
@@ -277,7 +289,10 @@ class AuthComponentTest extends TestCase
     {
         $AuthMockFourAuthorize = $this->getMock(
             'Cake\Controller\Component\Auth\BaseAuthorize',
-            array('authorize'), array(), '', false
+            array('authorize'),
+            array(),
+            '',
+            false
         );
         $this->Auth->config('authorize', ['AuthMockFour']);
         $this->Auth->setAuthorizeObject(0, $AuthMockFourAuthorize);
@@ -562,7 +577,9 @@ class AuthComponentTest extends TestCase
 
         $url = '/posts/view/1';
 
-        $this->Auth->session->write('Auth', array(
+        $this->Auth->session->write(
+            'Auth',
+            array(
             'AuthUsers' => array('id' => '1', 'username' => 'nate'))
         );
         $this->Controller->testUrl = null;
@@ -694,7 +711,10 @@ class AuthComponentTest extends TestCase
         $this->Auth->config('authenticate', ['Form']);
         $this->getMock(
             'Cake\Controller\Component\Auth\BaseAuthorize',
-            array('authorize'), array(), 'NoLoginRedirectMockAuthorize', false
+            array('authorize'),
+            array(),
+            'NoLoginRedirectMockAuthorize',
+            false
         );
         $this->Auth->config('authorize', ['NoLoginRedirectMockAuthorize']);
         $this->Auth->config('loginAction', ['controller' => 'auth_test', 'action' => 'login']);
@@ -1297,26 +1317,26 @@ class AuthComponentTest extends TestCase
                     'name' => 'Members'
                 ),
                 'is_admin' => false,
-        ));
-        $this->Auth->session->write('Auth', $data);
+            ));
+            $this->Auth->session->write('Auth', $data);
 
-        $result = $this->Auth->user();
-        $this->assertEquals($data['User'], $result);
+            $result = $this->Auth->user();
+            $this->assertEquals($data['User'], $result);
 
-        $result = $this->Auth->user('username');
-        $this->assertEquals($data['User']['username'], $result);
+            $result = $this->Auth->user('username');
+            $this->assertEquals($data['User']['username'], $result);
 
-        $result = $this->Auth->user('Group.name');
-        $this->assertEquals($data['User']['Group']['name'], $result);
+            $result = $this->Auth->user('Group.name');
+            $this->assertEquals($data['User']['Group']['name'], $result);
 
-        $result = $this->Auth->user('invalid');
-        $this->assertEquals(null, $result);
+            $result = $this->Auth->user('invalid');
+            $this->assertEquals(null, $result);
 
-        $result = $this->Auth->user('Company.invalid');
-        $this->assertEquals(null, $result);
+            $result = $this->Auth->user('Company.invalid');
+            $this->assertEquals(null, $result);
 
-        $result = $this->Auth->user('is_admin');
-        $this->assertFalse($result);
+            $result = $this->Auth->user('is_admin');
+            $this->assertFalse($result);
     }
 
     /**

@@ -1069,8 +1069,16 @@ class FolderTest extends TestCase
 
         return compact(
             'path',
-            'folderOne', 'folderOneA', 'folderTwo', 'folderTwoB', 'folderThree',
-            'fileOne', 'fileOneA', 'fileTwo', 'fileTwoB');
+            'folderOne',
+            'folderOneA',
+            'folderTwo',
+            'folderTwoB',
+            'folderThree',
+            'fileOne',
+            'fileOneA',
+            'fileTwo',
+            'fileTwoB'
+        );
     }
 
     /**

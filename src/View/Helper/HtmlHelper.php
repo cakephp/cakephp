@@ -1015,8 +1015,8 @@ class HtmlHelper extends Helper
      *
      * {{{
      * echo $this->Html->media(
-     * 		array('video.mp4', array('src' => 'video.ogv', 'type' => "video/ogg; codecs='theora, vorbis'")),
-     * 		array('tag' => 'video', 'autoplay')
+     *         array('video.mp4', array('src' => 'video.ogv', 'type' => "video/ogg; codecs='theora, vorbis'")),
+     *         array('tag' => 'video', 'autoplay')
      * );
      * }}}
      *
@@ -1024,15 +1024,15 @@ class HtmlHelper extends Helper
      *
      * {{{
      * <video autoplay="autoplay">
-     * 		<source src="/files/video.mp4" type="video/mp4"/>
-     * 		<source src="/files/video.ogv" type="video/ogv; codecs='theora, vorbis'"/>
+     *         <source src="/files/video.mp4" type="video/mp4"/>
+     *         <source src="/files/video.ogv" type="video/ogv; codecs='theora, vorbis'"/>
      * </video>
      * }}}
      *
      * ### Options
      *
      * - `tag` Type of media element to generate, either "audio" or "video".
-     * 	If tag is not provided it's guessed based on file's mime type.
+     *     If tag is not provided it's guessed based on file's mime type.
      * - `text` Text to include inside the audio/video tag
      * - `pathPrefix` Path prefix to use for relative URLs, defaults to 'files/'
      * - `fullBase` If provided the src attribute will get a full address including domain name

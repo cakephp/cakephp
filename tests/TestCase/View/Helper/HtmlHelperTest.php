@@ -471,18 +471,18 @@ class HtmlHelperTest extends TestCase
             'img' => array(
                 'src' => 'preg:/\/test_theme\/img\/__cake_test_image\.gif\?\d+/',
                 'alt' => ''
-        ));
-        $this->assertHtml($expected, $result);
+            ));
+            $this->assertHtml($expected, $result);
 
-        $this->Html->Url->request->webroot = '/testing/';
-        $result = $this->Html->image('__cake_test_image.gif');
-        $expected = array(
+            $this->Html->Url->request->webroot = '/testing/';
+            $result = $this->Html->image('__cake_test_image.gif');
+            $expected = array(
             'img' => array(
                 'src' => 'preg:/\/testing\/test_theme\/img\/__cake_test_image\.gif\?\d+/',
                 'alt' => ''
-        ));
-        $this->assertHtml($expected, $result);
-        $File->delete();
+            ));
+            $this->assertHtml($expected, $result);
+            $File->delete();
     }
 
     /**

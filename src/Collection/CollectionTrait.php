@@ -488,7 +488,8 @@ trait CollectionTrait
 
         return new Collection(
             new RecursiveIteratorIterator(
-                new UnfoldIterator($this, $transformer), RecursiveIteratorIterator::LEAVES_ONLY
+                new UnfoldIterator($this, $transformer),
+                RecursiveIteratorIterator::LEAVES_ONLY
             )
         );
     }

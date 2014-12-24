@@ -80,15 +80,15 @@ class I18n
      *
      * {{{
      *  I18n::translator('default', 'fr_FR', function () {
-     *		$package = new \Aura\Intl\Package();
-     *		$package->setMessages([
-     *			'Cake' => 'Gâteau'
-     *		]);
-     *		return $package;
+     *        $package = new \Aura\Intl\Package();
+     *        $package->setMessages([
+     *            'Cake' => 'Gâteau'
+     *        ]);
+     *        return $package;
      *  });
      *
-     *	$translator = I18n::translator('default', 'fr_FR');
-     *	echo $translator->translate('Cake');
+     *    $translator = I18n::translator('default', 'fr_FR');
+     *    echo $translator->translate('Cake');
      * }}}
      *
      * You can also use the `Cake\I18n\MessagesFileLoader` class to load a specific
@@ -97,9 +97,9 @@ class I18n
      *
      * {{{
      * I18n::translator(
-     *	'default',
-     *	'fr_FR',
-     *	new MessagesFileLoader('my_translations', 'custom', 'po');
+     *    'default',
+     *    'fr_FR',
+     *    new MessagesFileLoader('my_translations', 'custom', 'po');
      * );
      * }}}
      *
@@ -163,24 +163,24 @@ class I18n
      *
      * {{{
      *  use Cake\I18n\MessagesFileLoader;
-     *	I18n::config('my_domain', function ($name, $locale) {
-     *		// Load src/Locale/$locale/filename.po
-     *		$fileLoader = new MessagesFileLoader('filename', $locale, 'po');
-     *		return $fileLoader();
-     *	});
+     *    I18n::config('my_domain', function ($name, $locale) {
+     *        // Load src/Locale/$locale/filename.po
+     *        $fileLoader = new MessagesFileLoader('filename', $locale, 'po');
+     *        return $fileLoader();
+     *    });
      * }}}
      *
      * You can also assemble the package object yourself:
      *
      * {{{
      *  use Aura\Intl\Package;
-     *	I18n::config('my_domain', function ($name, $locale) {
-     *		$package = new Package('default');
-     *		$messages = (...); // Fetch messages for locale from external service.
-     *		$package->setMessages($message);
-     *		$package->setFallback('default);
-     *		return $package;
-     *	});
+     *    I18n::config('my_domain', function ($name, $locale) {
+     *        $package = new Package('default');
+     *        $messages = (...); // Fetch messages for locale from external service.
+     *        $package->setMessages($message);
+     *        $package->setFallback('default);
+     *        return $package;
+     *    });
      * }}}
      *
      * @param string $name The name of the translator to create a loader for

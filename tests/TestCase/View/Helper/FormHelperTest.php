@@ -674,7 +674,9 @@ class FormHelperTest extends TestCase
      */
     public function testCreateWithAcceptCharset()
     {
-        $result = $this->Form->create($this->article, array(
+        $result = $this->Form->create(
+            $this->article,
+            array(
                 'type' => 'post', 'action' => 'index', 'encoding' => 'iso-8859-1'
             )
         );
@@ -1508,19 +1510,19 @@ class FormHelperTest extends TestCase
             'input' => array(
                 'type' => 'hidden',
                 'name' => 'stuff',
-        ));
-        $this->assertHtml($expected, $result);
+            ));
+            $this->assertHtml($expected, $result);
 
-        $result = $this->Form->hidden('hidden', array('value' => '0'));
-        $expected = array('input' => array(
+            $result = $this->Form->hidden('hidden', array('value' => '0'));
+            $expected = array('input' => array(
             'type' => 'hidden',
             'name' => 'hidden',
             'value' => '0'
-        ));
-        $this->assertHtml($expected, $result);
+            ));
+            $this->assertHtml($expected, $result);
 
-        $result = $this->Form->input('something', array('type' => 'checkbox'));
-        $expected = array(
+            $result = $this->Form->input('something', array('type' => 'checkbox'));
+            $expected = array(
             'div' => array('class' => 'input checkbox'),
             array('input' => array(
                 'type' => 'hidden',
@@ -1537,20 +1539,20 @@ class FormHelperTest extends TestCase
             'Something',
             '/label',
             '/div'
-        );
-        $this->assertHtml($expected, $result);
+            );
+            $this->assertHtml($expected, $result);
 
-        $result = $this->Form->fields;
-        $expected = array(
+            $result = $this->Form->fields;
+            $expected = array(
             'ratio', 'population', 'published', 'other',
             'stuff' => '',
             'hidden' => '0',
             'something'
-        );
-        $this->assertEquals($expected, $result);
+            );
+            $this->assertEquals($expected, $result);
 
-        $result = $this->Form->secure($this->Form->fields);
-        $expected = array(
+            $result = $this->Form->secure($this->Form->fields);
+            $expected = array(
             'div' => array('style' => 'display:none;'),
             array('input' => array(
                 'type' => 'hidden',
@@ -1563,8 +1565,8 @@ class FormHelperTest extends TestCase
                 'value' => ''
             )),
             '/div'
-        );
-        $this->assertHtml($expected, $result);
+            );
+            $this->assertHtml($expected, $result);
     }
 
     /**
@@ -2725,7 +2727,9 @@ class FormHelperTest extends TestCase
      */
     public function testInputSelectType()
     {
-        $result = $this->Form->input('email', array(
+        $result = $this->Form->input(
+            'email',
+            array(
             'options' => array('è' => 'Firést', 'é' => 'Secoènd'), 'empty' => true)
         );
         $expected = array(
@@ -2747,7 +2751,9 @@ class FormHelperTest extends TestCase
         );
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->input('email', array(
+        $result = $this->Form->input(
+            'email',
+            array(
             'options' => array('First', 'Second'), 'empty' => true)
         );
         $expected = array(
@@ -3837,7 +3843,8 @@ class FormHelperTest extends TestCase
     public function testSelectEscapeHtml()
     {
         $result = $this->Form->select(
-            'Model.field', array('first' => 'first "html" <chars>', 'second' => 'value'),
+            'Model.field',
+            array('first' => 'first "html" <chars>', 'second' => 'value'),
             array('empty' => false)
         );
         $expected = array(
@@ -3917,7 +3924,8 @@ class FormHelperTest extends TestCase
             'Model.field',
             array(1 => 'One', 2 => 'Two', 'Three' => array(
                 3 => 'Three', 4 => 'Four', 5 => 'Five'
-            )), array('empty' => false)
+            )),
+            array('empty' => false)
         );
         $expected = array(
             'select' => array('name' => 'Model[field]'),
@@ -4238,7 +4246,9 @@ class FormHelperTest extends TestCase
     {
         $this->Form->request->data = array('Model' => array('tags' => array(1)));
         $result = $this->Form->select(
-            'Model.tags', array('1' => 'first', 'Array' => 'Array'), array('multiple' => 'checkbox')
+            'Model.tags',
+            array('1' => 'first', 'Array' => 'Array'),
+            array('multiple' => 'checkbox')
         );
         $expected = array(
             'input' => array(
@@ -4278,7 +4288,8 @@ class FormHelperTest extends TestCase
         $this->assertEquals(array(), $this->Form->fields);
 
         $result = $this->Form->select(
-            'Model.multi_field', array('1' => 'first', '2' => 'second', '3' => 'third'),
+            'Model.multi_field',
+            array('1' => 'first', '2' => 'second', '3' => 'third'),
             array('multiple' => 'checkbox')
         );
         $this->assertEquals(array('Model.multi_field'), $this->Form->fields);
@@ -4414,7 +4425,8 @@ class FormHelperTest extends TestCase
      */
     public function testSelectHiddenFieldOmission()
     {
-        $result = $this->Form->select('Model.multi_field',
+        $result = $this->Form->select(
+            'Model.multi_field',
             array('first', 'second'),
             array('multiple' => 'checkbox', 'hiddenField' => false, 'value' => null)
         );
@@ -6125,7 +6137,9 @@ class FormHelperTest extends TestCase
         );
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->postLink('Delete', '/posts/delete/2',
+        $result = $this->Form->postLink(
+            'Delete',
+            '/posts/delete/2',
             array('block' => true, 'method' => 'DELETE')
         );
         $expected = array(

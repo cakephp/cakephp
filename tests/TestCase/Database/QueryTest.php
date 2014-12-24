@@ -2411,7 +2411,10 @@ class QueryTest extends TestCase
             true
         );
         $this->assertQuotedQuery(
-            'SELECT <name>, \'some text\', 99 FROM <authors>', $result, true);
+            'SELECT <name>, \'some text\', 99 FROM <authors>',
+            $result,
+            true
+        );
         $result = $query->execute();
         $result->closeCursor();
 
@@ -2538,10 +2541,10 @@ class QueryTest extends TestCase
     {
         $query = new Query($this->connection);
         $result = $query->select(
-                function ($q) {
+            function ($q) {
                     return ['total' => $q->func()->count('*')];
-                }
-            )
+            }
+        )
             ->from('articles')
             ->execute();
         $expected = [['total' => 3]];
@@ -3051,15 +3054,21 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $publishedCase = $query
             ->newExpr()
-            ->addCase($query
+            ->addCase(
+                $query
                 ->newExpr()
-                ->add(['published' => 'Y']), 1, 'integer'
+                ->add(['published' => 'Y']),
+                1,
+                'integer'
             );
         $notPublishedCase = $query
             ->newExpr()
-            ->addCase($query
+            ->addCase(
+                $query
                     ->newExpr()
-                    ->add(['published' => 'N']), 1, 'integer'
+                    ->add(['published' => 'N']),
+                1,
+                'integer'
             );
 
         //Postgres requires the case statement to be cast to a integer

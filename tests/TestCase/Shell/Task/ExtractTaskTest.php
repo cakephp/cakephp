@@ -187,7 +187,8 @@ class ExtractTaskTest extends TestCase
     public function testExtractExcludePlugins()
     {
         Configure::write('App.namespace', 'TestApp');
-        $this->Task = $this->getMock('Cake\Shell\Task\ExtractTask',
+        $this->Task = $this->getMock(
+            'Cake\Shell\Task\ExtractTask',
             array('_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'),
             array($this->io)
         );
@@ -213,7 +214,8 @@ class ExtractTaskTest extends TestCase
     {
         Configure::write('App.namespace', 'TestApp');
 
-        $this->Task = $this->getMock('Cake\Shell\Task\ExtractTask',
+        $this->Task = $this->getMock(
+            'Cake\Shell\Task\ExtractTask',
             array('_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'),
             array($this->io)
         );

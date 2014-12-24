@@ -183,11 +183,11 @@ class Query extends DatabaseQuery implements JsonSerializable
      * ### Example:
      *
      * {{{
-     *	// Bring articles' author information
-     *	$query->contain('Author');
+     *    // Bring articles' author information
+     *    $query->contain('Author');
      *
-     *	// Also bring the category and tags associated to each article
-     *	$query->contain(['Category', 'Tag']);
+     *    // Also bring the category and tags associated to each article
+     *    $query->contain(['Category', 'Tag']);
      * }}}
      *
      * Associations can be arbitrarily nested using dot notation or nested arrays,
@@ -197,14 +197,14 @@ class Query extends DatabaseQuery implements JsonSerializable
      * ### Example:
      *
      * {{{
-     *	// Eager load the product info, and for each product load other 2 associations
-     *	$query->contain(['Product' => ['Manufacturer', 'Distributor']);
+     *    // Eager load the product info, and for each product load other 2 associations
+     *    $query->contain(['Product' => ['Manufacturer', 'Distributor']);
      *
-     *	// Which is equivalent to calling
-     *	$query->contain(['Products.Manufactures', 'Products.Distributors']);
+     *    // Which is equivalent to calling
+     *    $query->contain(['Products.Manufactures', 'Products.Distributors']);
      *
-     *	// For an author query, load his region, state and country
-     *	$query->contain('Regions.States.Countries');
+     *    // For an author query, load his region, state and country
+     *    $query->contain('Regions.States.Countries');
      * }}}
      *
      * It is possible to control the conditions and fields selected for each of the
@@ -213,13 +213,13 @@ class Query extends DatabaseQuery implements JsonSerializable
      * ### Example:
      *
      * {{{
-     *	$query->contain(['Tags' => function ($q) {
-     *		return $q->where(['Tags.is_popular' => true]);
-     *	}]);
+     *    $query->contain(['Tags' => function ($q) {
+     *        return $q->where(['Tags.is_popular' => true]);
+     *    }]);
      *
-     *	$query->contain(['Products.Manufactures' => function ($q) {
-     *		return $q->select(['name'])->where(['Manufactures.active' => true]);
-     *	}]);
+     *    $query->contain(['Products.Manufactures' => function ($q) {
+     *        return $q->select(['name'])->where(['Manufactures.active' => true]);
+     *    }]);
      * }}}
      *
      * Each association might define special options when eager loaded, the allowed
@@ -295,9 +295,9 @@ class Query extends DatabaseQuery implements JsonSerializable
      *
      * {{{
      *  // Bring only articles that were tagged with 'cake'
-     *	$query->matching('Tags', function ($q) {
-     *		return $q->where(['name' => 'cake']);
-     *	);
+     *    $query->matching('Tags', function ($q) {
+     *        return $q->where(['name' => 'cake']);
+     *    );
      * }}}
      *
      * It is possible to filter by deep associations by using dot notation:
@@ -306,9 +306,9 @@ class Query extends DatabaseQuery implements JsonSerializable
      *
      * {{{
      *  // Bring only articles that were commented by 'markstory'
-     *	$query->matching('Comments.Users', function ($q) {
-     *		return $q->where(['username' => 'markstory']);
-     *	);
+     *    $query->matching('Comments.Users', function ($q) {
+     *        return $q->where(['username' => 'markstory']);
+     *    );
      * }}}
      *
      * As this function will create `INNER JOIN`, you might want to consider
@@ -320,10 +320,10 @@ class Query extends DatabaseQuery implements JsonSerializable
      *
      * {{{
      *  // Bring unique articles that were commented by 'markstory'
-     *	$query->distinct(['Articles.id'])
-     *	->matching('Comments.Users', function ($q) {
-     *		return $q->where(['username' => 'markstory']);
-     *	);
+     *    $query->distinct(['Articles.id'])
+     *    ->matching('Comments.Users', function ($q) {
+     *        return $q->where(['username' => 'markstory']);
+     *    );
      * }}}
      *
      * Please note that the query passed to the closure will only accept calling

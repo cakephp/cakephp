@@ -315,7 +315,8 @@ class SqliteSchema extends BaseSchema
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
         );
-        return sprintf('CONSTRAINT %s %s (%s)%s',
+        return sprintf(
+            'CONSTRAINT %s %s (%s)%s',
             $this->_driver->quoteIdentifier($name),
             $type,
             implode(', ', $columns),
@@ -333,7 +334,8 @@ class SqliteSchema extends BaseSchema
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
         );
-        return sprintf('CREATE INDEX %s ON %s (%s)',
+        return sprintf(
+            'CREATE INDEX %s ON %s (%s)',
             $this->_driver->quoteIdentifier($name),
             $this->_driver->quoteIdentifier($table->name()),
             implode(', ', $columns)

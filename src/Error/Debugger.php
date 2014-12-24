@@ -255,7 +255,14 @@ class Debugger
         }
 
         $data = compact(
-            'level', 'error', 'code', 'description', 'file', 'path', 'line', 'context'
+            'level',
+            'error',
+            'code',
+            'description',
+            'file',
+            'path',
+            'line',
+            'context'
         );
         echo $self->outputError($data);
 

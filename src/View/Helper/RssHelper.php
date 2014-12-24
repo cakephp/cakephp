@@ -202,10 +202,10 @@ class RssHelper extends Helper
             }
 
             switch ($key) {
-                case 'pubDate' :
+                case 'pubDate':
                     $val = $this->time($val);
                     break;
-                case 'category' :
+                case 'category':
                     if (is_array($val) && !empty($val[0])) {
                         foreach ($val as $category) {
                             $attrib = array();

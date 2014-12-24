@@ -103,12 +103,14 @@ class ConsoleErrorHandler extends BaseErrorHandler
      */
     protected function _displayError($error, $debug)
     {
-        $message = sprintf('%s in [%s, line %s]',
+        $message = sprintf(
+            '%s in [%s, line %s]',
             $error['description'],
             $error['file'],
             $error['line']
         );
-        $message = sprintf("<error>%s Error:</error> %s\n",
+        $message = sprintf(
+            "<error>%s Error:</error> %s\n",
             $error['error'],
             $message
         );

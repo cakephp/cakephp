@@ -410,7 +410,8 @@ class PostgresSchema extends BaseSchema
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
         );
-        return sprintf('CREATE INDEX %s ON %s (%s)',
+        return sprintf(
+            'CREATE INDEX %s ON %s (%s)',
             $this->_driver->quoteIdentifier($name),
             $this->_driver->quoteIdentifier($table->name()),
             implode(', ', $columns)
@@ -476,7 +477,8 @@ class PostgresSchema extends BaseSchema
         foreach ($table->columns() as $column) {
             $columnData = $table->column($column);
             if (isset($columnData['comment'])) {
-                $out[] = sprintf('COMMENT ON COLUMN %s.%s IS %s',
+                $out[] = sprintf(
+                    'COMMENT ON COLUMN %s.%s IS %s',
                     $tableName,
                     $this->_driver->quoteIdentifier($column),
                     $this->_driver->schemaValue($columnData['comment'])

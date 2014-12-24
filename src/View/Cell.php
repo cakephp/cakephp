@@ -131,9 +131,12 @@ abstract class Cell
      * @param \Cake\Event\EventManager $eventManager then eventManager to bind events to
      * @param array $cellOptions cell options to apply
      */
-    public function __construct(Request $request = null, Response $response = null,
-            EventManager $eventManager = null, array $cellOptions = [])
-    {
+    public function __construct(
+        Request $request = null,
+        Response $response = null,
+        EventManager $eventManager = null,
+        array $cellOptions = []
+    ) {
         $this->eventManager($eventManager);
         $this->request = $request;
         $this->response = $response;

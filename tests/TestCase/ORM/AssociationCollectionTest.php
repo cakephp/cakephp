@@ -188,13 +188,15 @@ class AssociationCollectionTest extends TestCase
             ['saveAssociated'],
             ['Parent', [
                 'sourceTable' => $table,
-            ]]);
+            ]]
+        );
         $mockTwo = $this->getMock(
             'Cake\ORM\Association\HasMany',
             ['saveAssociated'],
             ['Child', [
                 'sourceTable' => $table
-            ]]);
+            ]]
+        );
 
         $this->associations->add('Parent', $mockOne);
         $this->associations->add('Child', $mockTwo);
@@ -235,13 +237,15 @@ class AssociationCollectionTest extends TestCase
             ['saveAssociated'],
             ['Parents', [
                 'sourceTable' => $table,
-            ]]);
+            ]]
+        );
         $mockTwo = $this->getMock(
             'Cake\ORM\Association\BelongsTo',
             ['saveAssociated'],
             ['Categories', [
                 'sourceTable' => $table
-            ]]);
+            ]]
+        );
 
         $this->associations->add('Parents', $mockOne);
         $this->associations->add('Categories', $mockTwo);
@@ -282,13 +286,15 @@ class AssociationCollectionTest extends TestCase
             ['saveAssociated'],
             ['Comments', [
                 'sourceTable' => $table,
-            ]]);
+            ]]
+        );
         $mockTwo = $this->getMock(
             'Cake\ORM\Association\HasOne',
             ['saveAssociated'],
             ['Profiles', [
                 'sourceTable' => $table
-            ]]);
+            ]]
+        );
 
         $this->associations->add('Comments', $mockOne);
         $this->associations->add('Profiles', $mockTwo);
@@ -327,7 +333,8 @@ class AssociationCollectionTest extends TestCase
         $table = $this->getMock(
             'Cake\ORM\Table',
             ['save'],
-            [['alias' => 'Users']]);
+            [['alias' => 'Users']]
+        );
 
         $entity = new Entity();
         $entity->set('profile', ['key' => 'value']);

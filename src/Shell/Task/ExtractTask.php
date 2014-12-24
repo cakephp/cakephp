@@ -203,8 +203,10 @@ class ExtractTask extends Shell
                     break;
                 } else {
                     $this->err('');
-                    $this->err('<error>The directory path you supplied was ' .
-                        'not found. Please try again.</error>');
+                    $this->err(
+                        '<error>The directory path you supplied was ' .
+                        'not found. Please try again.</error>'
+                    );
                 }
                 $this->out();
             }

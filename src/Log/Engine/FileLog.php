@@ -143,7 +143,8 @@ class FileLog extends BaseLog
             $selfError = true;
             trigger_error(vsprintf(
                 'Could not apply permission mask "%s" on log file "%s"',
-                array($mask, $pathname)), E_USER_WARNING);
+                array($mask, $pathname)
+            ), E_USER_WARNING);
             $selfError = false;
         }
 

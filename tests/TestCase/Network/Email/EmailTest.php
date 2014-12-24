@@ -2606,8 +2606,10 @@ HTML;
     {
         $lines = explode("\r\n", $message);
         foreach ($lines as $line) {
-            $this->assertTrue(strlen($line) <= Email::LINE_LENGTH_MUST,
-                'Line length exceeds the max. limit of Email::LINE_LENGTH_MUST');
+            $this->assertTrue(
+                strlen($line) <= Email::LINE_LENGTH_MUST,
+                'Line length exceeds the max. limit of Email::LINE_LENGTH_MUST'
+            );
         }
     }
 }

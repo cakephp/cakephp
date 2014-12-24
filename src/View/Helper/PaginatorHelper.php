@@ -150,7 +150,8 @@ class PaginatorHelper extends Helper
                 $this->request->params['paging'][$model] = array();
             }
             $this->request->params['paging'][$model] = array_merge(
-                $this->request->params['paging'][$model], $options[$model]
+                $this->request->params['paging'][$model],
+                $options[$model]
             );
             unset($options[$model]);
         }

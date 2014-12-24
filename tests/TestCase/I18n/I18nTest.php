@@ -404,7 +404,8 @@ class I18nTest extends TestCase
         );
         $this->assertEquals(
             'The letter A',
-            __dxn('custom', 'character', 'letter', 'letters', 1, ['A']));
+            __dxn('custom', 'character', 'letter', 'letters', 1, ['A'])
+        );
 
         $this->assertEquals(
             'She wrote a letter to Thomas and Sara',

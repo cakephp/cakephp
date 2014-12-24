@@ -125,7 +125,8 @@ class RequestActionTraitTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = $this->object->requestAction(
-            array('controller' => 'Tests', 'action' => 'index', 'plugin' => 'TestPlugin'), array('return')
+            array('controller' => 'Tests', 'action' => 'index', 'plugin' => 'TestPlugin'),
+            array('return')
         );
         $expected = 'test plugin index';
         $this->assertEquals($expected, $result);
@@ -164,7 +165,8 @@ class RequestActionTraitTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = $this->object->requestAction(
-            array('controller' => 'TestsApps', 'action' => 'index'), array('return')
+            array('controller' => 'TestsApps', 'action' => 'index'),
+            array('return')
         );
         $expected = 'This is the TestsAppsController index view ';
         $this->assertEquals($expected, $result);
@@ -199,7 +201,8 @@ class RequestActionTraitTest extends TestCase
     public function testRequestActionRemoveReturnParam()
     {
         $result = $this->object->requestAction(
-            '/request_action/param_check', array('return')
+            '/request_action/param_check',
+            array('return')
         );
         $this->assertEquals('', $result, 'Return key was found');
     }

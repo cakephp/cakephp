@@ -72,11 +72,11 @@ class AppTest extends TestCase
      * classnameProvider
      *
      * Return test permutations for testClassname method. Format:
-     * 	classname
-     *	type
-     *	suffix
-     *	existsInBase (Base meaning App or plugin namespace)
-     * 	expected return value
+     *     classname
+     *    type
+     *    suffix
+     *    existsInBase (Base meaning App or plugin namespace)
+     *     expected return value
      *
      * @return void
      */

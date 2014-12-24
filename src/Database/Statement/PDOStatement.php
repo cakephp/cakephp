@@ -80,9 +80,9 @@ class PDOStatement extends StatementDecorator
      * ### Example:
      *
      * {{{
-     *	$statement = $connection->prepare('SELECT id, title from articles');
-     *	$statement->execute();
-     *	print_r($statement->fetch('assoc')); // will show array('id' => 1, 'title' => 'a title')
+     *    $statement = $connection->prepare('SELECT id, title from articles');
+     *    $statement->execute();
+     *    print_r($statement->fetch('assoc')); // will show array('id' => 1, 'title' => 'a title')
      * }}}
      *
      * @param string $type 'num' for positional columns, assoc for named columns
@@ -106,9 +106,9 @@ class PDOStatement extends StatementDecorator
      * ### Example:
      *
      * {{{
-     *	$statement = $connection->prepare('SELECT id, title from articles');
-     *	$statement->execute();
-     *	print_r($statement->fetchAll('assoc')); // will show [0 => ['id' => 1, 'title' => 'a title']]
+     *    $statement = $connection->prepare('SELECT id, title from articles');
+     *    $statement->execute();
+     *    print_r($statement->fetchAll('assoc')); // will show [0 => ['id' => 1, 'title' => 'a title']]
      * }}}
      *
      * @param string $type num for fetching columns as positional keys or assoc for column names as keys

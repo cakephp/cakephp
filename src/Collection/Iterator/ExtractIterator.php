@@ -41,8 +41,8 @@ class ExtractIterator extends Collection
      *
      * {{{
      * $items = [
-     *	['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark']],
-     *	['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']]
+     *    ['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark']],
+     *    ['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']]
      * ];
      * $extractor = new ExtractIterator($items, 'comment.user.name'');
      * }}}

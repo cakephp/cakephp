@@ -77,8 +77,8 @@ class Exception extends \RuntimeException
      * See also Cake\Network\Response::header()
      *
      * @param string|array|null $header An array of header strings or a single header string
-     *	- an associative array of "header name" => "header value"
-     *	- an array of string headers is also accepted
+     *    - an associative array of "header name" => "header value"
+     *    - an array of string headers is also accepted
      * @param string $value The header value.
      * @return array
      */

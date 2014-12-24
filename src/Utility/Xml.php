@@ -50,20 +50,20 @@ class Xml
      * Building from an array:
      *
      * {{{
-     * 	$value = array(
-     * 		'tags' => array(
-     * 			'tag' => array(
-     * 				array(
-     * 					'id' => '1',
-     * 					'name' => 'defect'
-     * 				),
-     * 				array(
-     * 					'id' => '2',
-     * 					'name' => 'enhancement'
-     *				)
-     * 			)
-     * 		)
-     * 	);
+     *     $value = array(
+     *         'tags' => array(
+     *             'tag' => array(
+     *                 array(
+     *                     'id' => '1',
+     *                     'name' => 'defect'
+     *                 ),
+     *                 array(
+     *                     'id' => '2',
+     *                     'name' => 'enhancement'
+     *                )
+     *             )
+     *         )
+     *     );
      * $xml = Xml::build($value);
      * }}}
      *
@@ -275,13 +275,15 @@ class Xml
                     if ($key[0] === '@') {
                         throw new XmlException('Invalid array');
                     }
-                    if (is_numeric(implode('', array_keys($value)))) { // List
+                    if (is_numeric(implode('', array_keys($value)))) {
+// List
                         foreach ($value as $item) {
                             $itemData = compact('dom', 'node', 'key', 'format');
                             $itemData['value'] = $item;
                             static::_createChild($itemData);
                         }
-                    } else { // Struct
+                    } else {
+// Struct
                         static::_createChild(compact('dom', 'node', 'key', 'value', 'format'));
                     }
                 }

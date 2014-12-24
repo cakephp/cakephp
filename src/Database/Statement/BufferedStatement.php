@@ -128,7 +128,8 @@ class BufferedStatement extends StatementDecorator
     {
         if (!$this->_allFetched) {
             $counter = $this->_counter;
-            while ($this->fetch('assoc'));
+            while ($this->fetch('assoc')) {
+            }
             $this->_counter = $counter;
         }
 

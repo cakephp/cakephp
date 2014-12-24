@@ -172,17 +172,17 @@ class ConsoleOptionParser
      *
      * {{{
      * $spec = [
-     *		'description' => 'text',
-     *		'epilog' => 'text',
-     *		'arguments' => [
-     *			// list of arguments compatible with addArguments.
-     *		],
-     *		'options' => [
-     *			// list of options compatible with addOptions
-     *		],
-     *		'subcommands' => [
-     *			// list of subcommands to add.
-     *		]
+     *        'description' => 'text',
+     *        'epilog' => 'text',
+     *        'arguments' => [
+     *            // list of arguments compatible with addArguments.
+     *        ],
+     *        'options' => [
+     *            // list of options compatible with addOptions
+     *        ],
+     *        'subcommands' => [
+     *            // list of subcommands to add.
+     *        ]
      * ];
      * }}}
      *

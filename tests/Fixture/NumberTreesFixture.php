@@ -42,17 +42,17 @@ class NumberTreesFixture extends TestFixture
     /**
      * Records
      *
-     *	- electronics:1
-     *		- televisions:2
-     *			- tube:3
-     *			- lcd:4
-     *			- plasma:5
-     *		- portable:6
-     *			- mp3:7
-     *				- flash:8
-     *			- cd:9
-     *			- radios:10
-     *	- alien ware: 11
+     *    - electronics:1
+     *        - televisions:2
+     *            - tube:3
+     *            - lcd:4
+     *            - plasma:5
+     *        - portable:6
+     *            - mp3:7
+     *                - flash:8
+     *            - cd:9
+     *            - radios:10
+     *    - alien ware: 11
      *
      * @var array
      */

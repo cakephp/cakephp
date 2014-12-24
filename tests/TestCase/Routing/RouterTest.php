@@ -749,7 +749,8 @@ class RouterTest extends TestCase
             array('language' => '[a-z]{3}', 'admin' => 'admin')
         );
 
-        Router::connect('/:language/:controller/:action/*',
+        Router::connect(
+            '/:language/:controller/:action/*',
             [],
             array('language' => '[a-z]{3}')
         );
@@ -763,7 +764,8 @@ class RouterTest extends TestCase
         $this->assertEquals($expected, $result);
 
         Router::reload();
-        Router::connect('/:language/pages',
+        Router::connect(
+            '/:language/pages',
             array('controller' => 'pages', 'action' => 'index'),
             array('language' => '[a-z]{3}')
         );
@@ -781,7 +783,8 @@ class RouterTest extends TestCase
         $this->assertEquals($expected, $result);
 
         Router::reload();
-        Router::connect('/forestillinger/:month/:year/*',
+        Router::connect(
+            '/forestillinger/:month/:year/*',
             array('plugin' => 'shows', 'controller' => 'shows', 'action' => 'calendar'),
             array('month' => '0[1-9]|1[012]', 'year' => '[12][0-9]{3}')
         );
@@ -798,7 +801,8 @@ class RouterTest extends TestCase
         $this->assertEquals($expected, $result);
 
         Router::reload();
-        Router::connect('/kalender/:month/:year/*',
+        Router::connect(
+            '/kalender/:month/:year/*',
             array('plugin' => 'shows', 'controller' => 'shows', 'action' => 'calendar'),
             array('month' => '0[1-9]|1[012]', 'year' => '[12][0-9]{3}')
         );
@@ -1391,7 +1395,8 @@ class RouterTest extends TestCase
         $this->assertEquals($expected, $result);
 
         Router::reload();
-        Router::connect('/forestillinger/:month/:year/*',
+        Router::connect(
+            '/forestillinger/:month/:year/*',
             array('plugin' => 'shows', 'controller' => 'shows', 'action' => 'calendar'),
             array('month' => '0[1-9]|1[012]', 'year' => '[12][0-9]{3}')
         );

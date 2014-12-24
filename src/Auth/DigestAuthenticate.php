@@ -27,11 +27,11 @@ use Cake\Network\Request;
  *
  * In your controller's components array, add auth + the required config
  * {{{
- *	public $components = [
- *		'Auth' => [
- *			'authenticate' => ['Digest']
- *		]
- *	];
+ *    public $components = [
+ *        'Auth' => [
+ *            'authenticate' => ['Digest']
+ *        ]
+ *    ];
  * }}}
  *
  * You should also set `AuthComponent::$sessionKey = false;` in your AppController's

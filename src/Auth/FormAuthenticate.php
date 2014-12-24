@@ -23,11 +23,11 @@ use Cake\Network\Response;
  * data. Can be used by configuring AuthComponent to use it via the AuthComponent::$authenticate config.
  *
  * {{{
- *	$this->Auth->authenticate = [
- *		'Form' => [
- *			'scope' => ['Users.active' => 1]
- *		]
- *	]
+ *    $this->Auth->authenticate = [
+ *        'Form' => [
+ *            'scope' => ['Users.active' => 1]
+ *        ]
+ *    ]
  * }}}
  *
  * When configuring FormAuthenticate you can pass in config to which fields, model and additional conditions
