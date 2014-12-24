@@ -45,13 +45,6 @@ class Email {
 	use StaticConfigTrait;
 
 /**
- * Default X-Mailer
- *
- * @var string
- */
-	const EMAIL_CLIENT = 'CakePHP Email';
-
-/**
  * Line length - no should more - RFC 2822 - 2.1.1
  *
  * @var int
@@ -787,9 +780,6 @@ class Email {
 		}
 
 		$headers += $this->_headers;
-		if (!isset($headers['X-Mailer'])) {
-			$headers['X-Mailer'] = static::EMAIL_CLIENT;
-		}
 		if (!isset($headers['Date'])) {
 			$headers['Date'] = date(DATE_RFC2822);
 		}
