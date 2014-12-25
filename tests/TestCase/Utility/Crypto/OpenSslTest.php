@@ -74,20 +74,4 @@ class OpenSslTest extends TestCase {
 		$this->assertFalse($this->crypt->decrypt($txt, $key), 'Modified key will fail.');
 	}
 
-/**
- * Test that decrypt fails when there is an hmac error.
- *
- * @return void
- */
-	public function testDecryptHmacFailure() {
-		$txt = 'The quick brown fox';
-		$key = 'This key is long enough';
-		$salt = 'this is a delicious salt!';
-		$result = $this->crypt->encrypt($txt, $key, $salt);
-
-		// Change one of the bytes in the hmac.
-		$result[10] = 'x';
-		$this->assertFalse($this->crypt->decrypt($result, $key, $salt), 'Modified hmac causes failure.');
-	}
-
 }

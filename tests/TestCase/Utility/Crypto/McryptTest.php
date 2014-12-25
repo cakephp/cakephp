@@ -77,27 +77,12 @@ class McryptTest extends TestCase {
  */
 	public function testDecryptKeyFailure() {
 		$txt = 'The quick brown fox';
-		$key = 'This key is enough bytes';
+
+		$key = substr(hash('sha256', 'This key is enough bytes'), 0, 32);
 		$result = $this->crypt->encrypt($txt, $key);
 
-		$key = 'Not the same key.';
+		$key = substr(hash('sha256', 'Not the same key.'), 0, 32);
 		$this->assertFalse($this->crypt->decrypt($txt, $key), 'Modified key will fail.');
-	}
-
-/**
- * Test that decrypt fails when there is an hmac error.
- *
- * @return void
- */
-	public function testDecryptHmacFailure() {
-		$txt = 'The quick brown fox';
-		$key = 'This key is long enough';
-		$salt = 'this is a delicious salt!';
-		$result = $this->crypt->encrypt($txt, $key, $salt);
-
-		// Change one of the bytes in the hmac.
-		$result[10] = 'x';
-		$this->assertFalse($this->crypt->decrypt($result, $key, $salt), 'Modified hmac causes failure.');
 	}
 
 /**
@@ -109,11 +94,14 @@ class McryptTest extends TestCase {
  */
 	public function testDecryptOldData() {
 		$key = 'My password is nice and long really it is';
+		$key = substr(hash('sha256', $key), 0, 32);
+
 		$cipher = 'ZmFkMjdmY2U2NjgzOTkwMGZmMWJiMzY0ZDA5ZDUwZmNjYTdjNWVkZThkMzhmNzdiY' .
 			'Tg3ZDFjMzNjNmViMDljMnk9k0LmYpwSZH5eq7GmDozMwHxzh37YaXFQ2TK5gXb5OfTKXv83K+NjAS9lIo/Zvw==';
-		$salt = '';
+		$data = base64_decode($cipher);
+		$cipher = substr($data, 64);
 
-		$result = $this->crypt->encrypt($txt, $key, $salt);
+		$result = $this->crypt->decrypt($cipher, $key);
 		$this->assertEquals('This is a secret message', $result);
 	}
 
