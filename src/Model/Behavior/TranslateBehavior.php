@@ -66,7 +66,8 @@ class TranslateBehavior extends Behavior {
 		'fields' => [],
 		'translationTable' => 'i18n',
 		'defaultLocale' => '',
-		'model' => ''
+		'model' => '',
+		'filterUntranslated' => false
 	];
 
 /**
@@ -107,6 +108,7 @@ class TranslateBehavior extends Behavior {
  * @return void
  */
 	public function setupFieldAssociations($fields, $table, $model) {
+		$filter = $this->_config['filterUntranslated'];
 		foreach ($fields as $field) {
 			$name = $this->_table->alias() . '_' . $field . '_translation';
 			$target = TableRegistry::get($name);
@@ -115,7 +117,7 @@ class TranslateBehavior extends Behavior {
 			$this->_table->hasOne($name, [
 				'targetTable' => $target,
 				'foreignKey' => 'foreign_key',
-				'joinType' => 'LEFT',
+				'joinType' => $filter? 'INNER' : 'LEFT',
 				'conditions' => [
 					$name . '.model' => $model,
 					$name . '.field' => $field,
@@ -140,9 +142,10 @@ class TranslateBehavior extends Behavior {
  *
  * @param \Cake\Event\Event $event The beforeFind event that was fired.
  * @param \Cake\ORM\Query $query Query
+ * @param \ArrayObject $options The options for the query
  * @return void
  */
-	public function beforeFind(Event $event, Query $query) {
+	public function beforeFind(Event $event, Query $query, $options) {
 		$locale = $this->locale();
 
 		if ($locale === $this->config('defaultLocale')) {
@@ -169,14 +172,21 @@ class TranslateBehavior extends Behavior {
 		$fields = $this->_config['fields'];
 		$alias = $this->_table->alias();
 		$select = $query->clause('select');
+		$changeFilter = isset($options['filterUntranslated']) &&
+			$options['filterUntranslated'] !== $this->_config['filterUntranslated'];
 
 		foreach ($fields as $field) {
-			$contain[$alias . '_' . $field . '_translation'] = $conditions(
+			$contain[$alias . '_' . $field . '_translation']['queryBuilder'] = $conditions(
 				$field,
 				$locale,
 				$query,
 				$select
 			);
+
+			if ($changeFilter) {
+				$filter = $options['filterUntranslated'] ? 'INNER' : 'LEFT';
+				$contain[$alias . '_' . $field . '_translation']['joinType'] = $filter;
+			}
 		}
 
 		$query->contain($contain);
