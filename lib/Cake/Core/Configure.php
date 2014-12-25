@@ -191,6 +191,30 @@ class Configure {
 	}
 
 /**
+ * Used to read and delete a variable from Configure.
+ *
+ * This is primarily used during bootstrapping to move configuration data
+ * out of configure into the various other classes in CakePHP.
+ *
+ * @param string $var The key to read and remove.
+ * @return array|null
+ */
+	public static function consume($var) {
+		$simple = strpos($var, '.') === false;
+		if ($simple && !isset(self::$_values[$var])) {
+			return null;
+		}
+		if ($simple) {
+			$value = self::$_values[$var];
+			unset(self::$_values[$var]);
+			return $value;
+		}
+		$value = Hash::get(self::$_values, $var);
+		self::$_values = Hash::remove(self::$_values, $var);
+		return $value;
+	}
+
+/**
  * Returns true if given variable is set in Configure.
  *
  * @param string $var Variable name to check for
