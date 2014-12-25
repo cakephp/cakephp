@@ -537,7 +537,7 @@ class LogTest extends TestCase {
 /**
  * Test that write() returns false on an unhandled message.
  *
- * @return false
+ * @return void
  */
 	public function testWriteUnhandled() {
 		Log::drop('error');
@@ -545,6 +545,19 @@ class LogTest extends TestCase {
 
 		$result = Log::write('error', 'Bad stuff', 'unpossible');
 		$this->assertFalse($result);
+	}
+
+/**
+ * Tests using a callable for creating a Log engine
+ *
+ * @return void
+ */
+	public function testCreateLoggerWithCallable() {
+		$instance = new FileLog;
+		Log::config('default', function () use ($instance) {
+			return $instance;
+		});
+		$this->assertSame($instance, Log::engine('default'));
 	}
 
 }
