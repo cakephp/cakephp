@@ -61,7 +61,7 @@ trait ConventionsTrait {
  */
 	protected function _modelNameFromKey($key) {
 		$key = str_replace('_id', '', $key);
-		return Inflector::pluralize(Inflector::classify($key));
+		return Inflector::classify(Inflector::pluralize($key));
 	}
 
 /**
