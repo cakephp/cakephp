@@ -345,4 +345,26 @@ class TableRegistryTest extends TestCase {
 		$this->assertEquals($expected, TableRegistry::genericInstances());
 	}
 
+/**
+ * Tests remove an instance
+ *
+ * @return void
+ */
+	public function testRemove() {
+		Plugin::load('TestPlugin');
+
+		$pluginTable = TableRegistry::get('TestPlugin.Comments');
+		$cachedTable = TableRegistry::get('Comments');
+
+		$this->assertTrue(TableRegistry::exists('Comments'));
+		$this->assertSame($pluginTable, $cachedTable);
+
+		TableRegistry::remove('Comments');
+		$this->assertFalse(TableRegistry::exists('Comments'));
+
+		$appTable = TableRegistry::get('Comments');
+		$this->assertTrue(TableRegistry::exists('Comments'));
+		$this->assertNotSame($pluginTable, $appTable);
+	}
+
 }

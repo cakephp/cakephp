@@ -242,4 +242,23 @@ class TableRegistry {
 		return static::$_fallbacked;
 	}
 
+/**
+ * Removes an instance from the registry.
+ *
+ * Plugin name will be trimmed off of aliases as instances
+ * stored in the registry will be without the plugin name as well.
+ *
+ * @param string $alias The alias to remove.
+ * @return void
+ */
+	public static function remove($alias) {
+		list(, $alias) = pluginSplit($alias);
+
+		unset(
+			static::$_instances[$alias],
+			static::$_config[$alias],
+			static::$_fallbacked[$alias]
+		);
+	}
+
 }
