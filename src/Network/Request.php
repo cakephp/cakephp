@@ -19,6 +19,7 @@ use Cake\Core\Configure;
 use Cake\Network\Exception\MethodNotAllowedException;
 use Cake\Network\Session;
 use Cake\Utility\Hash;
+use Cake\Utility\RequestUtility;
 
 /**
  * A class that helps wrap Request information and particulars about a single request.
@@ -980,7 +981,7 @@ class Request implements \ArrayAccess {
  * @return array An array of prefValue => array(content/types)
  */
 	public function parseAccept() {
-		return $this->_parseAcceptWithQualifier($this->header('accept'));
+		return RequestUtility::parseAcceptWithQualifier($this->header('accept'));
 	}
 
 /**
@@ -998,60 +999,7 @@ class Request implements \ArrayAccess {
  * @return mixed If a $language is provided, a boolean. Otherwise the array of accepted languages.
  */
 	public function acceptLanguage($language = null) {
-		$raw = $this->_parseAcceptWithQualifier($this->header('Accept-Language'));
-		$accept = array();
-		foreach ($raw as $languages) {
-			foreach ($languages as &$lang) {
-				if (strpos($lang, '_')) {
-					$lang = str_replace('_', '-', $lang);
-				}
-				$lang = strtolower($lang);
-			}
-			$accept = array_merge($accept, $languages);
-		}
-		if ($language === null) {
-			return $accept;
-		}
-		return in_array(strtolower($language), $accept);
-	}
-
-/**
- * Parse Accept* headers with qualifier options.
- *
- * Only qualifiers will be extracted, any other accept extensions will be
- * discarded as they are not frequently used.
- *
- * @param string $header Header to parse.
- * @return array
- */
-	protected function _parseAcceptWithQualifier($header) {
-		$accept = array();
-		$header = explode(',', $header);
-		foreach (array_filter($header) as $value) {
-			$prefValue = '1.0';
-			$value = trim($value);
-
-			$semiPos = strpos($value, ';');
-			if ($semiPos !== false) {
-				$params = explode(';', $value);
-				$value = trim($params[0]);
-				foreach ($params as $param) {
-					$qPos = strpos($param, 'q=');
-					if ($qPos !== false) {
-						$prefValue = substr($param, $qPos + 2);
-					}
-				}
-			}
-
-			if (!isset($accept[$prefValue])) {
-				$accept[$prefValue] = array();
-			}
-			if ($prefValue) {
-				$accept[$prefValue][] = $value;
-			}
-		}
-		krsort($accept);
-		return $accept;
+		return RequestUtility::acceptLanguage($this->header('Accept-Language'), $language);
 	}
 
 /**
