@@ -889,7 +889,7 @@ class TranslateBehaviorTest extends TestCase {
 		$this->assertCount(1, $results);
 
 		$table->locale('spa');
-		$results = $table->find('translations', ['filterUntranslated' => false])->all();
+		$results = $table->find('translations', ['filterByCurrentLocale' => false])->all();
 		$this->assertCount(6, $results);
 
 		$table->locale('spa');

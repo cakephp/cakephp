@@ -172,8 +172,8 @@ class TranslateBehavior extends Behavior {
 		$fields = $this->_config['fields'];
 		$alias = $this->_table->alias();
 		$select = $query->clause('select');
-		$changeFilter = isset($options['filterUntranslated']) &&
-			$options['filterUntranslated'] !== $this->_config['filterUntranslated'];
+		$changeFilter = isset($options['filterByCurrentLocale']) &&
+			$options['filterByCurrentLocale'] !== $this->_config['filterUntranslated'];
 
 		foreach ($fields as $field) {
 			$contain[$alias . '_' . $field . '_translation']['queryBuilder'] = $conditions(
@@ -184,7 +184,7 @@ class TranslateBehavior extends Behavior {
 			);
 
 			if ($changeFilter) {
-				$filter = $options['filterUntranslated'] ? 'INNER' : 'LEFT';
+				$filter = $options['filterByCurrentLocale'] ? 'INNER' : 'LEFT';
 				$contain[$alias . '_' . $field . '_translation']['joinType'] = $filter;
 			}
 		}
