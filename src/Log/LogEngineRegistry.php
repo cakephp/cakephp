@@ -66,6 +66,10 @@ class LogEngineRegistry extends ObjectRegistry {
  * @throws \RuntimeException when an object doesn't implement the correct interface.
  */
 	protected function _create($class, $alias, $settings) {
+		if (is_callable($class)) {
+			$class = $class();
+		}
+
 		if (is_object($class)) {
 			$instance = $class;
 		}
