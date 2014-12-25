@@ -117,7 +117,7 @@ class TranslateBehavior extends Behavior {
 			$this->_table->hasOne($name, [
 				'targetTable' => $target,
 				'foreignKey' => 'foreign_key',
-				'joinType' => $filter? 'INNER' : 'LEFT',
+				'joinType' => $filter ? 'INNER' : 'LEFT',
 				'conditions' => [
 					$name . '.model' => $model,
 					$name . '.field' => $field,
