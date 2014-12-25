@@ -91,8 +91,13 @@ class Mcrypt {
 		$cipher = substr($cipher, $ivSize);
 		$plain = mcrypt_decrypt($algorithm, $key, $cipher, $mode, $iv);
 
-		// Remove PKCS#7 padding
+		// Remove PKCS#7 padding or Null bytes
+		// Newer values will be PKCS#7 padded, while old
+		// mcrypt values will be null byte padded.
 		$padChar = substr($plain, -1);
+		if ($padChar === "\0") {
+			return trim($plain, "\0");
+		}
 		$padLen = ord($padChar);
 		return substr($plain, 0, -$padLen);
 	}
