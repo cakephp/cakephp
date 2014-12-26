@@ -41,7 +41,7 @@ class SessionComponent extends Component {
 	}
 
 /**
- * Used to write a value to a session key.
+ * Writes a value to a session key.
  *
  * In your controller: $this->Session->write('Controller.sessKey', 'session value');
  *
@@ -56,7 +56,7 @@ class SessionComponent extends Component {
 	}
 
 /**
- * Used to read a session values for a key or return values for all keys.
+ * Reads a session value for a key or returns values for all keys.
  *
  * In your controller: $this->Session->read('Controller.sessKey');
  * Calling the method without a param will return all session vars
@@ -70,7 +70,7 @@ class SessionComponent extends Component {
 	}
 
 /**
- * Wrapper for SessionComponent::del();
+ * Deletes a session value for a key.
  *
  * In your controller: $this->Session->delete('Controller.sessKey');
  *
@@ -83,7 +83,19 @@ class SessionComponent extends Component {
 	}
 
 /**
- * Used to check if a session variable is set
+ * Reads and deletes a session value for a key.
+ *
+ * In your controller: `$this->Session->consume('Controller.sessKey');`
+ *
+ * @param string $name the name of the session key you want to read
+ * @return mixed values from the session vars
+ */
+	public function consume($name) {
+		return CakeSession::consume($name);
+	}
+
+/**
+ * Checks if a session variable is set.
  *
  * In your controller: $this->Session->check('Controller.sessKey');
  *

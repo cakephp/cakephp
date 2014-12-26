@@ -30,7 +30,7 @@ App::uses('CakeSession', 'Model/Datasource');
 class SessionHelper extends AppHelper {
 
 /**
- * Used to read a session values set in a controller for a key or return values for all keys.
+ * Reads a session value for a key or returns values for all keys.
  *
  * In your view: `$this->Session->read('Controller.sessKey');`
  * Calling the method without a param will return all session vars
@@ -44,7 +44,19 @@ class SessionHelper extends AppHelper {
 	}
 
 /**
- * Used to check is a session key has been set
+ * Reads and deletes a session value for a key.
+ *
+ * In your view: `$this->Session->consume('Controller.sessKey');`
+ *
+ * @param string $name the name of the session key you want to read
+ * @return mixed values from the session vars
+ */
+	public function consume($name) {
+		return CakeSession::consume($name);
+	}
+
+/**
+ * Checks if a session key has been set.
  *
  * In your view: `$this->Session->check('Controller.sessKey');`
  *
