@@ -67,10 +67,10 @@ class OpenSsl {
  * @param string $cipher The ciphertext to decrypt.
  * @param string $key The 256 bit/32 byte key to use as a cipher key.
  * @return string Decrypted data. Any trailing null bytes will be removed.
- * @throws InvalidArgumentException On invalid data or key.
+ * @throws \InvalidArgumentException On invalid data or key.
  */
 	public static function decrypt($cipher, $key) {
-		$method = 'aes-256-cbc';
+		$method = 'AES-256-CBC';
 		$ivSize = openssl_cipher_iv_length($method);
 
 		$iv = substr($cipher, 0, $ivSize);
