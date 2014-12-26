@@ -105,10 +105,10 @@ class Security {
  */
 	public static function engine($instance = null) {
 		if ($instance === null && static::$_instance === null) {
-			if (extension_loaded('openssl')) {
-				$instance = new Openssl();
-			} elseif (extension_loaded('mcrypt')) {
+			if (extension_loaded('mcrypt')) {
 				$instance = new Mcrypt();
+			} elseif (extension_loaded('openssl')) {
+				$instance = new Openssl();
 			}
 		}
 		if ($instance) {
