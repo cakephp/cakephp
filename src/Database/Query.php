@@ -388,7 +388,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	}
 
 /**
- * Adds a single or multiple tables to be used as JOIN clauses this query.
+ * Adds a single or multiple tables to be used as JOIN clauses to this query.
  * Tables can be passed as an array of strings, an array describing the
  * join parts, an array with multiple join descriptions, or a single string.
  *
@@ -396,10 +396,10 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * to be joined, unless the third argument is set to true.
  *
  * When no join type is specified an INNER JOIN is used by default:
- * ``$query->join(['authors'])`` Will produce INNER JOIN authors ON (1 = 1)
+ * ``$query->join(['authors'])`` Will produce ``INNER JOIN authors ON 1 = 1``
  *
  * It is also possible to alias joins using the array key:
- * ``$query->join(['a' => 'authors'])`` Will produce INNER JOIN authors a ON (1 = 1)
+ * ``$query->join(['a' => 'authors'])`` Will produce ``INNER JOIN authors a ON 1 = 1``
  *
  * A join can be fully described and aliased using the array notation:
  *
@@ -411,7 +411,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *			'conditions' => 'a.id = b.author_id'
  *		]
  *	]);
- *  // Produces LEFT JOIN authors a ON (a.id = b.author_id)
+ *  // Produces LEFT JOIN authors a ON a.id = b.author_id
  * }}}
  *
  * You can even specify multiple joins in an array, including the full description:
@@ -424,20 +424,20 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *			'conditions' => 'a.id = b.author_id'
  *		],
  *		'p' => [
- *			'table' => 'products',
+ *			'table' => 'publishers',
  *			'type' => 'INNER',
- *			'conditions' => 'a.owner_id = p.id
+ *			'conditions' => 'p.id = b.publisher_id AND p.name = "Cake Software Foundation"'
  *		]
  *	]);
- *	// LEFT JOIN authors a ON (a.id = b.author_id)
- *	// INNER JOIN products p (a.owner_id = p.id)
+ *	// LEFT JOIN authors a ON a.id = b.author_id
+ *	// INNER JOIN publishers p ON p.id = b.publisher_id AND p.name = "Cake Software Foundation"
  * }}}
  *
  * ### Using conditions and types
  *
  * Conditions can be expressed, as in the examples above, using a string for comparing
  * columns, or string with already quoted literal values. Additionally it is
- * possible to using conditions expressed in arrays or expression objects.
+ * possible to use conditions expressed in arrays or expression objects.
  *
  * When using arrays for expressing conditions, it is often desirable to convert
  * the literal values to the correct database representation. This is achieved
@@ -448,7 +448,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *		'table' => 'articles',
  *		'conditions' => [
  *			'a.posted >=' => new DateTime('-3 days'),
- *			'a.published' => true
+ *			'a.published' => true,
  *			'a.author_id = authors.id'
  *		]
  *	]], ['a.posted' => 'datetime', 'a.published' => 'boolean'])
@@ -513,18 +513,32 @@ class Query implements ExpressionInterface, IteratorAggregate {
 /**
  * Adds a single LEFT JOIN clause to the query.
  *
- * {{{
- * // LEFT JOIN authors ON posts.author_id' = authors.id
- * $query->leftJoin('authors', ['posts.author_id' = authors.id']);
- * }}}
+ * This is a shorthand method for building joins via `join()`.
  *
- * You can pass an array in the first parameter if you need to alias
- * the table for the join:
+ * The table name can be passed as a string, or as an array in case it needs to
+ * be aliased:
  *
  * {{{
- * // LEFT JOIN authors a ON posts.author_id' = a.id
- * $query->leftJoin(['a' => 'authors'], ['posts.author_id' = 'a.id']);
+ * // LEFT JOIN authors ON authors.id = posts.author_id
+ * $query->leftJoin('authors', 'authors.id = posts.author_id');
+ *
+ * // LEFT JOIN authors a ON a.id = posts.author_id
+ * $query->leftJoin(['a' => 'authors'], 'a.id = posts.author_id');
  * }}}
+ *
+ * Conditions can be passed as strings, arrays, or expression objects. When
+ * using arrays it is possible to combine them with the `$types` parameter
+ * in order to define how to convert the values:
+ *
+ * {{{
+ * $query->leftJoin(['a' => 'articles'], [
+ *		'a.posted >=' => new DateTime('-3 days'),
+ *		'a.published' => true,
+ *		'a.author_id = authors.id'
+ * ], ['a.posted' => 'datetime', 'a.published' => 'boolean']);
+ * }}}
+ *
+ * See `join()` for further details on conditions and types.
  *
  * @param string|array $table The table to join with
  * @param string|array|\Cake\Database\ExpressionInterface $conditions The conditions
@@ -540,18 +554,10 @@ class Query implements ExpressionInterface, IteratorAggregate {
 /**
  * Adds a single RIGHT JOIN clause to the query.
  *
- * {{{
- * // RIGHT JOIN authors ON posts.author_id' = authors.id
- * $query->rightJoin('authors', ['posts.author_id' = authors.id']);
- * }}}
+ * This is a shorthand method for building joins via `join()`.
  *
- * You can pass an array in the first parameter if you need to alias
- * the table for the join:
- *
- * {{{
- * // RIGHT JOIN authors a ON posts.author_id' = a.id
- * $query->righJoin(['a' => 'authors'], ['posts.author_id' = 'a.id']);
- * }}}
+ * The arguments of this method are identical to the `leftJoin()` shorthand, please refer
+ * to that methods description for further details.
  *
  * @param string|array $table The table to join with
  * @param string|array|\Cake\Database\ExpressionInterface $conditions The conditions
@@ -567,18 +573,10 @@ class Query implements ExpressionInterface, IteratorAggregate {
 /**
  * Adds a single INNER JOIN clause to the query.
  *
- * {{{
- * // INNER JOIN authors ON posts.author_id' = authors.id
- * $query->innerJoin('authors', ['posts.author_id' = authors.id']);
- * }}}
+ * This is a shorthand method for building joins via `join()`.
  *
- * You can pass an array in the first parameter if you need to alias
- * the table for the join:
- *
- * {{{
- * // INNER JOIN authors a ON posts.author_id' = a.id
- * $query->innerJoin(['a' => 'authors'], ['posts.author_id' = 'a.id']);
- * }}}
+ * The arguments of this method are identical to the `leftJoin()` shorthand, please refer
+ * to that methods description for further details.
  *
  * @param string|array $table The table to join with
  * @param string|array|\Cake\Database\ExpressionInterface $conditions The conditions
