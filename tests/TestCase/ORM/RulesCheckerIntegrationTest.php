@@ -135,7 +135,8 @@ class RulesCheckerIntegrationTest extends TestCase {
 		$table->association('articles')
 			->target()
 			->rulesChecker()
-			->add(function (Entity $entity) {
+			->add(function (Entity $entity, $options) use ($table) {
+				$this->assertSame($table, $options['_sourceTable']);
 				return $entity->title === '1';
 			}, ['errorField' => 'title', 'message' => 'This is an error']);
 
@@ -562,4 +563,44 @@ class RulesCheckerIntegrationTest extends TestCase {
 		$entity = $table->get(1);
 		$this->assertFalse($table->delete($entity, ['foo' => 'bar']));
 	}
+
+/**
+ * Tests that using existsIn for a hasMany association will not be called
+ * as the foreign key for the association was automatically validated already.
+ *
+ * @group save
+ * @return void
+ */
+	public function testAvoidExistsInOnAutomaticSaving() {
+		$entity = new \Cake\ORM\Entity([
+			'name' => 'Jose'
+		]);
+		$entity->articles = [
+			new \Cake\ORM\Entity([
+				'title' => '1',
+				'body' => 'A body'
+			]),
+			new \Cake\ORM\Entity([
+				'title' => 'Another Title',
+				'body' => 'Another body'
+			])
+		];
+
+		$table = TableRegistry::get('authors');
+		$table->hasMany('articles');
+		$table->association('articles')->belongsTo('authors');
+		$checker = $table->association('articles')->target()->rulesChecker();
+		$checker->add(function ($entity, $options) use ($checker) {
+			$rule = $checker->existsIn('author_id', 'authors');
+			$id = $entity->author_id;
+			$entity->author_id = 5000;
+			$result = $rule($entity, $options);
+			$this->assertTrue($result);
+			$entity->author_id = $id;
+			return true;
+		});
+
+		$this->assertSame($entity, $table->save($entity));
+	}
+
 }

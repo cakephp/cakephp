@@ -90,6 +90,7 @@ class HasMany extends Association {
 		);
 		$target = $this->target();
 		$original = $targetEntities;
+		$options['_sourceTable'] = $this->source();
 
 		foreach ($targetEntities as $k => $targetEntity) {
 			if (!($targetEntity instanceof EntityInterface)) {

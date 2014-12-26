@@ -15,6 +15,7 @@
 namespace Cake\ORM\Rule;
 
 use Cake\Datasource\EntityInterface;
+use Cake\ORM\Association;
 
 /**
  * Checks that the value provided in a field exists as the primary key of another
@@ -59,6 +60,15 @@ class ExistsIn {
 	public function __invoke(EntityInterface $entity, array $options) {
 		if (is_string($this->_repository)) {
 			$this->_repository = $options['repository']->association($this->_repository);
+		}
+
+		if (!empty($options['_sourceTable'])) {
+			$source = $this->_repository instanceof Association ?
+				$this->_repository->target() :
+				$this->_repository;
+			if ($source === $options['_sourceTable']) {
+				return true;
+			}
 		}
 
 		if (!$entity->extract($this->_fields, true)) {
