@@ -63,7 +63,7 @@ class CsrfComponentTest extends TestCase {
 		$controller->response = new Response();
 
 		$event = new Event('Controller.startup', $controller);
-		$this->component->startUp($event);
+		$this->component->startup($event);
 
 		$cookie = $controller->response->cookie('csrfToken');
 		$this->assertNotEmpty($cookie, 'Should set a token.');
@@ -101,7 +101,7 @@ class CsrfComponentTest extends TestCase {
 		$controller->response = new Response();
 
 		$event = new Event('Controller.startup', $controller);
-		$result = $this->component->startUp($event);
+		$result = $this->component->startup($event);
 		$this->assertNull($result, 'No exception means valid.');
 	}
 
@@ -124,7 +124,7 @@ class CsrfComponentTest extends TestCase {
 		$controller->response = new Response();
 
 		$event = new Event('Controller.startup', $controller);
-		$this->component->startUp($event);
+		$this->component->startup($event);
 	}
 
 /**
@@ -145,7 +145,7 @@ class CsrfComponentTest extends TestCase {
 		$controller->response = new Response();
 
 		$event = new Event('Controller.startup', $controller);
-		$result = $this->component->startUp($event);
+		$result = $this->component->startup($event);
 		$this->assertNull($result, 'No exception means valid.');
 	}
 
@@ -168,7 +168,7 @@ class CsrfComponentTest extends TestCase {
 		$controller->response = new Response();
 
 		$event = new Event('Controller.startup', $controller);
-		$this->component->startUp($event);
+		$this->component->startup($event);
 	}
 
 /**
@@ -189,7 +189,7 @@ class CsrfComponentTest extends TestCase {
 		$controller->response = new Response();
 
 		$event = new Event('Controller.startup', $controller);
-		$result = $this->component->startUp($event);
+		$result = $this->component->startup($event);
 		$this->assertNull($result, 'No error.');
 		$this->assertEquals('testing123', $controller->request->params['_csrfToken']);
 	}
@@ -214,7 +214,7 @@ class CsrfComponentTest extends TestCase {
 		]);
 
 		$event = new Event('Controller.startup', $controller);
-		$component->startUp($event);
+		$component->startup($event);
 
 		$this->assertEmpty($controller->response->cookie('csrfToken'));
 		$cookie = $controller->response->cookie('token');
@@ -248,7 +248,7 @@ class CsrfComponentTest extends TestCase {
 		]);
 
 		$event = new Event('Controller.startup', $controller);
-		$result = $component->startUp($event);
+		$result = $component->startup($event);
 		$this->assertNull($result, 'Config settings should work.');
 	}
 
