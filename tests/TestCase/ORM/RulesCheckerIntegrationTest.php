@@ -396,11 +396,19 @@ class RulesCheckerIntegrationTest extends TestCase {
 		$rules = $table->rulesChecker();
 		$rules->add($rules->existsIn('author_id', TableRegistry::get('Authors'), 'Nope'));
 
-		$table->eventManager()->attach(function ($event, Entity $entity, RulesChecker $check) {
-			$this->assertSame($event->subject()->rulesChecker(), $check);
-			$event->stopPropagation();
-			return true;
-		}, 'Model.beforeRules');
+		$table->eventManager()->attach(
+			function ($event, Entity $entity, \ArrayObject $options, $operation, RulesChecker $check) {
+				$this->assertEquals(
+					['atomic' => true, 'associated' => true, 'checkRules' => true],
+					$options->getArrayCopy()
+				);
+				$this->assertEquals('create', $operation);
+				$this->assertSame($event->subject()->rulesChecker(), $check);
+				$event->stopPropagation();
+				return true;
+			},
+			'Model.beforeRules'
+		);
 
 		$this->assertSame($entity, $table->save($entity));
 	}
@@ -421,12 +429,20 @@ class RulesCheckerIntegrationTest extends TestCase {
 		$rules = $table->rulesChecker();
 		$rules->add($rules->existsIn('author_id', TableRegistry::get('Authors'), 'Nope'));
 
-		$table->eventManager()->attach(function ($event, Entity $entity, RulesChecker $check, $result) {
-			$this->assertSame($event->subject()->rulesChecker(), $check);
-			$this->assertFalse($result);
-			$event->stopPropagation();
-			return true;
-		}, 'Model.afterRules');
+		$table->eventManager()->attach(
+			function ($event, Entity $entity, \ArrayObject $options, $result, $operation, RulesChecker $check) {
+				$this->assertEquals(
+					['atomic' => true, 'associated' => true, 'checkRules' => true],
+					$options->getArrayCopy()
+				);
+				$this->assertEquals('create', $operation);
+				$this->assertSame($event->subject()->rulesChecker(), $check);
+				$this->assertFalse($result);
+				$event->stopPropagation();
+				return true;
+			},
+			'Model.afterRules'
+		);
 
 		$this->assertSame($entity, $table->save($entity));
 	}
