@@ -102,6 +102,7 @@ class Security {
  *
  * @param object $instance The crypto instance to use.
  * @return object Crypto instance.
+ * @throws \InvalidArgumentException When no compatible crypto extension is available.
  */
 	public static function engine($instance = null) {
 		if ($instance === null && static::$_instance === null) {

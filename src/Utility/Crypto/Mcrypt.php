@@ -31,6 +31,7 @@ class Mcrypt {
  * @param string $key Key to use as the encryption key for encrypted data.
  * @param string $operation Operation to perform, encrypt or decrypt
  * @throws \LogicException When there are errors.
+ * @return string Encrytped binary string data, or decrypted data depending on operation.
  */
 	public static function rijndael($text, $key, $operation) {
 		$algorithm = MCRYPT_RIJNDAEL_256;

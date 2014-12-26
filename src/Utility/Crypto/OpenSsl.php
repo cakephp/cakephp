@@ -28,13 +28,13 @@ namespace Cake\Utility\Crypto;
 class OpenSsl {
 
 /**
- * Encrypts/Decrypts a text using the given key using rijndael method.
+ * Not implemented
  *
  * @param string $text Encrypted string to decrypt, normal string to encrypt
  * @param string $key Key to use as the encryption key for encrypted data.
  * @param string $operation Operation to perform, encrypt or decrypt
- * @throws \InvalidArgumentException When there are errors.
- * @return string Encrypted/Decrypted string
+ * @throws \LogicException Rijndael compatibility does not exist with Openssl.
+ * @return void
  */
 	public static function rijndael($text, $key, $operation) {
 		throw new \LogicException('rijndael is not compatible with OpenSSL. Use mcrypt instead.');
