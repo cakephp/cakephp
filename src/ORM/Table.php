@@ -1506,7 +1506,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			throw new \InvalidArgumentException($msg);
 		}
 
-		if ($options['checkRules'] && !$this->checkRules($entity, RulesChecker::DELETE)) {
+		if ($options['checkRules'] && !$this->checkRules($entity, RulesChecker::DELETE, $options)) {
 			return false;
 		}
 

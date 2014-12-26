@@ -522,4 +522,44 @@ class RulesCheckerIntegrationTest extends TestCase {
 		$this->assertFalse($table->delete($entity));
 	}
 
+/**
+ * Checks that it is possible to pass custom options to rules when saving
+ *
+ * @group save
+ * @return void
+ */
+	public function testCustomOptionsPassingSave() {
+		$entity = new Entity([
+			'name' => 'jose'
+		]);
+
+		$table = TableRegistry::get('Authors');
+		$rules = $table->rulesChecker();
+		$rules->add(function ($entity, $options) {
+			$this->assertEquals('bar', $options['foo']);
+			$this->assertEquals('option', $options['another']);
+			return false;
+		}, ['another' => 'option']);
+
+		$this->assertFalse($table->save($entity, ['foo' => 'bar']));
+	}
+
+/**
+ * Tests passing custom options to rules from delete
+ *
+ * @group delete
+ * @return void
+ */
+	public function testCustomOptionsPassingDelete() {
+		$table = TableRegistry::get('Articles');
+		$rules = $table->rulesChecker();
+		$rules->addDelete(function ($entity, $options) {
+			$this->assertEquals('bar', $options['foo']);
+			$this->assertEquals('option', $options['another']);
+			return false;
+		}, ['another' => 'option']);
+
+		$entity = $table->get(1);
+		$this->assertFalse($table->delete($entity, ['foo' => 'bar']));
+	}
 }
