@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM;
 
+use ArrayObject;
 use BadMethodCallException;
 use Cake\Core\App;
 use Cake\Database\Schema\Table as Schema;
@@ -1222,7 +1223,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
  *
  */
 	public function save(EntityInterface $entity, $options = []) {
-		$options = new \ArrayObject($options + [
+		$options = new ArrayObject($options + [
 			'atomic' => true,
 			'associated' => true,
 			'checkRules' => true
@@ -1269,7 +1270,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 		}
 
 		$mode = $entity->isNew() ? RulesChecker::CREATE : RulesChecker::UPDATE;
-		if ($options['checkRules'] && !$this->checkRules($entity, $mode)) {
+		if ($options['checkRules'] && !$this->checkRules($entity, $mode, $options)) {
 			return false;
 		}
 
@@ -1469,7 +1470,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
  *
  */
 	public function delete(EntityInterface $entity, $options = []) {
-		$options = new \ArrayObject($options + ['atomic' => true, 'checkRules' => true]);
+		$options = new ArrayObject($options + ['atomic' => true, 'checkRules' => true]);
 
 		$process = function () use ($entity, $options) {
 			return $this->_processDelete($entity, $options);
@@ -1905,24 +1906,28 @@ class Table implements RepositoryInterface, EventListenerInterface {
  * the rules checker.
  *
  * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.
+ * @param \ArrayObject|array $options The options To be passed to the rules.
  * @param string $operation Either 'create, 'update' or 'delete'.
  * @return bool
  */
-	public function checkRules(EntityInterface $entity, $operation = RulesChecker::CREATE) {
+	public function checkRules(EntityInterface $entity, $operation = RulesChecker::CREATE, $options = null) {
 		$rules = $this->rulesChecker();
+		$options = $options ?: new ArrayObject;
+		$options = is_array($options) ? new ArrayObject($options) : $options;
+
 		$event = $this->dispatchEvent(
 			'Model.beforeRules',
-			compact('entity', 'rules', 'operation')
+			compact('entity', 'options', 'operation', 'rules')
 		);
 
 		if ($event->isStopped()) {
 			return $event->result;
 		}
 
-		$result = $rules->check($entity, $operation);
+		$result = $rules->check($entity, $operation, $options->getArrayCopy());
 		$event = $this->dispatchEvent(
 			'Model.afterRules',
-			compact('entity', 'rules', 'result', 'operation')
+			compact('entity', 'options', 'result', 'operation', 'rules')
 		);
 
 		if ($event->isStopped()) {

@@ -203,20 +203,21 @@ class RulesChecker {
  *
  * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.
  * @param string $mode Either 'create, 'update' or 'delete'.
+ * @param array $options Extra options to pass to checker functions.
  * @return bool
  * @throws \InvalidArgumentException if an invalid mode is passed.
  */
-	public function check(EntityInterface $entity, $mode) {
+	public function check(EntityInterface $entity, $mode, array $options = []) {
 		if ($mode === self::CREATE) {
-			return $this->checkCreate($entity);
+			return $this->checkCreate($entity, $options);
 		}
 
 		if ($mode === self::UPDATE) {
-			return $this->checkUpdate($entity);
+			return $this->checkUpdate($entity, $options);
 		}
 
 		if ($mode === self::DELETE) {
-			return $this->checkDelete($entity);
+			return $this->checkDelete($entity, $options);
 		}
 
 		throw new InvalidArgumentException('Wrong checking mode: ' . $mode);
@@ -227,12 +228,14 @@ class RulesChecker {
  * of them pass. The rules selected will be only those specified to be run on 'create'
  *
  * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.
+ * @param array $options Extra options to pass to checker functions.
  * @return bool
  */
-	public function checkCreate(EntityInterface $entity) {
+	public function checkCreate(EntityInterface $entity, array $options = []) {
 		$success = true;
+		$options = $options + $this->_options;
 		foreach (array_merge($this->_rules, $this->_createRules) as $rule) {
-			$success = $rule($entity, $this->_options) && $success;
+			$success = $rule($entity, $options) && $success;
 		}
 		return $success;
 	}
@@ -242,12 +245,14 @@ class RulesChecker {
  * of them pass. The rules selected will be only those specified to be run on 'update'
  *
  * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.
+ * @param array $options Extra options to pass to checker functions.
  * @return bool
  */
-	public function checkUpdate(EntityInterface $entity) {
+	public function checkUpdate(EntityInterface $entity, array $options = []) {
 		$success = true;
+		$options = $options + $this->_options;
 		foreach (array_merge($this->_rules, $this->_updateRules) as $rule) {
-			$success = $rule($entity, $this->_options) && $success;
+			$success = $rule($entity, $options) && $success;
 		}
 		return $success;
 	}
@@ -257,12 +262,14 @@ class RulesChecker {
  * of them pass. The rules selected will be only those specified to be run on 'delete'
  *
  * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.
+ * @param array $options Extra options to pass to checker functions.
  * @return bool
  */
-	public function checkDelete(EntityInterface $entity) {
+	public function checkDelete(EntityInterface $entity, array $options = []) {
 		$success = true;
+		$options = $options + $this->_options;
 		foreach ($this->_deleteRules as $rule) {
-			$success = $rule($entity, $this->_options) && $success;
+			$success = $rule($entity, $options) && $success;
 		}
 		return $success;
 	}
