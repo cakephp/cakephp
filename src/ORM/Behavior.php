@@ -61,11 +61,11 @@ use Cake\Event\EventListenerInterface;
  *   Fired when the rules checking object for the table is being built. You can use this
  *   callback to add more rules to the set.
  *
- * - `beforeRules(Event $event, Entity $entity, RulesChecker $rules)`
+ * - `beforeRules(Event $event, Entity $entity, ArrayObject $options, $operation, RulesChecker $rules)`
  *   Fired before an entity is validated using by a rules checker. By stopping this event,
  *   you can return the final value of the rules checking operation.
  *
- * - `afterRules(Event $event, Entity $entity, RulesChecker $rules, bool $result)`
+ * - `afterRules(Event $event, Entity $entity, ArrayObject $options, bool $result, $operation, RulesChecker $rules,)`
  *   Fired after the rules have been checked on the entity. By stopping this event,
  *   you can return the final value of the rules checking operation.
  *

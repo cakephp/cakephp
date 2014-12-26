@@ -1168,12 +1168,13 @@ class Table implements RepositoryInterface, EventListenerInterface {
  *
  * - Model.beforeRules: Will be triggered right before any rule checking is done
  *   for the passed entity if the `checkRules` key in $options is not set to false.
- *   Listeners will receive as arguments the entity and the
- *   RulesChecker object to be used for validating the entity. If the event is
+ *   Listeners will receive as arguments the entity, options array, the operation type
+ *   and the RulesChecker object to be used for validating the entity. If the event is
  *   stopped the checking result will be set to the result of the event itself.
  * - Model.afterRules: Will be triggered right after the `checkRules()` method is
- *   called for the entity. Listeners will receive as arguments the entity, the
- *   RulesChecker object that was used and the result of checking the rules.
+ *   called for the entity. Listeners will receive as arguments the entity,
+ *   options array, the operation type, the result of checking the rules and the
+ *   RulesChecker object that was used.
  *   If the event is stopped the checking result will be set to the result of
  *   the event itself.
  * - Model.beforeSave: Will be triggered just before the list of fields to be
