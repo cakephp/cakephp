@@ -1909,7 +1909,6 @@ class Table implements RepositoryInterface, EventListenerInterface {
  * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.
  * @param string $operation The operation being run. Either 'create', 'update' or 'delete'.
  * @param \ArrayObject|array $options The options To be passed to the rules.
- * @param string $operation Either 'create, 'update' or 'delete'.
  * @return bool
  */
 	public function checkRules(EntityInterface $entity, $operation = RulesChecker::CREATE, $options = null) {
