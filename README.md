@@ -7,8 +7,8 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/cakephp/cakephp.svg?style=flat-square)](https://packagist.org/packages/cakephp/cakephp)
 
 [CakePHP](http://www.cakephp.org) is a rapid development framework for PHP which
-uses commonly known design patterns like Active Record, Association Data
-Mapping, Front Controller and MVC.  Our primary goal is to provide a structured
+uses commonly known design patterns like Associative Data
+Mapping, Front Controller, and MVC.  Our primary goal is to provide a structured
 framework that enables PHP users at all levels to rapidly develop robust web
 applications, without any loss to flexibility.
 
