@@ -1,4 +1,4 @@
-# CakePHP framework
+# CakePHP Framework
 
 [![Bake Status](https://secure.travis-ci.org/cakephp/cakephp.png?branch=3.0)](http://travis-ci.org/cakephp/cakephp)
 [![Latest Stable Version](https://poser.pugx.org/cakephp/cakephp/v/stable.svg)](https://packagist.org/packages/cakephp/cakephp)
@@ -14,7 +14,7 @@ and MVC.  Our primary goal is to provide a structured framework that enables
 PHP users at all levels to rapidly develop robust web applications, without any
 loss to flexibility.
 
-## Installing CakePHP via composer
+## Installing CakePHP via Composer
 
 You can install CakePHP into your project using
 [composer](http://getcomposer.org).  If you're starting a new project, we
@@ -28,7 +28,7 @@ a starting point. For existing applications you can add the following to your
 
 And run `php composer.phar update`
 
-## Running tests
+## Running Tests
 
 Assuming you have PHPUnit installed system wide using one of the methods stated
 [here](http://phpunit.de/manual/current/en/installation.html), you can run the
@@ -46,30 +46,30 @@ See CONTRIBUTING.md for more information.
 
 ## Some Handy Links
 
-[CakePHP](http://www.cakephp.org) - The rapid development PHP framework
+[CakePHP](http://www.cakephp.org) - The rapid development PHP framework.
 
 [CookBook](http://book.cakephp.org) - THE CakePHP user documentation; start learning here!
 
-[API](http://api.cakephp.org) - A reference to CakePHP's classes
+[API](http://api.cakephp.org) - A reference to CakePHP's classes.
 
-[Plugins](http://plugins.cakephp.org) - A repository of extensions to the framework
+[Plugins](http://plugins.cakephp.org) - A repository of extensions to the framework.
 
-[The Bakery](http://bakery.cakephp.org) - Tips, tutorials and articles
+[The Bakery](http://bakery.cakephp.org) - Tips, tutorials and articles.
 
-[Community Center](http://community.cakephp.org) - A source for everything community related
+[Community Center](http://community.cakephp.org) - A source for everything community related.
 
-[Training](http://training.cakephp.org) - Join a live session and get skilled with the framework
+[Training](http://training.cakephp.org) - Join a live session and get skilled with the framework.
 
-[CakeFest](http://cakefest.org) - Don't miss our annual CakePHP conference
+[CakeFest](http://cakefest.org) - Don't miss our annual CakePHP conference.
 
-[Cake Software Foundation](http://cakefoundation.org) - Promoting development related to CakePHP
+[Cake Software Foundation](http://cakefoundation.org) - Promoting development related to CakePHP.
 
 
 ## Get Support!
 
-[#cakephp](http://webchat.freenode.net/?channels=#cakephp) on irc.freenode.net - Come chat with us, we have cake
+[#cakephp](http://webchat.freenode.net/?channels=#cakephp) on irc.freenode.net - Come chat with us, we have cake.
 
-[Google Group](https://groups.google.com/group/cake-php) - Community mailing list and forum
+[Google Group](https://groups.google.com/group/cake-php) - Community mailing list and forum.
 
 [GitHub Issues](https://github.com/cakephp/cakephp/issues) - Got issues? Please tell us!
 
@@ -77,6 +77,6 @@ See CONTRIBUTING.md for more information.
 
 ## Contributing
 
-[CONTRIBUTING.md](CONTRIBUTING.md) - Quick pointers for contributing to the CakePHP project
+[CONTRIBUTING.md](CONTRIBUTING.md) - Quick pointers for contributing to the CakePHP project.
 
-[CookBook "Contributing" Section (2.x)](http://book.cakephp.org/2.0/en/contributing.html) [(3.0)](http://book.cakephp.org/3.0/en/contributing.html) - Version-specific details about contributing to the project
+[CookBook "Contributing" Section (2.x)](http://book.cakephp.org/2.0/en/contributing.html) [(3.0)](http://book.cakephp.org/3.0/en/contributing.html) - Version-specific details about contributing to the project.
