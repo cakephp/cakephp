@@ -15,7 +15,7 @@ applications, without any loss to flexibility.
 ## Installing CakePHP via Composer
 
 You can install CakePHP into your project using
-[composer](http://getcomposer.org).  If you're starting a new project, we
+[Composer](http://getcomposer.org).  If you're starting a new project, we
 recommend using the [app skeleton](https://github.com/cakephp/app) as
 a starting point. For existing applications you can run the following:
 
@@ -74,4 +74,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
 
 [CONTRIBUTING.md](CONTRIBUTING.md) - Quick pointers for contributing to the CakePHP project.
 
-[CookBook "Contributing" Section (2.x)](http://book.cakephp.org/2.0/en/contributing.html) [(3.0)](http://book.cakephp.org/3.0/en/contributing.html) - Version-specific details about contributing to the project.
+[CookBook "Contributing" Section](http://book.cakephp.org/3.0/en/contributing.html) - Details about contributing to the project.
