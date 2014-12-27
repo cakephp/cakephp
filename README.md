@@ -1,10 +1,10 @@
 # CakePHP Framework
 
-[![Bake Status](https://secure.travis-ci.org/cakephp/cakephp.png?branch=3.0)](http://travis-ci.org/cakephp/cakephp)
-[![Latest Stable Version](https://poser.pugx.org/cakephp/cakephp/v/stable.svg)](https://packagist.org/packages/cakephp/cakephp)
-[![License](https://poser.pugx.org/cakephp/cakephp/license.svg)](https://packagist.org/packages/cakephp/cakephp)
-[![Bake Status](https://secure.travis-ci.org/cakephp/cakephp.png?branch=master)](http://travis-ci.org/cakephp/cakephp)
-[![Code consistency](http://squizlabs.github.io/PHP_CodeSniffer/analysis/cakephp/cakephp/grade.svg)](http://squizlabs.github.io/PHP_CodeSniffer/analysis/cakephp/cakephp/)
+[![Latest Version](https://img.shields.io/github/release/cakephp/cakephp.svg?style=flat-square)](https://github.com/cakephp/cakephp/releases)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.txt)
+[![Build Status](https://img.shields.io/travis/cakephp/cakephp/master.svg?style=flat-square)](https://travis-ci.org/cakephp/cakephp)
+[![Code Consistency](http://squizlabs.github.io/PHP_CodeSniffer/analysis/cakephp/cakephp/grade.svg)](http://squizlabs.github.io/PHP_CodeSniffer/analysis/cakephp/cakephp/)
+[![Total Downloads](https://img.shields.io/packagist/dt/cakephp/cakephp.svg?style=flat-square)](https://packagist.org/packages/cakephp/cakephp)
 
 [![CakePHP](http://cakephp.org/img/cake-logo.png)](http://www.cakephp.org)
 
