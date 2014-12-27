@@ -90,7 +90,7 @@ use RuntimeException;
  * - `buildRules(Event $event, RulesChecker $rules)`
  *   Allows listeners to modify the rules checker by adding more rules.
  *
- * - `beforeRules(Event $event, Entity $entity, RulesChecker $rules)`
+ * - `beforeRules(Event $event, Entity $entity, ArrayObject $options, string $operation)`
  *   Fired before an entity is validated using the rules checker. By stopping this event,
  *   you can return the final value of the rules checking operation.
  *
@@ -1168,13 +1168,11 @@ class Table implements RepositoryInterface, EventListenerInterface {
  *
  * - Model.beforeRules: Will be triggered right before any rule checking is done
  *   for the passed entity if the `checkRules` key in $options is not set to false.
- *   Listeners will receive as arguments the entity, options array, the operation type
- *   and the RulesChecker object to be used for validating the entity. If the event is
- *   stopped the checking result will be set to the result of the event itself.
+ *   Listeners will receive as arguments the entity, options array and the operation type.
+ *   If the event is stopped the checking result will be set to the result of the event itself.
  * - Model.afterRules: Will be triggered right after the `checkRules()` method is
  *   called for the entity. Listeners will receive as arguments the entity,
- *   options array, the operation type, the result of checking the rules and the
- *   RulesChecker object that was used.
+ *   options array, the result of checking the rules and the operation type.
  *   If the event is stopped the checking result will be set to the result of
  *   the event itself.
  * - Model.beforeSave: Will be triggered just before the list of fields to be
@@ -1918,7 +1916,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 
 		$event = $this->dispatchEvent(
 			'Model.beforeRules',
-			compact('entity', 'options', 'operation', 'rules')
+			compact('entity', 'options', 'operation')
 		);
 
 		if ($event->isStopped()) {
@@ -1928,7 +1926,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 		$result = $rules->check($entity, $operation, $options->getArrayCopy());
 		$event = $this->dispatchEvent(
 			'Model.afterRules',
-			compact('entity', 'options', 'result', 'operation', 'rules')
+			compact('entity', 'options', 'result', 'operation')
 		);
 
 		if ($event->isStopped()) {
