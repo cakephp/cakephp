@@ -19,14 +19,11 @@ loss to flexibility.
 You can install CakePHP into your project using
 [composer](http://getcomposer.org).  If you're starting a new project, we
 recommend using the [app skeleton](https://github.com/cakephp/app) as
-a starting point. For existing applications you can add the following to your
-`composer.json` file:
+a starting point. For existing applications you can run the following:
 
-	"require": {
-		"cakephp/cakephp": "3.0.*-dev"
-	}
-
-And run `php composer.phar update`
+``` bash
+$ composer require cakephp/cakephp:"3.0.*-dev"
+```
 
 ## Running Tests
 
