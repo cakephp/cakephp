@@ -36,7 +36,7 @@ tests for cakephp by doing the following:
 
 ## Contributing
 
-See CONTRIBUTING.md for more information.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
 
 
 ## Some Handy Links
