@@ -20,7 +20,6 @@
 	"require": {
 		"php": ">=5.4.16",
 		"ext-intl": "*",
-		"ext-mcrypt": "*",
 		"ext-mbstring": "*",
 		"nesbot/Carbon": "1.13.*",
 		"ircmaxell/password-compat": "1.0.*",
