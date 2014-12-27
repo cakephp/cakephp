@@ -38,7 +38,7 @@ before_script:
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi"
   - chmod -R 777 ./app/tmp
   - sudo apt-get install lighttpd
-  - sh -c "if [ '$PHPCS' = '1' ]; then composer global require 'cakephp/cakephp-codesniffer:*'; fi"
+  - sh -c "if [ '$PHPCS' = '1' ]; then composer global require 'cakephp/cakephp-codesniffer:1.*'; fi"
   - sh -c "if [ '$PHPCS' = '1' ]; then ~/.composer/vendor/bin/phpcs --config-set installed_paths ~/.composer/vendor/cakephp/cakephp-codesniffer; fi"
   - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - phpenv rehash
