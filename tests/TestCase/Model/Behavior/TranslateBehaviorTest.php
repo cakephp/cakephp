@@ -847,7 +847,7 @@ class TranslateBehaviorTest extends TestCase {
 	}
 
 /**
- * Tests that filterUntranslated will remove records from the result set
+ * Tests that onlyTranslated will remove records from the result set
  * if they are not fully translated
  * 
  * @return void
@@ -856,7 +856,7 @@ class TranslateBehaviorTest extends TestCase {
 		$table = TableRegistry::get('Articles');
 		$table->addBehavior('Translate', [
 			'fields' => ['title', 'body'],
-			'filterUntranslated' => true
+			'onlyTranslated' => true
 		]);
 		$table->locale('eng');
 		$results = $table->find()->where(['Articles.id' => 1])->all();
@@ -878,7 +878,7 @@ class TranslateBehaviorTest extends TestCase {
 		$table = TableRegistry::get('Comments');
 		$table->addBehavior('Translate', [
 			'fields' => ['comment'],
-			'filterUntranslated' => true
+			'onlyTranslated' => true
 		]);
 		$table->locale('eng');
 		$results = $table->find('translations')->all();

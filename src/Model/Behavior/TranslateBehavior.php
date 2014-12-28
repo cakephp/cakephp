@@ -67,7 +67,7 @@ class TranslateBehavior extends Behavior {
 		'translationTable' => 'i18n',
 		'defaultLocale' => '',
 		'model' => '',
-		'filterUntranslated' => false
+		'onlyTranslated' => false
 	];
 
 /**
@@ -108,7 +108,7 @@ class TranslateBehavior extends Behavior {
  * @return void
  */
 	public function setupFieldAssociations($fields, $table, $model) {
-		$filter = $this->_config['filterUntranslated'];
+		$filter = $this->_config['onlyTranslated'];
 		foreach ($fields as $field) {
 			$name = $this->_table->alias() . '_' . $field . '_translation';
 			$target = TableRegistry::get($name);
@@ -173,7 +173,7 @@ class TranslateBehavior extends Behavior {
 		$alias = $this->_table->alias();
 		$select = $query->clause('select');
 		$changeFilter = isset($options['filterByCurrentLocale']) &&
-			$options['filterByCurrentLocale'] !== $this->_config['filterUntranslated'];
+			$options['filterByCurrentLocale'] !== $this->_config['onlyTranslated'];
 
 		foreach ($fields as $field) {
 			$contain[$alias . '_' . $field . '_translation']['queryBuilder'] = $conditions(
