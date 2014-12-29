@@ -50,17 +50,6 @@ define('CONFIG', TEST_APP . 'config' . DS);
 @mkdir(CACHE . 'models');
 //@codingStandardsIgnoreEnd
 
-require CAKE . 'Core/ClassLoader.php';
-
-$loader = new Cake\Core\ClassLoader;
-$loader->register();
-
-$loader->addNamespace('TestApp', APP);
-$loader->addNamespace('TestPlugin', TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'src');
-$loader->addNamespace('TestPlugin\Test', TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'tests');
-$loader->addNamespace('TestPluginTwo', TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS . 'src');
-$loader->addNamespace('PluginJs', TEST_APP . 'Plugin' . DS . 'PluginJs' . DS . 'src');
-
 require_once CORE_PATH . 'config/bootstrap.php';
 
 date_default_timezone_set('UTC');
