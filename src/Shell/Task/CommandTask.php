@@ -41,8 +41,7 @@ class CommandTask extends Shell {
 		$plugins = Plugin::loaded();
 		$shellList = array_fill_keys($plugins, null) + ['CORE' => null, 'app' => null];
 
-		$corePath = App::core('Shell');
-		$shells = $this->_scanDir($corePath[0]);
+		$shells = $this->_scanDir(dirname(__DIR__));
 		$shells = array_diff($shells, $skipFiles, $hiddenCommands);
 		$shellList = $this->_appendShells('CORE', $shells, $shellList);
 

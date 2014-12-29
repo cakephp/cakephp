@@ -1023,7 +1023,13 @@ class View {
 				}
 			}
 		}
-		$paths = array_merge($themePaths, $pluginPaths, $viewPaths, App::core('Template'));
+
+		$paths = array_merge(
+			$themePaths,
+			$pluginPaths,
+			$viewPaths,
+			[dirname(__DIR__) . DS . 'Template' . DS]
+		);
 
 		if ($plugin !== null) {
 			return $this->_pathsForPlugin[$plugin] = $paths;
