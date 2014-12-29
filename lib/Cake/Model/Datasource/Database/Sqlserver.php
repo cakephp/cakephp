@@ -474,6 +474,9 @@ class Sqlserver extends DboSource {
 			if (in_array($length->Type, array('nchar', 'nvarchar'))) {
 				return floor($length->Length / 2);
 			}
+			if ($length->Type === 'text') {
+				return null;
+			}
 			return $length->Length;
 		}
 		return parent::length($length);
