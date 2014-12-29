@@ -145,11 +145,11 @@ interface RepositoryInterface {
  * on the primary key data existing in the database when the entity
  * is saved. Until the entity is saved, it will be a detached record.
  *
- * @param array $data The data to build an entity with.
+ * @param array|null $data The data to build an entity with.
  * @param array $options A list of options for the object hydration.
  * @return \Cake\Datasource\EntityInterface
  */
-	public function newEntity(array $data = [], array $options = []);
+	public function newEntity($data = null, array $options = []);
 
 /**
  * Create a list of entities + associated entities from an array.

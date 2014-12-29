@@ -1742,8 +1742,27 @@ class Table implements RepositoryInterface, EventListenerInterface {
  *   ['accessibleFields' => ['protected_field' => true]]
  * );
  * }}}
+ *
+ * By default, the data is validated before being passed to the new entity. In
+ * the case of invalid fields, those will not be present in the resulting object.
+ * The `validate` option can be used to disable validation on the passed data:
+ *
+ * {{{
+ * $article = $this->Articles->newEntity(
+ *   $this->request->data(),
+ *   ['validate' => false]
+ * );
+ * }}}
+ *
+ * You can also pass the name of the validator to use in the `validate` option.
+ * If `null` is passed to the first param of this function, no validation will
+ * be performed.
  */
-	public function newEntity(array $data = [], array $options = []) {
+	public function newEntity($data = null, array $options = []) {
+		if ($data === null) {
+			$class = $this->entityClass();
+			return new $class;
+		}
 		if (!isset($options['associated'])) {
 			$options['associated'] = $this->_associations->keys();
 		}
@@ -1801,6 +1820,16 @@ class Table implements RepositoryInterface, EventListenerInterface {
  *	'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
  *	]
  * );
+ * }}}
+ *
+ * By default, the data is validated before being passed to the entity. In
+ * the case of invalid fields, those will not be assigned to the entity.
+ * The `validate` option can be used to disable validation on the passed data:
+ *
+ * {{{
+ * $article = $this->patchEntity($article, $this->request->data(),[
+ *	'validate' => false
+ * ]);
  * }}}
  */
 	public function patchEntity(EntityInterface $entity, array $data, array $options = []) {

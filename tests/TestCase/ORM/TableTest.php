@@ -2100,6 +2100,23 @@ class TableTest extends TestCase {
 	}
 
 /**
+ * Tests that calling an entity with an empty array will run validation
+ * whereas calling it with no parameters will not run any validation.
+ *
+ * @return void
+ */
+	public function testNewEntityAndValidation() {
+		$table = TableRegistry::get('Articles');
+		$validator = $table->validator()->requirePresence('title');
+		$entity = $table->newEntity([]);
+		$errors = $entity->errors();
+		$this->assertNotEmpty($errors['title']);
+
+		$entity = $table->newEntity();
+		$this->assertEmpty($entity->errors());
+	}
+
+/**
  * Test magic findByXX method.
  *
  * @return void
