@@ -845,4 +845,56 @@ class TranslateBehaviorTest extends TestCase {
 
 		$this->assertTrue($found, '`model` field condition on a Translation association was not found');
 	}
+
+/**
+ * Tests that onlyTranslated will remove records from the result set
+ * if they are not fully translated
+ * 
+ * @return void
+ */
+	public function testFilterUntranslated() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', [
+			'fields' => ['title', 'body'],
+			'onlyTranslated' => true
+		]);
+		$table->locale('eng');
+		$results = $table->find()->where(['Articles.id' => 1])->all();
+		$this->assertCount(1, $results);
+
+		$table->locale('fr');
+		$results = $table->find()->where(['Articles.id' => 1])->all();
+		$this->assertCount(0, $results);
+	}
+
+/**
+ * Tests that records not translated in the current locale will not be
+ * present in the results for the translations finder, and also proves
+ * that this can be overridden.
+ *
+ * @return void
+ */
+	public function testFilterUntranslatedWithFinder() {
+		$table = TableRegistry::get('Comments');
+		$table->addBehavior('Translate', [
+			'fields' => ['comment'],
+			'onlyTranslated' => true
+		]);
+		$table->locale('eng');
+		$results = $table->find('translations')->all();
+		$this->assertCount(4, $results);
+
+		$table->locale('spa');
+		$results = $table->find('translations')->all();
+		$this->assertCount(1, $results);
+
+		$table->locale('spa');
+		$results = $table->find('translations', ['filterByCurrentLocale' => false])->all();
+		$this->assertCount(6, $results);
+
+		$table->locale('spa');
+		$results = $table->find('translations')->all();
+		$this->assertCount(1, $results);
+	}
+
 }
