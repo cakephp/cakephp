@@ -162,8 +162,7 @@ class Helper implements EventListenerInterface {
  * @return string onclick JS code
  */
 	protected function _confirm($message, $okCode, $cancelCode = '', $options = array()) {
-		$message = json_encode($message);
-		$confirm = "if (confirm({$message})) { {$okCode} } {$cancelCode}";
+		$confirm = "if (confirm('{$message}')) { {$okCode} } {$cancelCode}";
 		if (isset($options['escape']) && $options['escape'] === false) {
 			$confirm = h($confirm);
 		}
