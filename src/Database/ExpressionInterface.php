@@ -17,25 +17,25 @@ namespace Cake\Database;
 /**
  * An interface used by Expression objects.
  */
-interface ExpressionInterface {
+interface ExpressionInterface
+{
 
-/**
- * Converts the Node into a SQL string fragment.
- *
- * @param \Cake\Database\ValueBinder $generator Placeholder generator object
- * @return string
- */
-	public function sql(ValueBinder $generator);
+    /**
+     * Converts the Node into a SQL string fragment.
+     *
+     * @param \Cake\Database\ValueBinder $generator Placeholder generator object
+     * @return string
+     */
+    public function sql(ValueBinder $generator);
 
-/**
- * Iterates over each part of the expression recursively for every
- * level of the expressions tree and executes the $visitor callable
- * passing as first parameter the instance of the expression currently
- * being iterated.
- *
- * @param callable $visitor The callable to apply to all nodes.
- * @return void
- */
-	public function traverse(callable $visitor);
-
+    /**
+     * Iterates over each part of the expression recursively for every
+     * level of the expressions tree and executes the $visitor callable
+     * passing as first parameter the instance of the expression currently
+     * being iterated.
+     *
+     * @param callable $visitor The callable to apply to all nodes.
+     * @return void
+     */
+    public function traverse(callable $visitor);
 }

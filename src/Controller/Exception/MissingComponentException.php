@@ -18,8 +18,8 @@ use Cake\Core\Exception\Exception;
  * Used when a component cannot be found.
  *
  */
-class MissingComponentException extends Exception {
+class MissingComponentException extends Exception
+{
 
-	protected $_messageTemplate = 'Component class %s could not be found.';
-
+    protected $_messageTemplate = 'Component class %s could not be found.';
 }

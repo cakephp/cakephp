@@ -17,85 +17,87 @@ namespace Cake\Database\Driver;
 use Cake\Database\Dialect\MysqlDialectTrait;
 use PDO;
 
-class Mysql extends \Cake\Database\Driver {
+class Mysql extends \Cake\Database\Driver
+{
 
-	use MysqlDialectTrait;
-	use PDODriverTrait;
+    use MysqlDialectTrait;
+    use PDODriverTrait;
 
-/**
- * Base configuration settings for MySQL driver
- *
- * @var array
- */
-	protected $_baseConfig = [
-		'persistent' => true,
-		'host' => 'localhost',
-		'username' => 'root',
-		'password' => '',
-		'database' => 'cake',
-		'port' => '3306',
-		'flags' => [],
-		'encoding' => 'utf8',
-		'timezone' => null,
-		'init' => [],
-	];
+    /**
+     * Base configuration settings for MySQL driver
+     *
+     * @var array
+     */
+    protected $_baseConfig = [
+        'persistent' => true,
+        'host' => 'localhost',
+        'username' => 'root',
+        'password' => '',
+        'database' => 'cake',
+        'port' => '3306',
+        'flags' => [],
+        'encoding' => 'utf8',
+        'timezone' => null,
+        'init' => [],
+    ];
 
-/**
- * Establishes a connection to the database server
- *
- * @return bool true on success
- */
-	public function connect() {
-		if ($this->_connection) {
-			return true;
-		}
-		$config = $this->_config;
+    /**
+     * Establishes a connection to the database server
+     *
+     * @return bool true on success
+     */
+    public function connect()
+    {
+        if ($this->_connection) {
+            return true;
+        }
+        $config = $this->_config;
 
-		if ($config['timezone'] === 'UTC') {
-			$config['timezone'] = '+0:00';
-		}
+        if ($config['timezone'] === 'UTC') {
+            $config['timezone'] = '+0:00';
+        }
 
-		if (!empty($config['timezone'])) {
-			$config['init'][] = sprintf("SET time_zone = '%s'", $config['timezone']);
-		}
+        if (!empty($config['timezone'])) {
+            $config['init'][] = sprintf("SET time_zone = '%s'", $config['timezone']);
+        }
 
-		$config['flags'] += [
-			PDO::ATTR_PERSISTENT => $config['persistent'],
-			PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
-			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-		];
+        $config['flags'] += [
+            PDO::ATTR_PERSISTENT => $config['persistent'],
+            PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        ];
 
-		if (!empty($config['ssl_key']) && !empty($config['ssl_cert'])) {
-			$config['flags'][PDO::MYSQL_ATTR_SSL_KEY] = $config['ssl_key'];
-			$config['flags'][PDO::MYSQL_ATTR_SSL_CERT] = $config['ssl_cert'];
-		}
-		if (!empty($config['ssl_ca'])) {
-			$config['flags'][PDO::MYSQL_ATTR_SSL_CA] = $config['ssl_ca'];
-		}
+        if (!empty($config['ssl_key']) && !empty($config['ssl_cert'])) {
+            $config['flags'][PDO::MYSQL_ATTR_SSL_KEY] = $config['ssl_key'];
+            $config['flags'][PDO::MYSQL_ATTR_SSL_CERT] = $config['ssl_cert'];
+        }
+        if (!empty($config['ssl_ca'])) {
+            $config['flags'][PDO::MYSQL_ATTR_SSL_CA] = $config['ssl_ca'];
+        }
 
-		if (empty($config['unix_socket'])) {
-			$dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset={$config['encoding']}";
-		} else {
-			$dsn = "mysql:unix_socket={$config['unix_socket']};dbname={$config['database']}";
-		}
+        if (empty($config['unix_socket'])) {
+            $dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset={$config['encoding']}";
+        } else {
+            $dsn = "mysql:unix_socket={$config['unix_socket']};dbname={$config['database']}";
+        }
 
-		$this->_connect($dsn, $config);
+        $this->_connect($dsn, $config);
 
-		if (!empty($config['init'])) {
-			foreach ((array)$config['init'] as $command) {
-				$this->connection()->exec($command);
-			}
-		}
-		return true;
-	}
+        if (!empty($config['init'])) {
+            foreach ((array)$config['init'] as $command) {
+                $this->connection()->exec($command);
+            }
+        }
+        return true;
+    }
 
-/**
- * Returns whether php is able to use this driver for connecting to database
- *
- * @return bool true if it is valid to use this driver
- */
-	public function enabled() {
-		return in_array('mysql', PDO::getAvailableDrivers());
-	}
-
+    /**
+     * Returns whether php is able to use this driver for connecting to database
+     *
+     * @return bool true if it is valid to use this driver
+     */
+    public function enabled()
+    {
+        return in_array('mysql', PDO::getAvailableDrivers());
+    }
 }

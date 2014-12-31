@@ -20,14 +20,14 @@ $pluginPath = Configure::read('App.paths.plugins.0');
 $pluginDot = empty($plugin) ? null : $plugin . '.';
 
 if (empty($plugin)) {
-	$filePath = APP_DIR . DS;
-	$namespace = $plugin;
+    $filePath = APP_DIR . DS;
+    $namespace = $plugin;
 }
 if (!empty($plugin) && Plugin::loaded($plugin)) {
-	$filePath = Plugin::classPath($plugin);
+    $filePath = Plugin::classPath($plugin);
 }
 if (!empty($plugin) && !Plugin::loaded($plugin)) {
-	$filePath = $pluginPath . h($plugin) . DS . 'src' . DS;
+    $filePath = $pluginPath . h($plugin) . DS . 'src' . DS;
 }
 
 $this->layout = 'dev_error';
@@ -36,19 +36,19 @@ $this->assign('templateName', 'missing_view.ctp');
 
 $this->start('subheading');
 ?>
-	<strong>Error: </strong>
-	<em><?= h($pluginDot . $class) ?></em> could not be found.
-	<?php if (!empty($plugin) && !Plugin::loaded($plugin)): ?>
-	Make sure your plugin <em><?= h($plugin) ?></em> is in the <?= h($pluginPath) ?> directory and was loaded.
-	<?php endif ?>
-	<?= $this->element('plugin_class_error', ['pluginPath' => $pluginPath]) ?>
+    <strong>Error: </strong>
+    <em><?= h($pluginDot . $class) ?></em> could not be found.
+    <?php if (!empty($plugin) && !Plugin::loaded($plugin)): ?>
+    Make sure your plugin <em><?= h($plugin) ?></em> is in the <?= h($pluginPath) ?> directory and was loaded.
+    <?php endif ?>
+    <?= $this->element('plugin_class_error', ['pluginPath' => $pluginPath]) ?>
 </p>
 <?php $this->end() ?>
 
 <?php $this->start('file') ?>
 <p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), $filePath . 'View' . DS . h($class) . '.php'); ?>
+    <strong>Error: </strong>
+    <?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), $filePath . 'View' . DS . h($class) . '.php'); ?>
 </p>
 <?php
 $code = <<<PHP

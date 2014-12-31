@@ -16,11 +16,11 @@ namespace Cake\Database\Exception;
 
 use Cake\Core\Exception\Exception;
 
-class MissingExtensionException extends \Cake\Core\Exception\Exception {
+class MissingExtensionException extends \Cake\Core\Exception\Exception
+{
 
-/**
- * {@inheritDoc}
- */
-	protected $_messageTemplate = 'Database driver %s cannot be used due to a missing PHP extension or unmet dependency';
-
+    /**
+     * {@inheritDoc}
+     */
+    protected $_messageTemplate = 'Database driver %s cannot be used due to a missing PHP extension or unmet dependency';
 }

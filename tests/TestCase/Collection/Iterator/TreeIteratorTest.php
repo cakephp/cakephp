@@ -22,94 +22,97 @@ use Cake\TestSuite\TestCase;
  * TreeIterator Test
  *
  */
-class TreeIteratorTest extends TestCase {
+class TreeIteratorTest extends TestCase
+{
 
-/**
- * Tests the printer function with defaults
- *
- * @return void
- */
-	public function testPrinter() {
-		$items = [
-			[
-				'id' => 1,
-				'name' => 'a',
-				'stuff' => [
-					['id' => 2, 'name' => 'b', 'stuff' => [['id' => 3, 'name' => 'c']]]
-				]
-			],
-			['id' => 4, 'name' => 'd', 'stuff' => [['id' => 5, 'name' => 'e']]]
-		];
-		$items = new NestIterator($items, 'stuff');
-		$result = (new TreeIterator($items))->printer('name')->toArray();
-		$expected = [
-			'a',
-			'__b',
-			'____c',
-			'd',
-			'__e'
-		];
-		$this->assertEquals($expected, $result);
-	}
+    /**
+     * Tests the printer function with defaults
+     *
+     * @return void
+     */
+    public function testPrinter()
+    {
+        $items = [
+            [
+                'id' => 1,
+                'name' => 'a',
+                'stuff' => [
+                    ['id' => 2, 'name' => 'b', 'stuff' => [['id' => 3, 'name' => 'c']]]
+                ]
+            ],
+            ['id' => 4, 'name' => 'd', 'stuff' => [['id' => 5, 'name' => 'e']]]
+        ];
+        $items = new NestIterator($items, 'stuff');
+        $result = (new TreeIterator($items))->printer('name')->toArray();
+        $expected = [
+            'a',
+            '__b',
+            '____c',
+            'd',
+            '__e'
+        ];
+        $this->assertEquals($expected, $result);
+    }
 
-/**
- * Tests the printer function with a custom key extractor and spacer
- *
- * @return void
- */
-	public function testPrinterCustomKeyAndSpacer() {
-			$items = [
-			[
-				'id' => 1,
-				'name' => 'a',
-				'stuff' => [
-					['id' => 2, 'name' => 'b', 'stuff' => [['id' => 3, 'name' => 'c']]]
-				]
-			],
-			['id' => 4, 'name' => 'd', 'stuff' => [['id' => 5, 'name' => 'e']]]
-		];
-		$items = new NestIterator($items, 'stuff');
-		$result = (new TreeIterator($items))->printer('id', 'name', '@@')->toArray();
-		$expected = [
-			'a' => '1',
-			'b' => '@@2',
-			'c' => '@@@@3',
-			'd' => '4',
-			'e' => '@@5'
-		];
-		$this->assertEquals($expected, $result);
-	}
+    /**
+     * Tests the printer function with a custom key extractor and spacer
+     *
+     * @return void
+     */
+    public function testPrinterCustomKeyAndSpacer()
+    {
+            $items = [
+            [
+                'id' => 1,
+                'name' => 'a',
+                'stuff' => [
+                    ['id' => 2, 'name' => 'b', 'stuff' => [['id' => 3, 'name' => 'c']]]
+                ]
+            ],
+            ['id' => 4, 'name' => 'd', 'stuff' => [['id' => 5, 'name' => 'e']]]
+        ];
+        $items = new NestIterator($items, 'stuff');
+        $result = (new TreeIterator($items))->printer('id', 'name', '@@')->toArray();
+        $expected = [
+            'a' => '1',
+            'b' => '@@2',
+            'c' => '@@@@3',
+            'd' => '4',
+            'e' => '@@5'
+        ];
+        $this->assertEquals($expected, $result);
+    }
 
-/**
- * Tests the printer function with a closure extractor
- *
- * @return void
- */
-	public function testPrinterWithClosure() {
-		$items = [
-			[
-				'id' => 1,
-				'name' => 'a',
-				'stuff' => [
-					['id' => 2, 'name' => 'b', 'stuff' => [['id' => 3, 'name' => 'c']]]
-				]
-			],
-			['id' => 4, 'name' => 'd', 'stuff' => [['id' => 5, 'name' => 'e']]]
-		];
-		$items = new NestIterator($items, 'stuff');
-		$result = (new TreeIterator($items))
-			->printer(function ($element, $key, $iterator) {
-				return ($iterator->getDepth() + 1 ) . '.' . $key . ' ' . $element['name'];
-			}, null, null)
-			->toArray();
-		$expected = [
-			'1.0 a',
-			'2.0 b',
-			'3.0 c',
-			'1.1 d',
-			'2.0 e'
-		];
-		$this->assertEquals($expected, $result);
-	}
-
+    /**
+     * Tests the printer function with a closure extractor
+     *
+     * @return void
+     */
+    public function testPrinterWithClosure()
+    {
+        $items = [
+            [
+                'id' => 1,
+                'name' => 'a',
+                'stuff' => [
+                    ['id' => 2, 'name' => 'b', 'stuff' => [['id' => 3, 'name' => 'c']]]
+                ]
+            ],
+            ['id' => 4, 'name' => 'd', 'stuff' => [['id' => 5, 'name' => 'e']]]
+        ];
+        $items = new NestIterator($items, 'stuff');
+        $result = (new TreeIterator($items))
+            ->printer(function ($element, $key, $iterator) {
+                return ($iterator->getDepth() + 1 ) . '.' . $key . ' ' . $element['name'];
+            }, null, null)
+            ->toArray();
+        $expected = [
+            '1.0 a',
+            '2.0 b',
+            '3.0 c',
+            '1.1 d',
+            '2.0 e'
+        ];
+        $this->assertEquals($expected, $result);
+    }
 }

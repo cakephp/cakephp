@@ -20,58 +20,62 @@ use Cake\Utility\Crypto\OpenSsl;
 /**
  * Openssl engine tests.
  */
-class OpenSslTest extends TestCase {
+class OpenSslTest extends TestCase
+{
 
-/**
- * Setup function.
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		$this->skipIf(!function_exists('openssl_encrypt'), 'No openssl skipping tests');
-		$this->crypt = new OpenSsl();
-	}
+    /**
+     * Setup function.
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->skipIf(!function_exists('openssl_encrypt'), 'No openssl skipping tests');
+        $this->crypt = new OpenSsl();
+    }
 
-/**
- * testRijndael method
- *
- * @expectedException \LogicException
- * @return void
- */
-	public function testRijndael() {
-		$txt = 'The quick brown fox jumped over the lazy dog.';
-		$key = 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi';
+    /**
+     * testRijndael method
+     *
+     * @expectedException \LogicException
+     * @return void
+     */
+    public function testRijndael()
+    {
+        $txt = 'The quick brown fox jumped over the lazy dog.';
+        $key = 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi';
 
-		$this->crypt->rijndael($txt, $key, 'encrypt');
-	}
+        $this->crypt->rijndael($txt, $key, 'encrypt');
+    }
 
-/**
- * Test encrypt/decrypt.
- *
- * @return void
- */
-	public function testEncryptDecrypt() {
-		$txt = 'The quick brown fox';
-		$key = 'This key is enough bytes';
-		$result = $this->crypt->encrypt($txt, $key);
-		$this->assertNotEquals($txt, $result, 'Should be encrypted.');
-		$this->assertNotEquals($result, $this->crypt->encrypt($txt, $key), 'Each result is unique.');
-		$this->assertEquals($txt, $this->crypt->decrypt($result, $key));
-	}
+    /**
+     * Test encrypt/decrypt.
+     *
+     * @return void
+     */
+    public function testEncryptDecrypt()
+    {
+        $txt = 'The quick brown fox';
+        $key = 'This key is enough bytes';
+        $result = $this->crypt->encrypt($txt, $key);
+        $this->assertNotEquals($txt, $result, 'Should be encrypted.');
+        $this->assertNotEquals($result, $this->crypt->encrypt($txt, $key), 'Each result is unique.');
+        $this->assertEquals($txt, $this->crypt->decrypt($result, $key));
+    }
 
-/**
- * Test that changing the key causes decryption to fail.
- *
- * @return void
- */
-	public function testDecryptKeyFailure() {
-		$txt = 'The quick brown fox';
-		$key = 'This key is enough bytes';
-		$result = $this->crypt->encrypt($txt, $key);
+    /**
+     * Test that changing the key causes decryption to fail.
+     *
+     * @return void
+     */
+    public function testDecryptKeyFailure()
+    {
+        $txt = 'The quick brown fox';
+        $key = 'This key is enough bytes';
+        $result = $this->crypt->encrypt($txt, $key);
 
-		$key = 'Not the same key.';
-		$this->assertFalse($this->crypt->decrypt($txt, $key), 'Modified key will fail.');
-	}
-
+        $key = 'Not the same key.';
+        $this->assertFalse($this->crypt->decrypt($txt, $key), 'Modified key will fail.');
+    }
 }

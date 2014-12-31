@@ -64,145 +64,151 @@ use InvalidArgumentException;
  * callback as the conditions could change during the dispatch cycle.
  *
  */
-class DispatcherFilter implements EventListenerInterface {
+class DispatcherFilter implements EventListenerInterface
+{
 
-	use InstanceConfigTrait;
+    use InstanceConfigTrait;
 
-/**
- * Default priority for all methods in this filter
- *
- * @var int
- */
-	protected $_priority = 10;
+    /**
+     * Default priority for all methods in this filter
+     *
+     * @var int
+     */
+    protected $_priority = 10;
 
-/**
- * Default config
- *
- * These are merged with user-provided config when the class is used.
- * The when and for options allow you to define conditions that are checked before
- * your filter is called.
- *
- * @var array
- */
-	protected $_defaultConfig = [
-		'when' => null,
-		'for' => null,
-		'priority' => null,
-	];
+    /**
+     * Default config
+     *
+     * These are merged with user-provided config when the class is used.
+     * The when and for options allow you to define conditions that are checked before
+     * your filter is called.
+     *
+     * @var array
+     */
+    protected $_defaultConfig = [
+        'when' => null,
+        'for' => null,
+        'priority' => null,
+    ];
 
-/**
- * Constructor.
- *
- * @param array $config Settings for the filter.
- * @throws \InvalidArgumentException When 'when' conditions are not callable.
- */
-	public function __construct($config = []) {
-		if (!isset($config['priority'])) {
-			$config['priority'] = $this->_priority;
-		}
-		$this->config($config);
-		if (isset($config['when']) && !is_callable($config['when'])) {
-			throw new InvalidArgumentException('"when" conditions must be a callable.');
-		}
-	}
+    /**
+     * Constructor.
+     *
+     * @param array $config Settings for the filter.
+     * @throws \InvalidArgumentException When 'when' conditions are not callable.
+     */
+    public function __construct($config = [])
+    {
+        if (!isset($config['priority'])) {
+            $config['priority'] = $this->_priority;
+        }
+        $this->config($config);
+        if (isset($config['when']) && !is_callable($config['when'])) {
+            throw new InvalidArgumentException('"when" conditions must be a callable.');
+        }
+    }
 
-/**
- * Returns the list of events this filter listens to.
- * Dispatcher notifies 2 different events `Dispatcher.before` and `Dispatcher.after`.
- * By default this class will attach `preDispatch` and `postDispatch` method respectively.
- *
- * Override this method at will to only listen to the events you are interested in.
- *
- * @return array
- */
-	public function implementedEvents() {
-		return array(
-			'Dispatcher.beforeDispatch' => [
-				'callable' => 'handle',
-				'priority' => $this->_config['priority']
-			],
-			'Dispatcher.afterDispatch' => [
-				'callable' => 'handle',
-				'priority' => $this->_config['priority']
-			],
-		);
-	}
+    /**
+     * Returns the list of events this filter listens to.
+     * Dispatcher notifies 2 different events `Dispatcher.before` and `Dispatcher.after`.
+     * By default this class will attach `preDispatch` and `postDispatch` method respectively.
+     *
+     * Override this method at will to only listen to the events you are interested in.
+     *
+     * @return array
+     */
+    public function implementedEvents()
+    {
+        return array(
+            'Dispatcher.beforeDispatch' => [
+                'callable' => 'handle',
+                'priority' => $this->_config['priority']
+            ],
+            'Dispatcher.afterDispatch' => [
+                'callable' => 'handle',
+                'priority' => $this->_config['priority']
+            ],
+        );
+    }
 
-/**
- * Handler method that applies conditions and resolves the correct method to call.
- *
- * @param \Cake\Event\Event $event The event instance.
- * @return mixed
- */
-	public function handle(Event $event) {
-		$name = $event->name();
-		list(, $method) = explode('.', $name);
-		if (empty($this->_config['for']) && empty($this->_config['when'])) {
-			return $this->{$method}($event);
-		}
-		if ($this->matches($event)) {
-			return $this->{$method}($event);
-		}
-	}
+    /**
+     * Handler method that applies conditions and resolves the correct method to call.
+     *
+     * @param \Cake\Event\Event $event The event instance.
+     * @return mixed
+     */
+    public function handle(Event $event)
+    {
+        $name = $event->name();
+        list(, $method) = explode('.', $name);
+        if (empty($this->_config['for']) && empty($this->_config['when'])) {
+            return $this->{$method}($event);
+        }
+        if ($this->matches($event)) {
+            return $this->{$method}($event);
+        }
+    }
 
-/**
- * Check to see if the incoming request matches this filter's criteria.
- *
- * @param \Cake\Event\Event $event The event to match.
- * @return bool
- */
-	public function matches(Event $event) {
-		$request = $event->data['request'];
-		$pass = true;
-		if (!empty($this->_config['for'])) {
-			$len = strlen('preg:');
-			$for = $this->_config['for'];
-			$url = $request->here(false);
-			if (substr($for, 0, $len) === 'preg:') {
-				$pass = (bool)preg_match(substr($for, $len), $url);
-			} else {
-				$pass = strpos($url, $for) === 0;
-			}
-		}
-		if ($pass && !empty($this->_config['when'])) {
-			$response = $event->data['response'];
-			$pass = $this->_config['when']($request, $response);
-		}
-		return $pass;
-	}
+    /**
+     * Check to see if the incoming request matches this filter's criteria.
+     *
+     * @param \Cake\Event\Event $event The event to match.
+     * @return bool
+     */
+    public function matches(Event $event)
+    {
+        $request = $event->data['request'];
+        $pass = true;
+        if (!empty($this->_config['for'])) {
+            $len = strlen('preg:');
+            $for = $this->_config['for'];
+            $url = $request->here(false);
+            if (substr($for, 0, $len) === 'preg:') {
+                $pass = (bool)preg_match(substr($for, $len), $url);
+            } else {
+                $pass = strpos($url, $for) === 0;
+            }
+        }
+        if ($pass && !empty($this->_config['when'])) {
+            $response = $event->data['response'];
+            $pass = $this->_config['when']($request, $response);
+        }
+        return $pass;
+    }
 
-/**
- * Method called before the controller is instantiated and called to serve a request.
- * If used with default priority, it will be called after the Router has parsed the
- * URL and set the routing params into the request object.
- *
- * If a Cake\Network\Response object instance is returned, it will be served at the end of the
- * event cycle, not calling any controller as a result. This will also have the effect of
- * not calling the after event in the dispatcher.
- *
- * If false is returned, the event will be stopped and no more listeners will be notified.
- * Alternatively you can call `$event->stopPropagation()` to achieve the same result.
- *
- * @param \Cake\Event\Event $event container object having the `request`, `response` and `additionalParams`
- *    keys in the data property.
- * @return void
- */
-	public function beforeDispatch(Event $event) {
-	}
+    /**
+     * Method called before the controller is instantiated and called to serve a request.
+     * If used with default priority, it will be called after the Router has parsed the
+     * URL and set the routing params into the request object.
+     *
+     * If a Cake\Network\Response object instance is returned, it will be served at the end of the
+     * event cycle, not calling any controller as a result. This will also have the effect of
+     * not calling the after event in the dispatcher.
+     *
+     * If false is returned, the event will be stopped and no more listeners will be notified.
+     * Alternatively you can call `$event->stopPropagation()` to achieve the same result.
+     *
+     * @param \Cake\Event\Event $event container object having the `request`, `response` and `additionalParams`
+     *    keys in the data property.
+     * @return void
+     */
+    public function beforeDispatch(Event $event)
+    {
+    }
 
-/**
- * Method called after the controller served a request and generated a response.
- * It is possible to alter the response object at this point as it is not sent to the
- * client yet.
- *
- * If false is returned, the event will be stopped and no more listeners will be notified.
- * Alternatively you can call `$event->stopPropagation()` to achieve the same result.
- *
- * @param \Cake\Event\Event $event container object having the `request` and  `response`
- *    keys in the data property.
- * @return void
- */
-	public function afterDispatch(Event $event) {
-	}
-
+    /**
+     * Method called after the controller served a request and generated a response.
+     * It is possible to alter the response object at this point as it is not sent to the
+     * client yet.
+     *
+     * If false is returned, the event will be stopped and no more listeners will be notified.
+     * Alternatively you can call `$event->stopPropagation()` to achieve the same result.
+     *
+     * @param \Cake\Event\Event $event container object having the `request` and  `response`
+     *    keys in the data property.
+     * @return void
+     */
+    public function afterDispatch(Event $event)
+    {
+    }
 }

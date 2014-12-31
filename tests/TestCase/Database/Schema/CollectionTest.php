@@ -25,66 +25,70 @@ use Cake\TestSuite\TestCase;
 /**
  * Test case for Collection
  */
-class CollectionTest extends TestCase {
+class CollectionTest extends TestCase
+{
 
-	public $fixtures = [
-		'core.users'
-	];
+    public $fixtures = [
+        'core.users'
+    ];
 
-/**
- * Setup function
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		$this->connection = ConnectionManager::get('test');
-		Cache::clear(false, '_cake_model_');
-		Cache::enable();
-	}
+    /**
+     * Setup function
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->connection = ConnectionManager::get('test');
+        Cache::clear(false, '_cake_model_');
+        Cache::enable();
+    }
 
-/**
- * Teardown function
- *
- * @return void
- */
-	public function tearDown() {
-		parent::tearDown();
-		unset($this->connection);
-	}
+    /**
+     * Teardown function
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        unset($this->connection);
+    }
 
-/**
- * Test that describing non-existent tables fails.
- *
- * Tests for positive describe() calls are in each platformSchema
- * test case.
- *
- * @expectedException \Cake\Database\Exception
- * @return void
- */
-	public function testDescribeIncorrectTable() {
-		$schema = new Collection($this->connection);
-		$this->assertNull($schema->describe('derp'));
-	}
+    /**
+     * Test that describing non-existent tables fails.
+     *
+     * Tests for positive describe() calls are in each platformSchema
+     * test case.
+     *
+     * @expectedException \Cake\Database\Exception
+     * @return void
+     */
+    public function testDescribeIncorrectTable()
+    {
+        $schema = new Collection($this->connection);
+        $this->assertNull($schema->describe('derp'));
+    }
 
-/**
- * Tests that schema metadata is cached
- *
- * @return void
- */
-	public function testDescribeCache() {
-		$schema = $this->connection->schemaCollection();
-		$table = $this->connection->schemaCollection()->describe('users');
+    /**
+     * Tests that schema metadata is cached
+     *
+     * @return void
+     */
+    public function testDescribeCache()
+    {
+        $schema = $this->connection->schemaCollection();
+        $table = $this->connection->schemaCollection()->describe('users');
 
-		Cache::delete('test_users', '_cake_model_');
-		$this->connection->cacheMetadata(true);
-		$schema = $this->connection->schemaCollection();
+        Cache::delete('test_users', '_cake_model_');
+        $this->connection->cacheMetadata(true);
+        $schema = $this->connection->schemaCollection();
 
-		$result = $schema->describe('users');
-		$this->assertEquals($table, $result);
+        $result = $schema->describe('users');
+        $this->assertEquals($table, $result);
 
-		$result = Cache::read('test_users', '_cake_model_');
-		$this->assertEquals($table, $result);
-	}
-
+        $result = Cache::read('test_users', '_cake_model_');
+        $this->assertEquals($table, $result);
+    }
 }

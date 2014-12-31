@@ -22,61 +22,66 @@ use Cake\Database\ValueBinder;
  *
  * @internal
  */
-class IdentifierExpression implements ExpressionInterface {
+class IdentifierExpression implements ExpressionInterface
+{
 
-/**
- * Holds the identifier string
- *
- * @var string
- */
-	protected $_identifier;
+    /**
+     * Holds the identifier string
+     *
+     * @var string
+     */
+    protected $_identifier;
 
-/**
- * Constructor
- *
- * @param string $identifier The identifier this expression represents
- */
-	public function __construct($identifier) {
-		$this->_identifier = $identifier;
-	}
+    /**
+     * Constructor
+     *
+     * @param string $identifier The identifier this expression represents
+     */
+    public function __construct($identifier)
+    {
+        $this->_identifier = $identifier;
+    }
 
-/**
- * Sets the identifier this expression represents
- *
- * @param string $identifier The identifier
- * @return void
- */
-	public function setIdentifier($identifier) {
-		$this->_identifier = $identifier;
-	}
+    /**
+     * Sets the identifier this expression represents
+     *
+     * @param string $identifier The identifier
+     * @return void
+     */
+    public function setIdentifier($identifier)
+    {
+        $this->_identifier = $identifier;
+    }
 
-/**
- * Returns the identifier this expression represents
- *
- * @return string
- */
-	public function getIdentifier() {
-		return $this->_identifier;
-	}
+    /**
+     * Returns the identifier this expression represents
+     *
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        return $this->_identifier;
+    }
 
-/**
- * Converts the expression to its string representation
- *
- * @param \Cake\Database\ValueBinder $generator Placeholder generator object
- * @return string
- */
-	public function sql(ValueBinder $generator) {
-		return $this->_identifier;
-	}
+    /**
+     * Converts the expression to its string representation
+     *
+     * @param \Cake\Database\ValueBinder $generator Placeholder generator object
+     * @return string
+     */
+    public function sql(ValueBinder $generator)
+    {
+        return $this->_identifier;
+    }
 
-/**
- * This method is a no-op, this is a leaf type of expression,
- * hence there is nothing to traverse
- *
- * @param callable $callable The callable to traverse with.
- * @return void
- */
-	public function traverse(callable $callable) {
-	}
-
+    /**
+     * This method is a no-op, this is a leaf type of expression,
+     * hence there is nothing to traverse
+     *
+     * @param callable $callable The callable to traverse with.
+     * @return void
+     */
+    public function traverse(callable $callable)
+    {
+    }
 }

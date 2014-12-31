@@ -20,95 +20,100 @@ use Cake\TestSuite\TestCase;
 /**
  * Form schema test case.
  */
-class SchemaTest extends TestCase {
+class SchemaTest extends TestCase
+{
 
-/**
- * Test adding multiple fields.
- *
- * @return void
- */
-	public function testAddingMultipleFields() {
-		$schema = new Schema();
-		$schema->addFields([
-			'email' => 'string',
-			'body' => ['type' => 'string', 'length' => 1000]
-		]);
-		$this->assertEquals(['email', 'body'], $schema->fields());
-		$this->assertEquals('string', $schema->field('email')['type']);
-		$this->assertEquals('string', $schema->field('body')['type']);
-	}
+    /**
+     * Test adding multiple fields.
+     *
+     * @return void
+     */
+    public function testAddingMultipleFields()
+    {
+        $schema = new Schema();
+        $schema->addFields([
+            'email' => 'string',
+            'body' => ['type' => 'string', 'length' => 1000]
+        ]);
+        $this->assertEquals(['email', 'body'], $schema->fields());
+        $this->assertEquals('string', $schema->field('email')['type']);
+        $this->assertEquals('string', $schema->field('body')['type']);
+    }
 
-/**
- * test adding fields.
- *
- * @return void
- */
-	public function testAddingFields() {
-		$schema = new Schema();
+    /**
+     * test adding fields.
+     *
+     * @return void
+     */
+    public function testAddingFields()
+    {
+        $schema = new Schema();
 
-		$res = $schema->addField('name', ['type' => 'string']);
-		$this->assertSame($schema, $res, 'Should be chainable');
+        $res = $schema->addField('name', ['type' => 'string']);
+        $this->assertSame($schema, $res, 'Should be chainable');
 
-		$this->assertEquals(['name'], $schema->fields());
-		$res = $schema->field('name');
-		$expected = ['type' => 'string', 'length' => null, 'precision' => null];
-		$this->assertEquals($expected, $res);
+        $this->assertEquals(['name'], $schema->fields());
+        $res = $schema->field('name');
+        $expected = ['type' => 'string', 'length' => null, 'precision' => null];
+        $this->assertEquals($expected, $res);
 
-		$res = $schema->addField('email', 'string');
-		$this->assertSame($schema, $res, 'Should be chainable');
+        $res = $schema->addField('email', 'string');
+        $this->assertSame($schema, $res, 'Should be chainable');
 
-		$this->assertEquals(['name', 'email'], $schema->fields());
-		$res = $schema->field('email');
-		$expected = ['type' => 'string', 'length' => null, 'precision' => null];
-		$this->assertEquals($expected, $res);
-	}
+        $this->assertEquals(['name', 'email'], $schema->fields());
+        $res = $schema->field('email');
+        $expected = ['type' => 'string', 'length' => null, 'precision' => null];
+        $this->assertEquals($expected, $res);
+    }
 
-/**
- * test adding field whitelist attrs
- *
- * @return void
- */
-	public function testAddingFieldsWhitelist() {
-		$schema = new Schema();
+    /**
+     * test adding field whitelist attrs
+     *
+     * @return void
+     */
+    public function testAddingFieldsWhitelist()
+    {
+        $schema = new Schema();
 
-		$schema->addField('name', ['derp' => 'derp', 'type' => 'string']);
-		$expected = ['type' => 'string', 'length' => null, 'precision' => null];
-		$this->assertEquals($expected, $schema->field('name'));
-	}
+        $schema->addField('name', ['derp' => 'derp', 'type' => 'string']);
+        $expected = ['type' => 'string', 'length' => null, 'precision' => null];
+        $this->assertEquals($expected, $schema->field('name'));
+    }
 
-/**
- * Test removing fields.
- *
- * @return void
- */
-	public function testRemovingFields() {
-		$schema = new Schema();
+    /**
+     * Test removing fields.
+     *
+     * @return void
+     */
+    public function testRemovingFields()
+    {
+        $schema = new Schema();
 
-		$schema->addField('name', ['type' => 'string']);
-		$this->assertEquals(['name'], $schema->fields());
+        $schema->addField('name', ['type' => 'string']);
+        $this->assertEquals(['name'], $schema->fields());
 
-		$res = $schema->removeField('name');
-		$this->assertSame($schema, $res, 'Should be chainable');
-		$this->assertEquals([], $schema->fields());
-		$this->assertNull($schema->field('name'));
-	}
+        $res = $schema->removeField('name');
+        $this->assertSame($schema, $res, 'Should be chainable');
+        $this->assertEquals([], $schema->fields());
+        $this->assertNull($schema->field('name'));
+    }
 
-/**
- * test fieldType
- *
- * @return void
- */
-	public function testFieldType() {
-		$schema = new Schema();
+    /**
+     * test fieldType
+     *
+     * @return void
+     */
+    public function testFieldType()
+    {
+        $schema = new Schema();
 
-		$schema->addField('name', 'string')
-			->addField('numbery', [
-				'type' => 'decimal',
-				'required' => true
-			]);
-		$this->assertEquals('string', $schema->fieldType('name'));
-		$this->assertEquals('decimal', $schema->fieldType('numbery'));
-		$this->assertNull($schema->fieldType('nope'));
-	}
-
+        $schema->addField('name', 'string')
+            ->addField('numbery', [
+                'type' => 'decimal',
+                'required' => true
+            ]);
+        $this->assertEquals('string', $schema->fieldType('name'));
+        $this->assertEquals('decimal', $schema->fieldType('numbery'));
+        $this->assertNull($schema->fieldType('nope'));
+    }
 }

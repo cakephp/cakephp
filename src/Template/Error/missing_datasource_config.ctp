@@ -20,6 +20,6 @@ $this->assign('templateName', 'missing_datasource_config.ctp');
 
 $this->start('subheading');
 ?>
-	<strong>Error: </strong>
-	The datasource configuration <em><?= h($name) ?></em> was not found in config<?= DS . 'app.php' ?>.
+    <strong>Error: </strong>
+    The datasource configuration <em><?= h($name) ?></em> was not found in config<?= DS . 'app.php' ?>.
 <?php $this->end() ?>

@@ -17,8 +17,8 @@ use Cake\Core\Exception\Exception;
 /**
  * Exception class to be thrown when a datasource configuration is not found
  */
-class MissingDatasourceConfigException extends Exception {
+class MissingDatasourceConfigException extends Exception
+{
 
-	protected $_messageTemplate = 'The datasource configuration "%s" was not found.';
-
+    protected $_messageTemplate = 'The datasource configuration "%s" was not found.';
 }

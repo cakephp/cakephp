@@ -3,50 +3,50 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Core\Configure;
 ?>
 <p>
-	<!--nocache-->
-	<span class="notice">
-		<?php
-			echo __d('cake', 'Your tmp directory is ');
-			if (is_writable(TMP)):
-				echo __d('cake', 'writable.');
-			else:
-				echo __d('cake', 'NOT writable.');
-			endif;
-		?>
-	</span>
-	<!--/nocache-->
+    <!--nocache-->
+    <span class="notice">
+        <?php
+            echo __d('cake', 'Your tmp directory is ');
+            if (is_writable(TMP)):
+                echo __d('cake', 'writable.');
+            else:
+                echo __d('cake', 'NOT writable.');
+            endif;
+        ?>
+    </span>
+    <!--/nocache-->
 </p>
 <p>
-	<span class="notice">
-		<?php
-			echo __d('cake', 'Your datasources configuration file is ');
-			$filePresent = null;
-			if (file_exists(APP . 'Config'.'datasources.php')):
-				echo __d('cake', 'present.');
-				$filePresent = true;
-			else:
-				echo __d('cake', 'NOT present.');
-				echo '<br/>';
-				echo __d('cake', 'Rename App/Config/datasources.default.php to App/Config/datasources.php');
-			endif;
-		?>
-	</span>
+    <span class="notice">
+        <?php
+            echo __d('cake', 'Your datasources configuration file is ');
+            $filePresent = null;
+            if (file_exists(APP . 'Config'.'datasources.php')):
+                echo __d('cake', 'present.');
+                $filePresent = true;
+            else:
+                echo __d('cake', 'NOT present.');
+                echo '<br/>';
+                echo __d('cake', 'Rename App/Config/datasources.default.php to App/Config/datasources.php');
+            endif;
+        ?>
+    </span>
 </p>
 <?php
 if (!empty($filePresent)):
- 	$connected = ConnectionManager::get('default');
+    $connected = ConnectionManager::get('default');
 ?>
 <p>
-	<span class="notice">
-		<?= __d('cake', 'Cake');
-			if ($connected->isConnected()):
-				__d('cake', ' is able to ');
-			else:
-				__d('cake', ' is NOT able to ');
-			endif;
-			__d('cake', 'connect to the database.');
-		?>
-	</span>
+    <span class="notice">
+        <?= __d('cake', 'Cake');
+            if ($connected->isConnected()):
+                __d('cake', ' is able to ');
+            else:
+                __d('cake', ' is NOT able to ');
+            endif;
+            __d('cake', 'connect to the database.');
+        ?>
+    </span>
 </p>
 <?php endif; ?>
 <h2><?= __d('cake', 'Release Notes for CakePHP %s.', Configure::version()); ?></h2>
@@ -72,26 +72,26 @@ if (!empty($filePresent)):
 <?= __d('cake', 'Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility.'); ?>
 </p>
 <ul>
-	<li><a href="http://cakefoundation.org/"><?= __d('cake', 'Cake Software Foundation'); ?> </a>
-	<ul><li><?= __d('cake', 'Promoting development related to CakePHP'); ?></li></ul></li>
-	<li><a href="http://bakery.cakephp.org"><?= __d('cake', 'The Bakery'); ?> </a>
-	<ul><li><?= __d('cake', 'Everything CakePHP'); ?></li></ul></li>
-	<li><a href="http://astore.amazon.com/cakesoftwaref-20/"><?= __d('cake', 'Book Store'); ?> </a>
-	<ul><li><?= __d('cake', 'Recommended Software Books'); ?></li></ul></li>
-	<li><a href="http://www.cafepress.com/cakefoundation"><?= __d('cake', 'CakeSchwag'); ?> </a>
-	<ul><li><?= __d('cake', 'Get your own CakePHP gear - Doughnate to Cake'); ?></li></ul></li>
-	<li><a href="http://www.cakephp.org"><?= __d('cake', 'CakePHP'); ?> </a>
-	<ul><li><?= __d('cake', 'The Rapid Development Framework'); ?></li></ul></li>
-	<li><a href="http://manual.cakephp.org"><?= __d('cake', 'CakePHP Manual'); ?> </a>
-	<ul><li><?= __d('cake', 'Your Rapid Development Cookbook'); ?></li></ul></li>
-	<li><a href="http://api.cakephp.org"><?= __d('cake', 'CakePHP API'); ?> </a>
-	<ul><li><?= __d('cake', 'Docblock Your Best Friend'); ?></li></ul></li>
-	<li><a href="http://www.cakeforge.org"><?= __d('cake', 'CakeForge'); ?> </a>
-	<ul><li><?= __d('cake', 'Open Development for CakePHP'); ?></li></ul></li>
-	<li><a href="https://trac.cakephp.org/"><?= __d('cake', 'CakePHP Trac'); ?> </a>
-	<ul><li><?= __d('cake', 'For the Development of CakePHP (Tickets, SVN browser, Roadmap, Changelogs)'); ?></li></ul></li>
-	<li><a href="http://groups-beta.google.com/group/cake-php"><?= __d('cake', 'CakePHP Google Group'); ?> </a>
-	<ul><li><?= __d('cake', 'Community mailing list'); ?></li></ul></li>
-	<li><a href="irc://irc.freenode.net/cakephp">irc.freenode.net #cakephp</a>
-	<ul><li><?= __d('cake', 'Live chat about CakePHP'); ?></li></ul></li>
+    <li><a href="http://cakefoundation.org/"><?= __d('cake', 'Cake Software Foundation'); ?> </a>
+    <ul><li><?= __d('cake', 'Promoting development related to CakePHP'); ?></li></ul></li>
+    <li><a href="http://bakery.cakephp.org"><?= __d('cake', 'The Bakery'); ?> </a>
+    <ul><li><?= __d('cake', 'Everything CakePHP'); ?></li></ul></li>
+    <li><a href="http://astore.amazon.com/cakesoftwaref-20/"><?= __d('cake', 'Book Store'); ?> </a>
+    <ul><li><?= __d('cake', 'Recommended Software Books'); ?></li></ul></li>
+    <li><a href="http://www.cafepress.com/cakefoundation"><?= __d('cake', 'CakeSchwag'); ?> </a>
+    <ul><li><?= __d('cake', 'Get your own CakePHP gear - Doughnate to Cake'); ?></li></ul></li>
+    <li><a href="http://www.cakephp.org"><?= __d('cake', 'CakePHP'); ?> </a>
+    <ul><li><?= __d('cake', 'The Rapid Development Framework'); ?></li></ul></li>
+    <li><a href="http://manual.cakephp.org"><?= __d('cake', 'CakePHP Manual'); ?> </a>
+    <ul><li><?= __d('cake', 'Your Rapid Development Cookbook'); ?></li></ul></li>
+    <li><a href="http://api.cakephp.org"><?= __d('cake', 'CakePHP API'); ?> </a>
+    <ul><li><?= __d('cake', 'Docblock Your Best Friend'); ?></li></ul></li>
+    <li><a href="http://www.cakeforge.org"><?= __d('cake', 'CakeForge'); ?> </a>
+    <ul><li><?= __d('cake', 'Open Development for CakePHP'); ?></li></ul></li>
+    <li><a href="https://trac.cakephp.org/"><?= __d('cake', 'CakePHP Trac'); ?> </a>
+    <ul><li><?= __d('cake', 'For the Development of CakePHP (Tickets, SVN browser, Roadmap, Changelogs)'); ?></li></ul></li>
+    <li><a href="http://groups-beta.google.com/group/cake-php"><?= __d('cake', 'CakePHP Google Group'); ?> </a>
+    <ul><li><?= __d('cake', 'Community mailing list'); ?></li></ul></li>
+    <li><a href="irc://irc.freenode.net/cakephp">irc.freenode.net #cakephp</a>
+    <ul><li><?= __d('cake', 'Live chat about CakePHP'); ?></li></ul></li>
 </ul>

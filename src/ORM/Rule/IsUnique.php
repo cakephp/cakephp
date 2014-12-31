@@ -19,44 +19,46 @@ use Cake\Datasource\EntityInterface;
 /**
  * Checks that a list of fields from an entity are unique in the table
  */
-class IsUnique {
+class IsUnique
+{
 
-/**
- * The list of fields to check
- *
- * @var array
- */
-	protected $_fields;
+    /**
+     * The list of fields to check
+     *
+     * @var array
+     */
+    protected $_fields;
 
-/**
- * Constructor.
- *
- * @param array $fields The list of fields to check uniqueness for
- */
-	public function __construct(array $fields) {
-		$this->_fields = $fields;
-	}
+    /**
+     * Constructor.
+     *
+     * @param array $fields The list of fields to check uniqueness for
+     */
+    public function __construct(array $fields)
+    {
+        $this->_fields = $fields;
+    }
 
-/**
- * Performs the uniqueness check
- *
- * @param \Cake\Datasource\EntityInterface $entity The entity from where to extract the fields
- * @param array $options Options passed to the check,
- * where the `repository` key is required.
- * @return bool
- */
-	public function __invoke(EntityInterface $entity, array $options) {
-		if (!$entity->extract($this->_fields, true)) {
-			return true;
-		}
+    /**
+     * Performs the uniqueness check
+     *
+     * @param \Cake\Datasource\EntityInterface $entity The entity from where to extract the fields
+     * @param array $options Options passed to the check,
+     * where the `repository` key is required.
+     * @return bool
+     */
+    public function __invoke(EntityInterface $entity, array $options)
+    {
+        if (!$entity->extract($this->_fields, true)) {
+            return true;
+        }
 
-		$conditions = $entity->extract($this->_fields);
-		if ($entity->isNew() === false) {
-			$keys = (array)$options['repository']->primaryKey();
-			$conditions['NOT'] = $entity->extract($keys);
-		}
+        $conditions = $entity->extract($this->_fields);
+        if ($entity->isNew() === false) {
+            $keys = (array)$options['repository']->primaryKey();
+            $conditions['NOT'] = $entity->extract($keys);
+        }
 
-		return !$options['repository']->exists($conditions);
-	}
-
+        return !$options['repository']->exists($conditions);
+    }
 }

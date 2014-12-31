@@ -15,14 +15,15 @@
 
 namespace Cake\Network {
 
-/**
- * Mocks the headers_sent() function when invoked from the Cake\Network
- * namespace so that it always returns false
- *
- * @return bool
- */
-	function headers_sent() {
-		return false;
-	}
+    /**
+     * Mocks the headers_sent() function when invoked from the Cake\Network
+     * namespace so that it always returns false
+     *
+     * @return bool
+     */
+    function headers_sent()
+    {
+        return false;
+    }
 
 }

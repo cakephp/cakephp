@@ -18,34 +18,34 @@ use Cake\Core\Plugin;
 
 $namespace = Configure::read('App.namespace');
 if (!empty($plugin)) {
-	$namespace = $plugin;
+    $namespace = $plugin;
 }
 $prefixNs = '';
 if (!empty($prefix)) {
-	$prefix = Inflector::camelize($prefix);
-	$prefixNs = '\\' . $prefix;
-	$prefix .= DS;
+    $prefix = Inflector::camelize($prefix);
+    $prefixNs = '\\' . $prefix;
+    $prefix .= DS;
 }
 if (empty($plugin)) {
-	$path = APP_DIR . DS . 'Controller' . DS . $prefix . h($controller) . '.php' ;
+    $path = APP_DIR . DS . 'Controller' . DS . $prefix . h($controller) . '.php' ;
 } else {
-	$path = Plugin::classPath($plugin) . 'Controller' . DS . $prefix . h($controller) . '.php';
+    $path = Plugin::classPath($plugin) . 'Controller' . DS . $prefix . h($controller) . '.php';
 }
 
 $this->layout = 'dev_error';
 
 $this->assign('title', sprintf('Missing Method in %s', h($controller)));
 $this->assign(
-	'subheading',
-	sprintf('The action <em>%s</em> is not defined in <em>%s</em>', h($action), h($controller))
+    'subheading',
+    sprintf('The action <em>%s</em> is not defined in <em>%s</em>', h($action), h($controller))
 );
 $this->assign('templateName', 'missing_action.ctp');
 
 $this->start('file');
 ?>
 <p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('Create <em>%s::%s()</em> in file: %s.', h($controller),  h($action), $path); ?>
+    <strong>Error: </strong>
+    <?= sprintf('Create <em>%s::%s()</em> in file: %s.', h($controller),  h($action), $path); ?>
 </p>
 
 <?php
@@ -57,9 +57,9 @@ use {$namespace}\Controller\AppController;
 
 class {$controller} extends AppController {
 
-	public function {$action}() {
+    public function {$action}() {
 
-	}
+    }
 }
 PHP;
 ?>

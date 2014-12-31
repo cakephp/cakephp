@@ -20,7 +20,7 @@ use Cake\Log\Log;
 require_once 'vendor/autoload.php';
 
 if (!defined('DS')) {
-	define('DS', DIRECTORY_SEPARATOR);
+    define('DS', DIRECTORY_SEPARATOR);
 }
 define('ROOT', dirname(__DIR__));
 define('APP_DIR', 'TestApp');
@@ -57,59 +57,59 @@ mb_internal_encoding('UTF-8');
 
 Configure::write('debug', true);
 Configure::write('App', [
-	'namespace' => 'App',
-	'encoding' => 'UTF-8',
-	'base' => false,
-	'baseUrl' => false,
-	'dir' => APP_DIR,
-	'webroot' => 'webroot',
-	'wwwRoot' => WWW_ROOT,
-	'fullBaseUrl' => 'http://localhost',
-	'imageBaseUrl' => 'img/',
-	'jsBaseUrl' => 'js/',
-	'cssBaseUrl' => 'css/',
-	'paths' => [
-		'plugins' => [TEST_APP . 'Plugin' . DS],
-		'templates' => [APP . 'Template' . DS],
-		'locales' => [APP . 'Locale' . DS],
-	]
+    'namespace' => 'App',
+    'encoding' => 'UTF-8',
+    'base' => false,
+    'baseUrl' => false,
+    'dir' => APP_DIR,
+    'webroot' => 'webroot',
+    'wwwRoot' => WWW_ROOT,
+    'fullBaseUrl' => 'http://localhost',
+    'imageBaseUrl' => 'img/',
+    'jsBaseUrl' => 'js/',
+    'cssBaseUrl' => 'css/',
+    'paths' => [
+        'plugins' => [TEST_APP . 'Plugin' . DS],
+        'templates' => [APP . 'Template' . DS],
+        'locales' => [APP . 'Locale' . DS],
+    ]
 ]);
 
 Cache::config([
-	'_cake_core_' => [
-		'engine' => 'File',
-		'prefix' => 'cake_core_',
-		'serialize' => true
-	],
-	'_cake_model_' => [
-		'engine' => 'File',
-		'prefix' => 'cake_model_',
-		'serialize' => true
-	]
+    '_cake_core_' => [
+        'engine' => 'File',
+        'prefix' => 'cake_core_',
+        'serialize' => true
+    ],
+    '_cake_model_' => [
+        'engine' => 'File',
+        'prefix' => 'cake_model_',
+        'serialize' => true
+    ]
 ]);
 
 // Ensure default test connection is defined
 if (!getenv('db_dsn')) {
-	putenv('db_dsn=sqlite:///:memory:');
+    putenv('db_dsn=sqlite:///:memory:');
 }
 
 ConnectionManager::config('test', ['url' => getenv('db_dsn')]);
 
 Configure::write('Session', [
-	'defaults' => 'php'
+    'defaults' => 'php'
 ]);
 
 Log::config([
-	'debug' => [
-		'engine' => 'Cake\Log\Engine\FileLog',
-		'levels' => ['notice', 'info', 'debug'],
-		'file' => 'debug',
-	],
-	'error' => [
-		'engine' => 'Cake\Log\Engine\FileLog',
-		'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
-		'file' => 'error',
-	]
+    'debug' => [
+        'engine' => 'Cake\Log\Engine\FileLog',
+        'levels' => ['notice', 'info', 'debug'],
+        'file' => 'debug',
+    ],
+    'error' => [
+        'engine' => 'Cake\Log\Engine\FileLog',
+        'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
+        'file' => 'error',
+    ]
 ]);
 
 Carbon\Carbon::setTestNow(Carbon\Carbon::now());

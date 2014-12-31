@@ -21,69 +21,73 @@ use Cake\TestSuite\TestCase;
  * Tests the PoFileLoader
  *
  */
-class PoFileParserTest extends TestCase {
+class PoFileParserTest extends TestCase
+{
 
-/**
- * Tests parsing a file with plurals and message context
- *
- * @return void
- */
-	public function testParse() {
-		$parser = new PoFileParser;
-		$file = APP . 'Locale' . DS . 'rule_1_po' . DS . 'default.po';
-		$messages = $parser->parse($file);
-		$this->assertCount(5, $messages);
-		$expected = [
-			'Plural Rule 1' => 'Plural Rule 1 (translated)',
-			'%d = 1' => [
-				'_context' => [
-					'This is the context' => 'First Context trasnlation',
-					'Another Context' => '%d = 1 (translated)'
-				]
-			],
-			'%d = 0 or > 1' => [
-				'_context' => [
-					'Another Context' => [
-						0 => '%d = 1 (translated)',
-						1 => '%d = 0 or > 1 (translated)'
-					]
-				]
-			],
-			'%-5d = 1' => '%-5d = 1 (translated)',
-			'%-5d = 0 or > 1' => [
-				0 => '%-5d = 1 (translated)',
-				1 => '',
-				2 => '',
-				3 => '',
-				4 => '%-5d = 0 or > 1 (translated)'
-			]
-		];
-		$this->assertEquals($expected, $messages);
-	}
+    /**
+     * Tests parsing a file with plurals and message context
+     *
+     * @return void
+     */
+    public function testParse()
+    {
+        $parser = new PoFileParser;
+        $file = APP . 'Locale' . DS . 'rule_1_po' . DS . 'default.po';
+        $messages = $parser->parse($file);
+        $this->assertCount(5, $messages);
+        $expected = [
+            'Plural Rule 1' => 'Plural Rule 1 (translated)',
+            '%d = 1' => [
+                '_context' => [
+                    'This is the context' => 'First Context trasnlation',
+                    'Another Context' => '%d = 1 (translated)'
+                ]
+            ],
+            '%d = 0 or > 1' => [
+                '_context' => [
+                    'Another Context' => [
+                        0 => '%d = 1 (translated)',
+                        1 => '%d = 0 or > 1 (translated)'
+                    ]
+                ]
+            ],
+            '%-5d = 1' => '%-5d = 1 (translated)',
+            '%-5d = 0 or > 1' => [
+                0 => '%-5d = 1 (translated)',
+                1 => '',
+                2 => '',
+                3 => '',
+                4 => '%-5d = 0 or > 1 (translated)'
+            ]
+        ];
+        $this->assertEquals($expected, $messages);
+    }
 
-/**
- * Tests parsing a file with multiline keys and values
- *
- * @return void
- */
-	public function testParseMultiLine() {
-		$parser = new PoFileParser;
-		$file = APP . 'Locale' . DS . 'en' . DS . 'default.po';
-		$messages = $parser->parse($file);
-		$this->assertCount(12, $messages);
-		$this->assertTextEquals("v\nsecond line", $messages["valid\nsecond line"]);
-	}
+    /**
+     * Tests parsing a file with multiline keys and values
+     *
+     * @return void
+     */
+    public function testParseMultiLine()
+    {
+        $parser = new PoFileParser;
+        $file = APP . 'Locale' . DS . 'en' . DS . 'default.po';
+        $messages = $parser->parse($file);
+        $this->assertCount(12, $messages);
+        $this->assertTextEquals("v\nsecond line", $messages["valid\nsecond line"]);
+    }
 
-/**
- * Test parsing a file with quoted strings
- *
- * @return void
- */
-	public function testQuotedString() {
-		$parser = new PoFileParser;
-		$file = APP . 'Locale' . DS . 'en' . DS . 'default.po';
-		$messages = $parser->parse($file);
+    /**
+     * Test parsing a file with quoted strings
+     *
+     * @return void
+     */
+    public function testQuotedString()
+    {
+        $parser = new PoFileParser;
+        $file = APP . 'Locale' . DS . 'en' . DS . 'default.po';
+        $messages = $parser->parse($file);
 
-		$this->assertTextEquals('this is a "quoted string" (translated)', $messages['this is a "quoted string"']);
-	}
+        $this->assertTextEquals('this is a "quoted string" (translated)', $messages['this is a "quoted string"']);
+    }
 }

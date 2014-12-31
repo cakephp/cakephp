@@ -25,93 +25,96 @@ use \PDO;
  * Tests Mysql driver
  *
  */
-class MysqlTest extends TestCase {
+class MysqlTest extends TestCase
+{
 
-/**
- * setup
- *
- * @return void
- */
-	public function setup() {
-		parent::setUp();
-		$config = Configure::read('Datasource.test');
-		$this->skipIf(strpos($config['datasource'], 'Mysql') === false, 'Not using Mysql for test config');
-	}
+    /**
+     * setup
+     *
+     * @return void
+     */
+    public function setup()
+    {
+        parent::setUp();
+        $config = Configure::read('Datasource.test');
+        $this->skipIf(strpos($config['datasource'], 'Mysql') === false, 'Not using Mysql for test config');
+    }
 
-/**
- * Test connecting to Mysql with default configuration
- *
- * @return void
- */
-	public function testConnectionConfigDefault() {
-		$driver = $this->getMock('Cake\Database\Driver\Mysql', ['_connect']);
-		$dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8';
-		$expected = [
-			'persistent' => true,
-			'host' => 'localhost',
-			'username' => 'root',
-			'password' => '',
-			'database' => 'cake',
-			'port' => '3306',
-			'flags' => [],
-			'encoding' => 'utf8',
-			'timezone' => null,
-			'init' => [],
-		];
+    /**
+     * Test connecting to Mysql with default configuration
+     *
+     * @return void
+     */
+    public function testConnectionConfigDefault()
+    {
+        $driver = $this->getMock('Cake\Database\Driver\Mysql', ['_connect']);
+        $dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8';
+        $expected = [
+            'persistent' => true,
+            'host' => 'localhost',
+            'username' => 'root',
+            'password' => '',
+            'database' => 'cake',
+            'port' => '3306',
+            'flags' => [],
+            'encoding' => 'utf8',
+            'timezone' => null,
+            'init' => [],
+        ];
 
-		$expected['flags'] += [
-			PDO::ATTR_PERSISTENT => true,
-			PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
-			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-		];
-		$driver->expects($this->once())->method('_connect')
-			->with($dsn, $expected);
-		$driver->connect([]);
-	}
+        $expected['flags'] += [
+            PDO::ATTR_PERSISTENT => true,
+            PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        ];
+        $driver->expects($this->once())->method('_connect')
+            ->with($dsn, $expected);
+        $driver->connect([]);
+    }
 
-/**
- * Test connecting to Mysql with custom configuration
- *
- * @return void
- */
-	public function testConnectionConfigCustom() {
-		$config = [
-			'persistent' => false,
-			'host' => 'foo',
-			'database' => 'bar',
-			'username' => 'user',
-			'password' => 'pass',
-			'port' => 3440,
-			'flags' => [1 => true, 2 => false],
-			'encoding' => 'a-language',
-			'timezone' => 'Antartica',
-			'init' => ['Execute this', 'this too']
-		];
-		$driver = $this->getMock(
-			'Cake\Database\Driver\Mysql',
-			['_connect', 'connection'],
-			[$config]
-		);
-		$dsn = 'mysql:host=foo;port=3440;dbname=bar;charset=a-language';
-		$expected = $config;
-		$expected['init'][] = "SET time_zone = 'Antartica'";
-		$expected['flags'] += [
-			PDO::ATTR_PERSISTENT => false,
-			PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
-			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-		];
+    /**
+     * Test connecting to Mysql with custom configuration
+     *
+     * @return void
+     */
+    public function testConnectionConfigCustom()
+    {
+        $config = [
+            'persistent' => false,
+            'host' => 'foo',
+            'database' => 'bar',
+            'username' => 'user',
+            'password' => 'pass',
+            'port' => 3440,
+            'flags' => [1 => true, 2 => false],
+            'encoding' => 'a-language',
+            'timezone' => 'Antartica',
+            'init' => ['Execute this', 'this too']
+        ];
+        $driver = $this->getMock(
+            'Cake\Database\Driver\Mysql',
+            ['_connect', 'connection'],
+            [$config]
+        );
+        $dsn = 'mysql:host=foo;port=3440;dbname=bar;charset=a-language';
+        $expected = $config;
+        $expected['init'][] = "SET time_zone = 'Antartica'";
+        $expected['flags'] += [
+            PDO::ATTR_PERSISTENT => false,
+            PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        ];
 
-		$connection = $this->getMock('StdClass', ['exec']);
-		$connection->expects($this->at(0))->method('exec')->with('Execute this');
-		$connection->expects($this->at(1))->method('exec')->with('this too');
-		$connection->expects($this->at(2))->method('exec')->with("SET time_zone = 'Antartica'");
-		$connection->expects($this->exactly(3))->method('exec');
+        $connection = $this->getMock('StdClass', ['exec']);
+        $connection->expects($this->at(0))->method('exec')->with('Execute this');
+        $connection->expects($this->at(1))->method('exec')->with('this too');
+        $connection->expects($this->at(2))->method('exec')->with("SET time_zone = 'Antartica'");
+        $connection->expects($this->exactly(3))->method('exec');
 
-		$driver->expects($this->once())->method('_connect')
-			->with($dsn, $expected);
-		$driver->expects($this->any())->method('connection')
-			->will($this->returnValue($connection));
-		$driver->connect($config);
-	}
-
+        $driver->expects($this->once())->method('_connect')
+            ->with($dsn, $expected);
+        $driver->expects($this->any())->method('connection')
+            ->will($this->returnValue($connection));
+        $driver->connect($config);
+    }
 }

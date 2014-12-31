@@ -25,58 +25,61 @@ namespace Cake\Utility\Crypto;
  *
  * @internal
  */
-class OpenSsl {
+class OpenSsl
+{
 
-/**
- * Not implemented
- *
- * @param string $text Encrypted string to decrypt, normal string to encrypt
- * @param string $key Key to use as the encryption key for encrypted data.
- * @param string $operation Operation to perform, encrypt or decrypt
- * @throws \LogicException Rijndael compatibility does not exist with Openssl.
- * @return void
- */
-	public static function rijndael($text, $key, $operation) {
-		throw new \LogicException('rijndael is not compatible with OpenSSL. Use mcrypt instead.');
-	}
+    /**
+     * Not implemented
+     *
+     * @param string $text Encrypted string to decrypt, normal string to encrypt
+     * @param string $key Key to use as the encryption key for encrypted data.
+     * @param string $operation Operation to perform, encrypt or decrypt
+     * @throws \LogicException Rijndael compatibility does not exist with Openssl.
+     * @return void
+     */
+    public static function rijndael($text, $key, $operation)
+    {
+        throw new \LogicException('rijndael is not compatible with OpenSSL. Use mcrypt instead.');
+    }
 
-/**
- * Encrypt a value using AES-256.
- *
- * *Caveat* You cannot properly encrypt/decrypt data with trailing null bytes.
- * Any trailing null bytes will be removed on decryption due to how PHP pads messages
- * with nulls prior to encryption.
- *
- * @param string $plain The value to encrypt.
- * @param string $key The 256 bit/32 byte key to use as a cipher key.
- * @param string|null $hmacSalt The salt to use for the HMAC process. Leave null to use Security.salt.
- * @return string Encrypted data.
- * @throws \InvalidArgumentException On invalid data or key.
- */
-	public static function encrypt($plain, $key, $hmacSalt = null) {
-		$method = 'AES-256-CBC';
-		$ivSize = openssl_cipher_iv_length($method);
+    /**
+     * Encrypt a value using AES-256.
+     *
+     * *Caveat* You cannot properly encrypt/decrypt data with trailing null bytes.
+     * Any trailing null bytes will be removed on decryption due to how PHP pads messages
+     * with nulls prior to encryption.
+     *
+     * @param string $plain The value to encrypt.
+     * @param string $key The 256 bit/32 byte key to use as a cipher key.
+     * @param string|null $hmacSalt The salt to use for the HMAC process. Leave null to use Security.salt.
+     * @return string Encrypted data.
+     * @throws \InvalidArgumentException On invalid data or key.
+     */
+    public static function encrypt($plain, $key, $hmacSalt = null)
+    {
+        $method = 'AES-256-CBC';
+        $ivSize = openssl_cipher_iv_length($method);
 
-		$iv = openssl_random_pseudo_bytes($ivSize);
-		return $iv . openssl_encrypt($plain, $method, $key, true, $iv);
-	}
+        $iv = openssl_random_pseudo_bytes($ivSize);
+        return $iv . openssl_encrypt($plain, $method, $key, true, $iv);
+    }
 
-/**
- * Decrypt a value using AES-256.
- *
- * @param string $cipher The ciphertext to decrypt.
- * @param string $key The 256 bit/32 byte key to use as a cipher key.
- * @return string Decrypted data. Any trailing null bytes will be removed.
- * @throws \InvalidArgumentException On invalid data or key.
- */
-	public static function decrypt($cipher, $key) {
-		$method = 'AES-256-CBC';
-		$ivSize = openssl_cipher_iv_length($method);
+    /**
+     * Decrypt a value using AES-256.
+     *
+     * @param string $cipher The ciphertext to decrypt.
+     * @param string $key The 256 bit/32 byte key to use as a cipher key.
+     * @return string Decrypted data. Any trailing null bytes will be removed.
+     * @throws \InvalidArgumentException On invalid data or key.
+     */
+    public static function decrypt($cipher, $key)
+    {
+        $method = 'AES-256-CBC';
+        $ivSize = openssl_cipher_iv_length($method);
 
-		$iv = substr($cipher, 0, $ivSize);
+        $iv = substr($cipher, 0, $ivSize);
 
-		$cipher = substr($cipher, $ivSize);
-		return openssl_decrypt($cipher, $method, $key, true, $iv);
-	}
+        $cipher = substr($cipher, $ivSize);
+        return openssl_decrypt($cipher, $method, $key, true, $iv);
+    }
 }
-
