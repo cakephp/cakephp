@@ -448,7 +448,7 @@ class EntityContext implements ContextInterface {
 		$parts = explode('.', $field);
 		$table = $this->_getTable($parts);
 		$column = (array)$table->schema()->column(array_pop($parts));
-		$whitelist = ['length' => null, 'precision' => null];
+		$whitelist = ['length' => null, 'precision' => null, 'unsigned' => false];
 		return array_intersect_key($column, $whitelist);
 	}
 
