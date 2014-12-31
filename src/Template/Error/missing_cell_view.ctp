@@ -26,18 +26,18 @@ $this->end();
 $this->start('file');
 ?>
 <p>
-	Confirm you have created the file: "<?= h($file . $this->_ext) ?>"
-	in one of the following paths:
+    Confirm you have created the file: "<?= h($file . $this->_ext) ?>"
+    in one of the following paths:
 </p>
 <ul>
 <?php
-	$paths = $this->_paths($this->plugin);
-	foreach ($paths as $path):
-		if (strpos($path, CORE_PATH) !== false) {
-			continue;
-		}
-		echo sprintf('<li>%sCell/%s/%s</li>', h($path), h($name), h($file . $this->_ext));
-	endforeach;
+    $paths = $this->_paths($this->plugin);
+    foreach ($paths as $path):
+        if (strpos($path, CORE_PATH) !== false) {
+            continue;
+        }
+        echo sprintf('<li>%sCell/%s/%s</li>', h($path), h($name), h($file . $this->_ext));
+    endforeach;
 ?>
 </ul>
 <?php $this->end(); ?>

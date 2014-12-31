@@ -21,24 +21,24 @@ $this->assign('templateName', 'pdo_error.ctp');
 
 $this->start('subheading');
 ?>
-	<strong>Error: </strong>
-	<?= h($message); ?>
+    <strong>Error: </strong>
+    <?= h($message); ?>
 <?php $this->end() ?>
 
 <?php $this->start('file') ?>
 <p class="notice">
-	If you are using SQL keywords as table column names, you can enable identifier
-	quoting for your database connection in config/app.php.
+    If you are using SQL keywords as table column names, you can enable identifier
+    quoting for your database connection in config/app.php.
 </p>
 <?php if (!empty($error->queryString)) : ?>
-	<p class="notice">
-		<strong>SQL Query: </strong>
-	</p>
-	<pre><?= h($error->queryString); ?></pre>
+    <p class="notice">
+        <strong>SQL Query: </strong>
+    </p>
+    <pre><?= h($error->queryString); ?></pre>
 <?php endif; ?>
 <?php if (!empty($error->params)) : ?>
-		<strong>SQL Query Params: </strong>
-		<pre><?= h(Debugger::dump($error->params)); ?></pre>
+        <strong>SQL Query Params: </strong>
+        <pre><?= h(Debugger::dump($error->params)); ?></pre>
 <?php endif; ?>
 <?= $this->element('auto_table_warning'); ?>
 <?php $this->end() ?>
