@@ -96,7 +96,7 @@ class DebuggerTest extends TestCase
      */
     public function testExcerpt()
     {
-        $result = Debugger::excerpt(__FILE__, __LINE__, 2);
+        $result = Debugger::excerpt(__FILE__, __LINE__ - 1, 2);
         $this->assertTrue(is_array($result));
         $this->assertCount(5, $result);
         $this->assertRegExp('/function(.+)testExcerpt/', $result[1]);
