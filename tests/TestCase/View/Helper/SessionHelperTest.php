@@ -133,7 +133,7 @@ class SessionHelperTest extends TestCase
 
         $result = $this->Session->flash('notification');
         $result = str_replace("\r\n", "\n", $result);
-        $expected = "<div id=\"notificationLayout\">\n\t<h1>Alert!</h1>\n\t<h3>Notice!</h3>\n\t<p>This is a test of the emergency broadcasting system</p>\n</div>";
+        $expected = "<div id=\"notificationLayout\">\n    <h1>Alert!</h1>\n    <h3>Notice!</h3>\n    <p>This is a test of the emergency broadcasting system</p>\n</div>\n";
         $this->assertEquals($expected, $result);
         $this->assertFalse($this->Session->check('Message.notification'));
     }
@@ -174,7 +174,7 @@ class SessionHelperTest extends TestCase
             'element' => 'session_helper',
             'params' => array('title' => 'Notice!', 'name' => 'Alert!')
         ));
-        $expected = "<div id=\"notificationLayout\">\n\t<h1>Alert!</h1>\n\t<h3>Notice!</h3>\n\t<p>This is a calling</p>\n</div>";
+        $expected = "<div id=\"notificationLayout\">\n    <h1>Alert!</h1>\n    <h3>Notice!</h3>\n    <p>This is a calling</p>\n</div>\n";
         $this->assertTextEquals($expected, $result);
     }
 
