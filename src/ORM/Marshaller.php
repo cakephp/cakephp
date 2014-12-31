@@ -317,12 +317,18 @@ class Marshaller {
 		$options += ['validate' => true];
 		$propertyMap = $this->_buildPropertyMap($options);
 		$tableName = $this->_table->alias();
+		$isNew = $entity->isNew();
+		$keys = [];
 
 		if (isset($data[$tableName])) {
 			$data = $data[$tableName];
 		}
 
-		$errors = $this->_validate($data, $options, $entity->isNew());
+		if (!$isNew) {
+			$keys = $entity->extract((array)$this->_table->primaryKey());
+		}
+
+		$errors = $this->_validate($data + $keys, $options, $isNew);
 		$schema = $this->_table->schema();
 		$properties = [];
 		foreach ($data as $key => $value) {
