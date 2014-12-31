@@ -1629,6 +1629,7 @@ class MarshallerTest extends TestCase {
 		];
 		$marshall = new Marshaller($this->articles);
 		$entity = new Entity([
+			'id' => 1,
 			'title' => 'Foo',
 			'body' => 'My Content',
 			'author_id' => 1
@@ -1639,7 +1640,9 @@ class MarshallerTest extends TestCase {
 
 		$this->articles->validator()
 			->requirePresence('thing', 'update')
-			->add('author_id', 'numeric', ['rule' => 'numeric']);
+			->requirePresence('id', 'update')
+			->add('author_id', 'numeric', ['rule' => 'numeric'])
+			->add('id', 'numeric', ['rule' => 'numeric', 'on' => 'update']);
 
 		$expected = clone $entity;
 		$result = $marshall->merge($expected, $data, []);
@@ -1647,10 +1650,48 @@ class MarshallerTest extends TestCase {
 		$this->assertSame($expected, $result);
 		$this->assertSame(1, $result->author_id);
 		$this->assertNotEmpty($result->errors('thing'));
+		$this->assertEmpty($result->errors('id'));
 
 		$this->articles->validator()->requirePresence('thing', 'create');
 		$result = $marshall->merge($entity, $data, []);
 		$this->assertEmpty($result->errors('thing'));
+	}
+
+/**
+ * Test merge with validation and create or update validation rules
+ *
+ * @return void
+ */
+	public function testMergeWithCreate() {
+		$data = [
+			'title' => 'My title',
+			'author_id' => 'foo',
+		];
+		$marshall = new Marshaller($this->articles);
+		$entity = new Entity([
+			'title' => 'Foo',
+			'body' => 'My Content',
+			'author_id' => 1
+		]);
+		$entity->accessible('*', true);
+		$entity->isNew(true);
+		$entity->clean();
+
+		$this->articles->validator()
+			->requirePresence('thing', 'update')
+			->add('author_id', 'numeric', ['rule' => 'numeric', 'on' => 'update']);
+
+		$expected = clone $entity;
+		$result = $marshall->merge($expected, $data, []);
+
+		$this->assertEmpty($result->errors('author_id'));
+		$this->assertEmpty($result->errors('thing'));
+
+		$entity->clean();
+		$entity->isNew(false);
+		$result = $marshall->merge($entity, $data, []);
+		$this->assertNotEmpty($result->errors('author_id'));
+		$this->assertNotEmpty($result->errors('thing'));
 	}
 
 }

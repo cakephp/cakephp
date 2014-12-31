@@ -3168,4 +3168,36 @@ class TableTest extends TestCase {
 		$this->assertEquals(1, $count, 'Callback should be called only once');
 	}
 
+/**
+ * Tests the validateUnique method with different combinations
+ *
+ * @return void
+ */
+	public function testValidateUnique() {
+		$table = TableRegistry::get('Users');
+		$validator = new Validator;
+		$validator->add('username', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+		$validator->provider('table', $table);
+		$data = ['username' => 'larry'];
+		$this->assertNotEmpty($validator->errors($data));
+
+		$data = ['username' => 'jose'];
+		$this->assertEmpty($validator->errors($data));
+
+		$data = ['username' => 'larry', 'id' => 3];
+		$this->assertEmpty($validator->errors($data, false));
+
+		$data = ['username' => 'larry', 'id' => 3];
+		$this->assertNotEmpty($validator->errors($data));
+
+		$data = ['username' => 'larry'];
+		$this->assertNotEmpty($validator->errors($data, false));
+
+		$validator->add('username', 'unique', [
+			'rule' => 'validateUnique', 'provider' => 'table'
+		]);
+		$data = ['username' => 'larry'];
+		$this->assertNotEmpty($validator->errors($data, false));
+	}
+
 }

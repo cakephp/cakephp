@@ -34,6 +34,7 @@ use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Marshaller;
 use Cake\ORM\RulesChecker;
+use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
 use RuntimeException;
@@ -1900,33 +1901,19 @@ class Table implements RepositoryInterface, EventListenerInterface {
  *
  * @param mixed $value The value of column to be checked for uniqueness
  * @param array $options The options array, optionally containing the 'scope' key
- * @param array $context The validation context as provided by the validation routine
  * @return bool true if the value is unique
  */
-	public function validateUnique($value, array $options, array $context = []) {
-		if (empty($context)) {
-			$context = $options;
-		}
-
-		$conditions = [$context['field'] => $value];
-		if (!empty($options['scope']) && isset($context['data'][$options['scope']])) {
-			$scope = $options['scope'];
-			$scopedValue = $context['data'][$scope];
-			$conditions[$scope] = $scopedValue;
-		}
-
-		if (!$context['newRecord']) {
-			$keys = (array)$this->primaryKey();
-			$not = [];
-			foreach ($keys as $key) {
-				if (isset($context['data'][$key])) {
-					$not[$key] = $context['data'][$key];
-				}
-			}
-			$conditions['NOT'] = $not;
-		}
-
-		return !$this->exists($conditions);
+	public function validateUnique($value, array $options) {
+		$entity = new Entity(
+			$options['data'],
+			['useSetters' => false, 'markNew' => $options['newRecord']]
+		);
+		$fields = array_merge(
+			[$options['field']],
+			isset($options['scope']) ? (array)$options['scope'] : []
+		);
+		$rule = new IsUnique($fields);
+		return $rule($entity, ['repository' => $this]);
 	}
 
 /**
