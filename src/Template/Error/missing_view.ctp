@@ -57,7 +57,8 @@ namespace {$namespace}\View;
 
 use Cake\View\View;
 
-class {$class}View extends View {
+class {$class}View extends View
+{
 
 }
 PHP;

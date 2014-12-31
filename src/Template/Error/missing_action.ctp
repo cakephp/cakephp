@@ -55,9 +55,11 @@ namespace {$namespace}\Controller{$prefixNs};
 
 use {$namespace}\Controller\AppController;
 
-class {$controller} extends AppController {
+class {$controller} extends AppController
+{
 
-    public function {$action}() {
+    public function {$action}()
+    {
 
     }
 }

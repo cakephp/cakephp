@@ -60,7 +60,8 @@ namespace {$namespace}\Controller{$prefixNs};
 
 use {$namespace}\Controller\AppController;
 
-class {$class}Controller extends AppController {
+class {$class}Controller extends AppController
+{
 
 }
 PHP;

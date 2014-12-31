@@ -58,7 +58,8 @@ namespace {$namespace}\Model\Behavior;
 
 use Cake\ORM\Behavior;
 
-class {$class} extends Behavior {
+class {$class} extends Behavior
+{
 
 }
 PHP;

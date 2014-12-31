@@ -54,7 +54,8 @@ namespace {$namespace}\Controller\Component;
 
 use Cake\Controller\Component;
 
-class {$class} extends Component {
+class {$class} extends Component
+{
 
 }
 PHP;

@@ -55,7 +55,8 @@ namespace {$namespace}\View\Helper;
 
 use Cake\View\Helper;
 
-class {$class} extends Helper {
+class {$class} extends Helper
+{
 
 }
 PHP;
