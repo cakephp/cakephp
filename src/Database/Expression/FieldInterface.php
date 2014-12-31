@@ -20,30 +20,30 @@ namespace Cake\Database\Expression;
  *
  * @internal
  */
-interface FieldInterface {
+interface FieldInterface
+{
 
-/**
- * Sets the field name
- *
- * @param string $field The field to compare with.
- * @return void
- * @deprecated 3.0.0 Will be removed in 3.0.0 stable. Use setField() instead.
- */
-	public function field($field);
+    /**
+     * Sets the field name
+     *
+     * @param string $field The field to compare with.
+     * @return void
+     * @deprecated 3.0.0 Will be removed in 3.0.0 stable. Use setField() instead.
+     */
+    public function field($field);
 
-/**
- * Sets the field name
- *
- * @param string $field The field to compare with.
- * @return void
- */
-	public function setField($field);
+    /**
+     * Sets the field name
+     *
+     * @param string $field The field to compare with.
+     * @return void
+     */
+    public function setField($field);
 
-/**
- * Returns the field name
- *
- * @return string|\Cake\Database\ExpressionInterface
- */
-	public function getField();
-
+    /**
+     * Returns the field name
+     *
+     * @return string|\Cake\Database\ExpressionInterface
+     */
+    public function getField();
 }

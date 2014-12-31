@@ -1,6 +1,7 @@
 <?php
 namespace TestPlugin\Utility;
 
-class TestPluginEngine {
+class TestPluginEngine
+{
 
 }

@@ -56,113 +56,117 @@ use Cake\Log\LogTrait;
  * @link http://book.cakephp.org/3.0/en/controllers/components.html
  * @see Controller::$components
  */
-class Component implements EventListenerInterface {
+class Component implements EventListenerInterface
+{
 
-	use InstanceConfigTrait;
-	use LogTrait;
+    use InstanceConfigTrait;
+    use LogTrait;
 
-/**
- * Component registry class used to lazy load components.
- *
- * @var ComponentRegistry
- */
-	protected $_registry;
+    /**
+     * Component registry class used to lazy load components.
+     *
+     * @var ComponentRegistry
+     */
+    protected $_registry;
 
-/**
- * Other Components this component uses.
- *
- * @var array
- */
-	public $components = array();
+    /**
+     * Other Components this component uses.
+     *
+     * @var array
+     */
+    public $components = array();
 
-/**
- * Default config
- *
- * These are merged with user-provided config when the component is used.
- *
- * @var array
- */
-	protected $_defaultConfig = [];
+    /**
+     * Default config
+     *
+     * These are merged with user-provided config when the component is used.
+     *
+     * @var array
+     */
+    protected $_defaultConfig = [];
 
-/**
- * A component lookup table used to lazy load component objects.
- *
- * @var array
- */
-	protected $_componentMap = array();
+    /**
+     * A component lookup table used to lazy load component objects.
+     *
+     * @var array
+     */
+    protected $_componentMap = array();
 
-/**
- * Constructor
- *
- * @param ComponentRegistry $registry A ComponentRegistry this component can use to lazy load its components
- * @param array $config Array of configuration settings.
- */
-	public function __construct(ComponentRegistry $registry, array $config = []) {
-		$this->_registry = $registry;
+    /**
+     * Constructor
+     *
+     * @param ComponentRegistry $registry A ComponentRegistry this component can use to lazy load its components
+     * @param array $config Array of configuration settings.
+     */
+    public function __construct(ComponentRegistry $registry, array $config = [])
+    {
+        $this->_registry = $registry;
 
-		$this->config($config);
+        $this->config($config);
 
-		if (!empty($this->components)) {
-			$this->_componentMap = $registry->normalizeArray($this->components);
-		}
-		$this->initialize($config);
-	}
+        if (!empty($this->components)) {
+            $this->_componentMap = $registry->normalizeArray($this->components);
+        }
+        $this->initialize($config);
+    }
 
-/**
- * Constructor hook method.
- *
- * Implement this method to avoid having to overwrite
- * the constructor and call parent.
- *
- * @param array $config The configuration settings provided to this component.
- * @return void
- */
-	public function initialize(array $config) {
-	}
+    /**
+     * Constructor hook method.
+     *
+     * Implement this method to avoid having to overwrite
+     * the constructor and call parent.
+     *
+     * @param array $config The configuration settings provided to this component.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+    }
 
-/**
- * Magic method for lazy loading $components.
- *
- * @param string $name Name of component to get.
- * @return mixed A Component object or null.
- */
-	public function __get($name) {
-		if (isset($this->_componentMap[$name]) && !isset($this->{$name})) {
-			$config = array('enabled' => false) + (array)$this->_componentMap[$name]['config'];
-			$this->{$name} = $this->_registry->load($this->_componentMap[$name]['class'], $config);
-		}
-		if (isset($this->{$name})) {
-			return $this->{$name};
-		}
-	}
+    /**
+     * Magic method for lazy loading $components.
+     *
+     * @param string $name Name of component to get.
+     * @return mixed A Component object or null.
+     */
+    public function __get($name)
+    {
+        if (isset($this->_componentMap[$name]) && !isset($this->{$name})) {
+            $config = array('enabled' => false) + (array)$this->_componentMap[$name]['config'];
+            $this->{$name} = $this->_registry->load($this->_componentMap[$name]['class'], $config);
+        }
+        if (isset($this->{$name})) {
+            return $this->{$name};
+        }
+    }
 
-/**
- * Get the Controller callbacks this Component is interested in.
- *
- * Uses Conventions to map controller events to standard component
- * callback method names. By defining one of the callback methods a
- * component is assumed to be interested in the related event.
- *
- * Override this method if you need to add non-conventional event listeners.
- * Or if you want components to listen to non-standard events.
- *
- * @return array
- */
-	public function implementedEvents() {
-		$eventMap = [
-			'Controller.initialize' => 'beforeFilter',
-			'Controller.startup' => 'startup',
-			'Controller.beforeRender' => 'beforeRender',
-			'Controller.beforeRedirect' => 'beforeRedirect',
-			'Controller.shutdown' => 'shutdown',
-		];
-		$events = [];
-		foreach ($eventMap as $event => $method) {
-			if (method_exists($this, $method)) {
-				$events[$event] = $method;
-			}
-		}
-		return $events;
-	}
-
+    /**
+     * Get the Controller callbacks this Component is interested in.
+     *
+     * Uses Conventions to map controller events to standard component
+     * callback method names. By defining one of the callback methods a
+     * component is assumed to be interested in the related event.
+     *
+     * Override this method if you need to add non-conventional event listeners.
+     * Or if you want components to listen to non-standard events.
+     *
+     * @return array
+     */
+    public function implementedEvents()
+    {
+        $eventMap = [
+            'Controller.initialize' => 'beforeFilter',
+            'Controller.startup' => 'startup',
+            'Controller.beforeRender' => 'beforeRender',
+            'Controller.beforeRedirect' => 'beforeRedirect',
+            'Controller.shutdown' => 'shutdown',
+        ];
+        $events = [];
+        foreach ($eventMap as $event => $method) {
+            if (method_exists($this, $method)) {
+                $events[$event] = $method;
+            }
+        }
+        return $events;
+    }
 }

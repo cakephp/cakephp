@@ -20,118 +20,125 @@ namespace Cake\Event;
  * represents the object that the event applies to.
  *
  */
-class Event {
+class Event
+{
 
-/**
- * Name of the event
- *
- * @var string
- */
-	protected $_name = null;
+    /**
+     * Name of the event
+     *
+     * @var string
+     */
+    protected $_name = null;
 
-/**
- * The object this event applies to (usually the same object that generates the event)
- *
- * @var object
- */
-	protected $_subject;
+    /**
+     * The object this event applies to (usually the same object that generates the event)
+     *
+     * @var object
+     */
+    protected $_subject;
 
-/**
- * Custom data for the method that receives the event
- *
- * @var mixed
- */
-	public $data = null;
+    /**
+     * Custom data for the method that receives the event
+     *
+     * @var mixed
+     */
+    public $data = null;
 
-/**
- * Property used to retain the result value of the event listeners
- *
- * @var mixed
- */
-	public $result = null;
+    /**
+     * Property used to retain the result value of the event listeners
+     *
+     * @var mixed
+     */
+    public $result = null;
 
-/**
- * Flags an event as stopped or not, default is false
- *
- * @var bool
- */
-	protected $_stopped = false;
+    /**
+     * Flags an event as stopped or not, default is false
+     *
+     * @var bool
+     */
+    protected $_stopped = false;
 
-/**
- * Constructor
- *
- * ### Examples of usage:
- *
- * {{{
- *	$event = new Event('Order.afterBuy', $this, array('buyer' => $userData));
- *	$event = new Event('User.afterRegister', $UserModel);
- * }}}
- *
- * @param string $name Name of the event
- * @param object|null $subject the object that this event applies to (usually the object that is generating the event)
- * @param array|null $data any value you wish to be transported with this event to it can be read by listeners
- */
-	public function __construct($name, $subject = null, $data = null) {
-		$this->_name = $name;
-		$this->data = $data;
-		$this->_subject = $subject;
-	}
+    /**
+     * Constructor
+     *
+     * ### Examples of usage:
+     *
+     * {{{
+     *  $event = new Event('Order.afterBuy', $this, array('buyer' => $userData));
+     *  $event = new Event('User.afterRegister', $UserModel);
+     * }}}
+     *
+     * @param string $name Name of the event
+     * @param object|null $subject the object that this event applies to (usually the object that is generating the event)
+     * @param array|null $data any value you wish to be transported with this event to it can be read by listeners
+     */
+    public function __construct($name, $subject = null, $data = null)
+    {
+        $this->_name = $name;
+        $this->data = $data;
+        $this->_subject = $subject;
+    }
 
-/**
- * Dynamically returns the name and subject if accessed directly
- *
- * @param string $attribute Attribute name.
- * @return mixed
- */
-	public function __get($attribute) {
-		if ($attribute === 'name' || $attribute === 'subject') {
-			return $this->{$attribute}();
-		}
-	}
+    /**
+     * Dynamically returns the name and subject if accessed directly
+     *
+     * @param string $attribute Attribute name.
+     * @return mixed
+     */
+    public function __get($attribute)
+    {
+        if ($attribute === 'name' || $attribute === 'subject') {
+            return $this->{$attribute}();
+        }
+    }
 
-/**
- * Returns the name of this event. This is usually used as the event identifier
- *
- * @return string
- */
-	public function name() {
-		return $this->_name;
-	}
+    /**
+     * Returns the name of this event. This is usually used as the event identifier
+     *
+     * @return string
+     */
+    public function name()
+    {
+        return $this->_name;
+    }
 
-/**
- * Returns the subject of this event
- *
- * @return string
- */
-	public function subject() {
-		return $this->_subject;
-	}
+    /**
+     * Returns the subject of this event
+     *
+     * @return string
+     */
+    public function subject()
+    {
+        return $this->_subject;
+    }
 
-/**
- * Stops the event from being used anymore
- *
- * @return void
- */
-	public function stopPropagation() {
-		$this->_stopped = true;
-	}
+    /**
+     * Stops the event from being used anymore
+     *
+     * @return void
+     */
+    public function stopPropagation()
+    {
+        $this->_stopped = true;
+    }
 
-/**
- * Check if the event is stopped
- *
- * @return bool True if the event is stopped
- */
-	public function isStopped() {
-		return $this->_stopped;
-	}
+    /**
+     * Check if the event is stopped
+     *
+     * @return bool True if the event is stopped
+     */
+    public function isStopped()
+    {
+        return $this->_stopped;
+    }
 
-/**
- * Access the event data/payload.
- *
- * @return array
- */
-	public function data() {
-		return (array)$this->data;
-	}
-
+    /**
+     * Access the event data/payload.
+     *
+     * @return array
+     */
+    public function data()
+    {
+        return (array)$this->data;
+    }
 }

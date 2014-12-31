@@ -22,58 +22,61 @@ use Cake\Database\SqlDialectTrait;
  *
  * @internal
  */
-trait MysqlDialectTrait {
+trait MysqlDialectTrait
+{
 
-	use SqlDialectTrait;
+    use SqlDialectTrait;
 
-/**
- *  String used to start a database identifier quoting to make it safe
- *
- * @var string
- */
-	protected $_startQuote = '`';
+    /**
+     *  String used to start a database identifier quoting to make it safe
+     *
+     * @var string
+     */
+    protected $_startQuote = '`';
 
-/**
- * String used to end a database identifier quoting to make it safe
- *
- * @var string
- */
-	protected $_endQuote = '`';
+    /**
+     * String used to end a database identifier quoting to make it safe
+     *
+     * @var string
+     */
+    protected $_endQuote = '`';
 
-/**
- * The schema dialect class for this driver
- *
- * @var \Cake\Database\Schema\MysqlSchema
- */
-	protected $_schemaDialect;
+    /**
+     * The schema dialect class for this driver
+     *
+     * @var \Cake\Database\Schema\MysqlSchema
+     */
+    protected $_schemaDialect;
 
-/**
- * Get the schema dialect.
- *
- * Used by Cake\Database\Schema package to reflect schema and
- * generate schema.
- *
- * @return \Cake\Database\Schema\MysqlSchema
- */
-	public function schemaDialect() {
-		if (!$this->_schemaDialect) {
-			$this->_schemaDialect = new \Cake\Database\Schema\MysqlSchema($this);
-		}
-		return $this->_schemaDialect;
-	}
+    /**
+     * Get the schema dialect.
+     *
+     * Used by Cake\Database\Schema package to reflect schema and
+     * generate schema.
+     *
+     * @return \Cake\Database\Schema\MysqlSchema
+     */
+    public function schemaDialect()
+    {
+        if (!$this->_schemaDialect) {
+            $this->_schemaDialect = new \Cake\Database\Schema\MysqlSchema($this);
+        }
+        return $this->_schemaDialect;
+    }
 
-/**
- * {@inheritDoc}
- */
-	public function disableForeignKeySQL() {
-		return 'SET foreign_key_checks = 0';
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public function disableForeignKeySQL()
+    {
+        return 'SET foreign_key_checks = 0';
+    }
 
-/**
- * {@inheritDoc}
- */
-	public function enableForeignKeySQL() {
-		return 'SET foreign_key_checks = 1';
-	}
-
+    /**
+     * {@inheritDoc}
+     */
+    public function enableForeignKeySQL()
+    {
+        return 'SET foreign_key_checks = 1';
+    }
 }

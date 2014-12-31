@@ -22,65 +22,69 @@ use PDO;
  *
  * Use to convert integer data between PHP and the database types.
  */
-class IntegerType extends \Cake\Database\Type {
+class IntegerType extends \Cake\Database\Type
+{
 
-/**
- * Convert integer data into the database format.
- *
- * @param string|resource $value The value to convert.
- * @param Driver $driver The driver instance to convert with.
- * @return string|resource
- */
-	public function toDatabase($value, Driver $driver) {
-		if ($value === null || $value === '') {
-			return null;
-		}
-		return (int)$value;
-	}
+    /**
+     * Convert integer data into the database format.
+     *
+     * @param string|resource $value The value to convert.
+     * @param Driver $driver The driver instance to convert with.
+     * @return string|resource
+     */
+    public function toDatabase($value, Driver $driver)
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+        return (int)$value;
+    }
 
-/**
- * Convert integer values to PHP integers
- *
- * @param null|string|resource $value The value to convert.
- * @param Driver $driver The driver instance to convert with.
- * @return resource
- * @throws \Cake\Core\Exception\Exception
- */
-	public function toPHP($value, Driver $driver) {
-		if ($value === null) {
-			return null;
-		}
-		return (int)$value;
-	}
+    /**
+     * Convert integer values to PHP integers
+     *
+     * @param null|string|resource $value The value to convert.
+     * @param Driver $driver The driver instance to convert with.
+     * @return resource
+     * @throws \Cake\Core\Exception\Exception
+     */
+    public function toPHP($value, Driver $driver)
+    {
+        if ($value === null) {
+            return null;
+        }
+        return (int)$value;
+    }
 
-/**
- * Get the correct PDO binding type for integer data.
- *
- * @param mixed $value The value being bound.
- * @param Driver $driver The driver.
- * @return int
- */
-	public function toStatement($value, Driver $driver) {
-		return PDO::PARAM_INT;
-	}
+    /**
+     * Get the correct PDO binding type for integer data.
+     *
+     * @param mixed $value The value being bound.
+     * @param Driver $driver The driver.
+     * @return int
+     */
+    public function toStatement($value, Driver $driver)
+    {
+        return PDO::PARAM_INT;
+    }
 
-/**
- * Marshalls request data into PHP floats.
- *
- * @param mixed $value The value to convert.
- * @return mixed Converted value.
- */
-	public function marshal($value) {
-		if ($value === null || $value === '') {
-			return null;
-		}
-		if (is_int($value)) {
-			return $value;
-		}
-		if (ctype_digit($value)) {
-			return (int)$value;
-		}
-		return $value;
-	}
-
+    /**
+     * Marshalls request data into PHP floats.
+     *
+     * @param mixed $value The value to convert.
+     * @return mixed Converted value.
+     */
+    public function marshal($value)
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+        if (is_int($value)) {
+            return $value;
+        }
+        if (ctype_digit($value)) {
+            return (int)$value;
+        }
+        return $value;
+    }
 }

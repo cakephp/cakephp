@@ -19,5 +19,6 @@ use RuntimeException;
  * SmtpTransport, MailTransport and HttpResponse when it encounters an error.
  *
  */
-class SocketException extends RuntimeException {
+class SocketException extends RuntimeException
+{
 }

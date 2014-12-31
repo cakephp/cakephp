@@ -23,28 +23,33 @@ use Cake\Network\Response;
  * Currently only switches the default layout and sets the response type - which just maps to
  * text/html by default.
  */
-class AjaxView extends View {
+class AjaxView extends View
+{
 
-/**
- *
- * @var string
- */
-	public $layout = 'ajax';
+    /**
+     *
+     * @var string
+     */
+    public $layout = 'ajax';
 
-/**
- * Constructor
- *
- * @param \Cake\Network\Request $request The request object.
- * @param \Cake\Network\Response $response The response object.
- * @param \Cake\Event\EventManager $eventManager Event manager object.
- * @param array $viewOptions View options.
- */
-	public function __construct(Request $request = null, Response $response = null,
-		EventManager $eventManager = null, array $viewOptions = []) {
-		parent::__construct($request, $response, $eventManager, $viewOptions);
+    /**
+     * Constructor
+     *
+     * @param \Cake\Network\Request $request The request object.
+     * @param \Cake\Network\Response $response The response object.
+     * @param \Cake\Event\EventManager $eventManager Event manager object.
+     * @param array $viewOptions View options.
+     */
+    public function __construct(
+        Request $request = null,
+        Response $response = null,
+        EventManager $eventManager = null,
+        array $viewOptions = []
+    ) {
+        parent::__construct($request, $response, $eventManager, $viewOptions);
 
-		if ($response && $response instanceof Response) {
-			$response->type('ajax');
-		}
-	}
+        if ($response && $response instanceof Response) {
+            $response->type('ajax');
+        }
+    }
 }

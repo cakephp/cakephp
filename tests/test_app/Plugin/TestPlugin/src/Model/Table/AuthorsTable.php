@@ -19,6 +19,7 @@ use Cake\ORM\Table;
 /**
  * Class AuthorsTable
  */
-class AuthorsTable extends Table {
+class AuthorsTable extends Table
+{
 
 }

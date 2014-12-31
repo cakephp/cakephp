@@ -21,65 +21,67 @@ use Cake\ORM\Association;
  * Checks that the value provided in a field exists as the primary key of another
  * table.
  */
-class ExistsIn {
+class ExistsIn
+{
 
-/**
- * The list of fields to check
- *
- * @var array
- */
-	protected $_fields;
+    /**
+     * The list of fields to check
+     *
+     * @var array
+     */
+    protected $_fields;
 
-/**
- * The repository where the field will be looked for
- *
- * @var array
- */
-	protected $_repository;
+    /**
+     * The repository where the field will be looked for
+     *
+     * @var array
+     */
+    protected $_repository;
 
-/**
- * Constructor.
- *
- * @param string|array $fields The field or fields to check existence as primary key.
- * @param object|string $repository The repository where the field will be looked for,
- * or the association name for the repository.
- */
-	public function __construct($fields, $repository) {
-		$this->_fields = (array)$fields;
-		$this->_repository = $repository;
-	}
+    /**
+     * Constructor.
+     *
+     * @param string|array $fields The field or fields to check existence as primary key.
+     * @param object|string $repository The repository where the field will be looked for,
+     * or the association name for the repository.
+     */
+    public function __construct($fields, $repository)
+    {
+        $this->_fields = (array)$fields;
+        $this->_repository = $repository;
+    }
 
-/**
- * Performs the existence check
- *
- * @param \Cake\Datasource\EntityInterface $entity The entity from where to extract the fields
- * @param array $options Options passed to the check,
- * where the `repository` key is required.
- * @return bool
- */
-	public function __invoke(EntityInterface $entity, array $options) {
-		if (is_string($this->_repository)) {
-			$this->_repository = $options['repository']->association($this->_repository);
-		}
+    /**
+     * Performs the existence check
+     *
+     * @param \Cake\Datasource\EntityInterface $entity The entity from where to extract the fields
+     * @param array $options Options passed to the check,
+     * where the `repository` key is required.
+     * @return bool
+     */
+    public function __invoke(EntityInterface $entity, array $options)
+    {
+        if (is_string($this->_repository)) {
+            $this->_repository = $options['repository']->association($this->_repository);
+        }
 
-		if (!empty($options['_sourceTable'])) {
-			$source = $this->_repository instanceof Association ?
-				$this->_repository->target() :
-				$this->_repository;
-			if ($source === $options['_sourceTable']) {
-				return true;
-			}
-		}
+        if (!empty($options['_sourceTable'])) {
+            $source = $this->_repository instanceof Association ?
+                $this->_repository->target() :
+                $this->_repository;
+            if ($source === $options['_sourceTable']) {
+                return true;
+            }
+        }
 
-		if (!$entity->extract($this->_fields, true)) {
-			return true;
-		}
+        if (!$entity->extract($this->_fields, true)) {
+            return true;
+        }
 
-		$conditions = array_combine(
-			(array)$this->_repository->primaryKey(),
-			$entity->extract($this->_fields)
-		);
-		return $this->_repository->exists($conditions);
-	}
-
+        $conditions = array_combine(
+            (array)$this->_repository->primaryKey(),
+            $entity->extract($this->_fields)
+        );
+        return $this->_repository->exists($conditions);
+    }
 }

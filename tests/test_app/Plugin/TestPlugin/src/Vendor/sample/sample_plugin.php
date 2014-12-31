@@ -17,5 +17,6 @@
  * Class SamplePluginClassTestName
  *
  */
-class SamplePluginClassTestName {
+class SamplePluginClassTestName
+{
 }

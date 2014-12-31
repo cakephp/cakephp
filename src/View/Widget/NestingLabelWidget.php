@@ -22,13 +22,13 @@ use Cake\View\Widget\LabelWidget;
  * Generally this element is used by other widgets,
  * and FormHelper itself.
  */
-class NestingLabelWidget extends LabelWidget {
+class NestingLabelWidget extends LabelWidget
+{
 
-/**
- * The template to use.
- *
- * @var string
- */
-	protected $_labelTemplate = 'nestingLabel';
-
+    /**
+     * The template to use.
+     *
+     * @var string
+     */
+    protected $_labelTemplate = 'nestingLabel';
 }

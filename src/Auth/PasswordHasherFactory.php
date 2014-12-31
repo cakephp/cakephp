@@ -20,38 +20,39 @@ use Cake\Core\App;
  * Builds password hashing objects
  *
  */
-class PasswordHasherFactory {
+class PasswordHasherFactory
+{
 
-/**
- * Returns password hasher object out of a hasher name or a configuration array
- *
- * @param string|array $passwordHasher Name of the password hasher or an array with
- * at least the key `className` set to the name of the class to use
- * @return \Cake\Auth\AbstractPasswordHasher Password hasher instance
- * @throws \RuntimeException If password hasher class not found or
- *   it does not extend Cake\Auth\AbstractPasswordHasher
- */
-	public static function build($passwordHasher) {
-		$config = [];
-		if (is_string($passwordHasher)) {
-			$class = $passwordHasher;
-		} else {
-			$class = $passwordHasher['className'];
-			$config = $passwordHasher;
-			unset($config['className']);
-		}
+    /**
+     * Returns password hasher object out of a hasher name or a configuration array
+     *
+     * @param string|array $passwordHasher Name of the password hasher or an array with
+     * at least the key `className` set to the name of the class to use
+     * @return \Cake\Auth\AbstractPasswordHasher Password hasher instance
+     * @throws \RuntimeException If password hasher class not found or
+     *   it does not extend Cake\Auth\AbstractPasswordHasher
+     */
+    public static function build($passwordHasher)
+    {
+        $config = [];
+        if (is_string($passwordHasher)) {
+            $class = $passwordHasher;
+        } else {
+            $class = $passwordHasher['className'];
+            $config = $passwordHasher;
+            unset($config['className']);
+        }
 
-		$className = App::className($class, 'Auth', 'PasswordHasher');
-		if (!$className) {
-			throw new \RuntimeException(sprintf('Password hasher class "%s" was not found.', $class));
-		}
+        $className = App::className($class, 'Auth', 'PasswordHasher');
+        if (!$className) {
+            throw new \RuntimeException(sprintf('Password hasher class "%s" was not found.', $class));
+        }
 
-		$hasher = new $className($config);
-		if (!($hasher instanceof AbstractPasswordHasher)) {
-			throw new \RuntimeException('Password hasher must extend AbstractPasswordHasher class.');
-		}
+        $hasher = new $className($config);
+        if (!($hasher instanceof AbstractPasswordHasher)) {
+            throw new \RuntimeException('Password hasher must extend AbstractPasswordHasher class.');
+        }
 
-		return $hasher;
-	}
-
+        return $hasher;
+    }
 }

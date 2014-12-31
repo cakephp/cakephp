@@ -17,5 +17,6 @@ namespace TestPlugin\Auth;
 
 use Cake\Auth\DefaultPasswordHasher;
 
-class LegacyPasswordHasher extends DefaultPasswordHasher {
+class LegacyPasswordHasher extends DefaultPasswordHasher
+{
 }

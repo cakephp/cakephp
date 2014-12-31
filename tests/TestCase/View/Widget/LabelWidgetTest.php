@@ -21,82 +21,86 @@ use Cake\View\Widget\LabelWidget;
 /**
  * Label test case.
  */
-class LabelWidgetTest extends TestCase {
+class LabelWidgetTest extends TestCase
+{
 
-/**
- * setup method.
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		$templates = [
-			'label' => '<label{{attrs}}>{{text}}</label>',
-		];
-		$this->templates = new StringTemplate($templates);
-		$this->context = $this->getMock('Cake\View\Form\ContextInterface');
-	}
+    /**
+     * setup method.
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $templates = [
+            'label' => '<label{{attrs}}>{{text}}</label>',
+        ];
+        $this->templates = new StringTemplate($templates);
+        $this->context = $this->getMock('Cake\View\Form\ContextInterface');
+    }
 
-/**
- * test render
- *
- * @return void
- */
-	public function testRender() {
-		$label = new LabelWidget($this->templates);
-		$data = [
-			'text' => 'My text',
-		];
-		$result = $label->render($data, $this->context);
-		$expected = [
-			'label' => [],
-			'My text',
-			'/label'
-		];
-		$this->assertHtml($expected, $result);
-	}
+    /**
+     * test render
+     *
+     * @return void
+     */
+    public function testRender()
+    {
+        $label = new LabelWidget($this->templates);
+        $data = [
+            'text' => 'My text',
+        ];
+        $result = $label->render($data, $this->context);
+        $expected = [
+            'label' => [],
+            'My text',
+            '/label'
+        ];
+        $this->assertHtml($expected, $result);
+    }
 
-/**
- * test render escape
- *
- * @return void
- */
-	public function testRenderEscape() {
-		$label = new LabelWidget($this->templates);
-		$data = [
-			'text' => 'My > text',
-			'for' => 'Some > value',
-			'escape' => false,
-		];
-		$result = $label->render($data, $this->context);
-		$expected = [
-			'label' => ['for' => 'Some > value'],
-			'My > text',
-			'/label'
-		];
-		$this->assertHtml($expected, $result);
-	}
+    /**
+     * test render escape
+     *
+     * @return void
+     */
+    public function testRenderEscape()
+    {
+        $label = new LabelWidget($this->templates);
+        $data = [
+            'text' => 'My > text',
+            'for' => 'Some > value',
+            'escape' => false,
+        ];
+        $result = $label->render($data, $this->context);
+        $expected = [
+            'label' => ['for' => 'Some > value'],
+            'My > text',
+            '/label'
+        ];
+        $this->assertHtml($expected, $result);
+    }
 
-/**
- * test render escape
- *
- * @return void
- */
-	public function testRenderAttributes() {
-		$label = new LabelWidget($this->templates);
-		$data = [
-			'text' => 'My > text',
-			'for' => 'some-id',
-			'id' => 'some-id',
-			'data-foo' => 'value',
-		];
-		$result = $label->render($data, $this->context);
-		$expected = [
-			'label' => ['id' => 'some-id', 'data-foo' => 'value', 'for' => 'some-id'],
-			'My &gt; text',
-			'/label'
-		];
-		$this->assertHtml($expected, $result);
-	}
-
+    /**
+     * test render escape
+     *
+     * @return void
+     */
+    public function testRenderAttributes()
+    {
+        $label = new LabelWidget($this->templates);
+        $data = [
+            'text' => 'My > text',
+            'for' => 'some-id',
+            'id' => 'some-id',
+            'data-foo' => 'value',
+        ];
+        $result = $label->render($data, $this->context);
+        $expected = [
+            'label' => ['id' => 'some-id', 'data-foo' => 'value', 'for' => 'some-id'],
+            'My &gt; text',
+            '/label'
+        ];
+        $this->assertHtml($expected, $result);
+    }
 }

@@ -20,8 +20,8 @@ use Cake\Core\Exception\Exception;
  * Used when a cell class file cannot be found.
  *
  */
-class MissingCellException extends Exception {
+class MissingCellException extends Exception
+{
 
-	protected $_messageTemplate = 'Cell class %s is missing.';
-
+    protected $_messageTemplate = 'Cell class %s is missing.';
 }

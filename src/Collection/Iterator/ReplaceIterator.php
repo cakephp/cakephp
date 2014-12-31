@@ -20,40 +20,42 @@ use Cake\Collection\Collection;
  * Creates an iterator from another iterator that will modify each of the values
  * by converting them using a callback function.
  */
-class ReplaceIterator extends Collection {
+class ReplaceIterator extends Collection
+{
 
-/**
- * The callback function to be used to modify each of the values
- *
- * @var callable
- */
-	protected $_callback;
+    /**
+     * The callback function to be used to modify each of the values
+     *
+     * @var callable
+     */
+    protected $_callback;
 
-/**
- * Creates an iterator from another iterator that will modify each of the values
- * by converting them using a callback function.
- *
- * Each time the callback is executed it will receive the value of the element
- * in the current iteration, the key of the element and the passed $items iterator
- * as arguments, in that order.
- *
- * @param array|\Traversable $items The items to be filtered.
- * @param callable $callback Callback.
- */
-	public function __construct($items, callable $callback) {
-		$this->_callback = $callback;
-		parent::__construct($items);
-	}
+    /**
+     * Creates an iterator from another iterator that will modify each of the values
+     * by converting them using a callback function.
+     *
+     * Each time the callback is executed it will receive the value of the element
+     * in the current iteration, the key of the element and the passed $items iterator
+     * as arguments, in that order.
+     *
+     * @param array|\Traversable $items The items to be filtered.
+     * @param callable $callback Callback.
+     */
+    public function __construct($items, callable $callback)
+    {
+        $this->_callback = $callback;
+        parent::__construct($items);
+    }
 
-/**
- * Returns the value returned by the callback after passing the current value in
- * the iteration
- *
- * @return mixed
- */
-	public function current() {
-		$callback = $this->_callback;
-		return $callback(parent::current(), $this->key(), $this->getInnerIterator());
-	}
-
+    /**
+     * Returns the value returned by the callback after passing the current value in
+     * the iteration
+     *
+     * @return mixed
+     */
+    public function current()
+    {
+        $callback = $this->_callback;
+        return $callback(parent::current(), $this->key(), $this->getInnerIterator());
+    }
 }

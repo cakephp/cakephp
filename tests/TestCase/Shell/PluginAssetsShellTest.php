@@ -25,179 +25,187 @@ use Cake\TestSuite\TestCase;
  * PluginAssetsShellTest class
  *
  */
-class PluginAssetsShellTest extends TestCase {
+class PluginAssetsShellTest extends TestCase
+{
 
-/**
- * setUp method
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
+    /**
+     * setUp method
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
 
-		$this->skipIf(
-			DS === '\\',
-			'Skip PluginAssetsShell tests on windows to prevent side effects for UrlHelper tests on AppVeyor.'
-		);
+        $this->skipIf(
+            DS === '\\',
+            'Skip PluginAssetsShell tests on windows to prevent side effects for UrlHelper tests on AppVeyor.'
+        );
 
-		$this->io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
+        $this->io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
-		$this->shell = $this->getMock(
-			'Cake\Shell\PluginAssetsShell',
-			array('in', 'out', 'err', '_stop'),
-			array($this->io)
-		);
-	}
+        $this->shell = $this->getMock(
+            'Cake\Shell\PluginAssetsShell',
+            array('in', 'out', 'err', '_stop'),
+            array($this->io)
+        );
+    }
 
-/**
- * tearDown method
- *
- * @return void
- */
-	public function tearDown() {
-		parent::tearDown();
-		unset($this->shell);
-		Plugin::unload();
-	}
+    /**
+     * tearDown method
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        unset($this->shell);
+        Plugin::unload();
+    }
 
-/**
- * testSymlink method
- *
- * @return void
- */
-	public function testSymlink() {
-		Plugin::load('TestPlugin');
-		Plugin::load('Company/TestPluginThree');
+    /**
+     * testSymlink method
+     *
+     * @return void
+     */
+    public function testSymlink()
+    {
+        Plugin::load('TestPlugin');
+        Plugin::load('Company/TestPluginThree');
 
-		$this->shell->symlink();
+        $this->shell->symlink();
 
-		$path = WWW_ROOT . 'test_plugin';
-		$link = new \SplFileInfo($path);
-		$this->assertTrue(file_exists($path . DS . 'root.js'));
-		if (DS === '\\') {
-			$this->assertTrue($link->isDir());
-			$folder = new Folder($path);
-			$folder->delete();
-		} else {
-			$this->assertTrue($link->isLink());
-			unlink($path);
-		}
+        $path = WWW_ROOT . 'test_plugin';
+        $link = new \SplFileInfo($path);
+        $this->assertTrue(file_exists($path . DS . 'root.js'));
+        if (DS === '\\') {
+            $this->assertTrue($link->isDir());
+            $folder = new Folder($path);
+            $folder->delete();
+        } else {
+            $this->assertTrue($link->isLink());
+            unlink($path);
+        }
 
-		$path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
-		$link = new \SplFileInfo($path);
-		// If "company" directory exists beforehand "test_plugin_three" would
-		// be a link. But if the directory is created by the shell itself
-		// symlinking fails and the assets folder is copied as fallback.
-		$this->assertTrue($link->isDir());
-		$this->assertTrue(file_exists($path . DS . 'css' . DS . 'company.css'));
-		$folder = new Folder(WWW_ROOT . 'company');
-		$folder->delete();
-	}
+        $path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
+        $link = new \SplFileInfo($path);
+        // If "company" directory exists beforehand "test_plugin_three" would
+        // be a link. But if the directory is created by the shell itself
+        // symlinking fails and the assets folder is copied as fallback.
+        $this->assertTrue($link->isDir());
+        $this->assertTrue(file_exists($path . DS . 'css' . DS . 'company.css'));
+        $folder = new Folder(WWW_ROOT . 'company');
+        $folder->delete();
+    }
 
-/**
- * testSymlinkWhenVendorDirectoryExits
- *
- * @return void
- */
-	public function testSymlinkWhenVendorDirectoryExits() {
-		Plugin::load('Company/TestPluginThree');
+    /**
+     * testSymlinkWhenVendorDirectoryExits
+     *
+     * @return void
+     */
+    public function testSymlinkWhenVendorDirectoryExits()
+    {
+        Plugin::load('Company/TestPluginThree');
 
-		mkdir(WWW_ROOT . 'company');
+        mkdir(WWW_ROOT . 'company');
 
-		$this->shell->symlink();
-		$path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
-		$link = new \SplFileInfo($path);
-		if (DS === '\\') {
-			$this->assertTrue($link->isDir());
-		} else {
-			$this->assertTrue($link->isLink());
-		}
-		$this->assertTrue(file_exists($path . DS . 'css' . DS . 'company.css'));
-		$folder = new Folder(WWW_ROOT . 'company');
-		$folder->delete();
-	}
+        $this->shell->symlink();
+        $path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
+        $link = new \SplFileInfo($path);
+        if (DS === '\\') {
+            $this->assertTrue($link->isDir());
+        } else {
+            $this->assertTrue($link->isLink());
+        }
+        $this->assertTrue(file_exists($path . DS . 'css' . DS . 'company.css'));
+        $folder = new Folder(WWW_ROOT . 'company');
+        $folder->delete();
+    }
 
-/**
- * testSymlinkWhenTargetAlreadyExits
- *
- * @return void
- */
-	public function testSymlinkWhenTargetAlreadyExits() {
-		Plugin::load('TestTheme');
+    /**
+     * testSymlinkWhenTargetAlreadyExits
+     *
+     * @return void
+     */
+    public function testSymlinkWhenTargetAlreadyExits()
+    {
+        Plugin::load('TestTheme');
 
-		$shell = $this->getMock(
-			'Cake\Shell\PluginAssetsShell',
-			array('in', 'out', 'err', '_stop', '_createSymlink', '_copyDirectory'),
-			array($this->io)
-		);
+        $shell = $this->getMock(
+            'Cake\Shell\PluginAssetsShell',
+            array('in', 'out', 'err', '_stop', '_createSymlink', '_copyDirectory'),
+            array($this->io)
+        );
 
-		$this->assertTrue(is_dir(WWW_ROOT . 'test_theme'));
+        $this->assertTrue(is_dir(WWW_ROOT . 'test_theme'));
 
-		$shell->expects($this->never())->method('_createSymlink');
-		$shell->expects($this->never())->method('_copyDirectory');
-		$shell->symlink();
-	}
+        $shell->expects($this->never())->method('_createSymlink');
+        $shell->expects($this->never())->method('_copyDirectory');
+        $shell->symlink();
+    }
 
-/**
- * test that plugins without webroot are not processed
- *
- * @return void
- */
-	public function testForPluginWithoutWebroot() {
-		Plugin::load('TestPluginTwo');
+    /**
+     * test that plugins without webroot are not processed
+     *
+     * @return void
+     */
+    public function testForPluginWithoutWebroot()
+    {
+        Plugin::load('TestPluginTwo');
 
-		$this->shell->symlink();
-		$this->assertFalse(file_exists(WWW_ROOT . 'test_plugin_two'));
-	}
+        $this->shell->symlink();
+        $this->assertFalse(file_exists(WWW_ROOT . 'test_plugin_two'));
+    }
 
-/**
- * testSymlinkingSpecifiedPlugin
- *
- * @return void
- */
-	public function testSymlinkingSpecifiedPlugin() {
-		Plugin::load('TestPlugin');
-		Plugin::load('Company/TestPluginThree');
+    /**
+     * testSymlinkingSpecifiedPlugin
+     *
+     * @return void
+     */
+    public function testSymlinkingSpecifiedPlugin()
+    {
+        Plugin::load('TestPlugin');
+        Plugin::load('Company/TestPluginThree');
 
-		$this->shell->symlink('TestPlugin');
+        $this->shell->symlink('TestPlugin');
 
-		$path = WWW_ROOT . 'test_plugin';
-		$link = new \SplFileInfo($path);
-		$this->assertTrue(file_exists($path . DS . 'root.js'));
-		unlink($path);
+        $path = WWW_ROOT . 'test_plugin';
+        $link = new \SplFileInfo($path);
+        $this->assertTrue(file_exists($path . DS . 'root.js'));
+        unlink($path);
 
-		$path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
-		$link = new \SplFileInfo($path);
-		$this->assertFalse($link->isDir());
-		$this->assertFalse($link->isLink());
-	}
+        $path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
+        $link = new \SplFileInfo($path);
+        $this->assertFalse($link->isDir());
+        $this->assertFalse($link->isLink());
+    }
 
-/**
- * testCopy
- *
- * @return void
- */
-	public function testCopy() {
-		Plugin::load('TestPlugin');
-		Plugin::load('Company/TestPluginThree');
+    /**
+     * testCopy
+     *
+     * @return void
+     */
+    public function testCopy()
+    {
+        Plugin::load('TestPlugin');
+        Plugin::load('Company/TestPluginThree');
 
-		$this->shell->copy();
+        $this->shell->copy();
 
-		$path = WWW_ROOT . 'test_plugin';
-		$dir = new \SplFileInfo($path);
-		$this->assertTrue($dir->isDir());
-		$this->assertTrue(file_exists($path . DS . 'root.js'));
+        $path = WWW_ROOT . 'test_plugin';
+        $dir = new \SplFileInfo($path);
+        $this->assertTrue($dir->isDir());
+        $this->assertTrue(file_exists($path . DS . 'root.js'));
 
-		$folder = new Folder($path);
-		$folder->delete();
+        $folder = new Folder($path);
+        $folder->delete();
 
-		$path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
-		$link = new \SplFileInfo($path);
-		$this->assertTrue($link->isDir());
-		$this->assertTrue(file_exists($path . DS . 'css' . DS . 'company.css'));
+        $path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
+        $link = new \SplFileInfo($path);
+        $this->assertTrue($link->isDir());
+        $this->assertTrue(file_exists($path . DS . 'css' . DS . 'company.css'));
 
-		$folder = new Folder(WWW_ROOT . 'company');
-		$folder->delete();
-	}
-
+        $folder = new Folder(WWW_ROOT . 'company');
+        $folder->delete();
+    }
 }

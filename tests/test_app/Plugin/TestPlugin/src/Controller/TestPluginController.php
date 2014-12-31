@@ -20,14 +20,16 @@
  */
 namespace TestPlugin\Controller;
 
-class TestPluginController extends TestPluginAppController {
+class TestPluginController extends TestPluginAppController
+{
 
-	public function index() {
-		$this->autoRender = false;
-	}
+    public function index()
+    {
+        $this->autoRender = false;
+    }
 
-	public function add() {
-		$this->autoRender = false;
-	}
-
+    public function add()
+    {
+        $this->autoRender = false;
+    }
 }

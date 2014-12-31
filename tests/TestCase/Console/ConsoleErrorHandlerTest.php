@@ -25,140 +25,149 @@ use Cake\TestSuite\TestCase;
 /**
  * ConsoleErrorHandler Test case.
  */
-class ConsoleErrorHandlerTest extends TestCase {
+class ConsoleErrorHandlerTest extends TestCase
+{
 
-/**
- * setup, create mocks
- *
- * @return Mock object
- */
-	public function setUp() {
-		parent::setUp();
-		$this->stderr = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
-		$this->Error = $this->getMock('Cake\Console\ConsoleErrorHandler', ['_stop'], [['stderr' => $this->stderr]]);
-		Log::drop('stderr');
-	}
+    /**
+     * setup, create mocks
+     *
+     * @return Mock object
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->stderr = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
+        $this->Error = $this->getMock('Cake\Console\ConsoleErrorHandler', ['_stop'], [['stderr' => $this->stderr]]);
+        Log::drop('stderr');
+    }
 
-/**
- * tearDown
- *
- * @return void
- */
-	public function tearDown() {
-		unset($this->Error);
-		parent::tearDown();
-	}
+    /**
+     * tearDown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        unset($this->Error);
+        parent::tearDown();
+    }
 
-/**
- * test that the console error handler can deal with Exceptions.
- *
- * @return void
- */
-	public function testHandleError() {
-		$content = "<error>Notice Error:</error> This is a notice error in [/some/file, line 275]\n";
-		$this->stderr->expects($this->once())->method('write')
-			->with($content);
-		$this->Error->expects($this->never())
-			->method('_stop');
+    /**
+     * test that the console error handler can deal with Exceptions.
+     *
+     * @return void
+     */
+    public function testHandleError()
+    {
+        $content = "<error>Notice Error:</error> This is a notice error in [/some/file, line 275]\n";
+        $this->stderr->expects($this->once())->method('write')
+            ->with($content);
+        $this->Error->expects($this->never())
+            ->method('_stop');
 
-		$this->Error->handleError(E_NOTICE, 'This is a notice error', '/some/file', 275);
-	}
+        $this->Error->handleError(E_NOTICE, 'This is a notice error', '/some/file', 275);
+    }
 
-/**
- * test that the console error handler can deal with fatal errors.
- *
- * @return void
- */
-	public function testHandleFatalError() {
-		ob_start();
-		$content = "<error>Fatal Error:</error> This is a fatal error in [/some/file, line 275]";
-		$this->stderr->expects($this->once())->method('write')
-			->with($this->stringContains($content));
+    /**
+     * test that the console error handler can deal with fatal errors.
+     *
+     * @return void
+     */
+    public function testHandleFatalError()
+    {
+        ob_start();
+        $content = "<error>Fatal Error:</error> This is a fatal error in [/some/file, line 275]";
+        $this->stderr->expects($this->once())->method('write')
+            ->with($this->stringContains($content));
 
-		$this->Error->handleError(E_USER_ERROR, 'This is a fatal error', '/some/file', 275);
-		ob_end_clean();
-	}
+        $this->Error->handleError(E_USER_ERROR, 'This is a fatal error', '/some/file', 275);
+        ob_end_clean();
+    }
 
-/**
- * test that the console error handler can deal with CakeExceptions.
- *
- * @return void
- */
-	public function testCakeErrors() {
-		$exception = new MissingActionException('Missing action');
-		$message = sprintf('Missing action in [%s, line %s]', $exception->getFile(), $exception->getLine());
-		$this->stderr->expects($this->once())->method('write')
-			->with($this->stringContains($message));
+    /**
+     * test that the console error handler can deal with CakeExceptions.
+     *
+     * @return void
+     */
+    public function testCakeErrors()
+    {
+        $exception = new MissingActionException('Missing action');
+        $message = sprintf('Missing action in [%s, line %s]', $exception->getFile(), $exception->getLine());
+        $this->stderr->expects($this->once())->method('write')
+            ->with($this->stringContains($message));
 
-		$this->Error->expects($this->once())
-			->method('_stop');
+        $this->Error->expects($this->once())
+            ->method('_stop');
 
-		$this->Error->handleException($exception);
-	}
+        $this->Error->handleException($exception);
+    }
 
-/**
- * test a non Cake Exception exception.
- *
- * @return void
- */
-	public function testNonCakeExceptions() {
-		$exception = new \InvalidArgumentException('Too many parameters.');
+    /**
+     * test a non Cake Exception exception.
+     *
+     * @return void
+     */
+    public function testNonCakeExceptions()
+    {
+        $exception = new \InvalidArgumentException('Too many parameters.');
 
-		$this->stderr->expects($this->once())->method('write')
-			->with($this->stringContains('Too many parameters.'));
+        $this->stderr->expects($this->once())->method('write')
+            ->with($this->stringContains('Too many parameters.'));
 
-		$this->Error->handleException($exception);
-	}
+        $this->Error->handleException($exception);
+    }
 
-/**
- * test a Error404 exception.
- *
- * @return void
- */
-	public function testError404Exception() {
-		$exception = new NotFoundException('dont use me in cli.');
+    /**
+     * test a Error404 exception.
+     *
+     * @return void
+     */
+    public function testError404Exception()
+    {
+        $exception = new NotFoundException('dont use me in cli.');
 
-		$this->stderr->expects($this->once())->method('write')
-			->with($this->stringContains('dont use me in cli.'));
+        $this->stderr->expects($this->once())->method('write')
+            ->with($this->stringContains('dont use me in cli.'));
 
-		$this->Error->handleException($exception);
-	}
+        $this->Error->handleException($exception);
+    }
 
-/**
- * test a Error500 exception.
- *
- * @return void
- */
-	public function testError500Exception() {
-		$exception = new InternalErrorException('dont use me in cli.');
+    /**
+     * test a Error500 exception.
+     *
+     * @return void
+     */
+    public function testError500Exception()
+    {
+        $exception = new InternalErrorException('dont use me in cli.');
 
-		$this->stderr->expects($this->once())->method('write')
-			->with($this->stringContains('dont use me in cli.'));
+        $this->stderr->expects($this->once())->method('write')
+            ->with($this->stringContains('dont use me in cli.'));
 
-		$this->Error->handleException($exception);
-	}
+        $this->Error->handleException($exception);
+    }
 
-/**
- * test a exception with non-integer code
- *
- * @return void
- */
-	public function testNonIntegerExceptionCode() {
-		$exception = new Exception('Non-integer exception code');
+    /**
+     * test a exception with non-integer code
+     *
+     * @return void
+     */
+    public function testNonIntegerExceptionCode()
+    {
+        $exception = new Exception('Non-integer exception code');
 
-		$class = new \ReflectionClass('Exception');
-		$property = $class->getProperty('code');
-		$property->setAccessible(true);
-		$property->setValue($exception, '42S22');
+        $class = new \ReflectionClass('Exception');
+        $property = $class->getProperty('code');
+        $property->setAccessible(true);
+        $property->setValue($exception, '42S22');
 
-		$this->stderr->expects($this->once())->method('write')
-			->with($this->stringContains('Non-integer exception code'));
+        $this->stderr->expects($this->once())->method('write')
+            ->with($this->stringContains('Non-integer exception code'));
 
-		$this->Error->expects($this->once())
-			->method('_stop')
-			->with(1);
+        $this->Error->expects($this->once())
+            ->method('_stop')
+            ->with(1);
 
-		$this->Error->handleException($exception);
-	}
-
+        $this->Error->handleException($exception);
+    }
 }

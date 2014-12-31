@@ -19,13 +19,13 @@ namespace Cake\Database\Type;
  *
  * Use to convert time instances to strings & back.
  */
-class TimeType extends \Cake\Database\Type\DateTimeType {
+class TimeType extends \Cake\Database\Type\DateTimeType
+{
 
-/**
- * Time format for DateTime object
- *
- * @var string
- */
-	protected $_format = 'H:i:s';
-
+    /**
+     * Time format for DateTime object
+     *
+     * @var string
+     */
+    protected $_format = 'H:i:s';
 }

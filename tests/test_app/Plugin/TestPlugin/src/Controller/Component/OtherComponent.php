@@ -20,5 +20,6 @@ namespace TestPlugin\Controller\Component;
 
 use Cake\Controller\Component;
 
-class OtherComponent extends Component {
+class OtherComponent extends Component
+{
 }

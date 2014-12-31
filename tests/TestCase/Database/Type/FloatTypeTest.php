@@ -22,79 +22,84 @@ use \PDO;
 /**
  * Test for the Float type.
  */
-class FloatTypeTest extends TestCase {
+class FloatTypeTest extends TestCase
+{
 
-/**
- * Setup
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		$this->type = Type::build('float');
-		$this->driver = $this->getMock('Cake\Database\Driver');
-	}
+    /**
+     * Setup
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->type = Type::build('float');
+        $this->driver = $this->getMock('Cake\Database\Driver');
+    }
 
-/**
- * Test toPHP
- *
- * @return void
- */
-	public function testToPHP() {
-		$this->assertNull($this->type->toPHP(null, $this->driver));
+    /**
+     * Test toPHP
+     *
+     * @return void
+     */
+    public function testToPHP()
+    {
+        $this->assertNull($this->type->toPHP(null, $this->driver));
 
-		$result = $this->type->toPHP('some data', $this->driver);
-		$this->assertSame(0.0, $result);
+        $result = $this->type->toPHP('some data', $this->driver);
+        $this->assertSame(0.0, $result);
 
-		$result = $this->type->toPHP('2', $this->driver);
-		$this->assertSame(2.0, $result);
+        $result = $this->type->toPHP('2', $this->driver);
+        $this->assertSame(2.0, $result);
 
-		$result = $this->type->toPHP('2 bears', $this->driver);
-		$this->assertSame(2.0, $result);
-	}
+        $result = $this->type->toPHP('2 bears', $this->driver);
+        $this->assertSame(2.0, $result);
+    }
 
-/**
- * Test converting to database format
- *
- * @return void
- */
-	public function testToDatabase() {
-		$result = $this->type->toDatabase('some data', $this->driver);
-		$this->assertSame(0.0, $result);
+    /**
+     * Test converting to database format
+     *
+     * @return void
+     */
+    public function testToDatabase()
+    {
+        $result = $this->type->toDatabase('some data', $this->driver);
+        $this->assertSame(0.0, $result);
 
-		$result = $this->type->toDatabase(2, $this->driver);
-		$this->assertSame(2.0, $result);
+        $result = $this->type->toDatabase(2, $this->driver);
+        $this->assertSame(2.0, $result);
 
-		$result = $this->type->toDatabase('2.51', $this->driver);
-		$this->assertSame(2.51, $result);
-	}
+        $result = $this->type->toDatabase('2.51', $this->driver);
+        $this->assertSame(2.51, $result);
+    }
 
-/**
- * Test marshalling
- *
- * @return void
- */
-	public function testMarshal() {
-		$result = $this->type->marshal('some data', $this->driver);
-		$this->assertSame('some data', $result);
+    /**
+     * Test marshalling
+     *
+     * @return void
+     */
+    public function testMarshal()
+    {
+        $result = $this->type->marshal('some data', $this->driver);
+        $this->assertSame('some data', $result);
 
-		$result = $this->type->marshal('', $this->driver);
-		$this->assertNull($result);
+        $result = $this->type->marshal('', $this->driver);
+        $this->assertNull($result);
 
-		$result = $this->type->marshal('2.51', $this->driver);
-		$this->assertSame(2.51, $result);
+        $result = $this->type->marshal('2.51', $this->driver);
+        $this->assertSame(2.51, $result);
 
-		$result = $this->type->marshal('3.5 bears', $this->driver);
-		$this->assertSame('3.5 bears', $result);
-	}
+        $result = $this->type->marshal('3.5 bears', $this->driver);
+        $this->assertSame('3.5 bears', $result);
+    }
 
-/**
- * Test that the PDO binding type is correct.
- *
- * @return void
- */
-	public function testToStatement() {
-		$this->assertEquals(PDO::PARAM_STR, $this->type->toStatement('', $this->driver));
-	}
-
+    /**
+     * Test that the PDO binding type is correct.
+     *
+     * @return void
+     */
+    public function testToStatement()
+    {
+        $this->assertEquals(PDO::PARAM_STR, $this->type->toStatement('', $this->driver));
+    }
 }

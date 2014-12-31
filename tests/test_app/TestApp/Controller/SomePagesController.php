@@ -20,37 +20,41 @@ use Cake\Network\Response;
  * SomePagesController class
  *
  */
-class SomePagesController extends Controller {
+class SomePagesController extends Controller
+{
 
-/**
- * display method
- *
- * @param mixed $page
- * @return void
- */
-	public function display($page = null) {
-	}
+    /**
+     * display method
+     *
+     * @param mixed $page
+     * @return void
+     */
+    public function display($page = null)
+    {
+    }
 
-/**
- * index method
- *
- * @return void
- */
-	public function index() {
-		return true;
-	}
+    /**
+     * index method
+     *
+     * @return void
+     */
+    public function index()
+    {
+        return true;
+    }
 
-/**
- * Test method for returning responses.
- *
- * @return \Cake\Network\Response
- */
-	public function responseGenerator() {
-		$this->response->body('new response');
-		return $this->response;
-	}
+    /**
+     * Test method for returning responses.
+     *
+     * @return \Cake\Network\Response
+     */
+    public function responseGenerator()
+    {
+        $this->response->body('new response');
+        return $this->response;
+    }
 
-	protected function _fail() {
-	}
-
+    protected function _fail()
+    {
+    }
 }
