@@ -31,13 +31,19 @@ class TestBehavior extends Behavior {
 /**
  * Test for event bindings.
  */
-	public function beforeValidate() {
+	public function beforeRules() {
 	}
 
 /**
  * Test for event bindings.
  */
-	public function afterValidate() {
+	public function afterRules() {
+	}
+
+/**
+ * Test for event bindings.
+ */
+	public function buildRules() {
 	}
 
 }
@@ -184,8 +190,9 @@ class BehaviorTest extends TestCase {
 		$behavior = new TestBehavior($table);
 		$expected = [
 			'Model.beforeFind' => 'beforeFind',
-			'Model.beforeValidate' => 'beforeValidate',
-			'Model.afterValidate' => 'afterValidate',
+			'Model.buildRules' => 'buildRules',
+			'Model.beforeRules' => 'beforeRules',
+			'Model.afterRules' => 'afterRules',
 		];
 		$this->assertEquals($expected, $behavior->implementedEvents());
 	}
@@ -203,13 +210,17 @@ class BehaviorTest extends TestCase {
 				'priority' => 10,
 				'callable' => 'beforeFind'
 			],
-			'Model.beforeValidate' => [
+			'Model.beforeRules' => [
 				'priority' => 10,
-				'callable' => 'beforeValidate'
+				'callable' => 'beforeRules'
 			],
-			'Model.afterValidate' => [
+			'Model.afterRules' => [
 				'priority' => 10,
-				'callable' => 'afterValidate'
+				'callable' => 'afterRules'
+			],
+			'Model.buildRules' => [
+				'priority' => 10,
+				'callable' => 'buildRules'
 			],
 		];
 		$this->assertEquals($expected, $behavior->implementedEvents());

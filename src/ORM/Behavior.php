@@ -53,12 +53,21 @@ use Cake\Event\EventListenerInterface;
  *   $primary parameter indicates whether or not this is the root query,
  *   or an associated query.
  *
- * - `beforeValidate(Event $event, Entity $entity, ArrayObject $options, Validator $validator)`
- *   Fired before an entity is validated. By stopping this event, you can abort
- *   the validate + save operations.
+ * - `buildValidator(Event $event, Validator $validator, string $name)`
+ *   Fired when the validator object identified by $name is being built. You can use this
+ *   callback to add validation rules or add validation providers.
  *
- * - `afterValidate(Event $event, Entity $entity, ArrayObject $options, Validator $validator)`
- *   Fired after an entity is validated.
+ * - `buildRules(Event $event, RulesChecker $rules)`
+ *   Fired when the rules checking object for the table is being built. You can use this
+ *   callback to add more rules to the set.
+ *
+ * - `beforeRules(Event $event, Entity $entity, ArrayObject $options, $operation)`
+ *   Fired before an entity is validated using by a rules checker. By stopping this event,
+ *   you can return the final value of the rules checking operation.
+ *
+ * - `afterRules(Event $event, Entity $entity, ArrayObject $options, bool $result, $operation)`
+ *   Fired after the rules have been checked on the entity. By stopping this event,
+ *   you can return the final value of the rules checking operation.
  *
  * - `beforeSave(Event $event, Entity $entity, ArrayObject $options)`
  *   Fired before each entity is saved. Stopping this event will abort the save
@@ -239,8 +248,10 @@ class Behavior implements EventListenerInterface {
 			'Model.afterSave' => 'afterSave',
 			'Model.beforeDelete' => 'beforeDelete',
 			'Model.afterDelete' => 'afterDelete',
-			'Model.beforeValidate' => 'beforeValidate',
-			'Model.afterValidate' => 'afterValidate',
+			'Model.buildValidator' => 'buildValidator',
+			'Model.buildRules' => 'buildRules',
+			'Model.beforeRules' => 'beforeRules',
+			'Model.afterRules' => 'afterRules',
 		];
 		$config = $this->config();
 		$priority = isset($config['priority']) ? $config['priority'] : null;

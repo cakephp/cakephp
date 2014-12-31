@@ -21,6 +21,7 @@ use Cake\ORM\Marshaller;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use Cake\Validation\Validator;
 
 /**
  * Test entity for mass assignment.
@@ -1489,6 +1490,167 @@ class MarshallerTest extends TestCase {
 		$this->assertEquals('new tag', $entity->tags[1]->tag);
 		$this->assertTrue($entity->tags[0]->dirty('_joinData'));
 		$this->assertTrue($entity->tags[1]->dirty('_joinData'));
+	}
+
+/**
+ * Tests marshalling with validation errors
+ *
+ * @return void
+ */
+	public function testValidationFail() {
+		$data = [
+			'title' => 'Thing',
+			'body' => 'hey'
+		];
+
+		$this->articles->validator()->requirePresence('thing');
+		$marshall = new Marshaller($this->articles);
+		$entity = $marshall->one($data);
+		$this->assertNotEmpty($entity->errors('thing'));
+	}
+
+/**
+ * Test that invalid validate options raise exceptions
+ *
+ * @expectedException \RuntimeException
+ * @return void
+ */
+	public function testValidateInvalidType() {
+		$data = ['title' => 'foo'];
+		$marshaller = new Marshaller($this->articles);
+		$marshaller->one($data, [
+			'validate' => ['derp'],
+		]);
+	}
+
+/**
+ * Tests that associations are validated and custom validators can be used
+ *
+ * @return void
+ */
+	public function testValidateWithAssociationsAndCustomValidator() {
+		$data = [
+			'title' => 'foo',
+			'body' => 'bar',
+			'user' => [
+				'name' => 'Susan'
+			],
+			'comments' => [
+				[
+					'comment' => 'foo'
+				]
+			]
+		];
+		$validator = (new Validator)->add('body', 'numeric', ['rule' => 'numeric']);
+		$this->articles->validator('custom', $validator);
+
+		$validator2 = (new Validator)->requirePresence('thing');
+		$this->articles->Users->validator('customThing', $validator2);
+
+		$this->articles->Comments->validator('default', $validator2);
+
+		$entity = (new Marshaller($this->articles))->one($data, [
+			'validate' => 'custom',
+			'associated' => ['Users', 'Comments']
+		]);
+		$this->assertNotEmpty($entity->errors('body'), 'custom was not used');
+		$this->assertNull($entity->body);
+		$this->assertEmpty($entity->user->errors('thing'));
+		$this->assertNotEmpty($entity->comments[0]->errors('thing'));
+
+		$entity = (new Marshaller($this->articles))->one($data, [
+			'validate' => 'custom',
+			'associated' => ['Users' => ['validate' => 'customThing'], 'Comments']
+		]);
+		$this->assertNotEmpty($entity->errors('body'));
+		$this->assertNull($entity->body);
+		$this->assertNotEmpty($entity->user->errors('thing'), 'customThing was not used');
+		$this->assertNotEmpty($entity->comments[0]->errors('thing'));
+	}
+
+/**
+ * Tests that validation can be bypassed
+ *
+ * @return void
+ */
+	public function testSkipValidation() {
+		$data = [
+			'title' => 'foo',
+			'body' => 'bar',
+			'user' => [
+				'name' => 'Susan'
+			],
+		];
+		$validator = (new Validator)->requirePresence('thing');
+		$this->articles->validator('default', $validator);
+		$this->articles->Users->validator('default', $validator);
+
+		$entity = (new Marshaller($this->articles))->one($data, [
+			'validate' => false,
+			'associated' => ['Users']
+		]);
+		$this->assertEmpty($entity->errors('thing'));
+		$this->assertNotEmpty($entity->user->errors('thing'));
+
+		$entity = (new Marshaller($this->articles))->one($data, [
+			'associated' => ['Users' => ['validate' => false]]
+		]);
+		$this->assertNotEmpty($entity->errors('thing'));
+		$this->assertEmpty($entity->user->errors('thing'));
+	}
+
+/**
+ * Tests that it is possible to pass a validator directly in the options
+ *
+ * @return void
+ */
+	public function testPassingCustomValidator() {
+		$data = [
+			'title' => 'Thing',
+			'body' => 'hey'
+		];
+
+		$validator = clone $this->articles->validator();
+		$validator->requirePresence('thing');
+		$marshall = new Marshaller($this->articles);
+		$entity = $marshall->one($data, ['validate' => $validator]);
+		$this->assertNotEmpty($entity->errors('thing'));
+	}
+
+/**
+ * Test merge with validation error
+ *
+ * @return void
+ */
+	public function testMergeWithValidation() {
+		$data = [
+			'title' => 'My title',
+			'author_id' => 'foo',
+		];
+		$marshall = new Marshaller($this->articles);
+		$entity = new Entity([
+			'title' => 'Foo',
+			'body' => 'My Content',
+			'author_id' => 1
+		]);
+		$entity->accessible('*', true);
+		$entity->isNew(false);
+		$entity->clean();
+
+		$this->articles->validator()
+			->requirePresence('thing', 'update')
+			->add('author_id', 'numeric', ['rule' => 'numeric']);
+
+		$expected = clone $entity;
+		$result = $marshall->merge($expected, $data, []);
+
+		$this->assertSame($expected, $result);
+		$this->assertSame(1, $result->author_id);
+		$this->assertNotEmpty($result->errors('thing'));
+
+		$this->articles->validator()->requirePresence('thing', 'create');
+		$result = $marshall->merge($entity, $data, []);
+		$this->assertEmpty($result->errors('thing'));
 	}
 
 }

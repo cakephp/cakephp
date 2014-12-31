@@ -19,6 +19,7 @@ use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use TestApp\Model\Entity\Extending;
 use TestApp\Model\Entity\NonExtending;
+use TestApp\Model\Entity\ValidatableEntity;
 
 /**
  * Entity test case.
@@ -741,7 +742,7 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testValidateMissingFields() {
-		$entity = $this->getMockBuilder('\Cake\ORM\Entity')
+		$entity = $this->getMockBuilder('TestApp\Model\Entity\ValidatableEntity')
 			->setMethods(['getSomething'])
 			->disableOriginalConstructor()
 			->getMock();
@@ -756,7 +757,7 @@ class EntityTest extends TestCase {
 		$validator->expects($this->once())->method('errors')
 			->with(['a' => 'b'], true)
 			->will($this->returnValue(['a' => ['not valid']]));
-		$this->assertFalse($entity->validate($validator));
+		$this->assertNotEmpty($entity->validate($validator));
 		$this->assertEquals(['a' => ['not valid']], $entity->errors());
 	}
 
@@ -772,7 +773,7 @@ class EntityTest extends TestCase {
 			'cool' => false,
 			'something' => true
 		];
-		$entity = new Entity($data);
+		$entity = new ValidatableEntity($data);
 		$entity->isNew(true);
 
 		$validator->expects($this->once())
@@ -781,7 +782,7 @@ class EntityTest extends TestCase {
 		$validator->expects($this->once())->method('errors')
 			->with($data, true)
 			->will($this->returnValue([]));
-		$this->assertTrue($entity->validate($validator));
+		$this->assertEmpty($entity->validate($validator));
 		$this->assertEquals([], $entity->errors());
 	}
 
@@ -804,16 +805,16 @@ class EntityTest extends TestCase {
 		$this->assertEquals([], $entity->errors('boo'));
 
 		$entity->errors('foo', 'other error');
-		$this->assertEquals(['other error'], $entity->errors('foo'));
+		$this->assertEquals(['bar', 'other error'], $entity->errors('foo'));
 
 		$entity->errors('bar', ['something', 'bad']);
 		$this->assertEquals(['something', 'bad'], $entity->errors('bar'));
 
-		$expected = ['foo' => ['other error'], 'bar' => ['something', 'bad']];
+		$expected = ['foo' => ['bar', 'other error'], 'bar' => ['something', 'bad']];
 		$this->assertEquals($expected, $entity->errors());
 
 		$errors = ['foo' => ['something'], 'bar' => 'else', 'baz' => ['error']];
-		$this->assertSame($entity, $entity->errors($errors));
+		$this->assertSame($entity, $entity->errors($errors, null, true));
 		$errors['bar'] = ['else'];
 		$this->assertEquals($errors, $entity->errors());
 	}
@@ -848,6 +849,14 @@ class EntityTest extends TestCase {
 			['c' => ['error3'], 'd' => ['error4']]
 		];
 		$this->assertEquals($expected, $author->errors('multiple'));
+
+		$expected = [
+			'thing' => $author->errors('thing'),
+			'user' => $author->errors('user'),
+			'owner' => $author->errors('owner'),
+			'multiple' => $author->errors('multiple')
+		];
+		$this->assertEquals($expected, $author->errors());
 	}
 
 /**

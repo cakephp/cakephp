@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM;
 
+use ArrayObject;
 use BadMethodCallException;
 use Cake\Core\App;
 use Cake\Database\Schema\Table as Schema;
@@ -32,6 +33,7 @@ use Cake\ORM\Association\HasOne;
 use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Marshaller;
+use Cake\ORM\RulesChecker;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
 use RuntimeException;
@@ -82,12 +84,19 @@ use RuntimeException;
  *   $primary parameter indicates whether or not this is the root query,
  *   or an associated query.
  *
- * - `beforeValidate(Event $event, Entity $entity, ArrayObject $options, Validator $validator)`
- *   Fired before an entity is validated. By stopping this event, you can abort
- *   the validate + save operations.
+ * - `buildValidator(Event $event, Validator $validator, string $name)`
+ *   Allows listeners to modify validation rules for the provided named validator.
  *
- * - `afterValidate(Event $event, Entity $entity, ArrayObject $options, Validator $validator)`
- *   Fired after an entity is validated.
+ * - `buildRules(Event $event, RulesChecker $rules)`
+ *   Allows listeners to modify the rules checker by adding more rules.
+ *
+ * - `beforeRules(Event $event, Entity $entity, ArrayObject $options, string $operation)`
+ *   Fired before an entity is validated using the rules checker. By stopping this event,
+ *   you can return the final value of the rules checking operation.
+ *
+ * - `afterRules(Event $event, Entity $entity,RulesChecker $rules, bool $result)`
+ *   Fired after the rules have been checked on the entity. By stopping this event,
+ *   you can return the final value of the rules checking operation.
  *
  * - `beforeSave(Event $event, Entity $entity, ArrayObject $options)`
  *   Fired before each entity is saved. Stopping this event will abort the save
@@ -179,6 +188,13 @@ class Table implements RepositoryInterface, EventListenerInterface {
  * @var array
  */
 	protected $_validators = [];
+
+/**
+ * The domain rules to be applied to entities saved by this table
+ *
+ * @var \Cake\ORM\RulesChecker
+ */
+	protected $_rulesChecker;
 
 /**
  * Initializes a new instance
@@ -1084,6 +1100,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 		if ($validator === null) {
 			$validator = new Validator();
 			$validator = $this->{'validation' . ucfirst($name)}($validator);
+			$this->dispatchEvent('Model.buildValidator', compact('validator', 'name'));
 		}
 
 		$validator->provider('table', $this);
@@ -1134,50 +1151,48 @@ class Table implements RepositoryInterface, EventListenerInterface {
  * The options array can receive the following keys:
  *
  * - atomic: Whether to execute the save and callbacks inside a database
- * transaction (default: true)
- * - validate: Whether or not validate the entity before saving, if validation
- * fails, it will abort the save operation. If this key is set to a string value,
- * the validator object registered in this table under the provided name will be
- * used instead of the default one. (default:true)
+ *   transaction (default: true)
+ * - checkRules: Whether or not to check the rules on entity before saving, if the checking
+ *   fails, it will abort the save operation. (default:true)
  * - associated: If true it will save all associated entities as they are found
- * in the passed `$entity` whenever the property defined for the association
- * is marked as dirty. Associated records are saved recursively unless told
- * otherwise. If an array, it will be interpreted as the list of associations
- * to be saved. It is possible to provide different options for saving on associated
- * table objects using this key by making the custom options the array value.
- * If false no associated records will be saved. (default: true)
+ *   in the passed `$entity` whenever the property defined for the association
+ *   is marked as dirty. Associated records are saved recursively unless told
+ *   otherwise. If an array, it will be interpreted as the list of associations
+ *   to be saved. It is possible to provide different options for saving on associated
+ *   table objects using this key by making the custom options the array value.
+ *   If false no associated records will be saved. (default: true)
  *
  * ### Events
  *
  * When saving, this method will trigger four events:
  *
- * - Model.beforeValidate: Will be triggered right before any validation is done
- * for the passed entity if the validate key in $options is not set to false.
- * Listeners will receive as arguments the entity, the options array and the
- * validation object to be used for validating the entity. If the event is
- * stopped the validation result will be set to the result of the event itself.
- * - Model.afterValidate: Will be triggered right after the `validate()` method is
- * called in the entity. Listeners will receive as arguments the entity, the
- * options array and the validation object to be used for validating the entity.
- * If the event is stopped the validation result will be set to the result of
- * the event itself.
+ * - Model.beforeRules: Will be triggered right before any rule checking is done
+ *   for the passed entity if the `checkRules` key in $options is not set to false.
+ *   Listeners will receive as arguments the entity, options array and the operation type.
+ *   If the event is stopped the checking result will be set to the result of the event itself.
+ * - Model.afterRules: Will be triggered right after the `checkRules()` method is
+ *   called for the entity. Listeners will receive as arguments the entity,
+ *   options array, the result of checking the rules and the operation type.
+ *   If the event is stopped the checking result will be set to the result of
+ *   the event itself.
  * - Model.beforeSave: Will be triggered just before the list of fields to be
- * persisted is calculated. It receives both the entity and the options as
- * arguments. The options array is passed as an ArrayObject, so any changes in
- * it will be reflected in every listener and remembered at the end of the event
- * so it can be used for the rest of the save operation. Returning false in any
- * of the listeners will abort the saving process. If the event is stopped
- * using the event API, the event object's `result` property will be returned.
- * This can be useful when having your own saving strategy implemented inside a
- * listener.
+ *   persisted is calculated. It receives both the entity and the options as
+ *   arguments. The options array is passed as an ArrayObject, so any changes in
+ *   it will be reflected in every listener and remembered at the end of the event
+ *   so it can be used for the rest of the save operation. Returning false in any
+ *   of the listeners will abort the saving process. If the event is stopped
+ *   using the event API, the event object's `result` property will be returned.
+ *   This can be useful when having your own saving strategy implemented inside a
+ *   listener.
  * - Model.afterSave: Will be triggered after a successful insert or save,
- * listeners will receive the entity and the options array as arguments. The type
- * of operation performed (insert or update) can be determined by checking the
- * entity's method `isNew`, true meaning an insert and false an update.
+ *   listeners will receive the entity and the options array as arguments. The type
+ *   of operation performed (insert or update) can be determined by checking the
+ *   entity's method `isNew`, true meaning an insert and false an update.
  *
  * This method will determine whether the passed entity needs to be
  * inserted or updated in the database. It does that by checking the `isNew`
- * method on the entity.
+ * method on the entity. If the entity to be saved returns a non-empty value from
+ * its `errors()` method, it will not be saved.
  *
  * ### Saving on associated tables
  *
@@ -1191,12 +1206,12 @@ class Table implements RepositoryInterface, EventListenerInterface {
  * $articles->save($entity, ['associated' => ['Comments']);
  *
  * // Save the company, the employees and related addresses for each of them.
- * // For employees use the 'special' validation group
+ * // For employees do not check the entity rules
  * $companies->save($entity, [
  *   'associated' => [
  *     'Employees' => [
  *       'associated' => ['Addresses'],
- *       'validate' => 'special'
+ *       'checkRules' => false
  *     ]
  *   ]
  * ]);
@@ -1207,11 +1222,15 @@ class Table implements RepositoryInterface, EventListenerInterface {
  *
  */
 	public function save(EntityInterface $entity, $options = []) {
-		$options = new \ArrayObject($options + [
+		$options = new ArrayObject($options + [
 			'atomic' => true,
-			'validate' => true,
-			'associated' => true
+			'associated' => true,
+			'checkRules' => true
 		]);
+
+		if ($entity->errors()) {
+			return false;
+		}
 
 		if ($entity->isNew() === false && !$entity->dirty()) {
 			return $entity;
@@ -1249,12 +1268,12 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			$entity->isNew(!$this->exists($conditions));
 		}
 
-		$options['associated'] = $this->_associations->normalizeKeys($options['associated']);
-		$validate = $options['validate'];
-
-		if ($validate && !$this->validate($entity, $options)) {
+		$mode = $entity->isNew() ? RulesChecker::CREATE : RulesChecker::UPDATE;
+		if ($options['checkRules'] && !$this->checkRules($entity, $mode, $options)) {
 			return false;
 		}
+
+		$options['associated'] = $this->_associations->normalizeKeys($options['associated']);
 		$event = $this->dispatchEvent('Model.beforeSave', compact('entity', 'options'));
 
 		if ($event->isStopped()) {
@@ -1265,7 +1284,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			$this,
 			$entity,
 			$options['associated'],
-			['validate' => false] + $options->getArrayCopy()
+			$options->getArrayCopy()
 		);
 
 		if (!$saved && $options['atomic']) {
@@ -1286,7 +1305,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 				$this,
 				$entity,
 				$options['associated'],
-				['validate' => (bool)$validate] + $options->getArrayCopy()
+				$options->getArrayCopy()
 			);
 			if ($success || !$options['atomic']) {
 				$entity->clean();
@@ -1435,6 +1454,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
  * ### Options
  *
  * - `atomic` Defaults to true. When true the deletion happens within a transaction.
+ * - `checkRules` Defaults to true. Check deletion rules before deleting the record.
  *
  * ### Events
  *
@@ -1449,7 +1469,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
  *
  */
 	public function delete(EntityInterface $entity, $options = []) {
-		$options = new \ArrayObject($options + ['atomic' => true]);
+		$options = new ArrayObject($options + ['atomic' => true, 'checkRules' => true]);
 
 		$process = function () use ($entity, $options) {
 			return $this->_processDelete($entity, $options);
@@ -1474,14 +1494,6 @@ class Table implements RepositoryInterface, EventListenerInterface {
  * @return bool success
  */
 	protected function _processDelete($entity, $options) {
-		$event = $this->dispatchEvent('Model.beforeDelete', [
-			'entity' => $entity,
-			'options' => $options
-		]);
-		if ($event->isStopped()) {
-			return $event->result;
-		}
-
 		if ($entity->isNew()) {
 			return false;
 		}
@@ -1491,6 +1503,20 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			$msg = 'Deleting requires all primary key values.';
 			throw new \InvalidArgumentException($msg);
 		}
+
+		if ($options['checkRules'] && !$this->checkRules($entity, RulesChecker::DELETE, $options)) {
+			return false;
+		}
+
+		$event = $this->dispatchEvent('Model.beforeDelete', [
+			'entity' => $entity,
+			'options' => $options
+		]);
+
+		if ($event->isStopped()) {
+			return $event->result;
+		}
+
 		$this->_associations->cascadeDelete($entity, $options->getArrayCopy());
 
 		$query = $this->query();
@@ -1682,18 +1708,6 @@ class Table implements RepositoryInterface, EventListenerInterface {
 	}
 
 /**
- * Returns a new instance of an EntityValidator that is configured to be used
- * for entities generated by this table. An EntityValidator can be used to
- * process validation rules on a single or multiple entities and any of its
- * associated values.
- *
- * @return EntityValidator
- */
-	public function entityValidator() {
-		return new EntityValidator($this);
-	}
-
-/**
  * {@inheritDoc}
  *
  * By default all the associations on this table will be hydrated. You can
@@ -1728,8 +1742,27 @@ class Table implements RepositoryInterface, EventListenerInterface {
  *   ['accessibleFields' => ['protected_field' => true]]
  * );
  * }}}
+ *
+ * By default, the data is validated before being passed to the new entity. In
+ * the case of invalid fields, those will not be present in the resulting object.
+ * The `validate` option can be used to disable validation on the passed data:
+ *
+ * {{{
+ * $article = $this->Articles->newEntity(
+ *   $this->request->data(),
+ *   ['validate' => false]
+ * );
+ * }}}
+ *
+ * You can also pass the name of the validator to use in the `validate` option.
+ * If `null` is passed to the first param of this function, no validation will
+ * be performed.
  */
-	public function newEntity(array $data = [], array $options = []) {
+	public function newEntity($data = null, array $options = []) {
+		if ($data === null) {
+			$class = $this->entityClass();
+			return new $class;
+		}
 		if (!isset($options['associated'])) {
 			$options['associated'] = $this->_associations->keys();
 		}
@@ -1788,6 +1821,16 @@ class Table implements RepositoryInterface, EventListenerInterface {
  *	]
  * );
  * }}}
+ *
+ * By default, the data is validated before being passed to the entity. In
+ * the case of invalid fields, those will not be assigned to the entity.
+ * The `validate` option can be used to disable validation on the passed data:
+ *
+ * {{{
+ * $article = $this->patchEntity($article, $this->request->data(),[
+ *	'validate' => false
+ * ]);
+ * }}}
  */
 	public function patchEntity(EntityInterface $entity, array $data, array $options = []) {
 		if (!isset($options['associated'])) {
@@ -1825,108 +1868,6 @@ class Table implements RepositoryInterface, EventListenerInterface {
 		}
 		$marshaller = $this->marshaller();
 		return $marshaller->mergeMany($entities, $data, $options);
-	}
-
-/**
- * Validates a single entity based on the passed options and validates
- * any nested entity for this table associations as requested in the
- * options array.
- *
- * Calling this function directly is mostly useful when you need to get
- * validation errors for an entity and associated nested entities before
- * they are saved.
- *
- * {{{
- * $articles->validate($article);
- * }}}
- *
- * You can specify which validation set to use using the options array:
- *
- * {{{
- * $users->validate($user, ['validate' => 'forSignup']);
- * }}}
- *
- * By default all the associations on this table will be validated if they can
- * be found in the passed entity. You can limit which associations are built,
- * or include deeper associations using the options parameter
- *
- * {{{
- * $articles->validate($article, [
- *	'associated' => [
- *		'Tags',
- *		'Comments' => [
- *			'validate' => 'myCustomSet',
- *			'associated' => ['Users']
- *		]
- *	]
- * ]);
- * }}}
- *
- * @param \Cake\Datasource\EntityInterface $entity The entity to be validated
- * @param array|\ArrayObject $options A list of options to use while validating, the following
- * keys are accepted:
- * - validate: The name of the validation set to use
- * - associated: map of association names to validate as well
- * @return bool true if the passed entity and its associations are valid
- */
-	public function validate($entity, $options = []) {
-		if (!isset($options['associated'])) {
-			$options['associated'] = $this->_associations->keys();
-		}
-
-		$entityValidator = $this->entityValidator();
-		return $entityValidator->one($entity, $options);
-	}
-
-/**
- * Validates a list of entities based on the passed options and validates
- * any nested entity for this table associations as requested in the
- * options array.
- *
- * Calling this function directly is mostly useful when you need to get
- * validation errors for a list of entities and associations before they are
- * saved.
- *
- * {{{
- * $articles->validateMany([$article1, $article2]);
- * }}}
- *
- * You can specify which validation set to use using the options array:
- *
- * {{{
- * $users->validateMany([$user1, $user2], ['validate' => 'forSignup']);
- * }}}
- *
- * By default all the associations on this table will be validated if they can
- * be found in the passed entities. You can limit which associations are built,
- * or include deeper associations using the options parameter
- *
- * {{{
- * $articles->validateMany([$article1, $article2], [
- *	'associated' => [
- *		'Tags',
- *		'Comments' => [
- *			'validate' => 'myCustomSet',
- *			'associated' => ['Users']
- *		]
- *	]
- * ]);
- * }}}
- *
- * @param array|\ArrayAccess $entities The entities to be validated
- * @param array $options A list of options to use while validating, the following
- * keys are accepted:
- * - validate: The name of the validation set to use
- * - associated: map of association names to validate as well
- * @return bool true if the passed entities and their associations are valid
- */
-	public function validateMany($entities, array $options = []) {
-		if (!isset($options['associated'])) {
-			$options['associated'] = $this->_associations->keys();
-		}
-
-		$entityValidator = $this->entityValidator();
-		return $entityValidator->many($entities, $options);
 	}
 
 /**
@@ -1989,6 +1930,70 @@ class Table implements RepositoryInterface, EventListenerInterface {
 	}
 
 /**
+ * Returns whether or not the passed entity complies with all the rules stored in
+ * the rules checker.
+ *
+ * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.
+ * @param string $operation The operation being run. Either 'create', 'update' or 'delete'.
+ * @param \ArrayObject|array $options The options To be passed to the rules.
+ * @return bool
+ */
+	public function checkRules(EntityInterface $entity, $operation = RulesChecker::CREATE, $options = null) {
+		$rules = $this->rulesChecker();
+		$options = $options ?: new ArrayObject;
+		$options = is_array($options) ? new ArrayObject($options) : $options;
+
+		$event = $this->dispatchEvent(
+			'Model.beforeRules',
+			compact('entity', 'options', 'operation')
+		);
+
+		if ($event->isStopped()) {
+			return $event->result;
+		}
+
+		$result = $rules->check($entity, $operation, $options->getArrayCopy());
+		$event = $this->dispatchEvent(
+			'Model.afterRules',
+			compact('entity', 'options', 'result', 'operation')
+		);
+
+		if ($event->isStopped()) {
+			return $event->result;
+		}
+
+		return $result;
+	}
+
+/**
+ * Returns the rule checker for this table. A rules checker object is used to
+ * test an entity for validity on rules that may involve complex logic or data that
+ * needs to be fetched from the database or other sources.
+ *
+ * @return \Cake\ORM\RulesChecker
+ */
+	public function rulesChecker() {
+		if ($this->_rulesChecker !== null) {
+			return $this->_rulesChecker;
+		}
+		$this->_rulesChecker = $this->buildRules(new RulesChecker(['repository' => $this]));
+		$this->dispatchEvent('Model.buildRules', ['rules' => $this->_rulesChecker]);
+		return $this->_rulesChecker;
+	}
+
+/**
+ * Returns rules checker object after modifying the one that was passed. Subclasses
+ * can override this method in order to initialize the rules to be applied to
+ * entities saved by this table.
+ *
+ * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+ * @return \Cake\ORM\RulesChecker
+ */
+	public function buildRules(RulesChecker $rules) {
+		return $rules;
+	}
+
+/**
  * Get the Model callbacks this table is interested in.
  *
  * By implementing the conventional methods a table class is assumed
@@ -2006,8 +2011,8 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			'Model.afterSave' => 'afterSave',
 			'Model.beforeDelete' => 'beforeDelete',
 			'Model.afterDelete' => 'afterDelete',
-			'Model.beforeValidate' => 'beforeValidate',
-			'Model.afterValidate' => 'afterValidate',
+			'Model.beforeRules' => 'beforeRules',
+			'Model.afterRules' => 'afterRules',
 		];
 		$events = [];
 

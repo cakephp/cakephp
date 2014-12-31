@@ -21,6 +21,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\AssociationsNormalizerTrait;
 use Cake\ORM\Table;
+use \RuntimeException;
 
 /**
  * Contains logic to convert array data into entities.
@@ -95,6 +96,7 @@ class Marshaller {
  * @see \Cake\ORM\Table::newEntity()
  */
 	public function one(array $data, array $options = []) {
+		$options += ['validate' => true];
 		$propertyMap = $this->_buildPropertyMap($options);
 
 		$schema = $this->_table->schema();
@@ -113,9 +115,13 @@ class Marshaller {
 			}
 		}
 
+		$errors = $this->_validate($data, $options, true);
 		$primaryKey = $schema->primaryKey();
 		$properties = [];
 		foreach ($data as $key => $value) {
+			if (!empty($errors[$key])) {
+				continue;
+			}
 			$columnType = $schema->columnType($key);
 			if (isset($propertyMap[$key])) {
 				$assoc = $propertyMap[$key]['association'];
@@ -132,6 +138,7 @@ class Marshaller {
 
 		if (!isset($options['fieldList'])) {
 			$entity->set($properties);
+			$entity->errors($errors);
 			return $entity;
 		}
 
@@ -141,7 +148,36 @@ class Marshaller {
 			}
 		}
 
+		$entity->errors($errors);
 		return $entity;
+	}
+
+/**
+ * Returns the validation errors for a data set based on the passed options
+ *
+ * @param array $data The data to validate.
+ * @param array $options The options passed to this marshaller.
+ * @param bool $isNew Whether it is a new entity or one to be updated.
+ * @return array The list of validation errors.
+ * @throws \RuntimeException If no validator can be created.
+ */
+	protected function _validate($data, $options, $isNew) {
+		if (!$options['validate']) {
+			return [];
+		}
+		if ($options['validate'] === true) {
+			$options['validate'] = $this->_table->validator('default');
+		}
+		if (is_string($options['validate'])) {
+			$options['validate'] = $this->_table->validator($options['validate']);
+		}
+		if (!is_object($options['validate'])) {
+			throw new RuntimeException(
+				sprintf('validate must be a boolean, a string or an object. Got %s.', gettype($options['validate']))
+			);
+		}
+
+		return $options['validate']->errors($data, $isNew);
 	}
 
 /**
@@ -266,6 +302,8 @@ class Marshaller {
  * ### Options:
  *
  * * associated: Associations listed here will be marshalled as well.
+ * * validate: Whether or not to validate data before hydrating the entities. Can
+ *   also be set to a string to use a specific validator. Defaults to true/default.
  * * fieldList: A whitelist of fields to be assigned to the entity. If not present
  *   the accessible fields list in the entity will be used.
  *
@@ -276,6 +314,7 @@ class Marshaller {
  * @return \Cake\Datasource\EntityInterface
  */
 	public function merge(EntityInterface $entity, array $data, array $options = []) {
+		$options += ['validate' => true];
 		$propertyMap = $this->_buildPropertyMap($options);
 		$tableName = $this->_table->alias();
 
@@ -283,9 +322,14 @@ class Marshaller {
 			$data = $data[$tableName];
 		}
 
+		$errors = $this->_validate($data, $options, false);
 		$schema = $this->_table->schema();
 		$properties = [];
 		foreach ($data as $key => $value) {
+			if (!empty($errors[$key])) {
+				continue;
+			}
+
 			$columnType = $schema->columnType($key);
 			$original = $entity->get($key);
 
@@ -309,6 +353,7 @@ class Marshaller {
 
 		if (!isset($options['fieldList'])) {
 			$entity->set($properties);
+			$entity->errors($errors);
 			return $entity;
 		}
 
@@ -318,6 +363,7 @@ class Marshaller {
 			}
 		}
 
+		$entity->errors($errors);
 		return $entity;
 	}
 

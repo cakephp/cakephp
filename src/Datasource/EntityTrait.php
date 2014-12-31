@@ -14,8 +14,8 @@
  */
 namespace Cake\Datasource;
 
+use Cake\Collection\Collection;
 use Cake\Utility\Inflector;
-use Cake\Validation\Validator;
 use Traversable;
 
 /**
@@ -585,29 +585,11 @@ trait EntityTrait {
 	}
 
 /**
- * Validates the internal properties using a validator object. The resulting
- * errors will be copied inside this entity and can be retrieved using the
- * `errors` method.
- *
- * This function returns true if there were no validation errors or false
- * otherwise.
- *
- * @param \Cake\Validation\Validator $validator The validator to use when validating the entity.
- * @return bool
- */
-	public function validate(Validator $validator) {
-		$data = $this->_properties;
-		$new = $this->isNew();
-		$validator->provider('entity', $this);
-		$this->errors($validator->errors($data, $new === null ? true : $new));
-		return empty($this->_errors);
-	}
-
-/**
  * Sets the error messages for a field or a list of fields. When called
  * without the second argument it returns the validation
  * errors for the specified fields. If called with no arguments it returns
- * all the validation error messages stored in this entity.
+ * all the validation error messages stored in this entity and any other nested
+ * entity.
  *
  * ### Example
  *
@@ -630,11 +612,21 @@ trait EntityTrait {
  *
  * @param string|array|null $field The field to get errors for, or the array of errors to set.
  * @param string|array|null $errors The errors to be set for $field
+ * @param bool $overwrite Whether or not to overwite pre-existing errors for $field
  * @return array|$this
  */
-	public function errors($field = null, $errors = null) {
+	public function errors($field = null, $errors = null, $overwrite = false) {
 		if ($field === null) {
-			return $this->_errors;
+			$diff = array_diff_key($this->_properties, $this->_errors);
+			return $this->_errors + (new Collection($diff))
+				->filter(function ($value) {
+					return is_array($value) || $value instanceof EntityInterface;
+				})
+				->map(function ($value) {
+					return $this->_readError($value);
+				})
+				->filter()
+				->toArray();
 		}
 
 		if (is_string($field) && $errors === null) {
@@ -650,8 +642,12 @@ trait EntityTrait {
 		}
 
 		foreach ($field as $f => $error) {
-			$this->_errors[$f] = (array)$error;
+			$this->_errors += [$f => []];
+			$this->_errors[$f] = $overwrite ?
+				(array)$error :
+				array_merge($this->_errors[$f], (array)$error);
 		}
+
 		return $this;
 	}
 
