@@ -363,18 +363,24 @@ class FormHelper extends Helper
             case 'get':
                 $htmlAttributes['method'] = 'get';
                 break;
+            // Set enctype for form
             case 'file':
                 $htmlAttributes['enctype'] = 'multipart/form-data';
                 $options['type'] = ($isCreate) ? 'post' : 'put';
+            // Move on
             case 'post':
+            // Move on
             case 'put':
+            // Move on
             case 'delete':
+            // Set patch method
             case 'patch':
                 $append .= $this->hidden('_method', array(
                     'name' => '_method',
                     'value' => strtoupper($options['type']),
                     'secure' => static::SECURE_SKIP
                 ));
+            // Default to post method
             default:
                 $htmlAttributes['method'] = 'post';
         }

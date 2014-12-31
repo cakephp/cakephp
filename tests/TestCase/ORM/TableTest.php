@@ -3261,7 +3261,7 @@ class TableTest extends TestCase
     public function testInitializeEvent()
     {
         $count = 0;
-        $cb = function ($event) use (&$count){
+        $cb = function ($event) use (&$count) {
             $count++;
         };
         EventManager::instance()->attach($cb, 'Model.initialize');
@@ -3294,7 +3294,7 @@ class TableTest extends TestCase
     public function testBuildValidatorEvent()
     {
         $count = 0;
-        $cb = function ($event) use (&$count){
+        $cb = function ($event) use (&$count) {
             $count++;
         };
         EventManager::instance()->attach($cb, 'Model.buildValidator');

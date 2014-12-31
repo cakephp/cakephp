@@ -188,10 +188,10 @@ class TranslateBehavior extends Behavior
             $select
             );
 
-        if ($changeFilter) {
-            $filter = $options['filterByCurrentLocale'] ? 'INNER' : 'LEFT';
-            $contain[$alias . '_' . $field . '_translation']['joinType'] = $filter;
-        }
+            if ($changeFilter) {
+                $filter = $options['filterByCurrentLocale'] ? 'INNER' : 'LEFT';
+                $contain[$alias . '_' . $field . '_translation']['joinType'] = $filter;
+            }
         }
 
         $query->contain($contain);
