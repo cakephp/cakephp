@@ -96,9 +96,9 @@ class Number
      * @return string Percentage string
      * @link http://book.cakephp.org/3.0/en/core-libraries/number.html#formatting-percentages
      */
-    public static function toPercentage($value, $precision = 2, array $options = array())
+    public static function toPercentage($value, $precision = 2, array $options = [])
     {
-        $options += array('multiply' => false);
+        $options += ['multiply' => false];
         if ($options['multiply']) {
             $value *= 100;
         }
@@ -143,7 +143,7 @@ class Number
      * @param array $options Options list.
      * @return string formatted delta
      */
-    public static function formatDelta($value, array $options = array())
+    public static function formatDelta($value, array $options = [])
     {
         $options += ['places' => 0];
         $value = number_format($value, $options['places'], '.', '');
@@ -175,7 +175,7 @@ class Number
      * @param array $options Options list.
      * @return string Number formatted as a currency.
      */
-    public static function currency($value, $currency = null, array $options = array())
+    public static function currency($value, $currency = null, array $options = [])
     {
         $value = (float)$value;
         $currency = $currency ?: static::defaultCurrency();

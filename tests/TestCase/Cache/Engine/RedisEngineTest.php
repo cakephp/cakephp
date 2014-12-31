@@ -80,11 +80,11 @@ class RedisEngineTest extends TestCase
     public function testConfig()
     {
         $config = Cache::engine('redis')->config();
-        $expecting = array(
+        $expecting = [
             'prefix' => 'cake_',
             'duration' => 3600,
             'probability' => 100,
-            'groups' => array(),
+            'groups' => [],
             'server' => '127.0.0.1',
             'port' => 6379,
             'timeout' => 0,
@@ -92,7 +92,7 @@ class RedisEngineTest extends TestCase
             'password' => false,
             'database' => 0,
             'unix_socket' => false,
-        );
+        ];
         $this->assertEquals($expecting, $config);
     }
 
@@ -114,20 +114,20 @@ class RedisEngineTest extends TestCase
      */
     public function testMultiDatabaseOperations()
     {
-        Cache::config('redisdb0', array(
+        Cache::config('redisdb0', [
             'engine' => 'Redis',
             'prefix' => 'cake2_',
             'duration' => 3600,
             'persistent' => false,
-        ));
+        ]);
 
-        Cache::config('redisdb1', array(
+        Cache::config('redisdb1', [
             'engine' => 'Redis',
             'database' => 1,
             'prefix' => 'cake2_',
             'duration' => 3600,
             'persistent' => false,
-        ));
+        ]);
 
         $result = Cache::write('save_in_0', true, 'redisdb0');
         $exist = Cache::read('save_in_0', 'redisdb0');
@@ -174,7 +174,7 @@ class RedisEngineTest extends TestCase
         $expecting = $data;
         $this->assertEquals($expecting, $result);
 
-        $data = array(1, 2, 3);
+        $data = [1, 2, 3];
         $this->assertTrue(Cache::write('array_data', $data, 'redis'));
         $this->assertEquals($data, Cache::read('array_data', 'redis'));
 
@@ -294,11 +294,11 @@ class RedisEngineTest extends TestCase
      */
     public function testClear()
     {
-        Cache::config('redis2', array(
+        Cache::config('redis2', [
             'engine' => 'Redis',
             'prefix' => 'cake2_',
             'duration' => 3600
-        ));
+        ]);
 
         Cache::write('some_value', 'cache1', 'redis');
         $result = Cache::clear(true, 'redis');

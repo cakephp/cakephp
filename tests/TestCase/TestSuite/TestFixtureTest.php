@@ -55,11 +55,11 @@ class ArticlesFixture extends TestFixture
      *
      * @var array
      */
-    public $records = array(
-        array('name' => 'Gandalf', 'created' => '2009-04-28 19:20:00'),
-        array('name' => 'Captain Picard', 'created' => '2009-04-28 19:20:00'),
-        array('name' => 'Chewbacca', 'created' => '2009-04-28 19:20:00')
-    );
+    public $records = [
+        ['name' => 'Gandalf', 'created' => '2009-04-28 19:20:00'],
+        ['name' => 'Captain Picard', 'created' => '2009-04-28 19:20:00'],
+        ['name' => 'Chewbacca', 'created' => '2009-04-28 19:20:00']
+    ];
 }
 
 /**
@@ -81,23 +81,23 @@ class StringsTestsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = array(
-        'id' => array('type' => 'integer'),
-        'name' => array('type' => 'string', 'length' => '255'),
-        'email' => array('type' => 'string', 'length' => '255'),
-        'age' => array('type' => 'integer', 'default' => 10)
-    );
+    public $fields = [
+        'id' => ['type' => 'integer'],
+        'name' => ['type' => 'string', 'length' => '255'],
+        'email' => ['type' => 'string', 'length' => '255'],
+        'age' => ['type' => 'integer', 'default' => 10]
+    ];
 
     /**
      * Records property
      *
      * @var array
      */
-    public $records = array(
-        array('name' => 'Mark Doe', 'email' => 'mark.doe@email.com'),
-        array('name' => 'John Doe', 'email' => 'john.doe@email.com', 'age' => 20),
-        array('email' => 'jane.doe@email.com', 'name' => 'Jane Doe', 'age' => 30)
-    );
+    public $records = [
+        ['name' => 'Mark Doe', 'email' => 'mark.doe@email.com'],
+        ['name' => 'John Doe', 'email' => 'john.doe@email.com', 'age' => 20],
+        ['email' => 'jane.doe@email.com', 'name' => 'Jane Doe', 'age' => 30]
+    ];
 }
 
 
@@ -120,9 +120,9 @@ class ImportsFixture extends TestFixture
      *
      * @var array
      */
-    public $records = array(
-        array('title' => 'Hello!', 'body' => 'Hello world!')
-    );
+    public $records = [
+        ['title' => 'Hello!', 'body' => 'Hello world!']
+    ];
 }
 
 /**

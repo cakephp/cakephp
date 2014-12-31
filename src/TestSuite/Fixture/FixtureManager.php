@@ -40,14 +40,14 @@ class FixtureManager
      *
      * @var array
      */
-    protected $_loaded = array();
+    protected $_loaded = [];
 
     /**
      * Holds the fixture classes that where instantiated indexed by class name
      *
      * @var array
      */
-    protected $_fixtureMap = array();
+    protected $_fixtureMap = [];
 
     /**
      * Inspects the test to look for unloaded fixtures and loads them

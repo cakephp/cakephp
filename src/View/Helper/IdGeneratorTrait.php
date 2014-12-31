@@ -60,7 +60,7 @@ trait IdGeneratorTrait
     {
         $name = $this->_domId($name);
 
-        $idSuffix = mb_strtolower(str_replace(array('/', '@', '<', '>', ' ', '"', '\''), '-', $val));
+        $idSuffix = mb_strtolower(str_replace(['/', '@', '<', '>', ' ', '"', '\''], '-', $val));
         $count = 1;
         $check = $idSuffix;
         while (in_array($check, $this->_idSuffixes)) {

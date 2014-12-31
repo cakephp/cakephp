@@ -24,5 +24,5 @@ use Cake\View\Helper;
 class PluggedHelperHelper extends Helper
 {
 
-    public $helpers = array('TestPlugin.OtherHelper');
+    public $helpers = ['TestPlugin.OtherHelper'];
 }

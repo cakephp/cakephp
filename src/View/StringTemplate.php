@@ -36,7 +36,7 @@ class StringTemplate
      *
      * @var array
      */
-    protected $_compactAttributes = array(
+    protected $_compactAttributes = [
         'compact' => true,
         'checked' => true,
         'declare' => true,
@@ -57,7 +57,7 @@ class StringTemplate
         'required' => true,
         'novalidate' => true,
         'formnovalidate' => true,
-    );
+    ];
 
     /**
      * The default templates this instance holds.

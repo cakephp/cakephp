@@ -1,11 +1,11 @@
 <?php
 $paging = isset($this->Paginator->options['url']) ? $this->Paginator->options['url'] : null;
 
-$formatted = array(
+$formatted = [
     'user' => $user['User']['username'],
-    'list' => array(),
+    'list' => [],
     'paging' => $paging,
-);
+];
 foreach ($user['Item'] as $item) {
     $formatted['list'][] = $item['name'];
 }

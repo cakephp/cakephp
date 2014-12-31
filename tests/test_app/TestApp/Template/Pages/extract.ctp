@@ -1,6 +1,6 @@
 <?php
 $count = 10;
-$messages = array('count' => 10);
+$messages = ['count' => 10];
 
 // Plural
 echo __n('You have %d new message.', 'You have %d new messages.', $count);

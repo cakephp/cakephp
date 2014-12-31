@@ -236,12 +236,12 @@ class RouteBuilder
             $callback = $options;
             $options = [];
         }
-        $options += array(
+        $options += [
             'connectOptions' => [],
             'id' => static::ID . '|' . static::UUID,
             'only' => ['index', 'update', 'create', 'view', 'delete'],
             'actions' => [],
-        );
+        ];
         $options['only'] = (array)$options['only'];
         $connectOptions = $options['connectOptions'];
 
@@ -263,12 +263,12 @@ class RouteBuilder
             }
 
             $url = '/' . implode('/', array_filter([$urlName, $params['path']]));
-            $params = array(
+            $params = [
                 'controller' => $name,
                 'action' => $action,
                 '_method' => $params['method'],
                 '_ext' => $ext
-            );
+            ];
             $routeOptions = $connectOptions + [
                 'id' => $options['id'],
                 'pass' => ['id']
@@ -352,7 +352,7 @@ class RouteBuilder
     public function connect($route, array $defaults = [], $options = [])
     {
         if (empty($options['action'])) {
-            $defaults += array('action' => 'index');
+            $defaults += ['action' => 'index'];
         }
 
         if (empty($options['_ext'])) {
@@ -453,7 +453,7 @@ class RouteBuilder
     {
         $options['routeClass'] = 'Cake\Routing\Route\RedirectRoute';
         if (is_string($url)) {
-            $url = array('redirect' => $url);
+            $url = ['redirect' => $url];
         }
         $this->connect($route, $url, $options);
     }

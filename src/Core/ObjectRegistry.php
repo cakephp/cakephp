@@ -250,15 +250,15 @@ abstract class ObjectRegistry
      */
     public function normalizeArray($objects)
     {
-        $normal = array();
+        $normal = [];
         foreach ($objects as $i => $objectName) {
-            $config = array();
+            $config = [];
             if (!is_int($i)) {
                 $config = (array)$objectName;
                 $objectName = $i;
             }
             list(, $name) = pluginSplit($objectName);
-            $normal[$name] = array('class' => $objectName, 'config' => $config);
+            $normal[$name] = ['class' => $objectName, 'config' => $config];
         }
         return $normal;
     }

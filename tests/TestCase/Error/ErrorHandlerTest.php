@@ -136,10 +136,10 @@ class ErrorHandlerTest extends TestCase
      */
     public static function errorProvider()
     {
-        return array(
-            array(E_USER_NOTICE, 'Notice'),
-            array(E_USER_WARNING, 'Warning'),
-        );
+        return [
+            [E_USER_NOTICE, 'Notice'],
+            [E_USER_WARNING, 'Warning'],
+        ];
     }
 
     /**

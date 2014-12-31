@@ -113,7 +113,7 @@ class ConfigureTest extends TestCase
         $result = Configure::read('SomeName.someKey');
         $this->assertEquals(null, $result);
 
-        $expected = array('One' => array('Two' => array('Three' => array('Four' => array('Five' => 'cool')))));
+        $expected = ['One' => ['Two' => ['Three' => ['Four' => ['Five' => 'cool']]]]];
         $writeResult = Configure::write('Key', $expected);
         $this->assertTrue($writeResult);
 
@@ -165,7 +165,7 @@ class ConfigureTest extends TestCase
         $result = Configure::read('SomeName.someKey');
         $this->assertTrue($result === null);
 
-        Configure::write('SomeName', array('someKey' => 'myvalue', 'otherKey' => 'otherValue'));
+        Configure::write('SomeName', ['someKey' => 'myvalue', 'otherKey' => 'otherValue']);
 
         $result = Configure::read('SomeName.someKey');
         $this->assertEquals('myvalue', $result);
@@ -412,7 +412,7 @@ class ConfigureTest extends TestCase
         ]);
 
         Configure::write('testing', 'value');
-        Configure::store('store_test', 'configure', array('store_test' => 'one'));
+        Configure::store('store_test', 'configure', ['store_test' => 'one']);
         Configure::delete('testing');
         $this->assertNull(Configure::read('store_test'), 'Calling store with data shouldn\'t modify runtime.');
 

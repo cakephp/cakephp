@@ -45,34 +45,34 @@ class SessionHelperTest extends TestCase
         $this->View->request = new Request(['session' => $session]);
         $this->Session = new SessionHelper($this->View);
 
-        $session->write(array(
+        $session->write([
             'test' => 'info',
-            'Flash' => array(
-                'flash' => array(
+            'Flash' => [
+                'flash' => [
                     'type' => 'info',
-                    'params' => array(),
+                    'params' => [],
                     'message' => 'This is a calling'
-                ),
-                'notification' => array(
+                ],
+                'notification' => [
                     'type' => 'info',
-                    'params' => array(
+                    'params' => [
                         'title' => 'Notice!',
                         'name' => 'Alert!',
                         'element' => 'session_helper'
-                    ),
+                    ],
                     'message' => 'This is a test of the emergency broadcasting system',
-                ),
-                'classy' => array(
+                ],
+                'classy' => [
                     'type' => 'success',
-                    'params' => array('class' => 'positive'),
+                    'params' => ['class' => 'positive'],
                     'message' => 'Recorded'
-                ),
+                ],
                 'incomplete' => [
                     'message' => 'A thing happened',
                 ]
-            ),
-            'Deeply' => array('nested' => array('key' => 'value')),
-        ));
+            ],
+            'Deeply' => ['nested' => ['key' => 'value']],
+        ]);
     }
 
     /**
@@ -82,7 +82,7 @@ class SessionHelperTest extends TestCase
      */
     public function tearDown()
     {
-        $_SESSION = array();
+        $_SESSION = [];
         unset($this->View, $this->Session);
         Plugin::unload();
         parent::tearDown();
@@ -157,7 +157,7 @@ class SessionHelperTest extends TestCase
      */
     public function testFlashAttributes()
     {
-        $result = $this->Session->flash('flash', array('class' => 'crazy'));
+        $result = $this->Session->flash('flash', ['class' => 'crazy']);
         $expected = '<div id="flash-message" class="message-crazy">This is a calling</div>';
         $this->assertEquals($expected, $result);
         $this->assertFalse($this->Session->check('Message.flash'));
@@ -170,10 +170,10 @@ class SessionHelperTest extends TestCase
      */
     public function testFlashElementInAttrs()
     {
-        $result = $this->Session->flash('flash', array(
+        $result = $this->Session->flash('flash', [
             'element' => 'session_helper',
-            'params' => array('title' => 'Notice!', 'name' => 'Alert!')
-        ));
+            'params' => ['title' => 'Notice!', 'name' => 'Alert!']
+        ]);
         $expected = "<div id=\"notificationLayout\">\n    <h1>Alert!</h1>\n    <h3>Notice!</h3>\n    <p>This is a calling</p>\n</div>\n";
         $this->assertTextEquals($expected, $result);
     }
@@ -187,7 +187,7 @@ class SessionHelperTest extends TestCase
     {
         Plugin::load('TestPlugin');
 
-        $result = $this->Session->flash('flash', array('element' => 'TestPlugin.plugin_element'));
+        $result = $this->Session->flash('flash', ['element' => 'TestPlugin.plugin_element']);
         $expected = 'this is the plugin element using params[plugin]';
         $this->assertEquals($expected, $result);
     }

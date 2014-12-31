@@ -40,7 +40,7 @@ if (!function_exists('h')) {
         if (is_string($text)) {
             //optimize for strings
         } elseif (is_array($text)) {
-            $texts = array();
+            $texts = [];
             foreach ($text as $k => $t) {
                 $texts[$k] = h($t, $double, $charset);
             }
@@ -92,7 +92,7 @@ if (!function_exists('pluginSplit')) {
             }
             return $parts;
         }
-        return array($plugin, $name);
+        return [$plugin, $name];
     }
 
 }
@@ -110,9 +110,9 @@ if (!function_exists('namespaceSplit')) {
     {
         $pos = strrpos($class, '\\');
         if ($pos === false) {
-            return array('', $class);
+            return ['', $class];
         }
-        return array(substr($class, 0, $pos), substr($class, $pos + 1));
+        return [substr($class, 0, $pos), substr($class, $pos + 1)];
     }
 
 }

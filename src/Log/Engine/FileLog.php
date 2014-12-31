@@ -143,7 +143,7 @@ class FileLog extends BaseLog
             $selfError = true;
             trigger_error(vsprintf(
                 'Could not apply permission mask "%s" on log file "%s"',
-                array($mask, $pathname)
+                [$mask, $pathname]
             ), E_USER_WARNING);
             $selfError = false;
         }
@@ -159,7 +159,7 @@ class FileLog extends BaseLog
      */
     protected function _getFilename($level)
     {
-        $debugTypes = array('notice', 'info', 'debug');
+        $debugTypes = ['notice', 'info', 'debug'];
 
         if (!empty($this->_file)) {
             $filename = $this->_file;

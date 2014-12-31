@@ -42,7 +42,7 @@ class ControllerTestAppController extends Controller
      *
      * @var array
      */
-    public $helpers = array('Html');
+    public $helpers = ['Html'];
 
     /**
      * modelClass property
@@ -56,7 +56,7 @@ class ControllerTestAppController extends Controller
      *
      * @var array
      */
-    public $components = array('Cookie');
+    public $components = ['Cookie'];
 }
 
 /**
@@ -70,14 +70,14 @@ class TestController extends ControllerTestAppController
      *
      * @var array
      */
-    public $helpers = array('Session');
+    public $helpers = ['Session'];
 
     /**
      * components property
      *
      * @var array
      */
-    public $components = array('Security');
+    public $components = ['Security'];
 
     /**
      * modelClass property
@@ -95,10 +95,10 @@ class TestController extends ControllerTestAppController
      */
     public function index($testId, $testTwoId)
     {
-        $this->request->data = array(
+        $this->request->data = [
             'testId' => $testId,
             'test2Id' => $testTwoId
-        );
+        ];
     }
 
     /**
@@ -110,10 +110,10 @@ class TestController extends ControllerTestAppController
      */
     public function view($testId, $testTwoId)
     {
-        $this->request->data = array(
+        $this->request->data = [
             'testId' => $testId,
             'test2Id' => $testTwoId
-        );
+        ];
     }
 
     public function returner()
@@ -220,10 +220,10 @@ class ControllerTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = array(
+    public $fixtures = [
         'core.posts',
         'core.comments'
-    );
+    ];
 
     /**
      * reset environment.
@@ -444,16 +444,16 @@ class ControllerTest extends TestCase
      */
     public static function statusCodeProvider()
     {
-        return array(
-            array(300, "Multiple Choices"),
-            array(301, "Moved Permanently"),
-            array(302, "Found"),
-            array(303, "See Other"),
-            array(304, "Not Modified"),
-            array(305, "Use Proxy"),
-            array(307, "Temporary Redirect"),
-            array(403, "Forbidden"),
-        );
+        return [
+            [300, "Multiple Choices"],
+            [301, "Moved Permanently"],
+            [302, "Found"],
+            [303, "See Other"],
+            [304, "Not Modified"],
+            [305, "Use Proxy"],
+            [307, "Temporary Redirect"],
+            [403, "Forbidden"],
+        ];
     }
 
     /**
@@ -499,7 +499,7 @@ class ControllerTest extends TestCase
      */
     public function testRedirectBeforeRedirectModifyingStatusCode()
     {
-        $Response = $this->getMock('Cake\Network\Response', array('stop'));
+        $Response = $this->getMock('Cake\Network\Response', ['stop']);
         $Controller = new Controller(null, $Response);
 
         $Controller->eventManager()->attach(function ($event, $url, $response) {
@@ -519,7 +519,7 @@ class ControllerTest extends TestCase
      */
     public function testRedirectBeforeRedirectListenerReturnFalse()
     {
-        $Response = $this->getMock('Cake\Network\Response', array('stop', 'header'));
+        $Response = $this->getMock('Cake\Network\Response', ['stop', 'header']);
         $Controller = new Controller(null, $Response);
 
         $Controller->eventManager()->attach(function ($event, $url, $response) {
@@ -588,7 +588,7 @@ class ControllerTest extends TestCase
             ->with(true)
             ->will($this->returnValue('/posts/index'));
         $Controller = new Controller($request);
-        $result = $Controller->referer(array('controller' => 'posts', 'action' => 'index'), true);
+        $result = $Controller->referer(['controller' => 'posts', 'action' => 'index'], true);
         $this->assertEquals('/posts/index', $result);
 
         $request = $this->getMock('Cake\Network\Request', ['referer']);
@@ -642,7 +642,7 @@ class ControllerTest extends TestCase
 
         $TestController = new TestController($request);
         $TestController->setAction('view', 1, 2);
-        $expected = array('testId' => 1, 'test2Id' => 2);
+        $expected = ['testId' => 1, 'test2Id' => 2];
         $this->assertSame($expected, $TestController->request->data);
         $this->assertSame('view', $TestController->request->params['action']);
         $this->assertSame('view', $TestController->view);
@@ -712,7 +712,7 @@ class ControllerTest extends TestCase
     public function testPaginate()
     {
         $request = new Request('controller_posts/index');
-        $request->params['pass'] = array();
+        $request->params['pass'] = [];
         $response = $this->getMock('Cake\Network\Response', ['httpCodes']);
 
         $Controller = new Controller($request, $response);
@@ -742,7 +742,7 @@ class ControllerTest extends TestCase
     public function testPaginateUsesModelClass()
     {
         $request = new Request('controller_posts/index');
-        $request->params['pass'] = array();
+        $request->params['pass'] = [];
         $response = $this->getMock('Cake\Network\Response', ['httpCodes']);
 
         $Controller = new Controller($request, $response);
@@ -763,7 +763,7 @@ class ControllerTest extends TestCase
     public function testInvokeActionMissingAction()
     {
         $url = new Request('test/missing');
-        $url->addParams(array('controller' => 'test_controller', 'action' => 'missing'));
+        $url->addParams(['controller' => 'test_controller', 'action' => 'missing']);
         $response = $this->getMock('Cake\Network\Response');
 
         $Controller = new TestController($url, $response);
@@ -780,7 +780,7 @@ class ControllerTest extends TestCase
     public function testInvokeActionPrivate()
     {
         $url = new Request('test/private_m/');
-        $url->addParams(array('controller' => 'test_controller', 'action' => 'private_m'));
+        $url->addParams(['controller' => 'test_controller', 'action' => 'private_m']);
         $response = $this->getMock('Cake\Network\Response');
 
         $Controller = new TestController($url, $response);
@@ -797,7 +797,7 @@ class ControllerTest extends TestCase
     public function testInvokeActionProtected()
     {
         $url = new Request('test/protected_m/');
-        $url->addParams(array('controller' => 'test_controller', 'action' => 'protected_m'));
+        $url->addParams(['controller' => 'test_controller', 'action' => 'protected_m']);
         $response = $this->getMock('Cake\Network\Response');
 
         $Controller = new TestController($url, $response);
@@ -814,7 +814,7 @@ class ControllerTest extends TestCase
     public function testInvokeActionBaseMethods()
     {
         $url = new Request('test/redirect/');
-        $url->addParams(array('controller' => 'test_controller', 'action' => 'redirect'));
+        $url->addParams(['controller' => 'test_controller', 'action' => 'redirect']);
         $response = $this->getMock('Cake\Network\Response');
 
         $Controller = new TestController($url, $response);
@@ -829,11 +829,11 @@ class ControllerTest extends TestCase
     public function testInvokeActionReturnValue()
     {
         $url = new Request('test/returner/');
-        $url->addParams(array(
+        $url->addParams([
             'controller' => 'test_controller',
             'action' => 'returner',
-            'pass' => array()
-        ));
+            'pass' => []
+        ]);
         $response = $this->getMock('Cake\Network\Response');
 
         $Controller = new TestController($url, $response);
@@ -849,16 +849,16 @@ class ControllerTest extends TestCase
     public function testViewPathConventions()
     {
         $request = new Request('admin/posts');
-        $request->addParams(array(
+        $request->addParams([
             'prefix' => 'admin'
-        ));
+        ]);
         $response = $this->getMock('Cake\Network\Response');
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
         $this->assertEquals('Admin' . DS . 'Posts', $Controller->viewPath);
 
-        $request->addParams(array(
+        $request->addParams([
             'prefix' => 'admin/super'
-        ));
+        ]);
         $response = $this->getMock('Cake\Network\Response');
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
         $this->assertEquals('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewPath);

@@ -36,7 +36,7 @@ class TextHelper extends Helper
      *
      * @var array
      */
-    public $helpers = array('Html');
+    public $helpers = ['Html'];
 
     /**
      * Default config for this class
@@ -53,7 +53,7 @@ class TextHelper extends Helper
      *
      * @var array
      */
-    protected $_placeholders = array();
+    protected $_placeholders = [];
 
     /**
      * String utility instance
@@ -74,7 +74,7 @@ class TextHelper extends Helper
      * @param array $config Settings array Settings array
      * @throws \Cake\Core\Exception\Exception when the engine class could not be found.
      */
-    public function __construct(View $View, array $config = array())
+    public function __construct(View $View, array $config = [])
     {
         parent::__construct($View, $config);
 
@@ -96,7 +96,7 @@ class TextHelper extends Helper
      */
     public function __call($method, $params)
     {
-        return call_user_func_array(array($this->_engine, $method), $params);
+        return call_user_func_array([$this->_engine, $method], $params);
     }
 
     /**
@@ -112,20 +112,20 @@ class TextHelper extends Helper
      * @return string The text with links
      * @link http://book.cakephp.org/3.0/en/views/helpers/text.html#linking-urls
      */
-    public function autoLinkUrls($text, array $options = array())
+    public function autoLinkUrls($text, array $options = [])
     {
-        $this->_placeholders = array();
-        $options += array('escape' => true);
+        $this->_placeholders = [];
+        $options += ['escape' => true];
 
         $pattern = '#(?<!href="|src="|">)((?:https?|ftp|nntp)://[\p{L}0-9.\-_:]+(?:[/?][^\s<]*)?)#ui';
         $text = preg_replace_callback(
             $pattern,
-            array(&$this, '_insertPlaceHolder'),
+            [&$this, '_insertPlaceHolder'],
             $text
         );
         $text = preg_replace_callback(
             '#(?<!href="|">)(?<!\b[[:punct:]])(?<!http://|https://|ftp://|nntp://)www.[^\n\%\ <]+[^<\n\%\,\.\ <](?<!\))#i',
-            array(&$this, '_insertPlaceHolder'),
+            [&$this, '_insertPlaceHolder'],
             $text
         );
         if ($options['escape']) {
@@ -157,7 +157,7 @@ class TextHelper extends Helper
      */
     protected function _linkUrls($text, $htmlOptions)
     {
-        $replace = array();
+        $replace = [];
         foreach ($this->_placeholders as $hash => $url) {
             $link = $url;
             if (!preg_match('#^[a-z]+\://#', $url)) {
@@ -178,7 +178,7 @@ class TextHelper extends Helper
      */
     protected function _linkEmails($text, $options)
     {
-        $replace = array();
+        $replace = [];
         foreach ($this->_placeholders as $hash => $url) {
             $replace[$hash] = $this->Html->link($url, 'mailto:' . $url, $options);
         }
@@ -197,15 +197,15 @@ class TextHelper extends Helper
      * @return string The text with links
      * @link http://book.cakephp.org/3.0/en/views/helpers/text.html#linking-email-addresses
      */
-    public function autoLinkEmails($text, array $options = array())
+    public function autoLinkEmails($text, array $options = [])
     {
-        $options += array('escape' => true);
-        $this->_placeholders = array();
+        $options += ['escape' => true];
+        $this->_placeholders = [];
 
         $atom = '[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]';
         $text = preg_replace_callback(
             '/(?<=\s|^|\(|\>|\;)(' . $atom . '*(?:\.' . $atom . '+)*@[\p{L}0-9-]+(?:\.[\p{L}0-9-]+)+)/ui',
-            array(&$this, '_insertPlaceholder'),
+            [&$this, '_insertPlaceholder'],
             $text
         );
         if ($options['escape']) {
@@ -226,10 +226,10 @@ class TextHelper extends Helper
      * @return string The text with links
      * @link http://book.cakephp.org/3.0/en/views/helpers/text.html#linking-both-urls-and-email-addresses
      */
-    public function autoLink($text, array $options = array())
+    public function autoLink($text, array $options = [])
     {
         $text = $this->autoLinkUrls($text, $options);
-        return $this->autoLinkEmails($text, array('escape' => false) + $options);
+        return $this->autoLinkEmails($text, ['escape' => false] + $options);
     }
 
     /**
@@ -243,7 +243,7 @@ class TextHelper extends Helper
      * @see String::highlight()
      * @link http://book.cakephp.org/3.0/en/views/helpers/text.html#highlighting-substrings
      */
-    public function highlight($text, $phrase, array $options = array())
+    public function highlight($text, $phrase, array $options = [])
     {
         return $this->_engine->highlight($text, $phrase, $options);
     }
@@ -261,7 +261,7 @@ class TextHelper extends Helper
     {
         if (trim($text) !== '') {
             $text = preg_replace('|<br[^>]*>\s*<br[^>]*>|i', "\n\n", $text . "\n");
-            $text = preg_replace("/\n\n+/", "\n\n", str_replace(array("\r\n", "\r"), "\n", $text));
+            $text = preg_replace("/\n\n+/", "\n\n", str_replace(["\r\n", "\r"], "\n", $text));
             $texts = preg_split('/\n\s*\n/', $text, -1, PREG_SPLIT_NO_EMPTY);
             $text = '';
             foreach ($texts as $txt) {
@@ -304,7 +304,7 @@ class TextHelper extends Helper
      * @see String::truncate()
      * @link http://book.cakephp.org/3.0/en/views/helpers/text.html#truncating-text
      */
-    public function truncate($text, $length = 100, array $options = array())
+    public function truncate($text, $length = 100, array $options = [])
     {
         return $this->_engine->truncate($text, $length, $options);
     }
@@ -327,7 +327,7 @@ class TextHelper extends Helper
      * @see \Cake\Utility\String::tail()
      * @link http://book.cakephp.org/3.0/en/views/helpers/text.html#truncating-the-tail-of-a-string
      */
-    public function tail($text, $length = 100, array $options = array())
+    public function tail($text, $length = 100, array $options = [])
     {
         return $this->_engine->tail($text, $length, $options);
     }

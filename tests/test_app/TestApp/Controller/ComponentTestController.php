@@ -27,5 +27,5 @@ class ComponentTestController extends Controller
      *
      * @var array
      */
-    public $uses = array();
+    public $uses = [];
 }

@@ -39,28 +39,28 @@ class BasicsTest extends TestCase
      */
     public function testArrayDiffKey()
     {
-        $one = array('one' => 1, 'two' => 2, 'three' => 3);
-        $two = array('one' => 'one', 'two' => 'two');
+        $one = ['one' => 1, 'two' => 2, 'three' => 3];
+        $two = ['one' => 'one', 'two' => 'two'];
         $result = array_diff_key($one, $two);
-        $expected = array('three' => 3);
+        $expected = ['three' => 3];
         $this->assertEquals($expected, $result);
 
-        $one = array('one' => array('value', 'value-two'), 'two' => 2, 'three' => 3);
-        $two = array('two' => 'two');
+        $one = ['one' => ['value', 'value-two'], 'two' => 2, 'three' => 3];
+        $two = ['two' => 'two'];
         $result = array_diff_key($one, $two);
-        $expected = array('one' => array('value', 'value-two'), 'three' => 3);
+        $expected = ['one' => ['value', 'value-two'], 'three' => 3];
         $this->assertEquals($expected, $result);
 
-        $one = array('one' => null, 'two' => 2, 'three' => '', 'four' => 0);
-        $two = array('two' => 'two');
+        $one = ['one' => null, 'two' => 2, 'three' => '', 'four' => 0];
+        $two = ['two' => 'two'];
         $result = array_diff_key($one, $two);
-        $expected = array('one' => null, 'three' => '', 'four' => 0);
+        $expected = ['one' => null, 'three' => '', 'four' => 0];
         $this->assertEquals($expected, $result);
 
-        $one = array('minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true);
-        $two = array('minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true);
+        $one = ['minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true];
+        $two = ['minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true];
         $result = array_diff_key($one, $two);
-        $this->assertSame(array(), $result);
+        $this->assertSame([], $result);
     }
 
     /**
@@ -74,18 +74,18 @@ class BasicsTest extends TestCase
 
         $server = $_SERVER;
         $env = $_ENV;
-        $_SERVER = $_ENV = array();
+        $_SERVER = $_ENV = [];
 
         $_SERVER['SCRIPT_NAME'] = '/a/test/test.php';
         $this->assertEquals(env('SCRIPT_NAME'), '/a/test/test.php');
 
-        $_SERVER = $_ENV = array();
+        $_SERVER = $_ENV = [];
 
         $_ENV['CGI_MODE'] = 'BINARY';
         $_ENV['SCRIPT_URL'] = '/a/test/test.php';
         $this->assertEquals(env('SCRIPT_NAME'), '/a/test/test.php');
 
-        $_SERVER = $_ENV = array();
+        $_SERVER = $_ENV = [];
 
         $this->assertFalse(env('HTTPS'));
 
@@ -110,7 +110,7 @@ class BasicsTest extends TestCase
         $_SERVER['HTTPS'] = '';
         $this->assertFalse(env('HTTPS'));
 
-        $_SERVER = array();
+        $_SERVER = [];
 
         $_ENV['SCRIPT_URI'] = 'https://domain.test/a/test.php';
         $this->assertTrue(env('HTTPS'));
@@ -118,7 +118,7 @@ class BasicsTest extends TestCase
         $_ENV['SCRIPT_URI'] = 'http://domain.test/a/test.php';
         $this->assertFalse(env('HTTPS'));
 
-        $_SERVER = $_ENV = array();
+        $_SERVER = $_ENV = [];
 
         $this->assertNull(env('TEST_ME'));
 
@@ -146,9 +146,9 @@ class BasicsTest extends TestCase
         $result = h($string);
         $this->assertEquals('&lt;foo&gt;', $result);
 
-        $in = array('this & that', '<p>Which one</p>');
+        $in = ['this & that', '<p>Which one</p>'];
         $result = h($in);
-        $expected = array('this &amp; that', '&lt;p&gt;Which one&lt;/p&gt;');
+        $expected = ['this &amp; that', '&lt;p&gt;Which one&lt;/p&gt;'];
         $this->assertEquals($expected, $result);
 
         $string = '<foo> & &nbsp;';
@@ -167,31 +167,31 @@ class BasicsTest extends TestCase
         $result = h($string);
         $this->assertContains('string', $result);
 
-        $arr = array('<foo>', '&nbsp;');
+        $arr = ['<foo>', '&nbsp;'];
         $result = h($arr);
-        $expected = array(
+        $expected = [
             '&lt;foo&gt;',
             '&amp;nbsp;'
-        );
+        ];
         $this->assertEquals($expected, $result);
 
-        $arr = array('<foo>', '&nbsp;');
+        $arr = ['<foo>', '&nbsp;'];
         $result = h($arr, false);
-        $expected = array(
+        $expected = [
             '&lt;foo&gt;',
             '&nbsp;'
-        );
+        ];
         $this->assertEquals($expected, $result);
 
-        $arr = array('f' => '<foo>', 'n' => '&nbsp;');
+        $arr = ['f' => '<foo>', 'n' => '&nbsp;'];
         $result = h($arr, false);
-        $expected = array(
+        $expected = [
             'f' => '&lt;foo&gt;',
             'n' => '&nbsp;'
-        );
+        ];
         $this->assertEquals($expected, $result);
 
-        $arr = array('invalid' => "\x99An invalid\x80string", 'good' => 'Good string');
+        $arr = ['invalid' => "\x99An invalid\x80string", 'good' => 'Good string'];
         $result = h($arr);
         $this->assertContains('An invalid', $result['invalid']);
         $this->assertEquals('Good string', $result['good']);
@@ -200,7 +200,7 @@ class BasicsTest extends TestCase
         $result = h(false);
         $this->assertFalse($result);
 
-        $arr = array('foo' => false, 'bar' => true);
+        $arr = ['foo' => false, 'bar' => true];
         $result = h($arr);
         $this->assertFalse($result['foo']);
         $this->assertTrue($result['bar']);
@@ -209,7 +209,7 @@ class BasicsTest extends TestCase
         $result = h($obj);
         $this->assertEquals('(object)stdClass', $result);
 
-        $obj = new Response(array('body' => 'Body content'));
+        $obj = new Response(['body' => 'Body content']);
         $result = h($obj);
         $this->assertEquals('Body content', $result);
     }
@@ -488,25 +488,25 @@ EXPECTED;
     public function testPluginSplit()
     {
         $result = pluginSplit('Something.else');
-        $this->assertEquals(array('Something', 'else'), $result);
+        $this->assertEquals(['Something', 'else'], $result);
 
         $result = pluginSplit('Something.else.more.dots');
-        $this->assertEquals(array('Something', 'else.more.dots'), $result);
+        $this->assertEquals(['Something', 'else.more.dots'], $result);
 
         $result = pluginSplit('Somethingelse');
-        $this->assertEquals(array(null, 'Somethingelse'), $result);
+        $this->assertEquals([null, 'Somethingelse'], $result);
 
         $result = pluginSplit('Something.else', true);
-        $this->assertEquals(array('Something.', 'else'), $result);
+        $this->assertEquals(['Something.', 'else'], $result);
 
         $result = pluginSplit('Something.else.more.dots', true);
-        $this->assertEquals(array('Something.', 'else.more.dots'), $result);
+        $this->assertEquals(['Something.', 'else.more.dots'], $result);
 
         $result = pluginSplit('Post', false, 'Blog');
-        $this->assertEquals(array('Blog', 'Post'), $result);
+        $this->assertEquals(['Blog', 'Post'], $result);
 
         $result = pluginSplit('Blog.Post', false, 'Ultimate');
-        $this->assertEquals(array('Blog', 'Post'), $result);
+        $this->assertEquals(['Blog', 'Post'], $result);
     }
 
     /**
@@ -517,16 +517,16 @@ EXPECTED;
     public function testNamespaceSplit()
     {
         $result = namespaceSplit('Something');
-        $this->assertEquals(array('', 'Something'), $result);
+        $this->assertEquals(['', 'Something'], $result);
 
         $result = namespaceSplit('\Something');
-        $this->assertEquals(array('', 'Something'), $result);
+        $this->assertEquals(['', 'Something'], $result);
 
         $result = namespaceSplit('Cake\Something');
-        $this->assertEquals(array('Cake', 'Something'), $result);
+        $this->assertEquals(['Cake', 'Something'], $result);
 
         $result = namespaceSplit('Cake\Test\Something');
-        $this->assertEquals(array('Cake\Test', 'Something'), $result);
+        $this->assertEquals(['Cake\Test', 'Something'], $result);
     }
 
     /**

@@ -365,14 +365,14 @@ class ExtractTask extends Shell
                 }
             }
             unset($allTokens);
-            $this->_parse('__', array('singular'));
-            $this->_parse('__n', array('singular', 'plural'));
-            $this->_parse('__d', array('domain', 'singular'));
-            $this->_parse('__dn', array('domain', 'singular', 'plural'));
-            $this->_parse('__x', array('context', 'singular'));
-            $this->_parse('__xn', array('context', 'singular', 'plural'));
-            $this->_parse('__dx', array('domain', 'context', 'singular'));
-            $this->_parse('__dxn', array('domain', 'context', 'singular', 'plural'));
+            $this->_parse('__', ['singular']);
+            $this->_parse('__n', ['singular', 'plural']);
+            $this->_parse('__d', ['domain', 'singular']);
+            $this->_parse('__dn', ['domain', 'singular', 'plural']);
+            $this->_parse('__x', ['context', 'singular']);
+            $this->_parse('__xn', ['context', 'singular', 'plural']);
+            $this->_parse('__dx', ['domain', 'context', 'singular']);
+            $this->_parse('__dxn', ['domain', 'context', 'singular', 'plural']);
 
         }
     }

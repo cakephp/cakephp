@@ -48,7 +48,7 @@ class FallbackPasswordHasher extends AbstractPasswordHasher
      * `hashers` key to be present in the array with a list of other hashers to be
      * used
      */
-    public function __construct(array $config = array())
+    public function __construct(array $config = [])
     {
         parent::__construct($config);
         foreach ($this->_config['hashers'] as $key => $hasher) {

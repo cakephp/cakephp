@@ -1,13 +1,13 @@
 <?php
-$config = array(
+$config = [
     'Read' => 'value2',
-    'Deep' => array(
-        'Second' => array(
+    'Deep' => [
+        'Second' => [
             'SecondDeepest' => 'buried2'
-        )
-    ),
-    'TestAcl' => array(
+        ]
+    ],
+    'TestAcl' => [
         'classname' => 'Overwrite',
         'custom' => 'one'
-    )
-);
+    ]
+];

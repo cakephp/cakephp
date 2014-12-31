@@ -119,7 +119,7 @@ class DispatcherFilter implements EventListenerInterface
      */
     public function implementedEvents()
     {
-        return array(
+        return [
             'Dispatcher.beforeDispatch' => [
                 'callable' => 'handle',
                 'priority' => $this->_config['priority']
@@ -128,7 +128,7 @@ class DispatcherFilter implements EventListenerInterface
                 'callable' => 'handle',
                 'priority' => $this->_config['priority']
             ],
-        );
+        ];
     }
 
     /**

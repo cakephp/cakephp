@@ -31,20 +31,20 @@ class PhpConfigTest extends TestCase
      *
      * @var array
      */
-    public $testData = array(
-        'One' => array(
+    public $testData = [
+        'One' => [
             'two' => 'value',
-            'three' => array(
+            'three' => [
                 'four' => 'value four'
-            ),
+            ],
             'is_null' => null,
             'bool_false' => false,
             'bool_true' => true,
-        ),
-        'Asset' => array(
+        ],
+        'Asset' => [
             'timestamp' => 'force'
-        ),
-    );
+        ],
+    ];
 
     /**
      * Setup.

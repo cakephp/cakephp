@@ -34,7 +34,7 @@ class TaskRegistryTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $shell = $this->getMock('Cake\Console\Shell', array(), array(), '', false);
+        $shell = $this->getMock('Cake\Console\Shell', [], [], '', false);
         $this->Tasks = new TaskRegistry($shell);
     }
 
@@ -82,8 +82,8 @@ class TaskRegistryTest extends TestCase
      */
     public function testLoadPluginTask()
     {
-        $dispatcher = $this->getMock('Cake\Console\ShellDispatcher', array(), array(), '', false);
-        $shell = $this->getMock('Cake\Console\Shell', array(), array(), '', false);
+        $dispatcher = $this->getMock('Cake\Console\ShellDispatcher', [], [], '', false);
+        $shell = $this->getMock('Cake\Console\Shell', [], [], '', false);
         Plugin::load('TestPlugin');
         $this->Tasks = new TaskRegistry($shell, $dispatcher);
 
@@ -102,18 +102,18 @@ class TaskRegistryTest extends TestCase
     {
         Plugin::load('TestPlugin');
 
-        $result = $this->Tasks->load('CommandAliased', array('className' => 'Command'));
+        $result = $this->Tasks->load('CommandAliased', ['className' => 'Command']);
         $this->assertInstanceOf('Cake\Shell\Task\CommandTask', $result);
         $this->assertInstanceOf('Cake\Shell\Task\CommandTask', $this->Tasks->CommandAliased);
 
         $result = $this->Tasks->loaded();
-        $this->assertEquals(array('CommandAliased'), $result, 'loaded() results are wrong.');
+        $this->assertEquals(['CommandAliased'], $result, 'loaded() results are wrong.');
 
-        $result = $this->Tasks->load('SomeTask', array('className' => 'TestPlugin.OtherTask'));
+        $result = $this->Tasks->load('SomeTask', ['className' => 'TestPlugin.OtherTask']);
         $this->assertInstanceOf('TestPlugin\Shell\Task\OtherTaskTask', $result);
         $this->assertInstanceOf('TestPlugin\Shell\Task\OtherTaskTask', $this->Tasks->SomeTask);
 
         $result = $this->Tasks->loaded();
-        $this->assertEquals(array('CommandAliased', 'SomeTask'), $result, 'loaded() results are wrong.');
+        $this->assertEquals(['CommandAliased', 'SomeTask'], $result, 'loaded() results are wrong.');
     }
 }

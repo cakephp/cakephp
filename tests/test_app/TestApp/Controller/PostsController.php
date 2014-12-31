@@ -28,10 +28,10 @@ class PostsController extends AppController
      *
      * @var array
      */
-    public $components = array(
+    public $components = [
         'Flash',
         'RequestHandler',
-    );
+    ];
 
     /**
      * Index method.

@@ -58,7 +58,7 @@ class NumberHelper extends Helper
      * @param array $config Configuration settings for the helper
      * @throws \Cake\Core\Exception\Exception When the engine class could not be found.
      */
-    public function __construct(View $View, array $config = array())
+    public function __construct(View $View, array $config = [])
     {
         parent::__construct($View, $config);
 
@@ -81,7 +81,7 @@ class NumberHelper extends Helper
      */
     public function __call($method, $params)
     {
-        return call_user_func_array(array($this->_engine, $method), $params);
+        return call_user_func_array([$this->_engine, $method], $params);
     }
 
     /**
@@ -125,7 +125,7 @@ class NumberHelper extends Helper
      * @see \Cake\I18n\Number::toPercentage()
      * @link http://book.cakephp.org/3.0/en/views/helpers/number.html#formatting-percentages
      */
-    public function toPercentage($number, $precision = 2, array $options = array())
+    public function toPercentage($number, $precision = 2, array $options = [])
     {
         return $this->_engine->toPercentage($number, $precision, $options);
     }
@@ -178,7 +178,7 @@ class NumberHelper extends Helper
      * @param array $options Options list.
      * @return string Number formatted as a currency.
      */
-    public function currency($number, $currency = null, array $options = array())
+    public function currency($number, $currency = null, array $options = [])
     {
         $formatted = $this->_engine->currency($number, $currency, $options);
         $options += ['escape' => true];
@@ -201,7 +201,7 @@ class NumberHelper extends Helper
      * @param array $options Options list.
      * @return string formatted delta
      */
-    public function formatDelta($value, array $options = array())
+    public function formatDelta($value, array $options = [])
     {
         $formatted = $this->_engine->formatDelta($value, $options);
         $options += ['escape' => true];

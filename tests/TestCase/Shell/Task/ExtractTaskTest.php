@@ -40,8 +40,8 @@ class ExtractTaskTest extends TestCase
 
         $this->Task = $this->getMock(
             'Cake\Shell\Task\ExtractTask',
-            array('in', 'out', 'err', '_stop'),
-            array($this->io)
+            ['in', 'out', 'err', '_stop'],
+            [$this->io]
         );
         $this->path = TMP . 'tests/extract_task_test';
         new Folder($this->path . DS . 'locale', true);
@@ -189,8 +189,8 @@ class ExtractTaskTest extends TestCase
         Configure::write('App.namespace', 'TestApp');
         $this->Task = $this->getMock(
             'Cake\Shell\Task\ExtractTask',
-            array('_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'),
-            array($this->io)
+            ['_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'],
+            [$this->io]
         );
         $this->Task->expects($this->exactly(1))
             ->method('_isExtractingApp')
@@ -216,8 +216,8 @@ class ExtractTaskTest extends TestCase
 
         $this->Task = $this->getMock(
             'Cake\Shell\Task\ExtractTask',
-            array('_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'),
-            array($this->io)
+            ['_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'],
+            [$this->io]
         );
 
         $this->Task->params['output'] = $this->path . DS;

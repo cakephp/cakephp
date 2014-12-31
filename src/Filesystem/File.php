@@ -43,7 +43,7 @@ class File
      * @var array
      * http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::$info
      */
-    public $info = array();
+    public $info = [];
 
     /**
      * Holds the file handler resource if the file is opened
@@ -209,7 +209,7 @@ class File
         if (DS === '\\' || $forceWindows === true) {
             $lineBreak = "\r\n";
         }
-        return strtr($data, array("\r\n" => $lineBreak, "\n" => $lineBreak, "\r" => $lineBreak));
+        return strtr($data, ["\r\n" => $lineBreak, "\n" => $lineBreak, "\r" => $lineBreak]);
     }
 
     /**

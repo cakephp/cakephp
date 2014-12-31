@@ -32,17 +32,17 @@ class TestHelper extends Helper
      *
      * @var array
      */
-    protected $_defaultConfig = array(
+    protected $_defaultConfig = [
         'key1' => 'val1',
-        'key2' => array('key2.1' => 'val2.1', 'key2.2' => 'val2.2')
-    );
+        'key2' => ['key2.1' => 'val2.1', 'key2.2' => 'val2.2']
+    ];
 
     /**
      * Helpers for this helper.
      *
      * @var array
      */
-    public $helpers = array('Html', 'TestPlugin.OtherHelper');
+    public $helpers = ['Html', 'TestPlugin.OtherHelper'];
 
     /**
      * expose a method as public
@@ -102,15 +102,15 @@ class HelperTest extends TestCase
      */
     public function testSettingsMerging()
     {
-        $Helper = new TestHelper($this->View, array(
+        $Helper = new TestHelper($this->View, [
             'key3' => 'val3',
-            'key2' => array('key2.2' => 'newval')
-        ));
-        $expected = array(
+            'key2' => ['key2.2' => 'newval']
+        ]);
+        $expected = [
             'key1' => 'val1',
-            'key2' => array('key2.1' => 'val2.1', 'key2.2' => 'newval'),
+            'key2' => ['key2.1' => 'val2.1', 'key2.2' => 'newval'],
             'key3' => 'val3'
-        );
+        ];
         $this->assertEquals($expected, $Helper->config());
     }
 
@@ -121,7 +121,7 @@ class HelperTest extends TestCase
      */
     public function testLazyLoadingHelpers()
     {
-        Plugin::load(array('TestPlugin'));
+        Plugin::load(['TestPlugin']);
 
         $Helper = new TestHelper($this->View);
         $this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $Helper->OtherHelper);

@@ -74,12 +74,12 @@ class QueryTest extends TestCase
         $this->assertEquals([2], $result->fetch());
 
         //This new field should be appended
-        $result = $query->select(array('1 + 3'))->execute();
+        $result = $query->select(['1 + 3'])->execute();
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
         $this->assertEquals([2, 4], $result->fetch());
 
         //This should now overwrite all previous fields
-        $result = $query->select(array('1 + 2', '1 + 5'), true)->execute();
+        $result = $query->select(['1 + 2', '1 + 5'], true)->execute();
         $this->assertEquals([3, 6], $result->fetch());
     }
 
@@ -107,20 +107,20 @@ class QueryTest extends TestCase
     public function testSelectFieldsFromTable()
     {
         $query = new Query($this->connection);
-        $result = $query->select(array('body', 'author_id'))->from('articles')->execute();
-        $this->assertEquals(array('body' => 'First Article Body', 'author_id' => 1), $result->fetch('assoc'));
-        $this->assertEquals(array('body' => 'Second Article Body', 'author_id' => 3), $result->fetch('assoc'));
+        $result = $query->select(['body', 'author_id'])->from('articles')->execute();
+        $this->assertEquals(['body' => 'First Article Body', 'author_id' => 1], $result->fetch('assoc'));
+        $this->assertEquals(['body' => 'Second Article Body', 'author_id' => 3], $result->fetch('assoc'));
 
         //Append more tables to next execution
-        $result = $query->select('name')->from(array('authors'))->order(['name' => 'desc', 'articles.id' => 'asc'])->execute();
-        $this->assertEquals(array('body' => 'First Article Body', 'author_id' => 1, 'name' => 'nate'), $result->fetch('assoc'));
-        $this->assertEquals(array('body' => 'Second Article Body', 'author_id' => 3, 'name' => 'nate'), $result->fetch('assoc'));
-        $this->assertEquals(array('body' => 'Third Article Body', 'author_id' => 1, 'name' => 'nate'), $result->fetch('assoc'));
+        $result = $query->select('name')->from(['authors'])->order(['name' => 'desc', 'articles.id' => 'asc'])->execute();
+        $this->assertEquals(['body' => 'First Article Body', 'author_id' => 1, 'name' => 'nate'], $result->fetch('assoc'));
+        $this->assertEquals(['body' => 'Second Article Body', 'author_id' => 3, 'name' => 'nate'], $result->fetch('assoc'));
+        $this->assertEquals(['body' => 'Third Article Body', 'author_id' => 1, 'name' => 'nate'], $result->fetch('assoc'));
 
         // Overwrite tables and only fetch from authors
         $result = $query->select('name', true)->from('authors', true)->order(['name' => 'desc'], true)->execute();
-        $this->assertEquals(array('nate'), $result->fetch());
-        $this->assertEquals(array('mariano'), $result->fetch());
+        $this->assertEquals(['nate'], $result->fetch());
+        $this->assertEquals(['mariano'], $result->fetch());
         $this->assertCount(4, $result);
     }
 
@@ -133,27 +133,27 @@ class QueryTest extends TestCase
     {
         $query = new Query($this->connection);
         $result = $query->select(['text' => 'body', 'author_id'])->from('articles')->execute();
-        $this->assertEquals(array('text' => 'First Article Body', 'author_id' => 1), $result->fetch('assoc'));
-        $this->assertEquals(array('text' => 'Second Article Body', 'author_id' => 3), $result->fetch('assoc'));
+        $this->assertEquals(['text' => 'First Article Body', 'author_id' => 1], $result->fetch('assoc'));
+        $this->assertEquals(['text' => 'Second Article Body', 'author_id' => 3], $result->fetch('assoc'));
 
         $query = new Query($this->connection);
         $result = $query->select(['text' => 'body', 'author' => 'author_id'])->from('articles')->execute();
-        $this->assertEquals(array('text' => 'First Article Body', 'author' => 1), $result->fetch('assoc'));
-        $this->assertEquals(array('text' => 'Second Article Body', 'author' => 3), $result->fetch('assoc'));
+        $this->assertEquals(['text' => 'First Article Body', 'author' => 1], $result->fetch('assoc'));
+        $this->assertEquals(['text' => 'Second Article Body', 'author' => 3], $result->fetch('assoc'));
 
         $query = new Query($this->connection);
         $query->select(['text' => 'body'])->select(['author_id', 'foo' => 'body']);
         $result = $query->from('articles')->execute();
-        $this->assertEquals(array('foo' => 'First Article Body', 'text' => 'First Article Body', 'author_id' => 1), $result->fetch('assoc'));
-        $this->assertEquals(array('foo' => 'Second Article Body', 'text' => 'Second Article Body', 'author_id' => 3), $result->fetch('assoc'));
+        $this->assertEquals(['foo' => 'First Article Body', 'text' => 'First Article Body', 'author_id' => 1], $result->fetch('assoc'));
+        $this->assertEquals(['foo' => 'Second Article Body', 'text' => 'Second Article Body', 'author_id' => 3], $result->fetch('assoc'));
 
         $query = new Query($this->connection);
         $exp = $query->newExpr('1 + 1');
         $comp = $query->newExpr(['author_id +' => 2]);
         $result = $query->select(['text' => 'body', 'two' => $exp, 'three' => $comp])
             ->from('articles')->execute();
-        $this->assertEquals(array('text' => 'First Article Body', 'two' => 2, 'three' => 3), $result->fetch('assoc'));
-        $this->assertEquals(array('text' => 'Second Article Body', 'two' => 2, 'three' => 5), $result->fetch('assoc'));
+        $this->assertEquals(['text' => 'First Article Body', 'two' => 2, 'three' => 3], $result->fetch('assoc'));
+        $this->assertEquals(['text' => 'Second Article Body', 'two' => 2, 'three' => 5], $result->fetch('assoc'));
     }
 
     /**
@@ -199,8 +199,8 @@ class QueryTest extends TestCase
             ->execute();
 
         $this->assertCount(3, $result);
-        $this->assertEquals(array('title' => 'First Article', 'name' => 'mariano'), $result->fetch('assoc'));
-        $this->assertEquals(array('title' => 'Second Article', 'name' => 'larry'), $result->fetch('assoc'));
+        $this->assertEquals(['title' => 'First Article', 'name' => 'mariano'], $result->fetch('assoc'));
+        $this->assertEquals(['title' => 'Second Article', 'name' => 'larry'], $result->fetch('assoc'));
 
         $result = $query->join('authors', [], true)->execute();
         $this->assertCount(12, $result, 'Cross join results in 12 records');
@@ -209,8 +209,8 @@ class QueryTest extends TestCase
             ['table' => 'authors', 'type' => 'INNER', 'conditions' => 'author_id = authors.id']
         ], [], true)->execute();
         $this->assertCount(3, $result);
-        $this->assertEquals(array('title' => 'First Article', 'name' => 'mariano'), $result->fetch('assoc'));
-        $this->assertEquals(array('title' => 'Second Article', 'name' => 'larry'), $result->fetch('assoc'));
+        $this->assertEquals(['title' => 'First Article', 'name' => 'mariano'], $result->fetch('assoc'));
+        $this->assertEquals(['title' => 'Second Article', 'name' => 'larry'], $result->fetch('assoc'));
     }
 
     /**
@@ -227,8 +227,8 @@ class QueryTest extends TestCase
             ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => ['author_id = a.id']])
             ->order(['title' => 'asc'])
             ->execute();
-        $this->assertEquals(array('title' => 'First Article', 'name' => 'mariano'), $result->fetch('assoc'));
-        $this->assertEquals(array('title' => 'Second Article', 'name' => 'larry'), $result->fetch('assoc'));
+        $this->assertEquals(['title' => 'First Article', 'name' => 'mariano'], $result->fetch('assoc'));
+        $this->assertEquals(['title' => 'Second Article', 'name' => 'larry'], $result->fetch('assoc'));
 
         $query = new Query($this->connection);
         $conditions = $query->newExpr('author_id = a.id');
@@ -238,8 +238,8 @@ class QueryTest extends TestCase
             ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $conditions])
             ->order(['title' => 'asc'])
             ->execute();
-        $this->assertEquals(array('title' => 'First Article', 'name' => 'mariano'), $result->fetch('assoc'));
-        $this->assertEquals(array('title' => 'Second Article', 'name' => 'larry'), $result->fetch('assoc'));
+        $this->assertEquals(['title' => 'First Article', 'name' => 'mariano'], $result->fetch('assoc'));
+        $this->assertEquals(['title' => 'Second Article', 'name' => 'larry'], $result->fetch('assoc'));
 
         $query = new Query($this->connection);
         $time = new \DateTime('2007-03-18 10:50:00');
@@ -266,8 +266,8 @@ class QueryTest extends TestCase
             ->join(['a' => 'authors'])
             ->order(['name' => 'desc', 'articles.id' => 'asc'])
             ->execute();
-        $this->assertEquals(array('title' => 'First Article', 'name' => 'nate'), $result->fetch('assoc'));
-        $this->assertEquals(array('title' => 'Second Article', 'name' => 'nate'), $result->fetch('assoc'));
+        $this->assertEquals(['title' => 'First Article', 'name' => 'nate'], $result->fetch('assoc'));
+        $this->assertEquals(['title' => 'Second Article', 'name' => 'nate'], $result->fetch('assoc'));
 
         $query = new Query($this->connection);
         $conditions = $query->newExpr('author_id = a.id');
@@ -277,8 +277,8 @@ class QueryTest extends TestCase
             ->join(['a' => ['table' => 'authors', 'conditions' => $conditions]])
             ->order(['title' => 'asc'])
             ->execute();
-        $this->assertEquals(array('title' => 'First Article', 'name' => 'mariano'), $result->fetch('assoc'));
-        $this->assertEquals(array('title' => 'Second Article', 'name' => 'larry'), $result->fetch('assoc'));
+        $this->assertEquals(['title' => 'First Article', 'name' => 'mariano'], $result->fetch('assoc'));
+        $this->assertEquals(['title' => 'Second Article', 'name' => 'larry'], $result->fetch('assoc'));
 
         $query = new Query($this->connection);
         $time = new \DateTime('2007-03-18 10:45:23');
@@ -288,7 +288,7 @@ class QueryTest extends TestCase
             ->from('articles')
             ->join(['c' => ['table' => 'comments', 'conditions' => ['created' => $time]]], $types)
             ->execute();
-        $this->assertEquals(array('title' => 'First Article', 'name' => 'First Comment for First Article'), $result->fetch('assoc'));
+        $this->assertEquals(['title' => 'First Article', 'name' => 'First Comment for First Article'], $result->fetch('assoc'));
     }
 
     /**
@@ -306,7 +306,7 @@ class QueryTest extends TestCase
             ->from('articles')
             ->leftJoin(['c' => 'comments'], ['created <' => $time], $types)
             ->execute();
-        $this->assertEquals(array('title' => 'First Article', 'name' => null), $result->fetch('assoc'));
+        $this->assertEquals(['title' => 'First Article', 'name' => null], $result->fetch('assoc'));
 
         $query = new Query($this->connection);
         $result = $query
@@ -450,7 +450,7 @@ class QueryTest extends TestCase
             ->where(['id >' => 1])
             ->execute();
         $this->assertCount(2, $result);
-        $this->assertEquals(array('title' => 'Second Article'), $result->fetch('assoc'));
+        $this->assertEquals(['title' => 'Second Article'], $result->fetch('assoc'));
 
         $query = new Query($this->connection);
         $result = $query
@@ -459,7 +459,7 @@ class QueryTest extends TestCase
             ->where(['id <' => 2])
             ->execute();
         $this->assertCount(1, $result);
-        $this->assertEquals(array('title' => 'First Article'), $result->fetch('assoc'));
+        $this->assertEquals(['title' => 'First Article'], $result->fetch('assoc'));
 
         $query = new Query($this->connection);
         $result = $query
@@ -492,7 +492,7 @@ class QueryTest extends TestCase
             ->where(['id !=' => 2])
             ->execute();
         $this->assertCount(2, $result);
-        $this->assertEquals(array('title' => 'First Article'), $result->fetch('assoc'));
+        $this->assertEquals(['title' => 'First Article'], $result->fetch('assoc'));
 
         $query = new Query($this->connection);
         $result = $query
@@ -501,7 +501,7 @@ class QueryTest extends TestCase
             ->where(['title LIKE' => 'First Article'])
             ->execute();
         $this->assertCount(1, $result);
-        $this->assertEquals(array('title' => 'First Article'), $result->fetch('assoc'));
+        $this->assertEquals(['title' => 'First Article'], $result->fetch('assoc'));
 
         $query = new Query($this->connection);
         $result = $query
@@ -559,7 +559,7 @@ class QueryTest extends TestCase
             )
             ->execute();
         $this->assertCount(1, $result);
-        $this->assertEquals(array('id' => 1), $result->fetch('assoc'));
+        $this->assertEquals(['id' => 1], $result->fetch('assoc'));
 
         $query = new Query($this->connection);
         $result = $query
@@ -924,7 +924,7 @@ class QueryTest extends TestCase
             })
             ->execute();
         $this->assertCount(2, $result);
-        $this->assertEquals(array('title' => 'Second Article'), $result->fetch('assoc'));
+        $this->assertEquals(['title' => 'Second Article'], $result->fetch('assoc'));
 
         $query = new Query($this->connection);
         $result = $query->select(['title'])
@@ -934,7 +934,7 @@ class QueryTest extends TestCase
             })
             ->execute();
         $this->assertCount(1, $result);
-        $this->assertEquals(array('title' => 'First Article'), $result->fetch('assoc'));
+        $this->assertEquals(['title' => 'First Article'], $result->fetch('assoc'));
 
         $query = new Query($this->connection);
         $result = $query->select(['title'])
@@ -974,7 +974,7 @@ class QueryTest extends TestCase
             })
             ->execute();
         $this->assertCount(2, $result);
-        $this->assertEquals(array('title' => 'First Article'), $result->fetch('assoc'));
+        $this->assertEquals(['title' => 'First Article'], $result->fetch('assoc'));
 
         $query = new Query($this->connection);
         $result = $query
@@ -985,7 +985,7 @@ class QueryTest extends TestCase
             })
             ->execute();
         $this->assertCount(1, $result);
-        $this->assertEquals(array('title' => 'First Article'), $result->fetch('assoc'));
+        $this->assertEquals(['title' => 'First Article'], $result->fetch('assoc'));
 
         $query = new Query($this->connection);
         $result = $query
