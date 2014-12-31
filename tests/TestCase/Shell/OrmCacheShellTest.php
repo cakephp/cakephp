@@ -18,11 +18,14 @@ use Cake\Cache\Cache;
 use Cake\Datasource\ConnectionManager;
 use Cake\Shell\OrmCacheShell;
 use Cake\TestSuite\TestCase;
+use Cake\TestSuite\Traits\ConnectionPrefixTestTrait;
 
 /**
  * OrmCacheShell test.
  */
 class OrmCacheShellTest extends TestCase {
+
+	use ConnectionPrefixTestTrait;
 
 /**
  * Fixtures.
@@ -49,6 +52,8 @@ class OrmCacheShellTest extends TestCase {
 
 		$ds = ConnectionManager::get('test');
 		$ds->cacheMetadata('orm_cache');
+
+		$this->setPrefix();
 	}
 
 /**
@@ -100,7 +105,7 @@ class OrmCacheShellTest extends TestCase {
 	public function testBuildNoArgs() {
 		$this->cache->expects($this->at(2))
 			->method('write')
-			->with('test_articles');
+			->with($this->applyConnectionPrefix('test_~articles'));
 
 		$this->shell->params['connection'] = 'test';
 		$this->shell->build();
@@ -114,7 +119,7 @@ class OrmCacheShellTest extends TestCase {
 	public function testBuildNamedModel() {
 		$this->cache->expects($this->once())
 			->method('write')
-			->with('test_articles');
+			->with($this->applyConnectionPrefix('test_~articles'));
 		$this->cache->expects($this->never())
 			->method('delete');
 
@@ -130,7 +135,7 @@ class OrmCacheShellTest extends TestCase {
 	public function testBuildOverwritesExistingData() {
 		$this->cache->expects($this->once())
 			->method('write')
-			->with('test_articles');
+			->with($this->applyConnectionPrefix('test_~articles'));
 		$this->cache->expects($this->never())
 			->method('read');
 		$this->cache->expects($this->never())
@@ -170,7 +175,7 @@ class OrmCacheShellTest extends TestCase {
 	public function testClearNoArgs() {
 		$this->cache->expects($this->at(2))
 			->method('delete')
-			->with('test_articles');
+			->with($this->applyConnectionPrefix('test_~articles'));
 
 		$this->shell->params['connection'] = 'test';
 		$this->shell->clear();
@@ -186,7 +191,7 @@ class OrmCacheShellTest extends TestCase {
 			->method('write');
 		$this->cache->expects($this->once())
 			->method('delete')
-			->with('test_articles');
+			->with($this->applyConnectionPrefix('test_~articles'));
 
 		$this->shell->params['connection'] = 'test';
 		$this->shell->clear('articles');

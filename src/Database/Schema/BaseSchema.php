@@ -15,7 +15,9 @@
 namespace Cake\Database\Schema;
 
 use Cake\Database\Driver;
+use Cake\Database\Expression\TableNameExpression;
 use Cake\Database\Schema\Table;
+use Cake\Database\ValueBinder;
 
 /**
  * Base class for schema implementations.
@@ -43,6 +45,56 @@ abstract class BaseSchema {
 	public function __construct(Driver $driver) {
 		$driver->connect();
 		$this->_driver = $driver;
+	}
+
+/**
+ * Retrieves the prefix from the current connection $config
+ *
+ * @param array $config Configuration array for the current Connection
+ * @return string The prefix for the current connection
+ */
+	public function getConnectionPrefix($config) {
+		$prefix = '';
+		if (isset($config['prefix']) && is_string($config['prefix'])) {
+			$prefix = $config['prefix'];
+		}
+
+		return $prefix;
+	}
+
+/**
+ * Resolves the full table name for the table name $tableName
+ *
+ * @param string|TableNameExpression $tableName Table name
+ * @param array $config Configuration array for the current Connection
+ * @param bool $quoted Whether the table name should be quoted
+ * @return string The full table name
+ */
+	public function getFullTableName($tableName, $config, $quoted = true) {
+		$prefix = $this->getConnectionPrefix($config);
+
+		if (is_string($tableName)) {
+			if ($prefix !== '' && (strpos($tableName, $prefix) !== 0 || $tableName === $prefix)) {
+				$tableName = $prefix . $tableName;
+			}
+
+			if ($quoted === true) {
+				$tableName = $this->_driver->quoteIdentifier($tableName);
+			}
+
+			return $tableName;
+		}
+
+		if ($tableName instanceof TableNameExpression) {
+			$name = $tableName->sql(new ValueBinder);
+			if ($quoted === true) {
+				$name = $this->_driver->quoteIdentifier($name);
+			}
+
+			return $name;
+		}
+
+		return $tableName;
 	}
 
 /**

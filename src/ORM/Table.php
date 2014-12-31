@@ -17,8 +17,10 @@ namespace Cake\ORM;
 use ArrayObject;
 use BadMethodCallException;
 use Cake\Core\App;
+use Cake\Database\Expression\TableNameExpression;
 use Cake\Database\Schema\Table as Schema;
 use Cake\Database\Type;
+use Cake\Database\ValueBinder;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\RepositoryInterface;
@@ -291,7 +293,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
  */
 	public function table($table = null) {
 		if ($table !== null) {
-			$this->_table = $table;
+			$this->_table = new TableNameExpression($table, '');
 		}
 		if ($this->_table === null) {
 			$table = namespaceSplit(get_class($this));
@@ -300,8 +302,14 @@ class Table implements RepositoryInterface, EventListenerInterface {
 				$table = $this->alias();
 			}
 			$this->_table = Inflector::underscore($table);
+			$this->_table = new TableNameExpression($this->_table, '');
 		}
-		return $this->_table;
+
+		if ($this->_table instanceof TableNameExpression) {
+			return $this->_table->sql(new ValueBinder);
+		} else {
+			return $this->_table;
+		}
 	}
 
 /**
@@ -316,7 +324,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 		}
 		if ($this->_alias === null) {
 			$alias = namespaceSplit(get_class($this));
-			$alias = substr(end($alias), 0, -5) ?: $this->_table;
+			$alias = substr(end($alias), 0, -5) ?: $this->table();
 			$this->_alias = $alias;
 		}
 		return $this->_alias;

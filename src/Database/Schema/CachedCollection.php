@@ -75,6 +75,10 @@ class CachedCollection extends Collection {
  * @return string The cache key.
  */
 	public function cacheKey($name) {
+		if ($this->_connection->getPrefix() !== '' && $this->_connection->isTableNamePrefixed($name) === false) {
+			$name = $this->_connection->getPrefix() . $name;
+		}
+
 		return $this->_connection->configName() . '_' . $name;
 	}
 

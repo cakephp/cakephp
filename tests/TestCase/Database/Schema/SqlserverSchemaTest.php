@@ -15,16 +15,20 @@
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Core\Configure;
+use Cake\Database\Expression\TableNameExpression;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\SqlserverSchema;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use Cake\TestSuite\Traits\ConnectionPrefixTestTrait;
 
 /**
  * SQL Server schema test case.
  */
 class SqlserverSchemaTest extends TestCase {
+
+	use ConnectionPrefixTestTrait;
 
 /**
  * Set up
@@ -33,6 +37,7 @@ class SqlserverSchemaTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
+		$this->setPrefix();
 		$this->skipUnless(defined('PDO::SQLSRV_ENCODING_UTF8'), 'SQL Server extension not present');
 	}
 
@@ -54,11 +59,13 @@ class SqlserverSchemaTest extends TestCase {
 	protected function _createTables($connection) {
 		$this->_needsConnection();
 
-		$connection->execute("IF OBJECT_ID('schema_articles', 'U') IS NOT NULL DROP TABLE schema_articles");
-		$connection->execute("IF OBJECT_ID('schema_authors', 'U') IS NOT NULL DROP TABLE schema_authors");
+		$prefix = $this->_getConnectionPrefix($connection);
+
+		$connection->execute($this->applyConnectionPrefix("IF OBJECT_ID('~schema_articles', 'U') IS NOT NULL DROP TABLE ~schema_articles"));
+		$connection->execute($this->applyConnectionPrefix("IF OBJECT_ID('~schema_authors', 'U') IS NOT NULL DROP TABLE ~schema_authors"));
 
 		$table = <<<SQL
-CREATE TABLE schema_authors (
+CREATE TABLE {$prefix}schema_authors (
 id int IDENTITY(1,1) PRIMARY KEY,
 name VARCHAR(50),
 bio DATE,
@@ -68,7 +75,7 @@ SQL;
 		$connection->execute($table);
 
 		$table = <<<SQL
-CREATE TABLE schema_articles (
+CREATE TABLE {$prefix}schema_articles (
 id BIGINT PRIMARY KEY,
 title VARCHAR(20),
 body VARCHAR(1000),
@@ -81,7 +88,7 @@ CONSTRAINT [author_idx] FOREIGN KEY ([author_id]) REFERENCES [schema_authors] ([
 )
 SQL;
 		$connection->execute($table);
-		$connection->execute('CREATE INDEX [author_idx] ON [schema_articles] ([author_id])');
+		$connection->execute($this->applyConnectionPrefix('CREATE INDEX [author_idx] ON [~schema_articles] ([author_id])'));
 	}
 
 /**
@@ -266,11 +273,13 @@ SQL;
 		$connection = ConnectionManager::get('test');
 		$this->_createTables($connection);
 
+		$prefix = $this->_getConnectionPrefix($connection);
+
 		$schema = new SchemaCollection($connection);
 		$result = $schema->listTables();
 		$this->assertInternalType('array', $result);
-		$this->assertContains('schema_articles', $result);
-		$this->assertContains('schema_authors', $result);
+		$this->assertContains($this->applyConnectionPrefix('~schema_articles'), $result);
+		$this->assertContains($this->applyConnectionPrefix('~schema_authors'), $result);
 	}
 
 /**
@@ -365,10 +374,12 @@ SQL;
 		$connection = ConnectionManager::get('test');
 		$this->_createTables($connection);
 
+		$prefix = $this->_getConnectionPrefix($connection);
+
 		$schema = new SchemaCollection($connection);
 		$result = $schema->describe('dbo.schema_articles');
 		$this->assertEquals(['id'], $result->primaryKey());
-		$this->assertEquals('schema_articles', $result->name());
+		$this->assertEquals($this->applyConnectionPrefix('~schema_articles'), $result->name());
 	}
 
 /**
@@ -636,6 +647,14 @@ SQL;
 		$connection->expects($this->any())->method('driver')
 			->will($this->returnValue($driver));
 
+		$testConnection = ConnectionManager::get('test');
+		$prefix = $this->_getConnectionPrefix($testConnection);
+		$expression = new TableNameExpression('schema_articles', $prefix);
+		$connection->expects($this->any())->method('fullTableName')
+			->will($this->returnValue($expression));
+
+		$prefix = $this->_getConnectionPrefix($connection);
+
 		$table = (new Table('schema_articles'))->addColumn('id', [
 				'type' => 'integer',
 				'null' => false
@@ -656,7 +675,7 @@ SQL;
 			]);
 
 		$expected = <<<SQL
-CREATE TABLE [schema_articles] (
+CREATE TABLE [{$prefix}schema_articles] (
 [id] INTEGER IDENTITY(1, 1),
 [title] NVARCHAR(255) NOT NULL,
 [body] NVARCHAR(MAX),
@@ -669,7 +688,7 @@ SQL;
 		$this->assertCount(2, $result);
 		$this->assertEquals(str_replace("\r\n", "\n", $expected), str_replace("\r\n", "\n", $result[0]));
 		$this->assertEquals(
-			'CREATE INDEX [title_idx] ON [schema_articles] ([title])',
+			$this->applyConnectionPrefix('CREATE INDEX [title_idx] ON [~schema_articles] ([title])'),
 			$result[1]
 		);
 	}
@@ -685,10 +704,16 @@ SQL;
 		$connection->expects($this->any())->method('driver')
 			->will($this->returnValue($driver));
 
+		$testConnection = ConnectionManager::get('test');
+		$prefix = $this->_getConnectionPrefix($testConnection);
+		$expression = new TableNameExpression('schema_articles', $prefix);
+		$connection->expects($this->any())->method('fullTableName')
+			->will($this->returnValue($expression));
+
 		$table = new Table('schema_articles');
 		$result = $table->dropSql($connection);
 		$this->assertCount(1, $result);
-		$this->assertEquals('DROP TABLE [schema_articles]', $result[0]);
+		$this->assertEquals($this->applyConnectionPrefix('DROP TABLE [~schema_articles]'), $result[0]);
 	}
 
 /**
@@ -702,6 +727,12 @@ SQL;
 		$connection->expects($this->any())->method('driver')
 			->will($this->returnValue($driver));
 
+		$testConnection = ConnectionManager::get('test');
+		$prefix = $this->_getConnectionPrefix($testConnection);
+		$expression = new TableNameExpression('schema_articles', $prefix);
+		$connection->expects($this->any())->method('fullTableName')
+			->will($this->returnValue($expression));
+
 		$table = new Table('schema_articles');
 		$table->addColumn('id', 'integer')
 			->addConstraint('primary', [
@@ -710,8 +741,8 @@ SQL;
 			]);
 		$result = $table->truncateSql($connection);
 		$this->assertCount(2, $result);
-		$this->assertEquals('DELETE FROM [schema_articles]', $result[0]);
-		$this->assertEquals('DBCC CHECKIDENT([schema_articles], RESEED, 0)', $result[1]);
+		$this->assertEquals($this->applyConnectionPrefix('DELETE FROM [~schema_articles]'), $result[0]);
+		$this->assertEquals($this->applyConnectionPrefix('DBCC CHECKIDENT([~schema_articles], RESEED, 0)'), $result[1]);
 	}
 
 /**

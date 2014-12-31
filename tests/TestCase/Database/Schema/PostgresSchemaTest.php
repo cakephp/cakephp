@@ -15,16 +15,25 @@
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Core\Configure;
+use Cake\Database\Expression\TableNameExpression;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\PostgresSchema;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use Cake\TestSuite\Traits\ConnectionPrefixTestTrait;
 
 /**
  * Postgres schema test case.
  */
 class PostgresSchemaTest extends TestCase {
+
+	use ConnectionPrefixTestTrait;
+
+	public function setUp() {
+		parent::setUp();
+		$this->setPrefix();
+	}
 
 /**
  * Helper method for skipping tests that need a real connection.
@@ -45,8 +54,8 @@ class PostgresSchemaTest extends TestCase {
 	protected function _createTables($connection) {
 		$this->_needsConnection();
 
-		$connection->execute('DROP TABLE IF EXISTS schema_articles');
-		$connection->execute('DROP TABLE IF EXISTS schema_authors');
+		$connection->execute($this->applyConnectionPrefix('DROP TABLE IF EXISTS ~schema_articles'));
+		$connection->execute($this->applyConnectionPrefix('DROP TABLE IF EXISTS ~schema_authors'));
 
 		$table = <<<SQL
 CREATE TABLE schema_authors (
@@ -750,6 +759,14 @@ SQL;
 		$connection->expects($this->any())->method('driver')
 			->will($this->returnValue($driver));
 
+		$testConnection = ConnectionManager::get('test');
+		$prefix = $this->_getConnectionPrefix($testConnection);
+		$expression = new TableNameExpression('schema_articles', $prefix);
+		$connection->expects($this->any())->method('fullTableName')
+			->will($this->returnValue($expression));
+
+		$prefix = $this->_getConnectionPrefix($testConnection);
+
 		$table = (new Table('schema_articles'))->addColumn('id', [
 				'type' => 'integer',
 				'null' => false
@@ -771,7 +788,7 @@ SQL;
 			]);
 
 		$expected = <<<SQL
-CREATE TABLE "schema_articles" (
+CREATE TABLE "{$prefix}schema_articles" (
 "id" SERIAL,
 "title" VARCHAR NOT NULL,
 "body" TEXT,
@@ -784,11 +801,11 @@ SQL;
 		$this->assertCount(3, $result);
 		$this->assertTextEquals($expected, $result[0]);
 		$this->assertEquals(
-			'CREATE INDEX "title_idx" ON "schema_articles" ("title")',
+			$this->applyConnectionPrefix('CREATE INDEX "title_idx" ON "~schema_articles" ("title")'),
 			$result[1]
 		);
 		$this->assertEquals(
-			'COMMENT ON COLUMN "schema_articles"."title" IS "This is the title"',
+			$this->applyConnectionPrefix('COMMENT ON COLUMN "~schema_articles"."title" IS "This is the title"'),
 			$result[2]
 		);
 	}
@@ -823,6 +840,15 @@ SQL;
 		$connection->expects($this->any())->method('driver')
 			->will($this->returnValue($driver));
 
+		$testConnection = ConnectionManager::get('test');
+		$prefix = $this->_getConnectionPrefix($testConnection);
+		$expression = new TableNameExpression('articles_tags', $prefix);
+		$expressionCompositeKey = new TableNameExpression('composite_key', $prefix);
+		$connection->method('fullTableName')
+			->will($this->onConsecutiveCalls($this->returnValue($expression), $this->returnValue($expressionCompositeKey)));
+
+		$prefix = $this->_getConnectionPrefix($testConnection);
+
 		$table = (new Table('articles_tags'))
 			->addColumn('article_id', [
 				'type' => 'integer',
@@ -838,7 +864,7 @@ SQL;
 			]);
 
 		$expected = <<<SQL
-CREATE TABLE "articles_tags" (
+CREATE TABLE "{$prefix}articles_tags" (
 "article_id" INTEGER NOT NULL,
 "tag_id" INTEGER NOT NULL,
 PRIMARY KEY ("article_id", "tag_id")
@@ -864,7 +890,7 @@ SQL;
 			]);
 
 		$expected = <<<SQL
-CREATE TABLE "composite_key" (
+CREATE TABLE "{$prefix}composite_key" (
 "id" SERIAL,
 "account_id" INTEGER NOT NULL,
 PRIMARY KEY ("id", "account_id")
@@ -886,10 +912,16 @@ SQL;
 		$connection->expects($this->any())->method('driver')
 			->will($this->returnValue($driver));
 
+		$testConnection = ConnectionManager::get('test');
+		$prefix = $this->_getConnectionPrefix($testConnection);
+		$expression = new TableNameExpression('schema_articles', $prefix);
+		$connection->expects($this->any())->method('fullTableName')
+			->will($this->returnValue($expression));
+
 		$table = new Table('schema_articles');
 		$result = $table->dropSql($connection);
 		$this->assertCount(1, $result);
-		$this->assertEquals('DROP TABLE "schema_articles" CASCADE', $result[0]);
+		$this->assertEquals($this->applyConnectionPrefix('DROP TABLE "~schema_articles" CASCADE'), $result[0]);
 	}
 
 /**
@@ -903,6 +935,12 @@ SQL;
 		$connection->expects($this->any())->method('driver')
 			->will($this->returnValue($driver));
 
+		$testConnection = ConnectionManager::get('test');
+		$prefix = $this->_getConnectionPrefix($testConnection);
+		$expression = new TableNameExpression('schema_articles', $prefix);
+		$connection->expects($this->any())->method('fullTableName')
+			->will($this->returnValue($expression));
+
 		$table = new Table('schema_articles');
 		$table->addColumn('id', 'integer')
 			->addConstraint('primary', [
@@ -911,7 +949,7 @@ SQL;
 			]);
 		$result = $table->truncateSql($connection);
 		$this->assertCount(1, $result);
-		$this->assertEquals('TRUNCATE "schema_articles" RESTART IDENTITY CASCADE', $result[0]);
+		$this->assertEquals($this->applyConnectionPrefix('TRUNCATE "~schema_articles" RESTART IDENTITY CASCADE'), $result[0]);
 	}
 
 /**

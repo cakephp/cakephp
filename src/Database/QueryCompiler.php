@@ -14,6 +14,7 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\Expression\TableNameExpression;
 use Cake\Database\Query;
 use Cake\Database\ValueBinder;
 
@@ -196,9 +197,7 @@ class QueryCompiler {
 	protected function _buildJoinPart($parts, $query, $generator) {
 		$joins = '';
 		foreach ($parts as $join) {
-			if ($join['table'] instanceof ExpressionInterface) {
-				$join['table'] = '(' . $join['table']->sql($generator) . ')';
-			}
+			$join['table'] = $this->_stringifyExpression($join['table'], $generator);
 			$joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
 			if (isset($join['conditions']) && count($join['conditions'])) {
 				$joins .= sprintf(' ON %s', $join['conditions']->sql($generator));
@@ -259,7 +258,7 @@ class QueryCompiler {
  * @return string SQL fragment.
  */
 	protected function _buildInsertPart($parts, $query, $generator) {
-		$table = $parts[0];
+		$table = $this->_stringifyExpression($parts[0], $generator);
 		$columns = $this->_stringifyExpressions($parts[1], $generator);
 		return sprintf('INSERT INTO %s (%s)', $table, implode(', ', $columns));
 	}
@@ -287,12 +286,26 @@ class QueryCompiler {
 	protected function _stringifyExpressions($expressions, $generator) {
 		$result = [];
 		foreach ($expressions as $k => $expression) {
-			if ($expression instanceof ExpressionInterface) {
-				$expression = '(' . $expression->sql($generator) . ')';
-			}
-			$result[$k] = $expression;
+			$result[$k] = $this->_stringifyExpression($expression, $generator);
 		}
 		return $result;
+	}
+
+/**
+ * Converts $expression into its string representation.
+ *
+ * @param string|ExpressionInterface $expression Expression to convert into a string
+ * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in the expression
+ * @return string
+ */
+	protected function _stringifyExpression($expression, $generator) {
+		if ($expression instanceof TableNameExpression) {
+			$expression = $expression->sql($generator);
+		} elseif ($expression instanceof ExpressionInterface) {
+			$expression = '(' . $expression->sql($generator) . ')';
+		}
+
+		return $expression;
 	}
 
 }

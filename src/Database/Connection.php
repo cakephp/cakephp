@@ -17,6 +17,7 @@ namespace Cake\Database;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\MissingDriverException;
 use Cake\Database\Exception\MissingExtensionException;
+use Cake\Database\Expression\TableNameExpression;
 use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
@@ -198,6 +199,133 @@ class Connection {
  */
 	public function isConnected() {
 		return $this->_driver->isConnected();
+	}
+
+/**
+ * Retrieves the connection prefix from the connection config
+ *
+ * @return string Connection prefix if any
+ */
+	public function getPrefix() {
+		$prefix = '';
+
+		if (isset($this->_config['prefix']) && $this->_config['prefix'] !== '') {
+			$prefix = $this->_config['prefix'];
+		}
+
+		return $prefix;
+	}
+
+/**
+ * Checks if $tableName is prefixed
+ * If no prefix is configured, the method will return false
+ *
+ * @param string $tableName Table name to check
+ *
+ * @return bool
+ */
+	public function isTableNamePrefixed($tableName) {
+		$prefix = $this->getPrefix();
+
+		return ($prefix !== '' && strpos($tableName, $prefix) === 0 && $tableName !== $prefix);
+	}
+
+/**
+ * Public method that will resolve the full table name of a table
+ *
+ * @param string|array|TableNameExpression $names The names of the tables
+ * @return array|TableNameExpression Full tables names
+ *
+ * @see \Cake\Database\Expression\TableNameExpression
+ */
+	public function fullTableName($names) {
+		if (is_string($names) || $names instanceof TableNameExpression) {
+			$names = $this->_fullTableName($names);
+			return $names;
+		}
+
+		if (is_array($names) && !empty($names)) {
+			foreach ($names as $alias => $tableName) {
+				if (is_string($tableName)) {
+					$tableName = $this->_fullTableName($tableName);
+				} elseif (
+					is_array($tableName) &&
+					isset($tableName['table']) &&
+					is_string($tableName['table'])
+				) {
+					$tableName['table'] = $this->_fullTableName($tableName['table']);
+				}
+
+				$names[$alias] = $tableName;
+			}
+		}
+
+		return $names;
+	}
+
+/**
+ * Wrap the table name in a TableNameExpression with the current config prefix
+ *
+ * @param string|TableNameExpression $table The names of the tables
+ *
+ * @return TableNameExpression
+ */
+	protected function _fullTableName($table) {
+		$prefix = $this->getPrefix();
+		if ($table instanceof TableNameExpression) {
+			$expression = $table;
+			$expression->setPrefix($prefix);
+		} else {
+			$expression = new TableNameExpression($table, $prefix);
+		}
+
+		return $expression;
+	}
+
+/**
+ * Wrap the field name associated to the field in a TableNameExpression with the current config prefix
+ *
+ * @param string $field The field
+ * @param array $tablesNames Lists of tables names that needs to be prefixed
+ * @return TableNameExpression Full field names
+ *
+ * @see \Cake\Database\Expression\TableNameExpression
+ */
+	public function fullFieldName($field, $tablesNames = null) {
+		$prefix = $this->getPrefix();
+
+		if (is_string($field) && strpos($field, '.') !== false) {
+			if ($tablesNames === null) {
+				$field = new TableNameExpression($field, $prefix);
+			} else {
+				$field = new TableNameExpression(
+					$field,
+					$prefix,
+					[
+						'snippet' => true, 'tablesNames' => $tablesNames,
+						'quoteStrings' => $this->driver()->getQuoteStrings()
+					]
+				);
+			}
+		}
+
+		return $field;
+	}
+
+/**
+ * Return the table name without its prefix
+ *
+ * @param string $tableName The table name
+ *
+ * @return string
+ */
+	public function rawTableName($tableName) {
+		$prefix = $this->getPrefix();
+		if ($this->isTableNamePrefixed($tableName)) {
+			$tableName = preg_replace('/^(' . $prefix . ')/', '', $tableName);
+		}
+
+		return $tableName;
 	}
 
 /**

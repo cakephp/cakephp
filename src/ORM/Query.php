@@ -739,7 +739,10 @@ class Query extends DatabaseQuery implements JsonSerializable {
  * @return $this
  */
 	public function update($table = null) {
-		$table = $this->repository()->table();
+		if ($table === null) {
+			$table = $this->repository()->table();
+		}
+
 		return parent::update($table);
 	}
 
@@ -754,7 +757,12 @@ class Query extends DatabaseQuery implements JsonSerializable {
  */
 	public function delete($table = null) {
 		$repo = $this->repository();
-		$this->from([$repo->alias() => $repo->table()]);
+
+		if ($table === null) {
+			$table = $repo->table();
+		}
+
+		$this->from([$repo->alias() => $table]);
 		return parent::delete();
 	}
 

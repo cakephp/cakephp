@@ -89,6 +89,10 @@ class Collection {
 		}
 		$table = new Table($name);
 
+		if (isset($config['prefix']) && $config['prefix'] !== '') {
+			$table->setTableNamePrefix($config['prefix']);
+		}
+
 		$this->_reflect('Column', $name, $config, $table);
 		if (count($table->columns()) === 0) {
 			throw new Exception(sprintf('Cannot describe %s. It has 0 columns.', $name));

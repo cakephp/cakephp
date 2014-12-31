@@ -16,18 +16,23 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Core\Configure;
 use Cake\Database\Connection;
+use Cake\Database\Expression\TableNameExpression;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use Cake\TestSuite\Traits\ConnectionPrefixTestTrait;
 
 /**
  * Tests Connection class
  */
 class ConnectionTest extends TestCase {
 
+	use ConnectionPrefixTestTrait;
+
 	public $fixtures = ['core.things'];
 
 	public function setUp() {
 		$this->connection = ConnectionManager::get('test');
+		$this->setPrefix();
 		parent::setUp();
 	}
 
@@ -117,6 +122,127 @@ class ConnectionTest extends TestCase {
 		$this->skipIf(isset($config['url']), 'Datasource has dsn, skipping.');
 		$connection = new Connection(['database' => '/dev/nonexistent'] + ConnectionManager::config('test'));
 		$connection->connect();
+	}
+
+/**
+ *
+ * Tests full table name resolutions
+ *
+ * @return  void
+ *
+ */
+	public function testFullTableName() {
+		$config = ConnectionManager::config('test');
+		if (isset($config['prefix'])) {
+			$config['prefix'] = '';
+		}
+		$connectionNoPrefix = new Connection($config);
+		$config['prefix'] = 'prefix_';
+		$connectionPrefix = new Connection($config);
+		$tableName = 'users';
+
+		$this->assertEquals($connectionNoPrefix->fullTableName([]), []);
+
+		$fullTableName = $connectionNoPrefix->fullTableName($tableName);
+		$this->assertEquals($fullTableName, new TableNameExpression($tableName, ''));
+
+		$fullTableName = $connectionPrefix->fullTableName($tableName);
+		$this->assertEquals($fullTableName, new TableNameExpression($tableName, $config['prefix']));
+
+		$tableNames = ['Posts' => 'posts', 'Users' => 'users'];
+		$expected = [
+			'Posts' => new TableNameExpression('posts', $config['prefix']),
+			'Users' => new TableNameExpression('users', $config['prefix'])
+		];
+		$fullTableNames = $connectionPrefix->fullTableName($tableNames);
+		$this->assertEquals($fullTableNames, $expected);
+
+		$expression = new TableNameExpression('users', '');
+		$expectedExpression = new TableNameExpression('users', 'prefix_');
+		$fullTableNameFromExpression = $connectionPrefix->fullTableName($expression);
+		$this->assertEquals($fullTableNameFromExpression, $expectedExpression);
+
+		$query = $this->connection->newQuery()->select('1 + 1');
+		$subQuery = ['sub' => $query];
+		$fullTableNameSubQuery = $connectionPrefix->fullTableName($subQuery);
+		$this->assertEquals($fullTableNameSubQuery, $subQuery);
+
+		$table = ['a' =>
+			[
+				'table' => 'articles',
+				'conditions' => [
+					'a.author_id = authors.id'
+				]
+			]
+		];
+		$expected = ['a' =>
+			[
+				'table' => new TableNameExpression('articles', $config['prefix']),
+				'conditions' => [
+					'a.author_id = authors.id'
+				]
+			]
+		];
+		$this->assertEquals($connectionPrefix->fullTableName($table), $expected);
+	}
+
+/**
+ * Tests full field name resolution in strings such as table.field
+ *
+ * @return void
+ */
+	public function testFullFieldName() {
+		$config = ConnectionManager::config('test');
+		if (!isset($config['prefix']) || $config['prefix'] === '') {
+			$config['prefix'] = 'prefix_';
+		}
+		$connectionWithPrefix = new Connection($config);
+
+		$this->assertEquals($connectionWithPrefix->fullFieldName('id'), 'id');
+
+		$expected = new TableNameExpression('users.id', 'prefix_');
+		$this->assertEquals($connectionWithPrefix->fullFieldName('users.id'), $expected);
+
+		$expected = new TableNameExpression('prefix_.id', 'prefix_');
+		$this->assertEquals($connectionWithPrefix->fullFieldName('prefix_.id'), $expected);
+	}
+
+/**
+ * Tests the Connection::isTableNamePrefixed() method
+ *
+ * @return void
+ */
+	public function testIsPrefixedTableName() {
+		$config = ConnectionManager::config('test');
+		if (!isset($config['prefix']) || $config['prefix'] === '') {
+			$config['prefix'] = 'prefix_';
+		}
+		$connectionWithPrefix = new Connection($config);
+
+		$this->assertTrue($connectionWithPrefix->isTableNamePrefixed('prefix_users'));
+		$this->assertTrue($connectionWithPrefix->isTableNamePrefixed('prefix_articles'));
+		$this->assertTrue($connectionWithPrefix->isTableNamePrefixed('prefix_prefix_'));
+		$this->assertFalse($connectionWithPrefix->isTableNamePrefixed('prefix_'));
+		$this->assertFalse($connectionWithPrefix->isTableNamePrefixed('users_prefix_'));
+	}
+
+/**
+ * Tests the trimming of the prefix on a table name
+ *
+ * @return void
+ */
+	public function testRawTableName() {
+		$config = ConnectionManager::config('test');
+		if (!isset($config['prefix']) || $config['prefix'] === '') {
+			$config['prefix'] = 'prefix_';
+		}
+		$connectionWithPrefix = new Connection($config);
+
+		$this->assertEquals($connectionWithPrefix->rawTableName('prefix_users'), 'users');
+		$this->assertEquals($connectionWithPrefix->rawTableName('prefix_articles'), 'articles');
+		$this->assertEquals($connectionWithPrefix->rawTableName('prefix_prefix_'), 'prefix_');
+		$this->assertEquals($connectionWithPrefix->rawTableName('prefix_'), 'prefix_');
+		$this->assertEquals($connectionWithPrefix->rawTableName('users_prefix_'), 'users_prefix_');
 	}
 
 /**
@@ -217,7 +343,7 @@ class ConnectionTest extends TestCase {
 		);
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
 		$result->closeCursor();
-		$result = $this->connection->execute('SELECT * from things where id = 3');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT * from ~things where id = 3'));
 		$this->assertCount(1, $result);
 		$row = $result->fetch('assoc');
 		$result->closeCursor();
@@ -238,7 +364,7 @@ class ConnectionTest extends TestCase {
 		);
 		$result->closeCursor();
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
-		$result = $this->connection->execute('SELECT * from things where id  = 3');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT * from ~things where id  = 3'));
 		$this->assertCount(1, $result);
 		$row = $result->fetch('assoc');
 		$result->closeCursor();
@@ -251,12 +377,12 @@ class ConnectionTest extends TestCase {
  * @return void
  */
 	public function testStatementReusing() {
-		$total = $this->connection->execute('SELECT COUNT(*) AS total FROM things');
+		$total = $this->connection->execute($this->applyConnectionPrefix('SELECT COUNT(*) AS total FROM ~things'));
 		$result = $total->fetch('assoc');
 		$this->assertEquals(2, $result['total']);
 		$total->closeCursor();
 
-		$result = $this->connection->execute('SELECT title, body  FROM things');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT title, body  FROM ~things'));
 		$row = $result->fetch('assoc');
 		$this->assertEquals('a title', $row['title']);
 		$this->assertEquals('a body', $row['body']);
@@ -274,7 +400,7 @@ class ConnectionTest extends TestCase {
  * @return void
  */
 	public function testStatementFetchObject() {
-		$result = $this->connection->execute('SELECT title, body  FROM things');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT title, body  FROM ~things'));
 		$row = $result->fetch(\PDO::FETCH_OBJ);
 		$this->assertEquals('a title', $row->title);
 		$this->assertEquals('a body', $row->body);
@@ -289,7 +415,10 @@ class ConnectionTest extends TestCase {
 		$title = 'changed the title!';
 		$body = 'changed the body!';
 		$this->connection->update('things', ['title' => $title, 'body' => $body]);
-		$result = $this->connection->execute('SELECT * FROM things WHERE title = ? AND body = ?', [$title, $body]);
+		$result = $this->connection->execute(
+			$this->applyConnectionPrefix('SELECT * FROM ~things WHERE title = ? AND body = ?'),
+			[$title, $body]
+		);
 		$this->assertCount(2, $result);
 		$result->closeCursor();
 	}
@@ -303,7 +432,10 @@ class ConnectionTest extends TestCase {
 		$title = 'changed the title!';
 		$body = 'changed the body!';
 		$this->connection->update('things', ['title' => $title, 'body' => $body], ['id' => 2]);
-		$result = $this->connection->execute('SELECT * FROM things WHERE title = ? AND body = ?', [$title, $body]);
+		$result = $this->connection->execute(
+			$this->applyConnectionPrefix('SELECT * FROM ~things WHERE title = ? AND body = ?'),
+			[$title, $body]
+		);
 		$this->assertCount(1, $result);
 		$result->closeCursor();
 	}
@@ -317,7 +449,10 @@ class ConnectionTest extends TestCase {
 		$title = 'changed the title!';
 		$body = 'changed the body!';
 		$this->connection->update('things', ['title' => $title, 'body' => $body], ['id' => 2, 'body is not null']);
-		$result = $this->connection->execute('SELECT * FROM things WHERE title = ? AND body = ?', [$title, $body]);
+		$result = $this->connection->execute(
+			$this->applyConnectionPrefix('SELECT * FROM ~things WHERE title = ? AND body = ?'),
+			[$title, $body]
+		);
 		$this->assertCount(1, $result);
 		$result->closeCursor();
 	}
@@ -332,7 +467,11 @@ class ConnectionTest extends TestCase {
 		$body = new \DateTime('2012-01-01');
 		$values = compact('title', 'body');
 		$this->connection->update('things', $values, [], ['body' => 'date']);
-		$result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
+		$result = $this->connection->execute(
+			$this->applyConnectionPrefix('SELECT * FROM ~things WHERE title = :title AND body = :body'),
+			$values,
+			['body' => 'date']
+		);
 		$this->assertCount(2, $result);
 		$row = $result->fetch('assoc');
 		$this->assertEquals('2012-01-01', $row['body']);
@@ -351,7 +490,11 @@ class ConnectionTest extends TestCase {
 		$body = new \DateTime('2012-01-01');
 		$values = compact('title', 'body');
 		$this->connection->update('things', $values, ['id' => '1-string-parsed-as-int'], ['body' => 'date', 'id' => 'integer']);
-		$result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
+		$result = $this->connection->execute(
+			$this->applyConnectionPrefix('SELECT * FROM ~things WHERE title = :title AND body = :body'),
+			$values,
+			['body' => 'date']
+		);
 		$this->assertCount(1, $result);
 		$row = $result->fetch('assoc');
 		$this->assertEquals('2012-01-01', $row['body']);
@@ -365,7 +508,7 @@ class ConnectionTest extends TestCase {
  */
 	public function testDeleteNoConditions() {
 		$this->connection->delete('things');
-		$result = $this->connection->execute('SELECT * FROM things');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT * FROM ~things'));
 		$this->assertCount(0, $result);
 		$result->closeCursor();
 	}
@@ -376,17 +519,17 @@ class ConnectionTest extends TestCase {
  */
 	public function testDeleteWithConditions() {
 		$this->connection->delete('things', ['id' => '1-rest-is-ommited'], ['id' => 'integer']);
-		$result = $this->connection->execute('SELECT * FROM things');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT * FROM ~things'));
 		$this->assertCount(1, $result);
 		$result->closeCursor();
 
 		$this->connection->delete('things', ['id' => '1-rest-is-ommited'], ['id' => 'integer']);
-		$result = $this->connection->execute('SELECT * FROM things');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT * FROM ~things'));
 		$this->assertCount(1, $result);
 		$result->closeCursor();
 
 		$this->connection->delete('things', ['id' => '2-rest-is-ommited'], ['id' => 'integer']);
-		$result = $this->connection->execute('SELECT * FROM things');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT * FROM ~things'));
 		$this->assertCount(0, $result);
 		$result->closeCursor();
 	}
@@ -400,14 +543,14 @@ class ConnectionTest extends TestCase {
 		$this->connection->begin();
 		$this->connection->delete('things', ['id' => 1]);
 		$this->connection->rollback();
-		$result = $this->connection->execute('SELECT * FROM things');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT * FROM ~things'));
 		$this->assertCount(2, $result);
 		$result->closeCursor();
 
 		$this->connection->begin();
 		$this->connection->delete('things', ['id' => 1]);
 		$this->connection->commit();
-		$result = $this->connection->execute('SELECT * FROM things');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT * FROM ~things'));
 		$this->assertCount(1, $result);
 	}
 
@@ -424,13 +567,13 @@ class ConnectionTest extends TestCase {
 		$this->connection->begin();
 
 		$this->connection->delete('things', ['id' => 1]);
-		$result = $this->connection->execute('SELECT * FROM things');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT * FROM ~things'));
 		$this->assertCount(1, $result);
 
 		$this->connection->commit();
 		$this->connection->rollback();
 
-		$result = $this->connection->execute('SELECT * FROM things');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT * FROM ~things'));
 		$this->assertCount(2, $result);
 	}
 
@@ -447,11 +590,11 @@ class ConnectionTest extends TestCase {
 		$this->connection->begin();
 
 		$this->connection->delete('things', ['id' => 1]);
-		$result = $this->connection->execute('SELECT * FROM things');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT * FROM ~things'));
 		$this->assertCount(1, $result);
 		$this->connection->rollback();
 
-		$result = $this->connection->execute('SELECT * FROM things');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT * FROM ~things'));
 		$this->assertCount(2, $result);
 	}
 
@@ -469,13 +612,13 @@ class ConnectionTest extends TestCase {
 		$this->connection->begin();
 
 		$this->connection->delete('things', ['id' => 1]);
-		$result = $this->connection->execute('SELECT * FROM things');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT * FROM ~things'));
 		$this->assertCount(1, $result);
 		$this->connection->commit();
 		$this->connection->commit();
 		$this->connection->commit();
 
-		$result = $this->connection->execute('SELECT * FROM things');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT * FROM ~things'));
 		$this->assertCount(1, $result);
 	}
 
@@ -490,20 +633,20 @@ class ConnectionTest extends TestCase {
 		$this->connection->begin();
 		$this->connection->delete('things', ['id' => 1]);
 
-		$result = $this->connection->execute('SELECT * FROM things');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT * FROM ~things'));
 		$this->assertCount(1, $result);
 
 		$this->connection->begin();
 		$this->connection->delete('things', ['id' => 2]);
-		$result = $this->connection->execute('SELECT * FROM things');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT * FROM ~things'));
 		$this->assertCount(0, $result);
 
 		$this->connection->rollback();
-		$result = $this->connection->execute('SELECT * FROM things');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT * FROM ~things'));
 		$this->assertCount(1, $result);
 
 		$this->connection->rollback();
-		$result = $this->connection->execute('SELECT * FROM things');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT * FROM ~things'));
 		$this->assertCount(2, $result);
 	}
 
@@ -518,20 +661,20 @@ class ConnectionTest extends TestCase {
 		$this->connection->begin();
 		$this->connection->delete('things', ['id' => 1]);
 
-		$result = $this->connection->execute('SELECT * FROM things');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT * FROM ~things'));
 		$this->assertCount(1, $result);
 
 		$this->connection->begin();
 		$this->connection->delete('things', ['id' => 2]);
-		$result = $this->connection->execute('SELECT * FROM things');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT * FROM ~things'));
 		$this->assertCount(0, $result);
 
 		$this->connection->rollback();
-		$result = $this->connection->execute('SELECT * FROM things');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT * FROM ~things'));
 		$this->assertCount(1, $result);
 
 		$this->connection->commit();
-		$result = $this->connection->execute('SELECT * FROM things');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT * FROM ~things'));
 		$this->assertCount(1, $result);
 	}
 

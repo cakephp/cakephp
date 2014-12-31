@@ -66,6 +66,10 @@ class IdentifierExpression implements ExpressionInterface {
  * @return string
  */
 	public function sql(ValueBinder $generator) {
+		if ($this->_identifier instanceof ExpressionInterface) {
+			return $this->_identifier->sql($generator);
+		}
+
 		return $this->_identifier;
 	}
 

@@ -33,20 +33,23 @@ class MysqlSchema extends BaseSchema {
  * {@inheritDoc}
  */
 	public function describeColumnSql($tableName, $config) {
-		return ['SHOW FULL COLUMNS FROM ' . $this->_driver->quoteIdentifier($tableName), []];
+		$tableName = $this->getFullTableName($tableName, $config);
+		return ['SHOW FULL COLUMNS FROM ' . $tableName, []];
 	}
 
 /**
  * {@inheritDoc}
  */
 	public function describeIndexSql($tableName, $config) {
-		return ['SHOW INDEXES FROM ' . $this->_driver->quoteIdentifier($tableName), []];
+		$tableName = $this->getFullTableName($tableName, $config);
+		return ['SHOW INDEXES FROM ' . $tableName, []];
 	}
 
 /**
  * {@inheritDoc}
  */
 	public function describeOptionsSql($tableName, $config) {
+		$tableName = $this->getFullTableName($tableName, $config, false);
 		return ['SHOW TABLE STATUS WHERE Name = ?', [$tableName]];
 	}
 
@@ -210,6 +213,7 @@ class MysqlSchema extends BaseSchema {
  * {@inheritDoc}
  */
 	public function describeForeignKeySql($tableName, $config) {
+		$tableName = $this->getFullTableName($tableName, $config, false);
 		$sql = 'SELECT * FROM information_schema.key_column_usage AS kcu
 			INNER JOIN information_schema.referential_constraints AS rc
 			ON (kcu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME)

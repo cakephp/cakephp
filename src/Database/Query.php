@@ -47,6 +47,13 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	protected $_type = 'select';
 
 /**
+ * Stores the tables names used in this query
+ *
+ * @var array
+ */
+	public $tablesNames = array();
+
+/**
  * List of SQL parts that will be used to build this query.
  *
  * @var array
@@ -377,6 +384,8 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			$tables = [$tables];
 		}
 
+		$this->_extractTableNames($tables);
+
 		if ($overwrite) {
 			$this->_parts['from'] = $tables;
 		} else {
@@ -497,7 +506,12 @@ class Query implements ExpressionInterface, IteratorAggregate {
 				$t['conditions'] = $this->newExpr()->add($t['conditions'], $types);
 			}
 			$alias = is_string($alias) ? $alias : null;
+
 			$joins[$alias ?: $i++] = $t + ['type' => 'INNER', 'alias' => $alias];
+
+			if (empty($alias) && empty($t['alias']) && is_string($t['table'])) {
+				$this->tablesNames[$t['table']] = $t['table'];
+			}
 		}
 
 		if ($overwrite) {
@@ -1187,7 +1201,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 /**
  * Set the table name for insert queries.
  *
- * @param string $table The table name to insert into.
+ * @param string|\Cake\Database\Expression\TableNameExpression $table The table name to insert into.
  * @return $this
  */
 	public function into($table) {
@@ -1236,7 +1250,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * Can be combined with set() and where() methods to create update queries.
  *
- * @param string $table The table you want to update.
+ * @param string|\Cake\Database\Expression\TableNameExpression $table The table you want to update.
  * @return $this
  */
 	public function update($table) {
@@ -1535,6 +1549,57 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		}
 		$this->_valueBinder = $binder;
 		return $this;
+	}
+
+/**
+ * Extract table aliases from $tables and stores them in Query::_tableAliases
+ *
+ * @param string|array $tables Table name or array of table name
+ *
+ * @return $this
+ */
+	protected function _extractTableNames($tables) {
+		if (empty($tables)) {
+			return $this;
+		}
+
+		foreach ($tables as $alias => $table) {
+			if (is_numeric($alias) && is_string($table)) {
+				$this->tablesNames[$table] = $table;
+			}
+		}
+
+		return $this;
+	}
+
+/**
+ * Checks whether $name is or contain (e.g. 'table.field') a table name.
+ *
+ * @param string $name Table or field name or SQL snippet
+ *
+ * @return bool
+ */
+	public function hasTableName($name) {
+		if (is_string($name) && !empty($this->tablesNames)) {
+			$lookAhead = implode('|', $this->tablesNames);
+			$wordPattern = '[\w-]+';
+			list($startQuote, $endQuote) = $this->_connection->driver()->getQuoteStrings();
+
+			if (strpos($name, $startQuote) === 0) {
+				$lookAhead = $startQuote . implode($endQuote . '|' . $startQuote, $this->tablesNames) . $endQuote;
+
+				if ($startQuote === $endQuote) {
+					$wordPattern = '[\w-' . $startQuote . ']+';
+				} else {
+					$wordPattern = '[\w-' . $startQuote . $endQuote . ']+';
+				}
+			}
+
+			$pattern = '/(?=(?:' . $lookAhead . '))(' . $wordPattern . ')(\.' . $wordPattern . ')/';
+			return isset($this->tablesNames[$name]) || preg_match_all($pattern, $name) > 0;
+		}
+
+		return false;
 	}
 
 /**

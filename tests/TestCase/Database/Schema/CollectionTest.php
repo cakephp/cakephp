@@ -21,11 +21,14 @@ use Cake\Database\Schema\Collection;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use Cake\TestSuite\Traits\ConnectionPrefixTestTrait;
 
 /**
  * Test case for Collection
  */
 class CollectionTest extends TestCase {
+
+	use ConnectionPrefixTestTrait;
 
 	public $fixtures = [
 		'core.users'
@@ -41,6 +44,8 @@ class CollectionTest extends TestCase {
 		$this->connection = ConnectionManager::get('test');
 		Cache::clear(false, '_cake_model_');
 		Cache::enable();
+
+		$this->setPrefix();
 	}
 
 /**
@@ -76,14 +81,14 @@ class CollectionTest extends TestCase {
 		$schema = $this->connection->schemaCollection();
 		$table = $this->connection->schemaCollection()->describe('users');
 
-		Cache::delete('test_users', '_cake_model_');
+		Cache::delete($this->applyConnectionPrefix('test_~users'), '_cake_model_');
 		$this->connection->cacheMetadata(true);
 		$schema = $this->connection->schemaCollection();
 
 		$result = $schema->describe('users');
 		$this->assertEquals($table, $result);
 
-		$result = Cache::read('test_users', '_cake_model_');
+		$result = Cache::read($this->applyConnectionPrefix('test_~users'), '_cake_model_');
 		$this->assertEquals($table, $result);
 	}
 

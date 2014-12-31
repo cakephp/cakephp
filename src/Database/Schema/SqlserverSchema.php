@@ -41,6 +41,7 @@ class SqlserverSchema extends BaseSchema {
  * {@inheritDoc}
  */
 	public function describeColumnSql($tableName, $config) {
+		$tableName = $this->getFullTableName($tableName, $config, false);
 		$sql =
 		"SELECT DISTINCT TABLE_SCHEMA AS [schema], COLUMN_NAME AS [name], DATA_TYPE AS [type],
 			IS_NULLABLE AS [null], COLUMN_DEFAULT AS [default],
@@ -161,6 +162,7 @@ class SqlserverSchema extends BaseSchema {
  * {@inheritDoc}
  */
 	public function describeIndexSql($tableName, $config) {
+		$tableName = $this->getFullTableName($tableName, $config, false);
 		$sql = "
 			SELECT
 				I.[name] AS [index_name],
@@ -222,6 +224,7 @@ class SqlserverSchema extends BaseSchema {
  * {@inheritDoc}
  */
 	public function describeForeignKeySql($tableName, $config) {
+		$tableName = $this->getFullTableName($tableName, $config, false);
 		$sql = "
 			SELECT FK.[name] AS [foreign_key_name], FK.[delete_referential_action_desc] AS [delete_type],
 				FK.[update_referential_action_desc] AS [update_type], C.name AS [column], RT.name AS [reference_table],
