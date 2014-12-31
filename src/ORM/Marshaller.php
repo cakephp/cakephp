@@ -322,7 +322,7 @@ class Marshaller {
 			$data = $data[$tableName];
 		}
 
-		$errors = $this->_validate($data, $options, false);
+		$errors = $this->_validate($data, $options, $entity->isNew());
 		$schema = $this->_table->schema();
 		$properties = [];
 		foreach ($data as $key => $value) {
