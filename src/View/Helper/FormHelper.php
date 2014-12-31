@@ -366,6 +366,7 @@ class FormHelper extends Helper
             case 'file':
                 $htmlAttributes['enctype'] = 'multipart/form-data';
                 $options['type'] = ($isCreate) ? 'post' : 'put';
+                // no break
             case 'post':
             case 'put':
             case 'delete':
@@ -375,6 +376,7 @@ class FormHelper extends Helper
                     'value' => strtoupper($options['type']),
                     'secure' => static::SECURE_SKIP
                 ));
+                // no break
             default:
                 $htmlAttributes['method'] = 'post';
         }

@@ -164,7 +164,7 @@ class Hash
      * Split token conditions
      *
      * @param string $token the token being splitted.
-     * @return array array(token, conditions) with token splitted
+     * @return array [token, conditions] with token splitted
      */
     protected static function _splitConditions($token)
     {

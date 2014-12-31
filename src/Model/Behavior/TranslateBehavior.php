@@ -182,16 +182,16 @@ class TranslateBehavior extends Behavior
 
         foreach ($fields as $field) {
             $contain[$alias . '_' . $field . '_translation']['queryBuilder'] = $conditions(
-            $field,
-            $locale,
-            $query,
-            $select
+                $field,
+                $locale,
+                $query,
+                $select
             );
 
-        if ($changeFilter) {
-            $filter = $options['filterByCurrentLocale'] ? 'INNER' : 'LEFT';
-            $contain[$alias . '_' . $field . '_translation']['joinType'] = $filter;
-        }
+            if ($changeFilter) {
+                $filter = $options['filterByCurrentLocale'] ? 'INNER' : 'LEFT';
+                $contain[$alias . '_' . $field . '_translation']['joinType'] = $filter;
+            }
         }
 
         $query->contain($contain);
