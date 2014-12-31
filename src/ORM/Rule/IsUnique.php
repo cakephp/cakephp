@@ -53,7 +53,10 @@ class IsUnique {
 		$conditions = $entity->extract($this->_fields);
 		if ($entity->isNew() === false) {
 			$keys = (array)$options['repository']->primaryKey();
-			$conditions['NOT'] = $entity->extract($keys);
+			$keys = $entity->extract($keys);
+			if (array_filter($keys, 'strlen')) {
+				$conditions['NOT'] = $keys;
+			}
 		}
 
 		return !$options['repository']->exists($conditions);
