@@ -28,7 +28,7 @@
 	},
 	"require-dev": {
 		"phpunit/phpunit": "*",
-		"cakephp/cakephp-codesniffer": "*"
+		"cakephp/cakephp-codesniffer": "dev-master"
 	},
 	"autoload": {
 		"psr-4": {
