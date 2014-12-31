@@ -20,53 +20,55 @@ use Cake\Core\InstanceConfigTrait;
  * Abstract transport for sending email
  *
  */
-abstract class AbstractTransport {
+abstract class AbstractTransport
+{
 
-	use InstanceConfigTrait;
+    use InstanceConfigTrait;
 
-/**
- * Default config for this class
- *
- * @var array
- */
-	protected $_defaultConfig = [];
+    /**
+     * Default config for this class
+     *
+     * @var array
+     */
+    protected $_defaultConfig = [];
 
-/**
- * Send mail
- *
- * @param \Cake\Network\Email\Email $email Email instance.
- * @return array
- */
-	abstract public function send(Email $email);
+    /**
+     * Send mail
+     *
+     * @param \Cake\Network\Email\Email $email Email instance.
+     * @return array
+     */
+    abstract public function send(Email $email);
 
-/**
- * Constructor
- *
- * @param array $config Configuration options.
- */
-	public function __construct($config = []) {
-		$this->config($config);
-	}
+    /**
+     * Constructor
+     *
+     * @param array $config Configuration options.
+     */
+    public function __construct($config = [])
+    {
+        $this->config($config);
+    }
 
-/**
- * Help to convert headers in string
- *
- * @param array $headers Headers in format key => value
- * @param string $eol End of line string.
- * @return string
- */
-	protected function _headersToString($headers, $eol = "\r\n") {
-		$out = '';
-		foreach ($headers as $key => $value) {
-			if ($value === false || $value === null || $value === '') {
-				continue;
-			}
-			$out .= $key . ': ' . $value . $eol;
-		}
-		if (!empty($out)) {
-			$out = substr($out, 0, -1 * strlen($eol));
-		}
-		return $out;
-	}
-
+    /**
+     * Help to convert headers in string
+     *
+     * @param array $headers Headers in format key => value
+     * @param string $eol End of line string.
+     * @return string
+     */
+    protected function _headersToString($headers, $eol = "\r\n")
+    {
+        $out = '';
+        foreach ($headers as $key => $value) {
+            if ($value === false || $value === null || $value === '') {
+                continue;
+            }
+            $out .= $key . ': ' . $value . $eol;
+        }
+        if (!empty($out)) {
+            $out = substr($out, 0, -1 * strlen($eol));
+        }
+        return $out;
+    }
 }

@@ -24,232 +24,243 @@ use Cake\TestSuite\TestCase;
 /**
  * CsrfComponent test.
  */
-class CsrfComponentTest extends TestCase {
+class CsrfComponentTest extends TestCase
+{
 
-/**
- * setup
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
+    /**
+     * setup
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
 
-		$controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
-		$this->registry = new ComponentRegistry($controller);
-		$this->component = new CsrfComponent($this->registry);
-	}
+        $controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
+        $this->registry = new ComponentRegistry($controller);
+        $this->component = new CsrfComponent($this->registry);
+    }
 
-/**
- * teardown
- *
- * @return void
- */
-	public function tearDown() {
-		parent::tearDown();
-		unset($this->component);
-	}
+    /**
+     * teardown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        unset($this->component);
+    }
 
-/**
- * Test setting the cookie value
- *
- * @return void
- * @triggers Controller.startup $controller
- */
-	public function testSettingCookie() {
-		$_SERVER['REQUEST_METHOD'] = 'GET';
+    /**
+     * Test setting the cookie value
+     *
+     * @return void
+     * @triggers Controller.startup $controller
+     */
+    public function testSettingCookie()
+    {
+        $_SERVER['REQUEST_METHOD'] = 'GET';
 
-		$controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
-		$controller->request = new Request(['webroot' => '/dir/']);
-		$controller->response = new Response();
+        $controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
+        $controller->request = new Request(['webroot' => '/dir/']);
+        $controller->response = new Response();
 
-		$event = new Event('Controller.startup', $controller);
-		$this->component->startup($event);
+        $event = new Event('Controller.startup', $controller);
+        $this->component->startup($event);
 
-		$cookie = $controller->response->cookie('csrfToken');
-		$this->assertNotEmpty($cookie, 'Should set a token.');
-		$this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
-		$this->assertEquals(0, $cookie['expiry'], 'session duration.');
-		$this->assertEquals('/dir/', $cookie['path'], 'session path.');
+        $cookie = $controller->response->cookie('csrfToken');
+        $this->assertNotEmpty($cookie, 'Should set a token.');
+        $this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
+        $this->assertEquals(0, $cookie['expiry'], 'session duration.');
+        $this->assertEquals('/dir/', $cookie['path'], 'session path.');
 
-		$this->assertEquals($cookie['value'], $controller->request->params['_csrfToken']);
-	}
+        $this->assertEquals($cookie['value'], $controller->request->params['_csrfToken']);
+    }
 
-/**
- * Data provider for HTTP method tests.
- *
- * @return void
- */
-	public static function httpMethodProvider() {
-		return [
-			['PATCH'], ['PUT'], ['POST'], ['DELETE']
-		];
-	}
+    /**
+     * Data provider for HTTP method tests.
+     *
+     * @return void
+     */
+    public static function httpMethodProvider()
+    {
+        return [
+            ['PATCH'], ['PUT'], ['POST'], ['DELETE']
+        ];
+    }
 
-/**
- * Test that the X-CSRF-Token works with the various http methods.
- *
- * @dataProvider httpMethodProvider
- * @return void
- * @triggers Controller.startup $controller
- */
-	public function testValidTokenInHeader($method) {
-		$_SERVER['REQUEST_METHOD'] = $method;
-		$_SERVER['HTTP_X_CSRF_TOKEN'] = 'testing123';
+    /**
+     * Test that the X-CSRF-Token works with the various http methods.
+     *
+     * @dataProvider httpMethodProvider
+     * @return void
+     * @triggers Controller.startup $controller
+     */
+    public function testValidTokenInHeader($method)
+    {
+        $_SERVER['REQUEST_METHOD'] = $method;
+        $_SERVER['HTTP_X_CSRF_TOKEN'] = 'testing123';
 
-		$controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
-		$controller->request = new Request(['cookies' => ['csrfToken' => 'testing123']]);
-		$controller->response = new Response();
+        $controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
+        $controller->request = new Request(['cookies' => ['csrfToken' => 'testing123']]);
+        $controller->response = new Response();
 
-		$event = new Event('Controller.startup', $controller);
-		$result = $this->component->startup($event);
-		$this->assertNull($result, 'No exception means valid.');
-	}
+        $event = new Event('Controller.startup', $controller);
+        $result = $this->component->startup($event);
+        $this->assertNull($result, 'No exception means valid.');
+    }
 
-/**
- * Test that the X-CSRF-Token works with the various http methods.
- *
- * @dataProvider httpMethodProvider
- * @expectedException \Cake\Network\Exception\ForbiddenException
- * @return void
- * @triggers Controller.startup $controller
- */
-	public function testInvalidTokenInHeader($method) {
-		$_SERVER['REQUEST_METHOD'] = $method;
-		$_SERVER['HTTP_X_CSRF_TOKEN'] = 'nope';
+    /**
+     * Test that the X-CSRF-Token works with the various http methods.
+     *
+     * @dataProvider httpMethodProvider
+     * @expectedException \Cake\Network\Exception\ForbiddenException
+     * @return void
+     * @triggers Controller.startup $controller
+     */
+    public function testInvalidTokenInHeader($method)
+    {
+        $_SERVER['REQUEST_METHOD'] = $method;
+        $_SERVER['HTTP_X_CSRF_TOKEN'] = 'nope';
 
-		$controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
-		$controller->request = new Request([
-			'cookies' => ['csrfToken' => 'testing123']
-		]);
-		$controller->response = new Response();
+        $controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
+        $controller->request = new Request([
+            'cookies' => ['csrfToken' => 'testing123']
+        ]);
+        $controller->response = new Response();
 
-		$event = new Event('Controller.startup', $controller);
-		$this->component->startup($event);
-	}
+        $event = new Event('Controller.startup', $controller);
+        $this->component->startup($event);
+    }
 
-/**
- * Test that request data works with the various http methods.
- *
- * @dataProvider httpMethodProvider
- * @return void
- * @triggers Controller.startup $controller
- */
-	public function testValidTokenRequestData($method) {
-		$_SERVER['REQUEST_METHOD'] = $method;
+    /**
+     * Test that request data works with the various http methods.
+     *
+     * @dataProvider httpMethodProvider
+     * @return void
+     * @triggers Controller.startup $controller
+     */
+    public function testValidTokenRequestData($method)
+    {
+        $_SERVER['REQUEST_METHOD'] = $method;
 
-		$controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
-		$controller->request = new Request([
-			'post' => ['_csrfToken' => 'testing123'],
-			'cookies' => ['csrfToken' => 'testing123']
-		]);
-		$controller->response = new Response();
+        $controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
+        $controller->request = new Request([
+            'post' => ['_csrfToken' => 'testing123'],
+            'cookies' => ['csrfToken' => 'testing123']
+        ]);
+        $controller->response = new Response();
 
-		$event = new Event('Controller.startup', $controller);
-		$result = $this->component->startup($event);
-		$this->assertNull($result, 'No exception means valid.');
-	}
+        $event = new Event('Controller.startup', $controller);
+        $result = $this->component->startup($event);
+        $this->assertNull($result, 'No exception means valid.');
+    }
 
-/**
- * Test that request data works with the various http methods.
- *
- * @dataProvider httpMethodProvider
- * @expectedException \Cake\Network\Exception\ForbiddenException
- * @return void
- * @triggers Controller.startup $controller
- */
-	public function testInvalidTokenRequestData($method) {
-		$_SERVER['REQUEST_METHOD'] = $method;
+    /**
+     * Test that request data works with the various http methods.
+     *
+     * @dataProvider httpMethodProvider
+     * @expectedException \Cake\Network\Exception\ForbiddenException
+     * @return void
+     * @triggers Controller.startup $controller
+     */
+    public function testInvalidTokenRequestData($method)
+    {
+        $_SERVER['REQUEST_METHOD'] = $method;
 
-		$controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
-		$controller->request = new Request([
-			'post' => ['_csrfToken' => 'nope'],
-			'cookies' => ['csrfToken' => 'testing123']
-		]);
-		$controller->response = new Response();
+        $controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
+        $controller->request = new Request([
+            'post' => ['_csrfToken' => 'nope'],
+            'cookies' => ['csrfToken' => 'testing123']
+        ]);
+        $controller->response = new Response();
 
-		$event = new Event('Controller.startup', $controller);
-		$this->component->startup($event);
-	}
+        $event = new Event('Controller.startup', $controller);
+        $this->component->startup($event);
+    }
 
-/**
- * Test that CSRF checks are not applied to request action requests.
- *
- * @return void
- * @triggers Controller.startup $controller
- */
-	public function testCsrfValidationSkipsRequestAction() {
-		$_SERVER['REQUEST_METHOD'] = 'POST';
+    /**
+     * Test that CSRF checks are not applied to request action requests.
+     *
+     * @return void
+     * @triggers Controller.startup $controller
+     */
+    public function testCsrfValidationSkipsRequestAction()
+    {
+        $_SERVER['REQUEST_METHOD'] = 'POST';
 
-		$controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
-		$controller->request = new Request([
-			'params' => ['requested' => 1],
-			'post' => ['_csrfToken' => 'nope'],
-			'cookies' => ['csrfToken' => 'testing123']
-		]);
-		$controller->response = new Response();
+        $controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
+        $controller->request = new Request([
+            'params' => ['requested' => 1],
+            'post' => ['_csrfToken' => 'nope'],
+            'cookies' => ['csrfToken' => 'testing123']
+        ]);
+        $controller->response = new Response();
 
-		$event = new Event('Controller.startup', $controller);
-		$result = $this->component->startup($event);
-		$this->assertNull($result, 'No error.');
-		$this->assertEquals('testing123', $controller->request->params['_csrfToken']);
-	}
+        $event = new Event('Controller.startup', $controller);
+        $result = $this->component->startup($event);
+        $this->assertNull($result, 'No error.');
+        $this->assertEquals('testing123', $controller->request->params['_csrfToken']);
+    }
 
-/**
- * Test that the configuration options work.
- *
- * @return void
- * @triggers Controller.startup $controller
- */
-	public function testConfigurationCookieCreate() {
-		$_SERVER['REQUEST_METHOD'] = 'GET';
+    /**
+     * Test that the configuration options work.
+     *
+     * @return void
+     * @triggers Controller.startup $controller
+     */
+    public function testConfigurationCookieCreate()
+    {
+        $_SERVER['REQUEST_METHOD'] = 'GET';
 
-		$controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
-		$controller->request = new Request(['webroot' => '/dir/']);
-		$controller->response = new Response();
+        $controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
+        $controller->request = new Request(['webroot' => '/dir/']);
+        $controller->response = new Response();
 
-		$component = new CsrfComponent($this->registry, [
-			'cookieName' => 'token',
-			'expiry' => 90,
-			'secure' => true
-		]);
+        $component = new CsrfComponent($this->registry, [
+            'cookieName' => 'token',
+            'expiry' => 90,
+            'secure' => true
+        ]);
 
-		$event = new Event('Controller.startup', $controller);
-		$component->startup($event);
+        $event = new Event('Controller.startup', $controller);
+        $component->startup($event);
 
-		$this->assertEmpty($controller->response->cookie('csrfToken'));
-		$cookie = $controller->response->cookie('token');
-		$this->assertNotEmpty($cookie, 'Should set a token.');
-		$this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
-		$this->assertEquals(90, $cookie['expiry'], 'session duration.');
-		$this->assertEquals('/dir/', $cookie['path'], 'session path.');
-		$this->assertTrue($cookie['secure'], 'cookie security flag missing');
-	}
+        $this->assertEmpty($controller->response->cookie('csrfToken'));
+        $cookie = $controller->response->cookie('token');
+        $this->assertNotEmpty($cookie, 'Should set a token.');
+        $this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
+        $this->assertEquals(90, $cookie['expiry'], 'session duration.');
+        $this->assertEquals('/dir/', $cookie['path'], 'session path.');
+        $this->assertTrue($cookie['secure'], 'cookie security flag missing');
+    }
 
-/**
- * Test that the configuration options work.
- *
- * @return void
- * @triggers Controller.startup $controller
- */
-	public function testConfigurationValidate() {
-		$_SERVER['REQUEST_METHOD'] = 'POST';
+    /**
+     * Test that the configuration options work.
+     *
+     * @return void
+     * @triggers Controller.startup $controller
+     */
+    public function testConfigurationValidate()
+    {
+        $_SERVER['REQUEST_METHOD'] = 'POST';
 
-		$controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
-		$controller->request = new Request([
-			'cookies' => ['csrfToken' => 'nope', 'token' => 'yes'],
-			'post' => ['_csrfToken' => 'no match', 'token' => 'yes'],
-		]);
-		$controller->response = new Response();
+        $controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
+        $controller->request = new Request([
+            'cookies' => ['csrfToken' => 'nope', 'token' => 'yes'],
+            'post' => ['_csrfToken' => 'no match', 'token' => 'yes'],
+        ]);
+        $controller->response = new Response();
 
-		$component = new CsrfComponent($this->registry, [
-			'cookieName' => 'token',
-			'field' => 'token',
-			'expiry' => 90,
-		]);
+        $component = new CsrfComponent($this->registry, [
+            'cookieName' => 'token',
+            'field' => 'token',
+            'expiry' => 90,
+        ]);
 
-		$event = new Event('Controller.startup', $controller);
-		$result = $component->startup($event);
-		$this->assertNull($result, 'Config settings should work.');
-	}
-
+        $event = new Event('Controller.startup', $controller);
+        $result = $component->startup($event);
+        $this->assertNull($result, 'Config settings should work.');
+    }
 }

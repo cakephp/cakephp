@@ -22,44 +22,47 @@ use Cake\Database\ValueBinder;
  *
  * @internal
  */
-trait FieldTrait {
+trait FieldTrait
+{
 
-/**
- * The field name or expression to be used in the left hand side of the operator
- *
- * @var string
- */
-	protected $_field;
+    /**
+     * The field name or expression to be used in the left hand side of the operator
+     *
+     * @var string
+     */
+    protected $_field;
 
-/**
- * Sets the field name
- *
- * @param string $field The field to compare with.
- * @return void
- * @deprecated 3.0.0 Will be removed in 3.0.0 stable. Use setField() instead.
- */
-	public function field($field) {
-		trigger_error('field() has been deprecated. Use setField() instead.', E_USER_WARNING);
-		$this->setField($field);
-	}
+    /**
+     * Sets the field name
+     *
+     * @param string $field The field to compare with.
+     * @return void
+     * @deprecated 3.0.0 Will be removed in 3.0.0 stable. Use setField() instead.
+     */
+    public function field($field)
+    {
+        trigger_error('field() has been deprecated. Use setField() instead.', E_USER_WARNING);
+        $this->setField($field);
+    }
 
-/**
- * Sets the field name
- *
- * @param string $field The field to compare with.
- * @return void
- */
-	public function setField($field) {
-		$this->_field = $field;
-	}
+    /**
+     * Sets the field name
+     *
+     * @param string $field The field to compare with.
+     * @return void
+     */
+    public function setField($field)
+    {
+        $this->_field = $field;
+    }
 
-/**
- * Returns the field name
- *
- * @return string|\Cake\Database\ExpressionInterface
- */
-	public function getField() {
-		return $this->_field;
-	}
-
+    /**
+     * Returns the field name
+     *
+     * @return string|\Cake\Database\ExpressionInterface
+     */
+    public function getField()
+    {
+        return $this->_field;
+    }
 }

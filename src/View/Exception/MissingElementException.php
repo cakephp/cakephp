@@ -17,13 +17,13 @@ use Cake\Core\Exception\Exception;
 /**
  * Used when an element file cannot be found.
  */
-class MissingElementException extends Exception {
+class MissingElementException extends Exception
+{
 
-/**
- * Message template
- *
- * @var string
- */
-	protected $_messageTemplate = 'Element file "%s" is missing.';
-
+    /**
+     * Message template
+     *
+     * @var string
+     */
+    protected $_messageTemplate = 'Element file "%s" is missing.';
 }

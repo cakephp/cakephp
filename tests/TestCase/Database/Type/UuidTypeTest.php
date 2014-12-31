@@ -22,68 +22,73 @@ use \PDO;
 /**
  * Test for the Uuid type.
  */
-class UuidTypeTest extends TestCase {
+class UuidTypeTest extends TestCase
+{
 
-/**
- * Setup
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		$this->type = Type::build('uuid');
-		$this->driver = $this->getMock('Cake\Database\Driver');
-	}
+    /**
+     * Setup
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->type = Type::build('uuid');
+        $this->driver = $this->getMock('Cake\Database\Driver');
+    }
 
-/**
- * Test toPHP
- *
- * @return void
- */
-	public function testToPHP() {
-		$this->assertNull($this->type->toPHP(null, $this->driver));
+    /**
+     * Test toPHP
+     *
+     * @return void
+     */
+    public function testToPHP()
+    {
+        $this->assertNull($this->type->toPHP(null, $this->driver));
 
-		$result = $this->type->toPHP('some data', $this->driver);
-		$this->assertSame('some data', $result);
+        $result = $this->type->toPHP('some data', $this->driver);
+        $this->assertSame('some data', $result);
 
-		$result = $this->type->toPHP(2, $this->driver);
-		$this->assertSame('2', $result);
-	}
+        $result = $this->type->toPHP(2, $this->driver);
+        $this->assertSame('2', $result);
+    }
 
-/**
- * Test converting to database format
- *
- * @return void
- */
-	public function testToDatabase() {
-		$result = $this->type->toDatabase('some data', $this->driver);
-		$this->assertSame('some data', $result);
+    /**
+     * Test converting to database format
+     *
+     * @return void
+     */
+    public function testToDatabase()
+    {
+        $result = $this->type->toDatabase('some data', $this->driver);
+        $this->assertSame('some data', $result);
 
-		$result = $this->type->toDatabase(2, $this->driver);
-		$this->assertSame('2', $result);
-	}
+        $result = $this->type->toDatabase(2, $this->driver);
+        $this->assertSame('2', $result);
+    }
 
-/**
- * Test that the PDO binding type is correct.
- *
- * @return void
- */
-	public function testToStatement() {
-		$this->assertEquals(PDO::PARAM_STR, $this->type->toStatement('', $this->driver));
-	}
+    /**
+     * Test that the PDO binding type is correct.
+     *
+     * @return void
+     */
+    public function testToStatement()
+    {
+        $this->assertEquals(PDO::PARAM_STR, $this->type->toStatement('', $this->driver));
+    }
 
-/**
- * Test generating new ids
- *
- * @return void
- */
-	public function testNewId() {
-		$one = $this->type->newId();
-		$two = $this->type->newId();
+    /**
+     * Test generating new ids
+     *
+     * @return void
+     */
+    public function testNewId()
+    {
+        $one = $this->type->newId();
+        $two = $this->type->newId();
 
-		$this->assertNotEquals($one, $two, 'Should be different values');
-		$this->assertRegExp('/^[a-f0-9-]+$/', $one, 'Should quack like a uuid');
-		$this->assertRegExp('/^[a-f0-9-]+$/', $two, 'Should quack like a uuid');
-	}
-
+        $this->assertNotEquals($one, $two, 'Should be different values');
+        $this->assertRegExp('/^[a-f0-9-]+$/', $one, 'Should quack like a uuid');
+        $this->assertRegExp('/^[a-f0-9-]+$/', $two, 'Should quack like a uuid');
+    }
 }

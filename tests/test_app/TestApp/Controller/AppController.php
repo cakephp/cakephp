@@ -29,5 +29,6 @@ use Cake\Controller\Controller;
  * will inherit them.
  *
  */
-class AppController extends Controller {
+class AppController extends Controller
+{
 }

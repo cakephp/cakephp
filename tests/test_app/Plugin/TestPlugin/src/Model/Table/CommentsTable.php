@@ -19,6 +19,7 @@ use Cake\ORM\Table;
 /**
  * Class CommentsTable
  */
-class CommentsTable extends Table {
+class CommentsTable extends Table
+{
 
 }

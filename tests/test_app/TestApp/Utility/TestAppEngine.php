@@ -1,6 +1,7 @@
 <?php
 namespace TestApp\Utility;
 
-class TestAppEngine {
+class TestAppEngine
+{
 
 }

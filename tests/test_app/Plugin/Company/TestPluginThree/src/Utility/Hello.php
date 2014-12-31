@@ -13,15 +13,16 @@
  */
 namespace Company\TestPluginThree\Utility;
 
-class Hello {
+class Hello
+{
 
-/**
- * foo method
- *
- * @return string
- */
-	public function foo() {
-		return 'bar';
-	}
-
+    /**
+     * foo method
+     *
+     * @return string
+     */
+    public function foo()
+    {
+        return 'bar';
+    }
 }

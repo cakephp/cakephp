@@ -15,8 +15,8 @@ namespace TestApp\Controller;
 
 use Cake\Controller\Controller;
 
-abstract class AbstractController extends Controller {
+abstract class AbstractController extends Controller
+{
 
-	abstract public function index();
-
+    abstract public function index();
 }

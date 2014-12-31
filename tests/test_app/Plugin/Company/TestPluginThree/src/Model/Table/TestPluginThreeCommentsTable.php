@@ -20,8 +20,8 @@ use Cake\ORM\Table;
  * Class TestPluginThreeCommentsTable
  *
  */
-class TestPluginThreeCommentsTable extends Table {
+class TestPluginThreeCommentsTable extends Table
+{
 
-	protected $_table = 'test_plugin_three_comments';
-
+    protected $_table = 'test_plugin_three_comments';
 }

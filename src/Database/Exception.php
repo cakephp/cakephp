@@ -17,6 +17,7 @@ namespace Cake\Database;
 /**
  * Exception for the database package.
  */
-class Exception extends \Cake\Core\Exception\Exception {
+class Exception extends \Cake\Core\Exception\Exception
+{
 
 }

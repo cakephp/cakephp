@@ -27,189 +27,202 @@ use Cake\TestSuite\TestCase;
 /**
  * Extended CookieComponent
  */
-class CookieAliasComponent extends CookieComponent {
+class CookieAliasComponent extends CookieComponent
+{
 }
 
-class ComponentRegistryTest extends TestCase {
+class ComponentRegistryTest extends TestCase
+{
 
-/**
- * setUp
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		$controller = new Controller(new Request(), new Response());
-		$this->Components = new ComponentRegistry($controller);
-	}
+    /**
+     * setUp
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $controller = new Controller(new Request(), new Response());
+        $this->Components = new ComponentRegistry($controller);
+    }
 
-/**
- * tearDown
- *
- * @return void
- */
-	public function tearDown() {
-		parent::tearDown();
-		unset($this->Components);
-	}
+    /**
+     * tearDown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        unset($this->Components);
+    }
 
-/**
- * test triggering callbacks on loaded helpers
- *
- * @return void
- */
-	public function testLoad() {
-		$result = $this->Components->load('Cookie');
-		$this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $result);
-		$this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $this->Components->Cookie);
+    /**
+     * test triggering callbacks on loaded helpers
+     *
+     * @return void
+     */
+    public function testLoad()
+    {
+        $result = $this->Components->load('Cookie');
+        $this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $result);
+        $this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $this->Components->Cookie);
 
-		$result = $this->Components->loaded();
-		$this->assertEquals(array('Cookie'), $result, 'loaded() results are wrong.');
+        $result = $this->Components->loaded();
+        $this->assertEquals(array('Cookie'), $result, 'loaded() results are wrong.');
 
-		$result = $this->Components->load('Cookie');
-		$this->assertSame($result, $this->Components->Cookie);
-	}
+        $result = $this->Components->load('Cookie');
+        $this->assertSame($result, $this->Components->Cookie);
+    }
 
-/**
- * Tests loading as an alias
- *
- * @return void
- */
-	public function testLoadWithAlias() {
-		$result = $this->Components->load('Cookie', array('className' => __NAMESPACE__ . '\CookieAliasComponent', 'somesetting' => true));
-		$this->assertInstanceOf(__NAMESPACE__ . '\CookieAliasComponent', $result);
-		$this->assertInstanceOf(__NAMESPACE__ . '\CookieAliasComponent', $this->Components->Cookie);
-		$this->assertTrue($this->Components->Cookie->config('somesetting'));
+    /**
+     * Tests loading as an alias
+     *
+     * @return void
+     */
+    public function testLoadWithAlias()
+    {
+        $result = $this->Components->load('Cookie', array('className' => __NAMESPACE__ . '\CookieAliasComponent', 'somesetting' => true));
+        $this->assertInstanceOf(__NAMESPACE__ . '\CookieAliasComponent', $result);
+        $this->assertInstanceOf(__NAMESPACE__ . '\CookieAliasComponent', $this->Components->Cookie);
+        $this->assertTrue($this->Components->Cookie->config('somesetting'));
 
-		$result = $this->Components->loaded();
-		$this->assertEquals(array('Cookie'), $result, 'loaded() results are wrong.');
+        $result = $this->Components->loaded();
+        $this->assertEquals(array('Cookie'), $result, 'loaded() results are wrong.');
 
-		$result = $this->Components->load('Cookie');
-		$this->assertInstanceOf(__NAMESPACE__ . '\CookieAliasComponent', $result);
+        $result = $this->Components->load('Cookie');
+        $this->assertInstanceOf(__NAMESPACE__ . '\CookieAliasComponent', $result);
 
-		Plugin::load('TestPlugin');
-		$result = $this->Components->load('SomeOther', array('className' => 'TestPlugin.Other'));
-		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $result);
-		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $this->Components->SomeOther);
+        Plugin::load('TestPlugin');
+        $result = $this->Components->load('SomeOther', array('className' => 'TestPlugin.Other'));
+        $this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $result);
+        $this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $this->Components->SomeOther);
 
-		$result = $this->Components->loaded();
-		$this->assertEquals(array('Cookie', 'SomeOther'), $result, 'loaded() results are wrong.');
-	}
+        $result = $this->Components->loaded();
+        $this->assertEquals(array('Cookie', 'SomeOther'), $result, 'loaded() results are wrong.');
+    }
 
-/**
- * test load and enable = false
- *
- * @return void
- */
-	public function testLoadWithEnableFalse() {
-		$mock = $this->getMock('Cake\Event\EventManager');
-		$mock->expects($this->never())
-			->method('attach');
+    /**
+     * test load and enable = false
+     *
+     * @return void
+     */
+    public function testLoadWithEnableFalse()
+    {
+        $mock = $this->getMock('Cake\Event\EventManager');
+        $mock->expects($this->never())
+            ->method('attach');
 
-		$this->Components->getController()->eventManager($mock);
+        $this->Components->getController()->eventManager($mock);
 
-		$result = $this->Components->load('Cookie', array('enabled' => false));
-		$this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $result);
-		$this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $this->Components->Cookie);
-	}
+        $result = $this->Components->load('Cookie', array('enabled' => false));
+        $this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $result);
+        $this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $this->Components->Cookie);
+    }
 
-/**
- * test missingcomponent exception
- *
- * @expectedException \Cake\Controller\Exception\MissingComponentException
- * @return void
- */
-	public function testLoadMissingComponent() {
-		$this->Components->load('ThisComponentShouldAlwaysBeMissing');
-	}
+    /**
+     * test missingcomponent exception
+     *
+     * @expectedException \Cake\Controller\Exception\MissingComponentException
+     * @return void
+     */
+    public function testLoadMissingComponent()
+    {
+        $this->Components->load('ThisComponentShouldAlwaysBeMissing');
+    }
 
-/**
- * test loading a plugin component.
- *
- * @return void
- */
-	public function testLoadPluginComponent() {
-		Plugin::load('TestPlugin');
-		$result = $this->Components->load('TestPlugin.Other');
-		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $result, 'Component class is wrong.');
-		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $this->Components->Other, 'Class is wrong');
-	}
+    /**
+     * test loading a plugin component.
+     *
+     * @return void
+     */
+    public function testLoadPluginComponent()
+    {
+        Plugin::load('TestPlugin');
+        $result = $this->Components->load('TestPlugin.Other');
+        $this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $result, 'Component class is wrong.');
+        $this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $this->Components->Other, 'Class is wrong');
+    }
 
-/**
- * Test loading components with aliases and plugins.
- *
- * @return void
- */
-	public function testLoadWithAliasAndPlugin() {
-		Plugin::load('TestPlugin');
-		$result = $this->Components->load('AliasedOther', ['className' => 'TestPlugin.Other']);
-		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $result);
-		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $this->Components->AliasedOther);
+    /**
+     * Test loading components with aliases and plugins.
+     *
+     * @return void
+     */
+    public function testLoadWithAliasAndPlugin()
+    {
+        Plugin::load('TestPlugin');
+        $result = $this->Components->load('AliasedOther', ['className' => 'TestPlugin.Other']);
+        $this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $result);
+        $this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $this->Components->AliasedOther);
 
-		$result = $this->Components->loaded();
-		$this->assertEquals(['AliasedOther'], $result, 'loaded() results are wrong.');
-	}
+        $result = $this->Components->loaded();
+        $this->assertEquals(['AliasedOther'], $result, 'loaded() results are wrong.');
+    }
 
-/**
- * test getting the controller out of the collection
- *
- * @return void
- */
-	public function testGetController() {
-		$result = $this->Components->getController();
-		$this->assertInstanceOf('Cake\Controller\Controller', $result);
-	}
+    /**
+     * test getting the controller out of the collection
+     *
+     * @return void
+     */
+    public function testGetController()
+    {
+        $result = $this->Components->getController();
+        $this->assertInstanceOf('Cake\Controller\Controller', $result);
+    }
 
-/**
- * Test reset.
- *
- * @return void
- */
-	public function testReset() {
-		$eventManager = $this->Components->getController()->eventManager();
-		$instance = $this->Components->load('Auth');
-		$this->assertSame(
-			$instance,
-			$this->Components->Auth,
-			'Instance in registry should be the same as previously loaded'
-		);
-		$this->assertCount(1, $eventManager->listeners('Controller.startup'));
+    /**
+     * Test reset.
+     *
+     * @return void
+     */
+    public function testReset()
+    {
+        $eventManager = $this->Components->getController()->eventManager();
+        $instance = $this->Components->load('Auth');
+        $this->assertSame(
+            $instance,
+            $this->Components->Auth,
+            'Instance in registry should be the same as previously loaded'
+        );
+        $this->assertCount(1, $eventManager->listeners('Controller.startup'));
 
-		$this->assertNull($this->Components->reset(), 'No return expected');
-		$this->assertCount(0, $eventManager->listeners('Controller.startup'));
+        $this->assertNull($this->Components->reset(), 'No return expected');
+        $this->assertCount(0, $eventManager->listeners('Controller.startup'));
 
-		$this->assertNotSame($instance, $this->Components->load('Auth'));
-	}
+        $this->assertNotSame($instance, $this->Components->load('Auth'));
+    }
 
-/**
- * Test unloading.
- *
- * @return void
- */
-	public function testUnload() {
-		$eventManager = $this->Components->getController()->eventManager();
+    /**
+     * Test unloading.
+     *
+     * @return void
+     */
+    public function testUnload()
+    {
+        $eventManager = $this->Components->getController()->eventManager();
 
-		$result = $this->Components->load('Auth');
-		$this->Components->unload('Auth');
+        $result = $this->Components->load('Auth');
+        $this->Components->unload('Auth');
 
-		$this->assertFalse(isset($this->Components->Auth), 'Should be gone');
-		$this->assertCount(0, $eventManager->listeners('Controller.startup'));
-	}
+        $this->assertFalse(isset($this->Components->Auth), 'Should be gone');
+        $this->assertCount(0, $eventManager->listeners('Controller.startup'));
+    }
 
-/**
- * Test set.
- *
- * @return void
- */
-	public function testSet() {
-		$eventManager = $this->Components->getController()->eventManager();
-		$this->assertCount(0, $eventManager->listeners('Controller.startup'));
+    /**
+     * Test set.
+     *
+     * @return void
+     */
+    public function testSet()
+    {
+        $eventManager = $this->Components->getController()->eventManager();
+        $this->assertCount(0, $eventManager->listeners('Controller.startup'));
 
-		$auth = new AuthComponent($this->Components);
-		$this->Components->set('Auth', $auth);
+        $auth = new AuthComponent($this->Components);
+        $this->Components->set('Auth', $auth);
 
-		$this->assertTrue(isset($this->Components->Auth), 'Should be gone');
-		$this->assertCount(1, $eventManager->listeners('Controller.startup'));
-	}
-
+        $this->assertTrue(isset($this->Components->Auth), 'Should be gone');
+        $this->assertCount(1, $eventManager->listeners('Controller.startup'));
+    }
 }

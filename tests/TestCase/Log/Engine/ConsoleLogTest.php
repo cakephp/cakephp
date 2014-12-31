@@ -22,67 +22,70 @@ use Cake\TestSuite\TestCase;
  * ConsoleLogTest class
  *
  */
-class ConsoleLogTest extends TestCase {
+class ConsoleLogTest extends TestCase
+{
 
-/**
- * Test writing to ConsoleOutput
- */
-	public function testConsoleOutputlogs() {
-		$output = $this->getMock('Cake\Console\ConsoleOutput');
+    /**
+     * Test writing to ConsoleOutput
+     */
+    public function testConsoleOutputlogs()
+    {
+        $output = $this->getMock('Cake\Console\ConsoleOutput');
 
-		$output->expects($this->at(0))
-			->method('outputAs');
+        $output->expects($this->at(0))
+            ->method('outputAs');
 
-		$message = " Error: oh noes\n</error>";
-		$output->expects($this->at(1))
-			->method('write')
-			->with($this->stringContains($message));
+        $message = " Error: oh noes\n</error>";
+        $output->expects($this->at(1))
+            ->method('write')
+            ->with($this->stringContains($message));
 
-		$log = new ConsoleLog([
-			'stream' => $output
-		]);
-		$log->log('error', 'oh noes');
-	}
+        $log = new ConsoleLog([
+            'stream' => $output
+        ]);
+        $log->log('error', 'oh noes');
+    }
 
-/**
- * Test writing to a file stream
- *
- * @return void
- */
-	public function testlogToFileStream() {
-		$filename = tempnam(sys_get_temp_dir(), 'cake_log_test');
-		$log = new ConsoleLog([
-			'stream' => $filename
-		]);
-		$log->log('error', 'oh noes');
-		$fh = fopen($filename, 'r');
-		$line = fgets($fh);
-		$this->assertContains('Error: oh noes', $line);
-	}
+    /**
+     * Test writing to a file stream
+     *
+     * @return void
+     */
+    public function testlogToFileStream()
+    {
+        $filename = tempnam(sys_get_temp_dir(), 'cake_log_test');
+        $log = new ConsoleLog([
+            'stream' => $filename
+        ]);
+        $log->log('error', 'oh noes');
+        $fh = fopen($filename, 'r');
+        $line = fgets($fh);
+        $this->assertContains('Error: oh noes', $line);
+    }
 
-/**
- * test default value of stream 'outputAs'
- */
-	public function testDefaultOutputAs() {
-		if (
-			(DS === '\\' && !(bool)env('ANSICON')) ||
-			(function_exists('posix_isatty') && !posix_isatty(null))
-		) {
-			$expected = ConsoleOutput::PLAIN;
-		} else {
-			$expected = ConsoleOutput::COLOR;
-		}
-		$output = $this->getMock('Cake\Console\ConsoleOutput');
+    /**
+     * test default value of stream 'outputAs'
+     */
+    public function testDefaultOutputAs()
+    {
+        if (
+            (DS === '\\' && !(bool)env('ANSICON')) ||
+            (function_exists('posix_isatty') && !posix_isatty(null))
+        ) {
+            $expected = ConsoleOutput::PLAIN;
+        } else {
+            $expected = ConsoleOutput::COLOR;
+        }
+        $output = $this->getMock('Cake\Console\ConsoleOutput');
 
-		$output->expects($this->at(0))
-			->method('outputAs')
-			->with($expected);
+        $output->expects($this->at(0))
+            ->method('outputAs')
+            ->with($expected);
 
-		$log = new ConsoleLog([
-			'stream' => $output,
-		]);
-		$config = $log->config();
-		$this->assertEquals($expected, $config['outputAs']);
-	}
-
+        $log = new ConsoleLog([
+            'stream' => $output,
+        ]);
+        $config = $log->config();
+        $this->assertEquals($expected, $config['outputAs']);
+    }
 }

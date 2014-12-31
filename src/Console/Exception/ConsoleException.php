@@ -20,5 +20,6 @@ use Cake\Core\Exception\Exception;
  * classes when they encounter an error.
  *
  */
-class ConsoleException extends Exception {
+class ConsoleException extends Exception
+{
 }

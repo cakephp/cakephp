@@ -24,6 +24,7 @@ use Psr\Log\LoggerInterface;
  *
  * @deprecated 3.0.0-beta1 Will be removed in 3.0.0 stable.
  */
-interface LogInterface extends LoggerInterface {
+interface LogInterface extends LoggerInterface
+{
 
 }

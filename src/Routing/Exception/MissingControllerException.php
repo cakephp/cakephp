@@ -19,18 +19,19 @@ use Cake\Core\Exception\Exception;
  * cannot be found.
  *
  */
-class MissingControllerException extends Exception {
+class MissingControllerException extends Exception
+{
 
-/**
- * {@inheritDoc}
- */
-	protected $_messageTemplate = 'Controller class %s could not be found.';
+    /**
+     * {@inheritDoc}
+     */
+    protected $_messageTemplate = 'Controller class %s could not be found.';
 
-/**
- * {@inheritDoc}
- */
-	public function __construct($message, $code = 404) {
-		parent::__construct($message, $code);
-	}
-
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct($message, $code = 404)
+    {
+        parent::__construct($message, $code);
+    }
 }

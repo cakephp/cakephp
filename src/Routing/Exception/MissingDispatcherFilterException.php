@@ -18,8 +18,8 @@ use Cake\Core\Exception\Exception;
  * Exception raised when a Dispatcher filter could not be found
  *
  */
-class MissingDispatcherFilterException extends Exception {
+class MissingDispatcherFilterException extends Exception
+{
 
-	protected $_messageTemplate = 'Dispatcher filter %s could not be found.';
-
+    protected $_messageTemplate = 'Dispatcher filter %s could not be found.';
 }

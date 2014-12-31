@@ -23,48 +23,50 @@ use NoRewindIterator;
  * BufferedIterator Test
  *
  */
-class BufferedIteratorTest extends TestCase {
+class BufferedIteratorTest extends TestCase
+{
 
-/**
- * Tests that items are cached once iterated over them
- *
- * @return void
- */
-	public function testBuffer() {
-		$items = new ArrayObject([
-			'a' => 1,
-			'b' => 2,
-			'c' => 3
-		]);
-		$iterator = new BufferedIterator($items);
-		$expected = (array)$items;
-		$this->assertSame($expected, $iterator->toArray());
+    /**
+     * Tests that items are cached once iterated over them
+     *
+     * @return void
+     */
+    public function testBuffer()
+    {
+        $items = new ArrayObject([
+            'a' => 1,
+            'b' => 2,
+            'c' => 3
+        ]);
+        $iterator = new BufferedIterator($items);
+        $expected = (array)$items;
+        $this->assertSame($expected, $iterator->toArray());
 
-		$items['c'] = 5;
-		$buffered = $iterator->toArray();
-		$this->assertSame($expected, $buffered);
-	}
+        $items['c'] = 5;
+        $buffered = $iterator->toArray();
+        $this->assertSame($expected, $buffered);
+    }
 
-/**
- * Tests that items are cached once iterated over them
- *
- * @return void
- */
-	public function testCount() {
-		$items = new ArrayObject([
-			'a' => 1,
-			'b' => 2,
-			'c' => 3
-		]);
-		$iterator = new BufferedIterator($items);
-		$this->assertCount(3, $iterator);
-		$buffered = $iterator->toArray();
-		$this->assertSame((array)$items, $buffered);
+    /**
+     * Tests that items are cached once iterated over them
+     *
+     * @return void
+     */
+    public function testCount()
+    {
+        $items = new ArrayObject([
+            'a' => 1,
+            'b' => 2,
+            'c' => 3
+        ]);
+        $iterator = new BufferedIterator($items);
+        $this->assertCount(3, $iterator);
+        $buffered = $iterator->toArray();
+        $this->assertSame((array)$items, $buffered);
 
-		$iterator = new BufferedIterator(new NoRewindIterator($items->getIterator()));
-		$this->assertCount(3, $iterator);
-		$buffered = $iterator->toArray();
-		$this->assertSame((array)$items, $buffered);
-	}
-
+        $iterator = new BufferedIterator(new NoRewindIterator($items->getIterator()));
+        $this->assertCount(3, $iterator);
+        $buffered = $iterator->toArray();
+        $this->assertSame((array)$items, $buffered);
+    }
 }

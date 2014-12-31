@@ -24,40 +24,43 @@ use Cake\Console\Shell;
  *
  * @deprecated
  */
-class TestShell extends Shell {
+class TestShell extends Shell
+{
 
-/**
- * Main entry point to this shell
- *
- * @return void
- */
-	public function main() {
-		$this->outputWarning();
-		return 255;
-	}
+    /**
+     * Main entry point to this shell
+     *
+     * @return void
+     */
+    public function main()
+    {
+        $this->outputWarning();
+        return 255;
+    }
 
-/**
- * Shows a list of available test cases and gives the option to run one of them
- *
- * @return void
- */
-	public function available() {
-		$this->outputWarning();
-		return 255;
-	}
+    /**
+     * Shows a list of available test cases and gives the option to run one of them
+     *
+     * @return void
+     */
+    public function available()
+    {
+        $this->outputWarning();
+        return 255;
+    }
 
-/**
- * Warning that test shell is defunct
- *
- * @return void
- */
-	public function outputWarning() {
-		$this->err('<error>TestShell has been removed.</error>');
-		$this->err('');
-		$this->err('TestShell has been replaced with <info>`phpunit`</info>.');
-		$this->err('');
-		$this->err('To run your application tests run <info>`phpunit`</info>.');
-		$this->err('To run plugin tests, cd into the plugin directory and run <info>`phpunit`</info>.');
-	}
-
+    /**
+     * Warning that test shell is defunct
+     *
+     * @return void
+     */
+    public function outputWarning()
+    {
+        $this->err('<error>TestShell has been removed.</error>');
+        $this->err('');
+        $this->err('TestShell has been replaced with <info>`phpunit`</info>.');
+        $this->err('');
+        $this->err('To run your application tests run <info>`phpunit`</info>.');
+        $this->err('To run plugin tests, cd into the plugin directory and run <info>`phpunit`</info>.');
+    }
 }

@@ -25,52 +25,55 @@ use RecursiveIterator;
  * @internal
  * @see Collection::unfold()
  */
-class UnfoldIterator extends IteratorIterator implements RecursiveIterator {
+class UnfoldIterator extends IteratorIterator implements RecursiveIterator
+{
 
-/**
- * A functions that gets passed each of the elements of this iterator and
- * that must return an array or Traversable object.
- *
- * @var callable
- */
-	protected $_unfolder;
+    /**
+     * A functions that gets passed each of the elements of this iterator and
+     * that must return an array or Traversable object.
+     *
+     * @var callable
+     */
+    protected $_unfolder;
 
-/**
- * Creates the iterator that will generate child iterators from each of the
- * elements it was constructed with.
- *
- * @param array|\Traversable $items The list of values to iterate
- * @param callable $unfolder A callable function that will receive the
- * current item and key. It must return an array or Traversable object
- * out of which the nested iterators will be yielded.
- */
-	public function __construct($items, callable $unfolder) {
-		$this->_unfolder = $unfolder;
-		parent::__construct($items);
-	}
+    /**
+     * Creates the iterator that will generate child iterators from each of the
+     * elements it was constructed with.
+     *
+     * @param array|\Traversable $items The list of values to iterate
+     * @param callable $unfolder A callable function that will receive the
+     * current item and key. It must return an array or Traversable object
+     * out of which the nested iterators will be yielded.
+     */
+    public function __construct($items, callable $unfolder)
+    {
+        $this->_unfolder = $unfolder;
+        parent::__construct($items);
+    }
 
-/**
- * Returns true as each of the elements in the array represent a
- * list of items
- *
- * @return bool
- */
-	public function hasChildren() {
-		return true;
-	}
+    /**
+     * Returns true as each of the elements in the array represent a
+     * list of items
+     *
+     * @return bool
+     */
+    public function hasChildren()
+    {
+        return true;
+    }
 
-/**
- * Returns an iterator containing the items generated out of transforming
- * the current value with the callable function.
- *
- * @return \RecursiveIterator
- */
-	public function getChildren() {
-		$current = $this->current();
-		$key = $this->key();
-		$unfolder = $this->_unfolder;
+    /**
+     * Returns an iterator containing the items generated out of transforming
+     * the current value with the callable function.
+     *
+     * @return \RecursiveIterator
+     */
+    public function getChildren()
+    {
+        $current = $this->current();
+        $key = $this->key();
+        $unfolder = $this->_unfolder;
 
-		return new NoChildrenIterator($unfolder($current, $key, $this));
-	}
-
+        return new NoChildrenIterator($unfolder($current, $key, $this));
+    }
 }

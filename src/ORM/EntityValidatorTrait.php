@@ -20,21 +20,22 @@ use Cake\Validation\Validator;
  * Contains a method that can be used to apply a validator to an entity's internal
  * properties. This trait can be used to satisfy the Cake\Validation\ValidatableInterface
  */
-trait EntityValidatorTrait {
+trait EntityValidatorTrait
+{
 
-/**
- * Validates the internal properties using a validator object and returns any
- * validation errors found.
- *
- * @param \Cake\Validation\Validator $validator The validator to use when validating the entity.
- * @return array
- */
-	public function validate(Validator $validator) {
-		$data = $this->_properties;
-		$new = $this->isNew();
-		$validator->provider('entity', $this);
-		$this->errors($validator->errors($data, $new === null ? true : $new));
-		return $this->_errors;
-	}
-
+    /**
+     * Validates the internal properties using a validator object and returns any
+     * validation errors found.
+     *
+     * @param \Cake\Validation\Validator $validator The validator to use when validating the entity.
+     * @return array
+     */
+    public function validate(Validator $validator)
+    {
+        $data = $this->_properties;
+        $new = $this->isNew();
+        $validator->provider('entity', $this);
+        $this->errors($validator->errors($data, $new === null ? true : $new));
+        return $this->_errors;
+    }
 }

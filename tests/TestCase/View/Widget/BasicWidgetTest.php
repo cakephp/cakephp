@@ -21,95 +21,100 @@ use Cake\View\Widget\BasicWidget;
 /**
  * Basic input test.
  */
-class BasicWidgetTest extends TestCase {
+class BasicWidgetTest extends TestCase
+{
 
-	public function setUp() {
-		parent::setUp();
-		$templates = [
-			'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
-		];
-		$this->templates = new StringTemplate($templates);
-		$this->context = $this->getMock('Cake\View\Form\ContextInterface');
-	}
+    public function setUp()
+    {
+        parent::setUp();
+        $templates = [
+            'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
+        ];
+        $this->templates = new StringTemplate($templates);
+        $this->context = $this->getMock('Cake\View\Form\ContextInterface');
+    }
 
-/**
- * Test render in a simple case.
- *
- * @return void
- */
-	public function testRenderSimple() {
-		$text = new BasicWidget($this->templates);
-		$result = $text->render(['name' => 'my_input'], $this->context);
-		$expected = [
-			'input' => ['type' => 'text', 'name' => 'my_input']
-		];
-		$this->assertHtml($expected, $result);
-	}
+    /**
+     * Test render in a simple case.
+     *
+     * @return void
+     */
+    public function testRenderSimple()
+    {
+        $text = new BasicWidget($this->templates);
+        $result = $text->render(['name' => 'my_input'], $this->context);
+        $expected = [
+            'input' => ['type' => 'text', 'name' => 'my_input']
+        ];
+        $this->assertHtml($expected, $result);
+    }
 
-/**
- * Test render with custom type
- *
- * @return void
- */
-	public function testRenderType() {
-		$text = new BasicWidget($this->templates);
-		$data = [
-			'name' => 'my_input',
-			'type' => 'email',
-		];
-		$result = $text->render($data, $this->context);
-		$expected = [
-			'input' => ['type' => 'email', 'name' => 'my_input']
-		];
-		$this->assertHtml($expected, $result);
-	}
+    /**
+     * Test render with custom type
+     *
+     * @return void
+     */
+    public function testRenderType()
+    {
+        $text = new BasicWidget($this->templates);
+        $data = [
+            'name' => 'my_input',
+            'type' => 'email',
+        ];
+        $result = $text->render($data, $this->context);
+        $expected = [
+            'input' => ['type' => 'email', 'name' => 'my_input']
+        ];
+        $this->assertHtml($expected, $result);
+    }
 
-/**
- * Test render with a value
- *
- * @return void
- */
-	public function testRenderWithValue() {
-		$text = new BasicWidget($this->templates);
-		$data = [
-			'name' => 'my_input',
-			'type' => 'email',
-			'val' => 'Some <value>'
-		];
-		$result = $text->render($data, $this->context);
-		$expected = [
-			'input' => [
-				'type' => 'email',
-				'name' => 'my_input',
-				'value' => 'Some &lt;value&gt;'
-			]
-		];
-		$this->assertHtml($expected, $result);
-	}
+    /**
+     * Test render with a value
+     *
+     * @return void
+     */
+    public function testRenderWithValue()
+    {
+        $text = new BasicWidget($this->templates);
+        $data = [
+            'name' => 'my_input',
+            'type' => 'email',
+            'val' => 'Some <value>'
+        ];
+        $result = $text->render($data, $this->context);
+        $expected = [
+            'input' => [
+                'type' => 'email',
+                'name' => 'my_input',
+                'value' => 'Some &lt;value&gt;'
+            ]
+        ];
+        $this->assertHtml($expected, $result);
+    }
 
-/**
- * Test render with additional attributes.
- *
- * @return void
- */
-	public function testRenderAttributes() {
-		$text = new BasicWidget($this->templates);
-		$data = [
-			'name' => 'my_input',
-			'type' => 'email',
-			'class' => 'form-control',
-			'required' => true
-		];
-		$result = $text->render($data, $this->context);
-		$expected = [
-			'input' => [
-				'type' => 'email',
-				'name' => 'my_input',
-				'class' => 'form-control',
-				'required' => 'required',
-			]
-		];
-		$this->assertHtml($expected, $result);
-	}
-
+    /**
+     * Test render with additional attributes.
+     *
+     * @return void
+     */
+    public function testRenderAttributes()
+    {
+        $text = new BasicWidget($this->templates);
+        $data = [
+            'name' => 'my_input',
+            'type' => 'email',
+            'class' => 'form-control',
+            'required' => true
+        ];
+        $result = $text->render($data, $this->context);
+        $expected = [
+            'input' => [
+                'type' => 'email',
+                'name' => 'my_input',
+                'class' => 'form-control',
+                'required' => 'required',
+            ]
+        ];
+        $this->assertHtml($expected, $result);
+    }
 }

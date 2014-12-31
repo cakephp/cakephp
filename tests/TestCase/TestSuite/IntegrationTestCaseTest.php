@@ -25,235 +25,251 @@ use Cake\Test\Fixture\AssertIntegrationTestCase;
 /**
  * Self test of the IntegrationTestCase
  */
-class IntegrationTestCaseTest extends IntegrationTestCase {
+class IntegrationTestCaseTest extends IntegrationTestCase
+{
 
-/**
- * Setup method
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		Configure::write('App.namespace', 'TestApp');
+    /**
+     * Setup method
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        Configure::write('App.namespace', 'TestApp');
 
-		Router::connect('/:controller/:action/*', [], ['routeClass' => 'InflectedRoute']);
-		DispatcherFactory::clear();
-		DispatcherFactory::add('Routing');
-		DispatcherFactory::add('ControllerFactory');
-	}
+        Router::connect('/:controller/:action/*', [], ['routeClass' => 'InflectedRoute']);
+        DispatcherFactory::clear();
+        DispatcherFactory::add('Routing');
+        DispatcherFactory::add('ControllerFactory');
+    }
 
-/**
- * Test building a request.
- *
- * @return void
- */
-	public function testRequestBuilding() {
-		$this->configRequest([
-			'headers' => ['X-CSRF-Token' => 'abc123'],
-			'base' => '',
-			'webroot' => '/'
-		]);
-		$this->cookie('split_token', 'def345');
-		$this->session(['User' => ['id' => 1, 'username' => 'mark']]);
-		$request = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
+    /**
+     * Test building a request.
+     *
+     * @return void
+     */
+    public function testRequestBuilding()
+    {
+        $this->configRequest([
+            'headers' => ['X-CSRF-Token' => 'abc123'],
+            'base' => '',
+            'webroot' => '/'
+        ]);
+        $this->cookie('split_token', 'def345');
+        $this->session(['User' => ['id' => 1, 'username' => 'mark']]);
+        $request = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
 
-		$this->assertEquals('abc123', $request->header('X-CSRF-Token'));
-		$this->assertEquals('tasks/add', $request->url);
-		$this->assertEquals(['split_token' => 'def345'], $request->cookies);
-		$this->assertEquals(['id' => '1', 'username' => 'mark'], $request->session()->read('User'));
-	}
+        $this->assertEquals('abc123', $request->header('X-CSRF-Token'));
+        $this->assertEquals('tasks/add', $request->url);
+        $this->assertEquals(['split_token' => 'def345'], $request->cookies);
+        $this->assertEquals(['id' => '1', 'username' => 'mark'], $request->session()->read('User'));
+    }
 
-/**
- * Test sending get requests.
- *
- * @return void
- */
-	public function testGet() {
-		$this->assertNull($this->_response);
+    /**
+     * Test sending get requests.
+     *
+     * @return void
+     */
+    public function testGet()
+    {
+        $this->assertNull($this->_response);
 
-		$this->get('/request_action/test_request_action');
-		$this->assertNotEmpty($this->_response);
-		$this->assertInstanceOf('Cake\Network\Response', $this->_response);
-		$this->assertEquals('This is a test', $this->_response->body());
-	}
+        $this->get('/request_action/test_request_action');
+        $this->assertNotEmpty($this->_response);
+        $this->assertInstanceOf('Cake\Network\Response', $this->_response);
+        $this->assertEquals('This is a test', $this->_response->body());
+    }
 
-/**
- * Test sending requests stores references to controller/view/layout.
- *
- * @return void
- */
-	public function testRequestSetsProperties() {
-		$this->post('/posts/index');
-		$this->assertInstanceOf('Cake\Controller\Controller', $this->_controller);
-		$this->assertContains('Template' . DS . 'Posts' . DS . 'index.ctp', $this->_viewName);
-		$this->assertContains('Template' . DS . 'Layout' . DS . 'default.ctp', $this->_layoutName);
+    /**
+     * Test sending requests stores references to controller/view/layout.
+     *
+     * @return void
+     */
+    public function testRequestSetsProperties()
+    {
+        $this->post('/posts/index');
+        $this->assertInstanceOf('Cake\Controller\Controller', $this->_controller);
+        $this->assertContains('Template' . DS . 'Posts' . DS . 'index.ctp', $this->_viewName);
+        $this->assertContains('Template' . DS . 'Layout' . DS . 'default.ctp', $this->_layoutName);
 
-		$this->assertTemplate('index');
-		$this->assertLayout('default');
-		$this->assertEquals('value', $this->viewVariable('test'));
-	}
+        $this->assertTemplate('index');
+        $this->assertLayout('default');
+        $this->assertEquals('value', $this->viewVariable('test'));
+    }
 
-/**
- * Test array URLs
- *
- * @return void
- */
-	public function testArrayUrls() {
-		$this->post(['controller' => 'Posts', 'action' => 'index']);
-		$this->assertEquals('value', $this->viewVariable('test'));
-	}
+    /**
+     * Test array URLs
+     *
+     * @return void
+     */
+    public function testArrayUrls()
+    {
+        $this->post(['controller' => 'Posts', 'action' => 'index']);
+        $this->assertEquals('value', $this->viewVariable('test'));
+    }
 
-/**
- * Test flash and cookie assertions
- *
- * @return void
- */
-	public function testFlashSessionAndCookieAsserts() {
-		$this->post('/posts/index');
+    /**
+     * Test flash and cookie assertions
+     *
+     * @return void
+     */
+    public function testFlashSessionAndCookieAsserts()
+    {
+        $this->post('/posts/index');
 
-		$this->assertSession('An error message', 'Flash.flash.message');
-		$this->assertCookie(1, 'remember_me');
-	}
+        $this->assertSession('An error message', 'Flash.flash.message');
+        $this->assertCookie(1, 'remember_me');
+    }
 
-/**
- * Test error handling and error page rendering.
- *
- * @return void
- */
-	public function testPostAndErrorHandling() {
-		$this->post('/request_action/error_method');
-		$this->assertResponseContains('Not there or here');
-		$this->assertResponseContains('<!DOCTYPE html>');
-	}
+    /**
+     * Test error handling and error page rendering.
+     *
+     * @return void
+     */
+    public function testPostAndErrorHandling()
+    {
+        $this->post('/request_action/error_method');
+        $this->assertResponseContains('Not there or here');
+        $this->assertResponseContains('<!DOCTYPE html>');
+    }
 
-/**
- * Test the responseOk status assertion
- *
- * @return void
- */
-	public function testAssertResponseStatusCodes() {
-		$this->_response = new Response();
+    /**
+     * Test the responseOk status assertion
+     *
+     * @return void
+     */
+    public function testAssertResponseStatusCodes()
+    {
+        $this->_response = new Response();
 
-		$this->_response->statusCode(200);
-		$this->assertResponseOk();
+        $this->_response->statusCode(200);
+        $this->assertResponseOk();
 
-		$this->_response->statusCode(201);
-		$this->assertResponseOk();
+        $this->_response->statusCode(201);
+        $this->assertResponseOk();
 
-		$this->_response->statusCode(204);
-		$this->assertResponseOk();
+        $this->_response->statusCode(204);
+        $this->assertResponseOk();
 
-		$this->_response->statusCode(400);
-		$this->assertResponseError();
+        $this->_response->statusCode(400);
+        $this->assertResponseError();
 
-		$this->_response->statusCode(417);
-		$this->assertResponseError();
+        $this->_response->statusCode(417);
+        $this->assertResponseError();
 
-		$this->_response->statusCode(500);
-		$this->assertResponseFailure();
+        $this->_response->statusCode(500);
+        $this->assertResponseFailure();
 
-		$this->_response->statusCode(505);
-		$this->assertResponseFailure();
+        $this->_response->statusCode(505);
+        $this->assertResponseFailure();
 
-		$this->_response->statusCode(301);
-		$this->assertResponseCode(301);
-	}
+        $this->_response->statusCode(301);
+        $this->assertResponseCode(301);
+    }
 
-/**
- * Test the location header assertion.
- *
- * @return void
- */
-	public function testAssertRedirect() {
-		$this->_response = new Response();
-		$this->_response->header('Location', 'http://localhost/tasks/index');
+    /**
+     * Test the location header assertion.
+     *
+     * @return void
+     */
+    public function testAssertRedirect()
+    {
+        $this->_response = new Response();
+        $this->_response->header('Location', 'http://localhost/tasks/index');
 
-		$this->assertRedirect('/tasks/index');
-		$this->assertRedirect(['controller' => 'Tasks', 'action' => 'index']);
-	}
+        $this->assertRedirect('/tasks/index');
+        $this->assertRedirect(['controller' => 'Tasks', 'action' => 'index']);
+    }
 
-/**
- * Test the location header assertion.
- *
- * @return void
- */
-	public function testAssertNoRedirect() {
-		$this->_response = new Response();
+    /**
+     * Test the location header assertion.
+     *
+     * @return void
+     */
+    public function testAssertNoRedirect()
+    {
+        $this->_response = new Response();
 
-		$this->assertNoRedirect();
-	}
+        $this->assertNoRedirect();
+    }
 
-/**
- * Test the location header assertion.
- *
- * @return void
- */
-	public function testAssertNoRedirectFail() {
-		$test = new AssertIntegrationTestCase('testBadAssertNoRedirect');
-		$result = $test->run();
-		ob_start();
-		$this->assertFalse($result->wasSuccessful());
-		$this->assertEquals(1, $result->failureCount());
-	}
+    /**
+     * Test the location header assertion.
+     *
+     * @return void
+     */
+    public function testAssertNoRedirectFail()
+    {
+        $test = new AssertIntegrationTestCase('testBadAssertNoRedirect');
+        $result = $test->run();
+        ob_start();
+        $this->assertFalse($result->wasSuccessful());
+        $this->assertEquals(1, $result->failureCount());
+    }
 
-/**
- * Test the header assertion.
- *
- * @return void
- */
-	public function testAssertHeader() {
-		$this->_response = new Response();
-		$this->_response->header('Etag', 'abc123');
+    /**
+     * Test the header assertion.
+     *
+     * @return void
+     */
+    public function testAssertHeader()
+    {
+        $this->_response = new Response();
+        $this->_response->header('Etag', 'abc123');
 
-		$this->assertHeader('Etag', 'abc123');
-	}
+        $this->assertHeader('Etag', 'abc123');
+    }
 
-/**
- * Test the content type assertion.
- *
- * @return void
- */
-	public function testAssertContentType() {
-		$this->_response = new Response();
-		$this->_response->type('json');
+    /**
+     * Test the content type assertion.
+     *
+     * @return void
+     */
+    public function testAssertContentType()
+    {
+        $this->_response = new Response();
+        $this->_response->type('json');
 
-		$this->assertContentType('json');
-		$this->assertContentType('application/json');
-	}
+        $this->assertContentType('json');
+        $this->assertContentType('application/json');
+    }
 
-/**
- * Test the content assertion.
- *
- * @return void
- */
-	public function testAssertResponseContains() {
-		$this->_response = new Response();
-		$this->_response->body('Some content');
+    /**
+     * Test the content assertion.
+     *
+     * @return void
+     */
+    public function testAssertResponseContains()
+    {
+        $this->_response = new Response();
+        $this->_response->body('Some content');
 
-		$this->assertResponseContains('content');
-	}
+        $this->assertResponseContains('content');
+    }
 
-/**
- * Test that works in tandem with testEventManagerReset2 to
- * test the EventManager reset.
- *
- * The return value is passed to testEventManagerReset2 as
- * an arguments.
- *
- * @return \Cake\Event\EventManager
- */
-	public function testEventManagerReset1() {
-		return EventManager::instance();
-	}
+    /**
+     * Test that works in tandem with testEventManagerReset2 to
+     * test the EventManager reset.
+     *
+     * The return value is passed to testEventManagerReset2 as
+     * an arguments.
+     *
+     * @return \Cake\Event\EventManager
+     */
+    public function testEventManagerReset1()
+    {
+        return EventManager::instance();
+    }
 
-/**
- * Test if the EventManager is reset between tests.
- *
- * @depends testEventManagerReset1
- * @return void
- */
-	public function testEventManagerReset2($prevEventManager) {
-		$this->assertNotSame($prevEventManager, EventManager::instance());
-	}
-
+    /**
+     * Test if the EventManager is reset between tests.
+     *
+     * @depends testEventManagerReset1
+     * @return void
+     */
+    public function testEventManagerReset2($prevEventManager)
+    {
+        $this->assertNotSame($prevEventManager, EventManager::instance());
+    }
 }

@@ -10,8 +10,8 @@ use Cake\Validation\ValidatableInterface;
  * Tests entity class used for asserting correct loading
  *
  */
-class ValidatableEntity extends Entity implements ValidatableInterface {
+class ValidatableEntity extends Entity implements ValidatableInterface
+{
 
-	use EntityValidatorTrait;
-
+    use EntityValidatorTrait;
 }
