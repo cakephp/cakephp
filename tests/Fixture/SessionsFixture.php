@@ -28,17 +28,17 @@ class SessionsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = array(
+    public $fields = [
         'id' => ['type' => 'string', 'length' => 128],
         'data' => ['type' => 'text', 'null' => true],
         'expires' => ['type' => 'integer', 'length' => 11, 'null' => true],
         '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
-    );
+    ];
 
     /**
      * records property
      *
      * @var array
      */
-    public $records = array();
+    public $records = [];
 }

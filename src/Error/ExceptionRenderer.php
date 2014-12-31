@@ -158,13 +158,13 @@ class ExceptionRenderer
             $this->controller->response->header($exception->responseHeader());
         }
         $this->controller->response->statusCode($code);
-        $this->controller->set(array(
+        $this->controller->set([
             'message' => $message,
             'url' => h($url),
             'error' => $exception,
             'code' => $code,
-            '_serialize' => array('message', 'url', 'code')
-        ));
+            '_serialize' => ['message', 'url', 'code']
+        ]);
 
         if ($exception instanceof CakeException && $isDebug) {
             $this->controller->set($this->error->getAttributes());
@@ -321,7 +321,7 @@ class ExceptionRenderer
         $this->controller->subDir = null;
         $this->controller->viewPath = 'Error';
         $this->controller->layout = 'error';
-        $this->controller->helpers = array('Form', 'Html', 'Session');
+        $this->controller->helpers = ['Form', 'Html', 'Session'];
 
         $view = $this->controller->createView();
         $this->controller->response->body($view->render($template, 'error'));

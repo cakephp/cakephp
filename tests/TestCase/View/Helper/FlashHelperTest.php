@@ -43,31 +43,31 @@ class FlashHelperTest extends TestCase
         $this->View->request = new Request(['session' => $session]);
         $this->Flash = new FlashHelper($this->View);
 
-        $session->write(array(
-            'Flash' => array(
-                'flash' => array(
+        $session->write([
+            'Flash' => [
+                'flash' => [
                     'key' => 'flash',
                     'message' => 'This is a calling',
                     'element' => 'Flash/default',
-                    'params' => array()
-                ),
-                'notification' => array(
+                    'params' => []
+                ],
+                'notification' => [
                     'key' => 'notification',
                     'message' => 'This is a test of the emergency broadcasting system',
                     'element' => 'flash_helper',
-                    'params' => array(
+                    'params' => [
                         'title' => 'Notice!',
                         'name' => 'Alert!'
-                    )
-                ),
-                'classy' => array(
+                    ]
+                ],
+                'classy' => [
                     'key' => 'classy',
                     'message' => 'Recorded',
                     'element' => 'flash_classy',
-                    'params' => array()
-                )
-            )
-        ));
+                    'params' => []
+                ]
+            ]
+        ]);
     }
 
     /**
@@ -126,10 +126,10 @@ class FlashHelperTest extends TestCase
      */
     public function testFlashElementInAttrs()
     {
-        $result = $this->Flash->render('notification', array(
+        $result = $this->Flash->render('notification', [
             'element' => 'flash_helper',
-            'params' => array('title' => 'Notice!', 'name' => 'Alert!')
-        ));
+            'params' => ['title' => 'Notice!', 'name' => 'Alert!']
+        ]);
 
         $expected = [
             'div' => ['id' => 'notificationLayout'],
@@ -150,7 +150,7 @@ class FlashHelperTest extends TestCase
     {
         Plugin::load('TestPlugin');
 
-        $result = $this->Flash->render('flash', array('element' => 'TestPlugin.Flash/plugin_element'));
+        $result = $this->Flash->render('flash', ['element' => 'TestPlugin.Flash/plugin_element']);
         $expected = 'this is the plugin element';
         $this->assertEquals($expected, $result);
     }

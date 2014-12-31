@@ -125,7 +125,7 @@ class Digest
         }
 
         $authHeader = 'Digest ';
-        $authHeader .= 'username="' . str_replace(array('\\', '"'), array('\\\\', '\\"'), $credentials['username']) . '", ';
+        $authHeader .= 'username="' . str_replace(['\\', '"'], ['\\\\', '\\"'], $credentials['username']) . '", ';
         $authHeader .= 'realm="' . $credentials['realm'] . '", ';
         $authHeader .= 'nonce="' . $credentials['nonce'] . '", ';
         $authHeader .= 'uri="' . $path . '", ';

@@ -105,7 +105,7 @@ You can also add some CSS styles for your pages at: APP/webroot/css.;
         echo $this->Html->link(
             '<strong>New</strong> CakePHP 3.0 Docs',
             'http://book.cakephp.org/3.0/en/',
-            array('target' => '_blank', 'escape' => false)
+            ['target' => '_blank', 'escape' => false]
         );
     ?>
 </p>
@@ -114,7 +114,7 @@ You can also add some CSS styles for your pages at: APP/webroot/css.;
         echo $this->Html->link(
             'The 15 min Blog Tutorial',
             'http://book.cakephp.org/3.0/en/getting-started.html#blog-tutorial',
-            array('target' => '_blank', 'escape' => false)
+            ['target' => '_blank', 'escape' => false]
         );
     ?>
 </p>

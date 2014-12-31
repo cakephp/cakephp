@@ -98,21 +98,21 @@ class TimeTest extends TestCase
      */
     public static function timeAgoProvider()
     {
-        return array(
-            array('-12 seconds', '12 seconds ago'),
-            array('-12 minutes', '12 minutes ago'),
-            array('-2 hours', '2 hours ago'),
-            array('-1 day', '1 day ago'),
-            array('-2 days', '2 days ago'),
-            array('-2 days -3 hours', '2 days, 3 hours ago'),
-            array('-1 week', '1 week ago'),
-            array('-2 weeks -2 days', '2 weeks, 2 days ago'),
-            array('+1 week', '1 week'),
-            array('+1 week 1 day', '1 week, 1 day'),
-            array('+2 weeks 2 day', '2 weeks, 2 days'),
-            array('2007-9-24', 'on 9/24/07'),
-            array('now', 'just now'),
-        );
+        return [
+            ['-12 seconds', '12 seconds ago'],
+            ['-12 minutes', '12 minutes ago'],
+            ['-2 hours', '2 hours ago'],
+            ['-1 day', '1 day ago'],
+            ['-2 days', '2 days ago'],
+            ['-2 days -3 hours', '2 days, 3 hours ago'],
+            ['-1 week', '1 week ago'],
+            ['-2 weeks -2 days', '2 weeks, 2 days ago'],
+            ['+1 week', '1 week'],
+            ['+1 week 1 day', '1 week, 1 day'],
+            ['+2 weeks 2 day', '2 weeks, 2 days'],
+            ['2007-9-24', 'on 9/24/07'],
+            ['now', 'just now'],
+        ];
     }
 
     /**
@@ -135,43 +135,43 @@ class TimeTest extends TestCase
      */
     public function timeAgoEndProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 '+4 months +2 weeks +3 days',
                 '4 months, 2 weeks, 3 days',
                 '8 years'
-            ),
-            array(
+            ],
+            [
                 '+4 months +2 weeks +1 day',
                 '4 months, 2 weeks, 1 day',
                 '8 years'
-            ),
-            array(
+            ],
+            [
                 '+3 months +2 weeks',
                 '3 months, 2 weeks',
                 '8 years'
-            ),
-            array(
+            ],
+            [
                 '+3 months +2 weeks +1 day',
                 '3 months, 2 weeks, 1 day',
                 '8 years'
-            ),
-            array(
+            ],
+            [
                 '+1 months +1 week +1 day',
                 '1 month, 1 week, 1 day',
                 '8 years'
-            ),
-            array(
+            ],
+            [
                 '+2 months +2 days',
                 '2 months, 2 days',
                 '+2 months +2 days'
-            ),
-            array(
+            ],
+            [
                 '+2 months +12 days',
                 '2 months, 1 week, 5 days',
                 '3 months'
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -183,7 +183,7 @@ class TimeTest extends TestCase
     public function testTimeAgoInWordsEnd($input, $expected, $end)
     {
         $time = new Time($input);
-        $result = $time->timeAgoInWords(array('end' => $end));
+        $result = $time->timeAgoInWords(['end' => $end]);
         $this->assertEquals($expected, $result);
     }
 
@@ -195,20 +195,20 @@ class TimeTest extends TestCase
     public function testTimeAgoInWordsCustomStrings()
     {
         $time = new Time('-8 years -4 months -2 weeks -3 days');
-        $result = $time->timeAgoInWords(array(
+        $result = $time->timeAgoInWords([
             'relativeString' => 'at least %s ago',
-            'accuracy' => array('year' => 'year'),
+            'accuracy' => ['year' => 'year'],
             'end' => '+10 years'
-        ));
+        ]);
         $expected = 'at least 8 years ago';
         $this->assertEquals($expected, $result);
 
         $time = new Time('+4 months +2 weeks +3 days');
-        $result = $time->timeAgoInWords(array(
+        $result = $time->timeAgoInWords([
             'absoluteString' => 'exactly on %s',
-            'accuracy' => array('year' => 'year'),
+            'accuracy' => ['year' => 'year'],
             'end' => '+2 months'
-        ));
+        ]);
         $expected = 'exactly on ' . date('n/j/y', strtotime('+4 months +2 weeks +3 days'));
         $this->assertEquals($expected, $result);
     }
@@ -221,56 +221,56 @@ class TimeTest extends TestCase
     public function testTimeAgoInWordsAccuracy()
     {
         $time = new Time('+8 years +4 months +2 weeks +3 days');
-        $result = $time->timeAgoInWords(array(
-            'accuracy' => array('year' => 'year'),
+        $result = $time->timeAgoInWords([
+            'accuracy' => ['year' => 'year'],
             'end' => '+10 years'
-        ));
+        ]);
         $expected = '8 years';
         $this->assertEquals($expected, $result);
 
         $time = new Time('+8 years +4 months +2 weeks +3 days');
-        $result = $time->timeAgoInWords(array(
-            'accuracy' => array('year' => 'month'),
+        $result = $time->timeAgoInWords([
+            'accuracy' => ['year' => 'month'],
             'end' => '+10 years'
-        ));
+        ]);
         $expected = '8 years, 4 months';
         $this->assertEquals($expected, $result);
 
         $time = new Time('+8 years +4 months +2 weeks +3 days');
-        $result = $time->timeAgoInWords(array(
-            'accuracy' => array('year' => 'week'),
+        $result = $time->timeAgoInWords([
+            'accuracy' => ['year' => 'week'],
             'end' => '+10 years'
-        ));
+        ]);
         $expected = '8 years, 4 months, 2 weeks';
         $this->assertEquals($expected, $result);
 
         $time = new Time('+8 years +4 months +2 weeks +3 days');
-        $result = $time->timeAgoInWords(array(
-            'accuracy' => array('year' => 'day'),
+        $result = $time->timeAgoInWords([
+            'accuracy' => ['year' => 'day'],
             'end' => '+10 years'
-        ));
+        ]);
         $expected = '8 years, 4 months, 2 weeks, 3 days';
         $this->assertEquals($expected, $result);
 
         $time = new Time('+1 years +5 weeks');
-        $result = $time->timeAgoInWords(array(
-            'accuracy' => array('year' => 'year'),
+        $result = $time->timeAgoInWords([
+            'accuracy' => ['year' => 'year'],
             'end' => '+10 years'
-        ));
+        ]);
         $expected = '1 year';
         $this->assertEquals($expected, $result);
 
         $time = new Time('+58 minutes');
-        $result = $time->timeAgoInWords(array(
+        $result = $time->timeAgoInWords([
             'accuracy' => 'hour'
-        ));
+        ]);
         $expected = 'in about an hour';
         $this->assertEquals($expected, $result);
 
         $time = new Time('+23 hours');
-        $result = $time->timeAgoInWords(array(
+        $result = $time->timeAgoInWords([
             'accuracy' => 'day'
-        ));
+        ]);
         $expected = 'in about a day';
         $this->assertEquals($expected, $result);
     }
@@ -283,19 +283,19 @@ class TimeTest extends TestCase
     public function testTimeAgoInWordsWithFormat()
     {
         $time = new Time('2007-9-25');
-        $result = $time->timeAgoInWords(array('format' => 'yyyy-MM-dd'));
+        $result = $time->timeAgoInWords(['format' => 'yyyy-MM-dd']);
         $this->assertEquals('on 2007-09-25', $result);
 
         $time = new Time('2007-9-25');
-        $result = $time->timeAgoInWords(array('format' => 'yyyy-MM-dd'));
+        $result = $time->timeAgoInWords(['format' => 'yyyy-MM-dd']);
         $this->assertEquals('on 2007-09-25', $result);
 
         $time = new Time('+2 weeks +2 days');
-        $result = $time->timeAgoInWords(array('format' => 'yyyy-MM-dd'));
+        $result = $time->timeAgoInWords(['format' => 'yyyy-MM-dd']);
         $this->assertRegExp('/^2 weeks, [1|2] day(s)?$/', $result);
 
         $time = new Time('+2 months +2 days');
-        $result = $time->timeAgoInWords(array('end' => '1 month', 'format' => 'yyyy-MM-dd'));
+        $result = $time->timeAgoInWords(['end' => '1 month', 'format' => 'yyyy-MM-dd']);
         $this->assertEquals('on ' . date('Y-m-d', strtotime('+2 months +2 days')), $result);
     }
 
@@ -307,23 +307,23 @@ class TimeTest extends TestCase
     public function testTimeAgoInWordsNegativeValues()
     {
         $time = new Time('-2 months -2 days');
-        $result = $time->timeAgoInWords(array('end' => '3 month'));
+        $result = $time->timeAgoInWords(['end' => '3 month']);
         $this->assertEquals('2 months, 2 days ago', $result);
 
         $time = new Time('-2 months -2 days');
-        $result = $time->timeAgoInWords(array('end' => '3 month'));
+        $result = $time->timeAgoInWords(['end' => '3 month']);
         $this->assertEquals('2 months, 2 days ago', $result);
 
         $time = new Time('-2 months -2 days');
-        $result = $time->timeAgoInWords(array('end' => '1 month', 'format' => 'YYYY-MM-dd'));
+        $result = $time->timeAgoInWords(['end' => '1 month', 'format' => 'YYYY-MM-dd']);
         $this->assertEquals('on ' . date('Y-m-d', strtotime('-2 months -2 days')), $result);
 
         $time = new Time('-2 years -5 months -2 days');
-        $result = $time->timeAgoInWords(array('end' => '3 years'));
+        $result = $time->timeAgoInWords(['end' => '3 years']);
         $this->assertEquals('2 years, 5 months, 2 days ago', $result);
 
         $time = new Time('-2 weeks -2 days');
-        $result = $time->timeAgoInWords(array('format' => 'YYYY-MM-dd'));
+        $result = $time->timeAgoInWords(['format' => 'YYYY-MM-dd']);
         $this->assertEquals('2 weeks, 2 days ago', $result);
 
         $time = new Time('-3 years -12 months');
@@ -333,27 +333,27 @@ class TimeTest extends TestCase
 
         $time = new Time('-1 month -1 week -6 days');
         $result = $time->timeAgoInWords(
-            array('end' => '1 year', 'accuracy' => array('month' => 'month'))
+            ['end' => '1 year', 'accuracy' => ['month' => 'month']]
         );
         $this->assertEquals('1 month ago', $result);
 
         $time = new Time('-1 years -2 weeks -3 days');
         $result = $time->timeAgoInWords(
-            array('accuracy' => array('year' => 'year'))
+            ['accuracy' => ['year' => 'year']]
         );
         $expected = 'on ' . $time->format('n/j/y');
         $this->assertEquals($expected, $result);
 
         $time = new Time('-13 months -5 days');
-        $result = $time->timeAgoInWords(array('end' => '2 years'));
+        $result = $time->timeAgoInWords(['end' => '2 years']);
         $this->assertEquals('1 year, 1 month, 5 days ago', $result);
 
         $time = new Time('-58 minutes');
-        $result = $time->timeAgoInWords(array('accuracy' => 'hour'));
+        $result = $time->timeAgoInWords(['accuracy' => 'hour']);
         $this->assertEquals('about an hour ago', $result);
 
         $time = new Time('-23 hours');
-        $result = $time->timeAgoInWords(array('accuracy' => 'day'));
+        $result = $time->timeAgoInWords(['accuracy' => 'day']);
         $this->assertEquals('about a day ago', $result);
     }
 

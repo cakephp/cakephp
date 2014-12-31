@@ -17,7 +17,7 @@
 // -------------------------------------
 // Roles
 // -------------------------------------
-$config['roles'] = array(
+$config['roles'] = [
     'Role/admin' => null,
     'Role/data_acquirer' => null,
     'Role/accounting' => null,
@@ -26,10 +26,10 @@ $config['roles'] = array(
     'Role/data_analyst' => 'Role/data_acquirer, Role/database_manager',
     'Role/reports' => 'Role/data_analyst',
     // allow inherited roles to be defined as an array or comma separated list
-    'Role/manager' => array(
+    'Role/manager' => [
         'Role/accounting',
         'Role/sales',
-    ),
+    ],
     'Role/accounting_manager' => 'Role/accounting',
     // managers
     'User/hardy' => 'Role/accounting_manager, Role/reports',
@@ -42,12 +42,12 @@ $config['roles'] = array(
     // database
     'User/db_manager_1' => 'Role/database_manager',
     'User/db_manager_2' => 'Role/database_manager',
-);
+];
 
 //-------------------------------------
 // Rules
 //-------------------------------------
-$config['rules']['allow'] = array(
+$config['rules']['allow'] = [
     '/*' => 'Role/admin',
     '/controllers/*/manager_*' => 'Role/manager',
     '/controllers/reports/*' => 'Role/sales',
@@ -58,12 +58,12 @@ $config['rules']['allow'] = array(
     '/controllers/users/dashboard' => 'Role/default',
     // test for case insensitivity
     'controllers/Forms/NEW' => 'Role/data_acquirer',
-);
-$config['rules']['deny'] = array(
+];
+$config['rules']['deny'] = [
     // accountants and sales should not delete anything
-    '/controllers/*/delete' => array(
+    '/controllers/*/delete' => [
         'Role/sales',
         'Role/accounting'
-    ),
+    ],
     '/controllers/db/drop' => 'User/db_manager_2',
-);
+];

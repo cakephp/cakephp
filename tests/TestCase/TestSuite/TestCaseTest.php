@@ -70,47 +70,47 @@ class TestCaseTest extends TestCase
     public function testAssertHtmlQuoting()
     {
         $input = '<a href="/test.html" class="active">My link</a>';
-        $pattern = array(
-            'a' => array('href' => '/test.html', 'class' => 'active'),
+        $pattern = [
+            'a' => ['href' => '/test.html', 'class' => 'active'],
             'My link',
             '/a'
-        );
+        ];
         $this->assertHtml($pattern, $input);
 
         $input = "<a href='/test.html' class='active'>My link</a>";
-        $pattern = array(
-            'a' => array('href' => '/test.html', 'class' => 'active'),
+        $pattern = [
+            'a' => ['href' => '/test.html', 'class' => 'active'],
             'My link',
             '/a'
-        );
+        ];
         $this->assertHtml($pattern, $input);
 
         $input = "<a href='/test.html' class='active'>My link</a>";
-        $pattern = array(
-            'a' => array('href' => 'preg:/.*\.html/', 'class' => 'active'),
+        $pattern = [
+            'a' => ['href' => 'preg:/.*\.html/', 'class' => 'active'],
             'My link',
             '/a'
-        );
+        ];
         $this->assertHtml($pattern, $input);
 
         $input = "<span><strong>Text</strong></span>";
-        $pattern = array(
+        $pattern = [
             '<span',
             '<strong',
             'Text',
             '/strong',
             '/span'
-        );
+        ];
         $this->assertHtml($pattern, $input);
 
         $input = "<span class='active'><strong>Text</strong></span>";
-        $pattern = array(
-            'span' => array('class'),
+        $pattern = [
+            'span' => ['class'],
             '<strong',
             'Text',
             '/strong',
             '/span'
-        );
+        ];
         $this->assertHtml($pattern, $input);
     }
 
@@ -121,8 +121,8 @@ class TestCaseTest extends TestCase
      */
     public function testAssertHtmlRuntimeComplexity()
     {
-        $pattern = array(
-            'div' => array(
+        $pattern = [
+            'div' => [
                 'attr1' => 'val1',
                 'attr2' => 'val2',
                 'attr3' => 'val3',
@@ -131,10 +131,10 @@ class TestCaseTest extends TestCase
                 'attr6' => 'val6',
                 'attr7' => 'val7',
                 'attr8' => 'val8',
-            ),
+            ],
             'My div',
             '/div'
-        );
+        ];
         $input = '<div attr8="val8" attr6="val6" attr4="val4" attr2="val2"' .
             ' attr1="val1" attr3="val3" attr5="val5" attr7="val7" />' .
             'My div' .
@@ -369,13 +369,13 @@ class TestCaseTest extends TestCase
     {
         Configure::write('App.namespace', 'TestApp');
         $Posts = $this->getMockForModel('Posts');
-        $entity = new \Cake\ORM\Entity(array());
+        $entity = new \Cake\ORM\Entity([]);
 
         $this->assertInstanceOf('TestApp\Model\Table\PostsTable', $Posts);
         $this->assertNull($Posts->save($entity));
         $this->assertNull($Posts->table());
 
-        $Posts = $this->getMockForModel('Posts', array('save'));
+        $Posts = $this->getMockForModel('Posts', ['save']);
         $Posts->expects($this->at(0))
             ->method('save')
             ->will($this->returnValue('mocked'));
@@ -399,7 +399,7 @@ class TestCaseTest extends TestCase
     {
         ConnectionManager::alias('test', 'secondary');
 
-        $post = $this->getMockForModel(__NAMESPACE__ . '\SecondaryPostsTable', array('save'));
+        $post = $this->getMockForModel(__NAMESPACE__ . '\SecondaryPostsTable', ['save']);
         $this->assertEquals('test', $post->connection()->configName());
     }
 
@@ -417,7 +417,7 @@ class TestCaseTest extends TestCase
         $result = TableRegistry::get('TestPlugin.TestPluginComments');
         $this->assertInstanceOf('TestPlugin\Model\Table\TestPluginCommentsTable', $result);
 
-        $TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComments', array('save'));
+        $TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComments', ['save']);
 
         $this->assertInstanceOf('TestPlugin\Model\Table\TestPluginCommentsTable', $TestPluginComment);
         $this->assertEquals('\Cake\ORM\Entity', $TestPluginComment->entityClass());
@@ -428,11 +428,11 @@ class TestCaseTest extends TestCase
             ->method('save')
             ->will($this->returnValue(false));
 
-        $entity = new \Cake\ORM\Entity(array());
+        $entity = new \Cake\ORM\Entity([]);
         $this->assertTrue($TestPluginComment->save($entity));
         $this->assertFalse($TestPluginComment->save($entity));
 
-        $TestPluginAuthors = $this->getMockForModel('TestPlugin.Authors', array('doSomething'));
+        $TestPluginAuthors = $this->getMockForModel('TestPlugin.Authors', ['doSomething']);
         $this->assertInstanceOf('TestPlugin\Model\Table\AuthorsTable', $TestPluginAuthors);
         $this->assertEquals('TestPlugin\Model\Entity\Author', $TestPluginAuthors->entityClass());
     }
@@ -446,8 +446,8 @@ class TestCaseTest extends TestCase
     {
         $Mock = $this->getMockForModel(
             'Table',
-            array('save'),
-            array('alias' => 'Comments', 'className' => '\Cake\ORM\Table')
+            ['save'],
+            ['alias' => 'Comments', 'className' => '\Cake\ORM\Table']
         );
 
         $result = TableRegistry::get('Comments');
@@ -461,7 +461,7 @@ class TestCaseTest extends TestCase
             ->method('save')
             ->will($this->returnValue(false));
 
-        $entity = new \Cake\ORM\Entity(array());
+        $entity = new \Cake\ORM\Entity([]);
         $this->assertTrue($Mock->save($entity));
         $this->assertFalse($Mock->save($entity));
     }

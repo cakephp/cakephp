@@ -64,7 +64,7 @@ class SyslogLog extends BaseLog
      *
      * @var array
      */
-    protected $_levelMap = array(
+    protected $_levelMap = [
         'emergency' => LOG_EMERG,
         'alert' => LOG_ALERT,
         'critical' => LOG_CRIT,
@@ -73,7 +73,7 @@ class SyslogLog extends BaseLog
         'notice' => LOG_NOTICE,
         'info' => LOG_INFO,
         'debug' => LOG_DEBUG
-    );
+    ];
 
     /**
      * Whether the logger connection is open or not

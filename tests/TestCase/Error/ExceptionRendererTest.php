@@ -79,14 +79,14 @@ class TestErrorController extends Controller
      *
      * @var array
      */
-    public $uses = array();
+    public $uses = [];
 
     /**
      * components property
      *
      * @return void
      */
-    public $components = array('Blueberry');
+    public $components = ['Blueberry'];
 
     /**
      * beforeRender method
@@ -185,7 +185,7 @@ class ExceptionRendererTest extends TestCase
      */
     protected function _mockResponse($error)
     {
-        $error->controller->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
+        $error->controller->response = $this->getMock('Cake\Network\Response', ['_sendHeader']);
         return $error;
     }
 
@@ -306,7 +306,7 @@ class ExceptionRendererTest extends TestCase
     {
         $exception = new MissingWidgetThingException('coding fail.');
         $ExceptionRenderer = new ExceptionRenderer($exception);
-        $ExceptionRenderer->controller->response = $this->getMock('Cake\Network\Response', array('statusCode', '_sendHeader'));
+        $ExceptionRenderer->controller->response = $this->getMock('Cake\Network\Response', ['statusCode', '_sendHeader']);
         $ExceptionRenderer->controller->response->expects($this->once())->method('statusCode')->with(404);
 
         $result = $ExceptionRenderer->render();
@@ -324,7 +324,7 @@ class ExceptionRendererTest extends TestCase
     {
         $exception = new \OutOfBoundsException('foul ball.');
         $ExceptionRenderer = new ExceptionRenderer($exception);
-        $ExceptionRenderer->controller->response = $this->getMock('Cake\Network\Response', array('statusCode', '_sendHeader'));
+        $ExceptionRenderer->controller->response = $this->getMock('Cake\Network\Response', ['statusCode', '_sendHeader']);
         $ExceptionRenderer->controller->response->expects($this->once())
             ->method('statusCode')
             ->with(500);
@@ -345,7 +345,7 @@ class ExceptionRendererTest extends TestCase
 
         $exception = new \OutOfBoundsException('foul ball.');
         $ExceptionRenderer = new ExceptionRenderer($exception);
-        $ExceptionRenderer->controller->response = $this->getMock('Cake\Network\Response', array('statusCode', '_sendHeader'));
+        $ExceptionRenderer->controller->response = $this->getMock('Cake\Network\Response', ['statusCode', '_sendHeader']);
         $ExceptionRenderer->controller->response->expects($this->once())
             ->method('statusCode')
             ->with(500);
@@ -365,7 +365,7 @@ class ExceptionRendererTest extends TestCase
     {
         $exception = new \OutOfBoundsException('foul ball.', 501);
         $ExceptionRenderer = new ExceptionRenderer($exception);
-        $ExceptionRenderer->controller->response = $this->getMock('Cake\Network\Response', array('statusCode', '_sendHeader'));
+        $ExceptionRenderer->controller->response = $this->getMock('Cake\Network\Response', ['statusCode', '_sendHeader']);
         $ExceptionRenderer->controller->response->expects($this->once())->method('statusCode')->with(501);
 
         $result = $ExceptionRenderer->render();
@@ -387,7 +387,7 @@ class ExceptionRendererTest extends TestCase
 
         $exception = new NotFoundException('Custom message');
         $ExceptionRenderer = new ExceptionRenderer($exception);
-        $ExceptionRenderer->controller->response = $this->getMock('Cake\Network\Response', array('statusCode', '_sendHeader'));
+        $ExceptionRenderer->controller->response = $this->getMock('Cake\Network\Response', ['statusCode', '_sendHeader']);
         $ExceptionRenderer->controller->response->expects($this->once())->method('statusCode')->with(404);
 
         $result = $ExceptionRenderer->render()->body();
@@ -411,7 +411,7 @@ class ExceptionRendererTest extends TestCase
         $result = $ExceptionRenderer->render();
         $this->assertContains('Custom message', $result->body());
 
-        $exception = new MissingActionException(array('controller' => 'PostsController', 'action' => 'index'));
+        $exception = new MissingActionException(['controller' => 'PostsController', 'action' => 'index']);
         $ExceptionRenderer = $this->_mockResponse(new ExceptionRenderer($exception));
 
         $result = $ExceptionRenderer->render();
@@ -448,7 +448,7 @@ class ExceptionRendererTest extends TestCase
     {
         $exception = new InternalErrorException('An Internal Error Has Occurred.');
         $ExceptionRenderer = new ExceptionRenderer($exception);
-        $ExceptionRenderer->controller->response = $this->getMock('Cake\Network\Response', array('statusCode', '_sendHeader'));
+        $ExceptionRenderer->controller->response = $this->getMock('Cake\Network\Response', ['statusCode', '_sendHeader']);
         $ExceptionRenderer->controller->response->expects($this->once())->method('statusCode')->with(500);
 
         $result = $ExceptionRenderer->render();
@@ -464,7 +464,7 @@ class ExceptionRendererTest extends TestCase
     public function testExceptionResponseHeader()
     {
         $exception = new MethodNotAllowedException('Only allowing POST and DELETE');
-        $exception->responseHeader(array('Allow: POST, DELETE'));
+        $exception->responseHeader(['Allow: POST, DELETE']);
         $ExceptionRenderer = new ExceptionRenderer($exception);
 
         $result = $ExceptionRenderer->render();
@@ -480,11 +480,11 @@ class ExceptionRendererTest extends TestCase
      */
     public function testMissingController()
     {
-        $exception = new MissingControllerException(array(
+        $exception = new MissingControllerException([
             'class' => 'Posts',
             'prefix' => '',
             'plugin' => '',
-        ));
+        ]);
         $ExceptionRenderer = $this->_mockResponse(new MyCustomExceptionRenderer($exception));
 
         $result = $ExceptionRenderer->render()->body();
@@ -501,99 +501,99 @@ class ExceptionRendererTest extends TestCase
      */
     public static function exceptionProvider()
     {
-        return array(
-            array(
-                new MissingActionException(array(
+        return [
+            [
+                new MissingActionException([
                     'controller' => 'PostsController',
                     'action' => 'index',
                     'prefix' => '',
                     'plugin' => '',
-                )),
-                array(
+                ]),
+                [
                     '/Missing Method in PostsController/',
                     '/<em>PostsController::index\(\)<\/em>/'
-                ),
+                ],
                 404
-            ),
-            array(
-                new MissingTemplateException(array('file' => '/posts/about.ctp')),
-                array(
+            ],
+            [
+                new MissingTemplateException(['file' => '/posts/about.ctp']),
+                [
                     "/posts\/about.ctp/"
-                ),
+                ],
                 500
-            ),
-            array(
-                new MissingLayoutException(array('file' => 'layouts/my_layout.ctp')),
-                array(
+            ],
+            [
+                new MissingLayoutException(['file' => 'layouts/my_layout.ctp']),
+                [
                     "/Missing Layout/",
                     "/layouts\/my_layout.ctp/"
-                ),
+                ],
                 500
-            ),
-            array(
-                new MissingHelperException(array('class' => 'MyCustomHelper')),
-                array(
+            ],
+            [
+                new MissingHelperException(['class' => 'MyCustomHelper']),
+                [
                     '/Missing Helper/',
                     '/<em>MyCustomHelper<\/em> could not be found./',
                     '/Create the class <em>MyCustomHelper<\/em> below in file:/',
                     '/(\/|\\\)MyCustomHelper.php/'
-                ),
+                ],
                 500
-            ),
-            array(
-                new MissingBehaviorException(array('class' => 'MyCustomBehavior')),
-                array(
+            ],
+            [
+                new MissingBehaviorException(['class' => 'MyCustomBehavior']),
+                [
                     '/Missing Behavior/',
                     '/Create the class <em>MyCustomBehavior<\/em> below in file:/',
                     '/(\/|\\\)MyCustomBehavior.php/'
-                ),
+                ],
                 500
-            ),
-            array(
-                new MissingComponentException(array('class' => 'SideboxComponent')),
-                array(
+            ],
+            [
+                new MissingComponentException(['class' => 'SideboxComponent']),
+                [
                     '/Missing Component/',
                     '/Create the class <em>SideboxComponent<\/em> below in file:/',
                     '/(\/|\\\)SideboxComponent.php/'
-                ),
+                ],
                 500
-            ),
-            array(
-                new MissingDatasourceConfigException(array('name' => 'MyDatasourceConfig')),
-                array(
+            ],
+            [
+                new MissingDatasourceConfigException(['name' => 'MyDatasourceConfig']),
+                [
                     '/Missing Datasource Configuration/',
                     '/<em>MyDatasourceConfig<\/em> was not found/'
-                ),
+                ],
                 500
-            ),
-            array(
-                new MissingDatasourceException(array('class' => 'MyDatasource', 'plugin' => 'MyPlugin')),
-                array(
+            ],
+            [
+                new MissingDatasourceException(['class' => 'MyDatasource', 'plugin' => 'MyPlugin']),
+                [
                     '/Missing Datasource/',
                     '/<em>MyPlugin.MyDatasource<\/em> could not be found./'
-                ),
+                ],
                 500
-            ),
-            array(
+            ],
+            [
                 new \Exception('boom'),
-                array(
+                [
                     '/Internal Error/'
-                ),
+                ],
                 500
-            ),
-            array(
+            ],
+            [
                 new \RuntimeException('another boom'),
-                array(
+                [
                     '/Internal Error/'
-                ),
+                ],
                 500
-            ),
-            array(
+            ],
+            [
                 new \Cake\Core\Exception\Exception('base class'),
-                array('/Internal Error/'),
+                ['/Internal Error/'],
                 500
-            )
-        );
+            ]
+        ];
     }
 
     /**
@@ -605,7 +605,7 @@ class ExceptionRendererTest extends TestCase
     public function testCakeExceptionHandling($exception, $patterns, $code)
     {
         $ExceptionRenderer = new ExceptionRenderer($exception);
-        $ExceptionRenderer->controller->response = $this->getMock('Cake\Network\Response', array('statusCode', '_sendHeader'));
+        $ExceptionRenderer->controller->response = $this->getMock('Cake\Network\Response', ['statusCode', '_sendHeader']);
         $ExceptionRenderer->controller->response->expects($this->once())
             ->method('statusCode')
             ->with($code);
@@ -624,11 +624,11 @@ class ExceptionRendererTest extends TestCase
      */
     public function testMissingRenderSafe()
     {
-        $exception = new MissingHelperException(array('class' => 'Fail'));
+        $exception = new MissingHelperException(['class' => 'Fail']);
         $ExceptionRenderer = new ExceptionRenderer($exception);
 
-        $ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', array('render'));
-        $ExceptionRenderer->controller->helpers = array('Fail', 'Boom');
+        $ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', ['render']);
+        $ExceptionRenderer->controller->helpers = ['Fail', 'Boom'];
         $ExceptionRenderer->controller->request = new Request;
         $ExceptionRenderer->controller->expects($this->at(0))
             ->method('render')
@@ -643,7 +643,7 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer->controller->response = $response;
         $ExceptionRenderer->render();
         sort($ExceptionRenderer->controller->helpers);
-        $this->assertEquals(array('Form', 'Html', 'Session'), $ExceptionRenderer->controller->helpers);
+        $this->assertEquals(['Form', 'Html', 'Session'], $ExceptionRenderer->controller->helpers);
     }
 
     /**
@@ -656,7 +656,7 @@ class ExceptionRendererTest extends TestCase
         $exception = new NotFoundException('Not there, sorry');
         $ExceptionRenderer = new ExceptionRenderer($exception);
 
-        $ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', array('beforeRender'));
+        $ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', ['beforeRender']);
         $ExceptionRenderer->controller->request = new Request;
         $ExceptionRenderer->controller->expects($this->any())
             ->method('beforeRender')
@@ -681,8 +681,8 @@ class ExceptionRendererTest extends TestCase
         $exception = new NotFoundException();
         $ExceptionRenderer = new ExceptionRenderer($exception);
 
-        $ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', array('render'));
-        $ExceptionRenderer->controller->helpers = array('Fail', 'Boom');
+        $ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', ['render']);
+        $ExceptionRenderer->controller->helpers = ['Fail', 'Boom'];
         $ExceptionRenderer->controller->layoutPath = 'boom';
         $ExceptionRenderer->controller->subDir = 'boom';
         $ExceptionRenderer->controller->request = new Request;
@@ -718,11 +718,11 @@ class ExceptionRendererTest extends TestCase
         $exception = new NotFoundException();
         $ExceptionRenderer = new ExceptionRenderer($exception);
 
-        $ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', array('render'));
+        $ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', ['render']);
         $ExceptionRenderer->controller->plugin = 'TestPlugin';
         $ExceptionRenderer->controller->request = $this->getMock('Cake\Network\Request');
 
-        $exception = new MissingPluginException(array('plugin' => 'TestPlugin'));
+        $exception = new MissingPluginException(['plugin' => 'TestPlugin']);
         $ExceptionRenderer->controller->expects($this->once())
             ->method('render')
             ->with('error400')
@@ -751,11 +751,11 @@ class ExceptionRendererTest extends TestCase
         $exception = new NotFoundException();
         $ExceptionRenderer = new ExceptionRenderer($exception);
 
-        $ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', array('render'));
+        $ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', ['render']);
         $ExceptionRenderer->controller->plugin = 'TestPlugin';
         $ExceptionRenderer->controller->request = $this->getMock('Cake\Network\Request');
 
-        $exception = new MissingPluginException(array('plugin' => 'TestPluginTwo'));
+        $exception = new MissingPluginException(['plugin' => 'TestPluginTwo']);
         $ExceptionRenderer->controller->expects($this->once())
             ->method('render')
             ->with('error400')
@@ -848,9 +848,9 @@ class ExceptionRendererTest extends TestCase
     {
         $exception = new \PDOException('There was an error in the SQL query');
         $exception->queryString = 'SELECT * from poo_query < 5 and :seven';
-        $exception->params = array('seven' => 7);
+        $exception->params = ['seven' => 7];
         $ExceptionRenderer = new ExceptionRenderer($exception);
-        $ExceptionRenderer->controller->response = $this->getMock('Cake\Network\Response', array('statusCode', '_sendHeader'));
+        $ExceptionRenderer->controller->response = $this->getMock('Cake\Network\Response', ['statusCode', '_sendHeader']);
         $ExceptionRenderer->controller->response->expects($this->once())->method('statusCode')->with(500);
 
         $result = $ExceptionRenderer->render()->body();

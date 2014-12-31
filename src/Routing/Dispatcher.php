@@ -76,12 +76,12 @@ class Dispatcher
         }
 
         if (!($controller instanceof Controller)) {
-            throw new MissingControllerException(array(
+            throw new MissingControllerException([
                 'class' => $request->params['controller'],
                 'plugin' => empty($request->params['plugin']) ? null : $request->params['plugin'],
                 'prefix' => empty($request->params['prefix']) ? null : $request->params['prefix'],
                 '_ext' => empty($request->params['_ext']) ? null : $request->params['_ext']
-            ));
+            ]);
         }
 
         $response = $this->_invoke($controller);

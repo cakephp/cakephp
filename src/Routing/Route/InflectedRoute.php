@@ -66,7 +66,7 @@ class InflectedRoute extends Route
      *   directory.
      * @return mixed either false or a string URL.
      */
-    public function match(array $url, array $context = array())
+    public function match(array $url, array $context = [])
     {
         $url = $this->_underscore($url);
         if (!$this->_inflectedDefaults) {

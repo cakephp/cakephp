@@ -140,7 +140,7 @@ class HelperRegistry extends ObjectRegistry
     protected function _create($class, $alias, $settings)
     {
         $instance = new $class($this->_View, $settings);
-        $vars = array('request', 'theme', 'plugin');
+        $vars = ['request', 'theme', 'plugin'];
         foreach ($vars as $var) {
             $instance->{$var} = $this->_View->{$var};
         }

@@ -36,7 +36,7 @@ class ControllerAuthorizeTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->controller = $this->getMock('Cake\Controller\Controller', array('isAuthorized'), array(), '', false);
+        $this->controller = $this->getMock('Cake\Controller\Controller', ['isAuthorized'], [], '', false);
         $this->components = $this->getMock('Cake\Controller\ComponentRegistry');
         $this->components->expects($this->any())
             ->method('getController')
@@ -70,7 +70,7 @@ class ControllerAuthorizeTest extends TestCase
      */
     public function testAuthorizeFailure()
     {
-        $user = array();
+        $user = [];
         $request = new Request('/posts/index');
         $this->assertFalse($this->auth->authorize($user, $request));
     }
@@ -82,7 +82,7 @@ class ControllerAuthorizeTest extends TestCase
      */
     public function testAuthorizeSuccess()
     {
-        $user = array('User' => array('username' => 'mark'));
+        $user = ['User' => ['username' => 'mark']];
         $request = new Request('/posts/index');
 
         $this->controller->expects($this->once())

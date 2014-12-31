@@ -77,14 +77,14 @@ class FileTest extends TestCase
         $this->assertEquals($expecting, $result);
 
         $result = $this->File->info();
-        $expecting = array(
+        $expecting = [
             'dirname' => dirname($file),
             'basename' => basename($file),
             'extension' => 'txt',
             'filename' => 'LICENSE',
             'filesize' => filesize($file),
             'mime' => 'text/plain'
-        );
+        ];
         if (!function_exists('finfo_open') &&
             (!function_exists('mime_content_type') ||
             function_exists('mime_content_type') &&
@@ -422,7 +422,7 @@ class FileTest extends TestCase
         $this->assertFalse(file_exists($tmpFile));
         $this->assertFalse(is_resource($TmpFile->handle));
 
-        $testData = array('CakePHP\'s', ' test suite', ' was here ...', '');
+        $testData = ['CakePHP\'s', ' test suite', ' was here ...', ''];
         foreach ($testData as $data) {
             $r = $TmpFile->write($data);
             $this->assertTrue($r);
@@ -452,7 +452,7 @@ class FileTest extends TestCase
         $TmpFile = new File($tmpFile);
         $this->assertFalse(file_exists($tmpFile));
 
-        $fragments = array('CakePHP\'s', ' test suite', ' was here ...');
+        $fragments = ['CakePHP\'s', ' test suite', ' was here ...'];
         $data = null;
         $size = 0;
         foreach ($fragments as $fragment) {
@@ -608,8 +608,8 @@ class FileTest extends TestCase
         $contents = $TmpFile->read();
         $this->assertContains($expected, $contents);
 
-        $search = array('This is the', 'welcome.php file', 'in tmp directory');
-        $replace = array('This should be a', 'welcome.tmp file', 'in the Lib directory');
+        $search = ['This is the', 'welcome.php file', 'in tmp directory'];
+        $replace = ['This should be a', 'welcome.tmp file', 'in the Lib directory'];
 
         // Replace the contents of the tempory file
         $result = $TmpFile->replaceText($search, $replace);

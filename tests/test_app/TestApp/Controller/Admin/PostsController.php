@@ -28,7 +28,7 @@ class PostsController extends Controller
      *
      * @var array
      */
-    public $components = array();
+    public $components = [];
 
     /**
      * index action

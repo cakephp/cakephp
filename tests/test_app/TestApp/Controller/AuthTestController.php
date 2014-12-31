@@ -28,7 +28,7 @@ class AuthTestController extends Controller
      *
      * @var array
      */
-    public $components = array('Auth');
+    public $components = ['Auth'];
 
     /**
      * testUrl property

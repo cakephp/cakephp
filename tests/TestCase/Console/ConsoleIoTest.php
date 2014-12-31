@@ -137,19 +137,19 @@ class ConsoleIoTest extends TestCase
 
         $this->out->expects($this->at(1))
             ->method('write')
-            ->with(array('Just', 'a', 'test'), 1);
+            ->with(['Just', 'a', 'test'], 1);
 
         $this->out->expects($this->at(2))
             ->method('write')
-            ->with(array('Just', 'a', 'test'), 2);
+            ->with(['Just', 'a', 'test'], 2);
 
         $this->out->expects($this->at(3))
             ->method('write')
             ->with('', 1);
 
         $this->io->out('Just a test');
-        $this->io->out(array('Just', 'a', 'test'));
-        $this->io->out(array('Just', 'a', 'test'), 2);
+        $this->io->out(['Just', 'a', 'test']);
+        $this->io->out(['Just', 'a', 'test'], 2);
         $this->io->out();
     }
 
@@ -234,19 +234,19 @@ class ConsoleIoTest extends TestCase
 
         $this->err->expects($this->at(1))
             ->method('write')
-            ->with(array('Just', 'a', 'test'), 1);
+            ->with(['Just', 'a', 'test'], 1);
 
         $this->err->expects($this->at(2))
             ->method('write')
-            ->with(array('Just', 'a', 'test'), 2);
+            ->with(['Just', 'a', 'test'], 2);
 
         $this->err->expects($this->at(3))
             ->method('write')
             ->with('', 1);
 
         $this->io->err('Just a test');
-        $this->io->err(array('Just', 'a', 'test'));
-        $this->io->err(array('Just', 'a', 'test'), 2);
+        $this->io->err(['Just', 'a', 'test']);
+        $this->io->err(['Just', 'a', 'test'], 2);
         $this->io->err();
     }
 

@@ -76,7 +76,7 @@ class UrlHelperTest extends TestCase
         $result = $this->Helper->build('/controller/action/1?one=1&two=2');
         $this->assertEquals('/controller/action/1?one=1&amp;two=2', $result);
 
-        $result = $this->Helper->build(array('controller' => 'posts', 'action' => 'index', 'page' => '1" onclick="alert(\'XSS\');"'));
+        $result = $this->Helper->build(['controller' => 'posts', 'action' => 'index', 'page' => '1" onclick="alert(\'XSS\');"']);
         $this->assertEquals("/posts/index?page=1%22+onclick%3D%22alert%28%27XSS%27%29%3B%22", $result);
 
         $result = $this->Helper->build('/controller/action/1/param:this+one+more');
@@ -88,15 +88,15 @@ class UrlHelperTest extends TestCase
         $result = $this->Helper->build('/controller/action/1/param:%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24');
         $this->assertEquals('/controller/action/1/param:%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24', $result);
 
-        $result = $this->Helper->build(array(
+        $result = $this->Helper->build([
             'controller' => 'posts', 'action' => 'index', 'param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24'
-        ));
+        ]);
         $this->assertEquals("/posts/index?param=%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524", $result);
 
-        $result = $this->Helper->build(array(
+        $result = $this->Helper->build([
             'controller' => 'posts', 'action' => 'index', 'page' => '1',
-            '?' => array('one' => 'value', 'two' => 'value', 'three' => 'purple')
-        ));
+            '?' => ['one' => 'value', 'two' => 'value', 'three' => 'purple']
+        ]);
         $this->assertEquals("/posts/index?page=1&amp;one=value&amp;two=value&amp;three=purple", $result);
     }
 
@@ -150,31 +150,31 @@ class UrlHelperTest extends TestCase
 
         $this->Helper->webroot = '';
         $result = $this->Helper->assetUrl(
-            array(
+            [
                 'controller' => 'js',
                 'action' => 'post',
                 '_ext' => 'js'
-            ),
-            array('fullBase' => true)
+            ],
+            ['fullBase' => true]
         );
         $this->assertEquals(Router::fullBaseUrl() . '/js/post.js', $result);
 
-        $result = $this->Helper->assetUrl('foo.jpg', array('pathPrefix' => 'img/'));
+        $result = $this->Helper->assetUrl('foo.jpg', ['pathPrefix' => 'img/']);
         $this->assertEquals('img/foo.jpg', $result);
 
-        $result = $this->Helper->assetUrl('foo.jpg', array('fullBase' => true));
+        $result = $this->Helper->assetUrl('foo.jpg', ['fullBase' => true]);
         $this->assertEquals(Router::fullBaseUrl() . '/foo.jpg', $result);
 
-        $result = $this->Helper->assetUrl('style', array('ext' => '.css'));
+        $result = $this->Helper->assetUrl('style', ['ext' => '.css']);
         $this->assertEquals('style.css', $result);
 
-        $result = $this->Helper->assetUrl('dir/sub dir/my image', array('ext' => '.jpg'));
+        $result = $this->Helper->assetUrl('dir/sub dir/my image', ['ext' => '.jpg']);
         $this->assertEquals('dir/sub%20dir/my%20image.jpg', $result);
 
         $result = $this->Helper->assetUrl('foo.jpg?one=two&three=four');
         $this->assertEquals('foo.jpg?one=two&amp;three=four', $result);
 
-        $result = $this->Helper->assetUrl('dir/big+tall/image', array('ext' => '.jpg'));
+        $result = $this->Helper->assetUrl('dir/big+tall/image', ['ext' => '.jpg']);
         $this->assertEquals('dir/big%2Btall/image.jpg', $result);
     }
 
@@ -185,12 +185,12 @@ class UrlHelperTest extends TestCase
      */
     public function testAssetUrlNoRewrite()
     {
-        $this->Helper->request->addPaths(array(
+        $this->Helper->request->addPaths([
             'base' => '/cake_dev/index.php',
             'webroot' => '/cake_dev/app/webroot/',
             'here' => '/cake_dev/index.php/tasks',
-        ));
-        $result = $this->Helper->assetUrl('img/cake.icon.png', array('fullBase' => true));
+        ]);
+        $result = $this->Helper->assetUrl('img/cake.icon.png', ['fullBase' => true]);
         $expected = Configure::read('App.fullBaseUrl') . '/cake_dev/app/webroot/img/cake.icon.png';
         $this->assertEquals($expected, $result);
     }
@@ -205,10 +205,10 @@ class UrlHelperTest extends TestCase
         $this->Helper->webroot = '';
         Plugin::load('TestPlugin');
 
-        $result = $this->Helper->assetUrl('TestPlugin.style', array('ext' => '.css'));
+        $result = $this->Helper->assetUrl('TestPlugin.style', ['ext' => '.css']);
         $this->assertEquals('test_plugin/style.css', $result);
 
-        $result = $this->Helper->assetUrl('TestPlugin.style', array('ext' => '.css', 'plugin' => false));
+        $result = $this->Helper->assetUrl('TestPlugin.style', ['ext' => '.css', 'plugin' => false]);
         $this->assertEquals('TestPlugin.style.css', $result);
 
         Plugin::unload('TestPlugin');
@@ -224,7 +224,7 @@ class UrlHelperTest extends TestCase
         $this->Helper->webroot = '';
         Configure::write('Asset.timestamp', 'force');
 
-        $result = $this->Helper->assetUrl('cake.generic.css', array('pathPrefix' => Configure::read('App.cssBaseUrl')));
+        $result = $this->Helper->assetUrl('cake.generic.css', ['pathPrefix' => Configure::read('App.cssBaseUrl')]);
         $this->assertRegExp('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
     }
 
@@ -236,7 +236,7 @@ class UrlHelperTest extends TestCase
     public function testAssetTimestampPluginsAndThemes()
     {
         Configure::write('Asset.timestamp', 'force');
-        Plugin::load(array('TestPlugin'));
+        Plugin::load(['TestPlugin']);
 
         $result = $this->Helper->assetTimestamp('/test_plugin/css/test_plugin_asset.css');
         $this->assertRegExp('#/test_plugin/css/test_plugin_asset.css\?[0-9]+$#', $result, 'Missing timestamp plugin');

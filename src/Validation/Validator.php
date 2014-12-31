@@ -521,7 +521,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
         }
 
         $newRecord = $context['newRecord'];
-        if (in_array($allowed, array('create', 'update'), true)) {
+        if (in_array($allowed, ['create', 'update'], true)) {
             $allowed = (
                 ($allowed === 'create' && $newRecord) ||
                 ($allowed === 'update' && !$newRecord)

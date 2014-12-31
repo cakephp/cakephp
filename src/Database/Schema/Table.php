@@ -238,7 +238,7 @@ class Table
      * @param string $table The table name.
      * @param array $columns The list of columns for the schema.
      */
-    public function __construct($table, array $columns = array())
+    public function __construct($table, array $columns = [])
     {
         $this->_table = $table;
         foreach ($columns as $field => $definition) {

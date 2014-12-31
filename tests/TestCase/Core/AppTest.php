@@ -151,21 +151,21 @@ class AppTest extends TestCase
     public function testCore()
     {
         $model = App::core('Model');
-        $this->assertEquals(array(CAKE . 'Model' . DS), $model);
+        $this->assertEquals([CAKE . 'Model' . DS], $model);
 
         $view = App::core('View');
-        $this->assertEquals(array(CAKE . 'View' . DS), $view);
+        $this->assertEquals([CAKE . 'View' . DS], $view);
 
         $controller = App::core('Controller');
-        $this->assertEquals(array(CAKE . 'Controller' . DS), $controller);
+        $this->assertEquals([CAKE . 'Controller' . DS], $controller);
 
         $component = App::core('Controller/Component');
-        $this->assertEquals(array(CAKE . 'Controller' . DS . 'Component' . DS), str_replace('/', DS, $component));
+        $this->assertEquals([CAKE . 'Controller' . DS . 'Component' . DS], str_replace('/', DS, $component));
 
         $auth = App::core('Controller/Component/Auth');
-        $this->assertEquals(array(CAKE . 'Controller' . DS . 'Component' . DS . 'Auth' . DS), str_replace('/', DS, $auth));
+        $this->assertEquals([CAKE . 'Controller' . DS . 'Component' . DS . 'Auth' . DS], str_replace('/', DS, $auth));
 
         $datasource = App::core('Model/Datasource');
-        $this->assertEquals(array(CAKE . 'Model' . DS . 'Datasource' . DS), str_replace('/', DS, $datasource));
+        $this->assertEquals([CAKE . 'Model' . DS . 'Datasource' . DS], str_replace('/', DS, $datasource));
     }
 }

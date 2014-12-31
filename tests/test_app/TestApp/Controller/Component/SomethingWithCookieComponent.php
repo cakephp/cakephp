@@ -27,5 +27,5 @@ class SomethingWithCookieComponent extends Component
      *
      * @var array
      */
-    public $components = array('Cookie');
+    public $components = ['Cookie'];
 }

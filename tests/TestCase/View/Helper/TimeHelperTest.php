@@ -53,51 +53,51 @@ class TimeHelperTest extends TestCase
     {
         $Time = new TimeHelper($this->View);
         $timestamp = strtotime('+8 years, +4 months +2 weeks +3 days');
-        $result = $Time->timeAgoInWords($timestamp, array(
+        $result = $Time->timeAgoInWords($timestamp, [
             'end' => '1 years',
             'element' => 'span'
-        ));
-        $expected = array(
-            'span' => array(
+        ]);
+        $expected = [
+            'span' => [
                 'title' => $timestamp,
                 'class' => 'time-ago-in-words'
-            ),
+            ],
             'on ' . date('n/j/y', $timestamp),
             '/span'
-        );
+        ];
         $this->assertHtml($expected, $result);
 
-        $result = $Time->timeAgoInWords($timestamp, array(
+        $result = $Time->timeAgoInWords($timestamp, [
             'end' => '1 years',
-            'element' => array(
+            'element' => [
                 'title' => 'testing',
                 'rel' => 'test'
-            )
-        ));
-        $expected = array(
-            'span' => array(
+            ]
+        ]);
+        $expected = [
+            'span' => [
                 'title' => 'testing',
                 'class' => 'time-ago-in-words',
                 'rel' => 'test'
-            ),
+            ],
             'on ' . date('n/j/y', $timestamp),
             '/span'
-        );
+        ];
         $this->assertHtml($expected, $result);
 
         $timestamp = strtotime('+2 weeks');
         $result = $Time->timeAgoInWords(
             $timestamp,
-            array('end' => '1 years', 'element' => 'div')
+            ['end' => '1 years', 'element' => 'div']
         );
-        $expected = array(
-            'div' => array(
+        $expected = [
+            'div' => [
                 'title' => $timestamp,
                 'class' => 'time-ago-in-words'
-            ),
+            ],
             '2 weeks',
             '/div'
-        );
+        ];
         $this->assertHtml($expected, $result);
     }
 
@@ -158,7 +158,7 @@ class TimeHelperTest extends TestCase
         $time = strtotime($date);
         $this->assertEquals(date('r', $time), $this->Time->toRss($time));
 
-        $timezones = array('Europe/London', 'Europe/Brussels', 'UTC', 'America/Denver', 'America/Caracas', 'Asia/Kathmandu');
+        $timezones = ['Europe/London', 'Europe/Brussels', 'UTC', 'America/Denver', 'America/Caracas', 'Asia/Kathmandu'];
         foreach ($timezones as $timezone) {
             $yourTimezone = new \DateTimeZone($timezone);
             $yourTime = new \DateTime($date, $yourTimezone);
@@ -237,11 +237,11 @@ class TimeHelperTest extends TestCase
     public function testIsThisWeek()
     {
         // A map of days which goes from -1 day of week to +1 day of week
-        $map = array(
-            'Mon' => array(-1, 7), 'Tue' => array(-2, 6), 'Wed' => array(-3, 5),
-            'Thu' => array(-4, 4), 'Fri' => array(-5, 3), 'Sat' => array(-6, 2),
-            'Sun' => array(-7, 1)
-        );
+        $map = [
+            'Mon' => [-1, 7], 'Tue' => [-2, 6], 'Wed' => [-3, 5],
+            'Thu' => [-4, 4], 'Fri' => [-5, 3], 'Sat' => [-6, 2],
+            'Sun' => [-7, 1]
+        ];
         $days = $map[date('D')];
 
         for ($day = $days[0] + 1; $day < $days[1]; $day++) {

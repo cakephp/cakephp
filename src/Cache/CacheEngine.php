@@ -107,7 +107,7 @@ abstract class CacheEngine
      */
     public function writeMany($data)
     {
-        $return = array();
+        $return = [];
         foreach ($data as $key => $value) {
             $return[$key] = $this->write($key, $value);
         }
@@ -131,7 +131,7 @@ abstract class CacheEngine
      */
     public function readMany($keys)
     {
-        $return = array();
+        $return = [];
         foreach ($keys as $key) {
             $return[$key] = $this->read($key);
         }
@@ -173,7 +173,7 @@ abstract class CacheEngine
      */
     public function deleteMany($keys)
     {
-        $return = array();
+        $return = [];
         foreach ($keys as $key) {
             $return[$key] = $this->delete($key);
         }

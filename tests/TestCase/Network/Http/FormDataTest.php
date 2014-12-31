@@ -66,7 +66,7 @@ class FormDataTest extends TestCase
         $this->assertCount(4, $data);
         $boundary = $data->boundary();
         $result = (string)$data;
-        $expected = array(
+        $expected = [
             '--' . $boundary,
             'Content-Disposition: form-data; name="test"',
             '',
@@ -86,7 +86,7 @@ class FormDataTest extends TestCase
             '--' . $boundary . '--',
             '',
             '',
-        );
+        ];
         $this->assertEquals(implode("\r\n", $expected), $result);
     }
 
@@ -106,7 +106,7 @@ class FormDataTest extends TestCase
         $boundary = $data->boundary();
         $result = (string)$data;
 
-        $expected = array(
+        $expected = [
             '--' . $boundary,
             'Content-Disposition: form-data; name="Article[title]"',
             '',
@@ -126,7 +126,7 @@ class FormDataTest extends TestCase
             '--' . $boundary . '--',
             '',
             '',
-        );
+        ];
         $this->assertEquals(implode("\r\n", $expected), $result);
     }
 
@@ -148,7 +148,7 @@ class FormDataTest extends TestCase
         $boundary = $data->boundary();
         $result = (string)$data;
 
-        $expected = array(
+        $expected = [
             '--' . $boundary,
             'Content-Disposition: form-data; name="Article[title]"',
             '',
@@ -161,7 +161,7 @@ class FormDataTest extends TestCase
             '--' . $boundary . '--',
             '',
             '',
-        );
+        ];
         $this->assertEquals(implode("\r\n", $expected), $result);
     }
 
@@ -180,7 +180,7 @@ class FormDataTest extends TestCase
         $boundary = $data->boundary();
         $result = (string)$data;
 
-        $expected = array(
+        $expected = [
             '--' . $boundary,
             'Content-Disposition: form-data; name="upload"; filename="VERSION.txt"',
             'Content-Type: text/plain; charset=us-ascii',
@@ -189,7 +189,7 @@ class FormDataTest extends TestCase
             '--' . $boundary . '--',
             '',
             ''
-        );
+        ];
         $this->assertEquals(implode("\r\n", $expected), $result);
     }
 
@@ -211,7 +211,7 @@ class FormDataTest extends TestCase
         rewind($fh);
         $contents = stream_get_contents($fh);
 
-        $expected = array(
+        $expected = [
             '--' . $boundary,
             'Content-Disposition: form-data; name="upload"',
             'Content-Type: application/octet-stream',
@@ -220,7 +220,7 @@ class FormDataTest extends TestCase
             '--' . $boundary . '--',
             '',
             ''
-        );
+        ];
         $this->assertEquals(implode("\r\n", $expected), $result);
     }
 }

@@ -26,7 +26,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable
      *
      * @var array
      */
-    protected $_rules = array();
+    protected $_rules = [];
 
     /**
      * Denotes whether the fieldname key must be present in data array

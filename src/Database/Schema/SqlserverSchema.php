@@ -75,7 +75,7 @@ class SqlserverSchema extends BaseSchema
     protected function _convertColumn($col, $length = null, $precision = null, $scale = null)
     {
         $col = strtolower($col);
-        if (in_array($col, array('date', 'time'))) {
+        if (in_array($col, ['date', 'time'])) {
             return ['type' => $col, 'length' => null];
         }
         if (strpos($col, 'datetime') !== false) {
