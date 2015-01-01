@@ -832,23 +832,6 @@ class View
     }
 
     /**
-     * Alias for loadHelper() for backwards compatibility.
-     *
-     * @param string $helperName Name of the helper to load.
-     * @param array $config Settings for the helper
-     * @return Helper a constructed helper object.
-     * @deprecated 3.0.0 Use loadHelper() instead.
-     */
-    public function addHelper($helperName, array $config = [])
-    {
-        trigger_error(
-            'addHelper() is deprecated, use loadHelper() instead.',
-            E_USER_DEPRECATED
-        );
-        return $this->loadHelper($helperName, $config);
-    }
-
-    /**
      * Loads a helper. Delegates to the `HelperRegistry::load()` to load the helper
      *
      * @param string $name Name of the helper to load.

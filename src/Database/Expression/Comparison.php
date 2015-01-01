@@ -76,19 +76,6 @@ class Comparison implements ExpressionInterface, FieldInterface
      *
      * @param mixed $value The value to compare
      * @return void
-     * @deprecated 3.0.0 Will be removed in 3.0.0 stable. Use setValue() instead.
-     */
-    public function value($value)
-    {
-        trigger_error('value() has been deprecated. Use setValue() instead.', E_USER_WARNING);
-        return $this->setValue($value);
-    }
-
-    /**
-     * Sets the value
-     *
-     * @param mixed $value The value to compare
-     * @return void
      */
     public function setValue($value)
     {

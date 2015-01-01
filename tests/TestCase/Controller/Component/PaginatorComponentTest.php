@@ -763,19 +763,6 @@ class PaginatorComponentTest extends TestCase
     }
 
     /**
-     * test paginate() and custom find with deprecated option.
-     *
-     * @expectedException \PHPUnit_Framework_Error_Deprecated
-     * @return void
-     */
-    public function testPaginateCustomFindOldOption()
-    {
-        $this->loadFixtures('Posts');
-        $table = TableRegistry::get('PaginatorPosts');
-        $this->Paginator->paginate($table, ['findType' => 'published']);
-    }
-
-    /**
      * test paginate() and custom find with fields array, to make sure the correct count is returned.
      *
      * @return void

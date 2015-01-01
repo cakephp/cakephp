@@ -317,23 +317,6 @@ class Controller implements EventListenerInterface
     }
 
     /**
-     * Alias for loadComponent() for backwards compatibility.
-     *
-     * @param string $name The name of the component to load.
-     * @param array $config The config for the component.
-     * @return \Cake\Controller\Component
-     * @deprecated 3.0.0 Use loadComponent() instead.
-     */
-    public function addComponent($name, array $config = [])
-    {
-        trigger_error(
-            'addComponent() is deprecated, use loadComponent() instead.',
-            E_USER_DEPRECATED
-        );
-        return $this->loadComponent($name, $config);
-    }
-
-    /**
      * Add a component to the controller's registry.
      *
      * This method will also set the component to a property.
@@ -451,22 +434,6 @@ class Controller implements EventListenerInterface
             'Controller.beforeRedirect' => 'beforeRedirect',
             'Controller.shutdown' => 'afterFilter',
         ];
-    }
-
-    /**
-     * No-op for backwards compatibility.
-     *
-     * The code that used to live here is now in Controller::__construct().
-     *
-     * @deprecated 3.0.0 Will be removed in 3.0.0.
-     * @return void
-     */
-    public function constructClasses()
-    {
-        trigger_error(
-            'Controller::constructClasses() is deprecated and will be removed in the first RC release',
-            E_USER_DEPRECATED
-        );
     }
 
     /**

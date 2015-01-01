@@ -180,17 +180,6 @@ abstract class ObjectRegistry
      */
     public function loaded()
     {
-        if (func_num_args() > 0) {
-            $class = get_class($this);
-            trigger_error(
-                sprintf(
-                    "%s::loaded() doesn't take object name as argument any more. Use %s::has() instead.",
-                    $class,
-                    $class
-                ),
-                E_USER_ERROR
-            );
-        }
         return array_keys($this->_loaded);
     }
 

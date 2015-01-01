@@ -227,11 +227,6 @@ class PaginatorComponent extends Component
      */
     protected function _extractFinder($options)
     {
-        if (!isset($options['finder']) && isset($options['findType'])) {
-            trigger_error('You should use finder instead of findType', E_USER_DEPRECATED);
-            $options['finder'] = $options['findType'];
-        }
-
         $type = !empty($options['finder']) ? $options['finder'] : 'all';
         unset($options['finder'], $options['maxLimit']);
 
