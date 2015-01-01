@@ -172,7 +172,7 @@ class TreeBehaviorTest extends TestCase
     /**
      * Tests that find('children') will throw an exception if the node was not found
      *
-     * @expectedException \Cake\ORM\Exception\RecordNotFoundException
+     * @expectedException \Cake\Datasource\Exception\RecordNotFoundException
      * @return void
      */
     public function testFindChildrenException()

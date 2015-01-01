@@ -15,22 +15,4 @@
 
 define('TIME_START', microtime(true));
 
-// Compatibility aliases. These will be removed for the first RC release.
-class_alias('Cake\Error\Debugger', 'Cake\Utility\Debugger');
-class_alias('Cake\Core\Configure\Engine\PhpConfig', 'Cake\Configure\Engine\PhpConfig');
-class_alias('Cake\Core\Configure\Engine\IniConfig', 'Cake\Configure\Engine\IniConfig');
-class_alias('Cake\Datasource\Exception\RecordNotFoundException', 'Cake\ORM\Exception\RecordNotFoundException');
-class_alias('Cake\ORM\Exception\RecordNotFoundException', 'Cake\ORM\Error\RecordNotFoundException');
-class_alias('Cake\Network\Exception\BadRequestException', 'Cake\Error\BadRequestException');
-class_alias('Cake\Network\Exception\ForbiddenException', 'Cake\Error\ForbiddenException');
-class_alias('Cake\Network\Exception\MethodNotAllowedException', 'Cake\Error\MethodNotAllowedException');
-class_alias('Cake\Network\Exception\NotFoundException', 'Cake\Error\NotFoundException');
-class_alias('Cake\Network\Exception\NotImplementedException', 'Cake\Error\NotImplementedException');
-class_alias('Cake\Network\Exception\SocketException', 'Cake\Error\SocketException');
-class_alias('Cake\Network\Exception\UnauthorizedException', 'Cake\Error\UnauthorizedException');
-class_alias('Cake\Filesystem\File', 'Cake\Utility\File');
-class_alias('Cake\Filesystem\Folder', 'Cake\Utility\Folder');
-class_alias('Cake\I18n\Time', 'Cake\Utility\Time');
-class_alias('Cake\I18n\Number', 'Cake\Utility\Number');
-
 require CAKE . 'basics.php';

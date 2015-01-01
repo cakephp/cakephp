@@ -196,83 +196,6 @@ class Debugger
     }
 
     /**
-     * Overrides PHP's default error handling.
-     *
-     * @param int $code Code of error
-     * @param string $description Error description
-     * @param string|null $file File on which error occurred
-     * @param int|null $line Line that triggered the error
-     * @param array|null $context Context
-     * @return bool true if error was handled
-     * @deprecated 3.0.0 Will be removed in 3.0. This function is superseded by Debugger::outputError().
-     */
-    public static function showError($code, $description, $file = null, $line = null, $context = null)
-    {
-        $self = Debugger::getInstance();
-
-        if (empty($file)) {
-            $file = '[internal]';
-        }
-        if (empty($line)) {
-            $line = '??';
-        }
-
-        $info = compact('code', 'description', 'file', 'line');
-        if (!in_array($info, $self->errors)) {
-            $self->errors[] = $info;
-        } else {
-            return;
-        }
-
-        switch ($code) {
-            case E_PARSE:
-            case E_ERROR:
-            case E_CORE_ERROR:
-            case E_COMPILE_ERROR:
-            case E_USER_ERROR:
-                $error = 'Fatal Error';
-                $level = LOG_ERR;
-                break;
-            case E_WARNING:
-            case E_USER_WARNING:
-            case E_COMPILE_WARNING:
-            case E_RECOVERABLE_ERROR:
-                $error = 'Warning';
-                $level = LOG_WARNING;
-                break;
-            case E_NOTICE:
-            case E_USER_NOTICE:
-                $error = 'Notice';
-                $level = LOG_NOTICE;
-                break;
-            case E_DEPRECATED:
-            case E_USER_DEPRECATED:
-                $error = 'Deprecated';
-                $level = LOG_NOTICE;
-                break;
-            default:
-                return;
-        }
-
-        $data = compact(
-            'level',
-            'error',
-            'code',
-            'description',
-            'file',
-            'path',
-            'line',
-            'context'
-        );
-        echo $self->outputError($data);
-
-        if ($error === 'Fatal Error') {
-            exit();
-        }
-        return true;
-    }
-
-    /**
      * Outputs a stack trace based on the supplied options.
      *
      * ### Options
@@ -704,39 +627,6 @@ class Debugger
             $self->_templates[$format] = $strings;
         }
         return $self->_templates[$format];
-    }
-
-    /**
-     * Switches output format, updates format strings.
-     * Can be used to switch the active output format:
-     *
-     * @param string $format Format to use, including 'js' for JavaScript-enhanced HTML, 'html' for
-     *    straight HTML output, or 'txt' for unformatted text.
-     * @param array $strings Template strings to be used for the output format.
-     * @return string
-     * @deprecated 3.0.0 Use Debugger::outputAs() and Debugger::addFormat(). Will be removed
-     *   in 3.0
-     */
-    public static function output($format = null, $strings = [])
-    {
-        $self = Debugger::getInstance();
-        $data = null;
-
-        if ($format === null) {
-            return Debugger::outputAs();
-        }
-
-        if (!empty($strings)) {
-            return Debugger::addFormat($format, $strings);
-        }
-
-        if ($format === true && !empty($self->_data)) {
-            $data = $self->_data;
-            $self->_data = [];
-            $format = false;
-        }
-        Debugger::outputAs($format);
-        return $data;
     }
 
     /**

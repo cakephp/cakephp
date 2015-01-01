@@ -733,24 +733,6 @@ class Router
     }
 
     /**
-     * Deprecated method for backwards compatibility.
-     *
-     * @param string|array $extensions List of extensions to be added.
-     * @param bool $merge Whether to merge with or override existing extensions.
-     *   Defaults to `true`.
-     * @return array Extensions list.
-     * @deprecated 3.0.0 Use Router::extensions() instead.
-     */
-    public static function parseExtensions($extensions = null, $merge = true)
-    {
-        trigger_error(
-            'Router::parseExtensions() is deprecated should use Router::extensions() instead.',
-            E_USER_DEPRECATED
-        );
-        return static::extensions($extensions, $merge);
-    }
-
-    /**
      * Get or set valid extensions for all routes connected later.
      *
      * Instructs the router to parse out file extensions

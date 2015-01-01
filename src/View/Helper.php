@@ -142,16 +142,13 @@ class Helper implements EventListenerInterface
      * Lazy loads helpers.
      *
      * @param string $name Name of the property being accessed.
-     * @return mixed Helper or property found at $name
-     * @deprecated Accessing request properties through this method is deprecated and will be removed in 3.0.
+     * @return \Cake\View\Helper|void Helper instance if helper with provided name exists
      */
     public function __get($name)
     {
         if (isset($this->_helperMap[$name]) && !isset($this->{$name})) {
             $config = ['enabled' => false] + (array)$this->_helperMap[$name]['config'];
             $this->{$name} = $this->_View->loadHelper($this->_helperMap[$name]['class'], $config);
-        }
-        if (isset($this->{$name})) {
             return $this->{$name};
         }
     }

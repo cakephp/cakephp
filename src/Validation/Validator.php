@@ -346,22 +346,6 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
     }
 
     /**
-     * Sets whether a field is required to be present in data array.
-     *
-     * Alias for requirePresence().
-     *
-     * @param string $field the name of the field
-     * @param bool|string $mode Valid values are true, false, 'create', 'update'
-     * @param string|null $message The message to show if the field presence validation fails.
-     * @return $this
-     * @deprecated 3.0.0 Will be removed in 3.0.0.
-     */
-    public function validatePresence($field, $mode = true, $message = null)
-    {
-        return $this->requirePresence($field, $mode, $message);
-    }
-
-    /**
      * Allows a field to be empty.
      *
      * This is the opposite of notEmpty() which requires a field to not be empty.

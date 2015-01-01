@@ -15,7 +15,7 @@
 namespace Cake\Test\TestCase\Network;
 
 use Cake\Core\Configure;
-use Cake\Error;
+use Cake\Network\Exception;
 use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\Routing\Dispatcher;
@@ -2375,7 +2375,7 @@ XML;
         try {
             $request->allowMethod(['POST', 'DELETE']);
             $this->fail('An expected exception has not been raised.');
-        } catch (Error\MethodNotAllowedException $e) {
+        } catch (Exception\MethodNotAllowedException $e) {
             $this->assertEquals(['Allow' => 'POST, DELETE'], $e->responseHeader());
         }
 
