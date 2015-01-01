@@ -147,13 +147,82 @@ class DebuggerTest extends TestCase
     }
 
     /**
+     * Tests that changes in output formats using Debugger::output() change the templates used.
+     *
+     * @return void
+     */
+    public function testAddFormat()
+    {
+        Debugger::addFormat('js', array(
+            'traceLine' => '{:reference} - <a href="txmt://open?url=file://{:file}' .
+                '&line={:line}">{:path}</a>, line {:line}'
+        ));
+        Debugger::outputAs('js');
+
+        $result = Debugger::trace();
+        $this->assertRegExp('/' . preg_quote('txmt://open?url=file://', '/') . '(\/|[A-Z]:\\\\)' . '/', $result);
+
+        Debugger::addFormat('xml', array(
+            'error' => '<error><code>{:code}</code><file>{:file}</file><line>{:line}</line>' .
+                '{:description}</error>',
+        ));
+        Debugger::outputAs('xml');
+
+        ob_start();
+        $debugger = Debugger::getInstance();
+        $debugger->outputError([
+            'level' => E_NOTICE,
+            'code' => E_NOTICE,
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'description' => 'Undefined variable: foo',
+        ]);
+        $result = ob_get_clean();
+
+        $expected = array(
+            '<error',
+            '<code', '8', '/code',
+            '<file', 'preg:/[^<]+/', '/file',
+            '<line', '' . ((int)__LINE__ - 9), '/line',
+            'preg:/Undefined variable:\s+foo/',
+            '/error'
+        );
+        $this->assertHtml($expected, $result, true);
+    }
+
+    /**
+     * Test adding a format that is handled by a callback.
+     *
+     * @return void
+     */
+    public function testAddFormatCallback()
+    {
+        Debugger::addFormat('callback', array('callback' => array($this, 'customFormat')));
+        Debugger::outputAs('callback');
+
+        ob_start();
+        $debugger = Debugger::getInstance();
+        $debugger->outputError([
+            'error' => 'Notice',
+            'code' => E_NOTICE,
+            'level' => E_NOTICE,
+            'description' => 'Undefined variable $foo',
+            'file' => __FILE__,
+            'line' => __LINE__,
+        ]);
+        $result = ob_get_clean();
+        $this->assertContains('Notice: I eated an error', $result);
+        $this->assertContains('DebuggerTest.php', $result);
+    }
+
+    /**
      * Test method for testing addFormat with callbacks.
      *
      * @return void
      */
     public function customFormat($error, $strings)
     {
-        return $error['error'] . ': I eated an error ' . $error['file'];
+        echo $error['error'] . ': I eated an error ' . $error['file'];
     }
 
     /**
