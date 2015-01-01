@@ -325,7 +325,9 @@ A number of commonly used functions can be created with the func() method:
 * `dateDiff()` Get the difference between two dates/times. The arguments are treated as bound parameters unless marked as literal.
 * `now()` Take either ‘time’ or ‘date’ as an argument allowing you to get either the current time, or current date.
 
-When providing arguments for SQL functions, there are two kinds of parameters you can use, literal arguments and bound parameters. Literal parameters allow you to reference columns or other SQL literals. Bound parameters can be used to safely add user data to SQL functions. For example:
+When providing arguments for SQL functions, there are two kinds of parameters you can use, literal arguments and bound parameters. Literal
+parameters allow you to reference columns or other SQL literals. Bound parameters can be used to safely add user data to SQL functions.
+For example:
 
 ```php
 $concat = $query->func()->concat([
