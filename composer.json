@@ -56,6 +56,7 @@
 		"cakephp/utility": "self.version",
 		"cakephp/core": "self.version",
 		"cakephp/datasource": "self.version",
+		"cakephp/database": "self.version",
 		"cakephp/cache": "self.version",
 		"cakephp/log": "self.version"
 	}
