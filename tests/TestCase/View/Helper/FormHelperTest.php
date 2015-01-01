@@ -5172,7 +5172,7 @@ class FormHelperTest extends TestCase
     {
         extract($this->dateRegex);
 
-        $result = $this->Form->day('Model.field', array('value' => false));
+        $result = $this->Form->day('Model.field', array('value' => ''));
         $expected = array(
             array('select' => array('name' => 'Model[field][day]')),
             array('option' => array('selected' => 'selected', 'value' => '')),
