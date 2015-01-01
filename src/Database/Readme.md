@@ -77,5 +77,64 @@ $statement = $connection->execute('SELECT * FROM articles');
 while($row = $statement->fetch('assoc')) {
 	echo $row['title'] . PHP_EOL;
 }
+```
+Binding values to parametrized arguments is also possible with the execute function:
 
+```php
+$statement = $connection->execute('SELECT * FROM articles WHERE id = :id', ['id' => 1], ['id' => 'integer']);
+$results = $statement->fetch('assoc');
+```
+
+The third parameter is the types the passed values should be converted to when passed to the database. If
+no types are passed, all arguments will be interpreted as a string.
+
+Alternatively you can construct a statement manually and then fetch rows from it:
+
+```php
+$statement = $connection->prepare('SELECT * from articles WHERE id != :id');
+$statement->bind(['id' => 1], ['id' => 'integer']);
+$results $statement->fetchAll('assoc');
+```
+
+The default types that are understood by this library and can be passed to the `bind()` function or to `execute()`
+are:
+
+* biginteger
+* binary
+* date
+* float
+* decimal
+* integer
+* time
+* datetime
+* timestamp
+* uuid
+
+More types can be added dynamically, but it will be explained shortly after.
+
+### Updating Rows
+
+Updating can be done using the `update()` function in the connection object. In the following
+example we will update the title of the article with id = 1:
+
+```php
+$connection->update('articles', ['title' => 'New title'], ['id' => 1]);
+```
+
+The concept of data types is central to this library, so you can use the last parameter of the function
+to specify what types should be used:
+
+```php
+$connection->update(
+	'articles',
+	['title' => 'New title'],
+	['created >=' => new DateTime('-3 day'), 'created <' => new DateTime('now')],
+	['created' => 'datetime']
+);
+```
+
+The example above will execute the following SQL:
+
+```sql
+UPDATE articles SET title = 'New Title' WHERE created >= '2014-10-10 00:00:00' AND created < '2014-10-13 00:00:00';
 ```
