@@ -12,7 +12,7 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Model\Behavior;
+namespace Cake\ORM\Behavior;
 
 use Cake\Event\Event;
 use Cake\I18n\Time;
