@@ -30,11 +30,11 @@ interface EventListenerInterface
      *
      * {{{
      *  public function implementedEvents() {
-     *      return array(
+     *      return [
      *          'Order.complete' => 'sendEmail',
      *          'Article.afterBuy' => 'decrementInventory',
-     *          'User.onRegister' => array('callable' => 'logRegistration', 'priority' => 20, 'passParams' => true)
-     *      );
+     *          'User.onRegister' => ['callable' => 'logRegistration', 'priority' => 20, 'passParams' => true]
+     *      ];
      *  }
      * }}}
      *

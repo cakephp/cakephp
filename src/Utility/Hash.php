@@ -478,7 +478,7 @@ class Hash
      * Usage:
      *
      * {{{
-     * $result = Hash::format($users, array('{n}.User.id', '{n}.User.name'), '%s : %s');
+     * $result = Hash::format($users, ['{n}.User.id', '{n}.User.name'], '%s : %s');
      * }}}
      *
      * The `$format` string can use any format options that `vsprintf()` and `sprintf()` do.
@@ -615,8 +615,8 @@ class Hash
 
     /**
      * Collapses a multi-dimensional array into a single dimension, using a delimited array path for
-     * each array element's key, i.e. array(array('Foo' => array('Bar' => 'Far'))) becomes
-     * array('0.Foo.Bar' => 'Far').)
+     * each array element's key, i.e. [['Foo' => ['Bar' => 'Far']]] becomes
+     * ['0.Foo.Bar' => 'Far'].)
      *
      * @param array $data Array to flatten
      * @param string $separator String used to separate array key elements in a path, defaults to '.'
@@ -658,8 +658,8 @@ class Hash
      * Expands a flat array to a nested array.
      *
      * For example, unflattens an array that was collapsed with `Hash::flatten()`
-     * into a multi-dimensional array. So, `array('0.Foo.Bar' => 'Far')` becomes
-     * `array(array('Foo' => array('Bar' => 'Far')))`.
+     * into a multi-dimensional array. So, `['0.Foo.Bar' => 'Far']` becomes
+     * `[['Foo' => ['Bar' => 'Far']]]`.
      *
      * @param array $data Flattened array
      * @param string $separator The delimiter used

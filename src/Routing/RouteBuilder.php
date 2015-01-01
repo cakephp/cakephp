@@ -321,7 +321,7 @@ class RouteBuilder
      *
      * - `pass` is used to define which of the routed parameters should be shifted
      *   into the pass array. Adding a parameter to pass will remove it from the
-     *   regular route array. Ex. `'pass' => array('slug')`.
+     *   regular route array. Ex. `'pass' => ['slug']`.
      * - `routeClass` is used to extend and change how individual routes parse requests
      *   and handle reverse routing, via a custom routing class.
      *   Ex. `'routeClass' => 'SlugRoute'`
@@ -334,7 +334,7 @@ class RouteBuilder
      *
      * Example of using the `_method` condition:
      *
-     * `$routes->connect('/tasks', array('controller' => 'Tasks', 'action' => 'index', '_method' => 'GET'));`
+     * `$routes->connect('/tasks', ['controller' => 'Tasks', 'action' => 'index', '_method' => 'GET']);`
      *
      * The above route will only be matched for GET requests. POST requests will fail to match this route.
      *
@@ -427,12 +427,12 @@ class RouteBuilder
      *
      * Examples:
      *
-     * `$routes->redirect('/home/*', array('controller' => 'posts', 'action' => 'view'));`
+     * `$routes->redirect('/home/*', ['controller' => 'posts', 'action' => 'view']);`
      *
      * Redirects /home/* to /posts/view and passes the parameters to /posts/view. Using an array as the
      * redirect destination allows you to use other routes to define where an URL string should be redirected to.
      *
-     * `$routes-redirect('/posts/*', 'http://google.com', array('status' => 302));`
+     * `$routes-redirect('/posts/*', 'http://google.com', ['status' => 302]);`
      *
      * Redirects /posts/* to http://google.com with a HTTP status of 302
      *

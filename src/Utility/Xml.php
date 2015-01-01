@@ -37,7 +37,7 @@ class Xml
      *
      * Building XML from string (output DOMDocument):
      *
-     * `$xml = Xml::build('<example>text</example>', array('return' => 'domdocument'));`
+     * `$xml = Xml::build('<example>text</example>', ['return' => 'domdocument']);`
      *
      * Building XML from a file path:
      *
@@ -50,20 +50,20 @@ class Xml
      * Building from an array:
      *
      * {{{
-     *  $value = array(
-     *      'tags' => array(
-     *          'tag' => array(
-     *              array(
+     *  $value = [
+     *      'tags' => [
+     *          'tag' => [
+     *              [
      *                  'id' => '1',
      *                  'name' => 'defect'
-     *              ),
-     *              array(
+     *              ],
+     *              [
      *                  'id' => '2',
      *                  'name' => 'enhancement'
-     *              )
-     *          )
-     *      )
-     *  );
+     *              ]
+     *          ]
+     *      ]
+     *  ];
      * $xml = Xml::build($value);
      * }}}
      *
@@ -157,15 +157,15 @@ class Xml
      * Using the following data:
      *
      * {{{
-     * $value = array(
-     *    'root' => array(
-     *        'tag' => array(
+     * $value = [
+     *    'root' => [
+     *        'tag' => [
      *            'id' => 1,
      *            'value' => 'defect',
      *            '@' => 'description'
-     *         )
-     *     )
-     * );
+     *         ]
+     *     ]
+     * ];
      * }}}
      *
      * Calling `Xml::fromArray($value, 'tags');`  Will generate:

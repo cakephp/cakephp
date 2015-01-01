@@ -129,21 +129,21 @@ class SmtpTransport extends AbstractTransport
      * A response consists of one or more lines containing a response
      * code and an optional response message text:
      * {{{
-     * array(
-     *     array(
+     * [
+     *     [
      *         'code' => '250',
      *         'message' => 'mail.example.com'
-     *     ),
-     *     array(
+     *     ],
+     *     [
      *         'code' => '250',
      *         'message' => 'PIPELINING'
-     *     ),
-     *     array(
+     *     ],
+     *     [
      *         'code' => '250',
      *         'message' => '8BITMIME'
-     *     ),
+     *     ],
      *     // etc...
-     * )
+     * ]
      * }}}
      *
      * @return array

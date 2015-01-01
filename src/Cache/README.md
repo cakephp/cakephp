@@ -20,19 +20,19 @@ Caching engines need to be configured with the `Cache::config()` method.
 use Cake\Cache\Cache;
 
 // Using a short name
-Cache::config('default', array(
+Cache::config('default', [
     'className' => 'File',
     'duration' => '+1 hours',
     'path' => sys_get_tmp_dir(),
     'prefix' => 'my_app_'
-));
+]);
 
 // Using a fully namespaced name.
-Cache::config('long', array(
+Cache::config('long', [
     'className' => 'Cake\Cache\Engine\ApcEngine',
     'duration' => '+1 week',
     'prefix' => 'my_app_'
-));
+]);
 
 // Using a constructed object.
 $object = new FileEngine($config);

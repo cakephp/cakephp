@@ -448,8 +448,8 @@ class View
      * @param string|null $layout Layout to use.
      * @return string|null Rendered content or null if content already rendered and returned earlier.
      * @throws \Cake\Core\Exception\Exception If there is an error in the view.
-     * @triggers View.beforeRender $this, array($viewFileName)
-     * @triggers View.afterRender $this, array($viewFileName)
+     * @triggers View.beforeRender $this, [$viewFileName]
+     * @triggers View.afterRender $this, [$viewFileName]
      */
     public function render($view = null, $layout = null)
     {
@@ -482,8 +482,8 @@ class View
      * @param string|null $layout Layout name
      * @return mixed Rendered output, or false on error
      * @throws \Cake\Core\Exception\Exception if there is an error in the view.
-     * @triggers View.beforeLayout $this, array($layoutFileName)
-     * @triggers View.afterLayout $this, array($layoutFileName)
+     * @triggers View.beforeLayout $this, [$layoutFileName]
+     * @triggers View.afterLayout $this, [$layoutFileName]
      */
     public function renderLayout($content, $layout = null)
     {
@@ -759,8 +759,8 @@ class View
      *   View::$viewVars will be used.
      * @return string Rendered output
      * @throws \LogicException When a block is left open.
-     * @triggers View.beforeRenderFile $this, array($viewFile)
-     * @triggers View.afterRenderFile $this, array($viewFile, $content)
+     * @triggers View.beforeRenderFile $this, [$viewFile]
+     * @triggers View.afterRenderFile $this, [$viewFile, $content]
      */
     protected function _render($viewFile, $data = [])
     {
@@ -1102,8 +1102,8 @@ class View
      * @param array $data Data to render
      * @param array $options Element options
      * @return string
-     * @triggers View.beforeRender $this, array($file)
-     * @triggers View.afterRender $this, array($file, $element)
+     * @triggers View.beforeRender $this, [$file]
+     * @triggers View.afterRender $this, [$file, $element]
      */
     protected function _renderElement($file, $data, $options)
     {

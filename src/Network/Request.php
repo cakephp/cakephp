@@ -778,39 +778,39 @@ class Request implements \ArrayAccess
      * The callback will receive the request object as its only parameter.
      *
      * e.g `addDetector('custom', function ($request) { //Return a boolean });`
-     * e.g `addDetector('custom', array('SomeClass', 'somemethod'));`
+     * e.g `addDetector('custom', ['SomeClass', 'somemethod']);`
      *
      * ### Environment value comparison
      *
      * An environment value comparison, compares a value fetched from `env()` to a known value
      * the environment value is equality checked against the provided value.
      *
-     * e.g `addDetector('post', array('env' => 'REQUEST_METHOD', 'value' => 'POST'))`
+     * e.g `addDetector('post', ['env' => 'REQUEST_METHOD', 'value' => 'POST'])`
      *
      * ### Pattern value comparison
      *
      * Pattern value comparison allows you to compare a value fetched from `env()` to a regular expression.
      *
-     * e.g `addDetector('iphone', array('env' => 'HTTP_USER_AGENT', 'pattern' => '/iPhone/i'));`
+     * e.g `addDetector('iphone', ['env' => 'HTTP_USER_AGENT', 'pattern' => '/iPhone/i']);`
      *
      * ### Option based comparison
      *
      * Option based comparisons use a list of options to create a regular expression. Subsequent calls
      * to add an already defined options detector will merge the options.
      *
-     * e.g `addDetector('mobile', array('env' => 'HTTP_USER_AGENT', 'options' => array('Fennec')));`
+     * e.g `addDetector('mobile', ['env' => 'HTTP_USER_AGENT', 'options' => ['Fennec']]);`
      *
      * ### Request parameter detectors
      *
      * Allows for custom detectors on the request parameters.
      *
-     * e.g `addDetector('requested', array('param' => 'requested', 'value' => 1)`
+     * e.g `addDetector('requested', ['param' => 'requested', 'value' => 1]`
      *
      * You can also make parameter detectors that accept multiple values
      * using the `options` key. This is useful when you want to check
      * if a request parameter is in a list of options.
      *
-     * `addDetector('extension', array('param' => 'ext', 'options' => array('pdf', 'csv'))`
+     * `addDetector('extension', ['param' => 'ext', 'options' => ['pdf', 'csv']]`
      *
      * @param string $name The name of the detector.
      * @param callable|array $callable A callable or options array for the detector definition.
@@ -1169,7 +1169,7 @@ class Request implements \ArrayAccess
      *
      * Getting input using a decoding function, and additional params:
      *
-     * `$this->request->input('Xml::build', array('return' => 'DOMDocument'));`
+     * `$this->request->input('Xml::build', ['return' => 'DOMDocument']);`
      *
      * Any additional parameters are applied to the callback in the order they are given.
      *

@@ -64,7 +64,7 @@ class Event
      * ### Examples of usage:
      *
      * {{{
-     *  $event = new Event('Order.afterBuy', $this, array('buyer' => $userData));
+     *  $event = new Event('Order.afterBuy', $this, ['buyer' => $userData]);
      *  $event = new Event('User.afterRegister', $UserModel);
      * }}}
      *

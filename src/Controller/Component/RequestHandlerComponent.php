@@ -381,7 +381,7 @@ class RequestHandlerComponent extends Component
      *
      * Usage:
      *
-     * `$this->RequestHandler->accepts(array('xml', 'html', 'json'));`
+     * `$this->RequestHandler->accepts(['xml', 'html', 'json']);`
      *
      * Returns true if the client accepts any of the supplied types.
      *
@@ -522,7 +522,7 @@ class RequestHandlerComponent extends Component
      *
      * Render the response as an xml file and force the result as a file download.
      *
-     * `$this->RequestHandler->renderAs($this, 'xml', array('attachment' => 'myfile.xml');`
+     * `$this->RequestHandler->renderAs($this, 'xml', ['attachment' => 'myfile.xml'];`
      *
      * @param Controller $controller A reference to a controller object
      * @param string $type Type of response to send (e.g: 'ajax')
@@ -686,7 +686,7 @@ class RequestHandlerComponent extends Component
     /**
      * Getter/setter for viewClassMap
      *
-     * @param array|string|null $type The type string or array with format `array('type' => 'viewClass')` to map one or more
+     * @param array|string|null $type The type string or array with format `['type' => 'viewClass']` to map one or more
      * @param array|null $viewClass The viewClass to be used for the type without `View` appended
      * @return array|string Returns viewClass when only string $type is set, else array with viewClassMap
      */

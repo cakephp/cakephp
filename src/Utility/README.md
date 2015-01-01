@@ -42,7 +42,7 @@ The String class includes convenience methods for creating and manipulating stri
 ```php
 String::insert(
     'My name is :name and I am :age years old.',
-    array('name' => 'Bob', 'age' => '65')
+    ['name' => 'Bob', 'age' => '65']
 );
 // Returns: "My name is Bob and I am 65 years old."
 
@@ -75,13 +75,13 @@ The Xml class allows you to easily transform arrays into SimpleXMLElement or DOM
 and back into arrays again
 
 ```php
-$data = array(
-    'post' => array(
+$data = [
+    'post' => [
         'id' => 1,
         'title' => 'Best post',
         'body' => ' ... '
-    )
-);
+    ]
+];
 $xml = Xml::build($data);
 ```
 

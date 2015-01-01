@@ -747,19 +747,19 @@ class FormHelper extends Helper
      * Custom attributes:
      *
      * {{{
-     * echo $this->Form->label('published', 'Publish', array(
+     * echo $this->Form->label('published', 'Publish', [
      *   'for' => 'post-publish'
-     * ));
+     * ]);
      * <label for="post-publish">Publish</label>
      * }}}
      *
      * Nesting an input tag:
      *
      * {{{
-     * echo $this->Form->label('published', 'Publish', array(
+     * echo $this->Form->label('published', 'Publish', [
      *   'for' => 'published',
      *   'input' => $this->text('published'),
-     * ));
+     * ]);
      * <label for="post-publish">Publish <input type="text" name="published"></label>
      * }}}
      *
@@ -1424,7 +1424,7 @@ class FormHelper extends Helper
      *
      * ### Usage
      *
-     * `$this->Form->search('User.query', array('value' => 'test'));`
+     * `$this->Form->search('User.query', ['value' => 'test']);`
      *
      * Will make an input like:
      *
@@ -1755,19 +1755,19 @@ class FormHelper extends Helper
      * A simple array will create normal options:
      *
      * {{{
-     * $options = array(1 => 'one', 2 => 'two');
+     * $options = [1 => 'one', 2 => 'two'];
      * $this->Form->select('Model.field', $options));
      * }}}
      *
      * While a nested options array will create optgroups with options inside them.
      * {{{
-     * $options = array(
+     * $options = [
      *  1 => 'bill',
-     *  'fred' => array(
-     *     2 => 'fred',
-     *     3 => 'fred jr.'
-     *  )
-     * );
+     *     'fred' => [
+     *         2 => 'fred',
+     *         3 => 'fred jr.'
+     *     ]
+     * ];
      * $this->Form->select('Model.field', $options);
      * }}}
      *
@@ -1775,10 +1775,10 @@ class FormHelper extends Helper
      * use an array of arrays to express this:
      *
      * {{{
-     * $options = array(
-     *  array('name' => 'United states', 'value' => 'USA'),
-     *  array('name' => 'USA', 'value' => 'USA'),
-     * );
+     * $options = [
+     *     ['name' => 'United states', 'value' => 'USA'],
+     *     ['name' => 'USA', 'value' => 'USA'],
+     * ];
      * }}}
      *
      * @param string $fieldName Name attribute of the SELECT

@@ -148,7 +148,7 @@ class HtmlHelper extends Helper
      *
      * @param string $name Text for link
      * @param string|null $link URL for link (if empty it won't be a link)
-     * @param string|array $options Link attributes e.g. array('id' => 'selected')
+     * @param string|array $options Link attributes e.g. ['id' => 'selected']
      * @return $this
      * @see HtmlHelper::link() for details on $options that can be used.
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
@@ -194,11 +194,11 @@ class HtmlHelper extends Helper
      *
      * Append the meta tag to custom view block "meta":
      *
-     * `$this->Html->meta('description', 'A great page', array('block' => true));`
+     * `$this->Html->meta('description', 'A great page', ['block' => true]);`
      *
      * Append the meta tag to custom view block:
      *
-     * `$this->Html->meta('description', 'A great page', array('block' => 'metaTags'));`
+     * `$this->Html->meta('description', 'A great page', ['block' => 'metaTags']);`
      *
      * Create a custom meta tag:
      *
@@ -376,15 +376,15 @@ class HtmlHelper extends Helper
      *
      * Include multiple CSS files:
      *
-     * `echo $this->Html->css(array('one.css', 'two.css'));`
+     * `echo $this->Html->css(['one.css', 'two.css']);`
      *
      * Add the stylesheet to view block "css":
      *
-     * `$this->Html->css('styles.css', array('block' => true));`
+     * `$this->Html->css('styles.css', ['block' => true]);`
      *
      * Add the stylesheet to a custom block:
      *
-     * `$this->Html->css('styles.css', array('block' => 'layoutCss'));`
+     * `$this->Html->css('styles.css', ['block' => 'layoutCss']);`
      *
      * ### Options
      *
@@ -469,11 +469,11 @@ class HtmlHelper extends Helper
      *
      * Include multiple script files:
      *
-     * `echo $this->Html->script(array('one.js', 'two.js'));`
+     * `echo $this->Html->script(['one.js', 'two.js']);`
      *
      * Add the script file to a custom block:
      *
-     * `$this->Html->script('styles.js', array('block' => 'bodyScript'));`
+     * `$this->Html->script('styles.js', ['block' => 'bodyScript']);`
      *
      * ### Options
      *
@@ -610,7 +610,7 @@ class HtmlHelper extends Helper
      * ### Usage:
      *
      * {{{
-     * echo $this->Html->style(array('margin' => '10px', 'padding' => '10px'), true);
+     * echo $this->Html->style(['margin' => '10px', 'padding' => '10px'], true);
      *
      * // creates
      * 'margin:10px;padding:10px;'
@@ -763,11 +763,11 @@ class HtmlHelper extends Helper
      *
      * Create a regular image:
      *
-     * `echo $this->Html->image('cake_icon.png', array('alt' => 'CakePHP'));`
+     * `echo $this->Html->image('cake_icon.png', ['alt' => 'CakePHP']);`
      *
      * Create an image link:
      *
-     * `echo $this->Html->image('cake_icon.png', array('alt' => 'CakePHP', 'url' => 'http://cakephp.org'));`
+     * `echo $this->Html->image('cake_icon.png', ['alt' => 'CakePHP', 'url' => 'http://cakephp.org']);`
      *
      * ### Options:
      *
@@ -997,7 +997,7 @@ class HtmlHelper extends Helper
      *
      * Using an audio file:
      *
-     * `echo $this->Html->media('audio.mp3', array('fullBase' => true));`
+     * `echo $this->Html->media('audio.mp3', ['fullBase' => true]);`
      *
      * Outputs:
      *
@@ -1005,7 +1005,7 @@ class HtmlHelper extends Helper
      *
      * Using a video file:
      *
-     * `echo $this->Html->media('video.mp4', array('text' => 'Fallback text'));`
+     * `echo $this->Html->media('video.mp4', ['text' => 'Fallback text']);`
      *
      * Outputs:
      *
@@ -1015,8 +1015,8 @@ class HtmlHelper extends Helper
      *
      * {{{
      * echo $this->Html->media(
-     *      array('video.mp4', array('src' => 'video.ogv', 'type' => "video/ogg; codecs='theora, vorbis'")),
-     *      array('tag' => 'video', 'autoplay')
+     *      ['video.mp4', ['src' => 'video.ogv', 'type' => "video/ogg; codecs='theora, vorbis'"]],
+     *      ['tag' => 'video', 'autoplay']
      * );
      * }}}
      *

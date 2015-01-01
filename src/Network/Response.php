@@ -578,13 +578,13 @@ class Response
      * e.g `header('Location', 'http://example.com');`
      *
      * ### Multiple headers
-     * e.g `header(array('Location' => 'http://example.com', 'X-Extra' => 'My header'));`
+     * e.g `header(['Location' => 'http://example.com', 'X-Extra' => 'My header']);`
      *
      * ### String header
      * e.g `header('WWW-Authenticate: Negotiate');`
      *
      * ### Array of string headers
-     * e.g `header(array('WWW-Authenticate: Negotiate', 'Content-type: application/pdf'));`
+     * e.g `header(['WWW-Authenticate: Negotiate', 'Content-type: application/pdf']);`
      *
      * Multiple calls for setting the same header name will have the same effect as setting the header once
      * with the last value sent for it
@@ -679,19 +679,19 @@ class Response
      *        between 1 and 5, which defines the class of response the client is to expect.
      *        Example:
      *
-     *        httpCodes(404); // returns array(404 => 'Not Found')
+     *        httpCodes(404); // returns [404 => 'Not Found']
      *
-     *        httpCodes(array(
+     *        httpCodes([
      *            381 => 'Unicorn Moved',
      *            555 => 'Unexpected Minotaur'
-     *        )); // sets these new values, and returns true
+     *        ]); // sets these new values, and returns true
      *
-     *        httpCodes(array(
+     *        httpCodes([
      *            0 => 'Nothing Here',
      *            -1 => 'Reverse Infinity',
      *            12345 => 'Universal Password',
      *            'Hello' => 'World'
-     *        )); // throws an exception due to invalid codes
+     *        ]); // throws an exception due to invalid codes
      *
      *        For more on HTTP status codes see: http://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1
      *
@@ -735,11 +735,11 @@ class Response
      *
      * ### Storing content type definitions
      *
-     * e.g `type(array('keynote' => 'application/keynote', 'bat' => 'application/bat'));`
+     * e.g `type(['keynote' => 'application/keynote', 'bat' => 'application/bat']);`
      *
      * ### Replacing a content type definition
      *
-     * e.g `type(array('jpg' => 'text/plain'));`
+     * e.g `type(['jpg' => 'text/plain']);`
      *
      * @param string|null $contentType Content type key.
      * @return mixed Current content type or false if supplied an invalid content type
@@ -1321,7 +1321,7 @@ class Response
      * e.g `cors($request, '*');`
      *
      * ### Whitelist of URIs
-     * e.g `cors($request, array('http://www.cakephp.org', '*.google.com', 'https://myproject.github.io'));`
+     * e.g `cors($request, ['http://www.cakephp.org', '*.google.com', 'https://myproject.github.io']);`
      *
      * @param \Cake\Network\Request $request Request object
      * @param string|array $allowedDomains List of allowed domains, see method description for more details

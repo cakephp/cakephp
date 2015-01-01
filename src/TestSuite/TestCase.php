@@ -288,30 +288,30 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      * attribute that contains 'my-input':
      *
      * {{{
-     * array('input' => array('name', 'id' => 'my-input'))
+     * ['input' => ['name', 'id' => 'my-input']]
      * }}}
      *
      * Checks for two p elements with some text in them:
      *
      * {{{
-     * array(
-     *   array('p' => true),
+     * [
+     *   ['p' => true],
      *   'textA',
      *   '/p',
-     *   array('p' => true),
+     *   ['p' => true],
      *   'textB',
      *   '/p'
-     * )
+     * ]
      * }}}
      *
      * You can also specify a pattern expression as part of the attribute values, or the tag
      * being defined, if you prepend the value with preg: and enclose it with slashes, like so:
      *
      * {{{
-     * array(
-     *   array('input' => array('name', 'id' => 'preg:/FieldName\d+/')),
+     * [
+     *   ['input' => ['name', 'id' => 'preg:/FieldName\d+/']],
      *   'preg:/My\s+field/'
-     * )
+     * ]
      * }}}
      *
      * Important: This function is very forgiving about whitespace and also accepts any

@@ -171,7 +171,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
      * {{{
      * $statement = $connection->prepare('SELECT id, title from articles');
      * $statement->execute();
-     * print_r($statement->fetch('assoc')); // will show array('id' => 1, 'title' => 'a title')
+     * print_r($statement->fetch('assoc')); // will show ['id' => 1, 'title' => 'a title']
      * }}}
      *
      * @param string $type 'num' for positional columns, assoc for named columns

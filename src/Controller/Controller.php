@@ -167,7 +167,7 @@ class Controller implements EventListenerInterface
      * Array containing the names of components this controller uses. Component names
      * should not contain the "Component" portion of the class name.
      *
-     * Example: `public $components = array('Session', 'RequestHandler', 'Acl');`
+     * Example: `public $components = ['Session', 'RequestHandler', 'Acl'];`
      *
      * @var array
      * @link http://book.cakephp.org/3.0/en/controllers/components.html
