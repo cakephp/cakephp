@@ -22,9 +22,9 @@ namespace TestPlugin\Controller;
 class TestsController extends TestPluginAppController
 {
 
-    public $helpers = array('TestPlugin.OtherHelper', 'Html');
+    public $helpers = ['TestPlugin.OtherHelper', 'Html'];
 
-    public $components = array('TestPlugin.Plugins');
+    public $components = ['TestPlugin.Plugins'];
 
     public function index()
     {

@@ -78,8 +78,8 @@ class EventTest extends TestCase
      */
     public function testEventData()
     {
-        $event = new Event('fake.event', $this, array('some' => 'data'));
-        $this->assertEquals(array('some' => 'data'), $event->data);
+        $event = new Event('fake.event', $this, ['some' => 'data']);
+        $this->assertEquals(['some' => 'data'], $event->data);
     }
 
     /**

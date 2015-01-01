@@ -171,7 +171,7 @@ class ConnectionManagerTest extends TestCase
     {
         Plugin::load('TestPlugin');
         $name = 'test_variant';
-        $config = array('className' => 'TestPlugin.TestSource', 'foo' => 'bar');
+        $config = ['className' => 'TestPlugin.TestSource', 'foo' => 'bar'];
         ConnectionManager::config($name, $config);
         $connection = ConnectionManager::get($name);
 

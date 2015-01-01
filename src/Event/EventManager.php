@@ -42,7 +42,7 @@ class EventManager
      *
      * @var object
      */
-    protected $_listeners = array();
+    protected $_listeners = [];
 
     /**
      * Internal flag to distinguish a common manager from the singleton
@@ -94,7 +94,7 @@ class EventManager
      * @throws \InvalidArgumentException When event key is missing or callable is not an
      *   instance of Cake\Event\EventListenerInterface.
      */
-    public function attach($callable, $eventKey = null, array $options = array())
+    public function attach($callable, $eventKey = null, array $options = [])
     {
         if (!$eventKey && !($callable instanceof EventListenerInterface)) {
             throw new \InvalidArgumentException('The eventKey variable is required');
@@ -103,10 +103,10 @@ class EventManager
             $this->_attachSubscriber($callable);
             return;
         }
-        $options += array('priority' => static::$defaultPriority);
-        $this->_listeners[$eventKey][$options['priority']][] = array(
+        $options += ['priority' => static::$defaultPriority];
+        $this->_listeners[$eventKey][$options['priority']][] = [
             'callable' => $callable,
-        );
+        ];
     }
 
     /**
@@ -119,7 +119,7 @@ class EventManager
     protected function _attachSubscriber(EventListenerInterface $subscriber)
     {
         foreach ((array)$subscriber->implementedEvents() as $eventKey => $function) {
-            $options = array();
+            $options = [];
             $method = $function;
             if (is_array($function) && isset($function['callable'])) {
                 list($method, $options) = $this->_extractCallable($function, $subscriber);
@@ -131,7 +131,7 @@ class EventManager
                 continue;
             }
             if (is_string($method)) {
-                $method = array($subscriber, $function);
+                $method = [$subscriber, $function];
             }
             $this->attach($method, $eventKey, $options);
         }
@@ -151,9 +151,9 @@ class EventManager
         $options = $function;
         unset($options['callable']);
         if (is_string($method)) {
-            $method = array($object, $method);
+            $method = [$object, $method];
         }
-        return array($method, $options);
+        return [$method, $options];
     }
 
     /**
@@ -200,20 +200,20 @@ class EventManager
         if (!empty($eventKey) && empty($events[$eventKey])) {
             return;
         } elseif (!empty($eventKey)) {
-            $events = array($eventKey => $events[$eventKey]);
+            $events = [$eventKey => $events[$eventKey]];
         }
         foreach ($events as $key => $function) {
             if (is_array($function)) {
                 if (is_numeric(key($function))) {
                     foreach ($function as $handler) {
                         $handler = isset($handler['callable']) ? $handler['callable'] : $handler;
-                        $this->detach(array($subscriber, $handler), $key);
+                        $this->detach([$subscriber, $handler], $key);
                     }
                     continue;
                 }
                 $function = $function['callable'];
             }
-            $this->detach(array($subscriber, $function), $key);
+            $this->detach([$subscriber, $function], $key);
         }
     }
 
@@ -290,19 +290,19 @@ class EventManager
      */
     public function listeners($eventKey)
     {
-        $localListeners = array();
+        $localListeners = [];
         if (!$this->_isGlobal) {
             $localListeners = $this->prioritisedListeners($eventKey);
-            $localListeners = empty($localListeners) ? array() : $localListeners;
+            $localListeners = empty($localListeners) ? [] : $localListeners;
         }
         $globalListeners = static::instance()->prioritisedListeners($eventKey);
-        $globalListeners = empty($globalListeners) ? array() : $globalListeners;
+        $globalListeners = empty($globalListeners) ? [] : $globalListeners;
 
         $priorities = array_merge(array_keys($globalListeners), array_keys($localListeners));
         $priorities = array_unique($priorities);
         asort($priorities);
 
-        $result = array();
+        $result = [];
         foreach ($priorities as $priority) {
             if (isset($globalListeners[$priority])) {
                 $result = array_merge($result, $globalListeners[$priority]);
@@ -323,7 +323,7 @@ class EventManager
     public function prioritisedListeners($eventKey)
     {
         if (empty($this->_listeners[$eventKey])) {
-            return array();
+            return [];
         }
         return $this->_listeners[$eventKey];
     }

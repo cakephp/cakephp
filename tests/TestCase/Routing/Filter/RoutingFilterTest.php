@@ -78,11 +78,11 @@ class RoutingFilterTest extends TestCase
     public function testQueryStringOnRoot()
     {
         Router::reload();
-        Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
-        Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
+        Router::connect('/', ['controller' => 'pages', 'action' => 'display', 'home']);
+        Router::connect('/pages/*', ['controller' => 'pages', 'action' => 'display']);
         Router::connect('/:controller/:action/*');
 
-        $_GET = array('coffee' => 'life', 'sleep' => 'sissies');
+        $_GET = ['coffee' => 'life', 'sleep' => 'sissies'];
         $filter = new RoutingFilter();
         $request = new Request('posts/home/?coffee=life&sleep=sissies');
 

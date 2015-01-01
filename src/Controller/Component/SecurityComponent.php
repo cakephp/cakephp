@@ -105,7 +105,7 @@ class SecurityComponent extends Component
         $this->_secureRequired($controller);
         $this->_authRequired($controller);
 
-        $isPost = $this->request->is(array('post', 'put'));
+        $isPost = $this->request->is(['post', 'put']);
         $isNotRequestAction = (
             !isset($controller->request->params['requested']) ||
             $controller->request->params['requested'] != 1
@@ -184,7 +184,7 @@ class SecurityComponent extends Component
         if (!$this->_config['blackHoleCallback']) {
             throw new BadRequestException('The request has been black-holed');
         }
-        return $this->_callback($controller, $this->_config['blackHoleCallback'], array($error));
+        return $this->_callback($controller, $this->_config['blackHoleCallback'], [$error]);
     }
 
     /**
@@ -194,12 +194,12 @@ class SecurityComponent extends Component
      * @param array $actions Controller actions to set the required HTTP method to.
      * @return void
      */
-    protected function _requireMethod($method, $actions = array())
+    protected function _requireMethod($method, $actions = [])
     {
         if (isset($actions[0]) && is_array($actions[0])) {
             $actions = $actions[0];
         }
-        $this->config('require' . $method, (empty($actions)) ? array('*') : $actions);
+        $this->config('require' . $method, (empty($actions)) ? ['*'] : $actions);
     }
 
     /**
@@ -215,7 +215,7 @@ class SecurityComponent extends Component
         ) {
             $requireSecure = $this->_config['requireSecure'];
 
-            if (in_array($this->_action, $requireSecure) || $requireSecure === array('*')) {
+            if (in_array($this->_action, $requireSecure) || $requireSecure === ['*']) {
                 if (!$this->request->is('ssl')) {
                     if (!$this->blackHole($controller, 'secure')) {
                         return null;
@@ -240,7 +240,7 @@ class SecurityComponent extends Component
         ) {
             $requireAuth = $this->_config['requireAuth'];
 
-            if (in_array($this->request->params['action'], $requireAuth) || $requireAuth == array('*')) {
+            if (in_array($this->request->params['action'], $requireAuth) || $requireAuth == ['*']) {
                 if (!isset($controller->request->data['_Token'])) {
                     if (!$this->blackHole($controller, 'auth')) {
                         return false;
@@ -302,10 +302,10 @@ class SecurityComponent extends Component
         $locked = explode('|', $locked);
         $unlocked = explode('|', $unlocked);
 
-        $lockedFields = array();
+        $lockedFields = [];
         $fields = Hash::flatten($check);
         $fieldList = array_keys($fields);
-        $multi = array();
+        $multi = [];
 
         foreach ($fieldList as $i => $key) {
             if (preg_match('/(\.\d){1,10}$/', $key)) {
@@ -348,12 +348,12 @@ class SecurityComponent extends Component
 
         $fieldList += $lockedFields;
         $unlocked = implode('|', $unlocked);
-        $hashParts = array(
+        $hashParts = [
             $controller->request->here(),
             serialize($fieldList),
             $unlocked,
             Security::salt()
-        );
+        ];
         $check = Security::hash(implode('', $hashParts), 'sha1');
         return ($token === $check);
     }
@@ -373,16 +373,16 @@ class SecurityComponent extends Component
             }
             return false;
         }
-        $token = array(
+        $token = [
             'allowedControllers' => $this->_config['allowedControllers'],
             'allowedActions' => $this->_config['allowedActions'],
             'unlockedFields' => $this->_config['unlockedFields'],
-        );
+        ];
 
         $this->session->write('_Token', $token);
-        $request->params['_Token'] = array(
+        $request->params['_Token'] = [
             'unlockedFields' => $token['unlockedFields']
-        );
+        ];
         return true;
     }
 
@@ -395,11 +395,11 @@ class SecurityComponent extends Component
      * @return mixed Controller callback method's response
      * @throws \Cake\Network\Exception\BadRequestException When a the blackholeCallback is not callable.
      */
-    protected function _callback(Controller $controller, $method, $params = array())
+    protected function _callback(Controller $controller, $method, $params = [])
     {
-        if (!is_callable(array($controller, $method))) {
+        if (!is_callable([$controller, $method])) {
             throw new BadRequestException('The request has been black-holed');
         }
-        return call_user_func_array(array(&$controller, $method), empty($params) ? null : $params);
+        return call_user_func_array([&$controller, $method], empty($params) ? null : $params);
     }
 }

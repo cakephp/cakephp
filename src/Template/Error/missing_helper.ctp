@@ -17,19 +17,19 @@ use Cake\Core\Configure;
 
 $namespace = Configure::read('App.namespace');
 if (!empty($plugin)) {
-	$namespace = $plugin;
+    $namespace = $plugin;
 }
 
 $pluginPath = Configure::read('App.paths.plugins.0');
 $pluginDot = empty($plugin) ? null : $plugin . '.';
 if (empty($plugin)) {
-	$filePath = APP_DIR . DS;
+    $filePath = APP_DIR . DS;
 }
 if (!empty($plugin) && Plugin::loaded($plugin)) {
-	$filePath = Plugin::classPath($plugin);
+    $filePath = Plugin::classPath($plugin);
 }
 if (!empty($plugin) && !Plugin::loaded($plugin)) {
-	$filePath = $pluginPath . h($plugin) . DS . 'src' . DS;
+    $filePath = $pluginPath . h($plugin) . DS . 'src' . DS;
 }
 
 $this->layout = 'dev_error';
@@ -38,15 +38,15 @@ $this->assign('templateName', 'missing_helper.ctp');
 
 $this->start('subheading');
 ?>
-	<strong>Error: </strong>
-	<em><?= h($pluginDot . $class) ?></em> could not be found.
-	<?= $this->element('plugin_class_error', ['pluginPath' => $pluginPath]) ?>
+    <strong>Error: </strong>
+    <em><?= h($pluginDot . $class) ?></em> could not be found.
+    <?= $this->element('plugin_class_error', ['pluginPath' => $pluginPath]) ?>
 <?php $this->end() ?>
 
 <?php $this->start('file') ?>
 <p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), $filePath . 'View' . DS . 'Helper' . DS . h($class) . '.php'); ?>
+    <strong>Error: </strong>
+    <?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), $filePath . 'View' . DS . 'Helper' . DS . h($class) . '.php'); ?>
 </p>
 <?php
 $code = <<<PHP
@@ -55,7 +55,8 @@ namespace {$namespace}\View\Helper;
 
 use Cake\View\Helper;
 
-class {$class} extends Helper {
+class {$class} extends Helper
+{
 
 }
 PHP;

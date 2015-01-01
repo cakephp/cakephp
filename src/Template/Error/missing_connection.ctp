@@ -23,7 +23,7 @@ A Database connection using was missing or unable to connect.
 <br/>
 <?php
 if (isset($reason)):
-	echo sprintf('The database server returned this error: %s', h($reason));
+    echo sprintf('The database server returned this error: %s', h($reason));
 endif;
 $this->end();
 

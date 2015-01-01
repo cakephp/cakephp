@@ -53,7 +53,7 @@ class CommandListShellTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Plugin::load(array('TestPlugin', 'TestPluginTwo'));
+        Plugin::load(['TestPlugin', 'TestPluginTwo']);
 
         $this->out = new TestStringOutput();
         $io = new ConsoleIo($this->out);

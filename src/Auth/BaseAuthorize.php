@@ -48,7 +48,7 @@ abstract class BaseAuthorize
      * @param ComponentRegistry $registry The controller for this request.
      * @param array $config An array of config. This class does not use any config.
      */
-    public function __construct(ComponentRegistry $registry, array $config = array())
+    public function __construct(ComponentRegistry $registry, array $config = [])
     {
         $this->_registry = $registry;
         $this->config($config);

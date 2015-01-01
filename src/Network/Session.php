@@ -125,51 +125,51 @@ class Session
      */
     protected static function _defaultConfig($name)
     {
-        $defaults = array(
-            'php' => array(
+        $defaults = [
+            'php' => [
                 'cookie' => 'CAKEPHP',
-                'ini' => array(
+                'ini' => [
                     'session.use_trans_sid' => 0,
-                )
-            ),
-            'cake' => array(
+                ]
+            ],
+            'cake' => [
                 'cookie' => 'CAKEPHP',
-                'ini' => array(
+                'ini' => [
                     'session.use_trans_sid' => 0,
                     'url_rewriter.tags' => '',
                     'session.serialize_handler' => 'php',
                     'session.use_cookies' => 1,
                     'session.save_path' => TMP . 'sessions',
                     'session.save_handler' => 'files'
-                )
-            ),
-            'cache' => array(
+                ]
+            ],
+            'cache' => [
                 'cookie' => 'CAKEPHP',
-                'ini' => array(
+                'ini' => [
                     'session.use_trans_sid' => 0,
                     'url_rewriter.tags' => '',
                     'session.use_cookies' => 1,
                     'session.save_handler' => 'user',
-                ),
-                'handler' => array(
+                ],
+                'handler' => [
                     'engine' => 'CacheSession',
                     'config' => 'default'
-                )
-            ),
-            'database' => array(
+                ]
+            ],
+            'database' => [
                 'cookie' => 'CAKEPHP',
-                'ini' => array(
+                'ini' => [
                     'session.use_trans_sid' => 0,
                     'url_rewriter.tags' => '',
                     'session.use_cookies' => 1,
                     'session.save_handler' => 'user',
                     'session.serialize_handler' => 'php',
-                ),
-                'handler' => array(
+                ],
+                'handler' => [
                     'engine' => 'DatabaseSession'
-                )
-            )
-        );
+                ]
+            ]
+        ];
 
         if (isset($defaults[$name])) {
             return $defaults[$name];
@@ -433,7 +433,7 @@ class Session
 
         $write = $name;
         if (!is_array($name)) {
-            $write = array($name => $value);
+            $write = [$name => $value];
         }
 
         $data = $_SESSION ?: [];

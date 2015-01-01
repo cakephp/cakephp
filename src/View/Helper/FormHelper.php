@@ -134,7 +134,7 @@ class FormHelper extends Helper
      *
      * @var array
      */
-    public $fields = array();
+    public $fields = [];
 
     /**
  * Constant used internally to skip the securing process,
@@ -159,7 +159,7 @@ class FormHelper extends Helper
      * @see SecurityComponent::validatePost()
      * @var array
      */
-    protected $_unlockedFields = array();
+    protected $_unlockedFields = [];
 
     /**
      * Registry for input widgets.
@@ -375,11 +375,11 @@ class FormHelper extends Helper
             case 'delete':
             // Set patch method
             case 'patch':
-                $append .= $this->hidden('_method', array(
+                $append .= $this->hidden('_method', [
                     'name' => '_method',
                     'value' => strtoupper($options['type']),
                     'secure' => static::SECURE_SKIP
-                ));
+                ]);
             // Default to post method
             default:
                 $htmlAttributes['method'] = 'post';
@@ -393,7 +393,7 @@ class FormHelper extends Helper
 
         $htmlAttributes += $options;
 
-        $this->fields = array();
+        $this->fields = [];
         if ($this->requestType !== 'get') {
             $append .= $this->_csrfField();
         }
@@ -480,10 +480,10 @@ class FormHelper extends Helper
         if (empty($this->request->params['_csrfToken'])) {
             return '';
         }
-        return $this->hidden('_csrfToken', array(
+        return $this->hidden('_csrfToken', [
             'value' => $this->request->params['_csrfToken'],
             'secure' => static::SECURE_SKIP
-        ));
+        ]);
     }
 
     /**
@@ -503,7 +503,7 @@ class FormHelper extends Helper
             !empty($this->request['_Token'])
         ) {
             $out .= $this->secure($this->fields, $secureAttributes);
-            $this->fields = array();
+            $this->fields = [];
         }
         $templater = $this->templater();
         $out .= $templater->format('formEnd', []);
@@ -529,12 +529,12 @@ class FormHelper extends Helper
      *    input elements generated for the Security Component.
      * @return string A hidden input field with a security hash
      */
-    public function secure(array $fields = array(), array $secureAttributes = array())
+    public function secure(array $fields = [], array $secureAttributes = [])
     {
         if (!isset($this->request['_Token']) || empty($this->request['_Token'])) {
             return;
         }
-        $locked = array();
+        $locked = [];
         $unlockedFields = $this->_unlockedFields;
 
         foreach ($fields as $key => $value) {
@@ -551,21 +551,21 @@ class FormHelper extends Helper
 
         $locked = implode(array_keys($locked), '|');
         $unlocked = implode($unlockedFields, '|');
-        $hashParts = array(
+        $hashParts = [
             $this->_lastAction,
             serialize($fields),
             $unlocked,
             Security::salt()
-        );
+        ];
         $fields = Security::hash(implode('', $hashParts), 'sha1');
 
-        $tokenFields = array_merge($secureAttributes, array(
+        $tokenFields = array_merge($secureAttributes, [
             'value' => urlencode($fields . ':' . $locked),
-        ));
+        ]);
         $out = $this->hidden('_Token.fields', $tokenFields);
-        $tokenUnlocked = array_merge($secureAttributes, array(
+        $tokenUnlocked = array_merge($secureAttributes, [
             'value' => urlencode($unlocked),
-        ));
+        ]);
         $out .= $this->hidden('_Token.unlocked', $tokenUnlocked);
         return $this->formatTemplate('hiddenBlock', ['content' => $out]);
     }
@@ -1466,7 +1466,7 @@ class FormHelper extends Helper
      * @return string A generated HTML text input element
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-textareas
      */
-    public function textarea($fieldName, array $options = array())
+    public function textarea($fieldName, array $options = [])
     {
         $options = $this->_initInputField($fieldName, $options);
         unset($options['type']);
@@ -1481,16 +1481,16 @@ class FormHelper extends Helper
      * @return string A generated hidden input
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-hidden-inputs
      */
-    public function hidden($fieldName, array $options = array())
+    public function hidden($fieldName, array $options = [])
     {
-        $options += array('required' => false, 'secure' => true);
+        $options += ['required' => false, 'secure' => true];
 
         $secure = $options['secure'];
         unset($options['secure']);
 
         $options = $this->_initInputField($fieldName, array_merge(
             $options,
-            array('secure' => static::SECURE_SKIP)
+            ['secure' => static::SECURE_SKIP]
         ));
 
         if ($secure === true) {
@@ -1509,9 +1509,9 @@ class FormHelper extends Helper
      * @return string A generated file input.
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-file-inputs
      */
-    public function file($fieldName, array $options = array())
+    public function file($fieldName, array $options = [])
     {
-        $options += array('secure' => true);
+        $options += ['secure' => true];
         $options = $this->_initInputField($fieldName, $options);
 
         unset($options['type']);
@@ -1533,9 +1533,9 @@ class FormHelper extends Helper
      * @return string A HTML button tag.
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-button-elements
      */
-    public function button($title, array $options = array())
+    public function button($title, array $options = [])
     {
-        $options += array('type' => 'submit', 'escape' => false, 'secure' => false);
+        $options += ['type' => 'submit', 'escape' => false, 'secure' => false];
         $options['text'] = $title;
         return $this->widget('button', $options);
     }
@@ -1557,12 +1557,12 @@ class FormHelper extends Helper
      * @return string A HTML button tag.
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-standalone-buttons-and-post-links
      */
-    public function postButton($title, $url, array $options = array())
+    public function postButton($title, $url, array $options = [])
     {
-        $out = $this->create(false, array('url' => $url));
+        $out = $this->create(false, ['url' => $url]);
         if (isset($options['data']) && is_array($options['data'])) {
             foreach (Hash::flatten($options['data']) as $key => $value) {
-                $out .= $this->hidden($key, array('value' => $value));
+                $out .= $this->hidden($key, ['value' => $value]);
             }
             unset($options['data']);
         }
@@ -1596,9 +1596,9 @@ class FormHelper extends Helper
      * @return string An `<a />` element.
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-standalone-buttons-and-post-links
      */
-    public function postLink($title, $url = null, array $options = array())
+    public function postLink($title, $url = null, array $options = [])
     {
-        $options += array('block' => null, 'confirm' => null);
+        $options += ['block' => null, 'confirm' => null];
 
         $requestMethod = 'POST';
         if (!empty($options['method'])) {
@@ -1610,12 +1610,12 @@ class FormHelper extends Helper
         unset($options['confirm']);
 
         $formName = str_replace('.', '', uniqid('post_', true));
-        $formOptions = array(
+        $formOptions = [
             'action' => $this->Url->build($url),
             'name' => $formName,
             'style' => 'display:none;',
             'method' => 'post',
-        );
+        ];
         if (isset($options['target'])) {
             $formOptions['target'] = $options['target'];
             unset($options['target']);
@@ -1629,11 +1629,11 @@ class FormHelper extends Helper
         $out .= $this->hidden('_method', ['value' => $requestMethod]);
         $out .= $this->_csrfField();
 
-        $fields = array();
+        $fields = [];
         if (isset($options['data']) && is_array($options['data'])) {
             foreach (Hash::flatten($options['data']) as $key => $value) {
                 $fields[$key] = $value;
-                $out .= $this->hidden($key, array('value' => $value));
+                $out .= $this->hidden($key, ['value' => $value]);
             }
             unset($options['data']);
         }
@@ -1699,7 +1699,7 @@ class FormHelper extends Helper
         unset($options['type']);
 
         if ($isUrl || $isImage) {
-            $unlockFields = array('x', 'y');
+            $unlockFields = ['x', 'y'];
             if (isset($options['name'])) {
                 $unlockFields = [
                     $options['name'] . '_x',
@@ -1821,12 +1821,12 @@ class FormHelper extends Helper
 
         $hidden = '';
         if ($attributes['multiple'] && $attributes['hiddenField']) {
-            $hiddenAttributes = array(
+            $hiddenAttributes = [
                 'name' => $attributes['name'],
                 'value' => '',
                 'form' => isset($attributes['form']) ? $attributes['form'] : null,
                 'secure' => false,
-            );
+            ];
             $hidden = $this->hidden($fieldName, $hiddenAttributes);
         }
         unset($attributes['hiddenField'], $attributes['type']);
@@ -1869,12 +1869,12 @@ class FormHelper extends Helper
 
         $hidden = '';
         if ($attributes['hiddenField']) {
-            $hiddenAttributes = array(
+            $hiddenAttributes = [
                 'name' => $attributes['name'],
                 'value' => '',
                 'secure' => false,
                 'disabled' => ($attributes['disabled'] === true || $attributes['disabled'] === 'disabled'),
-            );
+            ];
             $hidden = $this->hidden($fieldName, $hiddenAttributes);
         }
         return $hidden . $this->widget('multicheckbox', $attributes);
@@ -1980,7 +1980,7 @@ class FormHelper extends Helper
      * @return string A generated month select dropdown.
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-month-inputs
      */
-    public function month($fieldName, array $options = array())
+    public function month($fieldName, array $options = [])
     {
         $options = $this->_singleDatetime($options, 'month');
 
@@ -2070,7 +2070,7 @@ class FormHelper extends Helper
      * @return string Completed meridian select input
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-meridian-inputs
      */
-    public function meridian($fieldName, array $options = array())
+    public function meridian($fieldName, array $options = [])
     {
         $options = $this->_singleDatetime($options, 'meridian');
 
@@ -2119,7 +2119,7 @@ class FormHelper extends Helper
      * @return string Generated set of select boxes for the date and time formats chosen.
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-date-and-time-inputs
      */
-    public function dateTime($fieldName, array $options = array())
+    public function dateTime($fieldName, array $options = [])
     {
         $options += [
             'empty' => true,

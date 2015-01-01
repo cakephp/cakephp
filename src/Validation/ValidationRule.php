@@ -73,7 +73,7 @@ class ValidationRule
      *
      * @param array $validator [optional] The validator properties
      */
-    public function __construct(array $validator = array())
+    public function __construct(array $validator = [])
     {
         $this->_addValidatorProps($validator);
     }
@@ -178,7 +178,7 @@ class ValidationRule
      * @param array $validator [optional]
      * @return void
      */
-    protected function _addValidatorProps($validator = array())
+    protected function _addValidatorProps($validator = [])
     {
         foreach ($validator as $key => $value) {
             if (!isset($value) || empty($value)) {

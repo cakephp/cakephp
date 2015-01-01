@@ -1,6 +1,6 @@
 <p>This is regular text</p>
 <!--nocache-->
-	<?= microtime(); ?>
+    <?= microtime(); ?>
 <!--/nocache-->
 
 <?= $this->fetch('content'); ?>
@@ -8,6 +8,6 @@
 <?= $superman; ?>
 
 <!--nocache-->
-	<?= $variable; ?>
+    <?= $variable; ?>
 <!--/nocache-->
 <p>Additional regular text.</p>

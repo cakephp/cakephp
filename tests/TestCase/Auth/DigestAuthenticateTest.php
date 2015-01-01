@@ -36,7 +36,7 @@ class DigestAuthenticateTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = array('core.users', 'core.auth_users');
+    public $fixtures = ['core.users', 'core.auth_users'];
 
     /**
      * setup
@@ -48,11 +48,11 @@ class DigestAuthenticateTest extends TestCase
         parent::setUp();
 
         $this->Collection = $this->getMock('Cake\Controller\ComponentRegistry');
-        $this->auth = new DigestAuthenticate($this->Collection, array(
+        $this->auth = new DigestAuthenticate($this->Collection, [
             'realm' => 'localhost',
             'nonce' => 123,
             'opaque' => '123abc'
-        ));
+        ]);
 
         $password = DigestAuthenticate::password('mariano', 'cake', 'localhost');
         $User = TableRegistry::get('Users');
@@ -68,13 +68,13 @@ class DigestAuthenticateTest extends TestCase
      */
     public function testConstructor()
     {
-        $object = new DigestAuthenticate($this->Collection, array(
+        $object = new DigestAuthenticate($this->Collection, [
             'userModel' => 'AuthUser',
-            'fields' => array('username' => 'user', 'password' => 'pass'),
+            'fields' => ['username' => 'user', 'password' => 'pass'],
             'nonce' => 123456
-        ));
+        ]);
         $this->assertEquals('AuthUser', $object->config('userModel'));
-        $this->assertEquals(array('username' => 'user', 'password' => 'pass'), $object->config('fields'));
+        $this->assertEquals(['username' => 'user', 'password' => 'pass'], $object->config('fields'));
         $this->assertEquals(123456, $object->config('nonce'));
         $this->assertEquals(env('SERVER_NAME'), $object->config('realm'));
     }
@@ -104,7 +104,7 @@ class DigestAuthenticateTest extends TestCase
     public function testAuthenticateWrongUsername()
     {
         $request = new Request('posts/index');
-        $request->addParams(array('pass' => array()));
+        $request->addParams(['pass' => []]);
 
         $digest = <<<DIGEST
 Digest username="incorrect_user",
@@ -133,7 +133,7 @@ DIGEST;
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(array('pass' => array()));
+        $request->addParams(['pass' => []]);
 
         try {
             $this->auth->unauthenticated($request, $this->response);
@@ -142,7 +142,7 @@ DIGEST;
 
         $this->assertNotEmpty($e);
 
-        $expected = array('WWW-Authenticate: Digest realm="localhost",qop="auth",nonce="123",opaque="123abc"');
+        $expected = ['WWW-Authenticate: Digest realm="localhost",qop="auth",nonce="123",opaque="123abc"'];
         $this->assertEquals($expected, $e->responseHeader());
     }
 
@@ -157,7 +157,7 @@ DIGEST;
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(array('pass' => array()));
+        $request->addParams(['pass' => []]);
 
         $digest = <<<DIGEST
 Digest username="mariano",
@@ -173,12 +173,12 @@ DIGEST;
         $request->env('PHP_AUTH_DIGEST', $digest);
 
         $result = $this->auth->authenticate($request, $this->response);
-        $expected = array(
+        $expected = [
             'id' => 1,
             'username' => 'mariano',
             'created' => new Time('2007-03-17 01:16:23'),
             'updated' => new Time('2007-03-17 01:18:31')
-        );
+        ];
         $this->assertEquals($expected, $result);
     }
 
@@ -194,7 +194,7 @@ DIGEST;
             'post' => ['_method' => 'PUT'],
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(array('pass' => array()));
+        $request->addParams(['pass' => []]);
 
         $digest = <<<DIGEST
 Digest username="mariano",
@@ -210,12 +210,12 @@ DIGEST;
         $request->env('PHP_AUTH_DIGEST', $digest);
 
         $result = $this->auth->authenticate($request, $this->response);
-        $expected = array(
+        $expected = [
             'id' => 1,
             'username' => 'mariano',
             'created' => new Time('2007-03-17 01:16:23'),
             'updated' => new Time('2007-03-17 01:18:31')
-        );
+        ];
         $this->assertEquals($expected, $result);
     }
 
@@ -233,7 +233,7 @@ DIGEST;
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(array('pass' => array()));
+        $request->addParams(['pass' => []]);
 
         $digest = <<<DIGEST
 Digest username="mariano",
@@ -261,10 +261,10 @@ DIGEST;
         $request = new Request([
             'environment' => ['SERVER_NAME' => 'localhost']
         ]);
-        $this->auth = new DigestAuthenticate($this->Collection, array(
+        $this->auth = new DigestAuthenticate($this->Collection, [
             'realm' => 'localhost',
             'nonce' => '123'
-        ));
+        ]);
         $expected = 'WWW-Authenticate: Digest realm="localhost",qop="auth",nonce="123",opaque="421aa90e079fa326b6494f812ad13e79"';
         $result = $this->auth->loginHeaders($request);
         $this->assertEquals($expected, $result);
@@ -288,7 +288,7 @@ DIGEST;
 			response="6629fae49393a05397450978507c4ef1",
 			opaque="5ccc069c403ebaf9f0171e9517f40e41"
 DIGEST;
-        $expected = array(
+        $expected = [
             'username' => 'Mufasa',
             'realm' => 'testrealm@host.com',
             'nonce' => 'dcd98b7102dd2f0e8b11d0f600bfb0c093',
@@ -298,7 +298,7 @@ DIGEST;
             'cnonce' => '0a4f113b',
             'response' => '6629fae49393a05397450978507c4ef1',
             'opaque' => '5ccc069c403ebaf9f0171e9517f40e41'
-        );
+        ];
         $result = $this->auth->parseAuthData($digest);
         $this->assertSame($expected, $result);
 
@@ -348,7 +348,7 @@ DIGEST;
 			response="6629fae49393a05397450978507c4ef1",
 			opaque="5ccc069c403ebaf9f0171e9517f40e41"
 DIGEST;
-        $expected = array(
+        $expected = [
             'username' => 'mark@example.com',
             'realm' => 'testrealm@host.com',
             'nonce' => 'dcd98b7102dd2f0e8b11d0f600bfb0c093',
@@ -358,7 +358,7 @@ DIGEST;
             'cnonce' => '0a4f113b',
             'response' => '6629fae49393a05397450978507c4ef1',
             'opaque' => '5ccc069c403ebaf9f0171e9517f40e41'
-        );
+        ];
         $result = $this->auth->parseAuthData($digest);
         $this->assertSame($expected, $result);
     }

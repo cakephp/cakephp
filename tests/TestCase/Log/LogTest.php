@@ -89,7 +89,7 @@ class LogTest extends TestCase
      */
     public function testValidKeyName()
     {
-        Log::config('valid', array('engine' => 'File'));
+        Log::config('valid', ['engine' => 'File']);
         $stream = Log::engine('valid');
         $this->assertInstanceOf('Cake\Log\Engine\FileLog', $stream);
     }
@@ -102,7 +102,7 @@ class LogTest extends TestCase
      */
     public function testNotImplementingInterface()
     {
-        Log::config('fail', array('engine' => '\stdClass'));
+        Log::config('fail', ['engine' => '\stdClass']);
         Log::engine('fail');
     }
 
@@ -113,10 +113,10 @@ class LogTest extends TestCase
      */
     public function testDrop()
     {
-        Log::config('file', array(
+        Log::config('file', [
             'engine' => 'File',
             'path' => LOGS
-        ));
+        ]);
         $result = Log::configured();
         $this->assertContains('file', $result);
 
@@ -135,7 +135,7 @@ class LogTest extends TestCase
      */
     public function testInvalidLevel()
     {
-        Log::config('myengine', array('engine' => 'File'));
+        Log::config('myengine', ['engine' => 'File']);
         Log::write('invalid', 'This will not be logged');
     }
 
@@ -254,18 +254,18 @@ class LogTest extends TestCase
         if (file_exists(LOGS . 'eggs.log')) {
             unlink(LOGS . 'eggs.log');
         }
-        Log::config('spam', array(
+        Log::config('spam', [
             'engine' => 'File',
             'path' => LOGS,
             'types' => 'debug',
             'file' => 'spam',
-        ));
-        Log::config('eggs', array(
+        ]);
+        Log::config('eggs', [
             'engine' => 'File',
             'path' => LOGS,
-            'types' => array('eggs', 'debug', 'error', 'warning'),
+            'types' => ['eggs', 'debug', 'error', 'warning'],
             'file' => 'eggs',
-        ));
+        ]);
 
         $testMessage = 'selective logging';
         Log::write('warning', $testMessage);
@@ -291,18 +291,18 @@ class LogTest extends TestCase
 
     protected function _resetLogConfig()
     {
-        Log::config('debug', array(
+        Log::config('debug', [
             'engine' => 'File',
             'path' => LOGS,
-            'types' => array('notice', 'info', 'debug'),
+            'types' => ['notice', 'info', 'debug'],
             'file' => 'debug',
-        ));
-        Log::config('error', array(
+        ]);
+        Log::config('error', [
             'engine' => 'File',
             'path' => LOGS,
-            'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
+            'types' => ['warning', 'error', 'critical', 'alert', 'emergency'],
             'file' => 'error',
-        ));
+        ]);
     }
 
     protected function _deleteLogs()
@@ -336,13 +336,13 @@ class LogTest extends TestCase
     {
         $this->_deleteLogs();
         $this->_resetLogConfig();
-        Log::config('shops', array(
+        Log::config('shops', [
             'engine' => 'File',
             'path' => LOGS,
-            'types' => array('info', 'debug', 'warning'),
-            'scopes' => array('transactions', 'orders'),
+            'types' => ['info', 'debug', 'warning'],
+            'scopes' => ['transactions', 'orders'],
             'file' => 'shops',
-        ));
+        ]);
 
         Log::write('debug', 'debug message', 'transactions');
         $this->assertFileNotExists(LOGS . 'error.log');
@@ -384,13 +384,13 @@ class LogTest extends TestCase
         }
 
         $this->_resetLogConfig();
-        Log::config('shops', array(
+        Log::config('shops', [
             'engine' => 'File',
             'path' => LOGS,
-            'types' => array('info', 'debug', 'notice', 'warning'),
-            'scopes' => array('transactions', 'orders'),
+            'types' => ['info', 'debug', 'notice', 'warning'],
+            'scopes' => ['transactions', 'orders'],
             'file' => 'shops',
-        ));
+        ]);
 
         Log::info('info message', 'transactions');
         $this->assertFileNotExists(LOGS . 'error.log');
@@ -425,20 +425,20 @@ class LogTest extends TestCase
     {
         $this->_deleteLogs();
 
-        Log::config('shops', array(
+        Log::config('shops', [
             'engine' => 'File',
             'path' => LOGS,
-            'types' => array('debug', 'notice', 'warning'),
-            'scopes' => array('transactions', 'orders'),
+            'types' => ['debug', 'notice', 'warning'],
+            'scopes' => ['transactions', 'orders'],
             'file' => 'shops.log',
-        ));
-        Log::config('eggs', array(
+        ]);
+        Log::config('eggs', [
             'engine' => 'File',
             'path' => LOGS,
-            'types' => array('debug', 'notice', 'warning'),
-            'scopes' => array('eggs'),
+            'types' => ['debug', 'notice', 'warning'],
+            'scopes' => ['eggs'],
             'file' => 'eggs.log',
-        ));
+        ]);
 
         Log::write('debug', 'transactions message', 'transactions');
         $this->assertFileNotExists(LOGS . 'eggs.log');
@@ -463,8 +463,8 @@ class LogTest extends TestCase
         Log::config('scope_test', [
             'engine' => 'TestApp',
             'path' => LOGS,
-            'types' => array('notice', 'info', 'debug'),
-            'scopes' => array('foo', 'bar'),
+            'types' => ['notice', 'info', 'debug'],
+            'scopes' => ['foo', 'bar'],
         ]);
 
         $engine = Log::engine('scope_test');
@@ -487,18 +487,18 @@ class LogTest extends TestCase
     {
         $this->_deleteLogs();
 
-        Log::config('debug', array(
+        Log::config('debug', [
             'engine' => 'File',
             'path' => LOGS,
-            'types' => array('notice', 'info', 'debug'),
+            'types' => ['notice', 'info', 'debug'],
             'file' => 'debug',
-        ));
-        Log::config('error', array(
+        ]);
+        Log::config('error', [
             'engine' => 'File',
             'path' => LOGS,
-            'types' => array('emergency', 'alert', 'critical', 'error', 'warning'),
+            'types' => ['emergency', 'alert', 'critical', 'error', 'warning'],
             'file' => 'error',
-        ));
+        ]);
 
         $testMessage = 'emergency message';
         Log::emergency($testMessage);

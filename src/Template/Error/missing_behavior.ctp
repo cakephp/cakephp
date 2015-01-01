@@ -17,20 +17,20 @@ use Cake\Core\Configure;
 
 $namespace = Configure::read('App.namespace');
 if (!empty($plugin)) {
-	$namespace = $plugin;
+    $namespace = $plugin;
 }
 
 $pluginPath = Configure::read('App.paths.plugins.0');
 
 $pluginDot = empty($plugin) ? null : $plugin . '.';
 if (empty($plugin)) {
-	$filePath = APP_DIR . DS;
+    $filePath = APP_DIR . DS;
 }
 if (!empty($plugin) && Plugin::loaded($plugin)) {
-	$filePath = Plugin::classPath($plugin);
+    $filePath = Plugin::classPath($plugin);
 }
 if (!empty($plugin) && !Plugin::loaded($plugin)) {
-	$filePath = $pluginPath . h($plugin) . DS . 'src' . DS;
+    $filePath = $pluginPath . h($plugin) . DS . 'src' . DS;
 }
 
 $this->layout = 'dev_error';
@@ -47,8 +47,8 @@ $this->end();
 $this->start('file');
 ?>
 <p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), $filePath . 'Model' . DS . 'Behavior' . DS . h($class) . '.php'); ?>
+    <strong>Error: </strong>
+    <?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), $filePath . 'Model' . DS . 'Behavior' . DS . h($class) . '.php'); ?>
 </p>
 
 <?php
@@ -58,7 +58,8 @@ namespace {$namespace}\Model\Behavior;
 
 use Cake\ORM\Behavior;
 
-class {$class} extends Behavior {
+class {$class} extends Behavior
+{
 
 }
 PHP;

@@ -28,23 +28,23 @@ class PostsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = array(
+    public $fields = [
         'id' => ['type' => 'integer'],
         'author_id' => ['type' => 'integer', 'null' => false],
         'title' => ['type' => 'string', 'null' => false],
         'body' => 'text',
         'published' => ['type' => 'string', 'length' => 1, 'default' => 'N'],
         '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
-    );
+    ];
 
     /**
      * records property
      *
      * @var array
      */
-    public $records = array(
-        array('author_id' => 1, 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y'),
-        array('author_id' => 3, 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y'),
-        array('author_id' => 1, 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y')
-    );
+    public $records = [
+        ['author_id' => 1, 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y'],
+        ['author_id' => 3, 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y'],
+        ['author_id' => 1, 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y']
+    ];
 }

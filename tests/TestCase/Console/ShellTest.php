@@ -30,7 +30,7 @@ use Cake\Utility\Hash;
 class MergeShell extends Shell
 {
 
-    public $tasks = array('DbConfig', 'Fixture');
+    public $tasks = ['DbConfig', 'Fixture'];
 
     public $modelClass = 'Articles';
 }
@@ -179,7 +179,7 @@ class ShellTest extends TestCase
         Configure::write('App.namespace', 'TestApp');
 
         Plugin::load('TestPlugin');
-        $this->Shell->tasks = array('DbConfig' => array('one', 'two'));
+        $this->Shell->tasks = ['DbConfig' => ['one', 'two']];
         $this->Shell->plugin = 'TestPlugin';
         $this->Shell->modelClass = 'TestPlugin.TestPluginComments';
         $this->Shell->initialize();
@@ -237,7 +237,7 @@ class ShellTest extends TestCase
             ->with('Just a test?', 'n')
             ->will($this->returnValue('n'));
 
-        $result = $this->Shell->in('Just a test?', array('y', 'n'), 'n');
+        $result = $this->Shell->in('Just a test?', ['y', 'n'], 'n');
         $this->assertEquals('n', $result);
 
         $result = $this->Shell->in('Just a test?', null, 'n');
@@ -355,10 +355,10 @@ class ShellTest extends TestCase
         $this->Shell->tasks = true;
         $this->assertTrue($this->Shell->loadTasks());
 
-        $this->Shell->tasks = array();
+        $this->Shell->tasks = [];
         $this->assertTrue($this->Shell->loadTasks());
 
-        $this->Shell->tasks = array('TestApple');
+        $this->Shell->tasks = ['TestApple'];
         $this->assertTrue($this->Shell->loadTasks());
         $this->assertInstanceOf('Cake\Shell\Task\TestAppleTask', $this->Shell->TestApple);
 
@@ -369,7 +369,7 @@ class ShellTest extends TestCase
 
         unset($this->Shell->ShellTestApple, $this->Shell->TestBanana);
 
-        $this->Shell->tasks = array('TestApple', 'TestBanana');
+        $this->Shell->tasks = ['TestApple', 'TestBanana'];
         $this->assertTrue($this->Shell->loadTasks());
         $this->assertInstanceOf('Cake\Shell\Task\TestAppleTask', $this->Shell->TestApple);
         $this->assertInstanceOf('Cake\Shell\Task\TestBananaTask', $this->Shell->TestBanana);
@@ -382,13 +382,13 @@ class ShellTest extends TestCase
      */
     public function testMagicGetArgAndParamReferences()
     {
-        $this->Shell->tasks = array('TestApple');
-        $this->Shell->args = array('one');
-        $this->Shell->params = array('help' => false);
+        $this->Shell->tasks = ['TestApple'];
+        $this->Shell->args = ['one'];
+        $this->Shell->params = ['help' => false];
         $this->Shell->loadTasks();
         $result = $this->Shell->TestApple;
 
-        $this->Shell->args = array('one', 'two');
+        $this->Shell->args = ['one', 'two'];
 
         $this->assertSame($this->Shell->args, $result->args);
         $this->assertSame($this->Shell->params, $result->params);
@@ -532,7 +532,7 @@ class ShellTest extends TestCase
      */
     public function testHasTask()
     {
-        $this->Shell->tasks = array('Extract', 'DbConfig');
+        $this->Shell->tasks = ['Extract', 'DbConfig'];
         $this->Shell->loadTasks();
 
         $this->assertTrue($this->Shell->hasTask('extract'));
@@ -696,8 +696,8 @@ class ShellTest extends TestCase
      */
     public function testRunCommandBaseclassMethod()
     {
-        $shell = $this->getMock('Cake\Console\Shell', array('startup', 'getOptionParser', 'out'), array(), '', false);
-        $parser = $this->getMock('Cake\Console\ConsoleOptionParser', array(), array(), '', false);
+        $shell = $this->getMock('Cake\Console\Shell', ['startup', 'getOptionParser', 'out'], [], '', false);
+        $parser = $this->getMock('Cake\Console\ConsoleOptionParser', [], [], '', false);
 
         $parser->expects($this->once())->method('help');
         $shell->expects($this->once())->method('getOptionParser')
@@ -715,8 +715,8 @@ class ShellTest extends TestCase
      */
     public function testRunCommandMissingMethod()
     {
-        $shell = $this->getMock('Cake\Console\Shell', array('startup', 'getOptionParser', 'out'), array(), '', false);
-        $parser = $this->getMock('Cake\Console\ConsoleOptionParser', array(), array(), '', false);
+        $shell = $this->getMock('Cake\Console\Shell', ['startup', 'getOptionParser', 'out'], [], '', false);
+        $parser = $this->getMock('Cake\Console\ConsoleOptionParser', [], [], '', false);
 
         $parser->expects($this->once())->method('help');
         $shell->expects($this->once())->method('getOptionParser')
@@ -734,13 +734,13 @@ class ShellTest extends TestCase
      */
     public function testRunCommandTriggeringHelp()
     {
-        $Parser = $this->getMock('Cake\Console\ConsoleOptionParser', array(), array(), '', false);
+        $Parser = $this->getMock('Cake\Console\ConsoleOptionParser', [], [], '', false);
         $Parser->expects($this->once())->method('parse')
-            ->with(array('--help'))
-            ->will($this->returnValue(array(array('help' => true), array())));
+            ->with(['--help'])
+            ->will($this->returnValue([['help' => true], []]));
         $Parser->expects($this->once())->method('help');
 
-        $Shell = $this->getMock('Cake\Console\Shell', array('getOptionParser', 'out', 'startup', '_welcome'), array(), '', false);
+        $Shell = $this->getMock('Cake\Console\Shell', ['getOptionParser', 'out', 'startup', '_welcome'], [], '', false);
         $Shell->expects($this->once())->method('getOptionParser')
             ->will($this->returnValue($Parser));
         $Shell->expects($this->once())->method('out');
@@ -808,7 +808,7 @@ class ShellTest extends TestCase
     public function testWrapText()
     {
         $text = 'This is the song that never ends. This is the song that never ends. This is the song that never ends.';
-        $result = $this->Shell->wrapText($text, array('width' => 33));
+        $result = $this->Shell->wrapText($text, ['width' => 33]);
         $expected = <<<TEXT
 This is the song that never ends.
 This is the song that never ends.
@@ -816,7 +816,7 @@ This is the song that never ends.
 TEXT;
         $this->assertTextEquals($expected, $result, 'Text not wrapped.');
 
-        $result = $this->Shell->wrapText($text, array('indent' => '  ', 'width' => 33));
+        $result = $this->Shell->wrapText($text, ['indent' => '  ', 'width' => 33]);
         $expected = <<<TEXT
   This is the song that never ends.
   This is the song that never ends.
@@ -832,7 +832,7 @@ TEXT;
      */
     public function testShellNaming()
     {
-        $this->Shell->tasks = array('TestApple');
+        $this->Shell->tasks = ['TestApple'];
         $this->Shell->loadTasks();
         $expected = 'TestApple';
         $this->assertEquals($expected, $this->Shell->TestApple->name);
@@ -845,12 +845,12 @@ TEXT;
      */
     public function testParamReading($toRead, $expected)
     {
-        $this->Shell->params = array(
+        $this->Shell->params = [
             'key' => 'value',
             'help' => false,
             'emptykey' => '',
             'truthy' => true
-        );
+        ];
         $this->assertSame($expected, $this->Shell->param($toRead));
     }
 
@@ -861,28 +861,28 @@ TEXT;
      */
     public function paramReadingDataProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 'key',
                 'value',
-            ),
-            array(
+            ],
+            [
                 'help',
                 false,
-            ),
-            array(
+            ],
+            [
                 'emptykey',
                 '',
-            ),
-            array(
+            ],
+            [
                 'truthy',
                 true,
-            ),
-            array(
+            ],
+            [
                 'does_not_exist',
                 null,
-            )
-        );
+            ]
+        ];
     }
 
     /**
@@ -917,7 +917,7 @@ TEXT;
             ->method('setLoggers')
             ->with(false);
 
-        $this->Shell = $this->getMock(__NAMESPACE__ . '\ShellTestShell', array('_useLogger'), array($io));
+        $this->Shell = $this->getMock(__NAMESPACE__ . '\ShellTestShell', ['_useLogger'], [$io]);
         $this->Shell->runCommand(['foo', '--quiet']);
     }
 }

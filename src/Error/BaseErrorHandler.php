@@ -117,14 +117,14 @@ abstract class BaseErrorHandler
         if ($log === LOG_ERR) {
             return $this->handleFatalError($code, $description, $file, $line);
         }
-        $data = array(
+        $data = [
             'level' => $log,
             'code' => $code,
             'error' => $error,
             'description' => $description,
             'file' => $file,
             'line' => $line,
-        );
+        ];
 
         $debug = Configure::read('debug');
         if ($debug) {
@@ -212,10 +212,10 @@ abstract class BaseErrorHandler
             $data['line']
         );
         if (!empty($this->_options['trace'])) {
-            $trace = Debugger::trace(array(
+            $trace = Debugger::trace([
                 'start' => 1,
                 'format' => 'log'
-            ));
+            ]);
             $message .= "\nTrace:\n" . $trace . "\n";
         }
         $message .= "\n\n";

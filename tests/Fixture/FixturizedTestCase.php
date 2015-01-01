@@ -14,7 +14,7 @@ class FixturizedTestCase extends TestCase
      * Fixtures to use in this thes
      * @var array
      */
-    public $fixtures = array('core.categories');
+    public $fixtures = ['core.categories'];
 
     /**
      * test that the shared fixture is correctly set

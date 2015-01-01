@@ -50,8 +50,8 @@ if (!function_exists('debug')) {
         $line = '';
         $lineInfo = '';
         if ($showFrom) {
-            $trace = Debugger::trace(array('start' => 1, 'depth' => 2, 'format' => 'array'));
-            $search = array(ROOT);
+            $trace = Debugger::trace(['start' => 1, 'depth' => 2, 'format' => 'array']);
+            $search = [ROOT];
             if (defined('CAKE_CORE_INCLUDE_PATH')) {
                 array_unshift($search, CAKE_CORE_INCLUDE_PATH);
             }
@@ -111,13 +111,13 @@ if (!function_exists('stackTrace')) {
      * @return mixed Formatted stack trace
      * @see Debugger::trace()
      */
-    function stackTrace(array $options = array())
+    function stackTrace(array $options = [])
     {
         if (!Configure::read('debug')) {
             return;
         }
 
-        $options += array('start' => 0);
+        $options += ['start' => 0];
         $options['start']++;
         echo Debugger::trace($options);
     }

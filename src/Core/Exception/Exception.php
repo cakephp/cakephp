@@ -25,7 +25,7 @@ class Exception extends \RuntimeException
      *
      * @var array
      */
-    protected $_attributes = array();
+    protected $_attributes = [];
 
     /**
      * Template string that has attributes sprintf()'ed into it.
@@ -90,6 +90,6 @@ class Exception extends \RuntimeException
         if (is_array($header)) {
             return $this->_responseHeaders = $header;
         }
-        $this->_responseHeaders = array($header => $value);
+        $this->_responseHeaders = [$header => $value];
     }
 }

@@ -45,14 +45,14 @@ class ViewBlock
      *
      * @var array
      */
-    protected $_blocks = array();
+    protected $_blocks = [];
 
     /**
      * The active blocks being captured.
      *
      * @var array
      */
-    protected $_active = array();
+    protected $_active = [];
 
     /**
      * Should the currently captured content be discarded on ViewBlock::end()

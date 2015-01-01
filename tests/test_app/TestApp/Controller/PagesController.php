@@ -38,7 +38,7 @@ class PagesController extends AppController
      *
      * @var array
      */
-    public $helpers = array('Html', 'Session');
+    public $helpers = ['Html', 'Session'];
 
     /**
      * Displays a view
@@ -67,11 +67,11 @@ class PagesController extends AppController
         if (!empty($path[$count - 1])) {
             $titleForLayout = Inflector::humanize($path[$count - 1]);
         }
-        $this->set(array(
+        $this->set([
             'page' => $page,
             'subpage' => $subpage,
             'title_for_layout' => $titleForLayout
-        ));
+        ]);
 
         try {
             $this->render(implode('/', $path));

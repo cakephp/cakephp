@@ -153,8 +153,8 @@ class DigestAuthenticate extends BasicAuthenticate
         if (substr($digest, 0, 7) === 'Digest ') {
             $digest = substr($digest, 7);
         }
-        $keys = $match = array();
-        $req = array('nonce' => 1, 'nc' => 1, 'cnonce' => 1, 'qop' => 1, 'username' => 1, 'uri' => 1, 'response' => 1);
+        $keys = $match = [];
+        $req = ['nonce' => 1, 'nc' => 1, 'cnonce' => 1, 'qop' => 1, 'username' => 1, 'uri' => 1, 'response' => 1];
         preg_match_all('/(\w+)=([\'"]?)([a-zA-Z0-9\:\#\%\?\&@=\.\/_-]+)\2/', $digest, $match, PREG_SET_ORDER);
 
         foreach ($match as $i) {
@@ -208,14 +208,14 @@ class DigestAuthenticate extends BasicAuthenticate
     {
         $realm = $this->_config['realm'] ?: $request->env('SERVER_NAME');
 
-        $options = array(
+        $options = [
             'realm' => $realm,
             'qop' => $this->_config['qop'],
             'nonce' => $this->_config['nonce'],
             'opaque' => $this->_config['opaque'] ?: md5($realm)
-        );
+        ];
 
-        $opts = array();
+        $opts = [];
         foreach ($options as $k => $v) {
             $opts[] = sprintf('%s="%s"', $k, $v);
         }

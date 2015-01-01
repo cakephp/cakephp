@@ -69,7 +69,7 @@ class ComponentRegistryTest extends TestCase
         $this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $this->Components->Cookie);
 
         $result = $this->Components->loaded();
-        $this->assertEquals(array('Cookie'), $result, 'loaded() results are wrong.');
+        $this->assertEquals(['Cookie'], $result, 'loaded() results are wrong.');
 
         $result = $this->Components->load('Cookie');
         $this->assertSame($result, $this->Components->Cookie);
@@ -82,24 +82,24 @@ class ComponentRegistryTest extends TestCase
      */
     public function testLoadWithAlias()
     {
-        $result = $this->Components->load('Cookie', array('className' => __NAMESPACE__ . '\CookieAliasComponent', 'somesetting' => true));
+        $result = $this->Components->load('Cookie', ['className' => __NAMESPACE__ . '\CookieAliasComponent', 'somesetting' => true]);
         $this->assertInstanceOf(__NAMESPACE__ . '\CookieAliasComponent', $result);
         $this->assertInstanceOf(__NAMESPACE__ . '\CookieAliasComponent', $this->Components->Cookie);
         $this->assertTrue($this->Components->Cookie->config('somesetting'));
 
         $result = $this->Components->loaded();
-        $this->assertEquals(array('Cookie'), $result, 'loaded() results are wrong.');
+        $this->assertEquals(['Cookie'], $result, 'loaded() results are wrong.');
 
         $result = $this->Components->load('Cookie');
         $this->assertInstanceOf(__NAMESPACE__ . '\CookieAliasComponent', $result);
 
         Plugin::load('TestPlugin');
-        $result = $this->Components->load('SomeOther', array('className' => 'TestPlugin.Other'));
+        $result = $this->Components->load('SomeOther', ['className' => 'TestPlugin.Other']);
         $this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $result);
         $this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $this->Components->SomeOther);
 
         $result = $this->Components->loaded();
-        $this->assertEquals(array('Cookie', 'SomeOther'), $result, 'loaded() results are wrong.');
+        $this->assertEquals(['Cookie', 'SomeOther'], $result, 'loaded() results are wrong.');
     }
 
     /**
@@ -115,7 +115,7 @@ class ComponentRegistryTest extends TestCase
 
         $this->Components->getController()->eventManager($mock);
 
-        $result = $this->Components->load('Cookie', array('enabled' => false));
+        $result = $this->Components->load('Cookie', ['enabled' => false]);
         $this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $result);
         $this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $this->Components->Cookie);
     }

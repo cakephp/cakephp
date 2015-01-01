@@ -112,12 +112,12 @@ class IniConfig implements ConfigEngineInterface
         if (!empty($this->_section) && isset($contents[$this->_section])) {
             $values = $this->_parseNestedValues($contents[$this->_section]);
         } else {
-            $values = array();
+            $values = [];
             foreach ($contents as $section => $attribs) {
                 if (is_array($attribs)) {
                     $values[$section] = $this->_parseNestedValues($attribs);
                 } else {
-                    $parse = $this->_parseNestedValues(array($attribs));
+                    $parse = $this->_parseNestedValues([$attribs]);
                     $values[$section] = array_shift($parse);
                 }
             }
@@ -160,7 +160,7 @@ class IniConfig implements ConfigEngineInterface
      */
     public function dump($key, array $data)
     {
-        $result = array();
+        $result = [];
         foreach ($data as $k => $value) {
             $isSection = false;
             if ($k[0] !== '[') {

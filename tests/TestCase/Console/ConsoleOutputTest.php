@@ -34,7 +34,7 @@ class ConsoleOutputTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->output = $this->getMock('Cake\Console\ConsoleOutput', array('_write'));
+        $this->output = $this->getMock('Cake\Console\ConsoleOutput', ['_write']);
         $this->output->outputAs(ConsoleOutput::COLOR);
     }
 
@@ -98,7 +98,7 @@ class ConsoleOutputTest extends TestCase
         $this->output->expects($this->once())->method('_write')
             ->with('Line' . PHP_EOL . 'Line' . PHP_EOL . 'Line' . PHP_EOL);
 
-        $this->output->write(array('Line', 'Line', 'Line'));
+        $this->output->write(['Line', 'Line', 'Line']);
     }
 
     /**
@@ -109,7 +109,7 @@ class ConsoleOutputTest extends TestCase
     public function testStylesGet()
     {
         $result = $this->output->styles('error');
-        $expected = array('text' => 'red', 'underline' => true);
+        $expected = ['text' => 'red', 'underline' => true];
         $this->assertEquals($expected, $result);
 
         $this->assertNull($this->output->styles('made_up_goop'));
@@ -126,9 +126,9 @@ class ConsoleOutputTest extends TestCase
      */
     public function testStylesAdding()
     {
-        $this->output->styles('test', array('text' => 'red', 'background' => 'black'));
+        $this->output->styles('test', ['text' => 'red', 'background' => 'black']);
         $result = $this->output->styles('test');
-        $expected = array('text' => 'red', 'background' => 'black');
+        $expected = ['text' => 'red', 'background' => 'black'];
         $this->assertEquals($expected, $result);
 
         $this->assertTrue($this->output->styles('test', false), 'Removing a style should return true.');
@@ -168,12 +168,12 @@ class ConsoleOutputTest extends TestCase
      */
     public function testFormattingCustom()
     {
-        $this->output->styles('annoying', array(
+        $this->output->styles('annoying', [
             'text' => 'magenta',
             'background' => 'cyan',
             'blink' => true,
             'underline' => true
-        ));
+        ]);
 
         $this->output->expects($this->once())->method('_write')
             ->with("\033[35;46;5;4mAnnoy:\033[0m Something bad");

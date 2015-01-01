@@ -70,7 +70,7 @@ trait CellTrait
         $className = App::className($pluginAndCell, 'View/Cell', 'Cell');
 
         if (!$className) {
-            throw new Exception\MissingCellException(array('className' => $pluginAndCell . 'Cell'));
+            throw new Exception\MissingCellException(['className' => $pluginAndCell . 'Cell']);
         }
 
         $cell = $this->_createCell($className, $action, $plugin, $options);

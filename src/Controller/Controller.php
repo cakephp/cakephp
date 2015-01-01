@@ -110,7 +110,7 @@ class Controller implements EventListenerInterface
      * @var mixed
      * @link http://book.cakephp.org/3.0/en/controllers.html#configuring-helpers-to-load
      */
-    public $helpers = array();
+    public $helpers = [];
 
     /**
      * An instance of a Cake\Network\Request object that contains information about the current request.
@@ -172,7 +172,7 @@ class Controller implements EventListenerInterface
      * @var array
      * @link http://book.cakephp.org/3.0/en/controllers/components.html
      */
-    public $components = array();
+    public $components = [];
 
     /**
      * The name of the View class this controller sends output to.
@@ -230,7 +230,7 @@ class Controller implements EventListenerInterface
      *
      * @var mixed
      */
-    public $passedArgs = array();
+    public $passedArgs = [];
 
     /**
      * Constructor.
@@ -412,12 +412,12 @@ class Controller implements EventListenerInterface
             throw new LogicException('No Request object configured. Cannot invoke action');
         }
         if (!$this->isAction($request->params['action'])) {
-            throw new MissingActionException(array(
+            throw new MissingActionException([
                 'controller' => $this->name . "Controller",
                 'action' => $request->params['action'],
                 'prefix' => isset($request->params['prefix']) ? $request->params['prefix'] : '',
                 'plugin' => $request->params['plugin'],
-            ));
+            ]);
         }
         $callable = [$this, $request->params['action']];
         return call_user_func_array($callable, $request->params['pass']);
@@ -445,12 +445,12 @@ class Controller implements EventListenerInterface
      */
     public function implementedEvents()
     {
-        return array(
+        return [
             'Controller.initialize' => 'beforeFilter',
             'Controller.beforeRender' => 'beforeRender',
             'Controller.beforeRedirect' => 'beforeRedirect',
             'Controller.shutdown' => 'afterFilter',
-        );
+        ];
     }
 
     /**
@@ -579,7 +579,7 @@ class Controller implements EventListenerInterface
         $this->view = $action;
         $args = func_get_args();
         unset($args[0]);
-        return call_user_func_array(array(&$this, $action), $args);
+        return call_user_func_array([&$this, $action], $args);
     }
 
     /**

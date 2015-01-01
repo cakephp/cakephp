@@ -245,16 +245,16 @@ class RadioWidgetTest extends TestCase
             'val' => '0'
         ];
         $result = $radio->render($data, $this->context);
-        $expected = array(
-            array('label' => array('for' => 'model-field-1')),
-            array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'model-field-1')),
+        $expected = [
+            ['label' => ['for' => 'model-field-1']],
+            ['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'model-field-1']],
             'Yes',
             '/label',
-            array('label' => array('for' => 'model-field-0')),
-            array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0', 'checked' => 'checked')),
+            ['label' => ['for' => 'model-field-0']],
+            ['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0', 'checked' => 'checked']],
             'No',
             '/label',
-        );
+        ];
         $this->assertHtml($expected, $result);
 
         $data['val'] = 0;
@@ -265,16 +265,16 @@ class RadioWidgetTest extends TestCase
         $result = $radio->render($data, $this->context);
         $this->assertHtml($expected, $result);
 
-        $expected = array(
-            array('label' => array('for' => 'model-field-1')),
-            array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'model-field-1')),
+        $expected = [
+            ['label' => ['for' => 'model-field-1']],
+            ['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'model-field-1']],
             'Yes',
             '/label',
-            array('label' => array('for' => 'model-field-0')),
-            array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0')),
+            ['label' => ['for' => 'model-field-0']],
+            ['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0']],
             'No',
             '/label',
-        );
+        ];
         $data['val'] = null;
         $result = $radio->render($data, $this->context);
         $this->assertHtml($expected, $result);
@@ -283,16 +283,16 @@ class RadioWidgetTest extends TestCase
         $result = $radio->render($data, $this->context);
         $this->assertHtml($expected, $result);
 
-        $expected = array(
-            array('label' => array('for' => 'model-field-1')),
-            array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'model-field-1', 'checked' => 'checked')),
+        $expected = [
+            ['label' => ['for' => 'model-field-1']],
+            ['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'model-field-1', 'checked' => 'checked']],
             'Yes',
             '/label',
-            array('label' => array('for' => 'model-field-0')),
-            array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0')),
+            ['label' => ['for' => 'model-field-0']],
+            ['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0']],
             'No',
             '/label',
-        );
+        ];
         $data['val'] = '1';
         $result = $radio->render($data, $this->context);
         $this->assertHtml($expected, $result);

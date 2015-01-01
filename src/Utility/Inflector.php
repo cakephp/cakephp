@@ -149,20 +149,20 @@ class Inflector
      *
      * @var array
      */
-    protected static $_uninflected = array(
+    protected static $_uninflected = [
         '.*[nrlm]ese', '.*data', '.*deer', '.*fish', '.*measles', '.*ois',
         '.*pox', '.*sheep', 'people', 'feedback', 'stadia', '.*?media',
         'chassis', 'clippers', 'debris', 'diabetes', 'equipment', 'gallows',
         'graffiti', 'headquarters', 'information', 'innings', 'news', 'nexus',
         'proceedings', 'research', 'sea[- ]bass', 'series', 'species', 'weather'
-    );
+    ];
 
     /**
      * Default map of accented and special characters to ASCII characters
      *
      * @var array
      */
-    protected static $_transliteration = array(
+    protected static $_transliteration = [
         'ä' => 'ae',
         'æ' => 'ae',
         'ǽ' => 'ae',
@@ -397,21 +397,21 @@ class Inflector
         'þ' => 'th',
         'Є' => 'Ye',
         'є' => 'ye',
-    );
+    ];
 
     /**
      * Method cache array.
      *
      * @var array
      */
-    protected static $_cache = array();
+    protected static $_cache = [];
 
     /**
      * The initial state of Inflector so reset() works.
      *
      * @var array
      */
-    protected static $_initialState = array();
+    protected static $_initialState = [];
 
     /**
      * Cache inflected values, and return if already available
@@ -704,11 +704,11 @@ class Inflector
     {
         $quotedReplacement = preg_quote($replacement, '/');
 
-        $map = array(
+        $map = [
             '/[^\s\p{Zs}\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}]/mu' => ' ',
             '/[\s\p{Zs}]+/mu' => $replacement,
             sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
-        );
+        ];
 
         $string = str_replace(
             array_keys(static::$_transliteration),

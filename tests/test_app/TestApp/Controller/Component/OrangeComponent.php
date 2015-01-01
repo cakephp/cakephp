@@ -29,7 +29,7 @@ class OrangeComponent extends Component
      *
      * @var array
      */
-    public $components = array('Banana');
+    public $components = ['Banana'];
 
     /**
      * initialize method

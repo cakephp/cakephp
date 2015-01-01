@@ -60,10 +60,10 @@ class WincacheEngine extends CacheEngine
         $duration = $this->_config['duration'];
         $expires = time() + $duration;
 
-        $data = array(
+        $data = [
             $key . '_expires' => $expires,
             $key => $value
-        );
+        ];
         $result = wincache_ucache_set($data, null, $duration);
         return empty($result);
     }

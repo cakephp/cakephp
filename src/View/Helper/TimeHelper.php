@@ -222,16 +222,16 @@ class TimeHelper extends Helper
      * @return string Relative time string.
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
-    public function timeAgoInWords($dateTime, array $options = array())
+    public function timeAgoInWords($dateTime, array $options = [])
     {
         $element = null;
 
         if (!empty($options['element'])) {
-            $element = array(
+            $element = [
                 'tag' => 'span',
                 'class' => 'time-ago-in-words',
                 'title' => $dateTime
-            );
+            ];
 
             if (is_array($options['element'])) {
                 $element = $options['element'] + $element;
@@ -246,7 +246,7 @@ class TimeHelper extends Helper
             $relativeDate = sprintf(
                 '<%s%s>%s</%s>',
                 $element['tag'],
-                $this->templater()->formatAttributes($element, array('tag')),
+                $this->templater()->formatAttributes($element, ['tag']),
                 $relativeDate,
                 $element['tag']
             );

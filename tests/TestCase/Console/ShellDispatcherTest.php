@@ -169,15 +169,15 @@ class ShellDispatcherTest extends TestCase
             ->with('mock_with_main')
             ->will($this->returnValue($Shell));
 
-        $dispatcher->args = array('mock_with_main');
+        $dispatcher->args = ['mock_with_main'];
         $result = $dispatcher->dispatch();
         $this->assertSame(0, $result);
-        $this->assertEquals(array(), $dispatcher->args);
+        $this->assertEquals([], $dispatcher->args);
 
-        $dispatcher->args = array('mock_with_main');
+        $dispatcher->args = ['mock_with_main'];
         $result = $dispatcher->dispatch();
         $this->assertSame(0, $result);
-        $this->assertEquals(array(), $dispatcher->args);
+        $this->assertEquals([], $dispatcher->args);
     }
 
     /**
@@ -200,7 +200,7 @@ class ShellDispatcherTest extends TestCase
             ->with('mock_without_main')
             ->will($this->returnValue($Shell));
 
-        $dispatcher->args = array('mock_without_main', 'initdb');
+        $dispatcher->args = ['mock_without_main', 'initdb'];
         $result = $dispatcher->dispatch();
         $this->assertEquals(0, $result);
     }
@@ -228,7 +228,7 @@ class ShellDispatcherTest extends TestCase
             ->with('TestPlugin\Console\Command\TestPluginShell', 'TestPlugin.Example')
             ->will($this->returnValue($Shell));
 
-        $dispatcher->args = array('example');
+        $dispatcher->args = ['example'];
         $result = $dispatcher->dispatch();
         $this->assertEquals(0, $result);
     }
@@ -284,7 +284,7 @@ class ShellDispatcherTest extends TestCase
             ->with('App\Shell\SampleShell', 'Sample')
             ->will($this->returnValue($Shell));
 
-        $dispatcher->args = array('sample');
+        $dispatcher->args = ['sample'];
         $result = $dispatcher->dispatch();
         $this->assertEquals(0, $result);
     }
@@ -296,24 +296,24 @@ class ShellDispatcherTest extends TestCase
      */
     public function testShiftArgs()
     {
-        $this->dispatcher->args = array('a', 'b', 'c');
+        $this->dispatcher->args = ['a', 'b', 'c'];
         $this->assertEquals('a', $this->dispatcher->shiftArgs());
-        $this->assertSame($this->dispatcher->args, array('b', 'c'));
+        $this->assertSame($this->dispatcher->args, ['b', 'c']);
 
-        $this->dispatcher->args = array('a' => 'b', 'c', 'd');
+        $this->dispatcher->args = ['a' => 'b', 'c', 'd'];
         $this->assertEquals('b', $this->dispatcher->shiftArgs());
-        $this->assertSame($this->dispatcher->args, array('c', 'd'));
+        $this->assertSame($this->dispatcher->args, ['c', 'd']);
 
-        $this->dispatcher->args = array('a', 'b' => 'c', 'd');
+        $this->dispatcher->args = ['a', 'b' => 'c', 'd'];
         $this->assertEquals('a', $this->dispatcher->shiftArgs());
-        $this->assertSame($this->dispatcher->args, array('b' => 'c', 'd'));
+        $this->assertSame($this->dispatcher->args, ['b' => 'c', 'd']);
 
-        $this->dispatcher->args = array(0 => 'a', 2 => 'b', 30 => 'c');
+        $this->dispatcher->args = [0 => 'a', 2 => 'b', 30 => 'c'];
         $this->assertEquals('a', $this->dispatcher->shiftArgs());
-        $this->assertSame($this->dispatcher->args, array(0 => 'b', 1 => 'c'));
+        $this->assertSame($this->dispatcher->args, [0 => 'b', 1 => 'c']);
 
-        $this->dispatcher->args = array();
+        $this->dispatcher->args = [];
         $this->assertNull($this->dispatcher->shiftArgs());
-        $this->assertSame(array(), $this->dispatcher->args);
+        $this->assertSame([], $this->dispatcher->args);
     }
 }

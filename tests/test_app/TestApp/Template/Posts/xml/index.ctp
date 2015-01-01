@@ -1,6 +1,6 @@
 <?php
-$data = array('users' => array('user' => array()));
+$data = ['users' => ['user' => []]];
 foreach ($users as $user) {
-	$data['users']['user'][] = array('@' => $user['User']['username']);
+    $data['users']['user'][] = ['@' => $user['User']['username']];
 }
 echo \Cake\Utility\Xml::fromArray($data)->saveXml();

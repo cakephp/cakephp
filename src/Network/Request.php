@@ -36,13 +36,13 @@ class Request implements \ArrayAccess
      *
      * @var array
      */
-    public $params = array(
+    public $params = [
         'plugin' => null,
         'controller' => null,
         'action' => null,
         '_ext' => null,
         'pass' => []
-    );
+    ];
 
     /**
      * Array of POST data. Will contain form data as well as uploaded files.
@@ -119,21 +119,21 @@ class Request implements \ArrayAccess
      *
      * @var array
      */
-    protected static $_detectors = array(
-        'get' => array('env' => 'REQUEST_METHOD', 'value' => 'GET'),
-        'post' => array('env' => 'REQUEST_METHOD', 'value' => 'POST'),
-        'put' => array('env' => 'REQUEST_METHOD', 'value' => 'PUT'),
-        'patch' => array('env' => 'REQUEST_METHOD', 'value' => 'PATCH'),
-        'delete' => array('env' => 'REQUEST_METHOD', 'value' => 'DELETE'),
-        'head' => array('env' => 'REQUEST_METHOD', 'value' => 'HEAD'),
-        'options' => array('env' => 'REQUEST_METHOD', 'value' => 'OPTIONS'),
-        'ssl' => array('env' => 'HTTPS', 'options' => [1, 'on']),
-        'ajax' => array('env' => 'HTTP_X_REQUESTED_WITH', 'value' => 'XMLHttpRequest'),
-        'flash' => array('env' => 'HTTP_USER_AGENT', 'pattern' => '/^(Shockwave|Adobe) Flash/'),
-        'requested' => array('param' => 'requested', 'value' => 1),
-        'json' => array('accept' => array('application/json'), 'param' => '_ext', 'value' => 'json'),
-        'xml' => array('accept' => array('application/xml', 'text/xml'), 'param' => '_ext', 'value' => 'xml'),
-    );
+    protected static $_detectors = [
+        'get' => ['env' => 'REQUEST_METHOD', 'value' => 'GET'],
+        'post' => ['env' => 'REQUEST_METHOD', 'value' => 'POST'],
+        'put' => ['env' => 'REQUEST_METHOD', 'value' => 'PUT'],
+        'patch' => ['env' => 'REQUEST_METHOD', 'value' => 'PATCH'],
+        'delete' => ['env' => 'REQUEST_METHOD', 'value' => 'DELETE'],
+        'head' => ['env' => 'REQUEST_METHOD', 'value' => 'HEAD'],
+        'options' => ['env' => 'REQUEST_METHOD', 'value' => 'OPTIONS'],
+        'ssl' => ['env' => 'HTTPS', 'options' => [1, 'on']],
+        'ajax' => ['env' => 'HTTP_X_REQUESTED_WITH', 'value' => 'XMLHttpRequest'],
+        'flash' => ['env' => 'HTTP_USER_AGENT', 'pattern' => '/^(Shockwave|Adobe) Flash/'],
+        'requested' => ['param' => 'requested', 'value' => 1],
+        'json' => ['accept' => ['application/json'], 'param' => '_ext', 'value' => 'json'],
+        'xml' => ['accept' => ['application/xml', 'text/xml'], 'param' => '_ext', 'value' => 'xml'],
+    ];
 
     /**
      * Instance cache for results of is(something) calls
@@ -173,7 +173,7 @@ class Request implements \ArrayAccess
             'cookiePath' => $webroot
         ];
 
-        $config = array(
+        $config = [
             'query' => $_GET,
             'post' => $_POST,
             'files' => $_FILES,
@@ -182,7 +182,7 @@ class Request implements \ArrayAccess
             'base' => $base,
             'webroot' => $webroot,
             'session' => Session::create($sessionConfig)
-        );
+        ];
         $config['url'] = static::_url($config);
         return new static($config);
     }
@@ -208,23 +208,23 @@ class Request implements \ArrayAccess
      *
      * @param string|array $config An array of request data to create a request with.
      */
-    public function __construct($config = array())
+    public function __construct($config = [])
     {
         if (is_string($config)) {
-            $config = array('url' => $config);
+            $config = ['url' => $config];
         }
-        $config += array(
+        $config += [
             'params' => $this->params,
-            'query' => array(),
-            'post' => array(),
-            'files' => array(),
-            'cookies' => array(),
-            'environment' => array(),
+            'query' => [],
+            'post' => [],
+            'files' => [],
+            'cookies' => [],
+            'environment' => [],
             'url' => '',
             'base' => '',
             'webroot' => '',
             'input' => null,
-        );
+        ];
 
         $this->_setConfig($config);
     }
@@ -275,7 +275,7 @@ class Request implements \ArrayAccess
     protected function _processPost($data)
     {
         $method = $this->env('REQUEST_METHOD');
-        if (in_array($method, array('PUT', 'DELETE', 'PATCH')) &&
+        if (in_array($method, ['PUT', 'DELETE', 'PATCH']) &&
             strpos($this->env('CONTENT_TYPE'), 'application/x-www-form-urlencoded') === 0
         ) {
             $data = $this->input();
@@ -300,7 +300,7 @@ class Request implements \ArrayAccess
      */
     protected function _processGet($query)
     {
-        $unsetUrl = '/' . str_replace(array('.', ' '), '_', urldecode($this->url));
+        $unsetUrl = '/' . str_replace(['.', ' '], '_', urldecode($this->url));
         unset($query[$unsetUrl]);
         unset($query[$this->base . $unsetUrl]);
         if (strpos($this->url, '?') !== false) {
@@ -378,7 +378,7 @@ class Request implements \ArrayAccess
         extract($config);
 
         if ($base !== false && $base !== null) {
-            return array($base, $base . '/');
+            return [$base, $base . '/'];
         }
 
         if (!$baseUrl) {
@@ -396,7 +396,7 @@ class Request implements \ArrayAccess
                 $base = '';
             }
             $base = implode('/', array_map('rawurlencode', explode('/', $base)));
-            return array($base, $base . '/');
+            return [$base, $base . '/'];
         }
 
         $file = '/' . basename($baseUrl);
@@ -415,7 +415,7 @@ class Request implements \ArrayAccess
                 $webrootDir .= $webroot . '/';
             }
         }
-        return array($base . $file, $webrootDir);
+        return [$base . $file, $webrootDir];
     }
 
     /**
@@ -601,7 +601,7 @@ class Request implements \ArrayAccess
     public function is($type)
     {
         if (is_array($type)) {
-            $result = array_map(array($this, 'is'), $type);
+            $result = array_map([$this, 'is'], $type);
             return count(array_filter($result)) > 0;
         }
 
@@ -664,7 +664,7 @@ class Request implements \ArrayAccess
     protected function _extensionDetector($detect)
     {
         if (is_string($detect['extension'])) {
-            $detect['extension'] = array($detect['extension']);
+            $detect['extension'] = [$detect['extension']];
         }
         if (in_array($this->params['_ext'], $detect['extension'])) {
             return true;
@@ -764,7 +764,7 @@ class Request implements \ArrayAccess
      */
     public function isAll(array $types)
     {
-        $result = array_filter(array_map(array($this, 'is'), $types));
+        $result = array_filter(array_map([$this, 'is'], $types));
         return count($result) === count($types);
     }
 
@@ -851,7 +851,7 @@ class Request implements \ArrayAccess
      */
     public function addPaths(array $paths)
     {
-        foreach (array('webroot', 'here', 'base') as $element) {
+        foreach (['webroot', 'here', 'base'] as $element) {
             if (isset($paths[$element])) {
                 $this->{$element} = $paths[$element];
             }
@@ -997,7 +997,7 @@ class Request implements \ArrayAccess
     public function accepts($type = null)
     {
         $raw = $this->parseAccept();
-        $accept = array();
+        $accept = [];
         foreach ($raw as $types) {
             $accept = array_merge($accept, $types);
         }
@@ -1038,7 +1038,7 @@ class Request implements \ArrayAccess
     public function acceptLanguage($language = null)
     {
         $raw = $this->_parseAcceptWithQualifier($this->header('Accept-Language'));
-        $accept = array();
+        $accept = [];
         foreach ($raw as $languages) {
             foreach ($languages as &$lang) {
                 if (strpos($lang, '_')) {
@@ -1065,7 +1065,7 @@ class Request implements \ArrayAccess
      */
     protected function _parseAcceptWithQualifier($header)
     {
-        $accept = array();
+        $accept = [];
         $header = explode(',', $header);
         foreach (array_filter($header) as $value) {
             $prefValue = '1.0';
@@ -1084,7 +1084,7 @@ class Request implements \ArrayAccess
             }
 
             if (!isset($accept[$prefValue])) {
-                $accept[$prefValue] = array();
+                $accept[$prefValue] = [];
             }
             if ($prefValue) {
                 $accept[$prefValue][] = $value;

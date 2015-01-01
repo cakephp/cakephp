@@ -51,7 +51,7 @@ class PluginShortRoute extends InflectedRoute
      *   directory.
      * @return mixed either false or a string URL.
      */
-    public function match(array $url, array $context = array())
+    public function match(array $url, array $context = [])
     {
         if (isset($url['controller']) && isset($url['plugin']) && $url['plugin'] !== $url['controller']) {
             return false;
