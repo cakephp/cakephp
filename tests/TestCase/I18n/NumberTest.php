@@ -65,30 +65,30 @@ class NumberTest extends TestCase
         $expected = '100,100,100';
         $this->assertEquals($expected, $result);
 
-        $result = $this->Number->format($value, array('before' => '#'));
+        $result = $this->Number->format($value, ['before' => '#']);
         $expected = '#100,100,100';
         $this->assertEquals($expected, $result);
 
-        $result = $this->Number->format($value, array('places' => 3));
+        $result = $this->Number->format($value, ['places' => 3]);
         $expected = '100,100,100.000';
         $this->assertEquals($expected, $result);
 
-        $result = $this->Number->format($value, array('locale' => 'es_VE'));
+        $result = $this->Number->format($value, ['locale' => 'es_VE']);
         $expected = '100.100.100';
         $this->assertEquals($expected, $result);
 
         $value = 0.00001;
-        $result = $this->Number->format($value, array('places' => 1, 'before' => '$'));
+        $result = $this->Number->format($value, ['places' => 1, 'before' => '$']);
         $expected = '$0.0';
         $this->assertEquals($expected, $result);
 
         $value = -0.00001;
-        $result = $this->Number->format($value, array('places' => 1, 'before' => '$'));
+        $result = $this->Number->format($value, ['places' => 1, 'before' => '$']);
         $expected = '$-0.0';
         $this->assertEquals($expected, $result);
 
         $value = 1.23;
-        $options = array('locale' => 'fr_FR', 'after' => ' €');
+        $options = ['locale' => 'fr_FR', 'after' => ' €'];
         $result = $this->Number->format($value, $options);
         $expected = '1,23 €';
         $this->assertEquals($expected, $result);
@@ -103,38 +103,38 @@ class NumberTest extends TestCase
     {
         $value = '100100100';
 
-        $result = $this->Number->formatDelta($value, array('places' => 0));
+        $result = $this->Number->formatDelta($value, ['places' => 0]);
         $expected = '+100,100,100';
         $this->assertEquals($expected, $result);
 
-        $result = $this->Number->formatDelta($value, array('before' => '', 'after' => ''));
+        $result = $this->Number->formatDelta($value, ['before' => '', 'after' => '']);
         $expected = '+100,100,100';
         $this->assertEquals($expected, $result);
 
-        $result = $this->Number->formatDelta($value, array('before' => '[', 'after' => ']'));
+        $result = $this->Number->formatDelta($value, ['before' => '[', 'after' => ']']);
         $expected = '[+100,100,100]';
         $this->assertEquals($expected, $result);
 
-        $result = $this->Number->formatDelta(-$value, array('before' => '[', 'after' => ']'));
+        $result = $this->Number->formatDelta(-$value, ['before' => '[', 'after' => ']']);
         $expected = '[-100,100,100]';
         $this->assertEquals($expected, $result);
 
-        $result = $this->Number->formatDelta(-$value, array('before' => '[ ', 'after' => ' ]'));
+        $result = $this->Number->formatDelta(-$value, ['before' => '[ ', 'after' => ' ]']);
         $expected = '[ -100,100,100 ]';
         $this->assertEquals($expected, $result);
 
         $value = 0;
-        $result = $this->Number->formatDelta($value, array('places' => 1, 'before' => '[', 'after' => ']'));
+        $result = $this->Number->formatDelta($value, ['places' => 1, 'before' => '[', 'after' => ']']);
         $expected = '[0.0]';
         $this->assertEquals($expected, $result);
 
         $value = 0.0001;
-        $result = $this->Number->formatDelta($value, array('places' => 1, 'before' => '[', 'after' => ']'));
+        $result = $this->Number->formatDelta($value, ['places' => 1, 'before' => '[', 'after' => ']']);
         $expected = '[0.0]';
         $this->assertEquals($expected, $result);
 
         $value = 9876.1234;
-        $result = $this->Number->formatDelta($value, array('places' => 1, 'locale' => 'de_DE'));
+        $result = $this->Number->formatDelta($value, ['places' => 1, 'locale' => 'de_DE']);
         $expected = '+9.876,1';
         $this->assertEquals($expected, $result);
     }
@@ -336,11 +336,11 @@ class NumberTest extends TestCase
     {
         $value = '1234567.89';
 
-        $result = $this->Number->currency($value, null, array('before' => 'Total: '));
+        $result = $this->Number->currency($value, null, ['before' => 'Total: ']);
         $expected = 'Total: $1,234,567.89';
         $this->assertEquals($expected, $result);
 
-        $result = $this->Number->currency($value, null, array('after' => ' in Total'));
+        $result = $this->Number->currency($value, null, ['after' => ' in Total']);
         $expected = '$1,234,567.89 in Total';
         $this->assertEquals($expected, $result);
     }
@@ -402,27 +402,27 @@ class NumberTest extends TestCase
         $expected = '0.0000%';
         $this->assertEquals($expected, $result);
 
-        $result = $this->Number->toPercentage(45, 0, array('multiply' => false));
+        $result = $this->Number->toPercentage(45, 0, ['multiply' => false]);
         $expected = '45%';
         $this->assertEquals($expected, $result);
 
-        $result = $this->Number->toPercentage(45, 2, array('multiply' => false));
+        $result = $this->Number->toPercentage(45, 2, ['multiply' => false]);
         $expected = '45.00%';
         $this->assertEquals($expected, $result);
 
-        $result = $this->Number->toPercentage(0, 0, array('multiply' => false));
+        $result = $this->Number->toPercentage(0, 0, ['multiply' => false]);
         $expected = '0%';
         $this->assertEquals($expected, $result);
 
-        $result = $this->Number->toPercentage(0, 4, array('multiply' => false));
+        $result = $this->Number->toPercentage(0, 4, ['multiply' => false]);
         $expected = '0.0000%';
         $this->assertEquals($expected, $result);
 
-        $result = $this->Number->toPercentage(0.456, 0, array('multiply' => true));
+        $result = $this->Number->toPercentage(0.456, 0, ['multiply' => true]);
         $expected = '46%';
         $this->assertEquals($expected, $result);
 
-        $result = $this->Number->toPercentage(0.456, 2, array('multiply' => true));
+        $result = $this->Number->toPercentage(0.456, 2, ['multiply' => true]);
         $expected = '45.60%';
         $this->assertEquals($expected, $result);
 

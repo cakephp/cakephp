@@ -112,19 +112,19 @@ class MemcachedEngineTest extends TestCase
     {
         $config = Cache::engine('memcached')->config();
         unset($config['path']);
-        $expecting = array(
+        $expecting = [
             'prefix' => 'cake_',
             'duration' => 3600,
             'probability' => 100,
-            'servers' => array('127.0.0.1'),
+            'servers' => ['127.0.0.1'],
             'persistent' => false,
             'compress' => false,
             'username' => null,
             'password' => null,
-            'groups' => array(),
+            'groups' => [],
             'serialize' => 'php',
-            'options' => array()
-        );
+            'options' => []
+        ];
         $this->assertEquals($expecting, $config);
     }
 
@@ -136,20 +136,20 @@ class MemcachedEngineTest extends TestCase
     public function testCompressionSetting()
     {
         $Memcached = new TestMemcachedEngine();
-        $Memcached->init(array(
+        $Memcached->init([
             'engine' => 'Memcached',
-            'servers' => array('127.0.0.1:11211'),
+            'servers' => ['127.0.0.1:11211'],
             'compress' => false
-        ));
+        ]);
 
         $this->assertFalse($Memcached->getMemcached()->getOption(\Memcached::OPT_COMPRESSION));
 
         $MemcachedCompressed = new TestMemcachedEngine();
-        $MemcachedCompressed->init(array(
+        $MemcachedCompressed->init([
             'engine' => 'Memcached',
-            'servers' => array('127.0.0.1:11211'),
+            'servers' => ['127.0.0.1:11211'],
             'compress' => true
-        ));
+        ]);
 
         $this->assertTrue($MemcachedCompressed->getMemcached()->getOption(\Memcached::OPT_COMPRESSION));
     }
@@ -162,13 +162,13 @@ class MemcachedEngineTest extends TestCase
     public function testOptionsSetting()
     {
         $memcached = new TestMemcachedEngine();
-        $memcached->init(array(
+        $memcached->init([
             'engine' => 'Memcached',
-            'servers' => array('127.0.0.1:11211'),
-            'options' => array(
+            'servers' => ['127.0.0.1:11211'],
+            'options' => [
                 Memcached::OPT_BINARY_PROTOCOL => true
-            )
-        ));
+            ]
+        ]);
         $this->assertEquals(1, $memcached->getMemcached()->getOption(Memcached::OPT_BINARY_PROTOCOL));
     }
 
@@ -180,12 +180,12 @@ class MemcachedEngineTest extends TestCase
     public function testInvalidSerializerSetting()
     {
         $Memcached = new TestMemcachedEngine();
-        $config = array(
+        $config = [
             'className' => 'Memcached',
-            'servers' => array('127.0.0.1:11211'),
+            'servers' => ['127.0.0.1:11211'],
             'persistent' => false,
             'serialize' => 'invalid_serializer'
-        );
+        ];
 
         $this->setExpectedException(
             'InvalidArgumentException',
@@ -202,12 +202,12 @@ class MemcachedEngineTest extends TestCase
     public function testPhpSerializerSetting()
     {
         $Memcached = new TestMemcachedEngine();
-        $config = array(
+        $config = [
             'className' => 'Memcached',
-            'servers' => array('127.0.0.1:11211'),
+            'servers' => ['127.0.0.1:11211'],
             'persistent' => false,
             'serialize' => 'php'
-        );
+        ];
 
         $Memcached->init($config);
         $this->assertEquals(Memcached::SERIALIZER_PHP, $Memcached->getMemcached()->getOption(Memcached::OPT_SERIALIZER));
@@ -226,12 +226,12 @@ class MemcachedEngineTest extends TestCase
         );
 
         $Memcached = new TestMemcachedEngine();
-        $config = array(
+        $config = [
             'engine' => 'Memcached',
-            'servers' => array('127.0.0.1:11211'),
+            'servers' => ['127.0.0.1:11211'],
             'persistent' => false,
             'serialize' => 'json'
-        );
+        ];
 
         $Memcached->init($config);
         $this->assertEquals(Memcached::SERIALIZER_JSON, $Memcached->getMemcached()->getOption(Memcached::OPT_SERIALIZER));
@@ -250,12 +250,12 @@ class MemcachedEngineTest extends TestCase
         );
 
         $Memcached = new TestMemcachedEngine();
-        $config = array(
+        $config = [
             'engine' => 'Memcached',
-            'servers' => array('127.0.0.1:11211'),
+            'servers' => ['127.0.0.1:11211'],
             'persistent' => false,
             'serialize' => 'igbinary'
-        );
+        ];
 
         $Memcached->init($config);
         $this->assertEquals(Memcached::SERIALIZER_IGBINARY, $Memcached->getMemcached()->getOption(Memcached::OPT_SERIALIZER));
@@ -274,12 +274,12 @@ class MemcachedEngineTest extends TestCase
         );
 
         $Memcached = new TestMemcachedEngine();
-        $config = array(
+        $config = [
             'engine' => 'Memcached',
-            'servers' => array('127.0.0.1:11211'),
+            'servers' => ['127.0.0.1:11211'],
             'persistent' => false,
             'serialize' => 'msgpack'
-        );
+        ];
 
         $Memcached->init($config);
         $this->assertEquals(Memcached::SERIALIZER_MSGPACK, $Memcached->getMemcached()->getOption(Memcached::OPT_SERIALIZER));
@@ -298,12 +298,12 @@ class MemcachedEngineTest extends TestCase
         );
 
         $Memcached = new TestMemcachedEngine();
-        $config = array(
+        $config = [
             'className' => 'Memcached',
-            'servers' => array('127.0.0.1:11211'),
+            'servers' => ['127.0.0.1:11211'],
             'persistent' => false,
             'serialize' => 'json'
-        );
+        ];
 
         $this->setExpectedException(
             'InvalidArgumentException',
@@ -325,12 +325,12 @@ class MemcachedEngineTest extends TestCase
         );
 
         $Memcached = new TestMemcachedEngine();
-        $config = array(
+        $config = [
             'engine' => 'Memcached',
-            'servers' => array('127.0.0.1:11211'),
+            'servers' => ['127.0.0.1:11211'],
             'persistent' => false,
             'serialize' => 'msgpack'
-        );
+        ];
 
         $this->setExpectedException(
             'InvalidArgumentException',
@@ -352,12 +352,12 @@ class MemcachedEngineTest extends TestCase
         );
 
         $Memcached = new TestMemcachedEngine();
-        $config = array(
+        $config = [
             'engine' => 'Memcached',
-            'servers' => array('127.0.0.1:11211'),
+            'servers' => ['127.0.0.1:11211'],
             'persistent' => false,
             'serialize' => 'igbinary'
-        );
+        ];
 
         $this->setExpectedException(
             'InvalidArgumentException',
@@ -375,13 +375,13 @@ class MemcachedEngineTest extends TestCase
     public function testSaslAuthException()
     {
         $MemcachedEngine = new TestMemcachedEngine();
-        $config = array(
+        $config = [
             'engine' => 'Memcached',
-            'servers' => array('127.0.0.1:11211'),
+            'servers' => ['127.0.0.1:11211'],
             'persistent' => false,
             'username' => 'test',
             'password' => 'password'
-        );
+        ];
 
         $this->setExpectedException('PHPUnit_Framework_Error_Warning');
         $MemcachedEngine->init($config);
@@ -394,7 +394,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testMultipleServers()
     {
-        $servers = array('127.0.0.1:11211', '127.0.0.1:11222');
+        $servers = ['127.0.0.1:11211', '127.0.0.1:11222'];
         $available = true;
         $Memcached = new \Memcached();
 
@@ -410,7 +410,7 @@ class MemcachedEngineTest extends TestCase
         $this->skipIf(!$available, 'Need memcached servers at ' . implode(', ', $servers) . ' to run this test.');
 
         $Memcached = new MemcachedEngine();
-        $Memcached->init(array('engine' => 'Memcached', 'servers' => $servers));
+        $Memcached->init(['engine' => 'Memcached', 'servers' => $servers]);
 
         $config = $Memcached->config();
         $this->assertEquals($config['servers'], $servers);
@@ -425,14 +425,14 @@ class MemcachedEngineTest extends TestCase
     public function testConnectIpv6()
     {
         $Memcached = new MemcachedEngine();
-        $result = $Memcached->init(array(
+        $result = $Memcached->init([
             'prefix' => 'cake_',
             'duration' => 200,
             'engine' => 'Memcached',
-            'servers' => array(
+            'servers' => [
                 '[::1]:11211'
-            )
-        ));
+            ]
+        ]);
         $this->assertTrue($result);
     }
 
@@ -445,10 +445,10 @@ class MemcachedEngineTest extends TestCase
     {
         $Memcached = new TestMemcachedEngine();
         $result = $Memcached->parseServerString('schülervz.net:13211');
-        $this->assertEquals(array('schülervz.net', '13211'), $result);
+        $this->assertEquals(['schülervz.net', '13211'], $result);
 
         $result = $Memcached->parseServerString('sülül:1111');
-        $this->assertEquals(array('sülül', '1111'), $result);
+        $this->assertEquals(['sülül', '1111'], $result);
     }
 
     /**
@@ -460,7 +460,7 @@ class MemcachedEngineTest extends TestCase
     {
         $Memcached = new TestMemcachedEngine();
         $result = $Memcached->parseServerString('unix:///path/to/memcachedd.sock');
-        $this->assertEquals(array('unix:///path/to/memcachedd.sock', 0), $result);
+        $this->assertEquals(['unix:///path/to/memcachedd.sock', 0], $result);
     }
 
     /**
@@ -495,13 +495,13 @@ class MemcachedEngineTest extends TestCase
     public function testReadMany()
     {
         $this->_configCache(['duration' => 2]);
-        $data = array(
+        $data = [
             'App.falseTest' => false,
             'App.trueTest' => true,
             'App.nullTest' => null,
             'App.zeroTest' => 0,
             'App.zeroTest2' => '0'
-        );
+        ];
         foreach ($data as $key => $value) {
             Cache::write($key, $value, 'memcached');
         }
@@ -524,13 +524,13 @@ class MemcachedEngineTest extends TestCase
     public function testWriteMany()
     {
         $this->_configCache(['duration' => 2]);
-        $data = array(
+        $data = [
             'App.falseTest' => false,
             'App.trueTest' => true,
             'App.nullTest' => null,
             'App.zeroTest' => 0,
             'App.zeroTest2' => '0'
-        );
+        ];
         Cache::writeMany($data, 'memcached');
 
         $this->assertSame(Cache::read('App.falseTest', 'memcached'), false);
@@ -608,13 +608,13 @@ class MemcachedEngineTest extends TestCase
     {
         $this->assertFalse(defined('HHVM_VERSION'), 'Crashes HHVM');
         $this->_configCache();
-        $data = array(
+        $data = [
             'App.falseTest' => false,
             'App.trueTest' => true,
             'App.nullTest' => null,
             'App.zeroTest' => 0,
             'App.zeroTest2' => '0',
-        );
+        ];
         foreach ($data as $key => $value) {
             Cache::write($key, $value, 'memcached');
         }
@@ -662,12 +662,12 @@ class MemcachedEngineTest extends TestCase
      */
     public function testDecrementCompressedKeys()
     {
-        Cache::config('compressed_memcached', array(
+        Cache::config('compressed_memcached', [
             'engine' => 'Memcached',
             'duration' => '+2 seconds',
-            'servers' => array('127.0.0.1:11211'),
+            'servers' => ['127.0.0.1:11211'],
             'compress' => true
-        ));
+        ]);
 
         $result = Cache::write('test_decrement', 5, 'compressed_memcached');
         $this->assertTrue($result);
@@ -719,12 +719,12 @@ class MemcachedEngineTest extends TestCase
      */
     public function testIncrementCompressedKeys()
     {
-        Cache::config('compressed_memcached', array(
+        Cache::config('compressed_memcached', [
             'engine' => 'Memcached',
             'duration' => '+2 seconds',
-            'servers' => array('127.0.0.1:11211'),
+            'servers' => ['127.0.0.1:11211'],
             'compress' => true
-        ));
+        ]);
 
         $result = Cache::write('test_increment', 5, 'compressed_memcached');
         $this->assertTrue($result);
@@ -751,16 +751,16 @@ class MemcachedEngineTest extends TestCase
      */
     public function testConfigurationConflict()
     {
-        Cache::config('long_memcached', array(
+        Cache::config('long_memcached', [
             'engine' => 'Memcached',
             'duration' => '+2 seconds',
-            'servers' => array('127.0.0.1:11211'),
-        ));
-        Cache::config('short_memcached', array(
+            'servers' => ['127.0.0.1:11211'],
+        ]);
+        Cache::config('short_memcached', [
             'engine' => 'Memcached',
             'duration' => '+1 seconds',
-            'servers' => array('127.0.0.1:11211'),
-        ));
+            'servers' => ['127.0.0.1:11211'],
+        ]);
 
         $this->assertTrue(Cache::write('duration_test', 'yay', 'long_memcached'));
         $this->assertTrue(Cache::write('short_duration_test', 'boo', 'short_memcached'));
@@ -787,11 +787,11 @@ class MemcachedEngineTest extends TestCase
     public function testClear()
     {
         $this->assertFalse(defined('HHVM_VERSION'), 'Crashes HHVM');
-        Cache::config('memcached2', array(
+        Cache::config('memcached2', [
             'engine' => 'Memcached',
             'prefix' => 'cake2_',
             'duration' => 3600
-        ));
+        ]);
 
         Cache::write('some_value', 'cache1', 'memcached');
         $result = Cache::clear(true, 'memcached');
@@ -853,17 +853,17 @@ class MemcachedEngineTest extends TestCase
      */
     public function testGroupReadWrite()
     {
-        Cache::config('memcached_groups', array(
+        Cache::config('memcached_groups', [
             'engine' => 'Memcached',
             'duration' => 3600,
-            'groups' => array('group_a', 'group_b'),
+            'groups' => ['group_a', 'group_b'],
             'prefix' => 'test_'
-        ));
-        Cache::config('memcached_helper', array(
+        ]);
+        Cache::config('memcached_helper', [
             'engine' => 'Memcached',
             'duration' => 3600,
             'prefix' => 'test_'
-        ));
+        ]);
         $this->assertTrue(Cache::write('test_groups', 'value', 'memcached_groups'));
         $this->assertEquals('value', Cache::read('test_groups', 'memcached_groups'));
 
@@ -885,11 +885,11 @@ class MemcachedEngineTest extends TestCase
      */
     public function testGroupDelete()
     {
-        Cache::config('memcached_groups', array(
+        Cache::config('memcached_groups', [
             'engine' => 'Memcached',
             'duration' => 3600,
-            'groups' => array('group_a', 'group_b')
-        ));
+            'groups' => ['group_a', 'group_b']
+        ]);
         $this->assertTrue(Cache::write('test_groups', 'value', 'memcached_groups'));
         $this->assertEquals('value', Cache::read('test_groups', 'memcached_groups'));
         $this->assertTrue(Cache::delete('test_groups', 'memcached_groups'));
@@ -904,11 +904,11 @@ class MemcachedEngineTest extends TestCase
      */
     public function testGroupClear()
     {
-        Cache::config('memcached_groups', array(
+        Cache::config('memcached_groups', [
             'engine' => 'Memcached',
             'duration' => 3600,
-            'groups' => array('group_a', 'group_b')
-        ));
+            'groups' => ['group_a', 'group_b']
+        ]);
 
         $this->assertTrue(Cache::write('test_groups', 'value', 'memcached_groups'));
         $this->assertTrue(Cache::clearGroup('group_a', 'memcached_groups'));

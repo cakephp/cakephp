@@ -335,21 +335,21 @@ class Route
     protected function _parseExtension($url)
     {
         if (empty($this->_extensions)) {
-            return array($url, null);
+            return [$url, null];
         }
         preg_match('/\.([0-9a-z]*)$/', $url, $match);
         if (empty($match[1])) {
-            return array($url, null);
+            return [$url, null];
         }
         $ext = strtolower($match[1]);
         $len = strlen($match[1]);
         foreach ($this->_extensions as $name) {
             if (strtolower($name) === $ext) {
                 $url = substr($url, 0, ($len + 1) * -1);
-                return array($url, $ext);
+                return [$url, $ext];
             }
         }
-        return array($url, null);
+        return [$url, null];
     }
 
     /**

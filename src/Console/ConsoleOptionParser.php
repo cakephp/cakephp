@@ -706,7 +706,7 @@ class ConsoleOptionParser
             $params[$name] = $value;
             return $params;
         }
-        return array();
+        return [];
     }
 
     /**

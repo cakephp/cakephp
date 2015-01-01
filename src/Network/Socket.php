@@ -41,13 +41,13 @@ class Socket
      *
      * @var array
      */
-    protected $_defaultConfig = array(
+    protected $_defaultConfig = [
         'persistent' => false,
         'host' => 'localhost',
         'protocol' => 'tcp',
         'port' => 80,
         'timeout' => 30
-    );
+    ];
 
     /**
      * Reference to socket connection resource
@@ -68,7 +68,7 @@ class Socket
      *
      * @var array
      */
-    public $lastError = array();
+    public $lastError = [];
 
     /**
      * True if the socket stream is encrypted after a Cake\Network\Socket::enableCrypto() call
@@ -82,7 +82,7 @@ class Socket
      *
      * @var array
      */
-    protected $_encryptMethods = array(
+    protected $_encryptMethods = [
         // @codingStandardsIgnoreStart
         'sslv2_client' => STREAM_CRYPTO_METHOD_SSLv2_CLIENT,
         'sslv3_client' => STREAM_CRYPTO_METHOD_SSLv3_CLIENT,
@@ -93,7 +93,7 @@ class Socket
         'sslv23_server' => STREAM_CRYPTO_METHOD_SSLv23_SERVER,
         'tls_server' => STREAM_CRYPTO_METHOD_TLS_SERVER
         // @codingStandardsIgnoreEnd
-    );
+    ];
 
     /**
      * Used to capture connection warnings which can happen when there are
@@ -101,7 +101,7 @@ class Socket
      *
      * @var array
      */
-    protected $_connectionErrors = array();
+    protected $_connectionErrors = [];
 
     /**
      * Constructor.
@@ -109,7 +109,7 @@ class Socket
      * @param array $config Socket configuration, which will be merged with the base configuration
      * @see Socket::$_baseConfig
      */
-    public function __construct(array $config = array())
+    public function __construct(array $config = [])
     {
         $this->config($config);
     }
@@ -142,7 +142,7 @@ class Socket
             $connectAs |= STREAM_CLIENT_PERSISTENT;
         }
 
-        set_error_handler(array($this, '_connectionErrorHandler'));
+        set_error_handler([$this, '_connectionErrorHandler']);
         $this->connection = stream_socket_client(
             $scheme . $this->_config['host'] . ':' . $this->_config['port'],
             $errNum,
@@ -232,7 +232,7 @@ class Socket
     public function addresses()
     {
         if (Validation::ip($this->_config['host'])) {
-            return array($this->_config['host']);
+            return [$this->_config['host']];
         }
         return gethostbynamel($this->_config['host']);
     }
@@ -259,7 +259,7 @@ class Socket
      */
     public function setLastError($errNum, $errStr)
     {
-        $this->lastError = array('num' => $errNum, 'str' => $errStr);
+        $this->lastError = ['num' => $errNum, 'str' => $errStr];
     }
 
     /**
@@ -348,7 +348,7 @@ class Socket
     public function reset($state = null)
     {
         if (empty($state)) {
-            static $initalState = array();
+            static $initalState = [];
             if (empty($initalState)) {
                 $initalState = get_class_vars(__CLASS__);
             }

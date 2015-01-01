@@ -75,14 +75,14 @@ class Folder
      *
      * @var array
      */
-    protected $_messages = array();
+    protected $_messages = [];
 
     /**
      * Holds errors from last method.
      *
      * @var array
      */
-    protected $_errors = array();
+    protected $_errors = [];
 
     /**
      * Holds array of complete directory paths.
@@ -162,10 +162,10 @@ class Folder
      */
     public function read($sort = true, $exceptions = false, $fullPath = false)
     {
-        $dirs = $files = array();
+        $dirs = $files = [];
 
         if (!$this->pwd()) {
-            return array($dirs, $files);
+            return [$dirs, $files];
         }
         if (is_array($exceptions)) {
             $exceptions = array_flip($exceptions);
@@ -175,7 +175,7 @@ class Folder
         try {
             $iterator = new \DirectoryIterator($this->path);
         } catch (\Exception $e) {
-            return array($dirs, $files);
+            return [$dirs, $files];
         }
 
         foreach ($iterator as $item) {
@@ -199,7 +199,7 @@ class Folder
             sort($dirs);
             sort($files);
         }
-        return array($dirs, $files);
+        return [$dirs, $files];
     }
 
     /**
@@ -225,7 +225,7 @@ class Folder
     public function findRecursive($pattern = '.*', $sort = false)
     {
         if (!$this->pwd()) {
-            return array();
+            return [];
         }
         $startsOn = $this->path;
         $out = $this->_findRecursive($pattern, $sort);
@@ -243,7 +243,7 @@ class Folder
     protected function _findRecursive($pattern, $sort = false)
     {
         list($dirs, $files) = $this->read($sort);
-        $found = array();
+        $found = [];
 
         foreach ($files as $file) {
             if (preg_match('/^' . $pattern . '$/i', $file)) {
@@ -397,7 +397,7 @@ class Folder
      * @param array $exceptions Array of files, directories to skip.
      * @return bool Success.
      */
-    public function chmod($path, $mode = false, $recursive = true, array $exceptions = array())
+    public function chmod($path, $mode = false, $recursive = true, array $exceptions = [])
     {
         if (!$mode) {
             $mode = $this->mode;
@@ -458,8 +458,8 @@ class Folder
         if (!$path) {
             $path = $this->path;
         }
-        $files = array();
-        $directories = array($path);
+        $files = [];
+        $directories = [$path];
 
         if (is_array($exceptions)) {
             $exceptions = array_flip($exceptions);
@@ -477,9 +477,9 @@ class Folder
             $iterator = new \RecursiveIteratorIterator($directory, \RecursiveIteratorIterator::SELF_FIRST);
         } catch (\Exception $e) {
             if ($type === null) {
-                return array(array(), array());
+                return [[], []];
             }
-            return array();
+            return [];
         }
 
         foreach ($iterator as $itemPath => $fsIterator) {
@@ -501,7 +501,7 @@ class Folder
             }
         }
         if ($type === null) {
-            return array($directories, $files);
+            return [$directories, $files];
         }
         if ($type === 'dir') {
             return $directories;
@@ -566,7 +566,7 @@ class Folder
     {
         $size = 0;
         $directory = Folder::slashTerm($this->path);
-        $stack = array($directory);
+        $stack = [$directory];
         $count = count($stack);
         for ($i = 0, $j = $count; $i < $j; ++$i) {
             if (is_file($stack[$i])) {
@@ -673,15 +673,15 @@ class Folder
         $to = null;
         if (is_string($options)) {
             $to = $options;
-            $options = array();
+            $options = [];
         }
-        $options += array(
+        $options += [
             'to' => $to,
             'from' => $this->path,
             'mode' => $this->mode,
-            'skip' => array(),
+            'skip' => [],
             'scheme' => Folder::MERGE
-        );
+        ];
 
         $fromDir = $options['from'];
         $toDir = $options['to'];
@@ -701,7 +701,7 @@ class Folder
             return false;
         }
 
-        $exceptions = array_merge(array('.', '..', '.svn'), $options['skip']);
+        $exceptions = array_merge(['.', '..', '.svn'], $options['skip']);
         //@codingStandardsIgnoreStart
         if ($handle = @opendir($fromDir)) {
             //@codingStandardsIgnoreEnd
@@ -731,13 +731,13 @@ class Folder
                             chmod($to, $mode);
                             umask($old);
                             $this->_messages[] = sprintf('%s created', $to);
-                            $options = array('to' => $to, 'from' => $from) + $options;
+                            $options = ['to' => $to, 'from' => $from] + $options;
                             $this->copy($options);
                         } else {
                             $this->_errors[] = sprintf('%s not created', $to);
                         }
                     } elseif (is_dir($from) && $options['scheme'] === Folder::MERGE) {
-                        $options = array('to' => $to, 'from' => $from) + $options;
+                        $options = ['to' => $to, 'from' => $from] + $options;
                         $this->copy($options);
                     }
                 }
@@ -774,7 +774,7 @@ class Folder
             $to = $options;
             $options = (array)$options;
         }
-        $options += array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => array());
+        $options += ['to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => []];
 
         if ($this->copy($options)) {
             if ($this->delete($options['from'])) {
@@ -794,7 +794,7 @@ class Folder
     {
         $messages = $this->_messages;
         if ($reset) {
-            $this->_messages = array();
+            $this->_messages = [];
         }
         return $messages;
     }
@@ -809,7 +809,7 @@ class Folder
     {
         $errors = $this->_errors;
         if ($reset) {
-            $this->_errors = array();
+            $this->_errors = [];
         }
         return $errors;
     }
@@ -830,7 +830,7 @@ class Folder
             return $path;
         }
         $parts = explode(DS, $path);
-        $newparts = array();
+        $newparts = [];
         $newpath = '';
         if ($path[0] === DS) {
             $newpath = DS;

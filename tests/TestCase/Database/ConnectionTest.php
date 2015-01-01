@@ -156,21 +156,21 @@ class ConnectionTest extends TestCase
     public function testExecuteWithArguments()
     {
         $sql = 'SELECT 1 + ?';
-        $statement = $this->connection->execute($sql, [1], array('integer'));
+        $statement = $this->connection->execute($sql, [1], ['integer']);
         $this->assertCount(1, $statement);
         $result = $statement->fetch();
         $this->assertEquals([2], $result);
         $statement->closeCursor();
 
         $sql = 'SELECT 1 + ? + ? AS total';
-        $statement = $this->connection->execute($sql, [2, 3], array('integer', 'integer'));
+        $statement = $this->connection->execute($sql, [2, 3], ['integer', 'integer']);
         $this->assertCount(1, $statement);
         $result = $statement->fetch('assoc');
         $this->assertEquals(['total' => 6], $result);
         $statement->closeCursor();
 
         $sql = 'SELECT 1 + :one + :two AS total';
-        $statement = $this->connection->execute($sql, ['one' => 2, 'two' => 3], array('one' => 'integer', 'two' => 'integer'));
+        $statement = $this->connection->execute($sql, ['one' => 2, 'two' => 3], ['one' => 'integer', 'two' => 'integer']);
         $this->assertCount(1, $statement);
         $result = $statement->fetch('assoc');
         $statement->closeCursor();

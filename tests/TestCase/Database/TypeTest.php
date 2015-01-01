@@ -38,7 +38,7 @@ class TypeTest extends TestCase
      *
      * @var array
      */
-    protected $_originalMap = array();
+    protected $_originalMap = [];
 
     /**
      * Backup original Type class state
@@ -83,13 +83,13 @@ class TypeTest extends TestCase
      */
     public function basicTypesProvider()
     {
-        return array(
-            array('float'),
-            array('integer'),
-            array('string'),
-            array('text'),
-            array('boolean')
-        );
+        return [
+            ['float'],
+            ['integer'],
+            ['string'],
+            ['text'],
+            ['boolean']
+        ];
     }
 
     /**

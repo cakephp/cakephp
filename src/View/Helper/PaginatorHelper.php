@@ -84,7 +84,7 @@ class PaginatorHelper extends Helper
      * @param \Cake\View\View $View The View this helper is being attached to.
      * @param array $config Configuration settings for the helper.
      */
-    public function __construct(View $View, array $config = array())
+    public function __construct(View $View, array $config = [])
     {
         parent::__construct($View, $config);
 
@@ -134,11 +134,11 @@ class PaginatorHelper extends Helper
      *   See PaginatorHelper::$options for list of keys.
      * @return void
      */
-    public function options(array $options = array())
+    public function options(array $options = [])
     {
         if (!empty($options['paging'])) {
             if (!isset($this->request->params['paging'])) {
-                $this->request->params['paging'] = array();
+                $this->request->params['paging'] = [];
             }
             $this->request->params['paging'] = array_merge($this->request->params['paging'], $options['paging']);
             unset($options['paging']);
@@ -147,7 +147,7 @@ class PaginatorHelper extends Helper
 
         if (!empty($options[$model])) {
             if (!isset($this->request->params['paging'][$model])) {
-                $this->request->params['paging'][$model] = array();
+                $this->request->params['paging'][$model] = [];
             }
             $this->request->params['paging'][$model] = array_merge(
                 $this->request->params['paging'][$model],
@@ -184,7 +184,7 @@ class PaginatorHelper extends Helper
      *  null if the results are not currently sorted.
      * @link http://book.cakephp.org/3.0/en/views/helpers/paginator.html#creating-sort-links
      */
-    public function sortKey($model = null, array $options = array())
+    public function sortKey($model = null, array $options = [])
     {
         if (empty($options)) {
             $options = $this->params($model);
@@ -204,7 +204,7 @@ class PaginatorHelper extends Helper
      *  null if the results are not currently sorted.
      * @link http://book.cakephp.org/3.0/en/views/helpers/paginator.html#creating-sort-links
      */
-    public function sortDir($model = null, array $options = array())
+    public function sortDir($model = null, array $options = [])
     {
         $dir = null;
 
@@ -355,7 +355,7 @@ class PaginatorHelper extends Helper
      */
     public function sort($key, $title = null, array $options = [])
     {
-        $options += ['url' => array(), 'model' => null, 'escape' => true];
+        $options += ['url' => [], 'model' => null, 'escape' => true];
         $url = $options['url'];
         unset($options['url']);
 
@@ -417,7 +417,7 @@ class PaginatorHelper extends Helper
      * @return mixed By default, returns a full pagination URL string for use in non-standard contexts (i.e. JavaScript)
      * @link http://book.cakephp.org/3.0/en/views/helpers/paginator.html#generating-pagination-urls
      */
-    public function generateUrl(array $options = array(), $model = null, $full = false)
+    public function generateUrl(array $options = [], $model = null, $full = false)
     {
         $paging = $this->params($model);
         $paging += ['page' => null, 'sort' => null, 'direction' => null, 'limit' => null];
@@ -540,7 +540,7 @@ class PaginatorHelper extends Helper
     public function counter($options = [])
     {
         if (is_string($options)) {
-            $options = array('format' => $options);
+            $options = ['format' => $options];
         }
 
         $options += [
@@ -615,15 +615,15 @@ class PaginatorHelper extends Helper
      * @return string numbers string.
      * @link http://book.cakephp.org/3.0/en/views/helpers/paginator.html#creating-page-number-links
      */
-    public function numbers(array $options = array())
+    public function numbers(array $options = [])
     {
-        $defaults = array(
+        $defaults = [
             'before' => null, 'after' => null, 'model' => $this->defaultModel(),
             'modulus' => 8, 'first' => null, 'last' => null,
-        );
+        ];
         $options += $defaults;
 
-        $params = (array)$this->params($options['model']) + array('page' => 1);
+        $params = (array)$this->params($options['model']) + ['page' => 1];
         if ($params['pageCount'] <= 1) {
             return false;
         }
@@ -801,7 +801,7 @@ class PaginatorHelper extends Helper
      * @return string numbers string.
      * @link http://book.cakephp.org/3.0/en/views/helpers/paginator.html#creating-jump-links
      */
-    public function last($last = 'last >>', array $options = array())
+    public function last($last = 'last >>', array $options = [])
     {
         $options += ['model' => $this->defaultModel(), 'escape' => true];
         $params = $this->params($options['model']);

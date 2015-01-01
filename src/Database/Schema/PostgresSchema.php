@@ -79,7 +79,7 @@ class PostgresSchema extends BaseSchema
             $length = (int)$matches[2];
         }
 
-        if (in_array($col, array('date', 'time', 'boolean'))) {
+        if (in_array($col, ['date', 'time', 'boolean'])) {
             return ['type' => $col, 'length' => null];
         }
         if (strpos($col, 'timestamp') !== false) {

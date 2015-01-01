@@ -82,7 +82,7 @@ class Time extends Carbon implements JsonSerializable
      * @var array
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
-    public static $wordAccuracy = array(
+    public static $wordAccuracy = [
         'year' => "day",
         'month' => "day",
         'week' => "day",
@@ -90,7 +90,7 @@ class Time extends Carbon implements JsonSerializable
         'hour' => "minute",
         'minute' => "minute",
         'second' => "second",
-    );
+    ];
 
     /**
      * The end of relative time telling
@@ -185,13 +185,13 @@ class Time extends Carbon implements JsonSerializable
         $year = $this->format('Y');
         switch ($quarter) {
             case 1:
-                return array($year . '-01-01', $year . '-03-31');
+                return [$year . '-01-01', $year . '-03-31'];
             case 2:
-                return array($year . '-04-01', $year . '-06-30');
+                return [$year . '-04-01', $year . '-06-30'];
             case 3:
-                return array($year . '-07-01', $year . '-09-30');
+                return [$year . '-07-01', $year . '-09-30'];
             case 4:
-                return array($year . '-10-01', $year . '-12-31');
+                return [$year . '-10-01', $year . '-12-31'];
         }
     }
 
@@ -368,7 +368,7 @@ class Time extends Carbon implements JsonSerializable
             $fWord = $accuracy['minute'];
         }
 
-        $fNum = str_replace(array('year', 'month', 'week', 'day', 'hour', 'minute', 'second'), array(1, 2, 3, 4, 5, 6, 7), $fWord);
+        $fNum = str_replace(['year', 'month', 'week', 'day', 'hour', 'minute', 'second'], [1, 2, 3, 4, 5, 6, 7], $fWord);
 
         $relativeDate = '';
         if ($fNum >= 1 && $years > 0) {
@@ -398,28 +398,28 @@ class Time extends Carbon implements JsonSerializable
             return sprintf($relativeString, $relativeDate);
         }
         if (!$backwards) {
-            $aboutAgo = array(
+            $aboutAgo = [
                 'second' => __d('cake', 'about a second ago'),
                 'minute' => __d('cake', 'about a minute ago'),
                 'hour' => __d('cake', 'about an hour ago'),
                 'day' => __d('cake', 'about a day ago'),
                 'week' => __d('cake', 'about a week ago'),
                 'year' => __d('cake', 'about a year ago')
-            );
+            ];
 
             return $aboutAgo[$fWord];
         }
 
         // When time is to come
         if (!$relativeDate) {
-            $aboutIn = array(
+            $aboutIn = [
                 'second' => __d('cake', 'in about a second'),
                 'minute' => __d('cake', 'in about a minute'),
                 'hour' => __d('cake', 'in about an hour'),
                 'day' => __d('cake', 'in about a day'),
                 'week' => __d('cake', 'in about a week'),
                 'year' => __d('cake', 'in about a year')
-            );
+            ];
 
             return $aboutIn[$fWord];
         }
@@ -630,13 +630,13 @@ class Time extends Carbon implements JsonSerializable
         }
 
         if ($group) {
-            $groupedIdentifiers = array();
+            $groupedIdentifiers = [];
             foreach ($identifiers as $key => $tz) {
                 $item = explode('/', $tz, 2);
                 if (isset($item[1])) {
                     $groupedIdentifiers[$item[0]][$tz] = $item[1];
                 } else {
-                    $groupedIdentifiers[$item[0]] = array($tz => $item[0]);
+                    $groupedIdentifiers[$item[0]] = [$tz => $item[0]];
                 }
             }
             return $groupedIdentifiers;

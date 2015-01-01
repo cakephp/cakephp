@@ -89,28 +89,28 @@ class HtmlHelper extends Helper
      *
      * @var array
      */
-    protected $_crumbs = array();
+    protected $_crumbs = [];
 
     /**
      * Names of script & css files that have been included once
      *
      * @var array
      */
-    protected $_includedAssets = array();
+    protected $_includedAssets = [];
 
     /**
      * Options for the currently opened script block buffer if any.
      *
      * @var array
      */
-    protected $_scriptBlockOptions = array();
+    protected $_scriptBlockOptions = [];
 
     /**
      * Document type definitions
      *
      * @var array
      */
-    protected $_docTypes = array(
+    protected $_docTypes = [
         'html4-strict' => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">',
         'html4-trans' => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">',
         'html4-frame' => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">',
@@ -119,7 +119,7 @@ class HtmlHelper extends Helper
         'xhtml-trans' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
         'xhtml-frame' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">',
         'xhtml11' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
-    );
+    ];
 
     /**
      * Constructor
@@ -137,7 +137,7 @@ class HtmlHelper extends Helper
      * @param \Cake\View\View $View The View this helper is being attached to.
      * @param array $config Configuration settings for the helper.
      */
-    public function __construct(View $View, array $config = array())
+    public function __construct(View $View, array $config = [])
     {
         parent::__construct($View, $config);
         $this->response = $this->_View->response ?: new Response();
@@ -153,9 +153,9 @@ class HtmlHelper extends Helper
      * @see HtmlHelper::link() for details on $options that can be used.
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
      */
-    public function addCrumb($name, $link = null, array $options = array())
+    public function addCrumb($name, $link = null, array $options = [])
     {
-        $this->_crumbs[] = array($name, $link, $options);
+        $this->_crumbs[] = [$name, $link, $options];
         return $this;
     }
 
@@ -216,20 +216,20 @@ class HtmlHelper extends Helper
      * @return string A completed `<link />` element.
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-meta-tags
      */
-    public function meta($type, $content = null, array $options = array())
+    public function meta($type, $content = null, array $options = [])
     {
-        $options += array('block' => null);
+        $options += ['block' => null];
 
         if (!is_array($type)) {
-            $types = array(
-                'rss' => array('type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => $type, 'link' => $content),
-                'atom' => array('type' => 'application/atom+xml', 'title' => $type, 'link' => $content),
-                'icon' => array('type' => 'image/x-icon', 'rel' => 'icon', 'link' => $content),
-                'keywords' => array('name' => 'keywords', 'content' => $content),
-                'description' => array('name' => 'description', 'content' => $content),
-                'robots' => array('name' => 'robots', 'content' => $content),
-                'viewport' => array('name' => 'viewport', 'content' => $content),
-            );
+            $types = [
+                'rss' => ['type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => $type, 'link' => $content],
+                'atom' => ['type' => 'application/atom+xml', 'title' => $type, 'link' => $content],
+                'icon' => ['type' => 'image/x-icon', 'rel' => 'icon', 'link' => $content],
+                'keywords' => ['name' => 'keywords', 'content' => $content],
+                'description' => ['name' => 'description', 'content' => $content],
+                'robots' => ['name' => 'robots', 'content' => $content],
+                'viewport' => ['name' => 'viewport', 'content' => $content],
+            ];
 
             if ($type === 'icon' && $content === null) {
                 $types['icon']['link'] = 'favicon.ico';
@@ -323,7 +323,7 @@ class HtmlHelper extends Helper
      * @return string An `<a />` element.
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-links
      */
-    public function link($title, $url = null, array $options = array())
+    public function link($title, $url = null, array $options = [])
     {
         $escapeTitle = true;
         if ($url !== null) {
@@ -404,9 +404,9 @@ class HtmlHelper extends Helper
      * @return string CSS <link /> or <style /> tag, depending on the type of link.
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#linking-to-css-files
      */
-    public function css($path, array $options = array())
+    public function css($path, array $options = [])
     {
-        $options += array('once' => true, 'block' => null, 'rel' => 'stylesheet');
+        $options += ['once' => true, 'block' => null, 'rel' => 'stylesheet'];
 
         if (is_array($path)) {
             $out = '';
@@ -422,8 +422,8 @@ class HtmlHelper extends Helper
         if (strpos($path, '//') !== false) {
             $url = $path;
         } else {
-            $url = $this->Url->assetUrl($path, $options + array('pathPrefix' => Configure::read('App.cssBaseUrl'), 'ext' => '.css'));
-            $options = array_diff_key($options, array('fullBase' => null, 'pathPrefix' => null));
+            $url = $this->Url->assetUrl($path, $options + ['pathPrefix' => Configure::read('App.cssBaseUrl'), 'ext' => '.css']);
+            $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
         }
 
         if ($options['once'] && isset($this->_includedAssets[__METHOD__][$path])) {
@@ -490,9 +490,9 @@ class HtmlHelper extends Helper
      *   or if $once is true and the file has been included before.
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#linking-to-javascript-files
      */
-    public function script($url, array $options = array())
+    public function script($url, array $options = [])
     {
-        $defaults = array('block' => null, 'once' => true);
+        $defaults = ['block' => null, 'once' => true];
         $options += $defaults;
 
         if (is_array($url)) {
@@ -507,8 +507,8 @@ class HtmlHelper extends Helper
         }
 
         if (strpos($url, '//') === false) {
-            $url = $this->Url->assetUrl($url, $options + array('pathPrefix' => Configure::read('App.jsBaseUrl'), 'ext' => '.js'));
-            $options = array_diff_key($options, array('fullBase' => null, 'pathPrefix' => null));
+            $url = $this->Url->assetUrl($url, $options + ['pathPrefix' => Configure::read('App.jsBaseUrl'), 'ext' => '.js']);
+            $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
         }
         if ($options['once'] && isset($this->_includedAssets[__METHOD__][$url])) {
             return null;
@@ -544,9 +544,9 @@ class HtmlHelper extends Helper
      * @return mixed string or null depending on the value of `$options['block']`
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-inline-javascript-blocks
      */
-    public function scriptBlock($script, array $options = array())
+    public function scriptBlock($script, array $options = [])
     {
-        $options += array('safe' => true, 'block' => null);
+        $options += ['safe' => true, 'block' => null];
         if ($options['safe']) {
             $script = "\n" . '//<![CDATA[' . "\n" . $script . "\n" . '//]]>' . "\n";
         }
@@ -581,9 +581,9 @@ class HtmlHelper extends Helper
      * @return void
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-javascript-blocks
      */
-    public function scriptStart(array $options = array())
+    public function scriptStart(array $options = [])
     {
-        $options += array('safe' => true, 'block' => null);
+        $options += ['safe' => true, 'block' => null];
         $this->_scriptBlockOptions = $options;
         ob_start();
     }
@@ -600,7 +600,7 @@ class HtmlHelper extends Helper
     {
         $buffer = ob_get_clean();
         $options = $this->_scriptBlockOptions;
-        $this->_scriptBlockOptions = array();
+        $this->_scriptBlockOptions = [];
         return $this->scriptBlock($buffer, $options);
     }
 
@@ -623,7 +623,7 @@ class HtmlHelper extends Helper
      */
     public function style(array $data, $oneLine = true)
     {
-        $out = array();
+        $out = [];
         foreach ($data as $key => $value) {
             $out[] = $key . ':' . $value . ';';
         }
@@ -653,7 +653,7 @@ class HtmlHelper extends Helper
     {
         $crumbs = $this->_prepareCrumbs($startText);
         if (!empty($crumbs)) {
-            $out = array();
+            $out = [];
             foreach ($crumbs as $crumb) {
                 if (!empty($crumb[1])) {
                     $out[] = $this->link($crumb[0], $crumb[1], $crumb[2]);
@@ -685,9 +685,9 @@ class HtmlHelper extends Helper
      * @return string|null breadcrumbs html list
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
      */
-    public function getCrumbList(array $options = array(), $startText = false)
+    public function getCrumbList(array $options = [], $startText = false)
     {
-        $defaults = array('firstClass' => 'first', 'lastClass' => 'last', 'separator' => '', 'escape' => true);
+        $defaults = ['firstClass' => 'first', 'lastClass' => 'last', 'separator' => '', 'escape' => true];
         $options += $defaults;
         $firstClass = $options['firstClass'];
         $lastClass = $options['lastClass'];
@@ -704,7 +704,7 @@ class HtmlHelper extends Helper
         $crumbCount = count($crumbs);
         $ulOptions = $options;
         foreach ($crumbs as $which => $crumb) {
-            $options = array();
+            $options = [];
             if (empty($crumb[1])) {
                 $elementContent = $crumb[0];
             } else {
@@ -741,15 +741,15 @@ class HtmlHelper extends Helper
         $crumbs = $this->_crumbs;
         if ($startText) {
             if (!is_array($startText)) {
-                $startText = array(
+                $startText = [
                     'url' => '/',
                     'text' => $startText
-                );
+                ];
             }
-            $startText += array('url' => '/', 'text' => __d('cake', 'Home'));
-            list($url, $text) = array($startText['url'], $startText['text']);
+            $startText += ['url' => '/', 'text' => __d('cake', 'Home')];
+            list($url, $text) = [$startText['url'], $startText['text']];
             unset($startText['url'], $startText['text']);
-            array_unshift($crumbs, array($text, $url, $startText + array('escape' => $escape)));
+            array_unshift($crumbs, [$text, $url, $startText + ['escape' => $escape]]);
         }
         return $crumbs;
     }
@@ -781,10 +781,10 @@ class HtmlHelper extends Helper
      * @return string completed img tag
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#linking-to-images
      */
-    public function image($path, array $options = array())
+    public function image($path, array $options = [])
     {
-        $path = $this->Url->assetUrl($path, $options + array('pathPrefix' => Configure::read('App.imageBaseUrl')));
-        $options = array_diff_key($options, array('fullBase' => null, 'pathPrefix' => null));
+        $path = $this->Url->assetUrl($path, $options + ['pathPrefix' => Configure::read('App.imageBaseUrl')]);
+        $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
 
         if (!isset($options['alt'])) {
             $options['alt'] = '';
@@ -824,7 +824,7 @@ class HtmlHelper extends Helper
      */
     public function tableHeaders(array $names, array $trOptions = null, array $thOptions = null)
     {
-        $out = array();
+        $out = [];
         foreach ($names as $arg) {
             if (!is_array($arg)) {
                 $out[] = $this->formatTemplate('tableheader', [
@@ -859,7 +859,7 @@ class HtmlHelper extends Helper
     public function tableCells($data, $oddTrOptions = null, $evenTrOptions = null, $useCount = false, $continueOddEven = true)
     {
         if (empty($data[0]) || !is_array($data[0])) {
-            $data = array($data);
+            $data = [$data];
         }
 
         if ($oddTrOptions === true) {
@@ -880,10 +880,10 @@ class HtmlHelper extends Helper
 
         foreach ($data as $line) {
             $count++;
-            $cellsOut = array();
+            $cellsOut = [];
             $i = 0;
             foreach ($line as $cell) {
-                $cellOptions = array();
+                $cellOptions = [];
 
                 if (is_array($cell)) {
                     $cellOptions = $cell[1];
@@ -918,7 +918,7 @@ class HtmlHelper extends Helper
      * @param array $options Additional HTML attributes of the DIV tag, see above.
      * @return string The formatted tag element
      */
-    public function tag($name, $text = null, array $options = array())
+    public function tag($name, $text = null, array $options = [])
     {
         if (empty($name)) {
             return $text;
@@ -952,7 +952,7 @@ class HtmlHelper extends Helper
      * @param array $options Additional HTML attributes of the DIV tag
      * @return string The formatted DIV element
      */
-    public function div($class = null, $text = null, array $options = array())
+    public function div($class = null, $text = null, array $options = [])
     {
         if (!empty($class)) {
             $options['class'] = $class;
@@ -972,7 +972,7 @@ class HtmlHelper extends Helper
      * @param array $options Additional HTML attributes of the P tag
      * @return string The formatted P element
      */
-    public function para($class, $text, array $options = array())
+    public function para($class, $text, array $options = [])
     {
         if (isset($options['escape'])) {
             $text = h($text);
@@ -1042,13 +1042,13 @@ class HtmlHelper extends Helper
      * @param array $options Array of HTML attributes, and special options above.
      * @return string Generated media element
      */
-    public function media($path, array $options = array())
+    public function media($path, array $options = [])
     {
-        $options += array(
+        $options += [
             'tag' => null,
             'pathPrefix' => 'files/',
             'text' => ''
-        );
+        ];
 
         if (!empty($options['tag'])) {
             $tag = $options['tag'];
@@ -1060,9 +1060,9 @@ class HtmlHelper extends Helper
             $sourceTags = '';
             foreach ($path as &$source) {
                 if (is_string($source)) {
-                    $source = array(
+                    $source = [
                         'src' => $source,
-                    );
+                    ];
                 }
                 if (!isset($source['type'])) {
                     $ext = pathinfo($source['src'], PATHINFO_EXTENSION);
@@ -1098,16 +1098,16 @@ class HtmlHelper extends Helper
         }
 
         if (isset($options['poster'])) {
-            $options['poster'] = $this->Url->assetUrl($options['poster'], array('pathPrefix' => Configure::read('App.imageBaseUrl')) + $options);
+            $options['poster'] = $this->Url->assetUrl($options['poster'], ['pathPrefix' => Configure::read('App.imageBaseUrl')] + $options);
         }
         $text = $options['text'];
 
-        $options = array_diff_key($options, array(
+        $options = array_diff_key($options, [
             'tag' => null,
             'fullBase' => null,
             'pathPrefix' => null,
             'text' => null
-        ));
+        ]);
         return $this->tag($tag, $text, $options);
     }
 
@@ -1131,7 +1131,7 @@ class HtmlHelper extends Helper
      */
     public function nestedList(array $list, array $options = [], array $itemOptions = [])
     {
-        $options += array('tag' => 'ul');
+        $options += ['tag' => 'ul'];
         $items = $this->_nestedListItem($list, $options, $itemOptions);
         return $this->formatTemplate($options['tag'], [
             'attrs' => $this->templater()->formatAttributes($options, ['tag']),

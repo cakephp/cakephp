@@ -98,14 +98,14 @@ class View
      *
      * @var array
      */
-    public $passedArgs = array();
+    public $passedArgs = [];
 
     /**
      * An array of names of built-in helpers to include.
      *
      * @var mixed
      */
-    public $helpers = array();
+    public $helpers = [];
 
     /**
      * The name of the views subfolder containing views for this View.
@@ -180,7 +180,7 @@ class View
      *
      * @var array
      */
-    public $uuids = array();
+    public $uuids = [];
 
     /**
      * An instance of a Cake\Network\Request object that contains information about the current request.
@@ -213,31 +213,31 @@ class View
      *
      * @var array
      */
-    protected $_passedVars = array(
+    protected $_passedVars = [
         'viewVars', 'autoLayout', 'helpers', 'view', 'layout', 'name', 'theme',
         'layoutPath', 'viewPath', 'plugin', 'passedArgs'
-    );
+    ];
 
     /**
      * Holds an array of paths.
      *
      * @var array
      */
-    protected $_paths = array();
+    protected $_paths = [];
 
     /**
      * Holds an array of plugin paths.
      *
      * @var array
      */
-    protected $_pathsForPlugin = array();
+    protected $_pathsForPlugin = [];
 
     /**
      * The names of views and their parents used with View::extend();
      *
      * @var array
      */
-    protected $_parents = array();
+    protected $_parents = [];
 
     /**
      * The currently rendering view file. Used for resolving parent files.
@@ -259,7 +259,7 @@ class View
      *
      * @var array
      */
-    protected $_stack = array();
+    protected $_stack = [];
 
     /**
  * Constant for view file type 'view'
@@ -357,7 +357,7 @@ class View
      * @throws \Cake\View\Exception\MissingElementException When an element is missing and `ignoreMissing`
      *   is false.
      */
-    public function element($name, array $data = array(), array $options = array())
+    public function element($name, array $data = [], array $options = [])
     {
         $options += ['callbacks' => false, 'cache' => null];
         if (isset($options['cache'])) {
@@ -762,7 +762,7 @@ class View
      * @triggers View.beforeRenderFile $this, array($viewFile)
      * @triggers View.afterRenderFile $this, array($viewFile, $content)
      */
-    protected function _render($viewFile, $data = array())
+    protected function _render($viewFile, $data = [])
     {
         if (empty($data)) {
             $data = $this->viewVars;
@@ -832,23 +832,6 @@ class View
     }
 
     /**
-     * Alias for loadHelper() for backwards compatibility.
-     *
-     * @param string $helperName Name of the helper to load.
-     * @param array $config Settings for the helper
-     * @return Helper a constructed helper object.
-     * @deprecated 3.0.0 Use loadHelper() instead.
-     */
-    public function addHelper($helperName, array $config = [])
-    {
-        trigger_error(
-            'addHelper() is deprecated, use loadHelper() instead.',
-            E_USER_DEPRECATED
-        );
-        return $this->loadHelper($helperName, $config);
-    }
-
-    /**
      * Loads a helper. Delegates to the `HelperRegistry::load()` to load the helper
      *
      * @param string $name Name of the helper to load.
@@ -910,7 +893,7 @@ class View
                 return $this->_checkFilePath($path . $name . $this->_ext, $path);
             }
         }
-        throw new Exception\MissingTemplateException(array('file' => $name . $this->_ext));
+        throw new Exception\MissingTemplateException(['file' => $name . $this->_ext]);
     }
 
     /**
@@ -959,7 +942,7 @@ class View
         if (isset($this->plugin) && !$plugin && $fallback) {
             $plugin = $this->plugin;
         }
-        return array($plugin, $name);
+        return [$plugin, $name];
     }
 
     /**
@@ -1001,9 +984,9 @@ class View
                 }
             }
         }
-        throw new Exception\MissingLayoutException(array(
+        throw new Exception\MissingLayoutException([
             'file' => $layoutPaths[0] . $name . $this->_ext
-        ));
+        ]);
     }
 
     /**
@@ -1092,19 +1075,19 @@ class View
             $underscored = Inflector::underscore($plugin);
         }
         $keys = array_merge(
-            array($underscored, $name),
+            [$underscored, $name],
             array_keys($options),
             array_keys($data)
         );
-        $config = array(
+        $config = [
             'config' => $this->elementCache,
             'key' => implode('_', $keys)
-        );
+        ];
         if (is_array($options['cache'])) {
-            $defaults = array(
+            $defaults = [
                 'config' => $this->elementCache,
                 'key' => $config['key']
-            );
+            ];
             $config = $options['cache'] + $defaults;
         }
         $config['key'] = 'element_' . $config['key'];

@@ -143,7 +143,7 @@ class Security
         if (empty($key)) {
             throw new InvalidArgumentException('You cannot use an empty key for Security::rijndael()');
         }
-        if (empty($operation) || !in_array($operation, array('encrypt', 'decrypt'))) {
+        if (empty($operation) || !in_array($operation, ['encrypt', 'decrypt'])) {
             throw new InvalidArgumentException('You must specify the operation for Security::rijndael(), either encrypt or decrypt');
         }
         if (strlen($key) < 32) {

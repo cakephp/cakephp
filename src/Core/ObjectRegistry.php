@@ -180,17 +180,6 @@ abstract class ObjectRegistry
      */
     public function loaded()
     {
-        if (func_num_args() > 0) {
-            $class = get_class($this);
-            trigger_error(
-                sprintf(
-                    "%s::loaded() doesn't take object name as argument any more. Use %s::has() instead.",
-                    $class,
-                    $class
-                ),
-                E_USER_ERROR
-            );
-        }
         return array_keys($this->_loaded);
     }
 
@@ -250,15 +239,15 @@ abstract class ObjectRegistry
      */
     public function normalizeArray($objects)
     {
-        $normal = array();
+        $normal = [];
         foreach ($objects as $i => $objectName) {
-            $config = array();
+            $config = [];
             if (!is_int($i)) {
                 $config = (array)$objectName;
                 $objectName = $i;
             }
             list(, $name) = pluginSplit($objectName);
-            $normal[$name] = array('class' => $objectName, 'config' => $config);
+            $normal[$name] = ['class' => $objectName, 'config' => $config];
         }
         return $normal;
     }

@@ -227,7 +227,7 @@ class ApcEngineTest extends TestCase
         Cache::config('apc_groups', [
             'engine' => 'Apc',
             'duration' => 0,
-            'groups' => array('group_a', 'group_b'),
+            'groups' => ['group_a', 'group_b'],
             'prefix' => 'test_'
         ]);
         $this->assertTrue(Cache::write('test_groups', 'value', 'apc_groups'));
@@ -251,12 +251,12 @@ class ApcEngineTest extends TestCase
      */
     public function testGroupDelete()
     {
-        Cache::config('apc_groups', array(
+        Cache::config('apc_groups', [
             'engine' => 'Apc',
             'duration' => 0,
-            'groups' => array('group_a', 'group_b'),
+            'groups' => ['group_a', 'group_b'],
             'prefix' => 'test_'
-        ));
+        ]);
         $this->assertTrue(Cache::write('test_groups', 'value', 'apc_groups'));
         $this->assertEquals('value', Cache::read('test_groups', 'apc_groups'));
         $this->assertTrue(Cache::delete('test_groups', 'apc_groups'));
@@ -271,12 +271,12 @@ class ApcEngineTest extends TestCase
      */
     public function testGroupClear()
     {
-        Cache::config('apc_groups', array(
+        Cache::config('apc_groups', [
             'engine' => 'Apc',
             'duration' => 0,
-            'groups' => array('group_a', 'group_b'),
+            'groups' => ['group_a', 'group_b'],
             'prefix' => 'test_'
-        ));
+        ]);
 
         $this->assertTrue(Cache::write('test_groups', 'value', 'apc_groups'));
         $this->assertTrue(Cache::clearGroup('group_a', 'apc_groups'));

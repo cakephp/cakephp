@@ -52,7 +52,7 @@ class UrlHelper extends Helper
      *   `plugin` False value will prevent parsing path as a plugin
      * @return string Generated URL
      */
-    public function assetUrl($path, array $options = array())
+    public function assetUrl($path, array $options = [])
     {
         if (is_array($path)) {
             return $this->build($path, !empty($options['fullBase']));

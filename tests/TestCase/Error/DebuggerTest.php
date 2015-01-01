@@ -125,104 +125,6 @@ class DebuggerTest extends TestCase
     }
 
     /**
-     * testOutput method
-     *
-     * @return void
-     */
-    public function testOutput()
-    {
-        set_error_handler('Cake\Error\Debugger::showError');
-        $this->_restoreError = true;
-
-        $result = Debugger::output(false);
-        $this->assertEquals('', $result);
-        $out .= '';
-        $result = Debugger::output(true);
-
-        $this->assertEquals('Notice', $result[0]['error']);
-        $this->assertRegExp('/Undefined variable\:\s+out/', $result[0]['description']);
-        $this->assertRegExp('/DebuggerTest::testOutput/i', $result[0]['trace']);
-
-        ob_start();
-        Debugger::output('txt');
-        $other .= '';
-        $result = ob_get_clean();
-
-        $this->assertRegExp('/Undefined variable:\s+other/', $result);
-        $this->assertRegExp('/Context:/', $result);
-        $this->assertRegExp('/DebuggerTest::testOutput/i', $result);
-
-        ob_start();
-        Debugger::output('html');
-        $wrong .= '';
-        $result = ob_get_clean();
-        $this->assertRegExp('/<pre class="cake-error">.+<\/pre>/', $result);
-        $this->assertRegExp('/<b>Notice<\/b>/', $result);
-        $this->assertRegExp('/variable:\s+wrong/', $result);
-
-        ob_start();
-        Debugger::output('js');
-        $buzz .= '';
-        $result = explode('</a>', ob_get_clean());
-        $expected = array(
-            'pre' => array('class' => 'cake-error'),
-            'a' => array(
-                'href' => "javascript:void(0);",
-                'onclick' => "preg:/document\.getElementById\('cakeErr[a-z0-9]+\-trace'\)\.style\.display = " .
-                    "\(document\.getElementById\('cakeErr[a-z0-9]+\-trace'\)\.style\.display == 'none'" .
-                    " \? '' \: 'none'\);/"
-            ),
-            'b' => array(), 'Notice', '/b', ' (8)',
-        );
-        $this->assertHtml($expected, $result[0]);
-
-        $this->assertRegExp('/Undefined variable:\s+buzz/', $result[1]);
-        $this->assertRegExp('/<a[^>]+>Code/', $result[1]);
-        $this->assertRegExp('/<a[^>]+>Context/', $result[2]);
-        $this->assertContains('$wrong = &#039;&#039;', $result[3], 'Context should be HTML escaped.');
-    }
-
-    /**
-     * Tests that changes in output formats using Debugger::output() change the templates used.
-     *
-     * @return void
-     */
-    public function testChangeOutputFormats()
-    {
-        set_error_handler('Cake\Error\Debugger::showError');
-        $this->_restoreError = true;
-
-        Debugger::output('js', array(
-            'traceLine' => '{:reference} - <a href="txmt://open?url=file://{:file}' .
-                '&line={:line}">{:path}</a>, line {:line}'
-        ));
-        $result = Debugger::trace();
-        $this->assertRegExp('/' . preg_quote('txmt://open?url=file://', '/') . '(\/|[A-Z]:\\\\)' . '/', $result);
-
-        Debugger::output('xml', array(
-            'error' => '<error><code>{:code}</code><file>{:file}</file><line>{:line}</line>' .
-                '{:description}</error>',
-            'context' => "<context>{:context}</context>",
-            'trace' => "<stack>{:trace}</stack>",
-        ));
-        Debugger::output('xml');
-
-        ob_start();
-        $foo .= '';
-        $result = ob_get_clean();
-
-        $expected = array(
-            'error' => array(),
-            'code' => array(), '8', '/code',
-            'file' => array(), 'preg:/[^<]+/', '/file',
-            'line' => array(), '' . ((int)__LINE__ - 7), '/line',
-            'preg:/Undefined variable:\s+foo/',
-            '/error'
-        );
-        $this->assertHtml($expected, $result, true);
-    }
-
-    /**
      * Test that outputAs works.
      *
      * @return void
@@ -242,66 +144,6 @@ class DebuggerTest extends TestCase
     public function testOutputAsException()
     {
         Debugger::outputAs('Invalid junk');
-    }
-
-    /**
-     * Tests that changes in output formats using Debugger::output() change the templates used.
-     *
-     * @return void
-     */
-    public function testAddFormat()
-    {
-        set_error_handler('Cake\Error\Debugger::showError');
-        $this->_restoreError = true;
-
-        Debugger::addFormat('js', array(
-            'traceLine' => '{:reference} - <a href="txmt://open?url=file://{:file}' .
-                '&line={:line}">{:path}</a>, line {:line}'
-        ));
-        Debugger::outputAs('js');
-
-        $result = Debugger::trace();
-        $this->assertRegExp('/' . preg_quote('txmt://open?url=file://', '/') . '(\/|[A-Z]:\\\\)' . '/', $result);
-
-        Debugger::addFormat('xml', array(
-            'error' => '<error><code>{:code}</code><file>{:file}</file><line>{:line}</line>' .
-                '{:description}</error>',
-        ));
-        Debugger::outputAs('xml');
-
-        ob_start();
-        $foo .= '';
-        $result = ob_get_clean();
-
-        $expected = array(
-            '<error',
-            '<code', '8', '/code',
-            '<file', 'preg:/[^<]+/', '/file',
-            '<line', '' . ((int)__LINE__ - 7), '/line',
-            'preg:/Undefined variable:\s+foo/',
-            '/error'
-        );
-        $this->assertHtml($expected, $result, true);
-    }
-
-    /**
-     * Test adding a format that is handled by a callback.
-     *
-     * @return void
-     */
-    public function testAddFormatCallback()
-    {
-        set_error_handler('Cake\Error\Debugger::showError');
-        $this->_restoreError = true;
-
-        Debugger::addFormat('callback', array('callback' => array($this, 'customFormat')));
-        Debugger::outputAs('callback');
-
-        ob_start();
-        $foo .= '';
-        $result = ob_get_clean();
-        $this->assertContains('Notice: I eated an error', $result);
-        $this->assertContains('DebuggerTest.php', $result);
     }
 
     /**
@@ -334,7 +176,7 @@ class DebuggerTest extends TestCase
     public function testExportVar()
     {
         $Controller = new Controller();
-        $Controller->helpers = array('Html', 'Form');
+        $Controller->helpers = ['Html', 'Form'];
         $View = $Controller->createView();
         $View->int = 2;
         $View->float = 1.333;
@@ -395,10 +237,10 @@ TEXT;
 
         $this->assertTextEquals($expected, $result);
 
-        $data = array(
+        $data = [
             1 => 'Index one',
             5 => 'Index five'
-        );
+        ];
         $result = Debugger::exportVar($data);
         $expected = <<<TEXT
 [
@@ -408,11 +250,11 @@ TEXT;
 TEXT;
         $this->assertTextEquals($expected, $result);
 
-        $data = array(
-            'key' => array(
+        $data = [
+            'key' => [
                 'value'
-            )
-        );
+            ]
+        ];
         $result = Debugger::exportVar($data, 1);
         $expected = <<<TEXT
 [
@@ -443,13 +285,13 @@ TEXT;
      */
     public function testExportVarZero()
     {
-        $data = array(
+        $data = [
             'nothing' => '',
             'null' => null,
             'false' => false,
             'szero' => '0',
             'zero' => 0
-        );
+        ];
         $result = Debugger::exportVar($data);
         $expected = <<<TEXT
 [
@@ -490,7 +332,7 @@ TEXT;
             ));
 
         Debugger::log('cool');
-        Debugger::log(array('whatever', 'here'));
+        Debugger::log(['whatever', 'here']);
 
         Log::drop('test');
     }
@@ -513,9 +355,9 @@ TEXT;
                 $this->logicalNot($this->stringContains('val'))
             ));
 
-        $val = array(
-            'test' => array('key' => 'val')
-        );
+        $val = [
+            'test' => ['key' => 'val']
+        ];
         Debugger::log($val, 'debug', 0);
     }
 
@@ -526,18 +368,18 @@ TEXT;
      */
     public function testDump()
     {
-        $var = array('People' => array(
-            array(
+        $var = ['People' => [
+            [
                 'name' => 'joeseph',
                 'coat' => 'technicolor',
                 'hair_color' => 'brown'
-            ),
-            array(
+            ],
+            [
                 'name' => 'Shaft',
                 'coat' => 'black',
                 'hair' => 'black'
-            )
-        ));
+            ]
+        ]];
         ob_start();
         Debugger::dump($var);
         $result = ob_get_clean();
@@ -617,9 +459,9 @@ TEXT;
         $result = Debugger::trace();
         $this->assertRegExp('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest::testTraceExclude/', $result);
 
-        $result = Debugger::trace(array(
-            'exclude' => array('Cake\Test\TestCase\Error\DebuggerTest::testTraceExclude')
-        ));
+        $result = Debugger::trace([
+            'exclude' => ['Cake\Test\TestCase\Error\DebuggerTest::testTraceExclude']
+        ]);
         $this->assertNotRegExp('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest::testTraceExclude/', $result);
     }
 

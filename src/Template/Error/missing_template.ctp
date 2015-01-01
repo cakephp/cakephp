@@ -21,24 +21,24 @@ $this->assign('templateName', 'missing_template.ctp');
 
 $this->start('subheading');
 ?>
-	<strong>Error: </strong>
-	<?= sprintf('The view for <em>%sController::%s()</em> was not found.', h(Inflector::camelize($this->request->controller)), h($this->request->action)); ?>
+    <strong>Error: </strong>
+    <?= sprintf('The view for <em>%sController::%s()</em> was not found.', h(Inflector::camelize($this->request->controller)), h($this->request->action)); ?>
 <?php $this->end() ?>
 
 <?php $this->start('file') ?>
 <p>
-	<?= sprintf('Confirm you have created the file: "%s"', h($file)) ?>
-	in one of the following paths:
+    <?= sprintf('Confirm you have created the file: "%s"', h($file)) ?>
+    in one of the following paths:
 </p>
 <ul>
 <?php
-	$paths = $this->_paths($this->plugin);
-	foreach ($paths as $path):
-		if (strpos($path, CORE_PATH) !== false) {
-			continue;
-		}
-		echo sprintf('<li>%s%s</li>', h($path), h($file));
-	endforeach;
+    $paths = $this->_paths($this->plugin);
+    foreach ($paths as $path):
+        if (strpos($path, CORE_PATH) !== false) {
+            continue;
+        }
+        echo sprintf('<li>%s%s</li>', h($path), h($file));
+    endforeach;
 ?>
 </ul>
 <?php $this->end() ?>

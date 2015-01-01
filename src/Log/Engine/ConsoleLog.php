@@ -55,7 +55,7 @@ class ConsoleLog extends BaseLog
      * @param array $config Options for the FileLog, see above.
      * @throws \InvalidArgumentException
      */
-    public function __construct(array $config = array())
+    public function __construct(array $config = [])
     {
         if ((DS === '\\' && !(bool)env('ANSICON')) ||
             (function_exists('posix_isatty') && !posix_isatty($this->_output))

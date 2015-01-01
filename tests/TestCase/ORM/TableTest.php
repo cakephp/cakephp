@@ -3092,7 +3092,7 @@ class TableTest extends TestCase
     /**
      * Tests that get() will throw an exception if the record was not found
      *
-     * @expectedException \Cake\ORM\Exception\RecordNotFoundException
+     * @expectedException Cake\Datasource\Exception\RecordNotFoundException
      * @expectedExceptionMessage Record not found in table "articles"
      * @return void
      */

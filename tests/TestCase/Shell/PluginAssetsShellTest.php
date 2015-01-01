@@ -46,8 +46,8 @@ class PluginAssetsShellTest extends TestCase
 
         $this->shell = $this->getMock(
             'Cake\Shell\PluginAssetsShell',
-            array('in', 'out', 'err', '_stop'),
-            array($this->io)
+            ['in', 'out', 'err', '_stop'],
+            [$this->io]
         );
     }
 
@@ -133,8 +133,8 @@ class PluginAssetsShellTest extends TestCase
 
         $shell = $this->getMock(
             'Cake\Shell\PluginAssetsShell',
-            array('in', 'out', 'err', '_stop', '_createSymlink', '_copyDirectory'),
-            array($this->io)
+            ['in', 'out', 'err', '_stop', '_createSymlink', '_copyDirectory'],
+            [$this->io]
         );
 
         $this->assertTrue(is_dir(WWW_ROOT . 'test_theme'));

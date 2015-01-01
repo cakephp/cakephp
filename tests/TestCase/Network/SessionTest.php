@@ -63,7 +63,7 @@ class SessionTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = array('core.sessions', 'core.cake_sessions');
+    public $fixtures = ['core.sessions', 'core.cake_sessions'];
 
     /**
      * setup before class.
@@ -118,15 +118,15 @@ class SessionTest extends TestCase
     {
         $_SESSION = null;
 
-        $config = array(
+        $config = [
             'cookie' => 'test',
             'checkAgent' => false,
             'timeout' => 86400,
-            'ini' => array(
+            'ini' => [
                 'session.referer_check' => 'example.com',
                 'session.use_trans_sid' => false
-            )
-        );
+            ]
+        ];
 
         $session = Session::create($config);
         $this->assertEquals('', ini_get('session.use_trans_sid'), 'Ini value is incorrect');
@@ -431,11 +431,11 @@ class SessionTest extends TestCase
         Configure::write('App.namespace', 'TestApp');
         $config = [
             'defaults' => 'cake',
-            'handler' => array(
+            'handler' => [
                 'engine' => 'TestAppLibSession',
                 'these' => 'are',
                 'a few' => 'options'
-            )
+            ]
         ];
 
         $session = Session::create($config);
@@ -456,9 +456,9 @@ class SessionTest extends TestCase
 
         $config = [
             'defaults' => 'cake',
-            'handler' => array(
+            'handler' => [
                 'engine' => 'TestPlugin.TestPluginSession'
-            )
+            ]
         ];
 
         $session = Session::create($config);

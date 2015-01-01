@@ -29,12 +29,12 @@ class InflectorTest extends TestCase
      *
      * @var array
      */
-    public static $maps = array (
-        'de' => array ( /* German */
+    public static $maps = [
+        'de' => [ /* German */
             'Ä' => 'Ae', 'Ö' => 'Oe', 'Ü' => 'Ue', 'ä' => 'ae', 'ö' => 'oe', 'ü' => 'ue', 'ß' => 'ss',
             'ẞ' => 'SS'
-        ),
-        'latin' => array (
+        ],
+        'latin' => [
             'À' => 'A', 'Á' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Å' => 'A', 'Ă' => 'A', 'Æ' => 'AE', 'Ç' =>
             'C', 'È' => 'E', 'É' => 'E', 'Ê' => 'E', 'Ë' => 'E', 'Ì' => 'I', 'Í' => 'I', 'Î' => 'I',
             'Ï' => 'I', 'Ð' => 'D', 'Ñ' => 'N', 'Ò' => 'O', 'Ó' => 'O', 'Ô' => 'O', 'Õ' => 'O', 'Ő' => 'O', 'Ø' => 'O',
@@ -44,36 +44,36 @@ class InflectorTest extends TestCase
             'ì' => 'i', 'í' => 'i', 'î' => 'i', 'ï' => 'i', 'ð' => 'd', 'ñ' => 'n', 'ò' => 'o', 'ó' =>
             'o', 'ô' => 'o', 'õ' => 'o', 'ő' => 'o', 'ø' => 'o', 'ș' => 's', 'ț' => 't', 'ù' => 'u', 'ú' => 'u',
             'û' => 'u', 'ű' => 'u', 'ý' => 'y', 'þ' => 'th', 'ÿ' => 'y'
-        ),
-        'tr' => array ( /* Turkish */
+        ],
+        'tr' => [ /* Turkish */
             'ş' => 's', 'Ş' => 'S', 'ı' => 'i', 'İ' => 'I', 'ç' => 'c', 'Ç' => 'C', 'ğ' => 'g', 'Ğ' => 'G'
-        ),
-        'uk' => array ( /* Ukrainian */
+        ],
+        'uk' => [ /* Ukrainian */
             'Є' => 'Ye', 'І' => 'I', 'Ї' => 'Yi', 'Ґ' => 'G', 'є' => 'ye', 'і' => 'i', 'ї' => 'yi', 'ґ' => 'g'
-        ),
-        'cs' => array ( /* Czech */
+        ],
+        'cs' => [ /* Czech */
             'č' => 'c', 'ď' => 'd', 'ě' => 'e', 'ň' => 'n', 'ř' => 'r', 'š' => 's', 'ť' => 't', 'ů' => 'u',
             'ž' => 'z', 'Č' => 'C', 'Ď' => 'D', 'Ě' => 'E', 'Ň' => 'N', 'Ř' => 'R', 'Š' => 'S', 'Ť' => 'T',
             'Ů' => 'U', 'Ž' => 'Z'
-        ),
-        'pl' => array ( /* Polish */
+        ],
+        'pl' => [ /* Polish */
             'ą' => 'a', 'ć' => 'c', 'ę' => 'e', 'ł' => 'l', 'ń' => 'n', 'ó' => 'o', 'ś' => 's', 'ź' => 'z',
             'ż' => 'z', 'Ą' => 'A', 'Ć' => 'C', 'Ł' => 'L', 'Ń' => 'N', 'Ó' => 'O', 'Ś' => 'S',
             'Ź' => 'Z', 'Ż' => 'Z'
-        ),
-        'ro' => array ( /* Romanian */
+        ],
+        'ro' => [ /* Romanian */
             'ă' => 'a', 'â' => 'a', 'î' => 'i', 'ș' => 's', 'ț' => 't', 'Ţ' => 'T', 'ţ' => 't'
-        ),
-        'lv' => array ( /* Latvian */
+        ],
+        'lv' => [ /* Latvian */
             'ā' => 'a', 'č' => 'c', 'ē' => 'e', 'ģ' => 'g', 'ī' => 'i', 'ķ' => 'k', 'ļ' => 'l', 'ņ' => 'n',
             'š' => 's', 'ū' => 'u', 'ž' => 'z', 'Ā' => 'A', 'Č' => 'C', 'Ē' => 'E', 'Ģ' => 'G', 'Ī' => 'I',
             'Ķ' => 'K', 'Ļ' => 'L', 'Ņ' => 'N', 'Š' => 'S', 'Ū' => 'U', 'Ž' => 'Z'
-        ),
-        'lt' => array ( /* Lithuanian */
+        ],
+        'lt' => [ /* Lithuanian */
             'ą' => 'a', 'č' => 'c', 'ę' => 'e', 'ė' => 'e', 'į' => 'i', 'š' => 's', 'ų' => 'u', 'ū' => 'u', 'ž' => 'z',
             'Ą' => 'A', 'Č' => 'C', 'Ę' => 'E', 'Ė' => 'E', 'Į' => 'I', 'Š' => 'S', 'Ų' => 'U', 'Ū' => 'U', 'Ž' => 'Z'
-        )
-    );
+        ]
+    ];
 
     /**
      * tearDown
@@ -343,7 +343,7 @@ class InflectorTest extends TestCase
      */
     public function testInflectorSlugWithMap()
     {
-        Inflector::rules('transliteration', array('r' => '1'));
+        Inflector::rules('transliteration', ['r' => '1']);
         $result = Inflector::slug('replace every r');
         $expected = '1eplace-eve1y-1';
         $this->assertEquals($expected, $result);
@@ -360,7 +360,7 @@ class InflectorTest extends TestCase
      */
     public function testInflectorSlugWithMapOverridingDefault()
     {
-        Inflector::rules('transliteration', array('å' => 'aa', 'ø' => 'oe'));
+        Inflector::rules('transliteration', ['å' => 'aa', 'ø' => 'oe']);
         $result = Inflector::slug('Testing æ ø å', '-');
         $expected = 'Testing-ae-oe-aa';
         $this->assertEquals($expected, $result);
@@ -470,15 +470,15 @@ class InflectorTest extends TestCase
      */
     public function testCustomPluralRule()
     {
-        Inflector::rules('plural', array('/^(custom)$/i' => '\1izables'));
-        Inflector::rules('uninflected', array('uninflectable'));
+        Inflector::rules('plural', ['/^(custom)$/i' => '\1izables']);
+        Inflector::rules('uninflected', ['uninflectable']);
 
         $this->assertEquals(Inflector::pluralize('custom'), 'customizables');
         $this->assertEquals(Inflector::pluralize('uninflectable'), 'uninflectable');
 
-        Inflector::rules('plural', array('/^(alert)$/i' => '\1ables'));
-        Inflector::rules('irregular', array('amaze' => 'amazable', 'phone' => 'phonezes'));
-        Inflector::rules('uninflected', array('noflect', 'abtuse'));
+        Inflector::rules('plural', ['/^(alert)$/i' => '\1ables']);
+        Inflector::rules('irregular', ['amaze' => 'amazable', 'phone' => 'phonezes']);
+        Inflector::rules('uninflected', ['noflect', 'abtuse']);
         $this->assertEquals(Inflector::pluralize('noflect'), 'noflect');
         $this->assertEquals(Inflector::pluralize('abtuse'), 'abtuse');
         $this->assertEquals(Inflector::pluralize('alert'), 'alertables');
@@ -493,14 +493,14 @@ class InflectorTest extends TestCase
      */
     public function testCustomSingularRule()
     {
-        Inflector::rules('uninflected', array('singulars'));
-        Inflector::rules('singular', array('/(eple)r$/i' => '\1', '/(jente)r$/i' => '\1'));
+        Inflector::rules('uninflected', ['singulars']);
+        Inflector::rules('singular', ['/(eple)r$/i' => '\1', '/(jente)r$/i' => '\1']);
 
         $this->assertEquals(Inflector::singularize('epler'), 'eple');
         $this->assertEquals(Inflector::singularize('jenter'), 'jente');
 
-        Inflector::rules('singular', array('/^(bil)er$/i' => '\1', '/^(inflec|contribu)tors$/i' => '\1ta'));
-        Inflector::rules('irregular', array('spinor' => 'spins'));
+        Inflector::rules('singular', ['/^(bil)er$/i' => '\1', '/^(inflec|contribu)tors$/i' => '\1ta']);
+        Inflector::rules('irregular', ['spinor' => 'spins']);
 
         $this->assertEquals(Inflector::singularize('spins'), 'spinor');
         $this->assertEquals(Inflector::singularize('inflectors'), 'inflecta');
@@ -517,10 +517,10 @@ class InflectorTest extends TestCase
     {
         $this->assertEquals(Inflector::slug('Testing æ ø å'), 'Testing-ae-o-a');
 
-        Inflector::rules('transliteration', array('å' => 'aa', 'ø' => 'oe'));
+        Inflector::rules('transliteration', ['å' => 'aa', 'ø' => 'oe']);
         $this->assertEquals(Inflector::slug('Testing æ ø å'), 'Testing-ae-oe-aa');
 
-        Inflector::rules('transliteration', array('æ' => 'ae', 'å' => 'aa'), true);
+        Inflector::rules('transliteration', ['æ' => 'ae', 'å' => 'aa'], true);
         $this->assertEquals(Inflector::slug('Testing æ ø å'), 'Testing-ae-ø-aa');
     }
 
@@ -535,11 +535,11 @@ class InflectorTest extends TestCase
         $this->assertEquals(Inflector::tableize('Banana'), 'bananas');
         $this->assertEquals(Inflector::pluralize('Banana'), 'Bananas');
 
-        Inflector::rules('singular', array('/(.*)nas$/i' => '\1zzz'));
+        Inflector::rules('singular', ['/(.*)nas$/i' => '\1zzz']);
         $this->assertEquals('Banazzz', Inflector::singularize('Bananas'), 'Was inflected with old rules.');
 
-        Inflector::rules('plural', array('/(.*)na$/i' => '\1zzz'));
-        Inflector::rules('irregular', array('corpus' => 'corpora'));
+        Inflector::rules('plural', ['/(.*)na$/i' => '\1zzz']);
+        Inflector::rules('irregular', ['corpus' => 'corpora']);
         $this->assertEquals(Inflector::pluralize('Banana'), 'Banazzz', 'Was inflected with old rules.');
         $this->assertEquals(Inflector::pluralize('corpus'), 'corpora', 'Was inflected with old irregular form.');
     }
@@ -551,11 +551,11 @@ class InflectorTest extends TestCase
      */
     public function testCustomRuleWithReset()
     {
-        $uninflected = array('atlas', 'lapis', 'onibus', 'pires', 'virus', '.*x');
-        $pluralIrregular = array('as' => 'ases');
+        $uninflected = ['atlas', 'lapis', 'onibus', 'pires', 'virus', '.*x'];
+        $pluralIrregular = ['as' => 'ases'];
 
-        Inflector::rules('singular', array('/^(.*)(a|e|o|u)is$/i' => '\1\2l'), true);
-        Inflector::rules('plural', array('/^(.*)(a|e|o|u)l$/i' => '\1\2is'), true);
+        Inflector::rules('singular', ['/^(.*)(a|e|o|u)is$/i' => '\1\2l'], true);
+        Inflector::rules('plural', ['/^(.*)(a|e|o|u)l$/i' => '\1\2is'], true);
         Inflector::rules('uninflected', $uninflected, true);
         Inflector::rules('irregular', $pluralIrregular, true);
 

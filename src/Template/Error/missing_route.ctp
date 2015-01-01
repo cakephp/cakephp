@@ -25,8 +25,8 @@ $attributes = $error->getAttributes();
 
 $this->start('subheading');
 ?>
-	<strong>Error: </strong>
-	<?= $error->getMessage(); ?>
+    <strong>Error: </strong>
+    <?= $error->getMessage(); ?>
 <?php $this->end() ?>
 
 <?php $this->start('file') ?>
@@ -45,14 +45,14 @@ Add a matching route to <?= 'config' . DS . 'routes.php' ?></p>
 <tr><th>Template</th><th>Defaults</th><th>Options</th></tr>
 <?php
 foreach (Router::routes() as $route):
-	echo '<tr>';
-	printf(
-		'<td width="25%%">%s</td><td>%s</td><td width="20%%">%s</td>',
-		$route->template,
-		Debugger::exportVar($route->defaults),
-		Debugger::exportVar($route->options)
-	);
-	echo '</tr>';
+    echo '<tr>';
+    printf(
+        '<td width="25%%">%s</td><td>%s</td><td width="20%%">%s</td>',
+        $route->template,
+        Debugger::exportVar($route->defaults),
+        Debugger::exportVar($route->options)
+    );
+    echo '</tr>';
 endforeach;
 ?>
 </table>

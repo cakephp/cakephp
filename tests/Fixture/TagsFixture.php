@@ -28,20 +28,20 @@ class TagsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = array(
+    public $fields = [
         'id' => ['type' => 'integer', 'null' => false],
         'name' => ['type' => 'string', 'null' => false],
         '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
-    );
+    ];
 
     /**
      * records property
      *
      * @var array
      */
-    public $records = array(
-        array('name' => 'tag1'),
-        array('name' => 'tag2'),
-        array('name' => 'tag3')
-    );
+    public $records = [
+        ['name' => 'tag1'],
+        ['name' => 'tag2'],
+        ['name' => 'tag3']
+    ];
 }

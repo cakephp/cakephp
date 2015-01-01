@@ -36,7 +36,7 @@ class Debugger
      *
      * @var array
      */
-    public $errors = array();
+    public $errors = [];
 
     /**
      * The current output format.
@@ -51,43 +51,43 @@ class Debugger
      *
      * @var string
      */
-    protected $_templates = array(
-        'log' => array(
+    protected $_templates = [
+        'log' => [
             'trace' => '{:reference} - {:path}, line {:line}',
             'error' => "{:error} ({:code}): {:description} in [{:file}, line {:line}]"
-        ),
-        'js' => array(
+        ],
+        'js' => [
             'error' => '',
             'info' => '',
             'trace' => '<pre class="stack-trace">{:trace}</pre>',
             'code' => '',
             'context' => '',
-            'links' => array(),
+            'links' => [],
             'escapeContext' => true,
-        ),
-        'html' => array(
+        ],
+        'html' => [
             'trace' => '<pre class="cake-error trace"><b>Trace</b> <p>{:trace}</p></pre>',
             'context' => '<pre class="cake-error context"><b>Context</b> <p>{:context}</p></pre>',
             'escapeContext' => true,
-        ),
-        'txt' => array(
+        ],
+        'txt' => [
             'error' => "{:error}: {:code} :: {:description} on line {:line} of {:path}\n{:info}",
             'code' => '',
             'info' => ''
-        ),
-        'base' => array(
+        ],
+        'base' => [
             'traceLine' => '{:reference} - {:path}, line {:line}',
             'trace' => "Trace:\n{:trace}\n",
             'context' => "Context:\n{:context}\n",
-        )
-    );
+        ]
+    ];
 
     /**
      * Holds current output data when outputFormat is false.
      *
      * @var string
      */
-    protected $_data = array();
+    protected $_data = [];
 
     /**
      * Constructor.
@@ -119,7 +119,7 @@ class Debugger
         $t .= '{:context}{:code}{:trace}</div>';
         $this->_templates['js']['info'] = $t;
 
-        $links = array();
+        $links = [];
         $link = '<a href="javascript:void(0);" onclick="document.getElementById(\'{:id}-code\')';
         $link .= '.style.display = (document.getElementById(\'{:id}-code\').style.display == ';
         $link .= '\'none\' ? \'\' : \'none\')">Code</a>';
@@ -154,7 +154,7 @@ class Debugger
      */
     public static function getInstance($class = null)
     {
-        static $instance = array();
+        static $instance = [];
         if (!empty($class)) {
             if (!$instance || strtolower($class) != strtolower(get_class($instance[0]))) {
                 $instance[0] = new $class();
@@ -191,85 +191,8 @@ class Debugger
      */
     public static function log($var, $level = 'debug', $depth = 3)
     {
-        $source = static::trace(array('start' => 1)) . "\n";
+        $source = static::trace(['start' => 1]) . "\n";
         Log::write($level, "\n" . $source . static::exportVar($var, $depth));
-    }
-
-    /**
-     * Overrides PHP's default error handling.
-     *
-     * @param int $code Code of error
-     * @param string $description Error description
-     * @param string|null $file File on which error occurred
-     * @param int|null $line Line that triggered the error
-     * @param array|null $context Context
-     * @return bool true if error was handled
-     * @deprecated 3.0.0 Will be removed in 3.0. This function is superseded by Debugger::outputError().
-     */
-    public static function showError($code, $description, $file = null, $line = null, $context = null)
-    {
-        $self = Debugger::getInstance();
-
-        if (empty($file)) {
-            $file = '[internal]';
-        }
-        if (empty($line)) {
-            $line = '??';
-        }
-
-        $info = compact('code', 'description', 'file', 'line');
-        if (!in_array($info, $self->errors)) {
-            $self->errors[] = $info;
-        } else {
-            return;
-        }
-
-        switch ($code) {
-            case E_PARSE:
-            case E_ERROR:
-            case E_CORE_ERROR:
-            case E_COMPILE_ERROR:
-            case E_USER_ERROR:
-                $error = 'Fatal Error';
-                $level = LOG_ERR;
-                break;
-            case E_WARNING:
-            case E_USER_WARNING:
-            case E_COMPILE_WARNING:
-            case E_RECOVERABLE_ERROR:
-                $error = 'Warning';
-                $level = LOG_WARNING;
-                break;
-            case E_NOTICE:
-            case E_USER_NOTICE:
-                $error = 'Notice';
-                $level = LOG_NOTICE;
-                break;
-            case E_DEPRECATED:
-            case E_USER_DEPRECATED:
-                $error = 'Deprecated';
-                $level = LOG_NOTICE;
-                break;
-            default:
-                return;
-        }
-
-        $data = compact(
-            'level',
-            'error',
-            'code',
-            'description',
-            'file',
-            'path',
-            'line',
-            'context'
-        );
-        echo $self->outputError($data);
-
-        if ($error === 'Fatal Error') {
-            exit();
-        }
-        return true;
     }
 
     /**
@@ -288,32 +211,32 @@ class Debugger
      * @return mixed Formatted stack trace
      * @link http://book.cakephp.org/3.0/en/development/debugging.html#generating-stack-traces
      */
-    public static function trace(array $options = array())
+    public static function trace(array $options = [])
     {
         $self = Debugger::getInstance();
-        $defaults = array(
+        $defaults = [
             'depth' => 999,
             'format' => $self->_outputFormat,
             'args' => false,
             'start' => 0,
             'scope' => null,
-            'exclude' => array('call_user_func_array', 'trigger_error')
-        );
+            'exclude' => ['call_user_func_array', 'trigger_error']
+        ];
         $options = Hash::merge($defaults, $options);
 
         $backtrace = debug_backtrace();
         $count = count($backtrace);
-        $back = array();
+        $back = [];
 
-        $_trace = array(
+        $_trace = [
             'line' => '??',
             'file' => '[internal]',
             'class' => null,
             'function' => '[main]'
-        );
+        ];
 
         for ($i = $options['start']; $i < $count && $i < $options['depth']; $i++) {
-            $trace = $backtrace[$i] + array('file' => '[internal]', 'line' => '??');
+            $trace = $backtrace[$i] + ['file' => '[internal]', 'line' => '??'];
             $signature = $reference = '[main]';
 
             if (isset($backtrace[$i + 1])) {
@@ -324,7 +247,7 @@ class Debugger
                     $signature = $next['class'] . '::' . $next['function'];
                     $reference = $signature . '(';
                     if ($options['args'] && isset($next['args'])) {
-                        $args = array();
+                        $args = [];
                         foreach ($next['args'] as $arg) {
                             $args[] = Debugger::exportVar($arg);
                         }
@@ -337,7 +260,7 @@ class Debugger
                 continue;
             }
             if ($options['format'] === 'points' && $trace['file'] !== '[internal]') {
-                $back[] = array('file' => $trace['file'], 'line' => $trace['line']);
+                $back[] = ['file' => $trace['file'], 'line' => $trace['line']];
             } elseif ($options['format'] === 'array') {
                 $back[] = $trace;
             } else {
@@ -349,7 +272,7 @@ class Debugger
                 $trace['path'] = static::trimPath($trace['file']);
                 $trace['reference'] = $reference;
                 unset($trace['object'], $trace['args']);
-                $back[] = String::insert($tpl, $trace, array('before' => '{:', 'after' => '}'));
+                $back[] = String::insert($tpl, $trace, ['before' => '{:', 'after' => '}']);
             }
         }
 
@@ -404,9 +327,9 @@ class Debugger
      */
     public static function excerpt($file, $line, $context = 2)
     {
-        $lines = array();
+        $lines = [];
         if (!file_exists($file)) {
-            return array();
+            return [];
         }
         $data = file_get_contents($file);
         if (empty($data)) {
@@ -423,7 +346,7 @@ class Debugger
             if (!isset($data[$i])) {
                 continue;
             }
-            $string = str_replace(array("\r\n", "\n"), "", static::_highlight($data[$i]));
+            $string = str_replace(["\r\n", "\n"], "", static::_highlight($data[$i]));
             if ($i == $line) {
                 $lines[] = '<span class="code-highlight">' . $string . '</span>';
             } else {
@@ -548,7 +471,7 @@ class Debugger
             $break = "\n" . str_repeat("\t", $indent);
             $end = "\n" . str_repeat("\t", $indent - 1);
         }
-        $vars = array();
+        $vars = [];
 
         if ($depth >= 0) {
             foreach ($var as $key => $val) {
@@ -580,7 +503,7 @@ class Debugger
     protected static function _object($var, $depth, $indent)
     {
         $out = '';
-        $props = array();
+        $props = [];
 
         $className = get_class($var);
         $out .= 'object(' . $className . ') {';
@@ -606,10 +529,10 @@ class Debugger
 
             $ref = new \ReflectionObject($var);
 
-            $filters = array(
+            $filters = [
                 \ReflectionProperty::IS_PROTECTED => 'protected',
                 \ReflectionProperty::IS_PRIVATE => 'private',
-            );
+            ];
             foreach ($filters as $filter => $visibility) {
                 $reflectionProperties = $ref->getProperties($filter);
                 foreach ($reflectionProperties as $reflectionProperty) {
@@ -707,39 +630,6 @@ class Debugger
     }
 
     /**
-     * Switches output format, updates format strings.
-     * Can be used to switch the active output format:
-     *
-     * @param string $format Format to use, including 'js' for JavaScript-enhanced HTML, 'html' for
-     *    straight HTML output, or 'txt' for unformatted text.
-     * @param array $strings Template strings to be used for the output format.
-     * @return string
-     * @deprecated 3.0.0 Use Debugger::outputAs() and Debugger::addFormat(). Will be removed
-     *   in 3.0
-     */
-    public static function output($format = null, $strings = array())
-    {
-        $self = Debugger::getInstance();
-        $data = null;
-
-        if ($format === null) {
-            return Debugger::outputAs();
-        }
-
-        if (!empty($strings)) {
-            return Debugger::addFormat($format, $strings);
-        }
-
-        if ($format === true && !empty($self->_data)) {
-            $data = $self->_data;
-            $self->_data = array();
-            $format = false;
-        }
-        Debugger::outputAs($format);
-        return $data;
-    }
-
-    /**
      * Takes a processed array of data from an error and displays it in the chosen format.
      *
      * @param string $data Data to output.
@@ -747,19 +637,19 @@ class Debugger
      */
     public function outputError($data)
     {
-        $defaults = array(
+        $defaults = [
             'level' => 0,
             'error' => 0,
             'code' => 0,
             'description' => '',
             'file' => '',
             'line' => 0,
-            'context' => array(),
+            'context' => [],
             'start' => 2,
-        );
+        ];
         $data += $defaults;
 
-        $files = $this->trace(array('start' => $data['start'], 'format' => 'points'));
+        $files = $this->trace(['start' => $data['start'], 'format' => 'points']);
         $code = '';
         $file = null;
         if (isset($files[0]['file'])) {
@@ -770,10 +660,10 @@ class Debugger
         if ($file) {
             $code = $this->excerpt($file['file'], $file['line'] - 1, 1);
         }
-        $trace = $this->trace(array('start' => $data['start'], 'depth' => '20'));
-        $insertOpts = array('before' => '{:', 'after' => '}');
-        $context = array();
-        $links = array();
+        $trace = $this->trace(['start' => $data['start'], 'depth' => '20']);
+        $insertOpts = ['before' => '{:', 'after' => '}'];
+        $context = [];
+        $links = [];
         $info = '';
 
         foreach ((array)$data['context'] as $var => $value) {
@@ -811,7 +701,7 @@ class Debugger
             if (is_array($value)) {
                 $value = implode("\n", $value);
             }
-            $info .= String::insert($tpl[$key], array($key => $value) + $data, $insertOpts);
+            $info .= String::insert($tpl[$key], [$key => $value] + $data, $insertOpts);
         }
         $links = implode(' ', $links);
 

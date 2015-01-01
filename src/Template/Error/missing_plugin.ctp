@@ -23,11 +23,11 @@ $this->assign('templateName', 'missing_plugin.ctp');
 
 $this->start('subheading');
 ?>
-	<strong>Error: </strong>
-	The application is trying to load a file from the <em><?= h($plugin) ?></em> plugin.
-	<br>
-	<br>
-	Make sure your plugin <em><?= h($plugin) ?></em> is in the <?= h($pluginPath) ?> directory and was loaded.
+    <strong>Error: </strong>
+    The application is trying to load a file from the <em><?= h($plugin) ?></em> plugin.
+    <br>
+    <br>
+    Make sure your plugin <em><?= h($plugin) ?></em> is in the <?= h($pluginPath) ?> directory and was loaded.
 <?php $this->end() ?>
 
 <?php $this->start('file') ?>
@@ -41,8 +41,8 @@ PHP;
 <div class="code-dump"><?php highlight_string($code) ?></div>
 
 <p class="notice">
-	<strong>Loading all plugins: </strong>
-	<?= sprintf('If you wish to load all plugins at once, use the following line in your %s file', 'config' . DS . 'bootstrap.php'); ?>
+    <strong>Loading all plugins: </strong>
+    <?= sprintf('If you wish to load all plugins at once, use the following line in your %s file', 'config' . DS . 'bootstrap.php'); ?>
 </p>
 
 <?php

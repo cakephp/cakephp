@@ -53,7 +53,7 @@ class CommandListShellTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Plugin::load(array('TestPlugin', 'TestPluginTwo'));
+        Plugin::load(['TestPlugin', 'TestPluginTwo']);
 
         $this->out = new TestStringOutput();
         $io = new ConsoleIo($this->out);
@@ -99,7 +99,7 @@ class CommandListShellTest extends TestCase
         $expected = "/\[.*TestPluginTwo.*\] example, welcome/";
         $this->assertRegExp($expected, $output);
 
-        $expected = "/\[.*CORE.*\] i18n, orm_cache, plugin_assets, server, test/";
+        $expected = "/\[.*CORE.*\] i18n, orm_cache, plugin_assets, server/";
         $this->assertRegExp($expected, $output);
 
         $expected = "/\[.*app.*\] sample/";

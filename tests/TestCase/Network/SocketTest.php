@@ -33,7 +33,7 @@ class SocketTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->Socket = new Socket(array('timeout' => 1));
+        $this->Socket = new Socket(['timeout' => 1]);
     }
 
     /**
@@ -56,20 +56,20 @@ class SocketTest extends TestCase
     {
         $this->Socket = new Socket();
         $config = $this->Socket->config();
-        $this->assertSame($config, array(
+        $this->assertSame($config, [
             'persistent' => false,
             'host' => 'localhost',
             'protocol' => 'tcp',
             'port' => 80,
             'timeout' => 30
-        ));
+        ]);
 
         $this->Socket->reset();
-        $this->Socket->__construct(array('host' => 'foo-bar'));
+        $this->Socket->__construct(['host' => 'foo-bar']);
         $config['host'] = 'foo-bar';
         $this->assertSame($this->Socket->config(), $config);
 
-        $this->Socket = new Socket(array('host' => 'www.cakephp.org', 'port' => 23, 'protocol' => 'udp'));
+        $this->Socket = new Socket(['host' => 'www.cakephp.org', 'port' => 23, 'protocol' => 'udp']);
         $config = $this->Socket->config();
 
         $config['host'] = 'www.cakephp.org';
@@ -96,7 +96,7 @@ class SocketTest extends TestCase
             $this->assertTrue($this->Socket->connected);
 
             $this->Socket->disconnect();
-            $config = array('persistent' => true);
+            $config = ['persistent' => true];
             $this->Socket = new Socket($config);
             $this->Socket->connect();
             $this->assertTrue($this->Socket->connected);
@@ -112,10 +112,10 @@ class SocketTest extends TestCase
      */
     public static function invalidConnections()
     {
-        return array(
-            array(array('host' => 'invalid.host', 'port' => 9999, 'timeout' => 1)),
-            array(array('host' => '127.0.0.1', 'port' => '70000', 'timeout' => 1))
-        );
+        return [
+            [['host' => 'invalid.host', 'port' => 9999, 'timeout' => 1]],
+            [['host' => '127.0.0.1', 'port' => '70000', 'timeout' => 1]]
+        ];
     }
 
     /**
@@ -146,7 +146,7 @@ class SocketTest extends TestCase
             $this->assertEquals(null, $this->Socket->lastError());
             $this->assertTrue(in_array('127.0.0.1', $this->Socket->addresses()));
 
-            $this->Socket = new Socket(array('host' => '127.0.0.1'));
+            $this->Socket = new Socket(['host' => '127.0.0.1']);
             $this->Socket->connect();
             $this->assertEquals('127.0.0.1', $this->Socket->address());
             $this->assertEquals(gethostbyaddr('127.0.0.1'), $this->Socket->host());
@@ -179,12 +179,12 @@ class SocketTest extends TestCase
      */
     public function testSocketReading()
     {
-        $this->Socket = new Socket(array('timeout' => 5));
+        $this->Socket = new Socket(['timeout' => 5]);
         try {
             $this->Socket->connect();
             $this->assertEquals(null, $this->Socket->read(26));
 
-            $config = array('host' => 'google.com', 'port' => 80, 'timeout' => 1);
+            $config = ['host' => 'google.com', 'port' => 80, 'timeout' => 1];
             $this->Socket = new Socket($config);
             $this->assertTrue($this->Socket->connect());
             $this->assertEquals(null, $this->Socket->read(26));
@@ -201,12 +201,12 @@ class SocketTest extends TestCase
      */
     public function testTimeOutConnection()
     {
-        $config = array('host' => '127.0.0.1', 'timeout' => 0.5);
+        $config = ['host' => '127.0.0.1', 'timeout' => 0.5];
         $this->Socket = new Socket($config);
         try {
             $this->assertTrue($this->Socket->connect());
 
-            $config = array('host' => '127.0.0.1', 'timeout' => 0.00001);
+            $config = ['host' => '127.0.0.1', 'timeout' => 0.00001];
             $this->Socket = new Socket($config);
             $this->assertFalse($this->Socket->read(1024 * 1024));
             $this->assertEquals('2: ' . 'Connection timed out', $this->Socket->lastError());
@@ -234,13 +234,13 @@ class SocketTest extends TestCase
      */
     public function testReset()
     {
-        $config = array(
+        $config = [
             'persistent' => true,
             'host' => '127.0.0.1',
             'protocol' => 'udp',
             'port' => 80,
             'timeout' => 20
-        );
+        ];
         $anotherSocket = new Socket($config);
         $anotherSocket->reset();
 
@@ -267,7 +267,7 @@ class SocketTest extends TestCase
     public function testEnableCryptoSocketExceptionNoSsl()
     {
         $this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
-        $configNoSslOrTls = array('host' => 'localhost', 'port' => 80, 'timeout' => 0.1);
+        $configNoSslOrTls = ['host' => 'localhost', 'port' => 80, 'timeout' => 0.1];
 
         // testing exception on no ssl socket server for ssl and tls methods
         $this->Socket = new Socket($configNoSslOrTls);
@@ -283,7 +283,7 @@ class SocketTest extends TestCase
      */
     public function testEnableCryptoSocketExceptionNoTls()
     {
-        $configNoSslOrTls = array('host' => 'localhost', 'port' => 80, 'timeout' => 0.1);
+        $configNoSslOrTls = ['host' => 'localhost', 'port' => 80, 'timeout' => 0.1];
 
         // testing exception on no ssl socket server for ssl and tls methods
         $this->Socket = new Socket($configNoSslOrTls);
@@ -299,7 +299,7 @@ class SocketTest extends TestCase
     protected function _connectSocketToSslTls()
     {
         $this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
-        $configSslTls = array('host' => 'smtp.gmail.com', 'port' => 465, 'timeout' => 5);
+        $configSslTls = ['host' => 'smtp.gmail.com', 'port' => 465, 'timeout' => 5];
         $this->Socket = new Socket($configSslTls);
         try {
             $this->Socket->connect();
@@ -393,14 +393,14 @@ class SocketTest extends TestCase
     public function testGetContext()
     {
         $this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
-        $config = array(
+        $config = [
             'host' => 'smtp.gmail.com',
             'port' => 465,
             'timeout' => 5,
-            'context' => array(
-                'ssl' => array('capture_peer' => true)
-            )
-        );
+            'context' => [
+                'ssl' => ['capture_peer' => true]
+            ]
+        ];
         try {
             $this->Socket = new Socket($config);
             $this->Socket->connect();

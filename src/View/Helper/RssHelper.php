@@ -52,7 +52,7 @@ class RssHelper extends Helper
      *
      * @var array
      */
-    public $params = array();
+    public $params = [];
 
     /**
      * Current action.
@@ -96,11 +96,11 @@ class RssHelper extends Helper
      * @param string|null $content Tag content.
      * @return string An RSS document
      */
-    public function document($attrib = array(), $content = null)
+    public function document($attrib = [], $content = null)
     {
         if ($content === null) {
             $content = $attrib;
-            $attrib = array();
+            $attrib = [];
         }
         if (!isset($attrib['version']) || empty($attrib['version'])) {
             $attrib['version'] = $this->version;
@@ -117,7 +117,7 @@ class RssHelper extends Helper
      * @param string|null $content Content (`<item />`'s belonging to this channel
      * @return string An RSS `<channel />`
      */
-    public function channel($attrib = array(), $elements = array(), $content = null)
+    public function channel($attrib = [], $elements = [], $content = null)
     {
         if (!isset($elements['link'])) {
             $elements['link'] = '/';
@@ -132,18 +132,18 @@ class RssHelper extends Helper
 
         $elems = '';
         foreach ($elements as $elem => $data) {
-            $attributes = array();
+            $attributes = [];
             if (is_array($data)) {
                 if (strtolower($elem) === 'cloud') {
                     $attributes = $data;
-                    $data = array();
+                    $data = [];
                 } elseif (isset($data['attrib']) && is_array($data['attrib'])) {
                     $attributes = $data['attrib'];
                     unset($data['attrib']);
                 } else {
                     $innerElements = '';
                     foreach ($data as $subElement => $value) {
-                        $innerElements .= $this->elem($subElement, array(), $value);
+                        $innerElements .= $this->elem($subElement, [], $value);
                     }
                     $data = $innerElements;
                 }
@@ -172,7 +172,7 @@ class RssHelper extends Helper
         $c = count($items);
 
         for ($i = 0; $i < $c; $i++) {
-            $out .= $this->item(array(), $items[$i]);
+            $out .= $this->item([], $items[$i]);
         }
         return $out;
     }
@@ -184,7 +184,7 @@ class RssHelper extends Helper
      * @param array $elements The list of elements contained in this `<item />`
      * @return string An RSS `<item />` element
      */
-    public function item($att = array(), $elements = array())
+    public function item($att = [], $elements = [])
     {
         $content = null;
 
@@ -193,7 +193,7 @@ class RssHelper extends Helper
         }
 
         foreach ($elements as $key => $val) {
-            $attrib = array();
+            $attrib = [];
 
             $escape = true;
             if (is_array($val) && isset($val['convertEntities'])) {
@@ -208,7 +208,7 @@ class RssHelper extends Helper
                 case 'category':
                     if (is_array($val) && !empty($val[0])) {
                         foreach ($val as $category) {
-                            $attrib = array();
+                            $attrib = [];
                             if (is_array($category) && isset($category['domain'])) {
                                 $attrib['domain'] = $category['domain'];
                                 unset($category['domain']);
@@ -288,7 +288,7 @@ class RssHelper extends Helper
      * @param bool $endTag Whether the end tag of the element should be printed
      * @return string XML
      */
-    public function elem($name, $attrib = array(), $content = null, $endTag = true)
+    public function elem($name, $attrib = [], $content = null, $endTag = true)
     {
         $namespace = null;
         if (isset($attrib['namespace'])) {
@@ -303,7 +303,7 @@ class RssHelper extends Helper
         if (is_array($content) && array_key_exists('value', $content)) {
             $content = $content['value'];
         }
-        $children = array();
+        $children = [];
         if (is_array($content)) {
             $children = $content;
             $content = null;
@@ -331,7 +331,7 @@ class RssHelper extends Helper
             $content = '<![CDATA[' . $content . ']]>';
         }
         $xml .= '>' . $content . '</' . $name . '>';
-        $elem = Xml::build($xml, array('return' => 'domdocument'));
+        $elem = Xml::build($xml, ['return' => 'domdocument']);
         $nodes = $elem->getElementsByTagName($bareName);
         if ($attrib) {
             foreach ($attrib as $key => $value) {

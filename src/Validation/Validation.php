@@ -32,9 +32,9 @@ class Validation
      *
      * @var array
      */
-    protected static $_pattern = array(
+    protected static $_pattern = [
         'hostname' => '(?:[_\p{L}0-9][-_\p{L}0-9]*\.)*(?:[\p{L}0-9][-\p{L}0-9]{0,62})\.(?:(?:[a-z]{2}\.)?[a-z]{2,})'
-    );
+    ];
 
     /**
      * Holds an array of errors messages set in this class.
@@ -42,7 +42,7 @@ class Validation
      *
      * @var array
      */
-    public static $errors = array();
+    public static $errors = [];
 
     /**
      * Checks that a string contains something other than whitespace
@@ -143,7 +143,7 @@ class Validation
             extract(static::_defaults($check));
         }
 
-        $check = str_replace(array('-', ' '), '', $check);
+        $check = str_replace(['-', ' '], '', $check);
         if (mb_strlen($check) < 13) {
             return false;
         }
@@ -153,8 +153,8 @@ class Validation
                 return static::luhn($check, $deep);
             }
         }
-        $cards = array(
-            'all' => array(
+        $cards = [
+            'all' => [
                 'amex' => '/^3[4|7]\\d{13}$/',
                 'bankcard' => '/^56(10\\d\\d|022[1-5])\\d{10}$/',
                 'diners' => '/^(?:3(0[0-5]|[68]\\d)\\d{11})|(?:5[1-5]\\d{14})$/',
@@ -168,9 +168,9 @@ class Validation
                 'switch' => '/^(?:49(03(0[2-9]|3[5-9])|11(0[1-2]|7[4-9]|8[1-2])|36[0-9]{2})\\d{10}(\\d{2,3})?)|(?:564182\\d{10}(\\d{2,3})?)|(6(3(33[0-4][0-9])|759[0-9]{2})\\d{10}(\\d{2,3})?)$/',
                 'visa' => '/^4\\d{12}(\\d{3})?$/',
                 'voyager' => '/^8699[0-9]{11}$/'
-            ),
+            ],
             'fast' => '/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})$/'
-        );
+        ];
 
         if (is_array($type)) {
             foreach ($type as $value) {
@@ -214,7 +214,7 @@ class Validation
         if (is_array($check1)) {
             extract($check1, EXTR_OVERWRITE);
         }
-        $operator = str_replace(array(' ', "\t", "\n", "\r", "\0", "\x0B"), '', strtolower($operator));
+        $operator = str_replace([' ', "\t", "\n", "\r", "\0", "\x0B"], '', strtolower($operator));
 
         switch ($operator) {
             case 'isgreater':
@@ -341,7 +341,7 @@ class Validation
         $regex['ym'] = '%^(' . $year . $separator . $month . ')$%';
         $regex['y'] = '%^(' . $fourDigitYear . ')$%';
 
-        $format = (is_array($format)) ? array_values($format) : array($format);
+        $format = (is_array($format)) ? array_values($format) : [$format];
         foreach ($format as $key) {
             if (static::_check($check, $regex[$key]) === true) {
                 return true;
@@ -401,7 +401,7 @@ class Validation
      */
     public static function boolean($check)
     {
-        $booleanList = array(0, 1, '0', '1', true, false);
+        $booleanList = [0, 1, '0', '1', true, false];
         return in_array($check, $booleanList, true);
     }
 
@@ -507,7 +507,7 @@ class Validation
      * @param array $extensions file extensions to allow. By default extensions are 'gif', 'jpeg', 'png', 'jpg'
      * @return bool Success
      */
-    public static function extension($check, $extensions = array('gif', 'jpeg', 'png', 'jpg'))
+    public static function extension($check, $extensions = ['gif', 'jpeg', 'png', 'jpg'])
     {
         if (is_array($check)) {
             return static::extension(array_shift($check), $extensions);
@@ -538,7 +538,7 @@ class Validation
         if ($type === 'ipv6') {
             $flags = FILTER_FLAG_IPV6;
         }
-        return (bool)filter_var($check, FILTER_VALIDATE_IP, array('flags' => $flags));
+        return (bool)filter_var($check, FILTER_VALIDATE_IP, ['flags' => $flags]);
     }
 
     /**
@@ -597,9 +597,9 @@ class Validation
      * @param bool $caseInsensitive Set to true for case insensitive comparison.
      * @return bool Success
      */
-    public static function multiple($check, array $options = array(), $caseInsensitive = false)
+    public static function multiple($check, array $options = [], $caseInsensitive = false)
     {
-        $defaults = array('in' => null, 'max' => null, 'min' => null);
+        $defaults = ['in' => null, 'max' => null, 'min' => null];
         $options += $defaults;
 
         $check = array_filter((array)$check);
@@ -651,91 +651,6 @@ class Validation
     public static function naturalNumber($check, $allowZero = false)
     {
         $regex = $allowZero ? '/^(?:0|[1-9][0-9]*)$/' : '/^[1-9][0-9]*$/';
-        return static::_check($check, $regex);
-    }
-
-    /**
-     * Checks that a value is a valid phone number.
-     *
-     * @param string|array $check Value to check (string or array)
-     * @param string|null $regex Regular expression to use
-     * @param string $country Country code (defaults to 'all')
-     * @return bool Success
-     * @deprecated 3.0.0 Will be removed in 3.0.0. Please use the Localized plugin instead.
-     */
-    public static function phone($check, $regex = null, $country = 'all')
-    {
-        if (is_array($check)) {
-            extract(static::_defaults($check));
-        }
-
-        if ($regex === null) {
-            switch ($country) {
-                case 'us':
-                case 'ca':
-                case 'all':
-                    // includes all NANPA members.
-                    // see http://en.wikipedia.org/wiki/North_American_Numbering_Plan#List_of_NANPA_countries_and_territories
-                    $regex = '/^(?:(?:\+?1\s*(?:[.-]\s*)?)?';
-
-                    // Area code 555, X11 is not allowed.
-                    $areaCode = '(?![2-9]11)(?!555)([2-9][0-8][0-9])';
-                    $regex .= '(?:\(\s*' . $areaCode . '\s*\)|' . $areaCode . ')';
-                    $regex .= '\s*(?:[.-]\s*)?)';
-
-                    // Exchange and 555-XXXX numbers
-                    $regex .= '(?!(555(?:\s*(?:[.\-\s]\s*))(01([0-9][0-9])|1212)))';
-                    $regex .= '(?!(555(01([0-9][0-9])|1212)))';
-                    $regex .= '([2-9]1[02-9]|[2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)';
-
-                    // Local number and extension
-                    $regex .= '?([0-9]{4})';
-                    $regex .= '(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/';
-                    break;
-            }
-        }
-
-        return static::_check($check, $regex);
-    }
-
-    /**
-     * Checks that a given value is a valid postal code.
-     *
-     * @param string|array $check Value to check
-     * @param string|null $regex Regular expression to use
-     * @param string $country Country to use for formatting
-     * @return bool Success
-     * @deprecated 3.0.0 Will be removed in 3.0.0. Please use the Localized plugin instead.
-     */
-    public static function postal($check, $regex = null, $country = 'us')
-    {
-        if (is_array($check)) {
-            extract(static::_defaults($check));
-        }
-
-        if ($regex === null) {
-            switch ($country) {
-                case 'uk':
-                    $regex = '/\\A\\b[A-Z]{1,2}[0-9][A-Z0-9]? [0-9][ABD-HJLNP-UW-Z]{2}\\b\\z/i';
-                    break;
-                case 'ca':
-                    $district = '[ABCEGHJKLMNPRSTVYX]';
-                    $letters = '[ABCEGHJKLMNPRSTVWXYZ]';
-                    $regex = "/\\A\\b{$district}[0-9]{$letters} [0-9]{$letters}[0-9]\\b\\z/i";
-                    break;
-                case 'it':
-                case 'de':
-                    $regex = '/^[0-9]{5}$/i';
-                    break;
-                case 'be':
-                    $regex = '/^[1-9]{1}[0-9]{3}$/i';
-                    break;
-                case 'us':
-                    $regex = '/\\A\\b[0-9]{5}(?:-[0-9]{4})?\\b\\z/i';
-                    break;
-            }
-        }
-
         return static::_check($check, $regex);
     }
 
@@ -821,7 +736,7 @@ class Validation
      */
     public static function userDefined($check, $object, $method, $args = null)
     {
-        return call_user_func_array(array($object, $method), array($check, $args));
+        return call_user_func_array([$object, $method], [$check, $args]);
     }
 
     /**
@@ -861,13 +776,13 @@ class Validation
     protected static function _defaults($params)
     {
         static::_reset();
-        $defaults = array(
+        $defaults = [
             'check' => null,
             'regex' => null,
             'country' => null,
             'deep' => false,
             'type' => null
-        );
+        ];
         $params += $defaults;
         if ($params['country'] !== null) {
             $params['country'] = mb_strtolower($params['country']);
@@ -918,7 +833,7 @@ class Validation
      * @throws \RuntimeException when mime type can not be determined.
      * @throws \LogicException when ext/fileinfo is missing
      */
-    public static function mimeType($check, $mimeTypes = array())
+    public static function mimeType($check, $mimeTypes = [])
     {
         if (is_array($check) && isset($check['tmp_name'])) {
             $check = $check['tmp_name'];
@@ -1084,6 +999,6 @@ class Validation
      */
     protected static function _reset()
     {
-        static::$errors = array();
+        static::$errors = [];
     }
 }

@@ -6,10 +6,10 @@ use Cake\Controller\ErrorController;
 class TestAppsErrorController extends ErrorController
 {
 
-    public $helpers = array(
+    public $helpers = [
         'Html',
         'Session',
         'Form',
         'Banana',
-    );
+    ];
 }

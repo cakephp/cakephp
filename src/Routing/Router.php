@@ -114,14 +114,14 @@ class Router
      *
      * @var array
      */
-    protected static $_namedExpressions = array(
+    protected static $_namedExpressions = [
         'Action' => Router::ACTION,
         'Year' => Router::YEAR,
         'Month' => Router::MONTH,
         'Day' => Router::DAY,
         'ID' => Router::ID,
         'UUID' => Router::UUID
-    );
+    ];
 
     /**
      * Maintains the request object stack for the current request.
@@ -347,12 +347,12 @@ class Router
             static::pushRequest($request);
         } else {
             $requestData = $request;
-            $requestData += array([], []);
-            $requestData[0] += array(
+            $requestData += [[], []];
+            $requestData[0] += [
                 'controller' => false,
                 'action' => false,
                 'plugin' => null
-            );
+            ];
             $request = new Request();
             $request->addParams($requestData[0])->addPaths($requestData[1]);
             static::pushRequest($request);
@@ -536,12 +536,12 @@ class Router
             static::_loadRoutes();
         }
 
-        $params = array(
+        $params = [
             'plugin' => null,
             'controller' => null,
             'action' => 'index',
             '_ext' => null,
-        );
+        ];
         $here = $base = $output = $frag = null;
 
         $request = static::getRequest(true);
@@ -594,12 +594,12 @@ class Router
                     $url['prefix'] = $params['prefix'];
                 }
 
-                $url += array(
+                $url += [
                     'plugin' => $params['plugin'],
                     'controller' => $params['controller'],
                     'action' => 'index',
                     '_ext' => null
-                );
+                ];
             }
 
             $url = static::_applyUrlFilters($url);
@@ -733,24 +733,6 @@ class Router
     }
 
     /**
-     * Deprecated method for backwards compatibility.
-     *
-     * @param string|array $extensions List of extensions to be added.
-     * @param bool $merge Whether to merge with or override existing extensions.
-     *   Defaults to `true`.
-     * @return array Extensions list.
-     * @deprecated 3.0.0 Use Router::extensions() instead.
-     */
-    public static function parseExtensions($extensions = null, $merge = true)
-    {
-        trigger_error(
-            'Router::parseExtensions() is deprecated should use Router::extensions() instead.',
-            E_USER_DEPRECATED
-        );
-        return static::extensions($extensions, $merge);
-    }
-
-    /**
      * Get or set valid extensions for all routes connected later.
      *
      * Instructs the router to parse out file extensions
@@ -804,7 +786,7 @@ class Router
      */
     public static function parseNamedParams(Request $request, array $options = [])
     {
-        $options += array('separator' => ':');
+        $options += ['separator' => ':'];
         if (empty($request->params['pass'])) {
             $request->params['named'] = [];
             return $request;
@@ -824,16 +806,16 @@ class Router
                 $arr = $value;
                 foreach ($matches as $match) {
                     if (empty($match[1])) {
-                        $arr = array($arr);
+                        $arr = [$arr];
                     } else {
-                        $arr = array(
+                        $arr = [
                             $match[1] => $arr
-                        );
+                        ];
                     }
                 }
                 $value = $arr;
             }
-            $named = array_merge_recursive($named, array($key => $value));
+            $named = array_merge_recursive($named, [$key => $value]);
         }
         $request->params['named'] = $named;
         return $request;

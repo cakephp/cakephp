@@ -51,7 +51,7 @@ class CompletionShellTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Plugin::load(array('TestPlugin', 'TestPluginTwo'));
+        Plugin::load(['TestPlugin', 'TestPluginTwo']);
 
         $this->out = new TestCompletionStringOutput();
         $io = new ConsoleIo($this->out);
@@ -120,7 +120,7 @@ class CompletionShellTest extends TestCase
         $output = $this->out->output;
 
         $expected = "TestPlugin.example TestPlugin.sample " .
-            "TestPluginTwo.example TestPluginTwo.welcome i18n orm_cache plugin_assets server test sample\n";
+            "TestPluginTwo.example TestPluginTwo.welcome i18n orm_cache plugin_assets server sample\n";
         $this->assertTextEquals($expected, $output);
     }
 

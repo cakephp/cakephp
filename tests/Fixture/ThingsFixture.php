@@ -24,11 +24,11 @@ class ThingsFixture extends TestFixture
      *
      * @var array
      */
-    public $fields = array(
+    public $fields = [
         'id' => ['type' => 'integer'],
         'title' => ['type' => 'string', 'length' => 20],
         'body' => ['type' => 'string', 'length' => 50]
-    );
+    ];
 
     /**
      * records property

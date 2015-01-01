@@ -31,20 +31,20 @@ class IniConfigTest extends TestCase
      *
      * @var array
      */
-    public $testData = array(
-        'One' => array(
+    public $testData = [
+        'One' => [
             'two' => 'value',
-            'three' => array(
+            'three' => [
                 'four' => 'value four'
-            ),
+            ],
             'is_null' => null,
             'bool_false' => false,
             'bool_true' => true,
-        ),
-        'Asset' => array(
+        ],
+        'Asset' => [
             'timestamp' => 'force'
-        ),
-    );
+        ],
+    ];
 
     /**
      * setup
@@ -111,10 +111,10 @@ class IniConfigTest extends TestCase
         $engine = new IniConfig($this->path);
         $config = $engine->read('no_section.ini');
 
-        $expected = array(
+        $expected = [
             'some_key' => 'some_value',
             'bool_key' => true
-        );
+        ];
         $this->assertEquals($expected, $config);
     }
 
@@ -190,7 +190,7 @@ class IniConfigTest extends TestCase
     {
         $engine = new IniConfig($this->path);
         $config = $engine->read('empty');
-        $this->assertEquals(array(), $config);
+        $this->assertEquals([], $config);
     }
 
     /**

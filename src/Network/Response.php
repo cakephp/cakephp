@@ -34,7 +34,7 @@ class Response
      *
      * @var array
      */
-    protected $_statusCodes = array(
+    protected $_statusCodes = [
         100 => 'Continue',
         101 => 'Switching Protocols',
         200 => 'OK',
@@ -75,17 +75,17 @@ class Response
         503 => 'Service Unavailable',
         504 => 'Gateway Time-out',
         505 => 'Unsupported Version'
-    );
+    ];
 
     /**
      * Holds type key to mime type mappings for known mime types.
      *
      * @var array
      */
-    protected $_mimeTypes = array(
-        'html' => array('text/html', '*/*'),
+    protected $_mimeTypes = [
+        'html' => ['text/html', '*/*'],
         'json' => 'application/json',
-        'xml' => array('application/xml', 'text/xml'),
+        'xml' => ['application/xml', 'text/xml'],
         'rss' => 'application/rss+xml',
         'ai' => 'application/postscript',
         'bcpio' => 'application/x-bcpio',
@@ -96,7 +96,7 @@ class Response
         'cpio' => 'application/x-cpio',
         'cpt' => 'application/mac-compactpro',
         'csh' => 'application/x-csh',
-        'csv' => array('text/csv', 'application/vnd.ms-excel'),
+        'csv' => ['text/csv', 'application/vnd.ms-excel'],
         'dcr' => 'application/x-director',
         'dir' => 'application/x-director',
         'dms' => 'application/octet-stream',
@@ -217,7 +217,7 @@ class Response
         'f90' => 'text/plain',
         'h' => 'text/plain',
         'hh' => 'text/plain',
-        'htm' => array('text/html', '*/*'),
+        'htm' => ['text/html', '*/*'],
         'ics' => 'text/calendar',
         'm' => 'text/plain',
         'rtf' => 'text/rtf',
@@ -278,11 +278,11 @@ class Response
         'javascript' => 'application/javascript',
         'form' => 'application/x-www-form-urlencoded',
         'file' => 'multipart/form-data',
-        'xhtml' => array('application/xhtml+xml', 'application/xhtml', 'text/xhtml'),
+        'xhtml' => ['application/xhtml+xml', 'application/xhtml', 'text/xhtml'],
         'xhtml-mobile' => 'application/vnd.wap.xhtml+xml',
         'atom' => 'application/atom+xml',
         'amf' => 'application/x-amf',
-        'wap' => array('text/vnd.wap.wml', 'text/vnd.wap.wmlscript', 'image/vnd.wap.wbmp'),
+        'wap' => ['text/vnd.wap.wml', 'text/vnd.wap.wmlscript', 'image/vnd.wap.wbmp'],
         'wml' => 'text/vnd.wap.wml',
         'wmlscript' => 'text/vnd.wap.wmlscript',
         'wbmp' => 'image/vnd.wap.wbmp',
@@ -302,7 +302,7 @@ class Response
         'mkv' => 'video/x-matroska',
         'pkpass' => 'application/vnd.apple.pkpass',
         'ajax' => 'text/html'
-    );
+    ];
 
     /**
      * Protocol header to send to the client
@@ -331,7 +331,7 @@ class Response
      *
      * @var array
      */
-    protected $_headers = array();
+    protected $_headers = [];
 
     /**
      * Buffer string for response message
@@ -367,14 +367,14 @@ class Response
      *
      * @var array
      */
-    protected $_cacheDirectives = array();
+    protected $_cacheDirectives = [];
 
     /**
      * Holds cookies to be sent to the client
      *
      * @var array
      */
-    protected $_cookies = array();
+    protected $_cookies = [];
 
     /**
      * Constructor
@@ -386,7 +386,7 @@ class Response
      *  - type: a complete mime-type string or an extension mapped in this class
      *  - charset: the charset for the response body
      */
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         if (isset($options['body'])) {
             $this->body($options['body']);
@@ -487,12 +487,12 @@ class Response
      */
     protected function _setContentType()
     {
-        if (in_array($this->_status, array(304, 204))) {
+        if (in_array($this->_status, [304, 204])) {
             return;
         }
-        $whitelist = array(
+        $whitelist = [
             'application/javascript', 'application/json', 'application/xml', 'application/rss+xml'
-        );
+        ];
 
         $charset = false;
         if ($this->_charset &&
@@ -515,7 +515,7 @@ class Response
      */
     protected function _setContent()
     {
-        if (in_array($this->_status, array(304, 204))) {
+        if (in_array($this->_status, [304, 204])) {
             $this->body('');
         }
     }
@@ -602,10 +602,10 @@ class Response
         if ($header === null) {
             return $this->_headers;
         }
-        $headers = is_array($header) ? $header : array($header => $value);
+        $headers = is_array($header) ? $header : [$header => $value];
         foreach ($headers as $header => $value) {
             if (is_numeric($header)) {
-                list($header, $value) = array($value, null);
+                list($header, $value) = [$value, null];
             }
             if ($value === null) {
                 list($header, $value) = explode(':', $header, 2);
@@ -716,7 +716,7 @@ class Response
         if (!isset($this->_statusCodes[$code])) {
             return null;
         }
-        return array($code => $this->_statusCodes[$code]);
+        return [$code => $this->_statusCodes[$code]];
     }
 
     /**
@@ -792,7 +792,7 @@ class Response
     public function mapType($ctype)
     {
         if (is_array($ctype)) {
-            return array_map(array($this, 'mapType'), $ctype);
+            return array_map([$this, 'mapType'], $ctype);
         }
 
         foreach ($this->_mimeTypes as $alias => $types) {
@@ -825,11 +825,11 @@ class Response
      */
     public function disableCache()
     {
-        $this->header(array(
+        $this->header([
             'Expires' => 'Mon, 26 Jul 1997 05:00:00 GMT',
             'Last-Modified' => gmdate("D, d M Y H:i:s") . " GMT",
             'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
-        ));
+        ]);
     }
 
     /**
@@ -844,9 +844,9 @@ class Response
         if (!is_int($time)) {
             $time = strtotime($time);
         }
-        $this->header(array(
+        $this->header([
             'Date' => gmdate("D, j M Y G:i:s ", time()) . 'GMT'
-        ));
+        ]);
         $this->modified($since);
         $this->expires($time);
         $this->sharable(true);
@@ -1035,7 +1035,7 @@ class Response
     {
         $this->statusCode(304);
         $this->body('');
-        $remove = array(
+        $remove = [
             'Allow',
             'Content-Encoding',
             'Content-Language',
@@ -1043,7 +1043,7 @@ class Response
             'Content-MD5',
             'Content-Type',
             'Last-Modified'
-        );
+        ];
         foreach ($remove as $header) {
             unset($this->_headers[$header]);
         }
@@ -1289,7 +1289,7 @@ class Response
             return $this->_cookies[$options];
         }
 
-        $defaults = array(
+        $defaults = [
             'name' => 'CakeCookie[default]',
             'value' => '',
             'expire' => 0,
@@ -1297,7 +1297,7 @@ class Response
             'domain' => '',
             'secure' => false,
             'httpOnly' => false
-        );
+        ];
         $options += $defaults;
 
         $this->_cookies[$options['name']] = $options;
@@ -1329,7 +1329,7 @@ class Response
      * @param string|array $allowedHeaders List of HTTP headers allowed
      * @return void
      */
-    public function cors(Request $request, $allowedDomains, $allowedMethods = array(), $allowedHeaders = array())
+    public function cors(Request $request, $allowedDomains, $allowedMethods = [], $allowedHeaders = [])
     {
         $origin = $request->header('Origin');
         if (!$origin) {
@@ -1357,10 +1357,10 @@ class Response
      */
     protected function _normalizeCorsDomains($domains, $requestIsSSL = false)
     {
-        $result = array();
+        $result = [];
         foreach ($domains as $domain) {
             if ($domain === '*') {
-                $result[] = array('preg' => '@.@', 'original' => '*');
+                $result[] = ['preg' => '@.@', 'original' => '*'];
                 continue;
             }
 
@@ -1391,12 +1391,12 @@ class Response
      * @return void
      * @throws \Cake\Network\Exception\NotFoundException
      */
-    public function file($path, array $options = array())
+    public function file($path, array $options = [])
     {
-        $options += array(
+        $options += [
             'name' => null,
             'download' => null
-        );
+        ];
 
         if (strpos($path, '..') !== false) {
             throw new NotFoundException('The requested file contains `..` and will not be read.');
@@ -1482,19 +1482,19 @@ class Response
 
         if ($start > $end || $end > $lastByte || $start > $lastByte) {
             $this->statusCode(416);
-            $this->header(array(
+            $this->header([
                 'Content-Range' => 'bytes 0-' . $lastByte . '/' . $fileSize
-            ));
+            ]);
             return;
         }
 
-        $this->header(array(
+        $this->header([
             'Content-Length' => $end - $start + 1,
             'Content-Range' => 'bytes ' . $start . '-' . $end . '/' . $fileSize
-        ));
+        ]);
 
         $this->statusCode(206);
-        $this->_fileRange = array($start, $end);
+        $this->_fileRange = [$start, $end];
     }
 
     /**

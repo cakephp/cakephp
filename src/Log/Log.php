@@ -138,7 +138,7 @@ class Log
      *
      * @var array
      */
-    protected static $_levels = array(
+    protected static $_levels = [
         'emergency',
         'alert',
         'critical',
@@ -147,7 +147,7 @@ class Log
         'notice',
         'info',
         'debug'
-    );
+    ];
 
     /**
      * Log levels as detailed in RFC 5424
@@ -155,7 +155,7 @@ class Log
      *
      * @var array
      */
-    protected static $_levelMap = array(
+    protected static $_levelMap = [
         'emergency' => LOG_EMERG,
         'alert' => LOG_ALERT,
         'critical' => LOG_CRIT,
@@ -164,7 +164,7 @@ class Log
         'notice' => LOG_NOTICE,
         'info' => LOG_INFO,
         'debug' => LOG_DEBUG,
-    );
+    ];
 
     /**
      * Initializes registry and configurations
@@ -391,7 +391,7 @@ class Log
      *  See Cake\Log\Log::config() for more information on logging scopes.
      * @return bool Success
      */
-    public static function emergency($message, $context = array())
+    public static function emergency($message, $context = [])
     {
         return static::write('emergency', $message, $context);
     }
@@ -407,7 +407,7 @@ class Log
      *  See Cake\Log\Log::config() for more information on logging scopes.
      * @return bool Success
      */
-    public static function alert($message, $context = array())
+    public static function alert($message, $context = [])
     {
         return static::write('alert', $message, $context);
     }
@@ -423,7 +423,7 @@ class Log
      *  See Cake\Log\Log::config() for more information on logging scopes.
      * @return bool Success
      */
-    public static function critical($message, $context = array())
+    public static function critical($message, $context = [])
     {
         return static::write('critical', $message, $context);
     }
@@ -439,7 +439,7 @@ class Log
      *  See Cake\Log\Log::config() for more information on logging scopes.
      * @return bool Success
      */
-    public static function error($message, $context = array())
+    public static function error($message, $context = [])
     {
         return static::write('error', $message, $context);
     }
@@ -455,7 +455,7 @@ class Log
      *  See Cake\Log\Log::config() for more information on logging scopes.
      * @return bool Success
      */
-    public static function warning($message, $context = array())
+    public static function warning($message, $context = [])
     {
         return static::write('warning', $message, $context);
     }
@@ -471,7 +471,7 @@ class Log
      *  See Cake\Log\Log::config() for more information on logging scopes.
      * @return bool Success
      */
-    public static function notice($message, $context = array())
+    public static function notice($message, $context = [])
     {
         return static::write('notice', $message, $context);
     }
@@ -487,7 +487,7 @@ class Log
      *  See Cake\Log\Log::config() for more information on logging scopes.
      * @return bool Success
      */
-    public static function debug($message, $context = array())
+    public static function debug($message, $context = [])
     {
         return static::write('debug', $message, $context);
     }
@@ -503,7 +503,7 @@ class Log
      *  See Cake\Log\Log::config() for more information on logging scopes.
      * @return bool Success
      */
-    public static function info($message, $context = array())
+    public static function info($message, $context = [])
     {
         return static::write('info', $message, $context);
     }

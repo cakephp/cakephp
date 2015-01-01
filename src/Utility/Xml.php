@@ -83,10 +83,10 @@ class Xml
      */
     public static function build($input, array $options = [])
     {
-        $defaults = array(
+        $defaults = [
             'return' => 'simplexml',
             'loadEntities' => false,
-        );
+        ];
         $options += $defaults;
 
         if (is_array($input) || is_object($input)) {
@@ -181,7 +181,7 @@ class Xml
      * @return \SimpleXMLElement|\DOMDocument SimpleXMLElement or DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */
-    public static function fromArray($input, $options = array())
+    public static function fromArray($input, $options = [])
     {
         if (method_exists($input, 'toArray')) {
             $input = $input->toArray();
@@ -195,15 +195,15 @@ class Xml
         }
 
         if (!is_array($options)) {
-            $options = array('format' => (string)$options);
+            $options = ['format' => (string)$options];
         }
-        $defaults = array(
+        $defaults = [
             'format' => 'tags',
             'version' => '1.0',
             'encoding' => mb_internal_encoding(),
             'return' => 'simplexml',
             'pretty' => false
-        );
+        ];
         $options += $defaults;
 
         $dom = new DOMDocument($options['version'], $options['encoding']);
@@ -346,8 +346,8 @@ class Xml
         if (!($obj instanceof \SimpleXMLElement)) {
             throw new XmlException('The input is not instance of SimpleXMLElement, DOMDocument or DOMNode.');
         }
-        $result = array();
-        $namespaces = array_merge(array('' => ''), $obj->getNamespaces(true));
+        $result = [];
+        $namespaces = array_merge(['' => ''], $obj->getNamespaces(true));
         static::_toArray($obj, $result, '', array_keys($namespaces));
         return $result;
     }
@@ -363,7 +363,7 @@ class Xml
      */
     protected static function _toArray($xml, &$parentData, $ns, $namespaces)
     {
-        $data = array();
+        $data = [];
 
         foreach ($namespaces as $namespace) {
             foreach ($xml->attributes($namespace, true) as $key => $value) {
@@ -391,7 +391,7 @@ class Xml
         $name = $ns . $xml->getName();
         if (isset($parentData[$name])) {
             if (!is_array($parentData[$name]) || !isset($parentData[$name][0])) {
-                $parentData[$name] = array($parentData[$name]);
+                $parentData[$name] = [$parentData[$name]];
             }
             $parentData[$name][] = $data;
         } else {

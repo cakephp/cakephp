@@ -28,7 +28,7 @@ class CommentsController extends Controller
      *
      * @var array
      */
-    public $components = array();
+    public $components = [];
 
     /**
      * index action
