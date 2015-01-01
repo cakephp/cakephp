@@ -599,7 +599,7 @@ class Debugger
      * Alternatively if you want to use a custom callback to do all the formatting, you can use
      * the callback key, and provide a callable:
      *
-     * `Debugger::addFormat('custom', array('callback' => array($foo, 'outputError'));`
+     * `Debugger::addFormat('custom', ['callback' => [$foo, 'outputError']];`
      *
      * The callback can expect two parameters. The first is an array of all
      * the error data. The second contains the formatted strings generated using

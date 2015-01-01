@@ -31,7 +31,7 @@ use Cake\Utility\Xml;
  *
  * In your controller, you could do the following:
  *
- * `$this->set(array('posts' => $posts, '_serialize' => 'posts'));`
+ * `$this->set(['posts' => $posts, '_serialize' => 'posts']);`
  *
  * When the view is rendered, the `$posts` view variable will be serialized
  * into XML.
@@ -43,7 +43,7 @@ use Cake\Utility\Xml;
  *
  * {{{
  * $this->set(compact('posts', 'users', 'stuff'));
- * $this->set('_serialize', array('posts', 'users'));
+ * $this->set('_serialize', ['posts', 'users']);
  * }}}
  *
  * The above would generate a XML object that looks like:

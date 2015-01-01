@@ -120,11 +120,11 @@ class PaginatorComponent extends Component
      * You can paginate with any find type defined on your table using the `finder` option.
      *
      * {{{
-     *  $settings = array(
-     *    'Articles' => array(
+     *  $settings = [
+     *    'Articles' => [
      *      'finder' => 'popular'
-     *    )
-     *  );
+     *    ]
+     *  ];
      *  $results = $paginator->paginate($table, $settings);
      * }}}
      *

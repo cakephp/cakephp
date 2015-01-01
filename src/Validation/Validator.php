@@ -272,13 +272,13 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
      *
      * {{{
      *      $validator
-     *          ->add('title', 'required', array('rule' => 'notEmpty'))
-     *          ->add('user_id', 'valid', array('rule' => 'numeric', 'message' => 'Invalid User'))
+     *          ->add('title', 'required', ['rule' => 'notEmpty'])
+     *          ->add('user_id', 'valid', ['rule' => 'numeric', 'message' => 'Invalid User'])
      *
-     *      $validator->add('password', array(
-     *          'size' => array('rule' => array('between', 8, 20)),
-     *          'hasSpecialCharacter' => array('rule' => 'validateSpecialchar', 'message' => 'not valid')
-     *      ));
+     *      $validator->add('password', [
+     *          'size' => ['rule' => ['between', 8, 20]],
+     *          'hasSpecialCharacter' => ['rule' => 'validateSpecialchar', 'message' => 'not valid']
+     *      ]);
      * }}}
      *
      * @param string $field The name of the field from which the rule will be removed

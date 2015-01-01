@@ -50,7 +50,7 @@ class Validation
      * Returns true if string contains something other than whitespace
      *
      * $check can be passed as an array:
-     * array('check' => 'valueToCheck');
+     * ['check' => 'valueToCheck'];
      *
      * @param string|array $check Value to check
      * @return bool Success
@@ -73,7 +73,7 @@ class Validation
      * Returns true if string contains only integer or letters
      *
      * $check can be passed as an array:
-     * array('check' => 'valueToCheck');
+     * ['check' => 'valueToCheck'];
      *
      * @param string|array $check Value to check
      * @return bool Success
@@ -111,7 +111,7 @@ class Validation
      * Whitespace characters include Space, Tab, Carriage Return, Newline
      *
      * $check can be passed as an array:
-     * array('check' => 'valueToCheck');
+     * ['check' => 'valueToCheck'];
      *
      * @param string|array $check Value to check
      * @return bool Success
@@ -131,7 +131,7 @@ class Validation
      * @param string|array $check credit card number to validate
      * @param string|array $type 'all' may be passed as a string, defaults to fast which checks format of most major credit cards
      *    if an array is used only the values of the array are checked.
-     *    Example: array('amex', 'bankcard', 'maestro')
+     *    Example: ['amex', 'bankcard', 'maestro']
      * @param bool $deep set to true this will check the Luhn algorithm of the credit card.
      * @param string|null $regex A custom regex can also be passed, this will be used instead of the defined regex values
      * @return bool Success
@@ -202,7 +202,7 @@ class Validation
      * Used to compare 2 numeric values.
      *
      * @param string|array $check1 if string is passed for, a string must also be passed for $check2
-     *    used as an array it must be passed as array('check1' => value, 'operator' => 'value', 'check2' -> value)
+     *    used as an array it must be passed as ['check1' => value, 'operator' => 'value', 'check2' => value]
      * @param string $operator Can be either a word or operand
      *    is greater >, is less <, greater or equal >=
      *    less or equal <=, is less <, equal to ==, not equal !=
@@ -263,7 +263,7 @@ class Validation
      * Used when a custom regular expression is needed.
      *
      * @param string|array $check When used as a string, $regex must also be a valid regular expression.
-     *    As and array: array('check' => value, 'regex' => 'valid regular expression')
+     *    As and array: ['check' => value, 'regex' => 'valid regular expression']
      * @param string|null $regex If $check is passed as a string, $regex must also be set to valid regular expression
      * @return bool Success
      */
@@ -299,7 +299,7 @@ class Validation
      *
      * @param string|\DateTime $check a valid date string/object
      * @param string|array $format Use a string or an array of the keys above.
-     *    Arrays should be passed as array('dmy', 'mdy', etc)
+     *    Arrays should be passed as ['dmy', 'mdy', etc]
      * @param string|null $regex If a custom regular expression is used this is the only validation that will occur.
      * @return bool Success
      */

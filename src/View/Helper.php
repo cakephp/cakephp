@@ -87,8 +87,8 @@ class Helper implements EventListenerInterface
     public $plugin = null;
 
     /**
-     * Holds the fields array('field_name' => array('type' => 'string', 'length' => 100),
-     * primaryKey and validates array('field_name')
+     * Holds the fields ['field_name' => ['type' => 'string', 'length' => 100]],
+     * primaryKey and validates ['field_name']
      *
      * @var array
      */

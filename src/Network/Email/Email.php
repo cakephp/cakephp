@@ -1079,27 +1079,29 @@ class Email
      * Attach a file with a different filename:
      *
      * {{{
-     * $email->attachments(array('custom_name.txt' => 'path/to/file.txt'));
+     * $email->attachments(['custom_name.txt' => 'path/to/file.txt']);
      * }}}
      *
      * Attach a file and specify additional properties:
      *
      * {{{
-     * $email->attachments(array('custom_name.png' => array(
+     * $email->attachments(['custom_name.png' => [
      *      'file' => 'path/to/file',
      *      'mimetype' => 'image/png',
      *      'contentId' => 'abc123',
      *      'contentDisposition' => false
-     * ));
+     *    ]
+     * ]);
      * }}}
      *
      * Attach a file from string and specify additional properties:
      *
      * {{{
-     * $email->attachments(array('custom_name.png' => array(
+     * $email->attachments(['custom_name.png' => [
      *      'data' => file_get_contents('path/to/file'),
      *      'mimetype' => 'image/png'
-     * ));
+     *    ]
+     * ]);
      * }}}
      *
      * The `contentId` key allows you to specify an inline attachment. In your email text, you

@@ -29,11 +29,11 @@ use Cake\Network\Response;
  *
  * In your controller's components array, add auth + the required config
  * {{{
- *  public $components = array(
- *      'Auth' => array(
- *          'authenticate' => array('Basic')
- *      )
- *  );
+ *  public $components = [
+ *      'Auth' => [
+ *          'authenticate' => ['Basic']
+ *      ]
+ *  ];
  * }}}
  *
  * You should also set `AuthComponent::$sessionKey = false;` in your AppController's

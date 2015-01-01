@@ -589,7 +589,7 @@ class PaginatorHelper extends Helper
      * Returns a set of numbers for the paged result set
      * uses a modulus to decide how many numbers to show on each side of the current page (default: 8).
      *
-     * `$this->Paginator->numbers(array('first' => 2, 'last' => 2));`
+     * `$this->Paginator->numbers(['first' => 2, 'last' => 2]);`
      *
      * Using the first and last options you can create links to the beginning and end of the page set.
      *
