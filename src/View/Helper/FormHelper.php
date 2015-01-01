@@ -1755,7 +1755,7 @@ class FormHelper extends Helper
      * A simple array will create normal options:
      *
      * {{{
-     * $options = array(1 => 'one', 2 => 'two);
+     * $options = array(1 => 'one', 2 => 'two');
      * $this->Form->select('Model.field', $options));
      * }}}
      *
