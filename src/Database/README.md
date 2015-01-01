@@ -2,13 +2,13 @@
 
 This library abstracts and provides help with most aspects of dealing with relational
 databases such as keeping connections to the server, building queries,
-filtering possible SQL injections, inspecting and altering schemas and with debugging and
+preventing SQL injections, inspecting and altering schemas, and with debugging and
 profiling queries sent to the database.
 
 It adopts the API from the native PDO extension in PHP for familiarity, but solves many of the
-inconsistencies PDO has, while also provides several features that extends PDO capabilities.
+inconsistencies PDO has, while also providing several features that extend PDO's capabilities.
 
-A distinguishing factor this library has, when compared to similar database connection packages,
+A distinguishing factor of this library when compared to similar database connection packages,
 is that it takes the concept of "data types" to its core. It lets you work with complex PHP objects
 or structures that can be passed as query conditions or to be inserted in the database.
 
@@ -25,8 +25,8 @@ This library is able to work with the following databases:
 * SQLite
 * Microsoft SQL Server (2008 and above)
 
-The first thing you need to do for using this library is creating a connection object,
-and before performing any operations with the connection, you need to specify a driver
+The first thing you need to do when using this library is create a connection object.
+Before performing any operations with the connection, you need to specify a driver
 to use:
 
 ```php
@@ -45,21 +45,21 @@ $connection = new Connection([
 
 Drivers are classes responsible for actually executing the commands to the database and
 correctly building the SQL according to the database specific dialect. Drivers can also
-be specified by passing a class name, in that case, include all the connection details
+be specified by passing a class name. In that case, include all the connection details
 directly in the options array:
 
 ```php
 use Cake\Database\Connection;
 
 $connection = new Connection([
-	'driver' => 'Cake\Driver\Sqlite'
+	'driver' => 'Cake\Database\Driver\Sqlite'
 	'database' => '/path/to/file.db'
 ]);
 ```
 
 ### Connection options
 
-This is a list of possible options that can be passed for creating a connection:
+This is a list of possible options that can be passed when creating a connection:
 
 * `persistent`: Creates a persistent connection
 * `host`: The server host
@@ -117,7 +117,7 @@ are:
 * timestamp
 * uuid
 
-More types can be added dynamically, but it will be explained shortly after.
+More types can be added dynamically in a bit.
 
 Statements can be reused by binding new values to the parameters in the query:
 
@@ -189,14 +189,14 @@ More complex updates, deletes and insert queries can be generated using the `Que
 
 ## Query Builder
 
-One of the goals of this library is allowing the generation of both simple and complex queries with
+One of the goals of this library is to allow the generation of both simple and complex queries with
 ease. The query builder can be accessed by getting a new instance of a query:
 
 ```php
 $query = $connection->newQuery();
 ```
 
-### Select
+### Selecting Fields
 
 Adding fields to the `SELECT` clause:
 
@@ -221,9 +221,6 @@ Generating conditions:
 $query->where(['id' => 1]);
 
 // WHERE id > 2
-$query->where(['id >' => 1]);
-
-// WHERE id = 2
 $query->where(['id >' => 1]);
 ```
 
@@ -323,7 +320,7 @@ A number of commonly used functions can be created with the func() method:
 * `concat()` Concatenate two values together. The arguments are treated as bound parameters unless marked as literal.
 * `coalesce()` Coalesce values. The arguments are treated as bound parameters unless marked as literal.
 * `dateDiff()` Get the difference between two dates/times. The arguments are treated as bound parameters unless marked as literal.
-* `now()` Take either ‘time’ or ‘date’ as an argument allowing you to get either the current time, or current date.
+* `now()` Take either 'time' or 'date' as an argument allowing you to get either the current time, or current date.
 
 When providing arguments for SQL functions, there are two kinds of parameters you can use, literal arguments and bound parameters. Literal
 parameters allow you to reference columns or other SQL literals. Bound parameters can be used to safely add user data to SQL functions.
