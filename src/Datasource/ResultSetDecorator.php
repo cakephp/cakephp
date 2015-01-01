@@ -23,46 +23,49 @@ use Cake\Datasource\ResultSetInterface;
  *
  * @return void
  */
-class ResultSetDecorator extends Collection implements ResultSetInterface {
+class ResultSetDecorator extends Collection implements ResultSetInterface
+{
 
-/**
- * Make this object countable.
- *
- * Part of the Countable interface. Calling this method
- * will convert the underlying traversable object into an array and
- * get the count of the underlying data.
- *
- * @return int
- */
-	public function count() {
-		if ($this->getInnerIterator() instanceof \Countable) {
-			return $this->getInnerIterator()->count();
-		}
+    /**
+     * Make this object countable.
+     *
+     * Part of the Countable interface. Calling this method
+     * will convert the underlying traversable object into an array and
+     * get the count of the underlying data.
+     *
+     * @return int
+     */
+    public function count()
+    {
+        if ($this->getInnerIterator() instanceof \Countable) {
+            return $this->getInnerIterator()->count();
+        }
 
-		return count($this->toArray());
-	}
+        return count($this->toArray());
+    }
 
-/**
- * Serialize a resultset.
- *
- * Part of Serializable interface.
- *
- * @return string Serialized object
- */
-	public function serialize() {
-		return serialize($this->toArray());
-	}
+    /**
+     * Serialize a resultset.
+     *
+     * Part of Serializable interface.
+     *
+     * @return string Serialized object
+     */
+    public function serialize()
+    {
+        return serialize($this->toArray());
+    }
 
-/**
- * Unserialize a resultset.
- *
- * Part of Serializable interface.
- *
- * @param string $serialized Serialized object
- * @return void
- */
-	public function unserialize($serialized) {
-		parent::__construct(unserialize($serialized));
-	}
-
+    /**
+     * Unserialize a resultset.
+     *
+     * Part of Serializable interface.
+     *
+     * @param string $serialized Serialized object
+     * @return void
+     */
+    public function unserialize($serialized)
+    {
+        parent::__construct(unserialize($serialized));
+    }
 }

@@ -1,0 +1,2 @@
+msgid "Plural Rule 1"
+msgstr "Po (translated) from custom folder"

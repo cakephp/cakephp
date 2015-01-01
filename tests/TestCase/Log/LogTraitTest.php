@@ -22,33 +22,35 @@ use Cake\TestSuite\TestCase;
  * Test case for LogTrait
  *
  */
-class LogTraitTest extends TestCase {
+class LogTraitTest extends TestCase
+{
 
-	public function tearDown() {
-		parent::tearDown();
-		Log::drop('trait_test');
-	}
+    public function tearDown()
+    {
+        parent::tearDown();
+        Log::drop('trait_test');
+    }
 
-/**
- * Test log method.
- *
- * @return void
- */
-	public function testLog() {
-		$mock = $this->getMock('Psr\Log\LoggerInterface');
-		$mock->expects($this->at(0))
-			->method('log')
-			->with('error', 'Testing');
+    /**
+     * Test log method.
+     *
+     * @return void
+     */
+    public function testLog()
+    {
+        $mock = $this->getMock('Psr\Log\LoggerInterface');
+        $mock->expects($this->at(0))
+            ->method('log')
+            ->with('error', 'Testing');
 
-		$mock->expects($this->at(1))
-			->method('log')
-			->with('debug', array(1, 2));
+        $mock->expects($this->at(1))
+            ->method('log')
+            ->with('debug', [1, 2]);
 
-		Log::config('trait_test', ['engine' => $mock]);
-		$subject = $this->getObjectForTrait('Cake\Log\LogTrait');
+        Log::config('trait_test', ['engine' => $mock]);
+        $subject = $this->getObjectForTrait('Cake\Log\LogTrait');
 
-		$subject->log('Testing');
-		$subject->log(array(1, 2), 'debug');
-	}
-
+        $subject->log('Testing');
+        $subject->log([1, 2], 'debug');
+    }
 }

@@ -23,79 +23,86 @@ use Cake\TestSuite\TestCase;
 /**
  * Routing filter test.
  */
-class RoutingFilterTest extends TestCase {
+class RoutingFilterTest extends TestCase
+{
 
-/**
- * test setting parameters in beforeDispatch method
- *
- * @return void
- */
-	public function testBeforeDispatchSkipWhenControllerSet() {
-		$filter = new RoutingFilter();
+    /**
+     * test setting parameters in beforeDispatch method
+     *
+     * @return void
+     * @triggers __CLASS__ $this, compact(request)
+     */
+    public function testBeforeDispatchSkipWhenControllerSet()
+    {
+        $filter = new RoutingFilter();
 
-		$request = new Request("/testcontroller/testaction/params1/params2/params3");
-		$request->addParams(['controller' => 'articles']);
-		$event = new Event(__CLASS__, $this, compact('request'));
-		$filter->beforeDispatch($event);
+        $request = new Request("/testcontroller/testaction/params1/params2/params3");
+        $request->addParams(['controller' => 'articles']);
+        $event = new Event(__CLASS__, $this, compact('request'));
+        $filter->beforeDispatch($event);
 
-		$this->assertSame($request->params['controller'], 'articles');
-		$this->assertEmpty($request->params['action']);
-	}
+        $this->assertSame($request->params['controller'], 'articles');
+        $this->assertEmpty($request->params['action']);
+    }
 
-/**
- * test setting parameters in beforeDispatch method
- *
- * @return void
- */
-	public function testBeforeDispatchSetsParameters() {
-		Router::connect('/:controller/:action/*');
-		$filter = new RoutingFilter();
+    /**
+     * test setting parameters in beforeDispatch method
+     *
+     * @return void
+     * @triggers __CLASS__ $this, compact(request)
+     */
+    public function testBeforeDispatchSetsParameters()
+    {
+        Router::connect('/:controller/:action/*');
+        $filter = new RoutingFilter();
 
-		$request = new Request("/testcontroller/testaction/params1/params2/params3");
-		$event = new Event(__CLASS__, $this, compact('request'));
-		$filter->beforeDispatch($event);
+        $request = new Request("/testcontroller/testaction/params1/params2/params3");
+        $event = new Event(__CLASS__, $this, compact('request'));
+        $filter->beforeDispatch($event);
 
-		$this->assertSame($request->params['controller'], 'testcontroller');
-		$this->assertSame($request->params['action'], 'testaction');
-		$this->assertSame($request->params['pass'][0], 'params1');
-		$this->assertSame($request->params['pass'][1], 'params2');
-		$this->assertSame($request->params['pass'][2], 'params3');
-		$this->assertFalse(!empty($request['form']));
-	}
+        $this->assertSame($request->params['controller'], 'testcontroller');
+        $this->assertSame($request->params['action'], 'testaction');
+        $this->assertSame($request->params['pass'][0], 'params1');
+        $this->assertSame($request->params['pass'][1], 'params2');
+        $this->assertSame($request->params['pass'][2], 'params3');
+        $this->assertFalse(!empty($request['form']));
+    }
 
-/**
- * test setting parameters in beforeDispatch method
- *
- * @return void
- */
-	public function testQueryStringOnRoot() {
-		Router::reload();
-		Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
-		Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
-		Router::connect('/:controller/:action/*');
+    /**
+     * test setting parameters in beforeDispatch method
+     *
+     * @return void
+     * @triggers __CLASS__ $this, compact(request)
+     * @triggers __CLASS__ $this, compact(request)
+     */
+    public function testQueryStringOnRoot()
+    {
+        Router::reload();
+        Router::connect('/', ['controller' => 'pages', 'action' => 'display', 'home']);
+        Router::connect('/pages/*', ['controller' => 'pages', 'action' => 'display']);
+        Router::connect('/:controller/:action/*');
 
-		$_GET = array('coffee' => 'life', 'sleep' => 'sissies');
-		$filter = new RoutingFilter();
-		$request = new Request('posts/home/?coffee=life&sleep=sissies');
+        $_GET = ['coffee' => 'life', 'sleep' => 'sissies'];
+        $filter = new RoutingFilter();
+        $request = new Request('posts/home/?coffee=life&sleep=sissies');
 
-		$event = new Event(__CLASS__, $this, compact('request'));
-		$filter->beforeDispatch($event);
+        $event = new Event(__CLASS__, $this, compact('request'));
+        $filter->beforeDispatch($event);
 
-		$this->assertRegExp('/posts/', $request['controller']);
-		$this->assertRegExp('/home/', $request['action']);
-		$this->assertTrue(isset($request['url']['sleep']));
-		$this->assertTrue(isset($request['url']['coffee']));
+        $this->assertRegExp('/posts/', $request['controller']);
+        $this->assertRegExp('/home/', $request['action']);
+        $this->assertTrue(isset($request['url']['sleep']));
+        $this->assertTrue(isset($request['url']['coffee']));
 
-		$request = new Request('/?coffee=life&sleep=sissy');
+        $request = new Request('/?coffee=life&sleep=sissy');
 
-		$event = new Event(__CLASS__, $this, compact('request'));
-		$filter->beforeDispatch($event);
+        $event = new Event(__CLASS__, $this, compact('request'));
+        $filter->beforeDispatch($event);
 
-		$this->assertRegExp('/pages/', $request['controller']);
-		$this->assertRegExp('/display/', $request['action']);
-		$this->assertTrue(isset($request['url']['sleep']));
-		$this->assertTrue(isset($request['url']['coffee']));
-		$this->assertEquals('life', $request['url']['coffee']);
-	}
-
+        $this->assertRegExp('/pages/', $request['controller']);
+        $this->assertRegExp('/display/', $request['action']);
+        $this->assertTrue(isset($request['url']['sleep']));
+        $this->assertTrue(isset($request['url']['coffee']));
+        $this->assertEquals('life', $request['url']['coffee']);
+    }
 }

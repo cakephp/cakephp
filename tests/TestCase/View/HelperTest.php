@@ -24,134 +24,141 @@ use Cake\TestSuite\TestCase;
 use Cake\View\Helper;
 use Cake\View\View;
 
-class TestHelper extends Helper {
+class TestHelper extends Helper
+{
 
-/**
- * Settings for this helper.
- *
- * @var array
- */
-	protected $_defaultConfig = array(
-		'key1' => 'val1',
-		'key2' => array('key2.1' => 'val2.1', 'key2.2' => 'val2.2')
-	);
+    /**
+     * Settings for this helper.
+     *
+     * @var array
+     */
+    protected $_defaultConfig = [
+        'key1' => 'val1',
+        'key2' => ['key2.1' => 'val2.1', 'key2.2' => 'val2.2']
+    ];
 
-/**
- * Helpers for this helper.
- *
- * @var array
- */
-	public $helpers = array('Html', 'TestPlugin.OtherHelper');
+    /**
+     * Helpers for this helper.
+     *
+     * @var array
+     */
+    public $helpers = ['Html', 'TestPlugin.OtherHelper'];
 
-/**
- * expose a method as public
- *
- * @param string $options
- * @param string $exclude
- * @param string $insertBefore
- * @param string $insertAfter
- * @return void
- */
-	public function parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
-		return $this->_parseAttributes($options, $exclude, $insertBefore, $insertAfter);
-	}
-
+    /**
+     * expose a method as public
+     *
+     * @param string $options
+     * @param string $exclude
+     * @param string $insertBefore
+     * @param string $insertAfter
+     * @return void
+     */
+    public function parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null)
+    {
+        return $this->_parseAttributes($options, $exclude, $insertBefore, $insertAfter);
+    }
 }
 
 /**
  * HelperTest class
  *
  */
-class HelperTest extends TestCase {
+class HelperTest extends TestCase
+{
 
-/**
- * setUp method
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
+    /**
+     * setUp method
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
 
-		Router::reload();
-		$this->View = new View();
-		$this->Helper = new Helper($this->View);
-		$this->Helper->request = new Request();
-	}
+        Router::reload();
+        $this->View = new View();
+        $this->Helper = new Helper($this->View);
+        $this->Helper->request = new Request();
+    }
 
-/**
- * tearDown method
- *
- * @return void
- */
-	public function tearDown() {
-		parent::tearDown();
-		Configure::delete('Asset');
+    /**
+     * tearDown method
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        Configure::delete('Asset');
 
-		Plugin::unload();
-		unset($this->Helper, $this->View);
-	}
+        Plugin::unload();
+        unset($this->Helper, $this->View);
+    }
 
-/**
- * Test settings merging
- *
- * @return void
- */
-	public function testSettingsMerging() {
-		$Helper = new TestHelper($this->View, array(
-			'key3' => 'val3',
-			'key2' => array('key2.2' => 'newval')
-		));
-		$expected = array(
-			'key1' => 'val1',
-			'key2' => array('key2.1' => 'val2.1', 'key2.2' => 'newval'),
-			'key3' => 'val3'
-		);
-		$this->assertEquals($expected, $Helper->config());
-	}
+    /**
+     * Test settings merging
+     *
+     * @return void
+     */
+    public function testSettingsMerging()
+    {
+        $Helper = new TestHelper($this->View, [
+            'key3' => 'val3',
+            'key2' => ['key2.2' => 'newval']
+        ]);
+        $expected = [
+            'key1' => 'val1',
+            'key2' => ['key2.1' => 'val2.1', 'key2.2' => 'newval'],
+            'key3' => 'val3'
+        ];
+        $this->assertEquals($expected, $Helper->config());
+    }
 
-/**
- * test lazy loading helpers is seamless
- *
- * @return void
- */
-	public function testLazyLoadingHelpers() {
-		Plugin::load(array('TestPlugin'));
+    /**
+     * test lazy loading helpers is seamless
+     *
+     * @return void
+     */
+    public function testLazyLoadingHelpers()
+    {
+        Plugin::load(['TestPlugin']);
 
-		$Helper = new TestHelper($this->View);
-		$this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $Helper->OtherHelper);
-		$this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $Helper->Html);
-	}
+        $Helper = new TestHelper($this->View);
+        $this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $Helper->OtherHelper);
+        $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $Helper->Html);
+    }
 
-/**
- * test that a helpers Helper is not 'attached' to the collection
- *
- * @return void
- */
-	public function testThatHelperHelpersAreNotAttached() {
-		Plugin::loadAll();
+    /**
+     * test that a helpers Helper is not 'attached' to the collection
+     *
+     * @return void
+     */
+    public function testThatHelperHelpersAreNotAttached()
+    {
+        Plugin::loadAll();
 
-		$events = $this->getMock('\Cake\Event\EventManager');
-		$this->View->eventManager($events);
+        $events = $this->getMock('\Cake\Event\EventManager');
+        $this->View->eventManager($events);
 
-		$events->expects($this->never())
-			->method('attach');
+        $events->expects($this->never())
+            ->method('attach');
 
-		$Helper = new TestHelper($this->View);
-		$Helper->OtherHelper;
-	}
+        $Helper = new TestHelper($this->View);
+        $Helper->OtherHelper;
+    }
 
-/**
- * test that the lazy loader doesn't duplicate objects on each access.
- *
- * @return void
- */
-	public function testLazyLoadingUsesReferences() {
-		$Helper = new TestHelper($this->View);
-		$resultA = $Helper->Html;
-		$resultB = $Helper->Html;
+    /**
+     * test that the lazy loader doesn't duplicate objects on each access.
+     *
+     * @return void
+     */
+    public function testLazyLoadingUsesReferences()
+    {
+        $Helper = new TestHelper($this->View);
+        $resultA = $Helper->Html;
+        $resultB = $Helper->Html;
 
-		$resultA->testprop = 1;
-		$this->assertEquals($resultA->testprop, $resultB->testprop);
-	}
-
+        $resultA->testprop = 1;
+        $this->assertEquals($resultA->testprop, $resultB->testprop);
+    }
 }

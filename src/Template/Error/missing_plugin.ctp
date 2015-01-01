@@ -1,6 +1,5 @@
 <?php
 /**
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -15,32 +14,42 @@
  */
 use Cake\Core\Configure;
 
+$this->layout = 'dev_error';
+
 $pluginPath = Configure::read('App.paths.plugins.0');
+
+$this->assign('title', 'Missing Plugin');
+$this->assign('templateName', 'missing_plugin.ctp');
+
+$this->start('subheading');
 ?>
-<h2>Missing Plugin</h2>
-<p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('The application is trying to load a file from the <em>%s</em> plugin', h($plugin)); ?>
-</p>
-<p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('Make sure your plugin <em>%s</em> is in the %s directory and was loaded', h($plugin), $pluginPath) ?>
-</p>
-<pre>
-&lt;?php
-Plugin::load('<?= h($plugin)?>');
+    <strong>Error: </strong>
+    The application is trying to load a file from the <em><?= h($plugin) ?></em> plugin.
+    <br>
+    <br>
+    Make sure your plugin <em><?= h($plugin) ?></em> is in the <?= h($pluginPath) ?> directory and was loaded.
+<?php $this->end() ?>
 
-</pre>
+<?php $this->start('file') ?>
+<?php
+$code = <<<PHP
+<?php
+Plugin::load('{$plugin}');
+PHP;
+
+?>
+<div class="code-dump"><?php highlight_string($code) ?></div>
+
 <p class="notice">
-	<strong>Loading all plugins: </strong>
-	<?= sprintf('If you wish to load all plugins at once, use the following line in your %s file', 'config' . DS . 'bootstrap.php'); ?>
+    <strong>Loading all plugins: </strong>
+    <?= sprintf('If you wish to load all plugins at once, use the following line in your %s file', 'config' . DS . 'bootstrap.php'); ?>
 </p>
-<pre>
+
+<?php
+$code = <<<PHP
+<?php
 Plugin::loadAll();
-</pre>
-<p class="notice">
-	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_plugin.ctp'); ?>
-</p>
-
-<?= $this->element('exception_stack_trace'); ?>
+PHP;
+?>
+<div class="code-dump"><?php highlight_string($code) ?></div>
+<?php $this->end() ?>

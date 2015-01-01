@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM;
 
+use Cake\Collection\Collection;
 use Cake\Collection\CollectionTrait;
 use Cake\Database\Exception;
 use Cake\Database\Type;
@@ -28,469 +29,487 @@ use SplFixedArray;
  * queries required for eager loading external associations.
  *
  */
-class ResultSet implements ResultSetInterface {
+class ResultSet implements ResultSetInterface
+{
 
-	use CollectionTrait;
+    use CollectionTrait;
 
-/**
- * Original query from where results were generated
- *
- * @var Query
- */
-	protected $_query;
+    /**
+     * Original query from where results were generated
+     *
+     * @var Query
+     */
+    protected $_query;
 
-/**
- * Database statement holding the results
- *
- * @var \Cake\Database\StatementInterface
- */
-	protected $_statement;
+    /**
+     * Database statement holding the results
+     *
+     * @var \Cake\Database\StatementInterface
+     */
+    protected $_statement;
 
-/**
- * Points to the next record number that should be fetched
- *
- * @var int
- */
-	protected $_index = 0;
+    /**
+     * Points to the next record number that should be fetched
+     *
+     * @var int
+     */
+    protected $_index = 0;
 
-/**
- * Last record fetched from the statement
- *
- * @var array
- */
-	protected $_current;
+    /**
+     * Last record fetched from the statement
+     *
+     * @var array
+     */
+    protected $_current;
 
-/**
- * Default table instance
- *
- * @var \Cake\ORM\Table
- */
-	protected $_defaultTable;
+    /**
+     * Default table instance
+     *
+     * @var \Cake\ORM\Table
+     */
+    protected $_defaultTable;
 
-/**
- * List of associations that should be eager loaded
- *
- * @var array
- */
-	protected $_associationMap = [];
+    /**
+     * List of associations that should be placed under the `_matchingData`
+     * result key.
+     *
+     * @var array
+     */
+    protected $_matchingMap = [];
 
-/**
- * Map of fields that are fetched from the statement with
- * their type and the table they belong to
- *
- * @var string
- */
-	protected $_map;
+    /**
+     * List of associations that should be eager loaded.
+     *
+     * @var array
+     */
+    protected $_containMap = [];
 
-/**
- * Results that have been fetched or hydrated into the results.
- *
- * @var array
- */
-	protected $_results = [];
+    /**
+     * Map of fields that are fetched from the statement with
+     * their type and the table they belong to
+     *
+     * @var string
+     */
+    protected $_map;
 
-/**
- * Whether to hydrate results into objects or not
- *
- * @var bool
- */
-	protected $_hydrate = true;
+    /**
+     * Results that have been fetched or hydrated into the results.
+     *
+     * @var array
+     */
+    protected $_results = [];
 
-/**
- * The fully namespaced name of the class to use for hydrating results
- *
- * @var string
- */
-	protected $_entityClass;
+    /**
+     * Whether to hydrate results into objects or not
+     *
+     * @var bool
+     */
+    protected $_hydrate = true;
 
-/**
- * Whether or not to buffer results fetched from the statement
- *
- * @var bool
- */
-	protected $_useBuffering = true;
+    /**
+     * The fully namespaced name of the class to use for hydrating results
+     *
+     * @var string
+     */
+    protected $_entityClass;
 
-/**
- * Holds the count of records in this result set
- *
- * @var int
- */
-	protected $_count;
+    /**
+     * Whether or not to buffer results fetched from the statement
+     *
+     * @var bool
+     */
+    protected $_useBuffering = true;
 
-/**
- * Constructor
- *
- * @param \Cake\ORM\Query $query Query from where results come
- * @param \Cake\Database\StatementInterface $statement The statement to fetch from
- */
-	public function __construct($query, $statement) {
-		$repository = $query->repository();
-		$this->_query = $query;
-		$this->_statement = $statement;
-		$this->_defaultTable = $this->_query->repository();
-		$this->_calculateAssociationMap();
-		$this->_hydrate = $this->_query->hydrate();
-		$this->_entityClass = $repository->entityClass();
-		$this->_useBuffering = $query->bufferResults();
-		$this->count();
+    /**
+     * Holds the count of records in this result set
+     *
+     * @var int
+     */
+    protected $_count;
 
-		if ($this->_useBuffering) {
-			$this->_results = new SplFixedArray($this->_count);
-		}
-	}
+    /**
+     * Constructor
+     *
+     * @param \Cake\ORM\Query $query Query from where results come
+     * @param \Cake\Database\StatementInterface $statement The statement to fetch from
+     */
+    public function __construct($query, $statement)
+    {
+        $repository = $query->repository();
+        $this->_query = $query;
+        $this->_statement = $statement;
+        $this->_defaultTable = $this->_query->repository();
+        $this->_calculateAssociationMap();
+        $this->_hydrate = $this->_query->hydrate();
+        $this->_entityClass = $repository->entityClass();
+        $this->_useBuffering = $query->bufferResults();
+        $this->count();
 
-/**
- * Returns the current record in the result iterator
- *
- * Part of Iterator interface.
- *
- * @return array|object
- */
-	public function current() {
-		return $this->_current;
-	}
+        if ($this->_useBuffering) {
+            $this->_results = new SplFixedArray($this->_count);
+        }
+    }
 
-/**
- * Returns the key of the current record in the iterator
- *
- * Part of Iterator interface.
- *
- * @return int
- */
-	public function key() {
-		return $this->_index;
-	}
+    /**
+     * Returns the current record in the result iterator
+     *
+     * Part of Iterator interface.
+     *
+     * @return array|object
+     */
+    public function current()
+    {
+        return $this->_current;
+    }
 
-/**
- * Advances the iterator pointer to the next record
- *
- * Part of Iterator interface.
- *
- * @return void
- */
-	public function next() {
-		$this->_index++;
-	}
+    /**
+     * Returns the key of the current record in the iterator
+     *
+     * Part of Iterator interface.
+     *
+     * @return int
+     */
+    public function key()
+    {
+        return $this->_index;
+    }
 
-/**
- * Rewinds a ResultSet.
- *
- * Part of Iterator interface.
- *
- * @throws \Cake\Database\Exception
- * @return void
- */
-	public function rewind() {
-		if ($this->_index == 0) {
-			return;
-		}
+    /**
+     * Advances the iterator pointer to the next record
+     *
+     * Part of Iterator interface.
+     *
+     * @return void
+     */
+    public function next()
+    {
+        $this->_index++;
+    }
 
-		if (!$this->_useBuffering) {
-			$msg = 'You cannot rewind an un-buffered ResultSet. Use Query::bufferResults() to get a buffered ResultSet.';
-			throw new Exception($msg);
-		}
+    /**
+     * Rewinds a ResultSet.
+     *
+     * Part of Iterator interface.
+     *
+     * @throws \Cake\Database\Exception
+     * @return void
+     */
+    public function rewind()
+    {
+        if ($this->_index == 0) {
+            return;
+        }
 
-		$this->_index = 0;
-	}
+        if (!$this->_useBuffering) {
+            $msg = 'You cannot rewind an un-buffered ResultSet. Use Query::bufferResults() to get a buffered ResultSet.';
+            throw new Exception($msg);
+        }
 
-/**
- * Whether there are more results to be fetched from the iterator
- *
- * Part of Iterator interface.
- *
- * @return bool
- */
-	public function valid() {
-		if (isset($this->_results[$this->_index])) {
-			$this->_current = $this->_results[$this->_index];
-			return true;
-		}
+        $this->_index = 0;
+    }
 
-		$this->_current = $this->_fetchResult();
-		$valid = $this->_current !== false;
-		$hasNext = $this->_index < $this->_count;
+    /**
+     * Whether there are more results to be fetched from the iterator
+     *
+     * Part of Iterator interface.
+     *
+     * @return bool
+     */
+    public function valid()
+    {
+        if (isset($this->_results[$this->_index])) {
+            $this->_current = $this->_results[$this->_index];
+            return true;
+        }
 
-		if ($this->_statement && !($valid && $hasNext)) {
-			$this->_statement->closeCursor();
-		}
+        $this->_current = $this->_fetchResult();
+        $valid = $this->_current !== false;
+        $hasNext = $this->_index < $this->_count;
 
-		if ($valid) {
-			$this->_bufferResult($this->_current);
-		}
+        if ($this->_statement && !($valid && $hasNext)) {
+            $this->_statement->closeCursor();
+        }
 
-		return $valid;
-	}
+        if ($valid) {
+            $this->_bufferResult($this->_current);
+        }
 
-/**
- * Serializes a resultset.
- *
- * Part of Serializable interface.
- *
- * @return string Serialized object
- */
-	public function serialize() {
-		while ($this->valid()) {
-			$this->next();
-		}
-		return serialize($this->_results);
-	}
+        return $valid;
+    }
 
-/**
- * Unserializes a resultset.
- *
- * Part of Serializable interface.
- *
- * @param string $serialized Serialized object
- * @return void
- */
-	public function unserialize($serialized) {
-		$this->_results = unserialize($serialized);
-	}
+    /**
+     * Serializes a resultset.
+     *
+     * Part of Serializable interface.
+     *
+     * @return string Serialized object
+     */
+    public function serialize()
+    {
+        while ($this->valid()) {
+            $this->next();
+        }
+        return serialize($this->_results);
+    }
 
-/**
- * Returns the first result in this set and blocks the set so that no other
- * results can be fetched.
- *
- * When using serialized results, the index will be incremented past the
- * end of the results simulating the behavior when the result set is backed
- * by a statement.
- *
- * @return array|object
- */
-	public function first() {
-		if (isset($this->_results[0])) {
-			return $this->_results[0];
-		}
+    /**
+     * Unserializes a resultset.
+     *
+     * Part of Serializable interface.
+     *
+     * @param string $serialized Serialized object
+     * @return void
+     */
+    public function unserialize($serialized)
+    {
+        $this->_results = unserialize($serialized);
+    }
 
-		if ($this->valid()) {
-			if ($this->_statement) {
-				$this->_statement->closeCursor();
-			}
-			if (!$this->_statement && $this->_results) {
-				$this->_index = count($this->_results);
-			}
-			return $this->_current;
-		}
-		return null;
-	}
+    /**
+     * Gives the number of rows in the result set.
+     *
+     * Part of the Countable interface.
+     *
+     * @return int
+     */
+    public function count()
+    {
+        if ($this->_count !== null) {
+            return $this->_count;
+        }
+        if ($this->_statement) {
+            return $this->_count = $this->_statement->rowCount();
+        }
+        return $this->_count = count($this->_results);
+    }
 
-/**
- * Gives the number of rows in the result set.
- *
- * Part of the Countable interface.
- *
- * @return int
- */
-	public function count() {
-		if ($this->_count !== null) {
-			return $this->_count;
-		}
-		if ($this->_statement) {
-			return $this->_count = $this->_statement->rowCount();
-		}
-		return $this->_count = count($this->_results);
-	}
+    /**
+     * Calculates the list of associations that should get eager loaded
+     * when fetching each record
+     *
+     * @return void
+     */
+    protected function _calculateAssociationMap()
+    {
+        $map = $this->_query->eagerLoader()->associationsMap($this->_defaultTable);
+        $this->_matchingMap = (new Collection($map))
+            ->match(['matching' => true])
+            ->toArray();
 
-/**
- * Calculates the list of associations that should get eager loaded
- * when fetching each record
- *
- * @return void
- */
-	protected function _calculateAssociationMap() {
-		$contain = $this->_query->eagerLoader()->normalized($this->_defaultTable);
-		if (!$contain) {
-			return;
-		}
+        $this->_containMap = (new Collection(array_reverse($map)))
+            ->match(['matching' => false])
+            ->indexBy('nestKey')
+            ->toArray();
+    }
 
-		$map = [];
-		$visitor = function ($level) use (&$visitor, &$map) {
-			foreach ($level as $assoc => $meta) {
-				$map[$meta['aliasPath']] = [
-					'alias' => $assoc,
-					'instance' => $meta['instance'],
-					'canBeJoined' => $meta['canBeJoined'],
-					'entityClass' => $meta['instance']->target()->entityClass(),
-					'nestKey' => $meta['canBeJoined'] ? $assoc : $meta['aliasPath']
-				];
-				if ($meta['canBeJoined'] && !empty($meta['associations'])) {
-					$visitor($meta['associations']);
-				}
-			}
-		};
-		$visitor($contain, []);
-		$this->_associationMap = $map;
-	}
+    /**
+     * Helper function to fetch the next result from the statement or
+     * seeded results.
+     *
+     * @return mixed
+     */
+    protected function _fetchResult()
+    {
+        if (!$this->_statement) {
+            return false;
+        }
 
-/**
- * Helper function to fetch the next result from the statement or
- * seeded results.
- *
- * @return mixed
- */
-	protected function _fetchResult() {
-		if (!$this->_statement) {
-			return false;
-		}
+        $row = $this->_statement->fetch('assoc');
+        if ($row === false) {
+            return $row;
+        }
+        return $this->_groupResult($row);
+    }
 
-		$row = $this->_statement->fetch('assoc');
-		if ($row === false) {
-			return $row;
-		}
-		return $this->_groupResult($row);
-	}
+    /**
+     * Correctly nests results keys including those coming from associations
+     *
+     * @param mixed $row Array containing columns and values or false if there is no results
+     * @return array Results
+     */
+    protected function _groupResult($row)
+    {
+        $defaultAlias = $this->_defaultTable->alias();
+        $results = $presentAliases = [];
+        $options = [
+            'useSetters' => false,
+            'markClean' => true,
+            'markNew' => false,
+            'guard' => false
+        ];
 
-/**
- * Correctly nests results keys including those coming from associations
- *
- * @param mixed $row Array containing columns and values or false if there is no results
- * @return array Results
- */
-	protected function _groupResult($row) {
-		$defaultAlias = $this->_defaultTable->alias();
-		$results = $presentAliases = [];
-		foreach ($row as $key => $value) {
-			$table = $defaultAlias;
-			$field = $key;
+        foreach ($this->_matchingMap as $matching) {
+            foreach ($row as $key => $value) {
+                if (strpos($key, $matching['alias'] . '__') !== 0) {
+                    continue;
+                }
+                list($table, $field) = explode('__', $key);
+                $results['_matchingData'][$table][$field] = $value;
 
-			if (isset($this->_associationMap[$key])) {
-				$results[$key] = $value;
-				continue;
-			}
+                if (!isset($this->_containMap[$table])) {
+                    unset($row[$key]);
+                }
+            }
+            if (empty($results['_matchingData'][$matching['alias']])) {
+                continue;
+            }
 
-			if (empty($this->_map[$key])) {
-				$parts = explode('__', $key);
-				if (count($parts) > 1) {
-					$this->_map[$key] = $parts;
-				}
-			}
+            $results['_matchingData'][$matching['alias']] = $this->_castValues(
+                $matching['instance']->target(),
+                $results['_matchingData'][$matching['alias']]
+            );
 
-			if (!empty($this->_map[$key])) {
-				list($table, $field) = $this->_map[$key];
-			}
+            if ($this->_hydrate) {
+                $options['source'] = $matching['alias'];
+                $entity = new $matching['entityClass']($results['_matchingData'][$matching['alias']], $options);
+                $entity->clean();
+                $results['_matchingData'][$matching['alias']] = $entity;
+            }
+        }
 
-			$presentAliases[$table] = true;
-			$results[$table][$field] = $value;
-		}
+        foreach ($row as $key => $value) {
+            $table = $defaultAlias;
+            $field = $key;
 
-		unset($presentAliases[$defaultAlias]);
-		$results[$defaultAlias] = $this->_castValues(
-			$this->_defaultTable,
-			$results[$defaultAlias]
-		);
+            if ($value !== null && !is_scalar($value)) {
+                $results[$key] = $value;
+                continue;
+            }
 
-		$options = [
-			'useSetters' => false,
-			'markClean' => true,
-			'markNew' => false,
-			'guard' => false
-		];
+            if (empty($this->_map[$key])) {
+                $parts = explode('__', $key);
+                if (count($parts) > 1) {
+                    $this->_map[$key] = $parts;
+                }
+            }
 
-		foreach (array_reverse($this->_associationMap) as $assoc) {
-			$alias = $assoc['nestKey'];
-			$instance = $assoc['instance'];
+            if (!empty($this->_map[$key])) {
+                list($table, $field) = $this->_map[$key];
+            }
 
-			// Doing this before we're sure the root assoc has data is the problem.
-			if (!isset($results[$alias])) {
-				$results = $instance->defaultRowValue($results, $assoc['canBeJoined']);
-				continue;
-			}
+            $presentAliases[$table] = true;
+            $results[$table][$field] = $value;
+        }
 
-			$target = $instance->target();
-			$options['source'] = $target->alias();
-			unset($presentAliases[$alias]);
+        if (isset($presentAliases[$defaultAlias])) {
+            $results[$defaultAlias] = $this->_castValues(
+                $this->_defaultTable,
+                $results[$defaultAlias]
+            );
+        }
+        unset($presentAliases[$defaultAlias]);
 
-			if ($assoc['canBeJoined']) {
-				$results[$alias] = $this->_castValues($target, $results[$alias]);
+        foreach ($this->_containMap as $assoc) {
+            $alias = $assoc['nestKey'];
+            $instance = $assoc['instance'];
 
-				$hasData = false;
-				foreach ($results[$alias] as $v) {
-					if ($v !== null && $v !== []) {
-						$hasData = true;
-						break;
-					}
-				}
+            if (!isset($results[$alias])) {
+                $results = $instance->defaultRowValue($results, $assoc['canBeJoined']);
+                continue;
+            }
 
-				if (!$hasData) {
-					$results[$alias] = null;
-				}
-			}
+            $target = $instance->target();
+            $options['source'] = $target->alias();
+            unset($presentAliases[$alias]);
 
-			if ($this->_hydrate && $results[$alias] !== null && $assoc['canBeJoined']) {
-				$entity = new $assoc['entityClass']($results[$alias], $options);
-				$entity->clean();
-				$results[$alias] = $entity;
-			}
-			$results = $instance->transformRow($results, $alias, $assoc['canBeJoined']);
-		}
+            if ($assoc['canBeJoined']) {
+                $results[$alias] = $this->_castValues($target, $results[$alias]);
 
-		foreach ($presentAliases as $alias => $present) {
-			if (!isset($results[$alias])) {
-				continue;
-			}
-			$results[$defaultAlias][$alias] = $results[$alias];
-		}
+                $hasData = false;
+                foreach ($results[$alias] as $v) {
+                    if ($v !== null && $v !== []) {
+                        $hasData = true;
+                        break;
+                    }
+                }
 
-		$options['source'] = $defaultAlias;
-		$results = $results[$defaultAlias];
-		if ($this->_hydrate && !($results instanceof Entity)) {
-			$results = new $this->_entityClass($results, $options);
-		}
+                if (!$hasData) {
+                    $results[$alias] = null;
+                }
+            }
 
-		return $results;
-	}
+            if ($this->_hydrate && $results[$alias] !== null && $assoc['canBeJoined']) {
+                $entity = new $assoc['entityClass']($results[$alias], $options);
+                $entity->clean();
+                $results[$alias] = $entity;
+            }
 
-/**
- * Casts all values from a row brought from a table to the correct
- * PHP type.
- *
- * @param Table $table The table object
- * @param array $values The values to cast
- * @return array
- */
-	protected function _castValues($table, $values) {
-		$alias = $table->alias();
-		$driver = $this->_query->connection()->driver();
-		if (empty($this->types[$alias])) {
-			$schema = $table->schema();
-			foreach ($schema->columns() as $col) {
-				$this->types[$alias][$col] = Type::build($schema->columnType($col));
-			}
-		}
+            $results = $instance->transformRow($results, $alias, $assoc['canBeJoined']);
+        }
 
-		foreach ($values as $field => $value) {
-			if (!isset($this->types[$alias][$field])) {
-				continue;
-			}
-			$values[$field] = $this->types[$alias][$field]->toPHP($value, $driver);
-		}
+        foreach ($presentAliases as $alias => $present) {
+            if (!isset($results[$alias])) {
+                continue;
+            }
+            $results[$defaultAlias][$alias] = $results[$alias];
+        }
 
-		return $values;
-	}
+        if (isset($results['_matchingData'])) {
+            $results[$defaultAlias]['_matchingData'] = $results['_matchingData'];
+        }
 
-/**
- * Conditionally buffer the passed result
- *
- * @param array $result the result fetch from the database
- * @return void
- */
-	protected function _bufferResult($result) {
-		if ($this->_useBuffering) {
-			$this->_results[$this->_index] = $result;
-		}
-	}
+        $options['source'] = $defaultAlias;
+        $results = $results[$defaultAlias];
+        if ($this->_hydrate && !($results instanceof Entity)) {
+            $results = new $this->_entityClass($results, $options);
+        }
 
-/**
- * Returns an array that can be used to describe the internal state of this
- * object.
- *
- * @return array
- */
-	public function __debugInfo() {
-		return [
-			'query' => $this->_query,
-			'items' => $this->toArray(),
-		];
-	}
+        return $results;
+    }
 
+    /**
+     * Casts all values from a row brought from a table to the correct
+     * PHP type.
+     *
+     * @param Table $table The table object
+     * @param array $values The values to cast
+     * @return array
+     */
+    protected function _castValues($table, $values)
+    {
+        $alias = $table->alias();
+        $driver = $this->_query->connection()->driver();
+        if (empty($this->types[$alias])) {
+            $schema = $table->schema();
+            foreach ($schema->columns() as $col) {
+                $this->types[$alias][$col] = Type::build($schema->columnType($col));
+            }
+        }
+
+        foreach ($values as $field => $value) {
+            if (!isset($this->types[$alias][$field])) {
+                continue;
+            }
+            $values[$field] = $this->types[$alias][$field]->toPHP($value, $driver);
+        }
+
+        return $values;
+    }
+
+    /**
+     * Conditionally buffer the passed result
+     *
+     * @param array $result the result fetch from the database
+     * @return void
+     */
+    protected function _bufferResult($result)
+    {
+        if ($this->_useBuffering) {
+            $this->_results[$this->_index] = $result;
+        }
+    }
+
+    /**
+     * Returns an array that can be used to describe the internal state of this
+     * object.
+     *
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        return [
+            'query' => $this->_query,
+            'items' => $this->toArray(),
+        ];
+    }
 }

@@ -20,33 +20,34 @@ use Cake\TestSuite\Fixture\TestFixture;
  * A fixture for a join table containing additional data
  *
  */
-class SpecialTagsFixture extends TestFixture {
+class SpecialTagsFixture extends TestFixture
+{
 
-/**
- * fields property
- *
- * @var array
- */
-	public $fields = array(
-		'id' => ['type' => 'integer'],
-		'article_id' => ['type' => 'integer', 'null' => false],
-		'tag_id' => ['type' => 'integer', 'null' => false],
-		'highlighted' => ['type' => 'boolean', 'null' => true],
-		'highlighted_time' => ['type' => 'timestamp', 'null' => true],
-		'author_id' => ['type' => 'integer', 'null' => true],
-		'_constraints' => [
-			'primary' => ['type' => 'primary', 'columns' => ['id']],
-			'UNIQUE_TAG2' => ['type' => 'unique', 'columns' => ['article_id', 'tag_id']]
-		]
-	);
+    /**
+     * fields property
+     *
+     * @var array
+     */
+    public $fields = [
+        'id' => ['type' => 'integer'],
+        'article_id' => ['type' => 'integer', 'null' => false],
+        'tag_id' => ['type' => 'integer', 'null' => false],
+        'highlighted' => ['type' => 'boolean', 'null' => true],
+        'highlighted_time' => ['type' => 'timestamp', 'null' => true],
+        'author_id' => ['type' => 'integer', 'null' => true],
+        '_constraints' => [
+            'primary' => ['type' => 'primary', 'columns' => ['id']],
+            'UNIQUE_TAG2' => ['type' => 'unique', 'columns' => ['article_id', 'tag_id']]
+        ]
+    ];
 
-/**
- * records property
- *
- * @var array
- */
-	public $records = array(
-		array('article_id' => 1, 'tag_id' => 3, 'highlighted' => false, 'highlighted_time' => null, 'author_id' => null),
-		array('article_id' => 2, 'tag_id' => 1, 'highlighted' => true, 'highlighted_time' => '2014-06-01 10:10:00', 'author_id' => null)
-	);
+    /**
+     * records property
+     *
+     * @var array
+     */
+    public $records = [
+        ['article_id' => 1, 'tag_id' => 3, 'highlighted' => false, 'highlighted_time' => null, 'author_id' => null],
+        ['article_id' => 2, 'tag_id' => 1, 'highlighted' => true, 'highlighted_time' => '2014-06-01 10:10:00', 'author_id' => null]
+    ];
 }

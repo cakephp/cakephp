@@ -53,102 +53,109 @@ use Cake\Utility\Xml;
  * If you don't use the `_serialize` key, you will need a view. You can use extended
  * views to provide layout like functionality.
  */
-class XmlView extends View {
+class XmlView extends View
+{
 
-/**
- * XML layouts are located in the xml sub directory of `Layouts/`
- *
- * @var string
- */
-	public $layoutPath = 'xml';
+    /**
+     * XML layouts are located in the xml sub directory of `Layouts/`
+     *
+     * @var string
+     */
+    public $layoutPath = 'xml';
 
-/**
- * XML views are located in the 'xml' sub directory for controllers' views.
- *
- * @var string
- */
-	public $subDir = 'xml';
+    /**
+     * XML views are located in the 'xml' sub directory for controllers' views.
+     *
+     * @var string
+     */
+    public $subDir = 'xml';
 
-/**
- * Constructor
- *
- * @param \Cake\Network\Request $request Request instance
- * @param \Cake\Network\Response $response Response instance
- * @param \Cake\Event\EventManager $eventManager Event Manager
- * @param array $viewOptions View options.
- */
-	public function __construct(Request $request = null, Response $response = null,
-		EventManager $eventManager = null, array $viewOptions = []) {
-		parent::__construct($request, $response, $eventManager, $viewOptions);
+    /**
+     * Constructor
+     *
+     * @param \Cake\Network\Request|null $request Request instance
+     * @param \Cake\Network\Response|null $response Response instance
+     * @param \Cake\Event\EventManager|null $eventManager Event Manager
+     * @param array $viewOptions View options.
+     */
+    public function __construct(
+        Request $request = null,
+        Response $response = null,
+        EventManager $eventManager = null,
+        array $viewOptions = []
+    ) {
+        parent::__construct($request, $response, $eventManager, $viewOptions);
 
-		if ($response && $response instanceof Response) {
-			$response->type('xml');
-		}
-	}
+        if ($response && $response instanceof Response) {
+            $response->type('xml');
+        }
+    }
 
-/**
- * Skip loading helpers if this is a _serialize based view.
- *
- * @return void
- */
-	public function loadHelpers() {
-		if (isset($this->viewVars['_serialize'])) {
-			return;
-		}
-		parent::loadHelpers();
-	}
+    /**
+     * Skip loading helpers if this is a _serialize based view.
+     *
+     * @return void
+     */
+    public function loadHelpers()
+    {
+        if (isset($this->viewVars['_serialize'])) {
+            return;
+        }
+        parent::loadHelpers();
+    }
 
-/**
- * Render a XML view.
- *
- * Uses the special '_serialize' parameter to convert a set of
- * view variables into a XML response. Makes generating simple
- * XML responses very easy. You can omit the '_serialize' parameter,
- * and use a normal view + layout as well.
- *
- * @param string $view The view being rendered.
- * @param string $layout The layout being rendered.
- * @return string The rendered view.
- */
-	public function render($view = null, $layout = null) {
-		if (isset($this->viewVars['_serialize'])) {
-			return $this->_serialize($this->viewVars['_serialize']);
-		}
-		if ($view !== false && $this->_getViewFileName($view)) {
-			return parent::render($view, false);
-		}
-	}
+    /**
+     * Render a XML view.
+     *
+     * Uses the special '_serialize' parameter to convert a set of
+     * view variables into a XML response. Makes generating simple
+     * XML responses very easy. You can omit the '_serialize' parameter,
+     * and use a normal view + layout as well.
+     *
+     * @param string|null $view The view being rendered.
+     * @param string|null $layout The layout being rendered.
+     * @return string The rendered view.
+     */
+    public function render($view = null, $layout = null)
+    {
+        if (isset($this->viewVars['_serialize'])) {
+            return $this->_serialize($this->viewVars['_serialize']);
+        }
+        if ($view !== false && $this->_getViewFileName($view)) {
+            return parent::render($view, false);
+        }
+    }
 
-/**
- * Serialize view vars.
- *
- * @param array $serialize The viewVars that need to be serialized.
- * @return string The serialized data
- */
-	protected function _serialize($serialize) {
-		$rootNode = isset($this->viewVars['_rootNode']) ? $this->viewVars['_rootNode'] : 'response';
+    /**
+     * Serialize view vars.
+     *
+     * @param array|string $serialize The name(s) of the view variable(s) that need(s) to be serialized
+     * @return string The serialized data
+     */
+    protected function _serialize($serialize)
+    {
+        $rootNode = isset($this->viewVars['_rootNode']) ? $this->viewVars['_rootNode'] : 'response';
 
-		if (is_array($serialize)) {
-			$data = array($rootNode => array());
-			foreach ($serialize as $alias => $key) {
-				if (is_numeric($alias)) {
-					$alias = $key;
-				}
-				$data[$rootNode][$alias] = $this->viewVars[$key];
-			}
-		} else {
-			$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
-			if (is_array($data) && Hash::numeric(array_keys($data))) {
-				$data = array($rootNode => array($serialize => $data));
-			}
-		}
+        if (is_array($serialize)) {
+            $data = [$rootNode => []];
+            foreach ($serialize as $alias => $key) {
+                if (is_numeric($alias)) {
+                    $alias = $key;
+                }
+                $data[$rootNode][$alias] = $this->viewVars[$key];
+            }
+        } else {
+            $data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
+            if (is_array($data) && Hash::numeric(array_keys($data))) {
+                $data = [$rootNode => [$serialize => $data]];
+            }
+        }
 
-		$options = array();
-		if (Configure::read('debug')) {
-			$options['pretty'] = true;
-		}
+        $options = [];
+        if (Configure::read('debug')) {
+            $options['pretty'] = true;
+        }
 
-		return Xml::fromArray($data, $options)->asXML();
-	}
-
+        return Xml::fromArray($data, $options)->asXML();
+    }
 }

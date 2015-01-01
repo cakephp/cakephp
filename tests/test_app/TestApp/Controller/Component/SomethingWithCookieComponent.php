@@ -19,12 +19,13 @@ use Cake\Controller\Component;
  * SomethingWithCookieComponent class
  *
  */
-class SomethingWithCookieComponent extends Component {
+class SomethingWithCookieComponent extends Component
+{
 
-/**
- * components property
- *
- * @var array
- */
-	public $components = array('Cookie');
+    /**
+     * components property
+     *
+     * @var array
+     */
+    public $components = ['Cookie'];
 }

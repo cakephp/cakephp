@@ -24,48 +24,52 @@ use Cake\TestSuite\TestCase;
  * test case for PluginShortRoute
  *
  */
-class PluginShortRouteTest extends TestCase {
+class PluginShortRouteTest extends TestCase
+{
 
-/**
- * setUp method
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		Configure::write('Routing', array('admin' => null, 'prefixes' => array()));
-		Router::reload();
-	}
+    /**
+     * setUp method
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        Configure::write('Routing', ['admin' => null, 'prefixes' => []]);
+        Router::reload();
+    }
 
-/**
- * test the parsing of routes.
- *
- * @return void
- */
-	public function testParsing() {
-		$route = new PluginShortRoute('/:plugin', array('action' => 'index'), array('plugin' => 'foo|bar'));
+    /**
+     * test the parsing of routes.
+     *
+     * @return void
+     */
+    public function testParsing()
+    {
+        $route = new PluginShortRoute('/:plugin', ['action' => 'index'], ['plugin' => 'foo|bar']);
 
-		$result = $route->parse('/foo');
-		$this->assertEquals('Foo', $result['plugin']);
-		$this->assertEquals('Foo', $result['controller']);
-		$this->assertEquals('index', $result['action']);
+        $result = $route->parse('/foo');
+        $this->assertEquals('Foo', $result['plugin']);
+        $this->assertEquals('Foo', $result['controller']);
+        $this->assertEquals('index', $result['action']);
 
-		$result = $route->parse('/wrong');
-		$this->assertFalse($result, 'Wrong plugin name matched %s');
-	}
+        $result = $route->parse('/wrong');
+        $this->assertFalse($result, 'Wrong plugin name matched %s');
+    }
 
-/**
- * test the reverse routing of the plugin shortcut URLs.
- *
- * @return void
- */
-	public function testMatch() {
-		$route = new PluginShortRoute('/:plugin', array('action' => 'index'), array('plugin' => 'foo|bar'));
+    /**
+     * test the reverse routing of the plugin shortcut URLs.
+     *
+     * @return void
+     */
+    public function testMatch()
+    {
+        $route = new PluginShortRoute('/:plugin', ['action' => 'index'], ['plugin' => 'foo|bar']);
 
-		$result = $route->match(array('plugin' => 'foo', 'controller' => 'posts', 'action' => 'index'));
-		$this->assertFalse($result, 'plugin controller mismatch was converted. %s');
+        $result = $route->match(['plugin' => 'foo', 'controller' => 'posts', 'action' => 'index']);
+        $this->assertFalse($result, 'plugin controller mismatch was converted. %s');
 
-		$result = $route->match(array('plugin' => 'foo', 'controller' => 'foo', 'action' => 'index'));
-		$this->assertEquals('/foo', $result);
-	}
+        $result = $route->match(['plugin' => 'foo', 'controller' => 'foo', 'action' => 'index']);
+        $this->assertEquals('/foo', $result);
+    }
 }

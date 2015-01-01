@@ -21,32 +21,36 @@
  */
 namespace TestApp\Controller;
 
-class TestsAppsController extends AppController {
+class TestsAppsController extends AppController
+{
 
-	public $uses = array();
+    public $uses = [];
 
-	public $components = array('RequestHandler');
+    public $components = ['RequestHandler'];
 
-	public function index() {
-		$var = '';
-		if (isset($this->request->query['var'])) {
-			$var = $this->request->query['var'];
-		}
-		$this->set('var', $var);
-	}
+    public function index()
+    {
+        $var = '';
+        if (isset($this->request->query['var'])) {
+            $var = $this->request->query['var'];
+        }
+        $this->set('var', $var);
+    }
 
-	public function some_method() {
-		$this->response->body(5);
-		return $this->response;
-	}
+    public function some_method()
+    {
+        $this->response->body(5);
+        return $this->response;
+    }
 
-	public function set_action() {
-		$this->set('var', 'string');
-		$this->render('index');
-	}
+    public function set_action()
+    {
+        $this->set('var', 'string');
+        $this->render('index');
+    }
 
-	public function redirect_to() {
-		return $this->redirect('http://cakephp.org');
-	}
-
+    public function redirect_to()
+    {
+        return $this->redirect('http://cakephp.org');
+    }
 }

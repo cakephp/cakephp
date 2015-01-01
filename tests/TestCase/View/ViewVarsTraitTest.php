@@ -20,142 +20,166 @@ use Cake\View\ViewVarsTrait;
  * ViewVarsTrait test case
  *
  */
-class ViewVarsTraitTest extends TestCase {
+class ViewVarsTraitTest extends TestCase
+{
 
-/**
- * setup
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
+    /**
+     * setup
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
 
-		$this->subject = $this->getObjectForTrait('Cake\View\ViewVarsTrait');
-	}
+        $this->subject = $this->getObjectForTrait('Cake\View\ViewVarsTrait');
+    }
 
-/**
- * Test set() with one param.
- *
- * @return void
- */
-	public function testSetOneParam() {
-		$data = ['test' => 'val', 'foo' => 'bar'];
-		$this->subject->set($data);
-		$this->assertEquals($data, $this->subject->viewVars);
+    /**
+     * Test set() with one param.
+     *
+     * @return void
+     */
+    public function testSetOneParam()
+    {
+        $data = ['test' => 'val', 'foo' => 'bar'];
+        $this->subject->set($data);
+        $this->assertEquals($data, $this->subject->viewVars);
 
-		$update = ['test' => 'updated'];
-		$this->subject->set($update);
-		$this->assertEquals('updated', $this->subject->viewVars['test']);
-	}
+        $update = ['test' => 'updated'];
+        $this->subject->set($update);
+        $this->assertEquals('updated', $this->subject->viewVars['test']);
+    }
 
-/**
- * test set() with 2 params
- *
- * @return void
- */
-	public function testSetTwoParam() {
-		$this->subject->set('testing', 'value');
-		$this->assertEquals(['testing' => 'value'], $this->subject->viewVars);
-	}
+    /**
+     * test set() with 2 params
+     *
+     * @return void
+     */
+    public function testSetTwoParam()
+    {
+        $this->subject->set('testing', 'value');
+        $this->assertEquals(['testing' => 'value'], $this->subject->viewVars);
+    }
 
-/**
- * test set() with 2 params in combine mode
- *
- * @return void
- */
-	public function testSetTwoParamCombind() {
-		$keys = ['one', 'key'];
-		$vals = ['two', 'val'];
-		$this->subject->set($keys, $vals);
+    /**
+     * test chainable set()
+     *
+     * @return void
+     */
+    public function testSetChained()
+    {
+        $result = $this->subject->set('testing', 'value')
+            ->set('foo', 'bar');
+        $this->assertSame($this->subject, $result);
+        $this->assertEquals(['testing' => 'value', 'foo' => 'bar'], $this->subject->viewVars);
+    }
 
-		$expected = ['one' => 'two', 'key' => 'val'];
-		$this->assertEquals($expected, $this->subject->viewVars);
-	}
+    /**
+     * test set() with 2 params in combine mode
+     *
+     * @return void
+     */
+    public function testSetTwoParamCombind()
+    {
+        $keys = ['one', 'key'];
+        $vals = ['two', 'val'];
+        $this->subject->set($keys, $vals);
 
-/**
- * test viewOptions() with 1 string param, merge true
- *
- * @return void
- */
-	public function testAddOneViewOption() {
-		$option = 'newOption';
-		$this->subject->viewOptions($option);
+        $expected = ['one' => 'two', 'key' => 'val'];
+        $this->assertEquals($expected, $this->subject->viewVars);
+    }
 
-		$this->assertContains($option, $this->subject->_validViewOptions);
-	}
+    /**
+     * test viewOptions() with 1 string param, merge true
+     *
+     * @return void
+     */
+    public function testAddOneViewOption()
+    {
+        $option = 'newOption';
+        $this->subject->viewOptions($option);
 
-/**
- * test viewOptions() with 2 strings in array, merge true.
- *
- * @return void
- */
-	public function testAddTwoViewOption() {
-		$this->subject->_validViewOptions = ['oldOption'];
-		$option = ['newOption', 'anotherOption'];
-		$result = $this->subject->viewOptions($option);
-		$expects = ['oldOption', 'newOption', 'anotherOption'];
+        $this->assertContains($option, $this->subject->_validViewOptions);
+    }
 
-		$this->assertContainsOnly('string', $result);
-		$this->assertEquals($expects, $result);
-	}
+    /**
+     * test viewOptions() with 2 strings in array, merge true.
+     *
+     * @return void
+     */
+    public function testAddTwoViewOption()
+    {
+        $this->subject->_validViewOptions = ['oldOption'];
+        $option = ['newOption', 'anotherOption'];
+        $result = $this->subject->viewOptions($option);
+        $expects = ['oldOption', 'newOption', 'anotherOption'];
 
-/**
- * test empty params reads _validViewOptions.
- *
- * @return void
- */
-	public function testReadingViewOptions() {
-		$expected = $this->subject->_validViewOptions = ['one', 'two', 'three'];
-		$result = $this->subject->viewOptions();
+        $this->assertContainsOnly('string', $result);
+        $this->assertEquals($expects, $result);
+    }
 
-		$this->assertEquals($expected, $result);
-	}
+    /**
+     * test empty params reads _validViewOptions.
+     *
+     * @return void
+     */
+    public function testReadingViewOptions()
+    {
+        $expected = $this->subject->_validViewOptions = ['one', 'two', 'three'];
+        $result = $this->subject->viewOptions();
 
-/**
- * test setting $merge `false` overrides currect options.
- *
- * @return void
- */
-	public function testMergeFalseViewOptions() {
-		$this->subject->_validViewOptions = ['one', 'two', 'three'];
-		$expected = ['four', 'five', 'six'];
-		$result = $this->subject->viewOptions($expected, false);
+        $this->assertEquals($expected, $result);
+    }
 
-		$this->assertEquals($expected, $result);
-	}
+    /**
+     * test setting $merge `false` overrides currect options.
+     *
+     * @return void
+     */
+    public function testMergeFalseViewOptions()
+    {
+        $this->subject->_validViewOptions = ['one', 'two', 'three'];
+        $expected = ['four', 'five', 'six'];
+        $result = $this->subject->viewOptions($expected, false);
 
-/**
- * test _validViewOptions is undefined and $opts is null, an empty array is returned.
- *
- * @return void
- */
-	public function testUndefinedValidViewOptions() {
-		$result = $this->subject->viewOptions();
+        $this->assertEquals($expected, $result);
+    }
 
-		$this->assertTrue(is_array($result));
-		$this->assertTrue(empty($result));
-	}
+    /**
+     * test _validViewOptions is undefined and $opts is null, an empty array is returned.
+     *
+     * @return void
+     */
+    public function testUndefinedValidViewOptions()
+    {
+        $result = $this->subject->viewOptions();
 
-/**
- * test getView() throws exception if view class cannot be found
- *
- * @expectedException Cake\View\Exception\MissingViewException
- * @expectedExceptionMessage View class "Foo" is missing.
- * @return void
- */
-	public function testGetViewException() {
-		$this->subject->getView('Foo');
-	}
+        $this->assertTrue(is_array($result));
+        $this->assertTrue(empty($result));
+    }
 
-/**
- * test createView() throws exception if view class cannot be found
- *
- * @expectedException Cake\View\Exception\MissingViewException
- * @expectedExceptionMessage View class "Foo" is missing.
- * @return void
- */
-	public function testCreateViewException() {
-		$this->subject->getView('Foo');
-	}
+    /**
+     * test getView() throws exception if view class cannot be found
+     *
+     * @expectedException \Cake\View\Exception\MissingViewException
+     * @expectedExceptionMessage View class "Foo" is missing.
+     * @return void
+     */
+    public function testGetViewException()
+    {
+        $this->subject->getView('Foo');
+    }
 
+    /**
+     * test createView() throws exception if view class cannot be found
+     *
+     * @expectedException \Cake\View\Exception\MissingViewException
+     * @expectedExceptionMessage View class "Foo" is missing.
+     * @return void
+     */
+    public function testCreateViewException()
+    {
+        $this->subject->getView('Foo');
+    }
 }

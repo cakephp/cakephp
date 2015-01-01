@@ -23,53 +23,76 @@ use Cake\TestSuite\TestCase;
  * Test case for FallbackPasswordHasher
  *
  */
-class FallbackPasswordHasherTest extends TestCase {
+class FallbackPasswordHasherTest extends TestCase
+{
 
-/**
- * Tests that only the first hasher is user for hashing a password
- *
- * @return void
- */
-	public function testHash() {
-		$hasher = new FallbackPasswordHasher(['hashers' => ['Weak', 'Default']]);
-		$weak = new WeakPasswordHasher();
-		$this->assertSame($weak->hash('foo'), $hasher->hash('foo'));
+    /**
+     * Tests that only the first hasher is user for hashing a password
+     *
+     * @return void
+     */
+    public function testHash()
+    {
+        $hasher = new FallbackPasswordHasher(['hashers' => ['Weak', 'Default']]);
+        $weak = new WeakPasswordHasher();
+        $this->assertSame($weak->hash('foo'), $hasher->hash('foo'));
 
-		$simple = new DefaultPasswordHasher();
-		$hasher = new FallbackPasswordHasher(['hashers' => ['Weak', 'Default']]);
-		$this->assertSame($weak->hash('foo'), $hasher->hash('foo'));
-	}
+        $simple = new DefaultPasswordHasher();
+        $hasher = new FallbackPasswordHasher(['hashers' => ['Weak', 'Default']]);
+        $this->assertSame($weak->hash('foo'), $hasher->hash('foo'));
+    }
 
-/**
- * Tests that the check method will check with configured hashers until a match
- * is found
- *
- * @return void
- */
-	public function testCheck() {
-		$hasher = new FallbackPasswordHasher(['hashers' => ['Weak', 'Default']]);
-		$weak = new WeakPasswordHasher();
-		$simple = new DefaultPasswordHasher();
+    /**
+     * Tests that the check method will check with configured hashers until a match
+     * is found
+     *
+     * @return void
+     */
+    public function testCheck()
+    {
+        $hasher = new FallbackPasswordHasher(['hashers' => ['Weak', 'Default']]);
+        $weak = new WeakPasswordHasher();
+        $simple = new DefaultPasswordHasher();
 
-		$hash = $simple->hash('foo');
-		$otherHash = $weak->hash('foo');
-		$this->assertTrue($hasher->check('foo', $hash));
-		$this->assertTrue($hasher->check('foo', $otherHash));
-	}
+        $hash = $simple->hash('foo');
+        $otherHash = $weak->hash('foo');
+        $this->assertTrue($hasher->check('foo', $hash));
+        $this->assertTrue($hasher->check('foo', $otherHash));
+    }
 
-/**
- * Tests that the password only needs to be re-built according to the first hasher
- *
- * @return void
- */
-	public function testNeedsRehash() {
-		$hasher = new FallbackPasswordHasher(['hashers' => ['Default', 'Weak']]);
-		$weak = new WeakPasswordHasher();
-		$otherHash = $weak->hash('foo');
-		$this->assertTrue($hasher->needsRehash($otherHash));
+    /**
+     * Tests that the check method will work with configured hashers including different
+     * configs per hasher.
+     *
+     * @return void
+     */
+    public function testCheckWithConfigs()
+    {
+        $hasher = new FallbackPasswordHasher(['hashers' => ['Default', 'Weak' => ['hashType' => 'md5']]]);
+        $legacy = new WeakPasswordHasher(['hashType' => 'md5']);
+        $simple = new DefaultPasswordHasher();
 
-		$simple = new DefaultPasswordHasher();
-		$hash = $simple->hash('foo');
-		$this->assertFalse($hasher->needsRehash($hash));
-	}
+        $hash = $simple->hash('foo');
+        $legacyHash = $legacy->hash('foo');
+        $this->assertTrue($hash !== $legacyHash);
+        $this->assertTrue($hasher->check('foo', $hash));
+        $this->assertTrue($hasher->check('foo', $legacyHash));
+    }
+
+    /**
+     * Tests that the password only needs to be re-built according to the first hasher
+     *
+     * @return void
+     */
+    public function testNeedsRehash()
+    {
+        $hasher = new FallbackPasswordHasher(['hashers' => ['Default', 'Weak']]);
+        $weak = new WeakPasswordHasher();
+        $otherHash = $weak->hash('foo');
+        $this->assertTrue($hasher->needsRehash($otherHash));
+
+        $simple = new DefaultPasswordHasher();
+        $hash = $simple->hash('foo');
+        $this->assertFalse($hasher->needsRehash($hash));
+    }
 }

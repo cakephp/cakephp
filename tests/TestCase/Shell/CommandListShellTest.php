@@ -27,99 +27,105 @@ use Cake\TestSuite\TestCase;
 /**
  * Class TestStringOutput
  */
-class TestStringOutput extends ConsoleOutput {
+class TestStringOutput extends ConsoleOutput
+{
 
-	public $output = '';
+    public $output = '';
 
-	protected function _write($message) {
-		$this->output .= $message;
-	}
-
+    protected function _write($message)
+    {
+        $this->output .= $message;
+    }
 }
 
 /**
  * Class CommandListShellTest
  *
  */
-class CommandListShellTest extends TestCase {
+class CommandListShellTest extends TestCase
+{
 
-/**
- * setUp method
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
+    /**
+     * setUp method
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        Plugin::load(['TestPlugin', 'TestPluginTwo']);
 
-		$this->out = new TestStringOutput();
-		$io = new ConsoleIo($this->out);
+        $this->out = new TestStringOutput();
+        $io = new ConsoleIo($this->out);
 
-		$this->Shell = $this->getMock(
-			'Cake\Shell\CommandListShell',
-			['in', 'err', '_stop', 'clear'],
-			[$io]
-		);
+        $this->Shell = $this->getMock(
+            'Cake\Shell\CommandListShell',
+            ['in', 'err', '_stop', 'clear'],
+            [$io]
+        );
 
-		$this->Shell->Command = $this->getMock(
-			'Cake\Shell\Task\CommandTask',
-			['in', '_stop', 'err', 'clear'],
-			[$io]
-		);
-	}
+        $this->Shell->Command = $this->getMock(
+            'Cake\Shell\Task\CommandTask',
+            ['in', '_stop', 'err', 'clear'],
+            [$io]
+        );
+    }
 
-/**
- * tearDown
- *
- * @return void
- */
-	public function tearDown() {
-		parent::tearDown();
-		unset($this->Shell);
-		Plugin::unload();
-	}
+    /**
+     * tearDown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        unset($this->Shell);
+        Plugin::unload();
+    }
 
-/**
- * test that main finds core shells.
- *
- * @return void
- */
-	public function testMain() {
-		$this->Shell->main();
-		$output = $this->out->output;
+    /**
+     * test that main finds core shells.
+     *
+     * @return void
+     */
+    public function testMain()
+    {
+        $this->Shell->main();
+        $output = $this->out->output;
 
-		$expected = "/\[.*TestPlugin.*\] example/";
-		$this->assertRegExp($expected, $output);
+        $expected = "/\[.*TestPlugin.*\] example/";
+        $this->assertRegExp($expected, $output);
 
-		$expected = "/\[.*TestPluginTwo.*\] example, welcome/";
-		$this->assertRegExp($expected, $output);
+        $expected = "/\[.*TestPluginTwo.*\] example, welcome/";
+        $this->assertRegExp($expected, $output);
 
-		$expected = "/\[.*CORE.*\] bake, i18n, orm_cache, server, test/";
-		$this->assertRegExp($expected, $output);
+        $expected = "/\[.*CORE.*\] i18n, orm_cache, plugin_assets, server/";
+        $this->assertRegExp($expected, $output);
 
-		$expected = "/\[.*app.*\] sample/";
-		$this->assertRegExp($expected, $output);
-	}
+        $expected = "/\[.*app.*\] sample/";
+        $this->assertRegExp($expected, $output);
+    }
 
-/**
- * test xml output.
- *
- * @return void
- */
-	public function testMainXml() {
-		$this->assertFalse(defined('HHVM_VERSION'), 'Remove when travis updates to hhvm 2.5');
-		$this->Shell->params['xml'] = true;
-		$this->Shell->main();
+    /**
+     * test xml output.
+     *
+     * @return void
+     */
+    public function testMainXml()
+    {
+        $this->assertFalse(defined('HHVM_VERSION'), 'Remove when travis updates to hhvm 2.5');
+        $this->Shell->params['xml'] = true;
+        $this->Shell->main();
 
-		$output = $this->out->output;
+        $output = $this->out->output;
 
-		$find = '<shell name="sample" call_as="sample" provider="app" help="sample -h"/>';
-		$this->assertContains($find, $output);
+        $find = '<shell name="sample" call_as="sample" provider="app" help="sample -h"/>';
+        $this->assertContains($find, $output);
 
-		$find = '<shell name="bake" call_as="bake" provider="CORE" help="bake -h"/>';
-		$this->assertContains($find, $output);
+        $find = '<shell name="orm_cache" call_as="orm_cache" provider="CORE" help="orm_cache -h"/>';
+        $this->assertContains($find, $output);
 
-		$find = '<shell name="welcome" call_as="TestPluginTwo.welcome" provider="TestPluginTwo" help="TestPluginTwo.welcome -h"/>';
-		$this->assertContains($find, $output);
-	}
+        $find = '<shell name="welcome" call_as="TestPluginTwo.welcome" provider="TestPluginTwo" help="TestPluginTwo.welcome -h"/>';
+        $this->assertContains($find, $output);
+    }
 }

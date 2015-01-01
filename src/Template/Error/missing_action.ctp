@@ -18,44 +18,53 @@ use Cake\Core\Plugin;
 
 $namespace = Configure::read('App.namespace');
 if (!empty($plugin)) {
-	$namespace = $plugin;
+    $namespace = $plugin;
 }
 $prefixNs = '';
 if (!empty($prefix)) {
-	$prefix = Inflector::camelize($prefix);
-	$prefixNs = '\\' . $prefix;
+    $prefix = Inflector::camelize($prefix);
+    $prefixNs = '\\' . $prefix;
+    $prefix .= DS;
 }
 if (empty($plugin)) {
-	$path = APP_DIR . DS . 'Controller' . DS . $prefix . DS . h($controller) . '.php' ;
+    $path = APP_DIR . DS . 'Controller' . DS . $prefix . h($controller) . '.php' ;
 } else {
-	$path = Plugin::classPath($plugin) . 'Controller' . DS . $prefix . DS . h($controller) . '.php';
+    $path = Plugin::classPath($plugin) . 'Controller' . DS . $prefix . h($controller) . '.php';
 }
+
+$this->layout = 'dev_error';
+
+$this->assign('title', sprintf('Missing Method in %s', h($controller)));
+$this->assign(
+    'subheading',
+    sprintf('The action <em>%s</em> is not defined in <em>%s</em>', h($action), h($controller))
+);
+$this->assign('templateName', 'missing_action.ctp');
+
+$this->start('file');
 ?>
-<h2><?= sprintf('Missing Method in %s', h($controller)); ?></h2> <p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('The action <em>%s</em> is not defined in controller <em>%s</em>', h($action), h($controller)); ?>
-</p>
 <p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('Create <em>%s::%s()</em> in file: %s.', h($controller),  h($action), $path); ?>
+    <strong>Error: </strong>
+    <?= sprintf('Create <em>%s::%s()</em> in file: %s.', h($controller),  h($action), $path); ?>
 </p>
-<pre>
-&lt;?php
-namespace <?= h($namespace); ?>\Controller<?= h($prefixNs); ?>;
 
-use <?= h($namespace); ?>\Controller\AppController;
+<?php
+$code = <<<PHP
+<?php
+namespace {$namespace}\Controller{$prefixNs};
 
-class <?= h($controller); ?> extends AppController {
+use {$namespace}\Controller\AppController;
 
-<strong>
-	public function <?= h($action); ?>() {
+class {$controller} extends AppController
+{
 
-	}
-</strong>
+    public function {$action}()
+    {
+
+    }
 }
-</pre>
-<p class="notice">
-	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_action.ctp'); ?>
-</p>
-<?= $this->element('exception_stack_trace'); ?>
+PHP;
+?>
+
+<div class="code-dump"><?php highlight_string($code) ?></div>
+<?php $this->end() ?>

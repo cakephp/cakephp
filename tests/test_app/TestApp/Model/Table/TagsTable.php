@@ -17,12 +17,13 @@ use Cake\ORM\Table;
  * Tag table class
  *
  */
-class TagsTable extends Table {
+class TagsTable extends Table
+{
 
-	public function initialize(array $config) {
-		$this->belongsTo('authors');
-		$this->belongsToMany('articles');
-		$this->hasMany('ArticlesTags', ['propertyName' => 'extraInfo']);
-	}
-
+    public function initialize(array $config)
+    {
+        $this->belongsTo('authors');
+        $this->belongsToMany('articles');
+        $this->hasMany('ArticlesTags', ['propertyName' => 'extraInfo']);
+    }
 }

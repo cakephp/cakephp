@@ -16,58 +16,47 @@
  */
 use Cake\Error\Debugger;
 ?>
-<h3>Stack Trace</h3>
-<ul class="cake-stack-trace">
-<?php foreach ($error->getTrace() as $i => $stack): ?>
-	<li><?php
-	$excerpt = $arguments = '';
-	$params = array();
 
-	if (isset($stack['file']) && isset($stack['line'])):
-		printf(
-			'<a href="#" onclick="traceToggle(event, \'file-excerpt-%s\')">%s line %s</a>',
-			$i,
-			Debugger::trimPath($stack['file']),
-			$stack['line']
-		);
-		$excerpt = sprintf('<div id="file-excerpt-%s" class="cake-code-dump" style="display:none;"><pre>', $i);
-		$excerpt .= implode("\n", Debugger::excerpt($stack['file'], $stack['line'] - 1, 2));
-		$excerpt .= '</pre></div> ';
-	else:
-		echo '<a href="#">[internal function]</a>';
-	endif;
-	echo ' &rarr; ';
-	if ($stack['function']):
-		$args = array();
-		if (!empty($stack['args'])):
-			foreach ((array)$stack['args'] as $arg):
-				$args[] = Debugger::getType($arg);
-				$params[] = Debugger::exportVar($arg, 2);
-			endforeach;
-		endif;
+<?php
+foreach ($error->getTrace() as $i => $stack):
+    $excerpt = $params = [];
 
-		$called = isset($stack['class']) ? $stack['class'] . $stack['type'] . $stack['function'] : $stack['function'];
+    if (isset($stack['file']) && isset($stack['line'])):
+        $excerpt = Debugger::excerpt($stack['file'], $stack['line'], 4);
+    endif;
 
-		printf(
-			'<a href="#" onclick="traceToggle(event, \'trace-args-%s\')">%s(%s)</a> ',
-			$i,
-			$called,
-			h(implode(', ', $args))
-		);
-		$arguments = sprintf('<div id="trace-args-%s" class="cake-code-dump" style="display: none;"><pre>', $i);
-		$arguments .= h(implode("\n", $params));
-		$arguments .= '</pre></div>';
-	endif;
-	echo $excerpt;
-	echo $arguments;
-	?></li>
+    if (isset($stack['file'])):
+        $file = $stack['file'];
+    else:
+        $file = '[internal function]';
+    endif;
+
+    if ($stack['function']):
+        if (!empty($stack['args'])):
+            foreach ((array)$stack['args'] as $arg):
+                $params[] = Debugger::exportVar($arg, 4);
+            endforeach;
+        else:
+            $params[] = 'No arguments';
+        endif;
+    endif;
+?>
+    <div id="stack-frame-<?= $i ?>" style="display:none;" class="stack-details">
+        <span class="stack-frame-file"><?= h($file) ?></span>
+        <a href="#" class="toggle-link stack-frame-args" data-target="stack-args-<?= $i ?>">toggle arguments</a>
+
+        <table class="code-excerpt" cellspacing="0" cellpadding="0">
+        <?php $lineno = isset($stack['line']) ? $stack['line'] - 4 : 0 ?>
+        <?php foreach ($excerpt as $l => $line): ?>
+            <tr>
+                <td class="excerpt-number" data-number="<?= $lineno + $l ?>"></td>
+                <td class="excerpt-line"><?= $line ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </table>
+
+        <div id="stack-args-<?= $i ?>" style="display: none;">
+            <pre><?= h(implode("\n", $params)) ?></pre>
+        </div>
+    </div>
 <?php endforeach; ?>
-</ul>
-<script type="text/javascript">
-function traceToggle(event, id) {
-	var el = document.getElementById(id);
-	el.style.display = (el.style.display === 'block') ? 'none' : 'block';
-	event.preventDefault();
-	return false;
-}
-</script>

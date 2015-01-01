@@ -22,32 +22,34 @@ use Cake\Database\ValueBinder;
  *
  * @internal
  */
-trait FieldTrait {
+trait FieldTrait
+{
 
-/**
- * The field name or expression to be used in the left hand side of the operator
- *
- * @var string
- */
-	protected $_field;
+    /**
+     * The field name or expression to be used in the left hand side of the operator
+     *
+     * @var string
+     */
+    protected $_field;
 
-/**
- * Sets the field name
- *
- * @param string $field The field to compare with.
- * @return void
- */
-	public function field($field) {
-		$this->_field = $field;
-	}
+    /**
+     * Sets the field name
+     *
+     * @param string $field The field to compare with.
+     * @return void
+     */
+    public function setField($field)
+    {
+        $this->_field = $field;
+    }
 
-/**
- * Returns the field name
- *
- * @return string|\Cake\Database\ExpressionInterface
- */
-	public function getField() {
-		return $this->_field;
-	}
-
+    /**
+     * Returns the field name
+     *
+     * @return string|\Cake\Database\ExpressionInterface
+     */
+    public function getField()
+    {
+        return $this->_field;
+    }
 }

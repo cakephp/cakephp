@@ -24,91 +24,94 @@ use InvalidArgumentException;
  * Example users of this trait are Cake\Controller\Controller and
  * Cake\Console\Shell.
  */
-trait ModelAwareTrait {
+trait ModelAwareTrait
+{
 
-/**
- * This object's primary model class name. Should be a plural form.
- * CakePHP will not inflect the name.
- *
- * Example: For an object named 'Comments', the modelClass would be 'Comments'.
- * Plugin classes should use `Plugin.Comments` style names to correctly load
- * models from the correct plugin.
- *
- * @var string
- */
-	public $modelClass;
+    /**
+     * This object's primary model class name. Should be a plural form.
+     * CakePHP will not inflect the name.
+     *
+     * Example: For an object named 'Comments', the modelClass would be 'Comments'.
+     * Plugin classes should use `Plugin.Comments` style names to correctly load
+     * models from the correct plugin.
+     *
+     * @var string
+     */
+    public $modelClass;
 
-/**
- * A list of model factory functions.
- *
- * @var array
- */
-	protected $_modelFactories = [];
+    /**
+     * A list of model factory functions.
+     *
+     * @var array
+     */
+    protected $_modelFactories = [];
 
-/**
- * Set the modelClass and modelKey properties based on conventions.
- *
- * If the properties are already set they will not be overwritten
- *
- * @param string $name Class name.
- * @return void
- */
-	protected function _setModelClass($name) {
-		if (empty($this->modelClass)) {
-			$this->modelClass = $name;
-		}
-	}
+    /**
+     * Set the modelClass and modelKey properties based on conventions.
+     *
+     * If the properties are already set they will not be overwritten
+     *
+     * @param string $name Class name.
+     * @return void
+     */
+    protected function _setModelClass($name)
+    {
+        if (empty($this->modelClass)) {
+            $this->modelClass = $name;
+        }
+    }
 
-/**
- * Loads and constructs repository objects required by this object
- *
- * Typically used to load ORM Table objects as required. Can
- * also be used to load other types of repository objects your application uses.
- *
- * If a repository provider does not return an object a MissingModelException will
- * be thrown.
- *
- * @param string $modelClass Name of model class to load. Defaults to $this->modelClass
- * @param string $type The type of repository to load. Defaults to 'Table' which
- *   delegates to Cake\ORM\TableRegistry.
- * @return object The model instance created.
- * @throws \Cake\Model\Exception\MissingModelException If the model class cannot be found.
- * @throws \InvalidArgumentException When using a type that has not been registered.
- */
-	public function loadModel($modelClass = null, $type = 'Table') {
-		if ($modelClass === null) {
-			$modelClass = $this->modelClass;
-		}
+    /**
+     * Loads and constructs repository objects required by this object
+     *
+     * Typically used to load ORM Table objects as required. Can
+     * also be used to load other types of repository objects your application uses.
+     *
+     * If a repository provider does not return an object a MissingModelException will
+     * be thrown.
+     *
+     * @param string|null $modelClass Name of model class to load. Defaults to $this->modelClass
+     * @param string $type The type of repository to load. Defaults to 'Table' which
+     *   delegates to Cake\ORM\TableRegistry.
+     * @return object The model instance created.
+     * @throws \Cake\Model\Exception\MissingModelException If the model class cannot be found.
+     * @throws \InvalidArgumentException When using a type that has not been registered.
+     */
+    public function loadModel($modelClass = null, $type = 'Table')
+    {
+        if ($modelClass === null) {
+            $modelClass = $this->modelClass;
+        }
 
-		if (isset($this->{$modelClass})) {
-			return $this->{$modelClass};
-		}
+        if (isset($this->{$modelClass})) {
+            return $this->{$modelClass};
+        }
 
-		list($plugin, $modelClass) = pluginSplit($modelClass, true);
+        list($plugin, $modelClass) = pluginSplit($modelClass, true);
 
-		if (!isset($this->_modelFactories[$type])) {
-			throw new InvalidArgumentException(sprintf(
-				'Unknown repository type "%s". Make sure you register a type before trying to use it.',
-				$type
-			));
-		}
-		$factory = $this->_modelFactories[$type];
-		$this->{$modelClass} = $factory($plugin . $modelClass);
-		if (!$this->{$modelClass}) {
-			throw new MissingModelException([$modelClass, $type]);
-		}
-		return $this->{$modelClass};
-	}
+        if (!isset($this->_modelFactories[$type])) {
+            throw new InvalidArgumentException(sprintf(
+                'Unknown repository type "%s". Make sure you register a type before trying to use it.',
+                $type
+            ));
+        }
+        $factory = $this->_modelFactories[$type];
+        $this->{$modelClass} = $factory($plugin . $modelClass);
+        if (!$this->{$modelClass}) {
+            throw new MissingModelException([$modelClass, $type]);
+        }
+        return $this->{$modelClass};
+    }
 
-/**
- * Register a callable to generate repositories of a given type.
- *
- * @param string $type The name of the repository type the factory function is for.
- * @param callable $factory The factory function used to create instances.
- * @return void
- */
-	public function modelFactory($type, callable $factory) {
-		$this->_modelFactories[$type] = $factory;
-	}
-
+    /**
+     * Register a callable to generate repositories of a given type.
+     *
+     * @param string $type The name of the repository type the factory function is for.
+     * @param callable $factory The factory function used to create instances.
+     * @return void
+     */
+    public function modelFactory($type, callable $factory)
+    {
+        $this->_modelFactories[$type] = $factory;
+    }
 }

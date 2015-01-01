@@ -19,12 +19,13 @@ use Cake\Controller\Component;
  * MutuallyReferencingTwoComponent class
  *
  */
-class MutuallyReferencingTwoComponent extends Component {
+class MutuallyReferencingTwoComponent extends Component
+{
 
-/**
- * components property
- *
- * @var array
- */
-	public $components = array('MutuallyReferencingOne');
+    /**
+     * components property
+     *
+     * @var array
+     */
+    public $components = ['MutuallyReferencingOne'];
 }

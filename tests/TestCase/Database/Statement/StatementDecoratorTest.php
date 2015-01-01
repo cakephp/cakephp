@@ -22,42 +22,44 @@ use \PDO;
  * Tests StatementDecorator class
  *
  */
-class StatemetDecoratorTest extends TestCase {
+class StatemetDecoratorTest extends TestCase
+{
 
-/**
- * Tests that calling lastInsertId will proxy it to
- * the driver's lastInsertId method
- *
- * @return void
- */
-	public function testLastInsertId() {
-		$statement = $this->getMock('\PDOStatement');
-		$driver = $this->getMock('\Cake\Database\Driver');
-		$statement = new StatementDecorator($statement, $driver);
+    /**
+     * Tests that calling lastInsertId will proxy it to
+     * the driver's lastInsertId method
+     *
+     * @return void
+     */
+    public function testLastInsertId()
+    {
+        $statement = $this->getMock('\PDOStatement');
+        $driver = $this->getMock('\Cake\Database\Driver');
+        $statement = new StatementDecorator($statement, $driver);
 
-		$driver->expects($this->once())->method('lastInsertId')
-			->with('users')
-			->will($this->returnValue(2));
-		$this->assertEquals(2, $statement->lastInsertId('users'));
-	}
+        $driver->expects($this->once())->method('lastInsertId')
+            ->with('users')
+            ->will($this->returnValue(2));
+        $this->assertEquals(2, $statement->lastInsertId('users'));
+    }
 
-/**
- * Tests that calling lastInsertId will get the
- *
- * @return void
- */
-	public function testLastInsertIdWithReturning() {
-		$internal = $this->getMock('\PDOStatement');
-		$driver = $this->getMock('\Cake\Database\Driver');
-		$statement = new StatementDecorator($internal, $driver);
+    /**
+     * Tests that calling lastInsertId will get the
+     *
+     * @return void
+     */
+    public function testLastInsertIdWithReturning()
+    {
+        $internal = $this->getMock('\PDOStatement');
+        $driver = $this->getMock('\Cake\Database\Driver');
+        $statement = new StatementDecorator($internal, $driver);
 
-		$internal->expects($this->once())->method('columnCount')
-			->will($this->returnValue(1));
-		$internal->expects($this->once())->method('fetch')
-			->with('assoc')
-			->will($this->returnValue(['id' => 2]));
-		$driver->expects($this->never())->method('lastInsertId');
-		$this->assertEquals(2, $statement->lastInsertId('users', 'id'));
-	}
-
+        $internal->expects($this->once())->method('columnCount')
+            ->will($this->returnValue(1));
+        $internal->expects($this->once())->method('fetch')
+            ->with('assoc')
+            ->will($this->returnValue(['id' => 2]));
+        $driver->expects($this->never())->method('lastInsertId');
+        $this->assertEquals(2, $statement->lastInsertId('users', 'id'));
+    }
 }

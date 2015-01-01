@@ -21,23 +21,13 @@ use Cake\Event\Event;
  * BananaComponent class
  *
  */
-class BananaComponent extends Component {
+class BananaComponent extends Component
+{
 
-/**
- * testField property
- *
- * @var string
- */
-	public $testField = 'BananaField';
-
-/**
- * startup method
- *
- * @param Event $event
- * @param Controller $controller
- * @return string
- */
-	public function startup(Event $event) {
-		$controller->bar = 'fail';
-	}
+    /**
+     * testField property
+     *
+     * @var string
+     */
+    public $testField = 'BananaField';
 }

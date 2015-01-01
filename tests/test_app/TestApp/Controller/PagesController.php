@@ -30,55 +30,56 @@ use Cake\View\Exception\MissingTemplateException;
  *
  * @link http://book.cakephp.org/2.0/en/controllers/pages-controller.html
  */
-class PagesController extends AppController {
+class PagesController extends AppController
+{
 
-/**
- * Default helper
- *
- * @var array
- */
-	public $helpers = array('Html', 'Session');
+    /**
+     * Default helper
+     *
+     * @var array
+     */
+    public $helpers = ['Html', 'Session'];
 
-/**
- * Displays a view
- *
- * @param mixed What page to display
- * @return void
- * @throws Cake\Network\Exception\NotFoundException When the view file could not be found
- *	or Cake\View\Exception\MissingTemplateException in debug mode.
- */
-	public function display() {
-		$path = func_get_args();
+    /**
+     * Displays a view
+     *
+     * @param mixed What page to display
+     * @return void
+     * @throws Cake\Network\Exception\NotFoundException When the view file could not be found
+     *  or Cake\View\Exception\MissingTemplateException in debug mode.
+     */
+    public function display()
+    {
+        $path = func_get_args();
 
-		$count = count($path);
-		if (!$count) {
-			return $this->redirect('/');
-		}
-		$page = $subpage = $titleForLayout = null;
+        $count = count($path);
+        if (!$count) {
+            return $this->redirect('/');
+        }
+        $page = $subpage = $titleForLayout = null;
 
-		if (!empty($path[0])) {
-			$page = $path[0];
-		}
-		if (!empty($path[1])) {
-			$subpage = $path[1];
-		}
-		if (!empty($path[$count - 1])) {
-			$titleForLayout = Inflector::humanize($path[$count - 1]);
-		}
-		$this->set(array(
-			'page' => $page,
-			'subpage' => $subpage,
-			'title_for_layout' => $titleForLayout
-		));
+        if (!empty($path[0])) {
+            $page = $path[0];
+        }
+        if (!empty($path[1])) {
+            $subpage = $path[1];
+        }
+        if (!empty($path[$count - 1])) {
+            $titleForLayout = Inflector::humanize($path[$count - 1]);
+        }
+        $this->set([
+            'page' => $page,
+            'subpage' => $subpage,
+            'title_for_layout' => $titleForLayout
+        ]);
 
-		try {
-			$this->render(implode('/', $path));
-		} catch (MissingTemplateException $e) {
-			if (Configure::read('debug')) {
-				throw $e;
-			}
-			throw new NotFoundException();
-		}
-	}
-
+        try {
+            $this->render(implode('/', $path));
+        } catch (MissingTemplateException $e) {
+            if (Configure::read('debug')) {
+                throw $e;
+            }
+            throw new NotFoundException();
+        }
+    }
 }

@@ -27,124 +27,131 @@ use Cake\View\View;
  * FlashHelperTest class
  *
  */
-class FlashHelperTest extends TestCase {
+class FlashHelperTest extends TestCase
+{
 
-/**
- * setUp method
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		$this->View = new View();
-		$session = new Session();
-		$this->View->request = new Request(['session' => $session]);
-		$this->Flash = new FlashHelper($this->View);
+    /**
+     * setUp method
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->View = new View();
+        $session = new Session();
+        $this->View->request = new Request(['session' => $session]);
+        $this->Flash = new FlashHelper($this->View);
 
-		$session->write(array(
-			'Flash' => array(
-				'flash' => array(
-					'key' => 'flash',
-					'message' => 'This is a calling',
-					'element' => 'Flash/default',
-					'params' => array()
-				),
-				'notification' => array(
-					'key' => 'notification',
-					'message' => 'This is a test of the emergency broadcasting system',
-					'element' => 'flash_helper',
-					'params' => array(
-						'title' => 'Notice!',
-						'name' => 'Alert!'
-					)
-				),
-				'classy' => array(
-					'key' => 'classy',
-					'message' => 'Recorded',
-					'element' => 'flash_classy',
-					'params' => array()
-				)
-			)
-		));
-	}
+        $session->write([
+            'Flash' => [
+                'flash' => [
+                    'key' => 'flash',
+                    'message' => 'This is a calling',
+                    'element' => 'Flash/default',
+                    'params' => []
+                ],
+                'notification' => [
+                    'key' => 'notification',
+                    'message' => 'This is a test of the emergency broadcasting system',
+                    'element' => 'flash_helper',
+                    'params' => [
+                        'title' => 'Notice!',
+                        'name' => 'Alert!'
+                    ]
+                ],
+                'classy' => [
+                    'key' => 'classy',
+                    'message' => 'Recorded',
+                    'element' => 'flash_classy',
+                    'params' => []
+                ]
+            ]
+        ]);
+    }
 
-/**
- * tearDown method
- *
- * @return void
- */
-	public function tearDown() {
-		parent::tearDown();
-		unset($this->View, $this->Flash);
-	}
+    /**
+     * tearDown method
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        unset($this->View, $this->Flash);
+    }
 
-/**
- * testFlash method
- *
- * @return void
- */
-	public function testFlash() {
-		$result = $this->Flash->render();
-		$expected = '<div class="message">This is a calling</div>';
-		$this->assertContains($expected, $result);
+    /**
+     * testFlash method
+     *
+     * @return void
+     */
+    public function testFlash()
+    {
+        $result = $this->Flash->render();
+        $expected = '<div class="message">This is a calling</div>';
+        $this->assertContains($expected, $result);
 
-		$expected = '<div id="classy-message">Recorded</div>';
-		$result = $this->Flash->render('classy');
-		$this->assertEquals($expected, $result);
+        $expected = '<div id="classy-message">Recorded</div>';
+        $result = $this->Flash->render('classy');
+        $this->assertEquals($expected, $result);
 
-		$result = $this->Flash->render('notification');
-		$expected = [
-			'div' => ['id' => 'notificationLayout'],
-			'<h1', 'Alert!', '/h1',
-			'<h3', 'Notice!', '/h3',
-			'<p', 'This is a test of the emergency broadcasting system', '/p',
-			'/div'
-		];
-		$this->assertHtml($expected, $result);
-		$this->assertNull($this->Flash->render('non-existent'));
-	}
+        $result = $this->Flash->render('notification');
+        $expected = [
+            'div' => ['id' => 'notificationLayout'],
+            '<h1', 'Alert!', '/h1',
+            '<h3', 'Notice!', '/h3',
+            '<p', 'This is a test of the emergency broadcasting system', '/p',
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+        $this->assertNull($this->Flash->render('non-existent'));
+    }
 
-/**
- * testFlashThrowsException
- *
- * @expectedException \UnexpectedValueException
- */
-	public function testFlashThrowsException() {
-		$this->View->request->session()->write('Flash.foo', 'bar');
-		$this->Flash->render('foo');
-	}
+    /**
+     * testFlashThrowsException
+     *
+     * @expectedException \UnexpectedValueException
+     */
+    public function testFlashThrowsException()
+    {
+        $this->View->request->session()->write('Flash.foo', 'bar');
+        $this->Flash->render('foo');
+    }
 
-/**
- * test setting the element from the attrs.
- *
- * @return void
- */
-	public function testFlashElementInAttrs() {
-		$result = $this->Flash->render('notification', array(
-			'element' => 'flash_helper',
-			'params' => array('title' => 'Notice!', 'name' => 'Alert!')
-		));
+    /**
+     * test setting the element from the attrs.
+     *
+     * @return void
+     */
+    public function testFlashElementInAttrs()
+    {
+        $result = $this->Flash->render('notification', [
+            'element' => 'flash_helper',
+            'params' => ['title' => 'Notice!', 'name' => 'Alert!']
+        ]);
 
-		$expected = [
-			'div' => ['id' => 'notificationLayout'],
-			'<h1', 'Alert!', '/h1',
-			'<h3', 'Notice!', '/h3',
-			'<p', 'This is a test of the emergency broadcasting system', '/p',
-			'/div'
-		];
-		$this->assertHtml($expected, $result);
-	}
+        $expected = [
+            'div' => ['id' => 'notificationLayout'],
+            '<h1', 'Alert!', '/h1',
+            '<h3', 'Notice!', '/h3',
+            '<p', 'This is a test of the emergency broadcasting system', '/p',
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+    }
 
-/**
- * test using elements in plugins.
- *
- * @return void
- */
-	public function testFlashWithPluginElement() {
-		Plugin::load('TestPlugin');
+    /**
+     * test using elements in plugins.
+     *
+     * @return void
+     */
+    public function testFlashWithPluginElement()
+    {
+        Plugin::load('TestPlugin');
 
-		$result = $this->Flash->render('flash', array('element' => 'TestPlugin.Flash/plugin_element'));
-		$expected = 'this is the plugin element';
-		$this->assertEquals($expected, $result);
-	}
+        $result = $this->Flash->render('flash', ['element' => 'TestPlugin.Flash/plugin_element']);
+        $expected = 'this is the plugin element';
+        $this->assertEquals($expected, $result);
+    }
 }

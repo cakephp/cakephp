@@ -52,125 +52,132 @@ use Cake\Network\Response;
  * You can also enable JSONP support by setting parameter `_jsonp` to true or a string to specify
  * custom query string parameter name which will contain the callback function name.
  */
-class JsonView extends View {
+class JsonView extends View
+{
 
-/**
- * JSON layouts are located in the json sub directory of `Layouts/`
- *
- * @var string
- */
-	public $layoutPath = 'json';
+    /**
+     * JSON layouts are located in the json sub directory of `Layouts/`
+     *
+     * @var string
+     */
+    public $layoutPath = 'json';
 
-/**
- * JSON views are located in the 'json' sub directory for controllers' views.
- *
- * @var string
- */
-	public $subDir = 'json';
+    /**
+     * JSON views are located in the 'json' sub directory for controllers' views.
+     *
+     * @var string
+     */
+    public $subDir = 'json';
 
-/**
- * Constructor
- *
- * @param \Cake\Network\Request $request Request instance.
- * @param \Cake\Network\Response $response Response instance.
- * @param \Cake\Event\EventManager $eventManager EventManager instance.
- * @param array $viewOptions An array of view options
- */
-	public function __construct(Request $request = null, Response $response = null,
-		EventManager $eventManager = null, array $viewOptions = []) {
-		parent::__construct($request, $response, $eventManager, $viewOptions);
+    /**
+     * Constructor
+     *
+     * @param \Cake\Network\Request $request Request instance.
+     * @param \Cake\Network\Response $response Response instance.
+     * @param \Cake\Event\EventManager $eventManager EventManager instance.
+     * @param array $viewOptions An array of view options
+     */
+    public function __construct(
+        Request $request = null,
+        Response $response = null,
+        EventManager $eventManager = null,
+        array $viewOptions = []
+    ) {
+        parent::__construct($request, $response, $eventManager, $viewOptions);
 
-		if ($response && $response instanceof Response) {
-			$response->type('json');
-		}
-	}
+        if ($response && $response instanceof Response) {
+            $response->type('json');
+        }
+    }
 
-/**
- * Skip loading helpers if this is a _serialize based view.
- *
- * @return void
- */
-	public function loadHelpers() {
-		if (isset($this->viewVars['_serialize'])) {
-			return;
-		}
-		parent::loadHelpers();
-	}
+    /**
+     * Skip loading helpers if this is a _serialize based view.
+     *
+     * @return void
+     */
+    public function loadHelpers()
+    {
+        if (isset($this->viewVars['_serialize'])) {
+            return;
+        }
+        parent::loadHelpers();
+    }
 
-/**
- * Render a JSON view.
- *
- * ### Special parameters
- * `_serialize` To convert a set of view variables into a JSON response.
- *   Its value can be a string for single variable name or array for multiple names.
- *   You can omit the`_serialize` parameter, and use a normal view + layout as well.
- * `_jsonp` Enables JSONP support and wraps response in callback function provided in query string.
- *   - Setting it to true enables the default query string parameter "callback".
- *   - Setting it to a string value, uses the provided query string parameter for finding the
- *     JSONP callback name.
- *
- * @param string $view The view being rendered.
- * @param string $layout The layout being rendered.
- * @return string The rendered view.
- */
-	public function render($view = null, $layout = null) {
-		$return = null;
-		if (isset($this->viewVars['_serialize'])) {
-			$return = $this->_serialize($this->viewVars['_serialize']);
-		} elseif ($view !== false && $this->_getViewFileName($view)) {
-			$return = parent::render($view, false);
-		}
+    /**
+     * Render a JSON view.
+     *
+     * ### Special parameters
+     * `_serialize` To convert a set of view variables into a JSON response.
+     *   Its value can be a string for single variable name or array for multiple names.
+     *   You can omit the`_serialize` parameter, and use a normal view + layout as well.
+     * `_jsonp` Enables JSONP support and wraps response in callback function provided in query string.
+     *   - Setting it to true enables the default query string parameter "callback".
+     *   - Setting it to a string value, uses the provided query string parameter for finding the
+     *     JSONP callback name.
+     *
+     * @param string|null $view The view being rendered.
+     * @param string|null $layout The layout being rendered.
+     * @return string|null The rendered view.
+     */
+    public function render($view = null, $layout = null)
+    {
+        $return = null;
+        if (isset($this->viewVars['_serialize'])) {
+            $return = $this->_serialize($this->viewVars['_serialize']);
+        } elseif ($view !== false && $this->_getViewFileName($view)) {
+            $return = parent::render($view, false);
+        }
 
-		if (!empty($this->viewVars['_jsonp'])) {
-			$jsonpParam = $this->viewVars['_jsonp'];
-			if ($this->viewVars['_jsonp'] === true) {
-				$jsonpParam = 'callback';
-			}
-			if (isset($this->request->query[$jsonpParam])) {
-				$return = sprintf('%s(%s)', h($this->request->query[$jsonpParam]), $return);
-				$this->response->type('js');
-			}
-		}
+        if (!empty($this->viewVars['_jsonp'])) {
+            $jsonpParam = $this->viewVars['_jsonp'];
+            if ($this->viewVars['_jsonp'] === true) {
+                $jsonpParam = 'callback';
+            }
+            if (isset($this->request->query[$jsonpParam])) {
+                $return = sprintf('%s(%s)', h($this->request->query[$jsonpParam]), $return);
+                $this->response->type('js');
+            }
+        }
 
-		return $return;
-	}
+        return $return;
+    }
 
-/**
- * Serialize view vars
- *
- * @param array $serialize The viewVars that need to be serialized
- * @return string The serialized data
- */
-	protected function _serialize($serialize) {
-		if (is_array($serialize)) {
-			$data = array();
-			foreach ($serialize as $alias => $key) {
-				if (is_numeric($alias)) {
-					$alias = $key;
-				}
-				if (array_key_exists($key, $this->viewVars)) {
-					$data[$alias] = $this->viewVars[$key];
-				}
-			}
-			$data = !empty($data) ? $data : null;
-		} else {
-			$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
-		}
+    /**
+     * Serialize view vars
+     *
+     * @param array|string $serialize The name(s) of the view variable(s) that need(s) to be serialized
+     * @return string The serialized data
+     */
+    protected function _serialize($serialize)
+    {
+        if (is_array($serialize)) {
+            $data = [];
+            foreach ($serialize as $alias => $key) {
+                if (is_numeric($alias)) {
+                    $alias = $key;
+                }
+                if (array_key_exists($key, $this->viewVars)) {
+                    $data[$alias] = $this->viewVars[$key];
+                }
+            }
+            $data = !empty($data) ? $data : null;
+        } else {
+            $data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
+        }
 
-		$jsonOptions = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT;
-		if (isset($this->viewVars['_jsonOptions'])) {
-			if ($this->viewVars['_jsonOptions'] === false) {
-				$jsonOptions = 0;
-			} else {
-				$jsonOptions = $this->viewVars['_jsonOptions'];
-			}
-		}
+        $jsonOptions = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT;
+        if (isset($this->viewVars['_jsonOptions'])) {
+            if ($this->viewVars['_jsonOptions'] === false) {
+                $jsonOptions = 0;
+            } else {
+                $jsonOptions = $this->viewVars['_jsonOptions'];
+            }
+        }
 
-		if (Configure::read('debug')) {
-			return json_encode($data, $jsonOptions | JSON_PRETTY_PRINT);
-		}
+        if (Configure::read('debug')) {
+            return json_encode($data, $jsonOptions | JSON_PRETTY_PRINT);
+        }
 
-		return json_encode($data, $jsonOptions);
-	}
-
+        return json_encode($data, $jsonOptions);
+    }
 }

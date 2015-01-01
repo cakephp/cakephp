@@ -21,31 +21,32 @@ use Cake\TestSuite\TestCase;
  * FilterIterator test
  *
  */
-class FilterIteratorTest extends TestCase {
+class FilterIteratorTest extends TestCase
+{
 
-/**
- * Tests that the iterator works correctly
- *
- * @return void
- */
-	public function testFilter() {
-		$items = new \ArrayIterator([1, 2, 3]);
-		$callable = $this->getMock('stdClass', ['__invoke']);
-		$callable->expects($this->at(0))
-			->method('__invoke')
-			->with(1, 0, $items)
-			->will($this->returnValue(false));
-		$callable->expects($this->at(1))
-			->method('__invoke')
-			->with(2, 1, $items)
-			->will($this->returnValue(true));
-		$callable->expects($this->at(2))
-			->method('__invoke')
-			->with(3, 2, $items)
-			->will($this->returnValue(false));
+    /**
+     * Tests that the iterator works correctly
+     *
+     * @return void
+     */
+    public function testFilter()
+    {
+        $items = new \ArrayIterator([1, 2, 3]);
+        $callable = $this->getMock('stdClass', ['__invoke']);
+        $callable->expects($this->at(0))
+            ->method('__invoke')
+            ->with(1, 0, $items)
+            ->will($this->returnValue(false));
+        $callable->expects($this->at(1))
+            ->method('__invoke')
+            ->with(2, 1, $items)
+            ->will($this->returnValue(true));
+        $callable->expects($this->at(2))
+            ->method('__invoke')
+            ->with(3, 2, $items)
+            ->will($this->returnValue(false));
 
-		$filter = new FilterIterator($items, $callable);
-		$this->assertEquals([1 => 2], iterator_to_array($filter));
-	}
-
+        $filter = new FilterIterator($items, $callable);
+        $this->assertEquals([1 => 2], iterator_to_array($filter));
+    }
 }

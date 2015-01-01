@@ -19,13 +19,13 @@ use Cake\Controller\Controller;
  * ComponentTestController class
  *
  */
-class ComponentTestController extends Controller {
+class ComponentTestController extends Controller
+{
 
-/**
- * uses property
- *
- * @var array
- */
-	public $uses = array();
-
+    /**
+     * uses property
+     *
+     * @var array
+     */
+    public $uses = [];
 }

@@ -29,11 +29,11 @@ use Cake\Network\Response;
  *
  * In your controller's components array, add auth + the required config
  * {{{
- *	public $components = array(
- *		'Auth' => array(
- *			'authenticate' => array('Basic')
- *		)
- *	);
+ *  public $components = array(
+ *      'Auth' => array(
+ *          'authenticate' => array('Basic')
+ *      )
+ *  );
  * }}}
  *
  * You should also set `AuthComponent::$sessionKey = false;` in your AppController's
@@ -49,59 +49,63 @@ use Cake\Network\Response;
  * `AuthComponent::$loginAction`, or '/'. If unauthorizedRedirect is set to
  * false, a ForbiddenException exception is thrown instead of redirecting.
  */
-class BasicAuthenticate extends BaseAuthenticate {
+class BasicAuthenticate extends BaseAuthenticate
+{
 
-/**
- * Authenticate a user using HTTP auth. Will use the configured User model and attempt a
- * login using HTTP auth.
- *
- * @param \Cake\Network\Request $request The request to authenticate with.
- * @param \Cake\Network\Response $response The response to add headers to.
- * @return mixed Either false on failure, or an array of user data on success.
- */
-	public function authenticate(Request $request, Response $response) {
-		return $this->getUser($request);
-	}
+    /**
+     * Authenticate a user using HTTP auth. Will use the configured User model and attempt a
+     * login using HTTP auth.
+     *
+     * @param \Cake\Network\Request $request The request to authenticate with.
+     * @param \Cake\Network\Response $response The response to add headers to.
+     * @return mixed Either false on failure, or an array of user data on success.
+     */
+    public function authenticate(Request $request, Response $response)
+    {
+        return $this->getUser($request);
+    }
 
-/**
- * Get a user based on information in the request. Used by cookie-less auth for stateless clients.
- *
- * @param \Cake\Network\Request $request Request object.
- * @return mixed Either false or an array of user information
- */
-	public function getUser(Request $request) {
-		$username = $request->env('PHP_AUTH_USER');
-		$pass = $request->env('PHP_AUTH_PW');
+    /**
+     * Get a user based on information in the request. Used by cookie-less auth for stateless clients.
+     *
+     * @param \Cake\Network\Request $request Request object.
+     * @return mixed Either false or an array of user information
+     */
+    public function getUser(Request $request)
+    {
+        $username = $request->env('PHP_AUTH_USER');
+        $pass = $request->env('PHP_AUTH_PW');
 
-		if (!is_string($username) || $username === '' || !is_string($pass) || $pass === '') {
-			return false;
-		}
-		return $this->_findUser($username, $pass);
-	}
+        if (!is_string($username) || $username === '' || !is_string($pass) || $pass === '') {
+            return false;
+        }
+        return $this->_findUser($username, $pass);
+    }
 
-/**
- * Handles an unauthenticated access attempt by sending appropriate login headers
- *
- * @param \Cake\Network\Request $request A request object.
- * @param \Cake\Network\Response $response A response object.
- * @return void
- * @throws \Cake\Network\Exception\UnauthorizedException
- */
-	public function unauthenticated(Request $request, Response $response) {
-		$Exception = new UnauthorizedException();
-		$Exception->responseHeader(array($this->loginHeaders($request)));
-		throw $Exception;
-	}
+    /**
+     * Handles an unauthenticated access attempt by sending appropriate login headers
+     *
+     * @param \Cake\Network\Request $request A request object.
+     * @param \Cake\Network\Response $response A response object.
+     * @return void
+     * @throws \Cake\Network\Exception\UnauthorizedException
+     */
+    public function unauthenticated(Request $request, Response $response)
+    {
+        $Exception = new UnauthorizedException();
+        $Exception->responseHeader([$this->loginHeaders($request)]);
+        throw $Exception;
+    }
 
-/**
- * Generate the login headers
- *
- * @param \Cake\Network\Request $request Request object.
- * @return string Headers for logging in.
- */
-	public function loginHeaders(Request $request) {
-		$realm = $this->config('realm') ?: $request->env('SERVER_NAME');
-		return sprintf('WWW-Authenticate: Basic realm="%s"', $realm);
-	}
-
+    /**
+     * Generate the login headers
+     *
+     * @param \Cake\Network\Request $request Request object.
+     * @return string Headers for logging in.
+     */
+    public function loginHeaders(Request $request)
+    {
+        $realm = $this->config('realm') ?: $request->env('SERVER_NAME');
+        return sprintf('WWW-Authenticate: Basic realm="%s"', $realm);
+    }
 }

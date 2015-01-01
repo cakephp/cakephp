@@ -20,28 +20,29 @@ use Cake\TestSuite\Fixture\TestFixture;
  * Short description for class.
  *
  */
-class AuthorsFixture extends TestFixture {
+class AuthorsFixture extends TestFixture
+{
 
-/**
- * fields property
- *
- * @var array
- */
-	public $fields = array(
-		'id' => ['type' => 'integer'],
-		'name' => ['type' => 'string', 'default' => null],
-		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
-	);
+    /**
+     * fields property
+     *
+     * @var array
+     */
+    public $fields = [
+        'id' => ['type' => 'integer'],
+        'name' => ['type' => 'string', 'default' => null],
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+    ];
 
-/**
- * records property
- *
- * @var array
- */
-	public $records = array(
-		array('name' => 'mariano'),
-		array('name' => 'nate'),
-		array('name' => 'larry'),
-		array('name' => 'garrett'),
-	);
+    /**
+     * records property
+     *
+     * @var array
+     */
+    public $records = [
+        ['name' => 'mariano'],
+        ['name' => 'nate'],
+        ['name' => 'larry'],
+        ['name' => 'garrett'],
+    ];
 }

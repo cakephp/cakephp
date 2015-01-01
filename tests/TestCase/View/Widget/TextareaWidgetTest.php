@@ -21,61 +21,64 @@ use Cake\View\Widget\TextareaWidget;
 /**
  * Textarea input test.
  */
-class TextareaWidgetTest extends TestCase {
+class TextareaWidgetTest extends TestCase
+{
 
-/**
- * setup
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		$templates = [
-			'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
-		];
-		$this->context = $this->getMock('Cake\View\Form\ContextInterface');
-		$this->templates = new StringTemplate($templates);
-	}
+    /**
+     * setup
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $templates = [
+            'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
+        ];
+        $this->context = $this->getMock('Cake\View\Form\ContextInterface');
+        $this->templates = new StringTemplate($templates);
+    }
 
-/**
- * Test render in a simple case.
- *
- * @return void
- */
-	public function testRenderSimple() {
-		$input = new TextareaWidget($this->templates);
-		$result = $input->render(['name' => 'comment'], $this->context);
-		$expected = [
-			'textarea' => ['name' => 'comment'],
-			'/textarea',
-		];
-		$this->assertHtml($expected, $result);
-	}
+    /**
+     * Test render in a simple case.
+     *
+     * @return void
+     */
+    public function testRenderSimple()
+    {
+        $input = new TextareaWidget($this->templates);
+        $result = $input->render(['name' => 'comment'], $this->context);
+        $expected = [
+            'textarea' => ['name' => 'comment'],
+            '/textarea',
+        ];
+        $this->assertHtml($expected, $result);
+    }
 
-/**
- * Test render with a value
- *
- * @return void
- */
-	public function testRenderWithValue() {
-		$input = new TextareaWidget($this->templates);
-		$data = ['name' => 'comment', 'data-foo' => '<val>', 'val' => 'some <html>'];
-		$result = $input->render($data, $this->context);
-		$expected = [
-			'textarea' => ['name' => 'comment', 'data-foo' => '&lt;val&gt;'],
-			'some &lt;html&gt;',
-			'/textarea',
-		];
-		$this->assertHtml($expected, $result);
+    /**
+     * Test render with a value
+     *
+     * @return void
+     */
+    public function testRenderWithValue()
+    {
+        $input = new TextareaWidget($this->templates);
+        $data = ['name' => 'comment', 'data-foo' => '<val>', 'val' => 'some <html>'];
+        $result = $input->render($data, $this->context);
+        $expected = [
+            'textarea' => ['name' => 'comment', 'data-foo' => '&lt;val&gt;'],
+            'some &lt;html&gt;',
+            '/textarea',
+        ];
+        $this->assertHtml($expected, $result);
 
-		$data['escape'] = false;
-		$result = $input->render($data, $this->context);
-		$expected = [
-			'textarea' => ['name' => 'comment', 'data-foo' => '<val>'],
-			'some <html>',
-			'/textarea',
-		];
-		$this->assertHtml($expected, $result);
-	}
-
+        $data['escape'] = false;
+        $result = $input->render($data, $this->context);
+        $expected = [
+            'textarea' => ['name' => 'comment', 'data-foo' => '<val>'],
+            'some <html>',
+            '/textarea',
+        ];
+        $this->assertHtml($expected, $result);
+    }
 }

@@ -15,42 +15,51 @@
 use Cake\Core\Plugin;
 use Cake\Core\Configure;
 
-$pluginPath = Configure::read('App.paths.plugins.0');
+$namespace = Configure::read('App.namespace');
+if (!empty($plugin)) {
+    $namespace = $plugin;
+}
 
+$pluginPath = Configure::read('App.paths.plugins.0');
 $pluginDot = empty($plugin) ? null : $plugin . '.';
 if (empty($plugin)) {
-	$filePath = APP_DIR . DS;
+    $filePath = APP_DIR . DS;
 }
 if (!empty($plugin) && Plugin::loaded($plugin)) {
-	$filePath = Plugin::classPath($plugin);
+    $filePath = Plugin::classPath($plugin);
 }
 if (!empty($plugin) && !Plugin::loaded($plugin)) {
-	$filePath = $pluginPath . h($plugin) . DS . 'src' . DS;
+    $filePath = $pluginPath . h($plugin) . DS . 'src' . DS;
 }
+
+$this->layout = 'dev_error';
+$this->assign('title', 'Missing Helper');
+$this->assign('templateName', 'missing_helper.ctp');
+
+$this->start('subheading');
 ?>
-<h2>Missing Helper</h2>
+    <strong>Error: </strong>
+    <em><?= h($pluginDot . $class) ?></em> could not be found.
+    <?= $this->element('plugin_class_error', ['pluginPath' => $pluginPath]) ?>
+<?php $this->end() ?>
+
+<?php $this->start('file') ?>
 <p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('<em>%s</em> could not be found.', h($pluginDot . $class)); ?>
-	<?php
-		if (!empty($plugin) && !Plugin::loaded($plugin)):
-			echo sprintf('Make sure your plugin <em>%s</em> is in the %s directory and was loaded.', h($plugin), $pluginPath);
-		endif;
-	?>
+    <strong>Error: </strong>
+    <?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), $filePath . 'View' . DS . 'Helper' . DS . h($class) . '.php'); ?>
 </p>
-<p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), $filePath . 'View' . DS . 'Helper' . DS . h($class) . '.php'); ?>
-</p>
-<pre>
-&lt;?php
-class <?= h($class); ?> extends Helper {
+<?php
+$code = <<<PHP
+<?php
+namespace {$namespace}\View\Helper;
+
+use Cake\View\Helper;
+
+class {$class} extends Helper
+{
 
 }
-</pre>
-<p class="notice">
-	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_helper.ctp'); ?>
-</p>
-
-<?= $this->element('exception_stack_trace'); ?>
+PHP;
+?>
+<div class="code-dump"><?php highlight_string($code) ?></div>
+<?php $this->end() ?>

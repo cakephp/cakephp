@@ -20,20 +20,22 @@ use Cake\Controller\Controller;
  *
  * For testing prefix routing.
  */
-class CommentsController extends Controller {
+class CommentsController extends Controller
+{
 
-/**
- * components
- *
- * @var array
- */
-	public $components = array();
+    /**
+     * components
+     *
+     * @var array
+     */
+    public $components = [];
 
-/**
- * index action
- *
- * @return void
- */
-	public function index() {
-	}
+    /**
+     * index action
+     *
+     * @return void
+     */
+    public function index()
+    {
+    }
 }

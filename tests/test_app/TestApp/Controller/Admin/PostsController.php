@@ -20,28 +20,31 @@ use Cake\Controller\Controller;
  *
  * For testing prefix routing.
  */
-class PostsController extends Controller {
+class PostsController extends Controller
+{
 
-/**
- * components
- *
- * @var array
- */
-	public $components = array();
+    /**
+     * components
+     *
+     * @var array
+     */
+    public $components = [];
 
-/**
- * index action
- *
- * @return void
- */
-	public function index() {
-	}
+    /**
+     * index action
+     *
+     * @return void
+     */
+    public function index()
+    {
+    }
 
-/**
- * index action
- *
- * @return void
- */
-	public function add() {
-	}
+    /**
+     * index action
+     *
+     * @return void
+     */
+    public function add()
+    {
+    }
 }

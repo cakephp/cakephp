@@ -12,32 +12,31 @@
  * @since         0.10.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-?>
-<h2>Missing Layout</h2>
-<p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('The layout file <em>%s</em> can not be found or does not exist.', h($file)); ?>
-</p>
 
+$this->layout = 'dev_error';
+
+$this->assign('title', 'Missing Layout');
+$this->assign('templateName', 'missing_layout.ctp');
+
+$this->start('subheading');
+?>
+    <strong>Error: </strong>
+    The layout file <em><?= h($file) ?></em> can not be found or does not exist.
+<?php $this->end() ?>
+
+<?php $this->start('file') ?>
 <p>
-	<?= sprintf('Confirm you have created the file: %s', h($file)); ?>
-	in one of the following paths:
+    Confirm you have created the file: <?= h($file) ?> in one of the following paths:
 </p>
 <ul>
 <?php
-	$paths = $this->_paths($this->plugin);
-	foreach ($paths as $path):
-		if (strpos($path, CORE_PATH) !== false) {
-			continue;
-		}
-		echo sprintf('<li>%s%s</li>', h($path), h($file));
-	endforeach;
+    $paths = $this->_paths($this->plugin);
+    foreach ($paths as $path):
+        if (strpos($path, CORE_PATH) !== false) {
+            continue;
+        }
+        echo sprintf('<li>%s%s</li>', h($path), h($file));
+    endforeach;
 ?>
 </ul>
-
-<p class="notice">
-	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_layout.ctp'); ?>
-</p>
-
-<?= $this->element('exception_stack_trace'); ?>
+<?php $this->end() ?>

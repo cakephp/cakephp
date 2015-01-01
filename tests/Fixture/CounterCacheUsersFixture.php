@@ -20,18 +20,19 @@ use Cake\TestSuite\Fixture\TestFixture;
  * Short description for class.
  *
  */
-class CounterCacheUsersFixture extends TestFixture {
+class CounterCacheUsersFixture extends TestFixture
+{
 
-	public $fields = array(
-		'id' => ['type' => 'integer'],
-		'name' => ['type' => 'string', 'length' => 255, 'null' => false],
-		'post_count' => ['type' => 'integer', 'null' => true],
-		'posts_published' => ['type' => 'integer', 'null' => true],
-		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
-	);
+    public $fields = [
+        'id' => ['type' => 'integer'],
+        'name' => ['type' => 'string', 'length' => 255, 'null' => false],
+        'post_count' => ['type' => 'integer', 'null' => true],
+        'posts_published' => ['type' => 'integer', 'null' => true],
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+    ];
 
-	public $records = array(
-		array('name' => 'Alexander', 'post_count' => 2, 'posts_published' => 1),
-		array('name' => 'Steven', 'post_count' => 1, 'posts_published' => 1),
-	);
+    public $records = [
+        ['name' => 'Alexander', 'post_count' => 2, 'posts_published' => 1],
+        ['name' => 'Steven', 'post_count' => 1, 'posts_published' => 1],
+    ];
 }

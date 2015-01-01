@@ -19,7 +19,9 @@ use Cake\Log\Log;
 
 require_once 'vendor/autoload.php';
 
-define('DS', DIRECTORY_SEPARATOR);
+if (!defined('DS')) {
+    define('DS', DIRECTORY_SEPARATOR);
+}
 define('ROOT', dirname(__DIR__));
 define('APP_DIR', 'TestApp');
 
@@ -48,17 +50,6 @@ define('CONFIG', TEST_APP . 'config' . DS);
 @mkdir(CACHE . 'models');
 //@codingStandardsIgnoreEnd
 
-require CAKE . 'Core/ClassLoader.php';
-
-$loader = new Cake\Core\ClassLoader;
-$loader->register();
-
-$loader->addNamespace('TestApp', APP);
-$loader->addNamespace('TestPlugin', TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'src');
-$loader->addNamespace('TestPlugin\Test', TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'tests');
-$loader->addNamespace('TestPluginTwo', TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS . 'src');
-$loader->addNamespace('PluginJs', TEST_APP . 'Plugin' . DS . 'PluginJs' . DS . 'src');
-
 require_once CORE_PATH . 'config/bootstrap.php';
 
 date_default_timezone_set('UTC');
@@ -66,58 +57,59 @@ mb_internal_encoding('UTF-8');
 
 Configure::write('debug', true);
 Configure::write('App', [
-	'namespace' => 'App',
-	'encoding' => 'UTF-8',
-	'base' => false,
-	'baseUrl' => false,
-	'dir' => APP_DIR,
-	'webroot' => 'webroot',
-	'www_root' => WWW_ROOT,
-	'fullBaseUrl' => 'http://localhost',
-	'imageBaseUrl' => 'img/',
-	'jsBaseUrl' => 'js/',
-	'cssBaseUrl' => 'css/',
-	'paths' => [
-		'plugins' => [TEST_APP . 'Plugin' . DS],
-		'templates' => [APP . 'Template' . DS]
-	]
+    'namespace' => 'App',
+    'encoding' => 'UTF-8',
+    'base' => false,
+    'baseUrl' => false,
+    'dir' => APP_DIR,
+    'webroot' => 'webroot',
+    'wwwRoot' => WWW_ROOT,
+    'fullBaseUrl' => 'http://localhost',
+    'imageBaseUrl' => 'img/',
+    'jsBaseUrl' => 'js/',
+    'cssBaseUrl' => 'css/',
+    'paths' => [
+        'plugins' => [TEST_APP . 'Plugin' . DS],
+        'templates' => [APP . 'Template' . DS],
+        'locales' => [APP . 'Locale' . DS],
+    ]
 ]);
 
 Cache::config([
-	'_cake_core_' => [
-		'engine' => 'File',
-		'prefix' => 'cake_core_',
-		'serialize' => true
-	],
-	'_cake_model_' => [
-		'engine' => 'File',
-		'prefix' => 'cake_model_',
-		'serialize' => true
-	]
+    '_cake_core_' => [
+        'engine' => 'File',
+        'prefix' => 'cake_core_',
+        'serialize' => true
+    ],
+    '_cake_model_' => [
+        'engine' => 'File',
+        'prefix' => 'cake_model_',
+        'serialize' => true
+    ]
 ]);
 
 // Ensure default test connection is defined
 if (!getenv('db_dsn')) {
-	putenv('db_dsn=sqlite://:memory:');
+    putenv('db_dsn=sqlite:///:memory:');
 }
 
 ConnectionManager::config('test', ['url' => getenv('db_dsn')]);
 
 Configure::write('Session', [
-	'defaults' => 'php'
+    'defaults' => 'php'
 ]);
 
 Log::config([
-	'debug' => [
-		'engine' => 'Cake\Log\Engine\FileLog',
-		'levels' => ['notice', 'info', 'debug'],
-		'file' => 'debug',
-	],
-	'error' => [
-		'engine' => 'Cake\Log\Engine\FileLog',
-		'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
-		'file' => 'error',
-	]
+    'debug' => [
+        'engine' => 'Cake\Log\Engine\FileLog',
+        'levels' => ['notice', 'info', 'debug'],
+        'file' => 'debug',
+    ],
+    'error' => [
+        'engine' => 'Cake\Log\Engine\FileLog',
+        'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
+        'file' => 'error',
+    ]
 ]);
 
 Carbon\Carbon::setTestNow(Carbon\Carbon::now());

@@ -16,35 +16,44 @@
 use Cake\Routing\Router;
 use Cake\Error\Debugger;
 
-?>
-<h2>Missing Route</h2>
-<p class="error">
-	<strong>Error: </strong>
-	<?= $error->getMessage(); ?>
-</p>
+$this->layout = 'dev_error';
 
-<p class="notice">None of the currently connected routes match the given URL or parameters.
+$this->assign('title', 'Missing Route');
+$this->assign('templateName', 'missing_route.ctp');
+
+$attributes = $error->getAttributes();
+
+$this->start('subheading');
+?>
+    <strong>Error: </strong>
+    <?= $error->getMessage(); ?>
+<?php $this->end() ?>
+
+<?php $this->start('file') ?>
+<p>None of the currently connected routes match the given URL or parameters.
 Add a matching route to <?= 'config' . DS . 'routes.php' ?></p>
+
+<?php if (!empty($attributes['context'])): ?>
+<p>The passed context was:</p>
+<pre>
+<?=  Debugger::exportVar($attributes['context']); ?>
+</pre>
+<?php endif; ?>
 
 <h3>Connected Routes</h3>
 <table cellspacing="0" cellpadding="0">
 <tr><th>Template</th><th>Defaults</th><th>Options</th></tr>
 <?php
 foreach (Router::routes() as $route):
-	echo '<tr>';
-	printf(
-		'<th width="25%%">%s</th><th>%s</th><th width="20%%">%s</th>',
-		$route->template,
-		Debugger::exportVar($route->defaults),
-		Debugger::exportVar($route->options)
-	);
-	echo '</tr>';
+    echo '<tr>';
+    printf(
+        '<td width="25%%">%s</td><td>%s</td><td width="20%%">%s</td>',
+        $route->template,
+        Debugger::exportVar($route->defaults),
+        Debugger::exportVar($route->options)
+    );
+    echo '</tr>';
 endforeach;
 ?>
 </table>
-
-<p class="notice">
-	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_route.ctp'); ?>
-</p>
-<?= $this->element('exception_stack_trace'); ?>
+<?php $this->end() ?>

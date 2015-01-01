@@ -25,27 +25,28 @@ use JsonSerializable;
  * A collection is an immutable list of elements with a handful of functions to
  * iterate, group, transform and extract information from it.
  */
-class Collection extends IteratorIterator implements CollectionInterface {
+class Collection extends IteratorIterator implements CollectionInterface
+{
 
-	use CollectionTrait;
+    use CollectionTrait;
 
-/**
- * Constructor. You can provide an array or any traversable object
- *
- * @param array|\Traversable $items Items.
- * @throws InvalidArgumentException If passed incorrect type for items.
- */
-	public function __construct($items) {
-		if (is_array($items)) {
-			$items = new ArrayIterator($items);
-		}
+    /**
+     * Constructor. You can provide an array or any traversable object
+     *
+     * @param array|\Traversable $items Items.
+     * @throws InvalidArgumentException If passed incorrect type for items.
+     */
+    public function __construct($items)
+    {
+        if (is_array($items)) {
+            $items = new ArrayIterator($items);
+        }
 
-		if (!($items instanceof \Traversable)) {
-			$msg = 'Only array or \Traversable are allowed for Collection';
-			throw new InvalidArgumentException($msg);
-		}
+        if (!($items instanceof \Traversable)) {
+            $msg = 'Only an array or \Traversable is allowed for Collection';
+            throw new InvalidArgumentException($msg);
+        }
 
-		parent::__construct($items);
-	}
-
+        parent::__construct($items);
+    }
 }

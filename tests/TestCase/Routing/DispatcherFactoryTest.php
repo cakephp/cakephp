@@ -20,73 +20,79 @@ use Cake\TestSuite\TestCase;
 /**
  * Dispatcher factory test case.
  */
-class DispatcherFactoryTest extends TestCase {
+class DispatcherFactoryTest extends TestCase
+{
 
-/**
- * setup function
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		DispatcherFactory::clear();
-	}
+    /**
+     * setup function
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        DispatcherFactory::clear();
+    }
 
-/**
- * Test add filter
- *
- * @return void
- */
-	public function testAddFilter() {
-		$mw = $this->getMock('Cake\Routing\DispatcherFilter', ['beforeDispatch']);
-		$result = DispatcherFactory::add($mw);
-		$this->assertSame($mw, $result);
-	}
+    /**
+     * Test add filter
+     *
+     * @return void
+     */
+    public function testAddFilter()
+    {
+        $mw = $this->getMock('Cake\Routing\DispatcherFilter', ['beforeDispatch']);
+        $result = DispatcherFactory::add($mw);
+        $this->assertSame($mw, $result);
+    }
 
-/**
- * Test add filter as a string
- *
- * @return void
- */
-	public function testAddFilterString() {
-		$result = DispatcherFactory::add('Routing');
-		$this->assertInstanceOf('Cake\Routing\Filter\RoutingFilter', $result);
-	}
+    /**
+     * Test add filter as a string
+     *
+     * @return void
+     */
+    public function testAddFilterString()
+    {
+        $result = DispatcherFactory::add('Routing');
+        $this->assertInstanceOf('Cake\Routing\Filter\RoutingFilter', $result);
+    }
 
-/**
- * Test add filter missing
- *
- * @expectedException Cake\Routing\Exception\MissingDispatcherFilterException
- * @return void
- */
-	public function testAddFilterMissing() {
-		DispatcherFactory::add('NopeSauce');
-	}
+    /**
+     * Test add filter missing
+     *
+     * @expectedException \Cake\Routing\Exception\MissingDispatcherFilterException
+     * @return void
+     */
+    public function testAddFilterMissing()
+    {
+        DispatcherFactory::add('NopeSauce');
+    }
 
-/**
- * Test add filter
- *
- * @return void
- */
-	public function testAddFilterWithOptions() {
-		$config = ['config' => 'value', 'priority' => 999];
-		$result = DispatcherFactory::add('Routing', $config);
-		$this->assertInstanceOf('Cake\Routing\Filter\RoutingFilter', $result);
-		$this->assertEquals($config['config'], $result->config('config'));
-		$this->assertEquals($config['priority'], $result->config('priority'));
-	}
+    /**
+     * Test add filter
+     *
+     * @return void
+     */
+    public function testAddFilterWithOptions()
+    {
+        $config = ['config' => 'value', 'priority' => 999];
+        $result = DispatcherFactory::add('Routing', $config);
+        $this->assertInstanceOf('Cake\Routing\Filter\RoutingFilter', $result);
+        $this->assertEquals($config['config'], $result->config('config'));
+        $this->assertEquals($config['priority'], $result->config('priority'));
+    }
 
-/**
- * Test creating a dispatcher with the factory
- *
- * @return void
- */
-	public function testCreate() {
-		$mw = $this->getMock('Cake\Routing\DispatcherFilter', ['beforeDispatch']);
-		DispatcherFactory::add($mw);
-		$result = DispatcherFactory::create();
-		$this->assertInstanceOf('Cake\Routing\Dispatcher', $result);
-		$this->assertCount(1, $result->filters());
-	}
-
+    /**
+     * Test creating a dispatcher with the factory
+     *
+     * @return void
+     */
+    public function testCreate()
+    {
+        $mw = $this->getMock('Cake\Routing\DispatcherFilter', ['beforeDispatch']);
+        DispatcherFactory::add($mw);
+        $result = DispatcherFactory::create();
+        $this->assertInstanceOf('Cake\Routing\Dispatcher', $result);
+        $this->assertCount(1, $result->filters());
+    }
 }

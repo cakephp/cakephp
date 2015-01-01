@@ -14,42 +14,44 @@
  */
 namespace Cake\ORM\Association;
 
-use Cake\ORM\Entity;
+use Cake\Datasource\EntityInterface;
 
 /**
  * Implements cascading deletes for dependent associations.
  *
  * Included by HasOne and HasMany association classes.
  */
-trait DependentDeleteTrait {
+trait DependentDeleteTrait
+{
 
-/**
- * Cascade a delete to remove dependent records.
- *
- * This method does nothing if the association is not dependent.
- *
- * @param \Cake\ORM\Entity $entity The entity that started the cascaded delete.
- * @param array $options The options for the original delete.
- * @return bool Success.
- */
-	public function cascadeDelete(Entity $entity, array $options = []) {
-		if (!$this->dependent()) {
-			return true;
-		}
-		$table = $this->target();
-		$foreignKey = (array)$this->foreignKey();
-		$primaryKey = (array)$this->source()->primaryKey();
-		$conditions = array_combine($foreignKey, $entity->extract($primaryKey));
+    /**
+     * Cascade a delete to remove dependent records.
+     *
+     * This method does nothing if the association is not dependent.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity The entity that started the cascaded delete.
+     * @param array $options The options for the original delete.
+     * @return bool Success.
+     */
+    public function cascadeDelete(EntityInterface $entity, array $options = [])
+    {
+        if (!$this->dependent()) {
+            return true;
+        }
+        $table = $this->target();
+        $foreignKey = (array)$this->foreignKey();
+        $primaryKey = (array)$this->source()->primaryKey();
+        $conditions = array_combine($foreignKey, $entity->extract($primaryKey));
 
-		if ($this->_cascadeCallbacks) {
-			$query = $this->find('all')->where($conditions)->bufferResults(false);
-			foreach ($query as $related) {
-				$table->delete($related, $options);
-			}
-			return true;
-		}
+        if ($this->_cascadeCallbacks) {
+            $query = $this->find('all')->where($conditions)->bufferResults(false);
+            foreach ($query as $related) {
+                $table->delete($related, $options);
+            }
+            return true;
+        }
 
-		$conditions = array_merge($conditions, $this->conditions());
-		return $table->deleteAll($conditions);
-	}
+        $conditions = array_merge($conditions, $this->conditions());
+        return $table->deleteAll($conditions);
+    }
 }

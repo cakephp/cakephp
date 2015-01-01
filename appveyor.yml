@@ -1,5 +1,5 @@
 build: false
-shallow_clone: true
+shallow_clone: false
 platform: 'x86'
 clone_folder: c:\projects\cakephp
 branches:
@@ -33,6 +33,40 @@ install:
   - cd C:\projects\cakephp
   - php -r "readfile('https://getcomposer.org/installer');" | php
   - php composer.phar install --prefer-dist --no-interaction --dev
+before_test:
+# This script solves the "Database 'model' is being recovered. Waiting until recovery is finished."
+# This solution comes from https://gist.github.com/jonathanhickford/1cb0d6665adab8b9c664
+# and is follow by http://help.appveyor.com/discussions/suggestions/264-database-mssqlsystemresource-is-being-recovered-waiting-for-sql-server-to-start
+- ps: >-
+    $tries = 5;
+
+    $pause = 10; # Seconds to wait between tries
+
+    While ($tries -gt 0) {
+      try {
+        $ServerConnectionString = "Data Source=(local)\SQL2012SP1;Initial Catalog=master;User Id=sa;PWD=Password12!";
+        $ServerConnection = new-object system.data.SqlClient.SqlConnection($ServerConnectionString);
+        $query = "exec sp_configure 'clr enabled', 1;`n"
+        $query = $query + "RECONFIGURE;`n"
+        $cmd = new-object system.data.sqlclient.sqlcommand($query, $ServerConnection);
+        $ServerConnection.Open();
+        "Running:"
+        $query
+        if ($cmd.ExecuteNonQuery() -ne -1) {
+          "SQL Error";
+        } else {
+          "Success"
+        }
+        $ServerConnection.Close();
+        $tries = 0;
+      } catch {
+        "Error:"
+        $_.Exception.Message
+        "Retry in $pause seconds.  Attempts left: $tries";
+        Start-Sleep -s $pause;
+      }
+      $tries = $tries -1;
+    }
 test_script:
   - sqlcmd -S ".\SQL2012SP1" -U sa -P Password12! -Q "create database cakephp;"
   - cd C:\projects\cakephp

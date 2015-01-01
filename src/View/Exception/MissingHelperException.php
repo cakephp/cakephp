@@ -7,7 +7,6 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -19,8 +18,8 @@ use Cake\Core\Exception\Exception;
  * Used when a helper cannot be found.
  *
  */
-class MissingHelperException extends Exception {
+class MissingHelperException extends Exception
+{
 
-	protected $_messageTemplate = 'Helper class %s could not be found.';
-
+    protected $_messageTemplate = 'Helper class %s could not be found.';
 }

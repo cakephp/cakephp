@@ -20,21 +20,21 @@ namespace Cake\Database\Expression;
  *
  * @internal
  */
-interface FieldInterface {
+interface FieldInterface
+{
 
-/**
- * Sets the field name
- *
- * @param string $field The field to compare with.
- * @return void
- */
-	public function field($field);
+    /**
+     * Sets the field name
+     *
+     * @param string $field The field to compare with.
+     * @return void
+     */
+    public function setField($field);
 
-/**
- * Returns the field name
- *
- * @return string|\Cake\Database\ExpressionInterface
- */
-	public function getField();
-
+    /**
+     * Returns the field name
+     *
+     * @return string|\Cake\Database\ExpressionInterface
+     */
+    public function getField();
 }

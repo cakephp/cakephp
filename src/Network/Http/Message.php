@@ -19,172 +19,177 @@ namespace Cake\Network\Http;
  * Defines some common helper methods, constants
  * and properties.
  */
-class Message {
+class Message
+{
 
-/**
+    /**
  * HTTP 200 code
  *
  * @var int
  */
-	const STATUS_OK = 200;
+    const STATUS_OK = 200;
 
-/**
+    /**
  * HTTP 201 code
  *
  * @var int
  */
-	const STATUS_CREATED = 201;
+    const STATUS_CREATED = 201;
 
-/**
+    /**
  * HTTP 202 code
  *
  * @var int
  */
-	const STATUS_ACCEPTED = 202;
+    const STATUS_ACCEPTED = 202;
 
-/**
+    /**
  * HTTP 301 code
  *
  * @var int
  */
-	const STATUS_MOVED_PERMANENTLY = 301;
+    const STATUS_MOVED_PERMANENTLY = 301;
 
-/**
+    /**
  * HTTP 302 code
  *
  * @var int
  */
-	const STATUS_FOUND = 302;
+    const STATUS_FOUND = 302;
 
-/**
+    /**
  * HTTP 303 code
  *
  * @var int
  */
-	const STATUS_SEE_OTHER = 303;
+    const STATUS_SEE_OTHER = 303;
 
-/**
+    /**
  * HTTP 307 code
  *
  * @var int
  */
-	const STATUS_TEMPORARY_REDIRECT = 307;
+    const STATUS_TEMPORARY_REDIRECT = 307;
 
-/**
+    /**
  * HTTP GET method
  *
  * @var string
  */
-	const METHOD_GET = 'GET';
+    const METHOD_GET = 'GET';
 
-/**
+    /**
  * HTTP POST method
  *
  * @var string
  */
-	const METHOD_POST = 'POST';
+    const METHOD_POST = 'POST';
 
-/**
+    /**
  * HTTP PUT method
  *
  * @var string
  */
-	const METHOD_PUT = 'PUT';
+    const METHOD_PUT = 'PUT';
 
-/**
+    /**
  * HTTP DELETE method
  *
  * @var string
  */
-	const METHOD_DELETE = 'DELETE';
+    const METHOD_DELETE = 'DELETE';
 
-/**
+    /**
  * HTTP PATCH method
  *
  * @var string
  */
-	const METHOD_PATCH = 'PATCH';
+    const METHOD_PATCH = 'PATCH';
 
-/**
+    /**
  * HTTP HEAD method
  *
  * @var string
  */
-	const METHOD_HEAD = 'HEAD';
+    const METHOD_HEAD = 'HEAD';
 
-/**
- * The array of headers in the response.
- *
- * @var array
- */
-	protected $_headers = [];
+    /**
+     * The array of headers in the response.
+     *
+     * @var array
+     */
+    protected $_headers = [];
 
-/**
- * The array of cookies in the response.
- *
- * @var array
- */
-	protected $_cookies = [];
+    /**
+     * The array of cookies in the response.
+     *
+     * @var array
+     */
+    protected $_cookies = [];
 
-/**
- * HTTP Version being used.
- *
- * @var string
- */
-	protected $_version = '1.1';
+    /**
+     * HTTP Version being used.
+     *
+     * @var string
+     */
+    protected $_version = '1.1';
 
-/**
- * Normalize header names to Camel-Case form.
- *
- * @param string $name The header name to normalize.
- * @return string Normalized header name.
- */
-	protected function _normalizeHeader($name) {
-		$parts = explode('-', trim($name));
-		$parts = array_map('strtolower', $parts);
-		$parts = array_map('ucfirst', $parts);
-		return implode('-', $parts);
-	}
+    /**
+     * Normalize header names to Camel-Case form.
+     *
+     * @param string $name The header name to normalize.
+     * @return string Normalized header name.
+     */
+    protected function _normalizeHeader($name)
+    {
+        $parts = explode('-', trim($name));
+        $parts = array_map('strtolower', $parts);
+        $parts = array_map('ucfirst', $parts);
+        return implode('-', $parts);
+    }
 
-/**
- * Get all headers
- *
- * @return array
- */
-	public function headers() {
-		return $this->_headers;
-	}
+    /**
+     * Get all headers
+     *
+     * @return array
+     */
+    public function headers()
+    {
+        return $this->_headers;
+    }
 
-/**
- * Get all cookies
- *
- * @return array
- */
-	public function cookies() {
-		return $this->_cookies;
-	}
+    /**
+     * Get all cookies
+     *
+     * @return array
+     */
+    public function cookies()
+    {
+        return $this->_cookies;
+    }
 
-/**
- * Get the HTTP version used.
- *
- * @return string
- */
-	public function version() {
-		return $this->_version;
-	}
+    /**
+     * Get the HTTP version used.
+     *
+     * @return string
+     */
+    public function version()
+    {
+        return $this->_version;
+    }
 
-/**
- * Get/set the body for the message.
- *
- * @param string|null $body The body for the request. Leave null for get
- * @return mixed Either $this or the body value.
- */
-	public function body($body = null) {
-		if ($body === null) {
-			return $this->_body;
-		}
-		$this->_body = $body;
-		return $this;
-	}
-
+    /**
+     * Get/set the body for the message.
+     *
+     * @param string|null $body The body for the request. Leave null for get
+     * @return mixed Either $this or the body value.
+     */
+    public function body($body = null)
+    {
+        if ($body === null) {
+            return $this->_body;
+        }
+        $this->_body = $body;
+        return $this;
+    }
 }

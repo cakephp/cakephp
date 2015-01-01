@@ -1,12 +1,12 @@
 <?php
-$config = array(
-	'Read' => 'value',
-	'Deep' => array(
-		'Deeper' => array(
-			'Deepest' => 'buried'
-		)
-	),
-	'TestAcl' => array(
-		'classname' => 'Original'
-	)
-);
+$config = [
+    'Read' => 'value',
+    'Deep' => [
+        'Deeper' => [
+            'Deepest' => 'buried'
+        ]
+    ],
+    'TestAcl' => [
+        'classname' => 'Original'
+    ]
+];

@@ -24,88 +24,91 @@ use Cake\Routing\Route\Route;
  * application, for when URLs move.
  *
  */
-class RedirectRoute extends Route {
+class RedirectRoute extends Route
+{
 
-/**
- * A Response object
- *
- * @var \Cake\Network\Response
- */
-	public $response = null;
+    /**
+     * A Response object
+     *
+     * @var \Cake\Network\Response
+     */
+    public $response = null;
 
-/**
- * The location to redirect to. Either a string or a CakePHP array URL.
- *
- * @var mixed
- */
-	public $redirect;
+    /**
+     * The location to redirect to. Either a string or a CakePHP array URL.
+     *
+     * @var mixed
+     */
+    public $redirect;
 
-/**
- * Constructor
- *
- * @param string $template Template string with parameter placeholders
- * @param array|string $defaults Defaults for the route.
- * @param array $options Array of additional options for the Route
- */
-	public function __construct($template, $defaults = [], array $options = []) {
-		parent::__construct($template, $defaults, $options);
-		if (is_array($defaults) && isset($defaults['redirect'])) {
-			$defaults = $defaults['redirect'];
-		}
-		$this->redirect = (array)$defaults;
-	}
+    /**
+     * Constructor
+     *
+     * @param string $template Template string with parameter placeholders
+     * @param array|string $defaults Defaults for the route.
+     * @param array $options Array of additional options for the Route
+     */
+    public function __construct($template, $defaults = [], array $options = [])
+    {
+        parent::__construct($template, $defaults, $options);
+        if (is_array($defaults) && isset($defaults['redirect'])) {
+            $defaults = $defaults['redirect'];
+        }
+        $this->redirect = (array)$defaults;
+    }
 
-/**
- * Parses a string URL into an array. Parsed URLs will result in an automatic
- * redirection
- *
- * @param string $url The URL to parse
- * @return bool False on failure
- */
-	public function parse($url) {
-		$params = parent::parse($url);
-		if (!$params) {
-			return false;
-		}
-		if (!$this->response) {
-			$this->response = new Response();
-		}
-		$redirect = $this->redirect;
-		if (count($this->redirect) === 1 && !isset($this->redirect['controller'])) {
-			$redirect = $this->redirect[0];
-		}
-		if (isset($this->options['persist']) && is_array($redirect)) {
-			$redirect += array('pass' => $params['pass'], 'url' => array());
-			if (is_array($this->options['persist'])) {
-				foreach ($this->options['persist'] as $elem) {
-					if (isset($params[$elem])) {
-						$redirect[$elem] = $params[$elem];
-					}
-				}
-			}
-			$redirect = Router::reverse($redirect);
-		}
-		$status = 301;
-		if (isset($this->options['status']) && ($this->options['status'] >= 300 && $this->options['status'] < 400)) {
-			$status = $this->options['status'];
-		}
-		$this->response->header(array(
-			'Location' => Router::url($redirect, true)
-		));
-		$this->response->statusCode($status);
-		$this->response->send();
-		$this->response->stop();
-	}
+    /**
+     * Parses a string URL into an array. Parsed URLs will result in an automatic
+     * redirection
+     *
+     * @param string $url The URL to parse
+     * @return bool False on failure
+     */
+    public function parse($url)
+    {
+        $params = parent::parse($url);
+        if (!$params) {
+            return false;
+        }
+        if (!$this->response) {
+            $this->response = new Response();
+        }
+        $redirect = $this->redirect;
+        if (count($this->redirect) === 1 && !isset($this->redirect['controller'])) {
+            $redirect = $this->redirect[0];
+        }
+        if (isset($this->options['persist']) && is_array($redirect)) {
+            $redirect += ['pass' => $params['pass'], 'url' => []];
+            if (is_array($this->options['persist'])) {
+                foreach ($this->options['persist'] as $elem) {
+                    if (isset($params[$elem])) {
+                        $redirect[$elem] = $params[$elem];
+                    }
+                }
+            }
+            $redirect = Router::reverse($redirect);
+        }
+        $status = 301;
+        if (isset($this->options['status']) && ($this->options['status'] >= 300 && $this->options['status'] < 400)) {
+            $status = $this->options['status'];
+        }
+        $this->response->header([
+            'Location' => Router::url($redirect, true)
+        ]);
+        $this->response->statusCode($status);
+        $this->response->send();
+        $this->response->stop();
+    }
 
-/**
- * There is no reverse routing redirection routes
- *
- * @param array $url Array of parameters to convert to a string.
- * @param array $context Array of request context parameters.
- * @return mixed either false or a string url.
- */
-	public function match(array $url, array $context = array()) {
-		return false;
-	}
-
+    /**
+     * There is no reverse routing redirection routes
+     *
+     * @param array $url Array of parameters to convert to a string.
+     * @param array $context Array of request context parameters.
+     * @return mixed either false or a string url.
+     */
+    public function match(array $url, array $context = [])
+    {
+        return false;
+    }
 }

@@ -19,12 +19,13 @@ use Cake\Controller\Component;
  * ParamTestComponent
  *
  */
-class ParamTestComponent extends Component {
+class ParamTestComponent extends Component
+{
 
-/**
- * components property
- *
- * @var array
- */
-	public $components = array('Banana' => array('config' => 'value'));
+    /**
+     * components property
+     *
+     * @var array
+     */
+    public $components = ['Banana' => ['config' => 'value']];
 }

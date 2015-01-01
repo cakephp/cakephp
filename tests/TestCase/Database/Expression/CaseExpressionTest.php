@@ -21,48 +21,51 @@ use Cake\TestSuite\TestCase;
 /**
  * Tests CaseExpression class
  */
-class CaseExpressionTest extends TestCase {
+class CaseExpressionTest extends TestCase
+{
 
-/**
- * Test that the sql output works correctly
- *
- * @return void
- */
-	public function testSqlOutput() {
-		$expr = new QueryExpression();
-		$expr->eq('test', 'true');
-		$caseExpression = new CaseExpression($expr, 'foobar');
-		$expected = 'CASE WHEN test = :c0 THEN :c1 END';
-		$this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
+    /**
+     * Test that the sql output works correctly
+     *
+     * @return void
+     */
+    public function testSqlOutput()
+    {
+        $expr = new QueryExpression();
+        $expr->eq('test', 'true');
+        $caseExpression = new CaseExpression($expr, 'foobar');
+        $expected = 'CASE WHEN test = :c0 THEN :c1 END';
+        $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
 
-		$expr2 = new QueryExpression();
-		$expr2->eq('test2', 'false');
-		$caseExpression->add($expr2);
-		$expected = 'CASE WHEN test = :c0 THEN :c1 WHEN test2 = :c2 THEN :c3 END';
-		$this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
+        $expr2 = new QueryExpression();
+        $expr2->eq('test2', 'false');
+        $caseExpression->add($expr2);
+        $expected = 'CASE WHEN test = :c0 THEN :c1 WHEN test2 = :c2 THEN :c3 END';
+        $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
 
-		$caseExpression = new CaseExpression([$expr], ['foobar', 'else']);
-		$expected = 'CASE WHEN test = :c0 THEN :c1 ELSE :c2 END';
-		$this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
-	}
+        $caseExpression = new CaseExpression([$expr], ['foobar', 'else']);
+        $expected = 'CASE WHEN test = :c0 THEN :c1 ELSE :c2 END';
+        $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
+    }
 
-/**
- * Tests that the expression is correctly traversed
- *
- * @return void
- */
-	public function testTraverse() {
-		$count = 0;
-		$visitor = function () use (&$count) {
-			$count++;
-		};
+    /**
+     * Tests that the expression is correctly traversed
+     *
+     * @return void
+     */
+    public function testTraverse()
+    {
+        $count = 0;
+        $visitor = function () use (&$count) {
+            $count++;
+        };
 
-		$expr = new QueryExpression();
-		$expr->eq('test', 'true');
-		$expr2 = new QueryExpression();
-		$expr2->eq('test', 'false');
-		$caseExpression = new CaseExpression([$expr, $expr2]);
-		$caseExpression->traverse($visitor);
-		$this->assertSame(4, $count);
-	}
+        $expr = new QueryExpression();
+        $expr->eq('test', 'true');
+        $expr2 = new QueryExpression();
+        $expr2->eq('test', 'false');
+        $caseExpression = new CaseExpression([$expr, $expr2]);
+        $caseExpression->traverse($visitor);
+        $this->assertSame(4, $count);
+    }
 }

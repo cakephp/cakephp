@@ -19,135 +19,146 @@ use Cake\Network\Exception\NotFoundException;
  * RequestActionController class
  *
  */
-class RequestActionController extends AppController {
+class RequestActionController extends AppController
+{
 
-/**
- * modelClass property
- *
- * @var string
- */
-	public $modelClass = 'Posts';
+    /**
+     * modelClass property
+     *
+     * @var string
+     */
+    public $modelClass = 'Posts';
 
-/**
- * test_request_action method
- *
- * @return \Cake\Network\Response
- */
-	public function test_request_action() {
-		$this->response->body('This is a test');
-		return $this->response;
-	}
+    /**
+     * test_request_action method
+     *
+     * @return \Cake\Network\Response
+     */
+    public function test_request_action()
+    {
+        $this->response->body('This is a test');
+        return $this->response;
+    }
 
-/**
- * another_ra_test method
- *
- * @param mixed $id
- * @param mixed $other
- * @return \Cake\Network\Response
- */
-	public function another_ra_test($id, $other) {
-		$this->response->body($id + $other);
-		return $this->response;
-	}
+    /**
+     * another_ra_test method
+     *
+     * @param mixed $id
+     * @param mixed $other
+     * @return \Cake\Network\Response
+     */
+    public function another_ra_test($id, $other)
+    {
+        $this->response->body($id + $other);
+        return $this->response;
+    }
 
-/**
- * normal_request_action method
- *
- * @return \Cake\Network\Response
- */
-	public function normal_request_action() {
-		$this->response->body('Hello World');
-		return $this->response;
-	}
+    /**
+     * normal_request_action method
+     *
+     * @return \Cake\Network\Response
+     */
+    public function normal_request_action()
+    {
+        $this->response->body('Hello World');
+        return $this->response;
+    }
 
-/**
- * returns $this->here as body
- *
- * @return \Cake\Network\Response
- */
-	public function return_here() {
-		$this->response->body($this->here);
-		return $this->response;
-	}
+    /**
+     * returns $this->here as body
+     *
+     * @return \Cake\Network\Response
+     */
+    public function return_here()
+    {
+        $this->response->body($this->here);
+        return $this->response;
+    }
 
-/**
- * paginate_request_action method
- *
- * @return void
- */
-	public function paginate_request_action() {
-		$data = $this->paginate();
-		$this->autoRender = false;
-	}
+    /**
+     * paginate_request_action method
+     *
+     * @return void
+     */
+    public function paginate_request_action()
+    {
+        $data = $this->paginate();
+        $this->autoRender = false;
+    }
 
-/**
- * post pass, testing post passing
- *
- * @return \Cake\Network\Reponse
- */
-	public function post_pass() {
-		$this->response->body(json_encode($this->request->data));
-		return $this->response;
-	}
+    /**
+     * post pass, testing post passing
+     *
+     * @return \Cake\Network\Reponse
+     */
+    public function post_pass()
+    {
+        $this->response->body(json_encode($this->request->data));
+        return $this->response;
+    }
 
-/**
- * query pass, testing query passing
- *
- * @return \Cake\Network\Reponse
- */
-	public function query_pass() {
-		$this->response->body(json_encode($this->request->query));
-		return $this->response;
-	}
+    /**
+     * query pass, testing query passing
+     *
+     * @return \Cake\Network\Reponse
+     */
+    public function query_pass()
+    {
+        $this->response->body(json_encode($this->request->query));
+        return $this->response;
+    }
 
-/**
- * test param passing and parsing.
- *
- * @return \Cake\Network\Reponse
- */
-	public function params_pass() {
-		$this->response->body(json_encode([
-			'params' => $this->request->params,
-			'query' => $this->request->query,
-			'url' => $this->request->url,
-			'contentType' => $this->request->env('CONTENT_TYPE'),
-		]));
-		return $this->response;
-	}
+    /**
+     * test param passing and parsing.
+     *
+     * @return \Cake\Network\Reponse
+     */
+    public function params_pass()
+    {
+        $this->response->body(json_encode([
+            'params' => $this->request->params,
+            'query' => $this->request->query,
+            'url' => $this->request->url,
+            'contentType' => $this->request->env('CONTENT_TYPE'),
+        ]));
+        return $this->response;
+    }
 
-/**
- * param check method.
- *
- * @return \Cake\Network\Reponse
- */
-	public function param_check() {
-		$this->autoRender = false;
-		$content = '';
-		if (isset($this->request->params[0])) {
-			$content = 'return found';
-		}
-		$this->response->body($content);
-		return $this->response;
-	}
+    /**
+     * param check method.
+     *
+     * @return \Cake\Network\Reponse
+     */
+    public function param_check()
+    {
+        $this->autoRender = false;
+        $content = '';
+        if (isset($this->request->params[0])) {
+            $content = 'return found';
+        }
+        $this->response->body($content);
+        return $this->response;
+    }
 
-/**
- * Tests session transmission
- *
- * @return \Cake\Network\Reponse
- */
-	public function session_test() {
-		$this->response->body($this->request->session()->read('foo'));
-		return $this->response;
-	}
+    /**
+     * Tests session transmission
+     *
+     * @return \Cake\Network\Reponse
+     */
+    public function session_test()
+    {
+        $this->response->body($this->request->session()->read('foo'));
+        return $this->response;
+    }
 
-/**
- * Tests exception handling
- *
- * @throws \Cake\Network\Exception\NotFoundException
- * @return void
- */
-	public function error_method() {
-		throw new NotFoundException('Not there or here.');
-	}
-
+    /**
+     * Tests exception handling
+     *
+     * @throws \Cake\Network\Exception\NotFoundException
+     * @return void
+     */
+    public function error_method()
+    {
+        throw new NotFoundException('Not there or here.');
+    }
 }

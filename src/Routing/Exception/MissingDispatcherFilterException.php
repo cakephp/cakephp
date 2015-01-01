@@ -7,7 +7,6 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -19,8 +18,8 @@ use Cake\Core\Exception\Exception;
  * Exception raised when a Dispatcher filter could not be found
  *
  */
-class MissingDispatcherFilterException extends Exception {
+class MissingDispatcherFilterException extends Exception
+{
 
-	protected $_messageTemplate = 'Dispatcher filter %s could not be found.';
-
+    protected $_messageTemplate = 'Dispatcher filter %s could not be found.';
 }

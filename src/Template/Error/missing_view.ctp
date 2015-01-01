@@ -14,43 +14,54 @@
  */
 use Cake\Core\Plugin;
 use Cake\Core\Configure;
+$namespace = Configure::read('App.namespace');
 
 $pluginPath = Configure::read('App.paths.plugins.0');
-
 $pluginDot = empty($plugin) ? null : $plugin . '.';
+
 if (empty($plugin)) {
-	$filePath = APP_DIR . DS;
+    $filePath = APP_DIR . DS;
+    $namespace = $plugin;
 }
 if (!empty($plugin) && Plugin::loaded($plugin)) {
-	$filePath = Plugin::classPath($plugin);
+    $filePath = Plugin::classPath($plugin);
 }
 if (!empty($plugin) && !Plugin::loaded($plugin)) {
-	$filePath = $pluginPath . h($plugin) . DS . 'src' . DS;
+    $filePath = $pluginPath . h($plugin) . DS . 'src' . DS;
 }
+
+$this->layout = 'dev_error';
+$this->assign('title', 'Missing View');
+$this->assign('templateName', 'missing_view.ctp');
+
+$this->start('subheading');
 ?>
-<h2>Missing View</h2>
-<p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('<em>%s</em> could not be found.', h($pluginDot . $class)); ?>
-	<?php
-		if (!empty($plugin) && !Plugin::loaded($plugin)):
-			echo sprintf('Make sure your plugin <em>%s</em> is in the %s directory and was loaded.', h($plugin), $pluginPath);
-		endif;
-	?>
+    <strong>Error: </strong>
+    <em><?= h($pluginDot . $class) ?></em> could not be found.
+    <?php if (!empty($plugin) && !Plugin::loaded($plugin)): ?>
+    Make sure your plugin <em><?= h($plugin) ?></em> is in the <?= h($pluginPath) ?> directory and was loaded.
+    <?php endif ?>
+    <?= $this->element('plugin_class_error', ['pluginPath' => $pluginPath]) ?>
 </p>
+<?php $this->end() ?>
+
+<?php $this->start('file') ?>
 <p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), $filePath . 'View' . DS . h($class) . '.php'); ?>
+    <strong>Error: </strong>
+    <?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), $filePath . 'View' . DS . h($class) . '.php'); ?>
 </p>
-<pre>
-&lt;?php
-class <?= h($class); ?> extends View {
+<?php
+$code = <<<PHP
+<?php
+namespace {$namespace}\View;
+
+use Cake\View\View;
+
+class {$class}View extends View
+{
 
 }
-</pre>
-<p class="notice">
-	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_view.ctp'); ?>
-</p>
-
-<?= $this->element('exception_stack_trace'); ?>
+PHP;
+?>
+<div class="code-dump"><?php highlight_string($code) ?></div>
+<?php $this->end() ?>

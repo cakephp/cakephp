@@ -13,32 +13,32 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Utility\Inflector;
-?>
-<h2>Missing Template</h2>
-<p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('The view for <em>%sController::%s()</em> was not found.', h(Inflector::camelize($this->request->controller)), h($this->request->action)); ?>
-</p>
 
+$this->layout = 'dev_error';
+
+$this->assign('title', 'Missing Template');
+$this->assign('templateName', 'missing_template.ctp');
+
+$this->start('subheading');
+?>
+    <strong>Error: </strong>
+    <?= sprintf('The view for <em>%sController::%s()</em> was not found.', h(Inflector::camelize($this->request->controller)), h($this->request->action)); ?>
+<?php $this->end() ?>
+
+<?php $this->start('file') ?>
 <p>
-	<?= sprintf('Confirm you have created the file: "%s"', h($file)) ?>
-	in one of the following paths:
+    <?= sprintf('Confirm you have created the file: "%s"', h($file)) ?>
+    in one of the following paths:
 </p>
 <ul>
 <?php
-	$paths = $this->_paths($this->plugin);
-	foreach ($paths as $path):
-		if (strpos($path, CORE_PATH) !== false) {
-			continue;
-		}
-		echo sprintf('<li>%s%s</li>', h($path), h($file));
-	endforeach;
+    $paths = $this->_paths($this->plugin);
+    foreach ($paths as $path):
+        if (strpos($path, CORE_PATH) !== false) {
+            continue;
+        }
+        echo sprintf('<li>%s%s</li>', h($path), h($file));
+    endforeach;
 ?>
 </ul>
-
-<p class="notice">
-	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_template.ctp') ?>
-</p>
-
-<?= $this->element('exception_stack_trace'); ?>
+<?php $this->end() ?>

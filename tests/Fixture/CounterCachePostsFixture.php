@@ -20,20 +20,21 @@ use Cake\TestSuite\Fixture\TestFixture;
  * Counter Cache Test Fixtures
  *
  */
-class CounterCachePostsFixture extends TestFixture {
+class CounterCachePostsFixture extends TestFixture
+{
 
-	public $fields = array(
-		'id' => ['type' => 'integer'],
-		'title' => ['type' => 'string', 'length' => 255],
-		'user_id' => ['type' => 'integer', 'null' => true],
-		'category_id' => ['type' => 'integer', 'null' => true],
-		'published' => ['type' => 'boolean', 'null' => false, 'default' => false],
-		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
-	);
+    public $fields = [
+        'id' => ['type' => 'integer'],
+        'title' => ['type' => 'string', 'length' => 255],
+        'user_id' => ['type' => 'integer', 'null' => true],
+        'category_id' => ['type' => 'integer', 'null' => true],
+        'published' => ['type' => 'boolean', 'null' => false, 'default' => false],
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+    ];
 
-	public $records = array(
-		array('title' => 'Rock and Roll', 'user_id' => 1, 'category_id' => 1, 'published' => 0),
-		array('title' => 'Music', 'user_id' => 1, 'category_id' => 2, 'published' => 1),
-		array('title' => 'Food', 'user_id' => 2, 'category_id' => 2, 'published' => 1),
-	);
+    public $records = [
+        ['title' => 'Rock and Roll', 'user_id' => 1, 'category_id' => 1, 'published' => 0],
+        ['title' => 'Music', 'user_id' => 1, 'category_id' => 2, 'published' => 1],
+        ['title' => 'Food', 'user_id' => 2, 'category_id' => 2, 'published' => 1],
+    ];
 }

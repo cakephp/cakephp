@@ -20,17 +20,18 @@ use Cake\TestSuite\Fixture\TestFixture;
  * Short description for class.
  *
  */
-class CounterCacheCategoriesFixture extends TestFixture {
+class CounterCacheCategoriesFixture extends TestFixture
+{
 
-	public $fields = array(
-		'id' => ['type' => 'integer'],
-		'name' => ['type' => 'string', 'length' => 255, 'null' => false],
-		'post_count' => ['type' => 'integer', 'null' => true],
-		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
-	);
+    public $fields = [
+        'id' => ['type' => 'integer'],
+        'name' => ['type' => 'string', 'length' => 255, 'null' => false],
+        'post_count' => ['type' => 'integer', 'null' => true],
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+    ];
 
-	public $records = array(
-		array('name' => 'Sport', 'post_count' => 1),
-		array('name' => 'Music', 'post_count' => 2),
-	);
+    public $records = [
+        ['name' => 'Sport', 'post_count' => 1],
+        ['name' => 'Music', 'post_count' => 2],
+    ];
 }

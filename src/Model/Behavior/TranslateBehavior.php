@@ -36,401 +36,443 @@ use Cake\ORM\TableRegistry;
  * If you want to bring all or certain languages for each of the fetched records,
  * you can use the custom `translations` finders that is exposed to the table.
  */
-class TranslateBehavior extends Behavior {
+class TranslateBehavior extends Behavior
+{
 
-/**
- * Table instance
- *
- * @var \Cake\ORM\Table
- */
-	protected $_table;
+    /**
+     * Table instance
+     *
+     * @var \Cake\ORM\Table
+     */
+    protected $_table;
 
-/**
- * The locale name that will be used to override fields in the bound table
- * from the translations table
- *
- * @var string
- */
-	protected $_locale;
+    /**
+     * The locale name that will be used to override fields in the bound table
+     * from the translations table
+     *
+     * @var string
+     */
+    protected $_locale;
 
-/**
- * Default config
- *
- * These are merged with user-provided configuration when the behavior is used.
- *
- * @var array
- */
-	protected $_defaultConfig = [
-		'implementedFinders' => ['translations' => 'findTranslations'],
-		'implementedMethods' => ['locale' => 'locale'],
-		'fields' => [],
-		'translationTable' => 'i18n',
-		'defaultLocale' => ''
-	];
+    /**
+     * Default config
+     *
+     * These are merged with user-provided configuration when the behavior is used.
+     *
+     * @var array
+     */
+    protected $_defaultConfig = [
+        'implementedFinders' => ['translations' => 'findTranslations'],
+        'implementedMethods' => ['locale' => 'locale'],
+        'fields' => [],
+        'translationTable' => 'i18n',
+        'defaultLocale' => '',
+        'model' => '',
+        'onlyTranslated' => false
+    ];
 
-/**
- * Constructor
- *
- * @param \Cake\ORM\Table $table The table this behavior is attached to.
- * @param array $config The config for this behavior.
- */
-	public function __construct(Table $table, array $config = []) {
-		$config += ['defaultLocale' => I18n::defaultLocale()];
-		parent::__construct($table, $config);
-	}
+    /**
+     * Constructor
+     *
+     * @param \Cake\ORM\Table $table The table this behavior is attached to.
+     * @param array $config The config for this behavior.
+     */
+    public function __construct(Table $table, array $config = [])
+    {
+        $config += ['defaultLocale' => I18n::defaultLocale()];
+        parent::__construct($table, $config);
+    }
 
-/**
- * Initialize hook
- *
- * @param array $config The config for this behavior.
- * @return void
- */
-	public function initialize(array $config) {
-		$this->setupFieldAssociations(
-			$this->_config['fields'],
-			$this->_config['translationTable']
-		);
-	}
+    /**
+     * Initialize hook
+     *
+     * @param array $config The config for this behavior.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        $this->setupFieldAssociations(
+            $this->_config['fields'],
+            $this->_config['translationTable'],
+            $this->_config['model'] ? $this->_config['model'] : $this->_table->alias()
+        );
+    }
 
-/**
- * Creates the associations between the bound table and every field passed to
- * this method.
- *
- * Additionally it creates a `i18n` HasMany association that will be
- * used for fetching all translations for each record in the bound table
- *
- * @param array $fields list of fields to create associations for
- * @param string $table the table name to use for storing each field translation
- * @return void
- */
-	public function setupFieldAssociations($fields, $table) {
-		$alias = $this->_table->alias();
-		foreach ($fields as $field) {
-			$name = $this->_table->alias() . '_' . $field . '_translation';
-			$target = TableRegistry::get($name);
-			$target->table($table);
+    /**
+     * Creates the associations between the bound table and every field passed to
+     * this method.
+     *
+     * Additionally it creates a `i18n` HasMany association that will be
+     * used for fetching all translations for each record in the bound table
+     *
+     * @param array $fields list of fields to create associations for
+     * @param string $table the table name to use for storing each field translation
+     * @param string $model the model field value
+     * @return void
+     */
+    public function setupFieldAssociations($fields, $table, $model)
+    {
+        $filter = $this->_config['onlyTranslated'];
+        foreach ($fields as $field) {
+            $name = $this->_table->alias() . '_' . $field . '_translation';
+            $target = TableRegistry::get($name);
+            $target->table($table);
 
-			$this->_table->hasOne($name, [
-				'targetTable' => $target,
-				'foreignKey' => 'foreign_key',
-				'joinType' => 'LEFT',
-				'conditions' => [
-					$name . '.model' => $alias,
-					$name . '.field' => $field,
-				],
-				'propertyName' => $field . '_translation'
-			]);
-		}
+            $this->_table->hasOne($name, [
+                'targetTable' => $target,
+                'foreignKey' => 'foreign_key',
+                'joinType' => $filter ? 'INNER' : 'LEFT',
+                'conditions' => [
+                    $name . '.model' => $model,
+                    $name . '.field' => $field,
+                ],
+                'propertyName' => $field . '_translation'
+            ]);
+        }
 
-		$this->_table->hasMany($table, [
-			'foreignKey' => 'foreign_key',
-			'strategy' => 'subquery',
-			'conditions' => ["$table.model" => $alias],
-			'propertyName' => '_i18n',
-			'dependent' => true
-		]);
-	}
+        $this->_table->hasMany($table, [
+            'foreignKey' => 'foreign_key',
+            'strategy' => 'subquery',
+            'conditions' => ["$table.model" => $model],
+            'propertyName' => '_i18n',
+            'dependent' => true
+        ]);
+    }
 
-/**
- * Callback method that listens to the `beforeFind` event in the bound
- * table. It modifies the passed query by eager loading the translated fields
- * and adding a formatter to copy the values into the main table records.
- *
- * @param \Cake\Event\Event $event The beforeFind event that was fired.
- * @param \Cake\ORM\Query $query Query
- * @return void
- */
-	public function beforeFind(Event $event, Query $query) {
-		$locale = $this->locale();
+    /**
+     * Callback method that listens to the `beforeFind` event in the bound
+     * table. It modifies the passed query by eager loading the translated fields
+     * and adding a formatter to copy the values into the main table records.
+     *
+     * @param \Cake\Event\Event $event The beforeFind event that was fired.
+     * @param \Cake\ORM\Query $query Query
+     * @param \ArrayObject $options The options for the query
+     * @return void
+     */
+    public function beforeFind(Event $event, Query $query, $options)
+    {
+        $locale = $this->locale();
 
-		if ($locale === $this->config('defaultLocale')) {
-			return;
-		}
+        if ($locale === $this->config('defaultLocale')) {
+            return;
+        }
 
-		$conditions = function ($q) use ($locale) {
-			return $q
-				->select(['id', 'content'])
-				->where([$q->repository()->alias() . '.locale' => $locale]);
-		};
+        $conditions = function ($field, $locale, $query, $select) {
+            return function ($q) use ($field, $locale, $query, $select) {
+                $q->where([$q->repository()->alias() . '.locale' => $locale]);
+                $alias = $this->_table->alias();
 
-		$contain = [];
-		$fields = $this->_config['fields'];
-		$alias = $this->_table->alias();
-		foreach ($fields as $field) {
-			$contain[$alias . '_' . $field . '_translation'] = $conditions;
-		}
+                if ($query->autoFields() ||
+                    in_array($field, $select, true) ||
+                    in_array("$alias.$field", $select, true)
+                ) {
+                    $q->select(['id', 'content']);
+                }
 
-		$query->contain($contain);
-		$query->formatResults(function ($results) use ($locale) {
-			return $this->_rowMapper($results, $locale);
-		}, $query::PREPEND);
-	}
+                return $q;
+            };
+        };
 
-/**
- * Modifies the entity before it is saved so that translated fields are persisted
- * in the database too.
- *
- * @param \Cake\Event\Event $event The beforeSave event that was fired
- * @param \Cake\ORM\Entity $entity The entity that is going to be saved
- * @param \ArrayObject $options the options passed to the save method
- * @return void
- */
-	public function beforeSave(Event $event, Entity $entity, ArrayObject $options) {
-		$locale = $entity->get('_locale') ?: $this->locale();
-		$table = $this->_config['translationTable'];
-		$newOptions = [$table => ['validate' => false]];
-		$options['associated'] = $newOptions + $options['associated'];
+        $contain = [];
+        $fields = $this->_config['fields'];
+        $alias = $this->_table->alias();
+        $select = $query->clause('select');
+        $changeFilter = isset($options['filterByCurrentLocale']) &&
+            $options['filterByCurrentLocale'] !== $this->_config['onlyTranslated'];
 
-		$this->_bundleTranslatedFields($entity);
-		$bundled = $entity->get('_i18n') ?: [];
+        foreach ($fields as $field) {
+            $contain[$alias . '_' . $field . '_translation']['queryBuilder'] = $conditions(
+            $field,
+            $locale,
+            $query,
+            $select
+            );
 
-		if ($locale === $this->config('defaultLocale')) {
-			return;
-		}
+            if ($changeFilter) {
+                $filter = $options['filterByCurrentLocale'] ? 'INNER' : 'LEFT';
+                $contain[$alias . '_' . $field . '_translation']['joinType'] = $filter;
+            }
+        }
 
-		$values = $entity->extract($this->_config['fields'], true);
-		$fields = array_keys($values);
-		$primaryKey = (array)$this->_table->primaryKey();
-		$key = $entity->get(current($primaryKey));
+        $query->contain($contain);
+        $query->formatResults(function ($results) use ($locale) {
+            return $this->_rowMapper($results, $locale);
+        }, $query::PREPEND);
+    }
 
-		$preexistent = TableRegistry::get($table)->find()
-			->select(['id', 'field'])
-			->where(['field IN' => $fields, 'locale' => $locale, 'foreign_key' => $key])
-			->bufferResults(false)
-			->indexBy('field');
+    /**
+     * Modifies the entity before it is saved so that translated fields are persisted
+     * in the database too.
+     *
+     * @param \Cake\Event\Event $event The beforeSave event that was fired
+     * @param \Cake\ORM\Entity $entity The entity that is going to be saved
+     * @param \ArrayObject $options the options passed to the save method
+     * @return void
+     */
+    public function beforeSave(Event $event, Entity $entity, ArrayObject $options)
+    {
+        $locale = $entity->get('_locale') ?: $this->locale();
+        $table = $this->_config['translationTable'];
+        $newOptions = [$table => ['validate' => false]];
+        $options['associated'] = $newOptions + $options['associated'];
 
-		$modified = [];
-		foreach ($preexistent as $field => $translation) {
-			$translation->set('content', $values[$field]);
-			$modified[$field] = $translation;
-		}
+        $this->_bundleTranslatedFields($entity);
+        $bundled = $entity->get('_i18n') ?: [];
 
-		$new = array_diff_key($values, $modified);
-		$model = $this->_table->alias();
-		foreach ($new as $field => $content) {
-			$new[$field] = new Entity(compact('locale', 'field', 'content', 'model'), [
-				'useSetters' => false,
-				'markNew' => true
-			]);
-		}
+        if ($locale === $this->config('defaultLocale')) {
+            return;
+        }
 
-		$entity->set('_i18n', array_merge($bundled, array_values($modified + $new)));
-		$entity->set('_locale', $locale, ['setter' => false]);
-		$entity->dirty('_locale', false);
+        $values = $entity->extract($this->_config['fields'], true);
+        $fields = array_keys($values);
+        $primaryKey = (array)$this->_table->primaryKey();
+        $key = $entity->get(current($primaryKey));
+        $model = $this->_table->alias();
 
-		foreach ($fields as $field) {
-			$entity->dirty($field, false);
-		}
-	}
+        $preexistent = TableRegistry::get($table)->find()
+            ->select(['id', 'field'])
+            ->where(['field IN' => $fields, 'locale' => $locale, 'foreign_key' => $key, 'model' => $model])
+            ->bufferResults(false)
+            ->indexBy('field');
 
-/**
- * Unsets the temporary `_i18n` property after the entity has been saved
- *
- * @param \Cake\Event\Event $event The beforeSave event that was fired
- * @param \Cake\ORM\Entity $entity The entity that is going to be saved
- * @return void
- */
-	public function afterSave(Event $event, Entity $entity) {
-		$entity->unsetProperty('_i18n');
-	}
+        $modified = [];
+        foreach ($preexistent as $field => $translation) {
+            $translation->set('content', $values[$field]);
+            $modified[$field] = $translation;
+        }
 
-/**
- * Sets all future finds for the bound table to also fetch translated fields for
- * the passed locale. If no value is passed, it returns the currently configured
- * locale
- *
- * @param string $locale The locale to use for fetching translated records
- * @return string
- */
-	public function locale($locale = null) {
-		if ($locale === null) {
-			return $this->_locale ?: I18n::locale();
-		}
-		return $this->_locale = (string)$locale;
-	}
+        $new = array_diff_key($values, $modified);
+        foreach ($new as $field => $content) {
+            $new[$field] = new Entity(compact('locale', 'field', 'content', 'model'), [
+                'useSetters' => false,
+                'markNew' => true
+            ]);
+        }
 
-/**
- * Custom finder method used to retrieve all translations for the found records.
- * Fetched translations can be filtered by locale by passing the `locales` key
- * in the options array.
- *
- * Translated values will be found for each entity under the property `_translations`,
- * containing an array indexed by locale name.
- *
- * ### Example:
- *
- * {{{
- * $article = $articles->find('translations', ['locales' => ['eng', 'deu'])->first();
- * $englishTranslatedFields = $article->get('_translations')['eng'];
- * }}}
- *
- * If the `locales` array is not passed, it will bring all translations found
- * for each record.
- *
- * @param \Cake\ORM\Query $query The original query to modify
- * @param array $options Options
- * @return \Cake\ORM\Query
- */
-	public function findTranslations(Query $query, array $options) {
-		$locales = isset($options['locales']) ? $options['locales'] : [];
-		$table = $this->_config['translationTable'];
-		return $query
-			->contain([$table => function ($q) use ($locales, $table) {
-				if ($locales) {
-					$q->where(["$table.locale IN" => $locales]);
-				}
-				return $q;
-			}])
-			->formatResults([$this, 'groupTranslations'], $query::PREPEND);
-	}
+        $entity->set('_i18n', array_merge($bundled, array_values($modified + $new)));
+        $entity->set('_locale', $locale, ['setter' => false]);
+        $entity->dirty('_locale', false);
 
-/**
- * Modifies the results from a table find in order to merge the translated fields
- * into each entity for a given locale.
- *
- * @param \Cake\Datasource\ResultSetInterface $results Results to map.
- * @param string $locale Locale string
- * @return \Cake\Collection\Collection
- */
-	protected function _rowMapper($results, $locale) {
-		return $results->map(function ($row) use ($locale) {
-			$options = ['setter' => false, 'guard' => false];
-			$hydrated = !is_array($row);
+        foreach ($fields as $field) {
+            $entity->dirty($field, false);
+        }
+    }
 
-			foreach ($this->_config['fields'] as $field) {
+    /**
+     * Unsets the temporary `_i18n` property after the entity has been saved
+     *
+     * @param \Cake\Event\Event $event The beforeSave event that was fired
+     * @param \Cake\ORM\Entity $entity The entity that is going to be saved
+     * @return void
+     */
+    public function afterSave(Event $event, Entity $entity)
+    {
+        $entity->unsetProperty('_i18n');
+    }
 
-				$name = $field . '_translation';
-				$translation = isset($row[$name]) ? $row[$name] : null;
+    /**
+     * Sets all future finds for the bound table to also fetch translated fields for
+     * the passed locale. If no value is passed, it returns the currently configured
+     * locale
+     *
+     * @param string|null $locale The locale to use for fetching translated records
+     * @return string
+     */
+    public function locale($locale = null)
+    {
+        if ($locale === null) {
+            return $this->_locale ?: I18n::locale();
+        }
+        return $this->_locale = (string)$locale;
+    }
 
-				if ($translation === null || $translation === false) {
-					unset($row[$name]);
-					continue;
-				}
+    /**
+     * Custom finder method used to retrieve all translations for the found records.
+     * Fetched translations can be filtered by locale by passing the `locales` key
+     * in the options array.
+     *
+     * Translated values will be found for each entity under the property `_translations`,
+     * containing an array indexed by locale name.
+     *
+     * ### Example:
+     *
+     * {{{
+     * $article = $articles->find('translations', ['locales' => ['eng', 'deu'])->first();
+     * $englishTranslatedFields = $article->get('_translations')['eng'];
+     * }}}
+     *
+     * If the `locales` array is not passed, it will bring all translations found
+     * for each record.
+     *
+     * @param \Cake\ORM\Query $query The original query to modify
+     * @param array $options Options
+     * @return \Cake\ORM\Query
+     */
+    public function findTranslations(Query $query, array $options)
+    {
+        $locales = isset($options['locales']) ? $options['locales'] : [];
+        $table = $this->_config['translationTable'];
+        return $query
+            ->contain([$table => function ($q) use ($locales, $table) {
+                if ($locales) {
+                    $q->where(["$table.locale IN" => $locales]);
+                }
+                return $q;
+            }])
+            ->formatResults([$this, 'groupTranslations'], $query::PREPEND);
+    }
 
-				$content = isset($translation['content']) ? $translation['content'] : null;
-				if ($content !== null) {
-					$row[$field] = $content;
-				}
+    /**
+     * Modifies the results from a table find in order to merge the translated fields
+     * into each entity for a given locale.
+     *
+     * @param \Cake\Datasource\ResultSetInterface $results Results to map.
+     * @param string $locale Locale string
+     * @return \Cake\Collection\Collection
+     */
+    protected function _rowMapper($results, $locale)
+    {
+        return $results->map(function ($row) use ($locale) {
+            if ($row === null) {
+                return $row;
+            }
+            $hydrated = !is_array($row);
 
-				unset($row[$name]);
-			}
+            foreach ($this->_config['fields'] as $field) {
+                $name = $field . '_translation';
+                $translation = isset($row[$name]) ? $row[$name] : null;
 
-			$row['_locale'] = $locale;
-			if ($hydrated) {
-				$row->clean();
-			}
+                if ($translation === null || $translation === false) {
+                    unset($row[$name]);
+                    continue;
+                }
 
-			return $row;
-		});
-	}
+                $content = isset($translation['content']) ? $translation['content'] : null;
+                if ($content !== null) {
+                    $row[$field] = $content;
+                }
 
-/**
- * Modifies the results from a table find in order to merge full translation records
- * into each entity under the `_translations` key
- *
- * @param \Cake\Datasource\ResultSetInterface $results Results to modify.
- * @return \Cake\Collection\Collection
- */
-	public function groupTranslations($results) {
-		return $results->map(function ($row) {
-			$translations = (array)$row->get('_i18n');
-			$grouped = new Collection($translations);
+                unset($row[$name]);
+            }
 
-			$result = [];
-			foreach ($grouped->combine('field', 'content', 'locale') as $locale => $keys) {
-				$translation = new Entity($keys + ['locale' => $locale], [
-					'markNew' => false,
-					'useSetters' => false,
-					'markClean' => true
-				]);
-				$result[$locale] = $translation;
-			}
+            $row['_locale'] = $locale;
+            if ($hydrated) {
+                $row->clean();
+            }
 
-			$options = ['setter' => false, 'guard' => false];
-			$row->set('_translations', $result, $options);
-			unset($row['_i18n']);
-			$row->clean();
-			return $row;
-		});
-	}
+            return $row;
+        });
+    }
 
-/**
- * Helper method used to generated multiple translated field entities
- * out of the data found in the `_translations` property in the passed
- * entity. The result will be put into its `_i18n` property
- *
- * @param \Cake\ORM\Entity $entity Entity
- * @return void
- */
-	protected function _bundleTranslatedFields($entity) {
-		$translations = (array)$entity->get('_translations');
+    /**
+     * Modifies the results from a table find in order to merge full translation records
+     * into each entity under the `_translations` key
+     *
+     * @param \Cake\Datasource\ResultSetInterface $results Results to modify.
+     * @return \Cake\Collection\Collection
+     */
+    public function groupTranslations($results)
+    {
+        return $results->map(function ($row) {
+            $translations = (array)$row->get('_i18n');
+            $grouped = new Collection($translations);
 
-		if (empty($translations) && !$entity->dirty('_translations')) {
-			return;
-		}
+            $result = [];
+            foreach ($grouped->combine('field', 'content', 'locale') as $locale => $keys) {
+                $translation = new Entity($keys + ['locale' => $locale], [
+                    'markNew' => false,
+                    'useSetters' => false,
+                    'markClean' => true
+                ]);
+                $result[$locale] = $translation;
+            }
 
-		$fields = $this->_config['fields'];
-		$primaryKey = (array)$this->_table->primaryKey();
-		$key = $entity->get(current($primaryKey));
-		$find = [];
+            $options = ['setter' => false, 'guard' => false];
+            $row->set('_translations', $result, $options);
+            unset($row['_i18n']);
+            $row->clean();
+            return $row;
+        });
+    }
 
-		foreach ($translations as $lang => $translation) {
-			foreach ($fields as $field) {
-				if (!$translation->dirty($field)) {
-					continue;
-				}
-				$find[] = ['locale' => $lang, 'field' => $field, 'foreign_key' => $key];
-				$contents[] = new Entity(['content' => $translation->get($field)], [
-					'useSetters' => false
-				]);
-			}
-		}
+    /**
+     * Helper method used to generated multiple translated field entities
+     * out of the data found in the `_translations` property in the passed
+     * entity. The result will be put into its `_i18n` property
+     *
+     * @param \Cake\ORM\Entity $entity Entity
+     * @return void
+     */
+    protected function _bundleTranslatedFields($entity)
+    {
+        $translations = (array)$entity->get('_translations');
 
-		if (empty($find)) {
-			return;
-		}
+        if (empty($translations) && !$entity->dirty('_translations')) {
+            return;
+        }
 
-		$results = $this->_findExistingTranslations($find);
-		$alias = $this->_table->alias();
+        $fields = $this->_config['fields'];
+        $primaryKey = (array)$this->_table->primaryKey();
+        $key = $entity->get(current($primaryKey));
+        $find = [];
 
-		foreach ($find as $i => $translation) {
-			if (!empty($results[$i])) {
-				$contents[$i]->set('id', $results[$i], ['setter' => false]);
-				$contents[$i]->isNew(false);
-			} else {
-				$translation['model'] = $alias;
-				$contents[$i]->set($translation, ['setter' => false, 'guard' => false]);
-				$contents[$i]->isNew(true);
-			}
-		}
+        foreach ($translations as $lang => $translation) {
+            foreach ($fields as $field) {
+                if (!$translation->dirty($field)) {
+                    continue;
+                }
+                $find[] = ['locale' => $lang, 'field' => $field, 'foreign_key' => $key];
+                $contents[] = new Entity(['content' => $translation->get($field)], [
+                    'useSetters' => false
+                ]);
+            }
+        }
 
-		$entity->set('_i18n', $contents);
-	}
+        if (empty($find)) {
+            return;
+        }
 
-/**
- * Returns the ids found for each of the condition arrays passed for the translations
- * table. Each records is indexed by the corresponding position to the conditions array
- *
- * @param array $ruleSet an array of arary of conditions to be used for finding each
- * @return array
- */
-	protected function _findExistingTranslations($ruleSet) {
-		$association = $this->_table->association($this->_config['translationTable']);
-		$query = $association->find()
-			->select(['id', 'num' => 0])
-			->where(current($ruleSet))
-			->hydrate(false)
-			->bufferResults(false);
+        $results = $this->_findExistingTranslations($find);
+        $alias = $this->_table->alias();
 
-		unset($ruleSet[0]);
-		foreach ($ruleSet as $i => $conditions) {
-			$q = $association->find()
-				->select(['id', 'num' => $i])
-				->where($conditions);
-			$query->unionAll($q);
-		}
+        foreach ($find as $i => $translation) {
+            if (!empty($results[$i])) {
+                $contents[$i]->set('id', $results[$i], ['setter' => false]);
+                $contents[$i]->isNew(false);
+            } else {
+                $translation['model'] = $alias;
+                $contents[$i]->set($translation, ['setter' => false, 'guard' => false]);
+                $contents[$i]->isNew(true);
+            }
+        }
 
-		return $query->combine('num', 'id')->toArray();
-	}
+        $entity->set('_i18n', $contents);
+    }
 
+    /**
+     * Returns the ids found for each of the condition arrays passed for the translations
+     * table. Each records is indexed by the corresponding position to the conditions array
+     *
+     * @param array $ruleSet an array of arary of conditions to be used for finding each
+     * @return array
+     */
+    protected function _findExistingTranslations($ruleSet)
+    {
+        $association = $this->_table->association($this->_config['translationTable']);
+        $query = $association->find()
+            ->select(['id', 'num' => 0])
+            ->where(current($ruleSet))
+            ->hydrate(false)
+            ->bufferResults(false);
+
+        unset($ruleSet[0]);
+        foreach ($ruleSet as $i => $conditions) {
+            $q = $association->find()
+                ->select(['id', 'num' => $i])
+                ->where($conditions);
+            $query->unionAll($q);
+        }
+
+        return $query->combine('num', 'id')->toArray();
+    }
 }
