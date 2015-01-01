@@ -358,3 +358,8 @@ foreach ($query as $row) {
 // Get the statement and fetch all results
 $results = $query->execute()->fetchAll('assoc');
 ```
+
+## Official API
+
+You can read the official [official API docs](http://api.cakephp.org/3.0/namespace-Cake.Database.html) to learn more of what this library
+has to offer.
