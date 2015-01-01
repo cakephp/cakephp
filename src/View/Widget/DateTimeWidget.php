@@ -186,7 +186,7 @@ class DateTimeWidget implements WidgetInterface
      */
     protected function _deconstructDate($value, $options)
     {
-        if (empty($value)) {
+        if ($value === '' || $value === null) {
             return [
                 'year' => '', 'month' => '', 'day' => '',
                 'hour' => '', 'minute' => '', 'second' => '',
@@ -196,7 +196,7 @@ class DateTimeWidget implements WidgetInterface
         try {
             if (is_string($value)) {
                 $date = new \DateTime($value);
-            } elseif (is_bool($value) || $value === null) {
+            } elseif (is_bool($value)) {
                 $date = new \DateTime();
             } elseif (is_int($value)) {
                 $date = new \DateTime('@' . $value);

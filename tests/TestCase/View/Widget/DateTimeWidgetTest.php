@@ -53,11 +53,9 @@ class DateTimeWidgetTest extends TestCase
     public static function invalidSelectedValuesProvider()
     {
         return [
-            'null' => null,
-            'false' => false,
-            'true' => true,
+            'false' => [false],
+            'true' => [true],
             'string' => ['Bag of poop'],
-            'int' => [-1],
             'array' => [[
                 'derp' => 'hurt'
             ]]
@@ -67,7 +65,7 @@ class DateTimeWidgetTest extends TestCase
     /**
      * test rendering selected values.
      *
-     * @dataProvider selectedValuesProvider
+     * @dataProvider invalidSelectedValuesProvider
      * @return void
      */
     public function testRenderSelectedInvalid($selected)
