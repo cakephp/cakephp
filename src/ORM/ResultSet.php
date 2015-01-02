@@ -217,7 +217,7 @@ class ResultSet implements ResultSetInterface
      */
     public function valid()
     {
-        if (isset($this->_results[$this->_index])) {
+        if ($this->_results[$this->_index] !== null) {
             $this->_current = $this->_results[$this->_index];
             return true;
         }
