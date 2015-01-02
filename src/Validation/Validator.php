@@ -82,7 +82,6 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
      * @param array $data The data to be checked for errors
      * @param bool $newRecord whether the data to be validated is new or to be updated.
      * @return array Array of invalid fields
-     * @see Validator::validates()
      */
     public function errors(array $data, $newRecord = true)
     {
