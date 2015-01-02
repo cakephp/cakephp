@@ -249,6 +249,19 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test the negated content assertion.
+     *
+     * @return void
+     */
+    public function testAssertResponseNotContains()
+    {
+        $this->_response = new Response();
+        $this->_response->body('Some content');
+
+        $this->assertResponseNotContains('contents');
+    }
+
+    /**
      * Test that works in tandem with testEventManagerReset2 to
      * test the EventManager reset.
      *
