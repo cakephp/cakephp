@@ -234,8 +234,6 @@ class ResponseTest extends TestCase
         $response->expects($this->at(5))
             ->method('_sendHeader')->with('Access-Control-Allow-Origin', 'domain2');
         $response->expects($this->at(6))
-            ->method('_sendHeader')->with('Content-Length', 17);
-        $response->expects($this->at(7))
             ->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
         $response->send();
     }
@@ -272,8 +270,6 @@ class ResponseTest extends TestCase
         $response->expects($this->at(1))
             ->method('_sendHeader')->with('HTTP/1.1 200 OK');
         $response->expects($this->at(2))
-            ->method('_sendHeader')->with('Content-Length', 17);
-        $response->expects($this->at(3))
             ->method('_sendHeader')->with('Content-Type', $expected);
         $response->send();
     }
@@ -295,8 +291,6 @@ class ResponseTest extends TestCase
         $response->expects($this->at(1))
             ->method('_sendHeader')->with('HTTP/1.1 200 OK');
         $response->expects($this->at(2))
-            ->method('_sendHeader')->with('Content-Length', 17);
-        $response->expects($this->at(3))
             ->method('_sendHeader')->with('Content-Type', 'application/javascript');
         $response->send();
     }
@@ -531,80 +525,6 @@ class ResponseTest extends TestCase
     }
 
     /**
-     * Tests the send and setting of Content-Length
-     *
-     * @return void
-     */
-    public function testSendContentLength()
-    {
-        $response = $this->getMock('Cake\Network\Response', ['_sendHeader', '_sendContent']);
-        $response->body('the response body');
-        $response->expects($this->once())->method('_sendContent')->with('the response body');
-        $response->expects($this->at(0))
-            ->method('_sendHeader')->with('HTTP/1.1 200 OK');
-        $response->expects($this->at(2))
-            ->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
-        $response->expects($this->at(1))
-            ->method('_sendHeader')->with('Content-Length', strlen('the response body'));
-        $response->send();
-
-        $response = $this->getMock('Cake\Network\Response', ['_sendHeader', '_sendContent']);
-        $body = '長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？';
-        $response->body($body);
-        $response->expects($this->once())->method('_sendContent')->with($body);
-        $response->expects($this->at(0))
-            ->method('_sendHeader')->with('HTTP/1.1 200 OK');
-        $response->expects($this->at(2))
-            ->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
-        $response->expects($this->at(1))
-            ->method('_sendHeader')->with('Content-Length', 116);
-        $response->send();
-
-        $response = $this->getMock('Cake\Network\Response', ['_sendHeader', '_sendContent', 'outputCompressed']);
-        $body = '長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？';
-        $response->body($body);
-        $response->expects($this->once())->method('outputCompressed')->will($this->returnValue(true));
-        $response->expects($this->once())->method('_sendContent')->with($body);
-        $response->expects($this->exactly(2))->method('_sendHeader');
-        $response->send();
-
-        $response = $this->getMock('Cake\Network\Response', ['_sendHeader', '_sendContent', 'outputCompressed']);
-        $body = 'hwy';
-        $response->body($body);
-        $response->header('Content-Length', 1);
-        $response->expects($this->never())->method('outputCompressed');
-        $response->expects($this->once())->method('_sendContent')->with($body);
-        $response->expects($this->at(1))
-                ->method('_sendHeader')->with('Content-Length', 1);
-        $response->send();
-
-        $response = $this->getMock('Cake\Network\Response', ['_sendHeader', '_sendContent']);
-        $body = 'content';
-        $response->statusCode(301);
-        $response->body($body);
-        $response->expects($this->once())->method('_sendContent')->with($body);
-        $response->expects($this->exactly(2))->method('_sendHeader');
-        $response->send();
-
-        ob_start();
-        $response = $this->getMock('Cake\Network\Response', ['_sendHeader', '_sendContent']);
-        $goofyOutput = 'I am goofily sending output in the controller';
-        echo $goofyOutput;
-        $response = $this->getMock('Cake\Network\Response', ['_sendHeader', '_sendContent']);
-        $body = '長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？';
-        $response->body($body);
-        $response->expects($this->once())->method('_sendContent')->with($body);
-        $response->expects($this->at(0))
-            ->method('_sendHeader')->with('HTTP/1.1 200 OK');
-        $response->expects($this->at(1))
-            ->method('_sendHeader')->with('Content-Length', strlen($goofyOutput) + 116);
-        $response->expects($this->at(2))
-            ->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
-        $response->send();
-        ob_end_clean();
-    }
-
-    /**
      * Tests getting/setting the protocol
      *
      * @return void
@@ -631,13 +551,6 @@ class ResponseTest extends TestCase
         $this->assertEquals(100, $response->length());
         $response->expects($this->at(1))
             ->method('_sendHeader')->with('Content-Length', 100);
-        $response->send();
-
-        $response = $this->getMock('Cake\Network\Response', ['_sendHeader', '_sendContent']);
-        $response->length(false);
-        $this->assertFalse($response->length());
-        $response->expects($this->exactly(2))
-            ->method('_sendHeader');
         $response->send();
     }
 
@@ -1248,10 +1161,6 @@ class ResponseTest extends TestCase
             ->method('header')
             ->with('Accept-Ranges', 'bytes');
 
-        $response->expects($this->at(2))
-            ->method('header')
-            ->with('Content-Length', 38);
-
         $response->expects($this->once())->method('_clearBuffer');
         $response->expects($this->once())->method('_flushBuffer');
 
@@ -1302,10 +1211,6 @@ class ResponseTest extends TestCase
         $response->expects($this->at(3))
             ->method('header')
             ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->at(4))
-            ->method('header')
-            ->with('Content-Length', 38);
 
         $response->expects($this->once())->method('_clearBuffer');
         $response->expects($this->once())->method('_flushBuffer');
@@ -1366,10 +1271,6 @@ class ResponseTest extends TestCase
         $response->expects($this->at(3))
             ->method('header')
             ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->at(4))
-            ->method('header')
-            ->with('Content-Length', 35);
 
         $response->expects($this->once())->method('_clearBuffer');
         $response->expects($this->once())->method('_flushBuffer');
@@ -1433,10 +1334,6 @@ class ResponseTest extends TestCase
             ->method('header')
             ->with('Accept-Ranges', 'bytes');
 
-        $response->expects($this->at(5))
-            ->method('header')
-            ->with('Content-Length', 35);
-
         $response->expects($this->once())->method('_clearBuffer');
         $response->expects($this->once())->method('_flushBuffer');
         $response->expects($this->exactly(1))
@@ -1497,10 +1394,6 @@ class ResponseTest extends TestCase
         $response->expects($this->at(4))
             ->method('header')
             ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->at(5))
-            ->method('header')
-            ->with('Content-Length', 35);
 
         $response->expects($this->once())->method('_clearBuffer');
         $response->expects($this->once())->method('_flushBuffer');
