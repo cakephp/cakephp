@@ -26,9 +26,6 @@ use Cake\Validation\ValidatableInterface;
  * This class is generally used by the internals of the ORM. It
  * provides methods for traversing a set of entities and their associated
  * properties.
- *
- * @see \Cake\ORM\Table::validate()
- * @see \Cake\ORM\Table::validateMany()
  */
 class EntityValidator
 {

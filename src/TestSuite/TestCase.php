@@ -275,6 +275,10 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      */
     public function assertTags($string, $expected, $fullDebug = false)
     {
+        trigger_error(
+            'assertTags() is deprecated, use assertHtml() instead.',
+            E_USER_DEPRECATED
+        );
         static::assertHtml($expected, $string, $fullDebug);
     }
 
