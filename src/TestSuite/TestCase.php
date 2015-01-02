@@ -267,6 +267,24 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     /**
      * Asserts HTML tags.
      *
+     * @param string $string An HTML/XHTML/XML string
+     * @param array $expected An array, see above
+     * @param bool $fullDebug Whether or not more verbose output should be used.
+     * @return void
+     * @deprecated 3.0. Use assertHtml() instead.
+     */
+    public function assertTags($string, $expected, $fullDebug = false)
+    {
+        trigger_error(
+            'assertTags() is deprecated, use assertHtml() instead.',
+            E_USER_DEPRECATED
+        );
+        static::assertHtml($expected, $string, $fullDebug);
+    }
+
+    /**
+     * Asserts HTML tags.
+     *
      * Takes an array $expected and generates a regex from it to match the provided $string.
      * Samples for $expected:
      *
