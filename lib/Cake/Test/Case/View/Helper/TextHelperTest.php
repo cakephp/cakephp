@@ -148,7 +148,7 @@ class TextHelperTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$text = 'This is a test text with URL (http://www.cakephp.org/page/4) in brackets';
-		$expected = 'This is a test text with URL (<a href="http://www.cakephp.org/page/4>http://www.cakephp.org/page/4</a>) in brackets';
+		$expected = 'This is a test text with URL (<a href="http://www.cakephp.org/page/4">http://www.cakephp.org/page/4</a>) in brackets';
 		$result = $this->Text->autoLink($text);
 		$this->assertEquals($expected, $result);
 
