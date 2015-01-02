@@ -494,7 +494,12 @@ class CakeSession {
 
 		if (!empty($sessionConfig['handler'])) {
 			$sessionConfig['ini']['session.save_handler'] = 'user';
+		} elseif (!empty($sessionConfig['session.save_path']) && Configure::read('debug')) {
+			if (!is_dir($sessionConfig['session.save_path'])) {
+				mkdir($sessionConfig['session.save_path'], 0775, true);
+			}
 		}
+
 		if (!isset($sessionConfig['ini']['session.gc_maxlifetime'])) {
 			$sessionConfig['ini']['session.gc_maxlifetime'] = $sessionConfig['timeout'] * 60;
 		}
