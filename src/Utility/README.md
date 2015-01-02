@@ -40,14 +40,14 @@ Check the [official Inflector class documentation](http://book.cakephp.org/3.0/e
 The String class includes convenience methods for creating and manipulating strings.
 
 ```php
-String::insert(
+Text::insert(
     'My name is :name and I am :age years old.',
     ['name' => 'Bob', 'age' => '65']
 );
 // Returns: "My name is Bob and I am 65 years old."
 
 $text = 'This is the song that never ends.';
-$result = String::wrap($text, 22);
+$result = Text::wrap($text, 22);
 
 // Returns
 This is the song

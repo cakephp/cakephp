@@ -125,7 +125,7 @@ class Hash
             }
             $tokens = explode('.', $path);
         } else {
-            $tokens = String::tokenize($path, '.', '[', ']');
+            $tokens = Text::tokenize($path, '.', '[', ']');
         }
 
         $_key = '__set_item__';
@@ -282,7 +282,7 @@ class Hash
         if ($noTokens) {
             $tokens = explode('.', $path);
         } else {
-            $tokens = String::tokenize($path, '.', '[', ']');
+            $tokens = Text::tokenize($path, '.', '[', ']');
         }
 
         if ($noTokens && strpos($path, '{') === false) {
@@ -374,7 +374,7 @@ class Hash
             return $data;
         }
 
-        $tokens = $noTokens ? explode('.', $path) : String::tokenize($path, '.', '[', ']');
+        $tokens = $noTokens ? explode('.', $path) : Text::tokenize($path, '.', '[', ']');
 
         if ($noExpansion && $noTokens) {
             return static::_simpleOp('remove', $data, $tokens);

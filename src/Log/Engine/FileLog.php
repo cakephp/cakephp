@@ -16,7 +16,7 @@ namespace Cake\Log\Engine;
 
 use Cake\Core\Configure;
 use Cake\Log\Engine\BaseLog;
-use Cake\Utility\String;
+use Cake\Utility\Text;
 
 /**
  * File Storage stream for Logging. Writes logs to different files
@@ -106,7 +106,7 @@ class FileLog extends BaseLog
             if (is_numeric($this->_config['size'])) {
                 $this->_size = (int)$this->_config['size'];
             } else {
-                $this->_size = String::parseFileSize($this->_config['size']);
+                $this->_size = Text::parseFileSize($this->_config['size']);
             }
         }
     }

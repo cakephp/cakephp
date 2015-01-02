@@ -54,7 +54,7 @@ class Security
      */
     public static function generateAuthKey()
     {
-        return Security::hash(String::uuid());
+        return Security::hash(Text::uuid());
     }
 
     /**

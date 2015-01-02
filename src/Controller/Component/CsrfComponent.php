@@ -20,7 +20,7 @@ use Cake\Network\Exception\ForbiddenException;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Security;
-use Cake\Utility\String;
+use Cake\Utility\Text;
 
 /**
  * Provides CSRF protection & validation.
@@ -120,7 +120,7 @@ class CsrfComponent extends Component
      */
     protected function _setCookie(Request $request, Response $response)
     {
-        $value = Security::hash(String::uuid(), 'sha1', true);
+        $value = Security::hash(Text::uuid(), 'sha1', true);
         $request->params['_csrfToken'] = $value;
         $response->cookie([
             'name' => $this->_config['cookieName'],

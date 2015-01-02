@@ -14,7 +14,7 @@
  */
 namespace Cake\Console;
 
-use Cake\Utility\String;
+use Cake\Utility\Text;
 
 /**
  * HelpFormatter formats help for console shells. Can format to either
@@ -64,7 +64,7 @@ class HelpFormatter
         $out = [];
         $description = $parser->description();
         if (!empty($description)) {
-            $out[] = String::wrap($description, $width);
+            $out[] = Text::wrap($description, $width);
             $out[] = '';
         }
         $out[] = '<info>Usage:</info>';
@@ -76,7 +76,7 @@ class HelpFormatter
             $out[] = '';
             $max = $this->_getMaxLength($subcommands) + 2;
             foreach ($subcommands as $command) {
-                $out[] = String::wrap($command->help($max), [
+                $out[] = Text::wrap($command->help($max), [
                     'width' => $width,
                     'indent' => str_repeat(' ', $max),
                     'indentAt' => 1
@@ -93,7 +93,7 @@ class HelpFormatter
             $out[] = '<info>Options:</info>';
             $out[] = '';
             foreach ($options as $option) {
-                $out[] = String::wrap($option->help($max), [
+                $out[] = Text::wrap($option->help($max), [
                     'width' => $width,
                     'indent' => str_repeat(' ', $max),
                     'indentAt' => 1
@@ -108,7 +108,7 @@ class HelpFormatter
             $out[] = '<info>Arguments:</info>';
             $out[] = '';
             foreach ($arguments as $argument) {
-                $out[] = String::wrap($argument->help($max), [
+                $out[] = Text::wrap($argument->help($max), [
                     'width' => $width,
                     'indent' => str_repeat(' ', $max),
                     'indentAt' => 1
@@ -118,7 +118,7 @@ class HelpFormatter
         }
         $epilog = $parser->epilog();
         if (!empty($epilog)) {
-            $out[] = String::wrap($epilog, $width);
+            $out[] = Text::wrap($epilog, $width);
             $out[] = '';
         }
         return implode("\n", $out);
