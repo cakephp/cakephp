@@ -237,7 +237,8 @@ class ConfigureTest extends TestCase
      */
     public function testCheckEmpty()
     {
-        $this->assertFalse(Configure::check());
+        $this->assertFalse(Configure::check(''));
+        $this->assertFalse(Configure::check(null));
     }
 
     /**
@@ -550,5 +551,21 @@ class ConfigureTest extends TestCase
         $result = Configure::consume('Test');
         $expected = ['key2' => 'value2'];
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * testConsumeEmpty
+     *
+     * @return void
+     */
+    public function testConsumeEmpty()
+    {
+        Configure::write('Test', ['key' => 'value', 'key2' => 'value2']);
+
+        $result = Configure::consume('');
+        $this->assertNull($result);
+
+        $result = Configure::consume(null);
+        $this->assertNull($result);
     }
 }
