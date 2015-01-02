@@ -5719,7 +5719,7 @@ class FormHelperTest extends TestCase
                 '/textarea',
             '/div'
         ];
-        $this->assertTags($result, $expected);
+        $this->assertHtml($expected, $result);
 
         $result = $this->Form->input('stuff', ['type' => 'textarea']);
         $expected = [
@@ -5731,7 +5731,7 @@ class FormHelperTest extends TestCase
                 '/textarea',
             '/div'
         ];
-        $this->assertTags($result, $expected);
+        $this->assertHtml($expected, $result);
     }
 
     /**

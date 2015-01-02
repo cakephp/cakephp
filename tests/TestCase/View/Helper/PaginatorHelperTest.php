@@ -1317,7 +1317,7 @@ class PaginatorHelperTest extends TestCase
             ['a' => ['href' => '/index?page=11']], '11', '/a',
             ['a' => ['href' => '/index?page=12']], '12', '/a',
         ];
-        $this->assertTags($result, $expected);
+        $this->assertHtml($expected, $result);
 
         $this->assertContains(
             '<li',
