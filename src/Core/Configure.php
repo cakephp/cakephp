@@ -129,7 +129,7 @@ class Configure
      * @param string $var Variable name to check for
      * @return bool True if variable is there
      */
-    public static function check($var = null)
+    public static function check($var)
     {
         if (empty($var)) {
             return false;
@@ -150,7 +150,7 @@ class Configure
      * @return void
      * @link http://book.cakephp.org/3.0/en/development/configuration.html#deleting-configuration-data
      */
-    public static function delete($var = null)
+    public static function delete($var)
     {
         static::$_values = Hash::remove(static::$_values, $var);
     }
@@ -202,7 +202,7 @@ class Configure
     /**
      * Gets the names of the configured Engine objects.
      *
-     * @param string $name Engine name.
+     * @param string|null $name Engine name.
      * @return array Array of the configured Engine objects.
      */
     public static function configured($name = null)
