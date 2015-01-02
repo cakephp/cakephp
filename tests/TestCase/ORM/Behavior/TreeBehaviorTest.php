@@ -12,11 +12,11 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Model\Behavior;
+namespace Cake\Test\TestCase\ORM\Behavior;
 
 use Cake\Collection\Collection;
 use Cake\Event\Event;
-use Cake\Model\Behavior\TranslateBehavior;
+use Cake\ORM\Behavior\TranslateBehavior;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;

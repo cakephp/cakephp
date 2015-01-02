@@ -12,9 +12,9 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Model\Behavior\Translate;
+namespace Cake\Test\TestCase\ORM\Behavior\Translate;
 
-use Cake\Model\Behavior\Translate\TranslateTrait;
+use Cake\ORM\Behavior\Translate\TranslateTrait;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 

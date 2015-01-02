@@ -38,7 +38,6 @@ class DatabaseSuite extends TestSuite
         $suite->addTestFile(__DIR__ . DS . 'Database' . DS . 'ConnectionTest.php');
         $suite->addTestDirectoryRecursive(__DIR__ . DS . 'Database');
         $suite->addTestDirectoryRecursive(__DIR__ . DS . 'ORM');
-        $suite->addTestDirectoryRecursive(__DIR__ . DS . 'Model');
         return $suite;
     }
 

@@ -15,11 +15,11 @@
 namespace Cake\Controller;
 
 use Cake\Controller\Exception\MissingActionException;
+use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManagerTrait;
 use Cake\Log\LogTrait;
-use Cake\Model\ModelAwareTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\ORM\TableRegistry;
