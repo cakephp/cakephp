@@ -535,6 +535,21 @@ abstract class IntegrationTestCase extends TestCase
     }
 
     /**
+     * Asserts content does not exist in the response body.
+     *
+     * @param string $content The content to check for.
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertResponseNotContains($content, $message = '')
+    {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert content. ' . $message);
+        }
+        $this->assertNotContains($content, $this->_response->body(), $message);
+    }
+
+    /**
      * Asserts that the search string was in the template name.
      *
      * @param string $content The content to check for.
