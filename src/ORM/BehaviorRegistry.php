@@ -77,8 +77,8 @@ class BehaviorRegistry extends ObjectRegistry
     protected function _resolveClassName($class)
     {
         $result = App::className($class, 'Model/Behavior', 'Behavior');
-        if (!$result && in_array($class, ['CounterCache', 'Timestamp', 'Tree', 'Translate'])) {
-            return 'Cake\ORM\Behavior\\' . $class . 'Behavior';
+        if (!$result) {
+            $result = App::className($class, 'ORM/Behavior', 'Behavior');
         }
         return $result;
     }
