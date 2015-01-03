@@ -228,4 +228,39 @@ class AssetDispatcherTest extends CakeTestCase {
 		$this->assertFalse($event->isStopped());
 	}
 
+/**
+ * Test asset content length is unset
+ *
+ * If content length is unset, then the webserver can figure it out.
+ *
+ * @outputBuffering enabled
+ * @return void
+ */
+	public function testAssetContentLength() {
+		Router::reload();
+		Configure::write('Dispatcher.filters', array('AssetDispatcher'));
+		App::build(array(
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
+		));
+
+		$url = 'theme/test_theme/css/test_asset.css';
+		$file = 'View/Themed/TestTheme/webroot/css/test_asset.css';
+
+		$request = new CakeRequest($url);
+		$response = $this->getMock('CakeResponse', array('_sendHeader', 'send'));
+		$event = new CakeEvent('Dispatcher.beforeRequest', $this, compact('request', 'response'));
+
+		$filter = new AssetDispatcher();
+		$filter->beforeDispatch($event);
+		$result = ob_get_clean();
+
+		$path = CAKE . 'Test' . DS . 'test_app' . DS . str_replace('/', DS, $file);
+		$file = file_get_contents($path);
+		$this->assertEquals($file, $result);
+
+		$expected = filesize($path);
+		$headers = $response->header();
+		$this->assertFalse($headers['Content-Length']);
+	}
+
 }

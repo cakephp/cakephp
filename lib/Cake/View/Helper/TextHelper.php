@@ -107,7 +107,7 @@ class TextHelper extends AppHelper {
 		$this->_placeholders = array();
 		$options += array('escape' => true);
 
-		$pattern = '#(?<!href="|src="|">)((?:https?|ftp|nntp)://[\p{L}0-9.\-_:]+(?:[/?][^\s<]*)?)#ui';
+		$pattern = '#(?<!href="|src="|">)((?:https?|ftp|nntp)://[\p{L}0-9.\-_:]+(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))#i';
 		$text = preg_replace_callback(
 			$pattern,
 			array(&$this, '_insertPlaceHolder'),

@@ -162,9 +162,20 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->assertContains('msgid "double \\"quoted\\""', $result, 'Strings with quotes not handled correctly');
 		$this->assertContains("msgid \"single 'quoted'\"", $result, 'Strings with quotes not handled correctly');
 
-		$pattern = '/\#: (\\\\|\/)extract\.ctp:33\n';
-		$pattern .= 'msgctxt "mail"/';
-		$this->assertRegExp($pattern, $result);
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:34\nmsgid "letter"/';
+		$this->assertRegExp($pattern, $result, 'Strings with context should not overwrite strings without context');
+
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:35;37\nmsgctxt "A"\nmsgid "letter"/';
+		$this->assertRegExp($pattern, $result, 'Should contain string with context "A"');
+
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:36\nmsgctxt "B"\nmsgid "letter"/';
+		$this->assertRegExp($pattern, $result, 'Should contain string with context "B"');
+
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:38\nmsgid "%d letter"\nmsgid_plural "%d letters"/';
+		$this->assertRegExp($pattern, $result, 'Plural strings with context should not overwrite strings without context');
+
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:39\nmsgctxt "A"\nmsgid "%d letter"\nmsgid_plural "%d letters"/';
+		$this->assertRegExp($pattern, $result, 'Should contain plural string with context "A"');
 
 		// extract.ctp - reading the domain.pot
 		$result = file_get_contents($this->path . DS . 'domain.pot');
