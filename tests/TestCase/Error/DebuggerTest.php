@@ -83,6 +83,10 @@ class DebuggerTest extends TestCase
      */
     public function testDocRef()
     {
+        $this->skipIf(
+            defined('HHVM_VERSION'),
+            'HHVM does not output doc references'
+        );
         ini_set('docref_root', '');
         $this->assertEquals(ini_get('docref_root'), '');
         new Debugger();
@@ -105,6 +109,7 @@ class DebuggerTest extends TestCase
         $this->assertTrue(is_array($result));
         $this->assertCount(4, $result);
 
+        $this->skipIf(defined('HHVM_VERSION'), 'HHVM does not highlight php code');
         $pattern = '/<code>.*?<span style\="color\: \#\d+">.*?&lt;\?php/';
         $this->assertRegExp($pattern, $result[0]);
 
