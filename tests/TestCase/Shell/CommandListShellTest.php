@@ -113,19 +113,18 @@ class CommandListShellTest extends TestCase
      */
     public function testMainXml()
     {
-        $this->assertFalse(defined('HHVM_VERSION'), 'Remove when travis updates to hhvm 2.5');
         $this->Shell->params['xml'] = true;
         $this->Shell->main();
 
         $output = $this->out->output;
 
-        $find = '<shell name="sample" call_as="sample" provider="app" help="sample -h"/>';
+        $find = '<shell name="sample" call_as="sample" provider="app" help="sample -h"';
         $this->assertContains($find, $output);
 
-        $find = '<shell name="orm_cache" call_as="orm_cache" provider="CORE" help="orm_cache -h"/>';
+        $find = '<shell name="orm_cache" call_as="orm_cache" provider="CORE" help="orm_cache -h"';
         $this->assertContains($find, $output);
 
-        $find = '<shell name="welcome" call_as="TestPluginTwo.welcome" provider="TestPluginTwo" help="TestPluginTwo.welcome -h"/>';
+        $find = '<shell name="welcome" call_as="TestPluginTwo.welcome" provider="TestPluginTwo" help="TestPluginTwo.welcome -h"';
         $this->assertContains($find, $output);
     }
 }

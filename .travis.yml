@@ -14,6 +14,7 @@ env:
 
 services:
   - memcached
+  - redis-server
 
 matrix:
   allow_failures:

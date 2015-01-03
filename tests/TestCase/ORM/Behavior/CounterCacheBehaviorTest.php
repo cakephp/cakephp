@@ -385,7 +385,7 @@ class CounterCacheBehaviorTest extends TestCase
      */
     protected function _getUser($id = 1)
     {
-        return $this->user->find('all')->where(['id' => $id])->first();
+        return $this->user->get($id);
     }
 
     /**

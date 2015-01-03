@@ -91,7 +91,13 @@ trait ViewVarsTrait
         if (!$className) {
             throw new Exception\MissingViewException([$viewClass]);
         }
-        $viewOptions = array_intersect_key(get_object_vars($this), array_flip($this->_validViewOptions));
+
+        $viewOptions = [];
+        foreach ($this->_validViewOptions as $option) {
+            if (property_exists($this, $option)) {
+                $viewOptions[$option] = $this->{$option};
+            }
+        }
         return new $className($this->request, $this->response, $this->eventManager(), $viewOptions);
     }
 

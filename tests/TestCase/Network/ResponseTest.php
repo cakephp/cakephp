@@ -383,9 +383,7 @@ class ResponseTest extends TestCase
      */
     public function testCompress()
     {
-        if (php_sapi_name() !== 'cli') {
-            $this->markTestSkipped('The response compression can only be tested in cli.');
-        }
+        $this->skipIf(defined('HHVM_VERSION'), 'HHVM does not implement ob_gzhandler');
 
         $response = new Response();
         if (ini_get("zlib.output_compression") === '1' || !extension_loaded("zlib")) {
@@ -505,9 +503,8 @@ class ResponseTest extends TestCase
         if (!extension_loaded("zlib")) {
             $this->markTestSkipped('Skipping further tests for outputCompressed as zlib extension is not loaded');
         }
-        if (php_sapi_name() !== 'cli') {
-            $this->markTestSkipped('Testing outputCompressed method with compression enabled done only in cli');
-        }
+
+        $this->skipIf(defined('HHVM_VERSION'), 'HHVM does not implement ob_gzhandler');
 
         if (ini_get("zlib.output_compression") !== '1') {
             ob_start('ob_gzhandler');

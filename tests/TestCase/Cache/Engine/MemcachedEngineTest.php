@@ -370,6 +370,8 @@ class MemcachedEngineTest extends TestCase
      * test using authentication without memcached installed with SASL support
      * throw an exception
      *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Memcached extension is not build with SASL support
      * @return void
      */
     public function testSaslAuthException()
@@ -383,7 +385,6 @@ class MemcachedEngineTest extends TestCase
             'password' => 'password'
         ];
 
-        $this->setExpectedException('PHPUnit_Framework_Error_Warning');
         $MemcachedEngine->init($config);
     }
 
@@ -606,7 +607,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testDeleteMany()
     {
-        $this->assertFalse(defined('HHVM_VERSION'), 'Crashes HHVM');
+        $this->skipIf(defined('HHVM_VERSION'), 'HHVM does not implement deleteMulti');
         $this->_configCache();
         $data = [
             'App.falseTest' => false,
@@ -786,7 +787,6 @@ class MemcachedEngineTest extends TestCase
      */
     public function testClear()
     {
-        $this->assertFalse(defined('HHVM_VERSION'), 'Crashes HHVM');
         Cache::config('memcached2', [
             'engine' => 'Memcached',
             'prefix' => 'cake2_',

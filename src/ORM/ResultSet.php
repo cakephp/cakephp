@@ -217,21 +217,23 @@ class ResultSet implements ResultSetInterface
      */
     public function valid()
     {
-        if (isset($this->_results[$this->_index])) {
+        if ($this->_index >= $this->_count) {
+            if ($this->_statement !== null) {
+                $this->_statement->closeCursor();
+            }
+            return false;
+        }
+
+        if ($this->_useBuffering && $this->_results[$this->_index] !== null) {
             $this->_current = $this->_results[$this->_index];
             return true;
         }
 
         $this->_current = $this->_fetchResult();
         $valid = $this->_current !== false;
-        $hasNext = $this->_index < $this->_count;
 
-        if ($this->_statement && !($valid && $hasNext)) {
-            $this->_statement->closeCursor();
-        }
-
-        if ($valid) {
-            $this->_bufferResult($this->_current);
+        if ($this->_useBuffering) {
+            $this->_results[$this->_index] = $this->_current;
         }
 
         return $valid;
@@ -263,6 +265,8 @@ class ResultSet implements ResultSetInterface
     public function unserialize($serialized)
     {
         $this->_results = unserialize($serialized);
+        $this->_useBuffering = true;
+        $this->_count = count($this->_results);
     }
 
     /**
@@ -484,19 +488,6 @@ class ResultSet implements ResultSetInterface
         }
 
         return $values;
-    }
-
-    /**
-     * Conditionally buffer the passed result
-     *
-     * @param array $result the result fetch from the database
-     * @return void
-     */
-    protected function _bufferResult($result)
-    {
-        if ($this->_useBuffering) {
-            $this->_results[$this->_index] = $result;
-        }
     }
 
     /**

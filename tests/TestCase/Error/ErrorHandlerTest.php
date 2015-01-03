@@ -121,7 +121,7 @@ class ErrorHandlerTest extends TestCase
         $this->_restoreError = true;
 
         ob_start();
-        $wrong .= '';
+        $wrong = $wrong + 1;
         $result = ob_get_clean();
 
         $this->assertRegExp('/<pre class="cake-error">/', $result);
@@ -199,7 +199,7 @@ class ErrorHandlerTest extends TestCase
                 'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ + 3) . ']' . "\n\n"
             );
 
-        $out .= '';
+        $out = $out + 1;
     }
 
     /**
@@ -225,7 +225,7 @@ class ErrorHandlerTest extends TestCase
                 )
             );
 
-        $out .= '';
+        $out = $out + 1;
     }
 
     /**
