@@ -136,7 +136,6 @@ class Session
                 'cookie' => 'CAKEPHP',
                 'ini' => [
                     'session.use_trans_sid' => 0,
-                    'url_rewriter.tags' => '',
                     'session.serialize_handler' => 'php',
                     'session.use_cookies' => 1,
                     'session.save_path' => TMP . 'sessions',
@@ -147,7 +146,6 @@ class Session
                 'cookie' => 'CAKEPHP',
                 'ini' => [
                     'session.use_trans_sid' => 0,
-                    'url_rewriter.tags' => '',
                     'session.use_cookies' => 1,
                     'session.save_handler' => 'user',
                 ],
@@ -160,7 +158,6 @@ class Session
                 'cookie' => 'CAKEPHP',
                 'ini' => [
                     'session.use_trans_sid' => 0,
-                    'url_rewriter.tags' => '',
                     'session.use_cookies' => 1,
                     'session.save_handler' => 'user',
                     'session.serialize_handler' => 'php',
