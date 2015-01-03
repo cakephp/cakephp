@@ -20,7 +20,6 @@ use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\String;
 
 /**
  * Integration tests for Table class with uuid primary keys.

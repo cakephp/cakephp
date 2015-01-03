@@ -22,7 +22,7 @@ use Cake\Filesystem\File;
 use Cake\Log\Log;
 use Cake\Network\Http\FormData\Part;
 use Cake\Utility\Hash;
-use Cake\Utility\String;
+use Cake\Utility\Text;
 use InvalidArgumentException;
 use LogicException;
 
@@ -809,7 +809,7 @@ class Email
         }
         if ($this->_messageId !== false) {
             if ($this->_messageId === true) {
-                $headers['Message-ID'] = '<' . str_replace('-', '', String::UUID()) . '@' . $this->_domain . '>';
+                $headers['Message-ID'] = '<' . str_replace('-', '', Text::uuid()) . '@' . $this->_domain . '>';
             } else {
                 $headers['Message-ID'] = $this->_messageId;
             }

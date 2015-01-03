@@ -15,4 +15,7 @@
 
 define('TIME_START', microtime(true));
 
+// @deprecated Backward compatibility with 2.x series
+class_alias('Cake\Utility\Text', 'Cake\Utility\String');
+
 require CAKE . 'basics.php';

@@ -15,7 +15,7 @@
 namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
-use Cake\Utility\String;
+use Cake\Utility\Text;
 use PDO;
 
 /**
@@ -76,6 +76,6 @@ class UuidType extends \Cake\Database\Type
      */
     public function newId()
     {
-        return String::uuid();
+        return Text::uuid();
     }
 }

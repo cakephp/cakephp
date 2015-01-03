@@ -23,7 +23,7 @@ use Cake\Filesystem\File;
 use Cake\Log\LogTrait;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
-use Cake\Utility\String;
+use Cake\Utility\Text;
 
 /**
  * Base class for command-line utilities for automating programmer chores.
@@ -490,12 +490,12 @@ class Shell
      * @param string $text Text the text to format.
      * @param int|array $options Array of options to use, or an integer to wrap the text to.
      * @return string Wrapped / indented text
-     * @see String::wrap()
+     * @see \Cake\Utility\Text::wrap()
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::wrapText
      */
     public function wrapText($text, $options = [])
     {
-        return String::wrap($text, $options);
+        return Text::wrap($text, $options);
     }
 
     /**
