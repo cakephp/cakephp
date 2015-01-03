@@ -392,7 +392,10 @@ class SocketTest extends TestCase
      */
     public function testGetContext()
     {
-        $this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
+        $this->skipIf(
+            !extension_loaded('openssl') || defined('HHVM_VERSION'),
+            'OpenSSL is not enabled cannot test SSL.'
+        );
         $config = [
             'host' => 'smtp.gmail.com',
             'port' => 465,

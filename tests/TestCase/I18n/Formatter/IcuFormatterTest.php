@@ -95,7 +95,8 @@ class IcuFormatterTest extends TestCase
     /**
      * Tests that passing a message in the wrong format will throw an exception
      *
-     * @expectedException \Aura\Intl\Exception\CannotInstantiateFormatter
+     * @expectedException Exception
+     * @expectedExceptionMessage msgfmt_create: message formatter
      * @return void
      */
     public function testBadMessageFormat()
