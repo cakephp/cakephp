@@ -161,6 +161,16 @@ class TextHelperTest extends CakeTestCase {
 		$expected = 'This is a test text with URL [<a href="http://www.example.com?aParam[]=value1&amp;aParam[]=value2&amp;aParam[]=value3">http://www.example.com?aParam[]=value1&amp;aParam[]=value2&amp;aParam[]=value3</a>] in square brackets';
 		$result = $this->Text->autoLink($text);
 		$this->assertEquals($expected, $result);
+
+		$text = 'This is a test text with URL ;http://www.cakephp.org/page/4; semi-colon';
+		$expected = 'This is a test text with URL ;<a href="http://www.cakephp.org/page/4">http://www.cakephp.org/page/4</a>; semi-colon';
+		$result = $this->Text->autoLink($text);
+		$this->assertEquals($expected, $result);
+
+		$text = 'This is a test text with URL (http://www.cakephp.org/page/4/other(thing)) brackets';
+		$expected = 'This is a test text with URL (<a href="http://www.cakephp.org/page/4/other(thing)">http://www.cakephp.org/page/4/other(thing)</a>) brackets';
+		$result = $this->Text->autoLink($text);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
