@@ -168,11 +168,11 @@ class ConfigureTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
-	/**
-	 * testConsumeEmpty
-	 *
-	 * @return void
-	 */
+/**
+ * testConsumeEmpty
+ *
+ * @return void
+ */
 	public function testConsumeEmpty() {
 		Configure::write('Test', array('key' => 'value', 'key2' => 'value2'));
 		$result = Configure::consume('');
