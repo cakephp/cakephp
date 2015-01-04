@@ -472,10 +472,10 @@ class CakeSession {
  *
  * Optionally also clears the session id and renews the session.
  *
- * @param bool $renew If the session should also be renewed. Defaults to false.
+ * @param bool $renew If the session should also be renewed. Defaults to true.
  * @return void
  */
-	public static function clear($renew = false) {
+	public static function clear($renew = true) {
 		$_SESSION = null;
 		if ($renew) {
 			self::$id = null;
