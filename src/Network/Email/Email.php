@@ -23,8 +23,15 @@ use Cake\Log\Log;
 use Cake\Network\Http\FormData\Part;
 use Cake\Utility\Hash;
 use Cake\Utility\Text;
+use Closure;
+use Exception;
 use InvalidArgumentException;
+use JsonSerializable;
 use LogicException;
+use PDO;
+use RuntimeException;
+use Serializable;
+use SimpleXmlElement;
 
 /**
  * CakePHP email class.
@@ -40,7 +47,7 @@ use LogicException;
  * application sends.
  *
  */
-class Email
+class Email implements JsonSerializable, Serializable
 {
 
     use StaticConfigTrait;
@@ -1884,5 +1891,115 @@ class Email
             return strtoupper($this->_contentTypeCharset[$charset]);
         }
         return strtoupper($this->charset);
+    }
+
+    /**
+     * Serializes the email object to a value that can be natively serialized and re-used
+     * to clone this email instance.
+     *
+     * It has certain limitations for viewVars that are good to know:
+     *
+     *    - ORM\Query executed and stored as resultset
+     *    - SimpleXmlElements stored as associative array
+     *    - Exceptions stored as strings
+     *    - Resources, \Closure and \PDO are not supported.
+     *
+     * @return array Serializable array of configuration properties.
+     * @throws \Exception When a view var object can not be properly serialized.
+     */
+    public function jsonSerialize()
+    {
+        $properties = [
+            '_to', '_from', '_sender', '_replyTo', '_cc', '_bcc', '_subject', '_returnPath', '_readReceipt',
+            '_template', '_layout', '_viewRender', '_viewVars', '_theme', '_helpers', '_emailFormat',
+            '_emailPattern', '_attachments', '_domain', '_messageId', '_headers', 'charset', 'headerCharset',
+        ];
+
+        $array = [];
+
+        foreach ($properties as $property) {
+            $array[$property] = $this->{$property};
+        }
+
+        array_walk($array['_attachments'], function (&$item, $key) {
+            if (!empty($item['file'])) {
+                $item['data'] = $this->_readFile($item['file']);
+                unset($item['file']);
+            }
+        });
+
+        array_walk_recursive($array['_viewVars'], [$this, '_checkViewVars']);
+
+        return array_filter($array, function ($i) {
+            return !is_array($i) && strlen($i) || !empty($i);
+        });
+    }
+
+    /**
+     * Iterates through hash to clean up and normalize.
+     *
+     * @param mixed $item Reference to the view var value.
+     * @param string $key View var key.
+     * @return void
+     */
+    protected function _checkViewVars(&$item, $key)
+    {
+        if ($item instanceof Exception) {
+            $item = (string)$item;
+        }
+
+        if (
+            is_resource($item) ||
+            $item instanceof Closure ||
+            $item instanceof PDO
+        ) {
+            throw new RuntimeException(sprintf(
+                'Failed serializing the `%s` %s in the `%s` view var',
+                is_resource($item) ? get_resource_type($item) : get_class($item),
+                is_resource($item) ? 'resource' : 'object',
+                $key
+            ));
+        }
+    }
+
+    /**
+     * Configures an email instance object from serialized config.
+     *
+     * @param array $config Email configuration array.
+     * @return \Cake\Network\Email\Email Configured email instance.
+     */
+    public function createFromArray($config)
+    {
+        foreach ($config as $property => $value) {
+            $this->{$property} = $value;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Serializes the Email object.
+     *
+     * @return void.
+     */
+    public function serialize()
+    {
+        $array = $this->jsonSerialize();
+        array_walk_recursive($array, function (&$item, $key) {
+            if ($item instanceof SimpleXmlElement) {
+                $item = json_decode(json_encode((array)$item), true);
+            }
+        });
+        return serialize($array);
+    }
+
+    /**
+     * Unserializes the Email object.
+     *
+     * @return void.
+     */
+    public function unserialize($data)
+    {
+        return $this->createFromArray(unserialize($data));
     }
 }
