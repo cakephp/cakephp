@@ -1665,6 +1665,70 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Integration test to ensure that filtering associations with the queryBuilder
+     * option works.
+     *
+     * @expectedException \RuntimeException
+     * @return void
+     */
+    public function testContainWithQueryBuilderHasManyError()
+    {
+        $table = TableRegistry::get('Authors');
+        $table->hasMany('Articles');
+        $query = new Query($this->connection, $table);
+        $query->select()
+            ->contain([
+                'Articles' => [
+                    'foreignKey' => false,
+                    'queryBuilder' => function ($q) {
+                        return $q->where(['articles.id' => 1]);
+                    }
+                ]
+            ]);
+        $query->toArray();
+    }
+
+    /**
+     * Integration test to ensure that filtering associations with the queryBuilder
+     * option works.
+     *
+     * @return void
+     */
+    public function testContainWithQueryBuilderJoinableAssociation()
+    {
+        $table = TableRegistry::get('Authors');
+        $table->hasOne('Articles');
+        $query = new Query($this->connection, $table);
+        $query->select()
+            ->contain([
+                'Articles' => [
+                    'foreignKey' => false,
+                    'queryBuilder' => function ($q) {
+                        return $q->where(['Articles.id' => 1]);
+                    }
+                ]
+            ]);
+        $result = $query->toArray();
+        $this->assertEquals(1, $result[0]->article->id);
+        $this->assertEquals(1, $result[1]->article->id);
+
+        $articles = TableRegistry::get('Articles');
+        $articles->belongsTo('Authors');
+        $query = new Query($this->connection, $articles);
+        $query->select()
+            ->contain([
+                'Authors' => [
+                    'foreignKey' => false,
+                    'queryBuilder' => function ($q) {
+                        return $q->where(['Authors.id' => 1]);
+                    }
+                ]
+            ]);
+        $result = $query->toArray();
+        $this->assertEquals(1, $result[0]->author->id);
+    }
+
+    /**
      * Tests the formatResults method
      *
      * @return void
