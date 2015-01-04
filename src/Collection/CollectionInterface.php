@@ -625,6 +625,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * @return \Cake\Collection\CollectionInterface
      */
     public function insert($path, $values);
+
     /**
      * Returns an array representation of the results
      *
@@ -635,6 +636,14 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * @return array
      */
     public function toArray($preserveKeys = true);
+
+    /**
+     * Returns an numerically-indexed array representation of the results.
+     * This is equivalent to calling `toArray(false)`
+     *
+     * @return array
+     */
+    public function toList();
 
     /**
      * Convert a result set into JSON.

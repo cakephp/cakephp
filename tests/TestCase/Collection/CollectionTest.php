@@ -529,6 +529,18 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Test toList method
+     *
+     * @return void
+     */
+    public function testToList()
+    {
+        $data = [100 => 1, 300 => 2, 500 => 3, 1 => 4];
+        $collection = new Collection($data);
+        $this->assertEquals(array_values($data), $collection->toList());
+    }
+
+    /**
      * Test json enconding
      *
      * @return void
