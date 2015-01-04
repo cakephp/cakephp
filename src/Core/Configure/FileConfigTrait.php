@@ -14,6 +14,7 @@
  */
 namespace Cake\Core\Configure;
 
+use Cake\Core\Exception\Exception;
 use Cake\Core\Plugin;
 
 /**
@@ -33,11 +34,17 @@ trait FileConfigTrait
      *
      * @param string $key The identifier to write to. If the key has a . it will be treated
      *  as a plugin prefix.
-     * @param string $ext File extension.
+     * @param bool $checkExists Whether to check if file exists. Defaults to false.
      * @return string Full file path
+     * @throws \Cake\Core\Exception\Exception When files don't exist or when
+     *  files contain '..' as this could lead to abusive reads.
      */
-    protected function _getFilePath($key)
+    protected function _getFilePath($key, $checkExists = false)
     {
+        if (strpos($key, '..') !== false) {
+            throw new Exception('Cannot load/dump configuration files with ../ in them.');
+        }
+
         list($plugin, $key) = pluginSplit($key);
 
         if ($plugin) {
@@ -46,6 +53,12 @@ trait FileConfigTrait
             $file = $this->_path . $key;
         }
 
-        return $file . $this->_extension;
+        $file .= $this->_extension;
+
+        if ($checkExists && !is_file($file)) {
+            throw new Exception(sprintf('Could not load configuration file: %s', $file));
+        }
+
+        return $file;
     }
 }

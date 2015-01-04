@@ -65,14 +65,7 @@ class PhpConfig implements ConfigEngineInterface
      */
     public function read($key)
     {
-        if (strpos($key, '..') !== false) {
-            throw new Exception('Cannot load configuration files with ../ in them.');
-        }
-
-        $file = $this->_getFilePath($key);
-        if (!is_file($file)) {
-            throw new Exception(sprintf('Could not load configuration file: %s', $file));
-        }
+        $file = $this->_getFilePath($key, true);
 
         include $file;
         if (!isset($config)) {
