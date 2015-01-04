@@ -531,7 +531,9 @@ class Session
     public function clear($renew = false)
     {
         $_SESSION = [];
-        $this->renew();
+        if ($renew) {
+            $this->renew();
+        }
     }
 
     /**
