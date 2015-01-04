@@ -733,6 +733,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 
 		$availableDs = array_keys(ConnectionManager::enumConnectionObjects());
 		if ($mock->useDbConfig === 'default') {
+			$mock->useDbConfig = null;
 			$mock->setDataSource('test');
 		}
 		if ($mock->useDbConfig !== 'test' && in_array('test_' . $mock->useDbConfig, $availableDs)) {
