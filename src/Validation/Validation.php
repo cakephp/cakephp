@@ -973,7 +973,8 @@ class Validation
      * @param array $value The array representing a date or datetime.
      * @return string
      */
-    protected static function _getDateString($value) {
+    protected static function _getDateString($value)
+    {
         $formatted = '';
         if (
             isset($value['year'], $value['month'], $value['day']) &&

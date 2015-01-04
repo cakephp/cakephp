@@ -1487,7 +1487,8 @@ class ValidationTest extends TestCase
      *
      * @return void
      */
-    public function testDateArray() {
+    public function testDateArray()
+    {
         $date = ['year' => 2014, 'month' => 2, 'day' => 14];
         $this->assertTrue(Validation::date($date));
         $date = ['year' => 'farts', 'month' => 'derp', 'day' => 'farts'];
@@ -1499,7 +1500,8 @@ class ValidationTest extends TestCase
      *
      * @return void
      */
-    public function testDateTimeArray() {
+    public function testDateTimeArray()
+    {
         $date = ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15];
         $this->assertTrue(Validation::datetime($date));
 
