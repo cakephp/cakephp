@@ -49,7 +49,7 @@ class TextHelper extends AppHelper {
 	protected $_placeholders = array();
 
 /**
- * String utility instance
+ * CakeText utility instance
  *
  * @var stdClass
  */
@@ -60,7 +60,7 @@ class TextHelper extends AppHelper {
  *
  * ### Settings:
  *
- * - `engine` Class name to use to replace String functionality.
+ * - `engine` Class name to use to replace CakeText functionality.
  *            The class needs to be placed in the `Utility` directory.
  *
  * @param View $View the view object the helper is attached to.
@@ -68,7 +68,7 @@ class TextHelper extends AppHelper {
  * @throws CakeException when the engine class could not be found.
  */
 	public function __construct(View $View, $settings = array()) {
-		$settings = Hash::merge(array('engine' => 'String'), $settings);
+		$settings = Hash::merge(array('engine' => 'CakeText'), $settings);
 		parent::__construct($View, $settings);
 		list($plugin, $engineClass) = pluginSplit($settings['engine'], true);
 		App::uses($engineClass, $plugin . 'Utility');
@@ -80,7 +80,7 @@ class TextHelper extends AppHelper {
 	}
 
 /**
- * Call methods from String utility class
+ * Call methods from CakeText utility class
  *
  * @param string $method Method to call.
  * @param array $params Parameters to pass to method.

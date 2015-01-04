@@ -26,7 +26,7 @@ App::uses('TextHelper', 'View/Helper');
  */
 class TextHelperTestObject extends TextHelper {
 
-	public function attach(StringMock $string) {
+	public function attach(CakeTextMock $string) {
 		$this->_engine = $string;
 	}
 
@@ -37,11 +37,11 @@ class TextHelperTestObject extends TextHelper {
 }
 
 /**
- * StringMock class
+ * CakeTextMock class
  *
  * @package       Cake.Test.Case.View.Helper
  */
-class StringMock {
+class CakeTextMock {
 }
 
 /**
@@ -81,11 +81,11 @@ class TextHelperTest extends CakeTestCase {
 		$methods = array(
 			'highlight', 'stripLinks', 'truncate', 'tail', 'excerpt', 'toList',
 			);
-		$String = $this->getMock('StringMock', $methods);
-		$Text = new TextHelperTestObject($this->View, array('engine' => 'StringMock'));
-		$Text->attach($String);
+		$CakeText = $this->getMock('CakeTextMock', $methods);
+		$Text = new TextHelperTestObject($this->View, array('engine' => 'CakeTextMock'));
+		$Text->attach($CakeText);
 		foreach ($methods as $method) {
-			$String->expects($this->at(0))->method($method);
+			$CakeText->expects($this->at(0))->method($method);
 			$Text->{$method}('who', 'what', 'when', 'where', 'how');
 		}
 	}
