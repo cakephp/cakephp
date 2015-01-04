@@ -24,6 +24,7 @@ use Cake\Network\Http\FormData\Part;
 use Cake\Utility\Hash;
 use Cake\Utility\String;
 use InvalidArgumentException;
+use JsonSerializable;
 use LogicException;
 
 /**
@@ -40,7 +41,7 @@ use LogicException;
  * application sends.
  *
  */
-class Email {
+class Email implements JsonSerializable {
 
 	use StaticConfigTrait;
 
@@ -1801,4 +1802,54 @@ class Email {
 		return strtoupper($this->charset);
 	}
 
+
+/**
+ * Serializes the email object to a value that can be natively serialized and re-used
+ * to clone this email instance.
+ *
+ * @return array Serializable array of configuration properties.
+ */
+	public function jsonSerialize() {
+		$properties = [
+			'to', 'from', 'replyTo', 'cc', 'bcc', 'subject', 'returnPath', 'readReceipt',
+			'template', 'layout', 'viewRender', 'viewVars', 'theme', 'helpers', 'emailFormat', 'transport',
+			'attachments', 'domain', 'messageId', 'headers', 'charset', 'headerCharset',
+		];
+
+		$array = [];
+
+		foreach ($properties as $property) {
+			$protected = '_' . $property;
+			if (property_exists($this, $protected)) {
+				$array[$property] = $this->{$protected};
+				continue;
+			}
+
+			$array[$property] = $this->{$property};
+		}
+
+		return array_filter($array);
+	}
+
+/**
+ * Configures an email instance object from serialized config.
+ *
+ * @param string $json JSON encoded email configuration.
+ * @return \Cake\Network\Email\Email Configured email instance.
+ */
+	public function jsonConfig($json) {
+		$properties = json_decode($json, true);
+
+		foreach ($properties as $property => $value) {
+			$protected = '_' . $property;
+			if (property_exists($this, $protected)) {
+				$this->{$protected} = $value;
+				continue;
+			}
+
+			$this->{$property} = $value;
+		}
+
+		return $this;
+	}
 }
