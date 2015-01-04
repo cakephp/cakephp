@@ -393,9 +393,26 @@ class CakeSessionTest extends CakeTestCase {
 		$this->assertTrue(TestCakeSession::check('Delete'));
 
 		$this->assertTrue(TestCakeSession::write('Clearing.sale', 'everything must go'));
+		$this->assertFalse(TestCakeSession::delete(''));
+		$this->assertTrue(TestCakeSession::check('Clearing.sale'));
+		$this->assertFalse(TestCakeSession::delete(null));
+		$this->assertTrue(TestCakeSession::check('Clearing.sale'));
+
 		$this->assertTrue(TestCakeSession::delete('Clearing'));
 		$this->assertFalse(TestCakeSession::check('Clearing.sale'));
 		$this->assertFalse(TestCakeSession::check('Clearing'));
+	}
+
+/**
+ * testClear method
+ *
+ * @return void
+ */
+	public function testClear() {
+		$this->assertTrue(TestCakeSession::write('Delete.me', 'Clearing out'));
+		TestCakeSession::clear(false);
+		$this->assertFalse(TestCakeSession::check('Delete.me'));
+		$this->assertFalse(TestCakeSession::check('Delete'));
 	}
 
 /**
@@ -451,7 +468,8 @@ class CakeSessionTest extends CakeTestCase {
  * @return void
  */
 	public function testCheckEmpty() {
-		$this->assertFalse(TestCakeSession::check());
+		$this->assertFalse(TestCakeSession::check(''));
+		$this->assertFalse(TestCakeSession::check(null));
 	}
 
 /**
