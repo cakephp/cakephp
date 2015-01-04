@@ -987,7 +987,9 @@ class Validation
                 $value['hour'] = strtolower($value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
             }
             $value += ['minute' => 0, 'second' => 0];
-            $formatted .= sprintf('%02d:%02d:%02d', $value['hour'], $value['minute'], $value['second']);
+            if (is_numeric($value['hour']) && is_numeric($value['minute']) && is_numeric($value['second'])) {
+                $formatted .= sprintf('%02d:%02d:%02d', $value['hour'], $value['minute'], $value['second']);
+            }
         }
 
         return trim($formatted);
