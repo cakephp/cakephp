@@ -403,11 +403,11 @@ class CakeSessionTest extends CakeTestCase {
 		$this->assertFalse(TestCakeSession::check('Clearing'));
 	}
 
-	/**
-	 * testClear method
-	 *
-	 * @return void
-	 */
+/**
+ * testClear method
+ *
+ * @return void
+ */
 	public function testClear() {
 		$this->assertTrue(TestCakeSession::write('Delete.me', 'Clearing out'));
 		TestCakeSession::clear();
