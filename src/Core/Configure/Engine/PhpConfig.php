@@ -15,6 +15,7 @@
 namespace Cake\Core\Configure\Engine;
 
 use Cake\Core\Configure\ConfigEngineInterface;
+use Cake\Core\Configure\FileConfigTrait;
 use Cake\Core\Exception\Exception;
 use Cake\Core\Plugin;
 
@@ -28,12 +29,14 @@ use Cake\Core\Plugin;
 class PhpConfig implements ConfigEngineInterface
 {
 
+    use FileConfigTrait;
+
     /**
-     * The path this engine finds files on.
+     * File extension.
      *
      * @var string
      */
-    protected $_path = null;
+    protected $_extension = '.php';
 
     /**
      * Constructor for PHP Config file reading.
@@ -93,29 +96,5 @@ class PhpConfig implements ConfigEngineInterface
 
         $filename = $this->_getFilePath($key);
         return file_put_contents($filename, $contents);
-    }
-
-    /**
-     * Get file path
-     *
-     * @param string $key The identifier to write to. If the key has a . it will be treated
-     *  as a plugin prefix.
-     * @return string Full file path
-     */
-    protected function _getFilePath($key)
-    {
-        if (substr($key, -4) === '.php') {
-            $key = substr($key, 0, -4);
-        }
-        list($plugin, $key) = pluginSplit($key);
-        $key .= '.php';
-
-        if ($plugin) {
-            $file = Plugin::configPath($plugin) . $key;
-        } else {
-            $file = $this->_path . $key;
-        }
-
-        return $file;
     }
 }

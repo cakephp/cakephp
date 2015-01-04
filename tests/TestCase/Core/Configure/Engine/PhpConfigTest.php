@@ -68,9 +68,6 @@ class PhpConfigTest extends TestCase
         $values = $engine->read('var_test');
         $this->assertEquals('value', $values['Read']);
         $this->assertEquals('buried', $values['Deep']['Deeper']['Deepest']);
-
-        $values = $engine->read('var_test.php');
-        $this->assertEquals('value', $values['Read']);
     }
 
     /**
@@ -133,8 +130,6 @@ class PhpConfigTest extends TestCase
         $result = $engine->read('TestPlugin.load');
         $this->assertTrue(isset($result['plugin_load']));
 
-        $result = $engine->read('TestPlugin.load.php');
-        $this->assertTrue(isset($result['plugin_load']));
         Plugin::unload();
     }
 
@@ -146,7 +141,7 @@ class PhpConfigTest extends TestCase
     public function testDump()
     {
         $engine = new PhpConfig(TMP);
-        $result = $engine->dump('test.php', $this->testData);
+        $result = $engine->dump('test', $this->testData);
         $this->assertTrue($result > 0);
         $expected = <<<PHP
 <?php
@@ -190,8 +185,8 @@ PHP;
     public function testDumpRead()
     {
         $engine = new PhpConfig(TMP);
-        $engine->dump('test.php', $this->testData);
-        $result = $engine->read('test.php');
+        $engine->dump('test', $this->testData);
+        $result = $engine->read('test');
         unlink(TMP . 'test.php');
 
         $this->assertEquals($this->testData, $result);

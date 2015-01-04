@@ -65,7 +65,7 @@ class IniConfigTest extends TestCase
     public function testConstruct()
     {
         $engine = new IniConfig($this->path);
-        $config = $engine->read('acl.ini');
+        $config = $engine->read('acl');
 
         $this->assertTrue(isset($config['admin']));
         $this->assertTrue(isset($config['paul']['groups']));
@@ -83,7 +83,7 @@ class IniConfigTest extends TestCase
         $config = $engine->read('nested');
         $this->assertTrue($config['bools']['test_on']);
 
-        $config = $engine->read('nested.ini');
+        $config = $engine->read('nested');
         $this->assertTrue($config['bools']['test_on']);
     }
 
@@ -95,7 +95,7 @@ class IniConfigTest extends TestCase
     public function testReadOnlyOneSection()
     {
         $engine = new IniConfig($this->path, 'admin');
-        $config = $engine->read('acl.ini');
+        $config = $engine->read('acl');
 
         $this->assertTrue(isset($config['groups']));
         $this->assertEquals('administrators', $config['groups']);
@@ -109,7 +109,7 @@ class IniConfigTest extends TestCase
     public function testReadWithoutSection()
     {
         $engine = new IniConfig($this->path);
-        $config = $engine->read('no_section.ini');
+        $config = $engine->read('no_section');
 
         $expected = [
             'some_key' => 'some_value',
@@ -126,7 +126,7 @@ class IniConfigTest extends TestCase
     public function testReadValuesWithDots()
     {
         $engine = new IniConfig($this->path);
-        $config = $engine->read('nested.ini');
+        $config = $engine->read('nested');
 
         $this->assertTrue(isset($config['database']['db']['username']));
         $this->assertEquals('mark', $config['database']['db']['username']);
@@ -143,7 +143,7 @@ class IniConfigTest extends TestCase
     public function testBooleanReading()
     {
         $engine = new IniConfig($this->path);
-        $config = $engine->read('nested.ini');
+        $config = $engine->read('nested');
 
         $this->assertTrue($config['bools']['test_on']);
         $this->assertFalse($config['bools']['test_off']);
@@ -221,7 +221,7 @@ class IniConfigTest extends TestCase
         $this->assertFalse(isset($result['database.db.username']));
         $this->assertFalse(isset($result['database']['db.username']));
 
-        $result = $engine->read('TestPlugin.nested.ini');
+        $result = $engine->read('TestPlugin.nested');
         $this->assertEquals('foo', $result['database']['db']['password']);
         Plugin::unload();
     }
@@ -234,7 +234,7 @@ class IniConfigTest extends TestCase
     public function testDump()
     {
         $engine = new IniConfig(TMP);
-        $result = $engine->dump('test.ini', $this->testData);
+        $result = $engine->dump('test', $this->testData);
         $this->assertTrue($result > 0);
 
         $expected = <<<INI
@@ -270,8 +270,8 @@ INI;
     public function testDumpRead()
     {
         $engine = new IniConfig(TMP);
-        $engine->dump('test.ini', $this->testData);
-        $result = $engine->read('test.ini');
+        $engine->dump('test', $this->testData);
+        $result = $engine->read('test');
         unlink(TMP . 'test.ini');
 
         $expected = $this->testData;
