@@ -226,7 +226,8 @@ class Query extends DatabaseQuery implements JsonSerializable
      * options that can be set per association are:
      *
      * - foreignKey: Used to set a different field to match both tables, if set to false
-     *   no join conditions will be generated automatically
+     *   no join conditions will be generated automatically. `false` can only be used on
+     *   joinable associations and cannot be used with hasMany or belongsToMany associations.
      * - fields: An array with the fields that should be fetched from the association
      * - queryBuilder: Equivalent to passing a callable instead of an options array
      *
@@ -245,9 +246,9 @@ class Query extends DatabaseQuery implements JsonSerializable
      * Failing to do so will trigger exceptions.
      *
      * {{{
-     * // Use special join conditions for getting an author's hasMany 'likes'
+     * // Use special join conditions for getting an Articles's belongsTo 'authors'
      * $query->contain([
-     *   'Likes' => [
+     *   'Authors' => [
      *     'foreignKey' => false,
      *     'queryBuilder' => function ($q) {
      *       return $q->where(...); // Add full filtering conditions

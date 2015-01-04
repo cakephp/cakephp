@@ -128,6 +128,11 @@ class HasMany extends Association
     {
         $links = [];
         $name = $this->alias();
+        if ($options['foreignKey'] === false) {
+            $msg = 'Cannot have foreignKey = false for hasMany associations. ' .
+                   'You must provide a foreignKey column.';
+            throw new \RuntimeException($msg);
+        }
 
         foreach ((array)$options['foreignKey'] as $key) {
             $links[] = sprintf('%s.%s', $name, $key);
