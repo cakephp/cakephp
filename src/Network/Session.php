@@ -471,7 +471,7 @@ class Session
      * Removes a variable from session.
      *
      * @param string $name Session variable to remove
-     * @return bool Success
+     * @return void
      */
     public function delete($name)
     {
@@ -521,11 +521,14 @@ class Session
     }
 
     /**
-     * Clears the session, the session id, and renews the session.
+     * Clears the session.
      *
+     * Optionally it also clears the session id and renews the session.
+     *
+     * @param bool $renew If session should be renewed, as well. Defaults to false.
      * @return void
      */
-    public function clear()
+    public function clear($renew = false)
     {
         $_SESSION = [];
         $this->renew();
