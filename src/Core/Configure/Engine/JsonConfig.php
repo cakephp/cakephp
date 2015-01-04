@@ -16,6 +16,7 @@ namespace Cake\Core\Configure\Engine;
 
 use Cake\Core\Configure\ConfigEngineInterface;
 use Cake\Core\Configure\FileConfigTrait;
+use Cake\Core\Exception\Exception;
 use Cake\Core\Plugin;
 
 /**
@@ -57,12 +58,18 @@ class JsonConfig implements ConfigEngineInterface
      *   as a plugin prefix.
      * @return array Parsed configuration values.
      * @throws \Cake\Core\Exception\Exception When files don't exist or when
-     *   files contain '..' as this could lead to abusive reads.
+     *   files contain '..' (as this could lead to abusive reads) or when there
+     *   is an error parsing the JSON string.
      */
     public function read($key)
     {
         $file = $this->_getFilePath($key, true);
-        return (array)json_decode(file_get_contents($file), true);
+
+        $values = json_decode(file_get_contents($file), true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new Exception(sprintf('Error parsing JSON string fetched from config file %s', $file));
+        }
+        return (array)$values;
     }
 
     /**

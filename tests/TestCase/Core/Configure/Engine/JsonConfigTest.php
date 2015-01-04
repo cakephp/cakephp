@@ -107,6 +107,18 @@ class JsonConfigTest extends TestCase
     }
 
     /**
+     * Test an exception is thrown by reading files that contain invalid JSON.
+     *
+     * @expectedException \Cake\Core\Exception\Exception
+     * @return void
+     */
+    public function testReadWithInvalidJson()
+    {
+        $engine = new JsonConfig($this->path);
+        $engine->read('invalid');
+    }
+
+    /**
      * Test reading keys with ../ doesn't work.
      *
      * @expectedException \Cake\Core\Exception\Exception
