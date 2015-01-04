@@ -89,8 +89,6 @@ class IniConfig implements ConfigEngineInterface
     /**
      * Read an ini file and return the results as an array.
      *
-     * For backwards compatibility, acl.ini.php will be treated specially until 3.0.
-     *
      * @param string $key The identifier to read from. If the key has a . it will be treated
      *  as a plugin prefix. The chosen file must be on the engine's path.
      * @return array Parsed configuration values.
