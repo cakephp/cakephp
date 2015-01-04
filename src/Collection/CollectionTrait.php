@@ -418,6 +418,15 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      */
+    public function toList()
+    {
+        return iterator_to_array($this, false);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
     public function jsonSerialize()
     {
         return $this->toArray();
