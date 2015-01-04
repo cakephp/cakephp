@@ -179,7 +179,7 @@ class Configure {
  * Configure::read('Name.key'); will return only the value of Configure::Name[key]
  * }}}
  *
- * @param string $var Variable to obtain. Use '.' to access array elements.
+ * @param string|null $var Variable to obtain. Use '.' to access array elements.
  * @return mixed value stored in configure, or null.
  * @link http://book.cakephp.org/2.0/en/development/configuration.html#Configure::read
  */
@@ -220,7 +220,7 @@ class Configure {
  * @param string $var Variable name to check for
  * @return bool True if variable is there
  */
-	public static function check($var = null) {
+	public static function check($var) {
 		if (empty($var)) {
 			return false;
 		}
@@ -240,7 +240,7 @@ class Configure {
  * @return void
  * @link http://book.cakephp.org/2.0/en/development/configuration.html#Configure::delete
  */
-	public static function delete($var = null) {
+	public static function delete($var) {
 		self::$_values = Hash::remove(self::$_values, $var);
 	}
 
@@ -265,7 +265,7 @@ class Configure {
 /**
  * Gets the names of the configured reader objects.
  *
- * @param string $name Name to check. If null returns all configured reader names.
+ * @param string|null $name Name to check. If null returns all configured reader names.
  * @return array Array of the configured reader objects.
  */
 	public static function configured($name = null) {
@@ -443,7 +443,7 @@ class Configure {
 /**
  * Clear all values stored in Configure.
  *
- * @return bool success.
+ * @return bool Success.
  */
 	public static function clear() {
 		self::$_values = array();

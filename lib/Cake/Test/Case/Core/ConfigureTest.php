@@ -168,6 +168,19 @@ class ConfigureTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+	/**
+	 * testConsumeEmpty
+	 *
+	 * @return void
+	 */
+	public function testConsumeEmpty() {
+		Configure::write('Test', array('key' => 'value', 'key2' => 'value2'));
+		$result = Configure::consume('');
+		$this->assertNull($result);
+		$result = Configure::consume(null);
+		$this->assertNull($result);
+	}
+
 /**
  * test setting display_errors with debug.
  *
@@ -195,7 +208,7 @@ class ConfigureTest extends CakeTestCase {
 
 		Configure::delete('SomeName.someKey');
 		$result = Configure::read('SomeName.someKey');
-		$this->assertTrue($result === null);
+		$this->assertNull($result);
 
 		Configure::write('SomeName', array('someKey' => 'myvalue', 'otherKey' => 'otherValue'));
 
@@ -208,10 +221,10 @@ class ConfigureTest extends CakeTestCase {
 		Configure::delete('SomeName');
 
 		$result = Configure::read('SomeName.someKey');
-		$this->assertTrue($result === null);
+		$this->assertNull($result);
 
 		$result = Configure::read('SomeName.otherKey');
-		$this->assertTrue($result === null);
+		$this->assertNull($result);
 	}
 
 /**
@@ -265,7 +278,8 @@ class ConfigureTest extends CakeTestCase {
  * @return void
  */
 	public function testCheckEmpty() {
-		$this->assertFalse(Configure::check());
+		$this->assertFalse(Configure::check(''));
+		$this->assertFalse(Configure::check(null));
 	}
 
 /**
