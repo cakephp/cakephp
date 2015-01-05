@@ -660,7 +660,7 @@ abstract class Association
     {
         $formatters = $surrogate->formatResults();
 
-        if (!$formatters) {
+        if (!$formatters || empty($options['propertyPath'])) {
             return;
         }
 
