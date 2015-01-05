@@ -334,3 +334,24 @@ if (!function_exists('__dxn')) {
     }
 
 }
+
+if (!function_exists('json_last_error_msg')) {
+    /**
+     * Provides the fallback implementation of json_last_error_msg() available in PHP 5.5 and above.
+     *
+     * @return string Error message.
+     */
+    function json_last_error_msg() {
+        static $errors = array(
+            JSON_ERROR_NONE => '',
+            JSON_ERROR_DEPTH => 'Maximum stack depth exceeded',
+            JSON_ERROR_STATE_MISMATCH => 'Invalid or malformed JSON',
+            JSON_ERROR_CTRL_CHAR => 'Control character error, possibly incorrectly encoded',
+            JSON_ERROR_SYNTAX => 'Syntax error',
+            JSON_ERROR_UTF8 => 'Malformed UTF-8 characters, possibly incorrectly encoded'
+        );
+        $error = json_last_error();
+        return array_key_exists($error, $errors) ? $errors[$error] : "Unknown error ({$error})";
+    }
+
+}

@@ -66,8 +66,19 @@ class JsonConfig implements ConfigEngineInterface
         $file = $this->_getFilePath($key, true);
 
         $values = json_decode(file_get_contents($file), true);
-        if (!is_array($values) || json_last_error() !== JSON_ERROR_NONE) {
-            throw new Exception(sprintf('Error parsing JSON string fetched from config file %s', $file));
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new Exception(sprintf(
+                "Error parsing JSON string fetched from config file \"%s.json\": %s",
+                $key,
+                json_last_error_msg()
+            ));
+        }
+        if (!is_array($values)) {
+            throw new Exception(sprintf(
+                'Decoding JSON config file "%s.json" did not return any array',
+                $key,
+                json_last_error_msg()
+            ));
         }
         return $values;
     }
