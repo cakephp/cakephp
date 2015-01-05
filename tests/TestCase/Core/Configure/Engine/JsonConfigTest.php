@@ -97,13 +97,13 @@ class JsonConfigTest extends TestCase
     /**
      * Test reading an empty file.
      *
+     * @expectedException \Cake\Core\Exception\Exception
      * @return void
      */
     public function testReadEmptyFile()
     {
         $engine = new JsonConfig($this->path);
         $config = $engine->read('empty');
-        $this->assertEquals([], $config);
     }
 
     /**
