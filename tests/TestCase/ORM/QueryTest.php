@@ -1205,6 +1205,57 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests that belongsToMany associations are also correctly hydrated
+     *
+     * @return void
+     */
+    public function testFormatResultsBelongsToMany()
+    {
+        $table = TableRegistry::get('Articles');
+        TableRegistry::get('Tags');
+        $articlesTags = TableRegistry::get('ArticlesTags', [
+            'table' => 'articles_tags'
+        ]);
+        $table->belongsToMany('Tags');
+
+        $articlesTags
+            ->eventManager()
+            ->attach(function ($event, $query) {
+                $query->formatResults(function ($results) {
+                    return $results;
+                });
+            }, 'Model.beforeFind');
+
+
+        $query = new Query($this->connection, $table);
+
+        $results = $query
+            ->select()
+            ->contain('Tags')
+            ->toArray();
+
+        $first = $results[0];
+        foreach ($first->tags as $r) {
+            $this->assertInstanceOf('Cake\ORM\Entity', $r);
+        }
+
+        $this->assertCount(2, $first->tags);
+        $expected = [
+            'id' => 1,
+            'name' => 'tag1',
+            '_joinData' => ['article_id' => 1, 'tag_id' => 1]
+        ];
+        $this->assertEquals($expected, $first->tags[0]->toArray());
+
+        $expected = [
+            'id' => 2,
+            'name' => 'tag2',
+            '_joinData' => ['article_id' => 1, 'tag_id' => 2]
+        ];
+        $this->assertEquals($expected, $first->tags[1]->toArray());
+    }
+
+    /**
      * Tests that belongsTo relations are correctly hydrated
      *
      * @dataProvider internalStategiesProvider
