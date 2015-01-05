@@ -103,10 +103,10 @@ class Configure {
 				self::$_values['Exception']
 			);
 
-			// Preload Debugger + String in case of E_STRICT errors when loading files.
+			// Preload Debugger + CakeText in case of E_STRICT errors when loading files.
 			if (self::$_values['debug'] > 0) {
 				class_exists('Debugger');
-				class_exists('String');
+				class_exists('CakeText');
 			}
 		}
 	}

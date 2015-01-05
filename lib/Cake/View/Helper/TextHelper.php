@@ -49,7 +49,7 @@ class TextHelper extends AppHelper {
 	protected $_placeholders = array();
 
 /**
- * String utility instance
+ * CakeText utility instance
  *
  * @var stdClass
  */
@@ -60,7 +60,7 @@ class TextHelper extends AppHelper {
  *
  * ### Settings:
  *
- * - `engine` Class name to use to replace String functionality.
+ * - `engine` Class name to use to replace CakeText functionality.
  *            The class needs to be placed in the `Utility` directory.
  *
  * @param View $View the view object the helper is attached to.
@@ -68,7 +68,7 @@ class TextHelper extends AppHelper {
  * @throws CakeException when the engine class could not be found.
  */
 	public function __construct(View $View, $settings = array()) {
-		$settings = Hash::merge(array('engine' => 'String'), $settings);
+		$settings = Hash::merge(array('engine' => 'CakeText'), $settings);
 		parent::__construct($View, $settings);
 		list($plugin, $engineClass) = pluginSplit($settings['engine'], true);
 		App::uses($engineClass, $plugin . 'Utility');
@@ -80,7 +80,7 @@ class TextHelper extends AppHelper {
 	}
 
 /**
- * Call methods from String utility class
+ * Call methods from CakeText utility class
  *
  * @param string $method Method to call.
  * @param array $params Parameters to pass to method.
@@ -225,7 +225,7 @@ class TextHelper extends AppHelper {
  * @param string $phrase The phrase that will be searched
  * @param array $options An array of html attributes and options.
  * @return string The highlighted text
- * @see String::highlight()
+ * @see CakeText::highlight()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::highlight
  */
 	public function highlight($text, $phrase, $options = array()) {
@@ -260,7 +260,7 @@ class TextHelper extends AppHelper {
  *
  * @param string $text Text
  * @return string The text without links
- * @see String::stripLinks()
+ * @see CakeText::stripLinks()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::stripLinks
  */
 	public function stripLinks($text) {
@@ -283,7 +283,7 @@ class TextHelper extends AppHelper {
  * @param int $length Length of returned string, including ellipsis.
  * @param array $options An array of html attributes and options.
  * @return string Trimmed string.
- * @see String::truncate()
+ * @see CakeText::truncate()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::truncate
  */
 	public function truncate($text, $length = 100, $options = array()) {
@@ -305,7 +305,7 @@ class TextHelper extends AppHelper {
  * @param int $length Length of returned string, including ellipsis.
  * @param array $options An array of html attributes and options.
  * @return string Trimmed string.
- * @see String::tail()
+ * @see CakeText::tail()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::tail
  */
 	public function tail($text, $length = 100, $options = array()) {
@@ -321,7 +321,7 @@ class TextHelper extends AppHelper {
  * @param int $radius The amount of characters that will be returned on each side of the founded phrase
  * @param string $ending Ending that will be appended
  * @return string Modified string
- * @see String::excerpt()
+ * @see CakeText::excerpt()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::excerpt
  */
 	public function excerpt($text, $phrase, $radius = 100, $ending = '...') {
@@ -335,7 +335,7 @@ class TextHelper extends AppHelper {
  * @param string $and The word used to join the last and second last items together with. Defaults to 'and'.
  * @param string $separator The separator used to join all the other items together. Defaults to ', '.
  * @return string The glued together string.
- * @see String::toList()
+ * @see CakeText::toList()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::toList
  */
 	public function toList($list, $and = null, $separator = ', ') {
