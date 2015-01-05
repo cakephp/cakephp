@@ -584,11 +584,11 @@ class Shell extends Object {
  * @param string $text Text the text to format.
  * @param string|int|array $options Array of options to use, or an integer to wrap the text to.
  * @return string Wrapped / indented text
- * @see String::wrap()
+ * @see CakeText::wrap()
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::wrapText
  */
 	public function wrapText($text, $options = array()) {
-		return String::wrap($text, $options);
+		return CakeText::wrap($text, $options);
 	}
 
 /**

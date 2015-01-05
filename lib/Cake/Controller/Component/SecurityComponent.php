@@ -17,7 +17,7 @@
  */
 
 App::uses('Component', 'Controller');
-App::uses('String', 'Utility');
+App::uses('CakeText', 'Utility');
 App::uses('Hash', 'Utility');
 App::uses('Security', 'Utility');
 
