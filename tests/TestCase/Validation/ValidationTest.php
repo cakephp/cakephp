@@ -1483,6 +1483,47 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * test date validation when passing an array
+     *
+     * @return void
+     */
+    public function testDateArray()
+    {
+        $date = ['year' => 2014, 'month' => 2, 'day' => 14];
+        $this->assertTrue(Validation::date($date));
+        $date = ['year' => 'farts', 'month' => 'derp', 'day' => 'farts'];
+        $this->assertFalse(Validation::date($date));
+
+        $date = ['year' => 2014, 'month' => 2, 'day' => 14];
+        $this->assertTrue(Validation::date($date, 'mdy'));
+    }
+
+    /**
+     * test datetime validation when passing an array
+     *
+     * @return void
+     */
+    public function testDateTimeArray()
+    {
+        $date = ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15];
+        $this->assertTrue(Validation::datetime($date));
+
+        $date = [
+            'year' => 2014, 'month' => 2, 'day' => 14,
+            'hour' => 1, 'minute' => 14, 'second' => 15,
+            'meridian' => 'am'
+        ];
+        $this->assertTrue(Validation::datetime($date));
+        $this->assertTrue(Validation::datetime($date, 'mdy'));
+
+        $date = [
+            'year' => '2014', 'month' => '02', 'day' => '14',
+            'hour' => 'farts', 'minute' => 'farts'
+        ];
+        $this->assertFalse(Validation::datetime($date));
+    }
+
+    /**
      * Test validating dates with multiple formats
      *
      * @return void
