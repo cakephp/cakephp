@@ -341,7 +341,8 @@ if (!function_exists('json_last_error_msg')) {
      *
      * @return string Error message.
      */
-    function json_last_error_msg() {
+    function json_last_error_msg()
+    {
         static $errors = array(
             JSON_ERROR_NONE => '',
             JSON_ERROR_DEPTH => 'Maximum stack depth exceeded',
