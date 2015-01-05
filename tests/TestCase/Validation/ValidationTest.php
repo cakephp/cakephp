@@ -1493,6 +1493,9 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::date($date));
         $date = ['year' => 'farts', 'month' => 'derp', 'day' => 'farts'];
         $this->assertFalse(Validation::date($date));
+
+        $date = ['year' => 2014, 'month' => 2, 'day' => 14];
+        $this->assertTrue(Validation::date($date, 'mdy'));
     }
 
     /**
@@ -1511,6 +1514,7 @@ class ValidationTest extends TestCase
             'meridian' => 'am'
         ];
         $this->assertTrue(Validation::datetime($date));
+        $this->assertTrue(Validation::datetime($date, 'mdy'));
 
         $date = [
             'year' => '2014', 'month' => '02', 'day' => '14',

@@ -309,7 +309,10 @@ class Validation
             return true;
         }
 
-        $check = is_array($check) ? static::_getDateString($check) : $check;
+        if (is_array($check)) {
+            $check = static::_getDateString($check);
+            $format = 'ymd';
+        }
 
         if ($regex !== null) {
             return static::_check($check, $regex);
@@ -371,7 +374,10 @@ class Validation
             return true;
         }
         $valid = false;
-        $check = is_array($check) ? static::_getDateString($check) : $check;
+        if (is_array($check)) {
+            $check = static::_getDateString($check);
+            $dateFormat = 'ymd';
+        }
         $parts = explode(' ', $check);
         if (!empty($parts) && count($parts) > 1) {
             $time = array_pop($parts);
