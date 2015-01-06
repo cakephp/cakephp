@@ -46,7 +46,11 @@ trait CollectionTrait
      */
     public function each(callable $c)
     {
-        foreach ($this as $k => $v) {
+        $iterator = $this;
+        while (get_class($iterator) === 'Cake\Collection\Collection') {
+            $iterator = $iterator->getInnerIterator();
+        }
+        foreach ($iterator as $k => $v) {
             $c($v, $k);
         }
         return $this;

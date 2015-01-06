@@ -31,6 +31,13 @@ class ReplaceIterator extends Collection
     protected $_callback;
 
     /**
+     * A reference to the internal iterator this object is wrapping.
+     *
+     * @var \Iterator
+     */
+    protected $_innerIterator;
+
+    /**
      * Creates an iterator from another iterator that will modify each of the values
      * by converting them using a callback function.
      *
@@ -45,6 +52,7 @@ class ReplaceIterator extends Collection
     {
         $this->_callback = $callback;
         parent::__construct($items);
+        $this->_innerIterator = $this->getInnerIterator();
     }
 
     /**
@@ -56,6 +64,6 @@ class ReplaceIterator extends Collection
     public function current()
     {
         $callback = $this->_callback;
-        return $callback(parent::current(), $this->key(), $this->getInnerIterator());
+        return $callback(parent::current(), $this->key(), $this->_innerIterator);
     }
 }
