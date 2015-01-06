@@ -72,4 +72,23 @@ class FixtureManagerTest extends TestCase
             $fixtures['plugin.test_plugin.articles']
         );
     }
+
+    /**
+    * Test loading app fixtures.
+    *
+    * @return void
+    */
+    public function testFixturizeCustom()
+    {
+        $test = $this->getMock('Cake\TestSuite\TestCase');
+        $test->fixtures = ['plugin.Company/TestPluginThree.articles'];
+        $this->manager->fixturize($test);
+        $fixtures = $this->manager->loaded();
+        $this->assertCount(1, $fixtures);
+        $this->assertArrayHasKey('plugin.Company/TestPluginThree.articles', $fixtures);
+        $this->assertInstanceOf(
+            'Company\TestPluginThree\Test\Fixture\ArticlesFixture',
+            $fixtures['plugin.Company/TestPluginThree.articles']
+        );
+    }
 }

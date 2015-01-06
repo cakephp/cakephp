@@ -42,6 +42,7 @@
 	"autoload-dev": {
 		"psr-4": {
 			"Cake\\Test\\": "tests",
+			"Company\\TestPluginThree\\Test\\": "tests/test_app/Plugin/Company/TestPluginThree/tests",
 			"TestApp\\": "tests/test_app/TestApp",
 			"TestPlugin\\": "tests/test_app/Plugin/TestPlugin/src",
 			"TestPlugin\\Test\\": "tests/test_app/Plugin/TestPlugin/tests",
