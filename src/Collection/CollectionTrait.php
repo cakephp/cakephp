@@ -15,6 +15,7 @@
 namespace Cake\Collection;
 
 use AppendIterator;
+use ArrayIterator;
 use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Collection\Iterator\BufferedIterator;
@@ -409,6 +410,16 @@ trait CollectionTrait
      */
     public function toArray($preserveKeys = true)
     {
+        if (get_class($this) === 'Cake\Collection\Collection') {
+            $inner = $this->getInnerIterator();
+            if ($inner instanceof ArrayIterator) {
+                $items = $this->getInnerIterator()->getArrayCopy();
+                return $preserveKeys ? $items : array_values($items);
+            }
+            if ($inner instanceof CollectionInterface) {
+                return $inner->toArray($preserveKeys);
+            }
+        }
         return iterator_to_array($this, $preserveKeys);
     }
 
@@ -418,7 +429,7 @@ trait CollectionTrait
      */
     public function toList()
     {
-        return iterator_to_array($this, false);
+        return $this->toArray(false);
     }
 
     /**
