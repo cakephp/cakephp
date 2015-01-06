@@ -115,7 +115,8 @@ class DateTimeWidgetTest extends TestCase
         $this->assertContains('<option value="45" selected="selected">45</option>', $result);
     }
 
-    public function testRenderInvalidDate() {
+    public function testRenderInvalidDate()
+    {
         $selected = [
             'year' => '2014', 'month' => '02', 'day' => '31',
             'hour' => '12', 'minute' => '30', 'second' => '45',
