@@ -35,6 +35,13 @@ class StoppableIterator extends Collection
     protected $_condition;
 
     /**
+     * A reference to the internal iterator this object is wrapping.
+     *
+     * @var \Iterator
+     */
+    protected $_innerIterator;
+
+    /**
      * Creates an iterator that can be stopped based on a condition provided by a callback.
      *
      * Each time the condition callback is executed it will receive the value of the element
@@ -50,6 +57,7 @@ class StoppableIterator extends Collection
     {
         $this->_condition = $condition;
         parent::__construct($items);
+        $this->_innnerIterator = $this->getInnerIterator();
     }
 
     /**
@@ -67,6 +75,6 @@ class StoppableIterator extends Collection
         $current = $this->current();
         $key = $this->key();
         $condition = $this->_condition;
-        return !$condition($current, $key, $this);
+        return !$condition($current, $key, $this->_innerIterator);
     }
 }
