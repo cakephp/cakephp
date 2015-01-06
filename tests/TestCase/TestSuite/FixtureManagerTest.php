@@ -74,10 +74,10 @@ class FixtureManagerTest extends TestCase
     }
 
     /**
-    * Test loading app fixtures.
-    *
-    * @return void
-    */
+     * Test loading app fixtures.
+     *
+     * @return void
+     */
     public function testFixturizeCustom()
     {
         $test = $this->getMock('Cake\TestSuite\TestCase');
