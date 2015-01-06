@@ -75,9 +75,8 @@ class JsonConfig implements ConfigEngineInterface
         }
         if (!is_array($values)) {
             throw new Exception(sprintf(
-                'Decoding JSON config file "%s.json" did not return any array',
-                $key,
-                json_last_error_msg()
+                'Decoding JSON config file "%s.json" did not return an array',
+                $key
             ));
         }
         return $values;
