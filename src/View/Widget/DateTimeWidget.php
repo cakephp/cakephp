@@ -201,20 +201,34 @@ class DateTimeWidget implements WidgetInterface
             } elseif (is_int($value)) {
                 $date = new \DateTime('@' . $value);
             } elseif (is_array($value)) {
+                $dateArray = [
+                    'year' => '', 'month' => '', 'day' => '',
+                    'hour' => '', 'minute' => '', 'second' => '',
+                    'meridian' => 'pm',
+                ];
+                $validDate = false;
+                foreach ($dateArray as $key => $dateValue) {
+                    if (isset($value[$key])) {
+                        $dateArray[$key] = str_pad($value[$key], 2, '0', STR_PAD_LEFT);
+                        $validDate = true;
+                    }
+                }
+                if ($validDate) {
+                    if (empty($dateArray['second'])) {
+                        $dateArray['second'] = 0;
+                    }
+                    if (isset($value['meridian'])) {
+                        $isAm = strtolower($dateArray['meridian']) === 'am';
+                        $dateArray['hour'] = $isAm ? $dateArray['hour'] : $dateArray['hour'] + 12;
+                    }
+                    if (!empty($dateArray['minute']) && isset($options['minute']['interval'])) {
+                        $dateArray['minute'] += $this->_adjustValue($dateArray['minute'], $options['minute']);
+                    }
+
+                    return $dateArray;
+                }
+
                 $date = new \DateTime();
-                if (isset($value['year'], $value['month'], $value['day'])) {
-                    $date->setDate($value['year'], $value['month'], $value['day']);
-                }
-                if (!isset($value['second'])) {
-                    $value['second'] = 0;
-                }
-                if (isset($value['meridian'])) {
-                    $isAm = strtolower($value['meridian']) === 'am';
-                    $value['hour'] = $isAm ? $value['hour'] : $value['hour'] + 12;
-                }
-                if (isset($value['hour'], $value['minute'], $value['second'])) {
-                    $date->setTime($value['hour'], $value['minute'], $value['second']);
-                }
             } else {
                 $date = clone $value;
             }
