@@ -378,6 +378,23 @@ TEXT;
 	}
 
 /**
+ * test that wordWrap() properly handle newline characters.
+ *
+ * @return void
+ */
+	public function testWordWrapNewlineAware() {
+		$text = 'This is a line that is almost the 55 chars long.
+This is a new sentence which is manually newlined, but is so long it needs two lines.';
+		$result = String::wordWrap($text, 55);
+		$expected = <<<TEXT
+This is a line that is almost the 55 chars long.
+This is a new sentence which is manually newlined, but
+is so long it needs two lines.
+TEXT;
+		$this->assertTextEquals($expected, $result, 'Text not wrapped.');
+	}
+
+/**
  * test wrap method.
  *
  * @return void
