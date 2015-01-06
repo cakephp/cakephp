@@ -16,7 +16,6 @@ namespace Cake\Collection;
 
 use AppendIterator;
 use ArrayIterator;
-use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Collection\Iterator\BufferedIterator;
 use Cake\Collection\Iterator\ExtractIterator;
@@ -29,6 +28,7 @@ use Cake\Collection\Iterator\SortIterator;
 use Cake\Collection\Iterator\StoppableIterator;
 use Cake\Collection\Iterator\TreeIterator;
 use Cake\Collection\Iterator\UnfoldIterator;
+use Iterator;
 use LimitIterator;
 use RecursiveIteratorIterator;
 
@@ -64,7 +64,7 @@ trait CollectionTrait
                 return (bool)$v;
             };
         }
-        return new FilterIterator($this, $c);
+        return new FilterIterator($this->_unwrap(), $c);
     }
 
     /**
@@ -74,7 +74,7 @@ trait CollectionTrait
      */
     public function reject(callable $c)
     {
-        return new FilterIterator($this, function ($key, $value, $items) use ($c) {
+        return new FilterIterator($this->_unwrap(), function ($key, $value, $items) use ($c) {
             return !$c($key, $value, $items);
         });
     }
@@ -85,7 +85,7 @@ trait CollectionTrait
      */
     public function every(callable $c)
     {
-        foreach ($this as $key => $value) {
+        foreach ($this->_unwrap() as $key => $value) {
             if (!$c($value, $key)) {
                 return false;
             }
@@ -99,7 +99,7 @@ trait CollectionTrait
      */
     public function some(callable $c)
     {
-        foreach ($this as $key => $value) {
+        foreach ($this->_unwrap() as $key => $value) {
             if ($c($value, $key) === true) {
                 return true;
             }
@@ -113,7 +113,7 @@ trait CollectionTrait
      */
     public function contains($value)
     {
-        foreach ($this as $v) {
+        foreach ($this->_unwrap() as $v) {
             if ($value === $v) {
                 return true;
             }
@@ -128,7 +128,7 @@ trait CollectionTrait
      */
     public function map(callable $c)
     {
-        return new ReplaceIterator($this, $c);
+        return new ReplaceIterator($this->_unwrap(), $c);
     }
 
     /**
@@ -138,7 +138,7 @@ trait CollectionTrait
     public function reduce(callable $c, $zero)
     {
         $result = $zero;
-        foreach ($this as $k => $value) {
+        foreach ($this->_unwrap() as $k => $value) {
             $result = $c($result, $value, $k);
         }
         return $result;
@@ -151,7 +151,7 @@ trait CollectionTrait
      */
     public function extract($matcher)
     {
-        return new ExtractIterator($this, $matcher);
+        return new ExtractIterator($this->_unwrap(), $matcher);
     }
 
     /**
@@ -160,7 +160,7 @@ trait CollectionTrait
      */
     public function max($callback, $type = SORT_NUMERIC)
     {
-        return (new SortIterator($this, $callback, SORT_DESC, $type))->first();
+        return (new SortIterator($this->_unwrap(), $callback, SORT_DESC, $type))->first();
     }
 
     /**
@@ -169,7 +169,7 @@ trait CollectionTrait
      */
     public function min($callback, $type = SORT_NUMERIC)
     {
-        return (new SortIterator($this, $callback, SORT_ASC, $type))->first();
+        return (new SortIterator($this->_unwrap(), $callback, SORT_ASC, $type))->first();
     }
 
     /**
@@ -178,7 +178,7 @@ trait CollectionTrait
      */
     public function sortBy($callback, $dir = SORT_DESC, $type = SORT_NUMERIC)
     {
-        return new SortIterator($this, $callback, $dir, $type);
+        return new SortIterator($this->_unwrap(), $callback, $dir, $type);
     }
 
     /**
@@ -224,7 +224,7 @@ trait CollectionTrait
         $reducer = function ($values, $key, $mr) {
             $mr->emit(count($values), $key);
         };
-        return new Collection(new MapReduce($this, $mapper, $reducer));
+        return new Collection(new MapReduce($this->_unwrap(), $mapper, $reducer));
     }
 
     /**
@@ -248,7 +248,7 @@ trait CollectionTrait
      */
     public function shuffle()
     {
-        $elements = iterator_to_array($this);
+        $elements = $this->toArray();
         shuffle($elements);
         return new Collection($elements);
     }
@@ -268,7 +268,7 @@ trait CollectionTrait
      */
     public function take($size = 1, $from = 0)
     {
-        return new Collection(new LimitIterator($this, $from, $size));
+        return new Collection(new LimitIterator($this->_unwrap(), $from, $size));
     }
 
     /**
@@ -306,9 +306,10 @@ trait CollectionTrait
      */
     public function append($items)
     {
+        $items = $items instanceof Iterator ? $items : new Collection($items);
         $list = new AppendIterator;
         $list->append($this);
-        $list->append(new Collection($items));
+        $list->append($items->_unwrap());
         return new Collection($list);
     }
 
@@ -348,7 +349,7 @@ trait CollectionTrait
             $mapReduce->emit($result, $key);
         };
 
-        return new Collection(new MapReduce($this, $mapper, $reducer));
+        return new Collection(new MapReduce($this->_unwrap(), $mapper, $reducer));
     }
 
     /**
@@ -373,7 +374,7 @@ trait CollectionTrait
         $reducer = function ($values, $key, $mapReduce) use (&$parents, $isObject) {
             if (empty($key) || !isset($parents[$key])) {
                 foreach ($values as $id) {
-                    $parents[$id] = $isObject ? $parents[$id] : new ArrayObject($parents[$id]);
+                    $parents[$id] = $isObject ? $parents[$id] : new ArrayIterator($parents[$id], 1);
                     $mapReduce->emit($parents[$id]);
                 }
                 return;
@@ -387,7 +388,7 @@ trait CollectionTrait
         $collection = new MapReduce($this, $mapper, $reducer);
         if (!$isObject) {
             $collection = (new Collection($collection))->map(function ($value) {
-                return (array)$value;
+                return $value->getArrayCopy();
             });
         }
 
@@ -401,7 +402,7 @@ trait CollectionTrait
      */
     public function insert($path, $values)
     {
-        return new InsertIterator($this, $path, $values);
+        return new InsertIterator($this->_unwrap(), $path, $values);
     }
 
     /**
