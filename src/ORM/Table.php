@@ -900,6 +900,12 @@ class Table implements RepositoryInterface, EventListenerInterface
             'valueField' => $this->displayField(),
             'groupField' => null
         ];
+        if ($query->clause('select') === []) {
+            $query->select([$options['idField'], $options['valueField']]);
+            if ($options['groupField'] !== null) {
+                $query->select([$options['groupField']]);
+            }
+        }
         $options = $this->_setFieldMatchers(
             $options,
             ['idField', 'valueField', 'groupField']
