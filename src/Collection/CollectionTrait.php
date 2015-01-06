@@ -514,12 +514,12 @@ trait CollectionTrait
      *
      * @return \Iterator
      */
-    protected function _unwrap() {
+    protected function _unwrap()
+    {
         $iterator = $this;
         while (get_class($iterator) === 'Cake\Collection\Collection') {
             $iterator = $iterator->getInnerIterator();
         }
         return $iterator;
     }
-
 }

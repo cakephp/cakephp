@@ -191,5 +191,4 @@ class SortIteratorTest extends TestCase
         ];
         $this->assertEquals($expected, $sorted->toList());
     }
-
 }
