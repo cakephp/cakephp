@@ -115,6 +115,20 @@ class DateTimeWidgetTest extends TestCase
         $this->assertContains('<option value="45" selected="selected">45</option>', $result);
     }
 
+    public function testRenderInvalidDate() {
+        $selected = [
+            'year' => '2014', 'month' => '02', 'day' => '31',
+            'hour' => '12', 'minute' => '30', 'second' => '45',
+        ];
+        $result = $this->DateTime->render(['val' => $selected], $this->context);
+        $this->assertContains('<option value="2014" selected="selected">2014</option>', $result);
+        $this->assertContains('<option value="02" selected="selected">2</option>', $result);
+        $this->assertContains('<option value="31" selected="selected">31</option>', $result);
+        $this->assertContains('<option value="12" selected="selected">12</option>', $result);
+        $this->assertContains('<option value="30" selected="selected">30</option>', $result);
+        $this->assertContains('<option value="45" selected="selected">45</option>', $result);
+    }
+
     /**
      * Test that render() works with an array for val that is missing seconds.
      *
