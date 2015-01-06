@@ -839,7 +839,7 @@ class TranslateBehaviorTest extends TestCase
         $query = $table->find()->where(['Comments.id' => 6]);
         $query2 = $table->find()->where(['Comments.id' => 5]);
         $query->union($query2);
-        $results = $query->sortBy('id')->toArray();
+        $results = $query->sortBy('id', SORT_ASC)->toList();
         $this->assertCount(2, $results);
 
         $this->assertEquals('First Comment for Second Article', $results[0]->comment);
