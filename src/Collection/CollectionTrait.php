@@ -46,11 +46,7 @@ trait CollectionTrait
      */
     public function each(callable $c)
     {
-        $iterator = $this;
-        while (get_class($iterator) === 'Cake\Collection\Collection') {
-            $iterator = $iterator->getInnerIterator();
-        }
-        foreach ($iterator as $k => $v) {
+        foreach ($this->_unwrap() as $k => $v) {
             $c($v, $k);
         }
         return $this;
@@ -414,15 +410,10 @@ trait CollectionTrait
      */
     public function toArray($preserveKeys = true)
     {
-        if (get_class($this) === 'Cake\Collection\Collection') {
-            $inner = $this->getInnerIterator();
-            if ($inner instanceof ArrayIterator) {
-                $items = $this->getInnerIterator()->getArrayCopy();
-                return $preserveKeys ? $items : array_values($items);
-            }
-            if ($inner instanceof CollectionInterface) {
-                return $inner->toArray($preserveKeys);
-            }
+        $iterator = $this->_unwrap();
+        if ($iterator instanceof ArrayIterator) {
+            $items = $iterator->getArrayCopy();
+            return $preserveKeys ? $items : array_values($items);
         }
         return iterator_to_array($this, $preserveKeys);
     }
@@ -515,4 +506,19 @@ trait CollectionTrait
             )
         );
     }
+
+    /**
+     * Returns the closest nested iterator that can be safely traversed without
+     * losing any possible transformations.
+     *
+     * @return \Iterator
+     */
+    protected function _unwrap() {
+        $iterator = $this;
+        while (get_class($iterator) === 'Cake\Collection\Collection') {
+            $iterator = $iterator->getInnerIterator();
+        }
+        return $iterator;
+    }
+
 }
