@@ -306,11 +306,11 @@ class CollectionTest extends TestCase
         $map = $collection->sortBy('a.b.c');
         $this->assertInstanceOf('Cake\Collection\Collection', $map);
         $expected = [
-            2 => ['a' => ['b' => ['c' => 10]]],
-            1 => ['a' => ['b' => ['c' => 6]]],
-            0 => ['a' => ['b' => ['c' => 4]]],
+            ['a' => ['b' => ['c' => 10]]],
+            ['a' => ['b' => ['c' => 6]]],
+            ['a' => ['b' => ['c' => 4]]],
         ];
-        $this->assertEquals($expected, iterator_to_array($map));
+        $this->assertEquals($expected, $map->toList());
     }
 
     /**

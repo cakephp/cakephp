@@ -14,8 +14,8 @@
  */
 namespace Cake\Collection\Iterator;
 
-use Cake\Collection\ExtractTrait;
-use SplHeap;
+use Cake\Collection\CollectionInterface;
+use Cake\Collection\Collection;
 
 /**
  * An iterator that will return the passed items in order. The order is given by
@@ -37,39 +37,8 @@ use SplHeap;
  *
  * This iterator does not preserve the keys passed in the original elements.
  */
-class SortIterator extends SplHeap
+class SortIterator extends Collection
 {
-
-    use ExtractTrait;
-
-    /**
-     * Original items passed to this iterator
-     *
-     * @var array|\Traversable
-     */
-    protected $_items;
-
-    /**
-     * The callback used to extract the column or property from the elements
-     *
-     * @var callable
-     */
-    protected $_callback;
-
-    /**
-     * The direction in which the elements should be sorted. The constants
-     * `SORT_ASC` and `SORT_DESC` are the accepted values
-     *
-     * @var string
-     */
-    protected $_dir;
-
-    /**
-     * The type of sort comparison to perform.
-     *
-     * @var string
-     */
-    protected $_type;
 
     /**
      * Wraps this iterator around the passed items so when iterated they are returned
@@ -90,70 +59,22 @@ class SortIterator extends SplHeap
      */
     public function __construct($items, $callback, $dir = SORT_DESC, $type = SORT_NUMERIC)
     {
-        $this->_items = $items;
-        $this->_dir = $dir;
-        $this->_type = $type;
-        $this->_callback = $this->_propertyExtractor($callback);
+        if ($items instanceof CollectionInterface) {
+            $items = $items->toList();
+        }
+
+        $callback = $this->_propertyExtractor($callback);
+        $results = [];
+        foreach ($items as $key => $value) {
+            $results[$key] = $callback($value);
+        }
+
+        $dir === SORT_DESC ? arsort($results, $type) : asort($results, $type);
+
+        foreach (array_keys($results) as $key) {
+            $results[$key] = $items[$key];
+        }
+        parent::__construct($results);
     }
 
-    /**
-     * The comparison function used to sort the elements
-     *
-     * @param mixed $a an element in the list
-     * @param mixed $b an element in the list
-     * @return int
-     */
-    public function compare($a, $b)
-    {
-        if ($this->_dir === SORT_ASC) {
-            list($a, $b) = [$b, $a];
-        }
-
-        $callback = $this->_callback;
-        $a = $callback($a);
-        $b = $callback($b);
-
-        if ($this->_type === SORT_NUMERIC) {
-            return $a - $b;
-        }
-
-        if ($this->_type === SORT_NATURAL) {
-            return strnatcmp($a, $b);
-        }
-
-        if ($this->_type === SORT_STRING) {
-            return strcmp($a, $b);
-        }
-
-        return strcoll($a, $b);
-    }
-
-    /**
-     * Returns the top of the heap. Rewinds the iterator if the heap is empty.
-     *
-     * @return mixed
-     */
-    public function top()
-    {
-        if ($this->isEmpty()) {
-            $this->rewind();
-        }
-        if ($this->isEmpty()) {
-            return null;
-        }
-        return parent::top();
-    }
-
-    /**
-     * SplHeap removes elements upon iteration. Implementing rewind so that
-     * this iterator can be reused, at least at a cost.
-     *
-     * @return void
-     */
-    public function rewind()
-    {
-        foreach ($this->_items as $item) {
-            $this->insert($item);
-        }
-    }
 }
