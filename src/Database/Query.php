@@ -114,6 +114,14 @@ class Query implements ExpressionInterface, IteratorAggregate
     protected $_functionsBuilder;
 
     /**
+     * Boolean for tracking whether or not buffered results
+     * are enabled.
+     *
+     * @var bool
+     */
+    protected $_useBufferedResults = true;
+
+    /**
      * Constructor.
      *
      * @param \Cake\Database\Connection $connection The connection
@@ -1578,6 +1586,33 @@ class Query implements ExpressionInterface, IteratorAggregate
             return $this->_valueBinder;
         }
         $this->_valueBinder = $binder;
+        return $this;
+    }
+
+    /**
+     * Enable/Disable buffered results.
+     *
+     * When enabled the results returned by this Query will be
+     * buffered. This enables you to iterate a result set multiple times, or
+     * both cache and iterate it.
+     *
+     * When disabled it will consume less memory as fetched results are not
+     * remembered for future iterations.
+     *
+     * If called with no arguments, it will return whether or not buffering is
+     * enabled.
+     *
+     * @param bool $enable whether or not to enable buffering
+     * @return bool|$this
+     */
+    public function bufferResults($enable = null)
+    {
+        if ($enable === null) {
+            return $this->_useBufferedResults;
+        }
+
+        $this->_dirty();
+        $this->_useBufferedResults = (bool)$enable;
         return $this;
     }
 
