@@ -362,7 +362,6 @@ class TranslateBehavior extends Behavior
                 $name = $field . '_translation';
                 $translation = isset($row[$name]) ? $row[$name] : null;
          
-
                 if ($translation === null || $translation === false) {
                     unset($row[$name]);
                     continue;
@@ -396,7 +395,6 @@ class TranslateBehavior extends Behavior
     {
         return $results->map(function ($row) {
             $translations = (array)$row->get('_i18n');
-
             $grouped = new Collection($translations);
 
             $result = [];
@@ -413,7 +411,6 @@ class TranslateBehavior extends Behavior
             $row->set('_translations', $result, $options);
             unset($row['_i18n']);
             $row->clean();
-
             return $row;
         });
     }

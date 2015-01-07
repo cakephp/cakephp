@@ -29,5 +29,4 @@ class I18nTable extends Table
     {
         return 'custom_i18n_datasource';
     }
-
 }
