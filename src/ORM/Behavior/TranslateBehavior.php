@@ -115,6 +115,7 @@ class TranslateBehavior extends Behavior
      */
     public function setupFieldAssociations($fields, $table, $model, $strategy)
     {
+        $targetTable = TableRegistry::get($table);
         $targetAlias = Inflector::slug($table);
         $alias = $this->_table->alias();
         $filter = $this->_config['onlyTranslated'];
@@ -122,13 +123,15 @@ class TranslateBehavior extends Behavior
         foreach ($fields as $field) {
             $name = $alias . '_' . $field . '_translation';
 
+            $fieldTable = TableRegistry::set($name, $targetTable);
             $this->_table->hasOne($name, [
                 'className' => $table,
                 'foreignKey' => 'foreign_key',
+                'targetTable' => $fieldTable,
                 'joinType' => $filter ? 'INNER' : 'LEFT',
                 'conditions' => [
-                    $name . '.model' => $model,
-                    $name . '.field' => $field,
+                    $fieldTable->alias() . '.model' => $model,
+                    $fieldTable->alias() . '.field' => $field,
                 ],
                 'propertyName' => $field . '_translation'
             ]);
