@@ -37,6 +37,13 @@ class UnfoldIterator extends IteratorIterator implements RecursiveIterator
     protected $_unfolder;
 
     /**
+     * A reference to the internal iterator this object is wrapping.
+     *
+     * @var \Iterator
+     */
+    protected $_innerIterator;
+
+    /**
      * Creates the iterator that will generate child iterators from each of the
      * elements it was constructed with.
      *
@@ -49,6 +56,7 @@ class UnfoldIterator extends IteratorIterator implements RecursiveIterator
     {
         $this->_unfolder = $unfolder;
         parent::__construct($items);
+        $this->_innerIterator = $this->getInnerIterator();
     }
 
     /**
@@ -74,6 +82,6 @@ class UnfoldIterator extends IteratorIterator implements RecursiveIterator
         $key = $this->key();
         $unfolder = $this->_unfolder;
 
-        return new NoChildrenIterator($unfolder($current, $key, $this));
+        return new NoChildrenIterator($unfolder($current, $key, $this->_innerIterator));
     }
 }
