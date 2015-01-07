@@ -78,10 +78,11 @@ class TranslateBehaviorTest extends TestCase
 
     /**
      * Tests that custom translation tables are respected
-     * 
+     *
      * @return void
      */
-    public function testCustomTranslationTable() {
+    public function testCustomTranslationTable()
+    {
         $table = TableRegistry::get('Articles');
 
         $table->addBehavior('Translate', [
@@ -99,10 +100,11 @@ class TranslateBehaviorTest extends TestCase
 
     /**
      * Tests that the strategy can be changed for i18n
-     * 
+     *
      * @return void
      */
-    public function testStrategy() {
+    public function testStrategy()
+    {
         $table = TableRegistry::get('Articles');
 
         $table->addBehavior('Translate', [
@@ -966,5 +968,4 @@ class TranslateBehaviorTest extends TestCase
         $results = $table->find('translations')->all();
         $this->assertCount(1, $results);
     }
-
 }

@@ -112,7 +112,7 @@ class TranslateBehavior extends Behavior
      * @param string $table the table name to use for storing each field translation
      * @param string $model the model field value
      * @param string $strategy the strategy used in the _i18n association
-     * 
+     *
      * @return void
      */
     public function setupFieldAssociations($fields, $table, $model, $strategy)
