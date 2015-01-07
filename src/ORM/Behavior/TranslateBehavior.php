@@ -123,15 +123,19 @@ class TranslateBehavior extends Behavior
         foreach ($fields as $field) {
             $name = $alias . '_' . $field . '_translation';
 
-            $fieldTable = TableRegistry::set($name, $targetTable);
-            $this->_table->hasOne($name, [
+            $fieldTable = TableRegistry::get($name, [
                 'className' => $table,
-                'foreignKey' => 'foreign_key',
+                'alias' => $name,
+                'table' => $targetTable->table()
+            ]);
+
+            $this->_table->hasOne($name, [
                 'targetTable' => $fieldTable,
+                'foreignKey' => 'foreign_key',
                 'joinType' => $filter ? 'INNER' : 'LEFT',
                 'conditions' => [
-                    $fieldTable->alias() . '.model' => $model,
-                    $fieldTable->alias() . '.field' => $field,
+                    $name . '.model' => $model,
+                    $name . '.field' => $field,
                 ],
                 'propertyName' => $field . '_translation'
             ]);
@@ -190,7 +194,9 @@ class TranslateBehavior extends Behavior
             $options['filterByCurrentLocale'] !== $this->_config['onlyTranslated'];
 
         foreach ($fields as $field) {
-            $contain[$alias . '_' . $field . '_translation']['queryBuilder'] = $conditions(
+            $name = $alias . '_' . $field . '_translation';
+
+            $contain[$name]['queryBuilder'] = $conditions(
             $field,
             $locale,
             $query,
@@ -199,7 +205,7 @@ class TranslateBehavior extends Behavior
 
             if ($changeFilter) {
                 $filter = $options['filterByCurrentLocale'] ? 'INNER' : 'LEFT';
-                $contain[$alias . '_' . $field . '_translation']['joinType'] = $filter;
+                $contain[$name]['joinType'] = $filter;
             }
         }
 
@@ -353,6 +359,7 @@ class TranslateBehavior extends Behavior
             foreach ($this->_config['fields'] as $field) {
                 $name = $field . '_translation';
                 $translation = isset($row[$name]) ? $row[$name] : null;
+         
 
                 if ($translation === null || $translation === false) {
                     unset($row[$name]);
@@ -387,6 +394,7 @@ class TranslateBehavior extends Behavior
     {
         return $results->map(function ($row) {
             $translations = (array)$row->get('_i18n');
+
             $grouped = new Collection($translations);
 
             $result = [];
@@ -403,6 +411,7 @@ class TranslateBehavior extends Behavior
             $row->set('_translations', $result, $options);
             unset($row['_i18n']);
             $row->clean();
+
             return $row;
         });
     }
