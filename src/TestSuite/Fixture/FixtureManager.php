@@ -155,6 +155,7 @@ class FixtureManager
                 $baseNamespace = Inflector::camelize(str_replace('\\', '\ ', $path));
                 $additionalPath = null;
             } else {
+                $baseNamespace = '';
                 $name = $fixture;
             }
             $name = Inflector::camelize($name);
