@@ -318,7 +318,7 @@ class Text
     {
         $paragraphs = explode($break, $text);
         foreach ($paragraphs as &$paragraph) {
-            $paragraph = String::_wordWrap($paragraph, $width, $break, $cut);
+            $paragraph = static::_wordWrap($paragraph, $width, $break, $cut);
         }
         return implode($break, $paragraphs);
     }

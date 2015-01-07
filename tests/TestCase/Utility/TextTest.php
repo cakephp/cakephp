@@ -397,7 +397,7 @@ TEXT;
     public function testWordWrapNewlineAware() {
         $text = 'This is a line that is almost the 55 chars long.
 This is a new sentence which is manually newlined, but is so long it needs two lines.';
-        $result = String::wordWrap($text, 55);
+        $result = Text::wordWrap($text, 55);
         $expected = <<<TEXT
 This is a line that is almost the 55 chars long.
 This is a new sentence which is manually newlined, but
@@ -427,7 +427,7 @@ TEXT;
 This is the song th
 at never ends. This
  is the song that n
-ever ends. This is 
+ever ends. This is
 the song that never
  ends.
 TEXT;
