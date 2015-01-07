@@ -125,11 +125,15 @@ class TranslateBehavior extends Behavior
         foreach ($fields as $field) {
             $name = $alias . '_' . $field . '_translation';
 
-            $fieldTable = TableRegistry::get($name, [
-                'className' => $table,
-                'alias' => $name,
-                'table' => $targetTable->table()
-            ]);
+            if (!TableRegistry::exists($name)) {
+                $fieldTable = TableRegistry::get($name, [
+                    'className' => $table,
+                    'alias' => $name,
+                    'table' => $targetTable->table()
+                ]);
+            } else {
+                $fieldTable = TableRegistry::get($name);
+            }
 
             $this->_table->hasOne($name, [
                 'targetTable' => $fieldTable,
@@ -361,7 +365,7 @@ class TranslateBehavior extends Behavior
             foreach ($this->_config['fields'] as $field) {
                 $name = $field . '_translation';
                 $translation = isset($row[$name]) ? $row[$name] : null;
-         
+
                 if ($translation === null || $translation === false) {
                     unset($row[$name]);
                     continue;
