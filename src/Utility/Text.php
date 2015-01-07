@@ -323,7 +323,7 @@ class Text
         return implode($break, $paragraphs);
     }
 
-   /**
+    /**
      * Unicode aware version of wordwrap as helper method.
      *
      * @param string $text The text to format.

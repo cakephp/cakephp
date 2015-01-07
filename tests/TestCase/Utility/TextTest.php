@@ -394,7 +394,8 @@ TEXT;
      *
      * @return void
      */
-    public function testWordWrapNewlineAware() {
+    public function testWordWrapNewlineAware()
+    {
         $text = 'This is a line that is almost the 55 chars long.
 This is a new sentence which is manually newlined, but is so long it needs two lines.';
         $result = Text::wordWrap($text, 55);
