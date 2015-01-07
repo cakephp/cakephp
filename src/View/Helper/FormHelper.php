@@ -2075,9 +2075,11 @@ class FormHelper extends Helper
         $options = $this->_singleDatetime($options, 'meridian');
 
         if (isset($options['val'])) {
+            $hour = date('H');
             $options['val'] = [
-                'hour' => date('H'),
+                'hour' => $hour,
                 'minute' => (int)$options['val'],
+                'meridian' => $hour > 11 ? 'pm' : 'am',
             ];
         }
         return $this->datetime($fieldName, $options);

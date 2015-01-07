@@ -5355,15 +5355,15 @@ class FormHelperTest extends TestCase
     {
         extract($this->dateRegex);
 
-        $now = time();
+        $now = new \DateTime();
         $result = $this->Form->meridian('Model.field', ['value' => 'am']);
         $expected = [
             ['select' => ['name' => 'Model[field][meridian]']],
             ['option' => ['value' => '']],
             '/option',
             $meridianRegex,
-            ['option' => ['value' => date('a', $now), 'selected' => 'selected']],
-            date('a', $now),
+            ['option' => ['value' => $now->format('a'), 'selected' => 'selected']],
+            $now->format('a'),
             '/option',
             '*/select'
         ];
