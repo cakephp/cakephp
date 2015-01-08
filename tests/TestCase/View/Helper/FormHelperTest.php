@@ -205,7 +205,7 @@ class FormHelperTest extends TestCase
     public function testConstructTemplatesFile()
     {
         $helper = new FormHelper($this->View, [
-            'templates' => 'htmlhelper_tags.php'
+            'templates' => 'htmlhelper_tags'
         ]);
         $result = $helper->input('name');
         $this->assertContains('<input', $result);
@@ -474,7 +474,7 @@ class FormHelperTest extends TestCase
     public function testCreateTemplatesFile()
     {
         $result = $this->Form->create($this->article, [
-            'templates' => 'htmlhelper_tags.php',
+            'templates' => 'htmlhelper_tags',
         ]);
         $expected = [
             'start form',

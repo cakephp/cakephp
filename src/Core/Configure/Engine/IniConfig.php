@@ -15,6 +15,7 @@
 namespace Cake\Core\Configure\Engine;
 
 use Cake\Core\Configure\ConfigEngineInterface;
+use Cake\Core\Configure\FileConfigTrait;
 use Cake\Core\Exception\Exception;
 use Cake\Core\Plugin;
 use Cake\Utility\Hash;
@@ -55,12 +56,14 @@ use Cake\Utility\Hash;
 class IniConfig implements ConfigEngineInterface
 {
 
+    use FileConfigTrait;
+
     /**
-     * The path to read ini files from.
+     * File extension.
      *
-     * @var array
+     * @var string
      */
-    protected $_path;
+    protected $_extension = '.ini';
 
     /**
      * The section to read, if null all sections will be read.
@@ -97,14 +100,7 @@ class IniConfig implements ConfigEngineInterface
      */
     public function read($key)
     {
-        if (strpos($key, '..') !== false) {
-            throw new Exception('Cannot load configuration files with ../ in them.');
-        }
-
-        $file = $this->_getFilePath($key);
-        if (!is_file($file)) {
-            throw new Exception(sprintf('Could not load configuration file: %s', $file));
-        }
+        $file = $this->_getFilePath($key, true);
 
         $contents = parse_ini_file($file, true);
         if (!empty($this->_section) && isset($contents[$this->_section])) {
@@ -199,29 +195,5 @@ class IniConfig implements ConfigEngineInterface
             return 'false';
         }
         return (string)$value;
-    }
-
-    /**
-     * Get file path
-     *
-     * @param string $key The identifier to write to. If the key has a . it will be treated
-     *  as a plugin prefix.
-     * @return string Full file path
-     */
-    protected function _getFilePath($key)
-    {
-        if (substr($key, -4) === '.ini') {
-            $key = substr($key, 0, -4);
-        }
-        list($plugin, $key) = pluginSplit($key);
-        $key .= '.ini';
-
-        if ($plugin) {
-            $file = Plugin::configPath($plugin) . $key;
-        } else {
-            $file = $this->_path . $key;
-        }
-
-        return $file;
     }
 }

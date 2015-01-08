@@ -9,21 +9,21 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         2.0.0
+ * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Core\Configure\Engine;
 
 use Cake\Core\App;
-use Cake\Core\Configure\Engine\PhpConfig;
+use Cake\Core\Configure\Engine\JsonConfig;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class PhpConfigTest
+ * Class JsonConfigTest
  *
  */
-class PhpConfigTest extends TestCase
+class JsonConfigTest extends TestCase
 {
 
     /**
@@ -64,9 +64,9 @@ class PhpConfigTest extends TestCase
      */
     public function testRead()
     {
-        $engine = new PhpConfig($this->path);
-        $values = $engine->read('var_test');
-        $this->assertEquals('value', $values['Read']);
+        $engine = new JsonConfig($this->path);
+        $values = $engine->read('json_test');
+        $this->assertEquals('value', $values['Json']);
         $this->assertEquals('buried', $values['Deep']['Deeper']['Deepest']);
     }
 
@@ -78,8 +78,8 @@ class PhpConfigTest extends TestCase
      */
     public function testReadWithExistentFileWithoutExtension()
     {
-        $engine = new PhpConfig($this->path);
-        $engine->read('no_php_extension');
+        $engine = new JsonConfig($this->path);
+        $engine->read('no_json_extension');
     }
 
     /**
@@ -90,7 +90,7 @@ class PhpConfigTest extends TestCase
      */
     public function testReadWithNonExistentFile()
     {
-        $engine = new PhpConfig($this->path);
+        $engine = new JsonConfig($this->path);
         $engine->read('fake_values');
     }
 
@@ -98,12 +98,26 @@ class PhpConfigTest extends TestCase
      * Test reading an empty file.
      *
      * @expectedException \Cake\Core\Exception\Exception
+     * @expcetedExceptionMessage Decoding JSON config file "empty.json" did not return any array
      * @return void
      */
     public function testReadEmptyFile()
     {
-        $engine = new PhpConfig($this->path);
-        $engine->read('empty');
+        $engine = new JsonConfig($this->path);
+        $config = $engine->read('empty');
+    }
+
+    /**
+     * Test an exception is thrown by reading files that contain invalid JSON.
+     *
+     * @expectedException \Cake\Core\Exception\Exception
+     * @expectedExceptionMessage Error parsing JSON string fetched from config file "invalid.json"
+     * @return void
+     */
+    public function testReadWithInvalidJson()
+    {
+        $engine = new JsonConfig($this->path);
+        $engine->read('invalid');
     }
 
     /**
@@ -114,7 +128,7 @@ class PhpConfigTest extends TestCase
      */
     public function testReadWithDots()
     {
-        $engine = new PhpConfig($this->path);
+        $engine = new JsonConfig($this->path);
         $engine->read('../empty');
     }
 
@@ -126,7 +140,7 @@ class PhpConfigTest extends TestCase
     public function testReadPluginValue()
     {
         Plugin::load('TestPlugin');
-        $engine = new PhpConfig($this->path);
+        $engine = new JsonConfig($this->path);
         $result = $engine->read('TestPlugin.load');
         $this->assertTrue(isset($result['plugin_load']));
 
@@ -134,36 +148,17 @@ class PhpConfigTest extends TestCase
     }
 
     /**
-     * Test dumping data to PHP format.
+     * Test dumping data to json format.
      *
      * @return void
      */
     public function testDump()
     {
-        $engine = new PhpConfig(TMP);
+        $engine = new JsonConfig(TMP);
         $result = $engine->dump('test', $this->testData);
         $this->assertTrue($result > 0);
-        $expected = <<<PHP
-<?php
-\$config = array (
-  'One' => 
-  array (
-    'two' => 'value',
-    'three' => 
-    array (
-      'four' => 'value four',
-    ),
-    'is_null' => NULL,
-    'bool_false' => false,
-    'bool_true' => true,
-  ),
-  'Asset' => 
-  array (
-    'timestamp' => 'force',
-  ),
-);
-PHP;
-        $file = TMP . 'test.php';
+        $expected = '{"One":{"two":"value","three":{"four":"value four"},"is_null":null,"bool_false":false,"bool_true":true},"Asset":{"timestamp":"force"}}';
+        $file = TMP . 'test.json';
         $contents = file_get_contents($file);
 
         unlink($file);
@@ -184,10 +179,10 @@ PHP;
      */
     public function testDumpRead()
     {
-        $engine = new PhpConfig(TMP);
+        $engine = new JsonConfig(TMP);
         $engine->dump('test', $this->testData);
         $result = $engine->read('test');
-        unlink(TMP . 'test.php');
+        unlink(TMP . 'test.json');
 
         $this->assertEquals($this->testData, $result);
     }

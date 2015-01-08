@@ -503,7 +503,7 @@ class ConfigureTest extends TestCase
     {
         Configure::config('test_Engine', new PhpConfig(TMP));
 
-        $result = Configure::dump('config_test.php', 'test_Engine');
+        $result = Configure::dump('config_test', 'test_Engine');
         $this->assertTrue($result > 0);
         $result = file_get_contents(TMP . 'config_test.php');
         $this->assertContains('<?php', $result);
@@ -523,7 +523,7 @@ class ConfigureTest extends TestCase
         Configure::config('test_Engine', new PhpConfig(TMP));
         Configure::write('Error', ['test' => 'value']);
 
-        $result = Configure::dump('config_test.php', 'test_Engine', ['Error']);
+        $result = Configure::dump('config_test', 'test_Engine', ['Error']);
         $this->assertTrue($result > 0);
         $result = file_get_contents(TMP . 'config_test.php');
         $this->assertContains('<?php', $result);

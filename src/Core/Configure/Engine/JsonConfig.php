@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         2.0.0
+ * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Core\Configure\Engine;
@@ -20,13 +20,10 @@ use Cake\Core\Exception\Exception;
 use Cake\Core\Plugin;
 
 /**
- * PHP engine allows Configure to load configuration values from
- * files containing simple PHP arrays.
- *
- * Files compatible with PhpConfig should define a `$config` variable, that
- * contains all of the configuration data contained in the file.
+ * JSON engine allows Configure to load configuration values from
+ * files containing JSON strings.
  */
-class PhpConfig implements ConfigEngineInterface
+class JsonConfig implements ConfigEngineInterface
 {
 
     use FileConfigTrait;
@@ -36,10 +33,10 @@ class PhpConfig implements ConfigEngineInterface
      *
      * @var string
      */
-    protected $_extension = '.php';
+    protected $_extension = '.json';
 
     /**
-     * Constructor for PHP Config file reading.
+     * Constructor for JSON Config file reading.
      *
      * @param string|null $path The path to read config files from. Defaults to CONFIG.
      */
@@ -58,36 +55,45 @@ class PhpConfig implements ConfigEngineInterface
      * reading from the initialized path, plugin keys will be located using Plugin::path().
      *
      * @param string $key The identifier to read from. If the key has a . it will be treated
-     *  as a plugin prefix.
+     *   as a plugin prefix.
      * @return array Parsed configuration values.
-     * @throws \Cake\Core\Exception\Exception when files don't exist or they don't contain `$config`.
-     *  Or when files contain '..' as this could lead to abusive reads.
+     * @throws \Cake\Core\Exception\Exception When files don't exist or when
+     *   files contain '..' (as this could lead to abusive reads) or when there
+     *   is an error parsing the JSON string.
      */
     public function read($key)
     {
         $file = $this->_getFilePath($key, true);
 
-        include $file;
-        if (!isset($config)) {
-            throw new Exception(sprintf('No variable $config found in %s', $file));
+        $values = json_decode(file_get_contents($file), true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new Exception(sprintf(
+                "Error parsing JSON string fetched from config file \"%s.json\": %s",
+                $key,
+                json_last_error_msg()
+            ));
         }
-        return $config;
+        if (!is_array($values)) {
+            throw new Exception(sprintf(
+                'Decoding JSON config file "%s.json" did not return an array',
+                $key
+            ));
+        }
+        return $values;
     }
 
     /**
-     * Converts the provided $data into a string of PHP code that can
-     * be used saved into a file and loaded later.
+     * Converts the provided $data into a JSON string that can be used saved
+     * into a file and loaded later.
      *
-     * @param string $key The identifier to write to. If the key has a . it will be treated
-     *  as a plugin prefix.
+     * @param string $key The identifier to write to. If the key has a . it will
+     *  be treated as a plugin prefix.
      * @param array $data Data to dump.
      * @return int Bytes saved.
      */
     public function dump($key, array $data)
     {
-        $contents = '<?php' . "\n" . '$config = ' . var_export($data, true) . ';';
-
         $filename = $this->_getFilePath($key);
-        return file_put_contents($filename, $contents);
+        return file_put_contents($filename, json_encode($data));
     }
 }
