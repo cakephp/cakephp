@@ -390,6 +390,24 @@ TEXT;
     }
 
     /**
+     * test that wordWrap() properly handle newline characters.
+     *
+     * @return void
+     */
+    public function testWordWrapNewlineAware()
+    {
+        $text = 'This is a line that is almost the 55 chars long.
+This is a new sentence which is manually newlined, but is so long it needs two lines.';
+        $result = Text::wordWrap($text, 55);
+        $expected = <<<TEXT
+This is a line that is almost the 55 chars long.
+This is a new sentence which is manually newlined, but
+is so long it needs two lines.
+TEXT;
+        $this->assertTextEquals($expected, $result, 'Text not wrapped.');
+    }
+
+    /**
      * test wrap method.
      *
      * @return void
@@ -406,14 +424,12 @@ TEXT;
         $this->assertTextEquals($expected, $result, 'Text not wrapped.');
 
         $result = Text::wrap($text, ['width' => 20, 'wordWrap' => false]);
-        $expected = <<<TEXT
-This is the song th
-at never ends. This
- is the song that n
-ever ends. This is 
-the song that never
- ends.
-TEXT;
+        $expected = 'This is the song th' . "\n" .
+            'at never ends. This' . "\n" .
+            ' is the song that n' . "\n" .
+            'ever ends. This is ' . "\n" .
+            'the song that never' . "\n" .
+            ' ends.';
         $this->assertTextEquals($expected, $result, 'Text not wrapped.');
     }
 
