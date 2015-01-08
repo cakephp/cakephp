@@ -1818,7 +1818,9 @@ class Table implements RepositoryInterface, EventListenerInterface
     {
         if ($data === null) {
             $class = $this->entityClass();
-            return new $class;
+            $entity = new $class;
+            $entity->source($this->alias());
+            return $entity;
         }
         if (!isset($options['associated'])) {
             $options['associated'] = $this->_associations->keys();
