@@ -38,7 +38,7 @@ use Cake\Core\Plugin;
  * Plugins can be located with App as well. Using Plugin::path('DebugKit') for example, will
  * give you the full path to the DebugKit plugin.
  *
- * @link http://book.cakephp.org/3.0/en/core-utility-libraries/app.html
+ * @link http://book.cakephp.org/3.0/en/core-libraries/app.html
  */
 class App
 {

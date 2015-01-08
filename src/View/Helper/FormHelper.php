@@ -318,7 +318,7 @@ class FormHelper extends Helper
      *   to make a model-less form.
      * @param array $options An array of html attributes and options.
      * @return string An formatted opening FORM tag.
-     * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-create
+     * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#Cake\View\Helper\FormHelper::create
      */
     public function create($model = null, array $options = [])
     {

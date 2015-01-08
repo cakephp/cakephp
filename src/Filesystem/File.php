@@ -33,7 +33,7 @@ class File
      * File name
      *
      * @var string
-     * http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::$name
+     * http://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$name
      */
     public $name = null;
 
@@ -41,7 +41,7 @@ class File
      * File info
      *
      * @var array
-     * http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::$info
+     * http://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$info
      */
     public $info = [];
 
@@ -49,7 +49,7 @@ class File
      * Holds the file handler resource if the file is opened
      *
      * @var resource
-     * http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::$handle
+     * http://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$handle
      */
     public $handle = null;
 
@@ -57,7 +57,7 @@ class File
      * Enable locking for file reading and writing
      *
      * @var bool
-     * http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::$lock
+     * http://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$lock
      */
     public $lock = null;
 
@@ -67,7 +67,7 @@ class File
      * Current file's absolute path
      *
      * @var mixed
-     * http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::$path
+     * http://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$path
      */
     public $path = null;
 
