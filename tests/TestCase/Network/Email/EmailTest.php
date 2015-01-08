@@ -21,8 +21,10 @@ use Cake\Filesystem\File;
 use Cake\Log\Log;
 use Cake\Network\Email\DebugTransport;
 use Cake\Network\Email\Email;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\View\Exception\MissingTemplateException;
+use SimpleXmlElement;
 
 /**
  * Help to test Email
@@ -87,6 +89,8 @@ class TestEmail extends Email
  */
 class EmailTest extends TestCase
 {
+
+    public $fixtures = ['core.users'];
 
     /**
      * setUp
@@ -2589,6 +2593,98 @@ HTML;
         $result = $this->CakeEmail->send($message);
         $expected = "{$message}\r\n\r\n";
         $this->assertEquals($expected, $result['message']);
+    }
+
+    /**
+     * testJsonSerialize()
+     *
+     * @return void
+     */
+    public function testJsonSerialize()
+    {
+        $xmlstr = <<<XML
+<?xml version='1.0' standalone='yes'?>
+<framework>
+    <name>CakePHP</name>
+    <url>http://cakephp.org</url>
+</framework>
+XML;
+
+        $this->CakeEmail->reset()
+            ->to(['cakephp@cakephp.org' => 'CakePHP'])
+            ->from('noreply@cakephp.org')
+            ->replyTo('cakephp@cakephp.org')
+            ->cc(['mark@cakephp.org', 'juan@cakephp.org' => 'Juan Basso'])
+            ->bcc('phpnut@cakephp.org')
+            ->subject('Test Serialize')
+            ->template('default', 'test')
+            ->messageId('<uuid@server.com>')
+            ->domain('foo.bar')
+            ->viewVars([
+                'users' => TableRegistry::get('Users')->get(1, ['fields' => ['id', 'username']]),
+                'xml' => new SimpleXmlElement($xmlstr),
+                'exception' => new \Exception('test')
+            ])
+            ->attachments([
+                'test.txt' => TEST_APP . 'config' . DS . 'empty.ini',
+                'image' => [
+                    'data' => file_get_contents(TEST_APP . 'webroot' . DS . 'img' . DS . 'cake.icon.png'),
+                    'mimetype' => 'image/png'
+                ]
+            ]);
+
+        $result = json_decode(json_encode($this->CakeEmail), true);
+        $this->assertContains('test', $result['_viewVars']['exception']);
+        unset($result['_viewVars']['exception']);
+
+        $encode = function ($path) {
+            return chunk_split(base64_encode(file_get_contents($path)), 76, "\r\n");
+        };
+
+        $expected = [
+            '_to' => ['cakephp@cakephp.org' => 'CakePHP'],
+            '_from' => ['noreply@cakephp.org' => 'noreply@cakephp.org'],
+            '_replyTo' => ['cakephp@cakephp.org' => 'cakephp@cakephp.org'],
+            '_cc' => ['mark@cakephp.org' => 'mark@cakephp.org', 'juan@cakephp.org' => 'Juan Basso'],
+            '_bcc' => ['phpnut@cakephp.org' => 'phpnut@cakephp.org'],
+            '_subject' => 'Test Serialize',
+            '_template' => 'default',
+            '_layout' => 'test',
+            '_viewRender' => 'Cake\View\View',
+            '_helpers' => ['Html'],
+            '_emailFormat' => 'text',
+            '_messageId' => '<uuid@server.com>',
+            '_domain' => 'foo.bar',
+            'charset' => 'utf-8',
+            'headerCharset' => 'utf-8',
+            '_viewVars' => [
+                'users' => [
+                    'id' => 1,
+                    'username' => 'mariano'
+                ],
+                'xml' => [
+                    'name' => 'CakePHP',
+                    'url' => 'http://cakephp.org'
+                ],
+            ],
+            '_attachments' => [
+                'test.txt' => [
+                    'data' => $encode(TEST_APP . 'config' . DS . 'empty.ini'),
+                    'mimetype' => 'application/octet-stream'
+                ],
+                'image' => [
+                    'data' => $encode(TEST_APP . 'webroot' . DS . 'img' . DS . 'cake.icon.png'),
+                    'mimetype' => 'image/png'
+                ]
+            ],
+            '_emailPattern' => '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-.]+)$/ui'
+        ];
+        $this->assertEquals($expected, $result);
+
+        $result = json_decode(json_encode(unserialize(serialize($this->CakeEmail))), true);
+        $this->assertContains('test', $result['_viewVars']['exception']);
+        unset($result['_viewVars']['exception']);
+        $this->assertEquals($expected, $result);
     }
 
     /**
