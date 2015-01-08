@@ -1138,7 +1138,7 @@ class CakeTime {
 			if (function_exists('mb_check_encoding')) {
 				$valid = mb_check_encoding($format, $encoding);
 			} else {
-				$valid = !Multibyte::checkMultibyte($format);
+				$valid = Multibyte::checkMultibyte($format);
 			}
 			if (!$valid) {
 				$format = utf8_encode($format);
