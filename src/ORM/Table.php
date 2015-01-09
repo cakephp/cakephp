@@ -1875,7 +1875,7 @@ class Table implements RepositoryInterface, EventListenerInterface
      * passing the `fieldList` option, which is also accepted for associations:
      *
      * {{{
-     * $articles = $this->Articles->patchEntity($article, $this->request->data(), [
+     * $article = $this->Articles->patchEntity($article, $this->request->data(), [
      *  'fieldList' => ['title', 'body'],
      *  'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
      *  ]
