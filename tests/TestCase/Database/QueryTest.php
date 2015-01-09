@@ -3143,22 +3143,20 @@ class QueryTest extends TestCase
             ->bufferResults(false)
             ->execute();
 
+        $this->assertCount(0, $result);
         $list = $result->fetchAll('assoc');
         $this->assertCount(3, $list);
-
-        $list = $result->fetchAll('assoc');
-        $this->assertCount(0, $list);
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query->select(['body', 'author_id'])
             ->from('articles')
             ->execute();
 
+        $this->assertCount(3, $result);
         $list = $result->fetchAll('assoc');
         $this->assertCount(3, $list);
-
-        $list = $result->fetchAll('assoc');
-        $this->assertCount(3, $list);
+        $result->closeCursor();
     }
 
     /**
