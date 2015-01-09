@@ -1245,7 +1245,7 @@ class MarshallerTest extends TestCase
         $data = [
             'title' => 'My title',
             'body' => 'My content',
-            'author_id' => 1
+            'author_id' => null
         ];
         $marshall = new Marshaller($this->articles);
         $result = $marshall->one($data, ['fieldList' => ['title', 'author_id']]);
@@ -1264,12 +1264,13 @@ class MarshallerTest extends TestCase
     {
         $data = [
             'title' => 'My title',
+            'body' => null,
             'author_id' => 1
         ];
         $marshall = new Marshaller($this->articles);
         $entity = new Entity([
             'title' => 'Foo',
-            'body' => 'My Content',
+            'body' => 'My content',
             'author_id' => 2
         ]);
         $entity->accessible('*', false);
@@ -1279,7 +1280,7 @@ class MarshallerTest extends TestCase
 
         $expected = [
             'title' => 'My title',
-            'body' => 'My Content',
+            'body' => null,
             'author_id' => 2
         ];
 
