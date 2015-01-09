@@ -52,19 +52,19 @@ class AuthComponent extends Component
      *   You can configure multiple adapters and they will be checked sequentially
      *   when users are identified.
      *
-     *   {{{
+     *   ```
      *   $this->Auth->config('authenticate', [
      *      'Form' => [
      *         'userModel' => 'Users.Users'
      *      ]
      *   ]);
-     *   }}}
+     *   ```
      *
      *   Using the class name without 'Authenticate' as the key, you can pass in an
      *   array of config for each authentication object. Additionally you can define
      *   config that should be set to all authentications objects using the 'all' key:
      *
-     *   {{{
+     *   ```
      *   $this->Auth->config('authenticate', [
      *       AuthComponent::ALL => [
      *          'userModel' => 'Users.Users',
@@ -73,25 +73,25 @@ class AuthComponent extends Component
      *     'Form',
      *     'Basic'
      *   ]);
-     *   }}}
+     *   ```
      *
      * - `authorize` - An array of authorization objects to use for authorizing users.
      *   You can configure multiple adapters and they will be checked sequentially
      *   when authorization checks are done.
      *
-     *   {{{
+     *   ```
      *   $this->Auth->config('authorize', [
      *      'Crud' => [
      *          'actionPath' => 'controllers/'
      *      ]
      *   ]);
-     *   }}}
+     *   ```
      *
      *   Using the class name without 'Authorize' as the key, you can pass in an array
      *   of config for each authorization object. Additionally you can define config
      *   that should be set to all authorization objects using the AuthComponent::ALL key:
      *
-     *   {{{
+     *   ```
      *   $this->Auth->config('authorize', [
      *      AuthComponent::ALL => [
      *          'actionPath' => 'controllers/'
@@ -99,7 +99,7 @@ class AuthComponent extends Component
      *      'Crud',
      *      'CustomAuth'
      *   ]);
-     *   }}}
+     *   ```
      *
      * - `ajaxLogin` - The name of an optional view element to render when an Ajax
      *   request is made with an invalid or expired session.

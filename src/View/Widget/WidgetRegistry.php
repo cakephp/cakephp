@@ -97,12 +97,12 @@ class WidgetRegistry
      *
      * Widget arrays can either be descriptions or instances. For example:
      *
-     * {{{
+     * ```
      * $registry->add([
      *   'label' => new MyLabelWidget($templates),
      *   'checkbox' => ['Fancy.MyCheckbox', 'label']
      * ]);
-     * }}}
+     * ```
      *
      * The above shows how to define widgets as instances or as
      * descriptions including dependencies. Classes can be defined

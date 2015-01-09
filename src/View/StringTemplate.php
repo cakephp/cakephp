@@ -122,12 +122,12 @@ class StringTemplate
      *
      * ### Example:
      *
-     * {{{
+     * ```
      * $templater->add([
      *   'link' => '<a href="{{url}}">{{title}}</a>'
      *   'button' => '<button>{{text}}</button>'
      * ]);
-     * }}}
+     * ```
      *
      * @param array $templates An associative list of named templates.
      * @return $this

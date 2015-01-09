@@ -39,13 +39,13 @@ class ExtractIterator extends Collection
      *
      * Extract the user name for all comments in the array:
      *
-     * {{{
+     * ```
      * $items = [
      *  ['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark']],
      *  ['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']]
      * ];
      * $extractor = new ExtractIterator($items, 'comment.user.name'');
-     * }}}
+     * ```
      *
      * @param array|\Traversable $items The list of values to iterate
      * @param string $path a dot separated string symbolizing the path to follow

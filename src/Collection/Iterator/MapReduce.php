@@ -83,7 +83,7 @@ class MapReduce implements IteratorAggregate
      *
      * Separate all unique odd and even numbers in an array
      *
-     * {{{
+     * ```
      *  $data = new \ArrayObject([1, 2, 3, 4, 5, 3]);
      *  $mapper = function ($value, $key, $mr) {
      *      $type = ($value % 2 === 0) ? 'even' : 'odd';
@@ -94,13 +94,13 @@ class MapReduce implements IteratorAggregate
      *      $mr->emit(array_unique($numbers), $type);
      *  };
      *  $results = new MapReduce($data, $mapper, $reducer);
-     * }}}
+     * ```
      *
      * Previous example will generate the following result:
      *
-     * {{{
+     * ```
      *  ['odd' => [1, 3, 5], 'even' => [2, 4]]
-     * }}}
+     * ```
      *
      * @param \Traversable $data the original data to be processed
      * @param callable $mapper the mapper callback. This function will receive 3 arguments.

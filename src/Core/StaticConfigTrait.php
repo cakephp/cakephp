@@ -144,7 +144,7 @@ trait StaticConfigTrait
      * This method allows setting a DSN using formatting similar to that used by PEAR::DB.
      * The following is an example of its usage:
      *
-     * {{{
+     * ```
      * $dsn = 'mysql://user:pass@localhost/database?';
      * $config = ConnectionManager::parseDsn($dsn);
      *
@@ -159,7 +159,7 @@ trait StaticConfigTrait
      *
      * $dsn = 'File://?prefix=myapp_cake_core_&serialize=true&duration=+2 minutes&path=/tmp/persistent/';
      * $config = Cache::parseDsn($dsn);
-     * }}}
+     * ```
      *
      * For all classes, the value of `scheme` is set as the value of both the `className`
      * unless they have been otherwise specified.

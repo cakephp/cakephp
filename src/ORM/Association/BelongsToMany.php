@@ -552,10 +552,10 @@ class BelongsToMany extends Association
      *
      * ### Example:
      *
-     * {{{
+     * ```
      * $newTags = $tags->find('relevant')->execute();
      * $articles->association('tags')->link($article, $newTags);
-     * }}}
+     * ```
      *
      * `$article->get('tags')` will contain all tags in `$newTags` after liking
      *
@@ -593,11 +593,11 @@ class BelongsToMany extends Association
      *
      * ### Example:
      *
-     * {{{
+     * ```
      * $article->tags = [$tag1, $tag2, $tag3, $tag4];
      * $tags = [$tag1, $tag2, $tag3];
      * $articles->association('tags')->unlink($article, $tags);
-     * }}}
+     * ```
      *
      * `$article->get('tags')` will contain only `[$tag4]` after deleting in the database
      *
@@ -676,12 +676,12 @@ class BelongsToMany extends Association
      *
      * ### Example:
      *
-     * {{{
+     * ```
      * $article->tags = [$tag1, $tag2, $tag3, $tag4];
      * $articles->save($article);
      * $tags = [$tag1, $tag3];
      * $articles->association('tags')->replaceLinks($article, $tags);
-     * }}}
+     * ```
      *
      * `$article->get('tags')` will contain only `[$tag1, $tag3]` at the end
      *

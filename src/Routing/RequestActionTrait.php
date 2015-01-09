@@ -39,21 +39,21 @@ trait RequestActionTrait
      *
      * A basic example getting the return value of the controller action:
      *
-     * {{{
+     * ```
      * $variables = $this->requestAction('/articles/popular');
-     * }}}
+     * ```
      *
      * A basic example of request action to fetch a rendered page without the layout.
      *
-     * {{{
+     * ```
      * $viewHtml = $this->requestAction('/articles/popular', ['return']);
-     * }}}
+     * ```
      *
      * You can also pass the URL as an array:
      *
-     * {{{
+     * ```
      * $vars = $this->requestAction(['controller' => 'articles', 'action' => 'popular']);
-     * }}}
+     * ```
      *
      * ### Passing other request data
      *
@@ -61,34 +61,34 @@ trait RequestActionTrait
      * Cookies can be passed using the `cookies` key. Get parameters can be set with `query` and post
      * data can be sent using the `post` key.
      *
-     * {{{
+     * ```
      * $vars = $this->requestAction('/articles/popular', [
      *   'query' => ['page' = > 1],
      *   'cookies' => ['remember_me' => 1],
      * ]);
-     * }}}
+     * ```
      *
      * ### Sending environment or header values
      *
      * By default actions dispatched with this method will use the global $_SERVER and $_ENV
      * values. If you want to override those values for a request action, you can specify the values:
      *
-     * {{{
+     * ```
      * $vars = $this->requestAction('/articles/popular', [
      *   'environment' => ['CONTENT_TYPE' => 'application/json']
      * ]);
-     * }}}
+     * ```
      *
      * ### Transmitting the session
      *
      * By default actions dispatched with this method will use the standard session object.
      * If you want a particular session instance to be used, you need to specify it.
      *
-     * {{{
+     * ```
      * $vars = $this->requestAction('/articles/popular', [
      *   'session' => new Session($someSessionConfig)
      * ]);
-     * }}}
+     * ```
      *
      * @param string|array $url String or array-based url.  Unlike other url arrays in CakePHP, this
      *    url will not automatically handle passed arguments in the $url parameter.

@@ -609,12 +609,12 @@ class HtmlHelper extends Helper
      *
      * ### Usage:
      *
-     * {{{
+     * ```
      * echo $this->Html->style(['margin' => '10px', 'padding' => '10px'], true);
      *
      * // creates
      * 'margin:10px;padding:10px;'
-     * }}}
+     * ```
      *
      * @param array $data Style data array, keys will be used as property names, values as property values.
      * @param bool $oneLine Whether or not the style block should be displayed on one line.
@@ -1013,21 +1013,21 @@ class HtmlHelper extends Helper
      *
      * Using multiple video files:
      *
-     * {{{
+     * ```
      * echo $this->Html->media(
      *      ['video.mp4', ['src' => 'video.ogv', 'type' => "video/ogg; codecs='theora, vorbis'"]],
      *      ['tag' => 'video', 'autoplay']
      * );
-     * }}}
+     * ```
      *
      * Outputs:
      *
-     * {{{
+     * ```
      * <video autoplay="autoplay">
      *      <source src="/files/video.mp4" type="video/mp4"/>
      *      <source src="/files/video.ogv" type="video/ogv; codecs='theora, vorbis'"/>
      * </video>
-     * }}}
+     * ```
      *
      * ### Options
      *

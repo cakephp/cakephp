@@ -725,43 +725,43 @@ class FormHelper extends Helper
      *
      * The text and for attribute are generated off of the fieldname
      *
-     * {{{
+     * ```
      * echo $this->Form->label('published');
      * <label for="PostPublished">Published</label>
-     * }}}
+     * ```
      *
      * Custom text:
      *
-     * {{{
+     * ```
      * echo $this->Form->label('published', 'Publish');
      * <label for="published">Publish</label>
-     * }}}
+     * ```
      *
      * Custom class name:
      *
-     * {{{
+     * ```
      * echo $this->Form->label('published', 'Publish', 'required');
      * <label for="published" class="required">Publish</label>
-     * }}}
+     * ```
      *
      * Custom attributes:
      *
-     * {{{
+     * ```
      * echo $this->Form->label('published', 'Publish', [
      *   'for' => 'post-publish'
      * ]);
      * <label for="post-publish">Publish</label>
-     * }}}
+     * ```
      *
      * Nesting an input tag:
      *
-     * {{{
+     * ```
      * echo $this->Form->label('published', 'Publish', [
      *   'for' => 'published',
      *   'input' => $this->text('published'),
      * ]);
      * <label for="post-publish">Publish <input type="text" name="published"></label>
-     * }}}
+     * ```
      *
      * If you want to nest inputs in the labels, you will need to modify the default templates.
      *
@@ -814,17 +814,17 @@ class FormHelper extends Helper
      * will be used.
      *
      * You can customize individual inputs through `$fields`.
-     * {{{
+     * ```
      * $this->Form->allInputs([
      *   'name' => ['label' => 'custom label']
      * ]);
-     * }}}
+     * ```
      *
      * You can exclude fields by specifying them as false:
      *
-     * {{{
+     * ```
      * $this->Form->allInputs(['title' => false]);
-     * }}}
+     * ```
      *
      * In the above example, no field would be generated for the title field.
      *
@@ -855,12 +855,12 @@ class FormHelper extends Helper
      * Generate a set of inputs for `$fields` wrapped in a fieldset element.
      *
      * You can customize individual inputs through `$fields`.
-     * {{{
+     * ```
      * $this->Form->inputs([
      *   'name' => ['label' => 'custom label'],
      *   'email'
      * ]);
-     * }}}
+     * ```
      *
      * @param array $fields An array of the fields to generate. This array allows you to set custom
      *   types, labels, or other options.
@@ -1754,13 +1754,13 @@ class FormHelper extends Helper
      *
      * A simple array will create normal options:
      *
-     * {{{
+     * ```
      * $options = [1 => 'one', 2 => 'two'];
      * $this->Form->select('Model.field', $options));
-     * }}}
+     * ```
      *
      * While a nested options array will create optgroups with options inside them.
-     * {{{
+     * ```
      * $options = [
      *  1 => 'bill',
      *     'fred' => [
@@ -1769,17 +1769,17 @@ class FormHelper extends Helper
      *     ]
      * ];
      * $this->Form->select('Model.field', $options);
-     * }}}
+     * ```
      *
      * If you have multiple options that need to have the same value attribute, you can
      * use an array of arrays to express this:
      *
-     * {{{
+     * ```
      * $options = [
      *     ['name' => 'United states', 'value' => 'USA'],
      *     ['name' => 'USA', 'value' => 'USA'],
      * ];
-     * }}}
+     * ```
      *
      * @param string $fieldName Name attribute of the SELECT
      * @param array|\Traversable $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the

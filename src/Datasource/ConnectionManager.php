@@ -86,7 +86,7 @@ class ConnectionManager
      * This method allows setting a DSN using formatting similar to that used by PEAR::DB.
      * The following is an example of its usage:
      *
-     * {{{
+     * ```
      * $dsn = 'mysql://user:pass@localhost/database';
      * $config = ConnectionManager::parseDsn($dsn);
      *
@@ -95,7 +95,7 @@ class ConnectionManager
      *
      * $dsn = 'Cake\Database\Connection://localhost:3306/database?driver=Cake\Database\Driver\Mysql';
      * $config = ConnectionManager::parseDsn($dsn);
-     * }}}
+     * ```
      *
      * For all classes, the value of `scheme` is set as the value of both the `className` and `driver`
      * unless they have been otherwise specified.

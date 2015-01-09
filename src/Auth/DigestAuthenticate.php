@@ -26,13 +26,13 @@ use Cake\Network\Request;
  * ### Using Digest auth
  *
  * In your controller's components array, add auth + the required config
- * {{{
+ * ```
  *  public $components = [
  *      'Auth' => [
  *          'authenticate' => ['Digest']
  *      ]
  *  ];
- * }}}
+ * ```
  *
  * You should also set `AuthComponent::$sessionKey = false;` in your AppController's
  * beforeFilter() to prevent CakePHP from sending a session cookie to the client.

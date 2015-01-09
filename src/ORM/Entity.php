@@ -38,9 +38,9 @@ class Entity implements EntityInterface
      *
      * ### Example:
      *
-     * {{{
+     * ```
      *  $entity = new Entity(['id' => 1, 'name' => 'Andrew'])
-     * }}}
+     * ```
      *
      * @param array $properties hash of properties to set in this entity
      * @param array $options list of options to use when creating this entity

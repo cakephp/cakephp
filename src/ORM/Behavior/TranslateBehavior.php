@@ -296,10 +296,10 @@ class TranslateBehavior extends Behavior
      *
      * ### Example:
      *
-     * {{{
+     * ```
      * $article = $articles->find('translations', ['locales' => ['eng', 'deu'])->first();
      * $englishTranslatedFields = $article->get('_translations')['eng'];
-     * }}}
+     * ```
      *
      * If the `locales` array is not passed, it will bring all translations found
      * for each record.

@@ -52,13 +52,13 @@ abstract class ObjectRegistry
      * Using Cake\Controller\Controller::$components as an example. You can alias
      * an object by setting the 'className' key, i.e.,
      *
-     * {{{
+     * ```
      * public $components = [
      *   'Email' => [
      *     'className' => '\App\Controller\Component\AliasedEmailComponent'
      *   ];
      * ];
-     * }}}
+     * ```
      *
      * All calls to the `Email` component would use `AliasedEmail` instead.
      *
