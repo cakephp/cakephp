@@ -58,15 +58,15 @@ use RuntimeException;
  * finder methods. These methods allow you to easily set basic conditions up. For example
  * to filter users by username you would call
  *
- * {{{
+ * ```
  * $query = $users->findByUsername('mark');
- * }}}
+ * ```
  *
  * You can also combine conditions on multiple fields using either `Or` or `And`:
  *
- * {{{
+ * ```
  * $query = $users->findByUsernameOrEmail('mark', 'mark@example.org');
- * }}}
+ * ```
  *
  * ### Bulk updates/deletes
  *
@@ -272,13 +272,13 @@ class Table implements RepositoryInterface, EventListenerInterface
      * You can use this method to define associations, attach behaviors
      * define validation and do any other initialization logic you need.
      *
-     * {{{
+     * ```
      *  public function initialize(array $config) {
      *      $this->belongsTo('Users');
      *      $this->belongsToMany('Tagging.Tags');
      *      $this->primaryKey('something_else');
      *  }
-     * }}}
+     * ```
      *
      * @param array $config Configuration options passed to the constructor
      * @return void
@@ -394,12 +394,12 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * ### Example:
      *
-     * {{{
+     * ```
      * protected function _initializeSchema(\Cake\Database\Schema\Table $table) {
      *  $table->columnType('preferences', 'json');
      *  return $table;
      * }
-     * }}}
+     * ```
      *
      * @param \Cake\Database\Schema\Table $table The table definition fetched from database.
      * @return \Cake\Database\Schema\Table the altered schema
@@ -521,9 +521,9 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * Load a behavior, with some settings.
      *
-     * {{{
+     * ```
      * $this->addBehavior('Tree', ['parent' => 'parentId']);
-     * }}}
+     * ```
      *
      * Behaviors are generally loaded during Table::initialize().
      *
@@ -545,9 +545,9 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * Remove a behavior from this table.
      *
-     * {{{
+     * ```
      * $this->removeBehavior('Tree');
-     * }}}
+     * ```
      *
      * @param string $name The alias that the behavior was added with.
      * @return void
@@ -606,7 +606,7 @@ class Table implements RepositoryInterface, EventListenerInterface
      * It takes an array containing set of table names indexed by association type
      * as argument:
      *
-     * {{{
+     * ```
      * $this->Posts->addAssociations([
      *   'belongsTo' => [
      *     'Users' => ['className' => 'App\Model\Table\UsersTable']
@@ -614,7 +614,7 @@ class Table implements RepositoryInterface, EventListenerInterface
      *   'hasMany' => ['Comments'],
      *   'belongsToMany' => ['Tags']
      * ]);
-     * }}}
+     * ```
      *
      * Each association type accepts multiple associations where the keys
      * are the aliases, and the values are association config data. If numeric
@@ -847,37 +847,37 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * The results of this finder will be in the following form:
      *
-     * {{{
+     * ```
      * [
      *  1 => 'value for id 1',
      *  2 => 'value for id 2',
      *  4 => 'value for id 4'
      * ]
-     * }}}
+     * ```
      *
      * You can specify which property will be used as the key and which as value
      * by using the `$options` array, when not specified, it will use the results
      * of calling `primaryKey` and `displayField` respectively in this table:
      *
-     * {{{
+     * ```
      * $table->find('list', [
      *  'idField' => 'name',
      *  'valueField' => 'age'
      * ]);
-     * }}}
+     * ```
      *
      * Results can be put together in bigger groups when they share a property, you
      * can customize the property to use for grouping by setting `groupField`:
      *
-     * {{{
+     * ```
      * $table->find('list', [
      *  'groupField' => 'category_id',
      * ]);
-     * }}}
+     * ```
      *
      * When using a `groupField` results will be returned in this format:
      *
-     * {{{
+     * ```
      * [
      *  'group_1' => [
      *      1 => 'value for id 1',
@@ -887,7 +887,7 @@ class Table implements RepositoryInterface, EventListenerInterface
      *      4 => 'value for id 4'
      *  ]
      * ]
-     * }}}
+     * ```
      *
      * @param \Cake\ORM\Query $query The query to find with
      * @param array $options The options for the find
@@ -926,12 +926,12 @@ class Table implements RepositoryInterface, EventListenerInterface
      * these defaults you need to provide the keys `idField` or `parentField` in
      * `$options`:
      *
-     * {{{
+     * ```
      * $table->find('threaded', [
      *  'idField' => 'id',
      *  'parentField' => 'ancestor_id'
      * ]);
-     * }}}
+     * ```
      *
      * @param \Cake\ORM\Query $query The query to find with
      * @param array $options The options to find with
@@ -1099,25 +1099,25 @@ class Table implements RepositoryInterface, EventListenerInterface
      * For example, if you wish to create a validation set called 'forSubscription',
      * you will need to create a method in your Table subclass as follows:
      *
-     * {{{
+     * ```
      * public function validationForSubscription($validator) {
      *  return $validator
      *  ->add('email', 'valid-email', ['rule' => 'email'])
      *  ->add('password', 'valid', ['rule' => 'notEmpty'])
      *  ->requirePresence('username');
      * }
-     * }}}
+     * ```
      *
      * Otherwise, you can build the object by yourself and store it in the Table object:
      *
-     * {{{
+     * ```
      * $validator = new \Cake\Validation\Validator($table);
      * $validator
      *  ->add('email', 'valid-email', ['rule' => 'email'])
      *  ->add('password', 'valid', ['rule' => 'notEmpty'])
      *  ->allowEmpty('bio');
      * $table->validator('forSubscription', $validator);
-     * }}}
+     * ```
      *
      * You can implement the method in `validationDefault` in your Table subclass
      * should you wish to have a validation set that applies in cases where no other
@@ -1243,7 +1243,7 @@ class Table implements RepositoryInterface, EventListenerInterface
      * association in this table. It is possible to control what associations will
      * be saved and to pass additional option for saving them.
      *
-     * {{{
+     * ```
      * // Only save the comments association
      * $articles->save($entity, ['associated' => ['Comments']);
      *
@@ -1260,7 +1260,7 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * // Save no associations
      * $articles->save($entity, ['associated' => false]);
-     * }}}
+     * ```
      *
      */
     public function save(EntityInterface $entity, $options = [])
@@ -1770,45 +1770,45 @@ class Table implements RepositoryInterface, EventListenerInterface
      * limit which associations are built, or include deeper associations
      * using the options parameter:
      *
-     * {{{
+     * ```
      * $article = $this->Articles->newEntity(
      *   $this->request->data(),
      *   ['associated' => ['Tags', 'Comments.Users']]
      * );
-     * }}}
+     * ```
      *
      * You can limit fields that will be present in the constructed entity by
      * passing the `fieldList` option, which is also accepted for associations:
      *
-     * {{{
+     * ```
      * $article = $this->Articles->newEntity($this->request->data(), [
      *  'fieldList' => ['title', 'body'],
      *  'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
      * ]
      * );
-     * }}}
+     * ```
      *
      * The `fieldList` option lets remove or restrict input data from ending up in
      * the entity. If you'd like to relax the entity's default accessible fields,
      * you can use the `accessibleFields` option:
      *
-     * {{{
+     * ```
      * $article = $this->Articles->newEntity(
      *   $this->request->data(),
      *   ['accessibleFields' => ['protected_field' => true]]
      * );
-     * }}}
+     * ```
      *
      * By default, the data is validated before being passed to the new entity. In
      * the case of invalid fields, those will not be present in the resulting object.
      * The `validate` option can be used to disable validation on the passed data:
      *
-     * {{{
+     * ```
      * $article = $this->Articles->newEntity(
      *   $this->request->data(),
      *   ['validate' => false]
      * );
-     * }}}
+     * ```
      *
      * You can also pass the name of the validator to use in the `validate` option.
      * If `null` is passed to the first param of this function, no validation will
@@ -1836,23 +1836,23 @@ class Table implements RepositoryInterface, EventListenerInterface
      * limit which associations are built, or include deeper associations
      * using the options parameter:
      *
-     * {{{
+     * ```
      * $articles = $this->Articles->newEntities(
      *   $this->request->data(),
      *   ['associated' => ['Tags', 'Comments.Users']]
      * );
-     * }}}
+     * ```
      *
      * You can limit fields that will be present in the constructed entities by
      * passing the `fieldList` option, which is also accepted for associations:
      *
-     * {{{
+     * ```
      * $articles = $this->Articles->newEntities($this->request->data(), [
      *  'fieldList' => ['title', 'body'],
      *  'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
      *  ]
      * );
-     * }}}
+     * ```
      *
      */
     public function newEntities(array $data, array $options = [])
@@ -1874,23 +1874,23 @@ class Table implements RepositoryInterface, EventListenerInterface
      * You can limit fields that will be present in the merged entity by
      * passing the `fieldList` option, which is also accepted for associations:
      *
-     * {{{
+     * ```
      * $article = $this->Articles->patchEntity($article, $this->request->data(), [
      *  'fieldList' => ['title', 'body'],
      *  'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
      *  ]
      * );
-     * }}}
+     * ```
      *
      * By default, the data is validated before being passed to the entity. In
      * the case of invalid fields, those will not be assigned to the entity.
      * The `validate` option can be used to disable validation on the passed data:
      *
-     * {{{
+     * ```
      * $article = $this->patchEntity($article, $this->request->data(),[
      *  'validate' => false
      * ]);
-     * }}}
+     * ```
      */
     public function patchEntity(EntityInterface $entity, array $data, array $options = [])
     {
@@ -1915,13 +1915,13 @@ class Table implements RepositoryInterface, EventListenerInterface
      * You can limit fields that will be present in the merged entities by
      * passing the `fieldList` option, which is also accepted for associations:
      *
-     * {{{
+     * ```
      * $articles = $this->Articles->patchEntities($articles, $this->request->data(), [
      *  'fieldList' => ['title', 'body'],
      *  'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
      *  ]
      * );
-     * }}}
+     * ```
      */
     public function patchEntities($entities, array $data, array $options = [])
     {
@@ -1939,22 +1939,22 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * ### Example:
      *
-     * {{{
+     * ```
      * $validator->add('email', [
      *  'unique' => ['rule' => 'validateUnique', 'provider' => 'table']
      * ])
-     * }}}
+     * ```
      *
      * Unique validation can be scoped to the value of another column:
      *
-     * {{{
+     * ```
      * $validator->add('email', [
      *  'unique' => [
      *      'rule' => ['validateUnique', ['scope' => 'site_id']],
      *      'provider' => 'table'
      *  ]
      * ]);
-     * }}}
+     * ```
      *
      * In the above example, the email uniqueness will be scoped to only rows having
      * the same site_id. Scoping will only be used if the scoping field is present in

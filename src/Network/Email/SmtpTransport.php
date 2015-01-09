@@ -128,7 +128,7 @@ class SmtpTransport extends AbstractTransport
      *
      * A response consists of one or more lines containing a response
      * code and an optional response message text:
-     * {{{
+     * ```
      * [
      *     [
      *         'code' => '250',
@@ -144,7 +144,7 @@ class SmtpTransport extends AbstractTransport
      *     ],
      *     // etc...
      * ]
-     * }}}
+     * ```
      *
      * @return array
      */

@@ -44,12 +44,12 @@ interface RepositoryInterface
      *
      * ### Example:
      *
-     * {{{
+     * ```
      * $id = 10;
      * $article = $articles->get($id);
      *
      * $article = $articles->get($id, ['contain' => ['Comments]]);
-     * }}}
+     * ```
      *
      * @param mixed $primaryKey primary key value to find
      * @param array|\ArrayAccess $options options accepted by `Table::find()`
@@ -138,9 +138,9 @@ interface RepositoryInterface
      * This is most useful when hydrating request data back into entities.
      * For example, in your controller code:
      *
-     * {{{
+     * ```
      * $article = $this->Articles->newEntity($this->request->data());
-     * }}}
+     * ```
      *
      * The hydrated entity will correctly do an insert/update based
      * on the primary key data existing in the database when the entity
@@ -158,9 +158,9 @@ interface RepositoryInterface
      * This is most useful when hydrating request data back into entities.
      * For example, in your controller code:
      *
-     * {{{
+     * ```
      * $articles = $this->Articles->newEntities($this->request->data());
-     * }}}
+     * ```
      *
      * The hydrated entities can then be iterated and saved.
      *
@@ -177,9 +177,9 @@ interface RepositoryInterface
      *
      * This is most useful when editing an existing entity using request data:
      *
-     * {{{
+     * ```
      * $article = $this->Articles->patchEntity($article, $this->request->data());
-     * }}}
+     * ```
      *
      * @param \Cake\Datasource\EntityInterface $entity the entity that will get the
      * data merged in
@@ -197,9 +197,9 @@ interface RepositoryInterface
      *
      * This is most useful when editing a list of existing entities using request data:
      *
-     * {{{
+     * ```
      * $article = $this->Articles->patchEntities($articles, $this->request->data());
-     * }}}
+     * ```
      *
      * @param array|\Traversable $entities the entities that will get the
      * data merged in

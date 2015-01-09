@@ -41,7 +41,7 @@ use Cake\Utility\Hash;
  *
  *  ### Example
  *
- *  {{{
+ *  ```
  *  $data = [
  *    'schema' => [
  *      'id' => ['type' => 'integer'],
@@ -55,7 +55,7 @@ use Cake\Utility\Hash;
  *      'title' => 'First post!',
  *    ]
  *  ];
- *  }}}
+ *  ```
  */
 class ArrayContext implements ContextInterface
 {

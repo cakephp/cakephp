@@ -58,9 +58,9 @@ class TypeMap
      *
      * ### Example
      *
-     * {{{
+     * ```
      * $query->defaults(['created' => 'datetime', 'is_visible' => 'boolean']);
-     * }}}
+     * ```
      *
      * @param array $defaults associative array where keys are field names and values
      * are the correspondent type.
@@ -82,9 +82,9 @@ class TypeMap
      *
      * ### Example
      *
-     * {{{
+     * ```
      * $query->types(['created' => 'time']);
-     * }}}
+     * ```
      *
      * @param array $types associative array where keys are field names and values
      * are the correspondent type.

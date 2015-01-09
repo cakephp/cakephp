@@ -174,35 +174,35 @@ trait EntityTrait
      *
      * ### Example:
      *
-     * {{{
+     * ```
      * $entity->set(['name' => 'andrew', 'id' => 1]);
      * echo $entity->name // prints andrew
      * echo $entity->id // prints 1
-     * }}}
+     * ```
      *
      * Some times it is handy to bypass setter functions in this entity when assigning
      * properties. You can achieve this by disabling the `setter` option using the
      * `$options` parameter:
      *
-     * {{{
+     * ```
      * $entity->set('name', 'Andrew', ['setter' => false]);
      * $entity->set(['name' => 'Andrew', 'id' => 1], ['setter' => false]);
-     * }}}
+     * ```
      *
      * Mass assignment should be treated carefully when accepting user input, by default
      * entities will guard all fields when properties are assigned in bulk. You can disable
      * the guarding for a single set call with the `guard` option:
      *
-     * {{{
+     * ```
      * $entity->set(['name' => 'Andrew', 'id' => 1], ['guard' => true]);
-     * }}}
+     * ```
      *
      * You do not need to use the guard option when assigning properties individually:
      *
-     * {{{
+     * ```
      * // No need to use the guard option.
      * $entity->set('name', 'Andrew');
-     * }}}
+     * ```
      *
      * @param string|array $property the name of property to set or a list of
      * properties with their respective values
@@ -308,12 +308,12 @@ trait EntityTrait
      *
      * ### Example:
      *
-     * {{{
+     * ```
      * $entity = new Entity(['id' => 1, 'name' => null]);
      * $entity->has('id'); // true
      * $entity->has('name'); // false
      * $entity->has('last_name'); // false
-     * }}}
+     * ```
      *
      * When checking multiple properties. All properties must not be null
      * in order for true to be returned.
@@ -336,10 +336,10 @@ trait EntityTrait
      *
      * ### Examples:
      *
-     * {{{
+     * ```
      * $entity->unsetProperty('name');
      * $entity->unsetProperty(['name', 'last_name']);
-     * }}}
+     * ```
      *
      * @param string|array $property The property to unset.
      * @return $this
@@ -618,7 +618,7 @@ trait EntityTrait
      *
      * ### Example
      *
-     * {{{
+     * ```
      * // Sets the error messages for a single field
      * $entity->errors('salary', ['must be numeric', 'must be a positive number']);
      *
@@ -630,7 +630,7 @@ trait EntityTrait
      *
      * // Sets the error messages for multiple fields at once
      * $entity->errors(['salary' => ['message'], 'name' => ['another message']);
-     * }}}
+     * ```
      *
      * When used as a setter, this method will return this entity instance for method
      * chaining.
@@ -755,21 +755,21 @@ trait EntityTrait
      *
      * ### Example:
      *
-     * {{{
+     * ```
      * $entity->accessible('id', true); // Mark id as not protected
      * $entity->accessible('author_id', false); // Mark author_id as protected
      * $entity->accessible(['id', 'user_id'], true); // Mark both properties as accessible
      * $entity->accessible('*', false); // Mark all properties as protected
-     * }}}
+     * ```
      *
      * When called without the second param it will return whether or not the property
      * can be set.
      *
      * ### Example:
      *
-     * {{{
+     * ```
      * $entity->accessible('id'); // Returns whether it can be set or not
-     * }}}
+     * ```
      *
      * @param string|array $property single or list of properties to change its accessibility
      * @param bool $set true marks the property as accessible, false will

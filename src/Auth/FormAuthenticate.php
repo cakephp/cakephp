@@ -22,13 +22,13 @@ use Cake\Network\Response;
  * An authentication adapter for AuthComponent. Provides the ability to authenticate using POST
  * data. Can be used by configuring AuthComponent to use it via the AuthComponent::$authenticate config.
  *
- * {{{
+ * ```
  *  $this->Auth->authenticate = [
  *      'Form' => [
  *          'scope' => ['Users.active' => 1]
  *      ]
  *  ]
- * }}}
+ * ```
  *
  * When configuring FormAuthenticate you can pass in config to which fields, model and additional conditions
  * are used. See FormAuthenticate::$_config for more information.

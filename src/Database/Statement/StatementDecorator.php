@@ -80,11 +80,11 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
      *
      * ### Examples:
      *
-     * {{{
+     * ```
      * $statement->bindValue(1, 'a title');
      * $statement->bindValue('active', true, 'boolean');
      * $statement->bindValue(5, new \DateTime(), 'date');
-     * }}}
+     * ```
      *
      * @param string|int $column name or param position to be bound
      * @param mixed $value The value to bind to variable in query
@@ -113,11 +113,11 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
      *
      * ### Example:
      *
-     * {{{
+     * ```
      * $statement = $connection->prepare('SELECT id, title from articles');
      * $statement->execute();
      * echo $statement->columnCount(); // outputs 2
-     * }}}
+     * ```
      *
      * @return int
      */
@@ -168,11 +168,11 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
      *
      * ### Example:
      *
-     * {{{
+     * ```
      * $statement = $connection->prepare('SELECT id, title from articles');
      * $statement->execute();
      * print_r($statement->fetch('assoc')); // will show ['id' => 1, 'title' => 'a title']
-     * }}}
+     * ```
      *
      * @param string $type 'num' for positional columns, assoc for named columns
      * @return mixed Result array containing columns and values or false if no results
@@ -188,11 +188,11 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
      *
      * ### Example:
      *
-     * {{{
+     * ```
      * $statement = $connection->prepare('SELECT id, title from articles');
      * $statement->execute();
      * print_r($statement->fetchAll('assoc')); // will show [0 => ['id' => 1, 'title' => 'a title']]
-     * }}}
+     * ```
      *
      * @param string $type num for fetching columns as positional keys or assoc for column names as keys
      * @return array list of all results from database for this statement
@@ -207,11 +207,11 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
      *
      * ### Example:
      *
-     * {{{
+     * ```
      * $statement = $connection->prepare('SELECT id, title from articles');
      * $statement->execute();
      * print_r($statement->rowCount()); // will show 1
-     * }}}
+     * ```
      *
      * @return int
      */
@@ -226,13 +226,13 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
      *
      * ### Example:
      *
-     * {{{
+     * ```
      * $statement = $connection->prepare('SELECT id, title from articles');
      * $statement->execute();
      * foreach ($statement as $row) {
      *   //do stuff
      * }
-     * }}}
+     * ```
      *
      * @return \Iterator
      */

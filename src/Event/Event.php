@@ -63,10 +63,10 @@ class Event
      *
      * ### Examples of usage:
      *
-     * {{{
+     * ```
      *  $event = new Event('Order.afterBuy', $this, ['buyer' => $userData]);
      *  $event = new Event('User.afterRegister', $UserModel);
-     * }}}
+     * ```
      *
      * @param string $name Name of the event
      * @param object|null $subject the object that this event applies to (usually the object that is generating the event)

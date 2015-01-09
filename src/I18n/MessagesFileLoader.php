@@ -64,24 +64,24 @@ class MessagesFileLoader
      *
      * Load and parse src/Locale/fr/validation.po
      *
-     * {{{
+     * ```
      * $loader = new MessagesFileLoader('validation', 'fr_FR', 'po');
      * $package = $loader();
-     * }}}
+     * ```
      *
      * Load and parse  src/Locale/fr_FR/validation.mo
      *
-     * {{{
+     * ```
      * $loader = new MessagesFileLoader('validation', 'fr_FR', 'mo');
      * $package = $loader();
-     * }}}
+     * ```
      *
      * Load the plugins/MyPlugin/src/Locale/fr/my_plugin.po file:
      *
-     * {{{
+     * ```
      * $loader = new MessagesFileLoader('my_plugin', 'fr_FR', 'mo');
      * $package = $loader();
-     * }}}
+     * ```
      *
      * @param string $name The name (domain) of the translations package.
      * @param string $locale The locale to load, this will be mapped to a folder

@@ -35,10 +35,10 @@ use Cake\Utility\Hash;
  * You can nest properties as deeply as needed using `.`'s. In addition to using `.` you
  * can use standard ini section notation to create nested structures:
  *
- * {{{
+ * ```
  * [section]
  * key = value
- * }}}
+ * ```
  *
  * Once loaded into Configure, the above would be accessed using:
  *

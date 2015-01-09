@@ -156,18 +156,18 @@ class CookieComponent extends Component
      *
      * Set a single config option for a key:
      *
-     * {{{
+     * ```
      * $this->Cookie->configKey('User', 'expires', '+3 months');
-     * }}}
+     * ```
      *
      * Set multiple options:
      *
-     * {{{
+     * ```
      * $this->Cookie->configKey('User', [
      *   'expires', '+3 months',
      *   'httpOnly' => true,
      * ]);
-     * }}}
+     * ```
      *
      * @param string $keyname The top level keyname to configure.
      * @param null|string|array $option Either the option name to set, or an array of options to set,

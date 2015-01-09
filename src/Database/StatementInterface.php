@@ -55,11 +55,11 @@ interface StatementInterface
      *
      * ### Example:
      *
-     * {{{
+     * ```
      *  $statement = $connection->prepare('SELECT id, title from articles');
      *  $statement->execute();
      *  echo $statement->columnCount(); // outputs 2
-     * }}}
+     * ```
      *
      * @return int
      */
@@ -98,11 +98,11 @@ interface StatementInterface
      *
      * ### Example:
      *
-     * {{{
+     * ```
      *  $statement = $connection->prepare('SELECT id, title from articles');
      *  $statement->execute();
      *  print_r($statement->fetch('assoc')); // will show ['id' => 1, 'title' => 'a title']
-     * }}}
+     * ```
      *
      * @param string $type 'num' for positional columns, assoc for named columns
      * @return mixed Result array containing columns and values or false if no results
@@ -115,11 +115,11 @@ interface StatementInterface
      *
      * ### Example:
      *
-     * {{{
+     * ```
      *  $statement = $connection->prepare('SELECT id, title from articles');
      *  $statement->execute();
      *  print_r($statement->fetchAll('assoc')); // will show [0 => ['id' => 1, 'title' => 'a title']]
-     * }}}
+     * ```
      *
      * @param string $type num for fetching columns as positional keys or assoc for column names as keys
      * @return array list of all results from database for this statement
@@ -131,11 +131,11 @@ interface StatementInterface
      *
      * ### Example:
      *
-     * {{{
+     * ```
      *  $statement = $connection->prepare('SELECT id, title from articles');
      *  $statement->execute();
      *  print_r($statement->rowCount()); // will show 1
-     * }}}
+     * ```
      *
      * @return int
      */

@@ -179,18 +179,18 @@ class RouteBuilder
      *
      * Connect resource routes for an app controller:
      *
-     * {{{
+     * ```
      * $routes->resources('Posts');
-     * }}}
+     * ```
      *
      * Connect resource routes for the Comments controller in the
      * Comments plugin:
      *
-     * {{{
+     * ```
      * Router::plugin('Comments', function ($routes) {
      *   $routes->resources('Comments');
      * });
-     * }}}
+     * ```
      *
      * Plugins will create lower_case underscored resource routes. e.g
      * `/comments/comments`
@@ -198,22 +198,22 @@ class RouteBuilder
      * Connect resource routes for the Articles controller in the
      * Admin prefix:
      *
-     * {{{
+     * ```
      * Router::prefix('admin', function ($routes) {
      *   $routes->resources('Articles');
      * });
-     * }}}
+     * ```
      *
      * Prefixes will create lower_case underscored resource routes. e.g
      * `/admin/posts`
      *
      * You can create nested resources by passing a callback in:
      *
-     * {{{
+     * ```
      * $routes->resources('Articles', function ($routes) {
      *   $routes->resources('Comments');
      * });
-     * }}}
+     * ```
      *
      * The above would generate both resource routes for `/articles`, and `/articles/:article_id/comments`.
      *
@@ -304,13 +304,13 @@ class RouteBuilder
      * The above shows the use of route parameter defaults. And providing routing
      * parameters for a static route.
      *
-     * {{{
+     * ```
      * $routes->connect(
      *   '/:lang/:controller/:action/:id',
      *   [],
      *   ['id' => '[0-9]+', 'lang' => '[a-z]{3}']
      * );
-     * }}}
+     * ```
      *
      * Shows connecting a route with custom route parameters as well as
      * providing patterns for those parameters. Patterns for routing parameters

@@ -82,13 +82,13 @@ class Plugin
      *
      * Will load bootstrap file for both plugins
      *
-     * {{{
+     * ```
      *   Plugin::load([
      *     'DebugKit' => ['routes' => true],
      *     'ApiGenerator'
      *     ],
      *     ['bootstrap' => true])
-     * }}}
+     * ```
      *
      * Will only load the bootstrap for ApiGenerator and only the routes for DebugKit
      *
@@ -175,12 +175,12 @@ class Plugin
      * If passed an options array, it will be used as a common default for all plugins to be loaded
      * It is possible to set specific defaults for each plugins in the options array. Examples:
      *
-     * {{{
+     * ```
      *  Plugin::loadAll([
      *      ['bootstrap' => true],
      *      'DebugKit' => ['routes' => true],
      *  ]);
-     * }}}
+     * ```
      *
      * The above example will load the bootstrap file for all plugins, but for DebugKit it will only load the routes file
      * and will not look for any bootstrap script.

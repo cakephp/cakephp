@@ -32,11 +32,11 @@ use Cake\Event\EventListenerInterface;
  * methods. These methods will be accessible on the tables the
  * behavior has been added to.
  *
- * {{{
+ * ```
  * function doSomething($arg1, $arg2) {
  *   // do something
  * }
- * }}}
+ * ```
  *
  * Would be called like `$table->doSomething($arg1, $arg2);`.
  *
@@ -101,9 +101,9 @@ use Cake\Event\EventListenerInterface;
  * starting with `find` will be setup as a finder. Your finder
  * methods should expect the following arguments:
  *
- * {{{
+ * ```
  * findSlugged(Query $query, array $options)
- * }}}
+ * ```
  *
  * @see \Cake\ORM\Table::addBehavior()
  * @see \Cake\Event\EventManager
@@ -284,12 +284,12 @@ class Behavior implements EventListenerInterface
      *
      * Provides an alias->methodname map of which finders a behavior implements. Example:
      *
-     * {{{
+     * ```
      *  [
      *    'this' => 'findThis',
      *    'alias' => 'findMethodName'
      *  ]
-     * }}}
+     * ```
      *
      * With the above example, a call to `$Table->find('this')` will call `$Behavior->findThis()`
      * and a call to `$Table->find('alias')` will call `$Behavior->findMethodName()`
@@ -315,12 +315,12 @@ class Behavior implements EventListenerInterface
      *
      * Provides an alias->methodname map of which methods a behavior implements. Example:
      *
-     * {{{
+     * ```
      *  [
      *    'method' => 'method',
      *    'aliasedmethod' => 'somethingElse'
      *  ]
-     * }}}
+     * ```
      *
      * With the above example, a call to `$Table->method()` will call `$Behavior->method()`
      * and a call to `$Table->aliasedmethod()` will call `$Behavior->somethingElse()`

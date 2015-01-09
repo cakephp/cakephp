@@ -290,9 +290,9 @@ class RulesChecker
      *
      * ### Example:
      *
-     * {{{
+     * ```
      * $rules->add($rules->isUnique('email', 'The email should be unique'));
-     * }}}
+     * ```
      *
      * @param array $fields The list of fields to check for uniqueness.
      * @param string $message The error message to show in case the rule does not pass.
@@ -312,11 +312,11 @@ class RulesChecker
      *
      * ### Example:
      *
-     * {{{
+     * ```
      * $rules->add($rules->existsIn('author_id', 'Authors', 'Invalid Author'));
      *
      * $rules->add($rules->existsIn('site_id', new SitesTable(), 'Invalid Site'));
-     * }}}
+     * ```
      *
      * @param string|array $field The field or list of fields to check for existence by
      * primary key lookup in the other table.

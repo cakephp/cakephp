@@ -83,18 +83,18 @@ class MultiCheckboxWidget implements WidgetInterface
      *
      * You can generate simple options using a basic associative array:
      *
-     * {{{
+     * ```
      * 'options' => ['elk' => 'Elk', 'beaver' => 'Beaver']
-     * }}}
+     * ```
      *
      * If you need to define additional attributes on your option elements
      * you can use the complex form for options:
      *
-     * {{{
+     * ```
      * 'options' => [
      *   ['value' => 'elk', 'text' => 'Elk', 'data-foo' => 'bar'],
      * ]
-     * }}}
+     * ```
      *
      * This form **requires** that both the `value` and `text` keys be defined.
      * If either is not set options will not be generated correctly.

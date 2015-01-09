@@ -23,7 +23,7 @@ use Cake\Collection\CollectionInterface;
  *
  * ### Example:
  *
- * {{{
+ * ```
  * $items = [$user1, $user2, $user3];
  * $sorted = new SortIterator($items, function ($user) {
  *  return $user->age;
@@ -33,7 +33,7 @@ use Cake\Collection\CollectionInterface;
  * foreach ($sorted as $user) {
  *  echo $user->name;
  * }
- * }}}
+ * ```
  *
  * This iterator does not preserve the keys passed in the original elements.
  */

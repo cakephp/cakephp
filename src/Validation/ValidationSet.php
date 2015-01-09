@@ -103,11 +103,11 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable
      *
      * ### Example:
      *
-     * {{{
+     * ```
      *      $set
      *          ->add('notEmpty', ['rule' => 'notEmpty'])
      *          ->add('inRange', ['rule' => ['between', 4, 10])
-     * }}}
+     * ```
      *
      * @param string $name The name under which the rule should be set
      * @param \Cake\Validation\ValidationRule|array $rule The validation rule to be set
@@ -127,11 +127,11 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable
      *
      * ### Example:
      *
-     * {{{
+     * ```
      *      $set
      *          ->remove('notEmpty')
      *          ->remove('inRange')
-     * }}}
+     * ```
      *
      * @param string $name The name under which the rule should be unset
      * @return $this

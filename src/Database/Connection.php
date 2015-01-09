@@ -543,11 +543,11 @@ class Connection
      *
      * ### Example:
      *
-     * {{{
+     * ```
      * $connection->transactional(function ($connection) {
      *   $connection->newQuery()->delete('users')->execute();
      * });
-     * }}}
+     * ```
      *
      * @param callable $callback the code to be executed inside a transaction
      * @return mixed result from the $callback function

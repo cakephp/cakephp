@@ -291,13 +291,13 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      * Checks for an input tag with a name attribute (contains any non-empty value) and an id
      * attribute that contains 'my-input':
      *
-     * {{{
+     * ```
      * ['input' => ['name', 'id' => 'my-input']]
-     * }}}
+     * ```
      *
      * Checks for two p elements with some text in them:
      *
-     * {{{
+     * ```
      * [
      *   ['p' => true],
      *   'textA',
@@ -306,17 +306,17 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      *   'textB',
      *   '/p'
      * ]
-     * }}}
+     * ```
      *
      * You can also specify a pattern expression as part of the attribute values, or the tag
      * being defined, if you prepend the value with preg: and enclose it with slashes, like so:
      *
-     * {{{
+     * ```
      * [
      *   ['input' => ['name', 'id' => 'preg:/FieldName\d+/']],
      *   'preg:/My\s+field/'
      * ]
-     * }}}
+     * ```
      *
      * Important: This function is very forgiving about whitespace and also accepts any
      * permutation of attribute order. It will also allow whitespace between specified tags.

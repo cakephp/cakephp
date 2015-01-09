@@ -1026,11 +1026,11 @@ class Request implements \ArrayAccess
      *
      * Get the list of accepted languages:
      *
-     * {{{ \Cake\Network\Request::acceptLanguage(); }}}
+     * ``` \Cake\Network\Request::acceptLanguage(); ```
      *
      * Check if a specific language is accepted:
      *
-     * {{{ \Cake\Network\Request::acceptLanguage('es-es'); }}}
+     * ``` \Cake\Network\Request::acceptLanguage('es-es'); ```
      *
      * @param string|null $language The language to test.
      * @return mixed If a $language is provided, a boolean. Otherwise the array of accepted languages.

@@ -32,9 +32,9 @@ use RuntimeException;
  * will be used when creating instances. If you modify configuration after
  * an instance is made, the instances *will not* be updated.
  *
- * {{{
+ * ```
  * TableRegistry::config('Users', ['table' => 'my_users']);
- * }}}
+ * ```
  *
  * Configuration data is stored *per alias* if you use the same table with
  * multiple aliases you will need to set configuration multiple times.
@@ -46,9 +46,9 @@ use RuntimeException;
  * This is used to make the ORM use less memory and help make cyclic references easier
  * to solve.
  *
- * {{{
+ * ```
  * $table = TableRegistry::get('Users', $config);
- * }}}
+ * ```
  *
  */
 class TableRegistry

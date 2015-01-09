@@ -531,10 +531,10 @@ class Controller implements EventListenerInterface
      *
      * Examples:
      *
-     * {{{
+     * ```
      * setAction('another_action');
      * setAction('action_with_parameters', $parameter1);
-     * }}}
+     * ```
      *
      * @param string $action The new action to be 'redirected' to.
      *   Any other parameters passed to this method will be passed as parameters to the new action.

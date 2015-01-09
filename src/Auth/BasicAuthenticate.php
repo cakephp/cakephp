@@ -28,13 +28,13 @@ use Cake\Network\Response;
  * ### Using Basic auth
  *
  * In your controller's components array, add auth + the required config
- * {{{
+ * ```
  *  public $components = [
  *      'Auth' => [
  *          'authenticate' => ['Basic']
  *      ]
  *  ];
- * }}}
+ * ```
  *
  * You should also set `AuthComponent::$sessionKey = false;` in your AppController's
  * beforeFilter() to prevent CakePHP from sending a session cookie to the client.

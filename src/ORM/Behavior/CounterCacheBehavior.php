@@ -28,16 +28,16 @@ use Cake\ORM\Table;
  * Examples with Post model belonging to User model
  *
  * Regular counter cache
- * {{{
+ * ```
  * [
  *     'Users' => [
  *         'post_count'
  *     ]
  * ]
- * }}}
+ * ```
  *
  * Counter cache with scope
- * {{{
+ * ```
  * [
  *     'Users' => [
  *         'posts_published' => [
@@ -47,10 +47,10 @@ use Cake\ORM\Table;
  *         ]
  *     ]
  * ]
- * }}}
+ * ```
  *
  * Counter cache using custom find
- * {{{
+ * ```
  * [
  *     'Users' => [
  *         'posts_published' => [
@@ -58,11 +58,11 @@ use Cake\ORM\Table;
  *         ]
  *     ]
  * ]
- * }}}
+ * ```
  *
  * Counter cache using lambda function returning the count
  * This is equivalent to example #2
- * {{{
+ * ```
  * [
  *     'Users' => [
  *         'posts_published' => function (Event $event, Entity $entity, Table $table) {
@@ -74,7 +74,7 @@ use Cake\ORM\Table;
  *          }
  *     ]
  * ]
- * }}}
+ * ```
  *
  */
 class CounterCacheBehavior extends Behavior

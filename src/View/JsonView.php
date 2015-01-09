@@ -37,10 +37,10 @@ use Cake\Network\Response;
  * You can also define `'_serialize'` as an array. This will create a top level object containing
  * all the named view variables:
  *
- * {{{
+ * ```
  * $this->set(compact('posts', 'users', 'stuff'));
  * $this->set('_serialize', ['posts', 'users']);
- * }}}
+ * ```
  *
  * The above would generate a JSON object that looks like:
  *

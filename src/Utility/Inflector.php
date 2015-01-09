@@ -461,12 +461,12 @@ class Inflector
      *
      * ### Usage:
      *
-     * {{{
+     * ```
      * Inflector::rules('plural', ['/^(inflect)or$/i' => '\1ables']);
      * Inflector::rules('irregular' => ['red' => 'redlings']);
      * Inflector::rules('uninflected', ['dontinflectme']);
      * Inflector::rules('transliteration', ['/å/' => 'aa']);
-     * }}}
+     * ```
      *
      * @param string $type The type of inflection, either 'plural', 'singular',
      *   'uninflected' or 'transliteration'.

@@ -239,16 +239,16 @@ class Router
      *
      * Connect resource routes for an app controller:
      *
-     * {{{
+     * ```
      * Router::mapResources('Posts');
-     * }}}
+     * ```
      *
      * Connect resource routes for the Comment controller in the
      * Comments plugin:
      *
-     * {{{
+     * ```
      * Router::mapResources('Comments.Comment');
-     * }}}
+     * ```
      *
      * Plugins will create lower_case underscored resource routes. e.g
      * `/comments/comment`
@@ -256,9 +256,9 @@ class Router
      * Connect resource routes for the Posts controller in the
      * Admin prefix:
      *
-     * {{{
+     * ```
      * Router::mapResources('Posts', ['prefix' => 'admin']);
-     * }}}
+     * ```
      *
      * Prefixes will create lower_case underscored resource routes. e.g
      * `/admin/posts`
@@ -458,14 +458,14 @@ class Router
      *
      * URL filters allow you to easily implement features like persistent parameters.
      *
-     * {{{
+     * ```
      * Router::addUrlFilter(function ($params, $request) {
      *  if (isset($request->params['lang']) && !isset($params['lang']) {
      *    $params['lang'] = $request->params['lang'];
      *  }
      *  return $params;
      * });
-     * }}}
+     * ```
      *
      * @param callable $function The function to add
      * @return void
@@ -833,11 +833,11 @@ class Router
      *
      * ### Example
      *
-     * {{{
+     * ```
      * Router::scope('/blog', ['plugin' => 'Blog'], function ($routes) {
      *    $routes->connect('/', ['controller' => 'Articles']);
      * });
-     * }}}
+     * ```
      *
      * The above would result in a `/blog/` route being created, with both the
      * plugin & controller default parameters set.

@@ -78,7 +78,7 @@ class I18n
      *
      * ### Example:
      *
-     * {{{
+     * ```
      *  I18n::translator('default', 'fr_FR', function () {
      *      $package = new \Aura\Intl\Package();
      *      $package->setMessages([
@@ -89,19 +89,19 @@ class I18n
      *
      *  $translator = I18n::translator('default', 'fr_FR');
      *  echo $translator->translate('Cake');
-     * }}}
+     * ```
      *
      * You can also use the `Cake\I18n\MessagesFileLoader` class to load a specific
      * file from a folder. For example for loading a `my_translations.po` file from
      * the `src/Locale/custom` folder, you would do:
      *
-     * {{{
+     * ```
      * I18n::translator(
      *  'default',
      *  'fr_FR',
      *  new MessagesFileLoader('my_translations', 'custom', 'po');
      * );
-     * }}}
+     * ```
      *
      * @param string $name The domain of the translation messages.
      * @param string|null $locale The locale for the translator.
@@ -161,18 +161,18 @@ class I18n
      *
      * ### Example:
      *
-     * {{{
+     * ```
      *  use Cake\I18n\MessagesFileLoader;
      *  I18n::config('my_domain', function ($name, $locale) {
      *      // Load src/Locale/$locale/filename.po
      *      $fileLoader = new MessagesFileLoader('filename', $locale, 'po');
      *      return $fileLoader();
      *  });
-     * }}}
+     * ```
      *
      * You can also assemble the package object yourself:
      *
-     * {{{
+     * ```
      *  use Aura\Intl\Package;
      *  I18n::config('my_domain', function ($name, $locale) {
      *      $package = new Package('default');
@@ -181,7 +181,7 @@ class I18n
      *      $package->setFallback('default);
      *      return $package;
      *  });
-     * }}}
+     * ```
      *
      * @param string $name The name of the translator to create a loader for
      * @param callable $loader A callable object that should return a Package

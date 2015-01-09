@@ -144,7 +144,7 @@ trait QueryTrait
      *
      * ### Usage
      *
-     * {{{
+     * ```
      * // Simple string key + config
      * $query->cache('my_key', 'db_results');
      *
@@ -160,7 +160,7 @@ trait QueryTrait
      *
      * // Disable caching
      * $query->cache(false);
-     * }}}
+     * ```
      *
      * @param false|string|\Closure $key Either the cache key or a function to generate the cache key.
      *   When using a function, this query instance will be supplied as an argument.
@@ -285,7 +285,7 @@ trait QueryTrait
      *
      * ### Example:
      *
-     * {{{
+     * ```
      * // Return all results from the table indexed by id
      * $query->select(['id', 'name'])->formatResults(function ($results, $query) {
      *   return $results->indexBy('id');
@@ -298,7 +298,7 @@ trait QueryTrait
      *     return $row;
      *   });
      * });
-     * }}}
+     * ```
      *
      * @param callable|null $formatter The formatting callable.
      * @param bool|int $mode Whether or not to overwrite, append or prepend the formatter.
@@ -364,10 +364,10 @@ trait QueryTrait
      *
      * ### Example:
      *
-     * {{{
+     * ```
      *  $query->applyOptions(['doABarrelRoll' => true, 'fields' => ['id', 'name']);
      *  $query->getOptions(); // Returns ['doABarrelRoll' => true]
-     * }}}
+     * ```
      *
      * @see \Cake\ORM\Query::applyOptions() to read about the options that will
      * be processed by this class and not returned by this function
