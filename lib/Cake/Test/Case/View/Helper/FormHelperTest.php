@@ -1348,7 +1348,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->radio('Test.some', $options, array(
 			'disabled' => array('option1')
 		));
-		$expected = array('Test.test', 'Test.all' => '',  'Test.some');
+		$expected = array('Test.test', 'Test.all' => '', 'Test.some');
 		$this->assertEquals($expected, $this->Form->fields);
 	}
 
