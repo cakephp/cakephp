@@ -14,15 +14,17 @@
  */
 namespace Cake\Database\Statement;
 
+use PDO;
+
 /**
- * Statement class meant to be used by an Sqlite driver
+ * Statement class meant to be used by a Mysql PDO driver
  *
  * @internal
  */
-class SqliteStatement extends StatementDecorator
+class MysqlStatement extends PDOStatement
 {
 
-    /**
+     /**
      * Whether or not to buffer results in php
      *
      * @var bool
@@ -35,33 +37,10 @@ class SqliteStatement extends StatementDecorator
      */
     public function execute($params = null)
     {
-        if ($this->_statement instanceof BufferedStatement) {
-            $this->_statement = $this->_statement->getInnerStatement();
-        }
-
-        if ($this->_bufferResults) {
-            $this->_statement = new BufferedStatement($this->_statement, $this->_driver);
-        }
-
+        $this->_driver->connection()->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, $this->_bufferResults);
         $result = $this->_statement->execute($params);
+        $this->_driver->connection()->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
         return $result;
-    }
-
-    /**
-     * Returns the number of rows returned of affected by last execution
-     *
-     * @return int
-     */
-    public function rowCount()
-    {
-        if (preg_match('/^(?:DELETE|UPDATE|INSERT)/i', $this->_statement->queryString)) {
-            $changes = $this->_driver->prepare('SELECT CHANGES()');
-            $changes->execute();
-            $count = $changes->fetch()[0];
-            $changes->closeCursor();
-            return (int)$count;
-        }
-        return parent::rowCount();
     }
 
      /**
@@ -75,4 +54,5 @@ class SqliteStatement extends StatementDecorator
         $this->_bufferResults = (bool)$buffer;
         return $this;
     }
+
 }

@@ -15,6 +15,7 @@
 namespace Cake\Database\Driver;
 
 use Cake\Database\Dialect\SqliteDialectTrait;
+use Cake\Database\Query;
 use Cake\Database\Statement\PDOStatement;
 use Cake\Database\Statement\SqliteStatement;
 use PDO;
@@ -87,6 +88,10 @@ class Sqlite extends \Cake\Database\Driver
     {
         $this->connect();
         $statement = $this->_connection->prepare((string)$query);
-        return new SqliteStatement(new PDOStatement($statement, $this), $this);
+        $result = new SqliteStatement(new PDOStatement($statement, $this), $this);
+        if ($query instanceof Query && $query->bufferResults() === false) {
+            $result->bufferResults(false);
+        }
+        return $result;
     }
 }

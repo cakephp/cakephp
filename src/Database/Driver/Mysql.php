@@ -15,6 +15,8 @@
 namespace Cake\Database\Driver;
 
 use Cake\Database\Dialect\MysqlDialectTrait;
+use Cake\Database\Query;
+use Cake\Database\Statement\MysqlStatement;
 use PDO;
 
 class Mysql extends \Cake\Database\Driver
@@ -100,4 +102,22 @@ class Mysql extends \Cake\Database\Driver
     {
         return in_array('mysql', PDO::getAvailableDrivers());
     }
+
+    /**
+     * Prepares a sql statement to be executed
+     *
+     * @param string|\Cake\Database\Query $query The query to prepare.
+     * @return \Cake\Database\StatementInterface
+     */
+    public function prepare($query)
+    {
+        $this->connect();
+        $statement = $this->_connection->prepare((string)$query);
+        $result = new MysqlStatement($statement, $this);
+        if ($query instanceof Query && $query->bufferResults() === false) {
+            $result->bufferResults(false);
+        }
+        return $result;
+    }
+
 }

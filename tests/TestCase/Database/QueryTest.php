@@ -3132,6 +3132,36 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Shows that bufferResults(false) will prevent client-side results buffering
+     *
+     * @return void
+     */
+    public function testUnbufferedQuery() {
+        $query = new Query($this->connection);
+        $result = $query->select(['body', 'author_id'])
+            ->from('articles')
+            ->bufferResults(false)
+            ->execute();
+
+        $list = $result->fetchAll('assoc');
+        $this->assertCount(3, $list);
+
+        $list = $result->fetchAll('assoc');
+        $this->assertCount(0, $list);
+
+        $query = new Query($this->connection);
+        $result = $query->select(['body', 'author_id'])
+            ->from('articles')
+            ->execute();
+
+        $list = $result->fetchAll('assoc');
+        $this->assertCount(3, $list);
+
+        $list = $result->fetchAll('assoc');
+        $this->assertCount(3, $list);
+    }
+
+    /**
      * Assertion for comparing a table's contents with what is in it.
      *
      * @param string $table
