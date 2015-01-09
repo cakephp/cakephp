@@ -79,13 +79,13 @@ class ComponentCollection extends ObjectCollection implements CakeEventListener 
  * Callbacks default to on. Disabled component methods work as normal, only callbacks are disabled.
  *
  * You can alias your component as an existing component by setting the 'className' key, i.e.,
- * {{{
+ * ```
  * public $components = array(
  *   'Email' => array(
  *     'className' => 'AliasedEmail'
  *   );
  * );
- * }}}
+ * ```
  * All calls to the `Email` component would use `AliasedEmail` instead.
  *
  * @param string $component Component name to load

@@ -183,11 +183,11 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  *
  * ## Example:
  *
- * {{{
+ * ```
  *		$set
  *			->setRule('required', array('rule' => 'notEmpty', 'required' => true))
  *			->setRule('between', array('rule' => array('lengthBetween', 4, 10))
- * }}}
+ * ```
  *
  * @param string $name The name under which the rule should be set
  * @param CakeValidationRule|array $rule The validation rule to be set
@@ -206,11 +206,11 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  *
  * ## Example:
  *
- * {{{
+ * ```
  *		$set
  *			->removeRule('required')
  *			->removeRule('inRange')
- * }}}
+ * ```
  *
  * @param string $name The name under which the rule should be unset
  * @return $this
@@ -225,12 +225,12 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  *
  * ## Example:
  *
- * {{{
+ * ```
  *		$set->setRules(array(
  *			'required' => array('rule' => 'notEmpty', 'required' => true),
  *			'inRange' => array('rule' => array('between', 4, 10)
  * 		));
- * }}}
+ * ```
  *
  * @param array $rules The rules to be set
  * @param bool $mergeVars [optional] If true, merges vars instead of replace. Defaults to true.

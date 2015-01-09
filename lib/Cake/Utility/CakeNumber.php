@@ -380,11 +380,11 @@ class CakeNumber {
  * Add a currency format to the Number helper. Makes reusing
  * currency formats easier.
  *
- * {{{ $number->addFormat('NOK', array('before' => 'Kr. ')); }}}
+ * ``` $number->addFormat('NOK', array('before' => 'Kr. ')); ```
  *
  * You can now use `NOK` as a shortform when formatting currency amounts.
  *
- * {{{ $number->currency($value, 'NOK'); }}}
+ * ``` $number->currency($value, 'NOK'); ```
  *
  * Added formats are merged with the defaults defined in CakeNumber::$_currencyDefaults
  * See CakeNumber::currency() for more information on the various options and their function.

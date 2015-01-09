@@ -52,7 +52,7 @@ class Xml {
  *
  * Building from an array:
  *
- * {{{
+ * ```
  * 	$value = array(
  * 		'tags' => array(
  * 			'tag' => array(
@@ -68,7 +68,7 @@ class Xml {
  * 		)
  * 	);
  * $xml = Xml::build($value);
- * }}}
+ * ```
  *
  * When building XML from an array ensure that there is only one top level element.
  *
@@ -164,7 +164,7 @@ class Xml {
  *
  * Using the following data:
  *
- * {{{
+ * ```
  * $value = array(
  *    'root' => array(
  *        'tag' => array(
@@ -174,7 +174,7 @@ class Xml {
  *         )
  *     )
  * );
- * }}}
+ * ```
  *
  * Calling `Xml::fromArray($value, 'tags');`  Will generate:
  *

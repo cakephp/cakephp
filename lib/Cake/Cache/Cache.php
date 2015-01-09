@@ -26,12 +26,12 @@ App::uses('CacheEngine', 'Cache');
  * You can configure Cache engines in your application's `bootstrap.php` file. A sample configuration would
  * be
  *
- * {{{
+ * ```
  *	Cache::config('shared', array(
  *		'engine' => 'Apc',
  *		'prefix' => 'my_app_'
  *  ));
- * }}}
+ * ```
  *
  * This would configure an APC cache engine to the 'shared' alias. You could then read and write
  * to that cache alias by using it for the `$config` parameter in the various Cache methods. In
@@ -517,7 +517,7 @@ class Cache {
 /**
  * Retrieve group names to config mapping.
  *
- * {{{
+ * ```
  *	Cache::config('daily', array(
  *		'duration' => '1 day', 'groups' => array('posts')
  *	));
@@ -525,7 +525,7 @@ class Cache {
  *		'duration' => '1 week', 'groups' => array('posts', 'archive')
  *	));
  *	$configs = Cache::groupConfigs('posts');
- * }}}
+ * ```
  *
  * $config will equal to `array('posts' => array('daily', 'weekly'))`
  *
@@ -554,12 +554,12 @@ class Cache {
  *
  * Using a Closure to provide data, assume $this is a Model:
  *
- * {{{
+ * ```
  * $model = $this;
  * $results = Cache::remember('all_articles', function() use ($model) {
  *      return $model->find('all');
  * });
- * }}}
+ * ```
  *
  * @param string $key The cache key to read/store data at.
  * @param callable $callable The callable that provides data in the case when

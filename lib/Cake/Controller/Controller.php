@@ -227,12 +227,12 @@ class Controller extends Object implements CakeEventListener {
  *
  * Example:
  *
- * {{{
+ * ```
  * public $cacheAction = array(
  *		'view/23/' => 21600,
  *		'recalled/' => 86400
  *	);
- * }}}
+ * ```
  *
  * $cacheAction can also be set to a strtotime() compatible string. This
  * marks all the actions in the controller for view caching.
@@ -857,10 +857,10 @@ class Controller extends Object implements CakeEventListener {
  *
  * Examples:
  *
- * {{{
+ * ```
  * setAction('another_action');
  * setAction('action_with_parameters', $parameter1);
- * }}}
+ * ```
  *
  * @param string $action The new action to be 'redirected' to.
  *   Any other parameters passed to this method will be passed as parameters to the new action.

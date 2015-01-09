@@ -77,17 +77,17 @@ class SessionHelper extends AppHelper {
  * You can pass additional information into the flash message generation. This allows you
  * to consolidate all the parameters for a given type of flash message into the view.
  *
- * {{{
+ * ```
  * echo $this->Session->flash('flash', array('params' => array('class' => 'new-flash')));
- * }}}
+ * ```
  *
  * The above would generate a flash message with a custom class name. Using $attrs['params'] you
  * can pass additional data into the element rendering that will be made available as local variables
  * when the element is rendered:
  *
- * {{{
+ * ```
  * echo $this->Session->flash('flash', array('params' => array('name' => $user['User']['name'])));
- * }}}
+ * ```
  *
  * This would pass the current user's name into the flash message, so you could create personalized
  * messages without the controller needing access to that data.
@@ -95,19 +95,19 @@ class SessionHelper extends AppHelper {
  * Lastly you can choose the element that is rendered when creating the flash message. Using
  * custom elements allows you to fully customize how flash messages are generated.
  *
- * {{{
+ * ```
  * echo $this->Session->flash('flash', array('element' => 'my_custom_element'));
- * }}}
+ * ```
  *
  * If you want to use an element from a plugin for rendering your flash message you can do that using the
  * plugin param:
  *
- * {{{
+ * ```
  * echo $this->Session->flash('flash', array(
  *		'element' => 'my_custom_element',
  *		'params' => array('plugin' => 'my_plugin')
  * ));
- * }}}
+ * ```
  *
  * @param string $key The [Message.]key you are rendering in the view.
  * @param array $attrs Additional attributes to use for the creation of this flash message.

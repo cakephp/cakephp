@@ -152,11 +152,11 @@ class NumberHelper extends AppHelper {
  * Add a currency format to the Number helper. Makes reusing
  * currency formats easier.
  *
- * {{{ $this->Number->addFormat('NOK', array('before' => 'Kr. ')); }}}
+ * ``` $this->Number->addFormat('NOK', array('before' => 'Kr. ')); ```
  *
  * You can now use `NOK` as a shortform when formatting currency amounts.
  *
- * {{{ $this->Number->currency($value, 'NOK'); }}}
+ * ``` $this->Number->currency($value, 'NOK'); ```
  *
  * Added formats are merged with the defaults defined in Cake\Utility\Number::$_currencyDefaults
  * See Cake\Utility\Number::currency() for more information on the various options and their function.

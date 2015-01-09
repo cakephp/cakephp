@@ -28,13 +28,13 @@ App::uses('BasicAuthenticate', 'Controller/Component/Auth');
  * ### Using Digest auth
  *
  * In your controller's components array, add auth + the required settings.
- * {{{
+ * ```
  *	public $components = array(
  *		'Auth' => array(
  *			'authenticate' => array('Digest')
  *		)
  *	);
- * }}}
+ * ```
  *
  * In your login function just call `$this->Auth->login()` without any checks for POST data. This
  * will send the authentication headers, and trigger the login dialog in the browser/client.
