@@ -1018,12 +1018,12 @@ class CakeTime {
  *
  * Create localized & formatted time:
  *
- * {{{
+ * ```
  *   CakeTime::format('2012-02-15', '%m-%d-%Y'); // returns 02-15-2012
  *   CakeTime::format('2012-02-15 23:01:01', '%c'); // returns preferred date and time based on configured locale
  *   CakeTime::format('0000-00-00', '%d-%m-%Y', 'N/A'); // return N/A becuase an invalid date was passed
  *   CakeTime::format('2012-02-15 23:01:01', '%c', 'N/A', 'America/New_York'); // converts passed date to timezone
- * }}}
+ * ```
  *
  * @param int|string|DateTime $date UNIX timestamp, strtotime() valid string or DateTime object (or a date format string)
  * @param int|string|DateTime $format date format string (or UNIX timestamp, strtotime() valid string or DateTime object)

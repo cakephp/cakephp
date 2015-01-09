@@ -498,7 +498,7 @@ class FormHelper extends AppHelper {
  *
  * If $options is set a form submit button will be created. Options can be either a string or an array.
  *
- * {{{
+ * ```
  * array usage:
  *
  * array('label' => 'save'); value="save"
@@ -506,7 +506,7 @@ class FormHelper extends AppHelper {
  * array('name' => 'Whatever'); value="Submit" name="Whatever"
  * array('label' => 'save', 'name' => 'Whatever', 'div' => 'good') <div class="good"> value="save" name="Whatever"
  * array('label' => 'save', 'name' => 'Whatever', 'div' => array('class' => 'good')); <div class="good"> value="save" name="Whatever"
- * }}}
+ * ```
  *
  * If $secureAttributes is set, these html attributes will be merged into the hidden input tags generated for the
  * Security Component. This is especially useful to set HTML5 attributes like 'form'
@@ -786,33 +786,33 @@ class FormHelper extends AppHelper {
  *
  * The text and for attribute are generated off of the fieldname
  *
- * {{{
+ * ```
  * echo $this->Form->label('Post.published');
  * <label for="PostPublished">Published</label>
- * }}}
+ * ```
  *
  * Custom text:
  *
- * {{{
+ * ```
  * echo $this->Form->label('Post.published', 'Publish');
  * <label for="PostPublished">Publish</label>
- * }}}
+ * ```
  *
  * Custom class name:
  *
- * {{{
+ * ```
  * echo $this->Form->label('Post.published', 'Publish', 'required');
  * <label for="PostPublished" class="required">Publish</label>
- * }}}
+ * ```
  *
  * Custom attributes:
  *
- * {{{
+ * ```
  * echo $this->Form->label('Post.published', 'Publish', array(
  *		'for' => 'post-publish'
  * ));
  * <label for="post-publish">Publish</label>
- * }}}
+ * ```
  *
  * @param string $fieldName This should be "Modelname.fieldname"
  * @param string $text Text that will appear in the label field. If
@@ -859,11 +859,11 @@ class FormHelper extends AppHelper {
  * will be used.
  *
  * You can customize individual inputs through `$fields`.
- * {{{
+ * ```
  *	$this->Form->inputs(array(
  *		'name' => array('label' => 'custom label')
  *	));
- * }}}
+ * ```
  *
  * In addition to controller fields output, `$fields` can be used to control legend
  * and fieldset rendering.
@@ -1986,13 +1986,13 @@ class FormHelper extends AppHelper {
  *
  * A simple array will create normal options:
  *
- * {{{
+ * ```
  * $options = array(1 => 'one', 2 => 'two);
  * $this->Form->select('Model.field', $options));
- * }}}
+ * ```
  *
  * While a nested options array will create optgroups with options inside them.
- * {{{
+ * ```
  * $options = array(
  *  1 => 'bill',
  *  'fred' => array(
@@ -2001,7 +2001,7 @@ class FormHelper extends AppHelper {
  *  )
  * );
  * $this->Form->select('Model.field', $options);
- * }}}
+ * ```
  *
  * In the above `2 => 'fred'` will not generate an option element. You should enable the `showParents`
  * attribute to show the fred option.
@@ -2009,12 +2009,12 @@ class FormHelper extends AppHelper {
  * If you have multiple options that need to have the same value attribute, you can
  * use an array of arrays to express this:
  *
- * {{{
+ * ```
  * $options = array(
  *  array('name' => 'United states', 'value' => 'USA'),
  *  array('name' => 'USA', 'value' => 'USA'),
  * );
- * }}}
+ * ```
  *
  * @param string $fieldName Name attribute of the SELECT
  * @param array $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the

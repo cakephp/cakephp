@@ -30,11 +30,11 @@
  * Behaviors can provide mixin like features by declaring public methods. These methods should expect
  * the model instance to be shifted onto the parameter list.
  *
- * {{{
+ * ```
  * function doSomething(Model $model, $arg1, $arg2) {
  *		//do something
  * }
- * }}}
+ * ```
  *
  * Would be called like `$this->Model->doSomething($arg1, $arg2);`.
  *
@@ -45,13 +45,13 @@
  * be declared in your behaviors `$mapMethods` array. The method signature for a mapped method is slightly different
  * than a normal behavior mixin method.
  *
- * {{{
+ * ```
  * public $mapMethods = array('/do(\w+)/' => 'doSomething');
  *
  * function doSomething(Model $model, $method, $arg1, $arg2) {
  *		//do something
  * }
- * }}}
+ * ```
  *
  * The above will map every doXXX() method call to the behavior. As you can see, the model is
  * still the first parameter, but the called method name will be the 2nd parameter. This allows

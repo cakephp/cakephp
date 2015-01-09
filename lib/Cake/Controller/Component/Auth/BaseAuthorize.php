@@ -124,21 +124,21 @@ abstract class BaseAuthorize {
  *
  * Create additional mappings for a standard CRUD operation:
  *
- * {{{
+ * ```
  * $this->Auth->mapActions(array('create' => array('add', 'register'));
- * }}}
+ * ```
  *
  * Or equivalently:
  *
- * {{{
+ * ```
  * $this->Auth->mapActions(array('register' => 'create', 'add' => 'create'));
- * }}}
+ * ```
  *
  * Create mappings for custom CRUD operations:
  *
- * {{{
+ * ```
  * $this->Auth->mapActions(array('range' => 'search'));
- * }}}
+ * ```
  *
  * You can use the custom CRUD operations to create additional generic permissions
  * that behave like CRUD operations. Doing this will require additional columns on the

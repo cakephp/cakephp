@@ -75,7 +75,7 @@ class ContainableBehavior extends ModelBehavior {
  *
  * `Model->find('all', array('contain' => array('Model1', 'Model2')));`
  *
- * {{{
+ * ```
  * Model->find('all', array('contain' => array(
  * 	'Model1' => array('Model11', 'Model12'),
  * 	'Model2',
@@ -84,7 +84,7 @@ class ContainableBehavior extends ModelBehavior {
  * 		'Model32',
  * 		'Model33' => array('Model331', 'Model332')
  * )));
- * }}}
+ * ```
  *
  * @param Model $Model Model using the behavior
  * @param array $query Query parameters as set by cake

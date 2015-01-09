@@ -445,9 +445,9 @@ class Hash {
  *
  * Usage:
  *
- * {{{
+ * ```
  * $result = Hash::format($users, array('{n}.User.id', '{n}.User.name'), '%s : %s');
- * }}}
+ * ```
  *
  * The `$format` string can use any format options that `vsprintf()` and `sprintf()` do.
  *

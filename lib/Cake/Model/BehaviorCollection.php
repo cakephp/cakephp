@@ -86,13 +86,13 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
  * can still be used as normal.
  *
  * You can alias your behavior as an existing behavior by setting the 'className' key, i.e.,
- * {{{
+ * ```
  * public $actsAs = array(
  *   'Tree' => array(
  *     'className' => 'AliasedTree'
  *   );
  * );
- * }}}
+ * ```
  * All calls to the `Tree` behavior would use `AliasedTree` instead.
  *
  * @param string $behavior CamelCased name of the behavior to load

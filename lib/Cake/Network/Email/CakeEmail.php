@@ -1002,35 +1002,35 @@ class CakeEmail {
  *
  * Attach a single file:
  *
- * {{{
+ * ```
  * $email->attachments('path/to/file');
- * }}}
+ * ```
  *
  * Attach a file with a different filename:
  *
- * {{{
+ * ```
  * $email->attachments(array('custom_name.txt' => 'path/to/file.txt'));
- * }}}
+ * ```
  *
  * Attach a file and specify additional properties:
  *
- * {{{
+ * ```
  * $email->attachments(array('custom_name.png' => array(
  *		'file' => 'path/to/file',
  *		'mimetype' => 'image/png',
  *		'contentId' => 'abc123',
  *		'contentDisposition' => false
  * ));
- * }}}
+ * ```
  *
  * Attach a file from string and specify additional properties:
  *
- * {{{
+ * ```
  * $email->attachments(array('custom_name.png' => array(
  *		'data' => file_get_contents('path/to/file'),
  *		'mimetype' => 'image/png'
  * ));
- * }}}
+ * ```
  *
  * The `contentId` key allows you to specify an inline attachment. In your email text, you
  * can use `<img src="cid:abc123" />` to display the image inline.
