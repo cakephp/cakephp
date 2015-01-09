@@ -737,13 +737,6 @@ class FormHelper extends Helper
      * <label for="published">Publish</label>
      * ```
      *
-     * Custom class name:
-     *
-     * ```
-     * echo $this->Form->label('published', 'Publish', 'required');
-     * <label for="published" class="required">Publish</label>
-     * ```
-     *
      * Custom attributes:
      *
      * ```
