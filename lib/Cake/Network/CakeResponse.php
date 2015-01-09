@@ -513,17 +513,14 @@ class CakeResponse {
 /**
  * Sends a header to the client.
  *
+ * Will skip sending headers if headers have already been sent.
+ *
  * @param string $name the header name
  * @param string $value the header value
  * @return void
- * @throws CakeException When headers have already been sent
  */
 	protected function _sendHeader($name, $value = null) {
 		if (headers_sent($filename, $linenum)) {
-			trigger_error(
-				__d('cake_dev', 'Headers already sent in %s on line %s', $filename, $linenum),
-				E_USER_NOTICE
-			);
 			return;
 		}
 		if ($value === null) {
