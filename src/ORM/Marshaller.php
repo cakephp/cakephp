@@ -147,7 +147,7 @@ class Marshaller
         }
 
         foreach ((array)$options['fieldList'] as $field) {
-            if (isset($properties[$field])) {
+            if (array_key_exists($field, $properties)) {
                 $entity->set($field, $properties[$field]);
             }
         }
@@ -374,7 +374,7 @@ class Marshaller
         }
 
         foreach ((array)$options['fieldList'] as $field) {
-            if (isset($properties[$field])) {
+            if (array_key_exists($field, $properties)) {
                 $entity->set($field, $properties[$field]);
             }
         }
