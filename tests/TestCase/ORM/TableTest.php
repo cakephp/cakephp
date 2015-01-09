@@ -14,13 +14,18 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
+use ArrayObject;
 use Cake\Core\Configure;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
+use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\I18n\Time;
+use Cake\ORM\Entity;
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -3338,4 +3343,67 @@ class TableTest extends TestCase
         $data = ['username' => 'larry'];
         $this->assertNotEmpty($validator->errors($data, false));
     }
+
+    /**
+     * Tests that the callbacks receive the expected types of arguments.
+     */
+    public function testCallbackArgumentTypes() {
+        $table = TableRegistry::get('articles');
+        $eventManager = $table->eventManager();
+
+        $eventManager->attach(
+            function (Event $event, Query $query, ArrayObject $options, $primary) {
+                $this->assertTrue(is_bool($primary));
+            },
+            'Model.beforeFind'
+        );
+        $table->find()->first();
+
+        $eventManager->attach(
+            function (Event $event, Validator $validator, $name) {
+                $this->assertTrue(is_string($name));
+            },
+            'Model.buildValidator'
+        );
+        $table->validator();
+
+        $eventManager->attach(
+            function (Event $event, RulesChecker $rules) { },
+            'Model.buildRules'
+        );
+        $eventManager->attach(
+            function (Event $event, Entity $entity, ArrayObject $options, $operation) {
+                $this->assertTrue(is_string($operation));
+            },
+            'Model.beforeRules'
+        );
+        $eventManager->attach(
+            function (Event $event, Entity $entity, ArrayObject $options, $result, $operation) {
+                $this->assertTrue(is_bool($result));
+                $this->assertTrue(is_string($operation));
+            },
+            'Model.afterRules'
+        );
+        $eventManager->attach(
+            function (Event $event, Entity $entity, ArrayObject $options) { },
+            'Model.beforeSave'
+        );
+        $eventManager->attach(
+            function (Event $event, Entity $entity, ArrayObject $options) { },
+            'Model.afterSave'
+        );
+        $entity = new Entity(['title' => 'Title']);
+        $this->assertNotFalse($table->save($entity));
+
+        $eventManager->attach(
+            function (Event $event, Entity $entity, ArrayObject $options) { },
+            'Model.beforeDelete'
+        );
+        $eventManager->attach(
+            function (Event $event, Entity $entity, ArrayObject $options) { },
+            'Model.afterDelete'
+        );
+        $this->assertTrue($table->delete($entity));
+    }
+
 }
