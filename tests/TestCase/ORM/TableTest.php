@@ -3347,7 +3347,8 @@ class TableTest extends TestCase
     /**
      * Tests that the callbacks receive the expected types of arguments.
      */
-    public function testCallbackArgumentTypes() {
+    public function testCallbackArgumentTypes()
+    {
         $table = TableRegistry::get('articles');
         $eventManager = $table->eventManager();
 
@@ -3368,7 +3369,8 @@ class TableTest extends TestCase
         $table->validator();
 
         $eventManager->attach(
-            function (Event $event, RulesChecker $rules) { },
+            function (Event $event, RulesChecker $rules) {
+            },
             'Model.buildRules'
         );
         $eventManager->attach(
@@ -3385,25 +3387,28 @@ class TableTest extends TestCase
             'Model.afterRules'
         );
         $eventManager->attach(
-            function (Event $event, Entity $entity, ArrayObject $options) { },
+            function (Event $event, Entity $entity, ArrayObject $options) {
+            },
             'Model.beforeSave'
         );
         $eventManager->attach(
-            function (Event $event, Entity $entity, ArrayObject $options) { },
+            function (Event $event, Entity $entity, ArrayObject $options) {
+            },
             'Model.afterSave'
         );
         $entity = new Entity(['title' => 'Title']);
         $this->assertNotFalse($table->save($entity));
 
         $eventManager->attach(
-            function (Event $event, Entity $entity, ArrayObject $options) { },
+            function (Event $event, Entity $entity, ArrayObject $options) {
+            },
             'Model.beforeDelete'
         );
         $eventManager->attach(
-            function (Event $event, Entity $entity, ArrayObject $options) { },
+            function (Event $event, Entity $entity, ArrayObject $options) {
+            },
             'Model.afterDelete'
         );
         $this->assertTrue($table->delete($entity));
     }
-
 }
