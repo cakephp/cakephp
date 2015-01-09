@@ -95,7 +95,7 @@ use RuntimeException;
  *   Fired before an entity is validated using the rules checker. By stopping this event,
  *   you can return the final value of the rules checking operation.
  *
- * - `afterRules(Event $event, Entity $entity,RulesChecker $rules, bool $result)`
+ * - `afterRules(Event $event, Entity $entity, ArrayObject $options, bool $result, string $operation)`
  *   Fired after the rules have been checked on the entity. By stopping this event,
  *   you can return the final value of the rules checking operation.
  *
@@ -1295,7 +1295,7 @@ class Table implements RepositoryInterface, EventListenerInterface
      * Performs the actual saving of an entity based on the passed options.
      *
      * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
-     * @param array $options the options to use for the save operation
+     * @param \ArrayObject $options the options to use for the save operation
      * @return \Cake\Datasource\EntityInterface|bool
      * @throws \RuntimeException When an entity is missing some of the primary keys.
      */

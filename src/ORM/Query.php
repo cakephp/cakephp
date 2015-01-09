@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM;
 
+use ArrayObject;
 use Cake\Database\Query as DatabaseQuery;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\QueryTrait;
@@ -603,7 +604,11 @@ class Query extends DatabaseQuery implements JsonSerializable
     {
         if (!$this->_beforeFindFired && $this->_type === 'select') {
             $table = $this->repository();
-            $table->dispatchEvent('Model.beforeFind', [$this, $this->_options, !$this->eagerLoaded()]);
+            $table->dispatchEvent('Model.beforeFind', [
+                $this,
+                new ArrayObject($this->_options),
+                !$this->eagerLoaded()
+            ]);
             $this->_beforeFindFired = true;
         }
     }
