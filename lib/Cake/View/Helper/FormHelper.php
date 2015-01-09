@@ -1491,7 +1491,9 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-select-checkbox-and-radio-inputs
  */
 	public function radio($fieldName, $options = array(), $attributes = array()) {
+		$attributes['options'] = $options;
 		$attributes = $this->_initInputField($fieldName, $attributes);
+		unset($attributes['options']);
 
 		$showEmpty = $this->_extractOption('empty', $attributes);
 		if ($showEmpty) {
@@ -2955,7 +2957,18 @@ class FormHelper extends AppHelper {
 			$result = $this->addClass($result, 'form-error');
 		}
 
-		if (!empty($result['disabled'])) {
+		$isDisabled = false;
+		if (isset($result['disabled'])) {
+			$isDisabled = (
+				$result['disabled'] === true ||
+				$result['disabled'] === 'disabled' ||
+				(is_array($result['disabled']) &&
+					!empty($result['options']) &&
+					array_diff($result['options'], $result['disabled']) === array()
+				)
+			);
+		}
+		if ($isDisabled) {
 			return $result;
 		}
 
