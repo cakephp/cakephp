@@ -34,52 +34,52 @@ abstract class Association
     use ConventionsTrait;
 
     /**
- * Strategy name to use joins for fetching associated records
- *
- * @var string
- */
+     * Strategy name to use joins for fetching associated records
+     *
+     * @var string
+     */
     const STRATEGY_JOIN = 'join';
 
     /**
- * Strategy name to use a subquery for fetching associated records
- *
- * @var string
- */
+     * Strategy name to use a subquery for fetching associated records
+     *
+     * @var string
+     */
     const STRATEGY_SUBQUERY = 'subquery';
 
     /**
- * Strategy name to use a select for fetching associated records
- *
- * @var string
- */
+     * Strategy name to use a select for fetching associated records
+     *
+     * @var string
+     */
     const STRATEGY_SELECT = 'select';
 
     /**
- * Association type for one to one associations.
- *
- * @var string
- */
+     * Association type for one to one associations.
+     *
+     * @var string
+     */
     const ONE_TO_ONE = 'oneToOne';
 
     /**
- * Association type for one to many associations.
- *
- * @var string
- */
+     * Association type for one to many associations.
+     *
+     * @var string
+     */
     const ONE_TO_MANY = 'oneToMany';
 
     /**
- * Association type for many to many associations.
- *
- * @var string
- */
+     * Association type for many to many associations.
+     *
+     * @var string
+     */
     const MANY_TO_MANY = 'manyToMany';
 
     /**
- * Association type for many to one associations.
- *
- * @var string
- */
+     * Association type for many to one associations.
+     *
+     * @var string
+     */
     const MANY_TO_ONE = 'manyToOne';
 
     /**
