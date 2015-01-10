@@ -3393,63 +3393,90 @@ class TableTest extends TestCase
         $table = TableRegistry::get('articles');
         $eventManager = $table->eventManager();
 
+        $beforeFindCount = 0;
         $eventManager->attach(
-            function (Event $event, Query $query, ArrayObject $options, $primary) {
+            function (Event $event, Query $query, ArrayObject $options, $primary) use (&$beforeFindCount) {
                 $this->assertTrue(is_bool($primary));
+                $beforeFindCount ++;
             },
             'Model.beforeFind'
         );
         $table->find()->first();
+        $this->assertEquals(1, $beforeFindCount);
 
+        $buildValidatorCount = 0;
         $eventManager->attach(
-            function (Event $event, Validator $validator, $name) {
+            $callback = function (Event $event, Validator $validator, $name) use (&$buildValidatorCount) {
                 $this->assertTrue(is_string($name));
+                $buildValidatorCount ++;
             },
             'Model.buildValidator'
         );
         $table->validator();
+        $this->assertEquals(1, $buildValidatorCount);
 
+        $buildRulesCount =
+        $beforeRulesCount =
+        $afterRulesCount =
+        $beforeSaveCount =
+        $afterSaveCount = 0;
         $eventManager->attach(
-            function (Event $event, RulesChecker $rules) {
+            function (Event $event, RulesChecker $rules) use (&$buildRulesCount) {
+                $buildRulesCount ++;
             },
             'Model.buildRules'
         );
         $eventManager->attach(
-            function (Event $event, Entity $entity, ArrayObject $options, $operation) {
+            function (Event $event, Entity $entity, ArrayObject $options, $operation) use (&$beforeRulesCount) {
                 $this->assertTrue(is_string($operation));
+                $beforeRulesCount ++;
             },
             'Model.beforeRules'
         );
         $eventManager->attach(
-            function (Event $event, Entity $entity, ArrayObject $options, $result, $operation) {
+            function (Event $event, Entity $entity, ArrayObject $options, $result, $operation) use (&$afterRulesCount) {
                 $this->assertTrue(is_bool($result));
                 $this->assertTrue(is_string($operation));
+                $afterRulesCount ++;
             },
             'Model.afterRules'
         );
         $eventManager->attach(
-            function (Event $event, Entity $entity, ArrayObject $options) {
+            function (Event $event, Entity $entity, ArrayObject $options) use (&$beforeSaveCount) {
+                $beforeSaveCount ++;
             },
             'Model.beforeSave'
         );
         $eventManager->attach(
-            function (Event $event, Entity $entity, ArrayObject $options) {
+            $afterSaveCallback = function (Event $event, Entity $entity, ArrayObject $options) use (&$afterSaveCount) {
+                $afterSaveCount ++;
             },
             'Model.afterSave'
         );
         $entity = new Entity(['title' => 'Title']);
         $this->assertNotFalse($table->save($entity));
+        $this->assertEquals(1, $buildRulesCount);
+        $this->assertEquals(1, $beforeRulesCount);
+        $this->assertEquals(1, $afterRulesCount);
+        $this->assertEquals(1, $beforeSaveCount);
+        $this->assertEquals(1, $afterSaveCount);
 
+        $beforeDeleteCount =
+        $afterDeleteCount = 0;
         $eventManager->attach(
-            function (Event $event, Entity $entity, ArrayObject $options) {
+            function (Event $event, Entity $entity, ArrayObject $options) use (&$beforeDeleteCount) {
+                $beforeDeleteCount ++;
             },
             'Model.beforeDelete'
         );
         $eventManager->attach(
-            function (Event $event, Entity $entity, ArrayObject $options) {
+            function (Event $event, Entity $entity, ArrayObject $options) use (&$afterDeleteCount) {
+                $afterDeleteCount ++;
             },
             'Model.afterDelete'
         );
-        $this->assertTrue($table->delete($entity));
+        $this->assertTrue($table->delete($entity, ['checkRules' => false]));
+        $this->assertEquals(1, $beforeDeleteCount);
+        $this->assertEquals(1, $afterDeleteCount);
     }
 }
