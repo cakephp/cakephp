@@ -57,5 +57,4 @@ class SqliteStatement extends StatementDecorator
         }
         return parent::rowCount();
     }
-
 }

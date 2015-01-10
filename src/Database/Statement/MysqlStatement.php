@@ -37,5 +37,4 @@ class MysqlStatement extends PDOStatement
         $this->_driver->connection()->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
         return $result;
     }
-
 }

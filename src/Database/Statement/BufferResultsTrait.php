@@ -19,7 +19,8 @@ namespace Cake\Database\Statement;
  *
  * @internal
  */
-trait BufferResultsTrait {
+trait BufferResultsTrait
+{
 
     /**
      * Whether or not to buffer results in php
