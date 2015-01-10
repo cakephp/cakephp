@@ -23,94 +23,94 @@ class Message
 {
 
     /**
- * HTTP 200 code
- *
- * @var int
- */
+     * HTTP 200 code
+     *
+     * @var int
+     */
     const STATUS_OK = 200;
 
     /**
- * HTTP 201 code
- *
- * @var int
- */
+     * HTTP 201 code
+     *
+     * @var int
+     */
     const STATUS_CREATED = 201;
 
     /**
- * HTTP 202 code
- *
- * @var int
- */
+     * HTTP 202 code
+     *
+     * @var int
+     */
     const STATUS_ACCEPTED = 202;
 
     /**
- * HTTP 301 code
- *
- * @var int
- */
+     * HTTP 301 code
+     *
+     * @var int
+     */
     const STATUS_MOVED_PERMANENTLY = 301;
 
     /**
- * HTTP 302 code
- *
- * @var int
- */
+     * HTTP 302 code
+     *
+     * @var int
+     */
     const STATUS_FOUND = 302;
 
     /**
- * HTTP 303 code
- *
- * @var int
- */
+     * HTTP 303 code
+     *
+     * @var int
+     */
     const STATUS_SEE_OTHER = 303;
 
     /**
- * HTTP 307 code
- *
- * @var int
- */
+     * HTTP 307 code
+     *
+     * @var int
+     */
     const STATUS_TEMPORARY_REDIRECT = 307;
 
     /**
- * HTTP GET method
- *
- * @var string
- */
+     * HTTP GET method
+     *
+     * @var string
+     */
     const METHOD_GET = 'GET';
 
     /**
- * HTTP POST method
- *
- * @var string
- */
+     * HTTP POST method
+     *
+     * @var string
+     */
     const METHOD_POST = 'POST';
 
     /**
- * HTTP PUT method
- *
- * @var string
- */
+     * HTTP PUT method
+     *
+     * @var string
+     */
     const METHOD_PUT = 'PUT';
 
     /**
- * HTTP DELETE method
- *
- * @var string
- */
+     * HTTP DELETE method
+     *
+     * @var string
+     */
     const METHOD_DELETE = 'DELETE';
 
     /**
- * HTTP PATCH method
- *
- * @var string
- */
+     * HTTP PATCH method
+     *
+     * @var string
+     */
     const METHOD_PATCH = 'PATCH';
 
     /**
- * HTTP HEAD method
- *
- * @var string
- */
+     * HTTP HEAD method
+     *
+     * @var string
+     */
     const METHOD_HEAD = 'HEAD';
 
     /**

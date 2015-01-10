@@ -39,10 +39,10 @@ class AuthComponent extends Component
     use EventManagerTrait;
 
     /**
- * Constant for 'all'
- *
- * @var string
- */
+     * Constant for 'all'
+     *
+     * @var string
+     */
     const ALL = 'all';
 
     /**

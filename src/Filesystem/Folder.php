@@ -24,27 +24,27 @@ class Folder
 {
 
     /**
- * Default scheme for Folder::copy
- * Recursively merges subfolders with the same name
- *
- * @var string
- */
+     * Default scheme for Folder::copy
+     * Recursively merges subfolders with the same name
+     *
+     * @var string
+     */
     const MERGE = 'merge';
 
     /**
- * Overwrite scheme for Folder::copy
- * subfolders with the same name will be replaced
- *
- * @var string
- */
+     * Overwrite scheme for Folder::copy
+     * subfolders with the same name will be replaced
+     *
+     * @var string
+     */
     const OVERWRITE = 'overwrite';
 
     /**
- * Skip scheme for Folder::copy
- * if a subfolder with the same name exists it will be skipped
- *
- * @var string
- */
+     * Skip scheme for Folder::copy
+     * if a subfolder with the same name exists it will be skipped
+     *
+     * @var string
+     */
     const SKIP = 'skip';
 
     /**

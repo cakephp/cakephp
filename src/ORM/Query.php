@@ -40,24 +40,24 @@ class Query extends DatabaseQuery implements JsonSerializable
     }
 
     /**
- * Indicates that the operation should append to the list
- *
- * @var int
- */
+     * Indicates that the operation should append to the list
+     *
+     * @var int
+     */
     const APPEND = 0;
 
     /**
- * Indicates that the operation should prepend to the list
- *
- * @var int
- */
+     * Indicates that the operation should prepend to the list
+     *
+     * @var int
+     */
     const PREPEND = 1;
 
     /**
- * Indicates that the operation should overwrite the list
- *
- * @var bool
- */
+     * Indicates that the operation should overwrite the list
+     *
+     * @var bool
+     */
     const OVERWRITE = true;
 
     /**

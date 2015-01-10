@@ -53,38 +53,38 @@ class Email implements JsonSerializable, Serializable
     use StaticConfigTrait;
 
     /**
- * Line length - no should more - RFC 2822 - 2.1.1
- *
- * @var int
- */
+     * Line length - no should more - RFC 2822 - 2.1.1
+     *
+     * @var int
+     */
     const LINE_LENGTH_SHOULD = 78;
 
     /**
- * Line length - no must more - RFC 2822 - 2.1.1
- *
- * @var int
- */
+     * Line length - no must more - RFC 2822 - 2.1.1
+     *
+     * @var int
+     */
     const LINE_LENGTH_MUST = 998;
 
     /**
- * Type of message - HTML
- *
- * @var string
- */
+     * Type of message - HTML
+     *
+     * @var string
+     */
     const MESSAGE_HTML = 'html';
 
     /**
- * Type of message - TEXT
- *
- * @var string
- */
+     * Type of message - TEXT
+     *
+     * @var string
+     */
     const MESSAGE_TEXT = 'text';
 
     /**
- * Holds the regex pattern for email validation
- *
- * @var string
- */
+     * Holds the regex pattern for email validation
+     *
+     * @var string
+     */
     const EMAIL_PATTERN = '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-.]+)$/ui';
 
     /**

@@ -38,24 +38,24 @@ class Shell
     use ModelAwareTrait;
 
     /**
- * Output constant making verbose shells.
- *
- * @var int
- */
+     * Output constant making verbose shells.
+     *
+     * @var int
+     */
     const VERBOSE = ConsoleIo::VERBOSE;
 
     /**
- * Output constant for making normal shells.
- *
- * @var int
- */
+     * Output constant for making normal shells.
+     *
+     * @var int
+     */
     const NORMAL = ConsoleIo::NORMAL;
 
     /**
- * Output constants for making quiet shells.
- *
- * @var int
- */
+     * Output constants for making quiet shells.
+     *
+     * @var int
+     */
     const QUIET = ConsoleIo::QUIET;
 
     /**

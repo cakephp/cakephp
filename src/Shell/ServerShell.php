@@ -26,17 +26,17 @@ class ServerShell extends Shell
 {
 
     /**
- * Default ServerHost
- *
- * @var string
- */
+     * Default ServerHost
+     *
+     * @var string
+     */
     const DEFAULT_HOST = 'localhost';
 
     /**
- * Default ListenPort
- *
- * @var int
- */
+     * Default ListenPort
+     *
+     * @var int
+     */
     const DEFAULT_PORT = 8765;
 
     /**

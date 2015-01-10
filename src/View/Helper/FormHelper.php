@@ -137,11 +137,11 @@ class FormHelper extends Helper
     public $fields = [];
 
     /**
- * Constant used internally to skip the securing process,
- * and neither add the field to the hash or to the unlocked fields.
- *
- * @var string
- */
+     * Constant used internally to skip the securing process,
+     * and neither add the field to the hash or to the unlocked fields.
+     *
+     * @var string
+     */
     const SECURE_SKIP = 'skip';
 
     /**

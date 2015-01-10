@@ -26,15 +26,15 @@ class UnaryExpression implements ExpressionInterface
 {
 
     /**
- * Indicates that the operation is in pre-order
- *
- */
+     * Indicates that the operation is in pre-order
+     *
+     */
     const PREFIX = 0;
 
     /**
- * Indicates that the operation is in post-order
- *
- */
+     * Indicates that the operation is in post-order
+     *
+     */
     const POSTFIX = 1;
 
     /**

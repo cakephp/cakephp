@@ -36,17 +36,17 @@ class BelongsToMany extends Association
     }
 
     /**
- * Saving strategy that will only append to the links set
- *
- * @var string
- */
+     * Saving strategy that will only append to the links set
+     *
+     * @var string
+     */
     const SAVE_APPEND = 'append';
 
     /**
- * Saving strategy that will replace the links with the provided set
- *
- * @var string
- */
+     * Saving strategy that will replace the links with the provided set
+     *
+     * @var string
+     */
     const SAVE_REPLACE = 'replace';
 
     /**

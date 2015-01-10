@@ -51,24 +51,24 @@ class ConsoleIo
     protected $_in;
 
     /**
- * Output constant making verbose shells.
- *
- * @var int
- */
+     * Output constant making verbose shells.
+     *
+     * @var int
+     */
     const VERBOSE = 2;
 
     /**
- * Output constant for making normal shells.
- *
- * @var int
- */
+     * Output constant for making normal shells.
+     *
+     * @var int
+     */
     const NORMAL = 1;
 
     /**
- * Output constants for making quiet shells.
- *
- * @var int
- */
+     * Output constants for making quiet shells.
+     *
+     * @var int
+     */
     const QUIET = 0;
 
     /**

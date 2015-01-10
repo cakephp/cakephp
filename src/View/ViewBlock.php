@@ -27,17 +27,17 @@ class ViewBlock
 {
 
     /**
- * Append content
- *
- * @var string
- */
+     * Append content
+     *
+     * @var string
+     */
     const APPEND = 'append';
 
     /**
- * Prepend content
- *
- * @var string
- */
+     * Prepend content
+     *
+     * @var string
+     */
     const PREPEND = 'prepend';
 
     /**
