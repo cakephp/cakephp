@@ -3136,7 +3136,8 @@ class QueryTest extends TestCase
      *
      * @return void
      */
-    public function testUnbufferedQuery() {
+    public function testUnbufferedQuery()
+    {
         $query = new Query($this->connection);
         $result = $query->select(['body', 'author_id'])
             ->from('articles')

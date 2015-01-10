@@ -24,7 +24,7 @@ use PDO;
 class MysqlStatement extends PDOStatement
 {
 
-     /**
+    /**
      * Whether or not to buffer results in php
      *
      * @var bool
@@ -43,7 +43,7 @@ class MysqlStatement extends PDOStatement
         return $result;
     }
 
-     /**
+    /**
      * Whether or not to buffer results in php
      *
      * @param bool $buffer Toggle buffering

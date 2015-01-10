@@ -304,7 +304,8 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
      *
      * @return \Cake\Database\StatementInterface
      */
-    public function getInnerStatement() {
+    public function getInnerStatement()
+    {
         return $this->_statement;
     }
 }

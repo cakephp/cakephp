@@ -119,5 +119,4 @@ class Mysql extends \Cake\Database\Driver
         }
         return $result;
     }
-
 }
