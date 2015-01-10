@@ -68,11 +68,12 @@ trait InstanceConfigTrait
      *
      * @param string|array|null $key The key to get/set, or a complete array of configs.
      * @param mixed|null $value The value to set.
-     * @param bool $merge Whether to merge or overwrite existing config, defaults to true.
+     * @param bool|string $merge 'deep' to merge recursively, 'shallow' for simple merge,
+     *   false to overwrite, defaults to 'deep'.
      * @return mixed Config value being read, or the object itself on write operations.
      * @throws \Cake\Core\Exception\Exception When trying to set a key that is invalid.
      */
-    public function config($key = null, $value = null, $merge = true)
+    public function config($key = null, $value = null, $merge = 'deep')
     {
         if (!$this->_configInitialized) {
             $this->_config = $this->_defaultConfig;
@@ -123,7 +124,8 @@ trait InstanceConfigTrait
      *
      * @param string|array $key Key to write to.
      * @param mixed $value Value to write.
-     * @param bool $merge Whether to merge or overwrite value.
+     * @param bool|string $merge 'deep' to merge recursively, 'shallow' for simple merge,
+     *   false to overwrite, defaults to false.
      * @return void
      * @throws \Cake\Core\Exception\Exception if attempting to clobber existing config
      */
@@ -139,7 +141,11 @@ trait InstanceConfigTrait
             } else {
                 $update = [$key => $value];
             }
-            $this->_config = Hash::merge($this->_config, Hash::expand($update));
+            if ($merge === 'shallow') {
+                $this->_config = array_merge($this->_config, Hash::expand($update));
+            } else {
+                $this->_config = Hash::merge($this->_config, Hash::expand($update));
+            }
             return;
         }
 
