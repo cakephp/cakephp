@@ -14,28 +14,29 @@
  */
 namespace Cake\Database\Statement;
 
-use PDO;
-
 /**
- * Statement class meant to be used by a Mysql PDO driver
+ * Contains a setter for marking a Statement as buffered
  *
  * @internal
  */
-class MysqlStatement extends PDOStatement
-{
-
-    use BufferResultsTrait;
+trait BufferResultsTrait {
 
     /**
-     * {@inheritDoc}
+     * Whether or not to buffer results in php
      *
+     * @var bool
      */
-    public function execute($params = null)
-    {
-        $this->_driver->connection()->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, $this->_bufferResults);
-        $result = $this->_statement->execute($params);
-        $this->_driver->connection()->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
-        return $result;
-    }
+    protected $_bufferResults = true;
 
+    /**
+     * Whether or not to buffer results in php
+     *
+     * @param bool $buffer Toggle buffering
+     * @return $this
+     */
+    public function bufferResults($buffer)
+    {
+        $this->_bufferResults = (bool)$buffer;
+        return $this;
+    }
 }

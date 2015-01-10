@@ -22,12 +22,7 @@ namespace Cake\Database\Statement;
 class SqliteStatement extends StatementDecorator
 {
 
-    /**
-     * Whether or not to buffer results in php
-     *
-     * @var bool
-     */
-    protected $_bufferResults = true;
+    use BufferResultsTrait;
 
     /**
      * {@inheritDoc}
@@ -64,15 +59,4 @@ class SqliteStatement extends StatementDecorator
         return parent::rowCount();
     }
 
-     /**
-     * Whether or not to buffer results in php
-     *
-     * @param bool $buffer Toggle buffering
-     * @return $this
-     */
-    public function bufferResults($buffer)
-    {
-        $this->_bufferResults = (bool)$buffer;
-        return $this;
-    }
 }
