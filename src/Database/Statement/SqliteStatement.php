@@ -38,8 +38,7 @@ class SqliteStatement extends StatementDecorator
             $this->_statement = new BufferedStatement($this->_statement, $this->_driver);
         }
 
-        $result = $this->_statement->execute($params);
-        return $result;
+        return $this->_statement->execute($params);
     }
 
     /**

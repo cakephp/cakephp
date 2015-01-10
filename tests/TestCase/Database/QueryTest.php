@@ -3144,6 +3144,11 @@ class QueryTest extends TestCase
             ->bufferResults(false)
             ->execute();
 
+        $this->skipIf(
+            !method_exists($result, 'bufferResults'),
+            'This driver does not support unbuffered queries'
+        );
+
         $this->assertCount(0, $result);
         $list = $result->fetchAll('assoc');
         $this->assertCount(3, $list);
