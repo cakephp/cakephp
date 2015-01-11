@@ -8,7 +8,7 @@ ouput dates, currencies and any numbers in the right format for the specified lo
 
 ## Usage
 
-The `I18n` class uses internally the [Aura.Intl](https://github.com/auraphp/Aura.Intl) library.
+Internally, the `I18n` class uses [Aura.Intl](https://github.com/auraphp/Aura.Intl).
 Getting familiar with it, will help you understand how to build and manipulate translation bundles
 should you wish to create them manually instead of using the conventions this library uses.
 
