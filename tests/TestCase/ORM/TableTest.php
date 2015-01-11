@@ -3350,7 +3350,18 @@ class TableTest extends TestCase
     public function testCallbackArgumentTypes()
     {
         $table = TableRegistry::get('articles');
+        $table->belongsTo('authors');
+
         $eventManager = $table->eventManager();
+
+        $associationBeforeFindCount = 0;
+        $table->association('authors')->target()->eventManager()->attach(
+            function (Event $event, Query $query, ArrayObject $options, $primary) use (&$associationBeforeFindCount) {
+                $this->assertTrue(is_bool($primary));
+                $associationBeforeFindCount ++;
+            },
+            'Model.beforeFind'
+        );
 
         $beforeFindCount = 0;
         $eventManager->attach(
@@ -3360,7 +3371,8 @@ class TableTest extends TestCase
             },
             'Model.beforeFind'
         );
-        $table->find()->first();
+        $table->find()->contain('authors')->first();
+        $this->assertEquals(1, $associationBeforeFindCount);
         $this->assertEquals(1, $beforeFindCount);
 
         $buildValidatorCount = 0;
