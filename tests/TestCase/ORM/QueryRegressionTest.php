@@ -641,4 +641,33 @@ class QueryRegressionTest extends TestCase
 
         $this->assertCount(2, $result->first()->articles);
     }
+
+    /**
+     * Tests that matching does not overwrite associations in contain
+     *
+     * @see https://github.com/cakephp/cakephp/issues/5584
+     * @return void
+     */
+    public function testFindMatchingOverwrite()
+    {
+        $comments = TableRegistry::get('Comments');
+        $comments->belongsTo('Articles');
+
+        $articles = TableRegistry::get('Articles');
+        $articles->belongsToMany('Tags');
+
+        $result = $comments
+            ->find()
+            ->matching('Articles.Tags', function($q) {
+                return $q->where(['tags.id' => 2]);
+            })
+            ->contain('Articles')
+            ->first();
+
+        $this->assertEquals(1, $result->id);
+        $this->assertEquals(1, $result->_matchingData['Articles']->id);
+        $this->assertEquals(2, $result->_matchingData['Tags']->id);
+        $this->assertNotNull($result->article);
+        $this->assertEquals($result->article, $result->_matchingData['Articles']);
+    }
 }
