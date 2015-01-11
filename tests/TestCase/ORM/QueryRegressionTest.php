@@ -659,7 +659,7 @@ class QueryRegressionTest extends TestCase
         $result = $comments
             ->find()
             ->matching('Articles.Tags', function($q) {
-                return $q->where(['tags.id' => 2]);
+                return $q->where(['Tags.id' => 2]);
             })
             ->contain('Articles')
             ->first();
