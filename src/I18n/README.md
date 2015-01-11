@@ -17,7 +17,7 @@ should you wish to create them manually instead of using the conventions this li
 ```php
 use Cake\I18n\I18n;
 
-I18n::locale('de_DE');
+I18n::locale('en_US');
 ```
 
 ### Translating a message
@@ -72,15 +72,18 @@ echo Number::format(100100100);
 
 ```php
 echo Number::currency(123456.7890, 'EUR');
-// outputs €100,100,100.00
+// outputs €123,456.79
 ```
 
 ## Documentation
 
-Please make sure you check the [official I18n documentation](http://book.cakephp.org/3.0/en/core-libraries/internationalization-and-localization.html)
+Please make sure you check the [official I18n
+documentation](http://book.cakephp.org/3.0/en/core-libraries/internationalization-and-localization.html)
 
-The [documentation for the Time class](http://book.cakephp.org/3.0/en/core-libraries/time.html) contains instruction on how configure and output
-time strings for selected locales.
+The [documentation for the Time
+class](http://book.cakephp.org/3.0/en/core-libraries/time.html) contains
+instruction on how configure and output time strings for selected locales.
 
-The [documentation for the Number class](http://book.cakephp.org/3.0/en/core-libraries/number.html) shows how to use the `Number` class for
-displaying numbers in specific locales.
+The [documentation for the Number
+class](http://book.cakephp.org/3.0/en/core-libraries/number.html) shows how to
+use the `Number` class for displaying numbers in specific locales.
