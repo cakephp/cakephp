@@ -1602,7 +1602,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * If called with no arguments, it will return whether or not buffering is
      * enabled.
      *
-     * @param bool $enable whether or not to enable buffering
+     * @param bool|null $enable whether or not to enable buffering
      * @return bool|$this
      */
     public function bufferResults($enable = null)
