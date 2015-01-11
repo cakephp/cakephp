@@ -17,6 +17,7 @@ namespace Cake\I18n;
 use Aura\Intl\FormatterLocator;
 use Aura\Intl\PackageLocator;
 use Aura\Intl\TranslatorFactory;
+use Cake\Cache\Cache;
 use Cake\I18n\Formatter\IcuFormatter;
 use Cake\I18n\Formatter\SprintfFormatter;
 use Locale;
@@ -54,7 +55,7 @@ class I18n
             return static::$_collection;
         }
 
-        return static::$_collection = new TranslatorRegistry(
+        static::$_collection = new TranslatorRegistry(
             new PackageLocator,
             new FormatterLocator([
                 'sprintf' => function () {
@@ -67,6 +68,11 @@ class I18n
             new TranslatorFactory,
             static::locale()
         );
+
+        if (class_exists('Cake\Cache\Cache')) {
+            static::$_collection->setCacher(Cache::engine('_cake_core_'));
+        }
+        return static::$_collection;
     }
 
     /**
