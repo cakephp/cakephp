@@ -597,4 +597,17 @@ class FileTest extends CakeTestCase {
 
 		$TmpFile->delete();
 	}
+
+/**
+ * Tests that no path is being set for passed file paths that
+ * do not exist.
+ *
+ * @return void
+ */
+	public function testNoPartialPathBeingSetForNonExistentPath()
+	{
+		$tmpFile = new File('/non/existent/file');
+		$this->assertNull($tmpFile->pwd());
+		$this->assertNull($tmpFile->path);
+	}
 }
