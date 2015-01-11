@@ -48,7 +48,7 @@ class TranslatorRegistry extends TranslatorLocator
      *
      * @var \Cake\Cache\CacheEngine
      */
-    protected $cacher;
+    protected $_cacher;
 
     /**
      * Sets the CacheEngine instance used to remember translators across
@@ -57,7 +57,8 @@ class TranslatorRegistry extends TranslatorLocator
      * @param \Cake\Cache\CacheEngine $cacher The cacher instance.
      * @return void
      */
-    public function setCacher(CacheEngine $cacher) {
+    public function setCacher(CacheEngine $cacher)
+    {
         $this->_cacher = $cacher;
     }
 
@@ -106,8 +107,6 @@ class TranslatorRegistry extends TranslatorLocator
      * @param string|null $locale The locale to use; if empty, uses the default
      * locale.
      * @return \Aura\Intl\TranslatorInterface A translator object.
-     * @throws \Aura\Intl\Exception If no translator with that name could be found
-     * for the given locale.
      */
     protected function _getTranslator($name, $locale)
     {
@@ -119,7 +118,6 @@ class TranslatorRegistry extends TranslatorLocator
         if (!isset($this->_loaders[$name])) {
             $this->registerLoader($name, $this->_partialLoader());
         }
-
         return $this->_getFromLoader($name, $locale);
     }
 
