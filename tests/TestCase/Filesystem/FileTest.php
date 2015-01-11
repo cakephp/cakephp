@@ -622,4 +622,17 @@ class FileTest extends TestCase
 
         $TmpFile->delete();
     }
+
+    /**
+     * Tests that no path is being set for passed file paths that
+     * do not exist.
+     *
+     * @return void
+     */
+    public function testNoPartialPathBeingSetForNonExistentPath()
+    {
+        $TmpFile = new File('/non/existent/file');
+        $this->assertNull($TmpFile->pwd());
+        $this->assertNull($TmpFile->path);
+    }
 }
