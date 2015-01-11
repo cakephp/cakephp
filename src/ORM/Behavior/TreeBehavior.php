@@ -665,8 +665,7 @@ class TreeBehavior extends Behavior
             ->select($pk)
             ->where([$parent . ' IS' => $parentId])
             ->order($pk)
-            ->hydrate(false)
-            ->bufferResults(false);
+            ->hydrate(false);
 
         $leftCounter = $counter;
         foreach ($query as $row) {

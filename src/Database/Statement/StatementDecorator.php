@@ -238,6 +238,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
      */
     public function getIterator()
     {
+        $this->execute();
         return $this->_statement;
     }
 
@@ -296,5 +297,15 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
             return $row[$column];
         }
         return $this->_driver->lastInsertId($table, $column);
+    }
+
+    /**
+     * Returns the statement object that was decorated by this class.
+     *
+     * @return \Cake\Database\StatementInterface
+     */
+    public function getInnerStatement()
+    {
+        return $this->_statement;
     }
 }

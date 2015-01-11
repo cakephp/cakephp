@@ -143,10 +143,10 @@ class ResultSet implements ResultSetInterface
         $this->_hydrate = $this->_query->hydrate();
         $this->_entityClass = $repository->entityClass();
         $this->_useBuffering = $query->bufferResults();
-        $this->count();
 
         if ($this->_useBuffering) {
-            $this->_results = new SplFixedArray($this->_count);
+            $count = $this->count();
+            $this->_results = new SplFixedArray($count);
         }
     }
 
@@ -217,22 +217,26 @@ class ResultSet implements ResultSetInterface
      */
     public function valid()
     {
-        if ($this->_index >= $this->_count) {
+        $valid = true;
+        if ($this->_useBuffering) {
+            $valid = $this->_index < $this->_count;
+            if ($valid && $this->_results[$this->_index] !== null) {
+                $this->_current = $this->_results[$this->_index];
+                return true;
+            }
+        }
+
+        if (!$valid) {
             if ($this->_statement !== null) {
                 $this->_statement->closeCursor();
             }
             return false;
         }
 
-        if ($this->_useBuffering && $this->_results[$this->_index] !== null) {
-            $this->_current = $this->_results[$this->_index];
-            return true;
-        }
-
         $this->_current = $this->_fetchResult();
         $valid = $this->_current !== false;
 
-        if ($this->_useBuffering) {
+        if ($valid && $this->_useBuffering) {
             $this->_results[$this->_index] = $this->_current;
         }
 

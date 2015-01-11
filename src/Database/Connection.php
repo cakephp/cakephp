@@ -269,8 +269,7 @@ class Connection
      */
     public function run(Query $query)
     {
-        $sql = $query->sql();
-        $statement = $this->prepare($sql);
+        $statement = $this->prepare($query);
         $query->valueBinder()->attachTo($statement);
         $statement->execute();
 
@@ -487,7 +486,7 @@ class Connection
      */
     public function createSavePoint($name)
     {
-        $this->execute($this->_driver->savePointSQL($name));
+        $this->execute($this->_driver->savePointSQL($name))->closeCursor();
     }
 
     /**
@@ -498,7 +497,7 @@ class Connection
      */
     public function releaseSavePoint($name)
     {
-        $this->execute($this->_driver->releaseSavePointSQL($name));
+        $this->execute($this->_driver->releaseSavePointSQL($name))->closeCursor();
     }
 
     /**
@@ -509,7 +508,7 @@ class Connection
      */
     public function rollbackSavepoint($name)
     {
-        $this->execute($this->_driver->rollbackSavePointSQL($name));
+        $this->execute($this->_driver->rollbackSavePointSQL($name))->closeCursor();
     }
 
     /**
@@ -519,7 +518,7 @@ class Connection
      */
     public function disableForeignKeys()
     {
-        $this->execute($this->_driver->disableForeignKeySql());
+        $this->execute($this->_driver->disableForeignKeySql())->closeCursor();
     }
 
     /**
@@ -529,7 +528,7 @@ class Connection
      */
     public function enableForeignKeys()
     {
-        $this->execute($this->_driver->enableForeignKeySql());
+        $this->execute($this->_driver->enableForeignKeySql())->closeCursor();
     }
 
     /**

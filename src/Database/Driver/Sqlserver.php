@@ -100,7 +100,11 @@ class Sqlserver extends \Cake\Database\Driver
     public function prepare($query)
     {
         $this->connect();
-        $statement = $this->_connection->prepare((string)$query, [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL]);
+        $options = [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL];
+        if ($query instanceof Query && $query->bufferResults() === false) {
+            $options = [];
+        }
+        $statement = $this->_connection->prepare((string)$query, $options);
         return new SqlserverStatement($statement, $this);
     }
 }

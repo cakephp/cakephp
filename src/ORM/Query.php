@@ -77,14 +77,6 @@ class Query extends DatabaseQuery implements JsonSerializable
     protected $_autoFields;
 
     /**
-     * Boolean for tracking whether or not buffered results
-     * are enabled.
-     *
-     * @var bool
-     */
-    protected $_useBufferedResults = true;
-
-    /**
      * Whether to hydrate results into entity objects
      *
      * @var bool
@@ -340,33 +332,6 @@ class Query extends DatabaseQuery implements JsonSerializable
     {
         $this->eagerLoader()->matching($assoc, $builder);
         $this->_dirty();
-        return $this;
-    }
-
-    /**
-     * Enable/Disable buffered results.
-     *
-     * When enabled the ResultSet returned by this Query will be
-     * buffered. This enables you to iterate a ResultSet multiple times, or
-     * both cache and iterate the ResultSet.
-     *
-     * When disabled it will consume less memory as fetched results are not
-     * remembered in the ResultSet.
-     *
-     * If called with no arguments, it will return whether or not buffering is
-     * enabled.
-     *
-     * @param bool $enable whether or not to enable buffering
-     * @return bool|$this
-     */
-    public function bufferResults($enable = null)
-    {
-        if ($enable === null) {
-            return $this->_useBufferedResults;
-        }
-
-        $this->_dirty();
-        $this->_useBufferedResults = (bool)$enable;
         return $this;
     }
 
