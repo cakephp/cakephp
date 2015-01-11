@@ -1544,10 +1544,13 @@ class FormHelperTest extends TestCase
 
             $result = $this->Form->fields;
             $expected = [
-            'ratio', 'population', 'published', 'other',
-            'stuff' => '',
-            'hidden' => '0',
-            'something'
+                'ratio',
+                'population',
+                'published',
+                'other',
+                'stuff' => '',
+                'hidden' => '0',
+                'something'
             ];
             $this->assertEquals($expected, $result);
 
@@ -1644,6 +1647,18 @@ class FormHelperTest extends TestCase
 
         $this->Form->radio('Test.test', $options);
         $expected = ['Test.test'];
+        $this->assertEquals($expected, $this->Form->fields);
+
+        $this->Form->radio('Test.all', $options, [
+            'disabled' => ['option1', 'option2']
+        ]);
+        $expected = ['Test.test', 'Test.all' => ''];
+        $this->assertEquals($expected, $this->Form->fields);
+
+        $this->Form->radio('Test.some', $options, [
+            'disabled' => ['option1']
+        ]);
+        $expected = ['Test.test', 'Test.all' => '', 'Test.some'];
         $this->assertEquals($expected, $this->Form->fields);
     }
 

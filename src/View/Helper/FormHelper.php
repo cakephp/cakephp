@@ -1387,14 +1387,13 @@ class FormHelper extends Helper
      */
     public function radio($fieldName, $options = [], array $attributes = [])
     {
+        $attributes['options'] = $options;
+        $attributes['idPrefix'] = $this->_idPrefix;
         $attributes = $this->_initInputField($fieldName, $attributes);
 
         $value = $attributes['val'];
         $hiddenField = isset($attributes['hiddenField']) ? $attributes['hiddenField'] : true;
         unset($attributes['hiddenField']);
-
-        $attributes['options'] = $options;
-        $attributes['idPrefix'] = $this->_idPrefix;
 
         $radio = $this->widget('radio', $attributes);
 
@@ -2318,7 +2317,18 @@ class FormHelper extends Helper
         if ($context->hasError($field)) {
             $options = $this->addClass($options, $this->_config['errorClass']);
         }
-        if (!empty($options['disabled'])) {
+        $isDisabled = false;
+        if (isset($options['disabled'])) {
+            $isDisabled = (
+                $options['disabled'] === true ||
+                $options['disabled'] === 'disabled' ||
+                (is_array($options['disabled']) &&
+                    !empty($options['options']) &&
+                    array_diff($options['options'], $options['disabled']) === array()
+                )
+            );
+        }
+        if ($isDisabled) {
             $options['secure'] = self::SECURE_SKIP;
         }
         if ($options['secure'] === self::SECURE_SKIP) {
