@@ -36,10 +36,10 @@ App::uses('Hash', 'Utility');
  * You can also define `'_serialize'` as an array. This will create an additional
  * top level element named `<response>` containing all the named view variables:
  *
- * {{{
+ * ```
  * $this->set(compact('posts', 'users', 'stuff'));
  * $this->set('_serialize', array('posts', 'users'));
- * }}}
+ * ```
  *
  * The above would generate a XML object that looks like:
  *

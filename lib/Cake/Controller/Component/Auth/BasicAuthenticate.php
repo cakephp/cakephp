@@ -24,13 +24,13 @@ App::uses('BaseAuthenticate', 'Controller/Component/Auth');
  * ### Using Basic auth
  *
  * In your controller's components array, add auth + the required settings.
- * {{{
+ * ```
  *	public $components = array(
  *		'Auth' => array(
  *			'authenticate' => array('Basic')
  *		)
  *	);
- * }}}
+ * ```
  *
  * You should also set `AuthComponent::$sessionKey = false;` in your AppController's
  * beforeFilter() to prevent CakePHP from sending a session cookie to the client.

@@ -91,9 +91,9 @@ class Security {
  *
  * Creating a blowfish/bcrypt hash:
  *
- * {{{
+ * ```
  * 	$hash = Security::hash($password, 'blowfish');
- * }}}
+ * ```
  *
  * @param string $string String to hash
  * @param string $type Method to use (sha1/sha256/md5/blowfish)

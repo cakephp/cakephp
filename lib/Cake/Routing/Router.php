@@ -289,13 +289,13 @@ class Router {
  *
  * The above shows the use of route parameter defaults, and providing routing parameters for a static route.
  *
- * {{{
+ * ```
  * Router::connect(
  *   '/:lang/:controller/:action/:id',
  *   array(),
  *   array('id' => '[0-9]+', 'lang' => '[a-z]{3}')
  * );
- * }}}
+ * ```
  *
  * Shows connecting a route with custom route parameters as well as providing patterns for those parameters.
  * Patterns for routing parameters do not need capturing groups, as one will be added for each route params.
@@ -426,37 +426,37 @@ class Router {
  *
  * Do not parse any named parameters:
  *
- * {{{ Router::connectNamed(false); }}}
+ * ``` Router::connectNamed(false); ```
  *
  * Parse only default parameters used for CakePHP's pagination:
  *
- * {{{ Router::connectNamed(false, array('default' => true)); }}}
+ * ``` Router::connectNamed(false, array('default' => true)); ```
  *
  * Parse only the page parameter if its value is a number:
  *
- * {{{ Router::connectNamed(array('page' => '[\d]+'), array('default' => false, 'greedy' => false)); }}}
+ * ``` Router::connectNamed(array('page' => '[\d]+'), array('default' => false, 'greedy' => false)); ```
  *
  * Parse only the page parameter no matter what.
  *
- * {{{ Router::connectNamed(array('page'), array('default' => false, 'greedy' => false)); }}}
+ * ``` Router::connectNamed(array('page'), array('default' => false, 'greedy' => false)); ```
  *
  * Parse only the page parameter if the current action is 'index'.
  *
- * {{{
+ * ```
  * Router::connectNamed(
  *    array('page' => array('action' => 'index')),
  *    array('default' => false, 'greedy' => false)
  * );
- * }}}
+ * ```
  *
  * Parse only the page parameter if the current action is 'index' and the controller is 'pages'.
  *
- * {{{
+ * ```
  * Router::connectNamed(
  *    array('page' => array('action' => 'index', 'controller' => 'pages')),
  *    array('default' => false, 'greedy' => false)
  * );
- * }}}
+ * ```
  *
  * ### Options
  *

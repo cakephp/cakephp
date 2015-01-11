@@ -124,33 +124,33 @@ class Model extends Object implements CakeEventListener {
  *
  * ### Validating using regular expressions
  *
- * {{{
+ * ```
  * public $validate = array(
  *     'name' => '/^[a-z].+$/i'
  * );
- * }}}
+ * ```
  *
  * ### Validating using methods (no parameters)
  *
- * {{{
+ * ```
  * public $validate = array(
  *     'name' => 'notEmpty'
  * );
- * }}}
+ * ```
  *
  * ### Validating using methods (with parameters)
  *
- * {{{
+ * ```
  * public $validate = array(
  *     'length' => array(
  *         'rule' => array('lengthBetween', 5, 25)
  *     )
  * );
- * }}}
+ * ```
  *
  * ### Validating using custom method
  *
- * {{{
+ * ```
  * public $validate = array(
  *     'password' => array(
  *         'rule' => array('customValidation')
@@ -163,24 +163,24 @@ class Model extends Object implements CakeEventListener {
  *     }
  *     return true;
  * }
- * }}}
+ * ```
  *
  * ### Validations with messages
  *
  * The messages will be used in Model::$validationErrors and can be used in the FormHelper
  *
- * {{{
+ * ```
  * public $validate = array(
  *     'length' => array(
  *         'rule' => array('lengthBetween', 5, 15),
  *         'message' => array('Between %d to %d characters')
  *     )
  * );
- * }}}
+ * ```
  *
  * ### Multiple validations to the same field
  *
- * {{{
+ * ```
  * public $validate = array(
  *     'login' => array(
  *         array(
@@ -194,7 +194,7 @@ class Model extends Object implements CakeEventListener {
  *         )
  *     )
  * );
- * }}}
+ * ```
  *
  * ### Valid keys in validations
  *
@@ -280,7 +280,7 @@ class Model extends Object implements CakeEventListener {
  *
  * ### Detailed configuration
  *
- * {{{
+ * ```
  * public $belongsTo = array(
  *     'Group',
  *     'Department' => array(
@@ -288,7 +288,7 @@ class Model extends Object implements CakeEventListener {
  *         'foreignKey' => 'department_id'
  *     )
  * );
- * }}}
+ * ```
  *
  * ### Possible keys in association
  *
@@ -327,7 +327,7 @@ class Model extends Object implements CakeEventListener {
  *
  * ### Detailed configuration
  *
- * {{{
+ * ```
  * public $hasOne = array(
  *     'Profile',
  *     'Address' => array(
@@ -335,7 +335,7 @@ class Model extends Object implements CakeEventListener {
  *         'foreignKey' => 'user_id'
  *     )
  * );
- * }}}
+ * ```
  *
  * ### Possible keys in association
  *
@@ -370,7 +370,7 @@ class Model extends Object implements CakeEventListener {
  *
  * ### Detailed configuration
  *
- * {{{
+ * ```
  * public $hasMany = array(
  *     'Comment',
  *     'Task' => array(
@@ -378,7 +378,7 @@ class Model extends Object implements CakeEventListener {
  *         'foreignKey' => 'user_id'
  *     )
  * );
- * }}}
+ * ```
  *
  * ### Possible keys in association
  *
@@ -419,7 +419,7 @@ class Model extends Object implements CakeEventListener {
  *
  * ### Detailed configuration
  *
- * {{{
+ * ```
  * public $hasAndBelongsToMany = array(
  *     'Role',
  *     'Address' => array(
@@ -429,7 +429,7 @@ class Model extends Object implements CakeEventListener {
  *         'joinTable' => 'addresses_users'
  *     )
  * );
- * }}}
+ * ```
  *
  * ### Possible keys in association
  *
@@ -607,7 +607,7 @@ class Model extends Object implements CakeEventListener {
  * If true, afterFind will be passed consistent formatted $results in case of $primary is false.
  * The format will be such as the following.
  *
- * {{{
+ * ```
  * $results = array(
  * 	0 => array(
  * 		'ModelName' => array(
@@ -616,7 +616,7 @@ class Model extends Object implements CakeEventListener {
  * 		)
  * 	)
  * );
- * }}}
+ * ```
  *
  * @var bool
  */
@@ -683,9 +683,9 @@ class Model extends Object implements CakeEventListener {
  *
  * You can dynamically create model instances using the $id array syntax.
  *
- * {{{
+ * ```
  * $Post = new Model(array('table' => 'posts', 'name' => 'Post', 'ds' => 'connection2'));
- * }}}
+ * ```
  *
  * Would create a model attached to the posts table on connection2. Dynamic model creation is useful
  * when you want a model object that contains no associations or attached behaviors.
@@ -2233,12 +2233,12 @@ class Model extends Object implements CakeEventListener {
  *   Should be set to false if database/table does not support transactions.
  * - `fieldList`: Equivalent to the $fieldList parameter in Model::save().
  *   It should be an associate array with model name as key and array of fields as value. Eg.
- *   {{{
+ *   ```
  *   array(
  *       'SomeModel' => array('field'),
  *       'AssociatedModel' => array('field', 'otherfield')
  *   )
- *   }}}
+ *   ```
  * - `deep`: See saveMany/saveAssociated
  * - `callbacks`: See Model::save()
  * - `counterCache`: See Model::save()
@@ -2406,12 +2406,12 @@ class Model extends Object implements CakeEventListener {
  *   Should be set to false if database/table does not support transactions.
  * - `fieldList`: Equivalent to the $fieldList parameter in Model::save().
  *   It should be an associate array with model name as key and array of fields as value. Eg.
- *   {{{
+ *   ```
  *   array(
  *       'SomeModel' => array('field'),
  *       'AssociatedModel' => array('field', 'otherfield')
  *   )
- *   }}}
+ *   ```
  * - `deep`: If set to true, not only directly associated data is saved, but deeper nested associated data as well.
  * - `callbacks`: See Model::save()
  * - `counterCache`: See Model::save()
@@ -2919,7 +2919,7 @@ class Model extends Object implements CakeEventListener {
  * 'recursive', 'page', 'fields', 'offset', 'order', 'callbacks')
  *
  * Eg:
- * {{{
+ * ```
  * $model->find('all', array(
  *   'conditions' => array('name' => 'Thomas Anderson'),
  *   'fields' => array('name', 'email'),
@@ -2928,13 +2928,13 @@ class Model extends Object implements CakeEventListener {
  *   'group' => 'type',
  *   'callbacks' => false,
  * ));
- * }}}
+ * ```
  *
  * In addition to the standard query keys above, you can provide Datasource, and behavior specific
  * keys. For example, when using a SQL based datasource you can use the joins key to specify additional
  * joins that should be part of the query.
  *
- * {{{
+ * ```
  * $model->find('all', array(
  *   'conditions' => array('name' => 'Thomas Anderson'),
  *   'joins' => array(
@@ -2946,7 +2946,7 @@ class Model extends Object implements CakeEventListener {
  *     )
  *   )
  * ));
- * }}}
+ * ```
  *
  * ### Disabling callbacks
  *
@@ -2996,7 +2996,7 @@ class Model extends Object implements CakeEventListener {
  * Model::_readDataSource() is used by all find() calls to read from the data source and can be overloaded to allow
  * caching of datasource calls.
  *
- * {{{
+ * ```
  * protected function _readDataSource($type, $query) {
  * 		$cacheName = md5(json_encode($query));
  * 		$cache = Cache::read($cacheName, 'cache-config-name');
@@ -3008,7 +3008,7 @@ class Model extends Object implements CakeEventListener {
  * 		Cache::write($cacheName, $results, 'cache-config-name');
  * 		return $results;
  * }
- * }}}
+ * ```
  *
  * @param string $type Type of find operation (all / first / count / neighbors / list / threaded)
  * @param array $query Option fields (conditions / fields / joins / limit / offset / order / page / group / callbacks)

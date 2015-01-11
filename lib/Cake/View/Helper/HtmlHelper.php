@@ -650,12 +650,12 @@ class HtmlHelper extends AppHelper {
  *
  * ### Usage:
  *
- * {{{
+ * ```
  * echo $this->Html->style(array('margin' => '10px', 'padding' => '10px'), true);
  *
  * // creates
  * 'margin:10px;padding:10px;'
- * }}}
+ * ```
  *
  * @param array $data Style data array, keys will be used as property names, values as property values.
  * @param bool $oneline Whether or not the style block should be displayed on one line.
@@ -1034,21 +1034,21 @@ class HtmlHelper extends AppHelper {
  *
  * Using multiple video files:
  *
- * {{{
+ * ```
  * echo $this->Html->media(
  * 		array('video.mp4', array('src' => 'video.ogv', 'type' => "video/ogg; codecs='theora, vorbis'")),
  * 		array('tag' => 'video', 'autoplay')
  * );
- * }}}
+ * ```
  *
  * Outputs:
  *
- * {{{
+ * ```
  * <video autoplay="autoplay">
  * 		<source src="/files/video.mp4" type="video/mp4"/>
  * 		<source src="/files/video.ogv" type="video/ogv; codecs='theora, vorbis'"/>
  * </video>
- * }}}
+ * ```
  *
  * ### Options
  *
@@ -1186,11 +1186,11 @@ class HtmlHelper extends AppHelper {
  *
  * tags.php could look like:
  *
- * {{{
+ * ```
  * $tags = array(
  *		'meta' => '<meta %s>'
  * );
- * }}}
+ * ```
  *
  * If you wish to store tag definitions in another format you can give an array
  * containing the file name, and reader class name:

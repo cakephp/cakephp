@@ -20,7 +20,7 @@ App::uses('CakeText', 'Utility');
 /**
  * String handling methods.
  *
- * @package       Cake.Utility
+ * @package Cake.Utility
  * @deprecated 3.0.0 Deprecated since version 2.7, use CakeText class instead.
  */
 class String extends CakeText {

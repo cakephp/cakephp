@@ -93,9 +93,9 @@ class I18n {
  * The constants may be used in translation fetching
  * instead of hardcoded integers.
  * Example:
- * {{{
+ * ```
  *	I18n::translate('CakePHP is awesome.', null, null, I18n::LC_MESSAGES)
- * }}}
+ * ```
  *
  * To keep the code more readable, I18n constants are preferred over
  * hardcoded integers.

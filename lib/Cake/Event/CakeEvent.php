@@ -67,10 +67,10 @@ class CakeEvent {
  *
  * ## Examples of usage:
  *
- * {{{
+ * ```
  *	$event = new CakeEvent('Order.afterBuy', $this, array('buyer' => $userData));
  *	$event = new CakeEvent('User.afterRegister', $UserModel);
- * }}}
+ * ```
  *
  */
 	public function __construct($name, $subject = null, $data = null) {

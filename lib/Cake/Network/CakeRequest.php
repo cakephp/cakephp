@@ -841,11 +841,11 @@ class CakeRequest implements ArrayAccess {
  *
  * Get the list of accepted languages:
  *
- * {{{ CakeRequest::acceptLanguage(); }}}
+ * ``` CakeRequest::acceptLanguage(); ```
  *
  * Check if a specific language is accepted:
  *
- * {{{ CakeRequest::acceptLanguage('es-es'); }}}
+ * ``` CakeRequest::acceptLanguage('es-es'); ```
  *
  * @param string $language The language to test.
  * @return mixed If a $language is provided, a boolean. Otherwise the array of accepted languages.

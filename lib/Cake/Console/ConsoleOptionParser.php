@@ -175,7 +175,7 @@ class ConsoleOptionParser {
 /**
  * Build a parser from an array. Uses an array like
  *
- * {{{
+ * ```
  * $spec = array(
  *		'description' => 'text',
  *		'epilog' => 'text',
@@ -189,7 +189,7 @@ class ConsoleOptionParser {
  *			// list of subcommands to add.
  *		)
  * );
- * }}}
+ * ```
  *
  * @param array $spec The spec to build the OptionParser with.
  * @return ConsoleOptionParser
