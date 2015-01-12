@@ -522,6 +522,21 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * Asserts content exists in the response body.
      *
+     * @param mixed $content The content to check for.
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertResponseEquals($content, $message = '')
+    {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert content. ' . $message);
+        }
+        $this->assertEquals($content, $this->_response->body(), $message);
+    }
+
+    /**
+     * Asserts content exists in the response body.
+     *
      * @param string $content The content to check for.
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
@@ -531,7 +546,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert content. ' . $message);
         }
-        $this->assertContains($content, $this->_response->body(), $message);
+        $this->assertContains($content, (string)$this->_response->body(), $message);
     }
 
     /**
