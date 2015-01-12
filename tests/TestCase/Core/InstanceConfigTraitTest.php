@@ -272,9 +272,9 @@ class InstanceConfigTraitTest extends TestCase
      *
      * @return void
      */
-    public function testShallowMerge()
+    public function testConfigShallow()
     {
-        $this->object->config(['a' => ['new_nested' => true], 'new' => 'bar'], null, 'shallow');
+        $this->object->configShallow(['a' => ['new_nested' => true], 'new' => 'bar']);
 
         $this->assertSame(
             [

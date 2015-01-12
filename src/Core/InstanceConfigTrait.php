@@ -16,6 +16,7 @@ namespace Cake\Core;
 
 use Cake\Core\Exception\Exception;
 use Cake\Utility\Hash;
+use InvalidArgumentException;
 
 /**
  * A trait for reading and writing instance config
@@ -68,12 +69,11 @@ trait InstanceConfigTrait
      *
      * @param string|array|null $key The key to get/set, or a complete array of configs.
      * @param mixed|null $value The value to set.
-     * @param bool|string $merge 'deep' to merge recursively, 'shallow' for simple merge,
-     *   false to overwrite, defaults to 'deep'.
+     * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
      * @return mixed Config value being read, or the object itself on write operations.
      * @throws \Cake\Core\Exception\Exception When trying to set a key that is invalid.
      */
-    public function config($key = null, $value = null, $merge = 'deep')
+    public function config($key = null, $value = null, $merge = true)
     {
         if (!$this->_configInitialized) {
             $this->_config = $this->_defaultConfig;
@@ -86,6 +86,36 @@ trait InstanceConfigTrait
         }
 
         return $this->_configRead($key);
+    }
+
+    /**
+     * Merge provided config with existing config. Unlike `config()` which does
+     * a recursive merge for nested keys, this method does a simple merge.
+     *
+     * Setting a specific value:
+     *
+     * `$this->config('key', $value);`
+     *
+     * Setting a nested value:
+     *
+     * `$this->config('some.nested.key', $value);`
+     *
+     * Updating multiple config settings at the same time:
+     *
+     * `$this->config(['one' => 'value', 'another' => 'value']);`
+     *
+     * @param string|array $key The key to set, or a complete array of configs.
+     * @param mixed|null $value The value to set.
+     * @return $this The object itself.
+     */
+    public function configShallow($key, $value = null) {
+        if (!$this->_configInitialized) {
+            $this->_config = $this->_defaultConfig;
+            $this->_configInitialized = true;
+        }
+
+        $this->_configWrite($key, $value, 'shallow');
+        return $this;
     }
 
     /**
@@ -124,7 +154,7 @@ trait InstanceConfigTrait
      *
      * @param string|array $key Key to write to.
      * @param mixed $value Value to write.
-     * @param bool|string $merge 'deep' to merge recursively, 'shallow' for simple merge,
+     * @param bool|string $merge True to merge recursively, 'shallow' for simple merge,
      *   false to overwrite, defaults to false.
      * @return void
      * @throws \Cake\Core\Exception\Exception if attempting to clobber existing config
