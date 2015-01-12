@@ -108,7 +108,8 @@ trait InstanceConfigTrait
      * @param mixed|null $value The value to set.
      * @return $this The object itself.
      */
-    public function configShallow($key, $value = null) {
+    public function configShallow($key, $value = null)
+    {
         if (!$this->_configInitialized) {
             $this->_config = $this->_defaultConfig;
             $this->_configInitialized = true;
