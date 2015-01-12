@@ -480,10 +480,8 @@ class HasManyTest extends TestCase
         $query->expects($this->any())
             ->method('getIterator')
             ->will($this->returnValue($iterator));
-        $query->expects($this->once())
-            ->method('bufferResults')
-            ->with(false)
-            ->will($this->returnSelf());
+        $query->expects($this->never())
+            ->method('bufferResults');
 
         $this->article->expects($this->once())
             ->method('find')
