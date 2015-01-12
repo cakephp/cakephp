@@ -454,7 +454,8 @@ abstract class IntegrationTestCase extends TestCase
         }
         $result = $this->_response->header();
         if ($url === null) {
-            return $this->assertNotEmpty($result['Location']);
+            $this->assertTrue(!empty($result['Location']), $message);
+            return;
         }
         if (empty($result['Location'])) {
             $this->fail('No location header set. ' . $message);
