@@ -42,6 +42,13 @@ class Plugin
     protected static $_loader;
 
     /**
+     * The config map of plugins and their paths.
+     *
+     * @var array
+     */
+    protected static $_config;
+
+    /**
      * Loads a plugin and optionally loads bootstrapping,
      * routing files or runs an initialization function.
      *
@@ -118,6 +125,9 @@ class Plugin
             }
             return;
         }
+        if (static::$_config === null) {
+            static::_loadConfigMap();
+        }
 
         $config += [
             'autoload' => false,
@@ -126,6 +136,10 @@ class Plugin
             'classBase' => 'src',
             'ignoreMissing' => false
         ];
+
+        if (!isset($config['path']) && isset(static::$_config[$plugin])) {
+            $config['path'] = static::$_config[$plugin];
+        }
 
         if (empty($config['path'])) {
             $paths = App::path('Plugin');
@@ -167,6 +181,24 @@ class Plugin
                 $config['path'] . 'tests' . DS
             );
         }
+    }
+
+    /**
+     * Loads the config mappings for plugins.
+     *
+     * The map data in CONFIG/plugins.php map data is used set default paths
+     * for where plugins are located.
+     *
+     * @return void
+     */
+    protected static function _loadConfigMap()
+    {
+        if (!file_exists(CONFIG . 'plugins.php')) {
+            static::$_config = [];
+            return;
+        }
+        $config = include CONFIG . 'plugins.php';
+        static::$_config = $config;
     }
 
     /**
