@@ -120,6 +120,19 @@ class PluginTest extends TestCase
     }
 
     /**
+     * Test load() with path configuration data
+     *
+     * @return void
+     */
+    public function testLoadSingleWithPathConfig()
+    {
+        Configure::write('plugins.TestPlugin', APP);
+        Plugin::load('TestPlugin');
+        $this->assertEquals(APP . 'src' . DS, Plugin::classPath('TestPlugin'));
+    }
+
+
+    /**
      * Tests loading multiple plugins at once
      *
      * @return void
