@@ -131,7 +131,6 @@ class PluginTest extends TestCase
         $this->assertEquals(APP . 'src' . DS, Plugin::classPath('TestPlugin'));
     }
 
-
     /**
      * Tests loading multiple plugins at once
      *

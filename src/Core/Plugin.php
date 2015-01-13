@@ -120,7 +120,7 @@ class Plugin
             return;
         }
 
-        if (!Configure::check('pluginPaths')) {
+        if (!Configure::check('plugins')) {
             try {
                 Configure::load('plugins');
             } catch (\Exception $e) {
