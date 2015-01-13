@@ -9,7 +9,7 @@ ouput dates, currencies and any numbers in the right format for the specified lo
 ## Usage
 
 Internally, the `I18n` class uses [Aura.Intl](https://github.com/auraphp/Aura.Intl).
-Getting familiar with it, will help you understand how to build and manipulate translation bundles
+Getting familiar with it will help you understand how to build and manipulate translation bundles,
 should you wish to create them manually instead of using the conventions this library uses.
 
 ### Setting the Current Locale
@@ -20,7 +20,7 @@ use Cake\I18n\I18n;
 I18n::locale('en_US');
 ```
 
-### Translating a message
+### Translating a Message
 
 ```php
 echo __(
@@ -32,7 +32,7 @@ echo __(
 Hi Charles, your balance on the Jan 13, 2014, 11:12 AM is $ 1,354.37
 ```
 
-### Creating your Own Translators
+### Creating Your Own Translators
 
 ```php
 use Cake\I18n\I18n;
@@ -64,7 +64,7 @@ $time = Time::now();
 echo $time; // shows '4/20/14, 10:10 PM' for the en-US locale
 ```
 
-### Formattng Numbers
+### Formatting Numbers
 
 ```php
 echo Number::format(100100100);
@@ -78,11 +78,11 @@ echo Number::currency(123456.7890, 'EUR');
 ## Documentation
 
 Please make sure you check the [official I18n
-documentation](http://book.cakephp.org/3.0/en/core-libraries/internationalization-and-localization.html)
+documentation](http://book.cakephp.org/3.0/en/core-libraries/internationalization-and-localization.html).
 
 The [documentation for the Time
 class](http://book.cakephp.org/3.0/en/core-libraries/time.html) contains
-instruction on how configure and output time strings for selected locales.
+instructions on how to configure and output time strings for selected locales.
 
 The [documentation for the Number
 class](http://book.cakephp.org/3.0/en/core-libraries/number.html) shows how to
