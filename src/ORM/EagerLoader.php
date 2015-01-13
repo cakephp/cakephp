@@ -228,6 +228,12 @@ class EagerLoader
                 $options = [];
             }
 
+            if ($options instanceof EagerLoadable) {
+                $options = $options->asContainArray();
+                $table = key($options);
+                $options = current($options);
+            }
+
             if (isset($this->_containOptions[$table])) {
                 $pointer[$table] = $options;
                 continue;
