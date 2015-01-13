@@ -746,7 +746,7 @@ class PaginatorHelper extends Helper
      *
      * @param StringTemplate $ellipsis
      * @param array $params Params from the numbers() method.
-     * @param integer $start Start number.
+     * @param int $start Start number.
      * @param array $options Options from the numbers() method.
      * @return string Markup output.
      */
@@ -767,7 +767,7 @@ class PaginatorHelper extends Helper
      *
      * @param StringTemplate $ellipsis
      * @param array $params Params from the numbers() method.
-     * @param integer $end End number.
+     * @param int $end End number.
      * @param array $options Options from the numbers() method.
      * @return string Markup output.
      */
