@@ -79,7 +79,6 @@ use ReflectionMethod;
  * @property      \Cake\Controller\Component\PaginatorComponent $Paginator
  * @property      \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
  * @property      \Cake\Controller\Component\SecurityComponent $Security
- * @property      \Cake\Controller\Component\SessionComponent $Session
  * @link          http://book.cakephp.org/3.0/en/controllers.html
  */
 class Controller implements EventListenerInterface
