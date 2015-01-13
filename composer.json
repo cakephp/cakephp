@@ -36,7 +36,8 @@
 		},
 		"files": [
 			"src/Core/functions.php",
-			"src/Collection/functions.php"
+			"src/Collection/functions.php",
+			"src/I18n/functions.php"
 		]
 	},
 	"autoload-dev": {
@@ -59,6 +60,7 @@
 		"cakephp/datasource": "self.version",
 		"cakephp/database": "self.version",
 		"cakephp/cache": "self.version",
-		"cakephp/log": "self.version"
+		"cakephp/log": "self.version",
+		"cakephp/i18n": "self.version"
 	}
 }

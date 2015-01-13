@@ -15,7 +15,7 @@
 namespace Cake\I18n;
 
 use Aura\Intl\TranslatorLocator;
-use Cake\Cache\Cache;
+use Cake\Cache\CacheEngine;
 
 /**
  * Constructs and stores instances of translators that can be
@@ -43,6 +43,26 @@ class TranslatorRegistry extends TranslatorLocator
     protected $_defaultFormatter = 'default';
 
     /**
+     * A CacheEngine object that is used to remember translator across
+     * requests.
+     *
+     * @var \Cake\Cache\CacheEngine
+     */
+    protected $_cacher;
+
+    /**
+     * Sets the CacheEngine instance used to remember translators across
+     * requests.
+     *
+     * @param \Cake\Cache\CacheEngine $cacher The cacher instance.
+     * @return void
+     */
+    public function setCacher(CacheEngine $cacher)
+    {
+        $this->_cacher = $cacher;
+    }
+
+    /**
      * Gets a translator from the registry by package for a locale.
      *
      * @param string $name The translator package to retrieve.
@@ -62,25 +82,43 @@ class TranslatorRegistry extends TranslatorLocator
             $locale = $this->getLocale();
         }
 
-        if (!isset($this->registry[$name][$locale])) {
-            $key = "translations.$name.$locale";
-            $translator = Cache::remember($key, function () use ($name, $locale) {
-                try {
-                    return parent::get($name, $locale);
-                } catch (\Aura\Intl\Exception $e) {
-                }
-
-                if (!isset($this->_loaders[$name])) {
-                    $this->registerLoader($name, $this->_partialLoader());
-                }
-
-                return $this->_getFromLoader($name, $locale);
-            }, '_cake_core_');
-
-            return $this->registry[$name][$locale] = $translator;
+        if (isset($this->registry[$name][$locale])) {
+            return $this->registry[$name][$locale];
         }
 
-        return $this->registry[$name][$locale];
+        if (!$this->_cacher) {
+            return $this->registry[$name][$locale] = $this->_getTranslator($name, $locale);
+        }
+
+        $key = "translations.$name.$locale";
+        $translator = $this->_cacher->read($key);
+        if (!$translator) {
+            $translator = $this->_getTranslator($name, $locale);
+            $this->_cacher->write($key, $translator);
+        }
+
+        return $this->registry[$name][$locale] = $translator;
+    }
+
+    /**
+     * Gets a translator from the registry by package for a locale.
+     *
+     * @param string $name The translator package to retrieve.
+     * @param string|null $locale The locale to use; if empty, uses the default
+     * locale.
+     * @return \Aura\Intl\TranslatorInterface A translator object.
+     */
+    protected function _getTranslator($name, $locale)
+    {
+        try {
+            return parent::get($name, $locale);
+        } catch (\Aura\Intl\Exception $e) {
+        }
+
+        if (!isset($this->_loaders[$name])) {
+            $this->registerLoader($name, $this->_partialLoader());
+        }
+        return $this->_getFromLoader($name, $locale);
     }
 
     /**
