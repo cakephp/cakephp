@@ -268,6 +268,26 @@ class InstanceConfigTraitTest extends TestCase
     }
 
     /**
+     * test shallow merge
+     *
+     * @return void
+     */
+    public function testConfigShallow()
+    {
+        $this->object->configShallow(['a' => ['new_nested' => true], 'new' => 'bar']);
+
+        $this->assertSame(
+            [
+                'some' => 'string',
+                'a' => ['new_nested' => true],
+                'new' => 'bar'
+            ],
+            $this->object->config(),
+            'When merging a scalar property will be overwritten with an array'
+        );
+    }
+
+    /**
      * testSetClobber
      *
      * @expectedException \Exception
