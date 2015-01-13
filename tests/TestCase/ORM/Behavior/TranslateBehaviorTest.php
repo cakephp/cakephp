@@ -77,6 +77,48 @@ class TranslateBehaviorTest extends TestCase
     }
 
     /**
+     * Tests that custom translation tables are respected
+     *
+     * @return void
+     */
+    public function testCustomTranslationTable()
+    {
+        $table = TableRegistry::get('Articles');
+
+        $table->addBehavior('Translate', [
+            'translationTable' => '\TestApp\Model\Table\I18nTable',
+            'fields' => ['title', 'body']
+        ]);
+
+        $items = $table->associations();
+        $i18n = $items->getByProperty('_i18n');
+
+        $this->assertEquals('TestApp-Model-Table-I18nTable', $i18n->name());
+        $this->assertEquals('custom_i18n_table', $i18n->target()->table());
+        $this->assertEquals('test_custom_i18n_datasource', $i18n->target()->connection()->configName());
+    }
+
+    /**
+     * Tests that the strategy can be changed for i18n
+     *
+     * @return void
+     */
+    public function testStrategy()
+    {
+        $table = TableRegistry::get('Articles');
+
+        $table->addBehavior('Translate', [
+            'strategy' => 'select',
+            'fields' => ['title', 'body']
+        ]);
+
+        $items = $table->associations();
+        $i18n = $items->getByProperty('_i18n');
+
+        $this->assertEquals('select', $i18n->strategy());
+    }
+
+    /**
      * Tests that fields from a translated model are overriden
      *
      * @return void

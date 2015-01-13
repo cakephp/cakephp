@@ -23,6 +23,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Inflector;
 
 /**
  * This behavior provides a way to translate dynamic data by keeping translations
@@ -65,10 +66,11 @@ class TranslateBehavior extends Behavior
         'implementedFinders' => ['translations' => 'findTranslations'],
         'implementedMethods' => ['locale' => 'locale'],
         'fields' => [],
-        'translationTable' => 'i18n',
+        'translationTable' => 'I18n',
         'defaultLocale' => '',
         'model' => '',
-        'onlyTranslated' => false
+        'onlyTranslated' => false,
+        'strategy' => 'subquery'
     ];
 
     /**
@@ -94,7 +96,8 @@ class TranslateBehavior extends Behavior
         $this->setupFieldAssociations(
             $this->_config['fields'],
             $this->_config['translationTable'],
-            $this->_config['model'] ? $this->_config['model'] : $this->_table->alias()
+            $this->_config['model'] ? $this->_config['model'] : $this->_table->alias(),
+            $this->_config['strategy']
         );
     }
 
@@ -108,18 +111,32 @@ class TranslateBehavior extends Behavior
      * @param array $fields list of fields to create associations for
      * @param string $table the table name to use for storing each field translation
      * @param string $model the model field value
+     * @param string $strategy the strategy used in the _i18n association
+     *
      * @return void
      */
-    public function setupFieldAssociations($fields, $table, $model)
+    public function setupFieldAssociations($fields, $table, $model, $strategy)
     {
+        $targetTable = TableRegistry::get($table);
+        $targetAlias = Inflector::slug($table);
+        $alias = $this->_table->alias();
         $filter = $this->_config['onlyTranslated'];
+
         foreach ($fields as $field) {
-            $name = $this->_table->alias() . '_' . $field . '_translation';
-            $target = TableRegistry::get($name);
-            $target->table($table);
+            $name = $alias . '_' . $field . '_translation';
+
+            if (!TableRegistry::exists($name)) {
+                $fieldTable = TableRegistry::get($name, [
+                    'className' => $table,
+                    'alias' => $name,
+                    'table' => $targetTable->table()
+                ]);
+            } else {
+                $fieldTable = TableRegistry::get($name);
+            }
 
             $this->_table->hasOne($name, [
-                'targetTable' => $target,
+                'targetTable' => $fieldTable,
                 'foreignKey' => 'foreign_key',
                 'joinType' => $filter ? 'INNER' : 'LEFT',
                 'conditions' => [
@@ -130,10 +147,11 @@ class TranslateBehavior extends Behavior
             ]);
         }
 
-        $this->_table->hasMany($table, [
+        $this->_table->hasMany($targetAlias, [
+            'className' => $table,
             'foreignKey' => 'foreign_key',
-            'strategy' => 'subquery',
-            'conditions' => ["$table.model" => $model],
+            'strategy' => $strategy,
+            'conditions' => ["$targetAlias.model" => $model],
             'propertyName' => '_i18n',
             'dependent' => true
         ]);
@@ -177,11 +195,14 @@ class TranslateBehavior extends Behavior
         $fields = $this->_config['fields'];
         $alias = $this->_table->alias();
         $select = $query->clause('select');
+
         $changeFilter = isset($options['filterByCurrentLocale']) &&
             $options['filterByCurrentLocale'] !== $this->_config['onlyTranslated'];
 
         foreach ($fields as $field) {
-            $contain[$alias . '_' . $field . '_translation']['queryBuilder'] = $conditions(
+            $name = $alias . '_' . $field . '_translation';
+
+            $contain[$name]['queryBuilder'] = $conditions(
             $field,
             $locale,
             $query,
@@ -190,7 +211,7 @@ class TranslateBehavior extends Behavior
 
             if ($changeFilter) {
                 $filter = $options['filterByCurrentLocale'] ? 'INNER' : 'LEFT';
-                $contain[$alias . '_' . $field . '_translation']['joinType'] = $filter;
+                $contain[$name]['joinType'] = $filter;
             }
         }
 
@@ -213,7 +234,8 @@ class TranslateBehavior extends Behavior
     {
         $locale = $entity->get('_locale') ?: $this->locale();
         $table = $this->_config['translationTable'];
-        $newOptions = [$table => ['validate' => false]];
+        $targetAlias = Inflector::slug($table);
+        $newOptions = [$targetAlias => ['validate' => false]];
         $options['associated'] = $newOptions + $options['associated'];
 
         $this->_bundleTranslatedFields($entity);
@@ -312,10 +334,12 @@ class TranslateBehavior extends Behavior
     {
         $locales = isset($options['locales']) ? $options['locales'] : [];
         $table = $this->_config['translationTable'];
+        $targetAlias = Inflector::slug($table);
+
         return $query
-            ->contain([$table => function ($q) use ($locales, $table) {
+            ->contain([$targetAlias => function ($q) use ($locales, $targetAlias) {
                 if ($locales) {
-                    $q->where(["$table.locale IN" => $locales]);
+                    $q->where(["$targetAlias.locale IN" => $locales]);
                 }
                 return $q;
             }])
@@ -458,7 +482,9 @@ class TranslateBehavior extends Behavior
      */
     protected function _findExistingTranslations($ruleSet)
     {
-        $association = $this->_table->association($this->_config['translationTable']);
+        $target = TableRegistry::get($this->_config['translationTable']);
+        $association = $this->_table->association($target->alias());
+
         $query = $association->find()
             ->select(['id', 'num' => 0])
             ->where(current($ruleSet))
