@@ -1965,8 +1965,7 @@ class TableTest extends TestCase
             'dependent' => true,
         ]);
 
-        $query = $table->find('all')->where(['id' => 1]);
-        $entity = $query->first();
+        $entity = $table->get(1);
         $result = $table->delete($entity);
 
         $articles = $table->association('articles')->target();
@@ -1976,6 +1975,25 @@ class TableTest extends TestCase
             ]
         ]);
         $this->assertNull($query->all()->first(), 'Should not find any rows.');
+    }
+
+    /**
+     * Test delete with dependent records
+     *
+     * @return void
+     */
+    public function testDeleteDependentHasMany()
+    {
+        $table = TableRegistry::get('authors');
+        $table->hasMany('articles', [
+            'foreignKey' => 'author_id',
+            'dependent' => true,
+            'cascadeCallbacks' => true,
+        ]);
+
+        $entity = $table->get(1);
+        $result = $table->delete($entity);
+        $this->assertTrue($result);
     }
 
     /**
