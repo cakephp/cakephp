@@ -14,13 +14,18 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
+use ArrayObject;
 use Cake\Core\Configure;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
+use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\I18n\Time;
+use Cake\ORM\Entity;
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -3355,5 +3360,112 @@ class TableTest extends TestCase
         ]);
         $data = ['username' => 'larry'];
         $this->assertNotEmpty($validator->errors($data, false));
+    }
+
+    /**
+     * Tests that the callbacks receive the expected types of arguments.
+     */
+    public function testCallbackArgumentTypes()
+    {
+        $table = TableRegistry::get('articles');
+        $table->belongsTo('authors');
+
+        $eventManager = $table->eventManager();
+
+        $associationBeforeFindCount = 0;
+        $table->association('authors')->target()->eventManager()->attach(
+            function (Event $event, Query $query, ArrayObject $options, $primary) use (&$associationBeforeFindCount) {
+                $this->assertTrue(is_bool($primary));
+                $associationBeforeFindCount ++;
+            },
+            'Model.beforeFind'
+        );
+
+        $beforeFindCount = 0;
+        $eventManager->attach(
+            function (Event $event, Query $query, ArrayObject $options, $primary) use (&$beforeFindCount) {
+                $this->assertTrue(is_bool($primary));
+                $beforeFindCount ++;
+            },
+            'Model.beforeFind'
+        );
+        $table->find()->contain('authors')->first();
+        $this->assertEquals(1, $associationBeforeFindCount);
+        $this->assertEquals(1, $beforeFindCount);
+
+        $buildValidatorCount = 0;
+        $eventManager->attach(
+            $callback = function (Event $event, Validator $validator, $name) use (&$buildValidatorCount) {
+                $this->assertTrue(is_string($name));
+                $buildValidatorCount ++;
+            },
+            'Model.buildValidator'
+        );
+        $table->validator();
+        $this->assertEquals(1, $buildValidatorCount);
+
+        $buildRulesCount =
+        $beforeRulesCount =
+        $afterRulesCount =
+        $beforeSaveCount =
+        $afterSaveCount = 0;
+        $eventManager->attach(
+            function (Event $event, RulesChecker $rules) use (&$buildRulesCount) {
+                $buildRulesCount ++;
+            },
+            'Model.buildRules'
+        );
+        $eventManager->attach(
+            function (Event $event, Entity $entity, ArrayObject $options, $operation) use (&$beforeRulesCount) {
+                $this->assertTrue(is_string($operation));
+                $beforeRulesCount ++;
+            },
+            'Model.beforeRules'
+        );
+        $eventManager->attach(
+            function (Event $event, Entity $entity, ArrayObject $options, $result, $operation) use (&$afterRulesCount) {
+                $this->assertTrue(is_bool($result));
+                $this->assertTrue(is_string($operation));
+                $afterRulesCount ++;
+            },
+            'Model.afterRules'
+        );
+        $eventManager->attach(
+            function (Event $event, Entity $entity, ArrayObject $options) use (&$beforeSaveCount) {
+                $beforeSaveCount ++;
+            },
+            'Model.beforeSave'
+        );
+        $eventManager->attach(
+            $afterSaveCallback = function (Event $event, Entity $entity, ArrayObject $options) use (&$afterSaveCount) {
+                $afterSaveCount ++;
+            },
+            'Model.afterSave'
+        );
+        $entity = new Entity(['title' => 'Title']);
+        $this->assertNotFalse($table->save($entity));
+        $this->assertEquals(1, $buildRulesCount);
+        $this->assertEquals(1, $beforeRulesCount);
+        $this->assertEquals(1, $afterRulesCount);
+        $this->assertEquals(1, $beforeSaveCount);
+        $this->assertEquals(1, $afterSaveCount);
+
+        $beforeDeleteCount =
+        $afterDeleteCount = 0;
+        $eventManager->attach(
+            function (Event $event, Entity $entity, ArrayObject $options) use (&$beforeDeleteCount) {
+                $beforeDeleteCount ++;
+            },
+            'Model.beforeDelete'
+        );
+        $eventManager->attach(
+            function (Event $event, Entity $entity, ArrayObject $options) use (&$afterDeleteCount) {
+                $afterDeleteCount ++;
+            },
+            'Model.afterDelete'
+        );
+        $this->assertTrue($table->delete($entity, ['checkRules' => false]));
+        $this->assertEquals(1, $beforeDeleteCount);
+        $this->assertEquals(1, $afterDeleteCount);
     }
 }

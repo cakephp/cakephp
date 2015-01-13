@@ -284,7 +284,7 @@ class HasOneTest extends TestCase
             ->with(
                 $this->isInstanceOf('\Cake\Event\Event'),
                 $this->isInstanceOf('\Cake\ORM\Query'),
-                [],
+                $this->isInstanceOf('\ArrayObject'),
                 false
             );
         $association->attachTo($query);
@@ -307,7 +307,7 @@ class HasOneTest extends TestCase
         $listener = $this->getMock('stdClass', ['__invoke']);
         $this->profile->eventManager()->attach($listener, 'Model.beforeFind');
         $association = new HasOne('Profiles', $config);
-        $opts = ['something' => 'more'];
+        $opts = new \ArrayObject(['something' => 'more']);
         $listener->expects($this->once())->method('__invoke')
             ->with(
                 $this->isInstanceOf('\Cake\Event\Event'),
