@@ -231,6 +231,15 @@ class App {
 					$path[] = sprintf($f, $pluginPath);
 				}
 			}
+
+			if (isset(self::$_packages[$type])) {
+				foreach (self::$_packages[$type] as $p) {
+					if (strstr($p, $pluginPath) !== false) {
+						$path[] = $p;
+					}
+				}
+			}
+
 			return $path;
 		}
 
