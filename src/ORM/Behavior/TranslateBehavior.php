@@ -482,8 +482,8 @@ class TranslateBehavior extends Behavior
      */
     protected function _findExistingTranslations($ruleSet)
     {
-        $target = TableRegistry::get($this->_config['translationTable']);
-        $association = $this->_table->association($target->alias());
+        $targetAlias = Inflector::slug($this->_config['translationTable']);
+        $association = $this->_table->association($targetAlias);
 
         $query = $association->find()
             ->select(['id', 'num' => 0])
