@@ -3338,4 +3338,25 @@ class TableTest extends TestCase
         $data = ['username' => 'larry'];
         $this->assertNotEmpty($validator->errors($data, false));
     }
+
+    /**
+     * Tests the validateUnique method with scope
+     *
+     * @return void
+     */
+    public function testValidateUniqueScope()
+    {
+        $table = TableRegistry::get('Users');
+        $validator = new Validator;
+        $validator->add('username', 'unique', [
+            'rule' => ['validateUnique', ['scope' => 'id']],
+            'provider' => 'table'
+        ]);
+        $validator->provider('table', $table);
+        $data = ['username' => 'larry'];
+        $this->assertNotEmpty($validator->errors($data));
+
+        $data = ['username' => 'jose'];
+        $this->assertEmpty($validator->errors($data));
+    }
 }
