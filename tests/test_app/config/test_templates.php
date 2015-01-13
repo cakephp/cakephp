@@ -2,6 +2,6 @@
 /**
  * Template strings for testing.
  */
-$config = [
+return [
     'link' => '<a href="{{url}}">{{text}}</a>',
 ];

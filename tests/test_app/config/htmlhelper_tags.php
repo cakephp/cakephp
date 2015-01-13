@@ -1,6 +1,5 @@
 <?php
-
-$config = [
+return [
     'formStart' => 'start form',
     'formEnd' => 'finish form',
     'hiddenBlock' => '<div class="hidden">{{content}}</div>',

@@ -1,5 +1,5 @@
 <?php
-$config = [
+return [
     'Read' => 'value2',
     'Deep' => [
         'Second' => [
