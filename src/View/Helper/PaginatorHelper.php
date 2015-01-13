@@ -702,7 +702,7 @@ class PaginatorHelper extends Helper
 
         extract($this->_getNumbersStartAndEnd($params, $options));
 
-        $out .= $this->_firstNumber($ellipsis, $params, $end, $options);
+        $out .= $this->_firstNumber($ellipsis, $params, $start, $options);
 
         $out .= $options['before'];
 
@@ -913,6 +913,7 @@ class PaginatorHelper extends Helper
         }
         return $out;
     }
+
     /**
      * Returns the meta-links for a paginated result set.
      *
