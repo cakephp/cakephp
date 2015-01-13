@@ -1961,11 +1961,15 @@ class Table implements RepositoryInterface, EventListenerInterface
      * the data to be validated.
      *
      * @param mixed $value The value of column to be checked for uniqueness
-     * @param array $options The options array, optionally containing the 'scope' key
+     * @param array $context Either the options or validation context.
+     * @param array|null $options The options array, optionally containing the 'scope' key
      * @return bool true if the value is unique
      */
-    public function validateUnique($value, array $options)
+    public function validateUnique($value, array $context, array $options = null)
     {
+        if ($options === null) {
+            $options = $context;
+        }
         $entity = new Entity(
             $options['data'],
             ['useSetters' => false, 'markNew' => $options['newRecord']]
