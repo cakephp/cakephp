@@ -119,8 +119,12 @@ class Plugin
             }
             return;
         }
+
         if (!Configure::check('pluginPaths')) {
-            Configure::load('plugins');
+            try {
+                Configure::load('plugins');
+            } catch (\Exception $e) {
+            }
         }
 
         $config += [
