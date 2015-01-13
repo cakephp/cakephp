@@ -123,7 +123,7 @@ class DateTimeType extends \Cake\Database\Type
         $format = '';
         if (
             isset($value['year'], $value['month'], $value['day']) &&
-            (is_numeric($value['year']) & is_numeric($value['month']) && is_numeric($value['day']))
+            (is_numeric($value['year']) && is_numeric($value['month']) && is_numeric($value['day']))
         ) {
             $format .= sprintf('%d-%02d-%02d', $value['year'], $value['month'], $value['day']);
         }
@@ -131,7 +131,13 @@ class DateTimeType extends \Cake\Database\Type
         if (isset($value['meridian'])) {
             $value['hour'] = strtolower($value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
         }
-        $format .= sprintf('%02d:%02d:%02d', $value['hour'], $value['minute'], $value['second']);
+        $format .= sprintf(
+            '%s%02d:%02d:%02d',
+            empty($format) ? '' : ' ',
+            $value['hour'],
+            $value['minute'],
+            $value['second']
+        );
 
         return new $class($format);
     }
