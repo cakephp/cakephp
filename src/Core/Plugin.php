@@ -15,6 +15,7 @@
 namespace Cake\Core;
 
 use Cake\Core\ClassLoader;
+use Cake\Core\Configure;
 use DirectoryIterator;
 
 /**
@@ -40,13 +41,6 @@ class Plugin
      * @var \Cake\Core\ClassLoader
      */
     protected static $_loader;
-
-    /**
-     * The config map of plugins and their paths.
-     *
-     * @var array
-     */
-    protected static $_config;
 
     /**
      * Loads a plugin and optionally loads bootstrapping,
@@ -125,8 +119,8 @@ class Plugin
             }
             return;
         }
-        if (static::$_config === null) {
-            static::_loadConfigMap();
+        if (!Configure::check('pluginPaths')) {
+            Configure::load('plugins');
         }
 
         $config += [
@@ -137,8 +131,8 @@ class Plugin
             'ignoreMissing' => false
         ];
 
-        if (!isset($config['path']) && isset(static::$_config[$plugin])) {
-            $config['path'] = static::$_config[$plugin];
+        if (!isset($config['path'])) {
+            $config['path'] = Configure::read('plugins.' . $plugin);
         }
 
         if (empty($config['path'])) {
@@ -146,7 +140,7 @@ class Plugin
             foreach ($paths as $path) {
                 $pluginPath = str_replace('/', DS, $plugin);
                 if (is_dir($path . $pluginPath)) {
-                    $config += ['path' => $path . $pluginPath . DS];
+                    $config['path'] = $path . $pluginPath . DS;
                     break;
                 }
             }
@@ -181,24 +175,6 @@ class Plugin
                 $config['path'] . 'tests' . DS
             );
         }
-    }
-
-    /**
-     * Loads the config mappings for plugins.
-     *
-     * The map data in CONFIG/plugins.php map data is used set default paths
-     * for where plugins are located.
-     *
-     * @return void
-     */
-    protected static function _loadConfigMap()
-    {
-        if (!file_exists(CONFIG . 'plugins.php')) {
-            static::$_config = [];
-            return;
-        }
-        $config = include CONFIG . 'plugins.php';
-        static::$_config = $config;
     }
 
     /**
