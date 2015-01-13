@@ -178,6 +178,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->_response = new Response();
         $this->_response->header('Location', 'http://localhost/tasks/index');
 
+        $this->assertRedirect();
         $this->assertRedirect('/tasks/index');
         $this->assertRedirect(['controller' => 'Tasks', 'action' => 'index']);
     }
