@@ -17,6 +17,7 @@ namespace Cake\ORM;
 use Cake\Database\Statement\BufferedStatement;
 use Cake\Database\Statement\CallbackStatement;
 use Cake\ORM\Association;
+use Cake\ORM\EagerLoadable;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Closure;
@@ -113,6 +114,7 @@ class EagerLoader
      * - matching: Whether to inform the association class that it should filter the
      *  main query by the results fetched by that class.
      * - joinType: For joinable associations, the SQL join type to use.
+     * - strategy: The loading strategy to use (join, select, subquery)
      *
      * @param array|string $associations list of table aliases to be queried.
      * When this method is called multiple times it will merge previous list with
@@ -175,6 +177,10 @@ class EagerLoader
      * Returns the fully normalized array of associations that should be eagerly
      * loaded for a table. The normalized array will restructure the original array
      * by sorting all associations under one key and special options under another.
+     *
+     * Each of the levels of the associations tree will converted to a Cake\ORM\EagerLoadable
+     * object, that contains all the information required for the association objects
+     * to load the information from the database.
      *
      * Additionally it will set an 'instance' key per association containing the
      * association instance from the corresponding source table
@@ -297,10 +303,7 @@ class EagerLoader
     /**
      * Returns an array with the associations that can be fetched using a single query,
      * the array keys are the association aliases and the values will contain an array
-     * with the following keys:
-     *
-     * - instance: the association object instance
-     * - config: the options set for fetching such association
+     * with Cake\ORM\EagerLoadable objects.
      *
      * @param \Cake\ORM\Table $repository The table containing the associations to be
      * attached
@@ -316,10 +319,7 @@ class EagerLoader
 
     /**
      * Returns an array with the associations that need to be fetched using a
-     * separate query, each array value will contain the following keys:
-     *
-     * - instance: the association object instance
-     * - config: the options set for fetching such association
+     * separate query, each array value will contain a Cake\ORM\EagerLoadable object.
      *
      * @param \Cake\ORM\Table $repository The table containing the associations
      * to be loaded
@@ -452,27 +452,24 @@ class EagerLoader
     protected function _resolveJoins($associations, $matching = [])
     {
         $result = [];
-        foreach ($matching as $table => $options) {
-            $result[$table] = $options;
-            $result += $this->_resolveJoins($options->associations(), []);
+        foreach ($matching as $table => $loadable) {
+            $result[$table] = $loadable;
+            $result += $this->_resolveJoins($loadable->associations(), []);
         }
-        foreach ($associations as $table => $options) {
+        foreach ($associations as $table => $loadable) {
             $inMatching = isset($matching[$table]);
-            if (!$inMatching && $options->canBeJoined()) {
-                $result[$table] = $options;
-                $result += $this->_resolveJoins(
-                    $options->associations(),
-                    $inMatching ? $mathching[$table] : []
-                );
+            if (!$inMatching && $loadable->canBeJoined()) {
+                $result[$table] = $loadable;
+                $result += $this->_resolveJoins($loadable->associations(), []);
                 continue;
             }
 
             if ($inMatching) {
-                $this->_correctStrategy($options, $table);
+                $this->_correctStrategy($loadable, $table);
             }
 
-            $options->canBeJoined(false);
-            $this->_loadExternal[] = $options;
+            $loadable->canBeJoined(false);
+            $this->_loadExternal[] = $loadable;
         }
         return $result;
     }
