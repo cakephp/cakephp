@@ -465,10 +465,15 @@ class EagerLoader
                     $options->associations(),
                     $inMatching ? $mathching[$table] : []
                 );
-            } else {
-                $options->canBeJoined(false);
-                $this->_loadExternal[] = $options;
+                continue;
             }
+
+            if ($inMatching) {
+                $this->_correctStrategy($options, $table);
+            }
+
+            $options->canBeJoined(false);
+            $this->_loadExternal[] = $options;
         }
         return $result;
     }
