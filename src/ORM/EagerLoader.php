@@ -428,7 +428,7 @@ class EagerLoader
      */
     protected function _correctStrategy($loadable, $alias)
     {
-		$config = $loadable->config();
+        $config = $loadable->config();
         $currentStrategy = isset($config['strategy']) ?
             $config['strategy'] :
             'join';
@@ -437,7 +437,8 @@ class EagerLoader
             return;
         }
 
-        $config = $config['strategy'] = Association::STRATEGY_SELECT;
+        $config['strategy'] = Association::STRATEGY_SELECT;
+        $loadable->config($config);
         $loadable->canBeJoined(false);
     }
 
