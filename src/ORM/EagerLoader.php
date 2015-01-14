@@ -383,10 +383,10 @@ class EagerLoader
         }
 
         foreach ($extra as $t => $assoc) {
-               $eagerLoadable->addAssociation(
-                    $t,
-                    $this->_normalizeContain($table, $t, $assoc, $paths)
-               );
+            $eagerLoadable->addAssociation(
+                $t,
+                $this->_normalizeContain($table, $t, $assoc, $paths)
+            );
         }
 
         return $eagerLoadable;
