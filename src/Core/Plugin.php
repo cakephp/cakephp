@@ -176,6 +176,11 @@ class Plugin
         }
     }
 
+    /**
+     * Load the plugin path configuration file.
+     *
+     * @return void
+     */
     protected static function _loadConfig()
     {
         if (Configure::check('plugins')) {
