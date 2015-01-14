@@ -118,7 +118,7 @@ class TranslateBehavior extends Behavior
     public function setupFieldAssociations($fields, $table, $model, $strategy)
     {
         $targetTable = TableRegistry::get($table);
-        $targetAlias = Inflector::slug($table);
+        $targetAlias = Inflector::slug($table, '_');
         $alias = $this->_table->alias();
         $filter = $this->_config['onlyTranslated'];
 
@@ -234,7 +234,7 @@ class TranslateBehavior extends Behavior
     {
         $locale = $entity->get('_locale') ?: $this->locale();
         $table = $this->_config['translationTable'];
-        $targetAlias = Inflector::slug($table);
+        $targetAlias = Inflector::slug($table, '_');
         $newOptions = [$targetAlias => ['validate' => false]];
         $options['associated'] = $newOptions + $options['associated'];
 
@@ -334,7 +334,7 @@ class TranslateBehavior extends Behavior
     {
         $locales = isset($options['locales']) ? $options['locales'] : [];
         $table = $this->_config['translationTable'];
-        $targetAlias = Inflector::slug($table);
+        $targetAlias = Inflector::slug($table, '_');
 
         return $query
             ->contain([$targetAlias => function ($q) use ($locales, $targetAlias) {
@@ -482,7 +482,7 @@ class TranslateBehavior extends Behavior
      */
     protected function _findExistingTranslations($ruleSet)
     {
-        $targetAlias = Inflector::slug($this->_config['translationTable']);
+        $targetAlias = Inflector::slug($this->_config['translationTable'], '_');
         $association = $this->_table->association($targetAlias);
 
         $query = $association->find()
