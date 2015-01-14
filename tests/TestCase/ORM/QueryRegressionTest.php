@@ -658,7 +658,7 @@ class QueryRegressionTest extends TestCase
 
         $result = $comments
             ->find()
-            ->matching('Articles.Tags', function($q) {
+            ->matching('Articles.Tags', function ($q) {
                 return $q->where(['Tags.id' => 2]);
             })
             ->contain('Articles')
