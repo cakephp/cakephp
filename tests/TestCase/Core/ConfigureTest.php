@@ -507,7 +507,7 @@ class ConfigureTest extends TestCase
         $this->assertTrue($result > 0);
         $result = file_get_contents(TMP . 'config_test.php');
         $this->assertContains('<?php', $result);
-        $this->assertContains('$config = ', $result);
+        $this->assertContains('return ', $result);
         if (file_exists(TMP . 'config_test.php')) {
             unlink(TMP . 'config_test.php');
         }
@@ -527,7 +527,7 @@ class ConfigureTest extends TestCase
         $this->assertTrue($result > 0);
         $result = file_get_contents(TMP . 'config_test.php');
         $this->assertContains('<?php', $result);
-        $this->assertContains('$config = ', $result);
+        $this->assertContains('return ', $result);
         $this->assertContains('Error', $result);
         $this->assertNotContains('debug', $result);
 
