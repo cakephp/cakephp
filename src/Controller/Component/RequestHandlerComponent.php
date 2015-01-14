@@ -290,7 +290,7 @@ class RequestHandlerComponent extends Component
             return;
         }
         if (is_array($url)) {
-            $url = Router::url($url + ['base' => false]);
+            $url = Router::url($url + ['_base' => false]);
         }
         $controller = $event->subject();
         $response->body($controller->requestAction($url, [
