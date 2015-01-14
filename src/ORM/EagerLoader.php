@@ -203,7 +203,6 @@ class EagerLoader
             );
         }
 
-        $this->_fixStrategies();
         return $this->_normalized = $contain;
     }
 
@@ -311,6 +310,7 @@ class EagerLoader
     {
         $contain = $this->normalized($repository);
         $matching = $this->_matching ? $this->_matching->normalized($repository) : [];
+        $this->_fixStrategies();
         return $this->_resolveJoins($contain, $matching);
     }
 
@@ -331,8 +331,7 @@ class EagerLoader
             return $this->_loadExternal;
         }
 
-        $contain = $this->normalized($repository);
-        $this->_resolveJoins($contain, []);
+        $this->attachableAssociations($repository);
         return $this->_loadExternal;
     }
 
