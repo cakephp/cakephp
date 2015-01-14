@@ -404,27 +404,27 @@ class EagerLoaderTest extends TestCase
         $loader = new EagerLoader;
         $loader->contain($contains);
         $normalized = $loader->normalized($this->table);
-        $this->assertEquals('clients', $normalized['clients']['aliasPath']);
-        $this->assertEquals('client', $normalized['clients']['propertyPath']);
+        $this->assertEquals('clients', $normalized['clients']->aliasPath());
+        $this->assertEquals('client', $normalized['clients']->propertyPath());
 
-        $assocs = $normalized['clients']['associations'];
-        $this->assertEquals('clients.orders', $assocs['orders']['aliasPath']);
-        $this->assertEquals('client.order', $assocs['orders']['propertyPath']);
+        $assocs = $normalized['clients']->associations();
+        $this->assertEquals('clients.orders', $assocs['orders']->aliasPath());
+        $this->assertEquals('client.order', $assocs['orders']->propertyPath());
 
-        $assocs = $assocs['orders']['associations'];
-        $this->assertEquals('clients.orders.orderTypes', $assocs['orderTypes']['aliasPath']);
-        $this->assertEquals('client.order.order_type', $assocs['orderTypes']['propertyPath']);
-        $this->assertEquals('clients.orders.stuff', $assocs['stuff']['aliasPath']);
-        $this->assertEquals('client.order.stuff', $assocs['stuff']['propertyPath']);
+        $assocs = $assocs['orders']->associations();
+        $this->assertEquals('clients.orders.orderTypes', $assocs['orderTypes']->aliasPath());
+        $this->assertEquals('client.order.order_type', $assocs['orderTypes']->propertyPath());
+        $this->assertEquals('clients.orders.stuff', $assocs['stuff']->aliasPath());
+        $this->assertEquals('client.order.stuff', $assocs['stuff']->propertyPath());
 
-        $assocs = $assocs['stuff']['associations'];
+        $assocs = $assocs['stuff']->associations();
         $this->assertEquals(
             'clients.orders.stuff.stuffTypes',
-            $assocs['stuffTypes']['aliasPath']
+            $assocs['stuffTypes']->aliasPath()
         );
         $this->assertEquals(
             'client.order.stuff.stuff_type',
-            $assocs['stuffTypes']['propertyPath']
+            $assocs['stuffTypes']->propertyPath()
         );
     }
 
