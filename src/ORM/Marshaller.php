@@ -104,20 +104,17 @@ class Marshaller
         $propertyMap = $this->_buildPropertyMap($options);
 
         $schema = $this->_table->schema();
-        $tableName = $this->_table->alias();
         $entityClass = $this->_table->entityClass();
         $entity = new $entityClass();
         $entity->source($this->_table->alias());
-
-        if (isset($data[$tableName])) {
-            $data = $data[$tableName];
-        }
 
         if (isset($options['accessibleFields'])) {
             foreach ((array)$options['accessibleFields'] as $key => $value) {
                 $entity->accessible($key, $value);
             }
         }
+
+        $data = $this->_prepareData($data, $options);
 
         $errors = $this->_validate($data, $options, true);
         $primaryKey = $schema->primaryKey();
@@ -183,6 +180,27 @@ class Marshaller
         }
 
         return $options['validate']->errors($data, $isNew);
+    }
+
+    /**
+     * Returns data prepared to validate and marshall.
+     *
+     * @param array $data The data to prepare.
+     * @param array $options The options passed to this marshaller.
+     * @return array Prepared data.
+     */
+    protected function _prepareData($data, $options)
+    {
+        $tableName = $this->_table->alias();
+
+        if (isset($data[$tableName])) {
+            $data = $data[$tableName];
+        }
+
+        $dataObject = new \ArrayObject($data);
+        $this->_table->dispatchEvent('Model.beforeMarshal', compact('dataObject', 'options'));
+
+        return (array)$dataObject;
     }
 
     /**
@@ -326,17 +344,14 @@ class Marshaller
     {
         $options += ['validate' => true];
         $propertyMap = $this->_buildPropertyMap($options);
-        $tableName = $this->_table->alias();
         $isNew = $entity->isNew();
         $keys = [];
-
-        if (isset($data[$tableName])) {
-            $data = $data[$tableName];
-        }
 
         if (!$isNew) {
             $keys = $entity->extract((array)$this->_table->primaryKey());
         }
+
+        $data = $this->_prepareData($data, $options);
 
         $errors = $this->_validate($data + $keys, $options, $isNew);
         $schema = $this->_table->schema();

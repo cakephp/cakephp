@@ -1745,4 +1745,27 @@ class MarshallerTest extends TestCase
         $this->assertNotEmpty($result->errors('author_id'));
         $this->assertNotEmpty($result->errors('thing'));
     }
+
+    /**
+     * Test Model.beforeMarshal event.
+     *
+     * @return void
+     */
+    public function testBeforeMarshalEvent()
+    {
+        $data = [
+            'title' => 'My title',
+            'body' => 'My content'
+        ];
+
+        $marshall = new Marshaller($this->articles);
+
+        $this->articles->eventManager()->attach(function ($e, $data) {
+            $data['title'] = 'Modified title';
+        }, 'Model.beforeMarshal');
+
+        $entity = $marshall->one($data);
+
+        $this->assertEquals('Modified title', $entity->title);
+    }
 }
