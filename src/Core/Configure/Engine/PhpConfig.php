@@ -90,7 +90,7 @@ class PhpConfig implements ConfigEngineInterface
      */
     public function dump($key, array $data)
     {
-        $contents = '<?php' . "\n" . '$config = ' . var_export($data, true) . ';';
+        $contents = '<?php' . "\n" . 'return ' . var_export($data, true) . ';';
 
         $filename = $this->_getFilePath($key);
         return file_put_contents($filename, $contents);

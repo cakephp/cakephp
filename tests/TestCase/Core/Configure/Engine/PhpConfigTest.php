@@ -145,7 +145,7 @@ class PhpConfigTest extends TestCase
         $this->assertTrue($result > 0);
         $expected = <<<PHP
 <?php
-\$config = array (
+return array (
   'One' => 
   array (
     'two' => 'value',
