@@ -1,4 +1,4 @@
 <?php
-$config = [
+return [
     'italic' => '<em>{{text}}</em>',
 ];

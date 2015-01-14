@@ -2,6 +2,6 @@
 /**
  * Widgets list for testing.
  */
-$config = [
+return [
     'text' => ['Cake\View\Widget\LabelWidget'],
 ];
