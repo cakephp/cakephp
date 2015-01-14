@@ -120,12 +120,7 @@ class Plugin
             return;
         }
 
-        if (!Configure::check('plugins')) {
-            try {
-                Configure::load('plugins');
-            } catch (\Exception $e) {
-            }
-        }
+        static::_loadConfig();
 
         $config += [
             'autoload' => false,
@@ -181,6 +176,17 @@ class Plugin
         }
     }
 
+    protected static function _loadConfig()
+    {
+        if (Configure::check('plugins')) {
+            return;
+        }
+        try {
+            Configure::load('plugins');
+        } catch (\Exception $e) {
+        }
+    }
+
     /**
      * Will load all the plugins located in the default plugin folder.
      *
@@ -204,6 +210,7 @@ class Plugin
      */
     public static function loadAll(array $options = [])
     {
+        static::_loadConfig();
         $plugins = [];
         foreach (App::path('Plugin') as $path) {
             if (!is_dir($path)) {
@@ -215,6 +222,10 @@ class Plugin
                     $plugins[] = $path->getBaseName();
                 }
             }
+        }
+        if (Configure::check('plugins')) {
+            $plugins = array_merge($plugins, array_keys(Configure::read('plugins')));
+            $plugins = array_unique($plugins);
         }
 
         foreach ($plugins as $p) {

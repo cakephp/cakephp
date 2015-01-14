@@ -283,6 +283,18 @@ class PluginTest extends TestCase
     }
 
     /**
+     * Test loadAll() with path configuration data
+     *
+     * @return void
+     */
+    public function testLoadAllWithPathConfig()
+    {
+        Configure::write('plugins.FakePlugin', APP);
+        Plugin::loadAll();
+        $this->assertContains('FakePlugin', Plugin::loaded());
+    }
+
+    /**
      * Test that plugins don't reload using loadAll();
      *
      * @return void
