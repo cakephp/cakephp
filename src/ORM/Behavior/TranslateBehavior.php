@@ -56,6 +56,7 @@ class TranslateBehavior extends Behavior
 
     /**
      * Instance of Table responsible for translating
+     * 
      * @var \Cake\ORM\Table
      */
     protected $_translationTable;
