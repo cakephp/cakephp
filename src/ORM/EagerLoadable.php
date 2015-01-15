@@ -19,6 +19,8 @@ namespace Cake\ORM;
  * for a specific query. This contains all the information required to
  * fetch the results from the database from an associations and all its children
  * levels.
+ *
+ * @internal
  */
 class EagerLoadable
 {
@@ -69,14 +71,14 @@ class EagerLoadable
     protected $_propertyPath;
 
     /**
-     * Weather or not this level can be fetched using a join.
+     * Whether or not this level can be fetched using a join.
      *
      * @var bool
      */
     protected $_canBeJoined = false;
 
     /**
-     * Weather or not this level was meant for a "matching" fetch
+     * Whether or not this level was meant for a "matching" fetch
      * operation
      *
      * @var bool
@@ -154,7 +156,7 @@ class EagerLoadable
     }
 
     /**
-     * Sets a dotted separated string representing the path of associations
+     * Sets a dot separated string representing the path of associations
      * that should be followed to fetch this level.
      *
      * If called with no arguments it returns the current
@@ -172,11 +174,10 @@ class EagerLoadable
     }
 
     /**
-     * Sets a dotted separated string representing the path of entity properties
+     * Sets a dot separated string representing the path of entity properties
      * in which results for this level should be placed.
      *
-     * If called with no arguments it returns the current
-     * value.
+     * If called with no arguments it returns the current value.
      *
      * @param string|null $path The value to set.
      * @return string|null
@@ -190,10 +191,9 @@ class EagerLoadable
     }
 
     /**
-     * Sets weather or not this level can be fetched using a join.
+     * Sets whether or not this level can be fetched using a join.
      *
-     * If called with no arguments it returns the current
-     * value.
+     * If called with no arguments it returns the current value.
      *
      * @param bool|null $possible The value to set.
      * @return bool|null
@@ -225,7 +225,7 @@ class EagerLoadable
     }
 
     /**
-     * Sets weather or not this level was meant for a
+     * Sets whether or not this level was meant for a
      * "matching" fetch operation.
      *
      * If called with no arguments it returns the current
