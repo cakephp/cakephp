@@ -161,7 +161,6 @@ class TranslateBehavior extends Behavior
             'propertyName' => '_i18n',
             'dependent' => true
         ]);
-
     }
 
     /**
