@@ -125,6 +125,8 @@ class ErrorHandler {
 				$e->getMessage(),
 				$e->getTraceAsString()
 			);
+
+			Configure::write('Exception.bail', true);
 			trigger_error($message, E_USER_ERROR);
 		}
 	}
@@ -249,10 +251,17 @@ class ErrorHandler {
 		}
 
 		if (Configure::read('debug')) {
-			call_user_func($exceptionHandler, new FatalErrorException($description, 500, $file, $line));
+			$exception = new FatalErrorException($description, 500, $file, $line);
 		} else {
-			call_user_func($exceptionHandler, new InternalErrorException());
+			$exception = new InternalErrorException();
 		}
+
+		if (Configure::read('Exception.bail')) {
+			throw $exception;
+		}
+
+		call_user_func($exceptionHandler, $exception);
+
 		return false;
 	}
 

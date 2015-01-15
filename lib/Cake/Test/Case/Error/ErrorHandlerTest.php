@@ -21,6 +21,16 @@ App::uses('Controller', 'Controller');
 App::uses('Router', 'Routing');
 
 /**
+ * A faulty ExceptionRenderer to test nesting.
+ */
+class FaultyExceptionRenderer extends ExceptionRenderer {
+
+	public function render() {
+		throw new Exception('Error from renderer.');
+	}
+}
+
+/**
  * ErrorHandlerTest class
  *
  * @package       Cake.Test.Case.Error
@@ -318,6 +328,30 @@ class ErrorHandlerTest extends CakeTestCase {
 		$log = file(LOGS . 'error.log');
 		$this->assertContains(__FILE__, $log[0], 'missing filename');
 		$this->assertContains('[FatalErrorException] Something wrong', $log[1], 'message missing.');
+	}
+
+/**
+ * testExceptionRendererNestingDebug method
+ *
+ * @expectedException FatalErrorException
+ * @return void
+ */
+	public function testExceptionRendererNestingDebug() {
+		Configure::write('debug', 2);
+		Configure::write('Exception.renderer', 'FaultyExceptionRenderer');
+		ErrorHandler::handleFatalError(E_USER_ERROR, 'Initial error', __FILE__ ,__LINE__);
+	}
+
+/**
+ * testExceptionRendererNestingProduction method
+ *
+ * @expectedException InternalErrorException
+ * @return void
+ */
+	public function testExceptionRendererNestingProduction() {
+		Configure::write('debug', 0);
+		Configure::write('Exception.renderer', 'FaultyExceptionRenderer');
+		ErrorHandler::handleFatalError(E_USER_ERROR, 'Initial error', __FILE__ ,__LINE__);
 	}
 
 }
