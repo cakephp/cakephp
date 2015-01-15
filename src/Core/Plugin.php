@@ -15,6 +15,7 @@
 namespace Cake\Core;
 
 use Cake\Core\ClassLoader;
+use Cake\Core\Configure;
 use DirectoryIterator;
 
 /**
@@ -119,6 +120,8 @@ class Plugin
             return;
         }
 
+        static::_loadConfig();
+
         $config += [
             'autoload' => false,
             'bootstrap' => false,
@@ -127,12 +130,16 @@ class Plugin
             'ignoreMissing' => false
         ];
 
+        if (!isset($config['path'])) {
+            $config['path'] = Configure::read('plugins.' . $plugin);
+        }
+
         if (empty($config['path'])) {
             $paths = App::path('Plugin');
             foreach ($paths as $path) {
                 $pluginPath = str_replace('/', DS, $plugin);
                 if (is_dir($path . $pluginPath)) {
-                    $config += ['path' => $path . $pluginPath . DS];
+                    $config['path'] = $path . $pluginPath . DS;
                     break;
                 }
             }
@@ -170,6 +177,22 @@ class Plugin
     }
 
     /**
+     * Load the plugin path configuration file.
+     *
+     * @return void
+     */
+    protected static function _loadConfig()
+    {
+        if (Configure::check('plugins')) {
+            return;
+        }
+        try {
+            Configure::load('plugins');
+        } catch (\Exception $e) {
+        }
+    }
+
+    /**
      * Will load all the plugins located in the default plugin folder.
      *
      * If passed an options array, it will be used as a common default for all plugins to be loaded
@@ -192,6 +215,7 @@ class Plugin
      */
     public static function loadAll(array $options = [])
     {
+        static::_loadConfig();
         $plugins = [];
         foreach (App::path('Plugin') as $path) {
             if (!is_dir($path)) {
@@ -203,6 +227,10 @@ class Plugin
                     $plugins[] = $path->getBaseName();
                 }
             }
+        }
+        if (Configure::check('plugins')) {
+            $plugins = array_merge($plugins, array_keys(Configure::read('plugins')));
+            $plugins = array_unique($plugins);
         }
 
         foreach ($plugins as $p) {

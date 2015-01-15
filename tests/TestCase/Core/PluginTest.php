@@ -120,6 +120,18 @@ class PluginTest extends TestCase
     }
 
     /**
+     * Test load() with path configuration data
+     *
+     * @return void
+     */
+    public function testLoadSingleWithPathConfig()
+    {
+        Configure::write('plugins.TestPlugin', APP);
+        Plugin::load('TestPlugin');
+        $this->assertEquals(APP . 'src' . DS, Plugin::classPath('TestPlugin'));
+    }
+
+    /**
      * Tests loading multiple plugins at once
      *
      * @return void
@@ -268,6 +280,18 @@ class PluginTest extends TestCase
         Plugin::loadAll();
         $expected = ['Company', 'PluginJs', 'TestPlugin', 'TestPluginFour', 'TestPluginTwo', 'TestTheme'];
         $this->assertEquals($expected, Plugin::loaded());
+    }
+
+    /**
+     * Test loadAll() with path configuration data
+     *
+     * @return void
+     */
+    public function testLoadAllWithPathConfig()
+    {
+        Configure::write('plugins.FakePlugin', APP);
+        Plugin::loadAll();
+        $this->assertContains('FakePlugin', Plugin::loaded());
     }
 
     /**
