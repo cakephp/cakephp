@@ -25,9 +25,16 @@ App::uses('Router', 'Routing');
  */
 class FaultyExceptionRenderer extends ExceptionRenderer {
 
+/**
+ * Dummy rendering implementation.
+ *
+ * @return void
+ * @throws Exception
+ */
 	public function render() {
 		throw new Exception('Error from renderer.');
 	}
+
 }
 
 /**
@@ -339,7 +346,7 @@ class ErrorHandlerTest extends CakeTestCase {
 	public function testExceptionRendererNestingDebug() {
 		Configure::write('debug', 2);
 		Configure::write('Exception.renderer', 'FaultyExceptionRenderer');
-		ErrorHandler::handleFatalError(E_USER_ERROR, 'Initial error', __FILE__ ,__LINE__);
+		ErrorHandler::handleFatalError(E_USER_ERROR, 'Initial error', __FILE__, __LINE__);
 	}
 
 /**
@@ -351,7 +358,7 @@ class ErrorHandlerTest extends CakeTestCase {
 	public function testExceptionRendererNestingProduction() {
 		Configure::write('debug', 0);
 		Configure::write('Exception.renderer', 'FaultyExceptionRenderer');
-		ErrorHandler::handleFatalError(E_USER_ERROR, 'Initial error', __FILE__ ,__LINE__);
+		ErrorHandler::handleFatalError(E_USER_ERROR, 'Initial error', __FILE__, __LINE__);
 	}
 
 }

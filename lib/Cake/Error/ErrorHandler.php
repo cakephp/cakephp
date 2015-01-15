@@ -236,6 +236,8 @@ class ErrorHandler {
  * @param string $file File on which error occurred
  * @param int $line Line that triggered the error
  * @return bool
+ * @throws FatalErrorException If the Exception renderer threw an exception during rendering, and debug > 0.
+ * @throws InternalErrorException If the Exception renderer threw an exception during rendering, and debug is 0.
  */
 	public static function handleFatalError($code, $description, $file, $line) {
 		$logMessage = 'Fatal Error (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']';
