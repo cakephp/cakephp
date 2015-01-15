@@ -410,7 +410,7 @@ class EagerLoader
                 }
                 foreach ($configs as $loadable) {
                     if (strpos($loadable->aliasPath(), '.')) {
-                        $this->_correctStrategy($loadable, $alias);
+                        $this->_correctStrategy($loadable);
                     }
                 }
             }
@@ -422,10 +422,9 @@ class EagerLoader
      * under the same direct associations chain
      *
      * @param \Cake\ORM\EagerLoader $loadable The association config
-     * @param string $alias the name of the association to evaluate
      * @return void
      */
-    protected function _correctStrategy($loadable, $alias)
+    protected function _correctStrategy($loadable)
     {
         $config = $loadable->config();
         $currentStrategy = isset($config['strategy']) ?
@@ -465,7 +464,7 @@ class EagerLoader
             }
 
             if ($inMatching) {
-                $this->_correctStrategy($loadable, $table);
+                $this->_correctStrategy($loadable);
             }
 
             $loadable->canBeJoined(false);
