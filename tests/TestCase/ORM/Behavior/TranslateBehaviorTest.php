@@ -93,7 +93,7 @@ class TranslateBehaviorTest extends TestCase
         $items = $table->associations();
         $i18n = $items->getByProperty('_i18n');
 
-        $this->assertEquals('TestApp-Model-Table-I18nTable', $i18n->name());
+        $this->assertEquals('TestApp_Model_Table_I18nTable', $i18n->name());
         $this->assertEquals('custom_i18n_table', $i18n->target()->table());
         $this->assertEquals('test_custom_i18n_datasource', $i18n->target()->connection()->configName());
     }
