@@ -259,6 +259,7 @@ class ErrorHandler {
 		}
 
 		if (Configure::read('Exception.bail')) {
+			Configure::write('Exception.bail', false);
 			throw $exception;
 		}
 
