@@ -340,25 +340,45 @@ class ErrorHandlerTest extends CakeTestCase {
 /**
  * testExceptionRendererNestingDebug method
  *
- * @expectedException FatalErrorException
  * @return void
  */
 	public function testExceptionRendererNestingDebug() {
 		Configure::write('debug', 2);
 		Configure::write('Exception.renderer', 'FaultyExceptionRenderer');
-		ErrorHandler::handleFatalError(E_USER_ERROR, 'Initial error', __FILE__, __LINE__);
+
+		$result = false;
+		try {
+			ob_start();
+			ob_start();
+			ErrorHandler::handleFatalError(E_USER_ERROR, 'Initial error', __FILE__, __LINE__);
+		} catch (Exception $e) {
+			$result = $e instanceof FatalErrorException;
+		}
+
+		restore_error_handler();
+		$this->assertTrue($result);
 	}
 
 /**
  * testExceptionRendererNestingProduction method
  *
- * @expectedException InternalErrorException
  * @return void
  */
 	public function testExceptionRendererNestingProduction() {
 		Configure::write('debug', 0);
 		Configure::write('Exception.renderer', 'FaultyExceptionRenderer');
-		ErrorHandler::handleFatalError(E_USER_ERROR, 'Initial error', __FILE__, __LINE__);
+
+		$result = false;
+		try {
+			ob_start();
+			ob_start();
+			ErrorHandler::handleFatalError(E_USER_ERROR, 'Initial error', __FILE__, __LINE__);
+		} catch (Exception $e) {
+			$result = $e instanceof InternalErrorException;
+		}
+
+		restore_error_handler();
+		$this->assertTrue($result);
 	}
 
 }
