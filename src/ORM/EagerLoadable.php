@@ -137,56 +137,35 @@ class EagerLoadable
     }
 
     /**
-     * Sets the Association class instance to use for loading the records.
+     * Gets the Association class instance to use for loading the records.
      *
-     * If called with no arguments it returns the current
-     * value.
-     *
-     * @param \Cake\ORM\Association|null $instance The value to set.
      * @return \Cake\ORM\Association|null
      */
-    public function instance($instance = null)
+    public function instance()
     {
-        if ($instance === null) {
-            return $this->_instance;
-        }
-        $this->_instance = $instance;
+        return $this->_instance;
     }
 
     /**
-     * Sets a dotted separated string representing the path of associations
+     * Gets a dotted separated string representing the path of associations
      * that should be followed to fetch this level.
      *
-     * If called with no arguments it returns the current
-     * value.
-     *
-     * @param string|null $path The value to set.
      * @return string|null
      */
-    public function aliasPath($path = null)
+    public function aliasPath()
     {
-        if ($path === null) {
-            return $this->_aliasPath;
-        }
-        $this->_aliasPath = $path;
+        return $this->_aliasPath;
     }
 
     /**
-     * Sets a dotted separated string representing the path of entity properties
+     * Gets a dotted separated string representing the path of entity properties
      * in which results for this level should be placed.
      *
-     * If called with no arguments it returns the current
-     * value.
-     *
-     * @param string|null $path The value to set.
      * @return string|null
      */
-    public function propertyPath($path = null)
+    public function propertyPath()
     {
-        if ($path === null) {
-            return $this->_propertyPath;
-        }
-        $this->_propertyPath = $path;
+        return $this->_propertyPath;
     }
 
     /**
@@ -225,21 +204,14 @@ class EagerLoadable
     }
 
     /**
-     * Sets weather or not this level was meant for a
+     * Gets weather or not this level was meant for a
      * "matching" fetch operation.
      *
-     * If called with no arguments it returns the current
-     * value.
-     *
-     * @param bool|null $matching The value to set.
      * @return bool|null
      */
-    public function forMatching($matching = null)
+    public function forMatching()
     {
-        if ($matching === null) {
-            return $this->_forMatching;
-        }
-        $this->_forMatching = $matching;
+        return $this->_forMatching;
     }
 
     /**

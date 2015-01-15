@@ -691,8 +691,8 @@ class QueryRegressionTest extends TestCase
             ->matching('Articles.Tags', function ($q) {
                 return $q->where(['Tags.id' => 2]);
             })
-                ->contain('Articles.Authors')
-                ->first();
+            ->contain('Articles.Authors')
+            ->first();
 
         $this->assertNotNull($result->article->author);
     }

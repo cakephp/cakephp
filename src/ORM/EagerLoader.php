@@ -404,13 +404,13 @@ class EagerLoader
     protected function _fixStrategies()
     {
         foreach ($this->_aliasList as $aliases) {
-            foreach ($aliases as $alias => $configs) {
+            foreach ($aliases as $configs) {
                 if (count($configs) < 2) {
                     continue;
                 }
                 foreach ($configs as $loadable) {
                     if (strpos($loadable->aliasPath(), '.')) {
-                        $this->_correctStrategy($loadable, $alias);
+                        $this->_correctStrategy($loadable);
                     }
                 }
             }
@@ -421,11 +421,10 @@ class EagerLoader
      * Changes the association fetching strategy if required because of duplicate
      * under the same direct associations chain
      *
-     * @param \Cake\ORM\EagerLoader $loadable The association config
-     * @param string $alias the name of the association to evaluate
+     * @param \Cake\ORM\EagerLoadable $loadable The association config
      * @return void
      */
-    protected function _correctStrategy($loadable, $alias)
+    protected function _correctStrategy($loadable)
     {
         $config = $loadable->config();
         $currentStrategy = isset($config['strategy']) ?
@@ -465,7 +464,7 @@ class EagerLoader
             }
 
             if ($inMatching) {
-                $this->_correctStrategy($loadable, $table);
+                $this->_correctStrategy($loadable);
             }
 
             $loadable->canBeJoined(false);
