@@ -354,8 +354,10 @@ class DboSource extends DataSource {
 					return str_replace(',', '.', strval($data));
 				}
 				if ((is_int($data) || $data === '0') || (
-					is_numeric($data) && strpos($data, ',') === false &&
-					$data[0] != '0' && strpos($data, 'e') === false)
+					is_numeric($data) &&
+					strpos($data, ',') === false &&
+					$data[0] != '0' &&
+					strpos($data, 'e') === false)
 				) {
 					return $data;
 				}
