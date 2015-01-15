@@ -23,7 +23,6 @@ use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
-use Cake\Utility\Inflector;
 
 /**
  * This behavior provides a way to translate dynamic data by keeping translations
@@ -54,6 +53,12 @@ class TranslateBehavior extends Behavior
      * @var string
      */
     protected $_locale;
+
+    /**
+     * Instance of Table responsible for translating
+     * @var \Cake\ORM\Table
+     */
+    protected $_translationTable;
 
     /**
      * Default config
@@ -93,6 +98,7 @@ class TranslateBehavior extends Behavior
      */
     public function initialize(array $config)
     {
+        $this->_translationTable = TableRegistry::get($this->_config['translationTable']);
         $this->setupFieldAssociations(
             $this->_config['fields'],
             $this->_config['translationTable'],
@@ -117,8 +123,7 @@ class TranslateBehavior extends Behavior
      */
     public function setupFieldAssociations($fields, $table, $model, $strategy)
     {
-        $targetTable = TableRegistry::get($table);
-        $targetAlias = Inflector::slug($table, '_');
+        $targetAlias = $this->_translationTable->alias();
         $alias = $this->_table->alias();
         $filter = $this->_config['onlyTranslated'];
 
@@ -129,7 +134,7 @@ class TranslateBehavior extends Behavior
                 $fieldTable = TableRegistry::get($name, [
                     'className' => $table,
                     'alias' => $name,
-                    'table' => $targetTable->table()
+                    'table' => $this->_translationTable->table()
                 ]);
             } else {
                 $fieldTable = TableRegistry::get($name);
@@ -155,6 +160,7 @@ class TranslateBehavior extends Behavior
             'propertyName' => '_i18n',
             'dependent' => true
         ]);
+
     }
 
     /**
@@ -233,9 +239,7 @@ class TranslateBehavior extends Behavior
     public function beforeSave(Event $event, Entity $entity, ArrayObject $options)
     {
         $locale = $entity->get('_locale') ?: $this->locale();
-        $table = $this->_config['translationTable'];
-        $targetAlias = Inflector::slug($table, '_');
-        $newOptions = [$targetAlias => ['validate' => false]];
+        $newOptions = [$this->_translationTable->alias() => ['validate' => false]];
         $options['associated'] = $newOptions + $options['associated'];
 
         $this->_bundleTranslatedFields($entity);
@@ -251,7 +255,7 @@ class TranslateBehavior extends Behavior
         $key = $entity->get(current($primaryKey));
         $model = $this->_table->alias();
 
-        $preexistent = TableRegistry::get($table)->find()
+        $preexistent = $this->_translationTable->find()
             ->select(['id', 'field'])
             ->where(['field IN' => $fields, 'locale' => $locale, 'foreign_key' => $key, 'model' => $model])
             ->bufferResults(false)
@@ -333,9 +337,7 @@ class TranslateBehavior extends Behavior
     public function findTranslations(Query $query, array $options)
     {
         $locales = isset($options['locales']) ? $options['locales'] : [];
-        $table = $this->_config['translationTable'];
-        $targetAlias = Inflector::slug($table, '_');
-
+        $targetAlias = $this->_translationTable->alias();
         return $query
             ->contain([$targetAlias => function ($q) use ($locales, $targetAlias) {
                 if ($locales) {
@@ -482,8 +484,7 @@ class TranslateBehavior extends Behavior
      */
     protected function _findExistingTranslations($ruleSet)
     {
-        $targetAlias = Inflector::slug($this->_config['translationTable'], '_');
-        $association = $this->_table->association($targetAlias);
+        $association = $this->_table->association($this->_translationTable->alias());
 
         $query = $association->find()
             ->select(['id', 'num' => 0])
