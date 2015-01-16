@@ -1671,6 +1671,38 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result);
     }
 
+	/**
+	 * Test theme support for meta('icon') method
+	 *
+	 * @return void
+	 */
+	public function testMetaIconWithTheme()
+	{
+		$this->skipIf(!is_writable(WWW_ROOT), 'Cannot write to webroot.');
+
+		$this->Html->Url->request->webroot = '/';
+		$this->Html->Url->theme = 'TestTheme';
+
+		$result = $this->Html->meta('icon');
+		$expected = [
+			'link' => ['href' => '/favicon.ico', 'type' => 'image/x-icon', 'rel' => 'icon'],
+			['link' => ['href' => '/favicon.ico', 'type' => 'image/x-icon', 'rel' => 'shortcut icon']]
+		];
+		$this->assertHtml($expected, $result);
+
+		$testIcon = WWW_ROOT . 'test_theme/favicon.ico';
+		$File = new File($testIcon, true);
+
+		$result = $this->Html->meta('icon');
+		$expected = [
+			'link' => ['href' => '/test_theme/favicon.ico', 'type' => 'image/x-icon', 'rel' => 'icon'],
+			['link' => ['href' => '/test_theme/favicon.ico', 'type' => 'image/x-icon', 'rel' => 'shortcut icon']]
+		];
+		$this->assertHtml($expected, $result);
+
+		$File->delete();
+	}
+
     /**
      * Test the inline and block options for meta()
      *
