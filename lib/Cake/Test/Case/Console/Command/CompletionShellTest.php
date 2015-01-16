@@ -125,7 +125,7 @@ class CompletionShellTest extends CakeTestCase {
 		$this->Shell->runCommand('commands', array());
 		$output = $this->Shell->stdout->output;
 
-		$expected = "TestPlugin.example TestPluginTwo.example TestPluginTwo.welcome acl api bake command_list completion console i18n schema server test testsuite upgrade sample\n";
+		$expected = "TestPlugin.example TestPlugin.test_plugin TestPluginTwo.example TestPluginTwo.welcome acl api bake command_list completion console i18n schema server test testsuite upgrade sample\n";
 		$this->assertEquals($expected, $output);
 	}
 

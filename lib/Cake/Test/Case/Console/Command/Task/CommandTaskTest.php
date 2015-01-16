@@ -85,9 +85,10 @@ class CommandTaskTest extends CakeTestCase {
 				'upgrade'
 			),
 			'TestPlugin' => array(
-				'example'
+				'example',
+				'test_plugin'
 			),
-				'TestPluginTwo' => array(
+			'TestPluginTwo' => array(
 				'example',
 				'welcome'
 			),
@@ -108,6 +109,7 @@ class CommandTaskTest extends CakeTestCase {
 
 		$expected = array(
 			'TestPlugin.example',
+			'TestPlugin.test_plugin',
 			'TestPluginTwo.example',
 			'TestPluginTwo.welcome',
 			'acl',
