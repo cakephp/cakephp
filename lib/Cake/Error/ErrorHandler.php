@@ -96,6 +96,14 @@ App::uses('Router', 'Routing');
 class ErrorHandler {
 
 /**
+ * Whether to give up rendering an exception, if the renderer itself is
+ * throwing exceptions.
+ *
+ * @var bool
+ */
+	protected static $_bailExceptionRendering = false;
+
+/**
  * Set as the default exception handler by the CakePHP bootstrap process.
  *
  * This will either use custom exception renderer class if configured,
@@ -126,7 +134,7 @@ class ErrorHandler {
 				$e->getTraceAsString()
 			);
 
-			Configure::write('Exception.bail', true);
+			static::$_bailExceptionRendering = true;
 			trigger_error($message, E_USER_ERROR);
 		}
 	}
@@ -258,8 +266,8 @@ class ErrorHandler {
 			$exception = new InternalErrorException();
 		}
 
-		if (Configure::read('Exception.bail')) {
-			Configure::write('Exception.bail', false);
+		if (static::$_bailExceptionRendering) {
+			static::$_bailExceptionRendering = false;
 			throw $exception;
 		}
 
