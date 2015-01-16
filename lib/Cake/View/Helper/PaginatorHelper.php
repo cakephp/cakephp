@@ -706,7 +706,7 @@ class PaginatorHelper extends AppHelper {
  * - `currentClass` Class for wrapper tag on current active page, defaults to 'current'
  * - `currentTag` Tag to use for current page number, defaults to null
  *
- * @param array $options Options for the numbers, (before, after, model, modulus, separator)
+ * @param array|bool $options Options for the numbers, (before, after, model, modulus, separator)
  * @return string Numbers string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::numbers
  */
@@ -727,7 +727,7 @@ class PaginatorHelper extends AppHelper {
 		$params = (array)$this->params($options['model']) + array('page' => 1);
 		unset($options['model']);
 
-		if ($params['pageCount'] <= 1) {
+		if (empty($params['pageCount']) || $params['pageCount'] <= 1) {
 			return '';
 		}
 
