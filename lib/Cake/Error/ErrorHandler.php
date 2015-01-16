@@ -134,7 +134,7 @@ class ErrorHandler {
 				$e->getTraceAsString()
 			);
 
-			static::$_bailExceptionRendering = true;
+			self::$_bailExceptionRendering = true;
 			trigger_error($message, E_USER_ERROR);
 		}
 	}
@@ -266,8 +266,8 @@ class ErrorHandler {
 			$exception = new InternalErrorException();
 		}
 
-		if (static::$_bailExceptionRendering) {
-			static::$_bailExceptionRendering = false;
+		if (self::$_bailExceptionRendering) {
+			self::$_bailExceptionRendering = false;
 			throw $exception;
 		}
 
