@@ -232,7 +232,11 @@ class HtmlHelper extends Helper
             ];
 
             if ($type === 'icon' && $content === null) {
-                $types['icon']['link'] = 'favicon.ico';
+				if (!is_null($this->_View->Url->theme) && file_exists($this->_View->Url->request->webroot . 'favicon.ico')) {
+					$types['icon']['link'] = $this->_View->Url->request->webroot . 'favicon.ico';
+				} else {
+					$types['icon']['link'] = 'favicon.ico';
+				}
             }
 
             if (isset($types[$type])) {
