@@ -247,9 +247,9 @@ class ShellDispatcher {
 		App::uses($class, $plugin . 'Console/Command');
 
 		if (!class_exists($class)) {
-            $plugin = Inflector::camelize($shell) . '.';
-            App::uses($class, $plugin . 'Console/Command');
-        }
+			$plugin = Inflector::camelize($shell) . '.';
+			App::uses($class, $plugin . 'Console/Command');
+		}
 
 		if (!class_exists($class)) {
 			throw new MissingShellException(array(
