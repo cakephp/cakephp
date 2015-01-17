@@ -604,8 +604,7 @@ class FileTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testNoPartialPathBeingSetForNonExistentPath()
-	{
+	public function testNoPartialPathBeingSetForNonExistentPath() {
 		$tmpFile = new File('/non/existent/file');
 		$this->assertNull($tmpFile->pwd());
 		$this->assertNull($tmpFile->path);

@@ -136,7 +136,6 @@
 			<dependencies>
 				<php minimum_version="5.2.8" />
 				<pear minimum_version="1.9.0" recommended_version="1.9.4" />
-				<package name="PHPUnit" channel="pear.phpunit.de" minimum_version="3.5.0" type="optional" />
 			</dependencies>
 			<dirroles key="bin">script</dirroles>
 			<dirroles key="Cake/Console/Templates/skel">php</dirroles>

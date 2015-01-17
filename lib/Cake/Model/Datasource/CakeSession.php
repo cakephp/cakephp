@@ -460,7 +460,9 @@ class CakeSession {
 			self::_startSession();
 		}
 
-		session_destroy();
+		if (self::started()) {
+			session_destroy();
+		}
 
 		$_SESSION = null;
 		self::$id = null;

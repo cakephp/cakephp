@@ -1032,6 +1032,30 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
+ * Test that the referer is not absolute if it is '/'.
+ *
+ * This avoids the base path being applied twice on string urls.
+ *
+ * @return void
+ */
+	public function testRefererSlash() {
+		$request = $this->getMock('CakeRequest', array('referer'));
+		$request->base = '/base';
+		$request->expects($this->any())
+			->method('referer')
+			->will($this->returnValue('/'));
+		Router::setRequestInfo($request);
+
+		$controller = new Controller($request);
+		$result = $controller->referer('/', true);
+		$this->assertEquals('/', $result);
+
+		$controller = new Controller($request);
+		$result = $controller->referer('/some/path', true);
+		$this->assertEquals('/base/some/path', $result);
+	}
+
+/**
  * testSetAction method
  *
  * @return void

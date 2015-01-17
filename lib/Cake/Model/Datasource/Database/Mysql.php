@@ -796,6 +796,17 @@ class Mysql extends DboSource {
 	}
 
 /**
+ * {@inheritDoc}
+ */
+	public function value($data, $column = null) {
+		$value = parent::value($data, $column);
+		if (is_numeric($value) && substr($column, 0, 3) === 'set') {
+			return $this->_connection->quote($value);
+		}
+		return $value;
+	}
+
+/**
  * Gets the schema name
  *
  * @return string The schema name
