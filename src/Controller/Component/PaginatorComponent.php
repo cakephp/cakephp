@@ -355,7 +355,7 @@ class PaginatorComponent extends Component
     }
 
     /**
-     * Check the limit parameter and ensure its within the maxLimit bounds.
+     * Check the limit parameter and ensure it's within the maxLimit bounds.
      *
      * @param array $options An array of options with a limit key to be checked.
      * @return array An array of options for pagination

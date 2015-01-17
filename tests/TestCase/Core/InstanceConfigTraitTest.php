@@ -103,7 +103,7 @@ class InstanceConfigTraitTest extends TestCase
                 'a' => ['nested' => 'value']
             ],
             $this->object->config(),
-            'runtime config should match the defaults if not overriden'
+            'runtime config should match the defaults if not overridden'
         );
     }
 

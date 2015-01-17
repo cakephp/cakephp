@@ -922,7 +922,7 @@ class Table implements RepositoryInterface, EventListenerInterface
      * recursively nested inside the parent row values using the `children` property
      *
      * You can customize what fields are used for nesting results, by default the
-     * primary key and the `parent_id` fields are used. If you you wish to change
+     * primary key and the `parent_id` fields are used. If you wish to change
      * these defaults you need to provide the keys `idField` or `parentField` in
      * `$options`:
      *

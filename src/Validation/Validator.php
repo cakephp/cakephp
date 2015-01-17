@@ -375,7 +375,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
      * @param string $field the name of the field
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
      * Valid values are true (always), 'create', 'update'. If a callable is passed then
-     * the field will allowed to be empty only when the callaback returns true.
+     * the field will allowed to be empty only when the callback returns true.
      * @return $this
      */
     public function allowEmpty($field, $when = true)
@@ -418,7 +418,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
      * @param bool|string|callable $when  Indicates when the field is not allowed
      * to be empty. Valid values are true (always), 'create', 'update'. If a
      * callable is passed then the field will allowed be empty only when
-     * the callaback returns false.
+     * the callback returns false.
      * @return $this
      */
     public function notEmpty($field, $message = null, $when = false)

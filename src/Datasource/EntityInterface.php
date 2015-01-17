@@ -161,7 +161,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      *
      * @param string|array $field The field to get errors for.
      * @param string|array|null $errors The errors to be set for $field
-     * @param bool $overwrite Whether or not to overwite pre-existing errors for $field
+     * @param bool $overwrite Whether or not to overwrite pre-existing errors for $field
      * @return array|\Cake\Datasource\EntityInterface
      */
     public function errors($field = null, $errors = null, $overwrite = false);

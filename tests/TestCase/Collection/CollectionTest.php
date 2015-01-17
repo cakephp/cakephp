@@ -541,7 +541,7 @@ class CollectionTest extends TestCase
     }
 
     /**
-     * Test json enconding
+     * Test json encoding
      *
      * @return void
      */
@@ -935,7 +935,7 @@ class CollectionTest extends TestCase
     }
 
     /**
-     * Provider for testing each of the direcations for listNested
+     * Provider for testing each of the directions for listNested
      *
      * @return void
      */

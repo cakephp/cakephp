@@ -52,7 +52,7 @@ class CaseExpression implements ExpressionInterface
      * Constructs the case expression
      *
      * @param array|ExpressionInterface $conditions The conditions to test. Must be a ExpressionInterface
-     * instance,or an array of ExpressionInterface instances.
+     * instance, or an array of ExpressionInterface instances.
      * @param array|ExpressionInterface $values associative array of values to be associated with the conditions
      * passed in $conditions. If there are more $values than $conditions, the last $value is used as the `ELSE` value
      * @param array $types associative array of types to be associated with the values

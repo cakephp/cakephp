@@ -89,7 +89,7 @@ class RequestActionController extends AppController
     /**
      * post pass, testing post passing
      *
-     * @return \Cake\Network\Reponse
+     * @return \Cake\Network\Response
      */
     public function post_pass()
     {
@@ -100,7 +100,7 @@ class RequestActionController extends AppController
     /**
      * query pass, testing query passing
      *
-     * @return \Cake\Network\Reponse
+     * @return \Cake\Network\Response
      */
     public function query_pass()
     {
@@ -111,7 +111,7 @@ class RequestActionController extends AppController
     /**
      * test param passing and parsing.
      *
-     * @return \Cake\Network\Reponse
+     * @return \Cake\Network\Response
      */
     public function params_pass()
     {
@@ -127,7 +127,7 @@ class RequestActionController extends AppController
     /**
      * param check method.
      *
-     * @return \Cake\Network\Reponse
+     * @return \Cake\Network\Response
      */
     public function param_check()
     {
@@ -143,7 +143,7 @@ class RequestActionController extends AppController
     /**
      * Tests session transmission
      *
-     * @return \Cake\Network\Reponse
+     * @return \Cake\Network\Response
      */
     public function session_test()
     {

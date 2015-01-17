@@ -125,7 +125,7 @@ trait ViewVarsTrait
     }
 
     /**
-     * Get/Set valid view options in the object's _validViewOptions property. The proptery is
+     * Get/Set valid view options in the object's _validViewOptions property. The property is
      * created as an empty array if it is not set. If called without any parameters it will
      * return the current list of valid view options. See `createView()`.
      *

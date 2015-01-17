@@ -28,7 +28,7 @@ class ErrorController extends Controller
      * Constructor
      *
      * @param \Cake\Network\Request|null $request Request instance.
-     * @param \Cake\Network\Response|null $response Reponse instance.
+     * @param \Cake\Network\Response|null $response Response instance.
      */
     public function __construct($request = null, $response = null)
     {

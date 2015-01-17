@@ -142,7 +142,7 @@ class Oauth
      * - Values are sorted by name and then value.
      * - Request values are concatenated and urlencoded.
      * - The request URL (without querystring) is normalized.
-     * - The HTTP method, URL and request parameters are concatenated and returnned.
+     * - The HTTP method, URL and request parameters are concatenated and returned.
      *
      * @param \Cake\Network\Http\Request $request The request object.
      * @param array $oauthValues Oauth values.

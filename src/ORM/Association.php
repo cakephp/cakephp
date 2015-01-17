@@ -588,7 +588,7 @@ abstract class Association
      * @param mixed $conditions Conditions to be used, accepts anything Query::where()
      * can take.
      * @return bool Success Returns true if one or more rows are affected.
-     * @see \Cake\ORM\Table::delteAll()
+     * @see \Cake\ORM\Table::deleteAll()
      */
     public function deleteAll($conditions)
     {

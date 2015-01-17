@@ -40,7 +40,7 @@ class MemcachedEngine extends CacheEngine
     protected $_Memcached = null;
 
     /**
-     * The default config used unless overriden by runtime configuration
+     * The default config used unless overridden by runtime configuration
      *
      * - `compress` Whether to compress data
      * - `duration` Specify how long items in this cache configuration last.

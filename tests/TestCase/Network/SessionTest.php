@@ -72,7 +72,7 @@ class SessionTest extends TestCase
      */
     public static function setupBeforeClass()
     {
-        // Make sure garbage colector will be called
+        // Make sure garbage collector will be called
         static::$_gcDivisor = ini_get('session.gc_divisor');
         ini_set('session.gc_divisor', '1');
     }

@@ -271,7 +271,7 @@ class PluginTest extends TestCase
     }
 
     /**
-     * Tests that Plugin::loadAll() will load all plgins in the configured folder
+     * Tests that Plugin::loadAll() will load all plugins in the configured folder
      *
      * @return void
      */
@@ -307,7 +307,7 @@ class PluginTest extends TestCase
     }
 
     /**
-     * Tests that Plugin::loadAll() will load all plgins in the configured folder with bootstrap loading
+     * Tests that Plugin::loadAll() will load all plugins in the configured folder with bootstrap loading
      *
      * @return void
      */
@@ -323,7 +323,7 @@ class PluginTest extends TestCase
     }
 
     /**
-     * Tests that Plugin::loadAll() will load all plgins in the configured folder wit defaults
+     * Tests that Plugin::loadAll() will load all plugins in the configured folder wit defaults
      * and overrides for a plugin
      *
      * @return void

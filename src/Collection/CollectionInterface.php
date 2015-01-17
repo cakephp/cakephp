@@ -309,7 +309,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
 
     /**
      * Splits a collection into sets, grouped by the result of running each value
-     * through the callback. If $callback is is a string instead of a callable,
+     * through the callback. If $callback is a string instead of a callable,
      * groups by the property named by $callback on each of the values.
      *
      * When $callback is a string it should be a property name to extract or

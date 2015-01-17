@@ -665,7 +665,7 @@ class TimeTest extends TestCase
     }
 
     /**
-     * Cusotm assert to allow for variation in the version of the intl library, where
+     * Custom assert to allow for variation in the version of the intl library, where
      * some translations contain a few extra commas.
      *
      * @param string $expected

@@ -359,7 +359,7 @@ class Controller implements EventListenerInterface
      * - $this->request - To the $request parameter
      * - $this->plugin - To the $request->params['plugin']
      * - $this->autoRender - To false if $request->params['return'] == 1
-     * - $this->passedArgs - The the combined results of params['named'] and params['pass]
+     * - $this->passedArgs - The combined results of params['named'] and params['pass]
      * - View::$passedArgs - $this->passedArgs
      * - View::$plugin - $this->plugin
      * - View::$view - To the $request->params['action']
@@ -420,7 +420,7 @@ class Controller implements EventListenerInterface
     }
 
     /**
-     * Returns a list of all events that will fire in the controller during it's lifecycle.
+     * Returns a list of all events that will fire in the controller during its lifecycle.
      * You can override this function to add you own listener callbacks
      *
      * @return array

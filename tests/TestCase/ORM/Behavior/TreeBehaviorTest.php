@@ -281,7 +281,7 @@ class TreeBehaviorTest extends TestCase
         $table = TableRegistry::get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
 
-        // top level, wont move
+        // top level, won't move
         $node = $this->table->moveUp($table->get(1), 10);
         $this->assertEquals(['lft' => 1, 'rght' => 10], $node->extract(['lft', 'rght']));
 
@@ -366,7 +366,7 @@ class TreeBehaviorTest extends TestCase
     {
         $table = TableRegistry::get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
-        // latest node, wont move
+        // latest node, won't move
         $node = $this->table->moveDown($table->get(8), 10);
         $this->assertEquals(['lft' => 21, 'rght' => 22], $node->extract(['lft', 'rght']));
 

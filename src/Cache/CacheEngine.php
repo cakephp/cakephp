@@ -26,8 +26,8 @@ abstract class CacheEngine
     use InstanceConfigTrait;
 
     /**
-     * The default cache configuration is overriden in most cache adapters. These are
-     * the keys that are common to all adapters. If overriden, this property is not used.
+     * The default cache configuration is overridden in most cache adapters. These are
+     * the keys that are common to all adapters. If overridden, this property is not used.
      *
      * - `duration` Specify how long items in this cache configuration last.
      * - `groups` List of groups or 'tags' associated to every key stored in this config.
