@@ -611,7 +611,7 @@ abstract class Association
     {
         $table = $this->target();
         $options = $query->getOptions();
-        $table->dispatchEvent('Model.beforeFind', [$query, $options, false]);
+        $table->dispatchEvent('Model.beforeFind', [$query, new \ArrayObject($options), false]);
     }
 
     /**
