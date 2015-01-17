@@ -1672,6 +1672,38 @@ class HtmlHelperTest extends TestCase
     }
 
     /**
+     * Test generating favicon's with meta() with theme
+     *
+     * @return void
+     */
+    public function testMetaIconWithTheme()
+    {
+        $this->Html->Url->theme = 'TestTheme';
+
+        $result = $this->Html->meta('icon', 'favicon.ico');
+        $expected = [
+            'link' => ['href' => 'preg:/.*test_theme\/favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'icon'],
+            ['link' => ['href' => 'preg:/.*test_theme\/favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'shortcut icon']]
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->meta('icon');
+        $expected = [
+            'link' => ['href' => 'preg:/.*test_theme\/favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'icon'],
+            ['link' => ['href' => 'preg:/.*test_theme\/favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'shortcut icon']]
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->Html->request->webroot = '/testing/';
+        $result = $this->Html->meta('icon');
+        $expected = [
+            'link' => ['href' => '/testing/test_theme/favicon.ico', 'type' => 'image/x-icon', 'rel' => 'icon'],
+            ['link' => ['href' => '/testing/test_theme/favicon.ico', 'type' => 'image/x-icon', 'rel' => 'shortcut icon']]
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * Test the inline and block options for meta()
      *
      * @return void
