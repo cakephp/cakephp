@@ -359,13 +359,13 @@ class BehaviorTest extends TestCase
     }
 
     /**
-     * testVerifyConfigImplementedFindersOverriden
+     * testVerifyConfigImplementedFindersOverridden
      *
      * Simply don't expect an exception to be thrown
      *
      * @return void
      */
-    public function testVerifyConfigImplementedFindersOverriden()
+    public function testVerifyConfigImplementedFindersOverridden()
     {
         $table = $this->getMock('Cake\ORM\Table');
         $behavior = new Test2Behavior($table, [
@@ -397,13 +397,13 @@ class BehaviorTest extends TestCase
     }
 
     /**
-     * testVerifyConfigImplementedMethodsOverriden
+     * testVerifyConfigImplementedMethodsOverridden
      *
      * Don't expect an exception to be thrown
      *
      * @return void
      */
-    public function testVerifyConfigImplementedMethodsOverriden()
+    public function testVerifyConfigImplementedMethodsOverridden()
     {
         $table = $this->getMock('Cake\ORM\Table');
         $behavior = new Test2Behavior($table);

@@ -1209,7 +1209,7 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Tests that it is possible to use an expresison object
+     * Tests that it is possible to use an expression object
      * as the field for a between expression
      *
      * @return void

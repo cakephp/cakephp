@@ -534,7 +534,7 @@ class SmtpTransportTest extends TestCase
      */
     public function testBufferResponseLines()
     {
-        $reponseLines = [
+        $responseLines = [
             '123',
             "456\tFOO",
             'FOOBAR',
@@ -543,7 +543,7 @@ class SmtpTransportTest extends TestCase
             '250-8BITMIME',
             '250 DSN',
         ];
-        $this->SmtpTransport->bufferResponseLines($reponseLines);
+        $this->SmtpTransport->bufferResponseLines($responseLines);
 
         $expected = [
             ['code' => '123', 'message' => null],

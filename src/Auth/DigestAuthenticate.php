@@ -54,7 +54,7 @@ use Cake\Network\Request;
  * `$digestPass = DigestAuthenticate::password($username, env('SERVER_NAME'), $password);`
  *
  * If you wish to use digest authentication alongside other authentication methods,
- * its recommended that you store the digest authentication separately. For
+ * it's recommended that you store the digest authentication separately. For
  * example `User.digest_pass` could be used for a digest password, while
  * `User.password` would store the password hash for use with other methods like
  * Basic or Form.

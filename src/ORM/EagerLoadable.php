@@ -86,7 +86,7 @@ class EagerLoadable
     protected $_forMatching;
 
     /**
-     * Constructor. The $config parameted accepts the following array
+     * Constructor. The $config parameter accepts the following array
      * keys:
      *
      * - associations

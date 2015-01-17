@@ -23,7 +23,7 @@ use InvalidArgumentException;
  * Contains logic for storing and checking rules on entities
  *
  * RulesCheckers are used by Table classes to ensure that the
- * current entity state satifies the application logic and business rules.
+ * current entity state satisfies the application logic and business rules.
  *
  * RulesCheckers afford different rules to be applied in the create and update
  * scenario.
@@ -31,7 +31,7 @@ use InvalidArgumentException;
  * ### Adding rules
  *
  * Rules must be callable objects that return true/false depending on whether or
- * not the rule has been satisified. You can use RulesChecker::add(), RulesChecker::addCreate(),
+ * not the rule has been satisfied. You can use RulesChecker::add(), RulesChecker::addCreate(),
  * RulesChecker::addUpdate() and RulesChecker::addDelete to add rules to a checker.
  *
  * ### Running checks

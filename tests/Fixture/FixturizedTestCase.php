@@ -11,7 +11,7 @@ class FixturizedTestCase extends TestCase
 {
 
     /**
-     * Fixtures to use in this thes
+     * Fixtures to use in this test
      * @var array
      */
     public $fixtures = ['core.categories'];
@@ -57,7 +57,7 @@ class FixturizedTestCase extends TestCase
     }
 
     /**
-     * test that a fixtures are unoaded even if the test throws exceptions
+     * test that a fixtures are unloaded even if the test throws exceptions
      *
      * @return void
      * @throws \Exception

@@ -27,7 +27,7 @@ class UrlHelper extends Helper
 {
 
     /**
-     * Returns a URL based on provided provided parameters.
+     * Returns a URL based on provided parameters.
      *
      * @param string|array $url Either a relative string url like `/products/view/23` or
      *    an array of URL parameters. Using an array for URLs will allow you to leverage

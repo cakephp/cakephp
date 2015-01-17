@@ -323,7 +323,7 @@ class ConsoleOptionParser
      * - `default` - The default value for this option. Defaults are added into the parsed params when the
      *    attached option is not provided or has no value. Using default and boolean together will not work.
      *    are added into the parsed parameters when the option is undefined. Defaults to null.
-     * - `boolean` - The option uses no value, its just a boolean switch. Defaults to false.
+     * - `boolean` - The option uses no value, it's just a boolean switch. Defaults to false.
      *    If an option is defined as boolean, it will always be added to the parsed params. If no present
      *    it will be false, if present it will be true.
      * - `choices` A list of valid choices for this option. If left empty all values are valid..

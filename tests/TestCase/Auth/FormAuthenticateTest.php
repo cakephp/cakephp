@@ -34,7 +34,7 @@ class FormAuthenticateTest extends TestCase
 {
 
     /**
-     * Fixtrues
+     * Fixtures
      *
      * @var array
      */

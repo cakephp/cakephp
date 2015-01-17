@@ -119,7 +119,7 @@ class TranslateBehaviorTest extends TestCase
     }
 
     /**
-     * Tests that fields from a translated model are overriden
+     * Tests that fields from a translated model are overridden
      *
      * @return void
      */
@@ -240,7 +240,7 @@ class TranslateBehaviorTest extends TestCase
     }
 
     /**
-     * Tests that fields from a translated model are not overriden if translation
+     * Tests that fields from a translated model are not overridden if translation
      * is null
      *
      * @return void
@@ -459,7 +459,7 @@ class TranslateBehaviorTest extends TestCase
     }
 
     /**
-     * Tests that fields can be overriden in a hasMany association
+     * Tests that fields can be overridden in a hasMany association
      *
      * @return void
      */
@@ -842,7 +842,7 @@ class TranslateBehaviorTest extends TestCase
 
     /**
      * Tests that multiple translations saved when having a default locale
-     * are correclty saved
+     * are correctly saved
      *
      * @return void
      */

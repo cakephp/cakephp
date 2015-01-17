@@ -46,7 +46,7 @@ class Time extends Carbon implements JsonSerializable
     /**
      * The format to use when formatting a time using `Cake\I18n\Time::nice()`
      *
-     * The format should be eiter the formatting constants from IntlDateFormatter as
+     * The format should be either the formatting constants from IntlDateFormatter as
      * described in (http://www.php.net/manual/en/class.intldateformatter.php) or a pattern
      * as specified in (http://www.icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details)
      *

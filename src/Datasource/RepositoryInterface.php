@@ -127,7 +127,7 @@ interface RepositoryInterface
      * based on the 'dependent' option used when defining the association.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to remove.
-     * @param array|\ArrayAccess $options The options fo the delete.
+     * @param array|\ArrayAccess $options The options for the delete.
      * @return bool success
      */
     public function delete(EntityInterface $entity, $options = []);

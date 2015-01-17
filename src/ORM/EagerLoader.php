@@ -525,7 +525,7 @@ class EagerLoader
      * - canBeJoined: Whether or not the association will be loaded using a JOIN
      * - entityClass: The entity that should be used for hydrating the results
      * - nestKey: A dotted path that can be used to correctly insert the data into the results.
-     * - mathcing: Whether or not it is an association loaded through `matching()`.
+     * - matching: Whether or not it is an association loaded through `matching()`.
      *
      * @param \Cake\ORM\Table $table The table containing the association that
      * will be normalized

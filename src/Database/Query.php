@@ -26,7 +26,7 @@ use IteratorAggregate;
  * This class represents a Relational database SQL Query. A query can be of
  * different types like select, update, insert and delete. Exposes the methods
  * for dynamically constructing each query part, execute it and transform it
- * to a specific SQL disalect.
+ * to a specific SQL dialect.
  */
 class Query implements ExpressionInterface, IteratorAggregate
 {
@@ -220,7 +220,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * ```
      *
      * @param callable $visitor a function or callable to be executed for each part
-     * @param array $parts the query clasuses to traverse
+     * @param array $parts the query clauses to traverse
      * @return $this
      */
     public function traverse(callable $visitor, array $parts = [])

@@ -39,7 +39,7 @@ class FileEngine extends CacheEngine
     protected $_File = null;
 
     /**
-     * The default config used unless overriden by runtime configuration
+     * The default config used unless overridden by runtime configuration
      *
      * - `duration` Specify how long items in this cache configuration last.
      * - `groups` List of groups or 'tags' associated to every key stored in this config.

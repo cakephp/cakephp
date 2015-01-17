@@ -599,7 +599,7 @@ class FileTest extends TestCase
         // Copy the test file to the temporary location
         $TestFile->copy($TmpFile->path, true);
 
-        // Replace the contents of the tempory file
+        // Replace the contents of the temporary file
         $result = $TmpFile->replaceText('welcome.php', 'welcome.tmp');
         $this->assertTrue($result);
 
@@ -611,7 +611,7 @@ class FileTest extends TestCase
         $search = ['This is the', 'welcome.php file', 'in tmp directory'];
         $replace = ['This should be a', 'welcome.tmp file', 'in the Lib directory'];
 
-        // Replace the contents of the tempory file
+        // Replace the contents of the temporary file
         $result = $TmpFile->replaceText($search, $replace);
         $this->assertTrue($result);
 

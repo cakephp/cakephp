@@ -62,7 +62,7 @@ class I18nTest extends TestCase
 
     /**
      * Tests that a default translator is created and messages are parsed
-     * correclty
+     * correctly
      *
      * @return void
      */

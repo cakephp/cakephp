@@ -20,7 +20,7 @@ use Cake\Event\EventListenerInterface;
 use InvalidArgumentException;
 
 /**
- * This abstract class represents a filter to be applied to a dispatcher cycle. It acts as as
+ * This abstract class represents a filter to be applied to a dispatcher cycle. It acts as an
  * event listener with the ability to alter the request or response as needed before it is handled
  * by a controller or after the response body has already been built.
  *
