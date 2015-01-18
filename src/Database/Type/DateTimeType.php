@@ -39,6 +39,21 @@ class DateTimeType extends \Cake\Database\Type
     protected $_format = 'Y-m-d H:i:s';
 
     /**
+     * Whether dates should be parsed using a locale aware parser
+     * when marshalling string inputs.
+     *
+     * @var bool
+     */
+    protected $_useLocaleParser = false;
+
+    /**
+     * The date formate to use for parsing incoming dates for marshalling.
+     *
+     * @var string|array|int
+     */
+    protected $_localeFormat;
+
+    /**
      * {@inheritDoc}
      */
     public function __construct($name = null)
@@ -104,6 +119,8 @@ class DateTimeType extends \Cake\Database\Type
                 return null;
             } elseif (is_numeric($value)) {
                 $date = new $class('@' . $value);
+            } elseif (is_string($value) && $this->_useLocaleParser) {
+                $date = $this->_parseValue($date);
             } elseif (is_string($value)) {
                 $date = new $class($value);
                 $compare = true;
@@ -140,5 +157,33 @@ class DateTimeType extends \Cake\Database\Type
         );
 
         return new $class($format);
+    }
+
+    public function useLocaleParser($enable = true) {
+        if ($enable === false) {
+            $this->_useLocaleParser = $enable;
+            return $this;
+        }
+        if (
+            static::$dateTimeClass === 'Cake\I18n\Time' ||
+            is_subclass_of(static::$dateTimeClass, 'Cake\I18n\Time')
+        ) {
+            $this->_useLocaleParser = $enable;
+            return $this;
+        }
+        throw new RuntimeException(
+            sprintf('Cannot use locale parsing with the %s class', static::$dateTimeClass)
+        );
+    }
+
+    public function setLocaleFormat($format) {
+        $this->_localeFormat = $format;
+        return $this;
+    }
+
+    protected function _parseValue($value)
+    {
+        $class = static::$dateTimeClass;
+        return $class::parseDateTime($value);
     }
 }
