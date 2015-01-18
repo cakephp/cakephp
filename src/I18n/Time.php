@@ -658,12 +658,61 @@ class Time extends Carbon implements JsonSerializable
     /**
      * Sets the default format used when type converting instances of this type to string
      *
-     * @param string|int $format Format.
+     * @param string|array|int $format Format.
      * @return void
      */
     public static function setToStringFormat($format)
     {
         static::$_toStringFormat = $format;
+    }
+
+    /**
+     * Returns a new Time object after parsing the provided time string based on
+     * the passed or configured date time format. This method is locale dependent,
+     * Any string that is passed to this function will be intepreted as a locale
+     * dependent string.
+     *
+     * When no $format is provided, the `toString` format will be used.
+     *
+     * If it was impossible to parse the provided time, null will be returned.
+     *
+     * Example:
+     *
+     * {{{
+     *  $time = Time::parseDateTime('10/13/2013 12:54am');
+     *  $time = Time::parseDateTime('13 Oct, 2013 13:54', 'dd MMM, y H:mm');
+     *  $time = Time::parseDateTime('10/10/2015', [IntlDateFormatter::SHORT, -1]);
+     * }}}
+     *
+     * @param string $time The time string to parse.
+     * @param string|array $format Any format accepted by IntlDateFormatter.
+     * @return static|null
+     */
+    public static function parseDateTime($time, $format = null)
+    {
+        $dateFormat = $format ?: static::$_toStringFormat;
+        $timeFormat = $pattern = null;
+
+        if (is_array($dateFormat)) {
+            list($dateFormat, $timeFormat) = $dateFormat;
+        } else {
+            $pattern = $dateFormat;
+            $dateFormat = null;
+        }
+
+        $formatter = datefmt_create(
+            static::$defaultLocale,
+            $dateFormat,
+            $timeFormat,
+            null,
+            null,
+            $pattern
+        );
+        $time = $formatter->parse($time);
+        if ($time) {
+            return new static('@' . $time);
+        }
+        return null;
     }
 
     /**
