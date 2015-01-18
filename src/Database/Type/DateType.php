@@ -56,4 +56,13 @@ class DateType extends \Cake\Database\Type\DateTimeType
         }
         return $date;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function _parseValue($value)
+    {
+        $class = static::$dateTimeClass;
+        return $class::parseDate($value, $this->_localeFormat);
+    }
 }
