@@ -47,7 +47,7 @@ class DateTimeType extends \Cake\Database\Type
     protected $_useLocaleParser = false;
 
     /**
-     * The date formate to use for parsing incoming dates for marshalling.
+     * The date format to use for parsing incoming dates for marshalling.
      *
      * @var string|array|int
      */
@@ -160,14 +160,14 @@ class DateTimeType extends \Cake\Database\Type
     }
 
     /**
-     * Sets whether or not to pase dates passed to the marshal() function
+     * Sets whether or not to parse dates passed to the marshal() function
      * by using a locale aware parser.
      *
      * @param bool $enable Whether or not to enable
      * @return $this
      */
-	public function useLocaleParser($enable = true)
-	{
+    public function useLocaleParser($enable = true)
+    {
         if ($enable === false) {
             $this->_useLocaleParser = $enable;
             return $this;
