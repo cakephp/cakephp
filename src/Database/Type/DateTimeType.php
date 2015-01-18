@@ -159,6 +159,13 @@ class DateTimeType extends \Cake\Database\Type
         return new $class($format);
     }
 
+    /**
+     * Sets whether or not to pase dates passed to the marshal() function
+     * by using a locale aware parser.
+     *
+     * @param bool $enable Whether or not to enable
+     * @return $this
+     */
 	public function useLocaleParser($enable = true)
 	{
         if ($enable === false) {
@@ -177,12 +184,28 @@ class DateTimeType extends \Cake\Database\Type
         );
     }
 
+    /**
+     * Sets the format string to use for parsing dates in this class. The formats
+     * that are accepted are documented in the `Cake\I18n\Time::parseDateTime()`
+     * function.
+     *
+     * @param string|array $format The format in which the string are passed.
+     * @see \Cake\I18n\Time::parseDateTime()
+     * @return $this
+     */
     public function setLocaleFormat($format)
     {
         $this->_localeFormat = $format;
         return $this;
     }
 
+    /**
+     * Converts a string into a DateTime object after parseing it using the locale
+     * aware parser with the specified format.
+     *
+     * @param string $value The value to parse and convert to an object.
+     * @return \Cake\I18n\Time|null
+     */
     protected function _parseValue($value)
     {
         $class = static::$dateTimeClass;
