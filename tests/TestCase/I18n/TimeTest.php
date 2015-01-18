@@ -669,7 +669,8 @@ class TimeTest extends TestCase
      *
      * @return void
      */
-    public function testParseDateTime() {
+    public function testParseDateTime()
+    {
         $time = Time::parseDateTime('10/13/2013 12:54am');
         $this->assertNotNull($time);
         $this->assertEquals('2013-10-13 00:54', $time->format('Y-m-d H:i'));
@@ -692,7 +693,8 @@ class TimeTest extends TestCase
      *
      * @return void
      */
-    public function testParseDate() {
+    public function testParseDate()
+    {
         $time = Time::parseDate('10/13/2013 12:54am');
         $this->assertNotNull($time);
         $this->assertEquals('2013-10-13 00:00', $time->format('Y-m-d H:i'));
@@ -709,7 +711,7 @@ class TimeTest extends TestCase
         $time = Time::parseDate('13 foo 10 2013 12:54');
         $this->assertNull($time);
 
-        $time = Time::parseDate('13 Oct, 2013', 'dd MMM, y');
+        $time = Time::parseDate('13 10, 2013', 'dd M, y');
         $this->assertNotNull($time);
         $this->assertEquals('2013-10-13 00:00', $time->format('Y-m-d H:i'));
     }

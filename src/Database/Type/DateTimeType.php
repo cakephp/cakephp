@@ -159,7 +159,8 @@ class DateTimeType extends \Cake\Database\Type
         return new $class($format);
     }
 
-    public function useLocaleParser($enable = true) {
+	public function useLocaleParser($enable = true)
+	{
         if ($enable === false) {
             $this->_useLocaleParser = $enable;
             return $this;
@@ -176,7 +177,8 @@ class DateTimeType extends \Cake\Database\Type
         );
     }
 
-    public function setLocaleFormat($format) {
+    public function setLocaleFormat($format)
+    {
         $this->_localeFormat = $format;
         return $this;
     }
