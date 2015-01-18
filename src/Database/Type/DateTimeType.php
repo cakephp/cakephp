@@ -120,7 +120,7 @@ class DateTimeType extends \Cake\Database\Type
             } elseif (is_numeric($value)) {
                 $date = new $class('@' . $value);
             } elseif (is_string($value) && $this->_useLocaleParser) {
-                $date = $this->_parseValue($date);
+                return $this->_parseValue($value);
             } elseif (is_string($value)) {
                 $date = new $class($value);
                 $compare = true;
@@ -184,6 +184,6 @@ class DateTimeType extends \Cake\Database\Type
     protected function _parseValue($value)
     {
         $class = static::$dateTimeClass;
-        return $class::parseDateTime($value);
+        return $class::parseDateTime($value, $this->_localeFormat);
     }
 }
