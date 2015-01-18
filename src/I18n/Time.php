@@ -766,7 +766,8 @@ class Time extends Carbon implements JsonSerializable
      * @param string|int $format Any format accepted by IntlDateFormatter.
      * @return static|null
      */
-    public static function parseTime($time, $format = null) {
+    public static function parseTime($time, $format = null)
+    {
         if (is_int($format)) {
             $format = [-1, $format];
         }
