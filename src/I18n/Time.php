@@ -747,6 +747,34 @@ class Time extends Carbon implements JsonSerializable
     }
 
     /**
+     * Returns a new Time object after parsing the provided $time string based on
+     * the passed or configured date time format. This method is locale dependent,
+     * Any string that is passed to this function will be intepreted as a locale
+     * dependent string.
+     *
+     * When no $format is provided, the IntlDateFormatter::SHORT format will be used.
+     *
+     * If it was impossible to parse the provided time, null will be returned.
+     *
+     * Example:
+     *
+     * {{{
+     *  $time = Time::parseDate('11:23pm');
+     * }}}
+     *
+     * @param string $time The time string to parse.
+     * @param string|int $format Any format accepted by IntlDateFormatter.
+     * @return static|null
+     */
+    public static function parseTime($time, $format = null) {
+        if (is_int($format)) {
+            $format = [-1, $format];
+        }
+        $format = $format ?: [-1, IntlDateFormatter::SHORT];
+        return static::parseDateTime($time, $format);
+    }
+
+    /**
      * Returns a string that should be serialized when converting this object to json
      *
      * @return string

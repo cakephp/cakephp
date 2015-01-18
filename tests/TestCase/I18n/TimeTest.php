@@ -715,6 +715,26 @@ class TimeTest extends TestCase
     }
 
     /**
+     * Tests parsing times using the parseTime function
+     *
+     * @return void
+     */
+    public function testParseTime()
+    {
+        $time = Time::parseTime('12:54am');
+        $this->assertNotNull($time);
+        $this->assertEquals('00:54:00', $time->format('H:i:s'));
+
+        Time::$defaultLocale = 'fr-FR';
+        $time = Time::parseTime('23:54');
+        $this->assertNotNull($time);
+        $this->assertEquals('23:54:00', $time->format('H:i:s'));
+
+        $time = Time::parseTime('31c2:54');
+        $this->assertNull($time);
+    }
+
+    /**
      * Custom assert to allow for variation in the version of the intl library, where
      * some translations contain a few extra commas.
      *
