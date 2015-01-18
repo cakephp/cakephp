@@ -688,6 +688,33 @@ class TimeTest extends TestCase
     }
 
     /**
+     * Tests parsing a string into a Time object based on the locale format.
+     *
+     * @return void
+     */
+    public function testParseDate() {
+        $time = Time::parseDate('10/13/2013 12:54am');
+        $this->assertNotNull($time);
+        $this->assertEquals('2013-10-13 00:00', $time->format('Y-m-d H:i'));
+
+        $time = Time::parseDate('10/13/2013');
+        $this->assertNotNull($time);
+        $this->assertEquals('2013-10-13 00:00', $time->format('Y-m-d H:i'));
+
+        Time::$defaultLocale = 'fr-FR';
+        $time = Time::parseDate('13 10, 2013 12:54');
+        $this->assertNotNull($time);
+        $this->assertEquals('2013-10-13 00:00', $time->format('Y-m-d H:i'));
+
+        $time = Time::parseDate('13 foo 10 2013 12:54');
+        $this->assertNull($time);
+
+        $time = Time::parseDate('13 Oct, 2013', 'dd MMM, y');
+        $this->assertNotNull($time);
+        $this->assertEquals('2013-10-13 00:00', $time->format('Y-m-d H:i'));
+    }
+
+    /**
      * Custom assert to allow for variation in the version of the intl library, where
      * some translations contain a few extra commas.
      *
