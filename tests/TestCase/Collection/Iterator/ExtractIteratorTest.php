@@ -89,7 +89,8 @@ class ExtractIteratorTest extends TestCase
      *
      * @return void
      */
-    public function testExtractWithCallable() {
+    public function testExtractWithCallable()
+    {
         $items = [
             ['a' => 1, 'b' => 2],
             ['a' => 3, 'b' => 4]
