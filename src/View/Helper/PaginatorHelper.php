@@ -674,7 +674,7 @@ class PaginatorHelper extends Helper
     /**
      * Formats a number for the paginator number output.
      *
-     * @param StringTemplate $templater
+     * @param \Cake\View\StringTemplate $templater StringTemplate instance.
      * @param array $options Options from the numbers() method.
      * @return string
      */
@@ -690,7 +690,7 @@ class PaginatorHelper extends Helper
     /**
      * Generates the numbers for the paginator numbers() method.
      *
-     * @param StringTemplate $templater
+     * @param \Cake\View\StringTemplate $templater StringTemplate instance.
      * @param array $params Params from the numbers() method.
      * @param array $options Options from the numbers() method.
      * @return string Markup output.
@@ -700,13 +700,13 @@ class PaginatorHelper extends Helper
         $out = '';
         $ellipsis = $templater->format('ellipsis', []);
 
-        extract($this->_getNumbersStartAndEnd($params, $options));
+        $startAndEnd = ($this->_getNumbersStartAndEnd($params, $options));
 
-        $out .= $this->_firstNumber($ellipsis, $params, $start, $options);
+        $out .= $this->_firstNumber($ellipsis, $params, $startAndEnd['start'], $options);
 
         $out .= $options['before'];
 
-        for ($i = $start; $i < $params['page']; $i++) {
+        for ($i = $startAndEnd['start']; $i < $params['page']; $i++) {
             $out .= $this->_formatNumber($templater, [
                 'text' => $i,
                 'page' => $i,
@@ -720,7 +720,7 @@ class PaginatorHelper extends Helper
         ]);
 
         $start = $params['page'] + 1;
-        for ($i = $start; $i < $end; $i++) {
+        for ($i = $start; $i < $startAndEnd['end']; $i++) {
             $out .= $this->_formatNumber($templater, [
                 'text' => $i,
                 'page' => $i,
@@ -728,29 +728,30 @@ class PaginatorHelper extends Helper
             ]);
         }
 
-        if ($end != $params['page']) {
+        if ($startAndEnd['end'] != $params['page']) {
             $out .= $this->_formatNumber($templater, [
                 'text' => $i,
-                'page' => $end,
+                'page' => $startAndEnd['end'],
                 'model' => $options['model']
             ]);
         }
 
         $out .= $options['after'];
-        $out .= $this->_lastNumber($ellipsis, $params, $end, $options);
+        $out .= $this->_lastNumber($ellipsis, $params, $startAndEnd['end'], $options);
         return $out;
     }
 
     /**
      * Generates the last number for the paginator numbers() method.
      *
-     * @param StringTemplate $ellipsis
+     * @param \Cake\View\StringTemplate $ellipsis StringTemplate instance.
      * @param array $params Params from the numbers() method.
      * @param int $start Start number.
      * @param array $options Options from the numbers() method.
      * @return string Markup output.
      */
-    protected function _firstNumber($ellipsis, $params, $start, $options) {
+    protected function _firstNumber($ellipsis, $params, $start, $options)
+    {
         $out = '';
         if ($options['first'] && $start > 1) {
             $offset = ($start <= (int)$options['first']) ? $start - 1 : $options['first'];
@@ -765,13 +766,14 @@ class PaginatorHelper extends Helper
     /**
      * Generates the last number for the paginator numbers() method.
      *
-     * @param StringTemplate $ellipsis
+     * @param \Cake\View\StringTemplate $ellipsis StringTemplate instance.
      * @param array $params Params from the numbers() method.
      * @param int $end End number.
      * @param array $options Options from the numbers() method.
      * @return string Markup output.
      */
-    protected function _lastNumber($ellipsis, $params, $end, $options) {
+    protected function _lastNumber($ellipsis, $params, $end, $options)
+    {
         $out = '';
         if ($options['last'] && $end < $params['pageCount']) {
             $offset = ($params['pageCount'] < $end + (int)$options['last']) ? $params['pageCount'] - $end : $options['last'];
@@ -786,12 +788,13 @@ class PaginatorHelper extends Helper
     /**
      * Generates the numbers for the paginator numbers() method.
      *
-     * @param StringTemplate $templater
+     * @param \Cake\View\StringTemplate $templater StringTemplate instance.
      * @param array $params Params from the numbers() method.
      * @param array $options Options from the numbers() method.
      * @return string Markup output.
      */
-    protected function _numbers($templater, $params, $options) {
+    protected function _numbers($templater, $params, $options)
+    {
         $out = '';
         $out .= $options['before'];
         for ($i = 1; $i <= $params['pageCount']; $i++) {
