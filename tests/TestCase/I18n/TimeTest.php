@@ -707,9 +707,9 @@ class TimeTest extends TestCase
         $time = Time::parseDate('13 foo 10 2013 12:54');
         $this->assertNull($time);
 
-        $time = Time::parseDate('13 10, 2013', 'dd m, y');
+        $time = Time::parseDate('13 10, 2013', 'dd M, y');
         $this->assertNotNull($time);
-        $this->assertEquals('2013-10-13 00:00', $time->format('Y-m-d H:i'));
+        $this->assertEquals('2013-10-13', $time->format('Y-m-d'));
     }
 
     /**
