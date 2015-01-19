@@ -24,12 +24,12 @@ class ExtractIterator extends Collection
 {
 
     /**
-     * A path to follow inside a hierarchy in order to get a particular property,
-     * which name is the last in this array
+     * A callable responsible for extracting a single value for each
+     * item in the collection.
      *
-     * @var array
+     * @var callable
      */
-    protected $_path;
+    protected $_extractor;
 
     /**
      * Creates the iterator that will return the requested property for each value
@@ -53,7 +53,7 @@ class ExtractIterator extends Collection
      */
     public function __construct($items, $path)
     {
-        $this->_path = explode('.', $path);
+        $this->_extractor = $this->_propertyExtractor($path);
         parent::__construct($items);
     }
 
@@ -65,7 +65,7 @@ class ExtractIterator extends Collection
      */
     public function current()
     {
-        $current = parent::current();
-        return $this->_extract($current, $this->_path);
+        $extractor = $this->_extractor;
+        return $extractor(parent::current());
     }
 }
