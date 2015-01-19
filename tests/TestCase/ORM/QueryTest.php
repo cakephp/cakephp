@@ -1815,8 +1815,7 @@ class QueryTest extends TestCase
     {
         $table = TableRegistry::get('authors');
         $query = new Query($this->connection, $table);
-        $query->select()->formatResults(function ($results, $q) use ($query) {
-            $this->assertSame($query, $q);
+        $query->select()->formatResults(function ($results) {
             $this->assertInstanceOf('Cake\ORM\ResultSet', $results);
             return $results->indexBy('id');
         });
@@ -1832,8 +1831,7 @@ class QueryTest extends TestCase
     {
         $table = TableRegistry::get('authors');
         $query = new Query($this->connection, $table);
-        $query->select()->formatResults(function ($results, $q) use ($query) {
-            $this->assertSame($query, $q);
+        $query->select()->formatResults(function ($results) {
             $this->assertInstanceOf('Cake\ORM\ResultSet', $results);
             return $results->indexBy('id');
         });
