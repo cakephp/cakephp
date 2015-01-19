@@ -511,6 +511,8 @@ class ShellTest extends TestCase
         $path = TMP . 'shell_test';
         $file = $path . DS . 'file1.php';
         
+        new Folder($path, true);
+        
         touch($file);
         $this->assertTrue(file_exists($file));
         
