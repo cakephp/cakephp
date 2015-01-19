@@ -500,6 +500,29 @@ class ShellTest extends TestCase
         $this->assertTextEquals($contents, file_get_contents($file));
         $this->assertTrue($result, 'Did create file.');
     }
+    
+    /**
+     * Test that there is no user prompt in non-interactive mode while file already exists.
+     *
+     * @return void
+     */
+    public function testCreateFileOverwriteNonInteractive()
+    {
+        $path = TMP . 'shell_test';
+        $file = $path . DS . 'file1.php';
+        
+        new Folder($path, true);
+        
+        touch($file);
+        $this->assertTrue(file_exists($file));
+        
+        $this->io->expects($this->never())->method('askChoice');
+        
+        $this->Shell->interactive = false;
+        $result = $this->Shell->createFile($file, 'My content');
+        $this->assertTrue($result);
+        $this->assertEquals(file_get_contents($file), 'My content');
+    }
 
     /**
      * Test that you can't create files that aren't writable.
