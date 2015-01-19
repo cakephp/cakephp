@@ -742,7 +742,7 @@ class PaginatorHelper extends Helper
     }
 
     /**
-     * Generates the last number for the paginator numbers() method.
+     * Generates the first number for the paginator numbers() method.
      *
      * @param \Cake\View\StringTemplate $ellipsis StringTemplate instance.
      * @param array $params Params from the numbers() method.
