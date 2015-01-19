@@ -83,4 +83,21 @@ class ExtractIteratorTest extends TestCase
         $extractor = new ExtractIterator($items, 'a.b.c');
         $this->assertEquals([10, null, null, 25], iterator_to_array($extractor));
     }
+
+    /**
+     * Tests that it is possible to pass a callable as the extractor.
+     *
+     * @return void
+     */
+    public function testExtractWithCallable()
+    {
+        $items = [
+            ['a' => 1, 'b' => 2],
+            ['a' => 3, 'b' => 4]
+        ];
+        $extractor = new ExtractIterator($items, function ($item) {
+            return $item['b'];
+        });
+        $this->assertEquals([2, 4], iterator_to_array($extractor));
+    }
 }
