@@ -19,14 +19,14 @@ It also possible to load configuration from external files:
 
 ```php
 Configure::config('default', new PhpConfig('/path/to/config/folder'));
-Configure::load('app.php', 'default', false);
-Configure::load('other_config.php', 'default');
+Configure::load('app', 'default', false);
+Configure::load('other_config', 'default');
 ```
 
 And Write the configuration back into files:
 
 ```php
-Configure::dump('my_config.php', 'default');
+Configure::dump('my_config', 'default');
 ```
 
 ## Documentation

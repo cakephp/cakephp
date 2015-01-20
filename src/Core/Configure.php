@@ -279,11 +279,11 @@ class Configure
      * Given that the 'default' engine is an instance of PhpConfig.
      * Save all data in Configure to the file `my_config.php`:
      *
-     * `Configure::dump('my_config.php', 'default');`
+     * `Configure::dump('my_config', 'default');`
      *
      * Save only the error handling configuration:
      *
-     * `Configure::dump('error.php', 'default', ['Error', 'Exception'];`
+     * `Configure::dump('error', 'default', ['Error', 'Exception'];`
      *
      * @param string $key The identifier to create in the config adapter.
      *   This could be a filename or a cache key depending on the adapter being used.
