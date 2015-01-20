@@ -186,10 +186,14 @@ class Plugin
         if (Configure::check('plugins')) {
             return;
         }
-        try {
-            Configure::load('plugins');
-        } catch (\Exception $e) {
+
+        $vendorFile = ROOT . DS . 'vendor' . DS . 'cakephp-plugins.php';
+        if (!file_exists($vendorFile)) {
+            return;
         }
+
+        $config = require $vendorFile;
+        Configure::write($config);
     }
 
     /**
