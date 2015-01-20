@@ -1778,4 +1778,60 @@ class MarshallerTest extends TestCase
         $this->assertEquals('Robert', $entity->user->name);
         $this->assertEquals('robert', $entity->user->username);
     }
+
+    /**
+     * Test Model.beforeMarshal event on associated tables.
+     *
+     * @return void
+     */
+    public function testBeforeMarshalEventOnAssociations()
+    {
+        $data = [
+            'title' => 'My title',
+            'body' => 'My content',
+            'author_id' => 1,
+            'user' => [
+                'username' => 'mark',
+                'password' => 'secret'
+            ],
+            'comments' => [
+                ['comment' => 'First post', 'user_id' => 2],
+                ['comment' => 'Second post', 'user_id' => 2],
+            ],
+            'tags' => [
+                ['tag' => 'news', '_joinData' => ['active' => 1]],
+                ['tag' => 'cakephp', '_joinData' => ['active' => 0]],
+            ],
+        ];
+
+        $marshall = new Marshaller($this->articles);
+
+        $this->articles->users->eventManager()->attach(function ($e, $data) {
+            $data['secret'] = 'h45h3d';
+        }, 'Model.beforeMarshal');
+
+        $this->articles->comments->eventManager()->attach(function ($e, $data) {
+            $data['comment'] .= ' (modified)';
+        }, 'Model.beforeMarshal');
+
+        $this->articles->tags->eventManager()->attach(function ($e, $data) {
+            $data['tag'] .= ' (modified)';
+        }, 'Model.beforeMarshal');
+
+        $this->articles->tags->junction()->eventManager()->attach(function ($e, $data) {
+            $data['modified_by'] = 1;
+        }, 'Model.beforeMarshal');
+
+        $entity = $marshall->one($data, [
+            'associated' => ['Users', 'Comments', 'Tags']
+        ]);
+
+        $this->assertEquals('h45h3d', $entity->user->secret);
+        $this->assertEquals('First post (modified)', $entity->comments[0]->comment);
+        $this->assertEquals('Second post (modified)', $entity->comments[1]->comment);
+        $this->assertEquals('news (modified)', $entity->tags[0]->tag);
+        $this->assertEquals('cakephp (modified)', $entity->tags[1]->tag);
+        $this->assertEquals(1, $entity->tags[0]->_joinData->modified_by);
+        $this->assertEquals(1, $entity->tags[1]->_joinData->modified_by);
+    }
 }
