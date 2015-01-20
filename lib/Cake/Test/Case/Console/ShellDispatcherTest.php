@@ -427,6 +427,14 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Dispatcher = new TestShellDispatcher();
 		$result = $Dispatcher->getShell('TestPlugin.example');
 		$this->assertInstanceOf('ExampleShell', $result);
+
+		$Dispatcher = new TestShellDispatcher();
+		$result = $Dispatcher->getShell('test_plugin');
+		$this->assertInstanceOf('TestPluginShell', $result);
+
+		$Dispatcher = new TestShellDispatcher();
+		$result = $Dispatcher->getShell('TestPlugin');
+		$this->assertInstanceOf('TestPluginShell', $result);
 	}
 
 /**
