@@ -249,6 +249,7 @@ class Behavior implements EventListenerInterface
     public function implementedEvents()
     {
         $eventMap = [
+            'Model.beforeMarshal' => 'beforeMarshal',
             'Model.beforeFind' => 'beforeFind',
             'Model.beforeSave' => 'beforeSave',
             'Model.afterSave' => 'afterSave',
