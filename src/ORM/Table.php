@@ -1813,6 +1813,9 @@ class Table implements RepositoryInterface, EventListenerInterface
      * You can also pass the name of the validator to use in the `validate` option.
      * If `null` is passed to the first param of this function, no validation will
      * be performed.
+     *
+     * You can use the `Model.beforeMarshal` event to modify request data
+     * before it is converted into entities.
      */
     public function newEntity($data = null, array $options = [])
     {
@@ -1854,6 +1857,8 @@ class Table implements RepositoryInterface, EventListenerInterface
      * );
      * ```
      *
+     * You can use the `Model.beforeMarshal` event to modify request data
+     * before it is converted into entities.
      */
     public function newEntities(array $data, array $options = [])
     {
@@ -1891,6 +1896,9 @@ class Table implements RepositoryInterface, EventListenerInterface
      *  'validate' => false
      * ]);
      * ```
+     *
+     * You can use the `Model.beforeMarshal` event to modify request data
+     * before it is converted into entities.
      */
     public function patchEntity(EntityInterface $entity, array $data, array $options = [])
     {
@@ -1922,6 +1930,9 @@ class Table implements RepositoryInterface, EventListenerInterface
      *  ]
      * );
      * ```
+     *
+     * You can use the `Model.beforeMarshal` event to modify request data
+     * before it is converted into entities.
      */
     public function patchEntities($entities, array $data, array $options = [])
     {
@@ -2063,6 +2074,7 @@ class Table implements RepositoryInterface, EventListenerInterface
     public function implementedEvents()
     {
         $eventMap = [
+            'Model.beforeMarshal' => 'beforeMarshal',
             'Model.beforeFind' => 'beforeFind',
             'Model.beforeSave' => 'beforeSave',
             'Model.afterSave' => 'afterSave',
