@@ -668,7 +668,7 @@ class PaginatorHelper extends Helper
             $start = 1;
             $end = $params['page'] + ($options['modulus'] - $params['page']) + 1;
         }
-        return compact('start', 'end');
+        return [$start, $end];
     }
 
     /**
@@ -700,13 +700,13 @@ class PaginatorHelper extends Helper
         $out = '';
         $ellipsis = $templater->format('ellipsis', []);
 
-        $startAndEnd = ($this->_getNumbersStartAndEnd($params, $options));
+        list($start, $end) = $this->_getNumbersStartAndEnd($params, $options);
 
-        $out .= $this->_firstNumber($ellipsis, $params, $startAndEnd['start'], $options);
+        $out .= $this->_firstNumber($ellipsis, $params, $start, $options);
 
         $out .= $options['before'];
 
-        for ($i = $startAndEnd['start']; $i < $params['page']; $i++) {
+        for ($i = $start; $i < $params['page']; $i++) {
             $out .= $this->_formatNumber($templater, [
                 'text' => $i,
                 'page' => $i,
@@ -720,7 +720,7 @@ class PaginatorHelper extends Helper
         ]);
 
         $start = $params['page'] + 1;
-        for ($i = $start; $i < $startAndEnd['end']; $i++) {
+        for ($i = $start; $i < $end; $i++) {
             $out .= $this->_formatNumber($templater, [
                 'text' => $i,
                 'page' => $i,
@@ -728,16 +728,16 @@ class PaginatorHelper extends Helper
             ]);
         }
 
-        if ($startAndEnd['end'] != $params['page']) {
+        if ($end != $params['page']) {
             $out .= $this->_formatNumber($templater, [
                 'text' => $i,
-                'page' => $startAndEnd['end'],
+                'page' => $end,
                 'model' => $options['model']
             ]);
         }
 
         $out .= $options['after'];
-        $out .= $this->_lastNumber($ellipsis, $params, $startAndEnd['end'], $options);
+        $out .= $this->_lastNumber($ellipsis, $params, $end, $options);
         return $out;
     }
 
