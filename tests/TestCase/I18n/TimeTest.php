@@ -665,6 +665,74 @@ class TimeTest extends TestCase
     }
 
     /**
+     * Tests parsing a string into a Time object based on the locale format.
+     *
+     * @return void
+     */
+    public function testParseDateTime()
+    {
+        $time = Time::parseDateTime('10/13/2013 12:54am');
+        $this->assertNotNull($time);
+        $this->assertEquals('2013-10-13 00:54', $time->format('Y-m-d H:i'));
+
+        Time::$defaultLocale = 'fr-FR';
+        $time = Time::parseDateTime('13 10, 2013 12:54');
+        $this->assertNotNull($time);
+        $this->assertEquals('2013-10-13 12:54', $time->format('Y-m-d H:i'));
+
+        $time = Time::parseDateTime('13 foo 10 2013 12:54');
+        $this->assertNull($time);
+    }
+
+    /**
+     * Tests parsing a string into a Time object based on the locale format.
+     *
+     * @return void
+     */
+    public function testParseDate()
+    {
+        $time = Time::parseDate('10/13/2013 12:54am');
+        $this->assertNotNull($time);
+        $this->assertEquals('2013-10-13 00:00', $time->format('Y-m-d H:i'));
+
+        $time = Time::parseDate('10/13/2013');
+        $this->assertNotNull($time);
+        $this->assertEquals('2013-10-13 00:00', $time->format('Y-m-d H:i'));
+
+        Time::$defaultLocale = 'fr-FR';
+        $time = Time::parseDate('13 10, 2013 12:54');
+        $this->assertNotNull($time);
+        $this->assertEquals('2013-10-13 00:00', $time->format('Y-m-d H:i'));
+
+        $time = Time::parseDate('13 foo 10 2013 12:54');
+        $this->assertNull($time);
+
+        $time = Time::parseDate('13 10, 2013', 'dd M, y');
+        $this->assertNotNull($time);
+        $this->assertEquals('2013-10-13', $time->format('Y-m-d'));
+    }
+
+    /**
+     * Tests parsing times using the parseTime function
+     *
+     * @return void
+     */
+    public function testParseTime()
+    {
+        $time = Time::parseTime('12:54am');
+        $this->assertNotNull($time);
+        $this->assertEquals('00:54:00', $time->format('H:i:s'));
+
+        Time::$defaultLocale = 'fr-FR';
+        $time = Time::parseTime('23:54');
+        $this->assertNotNull($time);
+        $this->assertEquals('23:54:00', $time->format('H:i:s'));
+
+        $time = Time::parseTime('31c2:54');
+        $this->assertNull($time);
+    }
+
+    /**
      * Custom assert to allow for variation in the version of the intl library, where
      * some translations contain a few extra commas.
      *

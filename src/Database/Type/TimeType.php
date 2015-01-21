@@ -28,4 +28,13 @@ class TimeType extends \Cake\Database\Type\DateTimeType
      * @var string
      */
     protected $_format = 'H:i:s';
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function _parseValue($value)
+    {
+        $class = static::$dateTimeClass;
+        return $class::parseTime($value, $this->_localeFormat);
+    }
 }

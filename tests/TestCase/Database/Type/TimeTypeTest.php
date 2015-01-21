@@ -167,4 +167,19 @@ class TimeTypeTest extends TestCase
             $this->assertSame($expected, $result);
         }
     }
+
+    /**
+     * Tests marshalling dates using the locale aware parser
+     *
+     * @return void
+     */
+    public function testMarshalWithLocaleParsing()
+    {
+        $this->type->useLocaleParser();
+        $expected = new Time('23:23:00');
+        $result = $this->type->marshal('11:23pm');
+        $this->assertEquals($expected->format('H:i'), $result->format('H:i'));
+
+        $this->assertNull($this->type->marshal('derp:23'));
+    }
 }
