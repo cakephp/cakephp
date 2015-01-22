@@ -5070,10 +5070,10 @@ class Example extends AppModel {
  */
 	protected $_schema = array(
 		'filefield' => array(
-			'type'    => 'string',
-			'length'  => 254,
+			'type' => 'string',
+			'length' => 254,
 			'default' => null,
-			'null'    => true,
+			'null' => true,
 			'comment' => null
 		),
 	);
