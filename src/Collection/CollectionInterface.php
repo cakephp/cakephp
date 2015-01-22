@@ -179,12 +179,14 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * applying the callback function to all elements. $zero is the initial state
      * of the reduction, and each successive step of it should be returned
      * by the callback function.
+     * If $zero is omitted the first value of the collection will be used in its place
+     * and reduction will start from the second item.
      *
      * @param callable $c The callback function to be called
      * @param mixed $zero The state of reduction
      * @return void
      */
-    public function reduce(callable $c, $zero);
+    public function reduce(callable $c, $zero = null);
 
     /**
      * Returns a new collection containing the column or property value found in each

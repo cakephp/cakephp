@@ -135,10 +135,20 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      */
-    public function reduce(callable $c, $zero)
+    public function reduce(callable $c, $zero = null)
     {
+        $isFirst = false;
+        if (func_num_args() < 2) {
+            $isFirst = true;
+        }
+
         $result = $zero;
         foreach ($this->_unwrap() as $k => $value) {
+            if ($isFirst) {
+                $result = $value;
+                $isFirst = false;
+                continue;
+            }
             $result = $c($result, $value, $k);
         }
         return $result;
