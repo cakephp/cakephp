@@ -68,8 +68,7 @@ class ConsoleLogTest extends TestCase
      */
     public function testDefaultOutputAs()
     {
-        if (
-            (DS === '\\' && !(bool)env('ANSICON')) ||
+        if ((DS === '\\' && !(bool)env('ANSICON')) ||
             (function_exists('posix_isatty') && !posix_isatty(null))
         ) {
             $expected = ConsoleOutput::PLAIN;

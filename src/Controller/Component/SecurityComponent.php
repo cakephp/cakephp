@@ -250,8 +250,7 @@ class SecurityComponent extends Component
                 if ($this->session->check('_Token')) {
                     $tData = $this->session->read('_Token');
 
-                    if (
-                        !empty($tData['allowedControllers']) &&
+                    if (!empty($tData['allowedControllers']) &&
                         !in_array($this->request->params['controller'], $tData['allowedControllers']) ||
                         !empty($tData['allowedActions']) &&
                         !in_array($this->request->params['action'], $tData['allowedActions'])

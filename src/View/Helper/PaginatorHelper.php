@@ -436,8 +436,7 @@ class PaginatorHelper extends Helper
         if (!empty($url['page']) && $url['page'] == 1) {
             $url['page'] = null;
         }
-        if (
-            isset($paging['sortDefault'], $paging['directionDefault'], $url['sort'], $url['direction']) &&
+        if (isset($paging['sortDefault'], $paging['directionDefault'], $url['sort'], $url['direction']) &&
             $url['sort'] === $paging['sortDefault'] &&
             $url['direction'] === $paging['directionDefault']
         ) {

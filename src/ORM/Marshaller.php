@@ -371,8 +371,7 @@ class Marshaller
                 $converter = Type::build($columnType);
                 $value = $converter->marshal($value);
                 $isObject = is_object($value);
-                if (
-                    (!$isObject && $original === $value) ||
+                if ((!$isObject && $original === $value) ||
                     ($isObject && $original == $value)
                 ) {
                     continue;

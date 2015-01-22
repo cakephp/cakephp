@@ -239,8 +239,7 @@ class SqliteSchema extends BaseSchema
         $out = $this->_driver->quoteIdentifier($name);
         $hasUnsigned = ['biginteger', 'integer', 'float', 'decimal'];
 
-        if (
-            in_array($data['type'], $hasUnsigned, true) &&
+        if (in_array($data['type'], $hasUnsigned, true) &&
             isset($data['unsigned']) && $data['unsigned'] === true
         ) {
             $out .= ' UNSIGNED';
@@ -252,8 +251,7 @@ class SqliteSchema extends BaseSchema
             $out .= '(' . (int)$data['length'] . ')';
         }
         $hasPrecision = ['float', 'decimal'];
-        if (
-            in_array($data['type'], $hasPrecision, true) &&
+        if (in_array($data['type'], $hasPrecision, true) &&
             (isset($data['length']) || isset($data['precision']))
         ) {
             $out .= '(' . (int)$data['length'] . ',' . (int)$data['precision'] . ')';
@@ -287,8 +285,7 @@ class SqliteSchema extends BaseSchema
     public function constraintSql(Table $table, $name)
     {
         $data = $table->constraint($name);
-        if (
-            $data['type'] === Table::CONSTRAINT_PRIMARY &&
+        if ($data['type'] === Table::CONSTRAINT_PRIMARY &&
             count($data['columns']) === 1 &&
             $table->column($data['columns'][0])['type'] === 'integer'
         ) {

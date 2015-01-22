@@ -582,8 +582,7 @@ class Router
 
             if (!isset($url['_name'])) {
                 // Copy the current action if the controller is the current one.
-                if (
-                    empty($url['action']) &&
+                if (empty($url['action']) &&
                     (empty($url['controller']) || $params['controller'] === $url['controller'])
                 ) {
                     $url['action'] = $params['action'];

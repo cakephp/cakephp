@@ -138,8 +138,7 @@ class DateTimeType extends \Cake\Database\Type
         $value += ['hour' => 0, 'minute' => 0, 'second' => 0];
 
         $format = '';
-        if (
-            isset($value['year'], $value['month'], $value['day']) &&
+        if (isset($value['year'], $value['month'], $value['day']) &&
             (is_numeric($value['year']) && is_numeric($value['month']) && is_numeric($value['day']))
         ) {
             $format .= sprintf('%d-%02d-%02d', $value['year'], $value['month'], $value['day']);
@@ -172,8 +171,7 @@ class DateTimeType extends \Cake\Database\Type
             $this->_useLocaleParser = $enable;
             return $this;
         }
-        if (
-            static::$dateTimeClass === 'Cake\I18n\Time' ||
+        if (static::$dateTimeClass === 'Cake\I18n\Time' ||
             is_subclass_of(static::$dateTimeClass, 'Cake\I18n\Time')
         ) {
             $this->_useLocaleParser = $enable;

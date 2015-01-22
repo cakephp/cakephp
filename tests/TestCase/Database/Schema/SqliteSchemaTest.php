@@ -202,8 +202,7 @@ class SqliteSchemaTest extends TestCase
 
         $schema = new SchemaCollection($connection);
         $result = $schema->listTables();
-        if (
-            in_array('schema_articles', $result) &&
+        if (in_array('schema_articles', $result) &&
             in_array('schema_authors', $result)
         ) {
             return;

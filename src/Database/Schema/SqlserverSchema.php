@@ -97,8 +97,7 @@ class SqlserverSchema extends BaseSchema
         if ($col === 'bit') {
             return ['type' => 'boolean', 'length' => null];
         }
-        if (
-            strpos($col, 'numeric') !== false ||
+        if (strpos($col, 'numeric') !== false ||
             strpos($col, 'money') !== false ||
             strpos($col, 'decimal') !== false
         ) {
