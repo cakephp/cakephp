@@ -2497,4 +2497,17 @@ class ModelIntegrationTest extends BaseModelTest {
 		$model->expects($this->never())->method('getDataSource');
 		$this->assertEmpty($model->schema());
 	}
+
+/**
+ * Tests that calling getColumnType() on a model that is not supposed to use a table
+ * does not trigger any calls on any datasource
+ *
+ * @return void
+ */
+	public function testGetColumnTypeNoDB() {
+		$model = $this->getMock('Example', array('getDataSource'));
+		$model->expects($this->never())->method('getDataSource');
+		$result = $model->getColumnType('filefield');
+		$this->assertEquals('string', $result);
+	}
 }
