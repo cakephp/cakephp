@@ -36,7 +36,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * keys are `setter` and `guard`
      * @return \Cake\Datasource\EntityInterface
      */
-    public function set($property, $value = null, $options = []);
+    public function set($property, $value = null, array $options = []);
 
     /**
      * Returns the value of a property by name
