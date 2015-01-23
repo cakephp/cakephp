@@ -103,6 +103,9 @@ class DatabaseSession implements CakeSessionHandlerInterface {
 /**
  * Helper function called on write for database sessions.
  *
+ * Will retry, once, if the save triggers a PDOException which
+ * can happen if a race condition is encountered
+ *
  * @param int $id ID that uniquely identifies session in database
  * @param mixed $data The value of the data to be saved.
  * @return bool True for successful write, false otherwise.
@@ -114,7 +117,17 @@ class DatabaseSession implements CakeSessionHandlerInterface {
 		$expires = time() + $this->_timeout;
 		$record = compact('id', 'data', 'expires');
 		$record[$this->_model->primaryKey] = $id;
-		return $this->_model->save($record);
+
+		$options = array(
+			'validate' => false,
+			'callbacks' => false,
+			'counterCache' => false
+		);
+		try {
+			return $this->_model->save($record, $options);
+		} catch (PDOException $e) {
+			return $this->_model->save($record, $options);
+		}
 	}
 
 /**

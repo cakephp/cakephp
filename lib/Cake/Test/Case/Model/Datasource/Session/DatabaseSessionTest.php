@@ -191,4 +191,56 @@ class DatabaseSessionTest extends CakeTestCase {
 		$storage->gc();
 		$this->assertFalse($storage->read('foo'));
 	}
+
+/**
+ * testConcurrentInsert
+ *
+ * @return void
+ */
+	public function testConcurrentInsert() {
+		$this->skipIf(
+			$this->db instanceof Sqlite,
+			'Sqlite does not throw exceptions when attempting to insert a duplicate primary key'
+		);
+
+		ClassRegistry::removeObject('Session');
+
+		$mockedModel = $this->getMockForModel(
+			'SessionTestModel',
+			array('exists'),
+			array('alias' => 'MockedSessionTestModel', 'table' => 'sessions')
+		);
+		Configure::write('Session.handler.model', 'MockedSessionTestModel');
+
+		$counter = 0;
+		// First save
+		$mockedModel->expects($this->at($counter++))
+			->method('exists')
+			->will($this->returnValue(false));
+
+		// Second save
+		$mockedModel->expects($this->at($counter++))
+			->method('exists')
+			->will($this->returnValue(false));
+
+		// Second save retry
+		$mockedModel->expects($this->at($counter++))
+			->method('exists')
+			->will($this->returnValue(true));
+
+		// Datasource exists check
+		$mockedModel->expects($this->at($counter++))
+			->method('exists')
+			->will($this->returnValue(true));
+
+		$this->storage = new DatabaseSession();
+
+		$this->storage->write('foo', 'Some value');
+		$return = $this->storage->read('foo');
+		$this->assertSame('Some value', $return);
+
+		$this->storage->write('foo', 'Some other value');
+		$return = $this->storage->read('foo');
+		$this->assertSame('Some other value', $return);
+	}
 }
