@@ -252,11 +252,11 @@ class CollectionTest extends TestCase
     }
 
     /**
-     * Tests reduce
+     * Tests reduce with initial value
      *
      * @return void
      */
-    public function testReduce()
+    public function testReduceWithInitialValue()
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
@@ -274,6 +274,31 @@ class CollectionTest extends TestCase
             ->with(13, 3, 'c')
             ->will($this->returnValue(16));
         $this->assertEquals(16, $collection->reduce($callable, 10));
+    }
+
+    /**
+     * Tests reduce without initial value
+     *
+     * @return void
+     */
+    public function testReduceWithoutInitialValue()
+    {
+        $items = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4];
+        $collection = new Collection($items);
+        $callable = $this->getMock('stdClass', ['__invoke']);
+        $callable->expects($this->at(0))
+            ->method('__invoke')
+            ->with(1, 2, 'b')
+            ->will($this->returnValue(3));
+        $callable->expects($this->at(1))
+            ->method('__invoke')
+            ->with(3, 3, 'c')
+            ->will($this->returnValue(6));
+        $callable->expects($this->at(2))
+            ->method('__invoke')
+            ->with(6, 4, 'd')
+            ->will($this->returnValue(10));
+        $this->assertEquals(10, $collection->reduce($callable));
     }
 
     /**
