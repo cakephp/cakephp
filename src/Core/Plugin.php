@@ -186,10 +186,15 @@ class Plugin
         if (Configure::check('plugins')) {
             return;
         }
-        try {
-            Configure::load('plugins');
-        } catch (\Exception $e) {
+
+        $vendorFile = dirname(dirname(dirname(dirname(__DIR__)))) . DS . 'cakephp-plugins.php';
+        if (!file_exists($vendorFile)) {
+            Configure::write(['plugins' => []]);
+            return;
         }
+
+        $config = require $vendorFile;
+        Configure::write($config);
     }
 
     /**
