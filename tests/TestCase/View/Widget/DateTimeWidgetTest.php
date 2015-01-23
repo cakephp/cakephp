@@ -80,6 +80,36 @@ class DateTimeWidgetTest extends TestCase
     }
 
     /**
+     * test rendering empty selected.
+     *
+     * @return void
+     */
+    public function testRenderSelectedEmpty()
+    {
+        $result = $this->DateTime->render([
+            'val' => '',
+            'year' => ['empty' => true],
+            'month' => ['empty' => true],
+            'day' => ['empty' => true],
+            'hour' => ['empty' => true],
+            'minute' => ['empty' => true],
+        ], $this->context);
+        $this->assertContains('<option value="" selected="selected"></option>', $result);
+        $this->assertNotRegExp('/value="\d+" selected="selected"/', $result);
+
+        $result = $this->DateTime->render([
+            'val' => ['year' => '', 'month' => '', 'day' => '', 'hour' => '', 'minute' => ''],
+            'year' => ['empty' => true],
+            'month' => ['empty' => true],
+            'day' => ['empty' => true],
+            'hour' => ['empty' => true],
+            'minute' => ['empty' => true],
+        ], $this->context);
+        $this->assertContains('<option value="" selected="selected"></option>', $result);
+        $this->assertNotRegExp('/value="\d+" selected="selected"/', $result);
+    }
+
+    /**
      * Data provider for testing various acceptable selected values.
      *
      * @return array
