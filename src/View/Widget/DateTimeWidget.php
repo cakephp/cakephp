@@ -208,13 +208,16 @@ class DateTimeWidget implements WidgetInterface
                 ];
                 $validDate = false;
                 foreach ($dateArray as $key => $dateValue) {
-                    if (isset($value[$key])) {
-                        $dateArray[$key] = str_pad($value[$key], 2, '0', STR_PAD_LEFT);
+                    $exists = isset($value[$key]);
+                    if ($exists) {
                         $validDate = true;
+                    }
+                    if ($exists && $value[$key] !== '') {
+                        $dateArray[$key] = str_pad($value[$key], 2, '0', STR_PAD_LEFT);
                     }
                 }
                 if ($validDate) {
-                    if (empty($dateArray['second'])) {
+                    if (!isset($dateArray['second'])) {
                         $dateArray['second'] = 0;
                     }
                     if (isset($value['meridian'])) {
