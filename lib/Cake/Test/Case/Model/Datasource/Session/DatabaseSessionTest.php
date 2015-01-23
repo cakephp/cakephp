@@ -207,9 +207,41 @@ class DatabaseSessionTest extends CakeTestCase {
 		);
 		Configure::write('Session.handler.model', 'MockedSessionTestModel');
 
-		$mockedModel->expects($this->any())
+		$counter = 0;
+		// First save
+		$mockedModel->expects($this->at($counter++))
 			->method('exists')
 			->will($this->returnValue(false));
+
+		// First validate
+		$mockedModel->expects($this->at($counter++))
+			->method('exists')
+			->will($this->returnValue(false));
+
+		// Second save
+		$mockedModel->expects($this->at($counter++))
+			->method('exists')
+			->will($this->returnValue(false));
+
+		// Second validate
+		$mockedModel->expects($this->at($counter++))
+			->method('exists')
+			->will($this->returnValue(false));
+
+		// Second save retry
+		$mockedModel->expects($this->at($counter++))
+			->method('exists')
+			->will($this->returnValue(true));
+
+		// Second validate retry
+		$mockedModel->expects($this->at($counter++))
+			->method('exists')
+			->will($this->returnValue(false));
+
+		// Datasource exists check
+		$mockedModel->expects($this->at($counter++))
+			->method('exists')
+			->will($this->returnValue(true));
 
 		$this->storage = new DatabaseSession();
 
