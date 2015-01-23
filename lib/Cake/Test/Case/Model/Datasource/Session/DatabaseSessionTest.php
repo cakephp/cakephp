@@ -213,17 +213,7 @@ class DatabaseSessionTest extends CakeTestCase {
 			->method('exists')
 			->will($this->returnValue(false));
 
-		// First validate
-		$mockedModel->expects($this->at($counter++))
-			->method('exists')
-			->will($this->returnValue(false));
-
 		// Second save
-		$mockedModel->expects($this->at($counter++))
-			->method('exists')
-			->will($this->returnValue(false));
-
-		// Second validate
 		$mockedModel->expects($this->at($counter++))
 			->method('exists')
 			->will($this->returnValue(false));
@@ -232,11 +222,6 @@ class DatabaseSessionTest extends CakeTestCase {
 		$mockedModel->expects($this->at($counter++))
 			->method('exists')
 			->will($this->returnValue(true));
-
-		// Second validate retry
-		$mockedModel->expects($this->at($counter++))
-			->method('exists')
-			->will($this->returnValue(false));
 
 		// Datasource exists check
 		$mockedModel->expects($this->at($counter++))

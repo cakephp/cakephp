@@ -119,9 +119,9 @@ class DatabaseSession implements CakeSessionHandlerInterface {
 		$record[$this->_model->primaryKey] = $id;
 
 		try {
-			return $this->_model->save($record);
+			return $this->_model->save($record, array('validate' => false));
 		} catch (PDOException $e) {
-			return $this->_model->save($record);
+			return $this->_model->save($record, array('validate' => false));
 		}
 	}
 
