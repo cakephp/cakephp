@@ -587,7 +587,7 @@ class Controller implements EventListenerInterface
     public function referer($default = null, $local = false)
     {
         if (!$this->request) {
-            return '/';
+            return Router::url($default, !$local);
         }
 
         $referer = $this->request->referer($local);
