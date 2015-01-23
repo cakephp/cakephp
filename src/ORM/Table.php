@@ -1203,6 +1203,8 @@ class Table implements RepositoryInterface, EventListenerInterface
      *   to be saved. It is possible to provide different options for saving on associated
      *   table objects using this key by making the custom options the array value.
      *   If false no associated records will be saved. (default: true)
+     * - checkExisting: Whether or not to check if the entity already exists, assuming that the
+     *   entity is marked as not new, and the primary key has been set.
      *
      * ### Events
      *
