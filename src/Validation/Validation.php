@@ -937,7 +937,7 @@ class Validation
      * @param array $options An array of options for the validation.
      * @return bool
      */
-    public static function uploadedFile($file, $options = [])
+    public static function uploadedFile($file, array $options = [])
     {
         $options += [
             'minSize' => null,

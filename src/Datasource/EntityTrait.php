@@ -213,7 +213,7 @@ trait EntityTrait
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function set($property, $value = null, $options = [])
+    public function set($property, $value = null, array $options = [])
     {
         $isString = is_string($property);
         if ($isString && $property !== '') {

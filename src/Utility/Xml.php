@@ -177,7 +177,7 @@ class Xml
      * `<root><tag id="1" value="defect">description</tag></root>`
      *
      * @param array|\Cake\Collection\Collection $input Array with data or a collection instance.
-     * @param string|array $options The options to use
+     * @param string|array $options The options to use or a string to use as format.
      * @return \SimpleXMLElement|\DOMDocument SimpleXMLElement or DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */

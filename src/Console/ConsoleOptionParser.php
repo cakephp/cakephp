@@ -334,7 +334,7 @@ class ConsoleOptionParser
      * @param array $options An array of parameters that define the behavior of the option
      * @return $this
      */
-    public function addOption($name, $options = [])
+    public function addOption($name, array $options = [])
     {
         if ($name instanceof ConsoleInputOption) {
             $option = $name;
@@ -388,7 +388,7 @@ class ConsoleOptionParser
      * @param array $params Parameters for the argument, see above.
      * @return $this
      */
-    public function addArgument($name, $params = [])
+    public function addArgument($name, array $params = [])
     {
         if ($name instanceof ConsoleInputArgument) {
             $arg = $name;
@@ -471,7 +471,7 @@ class ConsoleOptionParser
      * @param array $options Array of params, see above.
      * @return $this
      */
-    public function addSubcommand($name, $options = [])
+    public function addSubcommand($name, array $options = [])
     {
         if ($name instanceof ConsoleInputSubcommand) {
             $command = $name;

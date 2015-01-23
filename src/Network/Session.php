@@ -238,7 +238,7 @@ class Session
      * @return \SessionHandlerInterface|null
      * @throws \InvalidArgumentException
      */
-    public function engine($class = null, $options = [])
+    public function engine($class = null, array $options = [])
     {
         if ($class instanceof SessionHandlerInterface) {
             return $this->_engine = $class;
