@@ -118,10 +118,11 @@ class DatabaseSession implements CakeSessionHandlerInterface {
 		$record = compact('id', 'data', 'expires');
 		$record[$this->_model->primaryKey] = $id;
 
+		$options = array('validate' => false, 'callbacks' => false);
 		try {
-			return $this->_model->save($record, array('validate' => false));
+			return $this->_model->save($record, $options);
 		} catch (PDOException $e) {
-			return $this->_model->save($record, array('validate' => false));
+			return $this->_model->save($record, $options);
 		}
 	}
 
