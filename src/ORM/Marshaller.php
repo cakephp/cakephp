@@ -372,7 +372,7 @@ class Marshaller
                 $value = $converter->marshal($value);
                 $isObject = is_object($value);
                 if ((!$isObject && $original === $value) ||
-                        ($isObject && $original == $value)
+                    ($isObject && $original == $value)
                 ) {
                     continue;
                 }
