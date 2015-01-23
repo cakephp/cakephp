@@ -198,6 +198,11 @@ class DatabaseSessionTest extends CakeTestCase {
  * @return void
  */
 	public function testConcurrentInsert() {
+		$this->skipIf(
+			$this->db instanceof Sqlite,
+			'Sqlite does not throw exceptions when attempting to insert a duplicate primary key'
+		);
+
 		ClassRegistry::removeObject('Session');
 
 		$mockedModel = $this->getMockForModel(
