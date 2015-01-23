@@ -400,8 +400,7 @@ class Route
 
         // Check for properties that will cause an
         // absolute url. Copy the other properties over.
-        if (
-            isset($hostOptions['_scheme']) ||
+        if (isset($hostOptions['_scheme']) ||
             isset($hostOptions['_port']) ||
             isset($hostOptions['_host'])
         ) {
@@ -571,8 +570,7 @@ class Route
         }
 
         $out = str_replace('//', '/', $out);
-        if (
-            isset($params['_scheme']) ||
+        if (isset($params['_scheme']) ||
             isset($params['_host']) ||
             isset($params['_port'])
         ) {

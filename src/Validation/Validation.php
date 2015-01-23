@@ -982,8 +982,7 @@ class Validation
     protected static function _getDateString($value)
     {
         $formatted = '';
-        if (
-            isset($value['year'], $value['month'], $value['day']) &&
+        if (isset($value['year'], $value['month'], $value['day']) &&
             (is_numeric($value['year']) && is_numeric($value['month']) && is_numeric($value['day']))
         ) {
             $formatted .= sprintf('%d-%02d-%02d ', $value['year'], $value['month'], $value['day']);

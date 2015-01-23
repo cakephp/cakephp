@@ -3709,6 +3709,7 @@ class FormHelperTest extends TestCase
         ]);
 
         $result = $this->Form->radio('Model.field', ['option A', 'option B']);
+        //@codingStandardsIgnoreStart
         $expected = [
             ['input' => [
                 'type' => 'hidden',
@@ -3734,6 +3735,7 @@ class FormHelperTest extends TestCase
                 'option B',
             '/label',
         ];
+        //@codingStandardsIgnoreEnd
         $this->assertHtml($expected, $result);
     }
 
@@ -6505,6 +6507,7 @@ class FormHelperTest extends TestCase
         $article = new Article(['comments' => [$comment]]);
         $this->Form->create([$article]);
         $result = $this->Form->input('0.comments.1.comment');
+        //@codingStandardsIgnoreStart
         $expected = [
             'div' => ['class' => 'input textarea'],
                 'label' => ['for' => '0-comments-1-comment'],
@@ -6517,9 +6520,11 @@ class FormHelperTest extends TestCase
                 '/textarea',
             '/div'
         ];
+        //@codingStandardsIgnoreEnd
         $this->assertHtml($expected, $result);
 
         $result = $this->Form->input('0.comments.0.comment');
+        //@codingStandardsIgnoreStart
         $expected = [
             'div' => ['class' => 'input textarea'],
                 'label' => ['for' => '0-comments-0-comment'],
@@ -6533,10 +6538,12 @@ class FormHelperTest extends TestCase
                 '/textarea',
             '/div'
         ];
+        //@codingStandardsIgnoreEnd
         $this->assertHtml($expected, $result);
 
         $comment->errors('comment', ['Not valid']);
         $result = $this->Form->input('0.comments.0.comment');
+        //@codingStandardsIgnoreStart
         $expected = [
             'div' => ['class' => 'input textarea error'],
                 'label' => ['for' => '0-comments-0-comment'],
@@ -6554,12 +6561,14 @@ class FormHelperTest extends TestCase
                 '/div',
             '/div'
         ];
+        //@codingStandardsIgnoreEnd
         $this->assertHtml($expected, $result);
 
         TableRegistry::get('Comments')
             ->validator('default')
             ->allowEmpty('comment', false);
         $result = $this->Form->input('0.comments.1.comment');
+        //@codingStandardsIgnoreStart
         $expected = [
             'div' => ['class' => 'input textarea required'],
                 'label' => ['for' => '0-comments-1-comment'],
@@ -6573,6 +6582,7 @@ class FormHelperTest extends TestCase
                 '/textarea',
             '/div'
         ];
+        //@codingStandardsIgnoreEnd
         $this->assertHtml($expected, $result);
     }
 

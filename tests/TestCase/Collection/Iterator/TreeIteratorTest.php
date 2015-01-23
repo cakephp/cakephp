@@ -61,7 +61,7 @@ class TreeIteratorTest extends TestCase
      */
     public function testPrinterCustomKeyAndSpacer()
     {
-            $items = [
+        $items = [
             [
                 'id' => 1,
                 'name' => 'a',

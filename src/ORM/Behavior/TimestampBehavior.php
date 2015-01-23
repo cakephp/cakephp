@@ -99,8 +99,7 @@ class TimestampBehavior extends Behavior
                     sprintf('When should be one of "always", "new" or "existing". The passed value "%s" is invalid', $when)
                 );
             }
-            if (
-                $when === 'always' ||
+            if ($when === 'always' ||
                 ($when === 'new' && $new) ||
                 ($when === 'existing' && !$new)
             ) {

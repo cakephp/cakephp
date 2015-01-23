@@ -498,8 +498,7 @@ class FormHelper extends Helper
     public function end($secureAttributes = [])
     {
         $out = '';
-        if (
-            $this->requestType !== 'get' &&
+        if ($this->requestType !== 'get' &&
             !empty($this->request['_Token'])
         ) {
             $out .= $this->secure($this->fields, $secureAttributes);
@@ -1799,8 +1798,7 @@ class FormHelper extends Helper
 
         // Secure the field if there are options, or it's a multi select.
         // Single selects with no options don't submit, but multiselects do.
-        if (
-            $attributes['secure'] &&
+        if ($attributes['secure'] &&
             empty($options) &&
             empty($attributes['empty']) &&
             empty($attributes['multiple'])
@@ -2146,8 +2144,7 @@ class FormHelper extends Helper
             }
 
             // Pass empty boolean to each type.
-            if (
-                !empty($options['empty']) &&
+            if (!empty($options['empty']) &&
                 is_bool($options['empty']) &&
                 is_array($options[$type])
             ) {
@@ -2469,8 +2466,7 @@ class FormHelper extends Helper
     public function widget($name, array $data = [])
     {
         $widget = $this->_registry->get($name);
-        if (
-            isset($data['secure'], $data['name']) &&
+        if (isset($data['secure'], $data['name']) &&
             $data['secure'] !== self::SECURE_SKIP
         ) {
             foreach ($widget->secureFields($data) as $field) {

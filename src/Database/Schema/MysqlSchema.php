@@ -316,16 +316,14 @@ class MysqlSchema extends BaseSchema
         }
 
         $hasPrecision = ['float', 'decimal'];
-        if (
-            in_array($data['type'], $hasPrecision, true) &&
+        if (in_array($data['type'], $hasPrecision, true) &&
             (isset($data['length']) || isset($data['precision']))
         ) {
             $out .= '(' . (int)$data['length'] . ',' . (int)$data['precision'] . ')';
         }
 
         $hasUnsigned = ['float', 'decimal', 'integer', 'biginteger'];
-        if (
-            in_array($data['type'], $hasUnsigned, true) &&
+        if (in_array($data['type'], $hasUnsigned, true) &&
             isset($data['unsigned']) && $data['unsigned'] === true
         ) {
             $out .= ' UNSIGNED';
@@ -334,8 +332,7 @@ class MysqlSchema extends BaseSchema
         if (isset($data['null']) && $data['null'] === false) {
             $out .= ' NOT NULL';
         }
-        if (
-            in_array($data['type'], ['integer', 'biginteger']) &&
+        if (in_array($data['type'], ['integer', 'biginteger']) &&
             ([$name] == (array)$table->primaryKey() || $data['autoIncrement'] === true)
         ) {
             $out .= ' AUTO_INCREMENT';
@@ -347,8 +344,7 @@ class MysqlSchema extends BaseSchema
         if (isset($data['default']) && $data['type'] !== 'timestamp') {
             $out .= ' DEFAULT ' . $this->_driver->schemaValue($data['default']);
         }
-        if (
-            isset($data['default']) &&
+        if (isset($data['default']) &&
             $data['type'] === 'timestamp' &&
             strtolower($data['default']) === 'current_timestamp'
         ) {

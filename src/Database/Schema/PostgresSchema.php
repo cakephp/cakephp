@@ -115,8 +115,7 @@ class PostgresSchema extends BaseSchema
         if ($col === 'real' || strpos($col, 'double') !== false) {
             return ['type' => 'float', 'length' => null];
         }
-        if (
-            strpos($col, 'numeric') !== false ||
+        if (strpos($col, 'numeric') !== false ||
             strpos($col, 'money') !== false ||
             strpos($col, 'decimal') !== false
         ) {
@@ -232,8 +231,7 @@ class PostgresSchema extends BaseSchema
             // If there is only one column in the primary key and it is integery,
             // make it autoincrement.
             $columnDef = $table->column($columns[0]);
-            if (
-                count($columns) === 1 &&
+            if (count($columns) === 1 &&
                 in_array($columnDef['type'], ['integer', 'biginteger']) &&
                 $type === Table::CONSTRAINT_PRIMARY
             ) {

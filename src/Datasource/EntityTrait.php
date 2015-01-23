@@ -703,8 +703,7 @@ trait EntityTrait
                 $val = isset($entity[$part]) ? $entity[$part] : false;
             }
 
-            if (
-                is_array($val) ||
+            if (is_array($val) ||
                 $val instanceof Traversable ||
                 $val instanceof EntityInterface
             ) {
