@@ -1369,6 +1369,58 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test that saving a new entity with a Primary Key set does call exists.
+     *
+     * @group save
+     * @return void
+     */
+    public function testSavePrimaryKeyEntityExists()
+    {
+        $table = $this->getMock(
+            'Cake\ORM\Table',
+            ['exists'],
+            [
+                [
+                    'connection' => $this->connection,
+                    'alias' => 'Users',
+                    'table' => 'users',
+                ]
+            ]
+        );
+        $entity = $table->newEntity(['id' => 20, 'username' => 'mark']);
+        $this->assertTrue($entity->isNew());
+
+        $table->expects($this->once())->method('exists');
+        $this->assertSame($entity, $table->save($entity));
+    }
+
+    /**
+     * Test that saving a new entity with a Primary Key set does not call exists when checkExisting is false.
+     *
+     * @group save
+     * @return void
+     */
+    public function testSavePrimaryKeyEntityNoExists()
+    {
+        $table = $this->getMock(
+            'Cake\ORM\Table',
+            ['exists'],
+            [
+                [
+                    'connection' => $this->connection,
+                    'alias' => 'Users',
+                    'table' => 'users',
+                ]
+            ]
+        );
+        $entity = $table->newEntity(['id' => 20, 'username' => 'mark']);
+        $this->assertTrue($entity->isNew());
+
+        $table->expects($this->never())->method('exists');
+        $this->assertSame($entity, $table->save($entity, ['checkExisting' => false]));
+    }
+
+    /**
      * Tests that saving an entity will filter out properties that
      * are not present in the table schema when saving
      *
