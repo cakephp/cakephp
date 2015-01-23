@@ -198,6 +198,7 @@ class Marshaller
         }
 
         $dataObject = new \ArrayObject($data);
+        $options = new \ArrayObject($options);
         $this->_table->dispatchEvent('Model.beforeMarshal', compact('dataObject', 'options'));
 
         return (array)$dataObject;
