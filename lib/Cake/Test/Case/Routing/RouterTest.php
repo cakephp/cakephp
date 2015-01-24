@@ -1465,7 +1465,7 @@ class RouterTest extends CakeTestCase {
 
 		Router::reload();
 		Router::parseExtensions('rss','atom');
-		Router::connect('/controller/action', array('controller' => 'controller', 'action' => 'action', 'ext' => array('rss','atom')));
+		Router::connect('/controller/action', array('controller' => 'controller', 'action' => 'action', 'ext' => array('rss', 'atom')));
 		$result = Router::parse('/controller/action.rss');
 		$expected = array('controller' => 'controller', 'action' => 'action', 'plugin' => null, 'ext' => 'rss', 'named' => array(), 'pass' => array());
 		$this->assertEquals($expected, $result);
