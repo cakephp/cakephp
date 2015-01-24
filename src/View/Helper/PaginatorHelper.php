@@ -634,96 +634,183 @@ class PaginatorHelper extends Helper
             $templater->{$method}($options['templates']);
         }
 
-        $out = '';
-        $ellipsis = $templater->format('ellipsis', []);
-
         if ($options['modulus'] && $params['pageCount'] > $options['modulus']) {
-            $half = (int)($options['modulus'] / 2);
-            $end = $params['page'] + $half;
-
-            if ($end > $params['pageCount']) {
-                $end = $params['pageCount'];
-            }
-            $start = $params['page'] - ($options['modulus'] - ($end - $params['page']));
-            if ($start <= 1) {
-                $start = 1;
-                $end = $params['page'] + ($options['modulus'] - $params['page']) + 1;
-            }
-
-            if ($options['first'] && $start > 1) {
-                $offset = ($start <= (int)$options['first']) ? $start - 1 : $options['first'];
-                $out .= $this->first($offset);
-                if ($offset < $start - 1) {
-                    $out .= $ellipsis;
-                }
-            }
-
-            $out .= $options['before'];
-
-            for ($i = $start; $i < $params['page']; $i++) {
-                $vars = [
-                    'text' => $i,
-                    'url' => $this->generateUrl(['page' => $i], $options['model']),
-                ];
-                $out .= $templater->format('number', $vars);
-            }
-
-            $out .= $templater->format('current', [
-                'text' => $params['page'],
-                'url' => $this->generateUrl(['page' => $params['page']], $options['model']),
-            ]);
-
-            $start = $params['page'] + 1;
-            for ($i = $start; $i < $end; $i++) {
-                $vars = [
-                    'text' => $i,
-                    'url' => $this->generateUrl(['page' => $i], $options['model']),
-                ];
-                $out .= $templater->format('number', $vars);
-            }
-
-            if ($end != $params['page']) {
-                $vars = [
-                    'text' => $i,
-                    'url' => $this->generateUrl(['page' => $end], $options['model']),
-                ];
-                $out .= $templater->format('number', $vars);
-            }
-
-            $out .= $options['after'];
-
-            if ($options['last'] && $end < $params['pageCount']) {
-                $offset = ($params['pageCount'] < $end + (int)$options['last']) ? $params['pageCount'] - $end : $options['last'];
-                if ($offset <= $options['last'] && $params['pageCount'] - $end > $offset) {
-                    $out .= $ellipsis;
-                }
-                $out .= $this->last($offset);
-            }
-
+            $out = $this->_modulusNumbers($templater, $params, $options);
         } else {
-            $out .= $options['before'];
-
-            for ($i = 1; $i <= $params['pageCount']; $i++) {
-                if ($i == $params['page']) {
-                    $out .= $templater->format('current', [
-                        'text' => $params['page'],
-                        'url' => $this->generateUrl(['page' => $params['page']], $options['model']),
-                    ]);
-                } else {
-                    $vars = [
-                        'text' => $i,
-                        'url' => $this->generateUrl(['page' => $i], $options['model']),
-                    ];
-                    $out .= $templater->format('number', $vars);
-                }
-            }
-
-            $out .= $options['after'];
+            $out = $this->_numbers($templater, $params, $options);
         }
+
         if (isset($options['templates'])) {
             $templater->pop();
         }
 
+        return $out;
+    }
+
+    /**
+     * Calculates the start and end for the pagination numbers.
+     *
+     * @param array $params Params from the numbers() method.
+     * @param array $options Options from the numbers() method.
+     * @return array An array with the start and end numbers.
+     */
+    protected function _getNumbersStartAndEnd($params, $options)
+    {
+        $half = (int)($options['modulus'] / 2);
+        $end = $params['page'] + $half;
+
+        if ($end > $params['pageCount']) {
+            $end = $params['pageCount'];
+        }
+        $start = $params['page'] - ($options['modulus'] - ($end - $params['page']));
+        if ($start <= 1) {
+            $start = 1;
+            $end = $params['page'] + ($options['modulus'] - $params['page']) + 1;
+        }
+        return [$start, $end];
+    }
+
+    /**
+     * Formats a number for the paginator number output.
+     *
+     * @param \Cake\View\StringTemplate $templater StringTemplate instance.
+     * @param array $options Options from the numbers() method.
+     * @return string
+     */
+    protected function _formatNumber($templater, $options)
+    {
+        $vars = [
+            'text' => $options['text'],
+            'url' => $this->generateUrl(['page' => $options['page']], $options['model']),
+        ];
+        return $templater->format('number', $vars);
+    }
+
+    /**
+     * Generates the numbers for the paginator numbers() method.
+     *
+     * @param \Cake\View\StringTemplate $templater StringTemplate instance.
+     * @param array $params Params from the numbers() method.
+     * @param array $options Options from the numbers() method.
+     * @return string Markup output.
+     */
+    protected function _modulusNumbers($templater, $params, $options)
+    {
+        $out = '';
+        $ellipsis = $templater->format('ellipsis', []);
+
+        list($start, $end) = $this->_getNumbersStartAndEnd($params, $options);
+
+        $out .= $this->_firstNumber($ellipsis, $params, $start, $options);
+
+        $out .= $options['before'];
+
+        for ($i = $start; $i < $params['page']; $i++) {
+            $out .= $this->_formatNumber($templater, [
+                'text' => $i,
+                'page' => $i,
+                'model' => $options['model']
+            ]);
+        }
+
+        $out .= $templater->format('current', [
+            'text' => $params['page'],
+            'url' => $this->generateUrl(['page' => $params['page']], $options['model']),
+        ]);
+
+        $start = $params['page'] + 1;
+        for ($i = $start; $i < $end; $i++) {
+            $out .= $this->_formatNumber($templater, [
+                'text' => $i,
+                'page' => $i,
+                'model' => $options['model']
+            ]);
+        }
+
+        if ($end != $params['page']) {
+            $out .= $this->_formatNumber($templater, [
+                'text' => $i,
+                'page' => $end,
+                'model' => $options['model']
+            ]);
+        }
+
+        $out .= $options['after'];
+        $out .= $this->_lastNumber($ellipsis, $params, $end, $options);
+        return $out;
+    }
+
+    /**
+     * Generates the first number for the paginator numbers() method.
+     *
+     * @param \Cake\View\StringTemplate $ellipsis StringTemplate instance.
+     * @param array $params Params from the numbers() method.
+     * @param int $start Start number.
+     * @param array $options Options from the numbers() method.
+     * @return string Markup output.
+     */
+    protected function _firstNumber($ellipsis, $params, $start, $options)
+    {
+        $out = '';
+        if ($options['first'] && $start > 1) {
+            $offset = ($start <= (int)$options['first']) ? $start - 1 : $options['first'];
+            $out .= $this->first($offset);
+            if ($offset < $start - 1) {
+                $out .= $ellipsis;
+            }
+        }
+        return $out;
+    }
+
+    /**
+     * Generates the last number for the paginator numbers() method.
+     *
+     * @param \Cake\View\StringTemplate $ellipsis StringTemplate instance.
+     * @param array $params Params from the numbers() method.
+     * @param int $end End number.
+     * @param array $options Options from the numbers() method.
+     * @return string Markup output.
+     */
+    protected function _lastNumber($ellipsis, $params, $end, $options)
+    {
+        $out = '';
+        if ($options['last'] && $end < $params['pageCount']) {
+            $offset = ($params['pageCount'] < $end + (int)$options['last']) ? $params['pageCount'] - $end : $options['last'];
+            if ($offset <= $options['last'] && $params['pageCount'] - $end > $offset) {
+                $out .= $ellipsis;
+            }
+            $out .= $this->last($offset);
+        }
+        return $out;
+    }
+
+    /**
+     * Generates the numbers for the paginator numbers() method.
+     *
+     * @param \Cake\View\StringTemplate $templater StringTemplate instance.
+     * @param array $params Params from the numbers() method.
+     * @param array $options Options from the numbers() method.
+     * @return string Markup output.
+     */
+    protected function _numbers($templater, $params, $options)
+    {
+        $out = '';
+        $out .= $options['before'];
+        for ($i = 1; $i <= $params['pageCount']; $i++) {
+            if ($i == $params['page']) {
+                $out .= $templater->format('current', [
+                    'text' => $params['page'],
+                    'url' => $this->generateUrl(['page' => $params['page']], $options['model']),
+                ]);
+            } else {
+                $vars = [
+                    'text' => $i,
+                    'url' => $this->generateUrl(['page' => $i], $options['model']),
+                ];
+                $out .= $templater->format('number', $vars);
+            }
+        }
+        $out .= $options['after'];
         return $out;
     }
 
@@ -828,6 +915,7 @@ class PaginatorHelper extends Helper
         }
         return $out;
     }
+
     /**
      * Returns the meta-links for a paginated result set.
      *
