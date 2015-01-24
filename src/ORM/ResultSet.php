@@ -226,21 +226,34 @@ class ResultSet implements ResultSetInterface
             }
         }
 
-        if (!$valid) {
-            if ($this->_statement !== null) {
-                $this->_statement->closeCursor();
-            }
-            return false;
-        }
-
         $this->_current = $this->_fetchResult();
         $valid = $this->_current !== false;
 
         if ($valid && $this->_useBuffering) {
             $this->_results[$this->_index] = $this->_current;
         }
+        if (!$valid && $this->_statement !== null) {
+            $this->_statement->closeCursor();
+        }
 
         return $valid;
+    }
+
+    /**
+     * Get the first record from a result set.
+     *
+     * This method will also close the underlying statement cursor.
+     *
+     * @return array|object
+     */
+    public function first()
+    {
+        foreach ($this as $result) {
+            if ($this->_statement) {
+                $this->_statement->closeCursor();
+            }
+            return $result;
+        }
     }
 
     /**

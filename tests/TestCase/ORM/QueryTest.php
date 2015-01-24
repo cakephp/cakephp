@@ -997,9 +997,9 @@ class QueryTest extends TestCase
             '\Database\StatementInterface',
             ['fetch', 'closeCursor', 'rowCount']
         );
-        $statement->expects($this->exactly(2))
+        $statement->expects($this->exactly(3))
             ->method('fetch')
-            ->will($this->onConsecutiveCalls(['a' => 1], ['a' => 2]));
+            ->will($this->onConsecutiveCalls(['a' => 1], ['a' => 2], false));
 
         $statement->expects($this->once())
             ->method('rowCount')
@@ -1095,6 +1095,23 @@ class QueryTest extends TestCase
 
         $first = $query->first();
         $this->assertEquals(1, $first);
+    }
+
+    /**
+     * Tests that first can be called on an unbuffered query
+     *
+     * @return void
+     */
+    public function testFirstUnbuffered()
+    {
+        $table = TableRegistry::get('Articles');
+        $query = new Query($this->connection, $table);
+        $query->select(['id']);
+
+        $first = $query->hydrate(false)
+            ->bufferResults(false)->first();
+
+        $this->assertEquals(['id' => 1], $first);
     }
 
     /**
