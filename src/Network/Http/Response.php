@@ -146,7 +146,7 @@ class Response extends Message
     protected function _decodeGzipBody($body)
     {
         if (!function_exists('gzinflate')) {
-            throw new \RuntimeException('Cannot decompress gzip response body without gzipinflate()');
+            throw new \RuntimeException('Cannot decompress gzip response body without gzinflate()');
         }
         $offset = 0;
         // Look for gzip 'signature'
