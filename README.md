@@ -1,6 +1,5 @@
 # CakePHP Framework
 
-[![Latest Version](https://img.shields.io/github/release/cakephp/cakephp.svg?style=flat-square)](https://github.com/cakephp/cakephp/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.txt)
 [![Build Status](https://img.shields.io/travis/cakephp/cakephp/master.svg?style=flat-square)](https://travis-ci.org/cakephp/cakephp)
 [![Code Consistency](http://squizlabs.github.io/PHP_CodeSniffer/analysis/cakephp/cakephp/grade.svg)](http://squizlabs.github.io/PHP_CodeSniffer/analysis/cakephp/cakephp/)
