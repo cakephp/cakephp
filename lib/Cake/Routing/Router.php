@@ -619,7 +619,7 @@ class Router {
 			$out['action'] = $out['prefix'] . '_' . $out['action'];
 		}
 
-		if(!empty($ext) && (!isset($out['ext']) || gettype($out['ext']))) {
+		if (!empty($ext) && (!isset($out['ext']) || gettype($out['ext']))) {
 			$out['ext'] = $ext;
 		}
 
