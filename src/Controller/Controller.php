@@ -501,7 +501,7 @@ class Controller implements EventListenerInterface
      * @return void|\Cake\Network\Response
      * @link http://book.cakephp.org/3.0/en/controllers.html#Controller::redirect
      */
-    public function redirect($url, $status = null)
+    public function redirect($url, $status = 302)
     {
         $this->autoRender = false;
 
