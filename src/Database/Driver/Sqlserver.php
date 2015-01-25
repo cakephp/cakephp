@@ -101,10 +101,11 @@ class Sqlserver extends \Cake\Database\Driver
     {
         $this->connect();
         $options = [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL];
-        if ($query instanceof Query && $query->bufferResults() === false) {
+        $isObject = $query instanceof Query;
+        if ($isObject && $query->bufferResults() === false) {
             $options = [];
         }
-        $statement = $this->_connection->prepare((string)$query, $options);
+        $statement = $this->_connection->prepare($isObject ? $query->sql() : $query);
         return new SqlserverStatement($statement, $this);
     }
 }
