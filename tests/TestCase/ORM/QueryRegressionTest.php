@@ -598,7 +598,7 @@ class QueryRegressionTest extends TestCase
         $results = TableRegistry::get('Articles')->find()->all();
         $this->assertEquals(3, $results->count());
         $this->assertNotNull($results->first());
-        $this->assertCount(1, $results->toArray());
+        $this->assertCount(3, $results->toArray());
     }
 
     /**

@@ -997,9 +997,9 @@ class QueryTest extends TestCase
             '\Database\StatementInterface',
             ['fetch', 'closeCursor', 'rowCount']
         );
-        $statement->expects($this->exactly(3))
+        $statement->expects($this->exactly(2))
             ->method('fetch')
-            ->will($this->onConsecutiveCalls(['a' => 1], ['a' => 2], false));
+            ->will($this->onConsecutiveCalls(['a' => 1], ['a' => 2]));
 
         $statement->expects($this->once())
             ->method('rowCount')

@@ -224,6 +224,9 @@ class ResultSet implements ResultSetInterface
                 $this->_current = $this->_results[$this->_index];
                 return true;
             }
+            if (!$valid) {
+                return $valid;
+            }
         }
 
         $this->_current = $this->_fetchResult();
@@ -249,7 +252,7 @@ class ResultSet implements ResultSetInterface
     public function first()
     {
         foreach ($this as $result) {
-            if ($this->_statement) {
+            if ($this->_statement && !$this->_useBuffering) {
                 $this->_statement->closeCursor();
             }
             return $result;
