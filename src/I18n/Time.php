@@ -113,7 +113,8 @@ class Time extends Carbon implements JsonSerializable
     public function __construct($time = null, $tz = null)
     {
         if ($time instanceof \DateTime) {
-            list($time, $tz) = [$time->format('Y-m-d H:i:s'), $time->getTimeZone()];
+            $tz = $time->getTimeZone();
+            $time = $time->format('Y-m-d H:i:s');
         }
 
         if (is_numeric($time)) {
@@ -694,7 +695,8 @@ class Time extends Carbon implements JsonSerializable
         $timeFormat = $pattern = null;
 
         if (is_array($dateFormat)) {
-            list($dateFormat, $timeFormat) = $dateFormat;
+            list($newDateFormat, $timeFormat) = $dateFormat;
+            $dateFormat = $newDateFormat;
         } else {
             $pattern = $dateFormat;
             $dateFormat = null;
