@@ -696,4 +696,18 @@ class QueryRegressionTest extends TestCase
 
         $this->assertNotNull($result->article->author);
     }
+
+
+    /**
+     * Tests that trying to contain an inexistent association
+     * throws an exception and not a fatal error.
+     *
+     * @expectedException RuntimeException
+     * @return void
+     */
+    public function testQueryNotFatalError()
+    {
+        $comments = TableRegistry::get('Comments');
+        $comments->find()->contain('Deprs')->all();
+    }
 }
