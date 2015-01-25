@@ -622,7 +622,7 @@ class Router {
 		if (!empty($ext)) {
 			if (!isset($out['ext'])) {
 				$out['ext'] = $ext;
-			} elseif (gettype($out['ext']) == 'array') {
+			} elseif (is_array($out['ext'])) {
 				$out['ext'] = $ext;
 			}
 		}
