@@ -14,6 +14,7 @@
  */
 namespace Cake\Database\Driver;
 
+use Cake\Database\Query;
 use Cake\Database\Statement\PDOStatement;
 use PDO;
 
@@ -84,7 +85,8 @@ trait PDODriverTrait
     public function prepare($query)
     {
         $this->connect();
-        $statement = $this->_connection->prepare((string)$query);
+        $isObject = $query instanceof Query;
+        $statement = $this->_connection->prepare($isObject ? $query->sql() : $query);
         return new PDOStatement($statement, $this);
     }
 

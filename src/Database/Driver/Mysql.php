@@ -112,9 +112,10 @@ class Mysql extends \Cake\Database\Driver
     public function prepare($query)
     {
         $this->connect();
-        $statement = $this->_connection->prepare((string)$query);
+        $isObject = $query instanceof Query;
+        $statement = $this->_connection->prepare($isObject ? $query->sql() : $query);
         $result = new MysqlStatement($statement, $this);
-        if ($query instanceof Query && $query->bufferResults() === false) {
+        if ($isObject && $query->bufferResults() === false) {
             $result->bufferResults(false);
         }
         return $result;
