@@ -622,10 +622,6 @@ class Router {
 			$out['action'] = $out['prefix'] . '_' . $out['action'];
 		}
 
-		if (!empty($ext) && !isset($out['ext'])) {
-			$out['ext'] = $ext;
-		}
-
 		if (!empty($queryParameters) && !isset($out['?'])) {
 			$out['?'] = $queryParameters;
 		}
