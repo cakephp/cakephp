@@ -1098,6 +1098,23 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests that first can be called on an unbuffered query
+     *
+     * @return void
+     */
+    public function testFirstUnbuffered()
+    {
+        $table = TableRegistry::get('Articles');
+        $query = new Query($this->connection, $table);
+        $query->select(['id']);
+
+        $first = $query->hydrate(false)
+            ->bufferResults(false)->first();
+
+        $this->assertEquals(['id' => 1], $first);
+    }
+
+    /**
      * Testing hydrating a result set into Entity objects
      *
      * @return void
