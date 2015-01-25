@@ -42,6 +42,8 @@ class QueryRegressionTest extends TestCase
         'core.authors',
         'core.special_tags',
         'core.translates',
+        'core.article_categories',
+        'core.category_authors'
     ];
 
     /**
@@ -695,5 +697,61 @@ class QueryRegressionTest extends TestCase
             ->first();
 
         $this->assertNotNull($result->article->author);
+    }
+
+    /**
+     * Test that even with four level deep tables the parent model can be matched whilst the children are
+     * still contained
+     *
+     * @see https://github.com/cakephp/cakephp/issues/5584
+     * @return void
+     */
+    public function testFindMatchingThreeLevelsDeep()
+    {
+        $articles = TableRegistry::get('Articles');
+        $articles->hasMany('Comments');
+        $articles->hasMany('ArticleCategories');
+
+        $categories = TableRegistry::get('ArticleCategories');
+        $categories->belongsTo('Articles');
+        $categories->belongsTo('CategoryAuthors');
+
+        $users = TableRegistry::get('CategoryAuthors');
+        $users->hasMany('ArticleCategories');
+        $users->hasMany('Comments');
+
+        $comments = TableRegistry::get('Comments');
+        $comments->belongsTo('Articles');
+        $comments->belongsTo('CategoryAuthors');
+
+        $connection = new \Cake\Datasource\ConnectionManager;
+        $query = new \Cake\ORM\Query($connection::get('test'), $comments);
+
+        /** @var \Cake\ORM\Query $result */
+        $result = $comments->find()
+            ->contain([
+                'Articles' =>[
+                    'ArticleCategories' => [
+                        'CategoryAuthors'
+                    ]
+                ]
+            ])
+            ->select(['totalRows' => $query->func()->count('*')])
+            ->matching('Articles.ArticleCategories.CategoryAuthors', function ($q) {
+                return $q->where([
+                    'AND' => [
+                        'ArticleCategories.category_author_id = CategoryAuthors.id',
+                        'ArticleCategories.article_id = Articles.id'
+                    ]
+                ]);
+            })
+            ->group('Articles.id')
+            ->autoFields(true);
+
+        $resultArray = $result->toArray();
+        $this->assertNotEmpty($resultArray[0]->article->article_categories[0]->category_author);
+        $this->assertEquals('Geoff', $result->toArray()[0]->article->article_categories[0]->category_author->name);
+
+
     }
 }
