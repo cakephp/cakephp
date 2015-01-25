@@ -1462,6 +1462,30 @@ class RouterTest extends CakeTestCase {
 		$result = Router::parse('/controller/action');
 		$expected = array('controller' => 'controller', 'action' => 'action', 'plugin' => null, 'ext' => 'rss', 'named' => array(), 'pass' => array());
 		$this->assertEquals($expected, $result);
+
+		Router::reload();
+		require CAKE . 'Config' . DS . 'routes.php';
+
+		Router::parseExtensions('rss', 'atom');
+		Router::connect('/controller/action', array('controller' => 'controller', 'action' => 'action', 'ext' => 'rss'));
+		Router::connect('/controller/action', array('controller' => 'controller', 'action' => 'action', 'ext' => 'atom'));
+		$result = Router::parse('/controller/action.rss');
+		$expected = array('controller' => 'controller', 'action' => 'action', 'plugin' => null, 'ext' => 'rss', 'named' => array(), 'pass' => array());
+		$this->assertEquals($expected, $result);
+		$result = Router::parse('/controller/action.atom');
+		$expected = array('controller' => 'controller', 'action' => 'action', 'plugin' => null, 'ext' => 'atom', 'named' => array(), 'pass' => array());
+		$this->assertEquals($expected, $result);
+
+		Router::reload();
+		require CAKE . 'Config' . DS . 'routes.php';
+		Router::parseExtensions('rss', 'atom');
+		Router::connect('/controller/action', array('controller' => 'controller', 'action' => 'action', 'ext' => array('rss', 'atom')));
+		$result = Router::parse('/controller/action.rss');
+		$expected = array('controller' => 'controller', 'action' => 'action', 'plugin' => null, 'ext' => 'rss', 'named' => array(), 'pass' => array());
+		$this->assertEquals($expected, $result);
+		$result = Router::parse('/controller/action.atom');
+		$expected = array('controller' => 'controller', 'action' => 'action', 'plugin' => null, 'ext' => 'atom', 'named' => array(), 'pass' => array());
+		$this->assertEquals($expected, $result);
 	}
 
 /**

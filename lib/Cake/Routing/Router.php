@@ -610,6 +610,9 @@ class Router {
 
 		foreach (self::$routes as $route) {
 			if (($r = $route->parse($url)) !== false) {
+				if(isset($ext)) {
+					$r['ext'] = $ext;
+				}
 				self::$_currentRoute[] = $route;
 				$out = $r;
 				break;
@@ -617,10 +620,6 @@ class Router {
 		}
 		if (isset($out['prefix'])) {
 			$out['action'] = $out['prefix'] . '_' . $out['action'];
-		}
-
-		if (!empty($ext) && !isset($out['ext'])) {
-			$out['ext'] = $ext;
 		}
 
 		if (!empty($queryParameters) && !isset($out['?'])) {
