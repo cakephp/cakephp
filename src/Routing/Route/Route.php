@@ -423,6 +423,7 @@ class Route
             $hostOptions['_ext'] = $url['_ext'];
             unset($url['_ext']);
         }
+        unset($defaults['_ext']);
 
         // Check the method first as it is special.
         if (!$this->_matchMethod($url)) {
