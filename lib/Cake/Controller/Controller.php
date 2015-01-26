@@ -788,9 +788,7 @@ class Controller extends Object implements CakeEventListener {
 		if ($status === null) {
 			$status = 302;
 		}
-		if ($status) {
-			$this->response->statusCode($status);
-		}
+		$this->response->statusCode($status);
 
 		if ($exit) {
 			$this->response->send();
