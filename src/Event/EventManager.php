@@ -110,6 +110,64 @@ class EventManager
     }
 
     /**
+     * Adds a new listener to an event.
+     *
+     * A variadic interface to add listeners that emulates jQuery.on().
+     *
+     * Binding an EventListenerInterface:
+     *
+     * ```
+     * $eventManager->on($listener);
+     * ```
+     *
+     * Binding with no options:
+     *
+     * ```
+     * $eventManager->on('Model.beforeSave', $callable);
+     * ```
+     *
+     * Binding with options:
+     *
+     * ```
+     * $eventManager->on('Model.beforeSave', ['priority' => 90], $callable);
+     * ```
+     *
+     * @param string|\Cake\Event\EventListenerInterface $eventKey The event unique identifier name
+     * with which the callback will be associated. If $eventKey is an instance of
+     * Cake\Event\EventListenerInterface its events will be bound using the `implementedEvents` methods.
+     *
+     * @param array|callable $options Either an array of options or the callable you wish to
+     * bind to $eventKey. If an array of options, the `priority` key can be used to define the order.
+     * Priorities are treated as queues. Lower values are called before higher ones, and multiple attachments
+     * added to the same priority queue will be treated in the order of insertion.
+     *
+     * @param callable $callable The callable function you want invoked.
+     *
+     * @return void
+     * @throws \InvalidArgumentException When event key is missing or callable is not an
+     *   instance of Cake\Event\EventListenerInterface.
+     */
+    public function on($eventKey = null, $options = [], $callable = null) {
+        if ($eventKey instanceof EventListenerInterface) {
+            $this->_attachSubscriber($eventKey);
+            return;
+        }
+        $argCount = func_num_args();
+        if ($argCount === 2) {
+            $this->_listeners[$eventKey][static::$defaultPriority][] = [
+                'callable' => $options
+            ];
+        }
+        if ($argCount === 3) {
+            $priority = isset($options['priority']) ? $options['priority'] : static::$defaultPriority;
+            $this->_listeners[$eventKey][$priority][] = [
+                'callable' => $callable
+            ];
+        }
+        throw new InvalidArgumentException('Invalid arguments for EventManager::on().');
+    }
+
+    /**
      * Auxiliary function to attach all implemented callbacks of a Cake\Event\EventListenerInterface class instance
      * as individual methods on this manager
      *

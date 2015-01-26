@@ -152,6 +152,36 @@ class EventManagerTest extends TestCase
     }
 
     /**
+     * Test the on() method for basic callable types.
+     *
+     * @return void
+     */
+    public function testOn()
+    {
+        $count = 1;
+        $manager = new EventManager();
+        $manager->on('my.event', 'myfunc');
+        $expected = [
+            ['callable' => 'myfunc']
+        ];
+        $this->assertSame($expected, $manager->listeners('my.event'));
+
+        $manager->on('my.event', ['priority' => 1], 'func2');
+        $expected = [
+            ['callable' => 'func2'],
+            ['callable' => 'myfunc'],
+        ];
+        $this->assertSame($expected, $manager->listeners('my.event'));
+
+        $listener = new CustomTestEventListenerInterface();
+        $manager->on($listener);
+        $expected = [
+            ['callable' => [$listener, 'listenerFunction']],
+        ];
+        $this->assertEquals($expected, $manager->listeners('fake.event'));
+    }
+
+    /**
      * Tests detaching an event from a event key queue
      *
      * @return void
