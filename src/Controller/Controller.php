@@ -506,7 +506,7 @@ class Controller implements EventListenerInterface
         $this->autoRender = false;
 
         $response = $this->response;
-        if ($status && $response->statusCode() === 200) {
+        if ($status) {
             $response->statusCode($status);
         }
 
