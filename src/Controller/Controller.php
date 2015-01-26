@@ -497,16 +497,16 @@ class Controller implements EventListenerInterface
      *
      * @param string|array $url A string or array-based URL pointing to another location within the app,
      *     or an absolute URL
-     * @param int $status Optional HTTP status code (eg: 404)
+     * @param int $status HTTP status code (eg: 301)
      * @return void|\Cake\Network\Response
      * @link http://book.cakephp.org/3.0/en/controllers.html#Controller::redirect
      */
-    public function redirect($url, $status = null)
+    public function redirect($url, $status = 302)
     {
         $this->autoRender = false;
 
         $response = $this->response;
-        if ($status && $response->statusCode() === 200) {
+        if ($status) {
             $response->statusCode($status);
         }
 
