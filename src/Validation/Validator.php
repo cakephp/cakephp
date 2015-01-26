@@ -395,7 +395,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
      *
      * ```
      * $message = 'This field cannot be empty';
-     * $validator->notEmpty('email'); // Email cannot be empty
+     * $validator->notEmpty('email'); // Email can be empty
      * $validator->notEmpty('email', $message, 'create'); // Email can be empty on update
      * $validator->notEmpty('email', $message, 'update'); // Email can be empty on create
      * ```
