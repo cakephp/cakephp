@@ -19,7 +19,8 @@ class Orders {
 
 	use EventManagerTrait;
 
-	public function placeOrder($order) {
+	public function placeOrder($order)
+	{
 		$this->doStuff();
 		$event = new Event('Orders.afterPlace', $this, [
 			'order' => $order
