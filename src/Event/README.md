@@ -15,7 +15,8 @@ of the action.
 use Cake\Event\Event;
 use Cake\Event\EventManagerTrait;
 
-class Orders {
+class Orders
+{
 
 	use EventManagerTrait;
 
