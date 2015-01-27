@@ -14,6 +14,8 @@
  */
 namespace Cake\Event;
 
+use \InvalidArgumentException;
+
 /**
  * The event manager is responsible for keeping track of event listeners, passing the correct
  * data to them, and firing them in the correct order, when associated events are triggered. You
@@ -157,12 +159,14 @@ class EventManager
             $this->_listeners[$eventKey][static::$defaultPriority][] = [
                 'callable' => $options
             ];
+            return;
         }
         if ($argCount === 3) {
             $priority = isset($options['priority']) ? $options['priority'] : static::$defaultPriority;
             $this->_listeners[$eventKey][$priority][] = [
                 'callable' => $callable
             ];
+            return;
         }
         throw new InvalidArgumentException('Invalid arguments for EventManager::on().');
     }
@@ -243,6 +247,22 @@ class EventManager
                 }
             }
         }
+    }
+
+    /**
+     * Removes a listener from the active listeners.
+     *
+     * @param string|\Cake\Event\EventListenerInterface $eventKey The event unique identifier name 
+     * with which the callback has been associated, or the $listener you want to remove.
+     * @param callback $callable The callback you want to detach.
+     * @return void
+     */
+    public function off($eventKey, $callable = null)
+    {
+        if ($callable === null) {
+            return $this->detach($eventKey);
+        }
+        return $this->detach($callable, $eventKey);
     }
 
     /**
