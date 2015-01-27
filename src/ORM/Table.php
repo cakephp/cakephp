@@ -273,7 +273,8 @@ class Table implements RepositoryInterface, EventListenerInterface
      * define validation and do any other initialization logic you need.
      *
      * ```
-     *  public function initialize(array $config) {
+     *  public function initialize(array $config)
+     *  {
      *      $this->belongsTo('Users');
      *      $this->belongsToMany('Tagging.Tags');
      *      $this->primaryKey('something_else');
@@ -1100,7 +1101,8 @@ class Table implements RepositoryInterface, EventListenerInterface
      * you will need to create a method in your Table subclass as follows:
      *
      * ```
-     * public function validationForSubscription($validator) {
+     * public function validationForSubscription($validator)
+     * {
      *  return $validator
      *  ->add('email', 'valid-email', ['rule' => 'email'])
      *  ->add('password', 'valid', ['rule' => 'notEmpty'])
