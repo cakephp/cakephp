@@ -14,6 +14,7 @@
  */
 namespace Cake\Database\Driver;
 
+use Cake\Database\Query;
 use Cake\Database\Dialect\SqlserverDialectTrait;
 use Cake\Database\Statement\SqlserverStatement;
 use Cake\Database\Query;
