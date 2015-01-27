@@ -1085,6 +1085,29 @@ class RouterTest extends TestCase
     }
 
     /**
+     * testRestUrlGenerationWithExtensions method
+     *
+     * @return void
+     */
+    public function testRestUrlGenerationWithExtensions()
+    {
+        Router::scope('/', function ($r) {
+            $r->extensions('json');
+            $r->resources('Articles');
+        });
+
+        $result = Router::url([
+            'plugin' => null,
+            'controller' => 'Articles',
+            'action' => 'add',
+            '_method' => 'POST',
+            '_ext' => 'json'
+        ]);
+        $expected = '/articles.json';
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * test url() when the current request has an extension.
      *
      * @return void
