@@ -1376,6 +1376,10 @@ class TableTest extends TestCase
      */
     public function testSavePrimaryKeyEntityExists()
     {
+        $this->skipIf(
+            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
+            'SQLServer does not like setting an id on IDENTITY fields'
+        );
         $table = $this->getMock(
             'Cake\ORM\Table',
             ['exists'],
@@ -1402,6 +1406,10 @@ class TableTest extends TestCase
      */
     public function testSavePrimaryKeyEntityNoExists()
     {
+        $this->skipIf(
+            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
+            'SQLServer does not like setting an id on IDENTITY fields'
+        );
         $table = $this->getMock(
             'Cake\ORM\Table',
             ['exists'],
