@@ -298,8 +298,10 @@ class RulesChecker
      * @param string $message The error message to show in case the rule does not pass.
      * @return callable
      */
-    public function isUnique(array $fields, $message = 'This value is already in use')
+    public function isUnique(array $fields, $message = null)
     {
+        $message = $message?: __('This value is already in use');
+
         $errorField = current($fields);
         return $this->_addError(new IsUnique($fields), compact('errorField', 'message'));
     }
@@ -324,8 +326,10 @@ class RulesChecker
      * @param string $message The error message to show in case the rule does not pass.
      * @return callable
      */
-    public function existsIn($field, $table, $message = 'This value does not exist')
+    public function existsIn($field, $table, $message = null)
     {
+        $message = $message?: __('This value does not exist');
+
         $errorField = $field;
         return $this->_addError(new ExistsIn($field, $table), compact('errorField', 'message'));
     }
