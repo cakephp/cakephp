@@ -544,11 +544,6 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
         $errors = [];
         // Loading default provider in case there is none
         $this->provider('default');
-        $message = 'The provided value is invalid';
-
-        if ($this->_useI18n) {
-            $message = __d('cake', 'The provided value is invalid');
-        }
 
         foreach ($rules as $name => $rule) {
             $result = $rule->process($value, $this->_providers, compact('newRecord', 'data', 'field'));
@@ -556,7 +551,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
                 continue;
             }
 
-            $errors[$name] = $message;
+            $errors[$name] = $name;
             if (is_string($result)) {
                 $errors[$name] = $result;
             }
