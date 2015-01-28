@@ -2449,4 +2449,12 @@ HTML;
 		}
 	}
 
+    public function testDefaultConfig() {
+        $defaultConfig = new File(APP . 'Config' . DS . 'email.php.default');
+        $this->skipIf(!$defaultConfig->copy(APP . 'Config' . DS . 'email.php'), 'Unable to copy default config');
+
+        $Email = new CakeEmail();
+        $this->assertEquals('you@localhost', current($Email->from()));
+    }
+
 }
