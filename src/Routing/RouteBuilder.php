@@ -267,11 +267,11 @@ class RouteBuilder
                 'controller' => $name,
                 'action' => $action,
                 '_method' => $params['method'],
-                '_ext' => $ext
             ];
             $routeOptions = $connectOptions + [
                 'id' => $options['id'],
-                'pass' => ['id']
+                'pass' => ['id'],
+                '_ext' => $ext,
             ];
             $this->connect($url, $params, $routeOptions);
         }
