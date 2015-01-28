@@ -2449,4 +2449,23 @@ HTML;
 		}
 	}
 
+/**
+ * Test if the EmailConfig::$default configuration is read when present
+ *
+ * @return void
+ */
+	public function testDefaultConfig() {
+		$defaultConfig = new File(APP . 'Config' . DS . 'email.php.default');
+		$emailConfig = new File(APP . 'Config' . DS . 'email.php');
+		$hasConfig = $emailConfig->exists();
+		$this->skipIf(!$defaultConfig->copy(APP . 'Config' . DS . 'email.php', false));
+
+		$Email = new CakeEmail();
+		$this->skipIf(!property_exists('EmailConfig', 'default'));
+		$this->assertEquals('you@localhost', current($Email->from()));
+		if (!$hasConfig) {
+			$emailConfig->delete();
+		}
+	}
+
 }
