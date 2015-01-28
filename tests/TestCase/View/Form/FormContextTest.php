@@ -183,8 +183,8 @@ class FormContextTest extends TestCase
 
         $context = new FormContext($this->request, ['entity' => $form]);
         $this->assertEquals([], $context->error('empty'));
-        $this->assertEquals(['The provided value is invalid'], $context->error('email'));
-        $this->assertEquals(['The provided value is invalid'], $context->error('name'));
+        $this->assertEquals(['format'], $context->error('email'));
+        $this->assertEquals(['length'], $context->error('name'));
 
         $this->assertEquals([], $context->error('Alias.name'));
         $this->assertEquals([], $context->error('nope.nope'));
