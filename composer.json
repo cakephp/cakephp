@@ -27,5 +27,8 @@
 	},
 	"bin": [
 		"lib/Cake/Console/cake"
-	]
+	],
+	"config": {
+		"vendor-dir": "vendors"
+	}
 }
