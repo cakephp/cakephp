@@ -199,7 +199,7 @@ class ExceptionRenderer
     {
         list(, $baseClass) = namespaceSplit(get_class($exception));
         
-        if(substr($baseClass, -9) === 'Exception') {
+        if (substr($baseClass, -9) === 'Exception') {
             $baseClass = substr($baseClass, 0, -9);
         }
         
