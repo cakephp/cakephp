@@ -162,6 +162,7 @@ class ConsoleOutput {
 		$this->_output = fopen($stream, 'w');
 
 		if ((DS === '\\' && !(bool)env('ANSICON')) ||
+			$stream === 'php://output' ||
 			(function_exists('posix_isatty') && !posix_isatty($this->_output))
 		) {
 			$this->_outputAs = self::PLAIN;

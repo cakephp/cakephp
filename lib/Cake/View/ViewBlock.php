@@ -75,7 +75,7 @@ class ViewBlock {
  */
 	public function start($name) {
 		if (in_array($name, $this->_active)) {
-			throw new CakeException(__("A view block with the name '%s' is already/still open.", $name));
+			throw new CakeException(__d('cake', "A view block with the name '%s' is already/still open.", $name));
 		}
 		$this->_active[] = $name;
 		ob_start();

@@ -232,6 +232,17 @@ class ConsoleOutputTest extends CakeTestCase {
 	}
 
 /**
+ * test plain output when php://output, as php://output is
+ * not compatible with posix_ functions.
+ *
+ * @return void
+ */
+	public function testOutputAsPlainWhenOutputStream() {
+		$output = $this->getMock('ConsoleOutput', array('_write'), array('php://output'));
+		$this->assertEquals(ConsoleOutput::PLAIN, $output->outputAs());
+	}
+
+/**
  * test plain output only strips tags used for formatting.
  *
  * @return void
