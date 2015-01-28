@@ -198,7 +198,11 @@ class ExceptionRenderer
     protected function _method(\Exception $exception)
     {
         list(, $baseClass) = namespaceSplit(get_class($exception));
-        $baseClass = substr($baseClass, 0, -9);
+        
+        if(strpos($baseClass, 'Exception')!==false) {
+            $baseClass = substr($baseClass, 0, -9);
+        }
+        
         $method = Inflector::variable($baseClass) ?: 'error500';
         return $this->method = $method;
     }
