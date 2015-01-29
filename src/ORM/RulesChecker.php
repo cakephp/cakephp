@@ -300,7 +300,7 @@ class RulesChecker
      */
     public function isUnique(array $fields, $message = null)
     {
-        $message = $message?: __('This value is already in use');
+        $message = $message?: __d('cake', 'This value is already in use');
 
         $errorField = current($fields);
         return $this->_addError(new IsUnique($fields), compact('errorField', 'message'));
@@ -328,7 +328,7 @@ class RulesChecker
      */
     public function existsIn($field, $table, $message = null)
     {
-        $message = $message?: __('This value does not exist');
+        $message = $message?: __d('cake', 'This value does not exist');
 
         $errorField = $field;
         return $this->_addError(new ExistsIn($field, $table), compact('errorField', 'message'));
