@@ -858,6 +858,23 @@ class TreeBehaviorTest extends TestCase
     }
 
     /**
+     * Tests getting the depth level of a node in the tree.
+     *
+     * @return void
+     */
+    public function testGetLevel()
+    {
+        $result = $this->table->getLevel(8);
+        $this->assertEquals(3, $result);
+
+        $result = $this->table->getLevel(5);
+        $this->assertEquals(2, $result);
+
+        $result = $this->table->getLevel(99999);
+        $this->assertFalse($result);
+    }
+
+    /**
      * Custom assertion use to verify tha a tree is returned in the expected order
      * and that it is still valid
      *
