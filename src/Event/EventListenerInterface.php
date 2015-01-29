@@ -29,7 +29,8 @@ interface EventListenerInterface
      * ### Example:
      *
      * ```
-     *  public function implementedEvents() {
+     *  public function implementedEvents()
+     *  {
      *      return [
      *          'Order.complete' => 'sendEmail',
      *          'Article.afterBuy' => 'decrementInventory',
