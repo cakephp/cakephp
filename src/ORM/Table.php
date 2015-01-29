@@ -215,8 +215,7 @@ class Table implements RepositoryInterface, EventListenerInterface
      * - associations: An AssociationCollection instance.
      * - validator: A Validator instance which is assigned as the "default"
      *   validation set, or an associative array, where key is the name of the
-     *   validation set and value the Validator instance. If a key is omitted, then
-     *   the "default" validation set is assumed.
+     *   validation set and value the Validator instance.
      *
      * @param array $config List of options for this table
      */
@@ -251,8 +250,7 @@ class Table implements RepositoryInterface, EventListenerInterface
             if (!is_array($config['validator'])) {
                 $this->validator(null, $config['validator']);
             } else {
-                foreach ($config['validator'] as $key => $validator) {
-                    $name = (!is_int($key)) ? $key : null;
+                foreach ($config['validator'] as $name => $validator) {
                     $this->validator($name, $validator);
                 }
             }
