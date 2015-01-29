@@ -42,6 +42,7 @@ class QueryRegressionTest extends TestCase
         'core.authors',
         'core.special_tags',
         'core.translates',
+        'core.authors_tags',
     ];
 
     /**
@@ -466,7 +467,7 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
-     * Tests that using the subquery strategy in a deep assotiatin returns the right results
+     * Tests that using the subquery strategy in a deep association returns the right results
      *
      * @see https://github.com/cakephp/cakephp/issues/4484
      * @return void
@@ -478,12 +479,41 @@ class QueryRegressionTest extends TestCase
         $table->Articles->belongsToMany('Tags', [
             'strategy' => 'subquery'
         ]);
-        $table->Articles->Tags->junction();
+
         $result = $table->find()->contain(['Articles.Tags'])->toArray();
         $this->assertEquals(
             ['tag1', 'tag3'],
             collection($result[2]->articles[0]->tags)->extract('name')->toArray()
         );
+    }
+
+    /**
+     * Tests that using the subquery strategy in a deep association returns the right results
+     *
+     * @see https://github.com/cakephp/cakephp/issues/5769
+     * @return void
+     */
+    public function testDeepBelongsToManySubqueryStrategy2()
+    {
+        $table = TableRegistry::get('Authors');
+        $table->hasMany('Articles');
+        $table->Articles->belongsToMany('Tags', [
+            'strategy' => 'subquery'
+        ]);
+        $table->belongsToMany('Tags', [
+            'strategy' => 'subquery',
+        ]);
+        $table->Articles->belongsTo('Authors');
+
+        $result = $table->Articles->find()
+            ->where(['Authors.id >' => 1])
+            ->contain(['Authors.Tags'])
+            ->toArray();
+        $this->assertEquals(
+            ['tag1', 'tag2'],
+            collection($result[0]->author->tags)->extract('name')->toArray()
+        );
+        $this->assertEquals(3, $result[0]->author->id);
     }
 
     /**
