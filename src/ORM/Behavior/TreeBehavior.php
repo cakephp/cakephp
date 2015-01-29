@@ -797,10 +797,11 @@ class TreeBehavior extends Behavior
 /**
  * Returns the depth level of a node in the tree.
  *
- * @param int|string $id
+ * @param int|string $id Primary key of the node.
  * @return int|bool Integer of the level or false if the node does not exist.
  */
-    public function getLevel($id) {
+    public function getLevel($id)
+    {
         $config = $this->config();
         $entity = $this->_table->find('all')
             ->select([$config['left'], $config['right']])
@@ -813,7 +814,7 @@ class TreeBehavior extends Behavior
 
         $query = $this->_table->find('all')->where([
             $config['left'] . ' <' => $entity[$config['left']],
-            $config['right'] . ' >'=> $entity[$config['right']]
+            $config['right'] . ' >' => $entity[$config['right']]
         ]);
 
         return $this->_scope($query)->count();

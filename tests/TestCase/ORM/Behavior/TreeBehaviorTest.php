@@ -862,7 +862,8 @@ class TreeBehaviorTest extends TestCase
      *
      * @return void
      */
-    public function testGetLevel() {
+    public function testGetLevel()
+    {
         $result = $this->table->getLevel(8);
         $this->assertEquals(3, $result);
 
