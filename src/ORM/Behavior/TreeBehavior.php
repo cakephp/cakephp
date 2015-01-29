@@ -61,7 +61,8 @@ class TreeBehavior extends Behavior
             'moveUp' => 'moveUp',
             'moveDown' => 'moveDown',
             'recover' => 'recover',
-            'removeFromTree' => 'removeFromTree'
+            'removeFromTree' => 'removeFromTree',
+            'getLevel' => 'getLevel'
         ],
         'parent' => 'parent_id',
         'left' => 'lft',
@@ -791,5 +792,30 @@ class TreeBehavior extends Behavior
             $this->_primaryKey = $this->_primaryKey[0];
         }
         return $this->_primaryKey;
+    }
+
+/**
+ * Returns the depth level of a node in the tree.
+ *
+ * @param int|string $id
+ * @return int|bool Integer of the level or false if the node does not exist.
+ */
+    public function getLevel($id) {
+        $config = $this->config();
+        $entity = $this->_table->find('all')
+            ->select([$config['left'], $config['right']])
+            ->where([$this->_getPrimaryKey() => $id])
+            ->first();
+
+        if ($entity === null) {
+            return false;
+        }
+
+        $query = $this->_table->find('all')->where([
+            $config['left'] . ' <' => $entity[$config['left']],
+            $config['right'] . ' >'=> $entity[$config['right']]
+        ]);
+
+        return $this->_scope($query)->count();
     }
 }
