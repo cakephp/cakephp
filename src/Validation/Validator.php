@@ -67,12 +67,34 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
     protected $_allowEmptyMessages = [];
 
     /**
+     * I18n domain for validation messages.
+     *
+     * @var string
+     */
+    protected $_validationDomain = 'default';
+
+    /**
      * Constructor
      *
      */
     public function __construct()
     {
         $this->_useI18n = function_exists('__d');
+    }
+
+    /**
+     * Get/set the I18n domain for validation messages.
+     *
+     * @param string|null $domain The validation domain to be used. If null
+     *   returns currently set domain.
+     * @return string|null
+     */
+    public function validationDomain($domain = null)
+    {
+        if ($domain === null) {
+            return $this->_validationDomain;
+        }
+        $this->_validationDomain = $domain;
     }
 
     /**
@@ -555,7 +577,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
                 $errors[$name] = $result;
             } elseif ($this->_useI18n) {
                 $args = $rule->get('pass');
-                $errors[$name] = __($name, $this->_translateArgs($args));
+                $errors[$name] = __d($this->_validationDomain, $name, $this->_translateArgs($args));
             } else {
                 $errors[$name] = $name;
             }
@@ -577,7 +599,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
     {
         foreach ((array)$args as $k => $arg) {
             if (is_string($arg)) {
-                $args[$k] = __($arg);
+                $args[$k] = __d($this->_validationDomain, $arg);
             }
         }
         return $args;

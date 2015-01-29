@@ -199,6 +199,13 @@ class Table implements RepositoryInterface, EventListenerInterface
     protected $_rulesChecker;
 
     /**
+     * I18n domain for validation messages.
+     *
+     * @var string
+     */
+    protected $_validationDomain = 'default';
+
+    /**
      * Initializes a new instance
      *
      * The $config array understands the following keys:
@@ -264,6 +271,21 @@ class Table implements RepositoryInterface, EventListenerInterface
     public static function defaultConnectionName()
     {
         return 'default';
+    }
+
+    /**
+     * Get/set the I18n domain for validation messages.
+     *
+     * @param string|null $domain The validation domain to be used. If null
+     *   returns currently set domain.
+     * @return string|null
+     */
+    public function validationDomain($domain = null)
+    {
+        if ($domain === null) {
+            return $this->_validationDomain;
+        }
+        $this->_validationDomain = $domain;
     }
 
     /**
