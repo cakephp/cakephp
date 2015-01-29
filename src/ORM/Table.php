@@ -121,6 +121,13 @@ class Table implements RepositoryInterface, EventListenerInterface
     use EventManagerTrait;
 
     /**
+     * Name of default validation set.
+     *
+     * @var string
+     */
+    const VALIDATOR_DEFAULT = 'default';
+
+    /**
      * Name of the table as it can be found in the database
      *
      * @var string
@@ -248,7 +255,7 @@ class Table implements RepositoryInterface, EventListenerInterface
         }
         if (!empty($config['validator'])) {
             if (!is_array($config['validator'])) {
-                $this->validator('default', $config['validator']);
+                $this->validator(self::VALIDATOR_DEFAULT, $config['validator']);
             } else {
                 foreach ($config['validator'] as $name => $validator) {
                     $this->validator($name, $validator);
@@ -1142,7 +1149,7 @@ class Table implements RepositoryInterface, EventListenerInterface
      *   use null to get a validator.
      * @return \Cake\Validation\Validator
      */
-    public function validator($name = 'default', Validator $validator = null)
+    public function validator($name = self::VALIDATOR_DEFAULT, Validator $validator = null)
     {
         if ($validator === null && isset($this->_validators[$name])) {
             return $this->_validators[$name];
