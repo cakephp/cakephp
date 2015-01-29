@@ -213,6 +213,10 @@ class Table implements RepositoryInterface, EventListenerInterface
      * - eventManager: An instance of an event manager to use for internal events
      * - behaviors: A BehaviorRegistry. Generally not used outside of tests.
      * - associations: An AssociationCollection instance.
+     * - validator: A Validator instance which is assigned as the "default"
+     *   validation set, or an associative array, where key is the name of the
+     *   validation set and value the Validator instance. If a key is omitted, then
+     *   the "default" validation set is assumed.
      *
      * @param array $config List of options for this table
      */
@@ -242,6 +246,16 @@ class Table implements RepositoryInterface, EventListenerInterface
         }
         if (!empty($config['associations'])) {
             $associations = $config['associations'];
+        }
+        if (!empty($config['validator'])) {
+            if (!is_array($config['validator'])) {
+                $this->validator(null, $config['validator']);
+            } else {
+                foreach ($config['validator'] as $key => $validator) {
+                    $name = (!is_int($key)) ? $key : null;
+                    $this->validator($name, $validator);
+                }
+            }
         }
         $this->_eventManager = $eventManager ?: new EventManager();
         $this->_behaviors = $behaviors ?: new BehaviorRegistry($this);
