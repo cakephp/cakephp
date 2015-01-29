@@ -623,7 +623,7 @@ class Controller implements EventListenerInterface
                 if (empty($tableName)) {
                     continue;
                 }
-                $table = TableRegistry::get($tableName);
+                $table = $this->loadModel($tableName);
                 break;
             }
         }
