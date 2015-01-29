@@ -240,7 +240,7 @@ trait SelectableAssociationTrait
         }
 
         $fields = $query->aliasFields($keys, $this->source()->alias());
-        return $filterQuery->select($fields, true);
+        return $filterQuery->select($fields, true)->distinct();
     }
 
     /**
