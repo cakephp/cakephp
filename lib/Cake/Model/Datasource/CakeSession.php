@@ -374,7 +374,7 @@ class CakeSession {
  *
  * @param string|null $name The name of the session variable (or a path as sent to Set.extract)
  * @return mixed The value of the session variable, null if session not available,
- *   session not started, or provided name not found in the session.
+ *   session not started, or provided name not found in the session, false on failure.
  */
 	public static function read($name = null) {
 		if (empty($name) && $name !== null) {
@@ -478,11 +478,14 @@ class CakeSession {
  * @return void
  */
 	public static function clear($renew = true) {
-		$_SESSION = null;
-		if ($renew) {
-			self::$id = null;
-			self::renew();
+		if (!$renew) {
+			$_SESSION = array();
+			return;
 		}
+
+		$_SESSION = null;
+		self::$id = null;
+		self::renew();
 	}
 
 /**
