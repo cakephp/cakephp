@@ -1559,6 +1559,31 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * test time validation when passing an array
+     *
+     * @return void
+     */
+    public function testTimeArray()
+    {
+        $date = ['hour' => 13, 'minute' => 14, 'second' => 15];
+        $this->assertTrue(Validation::time($date));
+
+        $date = [
+            'hour' => 1, 'minute' => 14, 'second' => 15,
+            'meridian' => 'am'
+        ];
+        $this->assertTrue(Validation::time($date));
+
+        $date = [
+            'hour' => 'farts', 'minute' => 'farts'
+        ];
+        $this->assertFalse(Validation::time($date));
+
+        $date = [];
+        $this->assertFalse(Validation::time($date));
+    }
+
+    /**
      * testBoolean method
      *
      * @return void

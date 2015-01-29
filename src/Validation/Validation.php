@@ -400,6 +400,9 @@ class Validation
         if ($check instanceof \DateTime) {
             return true;
         }
+        if (is_array($check)) {
+            $check = static::_getDateString($check);
+        }
         return static::_check($check, '%^((0?[1-9]|1[012])(:[0-5]\d){0,2} ?([AP]M|[ap]m))$|^([01]\d|2[0-3])(:[0-5]\d){0,2}$%');
     }
 
