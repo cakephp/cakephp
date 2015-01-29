@@ -551,9 +551,13 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
                 continue;
             }
 
-            $errors[$name] = $name;
             if (is_string($result)) {
                 $errors[$name] = $result;
+            } elseif ($this->_useI18n) {
+                $args = $rule->get('pass');
+                $errors[$name] = __($name, $this->_translateArgs($args));
+            } else {
+                $errors[$name] = $name;
             }
 
             if ($rule->isLast()) {
@@ -561,5 +565,20 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
             }
         }
         return $errors;
+    }
+
+    /**
+     * Applies translations to validator arguments.
+     *
+     * @param array $args The args to translate
+     * @return array Translated args.
+     */
+    protected function _translateArgs($args) {
+        foreach ((array)$args as $k => $arg) {
+            if (is_string($arg)) {
+                $args[$k] = __($arg);
+            }
+        }
+        return $args;
     }
 }
