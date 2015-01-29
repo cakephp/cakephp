@@ -191,7 +191,7 @@ class EventManagerTest extends TestCase
         $manager = new EventManager();
         $manager->on('fake.event', ['AClass', 'aMethod']);
         $manager->on('another.event', ['AClass', 'anotherMethod']);
-        $manager->on('another.event',  ['priority' => 1], 'fakeFunction');
+        $manager->on('another.event', ['priority' => 1], 'fakeFunction');
 
         $manager->off('fake.event', ['AClass', 'aMethod']);
         $this->assertEquals([], $manager->listeners('fake.event'));
@@ -216,7 +216,7 @@ class EventManagerTest extends TestCase
         $manager = new EventManager();
         $manager->on('fake.event', ['AClass', 'aMethod']);
         $manager->on('another.event', ['AClass', 'aMethod']);
-        $manager->on('another.event',  ['priority' => 1], 'fakeFunction');
+        $manager->on('another.event', ['priority' => 1], 'fakeFunction');
 
         $manager->off(['AClass', 'aMethod']);
         $expected = [

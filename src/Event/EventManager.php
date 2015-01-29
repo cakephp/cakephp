@@ -149,7 +149,8 @@ class EventManager
      * @throws \InvalidArgumentException When event key is missing or callable is not an
      *   instance of Cake\Event\EventListenerInterface.
      */
-    public function on($eventKey = null, $options = [], $callable = null) {
+    public function on($eventKey = null, $options = [], $callable = null)
+    {
         if ($eventKey instanceof EventListenerInterface) {
             $this->_attachSubscriber($eventKey);
             return;
@@ -252,8 +253,8 @@ class EventManager
     /**
      * Removes a listener from the active listeners.
      *
-     * @param string|\Cake\Event\EventListenerInterface $eventKey The event unique identifier name 
-     * with which the callback has been associated, or the $listener you want to remove.
+     * @param string|\Cake\Event\EventListenerInterface $eventKey The event unique identifier name
+     *   with which the callback has been associated, or the $listener you want to remove.
      * @param callback $callable The callback you want to detach.
      * @return void
      */
