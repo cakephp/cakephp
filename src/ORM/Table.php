@@ -248,7 +248,7 @@ class Table implements RepositoryInterface, EventListenerInterface
         }
         if (!empty($config['validator'])) {
             if (!is_array($config['validator'])) {
-                $this->validator(null, $config['validator']);
+                $this->validator('default', $config['validator']);
             } else {
                 foreach ($config['validator'] as $name => $validator) {
                     $this->validator($name, $validator);
