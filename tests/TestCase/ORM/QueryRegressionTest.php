@@ -467,7 +467,7 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
-     * Tests that using the subquery strategy in a deep assotiation returns the right results
+     * Tests that using the subquery strategy in a deep association returns the right results
      *
      * @see https://github.com/cakephp/cakephp/issues/4484
      * @return void
@@ -488,7 +488,7 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
-     * Tests that using the subquery strategy in a deep assotiation returns the right results
+     * Tests that using the subquery strategy in a deep association returns the right results
      *
      * @see https://github.com/cakephp/cakephp/issues/5769
      * @return void
