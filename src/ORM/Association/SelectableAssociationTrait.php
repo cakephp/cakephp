@@ -141,7 +141,7 @@ trait SelectableAssociationTrait
     public function _addFilteringJoin($query, $key, $subquery)
     {
         $filter = [];
-        $aliasedTable = $subquery->repository()->alias();
+        $aliasedTable = $this->source()->alias();
 
         foreach ($subquery->clause('select') as $aliasedField => $field) {
             $filter[] = new IdentifierExpression($field);
@@ -239,7 +239,7 @@ trait SelectableAssociationTrait
             $keys = (array)$this->foreignKey();
         }
 
-        $fields = $query->aliasFields($keys);
+        $fields = $query->aliasFields($keys, $this->source()->alias());
         return $filterQuery->select($fields, true);
     }
 
