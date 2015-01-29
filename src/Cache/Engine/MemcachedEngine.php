@@ -68,9 +68,11 @@ class MemcachedEngine extends CacheEngine
         'compress' => false,
         'duration' => 3600,
         'groups' => [],
+        'host' => null,
         'username' => null,
         'password' => null,
         'persistent' => false,
+        'port' => null,
         'prefix' => 'cake_',
         'probability' => 100,
         'serialize' => 'php',
@@ -113,6 +115,14 @@ class MemcachedEngine extends CacheEngine
         }
 
         parent::init($config);
+        
+        if (!empty($config['host'])) {
+            if (empty($config['port'])) {
+                $config['servers'] = [$config['host']];
+            } else {
+                $config['servers'] = [sprintf('%s:%d', $config['host'], $config['port'])];
+            }
+        }
 
         if (isset($config['servers'])) {
             $this->config('servers', $config['servers'], false);

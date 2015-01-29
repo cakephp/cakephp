@@ -92,6 +92,7 @@ class RedisEngineTest extends TestCase
             'password' => false,
             'database' => 0,
             'unix_socket' => false,
+            'host' => null,
         ];
         $this->assertEquals($expecting, $config);
     }
