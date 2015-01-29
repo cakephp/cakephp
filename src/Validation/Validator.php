@@ -573,7 +573,8 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
      * @param array $args The args to translate
      * @return array Translated args.
      */
-    protected function _translateArgs($args) {
+    protected function _translateArgs($args)
+    {
         foreach ((array)$args as $k => $arg) {
             if (is_string($arg)) {
                 $args[$k] = __($arg);
