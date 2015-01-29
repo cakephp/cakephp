@@ -506,7 +506,7 @@ class QueryRegressionTest extends TestCase
         $table->Articles->belongsTo('Authors');
 
         $result = $table->Articles->find()
-            ->where(['Authors.id > 1'])
+            ->where(['Authors.id >' => 1])
             ->contain(['Authors.Tags'])
             ->toArray();
         $this->assertEquals(
