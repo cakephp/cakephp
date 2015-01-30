@@ -35,9 +35,9 @@ echo Inflector::singularize('People'); // echoes Person
 
 Check the [official Inflector class documentation](http://book.cakephp.org/3.0/en/core-libraries/inflector.html)
 
-### String
+### Text
 
-The String class includes convenience methods for creating and manipulating strings.
+The Text class includes convenience methods for creating and manipulating strings.
 
 ```php
 Text::insert(
@@ -54,7 +54,7 @@ This is the song
 that never ends.
 ```
 
-Check the [official String class documentation](http://book.cakephp.org/3.0/en/core-libraries/string.html)
+Check the [official Text class documentation](http://book.cakephp.org/3.0/en/core-libraries/text.html)
 
 ### Security
 
