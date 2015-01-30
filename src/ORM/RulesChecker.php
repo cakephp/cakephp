@@ -100,6 +100,13 @@ class RulesChecker
     protected $_options = [];
 
     /**
+     * Whether or not to use I18n functions for translating default error messages
+     *
+     * @var bool
+     */
+    protected $_useI18n = false;
+
+    /**
      * Constructor. Takes the options to be passed to all rules.
      *
      * @param array $options The options to pass to every rule
@@ -107,6 +114,7 @@ class RulesChecker
     public function __construct(array $options)
     {
         $this->_options = $options;
+        $this->_useI18n = function_exists('__d');
     }
 
     /**
@@ -300,7 +308,13 @@ class RulesChecker
      */
     public function isUnique(array $fields, $message = null)
     {
-        $message = $message?: __d('cake', 'This value is already in use');
+        if (!$message) {
+            if ($this->_useI18n) {
+                $message = __d('cake', 'This value is already in use');
+            } else {
+                $message = 'This value is already in use';
+            }
+        }
 
         $errorField = current($fields);
         return $this->_addError(new IsUnique($fields), compact('errorField', 'message'));
@@ -328,7 +342,13 @@ class RulesChecker
      */
     public function existsIn($field, $table, $message = null)
     {
-        $message = $message?: __d('cake', 'This value does not exist');
+        if (!$message) {
+            if ($this->_useI18n) {
+                $message = __d('cake', 'This value does not exist');
+            } else {
+                $message = 'This value does not exist';
+            }
+        }
 
         $errorField = $field;
         return $this->_addError(new ExistsIn($field, $table), compact('errorField', 'message'));
