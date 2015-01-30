@@ -95,20 +95,17 @@ class EventManager
      * @return void
      * @throws \InvalidArgumentException When event key is missing or callable is not an
      *   instance of Cake\Event\EventListenerInterface.
+     * @deprecated 3.0.0 Use on() instead.
      */
     public function attach($callable, $eventKey = null, array $options = [])
     {
-        if (!$eventKey && !($callable instanceof EventListenerInterface)) {
-            throw new \InvalidArgumentException('The eventKey variable is required');
+        if ($eventKey === null) {
+            return $this->on($callable);
         }
-        if ($callable instanceof EventListenerInterface) {
-            $this->_attachSubscriber($callable);
-            return;
+        if ($options) {
+            return $this->on($eventKey, $options, $callable);
         }
-        $options += ['priority' => static::$defaultPriority];
-        $this->_listeners[$eventKey][$options['priority']][] = [
-            'callable' => $callable,
-        ];
+        return $this->on($eventKey, $callable);
     }
 
     /**
@@ -189,14 +186,14 @@ class EventManager
             } elseif (is_array($function) && is_numeric(key($function))) {
                 foreach ($function as $f) {
                     list($method, $options) = $this->_extractCallable($f, $subscriber);
-                    $this->attach($method, $eventKey, $options);
+                    $this->on($eventKey, $options, $method);
                 }
                 continue;
             }
             if (is_string($method)) {
                 $method = [$subscriber, $function];
             }
-            $this->attach($method, $eventKey, $options);
+            $this->on($eventKey, $options, $method);
         }
     }
 
@@ -225,15 +222,59 @@ class EventManager
      * @param callback|\Cake\Event\EventListenerInterface $callable any valid PHP callback type or an instance of EventListenerInterface
      * @param string|null $eventKey The event unique identifier name with which the callback has been associated
      * @return void
+     * @deprecated 3.0.0 Use off() instead.
      */
     public function detach($callable, $eventKey = null)
     {
+        if ($eventKey === null) {
+            return $this->off($callable);
+        }
+        return $this->off($eventKey, $callable);
+    }
+
+    /**
+     * Remove a listener from the active listeners.
+     *
+     * Remove a EventListenerInterface entirely:
+     *
+     * ```
+     * $manager->off($listener);
+     * ```
+     *
+     * Remove all listeners for a given event:
+     *
+     * ```
+     * $manager->off('My.event');
+     * ```
+     *
+     * Remove a specific listener:
+     *
+     * ```
+     * $manager->off('My.event', $callback);
+     * ```
+     *
+     * Remove a callback from all events:
+     *
+     * ```
+     * $manager->off($callback);
+     * ```
+     *
+     * @param string|\Cake\Event\EventListenerInterface $eventKey The event unique identifier name
+     *   with which the callback has been associated, or the $listener you want to remove.
+     * @param callback $callable The callback you want to detach.
+     * @return void
+     */
+    public function off($eventKey, $callable = null)
+    {
+        if ($eventKey instanceof EventListenerInterface) {
+            return $this->_detachSubscriber($eventKey);
+        }
         if ($callable instanceof EventListenerInterface) {
             return $this->_detachSubscriber($callable, $eventKey);
         }
-        if (empty($eventKey)) {
-            foreach (array_keys($this->_listeners) as $eventKey) {
-                $this->detach($callable, $eventKey);
+        if ($callable === null) {
+            foreach (array_keys($this->_listeners) as $name) {
+                $this->off($name, $eventKey);
             }
             return;
         }
@@ -248,22 +289,6 @@ class EventManager
                 }
             }
         }
-    }
-
-    /**
-     * Removes a listener from the active listeners.
-     *
-     * @param string|\Cake\Event\EventListenerInterface $eventKey The event unique identifier name
-     *   with which the callback has been associated, or the $listener you want to remove.
-     * @param callback $callable The callback you want to detach.
-     * @return void
-     */
-    public function off($eventKey, $callable = null)
-    {
-        if ($callable === null) {
-            return $this->detach($eventKey);
-        }
-        return $this->detach($callable, $eventKey);
     }
 
     /**
