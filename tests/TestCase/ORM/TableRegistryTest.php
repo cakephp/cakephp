@@ -331,10 +331,12 @@ class TableRegistryTest extends TestCase
      */
     public function testConfigWithSingleValidator()
     {
-        TableRegistry::config('users', ['validator' => new Validator()]);
+        $validator = new Validator();
+
+        TableRegistry::config('users', ['validator' => $validator]);
         $table = TableRegistry::get('users');
 
-        $this->assertInstanceOf('Cake\Validation\Validator', $table->validator('default'));
+        $this->assertSame($table->validator('default'), $validator);
     }
 
     /**
@@ -344,18 +346,22 @@ class TableRegistryTest extends TestCase
      */
     public function testConfigWithMultipleValidators()
     {
+        $validator1 = new Validator();
+        $validator2 = new Validator();
+        $validator3 = new Validator();
+
         TableRegistry::config('users', [
             'validator' => [
-                'default' => new Validator(),
-                'secondary' => new Validator(),
-                'tertiary' => new Validator(),
+                'default' => $validator1,
+                'secondary' => $validator2,
+                'tertiary' => $validator3,
             ]
         ]);
         $table = TableRegistry::get('users');
 
-        $this->assertInstanceOf('Cake\Validation\Validator', $table->validator('default'));
-        $this->assertInstanceOf('Cake\Validation\Validator', $table->validator('secondary'));
-        $this->assertInstanceOf('Cake\Validation\Validator', $table->validator('tertiary'));
+        $this->assertSame($table->validator('default'), $validator1);
+        $this->assertSame($table->validator('secondary'), $validator2);
+        $this->assertSame($table->validator('tertiary'), $validator3);
     }
 
     /**
