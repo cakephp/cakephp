@@ -618,6 +618,20 @@ class ExceptionRendererTest extends TestCase
     }
 
     /**
+     * Test that class names not ending in Exception are not mangled.
+     *
+     * @return void
+     */
+    public function testExceptionNameMangling()
+    {
+        $exception = $this->getMock('Exception', [], ['Bad things', 404], 'MissingWidgetThing');
+        $exceptionRenderer = new MyCustomExceptionRenderer($exception);
+
+        $result = $exceptionRenderer->render()->body();
+        $this->assertContains('widget thing is missing', $result);
+    }
+
+    /**
      * Test exceptions being raised when helpers are missing.
      *
      * @return void
