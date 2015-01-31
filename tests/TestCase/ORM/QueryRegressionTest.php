@@ -740,6 +740,12 @@ class QueryRegressionTest extends TestCase
         $comments->find()->contain('Deprs')->all();
     }
 
+    /**
+     * Tests that using matching and contain on belongsTo associations
+     * works correctly.
+     *
+     * @return void
+     */
     public function testFindMatchingWithContain()
     {
         $comments = TableRegistry::get('Comments');
@@ -758,5 +764,7 @@ class QueryRegressionTest extends TestCase
             ->first();
         $this->assertInstanceOf('Cake\ORM\Entity', $result->article);
         $this->assertInstanceOf('Cake\ORM\Entity', $result->user);
+        $this->assertEquals(2, $result->user->id);
+        $this->assertEquals(1, $result->article->id);
     }
 }
