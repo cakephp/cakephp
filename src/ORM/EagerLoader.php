@@ -435,7 +435,7 @@ class EagerLoader
             return;
         }
 
-        $config['strategy'] = Association::STRATEGY_SELECT;
+        $config['strategy'] = Association::STRATEGY_SUBQUERY;
         $loadable->config($config);
         $loadable->canBeJoined(false);
     }

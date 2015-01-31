@@ -727,7 +727,6 @@ class QueryRegressionTest extends TestCase
         $this->assertNotNull($result->article->author);
     }
 
-
     /**
      * Tests that trying to contain an inexistent association
      * throws an exception and not a fatal error.
@@ -739,5 +738,24 @@ class QueryRegressionTest extends TestCase
     {
         $comments = TableRegistry::get('Comments');
         $comments->find()->contain('Deprs')->all();
+    }
+
+    public function testFindMatchingWithContain()
+    {
+        $comments = TableRegistry::get('Comments');
+        $comments->belongsTo('Articles');
+        $comments->belongsTo('Users');
+
+        $result = $comments->find()
+            ->contain(['Articles', 'Users'])
+            ->matching('Articles', function ($q) {
+                return $q->where(['Articles.id >=' => 1]);
+            })
+            ->matching('Users', function ($q) {
+                return $q->where(['Users.id >=' => 1]);
+            })
+            ->first();
+        $this->assertInstanceOf('Cake\ORM\Entity', $result->article);
+        $this->assertInstanceOf('Cake\ORM\Entity', $result->user);
     }
 }
