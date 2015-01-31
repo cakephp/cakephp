@@ -754,6 +754,7 @@ class QueryRegressionTest extends TestCase
             ->matching('Users', function ($q) {
                 return $q->where(['Users.id >=' => 1]);
             })
+            ->order(['Comments.id' => 'ASC'])
             ->first();
         $this->assertInstanceOf('Cake\ORM\Entity', $result->article);
         $this->assertInstanceOf('Cake\ORM\Entity', $result->user);

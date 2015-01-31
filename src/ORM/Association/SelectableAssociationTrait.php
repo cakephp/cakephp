@@ -240,7 +240,17 @@ trait SelectableAssociationTrait
         }
 
         $fields = $query->aliasFields($keys, $this->source()->alias());
-        return $filterQuery->select($fields, true)->distinct();
+        $filterQuery->select($fields, true)->distinct();
+
+        $order = $filterQuery->clause('order');
+        if ($order) {
+            $order->iterateParts(function ($dir, $field) use ($filterQuery) {
+                $filterQuery->select(is_int($field) ? $dir : $field);
+                return $dir;
+            });
+        }
+
+        return $filterQuery;
     }
 
     /**
