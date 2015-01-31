@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM\Behavior;
 
+use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
@@ -804,7 +805,7 @@ class TreeBehavior extends Behavior
     {
         $primaryKey = $this->_getPrimaryKey();
         $id = $entity;
-        if (!is_scalar($entity)) {
+        if ($entity instanceof EntityInterface) {
             $id = $entity->get($primaryKey);
         }
         $config = $this->config();
