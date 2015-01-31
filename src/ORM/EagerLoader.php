@@ -491,6 +491,7 @@ class EagerLoader
 
         $driver = $query->connection()->driver();
         list($collected, $statement) = $this->_collectKeys($external, $query, $statement);
+
         foreach ($external as $meta) {
             $contain = $meta->associations();
             $instance = $meta->instance();
@@ -501,8 +502,8 @@ class EagerLoader
             if ($requiresKeys && empty($collected[$alias])) {
                 continue;
             }
-
             $keys = isset($collected[$alias]) ? $collected[$alias] : null;
+
             $f = $instance->eagerLoader(
                 $config + [
                     'query' => $query,
@@ -642,19 +643,26 @@ class EagerLoader
         while ($result = $statement->fetch('assoc')) {
             foreach ($collectKeys as $parts) {
                 // Missed joins will have null in the results.
-                if ($parts[2] && !isset($result[$parts[1][0]])) {
+                if ($parts[2] === true && !isset($result[$parts[1][0]])) {
                     continue;
                 }
-                if ($parts[2]) {
+                if ($parts[2] === true) {
                     $keys[$parts[0]][] = $result[$parts[1][0]];
                     continue;
                 }
 
+                // Handle composite keys.
                 $collected = [];
                 foreach ($parts[1] as $key) {
                     $collected[] = $result[$key];
                 }
                 $keys[$parts[0]][] = $collected;
+            }
+        }
+
+        foreach ($collectKeys as $parts) {
+            if ($parts[2] === true && isset($keys[$parts[0]])) {
+                $keys[$parts[0]] = array_unique($keys[$parts[0]]);
             }
         }
 
