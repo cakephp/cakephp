@@ -763,5 +763,4 @@ class QueryRegressionTest extends TestCase
             ->toArray();
         $this->assertNotEmpty($result[0]->article);
     }
-
 }
