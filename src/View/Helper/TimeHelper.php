@@ -326,9 +326,9 @@ class TimeHelper extends Helper
      * @throws \InvalidArgumentException When the date cannot be parsed
      * @see \Cake\I18n\Time::i18nFormat()
      */
-    public function i18nFormat($date = null, $format = null, $invalid = false, $timezone = null)
+    public function i18nFormat($date, $format = null, $invalid = false, $timezone = null)
     {
-        if (empty($date)) {
+        if (!isset($date)) {
             return $invalid;
         }
 

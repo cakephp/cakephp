@@ -448,4 +448,22 @@ class TimeHelperTest extends TestCase
             str_replace([',', '(', ')', ' at'], '', $result)
         );
     }
+
+    /**
+     * Test formatting in case the $time parameter is not set
+     *
+     * @return void
+     */
+    public function testNullDateFormat()
+    {
+        $time = null;
+
+        $result = $this->Time->format($time);
+        $expected = null;
+        $this->assertEquals($expected, $result);
+
+        $result = $this->Time->format($time, \IntlDateFormatter::FULL, 'Date invalid or not set');
+        $expected = 'Date invalid or not set';
+        $this->assertEquals($expected, $result);
+    }
 }
