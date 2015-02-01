@@ -154,7 +154,7 @@ class ValidatorTest extends TestCase
         $validator = new Validator;
         $validator->requirePresence('title');
         $errors = $validator->errors(['foo' => 'something']);
-        $expected = ['title' => ['This field is required']];
+        $expected = ['title' => ['_required' => 'This field is required']];
         $this->assertEquals($expected, $errors);
 
         $this->assertEmpty($validator->errors(['title' => 'bar']));
@@ -173,7 +173,7 @@ class ValidatorTest extends TestCase
         $validator = new Validator;
         $validator->requirePresence('title', true, 'Custom message');
         $errors = $validator->errors(['foo' => 'something']);
-        $expected = ['title' => ['Custom message']];
+        $expected = ['title' => ['_required' => 'Custom message']];
         $this->assertEquals($expected, $errors);
     }
 
@@ -336,15 +336,15 @@ class ValidatorTest extends TestCase
         $validator = new Validator;
         $validator->notEmpty('title');
         $errors = $validator->errors(['title' => '']);
-        $expected = ['title' => ['This field cannot be left empty']];
+        $expected = ['title' => ['_empty' => 'This field cannot be left empty']];
         $this->assertEquals($expected, $errors);
 
         $errors = $validator->errors(['title' => []]);
-        $expected = ['title' => ['This field cannot be left empty']];
+        $expected = ['title' => ['_empty' => 'This field cannot be left empty']];
         $this->assertEquals($expected, $errors);
 
         $errors = $validator->errors(['title' => null]);
-        $expected = ['title' => ['This field cannot be left empty']];
+        $expected = ['title' => ['_empty' => 'This field cannot be left empty']];
         $this->assertEquals($expected, $errors);
 
         $errors = $validator->errors(['title' => 0]);
@@ -367,7 +367,7 @@ class ValidatorTest extends TestCase
         $validator = new Validator;
         $validator->notEmpty('title', 'Custom message');
         $errors = $validator->errors(['title' => '']);
-        $expected = ['title' => ['Custom message']];
+        $expected = ['title' => ['_empty' => 'Custom message']];
         $this->assertEquals($expected, $errors);
     }
 

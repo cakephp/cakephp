@@ -99,7 +99,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
             $keyPresent = array_key_exists($name, $data);
 
             if (!$keyPresent && !$this->_checkPresence($field, $newRecord)) {
-                $errors[$name][] = isset($this->_presenceMessages[$name])
+                $errors[$name]['_required'] = isset($this->_presenceMessages[$name])
                     ? $this->_presenceMessages[$name]
                     : $requiredMessage;
                 continue;
@@ -115,7 +115,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
             $isEmpty = $this->_fieldIsEmpty($data[$name]);
 
             if (!$canBeEmpty && $isEmpty) {
-                $errors[$name][] = isset($this->_allowEmptyMessages[$name])
+                $errors[$name]['_empty'] = isset($this->_allowEmptyMessages[$name])
                     ? $this->_allowEmptyMessages[$name]
                     : $emptyMessage;
                 continue;
