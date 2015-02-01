@@ -549,6 +549,26 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 	}
 
 /**
+ * testGetLevel method
+ *
+ * @return void
+ */
+	public function testGetLevel() {
+		extract($this->settings);
+		$this->Tree = new $modelClass();
+		$this->Tree->initialize(2, 2);
+		$this->Tree->id = null;
+
+		$result = $this->Tree->getLevel(5);
+		$this->assertEquals(1, $result);
+
+		$result = $this->Tree->getLevel(3);
+		$this->assertEquals(2, $result);
+
+		$this->assertFalse($this->Tree->getLevel(999));
+	}
+
+/**
  * testMoveWithWhitelist method
  *
  * @return void
