@@ -260,6 +260,23 @@ class Validation
     }
 
     /**
+     * Compare one field to another.
+     *
+     * If both fields have exactly the same value this method will return true.
+     *
+     * @param mixed $check The value to find in $field.
+     * @param string $field The field to check $check against. This field must be present in $context.
+     * @param array $context The validation context.
+     * @return bool
+     */
+    public static function compareWith($check, $field, $context) {
+        if (!isset($context['data'][$field])) {
+            return false;
+        }
+        return $context['data'][$field] === $check;
+    }
+
+    /**
      * Used when a custom regular expression is needed.
      *
      * @param string|array $check When used as a string, $regex must also be a valid regular expression.
