@@ -740,4 +740,27 @@ class QueryRegressionTest extends TestCase
         $comments = TableRegistry::get('Comments');
         $comments->find()->contain('Deprs')->all();
     }
+
+    /**
+     * Tests that HasMany associations don't use duplicate PK values.
+     *
+     * @return void
+     */
+    public function testHasManyEagerLoadingUniqueKey()
+    {
+        $table = TableRegistry::get('ArticlesTags');
+        $table->belongsTo('Articles', [
+            'strategy' => 'select'
+        ]);
+
+        $result = $table->find()
+            ->contain(['Articles' => function ($q) {
+                $result = $q->sql();
+                $this->assertNotContains(':c2', $result, 'Only 2 bindings as there are only 2 rows.');
+                $this->assertNotContains(':c3', $result, 'Only 2 bindings as there are only 2 rows.');
+                return $q;
+            }])
+            ->toArray();
+        $this->assertNotEmpty($result[0]->article);
+    }
 }
