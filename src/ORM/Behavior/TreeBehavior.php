@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM\Behavior;
 
+use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
@@ -797,15 +798,20 @@ class TreeBehavior extends Behavior
 /**
  * Returns the depth level of a node in the tree.
  *
- * @param int|string $id Primary key of the node.
+ * @param int|string|\Cake\Datasource\EntityInterface $entity The entity or primary key get the level of.
  * @return int|bool Integer of the level or false if the node does not exist.
  */
-    public function getLevel($id)
+    public function getLevel($entity)
     {
+        $primaryKey = $this->_getPrimaryKey();
+        $id = $entity;
+        if ($entity instanceof EntityInterface) {
+            $id = $entity->get($primaryKey);
+        }
         $config = $this->config();
         $entity = $this->_table->find('all')
             ->select([$config['left'], $config['right']])
-            ->where([$this->_getPrimaryKey() => $id])
+            ->where([$primaryKey => $id])
             ->first();
 
         if ($entity === null) {
