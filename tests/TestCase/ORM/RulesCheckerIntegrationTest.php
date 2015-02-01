@@ -280,6 +280,32 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
+     * Test adding rule with name
+     *
+     * @group save
+     * @return void
+     */
+    public function testAddingRuleWithName()
+    {
+        $entity = new Entity([
+            'name' => 'larry'
+        ]);
+
+        $table = TableRegistry::get('Authors');
+        $rules = $table->rulesChecker();
+        $rules->add(
+            function () {
+                return false;
+            },
+            'ruleName',
+            ['errorField' => 'name']
+        );
+
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals(['ruleName' => 'invalid'], $entity->errors('name'));
+    }
+
+    /**
      * Tests the isUnique domain rule
      *
      * @group save
@@ -296,7 +322,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules->add($rules->isUnique(['name']));
 
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['This value is already in use'], $entity->errors('name'));
+        $this->assertEquals(['isUnique' => 'This value is already in use'], $entity->errors('name'));
 
         $entity->name = 'jose';
         $this->assertSame($entity, $table->save($entity));
@@ -324,7 +350,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules->add($rules->isUnique(['title', 'author_id'], 'Nope'));
 
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['title' => ['Nope']], $entity->errors());
+        $this->assertEquals(['title' => ['isUnique' => 'Nope']], $entity->errors());
 
         $entity->clean();
         $entity->author_id = 2;
@@ -350,7 +376,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules->add($rules->existsIn('author_id', 'Authors'));
 
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['This value does not exist'], $entity->errors('author_id'));
+        $this->assertEquals(['existsIn' => 'This value does not exist'], $entity->errors('author_id'));
     }
 
     /**
@@ -371,7 +397,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules->add($rules->existsIn('author_id', TableRegistry::get('Authors'), 'Nope'));
 
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['Nope'], $entity->errors('author_id'));
+        $this->assertEquals(['existsIn' => 'Nope'], $entity->errors('author_id'));
     }
 
     /**
