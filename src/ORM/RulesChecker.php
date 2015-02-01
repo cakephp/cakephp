@@ -321,7 +321,7 @@ class RulesChecker
         }
 
         $errorField = current($fields);
-        return $this->_addError(new IsUnique($fields), 'isUnique', compact('errorField', 'message'));
+        return $this->_addError(new IsUnique($fields), '_isUnique', compact('errorField', 'message'));
     }
 
     /**
@@ -355,7 +355,7 @@ class RulesChecker
         }
 
         $errorField = $field;
-        return $this->_addError(new ExistsIn($field, $table), 'existsIn', compact('errorField', 'message'));
+        return $this->_addError(new ExistsIn($field, $table), '_existsIn', compact('errorField', 'message'));
     }
 
     /**
