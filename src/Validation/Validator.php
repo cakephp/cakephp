@@ -525,6 +525,10 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
         if (empty($data) && $data !== '0' && $data !== false && $data !== 0 && $data !== 0.0) {
             return true;
         }
+        if (is_array($data) && (isset($data['year']) || isset($data['hour']))) {
+            $value = implode('', $data);
+            return strlen($value) === 0;
+        }
         return false;
     }
 

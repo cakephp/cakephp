@@ -196,6 +196,52 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the allowEmpty method with date/time fields.
+     *
+     * @return void
+     */
+    public function testAllowEmptyDateTime()
+    {
+        $validator = new Validator;
+        $validator->allowEmpty('created')
+            ->add('created', 'date', ['rule' => 'date']);
+
+        $data = [
+            'created' => [
+                'year' => '',
+                'month' => '',
+                'day' => ''
+            ]
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result, 'No errors on empty date');
+
+        $data = [
+            'created' => [
+                'year' => '',
+                'month' => '',
+                'day' => '',
+                'hour' => '',
+                'minute' => '',
+                'second' => '',
+                'meridian' => '',
+            ]
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result, 'No errors on empty datetime');
+
+        $data = [
+            'created' => [
+                'hour' => '',
+                'minute' => '',
+                'meridian' => '',
+            ]
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result, 'No errors on empty time');
+    }
+
+    /**
      * Test the notEmpty() method.
      *
      * @return void
