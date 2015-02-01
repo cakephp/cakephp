@@ -369,6 +369,8 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
      * });
      * ```
      *
+     * This method will correctly detect empty file uploads and date/time/datetime fields.
+     *
      * Because this and `notEmpty()` modify the same internal state, the last
      * method called will take precedence.
      *
@@ -525,9 +527,13 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
         if (empty($data) && $data !== '0' && $data !== false && $data !== 0 && $data !== 0.0) {
             return true;
         }
-        if (is_array($data) && (isset($data['year']) || isset($data['hour']))) {
+        $isArray = is_array($data);
+        if ($isArray && (isset($data['year']) || isset($data['hour']))) {
             $value = implode('', $data);
             return strlen($value) === 0;
+        }
+        if ($isArray && isset($data['name'], $data['type'], $data['tmp_name'], $data['error'])) {
+            return (int)$data['error'] === UPLOAD_ERR_NO_FILE;
         }
         return false;
     }

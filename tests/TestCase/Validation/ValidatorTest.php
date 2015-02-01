@@ -242,6 +242,40 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the allowEmpty method with file fields.
+     *
+     * @return void
+     */
+    public function testAllowEmptyFileFields()
+    {
+        $validator = new Validator;
+        $validator->allowEmpty('picture')
+            ->add('picture', 'file', ['rule' => 'uploadedFile']);
+
+        $data = [
+            'picture' => [
+                'name' => '',
+                'type' => '',
+                'tmp_name' => '',
+                'error' => UPLOAD_ERR_NO_FILE,
+            ]
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result, 'No errors on empty date');
+
+        $data = [
+            'picture' => [
+                'name' => 'fake.png',
+                'type' => '',
+                'tmp_name' => '',
+                'error' => UPLOAD_ERR_OK,
+            ]
+        ];
+        $result = $validator->errors($data);
+        $this->assertNotEmpty($result, 'Invalid file should be caught still.');
+    }
+
+    /**
      * Test the notEmpty() method.
      *
      * @return void
