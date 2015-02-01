@@ -299,7 +299,7 @@ class RulesChecker
      * ### Example:
      *
      * ```
-     * $rules->add($rules->isUnique('email', 'The email should be unique'));
+     * $rules->add($rules->isUnique(['email'], 'The email should be unique'));
      * ```
      *
      * @param array $fields The list of fields to check for uniqueness.
