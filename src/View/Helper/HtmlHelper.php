@@ -679,10 +679,10 @@ class HtmlHelper extends Helper
      * - `firstClass` Class for wrapper tag on the first breadcrumb, defaults to 'first'
      * - `lastClass` Class for wrapper tag on current active page, defaults to 'last'
      *
-     * @param array $options Array of html attributes to apply to the generated list elements.
+     * @param array $options Array of HTML attributes to apply to the generated list elements.
      * @param string|array|bool $startText This will be the first crumb, if false it defaults to first crumb in array. Can
      *   also be an array, see `HtmlHelper::getCrumbs` for details.
-     * @return string|null breadcrumbs html list
+     * @return string|null Breadcrumbs HTML list.
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
      */
     public function getCrumbList(array $options = [], $startText = false)

@@ -241,7 +241,7 @@ class TextHelper extends Helper
      *
      * @param string $text Text to search the phrase in
      * @param string $phrase The phrase that will be searched
-     * @param array $options An array of html attributes and options.
+     * @param array $options An array of HTML attributes and options.
      * @return string The highlighted text
      * @see \Cake\Utility\Text::highlight()
      * @link http://book.cakephp.org/3.0/en/views/helpers/text.html#highlighting-substrings
@@ -302,7 +302,7 @@ class TextHelper extends Helper
      *
      * @param string $text String to truncate.
      * @param int $length Length of returned string, including ellipsis.
-     * @param array $options An array of html attributes and options.
+     * @param array $options An array of HTML attributes and options.
      * @return string Trimmed string.
      * @see \Cake\Utility\Text::truncate()
      * @link http://book.cakephp.org/3.0/en/views/helpers/text.html#truncating-text
@@ -325,7 +325,7 @@ class TextHelper extends Helper
      *
      * @param string $text String to truncate.
      * @param int $length Length of returned string, including ellipsis.
-     * @param array $options An array of html attributes and options.
+     * @param array $options An array of HTML attributes and options.
      * @return string Trimmed string.
      * @see \Cake\Utility\Text::tail()
      * @link http://book.cakephp.org/3.0/en/views/helpers/text.html#truncating-the-tail-of-a-string

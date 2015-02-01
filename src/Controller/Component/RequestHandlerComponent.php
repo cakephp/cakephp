@@ -179,7 +179,7 @@ class RequestHandlerComponent extends Component
      * determines which type will be set.
      *
      * If html is one of the preferred types, no content type will be set, this
-     * is to avoid issues with browsers that prefer html and several other content types.
+     * is to avoid issues with browsers that prefer HTML and several other content types.
      *
      * @param \Cake\Network\Request $request The request instance.
      * @param \Cake\Network\Response $response The response instance.
