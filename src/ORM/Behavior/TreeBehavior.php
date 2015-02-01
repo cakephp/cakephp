@@ -795,12 +795,12 @@ class TreeBehavior extends Behavior
         return $this->_primaryKey;
     }
 
-/**
- * Returns the depth level of a node in the tree.
- *
- * @param int|string|\Cake\Datasource\EntityInterface $entity The entity or primary key get the level of.
- * @return int|bool Integer of the level or false if the node does not exist.
- */
+    /**
+     * Returns the depth level of a node in the tree.
+     *
+     * @param int|string|\Cake\Datasource\EntityInterface $entity The entity or primary key get the level of.
+     * @return int|bool Integer of the level or false if the node does not exist.
+     */
     public function getLevel($entity)
     {
         $primaryKey = $this->_getPrimaryKey();
