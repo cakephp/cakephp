@@ -77,7 +77,8 @@ class TranslateBehavior extends Behavior
         'defaultLocale' => '',
         'model' => '',
         'onlyTranslated' => false,
-        'strategy' => 'subquery'
+        'strategy' => 'subquery',
+        'fieldConditions' => ['model' => '']
     ];
 
     /**
@@ -110,10 +111,12 @@ class TranslateBehavior extends Behavior
             $this->_translationTable = TableRegistry::get($translationAlias);
         }
 
+        $this->config('fieldConditions.model', $this->config('model') ?: $this->config('fieldConditions.model') ?: $this->_table->alias());
+
         $this->setupFieldAssociations(
             $this->_config['fields'],
             $this->_config['translationTable'],
-            $this->_config['model'] ? $this->_config['model'] : $this->_table->alias(),
+            $this->_config['fieldConditions'],
             $this->_config['strategy']
         );
     }
@@ -127,12 +130,12 @@ class TranslateBehavior extends Behavior
      *
      * @param array $fields list of fields to create associations for
      * @param string $table the table name to use for storing each field translation
-     * @param string $model the model field value
+     * @param array $fieldConditions conditions for finding fields
      * @param string $strategy the strategy used in the _i18n association
      *
      * @return void
      */
-    public function setupFieldAssociations($fields, $table, $model, $strategy)
+    public function setupFieldAssociations($fields, $table, $fieldConditions, $strategy)
     {
         $targetAlias = $this->_translationTable->alias();
         $alias = $this->_table->alias();
@@ -140,7 +143,17 @@ class TranslateBehavior extends Behavior
 
         foreach ($fields as $field) {
             $name = $alias . '_' . $field . '_translation';
-
+            $conditions = [
+                $name . '.model' => $fieldConditions['model'],
+                $name . '.field' => $field,
+            ];
+            foreach ($fieldConditions as $fieldName => $fieldValue) {
+                if (is_numeric($fieldName)) {
+                    $conditions[] = $name . '.' . $fieldValue;
+                } else {
+                    $conditions[$name . '.' . $fieldName] = $fieldValue;
+                }
+            }
             if (!TableRegistry::exists($name)) {
                 $fieldTable = TableRegistry::get($name, [
                     'className' => $table,
@@ -155,10 +168,7 @@ class TranslateBehavior extends Behavior
                 'targetTable' => $fieldTable,
                 'foreignKey' => 'foreign_key',
                 'joinType' => $filter ? 'INNER' : 'LEFT',
-                'conditions' => [
-                    $name . '.model' => $model,
-                    $name . '.field' => $field,
-                ],
+                'conditions' => $conditions,
                 'propertyName' => $field . '_translation'
             ]);
         }
@@ -167,7 +177,7 @@ class TranslateBehavior extends Behavior
             'className' => $table,
             'foreignKey' => 'foreign_key',
             'strategy' => $strategy,
-            'conditions' => ["$targetAlias.model" => $model],
+            'conditions' => ["$targetAlias.model" => $fieldConditions['model']],
             'propertyName' => '_i18n',
             'dependent' => true
         ]);
@@ -263,7 +273,7 @@ class TranslateBehavior extends Behavior
         $fields = array_keys($values);
         $primaryKey = (array)$this->_table->primaryKey();
         $key = $entity->get(current($primaryKey));
-        $model = $this->_table->alias();
+        $model = $this->config('fieldConditions.model');
 
         $preexistent = $this->_translationTable->find()
             ->select(['id', 'field'])
@@ -469,14 +479,14 @@ class TranslateBehavior extends Behavior
         }
 
         $results = $this->_findExistingTranslations($find);
-        $alias = $this->_table->alias();
+        $model = $this->config('fieldConditions.model');
 
         foreach ($find as $i => $translation) {
             if (!empty($results[$i])) {
                 $contents[$i]->set('id', $results[$i], ['setter' => false]);
                 $contents[$i]->isNew(false);
             } else {
-                $translation['model'] = $alias;
+                $translation['model'] = $model;
                 $contents[$i]->set($translation, ['setter' => false, 'guard' => false]);
                 $contents[$i]->isNew(true);
             }
