@@ -669,4 +669,24 @@ class ValidatorTest extends TestCase
         $this->assertInstanceOf('Cake\Validation\ValidationSet', $set);
         $this->assertCount(2, $set);
     }
+
+    /**
+     * Integration test for compareWith validator.
+     *
+     * @return void
+     */
+    public function testCompareWithIntegration()
+    {
+        $validator = new Validator;
+        $validator->add('password', [
+            'compare' => [
+                'rule' => ['compareWith', 'password_compare']
+            ],
+        ]);
+        $data = [
+            'password' => 'test',
+            'password_compare' => 'not the same'
+        ];
+        $this->assertNotEmpty($validator->errors($data), 'Validation should fail.');
+    }
 }

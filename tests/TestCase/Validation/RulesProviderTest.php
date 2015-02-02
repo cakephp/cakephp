@@ -48,7 +48,7 @@ class RulesProviderTest extends TestCase
     {
         $mock = $this->getMock('\Cake\Validation\Validator', ['field']);
         $mock->expects($this->once())
-            ->method('Field')
+            ->method('field')
             ->with('first', null)
             ->will($this->returnValue(true));
 
