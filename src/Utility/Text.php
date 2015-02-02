@@ -379,13 +379,13 @@ class Text
      *
      * ### Options:
      *
-     * - `format` The piece of html with that the phrase will be highlighted
+     * - `format` The piece of HTML with that the phrase will be highlighted
      * - `html` If true, will ignore any HTML tags, ensuring that only the correct text is highlighted
      * - `regex` a custom regex rule that is used to match words, default is '|$tag|iu'
      *
      * @param string $text Text to search the phrase in.
      * @param string|array $phrase The phrase or phrases that will be searched.
-     * @param array $options An array of html attributes and options.
+     * @param array $options An array of HTML attributes and options.
      * @return string The highlighted text
      * @link http://book.cakephp.org/3.0/en/core-libraries/string.html#highlighting-substrings
      */
@@ -490,7 +490,7 @@ class Text
      *
      * @param string $text String to truncate.
      * @param int $length Length of returned string, including ellipsis.
-     * @param array $options An array of html attributes and options.
+     * @param array $options An array of HTML attributes and options.
      * @return string Trimmed string.
      * @link http://book.cakephp.org/3.0/en/core-libraries/string.html#truncating-text
      */

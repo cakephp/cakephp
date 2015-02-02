@@ -4,6 +4,7 @@
         <fieldset>
             <legend><?= __('Add User'); ?></legend>
         </fieldset>
-    <?= $this->Form->end('Submit'); ?>
+    <?= $this->Form->submit('Submit'); ?>
+    <?= $this->Form->end(); ?>
 <!--/nocache-->
 </div>
