@@ -245,7 +245,7 @@ trait SelectableAssociationTrait
         $order = $filterQuery->clause('order');
         if ($order) {
             $order->iterateParts(function ($dir, $field) use ($filterQuery) {
-                $filterQuery->select(is_int($field) ? $dir : $field);
+                $filterQuery->select(new IdentifierExpression(is_int($field) ? $dir : $field));
                 return $dir;
             });
         }
