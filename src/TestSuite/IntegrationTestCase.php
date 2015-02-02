@@ -570,6 +570,33 @@ abstract class IntegrationTestCase extends TestCase
     }
 
     /**
+     * Assert response content is not empty.
+     *
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertResponseNotEmpty($message = '')
+    {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert content. ' . $message);
+        }
+        $this->assertNotEmpty((string)$this->_response->body(), $message);
+    }
+    /**
+     * Assert response content is empty.
+     *
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertResponseEmpty($message = '')
+    {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert content. ' . $message);
+        }
+        $this->assertEmpty((string)$this->_response->body(), $message);
+    }
+
+    /**
      * Asserts that the search string was in the template name.
      *
      * @param string $content The content to check for.
