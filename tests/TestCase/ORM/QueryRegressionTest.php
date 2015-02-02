@@ -744,6 +744,7 @@ class QueryRegressionTest extends TestCase
      * Tests that using matching and contain on belongsTo associations
      * works correctly.
      *
+     * @see https://github.com/cakephp/cakephp/issues/5721
      * @return void
      */
     public function testFindMatchingWithContain()
