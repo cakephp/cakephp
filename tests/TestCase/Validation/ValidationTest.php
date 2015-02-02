@@ -2511,4 +2511,29 @@ class ValidationTest extends TestCase
         $options = [];
         $this->assertTrue(Validation::uploadedFile($file, $options), 'Wrong order');
     }
+
+    /**
+     * Test the compareWith method.
+     *
+     * @return void
+     */
+    public function testCompareWith()
+    {
+        $context = [
+            'data' => [
+                'other' => 'a value'
+            ]
+        ];
+        $this->assertTrue(Validation::compareWith('a value', 'other', $context));
+
+        $context = [
+            'data' => [
+                'other' => 'different'
+            ]
+        ];
+        $this->assertFalse(Validation::compareWith('a value', 'other', $context));
+
+        $context = [];
+        $this->assertFalse(Validation::compareWith('a value', 'other', $context));
+    }
 }
