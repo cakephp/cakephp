@@ -160,7 +160,7 @@ class QueryCompiler
             $modifiers = implode(' ', $modifiers) . ' ';
         }
 
-        return sprintf($select, $modifiers, $distinct, implode(', ', $normalized));
+        return sprintf($select, $distinct, $modifiers, implode(', ', $normalized));
     }
 
     /**
