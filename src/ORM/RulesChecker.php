@@ -100,6 +100,13 @@ class RulesChecker
     protected $_options = [];
 
     /**
+     * Whether or not to use I18n functions for translating default error messages
+     *
+     * @var bool
+     */
+    protected $_useI18n = false;
+
+    /**
      * Constructor. Takes the options to be passed to all rules.
      *
      * @param array $options The options to pass to every rule
@@ -107,6 +114,7 @@ class RulesChecker
     public function __construct(array $options)
     {
         $this->_options = $options;
+        $this->_useI18n = function_exists('__d');
     }
 
     /**
@@ -123,13 +131,14 @@ class RulesChecker
      *
      * @param callable $rule A callable function or object that will return whether
      * the entity is valid or not.
+     * @param string $name The alias for a rule.
      * @param array $options List of extra options to pass to the rule callable as
      * second argument.
      * @return $this
      */
-    public function add(callable $rule, array $options = [])
+    public function add(callable $rule, $name = null, array $options = [])
     {
-        $this->_rules[] = $this->_addError($rule, $options);
+        $this->_rules[] = $this->_addError($rule, $name, $options);
         return $this;
     }
 
@@ -146,13 +155,14 @@ class RulesChecker
      *
      * @param callable $rule A callable function or object that will return whether
      * the entity is valid or not.
+     * @param string $name The alias for a rule.
      * @param array $options List of extra options to pass to the rule callable as
      * second argument.
      * @return $this
      */
-    public function addCreate(callable $rule, array $options = [])
+    public function addCreate(callable $rule, $name = null, array $options = [])
     {
-        $this->_createRules[] = $this->_addError($rule, $options);
+        $this->_createRules[] = $this->_addError($rule, $name, $options);
         return $this;
     }
 
@@ -169,13 +179,14 @@ class RulesChecker
      *
      * @param callable $rule A callable function or object that will return whether
      * the entity is valid or not.
+     * @param string $name The alias for a rule.
      * @param array $options List of extra options to pass to the rule callable as
      * second argument.
      * @return $this
      */
-    public function addUpdate(callable $rule, array $options = [])
+    public function addUpdate(callable $rule, $name = null, array $options = [])
     {
-        $this->_updateRules[] = $this->_addError($rule, $options);
+        $this->_updateRules[] = $this->_addError($rule, $name, $options);
         return $this;
     }
 
@@ -192,13 +203,14 @@ class RulesChecker
      *
      * @param callable $rule A callable function or object that will return whether
      * the entity is valid or not.
+     * @param string $name The alias for a rule.
      * @param array $options List of extra options to pass to the rule callable as
      * second argument.
      * @return $this
      */
-    public function addDelete(callable $rule, array $options = [])
+    public function addDelete(callable $rule, $name = null, array $options = [])
     {
-        $this->_deleteRules[] = $this->_addError($rule, $options);
+        $this->_deleteRules[] = $this->_addError($rule, $name, $options);
         return $this;
     }
 
@@ -291,17 +303,25 @@ class RulesChecker
      * ### Example:
      *
      * ```
-     * $rules->add($rules->isUnique('email', 'The email should be unique'));
+     * $rules->add($rules->isUnique(['email'], 'The email should be unique'));
      * ```
      *
      * @param array $fields The list of fields to check for uniqueness.
      * @param string $message The error message to show in case the rule does not pass.
      * @return callable
      */
-    public function isUnique(array $fields, $message = 'This value is already in use')
+    public function isUnique(array $fields, $message = null)
     {
+        if (!$message) {
+            if ($this->_useI18n) {
+                $message = __d('cake', 'This value is already in use');
+            } else {
+                $message = 'This value is already in use';
+            }
+        }
+
         $errorField = current($fields);
-        return $this->_addError(new IsUnique($fields), compact('errorField', 'message'));
+        return $this->_addError(new IsUnique($fields), '_isUnique', compact('errorField', 'message'));
     }
 
     /**
@@ -324,10 +344,18 @@ class RulesChecker
      * @param string $message The error message to show in case the rule does not pass.
      * @return callable
      */
-    public function existsIn($field, $table, $message = 'This value does not exist')
+    public function existsIn($field, $table, $message = null)
     {
+        if (!$message) {
+            if ($this->_useI18n) {
+                $message = __d('cake', 'This value does not exist');
+            } else {
+                $message = 'This value does not exist';
+            }
+        }
+
         $errorField = $field;
-        return $this->_addError(new ExistsIn($field, $table), compact('errorField', 'message'));
+        return $this->_addError(new ExistsIn($field, $table), '_existsIn', compact('errorField', 'message'));
     }
 
     /**
@@ -335,12 +363,18 @@ class RulesChecker
      * property in the entity is marked as invalid.
      *
      * @param callable $rule The rule to decorate
+     * @param string $name The alias for a rule.
      * @param array $options The options containing the error message and field
      * @return callable
      */
-    protected function _addError($rule, $options)
+    protected function _addError($rule, $name, $options)
     {
-        return function ($entity, $scope) use ($rule, $options) {
+        if (is_array($name)) {
+            $options = $name;
+            $name = null;
+        }
+
+        return function ($entity, $scope) use ($rule, $name, $options) {
             $pass = $rule($entity, $options + $scope);
 
             if ($pass || empty($options['errorField'])) {
@@ -348,7 +382,12 @@ class RulesChecker
             }
 
             $message = isset($options['message']) ? $options['message'] : 'invalid';
-            $entity->errors($options['errorField'], (array)$message);
+            if ($name) {
+                $message = [$name => $message];
+            } else {
+                $message = (array)$message;
+            }
+            $entity->errors($options['errorField'], $message);
             return $pass;
         };
     }

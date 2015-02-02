@@ -14,6 +14,8 @@
  */
 namespace Cake\Event;
 
+use \InvalidArgumentException;
+
 /**
  * The event manager is responsible for keeping track of event listeners, passing the correct
  * data to them, and firing them in the correct order, when associated events are triggered. You
@@ -93,20 +95,78 @@ class EventManager
      * @return void
      * @throws \InvalidArgumentException When event key is missing or callable is not an
      *   instance of Cake\Event\EventListenerInterface.
+     * @deprecated 3.0.0 Use on() instead.
      */
     public function attach($callable, $eventKey = null, array $options = [])
     {
-        if (!$eventKey && !($callable instanceof EventListenerInterface)) {
-            throw new \InvalidArgumentException('The eventKey variable is required');
+        if ($eventKey === null) {
+            return $this->on($callable);
         }
-        if ($callable instanceof EventListenerInterface) {
-            $this->_attachSubscriber($callable);
+        if ($options) {
+            return $this->on($eventKey, $options, $callable);
+        }
+        return $this->on($eventKey, $callable);
+    }
+
+    /**
+     * Adds a new listener to an event.
+     *
+     * A variadic interface to add listeners that emulates jQuery.on().
+     *
+     * Binding an EventListenerInterface:
+     *
+     * ```
+     * $eventManager->on($listener);
+     * ```
+     *
+     * Binding with no options:
+     *
+     * ```
+     * $eventManager->on('Model.beforeSave', $callable);
+     * ```
+     *
+     * Binding with options:
+     *
+     * ```
+     * $eventManager->on('Model.beforeSave', ['priority' => 90], $callable);
+     * ```
+     *
+     * @param string|\Cake\Event\EventListenerInterface $eventKey The event unique identifier name
+     * with which the callback will be associated. If $eventKey is an instance of
+     * Cake\Event\EventListenerInterface its events will be bound using the `implementedEvents` methods.
+     *
+     * @param array|callable $options Either an array of options or the callable you wish to
+     * bind to $eventKey. If an array of options, the `priority` key can be used to define the order.
+     * Priorities are treated as queues. Lower values are called before higher ones, and multiple attachments
+     * added to the same priority queue will be treated in the order of insertion.
+     *
+     * @param callable $callable The callable function you want invoked.
+     *
+     * @return void
+     * @throws \InvalidArgumentException When event key is missing or callable is not an
+     *   instance of Cake\Event\EventListenerInterface.
+     */
+    public function on($eventKey = null, $options = [], $callable = null)
+    {
+        if ($eventKey instanceof EventListenerInterface) {
+            $this->_attachSubscriber($eventKey);
             return;
         }
-        $options += ['priority' => static::$defaultPriority];
-        $this->_listeners[$eventKey][$options['priority']][] = [
-            'callable' => $callable,
-        ];
+        $argCount = func_num_args();
+        if ($argCount === 2) {
+            $this->_listeners[$eventKey][static::$defaultPriority][] = [
+                'callable' => $options
+            ];
+            return;
+        }
+        if ($argCount === 3) {
+            $priority = isset($options['priority']) ? $options['priority'] : static::$defaultPriority;
+            $this->_listeners[$eventKey][$priority][] = [
+                'callable' => $callable
+            ];
+            return;
+        }
+        throw new InvalidArgumentException('Invalid arguments for EventManager::on().');
     }
 
     /**
@@ -126,14 +186,14 @@ class EventManager
             } elseif (is_array($function) && is_numeric(key($function))) {
                 foreach ($function as $f) {
                     list($method, $options) = $this->_extractCallable($f, $subscriber);
-                    $this->attach($method, $eventKey, $options);
+                    $this->on($eventKey, $options, $method);
                 }
                 continue;
             }
             if (is_string($method)) {
                 $method = [$subscriber, $function];
             }
-            $this->attach($method, $eventKey, $options);
+            $this->on($eventKey, $options, $method);
         }
     }
 
@@ -162,15 +222,59 @@ class EventManager
      * @param callback|\Cake\Event\EventListenerInterface $callable any valid PHP callback type or an instance of EventListenerInterface
      * @param string|null $eventKey The event unique identifier name with which the callback has been associated
      * @return void
+     * @deprecated 3.0.0 Use off() instead.
      */
     public function detach($callable, $eventKey = null)
     {
+        if ($eventKey === null) {
+            return $this->off($callable);
+        }
+        return $this->off($eventKey, $callable);
+    }
+
+    /**
+     * Remove a listener from the active listeners.
+     *
+     * Remove a EventListenerInterface entirely:
+     *
+     * ```
+     * $manager->off($listener);
+     * ```
+     *
+     * Remove all listeners for a given event:
+     *
+     * ```
+     * $manager->off('My.event');
+     * ```
+     *
+     * Remove a specific listener:
+     *
+     * ```
+     * $manager->off('My.event', $callback);
+     * ```
+     *
+     * Remove a callback from all events:
+     *
+     * ```
+     * $manager->off($callback);
+     * ```
+     *
+     * @param string|\Cake\Event\EventListenerInterface $eventKey The event unique identifier name
+     *   with which the callback has been associated, or the $listener you want to remove.
+     * @param callback $callable The callback you want to detach.
+     * @return void
+     */
+    public function off($eventKey, $callable = null)
+    {
+        if ($eventKey instanceof EventListenerInterface) {
+            return $this->_detachSubscriber($eventKey);
+        }
         if ($callable instanceof EventListenerInterface) {
             return $this->_detachSubscriber($callable, $eventKey);
         }
-        if (empty($eventKey)) {
-            foreach (array_keys($this->_listeners) as $eventKey) {
-                $this->detach($callable, $eventKey);
+        if ($callable === null) {
+            foreach (array_keys($this->_listeners) as $name) {
+                $this->off($name, $eventKey);
             }
             return;
         }

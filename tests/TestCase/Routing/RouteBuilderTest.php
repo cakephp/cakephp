@@ -336,8 +336,43 @@ class RouteBuilderTest extends TestCase
         $this->assertCount(5, $all);
 
         $this->assertEquals('/api/articles', $all[0]->template);
-        $this->assertEquals('json', $all[0]->defaults['_ext']);
+        $this->assertEquals(
+            ['controller', 'action', '_method', 'prefix', 'plugin'],
+            array_keys($all[0]->defaults)
+        );
+        $this->assertEquals('json', $all[0]->options['_ext']);
         $this->assertEquals('Articles', $all[0]->defaults['controller']);
+    }
+
+    /**
+     * Test connecting resources.
+     *
+     * @return void
+     */
+    public function testResourcesInScope()
+    {
+        Router::scope('/api', ['prefix' => 'api'], function ($routes) {
+            $routes->extensions(['json']);
+            $routes->resources('Articles');
+        });
+        $url = Router::url([
+            'prefix' => 'api',
+            'controller' => 'Articles',
+            'action' => 'edit',
+            '_method' => 'PUT',
+            'id' => 99
+        ]);
+        $this->assertEquals('/api/articles/99', $url);
+
+        $url = Router::url([
+            'prefix' => 'api',
+            'controller' => 'Articles',
+            'action' => 'edit',
+            '_method' => 'PUT',
+            '_ext' => 'json',
+            'id' => 99
+        ]);
+        $this->assertEquals('/api/articles/99.json', $url);
     }
 
     /**

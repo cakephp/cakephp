@@ -864,7 +864,11 @@ class TreeBehaviorTest extends TestCase
      */
     public function testGetLevel()
     {
-        $result = $this->table->getLevel(8);
+        $entity = $this->table->get(8);
+        $result = $this->table->getLevel($entity);
+        $this->assertEquals(3, $result);
+
+        $result = $this->table->getLevel($entity->id);
         $this->assertEquals(3, $result);
 
         $result = $this->table->getLevel(5);

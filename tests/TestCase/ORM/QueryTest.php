@@ -429,7 +429,10 @@ class QueryTest extends TestCase
         $article = TableRegistry::get('articles');
         $post = TableRegistry::get('posts');
 
-        $author->hasMany('posts', compact('strategy'));
+        $author->hasMany('posts', [
+            'sort' => ['posts.id' => 'ASC'],
+            'strategy' => $strategy
+        ]);
         $article->belongsTo('authors');
 
         $query = new Query($this->connection, $article);

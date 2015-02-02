@@ -14,19 +14,27 @@
  */
 namespace Cake\Validation;
 
+use ReflectionClass;
+
 /**
  * A Proxy class used to remove any extra arguments when the user intended to call
  * a method in another class that is not aware of validation providers signature
  */
 class RulesProvider
 {
-
     /**
-     * The class to proxy, defaults to \Cake\Validation\Validation in construction
+     * The class/object to proxy.
      *
-     * @var object
+     * @var mixed
      */
     protected $_class;
+
+    /**
+     * The proxied class' reflection
+     *
+     * @var \ReflectionClass
+     */
+    protected $_reflection;
 
     /**
      * Constructor, sets the default class to use for calling methods
@@ -36,12 +44,16 @@ class RulesProvider
     public function __construct($class = '\Cake\Validation\Validation')
     {
         $this->_class = $class;
+        $this->_reflection = new ReflectionClass($class);
     }
 
     /**
-     * Proxies validation method calls to the Validation class, it slices
-     * the arguments array to avoid passing more arguments than required to
-     * the validation methods.
+     * Proxies validation method calls to the Validation class.
+     *
+     * The last argument (context) will be sliced off, if the validation
+     * method's last parameter is not named 'context'. This lets
+     * the various wrapped validation methods to not receive the validation
+     * context unless they need it.
      *
      * @param string $method the validation method to call
      * @param array $arguments the list of arguments to pass to the method
@@ -49,7 +61,12 @@ class RulesProvider
      */
     public function __call($method, $arguments)
     {
-        $arguments = array_slice($arguments, 0, -1);
-        return call_user_func_array([$this->_class, $method], $arguments);
+        $method = $this->_reflection->getMethod($method);
+        $argumentList = $method->getParameters();
+        if (array_pop($argumentList)->getName() !== 'context') {
+            $arguments = array_slice($arguments, 0, -1);
+        }
+        $object = is_string($this->_class) ? null : $this->_class;
+        return $method->invokeArgs($object, $arguments);
     }
 }

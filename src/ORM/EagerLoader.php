@@ -491,6 +491,7 @@ class EagerLoader
 
         $driver = $query->connection()->driver();
         list($collected, $statement) = $this->_collectKeys($external, $query, $statement);
+
         foreach ($external as $meta) {
             $contain = $meta->associations();
             $instance = $meta->instance();
@@ -643,19 +644,21 @@ class EagerLoader
         while ($result = $statement->fetch('assoc')) {
             foreach ($collectKeys as $nestKey => $parts) {
                 // Missed joins will have null in the results.
-                if ($parts[2] && !isset($result[$parts[1][0]])) {
+                if ($parts[2] === true && !isset($result[$parts[1][0]])) {
                     continue;
                 }
-                if ($parts[2]) {
-                    $keys[$nestKey][$parts[0]][] = $result[$parts[1][0]];
+                if ($parts[2] === true) {
+                    $value = $result[$parts[1][0]];
+                    $keys[$nestKey][$parts[0]][$value] = $value;
                     continue;
                 }
 
+                // Handle composite keys.
                 $collected = [];
                 foreach ($parts[1] as $key) {
                     $collected[] = $result[$key];
                 }
-                $keys[$nestKey][$parts[0]][] = $collected;
+                $keys[$nestKey][$parts[0]][implode(';', $collected)] = $collected;
             }
         }
 

@@ -154,7 +154,7 @@ class ValidatorTest extends TestCase
         $validator = new Validator;
         $validator->requirePresence('title');
         $errors = $validator->errors(['foo' => 'something']);
-        $expected = ['title' => ['This field is required']];
+        $expected = ['title' => ['_required' => 'This field is required']];
         $this->assertEquals($expected, $errors);
 
         $this->assertEmpty($validator->errors(['title' => 'bar']));
@@ -173,7 +173,7 @@ class ValidatorTest extends TestCase
         $validator = new Validator;
         $validator->requirePresence('title', true, 'Custom message');
         $errors = $validator->errors(['foo' => 'something']);
-        $expected = ['title' => ['Custom message']];
+        $expected = ['title' => ['_required' => 'Custom message']];
         $this->assertEquals($expected, $errors);
     }
 
@@ -193,6 +193,86 @@ class ValidatorTest extends TestCase
 
         $validator->allowEmpty('title', 'update');
         $this->assertEquals('update', $validator->field('title')->isEmptyAllowed());
+    }
+
+    /**
+     * Tests the allowEmpty method with date/time fields.
+     *
+     * @return void
+     */
+    public function testAllowEmptyDateTime()
+    {
+        $validator = new Validator;
+        $validator->allowEmpty('created')
+            ->add('created', 'date', ['rule' => 'date']);
+
+        $data = [
+            'created' => [
+                'year' => '',
+                'month' => '',
+                'day' => ''
+            ]
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result, 'No errors on empty date');
+
+        $data = [
+            'created' => [
+                'year' => '',
+                'month' => '',
+                'day' => '',
+                'hour' => '',
+                'minute' => '',
+                'second' => '',
+                'meridian' => '',
+            ]
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result, 'No errors on empty datetime');
+
+        $data = [
+            'created' => [
+                'hour' => '',
+                'minute' => '',
+                'meridian' => '',
+            ]
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result, 'No errors on empty time');
+    }
+
+    /**
+     * Tests the allowEmpty method with file fields.
+     *
+     * @return void
+     */
+    public function testAllowEmptyFileFields()
+    {
+        $validator = new Validator;
+        $validator->allowEmpty('picture')
+            ->add('picture', 'file', ['rule' => 'uploadedFile']);
+
+        $data = [
+            'picture' => [
+                'name' => '',
+                'type' => '',
+                'tmp_name' => '',
+                'error' => UPLOAD_ERR_NO_FILE,
+            ]
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result, 'No errors on empty date');
+
+        $data = [
+            'picture' => [
+                'name' => 'fake.png',
+                'type' => '',
+                'tmp_name' => '',
+                'error' => UPLOAD_ERR_OK,
+            ]
+        ];
+        $result = $validator->errors($data);
+        $this->assertNotEmpty($result, 'Invalid file should be caught still.');
     }
 
     /**
@@ -336,15 +416,15 @@ class ValidatorTest extends TestCase
         $validator = new Validator;
         $validator->notEmpty('title');
         $errors = $validator->errors(['title' => '']);
-        $expected = ['title' => ['This field cannot be left empty']];
+        $expected = ['title' => ['_empty' => 'This field cannot be left empty']];
         $this->assertEquals($expected, $errors);
 
         $errors = $validator->errors(['title' => []]);
-        $expected = ['title' => ['This field cannot be left empty']];
+        $expected = ['title' => ['_empty' => 'This field cannot be left empty']];
         $this->assertEquals($expected, $errors);
 
         $errors = $validator->errors(['title' => null]);
-        $expected = ['title' => ['This field cannot be left empty']];
+        $expected = ['title' => ['_empty' => 'This field cannot be left empty']];
         $this->assertEquals($expected, $errors);
 
         $errors = $validator->errors(['title' => 0]);
@@ -367,7 +447,7 @@ class ValidatorTest extends TestCase
         $validator = new Validator;
         $validator->notEmpty('title', 'Custom message');
         $errors = $validator->errors(['title' => '']);
-        $expected = ['title' => ['Custom message']];
+        $expected = ['title' => ['_empty' => 'Custom message']];
         $this->assertEquals($expected, $errors);
     }
 
@@ -668,5 +748,25 @@ class ValidatorTest extends TestCase
         $set = $validator->field('title');
         $this->assertInstanceOf('Cake\Validation\ValidationSet', $set);
         $this->assertCount(2, $set);
+    }
+
+    /**
+     * Integration test for compareWith validator.
+     *
+     * @return void
+     */
+    public function testCompareWithIntegration()
+    {
+        $validator = new Validator;
+        $validator->add('password', [
+            'compare' => [
+                'rule' => ['compareWith', 'password_compare']
+            ],
+        ]);
+        $data = [
+            'password' => 'test',
+            'password_compare' => 'not the same'
+        ];
+        $this->assertNotEmpty($validator->errors($data), 'Validation should fail.');
     }
 }
