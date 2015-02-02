@@ -200,23 +200,31 @@ if (!function_exists('h')) {
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#h
  */
 	function h($text, $double = true, $charset = null) {
-		if (is_string($text)) {
-			//optimize for strings
-		} elseif (is_array($text)) {
-			$texts = array();
-			foreach ($text as $k => $t) {
-				$texts[$k] = h($t, $double, $charset);
-			}
-			return $texts;
-		} elseif (is_object($text)) {
-			if (method_exists($text, '__toString')) {
-				$text = (string)$text;
-			} else {
-				$text = '(object)' . get_class($text);
-			}
-		} elseif (is_bool($text)) {
-			return $text;
-		}
+		switch (gettype($text))
+    	{
+        	case 'array':
+            $texts = [];
+	        foreach ($text as $k => $t)
+	        {
+	        	$texts[$k] = h($t, $double, $charset);
+	        }
+	        break;
+
+        	case 'object':
+                if (method_exists($text, '__toString'))
+                {
+                    $text = (string) $text;
+                }
+                else
+                {
+                    $text = '(object) ' . get_class($text);
+                }
+        		break;
+
+            case 'boolean':
+                return $text;
+                break;
+        }
 
 		static $defaultCharset = false;
 		if ($defaultCharset === false) {
