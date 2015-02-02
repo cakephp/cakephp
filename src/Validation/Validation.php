@@ -269,7 +269,8 @@ class Validation
      * @param array $context The validation context.
      * @return bool
      */
-    public static function compareWith($check, $field, $context) {
+    public static function compareWith($check, $field, $context)
+    {
         if (!isset($context['data'][$field])) {
             return false;
         }
