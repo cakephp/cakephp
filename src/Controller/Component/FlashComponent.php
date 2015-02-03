@@ -113,13 +113,19 @@ class FlashComponent extends Component
      */
     public function __call($name, $args)
     {
-        $options = ['element' => Inflector::underscore($name)];
+        $element = Inflector::underscore($name);
 
         if (count($args) < 1) {
             throw new InternalErrorException('Flash message missing.');
         }
 
+        $options = ['element' => $element];
+
         if (!empty($args[1])) {
+            if (!empty($args[1]['plugin'])) {
+                $options = ['element' => $args[1]['plugin'] . '.' . $element];
+                unset($args[1]['plugin']);
+            }
             $options += (array)$args[1];
         }
 
