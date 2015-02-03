@@ -986,5 +986,4 @@ class TranslateBehaviorTest extends TestCase
         $result = $table->find()->first();
         $this->assertNull($result->description);
     }
-
 }
