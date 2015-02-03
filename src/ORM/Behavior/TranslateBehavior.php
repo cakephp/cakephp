@@ -78,7 +78,7 @@ class TranslateBehavior extends Behavior
         'model' => '',
         'onlyTranslated' => false,
         'strategy' => 'subquery',
-        'fieldConditions' => ['model' => '']
+        'conditions' => ['model' => '']
     ];
 
     /**
@@ -111,12 +111,12 @@ class TranslateBehavior extends Behavior
             $this->_translationTable = TableRegistry::get($translationAlias);
         }
 
-        $this->config('fieldConditions.model', $this->config('model') ?: $this->config('fieldConditions.model') ?: $this->_table->alias());
+        $this->config('conditions.model', $this->config('model') ?: $this->config('conditions.model') ?: $this->_table->alias());
 
         $this->setupFieldAssociations(
             $this->_config['fields'],
             $this->_config['translationTable'],
-            $this->_config['fieldConditions'],
+            $this->_config['conditions'],
             $this->_config['strategy']
         );
     }
@@ -130,7 +130,7 @@ class TranslateBehavior extends Behavior
      *
      * @param array $fields list of fields to create associations for
      * @param string $table the table name to use for storing each field translation
-     * @param array $fieldConditions conditions for finding fields
+     * @param array $conditions conditions for finding fields
      * @param string $strategy the strategy used in the _i18n association
      *
      * @return void
@@ -148,11 +148,7 @@ class TranslateBehavior extends Behavior
                 $name . '.field' => $field,
             ];
             foreach ($fieldConditions as $fieldName => $fieldValue) {
-                if (is_numeric($fieldName)) {
-                    $conditions[] = $name . '.' . $fieldValue;
-                } else {
-                    $conditions[$name . '.' . $fieldName] = $fieldValue;
-                }
+                $conditions[$name . '.' . $fieldName] = $fieldValue;
             }
             if (!TableRegistry::exists($name)) {
                 $fieldTable = TableRegistry::get($name, [
@@ -273,7 +269,7 @@ class TranslateBehavior extends Behavior
         $fields = array_keys($values);
         $primaryKey = (array)$this->_table->primaryKey();
         $key = $entity->get(current($primaryKey));
-        $model = $this->config('fieldConditions.model');
+        $model = $this->config('conditions.model');
 
         $preexistent = $this->_translationTable->find()
             ->select(['id', 'field'])
@@ -479,7 +475,7 @@ class TranslateBehavior extends Behavior
         }
 
         $results = $this->_findExistingTranslations($find);
-        $model = $this->config('fieldConditions.model');
+        $model = $this->config('conditions.model');
 
         foreach ($find as $i => $translation) {
             if (!empty($results[$i])) {

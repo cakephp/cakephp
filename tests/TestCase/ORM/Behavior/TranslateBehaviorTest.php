@@ -209,7 +209,7 @@ class TranslateBehaviorTest extends TestCase
             [
                 'id' => 1,
                 'title' => 'First Article',
-                'body' => 'First Article Body',
+                'body' => 'Contenido #1',
                 'comments' => [
                     ['article_id' => 1, 'comment' => 'First Comment for First Article', '_locale' => 'spa'],
                     ['article_id' => 1, 'comment' => 'Second Comment for First Article', '_locale' => 'spa'],
@@ -328,9 +328,10 @@ class TranslateBehaviorTest extends TestCase
         $results = $table->find('translations');
         $expected = [
             [
-                'eng' => ['title' => 'Title #1', 'body' => 'Content #1', 'locale' => 'eng'],
+                'eng' => ['title' => 'Title #1', 'body' => 'Content #1', 'description' => 'Description #1', 'locale' => 'eng'],
                 'deu' => ['title' => 'Titel #1', 'body' => 'Inhalt #1', 'locale' => 'deu'],
-                'cze' => ['title' => 'Titulek #1', 'body' => 'Obsah #1', 'locale' => 'cze']
+                'cze' => ['title' => 'Titulek #1', 'body' => 'Obsah #1', 'locale' => 'cze'],
+                'spa' => ['body' => 'Contenido #1', 'locale' => 'spa', 'description' => '']
             ],
             [
                 'eng' => ['title' => 'Title #2', 'body' => 'Content #2', 'locale' => 'eng'],
@@ -968,4 +969,22 @@ class TranslateBehaviorTest extends TestCase
         $results = $table->find('translations')->all();
         $this->assertCount(1, $results);
     }
+
+    /**
+     * Tests that conditions set when defining the behavior are applied correctly
+     *
+     * @return void
+     */
+    public function testConditions()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', [
+            'fields' => ['title', 'body', 'description'],
+            'conditions' => ['content <>' => '']
+        ]);
+        $table->locale('spa');
+        $result = $table->find()->first();
+        $this->assertNull($result->description);
+    }
+
 }
