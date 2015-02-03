@@ -153,6 +153,12 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->_response->statusCode(204);
         $this->assertResponseOk();
 
+        $this->_response->statusCode(202);
+        $this->assertResponseSuccess();
+
+        $this->_response->statusCode(302);
+        $this->assertResponseSuccess();
+
         $this->_response->statusCode(400);
         $this->assertResponseError();
 

@@ -389,6 +389,16 @@ abstract class IntegrationTestCase extends TestCase
     }
 
     /**
+     * Asserts that the response status code is in the 2xx/3xx range.
+     *
+     * @return void
+     */
+    public function assertResponseSuccess()
+    {
+        $this->_assertStatus(200, 308, 'Status code is not between 200 and 308');
+    }
+
+    /**
      * Asserts that the response status code is in the 4xx range.
      *
      * @return void
