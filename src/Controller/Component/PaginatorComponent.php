@@ -206,10 +206,7 @@ class PaginatorComponent extends Component
         if (!isset($request['paging'])) {
             $request['paging'] = [];
         }
-        $request['paging'] = array_merge(
-            (array)$request['paging'],
-            [$alias => $paging]
-        );
+        $request['paging'] = [$alias => $paging] + (array)$request['paging'];
 
         if ($requestedPage > $page) {
             throw new NotFoundException();

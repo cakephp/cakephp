@@ -140,7 +140,7 @@ class PaginatorHelper extends Helper
             if (!isset($this->request->params['paging'])) {
                 $this->request->params['paging'] = [];
             }
-            $this->request->params['paging'] = array_merge($this->request->params['paging'], $options['paging']);
+            $this->request->params['paging'] = $options['paging'] + $this->request->params['paging'];
             unset($options['paging']);
         }
         $model = $this->defaultModel();
@@ -149,13 +149,10 @@ class PaginatorHelper extends Helper
             if (!isset($this->request->params['paging'][$model])) {
                 $this->request->params['paging'][$model] = [];
             }
-            $this->request->params['paging'][$model] = array_merge(
-                $this->request->params['paging'][$model],
-                $options[$model]
-            );
+            $this->request->params['paging'][$model] = $options[$model] + $this->request->params['paging'][$model];
             unset($options[$model]);
         }
-        $this->_config['options'] = array_filter(array_merge($this->_config['options'], $options));
+        $this->_config['options'] = array_filter($options + $this->_config['options']);
     }
 
     /**
