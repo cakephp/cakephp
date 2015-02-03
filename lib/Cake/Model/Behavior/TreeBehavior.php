@@ -997,6 +997,41 @@ class TreeBehavior extends ModelBehavior {
 	}
 
 /**
+ * Returns the depth level of a node in the tree.
+ *
+ * @param Model $Model Model using this behavior
+ * @param int|string $id The primary key for record to get the level of.
+ * @return int|bool Integer of the level or false if the node does not exist.
+ */
+	public function getLevel(Model $Model, $id = null) {
+		if ($id === null) {
+			$id = $Model->id;
+		}
+
+		$node = $Model->find('first', array(
+			'conditions' => array($Model->escapeField() => $id),
+			'order' => false,
+			'recursive' => -1
+		));
+
+		if (empty($node)) {
+			return false;
+		}
+
+		extract($this->settings[$Model->alias]);
+
+		return $Model->find('count', array(
+			'conditions' => array(
+				$scope,
+				$left . ' <' => $node[$Model->alias][$left],
+				$right . ' >' => $node[$Model->alias][$right]
+			),
+			'order' => false,
+			'recursive' => -1
+		));
+	}
+
+/**
  * Sets the parent of the given node
  *
  * The force parameter is used to override the "don't change the parent to the current parent" logic in the event
