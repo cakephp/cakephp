@@ -399,7 +399,7 @@ class Marshaller
     }
 
     /**
-     * Merges each of the elements from `$data` into each of the entities in `$entities
+     * Merges each of the elements from `$data` into each of the entities in `$entities`
      * and recursively does the same for each of the association names passed in
      * `$options`. When merging associations, if an entity is not present in the parent
      * entity for a given association, a new one will be created.
