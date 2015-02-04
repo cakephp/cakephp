@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM\Association;
 
+use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\TupleComparison;
 
@@ -240,7 +241,8 @@ trait SelectableAssociationTrait
         }
 
         $fields = $query->aliasFields($keys, $this->source()->alias());
-        return $filterQuery->select($fields, true)->distinct();
+        $filterQuery->select($fields, true)->group(array_values($fields));
+        return $filterQuery;
     }
 
     /**

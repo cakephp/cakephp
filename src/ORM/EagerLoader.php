@@ -497,13 +497,14 @@ class EagerLoader
             $instance = $meta->instance();
             $config = $meta->config();
             $alias = $instance->source()->alias();
+            $path = $meta->aliasPath();
 
             $requiresKeys = $instance->requiresKeys($config);
-            if ($requiresKeys && empty($collected[$alias])) {
+            if ($requiresKeys && empty($collected[$path][$alias])) {
                 continue;
             }
-            $keys = isset($collected[$alias]) ? $collected[$alias] : null;
 
+            $keys = isset($collected[$path][$alias]) ? $collected[$path][$alias] : null;
             $f = $instance->eagerLoader(
                 $config + [
                     'query' => $query,
@@ -615,7 +616,7 @@ class EagerLoader
             foreach ($keys as $key) {
                 $pkFields[] = key($query->aliasField($key, $alias));
             }
-            $collectKeys[$alias] = [$alias, $pkFields, count($pkFields) === 1];
+            $collectKeys[$meta->aliasPath()] = [$alias, $pkFields, count($pkFields) === 1];
         }
 
         if (empty($collectKeys)) {
@@ -641,13 +642,14 @@ class EagerLoader
     {
         $keys = [];
         while ($result = $statement->fetch('assoc')) {
-            foreach ($collectKeys as $parts) {
+            foreach ($collectKeys as $nestKey => $parts) {
                 // Missed joins will have null in the results.
                 if ($parts[2] === true && !isset($result[$parts[1][0]])) {
                     continue;
                 }
                 if ($parts[2] === true) {
-                    $keys[$parts[0]][] = $result[$parts[1][0]];
+                    $value = $result[$parts[1][0]];
+                    $keys[$nestKey][$parts[0]][$value] = $value;
                     continue;
                 }
 
@@ -656,13 +658,7 @@ class EagerLoader
                 foreach ($parts[1] as $key) {
                     $collected[] = $result[$key];
                 }
-                $keys[$parts[0]][] = $collected;
-            }
-        }
-
-        foreach ($collectKeys as $parts) {
-            if ($parts[2] === true && isset($keys[$parts[0]])) {
-                $keys[$parts[0]] = array_unique($keys[$parts[0]]);
+                $keys[$nestKey][$parts[0]][implode(';', $collected)] = $collected;
             }
         }
 
