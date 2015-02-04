@@ -111,6 +111,14 @@ class TimeTypeTest extends TestCase
 
             // valid array types
             [
+                ['hour' => '', 'minute' => '', 'second' => ''],
+                null,
+            ],
+            [
+                ['hour' => '', 'minute' => '', 'meridian' => ''],
+                null,
+            ],
+            [
                 ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
                 new Time('2014-02-14 13:14:15')
             ],
