@@ -130,7 +130,7 @@ class TranslateBehavior extends Behavior
      *
      * @param array $fields list of fields to create associations for
      * @param string $table the table name to use for storing each field translation
-     * @param array $conditions conditions for finding fields
+     * @param array $fieldConditions conditions for finding fields
      * @param string $strategy the strategy used in the _i18n association
      *
      * @return void
