@@ -110,8 +110,15 @@ class TranslateBehavior extends Behavior
         } else {
             $this->_translationTable = TableRegistry::get($translationAlias);
         }
-
-        $this->config('conditions.model', $this->config('model') ?: $this->config('conditions.model') ?: $this->_table->alias());
+        
+        if ($this->config('model')) {
+            $model = $this->config('model');
+        } elseif ($this->config('conditions.model')) {
+            $model = $this->config('conditions.model');
+        } else {
+            $model = $this->_table->alias();
+        }
+        $this->config('conditions.model', $model);
 
         $this->setupFieldAssociations(
             $this->_config['fields'],
