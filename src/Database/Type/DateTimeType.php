@@ -135,6 +135,9 @@ class DateTimeType extends \Cake\Database\Type
             return $value;
         }
 
+        if (is_array($value) && implode('', $value) === '') {
+            return null;
+        }
         $value += ['hour' => 0, 'minute' => 0, 'second' => 0];
 
         $format = '';

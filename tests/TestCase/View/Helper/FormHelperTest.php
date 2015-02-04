@@ -5178,6 +5178,11 @@ class FormHelperTest extends TestCase
             '*/select',
         ];
         $this->assertHtml($expected, $result);
+
+        $result = $this->Form->month('Contact.published', [
+            'empty' => 'Published on',
+        ]);
+        $this->assertContains('Published on', $result);
     }
 
     /**
@@ -5268,6 +5273,11 @@ class FormHelperTest extends TestCase
             '/select',
         ];
         $this->assertHtml($expected, $result);
+
+        $result = $this->Form->day('Contact.published', [
+            'empty' => 'Published on',
+        ]);
+        $this->assertContains('Published on', $result);
     }
 
     /**
@@ -5545,6 +5555,11 @@ class FormHelperTest extends TestCase
             '/select',
         ];
         $this->assertHtml($expected, $result);
+
+        $result = $this->Form->year('Contact.published', [
+            'empty' => 'Published on',
+        ]);
+        $this->assertContains('Published on', $result);
     }
 
     /**
