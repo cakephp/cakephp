@@ -22,17 +22,17 @@ App::uses('FlashComponent', 'Controller/Component');
 App::uses('ComponentCollection', 'Controller');
 
 /**
-* FlashComponentTest class
-*
-* @package		Cake.Test.Case.Controller.Component
-*/
+ * FlashComponentTest class
+ *
+ * @package		Cake.Test.Case.Controller.Component
+ */
 class FlashComponentTest extends CakeTestCase {
 
 /**
-* setUp method
-*
-* @return void
-*/
+ * setUp method
+ *
+ * @return void
+ */
 	public function setUp() {
 		parent::setUp();
 		$this->Components = new ComponentCollection();
@@ -40,20 +40,20 @@ class FlashComponentTest extends CakeTestCase {
 	}
 
 /**
-* tearDown method
-*
-* @return void
-*/
+ * tearDown method
+ *
+ * @return void
+ */
 	public function tearDown() {
 		parent::tearDown();
 		CakeSession::destroy();
 	}
 
 /**
-* testSet method
-*
-* @return void
-*/
+ * testSet method
+ *
+ * @return void
+ */
 	public function testSet() {
 		$this->assertNull(CakeSession::read('Flash.flash'));
 
@@ -102,10 +102,10 @@ class FlashComponentTest extends CakeTestCase {
 	}
 
 /**
-* testSetWithException method
-*
-* @return void
-*/
+ * testSetWithException method
+ *
+ * @return void
+ */
 	public function testSetWithException() {
 		$this->assertNull(CakeSession::read('Flash.flash'));
 
@@ -121,10 +121,10 @@ class FlashComponentTest extends CakeTestCase {
 	}
 
 /**
-* testSetWithComponentConfiguration method
-*
-* @return void
-*/
+ * testSetWithComponentConfiguration method
+ *
+ * @return void
+ */
 	public function testSetWithComponentConfiguration() {
 		$this->assertNull(CakeSession::read('Flash.flash'));
 
@@ -141,10 +141,10 @@ class FlashComponentTest extends CakeTestCase {
 	}
 
 /**
-* Test magic call method.
-*
-* @return void
-*/
+ * Test magic call method.
+ *
+ * @return void
+ */
 	public function testCall() {
 		$this->assertNull(CakeSession::read('Flash.flash'));
 

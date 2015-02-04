@@ -23,23 +23,28 @@ App::uses('View', 'View');
 App::uses('CakePlugin', 'Core');
 
 /**
-* FlashHelperTest class
-*
-* @package		Cake.Test.Case.View.Helper
-*/
+ * FlashHelperTest class
+ *
+ * @package		Cake.Test.Case.View.Helper
+ */
 class FlashHelperTest extends CakeTestCase {
 
+/**
+ * setupBeforeClass method
+ *
+ * @return void
+ */
 	public static function setupBeforeClass() {
 		App::build(array(
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		));
 	}
 
-	/**
-	 * setUp method
-	 *
-	 * @return void
-	 */
+/**
+ * setUp method
+ *
+ * @return void
+ */
 	public function setUp() {
 		parent::setUp();
 		$controller = null;
@@ -76,22 +81,22 @@ class FlashHelperTest extends CakeTestCase {
 		));
 	}
 
-	/**
-	 * tearDown method
-	 *
-	 * @return void
-	 */
+/**
+ * tearDown method
+ *
+ * @return void
+ */
 	public function tearDown() {
 		parent::tearDown();
 		unset($this->View, $this->Flash);
 		CakeSession::destroy();
 	}
 
-	/**
-	 * testFlash method
-	 *
-	 * @return void
-	 */
+/**
+ * testFlash method
+ *
+ * @return void
+ */
 	public function testFlash() {
 		$result = $this->Flash->render();
 		$expected = '<div class="message">This is a calling</div>';
@@ -109,21 +114,21 @@ class FlashHelperTest extends CakeTestCase {
 		$this->assertNull($this->Flash->render('non-existent'));
 	}
 
-	/**
-	 * testFlashThrowsException
-	 *
-	 * @expectedException UnexpectedValueException
-	 */
+/**
+ * testFlashThrowsException
+ *
+ * @expectedException UnexpectedValueException
+ */
 	public function testFlashThrowsException() {
 		CakeSession::write('Flash.foo', 'bar');
 		$this->Flash->render('foo');
 	}
 
-	/**
-	 * test setting the element from the attrs.
-	 *
-	 * @return void
-	 */
+/**
+ * test setting the element from the attrs.
+ *
+ * @return void
+ */
 	public function testFlashElementInAttrs() {
 		$result = $this->Flash->render('notification', array(
 			'element' => 'flash_helper',
@@ -135,11 +140,11 @@ class FlashHelperTest extends CakeTestCase {
 		$this->assertContains($expected, $result);
 	}
 
-	/**
-	 * test using elements in plugins.
-	 *
-	 * @return void
-	 */
+/**
+ * test using elements in plugins.
+ *
+ * @return void
+ */
 	public function testFlashWithPluginElement() {
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)

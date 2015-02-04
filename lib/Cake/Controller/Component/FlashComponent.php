@@ -43,8 +43,8 @@ class FlashComponent extends Component {
 /**
  * Constructor
  *
- * @param ComponentCollection $collection
- * @param array $settings
+ * @param ComponentCollection $collection The ComponentCollection object
+ * @param array $settings Settings passed via controller
  */
 	public function __construct(ComponentCollection $collection, $settings = array()) {
 		$this->_defaultConfig = Hash::merge($this->_defaultConfig, $settings);
