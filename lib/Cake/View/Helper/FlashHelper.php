@@ -1,5 +1,7 @@
 <?php
 /**
+ * Flash Helper
+ *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -24,7 +26,6 @@ App::uses('CakeSession', 'Model/Datasource');
  * this class to output your flash messages in your views.
  *
  * @package       Cake.View.Helper
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html
  */
 class FlashHelper extends AppHelper {
 
@@ -38,7 +39,7 @@ class FlashHelper extends AppHelper {
  * to consolidate all the parameters for a given type of flash message into the view.
  *
  * ```
- * echo $this->Flash->render('flash', ['params' => ['name' => $user['User']['name']]]);
+ * echo $this->Flash->render('flash', array('params' => array('name' => $user['User']['name'])));
  * ```
  *
  * This would pass the current user's name into the flash message, so you could create personalized
@@ -48,16 +49,16 @@ class FlashHelper extends AppHelper {
  * custom elements allows you to fully customize how flash messages are generated.
  *
  * ```
- * echo $this->Flash->render('flash', ['element' => 'my_custom_element']);
+ * echo $this->Flash->render('flash', array('element' => 'my_custom_element'));
  * ```
  *
  * If you want to use an element from a plugin for rendering your flash message
  * you can use the dot notation for the plugin's element name:
  *
  * ```
- * echo $this->Flash->render('flash', [
+ * echo $this->Flash->render('flash', array(
  *   'element' => 'MyPlugin.my_custom_element',
- * ]);
+ * ));
  * ```
  *
  * @param string $key The [Flash.]key you are rendering in the view.
@@ -68,12 +69,11 @@ class FlashHelper extends AppHelper {
  * @throws UnexpectedValueException If value for flash settings key is not an array.
  */
 	public function render($key = 'flash', $options = array()) {
-
-		if (!CakeSession::check("Message.$key")) {
+		if (!CakeSession::check("Flash.$key")) {
 			return;
 		}
 
-		$flash = CakeSession::read("Message.$key");
+		$flash = CakeSession::read("Flash.$key");
 
 		if (!is_array($flash)) {
 			throw new UnexpectedValueException(sprintf(
