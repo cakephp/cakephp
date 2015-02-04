@@ -241,19 +241,7 @@ trait SelectableAssociationTrait
         }
 
         $fields = $query->aliasFields($keys, $this->source()->alias());
-        $filterQuery->select($fields, true)->distinct();
-
-        $order = $filterQuery->clause('order');
-        if ($order) {
-            $order->iterateParts(function ($dir, $field) use ($filterQuery) {
-                $col = is_int($field) ? $dir : $field;
-                if (!($col instanceof ExpressionInterface)) {
-                    $filterQuery->select(new IdentifierExpression($col));
-                }
-                return $dir;
-            });
-        }
-
+        $filterQuery->select($fields, true)->group(array_values($fields));
         return $filterQuery;
     }
 

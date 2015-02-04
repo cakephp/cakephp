@@ -461,7 +461,10 @@ class QueryRegressionTest extends TestCase
         $table = TableRegistry::get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
         $table->locale('eng');
-        $query = $table->find('translations')->limit(10)->offset(1);
+        $query = $table->find('translations')
+            ->order(['Articles.id' => 'ASC'])
+            ->limit(10)
+            ->offset(1);
         $result = $query->toArray();
         $this->assertCount(2, $result);
     }
