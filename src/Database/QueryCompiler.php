@@ -299,7 +299,11 @@ class QueryCompiler
         $result = [];
         foreach ($expressions as $k => $expression) {
             if ($expression instanceof ExpressionInterface) {
-                $expression = '(' . $expression->sql($generator) . ')';
+                $value = $expression->sql($generator);
+                if (!is_string($value)) {
+                    debug($expression);
+                }
+                $expression = '(' . $value . ')';
             }
             $result[$k] = $expression;
         }

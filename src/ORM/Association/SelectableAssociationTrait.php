@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM\Association;
 
+use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\TupleComparison;
 
@@ -245,7 +246,10 @@ trait SelectableAssociationTrait
         $order = $filterQuery->clause('order');
         if ($order) {
             $order->iterateParts(function ($dir, $field) use ($filterQuery) {
-                $filterQuery->select(new IdentifierExpression(is_int($field) ? $dir : $field));
+                $col = is_int($field) ? $dir : $field;
+                if (!($col instanceof ExpressionInterface)) {
+                    $filterQuery->select(new IdentifierExpression($col));
+                }
                 return $dir;
             });
         }
