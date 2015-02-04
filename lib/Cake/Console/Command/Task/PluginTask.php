@@ -123,7 +123,7 @@ class PluginTask extends AppShell {
 				'Test' . DS . 'Fixture',
 				'View' . DS . 'Elements',
 				'View' . DS . 'Helper',
-				'View' . DS . 'Layout',
+				'View' . DS . 'Layouts',
 				'webroot' . DS . 'css',
 				'webroot' . DS . 'js',
 				'webroot' . DS . 'img',
