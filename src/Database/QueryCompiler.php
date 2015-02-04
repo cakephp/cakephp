@@ -300,9 +300,6 @@ class QueryCompiler
         foreach ($expressions as $k => $expression) {
             if ($expression instanceof ExpressionInterface) {
                 $value = $expression->sql($generator);
-                if (!is_string($value)) {
-                    debug($expression);
-                }
                 $expression = '(' . $value . ')';
             }
             $result[$k] = $expression;
