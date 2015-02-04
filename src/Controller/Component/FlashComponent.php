@@ -110,8 +110,8 @@ class FlashComponent extends Component
      * specific element from a plugin, you should set the `plugin` option in $args.
      * 
      * For example: $this->Flash->warning('My message', ['plugin' => 'PluginName']) would
-     * use the warning.ctp element under `plugins/src/Template/Element/Flash` for rendering
-     * the flash message.
+     * use the warning.ctp element under `plugins/PluginName/src/Template/Element/Flash` for
+     * rendering the flash message.
      *
      * @param string $name Element name to use.
      * @param array $args Parameters to pass when calling `FlashComponent::set()`.
