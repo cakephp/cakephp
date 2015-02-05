@@ -103,17 +103,6 @@ class FileEngine extends CacheEngine
     }
 
     /**
-     * Garbage collection. Permanently remove all expired and deleted data
-     *
-     * @param int|null $expires [optional] An expires timestamp, invalidating all data before.
-     * @return bool True if garbage collection was successful, false on failure
-     */
-    public function gc($expires = null)
-    {
-        return $this->clear(true, $expires);
-    }
-
-    /**
      * Write data for key into cache
      *
      * @param string $key Identifier for the data
@@ -248,10 +237,9 @@ class FileEngine extends CacheEngine
      * Delete all values from the cache
      *
      * @param bool $check Optional - only delete expired cache items
-     * @param int|null $expires [optional] An expires timestamp, invalidating all data before.
      * @return bool True if the cache was successfully cleared, false otherwise
      */
-    public function clear($check, $expires = null)
+    public function clear($check)
     {
         if (!$this->_init) {
             return false;
@@ -260,7 +248,7 @@ class FileEngine extends CacheEngine
 
         $threshold = $now = false;
         if ($check) {
-            $now = $expires === null ? time() : $expires;
+            $now = time();
             $threshold = $now - $this->_config['duration'];
         }
 
