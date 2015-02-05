@@ -454,28 +454,16 @@ class TableRegistryTest extends TestCase
      */
     public function testRemove()
     {
-        Plugin::load('TestPlugin');
+        $first = TableRegistry::get('Comments');
 
-        $pluginTable = TableRegistry::get('TestPlugin.Comments');
-        $cachedTable = TableRegistry::get('Comments');
-
-        $this->assertTrue(TableRegistry::exists('TestPlugin.Comments'));
-        $this->assertTrue(TableRegistry::exists('Comments'));
-        $this->assertNotSame($pluginTable, $cachedTable);
-
-        TableRegistry::remove('TestPlugin.Comments');
-        $this->assertFalse(TableRegistry::exists('TestPlugin.Comments'));
         $this->assertTrue(TableRegistry::exists('Comments'));
 
         TableRegistry::remove('Comments');
-        $this->assertFalse(TableRegistry::exists('TestPlugin.Comments'));
         $this->assertFalse(TableRegistry::exists('Comments'));
 
-        $pluginTable = TableRegistry::get('TestPlugin.Comments');
-        $cachedTable = TableRegistry::get('Comments');
+        $second = TableRegistry::get('Comments');
 
-        TableRegistry::remove('Comments');
-        $this->assertTrue(TableRegistry::exists('TestPlugin.Comments'));
-        $this->assertFalse(TableRegistry::exists('Comments'));
+        $this->assertNotSame($first, $second, 'Should be different objects, as the reference to the first was destroyed');
+        $this->assertTrue(TableRegistry::exists('Comments'));
     }
 }
