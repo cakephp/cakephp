@@ -110,7 +110,7 @@ class FileEngine extends CacheEngine
      */
     public function gc($expires = null)
     {
-        return $this->clear(true);
+        return $this->clear(true, $expires);
     }
 
     /**
@@ -248,9 +248,10 @@ class FileEngine extends CacheEngine
      * Delete all values from the cache
      *
      * @param bool $check Optional - only delete expired cache items
+     * @param int|null $expires [optional] An expires timestamp, invalidating all data before.
      * @return bool True if the cache was successfully cleared, false otherwise
      */
-    public function clear($check)
+    public function clear($check, $expires = null)
     {
         if (!$this->_init) {
             return false;
@@ -259,7 +260,7 @@ class FileEngine extends CacheEngine
 
         $threshold = $now = false;
         if ($check) {
-            $now = time();
+            $now = $expires === null ? time() : $expires;
             $threshold = $now - $this->_config['duration'];
         }
 
