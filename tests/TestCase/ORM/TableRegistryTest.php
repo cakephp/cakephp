@@ -512,5 +512,4 @@ class TableRegistryTest extends TestCase
 
         $this->assertSame($plugin, $plugin3, 'Should be the same TestPluginTwo.Comments object');
     }
-
 }
