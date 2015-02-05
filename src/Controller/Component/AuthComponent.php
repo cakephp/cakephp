@@ -782,7 +782,7 @@ class AuthComponent extends Component
             }
             $config = array_merge($global, (array)$config);
             $this->_authenticateObjects[$alias] = new $className($this->_registry, $config);
-            $this->eventManager()->attach($this->_authenticateObjects[$alias]);
+            $this->eventManager()->on($this->_authenticateObjects[$alias]);
         }
         return $this->_authenticateObjects;
     }

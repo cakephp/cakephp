@@ -287,7 +287,7 @@ class Controller implements EventListenerInterface
 
         $this->_mergeControllerVars();
         $this->_loadComponents();
-        $this->eventManager()->attach($this);
+        $this->eventManager()->on($this);
     }
 
     /**
