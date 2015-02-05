@@ -83,11 +83,11 @@ trait ModelAwareTrait
             $modelClass = $this->modelClass;
         }
 
-        if (isset($this->{$modelClass})) {
-            return $this->{$modelClass};
-        }
+        list($plugin, $alias) = pluginSplit($modelClass, true);
 
-        list($plugin, $modelClass) = pluginSplit($modelClass, true);
+        if (isset($this->{$alias})) {
+            return $this->{$alias};
+        }
 
         if (!isset($this->_modelFactories[$type])) {
             throw new InvalidArgumentException(sprintf(
@@ -96,11 +96,11 @@ trait ModelAwareTrait
             ));
         }
         $factory = $this->_modelFactories[$type];
-        $this->{$modelClass} = $factory($plugin . $modelClass);
-        if (!$this->{$modelClass}) {
+        $this->{$alias} = $factory($modelClass);
+        if (!$this->{$alias}) {
             throw new MissingModelException([$modelClass, $type]);
         }
-        return $this->{$modelClass};
+        return $this->{$alias};
     }
 
     /**
