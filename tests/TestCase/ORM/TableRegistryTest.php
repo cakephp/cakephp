@@ -102,10 +102,6 @@ class TableRegistryTest extends TestCase
 
         $result = TableRegistry::config('TestPlugin.TestPluginComments', $data);
         $this->assertEquals($data, $result, 'Returns config data.');
-
-        $result = TableRegistry::config();
-        $expected = ['TestPluginComments' => $data];
-        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -226,9 +222,9 @@ class TableRegistryTest extends TestCase
 
         $class = 'TestPlugin\Model\Table\TestPluginCommentsTable';
         $this->assertInstanceOf($class, $table);
-        $this->assertTrue(
+        $this->assertFalse(
             TableRegistry::exists('TestPluginComments'),
-            'Short form should exist'
+            'Short form should NOT exist'
         );
         $this->assertTrue(
             TableRegistry::exists('TestPlugin.TestPluginComments'),
@@ -237,9 +233,6 @@ class TableRegistryTest extends TestCase
 
         $second = TableRegistry::get('TestPlugin.TestPluginComments');
         $this->assertSame($table, $second, 'Can fetch long form');
-
-        $second = TableRegistry::get('TestPluginComments');
-        $this->assertSame($table, $second);
     }
 
     /**
@@ -389,7 +382,6 @@ class TableRegistryTest extends TestCase
 
         $this->assertSame($mock, TableRegistry::set('TestPlugin.Comments', $mock));
         $this->assertSame($mock, TableRegistry::get('TestPlugin.Comments'));
-        $this->assertSame($mock, TableRegistry::get('Comments'));
     }
 
     /**
@@ -418,14 +410,23 @@ class TableRegistryTest extends TestCase
         $pluginTable = TableRegistry::get('TestPlugin.Comments');
         $cachedTable = TableRegistry::get('Comments');
 
+        $this->assertTrue(TableRegistry::exists('TestPlugin.Comments'));
         $this->assertTrue(TableRegistry::exists('Comments'));
-        $this->assertSame($pluginTable, $cachedTable);
+        $this->assertNotSame($pluginTable, $cachedTable);
+
+        TableRegistry::remove('TestPlugin.Comments');
+        $this->assertFalse(TableRegistry::exists('TestPlugin.Comments'));
+        $this->assertTrue(TableRegistry::exists('Comments'));
 
         TableRegistry::remove('Comments');
+        $this->assertFalse(TableRegistry::exists('TestPlugin.Comments'));
         $this->assertFalse(TableRegistry::exists('Comments'));
 
-        $appTable = TableRegistry::get('Comments');
-        $this->assertTrue(TableRegistry::exists('Comments'));
-        $this->assertNotSame($pluginTable, $appTable);
+        $pluginTable = TableRegistry::get('TestPlugin.Comments');
+        $cachedTable = TableRegistry::get('Comments');
+
+        TableRegistry::remove('Comments');
+        $this->assertTrue(TableRegistry::exists('TestPlugin.Comments'));
+        $this->assertFalse(TableRegistry::exists('Comments'));
     }
 }
