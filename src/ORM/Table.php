@@ -573,7 +573,7 @@ class Table implements RepositoryInterface, EventListenerInterface
      * Check if a behavior with the given alias has been loaded.
      *
      * @param string $name The behavior alias to check.
-     * @return array
+     * @return bool
      */
     public function hasBehavior($name)
     {

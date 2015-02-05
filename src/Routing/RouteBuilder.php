@@ -559,7 +559,7 @@ class RouteBuilder
      *
      * This is a shortcut method for connecting fallback routes in a given scope.
      *
-     * @param string $routeClass the route class to use, uses the default routeClass
+     * @param string|null $routeClass the route class to use, uses the default routeClass
      *   if not specified
      * @return void
      */
