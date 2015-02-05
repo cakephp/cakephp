@@ -275,6 +275,33 @@ class TableRegistryTest extends TestCase
     }
 
     /**
+     * Test get() with same-alias models in different plugins
+     *
+     * @return void
+     */
+    public function testGetMultiplePlugins()
+    {
+        Plugin::load('TestPlugin');
+        Plugin::load('TestPluginTwo');
+
+        $app = TableRegistry::get('Comments');
+        $plugin1 = TableRegistry::get('TestPlugin.Comments');
+        $plugin2 = TableRegistry::get('TestPluginTwo.Comments');
+
+        $this->assertInstanceOf('Cake\ORM\Table', $app, 'Should be an app table instance');
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $plugin1, 'Should be a plugin 1 table instance');
+        $this->assertInstanceOf('TestPluginTwo\Model\Table\CommentsTable', $plugin2, 'Should be a plugin 2 table instance');
+
+        $plugin2 = TableRegistry::get('TestPluginTwo.Comments');
+        $plugin1 = TableRegistry::get('TestPlugin.Comments');
+        $app = TableRegistry::get('Comments');
+
+        $this->assertInstanceOf('Cake\ORM\Table', $app, 'Should still be an app table instance');
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $plugin1, 'Should still be a plugin 1 table instance');
+        $this->assertInstanceOf('TestPluginTwo\Model\Table\CommentsTable', $plugin2, 'Should still be a plugin 2 table instance');
+    }
+
+    /**
      * Tests that table options can be pre-configured for the factory method
      *
      * @return void
