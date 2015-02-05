@@ -134,6 +134,25 @@ class TableRegistryTest extends TestCase
     }
 
     /**
+     * Test the exists() method with plugin-prefixed models.
+     *
+     * @return void
+     */
+    public function testExistsPlugin()
+    {
+        $this->assertFalse(TableRegistry::exists('Comments'));
+        $this->assertFalse(TableRegistry::exists('TestPlugin.Comments'));
+
+        TableRegistry::config('TestPlugin.Comments', ['table' => 'comments']);
+        $this->assertFalse(TableRegistry::exists('Comments'), 'The Comments key should not be populated');
+        $this->assertFalse(TableRegistry::exists('TestPlugin.Comments'), 'The plugin.alias key should not be populated');
+
+        TableRegistry::get('TestPlugin.Comments', ['table' => 'comments']);
+        $this->assertFalse(TableRegistry::exists('Comments'), 'The Comments key should not be populated');
+        $this->assertTrue(TableRegistry::exists('TestPlugin.Comments'), 'The plugin.alias key should now be populated');
+    }
+
+    /**
      * Test getting instances from the registry.
      *
      * @return void
