@@ -349,7 +349,7 @@ class RouteBuilder
      * @throws \InvalidArgumentException
      * @throws \BadMethodCallException
      */
-    public function connect($route, array $defaults = [], $options = [])
+    public function connect($route, array $defaults = [], array $options = [])
     {
         if (empty($options['action'])) {
             $defaults += ['action' => 'index'];
