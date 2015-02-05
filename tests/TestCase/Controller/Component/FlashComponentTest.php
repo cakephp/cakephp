@@ -178,5 +178,16 @@ class FlashComponentTest extends TestCase
         ];
         $result = $this->Session->read('Flash.flash');
         $this->assertEquals($expected, $result, 'Element is ignored in magic call.');
+        
+        $this->Flash->success('It worked', ['plugin' => 'MyPlugin']);
+
+        $expected = [
+            'message' => 'It worked',
+            'key' => 'flash',
+            'element' => 'MyPlugin.Flash/success',
+            'params' => []
+        ];
+        $result = $this->Session->read('Flash.flash');
+        $this->assertEquals($expected, $result);
     }
 }
