@@ -466,4 +466,51 @@ class TableRegistryTest extends TestCase
         $this->assertNotSame($first, $second, 'Should be different objects, as the reference to the first was destroyed');
         $this->assertTrue(TableRegistry::exists('Comments'));
     }
+
+    /**
+     * testRemovePlugin
+     *
+     * Removing a plugin-prefixed model should not affect any other
+     * plugin-prefixed model, or app model.
+     * Removing an app model should not affect any other
+     * plugin-prefixed model.
+     *
+     * @return void
+     */
+    public function testRemovePlugin()
+    {
+        Plugin::load('TestPlugin');
+        Plugin::load('TestPluginTwo');
+
+        $app = TableRegistry::get('Comments');
+        TableRegistry::get('TestPlugin.Comments');
+        $plugin = TableRegistry::get('TestPluginTwo.Comments');
+
+        $this->assertTrue(TableRegistry::exists('Comments'));
+        $this->assertTrue(TableRegistry::exists('TestPlugin.Comments'));
+        $this->assertTrue(TableRegistry::exists('TestPluginTwo.Comments'));
+
+        TableRegistry::remove('TestPlugin.Comments');
+
+        $this->assertTrue(TableRegistry::exists('Comments'));
+        $this->assertFalse(TableRegistry::exists('TestPlugin.Comments'));
+        $this->assertTrue(TableRegistry::exists('TestPluginTwo.Comments'));
+
+        $app2 = TableRegistry::get('Comments');
+        $plugin2 = TableRegistry::get('TestPluginTwo.Comments');
+
+        $this->assertSame($app, $app2, 'Should be the same Comments object');
+        $this->assertSame($plugin, $plugin2, 'Should be the same TestPluginTwo.Comments object');
+
+        TableRegistry::remove('Comments');
+
+        $this->assertFalse(TableRegistry::exists('Comments'));
+        $this->assertFalse(TableRegistry::exists('TestPlugin.Comments'));
+        $this->assertTrue(TableRegistry::exists('TestPluginTwo.Comments'));
+
+        $plugin3 = TableRegistry::get('TestPluginTwo.Comments');
+
+        $this->assertSame($plugin, $plugin3, 'Should be the same TestPluginTwo.Comments object');
+    }
+
 }
