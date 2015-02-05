@@ -105,11 +105,11 @@ class FlashComponent extends Component
      * For example: $this->Flash->success('My message') would use the
      * success.ctp element under `src/Template/Element/Flash` for rendering the
      * flash message.
-     * 
+     *
      * Note that the parameter `element` will be always overridden. In order to call a
      * specific element from a plugin, you should set the `plugin` option in $args.
-     * 
-     * For example: $this->Flash->warning('My message', ['plugin' => 'PluginName']) would
+     *
+     * For example: `$this->Flash->warning('My message', ['plugin' => 'PluginName'])` would
      * use the warning.ctp element under `plugins/PluginName/src/Template/Element/Flash` for
      * rendering the flash message.
      *
