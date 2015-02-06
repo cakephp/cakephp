@@ -187,7 +187,8 @@ class AssociationTest extends TestCase
             'sourceTable' => $this->source,
             'joinType' => 'INNER'
         ];
-        $this->association = $this->getMock('\Cake\ORM\Association',
+        $this->association = $this->getMock(
+            '\Cake\ORM\Association',
             [
                 '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
                 'saveAssociated', 'eagerLoader', 'type'
