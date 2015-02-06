@@ -155,21 +155,18 @@ class TableRegistry
      */
     public static function get($alias, array $options = [])
     {
-        list(, $classAlias) = pluginSplit($alias);
-        $exists = isset(static::$_instances[$alias]);
-
-        if ($exists && !empty($options)) {
-            if (static::$_options[$alias] !== $options) {
+        if (isset(static::$_instances[$alias])) {
+            if (!empty($options) && static::$_options[$alias] !== $options) {
                 throw new RuntimeException(sprintf(
                     'You cannot configure "%s", it already exists in the registry.',
                     $alias
                 ));
             }
-        }
-        if ($exists) {
             return static::$_instances[$alias];
         }
+
         static::$_options[$alias] = $options;
+        list(, $classAlias) = pluginSplit($alias);
         $options = ['alias' => $classAlias] + $options;
 
         if (empty($options['className'])) {
