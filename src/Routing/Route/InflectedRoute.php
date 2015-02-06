@@ -14,8 +14,10 @@
  */
 namespace Cake\Routing\Route;
 
+use Cake\Network\Exception\NotFoundException;
 use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
+use Cake\Core\Configure;
 
 /**
  * This route class will transparently inflect the controller and plugin routing
@@ -48,7 +50,21 @@ class InflectedRoute extends Route
             return false;
         }
         if (!empty($params['controller'])) {
+            $value = $params['controller'];
             $params['controller'] = Inflector::camelize($params['controller']);
+            if (Inflector::underscore($params['controller']) !== $value) {
+                throw new NotFoundException();
+            }
+        }
+        if (!empty($params['action'])) {
+            $value = $params['action'];
+            $action = lcfirst(Inflector::camelize($params['action']));
+            if (Configure::read('InflectedRoute.camelizedAction')) {
+                $params['action'] = $action;
+            }
+            if (Inflector::underscore($action) !== $value) {
+                throw new NotFoundException();
+            }
         }
         if (!empty($params['plugin'])) {
             $params['plugin'] = Inflector::camelize($params['plugin']);
@@ -87,6 +103,11 @@ class InflectedRoute extends Route
         if (!empty($url['controller'])) {
             $url['controller'] = Inflector::underscore($url['controller']);
         }
+        /*
+        if (!empty($url['action'])) {
+            $url['action'] = Inflector::underscore($url['action']);
+        }
+        */
         if (!empty($url['plugin'])) {
             $url['plugin'] = Inflector::underscore($url['plugin']);
         }
