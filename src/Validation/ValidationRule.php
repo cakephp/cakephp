@@ -193,4 +193,17 @@ class ValidationRule
             }
         }
     }
+
+    /**
+     * Returns the value of a property by name
+     *
+     * @param string $property The name of the property to retrieve.
+     * @return mixed
+     */
+    public function get($property)
+    {
+        if (isset($this->_{$property})) {
+            return $this->_{$property};
+        }
+    }
 }

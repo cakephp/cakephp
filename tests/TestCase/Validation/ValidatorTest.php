@@ -518,7 +518,7 @@ class ValidatorTest extends TestCase
         $errors = $validator->errors(['email' => 'not an email!']);
         $expected = [
             'email' => [
-                'alpha' => 'The provided value is invalid',
+                'alpha' => 'alpha',
                 'email' => 'Y u no write email?'
             ]
         ];
@@ -562,7 +562,7 @@ class ValidatorTest extends TestCase
         $validator->provider('thing', $thing);
         $errors = $validator->errors(['email' => '!', 'title' => 'bar']);
         $expected = [
-            'email' => ['alpha' => 'The provided value is invalid'],
+            'email' => ['alpha' => 'alpha'],
             'title' => ['cool' => "That ain't cool, yo"]
         ];
         $this->assertEquals($expected, $errors);
@@ -643,7 +643,7 @@ class ValidatorTest extends TestCase
         $errors = $validator->errors(['email' => 'not an email!']);
         $expected = [
             'email' => [
-                'alpha' => 'The provided value is invalid'
+                'alpha' => 'alpha'
             ]
         ];
 

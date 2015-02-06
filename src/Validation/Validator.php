@@ -67,12 +67,34 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
     protected $_allowEmptyMessages = [];
 
     /**
+     * I18n domain for validation messages.
+     *
+     * @var string
+     */
+    protected $_validationDomain = 'default';
+
+    /**
      * Constructor
      *
      */
     public function __construct()
     {
         $this->_useI18n = function_exists('__d');
+    }
+
+    /**
+     * Get/set the I18n domain for validation messages.
+     *
+     * @param string|null $domain The validation domain to be used. If null
+     *   returns currently set domain.
+     * @return string|null
+     */
+    public function validationDomain($domain = null)
+    {
+        if ($domain === null) {
+            return $this->_validationDomain;
+        }
+        $this->_validationDomain = $domain;
     }
 
     /**
@@ -554,11 +576,6 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
         $errors = [];
         // Loading default provider in case there is none
         $this->provider('default');
-        $message = 'The provided value is invalid';
-
-        if ($this->_useI18n) {
-            $message = __d('cake', 'The provided value is invalid');
-        }
 
         foreach ($rules as $name => $rule) {
             $result = $rule->process($value, $this->_providers, compact('newRecord', 'data', 'field'));
@@ -566,9 +583,13 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
                 continue;
             }
 
-            $errors[$name] = $message;
             if (is_string($result)) {
                 $errors[$name] = $result;
+            } elseif ($this->_useI18n) {
+                $args = $rule->get('pass');
+                $errors[$name] = __d($this->_validationDomain, $name, $this->_translateArgs($args));
+            } else {
+                $errors[$name] = $name;
             }
 
             if ($rule->isLast()) {
@@ -576,5 +597,21 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
             }
         }
         return $errors;
+    }
+
+    /**
+     * Applies translations to validator arguments.
+     *
+     * @param array $args The args to translate
+     * @return array Translated args.
+     */
+    protected function _translateArgs($args)
+    {
+        foreach ((array)$args as $k => $arg) {
+            if (is_string($arg)) {
+                $args[$k] = __d($this->_validationDomain, $arg);
+            }
+        }
+        return $args;
     }
 }
