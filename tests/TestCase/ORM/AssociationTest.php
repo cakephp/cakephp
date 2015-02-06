@@ -199,11 +199,11 @@ class AssociationTest extends TestCase
         $table = $this->association->target();
         $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $table);
 
-        $this->assertFalse(TableRegistry::exists('TestPlugin.Comments'));
+        $this->assertTrue(TableRegistry::exists('TestPlugin.Comments'));
         $this->assertFalse(TableRegistry::exists('Comments'));
-        $this->assertTrue(TableRegistry::exists('ThisAssociationName'));
+        $this->assertFalse(TableRegistry::exists('ThisAssociationName'));
 
-        $plugin = TableRegistry::get('ThisAssociationName');
+        $plugin = TableRegistry::get('TestPlugin.Comments');
         $this->assertSame($table, $plugin, 'Should be the same TestPlugin.Comments object');
     }
 

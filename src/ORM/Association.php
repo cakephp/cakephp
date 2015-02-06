@@ -269,11 +269,21 @@ abstract class Association
             return $this->_targetTable = $table;
         }
 
+        if ($this->_className) {
+            if (strpos($this->_className, '\\') !== false) {
+                $tableAlias = $this->_name;
+            } else {
+                $tableAlias = $this->_className;
+            }
+        } else {
+            $tableAlias = $this->_name;
+        }
+
         $config = [];
-        if (!TableRegistry::exists($this->_name)) {
+        if (!TableRegistry::exists($tableAlias)) {
             $config = ['className' => $this->_className];
         }
-        $this->_targetTable = TableRegistry::get($this->_name, $config);
+        $this->_targetTable = TableRegistry::get($tableAlias, $config);
 
         return $this->_targetTable;
     }
