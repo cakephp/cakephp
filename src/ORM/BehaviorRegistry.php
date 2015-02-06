@@ -117,7 +117,7 @@ class BehaviorRegistry extends ObjectRegistry
         $instance = new $class($this->_table, $config);
         $enable = isset($config['enabled']) ? $config['enabled'] : true;
         if ($enable) {
-            $this->eventManager()->attach($instance);
+            $this->eventManager()->on($instance);
         }
         $methods = $this->_getMethods($instance, $class, $alias);
         $this->_methodMap += $methods['methods'];

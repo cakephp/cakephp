@@ -248,7 +248,7 @@ class Table implements RepositoryInterface, EventListenerInterface
         $this->_associations = $associations ?: new AssociationCollection();
 
         $this->initialize($config);
-        $this->_eventManager->attach($this);
+        $this->_eventManager->on($this);
         $this->dispatchEvent('Model.initialize');
     }
 

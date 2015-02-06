@@ -31,7 +31,7 @@ class Orders
 }
 
 $orders = new Orders();
-$orders->eventManager()->attach(function ($event) {
+$orders->eventManager()->on(function ($event) {
 	// Do something after the order was placed
 	...
 }, 'Orders.afterPlace');

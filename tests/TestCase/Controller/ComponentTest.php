@@ -85,7 +85,7 @@ class ComponentTest extends TestCase
         $controller->eventManager($mock);
 
         $mock->expects($this->once())
-            ->method('attach')
+            ->method('on')
             ->with($this->isInstanceOf('TestApp\Controller\Component\AppleComponent'));
 
         $Collection = new ComponentRegistry($controller);

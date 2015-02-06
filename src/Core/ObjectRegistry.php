@@ -301,7 +301,7 @@ abstract class ObjectRegistry
         }
         $object = $this->_loaded[$objectName];
         if (isset($this->_eventManager)) {
-            $this->eventManager()->detach($object);
+            $this->eventManager()->off($object);
         }
         unset($this->_loaded[$objectName]);
     }

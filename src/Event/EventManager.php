@@ -311,13 +311,13 @@ class EventManager
                 if (is_numeric(key($function))) {
                     foreach ($function as $handler) {
                         $handler = isset($handler['callable']) ? $handler['callable'] : $handler;
-                        $this->detach([$subscriber, $handler], $key);
+                        $this->off($key, [$subscriber, $handler]);
                     }
                     continue;
                 }
                 $function = $function['callable'];
             }
-            $this->detach([$subscriber, $function], $key);
+            $this->off($key, [$subscriber, $function]);
         }
     }
 

@@ -267,10 +267,10 @@ abstract class IntegrationTestCase extends TestCase
         $request = $this->_buildRequest($url, $method, $data);
         $response = new Response();
         $dispatcher = DispatcherFactory::create();
-        $dispatcher->eventManager()->attach(
-            [$this, 'controllerSpy'],
+        $dispatcher->eventManager()->on(
             'Dispatcher.beforeDispatch',
-            ['priority' => 999]
+            ['priority' => 999],
+            [$this, 'controllerSpy']
         );
         try {
             $dispatcher->dispatch($request, $response);
@@ -296,12 +296,12 @@ abstract class IntegrationTestCase extends TestCase
         }
         $this->_controller = $event->data['controller'];
         $events = $this->_controller->eventManager();
-        $events->attach(function ($event, $viewFile) {
+        $events->on('View.beforeRender', function ($event, $viewFile) {
             $this->_viewName = $viewFile;
-        }, 'View.beforeRender');
-        $events->attach(function ($event, $viewFile) {
+        });
+        $events->on('View.beforeLayout', function ($event, $viewFile) {
             $this->_layoutName = $viewFile;
-        }, 'View.beforeLayout');
+        });
     }
 
     /**
