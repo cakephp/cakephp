@@ -177,7 +177,8 @@ class ValidationRuleTest extends TestCase
      *
      * @return void
      */
-    public function testGet() {
+    public function testGet()
+    {
         $Rule = new ValidationRule(['rule' => 'myTestRule', 'message' => 'foo']);
 
         $this->assertEquals('myTestRule', $Rule->get('rule'));
