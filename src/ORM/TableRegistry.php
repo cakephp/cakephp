@@ -254,6 +254,4 @@ class TableRegistry
             static::$_fallbacked[$alias]
         );
     }
-
-    public static function keys() { return array_keys(static::$_instances); }
 }
