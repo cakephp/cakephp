@@ -390,9 +390,11 @@ trait CollectionTrait
                 return;
             }
 
+            $children = [];
             foreach ($values as $id) {
-                $parents[$key]['children'][] =& $parents[$id];
+                $children[] =& $parents[$id];
             }
+            $parents[$key]['children'] = $children;
         };
 
         $collection = new MapReduce($this, $mapper, $reducer);
