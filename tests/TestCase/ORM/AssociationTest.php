@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Core\Plugin;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -167,6 +168,42 @@ class AssociationTest extends TestCase
         $other = new Table;
         $this->association->target($other);
         $this->assertSame($other, $this->association->target());
+    }
+
+    /**
+     * Tests that target() returns the correct Table object for plugins
+     *
+     * @return void
+     */
+    public function testTargetPlugin()
+    {
+        Plugin::load('TestPlugin');
+
+        $config = [
+            'className' => 'TestPlugin.Comments',
+            'foreignKey' => 'a_key',
+            'conditions' => ['field' => 'value'],
+            'dependent' => true,
+            'sourceTable' => $this->source,
+            'joinType' => 'INNER'
+        ];
+        $this->association = $this->getMock('\Cake\ORM\Association',
+            [
+                '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
+                'saveAssociated', 'eagerLoader', 'type'
+            ],
+            ['ThisAssociationName', $config]
+        );
+
+        $table = $this->association->target();
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $table);
+
+        $this->assertFalse(TableRegistry::exists('TestPlugin.Comments'));
+        $this->assertFalse(TableRegistry::exists('Comments'));
+        $this->assertTrue(TableRegistry::exists('ThisAssociationName'));
+
+        $plugin = TableRegistry::get('ThisAssociationName');
+        $this->assertSame($table, $plugin, 'Should be the same TestPlugin.Comments object');
     }
 
     /**
