@@ -521,8 +521,7 @@ class TableTest extends TestCase
     }
 
     /**
-     * Should a dupicate short-named association be defined, the earlier
-     * association will be inaccessible via the __get method
+     * Ensure associations use the plugin-prefixed model
      *
      * @return void
      */
@@ -533,11 +532,25 @@ class TableTest extends TestCase
 
         $table = new Table(['table' => 'authors']);
 
-        $table->hasOne('Comments');
-        $comments = $table->Comments->target();
-        $this->assertInstanceOf('Cake\ORM\Table', $comments);
-
         $table->hasMany('TestPlugin.Comments');
+        $comments = $table->Comments->target();
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $comments);
+    }
+
+    /**
+     * Ensure associations use the plugin-prefixed model
+     * even if specified with config
+     *
+     * @return void
+     */
+    public function testHasManyPluginOverlapConfig()
+    {
+        TableRegistry::get('Comments');
+        Plugin::load('TestPlugin');
+
+        $table = new Table(['table' => 'authors']);
+
+        $table->hasMany('Comments', ['className' => 'TestPlugin.Comments']);
         $comments = $table->Comments->target();
         $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $comments);
     }
