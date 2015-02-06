@@ -1764,14 +1764,14 @@ class MarshallerTest extends TestCase
 
         $marshall = new Marshaller($this->articles);
 
-        $this->articles->eventManager()->attach(function ($e, $data) {
+        $this->articles->eventManager()->attach(function ($e, $data, $options) {
             $data['title'] = 'Modified title';
             $data['user']['username'] = 'robert';
+
+            $options['associated'] = ['Users'];
         }, 'Model.beforeMarshal');
 
-        $entity = $marshall->one($data, [
-            'associated' => ['Users']
-        ]);
+        $entity = $marshall->one($data);
 
         $this->assertEquals('Modified title', $entity->title);
         $this->assertEquals('My content', $entity->body);

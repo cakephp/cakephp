@@ -100,7 +100,8 @@ class Marshaller
      */
     public function one(array $data, array $options = [])
     {
-        $options += ['validate' => true];
+        list($data, $options) = $this->_prepareDataAndOptions($data, $options);
+
         $propertyMap = $this->_buildPropertyMap($options);
 
         $schema = $this->_table->schema();
@@ -113,8 +114,6 @@ class Marshaller
                 $entity->accessible($key, $value);
             }
         }
-
-        $data = $this->_prepareData($data, $options);
 
         $errors = $this->_validate($data, $options, true);
         $primaryKey = $schema->primaryKey();
@@ -183,25 +182,26 @@ class Marshaller
     }
 
     /**
-     * Returns data prepared to validate and marshall.
+     * Returns data and options prepared to validate and marshall.
      *
      * @param array $data The data to prepare.
      * @param array $options The options passed to this marshaller.
-     * @return array Prepared data.
+     * @return array An array containing prepared data and options.
      */
-    protected function _prepareData($data, $options)
+    protected function _prepareDataAndOptions($data, $options)
     {
-        $tableName = $this->_table->alias();
+        $options += ['validate' => true];
 
+        $tableName = $this->_table->alias();
         if (isset($data[$tableName])) {
             $data = $data[$tableName];
         }
 
-        $dataObject = new \ArrayObject($data);
+        $data = new \ArrayObject($data);
         $options = new \ArrayObject($options);
-        $this->_table->dispatchEvent('Model.beforeMarshal', compact('dataObject', 'options'));
+        $this->_table->dispatchEvent('Model.beforeMarshal', compact('data', 'options'));
 
-        return (array)$dataObject;
+        return [(array)$data, (array)$options];
     }
 
     /**
@@ -343,7 +343,8 @@ class Marshaller
      */
     public function merge(EntityInterface $entity, array $data, array $options = [])
     {
-        $options += ['validate' => true];
+        list($data, $options) = $this->_prepareDataAndOptions($data, $options);
+
         $propertyMap = $this->_buildPropertyMap($options);
         $isNew = $entity->isNew();
         $keys = [];
@@ -351,8 +352,6 @@ class Marshaller
         if (!$isNew) {
             $keys = $entity->extract((array)$this->_table->primaryKey());
         }
-
-        $data = $this->_prepareData($data, $options);
 
         $errors = $this->_validate($data + $keys, $options, $isNew);
         $schema = $this->_table->schema();
