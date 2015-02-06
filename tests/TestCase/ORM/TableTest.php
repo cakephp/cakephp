@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use ArrayObject;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
@@ -517,6 +518,28 @@ class TableTest extends TestCase
         $this->assertEquals(['b' => 'c'], $hasMany->conditions());
         $this->assertEquals(['foo' => 'asc'], $hasMany->sort());
         $this->assertSame($table, $hasMany->source());
+    }
+
+    /**
+     * Should a dupicate short-named association be defined, the earlier
+     * association will be inaccessible via the __get method
+     *
+     * @return void
+     */
+    public function testHasManyPluginOverlap()
+    {
+        TableRegistry::get('Comments');
+        Plugin::load('TestPlugin');
+
+        $table = new Table(['table' => 'authors']);
+
+        $table->hasOne('Comments');
+        $comments = $table->Comments->target();
+        $this->assertInstanceOf('Cake\ORM\Table', $comments);
+
+        $table->hasMany('TestPlugin.Comments');
+        $comments = $table->Comments->target();
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $comments);
     }
 
     /**
