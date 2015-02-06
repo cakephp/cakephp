@@ -42,11 +42,6 @@ class PluginAssetsShellTest extends TestCase
             'Skip PluginAssetsShell tests on windows to prevent side effects for UrlHelper tests on AppVeyor.'
         );
 
-        $this->skipIf(
-            defined('HHVM_VERSION'),
-            'Also broken in HHVM, maybe the tests are wrong?'
-        );
-
         $this->io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
         $this->shell = $this->getMock(
