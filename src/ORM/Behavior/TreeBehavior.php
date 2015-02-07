@@ -68,7 +68,8 @@ class TreeBehavior extends Behavior
         'parent' => 'parent_id',
         'left' => 'lft',
         'right' => 'rght',
-        'scope' => null
+        'scope' => null,
+        'level' => null
     ];
 
     /**
@@ -88,6 +89,7 @@ class TreeBehavior extends Behavior
         $parent = $entity->get($config['parent']);
         $primaryKey = $this->_getPrimaryKey();
         $dirty = $entity->dirty($config['parent']);
+        $level = $config['level'];
 
         if ($isNew && $parent) {
             if ($entity->get($primaryKey[0]) == $parent) {
@@ -99,20 +101,92 @@ class TreeBehavior extends Behavior
             $entity->set($config['left'], $edge);
             $entity->set($config['right'], $edge + 1);
             $this->_sync(2, '+', ">= {$edge}");
+
+            if ($level) {
+                $entity->set($config[$level], $parentNode[$level] + 1);
+            }
+            return;
         }
 
         if ($isNew && !$parent) {
             $edge = $this->_getMax();
             $entity->set($config['left'], $edge + 1);
             $entity->set($config['right'], $edge + 2);
+
+            if ($level) {
+                $entity->set($config[$level], 0);
+            }
+            return;
         }
 
         if (!$isNew && $dirty && $parent) {
             $this->_setParent($entity, $parent);
+
+            if ($level) {
+                $parentNode = $this->_getNode($parent);
+                $entity->set($config[$level], $parentNode[$level] + 1);
+            }
+            return;
         }
 
         if (!$isNew && $dirty && !$parent) {
             $this->_setAsRoot($entity);
+
+            if ($level) {
+                $entity->set($config[$level], 0);
+            }
+        }
+    }
+
+    /**
+     * After save listener.
+     *
+     * Manages updating level of descendents of currently saved entity.
+     *
+     * @param \Cake\Event\Event $event The beforeSave event that was fired
+     * @param \Cake\ORM\Entity $entity the entity that is going to be saved
+     * @return void
+     */
+    public function afterSave(Event $event, Entity $entity)
+    {
+        if (!$this->_config['level'] || $entity->isNew()) {
+            return;
+        }
+
+        $this->_setChildrenLevel($entity);
+    }
+
+    /**
+     * Set level for descendents.
+     *
+     * @param \Cake\ORM\Entity $entity
+     * @return void
+     */
+    protected function _setChildrenLevel(Entity $entity)
+    {
+        $config = $this->config();
+
+        if ($entity->get($config['left']) + 1 === $entity->get($config['right'])) {
+            return;
+        }
+
+        $primaryKey = $this->_getPrimaryKey();
+        $primaryKeyValue = $entity->get($primaryKey);
+        $depths = [$primaryKeyValue => $entity->get($config['level'])];
+
+        $children = $this->_table->find('children', [
+            'for' => $primaryKeyValue,
+            'fields' => [$this->_getPrimaryKey(), $config['parent'], $config['level']],
+            'order' => $config['left']
+        ]);
+
+        foreach ($children as $node) {
+            $parentIdValue = $node->get($config['parent']);
+            $depth = $depths[$parentIdValue] + 1;
+            $depths[$node->get($primaryKey)] = $depth;
+
+            $node->set($config['level'], $depth);
+            $this->_table->save($node, ['checkRules' => false, 'atomic' => false]);
         }
     }
 
@@ -624,9 +698,13 @@ class TreeBehavior extends Behavior
         $config = $this->config();
         list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
         $primaryKey = $this->_getPrimaryKey();
+        $fields = [$parent, $left, $right];
+        if ($config['level']) {
+            $fields[] = $config['level'];
+        }
 
         $node = $this->_scope($this->_table->find())
-            ->select([$parent, $left, $right])
+            ->select($fields)
             ->where([$this->_table->alias() . '.' . $primaryKey => $id])
             ->first();
 
