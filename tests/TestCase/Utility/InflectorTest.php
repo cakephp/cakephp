@@ -401,7 +401,7 @@ class InflectorTest extends TestCase
         $this->assertSame('test-thing', Inflector::dasherize('testThing'));
         $this->assertSame('test-thing-extra', Inflector::dasherize('TestThingExtra'));
         $this->assertSame('test-thing-extra', Inflector::dasherize('testThingExtra'));
-        $this->assertSame('test-this-thing', Inflector::dasherize('test_this_thing'));
+        $this->assertSame('test_this_thing', Inflector::dasherize('test_this_thing'), 'Should be unchanged');
 
         // Test stupid values
         $this->assertSame('', Inflector::dasherize(null));

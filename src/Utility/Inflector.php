@@ -578,15 +578,15 @@ class Inflector
     /**
      * Returns the given lower_case_and_underscored_word as a CamelCased word.
      *
-     * @param string $lowerCaseAndUnderscoredWord Word to camelize
+     * @param string $string Word to camelize
      * @return string Camelized word. LikeThis.
      * @link http://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-camelcase-and-under-scored-forms
      */
-    public static function camelize($lowerCaseAndUnderscoredWord)
+    public static function camelize($string)
     {
-        if (!($result = static::_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord))) {
-            $result = str_replace(' ', '', static::humanize($lowerCaseAndUnderscoredWord));
-            static::_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord, $result);
+        if (!($result = static::_cache(__FUNCTION__, $string))) {
+            $result = str_replace(' ', '', static::humanize($string));
+            static::_cache(__FUNCTION__, $string, $result);
         }
         return $result;
     }
@@ -598,47 +598,55 @@ class Inflector
      * @return string Underscore-syntaxed version of the $camelCasedWord
      * @link http://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-camelcase-and-under-scored-forms
      */
-    public static function underscore($camelCasedWord)
+    public static function underscore($string)
     {
-        if (!($result = static::_cache(__FUNCTION__, $camelCasedWord))) {
-            $result = strtolower(preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $camelCasedWord));
-            static::_cache(__FUNCTION__, $camelCasedWord, $result);
-        }
-        return $result;
+        return static::normalize($string, '_');
     }
 
     /**
      * Returns the given CamelCasedWordGroup as an dashed-word-group.
      *
-     * @param string $wordGroup The string to dasherize.
+     * @param string $string The string to dasherize.
      * @return string Dashed version of the word group
      */
-    public static function dasherize($wordGroup)
+    public static function dasherize($string)
     {
-        $result = static::_cache(__FUNCTION__, $wordGroup);
-        if ($result !== false) {
-            return $result;
-        }
-
-        $result = str_replace('_', '-', static::underscore($wordGroup));
-        static::_cache(__FUNCTION__, $wordGroup, $result);
-        return $result;
+        return static::normalize($string, '-');
     }
 
     /**
      * Returns the given underscored_word_group as a Human Readable Word Group.
      * (Underscores are replaced by spaces and capitalized following words.)
      *
-     * @param string $lowerCaseAndUnderscoredWord String to be made more readable
+     * @param string $string String to be made more readable
+     * @param string $replacement
      * @return string Human-readable string
      * @link http://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-human-readable-forms
      */
-    public static function humanize($lowerCaseAndUnderscoredWord)
+    public static function humanize($string, $replacement = '_')
     {
-        if (!($result = static::_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord))) {
-            $result = ucwords(str_replace('_', ' ', $lowerCaseAndUnderscoredWord));
-            static::_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord, $result);
+        return ucwords(str_replace($replacement, ' ', static::normalize($string, $replacement)));
+    }
+
+    /**
+     * Returns the given CamelCasedWordGroup as lower cased words, separated by the replacement
+     * character
+     *
+     * @param string $string
+     * @param string $replacement
+     * @return string normalized stringd
+     */
+    public static function normalize($string, $replacement = '_')
+    {
+        $cacheKey = __FUNCTION__ . $replacement;
+
+        $result = static::_cache($cacheKey, $string);
+
+        if ($result === false) {
+            $result = strtolower(preg_replace('/(?<=\\w)([A-Z])/', $replacement .'\\1', $string));
+            static::_cache($cacheKey, $string, $result);
         }
+
         return $result;
     }
 
