@@ -187,12 +187,10 @@ class AssociationTest extends TestCase
             'sourceTable' => $this->source,
             'joinType' => 'INNER'
         ];
+
         $this->association = $this->getMock(
             '\Cake\ORM\Association',
-            [
-                '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
-                'saveAssociated', 'eagerLoader', 'type'
-            ],
+            ['type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated'],
             ['ThisAssociationName', $config]
         );
 
@@ -302,10 +300,7 @@ class AssociationTest extends TestCase
         ];
         $assoc = $this->getMock(
             '\Cake\ORM\Association',
-            [
-                '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
-                'saveAssociated', 'eagerLoader', 'type'
-            ],
+            ['type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated'],
             ['Foo', $config]
         );
         $this->assertEquals('published', $assoc->finder());
