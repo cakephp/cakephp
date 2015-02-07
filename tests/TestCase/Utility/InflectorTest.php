@@ -411,6 +411,26 @@ class InflectorTest extends TestCase
     }
 
     /**
+     * Demonstrate the expected output for bad inputs
+     *
+     * @return void
+     */
+    public function testCamelize()
+    {
+        $this->assertSame('TestThing', Inflector::camelize('test_thing'));
+        $this->assertSame('Test-thing', Inflector::camelize('test-thing'));
+        $this->assertSame('TestThing', Inflector::camelize('test thing'));
+
+        $this->assertSame('Test_thing', Inflector::camelize('test_thing', '-'));
+        $this->assertSame('TestThing', Inflector::camelize('test-thing', '-'));
+        $this->assertSame('TestThing', Inflector::camelize('test thing', '-'));
+
+        $this->assertSame('Test_thing', Inflector::camelize('test_thing', ' '));
+        $this->assertSame('Test-thing', Inflector::camelize('test-thing', ' '));
+        $this->assertSame('TestThing', Inflector::camelize('test thing', ' '));
+    }
+
+    /**
      * testVariableNaming method
      *
      * @return void

@@ -579,15 +579,21 @@ class Inflector
      * Returns the given lower_case_and_underscored_word as a CamelCased word.
      *
      * @param string $string Word to camelize
+     * @param string $replacement the delimiter in the input string
      * @return string Camelized word. LikeThis.
      * @link http://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-camelcase-and-under-scored-forms
      */
-    public static function camelize($string)
+    public static function camelize($string, $replacement = '_')
     {
-        if (!($result = static::_cache(__FUNCTION__, $string))) {
-            $result = str_replace(' ', '', static::humanize($string));
+        $cacheKey = __FUNCTION__ . $replacement;
+
+        $result = static::_cache($cacheKey, $string);
+
+        if ($result === false) {
+            $result = str_replace(' ', '', static::humanize($string, $replacement));
             static::_cache(__FUNCTION__, $string, $result);
         }
+
         return $result;
     }
 
