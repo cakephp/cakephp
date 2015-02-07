@@ -665,10 +665,13 @@ class Inflector
      */
     public static function tableize($className)
     {
-        if (!($result = static::_cache(__FUNCTION__, $className))) {
+        $result = static::_cache(__FUNCTION__, $className);
+
+        if ($result === false) {
             $result = static::pluralize(static::underscore($className));
             static::_cache(__FUNCTION__, $className, $result);
         }
+
         return $result;
     }
 
@@ -681,10 +684,13 @@ class Inflector
      */
     public static function classify($tableName)
     {
-        if (!($result = static::_cache(__FUNCTION__, $tableName))) {
+        $result = static::_cache(__FUNCTION__, $tableName);
+
+        if ($result === false) {
             $result = static::camelize(static::singularize($tableName));
             static::_cache(__FUNCTION__, $tableName, $result);
         }
+
         return $result;
     }
 
@@ -697,12 +703,15 @@ class Inflector
      */
     public static function variable($string)
     {
-        if (!($result = static::_cache(__FUNCTION__, $string))) {
+        $result = static::_cache(__FUNCTION__, $string);
+
+        if ($result === false) {
             $camelized = static::camelize(static::underscore($string));
             $replace = strtolower(substr($camelized, 0, 1));
             $result = preg_replace('/\\w/', $replace, $camelized, 1);
             static::_cache(__FUNCTION__, $string, $result);
         }
+
         return $result;
     }
 
