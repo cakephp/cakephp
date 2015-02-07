@@ -171,4 +171,26 @@ class ValidationRuleTest extends TestCase
         ]);
         $this->assertTrue($Rule->process($data, $providers, ['newRecord' => true]));
     }
+
+    /**
+     * testGet
+     *
+     * @return void
+     */
+    public function testGet()
+    {
+        $Rule = new ValidationRule(['rule' => 'myTestRule', 'message' => 'foo']);
+
+        $this->assertEquals('myTestRule', $Rule->get('rule'));
+        $this->assertEquals('foo', $Rule->get('message'));
+        $this->assertEquals('default', $Rule->get('provider'));
+        $this->assertEquals([], $Rule->get('pass'));
+        $this->assertNull($Rule->get('non-existent'));
+
+        $Rule = new ValidationRule(['rule' => ['myTestRule2', 'param'], 'message' => 'bar']);
+
+        $this->assertEquals('myTestRule2', $Rule->get('rule'));
+        $this->assertEquals('bar', $Rule->get('message'));
+        $this->assertEquals(['param'], $Rule->get('pass'));
+    }
 }
