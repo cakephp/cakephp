@@ -502,7 +502,7 @@ class TreeBehaviorTest extends TestCase
     {
         $table = $this->table;
         $entity = new Entity(
-            ['name' => 'New Orphan', 'parent_id' => null],
+            ['name' => 'New Orphan', 'parent_id' => null, 'level' => null],
             ['markNew' => true]
         );
         $expected = $table->find()->order('lft')->hydrate(false)->toArray();
@@ -876,6 +876,63 @@ class TreeBehaviorTest extends TestCase
 
         $result = $this->table->getLevel(99999);
         $this->assertFalse($result);
+    }
+
+    /**
+     * Test setting level for new nodes
+     *
+     * @return void
+     */
+    public function testSetLevelNewNode()
+    {
+        $this->table->behaviors()->Tree->config('level', 'level');
+
+        $entity = new Entity(['parent_id' => null, 'name' => 'Depth 0']);
+        $this->table->save($entity);
+        $entity = $this->table->get(12);
+        $this->assertEquals(0, $entity->level);
+
+        $entity = new Entity(['parent_id' => 1, 'name' => 'Depth 1']);
+        $this->table->save($entity);
+        $entity = $this->table->get(13);
+        $this->assertEquals(1, $entity->level);
+
+        $entity = new Entity(['parent_id' => 8, 'name' => 'Depth 4']);
+        $this->table->save($entity);
+        $entity = $this->table->get(14);
+        $this->assertEquals(4, $entity->level);
+    }
+
+    /**
+     * Test setting level for existing nodes
+     *
+     * @return void
+     */
+    public function testSetLevelExistingNode()
+    {
+        $this->table->behaviors()->Tree->config('level', 'level');
+
+        // Leaf node
+        $entity = $this->table->get(4);
+        $this->assertEquals(2, $entity->level);
+        $this->table->save($entity);
+        $entity = $this->table->get(4);
+        $this->assertEquals(2, $entity->level);
+
+        // Non leaf node so depth of descendents will also change
+        $entity = $this->table->get(6);
+        $this->assertEquals(1, $entity->level);
+
+        $entity->parent_id = null;
+        $this->table->save($entity);
+        $entity = $this->table->get(6);
+        $this->assertEquals(0, $entity->level);
+
+        $entity = $this->table->get(7);
+        $this->assertEquals(1, $entity->level);
+
+        $entity = $this->table->get(8);
+        $this->assertEquals(2, $entity->level);
     }
 
     /**
