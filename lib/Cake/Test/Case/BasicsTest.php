@@ -751,6 +751,19 @@ class BasicsTest extends CakeTestCase {
 	}
 
 /**
+ * test __dc() with LC_TIME po
+ *
+ * @return void
+ */
+	public function testTranslateDomainCategoryLcTime() {
+		Configure::write('Config.language', 'time_test_po');
+
+		$result = __dc('cake', 'Plural Rule 1', 5);
+		$expected = 'Time Po (translated)';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * test __dcn()
  *
  * @return void
