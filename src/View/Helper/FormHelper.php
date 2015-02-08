@@ -1884,7 +1884,12 @@ class FormHelper extends Helper
             $off,
             array_fill(0, count($off), false)
         );
-        $options = $off + $options;
+
+        $attributes = array_diff_key(
+            $options,
+            ['value' => null, 'empty' => null]
+        );
+        $options = $options + $off + [$keep => $attributes];
 
         if (isset($options['value'])) {
             $options['val'] = $options['value'];
