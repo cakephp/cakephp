@@ -18,7 +18,7 @@ use Cake\Core\Plugin;
 
 $namespace = Configure::read('App.namespace');
 if (!empty($plugin)) {
-    $namespace = $plugin;
+    $namespace = str_replace('/', '\\', $plugin);
 }
 $prefixNs = '';
 if (!empty($prefix)) {

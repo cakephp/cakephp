@@ -28,7 +28,7 @@ if (!empty($prefix)) {
 }
 
 if (!empty($plugin)) {
-    $namespace = $plugin;
+    $namespace = str_replace('/', '\\', $plugin);
 }
 if (empty($plugin)) {
     $path = APP_DIR . DS . 'Controller' . DS . $prefixPath . h($class) . 'Controller.php' ;
