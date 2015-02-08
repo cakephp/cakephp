@@ -734,7 +734,12 @@ class I18n {
 			if (($trans = $this->_domains[$domain][$this->_lang][$this->category][$format][$context])) {
 				return $trans;
 			}
+		} elseif (!empty($this->_domains[$domain][$this->_lang]['LC_TIME'][$format])) {
+			if (($trans = $this->_domains[$domain][$this->_lang][$this->category][$format])) {
+				return $trans;
+			}
 		}
+
 		return $format;
 	}
 
