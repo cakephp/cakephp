@@ -631,7 +631,16 @@ class Inflector
      */
     public static function humanize($string, $replacement = '_')
     {
-        return ucwords(str_replace($replacement, ' ', static::normalize($string, $replacement)));
+        $cacheKey = __FUNCTION__ . $replacement;
+
+        $result = static::_cache($cacheKey, $string);
+
+        if ($result === false) {
+            $result = ucwords(str_replace($replacement, ' ', $string));
+            static::_cache($cacheKey, $string, $result);
+        }
+
+        return $result;
     }
 
     /**

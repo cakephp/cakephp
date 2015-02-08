@@ -428,6 +428,8 @@ class InflectorTest extends TestCase
         $this->assertSame('Test_thing', Inflector::camelize('test_thing', ' '));
         $this->assertSame('Test-thing', Inflector::camelize('test-thing', ' '));
         $this->assertSame('TestThing', Inflector::camelize('test thing', ' '));
+
+        $this->assertSame('TestPlugin.TestPluginComments', Inflector::camelize('TestPlugin.TestPluginComments'));
     }
 
     /**
