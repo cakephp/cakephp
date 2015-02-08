@@ -651,6 +651,8 @@ class TreeBehavior extends Behavior
         }
 
         $edge = $this->_getMax();
+        $width = $node->{$right} - $node->{$left};
+
         while ($number-- > 0) {
             list($nodeLeft, $nodeRight) = array_values($node->extract([$left, $right]));
 
@@ -671,18 +673,15 @@ class TreeBehavior extends Behavior
             $this->_sync($nextNode->{$left} - $nodeLeft, '-', "BETWEEN {$nextNode->{$left}} AND {$nextNode->{$right}}");
             $this->_sync($edge - $nodeLeft - ($nextNode->{$right} - $nextNode->{$left}), '-', "> {$edge}");
 
-            $newLeft = $edge + 1;
-            if ($newLeft >= $nextNode->{$left} || $newLeft <= $nextNode->{$right}) {
-                $newLeft -= $nextNode->{$left} - $nodeLeft;
-            }
-            $newLeft -= $nextNode->{$right} - $nextNode->{$left} - 1;
+            $move = $nextNode->{$right} - $node->{$right};
 
-            $node->set($left, $newLeft);
-            $node->set($right, $newLeft + ($nodeRight - $nodeLeft));
+            $node->set($right, $node->{$left} + $width + $move);
+            $node->set($left, $node->{$left} + $move);
         }
 
         $node->dirty($left, false);
         $node->dirty($right, false);
+
         return $node;
     }
 

@@ -440,6 +440,18 @@ class TreeBehaviorTest extends TestCase
         $this->assertEquals([6, 8, 1], $nodes->extract('id')->toArray());
     }
 
+    public function testMoveDownMultiplePositions()
+    {
+        $node = $this->table->moveDown($this->table->get(3), 2);
+        $result = $this->table
+            ->find('children', ['for' => 2, 'direct' => true])
+            ->order(['lft' => 'ASC'])
+            ->extract('id')
+            ->toArray();
+
+        $this->assertEquals([4,5,3], $result);
+    }
+
     /**
      * Tests the recover function
      *
