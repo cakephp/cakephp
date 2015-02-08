@@ -159,7 +159,7 @@ class TreeBehavior extends Behavior
     /**
      * Set level for descendents.
      *
-     * @param \Cake\ORM\Entity $entity
+     * @param \Cake\ORM\Entity $entity The entity whose descendents need to be updated.
      * @return void
      */
     protected function _setChildrenLevel(Entity $entity)
