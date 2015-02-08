@@ -625,7 +625,7 @@ class Inflector
      * (Underscores are replaced by spaces and capitalized following words.)
      *
      * @param string $string String to be made more readable
-     * @param string $replacement
+     * @param string $replacement the character to replace with a space
      * @return string Human-readable string
      * @link http://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-human-readable-forms
      */
@@ -644,12 +644,11 @@ class Inflector
     }
 
     /**
-     * Returns the given CamelCasedWordGroup as lower cased words, separated by the replacement
-     * character
+     * Takes the input string, and based on the replacement character converts to a normalized string
      *
-     * @param string $string
-     * @param string $replacement
-     * @return string normalized stringd
+     * @param string $string String to normalize
+     * @param string $replacement the character to use as a delimiter
+     * @return string normalized string
      */
     public static function normalize($string, $replacement = '_')
     {
