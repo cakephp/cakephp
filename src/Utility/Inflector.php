@@ -657,7 +657,7 @@ class Inflector
         $result = static::_cache($cacheKey, $string);
 
         if ($result === false) {
-            $result = strtolower(preg_replace('/(?<=\\w)([A-Z])/', $replacement .'\\1', $string));
+            $result = strtolower(preg_replace('/(?<=\\w)([A-Z])/', $replacement . '\\1', $string));
             static::_cache($cacheKey, $string, $result);
         }
 
