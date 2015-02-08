@@ -65,6 +65,16 @@ class FormHelper extends Helper
     protected $_datetimeParts = ['year', 'month', 'day', 'hour', 'minute', 'second', 'meridian'];
 
     /**
+     * Special options used for datetime inputs.
+     *
+     * @var array
+     */
+    protected $_datetimeOptions = [
+        'interval', 'round', 'monthNames', 'minYear', 'maxYear',
+        'orderYear', 'timeFormat', 'second'
+    ];
+
+    /**
      * Default config for the helper.
      *
      * @var array
@@ -1887,7 +1897,7 @@ class FormHelper extends Helper
 
         $attributes = array_diff_key(
             $options,
-            ['value' => null, 'empty' => null]
+            array_flip(array_merge($this->_datetimeOptions, ['value', 'empty']))
         );
         $options = $options + $off + [$keep => $attributes];
 
