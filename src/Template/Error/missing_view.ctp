@@ -21,7 +21,7 @@ $pluginDot = empty($plugin) ? null : $plugin . '.';
 
 if (empty($plugin)) {
     $filePath = APP_DIR . DS;
-    $namespace = $plugin;
+    $namespace = str_replace('/', '\\', $plugin);
 }
 if (!empty($plugin) && Plugin::loaded($plugin)) {
     $filePath = Plugin::classPath($plugin);

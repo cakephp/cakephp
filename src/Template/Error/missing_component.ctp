@@ -17,7 +17,7 @@ use Cake\Core\Configure;
 
 $namespace = Configure::read('App.namespace');
 if (!empty($plugin)) {
-    $namespace = $plugin;
+    $namespace = str_replace('/', '\\', $plugin);
 }
 
 $pluginPath = Configure::read('App.paths.plugins.0');
