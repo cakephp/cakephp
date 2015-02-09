@@ -52,6 +52,47 @@ class TreeBehaviorTest extends TestCase
     }
 
     /**
+     * Sanity test
+     *
+     * Make sure the assert method acts as you'd expect, this is the expected
+     * initial db state
+     *
+     * @return void
+     */
+    public function testAssertMpttValues()
+    {
+        $expected = [
+            ' 1:20 -  1:electronics',
+            '_ 2: 9 -  2:televisions',
+            '__ 3: 4 -  3:tube',
+            '__ 5: 6 -  4:lcd',
+            '__ 7: 8 -  5:plasma',
+            '_10:19 -  6:portable',
+            '__11:14 -  7:mp3',
+            '___12:13 -  8:flash',
+            '__15:16 -  9:cd',
+            '__17:18 - 10:radios',
+            '21:22 - 11:alien hardware'
+        ];
+        $this->assertMpttValues($expected, $this->table);
+
+        $table = TableRegistry::get('MenuLinkTrees');
+        $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+
+        $expected = [
+            ' 1:10 -  1:Link 1',
+            '_ 2: 3 -  2:Link 2',
+            '_ 4: 9 -  3:Link 3',
+            '__ 5: 8 -  4:Link 4',
+            '___ 6: 7 -  5:Link 5',
+            '11:14 -  6:Link 6',
+            '_12:13 -  7:Link 7',
+            '15:16 -  8:Link 8'
+        ];
+        $this->assertMpttValues($expected, $table);
+    }
+
+    /**
      * Tests the find('path') method
      *
      * @return void
@@ -217,33 +258,31 @@ class TreeBehaviorTest extends TestCase
 
         // moveUp
         $table->moveUp($table->get(3), 1);
-        $result = $table->find('treeList')->toArray();
         $expected = [
-            1 => 'Link 1',
-            3 => '_Link 3',
-            4 => '__Link 4',
-            5 => '___Link 5',
-            2 => '_Link 2',
-            6 => 'Link 6',
-            7 => '_Link 7',
-            8 => 'Link 8'
+            ' 1:10 -  1:Link 1',
+            '_ 2: 7 -  3:Link 3',
+            '__ 3: 6 -  4:Link 4',
+            '___ 4: 5 -  5:Link 5',
+            '_ 8: 9 -  2:Link 2',
+            '11:14 -  6:Link 6',
+            '_12:13 -  7:Link 7',
+            '15:16 -  8:Link 8'
         ];
-        $this->assertSame($expected, $result);
+        $this->assertMpttValues($expected, $table);
 
         // moveDown
         $table->moveDown($table->get(6), 1);
-        $result2 = $table->find('treeList')->toArray();
-        $expected2 = [
-            1 => 'Link 1',
-            3 => '_Link 3',
-            4 => '__Link 4',
-            5 => '___Link 5',
-            2 => '_Link 2',
-            8 => 'Link 8',
-            6 => 'Link 6',
-            7 => '_Link 7',
+        $expected = [
+            ' 1:10 -  1:Link 1',
+            '_ 2: 7 -  3:Link 3',
+            '__ 3: 6 -  4:Link 4',
+            '___ 4: 5 -  5:Link 5',
+            '_ 8: 9 -  2:Link 2',
+            '11:12 -  8:Link 8',
+            '13:16 -  6:Link 6',
+            '_14:15 -  7:Link 7'
         ];
-        $this->assertSame($expected2, $result2);
+        $this->assertMpttValues($expected, $table);
     }
 
     /**
@@ -585,9 +624,21 @@ class TreeBehaviorTest extends TestCase
         $this->assertEquals(11, $entity->lft);
         $this->assertEquals(18, $entity->rght);
 
-        $result = $table->find()->order('lft')->hydrate(false);
-        $expected = [1, 6, 7, 8, 9, 10, 2, 3, 4, 5, 11];
-        $this->assertTreeNumbers($expected, $table);
+        $expected = [
+            ' 1:20 -  1:electronics',
+            '_ 2: 7 -  2:televisions',
+            '__ 3: 4 -  3:tube',
+            '__ 5: 6 -  4:lcd',
+            '_ 8:19 -  6:portable',
+            '__ 9:12 -  7:mp3',
+            '___10:11 -  8:flash',
+            '__13:14 -  9:cd',
+            '__15:16 - 10:radios',
+            '__17:18 -  5:plasma',
+            '___16:17 - 4:lcd',
+            '21:22 - 11:alien hardware'
+        ];
+        $this->assertMpttValues($expected, $table);
     }
 
     /**
@@ -645,8 +696,21 @@ class TreeBehaviorTest extends TestCase
         $this->assertEquals(18, $entity->rght);
 
         $result = $table->find()->order('lft')->hydrate(false);
-        $expected = [1, 2, 3, 4, 6, 7, 8, 9, 10, 5, 11];
-        $this->assertTreeNumbers($expected, $table);
+
+        $expected = [
+            ' 1:20 -  1:electronics',
+            '_ 2: 7 -  2:televisions',
+            '__ 3: 4 -  3:tube',
+            '__ 5: 6 -  4:lcd',
+            '_ 8:19 -  6:portable',
+            '__ 9:12 -  7:mp3',
+            '___10:11 -  8:flash',
+            '__13:14 -  9:cd',
+            '__15:16 - 10:radios',
+            '__17:18 -  5:plasma',
+            '21:22 - 11:alien hardware'
+        ];
+        $this->assertMpttValues($expected, $table);
     }
 
     /**
@@ -687,7 +751,7 @@ class TreeBehaviorTest extends TestCase
 
         $result = $table->find()->order('lft')->hydrate(false);
         $expected = [1, 6, 7, 8, 9, 10, 11, 2, 3, 4, 5];
-        $this->assertTreeNumbers($expected, $table);
+        $this->assertMpttValues($expected, $table);
     }
 
     /**
@@ -708,7 +772,7 @@ class TreeBehaviorTest extends TestCase
 
         $result = $table->find()->order('lft')->hydrate(false);
         $expected = [1, 6, 7, 8, 9, 10, 11, 2, 3, 4, 5];
-        $this->assertTreeNumbers($expected, $table);
+        $this->assertMpttValues($expected, $table);
     }
 
     /**
@@ -806,8 +870,21 @@ class TreeBehaviorTest extends TestCase
         $this->assertEquals(22, $entity->rght);
         $this->assertEquals(null, $entity->parent_id);
         $result = $table->find()->order('lft')->hydrate(false);
-        $expected = [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 10];
-        $this->assertTreeNumbers($expected, $table);
+        $expected = [
+            ' 1:18 -  1:electronics',
+            '_ 2: 9 -  2:televisions',
+            '__ 3: 4 -  3:tube',
+            '__ 5: 6 -  4:lcd',
+            '__ 7: 8 -  5:plasma',
+            '_10:17 -  6:portable',
+            '__11:14 -  7:mp3',
+            '___12:13 -  8:flash',
+            '__15:16 -  9:cd',
+            '19:20 - 11:alien hardware',
+            '21:22 - 10:radios'
+
+        ];
+        $this->assertMpttValues($expected, $table);
     }
 
     /**
@@ -825,8 +902,20 @@ class TreeBehaviorTest extends TestCase
         $this->assertEquals(22, $entity->rght);
         $this->assertEquals(null, $entity->parent_id);
         $result = $table->find()->order('lft')->hydrate(false);
-        $expected = [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 6];
-        $this->assertTreeNumbers($expected, $table);
+        $expected = [
+            ' 1:18 -  1:electronics',
+            '_ 2: 9 -  2:televisions',
+            '__ 3: 4 -  3:tube',
+            '__ 5: 6 -  4:lcd',
+            '__ 7: 8 -  5:plasma',
+            '_10:13 -  7:mp3',
+            '__11:12 -  8:flash',
+            '_14:15 -  9:cd',
+            '_16:17 - 10:radios',
+            '19:20 - 11:alien hardware',
+            '21:22 -  6:portable'
+        ];
+        $this->assertMpttValues($expected, $table);
     }
 
     /**
@@ -843,8 +932,21 @@ class TreeBehaviorTest extends TestCase
         $this->assertEquals(21, $entity->lft);
         $this->assertEquals(22, $entity->rght);
         $this->assertEquals(null, $entity->parent_id);
-        $expected = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 1];
-        $this->assertTreeNumbers($expected, $table);
+
+        $expected = [
+            ' 1: 8 -  2:televisions',
+            '_ 2: 3 -  3:tube',
+            '_ 4: 5 -  4:lcd',
+            '_ 6: 7 -  5:plasma',
+            ' 9:18 -  6:portable',
+            '_10:13 -  7:mp3',
+            '__11:12 -  8:flash',
+            '_14:15 -  9:cd',
+            '_16:17 - 10:radios',
+            '19:20 - 11:alien hardware',
+            '21:22 -  1:electronics'
+        ];
+        $this->assertMpttValues($expected, $table);
     }
 
     /**
@@ -948,23 +1050,46 @@ class TreeBehaviorTest extends TestCase
     }
 
     /**
-     * Custom assertion use to verify tha a tree is returned in the expected order
-     * and that it is still valid
+     * Assert MPTT values
      *
-     * @param array $expected The list of ids in the order they are expected
-     * @param \Cake\ORM\Table the table instance to use for comparing
+     * Custom assert method to make identifying the differences between expected
+     * and actual db state easier to identify.
+     *
+     * @param array $expected tree state to be expected
+     * @param \Cake\ORM\Table $table Table instance
+     * @param \Cake\ORM\Query $query Optional query object
      * @return void
      */
-    public function assertTreeNumbers($expected, $table)
+    public function assertMpttValues($expected, $table, $query = null)
     {
-        $result = $table->find()->order('lft')->hydrate(false);
-        $this->assertEquals($expected, $result->extract('id')->toArray());
-        $numbers = [];
-        $result->each(function ($v) use (&$numbers) {
-            $numbers[] = $v['lft'];
-            $numbers[] = $v['rght'];
-        });
-        sort($numbers);
-        $this->assertEquals(range(1, 22), $numbers);
+        $query = $query ?: $table->find();
+        $primaryKey = $table->primaryKey();
+        if (is_array($primaryKey)) {
+            $primaryKey = $primaryKey[0];
+        }
+        $displayField = $table->displayField();
+
+        $options = [
+            'valuePath' => function($item, $key, $iterator) use ($primaryKey, $displayField) {
+                return sprintf(
+                    '%s:%s - %s:%s',
+                    str_pad($item->lft, 2, ' ', STR_PAD_LEFT),
+                    str_pad($item->rght, 2, ' ', STR_PAD_LEFT),
+                    str_pad($item->$primaryKey, 2, ' ', STR_PAD_LEFT),
+                    $item->{$displayField}
+                );
+            }
+        ];
+        $result = array_values($query->find('treeList', $options)->toArray());
+
+        if (count($result) === count($expected)) {
+            $subExpected = array_diff($expected, $result);
+            if ($subExpected) {
+                $subResult = array_intersect_key($result, $subExpected);
+                $this->assertSame($subExpected, $subResult, 'Differences in the tree were found (lft:rght id:display-name)');
+            }
+        }
+
+        $this->assertSame($expected, $result, 'The tree is not the same (lft:rght id:display-name)');
     }
 }
