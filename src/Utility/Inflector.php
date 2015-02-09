@@ -606,7 +606,7 @@ class Inflector
      */
     public static function underscore($string)
     {
-        return static::normalize($string, '_');
+        return static::delimit(str_replace('-', '_', $string), '_');
     }
 
     /**
@@ -617,7 +617,7 @@ class Inflector
      */
     public static function dasherize($string)
     {
-        return static::normalize($string, '-');
+        return static::delimit(str_replace('_', '-', $string), '-');
     }
 
     /**
@@ -644,13 +644,13 @@ class Inflector
     }
 
     /**
-     * Takes the input string, and based on the replacement character converts to a normalized string
+     * Takes the input string, and based on the replacement character converts to a delimited string
      *
-     * @param string $string String to normalize
+     * @param string $string String to delimit
      * @param string $replacement the character to use as a delimiter
-     * @return string normalized string
+     * @return string delimited string
      */
-    public static function normalize($string, $replacement = '_')
+    public static function delimit($string, $replacement = '_')
     {
         $cacheKey = __FUNCTION__ . $replacement;
 

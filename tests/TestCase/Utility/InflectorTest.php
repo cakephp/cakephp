@@ -377,6 +377,7 @@ class InflectorTest extends TestCase
         $this->assertSame('test_thing', Inflector::underscore('testThing'));
         $this->assertSame('test_thing_extra', Inflector::underscore('TestThingExtra'));
         $this->assertSame('test_thing_extra', Inflector::underscore('testThingExtra'));
+        $this->assertSame('test_this_thing', Inflector::underscore('test-this-thing'));
 
         // Identical checks test the cache code path.
         $this->assertSame('test_thing', Inflector::underscore('TestThing'));
@@ -401,7 +402,7 @@ class InflectorTest extends TestCase
         $this->assertSame('test-thing', Inflector::dasherize('testThing'));
         $this->assertSame('test-thing-extra', Inflector::dasherize('TestThingExtra'));
         $this->assertSame('test-thing-extra', Inflector::dasherize('testThingExtra'));
-        $this->assertSame('test_this_thing', Inflector::dasherize('test_this_thing'), 'Should be unchanged');
+        $this->assertSame('test-this-thing', Inflector::dasherize('test_this_thing'));
 
         // Test stupid values
         $this->assertSame('', Inflector::dasherize(null));
