@@ -592,10 +592,8 @@ class TreeBehavior extends Behavior
             $this->_sync($nodeLeft - $nextNode->{$left}, '-', "BETWEEN {$nodeLeft} AND {$nodeRight}");
             $this->_sync($edge - $nextNode->{$left} - ($nodeRight - $nodeLeft), '-', "> {$edge}");
 
-            $shift = $node->{$right} - $nextNode->{$right};
-
-            $node->set($right, $node->{$left} + $width - $shift);
-            $node->set($left, $node->{$left} - $shift);
+            $node->set($left, $nextNode->{$left});
+            $node->set($right, $nextNode->{$left} + $width);
         }
 
         $node->dirty($left, false);
@@ -671,10 +669,8 @@ class TreeBehavior extends Behavior
             $this->_sync($nextNode->{$left} - $nodeLeft, '-', "BETWEEN {$nextNode->{$left}} AND {$nextNode->{$right}}");
             $this->_sync($edge - $nodeLeft - ($nextNode->{$right} - $nextNode->{$left}), '-', "> {$edge}");
 
-            $shift = $nextNode->{$right} - $node->{$right};
-
-            $node->set($right, $node->{$left} + $width + $shift);
-            $node->set($left, $node->{$left} + $shift);
+            $node->set($left, $nextNode->{$right} - $width);
+            $node->set($right, $nextNode->{$right});
         }
 
         $node->dirty($left, false);
