@@ -16,6 +16,7 @@ namespace Cake\Routing\Route;
 
 use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
+use Cake\Network\Exception\NotFoundException;
 
 /**
  * This route class will transparently inflect the controller, action and plugin
@@ -49,28 +50,44 @@ class DashedRoute extends Route
         if (!$params) {
             return false;
         }
-        if (!empty($params['controller'])) {
-            $params['controller'] = Inflector::camelize(str_replace(
-                '-',
-                '_',
-                $params['controller']
-            ));
-        }
         if (!empty($params['plugin'])) {
-            $params['plugin'] = Inflector::camelize(str_replace(
-                '-',
-                '_',
-                $params['plugin']
-            ));
+            $params['plugin'] = $this->_in($params['plugin']);
+        }
+        if (!empty($params['controller'])) {
+            $value = $params['controller'];
+            $params['controller'] = $this->_in($params['controller']);
+            if ($this->_out($params['controller']) !== $value) {
+                throw new NotFoundException();
+            }
         }
         if (!empty($params['action'])) {
-            $params['action'] = Inflector::variable(str_replace(
-                '-',
-                '_',
-                $params['action']
-            ));
+            $value = $params['action'];
+            $params['action'] = $this->_in($params['action']);
+            if ($this->_out($params['action']) !== $value) {
+                throw new NotFoundException();
+            }
         }
         return $params;
+    }
+
+    /**
+     * Formats URL part coming in
+     *
+     * @param $string String
+     * @return string Result
+     */
+    public function _in($string) {
+        return Inflector::camelize(str_replace('-', '_', $string));
+    }
+
+    /**
+     * Formats URL part going out
+     *
+     * @param $string String
+     * @return string Result
+     */
+    public function _out($string) {
+        return Inflector::dasherize($string);
     }
 
     /**
