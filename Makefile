@@ -31,7 +31,7 @@ help:
 	@echo "================"
 	@echo ""
 	@echo "release"
-	@echo "  Create a new release of CakePHP. Requires the VERSION and GITHUB_USER parameter."
+	@echo "  Create a new release of CakePHP. Requires the VERSION and GITHUB_USER, or GITHUB_TOKEN parameter."
 	@echo "  Packages up a new app skeleton tarball and uploads it to github."
 	@echo ""
 	@echo "package"
