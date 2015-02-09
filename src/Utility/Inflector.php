@@ -576,21 +576,21 @@ class Inflector
     }
 
     /**
-     * Returns the given lower_case_and_underscored_word as a CamelCased word.
+     * Returns the input lower_case_delimited_string as a CamelCasedString.
      *
-     * @param string $string Word to camelize
-     * @param string $replacement the delimiter in the input string
-     * @return string Camelized word. LikeThis.
+     * @param string $string String to camelize
+     * @param string $delimiter the delimiter in the input string
+     * @return string CamelizedStringLikeThis.
      * @link http://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-camelcase-and-under-scored-forms
      */
-    public static function camelize($string, $replacement = '_')
+    public static function camelize($string, $delimiter = '_')
     {
-        $cacheKey = __FUNCTION__ . $replacement;
+        $cacheKey = __FUNCTION__ . $delimiter;
 
         $result = static::_cache($cacheKey, $string);
 
         if ($result === false) {
-            $result = str_replace(' ', '', static::humanize($string, $replacement));
+            $result = str_replace(' ', '', static::humanize($string, $delimiter));
             static::_cache(__FUNCTION__, $string, $result);
         }
 
@@ -598,10 +598,12 @@ class Inflector
     }
 
     /**
-     * Returns the given camelCasedWord as an underscored_word.
+     * Returns the input CamelCasedString as an underscored_string.
      *
-     * @param string $camelCasedWord Camel-cased word to be "underscorized"
-     * @return string Underscore-syntaxed version of the $camelCasedWord
+     * Also replaces dashes with underscores
+     *
+     * @param string $string CamelCasedString to be "underscorized"
+     * @return string underscore_version of the input string
      * @link http://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-camelcase-and-under-scored-forms
      */
     public static function underscore($string)
@@ -610,10 +612,12 @@ class Inflector
     }
 
     /**
-     * Returns the given CamelCasedWordGroup as an dashed-word-group.
+     * Returns the input CamelCasedString as an dashed-string.
+     *
+     * Also replaces underscores with dashes
      *
      * @param string $string The string to dasherize.
-     * @return string Dashed version of the word group
+     * @return string Dashed version of the input string
      */
     public static function dasherize($string)
     {
@@ -621,22 +625,22 @@ class Inflector
     }
 
     /**
-     * Returns the given underscored_word_group as a Human Readable Word Group.
+     * Returns the input lower_case_delimited_string as 'A Human Readable String'.
      * (Underscores are replaced by spaces and capitalized following words.)
      *
-     * @param string $string String to be made more readable
-     * @param string $replacement the character to replace with a space
+     * @param string $string String to be humanized
+     * @param string $delimiter the character to replace with a space
      * @return string Human-readable string
      * @link http://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-human-readable-forms
      */
-    public static function humanize($string, $replacement = '_')
+    public static function humanize($string, $delimiter = '_')
     {
-        $cacheKey = __FUNCTION__ . $replacement;
+        $cacheKey = __FUNCTION__ . $delimiter;
 
         $result = static::_cache($cacheKey, $string);
 
         if ($result === false) {
-            $result = ucwords(str_replace($replacement, ' ', $string));
+            $result = ucwords(str_replace($delimiter, ' ', $string));
             static::_cache($cacheKey, $string, $result);
         }
 
@@ -644,20 +648,20 @@ class Inflector
     }
 
     /**
-     * Takes the input string, and based on the replacement character converts to a delimited string
+     * Expects a CamelCasedInputString, and produces a lower_case_delimited_string
      *
      * @param string $string String to delimit
-     * @param string $replacement the character to use as a delimiter
+     * @param string $delimiter the character to use as a delimiter
      * @return string delimited string
      */
-    public static function delimit($string, $replacement = '_')
+    public static function delimit($string, $delimiter = '_')
     {
-        $cacheKey = __FUNCTION__ . $replacement;
+        $cacheKey = __FUNCTION__ . $delimiter;
 
         $result = static::_cache($cacheKey, $string);
 
         if ($result === false) {
-            $result = strtolower(preg_replace('/(?<=\\w)([A-Z])/', $replacement . '\\1', $string));
+            $result = strtolower(preg_replace('/(?<=\\w)([A-Z])/', $delimiter . '\\1', $string));
             static::_cache($cacheKey, $string, $result);
         }
 
