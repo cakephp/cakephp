@@ -560,6 +560,9 @@ class TreeBehavior extends Behavior
         if (!$number) {
             return false;
         }
+        if ($number < 0) {
+            return $node;
+        }
 
         $config = $this->config();
         list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
@@ -640,6 +643,9 @@ class TreeBehavior extends Behavior
     {
         if (!$number) {
             return false;
+        }
+        if ($number < 0) {
+            return $node;
         }
 
         $config = $this->config();
