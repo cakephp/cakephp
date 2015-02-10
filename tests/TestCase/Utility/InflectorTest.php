@@ -255,11 +255,11 @@ class InflectorTest extends TestCase
     }
 
     /**
-     * testInflectorSlug method
+     * testSlug method
      *
      * @return void
      */
-    public function testInflectorSlug()
+    public function testSlug()
     {
         $result = Inflector::slug('Foo Bar: Not just for breakfast any-more');
         $expected = 'Foo-Bar-Not-just-for-breakfast-any-more';
@@ -326,7 +326,7 @@ class InflectorTest extends TestCase
      *
      * @return void
      */
-    public function testInflectorSlugCharList()
+    public function testSlugCharList()
     {
         foreach (self::$maps as $language => $list) {
             foreach ($list as $from => $to) {
@@ -337,11 +337,11 @@ class InflectorTest extends TestCase
     }
 
     /**
-     * testInflectorSlugWithMap method
+     * testSlugWithMap method
      *
      * @return void
      */
-    public function testInflectorSlugWithMap()
+    public function testSlugWithMap()
     {
         Inflector::rules('transliteration', ['r' => '1']);
         $result = Inflector::slug('replace every r');
@@ -354,11 +354,11 @@ class InflectorTest extends TestCase
     }
 
     /**
-     * testInflectorSlugWithMapOverridingDefault method
+     * testSlugWithMapOverridingDefault method
      *
      * @return void
      */
-    public function testInflectorSlugWithMapOverridingDefault()
+    public function testSlugWithMapOverridingDefault()
     {
         Inflector::rules('transliteration', ['å' => 'aa', 'ø' => 'oe']);
         $result = Inflector::slug('Testing æ ø å', '-');
@@ -367,16 +367,17 @@ class InflectorTest extends TestCase
     }
 
     /**
-     * testInflectorUnderscore method
+     * testUnderscore method
      *
      * @return void
      */
-    public function testInflectorUnderscore()
+    public function testUnderscore()
     {
         $this->assertSame('test_thing', Inflector::underscore('TestThing'));
         $this->assertSame('test_thing', Inflector::underscore('testThing'));
         $this->assertSame('test_thing_extra', Inflector::underscore('TestThingExtra'));
         $this->assertSame('test_thing_extra', Inflector::underscore('testThingExtra'));
+        $this->assertSame('test_this_thing', Inflector::underscore('test-this-thing'));
 
         // Identical checks test the cache code path.
         $this->assertSame('test_thing', Inflector::underscore('TestThing'));
@@ -408,6 +409,28 @@ class InflectorTest extends TestCase
         $this->assertSame('', Inflector::dasherize(''));
         $this->assertSame('0', Inflector::dasherize(0));
         $this->assertSame('', Inflector::dasherize(false));
+    }
+
+    /**
+     * Demonstrate the expected output for bad inputs
+     *
+     * @return void
+     */
+    public function testCamelize()
+    {
+        $this->assertSame('TestThing', Inflector::camelize('test_thing'));
+        $this->assertSame('Test-thing', Inflector::camelize('test-thing'));
+        $this->assertSame('TestThing', Inflector::camelize('test thing'));
+
+        $this->assertSame('Test_thing', Inflector::camelize('test_thing', '-'));
+        $this->assertSame('TestThing', Inflector::camelize('test-thing', '-'));
+        $this->assertSame('TestThing', Inflector::camelize('test thing', '-'));
+
+        $this->assertSame('Test_thing', Inflector::camelize('test_thing', ' '));
+        $this->assertSame('Test-thing', Inflector::camelize('test-thing', ' '));
+        $this->assertSame('TestThing', Inflector::camelize('test thing', ' '));
+
+        $this->assertSame('TestPlugin.TestPluginComments', Inflector::camelize('TestPlugin.TestPluginComments'));
     }
 
     /**
