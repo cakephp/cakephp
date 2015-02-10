@@ -121,6 +121,13 @@ class Table implements RepositoryInterface, EventListenerInterface
     use EventManagerTrait;
 
     /**
+     * Name of default validation set.
+     *
+     * @var string
+     */
+    const DEFAULT_VALIDATOR = 'default';
+
+    /**
      * Name of the table as it can be found in the database
      *
      * @var string
@@ -213,6 +220,9 @@ class Table implements RepositoryInterface, EventListenerInterface
      * - eventManager: An instance of an event manager to use for internal events
      * - behaviors: A BehaviorRegistry. Generally not used outside of tests.
      * - associations: An AssociationCollection instance.
+     * - validator: A Validator instance which is assigned as the "default"
+     *   validation set, or an associative array, where key is the name of the
+     *   validation set and value the Validator instance.
      *
      * @param array $config List of options for this table
      */
@@ -242,6 +252,15 @@ class Table implements RepositoryInterface, EventListenerInterface
         }
         if (!empty($config['associations'])) {
             $associations = $config['associations'];
+        }
+        if (!empty($config['validator'])) {
+            if (!is_array($config['validator'])) {
+                $this->validator(self::DEFAULT_VALIDATOR, $config['validator']);
+            } else {
+                foreach ($config['validator'] as $name => $validator) {
+                    $this->validator($name, $validator);
+                }
+            }
         }
         $this->_eventManager = $eventManager ?: new EventManager();
         $this->_behaviors = $behaviors ?: new BehaviorRegistry($this);
@@ -1130,7 +1149,7 @@ class Table implements RepositoryInterface, EventListenerInterface
      *   use null to get a validator.
      * @return \Cake\Validation\Validator
      */
-    public function validator($name = 'default', Validator $validator = null)
+    public function validator($name = self::DEFAULT_VALIDATOR, Validator $validator = null)
     {
         if ($validator === null && isset($this->_validators[$name])) {
             return $this->_validators[$name];
