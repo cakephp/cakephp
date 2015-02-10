@@ -370,7 +370,7 @@ class Table implements RepositoryInterface, EventListenerInterface
             $this->_repositoryAlias = $repositoryAlias;
         }
         if ($this->_repositoryAlias === null) {
-            $this->_repositoryAlias = Inflector::camelize($this->alias());
+            $this->_repositoryAlias = $this->alias();
         }
         return $this->_repositoryAlias;
     }
