@@ -593,9 +593,12 @@ class TreeBehavior extends Behavior
         $leftBoundary = $targetLeft;
         $rightBoundary = $nodeLeft - 1;
 
-        $this->_sync($edge - $nodeLeft + 1, '+', "BETWEEN {$nodeLeft} AND {$nodeRight}");
-        $this->_sync($nodeRight - $nodeLeft + 1, '+', "BETWEEN {$leftBoundary} AND {$rightBoundary}");
-        $this->_sync($edge - $leftBoundary + 1, '-', "> {$edge}");
+        $nodeToEdge = $edge - $nodeLeft + 1;
+        $shift = $nodeRight - $nodeLeft + 1;
+        $nodeToHole = $edge - $leftBoundary + 1;
+        $this->_sync($nodeToEdge, '+', "BETWEEN {$nodeLeft} AND {$nodeRight}");
+        $this->_sync($shift, '+', "BETWEEN {$leftBoundary} AND {$rightBoundary}");
+        $this->_sync($nodeToHole, '-', "> {$edge}");
 
         $node->set($left, $targetLeft);
         $node->set($right, $targetLeft + ($nodeRight - $nodeLeft));
@@ -672,9 +675,12 @@ class TreeBehavior extends Behavior
         $leftBoundary = $nodeRight + 1;
         $rightBoundary = $targetRight;
 
-        $this->_sync($edge - $nodeLeft + 1, '+', "BETWEEN {$nodeLeft} AND {$nodeRight}");
-        $this->_sync($nodeRight - $nodeLeft + 1, '-', "BETWEEN {$leftBoundary} AND {$rightBoundary}");
-        $this->_sync($edge - $nodeLeft - ($rightBoundary - $leftBoundary), '-', "> {$edge}");
+        $nodeToEdge = $edge - $nodeLeft + 1;
+        $shift = $nodeRight - $nodeLeft + 1;
+        $nodeToHole = $edge - $nodeLeft - ($rightBoundary - $leftBoundary);
+        $this->_sync($nodeToEdge, '+', "BETWEEN {$nodeLeft} AND {$nodeRight}");
+        $this->_sync($shift, '-', "BETWEEN {$leftBoundary} AND {$rightBoundary}");
+        $this->_sync($nodeToHole, '-', "> {$edge}");
 
         $node->set($left, $targetRight - ($nodeRight - $nodeLeft));
         $node->set($right, $targetRight);
