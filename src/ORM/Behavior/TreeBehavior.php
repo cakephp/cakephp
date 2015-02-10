@@ -557,47 +557,52 @@ class TreeBehavior extends Behavior
      */
     protected function _moveUp($node, $number)
     {
-        $config = $this->config();
-        list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
-
         if (!$number) {
             return false;
         }
 
-        $parentLeft = 0;
-        if ($node->get($parent)) {
-            $parentLeft = $this->_getNode($node->get($parent))->get($left);
-        }
+        $config = $this->config();
+        list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
+        list($nodeParent, $nodeLeft, $nodeRight) = array_values($node->extract([$parent, $left, $right]));
 
-        $edge = $this->_getMax();
-        $width = $node->{$right} - $node->{$left};
-
-        while ($number-- > 0) {
-            list($nodeLeft, $nodeRight) = array_values($node->extract([$left, $right]));
-
-            if ($parentLeft && ($nodeLeft - 1 == $parentLeft)) {
-                break;
-            }
-
-            $nextNode = $this->_scope($this->_table->find())
+        $targetNode = null;
+        if ($number !== true) {
+            $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
-                ->where([$right => ($nodeLeft - 1)])
+                ->where(["$parent IS" => $nodeParent, "$right <" => $nodeLeft])
+                ->order([$left => 'DESC'])
+                ->offset($number - 1)
+                ->limit(1)
+                ->first();
+        }
+        if (!$targetNode) {
+            $targetNode = $this->_scope($this->_table->find())
+                ->select([$left, $right])
+                ->where(["$parent IS" => $nodeParent, "$right <" => $nodeLeft])
+                ->order([$left => 'ASC'])
+                ->limit(1)
                 ->first();
 
-            if (!$nextNode) {
-                break;
+            if (!$targetNode) {
+                return $node;
             }
-
-            $this->_sync($edge - $nextNode->{$left} + 1, '+', "BETWEEN {$nextNode->{$left}} AND {$nextNode->{$right}}");
-            $this->_sync($nodeLeft - $nextNode->{$left}, '-', "BETWEEN {$nodeLeft} AND {$nodeRight}");
-            $this->_sync($edge - $nextNode->{$left} - ($nodeRight - $nodeLeft), '-', "> {$edge}");
-
-            $node->set($left, $nextNode->{$left});
-            $node->set($right, $nextNode->{$left} + $width);
         }
+
+        list($targetLeft, $targetRight) = array_values($targetNode->extract([$left, $right]));
+        $edge = $this->_getMax();
+        $leftBoundary = $targetLeft;
+        $rightBoundary = $nodeLeft - 1;
+
+        $this->_sync($edge - $nodeLeft + 1, '+', "BETWEEN {$nodeLeft} AND {$nodeRight}");
+        $this->_sync($nodeRight - $nodeLeft + 1, '+', "BETWEEN {$leftBoundary} AND {$rightBoundary}");
+        $this->_sync($edge - $leftBoundary + 1, '-', "> {$edge}");
+
+        $node->set($left, $targetLeft);
+        $node->set($right, $targetLeft + ($nodeRight - $nodeLeft));
 
         $node->dirty($left, false);
         $node->dirty($right, false);
+
         return $node;
     }
 
