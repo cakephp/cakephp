@@ -136,6 +136,30 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test redirecting and integration tests.
+     *
+     * @return void
+     */
+    public function testRedirect()
+    {
+        $this->post('/tests_apps/redirect_to');
+        $this->assertResponseSuccess();
+        $this->assertResponseCode(302);
+    }
+
+    /**
+     * Test redirecting and integration tests.
+     *
+     * @return void
+     */
+    public function testRedirectPermanent()
+    {
+        $this->post('/tests_apps/redirect_to_permanent');
+        $this->assertResponseSuccess();
+        $this->assertResponseCode(301);
+    }
+
+    /**
      * Test the responseOk status assertion
      *
      * @return void

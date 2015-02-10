@@ -53,4 +53,9 @@ class TestsAppsController extends AppController
     {
         return $this->redirect('http://cakephp.org');
     }
+
+    public function redirect_to_permanent()
+    {
+        return $this->redirect('http://cakephp.org', 301);
+    }
 }
