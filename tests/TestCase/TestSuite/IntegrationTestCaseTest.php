@@ -130,6 +130,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     public function testPostAndErrorHandling()
     {
         $this->post('/request_action/error_method');
+        $this->assertResponseNotEmpty();
         $this->assertResponseContains('Not there or here');
         $this->assertResponseContains('<!DOCTYPE html>');
     }
@@ -176,6 +177,12 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->_response->statusCode(204);
         $this->assertResponseOk();
 
+        $this->_response->statusCode(202);
+        $this->assertResponseSuccess();
+
+        $this->_response->statusCode(302);
+        $this->assertResponseSuccess();
+
         $this->_response->statusCode(400);
         $this->assertResponseError();
 
@@ -205,6 +212,8 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->assertRedirect();
         $this->assertRedirect('/tasks/index');
         $this->assertRedirect(['controller' => 'Tasks', 'action' => 'index']);
+
+        $this->assertResponseEmpty();
     }
 
     /**

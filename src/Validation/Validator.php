@@ -99,7 +99,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
             $keyPresent = array_key_exists($name, $data);
 
             if (!$keyPresent && !$this->_checkPresence($field, $newRecord)) {
-                $errors[$name][] = isset($this->_presenceMessages[$name])
+                $errors[$name]['_required'] = isset($this->_presenceMessages[$name])
                     ? $this->_presenceMessages[$name]
                     : $requiredMessage;
                 continue;
@@ -115,7 +115,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
             $isEmpty = $this->_fieldIsEmpty($data[$name]);
 
             if (!$canBeEmpty && $isEmpty) {
-                $errors[$name][] = isset($this->_allowEmptyMessages[$name])
+                $errors[$name]['_empty'] = isset($this->_allowEmptyMessages[$name])
                     ? $this->_allowEmptyMessages[$name]
                     : $emptyMessage;
                 continue;
@@ -354,7 +354,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
      * ### Example:
      *
      * ```
-     * $validator->allowEmpty('email'); // Email cannot be empty
+     * $validator->allowEmpty('email'); // Email can be empty
      * $validator->allowEmpty('email', 'create'); // Email can be empty on create
      * $validator->allowEmpty('email', 'update'); // Email can be empty on update
      * ```
@@ -368,6 +368,8 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
      *  return !$context['newRecord'] || $context['data']['role'] === 'admin';
      * });
      * ```
+     *
+     * This method will correctly detect empty file uploads and date/time/datetime fields.
      *
      * Because this and `notEmpty()` modify the same internal state, the last
      * method called will take precedence.
@@ -524,6 +526,14 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
     {
         if (empty($data) && $data !== '0' && $data !== false && $data !== 0 && $data !== 0.0) {
             return true;
+        }
+        $isArray = is_array($data);
+        if ($isArray && (isset($data['year']) || isset($data['hour']))) {
+            $value = implode('', $data);
+            return strlen($value) === 0;
+        }
+        if ($isArray && isset($data['name'], $data['type'], $data['tmp_name'], $data['error'])) {
+            return (int)$data['error'] === UPLOAD_ERR_NO_FILE;
         }
         return false;
     }

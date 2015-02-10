@@ -103,8 +103,15 @@ class FlashComponent extends Component
      * Magic method for verbose flash methods based on element names.
      *
      * For example: $this->Flash->success('My message') would use the
-     * success.ctp element under `App/Template/Element/Flash` for rendering the
+     * success.ctp element under `src/Template/Element/Flash` for rendering the
      * flash message.
+     *
+     * Note that the parameter `element` will be always overridden. In order to call a
+     * specific element from a plugin, you should set the `plugin` option in $args.
+     *
+     * For example: `$this->Flash->warning('My message', ['plugin' => 'PluginName'])` would
+     * use the warning.ctp element under `plugins/PluginName/src/Template/Element/Flash` for
+     * rendering the flash message.
      *
      * @param string $name Element name to use.
      * @param array $args Parameters to pass when calling `FlashComponent::set()`.
@@ -113,13 +120,19 @@ class FlashComponent extends Component
      */
     public function __call($name, $args)
     {
-        $options = ['element' => Inflector::underscore($name)];
+        $element = Inflector::underscore($name);
 
         if (count($args) < 1) {
             throw new InternalErrorException('Flash message missing.');
         }
 
+        $options = ['element' => $element];
+
         if (!empty($args[1])) {
+            if (!empty($args[1]['plugin'])) {
+                $options = ['element' => $args[1]['plugin'] . '.' . $element];
+                unset($args[1]['plugin']);
+            }
             $options += (array)$args[1];
         }
 

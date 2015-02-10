@@ -267,10 +267,10 @@ abstract class IntegrationTestCase extends TestCase
         $request = $this->_buildRequest($url, $method, $data);
         $response = new Response();
         $dispatcher = DispatcherFactory::create();
-        $dispatcher->eventManager()->attach(
-            [$this, 'controllerSpy'],
+        $dispatcher->eventManager()->on(
             'Dispatcher.beforeDispatch',
-            ['priority' => 999]
+            ['priority' => 999],
+            [$this, 'controllerSpy']
         );
         try {
             $dispatcher->dispatch($request, $response);
@@ -296,12 +296,12 @@ abstract class IntegrationTestCase extends TestCase
         }
         $this->_controller = $event->data['controller'];
         $events = $this->_controller->eventManager();
-        $events->attach(function ($event, $viewFile) {
+        $events->on('View.beforeRender', function ($event, $viewFile) {
             $this->_viewName = $viewFile;
-        }, 'View.beforeRender');
-        $events->attach(function ($event, $viewFile) {
+        });
+        $events->on('View.beforeLayout', function ($event, $viewFile) {
             $this->_layoutName = $viewFile;
-        }, 'View.beforeLayout');
+        });
     }
 
     /**
@@ -386,6 +386,16 @@ abstract class IntegrationTestCase extends TestCase
     public function assertResponseOk()
     {
         $this->_assertStatus(200, 204, 'Status code is not between 200 and 204');
+    }
+
+    /**
+     * Asserts that the response status code is in the 2xx/3xx range.
+     *
+     * @return void
+     */
+    public function assertResponseSuccess()
+    {
+        $this->_assertStatus(200, 308, 'Status code is not between 200 and 308');
     }
 
     /**
@@ -567,6 +577,33 @@ abstract class IntegrationTestCase extends TestCase
             $this->fail('No response set, cannot assert content. ' . $message);
         }
         $this->assertNotContains($content, (string)$this->_response->body(), $message);
+    }
+
+    /**
+     * Assert response content is not empty.
+     *
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertResponseNotEmpty($message = '')
+    {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert content. ' . $message);
+        }
+        $this->assertNotEmpty((string)$this->_response->body(), $message);
+    }
+    /**
+     * Assert response content is empty.
+     *
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertResponseEmpty($message = '')
+    {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert content. ' . $message);
+        }
+        $this->assertEmpty((string)$this->_response->body(), $message);
     }
 
     /**

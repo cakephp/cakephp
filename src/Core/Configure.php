@@ -134,7 +134,7 @@ class Configure
         if (empty($var)) {
             return false;
         }
-        return Hash::get(static::$_values, $var) !== null;
+        return static::read($var) !== null;
     }
 
     /**
@@ -176,7 +176,7 @@ class Configure
             return $value;
         }
         $value = Hash::get(static::$_values, $var);
-        static::$_values = Hash::remove(static::$_values, $var);
+        static::delete($var);
         return $value;
     }
 

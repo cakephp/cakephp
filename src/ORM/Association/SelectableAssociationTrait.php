@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM\Association;
 
+use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\TupleComparison;
 
@@ -141,7 +142,7 @@ trait SelectableAssociationTrait
     public function _addFilteringJoin($query, $key, $subquery)
     {
         $filter = [];
-        $aliasedTable = $subquery->repository()->alias();
+        $aliasedTable = $this->source()->alias();
 
         foreach ($subquery->clause('select') as $aliasedField => $field) {
             $filter[] = new IdentifierExpression($field);
@@ -239,8 +240,9 @@ trait SelectableAssociationTrait
             $keys = (array)$this->foreignKey();
         }
 
-        $fields = $query->aliasFields($keys);
-        return $filterQuery->select($fields, true);
+        $fields = $query->aliasFields($keys, $this->source()->alias());
+        $filterQuery->select($fields, true)->group(array_values($fields));
+        return $filterQuery;
     }
 
     /**

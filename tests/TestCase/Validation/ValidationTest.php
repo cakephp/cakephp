@@ -1559,6 +1559,31 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * test time validation when passing an array
+     *
+     * @return void
+     */
+    public function testTimeArray()
+    {
+        $date = ['hour' => 13, 'minute' => 14, 'second' => 15];
+        $this->assertTrue(Validation::time($date));
+
+        $date = [
+            'hour' => 1, 'minute' => 14, 'second' => 15,
+            'meridian' => 'am'
+        ];
+        $this->assertTrue(Validation::time($date));
+
+        $date = [
+            'hour' => 'farts', 'minute' => 'farts'
+        ];
+        $this->assertFalse(Validation::time($date));
+
+        $date = [];
+        $this->assertFalse(Validation::time($date));
+    }
+
+    /**
      * testBoolean method
      *
      * @return void
@@ -2485,5 +2510,30 @@ class ValidationTest extends TestCase
         ];
         $options = [];
         $this->assertTrue(Validation::uploadedFile($file, $options), 'Wrong order');
+    }
+
+    /**
+     * Test the compareWith method.
+     *
+     * @return void
+     */
+    public function testCompareWith()
+    {
+        $context = [
+            'data' => [
+                'other' => 'a value'
+            ]
+        ];
+        $this->assertTrue(Validation::compareWith('a value', 'other', $context));
+
+        $context = [
+            'data' => [
+                'other' => 'different'
+            ]
+        ];
+        $this->assertFalse(Validation::compareWith('a value', 'other', $context));
+
+        $context = [];
+        $this->assertFalse(Validation::compareWith('a value', 'other', $context));
     }
 }

@@ -827,7 +827,7 @@ abstract class Association
      * the source table.
      *
      * The required way of passing related source records is controlled by "strategy"
-     * By default the subquery strategy is used, which requires a query on the source
+     * When the subquery strategy is used it will require a query on the source table.
      * When using the select strategy, the list of primary keys will be used.
      *
      * Returns a closure that should be run for each record returned in a specific

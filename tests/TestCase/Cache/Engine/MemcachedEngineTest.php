@@ -123,7 +123,9 @@ class MemcachedEngineTest extends TestCase
             'password' => null,
             'groups' => [],
             'serialize' => 'php',
-            'options' => []
+            'options' => [],
+            'host' => null,
+            'port' => null,
         ];
         $this->assertEquals($expecting, $config);
     }

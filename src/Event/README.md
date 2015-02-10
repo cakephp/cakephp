@@ -15,11 +15,13 @@ of the action.
 use Cake\Event\Event;
 use Cake\Event\EventManagerTrait;
 
-class Orders {
+class Orders
+{
 
 	use EventManagerTrait;
 
-	public function placeOrder($order) {
+	public function placeOrder($order)
+	{
 		$this->doStuff();
 		$event = new Event('Orders.afterPlace', $this, [
 			'order' => $order
@@ -29,7 +31,7 @@ class Orders {
 }
 
 $orders = new Orders();
-$orders->eventManager()->attach(function ($event) {
+$orders->eventManager()->on(function ($event) {
 	// Do something after the order was placed
 	...
 }, 'Orders.afterPlace');

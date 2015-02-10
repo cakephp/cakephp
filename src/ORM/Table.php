@@ -121,6 +121,13 @@ class Table implements RepositoryInterface, EventListenerInterface
     use EventManagerTrait;
 
     /**
+     * Name of default validation set.
+     *
+     * @var string
+     */
+    const DEFAULT_VALIDATOR = 'default';
+
+    /**
      * Name of the table as it can be found in the database
      *
      * @var string
@@ -213,6 +220,9 @@ class Table implements RepositoryInterface, EventListenerInterface
      * - eventManager: An instance of an event manager to use for internal events
      * - behaviors: A BehaviorRegistry. Generally not used outside of tests.
      * - associations: An AssociationCollection instance.
+     * - validator: A Validator instance which is assigned as the "default"
+     *   validation set, or an associative array, where key is the name of the
+     *   validation set and value the Validator instance.
      *
      * @param array $config List of options for this table
      */
@@ -243,12 +253,21 @@ class Table implements RepositoryInterface, EventListenerInterface
         if (!empty($config['associations'])) {
             $associations = $config['associations'];
         }
+        if (!empty($config['validator'])) {
+            if (!is_array($config['validator'])) {
+                $this->validator(static::DEFAULT_VALIDATOR, $config['validator']);
+            } else {
+                foreach ($config['validator'] as $name => $validator) {
+                    $this->validator($name, $validator);
+                }
+            }
+        }
         $this->_eventManager = $eventManager ?: new EventManager();
         $this->_behaviors = $behaviors ?: new BehaviorRegistry($this);
         $this->_associations = $associations ?: new AssociationCollection();
 
         $this->initialize($config);
-        $this->_eventManager->attach($this);
+        $this->_eventManager->on($this);
         $this->dispatchEvent('Model.initialize');
     }
 
@@ -273,7 +292,8 @@ class Table implements RepositoryInterface, EventListenerInterface
      * define validation and do any other initialization logic you need.
      *
      * ```
-     *  public function initialize(array $config) {
+     *  public function initialize(array $config)
+     *  {
      *      $this->belongsTo('Users');
      *      $this->belongsToMany('Tagging.Tags');
      *      $this->primaryKey('something_else');
@@ -572,7 +592,7 @@ class Table implements RepositoryInterface, EventListenerInterface
      * Check if a behavior with the given alias has been loaded.
      *
      * @param string $name The behavior alias to check.
-     * @return array
+     * @return bool
      */
     public function hasBehavior($name)
     {
@@ -1100,7 +1120,8 @@ class Table implements RepositoryInterface, EventListenerInterface
      * you will need to create a method in your Table subclass as follows:
      *
      * ```
-     * public function validationForSubscription($validator) {
+     * public function validationForSubscription($validator)
+     * {
      *  return $validator
      *  ->add('email', 'valid-email', ['rule' => 'email'])
      *  ->add('password', 'valid', ['rule' => 'notEmpty'])
@@ -1128,7 +1149,7 @@ class Table implements RepositoryInterface, EventListenerInterface
      *   use null to get a validator.
      * @return \Cake\Validation\Validator
      */
-    public function validator($name = 'default', Validator $validator = null)
+    public function validator($name = self::DEFAULT_VALIDATOR, Validator $validator = null)
     {
         if ($validator === null && isset($this->_validators[$name])) {
             return $this->_validators[$name];
@@ -1203,6 +1224,8 @@ class Table implements RepositoryInterface, EventListenerInterface
      *   to be saved. It is possible to provide different options for saving on associated
      *   table objects using this key by making the custom options the array value.
      *   If false no associated records will be saved. (default: true)
+     * - checkExisting: Whether or not to check if the entity already exists, assuming that the
+     *   entity is marked as not new, and the primary key has been set.
      *
      * ### Events
      *
@@ -1268,7 +1291,8 @@ class Table implements RepositoryInterface, EventListenerInterface
         $options = new ArrayObject($options + [
             'atomic' => true,
             'associated' => true,
-            'checkRules' => true
+            'checkRules' => true,
+            'checkExisting' => true
         ]);
 
         if ($entity->errors()) {
@@ -1303,7 +1327,7 @@ class Table implements RepositoryInterface, EventListenerInterface
     {
         $primaryColumns = (array)$this->primaryKey();
 
-        if ($primaryColumns && $entity->isNew() && $entity->has($primaryColumns)) {
+        if ($options['checkExisting'] && $primaryColumns && $entity->isNew() && $entity->has($primaryColumns)) {
             $alias = $this->alias();
             $conditions = [];
             foreach ($entity->extract($primaryColumns) as $k => $v) {

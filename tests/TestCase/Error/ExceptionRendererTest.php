@@ -137,6 +137,14 @@ class MissingWidgetThingException extends NotFoundException
 }
 
 /**
+ * Exception class for testing app error handlers and custom errors.
+ *
+ */
+class MissingWidgetThing extends \Exception
+{
+}
+
+/**
  * ExceptionRendererTest class
  *
  */
@@ -615,6 +623,19 @@ class ExceptionRendererTest extends TestCase
         foreach ($patterns as $pattern) {
             $this->assertRegExp($pattern, $result);
         }
+    }
+
+    /**
+     * Test that class names not ending in Exception are not mangled.
+     *
+     * @return void
+     */
+    public function testExceptionNameMangling()
+    {
+        $exceptionRenderer = new MyCustomExceptionRenderer(new MissingWidgetThing());
+
+        $result = $exceptionRenderer->render()->body();
+        $this->assertContains('widget thing is missing', $result);
     }
 
     /**

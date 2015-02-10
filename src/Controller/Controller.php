@@ -287,7 +287,7 @@ class Controller implements EventListenerInterface
 
         $this->_mergeControllerVars();
         $this->_loadComponents();
-        $this->eventManager()->attach($this);
+        $this->eventManager()->on($this);
     }
 
     /**
@@ -623,7 +623,7 @@ class Controller implements EventListenerInterface
                 if (empty($tableName)) {
                     continue;
                 }
-                $table = TableRegistry::get($tableName);
+                $table = $this->loadModel($tableName);
                 break;
             }
         }

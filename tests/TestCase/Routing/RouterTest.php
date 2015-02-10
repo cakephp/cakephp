@@ -124,7 +124,6 @@ class RouterTest extends TestCase
             'controller' => 'Posts',
             'action' => 'index',
             '_method' => 'GET',
-            '_ext' => null
         ];
         $result = Router::parse('/posts');
         $this->assertEquals($expected, $result);
@@ -137,7 +136,6 @@ class RouterTest extends TestCase
             'action' => 'view',
             'id' => '13',
             '_method' => 'GET',
-            '_ext' => null
         ];
         $result = Router::parse('/posts/13');
         $this->assertEquals($expected, $result);
@@ -149,7 +147,6 @@ class RouterTest extends TestCase
             'controller' => 'Posts',
             'action' => 'add',
             '_method' => 'POST',
-            '_ext' => null
         ];
         $result = Router::parse('/posts');
         $this->assertEquals($expected, $result);
@@ -162,7 +159,6 @@ class RouterTest extends TestCase
             'action' => 'edit',
             'id' => '13',
             '_method' => ['PUT', 'PATCH'],
-            '_ext' => null
         ];
         $result = Router::parse('/posts/13');
         $this->assertEquals($expected, $result);
@@ -174,7 +170,6 @@ class RouterTest extends TestCase
             'action' => 'edit',
             'id' => '475acc39-a328-44d3-95fb-015000000000',
             '_method' => ['PUT', 'PATCH'],
-            '_ext' => null
         ];
         $result = Router::parse('/posts/475acc39-a328-44d3-95fb-015000000000');
         $this->assertEquals($expected, $result);
@@ -187,7 +182,6 @@ class RouterTest extends TestCase
             'action' => 'delete',
             'id' => '13',
             '_method' => 'DELETE',
-            '_ext' => null
         ];
         $result = Router::parse('/posts/13');
         $this->assertEquals($expected, $result);
@@ -203,7 +197,6 @@ class RouterTest extends TestCase
             'action' => 'view',
             'id' => 'add',
             '_method' => 'GET',
-            '_ext' => null
         ];
         $result = Router::parse('/posts/add');
         $this->assertEquals($expected, $result);
@@ -216,7 +209,6 @@ class RouterTest extends TestCase
             'action' => 'edit',
             'id' => 'name',
             '_method' => ['PUT', 'PATCH'],
-            '_ext' => null
         ];
         $result = Router::parse('/posts/name');
         $this->assertEquals($expected, $result);
@@ -239,7 +231,6 @@ class RouterTest extends TestCase
             'controller' => 'TestPlugin',
             'action' => 'index',
             '_method' => 'GET',
-            '_ext' => null
         ];
         $this->assertEquals($expected, $result);
 
@@ -252,7 +243,6 @@ class RouterTest extends TestCase
             'action' => 'view',
             'id' => '13',
             '_method' => 'GET',
-            '_ext' => null
         ];
         $this->assertEquals($expected, $result);
     }
@@ -276,7 +266,6 @@ class RouterTest extends TestCase
             'pass' => [],
             'prefix' => 'api',
             '_method' => 'GET',
-            '_ext' => null
         ];
         $this->assertEquals($expected, $result);
     }
@@ -299,18 +288,17 @@ class RouterTest extends TestCase
             'action' => 'index',
             'pass' => [],
             '_method' => 'GET',
-            '_ext' => 'json',
         ];
 
         $result = Router::parse('/posts');
         $this->assertEquals($expected, $result);
 
         $result = Router::parse('/posts.json');
+        $expected['_ext'] = 'json';
         $this->assertEquals($expected, $result);
 
-        $expected['_ext'] = 'xml';
         $result = Router::parse('/posts.xml');
-        $this->assertEquals($expected, $result);
+        $this->assertArrayNotHasKey('_method', $result, 'Not an extension/resource route.');
     }
 
     /**
@@ -349,7 +337,6 @@ class RouterTest extends TestCase
             'prefix' => 'api',
             'action' => 'index',
             '_method' => 'GET',
-            '_ext' => null
         ];
         $this->assertEquals($expected, $result);
 
@@ -364,7 +351,6 @@ class RouterTest extends TestCase
             'action' => 'index',
             '_method' => 'GET',
             'prefix' => 'api',
-            '_ext' => null
         ];
         $this->assertEquals($expected, $result);
     }
@@ -1659,6 +1645,37 @@ class RouterTest extends TestCase
         });
 
         $this->assertEquals(['json', 'rss', 'xml'], array_values(Router::extensions()));
+    }
+
+    /**
+     * Test connecting resources.
+     *
+     * @return void
+     */
+    public function testResourcesInScope()
+    {
+        Router::scope('/api', ['prefix' => 'api'], function ($routes) {
+            $routes->extensions(['json']);
+            $routes->resources('Articles');
+        });
+        $url = Router::url([
+            'prefix' => 'api',
+            'controller' => 'Articles',
+            'action' => 'edit',
+            '_method' => 'PUT',
+            'id' => 99
+        ]);
+        $this->assertEquals('/api/articles/99', $url);
+
+        $url = Router::url([
+            'prefix' => 'api',
+            'controller' => 'Articles',
+            'action' => 'edit',
+            '_method' => 'PUT',
+            '_ext' => 'json',
+            'id' => 99
+        ]);
+        $this->assertEquals('/api/articles/99.json', $url);
     }
 
     /**

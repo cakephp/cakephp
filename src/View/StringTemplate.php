@@ -230,7 +230,7 @@ class StringTemplate
      * If the value is not one of these 4, the parameter is not output.
      *
      * 'escape' is a special option in that it controls the conversion of
-     * attributes to their html-entity encoded equivalents. Set to false to disable html-encoding.
+     * attributes to their HTML-entity encoded equivalents. Set to false to disable HTML-encoding.
      *
      * If value for any option key is set to `null` or `false`, that option will be excluded from output.
      *

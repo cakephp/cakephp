@@ -106,7 +106,7 @@ class ComponentRegistry extends ObjectRegistry
         $instance = new $class($this, $config);
         $enable = isset($config['enabled']) ? $config['enabled'] : true;
         if ($enable) {
-            $this->eventManager()->attach($instance);
+            $this->eventManager()->on($instance);
         }
         return $instance;
     }

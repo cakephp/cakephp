@@ -36,6 +36,7 @@ class NumberTreesFixture extends TestFixture
         'parent_id' => 'integer',
         'lft' => ['type' => 'integer'],
         'rght' => ['type' => 'integer'],
+        'level' => ['type' => 'integer'],
         '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
     ];
 
@@ -61,67 +62,78 @@ class NumberTreesFixture extends TestFixture
             'name' => 'electronics',
             'parent_id' => null,
             'lft' => '1',
-            'rght' => '20'
+            'rght' => '20',
+            'level' => 0
         ],
         [
             'name' => 'televisions',
             'parent_id' => '1',
             'lft' => '2',
-            'rght' => '9'
+            'rght' => '9',
+            'level' => 1
         ],
         [
             'name' => 'tube',
             'parent_id' => '2',
             'lft' => '3',
-            'rght' => '4'
+            'rght' => '4',
+            'level' => 2
         ],
         [
             'name' => 'lcd',
             'parent_id' => '2',
             'lft' => '5',
-            'rght' => '6'
+            'rght' => '6',
+            'level' => 2
         ],
         [
             'name' => 'plasma',
             'parent_id' => '2',
             'lft' => '7',
-            'rght' => '8'
+            'rght' => '8',
+            'level' => 2
         ],
         [
             'name' => 'portable',
             'parent_id' => '1',
             'lft' => '10',
-            'rght' => '19'
+            'rght' => '19',
+            'level' => 1
         ],
         [
             'name' => 'mp3',
             'parent_id' => '6',
             'lft' => '11',
-            'rght' => '14'
+            'rght' => '14',
+            'level' => 2
         ],
         [
             'name' => 'flash',
             'parent_id' => '7',
             'lft' => '12',
-            'rght' => '13'
+            'rght' => '13',
+            'level' => 3
         ],
         [
             'name' => 'cd',
             'parent_id' => '6',
             'lft' => '15',
-            'rght' => '16'
+            'rght' => '16',
+            'level' => 2
         ],
         [
             'name' => 'radios',
             'parent_id' => '6',
             'lft' => '17',
-            'rght' => '18'
+            'rght' => '18',
+            'level' => 2
         ],
         [
             'name' => 'alien hardware',
             'parent_id' => null,
             'lft' => '21',
-            'rght' => '22'
+            'rght' => '22',
+            'level' => 0
         ]
     ];
 }

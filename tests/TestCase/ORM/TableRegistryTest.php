@@ -20,6 +20,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use Cake\Validation\Validator;
 
 /**
  * Used to test correct class is instantiated when using TableRegistry::get();
@@ -320,6 +321,47 @@ class TableRegistryTest extends TestCase
         $this->assertEquals('users', $table->alias());
         $this->assertSame($connection, $table->connection());
         $this->assertEquals(array_keys($schema), $table->schema()->columns());
+        $this->assertEquals($schema['id']['type'], $table->schema()->column('id')['type']);
+    }
+
+    /**
+     * Tests that table options can be pre-configured with a single validator
+     *
+     * @return void
+     */
+    public function testConfigWithSingleValidator()
+    {
+        $validator = new Validator();
+
+        TableRegistry::config('users', ['validator' => $validator]);
+        $table = TableRegistry::get('users');
+
+        $this->assertSame($table->validator('default'), $validator);
+    }
+
+    /**
+     * Tests that table options can be pre-configured with multiple validators
+     *
+     * @return void
+     */
+    public function testConfigWithMultipleValidators()
+    {
+        $validator1 = new Validator();
+        $validator2 = new Validator();
+        $validator3 = new Validator();
+
+        TableRegistry::config('users', [
+            'validator' => [
+                'default' => $validator1,
+                'secondary' => $validator2,
+                'tertiary' => $validator3,
+            ]
+        ]);
+        $table = TableRegistry::get('users');
+
+        $this->assertSame($table->validator('default'), $validator1);
+        $this->assertSame($table->validator('secondary'), $validator2);
+        $this->assertSame($table->validator('tertiary'), $validator3);
     }
 
     /**

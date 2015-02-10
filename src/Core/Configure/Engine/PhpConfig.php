@@ -23,8 +23,10 @@ use Cake\Core\Plugin;
  * PHP engine allows Configure to load configuration values from
  * files containing simple PHP arrays.
  *
- * Files compatible with PhpConfig should define a `$config` variable, that
+ * Files compatible with PhpConfig should return an array that
  * contains all of the configuration data contained in the file.
+ *
+ * @deprecated 3.0.0 Setting a `$config` variable is deprecated. Use `return` instead.
  */
 class PhpConfig implements ConfigEngineInterface
 {

@@ -147,4 +147,47 @@ class FlashComponentTest extends TestCase
         $result = $this->Session->read('Flash.flash');
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * Test magic call method.
+     *
+     * @covers \Cake\Controller\Component\FlashComponent::__call
+     * @return void
+     */
+    public function testCall()
+    {
+        $this->assertNull($this->Session->read('Flash.flash'));
+
+        $this->Flash->success('It worked');
+        $expected = [
+            'message' => 'It worked',
+            'key' => 'flash',
+            'element' => 'Flash/success',
+            'params' => []
+        ];
+        $result = $this->Session->read('Flash.flash');
+        $this->assertEquals($expected, $result);
+
+        $this->Flash->error('It did not work', ['element' => 'error_thing']);
+
+        $expected = [
+            'message' => 'It did not work',
+            'key' => 'flash',
+            'element' => 'Flash/error',
+            'params' => []
+        ];
+        $result = $this->Session->read('Flash.flash');
+        $this->assertEquals($expected, $result, 'Element is ignored in magic call.');
+        
+        $this->Flash->success('It worked', ['plugin' => 'MyPlugin']);
+
+        $expected = [
+            'message' => 'It worked',
+            'key' => 'flash',
+            'element' => 'MyPlugin.Flash/success',
+            'params' => []
+        ];
+        $result = $this->Session->read('Flash.flash');
+        $this->assertEquals($expected, $result);
+    }
 }

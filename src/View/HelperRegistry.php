@@ -146,7 +146,7 @@ class HelperRegistry extends ObjectRegistry
         }
         $enable = isset($settings['enabled']) ? $settings['enabled'] : true;
         if ($enable) {
-            $this->eventManager()->attach($instance);
+            $this->eventManager()->on($instance);
         }
         return $instance;
     }

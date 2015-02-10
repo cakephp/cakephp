@@ -42,6 +42,7 @@ class QueryRegressionTest extends TestCase
         'core.authors',
         'core.special_tags',
         'core.translates',
+        'core.authors_tags',
     ];
 
     /**
@@ -460,13 +461,16 @@ class QueryRegressionTest extends TestCase
         $table = TableRegistry::get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
         $table->locale('eng');
-        $query = $table->find('translations')->limit(10)->offset(1);
+        $query = $table->find('translations')
+            ->order(['Articles.id' => 'ASC'])
+            ->limit(10)
+            ->offset(1);
         $result = $query->toArray();
         $this->assertCount(2, $result);
     }
 
     /**
-     * Tests that using the subquery strategy in a deep assotiatin returns the right results
+     * Tests that using the subquery strategy in a deep association returns the right results
      *
      * @see https://github.com/cakephp/cakephp/issues/4484
      * @return void
@@ -478,12 +482,41 @@ class QueryRegressionTest extends TestCase
         $table->Articles->belongsToMany('Tags', [
             'strategy' => 'subquery'
         ]);
-        $table->Articles->Tags->junction();
+
         $result = $table->find()->contain(['Articles.Tags'])->toArray();
         $this->assertEquals(
             ['tag1', 'tag3'],
             collection($result[2]->articles[0]->tags)->extract('name')->toArray()
         );
+    }
+
+    /**
+     * Tests that using the subquery strategy in a deep association returns the right results
+     *
+     * @see https://github.com/cakephp/cakephp/issues/5769
+     * @return void
+     */
+    public function testDeepBelongsToManySubqueryStrategy2()
+    {
+        $table = TableRegistry::get('Authors');
+        $table->hasMany('Articles');
+        $table->Articles->belongsToMany('Tags', [
+            'strategy' => 'subquery'
+        ]);
+        $table->belongsToMany('Tags', [
+            'strategy' => 'subquery',
+        ]);
+        $table->Articles->belongsTo('Authors');
+
+        $result = $table->Articles->find()
+            ->where(['Authors.id >' => 1])
+            ->contain(['Authors.Tags'])
+            ->toArray();
+        $this->assertEquals(
+            ['tag1', 'tag2'],
+            collection($result[0]->author->tags)->extract('name')->toArray()
+        );
+        $this->assertEquals(3, $result[0]->author->id);
     }
 
     /**
@@ -697,7 +730,6 @@ class QueryRegressionTest extends TestCase
         $this->assertNotNull($result->article->author);
     }
 
-
     /**
      * Tests that trying to contain an inexistent association
      * throws an exception and not a fatal error.
@@ -709,5 +741,57 @@ class QueryRegressionTest extends TestCase
     {
         $comments = TableRegistry::get('Comments');
         $comments->find()->contain('Deprs')->all();
+    }
+
+    /**
+     * Tests that using matching and contain on belongsTo associations
+     * works correctly.
+     *
+     * @see https://github.com/cakephp/cakephp/issues/5721
+     * @return void
+     */
+    public function testFindMatchingWithContain()
+    {
+        $comments = TableRegistry::get('Comments');
+        $comments->belongsTo('Articles');
+        $comments->belongsTo('Users');
+
+        $result = $comments->find()
+            ->contain(['Articles', 'Users'])
+            ->matching('Articles', function ($q) {
+                return $q->where(['Articles.id >=' => 1]);
+            })
+            ->matching('Users', function ($q) {
+                return $q->where(['Users.id >=' => 1]);
+            })
+            ->order(['Comments.id' => 'ASC'])
+            ->first();
+        $this->assertInstanceOf('Cake\ORM\Entity', $result->article);
+        $this->assertInstanceOf('Cake\ORM\Entity', $result->user);
+        $this->assertEquals(2, $result->user->id);
+        $this->assertEquals(1, $result->article->id);
+    }
+
+    /**
+     * Tests that HasMany associations don't use duplicate PK values.
+     *
+     * @return void
+     */
+    public function testHasManyEagerLoadingUniqueKey()
+    {
+        $table = TableRegistry::get('ArticlesTags');
+        $table->belongsTo('Articles', [
+            'strategy' => 'select'
+        ]);
+
+        $result = $table->find()
+            ->contain(['Articles' => function ($q) {
+                $result = $q->sql();
+                $this->assertNotContains(':c2', $result, 'Only 2 bindings as there are only 2 rows.');
+                $this->assertNotContains(':c3', $result, 'Only 2 bindings as there are only 2 rows.');
+                return $q;
+            }])
+            ->toArray();
+        $this->assertNotEmpty($result[0]->article);
     }
 }

@@ -267,11 +267,11 @@ class RouteBuilder
                 'controller' => $name,
                 'action' => $action,
                 '_method' => $params['method'],
-                '_ext' => $ext
             ];
             $routeOptions = $connectOptions + [
                 'id' => $options['id'],
-                'pass' => ['id']
+                'pass' => ['id'],
+                '_ext' => $ext,
             ];
             $this->connect($url, $params, $routeOptions);
         }
@@ -349,7 +349,7 @@ class RouteBuilder
      * @throws \InvalidArgumentException
      * @throws \BadMethodCallException
      */
-    public function connect($route, array $defaults = [], $options = [])
+    public function connect($route, array $defaults = [], array $options = [])
     {
         if (empty($options['action'])) {
             $defaults += ['action' => 'index'];
@@ -559,7 +559,7 @@ class RouteBuilder
      *
      * This is a shortcut method for connecting fallback routes in a given scope.
      *
-     * @param string $routeClass the route class to use, uses the default routeClass
+     * @param string|null $routeClass the route class to use, uses the default routeClass
      *   if not specified
      * @return void
      */

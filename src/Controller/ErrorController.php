@@ -40,10 +40,10 @@ class ErrorController extends Controller
         }
         $eventManager = $this->eventManager();
         if (isset($this->Auth)) {
-            $eventManager->detach($this->Auth);
+            $eventManager->off($this->Auth);
         }
         if (isset($this->Security)) {
-            $eventManager->detach($this->Security);
+            $eventManager->off($this->Security);
         }
         $this->viewPath = 'Error';
     }
