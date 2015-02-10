@@ -142,7 +142,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     public function testRedirect()
     {
         $this->post('/tests_apps/redirect_to');
-        $this->assertResponseOk();
+        $this->assertResponseSuccess();
         $this->assertResponseCode(302);
     }
 
@@ -154,7 +154,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     public function testRedirectPermanent()
     {
         $this->post('/tests_apps/redirect_to_permanent');
-        $this->assertResponseOk();
+        $this->assertResponseSuccess();
         $this->assertResponseCode(301);
     }
 
