@@ -52,15 +52,16 @@
 		}
 	},
 	"replace": {
+		"cakephp/cache": "self.version",
 		"cakephp/collection": "self.version",
-		"cakephp/event": "self.version",
-		"cakephp/validation": "self.version",
-		"cakephp/utility": "self.version",
 		"cakephp/core": "self.version",
 		"cakephp/datasource": "self.version",
 		"cakephp/database": "self.version",
-		"cakephp/cache": "self.version",
+		"cakephp/event": "self.version",
+		"cakephp/i18n": "self.version",
 		"cakephp/log": "self.version",
-		"cakephp/i18n": "self.version"
+		"cakephp/orm": "self.version",
+		"cakephp/utility": "self.version",
+		"cakephp/validation": "self.version"
 	}
 }

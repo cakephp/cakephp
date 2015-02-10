@@ -1,0 +1,27 @@
+{
+	"name": "cakephp/orm",
+	"description": "CakePHP ORM - Provides a flexible and powerful ORM implementing a data-mapper pattern.",
+	"license": "MIT",
+	"authors": [
+		{
+		"name": "CakePHP Community",
+		"homepage": "http://cakephp.org"
+	}
+	],
+	"autoload": {
+		"psr-4": {
+			"Cake\\ORM\\": "."
+		}
+	},
+	"require": {
+		"cakephp/collection": "dev-master",
+		"cakephp/core": "dev-master",
+		"cakephp/datasource": "dev-master",
+		"cakephp/database": "dev-master",
+		"cakephp/event": "dev-master",
+		"cakephp/i18n": "dev-master",
+		"cakephp/utility": "dev-master",
+		"cakephp/validation": "dev-master"
+	},
+	"minimum-stability": "beta"
+}
