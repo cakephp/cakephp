@@ -677,7 +677,7 @@ class TreeBehavior extends Behavior
 
         $nodeToEdge = $edge - $nodeLeft + 1;
         $shift = $nodeRight - $nodeLeft + 1;
-        $nodeToHole = $edge - $nodeLeft - ($rightBoundary - $leftBoundary);
+        $nodeToHole = $edge - $rightBoundary + $shift;
         $this->_sync($nodeToEdge, '+', "BETWEEN {$nodeLeft} AND {$nodeRight}");
         $this->_sync($shift, '-', "BETWEEN {$leftBoundary} AND {$rightBoundary}");
         $this->_sync($nodeToHole, '-', "> {$edge}");
