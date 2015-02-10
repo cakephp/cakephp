@@ -183,6 +183,7 @@ class TableRegistry
             $options['connection'] = ConnectionManager::get($connectionName);
         }
 
+        $options['source'] = $alias;
         static::$_instances[$alias] = new $options['className']($options);
 
         if ($options['className'] === 'Cake\ORM\Table') {
