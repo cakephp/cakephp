@@ -727,6 +727,7 @@ class I18n {
  *
  * @param string $format Format to be translated
  * @param string $domain Domain where format is stored
+ * @param string $context Context The context of the translation, e.g a verb or a noun.
  * @return mixed translated format string if only value or array of translated strings for corresponding format.
  */
 	protected function _translateTime($format, $domain, $context) {
