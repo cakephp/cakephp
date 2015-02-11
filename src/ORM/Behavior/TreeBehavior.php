@@ -541,6 +541,10 @@ class TreeBehavior extends Behavior
      */
     public function moveUp(Entity $node, $number = 1)
     {
+        if ($number < 1) {
+            return false;
+        }
+
         return $this->_table->connection()->transactional(function () use ($node, $number) {
             $this->_ensureFields($node);
             return $this->_moveUp($node, $number);
@@ -557,13 +561,6 @@ class TreeBehavior extends Behavior
      */
     protected function _moveUp($node, $number)
     {
-        if (!$number) {
-            return false;
-        }
-        if ($number < 0) {
-            return $node;
-        }
-
         $config = $this->config();
         list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
         list($nodeParent, $nodeLeft, $nodeRight) = array_values($node->extract([$parent, $left, $right]));
@@ -625,6 +622,10 @@ class TreeBehavior extends Behavior
      */
     public function moveDown(Entity $node, $number = 1)
     {
+        if ($number < 1) {
+            return false;
+        }
+
         return $this->_table->connection()->transactional(function () use ($node, $number) {
             $this->_ensureFields($node);
             return $this->_moveDown($node, $number);
@@ -641,13 +642,6 @@ class TreeBehavior extends Behavior
      */
     protected function _moveDown($node, $number)
     {
-        if (!$number) {
-            return false;
-        }
-        if ($number < 0) {
-            return $node;
-        }
-
         $config = $this->config();
         list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
 

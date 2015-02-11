@@ -353,8 +353,7 @@ class TreeBehaviorTest extends TestCase
 
         // edge cases
         $this->assertFalse($this->table->moveUp($table->get(1), 0));
-        $node = $this->table->moveUp($table->get(1), -10);
-        $this->assertEquals(['lft' => 1, 'rght' => 10], $node->extract(['lft', 'rght']));
+        $this->assertFalse($this->table->moveUp($table->get(1), -10));
         $expected = [
             ' 1:10 -  1:Link 1',
             '_ 2: 3 -  2:Link 2',
@@ -484,6 +483,7 @@ class TreeBehaviorTest extends TestCase
 
         // edge cases
         $this->assertFalse($this->table->moveDown($table->get(8), 0));
+        $this->assertFalse($this->table->moveDown($table->get(8), -10));
         $expected = [
             ' 1:10 -  1:Link 1',
             '_ 2: 3 -  2:Link 2',
