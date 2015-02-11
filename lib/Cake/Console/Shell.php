@@ -22,7 +22,6 @@ App::uses('ConsoleInputSubcommand', 'Console');
 App::uses('ConsoleOptionParser', 'Console');
 App::uses('ClassRegistry', 'Utility');
 App::uses('File', 'Utility');
-App::uses('ClassRegistry', 'Utility');
 
 /**
  * Base class for command-line utilities for automating programmer chores.

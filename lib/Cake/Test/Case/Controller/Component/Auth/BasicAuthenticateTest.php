@@ -254,7 +254,11 @@ class BasicAuthenticateTest extends CakeTestCase {
  */
 	public function testAuthenticateUserFieldsRelatedModelsSuccess() {
 		$User = ClassRegistry::init('User');
-		$User->bindModel(array('hasOne' => array('Article')));
+		$User->bindModel(array('hasOne' => array(
+			'Article' => array(
+				'order' => 'Article.id ASC'
+			)
+		)));
 		$this->auth->settings['recursive'] = 0;
 		$this->auth->settings['userFields'] = array('Article.id', 'Article.title');
 		$request = new CakeRequest('posts/index', false);

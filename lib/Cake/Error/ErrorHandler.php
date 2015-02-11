@@ -96,6 +96,14 @@ App::uses('Router', 'Routing');
 class ErrorHandler {
 
 /**
+ * Whether to give up rendering an exception, if the renderer itself is
+ * throwing exceptions.
+ *
+ * @var bool
+ */
+	protected static $_bailExceptionRendering = false;
+
+/**
  * Set as the default exception handler by the CakePHP bootstrap process.
  *
  * This will either use custom exception renderer class if configured,
@@ -125,6 +133,8 @@ class ErrorHandler {
 				$e->getMessage(),
 				$e->getTraceAsString()
 			);
+
+			self::$_bailExceptionRendering = true;
 			trigger_error($message, E_USER_ERROR);
 		}
 	}
@@ -234,6 +244,8 @@ class ErrorHandler {
  * @param string $file File on which error occurred
  * @param int $line Line that triggered the error
  * @return bool
+ * @throws FatalErrorException If the Exception renderer threw an exception during rendering, and debug > 0.
+ * @throws InternalErrorException If the Exception renderer threw an exception during rendering, and debug is 0.
  */
 	public static function handleFatalError($code, $description, $file, $line) {
 		$logMessage = 'Fatal Error (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']';
@@ -249,10 +261,18 @@ class ErrorHandler {
 		}
 
 		if (Configure::read('debug')) {
-			call_user_func($exceptionHandler, new FatalErrorException($description, 500, $file, $line));
+			$exception = new FatalErrorException($description, 500, $file, $line);
 		} else {
-			call_user_func($exceptionHandler, new InternalErrorException());
+			$exception = new InternalErrorException();
 		}
+
+		if (self::$_bailExceptionRendering) {
+			self::$_bailExceptionRendering = false;
+			throw $exception;
+		}
+
+		call_user_func($exceptionHandler, $exception);
+
 		return false;
 	}
 
