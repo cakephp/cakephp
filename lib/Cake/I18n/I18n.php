@@ -730,14 +730,14 @@ class I18n {
  * @return mixed translated format string if only value or array of translated strings for corresponding format.
  */
 	protected function _translateTime($format, $domain, $context) {
-		if (!empty($this->_domains[$domain][$this->_lang]['LC_TIME'][$format][$context])) {
-			if (($trans = $this->_domains[$domain][$this->_lang][$this->category][$format][$context])) {
-				return $trans;
-			}
-		} elseif (!empty($this->_domains[$domain][$this->_lang]['LC_TIME'][$format])) {
-			if (($trans = $this->_domains[$domain][$this->_lang][$this->category][$format])) {
-				return $trans;
-			}
+		$lang = $this->_lang;
+		$category = $this->category;
+		$trans = Hash::get($this->_domains, "$domain.$lang.$category.$format.$context");
+		if ($trans === null) {
+			$trans = Hash::get($this->_domains, "$domain.$lang.$category.$format");
+		}
+		if ($trans !== null) {
+			return $trans;
 		}
 
 		return $format;
