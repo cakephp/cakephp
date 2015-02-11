@@ -112,7 +112,7 @@ trait EntityTrait
      *
      * @var string
      */
-    protected $_repositoryAlias;
+    protected $_registryAlias;
 
     /**
      * Magic getter to access properties that have been set in this entity
@@ -812,9 +812,9 @@ trait EntityTrait
     public function source($alias = null)
     {
         if ($alias === null) {
-            return $this->_repositoryAlias;
+            return $this->_registryAlias;
         }
-        $this->_repositoryAlias = $alias;
+        $this->_registryAlias = $alias;
     }
 
     /**
@@ -843,7 +843,7 @@ trait EntityTrait
             'original' => $this->_original,
             'virtual' => $this->_virtual,
             'errors' => $this->_errors,
-            'repository' => $this->_repositoryAlias
+            'repository' => $this->_registryAlias
         ];
     }
 }

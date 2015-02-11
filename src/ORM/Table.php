@@ -196,7 +196,7 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * @var string
      */
-    protected $_repositoryAlias;
+    protected $_registryAlias;
 
     /**
      * A list of validation objects indexed by name
@@ -235,8 +235,8 @@ class Table implements RepositoryInterface, EventListenerInterface
      */
     public function __construct(array $config = [])
     {
-        if (!empty($config['repositoryAlias'])) {
-            $this->repositoryAlias($config['repositoryAlias']);
+        if (!empty($config['registryAlias'])) {
+            $this->registryAlias($config['registryAlias']);
         }
         if (!empty($config['table'])) {
             $this->table($config['table']);
@@ -361,18 +361,18 @@ class Table implements RepositoryInterface, EventListenerInterface
     /**
      * Returns the table registry key used to create this table instance
      *
-     * @param string|null $repositoryAlias the key used to access this object
+     * @param string|null $registryAlias the key used to access this object
      * @return string
      */
-    public function repositoryAlias($repositoryAlias = null)
+    public function registryAlias($registryAlias = null)
     {
-        if ($repositoryAlias !== null) {
-            $this->_repositoryAlias = $repositoryAlias;
+        if ($registryAlias !== null) {
+            $this->_registryAlias = $registryAlias;
         }
-        if ($this->_repositoryAlias === null) {
-            $this->_repositoryAlias = $this->alias();
+        if ($this->_registryAlias === null) {
+            $this->_registryAlias = $this->alias();
         }
-        return $this->_repositoryAlias;
+        return $this->_registryAlias;
     }
 
     /**
@@ -1406,7 +1406,7 @@ class Table implements RepositoryInterface, EventListenerInterface
                 $entity->clean();
                 $this->dispatchEvent('Model.afterSave', compact('entity', 'options'));
                 $entity->isNew(false);
-                $entity->source($this->repositoryAlias());
+                $entity->source($this->registryAlias());
                 $success = true;
             }
         }
@@ -1872,7 +1872,7 @@ class Table implements RepositoryInterface, EventListenerInterface
     {
         if ($data === null) {
             $class = $this->entityClass();
-            $entity = new $class(['source' => $this->repositoryAlias()]);
+            $entity = new $class(['source' => $this->registryAlias()]);
             return $entity;
         }
         if (!isset($options['associated'])) {
@@ -2036,7 +2036,7 @@ class Table implements RepositoryInterface, EventListenerInterface
             [
                 'useSetters' => false,
                 'markNew' => $options['newRecord'],
-                'source' => $this->repositoryAlias()
+                'source' => $this->registryAlias()
             ]
         );
         $fields = array_merge(
