@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use TestApp\Model\Entity\Extending;
 use TestApp\Model\Entity\NonExtending;
-use TestApp\Model\Entity\ValidatableEntity;
 
 /**
  * Entity test case.
@@ -774,58 +773,6 @@ class EntityTest extends TestCase
         $expected = ['email' => 'mark@example.com'];
         $this->assertEquals($expected, $entity->toArray());
         $this->assertEquals(['name'], $entity->hiddenProperties());
-    }
-
-    /**
-     * Tests that missing fields will not be passed as null to the validator
-     *
-     * @return void
-     */
-    public function testValidateMissingFields()
-    {
-        $entity = $this->getMockBuilder('TestApp\Model\Entity\ValidatableEntity')
-            ->setMethods(['getSomething'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $entity->accessible('*', true);
-
-        $validator = $this->getMock('\Cake\Validation\Validator');
-        $entity->set('a', 'b');
-
-        $validator->expects($this->once())
-            ->method('provider')
-            ->with('entity', $entity);
-        $validator->expects($this->once())->method('errors')
-            ->with(['a' => 'b'], true)
-            ->will($this->returnValue(['a' => ['not valid']]));
-        $this->assertNotEmpty($entity->validate($validator));
-        $this->assertEquals(['a' => ['not valid']], $entity->errors());
-    }
-
-    /**
-     * Tests validate when the validator returns no errors
-     *
-     * @return void
-     */
-    public function testValidateSuccess()
-    {
-        $validator = $this->getMock('\Cake\Validation\Validator');
-        $data = [
-            'a' => 'b',
-            'cool' => false,
-            'something' => true
-        ];
-        $entity = new ValidatableEntity($data);
-        $entity->isNew(true);
-
-        $validator->expects($this->once())
-            ->method('provider')
-            ->with('entity', $entity);
-        $validator->expects($this->once())->method('errors')
-            ->with($data, true)
-            ->will($this->returnValue([]));
-        $this->assertEmpty($entity->validate($validator));
-        $this->assertEquals([], $entity->errors());
     }
 
     /**
