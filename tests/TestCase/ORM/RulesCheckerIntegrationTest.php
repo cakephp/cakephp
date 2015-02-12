@@ -549,6 +549,32 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
+     * Tests the existsIn with coflicting columns
+     *
+     * @group save
+     * @return void
+     */
+    public function testExistsInAliasPrefix()
+    {
+        $entity = new Entity([
+            'title' => 'An Article',
+            'author_id' => 500
+        ]);
+
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors');
+        $rules = $table->rulesChecker();
+        $rules->add($rules->existsIn('author_id', 'Authors'));
+
+        $table->Authors->eventManager()->on('Model.beforeFind', function ($event, $query) {
+            $query->leftJoin(['a2' => 'authors']);
+        });
+
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals(['_existsIn' => 'This value does not exist'], $entity->errors('author_id'));
+    }
+
+    /**
      * Tests using rules to prevent delete operations
      *
      * @group delete
