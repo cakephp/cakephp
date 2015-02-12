@@ -107,7 +107,7 @@ class Marshaller
         $schema = $this->_table->schema();
         $entityClass = $this->_table->entityClass();
         $entity = new $entityClass();
-        $entity->source($this->_table->alias());
+        $entity->source($this->_table->registryAlias());
 
         if (isset($options['accessibleFields'])) {
             foreach ((array)$options['accessibleFields'] as $key => $value) {

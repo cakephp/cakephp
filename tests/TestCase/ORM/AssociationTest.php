@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Core\Plugin;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -170,6 +171,41 @@ class AssociationTest extends TestCase
     }
 
     /**
+     * Tests that target() returns the correct Table object for plugins
+     *
+     * @return void
+     */
+    public function testTargetPlugin()
+    {
+        Plugin::load('TestPlugin');
+
+        $config = [
+            'className' => 'TestPlugin.Comments',
+            'foreignKey' => 'a_key',
+            'conditions' => ['field' => 'value'],
+            'dependent' => true,
+            'sourceTable' => $this->source,
+            'joinType' => 'INNER'
+        ];
+
+        $this->association = $this->getMock(
+            '\Cake\ORM\Association',
+            ['type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated'],
+            ['ThisAssociationName', $config]
+        );
+
+        $table = $this->association->target();
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $table);
+
+        $this->assertTrue(TableRegistry::exists('TestPlugin.Comments'));
+        $this->assertFalse(TableRegistry::exists('Comments'));
+        $this->assertFalse(TableRegistry::exists('ThisAssociationName'));
+
+        $plugin = TableRegistry::get('TestPlugin.Comments');
+        $this->assertSame($table, $plugin, 'Should be the same TestPlugin.Comments object');
+    }
+
+    /**
      * Tests that source() returns the correct Table object
      *
      * @return void
@@ -264,10 +300,7 @@ class AssociationTest extends TestCase
         ];
         $assoc = $this->getMock(
             '\Cake\ORM\Association',
-            [
-                '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
-                'saveAssociated', 'eagerLoader', 'type'
-            ],
+            ['type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated'],
             ['Foo', $config]
         );
         $this->assertEquals('published', $assoc->finder());

@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use ArrayObject;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
@@ -517,6 +518,41 @@ class TableTest extends TestCase
         $this->assertEquals(['b' => 'c'], $hasMany->conditions());
         $this->assertEquals(['foo' => 'asc'], $hasMany->sort());
         $this->assertSame($table, $hasMany->source());
+    }
+
+    /**
+     * Ensure associations use the plugin-prefixed model
+     *
+     * @return void
+     */
+    public function testHasManyPluginOverlap()
+    {
+        TableRegistry::get('Comments');
+        Plugin::load('TestPlugin');
+
+        $table = new Table(['table' => 'authors']);
+
+        $table->hasMany('TestPlugin.Comments');
+        $comments = $table->Comments->target();
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $comments);
+    }
+
+    /**
+     * Ensure associations use the plugin-prefixed model
+     * even if specified with config
+     *
+     * @return void
+     */
+    public function testHasManyPluginOverlapConfig()
+    {
+        TableRegistry::get('Comments');
+        Plugin::load('TestPlugin');
+
+        $table = new Table(['table' => 'authors']);
+
+        $table->hasMany('Comments', ['className' => 'TestPlugin.Comments']);
+        $comments = $table->Comments->target();
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $comments);
     }
 
     /**

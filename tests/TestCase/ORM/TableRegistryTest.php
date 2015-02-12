@@ -102,10 +102,6 @@ class TableRegistryTest extends TestCase
 
         $result = TableRegistry::config('TestPlugin.TestPluginComments', $data);
         $this->assertEquals($data, $result, 'Returns config data.');
-
-        $result = TableRegistry::config();
-        $expected = ['TestPluginComments' => $data];
-        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -135,6 +131,25 @@ class TableRegistryTest extends TestCase
 
         TableRegistry::get('Articles', ['table' => 'articles']);
         $this->assertTrue(TableRegistry::exists('Articles'));
+    }
+
+    /**
+     * Test the exists() method with plugin-prefixed models.
+     *
+     * @return void
+     */
+    public function testExistsPlugin()
+    {
+        $this->assertFalse(TableRegistry::exists('Comments'));
+        $this->assertFalse(TableRegistry::exists('TestPlugin.Comments'));
+
+        TableRegistry::config('TestPlugin.Comments', ['table' => 'comments']);
+        $this->assertFalse(TableRegistry::exists('Comments'), 'The Comments key should not be populated');
+        $this->assertFalse(TableRegistry::exists('TestPlugin.Comments'), 'The plugin.alias key should not be populated');
+
+        TableRegistry::get('TestPlugin.Comments', ['table' => 'comments']);
+        $this->assertFalse(TableRegistry::exists('Comments'), 'The Comments key should not be populated');
+        $this->assertTrue(TableRegistry::exists('TestPlugin.Comments'), 'The plugin.alias key should now be populated');
     }
 
     /**
@@ -224,11 +239,10 @@ class TableRegistryTest extends TestCase
         Plugin::load('TestPlugin');
         $table = TableRegistry::get('TestPlugin.TestPluginComments', ['connection' => 'test']);
 
-        $class = 'TestPlugin\Model\Table\TestPluginCommentsTable';
-        $this->assertInstanceOf($class, $table);
-        $this->assertTrue(
+        $this->assertInstanceOf('TestPlugin\Model\Table\TestPluginCommentsTable', $table);
+        $this->assertFalse(
             TableRegistry::exists('TestPluginComments'),
-            'Short form should exist'
+            'Short form should NOT exist'
         );
         $this->assertTrue(
             TableRegistry::exists('TestPlugin.TestPluginComments'),
@@ -237,9 +251,35 @@ class TableRegistryTest extends TestCase
 
         $second = TableRegistry::get('TestPlugin.TestPluginComments');
         $this->assertSame($table, $second, 'Can fetch long form');
+    }
 
-        $second = TableRegistry::get('TestPluginComments');
-        $this->assertSame($table, $second);
+    /**
+     * Test get() with same-alias models in different plugins
+     *
+     * There should be no internal cache-confusion
+     *
+     * @return void
+     */
+    public function testGetMultiplePlugins()
+    {
+        Plugin::load('TestPlugin');
+        Plugin::load('TestPluginTwo');
+
+        $app = TableRegistry::get('Comments');
+        $plugin1 = TableRegistry::get('TestPlugin.Comments');
+        $plugin2 = TableRegistry::get('TestPluginTwo.Comments');
+
+        $this->assertInstanceOf('Cake\ORM\Table', $app, 'Should be an app table instance');
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $plugin1, 'Should be a plugin 1 table instance');
+        $this->assertInstanceOf('TestPluginTwo\Model\Table\CommentsTable', $plugin2, 'Should be a plugin 2 table instance');
+
+        $plugin2 = TableRegistry::get('TestPluginTwo.Comments');
+        $plugin1 = TableRegistry::get('TestPlugin.Comments');
+        $app = TableRegistry::get('Comments');
+
+        $this->assertInstanceOf('Cake\ORM\Table', $app, 'Should still be an app table instance');
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $plugin1, 'Should still be a plugin 1 table instance');
+        $this->assertInstanceOf('TestPluginTwo\Model\Table\CommentsTable', $plugin2, 'Should still be a plugin 2 table instance');
     }
 
     /**
@@ -257,6 +297,7 @@ class TableRegistryTest extends TestCase
         $class = 'TestPlugin\Model\Table\TestPluginCommentsTable';
         $this->assertInstanceOf($class, $table);
         $this->assertFalse(TableRegistry::exists('TestPluginComments'), 'Class name should not exist');
+        $this->assertFalse(TableRegistry::exists('TestPlugin.TestPluginComments'), 'Full class alias should not exist');
         $this->assertTrue(TableRegistry::exists('Comments'), 'Class name should exist');
 
         $second = TableRegistry::get('Comments');
@@ -278,6 +319,7 @@ class TableRegistryTest extends TestCase
         ]);
         $this->assertInstanceOf($class, $table);
         $this->assertFalse(TableRegistry::exists('TestPluginComments'), 'Class name should not exist');
+        $this->assertFalse(TableRegistry::exists('TestPlugin.TestPluginComments'), 'Full class alias should not exist');
         $this->assertTrue(TableRegistry::exists('Comments'), 'Class name should exist');
     }
 
@@ -389,7 +431,6 @@ class TableRegistryTest extends TestCase
 
         $this->assertSame($mock, TableRegistry::set('TestPlugin.Comments', $mock));
         $this->assertSame($mock, TableRegistry::get('TestPlugin.Comments'));
-        $this->assertSame($mock, TableRegistry::get('Comments'));
     }
 
     /**
@@ -413,19 +454,62 @@ class TableRegistryTest extends TestCase
      */
     public function testRemove()
     {
-        Plugin::load('TestPlugin');
-
-        $pluginTable = TableRegistry::get('TestPlugin.Comments');
-        $cachedTable = TableRegistry::get('Comments');
+        $first = TableRegistry::get('Comments');
 
         $this->assertTrue(TableRegistry::exists('Comments'));
-        $this->assertSame($pluginTable, $cachedTable);
 
         TableRegistry::remove('Comments');
         $this->assertFalse(TableRegistry::exists('Comments'));
 
-        $appTable = TableRegistry::get('Comments');
+        $second = TableRegistry::get('Comments');
+
+        $this->assertNotSame($first, $second, 'Should be different objects, as the reference to the first was destroyed');
         $this->assertTrue(TableRegistry::exists('Comments'));
-        $this->assertNotSame($pluginTable, $appTable);
+    }
+
+    /**
+     * testRemovePlugin
+     *
+     * Removing a plugin-prefixed model should not affect any other
+     * plugin-prefixed model, or app model.
+     * Removing an app model should not affect any other
+     * plugin-prefixed model.
+     *
+     * @return void
+     */
+    public function testRemovePlugin()
+    {
+        Plugin::load('TestPlugin');
+        Plugin::load('TestPluginTwo');
+
+        $app = TableRegistry::get('Comments');
+        TableRegistry::get('TestPlugin.Comments');
+        $plugin = TableRegistry::get('TestPluginTwo.Comments');
+
+        $this->assertTrue(TableRegistry::exists('Comments'));
+        $this->assertTrue(TableRegistry::exists('TestPlugin.Comments'));
+        $this->assertTrue(TableRegistry::exists('TestPluginTwo.Comments'));
+
+        TableRegistry::remove('TestPlugin.Comments');
+
+        $this->assertTrue(TableRegistry::exists('Comments'));
+        $this->assertFalse(TableRegistry::exists('TestPlugin.Comments'));
+        $this->assertTrue(TableRegistry::exists('TestPluginTwo.Comments'));
+
+        $app2 = TableRegistry::get('Comments');
+        $plugin2 = TableRegistry::get('TestPluginTwo.Comments');
+
+        $this->assertSame($app, $app2, 'Should be the same Comments object');
+        $this->assertSame($plugin, $plugin2, 'Should be the same TestPluginTwo.Comments object');
+
+        TableRegistry::remove('Comments');
+
+        $this->assertFalse(TableRegistry::exists('Comments'));
+        $this->assertFalse(TableRegistry::exists('TestPlugin.Comments'));
+        $this->assertTrue(TableRegistry::exists('TestPluginTwo.Comments'));
+
+        $plugin3 = TableRegistry::get('TestPluginTwo.Comments');
+
+        $this->assertSame($plugin, $plugin3, 'Should be the same TestPluginTwo.Comments object');
     }
 }

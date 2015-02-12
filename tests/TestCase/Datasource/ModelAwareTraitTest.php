@@ -71,6 +71,29 @@ class ModelAwareTraitTest extends TestCase
     }
 
     /**
+     * test loadModel() with plugin prefixed models
+     *
+     * Load model should not be called with Foo.Model Bar.Model Model
+     * But if it is, the first call wins.
+     *
+     * @return void
+     */
+    public function testLoadModelPlugin()
+    {
+        $stub = new Stub();
+        $stub->setProps('Articles');
+        $stub->modelFactory('Table', ['\Cake\ORM\TableRegistry', 'get']);
+
+        $result = $stub->loadModel('TestPlugin.Comments');
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $result);
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $stub->Comments);
+
+        $result = $stub->loadModel('Comments');
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $result);
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $stub->Comments);
+    }
+
+    /**
      * test alternate model factories.
      *
      * @return void
