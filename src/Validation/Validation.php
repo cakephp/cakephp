@@ -14,8 +14,10 @@
  */
 namespace Cake\Validation;
 
+use Cake\I18n\Number;
 use Cake\Utility\Text;
 use LogicException;
+use NumberFormatter;
 use RuntimeException;
 
 /**
@@ -475,9 +477,12 @@ class Validation
         }
 
         // account for localized floats.
-        $data = localeconv();
-        $check = str_replace($data['thousands_sep'], '', $check);
-        $check = str_replace($data['decimal_point'], '.', $check);
+        $formatter = Number::formatter();
+        $decimalSeparator = $formatter->getSymbol(NumberFormatter::DECIMAL_SEPARATOR_SYMBOL);
+        $thousandsSeparator = $formatter->getSymbol(NumberFormatter::GROUPING_SEPARATOR_SYMBOL);
+        
+        $check = str_replace($thousandsSeparator, '', $check);
+        $check = str_replace($decimalSeparator, '.', $check);
 
         return static::_check($check, $regex);
     }
