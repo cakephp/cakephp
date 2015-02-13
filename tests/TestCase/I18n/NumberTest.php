@@ -114,7 +114,7 @@ class NumberTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $value = '1,234.37';
-        $result = $this->Number->parseFloat($value, 'en_US');
+        $result = $this->Number->parseFloat($value, ['locale' => 'en_US']);
         $expected = 1234.37;
         $this->assertEquals($expected, $result);
     }

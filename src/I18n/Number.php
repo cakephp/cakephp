@@ -14,7 +14,6 @@
  */
 namespace Cake\I18n;
 
-use Locale;
 use NumberFormatter;
 
 /**
@@ -130,20 +129,21 @@ class Number
     }
 
     /**
-     * Parse a localized numeric string and transform it
-     * in a float point
+     * Parse a localized numeric string and transform it in a float point
+     *
+     * Options:
+     *
+     * - `locale` - The locale name to use for parsing the number, e.g. fr_FR
+     * - `type` - The formatter type to construct, set it to `currency` if you need to parse
+     *    numbers representing money.
      *
      * @param string $value A numeric string.
-     * @param string|null $locale Locale of the formatted number
+     * @param array $options An array with options.
      * @return float point number
      */
-    public static function parseFloat($value, $locale = null)
+    public static function parseFloat($value, array $options = [])
     {
-        if ($locale === null) {
-            $locale = Locale::getDefault();
-        }
-
-        $formatter = new NumberFormatter($locale, NumberFormatter::DECIMAL);
+        $formatter = static::formatter($options);
         return (float)$formatter->parse($value, NumberFormatter::TYPE_DOUBLE);
     }
 
