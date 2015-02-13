@@ -514,6 +514,17 @@ class TableTest extends TestCase
         $hasOneTable = $hasOne->target();
         $this->assertSame('Comments', $hasOne->alias());
         $this->assertSame('TestPlugin.Comments', $hasOne->registryAlias());
+
+        $options = ['className' => 'TestPlugin.Comments'];
+        $table = new Table(['table' => 'users']);
+
+        $hasOne = $table->hasOne('TestPlugin.Comments', $options);
+        $this->assertInstanceOf('Cake\ORM\Association\HasOne', $hasOne);
+        $this->assertSame('Comments', $hasOne->name());
+
+        $hasOneTable = $hasOne->target();
+        $this->assertSame('Comments', $hasOne->alias());
+        $this->assertSame('TestPlugin.Comments', $hasOne->registryAlias());
     }
 
     /**
