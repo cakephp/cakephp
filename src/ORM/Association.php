@@ -275,7 +275,7 @@ abstract class Association
             return $this->_targetTable = $table;
         }
 
-        if ($this->_className && strpos($this->_className, '\\') === false) {
+        if (strpos($this->_className, '\\') === false) {
             $tableAlias = $this->_className;
         } else {
             $tableAlias = $this->_name;
