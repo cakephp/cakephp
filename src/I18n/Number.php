@@ -15,6 +15,7 @@
 namespace Cake\I18n;
 
 use NumberFormatter;
+use Locale;
 
 /**
  * Number helper library.
@@ -126,6 +127,24 @@ class Number
         $formatter = static::formatter($options);
         $options += ['before' => '', 'after' => ''];
         return $options['before'] . $formatter->format($value) . $options['after'];
+    }
+
+    /**
+     * Parse a localized numeric string and transform it
+     * in a float point
+     *
+     * @param string $value A numeric string.
+     * @param string|null $locale Locale of the formatted number
+     * @return float point number
+     */
+    public static function parseFloat($value, $locale = null)
+    {
+        if ($locale === null) {
+            $locale = Locale::getDefault();
+        }
+
+        $formatter = new NumberFormatter($locale, NumberFormatter::DECIMAL);
+        return (float)$formatter->parse($value, NumberFormatter::TYPE_DOUBLE);
     }
 
     /**
