@@ -1872,7 +1872,7 @@ class Table implements RepositoryInterface, EventListenerInterface
     {
         if ($data === null) {
             $class = $this->entityClass();
-            $entity = new $class(['source' => $this->registryAlias()]);
+            $entity = new $class([], ['source' => $this->registryAlias()]);
             return $entity;
         }
         if (!isset($options['associated'])) {
