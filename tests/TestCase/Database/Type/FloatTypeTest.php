@@ -14,9 +14,9 @@
  */
 namespace Cake\Test\TestCase\Database\Type;
 
-use Cake\I18n\I18n;
 use Cake\Database\Type;
 use Cake\Database\Type\FloatType;
+use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use \PDO;
 

@@ -97,7 +97,7 @@ class FloatType extends \Cake\Database\Type
         if (is_numeric($value)) {
             return (float)$value;
         } elseif (is_string($value) && $this->_useLocaleParser) {
-           return $this->_parseValue($value);
+            return $this->_parseValue($value);
         }
 
         return $value;

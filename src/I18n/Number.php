@@ -14,8 +14,8 @@
  */
 namespace Cake\I18n;
 
-use NumberFormatter;
 use Locale;
+use NumberFormatter;
 
 /**
  * Number helper library.
