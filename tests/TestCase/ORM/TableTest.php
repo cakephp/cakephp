@@ -3587,4 +3587,19 @@ class TableTest extends TestCase
         $this->assertEquals(1, $beforeDeleteCount);
         $this->assertEquals(1, $afterDeleteCount);
     }
+
+    /**
+     * Tests that calling newEntity() on a table sets the right source alias
+     *
+     * @return void
+     */
+    public function testEntitySource()
+    {
+        $table = TableRegistry::get('Articles');
+        $this->assertEquals('Articles', $table->newEntity()->source());
+
+        Plugin::load('TestPlugin');
+        $table = TableRegistry::get('TestPlugin.Comments');
+        $this->assertEquals('TestPlugin.Comments', $table->newEntity()->source());
+    }
 }
