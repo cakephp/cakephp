@@ -176,10 +176,10 @@ abstract class Association
      * Constructor. Subclasses can override _options function to get the original
      * list of passed options if expecting any other special key
      *
-     * @param string $name The name given to the association
+     * @param string $alias The name given to the association
      * @param array $options A list of properties to be set on this object
      */
-    public function __construct($name, array $options = [])
+    public function __construct($alias, array $options = [])
     {
         $defaults = [
             'cascadeCallbacks',
@@ -199,6 +199,7 @@ abstract class Association
             }
         }
 
+        list(,$name) = pluginSplit($alias);
         $this->_name = $name;
         $this->_options($options);
 
