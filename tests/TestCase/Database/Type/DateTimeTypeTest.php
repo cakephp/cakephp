@@ -145,6 +145,12 @@ class DateTimeTypeTest extends TestCase
                 ],
                 new Time('2014-02-14 00:00:00')
             ],
+            [
+                [
+                    'year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 12, 'minute' => 30, 'timezone' => 'Europe/Paris'
+                ],
+                new Time('2014-02-14 11:30:00', 'UTC')
+            ],
 
             // Invalid array types
             [
