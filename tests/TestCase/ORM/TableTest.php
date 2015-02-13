@@ -498,6 +498,25 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test has one with a plugin model
+     *
+     * @return void
+     */
+    public function testHasOnePlugin()
+    {
+        $options = ['className' => 'TestPlugin.Comments'];
+        $table = new Table(['table' => 'users']);
+
+        $hasOne = $table->hasOne('Comments', $options);
+        $this->assertInstanceOf('Cake\ORM\Association\HasOne', $hasOne);
+        $this->assertSame('Comments', $hasOne->name());
+
+        $hasOneTable = $hasOne->target();
+        $this->assertSame('Comments', $hasOne->alias());
+        $this->assertSame('TestPlugin.Comments', $hasOne->registryAlias());
+    }
+
+    /**
      * Tests that hasMany() creates and configures correctly the association
      *
      * @return void
