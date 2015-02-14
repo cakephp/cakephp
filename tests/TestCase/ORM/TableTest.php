@@ -48,8 +48,13 @@ class TableTest extends TestCase
 {
 
     public $fixtures = [
-        'core.users', 'core.categories', 'core.articles', 'core.authors',
-        'core.tags', 'core.articles_tags'
+        'core.comments',
+        'core.users',
+        'core.categories',
+        'core.articles',
+        'core.authors',
+        'core.tags',
+        'core.articles_tags'
     ];
 
     /**
@@ -548,6 +553,65 @@ class TableTest extends TestCase
         $this->assertEquals(['b' => 'c'], $hasMany->conditions());
         $this->assertEquals(['foo' => 'asc'], $hasMany->sort());
         $this->assertSame($table, $hasMany->source());
+    }
+
+    /**
+     * testHasManyWithClassName
+     *
+     * @return void
+     */
+    public function testHasManyWithClassName()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->hasMany('Comments', [
+            'className' => 'Comments',
+            'conditions' => ['published' => 'Y'],
+        ]);
+
+        $table->hasMany('UnapprovedComments', [
+            'className' => 'Comments',
+            'conditions' => ['published' => 'N'],
+            'propertyName' => 'unaproved_comments'
+        ]);
+
+        $expected = [
+            'id' => 1,
+            'title' => 'First Article',
+            'unaproved_comments' => [
+                [
+                    'id' => 4,
+                    'article_id' => 1,
+                    'comment' => 'Fourth Comment for First Article'
+                ]
+            ],
+            'comments' => [
+                [
+                    'id' => 1,
+                    'article_id' => 1,
+                    'comment' => 'First Comment for First Article'
+                ],
+                [
+                    'id' => 2,
+                    'article_id' => 1,
+                    'comment' => 'Second Comment for First Article'
+                ],
+                [
+                    'id' => 3,
+                    'article_id' => 1,
+                    'comment' => 'Third Comment for First Article'
+                ]
+            ]
+        ];
+        $result = $table->find()
+            ->select(['id', 'title'])
+            ->contain([
+                'Comments' => ['fields' => ['id', 'article_id', 'comment']],
+                'UnapprovedComments' => ['fields' => ['id', 'article_id', 'comment']]
+            ])
+            ->where(['id' => 1])
+            ->first();
+
+        $this->assertSame($expected, $result->toArray());
     }
 
     /**
