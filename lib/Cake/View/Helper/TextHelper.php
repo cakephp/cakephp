@@ -114,7 +114,7 @@ class TextHelper extends AppHelper {
 			$text
 		);
 		$text = preg_replace_callback(
-			'#(?<!href="|">)(?<!\b[[:punct:]])(?<!http://|https://|ftp://|nntp://)www.[^\n\%\ <]+[^<\n\%\,\.\ <](?<!\))#i',
+			'#(?<!href="|">)(?<!\b[[:punct:]])(?<!http://|https://|ftp://|nntp://|//)www.[^\n\%\ <]+[^<\n\%\,\.\ <](?<!\))#i',
 			array(&$this, '_insertPlaceHolder'),
 			$text
 		);
