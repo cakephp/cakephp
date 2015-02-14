@@ -50,7 +50,7 @@ class AssociationCollectionTest extends TestCase
         $this->assertNull($this->associations->get('users'));
         $this->assertNull($this->associations->get('Users'));
 
-        $belongsTo = new BelongsTo([]);
+        $belongsTo = new BelongsTo('');
         $this->assertSame($belongsTo, $this->associations->add('Users', $belongsTo));
         $this->assertTrue($this->associations->has('users'));
         $this->assertTrue($this->associations->has('Users'));
@@ -75,9 +75,9 @@ class AssociationCollectionTest extends TestCase
     {
         $this->assertEmpty($this->associations->keys());
 
-        $belongsTo = new BelongsTo([]);
+        $belongsTo = new BelongsTo('');
         $this->assertSame($belongsTo, $this->associations->add('Users', $belongsTo));
-        $belongsToMany = new BelongsToMany([]);
+        $belongsToMany = new BelongsToMany('');
         $this->assertSame($belongsToMany, $this->associations->add('Cart', $belongsToMany));
 
         $this->associations->removeAll();
@@ -109,7 +109,7 @@ class AssociationCollectionTest extends TestCase
         $this->assertFalse($this->associations->has('Photos.Photos'));
         $this->assertFalse($this->associations->has('Photos'));
 
-        $belongsTo = new BelongsTo([]);
+        $belongsTo = new BelongsTo('');
         $this->assertSame($belongsTo, $this->associations->add('Photos.Photos', $belongsTo));
         $this->assertTrue($this->associations->has('Photos'));
         $this->assertFalse($this->associations->has('Photos.Photos'));
@@ -122,7 +122,7 @@ class AssociationCollectionTest extends TestCase
      */
     public function testKeys()
     {
-        $belongsTo = new BelongsTo([]);
+        $belongsTo = new BelongsTo('');
         $this->associations->add('Users', $belongsTo);
         $this->associations->add('Categories', $belongsTo);
         $this->assertEquals(['users', 'categories'], $this->associations->keys());
@@ -138,10 +138,10 @@ class AssociationCollectionTest extends TestCase
      */
     public function testType()
     {
-        $belongsTo = new BelongsTo([]);
+        $belongsTo = new BelongsTo('');
         $this->associations->add('Users', $belongsTo);
 
-        $belongsToMany = new BelongsToMany([]);
+        $belongsToMany = new BelongsToMany('');
         $this->associations->add('Tags', $belongsToMany);
 
         $this->assertSame([$belongsTo], $this->associations->type('BelongsTo'));
@@ -156,8 +156,8 @@ class AssociationCollectionTest extends TestCase
      */
     public function testCascadeDelete()
     {
-        $mockOne = $this->getMock('Cake\ORM\Association\BelongsTo', [], [[]]);
-        $mockTwo = $this->getMock('Cake\ORM\Association\HasMany', [], [[]]);
+        $mockOne = $this->getMock('Cake\ORM\Association\BelongsTo', [], ['']);
+        $mockTwo = $this->getMock('Cake\ORM\Association\HasMany', [], ['']);
 
         $entity = new Entity();
         $options = ['option' => 'value'];
@@ -361,7 +361,7 @@ class AssociationCollectionTest extends TestCase
         $expected = ['a' => [], 'b' => [], 'd' => ['something']];
         $this->assertSame($expected, $this->associations->normalizeKeys($assocs));
 
-        $belongsTo = new BelongsTo([]);
+        $belongsTo = new BelongsTo('');
         $this->associations->add('users', $belongsTo);
         $this->associations->add('categories', $belongsTo);
         $expected = ['users' => [], 'categories' => []];
