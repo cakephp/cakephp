@@ -199,11 +199,11 @@ abstract class Association
             }
         }
 
-        if(!$this->_className) {
+        if (!$this->_className) {
             $this->_className = $alias;
         }
 
-        list(,$name) = pluginSplit($alias);
+        list(, $name) = pluginSplit($alias);
         $this->_name = $name;
 
         $this->_options($options);
