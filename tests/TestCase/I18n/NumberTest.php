@@ -95,6 +95,31 @@ class NumberTest extends TestCase
     }
 
     /**
+     * testParseFloat method
+     *
+     * @return void
+     */
+    public function testParseFloat()
+    {
+        I18n::locale('de_DE');
+        $value = '1.234.567,891';
+        $result = $this->Number->parseFloat($value);
+        $expected = 1234567.891;
+        $this->assertEquals($expected, $result);
+
+        I18n::locale('pt_BR');
+        $value = '1.234,37';
+        $result = $this->Number->parseFloat($value);
+        $expected = 1234.37;
+        $this->assertEquals($expected, $result);
+
+        $value = '1,234.37';
+        $result = $this->Number->parseFloat($value, ['locale' => 'en_US']);
+        $expected = 1234.37;
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * testFormatDelta method
      *
      * @return void

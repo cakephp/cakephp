@@ -129,6 +129,25 @@ class Number
     }
 
     /**
+     * Parse a localized numeric string and transform it in a float point
+     *
+     * Options:
+     *
+     * - `locale` - The locale name to use for parsing the number, e.g. fr_FR
+     * - `type` - The formatter type to construct, set it to `currency` if you need to parse
+     *    numbers representing money.
+     *
+     * @param string $value A numeric string.
+     * @param array $options An array with options.
+     * @return float point number
+     */
+    public static function parseFloat($value, array $options = [])
+    {
+        $formatter = static::formatter($options);
+        return (float)$formatter->parse($value, NumberFormatter::TYPE_DOUBLE);
+    }
+
+    /**
      * Formats a number into the correct locale format to show deltas (signed differences in value).
      *
      * ### Options
