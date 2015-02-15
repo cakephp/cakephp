@@ -178,7 +178,6 @@ class AssociationTest extends TestCase
     public function testTargetPlugin()
     {
         Plugin::load('TestPlugin');
-
         $config = [
             'className' => 'TestPlugin.Comments',
             'foreignKey' => 'a_key',

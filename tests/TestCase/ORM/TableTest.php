@@ -533,6 +533,49 @@ class TableTest extends TestCase
     }
 
     /**
+     * testNoneUniqueAssociationsSameClass
+     *
+     * @return void
+     */
+    public function testNoneUniqueAssociationsSameClass()
+    {
+        $Users = new Table(['table' => 'users']);
+        $options = ['className' => 'Comments'];
+        $Users->hasMany('Comments', $options);
+
+        $Articles = new Table(['table' => 'articles']);
+        $options = ['className' => 'Comments'];
+        $Articles->hasMany('Comments', $options);
+
+        $Categories = new Table(['table' => 'categories']);
+        $options = ['className' => 'TestPlugin.Comments'];
+        $Categories->hasMany('Comments', $options);
+
+        $this->assertInstanceOf('Cake\ORM\Table', $Users->Comments->target());
+        $this->assertInstanceOf('Cake\ORM\Table', $Articles->Comments->target());
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $Categories->Comments->target());
+    }
+
+    /**
+     * testMultipleAssociationsSameClass
+     *
+     * @return void
+     */
+    public function testMultipleAssociationsSameClass()
+    {
+        $Comments = new Table(['table' => 'comments']);
+        $options = ['className' => 'Comments'];
+        $Comments->hasMany('Children', $options);
+        $Comments->belongsTo('Parent', $options);
+
+        $this->assertSame('Children', $Comments->Children->alias());
+        $this->assertSame('Children', $Comments->Children->target()->alias());
+
+        $this->assertSame('Parent', $Comments->Parent->alias());
+        $this->assertSame('Parent', $Comments->Parent->target()->alias());
+    }
+
+    /**
      * Tests that hasMany() creates and configures correctly the association
      *
      * @return void
