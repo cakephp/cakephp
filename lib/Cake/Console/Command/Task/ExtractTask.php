@@ -686,7 +686,6 @@ class ExtractTask extends AppShell {
 		$output .= "msgid \"\"\n";
 		$output .= "msgstr \"\"\n";
 		$output .= "\"Project-Id-Version: PROJECT VERSION\\n\"\n";
-		$output .= "\"POT-Creation-Date: " . date("Y-m-d H:iO") . "\\n\"\n";
 		$output .= "\"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\\n\"\n";
 		$output .= "\"Last-Translator: NAME <EMAIL@ADDRESS>\\n\"\n";
 		$output .= "\"Language-Team: LANGUAGE <EMAIL@ADDRESS>\\n\"\n";
