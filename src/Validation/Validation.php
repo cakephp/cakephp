@@ -52,6 +52,10 @@ class Validation
      * $check can be passed as an array:
      * ['check' => 'valueToCheck'];
      *
+     * It is recommended to *not* use this method, and instead use Validator::allowEmpty()
+     * & Validator::notEmpty() instead. This method is only provided for
+     * backwards compatibility.
+     *
      * @param string|array $check Value to check
      * @return bool Success
      */
