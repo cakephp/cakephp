@@ -516,7 +516,8 @@ class Debugger
                     substr(static::_array($var->__debugInfo(), $depth - 1, $indent), 1, -1) .
                     $end . '}';
             } catch (Exception $e) {
-                return $out . "\n(unable to export object)\n }";
+                $message = $e->getMessage();
+                return $out . "\n(unable to export object: $message)\n }";
             }
         }
 
