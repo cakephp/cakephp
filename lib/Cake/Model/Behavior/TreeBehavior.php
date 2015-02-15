@@ -193,53 +193,59 @@ class TreeBehavior extends ModelBehavior {
 				if (!$parentNode) {
 					return false;
 				}
-				list($parentNode) = array_values($parentNode);
+
 				$Model->data[$Model->alias][$left] = 0;
 				$Model->data[$Model->alias][$right] = 0;
-			} else {
-				$edge = $this->_getMax($Model, $scope, $right, $recursive);
-				$Model->data[$Model->alias][$left] = $edge + 1;
-				$Model->data[$Model->alias][$right] = $edge + 2;
+				return true;
 			}
-		} elseif (array_key_exists($parent, $Model->data[$Model->alias])) {
+
+			$edge = $this->_getMax($Model, $scope, $right, $recursive);
+			$Model->data[$Model->alias][$left] = $edge + 1;
+			$Model->data[$Model->alias][$right] = $edge + 2;
+			return true;
+		}
+
+		if (array_key_exists($parent, $Model->data[$Model->alias])) {
 			if ($Model->data[$Model->alias][$parent] != $Model->field($parent)) {
 				$this->settings[$Model->alias]['__parentChange'] = true;
 			}
 			if (!$Model->data[$Model->alias][$parent]) {
 				$Model->data[$Model->alias][$parent] = null;
 				$this->_addToWhitelist($Model, $parent);
-			} else {
-				$values = $Model->find('first', array(
-					'conditions' => array($scope, $Model->escapeField() => $Model->id),
-					'fields' => array($Model->primaryKey, $parent, $left, $right),
-					'order' => false,
-					'recursive' => $recursive)
-				);
+				return true;
+			}
 
-				if (empty($values)) {
-					return false;
-				}
-				list($node) = array_values($values);
+			$values = $Model->find('first', array(
+				'conditions' => array($scope, $Model->escapeField() => $Model->id),
+				'fields' => array($Model->primaryKey, $parent, $left, $right),
+				'order' => false,
+				'recursive' => $recursive)
+			);
 
-				$parentNode = $Model->find('first', array(
-					'conditions' => array($scope, $Model->escapeField() => $Model->data[$Model->alias][$parent]),
-					'fields' => array($Model->primaryKey, $left, $right),
-					'order' => false,
-					'recursive' => $recursive
-				));
-				if (!$parentNode) {
-					return false;
-				}
-				list($parentNode) = array_values($parentNode);
+			if (empty($values)) {
+				return false;
+			}
+			list($node) = array_values($values);
 
-				if (($node[$left] < $parentNode[$left]) && ($parentNode[$right] < $node[$right])) {
-					return false;
-				}
-				if ($node[$Model->primaryKey] === $parentNode[$Model->primaryKey]) {
-					return false;
-				}
+			$parentNode = $Model->find('first', array(
+				'conditions' => array($scope, $Model->escapeField() => $Model->data[$Model->alias][$parent]),
+				'fields' => array($Model->primaryKey, $left, $right),
+				'order' => false,
+				'recursive' => $recursive
+			));
+			if (!$parentNode) {
+				return false;
+			}
+			list($parentNode) = array_values($parentNode);
+
+			if (($node[$left] < $parentNode[$left]) && ($parentNode[$right] < $node[$right])) {
+				return false;
+			}
+			if ($node[$Model->primaryKey] === $parentNode[$Model->primaryKey]) {
+				return false;
 			}
 		}
+
 		return true;
 	}
 
