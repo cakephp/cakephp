@@ -238,7 +238,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * @param Model $Model Model using this behavior
  * @param int|string $id The ID of the record to read
- * @return array|boolean The record read or false
+ * @return array|bool The record read or false
  */
 	protected function _getNode(Model $Model, $id) {
 		$settings = $this->settings[$Model->alias];
