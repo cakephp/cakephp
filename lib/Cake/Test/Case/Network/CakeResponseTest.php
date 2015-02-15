@@ -1170,11 +1170,30 @@ class CakeResponseTest extends CakeTestCase {
  * test file with ..
  *
  * @expectedException NotFoundException
+ * @expectedExceptionMessage The requested file contains `..` and will not be read.
  * @return void
  */
 	public function testFileWithPathTraversal() {
 		$response = new CakeResponse();
 		$response->file('my/../cat.gif');
+	}
+
+	public function testFileWithDotsInFilename() {
+		$ok = false;
+		$file = 'my/Some..cat.gif';
+
+		try {
+			$response = new CakeResponse();
+			$response->file($file);
+		} catch (NotFoundException $e) {
+			if (Configure::read('debug') > 0) {
+				$ok = $e->getMessage() === sprintf('The requested file %s was not found or not readable', APP . $file);
+			} else {
+				$ok = $e->getMessage() === 'The requested file was not found';
+			}
+		}
+
+		$this->assertTrue($ok);
 	}
 
 /**
