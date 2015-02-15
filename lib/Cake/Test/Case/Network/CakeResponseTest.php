@@ -1178,6 +1178,12 @@ class CakeResponseTest extends CakeTestCase {
 		$response->file('my/../cat.gif');
 	}
 
+/**
+ * Although unlikely, file's may contain dots in their filenames.
+ * This should be allowed, as long as the dots doesn't specify a path (../ or ..\)
+ *
+ * @return void
+ */
 	public function testFileWithDotsInFilename() {
 		$ok = false;
 		$file = 'my/Some..cat.gif';
