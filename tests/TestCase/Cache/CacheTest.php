@@ -255,6 +255,7 @@ class CacheTest extends TestCase
      */
     public function testGroupConfigs()
     {
+        Cache::drop('test');
         Cache::config('latest', [
             'duration' => 300,
             'engine' => 'File',
@@ -265,7 +266,6 @@ class CacheTest extends TestCase
             'posts' => ['latest'],
             'comments' => ['latest'],
         ];
-        $engine = Cache::engine('latest');
         $result = Cache::groupConfigs();
         $this->assertEquals($expected, $result);
 
@@ -278,7 +278,6 @@ class CacheTest extends TestCase
             'groups' => ['posts', 'archive'],
         ]);
 
-        $engine = Cache::engine('page');
         $result = Cache::groupConfigs();
         $expected = [
             'posts' => ['latest', 'page'],
@@ -296,7 +295,6 @@ class CacheTest extends TestCase
             'groups' => ['posts', 'archive', 'comments'],
         ]);
 
-        $engine = Cache::engine('archive');
         $result = Cache::groupConfigs('archive');
         $this->assertEquals(['archive' => ['archive', 'page']], $result);
     }
