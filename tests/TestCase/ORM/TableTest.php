@@ -568,6 +568,9 @@ class TableTest extends TestCase
         $Comments->hasMany('Children', $options);
         $Comments->belongsTo('Parent', $options);
 
+        $this->assertSame('comments', $Comments->Children->target()->table());
+        $this->assertSame('comments', $Comments->Parent->target()->table());
+
         $this->assertSame('Children', $Comments->Children->alias());
         $this->assertSame('Children', $Comments->Children->target()->alias());
 
