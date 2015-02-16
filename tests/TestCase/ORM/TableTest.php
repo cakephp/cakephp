@@ -2484,6 +2484,23 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests that the source of an existing Entity is the same as a new one
+     *
+     * @return void
+     */
+    public function testEntitySourceExistingAndNew()
+    {
+        Plugin::load('TestPlugin');
+        $table = TableRegistry::get('TestPlugin.Authors');
+
+        $existingAuthor = $table->find()->first();
+        $newAuthor = $table->newEntity();
+
+        $this->assertEquals('TestPlugin.Authors', $existingAuthor->source());
+        $this->assertEquals('TestPlugin.Authors', $newAuthor->source());
+    }
+
+    /**
      * Tests that calling an entity with an empty array will run validation
      * whereas calling it with no parameters will not run any validation.
      *
