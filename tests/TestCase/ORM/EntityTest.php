@@ -47,7 +47,8 @@ class EntityTest extends TestCase
         $existingAuthor = $table->find()->first();
         $newAuthor = $table->newEntity();
 
-        $this->assertSame($existingAuthor->source(), $newAuthor->source());
+        $this->assertEquals('TestPlugin.Authors', $existingAuthor->source());
+        $this->assertEquals('TestPlugin.Authors', $newAuthor->source());
     }
 
     /**
