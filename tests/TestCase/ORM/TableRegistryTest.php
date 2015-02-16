@@ -171,6 +171,24 @@ class TableRegistryTest extends TestCase
     }
 
     /**
+     * Are auto-models instanciated correctly? How about when they have an alias?
+     *
+     * @return void
+     */
+    public function testGetFallbacks()
+    {
+        $result = TableRegistry::get('Droids');
+        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertEquals('droids', $result->table());
+        $this->assertEquals('Droids', $result->alias());
+
+        $result = TableRegistry::get('R2D2', ['className' => 'Droids']);
+        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertEquals('droids', $result->table());
+        $this->assertEquals('R2D2', $result->alias());
+    }
+
+    /**
      * Test that get() uses config data set with config()
      *
      * @return void
