@@ -557,25 +557,58 @@ class TableTest extends TestCase
     }
 
     /**
-     * testMultipleAssociationsSameClass
+     * Test associations which refer to the same table multiple times
      *
      * @return void
      */
-    public function testMultipleAssociationsSameClass()
+    public function testSelfJoinAssociations()
     {
-        $Comments = new Table(['table' => 'comments']);
-        $options = ['className' => 'Comments'];
-        $Comments->hasMany('Children', $options);
-        $Comments->belongsTo('Parent', $options);
+        $Categories = TableRegistry::get('Categories');
+        $options = ['className' => 'Categories'];
+        $Categories->hasMany('Children', ['foreignKey' => 'parent_id'] + $options);
+        $Categories->belongsTo('Parent', $options);
 
-        $this->assertSame('comments', $Comments->Children->target()->table());
-        $this->assertSame('comments', $Comments->Parent->target()->table());
+        $this->assertSame('categories', $Categories->Children->target()->table());
+        $this->assertSame('categories', $Categories->Parent->target()->table());
 
-        $this->assertSame('Children', $Comments->Children->alias());
-        $this->assertSame('Children', $Comments->Children->target()->alias());
+        $this->assertSame('Children', $Categories->Children->alias());
+        $this->assertSame('Children', $Categories->Children->target()->alias());
 
-        $this->assertSame('Parent', $Comments->Parent->alias());
-        $this->assertSame('Parent', $Comments->Parent->target()->alias());
+        $this->assertSame('Parent', $Categories->Parent->alias());
+        $this->assertSame('Parent', $Categories->Parent->target()->alias());
+
+        $expected = [
+            'id' => 2,
+            'parent_id' => 1,
+            'name' => 'Category 1.1',
+            'parent' => [
+                'id' => 1,
+                'parent_id' => 0,
+                'name' => 'Category 1',
+            ],
+            'children' => [
+                [
+                    'id' => 7,
+                    'parent_id' => 2,
+                    'name' => 'Category 1.1.1',
+                ],
+                [
+                    'id' => 8,
+                    'parent_id' => 2,
+                    'name' => 'Category 1.1.2',
+                ]
+            ]
+        ];
+
+        $fields = ['id', 'parent_id', 'name'];
+        $result = $Categories->find('all')
+            ->select(['Categories.id', 'Categories.parent_id', 'Categories.name'])
+            ->contain(['Children' => ['fields' => $fields], 'Parent' => ['fields' => $fields]])
+            ->where(['Categories.id' => 2])
+            ->first()
+            ->toArray();
+
+        $this->assertSame($expected, $result);
     }
 
     /**
