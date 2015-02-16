@@ -226,7 +226,8 @@ class ModelIntegrationTest extends BaseModelTest {
 			'scope' => '1 = 1',
 			'type' => 'nested',
 			'__parentChange' => false,
-			'recursive' => -1
+			'recursive' => -1,
+			'level' => null
 		);
 		$this->assertEquals($expected, $TestModel->Behaviors->Tree->settings['Apple']);
 

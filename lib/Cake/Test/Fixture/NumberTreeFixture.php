@@ -37,6 +37,7 @@ class NumberTreeFixture extends CakeTestFixture {
 		'name'	=> array('type' => 'string', 'null' => false),
 		'parent_id' => 'integer',
 		'lft'	=> array('type' => 'integer', 'null' => false),
-		'rght'	=> array('type' => 'integer', 'null' => false)
+		'rght'	=> array('type' => 'integer', 'null' => false),
+		'level'	=> array('type' => 'integer', 'null' => true)
 	);
 }

@@ -44,7 +44,7 @@ class TreeBehavior extends ModelBehavior {
  * @var array
  */
 	protected $_defaults = array(
-		'parent' => 'parent_id', 'left' => 'lft', 'right' => 'rght',
+		'parent' => 'parent_id', 'left' => 'lft', 'right' => 'rght', 'level' => null,
 		'scope' => '1 = 1', 'type' => 'nested', '__parentChange' => false, 'recursive' => -1
 	);
 
@@ -97,7 +97,44 @@ class TreeBehavior extends ModelBehavior {
 			}
 		} elseif ($this->settings[$Model->alias]['__parentChange']) {
 			$this->settings[$Model->alias]['__parentChange'] = false;
+			if ($level) {
+				$this->_setChildrenLevel($Model, $Model->id);
+			}
 			return $this->_setParent($Model, $Model->data[$Model->alias][$parent]);
+		}
+	}
+
+/**
+ * Set level for descendents.
+ *
+ * @param Model $Model Model using this behavior.
+ * @param int|string $id Record ID
+ * @return void
+ */
+	protected function _setChildrenLevel($Model, $id) {
+		$settings = $Model->Behaviors->Tree->settings[$Model->alias];
+		$primaryKey = $Model->primaryKey;
+		$depths = array($id => (int)$Model->data[$Model->alias][$settings['level']]);
+
+		$children = $Model->children(
+			$id,
+			false,
+			array($primaryKey, $settings['parent'], $settings['level']),
+			$settings['left'],
+			null,
+			1,
+			-1
+		);
+
+		foreach ($children as $node) {
+			$parentIdValue = $node[$Model->alias][$settings['parent']];
+			$depth = (int)$depths[$parentIdValue] + 1;
+			$depths[$node[$Model->alias][$primaryKey]] = $depth;
+
+			$Model->updateAll(
+				array($settings['level'] => $depth),
+				array($primaryKey => $node[$Model->alias][$primaryKey])
+			);
 		}
 	}
 
@@ -182,8 +219,13 @@ class TreeBehavior extends ModelBehavior {
 		extract($this->settings[$Model->alias]);
 
 		$this->_addToWhitelist($Model, array($left, $right));
+		if ($level) {
+			$this->_addToWhitelist($Model, $level);
+		}
+		$parentIsSet = array_key_exists($parent, $Model->data[$Model->alias]);
+
 		if (!$Model->id || !$Model->exists()) {
-			if (array_key_exists($parent, $Model->data[$Model->alias]) && $Model->data[$Model->alias][$parent]) {
+			if ($parentIsSet && $Model->data[$Model->alias][$parent]) {
 				$parentNode = $this->_getNode($Model, $Model->data[$Model->alias][$parent]);
 				if (!$parentNode) {
 					return false;
@@ -191,22 +233,31 @@ class TreeBehavior extends ModelBehavior {
 
 				$Model->data[$Model->alias][$left] = 0;
 				$Model->data[$Model->alias][$right] = 0;
+				if ($level) {
+					$Model->data[$Model->alias][$level] = (int)$parentNode[$Model->alias][$level] + 1;
+				}
 				return true;
 			}
 
 			$edge = $this->_getMax($Model, $scope, $right, $recursive);
 			$Model->data[$Model->alias][$left] = $edge + 1;
 			$Model->data[$Model->alias][$right] = $edge + 2;
+			if ($level) {
+				$Model->data[$Model->alias][$level] = 0;
+			}
 			return true;
 		}
 
-		if (array_key_exists($parent, $Model->data[$Model->alias])) {
+		if ($parentIsSet) {
 			if ($Model->data[$Model->alias][$parent] != $Model->field($parent)) {
 				$this->settings[$Model->alias]['__parentChange'] = true;
 			}
 			if (!$Model->data[$Model->alias][$parent]) {
 				$Model->data[$Model->alias][$parent] = null;
 				$this->_addToWhitelist($Model, $parent);
+				if ($level) {
+					$Model->data[$Model->alias][$level] = 0;
+				}
 				return true;
 			}
 
@@ -228,6 +279,9 @@ class TreeBehavior extends ModelBehavior {
 			if ($node[$Model->primaryKey] === $parentNode[$Model->primaryKey]) {
 				return false;
 			}
+			if ($level) {
+				$Model->data[$Model->alias][$level] = (int)$parentNode[$level] + 1;
+			}
 		}
 
 		return true;
@@ -242,10 +296,14 @@ class TreeBehavior extends ModelBehavior {
  */
 	protected function _getNode(Model $Model, $id) {
 		$settings = $this->settings[$Model->alias];
+		$fields = array($Model->primaryKey, $settings['parent'], $settings['left'], $settings['right']);
+		if ($settings['level']) {
+			$fields[] = $settings['level'];
+		}
 
 		return $Model->find('first', array(
 			'conditions' => array($Model->escapeField() => $id),
-			'fields' => array($Model->primaryKey, $settings['parent'], $settings['left'], $settings['right']),
+			'fields' => $fields,
 			'recursive' => $settings['recursive'],
 			'order' => false,
 		));

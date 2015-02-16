@@ -46,7 +46,8 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		'modelClass' => 'NumberTree',
 		'leftField' => 'lft',
 		'rightField' => 'rght',
-		'parentField' => 'parent_id'
+		'parentField' => 'parent_id',
+		'level' => 'level'
 	);
 
 /**
@@ -1526,5 +1527,62 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 			)
 		);
 		$this->assertEquals($expected, $result);
+	}
+
+	public function testLevel() {
+		extract($this->settings);
+		$this->Tree = new $modelClass();
+		$this->Tree->Behaviors->attach('Tree', array('level' => 'level'));
+		$this->Tree->initialize(2, 2);
+
+		$result = $this->Tree->findByName('1. Root');
+		$this->assertEquals(0, $result[$modelClass][$level]);
+
+		$result = $this->Tree->findByName('1.1');
+		$this->assertEquals(1, $result[$modelClass][$level]);
+
+		$result = $this->Tree->findByName('1.2.2');
+		$this->assertEquals(2, $result[$modelClass][$level]);
+
+		$result = $this->Tree->findByName('1.2.1');
+		$this->assertEquals(2, $result[$modelClass][$level]);
+
+		// Save with parent_id not set
+		$this->Tree->save(array('id' => $result[$modelClass]['id'], 'name' => 'foo'));
+		$result = $this->Tree->findByName('foo');
+		$this->assertEquals(2, $result[$modelClass][$level]);
+
+		// Save with parent_id not changed
+		$this->Tree->save(array(
+			'id' => $result[$modelClass]['id'],
+			'parent_id' => $result[$modelClass]['parent_id'],
+			'name' => 'foo2'
+		));
+		$result = $this->Tree->findByName('foo2');
+		$this->assertEquals(2, $result[$modelClass][$level]);
+
+		// Save with parent_id changed
+		$result = $this->Tree->findByName('1.1');
+		$this->Tree->save(array(
+			'id' => $result[$modelClass]['id'],
+			'parent_id' => ''
+		));
+		$result = $this->Tree->findByName('1.1');
+		$this->assertEquals(0, $result[$modelClass][$level]);
+
+		$result = $this->Tree->findByName('1.1.2');
+		$this->assertEquals(1, $result[$modelClass][$level]);
+
+		$parent = $this->Tree->findByName('1.1.2');
+		$result = $this->Tree->findByName('1.2');
+		$this->Tree->save(array(
+			'id' => $result[$modelClass]['id'],
+			'parent_id' => $parent[$modelClass]['id']
+		));
+		$result = $this->Tree->findByName('1.2');
+		$this->assertEquals(2, $result[$modelClass][$level]);
+
+		$result = $this->Tree->findByName('1.2.2');
+		$this->assertEquals(3, $result[$modelClass][$level]);
 	}
 }
