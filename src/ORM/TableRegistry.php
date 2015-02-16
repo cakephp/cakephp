@@ -173,7 +173,15 @@ class TableRegistry
             $options['className'] = Inflector::camelize($alias);
         }
         $className = App::className($options['className'], 'Model/Table', 'Table');
-        $options['className'] = $className ?: 'Cake\ORM\Table';
+        if ($className) {
+            $options['className'] = $className;
+        } else {
+            if (!isset($options['table'])) {
+                list(, $table) = pluginSplit($options['className']);
+                $options['table'] = Inflector::underscore($table);
+            }
+            $options['className'] = 'Cake\ORM\Table';
+        }
 
         if (isset(static::$_config[$alias])) {
             $options += static::$_config[$alias];
