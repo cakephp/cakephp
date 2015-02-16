@@ -178,7 +178,6 @@ class AssociationTest extends TestCase
     public function testTargetPlugin()
     {
         Plugin::load('TestPlugin');
-
         $config = [
             'className' => 'TestPlugin.Comments',
             'foreignKey' => 'a_key',
@@ -197,12 +196,16 @@ class AssociationTest extends TestCase
         $table = $this->association->target();
         $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $table);
 
-        $this->assertTrue(TableRegistry::exists('TestPlugin.Comments'));
-        $this->assertFalse(TableRegistry::exists('Comments'));
-        $this->assertFalse(TableRegistry::exists('ThisAssociationName'));
+        $this->assertTrue(TableRegistry::exists('TestPlugin.ThisAssociationName'), 'The association class will use this registry key');
+        $this->assertFalse(TableRegistry::exists('TestPlugin.Comments', 'The association clas will NOT use this key'));
+        $this->assertFalse(TableRegistry::exists('Comments', 'Should also not be set'));
+        $this->assertFalse(TableRegistry::exists('ThisAssociationName', 'Should also not be set'));
 
-        $plugin = TableRegistry::get('TestPlugin.Comments');
-        $this->assertSame($table, $plugin, 'Should be the same TestPlugin.Comments object');
+        $plugin = TableRegistry::get('TestPlugin.ThisAssociationName');
+        $this->assertSame($table, $plugin, 'Should be an instance of TestPlugin.Comments');
+        $this->assertSame('TestPlugin.ThisAssociationName', $table->registryAlias());
+        $this->assertSame('comments', $table->table());
+        $this->assertSame('ThisAssociationName', $table->alias());
     }
 
     /**

@@ -533,6 +533,85 @@ class TableTest extends TestCase
     }
 
     /**
+     * testNoneUniqueAssociationsSameClass
+     *
+     * @return void
+     */
+    public function testNoneUniqueAssociationsSameClass()
+    {
+        $Users = new Table(['table' => 'users']);
+        $options = ['className' => 'Comments'];
+        $Users->hasMany('Comments', $options);
+
+        $Articles = new Table(['table' => 'articles']);
+        $options = ['className' => 'Comments'];
+        $Articles->hasMany('Comments', $options);
+
+        $Categories = new Table(['table' => 'categories']);
+        $options = ['className' => 'TestPlugin.Comments'];
+        $Categories->hasMany('Comments', $options);
+
+        $this->assertInstanceOf('Cake\ORM\Table', $Users->Comments->target());
+        $this->assertInstanceOf('Cake\ORM\Table', $Articles->Comments->target());
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $Categories->Comments->target());
+    }
+
+    /**
+     * Test associations which refer to the same table multiple times
+     *
+     * @return void
+     */
+    public function testSelfJoinAssociations()
+    {
+        $Categories = TableRegistry::get('Categories');
+        $options = ['className' => 'Categories'];
+        $Categories->hasMany('Children', ['foreignKey' => 'parent_id'] + $options);
+        $Categories->belongsTo('Parent', $options);
+
+        $this->assertSame('categories', $Categories->Children->target()->table());
+        $this->assertSame('categories', $Categories->Parent->target()->table());
+
+        $this->assertSame('Children', $Categories->Children->alias());
+        $this->assertSame('Children', $Categories->Children->target()->alias());
+
+        $this->assertSame('Parent', $Categories->Parent->alias());
+        $this->assertSame('Parent', $Categories->Parent->target()->alias());
+
+        $expected = [
+            'id' => 2,
+            'parent_id' => 1,
+            'name' => 'Category 1.1',
+            'parent' => [
+                'id' => 1,
+                'parent_id' => 0,
+                'name' => 'Category 1',
+            ],
+            'children' => [
+                [
+                    'id' => 7,
+                    'parent_id' => 2,
+                    'name' => 'Category 1.1.1',
+                ],
+                [
+                    'id' => 8,
+                    'parent_id' => 2,
+                    'name' => 'Category 1.1.2',
+                ]
+            ]
+        ];
+
+        $fields = ['id', 'parent_id', 'name'];
+        $result = $Categories->find('all')
+            ->select(['Categories.id', 'Categories.parent_id', 'Categories.name'])
+            ->contain(['Children' => ['fields' => $fields], 'Parent' => ['fields' => $fields]])
+            ->where(['Categories.id' => 2])
+            ->first()
+            ->toArray();
+
+        $this->assertSame($expected, $result);
+    }
+
+    /**
      * Tests that hasMany() creates and configures correctly the association
      *
      * @return void
