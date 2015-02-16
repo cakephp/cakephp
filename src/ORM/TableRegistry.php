@@ -176,7 +176,7 @@ class TableRegistry
         if ($className) {
             $options['className'] = $className;
         } else {
-            if (!isset($options['table'])) {
+            if (!isset($options['table']) && strpos($options['className'], '\\') === false) {
                 list(, $table) = pluginSplit($options['className']);
                 $options['table'] = Inflector::underscore($table);
             }

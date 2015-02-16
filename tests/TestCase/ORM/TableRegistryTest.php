@@ -184,8 +184,18 @@ class TableRegistryTest extends TestCase
 
         $result = TableRegistry::get('R2D2', ['className' => 'Droids']);
         $this->assertInstanceOf('Cake\ORM\Table', $result);
-        $this->assertEquals('droids', $result->table());
+        $this->assertEquals('droids', $result->table(), 'The table should be derived from the className');
         $this->assertEquals('R2D2', $result->alias());
+
+        $result = TableRegistry::get('C3P0', ['className' => 'Droids', 'table' => 'rebels']);
+        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertEquals('rebels', $result->table(), 'The table should be taken from options');
+        $this->assertEquals('C3P0', $result->alias());
+
+        $result = TableRegistry::get('Stuff', ['className' => 'Cake\ORM\Table']);
+        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertEquals('stuff', $result->table(), 'The table should be drived from the alias');
+        $this->assertEquals('Stuff', $result->alias());
     }
 
     /**
