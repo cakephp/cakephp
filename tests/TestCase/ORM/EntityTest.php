@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\ORM\Entity;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use TestApp\Model\Entity\Extending;
@@ -25,6 +26,29 @@ use TestApp\Model\Entity\NonExtending;
  */
 class EntityTest extends TestCase
 {
+
+    /**
+     * Fixtures to be used
+     *
+     * @var array
+     */
+    public $fixtures = ['core.authors'];
+
+    /**
+     * Tests that the source of an existing Entity is the same as a new one
+     *
+     * @return void
+     */
+    public function testEntitySourceExistingAndNew()
+    {
+        $this->loadFixtures('Authors');
+        $table = TableRegistry::get('TestPlugin.Authors');
+
+        $existingAuthor = $table->find()->first();
+        $newAuthor = $table->newEntity();
+
+        $this->assertSame($existingAuthor->source(), $newAuthor->source());
+    }
 
     /**
      * Tests setting a single property in an entity without custom setters
