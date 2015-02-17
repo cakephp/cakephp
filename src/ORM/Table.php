@@ -2158,6 +2158,7 @@ class Table implements RepositoryInterface, EventListenerInterface
     {
         $conn = $this->connection();
         return [
+            'registryAlias' => $this->registryAlias(),
             'table' => $this->table(),
             'alias' => $this->alias(),
             'entityClass' => $this->entityClass(),

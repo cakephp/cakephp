@@ -3508,11 +3508,26 @@ class TableTest extends TestCase
         $articles->addBehavior('Timestamp');
         $result = $articles->__debugInfo();
         $expected = [
+            'registryAlias' => 'articles',
             'table' => 'articles',
             'alias' => 'articles',
             'entityClass' => 'TestApp\Model\Entity\Article',
             'associations' => ['authors', 'tags', 'articlestags'],
             'behaviors' => ['Timestamp'],
+            'defaultConnection' => 'default',
+            'connectionName' => 'test'
+        ];
+        $this->assertEquals($expected, $result);
+
+        $articles = TableRegistry::get('Foo.Articles');
+        $result = $articles->__debugInfo();
+        $expected = [
+            'registryAlias' => 'Foo.Articles',
+            'table' => 'articles',
+            'alias' => 'Articles',
+            'entityClass' => '\Cake\ORM\Entity',
+            'associations' => [],
+            'behaviors' => [],
             'defaultConnection' => 'default',
             'connectionName' => 'test'
         ];
