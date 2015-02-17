@@ -2484,6 +2484,23 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests that the source of an existing Entity is the same as a new one
+     *
+     * @return void
+     */
+    public function testEntitySourceExistingAndNew()
+    {
+        Plugin::load('TestPlugin');
+        $table = TableRegistry::get('TestPlugin.Authors');
+
+        $existingAuthor = $table->find()->first();
+        $newAuthor = $table->newEntity();
+
+        $this->assertEquals('TestPlugin.Authors', $existingAuthor->source());
+        $this->assertEquals('TestPlugin.Authors', $newAuthor->source());
+    }
+
+    /**
      * Tests that calling an entity with an empty array will run validation
      * whereas calling it with no parameters will not run any validation.
      *
@@ -3491,11 +3508,26 @@ class TableTest extends TestCase
         $articles->addBehavior('Timestamp');
         $result = $articles->__debugInfo();
         $expected = [
+            'registryAlias' => 'articles',
             'table' => 'articles',
             'alias' => 'articles',
             'entityClass' => 'TestApp\Model\Entity\Article',
             'associations' => ['authors', 'tags', 'articlestags'],
             'behaviors' => ['Timestamp'],
+            'defaultConnection' => 'default',
+            'connectionName' => 'test'
+        ];
+        $this->assertEquals($expected, $result);
+
+        $articles = TableRegistry::get('Foo.Articles');
+        $result = $articles->__debugInfo();
+        $expected = [
+            'registryAlias' => 'Foo.Articles',
+            'table' => 'articles',
+            'alias' => 'Articles',
+            'entityClass' => '\Cake\ORM\Entity',
+            'associations' => [],
+            'behaviors' => [],
             'defaultConnection' => 'default',
             'connectionName' => 'test'
         ];
