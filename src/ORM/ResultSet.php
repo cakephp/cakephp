@@ -472,7 +472,7 @@ class ResultSet implements ResultSetInterface
             $results[$defaultAlias]['_matchingData'] = $results['_matchingData'];
         }
 
-        $options['source'] = $defaultAlias;
+        $options['source'] = $this->_defaultTable->registryAlias();
         $results = $results[$defaultAlias];
         if ($this->_hydrate && !($results instanceof Entity)) {
             $results = new $this->_entityClass($results, $options);
