@@ -196,10 +196,13 @@ class AssociationTest extends TestCase
         $table = $this->association->target();
         $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $table);
 
-        $this->assertTrue(TableRegistry::exists('TestPlugin.ThisAssociationName'), 'The association class will use this registry key');
-        $this->assertFalse(TableRegistry::exists('TestPlugin.Comments', 'The association clas will NOT use this key'));
-        $this->assertFalse(TableRegistry::exists('Comments', 'Should also not be set'));
-        $this->assertFalse(TableRegistry::exists('ThisAssociationName', 'Should also not be set'));
+        $this->assertTrue(
+            TableRegistry::exists('TestPlugin.ThisAssociationName'),
+            'The association class will use this registry key'
+        );
+        $this->assertFalse(TableRegistry::exists('TestPlugin.Comments'), 'The association class will NOT use this key');
+        $this->assertFalse(TableRegistry::exists('Comments'), 'Should also not be set');
+        $this->assertFalse(TableRegistry::exists('ThisAssociationName'), 'Should also not be set');
 
         $plugin = TableRegistry::get('TestPlugin.ThisAssociationName');
         $this->assertSame($table, $plugin, 'Should be an instance of TestPlugin.Comments');
