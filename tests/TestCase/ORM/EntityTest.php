@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Core\Plugin;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -41,6 +42,7 @@ class EntityTest extends TestCase
      */
     public function testEntitySourceExistingAndNew()
     {
+        Plugin::load('TestPlugin');
         $this->loadFixtures('Authors');
         $table = TableRegistry::get('TestPlugin.Authors');
 
