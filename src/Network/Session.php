@@ -416,6 +416,7 @@ class Session
      *
      * @param string|array $name Name of variable
      * @param string|null $value Value to write
+     * @return void
      */
     public function write($name, $value = null)
     {
