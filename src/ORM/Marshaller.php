@@ -451,7 +451,6 @@ class Marshaller
             }
 
             $key = implode(';', $entity->extract($primary));
-
             if ($key === null || !isset($indexed[$key])) {
                 continue;
             }
@@ -521,7 +520,7 @@ class Marshaller
      * @param \Cake\ORM\Association $assoc The association to marshall
      * @param array $value The data to hydrate
      * @param array $options List of options.
-     * @return mixed
+     * @return array
      */
     protected function _mergeBelongsToMany($original, $assoc, $value, $options)
     {
@@ -538,8 +537,26 @@ class Marshaller
             return $this->mergeMany($original, $value, $options);
         }
 
+        return $this->_mergeJoinData($original, $assoc, $value, $options);
+    }
+
+    /**
+     * Merge the special _joinData property into the entity set.
+     *
+     * @param \Cake\Datasource\EntityInterface $original The original entity
+     * @param \Cake\ORM\Association $assoc The association to marshall
+     * @param array $value The data to hydrate
+     * @param array $options List of options.
+     * @return array An array of entities
+     */
+    protected function _mergeJoinData($original, $assoc, $value, $options)
+    {
+        $associated = isset($options['associated']) ? $options['associated'] : [];
         $extra = [];
         foreach ($original as $entity) {
+            // Mark joinData as accessible so we can marshal it properly.
+            $entity->accessible('_joinData', true);
+
             $joinData = $entity->get('_joinData');
             if ($joinData && $joinData instanceof EntityInterface) {
                 $extra[spl_object_hash($entity)] = $joinData;
@@ -558,8 +575,14 @@ class Marshaller
         foreach ($records as $record) {
             $hash = spl_object_hash($record);
             $value = $record->get('_joinData');
+
+            if (!is_array($value)) {
+                $record->unsetProperty('_joinData');
+                continue;
+            }
+
             if (isset($extra[$hash])) {
-                $record->set('_joinData', $marshaller->merge($extra[$hash], (array)$value, $nested));
+                $record->set('_joinData', $marshaller->merge($extra[$hash], $value, $nested));
             } else {
                 $joinData = $marshaller->one($value, $nested);
                 $record->set('_joinData', $joinData);
