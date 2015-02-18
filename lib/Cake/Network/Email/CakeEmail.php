@@ -304,6 +304,13 @@ class CakeEmail {
 	protected $_config = array();
 
 /**
+ * An instance of the EmailConfig class can be set here
+ *
+ * @var EmailConfig
+ */
+	protected $_configInstance = null;
+
+/**
  * 8Bit character sets
  *
  * @var array
@@ -353,6 +360,11 @@ class CakeEmail {
 
 		if ($config) {
 			$this->config($config);
+		} elseif (config('email')) {
+			$this->_configInstance = new $this->_configClass;
+			if (property_exists($this->_configClass, 'default')) {
+				$this->config('default');
+			}
 		}
 		if (empty($this->headerCharset)) {
 			$this->headerCharset = $this->charset;
@@ -1223,7 +1235,7 @@ class CakeEmail {
  */
 	protected function _applyConfig($config) {
 		if (is_string($config)) {
-			if (!class_exists($this->_configClass) && !config('email')) {
+			if (!class_exists($this->_configClass) && !$this->_configInstance instanceof $this->_configClass && !config('email')) {
 				throw new ConfigureException(__d('cake_dev', '%s not found.', APP . 'Config' . DS . 'email.php'));
 			}
 			$configs = new $this->_configClass();
