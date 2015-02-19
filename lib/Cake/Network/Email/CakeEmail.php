@@ -337,6 +337,13 @@ class CakeEmail {
 	protected $_configClass = 'EmailConfig';
 
 /**
+ * An instance of the EmailConfig class can be set here
+ *
+ * @var string
+ */
+	protected $_configInstance;
+
+/**
  * Constructor
  *
  * @param array|string $config Array of configs, or string to load configs from email.php
@@ -353,8 +360,9 @@ class CakeEmail {
 
 		if ($config) {
 			$this->config($config);
-		} elseif (config('email')) {
-			if (property_exists($this->_configClass, 'default')) {
+		} elseif (class_exists($this->_configClass) && config('email')) {
+			$this->_configInstance = new $this->_configClass();
+			if (isset($this->_configInstance->default)) {
 				$this->config('default');
 			}
 		}
@@ -1227,14 +1235,16 @@ class CakeEmail {
  */
 	protected function _applyConfig($config) {
 		if (is_string($config)) {
-			if (!class_exists($this->_configClass) && !config('email')) {
-				throw new ConfigureException(__d('cake_dev', '%s not found.', APP . 'Config' . DS . 'email.php'));
+			if (!$this->_configInstance) {
+				if (!class_exists($this->_configClass) && !config('email')) {
+					throw new ConfigureException(__d('cake_dev', '%s not found.', APP . 'Config' . DS . 'email.php'));
+				}
+				$this->_configInstance = new $this->_configClass();
 			}
-			$configs = new $this->_configClass();
-			if (!isset($configs->{$config})) {
+			if (!isset($this->_configInstance->{$config})) {
 				throw new ConfigureException(__d('cake_dev', 'Unknown email configuration "%s".', $config));
 			}
-			$config = $configs->{$config};
+			$config = $this->_configInstance->{$config};
 		}
 		$this->_config = $config + $this->_config;
 		if (!empty($config['charset'])) {

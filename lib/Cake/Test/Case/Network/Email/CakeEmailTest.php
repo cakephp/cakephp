@@ -17,6 +17,7 @@
  */
 
 App::uses('CakeEmail', 'Network/Email');
+App::uses('File', 'Utility');
 
 /**
  * Help to test CakeEmail
@@ -93,6 +94,15 @@ class TestCakeEmail extends CakeEmail {
 class TestEmailConfig {
 
 /**
+ * default config
+ *
+ * @var array
+ */
+	public $default = array(
+		'subject' => 'Default Subject',
+	);
+
+/**
  * test config
  *
  * @var array
@@ -145,6 +155,14 @@ class CakeEmailTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
+
+		$this->_configFileExists = true;
+		$emailConfig = new File(APP . 'Config' . DS . 'email.php');
+		if (!$emailConfig->exists()) {
+			$this->_configFileExists = false;
+			$emailConfig->create();
+		}
+
 		$this->CakeEmail = new TestCakeEmail();
 
 		App::build(array(
@@ -160,6 +178,19 @@ class CakeEmailTest extends CakeTestCase {
 	public function tearDown() {
 		parent::tearDown();
 		App::build();
+
+		if (!$this->_configFileExists) {
+			unlink(APP . 'Config' . DS . 'email.php');
+		}
+	}
+
+/**
+ * Test if the EmailConfig::$default configuration is read when present
+ *
+ * @return void
+ */
+	public function testDefaultConfig() {
+		$this->assertEquals('Default Subject', $this->CakeEmail->subject());
 	}
 
 /**
@@ -860,16 +891,17 @@ class CakeEmailTest extends CakeTestCase {
 		$config = array('test' => 'ok', 'test2' => true);
 		$this->CakeEmail->config($config);
 		$this->assertSame($config, $transportClass->config());
-		$this->assertSame($config, $this->CakeEmail->config());
+		$expected = $config + array('subject' => 'Default Subject');
+		$this->assertSame($expected, $this->CakeEmail->config());
 
 		$this->CakeEmail->config(array());
 		$this->assertSame($config, $transportClass->config());
 
-		$config = array('test' => 'test@example.com');
+		$config = array('test' => 'test@example.com', 'subject' => 'my test subject');
 		$this->CakeEmail->config($config);
-		$expected = array('test' => 'test@example.com', 'test2' => true);
+		$expected = array('test' => 'test@example.com', 'subject' => 'my test subject', 'test2' => true);
 		$this->assertSame($expected, $this->CakeEmail->config());
-		$this->assertSame($expected, $transportClass->config());
+		$this->assertSame(array('test' => 'test@example.com', 'test2' => true), $transportClass->config());
 	}
 
 /**
@@ -2446,25 +2478,6 @@ HTML;
 		foreach ($lines as $line) {
 			$this->assertTrue(strlen($line) <= CakeEmail::LINE_LENGTH_MUST,
 				'Line length exceeds the max. limit of CakeEmail::LINE_LENGTH_MUST');
-		}
-	}
-
-/**
- * Test if the EmailConfig::$default configuration is read when present
- *
- * @return void
- */
-	public function testDefaultConfig() {
-		$defaultConfig = new File(APP . 'Config' . DS . 'email.php.default');
-		$emailConfig = new File(APP . 'Config' . DS . 'email.php');
-		$hasConfig = $emailConfig->exists();
-		$this->skipIf(!$defaultConfig->copy(APP . 'Config' . DS . 'email.php', false));
-
-		$Email = new CakeEmail();
-		$this->skipIf(!property_exists('EmailConfig', 'default'));
-		$this->assertEquals('you@localhost', current($Email->from()));
-		if (!$hasConfig) {
-			$emailConfig->delete();
 		}
 	}
 
