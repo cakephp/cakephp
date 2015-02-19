@@ -52,7 +52,14 @@ class ProtectedArticle extends Entity
 class MarshallerTest extends TestCase
 {
 
-    public $fixtures = ['core.tags', 'core.articles_tags', 'core.articles', 'core.users', 'core.comments'];
+    public $fixtures = [
+        'core.tags',
+        'core.articles_tags',
+        'core.articles',
+        'core.users',
+        'core.comments',
+        'core.special_tags'
+    ];
 
     /**
      * setup
@@ -989,6 +996,69 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test that invalid _joinData (scalar data) is not marshalled.
+     *
+     * @return void
+     */
+    public function testMergeBelongsToManyJoinDataScalar()
+    {
+        TableRegistry::clear();
+        $articles = TableRegistry::get('Articles');
+        $articles->belongsToMany('Tags', [
+            'through' => 'SpecialTags'
+        ]);
+
+        $entity = $articles->get(1, ['contain' => 'Tags']);
+        $data = [
+            'title' => 'Haz data',
+            'tags' => [
+                ['id' => 3, 'tag' => 'Cake', '_joinData' => 'Invalid'],
+            ]
+        ];
+        $marshall = new Marshaller($articles);
+        $result = $marshall->merge($entity, $data, ['associated' => 'Tags._joinData']);
+
+        $articles->save($entity, ['associated' => ['Tags._joinData']]);
+        $this->assertFalse($entity->tags[0]->dirty('_joinData'));
+        $this->assertEmpty($entity->tags[0]->_joinData);
+    }
+
+    /**
+     * Test merging the _joinData entity for belongstomany associations when * is not
+     * accessible.
+     *
+     * @return void
+     */
+    public function testMergeBelongsToManyJoinDataNotAccessible()
+    {
+        TableRegistry::clear();
+        $articles = TableRegistry::get('Articles');
+        $articles->belongsToMany('Tags', [
+            'through' => 'SpecialTags'
+        ]);
+
+        $entity = $articles->get(1, ['contain' => 'Tags']);
+        $data = [
+            'title' => 'Haz data',
+            'tags' => [
+                ['id' => 3, 'tag' => 'Cake', '_joinData' => ['highlighted' => '1', 'author_id' => '99']],
+            ]
+        ];
+        // Make only specific fields accessible, but not _joinData.
+        $entity->tags[0]->accessible('*', false);
+        $entity->tags[0]->accessible(['article_id', 'tag_id'], true);
+
+        $marshall = new Marshaller($articles);
+        $result = $marshall->merge($entity, $data, ['associated' => 'Tags._joinData']);
+
+        $this->assertTrue($entity->tags[0]->dirty('_joinData'));
+        $this->assertTrue($result->tags[0]->_joinData->dirty('author_id'), 'Field not modified');
+        $this->assertTrue($result->tags[0]->_joinData->dirty('highlighted'), 'Field not modified');
+        $this->assertSame(99, $result->tags[0]->_joinData->author_id);
+        $this->assertTrue($result->tags[0]->_joinData->highlighted);
+    }
+
+    /**
      * Test merging the _joinData entity for belongstomany associations.
      *
      * @return void
@@ -1017,7 +1087,7 @@ class MarshallerTest extends TestCase
             ],
         ];
 
-        $options = ['associated' => ['Tags' => ['associated' => ['_joinData']]]];
+        $options = ['associated' => ['Tags._joinData']];
         $marshall = new Marshaller($this->articles);
         $entity = $marshall->one($data, $options);
         $entity->accessible('*', true);

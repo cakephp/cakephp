@@ -159,7 +159,7 @@ class Type
      */
     public function toDatabase($value, Driver $driver)
     {
-        return $this->_basicTypeCast($value, $driver);
+        return $this->_basicTypeCast($value);
     }
 
     /**
@@ -171,7 +171,7 @@ class Type
      */
     public function toPHP($value, Driver $driver)
     {
-        return $this->_basicTypeCast($value, $driver);
+        return $this->_basicTypeCast($value);
     }
 
     /**
@@ -179,10 +179,9 @@ class Type
      * If it is, returns converted value
      *
      * @param mixed $value value to be converted to PHP equivalent
-     * @param Driver $driver object from which database preferences and configuration will be extracted
      * @return mixed
      */
-    protected function _basicTypeCast($value, Driver $driver)
+    protected function _basicTypeCast($value)
     {
         if ($value === null) {
             return null;
@@ -259,6 +258,6 @@ class Type
      */
     public function marshal($value)
     {
-        return $value;
+        return $this->_basicTypeCast($value);
     }
 }

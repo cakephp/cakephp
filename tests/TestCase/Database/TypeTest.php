@@ -368,6 +368,27 @@ class TypeTest extends TestCase
     }
 
     /**
+     * Test marshalling booleans
+     *
+     * @return void
+     */
+    public function testBooleanMarshal()
+    {
+        $type = Type::build('boolean');
+        $this->assertTrue($type->marshal(true));
+        $this->assertTrue($type->marshal(1));
+        $this->assertTrue($type->marshal('1'));
+        $this->assertTrue($type->marshal('true'));
+
+        $this->assertFalse($type->marshal('false'));
+        $this->assertFalse($type->marshal('0'));
+        $this->assertFalse($type->marshal(0));
+        $this->assertFalse($type->marshal(''));
+        $this->assertFalse($type->marshal('invalid'));
+    }
+
+
+    /**
      * Tests uuid from database are converted correctly to PHP
      *
      * @return void
