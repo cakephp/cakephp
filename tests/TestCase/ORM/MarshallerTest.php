@@ -1270,6 +1270,7 @@ class MarshallerTest extends TestCase
         $marshall = new Marshaller($comments);
         $result = $marshall->mergeMany($entities, $data);
 
+        $this->assertCount(3, $result);
         $this->assertEquals('Changed 1', $result[0]->comment);
         $this->assertEquals(1, $result[0]->user_id);
         $this->assertEquals('Changed 2', $result[1]->comment);
