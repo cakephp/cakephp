@@ -470,11 +470,13 @@ class Marshaller
                 return $query->orWhere($query->newExpr()->and_(array_combine($primary, $keys)));
             }, $this->_table->find());
 
-        if (count($maybeExistentQuery->clause('where'))) {
+        if (!empty($indexed) && count($maybeExistentQuery->clause('where'))) {
             foreach ($maybeExistentQuery as $entity) {
                 $key = implode(';', $entity->extract($primary));
-                $output[] = $this->merge($entity, $indexed[$key], $options);
-                unset($indexed[$key]);
+                if (isset($indexed[$key])) {
+                    $output[] = $this->merge($entity, $indexed[$key], $options);
+                    unset($indexed[$key]);
+                }
             }
         }
 
