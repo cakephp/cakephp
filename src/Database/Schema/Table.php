@@ -342,6 +342,22 @@ class Table
     }
 
     /**
+     * Check whether or not a field is nullable
+     *
+     * Missing columns are nullable.
+     *
+     * @param string $name The column to get the type of.
+     * @return bool Whether or not the field is nullable.
+     */
+    public function isNullable($name)
+    {
+        if (!isset($this->_columns[$name])) {
+            return true;
+        }
+        return ($this->_columns[$name]['null'] === true);
+    }
+
+    /**
      * Get a hash of columns and their default values.
      *
      * @return array

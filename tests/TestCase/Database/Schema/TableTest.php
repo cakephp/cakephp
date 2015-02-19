@@ -66,6 +66,28 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test isNullable method
+     *
+     * @return void
+     */
+    public function testIsNullable()
+    {
+        $table = new Table('articles');
+        $table->addColumn('title', [
+            'type' => 'string',
+            'length' => 25,
+            'null' => false
+        ])->addColumn('tagline', [
+            'type' => 'string',
+            'length' => 25,
+            'null' => true
+        ]);
+        $this->assertFalse($table->isNullable('title'));
+        $this->assertTrue($table->isNullable('tagline'));
+        $this->assertTrue($table->isNullable('missing'));
+    }
+
+    /**
      * Test columnType method
      *
      * @return void

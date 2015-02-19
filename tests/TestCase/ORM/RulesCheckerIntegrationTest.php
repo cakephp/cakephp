@@ -401,6 +401,27 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
+     * ExistsIn uses the schema to verify that nullable fields are ok.
+     *
+     * @return
+     */
+    public function testExistsInNullValue()
+    {
+        $entity = new Entity([
+            'title' => 'An Article',
+            'author_id' => null
+        ]);
+
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors');
+        $rules = $table->rulesChecker();
+        $rules->add($rules->existsIn('author_id', 'Authors'));
+
+        $this->assertEquals($entity, $table->save($entity));
+        $this->assertEquals([], $entity->errors('author_id'));
+    }
+
+    /**
      * Tests the checkRules save option
      *
      * @group save
