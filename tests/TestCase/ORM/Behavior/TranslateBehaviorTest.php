@@ -406,7 +406,7 @@ class TranslateBehaviorTest extends TestCase
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
         $results = $table
             ->find('list', [
-                'idField' => 'title',
+                'keyField' => 'title',
                 'valueField' => '_translations.deu.title',
                 'groupField' => 'id'
             ])

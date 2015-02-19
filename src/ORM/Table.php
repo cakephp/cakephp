@@ -908,7 +908,7 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * ```
      * $table->find('list', [
-     *  'idField' => 'name',
+     *  'keyField' => 'name',
      *  'valueField' => 'age'
      * ]);
      * ```
@@ -943,18 +943,25 @@ class Table implements RepositoryInterface, EventListenerInterface
     public function findList(Query $query, array $options)
     {
         $options += [
-            'idField' => $this->primaryKey(),
+            'keyField' => $this->primaryKey(),
             'valueField' => $this->displayField(),
             'groupField' => null
         ];
+
+        if (isset($options['idField'])) {
+            $options['keyField'] = $options['idField'];
+            unset($options['idField']);
+            trigger_error('Option "idField" is deprecated, use "keyField" instead.', E_USER_WARNING);
+        }
+
         $options = $this->_setFieldMatchers(
             $options,
-            ['idField', 'valueField', 'groupField']
+            ['keyField', 'valueField', 'groupField']
         );
 
         return $query->formatResults(function ($results) use ($options) {
             return $results->combine(
-                $options['idField'],
+                $options['keyField'],
                 $options['valueField'],
                 $options['groupField']
             );
@@ -970,12 +977,12 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * You can customize what fields are used for nesting results, by default the
      * primary key and the `parent_id` fields are used. If you wish to change
-     * these defaults you need to provide the keys `idField` or `parentField` in
+     * these defaults you need to provide the keys `keyField` or `parentField` in
      * `$options`:
      *
      * ```
      * $table->find('threaded', [
-     *  'idField' => 'id',
+     *  'keyField' => 'id',
      *  'parentField' => 'ancestor_id'
      * ]);
      * ```
@@ -987,13 +994,20 @@ class Table implements RepositoryInterface, EventListenerInterface
     public function findThreaded(Query $query, array $options)
     {
         $options += [
-            'idField' => $this->primaryKey(),
+            'keyField' => $this->primaryKey(),
             'parentField' => 'parent_id',
         ];
-        $options = $this->_setFieldMatchers($options, ['idField', 'parentField']);
+
+        if (isset($options['idField'])) {
+            $options['keyField'] = $options['idField'];
+            unset($options['idField']);
+            trigger_error('Option "idField" is deprecated, use "keyField" instead.', E_USER_WARNING);
+        }
+
+        $options = $this->_setFieldMatchers($options, ['keyField', 'parentField']);
 
         return $query->formatResults(function ($results) use ($options) {
-            return $results->nest($options['idField'], $options['parentField']);
+            return $results->nest($options['keyField'], $options['parentField']);
         });
     }
 
