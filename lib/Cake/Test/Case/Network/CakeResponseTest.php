@@ -1179,27 +1179,16 @@ class CakeResponseTest extends CakeTestCase {
 	}
 
 /**
- * Although unlikely, file's may contain dots in their filenames.
+ * Although unlikely, a file may contain dots in its filename.
  * This should be allowed, as long as the dots doesn't specify a path (../ or ..\)
  *
+ * @expectedException NotFoundException
+ * @execptedExceptionMessageRegExp #The requested file .+my/Some..cat.gif was not found or not readable#
  * @return void
  */
 	public function testFileWithDotsInFilename() {
-		$ok = false;
-		$file = 'my/Some..cat.gif';
-
-		try {
-			$response = new CakeResponse();
-			$response->file($file);
-		} catch (NotFoundException $e) {
-			if (Configure::read('debug') > 0) {
-				$ok = $e->getMessage() === sprintf('The requested file %s was not found or not readable', APP . $file);
-			} else {
-				$ok = $e->getMessage() === 'The requested file was not found';
-			}
-		}
-
-		$this->assertTrue($ok);
+		$response = new CakeResponse();
+		$response->file('my/Some..cat.gif');
 	}
 
 /**
