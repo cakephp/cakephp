@@ -47,6 +47,40 @@ class ProtectedArticle extends Entity
 }
 
 /**
+ * Test stub for greedy find operations.
+ */
+class GreedyCommentsTable extends Table
+{
+    /**
+     * initialize hook
+     *
+     * @param $config Config data.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        $this->table('comments');
+        $this->alias('Comments');
+    }
+
+    /**
+     * Overload find to cause issues.
+     *
+     * @param string $type Find type
+     * @param array $options find options
+     * @return object
+     */
+    public function find($type = 'all', $options = [])
+    {
+        if (empty($options['conditions'])) {
+            $options['conditions'] = [];
+        }
+        $options['conditions'] = array_merge($options['conditions'], ['Comments.published' => 'Y']);
+        return parent::find($type, $options);
+    }
+}
+
+/**
  * Marshaller test case
  */
 class MarshallerTest extends TestCase
@@ -1209,6 +1243,37 @@ class MarshallerTest extends TestCase
         $this->assertCount(2, $result, 'Should have two records');
         $this->assertSame($entities[0], $result[0], 'Should retain object');
         $this->assertSame($entities[1], $result[1], 'Should retain object');
+    }
+
+    /**
+     * Test mergeMany() when the exist check returns nothing.
+     *
+     * @return void
+     */
+    public function testMergeManyExistQueryFails()
+    {
+        $entities = [
+            new Entity(['id' => 1, 'comment' => 'First post', 'user_id' => 2]),
+            new Entity(['id' => 2, 'comment' => 'Second post', 'user_id' => 2])
+        ];
+        $entities[0]->clean();
+        $entities[1]->clean();
+
+        $data = [
+            ['id' => 2, 'comment' => 'Changed 2', 'user_id' => 2],
+            ['id' => 1, 'comment' => 'Changed 1', 'user_id' => 1],
+            ['id' => 3, 'comment' => 'New 1'],
+        ];
+        $comments = TableRegistry::get('GreedyComments', [
+            'className' => __NAMESPACE__ . '\\GreedyCommentsTable'
+        ]);
+        $marshall = new Marshaller($comments);
+        $result = $marshall->mergeMany($entities, $data);
+
+        $this->assertEquals('Changed 1', $result[0]->comment);
+        $this->assertEquals(1, $result[0]->user_id);
+        $this->assertEquals('Changed 2', $result[1]->comment);
+        $this->assertEquals('New 1', $result[2]->comment);
     }
 
     /**
