@@ -89,7 +89,7 @@ class File {
 			$this->name = basename($path);
 		}
 		$this->pwd();
-		$create && !$this->exists() && $this->safe($path) && $this->create();
+		$create && !$this->exists() && $this->safe($path) && $this->create($mode);
 	}
 
 /**
@@ -105,10 +105,11 @@ class File {
  * @return bool Success
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::create
  */
-	public function create() {
+	public function create($mode = 0755) {
 		$dir = $this->Folder->pwd();
 		if (is_dir($dir) && is_writable($dir) && !$this->exists()) {
 			if (touch($this->path)) {
+				chmod($this->path, $mode);
 				return true;
 			}
 		}
