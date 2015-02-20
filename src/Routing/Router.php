@@ -269,9 +269,14 @@ class Router
      *    integer values and UUIDs.
      * - 'prefix' - Routing prefix to use for the generated routes. Defaults to ''.
      *   Using this option will create prefixed routes, similar to using Routing.prefixes.
+     * - 'only' - Only connect the specific list of actions.
+     * - 'actions' - Override the method names used for connecting actions.
+     * - 'map' - Additional resource routes that should be connected. If you define 'only' and 'map',
+     *   make sure that your mapped methods are also in the 'only' list.
      *
      * @param string|array $controller A controller name or array of controller names (i.e. "Posts" or "ListItems")
      * @param array $options Options to use when generating REST routes
+     * @see \Cake\Routing\RouteBuilder::resources()
      * @return void
      */
     public static function mapResources($controller, $options = [])

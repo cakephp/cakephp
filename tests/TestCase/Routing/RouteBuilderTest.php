@@ -345,6 +345,42 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
+     * Test connecting resources with additional mappings
+     *
+     * @return void
+     */
+    public function testResourcesMappings()
+    {
+        $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'api']);
+        $routes->resources('Articles', [
+            '_ext' => 'json',
+            'map' => [
+                'delete_all' => ['action' => 'deleteAll', 'method' => 'DELETE'],
+                'update_many' => ['action' => 'updateAll', 'method' => 'DELETE', 'path' => '/updateAll'],
+            ]
+        ]);
+
+        $all = $this->collection->routes();
+        $this->assertCount(7, $all);
+
+        $this->assertEquals('/api/articles/delete_all', $all[5]->template, 'Path defaults to key name.');
+        $this->assertEquals(
+            ['controller', 'action', '_method', 'prefix', 'plugin'],
+            array_keys($all[5]->defaults)
+        );
+        $this->assertEquals('Articles', $all[5]->defaults['controller']);
+        $this->assertEquals('deleteAll', $all[5]->defaults['action']);
+
+        $this->assertEquals('/api/articles/updateAll', $all[6]->template, 'Explicit path option');
+        $this->assertEquals(
+            ['controller', 'action', '_method', 'prefix', 'plugin'],
+            array_keys($all[6]->defaults)
+        );
+        $this->assertEquals('Articles', $all[6]->defaults['controller']);
+        $this->assertEquals('updateAll', $all[6]->defaults['action']);
+    }
+
+    /**
      * Test connecting resources.
      *
      * @return void

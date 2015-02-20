@@ -216,6 +216,17 @@ class RouteBuilder
      * ```
      *
      * The above would generate both resource routes for `/articles`, and `/articles/:article_id/comments`.
+     * You can use the `map` option to connect additional resource methods:
+     *
+     * ```
+     * $routes->resources('Articles', [
+     *   'map' => ['deleteAll' => ['action' => 'deleteAll', 'method' => 'DELETE']]
+     * ]);
+     * ```
+     *
+     * In addition to the default routes, this would also connect a route for `/articles/delete_all`.
+     * By default the path segment will match the key name. You can use the 'path' key inside the resource
+     * definition to customize the path name.
      *
      * ### Options:
      *
@@ -223,6 +234,8 @@ class RouteBuilder
      *    integer values and UUIDs.
      * - 'only' - Only connect the specific list of actions.
      * - 'actions' - Override the method names used for connecting actions.
+     * - 'map' - Additional resource routes that should be connected. If you define 'only' and 'map',
+     *   make sure that your mapped methods are also in the 'only' list.
      *
      * @param string $name A controller name to connect resource routes for.
      * @param array|callable $options Options to use when generating REST routes, or a callback.
@@ -239,21 +252,31 @@ class RouteBuilder
         $options += [
             'connectOptions' => [],
             'id' => static::ID . '|' . static::UUID,
-            'only' => ['index', 'update', 'create', 'view', 'delete'],
+            'only' => [],
             'actions' => [],
+            'map' => [],
         ];
-        $options['only'] = (array)$options['only'];
-        $connectOptions = $options['connectOptions'];
 
-        $urlName = Inflector::underscore($name);
+        foreach ($options['map'] as $k => $mapped) {
+            $options['map'][$k] += ['method' => 'GET', 'path' => $k, 'action' => ''];
+        }
 
         $ext = null;
         if (!empty($options['_ext'])) {
             $ext = $options['_ext'];
         }
 
-        foreach (static::$_resourceMap as $method => $params) {
-            if (!in_array($method, $options['only'], true)) {
+        $connectOptions = $options['connectOptions'];
+        $urlName = Inflector::underscore($name);
+        $resourceMap = array_merge(static::$_resourceMap, $options['map']);
+
+        $only = (array)$options['only'];
+        if (empty($only)) {
+            $only = array_keys($resourceMap);
+        }
+
+        foreach ($resourceMap as $method => $params) {
+            if (!in_array($method, $only, true)) {
                 continue;
             }
 
