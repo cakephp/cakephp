@@ -154,4 +154,19 @@ class FlashHelperTest extends TestCase
         $expected = 'this is the plugin element';
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * test that when View theme is set, flash element from that theme (plugin) is used.
+     *
+     * @return void
+     */
+    public function testFlashWithTheme()
+    {
+        Plugin::load('TestTheme');
+
+        $this->View->theme = 'TestTheme';
+        $result = $this->Flash->render('flash');
+        $expected = 'flash element from TestTheme';
+        $this->assertContains($expected, $result);
+    }
 }
