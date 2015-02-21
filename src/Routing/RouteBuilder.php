@@ -232,6 +232,7 @@ class RouteBuilder
      *
      * - 'id' - The regular expression fragment to use when matching IDs. By default, matches
      *    integer values and UUIDs.
+     * - 'inflect' - Choose the inflection method used on the resource name. Defaults to 'underscore'.
      * - 'only' - Only connect the specific list of actions.
      * - 'actions' - Override the method names used for connecting actions.
      * - 'map' - Additional resource routes that should be connected. If you define 'only' and 'map',
@@ -251,6 +252,7 @@ class RouteBuilder
         }
         $options += [
             'connectOptions' => [],
+            'inflect' => 'underscore',
             'id' => static::ID . '|' . static::UUID,
             'only' => [],
             'actions' => [],
@@ -267,7 +269,7 @@ class RouteBuilder
         }
 
         $connectOptions = $options['connectOptions'];
-        $urlName = Inflector::underscore($name);
+        $urlName = Inflector::{$options['inflect']}($name);
         $resourceMap = array_merge(static::$_resourceMap, $options['map']);
 
         $only = (array)$options['only'];

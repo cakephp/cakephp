@@ -345,6 +345,27 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
+     * Test connecting resources with the inflection option
+     *
+     * @return void
+     */
+    public function testResourcesInflection()
+    {
+        $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'api']);
+        $routes->resources('BlogPosts', ['_ext' => 'json', 'inflect' => 'dasherize']);
+
+        $all = $this->collection->routes();
+        $this->assertCount(5, $all);
+
+        $this->assertEquals('/api/blog-posts', $all[0]->template);
+        $this->assertEquals(
+            ['controller', 'action', '_method', 'prefix', 'plugin'],
+            array_keys($all[0]->defaults)
+        );
+        $this->assertEquals('BlogPosts', $all[0]->defaults['controller']);
+    }
+
+    /**
      * Test connecting resources with additional mappings
      *
      * @return void
