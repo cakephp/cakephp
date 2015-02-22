@@ -60,13 +60,6 @@ class Date extends Time implements JsonSerializable
     public static $niceFormat = [IntlDateFormatter::MEDIUM, -1];
 
     /**
-     * The default locale to be used for displaying formatted date strings.
-     *
-     * @var string
-     */
-    public static $defaultLocale;
-
-    /**
      * The format to use when formatting a date using `Cake\I18n\Time::timeAgoInWords()`
      * and the difference is more than `Cake\I18n\Time::$wordEnd`
      *
