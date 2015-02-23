@@ -2036,26 +2036,27 @@ class Table implements RepositoryInterface, EventListenerInterface
      * the data to be validated.
      *
      * @param mixed $value The value of column to be checked for uniqueness
-     * @param array $context Either the options or validation context.
-     * @param array|null $options The options array, optionally containing the 'scope' key
+     * @param array $options The options array, optionally containing the 'scope' key.
+     *   May also be the validation context if there are no options.
+     * @param array|null $context Either the validation context or null.
      * @return bool true if the value is unique
      */
-    public function validateUnique($value, array $context, array $options = null)
+    public function validateUnique($value, array $options, array $context = null)
     {
-        if ($options === null) {
-            $options = $context;
+        if ($context === null) {
+            $context = $options;
         }
         $entity = new Entity(
-            $options['data'],
+            $context['data'],
             [
                 'useSetters' => false,
-                'markNew' => $options['newRecord'],
+                'markNew' => $context['newRecord'],
                 'source' => $this->registryAlias()
             ]
         );
         $fields = array_merge(
-            [$options['field']],
-            isset($context['scope']) ? (array)$context['scope'] : []
+            [$context['field']],
+            isset($options['scope']) ? (array)$options['scope'] : []
         );
         $rule = new IsUnique($fields);
         return $rule($entity, ['repository' => $this]);
