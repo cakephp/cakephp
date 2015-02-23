@@ -330,7 +330,6 @@ class ViewTaskTest extends CakeTestCase {
 				$expected
 			);
 		$this->Task->bake('index', true);
-
 	}
 
 /**
