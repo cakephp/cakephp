@@ -4126,6 +4126,34 @@ class FormHelperTest extends TestCase
             '/div'
         ];
         $this->assertHtml($expected, $result);
+
+        $tags = [
+            1 => 'blue',
+            50 => 'green'
+        ];
+        $this->View->viewVars['tags'] = $tags;
+        $this->Form->create();
+        $result = $this->Form->input('tags._ids');
+        $expected = [
+            'div' => ['class' => 'input select'],
+            'label' => ['for' => 'tags-ids'],
+            'Tags',
+            '/label',
+            'input' => ['type' => 'hidden', 'name' => 'tags[_ids]', 'value' => ''],
+            'select' => [
+                'name' => 'tags[_ids][]', 'id' => 'tags-ids',
+                'multiple' => 'multiple'
+            ],
+            ['option' => ['value' => '1']],
+            'blue',
+            '/option',
+            ['option' => ['value' => '50']],
+            'green',
+            '/option',
+            '/select',
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**
