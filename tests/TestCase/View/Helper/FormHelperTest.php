@@ -5666,7 +5666,7 @@ class FormHelperTest extends TestCase
         $this->Form->request->data = ['field' => 'some test data'];
         $result = $this->Form->textarea('field');
         $expected = [
-            'textarea' => ['name' => 'field'],
+            'textarea' => ['name' => 'field', 'rows' => 5],
             'some test data',
             '/textarea',
         ];
@@ -5674,7 +5674,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->textarea('user.bio');
         $expected = [
-            'textarea' => ['name' => 'user[bio]'],
+            'textarea' => ['name' => 'user[bio]', 'rows' => 5],
             '/textarea',
         ];
         $this->assertHtml($expected, $result);
@@ -5682,7 +5682,7 @@ class FormHelperTest extends TestCase
         $this->Form->request->data = ['field' => 'some <strong>test</strong> data with <a href="#">HTML</a> chars'];
         $result = $this->Form->textarea('field');
         $expected = [
-            'textarea' => ['name' => 'field'],
+            'textarea' => ['name' => 'field', 'rows' => 5],
             htmlentities('some <strong>test</strong> data with <a href="#">HTML</a> chars'),
             '/textarea',
         ];
@@ -5693,7 +5693,7 @@ class FormHelperTest extends TestCase
         ];
         $result = $this->Form->textarea('Model.field', ['escape' => false]);
         $expected = [
-            'textarea' => ['name' => 'Model[field]'],
+            'textarea' => ['name' => 'Model[field]', 'rows' => 5],
             'some <strong>test</strong> data with <a href="#">HTML</a> chars',
             '/textarea',
         ];
@@ -5701,7 +5701,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->textarea('0.OtherModel.field');
         $expected = [
-            'textarea' => ['name' => '0[OtherModel][field]'],
+            'textarea' => ['name' => '0[OtherModel][field]', 'rows' => 5],
             '/textarea'
         ];
         $this->assertHtml($expected, $result);
@@ -5747,7 +5747,7 @@ class FormHelperTest extends TestCase
                 'label' => ['for' => 'other'],
                     'Other',
                 '/label',
-                'textarea' => ['name' => 'other', 'id' => 'other'],
+                'textarea' => ['name' => 'other', 'id' => 'other', 'rows' => 5],
                 '/textarea',
             '/div'
         ];
@@ -5759,7 +5759,7 @@ class FormHelperTest extends TestCase
                 'label' => ['for' => 'stuff'],
                     'Stuff',
                 '/label',
-                'textarea' => ['name' => 'stuff', 'maxlength' => 10, 'id' => 'stuff'],
+                'textarea' => ['name' => 'stuff', 'maxlength' => 10, 'id' => 'stuff', 'rows' => 5],
                 '/textarea',
             '/div'
         ];
@@ -6531,6 +6531,7 @@ class FormHelperTest extends TestCase
                 'textarea' => [
                     'name',
                     'id' => '0-comments-1-comment',
+                    'rows' => 5
                 ],
                 '/textarea',
             '/div'
@@ -6547,7 +6548,8 @@ class FormHelperTest extends TestCase
                 '/label',
                 'textarea' => [
                     'name',
-                    'id' => '0-comments-0-comment'
+                    'id' => '0-comments-0-comment',
+                    'rows' => 5
                 ],
                 'Value',
                 '/textarea',
@@ -6567,7 +6569,8 @@ class FormHelperTest extends TestCase
                 'textarea' => [
                     'name',
                     'class' => 'form-error',
-                    'id' => '0-comments-0-comment'
+                    'id' => '0-comments-0-comment',
+                    'rows' => 5
                 ],
                 'Value',
                 '/textarea',
@@ -6592,7 +6595,8 @@ class FormHelperTest extends TestCase
                 'textarea' => [
                     'name',
                     'required' => 'required',
-                    'id' => '0-comments-1-comment'
+                    'id' => '0-comments-1-comment',
+                    'rows' => 5
                 ],
                 '/textarea',
             '/div'
