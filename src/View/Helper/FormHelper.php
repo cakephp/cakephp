@@ -674,6 +674,9 @@ class FormHelper extends Helper
      */
     public function error($field, $text = null, array $options = [])
     {
+        if (substr($field, -5) === '._ids') {
+            $field = substr($field, 0, -5);
+        }
         $options += ['escape' => true];
 
         $context = $this->_getContext();

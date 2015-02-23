@@ -4157,6 +4157,51 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Tests that errors for belongsToMany select fields are being
+     * picked up properly.
+     *
+     * @return void
+     */
+    public function testErrorsForBelongsToManySelect()
+    {
+        $tags = [
+            1 => 'blue',
+            50 => 'green'
+        ];
+        $this->View->viewVars['tags'] = $tags;
+
+        $article = new Article();
+        $article->errors('tags', ['Invalid']);
+
+        $this->Form->create($article);
+        $result = $this->Form->input('tags._ids');
+
+        $expected = [
+            ['div' => ['class' => 'input select error']],
+            'label' => ['for' => 'tags-ids'],
+            'Tags',
+            '/label',
+            'input' => ['type' => 'hidden', 'name' => 'tags[_ids]', 'value' => ''],
+            'select' => [
+                'name' => 'tags[_ids][]', 'id' => 'tags-ids',
+                'multiple' => 'multiple'
+            ],
+            ['option' => ['value' => '1']],
+            'blue',
+            '/option',
+            ['option' => ['value' => '50']],
+            'green',
+            '/option',
+            '/select',
+            ['div' => ['class' => 'error-message']],
+            'Invalid',
+            '/div',
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * test generation of multi select elements in checkbox format
      *
      * @return void
