@@ -3673,12 +3673,15 @@ class TableTest extends TestCase
         $table = TableRegistry::get('Users');
         $validator = new Validator;
         $validator->add('username', 'unique', [
-            'rule' => ['validateUnique', ['scope' => 'id']],
+            'rule' => ['validateUnique', ['derp' => 'erp', 'scope' => 'id']],
             'provider' => 'table'
         ]);
         $validator->provider('table', $table);
-        $data = ['username' => 'larry'];
+        $data = ['username' => 'larry', 'id' => 3];
         $this->assertNotEmpty($validator->errors($data));
+
+        $data = ['username' => 'larry', 'id' => 1];
+        $this->assertEmpty($validator->errors($data));
 
         $data = ['username' => 'jose'];
         $this->assertEmpty($validator->errors($data));

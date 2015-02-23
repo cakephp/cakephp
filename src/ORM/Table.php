@@ -2055,7 +2055,7 @@ class Table implements RepositoryInterface, EventListenerInterface
         );
         $fields = array_merge(
             [$options['field']],
-            isset($options['scope']) ? (array)$options['scope'] : []
+            isset($context['scope']) ? (array)$context['scope'] : []
         );
         $rule = new IsUnique($fields);
         return $rule($entity, ['repository' => $this]);
