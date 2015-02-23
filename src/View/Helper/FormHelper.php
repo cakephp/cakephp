@@ -1172,8 +1172,7 @@ class FormHelper extends Helper
 
         if (substr($fieldName, -5) === '._ids') {
             $fieldName = substr($fieldName, 0, -5);
-        }
-        if (substr($fieldName, -3) === '_id') {
+        } elseif (substr($fieldName, -3) === '_id') {
             $fieldName = substr($fieldName, 0, -3);
         }
         $fieldName = array_slice(explode('.', $fieldName), -1)[0];
