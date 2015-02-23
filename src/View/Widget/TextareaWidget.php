@@ -57,6 +57,7 @@ class TextareaWidget implements WidgetInterface
             'val' => '',
             'name' => '',
             'escape' => true,
+            'rows' => 5
         ];
         return $this->_templates->format('textarea', [
             'name' => $data['name'],
