@@ -162,19 +162,19 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->assertContains('msgid "double \\"quoted\\""', $result, 'Strings with quotes not handled correctly');
 		$this->assertContains("msgid \"single 'quoted'\"", $result, 'Strings with quotes not handled correctly');
 
-		$pattern = '/\#: (\\\\|\/)extract\.ctp:34\nmsgid "letter"/';
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:36\nmsgid "letter"/';
 		$this->assertRegExp($pattern, $result, 'Strings with context should not overwrite strings without context');
 
-		$pattern = '/\#: (\\\\|\/)extract\.ctp:35;37\nmsgctxt "A"\nmsgid "letter"/';
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:37;39\nmsgctxt "A"\nmsgid "letter"/';
 		$this->assertRegExp($pattern, $result, 'Should contain string with context "A"');
 
-		$pattern = '/\#: (\\\\|\/)extract\.ctp:36\nmsgctxt "B"\nmsgid "letter"/';
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:38\nmsgctxt "B"\nmsgid "letter"/';
 		$this->assertRegExp($pattern, $result, 'Should contain string with context "B"');
 
-		$pattern = '/\#: (\\\\|\/)extract\.ctp:38\nmsgid "%d letter"\nmsgid_plural "%d letters"/';
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:40\nmsgid "%d letter"\nmsgid_plural "%d letters"/';
 		$this->assertRegExp($pattern, $result, 'Plural strings with context should not overwrite strings without context');
 
-		$pattern = '/\#: (\\\\|\/)extract\.ctp:39\nmsgctxt "A"\nmsgid "%d letter"\nmsgid_plural "%d letters"/';
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:41\nmsgctxt "A"\nmsgid "%d letter"\nmsgid_plural "%d letters"/';
 		$this->assertRegExp($pattern, $result, 'Should contain plural string with context "A"');
 
 		// extract.ctp - reading the domain.pot
@@ -209,11 +209,15 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->Task->expects($this->never())->method('_stop');
 
 		$this->Task->execute();
-		$this->assertTrue(file_exists($this->path . DS . 'LC_TIME' . DS . 'default.pot'));
+		$this->assertTrue(file_exists($this->path . DS . 'LC_NUMERIC' . DS . 'default.pot'));
+		$this->assertFalse(file_exists($this->path . DS . 'LC_TIME' . DS . 'default.pot'));
 
 		$result = file_get_contents($this->path . DS . 'default.pot');
 
 		$pattern = '/\#: .*extract\.ctp:31\n/';
+		$this->assertNotRegExp($pattern, $result);
+
+		$pattern = '/\#: .*extract\.ctp:33\n/';
 		$this->assertNotRegExp($pattern, $result);
 	}
 
