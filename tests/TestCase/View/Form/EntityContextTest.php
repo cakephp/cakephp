@@ -67,6 +67,20 @@ class EntityContextTest extends TestCase
     }
 
     /**
+     * Test getting entity back from context.
+     *
+     * @return void
+     */
+    public function testEntity()
+    {
+        $row = new Article();
+        $context = new EntityContext($this->request, [
+            'entity' => $row,
+        ]);
+        $this->assertSame($row, $context->entity());
+    }
+
+    /**
      * Test getting primary key data.
      *
      * @return void
