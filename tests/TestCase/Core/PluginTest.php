@@ -95,18 +95,18 @@ class PluginTest extends TestCase
      */
     public function testLoadSingleWithAutoloadAndBootstrap()
     {
-        $this->assertFalse(class_exists('Company\TestPluginThree\Utility\Hello'));
+        $this->assertFalse(class_exists('Company\TestPluginFive\Utility\Hello'));
         Plugin::load(
-            'Company/TestPluginThree',
+            'Company/TestPluginFive',
             [
                 'autoload' => true,
                 'bootstrap' => true
             ]
         );
-        $this->assertTrue(Configure::read('PluginTest.test_plugin_three.autoload'));
-        $this->assertEquals('loaded plugin three bootstrap', Configure::read('PluginTest.test_plugin_three.bootstrap'));
+        $this->assertTrue(Configure::read('PluginTest.test_plugin_five.autoload'));
+        $this->assertEquals('loaded plugin five bootstrap', Configure::read('PluginTest.test_plugin_five.bootstrap'));
         $this->assertTrue(
-            class_exists('Company\TestPluginThree\Utility\Hello'),
+            class_exists('Company\TestPluginFive\Utility\Hello'),
             'Class should be loaded'
         );
     }
