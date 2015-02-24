@@ -1349,6 +1349,11 @@ class Table implements RepositoryInterface, EventListenerInterface
             $success = $connection->transactional(function () use ($entity, $options) {
                 return $this->_processSave($entity, $options);
             });
+            if ($success) {
+                $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
+                $entity->isNew(false);
+                $entity->source($this->registryAlias());
+            }
         } else {
             $success = $this->_processSave($entity, $options);
         }
@@ -1419,8 +1424,10 @@ class Table implements RepositoryInterface, EventListenerInterface
             if ($success || !$options['atomic']) {
                 $entity->clean();
                 $this->dispatchEvent('Model.afterSave', compact('entity', 'options'));
-                $entity->isNew(false);
-                $entity->source($this->registryAlias());
+                if (!$options['atomic']) {
+                    $entity->isNew(false);
+                    $entity->source($this->registryAlias());
+                }
                 $success = true;
             }
         }
@@ -2146,6 +2153,7 @@ class Table implements RepositoryInterface, EventListenerInterface
             'Model.beforeFind' => 'beforeFind',
             'Model.beforeSave' => 'beforeSave',
             'Model.afterSave' => 'afterSave',
+            'Model.afterSaveCommit' => 'afterSaveCommit',
             'Model.beforeDelete' => 'beforeDelete',
             'Model.afterDelete' => 'afterDelete',
             'Model.beforeRules' => 'beforeRules',
