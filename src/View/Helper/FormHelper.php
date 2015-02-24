@@ -1170,14 +1170,17 @@ class FormHelper extends Helper
             return $options;
         }
 
+        $pluralize = true;
         if (substr($fieldName, -5) === '._ids') {
             $fieldName = substr($fieldName, 0, -5);
+            $pluralize = false;
         } elseif (substr($fieldName, -3) === '_id') {
             $fieldName = substr($fieldName, 0, -3);
         }
         $fieldName = array_slice(explode('.', $fieldName), -1)[0];
+
         $varName = Inflector::variable(
-            Inflector::pluralize($fieldName)
+            $pluralize ? Inflector::pluralize($fieldName) : $fieldName
         );
         $varOptions = $this->_View->get($varName);
         if (!is_array($varOptions) && !($varOptions instanceof Traversable)) {
