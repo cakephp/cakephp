@@ -53,15 +53,32 @@ class IsUnique
             return true;
         }
 
-        $conditions = $entity->extract($this->_fields);
+        $alias = $options['repository']->alias();
+        $conditions = $this->_alias($alias, $entity->extract($this->_fields));
         if ($entity->isNew() === false) {
             $keys = (array)$options['repository']->primaryKey();
-            $keys = $entity->extract($keys);
+            $keys = $this->_alias($alias, $entity->extract($keys));
             if (array_filter($keys, 'strlen')) {
                 $conditions['NOT'] = $keys;
             }
         }
 
         return !$options['repository']->exists($conditions);
+    }
+
+    /**
+     * Add a model alias to all the keys in a set of conditions.
+     *
+     * @param string $alias The alias to add.
+     * @param array $conditions The conditions to alias.
+     * @return array
+     */
+    protected function _alias($alias, $conditions)
+    {
+        $aliased = [];
+        foreach ($conditions as $key => $value) {
+            $aliased["$alias.$key"] = $value;
+        }
+        return $aliased;
     }
 }
