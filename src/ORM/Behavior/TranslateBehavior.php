@@ -123,7 +123,7 @@ class TranslateBehavior extends Behavior
      */
     public function beforeFind(Event $event, Query $query, $options)
     {
-        $this->_engine->beforeFind($event, $query,  $options);
+        $this->_engine->beforeFind($event, $query, $options);
     }
 
     /**
@@ -137,7 +137,7 @@ class TranslateBehavior extends Behavior
      */
     public function beforeSave(Event $event, Entity $entity, ArrayObject $options)
     {
-        $this->_engine->beforeSave($event, $entity,  $options);
+        $this->_engine->beforeSave($event, $entity, $options);
     }
 
     /**
@@ -191,5 +191,4 @@ class TranslateBehavior extends Behavior
     {
         return $this->_engine->findTranslations($query, $options);
     }
-
 }

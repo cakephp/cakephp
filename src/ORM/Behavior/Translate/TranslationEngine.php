@@ -16,14 +16,15 @@
 namespace Cake\ORM\Behavior\Translate;
 
 use ArrayObject;
+use Cake\Core\InstanceConfigTrait;
 use Cake\Event\Event;
 use Cake\I18n\I18n;
-use Cake\Core\InstanceConfigTrait;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 
-abstract class TranslationEngine {
+abstract class TranslationEngine
+{
 
     use InstanceConfigTrait;
 
