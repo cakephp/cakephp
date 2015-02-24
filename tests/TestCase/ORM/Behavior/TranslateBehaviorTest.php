@@ -20,6 +20,7 @@ use Cake\I18n\I18n;
 use Cake\ORM\Behavior\TranslateBehavior;
 use Cake\ORM\Behavior\Translate\TranslateTrait;
 use Cake\ORM\Entity;
+use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
@@ -50,11 +51,33 @@ class TranslateBehaviorTest extends TestCase
         'core.authors'
     ];
 
+    /**
+     * Default behavior settings for all tests.
+     *
+     * @var array
+     */
+    protected $_behaviorDefaults = [
+        'engine' => '\Cake\ORM\Behavior\Translate\EavEngine',
+    ];
+
     public function tearDown()
     {
         parent::tearDown();
         I18n::locale(I18n::defaultLocale());
         TableRegistry::clear();
+    }
+
+    /**
+     * Helper method to attach the translate behavior with certain defaults.
+     *
+     * @param mixed $table Table object.
+     * @param array $options Behavior options.
+     * @return void
+     */
+    protected function _addBehavior($table, array $options = [])
+    {
+        $options += $this->_behaviorDefaults;
+        $table->addBehavior('Translate', $options);
     }
 
     /**
@@ -84,8 +107,7 @@ class TranslateBehaviorTest extends TestCase
     public function testCustomTranslationTable()
     {
         $table = TableRegistry::get('Articles');
-
-        $table->addBehavior('Translate', [
+        $this->_addBehavior($table, [ 
             'translationTable' => '\TestApp\Model\Table\I18nTable',
             'fields' => ['title', 'body']
         ]);
@@ -107,7 +129,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = TableRegistry::get('Articles');
 
-        $table->addBehavior('Translate', [
+        $this->_addBehavior($table, [
             'strategy' => 'select',
             'fields' => ['title', 'body']
         ]);
@@ -126,7 +148,7 @@ class TranslateBehaviorTest extends TestCase
     public function testFindSingleLocale()
     {
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $this->_addBehavior($table, ['fields' => ['title', 'body']]);
         $table->locale('eng');
         $results = $table->find()->combine('title', 'body', 'id')->toArray();
         $expected = [
@@ -148,10 +170,10 @@ class TranslateBehaviorTest extends TestCase
         I18n::locale('eng');
 
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $this->_addBehavior($table, ['fields' => ['title', 'body']]);
 
         $table->hasMany('Comments');
-        $table->Comments->addBehavior('Translate', ['fields' => ['comment']]);
+        $this->_addBehavior($table->Comments, ['fields' => ['comment']]);
 
         $results = $table->find()
             ->select(['id', 'title', 'body'])
@@ -248,7 +270,7 @@ class TranslateBehaviorTest extends TestCase
     public function testFindSingleLocaleWithNullTranslation()
     {
         $table = TableRegistry::get('Comments');
-        $table->addBehavior('Translate', ['fields' => ['comment']]);
+        $this->_addBehavior($table, ['fields' => ['comment']]);
         $table->locale('spa');
         $results = $table->find()
             ->where(['Comments.id' => 6])
@@ -266,7 +288,7 @@ class TranslateBehaviorTest extends TestCase
     public function testFindSingleLocaleWithConditions()
     {
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $this->_addBehavior($table, ['fields' => ['title', 'body']]);
         $table->locale('eng');
         $results = $table->find()
             ->where(['Articles.id' => 2])
@@ -294,7 +316,7 @@ class TranslateBehaviorTest extends TestCase
     public function testFindList()
     {
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $this->_addBehavior($table, ['fields' => ['title', 'body']]);
         $table->locale('eng');
 
         $results = $table->find('list')->toArray();
@@ -310,7 +332,7 @@ class TranslateBehaviorTest extends TestCase
     public function testFindCount()
     {
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $this->_addBehavior($table, ['fields' => ['title', 'body']]);
         $table->locale('eng');
 
         $this->assertEquals(3, $table->find()->count());
@@ -324,7 +346,7 @@ class TranslateBehaviorTest extends TestCase
     public function testFindTranslations()
     {
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $this->_addBehavior($table, ['fields' => ['title', 'body']]);
         $results = $table->find('translations');
         $expected = [
             [
@@ -365,7 +387,7 @@ class TranslateBehaviorTest extends TestCase
     public function testFindFilteredTranslations()
     {
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $this->_addBehavior($table, ['fields' => ['title', 'body']]);
         $results = $table->find('translations', ['locales' => ['deu', 'cze']]);
         $expected = [
             [
@@ -403,7 +425,7 @@ class TranslateBehaviorTest extends TestCase
     public function testFindTranslationsList()
     {
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $this->_addBehavior($table, ['fields' => ['title', 'body']]);
         $results = $table
             ->find('list', [
                 'keyField' => 'title',
@@ -428,7 +450,7 @@ class TranslateBehaviorTest extends TestCase
     public function testFindTranslationsWithFieldOverriding()
     {
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $this->_addBehavior($table, ['fields' => ['title', 'body']]);
         $table->locale('cze');
         $results = $table->find('translations', ['locales' => ['deu', 'cze']]);
         $expected = [
@@ -467,10 +489,10 @@ class TranslateBehaviorTest extends TestCase
     public function testFindSingleLocaleHasMany()
     {
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $this->_addBehavior($table, ['fields' => ['title', 'body']]);
         $table->hasMany('Comments');
         $comments = $table->hasMany('Comments')->target();
-        $comments->addBehavior('Translate', ['fields' => ['comment']]);
+        $this->_addBehavior($comments, ['fields' => ['comment']]);
 
         $table->locale('eng');
         $comments->locale('eng');
@@ -497,10 +519,10 @@ class TranslateBehaviorTest extends TestCase
     public function testTranslationsHasMany()
     {
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $this->_addBehavior($table, ['fields' => ['title', 'body']]);
         $table->hasMany('Comments');
         $comments = $table->hasMany('Comments')->target();
-        $comments->addBehavior('Translate', ['fields' => ['comment']]);
+        $this->_addBehavior($comments, ['fields' => ['comment']]);
 
         $results = $table->find('translations')->contain([
             'Comments' => function ($q) {
@@ -538,10 +560,10 @@ class TranslateBehaviorTest extends TestCase
     public function testTranslationsHasManyWithOverride()
     {
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $this->_addBehavior($table, ['fields' => ['title', 'body']]);
         $table->hasMany('Comments');
         $comments = $table->hasMany('Comments')->target();
-        $comments->addBehavior('Translate', ['fields' => ['comment']]);
+        $this->_addBehavior($comments, ['fields' => ['comment']]);
 
         $table->locale('cze');
         $comments->locale('eng');
@@ -588,12 +610,12 @@ class TranslateBehaviorTest extends TestCase
      *
      * @return void
      */
-    public function testFindSingleLocaleBelongsto()
+    public function testFindSingleLocaleBelongsTo()
     {
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $this->_addBehavior($table, ['fields' => ['title', 'body']]);
         $authors = $table->belongsTo('Authors')->target();
-        $authors->addBehavior('Translate', ['fields' => ['name']]);
+        $this->_addBehavior($authors, ['fields' => ['name']]);
 
         $table->locale('eng');
         $authors->locale('eng');
@@ -639,7 +661,7 @@ class TranslateBehaviorTest extends TestCase
     public function testUpdateSingleLocale()
     {
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $this->_addBehavior($table, ['fields' => ['title', 'body']]);
         $table->locale('eng');
         $article = $table->find()->first();
         $this->assertEquals(1, $article->get('id'));
@@ -677,7 +699,7 @@ class TranslateBehaviorTest extends TestCase
     public function testInsertNewTranslations()
     {
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $this->_addBehavior($table, ['fields' => ['title', 'body']]);
         $table->locale('fra');
 
         $article = $table->find()->first();
@@ -710,7 +732,7 @@ class TranslateBehaviorTest extends TestCase
     public function testUpdateTranslationWithLocaleInEntity()
     {
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $this->_addBehavior($table, ['fields' => ['title', 'body']]);
         $article = $table->find()->first();
         $this->assertEquals(1, $article->get('id'));
         $article->set('_locale', 'fra');
@@ -740,7 +762,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = TableRegistry::get('Articles');
         $table->hasMany('Comments');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $this->_addBehavior($table, ['fields' => ['title', 'body']]);
         $table->locale('fra');
 
         $article = $table->find()->first();
@@ -761,7 +783,7 @@ class TranslateBehaviorTest extends TestCase
     public function testDelete()
     {
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $this->_addBehavior($table, ['fields' => ['title', 'body']]);
         $article = $table->find()->first();
         $this->assertTrue($table->delete($article));
 
@@ -780,7 +802,7 @@ class TranslateBehaviorTest extends TestCase
     public function testSaveMultipleTranslations()
     {
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $this->_addBehavior($table, ['fields' => ['title', 'body']]);
         $article = $results = $table->find('translations')->first();
 
         $translations = $article->get('_translations');
@@ -804,7 +826,7 @@ class TranslateBehaviorTest extends TestCase
     public function testSaveMultipleNewTranslations()
     {
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $this->_addBehavior($table, ['fields' => ['title', 'body']]);
         $article = $results = $table->find('translations')->first();
 
         $translations = $article->get('_translations');
@@ -833,7 +855,7 @@ class TranslateBehaviorTest extends TestCase
     public function testUseCountInFindTranslations()
     {
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $this->_addBehavior($table, ['fields' => ['title', 'body']]);
         $articles = $results = $table->find('translations');
         $all = $articles->all();
         $this->assertCount(3, $all);
@@ -850,7 +872,7 @@ class TranslateBehaviorTest extends TestCase
     public function testSavingWithNonDefaultLocale()
     {
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $this->_addBehavior($table, ['fields' => ['title', 'body']]);
         $table->entityClass(__NAMESPACE__ . '\Article');
         I18n::locale('fra');
         $translations = [
@@ -877,7 +899,7 @@ class TranslateBehaviorTest extends TestCase
     public function testTranslationWithUnionQuery()
     {
         $table = TableRegistry::get('Comments');
-        $table->addBehavior('Translate', ['fields' => ['comment']]);
+        $this->_addBehavior($table, ['fields' => ['comment']]);
         $table->locale('spa');
         $query = $table->find()->where(['Comments.id' => 6]);
         $query2 = $table->find()->where(['Comments.id' => 5]);
@@ -899,7 +921,7 @@ class TranslateBehaviorTest extends TestCase
         $table = TableRegistry::get('Articles');
 
         $table->hasMany('OtherComments', ['className' => 'Comments']);
-        $table->OtherComments->addBehavior('Translate', ['fields' => ['comment'], 'model' => 'Comments']);
+        $this->_addBehavior($table->OtherComments, ['fields' => ['comment'], 'model' => 'Comments']);
 
         $items = $table->OtherComments->associations();
         $association = $items->getByProperty('comment_translation');
@@ -926,7 +948,7 @@ class TranslateBehaviorTest extends TestCase
     public function testFilterUntranslated()
     {
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', [
+        $this->_addBehavior($table, [
             'fields' => ['title', 'body'],
             'onlyTranslated' => true
         ]);
@@ -949,7 +971,7 @@ class TranslateBehaviorTest extends TestCase
     public function testFilterUntranslatedWithFinder()
     {
         $table = TableRegistry::get('Comments');
-        $table->addBehavior('Translate', [
+        $this->_addBehavior($table, [
             'fields' => ['comment'],
             'onlyTranslated' => true
         ]);
@@ -978,7 +1000,7 @@ class TranslateBehaviorTest extends TestCase
     public function testConditions()
     {
         $table = TableRegistry::get('Articles');
-        $table->addBehavior('Translate', [
+        $this->_addBehavior($table, [
             'fields' => ['title', 'body', 'description'],
             'conditions' => ['content <>' => '']
         ]);
