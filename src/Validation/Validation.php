@@ -16,6 +16,7 @@ namespace Cake\Validation;
 
 use Cake\Utility\Text;
 use LogicException;
+use NumberFormatter;
 use RuntimeException;
 
 /**
@@ -480,9 +481,9 @@ class Validation
 
         // account for localized floats.
         $locale = ini_get('intl.default_locale') ?: 'en_US';
-        $formatter = new \NumberFormatter($locale, \NumberFormatter::DECIMAL);
-        $decimalPoint = $formatter->getSymbol(\NumberFormatter::DECIMAL_SEPARATOR_SYMBOL);
-        $groupingSep = $formatter->getSymbol(\NumberFormatter::GROUPING_SEPARATOR_SYMBOL);
+        $formatter = new NumberFormatter($locale, NumberFormatter::DECIMAL);
+        $decimalPoint = $formatter->getSymbol(NumberFormatter::DECIMAL_SEPARATOR_SYMBOL);
+        $groupingSep = $formatter->getSymbol(NumberFormatter::GROUPING_SEPARATOR_SYMBOL);
 
         $check = str_replace($groupingSep, '', $check);
         $check = str_replace($decimalPoint, '.', $check);
