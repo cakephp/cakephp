@@ -253,7 +253,8 @@ class QueryCompiler
         $parts = array_map(function ($p) use ($generator) {
             $p['query'] = $p['query']->sql($generator);
             $p['query'] = $p['query'][0] === '(' ? trim($p['query'], '()') : $p['query'];
-            return $p['all'] ? 'ALL ' . $p['query'] : $p['query'];
+            $prefix = $p['all'] ? 'ALL' : '';
+            return sprintf('%s (%s)', $prefix, $p['query']);
         }, $parts);
         return sprintf("\nUNION %s", implode("\nUNION ", $parts));
     }
