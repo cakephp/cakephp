@@ -77,13 +77,6 @@ class TranslateBehavior extends Behavior
         'engine' => '\Cake\ORM\Behavior\Translate\EavEngine',
         'implementedFinders' => ['translations' => 'findTranslations'],
         'implementedMethods' => ['locale' => 'locale'],
-        'fields' => [],
-        'translationTable' => 'I18n',
-        'defaultLocale' => '',
-        'model' => '',
-        'onlyTranslated' => false,
-        'strategy' => 'subquery',
-        'conditions' => ['model' => '']
     ];
 
     /**

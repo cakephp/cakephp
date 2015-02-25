@@ -122,8 +122,6 @@ abstract class TranslationEngine
      * @var array
      */
     protected $_defaultConfig = [
-        'implementedFinders' => ['translations' => 'findTranslations'],
-        'implementedMethods' => ['locale' => 'locale'],
         'fields' => [],
         'translationTable' => 'I18n',
         'defaultLocale' => '',
