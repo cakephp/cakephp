@@ -4126,6 +4126,79 @@ class FormHelperTest extends TestCase
             '/div'
         ];
         $this->assertHtml($expected, $result);
+
+        $spacecraft = [
+            1 => 'Orion',
+            2 => 'Helios'
+        ];
+        $this->View->viewVars['spacecraft'] = $spacecraft;
+        $this->Form->create();
+        $result = $this->Form->input('spacecraft._ids');
+        $expected = [
+            'div' => ['class' => 'input select'],
+            'label' => ['for' => 'spacecraft-ids'],
+            'Spacecraft',
+            '/label',
+            'input' => ['type' => 'hidden', 'name' => 'spacecraft[_ids]', 'value' => ''],
+            'select' => [
+                'name' => 'spacecraft[_ids][]', 'id' => 'spacecraft-ids',
+                'multiple' => 'multiple'
+            ],
+            ['option' => ['value' => '1']],
+            'Orion',
+            '/option',
+            ['option' => ['value' => '2']],
+            'Helios',
+            '/option',
+            '/select',
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Tests that errors for belongsToMany select fields are being
+     * picked up properly.
+     *
+     * @return void
+     */
+    public function testErrorsForBelongsToManySelect()
+    {
+        $spacecraft = [
+            1 => 'Orion',
+            2 => 'Helios'
+        ];
+        $this->View->viewVars['spacecraft'] = $spacecraft;
+
+        $article = new Article();
+        $article->errors('spacecraft', ['Invalid']);
+
+        $this->Form->create($article);
+        $result = $this->Form->input('spacecraft._ids');
+
+        $expected = [
+            ['div' => ['class' => 'input select error']],
+            'label' => ['for' => 'spacecraft-ids'],
+            'Spacecraft',
+            '/label',
+            'input' => ['type' => 'hidden', 'name' => 'spacecraft[_ids]', 'value' => ''],
+            'select' => [
+                'name' => 'spacecraft[_ids][]', 'id' => 'spacecraft-ids',
+                'multiple' => 'multiple'
+            ],
+            ['option' => ['value' => '1']],
+            'Orion',
+            '/option',
+            ['option' => ['value' => '2']],
+            'Helios',
+            '/option',
+            '/select',
+            ['div' => ['class' => 'error-message']],
+            'Invalid',
+            '/div',
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**
