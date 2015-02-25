@@ -4164,33 +4164,33 @@ class FormHelperTest extends TestCase
      */
     public function testErrorsForBelongsToManySelect()
     {
-        $tags = [
-            1 => 'blue',
-            50 => 'green'
+        $spacecraft = [
+            1 => 'Orion',
+            2 => 'Helios'
         ];
-        $this->View->viewVars['tags'] = $tags;
+        $this->View->viewVars['spacecraft'] = $spacecraft;
 
         $article = new Article();
-        $article->errors('tags', ['Invalid']);
+        $article->errors('spacecraft', ['Invalid']);
 
         $this->Form->create($article);
-        $result = $this->Form->input('tags._ids');
+        $result = $this->Form->input('spacecraft._ids');
 
         $expected = [
             ['div' => ['class' => 'input select error']],
-            'label' => ['for' => 'tags-ids'],
-            'Tags',
+            'label' => ['for' => 'spacecraft-ids'],
+            'Spacecraft',
             '/label',
-            'input' => ['type' => 'hidden', 'name' => 'tags[_ids]', 'value' => ''],
+            'input' => ['type' => 'hidden', 'name' => 'spacecraft[_ids]', 'value' => ''],
             'select' => [
-                'name' => 'tags[_ids][]', 'id' => 'tags-ids',
+                'name' => 'spacecraft[_ids][]', 'id' => 'spacecraft-ids',
                 'multiple' => 'multiple'
             ],
             ['option' => ['value' => '1']],
-            'blue',
+            'Orion',
             '/option',
-            ['option' => ['value' => '50']],
-            'green',
+            ['option' => ['value' => '2']],
+            'Helios',
             '/option',
             '/select',
             ['div' => ['class' => 'error-message']],
