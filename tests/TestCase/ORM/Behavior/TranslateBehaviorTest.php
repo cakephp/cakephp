@@ -107,7 +107,7 @@ class TranslateBehaviorTest extends TestCase
     public function testCustomTranslationTable()
     {
         $table = TableRegistry::get('Articles');
-        $this->_addBehavior($table, [ 
+        $this->_addBehavior($table, [
             'translationTable' => '\TestApp\Model\Table\I18nTable',
             'fields' => ['title', 'body']
         ]);
