@@ -507,8 +507,16 @@ class Query extends DatabaseQuery implements JsonSerializable
         $complex = $complex || count($query->clause('union'));
 
         if (!$complex) {
+            $cleanContain = [];
+            foreach ($query->contain() as $alias => $contain) {
+                unset($contain['fields']);
+                $cleanContain[$alias] = $contain;
+            }
+            $query->contain(null, true);
+
             $statement = $query
                 ->select($count, true)
+                ->contain($cleanContain)
                 ->autoFields(false)
                 ->execute();
         } else {
