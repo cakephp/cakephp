@@ -1001,7 +1001,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = TableRegistry::get('Articles');
         $this->_addBehavior($table, [
-            'fields' => ['title', 'body', 'description'],
+            'fields' => ['title', 'body'],
             'conditions' => ['content <>' => '']
         ]);
         $table->locale('spa');
