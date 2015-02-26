@@ -576,7 +576,7 @@ class Connection
     /**
      * Checks if a transaction is running.
      *
-     * @return bool True is a transaction is runnning else false.
+     * @return bool True if a transaction is runnning else false.
      */
     public function inTransaction()
     {
