@@ -574,6 +574,16 @@ class Connection
     }
 
     /**
+     * Checks if a transaction is running.
+     *
+     * @return bool True is a transaction is runnning else false.
+     */
+    public function inTransaction()
+    {
+        return $this->_transactionStarted;
+    }
+
+    /**
      * Quotes value to be used safely in database query.
      *
      * @param mixed $value The value to quote.
