@@ -145,6 +145,10 @@ class TextHelperTest extends TestCase
      */
     public function testAutoLink()
     {
+        $text = 'The AWWWARD show happened today';
+        $result = $this->Text->autoLink($text);
+        $this->assertEquals($text, $result);
+
         $text = 'This is a test text';
         $expected = 'This is a test text';
         $result = $this->Text->autoLink($text);
