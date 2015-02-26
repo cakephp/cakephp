@@ -117,6 +117,10 @@ class TextHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testAutoLink() {
+		$text = 'The AWWWARD show happened today';
+		$result = $this->Text->autoLink($text);
+		$this->assertEquals($text, $result);
+
 		$text = 'This is a test text';
 		$expected = 'This is a test text';
 		$result = $this->Text->autoLink($text);
@@ -126,6 +130,10 @@ class TextHelperTest extends CakeTestCase {
 		$result = $this->Text->autoLink($text);
 		$expected = 'Text with a partial <a href="http://www.cakephp.org">www.cakephp.org</a> URL and <a href="mailto:test@cakephp\.org">test@cakephp\.org</a> email address';
 		$this->assertRegExp('#^' . $expected . '$#', $result);
+
+		$text = 'Text with a partial <a href="//www.cakephp.org">link</a> link';
+		$result = $this->Text->autoLink($text, array('escape' => false));
+		$this->assertEquals($text, $result);
 
 		$text = 'This is a test text with URL http://www.cakephp.org';
 		$expected = 'This is a test text with URL <a href="http://www.cakephp.org">http://www.cakephp.org</a>';
