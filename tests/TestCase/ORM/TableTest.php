@@ -1812,6 +1812,32 @@ class TableTest extends TestCase
     }
 
     /**
+     * Asserts the afterSaveCommit is not triggered if transaction is running.
+     *
+     * @return [type]
+     */
+    public function testAfterSaveCommitWithTransactionRunning()
+    {
+        $table = TableRegistry::get('users');
+        $data = new \Cake\ORM\Entity([
+            'username' => 'superuser',
+            'created' => new Time('2013-10-10 00:00'),
+            'updated' => new Time('2013-10-10 00:00')
+        ]);
+
+        $called = false;
+        $listener = function ($e, $entity, $options) use (&$called) {
+            $called = true;
+        };
+        $table->eventManager()->attach($listener, 'Model.afterSaveCommit');
+
+        $this->connection->begin();
+        $this->assertSame($data, $table->save($data));
+        $this->assertFalse($called);
+        $this->connection->commit();
+    }
+
+    /**
      * Asserts that afterSave callback not is called on unsuccessful save
      *
      * @group save
