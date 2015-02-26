@@ -24,6 +24,25 @@ use Cake\Database\QueryCompiler;
  */
 class SqliteCompiler extends QueryCompiler
 {
+    /**
+     * Helper function used to build the string representation of a SELECT clause,
+     * it constructs the field list taking care of aliasing and
+     * converting expression objects to string. This function also constructs the
+     * DISTINCT clause for the query.
+     *
+     * @param array $parts list of fields to be transformed to string
+     * @param \Cake\Database\Query $query The query that is being compiled
+     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+     * @return string
+     */
+    protected function _buildSelectPart($parts, $query, $generator)
+    {
+        $clause = parent::_buildSelectPart($parts, $query, $generator);
+        if ($clause[0] === '(') {
+            return substr($clause, 1);
+        }
+        return $clause;
+    }
 
     /**
      * Builds the SQL string for all the UNION clauses in this query, when dealing

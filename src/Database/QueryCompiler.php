@@ -135,6 +135,9 @@ class QueryCompiler
     {
         $driver = $query->connection()->driver();
         $select = 'SELECT %s%s%s';
+        if ($query->clause('union')) {
+            $select = '(SELECT %s%s%s';
+        }
         $distinct = $query->clause('distinct');
         $modifiers = $query->clause('modifier') ?: null;
 
@@ -253,10 +256,10 @@ class QueryCompiler
         $parts = array_map(function ($p) use ($generator) {
             $p['query'] = $p['query']->sql($generator);
             $p['query'] = $p['query'][0] === '(' ? trim($p['query'], '()') : $p['query'];
-            $prefix = $p['all'] ? 'ALL' : '';
-            return sprintf('%s (%s)', $prefix, $p['query']);
+            $prefix = $p['all'] ? 'ALL ' : '';
+            return sprintf('%s(%s)', $prefix, $p['query']);
         }, $parts);
-        return sprintf("\nUNION %s", implode("\nUNION ", $parts));
+        return sprintf(")\nUNION %s", implode("\nUNION ", $parts));
     }
 
     /**
