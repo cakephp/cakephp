@@ -388,6 +388,10 @@ class PaginatorComponent extends Component {
 		if (!empty($options['order']) && is_array($options['order'])) {
 			$order = array();
 			foreach ($options['order'] as $key => $value) {
+				if (is_int($key)) {
+					$key = $value;
+					$value = 'asc';
+				}
 				$field = $key;
 				$alias = $object->alias;
 				if (strpos($key, '.') !== false) {
