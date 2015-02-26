@@ -461,7 +461,13 @@ class RulesCheckerIntegrationTest extends TestCase
         $table->eventManager()->attach(
             function ($event, Entity $entity, \ArrayObject $options, $operation) {
                 $this->assertEquals(
-                    ['atomic' => true, 'associated' => true, 'checkRules' => true, 'checkExisting' => true],
+                    [
+                        'atomic' => true,
+                        'associated' => true,
+                        'checkRules' => true,
+                        'checkExisting' => true,
+                        '_primary' => true
+                    ],
                     $options->getArrayCopy()
                 );
                 $this->assertEquals('create', $operation);
@@ -494,7 +500,13 @@ class RulesCheckerIntegrationTest extends TestCase
         $table->eventManager()->attach(
             function ($event, Entity $entity, \ArrayObject $options, $result, $operation) {
                 $this->assertEquals(
-                    ['atomic' => true, 'associated' => true, 'checkRules' => true, 'checkExisting' => true],
+                    [
+                        'atomic' => true,
+                        'associated' => true,
+                        'checkRules' => true,
+                        'checkExisting' => true,
+                        '_primary' => true
+                    ],
                     $options->getArrayCopy()
                 );
                 $this->assertEquals('create', $operation);

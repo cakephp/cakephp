@@ -1333,7 +1333,8 @@ class Table implements RepositoryInterface, EventListenerInterface
             'atomic' => true,
             'associated' => true,
             'checkRules' => true,
-            'checkExisting' => true
+            'checkExisting' => true,
+            '_primary' => true
         ]);
 
         if ($entity->errors()) {
@@ -1350,7 +1351,9 @@ class Table implements RepositoryInterface, EventListenerInterface
                 return $this->_processSave($entity, $options);
             });
             if ($success) {
-                $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
+                if ($options['_primary']) {
+                    $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
+                }
                 $entity->isNew(false);
                 $entity->source($this->registryAlias());
             }
@@ -1398,7 +1401,7 @@ class Table implements RepositoryInterface, EventListenerInterface
             $this,
             $entity,
             $options['associated'],
-            $options->getArrayCopy()
+            ['_primary' => false] + $options->getArrayCopy()
         );
 
         if (!$saved && $options['atomic']) {
@@ -1419,7 +1422,7 @@ class Table implements RepositoryInterface, EventListenerInterface
                 $this,
                 $entity,
                 $options['associated'],
-                $options->getArrayCopy()
+                ['_primary' => false] + $options->getArrayCopy()
             );
             if ($success || !$options['atomic']) {
                 $entity->clean();
