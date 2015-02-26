@@ -1764,9 +1764,51 @@ class TableTest extends TestCase
             $called = true;
         };
         $table->eventManager()->attach($listener, 'Model.afterSave');
+
+        $calledAfterCommit = false;
+        $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
+            $this->assertSame($data, $entity);
+            $calledAfterCommit = true;
+        };
+        $table->eventManager()->attach($listenerAfterCommit, 'Model.afterSaveCommit');
+
         $this->assertSame($data, $table->save($data));
         $this->assertEquals($data->id, self::$nextUserId);
         $this->assertTrue($called);
+        $this->assertTrue($calledAfterCommit);
+    }
+
+    /**
+     * Asserts that afterSaveCommit is not triggered for non-atomic saves
+     *
+     * @return void
+     */
+    public function testAfterSaveCommitForNonAtomic()
+    {
+        $table = TableRegistry::get('users');
+        $data = new \Cake\ORM\Entity([
+            'username' => 'superuser',
+            'created' => new Time('2013-10-10 00:00'),
+            'updated' => new Time('2013-10-10 00:00')
+        ]);
+
+        $called = false;
+        $listener = function ($e, $entity, $options) use ($data, &$called) {
+            $this->assertSame($data, $entity);
+            $called = true;
+        };
+        $table->eventManager()->attach($listener, 'Model.afterSave');
+
+        $calledAfterCommit = false;
+        $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
+            $calledAfterCommit = true;
+        };
+        $table->eventManager()->attach($listenerAfterCommit, 'Model.afterSaveCommit');
+
+        $this->assertSame($data, $table->save($data, ['atomic' => false]));
+        $this->assertEquals($data->id, self::$nextUserId);
+        $this->assertTrue($called);
+        $this->assertFalse($calledAfterCommit);
     }
 
     /**
@@ -1808,8 +1850,54 @@ class TableTest extends TestCase
             $called = true;
         };
         $table->eventManager()->attach($listener, 'Model.afterSave');
+
+        $calledAfterCommit = false;
+        $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
+            $calledAfterCommit = true;
+        };
+        $table->eventManager()->attach($listenerAfterCommit, 'Model.afterSaveCommit');
+
         $this->assertFalse($table->save($data));
         $this->assertFalse($called);
+        $this->assertFalse($calledAfterCommit);
+    }
+
+    /**
+     * Asserts that afterSaveCommit callback is triggered only for primary table
+     *
+     * @group save
+     * @return void
+     */
+    public function testAfterSaveCommitTriggeredOnlyForPrimaryTable()
+    {
+        $entity = new \Cake\ORM\Entity([
+            'title' => 'A Title',
+            'body' => 'A body'
+        ]);
+        $entity->author = new \Cake\ORM\Entity([
+            'name' => 'Jose'
+        ]);
+
+        $table = TableRegistry::get('articles');
+        $table->belongsTo('authors');
+
+        $calledForArticle = false;
+        $listenerForArticle = function ($e, $entity, $options) use (&$calledForArticle) {
+            $calledForArticle = true;
+        };
+        $table->eventManager()->attach($listenerForArticle, 'Model.afterSaveCommit');
+
+        $calledForAuthor = false;
+        $listenerForAuthor = function ($e, $entity, $options) use (&$calledForAuthor) {
+            $calledForAuthor = true;
+        };
+        $table->authors->eventManager()->attach($listenerForAuthor, 'Model.afterSaveCommit');
+
+        $this->assertSame($entity, $table->save($entity));
+        $this->assertFalse($entity->isNew());
+        $this->assertFalse($entity->author->isNew());
+        $this->assertTrue($calledForArticle);
+        $this->assertFalse($calledForAuthor);
     }
 
     /**
