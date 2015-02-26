@@ -1967,6 +1967,9 @@ class QueryTest extends TestCase
             ->union($union)
             ->execute();
         $this->assertCount(self::COMMENT_COUNT + self::ARTICLE_COUNT, $result);
+
+        $rows = $result->fetchAll();
+        $this->assertCount(self::COMMENT_COUNT + self::ARTICLE_COUNT, $result);
     }
 
     /**
