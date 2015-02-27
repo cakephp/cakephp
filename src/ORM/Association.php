@@ -642,7 +642,7 @@ abstract class Association
         $autoFields = $surrogate->autoFields();
 
         if ($query->eagerLoader()->autoFields() === false) {
-            return false;
+            return;
         }
 
         if (empty($fields) && !$autoFields) {
