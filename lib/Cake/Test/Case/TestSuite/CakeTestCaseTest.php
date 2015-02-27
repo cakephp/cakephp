@@ -414,7 +414,7 @@ class CakeTestCaseTest extends CakeTestCase {
 			)
 		), App::RESET);
 		$Post = $this->getMockForModel('Post');
-
+		$this->assertEquals('test', $Post->useDbConfig);
 		$this->assertInstanceOf('Post', $Post);
 		$this->assertNull($Post->save(array()));
 		$this->assertNull($Post->find('all'));
