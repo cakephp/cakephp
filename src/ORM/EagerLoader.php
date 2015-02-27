@@ -96,6 +96,15 @@ class EagerLoader
     protected $_joinsMap = [];
 
     /**
+     * Controls whether or not fields from associated tables
+     * will be eagerly loaded. When set to false, no fields will
+     * be loaded from associations.
+     *
+     * @var bool
+     */
+    protected $_autoFields = true;
+
+    /**
      * Sets the list of associations that should be eagerly loaded along for a
      * specific table using when a query is provided. The list of associated tables
      * passed to this method must have been previously set as associations using the
@@ -132,6 +141,20 @@ class EagerLoader
         $this->_normalized = $this->_loadExternal = null;
         $this->_aliasList = [];
         return $this->_containments = $associations;
+    }
+
+    /**
+     * Set whether or not contained associations will load fields automatically.
+     *
+     * @param bool $value The value to set.
+     * @return bool The current value.
+     */
+    public function autoFields($value = null)
+    {
+        if ($value !== null) {
+            $this->_autoFields = (bool)$value;
+        }
+        return $this->_autoFields;
     }
 
     /**
@@ -294,7 +317,7 @@ class EagerLoader
             $config = $loadable->config() + [
                 'aliasPath' => $loadable->aliasPath(),
                 'propertyPath' => $loadable->propertyPath(),
-                'includeFields' => $includeFields
+                'includeFields' => $includeFields,
             ];
             $loadable->instance()->attachTo($query, $config);
         }

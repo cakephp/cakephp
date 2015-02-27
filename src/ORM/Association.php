@@ -640,6 +640,11 @@ abstract class Association
         $fields = $surrogate->clause('select') ?: $options['fields'];
         $target = $this->_targetTable;
         $autoFields = $surrogate->autoFields();
+
+        if ($query->eagerLoader()->autoFields() === false) {
+            return false;
+        }
+
         if (empty($fields) && !$autoFields) {
             if ($options['includeFields'] && ($fields === null || $fields !== false)) {
                 $fields = $target->schema()->columns();
