@@ -2465,9 +2465,81 @@ class TableTest extends TestCase
                 )
             ));
 
+        $mock->expects($this->at(4))
+            ->method('dispatch')
+            ->with($this->logicalAnd(
+                $this->attributeEqualTo('_name', 'Model.afterDeleteCommit'),
+                $this->attributeEqualTo(
+                    'data',
+                    ['entity' => $entity, 'options' => $options]
+                )
+            ));
+
         $table = TableRegistry::get('users', ['eventManager' => $mock]);
         $entity->isNew(false);
         $table->delete($entity, ['checkRules' => false]);
+    }
+
+    /**
+     * Test afterDeleteCommit not called for non-atomic delete
+     *
+     * @return void
+     */
+    public function testDeleteCallbacksNonAtomic()
+    {
+        $table = TableRegistry::get('users');
+
+        $data = $table->get(1);
+        $options = new \ArrayObject(['atomic' => false, 'checkRules' => false]);
+
+        $called = false;
+        $listener = function ($e, $entity, $options) use ($data, &$called) {
+            $this->assertSame($data, $entity);
+            $called = true;
+        };
+        $table->eventManager()->attach($listener, 'Model.afterDelete');
+
+        $calledAfterCommit = false;
+        $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
+            $calledAfterCommit = true;
+        };
+        $table->eventManager()->attach($listenerAfterCommit, 'Model.afterDeleteCommit');
+
+        $table->delete($data, ['atomic' => false]);
+        $this->assertTrue($called);
+        $this->assertFalse($calledAfterCommit);
+    }
+
+    /**
+     * Test that afterDeleteCommit is only triggered for primary table
+     *
+     * @return void
+     */
+    public function testAfterDeleteCommitTriggeredOnlyForPrimaryTable()
+    {
+        $table = TableRegistry::get('authors');
+        $table->hasOne('articles', [
+            'foreignKey' => 'author_id',
+            'dependent' => true,
+        ]);
+
+        $called = false;
+        $listener = function ($e, $entity, $options) use (&$called) {
+            $called = true;
+        };
+        $table->eventManager()->attach($listener, 'Model.afterDeleteCommit');
+
+        $called2 = false;
+        $listener = function ($e, $entity, $options) use (&$called2) {
+            $called2 = true;
+        };
+        $table->articles->eventManager()->attach($listener, 'Model.afterDeleteCommit');
+
+        $entity = $table->get(1);
+        $this->assertTrue($table->delete($entity));
+
+        $this->assertTrue($called);
+        $this->assertFalse($called2);
     }
 
     /**

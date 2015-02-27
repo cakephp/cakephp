@@ -1598,7 +1598,15 @@ class Table implements RepositoryInterface, EventListenerInterface
         };
 
         if ($options['atomic']) {
-            return $this->connection()->transactional($process);
+            $connection = $this->connection();
+            $success = $connection->transactional($process);
+            if ($success && !$connection->inTransaction()) {
+                $this->dispatchEvent('Model.afterDeleteCommit', [
+                    'entity' => $entity,
+                    'options' => $options
+                ]);
+            }
+            return $success;
         }
         return $process();
     }
@@ -2158,6 +2166,7 @@ class Table implements RepositoryInterface, EventListenerInterface
             'Model.afterSaveCommit' => 'afterSaveCommit',
             'Model.beforeDelete' => 'beforeDelete',
             'Model.afterDelete' => 'afterDelete',
+            'Model.afterDeleteCommit' => 'afterDeleteCommit',
             'Model.beforeRules' => 'beforeRules',
             'Model.afterRules' => 'afterRules',
         ];
