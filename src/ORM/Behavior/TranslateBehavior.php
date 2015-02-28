@@ -105,7 +105,7 @@ class TranslateBehavior extends Behavior
         $this->setupFieldAssociations(
             $this->_config['fields'],
             $this->_config['translationTable'],
-            $this->_config['model'] ? $this->_config['model'] : $this->_table->alias(),
+            $this->_config['model'] ?: $this->_table->alias(),
             $this->_config['strategy']
         );
     }
@@ -471,14 +471,14 @@ class TranslateBehavior extends Behavior
         }
 
         $results = $this->_findExistingTranslations($find);
-        $alias = $this->_table->alias();
+        $model = $this->_config['model'] ?: $this->_table->alias();
 
         foreach ($find as $i => $translation) {
             if (!empty($results[$i])) {
                 $contents[$i]->set('id', $results[$i], ['setter' => false]);
                 $contents[$i]->isNew(false);
             } else {
-                $translation['model'] = $alias;
+                $translation['model'] = $model;
                 $contents[$i]->set($translation, ['setter' => false, 'guard' => false]);
                 $contents[$i]->isNew(true);
             }
