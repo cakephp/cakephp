@@ -971,16 +971,16 @@ class TranslateBehaviorTest extends TestCase
     }
 
     /**
-     * Tests that conditions set when defining the behavior are applied correctly
+     * Tests that allowEmptyTranslations takes effect
      *
      * @return void
      */
-    public function testConditions()
+    public function testEmptyTranslations()
     {
         $table = TableRegistry::get('Articles');
         $table->addBehavior('Translate', [
             'fields' => ['title', 'body', 'description'],
-            'conditions' => ['content <>' => '']
+            'allowEmptyTranslations' => false,
         ]);
         $table->locale('spa');
         $result = $table->find()->first();
