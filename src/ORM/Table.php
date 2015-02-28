@@ -1294,6 +1294,9 @@ class Table implements RepositoryInterface, EventListenerInterface
      *   listeners will receive the entity and the options array as arguments. The type
      *   of operation performed (insert or update) can be determined by checking the
      *   entity's method `isNew`, true meaning an insert and false an update.
+     * - Model.afterSaveCommit: Will be triggered after the transaction is commited
+     *   for atomic save, listeners will receive the entity and the options array
+     *   as arguments.
      *
      * This method will determine whether the passed entity needs to be
      * inserted or updated in the database. It does that by checking the `isNew`
@@ -1579,10 +1582,14 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * ### Events
      *
-     * - `beforeDelete` Fired before the delete occurs. If stopped the delete
+     * - `Model.beforeDelete` Fired before the delete occurs. If stopped the delete
      *   will be aborted. Receives the event, entity, and options.
-     * - `afterDelete` Fired after the delete has been successful. Receives
+     * - `Model.afterDelete` Fired after the delete has been successful. Receives
      *   the event, entity, and options.
+     * - `Model.afterDelete` Fired after the delete has been successful. Receives
+     *   the event, entity, and options.
+     * - `Model.afterDeleteCommit` Fired after the transaction is committed for
+     *   an atomic delete. Receives the event, entity, and options.
      *
      * The options argument will be converted into an \ArrayObject instance
      * for the duration of the callbacks, this allows listeners to modify
