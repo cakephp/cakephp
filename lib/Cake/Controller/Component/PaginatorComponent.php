@@ -333,15 +333,13 @@ class PaginatorComponent extends Component {
 		if (isset($this->settings[$alias])) {
 			$defaults = $this->settings[$alias];
 		}
-		if (isset($defaults['limit']) &&
-			(empty($defaults['maxLimit']) || $defaults['limit'] > $defaults['maxLimit'])
-		) {
-			$defaults['maxLimit'] = $defaults['limit'];
-		}
-		return array_merge(
-			array('page' => 1, 'limit' => 20, 'maxLimit' => 100, 'paramType' => 'named'),
-			$defaults
+		$defaults += array(
+			'page' => 1,
+			'limit' => 20,
+			'maxLimit' => 100,
+			'paramType' => 'named'
 		);
+		return $defaults;
 	}
 
 /**
