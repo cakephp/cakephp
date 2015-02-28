@@ -75,6 +75,7 @@ class TranslateBehavior extends Behavior
         'translationTable' => 'I18n',
         'defaultLocale' => '',
         'model' => '',
+        'allowEmptyTranslations' => true,
         'onlyTranslated' => false,
         'strategy' => 'subquery'
     ];
@@ -142,23 +143,33 @@ class TranslateBehavior extends Behavior
                 $fieldTable = TableRegistry::get($name);
             }
 
+            $conditions = [
+                $name . '.model' => $model,
+                $name . '.field' => $field,
+            ];
+            if (!$this->_config['allowEmptyTranslations']) {
+                $conditions[$name . '.content !='] = '';
+            }
+
             $this->_table->hasOne($name, [
                 'targetTable' => $fieldTable,
                 'foreignKey' => 'foreign_key',
                 'joinType' => $filter ? 'INNER' : 'LEFT',
-                'conditions' => [
-                    $name . '.model' => $model,
-                    $name . '.field' => $field,
-                ],
+                'conditions' => $conditions,
                 'propertyName' => $field . '_translation'
             ]);
+        }
+
+        $conditions = ["$targetAlias.model" => $model];
+        if (!$this->_config['allowEmptyTranslations']) {
+            $conditions["$targetAlias.content !="] = '';
         }
 
         $this->_table->hasMany($targetAlias, [
             'className' => $table,
             'foreignKey' => 'foreign_key',
             'strategy' => $strategy,
-            'conditions' => ["$targetAlias.model" => $model],
+            'conditions' => $conditions,
             'propertyName' => '_i18n',
             'dependent' => true
         ]);
