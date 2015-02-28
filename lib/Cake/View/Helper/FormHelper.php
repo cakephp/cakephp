@@ -1287,6 +1287,7 @@ class FormHelper extends AppHelper {
 			isset($fieldDef['length']) &&
 			is_scalar($fieldDef['length']) &&
 			$fieldDef['length'] < 1000000 &&
+			$fieldDef['type'] !== 'decimal' &&
 			$options['type'] !== 'select'
 		);
 		if ($autoLength &&
