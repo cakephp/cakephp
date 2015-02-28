@@ -265,7 +265,7 @@ class TranslateBehavior extends Behavior
         $fields = array_keys($values);
         $primaryKey = (array)$this->_table->primaryKey();
         $key = $entity->get(current($primaryKey));
-        $model = $this->_table->alias();
+        $model = $this->_config['model'] ?: $this->_table->alias();
 
         $preexistent = $this->_translationTable->find()
             ->select(['id', 'field'])
