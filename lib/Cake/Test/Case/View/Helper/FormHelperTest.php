@@ -782,7 +782,6 @@ class FormHelperTest extends CakeTestCase {
 				'type' => 'text',
 				'name' => 'data[ValidateUser][cost_decimal]',
 				'id' => 'ValidateUserCostDecimal',
-				'maxlength' => 6,
 			)),
 			'/div'
 		);
