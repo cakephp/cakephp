@@ -15,12 +15,9 @@
 namespace Cake\Test\TestCase\ORM\Behavior;
 
 use Cake\Collection\Collection;
-use Cake\Event\Event;
 use Cake\I18n\I18n;
-use Cake\ORM\Behavior\TranslateBehavior;
 use Cake\ORM\Behavior\Translate\TranslateTrait;
 use Cake\ORM\Entity;
-use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
