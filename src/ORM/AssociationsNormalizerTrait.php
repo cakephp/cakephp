@@ -31,7 +31,7 @@ trait AssociationsNormalizerTrait
     protected function _normalizeAssociations($associations)
     {
         $result = [];
-        foreach ($associations as $table => $options) {
+        foreach ((array)$associations as $table => $options) {
             $pointer =& $result;
 
             if (is_int($table)) {

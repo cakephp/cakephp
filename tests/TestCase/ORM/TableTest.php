@@ -48,8 +48,13 @@ class TableTest extends TestCase
 {
 
     public $fixtures = [
-        'core.users', 'core.categories', 'core.articles', 'core.authors',
-        'core.tags', 'core.articles_tags'
+        'core.comments',
+        'core.users',
+        'core.categories',
+        'core.articles',
+        'core.authors',
+        'core.tags',
+        'core.articles_tags'
     ];
 
     /**
@@ -498,6 +503,115 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test has one with a plugin model
+     *
+     * @return void
+     */
+    public function testHasOnePlugin()
+    {
+        $options = ['className' => 'TestPlugin.Comments'];
+        $table = new Table(['table' => 'users']);
+
+        $hasOne = $table->hasOne('Comments', $options);
+        $this->assertInstanceOf('Cake\ORM\Association\HasOne', $hasOne);
+        $this->assertSame('Comments', $hasOne->name());
+
+        $hasOneTable = $hasOne->target();
+        $this->assertSame('Comments', $hasOne->alias());
+        $this->assertSame('TestPlugin.Comments', $hasOne->registryAlias());
+
+        $options = ['className' => 'TestPlugin.Comments'];
+        $table = new Table(['table' => 'users']);
+
+        $hasOne = $table->hasOne('TestPlugin.Comments', $options);
+        $this->assertInstanceOf('Cake\ORM\Association\HasOne', $hasOne);
+        $this->assertSame('Comments', $hasOne->name());
+
+        $hasOneTable = $hasOne->target();
+        $this->assertSame('Comments', $hasOne->alias());
+        $this->assertSame('TestPlugin.Comments', $hasOne->registryAlias());
+    }
+
+    /**
+     * testNoneUniqueAssociationsSameClass
+     *
+     * @return void
+     */
+    public function testNoneUniqueAssociationsSameClass()
+    {
+        $Users = new Table(['table' => 'users']);
+        $options = ['className' => 'Comments'];
+        $Users->hasMany('Comments', $options);
+
+        $Articles = new Table(['table' => 'articles']);
+        $options = ['className' => 'Comments'];
+        $Articles->hasMany('Comments', $options);
+
+        $Categories = new Table(['table' => 'categories']);
+        $options = ['className' => 'TestPlugin.Comments'];
+        $Categories->hasMany('Comments', $options);
+
+        $this->assertInstanceOf('Cake\ORM\Table', $Users->Comments->target());
+        $this->assertInstanceOf('Cake\ORM\Table', $Articles->Comments->target());
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $Categories->Comments->target());
+    }
+
+    /**
+     * Test associations which refer to the same table multiple times
+     *
+     * @return void
+     */
+    public function testSelfJoinAssociations()
+    {
+        $Categories = TableRegistry::get('Categories');
+        $options = ['className' => 'Categories'];
+        $Categories->hasMany('Children', ['foreignKey' => 'parent_id'] + $options);
+        $Categories->belongsTo('Parent', $options);
+
+        $this->assertSame('categories', $Categories->Children->target()->table());
+        $this->assertSame('categories', $Categories->Parent->target()->table());
+
+        $this->assertSame('Children', $Categories->Children->alias());
+        $this->assertSame('Children', $Categories->Children->target()->alias());
+
+        $this->assertSame('Parent', $Categories->Parent->alias());
+        $this->assertSame('Parent', $Categories->Parent->target()->alias());
+
+        $expected = [
+            'id' => 2,
+            'parent_id' => 1,
+            'name' => 'Category 1.1',
+            'parent' => [
+                'id' => 1,
+                'parent_id' => 0,
+                'name' => 'Category 1',
+            ],
+            'children' => [
+                [
+                    'id' => 7,
+                    'parent_id' => 2,
+                    'name' => 'Category 1.1.1',
+                ],
+                [
+                    'id' => 8,
+                    'parent_id' => 2,
+                    'name' => 'Category 1.1.2',
+                ]
+            ]
+        ];
+
+        $fields = ['id', 'parent_id', 'name'];
+        $result = $Categories->find('all')
+            ->select(['Categories.id', 'Categories.parent_id', 'Categories.name'])
+            ->contain(['Children' => ['fields' => $fields], 'Parent' => ['fields' => $fields]])
+            ->where(['Categories.id' => 2])
+            ->first()
+            ->toArray();
+
+        $this->assertSame($expected, $result);
+    }
+
+    /**
      * Tests that hasMany() creates and configures correctly the association
      *
      * @return void
@@ -518,6 +632,65 @@ class TableTest extends TestCase
         $this->assertEquals(['b' => 'c'], $hasMany->conditions());
         $this->assertEquals(['foo' => 'asc'], $hasMany->sort());
         $this->assertSame($table, $hasMany->source());
+    }
+
+    /**
+     * testHasManyWithClassName
+     *
+     * @return void
+     */
+    public function testHasManyWithClassName()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->hasMany('Comments', [
+            'className' => 'Comments',
+            'conditions' => ['published' => 'Y'],
+        ]);
+
+        $table->hasMany('UnapprovedComments', [
+            'className' => 'Comments',
+            'conditions' => ['published' => 'N'],
+            'propertyName' => 'unaproved_comments'
+        ]);
+
+        $expected = [
+            'id' => 1,
+            'title' => 'First Article',
+            'unaproved_comments' => [
+                [
+                    'id' => 4,
+                    'article_id' => 1,
+                    'comment' => 'Fourth Comment for First Article'
+                ]
+            ],
+            'comments' => [
+                [
+                    'id' => 1,
+                    'article_id' => 1,
+                    'comment' => 'First Comment for First Article'
+                ],
+                [
+                    'id' => 2,
+                    'article_id' => 1,
+                    'comment' => 'Second Comment for First Article'
+                ],
+                [
+                    'id' => 3,
+                    'article_id' => 1,
+                    'comment' => 'Third Comment for First Article'
+                ]
+            ]
+        ];
+        $result = $table->find()
+            ->select(['id', 'title'])
+            ->contain([
+                'Comments' => ['fields' => ['id', 'article_id', 'comment']],
+                'UnapprovedComments' => ['fields' => ['id', 'article_id', 'comment']]
+            ])
+            ->where(['id' => 1])
+            ->first();
+
+        $this->assertSame($expected, $result->toArray());
     }
 
     /**
@@ -2311,6 +2484,23 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests that the source of an existing Entity is the same as a new one
+     *
+     * @return void
+     */
+    public function testEntitySourceExistingAndNew()
+    {
+        Plugin::load('TestPlugin');
+        $table = TableRegistry::get('TestPlugin.Authors');
+
+        $existingAuthor = $table->find()->first();
+        $newAuthor = $table->newEntity();
+
+        $this->assertEquals('TestPlugin.Authors', $existingAuthor->source());
+        $this->assertEquals('TestPlugin.Authors', $newAuthor->source());
+    }
+
+    /**
      * Tests that calling an entity with an empty array will run validation
      * whereas calling it with no parameters will not run any validation.
      *
@@ -3318,11 +3508,26 @@ class TableTest extends TestCase
         $articles->addBehavior('Timestamp');
         $result = $articles->__debugInfo();
         $expected = [
+            'registryAlias' => 'articles',
             'table' => 'articles',
             'alias' => 'articles',
             'entityClass' => 'TestApp\Model\Entity\Article',
             'associations' => ['authors', 'tags', 'articlestags'],
             'behaviors' => ['Timestamp'],
+            'defaultConnection' => 'default',
+            'connectionName' => 'test'
+        ];
+        $this->assertEquals($expected, $result);
+
+        $articles = TableRegistry::get('Foo.Articles');
+        $result = $articles->__debugInfo();
+        $expected = [
+            'registryAlias' => 'Foo.Articles',
+            'table' => 'articles',
+            'alias' => 'Articles',
+            'entityClass' => '\Cake\ORM\Entity',
+            'associations' => [],
+            'behaviors' => [],
             'defaultConnection' => 'default',
             'connectionName' => 'test'
         ];
@@ -3468,12 +3673,15 @@ class TableTest extends TestCase
         $table = TableRegistry::get('Users');
         $validator = new Validator;
         $validator->add('username', 'unique', [
-            'rule' => ['validateUnique', ['scope' => 'id']],
+            'rule' => ['validateUnique', ['derp' => 'erp', 'scope' => 'id']],
             'provider' => 'table'
         ]);
         $validator->provider('table', $table);
-        $data = ['username' => 'larry'];
+        $data = ['username' => 'larry', 'id' => 3];
         $this->assertNotEmpty($validator->errors($data));
+
+        $data = ['username' => 'larry', 'id' => 1];
+        $this->assertEmpty($validator->errors($data));
 
         $data = ['username' => 'jose'];
         $this->assertEmpty($validator->errors($data));
@@ -3586,5 +3794,20 @@ class TableTest extends TestCase
         $this->assertTrue($table->delete($entity, ['checkRules' => false]));
         $this->assertEquals(1, $beforeDeleteCount);
         $this->assertEquals(1, $afterDeleteCount);
+    }
+
+    /**
+     * Tests that calling newEntity() on a table sets the right source alias
+     *
+     * @return void
+     */
+    public function testEntitySource()
+    {
+        $table = TableRegistry::get('Articles');
+        $this->assertEquals('Articles', $table->newEntity()->source());
+
+        Plugin::load('TestPlugin');
+        $table = TableRegistry::get('TestPlugin.Comments');
+        $this->assertEquals('TestPlugin.Comments', $table->newEntity()->source());
     }
 }

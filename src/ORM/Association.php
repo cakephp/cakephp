@@ -176,10 +176,10 @@ abstract class Association
      * Constructor. Subclasses can override _options function to get the original
      * list of passed options if expecting any other special key
      *
-     * @param string $name The name given to the association
+     * @param string $alias The name given to the association
      * @param array $options A list of properties to be set on this object
      */
-    public function __construct($name, array $options = [])
+    public function __construct($alias, array $options = [])
     {
         $defaults = [
             'cascadeCallbacks',
@@ -199,7 +199,13 @@ abstract class Association
             }
         }
 
+        if (!$this->_className) {
+            $this->_className = $alias;
+        }
+
+        list(, $name) = pluginSplit($alias);
         $this->_name = $name;
+
         $this->_options($options);
 
         if (!empty($options['strategy'])) {
@@ -269,17 +275,18 @@ abstract class Association
             return $this->_targetTable = $table;
         }
 
-        if ($this->_className && strpos($this->_className, '\\') === false) {
-            $tableAlias = $this->_className;
+        if (strpos($this->_className, '.')) {
+            list($plugin) = pluginSplit($this->_className, true);
+            $registryAlias = $plugin . $this->_name;
         } else {
-            $tableAlias = $this->_name;
+            $registryAlias = $this->_name;
         }
 
         $config = [];
-        if (!TableRegistry::exists($tableAlias)) {
+        if (!TableRegistry::exists($registryAlias)) {
             $config = ['className' => $this->_className];
         }
-        $this->_targetTable = TableRegistry::get($tableAlias, $config);
+        $this->_targetTable = TableRegistry::get($registryAlias, $config);
 
         return $this->_targetTable;
     }
@@ -633,6 +640,11 @@ abstract class Association
         $fields = $surrogate->clause('select') ?: $options['fields'];
         $target = $this->_targetTable;
         $autoFields = $surrogate->autoFields();
+
+        if ($query->eagerLoader()->autoFields() === false) {
+            return;
+        }
+
         if (empty($fields) && !$autoFields) {
             if ($options['includeFields'] && ($fields === null || $fields !== false)) {
                 $fields = $target->schema()->columns();

@@ -23,7 +23,6 @@ use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
-use Cake\Utility\Inflector;
 
 /**
  * This behavior provides a way to translate dynamic data by keeping translations
@@ -101,16 +100,8 @@ class TranslateBehavior extends Behavior
      */
     public function initialize(array $config)
     {
-        $translationAlias = Inflector::slug($this->_config['translationTable'], '_');
+        $this->_translationTable = TableRegistry::get($this->_config['translationTable']);
 
-        if (!TableRegistry::exists($translationAlias)) {
-            $this->_translationTable = TableRegistry::get($translationAlias, [
-                'className' => $this->_config['translationTable']
-            ]);
-        } else {
-            $this->_translationTable = TableRegistry::get($translationAlias);
-        }
-        
         if ($this->config('model')) {
             $model = $this->config('model');
         } elseif ($this->config('conditions.model')) {

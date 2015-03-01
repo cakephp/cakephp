@@ -78,6 +78,17 @@ class ExistsIn
             return true;
         }
 
+        $nulls = 0;
+        $schema = $this->_repository->schema();
+        foreach ($this->_fields as $field) {
+            if ($schema->isNullable($field) && $entity->get($field) === null) {
+                $nulls++;
+            }
+        }
+        if ($nulls === count($this->_fields)) {
+            return true;
+        }
+
         $alias = $this->_repository->alias();
         $primary = array_map(
             function ($key) use ($alias) {

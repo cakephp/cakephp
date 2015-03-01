@@ -1446,6 +1446,27 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test getting counts from queries with contain.
+     *
+     * @return void
+     */
+    public function testCountWithContain()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors');
+
+        $result = $table->find('all')
+            ->contain([
+                'Authors' => [
+                    'fields' => ['name']
+                ]
+            ])
+            ->count();
+        $this->assertSame(3, $result);
+    }
+
+
+    /**
      * test count with a beforeFind.
      *
      * @return void
@@ -1871,7 +1892,7 @@ class QueryTest extends TestCase
 
     /**
      * Tests that getting results from a query having a contained association
-     * will no attach joins twice if count() is called on it afterwards
+     * will not attach joins twice if count() is called on it afterwards
      *
      * @return void
      */

@@ -156,10 +156,6 @@ class Plugin
 
         static::$_plugins[$plugin] = $config;
 
-        if ($config['bootstrap'] === true) {
-            static::bootstrap($plugin);
-        }
-
         if ($config['autoload'] === true) {
             if (empty(static::$_loader)) {
                 static::$_loader = new ClassLoader;
@@ -173,6 +169,10 @@ class Plugin
                 str_replace('/', '\\', $plugin) . '\Test',
                 $config['path'] . 'tests' . DS
             );
+        }
+
+        if ($config['bootstrap'] === true) {
+            static::bootstrap($plugin);
         }
     }
 

@@ -47,12 +47,53 @@ class ProtectedArticle extends Entity
 }
 
 /**
+ * Test stub for greedy find operations.
+ */
+class GreedyCommentsTable extends Table
+{
+    /**
+     * initialize hook
+     *
+     * @param $config Config data.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        $this->table('comments');
+        $this->alias('Comments');
+    }
+
+    /**
+     * Overload find to cause issues.
+     *
+     * @param string $type Find type
+     * @param array $options find options
+     * @return object
+     */
+    public function find($type = 'all', $options = [])
+    {
+        if (empty($options['conditions'])) {
+            $options['conditions'] = [];
+        }
+        $options['conditions'] = array_merge($options['conditions'], ['Comments.published' => 'Y']);
+        return parent::find($type, $options);
+    }
+}
+
+/**
  * Marshaller test case
  */
 class MarshallerTest extends TestCase
 {
 
-    public $fixtures = ['core.tags', 'core.articles_tags', 'core.articles', 'core.users', 'core.comments'];
+    public $fixtures = [
+        'core.tags',
+        'core.articles_tags',
+        'core.articles',
+        'core.users',
+        'core.comments',
+        'core.special_tags'
+    ];
 
     /**
      * setup
@@ -989,6 +1030,69 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test that invalid _joinData (scalar data) is not marshalled.
+     *
+     * @return void
+     */
+    public function testMergeBelongsToManyJoinDataScalar()
+    {
+        TableRegistry::clear();
+        $articles = TableRegistry::get('Articles');
+        $articles->belongsToMany('Tags', [
+            'through' => 'SpecialTags'
+        ]);
+
+        $entity = $articles->get(1, ['contain' => 'Tags']);
+        $data = [
+            'title' => 'Haz data',
+            'tags' => [
+                ['id' => 3, 'tag' => 'Cake', '_joinData' => 'Invalid'],
+            ]
+        ];
+        $marshall = new Marshaller($articles);
+        $result = $marshall->merge($entity, $data, ['associated' => 'Tags._joinData']);
+
+        $articles->save($entity, ['associated' => ['Tags._joinData']]);
+        $this->assertFalse($entity->tags[0]->dirty('_joinData'));
+        $this->assertEmpty($entity->tags[0]->_joinData);
+    }
+
+    /**
+     * Test merging the _joinData entity for belongstomany associations when * is not
+     * accessible.
+     *
+     * @return void
+     */
+    public function testMergeBelongsToManyJoinDataNotAccessible()
+    {
+        TableRegistry::clear();
+        $articles = TableRegistry::get('Articles');
+        $articles->belongsToMany('Tags', [
+            'through' => 'SpecialTags'
+        ]);
+
+        $entity = $articles->get(1, ['contain' => 'Tags']);
+        $data = [
+            'title' => 'Haz data',
+            'tags' => [
+                ['id' => 3, 'tag' => 'Cake', '_joinData' => ['highlighted' => '1', 'author_id' => '99']],
+            ]
+        ];
+        // Make only specific fields accessible, but not _joinData.
+        $entity->tags[0]->accessible('*', false);
+        $entity->tags[0]->accessible(['article_id', 'tag_id'], true);
+
+        $marshall = new Marshaller($articles);
+        $result = $marshall->merge($entity, $data, ['associated' => 'Tags._joinData']);
+
+        $this->assertTrue($entity->tags[0]->dirty('_joinData'));
+        $this->assertTrue($result->tags[0]->_joinData->dirty('author_id'), 'Field not modified');
+        $this->assertTrue($result->tags[0]->_joinData->dirty('highlighted'), 'Field not modified');
+        $this->assertSame(99, $result->tags[0]->_joinData->author_id);
+        $this->assertTrue($result->tags[0]->_joinData->highlighted);
+    }
+
+    /**
      * Test merging the _joinData entity for belongstomany associations.
      *
      * @return void
@@ -1017,7 +1121,7 @@ class MarshallerTest extends TestCase
             ],
         ];
 
-        $options = ['associated' => ['Tags' => ['associated' => ['_joinData']]]];
+        $options = ['associated' => ['Tags._joinData']];
         $marshall = new Marshaller($this->articles);
         $entity = $marshall->one($data, $options);
         $entity->accessible('*', true);
@@ -1209,6 +1313,38 @@ class MarshallerTest extends TestCase
         $this->assertCount(2, $result, 'Should have two records');
         $this->assertSame($entities[0], $result[0], 'Should retain object');
         $this->assertSame($entities[1], $result[1], 'Should retain object');
+    }
+
+    /**
+     * Test mergeMany() when the exist check returns nothing.
+     *
+     * @return void
+     */
+    public function testMergeManyExistQueryFails()
+    {
+        $entities = [
+            new Entity(['id' => 1, 'comment' => 'First post', 'user_id' => 2]),
+            new Entity(['id' => 2, 'comment' => 'Second post', 'user_id' => 2])
+        ];
+        $entities[0]->clean();
+        $entities[1]->clean();
+
+        $data = [
+            ['id' => 2, 'comment' => 'Changed 2', 'user_id' => 2],
+            ['id' => 1, 'comment' => 'Changed 1', 'user_id' => 1],
+            ['id' => 3, 'comment' => 'New 1'],
+        ];
+        $comments = TableRegistry::get('GreedyComments', [
+            'className' => __NAMESPACE__ . '\\GreedyCommentsTable'
+        ]);
+        $marshall = new Marshaller($comments);
+        $result = $marshall->mergeMany($entities, $data);
+
+        $this->assertCount(3, $result);
+        $this->assertEquals('Changed 1', $result[0]->comment);
+        $this->assertEquals(1, $result[0]->user_id);
+        $this->assertEquals('Changed 2', $result[1]->comment);
+        $this->assertEquals('New 1', $result[2]->comment);
     }
 
     /**

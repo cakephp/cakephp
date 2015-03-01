@@ -157,8 +157,9 @@ class DateTimeType extends \Cake\Database\Type
             $value['minute'],
             $value['second']
         );
+        $tz = isset($value['timezone']) ? $value['timezone'] : null;
 
-        return new $class($format);
+        return new $class($format, $tz);
     }
 
     /**

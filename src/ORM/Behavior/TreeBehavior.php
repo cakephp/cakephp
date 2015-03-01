@@ -185,8 +185,10 @@ class TreeBehavior extends Behavior
             $depth = $depths[$parentIdValue] + 1;
             $depths[$node->get($primaryKey)] = $depth;
 
-            $node->set($config['level'], $depth);
-            $this->_table->save($node, ['checkRules' => false, 'atomic' => false]);
+            $this->_table->updateAll(
+                [$config['level'] => $depth],
+                [$primaryKey => $node->get($primaryKey)]
+            );
         }
     }
 

@@ -908,7 +908,7 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * ```
      * $table->find('list', [
-     *  'idField' => 'name',
+     *  'keyField' => 'name',
      *  'valueField' => 'age'
      * ]);
      * ```
@@ -943,18 +943,25 @@ class Table implements RepositoryInterface, EventListenerInterface
     public function findList(Query $query, array $options)
     {
         $options += [
-            'idField' => $this->primaryKey(),
+            'keyField' => $this->primaryKey(),
             'valueField' => $this->displayField(),
             'groupField' => null
         ];
+
+        if (isset($options['idField'])) {
+            $options['keyField'] = $options['idField'];
+            unset($options['idField']);
+            trigger_error('Option "idField" is deprecated, use "keyField" instead.', E_USER_WARNING);
+        }
+
         $options = $this->_setFieldMatchers(
             $options,
-            ['idField', 'valueField', 'groupField']
+            ['keyField', 'valueField', 'groupField']
         );
 
         return $query->formatResults(function ($results) use ($options) {
             return $results->combine(
-                $options['idField'],
+                $options['keyField'],
                 $options['valueField'],
                 $options['groupField']
             );
@@ -970,12 +977,12 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * You can customize what fields are used for nesting results, by default the
      * primary key and the `parent_id` fields are used. If you wish to change
-     * these defaults you need to provide the keys `idField` or `parentField` in
+     * these defaults you need to provide the keys `keyField` or `parentField` in
      * `$options`:
      *
      * ```
      * $table->find('threaded', [
-     *  'idField' => 'id',
+     *  'keyField' => 'id',
      *  'parentField' => 'ancestor_id'
      * ]);
      * ```
@@ -987,13 +994,20 @@ class Table implements RepositoryInterface, EventListenerInterface
     public function findThreaded(Query $query, array $options)
     {
         $options += [
-            'idField' => $this->primaryKey(),
+            'keyField' => $this->primaryKey(),
             'parentField' => 'parent_id',
         ];
-        $options = $this->_setFieldMatchers($options, ['idField', 'parentField']);
+
+        if (isset($options['idField'])) {
+            $options['keyField'] = $options['idField'];
+            unset($options['idField']);
+            trigger_error('Option "idField" is deprecated, use "keyField" instead.', E_USER_WARNING);
+        }
+
+        $options = $this->_setFieldMatchers($options, ['keyField', 'parentField']);
 
         return $query->formatResults(function ($results) use ($options) {
-            return $results->nest($options['idField'], $options['parentField']);
+            return $results->nest($options['keyField'], $options['parentField']);
         });
     }
 
@@ -1872,7 +1886,7 @@ class Table implements RepositoryInterface, EventListenerInterface
     {
         if ($data === null) {
             $class = $this->entityClass();
-            $entity = new $class(['source' => $this->registryAlias()]);
+            $entity = new $class([], ['source' => $this->registryAlias()]);
             return $entity;
         }
         if (!isset($options['associated'])) {
@@ -2022,25 +2036,26 @@ class Table implements RepositoryInterface, EventListenerInterface
      * the data to be validated.
      *
      * @param mixed $value The value of column to be checked for uniqueness
-     * @param array $context Either the options or validation context.
-     * @param array|null $options The options array, optionally containing the 'scope' key
+     * @param array $options The options array, optionally containing the 'scope' key.
+     *   May also be the validation context if there are no options.
+     * @param array|null $context Either the validation context or null.
      * @return bool true if the value is unique
      */
-    public function validateUnique($value, array $context, array $options = null)
+    public function validateUnique($value, array $options, array $context = null)
     {
-        if ($options === null) {
-            $options = $context;
+        if ($context === null) {
+            $context = $options;
         }
         $entity = new Entity(
-            $options['data'],
+            $context['data'],
             [
                 'useSetters' => false,
-                'markNew' => $options['newRecord'],
+                'markNew' => $context['newRecord'],
                 'source' => $this->registryAlias()
             ]
         );
         $fields = array_merge(
-            [$options['field']],
+            [$context['field']],
             isset($options['scope']) ? (array)$options['scope'] : []
         );
         $rule = new IsUnique($fields);
@@ -2158,6 +2173,7 @@ class Table implements RepositoryInterface, EventListenerInterface
     {
         $conn = $this->connection();
         return [
+            'registryAlias' => $this->registryAlias(),
             'table' => $this->table(),
             'alias' => $this->alias(),
             'entityClass' => $this->entityClass(),

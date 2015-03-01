@@ -423,7 +423,8 @@ class Cache
      * $configs = Cache::groupConfigs('posts');
      * ```
      *
-     * $config will equal to `['posts' => ['daily', 'weekly']]`
+     * $configs will equal to `['posts' => ['daily', 'weekly']]`
+     * Calling this method will load all the configured engines.
      *
      * @param string|null $group group name or null to retrieve all group mappings
      * @return array map of group and all configuration that has the same group
@@ -431,6 +432,9 @@ class Cache
      */
     public static function groupConfigs($group = null)
     {
+        foreach (array_keys(static::$_config) as $config) {
+            static::engine($config);
+        }
         if ($group === null) {
             return static::$_groups;
         }

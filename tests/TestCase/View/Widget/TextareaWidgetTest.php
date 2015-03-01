@@ -49,7 +49,7 @@ class TextareaWidgetTest extends TestCase
         $input = new TextareaWidget($this->templates);
         $result = $input->render(['name' => 'comment'], $this->context);
         $expected = [
-            'textarea' => ['name' => 'comment'],
+            'textarea' => ['name' => 'comment', 'rows' => 5],
             '/textarea',
         ];
         $this->assertHtml($expected, $result);
@@ -66,7 +66,7 @@ class TextareaWidgetTest extends TestCase
         $data = ['name' => 'comment', 'data-foo' => '<val>', 'val' => 'some <html>'];
         $result = $input->render($data, $this->context);
         $expected = [
-            'textarea' => ['name' => 'comment', 'data-foo' => '&lt;val&gt;'],
+            'textarea' => ['name' => 'comment', 'rows' => 5, 'data-foo' => '&lt;val&gt;'],
             'some &lt;html&gt;',
             '/textarea',
         ];
@@ -75,7 +75,7 @@ class TextareaWidgetTest extends TestCase
         $data['escape'] = false;
         $result = $input->render($data, $this->context);
         $expected = [
-            'textarea' => ['name' => 'comment', 'data-foo' => '<val>'],
+            'textarea' => ['name' => 'comment', 'rows' => 5, 'data-foo' => '<val>'],
             'some <html>',
             '/textarea',
         ];

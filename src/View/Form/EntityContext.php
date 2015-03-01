@@ -213,7 +213,7 @@ class EntityContext implements ContextInterface
             return null;
         }
         $parts = explode('.', $field);
-        $entity = $this->_getEntity($parts);
+        $entity = $this->entity($parts);
 
         if (end($parts) === '_ids' && !empty($entity)) {
             return $this->_extractMultiple($entity, $parts);
@@ -250,12 +250,17 @@ class EntityContext implements ContextInterface
      * entity. If the path does not contain a leaf entity false
      * will be returned.
      *
-     * @param array $path Each one of the parts in a path for a field name
-     * @return \Cake\DataSource\EntityInterface|bool
+     * @param array|null $path Each one of the parts in a path for a field name
+     *  or null to get the entity passed in contructor context.
+     * @return \Cake\DataSource\EntityInterface|\Traversable|array|bool
      * @throws \RuntimeException When properties cannot be read.
      */
-    protected function _getEntity($path)
+    public function entity($path = null)
     {
+        if ($path === null) {
+            return $this->_context['entity'];
+        }
+
         $oneElement = count($path) === 1;
         if ($oneElement && $this->_isCollection) {
             return false;
@@ -331,7 +336,7 @@ class EntityContext implements ContextInterface
     public function isRequired($field)
     {
         $parts = explode('.', $field);
-        $entity = $this->_getEntity($parts);
+        $entity = $this->entity($parts);
 
         $isNew = true;
         if ($entity instanceof Entity) {
@@ -375,7 +380,7 @@ class EntityContext implements ContextInterface
             return !is_numeric($part);
         });
         $key = implode('.', $keyParts);
-        $entity = $this->_getEntity($parts) ?: null;
+        $entity = $this->entity($parts) ?: null;
 
         if (isset($this->_validator[$key])) {
             $this->_validator[$key]->provider('entity', $entity);
@@ -488,7 +493,7 @@ class EntityContext implements ContextInterface
     public function error($field)
     {
         $parts = explode('.', $field);
-        $entity = $this->_getEntity($parts);
+        $entity = $this->entity($parts);
 
         if ($entity instanceof Entity) {
             return $entity->errors(array_pop($parts));

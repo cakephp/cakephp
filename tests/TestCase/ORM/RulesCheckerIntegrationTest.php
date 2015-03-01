@@ -401,6 +401,27 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
+     * ExistsIn uses the schema to verify that nullable fields are ok.
+     *
+     * @return
+     */
+    public function testExistsInNullValue()
+    {
+        $entity = new Entity([
+            'title' => 'An Article',
+            'author_id' => null
+        ]);
+
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors');
+        $rules = $table->rulesChecker();
+        $rules->add($rules->existsIn('author_id', 'Authors'));
+
+        $this->assertEquals($entity, $table->save($entity));
+        $this->assertEquals([], $entity->errors('author_id'));
+    }
+
+    /**
      * Tests the checkRules save option
      *
      * @group save
@@ -526,6 +547,32 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $entity->title = 'Third Article';
         $this->assertFalse($table->save($entity));
+    }
+
+    /**
+     * Tests the existsIn with coflicting columns
+     *
+     * @group save
+     * @return void
+     */
+    public function testExistsInAliasPrefix()
+    {
+        $entity = new Entity([
+            'title' => 'An Article',
+            'author_id' => 1
+        ]);
+
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors');
+        $rules = $table->rulesChecker();
+        $rules->add($rules->isUnique(['author_id']));
+
+        $table->Authors->eventManager()->on('Model.beforeFind', function ($event, $query) {
+            $query->leftJoin(['a2' => 'authors']);
+        });
+
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals(['_isUnique' => 'This value is already in use'], $entity->errors('author_id'));
     }
 
     /**

@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Filesystem\File;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validation;
+use Locale;
 
 /**
  * CustomValidator class
@@ -56,11 +57,8 @@ class ValidationTest extends TestCase
     {
         parent::setUp();
         $this->_appEncoding = Configure::read('App.encoding');
-        $this->_appLocale = [];
-        foreach ([LC_MONETARY, LC_NUMERIC, LC_TIME] as $category) {
-            $this->_appLocale[$category] = setlocale($category, 0);
-            setlocale($category, 'en_US');
-        }
+        $this->locale = Locale::getDefault();
+        Locale::setDefault('en_US');
     }
 
     /**
@@ -72,9 +70,7 @@ class ValidationTest extends TestCase
     {
         parent::tearDown();
         Configure::write('App.encoding', $this->_appEncoding);
-        foreach ($this->_appLocale as $category => $locale) {
-            setlocale($category, $locale);
-        }
+        Locale::setDefault($this->locale);
     }
 
     /**
@@ -1751,16 +1747,13 @@ class ValidationTest extends TestCase
     public function testDecimalLocaleSet()
     {
         $this->skipIf(DS === '\\', 'The locale is not supported in Windows and affects other tests.');
-        $restore = setlocale(LC_NUMERIC, 0);
-        $this->skipIf(setlocale(LC_NUMERIC, 'da_DK') === false, "The Danish locale isn't available.");
+        $this->skipIf(Locale::setDefault('da_DK') === false, "The Danish locale isn't available.");
 
         $this->assertTrue(Validation::decimal(1.54), '1.54 should be considered a valid float');
         $this->assertTrue(Validation::decimal('1.54'), '"1.54" should be considered a valid float');
 
         $this->assertTrue(Validation::decimal(12345.67), '12345.67 should be considered a valid float');
         $this->assertTrue(Validation::decimal('12,345.67'), '"12,345.67" should be considered a valid float');
-
-        setlocale(LC_NUMERIC, $restore);
     }
 
     /**
