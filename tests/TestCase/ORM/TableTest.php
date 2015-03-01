@@ -135,6 +135,29 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests the name method
+     *
+     * @return void
+     */
+    public function testNameMethod()
+    {
+        $table = new Table(['alias' => 'users']);
+        $this->assertEquals('Users', $table->name(), 'Derived from the table, derived from the alias');
+
+        $table = new Table(['table' => 'some_stuffs']);
+        $this->assertEquals('SomeStuffs', $table->name(), 'Derived from the table');
+
+        $table = new Table(['table' => 'stuffs', 'alias' => 'MyStuffs']);
+        $this->assertEquals('Stuffs', $table->name(), 'Derived from the table, ignoring the alias');
+
+        $table = new UsersTable();
+        $this->assertEquals('Users', $table->name(), 'Derived from the class name');
+
+        $table = new UsersTable(['alias' => 'Friend']);
+        $this->assertEquals('Users', $table->name(), 'Derived from the class name, ignoring the alias');
+    }
+
+    /**
      * Tests the alias method
      *
      * @return void
@@ -3509,6 +3532,7 @@ class TableTest extends TestCase
         $result = $articles->__debugInfo();
         $expected = [
             'registryAlias' => 'articles',
+            'name' => 'Articles',
             'table' => 'articles',
             'alias' => 'articles',
             'entityClass' => 'TestApp\Model\Entity\Article',
@@ -3523,6 +3547,7 @@ class TableTest extends TestCase
         $result = $articles->__debugInfo();
         $expected = [
             'registryAlias' => 'Foo.Articles',
+            'name' => 'Articles',
             'table' => 'articles',
             'alias' => 'Articles',
             'entityClass' => '\Cake\ORM\Entity',

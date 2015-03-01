@@ -128,6 +128,13 @@ class Table implements RepositoryInterface, EventListenerInterface
     const DEFAULT_VALIDATOR = 'default';
 
     /**
+     * Name of the table object, accounting for auto-models
+     *
+     * @var string
+     */
+    protected $_name;
+
+    /**
      * Name of the table as it can be found in the database
      *
      * @var string
@@ -318,6 +325,29 @@ class Table implements RepositoryInterface, EventListenerInterface
     }
 
     /**
+     * Returns the name of the table object, accounting for automodels
+     *
+     * @return string
+     */
+    public function name()
+    {
+        if ($this->_name === null) {
+            $name = namespaceSplit(get_class($this));
+            $name = substr(end($name), 0, -5);
+            if (empty($name)) {
+                if (isset($this->_table)) {
+                    $name = $this->_table;
+                } else {
+                    $name = $this->alias();
+                }
+                $name = Inflector::camelize($name);
+            }
+            $this->_name = $name;
+        }
+        return $this->_name;
+    }
+
+    /**
      * Returns the database table name or sets a new one
      *
      * @param string|null $table the new table name
@@ -329,12 +359,7 @@ class Table implements RepositoryInterface, EventListenerInterface
             $this->_table = $table;
         }
         if ($this->_table === null) {
-            $table = namespaceSplit(get_class($this));
-            $table = substr(end($table), 0, -5);
-            if (empty($table)) {
-                $table = $this->alias();
-            }
-            $this->_table = Inflector::underscore($table);
+            $this->_table = Inflector::underscore($this->name());
         }
         return $this->_table;
     }
@@ -2174,6 +2199,7 @@ class Table implements RepositoryInterface, EventListenerInterface
         $conn = $this->connection();
         return [
             'registryAlias' => $this->registryAlias(),
+            'name' => $this->name(),
             'table' => $this->table(),
             'alias' => $this->alias(),
             'entityClass' => $this->entityClass(),
