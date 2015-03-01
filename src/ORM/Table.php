@@ -335,7 +335,12 @@ class Table implements RepositoryInterface, EventListenerInterface
             $name = namespaceSplit(get_class($this));
             $name = substr(end($name), 0, -5);
             if (empty($name)) {
-                $name = $this->alias();
+                if (isset($this->_table)) {
+                    $name = $this->_table;
+                } else {
+                    $name = $this->alias();
+                }
+                $name = Inflector::camelize($name);
             }
             $this->_name = $name;
         }
