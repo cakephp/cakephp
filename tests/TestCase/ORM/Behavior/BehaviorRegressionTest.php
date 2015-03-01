@@ -49,7 +49,8 @@ class BehaviorRegressionTest extends TestCase
      * @see https://github.com/cakephp/cakephp/issues/5982
      * @return void
      */
-    public function testTreeAndTranslateIntegration() {
+    public function testTreeAndTranslateIntegration()
+    {
         $table = TableRegistry::get('NumberTrees');
         $table->primaryKey(['id']);
         $table->addBehavior('Tree');

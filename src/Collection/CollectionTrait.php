@@ -371,7 +371,7 @@ trait CollectionTrait
         $parents = [];
         $idPath = $this->_propertyExtractor($idPath);
         $parentPath = $this->_propertyExtractor($parentPath);
-        $isObject = !is_array((new Collection($this))->first());
+        $isObject = true;
 
         $mapper = function ($row, $key, $mapReduce) use (&$parents, $idPath, $parentPath) {
             $row['children'] = [];
@@ -381,7 +381,12 @@ trait CollectionTrait
             $mapReduce->emitIntermediate($id, $parentId);
         };
 
-        $reducer = function ($values, $key, $mapReduce) use (&$parents, $isObject) {
+        $reducer = function ($values, $key, $mapReduce) use (&$parents, &$isObject) {
+            static $foundOutType = false;
+            if (!$foundOutType) {
+                $isObject = is_object(current($parents));
+                $foundOutType = true;
+            }
             if (empty($key) || !isset($parents[$key])) {
                 foreach ($values as $id) {
                     $parents[$id] = $isObject ? $parents[$id] : new ArrayIterator($parents[$id], 1);
@@ -397,14 +402,10 @@ trait CollectionTrait
             $parents[$key]['children'] = $children;
         };
 
-        $collection = new MapReduce($this, $mapper, $reducer);
-        if (!$isObject) {
-            $collection = (new Collection($collection))->map(function ($value) {
-                return $value->getArrayCopy();
+        return (new Collection(new MapReduce($this->_unwrap(), $mapper, $reducer)))
+            ->map(function ($value) use (&$isObject) {
+                return $isObject ? $value : $value->getArrayCopy();
             });
-        }
-
-        return new Collection($collection);
     }
 
     /**
