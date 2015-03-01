@@ -23,6 +23,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Inflector;
 
 /**
  * This behavior provides a way to translate dynamic data by keeping translations
@@ -90,7 +91,7 @@ class TranslateBehavior extends Behavior
     {
         $config += [
             'defaultLocale' => I18n::defaultLocale(),
-            'referenceName' => $table->alias()
+            'referenceName' => $this->_referenceName($table)
         ];
         parent::__construct($table, $config);
     }
@@ -361,6 +362,29 @@ class TranslateBehavior extends Behavior
                 return $q;
             }])
             ->formatResults([$this, 'groupTranslations'], $query::PREPEND);
+    }
+
+    /**
+     * Determine the reference name to use for a given table
+     *
+     * The reference name is usually derived from the class name of the table object
+     * (PostsTable -> Posts), however for autotable instances it is derived from
+     * the database table the object points at - or as a last resort, the alias
+     * of the autotable instance.
+     *
+     * @param Table $table
+     * @return string
+     */
+    protected function _referenceName(Table $table)
+    {
+        $name = namespaceSplit(get_class($table));
+        $name = substr(end($name), 0, -5);
+        if (empty($name)) {
+            $name = $table->table() ?: $table->alias();
+            $name = Inflector::camelize($name);
+        }
+
+        return $name;
     }
 
     /**

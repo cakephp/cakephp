@@ -890,18 +890,18 @@ class TranslateBehaviorTest extends TestCase
     }
 
     /**
-     * Tests the use of `model` config option.
+     * Tests the use of `referenceName` config option.
      *
      * @return void
      */
-    public function testChangingModelFieldValue()
+    public function testAutoReferenceName()
     {
         $table = TableRegistry::get('Articles');
 
         $table->hasMany('OtherComments', ['className' => 'Comments']);
         $table->OtherComments->addBehavior(
             'Translate',
-            ['fields' => ['comment'], 'referenceName' => 'Comments']
+            ['fields' => ['comment']]
         );
 
         $items = $table->OtherComments->associations();
@@ -917,7 +917,37 @@ class TranslateBehaviorTest extends TestCase
             }
         }
 
-        $this->assertTrue($found, '`model` field condition on a Translation association was not found');
+        $this->assertTrue($found, '`referenceName` field condition on a Translation association was not found');
+    }
+
+    /**
+     * Tests the use of unconventional `referenceName` config option.
+     *
+     * @return void
+     */
+    public function testChangingReferenceName()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->alias('FavoritePost');
+        $table->addBehavior(
+            'Translate',
+            ['fields' => ['body'], 'referenceName' => 'Posts']
+        );
+
+        $items = $table->associations();
+        $association = $items->getByProperty('body_translation');
+        $this->assertNotEmpty($association, 'Translation association not found');
+
+        $found = false;
+        foreach ($association->conditions() as $key => $value) {
+            if (strpos($key, 'body_translation.model') !== false) {
+                $found = true;
+                $this->assertEquals('Posts', $value);
+                break;
+            }
+        }
+
+        $this->assertTrue($found, '`referenceName` field condition on a Translation association was not found');
     }
 
     /**
