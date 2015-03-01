@@ -74,7 +74,7 @@ class TranslateBehavior extends Behavior
         'fields' => [],
         'translationTable' => 'I18n',
         'defaultLocale' => '',
-        'model' => '',
+        'referenceName' => '',
         'allowEmptyTranslations' => true,
         'onlyTranslated' => false,
         'strategy' => 'subquery'
@@ -90,7 +90,7 @@ class TranslateBehavior extends Behavior
     {
         $config += [
             'defaultLocale' => I18n::defaultLocale(),
-            'model' => $table->alias()
+            'referenceName' => $table->alias()
         ];
         parent::__construct($table, $config);
     }
@@ -108,7 +108,7 @@ class TranslateBehavior extends Behavior
         $this->setupFieldAssociations(
             $this->_config['fields'],
             $this->_config['translationTable'],
-            $this->_config['model'],
+            $this->_config['referenceName'],
             $this->_config['strategy']
         );
     }
@@ -268,7 +268,7 @@ class TranslateBehavior extends Behavior
         $fields = array_keys($values);
         $primaryKey = (array)$this->_table->primaryKey();
         $key = $entity->get(current($primaryKey));
-        $model = $this->_config['model'];
+        $model = $this->_config['referenceName'];
 
         $preexistent = $this->_translationTable->find()
             ->select(['id', 'field'])
@@ -480,7 +480,7 @@ class TranslateBehavior extends Behavior
                 $contents[$i]->set('id', $results[$i], ['setter' => false]);
                 $contents[$i]->isNew(false);
             } else {
-                $translation['model'] = $this->_config['model'];
+                $translation['model'] = $this->_config['referenceName'];
                 $contents[$i]->set($translation, ['setter' => false, 'guard' => false]);
                 $contents[$i]->isNew(true);
             }

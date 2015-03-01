@@ -899,7 +899,10 @@ class TranslateBehaviorTest extends TestCase
         $table = TableRegistry::get('Articles');
 
         $table->hasMany('OtherComments', ['className' => 'Comments']);
-        $table->OtherComments->addBehavior('Translate', ['fields' => ['comment'], 'model' => 'Comments']);
+        $table->OtherComments->addBehavior(
+            'Translate',
+            ['fields' => ['comment'], 'referenceName' => 'Comments']
+        );
 
         $items = $table->OtherComments->associations();
         $association = $items->getByProperty('comment_translation');
