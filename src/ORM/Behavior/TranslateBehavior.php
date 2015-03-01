@@ -88,7 +88,10 @@ class TranslateBehavior extends Behavior
      */
     public function __construct(Table $table, array $config = [])
     {
-        $config += ['defaultLocale' => I18n::defaultLocale()];
+        $config += [
+            'defaultLocale' => I18n::defaultLocale(),
+            'model' => $table->alias()
+        ];
         parent::__construct($table, $config);
     }
 
@@ -105,7 +108,7 @@ class TranslateBehavior extends Behavior
         $this->setupFieldAssociations(
             $this->_config['fields'],
             $this->_config['translationTable'],
-            $this->_config['model'] ?: $this->_table->alias(),
+            $this->_config['model'],
             $this->_config['strategy']
         );
     }
@@ -265,7 +268,7 @@ class TranslateBehavior extends Behavior
         $fields = array_keys($values);
         $primaryKey = (array)$this->_table->primaryKey();
         $key = $entity->get(current($primaryKey));
-        $model = $this->_config['model'] ?: $this->_table->alias();
+        $model = $this->_config['model'];
 
         $preexistent = $this->_translationTable->find()
             ->select(['id', 'field'])
@@ -471,14 +474,13 @@ class TranslateBehavior extends Behavior
         }
 
         $results = $this->_findExistingTranslations($find);
-        $model = $this->_config['model'] ?: $this->_table->alias();
 
         foreach ($find as $i => $translation) {
             if (!empty($results[$i])) {
                 $contents[$i]->set('id', $results[$i], ['setter' => false]);
                 $contents[$i]->isNew(false);
             } else {
-                $translation['model'] = $model;
+                $translation['model'] = $this->_config['model'];
                 $contents[$i]->set($translation, ['setter' => false, 'guard' => false]);
                 $contents[$i]->isNew(true);
             }
