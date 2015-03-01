@@ -315,7 +315,7 @@ class TimeTest extends TestCase
         $this->assertEquals('2 months, 2 days ago', $result);
 
         $time = new Time('-2 months -2 days');
-        $result = $time->timeAgoInWords(['end' => '1 month', 'format' => 'YYYY-MM-dd']);
+        $result = $time->timeAgoInWords(['end' => '1 month', 'format' => 'yyyy-MM-dd']);
         $this->assertEquals('on ' . date('Y-m-d', strtotime('-2 months -2 days')), $result);
 
         $time = new Time('-2 years -5 months -2 days');
@@ -323,7 +323,7 @@ class TimeTest extends TestCase
         $this->assertEquals('2 years, 5 months, 2 days ago', $result);
 
         $time = new Time('-2 weeks -2 days');
-        $result = $time->timeAgoInWords(['format' => 'YYYY-MM-dd']);
+        $result = $time->timeAgoInWords(['format' => 'yyyy-MM-dd']);
         $this->assertEquals('2 weeks, 2 days ago', $result);
 
         $time = new Time('-3 years -12 months');
