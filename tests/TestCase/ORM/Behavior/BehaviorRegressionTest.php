@@ -64,5 +64,4 @@ class BehaviorRegressionTest extends TestCase
         }
         $this->assertEquals(['Elektroniker', 'Alien Tingerne'], $results);
     }
-
 }
