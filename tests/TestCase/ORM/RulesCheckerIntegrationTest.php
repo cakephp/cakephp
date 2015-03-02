@@ -550,12 +550,12 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests the existsIn with coflicting columns
+     * Tests isUnique rule with coflicting columns
      *
      * @group save
      * @return void
      */
-    public function testExistsInAliasPrefix()
+    public function testIsUniqueAliasPrefix()
     {
         $entity = new Entity([
             'title' => 'An Article',
