@@ -72,13 +72,13 @@ class CakeTimeTest extends CakeTestCase {
  */
 	public function testToQuarter() {
 		$result = $this->Time->toQuarter('2007-12-25');
-		$this->assertEquals(4, $result);
+		$this->assertSame(4, $result);
 
 		$result = $this->Time->toQuarter('2007-9-25');
-		$this->assertEquals(3, $result);
+		$this->assertSame(3, $result);
 
 		$result = $this->Time->toQuarter('2007-3-25');
-		$this->assertEquals(1, $result);
+		$this->assertSame(1, $result);
 
 		$result = $this->Time->toQuarter('2007-3-25', true);
 		$this->assertEquals(array('2007-01-01', '2007-03-31'), $result);

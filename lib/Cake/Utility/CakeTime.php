@@ -575,12 +575,12 @@ class CakeTime {
  *
  * @param int|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param bool $range if true returns a range in Y-m-d format
- * @return mixed 1, 2, 3, or 4 quarter of year or array if $range true
+ * @return int|array 1, 2, 3, or 4 quarter of year or array if $range true
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::toQuarter
  */
 	public static function toQuarter($dateString, $range = false) {
 		$time = self::fromString($dateString);
-		$date = ceil(date('m', $time) / 3);
+		$date = (int)ceil(date('m', $time) / 3);
 		if ($range === false) {
 			return $date;
 		}
