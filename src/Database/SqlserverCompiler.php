@@ -24,6 +24,12 @@ use Cake\Database\QueryCompiler;
  */
 class SqlserverCompiler extends QueryCompiler
 {
+    /**
+     * SQLserver does not support ORDER BY in UNION queries.
+     *
+     * @var bool
+     */
+    protected $_orderedUnion = false;
 
     /**
      * {@inheritDoc}

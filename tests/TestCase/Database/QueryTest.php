@@ -1945,6 +1945,35 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests that it is possible to run unions with order statements
+     *
+     * @return void
+     */
+    public function testUnionOrderBy()
+    {
+        $this->skipIf(
+            ($this->connection->driver() instanceof \Cake\Database\Driver\Sqlite ||
+            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver),
+            'Driver does not support ORDER BY in UNIONed queries.'
+        );
+        $union = (new Query($this->connection))
+            ->select(['id', 'title'])
+            ->from(['a' => 'articles'])
+            ->order(['a.id' => 'asc']);
+
+        $query = new Query($this->connection);
+        $result = $query->select(['id', 'comment'])
+            ->from(['c' => 'comments'])
+            ->order(['c.id' => 'asc'])
+            ->union($union)
+            ->execute();
+        $this->assertCount(self::COMMENT_COUNT + self::ARTICLE_COUNT, $result);
+
+        $rows = $result->fetchAll();
+        $this->assertCount(self::COMMENT_COUNT + self::ARTICLE_COUNT, $result);
+    }
+
+    /**
      * Tests that UNION ALL can be built by setting the second param of union() to true
      *
      * @return void

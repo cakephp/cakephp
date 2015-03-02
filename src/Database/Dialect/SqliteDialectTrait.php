@@ -18,6 +18,7 @@ use Cake\Database\Dialect\TupleComparisonTranslatorTrait;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\SqlDialectTrait;
+use Cake\Database\SqliteCompiler;
 
 /**
  * SQLite dialect trait
@@ -184,5 +185,15 @@ trait SqliteDialectTrait
     public function enableForeignKeySQL()
     {
         return 'PRAGMA foreign_keys = ON';
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return \Cake\Database\SqliteCompiler
+     */
+    public function newCompiler()
+    {
+        return new SqliteCompiler();
     }
 }
