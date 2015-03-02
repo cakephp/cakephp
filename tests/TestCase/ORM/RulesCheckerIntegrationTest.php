@@ -550,12 +550,12 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests the existsIn with coflicting columns
+     * Tests isUnique rule with coflicting columns
      *
      * @group save
      * @return void
      */
-    public function testExistsInAliasPrefix()
+    public function testIsUniqueAliasPrefix()
     {
         $entity = new Entity([
             'title' => 'An Article',
@@ -593,6 +593,32 @@ class RulesCheckerIntegrationTest extends TestCase
         $entity->author_id = 1000;
         $entity->dirty('author_id', false);
         $this->assertSame($entity, $table->save($entity));
+    }
+
+    /**
+     * Tests the existsIn with coflicting columns
+     *
+     * @group save
+     * @return void
+     */
+    public function testExistsInAliasPrefix()
+    {
+        $entity = new Entity([
+            'title' => 'An Article',
+            'author_id' => 500
+        ]);
+
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors');
+        $rules = $table->rulesChecker();
+        $rules->add($rules->existsIn('author_id', 'Authors'));
+
+        $table->Authors->eventManager()->on('Model.beforeFind', function ($event, $query) {
+            $query->leftJoin(['a2' => 'authors']);
+        });
+
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals(['_existsIn' => 'This value does not exist'], $entity->errors('author_id'));
     }
 
     /**
