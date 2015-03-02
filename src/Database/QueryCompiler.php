@@ -76,6 +76,15 @@ class QueryCompiler
     protected $_insertParts = ['insert', 'values', 'epilog'];
 
     /**
+     * Indicate whether or not this query dialect supports ordered unions.
+     *
+     * Overidden in subclasses.
+     *
+     * @var bool
+     */
+    protected $_orderedUnion = true;
+
+    /**
      * Returns the SQL representation of the provided query after generating
      * the placeholders for the bound values using the provided generator
      *
@@ -135,7 +144,7 @@ class QueryCompiler
     {
         $driver = $query->connection()->driver();
         $select = 'SELECT %s%s%s';
-        if ($query->clause('union')) {
+        if ($this->_orderedUnion && $query->clause('union')) {
             $select = '(SELECT %s%s%s';
         }
         $distinct = $query->clause('distinct');
@@ -257,9 +266,16 @@ class QueryCompiler
             $p['query'] = $p['query']->sql($generator);
             $p['query'] = $p['query'][0] === '(' ? trim($p['query'], '()') : $p['query'];
             $prefix = $p['all'] ? 'ALL ' : '';
-            return sprintf('%s(%s)', $prefix, $p['query']);
+            if ($this->_orderedUnion) {
+                return "{$prefix}({$p['query']})";
+            }
+            return $prefix . $p['query'];
         }, $parts);
-        return sprintf(")\nUNION %s", implode("\nUNION ", $parts));
+
+        if ($this->_orderedUnion) {
+            return sprintf(")\nUNION %s", implode("\nUNION ", $parts));
+        }
+        return sprintf("\nUNION %s", implode("\nUNION ", $parts));
     }
 
     /**

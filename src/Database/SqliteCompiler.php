@@ -25,43 +25,9 @@ use Cake\Database\QueryCompiler;
 class SqliteCompiler extends QueryCompiler
 {
     /**
-     * Helper function used to build the string representation of a SELECT clause,
-     * it constructs the field list taking care of aliasing and
-     * converting expression objects to string. This function also constructs the
-     * DISTINCT clause for the query.
+     * SQLite does not support ORDER BY in UNION queries.
      *
-     * @param array $parts list of fields to be transformed to string
-     * @param \Cake\Database\Query $query The query that is being compiled
-     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
-     * @return string
+     * @var bool
      */
-    protected function _buildSelectPart($parts, $query, $generator)
-    {
-        $clause = parent::_buildSelectPart($parts, $query, $generator);
-        if ($clause[0] === '(') {
-            return substr($clause, 1);
-        }
-        return $clause;
-    }
-
-    /**
-     * Builds the SQL string for all the UNION clauses in this query, when dealing
-     * with query objects it will also transform them using their configured SQL
-     * dialect.
-     *
-     * @param array $parts list of queries to be operated with UNION
-     * @param \Cake\Database\Query $query The query that is being compiled
-     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
-     * @return string
-     */
-    protected function _buildUnionPart($parts, $query, $generator)
-    {
-        $parts = array_map(function ($p) use ($generator) {
-            $p['query'] = $p['query']->sql($generator);
-            $p['query'] = $p['query'][0] === '(' ? trim($p['query'], '()') : $p['query'];
-            $prefix = $p['all'] ? 'ALL' : '';
-            return sprintf('%s %s', $prefix, $p['query']);
-        }, $parts);
-        return sprintf("\nUNION %s", implode("\nUNION ", $parts));
-    }
+    protected $_orderedUnion = false;
 }

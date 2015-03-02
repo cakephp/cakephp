@@ -1952,8 +1952,9 @@ class QueryTest extends TestCase
     public function testUnionOrderBy()
     {
         $this->skipIf(
-            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlite,
-            'SQLite does not support ORDER BY in UNIONed queries.'
+            ($this->connection->driver() instanceof \Cake\Database\Driver\Sqlite ||
+            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver),
+            'Driver does not support ORDER BY in UNIONed queries.'
         );
         $union = (new Query($this->connection))
             ->select(['id', 'title'])
