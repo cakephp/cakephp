@@ -115,7 +115,7 @@ class MemcachedEngine extends CacheEngine
         }
 
         parent::init($config);
-        
+
         if (!empty($config['host'])) {
             if (empty($config['port'])) {
                 $config['servers'] = [$config['host']];
