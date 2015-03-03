@@ -829,26 +829,6 @@ class MemcachedEngineTest extends TestCase
     }
 
     /**
-     * test that durations greater than 30 days never expire
-     *
-     * @return void
-     */
-    public function testLongDurationEqualToZero()
-    {
-        $memcached = new TestMemcachedEngine();
-        $memcached->init(['prefix' => 'Foo_', 'compress' => false, 'duration' => 50 * DAY]);
-
-        $mock = $this->getMock('Memcached');
-        $memcached->setMemcached($mock);
-        $mock->expects($this->once())
-            ->method('set')
-            ->with('Foo_key', 'value', 0);
-
-        $value = 'value';
-        $memcached->write('key', $value);
-    }
-
-    /**
      * Tests that configuring groups for stored keys return the correct values when read/written
      * Shows that altering the group value is equivalent to deleting all keys under the same
      * group
