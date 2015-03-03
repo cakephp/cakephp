@@ -241,7 +241,7 @@ class I18n {
 		}
 
 		if ($_this->category === 'LC_TIME') {
-			return $_this->_translateTime($singular, $domain);
+			return $_this->_translateTime($singular, $domain, $context);
 		}
 
 		if (!isset($count)) {
@@ -727,14 +727,20 @@ class I18n {
  *
  * @param string $format Format to be translated
  * @param string $domain Domain where format is stored
+ * @param string $context Context The context of the translation, e.g a verb or a noun.
  * @return mixed translated format string if only value or array of translated strings for corresponding format.
  */
-	protected function _translateTime($format, $domain) {
-		if (!empty($this->_domains[$domain][$this->_lang]['LC_TIME'][$format])) {
-			if (($trans = $this->_domains[$domain][$this->_lang][$this->category][$format])) {
-				return $trans;
-			}
+	protected function _translateTime($format, $domain, $context) {
+		$lang = $this->_lang;
+		$category = $this->category;
+		$trans = Hash::get($this->_domains, "$domain.$lang.$category.$format.$context");
+		if ($trans === null) {
+			$trans = Hash::get($this->_domains, "$domain.$lang.$category.$format");
 		}
+		if ($trans !== null) {
+			return $trans;
+		}
+
 		return $format;
 	}
 
