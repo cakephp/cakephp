@@ -158,13 +158,26 @@ class ExceptionRenderer
             $this->controller->response->header($exception->responseHeader());
         }
         $this->controller->response->statusCode($code);
-        $this->controller->set([
+        $viewVars = [
             'message' => $message,
             'url' => h($url),
             'error' => $exception,
             'code' => $code,
             '_serialize' => ['message', 'url', 'code']
-        ]);
+        ];
+        if ($isDebug) {
+            $rawTrace = $exception->getTrace();
+            $trace = [];
+            foreach ($rawTrace as $line) {
+                if (isset($line['args'])) {
+                    unset($line['args']);
+                }
+                $trace[] = $line;
+            }
+            $viewVars['trace'] = $trace;
+            $viewVars['_serialize'][] = 'trace';
+        }
+        $this->controller->set($viewVars);
 
         if ($exception instanceof CakeException && $isDebug) {
             $this->controller->set($this->error->getAttributes());
