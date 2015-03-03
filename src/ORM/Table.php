@@ -1604,24 +1604,33 @@ class Table implements RepositoryInterface, EventListenerInterface
      */
     public function delete(EntityInterface $entity, $options = [])
     {
-        $options = new ArrayObject($options + ['atomic' => true, 'checkRules' => true]);
+        $options = new ArrayObject($options + [
+            'atomic' => true,
+            'checkRules' => true,
+            '_primary' => true,
+        ]);
 
         $process = function () use ($entity, $options) {
             return $this->_processDelete($entity, $options);
         };
 
+        $connection = $this->connection();
         if ($options['atomic']) {
-            $connection = $this->connection();
             $success = $connection->transactional($process);
-            if ($success && !$connection->inTransaction()) {
-                $this->dispatchEvent('Model.afterDeleteCommit', [
-                    'entity' => $entity,
-                    'options' => $options
-                ]);
-            }
-            return $success;
+        } else {
+            $success = $process();
         }
-        return $process();
+
+        if ($success &&
+            !$connection->inTransaction() &&
+            ($options['atomic'] || (!$options['atomic'] && $options['_primary']))
+        ) {
+            $this->dispatchEvent('Model.afterDeleteCommit', [
+                'entity' => $entity,
+                'options' => $options
+            ]);
+        }
+        return $success;
     }
 
     /**
@@ -1661,7 +1670,10 @@ class Table implements RepositoryInterface, EventListenerInterface
             return $event->result;
         }
 
-        $this->_associations->cascadeDelete($entity, $options->getArrayCopy());
+        $this->_associations->cascadeDelete(
+            $entity,
+            ['_primary' => false] + $options->getArrayCopy()
+        );
 
         $query = $this->query();
         $conditions = (array)$entity->extract($primaryKey);

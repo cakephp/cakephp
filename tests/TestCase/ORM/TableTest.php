@@ -2461,7 +2461,7 @@ class TableTest extends TestCase
     public function testDeleteCallbacks()
     {
         $entity = new \Cake\ORM\Entity(['id' => 1, 'name' => 'mark']);
-        $options = new \ArrayObject(['atomic' => true, 'checkRules' => false]);
+        $options = new \ArrayObject(['atomic' => true, 'checkRules' => false, '_primary' => true]);
 
         $mock = $this->getMock('Cake\Event\EventManager');
 
@@ -2507,7 +2507,7 @@ class TableTest extends TestCase
     }
 
     /**
-     * Test afterDeleteCommit not called for non-atomic delete
+     * Test afterDeleteCommit is also called for non-atomic delete
      *
      * @return void
      */
@@ -2533,7 +2533,7 @@ class TableTest extends TestCase
 
         $table->delete($data, ['atomic' => false]);
         $this->assertTrue($called);
-        $this->assertFalse($calledAfterCommit);
+        $this->assertTrue($calledAfterCommit);
     }
 
     /**
