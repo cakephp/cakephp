@@ -116,7 +116,7 @@ if (!function_exists('__x')) {
     /**
      * Returns a translated string if one is found; Otherwise, the submitted message.
      * The context is a unique identifier for the translations string that makes it unique
-     * for in the same domain.
+     * within the same domain.
      *
      * @param string $context Context of the text
      * @param string $singular Text to translate
@@ -141,7 +141,7 @@ if (!function_exists('__xn')) {
      * Returns correct plural form of message identified by $singular and $plural for count $count.
      * Some languages have more than one form for plural messages dependent on the count.
      * The context is a unique identifier for the translations string that makes it unique
-     * for in the same domain.
+     * within the same domain.
      *
      * @param string $context Context of the text
      * @param string $singular Singular text to translate
@@ -170,7 +170,7 @@ if (!function_exists('__dx')) {
     /**
      * Allows you to override the current domain for a single message lookup.
      * The context is a unique identifier for the translations string that makes it unique
-     * for in the same domain.
+     * within the same domain.
      *
      * @param string $domain Domain
      * @param string $context Context of the text
@@ -199,7 +199,7 @@ if (!function_exists('__dxn')) {
      * Returns correct plural form of message identified by $singular and $plural for count $count.
      * Allows you to override the current domain for a single message lookup.
      * The context is a unique identifier for the translations string that makes it unique
-     * for in the same domain.
+     * within the same domain.
      *
      * @param string $domain Domain
      * @param string $context Context of the text
