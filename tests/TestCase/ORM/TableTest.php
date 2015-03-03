@@ -54,7 +54,9 @@ class TableTest extends TestCase
         'core.articles',
         'core.authors',
         'core.tags',
-        'core.articles_tags'
+        'core.articles_tags',
+        'core.site_authors',
+        'core.site_articles',
     ];
 
     /**
@@ -1976,6 +1978,36 @@ class TableTest extends TestCase
             ]
         ]);
         $table->save($entity);
+    }
+
+    /**
+     * Test that you cannot save rows with composite keys if some columns are missing.
+     *
+     * @group save
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Cannot insert row, some of the primary key values are missing
+     * @return void
+     */
+    public function testSaveNewErrorCompositeKeyNoIncrement()
+    {
+        $articles = TableRegistry::get('SiteArticles');
+        $article = $articles->newEntity(['site_id' => 1, 'author_id' => 1, 'title' => 'testing']);
+        $articles->save($article);
+    }
+
+    /**
+     * Test that saving into composite primary keys where one column is missing & autoIncrement works.
+     *
+     * @group save
+     * @return void
+     */
+    public function testSaveNewCompositeKeyIncrement()
+    {
+        $articles = TableRegistry::get('SiteAuthors');
+        $article = $articles->newEntity(['site_id' => 1, 'name' => 'new guy']);
+        $this->assertSame($article, $articles->save($article));
+        $this->assertNotEmpty($article->id, 'Primary key should have been populated');
+        $this->assertSame(1, $article->site_id);
     }
 
     /**

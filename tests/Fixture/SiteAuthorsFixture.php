@@ -25,7 +25,7 @@ class SiteAuthorsFixture extends TestFixture
      * @var array
      */
     public $fields = [
-        'id' => ['type' => 'integer'],
+        'id' => ['type' => 'integer', 'autoIncrement' => true],
         'name' => ['type' => 'string', 'default' => null],
         'site_id' => ['type' => 'integer', 'null' => true],
         '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id', 'site_id']]]
