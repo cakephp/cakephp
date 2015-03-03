@@ -16,8 +16,8 @@ use Cake\Core\Configure;
 
 if (!defined('DS')) {
     /**
- * Define DS as short form of DIRECTORY_SEPARATOR.
- */
+     * Define DS as short form of DIRECTORY_SEPARATOR.
+     */
     define('DS', DIRECTORY_SEPARATOR);
 
 }
@@ -29,10 +29,10 @@ if (!function_exists('h')) {
      * @param string|array|object $text Text to wrap through htmlspecialchars. Also works with arrays, and objects.
      *    Arrays will be mapped and have all their elements escaped. Objects will be string cast if they
      *    implement a `__toString` method. Otherwise the class name will be used.
-     * @param bool $double Encode existing html entities
+     * @param bool $double Encode existing html entities.
      * @param string $charset Character set to use when escaping. Defaults to config value in `mb_internal_encoding()`
-     * or 'UTF-8'
-     * @return string Wrapped text
+     * or 'UTF-8'.
+     * @return string Wrapped text.
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#h
      */
     function h($text, $double = true, $charset = null)
@@ -80,7 +80,7 @@ if (!function_exists('pluginSplit')) {
      * @param string $name The name you want to plugin split.
      * @param bool $dotAppend Set to true if you want the plugin to have a '.' appended to it.
      * @param string $plugin Optional default plugin to use if no plugin is found. Defaults to null.
-     * @return array Array with 2 indexes. 0 => plugin name, 1 => class name
+     * @return array Array with 2 indexes. 0 => plugin name, 1 => class name.
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pluginSplit
      */
     function pluginSplit($name, $dotAppend = false, $plugin = null)
@@ -101,10 +101,10 @@ if (!function_exists('namespaceSplit')) {
     /**
      * Split the namespace from the classname.
      *
-     * Commonly used like `list($namespace, $className) = namespaceSplit($class);`
+     * Commonly used like `list($namespace, $className) = namespaceSplit($class);`.
      *
-     * @param string $class The full class name, ie `Cake\Core\App`
-     * @return array Array with 2 indexes. 0 => namespace, 1 => classname
+     * @param string $class The full class name, ie `Cake\Core\App`.
+     * @return array Array with 2 indexes. 0 => namespace, 1 => classname.
      */
     function namespaceSplit($class)
     {
@@ -119,16 +119,15 @@ if (!function_exists('namespaceSplit')) {
 
 if (!function_exists('pr')) {
     /**
-     * print_r() convenience function
+     * print_r() convenience function.
      *
      * In terminals this will act similar to using print_r() directly, when not run on cli
      * print_r() will also wrap <pre> tags around the output of given variable. Similar to debug().
      *
-     * @param mixed $var Variable to print out
+     * @param mixed $var Variable to print out.
      * @return void
      * @see debug()
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pr
-     * @see debug()
      */
     function pr($var)
     {
@@ -147,7 +146,7 @@ if (!function_exists('pj')) {
      * In terminals this will act similar to using json_encode() with JSON_PRETTY_PRINT directly, when not run on cli
      * will also wrap <pre> tags around the output of given variable. Similar to pr().
      *
-     * @param mixed $var Variable to print out
+     * @param mixed $var Variable to print out.
      * @return void
      * @see pr()
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pj
