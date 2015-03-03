@@ -1472,10 +1472,6 @@ class QueryTest extends TestCase
      */
     public function testSelectDistinctON()
     {
-        $this->skipIf(
-            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
-            'Not implemented yet in SqlServer'
-        );
         $query = new Query($this->connection);
         $result = $query
             ->select(['id', 'author_id'])
