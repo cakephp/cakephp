@@ -1779,7 +1779,7 @@ class TableTest extends TestCase
     }
 
     /**
-     * Asserts that afterSaveCommit is not triggered for non-atomic saves
+     * Asserts that afterSaveCommit is also triggered for non-atomic saves
      *
      * @return void
      */
@@ -1808,13 +1808,13 @@ class TableTest extends TestCase
         $this->assertSame($data, $table->save($data, ['atomic' => false]));
         $this->assertEquals($data->id, self::$nextUserId);
         $this->assertTrue($called);
-        $this->assertFalse($calledAfterCommit);
+        $this->assertTrue($calledAfterCommit);
     }
 
     /**
      * Asserts the afterSaveCommit is not triggered if transaction is running.
      *
-     * @return [type]
+     * @return void
      */
     public function testAfterSaveCommitWithTransactionRunning()
     {
@@ -1833,6 +1833,32 @@ class TableTest extends TestCase
 
         $this->connection->begin();
         $this->assertSame($data, $table->save($data));
+        $this->assertFalse($called);
+        $this->connection->commit();
+    }
+
+    /**
+     * Asserts the afterSaveCommit is not triggered if transaction is running.
+     *
+     * @return void
+     */
+    public function testAfterSaveCommitWithNonAtomicAndTransactionRunning()
+    {
+        $table = TableRegistry::get('users');
+        $data = new \Cake\ORM\Entity([
+            'username' => 'superuser',
+            'created' => new Time('2013-10-10 00:00'),
+            'updated' => new Time('2013-10-10 00:00')
+        ]);
+
+        $called = false;
+        $listener = function ($e, $entity, $options) use (&$called) {
+            $called = true;
+        };
+        $table->eventManager()->attach($listener, 'Model.afterSaveCommit');
+
+        $this->connection->begin();
+        $this->assertSame($data, $table->save($data, ['atomic' => false]));
         $this->assertFalse($called);
         $this->connection->commit();
     }

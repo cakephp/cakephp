@@ -466,6 +466,7 @@ class RulesCheckerIntegrationTest extends TestCase
                         'associated' => true,
                         'checkRules' => true,
                         'checkExisting' => true,
+                        '_primary' => true,
                     ],
                     $options->getArrayCopy()
                 );
@@ -504,6 +505,7 @@ class RulesCheckerIntegrationTest extends TestCase
                         'associated' => true,
                         'checkRules' => true,
                         'checkExisting' => true,
+                        '_primary' => true,
                     ],
                     $options->getArrayCopy()
                 );

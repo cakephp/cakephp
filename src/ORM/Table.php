@@ -1337,6 +1337,7 @@ class Table implements RepositoryInterface, EventListenerInterface
             'associated' => true,
             'checkRules' => true,
             'checkExisting' => true,
+            '_primary' => true
         ]);
 
         if ($entity->errors()) {
@@ -1347,20 +1348,25 @@ class Table implements RepositoryInterface, EventListenerInterface
             return $entity;
         }
 
+        $connection = $this->connection();
         if ($options['atomic']) {
-            $connection = $this->connection();
             $success = $connection->transactional(function () use ($entity, $options) {
                 return $this->_processSave($entity, $options);
             });
-            if ($success) {
-                if (!$connection->inTransaction()) {
-                    $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
-                }
+        } else {
+            $success = $this->_processSave($entity, $options);
+        }
+
+        if ($success) {
+            if (!$connection->inTransaction() &&
+                ($options['atomic'] || (!$options['atomic'] && $options['_primary']))
+            ) {
+                $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
+            }
+            if ($options['atomic'] || $options['_primary']) {
                 $entity->isNew(false);
                 $entity->source($this->registryAlias());
             }
-        } else {
-            $success = $this->_processSave($entity, $options);
         }
 
         return $success;
@@ -1403,7 +1409,7 @@ class Table implements RepositoryInterface, EventListenerInterface
             $this,
             $entity,
             $options['associated'],
-            $options->getArrayCopy()
+            ['_primary' => false] + $options->getArrayCopy()
         );
 
         if (!$saved && $options['atomic']) {
@@ -1424,12 +1430,12 @@ class Table implements RepositoryInterface, EventListenerInterface
                 $this,
                 $entity,
                 $options['associated'],
-                $options->getArrayCopy()
+                ['_primary' => false] + $options->getArrayCopy()
             );
             if ($success || !$options['atomic']) {
                 $entity->clean();
                 $this->dispatchEvent('Model.afterSave', compact('entity', 'options'));
-                if (!$options['atomic']) {
+                if (!$options['atomic'] && !$options['_primary']) {
                     $entity->isNew(false);
                     $entity->source($this->registryAlias());
                 }
