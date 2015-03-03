@@ -221,7 +221,13 @@ class Mysql extends DboSource {
 		if ($cache) {
 			return $cache;
 		}
-		$result = $this->_execute('SHOW TABLES FROM ' . $this->name($this->config['database']));
+
+        try {
+            $result = $this->_execute('SHOW TABLES FROM ' . $this->name($this->config['database']));
+        } catch (\Exception $e) {
+            throw new \PDOException("Unable to connect to the database
+                {$this->name($this->config['database'])}. Please check your datasource database config.");
+        }
 
 		if (!$result) {
 			$result->closeCursor();
