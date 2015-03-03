@@ -66,6 +66,10 @@ class MemcachedEngineTest extends TestCase
         parent::setUp();
         $this->skipIf(!class_exists('Memcached'), 'Memcached is not installed or configured properly.');
 
+        $socket = @fsockopen('127.0.0.1', 11211, $errno, $errstr, 1);
+        $this->skipIf(!$socket, 'Memcached is not running.');
+        fclose($socket);
+
         $this->_configCache();
     }
 
@@ -831,8 +835,6 @@ class MemcachedEngineTest extends TestCase
      */
     public function testLongDurationEqualToZero()
     {
-        $this->markTestSkipped('Cannot run as Memcached cannot be reflected');
-
         $memcached = new TestMemcachedEngine();
         $memcached->init(['prefix' => 'Foo_', 'compress' => false, 'duration' => 50 * DAY]);
 
