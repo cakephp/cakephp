@@ -18,9 +18,9 @@ if (!function_exists('__')) {
     /**
      * Returns a translated string if one is found; Otherwise, the submitted message.
      *
-     * @param string $singular Text to translate
-     * @param mixed $args Array with arguments or multiple arguments in function
-     * @return mixed translated string
+     * @param string $singular Text to translate.
+     * @param mixed $args Array with arguments or multiple arguments in function.
+     * @return mixed Translated string.
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__
      */
     function __($singular, $args = null)
@@ -40,11 +40,11 @@ if (!function_exists('__n')) {
      * Returns correct plural form of message identified by $singular and $plural for count $count.
      * Some languages have more than one form for plural messages dependent on the count.
      *
-     * @param string $singular Singular text to translate
-     * @param string $plural Plural text
-     * @param int $count Count
-     * @param mixed $args Array with arguments or multiple arguments in function
-     * @return mixed plural form of translated string
+     * @param string $singular Singular text to translate.
+     * @param string $plural Plural text.
+     * @param int $count Count.
+     * @param mixed $args Array with arguments or multiple arguments in function.
+     * @return mixed Plural form of translated string.
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__n
      */
     function __n($singular, $plural, $count, $args = null)
@@ -66,10 +66,10 @@ if (!function_exists('__d')) {
     /**
      * Allows you to override the current domain for a single message lookup.
      *
-     * @param string $domain Domain
-     * @param string $msg String to translate
-     * @param mixed $args Array with arguments or multiple arguments in function
-     * @return string translated string
+     * @param string $domain Domain.
+     * @param string $msg String to translate.
+     * @param mixed $args Array with arguments or multiple arguments in function.
+     * @return string Translated string.
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__d
      */
     function __d($domain, $msg, $args = null)
@@ -89,12 +89,12 @@ if (!function_exists('__dn')) {
      * Returns correct plural form of message identified by $singular and $plural for count $count
      * from domain $domain.
      *
-     * @param string $domain Domain
-     * @param string $singular Singular string to translate
-     * @param string $plural Plural
-     * @param int $count Count
-     * @param mixed $args Array with arguments or multiple arguments in function
-     * @return string plural form of translated string
+     * @param string $domain Domain.
+     * @param string $singular Singular string to translate.
+     * @param string $plural Plural.
+     * @param int $count Count.
+     * @param mixed $args Array with arguments or multiple arguments in function.
+     * @return string Plural form of translated string.
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__dn
      */
     function __dn($domain, $singular, $plural, $count, $args = null)
@@ -118,10 +118,10 @@ if (!function_exists('__x')) {
      * The context is a unique identifier for the translations string that makes it unique
      * within the same domain.
      *
-     * @param string $context Context of the text
-     * @param string $singular Text to translate
-     * @param mixed $args Array with arguments or multiple arguments in function
-     * @return mixed translated string
+     * @param string $context Context of the text.
+     * @param string $singular Text to translate.
+     * @param mixed $args Array with arguments or multiple arguments in function.
+     * @return mixed Translated string.
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__
      */
     function __x($context, $singular, $args = null)
@@ -143,12 +143,12 @@ if (!function_exists('__xn')) {
      * The context is a unique identifier for the translations string that makes it unique
      * within the same domain.
      *
-     * @param string $context Context of the text
-     * @param string $singular Singular text to translate
-     * @param string $plural Plural text
-     * @param int $count Count
-     * @param mixed $args Array with arguments or multiple arguments in function
-     * @return mixed plural form of translated string
+     * @param string $context Context of the text.
+     * @param string $singular Singular text to translate.
+     * @param string $plural Plural text.
+     * @param int $count Count.
+     * @param mixed $args Array with arguments or multiple arguments in function.
+     * @return mixed Plural form of translated string.
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__xn
      */
     function __xn($context, $singular, $plural, $count, $args = null)
@@ -172,11 +172,11 @@ if (!function_exists('__dx')) {
      * The context is a unique identifier for the translations string that makes it unique
      * within the same domain.
      *
-     * @param string $domain Domain
-     * @param string $context Context of the text
-     * @param string $msg String to translate
-     * @param mixed $args Array with arguments or multiple arguments in function
-     * @return string translated string
+     * @param string $domain Domain.
+     * @param string $context Context of the text.
+     * @param string $msg String to translate.
+     * @param mixed $args Array with arguments or multiple arguments in function.
+     * @return string Translated string.
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__dx
      */
     function __dx($domain, $context, $msg, $args = null)
@@ -201,13 +201,13 @@ if (!function_exists('__dxn')) {
      * The context is a unique identifier for the translations string that makes it unique
      * within the same domain.
      *
-     * @param string $domain Domain
-     * @param string $context Context of the text
-     * @param string $singular Singular text to translate
-     * @param string $plural Plural text
-     * @param int $count Count
-     * @param mixed $args Array with arguments or multiple arguments in function
-     * @return mixed plural form of translated string
+     * @param string $domain Domain.
+     * @param string $context Context of the text.
+     * @param string $singular Singular text to translate.
+     * @param string $plural Plural text.
+     * @param int $count Count.
+     * @param mixed $args Array with arguments or multiple arguments in function.
+     * @return mixed Plural form of translated string.
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__dxn
      */
     function __dxn($domain, $context, $singular, $plural, $count, $args = null)
