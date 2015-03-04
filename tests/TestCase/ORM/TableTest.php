@@ -435,9 +435,12 @@ class TableTest extends TestCase
             'table' => 'users',
             'connection' => $this->connection,
         ]);
-        $table->eventManager()->attach(function ($event, $query, $options) {
-            $query->limit(1);
-        }, 'Model.beforeFind');
+        $table->eventManager()->on(
+            'Model.beforeFind',
+            function ($event, $query, $options) {
+                $query->limit(1);
+            }
+        );
 
         $result = $table->find('all')->all();
         $this->assertCount(1, $result, 'Should only have 1 record, limit 1 applied.');
@@ -456,10 +459,13 @@ class TableTest extends TestCase
             'connection' => $this->connection,
         ]);
         $expected = ['One', 'Two', 'Three'];
-        $table->eventManager()->attach(function ($event, $query, $options) use ($expected) {
-            $query->setResult($expected);
-            $event->stopPropagation();
-        }, 'Model.beforeFind');
+        $table->eventManager()->on(
+            'Model.beforeFind',
+            function ($event, $query, $options) use ($expected) {
+                $query->setResult($expected);
+                $event->stopPropagation();
+            }
+        );
 
         $query = $table->find('all');
         $query->limit(1);
@@ -1680,7 +1686,7 @@ class TableTest extends TestCase
             $this->assertSame($data, $entity);
             $entity->set('password', 'foo');
         };
-        $table->eventManager()->attach($listener, 'Model.beforeSave');
+        $table->eventManager()->on('Model.beforeSave', $listener);
         $this->assertSame($data, $table->save($data));
         $this->assertEquals($data->id, self::$nextUserId);
         $row = $table->find('all')->where(['id' => self::$nextUserId])->first();
@@ -1708,8 +1714,8 @@ class TableTest extends TestCase
         $listener2 = function ($e, $entity, $options) {
             $this->assertTrue($options['crazy']);
         };
-        $table->eventManager()->attach($listener1, 'Model.beforeSave');
-        $table->eventManager()->attach($listener2, 'Model.beforeSave');
+        $table->eventManager()->on('Model.beforeSave', $listener1);
+        $table->eventManager()->on('Model.beforeSave', $listener2);
         $this->assertSame($data, $table->save($data));
         $this->assertEquals($data->id, self::$nextUserId);
 
@@ -1736,7 +1742,7 @@ class TableTest extends TestCase
             $e->stopPropagation();
             return $entity;
         };
-        $table->eventManager()->attach($listener, 'Model.beforeSave');
+        $table->eventManager()->on('Model.beforeSave', $listener);
         $this->assertSame($data, $table->save($data));
         $this->assertNull($data->id);
         $row = $table->find('all')->where(['id' => self::$nextUserId])->first();
@@ -1763,14 +1769,14 @@ class TableTest extends TestCase
             $this->assertSame($data, $entity);
             $called = true;
         };
-        $table->eventManager()->attach($listener, 'Model.afterSave');
+        $table->eventManager()->on('Model.afterSave', $listener);
 
         $calledAfterCommit = false;
         $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
             $this->assertSame($data, $entity);
             $calledAfterCommit = true;
         };
-        $table->eventManager()->attach($listenerAfterCommit, 'Model.afterSaveCommit');
+        $table->eventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
 
         $this->assertSame($data, $table->save($data));
         $this->assertEquals($data->id, self::$nextUserId);
@@ -1797,13 +1803,13 @@ class TableTest extends TestCase
             $this->assertSame($data, $entity);
             $called = true;
         };
-        $table->eventManager()->attach($listener, 'Model.afterSave');
+        $table->eventManager()->on('Model.afterSave', $listener);
 
         $calledAfterCommit = false;
         $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
             $calledAfterCommit = true;
         };
-        $table->eventManager()->attach($listenerAfterCommit, 'Model.afterSaveCommit');
+        $table->eventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
 
         $this->assertSame($data, $table->save($data, ['atomic' => false]));
         $this->assertEquals($data->id, self::$nextUserId);
@@ -1829,7 +1835,7 @@ class TableTest extends TestCase
         $listener = function ($e, $entity, $options) use (&$called) {
             $called = true;
         };
-        $table->eventManager()->attach($listener, 'Model.afterSaveCommit');
+        $table->eventManager()->on('Model.afterSaveCommit', $listener);
 
         $this->connection->begin();
         $this->assertSame($data, $table->save($data));
@@ -1855,7 +1861,7 @@ class TableTest extends TestCase
         $listener = function ($e, $entity, $options) use (&$called) {
             $called = true;
         };
-        $table->eventManager()->attach($listener, 'Model.afterSaveCommit');
+        $table->eventManager()->on('Model.afterSaveCommit', $listener);
 
         $this->connection->begin();
         $this->assertSame($data, $table->save($data, ['atomic' => false]));
@@ -1901,13 +1907,13 @@ class TableTest extends TestCase
         $listener = function ($e, $entity, $options) use ($data, &$called) {
             $called = true;
         };
-        $table->eventManager()->attach($listener, 'Model.afterSave');
+        $table->eventManager()->on('Model.afterSave', $listener);
 
         $calledAfterCommit = false;
         $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
             $calledAfterCommit = true;
         };
-        $table->eventManager()->attach($listenerAfterCommit, 'Model.afterSaveCommit');
+        $table->eventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
 
         $this->assertFalse($table->save($data));
         $this->assertFalse($called);
@@ -1937,13 +1943,13 @@ class TableTest extends TestCase
         $listenerForArticle = function ($e, $entity, $options) use (&$calledForArticle) {
             $calledForArticle = true;
         };
-        $table->eventManager()->attach($listenerForArticle, 'Model.afterSaveCommit');
+        $table->eventManager()->on('Model.afterSaveCommit', $listenerForArticle);
 
         $calledForAuthor = false;
         $listenerForAuthor = function ($e, $entity, $options) use (&$calledForAuthor) {
             $calledForAuthor = true;
         };
-        $table->authors->eventManager()->attach($listenerForAuthor, 'Model.afterSaveCommit');
+        $table->authors->eventManager()->on('Model.afterSaveCommit', $listenerForAuthor);
 
         $this->assertSame($entity, $table->save($entity));
         $this->assertFalse($entity->isNew());
@@ -2210,7 +2216,7 @@ class TableTest extends TestCase
             $this->assertFalse($entity->isNew());
             $called = true;
         };
-        $table->eventManager()->attach($listener, 'Model.beforeSave');
+        $table->eventManager()->on('Model.beforeSave', $listener);
         $this->assertSame($entity, $table->save($entity));
         $this->assertTrue($called);
     }
@@ -2466,7 +2472,7 @@ class TableTest extends TestCase
         $mock = $this->getMock('Cake\Event\EventManager');
 
         $mock->expects($this->at(0))
-            ->method('attach');
+            ->method('on');
 
         $mock->expects($this->at(1))
             ->method('dispatch');
@@ -2523,13 +2529,13 @@ class TableTest extends TestCase
             $this->assertSame($data, $entity);
             $called = true;
         };
-        $table->eventManager()->attach($listener, 'Model.afterDelete');
+        $table->eventManager()->on('Model.afterDelete', $listener);
 
         $calledAfterCommit = false;
         $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
             $calledAfterCommit = true;
         };
-        $table->eventManager()->attach($listenerAfterCommit, 'Model.afterDeleteCommit');
+        $table->eventManager()->on('Model.afterDeleteCommit', $listenerAfterCommit);
 
         $table->delete($data, ['atomic' => false]);
         $this->assertTrue($called);
@@ -2553,13 +2559,13 @@ class TableTest extends TestCase
         $listener = function ($e, $entity, $options) use (&$called) {
             $called = true;
         };
-        $table->eventManager()->attach($listener, 'Model.afterDeleteCommit');
+        $table->eventManager()->on('Model.afterDeleteCommit', $listener);
 
         $called2 = false;
         $listener = function ($e, $entity, $options) use (&$called2) {
             $called2 = true;
         };
-        $table->articles->eventManager()->attach($listener, 'Model.afterDeleteCommit');
+        $table->articles->eventManager()->on('Model.afterDeleteCommit', $listener);
 
         $entity = $table->get(1);
         $this->assertTrue($table->delete($entity));
@@ -3800,7 +3806,7 @@ class TableTest extends TestCase
         $cb = function ($event) use (&$count) {
             $count++;
         };
-        EventManager::instance()->attach($cb, 'Model.initialize');
+        EventManager::instance()->on('Model.initialize', $cb);
         $articles = TableRegistry::get('Articles');
 
         $this->assertEquals(1, $count, 'Callback should be called');
@@ -3833,7 +3839,7 @@ class TableTest extends TestCase
         $cb = function ($event) use (&$count) {
             $count++;
         };
-        EventManager::instance()->attach($cb, 'Model.buildValidator');
+        EventManager::instance()->on('Model.buildValidator', $cb);
         $articles = TableRegistry::get('Articles');
         $articles->validator();
         $this->assertEquals(1, $count, 'Callback should be called');
@@ -3909,33 +3915,33 @@ class TableTest extends TestCase
         $eventManager = $table->eventManager();
 
         $associationBeforeFindCount = 0;
-        $table->association('authors')->target()->eventManager()->attach(
+        $table->association('authors')->target()->eventManager()->on(
+            'Model.beforeFind',
             function (Event $event, Query $query, ArrayObject $options, $primary) use (&$associationBeforeFindCount) {
                 $this->assertTrue(is_bool($primary));
                 $associationBeforeFindCount ++;
-            },
-            'Model.beforeFind'
+            }
         );
 
         $beforeFindCount = 0;
-        $eventManager->attach(
+        $eventManager->on(
+            'Model.beforeFind',
             function (Event $event, Query $query, ArrayObject $options, $primary) use (&$beforeFindCount) {
                 $this->assertTrue(is_bool($primary));
                 $beforeFindCount ++;
-            },
-            'Model.beforeFind'
+            }
         );
         $table->find()->contain('authors')->first();
         $this->assertEquals(1, $associationBeforeFindCount);
         $this->assertEquals(1, $beforeFindCount);
 
         $buildValidatorCount = 0;
-        $eventManager->attach(
+        $eventManager->on(
+            'Model.buildValidator',
             $callback = function (Event $event, Validator $validator, $name) use (&$buildValidatorCount) {
                 $this->assertTrue(is_string($name));
                 $buildValidatorCount ++;
-            },
-            'Model.buildValidator'
+            }
         );
         $table->validator();
         $this->assertEquals(1, $buildValidatorCount);
@@ -3945,38 +3951,38 @@ class TableTest extends TestCase
         $afterRulesCount =
         $beforeSaveCount =
         $afterSaveCount = 0;
-        $eventManager->attach(
+        $eventManager->on(
+            'Model.buildRules',
             function (Event $event, RulesChecker $rules) use (&$buildRulesCount) {
                 $buildRulesCount ++;
-            },
-            'Model.buildRules'
+            }
         );
-        $eventManager->attach(
+        $eventManager->on(
+            'Model.beforeRules',
             function (Event $event, Entity $entity, ArrayObject $options, $operation) use (&$beforeRulesCount) {
                 $this->assertTrue(is_string($operation));
                 $beforeRulesCount ++;
-            },
-            'Model.beforeRules'
+            }
         );
-        $eventManager->attach(
+        $eventManager->on(
+            'Model.afterRules',
             function (Event $event, Entity $entity, ArrayObject $options, $result, $operation) use (&$afterRulesCount) {
                 $this->assertTrue(is_bool($result));
                 $this->assertTrue(is_string($operation));
                 $afterRulesCount ++;
-            },
-            'Model.afterRules'
+            }
         );
-        $eventManager->attach(
+        $eventManager->on(
+            'Model.beforeSave',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$beforeSaveCount) {
                 $beforeSaveCount ++;
-            },
-            'Model.beforeSave'
+            }
         );
-        $eventManager->attach(
+        $eventManager->on(
+            'Model.afterSave',
             $afterSaveCallback = function (Event $event, Entity $entity, ArrayObject $options) use (&$afterSaveCount) {
                 $afterSaveCount ++;
-            },
-            'Model.afterSave'
+            }
         );
         $entity = new Entity(['title' => 'Title']);
         $this->assertNotFalse($table->save($entity));
@@ -3988,17 +3994,17 @@ class TableTest extends TestCase
 
         $beforeDeleteCount =
         $afterDeleteCount = 0;
-        $eventManager->attach(
+        $eventManager->on(
+            'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$beforeDeleteCount) {
                 $beforeDeleteCount ++;
-            },
-            'Model.beforeDelete'
+            }
         );
-        $eventManager->attach(
+        $eventManager->on(
+            'Model.afterDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$afterDeleteCount) {
                 $afterDeleteCount ++;
-            },
-            'Model.afterDelete'
+            }
         );
         $this->assertTrue($table->delete($entity, ['checkRules' => false]));
         $this->assertEquals(1, $beforeDeleteCount);
