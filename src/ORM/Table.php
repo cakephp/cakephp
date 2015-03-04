@@ -1294,6 +1294,9 @@ class Table implements RepositoryInterface, EventListenerInterface
      *   listeners will receive the entity and the options array as arguments. The type
      *   of operation performed (insert or update) can be determined by checking the
      *   entity's method `isNew`, true meaning an insert and false an update.
+     * - Model.afterSaveCommit: Will be triggered after the transaction is commited
+     *   for atomic save, listeners will receive the entity and the options array
+     *   as arguments.
      *
      * This method will determine whether the passed entity needs to be
      * inserted or updated in the database. It does that by checking the `isNew`
@@ -1333,7 +1336,8 @@ class Table implements RepositoryInterface, EventListenerInterface
             'atomic' => true,
             'associated' => true,
             'checkRules' => true,
-            'checkExisting' => true
+            'checkExisting' => true,
+            '_primary' => true
         ]);
 
         if ($entity->errors()) {
@@ -1344,13 +1348,25 @@ class Table implements RepositoryInterface, EventListenerInterface
             return $entity;
         }
 
+        $connection = $this->connection();
         if ($options['atomic']) {
-            $connection = $this->connection();
             $success = $connection->transactional(function () use ($entity, $options) {
                 return $this->_processSave($entity, $options);
             });
         } else {
             $success = $this->_processSave($entity, $options);
+        }
+
+        if ($success) {
+            if (!$connection->inTransaction() &&
+                ($options['atomic'] || (!$options['atomic'] && $options['_primary']))
+            ) {
+                $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
+            }
+            if ($options['atomic'] || $options['_primary']) {
+                $entity->isNew(false);
+                $entity->source($this->registryAlias());
+            }
         }
 
         return $success;
@@ -1393,7 +1409,7 @@ class Table implements RepositoryInterface, EventListenerInterface
             $this,
             $entity,
             $options['associated'],
-            $options->getArrayCopy()
+            ['_primary' => false] + $options->getArrayCopy()
         );
 
         if (!$saved && $options['atomic']) {
@@ -1414,13 +1430,15 @@ class Table implements RepositoryInterface, EventListenerInterface
                 $this,
                 $entity,
                 $options['associated'],
-                $options->getArrayCopy()
+                ['_primary' => false] + $options->getArrayCopy()
             );
             if ($success || !$options['atomic']) {
                 $entity->clean();
                 $this->dispatchEvent('Model.afterSave', compact('entity', 'options'));
-                $entity->isNew(false);
-                $entity->source($this->registryAlias());
+                if (!$options['atomic'] && !$options['_primary']) {
+                    $entity->isNew(false);
+                    $entity->source($this->registryAlias());
+                }
                 $success = true;
             }
         }
@@ -1570,10 +1588,14 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * ### Events
      *
-     * - `beforeDelete` Fired before the delete occurs. If stopped the delete
+     * - `Model.beforeDelete` Fired before the delete occurs. If stopped the delete
      *   will be aborted. Receives the event, entity, and options.
-     * - `afterDelete` Fired after the delete has been successful. Receives
+     * - `Model.afterDelete` Fired after the delete has been successful. Receives
      *   the event, entity, and options.
+     * - `Model.afterDelete` Fired after the delete has been successful. Receives
+     *   the event, entity, and options.
+     * - `Model.afterDeleteCommit` Fired after the transaction is committed for
+     *   an atomic delete. Receives the event, entity, and options.
      *
      * The options argument will be converted into an \ArrayObject instance
      * for the duration of the callbacks, this allows listeners to modify
@@ -1582,16 +1604,33 @@ class Table implements RepositoryInterface, EventListenerInterface
      */
     public function delete(EntityInterface $entity, $options = [])
     {
-        $options = new ArrayObject($options + ['atomic' => true, 'checkRules' => true]);
+        $options = new ArrayObject($options + [
+            'atomic' => true,
+            'checkRules' => true,
+            '_primary' => true,
+        ]);
 
         $process = function () use ($entity, $options) {
             return $this->_processDelete($entity, $options);
         };
 
+        $connection = $this->connection();
         if ($options['atomic']) {
-            return $this->connection()->transactional($process);
+            $success = $connection->transactional($process);
+        } else {
+            $success = $process();
         }
-        return $process();
+
+        if ($success &&
+            !$connection->inTransaction() &&
+            ($options['atomic'] || (!$options['atomic'] && $options['_primary']))
+        ) {
+            $this->dispatchEvent('Model.afterDeleteCommit', [
+                'entity' => $entity,
+                'options' => $options
+            ]);
+        }
+        return $success;
     }
 
     /**
@@ -1631,7 +1670,10 @@ class Table implements RepositoryInterface, EventListenerInterface
             return $event->result;
         }
 
-        $this->_associations->cascadeDelete($entity, $options->getArrayCopy());
+        $this->_associations->cascadeDelete(
+            $entity,
+            ['_primary' => false] + $options->getArrayCopy()
+        );
 
         $query = $this->query();
         $conditions = (array)$entity->extract($primaryKey);
@@ -2147,8 +2189,10 @@ class Table implements RepositoryInterface, EventListenerInterface
             'Model.beforeFind' => 'beforeFind',
             'Model.beforeSave' => 'beforeSave',
             'Model.afterSave' => 'afterSave',
+            'Model.afterSaveCommit' => 'afterSaveCommit',
             'Model.beforeDelete' => 'beforeDelete',
             'Model.afterDelete' => 'afterDelete',
+            'Model.afterDeleteCommit' => 'afterDeleteCommit',
             'Model.beforeRules' => 'beforeRules',
             'Model.afterRules' => 'afterRules',
         ];
