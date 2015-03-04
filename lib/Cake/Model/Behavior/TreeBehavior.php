@@ -132,8 +132,8 @@ class TreeBehavior extends ModelBehavior {
 			$depths[$node[$Model->alias][$primaryKey]] = $depth;
 
 			$Model->updateAll(
-				array($settings['level'] => $depth),
-				array($primaryKey => $node[$Model->alias][$primaryKey])
+				array($Model->escapeField($settings['level']) => $depth),
+				array($Model->escapeField($primaryKey) => $node[$Model->alias][$primaryKey])
 			);
 		}
 	}
