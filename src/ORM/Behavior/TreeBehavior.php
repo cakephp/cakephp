@@ -103,7 +103,7 @@ class TreeBehavior extends Behavior
             $this->_sync(2, '+', ">= {$edge}");
 
             if ($level) {
-                $entity->set($config[$level], $parentNode[$level] + 1);
+                $entity->set($level, $parentNode[$level] + 1);
             }
             return;
         }
@@ -114,7 +114,7 @@ class TreeBehavior extends Behavior
             $entity->set($config['right'], $edge + 2);
 
             if ($level) {
-                $entity->set($config[$level], 0);
+                $entity->set($level, 0);
             }
             return;
         }
@@ -133,7 +133,7 @@ class TreeBehavior extends Behavior
             $this->_setAsRoot($entity);
 
             if ($level) {
-                $entity->set($config[$level], 0);
+                $entity->set($level, 0);
             }
         }
     }
