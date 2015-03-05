@@ -2004,10 +2004,10 @@ class TableTest extends TestCase
     public function testSaveNewCompositeKeyIncrement()
     {
         $articles = TableRegistry::get('SiteAuthors');
-        $article = $articles->newEntity(['site_id' => 1, 'name' => 'new guy']);
+        $article = $articles->newEntity(['site_id' => 3, 'name' => 'new guy']);
         $this->assertSame($article, $articles->save($article));
         $this->assertNotEmpty($article->id, 'Primary key should have been populated');
-        $this->assertSame(1, $article->site_id);
+        $this->assertSame(3, $article->site_id);
     }
 
     /**

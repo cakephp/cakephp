@@ -139,6 +139,10 @@ class PostgresSchema extends BaseSchema
                 $row['default'] = 0;
             }
         }
+        // Sniff out serial types.
+        if (in_array($field['type'], ['integer', 'biginteger']) && strpos($row['default'], 'nextval(') === 0) {
+            $field['autoIncrement'] = true;
+        }
         $field += [
             'default' => $this->_defaultValue($row['default']),
             'null' => $row['null'] === 'YES' ? true : false,
@@ -231,9 +235,10 @@ class PostgresSchema extends BaseSchema
             // If there is only one column in the primary key and it is integery,
             // make it autoincrement.
             $columnDef = $table->column($columns[0]);
-            if (count($columns) === 1 &&
-                in_array($columnDef['type'], ['integer', 'biginteger']) &&
-                $type === Table::CONSTRAINT_PRIMARY
+            if (
+                $type === Table::CONSTRAINT_PRIMARY &&
+                count($columns) === 1 &&
+                in_array($columnDef['type'], ['integer', 'biginteger'])
             ) {
                 $columnDef['autoIncrement'] = true;
                 $table->addColumn($columns[0], $columnDef);
