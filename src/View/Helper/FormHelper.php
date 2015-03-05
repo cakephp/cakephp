@@ -646,7 +646,7 @@ class FormHelper extends Helper
     /**
      * Returns true if there is an error for the given field, otherwise false
      *
-     * @param string $field This should be "Modelname.fieldname"
+     * @param string $field This should be "modelname.fieldname"
      * @return bool If there are errors this method returns true, else false.
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#displaying-and-checking-errors
      */
@@ -665,7 +665,7 @@ class FormHelper extends Helper
      *
      * - `escape` boolean - Whether or not to html escape the contents of the error.
      *
-     * @param string $field A field name, like "Modelname.fieldname"
+     * @param string $field A field name, like "modelname.fieldname"
      * @param string|array $text Error message as string or array of messages. If an array,
      *   it should be a hash of key names => messages.
      * @param array $options See above.
@@ -770,7 +770,7 @@ class FormHelper extends Helper
      *
      * If you want to nest inputs in the labels, you will need to modify the default templates.
      *
-     * @param string $fieldName This should be "Modelname.fieldname"
+     * @param string $fieldName This should be "modelname.fieldname"
      * @param string $text Text that will appear in the label field. If
      *   $text is left undefined the text will be inflected from the
      *   fieldName.
@@ -954,7 +954,7 @@ class FormHelper extends Helper
      *   elements. Can be set to true on any input to force the input inside the label. If you
      *   enable this option for radio buttons you will also need to modify the default `radioWrapper` template.
      *
-     * @param string $fieldName This should be "Modelname.fieldname"
+     * @param string $fieldName This should be "modelname.fieldname"
      * @param array $options Each type of input takes different options.
      * @return string Completed form widget.
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-form-inputs
@@ -1349,7 +1349,7 @@ class FormHelper extends Helper
      *    as checked, without having to check the POST data. A matching POST data value, will overwrite
      *    the default value.
      *
-     * @param string $fieldName Name of a field, like this "Modelname.fieldname"
+     * @param string $fieldName Name of a field, like this "modelname.fieldname"
      * @param array $options Array of HTML attributes.
      * @return string|array An HTML text input element.
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-checkboxes
@@ -1399,7 +1399,7 @@ class FormHelper extends Helper
      * - `empty` - Set to `true` to create an input with the value '' as the first option. When `true`
      *   the radio label will be 'empty'. Set this option to a string to control the label value.
      *
-     * @param string $fieldName Name of a field, like this "Modelname.fieldname"
+     * @param string $fieldName Name of a field, like this "modelname.fieldname"
      * @param array|\Traversable $options Radio button options array.
      * @param array $attributes Array of HTML attributes, and special attributes above.
      * @return string Completed radio widget set.
@@ -1473,7 +1473,7 @@ class FormHelper extends Helper
      *
      * - `escape` - Whether or not the contents of the textarea should be escaped. Defaults to true.
      *
-     * @param string $fieldName Name of a field, in the form "Modelname.fieldname"
+     * @param string $fieldName Name of a field, in the form "modelname.fieldname"
      * @param array $options Array of HTML attributes, and special options above.
      * @return string A generated HTML text input element
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-textareas
@@ -1488,7 +1488,7 @@ class FormHelper extends Helper
     /**
      * Creates a hidden input field.
      *
-     * @param string $fieldName Name of a field, in the form of "Modelname.fieldname"
+     * @param string $fieldName Name of a field, in the form of "modelname.fieldname"
      * @param array $options Array of HTML attributes.
      * @return string A generated hidden input
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-hidden-inputs
@@ -1516,7 +1516,7 @@ class FormHelper extends Helper
     /**
      * Creates file input widget.
      *
-     * @param string $fieldName Name of a field, in the form "Modelname.fieldname"
+     * @param string $fieldName Name of a field, in the form "modelname.fieldname"
      * @param array $options Array of HTML attributes.
      * @return string A generated file input.
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-file-inputs
