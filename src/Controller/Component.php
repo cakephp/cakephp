@@ -63,9 +63,16 @@ class Component implements EventListenerInterface
     use LogTrait;
 
     /**
+     * Request object
+     *
+     * @var \Cake\Network\Request
+     */
+    public $request;
+
+    /**
      * Component registry class used to lazy load components.
      *
-     * @var ComponentRegistry
+     * @var \Cake\Controller\ComponentRegistry
      */
     protected $_registry;
 
@@ -101,6 +108,10 @@ class Component implements EventListenerInterface
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
         $this->_registry = $registry;
+        $controller = $registry->getController();
+        if ($controller) {
+            $this->request = $controller->request;
+        }
 
         $this->config($config);
 
