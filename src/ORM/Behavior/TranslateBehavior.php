@@ -372,7 +372,7 @@ class TranslateBehavior extends Behavior
      * the database table the object points at - or as a last resort, the alias
      * of the autotable instance.
      *
-     * @param Table $table
+     * @param Table $table The table class to get a reference name for.
      * @return string
      */
     protected function _referenceName(Table $table)
