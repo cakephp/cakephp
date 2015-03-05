@@ -40,17 +40,17 @@ class PostgresSchema extends BaseSchema
     {
         $sql =
         'SELECT DISTINCT table_schema AS schema, column_name AS name, data_type AS type,
-			is_nullable AS null, column_default AS default,
-			character_maximum_length AS char_length,
-			d.description as comment,
-			ordinal_position
-		FROM information_schema.columns c
-		INNER JOIN pg_catalog.pg_namespace ns ON (ns.nspname = table_schema)
-		INNER JOIN pg_catalog.pg_class cl ON (cl.relnamespace = ns.oid AND cl.relname = table_name)
-		LEFT JOIN pg_catalog.pg_index i ON (i.indrelid = cl.oid AND i.indkey[0] = c.ordinal_position)
-		LEFT JOIN pg_catalog.pg_description d on (cl.oid = d.objoid AND d.objsubid = c.ordinal_position)
-		WHERE table_name = ? AND table_schema = ? AND table_catalog = ?
-		ORDER BY ordinal_position';
+            is_nullable AS null, column_default AS default,
+            character_maximum_length AS char_length,
+            d.description as comment,
+            ordinal_position
+        FROM information_schema.columns c
+        INNER JOIN pg_catalog.pg_namespace ns ON (ns.nspname = table_schema)
+        INNER JOIN pg_catalog.pg_class cl ON (cl.relnamespace = ns.oid AND cl.relname = table_name)
+        LEFT JOIN pg_catalog.pg_index i ON (i.indrelid = cl.oid AND i.indkey[0] = c.ordinal_position)
+        LEFT JOIN pg_catalog.pg_description d on (cl.oid = d.objoid AND d.objsubid = c.ordinal_position)
+        WHERE table_name = ? AND table_schema = ? AND table_catalog = ?
+        ORDER BY ordinal_position';
 
         $schema = empty($config['schema']) ? 'public' : $config['schema'];
         return [$sql, [$tableName, $schema, $config['database']]];
@@ -181,24 +181,24 @@ class PostgresSchema extends BaseSchema
     public function describeIndexSql($tableName, $config)
     {
         $sql = 'SELECT
-			c2.relname,
-			i.indisprimary,
-			i.indisunique,
-			i.indisvalid,
-			pg_catalog.pg_get_indexdef(i.indexrelid, 0, true) AS statement
-		FROM pg_catalog.pg_class AS c,
-			pg_catalog.pg_class AS c2,
-			pg_catalog.pg_index AS i
-		WHERE c.oid  = (
-			SELECT c.oid
-			FROM pg_catalog.pg_class c
-			LEFT JOIN pg_catalog.pg_namespace AS n ON n.oid = c.relnamespace
-			WHERE c.relname = ?
-				AND n.nspname = ?
-		)
-		AND c.oid = i.indrelid
-		AND i.indexrelid = c2.oid
-		ORDER BY i.indisprimary DESC, i.indisunique DESC, c2.relname';
+            c2.relname,
+            i.indisprimary,
+            i.indisunique,
+            i.indisvalid,
+            pg_catalog.pg_get_indexdef(i.indexrelid, 0, true) AS statement
+        FROM pg_catalog.pg_class AS c,
+            pg_catalog.pg_class AS c2,
+            pg_catalog.pg_index AS i
+        WHERE c.oid  = (
+            SELECT c.oid
+            FROM pg_catalog.pg_class c
+            LEFT JOIN pg_catalog.pg_namespace AS n ON n.oid = c.relnamespace
+            WHERE c.relname = ?
+                AND n.nspname = ?
+        )
+        AND c.oid = i.indrelid
+        AND i.indexrelid = c2.oid
+        ORDER BY i.indisprimary DESC, i.indisunique DESC, c2.relname';
 
         $schema = 'public';
         if (!empty($config['schema'])) {

@@ -29,12 +29,10 @@ class SqlserverSchema extends BaseSchema
      */
     public function listTablesSql($config)
     {
-        $sql = '
-			SELECT TABLE_NAME
-			FROM INFORMATION_SCHEMA.TABLES
-			WHERE TABLE_SCHEMA = ?
-			ORDER BY TABLE_NAME
-		';
+        $sql = 'SELECT TABLE_NAME
+            FROM INFORMATION_SCHEMA.TABLES
+            WHERE TABLE_SCHEMA = ?
+            ORDER BY TABLE_NAME';
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
         return [$sql, [$schema]];
     }
@@ -44,16 +42,15 @@ class SqlserverSchema extends BaseSchema
      */
     public function describeColumnSql($tableName, $config)
     {
-        $sql =
-        "SELECT DISTINCT TABLE_SCHEMA AS [schema], COLUMN_NAME AS [name], DATA_TYPE AS [type],
-			IS_NULLABLE AS [null], COLUMN_DEFAULT AS [default],
-			CHARACTER_MAXIMUM_LENGTH AS [char_length],
-			NUMERIC_PRECISION AS [precision],
-			NUMERIC_SCALE AS [scale],
-			'' AS [comment], ORDINAL_POSITION AS [ordinal_position]
-		FROM INFORMATION_SCHEMA.COLUMNS
-		WHERE TABLE_NAME = ? AND TABLE_SCHEMA = ?
-		ORDER BY ordinal_position";
+        $sql = "SELECT DISTINCT TABLE_SCHEMA AS [schema], COLUMN_NAME AS [name], DATA_TYPE AS [type],
+            IS_NULLABLE AS [null], COLUMN_DEFAULT AS [default],
+            CHARACTER_MAXIMUM_LENGTH AS [char_length],
+            NUMERIC_PRECISION AS [precision],
+            NUMERIC_SCALE AS [scale],
+            '' AS [comment], ORDINAL_POSITION AS [ordinal_position]
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_NAME = ? AND TABLE_SCHEMA = ?
+        ORDER BY ordinal_position";
 
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
         return [$sql, [$tableName, $schema]];
@@ -166,21 +163,19 @@ class SqlserverSchema extends BaseSchema
      */
     public function describeIndexSql($tableName, $config)
     {
-        $sql = "
-			SELECT
-				I.[name] AS [index_name],
-				IC.[index_column_id] AS [index_order],
-				AC.[name] AS [column_name],
-				I.[is_unique], I.[is_primary_key],
-				I.[is_unique_constraint]
-			FROM sys.[tables] AS T
-			INNER JOIN sys.[schemas] S ON S.[schema_id] = T.[schema_id]
-			INNER JOIN sys.[indexes] I ON T.[object_id] = I.[object_id]
-			INNER JOIN sys.[index_columns] IC ON I.[object_id] = IC.[object_id] AND I.[index_id] = IC.[index_id]
-			INNER JOIN sys.[all_columns] AC ON T.[object_id] = AC.[object_id] AND IC.[column_id] = AC.[column_id]
-			WHERE T.[is_ms_shipped] = 0 AND I.[type_desc] <> 'HEAP' AND T.[name] = ? AND S.[name] = ?
-			ORDER BY I.[index_id], IC.[index_column_id]
-		";
+        $sql = "SELECT
+                I.[name] AS [index_name],
+                IC.[index_column_id] AS [index_order],
+                AC.[name] AS [column_name],
+                I.[is_unique], I.[is_primary_key],
+                I.[is_unique_constraint]
+            FROM sys.[tables] AS T
+            INNER JOIN sys.[schemas] S ON S.[schema_id] = T.[schema_id]
+            INNER JOIN sys.[indexes] I ON T.[object_id] = I.[object_id]
+            INNER JOIN sys.[index_columns] IC ON I.[object_id] = IC.[object_id] AND I.[index_id] = IC.[index_id]
+            INNER JOIN sys.[all_columns] AC ON T.[object_id] = AC.[object_id] AND IC.[column_id] = AC.[column_id]
+            WHERE T.[is_ms_shipped] = 0 AND I.[type_desc] <> 'HEAP' AND T.[name] = ? AND S.[name] = ?
+            ORDER BY I.[index_id], IC.[index_column_id]";
 
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
         return [$sql, [$tableName, $schema]];
@@ -229,19 +224,17 @@ class SqlserverSchema extends BaseSchema
      */
     public function describeForeignKeySql($tableName, $config)
     {
-        $sql = "
-			SELECT FK.[name] AS [foreign_key_name], FK.[delete_referential_action_desc] AS [delete_type],
-				FK.[update_referential_action_desc] AS [update_type], C.name AS [column], RT.name AS [reference_table],
-				RC.name AS [reference_column]
-			FROM sys.foreign_keys FK
-			INNER JOIN sys.foreign_key_columns FKC ON FKC.constraint_object_id = FK.object_id
-			INNER JOIN sys.tables T ON T.object_id = FKC.parent_object_id
-			INNER JOIN sys.tables RT ON RT.object_id = FKC.referenced_object_id
-			INNER JOIN sys.schemas S ON S.schema_id = T.schema_id AND S.schema_id = RT.schema_id
-			INNER JOIN sys.columns C ON C.column_id = FKC.parent_column_id AND C.object_id = FKC.parent_object_id
-			INNER JOIN sys.columns RC ON RC.column_id = FKC.referenced_column_id AND RC.object_id = FKC.referenced_object_id
-			WHERE FK.is_ms_shipped = 0 AND T.name = ? AND S.name = ?
-		";
+        $sql = "SELECT FK.[name] AS [foreign_key_name], FK.[delete_referential_action_desc] AS [delete_type],
+                FK.[update_referential_action_desc] AS [update_type], C.name AS [column], RT.name AS [reference_table],
+                RC.name AS [reference_column]
+            FROM sys.foreign_keys FK
+            INNER JOIN sys.foreign_key_columns FKC ON FKC.constraint_object_id = FK.object_id
+            INNER JOIN sys.tables T ON T.object_id = FKC.parent_object_id
+            INNER JOIN sys.tables RT ON RT.object_id = FKC.referenced_object_id
+            INNER JOIN sys.schemas S ON S.schema_id = T.schema_id AND S.schema_id = RT.schema_id
+            INNER JOIN sys.columns C ON C.column_id = FKC.parent_column_id AND C.object_id = FKC.parent_object_id
+            INNER JOIN sys.columns RC ON RC.column_id = FKC.referenced_column_id AND RC.object_id = FKC.referenced_object_id
+            WHERE FK.is_ms_shipped = 0 AND T.name = ? AND S.name = ?";
 
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
         return [$sql, [$tableName, $schema]];
