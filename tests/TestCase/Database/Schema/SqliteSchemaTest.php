@@ -153,7 +153,7 @@ class SqliteSchemaTest extends TestCase
         $dialect = new SqliteSchema($driver);
 
         $table = $this->getMock('Cake\Database\Schema\Table', [], ['table']);
-        $table->expects($this->at(0))->method('addColumn')->with('field', $expected);
+        $table->expects($this->at(1))->method('addColumn')->with('field', $expected);
 
         $dialect->convertColumnDescription($table, $field);
     }
@@ -324,6 +324,36 @@ SQL;
         foreach ($expected as $field => $definition) {
             $this->assertEquals($definition, $result->column($field));
         }
+    }
+
+    /**
+     * Test describing a table with Sqlite and composite keys
+     *
+     * Composite keys in SQLite are never autoincrement, and shouldn't be marked
+     * as such.
+     *
+     * @return void
+     */
+    public function testDescribeTableCompositeKey()
+    {
+        $this->_needsConnection();
+        $connection = ConnectionManager::get('test');
+        $sql = <<<SQL
+CREATE TABLE schema_composite (
+    "id" INTEGER NOT NULL,
+    "site_id" INTEGER NOT NULL,
+    "name" VARCHAR(255),
+    PRIMARY KEY("id", "site_id")
+);
+SQL;
+        $connection->execute($sql);
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('schema_composite');
+        $connection->execute('DROP TABLE schema_composite');
+
+        $this->assertEquals(['id', 'site_id'], $result->primaryKey());
+        $this->assertNull($result->column('site_id')['autoIncrement'], 'site_id should not be autoincrement');
+        $this->assertNull($result->column('id')['autoIncrement'], 'id should not be autoincrement');
     }
 
     /**
