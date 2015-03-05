@@ -507,11 +507,13 @@ class Query extends DatabaseQuery implements JsonSerializable
         $complex = $complex || count($query->clause('union'));
 
         if (!$complex) {
+            $autoFieldsBefore = $query->eagerLoader()->autoFields();
             $query->eagerLoader()->autoFields(false);
             $statement = $query
                 ->select($count, true)
                 ->autoFields(false)
                 ->execute();
+            $query->eagerLoader()->autoFields($autoFieldsBefore);
         } else {
             $statement = $this->connection()->newQuery()
                 ->select($count)
