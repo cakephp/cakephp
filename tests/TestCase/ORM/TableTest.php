@@ -4063,7 +4063,8 @@ class TableTest extends TestCase
      *
      * @return void
      */
-    public function skipIfSqlite() {
+    public function skipIfSqlite()
+    {
         $this->skipIf(
             $this->connection->driver() instanceof \Cake\Database\Driver\Sqlite,
             'SQLite does not support the requrirements of this test.'
@@ -4075,7 +4076,8 @@ class TableTest extends TestCase
      *
      * @return void
      */
-    public function skipIfSqlServer() {
+    public function skipIfSqlServer()
+    {
         $this->skipIf(
             $this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
             'SQLServer does not support the requirements of this test.'

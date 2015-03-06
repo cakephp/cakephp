@@ -372,7 +372,6 @@ SQL;
         $this->assertTrue($result->column('id')['autoIncrement'], 'id should be autoincrement');
     }
 
-
     /**
      * Test describing a table containing defaults with Postgres
      *

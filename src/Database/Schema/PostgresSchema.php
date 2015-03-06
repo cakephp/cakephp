@@ -235,8 +235,8 @@ class PostgresSchema extends BaseSchema
             // If there is only one column in the primary key and it is integery,
             // make it autoincrement.
             $columnDef = $table->column($columns[0]);
-            if (
-                $type === Table::CONSTRAINT_PRIMARY &&
+
+            if ($type === Table::CONSTRAINT_PRIMARY &&
                 count($columns) === 1 &&
                 in_array($columnDef['type'], ['integer', 'biginteger'])
             ) {
