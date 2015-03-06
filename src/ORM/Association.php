@@ -173,6 +173,13 @@ abstract class Association
     protected $_finder = 'all';
 
     /**
+     * Valid strategies for this association. Subclasses can narrow this down.
+     *
+     * @var array
+     */
+    protected $_validStrategies = [self::STRATEGY_JOIN, self::STRATEGY_SELECT, self::STRATEGY_SUBQUERY];
+
+    /**
      * Constructor. Subclasses can override _options function to get the original
      * list of passed options if expecting any other special key
      *
@@ -401,8 +408,7 @@ abstract class Association
     public function strategy($name = null)
     {
         if ($name !== null) {
-            $valid = [self::STRATEGY_JOIN, self::STRATEGY_SELECT, self::STRATEGY_SUBQUERY];
-            if (!in_array($name, $valid)) {
+            if (!$this->validStrategy($name)) {
                 throw new \InvalidArgumentException(
                     sprintf('Invalid strategy "%s" was provided', $name)
                 );
@@ -410,6 +416,20 @@ abstract class Association
             $this->_strategy = $name;
         }
         return $this->_strategy;
+    }
+
+    /**
+     * Checks if a given strategy is valid for the association type.
+     *
+     * @param string $name The strategy type.
+     * @return boolean
+     */
+    public function validStrategy($name)
+    {
+        if (in_array($name, $this->_validStrategies)) {
+            return true;
+        }
+        return false;
     }
 
     /**

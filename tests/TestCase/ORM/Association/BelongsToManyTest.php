@@ -138,6 +138,13 @@ class BelongsToManyTest extends TestCase
         $this->assertFalse($assoc->requiresKeys());
         $assoc->strategy(BelongsToMany::STRATEGY_SELECT);
         $this->assertTrue($assoc->requiresKeys());
+        $errorUsingJoin = false;
+        try {
+            $assoc->strategy(BelongsToMany::STRATEGY_JOIN);
+        } catch (\InvalidArgumentException $e) {
+            $errorUsingJoin = true;
+        }
+        $this->assertTrue($errorUsingJoin);   
     }
 
     /**

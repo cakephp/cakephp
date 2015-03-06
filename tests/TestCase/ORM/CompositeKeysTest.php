@@ -15,6 +15,8 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Datasource\ConnectionManager;
+use Cake\ORM\Association\BelongsTo;
+use Cake\ORM\Association\HasOne;
 use Cake\ORM\Entity;
 use Cake\ORM\Marshaller;
 use Cake\ORM\Query;
@@ -254,6 +256,10 @@ class CompositeKeyTest extends TestCase
      */
     public function testBelongsToEager($strategy)
     {
+        $assoc = new HasOne('Test');
+        if (!$assoc->validStrategy($strategy)) {
+            return;
+        }
         $table = TableRegistry::get('SiteArticles');
         $table->belongsTo('SiteAuthors', [
             'propertyName' => 'author',
@@ -303,6 +309,10 @@ class CompositeKeyTest extends TestCase
      */
     public function testHasOneEager($strategy)
     {
+        $assoc = new HasOne('Test');
+        if (!$assoc->validStrategy($strategy)) {
+            return;
+        }
         $table = TableRegistry::get('SiteAuthors');
         $table->hasOne('SiteArticles', [
             'propertyName' => 'first_article',

@@ -19,6 +19,8 @@ use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
+use Cake\ORM\Association\BelongsTo;
+use Cake\ORM\Association\HasOne;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
@@ -121,6 +123,10 @@ class QueryTest extends TestCase
      */
     public function testContainResultFetchingOneLevel($strategy)
     {
+        $assoc = new BelongsTo('Test');
+        if (!$assoc->validStrategy($strategy)) {
+            return;
+        }
         $table = TableRegistry::get('articles', ['table' => 'articles']);
         $table->belongsTo('authors', ['strategy' => $strategy]);
 
@@ -1283,6 +1289,10 @@ class QueryTest extends TestCase
      */
     public function testHydrateBelongsTo($strategy)
     {
+        $assoc = new BelongsTo('Test');
+        if (!$assoc->validStrategy($strategy)) {
+            return;
+        }
         $table = TableRegistry::get('articles');
         TableRegistry::get('authors');
         $table->belongsTo('authors', ['strategy' => $strategy]);
@@ -1308,6 +1318,10 @@ class QueryTest extends TestCase
      */
     public function testHydrateDeep($strategy)
     {
+        $assoc = new BelongsTo('Test');
+        if (!$assoc->validStrategy($strategy)) {
+            return;
+        }
         $table = TableRegistry::get('authors');
         $article = TableRegistry::get('articles');
         $table->hasMany('articles', [
@@ -2206,6 +2220,10 @@ class QueryTest extends TestCase
      */
     public function testRepeatedAssociationAliases($strategy)
     {
+        $assoc = new BelongsTo('Test');
+        if (!$assoc->validStrategy($strategy)) {
+            return;
+        }
         $table = TableRegistry::get('ArticlesTags');
         $table->belongsTo('Articles', ['strategy' => $strategy]);
         $table->belongsTo('Tags', ['strategy' => $strategy]);
@@ -2231,6 +2249,10 @@ class QueryTest extends TestCase
      */
     public function testAssociationKeyPresent()
     {
+        $assoc = new HasOne('Test');
+        if (!$assoc->validStrategy('select')) {
+            return;
+        }
         $table = TableRegistry::get('Articles');
         $table->hasOne('ArticlesTags', ['strategy' => 'select']);
         $article = $table->find()->where(['id' => 3])

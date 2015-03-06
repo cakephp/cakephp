@@ -115,6 +115,13 @@ class BelongsToMany extends Association
     protected $_through;
 
     /**
+     * Valid strategies for this type of association
+     *
+     * @var array
+     */
+    protected $_validStrategies = [parent::STRATEGY_SELECT, parent::STRATEGY_SUBQUERY];
+
+    /**
      * Sets the name of the field representing the foreign key to the target table.
      * If no parameters are passed current field is returned
      *

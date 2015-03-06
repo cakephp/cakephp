@@ -120,6 +120,13 @@ class HasManyTest extends TestCase
         $this->assertFalse($assoc->requiresKeys());
         $assoc->strategy(HasMany::STRATEGY_SELECT);
         $this->assertTrue($assoc->requiresKeys());
+        $errorUsingJoin = false;
+        try {
+            $assoc->strategy(HasMany::STRATEGY_JOIN);
+        } catch (\InvalidArgumentException $e) {
+            $errorUsingJoin = true;
+        }
+        $this->assertTrue($errorUsingJoin);   
     }
 
     /**
