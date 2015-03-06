@@ -256,7 +256,7 @@ class CompositeKeyTest extends TestCase
      */
     public function testBelongsToEager($strategy)
     {
-        $assoc = new HasOne('Test');
+        $assoc = new BelongsTo('Test');
         if (!$assoc->validStrategy($strategy)) {
             return;
         }
