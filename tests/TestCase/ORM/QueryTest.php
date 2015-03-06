@@ -2361,6 +2361,8 @@ class QueryTest extends TestCase
         $copy = $query->cleanCopy();
 
         $this->assertNotSame($copy, $query);
+        $this->assertNotSame($copy->eagerLoader(), $query->eagerLoader());
+        $this->assertNotEmpty($copy->eagerLoader()->contain());
         $this->assertNull($copy->clause('offset'));
         $this->assertNull($copy->clause('limit'));
         $this->assertNull($copy->clause('order'));
