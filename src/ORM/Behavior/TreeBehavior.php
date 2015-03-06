@@ -449,7 +449,7 @@ class TreeBehavior extends Behavior
      *  return the key out of the provided row.
      * - valuePath: A dot separated path to fetch the field to use for the array value, or a closure to
      *  return the value out of the provided row.
-     *  - spacer: A string to be used as prefix for denoting the depth in the tree for each item
+     * - spacer: A string to be used as prefix for denoting the depth in the tree for each item
      *
      * @param \Cake\ORM\Query $query Query.
      * @param array $options Array of options as described above
