@@ -42,15 +42,20 @@ class SqlserverSchema extends BaseSchema
      */
     public function describeColumnSql($tableName, $config)
     {
-        $sql = "SELECT DISTINCT TABLE_SCHEMA AS [schema], COLUMN_NAME AS [name], DATA_TYPE AS [type],
-            IS_NULLABLE AS [null], COLUMN_DEFAULT AS [default],
-            CHARACTER_MAXIMUM_LENGTH AS [char_length],
-            NUMERIC_PRECISION AS [precision],
-            NUMERIC_SCALE AS [scale],
-            '' AS [comment], ORDINAL_POSITION AS [ordinal_position]
-        FROM INFORMATION_SCHEMA.COLUMNS
-        WHERE TABLE_NAME = ? AND TABLE_SCHEMA = ?
-        ORDER BY ordinal_position";
+        $sql = "SELECT DISTINCT
+            AC.name AS [name],
+            TY.name AS [type],
+            AC.max_length AS [char_length],
+            AC.precision AS [precision],
+            AC.scale AS [scale],
+            AC.is_identity AS [autoincrement],
+            AC.is_nullable AS [null],
+            OBJECT_DEFINITION(AC.default_object_id) AS [default]
+            FROM sys.[tables] T
+            INNER JOIN sys.[schemas] S ON S.[schema_id] = T.[schema_id]
+            INNER JOIN sys.[all_columns] AC ON T.[object_id] = AC.[object_id]
+            INNER JOIN sys.[types] TY ON TY.[user_type_id] = AC.[user_type_id]
+            WHERE T.[name] = ? AND S.[name] = ?";
 
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
         return [$sql, [$tableName, $schema]];
@@ -146,13 +151,15 @@ class SqlserverSchema extends BaseSchema
         if (!empty($row['default'])) {
             $row['default'] = trim($row['default'], '()');
         }
-
+        if (!empty($row['autoincrement'])) {
+            $field['autoIncrement'] = true;
+        }
         if ($field['type'] === 'boolean') {
             $row['default'] = (int)$row['default'];
         }
 
         $field += [
-            'null' => $row['null'] === 'YES' ? true : false,
+            'null' => $row['null'] === '1' ? true : false,
             'default' => $row['default'],
         ];
         $table->addColumn($row['name'], $field);
