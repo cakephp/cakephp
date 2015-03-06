@@ -18,7 +18,6 @@ App::uses('CakeLog', 'Log');
 App::uses('Dispatcher', 'Routing');
 App::uses('Router', 'Routing');
 App::uses('Set', 'Utility');
-App::uses('CakeLog', 'Log');
 
 /**
  * Object class provides a few generic methods used in several subclasses.
