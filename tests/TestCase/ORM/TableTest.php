@@ -55,7 +55,7 @@ class TableTest extends TestCase
         'core.authors',
         'core.tags',
         'core.articles_tags',
-        'core.site_authors',
+        'core.composite_increments',
         'core.site_articles',
     ];
 
@@ -2000,11 +2000,11 @@ class TableTest extends TestCase
     public function testSaveNewCompositeKeyIncrement()
     {
         $this->skipIfSqlite();
-        $articles = TableRegistry::get('SiteAuthors');
-        $article = $articles->newEntity(['site_id' => 3, 'name' => 'new guy']);
-        $this->assertSame($article, $articles->save($article));
-        $this->assertNotEmpty($article->id, 'Primary key should have been populated');
-        $this->assertSame(3, $article->site_id);
+        $table = TableRegistry::get('CompositeIncrements');
+        $thing = $table->newEntity(['account_id' => 3, 'name' => 'new guy']);
+        $this->assertSame($thing, $table->save($thing));
+        $this->assertNotEmpty($thing->id, 'Primary key should have been populated');
+        $this->assertSame(3, $thing->account_id);
     }
 
     /**

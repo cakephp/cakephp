@@ -16,7 +16,7 @@ namespace Cake\Test\Fixture;
 
 use Cake\TestSuite\Fixture\TestFixture;
 
-class SiteAuthorsFixture extends TestFixture
+class CompositeIncrementsFixture extends TestFixture
 {
 
     /**
@@ -25,10 +25,10 @@ class SiteAuthorsFixture extends TestFixture
      * @var array
      */
     public $fields = [
-        'id' => ['type' => 'integer'],
+        'id' => ['type' => 'integer', 'null' => false, 'autoIncrement' => true],
+        'account_id' => ['type' => 'integer', 'null' => false],
         'name' => ['type' => 'string', 'default' => null],
-        'site_id' => ['type' => 'integer', 'null' => true],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id', 'site_id']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id', 'account_id']]]
     ];
 
     /**
@@ -37,9 +37,5 @@ class SiteAuthorsFixture extends TestFixture
      * @var array
      */
     public $records = [
-        ['id' => 1, 'name' => 'mark', 'site_id' => 1],
-        ['id' => 2, 'name' => 'juan', 'site_id' => 2],
-        ['id' => 3, 'name' => 'jose', 'site_id' => 2],
-        ['id' => 4, 'name' => 'andy', 'site_id' => 1]
     ];
 }
