@@ -37,9 +37,9 @@ class SiteAuthorsFixture extends TestFixture
      * @var array
      */
     public $records = [
-        ['id' => 1, 'name' => 'mark', 'site_id' => 1],
-        ['id' => 2, 'name' => 'juan', 'site_id' => 2],
-        ['id' => 3, 'name' => 'jose', 'site_id' => 2],
-        ['id' => 4, 'name' => 'andy', 'site_id' => 1]
+        ['name' => 'mark', 'site_id' => 1],
+        ['name' => 'juan', 'site_id' => 2],
+        ['name' => 'jose', 'site_id' => 2],
+        ['name' => 'andy', 'site_id' => 1]
     ];
 }
