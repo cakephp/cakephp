@@ -1593,10 +1593,7 @@ class TableTest extends TestCase
      */
     public function testSavePrimaryKeyEntityExists()
     {
-        $this->skipIf(
-            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
-            'SQLServer does not like setting an id on IDENTITY fields'
-        );
+        $this->skipIfSqlServer();
         $table = $this->getMock(
             'Cake\ORM\Table',
             ['exists'],
@@ -1623,10 +1620,7 @@ class TableTest extends TestCase
      */
     public function testSavePrimaryKeyEntityNoExists()
     {
-        $this->skipIf(
-            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
-            'SQLServer does not like setting an id on IDENTITY fields'
-        );
+        $this->skipIfSqlServer();
         $table = $this->getMock(
             'Cake\ORM\Table',
             ['exists'],
@@ -1998,11 +1992,14 @@ class TableTest extends TestCase
     /**
      * Test that saving into composite primary keys where one column is missing & autoIncrement works.
      *
+     * SQLite is skipped because it doesn't support autoincrement composite keys.
+     *
      * @group save
      * @return void
      */
     public function testSaveNewCompositeKeyIncrement()
     {
+        $this->skipIfSqlite();
         $articles = TableRegistry::get('SiteAuthors');
         $article = $articles->newEntity(['site_id' => 3, 'name' => 'new guy']);
         $this->assertSame($article, $articles->save($article));
@@ -4059,5 +4056,29 @@ class TableTest extends TestCase
         Plugin::load('TestPlugin');
         $table = TableRegistry::get('TestPlugin.Comments');
         $this->assertEquals('TestPlugin.Comments', $table->newEntity()->source());
+    }
+
+    /**
+     * Helper method to skip tests when connection is SQLite.
+     *
+     * @return void
+     */
+    public function skipIfSqlite() {
+        $this->skipIf(
+            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlite,
+            'SQLite does not support the requrirements of this test.'
+        );
+    }
+
+    /**
+     * Helper method to skip tests when connection is SQLServer.
+     *
+     * @return void
+     */
+    public function skipIfSqlServer() {
+        $this->skipIf(
+            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
+            'SQLServer does not support the requirements of this test.'
+        );
     }
 }
