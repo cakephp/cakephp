@@ -422,7 +422,7 @@ abstract class Association
      * Checks if a given strategy is valid for the association type.
      *
      * @param string $name The strategy type.
-     * @return boolean
+     * @return bool
      */
     public function validStrategy($name)
     {

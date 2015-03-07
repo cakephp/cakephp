@@ -144,7 +144,7 @@ class BelongsToManyTest extends TestCase
         } catch (\InvalidArgumentException $e) {
             $errorUsingJoin = true;
         }
-        $this->assertTrue($errorUsingJoin);   
+        $this->assertTrue($errorUsingJoin);
     }
 
     /**
