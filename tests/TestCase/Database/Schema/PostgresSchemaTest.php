@@ -346,6 +346,33 @@ SQL;
     }
 
     /**
+     * Test describing a table with postgres and composite keys
+     *
+     * @return void
+     */
+    public function testDescribeTableCompositeKey()
+    {
+        $this->_needsConnection();
+        $connection = ConnectionManager::get('test');
+        $sql = <<<SQL
+CREATE TABLE schema_composite (
+    "id" SERIAL,
+    "site_id" INTEGER NOT NULL,
+    "name" VARCHAR(255),
+    PRIMARY KEY("id", "site_id")
+);
+SQL;
+        $connection->execute($sql);
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('schema_composite');
+        $connection->execute('DROP TABLE schema_composite');
+
+        $this->assertEquals(['id', 'site_id'], $result->primaryKey());
+        $this->assertNull($result->column('site_id')['autoIncrement'], 'site_id should not be autoincrement');
+        $this->assertTrue($result->column('id')['autoIncrement'], 'id should be autoincrement');
+    }
+
+    /**
      * Test describing a table containing defaults with Postgres
      *
      * @return void

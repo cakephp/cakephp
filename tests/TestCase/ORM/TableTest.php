@@ -54,7 +54,9 @@ class TableTest extends TestCase
         'core.articles',
         'core.authors',
         'core.tags',
-        'core.articles_tags'
+        'core.articles_tags',
+        'core.composite_increments',
+        'core.site_articles',
     ];
 
     /**
@@ -1591,10 +1593,7 @@ class TableTest extends TestCase
      */
     public function testSavePrimaryKeyEntityExists()
     {
-        $this->skipIf(
-            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
-            'SQLServer does not like setting an id on IDENTITY fields'
-        );
+        $this->skipIfSqlServer();
         $table = $this->getMock(
             'Cake\ORM\Table',
             ['exists'],
@@ -1621,10 +1620,7 @@ class TableTest extends TestCase
      */
     public function testSavePrimaryKeyEntityNoExists()
     {
-        $this->skipIf(
-            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
-            'SQLServer does not like setting an id on IDENTITY fields'
-        );
+        $this->skipIfSqlServer();
         $table = $this->getMock(
             'Cake\ORM\Table',
             ['exists'],
@@ -1976,6 +1972,39 @@ class TableTest extends TestCase
             ]
         ]);
         $table->save($entity);
+    }
+
+    /**
+     * Test that you cannot save rows with composite keys if some columns are missing.
+     *
+     * @group save
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Cannot insert row, some of the primary key values are missing
+     * @return void
+     */
+    public function testSaveNewErrorCompositeKeyNoIncrement()
+    {
+        $articles = TableRegistry::get('SiteArticles');
+        $article = $articles->newEntity(['site_id' => 1, 'author_id' => 1, 'title' => 'testing']);
+        $articles->save($article);
+    }
+
+    /**
+     * Test that saving into composite primary keys where one column is missing & autoIncrement works.
+     *
+     * SQLite is skipped because it doesn't support autoincrement composite keys.
+     *
+     * @group save
+     * @return void
+     */
+    public function testSaveNewCompositeKeyIncrement()
+    {
+        $this->skipIfSqlite();
+        $table = TableRegistry::get('CompositeIncrements');
+        $thing = $table->newEntity(['account_id' => 3, 'name' => 'new guy']);
+        $this->assertSame($thing, $table->save($thing));
+        $this->assertNotEmpty($thing->id, 'Primary key should have been populated');
+        $this->assertSame(3, $thing->account_id);
     }
 
     /**
@@ -4027,5 +4056,31 @@ class TableTest extends TestCase
         Plugin::load('TestPlugin');
         $table = TableRegistry::get('TestPlugin.Comments');
         $this->assertEquals('TestPlugin.Comments', $table->newEntity()->source());
+    }
+
+    /**
+     * Helper method to skip tests when connection is SQLite.
+     *
+     * @return void
+     */
+    public function skipIfSqlite()
+    {
+        $this->skipIf(
+            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlite,
+            'SQLite does not support the requrirements of this test.'
+        );
+    }
+
+    /**
+     * Helper method to skip tests when connection is SQLServer.
+     *
+     * @return void
+     */
+    public function skipIfSqlServer()
+    {
+        $this->skipIf(
+            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
+            'SQLServer does not support the requirements of this test.'
+        );
     }
 }

@@ -1479,8 +1479,9 @@ class Table implements RepositoryInterface, EventListenerInterface
         $data = $filteredKeys + $data;
 
         if (count($primary) > 1) {
+            $schema = $this->schema();
             foreach ($primary as $k => $v) {
-                if (!isset($data[$k])) {
+                if (!isset($data[$k]) && empty($schema->column($k)['autoIncrement'])) {
                     $msg = 'Cannot insert row, some of the primary key values are missing. ';
                     $msg .= sprintf(
                         'Got (%s), expecting (%s)',
