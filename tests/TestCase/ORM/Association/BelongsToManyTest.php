@@ -141,6 +141,19 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Tests that BelongsToMany can't use the join strategy
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid strategy "join" was provided
+     * @return void
+     */
+    public function testStrategyFailure()
+    {
+        $assoc = new BelongsToMany('Test');
+        $assoc->strategy(BelongsToMany::STRATEGY_JOIN);
+    }
+
+    /**
      * Tests the junction method
      *
      * @return void

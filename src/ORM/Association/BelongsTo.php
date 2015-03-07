@@ -33,6 +33,13 @@ class BelongsTo extends Association
     use SelectableAssociationTrait;
 
     /**
+     * Valid strategies for this type of association
+     *
+     * @var array
+     */
+    protected $_validStrategies = [self::STRATEGY_JOIN, self::STRATEGY_SELECT];
+
+    /**
      * Sets the name of the field representing the foreign key to the target table.
      * If no parameters are passed current field is returned
      *

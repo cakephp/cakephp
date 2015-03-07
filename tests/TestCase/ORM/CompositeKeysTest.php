@@ -63,11 +63,41 @@ class CompositeKeyTest extends TestCase
     }
 
     /**
+     * Data provider for the two types of strategies HasOne implements
+     *
+     * @return void
+     */
+    public function strategiesProviderHasOne()
+    {
+        return [['join'], ['select']];
+    }
+
+    /**
      * Data provider for the two types of strategies HasMany implements
      *
      * @return void
      */
-    public function strategiesProvider()
+    public function strategiesProviderHasMany()
+    {
+        return [['subquery'], ['select']];
+    }
+
+    /**
+     * Data provider for the two types of strategies BelongsTo implements
+     *
+     * @return void
+     */
+    public function strategiesProviderBelongsTo()
+    {
+        return [['join'], ['select']];
+    }
+
+    /**
+     * Data provider for the two types of strategies BelongsToMany implements
+     *
+     * @return void
+     */
+    public function strategiesProviderBelongsToMany()
     {
         return [['subquery'], ['select']];
     }
@@ -76,7 +106,7 @@ class CompositeKeyTest extends TestCase
      * Tests that HasMany associations are correctly eager loaded and results
      * correctly nested when multiple foreignKeys are used
      *
-     * @dataProvider strategiesProvider
+     * @dataProvider strategiesProviderHasMany
      * @return void
      */
     public function testHasManyEager($strategy)
@@ -152,7 +182,7 @@ class CompositeKeyTest extends TestCase
      * Tests that BelongsToMany associations are correctly eager loaded when multiple
      * foreignKeys are used
      *
-     * @dataProvider strategiesProvider
+     * @dataProvider strategiesProviderBelongsToMany
      * @return void
      */
     public function testBelongsToManyEager($strategy)
@@ -237,19 +267,9 @@ class CompositeKeyTest extends TestCase
     }
 
     /**
-     * Provides strategies for associations that can be joined
-     *
-     * @return void
-     */
-    public function internalStategiesProvider()
-    {
-        return [['join'], ['select'], ['subquery']];
-    }
-
-    /**
      * Tests loding belongsTo with composite keys
      *
-     * @dataProvider internalStategiesProvider
+     * @dataProvider strategiesProviderBelongsTo
      * @return void
      */
     public function testBelongsToEager($strategy)
@@ -298,7 +318,7 @@ class CompositeKeyTest extends TestCase
     /**
      * Tests loding hasOne with composite keys
      *
-     * @dataProvider internalStategiesProvider
+     * @dataProvider strategiesProviderHasOne
      * @return void
      */
     public function testHasOneEager($strategy)
