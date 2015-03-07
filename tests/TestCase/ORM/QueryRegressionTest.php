@@ -780,7 +780,9 @@ class QueryRegressionTest extends TestCase
     public function testHasManyEagerLoadingUniqueKey()
     {
         $table = TableRegistry::get('ArticlesTags');
-        $table->belongsTo('Articles');
+        $table->belongsTo('Articles', [
+            'strategy' => 'select'
+        ]);
 
         $result = $table->find()
             ->contain(['Articles' => function ($q) {

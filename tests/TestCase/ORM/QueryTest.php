@@ -19,8 +19,6 @@ use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
-use Cake\ORM\Association\BelongsTo;
-use Cake\ORM\Association\HasOne;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;

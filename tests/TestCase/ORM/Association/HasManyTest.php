@@ -120,13 +120,19 @@ class HasManyTest extends TestCase
         $this->assertFalse($assoc->requiresKeys());
         $assoc->strategy(HasMany::STRATEGY_SELECT);
         $this->assertTrue($assoc->requiresKeys());
-        $errorUsingJoin = false;
-        try {
-            $assoc->strategy(HasMany::STRATEGY_JOIN);
-        } catch (\InvalidArgumentException $e) {
-            $errorUsingJoin = true;
-        }
-        $this->assertTrue($errorUsingJoin);
+    }
+
+    /**
+     * Tests that HasMany can't use the join strategy
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid strategy "join" was provided
+     * @return void
+     */
+    public function testStrategyFailure()
+    {
+        $assoc = new HasMany('Test');
+        $assoc->strategy(HasMany::STRATEGY_JOIN);
     }
 
     /**
