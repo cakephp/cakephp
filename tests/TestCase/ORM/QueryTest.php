@@ -105,28 +105,44 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Provides strategies for associations that can be joined
+     * Data provider for the two types of strategies HasMany implements
      *
      * @return void
      */
-    public function internalStategiesProvider()
+    public function strategiesProviderHasMany()
     {
-        return [['join'], ['select'], ['subquery']];
+        return [['subquery'], ['select']];
+    }
+
+    /**
+     * Data provider for the two types of strategies BelongsTo implements
+     *
+     * @return void
+     */
+    public function strategiesProviderBelongsTo()
+    {
+        return [['join'], ['select']];
+    }
+
+    /**
+     * Data provider for the two types of strategies BelongsToMany implements
+     *
+     * @return void
+     */
+    public function strategiesProviderBelongsToMany()
+    {
+        return [['subquery'], ['select']];
     }
 
     /**
      * Tests that results are grouped correctly when using contain()
      * and results are not hydrated
      *
-     * @dataProvider internalStategiesProvider
+     * @dataProvider strategiesProviderBelongsTo
      * @return void
      */
     public function testContainResultFetchingOneLevel($strategy)
     {
-        $assoc = new BelongsTo('Test');
-        if (!$assoc->validStrategy($strategy)) {
-            return;
-        }
         $table = TableRegistry::get('articles', ['table' => 'articles']);
         $table->belongsTo('authors', ['strategy' => $strategy]);
 
@@ -175,22 +191,12 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Data provider for the two types of strategies HasMany implements
-     *
-     * @return void
-     */
-    public function strategiesProvider()
-    {
-        return [['subquery'], ['select']];
-    }
-
-    /**
      * Tests that HasMany associations are correctly eager loaded and results
      * correctly nested when no hydration is used
      * Also that the query object passes the correct parent model keys to the
      * association objects in order to perform eager loading with select strategy
      *
-     * @dataProvider strategiesProvider
+     * @dataProvider strategiesProviderHasMany
      * @return void
      */
     public function testHasManyEagerLoadingNoHydration($strategy)
@@ -269,7 +275,7 @@ class QueryTest extends TestCase
      * Tests that it is possible to count results containing hasMany associations
      * both hydrating and not hydrating the results.
      *
-     * @dataProvider strategiesProvider
+     * @dataProvider strategiesProviderHasMany
      * @return void
      */
     public function testHasManyEagerLoadingCount($strategy)
@@ -300,7 +306,7 @@ class QueryTest extends TestCase
     /**
      * Tests that it is possible to set fields & order in a hasMany result set
      *
-     * @dataProvider strategiesProvider
+     * @dataProvider strategiesProviderHasMany
      * @return void
      */
     public function testHasManyEagerLoadingFieldsAndOrderNoHydration($strategy)
@@ -352,7 +358,7 @@ class QueryTest extends TestCase
     /**
      * Tests that deep associations can be eagerly loaded
      *
-     * @dataProvider strategiesProvider
+     * @dataProvider strategiesProviderHasMany
      * @return void
      */
     public function testHasManyEagerLoadingDeep($strategy)
@@ -426,7 +432,7 @@ class QueryTest extends TestCase
      * Tests that hasMany associations can be loaded even when related to a secondary
      * model in the query
      *
-     * @dataProvider strategiesProvider
+     * @dataProvider strategiesProviderHasMany
      * @return void
      */
     public function testHasManyEagerLoadingFromSecondaryTable($strategy)
@@ -532,7 +538,7 @@ class QueryTest extends TestCase
      * Also that the query object passes the correct parent model keys to the
      * association objects in order to perform eager loading with select strategy
      *
-     * @dataProvider strategiesProvider
+     * @dataProvider strategiesProviderBelongsToMany
      * @return void
      */
     public function testBelongsToManyEagerLoadingNoHydration($strategy)
@@ -1284,15 +1290,11 @@ class QueryTest extends TestCase
     /**
      * Tests that belongsTo relations are correctly hydrated
      *
-     * @dataProvider internalStategiesProvider
+     * @dataProvider strategiesProviderBelongsTo
      * @return void
      */
     public function testHydrateBelongsTo($strategy)
     {
-        $assoc = new BelongsTo('Test');
-        if (!$assoc->validStrategy($strategy)) {
-            return;
-        }
         $table = TableRegistry::get('articles');
         TableRegistry::get('authors');
         $table->belongsTo('authors', ['strategy' => $strategy]);
@@ -1313,15 +1315,11 @@ class QueryTest extends TestCase
     /**
      * Tests that deeply nested associations are also hydrated correctly
      *
-     * @dataProvider internalStategiesProvider
+     * @dataProvider strategiesProviderBelongsTo
      * @return void
      */
     public function testHydrateDeep($strategy)
     {
-        $assoc = new BelongsTo('Test');
-        if (!$assoc->validStrategy($strategy)) {
-            return;
-        }
         $table = TableRegistry::get('authors');
         $article = TableRegistry::get('articles');
         $table->hasMany('articles', [
@@ -2215,15 +2213,11 @@ class QueryTest extends TestCase
      * Tests that it is possible to use the same association aliases in the association
      * chain for contain
      *
-     * @dataProvider internalStategiesProvider
+     * @dataProvider strategiesProviderBelongsTo
      * @return void
      */
     public function testRepeatedAssociationAliases($strategy)
     {
-        $assoc = new BelongsTo('Test');
-        if (!$assoc->validStrategy($strategy)) {
-            return;
-        }
         $table = TableRegistry::get('ArticlesTags');
         $table->belongsTo('Articles', ['strategy' => $strategy]);
         $table->belongsTo('Tags', ['strategy' => $strategy]);
@@ -2249,10 +2243,6 @@ class QueryTest extends TestCase
      */
     public function testAssociationKeyPresent()
     {
-        $assoc = new HasOne('Test');
-        if (!$assoc->validStrategy('select')) {
-            return;
-        }
         $table = TableRegistry::get('Articles');
         $table->hasOne('ArticlesTags', ['strategy' => 'select']);
         $article = $table->find()->where(['id' => 3])

@@ -408,7 +408,7 @@ abstract class Association
     public function strategy($name = null)
     {
         if ($name !== null) {
-            if (!$this->validStrategy($name)) {
+            if (!in_array($name, $this->_validStrategies)) {
                 throw new \InvalidArgumentException(
                     sprintf('Invalid strategy "%s" was provided', $name)
                 );
@@ -416,17 +416,6 @@ abstract class Association
             $this->_strategy = $name;
         }
         return $this->_strategy;
-    }
-
-    /**
-     * Checks if a given strategy is valid for the association type.
-     *
-     * @param string $name The strategy type.
-     * @return bool
-     */
-    public function validStrategy($name)
-    {
-        return in_array($name, $this->_validStrategies);
     }
 
     /**
