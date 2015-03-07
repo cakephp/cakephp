@@ -38,7 +38,7 @@ class HasOne extends Association
      *
      * @var array
      */
-    protected $_validStrategies = [parent::STRATEGY_JOIN];
+    protected $_validStrategies = [parent::STRATEGY_JOIN, parent::STRATEGY_SELECT];
 
     /**
      * Sets the name of the field representing the foreign key to the target table.

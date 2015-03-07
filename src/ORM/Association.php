@@ -426,10 +426,7 @@ abstract class Association
      */
     public function validStrategy($name)
     {
-        if (in_array($name, $this->_validStrategies)) {
-            return true;
-        }
-        return false;
+        return in_array($name, $this->_validStrategies);
     }
 
     /**
