@@ -232,6 +232,16 @@ CONSTRAINT "author_idx" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("
 SQL;
         $connection->execute($table);
         $connection->execute('CREATE INDEX "created_idx" ON "schema_articles" ("created")');
+
+        $sql = <<<SQL
+CREATE TABLE schema_composite (
+    "id" INTEGER NOT NULL,
+    "site_id" INTEGER NOT NULL,
+    "name" VARCHAR(255),
+    PRIMARY KEY("id", "site_id")
+);
+SQL;
+        $connection->execute($sql);
     }
 
     /**
@@ -336,20 +346,10 @@ SQL;
      */
     public function testDescribeTableCompositeKey()
     {
-        $this->_needsConnection();
         $connection = ConnectionManager::get('test');
-        $sql = <<<SQL
-CREATE TABLE schema_composite (
-    "id" INTEGER NOT NULL,
-    "site_id" INTEGER NOT NULL,
-    "name" VARCHAR(255),
-    PRIMARY KEY("id", "site_id")
-);
-SQL;
-        $connection->execute($sql);
+        $this->_createTables($connection);
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_composite');
-        $connection->execute('DROP TABLE schema_composite');
 
         $this->assertEquals(['id', 'site_id'], $result->primaryKey());
         $this->assertNull($result->column('site_id')['autoIncrement'], 'site_id should not be autoincrement');
