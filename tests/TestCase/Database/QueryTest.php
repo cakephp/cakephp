@@ -1479,6 +1479,11 @@ class QueryTest extends TestCase
             ->from(['a' => 'articles'])
             ->execute();
         $this->assertCount(2, $result);
+        $expected = [
+            ['id' => 1, 'author_id' => 1],
+            ['id' => 2, 'author_id' => 3],
+        ];
+        $this->assertEquals($expected, $result->fetchAll('assoc'));
     }
 
     /**

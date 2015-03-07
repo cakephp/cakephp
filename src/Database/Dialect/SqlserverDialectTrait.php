@@ -72,7 +72,7 @@ trait SqlserverDialectTrait
             return $this->_pagingSubquery($query, $limit, $offset);
         }
 
-        return $query;
+        return $this->_transformDistinct($query);
     }
 
     /**
@@ -124,6 +124,57 @@ trait SqlserverDialectTrait
         $original->decorateResults(function ($row) {
             if (isset($row['_cake_page_rownum_'])) {
                 unset($row['_cake_page_rownum_']);
+            }
+            return $row;
+        });
+
+        return $outer;
+    }
+
+    /**
+     * Returns the passed query after rewriting the DISTINCT clause, so that drivers
+     * that do not support the "ON" part can provide the actual way it should be done
+     *
+     * @param Query $original The query to be transformed
+     * @return Query
+     */
+    protected function _transformDistinct($original)
+    {
+        if (!is_array($original->clause('distinct'))) {
+            return $original;
+        }
+
+        $query = clone $original;
+        $distinct = $query->clause('distinct');
+        $query->distinct(false);
+
+        $order = new OrderByExpression($distinct);
+        $query
+            ->select(function ($q) use ($distinct, $order) {
+                $over = $q->newExpr('ROW_NUMBER() OVER')
+                    ->add('(PARTITION BY')
+                    ->add($q->newExpr()->add($distinct)->type(','))
+                    ->add($order)
+                    ->add(')')
+                    ->type(' ');
+                return [
+                    '_cake_distinct_pivot_' => $over
+                ];
+            })
+            ->limit(null)
+            ->offset(null)
+            ->order([], true);
+
+        $outer = new Query($query->connection());
+        $outer->select('*')
+            ->from(['_cake_distinct_' => $query])
+            ->where(['_cake_distinct_pivot_' => 1]);
+
+        // Decorate the original query as that is what the
+        // end developer will be calling execute() on originally.
+        $original->decorateResults(function ($row) {
+            if (isset($row['_cake_distinct_pivot_'])) {
+                unset($row['_cake_distinct_pivot_']);
             }
             return $row;
         });
