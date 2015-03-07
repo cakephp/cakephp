@@ -45,14 +45,14 @@ class HasMany extends Association
      *
      * @var string
      */
-    protected $_strategy = parent::STRATEGY_SELECT;
+    protected $_strategy = self::STRATEGY_SELECT;
 
     /**
      * Valid strategies for this type of association
      *
      * @var array
      */
-    protected $_validStrategies = [parent::STRATEGY_SELECT, parent::STRATEGY_SUBQUERY];
+    protected $_validStrategies = [self::STRATEGY_SELECT, self::STRATEGY_SUBQUERY];
 
     /**
      * Returns whether or not the passed table is the owning side for this

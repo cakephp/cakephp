@@ -61,7 +61,7 @@ class BelongsToMany extends Association
      *
      * @var string
      */
-    protected $_strategy = parent::STRATEGY_SELECT;
+    protected $_strategy = self::STRATEGY_SELECT;
 
     /**
      * Junction table instance
@@ -119,7 +119,7 @@ class BelongsToMany extends Association
      *
      * @var array
      */
-    protected $_validStrategies = [parent::STRATEGY_SELECT, parent::STRATEGY_SUBQUERY];
+    protected $_validStrategies = [self::STRATEGY_SELECT, self::STRATEGY_SUBQUERY];
 
     /**
      * Sets the name of the field representing the foreign key to the target table.
