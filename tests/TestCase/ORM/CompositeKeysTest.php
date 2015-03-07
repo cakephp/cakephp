@@ -15,8 +15,6 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Datasource\ConnectionManager;
-use Cake\ORM\Association\BelongsTo;
-use Cake\ORM\Association\HasOne;
 use Cake\ORM\Entity;
 use Cake\ORM\Marshaller;
 use Cake\ORM\Query;
