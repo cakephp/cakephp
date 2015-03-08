@@ -1477,10 +1477,11 @@ class QueryTest extends TestCase
             ->select(['id', 'author_id'])
             ->distinct(['author_id'])
             ->from(['a' => 'articles'])
+            ->order(['id' => 'DESC'])
             ->execute();
         $this->assertCount(2, $result);
         $expected = [
-            ['id' => 1, 'author_id' => 1],
+            ['id' => 3, 'author_id' => 1],
             ['id' => 2, 'author_id' => 3],
         ];
         $this->assertEquals($expected, $result->fetchAll('assoc'));
