@@ -1477,7 +1477,7 @@ class QueryTest extends TestCase
             ->select(['id', 'author_id'])
             ->distinct(['author_id'])
             ->from(['a' => 'articles'])
-            ->order(['id' => 'ASC'])
+            ->order(['author_id' => 'ASC'])
             ->execute();
         $this->assertCount(2, $result);
         $results = $result->fetchAll('assoc');
