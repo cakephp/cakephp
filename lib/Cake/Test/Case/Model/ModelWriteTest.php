@@ -388,6 +388,38 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * Test save() resets the whitelist after afterSave
+ *
+ * @return void
+ */
+	public function testSaveResetWhitelistOnSuccess() {
+		$this->loadFixtures('Post');
+
+		$callback = array($this, 'callbackForWhitelistReset');
+		$model = ClassRegistry::init('Post');
+		$model->whitelist = array('author_id', 'title', 'body');
+		$model->getEventManager()->attach($callback, 'Model.afterSave');
+		$data = array(
+			'title' => 'New post',
+			'body' => 'Post body',
+			'author_id' => 1
+		);
+		$result = $model->save($data);
+		$this->assertNotEmpty($result);
+	}
+
+/**
+ * Callback for testing whitelist in afterSave
+ *
+ * @param Model $model The model having save called.
+ * @return void
+ */
+	public function callbackForWhitelistReset($event) {
+		$expected = array('author_id', 'title', 'body', 'updated', 'created');
+		$this->assertEquals($expected, $event->subject()->whitelist);
+	}
+
+/**
  * testSaveWithCounterCache method
  *
  * @return void

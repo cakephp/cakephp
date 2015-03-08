@@ -1941,9 +1941,8 @@ class Model extends Object implements CakeEventListener {
 			$this->_saveMulti($joined, $this->id, $db);
 		}
 
-		$this->whitelist = $_whitelist;
-
 		if (!$success) {
+			$this->whitelist = $_whitelist;
 			return $success;
 		}
 
@@ -1964,6 +1963,7 @@ class Model extends Object implements CakeEventListener {
 
 		$this->_clearCache();
 		$this->validationErrors = array();
+		$this->whitelist = $_whitelist;
 		$this->data = false;
 
 		return $success;
