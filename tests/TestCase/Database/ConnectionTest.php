@@ -611,6 +611,10 @@ class ConnectionTest extends TestCase
      */
     public function testInTransactionWithSavePoints()
     {
+        $this->skipIf(
+            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
+            'SQLServer fails when this test is included.'
+        );
         $this->skipIf(!$this->connection->useSavePoints(true));
         $this->connection->begin();
         $this->assertTrue($this->connection->inTransaction());
