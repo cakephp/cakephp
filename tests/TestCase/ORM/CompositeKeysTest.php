@@ -683,5 +683,4 @@ class CompositeKeyTest extends TestCase
             'SQLite does not support the requrirements of this test.'
         );
     }
-
 }
