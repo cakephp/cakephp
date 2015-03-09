@@ -43,6 +43,7 @@ class SqlserverSchema extends BaseSchema
     public function describeColumnSql($tableName, $config)
     {
         $sql = "SELECT DISTINCT
+            AC.column_id AS [column_id],
             AC.name AS [name],
             TY.name AS [type],
             AC.max_length AS [char_length],
@@ -55,7 +56,8 @@ class SqlserverSchema extends BaseSchema
             INNER JOIN sys.[schemas] S ON S.[schema_id] = T.[schema_id]
             INNER JOIN sys.[all_columns] AC ON T.[object_id] = AC.[object_id]
             INNER JOIN sys.[types] TY ON TY.[user_type_id] = AC.[user_type_id]
-            WHERE T.[name] = ? AND S.[name] = ?";
+            WHERE T.[name] = ? AND S.[name] = ?
+            ORDER BY column_id";
 
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
         return [$sql, [$tableName, $schema]];
