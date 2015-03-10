@@ -22,4 +22,30 @@ use Cake\Console\Shell;
  */
 class PluginShell extends Shell
 {
+
+    /**
+     * Contains tasks to load and instantiate
+     *
+     * @var array
+     */
+    public $tasks = ['Assets'];
+
+    /**
+     * Gets the option parser instance and configures it.
+     *
+     * @return \Cake\Console\ConsoleOptionParser
+     */
+    public function getOptionParser()
+    {
+        $parser = parent::getOptionParser();
+
+        $parser->description(
+            'Plugin Shell perform various tasks related to plugin.'
+        )->addSubcommand('assets', [
+            'help' => 'Symlink / copy plugin assets to app\'s webroot',
+            'parser' => $this->Assets->getOptionParser()
+        ]);
+
+        return $parser;
+    }
 }
