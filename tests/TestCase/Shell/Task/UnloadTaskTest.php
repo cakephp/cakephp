@@ -9,10 +9,8 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-
 namespace Cake\Test\TestCase\Shell\Task;
 
 use Cake\Core\Plugin;
@@ -81,7 +79,6 @@ class UnloadTaskTest extends TestCase
         $action = $this->Task->main('TestPlugin');
 
         $this->assertTrue($action);
-
         $expected = "Plugin::load('TestPlugin', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);";
         $this->assertNotContains($expected, $bootstrap->read());
     }
@@ -113,5 +110,4 @@ class UnloadTaskTest extends TestCase
         $bootstrap = new File($this->bootstrap, false);
         $bootstrap->append("Plugin::load('" . $name . "', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);\n");
     }
-
 }

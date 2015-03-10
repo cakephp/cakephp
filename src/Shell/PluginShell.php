@@ -12,7 +12,6 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-
 namespace Cake\Shell;
 
 use Cake\Console\Shell;
@@ -42,20 +41,19 @@ class PluginShell extends Shell
     {
         $parser = parent::getOptionParser();
         $parser->addSubcommand(
-            'load',
-            [
+                'load', [
             'help' => 'Loads a plugin',
             'parser' => $this->Load->getOptionParser(),
-            ]
+                ]
         );
         $parser->addSubcommand(
-            'unload',
-            [
+                'unload', [
             'help' => 'Unloads a plugin',
             'parser' => $this->Unload->getOptionParser(),
-            ]
+                ]
         );
 
         return $parser;
     }
+
 }

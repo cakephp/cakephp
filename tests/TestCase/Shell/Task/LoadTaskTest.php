@@ -9,23 +9,20 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-
 namespace Cake\Test\TestCase\Shell\Task;
 
 use Cake\Core\Plugin;
-use Cake\TestSuite\TestCase;
 use Cake\Filesystem\File;
+use Cake\TestSuite\TestCase;
 
 /**
- * LoadTaskTest class
+ * LoadTaskTest class.
  *
  */
 class LoadTaskTest extends TestCase
 {
-
     /**
      * setUp method
      *
@@ -47,7 +44,6 @@ class LoadTaskTest extends TestCase
 
         $this->original_bootstrap_content = $bootstrap->read();
     }
-
     /**
      * tearDown method
      *
@@ -63,7 +59,6 @@ class LoadTaskTest extends TestCase
 
         $bootstrap->write($this->original_bootstrap_content);
     }
-
     /**
      * testLoad
      *
@@ -73,7 +68,7 @@ class LoadTaskTest extends TestCase
     {
         $this->Task->params = [
             'bootstrap' => false,
-            'routes'    => false,
+            'routes' => false,
         ];
 
         $action = $this->Task->main('TestPlugin');
@@ -84,7 +79,6 @@ class LoadTaskTest extends TestCase
         $bootstrap = new File($this->bootstrap, false);
         $this->assertContains($expected, $bootstrap->read());
     }
-
     /**
      * testLoadWithBootstrap
      *
@@ -94,7 +88,7 @@ class LoadTaskTest extends TestCase
     {
         $this->Task->params = [
             'bootstrap' => true,
-            'routes'    => false,
+            'routes' => false,
         ];
 
         $action = $this->Task->main('TestPlugin');
@@ -105,7 +99,6 @@ class LoadTaskTest extends TestCase
         $bootstrap = new File($this->bootstrap, false);
         $this->assertContains($expected, $bootstrap->read());
     }
-
     /**
      * testLoadWithRoutes
      *
@@ -115,7 +108,7 @@ class LoadTaskTest extends TestCase
     {
         $this->Task->params = [
             'bootstrap' => false,
-            'routes'    => true,
+            'routes' => true,
         ];
 
         $action = $this->Task->main('TestPlugin');
@@ -126,7 +119,6 @@ class LoadTaskTest extends TestCase
         $bootstrap = new File($this->bootstrap, false);
         $this->assertContains($expected, $bootstrap->read());
     }
-
     /**
      * testLoadNoName
      *
@@ -136,7 +128,7 @@ class LoadTaskTest extends TestCase
     {
         $this->Task->params = [
             'bootstrap' => false,
-            'routes'    => true,
+            'routes' => true,
         ];
 
         $action = $this->Task->main();
@@ -147,5 +139,4 @@ class LoadTaskTest extends TestCase
         $bootstrap = new File($this->bootstrap, false);
         $this->assertNotContains($expected, $bootstrap->read());
     }
-
 }

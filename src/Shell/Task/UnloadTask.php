@@ -12,11 +12,9 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-
 namespace Cake\Shell\Task;
 
 use Cake\Console\Shell;
-use Cake\Core\App;
 use Cake\Filesystem\File;
 
 /**
@@ -25,20 +23,23 @@ use Cake\Filesystem\File;
  */
 class UnloadTask extends Shell
 {
-    public $path      = null;
+    /**
+     * Path to the bootstrap file.
+     *
+     * @var string
+     */
     public $bootstrap = null;
 
     /**
-     * Execution method always used for tasks
+     * Execution method always used for tasks.
      *
-     * @return boolean if action passed
+     * @param string $plugin The plugin name.
+     * @return boolean if action passed.
      *
      */
     public function main($plugin = null)
     {
-
-        $this->path      = current(App::path('Plugin'));
-        $this->bootstrap = ROOT.DS.'config'.DS.'bootstrap.php';
+        $this->bootstrap = ROOT . DS . 'config' . DS . 'bootstrap.php';
 
         if (empty($plugin)) {
             $this->err('<error>You must provide a plugin name in CamelCase format.</error>');
@@ -59,31 +60,25 @@ class UnloadTask extends Shell
     /**
      * Update the applications bootstrap.php file.
      *
-     * @param string $plugin Name of plugin
-     * @param bool $hasAutoloader Whether or not there is an autoloader configured for
-     * the plugin
-     * @return void
+     * @param string $plugin Name of plugin.
+     * @return bool If modify passed.
      */
     protected function _modifyBootstrap($plugin)
     {
-        $finder = "Plugin::load('".$plugin."',";
+        $bool = "(false|true)";
+        $finder = "/Plugin::load\('$plugin', \['autoload' => $bool, 'bootstrap' => $bool, 'routes' => $bool]\);\n/";
 
         $bootstrap = new File($this->bootstrap, false);
-        $contents  = $bootstrap->read();
+        $contents = $bootstrap->read();
+
         if (!preg_match("@\n\s*Plugin::loadAll@", $contents)) {
-            $_contents = explode("\n", $contents);
+            $contents = preg_replace($finder, "", $contents);
 
-            foreach ($_contents as $content) {
-                if (strpos($content, $finder) !== false) {
-                    $loadString = $content;
-                    $loadString .= "\n";
-
-                    $bootstrap->replaceText(sprintf($loadString), null);
-                }
-            }
+            $bootstrap->write($contents);
 
             $this->out('');
             $this->out(sprintf('%s modified', $this->bootstrap));
+
             return true;
         }
         return false;
@@ -92,7 +87,7 @@ class UnloadTask extends Shell
     /**
      * GetOptionParser method.
      *
-     * @return type
+     * @return \Cake\Console\ConsoleOptionParser
      */
     public function getOptionParser()
     {

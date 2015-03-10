@@ -12,11 +12,9 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-
 namespace Cake\Shell\Task;
 
 use Cake\Console\Shell;
-use Cake\Core\App;
 use Cake\Filesystem\File;
 
 /**
@@ -25,20 +23,22 @@ use Cake\Filesystem\File;
  */
 class LoadTask extends Shell
 {
-
-    public $path = null;
+    /**
+     * Path to the bootstrap file.
+     *
+     * @var string
+     */
     public $bootstrap = null;
 
     /**
-     * Execution method always used for tasks
+     * Execution method always used for tasks.
      *
-     * @return boolean if action passed
+     * @param string $plugin The plugin name.
+     * @return bool if action passed.
      *
      */
     public function main($plugin = null)
     {
-
-        $this->path = current(App::path('Plugin'));
         $this->bootstrap = ROOT . DS . 'config' . DS . 'bootstrap.php';
 
         if (empty($plugin)) {
@@ -60,22 +60,25 @@ class LoadTask extends Shell
     /**
      * Update the applications bootstrap.php file.
      *
-     * @param string $plugin Name of plugin
+     * @param string $plugin Name of plugin.
+     * @param bool $hasBootstrap Whether or not bootstrap should be loaded.
+     * @param bool $hasRoutes Whether or not routes should be loaded.
      * @param bool $hasAutoloader Whether or not there is an autoloader configured for
-     * the plugin
-     * @return void
+     * the plugin.
+     * @return bool If modify passed.
      */
     protected function _modifyBootstrap($plugin, $hasBootstrap, $hasRoutes, $hasAutoloader)
     {
         $bootstrap = new File($this->bootstrap, false);
         $contents = $bootstrap->read();
         if (!preg_match("@\n\s*Plugin::loadAll@", $contents)) {
-            $autoload = $hasAutoloader ? null : "'autoload' => true, ";
-            $bootstrap->append(sprintf(
-                "\nPlugin::load('%s', [%s'bootstrap' => " . ($hasBootstrap ? 'true' : 'false') . ", 'routes' => " . ($hasRoutes ? 'true' : 'false') . "]);\n",
-                $plugin,
-                $autoload
-            ));
+            $_autoload = $hasAutoloader ? null : "'autoload' => true, ";
+            $_bootstrap = $hasBootstrap ? "'bootstrap' => true, " : "'bootstrap' => false, ";
+            $_routes = $hasRoutes ? "'routes' => true" : "'routes' => false";
+
+            $append = "\nPlugin::load('%s', [%s%s%s]);\n";
+
+            $bootstrap->append(sprintf($append, $plugin, $_autoload, $_bootstrap, $_routes));
             $this->out('');
             $this->out(sprintf('%s modified', $this->bootstrap));
             return true;
@@ -86,22 +89,22 @@ class LoadTask extends Shell
     /**
      * GetOptionParser method.
      *
-     * @return type
+     * @return \Cake\Console\ConsoleOptionParser
      */
     public function getOptionParser()
     {
         $parser = parent::getOptionParser();
 
         $parser->addOption('bootstrap', [
-            'short'   => 'b',
-            'help'    => 'Will load bootstrap.php from plugin.',
+            'short' => 'b',
+            'help' => 'Will load bootstrap.php from plugin.',
             'boolean' => true,
             'default' => false,
         ]);
 
         $parser->addOption('routes', [
-            'short'   => 'r',
-            'help'    => 'Will load routes.php from plugin.',
+            'short' => 'r',
+            'help' => 'Will load routes.php from plugin.',
             'boolean' => true,
             'default' => false,
         ]);
