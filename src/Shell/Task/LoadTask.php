@@ -1,4 +1,18 @@
 <?php
+/**
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         3.0.0
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @author        Bob Mulder <bobmulder@outlook.com>
+ */
 
 namespace Cake\Shell\Task;
 
@@ -13,7 +27,9 @@ class LoadTask extends Shell
     public $bootstrap = null;
 
     /**
-     * main() method.
+     * Execution method always used for tasks
+     *
+     * @return boolean if action passed
      *
      */
     public function main($plugin = null)
@@ -31,7 +47,7 @@ class LoadTask extends Shell
 
         $write = $this->_modifyBootstrap($plugin, $this->params['bootstrap'], $this->params['routes'], false);
 
-        if($write) {
+        if ($write) {
             return true;
         }
 
@@ -39,7 +55,7 @@ class LoadTask extends Shell
     }
 
     /**
-     * Update the app's bootstrap.php file.
+     * Update the applications bootstrap.php file.
      *
      * @param string $plugin Name of plugin
      * @param bool $hasAutoloader Whether or not there is an autoloader configured for
@@ -53,7 +69,9 @@ class LoadTask extends Shell
         if (!preg_match("@\n\s*Plugin::loadAll@", $contents)) {
             $autoload = $hasAutoloader ? null : "'autoload' => true, ";
             $bootstrap->append(sprintf(
-                            "\nPlugin::load('%s', [%s'bootstrap' => " . ($hasBootstrap ? 'true' : 'false') . ", 'routes' => " . ($hasRoutes ? 'true' : 'false') . "]);\n", $plugin, $autoload
+                "\nPlugin::load('%s', [%s'bootstrap' => " . ($hasBootstrap ? 'true' : 'false') . ", 'routes' => " . ($hasRoutes ? 'true' : 'false') . "]);\n",
+                $plugin,
+                $autoload
             ));
             $this->out('');
             $this->out(sprintf('%s modified', $this->bootstrap));
@@ -91,5 +109,4 @@ class LoadTask extends Shell
 
         return $parser;
     }
-
 }
