@@ -1,4 +1,18 @@
 <?php
+/**
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         3.0.0
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @author        Bob Mulder <bobmulder@outlook.com>
+ */
 
 namespace Cake\Shell\Task;
 
@@ -8,19 +22,20 @@ use Cake\Filesystem\File;
 
 class UnloadTask extends Shell
 {
-
-    public $path = null;
+    public $path      = null;
     public $bootstrap = null;
 
     /**
-     * main() method.
+     * Execution method always used for tasks
+     *
+     * @return boolean if action passed
      *
      */
     public function main($plugin = null)
     {
 
-        $this->path = current(App::path('Plugin'));
-        $this->bootstrap = ROOT . DS . 'config' . DS . 'bootstrap.php';
+        $this->path      = current(App::path('Plugin'));
+        $this->bootstrap = ROOT.DS.'config'.DS.'bootstrap.php';
 
         if (empty($plugin)) {
             $this->err('<error>You must provide a plugin name in CamelCase format.</error>');
@@ -39,7 +54,7 @@ class UnloadTask extends Shell
     }
 
     /**
-     * Update the app's bootstrap.php file.
+     * Update the applications bootstrap.php file.
      *
      * @param string $plugin Name of plugin
      * @param bool $hasAutoloader Whether or not there is an autoloader configured for
@@ -48,17 +63,15 @@ class UnloadTask extends Shell
      */
     protected function _modifyBootstrap($plugin)
     {
-        $finder = "Plugin::load('" . $plugin . "',";
+        $finder = "Plugin::load('".$plugin."',";
 
         $bootstrap = new File($this->bootstrap, false);
-        $contents = $bootstrap->read();
+        $contents  = $bootstrap->read();
         if (!preg_match("@\n\s*Plugin::loadAll@", $contents)) {
-
             $_contents = explode("\n", $contents);
 
             foreach ($_contents as $content) {
                 if (strpos($content, $finder) !== false) {
-
                     $loadString = $content;
                     $loadString .= "\n";
 
@@ -84,5 +97,4 @@ class UnloadTask extends Shell
 
         return $parser;
     }
-
 }

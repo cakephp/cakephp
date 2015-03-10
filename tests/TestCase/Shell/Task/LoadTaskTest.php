@@ -78,6 +78,11 @@ class LoadTaskTest extends TestCase
     {
         Plugin::load('Company/TestPluginThree');
 
+        $this->Task->params = [
+            'bootstrap' => false,
+            'routes'    => false,
+        ];
+
         $action = $this->Task->main('TestPlugin');
 
         $this->assertTrue($action);

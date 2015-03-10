@@ -1,5 +1,4 @@
 <?php
-
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -19,21 +18,16 @@ namespace Cake\Shell;
 
 use Cake\Console\Shell;
 
-//use Cake\Core\Plugin;
-//use Cake\Filesystem\Folder;
-//use Cake\Utility\Inflector;
-
 /**
- * Shell for symlinking / copying plugin assets to app's webroot.
+ * Shell for tasks related to plugins.
  *
  */
 class PluginShell extends Shell
 {
-
     /**
      * Tasks to load
      *
-     * @var type
+     * @var array
      */
     public $tasks = [
         'Load',
@@ -48,16 +42,21 @@ class PluginShell extends Shell
     public function getOptionParser()
     {
         $parser = parent::getOptionParser();
-        $parser->addSubcommand('load', [
-            'help'   => 'Loads a plugin',
+        $parser->addSubcommand(
+            'load',
+            [
+            'help' => 'Loads a plugin',
             'parser' => $this->Load->getOptionParser(),
-        ]);
-        $parser->addSubcommand('unload', [
-            'help'   => 'Unloads a plugin',
+            ]
+        );
+        $parser->addSubcommand(
+            'unload',
+            [
+            'help' => 'Unloads a plugin',
             'parser' => $this->Unload->getOptionParser(),
-        ]);
+            ]
+        );
 
         return $parser;
     }
-
 }
