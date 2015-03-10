@@ -465,7 +465,7 @@ class Router
      *
      * ```
      * Router::addUrlFilter(function ($params, $request) {
-     *  if (isset($request->params['lang']) && !isset($params['lang']) {
+     *  if (isset($request->params['lang']) && !isset($params['lang'])) {
      *    $params['lang'] = $request->params['lang'];
      *  }
      *  return $params;
