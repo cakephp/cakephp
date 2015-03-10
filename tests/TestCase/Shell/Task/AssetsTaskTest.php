@@ -12,20 +12,20 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Shell;
+namespace Cake\Test\TestCase\Shell\Task;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
-use Cake\Shell\PluginAssetsTask;
+use Cake\Shell\Task\AssetsTask;
 use Cake\TestSuite\TestCase;
 
 /**
- * PluginAssetsShellTest class
+ * AssetsTaskTest class
  *
  */
-class PluginAssetsShellTest extends TestCase
+class AssetsTaskTest extends TestCase
 {
 
     /**
@@ -39,13 +39,13 @@ class PluginAssetsShellTest extends TestCase
 
         $this->skipIf(
             DS === '\\',
-            'Skip PluginAssetsShell tests on windows to prevent side effects for UrlHelper tests on AppVeyor.'
+            'Skip AssetsTask tests on windows to prevent side effects for UrlHelper tests on AppVeyor.'
         );
 
         $this->io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
-        $this->shell = $this->getMock(
-            'Cake\Shell\PluginAssetsShell',
+        $this->Task = $this->getMock(
+            'Cake\Shell\Task\AssetsTask',
             ['in', 'out', 'err', '_stop'],
             [$this->io]
         );
@@ -59,7 +59,7 @@ class PluginAssetsShellTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        unset($this->shell);
+        unset($this->Task);
         Plugin::unload();
     }
 
@@ -73,7 +73,7 @@ class PluginAssetsShellTest extends TestCase
         Plugin::load('TestPlugin');
         Plugin::load('Company/TestPluginThree');
 
-        $this->shell->symlink();
+        $this->Task->symlink();
 
         $path = WWW_ROOT . 'test_plugin';
         $link = new \SplFileInfo($path);
@@ -109,7 +109,7 @@ class PluginAssetsShellTest extends TestCase
 
         mkdir(WWW_ROOT . 'company');
 
-        $this->shell->symlink();
+        $this->Task->symlink();
         $path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
         $link = new \SplFileInfo($path);
         if (DS === '\\') {
@@ -132,7 +132,7 @@ class PluginAssetsShellTest extends TestCase
         Plugin::load('TestTheme');
 
         $shell = $this->getMock(
-            'Cake\Shell\PluginAssetsShell',
+            'Cake\Shell\Task\AssetsTask',
             ['in', 'out', 'err', '_stop', '_createSymlink', '_copyDirectory'],
             [$this->io]
         );
@@ -153,7 +153,7 @@ class PluginAssetsShellTest extends TestCase
     {
         Plugin::load('TestPluginTwo');
 
-        $this->shell->symlink();
+        $this->Task->symlink();
         $this->assertFalse(file_exists(WWW_ROOT . 'test_plugin_two'));
     }
 
@@ -167,7 +167,7 @@ class PluginAssetsShellTest extends TestCase
         Plugin::load('TestPlugin');
         Plugin::load('Company/TestPluginThree');
 
-        $this->shell->symlink('TestPlugin');
+        $this->Task->symlink('TestPlugin');
 
         $path = WWW_ROOT . 'test_plugin';
         $link = new \SplFileInfo($path);
@@ -190,7 +190,7 @@ class PluginAssetsShellTest extends TestCase
         Plugin::load('TestPlugin');
         Plugin::load('Company/TestPluginThree');
 
-        $this->shell->copy();
+        $this->Task->copy();
 
         $path = WWW_ROOT . 'test_plugin';
         $dir = new \SplFileInfo($path);
