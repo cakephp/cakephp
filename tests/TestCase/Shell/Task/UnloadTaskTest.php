@@ -70,19 +70,17 @@ class UnloadTaskTest extends TestCase
     }
 
     /**
-     * testLoad
+     * testUnload
      *
      * @return void
      */
     public function testUnload()
     {
-
-        Plugin::load('Company/TestPluginThree');
+        $bootstrap = new File($this->bootstrap, false);
 
         $this->_addPluginToBootstrap("TestPlugin");
 
         $expected = "Plugin::load('TestPlugin', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);";
-        $bootstrap = new File($this->bootstrap, false);
         $this->assertContains($expected, $bootstrap->read());
 
         $action = $this->Task->main('TestPlugin');
@@ -90,9 +88,19 @@ class UnloadTaskTest extends TestCase
         $this->assertTrue($action);
 
         $expected = "Plugin::load('TestPlugin', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);";
-        $bootstrap = new File($this->bootstrap, false);
-        debug($bootstrap->read());
         $this->assertNotContains($expected, $bootstrap->read());
+    }
+
+    /**
+     * testUnloadNoName
+     */
+    public function testUnloadNoName()
+    {
+        $bootstrap = new File($this->bootstrap, false);
+
+        $action = $this->Task->main();
+
+        $this->assertFalse($action);
     }
 
     /**
@@ -103,9 +111,8 @@ class UnloadTaskTest extends TestCase
      */
     protected function _addPluginToBootstrap($name)
     {
-
         $bootstrap = new File($this->bootstrap, false);
-        $bootstrap->append("Plugin::load('" . $name . "', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);");
+        $bootstrap->append("Plugin::load('" . $name . "', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);\n");
     }
 
 }
