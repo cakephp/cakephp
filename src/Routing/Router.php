@@ -102,7 +102,7 @@ class Router
 
     /**
      * The route collection routes would be added to.
-     * 
+     *
      * @var \Cake\Routing\RouteCollection
      */
     protected static $_collection;
