@@ -29,7 +29,13 @@ class LoadTask extends Shell
         }
 
 
-        $this->_modifyBootstrap($plugin, $this->params['bootstrap'], $this->params['routes'], false);
+        $write = $this->_modifyBootstrap($plugin, $this->params['bootstrap'], $this->params['routes'], false);
+
+        if($write) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -51,7 +57,9 @@ class LoadTask extends Shell
             ));
             $this->out('');
             $this->out(sprintf('%s modified', $this->bootstrap));
+            return true;
         }
+        return false;
     }
 
     /**

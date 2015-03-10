@@ -29,7 +29,13 @@ class UnloadTask extends Shell
         }
 
 
-        $this->_modifyBootstrap($plugin);
+        $write = $this->_modifyBootstrap($plugin);
+
+        if ($write) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -62,7 +68,9 @@ class UnloadTask extends Shell
 
             $this->out('');
             $this->out(sprintf('%s modified', $this->bootstrap));
+            return true;
         }
+        return false;
     }
 
     /**
