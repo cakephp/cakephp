@@ -853,7 +853,7 @@ class PaginatorComponentTest extends CakeTestCase {
 			'paramType' => 'named',
 		);
 		$result = $this->Paginator->mergeOptions('Post');
-		$expected = array('page' => 1, 'limit' => 200, 'maxLimit' => 200, 'paramType' => 'named');
+		$expected = array('page' => 1, 'limit' => 200, 'maxLimit' => 100, 'paramType' => 'named');
 		$this->assertEquals($expected, $result);
 
 		$this->Paginator->settings = array(
@@ -872,7 +872,7 @@ class PaginatorComponentTest extends CakeTestCase {
 			'paramType' => 'named',
 		);
 		$result = $this->Paginator->mergeOptions('Post');
-		$expected = array('page' => 1, 'limit' => 500, 'maxLimit' => 150, 'paramType' => 'named');
+		$expected = array('page' => 1, 'limit' => 500, 'maxLimit' => 100, 'paramType' => 'named');
 		$this->assertEquals($expected, $result);
 	}
 
