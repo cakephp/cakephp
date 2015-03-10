@@ -38,8 +38,6 @@ class PluginShell extends Shell
     public $tasks = [
         'Load',
         'Unload',
-        'Symlink',
-        'Copy',
     ];
 
     /**
@@ -57,14 +55,6 @@ class PluginShell extends Shell
         $parser->addSubcommand('unload', [
             'help'   => 'Unloads a plugin',
             'parser' => $this->Unload->getOptionParser(),
-        ]);
-        $parser->addSubcommand('symlink', [
-            'help' => 'Symlink (copy as fallback) plugin assets to app\'s webroot.',
-            'parser' => $this->Symlink->getOptionParser(),
-        ]);
-        $parser->addSubCommand('copy', [
-            'help' => 'Copy plugin assets to app\'s webroot.',
-            'parser' => $this->Copy->getOptionParser(),
         ]);
 
         return $parser;
