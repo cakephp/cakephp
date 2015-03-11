@@ -228,7 +228,7 @@ class PaginatorComponent extends Component
         unset($options['finder'], $options['maxLimit']);
 
         if (is_array($type)) {
-            $options = $options + (array)current($type);
+            $options = (array)current($type) + $options;
             $type = key($type);
         }
 
