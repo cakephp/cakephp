@@ -206,7 +206,7 @@ abstract class Association
             }
         }
 
-        if (!$this->_className) {
+        if (empty($this->_className) && strpos($alias, '.')) {
             $this->_className = $alias;
         }
 
