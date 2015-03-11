@@ -1,0 +1,73 @@
+build: false
+shallow_clone: false
+platform: 'x86'
+clone_folder: c:\projects\cakephp
+branches:
+  only:
+    - 3.0
+environment:
+  global:
+    PHP: "C:/PHP"
+  matrix:
+      - db: 2012
+        db_dsn: 'sqlserver://sa:Password12!@.\SQL2012SP1/cakephp?MultipleActiveResultSets=false'
+services:
+  - mssql2012sp1
+init:
+  - SET PATH=C:\php\;%PATH%
+install:
+  - cd c:\
+  - ps: Start-FileDownload 'http://ci.cakephp.org/php.zip'
+  - 7z x php.zip -oc:\php
+  - cd c:\php
+  - copy php.ini-production php.ini
+  - echo date.timezone="UTC" >> php.ini
+  - echo extension_dir=ext >> php.ini
+  - echo extension=php_openssl.dll >> php.ini
+  - echo extension=php_sqlsrv.dll >> php.ini
+  - echo extension=php_pdo_sqlsrv.dll >> php.ini
+  - echo extension=php_pdo_mysql.dll >> php.ini
+  - echo extension=php_intl.dll >> php.ini
+  - echo extension=php_mbstring.dll >> php.ini
+  - echo extension=php_fileinfo.dll >> php.ini
+  - cd C:\projects\cakephp
+  - php -r "readfile('https://getcomposer.org/installer');" | php
+  - php composer.phar install --prefer-dist --no-interaction --dev
+before_test:
+# This script solves the "Database 'model' is being recovered. Waiting until recovery is finished."
+# This solution comes from https://gist.github.com/jonathanhickford/1cb0d6665adab8b9c664
+# and is follow by http://help.appveyor.com/discussions/suggestions/264-database-mssqlsystemresource-is-being-recovered-waiting-for-sql-server-to-start
+- ps: >-
+    $tries = 5;
+
+    $pause = 10; # Seconds to wait between tries
+
+    While ($tries -gt 0) {
+      try {
+        $ServerConnectionString = "Data Source=(local)\SQL2012SP1;Initial Catalog=master;User Id=sa;PWD=Password12!";
+        $ServerConnection = new-object system.data.SqlClient.SqlConnection($ServerConnectionString);
+        $query = "exec sp_configure 'clr enabled', 1;`n"
+        $query = $query + "RECONFIGURE;`n"
+        $cmd = new-object system.data.sqlclient.sqlcommand($query, $ServerConnection);
+        $ServerConnection.Open();
+        "Running:"
+        $query
+        if ($cmd.ExecuteNonQuery() -ne -1) {
+          "SQL Error";
+        } else {
+          "Success"
+        }
+        $ServerConnection.Close();
+        $tries = 0;
+      } catch {
+        "Error:"
+        $_.Exception.Message
+        "Retry in $pause seconds.  Attempts left: $tries";
+        Start-Sleep -s $pause;
+      }
+      $tries = $tries -1;
+    }
+test_script:
+  - sqlcmd -S ".\SQL2012SP1" -U sa -P Password12! -Q "create database cakephp;"
+  - cd C:\projects\cakephp
+  - vendor\bin\phpunit.bat

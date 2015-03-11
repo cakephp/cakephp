@@ -1,0 +1,1 @@
+<?= $this->fetch('content'); ?>

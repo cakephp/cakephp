@@ -1,0 +1,21 @@
+{
+	"name": "cakephp/log",
+	"description": "CakePHP logging library with support for multiple different streams",
+	"license": "MIT",
+	"authors": [
+		{
+		"name": "CakePHP Community",
+		"homepage": "http://cakephp.org"
+	}
+	],
+	"autoload": {
+		"psr-4": {
+			"Cake\\Log\\": "."
+		}
+	},
+	"require": {
+		"cakephp/core": "dev-master",
+		"psr/log": "1.0"
+	},
+	"minimum-stability": "beta"
+}

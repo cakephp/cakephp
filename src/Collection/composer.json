@@ -1,0 +1,18 @@
+{
+	"name": "cakephp/collection",
+	"description": "Work easily with arrays and iterators by having a battery of utility traversal methods",
+	"license": "MIT",
+	"authors": [
+		{
+		"name": "CakePHP Community",
+		"homepage": "http://cakephp.org"
+	}
+	],
+	"autoload": {
+		"psr-4": {
+			"Cake\\Collection\\": "."
+		},
+		"files": ["functions.php"]
+	},
+	"minimum-stability": "beta"
+}

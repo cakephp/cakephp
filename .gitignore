@@ -1,14 +1,17 @@
 # User specific & automatically generated files #
 #################################################
-/App/Config
-/App/Config/database.php
-/App/tmp
-/lib/Cake/Console/Templates/skel/tmp/
-/plugins
-/vendors
 /build
 /dist
 /tags
+/composer.lock
+/phpunit.xml
+/vendor
+*.mo
+
+# IDE and editor specific files #
+#################################
+/nbproject
+.idea
 
 # OS generated files #
 ######################

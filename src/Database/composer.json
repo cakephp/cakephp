@@ -1,0 +1,24 @@
+{
+	"name": "cakephp/database",
+	"description": "Flexible and powerful Database abstraction library with a familiar PDO-like API",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "CakePHP Community",
+			"homepage": "http://cakephp.org"
+		}
+	],
+	"require": {
+		"cakephp/core": "dev-master"
+	},
+	"suggest": {
+		"cakephp/log": "Require this if you want to use the built-in query logger",
+		"cakephp/cache": "Require this if you decide to use the schema caching feature"
+	},
+	"autoload": {
+		"psr-4": {
+			"Cake\\Database\\": "."
+		}
+	},
+	"minimum-stability": "beta"
+}

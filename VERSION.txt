@@ -1,0 +1,19 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// +--------------------------------------------------------------------------------------------+ //
+// CakePHP Version
+//
+// Holds a static string representing the current version of CakePHP
+//
+// CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+// Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+//
+// Licensed under The MIT License
+// Redistributions of files must retain the above copyright notice.
+//
+// @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+// @link          http://cakephp.org
+// @since         CakePHP(tm) v 0.2.9
+// @license       http://www.opensource.org/licenses/mit-license.php MIT License
+// +--------------------------------------------------------------------------------------------+ //
+////////////////////////////////////////////////////////////////////////////////////////////////////
+3.0.0-RC2

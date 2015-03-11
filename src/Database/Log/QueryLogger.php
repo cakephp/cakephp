@@ -1,0 +1,79 @@
+<?php
+/**
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         3.0.0
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
+namespace Cake\Database\Log;
+
+use Cake\Log\Log;
+
+/**
+ * This class is a bridge used to write LoggedQuery objects into a real log.
+ * by default this class use the built-in CakePHP Log class to accomplish this
+ *
+ * @internal
+ */
+class QueryLogger
+{
+
+    /**
+     * Writes a LoggedQuery into a log
+     *
+     * @param LoggedQuery $query to be written in log
+     * @return void
+     */
+    public function log(LoggedQuery $query)
+    {
+        if (!empty($query->params)) {
+            $query->query = $this->_interpolate($query);
+        }
+        $this->_log($query);
+    }
+
+    /**
+     * Wrapper function for the logger object, useful for unit testing
+     * or for overriding in subclasses.
+     *
+     * @param LoggedQuery $query to be written in log
+     * @return void
+     */
+    protected function _log($query)
+    {
+        Log::write('debug', $query, ['queriesLog']);
+    }
+
+    /**
+     * Helper function used to replace query placeholders by the real
+     * params used to execute the query
+     *
+     * @param LoggedQuery $query The query to log
+     * @return string
+     */
+    protected function _interpolate($query)
+    {
+        $params = array_map(function ($p) {
+            if ($p === null) {
+                return 'NULL';
+            } elseif (is_bool($p)) {
+                return $p ? '1' : '0';
+            }
+            return is_string($p) ? "'$p'" : $p;
+        }, $query->params);
+
+        $keys = [];
+        foreach ($params as $key => $param) {
+            $keys[] = is_string($key) ? "/:$key/" : '/[?]/';
+        }
+
+        return preg_replace($keys, $params, $query->query, 1);
+    }
+}

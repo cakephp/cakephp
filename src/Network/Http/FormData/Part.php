@@ -1,0 +1,200 @@
+<?php
+/**
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         3.0.0
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
+namespace Cake\Network\Http\FormData;
+
+/**
+ * Contains the data and behavior for a single
+ * part in a Multipart FormData request body.
+ *
+ * Added to Cake\Network\Http\FormData when sending
+ * data to a remote server.
+ */
+class Part
+{
+
+    /**
+     * Name of the value.
+     *
+     * @var string
+     */
+    protected $_name;
+
+    /**
+     * Value to send.
+     *
+     * @var string
+     */
+    protected $_value;
+
+    /**
+     * Content type to use
+     *
+     * @var string
+     */
+    protected $_type;
+
+    /**
+     * Disposition to send
+     *
+     * @var string
+     */
+    protected $_disposition;
+
+    /**
+     * Filename to send if using files.
+     *
+     * @var string
+     */
+    protected $_filename;
+
+    /**
+     * The encoding used in this part.
+     *
+     * @var string
+     */
+    protected $_transferEncoding;
+
+    /**
+     * The contentId for the part
+     *
+     * @var string
+     */
+    protected $_contentId;
+
+    /**
+     * Constructor
+     *
+     * @param string $name The name of the data.
+     * @param string $value The value of the data.
+     * @param string $disposition The type of disposition to use, defaults to form-data.
+     */
+    public function __construct($name, $value, $disposition = 'form-data')
+    {
+        $this->_name = $name;
+        $this->_value = $value;
+        $this->_disposition = $disposition;
+    }
+
+    /**
+     * Get/set the disposition type
+     *
+     * By passing in `false` you can disable the disposition
+     * header from being added.
+     *
+     * @param null|string $disposition Use null to get/string to set.
+     * @return mixed
+     */
+    public function disposition($disposition = null)
+    {
+        if ($disposition === null) {
+            return $this->_disposition;
+        }
+        $this->_disposition = $disposition;
+    }
+
+    /**
+     * Get/set the contentId for a part.
+     *
+     * @param null|string $id The content id.
+     * @return mixed
+     */
+    public function contentId($id = null)
+    {
+        if ($id === null) {
+            return $this->_contentId = $id;
+        }
+        $this->_contentId = $id;
+    }
+
+    /**
+     * Get/set the filename.
+     *
+     * Setting the filename to `false` will exclude it from the
+     * generated output.
+     *
+     * @param null|string $filename Use null to get/string to set.
+     * @return mixed
+     */
+    public function filename($filename = null)
+    {
+        if ($filename === null) {
+            return $this->_filename;
+        }
+        $this->_filename = $filename;
+    }
+
+    /**
+     * Get/set the content type.
+     *
+     * @param null|string $type Use null to get/string to set.
+     * @return mixed
+     */
+    public function type($type)
+    {
+        if ($type === null) {
+            return $this->_type;
+        }
+        $this->_type = $type;
+    }
+
+    /**
+     * Set the transfer-encoding for multipart.
+     *
+     * Useful when content bodies are in encodings like base64.
+     *
+     * @param null|string $type The type of encoding the value has.
+     * @return mixed
+     */
+    public function transferEncoding($type)
+    {
+        if ($type === null) {
+            return $this->_transferEncoding;
+        }
+        $this->_transferEncoding = $type;
+    }
+
+    /**
+     * Convert the part into a string.
+     *
+     * Creates a string suitable for use in HTTP requests.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        $out = '';
+        if ($this->_disposition) {
+            $out .= 'Content-Disposition: ' . $this->_disposition;
+            if ($this->_name) {
+                $out .= '; name="' . $this->_name . '"';
+            }
+            if ($this->_filename) {
+                $out .= '; filename="' . $this->_filename . '"';
+            }
+            $out .= "\r\n";
+        }
+        if ($this->_type) {
+            $out .= 'Content-Type: ' . $this->_type . "\r\n";
+        }
+        if ($this->_transferEncoding) {
+            $out .= 'Content-Transfer-Encoding: ' . $this->_transferEncoding . "\r\n";
+        }
+        if ($this->_contentId) {
+            $out .= 'Content-ID: <' . $this->_contentId . ">\r\n";
+        }
+        $out .= "\r\n";
+        $out .= (string)$this->_value;
+        return $out;
+    }
+}

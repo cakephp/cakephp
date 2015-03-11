@@ -1,0 +1,2 @@
+Ajax!
+<?= $this->fetch('content'); ?>

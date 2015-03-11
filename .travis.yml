@@ -2,99 +2,50 @@ language: php
 
 php:
   - 5.4
+  - 5.5
+  - 5.6
+  - 7.0
+
+sudo: false
 
 env:
-  - DB=mysql
-  - DB=pgsql
-  - DB=sqlite
+  - DB=mysql db_dsn='mysql://travis@0.0.0.0/cakephp_test'
+  - DB=pgsql db_dsn='postgres://postgres@127.0.0.1/cakephp_test'
+  - DB=sqlite db_dsn='sqlite:///:memory:'
+
+services:
+  - memcached
+  - redis-server
 
 matrix:
+  fast_finish: true
   include:
     - php: 5.4
-      env:
-        - PHPCS=1
+      env: PHPCS=1
+    - php: hhvm-nightly
+      env: HHVM=1 DB=sqlite db_dsn='sqlite:///:memory:'
+    - php: hhvm-nightly
+      env: HHVM=1 DB=mysql db_dsn='mysql://travis@0.0.0.0/cakephp_test'
+  allow_failures:
+    - php: 7.0
+    - php: hhvm-nightly
 
 before_script:
+  - composer self-update
+  - composer install --prefer-dist --no-interaction --dev
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test2;'; fi"
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test3;'; fi"
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi"
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi"
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi"
-  - chmod -R 777 ./App/tmp
-  - echo "var net = require('net');
-    var server = net.createServer();
-    server.listen(80, 'localhost');
-    console.log('TCP server listening on port 80 at localhost.');" > App/tmp/socket.js
-  - sudo node ./App/tmp/socket.js &
-  - pear channel-discover pear.cakephp.org
-  - pear install --alldeps cakephp/CakePHP_CodeSniffer
+  - sh -c "if [ '$HHVM' != '1' ]; then echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
   - phpenv rehash
   - set +H
-  - echo "<?php
-    namespace App\Config;
-    use Cake\Core\Configure;
-    \$db = 'mysql';
-    if (!empty(\$_SERVER['DB'])) {
-      \$db = \$_SERVER['DB'];
-    }
-    \$identities = array(
-      'mysql' => array(
-        'datasource' => 'Database/Mysql',
-        'host' => '0.0.0.0',
-        'login' => 'travis',
-        'database' => array(
-          'default' => 'cakephp_test',
-          'test' => 'cakephp_test',
-          'test2' => 'cakephp_test2',
-          'test_database_three' => 'cakephp_test3'
-        ),
-      ),
-      'pgsql' => array(
-        'datasource' => 'Database/Postgres',
-        'host' => '127.0.0.1',
-        'login' => 'postgres',
-        'database' => 'cakephp_test',
-        'schema' => array(
-          'default' => 'public',
-          'test' => 'public',
-          'test2' => 'test2',
-          'test_database_three' => 'test3'
-        )
-      ),
-      'sqlite' => array(
-        'datasource' => 'Database/Sqlite',
-        'database' => array(
-          'default' => ':memory:',
-          'test' => ':memory:',
-          'test2' => '/tmp/cakephp_test2.db',
-          'test_database_three' => '/tmp/cakephp_test3.db'
-        ),
-      )
-    );
-    \$default = array(
-      'persistent' => false,
-      'host' => '',
-      'login' => '',
-      'password' => '',
-      'database' => '',
-      'prefix' => ''
-    );
-    \$datasources = array();
-    foreach (array('default', 'test', 'test2', 'test_database_three') as \$source) {
-      \$config = array_merge(\$default, \$identities[\$db]);
-      if (is_array(\$config['database'])) {
-        \$config['database'] = \$config['database'][\$source];
-      }
-      if (!empty(\$config['schema']) && is_array(\$config['schema'])) {
-        \$config['schema'] = \$config['schema'][\$source];
-      }
-      \$datasources[\$source] = \$config;
-    }
-    Configure::write('Datasource', \$datasources);" > App/Config/datasources.php
 
 script:
-  - sh -c "if [ '$PHPCS' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi"
+  - sh -c "if [ '$PHPCS' != '1' ]; then phpunit; fi"
+  - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p -n --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi"
 
 notifications:
   email: false
