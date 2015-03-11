@@ -64,13 +64,13 @@ class UnloadTask extends Shell
      */
     protected function _modifyBootstrap($plugin)
     {
-        $bool = "(false|true)";
-        $finder = "/Plugin::load\('$plugin', \['autoload' => $bool, 'bootstrap' => $bool, 'routes' => $bool]\);\n/";
+        $finder = "/\nPlugin::load\('$plugin'(.|.\n|)+\);\n/";
 
         $bootstrap = new File($this->bootstrap, false);
         $contents = $bootstrap->read();
 
         if (!preg_match("@\n\s*Plugin::loadAll@", $contents)) {
+            
             $contents = preg_replace($finder, "", $contents);
 
             $bootstrap->write($contents);

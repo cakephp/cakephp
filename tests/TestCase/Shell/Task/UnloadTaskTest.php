@@ -73,6 +73,8 @@ class UnloadTaskTest extends TestCase
 
         $this->_addPluginToBootstrap("TestPlugin");
 
+        $this->_addPluginToBootstrap("TestPluginSecond");
+
         $expected = "Plugin::load('TestPlugin', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);";
         $this->assertContains($expected, $bootstrap->read());
 
@@ -81,6 +83,8 @@ class UnloadTaskTest extends TestCase
         $this->assertTrue($action);
         $expected = "Plugin::load('TestPlugin', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);";
         $this->assertNotContains($expected, $bootstrap->read());
+        $expected = "Plugin::load('TestPluginSecond', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);";
+        $this->assertContains($expected, $bootstrap->read());
     }
 
     /**
@@ -94,6 +98,6 @@ class UnloadTaskTest extends TestCase
     protected function _addPluginToBootstrap($name)
     {
         $bootstrap = new File($this->bootstrap, false);
-        $bootstrap->append("Plugin::load('" . $name . "', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);\n");
+        $bootstrap->append("\nPlugin::load('" . $name . "', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);");
     }
 }
