@@ -43,7 +43,7 @@ class UnloadTaskTest extends TestCase
 
         $bootstrap = new File($this->bootstrap, false);
 
-        $this->original_bootstrap_content = $bootstrap->read();
+        $this->originalBootstrapContent = $bootstrap->read();
     }
 
     /**
@@ -59,7 +59,7 @@ class UnloadTaskTest extends TestCase
 
         $bootstrap = new File($this->bootstrap, false);
 
-        $bootstrap->write($this->original_bootstrap_content);
+        $bootstrap->write($this->originalBootstrapContent);
     }
 
     /**
@@ -81,20 +81,6 @@ class UnloadTaskTest extends TestCase
         $this->assertTrue($action);
         $expected = "Plugin::load('TestPlugin', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);";
         $this->assertNotContains($expected, $bootstrap->read());
-    }
-
-    /**
-     * testUnloadNoName
-     *
-     * @return void
-     */
-    public function testUnloadNoName()
-    {
-        $bootstrap = new File($this->bootstrap, false);
-
-        $action = $this->Task->main();
-
-        $this->assertFalse($action);
     }
 
     /**

@@ -34,8 +34,7 @@ class LoadTask extends Shell
      * Execution method always used for tasks.
      *
      * @param string $plugin The plugin name.
-     * @return bool if action passed.
-     *
+     * @return bool
      */
     public function main($plugin = null)
     {
@@ -72,13 +71,13 @@ class LoadTask extends Shell
         $bootstrap = new File($this->bootstrap, false);
         $contents = $bootstrap->read();
         if (!preg_match("@\n\s*Plugin::loadAll@", $contents)) {
-            $_autoload = $hasAutoloader ? null : "'autoload' => true, ";
-            $_bootstrap = $hasBootstrap ? "'bootstrap' => true, " : "'bootstrap' => false, ";
-            $_routes = $hasRoutes ? "'routes' => true" : "'routes' => false";
+            $autoloadString = $hasAutoloader ? null : "'autoload' => true, ";
+            $bootstrapString = $hasBootstrap ? "'bootstrap' => true, " : "'bootstrap' => false, ";
+            $routesString = $hasRoutes ? "'routes' => true" : "'routes' => false";
 
             $append = "\nPlugin::load('%s', [%s%s%s]);\n";
 
-            $bootstrap->append(sprintf($append, $plugin, $_autoload, $_bootstrap, $_routes));
+            $bootstrap->append(sprintf($append, $plugin, $autoloadString, $bootstrapString, $routesString));
             $this->out('');
             $this->out(sprintf('%s modified', $this->bootstrap));
             return true;
@@ -96,22 +95,20 @@ class LoadTask extends Shell
         $parser = parent::getOptionParser();
 
         $parser->addOption('bootstrap', [
-            'short' => 'b',
-            'help' => 'Will load bootstrap.php from plugin.',
-            'boolean' => true,
-            'default' => false,
-        ]);
-
-        $parser->addOption('routes', [
-            'short' => 'r',
-            'help' => 'Will load routes.php from plugin.',
-            'boolean' => true,
-            'default' => false,
-        ]);
-
-        $parser->addArgument('plugin', [
-            'help' => 'Name of the plugin to load.',
-        ]);
+                    'short' => 'b',
+                    'help' => 'Will load bootstrap.php from plugin.',
+                    'boolean' => true,
+                    'default' => false,
+                ])
+                ->addOption('routes', [
+                    'short' => 'r',
+                    'help' => 'Will load routes.php from plugin.',
+                    'boolean' => true,
+                    'default' => false,
+                ])
+                ->addArgument('plugin', [
+                    'help' => 'Name of the plugin to load.',
+                ]);
 
         return $parser;
     }
