@@ -2652,7 +2652,7 @@ class Model extends Object implements CakeEventListener {
  *    Fields are treated as SQL snippets, to insert literal values manually escape your data.
  * @param mixed $conditions Conditions to match, true for all records
  * @return bool True on success, false on failure
- * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html#model-updateall-array-fields-array-conditions
+ * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html#model-updateall-array-fields-mixed-conditions
  */
 	public function updateAll($fields, $conditions = true) {
 		return $this->getDataSource()->update($this, $fields, null, $conditions);
