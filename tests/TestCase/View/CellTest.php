@@ -75,6 +75,10 @@ class CellTest extends TestCase
         $this->assertContains('<h2>Usectetur adipiscing eli</h2>', $render);
         $this->assertContains('<h2>Topis semper blandit eu non</h2>', $render);
         $this->assertContains('<h2>Suspendisse gravida neque</h2>', $render);
+
+        $cell = $this->View->cell('Cello');
+        $this->assertInstanceOf('TestApp\View\Cell\CelloCell', $cell);
+        $this->assertEquals("Cellos\n", $cell->render());
     }
 
     /**
