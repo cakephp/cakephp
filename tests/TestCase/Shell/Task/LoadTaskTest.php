@@ -35,9 +35,7 @@ class LoadTaskTest extends TestCase
 
         $this->io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
-        $this->Task = $this->getMock(
-                'Cake\Shell\Task\LoadTask', ['in', 'out', 'err', '_stop'], [$this->io]
-        );
+        $this->Task = $this->getMock('Cake\Shell\Task\LoadTask', ['in', 'out', 'err', '_stop'], [$this->io]);
 
         $this->bootstrap = ROOT . DS . 'config' . DS . 'bootstrap.php';
 

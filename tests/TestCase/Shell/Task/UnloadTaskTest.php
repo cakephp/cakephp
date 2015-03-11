@@ -14,8 +14,8 @@
 namespace Cake\Test\TestCase\Shell\Task;
 
 use Cake\Core\Plugin;
-use Cake\TestSuite\TestCase;
 use Cake\Filesystem\File;
+use Cake\TestSuite\TestCase;
 
 /**
  * UnloadTaskTest class
@@ -35,9 +35,7 @@ class UnloadTaskTest extends TestCase
 
         $this->io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
-        $this->Task = $this->getMock(
-                'Cake\Shell\Task\UnloadTask', ['in', 'out', 'err', '_stop'], [$this->io]
-        );
+        $this->Task = $this->getMock('Cake\Shell\Task\UnloadTask', ['in', 'out', 'err', '_stop'], [$this->io]);
 
         $this->bootstrap = ROOT . DS . 'config' . DS . 'bootstrap.php';
 
@@ -98,6 +96,6 @@ class UnloadTaskTest extends TestCase
     protected function _addPluginToBootstrap($name)
     {
         $bootstrap = new File($this->bootstrap, false);
-        $bootstrap->append("\nPlugin::load('" . $name . "', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);");
+        $bootstrap->append("\nPlugin::load('$name', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);");
     }
 }
