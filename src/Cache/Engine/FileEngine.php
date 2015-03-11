@@ -88,7 +88,7 @@ class FileEngine extends CacheEngine
         parent::init($config);
 
         if ($this->_config['path'] === null) {
-            $this->_config['path'] = sys_get_temp_dir();
+            $this->_config['path'] = sys_get_temp_dir() . DS . 'cake_cache' . DS;
         }
         if (DS === '\\') {
             $this->_config['isWindows'] = true;
