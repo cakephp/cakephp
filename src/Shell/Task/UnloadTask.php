@@ -64,8 +64,8 @@ class UnloadTask extends Shell
      */
     protected function _modifyBootstrap($plugin)
     {
-        $finder = "/\nPlugin::load\('$plugin'(.|.\n|)+\);\n/";
-
+        $finder = "/\nPlugin::load\((.|.\n|\n\s\s|\n\t|)+'$plugin'(.|.\n|)+\);\n/";
+        
         $bootstrap = new File($this->bootstrap, false);
         $contents = $bootstrap->read();
 

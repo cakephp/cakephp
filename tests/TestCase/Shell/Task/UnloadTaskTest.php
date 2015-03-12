@@ -86,6 +86,86 @@ class UnloadTaskTest extends TestCase
     }
 
     /**
+     * testRegularExpressions
+     *
+     * This method will tests multiple notations of plugin loading.
+     */
+    public function testRegularExpressions()
+    {
+        $bootstrap = new File($this->bootstrap, false);
+
+        //  Plugin::load('TestPlugin', [
+        //      'boostrap' => false
+        //  ]);
+        $bootstrap->append("\nPlugin::load('TestPlugin', [\n\t'boostrap' => false\n]);\n");
+        $this->Task->main('TestPlugin');
+        $this->assertNotContains("Plugin::load('TestPlugin', [\n\t'boostrap' => false\n]);", $bootstrap->read());
+        $this->_clearBootstrap();
+
+        //  Plugin::load(
+        //      'TestPlugin',
+        //      [ 'boostrap' => false]
+        //  );
+        $bootstrap->append("\nPlugin::load(\n\t'TestPlugin',\n\t[ 'boostrap' => false]\n);\n");
+        $this->Task->main('TestPlugin');
+        $this->assertNotContains("Plugin::load(\n\t'TestPlugin',\n\t[ 'boostrap' => false]\n);", $bootstrap->read());
+        $this->_clearBootstrap();
+
+        //  Plugin::load(
+        //      'Foo',
+        //      [
+        //          'boostrap' => false
+        //      ]
+        //  );
+        $bootstrap->append("\nPlugin::load(\n\t'TestPlugin',\n\t[\n\t\t'boostrap' => false\n\t]\n);\n");
+        $this->Task->main('TestPlugin');
+        $this->assertNotContains("Plugin::load(\n\t'TestPlugin',\n\t[\n\t\t'boostrap' => false\n\t]\n);", $bootstrap->read());
+        $this->_clearBootstrap();
+
+        //  Plugin::load('Test', [
+        //      'autoload' => false,
+        //      'bootstrap' => true,
+        //      'routes' => true
+        //  ]);
+        $bootstrap->append("\nPlugin::load('TestPlugin', [\n\t'autoload' => false,\n\t'bootstrap' => true,\n\t'routes' => true\n]);\n");
+        $this->Task->main('TestPlugin');
+        $this->assertNotContains("Plugin::load('TestPlugin', [\n\t'autoload' => false,\n\t'bootstrap' => true,\n\t'routes' => true\n]);", $bootstrap->read());
+        $this->_clearBootstrap();
+
+        //  Plugin::load('Test',
+        //      [
+        //          'bootstrap' => true,
+        //          'routes' => true
+        //      ]
+        //  );
+        $bootstrap->append("\nPlugin::load('TestPlugin',\n\t[\n\t\t'bootstrap' => true,\n\t\t'routes' => true\n\t]\n);\n");
+        $this->Task->main('TestPlugin');
+        $this->assertNotContains("Plugin::load('TestPlugin',\n\t[\n\t\t'bootstrap' => true,\n\t\t'routes' => true\n\t]\n);", $bootstrap->read());
+        $this->_clearBootstrap();
+
+        //  Plugin::load('Test',
+        //      [
+        //
+        //      ]
+        //  );
+        $bootstrap->append("\nPlugin::load('TestPlugin',\n\t[\n\t\n\t]\n);\n");
+        $this->Task->main('TestPlugin');
+        $this->assertNotContains("Plugin::load('TestPlugin',\n\t[\n\t\n\t]\n);", $bootstrap->read());
+        $this->_clearBootstrap();
+
+        //  Plugin::load('Test');
+        $bootstrap->append("\nPlugin::load('TestPlugin');\n");
+        $this->Task->main('TestPlugin');
+        $this->assertNotContains("Plugin::load('TestPlugin');", $bootstrap->read());
+        $this->_clearBootstrap();
+
+        //  Plugin::load('Test', ['bootstrap' => true, 'route' => false]);
+        $bootstrap->append("\nPlugin::load('TestPlugin', ['bootstrap' => true, 'route' => false]);\n");
+        $this->Task->main('TestPlugin');
+        $this->assertNotContains("Plugin::load('TestPlugin', ['bootstrap' => true, 'route' => false]);", $bootstrap->read());
+    }
+
+    /**
      * _addPluginToBootstrap
      *
      * Quick method to add a plugin to the bootstrap file.
@@ -96,6 +176,20 @@ class UnloadTaskTest extends TestCase
     protected function _addPluginToBootstrap($name)
     {
         $bootstrap = new File($this->bootstrap, false);
-        $bootstrap->append("\nPlugin::load('$name', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);");
+        $bootstrap->append("\n\nPlugin::load('$name', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);\n");
+    }
+
+    /**
+     * clearBootstrap
+     *
+     * Helper to clear the bootstrap file.
+     *
+     * @return void
+     */
+    protected function _clearBootstrap()
+    {
+        $bootstrap = new File($this->bootstrap, false);
+
+        $bootstrap->write($this->originalBootstrapContent);
     }
 }
