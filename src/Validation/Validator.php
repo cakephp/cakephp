@@ -91,8 +91,8 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
         $emptyMessage = 'This field cannot be left empty';
 
         if ($this->_useI18n) {
-            $requiredMessage = __d('cake', 'This field is required');
-            $emptyMessage = __d('cake', 'This field cannot be left empty');
+            $requiredMessage = __d('cake', $requiredMessage);
+            $emptyMessage = __d('cake', $emptyMessage);
         }
 
         foreach ($this->_fields as $name => $field) {
@@ -557,7 +557,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
         $message = 'The provided value is invalid';
 
         if ($this->_useI18n) {
-            $message = __d('cake', 'The provided value is invalid');
+            $message = __d('cake', $message);
         }
 
         foreach ($rules as $name => $rule) {
