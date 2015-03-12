@@ -44,7 +44,8 @@ class StatemetDecoratorTest extends TestCase
     }
 
     /**
-     * Tests that calling lastInsertId will get the
+     * Tests that calling lastInsertId will get the last insert id by
+     * column name
      *
      * @return void
      */
@@ -62,4 +63,21 @@ class StatemetDecoratorTest extends TestCase
         $driver->expects($this->never())->method('lastInsertId');
         $this->assertEquals(2, $statement->lastInsertId('users', 'id'));
     }
+
+    /**
+     * Tests that the statement will not be executed twice if the iterator
+     * is requested more than once
+     *
+     * @return void
+     */
+    public function testNoDoubleExecution() {
+        $inner = $this->getMock('\PDOStatement');
+        $driver = $this->getMock('\Cake\Database\Driver');
+        $statement = new StatementDecorator($inner, $driver);
+
+        $inner->expects($this->once())->method('execute');
+        $this->assertSame($inner, $statement->getIterator());
+        $this->assertSame($inner, $statement->getIterator());
+    }
+
 }
