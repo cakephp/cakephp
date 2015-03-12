@@ -70,7 +70,8 @@ class StatemetDecoratorTest extends TestCase
      *
      * @return void
      */
-    public function testNoDoubleExecution() {
+    public function testNoDoubleExecution()
+    {
         $inner = $this->getMock('\PDOStatement');
         $driver = $this->getMock('\Cake\Database\Driver');
         $statement = new StatementDecorator($inner, $driver);
@@ -79,5 +80,4 @@ class StatemetDecoratorTest extends TestCase
         $this->assertSame($inner, $statement->getIterator());
         $this->assertSame($inner, $statement->getIterator());
     }
-
 }
