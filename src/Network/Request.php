@@ -276,7 +276,7 @@ class Request implements \ArrayAccess
     {
         $method = $this->env('REQUEST_METHOD');
         if (in_array($method, ['PUT', 'DELETE', 'PATCH']) &&
-            strpos($this->env('CONTENT_TYPE'), 'application/x-www-form-urlencoded') === 0
+            strpos($this->contentType(), 'application/x-www-form-urlencoded') === 0
         ) {
             $data = $this->input();
             parse_str($data, $data);
@@ -470,6 +470,20 @@ class Request implements \ArrayAccess
             }
         }
         return $data;
+    }
+
+    /**
+     * Get the content type used in this request.
+     *
+     * @return string
+     */
+    public function contentType()
+    {
+        $type = $this->env('CONTENT_TYPE');
+        if ($type) {
+            return $type;
+        }
+        return $this->env('HTTP_CONTENT_TYPE');
     }
 
     /**

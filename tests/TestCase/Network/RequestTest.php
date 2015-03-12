@@ -2399,6 +2399,22 @@ XML;
     }
 
     /**
+     * Test the content type method.
+     *
+     * @return void
+     */
+    public function testContentType()
+    {
+        $_SERVER['HTTP_CONTENT_TYPE'] = 'application/json';
+        $request = Request::createFromGlobals();
+        $this->assertEquals('application/json', $request->contentType());
+
+        $_SERVER['CONTENT_TYPE'] = 'application/xml';
+        $request = Request::createFromGlobals();
+        $this->assertEquals('application/xml', $request->contentType(), 'prefer non http header.');
+    }
+
+    /**
      * loadEnvironment method
      *
      * @param array $env
