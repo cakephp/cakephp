@@ -161,7 +161,7 @@ class JsonView extends View {
 				$error = __('JSON encoding failed: Error code %s', json_last_error());
 			}
 			throw new CakeException($error);
-		} else if ($json === false) {
+		} elseif ($json === false) {
 			throw new CakeException(__('Failed to parse JSON'));
 		}
 		return $json;
