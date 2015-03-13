@@ -46,14 +46,7 @@ class UnloadTask extends Shell
             return false;
         }
 
-
-        $write = $this->_modifyBootstrap($plugin);
-
-        if ($write) {
-            return true;
-        }
-
-        return false;
+        return (bool)$this->_modifyBootstrap($plugin);
     }
 
     /**
@@ -65,7 +58,7 @@ class UnloadTask extends Shell
     protected function _modifyBootstrap($plugin)
     {
         $finder = "/\nPlugin::load\((.|.\n|\n\s\s|\n\t|)+'$plugin'(.|.\n|)+\);\n/";
-        
+
         $bootstrap = new File($this->bootstrap, false);
         $contents = $bootstrap->read();
 

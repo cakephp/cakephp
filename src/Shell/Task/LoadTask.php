@@ -46,14 +46,7 @@ class LoadTask extends Shell
             return false;
         }
 
-
-        $write = $this->_modifyBootstrap($plugin, $this->params['bootstrap'], $this->params['routes'], false);
-
-        if ($write) {
-            return true;
-        }
-
-        return false;
+        return (bool)$this->_modifyBootstrap($plugin, $this->params['bootstrap'], $this->params['routes'], false);
     }
 
     /**
