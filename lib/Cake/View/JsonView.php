@@ -124,6 +124,10 @@ class JsonView extends View {
 
 /**
  * Serialize view vars
+ * For JSON documents, any errors are output using;
+ * PHP 5 >= 5.5.0 : json_last_error_msg()
+ * PHP 5 >= 5.3.0 : json_last_error()
+ * PHP 5 <= 5.2.9 : Generic fall back error
  *
  * @param array $serialize The viewVars that need to be serialized
  * @return string The serialized data
@@ -145,10 +149,22 @@ class JsonView extends View {
 		}
 
 		if (version_compare(PHP_VERSION, '5.4.0', '>=') && Configure::read('debug')) {
-			return json_encode($data, JSON_PRETTY_PRINT);
+			$json = json_encode($data, JSON_PRETTY_PRINT);
+		} else {
+			$json = json_encode($data);
 		}
 
-		return json_encode($data);
+		if (function_exists('json_last_error') && json_last_error() !== JSON_ERROR_NONE) {
+			if (function_exists('json_last_error_msg')) {
+				$error = json_last_error_msg();
+			} else {
+				$error = __('JSON encoding failed: Error code %s', json_last_error());
+			}
+			throw new CakeException($error);
+		} else if ($json === false) {
+			throw new CakeException(__('Failed to parse JSON'));
+		}
+		return $json;
 	}
 
 }
