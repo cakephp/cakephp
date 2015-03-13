@@ -122,7 +122,7 @@ class PoFileParser
     /**
      * Saves a translation item to the messages.
      *
-     * @param array &$messages The messages array being collected from the file
+     * @param array $messages The messages array being collected from the file
      * @param array $item The current item being inspected
      * @return void
      */
