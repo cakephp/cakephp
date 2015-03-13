@@ -345,6 +345,6 @@ class JsonViewTest extends CakeTestCase {
 		$View = new JsonView($Controller);
 		$output = $View->render();
 		$this->assertSame('null', $output);
-	}	
-	
+	}
+
 }
