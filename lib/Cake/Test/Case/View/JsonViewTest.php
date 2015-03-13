@@ -306,4 +306,25 @@ class JsonViewTest extends CakeTestCase {
 		$this->assertSame($expected, $output);
 		$this->assertSame('application/javascript', $Response->type());
 	}
+
+/**
+ * JsonViewTest::testRenderInvalidJSON()
+ *
+ * @expectedException CakeException
+ * @return void
+ */
+	public function testRenderInvalidJSON() {
+		$Request = new CakeRequest();
+		$Response = new CakeResponse();
+		$Controller = new Controller($Request, $Response);
+
+		// non utf-8 stuff
+		$data = array('data' => array('foo' => 'bar' . chr('0x97')));
+
+		$Controller->set($data);
+		$Controller->set('_serialize', 'data');
+		$View = new JsonView($Controller);
+		$output = $View->render();
+	}
+	
 }
