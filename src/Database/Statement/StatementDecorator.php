@@ -47,6 +47,13 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
     protected $_driver;
 
     /**
+     * Whether or not this statement has already been executed
+     *
+     * @var bool
+     */
+    protected $_hasExecuted = false;
+
+    /**
      * Constructor
      *
      * @param \Cake\Database\StatementInterface|null $statement Statement implementation such as PDOStatement
@@ -158,6 +165,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
      */
     public function execute($params = null)
     {
+        $this->_hasExecuted = true;
         return $this->_statement->execute($params);
     }
 
@@ -228,7 +236,6 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
      *
      * ```
      * $statement = $connection->prepare('SELECT id, title from articles');
-     * $statement->execute();
      * foreach ($statement as $row) {
      *   //do stuff
      * }
@@ -238,7 +245,9 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
      */
     public function getIterator()
     {
-        $this->execute();
+        if (!$this->_hasExecuted) {
+            $this->execute();
+        }
         return $this->_statement;
     }
 
