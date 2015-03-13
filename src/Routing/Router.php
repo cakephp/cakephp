@@ -890,14 +890,21 @@ class Router
      * to the `Controller\Admin\Api\` namespace.
      *
      * @param string $name The prefix name to use.
+     * @param array|callable $params An array of routing defaults to add to each connected route.
+     *   If you have no parameters, this argument can be a callable.
      * @param callable $callback The callback to invoke that builds the prefixed routes.
      * @return void
      */
-    public static function prefix($name, $callback)
+    public static function prefix($name, $params = [], $callback = null)
     {
+        if($callback === null) {
+            $callback = $params;
+            $params   = [];
+        }
         $name = Inflector::underscore($name);
         $path = '/' . $name;
-        static::scope($path, ['prefix' => $name], $callback);
+        $params = array_merge($params, ['prefix' => $name]);
+        static::scope($path, $params, $callback);
     }
 
     /**
