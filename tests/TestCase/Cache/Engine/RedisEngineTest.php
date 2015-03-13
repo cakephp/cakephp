@@ -38,7 +38,9 @@ class RedisEngineTest extends TestCase
         parent::setUp();
         $this->skipIf(!class_exists('Redis'), 'Redis extension is not installed or configured properly.');
 
+        // @codingStandardsIgnoreStart
         $socket = @fsockopen('127.0.0.1', 6379, $errno, $errstr, 1);
+        // @codingStandardsIgnoreEnd
         $this->skipIf(!$socket, 'Redis is not running.');
         fclose($socket);
 
