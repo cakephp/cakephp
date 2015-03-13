@@ -100,12 +100,14 @@ class EventManager
     public function attach($callable, $eventKey = null, array $options = [])
     {
         if ($eventKey === null) {
-            return $this->on($callable);
+            $this->on($callable);
+            return;
         }
         if ($options) {
-            return $this->on($eventKey, $options, $callable);
+            $this->on($eventKey, $options, $callable);
+            return;
         }
-        return $this->on($eventKey, $callable);
+        $this->on($eventKey, $callable);
     }
 
     /**
@@ -227,9 +229,10 @@ class EventManager
     public function detach($callable, $eventKey = null)
     {
         if ($eventKey === null) {
-            return $this->off($callable);
+            $this->off($callable);
+            return;
         }
-        return $this->off($eventKey, $callable);
+        $this->off($eventKey, $callable);
     }
 
     /**
@@ -267,10 +270,12 @@ class EventManager
     public function off($eventKey, $callable = null)
     {
         if ($eventKey instanceof EventListenerInterface) {
-            return $this->_detachSubscriber($eventKey);
+            $this->_detachSubscriber($eventKey);
+            return;
         }
         if ($callable instanceof EventListenerInterface) {
-            return $this->_detachSubscriber($callable, $eventKey);
+            $this->_detachSubscriber($callable, $eventKey);
+            return;
         }
         if ($callable === null) {
             foreach (array_keys($this->_listeners) as $name) {

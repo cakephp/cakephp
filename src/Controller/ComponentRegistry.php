@@ -99,7 +99,7 @@ class ComponentRegistry extends ObjectRegistry
      * @param string $class The classname to create.
      * @param string $alias The alias of the component.
      * @param array $config An array of config to use for the component.
-     * @return Component The constructed component class.
+     * @return \Cake\Controller\Component The constructed component class.
      */
     protected function _create($class, $alias, $config)
     {
