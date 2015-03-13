@@ -897,9 +897,9 @@ class Router
      */
     public static function prefix($name, $params = [], $callback = null)
     {
-        if($callback === null) {
+        if ($callback === null) {
             $callback = $params;
-            $params   = [];
+            $params = [];
         }
         $name = Inflector::underscore($name);
         $path = '/' . $name;
