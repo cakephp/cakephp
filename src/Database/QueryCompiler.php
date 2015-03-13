@@ -107,7 +107,7 @@ class QueryCompiler
      * Returns a callable object that can be used to compile a SQL string representation
      * of this query.
      *
-     * @param string &$sql initial sql string to append to
+     * @param string $sql initial sql string to append to
      * @param \Cake\Database\Query $query The query that is being compiled
      * @param \Cake\Database\ValueBinder $generator The placeholder and value binder object
      * @return \Closure

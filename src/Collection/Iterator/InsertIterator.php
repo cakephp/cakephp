@@ -98,7 +98,7 @@ class InsertIterator extends Collection
      * Returns the current element in the target collection after inserting
      * the value from the source collection into the specified path.
      *
-     * @return void
+     * @return mixed
      */
     public function current()
     {

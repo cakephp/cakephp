@@ -1521,7 +1521,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @param callable $callback the function to be executed for each ExpressionInterface
      *   found inside this query.
-     * @return $this
+     * @return void|$this
      */
     public function traverseExpressions(callable $callback)
     {

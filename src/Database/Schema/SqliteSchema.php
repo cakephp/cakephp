@@ -383,7 +383,7 @@ class SqliteSchema extends BaseSchema
      * Returns whether there is any table in this connection to SQLite containing
      * sequences
      *
-     * @return void
+     * @return bool
      */
     public function hasSequences()
     {
