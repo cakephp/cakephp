@@ -130,6 +130,7 @@ class JsonView extends View {
  * PHP 5 <= 5.2.9 : Generic fall back error
  *
  * @param array $serialize The viewVars that need to be serialized
+ * @throws CakeException
  * @return string The serialized data
  */
 	protected function _serialize($serialize) {
