@@ -28,9 +28,24 @@ App::uses('JsonView', 'View');
  */
 class JsonViewTest extends CakeTestCase {
 
+/**
+ * setUp method
+ *
+ * @return void
+ **/
 	public function setUp() {
 		parent::setUp();
 		Configure::write('debug', 0);
+	}
+
+/**
+ * tearDown method
+ *
+ * @return void
+ **/
+	public function tearDown() {
+		parent::tearDown();
+		restore_error_handler();
 	}
 
 /**
@@ -324,7 +339,7 @@ class JsonViewTest extends CakeTestCase {
 /**
  * JsonViewTest::testRenderInvalidJSON()
  *
- * expectedException CakeException
+ * @expectedException CakeException
  * @return void
  */
 	public function testRenderInvalidJSON() {
@@ -336,7 +351,7 @@ class JsonViewTest extends CakeTestCase {
 		$data = array('data' => array('foo' => 'bar' . chr('0x97')));
 
 		// Use a custom error handler
-		$phpUnitErrorHandler = set_error_handler(array($this, 'jsonEncodeErrorHandler'));
+		set_error_handler(array($this, 'jsonEncodeErrorHandler'));
 
 		$Controller->set($data);
 		$Controller->set('_serialize', 'data');
