@@ -4025,6 +4025,28 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests that passing a coned entity that was marked as new to save() will
+     * actaully save it as a new entity
+     *
+     * @return void
+     */
+    public function testSaveWithClonedEntity()
+    {
+        $table = TableRegistry::get('Articles');
+        $article = $table->get(1);
+
+        $cloned = clone $article;
+        $cloned->unsetProperty('id');
+        $cloned->isNew(true);
+        $this->assertSame($cloned, $table->save($cloned));
+        $this->assertEquals(
+            $article->extract(['title', 'author_id']),
+            $cloned->extract(['title', 'author_id'])
+        );
+        $this->assertEquals(4, $cloned->id);
+    }
+
+    /**
      * Helper method to skip tests when connection is SQLServer.
      *
      * @return void
