@@ -1146,7 +1146,8 @@ class EntityTest extends TestCase
      *
      * @return void
      */
-    public function testIsDirtyFromClone() {
+    public function testIsDirtyFromClone()
+    {
         $entity = new Entity(
             ['a' => 1, 'b' => 2],
             ['markNew' => false, 'markClean' => true]
