@@ -2814,6 +2814,20 @@ class RouterTest extends TestCase
     }
 
     /**
+     * Test that prefix() accepts options
+     *
+     * @return void
+     */
+    public function testPrefixOptions()
+    {
+        Router::prefix('admin', ['param' => 'value'], function ($routes) {
+            $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
+            $this->assertEquals('/admin', $routes->path());
+            $this->assertEquals(['prefix' => 'admin', 'param' => 'value'], $routes->params());
+        });
+    }
+
+    /**
      * Test that plugin() creates a scope.
      *
      * @return void
