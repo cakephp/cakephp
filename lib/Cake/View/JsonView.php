@@ -150,9 +150,9 @@ class JsonView extends View {
 		}
 
 		if (version_compare(PHP_VERSION, '5.4.0', '>=') && Configure::read('debug')) {
-			$json = @json_encode($data, JSON_PRETTY_PRINT);
+			$json = json_encode($data, JSON_PRETTY_PRINT);
 		} else {
-			$json = @json_encode($data);
+			$json = json_encode($data);
 		}
 
 		if (function_exists('json_last_error') && json_last_error() !== JSON_ERROR_NONE) {
