@@ -158,11 +158,11 @@ class JsonView extends View {
 			if (function_exists('json_last_error_msg')) {
 				$error = json_last_error_msg();
 			} else {
-				$error = __('JSON encoding failed: Error code %s', json_last_error());
+				$error = sprintf('JSON encoding failed: Error code %s', json_last_error());
 			}
 			throw new CakeException($error);
 		} elseif ($json === false) {
-			throw new CakeException(__('Failed to parse JSON'));
+			throw new CakeException('Failed to parse JSON');
 		}
 		return $json;
 	}
