@@ -1970,4 +1970,38 @@ class MarshallerTest extends TestCase
         $this->assertEquals(1, $entity->tags[0]->_joinData->modified_by);
         $this->assertEquals(1, $entity->tags[1]->_joinData->modified_by);
     }
+
+    /**
+     * Tests that patching an association resulting in no changes, will
+     * not mark the parent entity as dirty
+     *
+     * @return void
+     */
+    public function testAssociationNoChanges()
+    {
+        $options = ['markClean' => true, 'isNew' => false];
+        $entity = new Entity([
+            'tile' => 'My Title',
+            'user' => new Entity([
+                'username' => 'mark',
+                'password' => 'not a secret'
+            ], $options)
+        ], $options);
+
+        $data = [
+            'body' => 'My Content',
+            'user' => [
+                'username' => 'mark',
+                'password' => 'not a secret'
+            ]
+        ];
+        $marshall = new Marshaller($this->articles);
+        $marshall->merge($entity, $data, ['associated' => ['Users']]);
+        $this->assertEquals('My Content', $entity->body);
+        $this->assertInstanceOf('Cake\ORM\Entity', $entity->user);
+        $this->assertEquals('mark', $entity->user->username);
+        $this->assertEquals('not a secret', $entity->user->password);
+        $this->assertFalse($entity->dirty('user'));
+        $this->assertTrue($entity->user->isNew());
+    }
 }
