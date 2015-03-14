@@ -334,7 +334,7 @@ class JsonViewTest extends CakeTestCase {
 
 		// non utf-8 stuff
 		$data = array('data' => array('foo' => 'bar' . chr('0x97')));
-		
+
 		// Use a custom error handler
 		$phpUnitErrorHandler = set_error_handler(array($this, 'jsonEncodeErrorHandler'));
 
