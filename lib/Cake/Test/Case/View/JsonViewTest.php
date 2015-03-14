@@ -157,6 +157,20 @@ class JsonViewTest extends CakeTestCase {
 	}
 
 /**
+ * Custom error handler for use while testing methods that use json_encode
+ * @param int $errno
+ * @param string $errstr
+ * @param string $errfile
+ * @param int $errline
+ * @param array $errcontext
+ * @return void
+ * @throws CakeException
+ **/
+	public function jsonEncodeErrorHandler($errno, $errstr, $errfile, $errline, $errcontext) {
+		throw new CakeException($errstr, 0, $errno, $errfile, $errline);
+	}
+
+/**
  * Test render with a valid string in _serialize.
  *
  * @dataProvider renderWithoutViewProvider
@@ -310,7 +324,7 @@ class JsonViewTest extends CakeTestCase {
 /**
  * JsonViewTest::testRenderInvalidJSON()
  *
- * @expectedException CakeException
+ * expectedException CakeException
  * @return void
  */
 	public function testRenderInvalidJSON() {
@@ -320,6 +334,9 @@ class JsonViewTest extends CakeTestCase {
 
 		// non utf-8 stuff
 		$data = array('data' => array('foo' => 'bar' . chr('0x97')));
+		
+		// Use a custom error handler
+		$phpUnitErrorHandler = set_error_handler(array($this, 'jsonEncodeErrorHandler'));
 
 		$Controller->set($data);
 		$Controller->set('_serialize', 'data');
