@@ -1140,4 +1140,26 @@ class EntityTest extends TestCase
         $entity = new Entity();
         $entity->set($property, 'bar');
     }
+
+    /**
+     * Provides empty values
+     *
+     * @return void
+     */
+    public function testIsDirtyFromClone() {
+        $entity = new Entity(
+            ['a' => 1, 'b' => 2],
+            ['markNew' => false, 'markClean' => true]
+        );
+
+        $this->assertFalse($entity->isNew());
+        $this->assertFalse($entity->dirty());
+
+        $cloned = clone $entity;
+        $cloned->isNew(true);
+
+        $this->assertTrue($cloned->dirty());
+        $this->assertTrue($cloned->dirty('a'));
+        $this->assertTrue($cloned->dirty('b'));
+    }
 }
