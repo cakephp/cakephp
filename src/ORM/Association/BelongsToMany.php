@@ -122,6 +122,16 @@ class BelongsToMany extends Association
     protected $_validStrategies = [self::STRATEGY_SELECT, self::STRATEGY_SUBQUERY];
 
     /**
+     * Whether the records on the joint table should be removed when a record
+     * on the source table is deleted.
+     *
+     * Defaults to true for backwards compatibility.
+     *
+     * @var bool
+     */
+    protected $_dependent = true;
+
+    /**
      * Sets the name of the field representing the foreign key to the target table.
      * If no parameters are passed current field is returned
      *
@@ -332,6 +342,9 @@ class BelongsToMany extends Association
      */
     public function cascadeDelete(EntityInterface $entity, array $options = [])
     {
+        if (!$this->dependent()) {
+            return true;
+        }
         $foreignKey = (array)$this->foreignKey();
         $primaryKey = (array)$this->source()->primaryKey();
         $conditions = [];

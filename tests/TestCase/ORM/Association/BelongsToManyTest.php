@@ -278,6 +278,35 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Test cascading deletes with dependent=false
+     *
+     * @return void
+     */
+    public function testCascadeDeleteDependent()
+    {
+        $articleTag = $this->getMock('Cake\ORM\Table', ['delete', 'deleteAll'], []);
+        $config = [
+            'sourceTable' => $this->article,
+            'targetTable' => $this->tag,
+            'dependent' => false,
+            'sort' => ['id' => 'ASC'],
+        ];
+        $association = new BelongsToMany('Tags', $config);
+        $association->junction($articleTag);
+        $this->article
+            ->association($articleTag->alias())
+            ->conditions(['click_count' => 3]);
+
+        $articleTag->expects($this->never())
+            ->method('deleteAll');
+        $articleTag->expects($this->never())
+            ->method('delete');
+
+        $entity = new Entity(['id' => 1, 'name' => 'PHP']);
+        $association->cascadeDelete($entity);
+    }
+
+    /**
      * Test cascading deletes with callbacks.
      *
      * @return void
