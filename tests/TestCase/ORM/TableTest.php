@@ -4054,7 +4054,8 @@ class TableTest extends TestCase
      * @group save
      * @return void
      */
-    public function testSaveCorrectPKType() {
+    public function testSaveCorrectPrimaryKeyType()
+    {
         $entity = new Entity([
             'username' => 'superuser',
             'created' => new Time('2013-10-10 00:00'),
