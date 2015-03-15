@@ -152,7 +152,7 @@ class JsonView extends View {
 		}
 
 		if (function_exists('json_last_error') && json_last_error() !== JSON_ERROR_NONE) {
-			throw new CakeException(sprintf('JSON_ERROR: %s', json_last_error_msg()));
+			throw new CakeException(json_last_error_msg());
 		} elseif ($json === false) {
 			throw new CakeException('Failed to parse JSON');
 		}
