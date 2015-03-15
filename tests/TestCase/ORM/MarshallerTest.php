@@ -1981,7 +1981,7 @@ class MarshallerTest extends TestCase
     {
         $options = ['markClean' => true, 'isNew' => false];
         $entity = new Entity([
-            'tile' => 'My Title',
+            'title' => 'My Title',
             'user' => new Entity([
                 'username' => 'mark',
                 'password' => 'not a secret'
