@@ -39,16 +39,6 @@ class JsonViewTest extends CakeTestCase {
 	}
 
 /**
- * tearDown method
- *
- * @return void
- **/
-	public function tearDown() {
-		parent::tearDown();
-		restore_error_handler();
-	}
-
-/**
  * Generates testRenderWithoutView data.
  *
  * Note: array($data, $serialize, expected)
@@ -339,7 +329,6 @@ class JsonViewTest extends CakeTestCase {
 /**
  * JsonViewTest::testRenderInvalidJSON()
  *
- * @expectedException CakeException
  * @return void
  */
 	public function testRenderInvalidJSON() {
@@ -350,13 +339,27 @@ class JsonViewTest extends CakeTestCase {
 		// non utf-8 stuff
 		$data = array('data' => array('foo' => 'bar' . chr('0x97')));
 
-		// Use a custom error handler
-		set_error_handler(array($this, 'jsonEncodeErrorHandler'));
-
 		$Controller->set($data);
 		$Controller->set('_serialize', 'data');
 		$View = new JsonView($Controller);
-		$output = $View->render();
+
+		// Use a custom error handler
+		set_error_handler(array($this, 'jsonEncodeErrorHandler'));
+
+		try {
+			$View->render();
+			restore_error_handler();
+			$this->fail('Failed asserting that exception of type "CakeException" is thrown.');
+		} catch (CakeException $e) {
+			$expected = array(
+				'Failed to parse JSON', 
+				'Malformed UTF-8 characters, possibly incorrectly encoded'
+			);
+			$this->assertContains($e->getMessage(), $expected);
+			restore_error_handler();
+			return;
+			
+		}
 	}
 
 /**
