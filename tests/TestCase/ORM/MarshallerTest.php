@@ -794,7 +794,7 @@ class MarshallerTest extends TestCase
     public function testMergeCreateAssociation()
     {
         $entity = new Entity([
-            'tile' => 'My Title'
+            'title' => 'My Title'
         ]);
         $entity->accessible('*', true);
         $data = [
