@@ -764,7 +764,7 @@ class MarshallerTest extends TestCase
             'password' => 'secret'
         ]);
         $entity = new Entity([
-            'tile' => 'My Title',
+            'title' => 'My Title',
             'user' => $user
         ]);
         $user->accessible('*', true);
