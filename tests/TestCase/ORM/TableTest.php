@@ -4028,6 +4028,7 @@ class TableTest extends TestCase
      * Tests that passing a coned entity that was marked as new to save() will
      * actaully save it as a new entity
      *
+     * @group save
      * @return void
      */
     public function testSaveWithClonedEntity()
@@ -4044,6 +4045,25 @@ class TableTest extends TestCase
             $cloned->extract(['title', 'author_id'])
         );
         $this->assertEquals(4, $cloned->id);
+    }
+
+    /**
+     * Tests that after saving then entity contains the right primary
+     * key casted to the right type
+     *
+     * @group save
+     * @return void
+     */
+    public function testSaveCorrectPKType() {
+        $entity = new Entity([
+            'username' => 'superuser',
+            'created' => new Time('2013-10-10 00:00'),
+            'updated' => new Time('2013-10-10 00:00')
+        ], ['markNew' => true]);
+
+        $table = TableRegistry::get('Users');
+        $this->assertSame($entity, $table->save($entity));
+        $this->assertSame(self::$nextUserId, $entity->id);
     }
 
     /**
