@@ -162,7 +162,10 @@ abstract class Cell
      */
     public function render($template = null)
     {
-        if ($template !== null && strpos($template, '/') === false) {
+        if ($template !== null &&
+            strpos($template, '/') === false &&
+            strpos($template, '.') === false
+        ) {
             $template = Inflector::underscore($template);
         }
         if ($template === null) {
