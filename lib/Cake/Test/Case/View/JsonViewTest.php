@@ -354,7 +354,6 @@ class JsonViewTest extends CakeTestCase {
 			restore_error_handler();
 			$this->assertRegExp('/UTF-8/', $e->getMessage());
 			return;
-			
 		}
 	}
 
