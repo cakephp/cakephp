@@ -349,6 +349,24 @@ class RouteTest extends TestCase
     }
 
     /**
+     * Test match() with persist option
+     *
+     * @return void
+     */
+    public function testMatchWithPersistOption()
+    {
+        $context = [
+            'params' => ['lang' => 'en']
+        ];
+        $route = new Route('/:lang/:controller/:action', [], ['persist' => ['lang']]);
+        $result = $route->match(
+            ['controller' => 'tasks', 'action' => 'add'],
+            $context
+        );
+        $this->assertEquals('/en/tasks/add', $result);
+    }
+
+    /**
      * Test match() with _host and other keys.
      */
     public function testMatchWithHostKeys()

@@ -350,6 +350,10 @@ class RouteBuilder
      * - `routeClass` is used to extend and change how individual routes parse requests
      *   and handle reverse routing, via a custom routing class.
      *   Ex. `'routeClass' => 'SlugRoute'`
+     * -  `persist` is used to define which route parameters should be automatically
+     *   included when generating new URLs. You can override persistent parameters
+     *   by redefining them in a URL or remove them by setting the parameter to `false`.
+     *   Ex. `'persist' => ['lang']`
      * - `_name` is used to define a specific name for routes. This can be used to optimize
      *   reverse routing lookups. If undefined a name will be generated for each
      *   connected route.
