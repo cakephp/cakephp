@@ -754,9 +754,17 @@ class PostgresTest extends CakeTestCase {
 		$modified['text_fields']['active'] = array('type' => 'integer', 'null' => true);
 
 		$New = new CakeSchema($modified);
-		$query = $this->Dbo->alterSchema($New->compare($Old));
-		$result = $this->Dbo->query($query);
+		$this->Dbo->query($this->Dbo->alterSchema($New->compare($Old)));
+		$result = $this->Dbo->describe('text_fields');
+
 		$this->Dbo->query($this->Dbo->dropSchema($Old));
+		$expected = array(
+			'type' => 'integer',
+			'null' => true,
+			'default' => null,
+			'length' => null,
+		);
+		$this->assertEquals($expected, $result['active']);
 	}
 
 /**
