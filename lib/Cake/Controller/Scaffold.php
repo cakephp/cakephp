@@ -399,7 +399,7 @@ class Scaffold {
 				}
 			} else {
 				throw new MissingActionException(array(
-					'controller' => $this->controller->name,
+					'controller' => get_class($this->controller),
 					'action' => $request->action
 				));
 			}
