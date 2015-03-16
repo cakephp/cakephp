@@ -69,6 +69,9 @@ class FloatTypeTest extends TestCase
 
         $result = $this->type->toPHP('2 bears', $this->driver);
         $this->assertSame(2.0, $result);
+
+        $result = $this->type->toPHP(['3', '4'], $this->driver);
+        $this->assertSame(1, $result);
     }
 
     /**
@@ -86,6 +89,9 @@ class FloatTypeTest extends TestCase
 
         $result = $this->type->toDatabase('2.51', $this->driver);
         $this->assertSame(2.51, $result);
+
+        $result = $this->type->toDatabase(['3', '4'], $this->driver);
+        $this->assertSame(1, $result);
     }
 
     /**
@@ -106,6 +112,9 @@ class FloatTypeTest extends TestCase
 
         $result = $this->type->marshal('3.5 bears', $this->driver);
         $this->assertSame('3.5 bears', $result);
+
+        $result = $this->type->marshal(['3', '4'], $this->driver);
+        $this->assertSame(1, $result);
     }
 
     /**
