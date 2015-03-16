@@ -1505,10 +1505,13 @@ class Table implements RepositoryInterface, EventListenerInterface
         if ($statement->rowCount() !== 0) {
             $success = $entity;
             $entity->set($filteredKeys, ['guard' => false]);
+            $schema = $this->schema();
+            $driver = $this->connection()->driver();
             foreach ($primary as $key => $v) {
                 if (!isset($data[$key])) {
                     $id = $statement->lastInsertId($this->table(), $key);
-                    $entity->set($key, $id);
+                    $type = $schema->columnType($key);
+                    $entity->set($key, Type::build($type)->toPHP($id, $driver));
                     break;
                 }
             }
