@@ -956,6 +956,3 @@ class Router
         include CONFIG . 'routes.php';
     }
 }
-
-//Save the initial state
-Router::reload();
