@@ -355,7 +355,7 @@ class Marshaller
 
         $errors = $this->_validate($data + $keys, $options, $isNew);
         $schema = $this->_table->schema();
-        $properties = [];
+        $properties = $marshalledAssocs = [];
         foreach ($data as $key => $value) {
             if (!empty($errors[$key])) {
                 continue;
@@ -367,6 +367,7 @@ class Marshaller
             if (isset($propertyMap[$key])) {
                 $assoc = $propertyMap[$key]['association'];
                 $value = $this->_mergeAssociation($original, $assoc, $value, $propertyMap[$key]);
+                $marshalledAssocs[$key] = true;
             } elseif ($columnType) {
                 $converter = Type::build($columnType);
                 $value = $converter->marshal($value);
@@ -384,12 +385,22 @@ class Marshaller
         if (!isset($options['fieldList'])) {
             $entity->set($properties);
             $entity->errors($errors);
+
+            foreach (array_keys($marshalledAssocs) as $field) {
+                if ($properties[$field] instanceof EntityInterface) {
+                    $entity->dirty($field, $properties[$field]->dirty());
+                }
+            }
             return $entity;
         }
 
         foreach ((array)$options['fieldList'] as $field) {
             if (array_key_exists($field, $properties)) {
                 $entity->set($field, $properties[$field]);
+                if ($properties[$field] instanceof EntityInterface &&
+                    isset($marshalledAssocs[$field])) {
+                    $entity->dirty($assoc, $properties[$field]->dirty());
+                }
             }
         }
 
