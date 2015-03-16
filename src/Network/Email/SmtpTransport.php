@@ -329,7 +329,7 @@ class SmtpTransport extends AbstractTransport
      */
     protected function _prepareMessageHeaders()
     {
-        return $this->_cakeEmail->getHeaders(['from', 'sender', 'replyTo', 'readReceipt', 'to', 'cc', 'subject']);
+        return $this->_cakeEmail->getHeaders(['from', 'sender', 'replyTo', 'readReceipt', 'to', 'cc', 'subject', 'returnPath']);
     }
 
     /**

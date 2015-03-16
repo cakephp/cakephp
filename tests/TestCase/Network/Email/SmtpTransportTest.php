@@ -407,6 +407,7 @@ class SmtpTransportTest extends TestCase
             ->will($this->returnValue(['First Line', 'Second Line', '.Third Line', '']));
 
         $data = "From: CakePHP Test <noreply@cakephp.org>\r\n";
+        $data .= "Return-Path: CakePHP Return <pleasereply@cakephp.org>\r\n";
         $data .= "To: CakePHP <cake@cakephp.org>\r\n";
         $data .= "Cc: Mark Story <mark@cakephp.org>, Juan Basso <juan@cakephp.org>\r\n";
         $data .= "Date: " . $date . "\r\n";
