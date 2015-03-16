@@ -495,6 +495,52 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test one() with with id and _joinData.
+     *
+     * @return void
+     */
+    public function testOneBelongsToManyJoinDataAssociatedWithIds()
+    {
+        $data = [
+            'title' => 'My title',
+            'body' => 'My content',
+            'author_id' => 1,
+            'tags' => [
+                [
+                    'id' => 1,
+                    '_joinData' => [
+                        'active' => 1,
+                        'user' => ['username' => 'MyLux'],
+                    ]
+                ],
+                [
+                    'id' => 2,
+                    '_joinData' => [
+                        'active' => 0,
+                        'user' => ['username' => 'IronFall'],
+                    ]
+                ],
+            ],
+        ];
+        $marshall = new Marshaller($this->articles);
+        $result = $marshall->one($data, ['associated' => ['Tags._joinData.Users']]);
+        $this->assertInstanceOf(
+            'Cake\ORM\Entity',
+            $result->tags[0]
+        );
+        $this->assertInstanceOf(
+            'Cake\ORM\Entity',
+            $result->tags[1]
+        );
+
+        $this->assertEquals(false,$result->tags[0]->isNew() );
+        $this->assertEquals(false,$result->tags[1]->isNew() );
+        $this->assertEquals( TableRegistry::get('tags')->get(1)->tag,$result->tags[0]->tag );
+        $this->assertEquals( TableRegistry::get('tags')->get(2)->tag,$result->tags[1]->tag );
+
+    }
+
+    /**
      * Test one() with deeper associations.
      *
      * @return void

@@ -105,6 +105,18 @@ class Marshaller
         $propertyMap = $this->_buildPropertyMap($options);
 
         $schema = $this->_table->schema();
+        $primaryKey = $schema->primaryKey();
+
+        if ( array_intersect($primaryKey, array_keys($data)) == $primaryKey ) {
+            $record=$this->_table->find('all');
+            foreach ( $primaryKey as $pkey ) {
+                $record->where(["$pkey"=>$data[$pkey] ]);
+            }
+            if ( $record->count() > 0 ) {
+                return $record->first();
+            }
+        }
+
         $entityClass = $this->_table->entityClass();
         $entity = new $entityClass();
         $entity->source($this->_table->registryAlias());
@@ -116,7 +128,6 @@ class Marshaller
         }
 
         $errors = $this->_validate($data, $options, true);
-        $primaryKey = $schema->primaryKey();
         $properties = [];
         foreach ($data as $key => $value) {
             if (!empty($errors[$key])) {
