@@ -522,6 +522,12 @@ class MarshallerTest extends TestCase
                 ],
             ],
         ];
+
+        $articlesTags = TableRegistry::get('ArticlesTags');
+        $Tags = TableRegistry::get('Tags');
+        $t1 = $Tags->find('all')->where(['id' => 1])->first();
+        $t2 = $Tags->find('all')->where(['id' => 2])->first();
+        $articlesTags->belongsTo('Users');
         $marshall = new Marshaller($this->articles);
         $result = $marshall->one($data, ['associated' => ['Tags._joinData.Users']]);
         $this->assertInstanceOf(
@@ -533,10 +539,21 @@ class MarshallerTest extends TestCase
             $result->tags[1]
         );
 
+        $this->assertInstanceOf(
+            'Cake\ORM\Entity',
+            $result->tags[0]->_joinData->user
+        );
+
+        $this->assertInstanceOf(
+            'Cake\ORM\Entity',
+            $result->tags[1]->_joinData->user
+        );
         $this->assertEquals(false, $result->tags[0]->isNew());
         $this->assertEquals(false, $result->tags[1]->isNew());
-        $this->assertEquals(TableRegistry::get('tags')->get(1)->tag, $result->tags[0]->tag);
-        $this->assertEquals(TableRegistry::get('tags')->get(2)->tag, $result->tags[1]->tag);
+        $this->assertEquals($t1->tag, $result->tags[0]->tag);
+        $this->assertEquals($t2->tag, $result->tags[1]->tag);
+        $this->assertEquals($data['tags'][0]['_joinData']['user']['username'], $result->tags[0]->_joinData->user->username);
+        $this->assertEquals($data['tags'][1]['_joinData']['user']['username'], $result->tags[1]->_joinData->user->username);
     }
 
     /**
