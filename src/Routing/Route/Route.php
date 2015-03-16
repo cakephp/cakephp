@@ -416,7 +416,7 @@ class Route
         $defaults = $this->defaults;
         $context += ['params' => []];
 
-        if (!empty($this->options['persist'])  &&
+        if (!empty($this->options['persist']) &&
             is_array($this->options['persist'])
         ) {
             $url = $this->_persistParams($url, $context['params']);
