@@ -385,11 +385,8 @@ class Route
      * @param array $params An array of persistent values to replace persistent ones.
      * @return array An array with persistent parameters applied.
      */
-    public function persistParams(array $url, array $params)
+    protected function _persistParams(array $url, array $params)
     {
-        if (empty($this->options['persist']) || !is_array($this->options['persist'])) {
-            return $url;
-        }
         foreach ($this->options['persist'] as $persistKey) {
             if (array_key_exists($persistKey, $params) && !isset($url[$persistKey])) {
                 $url[$persistKey] = $params[$persistKey];
@@ -419,7 +416,11 @@ class Route
         $defaults = $this->defaults;
         $context += ['params' => []];
 
-        $url = $this->persistParams($url, $context['params']);
+        if (!empty($this->options['persist'])  &&
+            is_array($this->options['persist'])
+        ) {
+            $url = $this->_persistParams($url, $context['params']);
+        }
         unset($context['params']);
         $hostOptions = array_intersect_key($url, $context);
 
