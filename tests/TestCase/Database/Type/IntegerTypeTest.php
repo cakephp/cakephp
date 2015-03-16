@@ -54,6 +54,9 @@ class IntegerTypeTest extends TestCase
 
         $result = $this->type->toPHP('2 bears', $this->driver);
         $this->assertSame(2, $result);
+
+        $result = $this->type->toPHP(['3', '4'], $this->driver);
+        $this->assertSame(1, $result);
     }
 
     /**
@@ -71,6 +74,9 @@ class IntegerTypeTest extends TestCase
 
         $result = $this->type->toDatabase('2', $this->driver);
         $this->assertSame(2, $result);
+
+        $result = $this->type->toDatabase(['3', '4'], $this->driver);
+        $this->assertSame(1, $result);
     }
 
     /**
@@ -100,6 +106,9 @@ class IntegerTypeTest extends TestCase
 
         $result = $this->type->marshal('2 monkeys', $this->driver);
         $this->assertSame('2 monkeys', $result);
+
+        $result = $this->type->marshal(['3', '4'], $this->driver);
+        $this->assertSame(1, $result);
     }
 
     /**
