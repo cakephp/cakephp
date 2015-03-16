@@ -37,7 +37,8 @@
 		"files": [
 			"src/Core/functions.php",
 			"src/Collection/functions.php",
-			"src/I18n/functions.php"
+			"src/I18n/functions.php",
+            "src/Utility/bootstrap.php"
 		]
 	},
 	"autoload-dev": {
