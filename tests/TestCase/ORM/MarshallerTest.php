@@ -533,11 +533,10 @@ class MarshallerTest extends TestCase
             $result->tags[1]
         );
 
-        $this->assertEquals(false,$result->tags[0]->isNew() );
-        $this->assertEquals(false,$result->tags[1]->isNew() );
-        $this->assertEquals( TableRegistry::get('tags')->get(1)->tag,$result->tags[0]->tag );
-        $this->assertEquals( TableRegistry::get('tags')->get(2)->tag,$result->tags[1]->tag );
-
+        $this->assertEquals(false, $result->tags[0]->isNew());
+        $this->assertEquals(false, $result->tags[1]->isNew());
+        $this->assertEquals(TableRegistry::get('tags')->get(1)->tag, $result->tags[0]->tag);
+        $this->assertEquals(TableRegistry::get('tags')->get(2)->tag, $result->tags[1]->tag);
     }
 
     /**
