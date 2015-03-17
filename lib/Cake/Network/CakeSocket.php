@@ -130,7 +130,7 @@ class CakeSocket {
 		}
 
 		$scheme = null;
-		if (!empty($this->config['protocol']) && strpos($this->config['host'], '://') === false) {
+		if (!empty($this->config['protocol']) && strpos($this->config['host'], '://') === false && empty($this->config['proxy'])) {
 			$scheme = $this->config['protocol'] . '://';
 		}
 
@@ -170,6 +170,34 @@ class CakeSocket {
 		if ($this->connected) {
 			stream_set_timeout($this->connection, $this->config['timeout']);
 		}
+
+
+		if (!empty($this->config['request']) && $this->config['request']['uri']['scheme'] == 'https' && !empty($this->config['proxy'])) {
+			$req = array();
+			$req[] = 'CONNECT '. $this->config['request']['uri']['host'] . ':' . $this->config['request']['uri']['port'] . ' HTTP/1.1';
+			$req[] = 'Host: ' . $this->config['host'];
+			$req[] = 'User-Agent: php proxy';
+
+			fwrite($this->connection, implode("\r\n", $req)."\r\n\r\n");
+
+			while(true) {
+				$s = rtrim(fgets($this->connection, 4096));
+				if(preg_match('/^$/', $s)) {
+					break;
+				}
+			}
+
+			$modes = array(STREAM_CRYPTO_METHOD_TLS_CLIENT,
+				       STREAM_CRYPTO_METHOD_SSLv3_CLIENT,
+				       STREAM_CRYPTO_METHOD_SSLv23_CLIENT,
+				       STREAM_CRYPTO_METHOD_SSLv2_CLIENT);
+			$success = false;
+			foreach($modes as $mode) {
+				$success = stream_socket_enable_crypto($this->connection, true, $mode);
+				if ($success) break;
+			}
+		}
+
 		return $this->connected;
 	}
 

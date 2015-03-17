@@ -652,6 +652,7 @@ class HttpSocket extends CakeSocket {
 		}
 		$this->config['host'] = $this->_proxy['host'];
 		$this->config['port'] = $this->_proxy['port'];
+		$this->config['proxy'] = true;
 
 		if (empty($this->_proxy['method']) || !isset($this->_proxy['user'], $this->_proxy['pass'])) {
 			return;
