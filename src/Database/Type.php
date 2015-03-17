@@ -51,8 +51,8 @@ class Type
      * @var array
      */
     protected static $_basicTypes = [
-        'string' => ['callback' => 'strval'],
-        'text' => ['callback' => 'strval'],
+        'string' => ['callback' => ['\Cake\Database\Type', 'strval']],
+        'text' => ['callback' => ['\Cake\Database\Type', 'strval']],
         'boolean' => [
             'callback' => ['\Cake\Database\Type', 'boolval'],
             'pdo' => PDO::PARAM_BOOL
@@ -186,10 +186,6 @@ class Type
         if ($value === null) {
             return null;
         }
-        if (is_array($value)) {
-            $value = '';
-        }
-
         if (!empty(self::$_basicTypes[$this->_name])) {
             $typeInfo = self::$_basicTypes[$this->_name];
             if (isset($typeInfo['callback'])) {
@@ -234,6 +230,22 @@ class Type
             return strtolower($value) === 'true' ? true : false;
         }
         return !empty($value);
+    }
+
+    /**
+     * Type converter for string values.
+     *
+     * Will convert values into strings
+     *
+     * @param mixed $value The value to convert to a string.
+     * @return bool
+     */
+    public static function strval($value)
+    {
+        if (is_array($value)) {
+            $value = '';
+        }
+        return strval($value);
     }
 
     /**
