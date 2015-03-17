@@ -612,7 +612,7 @@ class Router
             }
 
             $url = static::_applyUrlFilters($url);
-            $output = static::$_collection->match($url, static::$_requestContext);
+            $output = static::$_collection->match($url, static::$_requestContext + ['params' => $params]);
         } else {
             $plainString = (
                 strpos($url, 'javascript:') === 0 ||
