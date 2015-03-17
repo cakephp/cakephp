@@ -126,10 +126,10 @@ abstract class Cell
     /**
      * Constructor.
      *
-     * @param \Cake\Network\Request $request the request to use in the cell
-     * @param \Cake\Network\Response $response the response to use in the cell
-     * @param \Cake\Event\EventManager $eventManager then eventManager to bind events to
-     * @param array $cellOptions cell options to apply
+     * @param \Cake\Network\Request $request The request to use in the cell.
+     * @param \Cake\Network\Response $response The response to use in the cell.
+     * @param \Cake\Event\EventManager $eventManager The eventManager to bind events to.
+     * @param array $cellOptions Cell options to apply.
      */
     public function __construct(
         Request $request = null,
@@ -157,12 +157,15 @@ abstract class Cell
      *
      * @param string|null $template Custom template name to render. If not provided (null), the last
      * value will be used. This value is automatically set by `CellTrait::cell()`.
-     * @return string The rendered cell
+     * @return string The rendered cell.
      * @throws \Cake\View\Exception\MissingCellViewException When a MissingTemplateException is raised during rendering.
      */
     public function render($template = null)
     {
-        if ($template !== null && strpos($template, '/') === false) {
+        if ($template !== null &&
+            strpos($template, '/') === false &&
+            strpos($template, '.') === false
+        ) {
             $template = Inflector::underscore($template);
         }
         if ($template === null) {

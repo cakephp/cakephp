@@ -174,6 +174,27 @@ class CellTest extends TestCase
     }
 
     /**
+     * Test that a cell can render a plugin view.
+     *
+     * @return void
+     */
+    public function testCellRenderPluginTemplate()
+    {
+        $cell = $this->View->cell('Articles');
+        $this->assertContains(
+            'TestPlugin Articles/display',
+            $cell->render('TestPlugin.display')
+        );
+
+        $cell = $this->View->cell('Articles');
+        $cell->plugin = 'TestPlugin';
+        $this->assertContains(
+            'TestPlugin Articles/display',
+            $cell->render('display')
+        );
+    }
+
+    /**
      * Tests that using plugin's cells works.
      *
      * @return void

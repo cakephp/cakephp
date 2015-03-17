@@ -186,6 +186,9 @@ class Type
         if ($value === null) {
             return null;
         }
+        if (is_array($value)) {
+            $value = '';
+        }
 
         if (!empty(self::$_basicTypes[$this->_name])) {
             $typeInfo = self::$_basicTypes[$this->_name];
