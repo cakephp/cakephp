@@ -112,8 +112,11 @@ class Marshaller
             foreach ($primaryKey as $pkey) {
                 $record->where(["$pkey" => $data[$pkey] ]);
             }
-            if ($record->count() > 0) {
-                return $record->first();
+
+            $record = $record->first();
+
+            if ($record) {
+                return $record;
             }
         }
 
