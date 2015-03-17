@@ -304,18 +304,22 @@ class Router
             if ($plugin && $prefix) {
                 $path = '/' . implode('/', [$prefix, $pluginUrl]);
                 $params = ['prefix' => $prefix, 'plugin' => $plugin];
-                return static::scope($path, $params, $callback);
+                static::scope($path, $params, $callback);
+                return;
             }
 
             if ($prefix) {
-                return static::prefix($prefix, $callback);
+                static::prefix($prefix, $callback);
+                return;
             }
 
             if ($plugin) {
-                return static::plugin($plugin, $callback);
+                static::plugin($plugin, $callback);
+                return;
             }
 
-            return static::scope('/', $callback);
+            static::scope('/', $callback);
+            return;
         }
     }
 
@@ -959,6 +963,3 @@ class Router
         include CONFIG . 'routes.php';
     }
 }
-
-//Save the initial state
-Router::reload();

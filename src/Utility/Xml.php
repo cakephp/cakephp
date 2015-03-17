@@ -224,7 +224,7 @@ class Xml
      *
      * @param \DOMDocument $dom Handler to DOMDocument
      * @param \DOMElement $node Handler to DOMElement (child)
-     * @param array &$data Array of data to append to the $node.
+     * @param array $data Array of data to append to the $node.
      * @param string $format Either 'attribute' or 'tags'. This determines where nested keys go.
      * @return void
      * @throws \Cake\Utility\Exception\XmlException
@@ -356,7 +356,7 @@ class Xml
      * Recursive method to toArray
      *
      * @param \SimpleXMLElement $xml SimpleXMLElement object
-     * @param array &$parentData Parent array with data
+     * @param array $parentData Parent array with data
      * @param string $ns Namespace of current child
      * @param array $namespaces List of namespaces in XML
      * @return void

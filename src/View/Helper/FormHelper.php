@@ -536,7 +536,7 @@ class FormHelper extends Helper
      *    generating the hash, else $this->fields is being used.
      * @param array $secureAttributes will be passed as HTML attributes into the hidden
      *    input elements generated for the Security Component.
-     * @return string A hidden input field with a security hash
+     * @return void|string A hidden input field with a security hash
      */
     public function secure(array $fields = [], array $secureAttributes = [])
     {

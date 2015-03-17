@@ -94,7 +94,7 @@ class SecurityComponent extends Component
      * Component startup. All security checking happens here.
      *
      * @param Event $event An Event instance
-     * @return void
+     * @return mixed
      */
     public function startup(Event $event)
     {

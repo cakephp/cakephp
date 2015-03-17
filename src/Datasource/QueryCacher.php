@@ -71,7 +71,7 @@ class QueryCacher
      *
      * @param object $query The query the cache read is for.
      * @param \Traversable $results The result set to store.
-     * @return void
+     * @return bool True if the data was successfully cached, false on failure
      */
     public function store($query, Traversable $results)
     {

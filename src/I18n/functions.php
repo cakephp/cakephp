@@ -69,7 +69,7 @@ if (!function_exists('__d')) {
      * @param string $domain Domain.
      * @param string $msg String to translate.
      * @param mixed $args Array with arguments or multiple arguments in function.
-     * @return string Translated string.
+     * @return void|string Translated string.
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__d
      */
     function __d($domain, $msg, $args = null)
@@ -94,7 +94,7 @@ if (!function_exists('__dn')) {
      * @param string $plural Plural.
      * @param int $count Count.
      * @param mixed $args Array with arguments or multiple arguments in function.
-     * @return string Plural form of translated string.
+     * @return void|string Plural form of translated string.
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__dn
      */
     function __dn($domain, $singular, $plural, $count, $args = null)
@@ -121,7 +121,7 @@ if (!function_exists('__x')) {
      * @param string $context Context of the text.
      * @param string $singular Text to translate.
      * @param mixed $args Array with arguments or multiple arguments in function.
-     * @return mixed Translated string.
+     * @return void|string Translated string.
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__
      */
     function __x($context, $singular, $args = null)
@@ -148,7 +148,7 @@ if (!function_exists('__xn')) {
      * @param string $plural Plural text.
      * @param int $count Count.
      * @param mixed $args Array with arguments or multiple arguments in function.
-     * @return mixed Plural form of translated string.
+     * @return void|string Plural form of translated string.
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__xn
      */
     function __xn($context, $singular, $plural, $count, $args = null)
@@ -176,7 +176,7 @@ if (!function_exists('__dx')) {
      * @param string $context Context of the text.
      * @param string $msg String to translate.
      * @param mixed $args Array with arguments or multiple arguments in function.
-     * @return string Translated string.
+     * @return void|string Translated string.
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__dx
      */
     function __dx($domain, $context, $msg, $args = null)
@@ -207,7 +207,7 @@ if (!function_exists('__dxn')) {
      * @param string $plural Plural text.
      * @param int $count Count.
      * @param mixed $args Array with arguments or multiple arguments in function.
-     * @return mixed Plural form of translated string.
+     * @return void|string Plural form of translated string.
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__dxn
      */
     function __dxn($domain, $context, $singular, $plural, $count, $args = null)

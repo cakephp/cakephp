@@ -199,7 +199,7 @@ abstract class BaseErrorHandler
      *
      * @param string $level The level name of the log.
      * @param array $data Array of error data.
-     * @return void
+     * @return bool
      */
     protected function _logError($level, $data)
     {

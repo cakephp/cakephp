@@ -242,7 +242,7 @@ class RouteBuilder
      * @param array|callable $options Options to use when generating REST routes, or a callback.
      * @param callable|null $callback An optional callback to be executed in a nested scope. Nested
      *   scopes inherit the existing path and 'id' parameter.
-     * @return array Array of mapped resources
+     * @return void
      */
     public function resources($name, $options = [], $callback = null)
     {

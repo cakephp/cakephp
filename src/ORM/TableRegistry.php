@@ -147,11 +147,11 @@ class TableRegistry
      * If no `connection` option is passed the table's defaultConnectionName() method
      * will be called to get the default connection name to use.
      *
-     * @param string $name The alias name you want to get.
+     * @param string $alias The alias name you want to get.
      * @param array $options The options you want to build the table with.
      *   If a table has already been loaded the options will be ignored.
      * @return \Cake\ORM\Table
-     * @throws RuntimeException When you try to configure an alias that already exists.
+     * @throws \RuntimeException When you try to configure an alias that already exists.
      */
     public static function get($alias, array $options = [])
     {
