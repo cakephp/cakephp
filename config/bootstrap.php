@@ -13,9 +13,14 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
+use Cake\Routing\Router;
+
 define('TIME_START', microtime(true));
 
 // @deprecated Backward compatibility with 2.x series
 class_alias('Cake\Utility\Text', 'Cake\Utility\String');
 
 require CAKE . 'basics.php';
+
+// Sets the initial router state so future reloads work.
+Router::reload();

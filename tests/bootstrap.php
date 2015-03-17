@@ -16,7 +16,6 @@ use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\I18n\I18n;
 use Cake\Log\Log;
-use Cake\Routing\Router;
 
 require_once 'vendor/autoload.php';
 
@@ -117,5 +116,3 @@ Log::config([
 Carbon\Carbon::setTestNow(Carbon\Carbon::now());
 
 ini_set('intl.default_locale', 'en_US');
-
-Router::reload();
