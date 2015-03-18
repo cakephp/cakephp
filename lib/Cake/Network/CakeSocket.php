@@ -171,7 +171,6 @@ class CakeSocket {
 			stream_set_timeout($this->connection, $this->config['timeout']);
 		}
 
-
 		if (!empty($this->config['request']) && $this->config['request']['uri']['scheme'] == 'https' && !empty($this->config['proxy'])) {
 			$req = array();
 			$req[] = 'CONNECT '. $this->config['request']['uri']['host'] . ':' . $this->config['request']['uri']['port'] . ' HTTP/1.1';
@@ -187,15 +186,7 @@ class CakeSocket {
 				}
 			}
 
-			$modes = array(STREAM_CRYPTO_METHOD_TLS_CLIENT,
-				       STREAM_CRYPTO_METHOD_SSLv3_CLIENT,
-				       STREAM_CRYPTO_METHOD_SSLv23_CLIENT,
-				       STREAM_CRYPTO_METHOD_SSLv2_CLIENT);
-			$success = false;
-			foreach($modes as $mode) {
-				$success = stream_socket_enable_crypto($this->connection, true, $mode);
-				if ($success) break;
-			}
+			$this->enableCrypto('tls', 'client');
 		}
 
 		return $this->connected;
