@@ -1260,6 +1260,14 @@ class PaginatorHelperTest extends CakeTestCase {
 				'paramType' => 'named'
 			)
 		);
+		$result = $this->Paginator->sort('title', 'Title', array('model' => 'Client'));
+		$expected = array(
+			'a' => array('href' => '/index/sort:title/direction:asc'),
+			'Title',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+
 		$result = $this->Paginator->next('Next', array('model' => 'Client'));
 		$expected = array(
 			'span' => array('class' => 'next'),
@@ -1273,6 +1281,39 @@ class PaginatorHelperTest extends CakeTestCase {
 		$result = $this->Paginator->next('Next', array('model' => 'Server'), 'No Next', array('model' => 'Server'));
 		$expected = array(
 			'span' => array('class' => 'next'), 'No Next', '/span'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test creating paging links for missing models.
+ *
+ * @return void
+ */
+	public function testPagingLinksMissingModel() {
+		$result = $this->Paginator->sort('title', 'Title', array('model' => 'Missing'));
+		$expected = array(
+			'a' => array('href' => '/index/sort:title/direction:asc'),
+			'Title',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Paginator->next('Next', array('model' => 'Missing'));
+		$expected = array(
+			'span' => array('class' => 'next'),
+			'a' => array('href' => '/index/page:2', 'rel' => 'next'),
+			'Next',
+			'/a',
+			'/span'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Paginator->prev('Prev', array('model' => 'Missing'));
+		$expected = array(
+			'span' => array('class' => 'prev'),
+			'Prev',
+			'/span'
 		);
 		$this->assertTags($result, $expected);
 	}
