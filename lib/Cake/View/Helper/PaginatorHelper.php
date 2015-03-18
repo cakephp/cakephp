@@ -120,7 +120,7 @@ class PaginatorHelper extends AppHelper {
  * Gets the current paging parameters from the resultset for the given model
  *
  * @param string $model Optional model name. Uses the default if none is specified.
- * @return array|null The array of paging parameters for the paginated resultset.
+ * @return array The array of paging parameters for the paginated resultset.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::params
  */
 	public function params($model = null) {
@@ -128,7 +128,14 @@ class PaginatorHelper extends AppHelper {
 			$model = $this->defaultModel();
 		}
 		if (!isset($this->request->params['paging']) || empty($this->request->params['paging'][$model])) {
-			return null;
+			return array(
+				'prevPage' => false,
+				'nextPage' => true,
+				'paramType' => 'named',
+				'pageCount' => 1,
+				'options' => array(),
+				'page' => 1
+			);
 		}
 		return $this->request->params['paging'][$model];
 	}
