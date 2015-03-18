@@ -171,7 +171,6 @@ class CakeSocket {
 			stream_set_timeout($this->connection, $this->config['timeout']);
 		}
 
-
 		if (!empty($this->config['request']) && $this->config['request']['uri']['scheme'] == 'https' && !empty($this->config['proxy'])) {
 			$req = array();
 			$req[] = 'CONNECT '. $this->config['request']['uri']['host'] . ':' . $this->config['request']['uri']['port'] . ' HTTP/1.1';
