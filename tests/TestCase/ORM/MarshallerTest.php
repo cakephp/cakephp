@@ -548,8 +548,8 @@ class MarshallerTest extends TestCase
             'Cake\ORM\Entity',
             $result->tags[1]->_joinData->user
         );
-        $this->assertEquals(false, $result->tags[0]->isNew());
-        $this->assertEquals(false, $result->tags[1]->isNew());
+        $this->assertFalse($result->tags[0]->isNew());
+        $this->assertFalse($result->tags[1]->isNew());
         $this->assertEquals($t1->tag, $result->tags[0]->tag);
         $this->assertEquals($t2->tag, $result->tags[1]->tag);
         $this->assertEquals($data['tags'][0]['_joinData']['user']['username'], $result->tags[0]->_joinData->user->username);
