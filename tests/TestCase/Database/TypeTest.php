@@ -261,7 +261,7 @@ class TypeTest extends TestCase
         $this->assertFalse($type->toDatabase(0, $driver));
         $this->assertTrue($type->toDatabase('1', $driver));
         $this->assertFalse($type->toDatabase('0', $driver));
-        $this->assertFalse($type->toDatabase([1, 2], $driver));
+        $this->assertTrue($type->toDatabase([1, 2], $driver));
     }
 
     /**
@@ -299,7 +299,7 @@ class TypeTest extends TestCase
         $this->assertFalse($type->toPHP('0', $driver));
         $this->assertFalse($type->toPHP('FALSE', $driver));
         $this->assertFalse($type->toPHP('false', $driver));
-        $this->assertFalse($type->toPHP(['2', '3'], $driver));
+        $this->assertTrue($type->toPHP(['2', '3'], $driver));
     }
 
     /**
@@ -320,7 +320,7 @@ class TypeTest extends TestCase
         $this->assertFalse($type->marshal(0));
         $this->assertFalse($type->marshal(''));
         $this->assertFalse($type->marshal('invalid'));
-        $this->assertFalse($type->marshal(['2', '3']));
+        $this->assertTrue($type->marshal(['2', '3']));
     }
 
 
