@@ -222,7 +222,7 @@ class RouteCollection
      *
      * @param array $url The url to match.
      * @param array $context The request context to use. Contains _base, _port,
-     *    _host, and _scheme keys.
+     *    _host, _scheme and params keys.
      * @return string|false Either a string on match, or false on failure.
      * @throws \Cake\Routing\Exception\MissingRouteException when a route cannot be matched.
      */

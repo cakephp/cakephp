@@ -207,7 +207,7 @@ class I18n
      * locale as stored in the `intl.default_locale` PHP setting.
      *
      * @param string|null $locale The name of the locale to set as default.
-     * @return string|null The name of the default locale.
+     * @return string|void The name of the default locale.
      */
     public static function locale($locale = null)
     {

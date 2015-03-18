@@ -242,7 +242,7 @@ class RouteBuilder
      * @param array|callable $options Options to use when generating REST routes, or a callback.
      * @param callable|null $callback An optional callback to be executed in a nested scope. Nested
      *   scopes inherit the existing path and 'id' parameter.
-     * @return array Array of mapped resources
+     * @return void
      */
     public function resources($name, $options = [], $callback = null)
     {
@@ -350,6 +350,10 @@ class RouteBuilder
      * - `routeClass` is used to extend and change how individual routes parse requests
      *   and handle reverse routing, via a custom routing class.
      *   Ex. `'routeClass' => 'SlugRoute'`
+     * -  `persist` is used to define which route parameters should be automatically
+     *   included when generating new URLs. You can override persistent parameters
+     *   by redefining them in a URL or remove them by setting the parameter to `false`.
+     *   Ex. `'persist' => ['lang']`
      * - `_name` is used to define a specific name for routes. This can be used to optimize
      *   reverse routing lookups. If undefined a name will be generated for each
      *   connected route.

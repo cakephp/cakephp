@@ -446,7 +446,7 @@ class View
      *
      * @param string|null $view Name of view file to use
      * @param string|null $layout Layout to use.
-     * @return string|null Rendered content or null if content already rendered and returned earlier.
+     * @return string|void Rendered content or null if content already rendered and returned earlier.
      * @throws \Cake\Core\Exception\Exception If there is an error in the view.
      * @triggers View.beforeRender $this, [$viewFileName]
      * @triggers View.afterRender $this, [$viewFileName]

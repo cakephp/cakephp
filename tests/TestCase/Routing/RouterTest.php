@@ -1198,6 +1198,29 @@ class RouterTest extends TestCase
     }
 
     /**
+     * Test url param persistence.
+     *
+     * @return void
+     */
+    public function testUrlParamPersistence()
+    {
+        Router::connect('/:lang/:controller/:action/*', [], ['persist' => ['lang']]);
+        $request = new Request();
+        $request->addParams([
+            'lang' => 'en',
+            'controller' => 'posts',
+            'action' => 'index'
+        ])->addPaths([
+            'base' => '',
+            'here' => '/'
+        ]);
+        Router::pushRequest($request);
+
+        $result = Router::url(['controller' => 'tasks', 'action' => 'edit', '1234']);
+        $this->assertEquals('/en/tasks/edit/1234', $result);
+    }
+
+    /**
      * Test that plain strings urls work
      *
      * @return void

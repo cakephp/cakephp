@@ -653,7 +653,7 @@ class Query extends DatabaseQuery implements JsonSerializable
      * using `contain`
      *
      * @see \Cake\Database\Query::execute()
-     * @return $this
+     * @return void
      */
     protected function _transformQuery()
     {
