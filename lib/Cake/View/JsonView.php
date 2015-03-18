@@ -126,6 +126,7 @@ class JsonView extends View {
  * Serialize view vars
  *
  * @param array $serialize The viewVars that need to be serialized
+ * @throws CakeException
  * @return string The serialized data
  */
 	protected function _serialize($serialize) {
@@ -145,10 +146,17 @@ class JsonView extends View {
 		}
 
 		if (version_compare(PHP_VERSION, '5.4.0', '>=') && Configure::read('debug')) {
-			return json_encode($data, JSON_PRETTY_PRINT);
+			$json = json_encode($data, JSON_PRETTY_PRINT);
+		} else {
+			$json = json_encode($data);
 		}
 
-		return json_encode($data);
+		if (function_exists('json_last_error') && json_last_error() !== JSON_ERROR_NONE) {
+			throw new CakeException(json_last_error_msg());
+		} elseif ($json === false) {
+			throw new CakeException('Failed to parse JSON');
+		}
+		return $json;
 	}
 
 }
