@@ -495,6 +495,68 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test one() with with id and _joinData.
+     *
+     * @return void
+     */
+    public function testOneBelongsToManyJoinDataAssociatedWithIds()
+    {
+        $data = [
+            'title' => 'My title',
+            'body' => 'My content',
+            'author_id' => 1,
+            'tags' => [
+                [
+                    'id' => 1,
+                    '_joinData' => [
+                        'active' => 1,
+                        'user' => ['username' => 'MyLux'],
+                    ]
+                ],
+                [
+                    'id' => 2,
+                    '_joinData' => [
+                        'active' => 0,
+                        'user' => ['username' => 'IronFall'],
+                    ]
+                ],
+            ],
+        ];
+
+        $articlesTags = TableRegistry::get('ArticlesTags');
+        $Tags = TableRegistry::get('Tags');
+        $t1 = $Tags->find('all')->where(['id' => 1])->first();
+        $t2 = $Tags->find('all')->where(['id' => 2])->first();
+        $articlesTags->belongsTo('Users');
+        $marshall = new Marshaller($this->articles);
+        $result = $marshall->one($data, ['associated' => ['Tags._joinData.Users']]);
+        $this->assertInstanceOf(
+            'Cake\ORM\Entity',
+            $result->tags[0]
+        );
+        $this->assertInstanceOf(
+            'Cake\ORM\Entity',
+            $result->tags[1]
+        );
+
+        $this->assertInstanceOf(
+            'Cake\ORM\Entity',
+            $result->tags[0]->_joinData->user
+        );
+
+        $this->assertInstanceOf(
+            'Cake\ORM\Entity',
+            $result->tags[1]->_joinData->user
+        );
+        $this->assertEquals(false, $result->tags[0]->isNew());
+        $this->assertEquals(false, $result->tags[1]->isNew());
+        $this->assertEquals($t1->tag, $result->tags[0]->tag);
+        $this->assertEquals($t2->tag, $result->tags[1]->tag);
+        $this->assertEquals($data['tags'][0]['_joinData']['user']['username'], $result->tags[0]->_joinData->user->username);
+        $this->assertEquals($data['tags'][1]['_joinData']['user']['username'], $result->tags[1]->_joinData->user->username);
+    }
+
+    /**
      * Test one() with deeper associations.
      *
      * @return void
