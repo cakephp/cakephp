@@ -108,10 +108,10 @@ class Marshaller
         $primaryKey = $schema->primaryKey();
 
         if (array_intersect($primaryKey, array_keys($data)) == $primaryKey) {
-            $tableName = $this->_table->table();
+            $tableName = $this->_table->alias();
             $record = $this->_table->find('all');
             foreach ($primaryKey as $pkey) {
-                $record->where(["$tableName.$pkey" => $data[$pkey] ]);
+                $record->where(["$tableName.$pkey" => $data[$pkey]]);
             }
 
             $record = $record->first();
