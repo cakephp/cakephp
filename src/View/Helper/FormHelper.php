@@ -931,7 +931,7 @@ class FormHelper extends Helper
             $legend = sprintf($actionName, $modelName);
         }
 
-        if ($fieldset === true || is_array($fieldset)) {
+        if ($fieldset !== false) {
             if ($legend) {
                 $out = $this->formatTemplate('legend', ['text' => $legend]) . $out;
             }
