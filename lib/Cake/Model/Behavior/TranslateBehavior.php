@@ -368,6 +368,8 @@ class TranslateBehavior extends ModelBehavior {
  * Prevents Model data from being saved if not in the 'base' language
  * as defined by Config.language 
  *
+ * @param Model $Model Model using this behavior.
+ * @return void
  */
 	protected function _cleanSaveData(Model $Model) {
 		$locale = $this->_getLocale($Model);
@@ -375,7 +377,7 @@ class TranslateBehavior extends ModelBehavior {
 			return true;
 		}
 		$fields = array_merge($this->settings[$Model->alias], $this->runtime[$Model->alias]['fields']);
-		if ($locale != Configure::read('Config.language')) {
+		if ($locale !== Configure::read('Config.language')) {
 			foreach ($fields as $field) {
 				if (isset($Model->data[$Model->alias][$field])) {
 					unset($Model->data[$Model->alias][$field]);
