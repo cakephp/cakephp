@@ -177,9 +177,9 @@ class CakeSocket {
 			$req[] = 'Host: ' . $this->config['host'];
 			$req[] = 'User-Agent: php proxy';
 
-			fwrite($this->connection, implode("\r\n", $req)."\r\n\r\n");
+			fwrite($this->connection, implode("\r\n", $req) . "\r\n\r\n");
 
-			while(true) {
+			while (!feof($this->connection)) {
 				$s = rtrim(fgets($this->connection, 4096));
 				if (preg_match('/^$/', $s)) {
 					break;
