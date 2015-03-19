@@ -712,7 +712,9 @@ class Time extends Carbon implements JsonSerializable
         );
         $time = $formatter->parse($time);
         if ($time) {
-            return new static('@' . $time);
+            $result = new static('@' . $time);
+            $result->setTimezone(date_default_timezone_get());
+            return $result;
         }
         return null;
     }

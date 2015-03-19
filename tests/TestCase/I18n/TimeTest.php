@@ -50,6 +50,7 @@ class TimeTest extends TestCase
         Time::setTestNow($this->now);
         Time::$defaultLocale = $this->locale;
         Time::resetToStringFormat();
+        date_default_timezone_set('UTC');
     }
 
     /**
@@ -730,6 +731,20 @@ class TimeTest extends TestCase
 
         $time = Time::parseTime('31c2:54');
         $this->assertNull($time);
+    }
+
+    /**
+     * Tests that parsing a date respects de default timezone in PHP.
+     *
+     * @return void
+     */
+    public function testParseDateDifferentTimezone()
+    {
+        date_default_timezone_set('Europe/Paris');
+        Time::$defaultLocale = 'fr-FR';
+        $result = Time::parseDate('12/03/2015');
+        $this->assertEquals('2015-03-12', $result->format('Y-m-d'));
+        $this->assertEquals(new \DateTimeZone('Europe/Paris'), $result->tz);
     }
 
     /**
