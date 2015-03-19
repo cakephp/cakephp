@@ -188,7 +188,6 @@ class CakeSocket {
 				$this->enableCrypto('tls', 'client');
 			}
 		}
-
 		return $this->connected;
 	}
 
