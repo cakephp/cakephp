@@ -332,7 +332,11 @@ class Helper extends Object {
 		if (isset($plugin)) {
 			$path = Inflector::underscore($plugin) . '/' . $path;
 		}
-		$path = $this->_encodeUrl($this->assetTimestamp($this->webroot($path)));
+		if(strpos($path, $this->webroot) !== 0){
+	        	$path = $this->_encodeUrl($this->assetTimestamp($this->webroot($path)));
+		} else {
+			$path = $this->_encodeUrl($this->assetTimestamp($path));
+		}
 
 		if (!empty($options['fullBase'])) {
 			$path = rtrim(Router::fullBaseUrl(), '/') . '/' . ltrim($path, '/');
