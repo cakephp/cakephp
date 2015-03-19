@@ -927,7 +927,7 @@ class HttpSocket extends CakeSocket {
 
 		$request['uri'] = $this->_parseUri($request['uri']);
 		$request += array('method' => 'GET');
-		if (!empty($this->_proxy['host'])) {
+		if (!empty($this->_proxy['host']) && $request['uri']['scheme'] !== 'https') {
 			$request['uri'] = $this->_buildUri($request['uri'], '%scheme://%host:%port/%path?%query');
 		} else {
 			$request['uri'] = $this->_buildUri($request['uri'], '/%path?%query');
