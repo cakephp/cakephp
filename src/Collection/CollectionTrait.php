@@ -525,7 +525,7 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      */
-    public function through(callable $handler) 
+    public function through(callable $handler)
     {
         $result = $handler($this);
         return $result instanceof CollectionInterface ? $result: new Collection($result);
