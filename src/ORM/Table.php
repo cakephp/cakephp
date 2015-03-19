@@ -1048,6 +1048,27 @@ class Table implements RepositoryInterface, EventListenerInterface
 
         return $options;
     }
+    
+    /**
+     * get value of a single column
+     * 
+     * @param string|array $field string field or key value pair array
+     * @param array $conditions
+     * @param array $order
+     * @return mixed|null null field value or null is returned
+     */
+    public function field($field, $conditions = [], $order = [])
+    {
+        $result = $this->find()->select(is_array($field) ? $field : [$field])->where($conditions)->order($order)->first();
+        if (!$result) {
+            return null;
+        }
+
+        if (is_array($field)) {
+            $field = key($field);
+        }
+        return $result->{$field};
+    }
 
     /**
      * {@inheritDoc}
