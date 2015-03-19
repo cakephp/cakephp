@@ -1059,7 +1059,7 @@ class Table implements RepositoryInterface, EventListenerInterface
      */
     public function field($field, $conditions = [], $order = [])
     {
-        $result = $this->find()->select(is_array($field) ? $field : [$field])->where($conditions)->order($order)->first();
+        $result = $this->find()->select((array) $field)->where($conditions)->order($order)->first();
         if (!$result) {
             return null;
         }
