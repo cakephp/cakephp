@@ -162,6 +162,17 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test that aliasField() works.
+     *
+     * @return void
+     */
+    public function testAliasField()
+    {
+        $table = new Table(['alias' => 'Users']);
+        $this->assertEquals('Users.id', $table->aliasField('id'));
+    }
+
+    /**
      * Tests connection method
      *
      * @return void

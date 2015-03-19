@@ -359,6 +359,17 @@ class Table implements RepositoryInterface, EventListenerInterface
     }
 
     /**
+     * Alias a field with the table's current alias.
+     *
+     * @param string $field The field to alias.
+     * @return string The field prefixed with the table alias.
+     */
+    public function aliasField($field)
+    {
+        return $this->alias() . '.' . $field;
+    }
+
+    /**
      * Returns the table registry key used to create this table instance
      *
      * @param string|null $registryAlias the key used to access this object
