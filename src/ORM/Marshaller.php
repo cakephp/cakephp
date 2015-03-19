@@ -107,23 +107,22 @@ class Marshaller
         $schema = $this->_table->schema();
         $primaryKey = $schema->primaryKey();
 
+        $entity = null;
         if (array_intersect($primaryKey, array_keys($data)) == $primaryKey) {
             $tableName = $this->_table->alias();
-            $record = $this->_table->find('all');
+            $query = $this->_table->find('all');
             foreach ($primaryKey as $pkey) {
-                $record->where(["$tableName.$pkey" => $data[$pkey]]);
+                $query->where(["$tableName.$pkey" => $data[$pkey]]);
             }
-
-            $record = $record->first();
-
-            if ($record) {
-                return $record;
-            }
+            $entity = $query->first();
         }
 
-        $entityClass = $this->_table->entityClass();
-        $entity = new $entityClass();
-        $entity->source($this->_table->registryAlias());
+        if (!isset($entity)) {
+            $entityClass = $this->_table->entityClass();
+            $entity = new $entityClass();
+            $entity->source($this->_table->registryAlias());
+        }
+
 
         if (isset($options['accessibleFields'])) {
             foreach ((array)$options['accessibleFields'] as $key => $value) {

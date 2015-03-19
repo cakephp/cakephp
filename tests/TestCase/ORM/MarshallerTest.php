@@ -524,10 +524,11 @@ class MarshallerTest extends TestCase
         ];
 
         $articlesTags = TableRegistry::get('ArticlesTags');
-        $Tags = TableRegistry::get('Tags');
-        $t1 = $Tags->find('all')->where(['id' => 1])->first();
-        $t2 = $Tags->find('all')->where(['id' => 2])->first();
+        $tags = TableRegistry::get('Tags');
+        $t1 = $tags->find('all')->where(['id' => 1])->first();
+        $t2 = $tags->find('all')->where(['id' => 2])->first();
         $articlesTags->belongsTo('Users');
+
         $marshall = new Marshaller($this->articles);
         $result = $marshall->one($data, ['associated' => ['Tags._joinData.Users']]);
         $this->assertInstanceOf(
@@ -548,8 +549,8 @@ class MarshallerTest extends TestCase
             'Cake\ORM\Entity',
             $result->tags[1]->_joinData->user
         );
-        $this->assertFalse($result->tags[0]->isNew());
-        $this->assertFalse($result->tags[1]->isNew());
+        $this->assertFalse($result->tags[0]->isNew(), 'Should not be new, as id is in db.');
+        $this->assertFalse($result->tags[1]->isNew(), 'Should not be new, as id is in db.');
         $this->assertEquals($t1->tag, $result->tags[0]->tag);
         $this->assertEquals($t2->tag, $result->tags[1]->tag);
         $this->assertEquals($data['tags'][0]['_joinData']['user']['username'], $result->tags[0]->_joinData->user->username);
@@ -586,6 +587,37 @@ class MarshallerTest extends TestCase
             $data['article']['user']['username'],
             $result->article->user->username
         );
+    }
+
+    /**
+     * test one() to update associations.
+     *
+     * @return void
+     */
+    public function testOneAssociationPatchExisting()
+    {
+        $data = [
+            'title' => 'My title',
+            'body' => 'My content',
+            'author_id' => 1,
+            'user' => [
+                'id' => 1,
+                'username' => 'mark',
+                'password' => 'secret'
+            ]
+        ];
+        $marshall = new Marshaller($this->articles);
+        $result = $marshall->one($data, ['associated' => ['Users']]);
+
+        $this->assertEquals($data['title'], $result->title);
+        $this->assertEquals($data['body'], $result->body);
+        $this->assertEquals($data['author_id'], $result->author_id);
+
+        $this->assertInstanceOf('Cake\ORM\Entity', $result->user);
+        $this->assertFalse($result->user->isNew(), 'Existing association');
+        $this->assertEquals(1, $result->user->id);
+        $this->assertEquals($data['user']['username'], $result->user->username);
+        $this->assertEquals($data['user']['password'], $result->user->password);
     }
 
     /**
