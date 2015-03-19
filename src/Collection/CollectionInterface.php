@@ -825,7 +825,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * });
      * ```
      *
-     * @param callable $transformer A callable function that will receive
+     * @param callable $handler A callable function that will receive
      * this collection as first argument.
      * @return \Cake\Collection\CollectionInterface
      */
