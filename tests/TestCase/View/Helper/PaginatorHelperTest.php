@@ -426,7 +426,8 @@ class PaginatorHelperTest extends TestCase
      *
      * @return void
      */
-    public function testPagingLinksMissingModel() {
+    public function testPagingLinksMissingModel()
+    {
         $result = $this->Paginator->sort('title', 'Title', ['model' => 'Missing']);
         $expected = [
             'a' => ['href' => '/index?sort=title&amp;direction=asc'],
