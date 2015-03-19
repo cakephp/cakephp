@@ -446,6 +446,18 @@ class MemcachedEngineTest extends TestCase
     }
 
     /**
+     * test domain starts with u
+     *
+     * @return void
+     */
+    public function testParseServerStringWithU()
+    {
+        $Memcached = new TestMemcachedEngine();
+        $result = $Memcached->parseServerString('udomain.net:13211');
+        $this->assertEquals(array('udomain.net', '13211'), $result);
+    }
+
+    /**
      * test non latin domains.
      *
      * @return void
