@@ -176,7 +176,7 @@ class AuthComponent extends Component
      *
      * @var string
      */
-    public $sessionKey = 'Auth.User';
+    public $sessionKey = 'Auth';
 
     /**
      * The current user, used for stateless authentication when
@@ -342,17 +342,17 @@ class AuthComponent extends Component
 
         if ($this->_isLoginAction($controller)) {
             if (empty($controller->request->data) &&
-                !$this->session->check('Auth.redirect') &&
+                !$this->session->check($this->sessionKey . '.redirect') &&
                 $this->request->env('HTTP_REFERER')
             ) {
-                $this->session->write('Auth.redirect', $controller->referer(null, true));
+                $this->session->write($this->sessionKey . '.redirect', $controller->referer(null, true));
             }
             return;
         }
 
         if (!$controller->request->is('ajax')) {
             $this->flash($this->_config['authError']);
-            $this->session->write('Auth.redirect', $controller->request->here(false));
+            $this->session->write($this->sessionKey . '.redirect', $controller->request->here(false));
             return $controller->redirect($this->_config['loginAction']);
         }
 
@@ -597,7 +597,7 @@ class AuthComponent extends Component
     public function setUser(array $user)
     {
         $this->session->renew();
-        $this->session->write($this->sessionKey, $user);
+        $this->session->write($this->sessionKey . '.user', $user);
     }
 
     /**
@@ -621,7 +621,6 @@ class AuthComponent extends Component
         $user = (array)$this->user();
         $this->dispatchEvent('Auth.logout', [$user]);
         $this->session->delete($this->sessionKey);
-        $this->session->delete('Auth.redirect');
         $this->session->renew();
         return Router::normalize($this->_config['logoutRedirect']);
     }
@@ -641,8 +640,8 @@ class AuthComponent extends Component
     {
         if (!empty($this->_user)) {
             $user = $this->_user;
-        } elseif ($this->sessionKey && $this->session->check($this->sessionKey)) {
-            $user = $this->session->read($this->sessionKey);
+        } elseif ($this->sessionKey . '.user' && $this->session->check($this->sessionKey . '.user')) {
+            $user = $this->session->read($this->sessionKey . '.user');
         } else {
             return null;
         }
