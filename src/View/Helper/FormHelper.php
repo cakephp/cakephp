@@ -97,7 +97,7 @@ class FormHelper extends Helper
             'errorList' => '<ul>{{content}}</ul>',
             'errorItem' => '<li>{{text}}</li>',
             'file' => '<input type="file" name="{{name}}"{{attrs}}>',
-            'fieldset' => '<fieldset>{{content}}</fieldset>',
+            'fieldset' => '<fieldset{{attrs}}>{{content}}</fieldset>',
             'formStart' => '<form{{attrs}}>',
             'formEnd' => '</form>',
             'formGroup' => '{{label}}{{input}}',
@@ -836,7 +836,9 @@ class FormHelper extends Helper
      * @param array $fields An array of customizations for the fields that will be
      *   generated. This array allows you to set custom types, labels, or other options.
      * @param array $options Options array. Valid keys are:
-     * - `fieldset` Set to false to disable the fieldset.
+     * - `fieldset` Set to false to disable the fieldset. You can also pass an array of params to be
+     *    applied as HTML attributes to the fieldset tag. If you pass an empty array, the fieldset will
+     *    be enabled
      * - `legend` Set to false to disable the legend for the generated input set. Or supply a string
      *    to customize the legend text.
      * @return string Completed form inputs.
@@ -870,7 +872,9 @@ class FormHelper extends Helper
      * @param array $fields An array of the fields to generate. This array allows you to set custom
      *   types, labels, or other options.
      * @param array $options Options array. Valid keys are:
-     * - `fieldset` Set to false to disable the fieldset.
+     * - `fieldset` Set to false to disable the fieldset. You can also pass an array of params to be
+     *    applied as HTML attributes to the fieldset tag. If you pass an empty array, the fieldset will
+     *    be enabled
      * - `legend` Set to false to disable the legend for the generated input set. Or supply a string
      *    to customize the legend text.
      * @return string Completed form inputs.
@@ -897,7 +901,9 @@ class FormHelper extends Helper
      *
      * @param string $fields the form inputs to wrap in a fieldset
      * @param array $options Options array. Valid keys are:
-     * - `fieldset` Set to false to disable the fieldset.
+     * - `fieldset` Set to false to disable the fieldset. You can also pass an array of params to be
+     *    applied as HTML attributes to the fieldset tag. If you pass an empty array, the fieldset will
+     *    be enabled
      * - `legend` Set to false to disable the legend for the generated input set. Or supply a string
      *    to customize the legend text.
      * @return string Completed form inputs.
@@ -925,11 +931,16 @@ class FormHelper extends Helper
             $legend = sprintf($actionName, $modelName);
         }
 
-        if ($fieldset) {
+        if ($fieldset !== false) {
             if ($legend) {
                 $out = $this->formatTemplate('legend', ['text' => $legend]) . $out;
             }
-            $out = $this->formatTemplate('fieldset', ['content' => $out]);
+
+            $fieldsetParams = ['content' => $out, 'attrs' => ''];
+            if (is_array($fieldset) && !empty($fieldset)) {
+                $fieldsetParams['attrs'] = $this->templater()->formatAttributes($fieldset);
+            }
+            $out = $this->formatTemplate('fieldset', $fieldsetParams);
         }
         return $out;
     }

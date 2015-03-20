@@ -3117,6 +3117,35 @@ class FormHelperTest extends TestCase
             '*/fieldset',
         ];
         $this->assertHtml($expected, $result);
+
+        $this->Form->create($this->article);
+        $result = $this->Form->allInputs([], ['fieldset' => [], 'legend' => 'The Legend']);
+        $expected = [
+            '<fieldset',
+            '<legend',
+            'The Legend',
+            '/legend',
+            '*/fieldset',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->Form->create($this->article);
+        $result = $this->Form->allInputs([], [
+            'fieldset' => [
+                'class' => 'some-class some-other-class',
+                'disabled' => true,
+                'data-param' => 'a-param'
+            ],
+            'legend' => 'The Legend'
+        ]);
+        $expected = [
+            '<fieldset class="some-class some-other-class" disabled="disabled" data-param="a-param"',
+            '<legend',
+            'The Legend',
+            '/legend',
+            '*/fieldset',
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**
