@@ -347,10 +347,9 @@ class TreeBehavior extends Behavior
         }
 
         $config = $this->config();
-        $alias = $this->_table->alias();
         list($left, $right) = array_map(
-            function ($field) use ($alias) {
-                return "$alias.$field";
+            function ($field) {
+                return $this->_table->aliasField($field);
             },
             [$config['left'], $config['right']]
         );
@@ -375,8 +374,7 @@ class TreeBehavior extends Behavior
     public function childCount(Entity $node, $direct = false)
     {
         $config = $this->config();
-        $alias = $this->_table->alias();
-        $parent = $alias . '.' . $config['parent'];
+        $parent = $this->_table->aliasField($config['parent']);
 
         if ($direct) {
             return $this->_scope($this->_table->find())
@@ -407,11 +405,10 @@ class TreeBehavior extends Behavior
     public function findChildren(Query $query, array $options)
     {
         $config = $this->config();
-        $alias = $this->_table->alias();
         $options += ['for' => null, 'direct' => false];
         list($parent, $left, $right) = array_map(
-            function ($field) use ($alias) {
-                return "$alias.$field";
+            function ($field) {
+                return $this->_table->aliasField($field);
             },
             [$config['parent'], $config['left'], $config['right']]
         );
@@ -458,7 +455,10 @@ class TreeBehavior extends Behavior
     public function findTreeList(Query $query, array $options)
     {
         return $this->_scope($query)
-            ->find('threaded', ['parentField' => $this->config()['parent'], 'order' => [$this->config()['left'] => 'ASC']])
+            ->find('threaded', [
+                'parentField' => $this->config('parent'),
+                'order' => [$this->config('left') => 'ASC']
+            ])
             ->formatResults(function ($results) use ($options) {
                 $options += [
                     'keyPath' => $this->_getPrimaryKey(),

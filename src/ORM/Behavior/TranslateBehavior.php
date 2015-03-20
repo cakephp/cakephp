@@ -199,12 +199,11 @@ class TranslateBehavior extends Behavior
 
         $conditions = function ($field, $locale, $query, $select) {
             return function ($q) use ($field, $locale, $query, $select) {
-                $q->where([$q->repository()->alias() . '.locale' => $locale]);
-                $alias = $this->_table->alias();
+                $q->where([$q->repository()->aliasField('locale') => $locale]);
 
                 if ($query->autoFields() ||
                     in_array($field, $select, true) ||
-                    in_array("$alias.$field", $select, true)
+                    in_array($this->_table->aliasField($field), $select, true)
                 ) {
                     $q->select(['id', 'content']);
                 }
