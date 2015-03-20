@@ -379,9 +379,7 @@ class TranslateBehavior extends ModelBehavior {
 		$fields = array_merge($this->settings[$Model->alias], $this->runtime[$Model->alias]['fields']);
 		if ($locale !== Configure::read('Config.language')) {
 			foreach ($fields as $field) {
-				if (isset($Model->data[$Model->alias][$field])) {
-					unset($Model->data[$Model->alias][$field]);
-				}
+				unset($Model->data[$Model->alias][$field]);
 			}
 		}
 	}
