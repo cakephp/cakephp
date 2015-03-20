@@ -724,11 +724,11 @@ class HttpSocket extends CakeSocket {
 			}
 			if (version_compare(PHP_VERSION, '5.6.0', '>=')) {
 				if (empty($this->config['context']['ssl']['peer_name'])) {
-					$this->config['context']['ssl']['peer_name'] = $this->request['uri']['host'];
+					$this->config['context']['ssl']['peer_name'] = $host;
 				}
 			} else {
 				if (empty($this->config['context']['ssl']['SNI_server_name'])) {
-					$this->config['context']['ssl']['SNI_server_name'] = $this->request['uri']['host'];
+					$this->config['context']['ssl']['SNI_server_name'] = $host;
 				}
 			}
 		}
