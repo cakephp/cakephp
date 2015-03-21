@@ -46,7 +46,12 @@ class LoadTask extends Shell
             return false;
         }
 
-        return (bool)$this->_modifyBootstrap($plugin, $this->params['bootstrap'], $this->params['routes'], false);
+        return $this->_modifyBootstrap(
+            $plugin,
+            $this->params['bootstrap'],
+            $this->params['routes'],
+            $this->params['autoload']
+        );
     }
 
     /**
@@ -64,13 +69,14 @@ class LoadTask extends Shell
         $bootstrap = new File($this->bootstrap, false);
         $contents = $bootstrap->read();
         if (!preg_match("@\n\s*Plugin::loadAll@", $contents)) {
-            $autoloadString = $hasAutoloader ? null : "'autoload' => true, ";
-            $bootstrapString = $hasBootstrap ? "'bootstrap' => true, " : "'bootstrap' => false, ";
-            $routesString = $hasRoutes ? "'routes' => true" : "'routes' => false";
+            $autoloadString = $hasAutoloader ? "'autoload' => true" : '';
+            $bootstrapString = $hasBootstrap ? "'bootstrap' => true" : '';
+            $routesString = $hasRoutes ? "'routes' => true" : '';
 
-            $append = "\nPlugin::load('%s', [%s%s%s]);\n";
+            $append = "\nPlugin::load('%s', [%s]);\n";
+            $options = implode(', ', array_filter([$autoloadString, $bootstrapString, $routesString]));
 
-            $bootstrap->append(sprintf($append, $plugin, $autoloadString, $bootstrapString, $routesString));
+            $bootstrap->append(sprintf($append, $plugin, $options));
             $this->out('');
             $this->out(sprintf('%s modified', $this->bootstrap));
             return true;
@@ -96,6 +102,12 @@ class LoadTask extends Shell
                 ->addOption('routes', [
                     'short' => 'r',
                     'help' => 'Will load routes.php from plugin.',
+                    'boolean' => true,
+                    'default' => false,
+                ])
+                ->addOption('autoload', [
+                    'help' => 'Will autoload the plugin using CakePHP. ' .
+                        'Set to true if you are not using composer to autoload your plugin.',
                     'boolean' => true,
                     'default' => false,
                 ])
