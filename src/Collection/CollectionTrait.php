@@ -522,6 +522,16 @@ trait CollectionTrait
     }
 
     /**
+     * {@inheritDoc}
+     *
+     */
+    public function through(callable $handler)
+    {
+        $result = $handler($this);
+        return $result instanceof CollectionInterface ? $result: new Collection($result);
+    }
+
+    /**
      * Returns the closest nested iterator that can be safely traversed without
      * losing any possible transformations.
      *
