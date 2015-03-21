@@ -480,7 +480,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
      */
-    public function assertRedirectContains($url = null, $message = '')
+    public function assertRedirectContains($url, $message = '')
     {
         if (!$this->_response) {
             $this->fail('No response set, cannot assert location header. ' . $message);
