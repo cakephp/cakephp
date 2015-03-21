@@ -524,10 +524,11 @@ class MarshallerTest extends TestCase
         ];
 
         $articlesTags = TableRegistry::get('ArticlesTags');
-        $Tags = TableRegistry::get('Tags');
-        $t1 = $Tags->find('all')->where(['id' => 1])->first();
-        $t2 = $Tags->find('all')->where(['id' => 2])->first();
+        $tags = TableRegistry::get('Tags');
+        $t1 = $tags->find('all')->where(['id' => 1])->first();
+        $t2 = $tags->find('all')->where(['id' => 2])->first();
         $articlesTags->belongsTo('Users');
+
         $marshall = new Marshaller($this->articles);
         $result = $marshall->one($data, ['associated' => ['Tags._joinData.Users']]);
         $this->assertInstanceOf(
@@ -548,8 +549,8 @@ class MarshallerTest extends TestCase
             'Cake\ORM\Entity',
             $result->tags[1]->_joinData->user
         );
-        $this->assertFalse($result->tags[0]->isNew());
-        $this->assertFalse($result->tags[1]->isNew());
+        $this->assertFalse($result->tags[0]->isNew(), 'Should not be new, as id is in db.');
+        $this->assertFalse($result->tags[1]->isNew(), 'Should not be new, as id is in db.');
         $this->assertEquals($t1->tag, $result->tags[0]->tag);
         $this->assertEquals($t2->tag, $result->tags[1]->tag);
         $this->assertEquals($data['tags'][0]['_joinData']['user']['username'], $result->tags[0]->_joinData->user->username);
@@ -1152,6 +1153,62 @@ class MarshallerTest extends TestCase
         $this->assertTrue($result->tags[0]->_joinData->dirty('highlighted'), 'Field not modified');
         $this->assertSame(99, $result->tags[0]->_joinData->author_id);
         $this->assertTrue($result->tags[0]->_joinData->highlighted);
+    }
+
+    /**
+     * Test merging belongsToMany data doesn't create 'new' entities.
+     *
+     * @return void
+     */
+    public function testMergeBelongsToManyJoinDataAssociatedWithIds()
+    {
+        $data = [
+            'title' => 'My title',
+            'tags' => [
+                [
+                    'id' => 1,
+                    '_joinData' => [
+                        'active' => 1,
+                        'user' => ['username' => 'MyLux'],
+                    ]
+                ],
+                [
+                    'id' => 2,
+                    '_joinData' => [
+                        'active' => 0,
+                        'user' => ['username' => 'IronFall'],
+                    ]
+                ],
+            ],
+        ];
+        $articlesTags = TableRegistry::get('ArticlesTags');
+        $articlesTags->belongsTo('Users');
+
+        $marshall = new Marshaller($this->articles);
+        $article = $this->articles->get(1, ['associated' => 'Tags']);
+        $result = $marshall->merge($article, $data, ['associated' => ['Tags._joinData.Users']]);
+
+        $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]);
+        $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[1]);
+        $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]->_joinData->user);
+
+        $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[1]->_joinData->user);
+        $this->assertFalse($result->tags[0]->isNew(), 'Should not be new, as id is in db.');
+        $this->assertFalse($result->tags[1]->isNew(), 'Should not be new, as id is in db.');
+        $this->assertEquals(1, $result->tags[0]->id);
+        $this->assertEquals(2, $result->tags[1]->id);
+
+        $this->assertEquals(1, $result->tags[0]->_joinData->active);
+        $this->assertEquals(0, $result->tags[1]->_joinData->active);
+
+        $this->assertEquals(
+            $data['tags'][0]['_joinData']['user']['username'],
+            $result->tags[0]->_joinData->user->username
+        );
+        $this->assertEquals(
+            $data['tags'][1]['_joinData']['user']['username'],
+            $result->tags[1]->_joinData->user->username
+        );
     }
 
     /**

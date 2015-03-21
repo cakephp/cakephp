@@ -106,21 +106,6 @@ class Marshaller
 
         $schema = $this->_table->schema();
         $primaryKey = $schema->primaryKey();
-
-        if (array_intersect($primaryKey, array_keys($data)) == $primaryKey) {
-            $tableName = $this->_table->alias();
-            $record = $this->_table->find('all');
-            foreach ($primaryKey as $pkey) {
-                $record->where(["$tableName.$pkey" => $data[$pkey]]);
-            }
-
-            $record = $record->first();
-
-            if ($record) {
-                return $record;
-            }
-        }
-
         $entityClass = $this->_table->entityClass();
         $entity = new $entityClass();
         $entity->source($this->_table->registryAlias());
@@ -277,6 +262,7 @@ class Marshaller
      */
     protected function _belongsToMany(Association $assoc, array $data, $options = [])
     {
+        // Accept _ids = [1, 2]
         $associated = isset($options['associated']) ? $options['associated'] : [];
         $hasIds = array_key_exists('_ids', $data);
         if ($hasIds && is_array($data['_ids'])) {
@@ -286,7 +272,22 @@ class Marshaller
             return [];
         }
 
-        $records = $this->many($data, $options);
+        // Accept [ [id => 1], [id = 2] ] style.
+        $primaryKey = array_flip($assoc->target()->schema()->primaryKey());
+        if (array_intersect_key($primaryKey, current($data)) === $primaryKey) {
+            $primaryCount = count($primaryKey);
+            $query = $assoc->find();
+            foreach ($data as $row) {
+                $keys = array_intersect_key($row, $primaryKey);
+                if (count($keys) === $primaryCount) {
+                    $query->orWhere($keys);
+                }
+            }
+            $records = $query->toArray();
+        } else {
+            $records = $this->many($data, $options);
+        }
+
         $joint = $assoc->junction();
         $jointMarshaller = $joint->marshaller();
 
