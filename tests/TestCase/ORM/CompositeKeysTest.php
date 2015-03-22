@@ -45,6 +45,7 @@ class CompositeKeyTest extends TestCase
      * @var array
      */
     public $fixtures = [
+        'core.composite_increments',
         'core.site_articles',
         'core.site_authors',
         'core.site_tags',
@@ -63,20 +64,83 @@ class CompositeKeyTest extends TestCase
     }
 
     /**
+     * Data provider for the two types of strategies HasOne implements
+     *
+     * @return void
+     */
+    public function strategiesProviderHasOne()
+    {
+        return [['join'], ['select']];
+    }
+
+    /**
      * Data provider for the two types of strategies HasMany implements
      *
      * @return void
      */
-    public function strategiesProvider()
+    public function strategiesProviderHasMany()
     {
         return [['subquery'], ['select']];
+    }
+
+    /**
+     * Data provider for the two types of strategies BelongsTo implements
+     *
+     * @return void
+     */
+    public function strategiesProviderBelongsTo()
+    {
+        return [['join'], ['select']];
+    }
+
+    /**
+     * Data provider for the two types of strategies BelongsToMany implements
+     *
+     * @return void
+     */
+    public function strategiesProviderBelongsToMany()
+    {
+        return [['subquery'], ['select']];
+    }
+
+    /**
+     * Test that you cannot save rows with composite keys if some columns are missing.
+     *
+     * @group save
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Cannot insert row, some of the primary key values are missing
+     * @return void
+     */
+    public function testSaveNewErrorCompositeKeyNoIncrement()
+    {
+        $articles = TableRegistry::get('SiteArticles');
+        $article = $articles->newEntity(['site_id' => 1, 'author_id' => 1, 'title' => 'testing']);
+        $articles->save($article);
+    }
+
+    /**
+     * Test that saving into composite primary keys where one column is missing & autoIncrement works.
+     *
+     * SQLite is skipped because it doesn't support autoincrement composite keys.
+     *
+     * @group save
+     * @return void
+     */
+    public function testSaveNewCompositeKeyIncrement()
+    {
+        $this->skipIfSqlite();
+        $table = TableRegistry::get('CompositeIncrements');
+        $thing = $table->newEntity(['account_id' => 3, 'name' => 'new guy']);
+        $this->assertSame($thing, $table->save($thing));
+        $this->assertNotEmpty($thing->id, 'Primary key should have been populated');
+        $this->assertSame(3, $thing->account_id);
     }
 
     /**
      * Tests that HasMany associations are correctly eager loaded and results
      * correctly nested when multiple foreignKeys are used
      *
-     * @dataProvider strategiesProvider
+     * @dataProvider strategiesProviderHasMany
      * @return void
      */
     public function testHasManyEager($strategy)
@@ -152,7 +216,7 @@ class CompositeKeyTest extends TestCase
      * Tests that BelongsToMany associations are correctly eager loaded when multiple
      * foreignKeys are used
      *
-     * @dataProvider strategiesProvider
+     * @dataProvider strategiesProviderBelongsToMany
      * @return void
      */
     public function testBelongsToManyEager($strategy)
@@ -237,19 +301,9 @@ class CompositeKeyTest extends TestCase
     }
 
     /**
-     * Provides strategies for associations that can be joined
-     *
-     * @return void
-     */
-    public function internalStategiesProvider()
-    {
-        return [['join'], ['select'], ['subquery']];
-    }
-
-    /**
      * Tests loding belongsTo with composite keys
      *
-     * @dataProvider internalStategiesProvider
+     * @dataProvider strategiesProviderBelongsTo
      * @return void
      */
     public function testBelongsToEager($strategy)
@@ -298,7 +352,7 @@ class CompositeKeyTest extends TestCase
     /**
      * Tests loding hasOne with composite keys
      *
-     * @dataProvider internalStategiesProvider
+     * @dataProvider strategiesProviderHasOne
      * @return void
      */
     public function testHasOneEager($strategy)
@@ -615,5 +669,18 @@ class CompositeKeyTest extends TestCase
             ]
         ];
         $this->assertEquals($expected, $formatter($items)->toArray());
+    }
+
+    /**
+     * Helper method to skip tests when connection is SQLite.
+     *
+     * @return void
+     */
+    public function skipIfSqlite()
+    {
+        $this->skipIf(
+            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlite,
+            'SQLite does not support the requrirements of this test.'
+        );
     }
 }

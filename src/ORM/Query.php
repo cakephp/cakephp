@@ -479,6 +479,7 @@ class Query extends DatabaseQuery implements JsonSerializable
         $query = clone $this;
         $query->triggerBeforeFind();
         $query->autoFields(false);
+        $query->eagerLoader(clone $this->eagerLoader());
         $query->limit(null);
         $query->order([], true);
         $query->offset(null);
@@ -652,7 +653,7 @@ class Query extends DatabaseQuery implements JsonSerializable
      * using `contain`
      *
      * @see \Cake\Database\Query::execute()
-     * @return $this
+     * @return void
      */
     protected function _transformQuery()
     {

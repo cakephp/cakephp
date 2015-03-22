@@ -84,8 +84,6 @@ class TypeTest extends TestCase
     public function basicTypesProvider()
     {
         return [
-            ['float'],
-            ['integer'],
             ['string'],
             ['text'],
             ['boolean']
@@ -158,63 +156,6 @@ class TypeTest extends TestCase
     }
 
     /**
-     * Tests floats from database are converted correctly to PHP
-     *
-     * @return void
-     */
-    public function testFloatToPHP()
-    {
-        $type = Type::build('float');
-        $float = '3.14159';
-        $driver = $this->getMock('\Cake\Database\Driver');
-        $this->assertEquals(3.14159, $type->toPHP($float, $driver));
-        $this->assertEquals(3.14159, $type->toPHP(3.14159, $driver));
-        $this->assertEquals(3.00, $type->toPHP(3, $driver));
-    }
-
-    /**
-     * Tests floats from PHP are converted correctly to statement value
-     *
-     * @return void
-     */
-
-    public function testFloatToStatement()
-    {
-        $type = Type::build('float');
-        $float = '3.14159';
-        $driver = $this->getMock('\Cake\Database\Driver');
-        $this->assertEquals(PDO::PARAM_STR, $type->toStatement($float, $driver));
-    }
-
-    /**
-     * Tests integers from database are converted correctly to PHP
-     *
-     * @return void
-     */
-    public function testIntegerToPHP()
-    {
-        $type = Type::build('integer');
-        $integer = '3';
-        $driver = $this->getMock('\Cake\Database\Driver');
-        $this->assertEquals(3, $type->toPHP($integer, $driver));
-        $this->assertEquals(3, $type->toPHP(3, $driver));
-        $this->assertEquals(3, $type->toPHP(3.57, $driver));
-    }
-
-    /**
-     * Tests integers from PHP are converted correctly to statement value
-     *
-     * @return void
-     */
-    public function testIntegerToStatement()
-    {
-        $type = Type::build('integer');
-        $integer = '3';
-        $driver = $this->getMock('\Cake\Database\Driver');
-        $this->assertEquals(PDO::PARAM_INT, $type->toStatement($integer, $driver));
-    }
-
-    /**
      * Tests bigintegers from database are converted correctly to PHP
      *
      * @return void
@@ -259,6 +200,7 @@ class TypeTest extends TestCase
         $this->assertEquals('foo', $type->toPHP($string, $driver));
         $this->assertEquals('3', $type->toPHP(3, $driver));
         $this->assertEquals('3.14159', $type->toPHP(3.14159, $driver));
+        $this->assertEquals('', $type->toPHP([3, 'elf'], $driver));
     }
 
     /**
@@ -287,6 +229,7 @@ class TypeTest extends TestCase
         $this->assertEquals('foo', $type->toPHP($string, $driver));
         $this->assertEquals('3', $type->toPHP(3, $driver));
         $this->assertEquals('3.14159', $type->toPHP(3.14159, $driver));
+        $this->assertEquals('', $type->toPHP([2, 3], $driver));
     }
 
     /**
@@ -311,22 +254,14 @@ class TypeTest extends TestCase
     {
         $type = Type::build('boolean');
         $driver = $this->getMock('\Cake\Database\Driver');
+
         $this->assertTrue($type->toDatabase(true, $driver));
-
-        $driver = $this->getMock('\Cake\Database\Driver');
         $this->assertFalse($type->toDatabase(false, $driver));
-
-        $driver = $this->getMock('\Cake\Database\Driver');
         $this->assertTrue($type->toDatabase(1, $driver));
-
-        $driver = $this->getMock('\Cake\Database\Driver');
         $this->assertFalse($type->toDatabase(0, $driver));
-
-        $driver = $this->getMock('\Cake\Database\Driver');
         $this->assertTrue($type->toDatabase('1', $driver));
-
-        $driver = $this->getMock('\Cake\Database\Driver');
         $this->assertFalse($type->toDatabase('0', $driver));
+        $this->assertTrue($type->toDatabase([1, 2], $driver));
     }
 
     /**
@@ -338,9 +273,8 @@ class TypeTest extends TestCase
     {
         $type = Type::build('boolean');
         $driver = $this->getMock('\Cake\Database\Driver');
-        $this->assertEquals(PDO::PARAM_BOOL, $type->toStatement(true, $driver));
 
-        $driver = $this->getMock('\Cake\Database\Driver');
+        $this->assertEquals(PDO::PARAM_BOOL, $type->toStatement(true, $driver));
         $this->assertEquals(PDO::PARAM_BOOL, $type->toStatement(false, $driver));
     }
 
@@ -365,6 +299,7 @@ class TypeTest extends TestCase
         $this->assertFalse($type->toPHP('0', $driver));
         $this->assertFalse($type->toPHP('FALSE', $driver));
         $this->assertFalse($type->toPHP('false', $driver));
+        $this->assertTrue($type->toPHP(['2', '3'], $driver));
     }
 
     /**
@@ -385,6 +320,7 @@ class TypeTest extends TestCase
         $this->assertFalse($type->marshal(0));
         $this->assertFalse($type->marshal(''));
         $this->assertFalse($type->marshal('invalid'));
+        $this->assertTrue($type->marshal(['2', '3']));
     }
 
 
@@ -429,6 +365,7 @@ class TypeTest extends TestCase
         $this->assertSame(3.14159, $type->toPHP('3.14159', $driver));
         $this->assertSame(3.14159, $type->toPHP(3.14159, $driver));
         $this->assertSame(3.0, $type->toPHP(3, $driver));
+        $this->assertSame(1, $type->toPHP(['3', '4'], $driver));
     }
 
     /**

@@ -578,6 +578,68 @@ class ConnectionTest extends TestCase
     }
 
     /**
+     * Tests inTransaction()
+     *
+     * @return void
+     */
+    public function testInTransaction()
+    {
+        $this->connection->begin();
+        $this->assertTrue($this->connection->inTransaction());
+
+        $this->connection->begin();
+        $this->assertTrue($this->connection->inTransaction());
+
+        $this->connection->commit();
+        $this->assertTrue($this->connection->inTransaction());
+
+        $this->connection->commit();
+        $this->assertFalse($this->connection->inTransaction());
+
+        $this->connection->begin();
+        $this->assertTrue($this->connection->inTransaction());
+
+        $this->connection->begin();
+        $this->connection->rollback();
+        $this->assertFalse($this->connection->inTransaction());
+    }
+
+    /**
+     * Tests inTransaction() with save points
+     *
+     * @return void
+     */
+    public function testInTransactionWithSavePoints()
+    {
+        $this->skipIf(
+            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
+            'SQLServer fails when this test is included.'
+        );
+        $this->skipIf(!$this->connection->useSavePoints(true));
+        $this->connection->begin();
+        $this->assertTrue($this->connection->inTransaction());
+
+        $this->connection->begin();
+        $this->assertTrue($this->connection->inTransaction());
+
+        $this->connection->commit();
+        $this->assertTrue($this->connection->inTransaction());
+
+        $this->connection->commit();
+        $this->assertFalse($this->connection->inTransaction());
+
+        $this->connection->begin();
+        $this->assertTrue($this->connection->inTransaction());
+
+        $this->connection->begin();
+        $this->connection->rollback();
+        $this->assertTrue($this->connection->inTransaction());
+
+        $this->connection->rollback();
+        $this->assertFalse($this->connection->inTransaction());
+    }
+
+    /**
      * Tests connection can quote values to be safely used in query strings
      *
      * @return void

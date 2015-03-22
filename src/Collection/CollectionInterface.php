@@ -768,7 +768,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * $comments = (new Collection($comments))->stopWhen(['is_approved' => false]);
      * ```
      *
-     * @param callable|array $condition the method that will receive each of the elements and
+     * @param callable $condition the method that will receive each of the elements and
      * returns false when the iteration should be stopped.
      * If an array, it will be interpreted as a key-value list of conditions where
      * the key is a property path as accepted by `Collection::extract`,
@@ -806,9 +806,28 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * });
      * ```
      *
-     * @param callable|array $transformer A callable function that will receive each of
+     * @param callable $transformer A callable function that will receive each of
      * the items in the collection and should return an array or Traversable object
      * @return \Cake\Collection\CollectionInterface
      */
     public function unfold(callable $transformer = null);
+
+    /**
+     * Passes this collection through a callable as its first argument.
+     * This is useful for decorating the full collection with another object.
+     *
+     * ### Example:
+     *
+     * ```
+     * $items [1, 2, 3];
+     * $decorated = (new Collection($items))->through(function ($collection) {
+     *      return new MyCustomCollection($collection);
+     * });
+     * ```
+     *
+     * @param callable $handler A callable function that will receive
+     * this collection as first argument.
+     * @return \Cake\Collection\CollectionInterface
+     */
+    public function through(callable $handler);
 }

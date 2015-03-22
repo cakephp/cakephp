@@ -369,6 +369,45 @@ class LogTest extends TestCase
     }
 
     /**
+     * Test scoped logging without the default loggers catching everything
+     *
+     * @return void
+     */
+    public function testScopedLoggingStrict()
+    {
+        $this->_deleteLogs();
+
+        Log::config('debug', [
+            'engine' => 'File',
+            'path' => LOGS,
+            'types' => ['notice', 'info', 'debug'],
+            'file' => 'debug',
+            'scopes' => false
+        ]);
+        Log::config('shops', [
+            'engine' => 'File',
+            'path' => LOGS,
+            'types' => ['info', 'debug', 'warning'],
+            'file' => 'shops',
+            'scopes' => ['transactions', 'orders'],
+        ]);
+
+        Log::write('debug', 'debug message');
+        $this->assertFileNotExists(LOGS . 'shops.log');
+        $this->assertFileExists(LOGS . 'debug.log');
+
+        $this->_deleteLogs();
+
+        Log::write('debug', 'debug message', 'orders');
+        $this->assertFileExists(LOGS . 'shops.log');
+        $this->assertFileNotExists(LOGS . 'debug.log');
+
+        $this->_deleteLogs();
+
+        Log::drop('shops');
+    }
+
+    /**
      * test scoped logging with convenience methods
      */
     public function testConvenienceScopedLogging()

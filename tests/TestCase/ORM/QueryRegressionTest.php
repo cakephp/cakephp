@@ -293,8 +293,12 @@ class QueryRegressionTest extends TestCase
                 'Highlights.Authors'
             ]
         ]);
-        $this->assertEquals('mariano', end($entity->special_tags)->author->name);
         $this->assertEquals('mark', end($entity->highlights)->author->name);
+
+        $lastTag = end($entity->special_tags);
+        $this->assertTrue($lastTag->highlighted);
+        $this->assertEquals('2014-06-01 10:10:00', $lastTag->highlighted_time->format('Y-m-d H:i:s'));
+        $this->assertEquals('mariano', $lastTag->author->name);
     }
 
     /**

@@ -29,12 +29,10 @@ class SqlserverSchema extends BaseSchema
      */
     public function listTablesSql($config)
     {
-        $sql = '
-			SELECT TABLE_NAME
-			FROM INFORMATION_SCHEMA.TABLES
-			WHERE TABLE_SCHEMA = ?
-			ORDER BY TABLE_NAME
-		';
+        $sql = 'SELECT TABLE_NAME
+            FROM INFORMATION_SCHEMA.TABLES
+            WHERE TABLE_SCHEMA = ?
+            ORDER BY TABLE_NAME';
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
         return [$sql, [$schema]];
     }
@@ -44,16 +42,22 @@ class SqlserverSchema extends BaseSchema
      */
     public function describeColumnSql($tableName, $config)
     {
-        $sql =
-        "SELECT DISTINCT TABLE_SCHEMA AS [schema], COLUMN_NAME AS [name], DATA_TYPE AS [type],
-			IS_NULLABLE AS [null], COLUMN_DEFAULT AS [default],
-			CHARACTER_MAXIMUM_LENGTH AS [char_length],
-			NUMERIC_PRECISION AS [precision],
-			NUMERIC_SCALE AS [scale],
-			'' AS [comment], ORDINAL_POSITION AS [ordinal_position]
-		FROM INFORMATION_SCHEMA.COLUMNS
-		WHERE TABLE_NAME = ? AND TABLE_SCHEMA = ?
-		ORDER BY ordinal_position";
+        $sql = "SELECT DISTINCT
+            AC.column_id AS [column_id],
+            AC.name AS [name],
+            TY.name AS [type],
+            AC.max_length AS [char_length],
+            AC.precision AS [precision],
+            AC.scale AS [scale],
+            AC.is_identity AS [autoincrement],
+            AC.is_nullable AS [null],
+            OBJECT_DEFINITION(AC.default_object_id) AS [default]
+            FROM sys.[tables] T
+            INNER JOIN sys.[schemas] S ON S.[schema_id] = T.[schema_id]
+            INNER JOIN sys.[all_columns] AC ON T.[object_id] = AC.[object_id]
+            INNER JOIN sys.[types] TY ON TY.[user_type_id] = AC.[user_type_id]
+            WHERE T.[name] = ? AND S.[name] = ?
+            ORDER BY column_id";
 
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
         return [$sql, [$tableName, $schema]];
@@ -149,13 +153,15 @@ class SqlserverSchema extends BaseSchema
         if (!empty($row['default'])) {
             $row['default'] = trim($row['default'], '()');
         }
-
+        if (!empty($row['autoincrement'])) {
+            $field['autoIncrement'] = true;
+        }
         if ($field['type'] === 'boolean') {
             $row['default'] = (int)$row['default'];
         }
 
         $field += [
-            'null' => $row['null'] === 'YES' ? true : false,
+            'null' => $row['null'] === '1' ? true : false,
             'default' => $row['default'],
         ];
         $table->addColumn($row['name'], $field);
@@ -166,21 +172,19 @@ class SqlserverSchema extends BaseSchema
      */
     public function describeIndexSql($tableName, $config)
     {
-        $sql = "
-			SELECT
-				I.[name] AS [index_name],
-				IC.[index_column_id] AS [index_order],
-				AC.[name] AS [column_name],
-				I.[is_unique], I.[is_primary_key],
-				I.[is_unique_constraint]
-			FROM sys.[tables] AS T
-			INNER JOIN sys.[schemas] S ON S.[schema_id] = T.[schema_id]
-			INNER JOIN sys.[indexes] I ON T.[object_id] = I.[object_id]
-			INNER JOIN sys.[index_columns] IC ON I.[object_id] = IC.[object_id] AND I.[index_id] = IC.[index_id]
-			INNER JOIN sys.[all_columns] AC ON T.[object_id] = AC.[object_id] AND IC.[column_id] = AC.[column_id]
-			WHERE T.[is_ms_shipped] = 0 AND I.[type_desc] <> 'HEAP' AND T.[name] = ? AND S.[name] = ?
-			ORDER BY I.[index_id], IC.[index_column_id]
-		";
+        $sql = "SELECT
+                I.[name] AS [index_name],
+                IC.[index_column_id] AS [index_order],
+                AC.[name] AS [column_name],
+                I.[is_unique], I.[is_primary_key],
+                I.[is_unique_constraint]
+            FROM sys.[tables] AS T
+            INNER JOIN sys.[schemas] S ON S.[schema_id] = T.[schema_id]
+            INNER JOIN sys.[indexes] I ON T.[object_id] = I.[object_id]
+            INNER JOIN sys.[index_columns] IC ON I.[object_id] = IC.[object_id] AND I.[index_id] = IC.[index_id]
+            INNER JOIN sys.[all_columns] AC ON T.[object_id] = AC.[object_id] AND IC.[column_id] = AC.[column_id]
+            WHERE T.[is_ms_shipped] = 0 AND I.[type_desc] <> 'HEAP' AND T.[name] = ? AND S.[name] = ?
+            ORDER BY I.[index_id], IC.[index_column_id]";
 
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
         return [$sql, [$tableName, $schema]];
@@ -229,19 +233,17 @@ class SqlserverSchema extends BaseSchema
      */
     public function describeForeignKeySql($tableName, $config)
     {
-        $sql = "
-			SELECT FK.[name] AS [foreign_key_name], FK.[delete_referential_action_desc] AS [delete_type],
-				FK.[update_referential_action_desc] AS [update_type], C.name AS [column], RT.name AS [reference_table],
-				RC.name AS [reference_column]
-			FROM sys.foreign_keys FK
-			INNER JOIN sys.foreign_key_columns FKC ON FKC.constraint_object_id = FK.object_id
-			INNER JOIN sys.tables T ON T.object_id = FKC.parent_object_id
-			INNER JOIN sys.tables RT ON RT.object_id = FKC.referenced_object_id
-			INNER JOIN sys.schemas S ON S.schema_id = T.schema_id AND S.schema_id = RT.schema_id
-			INNER JOIN sys.columns C ON C.column_id = FKC.parent_column_id AND C.object_id = FKC.parent_object_id
-			INNER JOIN sys.columns RC ON RC.column_id = FKC.referenced_column_id AND RC.object_id = FKC.referenced_object_id
-			WHERE FK.is_ms_shipped = 0 AND T.name = ? AND S.name = ?
-		";
+        $sql = "SELECT FK.[name] AS [foreign_key_name], FK.[delete_referential_action_desc] AS [delete_type],
+                FK.[update_referential_action_desc] AS [update_type], C.name AS [column], RT.name AS [reference_table],
+                RC.name AS [reference_column]
+            FROM sys.foreign_keys FK
+            INNER JOIN sys.foreign_key_columns FKC ON FKC.constraint_object_id = FK.object_id
+            INNER JOIN sys.tables T ON T.object_id = FKC.parent_object_id
+            INNER JOIN sys.tables RT ON RT.object_id = FKC.referenced_object_id
+            INNER JOIN sys.schemas S ON S.schema_id = T.schema_id AND S.schema_id = RT.schema_id
+            INNER JOIN sys.columns C ON C.column_id = FKC.parent_column_id AND C.object_id = FKC.parent_object_id
+            INNER JOIN sys.columns RC ON RC.column_id = FKC.referenced_column_id AND RC.object_id = FKC.referenced_object_id
+            WHERE FK.is_ms_shipped = 0 AND T.name = ? AND S.name = ?";
 
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
         return [$sql, [$tableName, $schema]];

@@ -1132,4 +1132,35 @@ class CollectionTest extends TestCase
         $expected = [1, 2, 2, 3, 4, 3, 4, 5, 6];
         $this->assertEquals($expected, $collection->toArray(false));
     }
+
+    /**
+     * Tests the through() method
+     *
+     * @return void
+     */
+    public function testThrough()
+    {
+        $items = [1, 2, 3];
+        $collection = (new Collection($items))->through(function ($collection) {
+            return $collection->append($collection->toList());
+        });
+
+        $this->assertEquals([1, 2, 3, 1, 2, 3], $collection->toList());
+    }
+
+    /**
+     * Tests the through method when it returns an array
+     *
+     * @return void
+     */
+    public function testThroughReturnArray()
+    {
+        $items = [1, 2, 3];
+        $collection = (new Collection($items))->through(function ($collection) {
+            $list = $collection->toList();
+            return array_merge($list, $list);
+        });
+
+        $this->assertEquals([1, 2, 3, 1, 2, 3], $collection->toList());
+    }
 }

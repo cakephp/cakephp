@@ -103,7 +103,7 @@ class TreeBehavior extends Behavior
             $this->_sync(2, '+', ">= {$edge}");
 
             if ($level) {
-                $entity->set($config[$level], $parentNode[$level] + 1);
+                $entity->set($level, $parentNode[$level] + 1);
             }
             return;
         }
@@ -114,7 +114,7 @@ class TreeBehavior extends Behavior
             $entity->set($config['right'], $edge + 2);
 
             if ($level) {
-                $entity->set($config[$level], 0);
+                $entity->set($level, 0);
             }
             return;
         }
@@ -133,7 +133,7 @@ class TreeBehavior extends Behavior
             $this->_setAsRoot($entity);
 
             if ($level) {
-                $entity->set($config[$level], 0);
+                $entity->set($level, 0);
             }
         }
     }
@@ -347,10 +347,9 @@ class TreeBehavior extends Behavior
         }
 
         $config = $this->config();
-        $alias = $this->_table->alias();
         list($left, $right) = array_map(
-            function ($field) use ($alias) {
-                return "$alias.$field";
+            function ($field) {
+                return $this->_table->aliasField($field);
             },
             [$config['left'], $config['right']]
         );
@@ -375,8 +374,7 @@ class TreeBehavior extends Behavior
     public function childCount(Entity $node, $direct = false)
     {
         $config = $this->config();
-        $alias = $this->_table->alias();
-        $parent = $alias . '.' . $config['parent'];
+        $parent = $this->_table->aliasField($config['parent']);
 
         if ($direct) {
             return $this->_scope($this->_table->find())
@@ -407,11 +405,10 @@ class TreeBehavior extends Behavior
     public function findChildren(Query $query, array $options)
     {
         $config = $this->config();
-        $alias = $this->_table->alias();
         $options += ['for' => null, 'direct' => false];
         list($parent, $left, $right) = array_map(
-            function ($field) use ($alias) {
-                return "$alias.$field";
+            function ($field) {
+                return $this->_table->aliasField($field);
             },
             [$config['parent'], $config['left'], $config['right']]
         );
@@ -449,7 +446,7 @@ class TreeBehavior extends Behavior
      *  return the key out of the provided row.
      * - valuePath: A dot separated path to fetch the field to use for the array value, or a closure to
      *  return the value out of the provided row.
-     *  - spacer: A string to be used as prefix for denoting the depth in the tree for each item
+     * - spacer: A string to be used as prefix for denoting the depth in the tree for each item
      *
      * @param \Cake\ORM\Query $query Query.
      * @param array $options Array of options as described above
@@ -458,7 +455,10 @@ class TreeBehavior extends Behavior
     public function findTreeList(Query $query, array $options)
     {
         return $this->_scope($query)
-            ->find('threaded', ['parentField' => $this->config()['parent'], 'order' => [$this->config()['left'] => 'ASC']])
+            ->find('threaded', [
+                'parentField' => $this->config('parent'),
+                'order' => [$this->config('left') => 'ASC']
+            ])
             ->formatResults(function ($results) use ($options) {
                 $options += [
                     'keyPath' => $this->_getPrimaryKey(),

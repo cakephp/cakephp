@@ -1,17 +1,18 @@
 {
-	"name": "cakephp/utility",
-	"description": "CakePHP Utility classes such as Inflector, String, Hash, and Security",
-	"license": "MIT",
-	"authors": [
-		{
-		"name": "CakePHP Community",
-		"homepage": "http://cakephp.org"
-	}
-	],
-	"autoload": {
-		"psr-4": {
-			"Cake\\Utility\\": "."
-		}
-	},
-	"minimum-stability": "beta"
+    "name": "cakephp/utility",
+    "description": "CakePHP Utility classes such as Inflector, String, Hash, and Security",
+    "license": "MIT",
+    "authors": [
+        {
+        "name": "CakePHP Community",
+        "homepage": "http://cakephp.org"
+    }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Cake\\Utility\\": "."
+        },
+        "files": ["bootstrap.php"]
+    },
+    "minimum-stability": "beta"
 }

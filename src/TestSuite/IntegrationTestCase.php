@@ -474,6 +474,25 @@ abstract class IntegrationTestCase extends TestCase
     }
 
     /**
+     * Asserts that the Location header contains a substring
+     *
+     * @param string $url The URL you expected the client to go to.
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertRedirectContains($url, $message = '')
+    {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert location header. ' . $message);
+        }
+        $result = $this->_response->header();
+        if (empty($result['Location'])) {
+            $this->fail('No location header set. ' . $message);
+        }
+        $this->assertContains($url, $result['Location'], $message);
+    }
+
+    /**
      * Asserts that the Location header is not set.
      *
      * @param string $message The failure message that will be appended to the generated message.

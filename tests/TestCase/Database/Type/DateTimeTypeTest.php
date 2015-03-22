@@ -26,6 +26,13 @@ class DateTimeTypeTest extends TestCase
 {
 
     /**
+     * Original type map
+     *
+     * @var array
+     */
+    protected $_originalMap = [];
+
+    /**
      * Setup
      *
      * @return void
@@ -35,6 +42,19 @@ class DateTimeTypeTest extends TestCase
         parent::setUp();
         $this->type = Type::build('datetime');
         $this->driver = $this->getMock('Cake\Database\Driver');
+        $this->_originalMap = Type::map();
+    }
+
+    /**
+     * Restores Type class state
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        Type::map($this->_originalMap);
     }
 
     /**

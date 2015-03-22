@@ -12,7 +12,7 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Shell;
+namespace Cake\Shell\Task;
 
 use Cake\Console\Shell;
 use Cake\Core\Plugin;
@@ -20,10 +20,10 @@ use Cake\Filesystem\Folder;
 use Cake\Utility\Inflector;
 
 /**
- * Shell for symlinking / copying plugin assets to app's webroot.
+ * Task for symlinking / copying plugin assets to app's webroot.
  *
  */
-class PluginAssetsShell extends Shell
+class AssetsTask extends Shell
 {
 
     /**

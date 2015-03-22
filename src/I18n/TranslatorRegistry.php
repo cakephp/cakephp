@@ -130,7 +130,7 @@ class TranslatorRegistry extends TranslatorLocator
      *
      * @param string $name The name of the translator package to register a loader for
      * @param callable $loader A callable object that should return a Package
-     * @return \Aura\Intl\TranslatorInterface A translator object.
+     * @return void
      */
     public function registerLoader($name, callable $loader)
     {

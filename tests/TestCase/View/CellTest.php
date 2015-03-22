@@ -75,6 +75,10 @@ class CellTest extends TestCase
         $this->assertContains('<h2>Usectetur adipiscing eli</h2>', $render);
         $this->assertContains('<h2>Topis semper blandit eu non</h2>', $render);
         $this->assertContains('<h2>Suspendisse gravida neque</h2>', $render);
+
+        $cell = $this->View->cell('Cello');
+        $this->assertInstanceOf('TestApp\View\Cell\CelloCell', $cell);
+        $this->assertEquals("Cellos\n", $cell->render());
     }
 
     /**
@@ -167,6 +171,27 @@ class CellTest extends TestCase
         $this->assertEquals($this->View->theme, $cell->theme);
         $this->assertContains('Themed cell content.', $cell->render());
         $this->assertEquals($cell->View->theme, $cell->theme);
+    }
+
+    /**
+     * Test that a cell can render a plugin view.
+     *
+     * @return void
+     */
+    public function testCellRenderPluginTemplate()
+    {
+        $cell = $this->View->cell('Articles');
+        $this->assertContains(
+            'TestPlugin Articles/display',
+            $cell->render('TestPlugin.display')
+        );
+
+        $cell = $this->View->cell('Articles');
+        $cell->plugin = 'TestPlugin';
+        $this->assertContains(
+            'TestPlugin Articles/display',
+            $cell->render('display')
+        );
     }
 
     /**

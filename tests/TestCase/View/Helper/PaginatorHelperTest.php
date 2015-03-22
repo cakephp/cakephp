@@ -422,6 +422,42 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
+     * Test creating paging links for missing models.
+     *
+     * @return void
+     */
+    public function testPagingLinksMissingModel()
+    {
+        $result = $this->Paginator->sort('title', 'Title', ['model' => 'Missing']);
+        $expected = [
+            'a' => ['href' => '/index?sort=title&amp;direction=asc'],
+            'Title',
+            '/a'
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Paginator->next('Next', ['model' => 'Missing']);
+        $expected = [
+            'li' => ['class' => 'next disabled'],
+            'a' => ['href' => ''],
+            'Next',
+            '/a',
+            '/li'
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Paginator->prev('Prev', ['model' => 'Missing']);
+        $expected = [
+            'li' => ['class' => 'prev disabled'],
+            'a' => ['href' => ''],
+            'Prev',
+            '/a',
+            '/li'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * testSortKey method
      *
      * @return void

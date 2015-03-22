@@ -141,6 +141,19 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Tests that BelongsToMany can't use the join strategy
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid strategy "join" was provided
+     * @return void
+     */
+    public function testStrategyFailure()
+    {
+        $assoc = new BelongsToMany('Test');
+        $assoc->strategy(BelongsToMany::STRATEGY_JOIN);
+    }
+
+    /**
      * Tests the junction method
      *
      * @return void
@@ -259,6 +272,35 @@ class BelongsToManyTest extends TestCase
                 'click_count' => 3,
                 'article_id' => 1
             ]);
+
+        $entity = new Entity(['id' => 1, 'name' => 'PHP']);
+        $association->cascadeDelete($entity);
+    }
+
+    /**
+     * Test cascading deletes with dependent=false
+     *
+     * @return void
+     */
+    public function testCascadeDeleteDependent()
+    {
+        $articleTag = $this->getMock('Cake\ORM\Table', ['delete', 'deleteAll'], []);
+        $config = [
+            'sourceTable' => $this->article,
+            'targetTable' => $this->tag,
+            'dependent' => false,
+            'sort' => ['id' => 'ASC'],
+        ];
+        $association = new BelongsToMany('Tags', $config);
+        $association->junction($articleTag);
+        $this->article
+            ->association($articleTag->alias())
+            ->conditions(['click_count' => 3]);
+
+        $articleTag->expects($this->never())
+            ->method('deleteAll');
+        $articleTag->expects($this->never())
+            ->method('delete');
 
         $entity = new Entity(['id' => 1, 'name' => 'PHP']);
         $association->cascadeDelete($entity);

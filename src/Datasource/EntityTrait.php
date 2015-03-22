@@ -606,7 +606,16 @@ trait EntityTrait
         if ($new === null) {
             return $this->_new;
         }
-        return $this->_new = (bool)$new;
+
+        $new = (bool)$new;
+
+        if ($new) {
+            foreach ($this->_properties as $k => $p) {
+                $this->_dirty[$k] = true;
+            }
+        }
+
+        return $this->_new = $new;
     }
 
     /**

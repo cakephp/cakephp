@@ -122,7 +122,8 @@ class ExtractTask extends Shell
             $response = $this->in($message, null, $defaultPath);
             if (strtoupper($response) === 'Q') {
                 $this->err('Extract Aborted');
-                return $this->_stop();
+                $this->_stop();
+                return;
             } elseif (strtoupper($response) === 'D' && count($this->_paths)) {
                 $this->out();
                 return;
@@ -197,7 +198,8 @@ class ExtractTask extends Shell
                 $response = $this->in($message, null, rtrim($this->_paths[0], DS) . DS . 'Locale');
                 if (strtoupper($response) === 'Q') {
                     $this->err('Extract Aborted');
-                    return $this->_stop();
+                    $this->_stop();
+                    return;
                 } elseif ($this->_isPathUsable($response)) {
                     $this->_output = $response . DS;
                     break;
@@ -227,7 +229,8 @@ class ExtractTask extends Shell
         $this->_output = rtrim($this->_output, DS) . DS;
         if (!$this->_isPathUsable($this->_output)) {
             $this->err(sprintf('The output directory %s was not found or writable.', $this->_output));
-            return $this->_stop();
+            $this->_stop();
+            return;
         }
 
         $this->_extract();
@@ -571,7 +574,7 @@ class ExtractTask extends Shell
     /**
      * Get the strings from the position forward
      *
-     * @param int &$position Actual position on tokens array
+     * @param int $position Actual position on tokens array
      * @param int $target Number of strings to extract
      * @return array Strings extracted
      */

@@ -175,7 +175,7 @@ class ConsoleIo
      * @param int $newlines Number of newlines to append.
      * @param int $size The number of bytes to overwrite. Defaults to the
      *    length of the last message output.
-     * @return int|bool Returns the number of bytes returned from writing to stdout.
+     * @return void
      */
     public function overwrite($message, $newlines = 1, $size = null)
     {

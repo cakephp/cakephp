@@ -324,7 +324,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      * @param array $expected An array, see above
      * @param string $string An HTML/XHTML/XML string
      * @param bool $fullDebug Whether or not more verbose output should be used.
-     * @return void
+     * @return bool
      */
     public function assertHtml($expected, $string, $fullDebug = false)
     {
@@ -463,7 +463,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      *
      * @param array $assertions Assertions to run.
      * @param string $string The HTML string to check.
-     * @return void
+     * @return string
      */
     protected function _assertAttributes($assertions, $string)
     {

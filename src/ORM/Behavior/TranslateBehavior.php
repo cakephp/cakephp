@@ -199,12 +199,11 @@ class TranslateBehavior extends Behavior
 
         $conditions = function ($field, $locale, $query, $select) {
             return function ($q) use ($field, $locale, $query, $select) {
-                $q->where([$q->repository()->alias() . '.locale' => $locale]);
-                $alias = $this->_table->alias();
+                $q->where([$q->repository()->aliasField('locale') => $locale]);
 
                 if ($query->autoFields() ||
                     in_array($field, $select, true) ||
-                    in_array("$alias.$field", $select, true)
+                    in_array($this->_table->aliasField($field), $select, true)
                 ) {
                     $q->select(['id', 'content']);
                 }
@@ -372,7 +371,7 @@ class TranslateBehavior extends Behavior
      * the database table the object points at - or as a last resort, the alias
      * of the autotable instance.
      *
-     * @param Table $table
+     * @param \Cake\ORM\Table $table The table class to get a reference name for.
      * @return string
      */
     protected function _referenceName(Table $table)

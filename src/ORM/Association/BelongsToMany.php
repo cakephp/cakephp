@@ -61,7 +61,7 @@ class BelongsToMany extends Association
      *
      * @var string
      */
-    protected $_strategy = parent::STRATEGY_SELECT;
+    protected $_strategy = self::STRATEGY_SELECT;
 
     /**
      * Junction table instance
@@ -113,6 +113,23 @@ class BelongsToMany extends Association
      * @var string|\Cake\ORM\Table
      */
     protected $_through;
+
+    /**
+     * Valid strategies for this type of association
+     *
+     * @var array
+     */
+    protected $_validStrategies = [self::STRATEGY_SELECT, self::STRATEGY_SUBQUERY];
+
+    /**
+     * Whether the records on the joint table should be removed when a record
+     * on the source table is deleted.
+     *
+     * Defaults to true for backwards compatibility.
+     *
+     * @var bool
+     */
+    protected $_dependent = true;
 
     /**
      * Sets the name of the field representing the foreign key to the target table.
@@ -325,6 +342,9 @@ class BelongsToMany extends Association
      */
     public function cascadeDelete(EntityInterface $entity, array $options = [])
     {
+        if (!$this->dependent()) {
+            return true;
+        }
         $foreignKey = (array)$this->foreignKey();
         $primaryKey = (array)$this->source()->primaryKey();
         $conditions = [];

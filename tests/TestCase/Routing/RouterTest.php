@@ -1198,6 +1198,29 @@ class RouterTest extends TestCase
     }
 
     /**
+     * Test url param persistence.
+     *
+     * @return void
+     */
+    public function testUrlParamPersistence()
+    {
+        Router::connect('/:lang/:controller/:action/*', [], ['persist' => ['lang']]);
+        $request = new Request();
+        $request->addParams([
+            'lang' => 'en',
+            'controller' => 'posts',
+            'action' => 'index'
+        ])->addPaths([
+            'base' => '',
+            'here' => '/'
+        ]);
+        Router::pushRequest($request);
+
+        $result = Router::url(['controller' => 'tasks', 'action' => 'edit', '1234']);
+        $this->assertEquals('/en/tasks/edit/1234', $result);
+    }
+
+    /**
      * Test that plain strings urls work
      *
      * @return void
@@ -2810,6 +2833,20 @@ class RouterTest extends TestCase
             $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
             $this->assertEquals('/admin', $routes->path());
             $this->assertEquals(['prefix' => 'admin'], $routes->params());
+        });
+    }
+
+    /**
+     * Test that prefix() accepts options
+     *
+     * @return void
+     */
+    public function testPrefixOptions()
+    {
+        Router::prefix('admin', ['param' => 'value'], function ($routes) {
+            $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
+            $this->assertEquals('/admin', $routes->path());
+            $this->assertEquals(['prefix' => 'admin', 'param' => 'value'], $routes->params());
         });
     }
 

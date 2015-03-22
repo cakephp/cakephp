@@ -122,10 +122,19 @@ class SqliteSchema extends BaseSchema
             'null' => !$row['notnull'],
             'default' => $row['dflt_value'] === null ? null : trim($row['dflt_value'], "'"),
         ];
-        if ($row['pk']) {
+        $primary = $table->constraint('primary');
+
+        if ($row['pk'] && empty($primary)) {
             $field['null'] = false;
             $field['autoIncrement'] = true;
         }
+
+        // SQLite does not support autoincrement on composite keys.
+        if ($row['pk'] && !empty($primary)) {
+            $existingColumn = $primary['columns'][0];
+            $table->addColumn($existingColumn, ['autoIncrement' => null] + $table->column($existingColumn));
+        }
+
         $table->addColumn($row['name'], $field);
         if ($row['pk']) {
             $constraint = (array)$table->constraint('primary') + [
@@ -374,7 +383,7 @@ class SqliteSchema extends BaseSchema
      * Returns whether there is any table in this connection to SQLite containing
      * sequences
      *
-     * @return void
+     * @return bool
      */
     public function hasSequences()
     {

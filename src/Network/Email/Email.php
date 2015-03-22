@@ -1995,7 +1995,8 @@ class Email implements JsonSerializable, Serializable
     /**
      * Unserializes the Email object.
      *
-     * @return void.
+     * @param string $data Serialized string.
+     * @return \Cake\Network\Email\Email Configured email instance.
      */
     public function unserialize($data)
     {
