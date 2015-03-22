@@ -27,16 +27,6 @@ class SecurityTest extends TestCase
 {
 
     /**
-     * testGenerateAuthkey method
-     *
-     * @return void
-     */
-    public function testGenerateAuthkey()
-    {
-        $this->assertEquals(strlen(Security::generateAuthKey()), 40);
-    }
-
-    /**
      * testHash method
      *
      * @return void
