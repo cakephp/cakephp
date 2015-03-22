@@ -271,6 +271,7 @@ class Marshaller
         if ($hasIds) {
             return [];
         }
+        $data = array_values($data);
 
         // Accept [ [id => 1], [id = 2] ] style.
         $primaryKey = array_flip($assoc->target()->schema()->primaryKey());

@@ -506,14 +506,14 @@ class MarshallerTest extends TestCase
             'body' => 'My content',
             'author_id' => 1,
             'tags' => [
-                [
+                3 => [
                     'id' => 1,
                     '_joinData' => [
                         'active' => 1,
                         'user' => ['username' => 'MyLux'],
                     ]
                 ],
-                [
+                5 => [
                     'id' => 2,
                     '_joinData' => [
                         'active' => 0,
@@ -553,8 +553,8 @@ class MarshallerTest extends TestCase
         $this->assertFalse($result->tags[1]->isNew(), 'Should not be new, as id is in db.');
         $this->assertEquals($t1->tag, $result->tags[0]->tag);
         $this->assertEquals($t2->tag, $result->tags[1]->tag);
-        $this->assertEquals($data['tags'][0]['_joinData']['user']['username'], $result->tags[0]->_joinData->user->username);
-        $this->assertEquals($data['tags'][1]['_joinData']['user']['username'], $result->tags[1]->_joinData->user->username);
+        $this->assertEquals($data['tags'][3]['_joinData']['user']['username'], $result->tags[0]->_joinData->user->username);
+        $this->assertEquals($data['tags'][5]['_joinData']['user']['username'], $result->tags[1]->_joinData->user->username);
     }
 
     /**
