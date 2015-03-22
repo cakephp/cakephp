@@ -19,7 +19,7 @@ recommend using the [app skeleton](https://github.com/cakephp/app) as
 a starting point. For existing applications you can run the following:
 
 ``` bash
-$ composer require cakephp/cakephp:"3.0.*-dev"
+$ composer require cakephp/cakephp:"~3.0"
 ```
 
 ## Running Tests
