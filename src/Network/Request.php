@@ -713,7 +713,7 @@ class Request implements \ArrayAccess
     {
         foreach ($detect['header'] as $header => $value) {
             $header = $this->env('http_' . $header);
-            if (!is_null($header)) {
+            if ($header !== null) {
                 if (!is_string($value) && !is_bool($value) && is_callable($value)) {
                     return call_user_func($value, $header);
                 }
