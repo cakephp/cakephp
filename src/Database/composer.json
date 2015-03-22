@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "cakephp/core": "dev-master"
+        "cakephp/core": "~3.0"
     },
     "suggest": {
         "cakephp/log": "Require this if you want to use the built-in query logger",
