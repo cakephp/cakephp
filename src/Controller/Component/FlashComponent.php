@@ -45,7 +45,7 @@ class FlashComponent extends Component
         'element' => 'default',
         'params' => [],
         'reset' => false,
-        'stackLimit' => 50
+        'limit' => 50
     ];
 
     /**
@@ -110,7 +110,7 @@ class FlashComponent extends Component
             $index++;
         }
 
-        if ($index >= $this->config('stackLimit')) {
+        if ($index >= $this->config('limit')) {
             array_shift($messages);
             $this->_session->write($sessionKey, $messages);
             $index--;

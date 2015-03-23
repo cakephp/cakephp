@@ -308,7 +308,7 @@ class FlashComponentTest extends TestCase
     {
         $this->assertNull($this->Session->read('Flash.flash'));
 
-        $this->Flash->config('stackLimit', 2);
+        $this->Flash->config('limit', 2);
 
         $this->Flash->set('This is a test message');
         $this->Flash->set('This is another test message');
