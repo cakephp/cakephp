@@ -1060,14 +1060,14 @@ class Hash {
 		array_shift($parentKeys);
 
 		$hasNullRoot = false;
-		
+
 		foreach ($data as $result) {
 			$result[$options['children']] = array();
 
 			$id = self::get($result, $idKeys);
 			$parentId = self::get($result, $parentKeys);
 			$hasNullRoot = $hasNullRoot || !$parentId;
-			
+
 			if (isset($idMap[$id][$options['children']])) {
 				$idMap[$id] = array_merge($result, (array)$idMap[$id]);
 			} else {
