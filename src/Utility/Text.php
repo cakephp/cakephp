@@ -26,6 +26,9 @@ class Text
     /**
      * Generate a random UUID version 4
      *
+     * Warning: This method should not be used as a random seed for any cryptographic operations.
+     * Instead you should use the ssl or mcrypt extensions.
+     *
      * @see http://www.ietf.org/rfc/rfc4122.txt
      * @return string RFC 4122 UUID
      * @copyright Matt Farina MIT License https://github.com/lootils/uuid/blob/master/LICENSE
