@@ -317,10 +317,17 @@ class HttpSocketTest extends CakeTestCase {
 				'verify_peer' => true,
 				'allow_self_signed' => false,
 				'verify_depth' => 5,
+				'SNI_enabled' => true,
 				'CN_match' => 'www.cakephp.org',
 				'cafile' => CAKE . 'Config' . DS . 'cacert.pem'
 			)
 		);
+
+		if (version_compare(PHP_VERSION, '5.6.0', '>=')) {
+			$context['ssl']['peer_name'] = 'www.cakephp.org';
+		} else {
+			$context['ssl']['SNI_server_name'] = 'www.cakephp.org';
+		}
 
 		$tests = array(
 			array(
