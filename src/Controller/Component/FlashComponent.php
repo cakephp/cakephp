@@ -137,6 +137,7 @@ class FlashComponent extends Component
      *   expected for the $options value of the FlashComponent::set() method
      *   - `message` The message to overwrite
      *   - `params` An array of variables to make available when using an element
+     * @param string $key The flash key where the message is stored
      * @return void
      */
     public function edit($index, $message, $key = 'flash')
