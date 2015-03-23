@@ -248,8 +248,8 @@ class Security
         if (function_exists('hash_equals')) {
             return hash_equals($hmac, $compare);
         }
-        $hashLength = mb_strlen($hmac, '8bit');
-        $compareLength = mb_strlen($compare, '8bit');
+        $hashLength = strlen($hmac);
+        $compareLength = strlen($compare);
         if ($hashLength !== $compareLength) {
             return false;
         }
