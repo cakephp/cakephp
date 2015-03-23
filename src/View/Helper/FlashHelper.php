@@ -35,7 +35,7 @@ class FlashHelper extends Helper
     ];
 
     /**
-     * Used to render the message (or the stack of messages) set in FlashComponent::set()
+     * Used to render the messages stack set in FlashComponent::set()
      *
      * In your view: $this->Flash->render('somekey');
      * Will default to flash if no param is passed

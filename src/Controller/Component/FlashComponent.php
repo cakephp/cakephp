@@ -65,6 +65,11 @@ class FlashComponent extends Component
      *
      * In your controller: $this->Flash->set('This has been saved');
      *
+     * All messages will be added in a stack, meaning that if you call this method
+     * twice, two messages will be registered and rendered with the FlashHelper.
+     * If you want to reset a message, you can use the `reset` option and set it to
+     * true.
+     *
      * ### Options:
      *
      * - `key` The key to set under the session's Flash key
@@ -155,9 +160,7 @@ class FlashComponent extends Component
     }
 
     /**
-     * Delete a message from the session
-     * If there are no remaining messages (in case of a stack), the stack
-     * array is nulled
+     * Delete a message from the stack
      *
      * @param string $key The flash key where the message is stored
      * @param null|string $index The index of the message to delete
@@ -185,10 +188,10 @@ class FlashComponent extends Component
     }
 
     /**
-     * Delete all messages from a special type
+     * Delete all messages of a specific type
      *
-     * @param string $type The type of message to clear
-     * @param string $key The flash key where the message is stored
+     * @param string $type The type of messages to clear
+     * @param string $key The flash key where the messages are stored
      * @return void
      */
     public function clear($type, $key = '')
@@ -225,7 +228,7 @@ class FlashComponent extends Component
 
     /**
      * Get the correct and full element path for the given $optElement
-     * $optElement is supposed to be of the same type as the one given to the
+     * $optElement is supposed to be of the same format as the one given to the
      * FlashComponent::set() method
      *
      * @param string $optElement Element path to resolve
