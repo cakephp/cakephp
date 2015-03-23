@@ -80,6 +80,7 @@ class FormHelper extends Helper
      * @var array
      */
     protected $_defaultConfig = [
+        'idPrefix' => null,
         'errorClass' => 'form-error',
         'typeMap' => [
             'string' => 'text', 'datetime' => 'datetime', 'boolean' => 'checkbox',
@@ -227,6 +228,7 @@ class FormHelper extends Helper
 
         $this->widgetRegistry($registry, $widgets);
         $this->_addDefaultContextProviders();
+        $this->_idPrefix = $this->config('idPrefix');
     }
 
     /**
@@ -352,7 +354,9 @@ class FormHelper extends Helper
             'idPrefix' => null,
         ];
 
-        $this->_idPrefix = $options['idPrefix'];
+        if (!is_null($options['idPrefix'])) {
+            $this->_idPrefix = $options['idPrefix'];
+        }
         $templater = $this->templater();
 
         if (!empty($options['templates'])) {
@@ -520,7 +524,7 @@ class FormHelper extends Helper
         $templater->pop();
         $this->requestType = null;
         $this->_context = null;
-        $this->_idPrefix = null;
+        $this->_idPrefix = $this->config('idPrefix');
         return $out;
     }
 
