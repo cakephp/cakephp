@@ -354,7 +354,7 @@ class FormHelper extends Helper
             'idPrefix' => null,
         ];
 
-        if (!is_null($options['idPrefix'])) {
+        if ($options['idPrefix'] !== null) {
             $this->_idPrefix = $options['idPrefix'];
         }
         $templater = $this->templater();
