@@ -142,7 +142,7 @@ class FlashComponent extends Component
     public function edit($index, $message, $key = 'flash')
     {
         $sessionKey = 'Flash.' . $key . '.' . $index;
-        if ($this->_session->check($sessionKey) === false) {
+        if (!$this->_session->check($sessionKey)) {
             return;
         }
 
