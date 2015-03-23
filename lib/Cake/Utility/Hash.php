@@ -1095,7 +1095,7 @@ class Hash {
 		if ($root === false) {
 			$root = self::get($return[0], $parentKeys);
 		}
-		
+
 		foreach ($return as $i => $result) {
 			$id = self::get($result, $idKeys);
 			$parentId = self::get($result, $parentKeys);
