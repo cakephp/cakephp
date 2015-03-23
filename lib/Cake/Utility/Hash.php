@@ -1063,12 +1063,15 @@ class Hash {
 		$parentKeys = explode('.', $options['parentPath']);
 		array_shift($parentKeys);
 
+		$hasNullRoot = false;
+		
 		foreach ($data as $result) {
 			$result[$options['children']] = array();
 
 			$id = self::get($result, $idKeys);
 			$parentId = self::get($result, $parentKeys);
-
+			$hasNullRoot = $hasNullRoot || !$parentId;
+			
 			if (isset($idMap[$id][$options['children']])) {
 				$idMap[$id] = array_merge($result, (array)$idMap[$id]);
 			} else {
@@ -1089,6 +1092,8 @@ class Hash {
 
 		if ($options['root']) {
 			$root = $options['root'];
+		} elseif ($hasNullRoot) {
+			$root = null;
 		} else {
 			$root = self::get($return[0], $parentKeys);
 		}
