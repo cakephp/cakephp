@@ -33,10 +33,6 @@ tests for cakephp by doing the following:
    a non-SQLite datasource.
 3. Run `phpunit`.
 
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
-
 ## Some Handy Links
 
 [CakePHP](http://www.cakephp.org) - The rapid development PHP framework.
