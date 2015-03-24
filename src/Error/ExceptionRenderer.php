@@ -19,6 +19,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception as CakeException;
 use Cake\Core\Exception\MissingPluginException;
+use Cake\Error\Debugger;
 use Cake\Event\Event;
 use Cake\Network\Exception\HttpException;
 use Cake\Network\Request;
@@ -166,15 +167,10 @@ class ExceptionRenderer
             '_serialize' => ['message', 'url', 'code']
         ];
         if ($isDebug) {
-            $rawTrace = $exception->getTrace();
-            $trace = [];
-            foreach ($rawTrace as $line) {
-                if (isset($line['args'])) {
-                    unset($line['args']);
-                }
-                $trace[] = $line;
-            }
-            $viewVars['trace'] = $trace;
+            $viewVars['trace'] = Debugger::formatTrace($exception->getTrace(), [
+                'format' => 'array',
+                'args' => false
+            ]);
             $viewVars['_serialize'][] = 'trace';
         }
         $this->controller->set($viewVars);
