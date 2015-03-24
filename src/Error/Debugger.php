@@ -213,6 +213,31 @@ class Debugger
      */
     public static function trace(array $options = [])
     {
+        return Debugger::formatTrace(debug_backtrace(), $options);
+    }
+
+    /**
+      * Formats a stack trace based on the supplied options.
+      *
+      * ### Options
+      *
+      * - `depth` - The number of stack frames to return. Defaults to 999
+      * - `format` - The format you want the return. Defaults to the currently selected format. If
+      *    format is 'array' or 'points' the return will be an array.
+      * - `args` - Should arguments for functions be shown?  If true, the arguments for each method call
+      *   will be displayed.
+      * - `start` - The stack frame to start generating a trace from. Defaults to 0
+      *
+      * @param array|\Exception Trace as array or an exception object.
+      * @param array $options Format for outputting stack trace
+      * @return mixed Formatted stack trace
+      * @link http://book.cakephp.org/3.0/en/development/debugging.html#generating-stack-traces
+      */
+    public static function formatTrace($backtrace, $options = [])
+    {
+        if (is_a($backtrace, '\Exception')) {
+            $backtrace = $backtrace->getTrace();
+        }
         $self = Debugger::getInstance();
         $defaults = [
             'depth' => 999,
@@ -224,7 +249,6 @@ class Debugger
         ];
         $options = Hash::merge($defaults, $options);
 
-        $backtrace = debug_backtrace();
         $count = count($backtrace);
         $back = [];
 
