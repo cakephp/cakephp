@@ -448,7 +448,7 @@ class ExtractTask extends AppShell {
 					if ($categoryName !== 'LC_TIME') {
 						$this->_addTranslation($categoryName, $domain, $singular, $details);
 					}
-				} else {
+				} elseif (!is_array($this->_tokens[$count - 1]) || $this->_tokens[$count - 1][0] != T_FUNCTION) {
 					$this->_markerError($this->_file, $line, $functionName, $count);
 				}
 			}

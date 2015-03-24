@@ -652,6 +652,7 @@ class HttpSocket extends CakeSocket {
 		}
 		$this->config['host'] = $this->_proxy['host'];
 		$this->config['port'] = $this->_proxy['port'];
+		$this->config['proxy'] = true;
 
 		if (empty($this->_proxy['method']) || !isset($this->_proxy['user'], $this->_proxy['pass'])) {
 			return;
@@ -716,6 +717,20 @@ class HttpSocket extends CakeSocket {
 				$this->config['context']['ssl'][$contextKey] = $value;
 			}
 			unset($this->config[$key]);
+		}
+		if (version_compare(PHP_VERSION, '5.3.2', '>=')) {
+			if (empty($this->config['context']['ssl']['SNI_enabled'])) {
+				$this->config['context']['ssl']['SNI_enabled'] = true;
+			}
+			if (version_compare(PHP_VERSION, '5.6.0', '>=')) {
+				if (empty($this->config['context']['ssl']['peer_name'])) {
+					$this->config['context']['ssl']['peer_name'] = $host;
+				}
+			} else {
+				if (empty($this->config['context']['ssl']['SNI_server_name'])) {
+					$this->config['context']['ssl']['SNI_server_name'] = $host;
+				}
+			}
 		}
 		if (empty($this->config['context']['ssl']['cafile'])) {
 			$this->config['context']['ssl']['cafile'] = CAKE . 'Config' . DS . 'cacert.pem';
@@ -926,7 +941,7 @@ class HttpSocket extends CakeSocket {
 
 		$request['uri'] = $this->_parseUri($request['uri']);
 		$request += array('method' => 'GET');
-		if (!empty($this->_proxy['host'])) {
+		if (!empty($this->_proxy['host']) && $request['uri']['scheme'] !== 'https') {
 			$request['uri'] = $this->_buildUri($request['uri'], '%scheme://%host:%port/%path?%query');
 		} else {
 			$request['uri'] = $this->_buildUri($request['uri'], '/%path?%query');

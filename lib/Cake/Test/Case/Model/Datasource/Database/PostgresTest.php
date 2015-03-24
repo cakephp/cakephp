@@ -732,6 +732,42 @@ class PostgresTest extends CakeTestCase {
 	}
 
 /**
+ * Test the alterSchema changing text to integer
+ *
+ * @return void
+ */
+	public function testAlterSchemaTextToIntegerField() {
+		$default = array(
+			'connection' => 'test',
+			'name' => 'TextField',
+			'text_fields' => array(
+				'id' => array('type' => 'integer', 'key' => 'primary'),
+				'name' => array('type' => 'string', 'length' => 50),
+				'active' => array('type' => 'text', 'null' => false),
+			)
+		);
+		$Old = new CakeSchema($default);
+		$result = $this->Dbo->query($this->Dbo->createSchema($Old));
+		$this->assertTrue($result);
+
+		$modified = $default;
+		$modified['text_fields']['active'] = array('type' => 'integer', 'null' => true);
+
+		$New = new CakeSchema($modified);
+		$this->Dbo->query($this->Dbo->alterSchema($New->compare($Old)));
+		$result = $this->Dbo->describe('text_fields');
+
+		$this->Dbo->query($this->Dbo->dropSchema($Old));
+		$expected = array(
+			'type' => 'integer',
+			'null' => true,
+			'default' => null,
+			'length' => null,
+		);
+		$this->assertEquals($expected, $result['active']);
+	}
+
+/**
  * Test the alter index capabilities of postgres
  *
  * @return void
