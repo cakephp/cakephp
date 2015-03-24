@@ -11,7 +11,7 @@ A ``Hash`` (as in PHP arrays) class, capable of extracting data using an intuiti
 ```php
 $things = [
     ['name' => 'Mark', 'age' => 15],
-    ['name' => 'Susan', 'age' => 30]
+    ['name' => 'Susan', 'age' => 30],
     ['name' => 'Lucy', 'age' => 25]
 ];
 
