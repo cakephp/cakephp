@@ -46,25 +46,54 @@ class FlashHelperTest extends TestCase
         $session->write([
             'Flash' => [
                 'flash' => [
-                    'key' => 'flash',
-                    'message' => 'This is a calling',
-                    'element' => 'Flash/default',
-                    'params' => []
+                    [
+                        'key' => 'flash',
+                        'message' => 'This is a calling',
+                        'element' => 'Flash/default',
+                        'params' => []
+                    ]
                 ],
                 'notification' => [
-                    'key' => 'notification',
-                    'message' => 'This is a test of the emergency broadcasting system',
-                    'element' => 'flash_helper',
-                    'params' => [
-                        'title' => 'Notice!',
-                        'name' => 'Alert!'
+                    [
+                        'key' => 'notification',
+                        'message' => 'This is a test of the emergency broadcasting system',
+                        'element' => 'flash_helper',
+                        'params' => [
+                            'title' => 'Notice!',
+                            'name' => 'Alert!'
+                        ]
                     ]
                 ],
                 'classy' => [
-                    'key' => 'classy',
-                    'message' => 'Recorded',
-                    'element' => 'flash_classy',
-                    'params' => []
+                    [
+                        'key' => 'classy',
+                        'message' => 'Recorded',
+                        'element' => 'flash_classy',
+                        'params' => []
+                    ]
+                ],
+                'stack' => [
+                    [
+                        'key' => 'flash',
+                        'message' => 'This is a calling',
+                        'element' => 'Flash/default',
+                        'params' => []
+                    ],
+                    [
+                        'key' => 'notification',
+                        'message' => 'This is a test of the emergency broadcasting system',
+                        'element' => 'flash_helper',
+                        'params' => [
+                            'title' => 'Notice!',
+                            'name' => 'Alert!'
+                        ]
+                    ],
+                    [
+                        'key' => 'classy',
+                        'message' => 'Recorded',
+                        'element' => 'flash_classy',
+                        'params' => []
+                    ]
                 ]
             ]
         ]);
@@ -168,5 +197,27 @@ class FlashHelperTest extends TestCase
         $result = $this->Flash->render('flash');
         $expected = 'flash element from TestTheme';
         $this->assertContains($expected, $result);
+    }
+
+    /**
+     * Test that when rendering a stack, messages are displayed in their
+     * respective element, in the order they were added in the stack
+     *
+     * @return void
+     */
+    public function testFlashWithStack()
+    {
+        $result = $this->Flash->render('stack');
+        $expected = [
+            ['div' => ['class' => 'message']], 'This is a calling', '/div',
+            ['div' => ['id' => 'notificationLayout']],
+            '<h1', 'Alert!', '/h1',
+            '<h3', 'Notice!', '/h3',
+            '<p', 'This is a test of the emergency broadcasting system', '/p',
+            '/div',
+            ['div' => ['id' => 'classy-message']], 'Recorded', '/div'
+        ];
+        $this->assertHtml($expected, $result);
+        $this->assertNull($this->View->request->session()->read('Flash.stack'));
     }
 }
