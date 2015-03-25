@@ -706,7 +706,7 @@ class Time extends Carbon implements JsonSerializable
             static::$defaultLocale,
             $dateFormat,
             $timeFormat,
-            null,
+            date_default_timezone_get(),
             null,
             $pattern
         );
