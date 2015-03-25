@@ -128,6 +128,15 @@ class ResultSet implements ResultSetInterface
     protected $_count;
 
     /**
+     * Type cache for type converters.
+     *
+     * Converters are indexed by alias and column name.
+     *
+     * @var array
+     */
+    protected $_types = [];
+
+    /**
      * Constructor
      *
      * @param \Cake\ORM\Query $query Query from where results come
@@ -493,18 +502,18 @@ class ResultSet implements ResultSetInterface
     {
         $alias = $table->alias();
         $driver = $this->_query->connection()->driver();
-        if (empty($this->types[$alias])) {
+        if (empty($this->_types[$alias])) {
             $schema = $table->schema();
             foreach ($schema->columns() as $col) {
-                $this->types[$alias][$col] = Type::build($schema->columnType($col));
+                $this->_types[$alias][$col] = Type::build($schema->columnType($col));
             }
         }
 
         foreach ($values as $field => $value) {
-            if (!isset($this->types[$alias][$field])) {
+            if (!isset($this->_types[$alias][$field])) {
                 continue;
             }
-            $values[$field] = $this->types[$alias][$field]->toPHP($value, $driver);
+            $values[$field] = $this->_types[$alias][$field]->toPHP($value, $driver);
         }
 
         return $values;
