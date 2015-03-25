@@ -85,6 +85,24 @@ class QueryLoggerTest extends TestCase
     }
 
     /**
+     * Tests that repeated placeholders are correctly replaced
+     *
+     * @return void
+     */
+    public function testStringInterpolation3()
+    {
+        $logger = $this->getMock('\Cake\Database\Log\QueryLogger', ['_log']);
+        $query = new LoggedQuery;
+        $query->query = 'SELECT a FROM b where a = :p1 AND b = :p1 AND c = :p2 AND d = :p2';
+        $query->params = ['p1' => 'string', 'p2' => 3];
+
+        $logger->expects($this->once())->method('_log')->with($query);
+        $logger->log($query);
+        $expected = "SELECT a FROM b where a = 'string' AND b = 'string' AND c = 3 AND d = 3";
+        $this->assertEquals($expected, (string)$query);
+    }
+
+    /**
      * Tests that the logged query object is passed to the built-in logger using
      * the correct scope
      *
