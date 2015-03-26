@@ -101,7 +101,7 @@ class MemcachedEngine extends CacheEngine
      */
     public function init(array $config = [])
     {
-        if (!class_exists('Memcached')) {
+        if (!extension_loaded('memcached')) {
             return false;
         }
 
