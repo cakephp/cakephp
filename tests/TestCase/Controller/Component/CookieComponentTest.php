@@ -215,9 +215,13 @@ class CookieComponentTest extends TestCase
     public function testWriteSimple()
     {
         $this->Cookie->write('Testing', 'value');
-        $result = $this->Cookie->read('Testing');
+        $this->Cookie->write('Some[brackets]', 'yummy');
 
+        $result = $this->Cookie->read('Testing');
         $this->assertEquals('value', $result);
+
+        $result = $this->Cookie->read('Some[brackets]');
+        $this->assertEquals('yummy', $result);
     }
 
     /**
