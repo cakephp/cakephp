@@ -238,7 +238,7 @@ class CookieComponentTest extends TestCase
      *
      * @return void
      */
-    public function testWriteThanRead()
+    public function testWriteThenRead()
     {
         $this->request->cookies = [
             'User' => ['name' => 'mark']
@@ -419,8 +419,8 @@ class CookieComponentTest extends TestCase
      */
     public function testWriteMixedArray()
     {
-        $this->Cookie->write('User', ['name' => 'mark'], false);
-        $this->Cookie->write('User.email', 'mark@example.com', false);
+        $this->Cookie->write('User', ['name' => 'mark']);
+        $this->Cookie->write('User.email', 'mark@example.com');
         $expected = [
             'name' => 'User',
             'value' => '{"name":"mark","email":"mark@example.com"}',
@@ -434,8 +434,8 @@ class CookieComponentTest extends TestCase
 
         $this->assertEquals($expected, $result);
 
-        $this->Cookie->write('User.email', 'mark@example.com', false);
-        $this->Cookie->write('User', ['name' => 'mark'], false);
+        $this->Cookie->write('User.email', 'mark@example.com');
+        $this->Cookie->write('User', ['name' => 'mark']);
         $expected = [
             'name' => 'User',
             'value' => '{"name":"mark"}',
