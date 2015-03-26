@@ -817,6 +817,29 @@ class ViewTest extends TestCase
     }
 
     /**
+     * Test element method with a prefix
+     *
+     * @return void
+     */
+    public function testPrefixElement()
+    {
+        $this->View->request->params['prefix'] = 'Admin';
+        $result = $this->View->element('prefix_element');
+        $this->assertEquals('this is a prefixed test element', $result);
+
+        $result = $this->View->element('TestPlugin.plugin_element');
+        $this->assertEquals('this is the plugin prefixed element using params[plugin]', $result);
+
+        $this->View->plugin = 'TestPlugin';
+        $result = $this->View->element('test_plugin_element');
+        $this->assertEquals('this is the test set using View::$plugin plugin prefixed element', $result);
+
+        $this->View->request->params['prefix'] = 'FooPrefix/BarPrefix';
+        $result = $this->View->element('prefix_element');
+        $this->assertEquals('this is a nested prefixed test element', $result);
+    }
+
+    /**
      * Test elementInexistent method
      *
      * @expectedException \Cake\View\Exception\MissingElementException
@@ -1715,6 +1738,26 @@ TEXT;
     }
 
     /**
+     * Test extend() in an element and a view.
+     *
+     * @return void
+     */
+    public function testExtendPrefixElement()
+    {
+        $this->View->request->params['prefix'] = 'Admin';
+        $this->View->layout = false;
+        $content = $this->View->render('extend_element');
+        $expected = <<<TEXT
+Parent View.
+View content.
+Parent Element.
+Prefix Element content.
+
+TEXT;
+        $this->assertEquals($expected, $content);
+    }
+
+    /**
      * Extending an element which doesn't exist should throw a missing view exception
      *
      * @return void
@@ -1744,6 +1787,24 @@ TEXT;
         $expected = <<<TEXT
 Parent View.
 this is the test elementThe view
+
+TEXT;
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test extend() preceeded by an element()
+     *
+     * @return void
+     */
+    public function testExtendWithPrefixElementBeforeExtend()
+    {
+        $this->View->request->params['prefix'] = 'Admin';
+        $this->View->layout = false;
+        $result = $this->View->render('extend_with_element');
+        $expected = <<<TEXT
+Parent View.
+this is the test prefix elementThe view
 
 TEXT;
         $this->assertEquals($expected, $result);
