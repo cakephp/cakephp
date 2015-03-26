@@ -4,7 +4,8 @@ platform: 'x86'
 clone_folder: c:\projects\cakephp
 branches:
   only:
-    - 3.0
+    - master
+    - 3.1
 environment:
   global:
     PHP: "C:/PHP"
