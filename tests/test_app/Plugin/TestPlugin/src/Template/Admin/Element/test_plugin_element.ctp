@@ -1,0 +1,1 @@
+this is the test set using View::$plugin plugin prefixed element
