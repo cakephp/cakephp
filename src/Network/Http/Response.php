@@ -100,7 +100,7 @@ class Response extends Message
     /**
      * Cached decoded JSON data.
      *
-     * @var \SimpleXMLElement
+     * @var array
      */
     protected $_json;
 
