@@ -875,7 +875,7 @@ class Hash
      * - `numeric` Compare values numerically
      * - `string` Compare values as strings
      * - `natural` Compare items as strings using "natural ordering" in a human friendly way.
-     *   Will sort foo10 below foo2 as an example. Requires PHP 5.4 or greater or it will fallback to 'regular'
+     *   Will sort foo10 below foo2 as an example.
      *
      * @param array $data An array of data to sort
      * @param string $path A Set-compatible path to the array value
