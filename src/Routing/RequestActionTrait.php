@@ -63,7 +63,7 @@ trait RequestActionTrait
      *
      * ```
      * $vars = $this->requestAction('/articles/popular', [
-     *   'query' => ['page' = > 1],
+     *   'query' => ['page' => 1],
      *   'cookies' => ['remember_me' => 1],
      * ]);
      * ```
