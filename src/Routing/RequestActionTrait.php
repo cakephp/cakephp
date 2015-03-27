@@ -108,7 +108,7 @@ trait RequestActionTrait
             unset($extra[$index]);
         }
         $extra += ['autoRender' => 0, 'return' => 1, 'bare' => 1, 'requested' => 1];
-        if(isset($this->request->params['_csrfToken'])) {
+        if (isset($this->request->params['_csrfToken'])) {
             $extra += ['_csrfToken' => $this->request->params['_csrfToken']];
         }
 
