@@ -354,7 +354,7 @@ class RulesChecker
             }
         }
 
-        $errorField = $field;
+        $errorField = is_string($field) ? $field : current($field);
         return $this->_addError(new ExistsIn($field, $table), '_existsIn', compact('errorField', 'message'));
     }
 
