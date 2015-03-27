@@ -67,7 +67,7 @@ abstract class BaseErrorHandler
         set_error_handler([$this, 'handleError'], $level);
         set_exception_handler([$this, 'handleException']);
         register_shutdown_function(function () {
-            if (php_sapi_name() === 'cli') {
+            if (PHP_SAPI === 'cli') {
                 return;
             }
             $error = error_get_last();
@@ -264,7 +264,7 @@ abstract class BaseErrorHandler
                 $message .= "\nException Attributes: " . var_export($exception->getAttributes(), true);
             }
         }
-        if (php_sapi_name() !== 'cli') {
+        if (PHP_SAPI !== 'cli') {
             $request = Router::getRequest();
             if ($request) {
                 $message .= "\nRequest URL: " . $request->here();
