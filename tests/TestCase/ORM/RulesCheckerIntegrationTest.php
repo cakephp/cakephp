@@ -634,6 +634,27 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
+     * Tests that using an array in existsIn() sets the error message correctly
+     *
+     * @return
+     */
+    public function testExistsInErrorWithArrayField()
+    {
+        $entity = new Entity([
+            'title' => 'An Article',
+            'author_id' => 500
+        ]);
+
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors');
+        $rules = $table->rulesChecker();
+        $rules->add($rules->existsIn(['author_id'], 'Authors'));
+
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals(['_existsIn' => 'This value does not exist'], $entity->errors('author_id'));
+    }
+
+    /**
      * Tests using rules to prevent delete operations
      *
      * @group delete
