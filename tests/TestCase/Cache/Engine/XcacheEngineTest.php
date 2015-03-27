@@ -35,9 +35,9 @@ class XcacheEngineTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-		if (CLI) {
-			$this->markTestSkipped('Xcache is not available for the CLI.');
-		}
+        if (CLI) {
+            $this->markTestSkipped('Xcache is not available for the CLI.');
+        }
         if (!function_exists('xcache_set')) {
             $this->markTestSkipped('Xcache is not installed or configured properly');
         }
