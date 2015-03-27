@@ -1063,7 +1063,7 @@ class Table implements RepositoryInterface, EventListenerInterface
     /**
      * {@inheritDoc}
      *
-     * @throws Cake\Datasource\Exception\InvalidPrimaryKeyException When $primaryKey has an
+     * @throws \Cake\Datasource\Exception\InvalidPrimaryKeyException When $primaryKey has an
      *      incorrect number of elements.
      */
     public function get($primaryKey, $options = [])
