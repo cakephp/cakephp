@@ -56,13 +56,6 @@ class Session
     protected $_lifetime;
 
     /**
-     * Whether this session is running under a CLI environment
-     *
-     * @var bool
-     */
-    protected $_isCli = false;
-
-    /**
      * Returns a new instance of a session after building a configuration bundle for it.
      * This function allows an options array which will be used for configuring the session
      * and the handler to be used. The most important key in the configuration array is
@@ -217,7 +210,6 @@ class Session
         }
 
         $this->_lifetime = ini_get('session.gc_maxlifetime');
-        $this->_isCli = php_sapi_name() === 'cli';
         session_register_shutdown();
     }
 
@@ -304,7 +296,7 @@ class Session
             return true;
         }
 
-        if ($this->_isCli) {
+        if (CLI) {
             $_SESSION = [];
             return $this->_started = true;
         }
@@ -509,7 +501,7 @@ class Session
             $this->start();
         }
 
-        if (!$this->_isCli && session_status() === PHP_SESSION_ACTIVE) {
+        if (!CLI && session_status() === PHP_SESSION_ACTIVE) {
             session_destroy();
         }
 
@@ -542,7 +534,7 @@ class Session
     {
         return !ini_get('session.use_cookies')
             || isset($_COOKIE[session_name()])
-            || $this->_isCli;
+            || CLI;
     }
 
     /**
@@ -552,7 +544,7 @@ class Session
      */
     public function renew()
     {
-        if (!$this->_hasSession() || $this->_isCli) {
+        if (!$this->_hasSession() || CLI) {
             return;
         }
 
