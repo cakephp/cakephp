@@ -77,9 +77,9 @@ class OpenSsl
         $method = 'AES-256-CBC';
         $ivSize = openssl_cipher_iv_length($method);
 
-        $iv = substr($cipher, 0, $ivSize);
+        $iv = mb_substr($cipher, 0, $ivSize, '8bit');
 
-        $cipher = substr($cipher, $ivSize);
+        $cipher = mb_substr($cipher, $ivSize, null, '8bit');
         return openssl_decrypt($cipher, $method, $key, true, $iv);
     }
 }

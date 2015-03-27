@@ -146,7 +146,7 @@ class Security
         if (empty($operation) || !in_array($operation, ['encrypt', 'decrypt'])) {
             throw new InvalidArgumentException('You must specify the operation for Security::rijndael(), either encrypt or decrypt');
         }
-        if (strlen($key) < 32) {
+        if (mb_strlen($key, '8bit') < 32) {
             throw new InvalidArgumentException('You must use a key larger than 32 bytes for Security::rijndael()');
         }
         $crypto = static::engine();
@@ -174,7 +174,7 @@ class Security
             $hmacSalt = static::$_salt;
         }
         // Generate the encryption and hmac key.
-        $key = substr(hash('sha256', $key . $hmacSalt), 0, 32);
+        $key = mb_substr(hash('sha256', $key . $hmacSalt), 0, 32, '8bit');
 
         $crypto = static::engine();
         $ciphertext = $crypto->encrypt($plain, $key);
@@ -192,7 +192,7 @@ class Security
      */
     protected static function _checkKey($key, $method)
     {
-        if (strlen($key) < 32) {
+        if (mb_strlen($key, '8bit') < 32) {
             throw new InvalidArgumentException(
                 sprintf('Invalid key for %s, key must be at least 256 bits (32 bytes) long.', $method)
             );
@@ -219,12 +219,12 @@ class Security
         }
 
         // Generate the encryption and hmac key.
-        $key = substr(hash('sha256', $key . $hmacSalt), 0, 32);
+        $key = mb_substr(hash('sha256', $key . $hmacSalt), 0, 32, '8bit');
 
         // Split out hmac for comparison
         $macSize = 64;
-        $hmac = substr($cipher, 0, $macSize);
-        $cipher = substr($cipher, $macSize);
+        $hmac = mb_substr($cipher, 0, $macSize, '8bit');
+        $cipher = mb_substr($cipher, $macSize, null, '8bit');
 
         $compareHmac = hash_hmac('sha256', $cipher, $key);
         if (!static::_constantEquals($hmac, $compareHmac)) {
