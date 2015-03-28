@@ -70,6 +70,13 @@ class ResultSet implements ResultSetInterface
     protected $_defaultTable;
 
     /**
+     * The default table alias
+     *
+     * @var string
+     */
+    protected $_defaultAlias;
+
+    /**
      * List of associations that should be placed under the `_matchingData`
      * result key.
      *
@@ -88,9 +95,17 @@ class ResultSet implements ResultSetInterface
      * Map of fields that are fetched from the statement with
      * their type and the table they belong to
      *
-     * @var string
+     * @var array
      */
-    protected $_map;
+    protected $_map = [];
+
+    /**
+     * List of matching associations and the column keys to expect
+     * from each of them.
+     *
+     * @var array
+     */
+    protected $_matchingMapColumns = [];
 
     /**
      * Results that have been fetched or hydrated into the results.
@@ -152,6 +167,8 @@ class ResultSet implements ResultSetInterface
         $this->_hydrate = $this->_query->hydrate();
         $this->_entityClass = $repository->entityClass();
         $this->_useBuffering = $query->bufferResults();
+        $this->_defaultAlias = $this->_defaultTable->alias();
+        $this->_calculateColumnMap();
 
         if ($this->_useBuffering) {
             $count = $this->count();
@@ -327,12 +344,39 @@ class ResultSet implements ResultSetInterface
         $map = $this->_query->eagerLoader()->associationsMap($this->_defaultTable);
         $this->_matchingMap = (new Collection($map))
             ->match(['matching' => true])
+            ->indexBy('alias')
             ->toArray();
 
         $this->_containMap = (new Collection(array_reverse($map)))
             ->match(['matching' => false])
             ->indexBy('nestKey')
             ->toArray();
+    }
+
+    /**
+     * Creates a map of row keys out of the query select clasuse that can be
+     * used to quickly hydrate correctly nested result sets.
+     *
+     * @return void
+     */
+    protected function _calculateColumnMap()
+    {
+        $map = [];
+        foreach ($this->_query->clause('select') as $key => $field) {
+            if (strpos($key, '__') > 0) {
+                $parts = explode('__', $key, 2);
+                $map[$parts[0]][$key] = $parts[1];
+            } else {
+                $map[$this->_defaultAlias][$key] = $key;
+            }
+        }
+
+        foreach ($this->_matchingMap as $alias => $assoc) {
+            $this->_matchingMapColumns[$alias] = $map[$alias];
+            unset($map[$alias]);
+        }
+
+        $this->_map = $map;
     }
 
     /**
@@ -362,7 +406,7 @@ class ResultSet implements ResultSetInterface
      */
     protected function _groupResult($row)
     {
-        $defaultAlias = $this->_defaultTable->alias();
+        $defaultAlias = $this->_defaultAlias;
         $results = $presentAliases = [];
         $options = [
             'useSetters' => false,
@@ -371,57 +415,26 @@ class ResultSet implements ResultSetInterface
             'guard' => false
         ];
 
-        foreach ($this->_matchingMap as $matching) {
-            foreach ($row as $key => $value) {
-                if (strpos($key, $matching['alias'] . '__') !== 0) {
-                    continue;
-                }
-                list($table, $field) = explode('__', $key);
-                $results['_matchingData'][$table][$field] = $value;
-
-                if (!isset($this->_containMap[$table])) {
-                    unset($row[$key]);
-                }
-            }
-            if (empty($results['_matchingData'][$matching['alias']])) {
-                continue;
-            }
-
-            $results['_matchingData'][$matching['alias']] = $this->_castValues(
+        foreach ($this->_matchingMapColumns as $alias => $keys) {
+            $matching = $this->_matchingMap[$alias];
+            $results['_matchingData'][$alias] = $this->_castValues(
                 $matching['instance']->target(),
-                $results['_matchingData'][$matching['alias']]
+                array_combine(
+                    $keys,
+                    array_intersect_key($row, $keys)
+                )
             );
-
             if ($this->_hydrate) {
-                $options['source'] = $matching['alias'];
-                $entity = new $matching['entityClass']($results['_matchingData'][$matching['alias']], $options);
+                $options['source'] = $alias;
+                $entity = new $matching['entityClass']($results['_matchingData'][$alias], $options);
                 $entity->clean();
-                $results['_matchingData'][$matching['alias']] = $entity;
+                $results['_matchingData'][$alias] = $entity;
             }
         }
 
-        foreach ($row as $key => $value) {
-            $table = $defaultAlias;
-            $field = $key;
-
-            if ($value !== null && !is_scalar($value)) {
-                $results[$key] = $value;
-                continue;
-            }
-
-            if (empty($this->_map[$key])) {
-                $parts = explode('__', $key);
-                if (count($parts) > 1) {
-                    $this->_map[$key] = $parts;
-                }
-            }
-
-            if (!empty($this->_map[$key])) {
-                list($table, $field) = $this->_map[$key];
-            }
-
+        foreach ($this->_map as $table => $keys) {
+            $results[$table] = array_combine($keys, array_intersect_key($row, $keys));
             $presentAliases[$table] = true;
-            $results[$table][$field] = $value;
         }
 
         if (isset($presentAliases[$defaultAlias])) {
@@ -436,9 +449,13 @@ class ResultSet implements ResultSetInterface
             $alias = $assoc['nestKey'];
             $instance = $assoc['instance'];
 
-            if (!isset($results[$alias])) {
+            if (!$assoc['canBeJoined'] && !isset($row[$alias])) {
                 $results = $instance->defaultRowValue($results, $assoc['canBeJoined']);
                 continue;
+            }
+
+            if (!$assoc['canBeJoined']) {
+                $results[$alias] = $row[$alias];
             }
 
             $target = $instance->target();

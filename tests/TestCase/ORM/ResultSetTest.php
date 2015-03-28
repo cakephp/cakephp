@@ -328,7 +328,7 @@ class ResultSetTest extends TestCase
     public function testFetchMissingDefaultAlias()
     {
         $comments = TableRegistry::get('Comments');
-        $query = $comments->find();
+        $query = $comments->find()->select(['Other__field' => 'test']);
         $query->autoFields(false);
 
         $row = ['Other__field' => 'test'];

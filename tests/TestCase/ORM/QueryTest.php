@@ -1003,25 +1003,9 @@ class QueryTest extends TestCase
      */
     public function testResultsAreWrappedInMapReduce()
     {
-        $params = [$this->connection, $this->table];
-        $query = $this->getMock('\Cake\ORM\Query', ['execute'], $params);
-
-        $statement = $this->getMock(
-            '\Database\StatementInterface',
-            ['fetch', 'closeCursor', 'rowCount']
-        );
-        $statement->expects($this->exactly(2))
-            ->method('fetch')
-            ->will($this->onConsecutiveCalls(['a' => 1], ['a' => 2]));
-
-        $statement->expects($this->once())
-            ->method('rowCount')
-            ->will($this->returnValue(2));
-
-        $query->expects($this->once())
-            ->method('execute')
-            ->will($this->returnValue($statement));
-
+        $table = TableRegistry::get('articles', ['table' => 'articles']);
+        $query = new Query($this->connection, $table);
+        $query->select(['a' => 'id'])->limit(2)->order(['id' => 'ASC']);
         $query->mapReduce(function ($v, $k, $mr) {
             $mr->emit($v['a']);
         });
@@ -1029,9 +1013,9 @@ class QueryTest extends TestCase
             function ($v, $k, $mr) {
                 $mr->emitIntermediate($v, $k);
             },
-            function ($v, $k, $mr) {
-                $mr->emit($v[0] + 1);
-            }
+                function ($v, $k, $mr) {
+                    $mr->emit($v[0] + 1);
+                }
         );
 
         $this->assertEquals([2, 3], iterator_to_array($query->all()));
