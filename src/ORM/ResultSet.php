@@ -354,8 +354,8 @@ class ResultSet implements ResultSetInterface
     }
 
     /**
-     * Creates a map of row keys out of the query select clasuse that can be
-     * used to quickly hydrate correctly nested result sets.
+     * Creates a map of row keys out of the query select clause that can be
+     * used to hydrate nested result sets more quickly.
      *
      * @return void
      */
