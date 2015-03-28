@@ -136,8 +136,8 @@ class Plugin
 
         if (empty($config['path'])) {
             $paths = App::path('Plugin');
+            $pluginPath = str_replace('/', DS, $plugin);
             foreach ($paths as $path) {
-                $pluginPath = str_replace('/', DS, $plugin);
                 if (is_dir($path . $pluginPath)) {
                     $config['path'] = $path . $pluginPath . DS;
                     break;

@@ -144,7 +144,6 @@ trait InstanceConfigTrait
             }
 
             $return = $return[$k];
-
         }
 
         return $return;
@@ -168,11 +167,7 @@ trait InstanceConfigTrait
         }
 
         if ($merge) {
-            if (is_array($key)) {
-                $update = $key;
-            } else {
-                $update = [$key => $value];
-            }
+            $update = is_array($key) ? $key : [$key => $value];
             if ($merge === 'shallow') {
                 $this->_config = array_merge($this->_config, Hash::expand($update));
             } else {
