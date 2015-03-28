@@ -100,7 +100,7 @@ class TableUuidTest extends TestCase
 
         $row = $table->find('all')->where(['id' => $id])->first();
         $this->assertNotEmpty($row);
-        $this->assertSame($id, $row->id);
+        $this->assertSame($id, strtolower($row->id));
         $this->assertSame($entity->name, $row->name);
     }
 
