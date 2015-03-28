@@ -363,6 +363,7 @@ class ResultSet implements ResultSetInterface
     {
         $map = [];
         foreach ($this->_query->clause('select') as $key => $field) {
+            $key = trim($key, '"`[]');
             if (strpos($key, '__') > 0) {
                 $parts = explode('__', $key, 2);
                 $map[$parts[0]][$key] = $parts[1];
