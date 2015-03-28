@@ -60,7 +60,7 @@ class Session
      *
      * @var bool
      */
-    protected $_isCli = false;
+    protected $_isCLI = false;
 
     /**
      * Returns a new instance of a session after building a configuration bundle for it.
@@ -217,7 +217,7 @@ class Session
         }
 
         $this->_lifetime = ini_get('session.gc_maxlifetime');
-        $this->_isCli = php_sapi_name() === 'cli';
+        $this->_isCLI = PHP_SAPI === 'cli';
         session_register_shutdown();
     }
 
@@ -304,7 +304,7 @@ class Session
             return true;
         }
 
-        if ($this->_isCli) {
+        if ($this->_isCLI) {
             $_SESSION = [];
             return $this->_started = true;
         }
@@ -509,7 +509,7 @@ class Session
             $this->start();
         }
 
-        if (!$this->_isCli && session_status() === PHP_SESSION_ACTIVE) {
+        if (!$this->_isCLI && session_status() === PHP_SESSION_ACTIVE) {
             session_destroy();
         }
 
@@ -542,7 +542,7 @@ class Session
     {
         return !ini_get('session.use_cookies')
             || isset($_COOKIE[session_name()])
-            || $this->_isCli;
+            || $this->_isCLI;
     }
 
     /**
@@ -552,7 +552,7 @@ class Session
      */
     public function renew()
     {
-        if (!$this->_hasSession() || $this->_isCli) {
+        if (!$this->_hasSession() || $this->_isCLI) {
             return;
         }
 

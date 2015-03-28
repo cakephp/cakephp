@@ -73,7 +73,7 @@ HTML;
 
 TEXT;
         $template = $html;
-        if (php_sapi_name() === 'cli' || $showHtml === false) {
+        if (PHP_SAPI === 'cli' || $showHtml === false) {
             $template = $text;
             if ($showFrom) {
                 $lineInfo = sprintf('%s (line %s)', $file, $line);
