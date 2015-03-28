@@ -1013,9 +1013,9 @@ class QueryTest extends TestCase
             function ($v, $k, $mr) {
                 $mr->emitIntermediate($v, $k);
             },
-                function ($v, $k, $mr) {
-                    $mr->emit($v[0] + 1);
-                }
+            function ($v, $k, $mr) {
+                $mr->emit($v[0] + 1);
+            }
         );
 
         $this->assertEquals([2, 3], iterator_to_array($query->all()));
