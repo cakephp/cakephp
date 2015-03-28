@@ -23,7 +23,7 @@ use UnexpectedValueException;
  * for classes that provide an adapter facade or need to have sets of
  * configuration data registered and manipulated.
  *
- * Implementing objects are expected to declare a static `$_config` property.
+ * Implementing objects are expected to declare a static `$_dsnClassMap` property.
  */
 trait StaticConfigTrait
 {
