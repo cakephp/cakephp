@@ -59,13 +59,8 @@ class App
         }
 
         list($plugin, $name) = pluginSplit($class);
-        if ($plugin) {
-            $base = $plugin;
-        } else {
-            $base = Configure::read('App.namespace');
-        }
+        $base = $plugin ?: Configure::read('App.namespace');
         $base = str_replace('/', '\\', rtrim($base, '\\'));
-
         $fullname = '\\' . str_replace('/', '\\', $type . '\\' . $name) . $suffix;
 
         if (static::_classExistsInBase($fullname, $base)) {

@@ -166,11 +166,10 @@ class Configure
      */
     public static function consume($var)
     {
-        $simple = strpos($var, '.') === false;
-        if ($simple && !isset(static::$_values[$var])) {
-            return null;
-        }
-        if ($simple) {
+        if (strpos($var, '.') === false) {
+            if (!isset(static::$_values[$var])) {
+                return null;
+            }
             $value = static::$_values[$var];
             unset(static::$_values[$var]);
             return $value;
