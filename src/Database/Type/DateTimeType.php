@@ -54,6 +54,14 @@ class DateTimeType extends \Cake\Database\Type
     protected $_localeFormat;
 
     /**
+     * An instance of the configured dateTimeClass, used to quickly generate
+     * new instances without calling the constructor.
+     *
+     * @var \DateTime
+     */
+    protected $_datetimeInstance;
+
+    /**
      * {@inheritDoc}
      */
     public function __construct($name = null)
@@ -63,6 +71,8 @@ class DateTimeType extends \Cake\Database\Type
         if (!class_exists(static::$dateTimeClass)) {
             static::$dateTimeClass = 'DateTime';
         }
+
+        $this->_datetimeInstance = new static::$dateTimeClass;
     }
 
     /**
@@ -88,23 +98,27 @@ class DateTimeType extends \Cake\Database\Type
      *
      * @param string $value The value to convert.
      * @param Driver $driver The driver instance to convert with.
-     * @return \Carbon\Carbon
+     * @return \Cake\I18n\Time|DateTime
      */
     public function toPHP($value, Driver $driver)
     {
         if ($value === null) {
             return null;
         }
-        list($value) = explode('.', $value);
-        $class = static::$dateTimeClass;
-        return $class::createFromFormat($this->_format, $value);
+
+        if (strpos($value, '.') !== false) {
+            list($value) = explode('.', $value);
+        }
+
+        $instance = clone $this->_datetimeInstance;
+        return $instance->modify($value);
     }
 
     /**
      * Convert request data into a datetime object.
      *
      * @param mixed $value Request data
-     * @return \Carbon\Carbon
+     * @return \Cake\I18n\Time|DateTime
      */
     public function marshal($value)
     {
