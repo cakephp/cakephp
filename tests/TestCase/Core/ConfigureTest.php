@@ -469,7 +469,8 @@ class ConfigureTest extends TestCase
     {
         $this->skipIf(PHP_VERSION_ID >= 70000);
 
-        $this->setExpectedException('PHPUnit_Framework_Error');
+        $message = '/^Argument 2 passed to Cake\\\Core\\\Configure::config\(\) must implement interface Cake\\\Core\\\Configure\\\ConfigEngineInterface, instance of stdClass given.*/';
+        $this->setExpectedExceptionRegExp('PHPUnit_Framework_Error', $message);
         Configure::config('test', new \stdClass());
     }
 
@@ -484,8 +485,10 @@ class ConfigureTest extends TestCase
 
         try {
             Configure::config('test', new \stdClass());
+            $this->fail();
         } catch (\BaseException $e) {
-            $this->assertTrue(true);
+            $expectedMessage = 'Argument 2 passed to Cake\Core\Configure::config() must implement interface Cake\Core\Configure\ConfigEngineInterface, instance of stdClass given';
+            $this->assertContains($expectedMessage, $e->getMessage());
         }
     }
 
