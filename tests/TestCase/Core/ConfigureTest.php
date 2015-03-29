@@ -463,13 +463,33 @@ class ConfigureTest extends TestCase
     /**
      * test engine() throwing exceptions on missing interface.
      *
-     * @expectedException \PHPUnit_Framework_Error
      * @return void
      */
     public function testEngineExceptionOnIncorrectClass()
     {
-        $engine = new \StdClass();
-        Configure::config('test', $engine);
+        $this->skipIf(PHP_VERSION_ID >= 70000);
+
+        $message = '/^Argument 2 passed to Cake\\\Core\\\Configure::config\(\) must implement interface Cake\\\Core\\\Configure\\\ConfigEngineInterface, instance of stdClass given.*/';
+        $this->setExpectedExceptionRegExp('PHPUnit_Framework_Error', $message);
+        Configure::config('test', new \stdClass());
+    }
+
+    /**
+     * test engine() throwing exceptions on missing interface (PHP 7)
+     *
+     * @return void
+     */
+    public function testEngineExceptionOnIncorrectClassPhp7()
+    {
+        $this->skipIf(PHP_VERSION_ID < 70000);
+
+        try {
+            Configure::config('test', new \stdClass());
+            $this->fail();
+        } catch (\BaseException $e) {
+            $expectedMessage = 'Argument 2 passed to Cake\Core\Configure::config() must implement interface Cake\Core\Configure\ConfigEngineInterface, instance of stdClass given';
+            $this->assertContains($expectedMessage, $e->getMessage());
+        }
     }
 
     /**
