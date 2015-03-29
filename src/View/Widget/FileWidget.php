@@ -74,6 +74,10 @@ class FileWidget implements WidgetInterface
      */
     public function secureFields(array $data)
     {
+        if (!$data['name']) {
+            return [];
+        }
+
         $fields = [];
         foreach (['name', 'type', 'tmp_name', 'error', 'size'] as $suffix) {
             $fields[] = $data['name'] . '[' . $suffix . ']';
