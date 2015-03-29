@@ -56,6 +56,19 @@ class Entity implements EntityInterface
         ];
         $this->_className = get_class($this);
 
+        if (!empty($options['source'])) {
+            $this->source($options['source']);
+        }
+
+        if ($options['markNew'] !== null) {
+            $this->isNew($options['markNew']);
+        }
+
+        if (!empty($properties) && $options['markClean'] && !$options['useSetters']) {
+            $this->_properties = $properties;
+            return;
+        }
+
         if (!empty($properties)) {
             $this->set($properties, [
                 'setter' => $options['useSetters'],
@@ -65,14 +78,6 @@ class Entity implements EntityInterface
 
         if ($options['markClean']) {
             $this->clean();
-        }
-
-        if ($options['markNew'] !== null) {
-            $this->isNew($options['markNew']);
-        }
-
-        if (!empty($options['source'])) {
-            $this->source($options['source']);
         }
     }
 }
