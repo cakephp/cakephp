@@ -545,11 +545,11 @@ class TimeTest extends TestCase
         $this->assertTimeFormat($expected, $result);
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'fa-IR@calendar=persian');
-        $expected = 'پنجشنبه ۲۴ دی ۱۳۸۸ ه‍.ش.، ساعت ۱۳:۵۹:۲۸ (GMT)';
+        $expected = 'پنجشنبه ۲۴ دی ۱۳۸۸، ساعت ۱۳:۵۹:۲۸ (GMT)';
         $this->assertTimeFormat($expected, $result);
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-IR@calendar=persian');
-        $expected = 'Thursday, Dey 24, 1388 AP at 1:59:28 PM GMT';
+        $expected = 'Thursday, Dey 24, 1388 at 1:59:28 PM GMT';
         $this->assertTimeFormat($expected, $result);
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'ar-IR@calendar=persian');
@@ -557,7 +557,7 @@ class TimeTest extends TestCase
         $this->assertTimeFormat($expected, $result);
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'ps-IR@calendar=persian');
-        $expected = 'پنجشنبه د AP ۱۳۸۸ د مرغومی ۲۴ ۱۳:۵۹:۲۸ (GMT)';
+        $expected = 'پنجشنبه د  ۱۳۸۸ د مرغومی ۲۴ ۱۳:۵۹:۲۸ (GMT)';
         $this->assertTimeFormat($expected, $result);
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'fa-KW@calendar=islamic');
@@ -565,7 +565,7 @@ class TimeTest extends TestCase
         $this->assertTimeFormat($expected, $result);
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-KW@calendar=islamic');
-        $expected = 'Thursday, Muharram 29, 1431 AH at 1:59:28 PM GMT';
+        $expected = 'Thursday, Muharram 29, 1431 at 1:59:28 PM GMT';
         $this->assertTimeFormat($expected, $result);
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'ar-KW@calendar=islamic');
