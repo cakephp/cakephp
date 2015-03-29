@@ -74,6 +74,10 @@ class TextareaWidget implements WidgetInterface
      */
     public function secureFields(array $data)
     {
-        return [$data['name']];
+        if ($data['name']) {
+            return [$data['name']];
+        }
+
+        return [];
     }
 }

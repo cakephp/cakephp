@@ -129,9 +129,6 @@ class SelectBoxWidget implements WidgetInterface
             'val' => null,
         ];
 
-        if (empty($data['name'])) {
-            throw new \RuntimeException('Cannot make inputs with empty name attributes.');
-        }
         $options = $this->_renderContent($data);
         $name = $data['name'];
         unset($data['name'], $data['options'], $data['empty'], $data['val'], $data['escape']);
@@ -301,6 +298,10 @@ class SelectBoxWidget implements WidgetInterface
      */
     public function secureFields(array $data)
     {
-        return [$data['name']];
+        if ($data['name']) {
+            return [$data['name']];
+        }
+
+        return [];
     }
 }
