@@ -91,7 +91,7 @@ class DateTimeWidget implements WidgetInterface
      * - `minute` - Array of options for the minute select box.
      * - `second` - Set to true to enable the seconds input. Defaults to false.
      * - `meridian` - Set to true to enable the meridian input. Defaults to false.
-     *   The meridian will be enabled automatically if you chose a 12 hour format.
+     *   The meridian will be enabled automatically if you choose a 12 hour format.
      *
      * The `year` option accepts the `start` and `end` options. These let you control
      * the year range that is generated. It defaults to +-5 years from today.
