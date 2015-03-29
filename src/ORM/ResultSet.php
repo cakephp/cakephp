@@ -152,6 +152,15 @@ class ResultSet implements ResultSetInterface
     protected $_types = [];
 
     /**
+     * The Database driver object.
+     *
+     * Cached in a property to avoid multiple calls to the same function.
+     *
+     * @var \Cake\Database\Driver
+     */
+    protected $_driver;
+
+    /**
      * Constructor
      *
      * @param \Cake\ORM\Query $query Query from where results come
@@ -162,6 +171,7 @@ class ResultSet implements ResultSetInterface
         $repository = $query->repository();
         $this->_query = $query;
         $this->_statement = $statement;
+        $this->_driver = $driver = $this->_query->connection()->driver();
         $this->_defaultTable = $this->_query->repository();
         $this->_calculateAssociationMap();
         $this->_hydrate = $this->_query->hydrate();
@@ -169,6 +179,7 @@ class ResultSet implements ResultSetInterface
         $this->_useBuffering = $query->bufferResults();
         $this->_defaultAlias = $this->_defaultTable->alias();
         $this->_calculateColumnMap();
+        $this->_calculateTypeMap();
 
         if ($this->_useBuffering) {
             $count = $this->count();
@@ -381,6 +392,74 @@ class ResultSet implements ResultSetInterface
     }
 
     /**
+     * Creates a map of Type converter classes for each of the columns that should
+     * be fetched by this object.
+     *
+     * @return void
+     */
+    protected function _calculateTypeMap()
+    {
+        if (isset($this->_map[$this->_defaultAlias])) {
+            $this->_types[$this->_defaultAlias] = $this->_getTypes(
+                $this->_defaultTable,
+                $this->_map[$this->_defaultAlias]
+            );
+        }
+
+        foreach ($this->_matchingMapColumns as $alias => $keys) {
+            $this->_types[$alias] = $this->_getTypes(
+                $this->_matchingMap[$alias]['instance']->target(),
+                $keys
+            );
+        }
+
+        foreach ($this->_containMap as $assoc) {
+            $alias = $assoc['alias'];
+            if (isset($this->_types[$alias]) || !$assoc['canBeJoined'] || !isset($this->_map[$alias])) {
+                continue;
+            }
+            $this->_types[$alias] = $this->_getTypes(
+                $assoc['instance']->target(),
+                $this->_map[$alias]
+            );
+        }
+    }
+
+    /**
+     * Returns the Type classes for each of the passed fields belonging to the
+     * table.
+     *
+     * @param \Cake\ORM\Table $table The table from which to get the schema
+     * @param array $fields The fields whitelist to use for fields in the schema.
+     * @return array
+     */
+    protected function _getTypes($table, $fields)
+    {
+        $types = [];
+        $schema = $table->schema();
+        $map = array_keys(Type::map() + ['string' => 1, 'text' => 1, 'boolean' => 1]);
+        $typeMap = array_combine(
+            $map,
+            array_map(['Cake\Database\Type', 'build'], $map)
+        );
+
+        foreach (['string', 'text'] as $t) {
+            if (get_class($typeMap[$t]) === 'Cake\Database\Type') {
+                unset($typeMap[$t]);
+            }
+        }
+
+        foreach (array_intersect($fields, $schema->columns()) as $col) {
+            $typeName = $schema->columnType($col);
+            if (isset($typeMap[$typeName])) {
+                $types[$col] = $typeMap[$typeName];
+            }
+        }
+
+        return $types;
+    }
+
+    /**
      * Helper function to fetch the next result from the statement or
      * seeded results.
      *
@@ -419,7 +498,7 @@ class ResultSet implements ResultSetInterface
         foreach ($this->_matchingMapColumns as $alias => $keys) {
             $matching = $this->_matchingMap[$alias];
             $results['_matchingData'][$alias] = $this->_castValues(
-                $matching['instance']->target(),
+                $alias,
                 array_combine(
                     $keys,
                     array_intersect_key($row, $keys)
@@ -440,7 +519,7 @@ class ResultSet implements ResultSetInterface
 
         if (isset($presentAliases[$defaultAlias])) {
             $results[$defaultAlias] = $this->_castValues(
-                $this->_defaultTable,
+                $defaultAlias,
                 $results[$defaultAlias]
             );
         }
@@ -464,7 +543,7 @@ class ResultSet implements ResultSetInterface
             unset($presentAliases[$alias]);
 
             if ($assoc['canBeJoined']) {
-                $results[$alias] = $this->_castValues($target, $results[$alias]);
+                $results[$alias] = $this->_castValues($assoc['alias'], $results[$alias]);
 
                 $hasData = false;
                 foreach ($results[$alias] as $v) {
@@ -512,26 +591,14 @@ class ResultSet implements ResultSetInterface
      * Casts all values from a row brought from a table to the correct
      * PHP type.
      *
-     * @param Table $table The table object
+     * @param string $alias The table object alias
      * @param array $values The values to cast
      * @return array
      */
-    protected function _castValues($table, $values)
+    protected function _castValues($alias, $values)
     {
-        $alias = $table->alias();
-        $driver = $this->_query->connection()->driver();
-        if (empty($this->_types[$alias])) {
-            $schema = $table->schema();
-            foreach ($schema->columns() as $col) {
-                $this->_types[$alias][$col] = Type::build($schema->columnType($col));
-            }
-        }
-
-        foreach ($values as $field => $value) {
-            if (!isset($this->_types[$alias][$field])) {
-                continue;
-            }
-            $values[$field] = $this->_types[$alias][$field]->toPHP($value, $driver);
+        foreach ($this->_types[$alias] as $field => $type) {
+            $values[$field] = $type->toPHP($values[$field], $this->_driver);
         }
 
         return $values;

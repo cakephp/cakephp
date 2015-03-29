@@ -28,9 +28,9 @@ class IntegerType extends \Cake\Database\Type
     /**
      * Convert integer data into the database format.
      *
-     * @param string|resource $value The value to convert.
+     * @param mixed $value The value to convert.
      * @param Driver $driver The driver instance to convert with.
-     * @return string|resource
+     * @return int
      */
     public function toDatabase($value, Driver $driver)
     {
@@ -46,10 +46,9 @@ class IntegerType extends \Cake\Database\Type
     /**
      * Convert integer values to PHP integers
      *
-     * @param null|string|resource $value The value to convert.
+     * @param mixed $value The value to convert.
      * @param Driver $driver The driver instance to convert with.
-     * @return resource
-     * @throws \Cake\Core\Exception\Exception
+     * @return int
      */
     public function toPHP($value, Driver $driver)
     {
