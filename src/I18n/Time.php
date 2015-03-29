@@ -588,6 +588,10 @@ class Time extends Carbon implements JsonSerializable
             );
         }
 
+        if(preg_match('/@calendar=(japanese|buddhist|chinese|persian|indian|islamic|hebrew|indian|coptic|ethiopic)/', $locale)) {
+            static::$_formatters[$key]->setCalendar(\IntlDateFormatter::TRADITIONAL);
+        }
+
         return static::$_formatters[$key]->format($date);
     }
 

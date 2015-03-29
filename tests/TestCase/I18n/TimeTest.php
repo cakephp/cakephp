@@ -527,6 +527,70 @@ class TimeTest extends TestCase
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'es-ES');
         $expected = 'jueves, 14 de enero de 2010, 13:59:28 (GMT)';
         $this->assertTimeFormat($expected, $result, 'DEfault locale should not be used');
+
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'fa-AF');
+        $expected = 'پنجشنبه ۱۴ جنوری ۲۰۱۰، ساعت ۱۳:۵۹:۲۸ (GMT)';
+        $this->assertTimeFormat($expected, $result);
+
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'fa-SA');
+        $expected = 'پنجشنبه ۱۴ ژانویهٔ ۲۰۱۰، ساعت ۱۳:۵۹:۲۸ (GMT)';
+        $this->assertTimeFormat($expected, $result);
+
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'fa-IR');
+        $expected = 'پنجشنبه ۱۴ ژانویهٔ ۲۰۱۰ م.، ساعت ۱۳:۵۹:۲۸ (GMT)';
+        $this->assertTimeFormat($expected, $result);
+
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'ja-JP');
+        $expected = '2010年1月14日木曜日 13時59分28秒 GMT';
+        $this->assertTimeFormat($expected, $result);
+
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'fa-IR@calendar=persian');
+        $expected = 'پنجشنبه ۲۴ دی ۱۳۸۸ ه‍.ش.، ساعت ۱۳:۵۹:۲۸ (GMT)';
+        $this->assertTimeFormat($expected, $result);
+
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-IR@calendar=persian');
+        $expected = 'Thursday, Dey 24, 1388 AP at 1:59:28 PM GMT';
+        $this->assertTimeFormat($expected, $result);
+
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'ar-IR@calendar=persian');
+        $expected = 'الخميس، ٢٤ دي، ١٣٨٨ ه‍.ش ١:٥٩:٢٨ م جرينتش';
+        $this->assertTimeFormat($expected, $result);
+
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'ps-IR@calendar=persian');
+        $expected = 'پنجشنبه د AP ۱۳۸۸ د مرغومی ۲۴ ۱۳:۵۹:۲۸ (GMT)';
+        $this->assertTimeFormat($expected, $result);
+
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'fa-KW@calendar=islamic');
+        $expected = 'پنجشنبه ۲۹ محرم ۱۴۳۱ هجری قمری، ساعت ۱۳:۵۹:۲۸ (GMT)';
+        $this->assertTimeFormat($expected, $result);
+
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-KW@calendar=islamic');
+        $expected = 'Thursday, Muharram 29, 1431 AH at 1:59:28 PM GMT';
+        $this->assertTimeFormat($expected, $result);
+
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'ar-KW@calendar=islamic');
+        $expected = 'الخميس، ٢٩ محرم ١٤٣١ هـ ١:٥٩:٢٨ م جرينتش';
+        $this->assertTimeFormat($expected, $result);
+
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'hi-IN@calendar=indian');
+        $expected = 'बृहस्पतिवार, 24 पौष SAKA1931 1:59:28 अपराह्न GMT';
+        $this->assertTimeFormat($expected, $result);
+
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-IN@calendar=indian');
+        $expected = 'Thursday 24 Pausa 1931 SAKA 1:59:28 pm GMT';
+        $this->assertTimeFormat($expected, $result);
+
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'ar-IN@calendar=indian');
+        $expected = 'SAKA १९३१ माघ २४, बिहीवार १३:५९:२८ GMT';
+        $this->assertTimeFormat($expected, $result);
+
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'ks-IN@calendar=indian');
+        $expected = 'برٛٮ۪سوار, شوال ۲۴, ۱۹۳۱ SAKA ۱:۵۹:۲۸ PM GMT';
+        $this->assertTimeFormat($expected, $result);
+
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, 'Asia/Tokyo', 'ja-JP@calendar=japanese');
+        $expected = '平成22年1月14日木曜日 22時59分28秒 日本標準時';
+        $this->assertTimeFormat($expected, $result);
     }
 
     /**
