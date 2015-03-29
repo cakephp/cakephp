@@ -613,10 +613,14 @@ class FormHelper extends Helper
      * @param string|array $field Reference to field to be secured. Can be dot
      *   separated string to indicate nesting or array of fieldname parts.
      * @param mixed $value Field value, if value should not be tampered with.
-     * @return mixed|null Not used yet
+     * @return void
      */
     protected function _secure($lock, $field, $value = null)
     {
+        if (empty($field)) {
+            return;
+        }
+
         if (is_string($field)) {
             $field = Hash::filter(explode('.', $field));
         }
@@ -2381,11 +2385,15 @@ class FormHelper extends Helper
      * fieldname parts like ['Model', 'field'] is returned.
      *
      * @param string $name The form inputs name attribute.
-     * @return string|array|null Dot separated string like Foo.bar, array of filename
-     *   params like ['Model', 'field'] or null if options does not contain name.
+     * @return array Array of field name params like ['Model.field'] or
+     *   ['Model', 'field'] for array fields or empty array if $name is empty.
      */
     protected function _secureFieldName($name)
     {
+        if (empty($name)) {
+            return [];
+        }
+
         if (strpos($name, '[') === false) {
             return [$name];
         }

@@ -263,6 +263,21 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test that empty string is not added to secure fields list when
+     * rendering input widget without name.
+     *
+     * @return void
+     */
+    public function testRenderingWidgetWithEmptyName()
+    {
+        $this->assertEquals([], $this->Form->fields);
+
+        $result = $this->Form->widget('select', ['secure' => true, 'name' => '']);
+        $this->assertEquals('<select name=""></select>', $result);
+        $this->assertEquals([], $this->Form->fields);
+    }
+
+    /**
      * Test registering an invalid widget class.
      *
      * @expectedException \RuntimeException
