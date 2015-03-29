@@ -241,6 +241,7 @@ class SelectBoxWidget implements WidgetInterface
             ];
             if (is_array($val) && isset($optAttrs['text'], $optAttrs['value'])) {
                 $optAttrs = $val;
+                $key = $optAttrs['value'];
             }
             if ($this->_isSelected($key, $selected)) {
                 $optAttrs['selected'] = true;
