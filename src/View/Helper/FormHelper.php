@@ -617,7 +617,7 @@ class FormHelper extends Helper
      */
     protected function _secure($lock, $field, $value = null)
     {
-        if (empty($field)) {
+        if (empty($field) && $field !== '0') {
             return;
         }
 
@@ -2390,7 +2390,7 @@ class FormHelper extends Helper
      */
     protected function _secureFieldName($name)
     {
-        if (empty($name)) {
+        if (empty($name) && $name !== '0') {
             return [];
         }
 

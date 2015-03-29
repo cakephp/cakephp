@@ -275,6 +275,10 @@ class FormHelperTest extends TestCase
         $result = $this->Form->widget('select', ['secure' => true, 'name' => '']);
         $this->assertEquals('<select name=""></select>', $result);
         $this->assertEquals([], $this->Form->fields);
+
+        $result = $this->Form->widget('select', ['secure' => true, 'name' => '0']);
+        $this->assertEquals('<select name="0"></select>', $result);
+        $this->assertEquals(['0'], $this->Form->fields);
     }
 
     /**
