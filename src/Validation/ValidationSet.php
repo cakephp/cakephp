@@ -15,8 +15,8 @@
 namespace Cake\Validation;
 
 use ArrayAccess;
-use IteratorAggregate;
 use Countable;
+use IteratorAggregate;
 
 /**
  * ValidationSet object. Holds all validation rules for a field and exposes

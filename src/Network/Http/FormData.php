@@ -13,8 +13,8 @@
  */
 namespace Cake\Network\Http;
 
-use Countable;
 use Cake\Network\Http\FormData\Part;
+use Countable;
 
 /**
  * Provides an interface for building
