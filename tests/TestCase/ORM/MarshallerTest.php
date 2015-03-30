@@ -558,6 +558,30 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test HasMany association with _ids attribute
+     *
+     * @return void
+     */
+    public function testHasManyWithIds()
+    {
+        $data = [
+            'username' => 'lux',
+            'password' => 'passphrase',
+            'comments' => [
+                '_ids' => [1, 2]
+            ]
+        ];
+
+        $userTable = TableRegistry::get('Users');
+        $userTable->hasMany('Comments');
+        $commentTable = TableRegistry::get('Comments');
+        $user = $userTable->newEntity($data, ['associated' => ['Comments']]);
+
+        $this->assertEquals($user->comments[0], $commentTable->get(1));
+        $this->assertEquals($user->comments[1], $commentTable->get(2));
+    }
+
+    /**
      * Test one() with deeper associations.
      *
      * @return void
