@@ -186,19 +186,6 @@ class TableTest extends TestCase
     }
 
     /**
-     * Tests exception is thrown in connection is not instance of
-     * \Cake\Database\Connection
-     *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage $conn must be an instance of \Cake\Database\Connection
-     * @return void
-     */
-    public function testConnectionException()
-    {
-        $table = new Table(['table' => 'users', 'connection' => 'default']);
-    }
-
-    /**
      * Tests primaryKey method
      *
      * @return void

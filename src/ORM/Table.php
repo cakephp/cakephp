@@ -393,14 +393,10 @@ class Table implements RepositoryInterface, EventListenerInterface
      * @param \Cake\Database\Connection|null $conn The new connection instance
      * @return \Cake\Database\Connection
      */
-    public function connection($conn = null)
+    public function connection(Connection $conn = null)
     {
         if ($conn === null) {
             return $this->_connection;
-        }
-
-        if (!($conn instanceof Connection)) {
-            throw new RuntimeException('$conn must be an instance of \Cake\Database\Connection');
         }
 
         return $this->_connection = $conn;
