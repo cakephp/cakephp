@@ -17,6 +17,7 @@ namespace Cake\ORM;
 use ArrayObject;
 use BadMethodCallException;
 use Cake\Core\App;
+use Cake\Database\Connection;
 use Cake\Database\Schema\Table as Schema;
 use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
@@ -397,6 +398,11 @@ class Table implements RepositoryInterface, EventListenerInterface
         if ($conn === null) {
             return $this->_connection;
         }
+
+        if (!($conn instanceof Connection)) {
+            throw new RuntimeException('$conn must be an instance of \Cake\Database\Connection');
+        }
+
         return $this->_connection = $conn;
     }
 
