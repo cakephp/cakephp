@@ -14,10 +14,12 @@
  */
 namespace Cake\Database;
 
+use Cake\Core\Exception;
+
 /**
  * Exception for the database package.
  */
-class Exception extends \Cake\Core\Exception\Exception
+class Exception extends Exception
 {
 
 }

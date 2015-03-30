@@ -15,13 +15,14 @@
 namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
+use Cake\Database\Type;
 use Cake\Utility\Text;
 use PDO;
 
 /**
  * Provides behavior for the uuid type
  */
-class UuidType extends \Cake\Database\Type
+class UuidType extends Type
 {
 
     /**

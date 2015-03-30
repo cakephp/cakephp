@@ -15,13 +15,14 @@
 namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
+use Cake\Database\Type;
 
 /**
  * Datetime type converter.
  *
  * Use to convert datetime instances to strings & back.
  */
-class DateTimeType extends \Cake\Database\Type
+class DateTimeType extends Type
 {
 
     /**

@@ -16,7 +16,6 @@ namespace Cake\Core;
 
 use Cake\Core\Exception\Exception;
 use Cake\Utility\Hash;
-use InvalidArgumentException;
 
 /**
  * A trait for reading and writing instance config

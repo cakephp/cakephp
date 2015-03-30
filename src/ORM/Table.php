@@ -38,7 +38,6 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
-use RuntimeException;
 
 /**
  * Represents a single database table.

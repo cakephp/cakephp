@@ -19,7 +19,6 @@ use Cake\Collection\CollectionTrait;
 use Cake\Database\Exception;
 use Cake\Database\Type;
 use Cake\Datasource\ResultSetInterface;
-use JsonSerializable;
 use SplFixedArray;
 
 /**

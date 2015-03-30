@@ -18,7 +18,6 @@ use Cake\Event\Event;
 use Cake\ORM\Association;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
-use Cake\ORM\Table;
 
 /**
  * CounterCache behavior

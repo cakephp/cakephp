@@ -14,7 +14,6 @@
  */
 namespace Cake\ORM\Association;
 
-use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\TupleComparison;
 

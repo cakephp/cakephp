@@ -15,6 +15,7 @@
 namespace Cake\Database\Type;
 
 use Cake\Core\Exception\Exception;
+use Cake\Database\Type;
 use Cake\Database\Driver;
 use PDO;
 
@@ -23,7 +24,7 @@ use PDO;
  *
  * Use to convert binary data between PHP and the database types.
  */
-class BinaryType extends \Cake\Database\Type
+class BinaryType extends Type
 {
 
     /**

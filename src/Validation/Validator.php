@@ -14,6 +14,10 @@
  */
 namespace Cake\Validation;
 
+use ArrayAccess;
+use IteratorAggregate;
+use Countable;
+
 use Cake\Validation\RulesProvider;
 use Cake\Validation\ValidationSet;
 
@@ -25,7 +29,7 @@ use Cake\Validation\ValidationSet;
  *
  * @link http://book.cakephp.org/3.0/en/core-libraries/validation.html
  */
-class Validator implements \ArrayAccess, \IteratorAggregate, \Countable
+class Validator implements ArrayAccess, IteratorAggregate, Countable
 {
 
     /**

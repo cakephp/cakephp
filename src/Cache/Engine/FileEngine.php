@@ -15,7 +15,6 @@
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
-use Cake\Core\Configure;
 use Cake\Utility\Inflector;
 use Exception;
 use LogicException;

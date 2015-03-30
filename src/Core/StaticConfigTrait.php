@@ -16,7 +16,6 @@ namespace Cake\Core;
 
 use BadMethodCallException;
 use InvalidArgumentException;
-use UnexpectedValueException;
 
 /**
  * A trait that provides a set of static methods to manage configuration

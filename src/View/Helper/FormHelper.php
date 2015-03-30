@@ -2231,7 +2231,7 @@ class FormHelper extends Helper
         unset($options['interval'], $options['round']);
 
         if (!isset($options['val'])) {
-            $val = new \DateTime();
+            $val = new DateTime();
             $currentYear = $val->format('Y');
             if (isset($options['year']['end']) && $options['year']['end'] < $currentYear) {
                 $val->setDate($options['year']['end'], $val->format('n'), $val->format('j'));
