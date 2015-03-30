@@ -68,7 +68,7 @@ To run the sniffs for CakePHP coding standards:
     phpcs -p --extensions=php --standard=CakePHP ./src
 
 Check the [cakephp-codesniffer](https://github.com/cakephp/cakephp-codesniffer)
-repository to setup the CakePHP standard. The [README](https://github.com/cakephp/cakephp-codesniffer/blob/master/README.mdown) contains installation info
+repository to setup the CakePHP standard. The [README](https://github.com/cakephp/cakephp-codesniffer/blob/master/README.md) contains installation info
 for the sniff and phpcs.
 
 # Additional Resources
