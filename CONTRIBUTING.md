@@ -46,7 +46,7 @@ chance of keeping on top of things.
 ## Submitting Changes
 
 * Push your changes to a topic branch in your fork of the repository.
-* Submit a pull request to the repository in the cakephp organization, with the
+* Submit a pull request to the repository in the CakePHP organization, with the
   correct target branch.
 
 ## Test cases and codesniffer
@@ -61,7 +61,7 @@ driver settings as required to run tests for particular database.
 
 You can also register on [Travis CI](https://travis-ci.org/) and from your
 [profile](https://travis-ci.org/profile) page enable the service hook for your
-cakephp fork on github for automated test builds.
+CakePHP fork on GitHub for automated test builds.
 
 To run the sniffs for CakePHP coding standards:
 
