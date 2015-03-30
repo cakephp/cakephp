@@ -527,6 +527,11 @@ class ResultSet implements ResultSetInterface
 
         foreach ($this->_containMap as $assoc) {
             $alias = $assoc['nestKey'];
+
+            if ($assoc['canBeJoined'] && empty($this->_map[$alias])) {
+                continue;
+            }
+
             $instance = $assoc['instance'];
 
             if (!$assoc['canBeJoined'] && !isset($row[$alias])) {

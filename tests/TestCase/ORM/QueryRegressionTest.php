@@ -798,4 +798,24 @@ class QueryRegressionTest extends TestCase
             ->toArray();
         $this->assertNotEmpty($result[0]->article);
     }
+
+    /**
+     * Tests that using contain but selecting no fields from the association
+     * does not trigger any errors and fetches the right results.
+     *
+     * @see https://github.com/cakephp/cakephp/issues/6214
+     * @return void
+     */
+    public function testContainWithNoFields()
+    {
+        $table = TableRegistry::get('Comments');
+        $table->belongsTo('Users');
+        $results = $table->find()
+            ->select(['Comments.id', 'Comments.user_id'])
+            ->contain(['Users'])
+            ->where(['Users.id' => 1])
+            ->combine('id', 'user_id');
+
+        $this->assertEquals([3 => 1, 4 => 1, 5 => 1], $results->toArray());
+    }
 }
