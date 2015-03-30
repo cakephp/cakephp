@@ -1,0 +1,25 @@
+#!/bin/sh
+FILES=`git diff --cached --name-only --diff-filter=ACMR HEAD | grep \\\\.php`
+
+# Determine if a file list is passed
+if [ "$#" -eq 1 ]
+then
+    oIFS=$IFS
+    IFS='
+    '
+    SFILES="$1"
+    IFS=$oIFS
+fi
+SFILES=${SFILES:-$FILES}
+
+if [ "$FILES" != "" ]
+then
+    echo "Running PHPCS"
+    ./vendor/bin/phpcs --standard=vendor/cakephp/cakephp-codesniffer/CakePHP $SFILES
+    if [ $? != 0 ]
+    then
+        echo "PHPCS Errors found; commit aborted."
+        exit 1
+    fi
+fi
+exit $?
