@@ -1487,7 +1487,7 @@ class Table implements RepositoryInterface, EventListenerInterface
         $id = (array)$this->_newId($primary) + $keys;
         $primary = array_combine($primary, $id);
         $filteredKeys = array_filter($primary, 'strlen');
-        $data = $filteredKeys + $data;
+        $data = $data + $filteredKeys;
 
         if (count($primary) > 1) {
             $schema = $this->schema();

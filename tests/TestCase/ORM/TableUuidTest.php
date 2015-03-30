@@ -17,9 +17,11 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Core\Configure;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\ConnectionManager;
+use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Text;
 
 /**
  * Integration tests for Table class with uuid primary keys.
@@ -67,7 +69,7 @@ class TableUuidTest extends TestCase
      */
     public function testSaveNew()
     {
-        $entity = new \Cake\ORM\Entity([
+        $entity = new Entity([
             'name' => 'shiny new',
             'published' => true,
         ]);
@@ -81,6 +83,28 @@ class TableUuidTest extends TestCase
     }
 
     /**
+     * Test saving new records allows manual uuids
+     *
+     * @return void
+     */
+    public function testSaveNewSpecificId()
+    {
+        $id = Text::uuid();
+        $entity = new Entity([
+            'id' => $id,
+            'name' => 'shiny and new',
+            'published' => true,
+        ]);
+        $table = TableRegistry::get('uuiditems');
+        $this->assertSame($entity, $table->save($entity));
+
+        $row = $table->find('all')->where(['id' => $id])->first();
+        $this->assertNotEmpty($row);
+        $this->assertSame($id, strtolower($row->id));
+        $this->assertSame($entity->name, $row->name);
+    }
+
+    /**
      * Test saving existing records works
      *
      * @return void
@@ -88,7 +112,7 @@ class TableUuidTest extends TestCase
     public function testSaveUpdate()
     {
         $id = '481fc6d0-b920-43e0-a40d-6d1740cf8569';
-        $entity = new \Cake\ORM\Entity([
+        $entity = new Entity([
             'id' => $id,
             'name' => 'shiny update',
             'published' => true,
@@ -126,10 +150,6 @@ class TableUuidTest extends TestCase
      */
     public function testEmptyUuid()
     {
-        $this->skipIf(
-            !$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
-            'Empty UUIDs only affect SQLServer uniqueidentifier field types'
-        );
         $id = '';
         $table = TableRegistry::get('uuiditems');
         $entity = $table->find('all')
