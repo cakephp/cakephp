@@ -15,11 +15,10 @@
 namespace Cake\Validation;
 
 use ArrayAccess;
-use Countable;
-use IteratorAggregate;
-
 use Cake\Validation\RulesProvider;
 use Cake\Validation\ValidationSet;
+use Countable;
+use IteratorAggregate;
 
 /**
  * Validator object encapsulates all methods related to data validations for a model
