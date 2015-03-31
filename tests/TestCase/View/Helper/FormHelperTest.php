@@ -6968,6 +6968,26 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test that *Container templates are used by input.
+     *
+     * @return void
+     */
+    public function testFormGroupTemplates()
+    {
+        $this->Form->templates([
+            'radioFormGroup' => '<div class="radio">{{label}}{{input}}</div>',
+        ]);
+
+        $this->Form->create($this->article);
+
+        $result = $this->Form->input('accept', [
+            'type' => 'radio',
+            'options' => ['Y', 'N']
+        ]);
+        $this->assertContains('<div class="radio">', $result);
+    }
+
+    /**
      * Test resetting templates.
      *
      * @return void
