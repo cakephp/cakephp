@@ -436,10 +436,11 @@ class QueryExpression implements ExpressionInterface, Countable
     }
 
     /**
-     * Executes a callable function for each of the parts that form this expression
-     * Callable function is required to return a value, which will the one with
-     * which the currently visited part will be replaced. If the callable function
-     * returns null then the part will be discarded completely from this expression
+     * Executes a callable function for each of the parts that form this expression.
+     *
+     * The callable function is required to return a value with which the currently
+     * visited part will be replaced. If the callable function returns null then
+     * the part will be discarded completely from this expression.
      *
      * The callback function will receive each of the conditions as first param and
      * the key as second param. It is possible to declare the second parameter as
