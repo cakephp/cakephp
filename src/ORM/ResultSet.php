@@ -383,6 +383,9 @@ class ResultSet implements ResultSetInterface
         }
 
         foreach ($this->_matchingMap as $alias => $assoc) {
+            if (!isset($map[$alias])) {
+                continue;
+            }
             $this->_matchingMapColumns[$alias] = $map[$alias];
             unset($map[$alias]);
         }
@@ -526,6 +529,11 @@ class ResultSet implements ResultSetInterface
 
         foreach ($this->_containMap as $assoc) {
             $alias = $assoc['nestKey'];
+
+            if ($assoc['canBeJoined'] && empty($this->_map[$alias])) {
+                continue;
+            }
+
             $instance = $assoc['instance'];
 
             if (!$assoc['canBeJoined'] && !isset($row[$alias])) {

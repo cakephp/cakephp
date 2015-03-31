@@ -454,7 +454,7 @@ class MemcachedEngineTest extends TestCase
     {
         $Memcached = new TestMemcachedEngine();
         $result = $Memcached->parseServerString('udomain.net:13211');
-        $this->assertEquals(array('udomain.net', '13211'), $result);
+        $this->assertEquals(['udomain.net', '13211'], $result);
     }
 
     /**

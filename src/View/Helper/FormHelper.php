@@ -1053,7 +1053,10 @@ class FormHelper extends Helper
      */
     protected function _groupTemplate($options)
     {
-        $groupTemplate = $options['options']['type'] === 'checkbox' ? 'checkboxFormGroup' : 'formGroup';
+        $groupTemplate = $options['options']['type'] . 'FormGroup';
+        if (!$this->templater()->get($groupTemplate)) {
+            $groupTemplate = 'formGroup';
+        }
         return $this->templater()->format($groupTemplate, [
             'input' => $options['input'],
             'label' => $options['label'],
@@ -2365,7 +2368,7 @@ class FormHelper extends Helper
                 $options['disabled'] === 'disabled' ||
                 (is_array($options['disabled']) &&
                     !empty($options['options']) &&
-                    array_diff($options['options'], $options['disabled']) === array()
+                    array_diff($options['options'], $options['disabled']) === []
                 )
             );
         }
