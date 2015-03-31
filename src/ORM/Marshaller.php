@@ -223,10 +223,8 @@ class Marshaller
         if ($assoc->type() === Association::MANY_TO_MANY) {
             return $marshaller->_belongsToMany($assoc, $value, (array)$options);
         }
-        if ($assoc->type() === Association::ONE_TO_MANY && array_key_exists('_ids', $value)) {
-            if (is_array($value['_ids'])) {
-                return $this->_loadAssociatedByIds($assoc, $value['_ids']);
-            }
+        if ($assoc->type() === Association::ONE_TO_MANY && array_key_exists('_ids', $value) && is_array($value['_ids'])) {
+            return $this->_loadAssociatedByIds($assoc, $value['_ids']);
         }
         return $marshaller->many($value, (array)$options);
     }
