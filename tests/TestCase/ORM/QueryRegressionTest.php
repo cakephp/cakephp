@@ -818,4 +818,25 @@ class QueryRegressionTest extends TestCase
 
         $this->assertEquals([3 => 1, 4 => 1, 5 => 1], $results->toArray());
     }
+
+    /**
+     * Tests that using matching and selecting no fields for that association
+     * will no trigger any errors and fetch the right results
+     *
+     * @see https://github.com/cakephp/cakephp/issues/6223
+     * @return void
+     */
+    public function testMatchingWithNoFields()
+    {
+        $table = TableRegistry::get('Users');
+        $table->hasMany('Comments');
+        $results = $table->find()
+            ->select(['Users.id'])
+            ->matching('Comments', function ($q) {
+                return $q->where(['Comments.id' => 1]);
+            })
+            ->extract('id')
+            ->toList();
+        $this->assertEquals([2], $results);
+    }
 }
