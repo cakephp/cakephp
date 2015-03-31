@@ -4058,6 +4058,24 @@ class TableTest extends TestCase
         $this->assertEquals(4, $cloned->id);
     }
 
+    public function testSaveHasManyWithIds()
+    {
+        $data = [
+            'username' => 'lux',
+            'password' => 'passphrase',
+            'comments' => [
+                '_ids' => [1, 2]
+            ]
+        ];
+
+        $userTable = TableRegistry::get('Users');
+        $userTable->hasMany('Comments');
+        $savedUser = $userTable->save($userTable->newEntity($data, ['associated' => ['Comments']]));
+        $retrievedUser = $userTable->find('all')->where(['id' => $savedUser->id])->contain(['Comments'])->first();
+        $this->assertEquals($savedUser->comments[0]->user_id, $retrievedUser->comments[0]->user_id);
+        $this->assertEquals($savedUser->comments[1]->user_id, $retrievedUser->comments[1]->user_id);
+    }
+
     /**
      * Tests that after saving then entity contains the right primary
      * key casted to the right type
