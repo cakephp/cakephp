@@ -68,7 +68,7 @@ class FileEngine extends CacheEngine
     ];
 
     /**
-     * True unless FileEngine::__active(); fails
+     * True unless `FileEngine::_dirWritable` fails
      *
      * @var bool
      */
@@ -85,20 +85,18 @@ class FileEngine extends CacheEngine
     public function init(array $config = [])
     {
         parent::init($config);
-
-        if ($this->_config['path'] === null) {
-            $this->_config['path'] = sys_get_temp_dir() . DS . 'cake_cache' . DS;
+        if (!$this->_dirWritable) {
+            return false;
         }
+
         if (DS === '\\') {
             $this->_config['isWindows'] = true;
         }
-        if (substr($this->_config['path'], -1) !== DS) {
-            $this->_config['path'] .= DS;
-        }
+
         if (!empty($this->_groupPrefix)) {
             $this->_groupPrefix = str_replace('_', DS, $this->_groupPrefix);
         }
-        return $this->_active();
+        return true;
     }
 
     /**
@@ -126,13 +124,11 @@ class FileEngine extends CacheEngine
         }
 
         $key = $this->_key($key);
-
         if ($this->_setKey($key, true) === false) {
             return false;
         }
 
         $lineBreak = "\n";
-
         if ($this->_config['isWindows']) {
             $lineBreak = "\r\n";
         }
@@ -175,9 +171,12 @@ class FileEngine extends CacheEngine
      */
     public function read($key)
     {
-        $key = $this->_key($key);
+        if ($key === '' || !$this->_init) {
+            return false;
+        }
 
-        if (!$this->_init || $this->_setKey($key) === false) {
+        $key = $this->_key($key);
+        if ($this->_setKey($key) === false) {
             return false;
         }
 
@@ -229,9 +228,12 @@ class FileEngine extends CacheEngine
      */
     public function delete($key)
     {
-        $key = $this->_key($key);
+        if ($key === '' || !$this->_init) {
+            return false;
+        }
 
-        if ($this->_setKey($key) === false || !$this->_init) {
+        $key = $this->_key($key);
+        if ($this->_setKey($key) === false) {
             return false;
         }
 
@@ -254,6 +256,7 @@ class FileEngine extends CacheEngine
         if (!$this->_init) {
             return false;
         }
+
         $this->_File = null;
 
         $threshold = $now = false;
@@ -294,12 +297,11 @@ class FileEngine extends CacheEngine
      */
     protected function _clearDirectory($path, $now, $threshold)
     {
-        $prefixLength = strlen($this->_config['prefix']);
-
         if (!is_dir($path)) {
             return;
         }
 
+        $prefixLength = strlen($this->_config['prefix']);
         $dir = dir($path);
         while (($entry = $dir->read()) !== false) {
             if (substr($entry, 0, $prefixLength) !== $this->_config['prefix']) {
@@ -312,19 +314,20 @@ class FileEngine extends CacheEngine
                 continue;
             }
 
-            if ($threshold) {
-                $mtime = $file->getMTime();
-
-                if ($mtime > $threshold) {
-                    continue;
-                }
-                $expires = (int)$file->current();
-
-                if ($expires > $now) {
-                    continue;
-                }
-            }
             if ($file->isFile()) {
+                if ($threshold) {
+                    $mtime = $file->getMTime();
+
+                    if ($mtime > $threshold) {
+                        continue;
+                    }
+                    $expires = (int)$file->current();
+
+                    if ($expires > $now) {
+                        continue;
+                    }
+                }
+
                 $filePath = $file->getRealPath();
                 $file = null;
 
@@ -395,9 +398,7 @@ class FileEngine extends CacheEngine
             }
             unset($path);
 
-            if (!$exists &&
-                !chmod($this->_File->getPathname(), (int)$this->_config['mask'])
-            ) {
+            if (!$exists && !chmod($this->_File->getPathname(), $this->_config['mask'])) {
                 trigger_error(sprintf(
                     'Could not apply permission mask "%s" on cache file "%s"',
                     $this->_File->getPathname(),
@@ -413,8 +414,16 @@ class FileEngine extends CacheEngine
      *
      * @return bool
      */
-    protected function _active()
+    protected function _dirWritable
     {
+        if ($this->_config['path'] === null) {
+            $this->_config['path'] = sys_get_temp_dir() . DS . 'cake_cache' . DS;
+        }
+
+        if (substr($this->_config['path'], -1) !== DS) {
+            $this->_config['path'] .= DS;
+        }
+
         $dir = new \SplFileInfo($this->_config['path']);
         $path = $dir->getPathname();
         if (!is_dir($path)) {
