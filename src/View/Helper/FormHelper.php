@@ -2365,7 +2365,7 @@ class FormHelper extends Helper
                 $options['disabled'] === 'disabled' ||
                 (is_array($options['disabled']) &&
                     !empty($options['options']) &&
-                    array_diff($options['options'], $options['disabled']) === array()
+                    array_diff($options['options'], $options['disabled']) === []
                 )
             );
         }
