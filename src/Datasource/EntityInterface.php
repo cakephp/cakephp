@@ -15,7 +15,6 @@
 namespace Cake\Datasource;
 
 use ArrayAccess;
-use Cake\Validation\Validator;
 use JsonSerializable;
 
 /**

@@ -14,12 +14,14 @@
  */
 namespace Cake\Database\Type;
 
+use Cake\Database\Type\DateTimeType;
+
 /**
  * Time type converter.
  *
  * Use to convert time instances to strings & back.
  */
-class TimeType extends \Cake\Database\Type\DateTimeType
+class TimeType extends DateTimeType
 {
 
     /**

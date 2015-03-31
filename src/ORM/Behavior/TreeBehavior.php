@@ -20,7 +20,6 @@ use Cake\Event\Event;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
-use Cake\ORM\Table;
 
 /**
  * Makes the table to which this is attached to behave like a nested set and
