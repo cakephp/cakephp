@@ -68,7 +68,7 @@ class FileEngine extends CacheEngine
     ];
 
     /**
-     * True unless `FileEngine::_dirWritable` fails
+     * True unless `FileEngine::_dirWritable()` fails
      *
      * @var bool
      */
@@ -85,7 +85,7 @@ class FileEngine extends CacheEngine
     public function init(array $config = [])
     {
         parent::init($config);
-        if (!$this->_dirWritable) {
+        if (!$this->_dirWritable()) {
             return false;
         }
 
@@ -317,12 +317,11 @@ class FileEngine extends CacheEngine
             if ($file->isFile()) {
                 if ($threshold) {
                     $mtime = $file->getMTime();
-
                     if ($mtime > $threshold) {
                         continue;
                     }
-                    $expires = (int)$file->current();
 
+                    $expires = (int)$file->current();
                     if ($expires > $now) {
                         continue;
                     }
@@ -398,7 +397,7 @@ class FileEngine extends CacheEngine
             }
             unset($path);
 
-            if (!$exists && !chmod($this->_File->getPathname(), $this->_config['mask'])) {
+            if (!$exists && !chmod($this->_File->getPathname(), (int)$this->_config['mask'])) {
                 trigger_error(sprintf(
                     'Could not apply permission mask "%s" on cache file "%s"',
                     $this->_File->getPathname(),
@@ -414,7 +413,7 @@ class FileEngine extends CacheEngine
      *
      * @return bool
      */
-    protected function _dirWritable
+    protected function _dirWritable()
     {
         if ($this->_config['path'] === null) {
             $this->_config['path'] = sys_get_temp_dir() . DS . 'cake_cache' . DS;
