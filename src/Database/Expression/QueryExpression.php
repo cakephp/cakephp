@@ -599,4 +599,17 @@ class QueryExpression implements ExpressionInterface, Countable
         }
         return implode(', ', $params);
     }
+    
+    /**
+     * Adds a new condition to the expression object in the form "field REGEXP value".
+     * 
+     * @param string $field database field to be compared against value
+     * @param mixed $value The value to be bound to $field for comparison
+     * @param string $type the type name for $value as configured using the Type map.
+     * @return $this
+     */
+    public function regexp($field, $value, $type = null)
+    {
+        return $this->add(new Comparison($field, $value, $type, 'REGEXP'));
+    }
 }
