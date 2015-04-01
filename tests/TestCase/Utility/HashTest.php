@@ -282,6 +282,14 @@ class HashTest extends TestCase
      */
     public function testMaxDimensions()
     {
+        $data = [];
+        $result = Hash::maxDimensions($data);
+        $this->assertEquals(0, $result);
+
+        $data = ['a', 'b'];
+        $result = Hash::maxDimensions($data);
+        $this->assertEquals(1, $result);
+
         $data = ['1' => '1.1', '2', '3' => ['3.1' => '3.1.1']];
         $result = Hash::maxDimensions($data);
         $this->assertEquals($result, 2);
