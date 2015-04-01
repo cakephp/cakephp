@@ -70,7 +70,7 @@ class TableRegistry
     /**
      * Sets and returns singleton instance of Registry.
      *
-     * @param \Cake\ORM\Registry\RegistryInterface $instance
+     * @param \Cake\ORM\Registry\RegistryInterface $instance Instance of registry to set.
      * @return \Cake\ORM\Registry\RegistryInterface
      */
     public static function instance(RegistryInterface $instance = null)
@@ -89,8 +89,8 @@ class TableRegistry
     /**
      * Proxy for static calls on a singleton.
      *
-     * @param string $name
-     * @param array $arguments
+     * @param string $name Method name.
+     * @param array $arguments Method arguments.
      * @return mixed
      */
     public static function __callStatic($name, $arguments)

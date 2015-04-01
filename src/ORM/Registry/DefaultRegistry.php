@@ -87,7 +87,8 @@ class DefaultRegistry implements RegistryInterface
         }
         if (isset($this->_instances[$alias])) {
             throw new RuntimeException(sprintf(
-                'You cannot configure "%s", it has already been constructed.', $alias
+                'You cannot configure "%s", it has already been constructed.',
+                $alias
             ));
         }
         return $this->_config[$alias] = $options;
@@ -132,7 +133,8 @@ class DefaultRegistry implements RegistryInterface
         if (isset($this->_instances[$alias])) {
             if (!empty($options) && $this->_options[$alias] !== $options) {
                 throw new RuntimeException(sprintf(
-                    'You cannot configure "%s", it already exists in the registry.', $alias
+                    'You cannot configure "%s", it already exists in the registry.',
+                    $alias
                 ));
             }
             return $this->_instances[$alias];
@@ -186,7 +188,7 @@ class DefaultRegistry implements RegistryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function exists($alias)
     {
@@ -194,7 +196,7 @@ class DefaultRegistry implements RegistryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function set($alias, Table $object)
     {
@@ -202,7 +204,7 @@ class DefaultRegistry implements RegistryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function clear()
     {
@@ -225,13 +227,13 @@ class DefaultRegistry implements RegistryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function remove($alias)
     {
         unset(
-            $this->_instances[$alias], 
-            $this->_config[$alias], 
+            $this->_instances[$alias],
+            $this->_config[$alias],
             $this->_fallbacked[$alias]
         );
     }
