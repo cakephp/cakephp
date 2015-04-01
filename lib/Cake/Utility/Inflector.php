@@ -107,7 +107,8 @@ class Inflector {
 			'hero' => 'heroes',
 			'tooth' => 'teeth',
 			'goose' => 'geese',
-			'foot' => 'feet'
+			'foot' => 'feet',
+			'sieve' => 'sieves'
 		)
 	);
 

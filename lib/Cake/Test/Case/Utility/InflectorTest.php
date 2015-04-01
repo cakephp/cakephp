@@ -177,6 +177,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEquals(Inflector::singularize('body_curves'), 'body_curve');
 		$this->assertEquals(Inflector::singularize('metadata'), 'metadata');
 		$this->assertEquals(Inflector::singularize('files_metadata'), 'files_metadata');
+		$this->assertEquals(Inflector::singularize('sieves'), 'sieve');
 		$this->assertEquals(Inflector::singularize(''), '');
 	}
 
@@ -248,6 +249,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEquals(Inflector::pluralize('metadata'), 'metadata');
 		$this->assertEquals(Inflector::pluralize('files_metadata'), 'files_metadata');
 		$this->assertEquals(Inflector::pluralize('stadia'), 'stadia');
+		$this->assertEquals(Inflector::pluralize('sieve'), 'sieves');
 		$this->assertEquals(Inflector::pluralize(''), '');
 	}
 
