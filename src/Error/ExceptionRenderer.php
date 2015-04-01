@@ -83,7 +83,7 @@ class ExceptionRenderer
      * If the error is a Cake\Core\Exception\Exception it will be converted to either a 400 or a 500
      * code error depending on the code used to construct the error.
      *
-     * @param \Exception $exception Exception
+     * @param \Exception $exception Exception.
      */
     public function __construct(Exception $exception)
     {
@@ -219,8 +219,8 @@ class ExceptionRenderer
     /**
      * Get error message.
      *
-     * @param \Exception $exception Exception
-     * @param int $code Error code
+     * @param \Exception $exception Exception.
+     * @param int $code Error code.
      * @return string Error message
      */
     protected function _message(\Exception $exception, $code)
@@ -244,8 +244,8 @@ class ExceptionRenderer
      * Get template for rendering exception info.
      *
      * @param \Exception $exception Exception instance.
-     * @param string $method Method name
-     * @param int $code Error code
+     * @param string $method Method name.
+     * @param int $code Error code.
      * @return string Template name
      */
     protected function _template(\Exception $exception, $method, $code)
@@ -280,7 +280,7 @@ class ExceptionRenderer
     /**
      * Get an error code value within range 400 to 506
      *
-     * @param \Exception $exception Exception
+     * @param \Exception $exception Exception.
      * @return int Error code value within range 400 to 506
      */
     protected function _code(\Exception $exception)
@@ -325,7 +325,7 @@ class ExceptionRenderer
      * A safer way to render error messages, replaces all helpers, with basics
      * and doesn't call component methods.
      *
-     * @param string $template The template to render
+     * @param string $template The template to render.
      * @return \Cake\Network\Response A response object that can be sent.
      */
     protected function _outputMessageSafe($template)

@@ -169,7 +169,7 @@ class Debugger
     /**
      * Recursively formats and outputs the contents of the supplied variable.
      *
-     * @param mixed $var the variable to dump
+     * @param mixed $var The variable to dump.
      * @param int $depth The depth to output to. Defaults to 3.
      * @return void
      * @see Debugger::exportVar()
@@ -184,8 +184,8 @@ class Debugger
      * Creates an entry in the log file. The log entry will contain a stack trace from where it was called.
      * as well as export the variable using exportVar. By default the log is written to the debug log.
      *
-     * @param mixed $var Variable or content to log
-     * @param int|string $level type of log to use. Defaults to 'debug'
+     * @param mixed $var Variable or content to log.
+     * @param int|string $level Type of log to use. Defaults to 'debug'.
      * @param int $depth The depth to output to. Defaults to 3.
      * @return void
      */
@@ -207,8 +207,8 @@ class Debugger
      *   will be displayed.
      * - `start` - The stack frame to start generating a trace from. Defaults to 0
      *
-     * @param array $options Format for outputting stack trace
-     * @return mixed Formatted stack trace
+     * @param array $options Format for outputting stack trace.
+     * @return mixed Formatted stack trace.
      * @link http://book.cakephp.org/3.0/en/development/debugging.html#generating-stack-traces
      */
     public static function trace(array $options = [])
@@ -228,9 +228,9 @@ class Debugger
      *   will be displayed.
      * - `start` - The stack frame to start generating a trace from. Defaults to 0
      *
-     * @param array|\Exception Trace as array or an exception object.
-     * @param array $options Format for outputting stack trace
-     * @return mixed Formatted stack trace
+     * @param array|\Exception $backtrace Trace as array or an exception object.
+     * @param array $options Format for outputting stack trace.
+     * @return mixed Formatted stack trace.
      * @link http://book.cakephp.org/3.0/en/development/debugging.html#generating-stack-traces
      */
     public static function formatTrace($backtrace, $options = [])
@@ -310,7 +310,7 @@ class Debugger
      * Shortens file paths by replacing the application base path with 'APP', and the CakePHP core
      * path with 'CORE'.
      *
-     * @param string $path Path to shorten
+     * @param string $path Path to shorten.
      * @return string Normalized path
      */
     public static function trimPath($path)
@@ -342,9 +342,9 @@ class Debugger
      * are processed with highlight_string() as well, so they have basic PHP syntax highlighting
      * applied.
      *
-     * @param string $file Absolute path to a PHP file
-     * @param int $line Line number to highlight
-     * @param int $context Number of lines of context to extract above and below $line
+     * @param string $file Absolute path to a PHP file.
+     * @param int $line Line number to highlight.
+     * @param int $context Number of lines of context to extract above and below $line.
      * @return array Set of lines highlighted
      * @see http://php.net/highlight_string
      * @link http://book.cakephp.org/3.0/en/development/debugging.html#getting-an-excerpt-from-a-file
@@ -384,7 +384,7 @@ class Debugger
      * Wraps the highlight_string function in case the server API does not
      * implement the function as it is the case of the HipHop interpreter
      *
-     * @param string $str the string to convert
+     * @param string $str The string to convert.
      * @return string
      */
     protected static function _highlight($str)
@@ -425,7 +425,7 @@ class Debugger
      * This is done to protect database credentials, which could be accidentally
      * shown in an error message if CakePHP is deployed in development mode.
      *
-     * @param string $var Variable to convert
+     * @param string $var Variable to convert.
      * @param int $depth The depth to output to. Defaults to 3.
      * @return string Variable as a formatted string
      */
@@ -518,7 +518,7 @@ class Debugger
     /**
      * Handles object to string conversion.
      *
-     * @param string $var Object to convert
+     * @param string $var Object to convert.
      * @param int $depth The current depth, used for tracking recursion.
      * @param int $indent The current indentation level.
      * @return string
@@ -582,7 +582,7 @@ class Debugger
      * @param string|null $format The format you want errors to be output as.
      *   Leave null to get the current format.
      * @return mixed Returns null when setting. Returns the current format when getting.
-     * @throws \InvalidArgumentException when choosing a format that doesn't exist.
+     * @throws \InvalidArgumentException When choosing a format that doesn't exist.
      */
     public static function outputAs($format = null)
     {
@@ -740,7 +740,7 @@ class Debugger
      * Get the type of the given variable. Will return the class name
      * for objects.
      *
-     * @param mixed $var The variable to get the type of
+     * @param mixed $var The variable to get the type of.
      * @return string The type of variable.
      */
     public static function getType($var)
