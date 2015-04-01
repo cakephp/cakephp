@@ -10,50 +10,23 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         3.1.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-namespace Cake\ORM;
+namespace Cake\ORM\Registry;
 
 use Cake\Core\App;
 use Cake\Datasource\ConnectionManager;
+use Cake\ORM\Registry\RegistryInterface;
+use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use RuntimeException;
 
 /**
- * Provides a registry/factory for Table objects.
- *
- * This registry allows you to centralize the configuration for tables
- * their connections and other meta-data.
- *
- * ### Configuring instances
- *
- * You may need to configure your table objects, using TableRegistry you can
- * centralize configuration. Any configuration set before instances are created
- * will be used when creating instances. If you modify configuration after
- * an instance is made, the instances *will not* be updated.
- *
- * ```
- * TableRegistry::config('Users', ['table' => 'my_users']);
- * ```
- *
- * Configuration data is stored *per alias* if you use the same table with
- * multiple aliases you will need to set configuration multiple times.
- *
- * ### Getting instances
- *
- * You can fetch instances out of the registry using get(). One instance is stored
- * per alias. Once an alias is populated the same instance will always be returned.
- * This is used to make the ORM use less memory and help make cyclic references easier
- * to solve.
- *
- * ```
- * $table = TableRegistry::get('Users', $config);
- * ```
- *
+ * Provides a default registry/factory for Table objects.
  */
-class Registry
+class DefaultRegistry implements RegistryInterface
 {
 
     /**
@@ -114,7 +87,7 @@ class Registry
         }
         if (isset($this->_instances[$alias])) {
             throw new RuntimeException(sprintf(
-                    'You cannot configure "%s", it has already been constructed.', $alias
+                'You cannot configure "%s", it has already been constructed.', $alias
             ));
         }
         return $this->_config[$alias] = $options;
@@ -159,7 +132,7 @@ class Registry
         if (isset($this->_instances[$alias])) {
             if (!empty($options) && $this->_options[$alias] !== $options) {
                 throw new RuntimeException(sprintf(
-                        'You cannot configure "%s", it already exists in the registry.', $alias
+                    'You cannot configure "%s", it already exists in the registry.', $alias
                 ));
             }
             return $this->_instances[$alias];
@@ -197,7 +170,7 @@ class Registry
         if ($options['className'] === 'Cake\ORM\Table') {
             $this->_fallbacked[$alias] = $this->_instances[$alias];
         }
-        
+
         return $this->_instances[$alias];
     }
 
@@ -213,10 +186,7 @@ class Registry
     }
 
     /**
-     * Check to see if an instance exists in the registry.
-     *
-     * @param string $alias The alias to check for.
-     * @return bool
+     * @inheritDoc
      */
     public function exists($alias)
     {
@@ -224,11 +194,7 @@ class Registry
     }
 
     /**
-     * Set an instance.
-     *
-     * @param string $alias The alias to set.
-     * @param \Cake\ORM\Table $object The table to set.
-     * @return \Cake\ORM\Table
+     * @inheritDoc
      */
     public function set($alias, Table $object)
     {
@@ -236,9 +202,7 @@ class Registry
     }
 
     /**
-     * Clears the registry of configuration and instances.
-     *
-     * @return void
+     * @inheritDoc
      */
     public function clear()
     {
@@ -261,16 +225,13 @@ class Registry
     }
 
     /**
-     * Removes an instance from the registry.
-     *
-     * @param string $alias The alias to remove.
-     * @return void
+     * @inheritDoc
      */
     public function remove($alias)
     {
         unset(
-            $this->_instances[$alias],
-            $this->_config[$alias],
+            $this->_instances[$alias], 
+            $this->_config[$alias], 
             $this->_fallbacked[$alias]
         );
     }

@@ -16,7 +16,7 @@
 
 namespace Cake\ORM;
 
-use Cake\ORM\Registry;
+use Cake\ORM\Registry\RegistryInterface;
 
 /**
  * Provides a registry/factory for Table objects.
@@ -56,24 +56,31 @@ class TableRegistry
     /**
      * Singleton for static calls.
      *
-     * @var Registry
+     * @var \Cake\ORM\Registry\RegistryInterface
      */
     protected static $_instance;
 
     /**
-     * Sets and returns singleton instance of Registry.
-     * 
-     * @param \Cake\ORM\Registry $instance
-     * @return \Cake\ORM\Registry
+     * Default RegistryInterface implementation class.
+     *
+     * @var string
      */
-    public static function instance(Registry $instance = null)
+    protected static $_defaultRegistryClass = 'Cake\ORM\Registry\DefaultRegistry';
+
+    /**
+     * Sets and returns singleton instance of Registry.
+     *
+     * @param \Cake\ORM\Registry\RegistryInterface $instance
+     * @return \Cake\ORM\Registry\RegistryInterface
+     */
+    public static function instance(RegistryInterface $instance = null)
     {
         if ($instance) {
             static::$_instance = $instance;
         }
 
         if (!static::$_instance) {
-            static::$_instance = new Registry;
+            static::$_instance = new static::$_defaultRegistryClass;
         }
 
         return static::$_instance;
@@ -81,7 +88,7 @@ class TableRegistry
 
     /**
      * Proxy for static calls on a singleton.
-     * 
+     *
      * @param string $name
      * @param array $arguments
      * @return mixed
