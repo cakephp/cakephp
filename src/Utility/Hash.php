@@ -13,6 +13,8 @@
  */
 namespace Cake\Utility;
 
+use RuntimeException;
+
 /**
  * Library of array functions for manipulating and extracting data
  * from arrays or 'sets' of data.
@@ -444,7 +446,7 @@ class Hash
         }
 
         if (count($keys) !== count($vals)) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 'Hash::combine() needs an equal number of keys + values.'
             );
         }

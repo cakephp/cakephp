@@ -38,6 +38,7 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
+use RuntimeException;
 
 /**
  * Represents a single database table.
@@ -1482,7 +1483,7 @@ class Table implements RepositoryInterface, EventListenerInterface
                 'Cannot insert row in "%s" table, it has no primary key.',
                 $this->table()
             );
-            throw new \RuntimeException($msg);
+            throw new RuntimeException($msg);
         }
         $keys = array_fill(0, count($primary), null);
         $id = (array)$this->_newId($primary) + $keys;
@@ -1500,7 +1501,7 @@ class Table implements RepositoryInterface, EventListenerInterface
                         implode(', ', $filteredKeys + $entity->extract(array_keys($primary))),
                         implode(', ', array_keys($primary))
                     );
-                    throw new \RuntimeException($msg);
+                    throw new RuntimeException($msg);
                 }
             }
         }
@@ -1851,7 +1852,7 @@ class Table implements RepositoryInterface, EventListenerInterface
     {
         $association = $this->_associations->get($property);
         if (!$association) {
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 'Table "%s" is not associated with "%s"',
                 get_class($this),
                 $property
