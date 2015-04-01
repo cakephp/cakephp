@@ -716,6 +716,7 @@ class Time extends Carbon implements JsonSerializable
             null,
             $pattern
         );
+
         $time = $formatter->parse($time);
         if ($time) {
             $result = new static('@' . $time);
