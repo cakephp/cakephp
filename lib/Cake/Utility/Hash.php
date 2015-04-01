@@ -763,10 +763,14 @@ class Hash {
 		$depth = array();
 		if (is_array($data) && reset($data) !== false) {
 			foreach ($data as $value) {
-				$depth[] = self::dimensions((array)$value) + 1;
+				if (is_array($value)) {
+					$depth[] = self::dimensions($value) + 1;
+				} else {
+					$depth[] = 1;
+				}
 			}
 		}
-		return max($depth);
+		return empty($depth) ? 0 : max($depth);
 	}
 
 /**
