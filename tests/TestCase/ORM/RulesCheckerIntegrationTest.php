@@ -716,6 +716,50 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
+     * Test adding rules that return error string
+     *
+     * @group save
+     * @return void
+     */
+    public function testCustomErrorMessageFromRule()
+    {
+        $entity = new Entity([
+            'name' => 'larry'
+        ]);
+
+        $table = TableRegistry::get('Authors');
+        $rules = $table->rulesChecker();
+        $rules->add(function () {
+            return 'So much nope';
+        }, ['errorField' => 'name']);
+
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals(['So much nope'], $entity->errors('name'));
+    }
+
+    /**
+     * Test adding rules with no errorField do not accept strings
+     *
+     * @group save
+     * @return void
+     */
+    public function testCustomErrorMessageFromRuleNoErrorField()
+    {
+        $entity = new Entity([
+            'name' => 'larry'
+        ]);
+
+        $table = TableRegistry::get('Authors');
+        $rules = $table->rulesChecker();
+        $rules->add(function () {
+            return 'So much nope';
+        });
+
+        $this->assertFalse($table->save($entity));
+        $this->assertEmpty($entity->errors());
+    }
+
+    /**
      * Tests that using existsIn for a hasMany association will not be called
      * as the foreign key for the association was automatically validated already.
      *
