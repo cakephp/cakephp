@@ -19,6 +19,7 @@ use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
 use Locale;
+use RuntimeException;
 
 /**
  * A generic translations package factory that will load translations files
@@ -132,7 +133,7 @@ class MessagesFileLoader
         $class = App::classname($name, 'I18n\Parser', 'FileParser');
 
         if (!$class) {
-            throw new \RuntimeException(sprintf('Could not find class %s', "{$name}FileParser"));
+            throw new RuntimeException(sprintf('Could not find class %s', "{$name}FileParser"));
         }
 
         $messages = (new $class)->parse($file);

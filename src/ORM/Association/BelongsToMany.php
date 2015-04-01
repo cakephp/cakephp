@@ -20,6 +20,7 @@ use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use RuntimeException;
 
 /**
  * Represents an M - N relationship where there exists a junction - or join - table
@@ -312,7 +313,7 @@ class BelongsToMany extends Association
 
         foreach ($fetchQuery->all() as $result) {
             if (!isset($result[$property])) {
-                throw new \RuntimeException(sprintf(
+                throw new RuntimeException(sprintf(
                     '"%s" is missing from the belongsToMany results. Results cannot be created.',
                     $property
                 ));

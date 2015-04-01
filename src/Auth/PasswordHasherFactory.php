@@ -15,6 +15,7 @@
 namespace Cake\Auth;
 
 use Cake\Core\App;
+use RuntimeException;
 
 /**
  * Builds password hashing objects
@@ -45,12 +46,12 @@ class PasswordHasherFactory
 
         $className = App::className($class, 'Auth', 'PasswordHasher');
         if (!$className) {
-            throw new \RuntimeException(sprintf('Password hasher class "%s" was not found.', $class));
+            throw new RuntimeException(sprintf('Password hasher class "%s" was not found.', $class));
         }
 
         $hasher = new $className($config);
         if (!($hasher instanceof AbstractPasswordHasher)) {
-            throw new \RuntimeException('Password hasher must extend AbstractPasswordHasher class.');
+            throw new RuntimeException('Password hasher must extend AbstractPasswordHasher class.');
         }
 
         return $hasher;

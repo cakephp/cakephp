@@ -22,6 +22,7 @@ use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use RuntimeException;
 
 /**
  * An Association is a relationship established between two tables and is used
@@ -501,7 +502,7 @@ abstract class Association
         if (!empty($options['queryBuilder'])) {
             $dummy = $options['queryBuilder']($dummy);
             if (!($dummy instanceof Query)) {
-                throw new \RuntimeException(sprintf(
+                throw new RuntimeException(sprintf(
                     'Query builder for association "%s" did not return a query',
                     $this->name()
                 ));
@@ -753,7 +754,7 @@ abstract class Association
 
         if (count($foreignKey) !== count($primaryKey)) {
             $msg = 'Cannot match provided foreignKey for "%s", got "(%s)" but expected foreign key for "(%s)"';
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 $msg,
                 $this->_name,
                 implode(', ', $foreignKey),
