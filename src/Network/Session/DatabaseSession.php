@@ -121,10 +121,7 @@ class DatabaseSession implements SessionHandlerInterface
         $record = compact('data', 'expires');
         $record[$this->_table->primaryKey()] = $id;
         $result = $this->_table->save(new Entity($record));
-        if ($result) {
-            return $result->toArray();
-        }
-        return false;
+        return (bool)$result;
     }
 
     /**
@@ -135,7 +132,7 @@ class DatabaseSession implements SessionHandlerInterface
      */
     public function destroy($id)
     {
-        return $this->_table->delete(new Entity(
+        return (bool)$this->_table->delete(new Entity(
             [$this->_table->primaryKey() => $id],
             ['markNew' => false]
         ));
@@ -149,6 +146,7 @@ class DatabaseSession implements SessionHandlerInterface
      */
     public function gc($maxlifetime)
     {
-        return $this->_table->deleteAll(['expires <' => time() - $maxlifetime]);
+        $this->_table->deleteAll(['expires <' => time() - $maxlifetime]);
+        return true;
     }
 }
