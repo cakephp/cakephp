@@ -6141,9 +6141,6 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->postLink('Delete', '/posts/delete', ['data' => ['id' => 1]]);
-        $this->assertContains('<input type="hidden" name="id" value="1"', $result);
-
         $result = $this->Form->postLink('Delete', '/posts/delete/1', ['target' => '_blank']);
         $expected = [
             'form' => [
@@ -6174,6 +6171,27 @@ class FormHelperTest extends TestCase
             '/a'
         ];
         $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Test postLink with additional data.
+     *
+     * @return void
+     */
+    public function testPostLinkWithData()
+    {
+        $result = $this->Form->postLink('Delete', '/posts/delete', ['data' => ['id' => 1]]);
+        $this->assertContains('<input type="hidden" name="id" value="1"', $result);
+
+        $entity = new Entity(['name' => 'no show'], ['source' => 'Articles']);
+        $this->Form->create($entity);
+        $this->Form->end();
+        $result = $this->Form->postLink('Delete', '/posts/delete', ['data' => ['name' => 'show']]);
+        $this->assertContains(
+            '<input type="hidden" name="name" value="show"',
+            $result,
+            'should not contain entity data.'
+        );
     }
 
     /**
