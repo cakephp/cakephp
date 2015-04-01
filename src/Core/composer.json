@@ -9,7 +9,7 @@
     }
     ],
     "require": {
-        "cakephp/utility": "dev-master"
+        "cakephp/utility": "~3.0"
     },
     "autoload": {
         "psr-4": {

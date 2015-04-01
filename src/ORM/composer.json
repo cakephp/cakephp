@@ -14,16 +14,16 @@
         }
     },
     "require": {
-        "cakephp/collection": "dev-master",
-        "cakephp/core": "dev-master",
-        "cakephp/datasource": "dev-master",
-        "cakephp/database": "dev-master",
-        "cakephp/event": "dev-master",
-        "cakephp/utility": "dev-master",
-        "cakephp/validation": "dev-master"
+        "cakephp/collection": "~3.0",
+        "cakephp/core": "~3.0",
+        "cakephp/datasource": "~3.0",
+        "cakephp/database": "~3.0",
+        "cakephp/event": "~3.0",
+        "cakephp/utility": "~3.0",
+        "cakephp/validation": "~3.0"
     },
     "suggest": {
-        "cakephp/i18n": "dev-master"
+        "cakephp/i18n": "~3.0"
     },
-    "minimum-stability": "beta"
+    "minimum-stability": "dev"
 }

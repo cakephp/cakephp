@@ -15,7 +15,7 @@
         "files": ["functions.php"]
     },
     "require": {
-        "cakephp/core": "dev-master",
+        "cakephp/core": "~3.0",
         "ext-intl": "*",
         "nesbot/Carbon": "~1.13",
         "aura/intl": "1.1.*"

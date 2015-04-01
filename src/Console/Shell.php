@@ -226,6 +226,7 @@ class Shell
         $this->hr();
         $this->out(sprintf('App : %s', APP_DIR));
         $this->out(sprintf('Path: %s', APP));
+        $this->out(sprintf('PHP : %s', phpversion()));
         $this->hr();
     }
 

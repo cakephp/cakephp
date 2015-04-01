@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "cakephp/core": "dev-master"
+        "cakephp/core": "~3.0"
     },
     "suggest": {
         "cakephp/utility": "Require this if you decide to use EntityTrait",

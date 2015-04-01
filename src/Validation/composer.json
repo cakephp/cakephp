@@ -14,7 +14,7 @@
         }
     },
     "require": {
-        "cakephp/utility": "dev-master"
+        "cakephp/utility": "~3.0"
     },
     "minimum-stability": "dev"
 }
