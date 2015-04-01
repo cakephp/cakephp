@@ -174,6 +174,7 @@ class InflectorTest extends TestCase
         $this->assertEquals('metadata', Inflector::singularize('metadata'));
         $this->assertEquals('files_metadata', Inflector::singularize('files_metadata'));
         $this->assertEquals('address', Inflector::singularize('addresses'));
+        $this->assertEquals('sieve', Inflector::singularize('sieves'));
         $this->assertEquals('', Inflector::singularize(''));
     }
 
@@ -251,6 +252,7 @@ class InflectorTest extends TestCase
         $this->assertEquals('files_metadata', Inflector::pluralize('files_metadata'));
         $this->assertEquals('stadia', Inflector::pluralize('stadia'));
         $this->assertEquals('Addresses', Inflector::pluralize('Address'));
+        $this->assertEquals('sieves', Inflector::pluralize('sieve'));
         $this->assertEquals('', Inflector::pluralize(''));
     }
 
