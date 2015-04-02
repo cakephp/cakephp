@@ -66,25 +66,27 @@ abstract class ObjectRegistry
      * @param array $config Additional settings to use when loading the object.
      * @return mixed
      */
-    public function load($objectName, $config = [])
+    public function load($objectName, array $config = [])
     {
         list(, $name) = pluginSplit($objectName);
-        $loaded = isset($this->_loaded[$name]);
-        if ($loaded && !empty($config)) {
-            $this->_checkDuplicate($name, $config);
-        }
-        if ($loaded) {
+        if (isset($this->_loaded[$name])) {
+            if (!empty($config)) {
+                $this->_checkDuplicate($name, $config);
+            }
+
             return $this->_loaded[$name];
         }
 
-        if (is_array($config) && isset($config['className'])) {
+        if (isset($config['className'])) {
             $objectName = $config['className'];
         }
+
         $className = $this->_resolveClassName($objectName);
         if (!$className || (is_string($className) && !class_exists($className))) {
             list($plugin, $objectName) = pluginSplit($objectName);
             $this->_throwMissingClassError($objectName, $plugin);
         }
+
         $instance = $this->_create($className, $name, $config);
         $this->_loaded[$name] = $instance;
         return $instance;
@@ -110,30 +112,26 @@ abstract class ObjectRegistry
     {
         $existing = $this->_loaded[$name];
         $msg = sprintf('The "%s" alias has already been loaded', $name);
-        $hasConfig = false;
-        if (method_exists($existing, 'config')) {
-            $hasConfig = true;
-        }
-        if (!$hasConfig) {
+        if (!method_exists($existing, 'config')) {
             throw new RuntimeException($msg);
         }
-        if (empty($config)) {
-            return;
-        }
+
         $existingConfig = $existing->config();
         unset($config['enabled'], $existingConfig['enabled']);
 
         $fail = false;
         foreach ($config as $key => $value) {
-            if (!array_key_exists($key, $existingConfig)) {
+            if (!isset($existingConfig[$key])) {
                 $fail = true;
                 break;
-            }
-            if (isset($existingConfig[$key]) && $existingConfig[$key] !== $value) {
-                $fail = true;
-                break;
+            } else {
+                if ($existingConfig[$key] !== $value) {
+                    $fail = true;
+                    break;
+                }
             }
         }
+
         if ($fail) {
             $msg .= ' with the following config: ';
             $msg .= var_export($existingConfig, true);
@@ -281,7 +279,7 @@ abstract class ObjectRegistry
         list(, $name) = pluginSplit($objectName);
         $this->unload($objectName);
         if (isset($this->_eventManager)) {
-            $this->eventManager()->attach($object);
+            $this->eventManager()->on($object);
         }
         $this->_loaded[$name] = $object;
     }
