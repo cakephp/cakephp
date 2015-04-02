@@ -53,7 +53,7 @@ class PasswordHasherFactory
         if (!($hasher instanceof AbstractPasswordHasher)) {
             throw new RuntimeException('Password hasher must extend AbstractPasswordHasher class.');
         }
-˙
+
         return $hasher;
     }
 }
