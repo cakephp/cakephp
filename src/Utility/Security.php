@@ -48,16 +48,6 @@ class Security
     protected static $_instance;
 
     /**
-     * Generate authorization hash.
-     *
-     * @return string Hash
-     */
-    public static function generateAuthKey()
-    {
-        return Security::hash(Text::uuid());
-    }
-
-    /**
      * Create a hash from string using given method.
      *
      * @param string $string String to hash
