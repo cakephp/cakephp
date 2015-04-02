@@ -338,6 +338,19 @@ class Marshaller
     }
 
     /**
+     * Loads a list of belongs to many from ids.
+     *
+     * @param Association $assoc The association class for the belongsToMany association.
+     * @param array $ids The list of ids to load.
+     * @return array An array of entities.
+     * @deprecated Use _loadAssociatedByIds()
+     */
+    protected function _loadBelongsToMany($assoc, $ids)
+    {
+        return $this->_loadAssociatedByIds($assoc, $ids);
+    }
+
+    /**
      * Merges `$data` into `$entity` and recursively does the same for each one of
      * the association names passed in `$options`. When merging associations, if an
      * entity is not present in the parent entity for a given association, a new one
