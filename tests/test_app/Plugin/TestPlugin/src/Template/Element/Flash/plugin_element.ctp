@@ -1,1 +1,1 @@
-<?= 'this is the plugin element'; ?>
+this is the plugin element
