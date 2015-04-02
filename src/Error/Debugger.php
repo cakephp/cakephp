@@ -235,7 +235,7 @@ class Debugger
      */
     public static function formatTrace($backtrace, $options = [])
     {
-        if (is_a($backtrace, '\Exception')) {
+        if ($backtrace instanceof \Exception) {
             $backtrace = $backtrace->getTrace();
         }
         $self = Debugger::getInstance();
