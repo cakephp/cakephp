@@ -87,6 +87,75 @@ class TableRegistry
     }
 
     /**
+     * Stores a list of options to be used when instantiating an object
+     * with a matching alias.
+     *
+     * @param string|null $alias Name of the alias
+     * @param array|null $options list of options for the alias
+     * @return array The config data.
+     */
+    public static function config($alias = null, $options = null)
+    {
+        return static::instance()->config($alias, $options);
+    }
+
+    /**
+     * Get a table instance from the registry.
+     *
+     * @param string $alias The alias name you want to get.
+     * @param array $options The options you want to build the table with.
+     * @return \Cake\ORM\Table
+     */
+    public static function get($alias, array $options = [])
+    {
+        return static::instance()->get($alias, $options);
+    }
+
+    /**
+     * Check to see if an instance exists in the registry.
+     *
+     * @param string $alias The alias to check for.
+     * @return bool
+     */
+    public static function exists($alias)
+    {
+        return static::instance()->exists($alias);
+    }
+
+    /**
+     * Set an instance.
+     *
+     * @param string $alias The alias to set.
+     * @param \Cake\ORM\Table $object The table to set.
+     * @return \Cake\ORM\Table
+     */
+    public static function set($alias, Table $object)
+    {
+        return static::instance()->set($alias, $object);
+    }
+
+    /**
+     * Removes an instance from the registry.
+     *
+     * @param string $alias The alias to remove.
+     * @return void
+     */
+    public static function remove($alias)
+    {
+        static::instance()->remove($alias);
+    }
+
+    /**
+     * Clears the registry of configuration and instances.
+     *
+     * @return void
+     */
+    public static function clear()
+    {
+        static::instance()->clear();
+    }
+
+    /**
      * Proxy for static calls on a singleton.
      *
      * @param string $name Method name.
