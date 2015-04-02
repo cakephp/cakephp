@@ -16,6 +16,7 @@ namespace Cake\Network;
 
 use Cake\Core\App;
 use Cake\Utility\Hash;
+use RuntimeException;
 use SessionHandlerInterface;
 
 /**
@@ -275,7 +276,7 @@ class Session
      *
      * @param array $options Ini options to set.
      * @return void
-     * @throws \RuntimeException if any directive could not be set
+     * @throws RuntimeException if any directive could not be set
      */
     public function options(array $options)
     {
@@ -285,7 +286,7 @@ class Session
 
         foreach ($options as $setting => $value) {
             if (ini_set($setting, $value) === false) {
-                throw new \RuntimeException(
+                throw new RuntimeException(
                     sprintf('Unable to configure the session, setting %s failed.', $setting)
                 );
             }
@@ -296,7 +297,7 @@ class Session
      * Starts the Session.
      *
      * @return bool True if session was started
-     * @throws \RuntimeException if the session was already started
+     * @throws RuntimeException if the session was already started
      */
     public function start()
     {
@@ -310,7 +311,7 @@ class Session
         }
 
         if (session_status() === \PHP_SESSION_ACTIVE) {
-            throw new \RuntimeException('Session was already started');
+            throw new RuntimeException('Session was already started');
         }
 
         if (ini_get('session.use_cookies') && headers_sent($file, $line)) {
@@ -318,7 +319,7 @@ class Session
         }
 
         if (!session_start()) {
-            throw new \RuntimeException('Could not start the session');
+            throw new RuntimeException('Could not start the session');
         }
 
         $this->_started = true;

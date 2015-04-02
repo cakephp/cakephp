@@ -22,6 +22,7 @@ use Cake\ORM\EagerLoader;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
 use JsonSerializable;
+use RuntimeException;
 
 /**
  * Extends the base Query class to provide new methods related to association
@@ -570,12 +571,12 @@ class Query extends DatabaseQuery implements JsonSerializable
      * {@inheritDoc}
      *
      * @return $this
-     * @throws \RuntimeException When you attempt to cache a non-select query.
+     * @throws RuntimeException When you attempt to cache a non-select query.
      */
     public function cache($key, $config = 'default')
     {
         if ($this->_type !== 'select' && $this->_type !== null) {
-            throw new \RuntimeException('You cannot cache the results of non-select queries.');
+            throw new RuntimeException('You cannot cache the results of non-select queries.');
         }
         return $this->_cache($key, $config);
     }
@@ -583,12 +584,12 @@ class Query extends DatabaseQuery implements JsonSerializable
     /**
      * {@inheritDoc}
      *
-     * @throws \RuntimeException if this method is called on a non-select Query.
+     * @throws RuntimeException if this method is called on a non-select Query.
      */
     public function all()
     {
         if ($this->_type !== 'select' && $this->_type !== null) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 'You cannot call all() on a non-select query. Use execute() instead.'
             );
         }

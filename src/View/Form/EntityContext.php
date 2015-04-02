@@ -20,6 +20,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use Cake\View\Form\ContextInterface;
+use RuntimeException;
 use Traversable;
 
 /**
@@ -112,7 +113,7 @@ class EntityContext implements ContextInterface
      * like arrays, Collection objects and ResultSets.
      *
      * @return void
-     * @throws \RuntimeException When a table object cannot be located/inferred.
+     * @throws RuntimeException When a table object cannot be located/inferred.
      */
     protected function _prepare()
     {
@@ -137,7 +138,7 @@ class EntityContext implements ContextInterface
         }
 
         if (!is_object($table)) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 'Unable to find table class for current entity'
             );
         }
@@ -253,7 +254,7 @@ class EntityContext implements ContextInterface
      * @param array|null $path Each one of the parts in a path for a field name
      *  or null to get the entity passed in contructor context.
      * @return \Cake\DataSource\EntityInterface|\Traversable|array|bool
-     * @throws \RuntimeException When properties cannot be read.
+     * @throws RuntimeException When properties cannot be read.
      */
     public function entity($path = null)
     {
@@ -296,7 +297,7 @@ class EntityContext implements ContextInterface
             }
             $entity = $next;
         }
-        throw new \RuntimeException(sprintf(
+        throw new RuntimeException(sprintf(
             'Unable to fetch property "%s"',
             implode(".", $path)
         ));

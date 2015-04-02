@@ -22,6 +22,7 @@ use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use RuntimeException;
 
 /**
  * An Association is a relationship established between two tables and is used
@@ -470,7 +471,7 @@ abstract class Association
      * @param Query $query the query to be altered to include the target table data
      * @param array $options Any extra options or overrides to be taken in account
      * @return void
-     * @throws \RuntimeException if the query builder passed does not return a query
+     * @throws RuntimeException if the query builder passed does not return a query
      * object
      */
     public function attachTo(Query $query, array $options = [])
@@ -501,7 +502,7 @@ abstract class Association
         if (!empty($options['queryBuilder'])) {
             $dummy = $options['queryBuilder']($dummy);
             if (!($dummy instanceof Query)) {
-                throw new \RuntimeException(sprintf(
+                throw new RuntimeException(sprintf(
                     'Query builder for association "%s" did not return a query',
                     $this->name()
                 ));
@@ -740,7 +741,7 @@ abstract class Association
      *
      * @param array $options list of options passed to attachTo method
      * @return array
-     * @throws \RuntimeException if the number of columns in the foreignKey do not
+     * @throws RuntimeException if the number of columns in the foreignKey do not
      * match the number of columns in the source table primaryKey
      */
     protected function _joinCondition($options)
@@ -753,7 +754,7 @@ abstract class Association
 
         if (count($foreignKey) !== count($primaryKey)) {
             $msg = 'Cannot match provided foreignKey for "%s", got "(%s)" but expected foreign key for "(%s)"';
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 $msg,
                 $this->_name,
                 implode(', ', $foreignKey),
@@ -803,7 +804,7 @@ abstract class Association
      *
      * @param string $property the property name
      * @return \Cake\ORM\Association
-     * @throws \RuntimeException if no association with such name exists
+     * @throws RuntimeException if no association with such name exists
      */
     public function __get($property)
     {

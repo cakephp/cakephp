@@ -38,6 +38,7 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
+use RuntimeException;
 
 /**
  * Represents a single database table.
@@ -589,7 +590,7 @@ class Table implements RepositoryInterface, EventListenerInterface
      * @param string $name The name of the behavior. Can be a short class reference.
      * @param array $options The options for the behavior to use.
      * @return void
-     * @throws \RuntimeException If a behavior is being reloaded.
+     * @throws RuntimeException If a behavior is being reloaded.
      * @see \Cake\ORM\Behavior
      */
     public function addBehavior($name, array $options = [])
@@ -1390,7 +1391,7 @@ class Table implements RepositoryInterface, EventListenerInterface
      * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
      * @param \ArrayObject $options the options to use for the save operation
      * @return \Cake\Datasource\EntityInterface|bool
-     * @throws \RuntimeException When an entity is missing some of the primary keys.
+     * @throws RuntimeException When an entity is missing some of the primary keys.
      */
     protected function _processSave($entity, $options)
     {
@@ -1471,7 +1472,7 @@ class Table implements RepositoryInterface, EventListenerInterface
      * @param \Cake\Datasource\EntityInterface $entity the subject entity from were $data was extracted
      * @param array $data The actual data that needs to be saved
      * @return \Cake\Datasource\EntityInterface|bool
-     * @throws \RuntimeException if not all the primary keys where supplied or could
+     * @throws RuntimeException if not all the primary keys where supplied or could
      * be generated when the table has composite primary keys. Or when the table has no primary key.
      */
     protected function _insert($entity, $data)
@@ -1482,7 +1483,7 @@ class Table implements RepositoryInterface, EventListenerInterface
                 'Cannot insert row in "%s" table, it has no primary key.',
                 $this->table()
             );
-            throw new \RuntimeException($msg);
+            throw new RuntimeException($msg);
         }
         $keys = array_fill(0, count($primary), null);
         $id = (array)$this->_newId($primary) + $keys;
@@ -1500,7 +1501,7 @@ class Table implements RepositoryInterface, EventListenerInterface
                         implode(', ', $filteredKeys + $entity->extract(array_keys($primary))),
                         implode(', ', array_keys($primary))
                     );
-                    throw new \RuntimeException($msg);
+                    throw new RuntimeException($msg);
                 }
             }
         }
@@ -1845,13 +1846,13 @@ class Table implements RepositoryInterface, EventListenerInterface
      *
      * @param string $property the association name
      * @return \Cake\ORM\Association
-     * @throws \RuntimeException if no association with such name exists
+     * @throws RuntimeException if no association with such name exists
      */
     public function __get($property)
     {
         $association = $this->_associations->get($property);
         if (!$association) {
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 'Table "%s" is not associated with "%s"',
                 get_class($this),
                 $property

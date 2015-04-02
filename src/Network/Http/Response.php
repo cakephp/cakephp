@@ -14,6 +14,7 @@
 namespace Cake\Network\Http;
 
 use Cake\Network\Http\Message;
+use RuntimeException;
 
 /**
  * Implements methods for HTTP responses.
@@ -141,12 +142,12 @@ class Response extends Message
      *
      * @param string $body Gzip encoded body.
      * @return string
-     * @throws \RuntimeException When attempting to decode gzip content without gzinflate.
+     * @throws RuntimeException When attempting to decode gzip content without gzinflate.
      */
     protected function _decodeGzipBody($body)
     {
         if (!function_exists('gzinflate')) {
-            throw new \RuntimeException('Cannot decompress gzip response body without gzinflate()');
+            throw new RuntimeException('Cannot decompress gzip response body without gzinflate()');
         }
         $offset = 0;
         // Look for gzip 'signature'

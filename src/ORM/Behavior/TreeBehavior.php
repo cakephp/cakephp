@@ -20,6 +20,7 @@ use Cake\Event\Event;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
+use RuntimeException;
 
 /**
  * Makes the table to which this is attached to behave like a nested set and
@@ -79,7 +80,7 @@ class TreeBehavior extends Behavior
      * @param \Cake\Event\Event $event The beforeSave event that was fired
      * @param \Cake\ORM\Entity $entity the entity that is going to be saved
      * @return void
-     * @throws \RuntimeException if the parent to set for the node is invalid
+     * @throws RuntimeException if the parent to set for the node is invalid
      */
     public function beforeSave(Event $event, Entity $entity)
     {
@@ -92,7 +93,7 @@ class TreeBehavior extends Behavior
 
         if ($isNew && $parent) {
             if ($entity->get($primaryKey[0]) == $parent) {
-                throw new \RuntimeException("Cannot set a node's parent as itself");
+                throw new RuntimeException("Cannot set a node's parent as itself");
             }
 
             $parentNode = $this->_getNode($parent);
@@ -224,7 +225,7 @@ class TreeBehavior extends Behavior
      * @param \Cake\ORM\Entity $entity The entity to re-parent
      * @param mixed $parent the id of the parent to set
      * @return void
-     * @throws \RuntimeException if the parent to set to the entity is not valid
+     * @throws RuntimeException if the parent to set to the entity is not valid
      */
     protected function _setParent($entity, $parent)
     {
@@ -237,7 +238,7 @@ class TreeBehavior extends Behavior
         $left = $entity->get($config['left']);
 
         if ($parentLeft > $left && $parentLeft < $right) {
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 'Cannot use node "%s" as parent for entity "%s"',
                 $parent,
                 $entity->get($this->_getPrimaryKey())
