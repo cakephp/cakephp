@@ -314,26 +314,24 @@ class FileEngine extends CacheEngine
                 continue;
             }
 
-            if ($file->isFile()) {
-                if ($threshold) {
-                    $mtime = $file->getMTime();
-                    if ($mtime > $threshold) {
-                        continue;
-                    }
-
-                    $expires = (int)$file->current();
-                    if ($expires > $now) {
-                        continue;
-                    }
+            if ($threshold) {
+                $mtime = $file->getMTime();
+                if ($mtime > $threshold) {
+                    continue;
                 }
 
-                $filePath = $file->getRealPath();
-                $file = null;
-
-                //@codingStandardsIgnoreStart
-                @unlink($filePath);
-                //@codingStandardsIgnoreEnd
+                $expires = (int)$file->current();
+                if ($expires > $now) {
+                    continue;
+                }
             }
+
+            $filePath = $file->getRealPath();
+            $file = null;
+
+            //@codingStandardsIgnoreStart
+            @unlink($filePath);
+            //@codingStandardsIgnoreEnd
         }
     }
 
