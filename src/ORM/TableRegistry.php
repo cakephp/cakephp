@@ -54,11 +54,11 @@ class TableRegistry
 {
 
     /**
-     * Singleton for static calls.
+     * LocatorInterface implementation instance.
      *
      * @var \Cake\ORM\Locator\LocatorInterface
      */
-    protected static $_instance;
+    protected static $_locator;
 
     /**
      * Default LocatorInterface implementation class.
@@ -68,22 +68,22 @@ class TableRegistry
     protected static $_defaultLocatorClass = 'Cake\ORM\Locator\TableLocator';
 
     /**
-     * Sets and returns singleton instance of a LocatorInterface.
+     * Sets and returns a singleton instance of LocatorInterface implementation.
      *
-     * @param \Cake\ORM\Locator\LocatorInterface $instance Instance of registry to set.
+     * @param \Cake\ORM\Locator\LocatorInterface $locator Instance of a locator to use.
      * @return \Cake\ORM\Locator\LocatorInterface
      */
-    public static function instance(LocatorInterface $instance = null)
+    public static function locator(LocatorInterface $locator = null)
     {
-        if ($instance) {
-            static::$_instance = $instance;
+        if ($locator) {
+            static::$_locator = $locator;
         }
 
-        if (!static::$_instance) {
-            static::$_instance = new static::$_defaultLocatorClass;
+        if (!static::$_locator) {
+            static::$_locator = new static::$_defaultLocatorClass;
         }
 
-        return static::$_instance;
+        return static::$_locator;
     }
 
     /**
@@ -96,7 +96,7 @@ class TableRegistry
      */
     public static function config($alias = null, $options = null)
     {
-        return static::instance()->config($alias, $options);
+        return static::locator()->config($alias, $options);
     }
 
     /**
@@ -108,7 +108,7 @@ class TableRegistry
      */
     public static function get($alias, array $options = [])
     {
-        return static::instance()->get($alias, $options);
+        return static::locator()->get($alias, $options);
     }
 
     /**
@@ -119,7 +119,7 @@ class TableRegistry
      */
     public static function exists($alias)
     {
-        return static::instance()->exists($alias);
+        return static::locator()->exists($alias);
     }
 
     /**
@@ -131,7 +131,7 @@ class TableRegistry
      */
     public static function set($alias, Table $object)
     {
-        return static::instance()->set($alias, $object);
+        return static::locator()->set($alias, $object);
     }
 
     /**
@@ -142,7 +142,7 @@ class TableRegistry
      */
     public static function remove($alias)
     {
-        static::instance()->remove($alias);
+        static::locator()->remove($alias);
     }
 
     /**
@@ -152,11 +152,11 @@ class TableRegistry
      */
     public static function clear()
     {
-        static::instance()->clear();
+        static::locator()->clear();
     }
 
     /**
-     * Proxy for static calls on a singleton.
+     * Proxy for static calls on a locator.
      *
      * @param string $name Method name.
      * @param array $arguments Method arguments.
@@ -164,6 +164,6 @@ class TableRegistry
      */
     public static function __callStatic($name, $arguments)
     {
-        return call_user_func_array([static::instance(), $name], $arguments);
+        return call_user_func_array([static::locator(), $name], $arguments);
     }
 }
