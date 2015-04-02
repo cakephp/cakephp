@@ -21,7 +21,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\AssociationsNormalizerTrait;
 use Cake\ORM\Table;
-use \RuntimeException;
+use RuntimeException;
 
 /**
  * Contains logic to convert array data into entities.

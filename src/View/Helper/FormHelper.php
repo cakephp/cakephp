@@ -35,6 +35,7 @@ use Cake\View\View;
 use Cake\View\Widget\WidgetRegistry;
 use DateTime;
 use Traversable;
+use RuntimeException;
 
 /**
  * Form helper library.
@@ -2480,7 +2481,7 @@ class FormHelper extends Helper
             $context = new NullContext($this->request, $data);
         }
         if (!($context instanceof ContextInterface)) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 'Context objects must implement Cake\View\Form\ContextInterface'
             );
         }

@@ -18,6 +18,7 @@ use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
 use Cake\View\Widget\SelectBoxWidget;
 use Cake\View\Widget\WidgetInterface;
+use RuntimeException;
 
 /**
  * Input widget class for generating a date time input widget.
@@ -154,7 +155,7 @@ class DateTimeWidget implements WidgetInterface
                 continue;
             }
             if (!is_array($data[$select])) {
-                throw new \RuntimeException(sprintf(
+                throw new RuntimeException(sprintf(
                     'Options for "%s" must be an array|false|null',
                     $select
                 ));

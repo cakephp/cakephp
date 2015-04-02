@@ -20,6 +20,7 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
+use RuntimeException;
 
 /**
  * Cookie Component.
@@ -399,7 +400,7 @@ class CookieComponent extends Component
                 'Invalid encryption cipher. Must be one of %s.',
                 implode(', ', $this->_validCiphers)
             );
-            throw new \RuntimeException($msg);
+            throw new RuntimeException($msg);
         }
     }
 
