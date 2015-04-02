@@ -1149,7 +1149,7 @@ class Table implements RepositoryInterface, EventListenerInterface
     /**
      * {@inheritDoc}
      */
-    public function updateAll($fields, $conditions)
+    public function updateAll($fields, $conditions = [])
     {
         $query = $this->query();
         $query->update()
