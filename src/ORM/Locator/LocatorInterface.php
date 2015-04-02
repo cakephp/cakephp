@@ -14,14 +14,14 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-namespace Cake\ORM\Registry;
+namespace Cake\ORM\Locator;
 
 use Cake\ORM\Table;
 
 /**
  * Registries for Table objects should implement this interface.
  */
-interface RegistryInterface
+interface LocatorInterface
 {
 
     /**

@@ -14,11 +14,11 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-namespace Cake\ORM\Registry;
+namespace Cake\ORM\Locator;
 
 use Cake\Core\App;
 use Cake\Datasource\ConnectionManager;
-use Cake\ORM\Registry\RegistryInterface;
+use Cake\ORM\Locator\LocatorInterface;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use RuntimeException;
@@ -26,7 +26,7 @@ use RuntimeException;
 /**
  * Provides a default registry/factory for Table objects.
  */
-class DefaultRegistry implements RegistryInterface
+class TableLocator implements LocatorInterface
 {
 
     /**

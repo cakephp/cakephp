@@ -16,7 +16,7 @@
 
 namespace Cake\ORM;
 
-use Cake\ORM\Registry\RegistryInterface;
+use Cake\ORM\Locator\LocatorInterface;
 
 /**
  * Provides a registry/factory for Table objects.
@@ -56,31 +56,31 @@ class TableRegistry
     /**
      * Singleton for static calls.
      *
-     * @var \Cake\ORM\Registry\RegistryInterface
+     * @var \Cake\ORM\Locator\LocatorInterface
      */
     protected static $_instance;
 
     /**
-     * Default RegistryInterface implementation class.
+     * Default LocatorInterface implementation class.
      *
      * @var string
      */
-    protected static $_defaultRegistryClass = 'Cake\ORM\Registry\DefaultRegistry';
+    protected static $_defaultLocatorClass = 'Cake\ORM\Locator\TableLocator';
 
     /**
-     * Sets and returns singleton instance of Registry.
+     * Sets and returns singleton instance of a LocatorInterface.
      *
-     * @param \Cake\ORM\Registry\RegistryInterface $instance Instance of registry to set.
-     * @return \Cake\ORM\Registry\RegistryInterface
+     * @param \Cake\ORM\Locator\LocatorInterface $instance Instance of registry to set.
+     * @return \Cake\ORM\Locator\LocatorInterface
      */
-    public static function instance(RegistryInterface $instance = null)
+    public static function instance(LocatorInterface $instance = null)
     {
         if ($instance) {
             static::$_instance = $instance;
         }
 
         if (!static::$_instance) {
-            static::$_instance = new static::$_defaultRegistryClass;
+            static::$_instance = new static::$_defaultLocatorClass;
         }
 
         return static::$_instance;
