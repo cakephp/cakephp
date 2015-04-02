@@ -276,20 +276,26 @@ class Marshaller
         }
         $data = array_values($data);
 
-        // Accept [ [id => 1], [id = 2] ] style.
         $primaryKey = array_flip($assoc->target()->schema()->primaryKey());
-        if (array_intersect_key($primaryKey, current($data)) === $primaryKey) {
-            $primaryCount = count($primaryKey);
-            $query = $assoc->find();
-            foreach ($data as $row) {
+        $records = [];
+
+        foreach ($data as $row) {
+            if (array_intersect_key($primaryKey, $row) === $primaryKey) {
+                if (!isset($query)) {
+                    $primaryCount = count($primaryKey);
+                    $query = $assoc->find();
+                }
                 $keys = array_intersect_key($row, $primaryKey);
                 if (count($keys) === $primaryCount) {
                     $query->orWhere($keys);
                 }
+            } else {
+                $records = array_merge($records, $this->many([$row], $options));
             }
-            $records = $query->toArray();
-        } else {
-            $records = $this->many($data, $options);
+        }
+
+        if (isset($query)) {
+            $records = array_merge($records, $query->toArray());
         }
 
         $joint = $assoc->junction();
