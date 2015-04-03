@@ -30,7 +30,7 @@ class PasswordHasherFactory
      * @param string|array $passwordHasher Name of the password hasher or an array with
      * at least the key `className` set to the name of the class to use
      * @return \Cake\Auth\AbstractPasswordHasher Password hasher instance
-     * @throws RuntimeException If password hasher class not found or
+     * @throws \RuntimeException If password hasher class not found or
      *   it does not extend Cake\Auth\AbstractPasswordHasher
      */
     public static function build($passwordHasher)

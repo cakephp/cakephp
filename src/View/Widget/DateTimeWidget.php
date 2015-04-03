@@ -119,7 +119,7 @@ class DateTimeWidget implements WidgetInterface
      * @param array $data Data to render with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string A generated select box.
-     * @throws RuntimeException When option data is invalid.
+     * @throws \RuntimeException When option data is invalid.
      */
     public function render(array $data, ContextInterface $context)
     {

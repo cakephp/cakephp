@@ -142,7 +142,7 @@ class Response extends Message
      *
      * @param string $body Gzip encoded body.
      * @return string
-     * @throws RuntimeException When attempting to decode gzip content without gzinflate.
+     * @throws \RuntimeException When attempting to decode gzip content without gzinflate.
      */
     protected function _decodeGzipBody($body)
     {

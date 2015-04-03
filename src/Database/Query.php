@@ -1204,7 +1204,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param array $columns The columns to insert into.
      * @param array $types A map between columns & their datatypes.
      * @return $this
-     * @throws RuntimeException When there are 0 columns.
+     * @throws \RuntimeException When there are 0 columns.
      */
     public function insert(array $columns, array $types = [])
     {

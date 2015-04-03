@@ -55,7 +55,7 @@ class MoFileParser
      * @param resource $resource The file to be parsed.
      *
      * @return array List of messages extracted from the file
-     * @throws RuntimeException If stream content has an invalid format.
+     * @throws \RuntimeException If stream content has an invalid format.
      */
     public function parse($resource)
     {

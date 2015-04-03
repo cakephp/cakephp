@@ -111,7 +111,7 @@ class WidgetRegistry
      *
      * @param array $widgets Array of widgets to use.
      * @return void
-     * @throws RuntimeException When class does not implement WidgetInterface.
+     * @throws \RuntimeException When class does not implement WidgetInterface.
      */
     public function add(array $widgets)
     {
@@ -137,7 +137,7 @@ class WidgetRegistry
      *
      * @param string $name The widget name to get.
      * @return WidgetInterface widget interface class.
-     * @throws RuntimeException when widget is undefined.
+     * @throws \RuntimeException when widget is undefined.
      */
     public function get($name)
     {
@@ -166,7 +166,7 @@ class WidgetRegistry
      *
      * @param mixed $widget The widget to get
      * @return WidgetInterface
-     * @throws RuntimeException when class cannot be loaded or does not
+     * @throws \RuntimeException when class cannot be loaded or does not
      *   implement WidgetInterface.
      */
     protected function _resolveWidget($widget)

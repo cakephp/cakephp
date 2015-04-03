@@ -80,7 +80,7 @@ class TreeBehavior extends Behavior
      * @param \Cake\Event\Event $event The beforeSave event that was fired
      * @param \Cake\ORM\Entity $entity the entity that is going to be saved
      * @return void
-     * @throws RuntimeException if the parent to set for the node is invalid
+     * @throws \RuntimeException if the parent to set for the node is invalid
      */
     public function beforeSave(Event $event, Entity $entity)
     {
@@ -225,7 +225,7 @@ class TreeBehavior extends Behavior
      * @param \Cake\ORM\Entity $entity The entity to re-parent
      * @param mixed $parent the id of the parent to set
      * @return void
-     * @throws RuntimeException if the parent to set to the entity is not valid
+     * @throws \RuntimeException if the parent to set to the entity is not valid
      */
     protected function _setParent($entity, $parent)
     {

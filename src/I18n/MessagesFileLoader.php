@@ -102,7 +102,7 @@ class MessagesFileLoader
      * package containing the messages loaded from the file.
      *
      * @return \Aura\Intl\Package
-     * @throws RuntimeException if no file parser class could be found for the specified
+     * @throws \RuntimeException if no file parser class could be found for the specified
      * file extension.
      */
     public function __invoke()

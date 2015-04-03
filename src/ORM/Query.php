@@ -571,7 +571,7 @@ class Query extends DatabaseQuery implements JsonSerializable
      * {@inheritDoc}
      *
      * @return $this
-     * @throws RuntimeException When you attempt to cache a non-select query.
+     * @throws \RuntimeException When you attempt to cache a non-select query.
      */
     public function cache($key, $config = 'default')
     {
@@ -584,7 +584,7 @@ class Query extends DatabaseQuery implements JsonSerializable
     /**
      * {@inheritDoc}
      *
-     * @throws RuntimeException if this method is called on a non-select Query.
+     * @throws \RuntimeException if this method is called on a non-select Query.
      */
     public function all()
     {

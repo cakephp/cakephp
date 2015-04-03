@@ -471,7 +471,7 @@ abstract class Association
      * @param Query $query the query to be altered to include the target table data
      * @param array $options Any extra options or overrides to be taken in account
      * @return void
-     * @throws RuntimeException if the query builder passed does not return a query
+     * @throws \RuntimeException if the query builder passed does not return a query
      * object
      */
     public function attachTo(Query $query, array $options = [])
@@ -741,7 +741,7 @@ abstract class Association
      *
      * @param array $options list of options passed to attachTo method
      * @return array
-     * @throws RuntimeException if the number of columns in the foreignKey do not
+     * @throws \RuntimeException if the number of columns in the foreignKey do not
      * match the number of columns in the source table primaryKey
      */
     protected function _joinCondition($options)
@@ -804,7 +804,7 @@ abstract class Association
      *
      * @param string $property the property name
      * @return \Cake\ORM\Association
-     * @throws RuntimeException if no association with such name exists
+     * @throws \RuntimeException if no association with such name exists
      */
     public function __get($property)
     {

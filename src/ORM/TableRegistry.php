@@ -97,7 +97,7 @@ class TableRegistry
      * @param string|null $alias Name of the alias
      * @param array|null $options list of options for the alias
      * @return array The config data.
-     * @throws RuntimeException When you attempt to configure an existing table instance.
+     * @throws \RuntimeException When you attempt to configure an existing table instance.
      */
     public static function config($alias = null, $options = null)
     {

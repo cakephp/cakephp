@@ -391,7 +391,7 @@ class CookieComponent extends Component
      *
      * @param string $encrypt The cipher name.
      * @return void
-     * @throws RuntimeException When an invalid cipher is provided.
+     * @throws \RuntimeException When an invalid cipher is provided.
      */
     protected function _checkCipher($encrypt)
     {

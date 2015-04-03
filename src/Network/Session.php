@@ -276,7 +276,7 @@ class Session
      *
      * @param array $options Ini options to set.
      * @return void
-     * @throws RuntimeException if any directive could not be set
+     * @throws \RuntimeException if any directive could not be set
      */
     public function options(array $options)
     {
@@ -297,7 +297,7 @@ class Session
      * Starts the Session.
      *
      * @return bool True if session was started
-     * @throws RuntimeException if the session was already started
+     * @throws \RuntimeException if the session was already started
      */
     public function start()
     {

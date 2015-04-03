@@ -302,7 +302,7 @@ class BelongsToMany extends Association
      * @param \Cake\ORM\Query $fetchQuery The query to get results from
      * @param array $options The options passed to the eager loader
      * @return array
-     * @throws RuntimeException when the association property is not part of the results set.
+     * @throws \RuntimeException when the association property is not part of the results set.
      */
     protected function _buildResultMap($fetchQuery, $options)
     {
