@@ -530,6 +530,29 @@ class TimeTest extends TestCase
     }
 
     /**
+     * test formatting dates with offset style timezone
+     *
+     * @return void
+     */
+    public function testI18nFormatWithOffsetTimezone()
+    {
+        $time = new Time('2014-01-01T00:00:00+00');
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL);
+        $expected = 'Wednesday January 1 2014 12:00:00 AM GMT';
+        $this->assertTimeFormat($expected, $result);
+
+        $time = new Time('2014-01-01T00:00:00+09');
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL);
+        $expected = 'Wednesday January 1 2014 12:00:00 AM GMT+09:00';
+        $this->assertTimeFormat($expected, $result);
+
+        $time = new Time('2014-01-01T00:00:00-01:30');
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL);
+        $expected = 'Wednesday January 1 2014 12:00:00 AM GMT-01:30';
+        $this->assertTimeFormat($expected, $result);
+    }
+
+    /**
      * testListTimezones
      *
      * @return void
