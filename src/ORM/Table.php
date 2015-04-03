@@ -38,6 +38,7 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -1573,7 +1574,7 @@ class Table implements RepositoryInterface, EventListenerInterface
 
         if (!$entity->has($primaryColumns)) {
             $message = 'All primary key value(s) are needed for updating';
-            throw new \InvalidArgumentException($message);
+            throw new InvalidArgumentException($message);
         }
 
         $query = $this->query();
@@ -1671,7 +1672,7 @@ class Table implements RepositoryInterface, EventListenerInterface
         $primaryKey = (array)$this->primaryKey();
         if (!$entity->has($primaryKey)) {
             $msg = 'Deleting requires all primary key values.';
-            throw new \InvalidArgumentException($msg);
+            throw new InvalidArgumentException($msg);
         }
 
         if ($options['checkRules'] && !$this->checkRules($entity, RulesChecker::DELETE, $options)) {

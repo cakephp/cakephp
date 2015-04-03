@@ -569,7 +569,7 @@ class RouteBuilder
         }
         if (!is_callable($callback)) {
             $msg = 'Need a callable function/object to connect routes.';
-            throw new \InvalidArgumentException($msg);
+            throw new InvalidArgumentException($msg);
         }
 
         if ($this->_path !== '/') {

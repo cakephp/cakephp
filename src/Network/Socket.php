@@ -17,6 +17,7 @@ namespace Cake\Network;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Network\Exception\SocketException;
 use Cake\Validation\Validation;
+use InvalidArgumentException;
 
 /**
  * CakePHP network socket connection class.
@@ -375,7 +376,7 @@ class Socket
     public function enableCrypto($type, $clientOrServer = 'client', $enable = true)
     {
         if (!array_key_exists($type . '_' . $clientOrServer, $this->_encryptMethods)) {
-            throw new \InvalidArgumentException('Invalid encryption scheme chosen');
+            throw new InvalidArgumentException('Invalid encryption scheme chosen');
         }
         try {
             $enableCryptoResult = stream_socket_enable_crypto($this->connection, $enable, $this->_encryptMethods[$type . '_' . $clientOrServer]);

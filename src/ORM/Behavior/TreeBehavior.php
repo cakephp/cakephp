@@ -20,6 +20,7 @@ use Cake\Event\Event;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -343,7 +344,7 @@ class TreeBehavior extends Behavior
     public function findPath(Query $query, array $options)
     {
         if (empty($options['for'])) {
-            throw new \InvalidArgumentException("The 'for' key is required for find('path')");
+            throw new InvalidArgumentException("The 'for' key is required for find('path')");
         }
 
         $config = $this->config();
@@ -416,7 +417,7 @@ class TreeBehavior extends Behavior
         list($for, $direct) = [$options['for'], $options['direct']];
 
         if (empty($for)) {
-            throw new \InvalidArgumentException("The 'for' key is required for find('children')");
+            throw new InvalidArgumentException("The 'for' key is required for find('children')");
         }
 
         if ($query->clause('order') === null) {
