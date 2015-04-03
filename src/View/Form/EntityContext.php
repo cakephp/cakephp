@@ -20,6 +20,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use Cake\View\Form\ContextInterface;
+use RuntimeException;
 use Traversable;
 
 /**
@@ -137,7 +138,7 @@ class EntityContext implements ContextInterface
         }
 
         if (!is_object($table)) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 'Unable to find table class for current entity'
             );
         }
@@ -296,7 +297,7 @@ class EntityContext implements ContextInterface
             }
             $entity = $next;
         }
-        throw new \RuntimeException(sprintf(
+        throw new RuntimeException(sprintf(
             'Unable to fetch property "%s"',
             implode(".", $path)
         ));

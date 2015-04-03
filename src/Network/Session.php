@@ -16,6 +16,7 @@ namespace Cake\Network;
 
 use Cake\Core\App;
 use Cake\Utility\Hash;
+use RuntimeException;
 use SessionHandlerInterface;
 
 /**
@@ -285,7 +286,7 @@ class Session
 
         foreach ($options as $setting => $value) {
             if (ini_set($setting, $value) === false) {
-                throw new \RuntimeException(
+                throw new RuntimeException(
                     sprintf('Unable to configure the session, setting %s failed.', $setting)
                 );
             }
@@ -310,7 +311,7 @@ class Session
         }
 
         if (session_status() === \PHP_SESSION_ACTIVE) {
-            throw new \RuntimeException('Session was already started');
+            throw new RuntimeException('Session was already started');
         }
 
         if (ini_get('session.use_cookies') && headers_sent($file, $line)) {
@@ -318,7 +319,7 @@ class Session
         }
 
         if (!session_start()) {
-            throw new \RuntimeException('Could not start the session');
+            throw new RuntimeException('Could not start the session');
         }
 
         $this->_started = true;
