@@ -574,6 +574,12 @@ class Time extends Carbon implements JsonSerializable
             $pattern = $format;
         }
 
+        if (preg_match('/@calendar=(japanese|buddhist|chinese|persian|indian|islamic|hebrew|coptic|ethiopic)/', $locale)) {
+            $calendar = \IntlDateFormatter::TRADITIONAL;
+        } else {
+            $calendar = \IntlDateFormatter::GREGORIAN;
+        }
+
         $timezone = $date->getTimezone()->getName();
         $key = "{$locale}.{$dateFormat}.{$timeFormat}.{$timezone}.{$calendar}.{$pattern}";
 
