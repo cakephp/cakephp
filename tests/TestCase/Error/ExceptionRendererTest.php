@@ -664,7 +664,7 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer->controller->response = $response;
         $ExceptionRenderer->render();
         sort($ExceptionRenderer->controller->helpers);
-        $this->assertEquals(['Form', 'Html', 'Session'], $ExceptionRenderer->controller->helpers);
+        $this->assertEquals(['Form', 'Html'], $ExceptionRenderer->controller->helpers);
     }
 
     /**

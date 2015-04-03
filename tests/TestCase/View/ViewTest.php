@@ -1169,7 +1169,6 @@ class ViewTest extends TestCase
     public function testBeforeLayout()
     {
         $this->PostsController->helpers = [
-            'Session',
             'TestBeforeAfter' => ['className' => __NAMESPACE__ . '\TestBeforeAfterHelper'],
             'Html'
         ];
@@ -1186,7 +1185,6 @@ class ViewTest extends TestCase
     public function testAfterLayout()
     {
         $this->PostsController->helpers = [
-            'Session',
             'TestBeforeAfter' => ['className' => __NAMESPACE__ . '\TestBeforeAfterHelper'],
             'Html'
         ];
@@ -1207,7 +1205,7 @@ class ViewTest extends TestCase
      */
     public function testRenderLoadHelper()
     {
-        $this->PostsController->helpers = ['Session', 'Form', 'Number'];
+        $this->PostsController->helpers = ['Form', 'Number'];
         $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
 
         $result = $View->render('index', false);
@@ -1215,7 +1213,7 @@ class ViewTest extends TestCase
 
         $attached = $View->helpers()->loaded();
         // HtmlHelper is loaded in TestView::initialize()
-        $this->assertEquals(['Html', 'Session', 'Form', 'Number'], $attached);
+        $this->assertEquals(['Html', 'Form', 'Number'], $attached);
 
         $this->PostsController->helpers = ['Html', 'Form', 'Number', 'TestPlugin.PluggedHelper'];
         $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
@@ -1249,7 +1247,7 @@ class ViewTest extends TestCase
 
         $this->assertNull($View->render(false, 'ajax2'));
 
-        $this->PostsController->helpers = ['Session', 'Html'];
+        $this->PostsController->helpers = ['Html'];
         $this->PostsController->request->params['action'] = 'index';
         Configure::write('Cache.check', true);
 
@@ -1302,7 +1300,7 @@ class ViewTest extends TestCase
     public function testViewVarOverwritingLocalHelperVar()
     {
         $Controller = new ViewPostsController();
-        $Controller->helpers = ['Session', 'Html'];
+        $Controller->helpers = ['Html'];
         $Controller->set('html', 'I am some test html');
         $View = $Controller->createView();
         $result = $View->render('helper_overwrite', false);

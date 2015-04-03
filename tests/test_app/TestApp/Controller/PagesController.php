@@ -38,7 +38,7 @@ class PagesController extends AppController
      *
      * @var array
      */
-    public $helpers = ['Html', 'Session'];
+    public $helpers = ['Html'];
 
     /**
      * Displays a view
