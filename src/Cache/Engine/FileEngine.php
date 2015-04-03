@@ -294,11 +294,10 @@ class FileEngine extends CacheEngine
      */
     protected function _clearDirectory($path, $now, $threshold)
     {
-        $prefixLength = strlen($this->_config['prefix']);
-
         if (!is_dir($path)) {
             return;
         }
+        $prefixLength = strlen($this->_config['prefix']);
 
         $dir = dir($path);
         while (($entry = $dir->read()) !== false) {
@@ -314,12 +313,11 @@ class FileEngine extends CacheEngine
 
             if ($threshold) {
                 $mtime = $file->getMTime();
-
                 if ($mtime > $threshold) {
                     continue;
                 }
-                $expires = (int)$file->current();
 
+                $expires = (int)$file->current();
                 if ($expires > $now) {
                     continue;
                 }
@@ -395,9 +393,7 @@ class FileEngine extends CacheEngine
             }
             unset($path);
 
-            if (!$exists &&
-                !chmod($this->_File->getPathname(), (int)$this->_config['mask'])
-            ) {
+            if (!$exists && !chmod($this->_File->getPathname(), (int)$this->_config['mask'])) {
                 trigger_error(sprintf(
                     'Could not apply permission mask "%s" on cache file "%s"',
                     $this->_File->getPathname(),

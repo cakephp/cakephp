@@ -110,10 +110,7 @@ abstract class ObjectRegistry
     {
         $existing = $this->_loaded[$name];
         $msg = sprintf('The "%s" alias has already been loaded', $name);
-        $hasConfig = false;
-        if (method_exists($existing, 'config')) {
-            $hasConfig = true;
-        }
+        $hasConfig = method_exists($existing, 'config');
         if (!$hasConfig) {
             throw new RuntimeException($msg);
         }
