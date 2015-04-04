@@ -103,7 +103,11 @@ class PostgresSchema extends BaseSchema
         if ($col === 'char' || $col === 'character') {
             return ['type' => 'string', 'fixed' => true, 'length' => $length];
         }
-        if (strpos($col, 'char') !== false) {
+        // money is 'string' as it includes arbitrary text content
+        // before the number value.
+        if (strpos($col, 'char') !== false ||
+            strpos($col, 'money') !== false
+        ) {
             return ['type' => 'string', 'length' => $length];
         }
         if (strpos($col, 'text') !== false) {
@@ -116,7 +120,6 @@ class PostgresSchema extends BaseSchema
             return ['type' => 'float', 'length' => null];
         }
         if (strpos($col, 'numeric') !== false ||
-            strpos($col, 'money') !== false ||
             strpos($col, 'decimal') !== false
         ) {
             return ['type' => 'decimal', 'length' => null];

@@ -23,9 +23,6 @@ namespace TestApp\Controller;
 
 class TestsAppsController extends AppController
 {
-
-    public $uses = [];
-
     public $components = ['RequestHandler'];
 
     public function index()
