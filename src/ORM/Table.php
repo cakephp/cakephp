@@ -870,7 +870,6 @@ class Table implements RepositoryInterface, EventListenerInterface
      * - limit
      * - offset
      * - page
-     * - order
      * - group
      * - having
      * - contain
