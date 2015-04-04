@@ -138,10 +138,6 @@ SQL;
                 'DECIMAL(10,2)',
                 ['type' => 'decimal', 'length' => null]
             ],
-            [
-                'MONEY',
-                ['type' => 'decimal', 'length' => null]
-            ],
             // String
             [
                 'VARCHAR',
@@ -166,6 +162,10 @@ SQL;
             [
                 'CHARACTER(10)',
                 ['type' => 'string', 'fixed' => true, 'length' => 10]
+            ],
+            [
+                'MONEY',
+                ['type' => 'string', 'length' => null]
             ],
             // UUID
             [
