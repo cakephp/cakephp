@@ -22,6 +22,7 @@ use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -410,7 +411,7 @@ abstract class Association
     {
         if ($name !== null) {
             if (!in_array($name, $this->_validStrategies)) {
-                throw new \InvalidArgumentException(
+                throw new InvalidArgumentException(
                     sprintf('Invalid strategy "%s" was provided', $name)
                 );
             }

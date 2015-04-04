@@ -13,6 +13,7 @@
  */
 namespace Cake\Utility;
 
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -52,7 +53,7 @@ class Hash
             $parts = explode('.', $path);
         } else {
             if (!is_array($path)) {
-                throw new \InvalidArgumentException(sprintf(
+                throw new InvalidArgumentException(sprintf(
                     'Invalid Parameter %s, should be dot separated path or array.',
                     $path
                 ));
@@ -1125,7 +1126,7 @@ class Hash
         }
 
         if (!$return) {
-            throw new \InvalidArgumentException('Invalid data array to nest.');
+            throw new InvalidArgumentException('Invalid data array to nest.');
         }
 
         if ($options['root']) {

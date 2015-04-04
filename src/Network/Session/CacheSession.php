@@ -17,6 +17,7 @@
 namespace Cake\Network\Session;
 
 use Cake\Cache\Cache;
+use InvalidArgumentException;
 use SessionHandlerInterface;
 
 /**
@@ -46,7 +47,7 @@ class CacheSession implements SessionHandlerInterface
     public function __construct(array $config = [])
     {
         if (empty($config['config'])) {
-            throw new \InvalidArgumentException('The cache configuration name to use is required');
+            throw new InvalidArgumentException('The cache configuration name to use is required');
         }
         $this->_options = $config;
     }

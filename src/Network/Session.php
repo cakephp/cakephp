@@ -16,6 +16,7 @@ namespace Cake\Network;
 
 use Cake\Core\App;
 use Cake\Utility\Hash;
+use InvalidArgumentException;
 use RuntimeException;
 use SessionHandlerInterface;
 
@@ -251,14 +252,14 @@ class Session
 
         $className = App::className($class, 'Network/Session');
         if (!$className) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf('The class "%s" does not exist and cannot be used as a session engine', $class)
             );
         }
 
         $handler = new $className($options);
         if (!($handler instanceof SessionHandlerInterface)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'The chosen SessionHandler does not implement SessionHandlerInterface, it cannot be used as an engine.'
             );
         }

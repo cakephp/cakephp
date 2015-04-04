@@ -15,6 +15,7 @@
 namespace Cake\Database;
 
 use Cake\Database\Driver;
+use InvalidArgumentException;
 use PDO;
 
 /**
@@ -99,7 +100,7 @@ class Type
             return static::$_builtTypes[$name] = new static($name);
         }
         if (!isset(static::$_types[$name])) {
-            throw new \InvalidArgumentException(sprintf('Unknown type "%s"', $name));
+            throw new InvalidArgumentException(sprintf('Unknown type "%s"', $name));
         }
         return static::$_builtTypes[$name] = new static::$_types[$name]($name);
     }
