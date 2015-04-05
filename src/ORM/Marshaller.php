@@ -290,7 +290,7 @@ class Marshaller
                     $query->orWhere($keys);
                 }
             } else {
-                $records = array_merge($records, $this->many([$row], $options));
+                $records[] = $this->one($row, $options);
             }
         }
 
