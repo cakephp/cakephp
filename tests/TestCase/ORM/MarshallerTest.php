@@ -564,7 +564,6 @@ class MarshallerTest extends TestCase
      */
     public function testBelongsToManyWithMixedData()
     {
-
         $data = [
             'title' => 'My title',
             'body' => 'My content',
@@ -593,13 +592,18 @@ class MarshallerTest extends TestCase
             ]
         ]);
 
+        $this->assertEquals($data['tags'][0]['name'], $article->tags[0]->name);
+        $this->assertEquals($data['tags'][1]['name'], $article->tags[1]->name);
         $this->assertEquals($article->tags[2], $tags->get(1));
 
-        $tag_count = $tags->find()->count();
+        $this->assertEquals($article->tags[0]->isNew(), true);
+        $this->assertEquals($article->tags[1]->isNew(), true);
+        $this->assertEquals($article->tags[2]->isNew(), false);
+
+        $tagCount = $tags->find()->count();
         $articles->save($article);
 
-        $this->assertEquals($tag_count + 2, $tags->find()->count());
-
+        $this->assertEquals($tagCount + 2, $tags->find()->count());
     }
 
     /**
