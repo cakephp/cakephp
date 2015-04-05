@@ -19,6 +19,7 @@ use Cake\Controller\Controller;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\Configure;
+use Cake\Core\Exception\Exception as CakeException;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
 use Cake\Datasource\Exception\MissingDatasourceConfigException;
@@ -39,6 +40,7 @@ use Cake\View\Exception\MissingHelperException;
 use Cake\View\Exception\MissingLayoutException;
 use Cake\View\Exception\MissingTemplateException;
 use Exception;
+use RuntimeException;
 
 /**
  * BlueberryComponent class
@@ -589,14 +591,14 @@ class ExceptionRendererTest extends TestCase
                 500
             ],
             [
-                new \RuntimeException('another boom'),
+                new RuntimeException('another boom'),
                 [
                     '/Internal Error/'
                 ],
                 500
             ],
             [
-                new \Cake\Core\ExceptionException('base class'),
+                new CakeException('base class'),
                 ['/Internal Error/'],
                 500
             ]
