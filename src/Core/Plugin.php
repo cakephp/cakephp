@@ -15,8 +15,8 @@
 namespace Cake\Core;
 
 use Cake\Core\ClassLoader;
-use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Configure;
+use Cake\Core\Exception\MissingPluginException;
 use DirectoryIterator;
 
 /**
