@@ -36,7 +36,7 @@ class RoutesShell extends Shell
     {
         $output = [];
         foreach (Router::routes() as $route) {
-            $output[] = [$route->getName(), $route->template, $this->_stringifyDefaults($route->defaults)];
+            $output[] = [$route->getName(), $route->template, json_encode($route->defaults)];
         }
 
         $this->_outWithColumns($output);
@@ -52,7 +52,7 @@ class RoutesShell extends Shell
     {
         try {
             $route = Router::parse($url);
-            $this->_outWithColumns(['', $url, $this->_stringifyDefaults($route)]);
+            $this->_outWithColumns(['', $url, json_encode($route)]);
         } catch (MissingRouteException $e) {
             $this->err("<warning>'$url' did not match any routes.</warning>");
             return false;
@@ -77,6 +77,24 @@ class RoutesShell extends Shell
         }
     }
 
+    public function getOptionParser()
+    {
+        $parser = parent::getOptionParser();
+        $parser->description(
+                'Get the list of routes connected in this application. ' .
+                'This tool also lets you test URL generation and URL parsing.'
+            )->addSubcommand('check', [
+                'help' => 'Check a URL string against the routes. ' .
+                    'Will output the routing parameters the route resolves to.'
+            ])->addSubcommand('generate', [
+                'help' => 'Check a routing array agains the routes. ' .
+                    "Will output the URL if there is a match.\n\n" .
+                    "Routing parameters should be supplied in a key:value format. " .
+                    "For example `controller:Articles action:view 2`"
+            ]);
+        return $parser;
+    }
+
     /**
      * Split the CLI arguments into a hash.
      *
@@ -87,12 +105,12 @@ class RoutesShell extends Shell
     {
         $out = [];
         foreach ($args as $arg) {
-            if (strpos($arg, ':') === false) {
-                $this->err("<error>The '$arg' is malformed. It should be formated like `key:value`.");
-                continue;
+            if (strpos($arg, ':') !== false) {
+                list($key, $value) = explode(':', $arg);
+                $out[$key] = $value;
+            } else {
+                $out[] = $arg;
             }
-            list($key, $value) = explode(':', $arg);
-            $out[$key] = $value;
         }
         return $out;
     }
@@ -128,32 +146,5 @@ class RoutesShell extends Shell
         }
 
         $this->out();
-    }
-
-    /**
-     * Get defaults from the route object as a string
-     *
-     * @param array $defaults The defaults to use for creating a route array.
-     * @return string
-     */
-    protected function _stringifyDefaults($defaults)
-    {
-        $results = [];
-        if (!empty($defaults['controller'])) {
-            $results['controller'] = $defaults['controller'];
-        }
-        if (!empty($defaults['action'])) {
-            $results['action'] = $defaults['action'];
-        }
-        if (!empty($defaults[0])) {
-            $pass = [];
-            $i = 0;
-            while (!empty($defaults[$i])) {
-                $pass[$i] = $defaults[$i];
-                $i++;
-            }
-            $results['pass'] = $pass;
-        }
-        return json_encode($results);
     }
 }

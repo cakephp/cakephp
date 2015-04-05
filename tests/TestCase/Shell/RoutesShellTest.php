@@ -38,7 +38,7 @@ class RoutesShellTest extends TestCase
         $this->io = $this->getMock('Cake\Console\ConsoleIo');
 
         $this->shell = new RoutesShell($this->io);
-        Router::connect('/articles/:action', ['controller' => 'Articles']);
+        Router::connect('/articles/:action/*', ['controller' => 'Articles']);
         Router::connect('/bake/:controller/:action', ['plugin' => 'Bake']);
     }
 
@@ -73,7 +73,7 @@ class RoutesShellTest extends TestCase
             ->with($this->logicalAnd(
                 $this->stringContains('articles:_action'),
                 $this->stringContains('/articles/:action'),
-                $this->stringContains('{"controller":"Articles",')
+                $this->stringContains('"controller":"Articles",')
             ));
         $this->shell->main();
     }
@@ -89,7 +89,7 @@ class RoutesShellTest extends TestCase
             ->method('out')
             ->with($this->logicalAnd(
                 $this->stringContains('/articles/index'),
-                $this->stringContains('{"controller":"Articles",')
+                $this->stringContains('"controller":"Articles",')
             ));
         $this->shell->check('/articles/index');
     }
@@ -114,10 +114,19 @@ class RoutesShellTest extends TestCase
      */
     public function testGenerate()
     {
+        $this->io->expects($this->never())
+            ->method('err');
         $this->io->expects($this->at(0))
             ->method('out')
             ->with($this->stringContains('> /articles/index'));
+        $this->io->expects($this->at(1))
+            ->method('out')
+            ->with($this->stringContains('> /articles/view/2/3'));
+
         $this->shell->args = ['controller:Articles', 'action:index'];
+        $this->shell->generate();
+
+        $this->shell->args = ['controller:Articles', 'action:view', '2', '3'];
         $this->shell->generate();
     }
 
