@@ -42,8 +42,12 @@ class ApcEngine extends CacheEngine
      */
     public function init(array $config = [])
     {
+        if (!extension_loaded('apc')) {
+            return false;
+        }
+
         parent::init($config);
-        return function_exists('apc_dec');
+        return true;
     }
 
     /**

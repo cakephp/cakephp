@@ -54,17 +54,6 @@ class TimeTypeTest extends TestCase
     }
 
     /**
-     * Tests that passing invalid data will throw an exception
-     *
-     * @expectedException \InvalidArgumentException
-     * @return void
-     */
-    public function testToPHPError()
-    {
-        $this->type->toPHP('2001-01-04 10:11:12', $this->driver);
-    }
-
-    /**
      * Test converting to database format
      *
      * @return void

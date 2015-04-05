@@ -295,7 +295,7 @@ EXPECTED;
 ###########################
 
 EXPECTED;
-        if (php_sapi_name() === 'cli') {
+        if (PHP_SAPI === 'cli') {
             $expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 18);
         } else {
             $expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);
@@ -320,7 +320,7 @@ EXPECTED;
 ###########################
 
 EXPECTED;
-        if (php_sapi_name() === 'cli') {
+        if (PHP_SAPI === 'cli') {
             $expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 18);
         } else {
             $expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);

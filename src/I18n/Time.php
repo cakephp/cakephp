@@ -17,6 +17,7 @@ namespace Cake\I18n;
 use Carbon\Carbon;
 use IntlDateFormatter;
 use JsonSerializable;
+use RuntimeException;
 
 /**
  * Extends the built-in DateTime class to provide handy methods and locale-aware
@@ -584,11 +585,16 @@ class Time extends Carbon implements JsonSerializable
         $key = "{$locale}.{$dateFormat}.{$timeFormat}.{$timezone}.{$calendar}.{$pattern}";
 
         if (!isset(static::$_formatters[$key])) {
+            if ($timezone === '+00:00') {
+                $timezone = 'UTC';
+            } elseif ($timezone[0] === '+' || $timezone[0] === '-') {
+                $timezone = 'GMT' . $timezone;
+            }
             static::$_formatters[$key] = datefmt_create(
                 $locale,
                 $dateFormat,
                 $timeFormat,
-                $timezone === '+00:00' ? 'UTC' : $timezone,
+                $timezone,
                 $calendar,
                 $pattern
             );
@@ -712,7 +718,7 @@ class Time extends Carbon implements JsonSerializable
             static::$defaultLocale,
             $dateFormat,
             $timeFormat,
-            null,
+            date_default_timezone_get(),
             null,
             $pattern
         );

@@ -17,6 +17,7 @@ namespace Cake\ORM;
 use ArrayObject;
 use BadMethodCallException;
 use Cake\Core\App;
+use Cake\Database\Connection;
 use Cake\Database\Schema\Table as Schema;
 use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
@@ -37,6 +38,7 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -392,11 +394,12 @@ class Table implements RepositoryInterface, EventListenerInterface
      * @param \Cake\Database\Connection|null $conn The new connection instance
      * @return \Cake\Database\Connection
      */
-    public function connection($conn = null)
+    public function connection(Connection $conn = null)
     {
         if ($conn === null) {
             return $this->_connection;
         }
+
         return $this->_connection = $conn;
     }
 
@@ -868,7 +871,6 @@ class Table implements RepositoryInterface, EventListenerInterface
      * - limit
      * - offset
      * - page
-     * - order
      * - group
      * - having
      * - contain
@@ -1063,7 +1065,7 @@ class Table implements RepositoryInterface, EventListenerInterface
     /**
      * {@inheritDoc}
      *
-     * @throws Cake\Datasource\Exception\InvalidPrimaryKeyException When $primaryKey has an
+     * @throws \Cake\Datasource\Exception\InvalidPrimaryKeyException When $primaryKey has an
      *      incorrect number of elements.
      */
     public function get($primaryKey, $options = [])
@@ -1481,13 +1483,13 @@ class Table implements RepositoryInterface, EventListenerInterface
                 'Cannot insert row in "%s" table, it has no primary key.',
                 $this->table()
             );
-            throw new \RuntimeException($msg);
+            throw new RuntimeException($msg);
         }
         $keys = array_fill(0, count($primary), null);
         $id = (array)$this->_newId($primary) + $keys;
         $primary = array_combine($primary, $id);
         $filteredKeys = array_filter($primary, 'strlen');
-        $data = $filteredKeys + $data;
+        $data = $data + $filteredKeys;
 
         if (count($primary) > 1) {
             $schema = $this->schema();
@@ -1499,7 +1501,7 @@ class Table implements RepositoryInterface, EventListenerInterface
                         implode(', ', $filteredKeys + $entity->extract(array_keys($primary))),
                         implode(', ', array_keys($primary))
                     );
-                    throw new \RuntimeException($msg);
+                    throw new RuntimeException($msg);
                 }
             }
         }
@@ -1571,7 +1573,7 @@ class Table implements RepositoryInterface, EventListenerInterface
 
         if (!$entity->has($primaryColumns)) {
             $message = 'All primary key value(s) are needed for updating';
-            throw new \InvalidArgumentException($message);
+            throw new InvalidArgumentException($message);
         }
 
         $query = $this->query();
@@ -1669,7 +1671,7 @@ class Table implements RepositoryInterface, EventListenerInterface
         $primaryKey = (array)$this->primaryKey();
         if (!$entity->has($primaryKey)) {
             $msg = 'Deleting requires all primary key values.';
-            throw new \InvalidArgumentException($msg);
+            throw new InvalidArgumentException($msg);
         }
 
         if ($options['checkRules'] && !$this->checkRules($entity, RulesChecker::DELETE, $options)) {
@@ -1850,7 +1852,7 @@ class Table implements RepositoryInterface, EventListenerInterface
     {
         $association = $this->_associations->get($property);
         if (!$association) {
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 'Table "%s" is not associated with "%s"',
                 get_class($this),
                 $property

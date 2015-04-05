@@ -1,1 +1,1 @@
-<?= 'this is the test element'; ?>
+this is the test element

@@ -34,6 +34,7 @@ use Cake\View\StringTemplateTrait;
 use Cake\View\View;
 use Cake\View\Widget\WidgetRegistry;
 use DateTime;
+use RuntimeException;
 use Traversable;
 
 /**
@@ -80,6 +81,7 @@ class FormHelper extends Helper
      * @var array
      */
     protected $_defaultConfig = [
+        'idPrefix' => null,
         'errorClass' => 'form-error',
         'typeMap' => [
             'string' => 'text', 'datetime' => 'datetime', 'boolean' => 'checkbox',
@@ -227,6 +229,7 @@ class FormHelper extends Helper
 
         $this->widgetRegistry($registry, $widgets);
         $this->_addDefaultContextProviders();
+        $this->_idPrefix = $this->config('idPrefix');
     }
 
     /**
@@ -352,7 +355,9 @@ class FormHelper extends Helper
             'idPrefix' => null,
         ];
 
-        $this->_idPrefix = $options['idPrefix'];
+        if ($options['idPrefix'] !== null) {
+            $this->_idPrefix = $options['idPrefix'];
+        }
         $templater = $this->templater();
 
         if (!empty($options['templates'])) {
@@ -520,7 +525,7 @@ class FormHelper extends Helper
         $templater->pop();
         $this->requestType = null;
         $this->_context = null;
-        $this->_idPrefix = null;
+        $this->_idPrefix = $this->config('idPrefix');
         return $out;
     }
 
@@ -613,10 +618,14 @@ class FormHelper extends Helper
      * @param string|array $field Reference to field to be secured. Can be dot
      *   separated string to indicate nesting or array of fieldname parts.
      * @param mixed $value Field value, if value should not be tampered with.
-     * @return mixed|null Not used yet
+     * @return void
      */
     protected function _secure($lock, $field, $value = null)
     {
+        if (empty($field) && $field !== '0') {
+            return;
+        }
+
         if (is_string($field)) {
             $field = Hash::filter(explode('.', $field));
         }
@@ -1045,7 +1054,10 @@ class FormHelper extends Helper
      */
     protected function _groupTemplate($options)
     {
-        $groupTemplate = $options['options']['type'] === 'checkbox' ? 'checkboxFormGroup' : 'formGroup';
+        $groupTemplate = $options['options']['type'] . 'FormGroup';
+        if (!$this->templater()->get($groupTemplate)) {
+            $groupTemplate = 'formGroup';
+        }
         return $this->templater()->format($groupTemplate, [
             'input' => $options['input'],
             'label' => $options['label'],
@@ -2223,7 +2235,7 @@ class FormHelper extends Helper
         unset($options['interval'], $options['round']);
 
         if (!isset($options['val'])) {
-            $val = new \DateTime();
+            $val = new DateTime();
             $currentYear = $val->format('Y');
             if (isset($options['year']['end']) && $options['year']['end'] < $currentYear) {
                 $val->setDate($options['year']['end'], $val->format('n'), $val->format('j'));
@@ -2357,7 +2369,7 @@ class FormHelper extends Helper
                 $options['disabled'] === 'disabled' ||
                 (is_array($options['disabled']) &&
                     !empty($options['options']) &&
-                    array_diff($options['options'], $options['disabled']) === array()
+                    array_diff($options['options'], $options['disabled']) === []
                 )
             );
         }
@@ -2381,11 +2393,15 @@ class FormHelper extends Helper
      * fieldname parts like ['Model', 'field'] is returned.
      *
      * @param string $name The form inputs name attribute.
-     * @return string|array|null Dot separated string like Foo.bar, array of filename
-     *   params like ['Model', 'field'] or null if options does not contain name.
+     * @return array Array of field name params like ['Model.field'] or
+     *   ['Model', 'field'] for array fields or empty array if $name is empty.
      */
     protected function _secureFieldName($name)
     {
+        if (empty($name) && $name !== '0') {
+            return [];
+        }
+
         if (strpos($name, '[') === false) {
             return [$name];
         }
@@ -2465,7 +2481,7 @@ class FormHelper extends Helper
             $context = new NullContext($this->request, $data);
         }
         if (!($context instanceof ContextInterface)) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 'Context objects must implement Cake\View\Form\ContextInterface'
             );
         }

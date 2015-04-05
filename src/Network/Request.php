@@ -14,6 +14,7 @@
  */
 namespace Cake\Network;
 
+use ArrayAccess;
 use BadMethodCallException;
 use Cake\Core\Configure;
 use Cake\Network\Exception\MethodNotAllowedException;
@@ -28,7 +29,7 @@ use Cake\Utility\Hash;
  *
  * `$request['controller']` or `$request->controller`.
  */
-class Request implements \ArrayAccess
+class Request implements ArrayAccess
 {
 
     /**

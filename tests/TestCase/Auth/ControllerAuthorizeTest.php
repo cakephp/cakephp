@@ -46,12 +46,31 @@ class ControllerAuthorizeTest extends TestCase
     }
 
     /**
-     * @expectedException \PHPUnit_Framework_Error
      * @return void
      */
     public function testControllerTypeError()
     {
-        $this->auth->controller(new \StdClass());
+        $this->skipIf(PHP_VERSION_ID >= 70000);
+
+        $message = '/^Argument 1 passed to Cake\\\Auth\\\ControllerAuthorize::controller\(\) must be an instance of Cake\\\Controller\\\Controller, instance of stdClass given.*/';
+        $this->setExpectedExceptionRegExp('PHPUnit_Framework_Error', $message);
+        $this->auth->controller(new \stdClass());
+    }
+
+    /**
+     * @return void
+     */
+    public function testControllerTypeErrorPhp7()
+    {
+        $this->skipIf(PHP_VERSION_ID < 70000);
+
+        try {
+            $this->auth->controller(new \stdClass());
+            $this->fail();
+        } catch (\BaseException $e) {
+            $expectedMessage = 'Argument 1 passed to Cake\Auth\ControllerAuthorize::controller() must be an instance of Cake\Controller\Controller, instance of stdClass given';
+            $this->assertContains($expectedMessage, $e->getMessage());
+        }
     }
 
     /**

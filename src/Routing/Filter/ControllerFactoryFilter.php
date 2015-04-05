@@ -17,7 +17,6 @@ namespace Cake\Routing\Filter;
 use Cake\Core\App;
 use Cake\Event\Event;
 use Cake\Routing\DispatcherFilter;
-use Cake\Utility\Inflector;
 
 /**
  * A dispatcher filter that builds the controller to dispatch

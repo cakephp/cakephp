@@ -97,14 +97,9 @@ class DatabaseSessionTest extends TestCase
     public function testWrite()
     {
         $result = $this->storage->write('foo', 'Some value');
-        $expected = [
-            'id' => 'foo',
-            'data' => 'Some value',
-        ];
-        $expires = $result['expires'];
-        unset($result['expires']);
-        $this->assertEquals($expected, $result);
+        $this->assertTrue($result);
 
+        $expires = TableRegistry::get('Sessions')->get('foo')->expires;
         $expected = time() + ini_get('session.gc_maxlifetime');
         $this->assertWithinRange($expected, $expires, 1);
     }

@@ -594,6 +594,8 @@ class Router
                 unset($url['_ssl']);
             }
 
+            $url = static::_applyUrlFilters($url);
+
             if (!isset($url['_name'])) {
                 // Copy the current action if the controller is the current one.
                 if (empty($url['action']) &&
@@ -615,7 +617,6 @@ class Router
                 ];
             }
 
-            $url = static::_applyUrlFilters($url);
             $output = static::$_collection->match($url, static::$_requestContext + ['params' => $params]);
         } else {
             $plainString = (

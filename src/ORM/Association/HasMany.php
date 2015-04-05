@@ -20,6 +20,8 @@ use Cake\ORM\Association;
 use Cake\ORM\Association\DependentDeleteTrait;
 use Cake\ORM\Association\ExternalAssociationTrait;
 use Cake\ORM\Table;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * Represents an N - 1 relationship where the target side of the relationship
@@ -91,7 +93,7 @@ class HasMany extends Association
         if (!is_array($targetEntities) && !($targetEntities instanceof \Traversable)) {
             $name = $this->property();
             $message = sprintf('Could not save %s, it cannot be traversed', $name);
-            throw new \InvalidArgumentException($message);
+            throw new InvalidArgumentException($message);
         }
 
         $properties = array_combine(
@@ -138,7 +140,7 @@ class HasMany extends Association
         if ($options['foreignKey'] === false) {
             $msg = 'Cannot have foreignKey = false for hasMany associations. ' .
                    'You must provide a foreignKey column.';
-            throw new \RuntimeException($msg);
+            throw new RuntimeException($msg);
         }
 
         foreach ((array)$options['foreignKey'] as $key) {

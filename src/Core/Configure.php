@@ -166,11 +166,10 @@ class Configure
      */
     public static function consume($var)
     {
-        $simple = strpos($var, '.') === false;
-        if ($simple && !isset(static::$_values[$var])) {
-            return null;
-        }
-        if ($simple) {
+        if (strpos($var, '.') === false) {
+            if (!isset(static::$_values[$var])) {
+                return null;
+            }
             $value = static::$_values[$var];
             unset(static::$_values[$var]);
             return $value;
@@ -298,9 +297,6 @@ class Configure
         $engine = static::_getEngine($config);
         if (!$engine) {
             throw new Exception(sprintf('There is no "%s" config engine.', $config));
-        }
-        if (!method_exists($engine, 'dump')) {
-            throw new Exception(sprintf('The "%s" config engine, does not have a dump() method.', $config));
         }
         $values = static::$_values;
         if (!empty($keys) && is_array($keys)) {

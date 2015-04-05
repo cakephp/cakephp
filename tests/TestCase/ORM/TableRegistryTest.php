@@ -275,7 +275,7 @@ class TableRegistryTest extends TestCase
     public function testGetPlugin()
     {
         Plugin::load('TestPlugin');
-        $table = TableRegistry::get('TestPlugin.TestPluginComments', ['connection' => 'test']);
+        $table = TableRegistry::get('TestPlugin.TestPluginComments');
 
         $this->assertInstanceOf('TestPlugin\Model\Table\TestPluginCommentsTable', $table);
         $this->assertFalse(
@@ -330,7 +330,6 @@ class TableRegistryTest extends TestCase
         Plugin::load('TestPlugin');
         $table = TableRegistry::get('Comments', [
             'className' => 'TestPlugin.TestPluginComments',
-            'connection' => 'test'
         ]);
         $class = 'TestPlugin\Model\Table\TestPluginCommentsTable';
         $this->assertInstanceOf($class, $table);
@@ -353,7 +352,6 @@ class TableRegistryTest extends TestCase
         $class = 'TestPlugin\Model\Table\TestPluginCommentsTable';
         $table = TableRegistry::get('Comments', [
             'className' => $class,
-            'connection' => 'test'
         ]);
         $this->assertInstanceOf($class, $table);
         $this->assertFalse(TableRegistry::exists('TestPluginComments'), 'Class name should not exist');

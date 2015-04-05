@@ -14,9 +14,9 @@
  */
 namespace Cake\ORM\Association;
 
-use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\TupleComparison;
+use InvalidArgumentException;
 
 /**
  * Represents a type of association that that can be fetched using another query
@@ -107,7 +107,7 @@ trait SelectableAssociationTrait
         if (!empty($options['fields'])) {
             $fields = $fetchQuery->aliasFields($options['fields'], $alias);
             if (!in_array($key, $fields)) {
-                throw new \InvalidArgumentException(
+                throw new InvalidArgumentException(
                     sprintf('You are required to select the "%s" field', $key)
                 );
             }

@@ -18,6 +18,7 @@ use Cake\ORM\Association;
 use Cake\ORM\AssociationsNormalizerTrait;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
+use InvalidArgumentException;
 
 /**
  * A container/collection for association classes.
@@ -216,7 +217,7 @@ class AssociationCollection
                     $alias,
                     $table->alias()
                 );
-                throw new \InvalidArgumentException($msg);
+                throw new InvalidArgumentException($msg);
             }
             if ($relation->isOwningSide($table) !== $owningSide) {
                 continue;

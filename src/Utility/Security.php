@@ -48,16 +48,6 @@ class Security
     protected static $_instance;
 
     /**
-     * Generate authorization hash.
-     *
-     * @return string Hash
-     */
-    public static function generateAuthKey()
-    {
-        return Security::hash(Text::uuid());
-    }
-
-    /**
      * Create a hash from string using given method.
      *
      * @param string $string String to hash
@@ -146,7 +136,7 @@ class Security
         if (empty($operation) || !in_array($operation, ['encrypt', 'decrypt'])) {
             throw new InvalidArgumentException('You must specify the operation for Security::rijndael(), either encrypt or decrypt');
         }
-        if (strlen($key) < 32) {
+        if (mb_strlen($key, '8bit') < 32) {
             throw new InvalidArgumentException('You must use a key larger than 32 bytes for Security::rijndael()');
         }
         $crypto = static::engine();
@@ -174,7 +164,7 @@ class Security
             $hmacSalt = static::$_salt;
         }
         // Generate the encryption and hmac key.
-        $key = substr(hash('sha256', $key . $hmacSalt), 0, 32);
+        $key = mb_substr(hash('sha256', $key . $hmacSalt), 0, 32, '8bit');
 
         $crypto = static::engine();
         $ciphertext = $crypto->encrypt($plain, $key);
@@ -192,7 +182,7 @@ class Security
      */
     protected static function _checkKey($key, $method)
     {
-        if (strlen($key) < 32) {
+        if (mb_strlen($key, '8bit') < 32) {
             throw new InvalidArgumentException(
                 sprintf('Invalid key for %s, key must be at least 256 bits (32 bytes) long.', $method)
             );
@@ -219,20 +209,45 @@ class Security
         }
 
         // Generate the encryption and hmac key.
-        $key = substr(hash('sha256', $key . $hmacSalt), 0, 32);
+        $key = mb_substr(hash('sha256', $key . $hmacSalt), 0, 32, '8bit');
 
         // Split out hmac for comparison
         $macSize = 64;
-        $hmac = substr($cipher, 0, $macSize);
-        $cipher = substr($cipher, $macSize);
+        $hmac = mb_substr($cipher, 0, $macSize, '8bit');
+        $cipher = mb_substr($cipher, $macSize, null, '8bit');
 
         $compareHmac = hash_hmac('sha256', $cipher, $key);
-        if ($hmac !== $compareHmac) {
+        if (!static::_constantEquals($hmac, $compareHmac)) {
             return false;
         }
 
         $crypto = static::engine();
         return $crypto->decrypt($cipher, $key);
+    }
+
+    /**
+     * A timing attack resistant comparison that prefers native PHP implementations.
+     *
+     * @param string $hmac The hmac from the ciphertext being decrypted.
+     * @param string $compare The comparison hmac.
+     * @return bool
+     * @see https://github.com/resonantcore/php-future/
+     */
+    protected static function _constantEquals($hmac, $compare)
+    {
+        if (function_exists('hash_equals')) {
+            return hash_equals($hmac, $compare);
+        }
+        $hashLength = mb_strlen($hmac, '8bit');
+        $compareLength = mb_strlen($compare, '8bit');
+        if ($hashLength !== $compareLength) {
+            return false;
+        }
+        $result = 0;
+        for ($i = 0; $i < $hashLength; $i++) {
+            $result |= (ord($hmac[$i]) ^ ord($compare[$i]));
+        }
+        return $result === 0;
     }
 
     /**

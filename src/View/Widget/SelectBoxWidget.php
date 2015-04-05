@@ -129,9 +129,6 @@ class SelectBoxWidget implements WidgetInterface
             'val' => null,
         ];
 
-        if (empty($data['name'])) {
-            throw new \RuntimeException('Cannot make inputs with empty name attributes.');
-        }
         $options = $this->_renderContent($data);
         $name = $data['name'];
         unset($data['name'], $data['options'], $data['empty'], $data['val'], $data['escape']);
@@ -241,6 +238,7 @@ class SelectBoxWidget implements WidgetInterface
             ];
             if (is_array($val) && isset($optAttrs['text'], $optAttrs['value'])) {
                 $optAttrs = $val;
+                $key = $optAttrs['value'];
             }
             if ($this->_isSelected($key, $selected)) {
                 $optAttrs['selected'] = true;

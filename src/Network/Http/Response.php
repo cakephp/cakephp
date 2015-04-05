@@ -14,6 +14,7 @@
 namespace Cake\Network\Http;
 
 use Cake\Network\Http\Message;
+use RuntimeException;
 
 /**
  * Implements methods for HTTP responses.
@@ -100,7 +101,7 @@ class Response extends Message
     /**
      * Cached decoded JSON data.
      *
-     * @var \SimpleXMLElement
+     * @var array
      */
     protected $_json;
 
@@ -146,7 +147,7 @@ class Response extends Message
     protected function _decodeGzipBody($body)
     {
         if (!function_exists('gzinflate')) {
-            throw new \RuntimeException('Cannot decompress gzip response body without gzinflate()');
+            throw new RuntimeException('Cannot decompress gzip response body without gzinflate()');
         }
         $offset = 0;
         // Look for gzip 'signature'

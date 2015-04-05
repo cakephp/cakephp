@@ -220,4 +220,18 @@ class FlashHelperTest extends TestCase
         $this->assertHtml($expected, $result);
         $this->assertNull($this->View->request->session()->read('Flash.stack'));
     }
+
+    /**
+     * test that when View prefix is set, flash element from that prefix
+     * is used if available.
+     *
+     * @return void
+     */
+    public function testFlashWithPrefix()
+    {
+        $this->View->request->params['prefix'] = 'Admin';
+        $result = $this->Flash->render('flash');
+        $expected = 'flash element from Admin prefix folder';
+        $this->assertContains($expected, $result);
+    }
 }

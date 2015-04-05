@@ -19,7 +19,6 @@ use Cake\Collection\CollectionTrait;
 use Cake\Database\Exception;
 use Cake\Database\Type;
 use Cake\Datasource\ResultSetInterface;
-use JsonSerializable;
 use SplFixedArray;
 
 /**
@@ -70,6 +69,13 @@ class ResultSet implements ResultSetInterface
     protected $_defaultTable;
 
     /**
+     * The default table alias
+     *
+     * @var string
+     */
+    protected $_defaultAlias;
+
+    /**
      * List of associations that should be placed under the `_matchingData`
      * result key.
      *
@@ -88,9 +94,17 @@ class ResultSet implements ResultSetInterface
      * Map of fields that are fetched from the statement with
      * their type and the table they belong to
      *
-     * @var string
+     * @var array
      */
-    protected $_map;
+    protected $_map = [];
+
+    /**
+     * List of matching associations and the column keys to expect
+     * from each of them.
+     *
+     * @var array
+     */
+    protected $_matchingMapColumns = [];
 
     /**
      * Results that have been fetched or hydrated into the results.
@@ -128,6 +142,24 @@ class ResultSet implements ResultSetInterface
     protected $_count;
 
     /**
+     * Type cache for type converters.
+     *
+     * Converters are indexed by alias and column name.
+     *
+     * @var array
+     */
+    protected $_types = [];
+
+    /**
+     * The Database driver object.
+     *
+     * Cached in a property to avoid multiple calls to the same function.
+     *
+     * @var \Cake\Database\Driver
+     */
+    protected $_driver;
+
+    /**
      * Constructor
      *
      * @param \Cake\ORM\Query $query Query from where results come
@@ -138,11 +170,15 @@ class ResultSet implements ResultSetInterface
         $repository = $query->repository();
         $this->_query = $query;
         $this->_statement = $statement;
+        $this->_driver = $driver = $this->_query->connection()->driver();
         $this->_defaultTable = $this->_query->repository();
         $this->_calculateAssociationMap();
         $this->_hydrate = $this->_query->hydrate();
         $this->_entityClass = $repository->entityClass();
         $this->_useBuffering = $query->bufferResults();
+        $this->_defaultAlias = $this->_defaultTable->alias();
+        $this->_calculateColumnMap();
+        $this->_calculateTypeMap();
 
         if ($this->_useBuffering) {
             $count = $this->count();
@@ -318,12 +354,111 @@ class ResultSet implements ResultSetInterface
         $map = $this->_query->eagerLoader()->associationsMap($this->_defaultTable);
         $this->_matchingMap = (new Collection($map))
             ->match(['matching' => true])
+            ->indexBy('alias')
             ->toArray();
 
         $this->_containMap = (new Collection(array_reverse($map)))
             ->match(['matching' => false])
             ->indexBy('nestKey')
             ->toArray();
+    }
+
+    /**
+     * Creates a map of row keys out of the query select clause that can be
+     * used to hydrate nested result sets more quickly.
+     *
+     * @return void
+     */
+    protected function _calculateColumnMap()
+    {
+        $map = [];
+        foreach ($this->_query->clause('select') as $key => $field) {
+            $key = trim($key, '"`[]');
+            if (strpos($key, '__') > 0) {
+                $parts = explode('__', $key, 2);
+                $map[$parts[0]][$key] = $parts[1];
+            } else {
+                $map[$this->_defaultAlias][$key] = $key;
+            }
+        }
+
+        foreach ($this->_matchingMap as $alias => $assoc) {
+            if (!isset($map[$alias])) {
+                continue;
+            }
+            $this->_matchingMapColumns[$alias] = $map[$alias];
+            unset($map[$alias]);
+        }
+
+        $this->_map = $map;
+    }
+
+    /**
+     * Creates a map of Type converter classes for each of the columns that should
+     * be fetched by this object.
+     *
+     * @return void
+     */
+    protected function _calculateTypeMap()
+    {
+        if (isset($this->_map[$this->_defaultAlias])) {
+            $this->_types[$this->_defaultAlias] = $this->_getTypes(
+                $this->_defaultTable,
+                $this->_map[$this->_defaultAlias]
+            );
+        }
+
+        foreach ($this->_matchingMapColumns as $alias => $keys) {
+            $this->_types[$alias] = $this->_getTypes(
+                $this->_matchingMap[$alias]['instance']->target(),
+                $keys
+            );
+        }
+
+        foreach ($this->_containMap as $assoc) {
+            $alias = $assoc['alias'];
+            if (isset($this->_types[$alias]) || !$assoc['canBeJoined'] || !isset($this->_map[$alias])) {
+                continue;
+            }
+            $this->_types[$alias] = $this->_getTypes(
+                $assoc['instance']->target(),
+                $this->_map[$alias]
+            );
+        }
+    }
+
+    /**
+     * Returns the Type classes for each of the passed fields belonging to the
+     * table.
+     *
+     * @param \Cake\ORM\Table $table The table from which to get the schema
+     * @param array $fields The fields whitelist to use for fields in the schema.
+     * @return array
+     */
+    protected function _getTypes($table, $fields)
+    {
+        $types = [];
+        $schema = $table->schema();
+        $map = array_keys(Type::map() + ['string' => 1, 'text' => 1, 'boolean' => 1]);
+        $typeMap = array_combine(
+            $map,
+            array_map(['Cake\Database\Type', 'build'], $map)
+        );
+
+        foreach (['string', 'text'] as $t) {
+            if (get_class($typeMap[$t]) === 'Cake\Database\Type') {
+                unset($typeMap[$t]);
+            }
+        }
+
+        foreach (array_intersect($fields, $schema->columns()) as $col) {
+            $typeName = $schema->columnType($col);
+            if (isset($typeMap[$typeName])) {
+                $types[$col] = $typeMap[$typeName];
+            }
+        }
+
+        return $types;
     }
 
     /**
@@ -353,7 +488,7 @@ class ResultSet implements ResultSetInterface
      */
     protected function _groupResult($row)
     {
-        $defaultAlias = $this->_defaultTable->alias();
+        $defaultAlias = $this->_defaultAlias;
         $results = $presentAliases = [];
         $options = [
             'useSetters' => false,
@@ -362,62 +497,31 @@ class ResultSet implements ResultSetInterface
             'guard' => false
         ];
 
-        foreach ($this->_matchingMap as $matching) {
-            foreach ($row as $key => $value) {
-                if (strpos($key, $matching['alias'] . '__') !== 0) {
-                    continue;
-                }
-                list($table, $field) = explode('__', $key);
-                $results['_matchingData'][$table][$field] = $value;
-
-                if (!isset($this->_containMap[$table])) {
-                    unset($row[$key]);
-                }
-            }
-            if (empty($results['_matchingData'][$matching['alias']])) {
-                continue;
-            }
-
-            $results['_matchingData'][$matching['alias']] = $this->_castValues(
-                $matching['instance']->target(),
-                $results['_matchingData'][$matching['alias']]
+        foreach ($this->_matchingMapColumns as $alias => $keys) {
+            $matching = $this->_matchingMap[$alias];
+            $results['_matchingData'][$alias] = $this->_castValues(
+                $alias,
+                array_combine(
+                    $keys,
+                    array_intersect_key($row, $keys)
+                )
             );
-
             if ($this->_hydrate) {
-                $options['source'] = $matching['alias'];
-                $entity = new $matching['entityClass']($results['_matchingData'][$matching['alias']], $options);
+                $options['source'] = $alias;
+                $entity = new $matching['entityClass']($results['_matchingData'][$alias], $options);
                 $entity->clean();
-                $results['_matchingData'][$matching['alias']] = $entity;
+                $results['_matchingData'][$alias] = $entity;
             }
         }
 
-        foreach ($row as $key => $value) {
-            $table = $defaultAlias;
-            $field = $key;
-
-            if ($value !== null && !is_scalar($value)) {
-                $results[$key] = $value;
-                continue;
-            }
-
-            if (empty($this->_map[$key])) {
-                $parts = explode('__', $key);
-                if (count($parts) > 1) {
-                    $this->_map[$key] = $parts;
-                }
-            }
-
-            if (!empty($this->_map[$key])) {
-                list($table, $field) = $this->_map[$key];
-            }
-
+        foreach ($this->_map as $table => $keys) {
+            $results[$table] = array_combine($keys, array_intersect_key($row, $keys));
             $presentAliases[$table] = true;
-            $results[$table][$field] = $value;
         }
 
         if (isset($presentAliases[$defaultAlias])) {
             $results[$defaultAlias] = $this->_castValues(
-                $this->_defaultTable,
+                $defaultAlias,
                 $results[$defaultAlias]
             );
         }
@@ -425,11 +529,20 @@ class ResultSet implements ResultSetInterface
 
         foreach ($this->_containMap as $assoc) {
             $alias = $assoc['nestKey'];
+
+            if ($assoc['canBeJoined'] && empty($this->_map[$alias])) {
+                continue;
+            }
+
             $instance = $assoc['instance'];
 
-            if (!isset($results[$alias])) {
+            if (!$assoc['canBeJoined'] && !isset($row[$alias])) {
                 $results = $instance->defaultRowValue($results, $assoc['canBeJoined']);
                 continue;
+            }
+
+            if (!$assoc['canBeJoined']) {
+                $results[$alias] = $row[$alias];
             }
 
             $target = $instance->target();
@@ -437,7 +550,7 @@ class ResultSet implements ResultSetInterface
             unset($presentAliases[$alias]);
 
             if ($assoc['canBeJoined']) {
-                $results[$alias] = $this->_castValues($target, $results[$alias]);
+                $results[$alias] = $this->_castValues($assoc['alias'], $results[$alias]);
 
                 $hasData = false;
                 foreach ($results[$alias] as $v) {
@@ -485,26 +598,14 @@ class ResultSet implements ResultSetInterface
      * Casts all values from a row brought from a table to the correct
      * PHP type.
      *
-     * @param Table $table The table object
+     * @param string $alias The table object alias
      * @param array $values The values to cast
      * @return array
      */
-    protected function _castValues($table, $values)
+    protected function _castValues($alias, $values)
     {
-        $alias = $table->alias();
-        $driver = $this->_query->connection()->driver();
-        if (empty($this->types[$alias])) {
-            $schema = $table->schema();
-            foreach ($schema->columns() as $col) {
-                $this->types[$alias][$col] = Type::build($schema->columnType($col));
-            }
-        }
-
-        foreach ($values as $field => $value) {
-            if (!isset($this->types[$alias][$field])) {
-                continue;
-            }
-            $values[$field] = $this->types[$alias][$field]->toPHP($value, $driver);
+        foreach ($this->_types[$alias] as $field => $type) {
+            $values[$field] = $type->toPHP($values[$field], $this->_driver);
         }
 
         return $values;

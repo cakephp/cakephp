@@ -14,7 +14,6 @@
  */
 namespace Cake\View\Form;
 
-use Cake\Form\Form;
 use Cake\Network\Request;
 use Cake\View\Form\ContextInterface;
 

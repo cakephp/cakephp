@@ -76,11 +76,11 @@ class RedisEngine extends CacheEngine
      */
     public function init(array $config = [])
     {
-        if (!class_exists('Redis')) {
+        if (!extension_loaded('redis')) {
             return false;
         }
-        parent::init($config);
 
+        parent::init($config);
         return $this->_connect();
     }
 

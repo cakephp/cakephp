@@ -1,1 +1,1 @@
-<?= 'this is the plugin element using params[plugin]'; ?>
+this is the plugin element using params[plugin]

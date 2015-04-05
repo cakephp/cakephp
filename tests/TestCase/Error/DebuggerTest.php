@@ -158,19 +158,19 @@ class DebuggerTest extends TestCase
      */
     public function testAddFormat()
     {
-        Debugger::addFormat('js', array(
+        Debugger::addFormat('js', [
             'traceLine' => '{:reference} - <a href="txmt://open?url=file://{:file}' .
                 '&line={:line}">{:path}</a>, line {:line}'
-        ));
+        ]);
         Debugger::outputAs('js');
 
         $result = Debugger::trace();
         $this->assertRegExp('/' . preg_quote('txmt://open?url=file://', '/') . '(\/|[A-Z]:\\\\)' . '/', $result);
 
-        Debugger::addFormat('xml', array(
+        Debugger::addFormat('xml', [
             'error' => '<error><code>{:code}</code><file>{:file}</file><line>{:line}</line>' .
                 '{:description}</error>',
-        ));
+        ]);
         Debugger::outputAs('xml');
 
         ob_start();
@@ -184,14 +184,14 @@ class DebuggerTest extends TestCase
         ]);
         $result = ob_get_clean();
 
-        $expected = array(
+        $expected = [
             '<error',
             '<code', '8', '/code',
             '<file', 'preg:/[^<]+/', '/file',
             '<line', '' . ((int)__LINE__ - 9), '/line',
             'preg:/Undefined variable:\s+foo/',
             '/error'
-        );
+        ];
         $this->assertHtml($expected, $result, true);
     }
 
@@ -202,7 +202,7 @@ class DebuggerTest extends TestCase
      */
     public function testAddFormatCallback()
     {
-        Debugger::addFormat('callback', array('callback' => array($this, 'customFormat')));
+        Debugger::addFormat('callback', ['callback' => [$this, 'customFormat']]);
         Debugger::outputAs('callback');
 
         ob_start();

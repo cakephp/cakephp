@@ -598,7 +598,7 @@ class RssHelperTest extends TestCase
         $tmpFile = WWW_ROOT . 'tests/cakephp.file.test.tmp';
         $File = new File($tmpFile, true);
 
-        $this->assertTrue($File->write('123'), 'Could not write to ' . $tmpFile);
+        $this->assertTrue($File->write('1234'), 'Could not write to ' . $tmpFile);
 
         clearstatcache();
 

@@ -263,6 +263,25 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test that empty string is not added to secure fields list when
+     * rendering input widget without name.
+     *
+     * @return void
+     */
+    public function testRenderingWidgetWithEmptyName()
+    {
+        $this->assertEquals([], $this->Form->fields);
+
+        $result = $this->Form->widget('select', ['secure' => true, 'name' => '']);
+        $this->assertEquals('<select name=""></select>', $result);
+        $this->assertEquals([], $this->Form->fields);
+
+        $result = $this->Form->widget('select', ['secure' => true, 'name' => '0']);
+        $this->assertEquals('<select name="0"></select>', $result);
+        $this->assertEquals(['0'], $this->Form->fields);
+    }
+
+    /**
      * Test registering an invalid widget class.
      *
      * @expectedException \RuntimeException
@@ -6122,9 +6141,6 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->postLink('Delete', '/posts/delete', ['data' => ['id' => 1]]);
-        $this->assertContains('<input type="hidden" name="id" value="1"', $result);
-
         $result = $this->Form->postLink('Delete', '/posts/delete/1', ['target' => '_blank']);
         $expected = [
             'form' => [
@@ -6155,6 +6171,27 @@ class FormHelperTest extends TestCase
             '/a'
         ];
         $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Test postLink with additional data.
+     *
+     * @return void
+     */
+    public function testPostLinkWithData()
+    {
+        $result = $this->Form->postLink('Delete', '/posts/delete', ['data' => ['id' => 1]]);
+        $this->assertContains('<input type="hidden" name="id" value="1"', $result);
+
+        $entity = new Entity(['name' => 'no show'], ['source' => 'Articles']);
+        $this->Form->create($entity);
+        $this->Form->end();
+        $result = $this->Form->postLink('Delete', '/posts/delete', ['data' => ['name' => 'show']]);
+        $this->assertContains(
+            '<input type="hidden" name="name" value="show"',
+            $result,
+            'should not contain entity data.'
+        );
     }
 
     /**
@@ -6946,6 +6983,26 @@ class FormHelperTest extends TestCase
             'type' => 'datetime',
         ]);
         $this->assertContains('<div class="dt">', $result);
+    }
+
+    /**
+     * Test that *Container templates are used by input.
+     *
+     * @return void
+     */
+    public function testFormGroupTemplates()
+    {
+        $this->Form->templates([
+            'radioFormGroup' => '<div class="radio">{{label}}{{input}}</div>',
+        ]);
+
+        $this->Form->create($this->article);
+
+        $result = $this->Form->input('accept', [
+            'type' => 'radio',
+            'options' => ['Y', 'N']
+        ]);
+        $this->assertContains('<div class="radio">', $result);
     }
 
     /**

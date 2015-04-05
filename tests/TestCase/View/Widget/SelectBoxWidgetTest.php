@@ -211,6 +211,37 @@ class SelectBoxWidgetTest extends TestCase
     }
 
     /**
+     * test complex option rendering with a selected value
+     *
+     * @return void
+     */
+    public function testRenderComplexSelected()
+    {
+        $select = new SelectBoxWidget($this->templates);
+        $data = [
+            'id' => 'BirdName',
+            'name' => 'Birds[name]',
+            'val' => 'a',
+            'options' => [
+                ['value' => 'a', 'text' => 'Albatross'],
+                ['value' => 'b', 'text' => 'Budgie', 'data-foo' => 'bar'],
+            ]
+        ];
+        $result = $select->render($data, $this->context);
+        $expected = [
+            'select' => ['name' => 'Birds[name]', 'id' => 'BirdName'],
+            ['option' => ['value' => 'a', 'selected' => 'selected']],
+            'Albatross',
+            '/option',
+            ['option' => ['value' => 'b', 'data-foo' => 'bar']],
+            'Budgie',
+            '/option',
+            '/select'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * test rendering a multi select
      *
      * @return void
@@ -568,6 +599,37 @@ class SelectBoxWidgetTest extends TestCase
             '/option',
             ['option' => ['value' => 'c', 'disabled' => 'disabled']],
             'Canary',
+            '/option',
+            '/select'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * test complex option rendering with a disabled element
+     *
+     * @return void
+     */
+    public function testRenderComplexDisabled()
+    {
+        $select = new SelectBoxWidget($this->templates);
+        $data = [
+            'disabled' => ['b'],
+            'id' => 'BirdName',
+            'name' => 'Birds[name]',
+            'options' => [
+                ['value' => 'a', 'text' => 'Albatross'],
+                ['value' => 'b', 'text' => 'Budgie', 'data-foo' => 'bar'],
+            ]
+        ];
+        $result = $select->render($data, $this->context);
+        $expected = [
+            'select' => ['name' => 'Birds[name]', 'id' => 'BirdName'],
+            ['option' => ['value' => 'a']],
+            'Albatross',
+            '/option',
+            ['option' => ['value' => 'b', 'data-foo' => 'bar', 'disabled' => 'disabled']],
+            'Budgie',
             '/option',
             '/select'
         ];

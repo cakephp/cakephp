@@ -634,6 +634,27 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
+     * Tests that using an array in existsIn() sets the error message correctly
+     *
+     * @return
+     */
+    public function testExistsInErrorWithArrayField()
+    {
+        $entity = new Entity([
+            'title' => 'An Article',
+            'author_id' => 500
+        ]);
+
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors');
+        $rules = $table->rulesChecker();
+        $rules->add($rules->existsIn(['author_id'], 'Authors'));
+
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals(['_existsIn' => 'This value does not exist'], $entity->errors('author_id'));
+    }
+
+    /**
      * Tests using rules to prevent delete operations
      *
      * @group delete
@@ -692,6 +713,50 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $entity = $table->get(1);
         $this->assertFalse($table->delete($entity, ['foo' => 'bar']));
+    }
+
+    /**
+     * Test adding rules that return error string
+     *
+     * @group save
+     * @return void
+     */
+    public function testCustomErrorMessageFromRule()
+    {
+        $entity = new Entity([
+            'name' => 'larry'
+        ]);
+
+        $table = TableRegistry::get('Authors');
+        $rules = $table->rulesChecker();
+        $rules->add(function () {
+            return 'So much nope';
+        }, ['errorField' => 'name']);
+
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals(['So much nope'], $entity->errors('name'));
+    }
+
+    /**
+     * Test adding rules with no errorField do not accept strings
+     *
+     * @group save
+     * @return void
+     */
+    public function testCustomErrorMessageFromRuleNoErrorField()
+    {
+        $entity = new Entity([
+            'name' => 'larry'
+        ]);
+
+        $table = TableRegistry::get('Authors');
+        $rules = $table->rulesChecker();
+        $rules->add(function () {
+            return 'So much nope';
+        });
+
+        $this->assertFalse($table->save($entity));
+        $this->assertEmpty($entity->errors());
     }
 
     /**

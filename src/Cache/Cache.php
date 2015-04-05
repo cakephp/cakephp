@@ -237,7 +237,7 @@ class Cache
      * @param array $data An array of data to be stored in the cache
      * @param string $config Optional string configuration name to write to. Defaults to 'default'
      * @return array of bools for each key provided, indicating true for success or false for fail
-     * @throws RuntimeException
+     * @throws \RuntimeException
      */
     public static function writeMany($data, $config = 'default')
     {
