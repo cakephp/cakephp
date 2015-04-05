@@ -18,13 +18,11 @@ use Cake\Controller\Component;
 use Cake\Controller\Controller;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Controller\Exception\MissingComponentException;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
 use Cake\Datasource\Exception\MissingDatasourceConfigException;
 use Cake\Datasource\Exception\MissingDatasourceException;
-use Cake\Error;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
@@ -40,6 +38,7 @@ use Cake\TestSuite\TestCase;
 use Cake\View\Exception\MissingHelperException;
 use Cake\View\Exception\MissingLayoutException;
 use Cake\View\Exception\MissingTemplateException;
+use Exception;
 
 /**
  * BlueberryComponent class
@@ -583,7 +582,7 @@ class ExceptionRendererTest extends TestCase
                 500
             ],
             [
-                new \Exception('boom'),
+                new Exception('boom'),
                 [
                     '/Internal Error/'
                 ],
@@ -597,7 +596,7 @@ class ExceptionRendererTest extends TestCase
                 500
             ],
             [
-                new \Cake\Core\Exception\Exception('base class'),
+                new \Cake\Core\ExceptionException('base class'),
                 ['/Internal Error/'],
                 500
             ]
@@ -806,7 +805,7 @@ class ExceptionRendererTest extends TestCase
         Router::reload();
         $this->assertNull(Router::getRequest(false));
 
-        $exception = new \Exception('Terrible');
+        $exception = new Exception('Terrible');
         $ExceptionRenderer = new ExceptionRenderer($exception);
         $result = $ExceptionRenderer->render();
 
@@ -829,7 +828,7 @@ class ExceptionRendererTest extends TestCase
         $events->attach($listener, 'Controller.shutdown');
         $events->attach($listener, 'Dispatcher.afterDispatch');
 
-        $exception = new \Exception('Terrible');
+        $exception = new Exception('Terrible');
         $renderer = new ExceptionRenderer($exception);
         $renderer->render();
 
