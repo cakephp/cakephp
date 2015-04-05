@@ -17,6 +17,7 @@ namespace Cake\Shell;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\Routing\Router;
+use Cake\Routing\Exception\MissingRouteException;
 
 /**
  * Provides interactive CLI tools for routing.
@@ -45,12 +46,55 @@ class RoutesShell extends Shell
      * Checks a url for the route that will be applied.
      *
      * @param string $url The URL to parse
-     * @return void
+     * @return null|false
      */
     public function check($url)
     {
-        $route = Router::parse($url);
-        $this->_outWithColumns([$url, $this->_stringifyDefaults($route)]);
+        try {
+            $route = Router::parse($url);
+            $this->_outWithColumns(['', $url, $this->_stringifyDefaults($route)]);
+        } catch (MissingRouteException $e) {
+            $this->err("<warning>'$url' did not match any routes.</warning>");
+            return false;
+        }
+    }
+
+    /**
+     * Generate a URL based on a set of parameters
+     *
+     * Takes variadic arguments of key/value pairs.
+     * @return null|false
+     */
+    public function generate()
+    {
+        try {
+            $args = $this->_splitArgs($this->args);
+            $url = Router::url($args);
+            $this->out("> $url");
+        } catch (MissingRouteException $e) {
+            $this->err("<warning>The provided parameters do not match any routes.</warning>");
+            return false;
+        }
+    }
+
+    /**
+     * Split the CLI arguments into a hash.
+     *
+     * @param array $args The arguments to split.
+     * @return array
+     */
+    protected function _splitArgs($args)
+    {
+        $out = [];
+        foreach ($args as $arg) {
+            if (strpos($arg, ':') === false) {
+                $this->err("<error>The '$arg' is malformed. It should be formated like `key:value`.");
+                continue;
+            }
+            list($key, $value) = explode(':', $arg);
+            $out[$key] = $value;
+        }
+        return $out;
     }
 
     /**
@@ -65,6 +109,7 @@ class RoutesShell extends Shell
             $rows = [$rows];
         }
         $maxCharacterLength = [];
+        array_unshift($rows, ['Route name', 'URI template', 'Defaults']);
 
         foreach ($rows as $line) {
             for ($i = 0; $i < count($line); $i++) {
