@@ -9,19 +9,17 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         2.3.0
+ * @since         3.1.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-
 namespace Cake\Shell;
 
 use Cake\Console\Shell;
 use Cake\Core\Configure;
-
 use Cake\Routing\Router;
 
 /**
- * built-in Routes Shell
+ * Provides interactive CLI tools for routing.
  *
  */
 class RoutesShell extends Shell {
@@ -33,13 +31,9 @@ class RoutesShell extends Shell {
  * @return void
  */
 	public function main() {
-		// Forces routes object to initialise.
-		Router::parse(null);
-
-		$routes = Router::routes();
-		$output = array();
-		foreach($routes as $route) {
-			$output[] = array($route->getName(), $route->template, $this->stringifyDefaults($route->defaults));
+		$output = [];
+		foreach (Router::routes() as $route) {
+			$output[] = [$route->getName(), $route->template, $this->stringifyDefaults($route->defaults)];
 		}
 
 		$this->outWithColumns($output);
@@ -52,7 +46,7 @@ class RoutesShell extends Shell {
  */
 	public function check($url) {
 		$route = Router::parse($url);
-		$this->outWithColumns(array($url, $this->stringifyDefaults($route)));
+		$this->outWithColumns([$url, $this->stringifyDefaults($route)]);
 	}
 
 /**
@@ -62,54 +56,53 @@ class RoutesShell extends Shell {
  * @param $rows
  */
 	private function outWithColumns($rows) {
-		if(!is_array($rows[0])) {
-			$rows = array($rows);
+		if (!is_array($rows[0])) {
+			$rows = [$rows];
 		}
-		$maxCharacterLength = array();
+		$maxCharacterLength = [];
 
-		foreach($rows as $line) {
-			for($i = 0; $i < count($line); $i++) {
+		foreach ($rows as $line) {
+			for ($i = 0; $i < count($line); $i++) {
 				$elementLength = strlen($line[$i]);
-				if($elementLength > (isset($maxCharacterLength[$i]) ? $maxCharacterLength[$i] : 0)) {
+				if ($elementLength > (isset($maxCharacterLength[$i]) ? $maxCharacterLength[$i] : 0)) {
 					$maxCharacterLength[$i] = $elementLength;
 				}
 			}
 		}
 
-		foreach($rows as $line) {
-			for($i = 0; $i < count($line); $i++) {
+		foreach ($rows as $line) {
+			for ($i = 0; $i < count($line); $i++) {
 				$line[$i] = str_pad($line[$i], $maxCharacterLength[$i], " ", STR_PAD_RIGHT);
 			}
-			$this->out(implode('	', $line));
+			$this->out(implode('    ', $line));
 		}
 
 		$this->out();
 	}
 
 /**
- * Takes defaults from the route object and
+ * Get defaults from the route object as a string
  *
- * @param $defaults
+ * @param array $defaults The defaults to use for creating a route array.
  * @return string
  */
-	private function stringifyDefaults($defaults) {
-		$results = array();
-		if(!empty($defaults['controller'])) {
+	protected function stringifyDefaults($defaults) {
+		$results = [];
+		if (!empty($defaults['controller'])) {
 			$results['controller'] = $defaults['controller'];
 		}
-		if(!empty($defaults['action'])) {
+		if (!empty($defaults['action'])) {
 			$results['action'] = $defaults['action'];
 		}
-		if(!empty($defaults[0])) {
-			$pass = array(); 
+		if (!empty($defaults[0])) {
+			$pass = [];
 			$i = 0;
-			while(!empty($defaults[$i])) {
+			while (!empty($defaults[$i])) {
 				$pass[$i] = $defaults[$i];
 				$i++;
 			}
 			$results['pass'] = $pass;
 		}
-
 		return json_encode($results);
 	}
 }
