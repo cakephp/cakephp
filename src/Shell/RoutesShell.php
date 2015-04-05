@@ -22,87 +22,93 @@ use Cake\Routing\Router;
  * Provides interactive CLI tools for routing.
  *
  */
-class RoutesShell extends Shell {
+class RoutesShell extends Shell
+{
 
-/**
- * Override main() to handle action
- * Displays all routes in an application.
- *
- * @return void
- */
-	public function main() {
-		$output = [];
-		foreach (Router::routes() as $route) {
-			$output[] = [$route->getName(), $route->template, $this->stringifyDefaults($route->defaults)];
-		}
+    /**
+     * Override main() to handle action
+     * Displays all routes in an application.
+     *
+     * @return void
+     */
+    public function main()
+    {
+        $output = [];
+        foreach (Router::routes() as $route) {
+            $output[] = [$route->getName(), $route->template, $this->_stringifyDefaults($route->defaults)];
+        }
 
-		$this->outWithColumns($output);
-	}
+        $this->_outWithColumns($output);
+    }
 
-/**
- * Checks a url for the route that will be applied.
- *
- * @param $url
- */
-	public function check($url) {
-		$route = Router::parse($url);
-		$this->outWithColumns([$url, $this->stringifyDefaults($route)]);
-	}
+    /**
+     * Checks a url for the route that will be applied.
+     *
+     * @param string $url The URL to parse
+     * @return void
+     */
+    public function check($url)
+    {
+        $route = Router::parse($url);
+        $this->_outWithColumns([$url, $this->_stringifyDefaults($route)]);
+    }
 
-/**
- * Takes an array to represent rows, of arrays to represent columns.
- * Will pad strings to the maximum character length of each column.
- *
- * @param $rows
- */
-	private function outWithColumns($rows) {
-		if (!is_array($rows[0])) {
-			$rows = [$rows];
-		}
-		$maxCharacterLength = [];
+    /**
+     * Takes an array to represent rows, of arrays to represent columns.
+     * Will pad strings to the maximum character length of each column.
+     *
+     * @param $rows
+     */
+    protected function _outWithColumns($rows)
+    {
+        if (!is_array($rows[0])) {
+            $rows = [$rows];
+        }
+        $maxCharacterLength = [];
 
-		foreach ($rows as $line) {
-			for ($i = 0; $i < count($line); $i++) {
-				$elementLength = strlen($line[$i]);
-				if ($elementLength > (isset($maxCharacterLength[$i]) ? $maxCharacterLength[$i] : 0)) {
-					$maxCharacterLength[$i] = $elementLength;
-				}
-			}
-		}
+        foreach ($rows as $line) {
+            for ($i = 0; $i < count($line); $i++) {
+                $elementLength = strlen($line[$i]);
+                if ($elementLength > (isset($maxCharacterLength[$i]) ? $maxCharacterLength[$i] : 0)) {
+                    $maxCharacterLength[$i] = $elementLength;
+                }
+            }
+        }
 
-		foreach ($rows as $line) {
-			for ($i = 0; $i < count($line); $i++) {
-				$line[$i] = str_pad($line[$i], $maxCharacterLength[$i], " ", STR_PAD_RIGHT);
-			}
-			$this->out(implode('    ', $line));
-		}
+        foreach ($rows as $line) {
+            for ($i = 0; $i < count($line); $i++) {
+                $line[$i] = str_pad($line[$i], $maxCharacterLength[$i], " ", STR_PAD_RIGHT);
+            }
+            $this->out(implode('    ', $line));
+        }
 
-		$this->out();
-	}
+        $this->out();
+    }
 
-/**
- * Get defaults from the route object as a string
- *
- * @param array $defaults The defaults to use for creating a route array.
- * @return string
- */
-	protected function stringifyDefaults($defaults) {
-		$results = [];
-		if (!empty($defaults['controller'])) {
-			$results['controller'] = $defaults['controller'];
-		}
-		if (!empty($defaults['action'])) {
-			$results['action'] = $defaults['action'];
-		}
-		if (!empty($defaults[0])) {
-			$pass = [];
-			$i = 0;
-			while (!empty($defaults[$i])) {
-				$pass[$i] = $defaults[$i];
-				$i++;
-			}
-			$results['pass'] = $pass;
-		}
-		return json_encode($results);
-	}
+    /**
+     * Get defaults from the route object as a string
+     *
+     * @param array $defaults The defaults to use for creating a route array.
+     * @return string
+     */
+    protected function _stringifyDefaults($defaults)
+    {
+        $results = [];
+        if (!empty($defaults['controller'])) {
+            $results['controller'] = $defaults['controller'];
+        }
+        if (!empty($defaults['action'])) {
+            $results['action'] = $defaults['action'];
+        }
+        if (!empty($defaults[0])) {
+            $pass = [];
+            $i = 0;
+            while (!empty($defaults[$i])) {
+                $pass[$i] = $defaults[$i];
+                $i++;
+            }
+            $results['pass'] = $pass;
+        }
+        return json_encode($results);
+    }
 }
