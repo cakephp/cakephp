@@ -46,6 +46,20 @@ class Validation
     public static $errors = [];
 
     /**
+     * Backwards compatibility wrapper for Validation::notBlank().
+     *
+     * @param string|array $check Value to check.
+     * @return bool Success.
+     * @deprecated 3.0.2 Use Validation::notBlank() instead.
+     * @see Validation::notBlank()
+     */
+    public function notEmpty($check)
+    {
+        trigger_error('Validation::notEmpty() is deprecated. Use Validation::notBlank() instead.', E_USER_DEPRECATED);
+        return static::notBlank($check);
+    }
+
+    /**
      * Checks that a string contains something other than whitespace
      *
      * Returns true if string contains something other than whitespace
@@ -53,14 +67,10 @@ class Validation
      * $check can be passed as an array:
      * ['check' => 'valueToCheck'];
      *
-     * It is recommended to *not* use this method, and instead use Validator::allowEmpty()
-     * & Validator::notEmpty() instead. This method is only provided for
-     * backwards compatibility.
-     *
      * @param string|array $check Value to check
      * @return bool Success
      */
-    public static function notEmpty($check)
+    public static function notBlank($check)
     {
         if (is_array($check)) {
             extract(static::_defaults($check));
