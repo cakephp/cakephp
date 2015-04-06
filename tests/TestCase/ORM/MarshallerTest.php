@@ -558,6 +558,55 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test belongsToMany association with mixed data array
+     *
+     * @return void
+     */
+    public function testBelongsToManyWithMixedData()
+    {
+        $data = [
+            'title' => 'My title',
+            'body' => 'My content',
+            'author_id' => 1,
+            'tags' => [
+                [
+                    'name' => 'tag4'
+                ],
+                [
+                    'name' => 'tag5'
+                ],
+                [
+                    'id' => 1
+                ]
+            ]
+        ];
+
+        $articles = TableRegistry::get('Articles');
+        $articles->belongsToMany('Tags');
+
+        $tags = TableRegistry::get('Tags');
+
+        $article = $articles->newEntity($data, [
+            'associated' => [
+                'Tags'
+            ]
+        ]);
+
+        $this->assertEquals($data['tags'][0]['name'], $article->tags[0]->name);
+        $this->assertEquals($data['tags'][1]['name'], $article->tags[1]->name);
+        $this->assertEquals($article->tags[2], $tags->get(1));
+
+        $this->assertEquals($article->tags[0]->isNew(), true);
+        $this->assertEquals($article->tags[1]->isNew(), true);
+        $this->assertEquals($article->tags[2]->isNew(), false);
+
+        $tagCount = $tags->find()->count();
+        $articles->save($article);
+
+        $this->assertEquals($tagCount + 2, $tags->find()->count());
+    }
+
+    /**
      * Test HasMany association with _ids attribute
      *
      * @return void
