@@ -18,10 +18,10 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\FlashComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
-use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
+use Exception;
 
 /**
  * FlashComponentTest class
@@ -116,7 +116,7 @@ class FlashComponentTest extends TestCase
     {
         $this->assertNull($this->Session->read('Flash.flash'));
 
-        $this->Flash->set(new \Exception('This is a test message', 404));
+        $this->Flash->set(new Exception('This is a test message', 404));
         $expected = [
             'message' => 'This is a test message',
             'key' => 'flash',

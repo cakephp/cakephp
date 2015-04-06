@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Core;
 
 use Cake\Core\InstanceConfigTrait;
 use Cake\TestSuite\TestCase;
+use Exception;
 
 /**
  * TestInstanceConfig
@@ -68,7 +69,7 @@ class ReadOnlyTestInstanceConfig
      */
     protected function _configWrite($key, $value = null)
     {
-        throw new \Exception('This Instance is readonly');
+        throw new Exception('This Instance is readonly');
     }
 }
 
