@@ -237,6 +237,7 @@ class Marshaller
      * * associated: Associations listed here will be marshalled as well.
      * * fieldList: A whitelist of fields to be assigned to the entity. If not present,
      *   the accessible fields list in the entity will be used.
+     * * accessibleFields: A list of fields to allow or deny in entity accessible fields.
      *
      * @param array $data The data to hydrate.
      * @param array $options List of options
