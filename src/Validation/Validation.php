@@ -130,9 +130,11 @@ class Validation
      *
      * @param string|array $check Value to check
      * @return bool Success
+     * @deprecated 3.0.2
      */
     public static function blank($check)
     {
+        trigger_error('Validation::blank() is deprecated.');
         if (is_array($check)) {
             extract(static::_defaults($check));
         }
@@ -783,9 +785,14 @@ class Validation
      * @param string $method class method name for validation to run
      * @param array|null $args arguments to send to method
      * @return mixed user-defined class class method returns
+     * @deprecated 3.0.2 You can just set a callable for `rule` key when adding validators.
      */
     public static function userDefined($check, $object, $method, $args = null)
     {
+        trigger_error(
+            'Validation::userDefined() is deprecated. Just set a callable for `rule` key when adding validators instead.',
+            E_USER_DEPRECATED
+        );
         return call_user_func_array([$object, $method], [$check, $args]);
     }
 
