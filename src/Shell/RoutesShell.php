@@ -16,8 +16,8 @@ namespace Cake\Shell;
 
 use Cake\Console\Shell;
 use Cake\Core\Configure;
-use Cake\Routing\Router;
 use Cake\Routing\Exception\MissingRouteException;
+use Cake\Routing\Router;
 
 /**
  * Provides interactive CLI tools for routing.
@@ -77,21 +77,26 @@ class RoutesShell extends Shell
         }
     }
 
+    /**
+     * Get the option parser.
+     *
+     * @return \Cake\Console\ConsoleOptionParser
+     */
     public function getOptionParser()
     {
         $parser = parent::getOptionParser();
         $parser->description(
-                'Get the list of routes connected in this application. ' .
-                'This tool also lets you test URL generation and URL parsing.'
-            )->addSubcommand('check', [
-                'help' => 'Check a URL string against the routes. ' .
-                    'Will output the routing parameters the route resolves to.'
-            ])->addSubcommand('generate', [
-                'help' => 'Check a routing array agains the routes. ' .
-                    "Will output the URL if there is a match.\n\n" .
-                    "Routing parameters should be supplied in a key:value format. " .
-                    "For example `controller:Articles action:view 2`"
-            ]);
+            'Get the list of routes connected in this application. ' .
+            'This tool also lets you test URL generation and URL parsing.'
+        )->addSubcommand('check', [
+            'help' => 'Check a URL string against the routes. ' .
+                'Will output the routing parameters the route resolves to.'
+        ])->addSubcommand('generate', [
+            'help' => 'Check a routing array agains the routes. ' .
+                "Will output the URL if there is a match.\n\n" .
+                "Routing parameters should be supplied in a key:value format. " .
+                "For example `controller:Articles action:view 2`"
+        ]);
         return $parser;
     }
 
@@ -119,7 +124,8 @@ class RoutesShell extends Shell
      * Takes an array to represent rows, of arrays to represent columns.
      * Will pad strings to the maximum character length of each column.
      *
-     * @param $rows
+     * @param array $rows The rows to print
+     * @return void
      */
     protected function _outWithColumns($rows)
     {
@@ -130,7 +136,7 @@ class RoutesShell extends Shell
         array_unshift($rows, ['Route name', 'URI template', 'Defaults']);
 
         foreach ($rows as $line) {
-            for ($i = 0; $i < count($line); $i++) {
+            for ($i = 0, $len = count($line); $i < $len; $i++) {
                 $elementLength = strlen($line[$i]);
                 if ($elementLength > (isset($maxCharacterLength[$i]) ? $maxCharacterLength[$i] : 0)) {
                     $maxCharacterLength[$i] = $elementLength;
@@ -139,7 +145,7 @@ class RoutesShell extends Shell
         }
 
         foreach ($rows as $line) {
-            for ($i = 0; $i < count($line); $i++) {
+            for ($i = 0, $len = count($line); $i < $len; $i++) {
                 $line[$i] = str_pad($line[$i], $maxCharacterLength[$i], " ", STR_PAD_RIGHT);
             }
             $this->out(implode('    ', $line));
