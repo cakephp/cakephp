@@ -191,7 +191,7 @@ class FixtureManager
      * @param bool $drop whether drop the fixture if it is already created or not
      * @return void
      */
-    protected function _setupTable(TestFixture $fixture, Connection $db, array $sources, $drop = true)
+    protected function _setupTable($fixture, $db, array $sources, $drop = true)
     {
         if (!empty($fixture->created) && in_array($db->configName(), $fixture->created)) {
             return;
