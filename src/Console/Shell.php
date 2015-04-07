@@ -24,6 +24,8 @@ use Cake\Log\LogTrait;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
 use Cake\Utility\Text;
+use ReflectionException;
+use ReflectionMethod;
 
 /**
  * Base class for command-line utilities for automating programmer chores.
