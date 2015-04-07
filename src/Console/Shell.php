@@ -270,7 +270,7 @@ class Shell
         $hasMethod = false;
         try {
             $method = new ReflectionMethod($this, $name);
-            if($method->isPublic() && $method->getDeclaringClass()->name === 'Cake\Console\Shell') {
+            if ($method->isPublic() && $method->getDeclaringClass()->name === 'Cake\Console\Shell') {
                 $hasMethod = true;
             }
         } catch (ReflectionException $ex) {
