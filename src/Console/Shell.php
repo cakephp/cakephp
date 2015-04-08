@@ -211,7 +211,9 @@ class Shell
      */
     public function startup()
     {
-        $this->_welcome();
+        if (!(bool)$this->param('requested')) {
+            $this->_welcome();
+        }
     }
 
     /**
@@ -304,12 +306,23 @@ class Shell
     public function dispatchShell()
     {
         $args = func_get_args();
-        if (is_string($args[0]) && count($args) === 1) {
+        $extra = [];
+        if (is_array($args[0]) && isset($args[0]['command'])) {
+            if (!empty($args[0]['extra'])) {
+                $extra = $args[0]['extra'];
+            }
+
+            $args = explode(' ', $args[0]['command']);
+        } elseif (is_string($args[0]) && count($args) === 1) {
             $args = explode(' ', $args[0]);
         }
 
+        if (!isset($extra['requested'])) {
+            $extra['requested'] = true;
+        }
+
         $dispatcher = new ShellDispatcher($args, false);
-        return $dispatcher->dispatch();
+        return $dispatcher->dispatch($extra);
     }
 
     /**
@@ -332,10 +345,14 @@ class Shell
      * @param array $argv Array of arguments to run the shell with. This array should be missing the shell name.
      * @param bool $autoMethod Set to true to allow any public method to be called even if it
      *   was not defined as a subcommand. This is used by ShellDispatcher to make building simple shells easy.
+     * @param array $extra Extra parameters that you can manually pass to the Shell
+     * to be dispatched.
+     * Built-in extra parameter is :
+     * - `requested` : if used, will prevent the Shell welcome message to be displayed
      * @return mixed
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#the-cakephp-console
      */
-    public function runCommand($argv, $autoMethod = false)
+    public function runCommand($argv, $autoMethod = false, $extra = [])
     {
         $command = isset($argv[0]) ? $argv[0] : null;
         $this->OptionParser = $this->getOptionParser();
@@ -345,6 +362,10 @@ class Shell
             $this->err('<error>Error: ' . $e->getMessage() . '</error>');
             $this->out($this->OptionParser->help($command));
             return false;
+        }
+
+        if (!empty($extra) && is_array($extra)) {
+            $this->params = array_merge($this->params, $extra);
         }
 
         if (!empty($this->params['quiet'])) {
