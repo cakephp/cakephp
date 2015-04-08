@@ -240,6 +240,25 @@ class HashTest extends CakeTestCase {
 	}
 
 /**
+ * Test testGetNonStringPath()
+ *
+ * @return void
+ */
+	public function testGetNonStringPath() {
+		$result = Hash::get(array(1.1 => 'one.one'), 1.1);
+		$this->assertEquals('one.one', $result);
+
+		$result = Hash::get(array('1' => array('1' => 'one.one')), 1.1);
+		$this->assertNull($result);
+
+		$result = Hash::get(array(true => 'true'), true);
+		$this->assertEquals('true', $result);
+
+		$result = Hash::get(array('one' => 'two'), null, '-');
+		$this->assertEquals('-', $result);
+	}
+
+/**
  * Test dimensions.
  *
  * @return void
