@@ -653,7 +653,7 @@ class Controller implements EventListenerInterface
                 $isAction = true;
             }
         } catch (ReflectionException $ex) {
-            $this->log($ex->getMessage());
+
         }
         return $isAction;
     }

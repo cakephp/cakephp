@@ -274,7 +274,7 @@ class Shell
                 $hasMethod = true;
             }
         } catch (ReflectionException $ex) {
-            $this->log($ex->getMessage());
+
         }
         return $hasMethod;
     }
