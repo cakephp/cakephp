@@ -24,6 +24,8 @@ use Cake\Log\LogTrait;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
 use Cake\Utility\Text;
+use ReflectionException;
+use ReflectionMethod;
 
 /**
  * Base class for command-line utilities for automating programmer chores.
@@ -265,18 +267,16 @@ class Shell
      */
     public function hasMethod($name)
     {
+        $hasMethod = false;
         try {
-            $method = new \ReflectionMethod($this, $name);
-            if (!$method->isPublic()) {
-                return false;
+            $method = new ReflectionMethod($this, $name);
+            if ($method->isPublic() && $method->getDeclaringClass()->name === 'Cake\Console\Shell') {
+                $hasMethod = true;
             }
-            if ($method->getDeclaringClass()->name === 'Cake\Console\Shell') {
-                return false;
-            }
-            return true;
-        } catch (\ReflectionException $e) {
-            return false;
+        } catch (ReflectionException $ex) {
+
         }
+        return $hasMethod;
     }
 
     /**

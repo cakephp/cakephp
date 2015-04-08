@@ -646,18 +646,16 @@ class Controller implements EventListenerInterface
      */
     public function isAction($action)
     {
+        $isAction = false;
         try {
             $method = new ReflectionMethod($this, $action);
-        } catch (ReflectionException $e) {
-            return false;
+            if($method->isPublic() && $method->getDeclaringClass()->name === 'Cake\Controller\Controller') {
+                $isAction = true;
+            }
+        } catch (ReflectionException $ex) {
+
         }
-        if (!$method->isPublic()) {
-            return false;
-        }
-        if ($method->getDeclaringClass()->name === 'Cake\Controller\Controller') {
-            return false;
-        }
-        return true;
+        return $isAction;
     }
 
     /**

@@ -14,9 +14,13 @@
  */
 namespace Cake\View;
 
+use BadMethodCallException;
 use Cake\Core\App;
 use Cake\Utility\Inflector;
+use Cake\View\Exception\MissingCellException;
 use Cake\View\View;
+use ReflectionException;
+use ReflectionMethod;
 
 /**
  * Provides cell() method for usage in Controller and View classes.
@@ -70,7 +74,7 @@ trait CellTrait
         $className = App::className($pluginAndCell, 'View/Cell', 'Cell');
 
         if (!$className) {
-            throw new Exception\MissingCellException(['className' => $pluginAndCell . 'Cell']);
+            throw new MissingCellException(['className' => $pluginAndCell . 'Cell']);
         }
 
         $cell = $this->_createCell($className, $action, $plugin, $options);
@@ -79,11 +83,11 @@ trait CellTrait
         }
 
         try {
-            $reflect = new \ReflectionMethod($cell, $action);
+            $reflect = new ReflectionMethod($cell, $action);
             $reflect->invokeArgs($cell, $data);
             return $cell;
-        } catch (\ReflectionException $e) {
-            throw new \BadMethodCallException(sprintf(
+        } catch (ReflectionException $e) {
+            throw new BadMethodCallException(sprintf(
                 'Class %s does not have a "%s" method.',
                 $className,
                 $action
