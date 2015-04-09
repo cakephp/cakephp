@@ -210,6 +210,9 @@ class HashTest extends TestCase
         $result = Hash::get($data, '');
         $this->assertNull($result);
 
+        $result = Hash::get($data, null, '-');
+        $this->assertSame('-', $result);
+
         $result = Hash::get($data, '0.Article.title');
         $this->assertEquals('First Article', $result);
 
