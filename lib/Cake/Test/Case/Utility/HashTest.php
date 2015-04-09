@@ -247,6 +247,9 @@ class HashTest extends CakeTestCase {
 	public function testGetNullPath() {
 		$result = Hash::get(array('one' => 'two'), null, '-');
 		$this->assertEquals('-', $result);
+
+		$result = Hash::get(array('one' => 'two'), '', '-');
+		$this->assertEquals('-', $result);
 	}
 
 /**

@@ -43,7 +43,7 @@ class Hash {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::get
  */
 	public static function get(array $data, $path, $default = null) {
-		if (empty($data)) {
+		if (empty($data) || $path === '' || $path === null) {
 			return $default;
 		}
 		if (is_string($path) || is_numeric($path)) {
@@ -55,7 +55,6 @@ class Hash {
 					$path
 				));
 			}
-
 			$parts = $path;
 		}
 
