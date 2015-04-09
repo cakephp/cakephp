@@ -242,8 +242,8 @@ class TableLocatorTest extends TestCase
      */
     public function testGetWithSameOption()
     {
-        $result = $this->_locator->get('Users', ['className' => 'Cake\Test\TestCase\ORM\MyUsersTable']);
-        $result2 = $this->_locator->get('Users', ['className' => 'Cake\Test\TestCase\ORM\MyUsersTable']);
+        $result = $this->_locator->get('Users', ['className' => 'Cake\Test\TestCase\ORM\Locator\MyUsersTable']);
+        $result2 = $this->_locator->get('Users', ['className' => 'Cake\Test\TestCase\ORM\Locator\MyUsersTable']);
         $this->assertEquals($result, $result2);
     }
 
@@ -274,7 +274,7 @@ class TableLocatorTest extends TestCase
     public function testGetPlugin()
     {
         Plugin::load('TestPlugin');
-        $table = $this->_locator->get('TestPlugin.TestPluginComments', ['connection' => 'test']);
+        $table = $this->_locator->get('TestPlugin.TestPluginComments');
 
         $this->assertInstanceOf('TestPlugin\Model\Table\TestPluginCommentsTable', $table);
         $this->assertFalse(
@@ -329,7 +329,6 @@ class TableLocatorTest extends TestCase
         Plugin::load('TestPlugin');
         $table = $this->_locator->get('Comments', [
             'className' => 'TestPlugin.TestPluginComments',
-            'connection' => 'test'
         ]);
         $class = 'TestPlugin\Model\Table\TestPluginCommentsTable';
         $this->assertInstanceOf($class, $table);
@@ -352,7 +351,6 @@ class TableLocatorTest extends TestCase
         $class = 'TestPlugin\Model\Table\TestPluginCommentsTable';
         $table = $this->_locator->get('Comments', [
             'className' => $class,
-            'connection' => 'test'
         ]);
         $this->assertInstanceOf($class, $table);
         $this->assertFalse($this->_locator->exists('TestPluginComments'), 'Class name should not exist');
