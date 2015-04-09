@@ -648,7 +648,7 @@ class CakeRequest implements ArrayAccess {
  */
 	public static function header($name) {
 		$name = 'HTTP_' . strtoupper(str_replace('-', '_', $name));
-		if (!empty($_SERVER[$name])) {
+		if (isset($_SERVER[$name])) {
 			return $_SERVER[$name];
 		}
 		return false;
