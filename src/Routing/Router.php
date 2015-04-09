@@ -950,6 +950,9 @@ class Router
      */
     public static function routes()
     {
+        if (!static::$initialized) {
+            static::_loadRoutes();
+        }
         return static::$_collection->routes();
     }
 

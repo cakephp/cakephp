@@ -1,0 +1,146 @@
+<?php
+/**
+ * CakePHP :  Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP Project
+ * @since         3.1.0
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
+namespace Cake\Test\TestCase\Shell;
+
+use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleOutput;
+use Cake\Routing\Router;
+use Cake\Shell\RoutesShell;
+use Cake\TestSuite\TestCase;
+
+/**
+ * Class RoutesShellTest
+ *
+ */
+class RoutesShellTest extends TestCase
+{
+
+    /**
+     * setUp method
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->io = $this->getMock('Cake\Console\ConsoleIo');
+
+        $this->shell = new RoutesShell($this->io);
+        Router::connect('/articles/:action/*', ['controller' => 'Articles']);
+        Router::connect('/bake/:controller/:action', ['plugin' => 'Bake']);
+    }
+
+    /**
+     * tearDown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        Router::reload();
+        unset($this->io, $this->shell);
+    }
+
+    /**
+     * Test checking an non-existing route.
+     *
+     * @return void
+     */
+    public function testMain()
+    {
+        $this->io->expects($this->at(0))
+            ->method('out')
+            ->with($this->logicalAnd(
+                $this->stringContains('Route name'),
+                $this->stringContains('URI template'),
+                $this->stringContains('Defaults')
+            ));
+        $this->io->expects($this->at(1))
+            ->method('out')
+            ->with($this->logicalAnd(
+                $this->stringContains('articles:_action'),
+                $this->stringContains('/articles/:action'),
+                $this->stringContains('"controller":"Articles",')
+            ));
+        $this->shell->main();
+    }
+
+    /**
+     * Test checking an existing route.
+     *
+     * @return void
+     */
+    public function testCheck()
+    {
+        $this->io->expects($this->at(1))
+            ->method('out')
+            ->with($this->logicalAnd(
+                $this->stringContains('/articles/index'),
+                $this->stringContains('"controller":"Articles",')
+            ));
+        $this->shell->check('/articles/index');
+    }
+
+    /**
+     * Test checking an non-existing route.
+     *
+     * @return void
+     */
+    public function testCheckNotFound()
+    {
+        $this->io->expects($this->at(0))
+            ->method('err')
+            ->with($this->stringContains('did not match'));
+        $this->shell->check('/nope');
+    }
+
+    /**
+     * Test generating URLs
+     *
+     * @return void
+     */
+    public function testGenerate()
+    {
+        $this->io->expects($this->never())
+            ->method('err');
+        $this->io->expects($this->at(0))
+            ->method('out')
+            ->with($this->stringContains('> /articles/index'));
+        $this->io->expects($this->at(1))
+            ->method('out')
+            ->with($this->stringContains('> /articles/view/2/3'));
+
+        $this->shell->args = ['controller:Articles', 'action:index'];
+        $this->shell->generate();
+
+        $this->shell->args = ['controller:Articles', 'action:view', '2', '3'];
+        $this->shell->generate();
+    }
+
+    /**
+     * Test generating URLs
+     *
+     * @return void
+     */
+    public function testGenerateMissing()
+    {
+        $this->io->expects($this->at(0))
+            ->method('err')
+            ->with($this->stringContains('do not match'));
+        $this->shell->args = ['controller:Derp'];
+        $this->shell->generate();
+    }
+}
