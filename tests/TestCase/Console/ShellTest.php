@@ -643,6 +643,52 @@ class ShellTest extends TestCase
     }
 
     /**
+     * Test the dispatchShell() arguments parser
+     *
+     * @return void
+     */
+    public function testDispatchShellArgsParser()
+    {
+        $Shell = new Shell();
+
+        $expected = [['schema', 'create', 'DbAcl'], []];
+        // Shell::dispatchShell('schema create DbAcl');
+        $result = $Shell->parseDispatchArguments(['schema create DbAcl']);
+        $this->assertEquals($expected, $result);
+
+        // Shell::dispatchShell('schema', 'create', 'DbAcl');
+        $result = $Shell->parseDispatchArguments(['schema', 'create', 'DbAcl']);
+        $this->assertEquals($expected, $result);
+
+        // Shell::dispatchShell(['command' => 'schema create DbAcl']);
+        $result = $Shell->parseDispatchArguments([[
+            'command' => 'schema create DbAcl'
+        ]]);
+        $this->assertEquals($expected, $result);
+
+        // Shell::dispatchShell(['command' => ['schema', 'create', 'DbAcl']]);
+        $result = $Shell->parseDispatchArguments([[
+            'command' => ['schema', 'create', 'DbAcl']
+        ]]);
+        $this->assertEquals($expected, $result);
+
+        $expected[1] = ['param' => 'value'];
+        // Shell::dispatchShell(['command' => 'schema create DbAcl', 'extra' => ['param' => 'value']]);
+        $result = $Shell->parseDispatchArguments([[
+            'command' => 'schema create DbAcl',
+            'extra' => ['param' => 'value']
+        ]]);
+        $this->assertEquals($expected, $result);
+
+        // Shell::dispatchShell(['command' => ['schema', 'create', 'DbAcl'], 'extra' => ['param' => 'value']]);
+        $result = $Shell->parseDispatchArguments([[
+            'command' => ['schema', 'create', 'DbAcl'],
+            'extra' => ['param' => 'value']
+        ]]);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Test that runCommand() doesn't call public methods when the second arg is false.
      *
      * @return void
