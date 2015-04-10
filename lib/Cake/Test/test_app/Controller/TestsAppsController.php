@@ -44,6 +44,10 @@ class TestsAppsController extends AppController {
 		$this->render('index');
 	}
 
+	public function file() {
+		$this->response->file(__FILE__);
+	}
+
 	public function redirect_to() {
 		return $this->redirect('http://cakephp.org');
 	}
