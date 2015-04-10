@@ -23,6 +23,7 @@ use Cake\Filesystem\Folder;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
+use TestApp\Shell\TestingDispatchShell;
 
 /**
  * Class for testing merging vars
@@ -821,6 +822,32 @@ class ShellTest extends TestCase
 
         $shell->Slice = $task;
         $shell->runCommand(['slice', 'one']);
+    }
+
+    /**
+     * test calling a shell that dispatch another one
+     *
+     * @return void
+     */
+    public function testDispatchShell()
+    {
+        $this->skipIf(!touch(TEST_APP . 'shell.log'), 'Can\'t write shell test log file');
+        $Shell = new TestingDispatchShell();
+        $Shell->runCommand(['test_task'], true);
+
+        $result = file_get_contents(TEST_APP . 'shell.log');
+        $expected = <<<TEXT
+<info>Welcome to CakePHP v3.0.1 Console</info>
+I am a test task, I dispatch another Shell
+<info>Welcome to CakePHP v3.0.1 Console</info>
+I am a dispatched Shell
+
+TEXT;
+        $this->assertEquals($expected, $result);
+
+        //@codingStandardsIgnoreStart
+        @unlink(TEST_APP . 'shell.log');
+        //@codingStandardsIgnoreEnd
     }
 
     /**
