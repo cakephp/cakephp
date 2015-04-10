@@ -3171,6 +3171,22 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test that belongsToMany ignores non-entity data.
+     *
+     * @return void
+     */
+    public function testSaveBelongsToManyIgnoreNonEntityData()
+    {
+        $articles = TableRegistry::get('Articles');
+        $article = $articles->get(1, ['contain' => ['Tags']]);
+        $article->tags = [
+            '_ids' => [2, 1]
+        ];
+        $result = $articles->save($article);
+        $this->assertSame($result, $article);
+    }
+
+    /**
      * Tests that saving a persisted and clean entity will is a no-op
      *
      * @group save
