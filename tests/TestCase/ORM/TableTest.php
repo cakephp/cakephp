@@ -17,7 +17,7 @@ namespace Cake\Test\TestCase\ORM;
 use ArrayObject;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Database\Expression\OrderByExpression;
+use Cake\Database\Exception;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
@@ -859,7 +859,7 @@ class TableTest extends TestCase
 
         $query->expects($this->once())
             ->method('execute')
-            ->will($this->throwException(new \Cake\Database\Exception('Not good')));
+            ->will($this->throwException(new Exception('Not good')));
 
         $table->updateAll(['username' => 'mark'], []);
     }
@@ -922,7 +922,7 @@ class TableTest extends TestCase
 
         $query->expects($this->once())
             ->method('execute')
-            ->will($this->throwException(new \Cake\Database\Exception('Not good')));
+            ->will($this->throwException(new Exception('Not good')));
 
         $table->deleteAll(['id >' => 4]);
     }
@@ -3168,6 +3168,22 @@ class TableTest extends TestCase
         $entity = $table->get(1, ['contain' => 'Tags']);
         $this->assertCount(1, $entity->tags, 'Only one tag in the db.');
         $this->assertEquals($tag->id, $entity->tags[0]->id);
+    }
+
+    /**
+     * Test that belongsToMany ignores non-entity data.
+     *
+     * @return void
+     */
+    public function testSaveBelongsToManyIgnoreNonEntityData()
+    {
+        $articles = TableRegistry::get('Articles');
+        $article = $articles->get(1, ['contain' => ['Tags']]);
+        $article->tags = [
+            '_ids' => [2, 1]
+        ];
+        $result = $articles->save($article);
+        $this->assertSame($result, $article);
     }
 
     /**

@@ -804,6 +804,9 @@ class BelongsToMany extends Association
         $primary = (array)$target->primaryKey();
         $jointProperty = $this->_junctionProperty;
         foreach ($targetEntities as $k => $entity) {
+            if (!($entity instanceof EntityInterface)) {
+                continue;
+            }
             $key = array_values($entity->extract($primary));
             foreach ($present as $i => $data) {
                 if ($key === $data && !$entity->get($jointProperty)) {
@@ -873,6 +876,9 @@ class BelongsToMany extends Association
         $missing = [];
 
         foreach ($targetEntities as $entity) {
+            if (!($entity instanceof EntityInterface)) {
+                continue;
+            }
             $joint = $entity->get($jointProperty);
 
             if (!$joint || !($joint instanceof EntityInterface)) {

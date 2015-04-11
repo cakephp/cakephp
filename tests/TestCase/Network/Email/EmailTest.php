@@ -14,16 +14,14 @@
  */
 namespace Cake\Test\TestCase\Network\Email;
 
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Filesystem\File;
 use Cake\Log\Log;
 use Cake\Network\Email\DebugTransport;
 use Cake\Network\Email\Email;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use Cake\View\Exception\MissingTemplateException;
+use Exception;
 use SimpleXmlElement;
 
 /**
@@ -2623,7 +2621,7 @@ XML;
             ->viewVars([
                 'users' => TableRegistry::get('Users')->get(1, ['fields' => ['id', 'username']]),
                 'xml' => new SimpleXmlElement($xmlstr),
-                'exception' => new \Exception('test')
+                'exception' => new Exception('test')
             ])
             ->attachments([
                 'test.txt' => TEST_APP . 'config' . DS . 'empty.ini',

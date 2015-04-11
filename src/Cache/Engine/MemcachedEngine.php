@@ -24,7 +24,7 @@ use Memcached;
  * more information.
  *
  * Main advantage of this Memcached engine over the memcached engine is
- * support of binary protocol, and igbibnary serialization
+ * support of binary protocol, and igbinary serialization
  * (if memcached extension compiled with --enable-igbinary)
  * Compressed keys can also be incremented/decremented
  *

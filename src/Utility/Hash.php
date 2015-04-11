@@ -45,7 +45,7 @@ class Hash
      */
     public static function get(array $data, $path, $default = null)
     {
-        if (empty($data)) {
+        if (empty($data) || $path === null || $path === '') {
             return $default;
         }
 

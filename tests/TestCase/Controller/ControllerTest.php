@@ -70,7 +70,7 @@ class TestController extends ControllerTestAppController
      *
      * @var array
      */
-    public $helpers = ['Session'];
+    public $helpers = ['Html'];
 
     /**
      * components property
@@ -549,7 +549,6 @@ class ControllerTest extends TestCase
 
         $expected = [
             'Html' => null,
-            'Session' => null
         ];
         $this->assertEquals($expected, $TestController->helpers);
 

@@ -229,6 +229,7 @@ class CompositeKeyTest extends TestCase
             'targetTable' => $tags,
             'propertyName' => 'tags',
             'through' => 'SiteArticlesTags',
+            'sort' => ['SiteTags.id' => 'asc'],
             'foreignKey' => ['article_id', 'site_id'],
             'targetForeignKey' => ['tag_id', 'site_id']
         ]);

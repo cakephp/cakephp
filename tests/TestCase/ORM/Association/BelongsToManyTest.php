@@ -912,7 +912,7 @@ class BelongsToManyTest extends TestCase
      *
      * @return void
      */
-    public function testSaveAssociatedOnlyEntities()
+    public function testSaveAssociatedOnlyEntitiesAppend()
     {
         $connection = ConnectionManager::get('test');
         $mock = $this->getMock(

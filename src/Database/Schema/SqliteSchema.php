@@ -207,12 +207,14 @@ class SqliteSchema extends BaseSchema
      */
     public function convertForeignKeyDescription(Table $table, $row)
     {
+        $update = isset($row['on_update']) ? $row['on_update'] : '';
+        $delete = isset($row['on_delete']) ? $row['on_delete'] : '';
         $data = [
             'type' => Table::CONSTRAINT_FOREIGN,
             'columns' => [$row['from']],
             'references' => [$row['table'], $row['to']],
-            'update' => $this->_convertOnClause($row['on_update']),
-            'delete' => $this->_convertOnClause($row['on_delete']),
+            'update' => $this->_convertOnClause($update),
+            'delete' => $this->_convertOnClause($delete),
         ];
         $name = $row['from'] . '_fk';
         $table->addConstraint($name, $data);

@@ -14,12 +14,10 @@
  */
 namespace Cake\Test\TestCase\TestSuite;
 
-use Cake\Core\Configure;
-use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\TestSuite\Fixture\TestFixture;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\ClassRegistry;
+use Exception;
 
 /**
  * ArticlesFixture class
@@ -251,7 +249,7 @@ class TestFixtureTest extends TestCase
         $table->expects($this->once())
             ->method('createSql')
             ->with($db)
-            ->will($this->throwException(new \Exception('oh noes')));
+            ->will($this->throwException(new Exception('oh noes')));
         $fixture->schema($table);
 
         $fixture->create($db);

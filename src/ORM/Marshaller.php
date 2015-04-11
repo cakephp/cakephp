@@ -237,6 +237,7 @@ class Marshaller
      * * associated: Associations listed here will be marshalled as well.
      * * fieldList: A whitelist of fields to be assigned to the entity. If not present,
      *   the accessible fields list in the entity will be used.
+     * * accessibleFields: A list of fields to allow or deny in entity accessible fields.
      *
      * @param array $data The data to hydrate.
      * @param array $options List of options
@@ -276,20 +277,26 @@ class Marshaller
         }
         $data = array_values($data);
 
-        // Accept [ [id => 1], [id = 2] ] style.
         $primaryKey = array_flip($assoc->target()->schema()->primaryKey());
-        if (array_intersect_key($primaryKey, current($data)) === $primaryKey) {
-            $primaryCount = count($primaryKey);
-            $query = $assoc->find();
-            foreach ($data as $row) {
+        $records = [];
+
+        foreach ($data as $row) {
+            if (array_intersect_key($primaryKey, $row) === $primaryKey) {
+                if (!isset($query)) {
+                    $primaryCount = count($primaryKey);
+                    $query = $assoc->find();
+                }
                 $keys = array_intersect_key($row, $primaryKey);
                 if (count($keys) === $primaryCount) {
                     $query->orWhere($keys);
                 }
+            } else {
+                $records[] = $this->one($row, $options);
             }
-            $records = $query->toArray();
-        } else {
-            $records = $this->many($data, $options);
+        }
+
+        if (isset($query)) {
+            $records = array_merge($records, $query->toArray());
         }
 
         $joint = $assoc->junction();

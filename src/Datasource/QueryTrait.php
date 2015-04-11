@@ -270,8 +270,7 @@ trait QueryTrait
      * to fetch the results from the database.
      *
      * Formatting callbacks will get a first parameter, a `ResultSetDecorator`, that
-     * can be traversed and modified at will. As for the second parameter, the
-     * formatting callback will receive this query instance.
+     * can be traversed and modified at will.
      *
      * Callbacks are required to return an iterator object, which will be used as
      * the return value for this query's result. Formatter functions are applied
@@ -287,12 +286,12 @@ trait QueryTrait
      *
      * ```
      * // Return all results from the table indexed by id
-     * $query->select(['id', 'name'])->formatResults(function ($results, $query) {
+     * $query->select(['id', 'name'])->formatResults(function ($results) {
      *   return $results->indexBy('id');
      * });
      *
      * // Add a new column to the ResultSet
-     * $query->select(['name', 'birth_date'])->formatResults(function ($results, $query) {
+     * $query->select(['name', 'birth_date'])->formatResults(function ($results) {
      *   return $results->map(function ($row) {
      *     $row['age'] = $row['birth_date']->diff(new DateTime)->y;
      *     return $row;
