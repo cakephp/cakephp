@@ -134,7 +134,7 @@ class Validation
      */
     public static function blank($check)
     {
-        trigger_error('Validation::blank() is deprecated.');
+        trigger_error('Validation::blank() is deprecated.', E_USER_DEPRECATED);
         if (is_array($check)) {
             extract(static::_defaults($check));
         }
