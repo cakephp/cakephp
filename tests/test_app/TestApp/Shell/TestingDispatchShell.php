@@ -25,8 +25,6 @@ use Cake\Core\Configure;
 class TestingDispatchShell extends Shell
 {
 
-    public $outPath = '';
-
     protected function _welcome()
     {
         $this->out(sprintf('<info>Welcome to CakePHP %s Console</info>', 'v' . Configure::version()));
@@ -34,7 +32,7 @@ class TestingDispatchShell extends Shell
 
     public function out($message = null, $newlines = 1, $level = Shell::NORMAL)
     {
-        file_put_contents(TEST_APP . 'shell.log', $message . "\n", FILE_APPEND);
+        echo $message . "\n";
     }
 
     public function testTask()

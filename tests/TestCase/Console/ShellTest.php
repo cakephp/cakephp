@@ -831,11 +831,11 @@ class ShellTest extends TestCase
      */
     public function testDispatchShell()
     {
-        $this->skipIf(!touch(TEST_APP . 'shell.log'), 'Can\'t write shell test log file');
         $Shell = new TestingDispatchShell();
+        ob_start();
         $Shell->runCommand(['test_task'], true);
+        $result = ob_get_clean();
 
-        $result = file_get_contents(TEST_APP . 'shell.log');
         $expected = <<<TEXT
 <info>Welcome to CakePHP v3.0.1 Console</info>
 I am a test task, I dispatch another Shell
@@ -844,10 +844,6 @@ I am a dispatched Shell
 
 TEXT;
         $this->assertEquals($expected, $result);
-
-        //@codingStandardsIgnoreStart
-        @unlink(TEST_APP . 'shell.log');
-        //@codingStandardsIgnoreEnd
     }
 
     /**
