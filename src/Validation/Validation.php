@@ -46,6 +46,20 @@ class Validation
     public static $errors = [];
 
     /**
+     * Backwards compatibility wrapper for Validation::notBlank().
+     *
+     * @param string|array $check Value to check.
+     * @return bool Success.
+     * @deprecated 3.0.2 Use Validation::notBlank() instead.
+     * @see Validation::notBlank()
+     */
+    public function notEmpty($check)
+    {
+        trigger_error('Validation::notEmpty() is deprecated. Use Validation::notBlank() instead.', E_USER_DEPRECATED);
+        return static::notBlank($check);
+    }
+
+    /**
      * Checks that a string contains something other than whitespace
      *
      * Returns true if string contains something other than whitespace
@@ -53,14 +67,10 @@ class Validation
      * $check can be passed as an array:
      * ['check' => 'valueToCheck'];
      *
-     * It is recommended to *not* use this method, and instead use Validator::allowEmpty()
-     * & Validator::notEmpty() instead. This method is only provided for
-     * backwards compatibility.
-     *
      * @param string|array $check Value to check
      * @return bool Success
      */
-    public static function notEmpty($check)
+    public static function notBlank($check)
     {
         if (is_array($check)) {
             extract(static::_defaults($check));
@@ -120,9 +130,11 @@ class Validation
      *
      * @param string|array $check Value to check
      * @return bool Success
+     * @deprecated 3.0.2
      */
     public static function blank($check)
     {
+        trigger_error('Validation::blank() is deprecated.');
         if (is_array($check)) {
             extract(static::_defaults($check));
         }
@@ -773,9 +785,14 @@ class Validation
      * @param string $method class method name for validation to run
      * @param array|null $args arguments to send to method
      * @return mixed user-defined class class method returns
+     * @deprecated 3.0.2 You can just set a callable for `rule` key when adding validators.
      */
     public static function userDefined($check, $object, $method, $args = null)
     {
+        trigger_error(
+            'Validation::userDefined() is deprecated. Just set a callable for `rule` key when adding validators instead.',
+            E_USER_DEPRECATED
+        );
         return call_user_func_array([$object, $method], [$check, $args]);
     }
 
