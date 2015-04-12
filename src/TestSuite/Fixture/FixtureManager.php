@@ -50,6 +50,13 @@ class FixtureManager
     protected $_fixtureMap = [];
 
     /**
+     * A map of connection names and the fixture currently in it.
+     *
+     * @var array
+     */
+    protected $_insertionMap = [];
+
+    /**
      * Inspects the test to look for unloaded fixtures and loads them
      *
      * @param \Cake\TestSuite\TestCase $test The test case to inspect.
@@ -193,11 +200,12 @@ class FixtureManager
      */
     protected function _setupTable($fixture, $db, array $sources, $drop = true)
     {
-        if (!empty($fixture->created) && in_array($db->configName(), $fixture->created)) {
+        $configName = $db->configName();
+        if ($this->isFixtureSetup($configName, $fixture)) {
             return;
         }
 
-        $table = $fixture->table;
+        $table = $fixture->sourceName();
         $exists = in_array($table, $sources);
 
         if ($drop && $exists) {
@@ -206,7 +214,7 @@ class FixtureManager
         } elseif (!$exists) {
             $fixture->create($db);
         } else {
-            $fixture->created[] = $db->configName();
+            $this->_insertionMap[$configName][] = $fixture;
             $fixture->truncate($db);
         }
     }
@@ -232,8 +240,12 @@ class FixtureManager
         try {
             $createTables = function ($db, $fixtures) use ($test) {
                 $tables = $db->schemaCollection()->listTables();
+                $configName = $db->configName();
+                if (!isset($this->_insertionMap[$configName])) {
+                    $this->_insertionMap[$configName] = [];
+                }
                 foreach ($fixtures as $fixture) {
-                    if (!in_array($db->configName(), (array)$fixture->created)) {
+                    if (!in_array($fixture, $this->_insertionMap[$configName])) {
                         $this->_setupTable($fixture, $db, $tables, $test->dropTables);
                     } else {
                         $fixture->truncate($db);
@@ -294,7 +306,7 @@ class FixtureManager
         foreach ($fixtures as $f) {
             if (!empty($this->_loaded[$f])) {
                 $fixture = $this->_loaded[$f];
-                $dbs[$fixture->connection][$f] = $fixture;
+                $dbs[$fixture->connection()][$f] = $fixture;
             }
         }
         return $dbs;
@@ -312,9 +324,9 @@ class FixtureManager
             return;
         }
         $truncate = function ($db, $fixtures) {
-            $connection = $db->configName();
+            $configName = $db->configName();
             foreach ($fixtures as $fixture) {
-                if (!empty($fixture->created) && in_array($connection, $fixture->created)) {
+                if ($this->isFixtureSetup($configName, $fixture)) {
                     $fixture->truncate($db);
                 }
             }
@@ -336,10 +348,10 @@ class FixtureManager
         if (isset($this->_fixtureMap[$name])) {
             $fixture = $this->_fixtureMap[$name];
             if (!$db) {
-                $db = ConnectionManager::get($fixture->connection);
+                $db = ConnectionManager::get($fixture->connection());
             }
 
-            if (!in_array($db->configName(), (array)$fixture->created)) {
+            if (!$this->isFixtureSetup($db->configName(), $fixture)) {
                 $sources = $db->schemaCollection()->listTables();
                 $this->_setupTable($fixture, $db, $sources, $dropTables);
             }
@@ -362,11 +374,26 @@ class FixtureManager
         $shutdown = function ($db, $fixtures) {
             $connection = $db->configName();
             foreach ($fixtures as $fixture) {
-                if (!empty($fixture->created) && in_array($connection, $fixture->created)) {
+                if ($this->isFixtureSetup($connection, $fixture)) {
                     $fixture->drop($db);
+                    $index = array_search($fixture, $this->_insertionMap[$connection]);
+                    unset($this->_insertionMap[$connection][$index]);
                 }
             }
         };
         $this->_runOperation(array_keys($this->_loaded), $shutdown);
     }
+
+    /**
+     * Check whether or not a fixture has been inserted in a given connection name.
+     *
+     * @param string $connection The connection name.
+     * @param \Cake\Datasource\FixtureInterface $fixture The fixture to check.
+     * @return bool
+     */
+    public function isFixtureSetup($connection, $fixture)
+    {
+        return isset($this->_insertionMap[$connection]) && in_array($fixture, $this->_insertionMap[$connection]);
+    }
+
 }

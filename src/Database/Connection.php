@@ -14,6 +14,7 @@
  */
 namespace Cake\Database;
 
+use Cake\Datasource\ConnectionInterface;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\MissingDriverException;
 use Cake\Database\Exception\MissingExtensionException;
@@ -28,7 +29,7 @@ use Cake\Database\ValueBinder;
 /**
  * Represents a connection with a database server.
  */
-class Connection
+class Connection implements ConnectionInterface
 {
 
     use TypeConverterTrait;
