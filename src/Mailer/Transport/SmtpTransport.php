@@ -12,8 +12,10 @@
  * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Network\Email;
+namespace Cake\Mailer\Transport;
 
+use Cake\Mailer\AbstractTransport;
+use Cake\Mailer\Email;
 use Cake\Network\Exception\SocketException;
 use Cake\Network\Socket;
 
@@ -149,7 +151,7 @@ class SmtpTransport extends AbstractTransport
     /**
      * Send mail
      *
-     * @param \Cake\Network\Email\Email $email Email instance
+     * @param \Cake\Mailer\Email $email Email instance
      * @return array
      * @throws \Cake\Network\Exception\SocketException
      */
@@ -289,7 +291,7 @@ class SmtpTransport extends AbstractTransport
     /**
      * Prepares the `from` email address.
      *
-     * @param \Cake\Network\Email\Email $email Email instance
+     * @param \Cake\Mailer\Email $email Email instance
      * @return array
      */
     protected function _prepareFromAddress($email)
@@ -304,7 +306,7 @@ class SmtpTransport extends AbstractTransport
     /**
      * Prepares the recipient email addresses.
      *
-     * @param \Cake\Network\Email\Email $email Email instance
+     * @param \Cake\Mailer\Email $email Email instance
      * @return array
      */
     protected function _prepareRecipientAddresses($email)
@@ -318,7 +320,7 @@ class SmtpTransport extends AbstractTransport
     /**
      * Prepares the message headers.
      *
-     * @param \Cake\Network\Email\Email $email Email instance
+     * @param \Cake\Mailer\Email $email Email instance
      * @return array
      */
     protected function _prepareMessageHeaders($email)
@@ -329,7 +331,7 @@ class SmtpTransport extends AbstractTransport
     /**
      * Prepares the message body.
      *
-     * @param \Cake\Network\Email\Email $email Email instance
+     * @param \Cake\Mailer\Email $email Email instance
      * @return string
      */
     protected function _prepareMessage($email)
@@ -350,7 +352,7 @@ class SmtpTransport extends AbstractTransport
      * Send emails
      *
      * @return void
-     * @param \Cake\Network\Email\Email $email Cake Email
+     * @param \Cake\Mailer\Email $email Cake Email
      * @throws \Cake\Network\Exception\SocketException
      */
     protected function _sendRcpt($email)
@@ -367,7 +369,7 @@ class SmtpTransport extends AbstractTransport
     /**
      * Send Data
      *
-     * @param \Cake\Network\Email\Email $email Email instance
+     * @param \Cake\Mailer\Email $email Email instance
      * @return void
      * @throws \Cake\Network\Exception\SocketException
      */

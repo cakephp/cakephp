@@ -12,7 +12,7 @@
  * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Network\Email;
+namespace Cake\Mailer;
 
 use BadMethodCallException;
 use Cake\Core\App;
@@ -262,7 +262,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * The transport instance to use for sending mail.
      *
-     * @var \Cake\Network\Email\AbstractTransport
+     * @var \Cake\Mailer\Transport\AbstractTransport
      */
     protected $_transport = null;
 
@@ -310,9 +310,9 @@ class Email implements JsonSerializable, Serializable
      * @var array
      */
     protected static $_dsnClassMap = [
-        'debug' => 'Cake\Network\Email\DebugTransport',
-        'mail' => 'Cake\Network\Email\MailTransport',
-        'smtp' => 'Cake\Network\Email\SmtpTransport',
+        'debug' => 'Cake\Mailer\Transport\DebugTransport',
+        'mail' => 'Cake\Mailer\Transport\MailTransport',
+        'smtp' => 'Cake\Mailer\Transport\SmtpTransport',
     ];
 
     /**
@@ -977,7 +977,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @param string|AbstractTransport|null $name Either the name of a configured
      *   transport, or a transport instance.
-     * @return \Cake\Network\Email\AbstractTransport|$this
+     * @return \Cake\Mailer\Transport\AbstractTransport|$this
      * @throws \LogicException When the chosen transport lacks a send method.
      * @throws \InvalidArgumentException When $name is neither a string nor an object.
      */
@@ -1008,7 +1008,7 @@ class Email implements JsonSerializable, Serializable
      * Build a transport instance from configuration data.
      *
      * @param string $name The transport configuration name to build.
-     * @return \Cake\Network\Email\AbstractTransport
+     * @return \Cake\Mailer\AbstractTransport
      * @throws \InvalidArgumentException When transport configuration is missing or invalid.
      */
     protected function _constructTransport($name)
@@ -1023,7 +1023,7 @@ class Email implements JsonSerializable, Serializable
             return $config['className'];
         }
 
-        $className = App::className($config['className'], 'Network/Email', 'Transport');
+        $className = App::className($config['className'], 'Mailer/Transport', 'Transport');
         if (!$className) {
             throw new InvalidArgumentException(sprintf('Transport class "%s" not found.', $name));
         } elseif (!method_exists($className, 'send')) {
@@ -1164,7 +1164,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|array $attachments String with the filename or array with filenames
      * @return $this
      * @throws \InvalidArgumentException
-     * @see \Cake\Network\Email\Email::attachments()
+     * @see \Cake\Mailer\Email::attachments()
      */
     public function addAttachments($attachments)
     {
@@ -1332,14 +1332,14 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Static method to fast create an instance of \Cake\Network\Email\Email
+     * Static method to fast create an instance of \Cake\Mailer\Email
      *
-     * @param string|array $to Address to send (see Cake\Network\Email\Email::to()). If null, will try to use 'to' from transport config
+     * @param string|array $to Address to send (see Cake\Mailer\Email::to()). If null, will try to use 'to' from transport config
      * @param string $subject String of subject or null to use 'subject' from transport config
      * @param string|array $message String with message or array with variables to be used in render
      * @param string|array $transportConfig String to use config from EmailConfig or array with configs
      * @param bool $send Send the email or just return the instance pre-configured
-     * @return \Cake\Network\Email\Email Instance of Cake\Network\Email\Email
+     * @return \Cake\Mailer\Email Instance of Cake\Mailer\Email
      * @throws \InvalidArgumentException
      */
     public static function deliver($to = null, $subject = null, $message = null, $transportConfig = 'fast', $send = true)
@@ -1965,7 +1965,7 @@ class Email implements JsonSerializable, Serializable
      * Configures an email instance object from serialized config.
      *
      * @param array $config Email configuration array.
-     * @return \Cake\Network\Email\Email Configured email instance.
+     * @return \Cake\Mailer\Email Configured email instance.
      */
     public function createFromArray($config)
     {
@@ -1996,7 +1996,7 @@ class Email implements JsonSerializable, Serializable
      * Unserializes the Email object.
      *
      * @param string $data Serialized string.
-     * @return \Cake\Network\Email\Email Configured email instance.
+     * @return \Cake\Mailer\Email Configured email instance.
      */
     public function unserialize($data)
     {
