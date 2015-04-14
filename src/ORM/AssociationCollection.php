@@ -259,7 +259,14 @@ class AssociationCollection
     public function cascadeDelete(Entity $entity, array $options)
     {
         foreach ($this->_items as $assoc) {
-            $assoc->cascadeDelete($entity, $options);
+            if ($assoc->cascadeCallbacks()) {
+                $assoc->cascadeDelete($entity, $options);
+            }
+        }
+        foreach ($this->_items as $assoc) {
+            if (!$assoc->cascadeCallbacks()) {
+                $assoc->cascadeDelete($entity, $options);
+            }
         }
     }
 
