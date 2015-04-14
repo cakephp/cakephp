@@ -15,7 +15,6 @@
 namespace Cake\View\Helper;
 
 use Cake\View\Helper;
-use Cake\View\StringTemplateTrait;
 use Cake\View\View;
 
 /**
@@ -28,19 +27,6 @@ use Cake\View\View;
  */
 class SessionHelper extends Helper
 {
-
-    use StringTemplateTrait;
-
-    /**
-     * Default config for this class
-     *
-     * @var array
-     */
-    protected $_defaultConfig = [
-        'templates' => [
-            'flash' => '<div id="{{key}}-message" class="message-{{class}}">{{message}}</div>'
-        ]
-    ];
 
     /**
      *  Constructor
