@@ -14,8 +14,8 @@
  */
 namespace Cake\Collection;
 
-use Iterator;
 use JsonSerializable;
+use Traversable;
 
 /**
  * Describes the methods a Collection should implement. A collection is an immutable
@@ -23,7 +23,7 @@ use JsonSerializable;
  * generating other collections.
  *
  */
-interface CollectionInterface extends Iterator, JsonSerializable
+interface CollectionInterface extends JsonSerializable, Traversable
 {
 
     /**
