@@ -461,7 +461,7 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer->controller->response->expects($this->once())->method('statusCode')->with(500);
 
         $result = $ExceptionRenderer->render();
-        $this->assertContains('<h2>An Internal Error Has Occurred</h2>', $result->body());
+        $this->assertContains('<h2>An Internal Error Has Occurred.</h2>', $result->body());
         $this->assertContains('An Internal Error Has Occurred.</p>', $result->body());
     }
 
