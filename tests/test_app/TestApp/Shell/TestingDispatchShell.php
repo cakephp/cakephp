@@ -27,7 +27,7 @@ class TestingDispatchShell extends Shell
 
     protected function _welcome()
     {
-        $this->out(sprintf('<info>Welcome to CakePHP %s Console</info>', 'v' . Configure::version()));
+        $this->out('<info>Welcome to CakePHP Console</info>');
     }
 
     public function out($message = null, $newlines = 1, $level = Shell::NORMAL)

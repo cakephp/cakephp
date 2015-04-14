@@ -837,9 +837,9 @@ class ShellTest extends TestCase
         $result = ob_get_clean();
 
         $expected = <<<TEXT
-<info>Welcome to CakePHP v3.0.1 Console</info>
+<info>Welcome to CakePHP Console</info>
 I am a test task, I dispatch another Shell
-<info>Welcome to CakePHP v3.0.1 Console</info>
+<info>Welcome to CakePHP Console</info>
 I am a dispatched Shell
 
 TEXT;
