@@ -30,5 +30,4 @@ class GroupsTable extends Table
             'cascadeCallbacks' => true
         ]);
     }
-
 }

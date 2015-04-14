@@ -27,5 +27,4 @@ class GroupsMembersTable extends Table
 
         $this->addBehavior('CounterCache', ['Members' => ['group_count']]);
     }
-
 }

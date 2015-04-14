@@ -25,5 +25,4 @@ class MembersTable extends Table
     {
         $this->belongsToMany('Groups');
     }
-
 }

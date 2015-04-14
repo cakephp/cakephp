@@ -14,11 +14,11 @@
  */
 namespace Cake\ORM;
 
+use Cake\Collection\Collection;
 use Cake\ORM\Association;
 use Cake\ORM\AssociationsNormalizerTrait;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
-use Cake\Collection\Collection;
 use InvalidArgumentException;
 
 /**
