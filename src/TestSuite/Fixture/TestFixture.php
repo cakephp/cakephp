@@ -14,8 +14,8 @@
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Exception\Exception;
-use Cake\Datasource\ConnectionInterface;
 use Cake\Database\Schema\Table;
+use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
 use Cake\Log\Log;
