@@ -18,6 +18,7 @@ use Cake\ORM\Association;
 use Cake\ORM\AssociationsNormalizerTrait;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
+use Cake\Collection\Collection;
 use InvalidArgumentException;
 
 /**
@@ -251,6 +252,7 @@ class AssociationCollection
 
     /**
      * Cascade a delete across the various associations.
+     * Cascade first across associations for which cascadeCallbacks is true.
      *
      * @param \Cake\ORM\Entity $entity The entity to delete associations for.
      * @param array $options The options used in the delete operation.
@@ -258,15 +260,16 @@ class AssociationCollection
      */
     public function cascadeDelete(Entity $entity, array $options)
     {
-        foreach ($this->_items as $assoc) {
+        $assocs = new Collection($this->_items);
+        $assocs = $assocs->filter(function ($assoc) use ($entity, $options) {
             if ($assoc->cascadeCallbacks()) {
                 $assoc->cascadeDelete($entity, $options);
+                return false;
             }
-        }
-        foreach ($this->_items as $assoc) {
-            if (!$assoc->cascadeCallbacks()) {
-                $assoc->cascadeDelete($entity, $options);
-            }
+            return true;
+        })->toArray();
+        foreach ($assocs as $assoc) {
+            $assoc->cascadeDelete($entity, $options);
         }
     }
 
