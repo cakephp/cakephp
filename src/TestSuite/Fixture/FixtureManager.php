@@ -395,5 +395,4 @@ class FixtureManager
     {
         return isset($this->_insertionMap[$connection]) && in_array($fixture, $this->_insertionMap[$connection]);
     }
-
 }
