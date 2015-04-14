@@ -2754,7 +2754,7 @@ class TableTest extends TestCase
         $result = $table->findByUsername('garrett');
         $this->assertInstanceOf('Cake\ORM\Query', $result);
 
-        $expected = new QueryExpression(['username' => 'garrett'], $this->usersTypeMap);
+        $expected = new QueryExpression(['Users.username' => 'garrett'], $this->usersTypeMap);
         $this->assertEquals($expected, $result->clause('where'));
     }
 
@@ -2812,7 +2812,7 @@ class TableTest extends TestCase
         $result = $table->findByUsernameAndId('garrett', 4);
         $this->assertInstanceOf('Cake\ORM\Query', $result);
 
-        $expected = new QueryExpression(['username' => 'garrett', 'id' => 4], $this->usersTypeMap);
+        $expected = new QueryExpression(['Users.username' => 'garrett', 'Users.id' => 4], $this->usersTypeMap);
         $this->assertEquals($expected, $result->clause('where'));
     }
 
@@ -2832,8 +2832,8 @@ class TableTest extends TestCase
         $expected->add(
             [
             'OR' => [
-                'username' => 'garrett',
-                'id' => 4
+                'Users.username' => 'garrett',
+                'Users.id' => 4
             ]]
         );
         $this->assertEquals($expected, $result->clause('where'));
@@ -2852,7 +2852,7 @@ class TableTest extends TestCase
         $this->assertInstanceOf('Cake\ORM\Query', $result);
         $this->assertNull($result->clause('limit'));
 
-        $expected = new QueryExpression(['author_id' => 1], $this->articlesTypeMap);
+        $expected = new QueryExpression(['Articles.author_id' => 1], $this->articlesTypeMap);
         $this->assertEquals($expected, $result->clause('where'));
     }
 
@@ -2869,7 +2869,7 @@ class TableTest extends TestCase
         $this->assertInstanceOf('Cake\ORM\Query', $result);
         $this->assertNull($result->clause('limit'));
         $expected = new QueryExpression(
-            ['author_id' => 1, 'published' => 'Y'],
+            ['Users.author_id' => 1, 'Users.published' => 'Y'],
             $this->usersTypeMap
         );
         $this->assertEquals($expected, $result->clause('where'));
@@ -2901,7 +2901,7 @@ class TableTest extends TestCase
             'updated' => 'timestamp',
         ]);
         $expected->add(
-            ['or' => ['author_id' => 1, 'published' => 'Y']]
+            ['or' => ['Users.author_id' => 1, 'Users.published' => 'Y']]
         );
         $this->assertEquals($expected, $result->clause('where'));
         $this->assertNull($result->clause('order'));
