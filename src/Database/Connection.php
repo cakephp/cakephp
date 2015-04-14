@@ -14,7 +14,6 @@
  */
 namespace Cake\Database;
 
-use Cake\Datasource\ConnectionInterface;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\MissingDriverException;
 use Cake\Database\Exception\MissingExtensionException;
@@ -25,6 +24,7 @@ use Cake\Database\Query;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\ValueBinder;
+use Cake\Datasource\ConnectionInterface;
 
 /**
  * Represents a connection with a database server.
