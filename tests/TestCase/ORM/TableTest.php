@@ -56,6 +56,9 @@ class TableTest extends TestCase
         'core.tags',
         'core.articles_tags',
         'core.site_articles',
+        'core.members',
+        'core.groups',
+        'core.groups_members',
     ];
 
     /**
@@ -2463,6 +2466,20 @@ class TableTest extends TestCase
         $junction = $table->association('tags')->junction();
         $query = $junction->find('all')->where(['article_id' => 1]);
         $this->assertNull($query->all()->first(), 'Should not find any rows.');
+    }
+
+    public function testDeleteAssociationsCascadingCallbacksOrder()
+    {
+        $Members = TableRegistry::get('Members');
+
+        $member = $Members->get(1);
+        $this->assertEquals(2, $member->group_count);
+
+        $group = $Members->Groups->get(1);
+        $Members->Groups->delete($group);
+
+        $member = $Members->get(1);
+        $this->assertEquals(1, $member->group_count);
     }
 
     /**
