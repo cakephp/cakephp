@@ -1,13 +1,33 @@
 <?php
+/**
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @since         3.1.0
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
 namespace Cake\Mailer;
 
 use ArrayAccess;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventListenerInterface;
+use Cake\Mailer\Exception\MissingMailException;
+use Cake\Utility\Inflector;
 
-class Mailer implements ArrayAccess, EventListenerInterface
+abstract class Mailer implements ArrayAccess, EventListenerInterface
 {
     use ModelAwareTrait;
+
+    /**
+     * Layout.
+     *
+     * @var string
+     */
+    public $layout;
 
     /**
      * Email instance.
@@ -15,13 +35,6 @@ class Mailer implements ArrayAccess, EventListenerInterface
      * @var \Cake\Mailer\Email
      */
     protected $_email;
-
-    /**
-     * Serialized email instance's initial state configuration defined by mailer.
-     *
-     * @var string
-     */
-    protected $_emailInitialState;
 
     /**
      * Constructor.
@@ -34,54 +47,33 @@ class Mailer implements ArrayAccess, EventListenerInterface
             $email = new Email();
         }
 
-        $this->_email = $email->profile($this);
-        $this->_emailInitialState = $email->jsonSerialize();
-    }
-
-    /**
-     * Dispatches mailer actions.
-     *
-     * @param string $action Name of the action to trigger (i.e. 'welcome' will trigger '_welcome').
-     * @param array $args Arguments passed to triggered action.
-     * @return mixed When using `send` prefix, result of `\Cake\Mailer\Email::send()`. Otherwise, $this.
-     */
-    public function __call($method, $args)
-    {
-        $action = str_replace('send', '', $method);
-        $send = $action !== $method;
-
-        $actionMethod = Inflector::camelize($action);
-        if (!method_exists($this, $actionMethod)) {
-            throw new \Exception('Missing mailer action: ' . $actionMethod);
+        if ($this->layout === null) {
+            $this->layout = Inflector::underscore($this->getName());
         }
 
-        $this += [
-            'template' => Inflector::underscore($action),
-        ];
-
-        call_user_func_array([$this, $actionMethod], $args);
-
-        return $send ? $this->send() : $this;
+        $this->_email = $email->profile((array)$this);
     }
 
     /**
-     * Implemented events.
+     * Returns the mailer's name.
      *
-     * @return array
+     * @return string
      */
-    public function implementedEvents()
+    public function getName()
     {
-        return [];
+        return str_replace('Mailer', '', join('', array_slice(explode('\\', get_class($this)), -1)));
     }
 
     /**
-     * Resets email instance to initial state used by mailer.
+     * Sets layout to use. Defaults to configured layout template if a custom layout
+     * could not be found.
      *
+     * @param string $layout Name of the layout to use.
      * @return $this object.
      */
-    public function reset()
+    public function layout($layout)
     {
-        $this->_email->profile(json_decode($this->_emailInitialState));
+        $this->layout = $layout;
         return $this;
     }
 
@@ -89,7 +81,7 @@ class Mailer implements ArrayAccess, EventListenerInterface
      * Sets headers.
      *
      * @param array $headers Headers to set.
-     * @return  $this object.
+     * @return $this object.
      */
     public function setHeaders(array $headers)
     {
@@ -101,7 +93,7 @@ class Mailer implements ArrayAccess, EventListenerInterface
      * Adds headers.
      *
      * @param array $headers Headers to set.
-     * @return  $this object.
+     * @return $this object.
      */
     public function addHeaders(array $headers)
     {
@@ -138,20 +130,43 @@ class Mailer implements ArrayAccess, EventListenerInterface
     /**
      * Sends email.
      *
+     * @param string $mail The name of the mail action to trigger.
+     * @param array $args Arguments to pass to the triggered mail action.
      * @param array $headers Headers to set.
      * @return array
+     * @throws \Cake\Mailer\Exception\MissingMailException
      * @throws \BadMethodCallException
      */
-    public function send($headers = [])
+    public function send($mail, $args = [], $headers = [])
     {
+        if (!method_exists($this, $mail)) {
+            throw new MissingMailException([
+                'mailer' => $this->getName() . 'Mailer',
+                'mail' => $mail,
+            ]);
+        }
+
         $this->setHeaders($headers);
 
+        call_user_func_array([$this, $mail], $args);
+
         $result = $this->_email
-            ->profile($this)
+            ->profile((array)$this)
             ->send();
 
         $this->reset();
         return $result;
+    }
+
+    /**
+     * Resets email instance to original config.
+     *
+     * @return $this object.
+     */
+    public function reset()
+    {
+        $this->_email->reset();
+        return $this;
     }
 
     /**
@@ -193,5 +208,15 @@ class Mailer implements ArrayAccess, EventListenerInterface
     public function offsetUnset($offset)
     {
         unset($this->{$offset});
+    }
+
+    /**
+     * Implemented events.
+     *
+     * @return array
+     */
+    public function implementedEvents()
+    {
+        return [];
     }
 }
