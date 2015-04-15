@@ -591,10 +591,10 @@ class Text
             $truncate = mb_substr($truncate, 0, $spacepos);
         }
         // If truncate still empty, then we don't need to count ellipsis in the cut.
-        if(mb_strlen($truncate) === 0){
-                
-           $truncate = mb_substr($text, 0, $length);
+        if (mb_strlen($truncate) === 0) {
+            $truncate = mb_substr($text, 0, $length);
         }
+        
         $truncate .= $ellipsis;
 
         if ($html) {
