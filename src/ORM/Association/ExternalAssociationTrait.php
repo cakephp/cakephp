@@ -57,7 +57,7 @@ trait ExternalAssociationTrait
     {
         if ($key === null) {
             if ($this->_foreignKey === null) {
-                $this->_foreignKey = $this->_modelKey($this->source()->alias());
+                $this->_foreignKey = $this->_modelKey($this->source()->table());
             }
             return $this->_foreignKey;
         }
