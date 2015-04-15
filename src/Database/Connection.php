@@ -24,11 +24,12 @@ use Cake\Database\Query;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\ValueBinder;
+use Cake\Datasource\ConnectionInterface;
 
 /**
  * Represents a connection with a database server.
  */
-class Connection
+class Connection implements ConnectionInterface
 {
 
     use TypeConverterTrait;
