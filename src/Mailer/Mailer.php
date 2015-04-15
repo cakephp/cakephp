@@ -15,7 +15,7 @@ namespace Cake\Mailer;
 use ArrayAccess;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventListenerInterface;
-use Cake\Mailer\Exception\MissingMailException;
+use Cake\Mailer\Exception\MissingActionException;
 use Cake\Utility\Inflector;
 
 abstract class Mailer implements ArrayAccess, EventListenerInterface
@@ -130,25 +130,25 @@ abstract class Mailer implements ArrayAccess, EventListenerInterface
     /**
      * Sends email.
      *
-     * @param string $mail The name of the mail action to trigger.
-     * @param array $args Arguments to pass to the triggered mail action.
+     * @param string $action The name of the mailer action to trigger.
+     * @param array $args Arguments to pass to the triggered mailer action.
      * @param array $headers Headers to set.
      * @return array
-     * @throws \Cake\Mailer\Exception\MissingMailException
+     * @throws \Cake\Mailer\Exception\MissingActionException
      * @throws \BadMethodCallException
      */
-    public function send($mail, $args = [], $headers = [])
+    public function send($action, $args = [], $headers = [])
     {
-        if (!method_exists($this, $mail)) {
-            throw new MissingMailException([
+        if (!method_exists($this, $action)) {
+            throw new MissingActionException([
                 'mailer' => $this->getName() . 'Mailer',
-                'mail' => $mail,
+                'action' => $action,
             ]);
         }
 
         $this->setHeaders($headers);
 
-        call_user_func_array([$this, $mail], $args);
+        call_user_func_array([$this, $action], $args);
 
         $result = $this->_email
             ->profile((array)$this)

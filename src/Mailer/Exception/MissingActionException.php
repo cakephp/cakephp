@@ -15,10 +15,9 @@ namespace Cake\Mailer\Exception;
 use Cake\Core\Exception\Exception;
 
 /**
- * Missing Action exception - used when a controller action
- * cannot be found, or when the controller's isAction() method returns false.
+ * Missing Action exception - used when a mailer action cannot be found.
  */
-class MissingMailException extends Exception
+class MissingActionException extends Exception
 {
 
     /**
