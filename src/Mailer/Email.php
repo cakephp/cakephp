@@ -262,7 +262,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * The transport instance to use for sending mail.
      *
-     * @var \Cake\Mailer\Transport\AbstractTransport
+     * @var \Cake\Mailer\AbstractTransport
      */
     protected $_transport = null;
 
@@ -977,7 +977,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @param string|AbstractTransport|null $name Either the name of a configured
      *   transport, or a transport instance.
-     * @return \Cake\Mailer\Transport\AbstractTransport|$this
+     * @return \Cake\Mailer\AbstractTransport|$this
      * @throws \LogicException When the chosen transport lacks a send method.
      * @throws \InvalidArgumentException When $name is neither a string nor an object.
      */
