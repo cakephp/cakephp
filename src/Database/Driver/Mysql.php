@@ -89,8 +89,9 @@ class Mysql extends \Cake\Database\Driver
         $this->_connect($dsn, $config);
 
         if (!empty($config['init'])) {
+            $connection = $this->connection();
             foreach ((array)$config['init'] as $command) {
-                $this->connection()->exec($command);
+                $connection->exec($command);
             }
         }
         return true;

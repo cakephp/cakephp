@@ -36,8 +36,8 @@ class MysqlTest extends TestCase
     public function setup()
     {
         parent::setUp();
-        $config = Configure::read('Datasource.test');
-        $this->skipIf(strpos($config['datasource'], 'Mysql') === false, 'Not using Mysql for test config');
+        $config = ConnectionManager::config('test');
+        $this->skipIf(strpos($config['driver'], 'Mysql') === false, 'Not using Mysql for test config');
     }
 
     /**
@@ -47,7 +47,7 @@ class MysqlTest extends TestCase
      */
     public function testConnectionConfigDefault()
     {
-        $driver = $this->getMock('Cake\Database\Driver\Mysql', ['_connect']);
+        $driver = $this->getMock('Cake\Database\Driver\Mysql', ['_connect', 'connection']);
         $dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8';
         $expected = [
             'persistent' => true,
@@ -59,7 +59,7 @@ class MysqlTest extends TestCase
             'flags' => [],
             'encoding' => 'utf8',
             'timezone' => null,
-            'init' => [],
+            'init' => ['SET NAMES utf8'],
         ];
 
         $expected['flags'] += [
@@ -67,8 +67,14 @@ class MysqlTest extends TestCase
             PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
+        $connection = $this->getMock('StdClass', ['exec']);
+
         $driver->expects($this->once())->method('_connect')
             ->with($dsn, $expected);
+
+        $driver->expects($this->any())
+            ->method('connection')
+            ->will($this->returnValue($connection));
         $driver->connect([]);
     }
 
@@ -89,7 +95,10 @@ class MysqlTest extends TestCase
             'flags' => [1 => true, 2 => false],
             'encoding' => 'a-language',
             'timezone' => 'Antartica',
-            'init' => ['Execute this', 'this too']
+            'init' => [
+                'Execute this',
+                'this too',
+            ]
         ];
         $driver = $this->getMock(
             'Cake\Database\Driver\Mysql',
@@ -99,6 +108,7 @@ class MysqlTest extends TestCase
         $dsn = 'mysql:host=foo;port=3440;dbname=bar;charset=a-language';
         $expected = $config;
         $expected['init'][] = "SET time_zone = 'Antartica'";
+        $expected['init'][] = "SET NAMES a-language";
         $expected['flags'] += [
             PDO::ATTR_PERSISTENT => false,
             PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
@@ -109,7 +119,8 @@ class MysqlTest extends TestCase
         $connection->expects($this->at(0))->method('exec')->with('Execute this');
         $connection->expects($this->at(1))->method('exec')->with('this too');
         $connection->expects($this->at(2))->method('exec')->with("SET time_zone = 'Antartica'");
-        $connection->expects($this->exactly(3))->method('exec');
+        $connection->expects($this->at(3))->method('exec')->with("SET NAMES a-language");
+        $connection->expects($this->exactly(4))->method('exec');
 
         $driver->expects($this->once())->method('_connect')
             ->with($dsn, $expected);
