@@ -2411,7 +2411,9 @@ class TableTest extends TestCase
     public function testDeleteDependentHasMany()
     {
         $table = TableRegistry::get('authors');
-        $table->hasMany('articles', [
+        $table->associations()->remove('articles');
+        $table->hasMany('aliased_articles', [
+            'className' => 'articles',
             'foreignKey' => 'author_id',
             'dependent' => true,
             'cascadeCallbacks' => true,
