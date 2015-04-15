@@ -1025,6 +1025,10 @@ class Email implements JsonSerializable, Serializable
 
         $className = App::className($config['className'], 'Mailer/Transport', 'Transport');
         if (!$className) {
+            $className = App::className($config['className'], 'Network/Email', 'Transport');
+        }
+
+        if (!$className) {
             throw new InvalidArgumentException(sprintf('Transport class "%s" not found.', $name));
         } elseif (!method_exists($className, 'send')) {
             throw new InvalidArgumentException(sprintf('The "%s" does not have a send() method.', $className));
