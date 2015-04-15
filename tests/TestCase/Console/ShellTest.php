@@ -23,6 +23,7 @@ use Cake\Filesystem\Folder;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
+use TestApp\Shell\TestingDispatchShell;
 
 /**
  * Class for testing merging vars
@@ -821,6 +822,28 @@ class ShellTest extends TestCase
 
         $shell->Slice = $task;
         $shell->runCommand(['slice', 'one']);
+    }
+
+    /**
+     * test calling a shell that dispatch another one
+     *
+     * @return void
+     */
+    public function testDispatchShell()
+    {
+        $Shell = new TestingDispatchShell();
+        ob_start();
+        $Shell->runCommand(['test_task'], true);
+        $result = ob_get_clean();
+
+        $expected = <<<TEXT
+<info>Welcome to CakePHP Console</info>
+I am a test task, I dispatch another Shell
+<info>Welcome to CakePHP Console</info>
+I am a dispatched Shell
+
+TEXT;
+        $this->assertEquals($expected, $result);
     }
 
     /**
