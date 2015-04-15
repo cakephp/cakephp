@@ -22,7 +22,6 @@ class TestMailer extends Mailer
     {
         return $this->_email;
     }
-
 }
 
 class MailerTest extends TestCase
