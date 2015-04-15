@@ -124,6 +124,7 @@ class MarshallerTest extends TestCase
 
         $this->articles = $articles;
         $this->comments = $comments;
+        $this->users = $users;
     }
 
     /**
@@ -135,7 +136,7 @@ class MarshallerTest extends TestCase
     {
         parent::tearDown();
         TableRegistry::clear();
-        unset($this->articles, $this->comments);
+        unset($this->articles, $this->comments, $this->users);
     }
 
     /**
@@ -304,6 +305,37 @@ class MarshallerTest extends TestCase
         $result = $marshall->one($data, ['accessibleFields' => ['*' => true]]);
         $this->assertEquals($data['author_id'], $result->author_id);
         $this->assertTrue($result->not_in_schema);
+    }
+
+    /**
+     * Test one() supports accessibleFields option for associations
+     *
+     * @return void
+     */
+    public function testOneAccessibleFieldsOptionForAssociations()
+    {
+        $data = [
+            'title' => 'My title',
+            'body' => 'My content',
+            'user' => [
+                'id' => 1,
+                'username' => 'mark',
+            ]
+        ];
+        $this->articles->entityClass(__NAMESPACE__ . '\ProtectedArticle');
+        $this->users->entityClass(__NAMESPACE__ . '\ProtectedArticle');
+
+        $marshall = new Marshaller($this->articles);
+
+        $result = $marshall->one($data, [
+            'associated' => [
+                'Users' => ['accessibleFields' => ['id' => true]]
+            ],
+            'accessibleFields' => ['body' => false, 'user' => true]
+        ]);
+        $this->assertNull($result->body);
+        $this->assertNull($result->user->username);
+        $this->assertEquals(1, $result->user->id);
     }
 
     /**
