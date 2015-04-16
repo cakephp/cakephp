@@ -129,7 +129,7 @@ class DateTimeType extends Type
 
         $class = static::$dateTimeClass;
         try {
-            $compare = $date = false;
+            $date = false;
             if ($value === '' || $value === null || $value === false || $value === true) {
                 return null;
             } elseif (is_numeric($value)) {
@@ -138,10 +138,6 @@ class DateTimeType extends Type
                 return $this->_parseValue($value);
             } elseif (is_string($value)) {
                 $date = new $class($value);
-                $compare = true;
-            }
-            if ($compare && $date && (string)$date !== $value) {
-                return $value;
             }
             if ($date) {
                 return $date;
