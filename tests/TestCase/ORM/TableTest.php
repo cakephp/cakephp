@@ -2412,7 +2412,6 @@ class TableTest extends TestCase
     {
         $table = TableRegistry::get('authors');
         $table->hasMany('articles', [
-            'className' => 'articles',
             'foreignKey' => 'author_id',
             'dependent' => true,
             'cascadeCallbacks' => true,
