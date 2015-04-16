@@ -2411,8 +2411,7 @@ class TableTest extends TestCase
     public function testDeleteDependentHasMany()
     {
         $table = TableRegistry::get('authors');
-        $table->associations()->remove('articles');
-        $table->hasMany('aliased_articles', [
+        $table->hasMany('articles', [
             'className' => 'articles',
             'foreignKey' => 'author_id',
             'dependent' => true,
@@ -2465,6 +2464,26 @@ class TableTest extends TestCase
         $junction = $table->association('tags')->junction();
         $query = $junction->find('all')->where(['article_id' => 1]);
         $this->assertNull($query->all()->first(), 'Should not find any rows.');
+    }
+
+    public function testDeleteDependentAliased()
+    {
+        $Authors = TableRegistry::get('authors');
+        $Authors->associations()->removeAll();
+        $Articles = TableRegistry::get('articles');
+        $Articles->associations()->removeAll();
+
+        $Authors->hasMany('AliasedArticles', [
+            'className' => 'articles',
+            'dependent' => true,
+            'cascadeCallbacks' => true
+        ]);
+        $Articles->belongsToMany('Tags');
+
+        $author = $Authors->get(1);
+        $result = $Authors->delete($author);
+
+        $this->assertTrue($result);
     }
 
     /**
