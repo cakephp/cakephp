@@ -2465,6 +2465,12 @@ class TableTest extends TestCase
         $this->assertNull($query->all()->first(), 'Should not find any rows.');
     }
 
+    /**
+     * Test delete with dependent records belonging to an aliased
+     * belongsToMany association.
+     *
+     * @return void
+     */
     public function testDeleteDependentAliased()
     {
         $Authors = TableRegistry::get('authors');
