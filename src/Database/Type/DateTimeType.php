@@ -140,7 +140,7 @@ class DateTimeType extends Type
                 $date = new $class($value);
                 $compare = true;
             }
-            if ($compare && $date && $date->format($this->_format) !== $value) {
+            if ($compare && $date && (string)$date !== $value) {
                 return $value;
             }
             if ($date) {
