@@ -2522,7 +2522,7 @@ class FormHelper extends Helper
         $widgetData = $data;
         unset($widgetData['secure']);
         
-        $return = $widget->render($data, $this->context());
+        $return = $widget->render($widgetData, $this->context());
         
         if (isset($data['secure'], $data['name']) &&
             $data['secure'] !== self::SECURE_SKIP
