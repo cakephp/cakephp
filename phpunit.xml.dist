@@ -23,6 +23,7 @@
 			<file>./tests/TestCase/DatabaseSuite.php</file>
 		</testsuite>
 	</testsuites>
+
 	<listeners>
 		<listener class="\Cake\TestSuite\Fixture\FixtureInjector" file="./src/TestSuite/Fixture/FixtureInjector.php">
 			<arguments>
@@ -30,6 +31,20 @@
 			</arguments>
 		</listener>
 	</listeners>
+
+    <!-- Prevent coverage reports from looking in tests, vendors, config folders -->
+    <filter>
+        <blacklist>
+            <directory suffix=".php">./vendor/</directory>
+            <directory suffix=".ctp">./vendor/</directory>
+
+            <directory suffix=".php">./tests/</directory>
+            <directory suffix=".ctp">./tests/</directory>
+
+            <directory suffix=".php">./config/</directory>
+        </blacklist>
+    </filter>
+
 	<php>
 		<!-- SQLite
 		<env name="db_dsn" value="sqlite:///:memory:"/>
