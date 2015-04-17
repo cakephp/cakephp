@@ -143,6 +143,8 @@ class DateTimeWidget implements WidgetInterface
             'second' => [],
             'meridian' => null,
         ];
+        
+        $this->_secureFields = [];
 
         $selected = $this->_deconstructDate($data['val'], $data);
 
