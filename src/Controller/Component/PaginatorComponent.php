@@ -94,7 +94,7 @@ class PaginatorComponent extends Component
      *      'limit' => 20,
      *      'maxLimit' => 100
      *    ],
-    	 *    'Comments' => [ ... ]
+     *    'Comments' => [ ... ]
      *  ];
      *  $results = $paginator->paginate($table, $settings);
      * ```
@@ -153,15 +153,27 @@ class PaginatorComponent extends Component
         return $result;
     }
 
+    /**
+     * Overloading the config method to be able to pass the config to the paginator.
+     *
+     * @param string|array|null $key The key to get/set, or a complete array of configs.
+     * @param mixed|null $value The value to set.
+     * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
+     * @return mixed Config value being read, or the object itself on write operations.
+     * @throws \Cake\Core\Exception\Exception When trying to set a key that is invalid.
+     */
     public function config($key = null, $value = null, $merge = true)
     {
-        $result = parent::config($key, $value, $merge);
-        if (!empty($this->_paginator)) {
-            return $this->_paginator->config($key, $value, $merge);
-        }
-        return $result;
+        return $this->_paginator->config($key, $value, $merge);
     }
 
+    /**
+     * Using the magic call as a proxy to the refactored paginator.
+     *
+     * @param string $method Method name.
+     * @param array $args The arguments passed to the called method.
+     * @return mixed
+     */
     public function __call($method, $args)
     {
         if (method_exists($this->_paginator, $method)) {
