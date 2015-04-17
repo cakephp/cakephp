@@ -34,28 +34,6 @@ class PaginatorComponent extends Component
 {
 
     /**
-     * Default pagination settings.
-     *
-     * When calling paginate() these settings will be merged with the configuration
-     * you provide.
-     *
-     * - `maxLimit` - The maximum limit users can choose to view. Defaults to 100
-     * - `limit` - The initial number of items per page. Defaults to 20.
-     * - `page` - The starting page, defaults to 1.
-     * - `whitelist` - A list of parameters users are allowed to set using request
-     *   parameters. Modifying this list will allow users to have more influence
-     *   over pagination, be careful with what you permit.
-     *
-     * @var array
-     */
-    protected $_defaultConfig = [
-        'page' => 1,
-        'limit' => 20,
-        'maxLimit' => 100,
-        'whitelist' => ['limit', 'sort', 'page', 'direction']
-    ];
-
-    /**
      * Events supported by this component.
      *
      * @return array
@@ -65,6 +43,12 @@ class PaginatorComponent extends Component
         return [];
     }
 
+    /**
+     * Constructor
+     *
+     * @param ComponentRegistry $registry A ComponentRegistry this component can use to lazy load its components
+     * @param array $config Array of configuration settings.
+     */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
         $this->_paginator = new Paginator($config);
