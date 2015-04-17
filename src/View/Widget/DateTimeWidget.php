@@ -57,6 +57,13 @@ class DateTimeWidget implements WidgetInterface
      * @var \Cake\View\StringTemplate
      */
     protected $_templates;
+    
+    /**
+     * The list of inputs this widget has generated
+     * 
+     * @var array
+     */
+    protected $_secureFields = [];
 
     /**
      * Constructor
@@ -309,6 +316,7 @@ class DateTimeWidget implements WidgetInterface
             $options['options'] = array_reverse($options['options'], true);
         }
         unset($options['start'], $options['end'], $options['order']);
+        $this->_secureFields[] = $options['name'];
         return $this->_select->render($options, $context);
     }
 
@@ -340,6 +348,7 @@ class DateTimeWidget implements WidgetInterface
         }
 
         unset($options['leadingZeroKey'], $options['leadingZeroValue'], $options['names']);
+        $this->_secureFields[] = $options['name'];
         return $this->_select->render($options, $context);
     }
 
@@ -361,6 +370,7 @@ class DateTimeWidget implements WidgetInterface
         $options['options'] = $this->_generateNumbers(1, 31, $options);
 
         unset($options['names'], $options['leadingZeroKey'], $options['leadingZeroValue']);
+        $this->_secureFields[] = $options['name'];
         return $this->_select->render($options, $context);
     }
 
@@ -413,6 +423,7 @@ class DateTimeWidget implements WidgetInterface
             $options['format'], $options['leadingZeroKey'],
             $options['leadingZeroValue']
         );
+        $this->_secureFields[] = $options['name'];
         return $this->_select->render($options, $context);
     }
 
@@ -444,6 +455,7 @@ class DateTimeWidget implements WidgetInterface
             $options['interval'],
             $options['round']
         );
+        $this->_secureFields[] = $options['name'];
         return $this->_select->render($options, $context);
     }
 
@@ -465,6 +477,7 @@ class DateTimeWidget implements WidgetInterface
         ];
 
         unset($options['leadingZeroKey'], $options['leadingZeroValue']);
+        $this->_secureFields[] = $options['name'];
         return $this->_select->render($options, $context);
     }
 
@@ -482,6 +495,7 @@ class DateTimeWidget implements WidgetInterface
             'val' => null,
             'options' => ['am' => 'am', 'pm' => 'pm']
         ];
+        $this->_secureFields[] = $options['name'];
         return $this->_select->render($options, $context);
     }
 
@@ -569,16 +583,6 @@ class DateTimeWidget implements WidgetInterface
      */
     public function secureFields(array $data)
     {
-        $fields = [];
-        $hourFormat = isset($data['hour']['format']) ? $data['hour']['format'] : null;
-        foreach ($this->_selects as $type) {
-            if ($type === 'meridian' && ($hourFormat === null || $hourFormat === 24)) {
-                continue;
-            }
-            if (!isset($data[$type]) || $data[$type] !== false) {
-                $fields[] = $data['name'] . '[' . $type . ']';
-            }
-        }
-        return $fields;
+        return $this->_secureFields;
     }
 }
