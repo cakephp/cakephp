@@ -60,6 +60,11 @@ class Paginator extends Component
      */
     public $_pagingParams = [];
 
+    public function __construct(array $config = [])
+    {
+        $this->config($config);
+    }
+
     /**
      * Handles automatic pagination of model records.
      *
@@ -246,10 +251,7 @@ class Paginator extends Component
      */
     public function mergeOptions($alias, $settings)
     {
-        $defaults = $this->getDefaults($alias, $settings);
-        $request = $this->_registry->getController()->request;
-        $request = array_intersect_key($request->query, array_flip($this->_config['whitelist']));
-        return array_merge($defaults, $request);
+        return $this->getDefaults($alias, $settings);
     }
 
     /**
