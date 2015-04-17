@@ -15,9 +15,11 @@
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
+use Cake\Controller\ComponentRegistry;
 use Cake\Network\Exception\NotFoundException;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
+use Cake\ORM\Paginator as OrmPaginator;
 
 /**
  * This component is used to handle automatic model data pagination. The primary way to use this
@@ -64,17 +66,19 @@ class PaginatorComponent extends Component
         return [];
     }
 
+    public function __construct(ComponentRegistry $registry, array $config = [])
+    {
+        $this->_paginator = new OrmPaginator($registry, $config);
+        parent::__construct($registry, $config);
+    }
+
     /**
      * Handles automatic pagination of model records.
-     *
      * ### Configuring pagination
-     *
      * When calling `paginate()` you can use the $settings parameter to pass in pagination settings.
      * These settings are used to build the queries made and control other pagination settings.
-     *
      * If your settings contain a key with the current table's alias. The data inside that key will be used.
      * Otherwise the top level configuration will be used.
-     *
      * ```
      *  $settings = [
      *    'limit' => 20,
@@ -82,30 +86,24 @@ class PaginatorComponent extends Component
      *  ];
      *  $results = $paginator->paginate($table, $settings);
      * ```
-     *
      * The above settings will be used to paginate any Table. You can configure Table specific settings by
      * keying the settings with the Table alias.
-     *
      * ```
      *  $settings = [
      *    'Articles' => [
      *      'limit' => 20,
      *      'maxLimit' => 100
      *    ],
-     *    'Comments' => [ ... ]
+    	 *    'Comments' => [ ... ]
      *  ];
      *  $results = $paginator->paginate($table, $settings);
      * ```
-     *
      * This would allow you to have different pagination settings for `Articles` and `Comments` tables.
-     *
      * ### Controlling sort fields
-     *
      * By default CakePHP will automatically allow sorting on any column on the table object being
      * paginated. Often times you will want to allow sorting on either associated columns or calculated
      * fields. In these cases you will need to define a whitelist of all the columns you wish to allow
      * sorting on. You can define the whitelist in the `$settings` parameter:
-     *
      * ```
      * $settings = [
      *   'Articles' => [
@@ -114,11 +112,8 @@ class PaginatorComponent extends Component
      *   ]
      * ];
      * ```
-     *
      * ### Paginating with custom finders
-     *
      * You can paginate with any find type defined on your table using the `finder` option.
-     *
      * ```
      *  $settings = [
      *    'Articles' => [
@@ -127,11 +122,8 @@ class PaginatorComponent extends Component
      *  ];
      *  $results = $paginator->paginate($table, $settings);
      * ```
-     *
      * Would paginate using the `find('popular')` method.
-     *
      * You can also pass an already created instance of a query to this method:
-     *
      * ```
      * $query = $this->Articles->find('popular')->matching('Tags', function ($q) {
      *   return $q->where(['name' => 'CakePHP'])
@@ -146,224 +138,34 @@ class PaginatorComponent extends Component
      */
     public function paginate($object, array $settings = [])
     {
-        if ($object instanceof Query) {
-            $query = $object;
-            $object = $query->repository();
+        $result = $this->_paginator->paginate($object, $settings);
+        $pagingParams = $this->_paginator->getPagingParams();
+
+        if (!isset($this->request['paging'])) {
+            $this->request['paging'] = [];
         }
+        $this->request['paging'] = [$pagingParams['alias'] => $pagingParams] + (array)$this->request['paging'];
 
-        $alias = $object->alias();
-        $options = $this->mergeOptions($alias, $settings);
-        $options = $this->validateSort($object, $options);
-        $options = $this->checkLimit($options);
-
-        $options += ['page' => 1];
-        $options['page'] = (int)$options['page'] < 1 ? 1 : (int)$options['page'];
-        list($finder, $options) = $this->_extractFinder($options);
-
-        if (empty($query)) {
-            $query = $object->find($finder, $options);
-        } else {
-            $query->applyOptions($options);
-        }
-
-        $results = $query->all();
-        $numResults = count($results);
-        $count = $numResults ? $query->count() : 0;
-
-        $defaults = $this->getDefaults($alias, $settings);
-        unset($defaults[0]);
-
-        $page = $options['page'];
-        $limit = $options['limit'];
-        $pageCount = (int)ceil($count / $limit);
-        $requestedPage = $page;
-        $page = max(min($page, $pageCount), 1);
-        $request = $this->_registry->getController()->request;
-
-        $order = (array)$options['order'];
-        $sortDefault = $directionDefault = false;
-        if (!empty($defaults['order']) && count($defaults['order']) == 1) {
-            $sortDefault = key($defaults['order']);
-            $directionDefault = current($defaults['order']);
-        }
-
-        $paging = [
-            'finder' => $finder,
-            'page' => $page,
-            'current' => $numResults,
-            'count' => $count,
-            'perPage' => $limit,
-            'prevPage' => ($page > 1),
-            'nextPage' => ($count > ($page * $limit)),
-            'pageCount' => $pageCount,
-            'sort' => key($order),
-            'direction' => current($order),
-            'limit' => $defaults['limit'] != $limit ? $limit : null,
-            'sortDefault' => $sortDefault,
-            'directionDefault' => $directionDefault
-        ];
-
-        if (!isset($request['paging'])) {
-            $request['paging'] = [];
-        }
-        $request['paging'] = [$alias => $paging] + (array)$request['paging'];
-
-        if ($requestedPage > $page) {
+        if ($pagingParams['requestedPage'] > $pagingParams['page']) {
             throw new NotFoundException();
         }
-
-        return $results;
+        
+        return $result;
     }
 
-    /**
-     * Extracts the finder name and options out of the provided pagination options
-     *
-     * @param array $options the pagination options
-     * @return array An array containing in the first position the finder name and
-     * in the second the options to be passed to it
-     */
-    protected function _extractFinder($options)
+    public function config($key = null, $value = null, $merge = true)
     {
-        $type = !empty($options['finder']) ? $options['finder'] : 'all';
-        unset($options['finder'], $options['maxLimit']);
-
-        if (is_array($type)) {
-            $options = (array)current($type) + $options;
-            $type = key($type);
+        $result = parent::config($key, $value, $merge);
+        if (!empty($this->_paginator)) {
+            return $this->_paginator->config($key, $value, $merge);
         }
-
-        return [$type, $options];
+        return $result;
     }
 
-    /**
-     * Merges the various options that Pagination uses.
-     * Pulls settings together from the following places:
-     *
-     * - General pagination settings
-     * - Model specific settings.
-     * - Request parameters
-     *
-     * The result of this method is the aggregate of all the option sets combined together. You can change
-     * config value `whitelist` to modify which options/values can be set using request parameters.
-     *
-     * @param string $alias Model alias being paginated, if the general settings has a key with this value
-     *   that key's settings will be used for pagination instead of the general ones.
-     * @param array $settings The settings to merge with the request data.
-     * @return array Array of merged options.
-     */
-    public function mergeOptions($alias, $settings)
+    public function __call($method, $args)
     {
-        $defaults = $this->getDefaults($alias, $settings);
-        $request = $this->_registry->getController()->request;
-        $request = array_intersect_key($request->query, array_flip($this->_config['whitelist']));
-        return array_merge($defaults, $request);
-    }
-
-    /**
-     * Get the default settings for a $model. If there are no settings for a specific model, the general settings
-     * will be used.
-     *
-     * @param string $alias Model name to get default settings for.
-     * @param array $defaults The defaults to use for combining settings.
-     * @return array An array of pagination defaults for a model, or the general settings.
-     */
-    public function getDefaults($alias, $defaults)
-    {
-        if (isset($defaults[$alias])) {
-            $defaults = $defaults[$alias];
+        if (method_exists($this->_paginator, $method)) {
+            return call_user_func_array([$this->_paginator, $method], $args);
         }
-        if (isset($defaults['limit']) &&
-            (empty($defaults['maxLimit']) || $defaults['limit'] > $defaults['maxLimit'])
-        ) {
-            $defaults['maxLimit'] = $defaults['limit'];
-        }
-        return $defaults + $this->config();
-    }
-
-    /**
-     * Validate that the desired sorting can be performed on the $object. Only fields or
-     * virtualFields can be sorted on. The direction param will also be sanitized. Lastly
-     * sort + direction keys will be converted into the model friendly order key.
-     *
-     * You can use the whitelist parameter to control which columns/fields are available for sorting.
-     * This helps prevent users from ordering large result sets on un-indexed values.
-     *
-     * If you need to sort on associated columns or synthetic properties you will need to use a whitelist.
-     *
-     * Any columns listed in the sort whitelist will be implicitly trusted. You can use this to sort
-     * on synthetic columns, or columns added in custom find operations that may not exist in the schema.
-     *
-     * @param Table $object The model being paginated.
-     * @param array $options The pagination options being used for this request.
-     * @return array An array of options with sort + direction removed and replaced with order if possible.
-     */
-    public function validateSort(Table $object, array $options)
-    {
-        if (isset($options['sort'])) {
-            $direction = null;
-            if (isset($options['direction'])) {
-                $direction = strtolower($options['direction']);
-            }
-            if (!in_array($direction, ['asc', 'desc'])) {
-                $direction = 'asc';
-            }
-            $options['order'] = [$options['sort'] => $direction];
-        }
-        unset($options['sort'], $options['direction']);
-
-        if (empty($options['order'])) {
-            $options['order'] = [];
-        }
-        if (!is_array($options['order'])) {
-            return $options;
-        }
-
-        if (!empty($options['sortWhitelist'])) {
-            $field = key($options['order']);
-            $inWhitelist = in_array($field, $options['sortWhitelist'], true);
-            if (!$inWhitelist) {
-                $options['order'] = [];
-            }
-            return $options;
-        }
-
-        $tableAlias = $object->alias();
-        $order = [];
-
-        foreach ($options['order'] as $key => $value) {
-            $field = $key;
-            $alias = $tableAlias;
-            if (is_numeric($key)) {
-                $order[] = $value;
-            } else {
-                if (strpos($key, '.') !== false) {
-                    list($alias, $field) = explode('.', $key);
-                }
-                $correctAlias = ($tableAlias === $alias);
-
-                if ($correctAlias && $object->hasField($field)) {
-                    $order[$tableAlias . '.' . $field] = $value;
-                }
-            }
-        }
-        $options['order'] = $order;
-
-        return $options;
-    }
-
-    /**
-     * Check the limit parameter and ensure it's within the maxLimit bounds.
-     *
-     * @param array $options An array of options with a limit key to be checked.
-     * @return array An array of options for pagination
-     */
-    public function checkLimit(array $options)
-    {
-        $options['limit'] = (int)$options['limit'];
-        if (empty($options['limit']) || $options['limit'] < 1) {
-            $options['limit'] = 1;
-        }
-        $options['limit'] = min($options['limit'], $options['maxLimit']);
-        return $options;
     }
 }
