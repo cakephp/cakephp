@@ -2468,17 +2468,34 @@ class TableTest extends TestCase
         $this->assertNull($query->all()->first(), 'Should not find any rows.');
     }
 
+    /**
+     * Test that cascading associations are deleted first.
+     *
+     * @return void
+     */
     public function testDeleteAssociationsCascadingCallbacksOrder()
     {
-        $Members = TableRegistry::get('Members');
+        $groups = TableRegistry::get('Groups');
+        $members = TableRegistry::get('Members');
+        $groupsMembers = TableRegistry::get('GroupsMembers');
 
-        $member = $Members->get(1);
+        $groups->belongsToMany('Members');
+        $groups->hasMany('GroupsMembers', [
+            'dependent' => true,
+            'cascadeCallbacks' => true,
+        ]);
+        $groupsMembers->belongsTo('Members');
+        $groupsMembers->addBehavior('CounterCache', [
+            'Members' => ['group_count']
+        ]);
+
+        $member = $members->get(1);
         $this->assertEquals(2, $member->group_count);
 
-        $group = $Members->Groups->get(1);
-        $Members->Groups->delete($group);
+        $group = $groups->get(1);
+        $groups->delete($group);
 
-        $member = $Members->get(1);
+        $member = $members->get(1);
         $this->assertEquals(1, $member->group_count);
     }
 
