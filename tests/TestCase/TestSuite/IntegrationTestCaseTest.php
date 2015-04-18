@@ -283,6 +283,19 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test that type() in an action sets the content-type header.
+     *
+     * @return void
+     */
+    public function testContentTypeInAction()
+    {
+        $this->get('/tests_apps/set_type');
+        $this->assertHeader('Content-Type', 'application/json; charset=UTF-8');
+        $this->assertContentType('json');
+        $this->assertContentType('application/json');
+    }
+
+    /**
      * Test the content assertion.
      *
      * @return void
