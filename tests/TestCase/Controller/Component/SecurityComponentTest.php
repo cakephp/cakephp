@@ -503,6 +503,26 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * Tests validation of integer field names.
+     *
+     * @return void
+     */
+    public function testValidateIntFieldName()
+    {
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->Controller->Security->startup($event);
+
+        $fields = '4a221010dd7a23f7166cb10c38bc21d81341c387%3A';
+        $unlocked = '';
+
+        $this->Controller->request->data = [
+            1 => 'value,',
+            '_Token' => compact('fields', 'unlocked')
+        ];
+        $this->assertTrue($this->Controller->Security->validatePost($this->Controller));
+    }
+
+    /**
      * testValidatePostNoModel method
      *
      * @return void
