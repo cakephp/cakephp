@@ -28,5 +28,9 @@ class Response extends Base
      */
     public function send()
     {
+        if (isset($this->_headers['Location']) && $this->_status === 200) {
+            $this->statusCode(302);
+        }
+        $this->_setContentType();
     }
 }
