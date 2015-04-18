@@ -301,6 +301,7 @@ class PaginatorComponentTest extends TestCase
             'page' => 10,
             'limit' => 10
         ];
+        $this->Paginator->setParams($this->request->query);
         $settings = [
             'page' => 1,
             'limit' => 20,
@@ -329,6 +330,7 @@ class PaginatorComponentTest extends TestCase
             'page' => 99,
             'limit' => 75
         ];
+		$this->Paginator->setParams($this->request->query);
         $settings = [
             'page' => 1,
             'limit' => 20,
@@ -354,6 +356,7 @@ class PaginatorComponentTest extends TestCase
             'conditions' => ['bad.stuff'],
             'contain' => ['bad']
         ];
+		$this->Paginator->setParams($this->request->query);
         $settings = [
             'page' => 1,
             'limit' => 20,
@@ -379,6 +382,7 @@ class PaginatorComponentTest extends TestCase
             'conditions' => ['bad.stuff'],
             'contain' => ['bad']
         ];
+		$this->Paginator->setParams($this->request->query);
         $settings = [
             'page' => 1,
             'limit' => 20,

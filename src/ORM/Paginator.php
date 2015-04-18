@@ -56,11 +56,18 @@ class Paginator
     ];
 
     /**
-     * Pagination paramters.
+     * Pagination parameters.
      *
      * @var array
      */
     public $_pagingParams = [];
+
+    /**
+     * Params that get merged in the next paginate() call.
+     *
+     * @var array
+     */
+    public $_params = [];
 
     /**
      * Constructor
@@ -212,6 +219,8 @@ class Paginator
             'directionDefault' => $directionDefault
         ];
 
+        $this->_params = [];
+
         return $results;
     }
 
@@ -263,7 +272,26 @@ class Paginator
      */
     public function mergeOptions($alias, $settings)
     {
-        return $this->getDefaults($alias, $settings);
+        $defaults = $this->getDefaults($alias, $settings);
+        $otherParams = array_intersect_key($this->_params, array_flip($this->_config['whitelist']));
+        return array_merge($defaults, $otherParams);
+    }
+
+    /**
+     * Sets pagination params that get merged in the next paginate() call.
+     *
+     * @param string $key Key to set.
+     * @param mixed $value Value to set.
+     * @throws \InvalidArgumentException
+     * @return void
+     */
+    public function setParams($name, $value = null) {
+        if (!is_array($name) && !empty($value)) {
+            $name = [$name => $value];
+        }
+        foreach ($name as $key => $value) {
+            $this->_params[$key] = $value;
+        }
     }
 
     /**

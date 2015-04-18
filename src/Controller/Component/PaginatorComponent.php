@@ -51,9 +51,26 @@ class PaginatorComponent extends Component
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
-        $this->_paginator = new Paginator($config);
-        $this->_paginator->request = $registry->getController()->request;
+        $this->_paginator = new \Cake\ORM\Paginator($config);
         parent::__construct($registry, $config);
+    }
+
+    public function paginate($object, array $settings = [])
+    {
+        $this->_paginator->setParams($this->request->query);
+        $result = $this->_paginator->paginate($object, $settings);
+        $pagingParams = $this->_paginator->getPagingParams();
+
+        if (!isset($this->request['paging'])) {
+            $this->request['paging'] = [];
+        }
+        $this->request['paging'] = [$pagingParams['alias'] => $pagingParams] + (array)$this->request['paging'];
+
+        if ($pagingParams['requestedPage'] > $pagingParams['page']) {
+            throw new NotFoundException();
+        }
+
+        return $result;
     }
 
     /**
