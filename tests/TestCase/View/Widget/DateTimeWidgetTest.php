@@ -1047,6 +1047,7 @@ class DateTimeWidgetTest extends TestCase
         $data = [
             'name' => 'date',
         ];
+        $this->DateTime->render($data, $this->context);
         $result = $this->DateTime->secureFields($data);
         $expected = [
             'date[year]', 'date[month]', 'date[day]',
@@ -1058,6 +1059,7 @@ class DateTimeWidgetTest extends TestCase
             'name' => 'date',
             'hour' => ['format' => 24]
         ];
+        $this->DateTime->render($data, $this->context);
         $result = $this->DateTime->secureFields($data);
         $this->assertEquals($expected, $result, 'No meridian on 24hr input');
 
@@ -1073,6 +1075,7 @@ class DateTimeWidgetTest extends TestCase
             'minute' => false,
             'second' => false,
         ];
+        $this->DateTime->render($data, $this->context);
         $result = $this->DateTime->secureFields($data);
         $expected = [
             'date[hour]', 'date[meridian]'
