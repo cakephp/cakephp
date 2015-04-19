@@ -15,14 +15,7 @@ namespace Cake\Test\TestCase\Mailer;
 use Cake\Mailer\Email;
 use Cake\Mailer\Mailer;
 use Cake\TestSuite\TestCase;
-
-class TestMailer extends Mailer
-{
-    public function getEmailForAssertion()
-    {
-        return $this->_email;
-    }
-}
+use TestApp\Mailer\TestMailer;
 
 class MailerTest extends TestCase
 {
@@ -57,7 +50,7 @@ class MailerTest extends TestCase
     public function testLayout()
     {
         $result = (new TestMailer())->layout('foo');
-        $this->assertInstanceOf('Cake\Test\TestCase\Mailer\TestMailer', $result);
+        $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
         $this->assertEquals('foo', $result->layout);
     }
 
@@ -68,21 +61,21 @@ class MailerTest extends TestCase
             ->method('setHeaders')
             ->with([]);
         $result = (new TestMailer($email))->setHeaders([]);
-        $this->assertInstanceOf('Cake\Test\TestCase\Mailer\TestMailer', $result);
+        $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
 
         $email = $this->getMockForEmail('addHeaders');
         $email->expects($this->once())
             ->method('addHeaders')
             ->with([]);
         $result = (new TestMailer($email))->addHeaders([]);
-        $this->assertInstanceOf('Cake\Test\TestCase\Mailer\TestMailer', $result);
+        $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
 
         $email = $this->getMockForEmail('attachments');
         $email->expects($this->once())
             ->method('attachments')
             ->with([]);
         $result = (new TestMailer($email))->attachments([]);
-        $this->assertInstanceOf('Cake\Test\TestCase\Mailer\TestMailer', $result);
+        $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
     }
 
     public function testSet()
@@ -92,14 +85,14 @@ class MailerTest extends TestCase
             ->method('viewVars')
             ->with(['key' => 'value']);
         $result = (new TestMailer($email))->set('key', 'value');
-        $this->assertInstanceOf('Cake\Test\TestCase\Mailer\TestMailer', $result);
+        $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
 
         $email = $this->getMockForEmail('viewVars');
         $email->expects($this->once())
             ->method('viewVars')
             ->with(['key' => 'value']);
         $result = (new TestMailer($email))->set(['key' => 'value']);
-        $this->assertInstanceOf('Cake\Test\TestCase\Mailer\TestMailer', $result);
+        $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
     }
 
     public function testSend()
@@ -109,7 +102,7 @@ class MailerTest extends TestCase
             ->method('send')
             ->will($this->returnValue([]));
 
-        $mailer = $this->getMock('Cake\Test\TestCase\Mailer\TestMailer', ['test'], [$email]);
+        $mailer = $this->getMock('TestApp\Mailer\TestMailer', ['test'], [$email]);
         $mailer->expects($this->once())
             ->method('test')
             ->with('foo', 'bar');
