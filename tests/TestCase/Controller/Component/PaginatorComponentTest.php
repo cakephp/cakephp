@@ -286,7 +286,10 @@ class PaginatorComponentTest extends TestCase
         $this->assertEquals($settings, $result);
 
         $result = $this->Paginator->mergeOptions('Posts', $settings);
-        $expected = ['page' => 1, 'limit' => 10, 'maxLimit' => 50, 'whitelist' => ['limit', 'sort', 'page', 'direction']];
+        $expected = [
+            'page' => 1, 'limit' => 10, 'maxLimit' => 50,
+            'whitelist' => ['limit', 'sort', 'page', 'direction']
+        ];
         $this->assertEquals($expected, $result);
     }
 
@@ -330,14 +333,17 @@ class PaginatorComponentTest extends TestCase
             'page' => 99,
             'limit' => 75
         ];
-		$this->Paginator->setParams($this->request->query);
+        $this->Paginator->setParams($this->request->query);
         $settings = [
             'page' => 1,
             'limit' => 20,
             'maxLimit' => 100,
         ];
         $result = $this->Paginator->mergeOptions('Post', $settings);
-        $expected = ['page' => 99, 'limit' => 75, 'maxLimit' => 100, 'whitelist' => ['limit', 'sort', 'page', 'direction']];
+        $expected = [
+            'page' => 99, 'limit' => 75, 'maxLimit' => 100,
+            'whitelist' => ['limit', 'sort', 'page', 'direction']
+        ];
         $this->assertEquals($expected, $result);
     }
 
@@ -356,14 +362,17 @@ class PaginatorComponentTest extends TestCase
             'conditions' => ['bad.stuff'],
             'contain' => ['bad']
         ];
-		$this->Paginator->setParams($this->request->query);
+        $this->Paginator->setParams($this->request->query);
         $settings = [
             'page' => 1,
             'limit' => 20,
             'maxLimit' => 100,
         ];
         $result = $this->Paginator->mergeOptions('Post', $settings);
-        $expected = ['page' => 10, 'limit' => 10, 'maxLimit' => 100, 'whitelist' => ['limit', 'sort', 'page', 'direction']];
+        $expected = [
+            'page' => 10, 'limit' => 10, 'maxLimit' => 100,
+            'whitelist' => ['limit', 'sort', 'page', 'direction']
+        ];
         $this->assertEquals($expected, $result);
     }
 
@@ -382,7 +391,7 @@ class PaginatorComponentTest extends TestCase
             'conditions' => ['bad.stuff'],
             'contain' => ['bad']
         ];
-		$this->Paginator->setParams($this->request->query);
+        $this->Paginator->setParams($this->request->query);
         $settings = [
             'page' => 1,
             'limit' => 20,
@@ -391,7 +400,8 @@ class PaginatorComponentTest extends TestCase
         $this->Paginator->config('whitelist', ['fields']);
         $result = $this->Paginator->mergeOptions('Post', $settings);
         $expected = [
-            'page' => 10, 'limit' => 10, 'maxLimit' => 100, 'fields' => ['bad.stuff'], 'whitelist' => ['limit', 'sort', 'page', 'direction', 'fields']
+            'page' => 10, 'limit' => 10, 'maxLimit' => 100, 'fields' => ['bad.stuff'],
+            'whitelist' => ['limit', 'sort', 'page', 'direction', 'fields']
         ];
         $this->assertEquals($expected, $result);
     }
@@ -730,7 +740,10 @@ class PaginatorComponentTest extends TestCase
         };
 
         $table = TableRegistry::get('PaginatorPosts');
-        $data = ['author_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N'];
+        $data = [
+            'author_id' => 3, 'title' => 'Fourth Article',
+            'body' => 'Article Body, unpublished', 'published' => 'N'
+        ];
         $result = $table->save(new \Cake\ORM\Entity($data));
         $this->assertNotEmpty($result);
 
@@ -775,7 +788,10 @@ class PaginatorComponentTest extends TestCase
     {
         $this->loadFixtures('Posts');
         $table = TableRegistry::get('PaginatorPosts');
-        $data = ['author_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N'];
+        $data = [
+            'author_id' => 3, 'title' => 'Fourth Article',
+            'body' => 'Article Body, unpublished', 'published' => 'N'
+        ];
         $table->save(new \Cake\ORM\Entity($data));
 
         $settings = [
