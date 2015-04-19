@@ -319,6 +319,8 @@ class ClientTest extends TestCase
             [Request::METHOD_PUT],
             [Request::METHOD_DELETE],
             [Request::METHOD_PATCH],
+            [Request::METHOD_OPTIONS],
+            [Request::METHOD_TRACE],
         ];
     }
     /**
