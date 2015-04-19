@@ -58,7 +58,7 @@ abstract class Mailer implements ArrayAccess, EventListenerInterface
             $this->layout = Inflector::underscore($this->getName());
         }
 
-        $this->_email = $email->profile((array)$this);
+        $this->_email = $email;
     }
 
     /**
