@@ -46,7 +46,7 @@ class PaginatorComponent extends Component
     /**
      * Constructor
      *
-     * @param \Cake\Controller\ComponentRegistry $registry A ComponentRegistry this component can use to lazy load its components
+     * @param \Cake\Controller\ComponentRegistry $registry A ComponentRegistry this component can use to lazy load its components.
      * @param array $config Array of configuration settings.
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
@@ -55,6 +55,69 @@ class PaginatorComponent extends Component
         parent::__construct($registry, $config);
     }
 
+    /**
+     * Handles automatic pagination of model records.
+     * ### Configuring pagination
+     * When calling `paginate()` you can use the $settings parameter to pass in pagination settings.
+     * These settings are used to build the queries made and control other pagination settings.
+     * If your settings contain a key with the current table's alias. The data inside that key will be used.
+     * Otherwise the top level configuration will be used.
+     * ```
+     *  $settings = [
+     *    'limit' => 20,
+     *    'maxLimit' => 100
+     *  ];
+     *  $results = $paginator->paginate($table, $settings);
+     * ```
+     * The above settings will be used to paginate any Table. You can configure Table specific settings by
+     * keying the settings with the Table alias.
+     * ```
+     *  $settings = [
+     *    'Articles' => [
+     *      'limit' => 20,
+     *      'maxLimit' => 100
+     *    ],
+     *    'Comments' => [ ... ]
+     *  ];
+     *  $results = $paginator->paginate($table, $settings);
+     * ```
+     * This would allow you to have different pagination settings for `Articles` and `Comments` tables.
+     * ### Controlling sort fields
+     * By default CakePHP will automatically allow sorting on any column on the table object being
+     * paginated. Often times you will want to allow sorting on either associated columns or calculated
+     * fields. In these cases you will need to define a whitelist of all the columns you wish to allow
+     * sorting on. You can define the whitelist in the `$settings` parameter:
+     * ```
+     * $settings = [
+     *   'Articles' => [
+     *     'finder' => 'custom',
+     *     'sortWhitelist' => ['title', 'author_id', 'comment_count'],
+     *   ]
+     * ];
+     * ```
+     * ### Paginating with custom finders
+     * You can paginate with any find type defined on your table using the `finder` option.
+     * ```
+     *  $settings = [
+     *    'Articles' => [
+     *      'finder' => 'popular'
+     *    ]
+     *  ];
+     *  $results = $paginator->paginate($table, $settings);
+     * ```
+     * Would paginate using the `find('popular')` method.
+     * You can also pass an already created instance of a query to this method:
+     * ```
+     * $query = $this->Articles->find('popular')->matching('Tags', function ($q) {
+     *   return $q->where(['name' => 'CakePHP'])
+     * });
+     * $results = $paginator->paginate($query);
+     * ```
+     *
+     * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Query $object The table or query to paginate.
+     * @param array $settings The settings/configuration used for pagination.
+     * @return array Query results.
+     */
     public function paginate($object, array $settings = [])
     {
         $this->_paginator->setParams($this->request->query);
