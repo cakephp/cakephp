@@ -188,11 +188,15 @@ class Cache
      *
      * Writing to the active cache config:
      *
-     * `Cache::write('cached_data', $data);`
+     * ```
+     * Cache::write('cached_data', $data);
+     * ```
      *
      * Writing to a specific cache config:
      *
-     * `Cache::write('cached_data', $data, 'long_term');`
+     * ```
+     * Cache::write('cached_data', $data, 'long_term');
+     * ```
      *
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached - anything except a resource
@@ -228,11 +232,15 @@ class Cache
      *
      * Writing to the active cache config:
      *
-     * `Cache::writeMany(['cached_data_1' => 'data 1', 'cached_data_2' => 'data 2']);`
+     * ```
+     * Cache::writeMany(['cached_data_1' => 'data 1', 'cached_data_2' => 'data 2']);
+     * ```
      *
      * Writing to a specific cache config:
      *
-     * `Cache::writeMany(['cached_data_1' => 'data 1', 'cached_data_2' => 'data 2'], 'long_term');`
+     * ```
+     * Cache::writeMany(['cached_data_1' => 'data 1', 'cached_data_2' => 'data 2'], 'long_term');
+     * ```
      *
      * @param array $data An array of data to be stored in the cache
      * @param string $config Optional string configuration name to write to. Defaults to 'default'
@@ -263,11 +271,15 @@ class Cache
      *
      * Reading from the active cache configuration.
      *
-     * `Cache::read('my_data');`
+     * ```
+     * Cache::read('my_data');
+     * ```
      *
      * Reading from a specific cache configuration.
      *
-     * `Cache::read('my_data', 'long_term');`
+     * ```
+     * Cache::read('my_data', 'long_term');
+     * ```
      *
      * @param string $key Identifier for the data
      * @param string $config optional name of the configuration to use. Defaults to 'default'
@@ -286,11 +298,15 @@ class Cache
      *
      * Reading multiple keys from the active cache configuration.
      *
-     * `Cache::readMany(['my_data_1', 'my_data_2]);`
+     * ```
+     * Cache::readMany(['my_data_1', 'my_data_2]);
+     * ```
      *
      * Reading from a specific cache configuration.
      *
-     * `Cache::readMany(['my_data_1', 'my_data_2], 'long_term');`
+     * ```
+     * Cache::readMany(['my_data_1', 'my_data_2], 'long_term');
+     * ```
      *
      * @param array $keys an array of keys to fetch from the cache
      * @param string $config optional name of the configuration to use. Defaults to 'default'
@@ -348,11 +364,15 @@ class Cache
      *
      * Deleting from the active cache configuration.
      *
-     * `Cache::delete('my_data');`
+     * ```
+     * Cache::delete('my_data');
+     * ```
      *
      * Deleting from a specific cache configuration.
      *
-     * `Cache::delete('my_data', 'long_term');`
+     * ```
+     * Cache::delete('my_data', 'long_term');
+     * ```
      *
      * @param string $key Identifier for the data
      * @param string $config name of the configuration to use. Defaults to 'default'
@@ -371,11 +391,15 @@ class Cache
      *
      * Deleting multiple keys from the active cache configuration.
      *
-     * `Cache::deleteMany(['my_data_1', 'my_data_2']);`
+     * ```
+     * Cache::deleteMany(['my_data_1', 'my_data_2']);
+     * ```
      *
      * Deleting from a specific cache configuration.
      *
-     * `Cache::deleteMany(['my_data_1', 'my_data_2], 'long_term');`
+     * ```
+     * Cache::deleteMany(['my_data_1', 'my_data_2], 'long_term');
+     * ```
      *
      * @param array $keys Array of cache keys to be deleted
      * @param string $config name of the configuration to use. Defaults to 'default'

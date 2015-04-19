@@ -50,19 +50,27 @@ trait StaticConfigTrait
      *
      * Reading config data back:
      *
-     * `Cache::config('default');`
+     * ```
+     * Cache::config('default');
+     * ```
      *
      * Setting a cache engine up.
      *
-     * `Cache::config('default', $settings);`
+     * ```
+     * Cache::config('default', $settings);
+     * ```
      *
      * Injecting a constructed adapter in:
      *
-     * `Cache::config('default', $instance);`
+     * ```
+     * Cache::config('default', $instance);
+     * ```
      *
      * Configure multiple adapters at once:
      *
-     * `Cache::config($arrayOfConfig);`
+     * ```
+     * Cache::config($arrayOfConfig);
+     * ```
      *
      * @param string|array $key The name of the configuration, or an array of multiple configs.
      * @param array $config An array of name => configuration data for adapter.

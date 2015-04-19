@@ -1459,7 +1459,9 @@ class FormHelper extends Helper
      *
      * ### Usage
      *
-     * `$this->Form->search('User.query', ['value' => 'test']);`
+     * ```
+     * $this->Form->search('User.query', ['value' => 'test']);
+     * ```
      *
      * Will make an input like:
      *

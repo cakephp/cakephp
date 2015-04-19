@@ -537,9 +537,14 @@ class AuthComponent extends Component
      *
      * You can use allow with either an array or a simple string.
      *
-     * `$this->Auth->allow('view');`
-     * `$this->Auth->allow(['edit', 'add']);`
-     * `$this->Auth->allow();` to allow all actions
+     * ```
+     * $this->Auth->allow('view');
+     * $this->Auth->allow(['edit', 'add']);
+     * ```
+     * or to allow all actions
+     * ```
+     * $this->Auth->allow();
+     * ```
      *
      * @param string|array $actions Controller action name or array of actions
      * @return void
@@ -560,9 +565,15 @@ class AuthComponent extends Component
      *
      * You can use deny with either an array or a simple string.
      *
-     * `$this->Auth->deny('view');`
-     * `$this->Auth->deny(['edit', 'add']);`
-     * `$this->Auth->deny();` to remove all items from the allowed list
+     * ```
+     * $this->Auth->deny('view');
+     * $this->Auth->deny(['edit', 'add']);
+     * ```
+     * or
+     * ```
+     * $this->Auth->deny();
+     * ```
+     * to remove all items from the allowed list
      *
      * @param string|array $actions Controller action name or array of actions
      * @return void
