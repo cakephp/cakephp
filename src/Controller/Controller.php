@@ -103,7 +103,10 @@ class Controller implements EventListenerInterface
      * An array containing the names of helpers this controller uses. The array elements should
      * not contain the "Helper" part of the class name.
      *
-     * Example: `public $helpers = ['Form', 'Html', 'Time'];`
+     * Example:
+     * ```
+     * public $helpers = ['Form', 'Html', 'Time'];
+     * ```
      *
      * @var mixed
      * @link http://book.cakephp.org/3.0/en/controllers.html#configuring-helpers-to-load
@@ -165,7 +168,10 @@ class Controller implements EventListenerInterface
      * Array containing the names of components this controller uses. Component names
      * should not contain the "Component" portion of the class name.
      *
-     * Example: `public $components = ['RequestHandler', 'Acl'];`
+     * Example:
+     * ```
+     * public $components = ['RequestHandler', 'Acl'];
+     * ```
      *
      * @var array
      * @link http://book.cakephp.org/3.0/en/controllers/components.html
@@ -320,7 +326,9 @@ class Controller implements EventListenerInterface
      * This method will also set the component to a property.
      * For example:
      *
-     * `$this->loadComponent('Acl.Acl');`
+     * ```
+     * $this->loadComponent('Acl.Acl');
+     * ```
      *
      * Will result in a `Toolbar` property being set.
      *

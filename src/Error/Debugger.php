@@ -311,7 +311,9 @@ class Debugger
      *
      * Usage:
      *
-     * `Debugger::excerpt('/path/to/file', 100, 4);`
+     * ```
+     * Debugger::excerpt('/path/to/file', 100, 4);
+     * ```
      *
      * The above would return an array of 8 items. The 4th item would be the provided line,
      * and would be wrapped in `<span class="code-highlight"></span>`. All of the lines
@@ -576,7 +578,9 @@ class Debugger
     /**
      * Add an output format or update a format in Debugger.
      *
-     * `Debugger::addFormat('custom', $data);`
+     * ```
+     * Debugger::addFormat('custom', $data);
+     * ```
      *
      * Where $data is an array of strings that use Text::insert() variable
      * replacement. The template vars should be in a `{:id}` style.
@@ -600,7 +604,9 @@ class Debugger
      * Alternatively if you want to use a custom callback to do all the formatting, you can use
      * the callback key, and provide a callable:
      *
-     * `Debugger::addFormat('custom', ['callback' => [$foo, 'outputError']];`
+     * ```
+     * Debugger::addFormat('custom', ['callback' => [$foo, 'outputError']];
+     * ```
      *
      * The callback can expect two parameters. The first is an array of all
      * the error data. The second contains the formatted strings generated using

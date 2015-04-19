@@ -60,7 +60,9 @@ use Cake\Utility\Inflector;
  * arguments any arguments greater than those defined will cause exceptions. Additionally you can
  * declare arguments as optional, by setting the required param to false.
  *
- * `$parser->addArgument('model', ['required' => false]);`
+ * ```
+ * $parser->addArgument('model', ['required' => false]);
+ * ```
  *
  * ### Providing Help text
  *
