@@ -170,7 +170,10 @@ abstract class Mailer implements ArrayAccess, EventListenerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Checks if the property exists.
+     *
+     * @param string $offset Property name.
+     * @return bool True if it exists.
      */
     public function offsetExists($offset)
     {
@@ -179,7 +182,10 @@ abstract class Mailer implements ArrayAccess, EventListenerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Gets the property value if it exists.
+     *
+     * @param string $offset Property name.
+     * @return mixed Value.
      */
     public function offsetGet($offset)
     {
@@ -195,7 +201,11 @@ abstract class Mailer implements ArrayAccess, EventListenerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Sets property's value.
+     *
+     * @param string $offset Property name.
+     * @param mixed $value Value.
+     * @return void
      */
     public function offsetSet($offset, $value)
     {
@@ -203,7 +213,10 @@ abstract class Mailer implements ArrayAccess, EventListenerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Unset a property.
+     *
+     * @param string $offset Property name.
+     * @return void
      */
     public function offsetUnset($offset)
     {
