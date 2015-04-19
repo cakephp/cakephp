@@ -23,25 +23,6 @@ use Cake\Validation\Validation;
 use Locale;
 
 /**
- * CustomValidator class
- *
- */
-class CustomValidator
-{
-
-    /**
-     * Makes sure that a given $email address is valid and unique
-     *
-     * @param string $check
-     * @return bool
-     */
-    public static function customValidate($check)
-    {
-        return (bool)preg_match('/^[0-9]{3}$/', $check);
-    }
-}
-
-/**
  * Test Case for Validation Class
  *
  */
@@ -80,15 +61,15 @@ class ValidationTest extends TestCase
      */
     public function testNotEmpty()
     {
-        $this->assertTrue(Validation::notEmpty('abcdefg'));
-        $this->assertTrue(Validation::notEmpty('fasdf '));
-        $this->assertTrue(Validation::notEmpty('fooo' . chr(243) . 'blabla'));
-        $this->assertTrue(Validation::notEmpty('abçďĕʑʘπй'));
-        $this->assertTrue(Validation::notEmpty('José'));
-        $this->assertTrue(Validation::notEmpty('é'));
-        $this->assertTrue(Validation::notEmpty('π'));
-        $this->assertFalse(Validation::notEmpty("\t "));
-        $this->assertFalse(Validation::notEmpty(""));
+        $this->assertTrue(Validation::notBlank('abcdefg'));
+        $this->assertTrue(Validation::notBlank('fasdf '));
+        $this->assertTrue(Validation::notBlank('fooo' . chr(243) . 'blabla'));
+        $this->assertTrue(Validation::notBlank('abçďĕʑʘπй'));
+        $this->assertTrue(Validation::notBlank('José'));
+        $this->assertTrue(Validation::notBlank('é'));
+        $this->assertTrue(Validation::notBlank('π'));
+        $this->assertFalse(Validation::notBlank("\t "));
+        $this->assertFalse(Validation::notBlank(""));
     }
 
     /**
@@ -99,14 +80,14 @@ class ValidationTest extends TestCase
     public function testNotEmptyISO88591AppEncoding()
     {
         Configure::write('App.encoding', 'ISO-8859-1');
-        $this->assertTrue(Validation::notEmpty('abcdefg'));
-        $this->assertTrue(Validation::notEmpty('fasdf '));
-        $this->assertTrue(Validation::notEmpty('fooo' . chr(243) . 'blabla'));
-        $this->assertTrue(Validation::notEmpty('abçďĕʑʘπй'));
-        $this->assertTrue(Validation::notEmpty('José'));
-        $this->assertTrue(Validation::notEmpty(utf8_decode('José')));
-        $this->assertFalse(Validation::notEmpty("\t "));
-        $this->assertFalse(Validation::notEmpty(""));
+        $this->assertTrue(Validation::notBlank('abcdefg'));
+        $this->assertTrue(Validation::notBlank('fasdf '));
+        $this->assertTrue(Validation::notBlank('fooo' . chr(243) . 'blabla'));
+        $this->assertTrue(Validation::notBlank('abçďĕʑʘπй'));
+        $this->assertTrue(Validation::notBlank('José'));
+        $this->assertTrue(Validation::notBlank(utf8_decode('José')));
+        $this->assertFalse(Validation::notBlank("\t "));
+        $this->assertFalse(Validation::notBlank(""));
     }
 
     /**
@@ -169,38 +150,6 @@ class ValidationTest extends TestCase
 
         $this->assertFalse(Validation::lengthBetween('abcdefg', 1, 6));
         $this->assertFalse(Validation::lengthBetween('ÆΔΩЖÇ', 1, 3));
-    }
-
-    /**
-     * testBlank method
-     *
-     * @return void
-     */
-    public function testBlank()
-    {
-        $this->assertTrue(Validation::blank(''));
-        $this->assertTrue(Validation::blank(' '));
-        $this->assertTrue(Validation::blank("\n"));
-        $this->assertTrue(Validation::blank("\t"));
-        $this->assertTrue(Validation::blank("\r"));
-        $this->assertFalse(Validation::blank('    Blank'));
-        $this->assertFalse(Validation::blank('Blank'));
-    }
-
-    /**
-     * testBlankAsArray method
-     *
-     * @return void
-     */
-    public function testBlankAsArray()
-    {
-        $this->assertTrue(Validation::blank(['check' => '']));
-        $this->assertTrue(Validation::blank(['check' => ' ']));
-        $this->assertTrue(Validation::blank(['check' => "\n"]));
-        $this->assertTrue(Validation::blank(['check' => "\t"]));
-        $this->assertTrue(Validation::blank(['check' => "\r"]));
-        $this->assertFalse(Validation::blank(['check' => '    Blank']));
-        $this->assertFalse(Validation::blank(['check' => 'Blank']));
     }
 
     /**
@@ -2263,19 +2212,6 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::naturalNumber(49));
         $this->assertTrue(Validation::naturalNumber('0', true));
         $this->assertTrue(Validation::naturalNumber(0, true));
-    }
-
-    /**
-     * testUserDefined method
-     *
-     * @return void
-     */
-    public function testUserDefined()
-    {
-        $validator = new CustomValidator;
-        $this->assertFalse(Validation::userDefined('33', $validator, 'customValidate'));
-        $this->assertFalse(Validation::userDefined('3333', $validator, 'customValidate'));
-        $this->assertTrue(Validation::userDefined('333', $validator, 'customValidate'));
     }
 
     /**

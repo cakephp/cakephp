@@ -56,6 +56,9 @@ class TableTest extends TestCase
         'core.tags',
         'core.articles_tags',
         'core.site_articles',
+        'core.members',
+        'core.groups',
+        'core.groups_members',
     ];
 
     /**
@@ -2466,6 +2469,37 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test that cascading associations are deleted first.
+     *
+     * @return void
+     */
+    public function testDeleteAssociationsCascadingCallbacksOrder()
+    {
+        $groups = TableRegistry::get('Groups');
+        $members = TableRegistry::get('Members');
+        $groupsMembers = TableRegistry::get('GroupsMembers');
+
+        $groups->belongsToMany('Members');
+        $groups->hasMany('GroupsMembers', [
+            'dependent' => true,
+            'cascadeCallbacks' => true,
+        ]);
+        $groupsMembers->belongsTo('Members');
+        $groupsMembers->addBehavior('CounterCache', [
+            'Members' => ['group_count']
+        ]);
+
+        $member = $members->get(1);
+        $this->assertEquals(2, $member->group_count);
+
+        $group = $groups->get(1);
+        $groups->delete($group);
+
+        $member = $members->get(1);
+        $this->assertEquals(1, $member->group_count);
+    }
+
+    /**
      * Test delete callbacks
      *
      * @return void
@@ -2754,7 +2788,7 @@ class TableTest extends TestCase
         $result = $table->findByUsername('garrett');
         $this->assertInstanceOf('Cake\ORM\Query', $result);
 
-        $expected = new QueryExpression(['username' => 'garrett'], $this->usersTypeMap);
+        $expected = new QueryExpression(['Users.username' => 'garrett'], $this->usersTypeMap);
         $this->assertEquals($expected, $result->clause('where'));
     }
 
@@ -2812,7 +2846,7 @@ class TableTest extends TestCase
         $result = $table->findByUsernameAndId('garrett', 4);
         $this->assertInstanceOf('Cake\ORM\Query', $result);
 
-        $expected = new QueryExpression(['username' => 'garrett', 'id' => 4], $this->usersTypeMap);
+        $expected = new QueryExpression(['Users.username' => 'garrett', 'Users.id' => 4], $this->usersTypeMap);
         $this->assertEquals($expected, $result->clause('where'));
     }
 
@@ -2832,8 +2866,8 @@ class TableTest extends TestCase
         $expected->add(
             [
             'OR' => [
-                'username' => 'garrett',
-                'id' => 4
+                'Users.username' => 'garrett',
+                'Users.id' => 4
             ]]
         );
         $this->assertEquals($expected, $result->clause('where'));
@@ -2852,7 +2886,7 @@ class TableTest extends TestCase
         $this->assertInstanceOf('Cake\ORM\Query', $result);
         $this->assertNull($result->clause('limit'));
 
-        $expected = new QueryExpression(['author_id' => 1], $this->articlesTypeMap);
+        $expected = new QueryExpression(['Articles.author_id' => 1], $this->articlesTypeMap);
         $this->assertEquals($expected, $result->clause('where'));
     }
 
@@ -2869,7 +2903,7 @@ class TableTest extends TestCase
         $this->assertInstanceOf('Cake\ORM\Query', $result);
         $this->assertNull($result->clause('limit'));
         $expected = new QueryExpression(
-            ['author_id' => 1, 'published' => 'Y'],
+            ['Users.author_id' => 1, 'Users.published' => 'Y'],
             $this->usersTypeMap
         );
         $this->assertEquals($expected, $result->clause('where'));
@@ -2901,7 +2935,7 @@ class TableTest extends TestCase
             'updated' => 'timestamp',
         ]);
         $expected->add(
-            ['or' => ['author_id' => 1, 'published' => 'Y']]
+            ['or' => ['Users.author_id' => 1, 'Users.published' => 'Y']]
         );
         $this->assertEquals($expected, $result->clause('where'));
         $this->assertNull($result->clause('order'));

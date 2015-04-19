@@ -21,6 +21,7 @@ use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\Stub\Response;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Hash;
 
 /**
  * A test case class intended to make integration tests of
@@ -355,7 +356,7 @@ abstract class IntegrationTestCase extends TestCase
         }
         $env['REQUEST_METHOD'] = $method;
         $props['environment'] = $env;
-        $props += $this->_request;
+        $props = Hash::merge($props, $this->_request);
         return new Request($props);
     }
 

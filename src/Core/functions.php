@@ -75,7 +75,10 @@ if (!function_exists('pluginSplit')) {
      * Splits a dot syntax plugin name into its plugin and class name.
      * If $name does not have a dot, then index 0 will be null.
      *
-     * Commonly used like `list($plugin, $name) = pluginSplit($name);`
+     * Commonly used like
+     * ```
+     * list($plugin, $name) = pluginSplit($name);
+     * ```
      *
      * @param string $name The name you want to plugin split.
      * @param bool $dotAppend Set to true if you want the plugin to have a '.' appended to it.

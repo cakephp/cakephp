@@ -251,6 +251,7 @@ class AssociationCollection
 
     /**
      * Cascade a delete across the various associations.
+     * Cascade first across associations for which cascadeCallbacks is true.
      *
      * @param \Cake\ORM\Entity $entity The entity to delete associations for.
      * @param array $options The options used in the delete operation.
@@ -258,7 +259,15 @@ class AssociationCollection
      */
     public function cascadeDelete(Entity $entity, array $options)
     {
+        $noCascade = [];
         foreach ($this->_items as $assoc) {
+            if (!$assoc->cascadeCallbacks()) {
+                $noCascade[] = $assoc;
+                continue;
+            }
+            $assoc->cascadeDelete($entity, $options);
+        }
+        foreach ($noCascade as $assoc) {
             $assoc->cascadeDelete($entity, $options);
         }
     }

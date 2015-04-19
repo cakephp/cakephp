@@ -33,19 +33,27 @@ class Xml
      *
      * Building XML from a string:
      *
-     * `$xml = Xml::build('<example>text</example>');`
+     * ```
+     * $xml = Xml::build('<example>text</example>');
+     * ```
      *
      * Building XML from string (output DOMDocument):
      *
-     * `$xml = Xml::build('<example>text</example>', ['return' => 'domdocument']);`
+     * ```
+     * $xml = Xml::build('<example>text</example>', ['return' => 'domdocument']);
+     * ```
      *
      * Building XML from a file path:
      *
-     * `$xml = Xml::build('/path/to/an/xml/file.xml');`
+     * ```
+     * $xml = Xml::build('/path/to/an/xml/file.xml');
+     * ```
      *
      * Building from a remote URL:
      *
-     * `$xml = Xml::build('http://example.com/example.xml');`
+     * ```
+     * $xml = Xml::build('http://example.com/example.xml');
+     * ```
      *
      * Building from an array:
      *

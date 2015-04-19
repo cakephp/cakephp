@@ -54,7 +54,11 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->configRequest([
             'headers' => ['X-CSRF-Token' => 'abc123'],
             'base' => '',
-            'webroot' => '/'
+            'webroot' => '/',
+            'environment' => [
+                'PHP_AUTH_USER' => 'foo',
+                'PHP_AUTH_PW' => 'bar'
+            ]
         ]);
         $this->cookie('split_token', 'def345');
         $this->session(['User' => ['id' => 1, 'username' => 'mark']]);
@@ -64,6 +68,8 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->assertEquals('tasks/add', $request->url);
         $this->assertEquals(['split_token' => 'def345'], $request->cookies);
         $this->assertEquals(['id' => '1', 'username' => 'mark'], $request->session()->read('User'));
+        $this->assertEquals('foo', $request->env('PHP_AUTH_USER'));
+        $this->assertEquals('bar', $request->env('PHP_AUTH_PW'));
     }
 
     /**
@@ -278,6 +284,19 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->_response = new Response();
         $this->_response->type('json');
 
+        $this->assertContentType('json');
+        $this->assertContentType('application/json');
+    }
+
+    /**
+     * Test that type() in an action sets the content-type header.
+     *
+     * @return void
+     */
+    public function testContentTypeInAction()
+    {
+        $this->get('/tests_apps/set_type');
+        $this->assertHeader('Content-Type', 'application/json; charset=UTF-8');
         $this->assertContentType('json');
         $this->assertContentType('application/json');
     }

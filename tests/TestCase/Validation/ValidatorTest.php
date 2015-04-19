@@ -513,7 +513,7 @@ class ValidatorTest extends TestCase
         $validator = new Validator;
         $validator
             ->add('email', 'alpha', ['rule' => 'alphanumeric'])
-            ->add('email', 'notEmpty', ['rule' => 'notEmpty'])
+            ->add('email', 'notBlank', ['rule' => 'notBlank'])
             ->add('email', 'email', ['rule' => 'email', 'message' => 'Y u no write email?']);
         $errors = $validator->errors(['email' => 'not an email!']);
         $expected = [

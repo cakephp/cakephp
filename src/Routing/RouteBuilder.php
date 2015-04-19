@@ -317,14 +317,18 @@ class RouteBuilder
      *
      * Examples:
      *
-     * `$routes->connect('/:controller/:action/*');`
+     * ```
+     * $routes->connect('/:controller/:action/*');
+     * ```
      *
      * The first parameter will be used as a controller name while the second is
      * used as the action name. The '/*' syntax makes this route greedy in that
      * it will match requests like `/posts/index` as well as requests
      * like `/posts/edit/1/foo/bar`.
      *
-     * `$routes->connect('/home-page', ['controller' => 'Pages', 'action' => 'display', 'home']);`
+     * ```
+     * $routes->connect('/home-page', ['controller' => 'Pages', 'action' => 'display', 'home']);
+     * ```
      *
      * The above shows the use of route parameter defaults. And providing routing
      * parameters for a static route.
@@ -363,7 +367,9 @@ class RouteBuilder
      *
      * Example of using the `_method` condition:
      *
-     * `$routes->connect('/tasks', ['controller' => 'Tasks', 'action' => 'index', '_method' => 'GET']);`
+     * ```
+     * $routes->connect('/tasks', ['controller' => 'Tasks', 'action' => 'index', '_method' => 'GET']);
+     * ```
      *
      * The above route will only be matched for GET requests. POST requests will fail to match this route.
      *
@@ -456,12 +462,16 @@ class RouteBuilder
      *
      * Examples:
      *
-     * `$routes->redirect('/home/*', ['controller' => 'posts', 'action' => 'view']);`
+     * ```
+     * $routes->redirect('/home/*', ['controller' => 'posts', 'action' => 'view']);
+     * ```
      *
      * Redirects /home/* to /posts/view and passes the parameters to /posts/view. Using an array as the
      * redirect destination allows you to use other routes to define where an URL string should be redirected to.
      *
-     * `$routes-redirect('/posts/*', 'http://google.com', ['status' => 302]);`
+     * ```
+     * $routes-redirect('/posts/*', 'http://google.com', ['status' => 302]);
+     * ```
      *
      * Redirects /posts/* to http://google.com with a HTTP status of 302
      *

@@ -310,6 +310,8 @@ class SecurityComponent extends Component
             if (preg_match('/(\.\d){1,10}$/', $key)) {
                 $multi[$i] = preg_replace('/(\.\d+){1,10}$/', '', $key);
                 unset($fieldList[$i]);
+            } else {
+                $fieldList[$i] = (string)$key;
             }
         }
         if (!empty($multi)) {

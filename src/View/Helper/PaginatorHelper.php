@@ -585,7 +585,9 @@ class PaginatorHelper extends Helper
      * Returns a set of numbers for the paged result set
      * uses a modulus to decide how many numbers to show on each side of the current page (default: 8).
      *
-     * `$this->Paginator->numbers(['first' => 2, 'last' => 2]);`
+     * ```
+     * $this->Paginator->numbers(['first' => 2, 'last' => 2]);
+     * ```
      *
      * Using the first and last options you can create links to the beginning and end of the page set.
      *
@@ -814,11 +816,15 @@ class PaginatorHelper extends Helper
     /**
      * Returns a first or set of numbers for the first pages.
      *
-     * `echo $this->Paginator->first('< first');`
+     * ```
+     * echo $this->Paginator->first('< first');
+     * ```
      *
      * Creates a single link for the first page. Will output nothing if you are on the first page.
      *
-     * `echo $this->Paginator->first(3);`
+     * ```
+     * echo $this->Paginator->first(3);
+     * ```
      *
      * Will create links for the first 3 pages, once you get to the third or greater page. Prior to that
      * nothing will be output.
@@ -866,11 +872,15 @@ class PaginatorHelper extends Helper
     /**
      * Returns a last or set of numbers for the last pages.
      *
-     * `echo $this->Paginator->last('last >');`
+     * ```
+     * echo $this->Paginator->last('last >');
+     * ```
      *
      * Creates a single link for the last page. Will output nothing if you are on the last page.
      *
-     * `echo $this->Paginator->last(3);`
+     * ```
+     * echo $this->Paginator->last(3);
+     * ```
      *
      * Will create links for the last 3 pages. Once you enter the page range, no output will be created.
      *
@@ -916,11 +926,15 @@ class PaginatorHelper extends Helper
     /**
      * Returns the meta-links for a paginated result set.
      *
-     * `echo $this->Paginator->meta();`
+     * ```
+     * echo $this->Paginator->meta();
+     * ```
      *
      * Echos the links directly, will output nothing if there is neither a previous nor next page.
      *
-     * `$this->Paginator->meta(['block' => true]);`
+     * ```
+     * $this->Paginator->meta(['block' => true]);
+     * ```
      *
      * Will append the output of the meta function to the named block - if true is passed the "meta"
      * block is used.

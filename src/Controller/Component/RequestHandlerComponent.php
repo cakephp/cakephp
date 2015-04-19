@@ -381,11 +381,15 @@ class RequestHandlerComponent extends Component
      *
      * Usage:
      *
-     * `$this->RequestHandler->accepts(['xml', 'html', 'json']);`
+     * ```
+     * $this->RequestHandler->accepts(['xml', 'html', 'json']);
+     * ```
      *
      * Returns true if the client accepts any of the supplied types.
      *
-     * `$this->RequestHandler->accepts('xml');`
+     * ```
+     * $this->RequestHandler->accepts('xml');
+     * ```
      *
      * Returns true if the client accepts xml.
      *
@@ -518,11 +522,15 @@ class RequestHandlerComponent extends Component
      *
      * Render the response as an 'ajax' response.
      *
-     * `$this->RequestHandler->renderAs($this, 'ajax');`
+     * ```
+     * $this->RequestHandler->renderAs($this, 'ajax');
+     * ```
      *
      * Render the response as an xml file and force the result as a file download.
      *
-     * `$this->RequestHandler->renderAs($this, 'xml', ['attachment' => 'myfile.xml'];`
+     * ```
+     * $this->RequestHandler->renderAs($this, 'xml', ['attachment' => 'myfile.xml'];
+     * ```
      *
      * @param Controller $controller A reference to a controller object
      * @param string $type Type of response to send (e.g: 'ajax')
