@@ -23,6 +23,13 @@ abstract class Mailer implements ArrayAccess, EventListenerInterface
     use ModelAwareTrait;
 
     /**
+     * Mailer's name.
+     *
+     * @var string
+     */
+    static public $name;
+
+    /**
      * Layout.
      *
      * @var string
@@ -61,7 +68,14 @@ abstract class Mailer implements ArrayAccess, EventListenerInterface
      */
     public function getName()
     {
-        return str_replace('Mailer', '', join('', array_slice(explode('\\', get_class($this)), -1)));
+        if (!static::$name) {
+            static::$name = str_replace(
+                'Mailer',
+                '',
+                join('', array_slice(explode('\\', get_class($this)), -1))
+            );
+        }
+        return static::$name;
     }
 
     /**
