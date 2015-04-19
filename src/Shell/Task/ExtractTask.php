@@ -431,7 +431,7 @@ class ExtractTask extends Shell
                         $details['msgctxt'] = $context;
                     }
                     $this->_addTranslation($domain, $singular, $details);
-                } else {
+                } elseif (strpos($this->_file, CAKE_CORE_INCLUDE_PATH) === false) {
                     $this->_markerError($this->_file, $line, $functionName, $count);
                 }
             }
