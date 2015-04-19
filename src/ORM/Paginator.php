@@ -327,11 +327,11 @@ class Paginator
      * Any columns listed in the sort whitelist will be implicitly trusted. You can use this to sort
      * on synthetic columns, or columns added in custom find operations that may not exist in the schema.
      *
-     * @param Table $object The model being paginated.
+     * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Query $object The model being paginated.
      * @param array $options The pagination options being used for this request.
      * @return array An array of options with sort + direction removed and replaced with order if possible.
      */
-    public function validateSort(Table $object, array $options)
+    public function validateSort($object, array $options)
     {
         if (isset($options['sort'])) {
             $direction = null;

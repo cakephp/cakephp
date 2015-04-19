@@ -14,6 +14,7 @@
  */
 namespace Cake\Controller\Component;
 
+use BadMethodCallException;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Network\Exception\NotFoundException;
@@ -155,6 +156,7 @@ class PaginatorComponent extends Component
      *
      * @param string $method Method name.
      * @param array $args The arguments passed to the called method.
+     * @throws \BadMethodCallException When the method does not exist.
      * @return mixed
      */
     public function __call($method, $args)
@@ -162,5 +164,6 @@ class PaginatorComponent extends Component
         if (method_exists($this->_paginator, $method)) {
             return call_user_func_array([$this->_paginator, $method], $args);
         }
+        throw new BadMethodCallException(sprintf('Method %s does not exist.', $method));
     }
 }
