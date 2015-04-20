@@ -66,6 +66,7 @@ class Stream
     {
         $this->_stream = null;
         $this->_context = [];
+        $this->_contextOptions = [];
         $this->_connectionErrors = [];
 
         $this->_buildContext($request, $options);

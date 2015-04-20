@@ -119,4 +119,18 @@ class RequestTest extends TestCase
         $result = $request->cookie('session');
         $this->assertEquals('123456', $result);
     }
+
+    /**
+     * test version method.
+     *
+     * @return void
+     */
+    public function testVersion()
+    {
+        $request = new Request();
+        $result = $request->version('1.0');
+        $this->assertSame($request, $request, 'Should return self');
+
+        $this->assertSame('1.0', $request->version());
+    }
 }
