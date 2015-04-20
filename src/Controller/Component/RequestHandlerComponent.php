@@ -300,6 +300,7 @@ class RequestHandlerComponent extends Component
                 'REQUEST_METHOD' => 'GET'
             ]
         ]));
+        $response->statusCode(200);
         $response->send();
         $response->stop();
     }
