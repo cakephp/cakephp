@@ -312,6 +312,18 @@ class ControllerTestCaseTest extends CakeTestCase {
 	}
 
 /**
+ * Test that file responses don't trigger errors.
+ *
+ * @return void
+ */
+	public function testActionWithFile() {
+		$Controller = $this->Case->generate('TestsApps');
+		$this->Case->testAction('/tests_apps/file');
+		$this->assertArrayHasKey('Content-Disposition', $Controller->response->header());
+		$this->assertArrayHasKey('Content-Length', $Controller->response->header());
+	}
+
+/**
  * Make sure testAction() can hit plugin controllers.
  *
  * @return void

@@ -747,7 +747,7 @@ class CakeSession {
  * @return void
  */
 	public static function renew() {
-		if (!session_id()) {
+		if (session_id() === '') {
 			return;
 		}
 		if (isset($_COOKIE[session_name()])) {
