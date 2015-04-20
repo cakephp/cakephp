@@ -80,11 +80,15 @@ class ShellDispatcher
      *
      * Aliasing a shell named ClassName:
      *
-     * `$this->alias('alias', 'ClassName');`
+     * ```
+     * $this->alias('alias', 'ClassName');
+     * ```
      *
      * Getting the original name for a given alias:
      *
-     * `$this->alias('alias');`
+     * ```
+     * $this->alias('alias');
+     * ```
      *
      * @param string $short The new short name for the shell.
      * @param string|null $original The original full name for the shell.

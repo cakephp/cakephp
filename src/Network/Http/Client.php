@@ -60,7 +60,9 @@ use Cake\Utility\Hash;
  * When sending request bodies you can use the `type` option to
  * set the Content-Type for the request:
  *
- * `$http->get('/users', [], ['type' => 'json']);`
+ * ```
+ * $http->get('/users', [], ['type' => 'json']);
+ * ```
  *
  * The `type` option sets both the `Content-Type` and `Accept` header, to
  * the same mime type. When using `type` you can use either a full mime

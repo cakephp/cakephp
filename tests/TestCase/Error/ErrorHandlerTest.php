@@ -338,7 +338,7 @@ class ErrorHandlerTest extends TestCase
         $result = $errorHandler->response->body();
         $this->assertNotContains('Something wrong', $result, 'message must not appear.');
         $this->assertNotContains(__FILE__, $result, 'filename must not appear.');
-        $this->assertContains('An Internal Error Has Occurred', $result);
+        $this->assertContains('An Internal Error Has Occurred.', $result);
     }
 
     /**

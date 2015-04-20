@@ -51,7 +51,9 @@ use Cake\Network\Request;
  * DigestAuthenticate requires a special password hash that conforms to RFC2617.
  * You can generate this password using `DigestAuthenticate::password()`
  *
- * `$digestPass = DigestAuthenticate::password($username, $password, env('SERVER_NAME'));`
+ * ```
+ * $digestPass = DigestAuthenticate::password($username, $password, env('SERVER_NAME'));
+ * ```
  *
  * If you wish to use digest authentication alongside other authentication methods,
  * it's recommended that you store the digest authentication separately. For

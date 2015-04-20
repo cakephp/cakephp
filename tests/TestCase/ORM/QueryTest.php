@@ -2041,6 +2041,26 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test finding fields on the non-default table that
+     * have the same name as the primary table.
+     *
+     * @return void
+     */
+    public function testContainSelectedFields()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors');
+
+        $query = $table->find()
+            ->contain(['Authors'])
+            ->order(['Authors.id' => 'asc'])
+            ->select(['Authors.id']);
+        $results = $query->extract('Authors.id')->toList();
+        $expected = [1, 1, 3];
+        $this->assertEquals($expected, $results);
+    }
+
+    /**
      * Tests that it is possible to attach more association when using a query
      * builder for other associations
      *

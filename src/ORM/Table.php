@@ -1787,7 +1787,7 @@ class Table implements RepositoryInterface, EventListenerInterface
                 ));
             }
             foreach ($fields as $field) {
-                $conditions[$field] = array_shift($args);
+                $conditions[$this->aliasField($field)] = array_shift($args);
             }
             return $conditions;
         };

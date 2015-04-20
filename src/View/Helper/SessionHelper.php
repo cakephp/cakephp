@@ -15,7 +15,6 @@
 namespace Cake\View\Helper;
 
 use Cake\View\Helper;
-use Cake\View\StringTemplateTrait;
 use Cake\View\View;
 
 /**
@@ -28,19 +27,6 @@ use Cake\View\View;
  */
 class SessionHelper extends Helper
 {
-
-    use StringTemplateTrait;
-
-    /**
-     * Default config for this class
-     *
-     * @var array
-     */
-    protected $_defaultConfig = [
-        'templates' => [
-            'flash' => '<div id="{{key}}-message" class="message-{{class}}">{{message}}</div>'
-        ]
-    ];
 
     /**
      *  Constructor
@@ -57,7 +43,10 @@ class SessionHelper extends Helper
     /**
      * Reads a session value for a key or returns values for all keys.
      *
-     * In your view: `$this->Session->read('Controller.sessKey');`
+     * In your view:
+     * ```
+     * $this->Session->read('Controller.sessKey');
+     * ```
      * Calling the method without a param will return all session vars
      *
      * @param string|null $name The name of the session key you want to read
@@ -71,7 +60,10 @@ class SessionHelper extends Helper
     /**
      * Checks if a session key has been set.
      *
-     * In your view: `$this->Session->check('Controller.sessKey');`
+     * In your view:
+     * ```
+     * $this->Session->check('Controller.sessKey');
+     * ```
      *
      * @param string $name Session key to check.
      * @return bool
