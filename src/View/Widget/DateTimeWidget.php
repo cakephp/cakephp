@@ -59,6 +59,13 @@ class DateTimeWidget implements WidgetInterface
     protected $_templates;
 
     /**
+     * List of fields to be secured populated after call to render().
+     *
+     * @var array
+     */
+    protected $_secureFields = [];
+
+    /**
      * Constructor
      *
      * @param \Cake\View\StringTemplate $templates Templates list.
@@ -136,6 +143,7 @@ class DateTimeWidget implements WidgetInterface
             'second' => [],
             'meridian' => null,
         ];
+        $this->_secureFields = [];
 
         $selected = $this->_deconstructDate($data['val'], $data);
 
@@ -171,6 +179,7 @@ class DateTimeWidget implements WidgetInterface
                 $data[$select]['disabled'] = $data['disabled'];
             }
             $templateOptions[$select] = $this->{$method}($data[$select], $context);
+            $this->_secureFields[] = $data['name'] . '[' . $select . ']';
             unset($data[$select]);
         }
         unset($data['name'], $data['empty'], $data['disabled'], $data['val']);
@@ -569,16 +578,6 @@ class DateTimeWidget implements WidgetInterface
      */
     public function secureFields(array $data)
     {
-        $fields = [];
-        $hourFormat = isset($data['hour']['format']) ? $data['hour']['format'] : null;
-        foreach ($this->_selects as $type) {
-            if ($type === 'meridian' && ($hourFormat === null || $hourFormat === 24)) {
-                continue;
-            }
-            if (!isset($data[$type]) || $data[$type] !== false) {
-                $fields[] = $data['name'] . '[' . $type . ']';
-            }
-        }
-        return $fields;
+        return $this->_secureFields;
     }
 }

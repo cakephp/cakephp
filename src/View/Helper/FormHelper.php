@@ -2519,17 +2519,22 @@ class FormHelper extends Helper
      */
     public function widget($name, array $data = [])
     {
+        $secure = null;
+        if (isset($data['secure'])) {
+            $secure = $data['secure'];
+            unset($data['secure']);
+        }
+
         $widget = $this->_registry->get($name);
-        if (isset($data['secure'], $data['name']) &&
-            $data['secure'] !== self::SECURE_SKIP
-        ) {
+        $out = $widget->render($data, $this->context());
+
+        if (isset($data['name']) && $secure !== null && $secure !== self::SECURE_SKIP) {
             foreach ($widget->secureFields($data) as $field) {
-                $this->_secure($data['secure'], $this->_secureFieldName($field));
+                $this->_secure($secure, $this->_secureFieldName($field));
             }
         }
-        unset($data['secure']);
 
-        return $widget->render($data, $this->context());
+        return $out;
     }
 
     /**
