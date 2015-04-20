@@ -2520,6 +2520,12 @@ class FormHelper extends Helper
     public function widget($name, array $data = [])
     {
         $widget = $this->_registry->get($name);
+        
+        $widgetData = $data;
+        unset($widgetData['secure']);
+        
+        $return = $widget->render($widgetData, $this->context());
+        
         if (isset($data['secure'], $data['name']) &&
             $data['secure'] !== self::SECURE_SKIP
         ) {
@@ -2527,9 +2533,8 @@ class FormHelper extends Helper
                 $this->_secure($data['secure'], $this->_secureFieldName($field));
             }
         }
-        unset($data['secure']);
 
-        return $widget->render($data, $this->context());
+        return $return;
     }
 
     /**
