@@ -793,7 +793,7 @@ class RequestHandlerComponentTest extends TestCase
     }
 
     /**
-     * test that ajax requests involving redirects trigger requestAction instead.
+     * test that AJAX requests involving redirects trigger requestAction instead.
      *
      * @return void
      * @triggers Controller.beforeRedirect $this->Controller
@@ -820,6 +820,38 @@ class RequestHandlerComponentTest extends TestCase
         );
         $result = ob_get_clean();
         $this->assertRegExp('/posts index/', $result, 'RequestAction redirect failed.');
+    }
+
+    /**
+     * Tests that AJAX requests involving redirects don't let the status code bleed through.
+     *
+     * @return void
+     * @triggers Controller.beforeRedirect $this->Controller
+     */
+    public function testAjaxRedirectAsRequestActionStatusCode()
+    {
+        Configure::write('App.namespace', 'TestApp');
+        Router::connect('/:controller/:action');
+        $event = new Event('Controller.beforeRedirect', $this->Controller);
+
+        $this->Controller->response->statusCode(302);
+        $this->Controller->RequestHandler = new RequestHandlerComponent($this->Controller->components());
+        $this->Controller->request = $this->getMock('Cake\Network\Request', ['is']);
+        $this->Controller->response = $this->getMock('Cake\Network\Response', ['_sendHeader', 'stop']);
+        $this->Controller->RequestHandler->request = $this->Controller->request;
+        $this->Controller->RequestHandler->response = $this->Controller->response;
+        $this->Controller->request->expects($this->any())->method('is')->will($this->returnValue(true));
+        $this->Controller->response->expects($this->once())->method('stop');
+
+        ob_start();
+        $this->Controller->RequestHandler->beforeRedirect(
+            $event,
+            ['controller' => 'request_handler_test', 'action' => 'destination'],
+            $this->Controller->response
+        );
+        $result = ob_get_clean();
+        $this->assertRegExp('/posts index/', $result, 'RequestAction redirect failed.');
+        $this->assertSame(200, $this->Controller->response->statusCode());
     }
 
     /**
