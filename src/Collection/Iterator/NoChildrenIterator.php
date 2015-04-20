@@ -15,14 +15,24 @@
 namespace Cake\Collection\Iterator;
 
 use Cake\Collection\Collection;
+use Cake\Collection\CollectionInterface;
+use Cake\Collection\CollectionTrait;
+use IteratorIterator;
 use RecursiveIterator;
 
 /**
  * An iterator that can be used as argument for other iterators that require
  * a RecursiveIterator, but that will always report as having no nested items.
  */
-class NoChildrenIterator extends Collection implements RecursiveIterator
+class NoChildrenIterator extends IteratorIterator implements CollectionInterface, RecursiveIterator
 {
+
+    use CollectionTrait;
+
+    public function __construct($items)
+    {
+        parent::__construct(new Collection($items));
+    }
 
     /**
      * Returns false as there are no children iterators in this collection

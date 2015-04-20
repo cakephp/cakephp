@@ -15,13 +15,18 @@
 namespace Cake\Collection\Iterator;
 
 use Cake\Collection\Collection;
+use Cake\Collection\CollectionInterface;
+use Cake\Collection\CollectionTrait;
+use IteratorIterator;
 
 /**
  * Creates an iterator from another iterator that extract the requested column
  * or property based on a path
  */
-class ExtractIterator extends Collection
+class ExtractIterator extends IteratorIterator implements CollectionInterface
 {
+
+    use CollectionTrait;
 
     /**
      * A callable responsible for extracting a single value for each
@@ -54,7 +59,7 @@ class ExtractIterator extends Collection
     public function __construct($items, $path)
     {
         $this->_extractor = $this->_propertyExtractor($path);
-        parent::__construct($items);
+        parent::__construct(new Collection($items));
     }
 
     /**

@@ -15,6 +15,9 @@
 namespace Cake\Collection\Iterator;
 
 use Cake\Collection\Collection;
+use Cake\Collection\CollectionInterface;
+use Cake\Collection\CollectionTrait;
+use IteratorIterator;
 use Countable;
 use SplDoublyLinkedList;
 
@@ -22,8 +25,10 @@ use SplDoublyLinkedList;
  * Creates an iterator from another iterator that will keep the results of the inner
  * iterator in memory, so that results don't have to be re-calculated.
  */
-class BufferedIterator extends Collection implements Countable
+class BufferedIterator extends IteratorIterator implements CollectionInterface, Countable
 {
+
+    use CollectionTrait;
 
     /**
      * The in-memory cache containing results from previous iterators
@@ -77,7 +82,7 @@ class BufferedIterator extends Collection implements Countable
     public function __construct($items)
     {
         $this->_buffer = new SplDoublyLinkedList;
-        parent::__construct($items);
+        parent::__construct(new Collection($items));
     }
 
     /**

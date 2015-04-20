@@ -15,6 +15,9 @@
 namespace Cake\Collection\Iterator;
 
 use Cake\Collection\Collection;
+use Cake\Collection\CollectionInterface;
+use Cake\Collection\CollectionTrait;
+use IteratorIterator;
 use RecursiveIterator;
 
 /**
@@ -22,8 +25,10 @@ use RecursiveIterator;
  * check or retrieve them
  *
  */
-class NestIterator extends Collection implements RecursiveIterator
+class NestIterator extends IteratorIterator implements CollectionInterface, RecursiveIterator
 {
+
+    use CollectionTrait;
 
     /**
      * The name of the property that contains the nested items for each element
@@ -41,7 +46,7 @@ class NestIterator extends Collection implements RecursiveIterator
      */
     public function __construct($items, $nestKey)
     {
-        parent::__construct($items);
+        parent::__construct(new Collection($items));
         $this->_nestKey = $nestKey;
     }
 

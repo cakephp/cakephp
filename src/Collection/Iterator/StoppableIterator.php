@@ -15,6 +15,9 @@
 namespace Cake\Collection\Iterator;
 
 use Cake\Collection\Collection;
+use Cake\Collection\CollectionInterface;
+use Cake\Collection\CollectionTrait;
+use IteratorIterator;
 
 /**
  * Creates an iterator from another iterator that will verify a condition on each
@@ -24,8 +27,10 @@ use Cake\Collection\Collection;
  * @internal
  * @see Collection::stopWhen()
  */
-class StoppableIterator extends Collection
+class StoppableIterator extends IteratorIterator implements CollectionInterface
 {
+
+    use CollectionTrait;
 
     /**
      * The condition to evaluate for each item of the collection
@@ -56,7 +61,7 @@ class StoppableIterator extends Collection
     public function __construct($items, callable $condition)
     {
         $this->_condition = $condition;
-        parent::__construct($items);
+        parent::__construct(new Collection($items));
         $this->_innnerIterator = $this->getInnerIterator();
     }
 

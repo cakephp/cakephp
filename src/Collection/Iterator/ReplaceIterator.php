@@ -15,13 +15,18 @@
 namespace Cake\Collection\Iterator;
 
 use Cake\Collection\Collection;
+use Cake\Collection\CollectionInterface;
+use Cake\Collection\CollectionTrait;
+use IteratorIterator;
 
 /**
  * Creates an iterator from another iterator that will modify each of the values
  * by converting them using a callback function.
  */
-class ReplaceIterator extends Collection
+class ReplaceIterator extends IteratorIterator implements CollectionInterface
 {
+
+    use CollectionTrait;
 
     /**
      * The callback function to be used to modify each of the values
@@ -51,7 +56,7 @@ class ReplaceIterator extends Collection
     public function __construct($items, callable $callback)
     {
         $this->_callback = $callback;
-        parent::__construct($items);
+        parent::__construct(new Collection($items));
         $this->_innerIterator = $this->getInnerIterator();
     }
 

@@ -14,6 +14,7 @@
  */
 namespace Cake\Collection\Iterator;
 
+use ArrayIterator;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 
@@ -40,6 +41,12 @@ use Cake\Collection\CollectionInterface;
 class SortIterator extends Collection
 {
 
+    protected $_callback;
+
+    protected $_dir;
+
+    protected $_type;
+
     /**
      * Wraps this iterator around the passed items so when iterated they are returned
      * in order.
@@ -59,22 +66,29 @@ class SortIterator extends Collection
      */
     public function __construct($items, $callback, $dir = SORT_DESC, $type = SORT_NUMERIC)
     {
-        if (is_array($items)) {
-            $items = new Collection($items);
-        }
+        parent::__construct($items);
+        $this->_callback = $callback;
+        $this->_dir = $dir;
+        $this->_type = $type;
+    }
 
-        $items = iterator_to_array($items, false);
-        $callback = $this->_propertyExtractor($callback);
+    public function getIterator()
+    {
+        $items = iterator_to_array(parent::getIterator(), false);
+        $callback = $this->_propertyExtractor($this->_callback);
         $results = [];
         foreach ($items as $key => $value) {
             $results[$key] = $callback($value);
         }
 
-        $dir === SORT_DESC ? arsort($results, $type) : asort($results, $type);
+        $this->_dir === SORT_DESC ?
+            arsort($results, $this->_type) :
+            asort($results, $this->_type);
 
         foreach (array_keys($results) as $key) {
             $results[$key] = $items[$key];
         }
-        parent::__construct($results);
+
+        return new ArrayIterator($results);
     }
 }

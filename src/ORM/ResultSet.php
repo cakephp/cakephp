@@ -19,6 +19,7 @@ use Cake\Collection\CollectionTrait;
 use Cake\Database\Exception;
 use Cake\Database\Type;
 use Cake\Datasource\ResultSetInterface;
+use Iterator;
 use SplFixedArray;
 
 /**
@@ -28,7 +29,7 @@ use SplFixedArray;
  * queries required for eager loading external associations.
  *
  */
-class ResultSet implements ResultSetInterface
+class ResultSet implements Iterator, ResultSetInterface
 {
 
     use CollectionTrait;
