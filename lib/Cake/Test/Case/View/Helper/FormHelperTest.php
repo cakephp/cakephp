@@ -7470,7 +7470,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->input('date',
 			array(
 				'label' => false,
-				'type' => 'year',
+				'type' => 'hour',
 				'class' => 'form-control'
 			)
 		);
