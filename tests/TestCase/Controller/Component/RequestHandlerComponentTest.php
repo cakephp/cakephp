@@ -834,10 +834,10 @@ class RequestHandlerComponentTest extends TestCase
         Router::connect('/:controller/:action');
         $event = new Event('Controller.beforeRedirect', $this->Controller);
 
-        $this->Controller->response->statusCode(302);
         $this->Controller->RequestHandler = new RequestHandlerComponent($this->Controller->components());
         $this->Controller->request = $this->getMock('Cake\Network\Request', ['is']);
         $this->Controller->response = $this->getMock('Cake\Network\Response', ['_sendHeader', 'stop']);
+        $this->Controller->response->statusCode(302);
         $this->Controller->RequestHandler->request = $this->Controller->request;
         $this->Controller->RequestHandler->response = $this->Controller->response;
         $this->Controller->request->expects($this->any())->method('is')->will($this->returnValue(true));
