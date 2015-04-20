@@ -30,6 +30,11 @@ class Collection implements IteratorAggregate, CollectionInterface
 
     use CollectionTrait;
 
+    /**
+     * Holds the reference to the wrapped iterator
+     *
+     * @var \Iterator
+     */
     protected $_innerIterator;
 
     /**
@@ -52,6 +57,11 @@ class Collection implements IteratorAggregate, CollectionInterface
         $this->_innerIterator = $items;
     }
 
+    /**
+     * Returns the iterator wrapped by this class
+     *
+     * @return \Iterator
+     */
     public function getIterator()
     {
         $iterator = $this->_innerIterator;

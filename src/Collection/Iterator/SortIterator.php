@@ -41,10 +41,25 @@ use Cake\Collection\CollectionInterface;
 class SortIterator extends Collection
 {
 
+    /**
+     * The callback function to use for extracting the sortable property.
+     *
+     * @var callable
+     */
     protected $_callback;
 
+    /**
+     * The sorting direction
+     *
+     * @var integer
+     */
     protected $_dir;
 
+    /**
+     * The sorting type
+     *
+     * @var integer
+     */
     protected $_type;
 
     /**
@@ -72,6 +87,11 @@ class SortIterator extends Collection
         $this->_type = $type;
     }
 
+    /**
+     * Returns the iterator wrapped by this class
+     *
+     * @return \Iterator
+     */
     public function getIterator()
     {
         $items = iterator_to_array(parent::getIterator(), false);

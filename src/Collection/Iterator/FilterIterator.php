@@ -27,6 +27,11 @@ use IteratorIterator;
 class FilterIterator extends Collection
 {
 
+    /**
+     * The callback function to use for filtering.
+     *
+     * @var callable
+     */
     protected $_callback;
 
     /**
@@ -46,6 +51,11 @@ class FilterIterator extends Collection
         parent::__construct($items);
     }
 
+    /**
+     * Returns the iterator wrapped by this class
+     *
+     * @return \Iterator
+     */
     public function getIterator()
     {
         $it = parent::getIterator();
