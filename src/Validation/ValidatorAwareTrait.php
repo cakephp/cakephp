@@ -23,6 +23,15 @@ use Cake\Validation\Validator;
  * This trait is useful when building ORM like features where
  * the implementing class wants to build and customize a variety
  * of validator instances.
+ *
+ * This trait expects that classes including it define two constants:
+ *
+ * - `DEFAULT_VALIDATOR` - The default validator name.
+ * - `VALIDATOR_PROVIDER_NAME ` - The provider name the including class is assigned
+ *   in validators.
+ *
+ * If the including class also implements events the `Model.buildValidator` event
+ * will be triggered when validators are created.
  */
 trait ValidatorAwareTrait
 {
@@ -89,7 +98,7 @@ trait ValidatorAwareTrait
             }
         }
 
-        $validator->provider('table', $this);
+        $validator->provider(self::VALIDATOR_PROVIDER_NAME, $this);
         return $this->_validators[$name] = $validator;
     }
 
