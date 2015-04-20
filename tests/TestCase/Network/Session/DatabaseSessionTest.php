@@ -175,6 +175,6 @@ class DatabaseSessionTest extends TestCase
         $entity->value = 'something';
         $result = $this->storage->write('key', serialize($entity));
         $data = TableRegistry::get('Sessions')->get('key')->data;
-        $this->assertEquals(serialize($entity), $data);
+        $this->assertEquals(serialize($entity), stream_get_contents($data));
     }
 }
