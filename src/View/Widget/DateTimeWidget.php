@@ -159,10 +159,10 @@ class DateTimeWidget implements WidgetInterface
     }
 
     /**
-     * Normalize data
+     * Normalize data.
      *
-     * @param $data Data to normalize.
-     * @return array
+     * @param array $data Data to normalize.
+     * @return array Normalized data.
      */
     protected function _normalizeData($data)
     {
