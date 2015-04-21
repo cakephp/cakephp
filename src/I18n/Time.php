@@ -272,6 +272,10 @@ class Time extends Carbon implements JsonSerializable
             }
         }
 
+        if ($timezone) {
+            $this->timezone($timezone);
+        }
+
         $now = $from->format('U');
         $inSeconds = $this->format('U');
         $backwards = ($inSeconds > $now);
