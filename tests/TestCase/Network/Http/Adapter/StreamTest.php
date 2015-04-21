@@ -84,9 +84,9 @@ class StreamTest extends TestCase
             'Content-Type: application/json',
             'Cookie: testing=value; utm_src=awesome',
         ];
-        $this->assertEquals(implode("\r\n", $expected), $result['header']);
-        $this->assertEquals($options['redirect'], $result['max_redirects']);
-        $this->assertTrue($result['ignore_errors']);
+        $this->assertEquals(implode("\r\n", $expected), $result['http']['header']);
+        $this->assertEquals($options['redirect'], $result['http']['max_redirects']);
+        $this->assertTrue($result['http']['ignore_errors']);
     }
 
     /**
@@ -114,8 +114,8 @@ class StreamTest extends TestCase
             'User-Agent: CakePHP',
             'Content-Type: application/json',
         ];
-        $this->assertEquals(implode("\r\n", $expected), $result['header']);
-        $this->assertEquals($content, $result['content']);
+        $this->assertEquals(implode("\r\n", $expected), $result['http']['header']);
+        $this->assertEquals($content, $result['http']['content']);
     }
 
     /**
@@ -139,9 +139,9 @@ class StreamTest extends TestCase
             'User-Agent: CakePHP',
             'Content-Type: multipart/form-data; boundary="',
         ];
-        $this->assertStringStartsWith(implode("\r\n", $expected), $result['header']);
-        $this->assertContains('Content-Disposition: form-data; name="a"', $result['content']);
-        $this->assertContains('my value', $result['content']);
+        $this->assertStringStartsWith(implode("\r\n", $expected), $result['http']['header']);
+        $this->assertContains('Content-Disposition: form-data; name="a"', $result['http']['content']);
+        $this->assertContains('my value', $result['http']['content']);
     }
 
     /**
@@ -169,7 +169,7 @@ class StreamTest extends TestCase
             'allow_self_signed' => false,
         ];
         foreach ($expected as $k => $v) {
-            $this->assertEquals($v, $result[$k]);
+            $this->assertEquals($v, $result['ssl'][$k]);
         }
     }
 

@@ -35,11 +35,18 @@ class Stream
     protected $_context;
 
     /**
-     * Array of options/content for the stream context.
+     * Array of options/content for the http stream context.
      *
      * @var array
      */
     protected $_contextOptions;
+
+    /**
+     * Array of options/content for the ssl stream context.
+     *
+     * @var array
+     */
+    protected $_sslContextOptions;
 
     /**
      * The stream resource.
@@ -67,6 +74,7 @@ class Stream
         $this->_stream = null;
         $this->_context = [];
         $this->_contextOptions = [];
+        $this->_sslContextOptions = [];
         $this->_connectionErrors = [];
 
         $this->_buildContext($request, $options);
@@ -119,9 +127,7 @@ class Stream
         if ($scheme === 'https') {
             $this->_buildSslContext($request, $options);
         }
-        $this->_context = stream_context_create([
-            'http' => $this->_contextOptions
-        ]);
+        $this->_context = stream_context_create($this->contextOptions());
     }
 
     /**
@@ -225,12 +231,12 @@ class Stream
         if (!empty($options['ssl_verify_host'])) {
             $url = $request->url();
             $host = parse_url($url, PHP_URL_HOST);
-            $this->_contextOptions['CN_match'] = $host;
+            $this->_sslContextOptions['CN_match'] = $host;
         }
         foreach ($sslOptions as $key) {
             if (isset($options[$key])) {
                 $name = substr($key, 4);
-                $this->_contextOptions[$name] = $options[$key];
+                $this->_sslContextOptions[$name] = $options[$key];
             }
         }
     }
@@ -303,6 +309,9 @@ class Stream
      */
     public function contextOptions()
     {
-        return $this->_contextOptions;
+        return [
+            'http' => $this->_contextOptions,
+            'ssl'  => $this->_sslContextOptions,
+        ];
     }
 }
