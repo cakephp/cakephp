@@ -912,7 +912,6 @@ class ShellTest extends TestCase
         $expected = <<<TEXT
 <info>Welcome to CakePHP Console</info>
 I am a test task, I dispatch another Shell
-<info>Welcome to CakePHP Console</info>
 I am a dispatched Shell
 
 TEXT;
