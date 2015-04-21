@@ -3121,6 +3121,24 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testFormInputSubmit method
+     *
+     * test correct results for form::input() and type submit.
+     *
+     * @return void
+     */
+    public function testFormInputSubmit()
+    {
+        $result = $this->Form->input('Test Submit', ['type' => 'submit', 'class' => 'foobar']);
+        $expected = [
+            'div' => ['class' => 'submit'],
+            'input' => ['type' => 'submit', 'class' => 'foobar', 'id' => 'test-submit', 'value' => 'Test Submit'],
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * testFormInputs method
      *
      * test correct results from form::inputs().

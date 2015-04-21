@@ -1012,6 +1012,7 @@ class FormHelper extends Helper
 
         $label = $options['label'];
         unset($options['label']);
+
         $nestedInput = false;
         if ($options['type'] === 'checkbox') {
             $nestedInput = true;
@@ -1023,7 +1024,7 @@ class FormHelper extends Helper
         }
 
         $input = $this->_getInput($fieldName, $options);
-        if ($options['type'] === 'hidden') {
+        if ($options['type'] === 'hidden' || $options['type'] === 'submit') {
             if ($newTemplates) {
                 $templater->pop();
             }
