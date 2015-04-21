@@ -17,8 +17,8 @@ namespace Cake\Collection\Iterator;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Collection\CollectionTrait;
-use IteratorIterator;
 use Countable;
+use IteratorIterator;
 use SplDoublyLinkedList;
 
 /**
