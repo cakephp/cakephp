@@ -211,7 +211,9 @@ class Shell
      */
     public function startup()
     {
-        $this->_welcome();
+        if (!$this->param('requested')) {
+            $this->_welcome();
+        }
     }
 
     /**
@@ -302,18 +304,69 @@ class Shell
      * return $this->dispatchShell('schema', 'create', 'i18n', '--dry');
      * ```
      *
+     * With an array having two key / value pairs:
+     *  - `command` can accept either a string or an array. Represents the command to dispatch
+     *  - `extra` can accept an array of extra parameters to pass on to the dispatcher. This
+     *  parameters will be available in the `param` property of the called `Shell`
+     *
+     * `return $this->dispatchShell([
+     *      'command' => 'schema create DbAcl',
+     *      'extra' => ['param' => 'value']
+     * ]);`
+     *
+     * or
+     *
+     * `return $this->dispatchShell([
+     *      'command' => ['schema', 'create', 'DbAcl'],
+     *      'extra' => ['param' => 'value']
+     * ]);`
+     *
      * @return mixed The return of the other shell.
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#invoking-other-shells-from-your-shell
      */
     public function dispatchShell()
     {
-        $args = func_get_args();
-        if (is_string($args[0]) && count($args) === 1) {
-            $args = explode(' ', $args[0]);
+        list($args, $extra) = $this->parseDispatchArguments(func_get_args());
+
+        if (!isset($extra['requested'])) {
+            $extra['requested'] = true;
         }
 
         $dispatcher = new ShellDispatcher($args, false);
-        return $dispatcher->dispatch();
+        return $dispatcher->dispatch($extra);
+    }
+
+    /**
+     * Parses the arguments for the dispatchShell() method.
+     *
+     * @param array $args Arguments fetch from the dispatchShell() method with
+     * func_get_args()
+     * @return array First value has to be an array of the command arguments.
+     * Second value has to be an array of extra parameter to pass on to the dispatcher
+     */
+    public function parseDispatchArguments($args)
+    {
+        $extra = [];
+
+        if (is_string($args[0]) && count($args) === 1) {
+            $args = explode(' ', $args[0]);
+            return [$args, $extra];
+        }
+
+        if (is_array($args[0]) && !empty($args[0]['command'])) {
+            $command = $args[0]['command'];
+            if (is_string($command)) {
+                $command = explode(' ', $command);
+            }
+
+            if (!empty($args[0]['extra'])) {
+                $extra = $args[0]['extra'];
+            }
+
+            return [$command, $extra];
+        }
+
+        return [$args, $extra];
     }
 
     /**
@@ -336,10 +389,14 @@ class Shell
      * @param array $argv Array of arguments to run the shell with. This array should be missing the shell name.
      * @param bool $autoMethod Set to true to allow any public method to be called even if it
      *   was not defined as a subcommand. This is used by ShellDispatcher to make building simple shells easy.
+     * @param array $extra Extra parameters that you can manually pass to the Shell
+     * to be dispatched.
+     * Built-in extra parameter is :
+     * - `requested` : if used, will prevent the Shell welcome message to be displayed
      * @return mixed
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#the-cakephp-console
      */
-    public function runCommand($argv, $autoMethod = false)
+    public function runCommand($argv, $autoMethod = false, $extra = [])
     {
         $command = isset($argv[0]) ? $argv[0] : null;
         $this->OptionParser = $this->getOptionParser();
@@ -349,6 +406,10 @@ class Shell
             $this->err('<error>Error: ' . $e->getMessage() . '</error>');
             $this->out($this->OptionParser->help($command));
             return false;
+        }
+
+        if (!empty($extra) && is_array($extra)) {
+            $this->params = array_merge($this->params, $extra);
         }
 
         if (!empty($this->params['quiet'])) {

@@ -118,12 +118,13 @@ class ShellDispatcher
      * Run the dispatcher
      *
      * @param array $argv The argv from PHP
+     * @param array $extra Extra parameters
      * @return int The exit code of the shell process.
      */
-    public static function run($argv)
+    public static function run($argv, $extra = [])
     {
         $dispatcher = new ShellDispatcher($argv);
-        return $dispatcher->dispatch();
+        return $dispatcher->dispatch($extra);
     }
 
     /**
@@ -168,11 +169,15 @@ class ShellDispatcher
      * Converts a shell command result into an exit code. Null/True
      * are treated as success. All other return values are an error.
      *
+     * @param array $extra Extra parameters that you can manually pass to the Shell
+     * to be dispatched.
+     * Built-in extra parameter is :
+     * - `requested` : if used, will prevent the Shell welcome message to be displayed
      * @return int The cli command exit code. 0 is success.
      */
-    public function dispatch()
+    public function dispatch($extra = [])
     {
-        $result = $this->_dispatch();
+        $result = $this->_dispatch($extra);
         if ($result === null || $result === true) {
             return 0;
         }
@@ -182,10 +187,14 @@ class ShellDispatcher
     /**
      * Dispatch a request.
      *
+     * @param array $extra Extra parameters that you can manually pass to the Shell
+     * to be dispatched.
+     * Built-in extra parameter is :
+     * - `requested` : if used, will prevent the Shell welcome message to be displayed
      * @return bool
      * @throws \Cake\Console\Exception\MissingShellMethodException
      */
-    protected function _dispatch()
+    protected function _dispatch($extra = [])
     {
         $shell = $this->shiftArgs();
 
@@ -201,7 +210,7 @@ class ShellDispatcher
         $Shell = $this->findShell($shell);
 
         $Shell->initialize();
-        return $Shell->runCommand($this->args, true);
+        return $Shell->runCommand($this->args, true, $extra);
     }
 
     /**

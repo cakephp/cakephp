@@ -617,6 +617,79 @@ class ShellTest extends TestCase
     }
 
     /**
+     * test that a command called with an extra parameter passed merges the extra parameters
+     * to the shell's one
+     * Also tests that if an extra `requested` parameter prevents the welcome message from
+     * being displayed
+     *
+     * @return void
+     */
+    public function testRunCommandWithExtra()
+    {
+        $Parser = $this->getMock('Cake\Console\ConsoleOptionParser', ['help'], ['knife']);
+        $io = $this->getMock('Cake\Console\ConsoleIo');
+        $Shell = $this->getMock('Cake\Console\Shell', ['getOptionParser', 'slice', '_welcome', 'param'], [$io]);
+        $Parser->addSubCommand('slice');
+        $Shell->expects($this->once())
+            ->method('getOptionParser')
+            ->will($this->returnValue($Parser));
+        $Shell->expects($this->once())
+            ->method('slice')
+            ->with('cakes');
+        $Shell->expects($this->never())->method('_welcome');
+        $Shell->expects($this->once())->method('param')
+            ->with('requested')
+            ->will($this->returnValue(true));
+        $Shell->runCommand(['slice', 'cakes'], false, ['requested' => true]);
+    }
+
+    /**
+     * Test the dispatchShell() arguments parser
+     *
+     * @return void
+     */
+    public function testDispatchShellArgsParser()
+    {
+        $Shell = new Shell();
+
+        $expected = [['schema', 'create', 'DbAcl'], []];
+        // Shell::dispatchShell('schema create DbAcl');
+        $result = $Shell->parseDispatchArguments(['schema create DbAcl']);
+        $this->assertEquals($expected, $result);
+
+        // Shell::dispatchShell('schema', 'create', 'DbAcl');
+        $result = $Shell->parseDispatchArguments(['schema', 'create', 'DbAcl']);
+        $this->assertEquals($expected, $result);
+
+        // Shell::dispatchShell(['command' => 'schema create DbAcl']);
+        $result = $Shell->parseDispatchArguments([[
+            'command' => 'schema create DbAcl'
+        ]]);
+        $this->assertEquals($expected, $result);
+
+        // Shell::dispatchShell(['command' => ['schema', 'create', 'DbAcl']]);
+        $result = $Shell->parseDispatchArguments([[
+            'command' => ['schema', 'create', 'DbAcl']
+        ]]);
+        $this->assertEquals($expected, $result);
+
+        $expected[1] = ['param' => 'value'];
+        // Shell::dispatchShell(['command' => 'schema create DbAcl', 'extra' => ['param' => 'value']]);
+        $result = $Shell->parseDispatchArguments([[
+            'command' => 'schema create DbAcl',
+            'extra' => ['param' => 'value']
+        ]]);
+        $this->assertEquals($expected, $result);
+
+        // Shell::dispatchShell(['command' => ['schema', 'create', 'DbAcl'], 'extra' => ['param' => 'value']]);
+        $result = $Shell->parseDispatchArguments([[
+            'command' => ['schema', 'create', 'DbAcl'],
+            'extra' => ['param' => 'value']
+        ]]);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Test that runCommand() doesn't call public methods when the second arg is false.
      *
      * @return void
