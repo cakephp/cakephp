@@ -2317,7 +2317,7 @@ class FormHelper extends AppHelper {
 	public function hour($fieldName, $format24Hours = false, $attributes = array()) {
 		if (is_array($format24Hours)) {
 			$attributes = $format24Hours;
-			$format24Hours = null;
+			$format24Hours = false;
 		}
 
 		$attributes += array('empty' => true, 'value' => null);
