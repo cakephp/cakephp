@@ -903,7 +903,7 @@ class RequestHandlerComponentTest extends TestCase
         $RequestHandler->response = $this->Controller->response;
 
         ob_start();
-        $response = $RequestHandler->beforeRedirect(
+        $RequestHandler->beforeRedirect(
             $event,
             ['controller' => 'RequestHandlerTest', 'action' => 'param_method', 'first', 'second'],
             $this->Controller->response
