@@ -150,7 +150,7 @@ class ValidationRule
         }
     
         if (class_exists('Cake\Utility\Text', false)) {
-            return String::insert($this->_message, $data);
+            return Text::insert($this->_message, $data);
         }
 
         return $this->_message;
