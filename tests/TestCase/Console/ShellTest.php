@@ -690,6 +690,78 @@ class ShellTest extends TestCase
     }
 
     /**
+     * test calling a shell that dispatch another one
+     *
+     * @return void
+     */
+    public function testDispatchShell()
+    {
+        $Shell = new TestingDispatchShell();
+        ob_start();
+        $Shell->runCommand(['test_task'], true);
+        $result = ob_get_clean();
+
+        $expected = <<<TEXT
+<info>Welcome to CakePHP Console</info>
+I am a test task, I dispatch another Shell
+I am a dispatched Shell
+
+TEXT;
+        $this->assertEquals($expected, $result);
+
+        ob_start();
+        $Shell->runCommand(['test_task_dispatch_array'], true);
+        $result = ob_get_clean();
+        $this->assertEquals($expected, $result);
+
+        ob_start();
+        $Shell->runCommand(['test_task_dispatch_command_string'], true);
+        $result = ob_get_clean();
+        $this->assertEquals($expected, $result);
+
+        ob_start();
+        $Shell->runCommand(['test_task_dispatch_command_array'], true);
+        $result = ob_get_clean();
+        $this->assertEquals($expected, $result);
+
+        $expected = <<<TEXT
+<info>Welcome to CakePHP Console</info>
+I am a test task, I dispatch another Shell
+I am a dispatched Shell. My param `foo` has the value `bar`
+
+TEXT;
+
+        ob_start();
+        $Shell->runCommand(['test_task_dispatch_with_param'], true);
+        $result = ob_get_clean();
+        $this->assertEquals($expected, $result);
+
+        $expected = <<<TEXT
+<info>Welcome to CakePHP Console</info>
+I am a test task, I dispatch another Shell
+I am a dispatched Shell. My param `foo` has the value `bar`
+My param `fooz` has the value `baz`
+
+TEXT;
+        ob_start();
+        $Shell->runCommand(['test_task_dispatch_with_multiple_params'], true);
+        $result = ob_get_clean();
+        $this->assertEquals($expected, $result);
+
+        $expected = <<<TEXT
+<info>Welcome to CakePHP Console</info>
+I am a test task, I dispatch another Shell
+<info>Welcome to CakePHP Console</info>
+I am a dispatched Shell
+
+TEXT;
+        ob_start();
+        $Shell->runCommand(['test_task_dispatch_with_requested_off'], true);
+        $result = ob_get_clean();
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Test that runCommand() doesn't call public methods when the second arg is false.
      *
      * @return void
@@ -895,27 +967,6 @@ class ShellTest extends TestCase
 
         $shell->Slice = $task;
         $shell->runCommand(['slice', 'one']);
-    }
-
-    /**
-     * test calling a shell that dispatch another one
-     *
-     * @return void
-     */
-    public function testDispatchShell()
-    {
-        $Shell = new TestingDispatchShell();
-        ob_start();
-        $Shell->runCommand(['test_task'], true);
-        $result = ob_get_clean();
-
-        $expected = <<<TEXT
-<info>Welcome to CakePHP Console</info>
-I am a test task, I dispatch another Shell
-I am a dispatched Shell
-
-TEXT;
-        $this->assertEquals($expected, $result);
     }
 
     /**
