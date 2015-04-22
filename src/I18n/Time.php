@@ -246,6 +246,8 @@ class Time extends Carbon implements JsonSerializable
      */
     public function timeAgoInWords(array $options = [])
     {
+        $time = $this;
+        
         $timezone = null;
         $format = static::$wordFormat;
         $end = static::$wordEnd;
@@ -273,11 +275,12 @@ class Time extends Carbon implements JsonSerializable
         }
 
         if ($timezone) {
-            $this->timezone($timezone);
+            $time = clone $this;
+            $time->timezone($timezone);
         }
 
         $now = $from->format('U');
-        $inSeconds = $this->format('U');
+        $inSeconds = $time->format('U');
         $backwards = ($inSeconds > $now);
 
         $futureTime = $now;
@@ -293,7 +296,7 @@ class Time extends Carbon implements JsonSerializable
         }
 
         if ($diff > abs($now - (new static($end))->format('U'))) {
-            return sprintf($absoluteString, $this->i18nFormat($format));
+            return sprintf($absoluteString, $time->i18nFormat($format));
         }
 
         // If more than a week, then take into account the length of months
