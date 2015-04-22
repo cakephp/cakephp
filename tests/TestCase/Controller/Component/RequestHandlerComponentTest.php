@@ -810,16 +810,13 @@ class RequestHandlerComponentTest extends TestCase
         $this->Controller->RequestHandler->request = $this->Controller->request;
         $this->Controller->RequestHandler->response = $this->Controller->response;
         $this->Controller->request->expects($this->any())->method('is')->will($this->returnValue(true));
-        $this->Controller->response->expects($this->once())->method('stop');
 
-        ob_start();
-        $this->Controller->RequestHandler->beforeRedirect(
+        $response = $this->Controller->RequestHandler->beforeRedirect(
             $event,
-            ['controller' => 'request_handler_test', 'action' => 'destination'],
+            ['controller' => 'RequestHandlerTest', 'action' => 'destination'],
             $this->Controller->response
         );
-        $result = ob_get_clean();
-        $this->assertRegExp('/posts index/', $result, 'RequestAction redirect failed.');
+        $this->assertRegExp('/posts index/', $response->body(), 'RequestAction redirect failed.');
     }
 
     /**
@@ -841,17 +838,14 @@ class RequestHandlerComponentTest extends TestCase
         $this->Controller->RequestHandler->request = $this->Controller->request;
         $this->Controller->RequestHandler->response = $this->Controller->response;
         $this->Controller->request->expects($this->any())->method('is')->will($this->returnValue(true));
-        $this->Controller->response->expects($this->once())->method('stop');
 
-        ob_start();
-        $this->Controller->RequestHandler->beforeRedirect(
+        $response = $this->Controller->RequestHandler->beforeRedirect(
             $event,
-            ['controller' => 'request_handler_test', 'action' => 'destination'],
+            ['controller' => 'RequestHandlerTest', 'action' => 'destination'],
             $this->Controller->response
         );
-        $result = ob_get_clean();
-        $this->assertRegExp('/posts index/', $result, 'RequestAction redirect failed.');
-        $this->assertSame(200, $this->Controller->response->statusCode());
+        $this->assertRegExp('/posts index/', $response->body(), 'RequestAction redirect failed.');
+        $this->assertSame(200, $response->statusCode());
     }
 
     /**
@@ -873,17 +867,14 @@ class RequestHandlerComponentTest extends TestCase
         $this->Controller->RequestHandler->request = $this->Controller->request;
         $this->Controller->RequestHandler->response = $this->Controller->response;
         $this->Controller->request->expects($this->any())->method('is')->will($this->returnValue(true));
-        $this->Controller->response->expects($this->once())->method('stop');
 
-        ob_start();
-        $this->Controller->RequestHandler->beforeRedirect(
+        $response = $this->Controller->RequestHandler->beforeRedirect(
             $event,
-            ['controller' => 'request_handler_test', 'action' => 'ajax2_layout'],
+            ['controller' => 'RequestHandlerTest', 'action' => 'ajax2_layout'],
             $this->Controller->response
         );
-        $result = ob_get_clean();
-        $this->assertRegExp('/posts index/', $result, 'RequestAction redirect failed.');
-        $this->assertRegExp('/Ajax!/', $result, 'Layout was not rendered.');
+        $this->assertRegExp('/posts index/', $response->body(), 'RequestAction redirect failed.');
+        $this->assertRegExp('/Ajax!/', $response->body(), 'Layout was not rendered.');
     }
 
     /**
@@ -912,9 +903,9 @@ class RequestHandlerComponentTest extends TestCase
         $RequestHandler->response = $this->Controller->response;
 
         ob_start();
-        $RequestHandler->beforeRedirect(
+        $response = $RequestHandler->beforeRedirect(
             $event,
-            ['controller' => 'request_handler_test', 'action' => 'param_method', 'first', 'second'],
+            ['controller' => 'RequestHandlerTest', 'action' => 'param_method', 'first', 'second'],
             $this->Controller->response
         );
         $result = ob_get_clean();
