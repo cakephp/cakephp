@@ -80,7 +80,7 @@ class TestingDispatchShell extends Shell
         $this->out('I am a test task, I dispatch another Shell');
         Configure::write('App.namespace', 'TestApp');
         $this->dispatchShell([
-            'command' => ['testing_dispatch dispatch_test_task_params'],
+            'command' => 'testing_dispatch dispatch_test_task_params',
             'extra' => [
                 'foo' => 'bar',
                 'fooz' => 'baz'
