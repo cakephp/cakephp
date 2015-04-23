@@ -15,6 +15,9 @@
 namespace Cake\Collection\Iterator;
 
 use Cake\Collection\Collection;
+use Cake\Collection\CollectionInterface;
+use Cake\Collection\CollectionTrait;
+use IteratorIterator;
 
 /**
  * This iterator will insert values into a property of each of the records returned.
@@ -22,8 +25,10 @@ use Cake\Collection\Collection;
  * when you have two separate collections and want to merge them together by placing
  * each of the values from one collection into a property inside the other collection.
  */
-class InsertIterator extends Collection
+class InsertIterator extends IteratorIterator implements CollectionInterface
 {
+
+    use CollectionTrait;
 
     /**
      * The collection from which to extract the values to be inserted
@@ -67,7 +72,7 @@ class InsertIterator extends Collection
      */
     public function __construct($into, $path, $values)
     {
-        parent::__construct($into);
+        parent::__construct(new Collection($into));
 
         if (!($values instanceof Collection)) {
             $values = new Collection($values);
@@ -77,7 +82,7 @@ class InsertIterator extends Collection
         $target = array_pop($path);
         $this->_path = $path;
         $this->_target = $target;
-        $this->_values = $values;
+        $this->_values = $values->getIterator();
     }
 
     /**

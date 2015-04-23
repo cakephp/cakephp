@@ -29,6 +29,8 @@ use Cake\Collection\Iterator\StoppableIterator;
 use Cake\Collection\Iterator\TreeIterator;
 use Cake\Collection\Iterator\UnfoldIterator;
 use Iterator;
+use IteratorAggregate;
+use IteratorIterator;
 use LimitIterator;
 use RecursiveIteratorIterator;
 
@@ -269,7 +271,11 @@ trait CollectionTrait
      */
     public function sample($size = 10)
     {
-        return new Collection(new LimitIterator($this->shuffle(), 0, $size));
+        return new Collection(new LimitIterator(
+            $this->shuffle()->getIterator(),
+            0,
+            $size
+        ));
     }
 
     /**
@@ -316,10 +322,12 @@ trait CollectionTrait
      */
     public function append($items)
     {
-        $items = $items instanceof Iterator ? $items : new Collection($items);
+        $items = $items instanceof Iterator ?
+            $items :
+            (new Collection($items))->getIterator();
         $list = new AppendIterator;
-        $list->append($this);
-        $list->append($items->_unwrap());
+        $list->append($this->_unwrap());
+        $list->append($items);
         return new Collection($list);
     }
 
@@ -540,8 +548,8 @@ trait CollectionTrait
     protected function _unwrap()
     {
         $iterator = $this;
-        while (get_class($iterator) === 'Cake\Collection\Collection') {
-            $iterator = $iterator->getInnerIterator();
+        while ($iterator instanceof IteratorAggregate) {
+            $iterator = $iterator->getIterator();
         }
         return $iterator;
     }

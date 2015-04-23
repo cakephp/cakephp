@@ -16,6 +16,7 @@ namespace Cake\Datasource;
 
 use Cake\Collection\Collection;
 use Cake\Datasource\ResultSetInterface;
+use Countable;
 
 /**
  * Generic ResultSet decorator. This will make any traversable object appear to
@@ -37,11 +38,12 @@ class ResultSetDecorator extends Collection implements ResultSetInterface
      */
     public function count()
     {
-        if ($this->getInnerIterator() instanceof \Countable) {
-            return $this->getInnerIterator()->count();
+        $iterator = $this->getIterator();
+        if ($iterator instanceof Countable) {
+            return $iterator->count();
         }
 
-        return count($this->toArray());
+        return iterator_count($this);
     }
 
     /**

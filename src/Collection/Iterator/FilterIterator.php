@@ -17,6 +17,7 @@ namespace Cake\Collection\Iterator;
 use Cake\Collection\Collection;
 use CallbackFilterIterator;
 use Iterator;
+use IteratorIterator;
 
 /**
  * Creates a filtered iterator from another iterator. The filtering is done by
@@ -25,6 +26,13 @@ use Iterator;
  */
 class FilterIterator extends Collection
 {
+
+    /**
+     * The callback function to use for filtering.
+     *
+     * @var callable
+     */
+    protected $_callback;
 
     /**
      * Creates a filtered iterator using the callback to determine which items are
@@ -37,9 +45,23 @@ class FilterIterator extends Collection
      * @param Iterator $items The items to be filtered.
      * @param callable $callback Callback.
      */
-    public function __construct(Iterator $items, callable $callback)
+    public function __construct($items, callable $callback)
     {
-        $wrapper = new CallbackFilterIterator($items, $callback);
-        parent::__construct($wrapper);
+        $this->_callback = $callback;
+        parent::__construct($items);
+    }
+
+    /**
+     * Returns the iterator wrapped by this class
+     *
+     * @return \Iterator
+     */
+    public function getIterator()
+    {
+        $it = parent::getIterator();
+        if (!$it instanceof Iterator) {
+            $it = new IteratorIterator($it);
+        }
+        return new CallbackFilterIterator($it, $this->_callback);
     }
 }

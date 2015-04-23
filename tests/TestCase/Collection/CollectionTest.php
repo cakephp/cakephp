@@ -118,7 +118,7 @@ class CollectionTest extends TestCase
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
         $result = $collection->reject(function ($v, $k, $items) use ($collection) {
-            $this->assertSame($collection->getInnerIterator(), $items);
+            $this->assertSame($collection->getIterator(), $items);
             return $v > 2;
         });
         $this->assertEquals(['a' => 1, 'b' => 2], iterator_to_array($result));
@@ -244,7 +244,7 @@ class CollectionTest extends TestCase
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
         $map = $collection->map(function ($v, $k, $it) use ($collection) {
-            $this->assertSame($collection->getInnerIterator(), $it);
+            $this->assertSame($collection->getIterator(), $it);
             return $v * $v;
         });
         $this->assertInstanceOf('Cake\Collection\Iterator\ReplaceIterator', $map);

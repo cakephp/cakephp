@@ -18,16 +18,24 @@ use ArrayIterator;
 use Cake\Collection\CollectionInterface;
 use Cake\Collection\CollectionTrait;
 use InvalidArgumentException;
+use IteratorAggregate;
 use IteratorIterator;
 
 /**
  * A collection is an immutable list of elements with a handful of functions to
  * iterate, group, transform and extract information from it.
  */
-class Collection extends IteratorIterator implements CollectionInterface
+class Collection implements IteratorAggregate, CollectionInterface
 {
 
     use CollectionTrait;
+
+    /**
+     * Holds the reference to the wrapped iterator
+     *
+     * @var \Iterator
+     */
+    protected $_innerIterator;
 
     /**
      * Constructor. You can provide an array or any traversable object
@@ -46,7 +54,21 @@ class Collection extends IteratorIterator implements CollectionInterface
             throw new InvalidArgumentException($msg);
         }
 
-        parent::__construct($items);
+        $this->_innerIterator = $items;
+    }
+
+    /**
+     * Returns the iterator wrapped by this class
+     *
+     * @return \Iterator
+     */
+    public function getIterator()
+    {
+        $iterator = $this->_innerIterator;
+        while ($iterator instanceof IteratorAggregate) {
+            $iterator = $iterator->getIterator();
+        }
+        return $iterator;
     }
 
     /**
