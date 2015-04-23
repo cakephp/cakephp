@@ -143,7 +143,7 @@ class ConsoleOutputTest extends TestCase
     public function testFormattingSimple()
     {
         $this->output->expects($this->once())->method('_write')
-            ->with("\033[31mError:\033[0m Something bad");
+            ->with("\033[91mError:\033[0m Something bad");
 
         $this->output->write('<error>Error:</error> Something bad', false);
     }
@@ -202,7 +202,7 @@ class ConsoleOutputTest extends TestCase
     public function testFormattingMultipleStylesName()
     {
         $this->output->expects($this->once())->method('_write')
-            ->with("\033[31mBad\033[0m \033[33mWarning\033[0m Regular");
+            ->with("\033[91mBad\033[0m \033[33mWarning\033[0m Regular");
 
         $this->output->write('<error>Bad</error> <warning>Warning</warning> Regular', false);
     }
@@ -215,7 +215,7 @@ class ConsoleOutputTest extends TestCase
     public function testFormattingMultipleSameTags()
     {
         $this->output->expects($this->once())->method('_write')
-            ->with("\033[31mBad\033[0m \033[31mWarning\033[0m Regular");
+            ->with("\033[91mBad\033[0m \033[91mWarning\033[0m Regular");
 
         $this->output->write('<error>Bad</error> <error>Warning</error> Regular', false);
     }
