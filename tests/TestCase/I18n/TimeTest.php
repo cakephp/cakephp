@@ -401,7 +401,7 @@ class TimeTest extends TestCase
         date_default_timezone_set('Europe/Moscow');
         $time = new Time('2015-04-23 06:00');
         $result = $time->nice();
-        $this->assertTimeFormat('Apr 23, 2015, 6:00 AM', $result);
+        $this->assertTimeFormat('Apr 23, 2015, 6:00 AM', $result, 'The timezonedb is out of date');
         $this->assertEquals('Europe/Moscow', $time->getTimezone()->getName());
     }
 
@@ -807,11 +807,12 @@ class TimeTest extends TestCase
      * @param string $result
      * @return void
      */
-    public function assertTimeFormat($expected, $result)
+    public function assertTimeFormat($expected, $result, $message = '')
     {
         return $this->assertEquals(
             str_replace([',', '(', ')', ' at'], '', $expected),
-            str_replace([',', '(', ')', ' at'], '', $result)
+            str_replace([',', '(', ')', ' at'], '', $result),
+            $message
         );
     }
 }
