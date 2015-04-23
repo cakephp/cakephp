@@ -174,7 +174,24 @@ class TimeTest extends TestCase
             ],
         ];
     }
-
+    /**
+     * test the timezone option for timeAgoInWords
+     *
+     * @return void
+     */
+    public function testTimeAgoInWordsTimezone()
+    {
+        $time = new Time('1990-07-31 20:33:00 UTC');
+        $result = $time->timeAgoInWords(
+            [
+                'timezone' => 'America/Vancouver',
+                'end' => '+1month',
+                'format' => 'dd-MM-YYYY HH:mm:ss'
+            ]
+        );
+        $this->assertEquals('on 31-07-1990 13:33:00', $result);
+    }
+     
     /**
      * test the end option for timeAgoInWords
      *

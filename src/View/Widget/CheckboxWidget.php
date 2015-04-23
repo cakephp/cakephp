@@ -15,30 +15,13 @@
 namespace Cake\View\Widget;
 
 use Cake\View\Form\ContextInterface;
-use Cake\View\Widget\WidgetInterface;
+use Cake\View\Widget\BasicWidget;
 
 /**
  * Input widget for creating checkbox widgets.
  */
-class CheckboxWidget implements WidgetInterface
+class CheckboxWidget extends BasicWidget
 {
-
-    /**
-     * Template instance.
-     *
-     * @var \Cake\View\StringTemplate
-     */
-    protected $_templates;
-
-    /**
-     * Constructor
-     *
-     * @param \Cake\View\StringTemplate $templates Templates list.
-     */
-    public function __construct($templates)
-    {
-        $this->_templates = $templates;
-    }
 
     /**
      * Render a checkbox element.
@@ -97,13 +80,5 @@ class CheckboxWidget implements WidgetInterface
             return true;
         }
         return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function secureFields(array $data)
-    {
-        return [$data['name']];
     }
 }
