@@ -437,9 +437,8 @@ class Marshaller
         foreach ((array)$options['fieldList'] as $field) {
             if (array_key_exists($field, $properties)) {
                 $entity->set($field, $properties[$field]);
-                if ($properties[$field] instanceof EntityInterface &&
-                    isset($marshalledAssocs[$field])) {
-                    $entity->dirty($assoc, $properties[$field]->dirty());
+                if ($properties[$field] instanceof EntityInterface && isset($marshalledAssocs[$field])) {
+                    $entity->dirty($field, $properties[$field]->dirty());
                 }
             }
         }
