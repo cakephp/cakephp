@@ -127,7 +127,10 @@ class Stream
         if ($scheme === 'https') {
             $this->_buildSslContext($request, $options);
         }
-        $this->_context = stream_context_create($this->contextOptions());
+        $this->_context = stream_context_create([
+            'http' => $this->_contextOptions,
+            'ssl' => $this->_sslContextOptions,
+        ]);
     }
 
     /**
@@ -226,7 +229,7 @@ class Stream
             'ssl_passphrase',
         ];
         if (empty($options['ssl_cafile'])) {
-            $options['ssl_cafile'] = CAKE . 'Config' . DS . 'cacert.pem';
+            $options['ssl_cafile'] = CAKE . 'config' . DS . 'cacert.pem';
         }
         if (!empty($options['ssl_verify_host'])) {
             $url = $request->url();
@@ -309,9 +312,6 @@ class Stream
      */
     public function contextOptions()
     {
-        return [
-            'http' => $this->_contextOptions,
-            'ssl'  => $this->_sslContextOptions,
-        ];
+        return array_merge($this->_contextOptions, $this->_sslContextOptions);
     }
 }
