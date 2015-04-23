@@ -27,6 +27,22 @@ class TimeTest extends TestCase
 {
 
     /**
+     * A test Carbon instance
+     *
+     * @var Carbon
+     */
+    private $now;
+
+    /**
+     * The default locale to be used for displaying formatted date strings.
+     *
+     * Used to restore in teardown
+     *
+     * @var string
+     */
+    private $locale;
+
+    /**
      * setUp method
      *
      * @return void
@@ -51,16 +67,6 @@ class TimeTest extends TestCase
         Time::$defaultLocale = $this->locale;
         Time::resetToStringFormat();
         date_default_timezone_set('UTC');
-    }
-
-    /**
-     * Restored the original system timezone
-     *
-     * @return void
-     */
-    protected function _restoreSystemTimezone()
-    {
-        date_default_timezone_set($this->_systemTimezoneIdentifier);
     }
 
     /**
@@ -191,7 +197,7 @@ class TimeTest extends TestCase
         );
         $this->assertEquals('on 31-07-1990 13:33:00', $result);
     }
-     
+
     /**
      * test the end option for timeAgoInWords
      *
@@ -391,6 +397,12 @@ class TimeTest extends TestCase
 
         $this->assertTimeFormat('20 avr. 2014 20:00', $time->nice(null, 'fr-FR'));
         $this->assertTimeFormat('20 avr. 2014 16:00', $time->nice('America/New_York', 'fr-FR'));
+
+        date_default_timezone_set('Europe/Moscow');
+        $time = new Time('2015-04-23 06:00');
+        $result = $time->nice();
+        $this->assertTimeFormat('Apr 23, 2015, 6:00 AM', $result);
+        $this->assertEquals('Europe/Moscow', $time->getTimezone()->getName());
     }
 
     /**
