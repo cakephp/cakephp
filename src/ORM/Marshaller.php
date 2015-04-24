@@ -248,6 +248,9 @@ class Marshaller
     {
         $output = [];
         foreach ($data as $record) {
+            if (!is_array($record)) {
+                continue;
+            }
             $output[] = $this->one($record, $options);
         }
         return $output;

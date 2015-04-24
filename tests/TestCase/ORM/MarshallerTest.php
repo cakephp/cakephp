@@ -716,6 +716,24 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test many() with some invalid data
+     *
+     * @return void
+     */
+    public function testManyInvalidData()
+    {
+        $data = [
+            ['id' => 2, 'comment' => 'Changed 2', 'user_id' => 2],
+            ['id' => 1, 'comment' => 'Changed 1', 'user_id' => 1],
+            '_csrfToken' => 'abc123',
+        ];
+        $marshall = new Marshaller($this->comments);
+        $result = $marshall->many($data);
+
+        $this->assertCount(2, $result);
+    }
+
+    /**
      * test many() with nested associations.
      *
      * @return void
