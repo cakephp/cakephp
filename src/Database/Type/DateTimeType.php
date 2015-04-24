@@ -103,7 +103,7 @@ class DateTimeType extends Type
      */
     public function toPHP($value, Driver $driver)
     {
-        if ($value === null || (int)$value === 0) {
+        if ($value === null || strpos($value, '-') !== false && (int)$value === 0) {
             return null;
         }
 
