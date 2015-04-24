@@ -531,6 +531,9 @@ class Marshaller
         }
 
         foreach ((new Collection($indexed))->append($new) as $value) {
+            if (!is_array($value)) {
+                continue;
+            }
             $output[] = $this->one($value, $options);
         }
 

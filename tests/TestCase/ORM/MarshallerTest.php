@@ -1513,6 +1513,32 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test mergeMany() with some invalid data
+     *
+     * @return void
+     */
+    public function testMergeManyInvalidData()
+    {
+        $entities = [
+            new OpenEntity(['id' => 1, 'comment' => 'First post', 'user_id' => 2]),
+            new OpenEntity(['id' => 2, 'comment' => 'Second post', 'user_id' => 2])
+        ];
+        $entities[0]->clean();
+        $entities[1]->clean();
+
+        $data = [
+            ['id' => 2, 'comment' => 'Changed 2', 'user_id' => 2],
+            ['id' => 1, 'comment' => 'Changed 1', 'user_id' => 1],
+            '_csrfToken' => 'abc123',
+        ];
+        $marshall = new Marshaller($this->comments);
+        $result = $marshall->mergeMany($entities, $data);
+
+        $this->assertSame($entities[0], $result[0]);
+        $this->assertSame($entities[1], $result[1]);
+    }
+
+    /**
      * Tests that only records found in the data array are returned, those that cannot
      * be matched are discarded
      *
