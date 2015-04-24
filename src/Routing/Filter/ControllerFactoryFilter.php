@@ -84,6 +84,6 @@ class ControllerFactoryFilter extends DispatcherFilter
         if ($reflection->isAbstract() || $reflection->isInterface()) {
             return false;
         }
-        return $reflection->newInstance($request, $response);
+        return $reflection->newInstance($request, $response, $controller);
     }
 }
