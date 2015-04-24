@@ -248,6 +248,9 @@ class Marshaller
     {
         $output = [];
         foreach ($data as $record) {
+            if (!is_array($record)) {
+                continue;
+            }
             $output[] = $this->one($record, $options);
         }
         return $output;
@@ -531,6 +534,9 @@ class Marshaller
         }
 
         foreach ((new Collection($indexed))->append($new) as $value) {
+            if (!is_array($value)) {
+                continue;
+            }
             $output[] = $this->one($value, $options);
         }
 
