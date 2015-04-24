@@ -258,17 +258,10 @@ class Controller implements EventListenerInterface
             $this->name = $name;
         }
 
-        if (!($request instanceof Request)) {
-            $request = new Request();
-        }
-        $this->setRequest($request);
+        $this->setRequest($request !== null ? $request : new Request);
+        $this->response = $response !== null ? $response : new Response;
 
-        if (!($response instanceof Response)) {
-            $response = new Response();
-        }
-        $this->response = $response;
-
-        if ($eventManager) {
+        if ($eventManager !== null) {
             $this->eventManager($eventManager);
         }
 
