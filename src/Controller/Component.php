@@ -110,7 +110,7 @@ class Component implements EventListenerInterface
         $this->_registry = $registry;
         $controller = $registry->getController();
         if ($controller) {
-            $this->request =& $controller->request;
+            $this->request = $controller->request;
         }
 
         $this->config($config);
