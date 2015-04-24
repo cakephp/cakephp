@@ -258,18 +258,6 @@ class Controller implements EventListenerInterface
             $this->name = $name;
         }
 
-        if (!$this->viewPath) {
-            $viewPath = $this->name;
-            if (isset($request->params['prefix'])) {
-                $prefixes = array_map(
-                    'Cake\Utility\Inflector::camelize',
-                    explode('/', $request->params['prefix'])
-                );
-                $viewPath = implode(DS, $prefixes) . DS . $viewPath;
-            }
-            $this->viewPath = $viewPath;
-        }
-
         if (!($request instanceof Request)) {
             $request = new Request();
         }
@@ -383,6 +371,18 @@ class Controller implements EventListenerInterface
 
         if (isset($request->params['pass'])) {
             $this->passedArgs = $request->params['pass'];
+        }
+
+        if (!$this->viewPath) {
+            $viewPath = $this->name;
+            if (isset($request->params['prefix'])) {
+                $prefixes = array_map(
+                    'Cake\Utility\Inflector::camelize',
+                    explode('/', $request->params['prefix'])
+                );
+                $viewPath = implode(DS, $prefixes) . DS . $viewPath;
+            }
+            $this->viewPath = $viewPath;
         }
     }
 
