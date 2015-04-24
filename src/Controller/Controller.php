@@ -250,12 +250,17 @@ class Controller implements EventListenerInterface
      */
     public function __construct(Request $request = null, Response $response = null, $name = null, $eventManager = null)
     {
-        if ($this->name === null && $name === null) {
-            list(, $name) = namespaceSplit(get_class($this));
-            $name = substr($name, 0, -10);
-        }
         if ($name !== null) {
             $this->name = $name;
+        }
+
+        if ($this->name === null && isset($request->params['controller'])) {
+            $this->name = $request->params['controller'];
+        }
+
+        if ($this->name === null) {
+            list(, $name) = namespaceSplit(get_class($this));
+            $this->name = substr($name, 0, -10);
         }
 
         $this->setRequest($request !== null ? $request : new Request);
