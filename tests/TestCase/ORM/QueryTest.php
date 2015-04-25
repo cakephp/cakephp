@@ -2383,6 +2383,26 @@ class QueryTest extends TestCase
     }
 
     /**
+     * test that cleanCopy retains bindings
+     *
+     * @return void
+     */
+    public function testCleanCopyRetainsBindings()
+    {
+        $table = TableRegistry::get('Articles');
+        $query = $table->find();
+        $query->offset(10)
+            ->limit(1)
+            ->where(['Articles.id BETWEEN :start AND :end'])
+            ->order(['Articles.id' => 'DESC'])
+            ->bind(':start', 1)
+            ->bind(':end', 2);
+        $copy = $query->cleanCopy();
+
+        $this->assertNotEmpty($copy->valueBinder()->bindings());
+    }
+
+    /**
      * test that cleanCopy makes a cleaned up clone with a beforeFind.
      *
      * @return void

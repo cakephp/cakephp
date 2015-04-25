@@ -854,6 +854,28 @@ class PaginatorComponentTest extends TestCase
     }
 
     /**
+     * test paginate() with bind()
+     *
+     * @return void
+     */
+    public function testPaginateQueryWithBindValue()
+    {
+        $this->loadFixtures('Posts');
+        $table = TableRegistry::get('PaginatorPosts');
+        $query = $table->find()
+            ->where(['PaginatorPosts.author_id BETWEEN :start AND :end'])
+            ->bind(':start', 1)
+            ->bind(':end', 2);
+
+        $results = $this->Paginator->paginate($query, []);
+
+        $result = $results->toArray();
+        $this->assertCount(2, $result);
+        $this->assertEquals('First Post', $result[0]->title);
+        $this->assertEquals('Third Post', $result[1]->title);
+    }
+
+    /**
      * Tests that passing a query object with a limit clause set will
      * overwrite it with the passed defaults.
      *
