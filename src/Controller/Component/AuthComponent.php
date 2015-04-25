@@ -242,8 +242,7 @@ class AuthComponent extends Component
     {
         $controller = $this->_registry->getController();
         $this->eventManager($controller->eventManager());
-        $this->request = $controller->request;
-        $this->response = $controller->response;
+        $this->response =& $controller->response;
         $this->session = $controller->request->session();
     }
 

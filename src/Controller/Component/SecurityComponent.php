@@ -99,7 +99,6 @@ class SecurityComponent extends Component
     public function startup(Event $event)
     {
         $controller = $event->subject();
-        $this->request = $controller->request;
         $this->session = $this->request->session();
         $this->_action = $this->request->params['action'];
         $this->_secureRequired($controller);
