@@ -1726,6 +1726,32 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Integration test for query caching usigna  real cache engine and
+     * a formatResults callback
+     *
+     * @return void
+     */
+    public function testCacheIntegrationWithFormatResults()
+    {
+        $table = TableRegistry::get('Articles');
+        $query = new Query($this->connection, $table);
+        $cacher = new \Cake\Cache\Engine\FileEngine();
+        $cacher->init();
+
+        $query
+            ->select(['id', 'title'])
+            ->formatResults(function ($results) {
+                return $results->combine('id', 'title');
+            })
+            ->cache('my_key', $cacher);
+
+        $expected = $query->toArray();
+        $query = new Query($this->connection, $table);
+        $results = $query->cache('my_key', $cacher)->toArray();
+        $this->assertSame($expected, $results);
+    }
+
+    /**
      * Integration test to show filtering associations using contain and a closure
      *
      * @return void
