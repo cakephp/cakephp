@@ -1649,7 +1649,7 @@ class FormHelper extends Helper
 
         $formName = str_replace('.', '', uniqid('post_', true));
         $formOptions = [
-            'action' => $this->Url->build($url),
+            'action' => Router::url($url),
             'name' => $formName,
             'style' => 'display:none;',
             'method' => 'post',
