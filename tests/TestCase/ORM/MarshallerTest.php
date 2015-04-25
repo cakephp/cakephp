@@ -889,6 +889,40 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test merge when fieldList contains an association.
+     *
+     * @return void
+     */
+    public function testMergeWithSingleAssociationAndFieldLists()
+    {
+        $user = new Entity([
+           'username' => 'user',
+        ]);
+        $article = new Entity([
+           'title' => 'title for post',
+           'body' => 'body',
+           'user' => $user,
+        ]);
+
+        $user->accessible('*', true);
+        $article->accessible('*', true);
+
+        $data = [
+            'title' => 'Chelsea',
+            'user' => [
+                'username' => 'dee'
+            ]
+        ];
+
+        $marshall = new Marshaller($this->articles);
+        $marshall->merge($article, $data, [
+            'fieldList' => ['title', 'user'],
+            'associated' => ['Users' => []]
+        ]);
+        $this->assertSame($user, $article->user);
+    }
+
+    /**
      * Tests that fields with the same value are not marked as dirty
      *
      * @return void

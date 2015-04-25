@@ -31,7 +31,7 @@ use Cake\Utility\Xml;
  * Request object for handling alternative HTTP requests
  *
  * Alternative HTTP requests can come from wireless units like mobile phones, palmtop computers,
- * and the like. These units have no use for Ajax requests, and this Component can tell how Cake
+ * and the like. These units have no use for AJAX requests, and this Component can tell how Cake
  * should respond to the different needs of a handheld computer and a desktop machine.
  *
  * @link http://book.cakephp.org/3.0/en/controllers/components/request-handling.html
@@ -142,7 +142,7 @@ class RequestHandlerComponent extends Component
      * Checks to see if a specific content type has been requested and sets RequestHandler::$ext
      * accordingly. Checks the following in order: 1. The '_ext' value parsed by the Router. 2. A specific
      * AJAX type request indicated by the presence of a header. 3. The Accept header. With the exception
-     * of an ajax request indicated using the second header based method above, the type must have
+     * of an AJAX request indicated using the second header based method above, the type must have
      * been configured in {@link Cake\Routing\Router}.
      *
      * @param array $config The config data.
@@ -273,12 +273,12 @@ class RequestHandlerComponent extends Component
     }
 
     /**
-     * Handles (fakes) redirects for Ajax requests using requestAction()
+     * Handles (fakes) redirects for AJAX requests using requestAction()
      *
      * @param Event $event The Controller.beforeRedirect event.
      * @param string|array $url A string or array containing the redirect location
      * @param \Cake\Network\Response $response The response object.
-     * @return void
+     * @return void|\Cake\Network\Response The response object if the redirect is caught.
      */
     public function beforeRedirect(Event $event, $url, Response $response)
     {
@@ -300,8 +300,8 @@ class RequestHandlerComponent extends Component
                 'REQUEST_METHOD' => 'GET'
             ]
         ]));
-        $response->send();
-        $response->stop();
+        $response->statusCode(200);
+        return $response;
     }
 
     /**
