@@ -301,7 +301,7 @@ class ConsoleOutput
      * Get/Set the output type to use. The output type how formatting tags are treated.
      *
      * @param int|null $type The output type to use. Should be one of the class constants.
-     * @return int|null Either null or the value if getting.
+     * @return int|void  Either null or the value if getting.
      */
     public function outputAs($type = null)
     {
@@ -309,7 +309,6 @@ class ConsoleOutput
             return $this->_outputAs;
         }
         $this->_outputAs = $type;
-        return null;
     }
 
     /**
