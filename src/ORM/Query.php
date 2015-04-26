@@ -477,16 +477,28 @@ class Query extends DatabaseQuery implements JsonSerializable
      */
     public function cleanCopy()
     {
-        $query = clone $this;
-        $query->triggerBeforeFind();
-        $query->autoFields(false);
-        $query->eagerLoader(clone $this->eagerLoader());
-        $query->limit(null);
-        $query->order([], true);
-        $query->offset(null);
-        $query->mapReduce(null, null, true);
-        $query->formatResults(null, true);
-        return $query;
+        return clone $this;
+    }
+
+    /**
+     * Object clone hook.
+     *
+     * Destroys the clones inner iterator and clones the value binder, and eagerloader instances.
+     *
+     * @return void
+     */
+    public function __clone()
+    {
+        $this->_iterator = null;
+        $this->triggerBeforeFind();
+        $this->eagerLoader(clone $this->eagerLoader());
+        $this->valueBinder(clone $this->valueBinder());
+        $this->autoFields(false);
+        $this->limit(null);
+        $this->order([], true);
+        $this->offset(null);
+        $this->mapReduce(null, null, true);
+        $this->formatResults(null, true);
     }
 
     /**
