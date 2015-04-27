@@ -255,6 +255,36 @@ class Client
     }
 
     /**
+     * Do an OPTIONS request.
+     *
+     * @param string $url The url or path you want to request.
+     * @param mixed $data The request data you want to send.
+     * @param array $options Additional options for the request.
+     * @return \Cake\Network\Http\Response
+     */
+    public function options($url, $data = [], array $options = [])
+    {
+        $options = $this->_mergeOptions($options);
+        $url = $this->buildUrl($url, [], $options);
+        return $this->_doRequest(Request::METHOD_OPTIONS, $url, $data, $options);
+    }
+
+    /**
+     * Do a TRACE request.
+     *
+     * @param string $url The url or path you want to request.
+     * @param mixed $data The request data you want to send.
+     * @param array $options Additional options for the request.
+     * @return \Cake\Network\Http\Response
+     */
+    public function trace($url, $data = [], array $options = [])
+    {
+        $options = $this->_mergeOptions($options);
+        $url = $this->buildUrl($url, [], $options);
+        return $this->_doRequest(Request::METHOD_TRACE, $url, $data, $options);
+    }
+
+    /**
      * Do a DELETE request.
      *
      * @param string $url The url or path you want to request.

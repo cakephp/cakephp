@@ -174,7 +174,24 @@ class TimeTest extends TestCase
             ],
         ];
     }
-
+    /**
+     * test the timezone option for timeAgoInWords
+     *
+     * @return void
+     */
+    public function testTimeAgoInWordsTimezone()
+    {
+        $time = new Time('1990-07-31 20:33:00 UTC');
+        $result = $time->timeAgoInWords(
+            [
+                'timezone' => 'America/Vancouver',
+                'end' => '+1month',
+                'format' => 'dd-MM-YYYY HH:mm:ss'
+            ]
+        );
+        $this->assertEquals('on 31-07-1990 13:33:00', $result);
+    }
+     
     /**
      * test the end option for timeAgoInWords
      *
@@ -540,20 +557,12 @@ class TimeTest extends TestCase
         $expected = 'پنجشنبه ۱۴ ژانویهٔ ۲۰۱۰ م.، ساعت ۱۳:۵۹:۲۸ (GMT)';
         $this->assertTimeFormat($expected, $result);
 
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'ja-JP');
-        $expected = '2010年1月14日木曜日13時59分28秒 GMT';
-        $this->assertTimeFormat($expected, $result);
-
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'fa-IR@calendar=persian');
         $expected = 'پنجشنبه ۲۴ دی ۱۳۸۸ ه‍.ش.، ساعت ۱۳:۵۹:۲۸ (GMT)';
         $this->assertTimeFormat($expected, $result);
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-IR@calendar=persian');
         $expected = 'Thursday, Dey 24, 1388 at 1:59:28 PM GMT';
-        $this->assertTimeFormat($expected, $result);
-
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'ar-IR@calendar=persian');
-        $expected = 'الخميس، ٢٤ دي، ١٣٨٨ جرينتش ١:٥٩:٢٨ م';
         $this->assertTimeFormat($expected, $result);
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'ps-IR@calendar=persian');
@@ -566,22 +575,6 @@ class TimeTest extends TestCase
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-KW@calendar=islamic');
         $expected = 'Thursday, Muharram 29, 1431 at 1:59:28 PM GMT';
-        $this->assertTimeFormat($expected, $result);
-
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'ar-KW@calendar=islamic');
-        $expected = 'الخميس، ٢٩ محرم ١٤٣١ جرينتش ١:٥٩:٢٨ م';
-        $this->assertTimeFormat($expected, $result);
-
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'hi-IN@calendar=indian');
-        $expected = 'बृहस्पतिवार २४ पौष १९३१ १:५९:२८ अपराह्न GMT';
-        $this->assertTimeFormat($expected, $result);
-
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-IN@calendar=indian');
-        $expected = 'Thursday 24 Pausa 1931 SAKA 1:59:28 PM GMT';
-        $this->assertTimeFormat($expected, $result);
-
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'ar-IN@calendar=indian');
-        $expected = 'الخميس، ٢٤ Pausa، ١٩٣١ جرينتش ١:٥٩:٢٨ م';
         $this->assertTimeFormat($expected, $result);
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, 'Asia/Tokyo', 'ja-JP@calendar=japanese');
@@ -846,7 +839,7 @@ class TimeTest extends TestCase
     {
         $expected = str_replace([',', '(', ')', ' at', ' م.', ' ه‍.ش.', ' AP', ' AH', ' SAKA'], '', $expected);
         $expected = str_replace(['  '], ' ', $expected);
-        
+
         $result = str_replace([',', '(', ')', ' at', ' م.', ' ه‍.ش.', ' AP', ' AH', ' SAKA'], '', $result);
         $result = str_replace(['  '], ' ', $result);
 

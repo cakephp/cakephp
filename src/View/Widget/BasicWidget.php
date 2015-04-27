@@ -85,6 +85,9 @@ class BasicWidget implements WidgetInterface
      */
     public function secureFields(array $data)
     {
+        if (!isset($data['name']) || $data['name'] === '') {
+            return [];
+        }
         return [$data['name']];
     }
 }

@@ -173,4 +173,21 @@ class Request extends Message
         }
         return $this;
     }
+
+    /**
+     * Get/Set http version.
+     *
+     * @param string|null $version The http version.
+     *
+     * @return $this|string Either $this or the http version.
+     */
+    public function version($version = null)
+    {
+        if ($version === null) {
+            return parent::version();
+        }
+
+        $this->_version = $version;
+        return $this;
+    }
 }

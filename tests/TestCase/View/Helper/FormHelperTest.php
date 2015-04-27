@@ -263,6 +263,35 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test that secureFields() of widget is called after calling render(),
+     * not before.
+     *
+     * @return void
+     */
+    public function testOrderForRenderingWidgetAndFetchingSecureFields()
+    {
+        $data = [
+            'val' => 1,
+            'name' => 'test'
+        ];
+        $mock = $this->getMock('Cake\View\Widget\WidgetInterface');
+        $this->assertNull($this->Form->addWidget('test', $mock));
+
+        $mock->expects($this->at(0))
+            ->method('render')
+            ->with($data)
+            ->will($this->returnValue('HTML'));
+
+        $mock->expects($this->at(1))
+            ->method('secureFields')
+            ->with($data)
+            ->will($this->returnValue(['test']));
+
+        $result = $this->Form->widget('test', $data + ['secure' => true]);
+        $this->assertEquals('HTML', $result);
+    }
+
+    /**
      * Test that empty string is not added to secure fields list when
      * rendering input widget without name.
      *
@@ -3089,6 +3118,24 @@ class FormHelperTest extends TestCase
         $this->View->viewVars['users'] = ['value' => 'good', 'other' => 'bad'];
         $result = $this->Form->input('Model.user_id', ['type' => 'radio']);
         $this->assertContains('input type="radio"', $result);
+    }
+
+    /**
+     * testFormInputSubmit method
+     *
+     * test correct results for form::input() and type submit.
+     *
+     * @return void
+     */
+    public function testFormInputSubmit()
+    {
+        $result = $this->Form->input('Test Submit', ['type' => 'submit', 'class' => 'foobar']);
+        $expected = [
+            'div' => ['class' => 'submit'],
+            'input' => ['type' => 'submit', 'class' => 'foobar', 'id' => 'test-submit', 'value' => 'Test Submit'],
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**
