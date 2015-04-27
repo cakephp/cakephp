@@ -142,6 +142,29 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test that exceptions being thrown are handled correctly.
+     *
+     * @return void
+     */
+    public function testWithExpectedException()
+    {
+        $this->get('/tests_apps/throw_exception');
+        $this->assertResponseCode(500);
+    }
+
+    /**
+     * Test that exceptions being thrown are handled correctly.
+     *
+     * @expectedException PHPUnit_Framework_AssertionFailedError
+     * @return void
+     */
+    public function testWithUnexpectedException()
+    {
+        $this->get('/tests_apps/throw_exception');
+        $this->assertResponseCode(501);
+    }
+
+    /**
      * Test redirecting and integration tests.
      *
      * @return void

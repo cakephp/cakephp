@@ -61,4 +61,9 @@ class TestsAppsController extends AppController
         $this->response->type('json');
         return $this->response;
     }
+
+    public function throw_exception()
+    {
+        throw new \RuntimeException('Foo');
+    }
 }
