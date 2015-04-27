@@ -14,7 +14,6 @@
  */
 namespace Cake\ORM\Locator;
 
-use Cake\ORM\Locator\LocatorInterface;
 use Cake\ORM\TableRegistry;
 
 /**
