@@ -328,21 +328,6 @@ class AssociationTest extends TestCase
     }
 
     /**
-     * Tests locator method
-     *
-     * @return void
-     */
-    public function testLocator()
-    {
-        $locator = $this->association->locator();
-        $this->assertSame(TableRegistry::locator(), $locator);
-
-        $newLocator = $this->getMock('Cake\ORM\Locator\LocatorInterface');
-        $associationLocator = $this->association->locator($newLocator);
-        $this->assertSame($newLocator, $associationLocator);
-    }
-    
-    /**
      * Tests that `locator` is a valid option for the association constructor
      *
      * @return void

@@ -18,7 +18,7 @@ use Cake\Core\ConventionsTrait;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetDecorator;
-use Cake\ORM\Locator\LocatorInterface;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -35,6 +35,7 @@ abstract class Association
 {
 
     use ConventionsTrait;
+    use LocatorAwareTrait;
 
     /**
      * Strategy name to use joins for fetching associated records
@@ -146,13 +147,6 @@ abstract class Association
     protected $_targetTable;
 
     /**
-     * Table locator instance
-     *
-     * @var \Cake\ORM\Locator\LocatorInterface
-     */
-    protected $_locator;
-
-    /**
      * The type of join to be used when adding the association to a query
      *
      * @var string
@@ -223,10 +217,6 @@ abstract class Association
 
         list(, $name) = pluginSplit($alias);
         $this->_name = $name;
-
-        if (!$this->_locator) {
-            $this->_locator =& TableRegistry::locator();
-        }
 
         $this->_options($options);
 
@@ -305,10 +295,10 @@ abstract class Association
         }
 
         $config = [];
-        if (!$this->_locator->exists($registryAlias)) {
+        if (!$this->locator()->exists($registryAlias)) {
             $config = ['className' => $this->_className];
         }
-        $this->_targetTable = $this->_locator->get($registryAlias, $config);
+        $this->_targetTable = $this->locator()->get($registryAlias, $config);
 
         return $this->_targetTable;
     }
@@ -447,21 +437,6 @@ abstract class Association
             $this->_finder = $finder;
         }
         return $this->_finder;
-    }
-
-    /**
-     * Sets the table locator for this association.
-     * If no parameters are passed, it will return the currently used locator.
-     *
-     * @param LocatorInterface|null $locator LocatorInterface instance.
-     * @return LocatorInterface
-     */
-    public function locator(LocatorInterface $locator = null)
-    {
-        if ($locator !== null) {
-            $this->_locator = $locator;
-        }
-        return $this->_locator;
     }
 
     /**

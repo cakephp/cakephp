@@ -176,15 +176,15 @@ class BelongsToMany extends Association
                 $tableAlias = Inflector::camelize($tableName);
 
                 $config = [];
-                if (!$this->_locator->exists($tableAlias)) {
+                if (!$this->locator()->exists($tableAlias)) {
                     $config = ['table' => $tableName];
                 }
-                $table = $this->_locator->get($tableAlias, $config);
+                $table = $this->locator()->get($tableAlias, $config);
             }
         }
 
         if (is_string($table)) {
-            $table = $this->_locator->get($table);
+            $table = $this->locator()->get($table);
         }
         $junctionAlias = $table->alias();
 
