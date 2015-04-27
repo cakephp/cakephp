@@ -1197,6 +1197,11 @@ class TableTest extends TestCase
         $expected = ['id', 'username'];
         $this->assertSame($expected, $query->clause('select'));
 
+        $query = $table->find('list', ['valueField' => function ($row) {
+            return $row->username;
+        }]);
+        $this->assertEmpty($query->clause('select'));
+
         $expected = ['odd' => new QueryExpression('id % 2'), 'id', 'username'];
         $query = $table->find('list', [
             'fields' => $expected,
