@@ -16,6 +16,7 @@ namespace Cake\TestSuite;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
+use Cake\ORM\Exception\MissingTableClassException;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
@@ -582,7 +583,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             $class = Inflector::camelize($alias);
             $className = App::className($class, 'Model/Table', 'Table');
             if (!$className) {
-                throw new \Cake\ORM\Exception\MissingTableClassException([$alias]);
+                throw new MissingTableClassException([$alias]);
             }
             $options['className'] = $className;
         }
