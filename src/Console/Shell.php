@@ -160,7 +160,8 @@ class Shell
         }
         $this->_io = $io ?: new ConsoleIo();
 
-        $this->modelFactory('Table', [$this->tableLocator(), 'get']);
+        $locator = $this->tableLocator() ? : 'Cake\ORM\TableRegistry';
+        $this->modelFactory('Table', [$locator, 'get']);
         $this->Tasks = new TaskRegistry($this);
 
         $this->_io->setLoggers(true);
