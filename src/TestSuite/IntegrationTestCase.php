@@ -456,7 +456,7 @@ abstract class IntegrationTestCase extends TestCase
         $status = $this->_response->statusCode();
 
         if ($this->_exception && ($status < $min || $status > $max)) {
-            throw $this->_exception;
+            $this->fail($this->_exception);
         }
 
         $this->assertGreaterThanOrEqual($min, $status, $message);
