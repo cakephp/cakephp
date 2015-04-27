@@ -1251,6 +1251,32 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test find('list') with value field from associated table
+     *
+     * @return void
+     */
+    public function testFindListWithAssociatedTable()
+    {
+        $articles = new Table([
+            'table' => 'articles',
+            'connection' => $this->connection,
+        ]);
+
+        $articles->belongsTo('Authors');
+        $query = $articles->find('list', ['valueField' => 'author.name'])
+            ->contain(['Authors'])
+            ->order('Articles.id');
+        $this->assertEmpty($query->clause('select'));
+
+        $expected = [
+            1 => 'mariano',
+            2 => 'larry',
+            3 => 'mariano',
+        ];
+        $this->assertSame($expected, $query->toArray());
+    }
+
+    /**
      * Test the default entityClass.
      *
      * @return void
