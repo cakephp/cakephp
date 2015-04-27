@@ -326,4 +326,39 @@ class AssociationTest extends TestCase
             $this->association->find()->getOptions()
         );
     }
+
+    /**
+     * Tests locator method
+     *
+     * @return void
+     */
+    public function testLocator()
+    {
+        $locator = $this->association->locator();
+        $this->assertSame(TableRegistry::locator(), $locator);
+
+        $newLocator = $this->getMock('Cake\ORM\Locator\LocatorInterface');
+        $associationLocator = $this->association->locator($newLocator);
+        $this->assertSame($newLocator, $associationLocator);
+    }
+    
+    /**
+     * Tests that `locator` is a valid option for the association constructor
+     *
+     * @return void
+     */
+    public function testLocatorInConstructor()
+    {
+        $locator = $this->getMock('Cake\ORM\Locator\LocatorInterface');
+        $config = [
+            'className' => '\Cake\Test\TestCase\ORM\TestTable',
+            'locator' => $locator
+        ];
+        $assoc = $this->getMock(
+            '\Cake\ORM\Association',
+            ['type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated'],
+            ['Foo', $config]
+        );
+        $this->assertEquals($locator, $assoc->locator());
+    }
 }

@@ -18,7 +18,6 @@ use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use RuntimeException;
@@ -177,15 +176,15 @@ class BelongsToMany extends Association
                 $tableAlias = Inflector::camelize($tableName);
 
                 $config = [];
-                if (!TableRegistry::exists($tableAlias)) {
+                if (!$this->_locator->exists($tableAlias)) {
                     $config = ['table' => $tableName];
                 }
-                $table = TableRegistry::get($tableAlias, $config);
+                $table = $this->_locator->get($tableAlias, $config);
             }
         }
 
         if (is_string($table)) {
-            $table = TableRegistry::get($table);
+            $table = $this->_locator->get($table);
         }
         $junctionAlias = $table->alias();
 
