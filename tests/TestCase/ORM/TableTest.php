@@ -1197,18 +1197,20 @@ class TableTest extends TestCase
         $expected = ['id', 'username'];
         $this->assertSame($expected, $query->clause('select'));
 
-        $select = ['odd' => new QueryExpression('id % 2')];
-        $query = $table->find('list', ['groupField' => 'odd'])
-            ->select($select)
-            ->order('id');
-        $expected = array_merge(['id', 'username'], $select);
-        $this->assertSame($expected, $query->clause('select'));
-
         $expected = ['odd' => new QueryExpression('id % 2'), 'id', 'username'];
         $query = $table->find('list', [
             'fields' => $expected,
             'groupField' => 'odd',
         ]);
+        $this->assertSame($expected, $query->clause('select'));
+
+        $articles = new Table([
+            'table' => 'articles',
+            'connection' => $this->connection,
+        ]);
+
+        $query = $articles->find('list', ['groupField' => 'author_id']);
+        $expected = ['id', 'title', 'author_id'];
         $this->assertSame($expected, $query->clause('select'));
     }
 
@@ -1229,7 +1231,6 @@ class TableTest extends TestCase
         $query = $table
             ->find('list')
             ->order('id');
-
         $this->assertEmpty($query->clause('select'));
 
         $expected = [
@@ -1239,6 +1240,9 @@ class TableTest extends TestCase
             4 => 'bonus'
         ];
         $this->assertSame($expected, $query->toArray());
+
+        $query = $table->find('list', ['groupField' => 'odd']);
+        $this->assertEmpty($query->clause('select'));
     }
 
     /**

@@ -969,7 +969,11 @@ class Table implements RepositoryInterface, EventListenerInterface
         }
 
         if (!$query->clause('select')) {
-            $fields = array_merge((array)$options['keyField'], (array)$options['valueField']);
+            $fields = array_merge(
+                (array)$options['keyField'],
+                (array)$options['valueField'],
+                (array)$options['groupField']
+            );
             $columns = $this->schema()->columns();
             if (count($fields) === count(array_intersect($fields, $columns))) {
                 $query->select($fields);
