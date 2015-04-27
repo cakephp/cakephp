@@ -118,7 +118,7 @@ class RequestHandlerComponentTest extends TestCase
     {
         $this->assertNull($this->RequestHandler->ext);
         $this->Controller->request->params['_ext'] = 'rss';
-        $this->RequestHandler->initialize([]);
+        $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertEquals('rss', $this->RequestHandler->ext);
     }
 
@@ -133,7 +133,7 @@ class RequestHandlerComponentTest extends TestCase
         Router::extensions('json', false);
 
         $this->RequestHandler->ext = null;
-        $this->RequestHandler->initialize([]);
+        $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertEquals('json', $this->RequestHandler->ext);
     }
 
@@ -149,7 +149,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->ext = null;
         Router::extensions('json', false);
 
-        $this->RequestHandler->initialize([]);
+        $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertEquals('json', $this->RequestHandler->ext);
     }
 
@@ -163,7 +163,7 @@ class RequestHandlerComponentTest extends TestCase
         Router::extensions('csv', false);
         $this->request->env('HTTP_ACCEPT', 'text/plain, */*; q=0.01');
 
-        $this->RequestHandler->initialize([]);
+        $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertNull($this->RequestHandler->ext);
     }
 
@@ -179,7 +179,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->ext = null;
         Router::extensions(['rss', 'json'], false);
 
-        $this->RequestHandler->initialize([]);
+        $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertEquals('json', $this->RequestHandler->ext);
     }
 
@@ -194,7 +194,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->assertNull($this->RequestHandler->ext);
         Router::extensions('json', false);
 
-        $this->RequestHandler->initialize([]);
+        $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertNull($this->RequestHandler->ext);
     }
 
@@ -215,13 +215,13 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->ext = null;
         Router::extensions(['xml', 'json'], false);
 
-        $this->RequestHandler->initialize([]);
+        $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertEquals('xml', $this->RequestHandler->ext);
 
         $this->RequestHandler->ext = null;
         Router::extensions(['json', 'xml'], false);
 
-        $this->RequestHandler->initialize([]);
+        $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertEquals('json', $this->RequestHandler->ext);
     }
 
@@ -239,7 +239,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->ext = null;
         Router::extensions(['xml', 'json'], false);
 
-        $this->RequestHandler->initialize([]);
+        $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertEquals('json', $this->RequestHandler->ext);
     }
 
@@ -257,7 +257,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->ext = null;
         Router::extensions(['html', 'xml'], false);
 
-        $this->RequestHandler->initialize([]);
+        $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertNull($this->RequestHandler->ext);
     }
 
@@ -271,7 +271,7 @@ class RequestHandlerComponentTest extends TestCase
         $_SERVER['HTTP_ACCEPT'] = 'text/html,application/xhtml+xml,application/xml;image/png,image/jpeg,image/*;q=0.9,*/*;q=0.8';
         Router::extensions(['xml', 'json'], false);
 
-        $this->RequestHandler->initialize([]);
+        $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertNull($this->RequestHandler->ext);
     }
 
@@ -291,7 +291,7 @@ class RequestHandlerComponentTest extends TestCase
             ->method('accepts')
             ->will($this->returnValue(['application/json']));
 
-        $this->RequestHandler->initialize([]);
+        $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertNull($this->RequestHandler->ext);
 
         call_user_func_array(['Cake\Routing\Router', 'extensions'], [$extensions, false]);
@@ -484,14 +484,14 @@ class RequestHandlerComponentTest extends TestCase
         if (!function_exists('str_getcsv')) {
             $this->markTestSkipped('Need "str_getcsv" for this test.');
         }
-        $event = new Event('Controller.startup', $this->Controller);
         $this->Controller->request = $this->getMock('Cake\Network\Request', ['_readInput']);
         $this->Controller->request->expects($this->once())
             ->method('_readInput')
             ->will($this->returnValue('"A","csv","string"'));
         $this->RequestHandler->addInputType('csv', ['str_getcsv']);
-        $this->request->env('REQUEST_METHOD', 'POST');
-        $this->request->env('CONTENT_TYPE', 'text/csv');
+        $this->Controller->request->env('REQUEST_METHOD', 'POST');
+        $this->Controller->request->env('CONTENT_TYPE', 'text/csv');
+        $event = new Event('Controller.startup', $this->Controller);
         $this->RequestHandler->startup($event);
         $expected = [
             'A', 'csv', 'string'
