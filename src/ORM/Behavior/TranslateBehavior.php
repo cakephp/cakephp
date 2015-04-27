@@ -20,9 +20,9 @@ use Cake\Event\Event;
 use Cake\I18n\I18n;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 
 /**
@@ -39,6 +39,8 @@ use Cake\Utility\Inflector;
  */
 class TranslateBehavior extends Behavior
 {
+
+    use LocatorAwareTrait;
 
     /**
      * Table instance
@@ -78,7 +80,8 @@ class TranslateBehavior extends Behavior
         'referenceName' => '',
         'allowEmptyTranslations' => true,
         'onlyTranslated' => false,
-        'strategy' => 'subquery'
+        'strategy' => 'subquery',
+        'locator' => null
     ];
 
     /**
@@ -93,6 +96,11 @@ class TranslateBehavior extends Behavior
             'defaultLocale' => I18n::defaultLocale(),
             'referenceName' => $this->_referenceName($table)
         ];
+
+        if (isset($config['locator'])) {
+            $this->_locator = $config['locator'];
+        }
+
         parent::__construct($table, $config);
     }
 
@@ -104,7 +112,7 @@ class TranslateBehavior extends Behavior
      */
     public function initialize(array $config)
     {
-        $this->_translationTable = TableRegistry::get($this->_config['translationTable']);
+        $this->_translationTable = $this->locator()->get($this->_config['translationTable']);
 
         $this->setupFieldAssociations(
             $this->_config['fields'],
@@ -137,14 +145,14 @@ class TranslateBehavior extends Behavior
         foreach ($fields as $field) {
             $name = $alias . '_' . $field . '_translation';
 
-            if (!TableRegistry::exists($name)) {
-                $fieldTable = TableRegistry::get($name, [
+            if (!$this->locator()->exists($name)) {
+                $fieldTable = $this->locator()->get($name, [
                     'className' => $table,
                     'alias' => $name,
                     'table' => $this->_translationTable->table()
                 ]);
             } else {
-                $fieldTable = TableRegistry::get($name);
+                $fieldTable = $this->locator()->get($name);
             }
 
             $conditions = [
