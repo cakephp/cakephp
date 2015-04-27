@@ -1181,6 +1181,67 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test that find('list') only selects required fields.
+     *
+     * @return void
+     */
+    public function testFindListSelectedFields()
+    {
+        $table = new Table([
+            'table' => 'users',
+            'connection' => $this->connection,
+        ]);
+        $table->displayField('username');
+
+        $query = $table->find('list');
+        $expected = ['id', 'username'];
+        $this->assertSame($expected, $query->clause('select'));
+
+        $select = ['odd' => new QueryExpression('id % 2')];
+        $query = $table->find('list', ['groupField' => 'odd'])
+            ->select($select)
+            ->order('id');
+        $expected = array_merge(['id', 'username'], $select);
+        $this->assertSame($expected, $query->clause('select'));
+
+        $expected = ['odd' => new QueryExpression('id % 2'), 'id', 'username'];
+        $query = $table->find('list', [
+            'fields' => $expected,
+            'groupField' => 'odd',
+        ]);
+        $this->assertSame($expected, $query->clause('select'));
+    }
+
+    /**
+     * test that find('list') does not auto add fields to select if using virtual properties
+     *
+     * @return void
+     */
+    public function testFindListWithVirtualField()
+    {
+        $table = new Table([
+            'table' => 'users',
+            'connection' => $this->connection,
+            'entityClass' => '\TestApp\Model\Entity\VirtualUser'
+        ]);
+        $table->displayField('bonus');
+
+        $query = $table
+            ->find('list')
+            ->order('id');
+
+        $this->assertEmpty($query->clause('select'));
+
+        $expected = [
+            1 => 'bonus',
+            2 => 'bonus',
+            3 => 'bonus',
+            4 => 'bonus'
+        ];
+        $this->assertSame($expected, $query->toArray());
+    }
+
+    /**
      * Test the default entityClass.
      *
      * @return void

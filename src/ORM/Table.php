@@ -968,6 +968,14 @@ class Table implements RepositoryInterface, EventListenerInterface
             trigger_error('Option "idField" is deprecated, use "keyField" instead.', E_USER_WARNING);
         }
 
+        if (!$query->clause('select')) {
+            $fields = array_merge((array)$options['keyField'], (array)$options['valueField']);
+            $columns = $this->schema()->columns();
+            if (count($fields) === count(array_intersect($fields, $columns))) {
+                $query->select($fields);
+            }
+        }
+
         $options = $this->_setFieldMatchers(
             $options,
             ['keyField', 'valueField', 'groupField']
