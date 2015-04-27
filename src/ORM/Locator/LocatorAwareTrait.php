@@ -34,8 +34,8 @@ trait LocatorAwareTrait
      * Sets the table locator.
      * If no parameters are passed, it will return the currently used locator.
      *
-     * @param LocatorInterface|null $locator LocatorInterface instance.
-     * @return LocatorInterface
+     * @param \Cake\ORM\Locator\LocatorInterface|null $locator LocatorInterface instance.
+     * @return \Cake\ORM\Locator\LocatorInterface
      */
     public function locator(LocatorInterface $locator = null)
     {
