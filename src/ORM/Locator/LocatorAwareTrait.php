@@ -43,7 +43,8 @@ trait LocatorAwareTrait
             $this->_locator = $locator;
         }
         if (!$this->_locator) {
-            $this->_locator = TableRegistry::locator();
+            $locator = TableRegistry::locator();
+            $this->_locator =& $locator;
         }
         return $this->_locator;
     }
