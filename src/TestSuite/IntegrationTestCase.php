@@ -51,6 +51,13 @@ abstract class IntegrationTestCase extends TestCase
     protected $_response;
 
     /**
+     * The exception being thrown if the case.
+     *
+     * @var \Cake\Core\Exception\Exception
+     */
+    protected $_exception;
+
+    /**
      * Session data to use in the next request.
      *
      * @var array
@@ -115,6 +122,7 @@ abstract class IntegrationTestCase extends TestCase
         $this->_session = [];
         $this->_cookie = [];
         $this->_response = null;
+        $this->_exception = null;
         $this->_controller = null;
         $this->_viewName = null;
         $this->_layoutName = null;
@@ -280,6 +288,7 @@ abstract class IntegrationTestCase extends TestCase
         } catch (\PHPUnit_Exception $e) {
             throw $e;
         } catch (\Exception $e) {
+            $this->_exception = $e;
             $this->_handleError($e);
         }
     }
@@ -445,6 +454,11 @@ abstract class IntegrationTestCase extends TestCase
             $this->fail('No response set, cannot assert status code.');
         }
         $status = $this->_response->statusCode();
+
+        if ($this->_exception && ($status < $min || $status > $max)) {
+            throw $this->_exception;
+        }
+
         $this->assertGreaterThanOrEqual($min, $status, $message);
         $this->assertLessThanOrEqual($max, $status, $message);
     }
