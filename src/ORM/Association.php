@@ -200,7 +200,7 @@ abstract class Association
             'finder',
             'foreignKey',
             'joinType',
-            'locator',
+            'tableLocator',
             'propertyName',
             'sourceTable',
             'targetTable'
@@ -295,10 +295,10 @@ abstract class Association
         }
 
         $config = [];
-        if (!$this->locator()->exists($registryAlias)) {
+        if (!$this->tableLocator()->exists($registryAlias)) {
             $config = ['className' => $this->_className];
         }
-        $this->_targetTable = $this->locator()->get($registryAlias, $config);
+        $this->_targetTable = $this->tableLocator()->get($registryAlias, $config);
 
         return $this->_targetTable;
     }

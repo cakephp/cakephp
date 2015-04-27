@@ -142,7 +142,7 @@ abstract class Cell
         $this->eventManager($eventManager);
         $this->request = $request;
         $this->response = $response;
-        $this->modelFactory('Table', [$this->locator(), 'get']);
+        $this->modelFactory('Table', [$this->tableLocator(), 'get']);
 
         foreach ($this->_validCellOptions as $var) {
             if (isset($cellOptions[$var])) {

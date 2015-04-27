@@ -337,13 +337,13 @@ class AssociationTest extends TestCase
         $locator = $this->getMock('Cake\ORM\Locator\LocatorInterface');
         $config = [
             'className' => '\Cake\Test\TestCase\ORM\TestTable',
-            'locator' => $locator
+            'tableLocator' => $locator
         ];
         $assoc = $this->getMock(
             '\Cake\ORM\Association',
             ['type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated'],
             ['Foo', $config]
         );
-        $this->assertEquals($locator, $assoc->locator());
+        $this->assertEquals($locator, $assoc->tableLocator());
     }
 }

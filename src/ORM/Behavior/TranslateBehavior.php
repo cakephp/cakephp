@@ -81,7 +81,7 @@ class TranslateBehavior extends Behavior
         'allowEmptyTranslations' => true,
         'onlyTranslated' => false,
         'strategy' => 'subquery',
-        'locator' => null
+        'tableLocator' => null
     ];
 
     /**
@@ -97,8 +97,8 @@ class TranslateBehavior extends Behavior
             'referenceName' => $this->_referenceName($table)
         ];
 
-        if (isset($config['locator'])) {
-            $this->_locator = $config['locator'];
+        if (isset($config['tableLocator'])) {
+            $this->_tableLocator = $config['tableLocator'];
         }
 
         parent::__construct($table, $config);
@@ -112,7 +112,7 @@ class TranslateBehavior extends Behavior
      */
     public function initialize(array $config)
     {
-        $this->_translationTable = $this->locator()->get($this->_config['translationTable']);
+        $this->_translationTable = $this->tableLocator()->get($this->_config['translationTable']);
 
         $this->setupFieldAssociations(
             $this->_config['fields'],
@@ -145,14 +145,14 @@ class TranslateBehavior extends Behavior
         foreach ($fields as $field) {
             $name = $alias . '_' . $field . '_translation';
 
-            if (!$this->locator()->exists($name)) {
-                $fieldTable = $this->locator()->get($name, [
+            if (!$this->tableLocator()->exists($name)) {
+                $fieldTable = $this->tableLocator()->get($name, [
                     'className' => $table,
                     'alias' => $name,
                     'table' => $this->_translationTable->table()
                 ]);
             } else {
-                $fieldTable = $this->locator()->get($name);
+                $fieldTable = $this->tableLocator()->get($name);
             }
 
             $conditions = [
