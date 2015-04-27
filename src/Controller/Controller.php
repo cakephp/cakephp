@@ -22,6 +22,7 @@ use Cake\Event\EventManagerTrait;
 use Cake\Log\LogTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\MergeVariablesTrait;
@@ -84,6 +85,7 @@ class Controller implements EventListenerInterface
 {
 
     use EventManagerTrait;
+    use LocatorAwareTrait;
     use LogTrait;
     use MergeVariablesTrait;
     use ModelAwareTrait;
@@ -270,7 +272,7 @@ class Controller implements EventListenerInterface
             $this->eventManager($eventManager);
         }
 
-        $this->modelFactory('Table', ['Cake\ORM\TableRegistry', 'get']);
+        $this->modelFactory('Table', [$this->locator(), 'get']);
         $modelClass = ($this->plugin ? $this->plugin . '.' : '') . $this->name;
         $this->_setModelClass($modelClass);
 
