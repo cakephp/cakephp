@@ -49,10 +49,14 @@ class Xml
      * $xml = Xml::build('/path/to/an/xml/file.xml');
      * ```
      *
-     * Building from a remote URL:
+     * Building XML from a remote URL:
      *
      * ```
-     * $xml = Xml::build('http://example.com/example.xml');
+     * use Cake\Network\Http\Client;
+     *
+     * $http = new Client();
+     * $response = $http->get('http://example.com/example.xml');
+     * $xml = Xml::build($response->body());
      * ```
      *
      * Building from an array:
