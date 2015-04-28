@@ -1217,6 +1217,18 @@ class TableTest extends TestCase
         $query = $articles->find('list', ['groupField' => 'author_id']);
         $expected = ['id', 'title', 'author_id'];
         $this->assertSame($expected, $query->clause('select'));
+
+        $query = $articles->find('list', ['valueField' => ['author_id', 'title']])
+            ->order('id');
+        $expected = ['id', 'author_id', 'title'];
+        $this->assertSame($expected, $query->clause('select'));
+
+        $expected = [
+            1 => '1;First Article',
+            2 => '3;Second Article',
+            3 => '1;Third Article',
+        ];
+        $this->assertSame($expected, $query->toArray());
     }
 
     /**
