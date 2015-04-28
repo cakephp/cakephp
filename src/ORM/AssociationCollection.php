@@ -14,11 +14,13 @@
  */
 namespace Cake\ORM;
 
+use ArrayIterator;
 use Cake\ORM\Association;
 use Cake\ORM\AssociationsNormalizerTrait;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use InvalidArgumentException;
+use IteratorAggregate;
 
 /**
  * A container/collection for association classes.
@@ -26,7 +28,7 @@ use InvalidArgumentException;
  * Contains methods for managing associations, and
  * ordering operations around saving and deleting.
  */
-class AssociationCollection
+class AssociationCollection implements IteratorAggregate
 {
 
     use AssociationsNormalizerTrait;
@@ -291,5 +293,15 @@ class AssociationCollection
         }
 
         return $this->_normalizeAssociations($keys);
+    }
+    
+    /**
+     * Allow looping through the associations
+     * 
+     * @return \Cake\ORM\Association
+     */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->_items);
     }
 }
