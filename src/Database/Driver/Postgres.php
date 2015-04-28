@@ -57,8 +57,12 @@ class Postgres extends \Cake\Database\Driver
             PDO::ATTR_PERSISTENT => $config['persistent'],
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ];
+        if (empty($config['unix_socket'])) {
+            $dsn = "pgsql:host={$config['host']};port={$config['port']};dbname={$config['database']}";
+        } else {
+            $dsn = "pgsql:dbname={$config['database']}";
+        }
 
-        $dsn = "pgsql:host={$config['host']};port={$config['port']};dbname={$config['database']}";
         $this->_connect($dsn, $config);
         $this->_connection = $connection = $this->connection();
         if (!empty($config['encoding'])) {
