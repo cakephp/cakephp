@@ -380,12 +380,8 @@ class AssociationCollectionTest extends TestCase
         $belongsToMany = new BelongsToMany('');
         $this->associations->add('Cart', $belongsToMany);
 
-        foreach ($this->associations as $name => $association) {
-            if ($name === 'users') {
-                $this->assertInstanceOf('Cake\ORM\Association\BelongsTo', $association);
-            } else {
-                $this->assertInstanceOf('Cake\ORM\Association\BelongsToMany', $association);
-            }
-        }
+        $expected = ['users' => $belongsTo, 'cart' => $belongsToMany];
+        $result = iterator_to_array($this->associations, true);
+        $this->assertSame($expected, $result);
     }
 }
