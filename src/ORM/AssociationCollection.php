@@ -294,11 +294,11 @@ class AssociationCollection implements IteratorAggregate
 
         return $this->_normalizeAssociations($keys);
     }
-    
+
     /**
      * Allow looping through the associations
-     * 
-     * @return \Cake\ORM\Association
+     *
+     * @return ArrayIterator
      */
     public function getIterator()
     {
