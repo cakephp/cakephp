@@ -1265,7 +1265,7 @@ class TableTest extends TestCase
         $articles->belongsTo('Authors');
         $query = $articles->find('list', ['valueField' => 'author.name'])
             ->contain(['Authors'])
-            ->order('Articles.id');
+            ->order('articles.id');
         $this->assertEmpty($query->clause('select'));
 
         $expected = [
