@@ -138,20 +138,6 @@ class PaginatorComponent extends Component
     }
 
     /**
-     * Overloading the config method to be able to pass the config to the paginator.
-     *
-     * @param string|array|null $key The key to get/set, or a complete array of configs.
-     * @param mixed|null $value The value to set.
-     * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
-     * @return mixed Config value being read, or the object itself on write operations.
-     * @throws \Cake\Core\Exception\Exception When trying to set a key that is invalid.
-     */
-    public function config($key = null, $value = null, $merge = true)
-    {
-        return $this->_paginator->config($key, $value, $merge);
-    }
-
-    /**
      * Using the magic call as a proxy to the refactored paginator.
      *
      * @param string $method Method name.
