@@ -799,7 +799,7 @@ class Time extends Carbon implements JsonSerializable
      */
     public function jsonSerialize()
     {
-        return $this->format(static::ISO8601);
+        return $this->__toString();
     }
 
     /**
