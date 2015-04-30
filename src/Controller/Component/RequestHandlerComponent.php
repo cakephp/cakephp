@@ -73,7 +73,7 @@ class RequestHandlerComponent extends Component
      *
      * These are merged with user-provided config when the component is used.
      *
-     * - `checkHttpCache` - Whether to check for http cache.
+     * - `checkHttpCache` - Whether to check for HTTP cache.
      * - `viewClassMap` - Mapping between type and view class.
      *
      * @var array
