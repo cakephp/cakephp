@@ -35,14 +35,14 @@ class Stream
     protected $_context;
 
     /**
-     * Array of options/content for the http stream context.
+     * Array of options/content for the HTTP stream context.
      *
      * @var array
      */
     protected $_contextOptions;
 
     /**
-     * Array of options/content for the ssl stream context.
+     * Array of options/content for the SSL stream context.
      *
      * @var array
      */
