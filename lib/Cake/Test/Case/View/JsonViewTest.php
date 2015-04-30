@@ -195,6 +195,31 @@ class JsonViewTest extends CakeTestCase {
 	}
 
 /**
+ * Test render with _jsonOptions setting.
+ *
+ * @return void
+ */
+	public function testRenderWithoutViewJsonOptions() {
+		$this->skipIf(!version_compare(PHP_VERSION, '5.3.0', '>='), 'Needs PHP5.3+ for these constants to be tested');
+
+		$Request = new CakeRequest();
+		$Response = new CakeResponse();
+		$Controller = new Controller($Request, $Response);
+
+		// Test render with encode <, >, ', &, and " for RFC4627-compliant to be serialized.
+		$data = array('rfc4627_escape' => '<tag> \'quote\' "double-quote" &');
+		$serialize = 'rfc4627_escape';
+		$expected = json_encode('<tag> \'quote\' "double-quote" &', JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
+
+		$Controller->set($data);
+		$Controller->set('_serialize', $serialize);
+		$Controller->set('_jsonOptions', JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
+		$View = new JsonView($Controller);
+		$output = $View->render(false);
+
+		$this->assertSame($expected, $output);
+	}
+/**
  * Test that rendering with _serialize does not load helpers.
  *
  * @return void
