@@ -502,7 +502,7 @@ class SecurityComponentTest extends TestCase
         $this->assertTrue($this->Controller->Security->validatePost($this->Controller));
 
         $this->Controller->request->data = [
-            'Model' => ['multi_field' => [12 => '1',  20 => '3']],
+            'Model' => ['multi_field' => [12 => '1', 20 => '3']],
             '_Token' => compact('fields', 'unlocked')
         ];
         $this->assertTrue($this->Controller->Security->validatePost($this->Controller));
