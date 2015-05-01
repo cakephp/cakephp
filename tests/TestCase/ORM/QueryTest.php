@@ -1538,6 +1538,27 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test update method.
+     *
+     * @return void
+     */
+    public function testUpdateWithTableExpression()
+    {
+        $this->skipIf(!$this->connection->driver() instanceof \Cake\Database\Driver\Mysql);
+        $table = TableRegistry::get('articles');
+
+        $query = $table->query();
+        $result = $query->update($query->newExpr('articles, authors'))
+            ->set(['title' => 'First'])
+            ->where(['articles.author_id = authors.id'])
+            ->andWhere(['authors.name' => 'mariano'])
+            ->execute();
+
+        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertTrue($result->rowCount() > 0);
+    }
+
+    /**
      * Test insert method.
      *
      * @return void
