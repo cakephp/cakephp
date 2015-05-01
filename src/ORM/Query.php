@@ -749,7 +749,7 @@ class Query extends DatabaseQuery implements JsonSerializable
      */
     public function update($table = null)
     {
-        $table = $this->repository()->table();
+        $table = $table ?: $this->repository()->table();
         return parent::update($table);
     }
 
