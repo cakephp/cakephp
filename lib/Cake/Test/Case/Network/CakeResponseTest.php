@@ -404,7 +404,7 @@ class CakeResponseTest extends CakeTestCase {
 	public function testHttpCodes() {
 		$response = new CakeResponse();
 		$result = $response->httpCodes();
-		$this->assertEquals(40, count($result));
+		$this->assertEquals(41, count($result));
 
 		$result = $response->httpCodes(100);
 		$expected = array(100 => 'Continue');
@@ -417,7 +417,7 @@ class CakeResponseTest extends CakeTestCase {
 
 		$result = $response->httpCodes($codes);
 		$this->assertTrue($result);
-		$this->assertEquals(42, count($response->httpCodes()));
+		$this->assertEquals(43, count($response->httpCodes()));
 
 		$result = $response->httpCodes(381);
 		$expected = array(381 => 'Unicorn Moved');
@@ -426,7 +426,7 @@ class CakeResponseTest extends CakeTestCase {
 		$codes = array(404 => 'Sorry Bro');
 		$result = $response->httpCodes($codes);
 		$this->assertTrue($result);
-		$this->assertEquals(42, count($response->httpCodes()));
+		$this->assertEquals(43, count($response->httpCodes()));
 
 		$result = $response->httpCodes(404);
 		$expected = array(404 => 'Sorry Bro');
