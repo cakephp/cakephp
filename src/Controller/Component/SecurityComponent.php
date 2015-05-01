@@ -306,7 +306,7 @@ class SecurityComponent extends Component
         $multi = [];
 
         foreach ($fieldList as $i => $key) {
-            if (preg_match('/(\.\d){1,10}$/', $key)) {
+            if (preg_match('/(\.\d+){1,10}$/', $key)) {
                 $multi[$i] = preg_replace('/(\.\d+){1,10}$/', '', $key);
                 unset($fieldList[$i]);
             } else {
