@@ -901,9 +901,16 @@ class HtmlHelper extends AppHelper {
 				if (is_array($cell)) {
 					$cellOptions = $cell[1];
 					$cell = $cell[0];
-				} elseif ($useCount) {
-					$cellOptions['class'] = 'column-' . ++$i;
 				}
+
+				if ($useCount) {
+					if (isset($cellOptions['class'])) {
+						$cellOptions['class'] .= ' column-' . ++$i;
+					} else {
+						$cellOptions['class'] = 'column-' . ++$i;
+					}
+				}
+
 				$cellsOut[] = sprintf($this->_tags['tablecell'], $this->_parseAttributes($cellOptions), $cell);
 			}
 			$options = $this->_parseAttributes($count % 2 ? $oddTrOptions : $evenTrOptions);
