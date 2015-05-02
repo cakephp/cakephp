@@ -96,7 +96,78 @@ class XmlViewTest extends CakeTestCase {
 		$this->assertFalse(isset($View->Html), 'No helper loaded.');
 	}
 
+
 /**
+ * Test that rendering with _serialize respects XML options.
+ *
+ * @return void
+ */
+	public function testRenderSerializeWithOptions() {
+		$Request = new CakeRequest();
+		$Response = new CakeResponse();
+		$Controller = new Controller($Request, $Response);
+		$data = [
+			'_serialize' => ['tags'],
+			'_xmlOptions' => ['format' => 'attributes'],
+			'tags' => [
+				'tag' => [
+					[
+						'id' => '1',
+						'name' => 'defect'
+					],
+					[
+						'id' => '2',
+						'name' => 'enhancement'
+					]
+				]
+			]
+		];
+		$Controller->set($data);
+		$Controller->viewClass = 'Xml';
+		$View = new XmlView($Controller);
+		$result = $View->render();
+
+		$expected = Xml::build(['response' => ['tags' => $data['tags']]], $data['_xmlOptions'])->asXML();
+		$this->assertSame($expected, $result);
+	}
+
+/**
+ * Test that rendering with _serialize can work with string setting.
+ *
+ * @return void
+ */
+	public function testRenderSerializeWithString() {
+		$Request = new CakeRequest();
+		$Response = new CakeResponse();
+		$Controller = new Controller($Request, $Response);
+		$data = [
+			'_serialize' => 'tags',
+			'_xmlOptions' => ['format' => 'attributes'],
+			'tags' => [
+				'tags' => [
+					'tag' => [
+						[
+							'id' => '1',
+							'name' => 'defect'
+						],
+						[
+							'id' => '2',
+							'name' => 'enhancement'
+						]
+					]
+				]
+			]
+		];
+		$Controller->set($data);
+		$Controller->viewClass = 'Xml';
+		$View = new XmlView($Controller);
+		$result = $View->render();
+
+		$expected = Xml::build($data['tags'], $data['_xmlOptions'])->asXML();
+		$this->assertSame($expected, $result);
+	}
+
+	/**
  * Test render with an array in _serialize
  *
  * @return void
