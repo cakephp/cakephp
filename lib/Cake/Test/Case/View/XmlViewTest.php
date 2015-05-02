@@ -96,7 +96,6 @@ class XmlViewTest extends CakeTestCase {
 		$this->assertFalse(isset($View->Html), 'No helper loaded.');
 	}
 
-
 /**
  * Test that rendering with _serialize respects XML options.
  *
@@ -167,7 +166,7 @@ class XmlViewTest extends CakeTestCase {
 		$this->assertSame($expected, $result);
 	}
 
-	/**
+/**
  * Test render with an array in _serialize
  *
  * @return void
