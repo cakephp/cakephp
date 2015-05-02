@@ -106,28 +106,28 @@ class XmlViewTest extends CakeTestCase {
 		$Request = new CakeRequest();
 		$Response = new CakeResponse();
 		$Controller = new Controller($Request, $Response);
-		$data = [
-			'_serialize' => ['tags'],
-			'_xmlOptions' => ['format' => 'attributes'],
-			'tags' => [
-				'tag' => [
-					[
+		$data = array(
+			'_serialize' => array('tags'),
+			'_xmlOptions' => array('format' => 'attributes'),
+			'tags' => array(
+				'tag' => array(
+					array(
 						'id' => '1',
 						'name' => 'defect'
-					],
-					[
+					),
+					array(
 						'id' => '2',
 						'name' => 'enhancement'
-					]
-				]
-			]
-		];
+					)
+				)
+			)
+		);
 		$Controller->set($data);
 		$Controller->viewClass = 'Xml';
 		$View = new XmlView($Controller);
 		$result = $View->render();
 
-		$expected = Xml::build(['response' => ['tags' => $data['tags']]], $data['_xmlOptions'])->asXML();
+		$expected = Xml::build(array('response' => array('tags' => $data['tags'])), $data['_xmlOptions'])->asXML();
 		$this->assertSame($expected, $result);
 	}
 
@@ -140,24 +140,24 @@ class XmlViewTest extends CakeTestCase {
 		$Request = new CakeRequest();
 		$Response = new CakeResponse();
 		$Controller = new Controller($Request, $Response);
-		$data = [
+		$data = array(
 			'_serialize' => 'tags',
-			'_xmlOptions' => ['format' => 'attributes'],
-			'tags' => [
-				'tags' => [
-					'tag' => [
-						[
+			'_xmlOptions' => array('format' => 'attributes'),
+			'tags' => array(
+				'tags' => array(
+					'tag' => array(
+						array(
 							'id' => '1',
 							'name' => 'defect'
-						],
-						[
+						),
+						array(
 							'id' => '2',
 							'name' => 'enhancement'
-						]
-					]
-				]
-			]
-		];
+						)
+					)
+				)
+			)
+		);
 		$Controller->set($data);
 		$Controller->viewClass = 'Xml';
 		$View = new XmlView($Controller);
