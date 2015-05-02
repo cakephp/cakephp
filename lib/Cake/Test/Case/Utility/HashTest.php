@@ -847,6 +847,8 @@ class HashTest extends CakeTestCase {
 			'2300000918020101' => array('name' => 'Mr. Numeric'),
 			'390000096AB30001' => array('name' => 'Mrs. Alphanumeric'),
 			'stuff' => array('name' => 'Ms. Word'),
+			123 => array('name' => 'Mr. Number'),
+			true => array('name' => 'Ms. Bool'),
 		);
 		$result = Hash::extract($data, '{*}.name');
 		$expected = array(
@@ -854,6 +856,8 @@ class HashTest extends CakeTestCase {
 			'Mr. Numeric',
 			'Mrs. Alphanumeric',
 			'Ms. Word',
+			'Mr. Number',
+			'Ms. Bool',
 		);
 		$this->assertEquals($expected, $result);
 	}
