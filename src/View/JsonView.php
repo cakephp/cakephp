@@ -147,6 +147,10 @@ class JsonView extends View
     /**
      * Serialize view vars
      *
+     * ### Special parameters
+     * `_jsonOptions` You can set custom options for json_encode() this way,
+     *   e.g. `JSON_HEX_TAG | JSON_HEX_APOS`.
+     *
      * @param array|string $serialize The name(s) of the view variable(s) that need(s) to be serialized
      * @return string The serialized data
      */
