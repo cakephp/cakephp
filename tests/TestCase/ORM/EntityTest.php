@@ -72,6 +72,34 @@ class EntityTest extends TestCase
     }
 
     /**
+     * Test extractOriginal()
+     *
+     * @return void
+     */
+    public function testExtractOriginal()
+    {
+        $entity = new Entity([
+            'id' => 1,
+            'title' => 'original',
+            'body' => 'no'
+        ], ['markNew' => true]);
+        $entity->set('body', 'updated body');
+        $result = $entity->extractOriginal(['id', 'title', 'body']);
+        $expected = [
+            'id' => 1,
+            'title' => 'original',
+            'body' => 'no'
+        ];
+        $this->assertEquals($expected, $result);
+
+        $result = $entity->extractOriginalDirty(['id', 'title', 'body']);
+        $expected = [
+            'body' => 'no',
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Tests setting a single property using a setter function
      *
      * @return void

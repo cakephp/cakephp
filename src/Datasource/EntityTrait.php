@@ -526,12 +526,37 @@ trait EntityTrait
 
     /**
      * Returns an array with the requested original properties
-     * stored in this entity, indexed by property name
+     * stored in this entity, indexed by property name.
+     *
+     * Properties that have not changed will be included in the
+     * return of this method.
      *
      * @param array $properties List of properties to be returned
      * @return array
      */
     public function extractOriginal(array $properties)
+    {
+        $result = [];
+        foreach ($properties as $property) {
+            $original = $this->getOriginal($property);
+            if ($original !== null) {
+                $result[$property] = $original;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Returns an array with only the original properties
+     * stored in this entity, indexed by property name.
+     *
+     * This method will only return properties that have been modified.
+     * Unchanged properties will be omited.
+     *
+     * @param array $properties List of properties to be returned
+     * @return array
+     */
+    public function extractOriginalDirty(array $properties)
     {
         $result = [];
         foreach ($properties as $property) {
