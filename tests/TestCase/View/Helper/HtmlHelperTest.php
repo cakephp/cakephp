@@ -1821,6 +1821,21 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->tableCells($tr, ['class' => 'odd'], ['class' => 'even'], false, false);
         $expected = "<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"even\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>\n<tr class=\"odd\"><td>td content 1</td> <td>td content 2</td> <td>td content 3</td></tr>";
         $this->assertEquals($expected, $result);
+
+        $tr = [
+            'td content 1',
+            'td content 2',
+            ['td content 3', ['class' => 'foo']]
+        ];
+        $result = $this->Html->tableCells($tr, null, null, true);
+        $expected = [
+            '<tr',
+            ['td' => ['class' => 'column-1']], 'td content 1', '/td',
+            ['td' => ['class' => 'column-2']], 'td content 2', '/td',
+            ['td' => ['class' => 'foo column-3']], 'td content 3', '/td',
+            '/tr'
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**
