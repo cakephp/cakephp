@@ -846,6 +846,33 @@ class HashTest extends TestCase
     }
 
     /**
+     * Test wildcard matcher
+     *
+     * @return void
+     */
+    public function testExtractWildcard()
+    {
+        $data = [
+            '02000009C5560001' => ['name' => 'Mr. Alphanumeric'],
+            '2300000918020101' => ['name' => 'Mr. Numeric'],
+            '390000096AB30001' => ['name' => 'Mrs. Alphanumeric'],
+            'stuff' => ['name' => 'Ms. Word'],
+            123 => ['name' => 'Mr. Number'],
+            true => ['name' => 'Ms. Bool'],
+        ];
+        $result = Hash::extract($data, '{*}.name');
+        $expected = [
+            'Mr. Alphanumeric',
+            'Mr. Numeric',
+            'Mrs. Alphanumeric',
+            'Ms. Word',
+            'Mr. Number',
+            'Ms. Bool',
+        ];
+        $this->assertEquals($expected, $result);
+   }
+
+    /**
      * Test the attribute presense selector.
      *
      * @return void
