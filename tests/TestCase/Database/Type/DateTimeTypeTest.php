@@ -65,6 +65,7 @@ class DateTimeTypeTest extends TestCase
     public function testToPHP()
     {
         $this->assertNull($this->type->toPHP(null, $this->driver));
+        $this->assertNull($this->type->toPHP('0000-00-00 00:00:00', $this->driver));
 
         $result = $this->type->toPHP('2001-01-04 12:13:14', $this->driver);
         $this->assertInstanceOf('Cake\I18n\Time', $result);

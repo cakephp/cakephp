@@ -681,6 +681,12 @@ class ViewTest extends TestCase
         $result = $View->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
 
+        $View->request->params['prefix'] = 'foo_prefix/bar_prefix';
+        $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS .
+            'FooPrefix' . DS . 'Layout' . DS . 'nested_prefix_cascade.ctp';
+        $result = $View->getLayoutFileName('nested_prefix_cascade');
+        $this->assertPathEquals($expected, $result);
+
         // Fallback to app's layout
         $View->request->params['prefix'] = 'Admin';
         $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS .
@@ -837,6 +843,10 @@ class ViewTest extends TestCase
         $this->View->request->params['prefix'] = 'FooPrefix/BarPrefix';
         $result = $this->View->element('prefix_element');
         $this->assertEquals('this is a nested prefixed test element', $result);
+
+        $this->View->request->params['prefix'] = 'FooPrefix/BarPrefix';
+        $result = $this->View->element('prefix_element_in_parent');
+        $this->assertEquals('this is a nested prefixed test element in first level element', $result);
     }
 
     /**

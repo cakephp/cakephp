@@ -56,6 +56,9 @@ class TableTest extends TestCase
         'core.tags',
         'core.articles_tags',
         'core.site_articles',
+        'core.members',
+        'core.groups',
+        'core.groups_members',
     ];
 
     /**
@@ -1173,6 +1176,114 @@ class TableTest extends TestCase
                 2 => 'nate',
                 4 => 'garrett'
             ]
+        ];
+        $this->assertSame($expected, $query->toArray());
+    }
+
+    /**
+     * Test that find('list') only selects required fields.
+     *
+     * @return void
+     */
+    public function testFindListSelectedFields()
+    {
+        $table = new Table([
+            'table' => 'users',
+            'connection' => $this->connection,
+        ]);
+        $table->displayField('username');
+
+        $query = $table->find('list');
+        $expected = ['id', 'username'];
+        $this->assertSame($expected, $query->clause('select'));
+
+        $query = $table->find('list', ['valueField' => function ($row) {
+            return $row->username;
+        }]);
+        $this->assertEmpty($query->clause('select'));
+
+        $expected = ['odd' => new QueryExpression('id % 2'), 'id', 'username'];
+        $query = $table->find('list', [
+            'fields' => $expected,
+            'groupField' => 'odd',
+        ]);
+        $this->assertSame($expected, $query->clause('select'));
+
+        $articles = new Table([
+            'table' => 'articles',
+            'connection' => $this->connection,
+        ]);
+
+        $query = $articles->find('list', ['groupField' => 'author_id']);
+        $expected = ['id', 'title', 'author_id'];
+        $this->assertSame($expected, $query->clause('select'));
+
+        $query = $articles->find('list', ['valueField' => ['author_id', 'title']])
+            ->order('id');
+        $expected = ['id', 'author_id', 'title'];
+        $this->assertSame($expected, $query->clause('select'));
+
+        $expected = [
+            1 => '1;First Article',
+            2 => '3;Second Article',
+            3 => '1;Third Article',
+        ];
+        $this->assertSame($expected, $query->toArray());
+    }
+
+    /**
+     * test that find('list') does not auto add fields to select if using virtual properties
+     *
+     * @return void
+     */
+    public function testFindListWithVirtualField()
+    {
+        $table = new Table([
+            'table' => 'users',
+            'connection' => $this->connection,
+            'entityClass' => '\TestApp\Model\Entity\VirtualUser'
+        ]);
+        $table->displayField('bonus');
+
+        $query = $table
+            ->find('list')
+            ->order('id');
+        $this->assertEmpty($query->clause('select'));
+
+        $expected = [
+            1 => 'bonus',
+            2 => 'bonus',
+            3 => 'bonus',
+            4 => 'bonus'
+        ];
+        $this->assertSame($expected, $query->toArray());
+
+        $query = $table->find('list', ['groupField' => 'odd']);
+        $this->assertEmpty($query->clause('select'));
+    }
+
+    /**
+     * Test find('list') with value field from associated table
+     *
+     * @return void
+     */
+    public function testFindListWithAssociatedTable()
+    {
+        $articles = new Table([
+            'table' => 'articles',
+            'connection' => $this->connection,
+        ]);
+
+        $articles->belongsTo('Authors');
+        $query = $articles->find('list', ['valueField' => 'author.name'])
+            ->contain(['Authors'])
+            ->order('articles.id');
+        $this->assertEmpty($query->clause('select'));
+
+        $expected = [
+            1 => 'mariano',
+            2 => 'larry',
+            3 => 'mariano',
         ];
         $this->assertSame($expected, $query->toArray());
     }
@@ -2489,6 +2600,37 @@ class TableTest extends TestCase
         $result = $Authors->delete($author);
 
         $this->assertTrue($result);
+    }
+
+    /**
+     * Test that cascading associations are deleted first.
+     *
+     * @return void
+     */
+    public function testDeleteAssociationsCascadingCallbacksOrder()
+    {
+        $groups = TableRegistry::get('Groups');
+        $members = TableRegistry::get('Members');
+        $groupsMembers = TableRegistry::get('GroupsMembers');
+
+        $groups->belongsToMany('Members');
+        $groups->hasMany('GroupsMembers', [
+            'dependent' => true,
+            'cascadeCallbacks' => true,
+        ]);
+        $groupsMembers->belongsTo('Members');
+        $groupsMembers->addBehavior('CounterCache', [
+            'Members' => ['group_count']
+        ]);
+
+        $member = $members->get(1);
+        $this->assertEquals(2, $member->group_count);
+
+        $group = $groups->get(1);
+        $groups->delete($group);
+
+        $member = $members->get(1);
+        $this->assertEquals(1, $member->group_count);
     }
 
     /**

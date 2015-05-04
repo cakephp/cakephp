@@ -46,6 +46,12 @@ class TimeTypeTest extends TestCase
     {
         $this->assertNull($this->type->toPHP(null, $this->driver));
 
+        $result = $this->type->toPHP('00:00:00', $this->driver);
+        $this->assertEquals('00', $result->format('s'));
+
+        $result = $this->type->toPHP('00:00:15', $this->driver);
+        $this->assertEquals('15', $result->format('s'));
+
         $result = $this->type->toPHP('16:30:15', $this->driver);
         $this->assertInstanceOf('DateTime', $result);
         $this->assertEquals('16', $result->format('H'));

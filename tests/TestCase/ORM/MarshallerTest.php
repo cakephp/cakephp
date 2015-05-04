@@ -716,6 +716,24 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test many() with some invalid data
+     *
+     * @return void
+     */
+    public function testManyInvalidData()
+    {
+        $data = [
+            ['id' => 2, 'comment' => 'Changed 2', 'user_id' => 2],
+            ['id' => 1, 'comment' => 'Changed 1', 'user_id' => 1],
+            '_csrfToken' => 'abc123',
+        ];
+        $marshall = new Marshaller($this->comments);
+        $result = $marshall->many($data);
+
+        $this->assertCount(2, $result);
+    }
+
+    /**
      * test many() with nested associations.
      *
      * @return void
@@ -886,6 +904,40 @@ class MarshallerTest extends TestCase
             'author_id' => 1
         ];
         $this->assertEquals($expected, $result->toArray());
+    }
+
+    /**
+     * Test merge when fieldList contains an association.
+     *
+     * @return void
+     */
+    public function testMergeWithSingleAssociationAndFieldLists()
+    {
+        $user = new Entity([
+           'username' => 'user',
+        ]);
+        $article = new Entity([
+           'title' => 'title for post',
+           'body' => 'body',
+           'user' => $user,
+        ]);
+
+        $user->accessible('*', true);
+        $article->accessible('*', true);
+
+        $data = [
+            'title' => 'Chelsea',
+            'user' => [
+                'username' => 'dee'
+            ]
+        ];
+
+        $marshall = new Marshaller($this->articles);
+        $marshall->merge($article, $data, [
+            'fieldList' => ['title', 'user'],
+            'associated' => ['Users' => []]
+        ]);
+        $this->assertSame($user, $article->user);
     }
 
     /**
@@ -1476,6 +1528,32 @@ class MarshallerTest extends TestCase
         $this->assertEquals('Changed 2', $result[1]->comment);
         $this->assertTrue($result[0]->dirty('user_id'));
         $this->assertFalse($result[1]->dirty('user_id'));
+    }
+
+    /**
+     * Test mergeMany() with some invalid data
+     *
+     * @return void
+     */
+    public function testMergeManyInvalidData()
+    {
+        $entities = [
+            new OpenEntity(['id' => 1, 'comment' => 'First post', 'user_id' => 2]),
+            new OpenEntity(['id' => 2, 'comment' => 'Second post', 'user_id' => 2])
+        ];
+        $entities[0]->clean();
+        $entities[1]->clean();
+
+        $data = [
+            ['id' => 2, 'comment' => 'Changed 2', 'user_id' => 2],
+            ['id' => 1, 'comment' => 'Changed 1', 'user_id' => 1],
+            '_csrfToken' => 'abc123',
+        ];
+        $marshall = new Marshaller($this->comments);
+        $result = $marshall->mergeMany($entities, $data);
+
+        $this->assertSame($entities[0], $result[0]);
+        $this->assertSame($entities[1], $result[1]);
     }
 
     /**

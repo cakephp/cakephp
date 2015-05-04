@@ -439,7 +439,7 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->next('Next', ['model' => 'Missing']);
         $expected = [
             'li' => ['class' => 'next disabled'],
-            'a' => ['href' => ''],
+            'a' => ['href' => '', 'onclick' => 'return false;'],
             'Next',
             '/a',
             '/li'
@@ -449,7 +449,7 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->prev('Prev', ['model' => 'Missing']);
         $expected = [
             'li' => ['class' => 'prev disabled'],
-            'a' => ['href' => ''],
+            'a' => ['href' => '', 'onclick' => 'return false;'],
             'Prev',
             '/a',
             '/li'
@@ -884,7 +884,7 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->prev('<< Previous');
         $expected = [
             'li' => ['class' => 'prev disabled'],
-            'a' => ['href' => ''],
+            'a' => ['href' => '', 'onclick' => 'return false;'],
             '&lt;&lt; Previous',
             '/a',
             '/li'
@@ -894,7 +894,7 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->prev('<< Previous', ['disabledTitle' => 'Prev']);
         $expected = [
             'li' => ['class' => 'prev disabled'],
-            'a' => ['href' => ''],
+            'a' => ['href' => '', 'onclick' => 'return false;'],
             'Prev',
             '/a',
             '/li'
@@ -991,7 +991,7 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->next('Next >>');
         $expected = [
             'li' => ['class' => 'next disabled'],
-            'a' => ['href' => ''],
+            'a' => ['href' => '', 'onclick' => 'return false;'],
             'Next &gt;&gt;',
             '/a',
             '/li'
@@ -1001,7 +1001,7 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->next('Next >>', ['disabledTitle' => 'Next']);
         $expected = [
             'li' => ['class' => 'next disabled'],
-            'a' => ['href' => ''],
+            'a' => ['href' => '', 'onclick' => 'return false;'],
             'Next',
             '/a',
             '/li'
@@ -1052,13 +1052,13 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->prev('Prev', [
             'model' => 'Client'
         ]);
-        $expected = '<li class="prev disabled"><a href="">Prev</a></li>';
+        $expected = '<li class="prev disabled"><a href="" onclick="return false;">Prev</a></li>';
         $this->assertEquals($expected, $result);
 
         $result = $this->Paginator->next('Next', [
             'model' => 'Server'
         ]);
-        $expected = '<li class="next disabled"><a href="">Next</a></li>';
+        $expected = '<li class="next disabled"><a href="" onclick="return false;">Next</a></li>';
         $this->assertEquals($expected, $result);
 
         $result = $this->Paginator->prev('Prev', [

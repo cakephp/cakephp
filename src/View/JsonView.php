@@ -29,7 +29,9 @@ use Cake\Network\Response;
  *
  * In your controller, you could do the following:
  *
- * `$this->set(['posts' => $posts, '_serialize' => 'posts']);`
+ * ```
+ * $this->set(['posts' => $posts, '_serialize' => 'posts']);
+ * ```
  *
  * When the view is rendered, the `$posts` view variable will be serialized
  * into JSON.
@@ -175,9 +177,8 @@ class JsonView extends View
         }
 
         if (Configure::read('debug')) {
-            return json_encode($data, $jsonOptions | JSON_PRETTY_PRINT);
+            $jsonOptions = $jsonOptions | JSON_PRETTY_PRINT;
         }
-
         return json_encode($data, $jsonOptions);
     }
 }

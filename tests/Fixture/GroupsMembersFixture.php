@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         1.2.0
+ * @since         3.0.2
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\Fixture;
@@ -17,10 +17,10 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Class SessionFixture
+ * Class GroupsMembersFixture
  *
  */
-class SessionsFixture extends TestFixture
+class GroupsMembersFixture extends TestFixture
 {
 
     /**
@@ -29,9 +29,9 @@ class SessionsFixture extends TestFixture
      * @var array
      */
     public $fields = [
-        'id' => ['type' => 'string', 'length' => 128],
-        'data' => ['type' => 'binary', 'null' => true],
-        'expires' => ['type' => 'integer', 'length' => 11, 'null' => true],
+        'id' => ['type' => 'integer'],
+        'group_id' => ['type' => 'integer'],
+        'member_id' => ['type' => 'integer'],
         '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
     ];
 
@@ -40,5 +40,8 @@ class SessionsFixture extends TestFixture
      *
      * @var array
      */
-    public $records = [];
+    public $records = [
+        ['group_id' => 1, 'member_id' => 1],
+        ['group_id' => 2, 'member_id' => 1],
+    ];
 }

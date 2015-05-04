@@ -1165,6 +1165,27 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests that the sortBy method does not die when something that is not a
+     * collection is passed
+     *
+     * @return void
+     */
+    public function testComplexSortBy()
+    {
+        $results = collection([3, 7])
+            ->unfold(function ($value) {
+                return [
+                    ['sorting' => $value * 2],
+                    ['sorting' => $value * 2]
+                ];
+            })
+            ->sortBy('sorting')
+            ->extract('sorting')
+            ->toList();
+        $this->assertEquals([14, 14, 6, 6], $results);
+    }
+
+    /**
      * Tests __debugInfo() or debug() usage
      *
      * @return void

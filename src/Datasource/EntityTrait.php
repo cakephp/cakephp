@@ -100,8 +100,8 @@ trait EntityTrait
      * property name points to a boolean indicating its status. An empty array
      * means no properties are accessible
      *
-     * The special property '*' can also be mapped, meaning that any other property
-     * not defined in the map will take its value. For example, `'*' => true`
+     * The special property '\*' can also be mapped, meaning that any other property
+     * not defined in the map will take its value. For example, `'\*' => true`
      * means that any property not defined in the map will be accessible by default
      *
      * @var array
@@ -754,7 +754,7 @@ trait EntityTrait
 
     /**
      * Stores whether or not a property value can be changed or set in this entity.
-     * The special property '*' can also be marked as accessible or protected, meaning
+     * The special property `*` can also be marked as accessible or protected, meaning
      * that any other property specified before will take its value. For example
      * `$entity->accessible('*', true)`  means that any property not specified already
      * will be accessible by default.
