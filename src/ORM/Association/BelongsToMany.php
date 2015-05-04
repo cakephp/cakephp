@@ -1002,12 +1002,12 @@ class BelongsToMany extends Association
     {
         if ($name === null) {
             if (empty($this->_junctionTableName)) {
-                $aliases = array_map('\Cake\Utility\Inflector::underscore', [
-                    $this->source()->alias(),
-                    $this->target()->alias()
+                $tablesNames = array_map('\Cake\Utility\Inflector::underscore', [
+                    $this->source()->table(),
+                    $this->target()->table()
                 ]);
-                sort($aliases);
-                $this->_junctionTableName = implode('_', $aliases);
+                sort($tablesNames);
+                $this->_junctionTableName = implode('_', $tablesNames);
             }
             return $this->_junctionTableName;
         }
