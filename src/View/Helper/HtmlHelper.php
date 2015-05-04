@@ -871,9 +871,9 @@ class HtmlHelper extends Helper
     /**
      * Returns a formatted string of table rows (TR's with TD's in them).
      *
-     * @param array $data Array of table data
-     * @param array $oddTrOptions HTML options for odd TR elements if true useCount is used
-     * @param array $evenTrOptions HTML options for even TR elements
+     * @param array|string $data Array of table data
+     * @param array|bool|null $oddTrOptions HTML options for odd TR elements if true useCount is used
+     * @param array|bool|null $evenTrOptions HTML options for even TR elements
      * @param bool $useCount adds class "column-$i"
      * @param bool $continueOddEven If false, will use a non-static $count variable,
      *    so that the odd/even count is reset to zero just for that call.
@@ -912,9 +912,16 @@ class HtmlHelper extends Helper
                 if (is_array($cell)) {
                     $cellOptions = $cell[1];
                     $cell = $cell[0];
-                } elseif ($useCount) {
-                    $cellOptions['class'] = 'column-' . ++$i;
                 }
+
+                if ($useCount) {
+                    if (isset($cellOptions['class'])) {
+                        $cellOptions['class'] .= ' column-' . ++$i;
+                    } else {
+                        $cellOptions['class'] = 'column-' . ++$i;
+                    }
+                }
+
                 $cellsOut[] = $this->formatTemplate('tablecell', [
                     'attrs' => $this->templater()->formatAttributes($cellOptions),
                     'content' => $cell

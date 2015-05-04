@@ -163,7 +163,7 @@ class StreamTest extends TestCase
         $this->stream->send($request, $options);
         $result = $this->stream->contextOptions();
         $expected = [
-            'CN_match' => 'localhost.com',
+            'peer_name' => 'localhost.com',
             'verify_peer' => true,
             'verify_depth' => 9000,
             'allow_self_signed' => false,
@@ -171,6 +171,7 @@ class StreamTest extends TestCase
         foreach ($expected as $k => $v) {
             $this->assertEquals($v, $result[$k]);
         }
+        $this->assertTrue(is_readable($result['cafile']));
     }
 
     /**

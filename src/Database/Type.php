@@ -106,6 +106,18 @@ class Type
     }
 
     /**
+     * Returns a Type object capable of converting a type identified by $name
+     *
+     * @param string $name The type identifier you want to set.
+     * @param \Cake\Databse\Type $instance The type instance you want to set.
+     * @return void
+     */
+    public static function set($name, Type $instance)
+    {
+        static::$_builtTypes[$name] = $instance;
+    }
+
+    /**
      * Registers a new type identifier and maps it to a fully namespaced classname,
      * If called with no arguments it will return current types map array
      * If $className is omitted it will return mapped class for $type

@@ -47,13 +47,6 @@ class RequestHandlerComponent extends Component
     public $enabled = true;
 
     /**
-     * Holds the reference to Controller::$request
-     *
-     * @var \Cake\Network\Request
-     */
-    public $request;
-
-    /**
      * Holds the reference to Controller::$response
      *
      * @var \Cake\Network\Response
@@ -80,7 +73,7 @@ class RequestHandlerComponent extends Component
      *
      * These are merged with user-provided config when the component is used.
      *
-     * - `checkHttpCache` - Whether to check for http cache.
+     * - `checkHttpCache` - Whether to check for HTTP cache.
      * - `viewClassMap` - Mapping between type and view class.
      *
      * @var array
@@ -152,18 +145,7 @@ class RequestHandlerComponent extends Component
     public function initialize(array $config)
     {
         $controller = $this->_registry->getController();
-        $request = $this->request = $controller->request;
-        $this->response = $controller->response;
-
-        if (isset($request->params['_ext'])) {
-            $this->ext = $request->params['_ext'];
-        }
-        if (empty($this->ext) || in_array($this->ext, ['html', 'htm'])) {
-            $this->_setExtension($request, $this->response);
-        }
-        if (empty($this->ext) && $request->is('ajax')) {
-            $this->ext = 'ajax';
-        }
+        $this->response =& $controller->response;
 
         if ($this->_config['viewClassMap']) {
             $this->viewClassMap($this->_config['viewClassMap']);
@@ -232,7 +214,19 @@ class RequestHandlerComponent extends Component
     public function startup(Event $event)
     {
         $controller = $event->subject();
-        $controller->request->params['isAjax'] = $this->request->is('ajax');
+        $request = $controller->request;
+
+        if (isset($request->params['_ext'])) {
+            $this->ext = $request->params['_ext'];
+        }
+        if (empty($this->ext) || in_array($this->ext, ['html', 'htm'])) {
+            $this->_setExtension($request, $this->response);
+        }
+        if (empty($this->ext) && $request->is('ajax')) {
+            $this->ext = 'ajax';
+        }
+
+        $request->params['isAjax'] = $this->request->is('ajax');
         $isRecognized = (
             !in_array($this->ext, ['html', 'htm']) &&
             $this->response->getMimeType($this->ext)
@@ -247,7 +241,7 @@ class RequestHandlerComponent extends Component
         foreach ($this->_inputTypeMap as $type => $handler) {
             if ($this->requestedWith($type)) {
                 $input = call_user_func_array([$controller->request, 'input'], $handler);
-                $controller->request->data = $input;
+                $request->data = $input;
             }
         }
     }

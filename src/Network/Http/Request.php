@@ -175,11 +175,11 @@ class Request extends Message
     }
 
     /**
-     * Get/Set http version.
+     * Get/Set HTTP version.
      *
-     * @param string|null $version The http version.
+     * @param string|null $version The HTTP version.
      *
-     * @return $this|string Either $this or the http version.
+     * @return $this|string Either $this or the HTTP version.
      */
     public function version($version = null)
     {

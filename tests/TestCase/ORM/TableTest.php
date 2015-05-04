@@ -1181,6 +1181,114 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test that find('list') only selects required fields.
+     *
+     * @return void
+     */
+    public function testFindListSelectedFields()
+    {
+        $table = new Table([
+            'table' => 'users',
+            'connection' => $this->connection,
+        ]);
+        $table->displayField('username');
+
+        $query = $table->find('list');
+        $expected = ['id', 'username'];
+        $this->assertSame($expected, $query->clause('select'));
+
+        $query = $table->find('list', ['valueField' => function ($row) {
+            return $row->username;
+        }]);
+        $this->assertEmpty($query->clause('select'));
+
+        $expected = ['odd' => new QueryExpression('id % 2'), 'id', 'username'];
+        $query = $table->find('list', [
+            'fields' => $expected,
+            'groupField' => 'odd',
+        ]);
+        $this->assertSame($expected, $query->clause('select'));
+
+        $articles = new Table([
+            'table' => 'articles',
+            'connection' => $this->connection,
+        ]);
+
+        $query = $articles->find('list', ['groupField' => 'author_id']);
+        $expected = ['id', 'title', 'author_id'];
+        $this->assertSame($expected, $query->clause('select'));
+
+        $query = $articles->find('list', ['valueField' => ['author_id', 'title']])
+            ->order('id');
+        $expected = ['id', 'author_id', 'title'];
+        $this->assertSame($expected, $query->clause('select'));
+
+        $expected = [
+            1 => '1;First Article',
+            2 => '3;Second Article',
+            3 => '1;Third Article',
+        ];
+        $this->assertSame($expected, $query->toArray());
+    }
+
+    /**
+     * test that find('list') does not auto add fields to select if using virtual properties
+     *
+     * @return void
+     */
+    public function testFindListWithVirtualField()
+    {
+        $table = new Table([
+            'table' => 'users',
+            'connection' => $this->connection,
+            'entityClass' => '\TestApp\Model\Entity\VirtualUser'
+        ]);
+        $table->displayField('bonus');
+
+        $query = $table
+            ->find('list')
+            ->order('id');
+        $this->assertEmpty($query->clause('select'));
+
+        $expected = [
+            1 => 'bonus',
+            2 => 'bonus',
+            3 => 'bonus',
+            4 => 'bonus'
+        ];
+        $this->assertSame($expected, $query->toArray());
+
+        $query = $table->find('list', ['groupField' => 'odd']);
+        $this->assertEmpty($query->clause('select'));
+    }
+
+    /**
+     * Test find('list') with value field from associated table
+     *
+     * @return void
+     */
+    public function testFindListWithAssociatedTable()
+    {
+        $articles = new Table([
+            'table' => 'articles',
+            'connection' => $this->connection,
+        ]);
+
+        $articles->belongsTo('Authors');
+        $query = $articles->find('list', ['valueField' => 'author.name'])
+            ->contain(['Authors'])
+            ->order('articles.id');
+        $this->assertEmpty($query->clause('select'));
+
+        $expected = [
+            1 => 'mariano',
+            2 => 'larry',
+            3 => 'mariano',
+        ];
+        $this->assertSame($expected, $query->toArray());
+    }
+
+    /**
      * Test the default entityClass.
      *
      * @return void

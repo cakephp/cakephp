@@ -1538,6 +1538,27 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test update method.
+     *
+     * @return void
+     */
+    public function testUpdateWithTableExpression()
+    {
+        $this->skipIf(!$this->connection->driver() instanceof \Cake\Database\Driver\Mysql);
+        $table = TableRegistry::get('articles');
+
+        $query = $table->query();
+        $result = $query->update($query->newExpr('articles, authors'))
+            ->set(['title' => 'First'])
+            ->where(['articles.author_id = authors.id'])
+            ->andWhere(['authors.name' => 'mariano'])
+            ->execute();
+
+        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertTrue($result->rowCount() > 0);
+    }
+
+    /**
      * Test insert method.
      *
      * @return void
@@ -1723,6 +1744,32 @@ class QueryTest extends TestCase
             ->where(['id' => 1]);
 
         $query->all();
+    }
+
+    /**
+     * Integration test for query caching usigna  real cache engine and
+     * a formatResults callback
+     *
+     * @return void
+     */
+    public function testCacheIntegrationWithFormatResults()
+    {
+        $table = TableRegistry::get('Articles');
+        $query = new Query($this->connection, $table);
+        $cacher = new \Cake\Cache\Engine\FileEngine();
+        $cacher->init();
+
+        $query
+            ->select(['id', 'title'])
+            ->formatResults(function ($results) {
+                return $results->combine('id', 'title');
+            })
+            ->cache('my_key', $cacher);
+
+        $expected = $query->toArray();
+        $query = new Query($this->connection, $table);
+        $results = $query->cache('my_key', $cacher)->toArray();
+        $this->assertSame($expected, $results);
     }
 
     /**
@@ -2380,6 +2427,26 @@ class QueryTest extends TestCase
         $this->assertNull($copy->clause('offset'));
         $this->assertNull($copy->clause('limit'));
         $this->assertNull($copy->clause('order'));
+    }
+
+    /**
+     * test that cleanCopy retains bindings
+     *
+     * @return void
+     */
+    public function testCleanCopyRetainsBindings()
+    {
+        $table = TableRegistry::get('Articles');
+        $query = $table->find();
+        $query->offset(10)
+            ->limit(1)
+            ->where(['Articles.id BETWEEN :start AND :end'])
+            ->order(['Articles.id' => 'DESC'])
+            ->bind(':start', 1)
+            ->bind(':end', 2);
+        $copy = $query->cleanCopy();
+
+        $this->assertNotEmpty($copy->valueBinder()->bindings());
     }
 
     /**

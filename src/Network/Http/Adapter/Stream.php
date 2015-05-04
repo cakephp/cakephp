@@ -35,14 +35,14 @@ class Stream
     protected $_context;
 
     /**
-     * Array of options/content for the http stream context.
+     * Array of options/content for the HTTP stream context.
      *
      * @var array
      */
     protected $_contextOptions;
 
     /**
-     * Array of options/content for the ssl stream context.
+     * Array of options/content for the SSL stream context.
      *
      * @var array
      */
@@ -229,12 +229,12 @@ class Stream
             'ssl_passphrase',
         ];
         if (empty($options['ssl_cafile'])) {
-            $options['ssl_cafile'] = CAKE . 'config' . DS . 'cacert.pem';
+            $options['ssl_cafile'] = CORE_PATH . 'config' . DS . 'cacert.pem';
         }
         if (!empty($options['ssl_verify_host'])) {
             $url = $request->url();
             $host = parse_url($url, PHP_URL_HOST);
-            $this->_sslContextOptions['CN_match'] = $host;
+            $this->_sslContextOptions['peer_name'] = $host;
         }
         foreach ($sslOptions as $key) {
             if (isset($options[$key])) {

@@ -297,10 +297,10 @@ class TimeHelper extends Helper
     }
 
     /**
-     * Returns a formatted date string, given either a UNIX timestamp or a valid strtotime() date string.
+     * Returns a formatted date string, given either a Time instance,
+     * UNIX timestamp or a valid strtotime() date string.
      *
-     * This function also accepts a time string and a format string as first and second parameters.
-     * In that case this function behaves as a wrapper for Time::i18nFormat()
+     * This method is an alias for TimeHelper::i18nFormat().
      *
      * @param int|string|\DateTime $date UNIX timestamp, strtotime() valid string or DateTime object (or a date format string)
      * @param int|string|null $format date format string (or a UNIX timestamp, strtotime() valid string or DateTime object)

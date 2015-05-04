@@ -177,9 +177,8 @@ class JsonView extends View
         }
 
         if (Configure::read('debug')) {
-            return json_encode($data, $jsonOptions | JSON_PRETTY_PRINT);
+            $jsonOptions = $jsonOptions | JSON_PRETTY_PRINT;
         }
-
         return json_encode($data, $jsonOptions);
     }
 }

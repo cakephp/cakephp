@@ -242,8 +242,7 @@ class AuthComponent extends Component
     {
         $controller = $this->_registry->getController();
         $this->eventManager($controller->eventManager());
-        $this->request = $controller->request;
-        $this->response = $controller->response;
+        $this->response =& $controller->response;
         $this->session = $controller->request->session();
     }
 
@@ -321,8 +320,8 @@ class AuthComponent extends Component
      * of the last authenticator in the chain will be called. The authenticator can
      * handle sending response or redirection as appropriate and return `true` to
      * indicate no further action is necessary. If authenticator returns null this
-     * method redirects user to login action. If it's an ajax request and config
-     * `ajaxLogin` is specified that element is rendered else a 403 http status code
+     * method redirects user to login action. If it's an AJAX request and config
+     * `ajaxLogin` is specified that element is rendered else a 403 HTTP status code
      * is returned.
      *
      * @param \Cake\Controller\Controller $controller A reference to the controller object.

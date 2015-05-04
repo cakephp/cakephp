@@ -89,6 +89,7 @@ class Hash
      *
      * - `{n}` Matches any numeric key, or integer.
      * - `{s}` Matches any string key.
+     * - `{*}` Matches any value.
      * - `Foo` Matches any key with the exact same value.
      *
      * There are a number of attribute operators:
@@ -191,16 +192,16 @@ class Hash
      */
     protected static function _matchToken($key, $token)
     {
-        if ($token === '{n}') {
-            return is_numeric($key);
+        switch ($token) {
+            case '{n}':
+                return is_numeric($key);
+            case '{s}':
+                return is_string($key);
+            case '{*}':
+                return true;
+            default:
+                return is_numeric($token) ? ($key == $token) : $key === $token;
         }
-        if ($token === '{s}') {
-            return is_string($key);
-        }
-        if (is_numeric($token)) {
-            return ($key == $token);
-        }
-        return ($key === $token);
     }
 
     /**
