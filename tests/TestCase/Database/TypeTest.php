@@ -380,4 +380,16 @@ class TypeTest extends TestCase
         $driver = $this->getMock('\Cake\Database\Driver');
         $this->assertEquals(PDO::PARAM_STR, $type->toStatement($string, $driver));
     }
+
+    /**
+     * Test setting instances into the factory/registry.
+     *
+     * @return void
+     */
+    public function testSet()
+    {
+        $instance = $this->getMock('Cake\Database\Type');
+        Type::set('random', $instance);
+        $this->assertSame($instance, Type::build('random'));
+    }
 }
