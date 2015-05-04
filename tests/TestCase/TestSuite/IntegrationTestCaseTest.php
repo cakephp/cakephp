@@ -73,6 +73,18 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test building a request, with query parameters
+     *
+     * @return void
+     */
+    public function testRequestBuildingQueryParameters()
+    {
+        $request = $this->_buildRequest('/tasks/view?archived=yes', 'GET', []);
+
+        $this->assertEquals('/tasks/view?archived=yes', $request->here());
+        $this->assertEquals('yes', $request->query('archived'));
+    }
+    /**
      * Test sending get requests.
      *
      * @return void

@@ -350,11 +350,13 @@ abstract class IntegrationTestCase extends TestCase
         $session = Session::create($sessionConfig);
         $session->write($this->_session);
 
+        list ($url, $query) = $this->_url($url);
         $props = [
-            'url' => Router::url($url),
+            'url' => $url,
             'post' => $data,
             'cookies' => $this->_cookie,
             'session' => $session,
+            'query' => $query
         ];
         $env = [];
         if (isset($this->_request['headers'])) {
@@ -367,6 +369,25 @@ abstract class IntegrationTestCase extends TestCase
         $props['environment'] = $env;
         $props = Hash::merge($props, $this->_request);
         return new Request($props);
+    }
+
+    /**
+     * Creates a valid request url and parameter array more like Request::_url()
+     *
+     * @param string|array $url The URL
+     * @return array Qualified URL and the query parameters
+     */
+    protected function _url($url)
+    {
+        $url = Router::url($url);
+        $query = [];
+
+        if (strpos($url, '?') !== false) {
+            list($url, $parameters) = explode('?', $url, 2);
+            parse_str($parameters, $query);
+        }
+
+        return [$url, $query];
     }
 
     /**
