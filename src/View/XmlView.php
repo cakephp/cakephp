@@ -131,6 +131,10 @@ class XmlView extends View
     /**
      * Serialize view vars.
      *
+     * ### Special parameters
+     * `_xmlOptions` You can set an array of custom options for Xml::fromArray() this way, e.g.
+     *   'format' as 'attributes' instead of 'tags'.
+     *
      * @param array|string $serialize The name(s) of the view variable(s) that need(s) to be serialized
      * @return string The serialized data
      */
@@ -154,6 +158,9 @@ class XmlView extends View
         }
 
         $options = [];
+        if (isset($this->viewVars['_xmlOptions'])) {
+            $options = $this->viewVars['_xmlOptions'];
+        }
         if (Configure::read('debug')) {
             $options['pretty'] = true;
         }
