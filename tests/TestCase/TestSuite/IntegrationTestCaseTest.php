@@ -84,6 +84,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->assertEquals('/tasks/view?archived=yes', $request->here());
         $this->assertEquals('yes', $request->query('archived'));
     }
+
     /**
      * Test sending get requests.
      *
