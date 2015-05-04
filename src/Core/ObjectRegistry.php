@@ -279,7 +279,7 @@ abstract class ObjectRegistry
         list(, $name) = pluginSplit($objectName);
         $this->unload($objectName);
         if (isset($this->_eventManager) && $object instanceof EventListenerInterface) {
-            $this->eventManager()->attach($object);
+            $this->eventManager()->on($object);
         }
         $this->_loaded[$name] = $object;
     }
