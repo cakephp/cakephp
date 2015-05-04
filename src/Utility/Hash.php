@@ -192,15 +192,15 @@ class Hash
      */
     protected static function _matchToken($key, $token)
     {
-       switch ($token) {
-           case '{n}':
-               return is_numeric($key);
-           case '{s}':
-               return is_string($key);
-           case '{*}':
-               return true;
-           default:
-               return is_numeric($token) ? ($key == $token) : $key === $token;
+        switch ($token) {
+            case '{n}':
+                return is_numeric($key);
+            case '{s}':
+                return is_string($key);
+            case '{*}':
+                return true;
+            default:
+                return is_numeric($token) ? ($key == $token) : $key === $token;
         }
     }
 

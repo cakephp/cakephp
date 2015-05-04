@@ -870,7 +870,7 @@ class HashTest extends TestCase
             'Ms. Bool',
         ];
         $this->assertEquals($expected, $result);
-   }
+    }
 
     /**
      * Test the attribute presense selector.
