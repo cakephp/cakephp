@@ -1226,4 +1226,23 @@ class CollectionTest extends TestCase
         ];
         $this->assertSame($expected, $result);
     }
+
+    /**
+     * Tests the isEmpty() method
+     *
+     * @return void
+     */
+    public function testIsEmpty()
+    {
+        $collection = new Collection([1, 2, 3]);
+        $this->assertFalse($collection->isEmpty());
+
+        $collection = $collection->map(function () {
+            return null;
+        });
+        $this->assertFalse($collection->isEmpty());
+
+        $collection = $collection->filter();
+        $this->assertTrue($collection->isEmpty());
+    }
 }
