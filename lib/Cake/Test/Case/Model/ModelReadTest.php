@@ -8047,8 +8047,8 @@ class ModelReadTest extends BaseModelTest {
 
 /**
  * test after find callback on related model
- * 
- * @return void 
+ *
+ * @return void
  */
 	public function testRelatedAfterFindCallback() {
 		$this->loadFixtures('Something', 'SomethingElse', 'JoinThing');
