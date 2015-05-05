@@ -84,8 +84,11 @@ trait ValidatorAwareTrait
      *   use null to get a validator.
      * @return \Cake\Validation\Validator
      */
-    public function validator($name = self::DEFAULT_VALIDATOR, Validator $validator = null)
+    public function validator($name = null, Validator $validator = null)
     {
+        if ($name === null) {
+            $name = self::DEFAULT_VALIDATOR;
+        }
         if ($validator === null && isset($this->_validators[$name])) {
             return $this->_validators[$name];
         }
