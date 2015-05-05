@@ -3723,6 +3723,28 @@ class FormHelperTest extends TestCase
             '/label',
         ];
         $this->assertHtml($expected, $result);
+
+        $result = $this->Form->radio(
+            'Employee.gender',
+            [
+                ['value' => 'male', 'text' => 'Male', 'style' => 'width:20px'],
+                ['value' => 'female', 'text' => 'Female', 'style' => 'width:20px'],
+            ]
+        );
+        $expected = [
+            'input' => ['type' => 'hidden', 'name' => 'Employee[gender]', 'value' => ''],
+            ['label' => ['for' => 'employee-gender-male']],
+            ['input' => ['type' => 'radio', 'name' => 'Employee[gender]', 'value' => 'male',
+                'id' => 'employee-gender-male', 'style' => 'width:20px']],
+            'Male',
+            '/label',
+            ['label' => ['for' => 'employee-gender-female']],
+            ['input' => ['type' => 'radio', 'name' => 'Employee[gender]', 'value' => 'female',
+                'id' => 'employee-gender-female', 'style' => 'width:20px']],
+            'Female',
+            '/label',
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**
