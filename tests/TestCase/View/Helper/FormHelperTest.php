@@ -674,6 +674,26 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * test create() with no url (no "action" attribute for <form> tag)
+     *
+     * @return void
+     */
+    public function testCreateNoUrl()
+    {
+        $result = $this->Form->create(false, ['url' => false]);
+        $expected = [
+            'form' => [
+                'method' => 'post',
+                'accept-charset' => strtolower(Configure::read('App.encoding'))
+            ],
+            'div' => ['style' => 'display:none;'],
+            'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * test create() with a custom route
      *
      * @return void

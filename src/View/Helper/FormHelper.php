@@ -367,11 +367,16 @@ class FormHelper extends Helper
         }
         unset($options['templates']);
 
-        $url = $this->_formUrl($context, $options);
-        $action = $this->Url->build($url);
-        unset($options['url'], $options['action'], $options['idPrefix']);
+        if ($options['url'] === false) {
+            $action = null;
+            $this->_lastAction = '';
+        } else {
+            $url = $this->_formUrl($context, $options);
+            $action = $this->Url->build($url);
 
-        $this->_lastAction($url);
+            $this->_lastAction($url);
+        }
+        unset($options['url'], $options['action'], $options['idPrefix']);
 
         $htmlAttributes = [];
         switch (strtolower($options['type'])) {
