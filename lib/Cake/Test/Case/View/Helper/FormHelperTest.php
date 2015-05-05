@@ -7431,6 +7431,53 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testInputDate method
+ *
+ * Test various inputs with type date and different option attributes.
+ *
+ * @return void
+ */
+	public function testInputDateOptions() {
+		$this->Form->create('User');
+
+		$result = $this->Form->input('date',
+			array(
+				'label' => false,
+				'type' => 'day',
+				'class' => 'form-control'
+			)
+		);
+		$this->assertContains('class="form-control"', $result);
+
+		$result = $this->Form->input('date',
+			array(
+				'label' => false,
+				'type' => 'month',
+				'class' => 'form-control'
+			)
+		);
+		$this->assertContains('class="form-control"', $result);
+
+		$result = $this->Form->input('date',
+			array(
+				'label' => false,
+				'type' => 'year',
+				'class' => 'form-control'
+			)
+		);
+		$this->assertContains('class="form-control"', $result);
+
+		$result = $this->Form->input('date',
+			array(
+				'label' => false,
+				'type' => 'hour',
+				'class' => 'form-control'
+			)
+		);
+		$this->assertContains('class="form-control"', $result);
+	}
+
+/**
  * testInputDateMaxYear method
  *
  * Let's say we want to only allow users born from 2006 to 2008 to register

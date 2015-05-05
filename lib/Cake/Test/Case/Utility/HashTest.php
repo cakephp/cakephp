@@ -240,6 +240,19 @@ class HashTest extends CakeTestCase {
 	}
 
 /**
+ * Test testGetNullPath()
+ *
+ * @return void
+ */
+	public function testGetNullPath() {
+		$result = Hash::get(array('one' => 'two'), null, '-');
+		$this->assertEquals('-', $result);
+
+		$result = Hash::get(array('one' => 'two'), '', '-');
+		$this->assertEquals('-', $result);
+	}
+
+/**
  * Test dimensions.
  *
  * @return void
@@ -275,6 +288,14 @@ class HashTest extends CakeTestCase {
  * @return void
  */
 	public function testMaxDimensions() {
+		$data = array();
+		$result = Hash::maxDimensions($data);
+		$this->assertEquals(0, $result);
+
+		$data = array('a', 'b');
+		$result = Hash::maxDimensions($data);
+		$this->assertEquals(1, $result);
+
 		$data = array('1' => '1.1', '2', '3' => array('3.1' => '3.1.1'));
 		$result = Hash::maxDimensions($data);
 		$this->assertEquals($result, 2);
