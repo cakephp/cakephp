@@ -3456,6 +3456,38 @@ class Model extends Object implements CakeEventListener {
 	}
 
 /**
+ * Builds and execute the query. Return DataSource object to retrieve the result explicitly using `fetchResult()`
+ *
+ * @param array $query Option fields (conditions / fields / joins / limit / offset / order / page / group / callbacks)
+ * @param int $recursive Number of levels of association
+ * @return mixed DataSource object if query executes with no problem, null on failure
+ */
+	public function runQuery($query = array(), $recursive = null) {
+		$db = clone $this->getDataSource();
+		if (!$db) {
+			return null;
+		}
+
+		$queryData = $this->buildQuery('all', $query);
+		if (is_null($queryData)) {
+			return null;
+		}
+
+		$sql = $db->getQueryStatement($this, $queryData, $recursive);
+		if (!$sql) {
+			return null;
+		}
+
+		if ($result = $db->execute($sql)) {
+			$db->resultSet($result);
+		} else {
+			return null;
+		}
+
+		return $db;
+	}
+
+/**
  * Returns true if all fields pass validation. Will validate hasAndBelongsToMany associations
  * that use the 'with' key as well. Since _saveMulti is incapable of exiting a save operation.
  *
