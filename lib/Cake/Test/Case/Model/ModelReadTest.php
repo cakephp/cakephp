@@ -8288,4 +8288,173 @@ class ModelReadTest extends BaseModelTest {
 		);
 		$this->assertEquals($expected, $results, 'Model related with belongsTo afterFind callback fails');
 	}
+
+/**
+ * test runQuery method
+ *
+ * @return void
+ */
+	public function testRunQuery() {
+		$this->loadFixtures('Article');
+		$Article = new Article();
+		$Article->recursive = -1;
+
+		$query = $Article->runQuery(array(
+			'fields' => array(
+				'user_id',
+				'title',
+				'body',
+				'published'
+			)
+		));
+
+		$results = array();
+		if ($query) {
+			while ($row = $query->fetchResult()) {
+				$results[] = $row;
+			}
+		}
+
+		$expected = array(
+			array(
+				'Article' => array(
+					'user_id' => 1,
+					'title' => 'First Article',
+					'body' => 'First Article Body',
+					'published' => 'Y'
+				)
+			),
+			array(
+				'Article' => array(
+					'user_id' => 3,
+					'title' => 'Second Article',
+					'body' => 'Second Article Body',
+					'published' => 'Y'
+				)
+			),
+			array(
+				'Article' => array(
+					'user_id' => 1,
+					'title' => 'Third Article',
+					'body' => 'Third Article Body',
+					'published' => 'Y'
+				)
+			)
+		);
+		$this->assertEquals($expected, $results);
+
+		$query = $Article->runQuery(array(
+			'fields' => array(
+				'user_id',
+				'title',
+				'body',
+				'published'
+			),
+			'order' => array('user_id', 'title')
+		));
+
+		$results = array();
+		if ($query) {
+			while ($row = $query->fetchResult()) {
+				$results[] = $row;
+			}
+		}
+
+		$expected = array(
+			array(
+				'Article' => array(
+					'user_id' => 1,
+					'title' => 'First Article',
+					'body' => 'First Article Body',
+					'published' => 'Y'
+				)
+			),
+			array(
+				'Article' => array(
+					'user_id' => 1,
+					'title' => 'Third Article',
+					'body' => 'Third Article Body',
+					'published' => 'Y'
+				)
+			),
+			array(
+				'Article' => array(
+					'user_id' => 3,
+					'title' => 'Second Article',
+					'body' => 'Second Article Body',
+					'published' => 'Y'
+				)
+			)
+		);
+		$this->assertEquals($expected, $results);
+
+		$query = $Article->runQuery(array(
+			'fields' => array(
+				'user_id',
+				'title',
+				'body',
+				'published'
+			),
+			'limit' => 1
+		));
+
+		$results = array();
+		if ($query) {
+			while ($row = $query->fetchResult()) {
+				$results[] = $row;
+			}
+		}
+
+		$expected = array(
+			array(
+				'Article' => array(
+					'user_id' => 1,
+					'title' => 'First Article',
+					'body' => 'First Article Body',
+					'published' => 'Y'
+				)
+			)
+		);
+		$this->assertEquals($expected, $results);
+
+		$query = $Article->runQuery(array(
+			'fields' => array(
+				'user_id',
+				'title',
+				'body',
+				'published'
+			),
+			'conditions' => array(
+				'user_id' => 1
+			),
+			'order' => array('user_id', 'title')
+		));
+
+		$results = array();
+		if ($query) {
+			while ($row = $query->fetchResult()) {
+				$results[] = $row;
+			}
+		}
+
+		$expected = array(
+			array(
+				'Article' => array(
+					'user_id' => 1,
+					'title' => 'First Article',
+					'body' => 'First Article Body',
+					'published' => 'Y'
+				)
+			),
+			array(
+				'Article' => array(
+					'user_id' => 1,
+					'title' => 'Third Article',
+					'body' => 'Third Article Body',
+					'published' => 'Y'
+				)
+			)
+		);
+		$this->assertEquals($expected, $results);
+	}
 }
