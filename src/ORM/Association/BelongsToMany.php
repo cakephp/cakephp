@@ -163,6 +163,7 @@ class BelongsToMany extends Association
         $source = $this->source();
         $sAlias = $source->alias();
         $tAlias = $target->alias();
+        $tableLocator = $this->tableLocator();
 
         if ($table === null) {
             if (!empty($this->_junctionTable)) {
@@ -176,15 +177,15 @@ class BelongsToMany extends Association
                 $tableAlias = Inflector::camelize($tableName);
 
                 $config = [];
-                if (!$this->tableLocator()->exists($tableAlias)) {
+                if (!$tableLocator->exists($tableAlias)) {
                     $config = ['table' => $tableName];
                 }
-                $table = $this->tableLocator()->get($tableAlias, $config);
+                $table = $tableLocator->get($tableAlias, $config);
             }
         }
 
         if (is_string($table)) {
-            $table = $this->tableLocator()->get($table);
+            $table = $tableLocator->get($table);
         }
         $junctionAlias = $table->alias();
 

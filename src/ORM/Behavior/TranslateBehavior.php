@@ -141,18 +141,19 @@ class TranslateBehavior extends Behavior
         $targetAlias = $this->_translationTable->alias();
         $alias = $this->_table->alias();
         $filter = $this->_config['onlyTranslated'];
+        $tableLocator = $this->tableLocator();
 
         foreach ($fields as $field) {
             $name = $alias . '_' . $field . '_translation';
 
-            if (!$this->tableLocator()->exists($name)) {
-                $fieldTable = $this->tableLocator()->get($name, [
+            if (!$tableLocator->exists($name)) {
+                $fieldTable = $tableLocator->get($name, [
                     'className' => $table,
                     'alias' => $name,
                     'table' => $this->_translationTable->table()
                 ]);
             } else {
-                $fieldTable = $this->tableLocator()->get($name);
+                $fieldTable = $tableLocator->get($name);
             }
 
             $conditions = [

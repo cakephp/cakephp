@@ -293,11 +293,13 @@ abstract class Association
             $registryAlias = $this->_name;
         }
 
+        $tableLocator = $this->tableLocator();
+
         $config = [];
-        if (!$this->tableLocator()->exists($registryAlias)) {
+        if (!$tableLocator->exists($registryAlias)) {
             $config = ['className' => $this->_className];
         }
-        $this->_targetTable = $this->tableLocator()->get($registryAlias, $config);
+        $this->_targetTable = $tableLocator->get($registryAlias, $config);
 
         return $this->_targetTable;
     }
