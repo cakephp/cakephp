@@ -2630,4 +2630,16 @@ class QueryTest extends TestCase
         $this->assertCount(2, $result->tags);
         $this->assertEquals(2, $result->_matchingData['tags']->id);
     }
+
+    /**
+     * Tests that isEmpty() can be called on a query
+     *
+     * @return void
+     */
+    public function testIsEmpty()
+    {
+        $table = TableRegistry::get('articles');
+        $this->assertFalse($table->find()->isEmpty());
+        $this->assertTrue($table->find()->where(['id' => -1])->isEmpty());
+    }
 }

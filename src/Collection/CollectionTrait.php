@@ -532,6 +532,15 @@ trait CollectionTrait
     }
 
     /**
+     * {@inheritDoc}
+     *
+     */
+    public function isEmpty()
+    {
+        return iterator_count($this->take(1)) === 0;
+    }
+
+    /**
      * Returns the closest nested iterator that can be safely traversed without
      * losing any possible transformations.
      *
