@@ -211,7 +211,7 @@ class AuthComponent extends Component
     /**
      * Instance of the Session object
      *
-     * @return void
+     * @var \Cake\Network\Session
      */
     public $session;
 
