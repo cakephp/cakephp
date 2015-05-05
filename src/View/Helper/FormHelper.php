@@ -1425,7 +1425,7 @@ class FormHelper extends Helper
      *
      * @param string $fieldName Name of a field, like this "modelname.fieldname"
      * @param array|\Traversable $options Radio button options array.
-     * @param array $attributes Array of HTML attributes, and special attributes above.
+     * @param array $attributes Array of attributes.
      * @return string Completed radio widget set.
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-radio-buttons
      */
