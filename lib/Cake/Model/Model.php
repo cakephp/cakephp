@@ -3359,6 +3359,24 @@ class Model extends Object implements CakeEventListener {
 	}
 
 /**
+ * This gets the association arrays according to the recursive level set
+ * @return array Array of associations or empty array
+ */
+	public function getAssociationsByRecursive() {
+		if ($this->recursive === -1) {
+			// Primary model data only, no joins.
+			return array();
+		}
+
+		$associations = $this->associations();
+		if ($this->recursive === 0) {
+			// Primary model data and its domain.
+			unset($associations[2], $associations[3]);
+		}
+		return $associations;
+	}
+
+/**
  * Returns false if any fields passed match any (by default, all if $or = false) of their matching values.
  *
  * Can be used as a validation method. When used as a validation method, the `$or` parameter
