@@ -545,7 +545,7 @@ class FormHelper extends Helper
      */
     public function secure(array $fields = [], array $secureAttributes = [])
     {
-        if (!isset($this->request['_Token']) || empty($this->request['_Token'])) {
+        if (empty($this->request['_Token'])) {
             return;
         }
         $locked = [];
