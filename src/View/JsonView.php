@@ -22,22 +22,19 @@ use Cake\Network\Response;
 /**
  * A view class that is used for JSON responses.
  *
- * By setting the '_serialize' key in your controller, you can specify a view variable
- * that should be serialized to JSON and used as the response for the request.
- * This allows you to omit views and layouts if you just need to emit a single view
- * variable as the JSON response.
+ * It allows you to omit templates and layouts if you just need to emit JSON
+ * string as response.
  *
  * In your controller, you could do the following:
  *
  * ```
- * $this->set(['posts' => $posts, '_serialize' => 'posts']);
+ * $this->set(['posts' => $posts]);
  * ```
  *
- * When the view is rendered, the `$posts` view variable will be serialized
- * into JSON.
+ * By default all view variables will be serialized to JSON. So for above example
+ * the `$posts` view variable will be serialized into JSON.
  *
- * You can also define `'_serialize'` as an array. This will create a top level object containing
- * all the named view variables:
+ * You can also define `'_serialize'` to specify which view variables to serialize.
  *
  * ```
  * $this->set(compact('posts', 'users', 'stuff'));
@@ -48,13 +45,13 @@ use Cake\Network\Response;
  *
  * `{"posts": [...], "users": [...]}`
  *
- * You can also set `_serialize` to `true` to serialize all view variables.
+ * If you need the regular view template processing you can set `_serialize` to
+ * false which will turn off automatic serialization and instead view template
+ * and layotu will be used.
  *
- * If you don't use the `_serialize` key, you will need a view. You can use extended
- * views to provide layout-like functionality.
- *
- * You can also enable JSONP support by setting parameter `_jsonp` to true or a string to specify
- * custom query string parameter name which will contain the callback function name.
+ * You can also enable JSONP support by setting parameter `_jsonp` to true or a
+ * string to specify custom query string parameter name which will contain the
+ * callback function name.
  */
 class JsonView extends View
 {
@@ -72,6 +69,13 @@ class JsonView extends View
      * @var string
      */
     public $subDir = 'json';
+
+    /**
+     * List of special view vars.
+     *
+     * @var array
+     */
+    protected $_specialVars = ['_serialize', '_jsonOptions', '_jsonp'];
 
     /**
      * Constructor
@@ -95,16 +99,17 @@ class JsonView extends View
     }
 
     /**
-     * Skip loading helpers if this is a _serialize based view.
+     * Load helpers only if serialization is disabled.
      *
      * @return void
      */
     public function loadHelpers()
     {
-        if (isset($this->viewVars['_serialize'])) {
-            return;
+        if (isset($this->viewVars['_serialize']) &&
+            $this->viewVars['_serialize'] === false
+        ) {
+            parent::loadHelpers();
         }
-        parent::loadHelpers();
     }
 
     /**
@@ -113,8 +118,8 @@ class JsonView extends View
      * ### Special parameters
      * `_serialize` To convert a set of view variables into a JSON response.
      *   Its value can be a string for single variable name or array for multiple names.
-     *   It can also be set to true to serialize all view variables.
-     *   You can omit the`_serialize` parameter, and use a normal view + layout as well.
+     *   It can also be set to false to turn off serialization and use a normal
+     *   view + layout as well. If unset or true all view variables will be serialized.
      * `_jsonp` Enables JSONP support and wraps response in callback function provided in query string.
      *   - Setting it to true enables the default query string parameter "callback".
      *   - Setting it to a string value, uses the provided query string parameter for finding the
@@ -126,9 +131,14 @@ class JsonView extends View
      */
     public function render($view = null, $layout = null)
     {
-        $return = null;
+        $serialize = true;
         if (isset($this->viewVars['_serialize'])) {
-            $return = $this->_serialize($this->viewVars['_serialize']);
+            $serialize = $this->viewVars['_serialize'];
+        }
+
+        $return = null;
+        if ($serialize !== false) {
+            $return = $this->_serialize($serialize);
         } elseif ($view !== false && $this->_getViewFileName($view)) {
             $return = parent::render($view, false);
         }
@@ -178,18 +188,19 @@ class JsonView extends View
     }
 
     /**
-     * Returns data to be serialized
+     * Returns data to be serialized.
      *
      * @param array|string|bool $serialize The name(s) of the view variable(s)
-     *   that need(s) to be serialized. If true all available view variables.
-     * @return mixe The data to serialize
+     *   that need(s) to be serialized. If null or true all available view
+     *   variables will be used.
+     * @return mixed The data to serialize.
      */
-    protected function _dataToSerialize($serialize)
+    protected function _dataToSerialize($serialize = null)
     {
-        if ($serialize === true) {
+        if ($serialize === null || $serialize === true) {
             $data = array_diff_key(
                 $this->viewVars,
-                ['_serialize' => null, '_jsonOptions' => null, '_jsonp' => null]
+                array_flip($this->_specialVars)
             );
 
             if (empty($data)) {

@@ -100,7 +100,7 @@ class JsonViewTest extends TestCase
                 ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']],
                 null,
                 null,
-                null
+                json_encode(['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']])
             ],
 
             // Test render with False in _serialize.
@@ -108,7 +108,7 @@ class JsonViewTest extends TestCase
                 ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']],
                 false,
                 null,
-                json_encode(null)
+                null
             ],
 
             // Test render with True in _serialize.
@@ -306,6 +306,7 @@ class JsonViewTest extends TestCase
             ]
         ];
         $Controller->set('user', $data);
+        $Controller->set('_serialize', false);
         $Controller->viewClass = 'Json';
         $View = $Controller->createView();
         $output = $View->render('index');
