@@ -48,6 +48,8 @@ use Cake\Network\Response;
  *
  * `{"posts": [...], "users": [...]}`
  *
+ * You can also set `_serialize` to `true` to serialize all view variables.
+ *
  * If you don't use the `_serialize` key, you will need a view. You can use extended
  * views to provide layout-like functionality.
  *
@@ -111,6 +113,7 @@ class JsonView extends View
      * ### Special parameters
      * `_serialize` To convert a set of view variables into a JSON response.
      *   Its value can be a string for single variable name or array for multiple names.
+     *   It can also be set to true to serialize all view variables.
      *   You can omit the`_serialize` parameter, and use a normal view + layout as well.
      * `_jsonp` Enables JSONP support and wraps response in callback function provided in query string.
      *   - Setting it to true enables the default query string parameter "callback".
@@ -151,25 +154,13 @@ class JsonView extends View
      * `_jsonOptions` You can set custom options for json_encode() this way,
      *   e.g. `JSON_HEX_TAG | JSON_HEX_APOS`.
      *
-     * @param array|string $serialize The name(s) of the view variable(s) that need(s) to be serialized
+     * @param array|string|bool $serialize The name(s) of the view variable(s)
+     *   that need(s) to be serialized. If true all available view variables.
      * @return string The serialized data
      */
     protected function _serialize($serialize)
     {
-        if (is_array($serialize)) {
-            $data = [];
-            foreach ($serialize as $alias => $key) {
-                if (is_numeric($alias)) {
-                    $alias = $key;
-                }
-                if (array_key_exists($key, $this->viewVars)) {
-                    $data[$alias] = $this->viewVars[$key];
-                }
-            }
-            $data = !empty($data) ? $data : null;
-        } else {
-            $data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
-        }
+        $data = $this->_dataToSerialize($serialize);
 
         $jsonOptions = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT;
         if (isset($this->viewVars['_jsonOptions'])) {
@@ -184,5 +175,47 @@ class JsonView extends View
             $jsonOptions = $jsonOptions | JSON_PRETTY_PRINT;
         }
         return json_encode($data, $jsonOptions);
+    }
+
+    /**
+     * Returns data to be serialized
+     *
+     * @param array|string|bool $serialize The name(s) of the view variable(s)
+     *   that need(s) to be serialized. If true all available view variables.
+     * @return mixe The data to serialize
+     */
+    protected function _dataToSerialize($serialize)
+    {
+        if ($serialize === true) {
+            $data = array_diff_key(
+                $this->viewVars,
+                ['_serialize' => null, '_jsonOptions' => null, '_jsonp' => null]
+            );
+
+            if (empty($data)) {
+                return null;
+            }
+
+            if (count($data) === 1) {
+                return current($data);
+            }
+
+            return $data;
+        }
+
+        if (is_array($serialize)) {
+            $data = [];
+            foreach ($serialize as $alias => $key) {
+                if (is_numeric($alias)) {
+                    $alias = $key;
+                }
+                if (array_key_exists($key, $this->viewVars)) {
+                    $data[$alias] = $this->viewVars[$key];
+                }
+            }
+            return !empty($data) ? $data : null;
+        }
+
+        return isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
     }
 }
