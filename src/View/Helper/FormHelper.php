@@ -367,7 +367,7 @@ class FormHelper extends Helper
         }
         unset($options['templates']);
 
-        if ($options['url'] === false) {
+        if ($options['action'] === false || $options['url'] === false) {
             $url = $this->request->here(false);
             $action = null;
         } else {

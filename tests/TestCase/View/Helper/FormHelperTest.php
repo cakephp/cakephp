@@ -691,6 +691,9 @@ class FormHelperTest extends TestCase
             '/div'
         ];
         $this->assertHtml($expected, $result);
+
+        $result = $this->Form->create(false, ['action' => false]);
+        $this->assertHtml($expected, $result);
     }
 
     /**
