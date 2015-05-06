@@ -51,11 +51,13 @@ class DatabaseSession implements SessionHandlerInterface
      */
     public function __construct(array $config = [])
     {
+        $tableLocator = isset($config['tableLocator']) ? $config['tableLocator'] : TableRegistry::locator();
+
         if (empty($config['model'])) {
-            $config = TableRegistry::exists('Sessions') ? [] : ['table' => 'sessions'];
-            $this->_table = TableRegistry::get('Sessions', $config);
+            $config = $tableLocator->exists('Sessions') ? [] : ['table' => 'sessions'];
+            $this->_table = $tableLocator->get('Sessions', $config);
         } else {
-            $this->_table = TableRegistry::get($config['model']);
+            $this->_table = $tableLocator->get($config['model']);
         }
 
         $this->_timeout = ini_get('session.gc_maxlifetime');

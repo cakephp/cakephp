@@ -18,9 +18,9 @@ use Cake\Core\ConventionsTrait;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetDecorator;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use RuntimeException;
@@ -34,6 +34,7 @@ abstract class Association
 {
 
     use ConventionsTrait;
+    use LocatorAwareTrait;
 
     /**
      * Strategy name to use joins for fetching associated records
@@ -198,6 +199,7 @@ abstract class Association
             'finder',
             'foreignKey',
             'joinType',
+            'tableLocator',
             'propertyName',
             'sourceTable',
             'targetTable'
@@ -291,11 +293,13 @@ abstract class Association
             $registryAlias = $this->_name;
         }
 
+        $tableLocator = $this->tableLocator();
+
         $config = [];
-        if (!TableRegistry::exists($registryAlias)) {
+        if (!$tableLocator->exists($registryAlias)) {
             $config = ['className' => $this->_className];
         }
-        $this->_targetTable = TableRegistry::get($registryAlias, $config);
+        $this->_targetTable = $tableLocator->get($registryAlias, $config);
 
         return $this->_targetTable;
     }

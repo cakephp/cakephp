@@ -21,6 +21,7 @@ use Cake\Core\Plugin;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Filesystem\File;
 use Cake\Log\LogTrait;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
 use Cake\Utility\Text;
@@ -33,6 +34,7 @@ use Cake\Utility\Text;
 class Shell
 {
 
+    use LocatorAwareTrait;
     use LogTrait;
     use MergeVariablesTrait;
     use ModelAwareTrait;
@@ -158,7 +160,8 @@ class Shell
         }
         $this->_io = $io ?: new ConsoleIo();
 
-        $this->modelFactory('Table', ['Cake\ORM\TableRegistry', 'get']);
+        $locator = $this->tableLocator() ? : 'Cake\ORM\TableRegistry';
+        $this->modelFactory('Table', [$locator, 'get']);
         $this->Tasks = new TaskRegistry($this);
 
         $this->_io->setLoggers(true);
