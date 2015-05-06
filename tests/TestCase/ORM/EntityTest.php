@@ -92,7 +92,7 @@ class EntityTest extends TestCase
         ];
         $this->assertEquals($expected, $result);
 
-        $result = $entity->extractOriginalDirty(['id', 'title', 'body']);
+        $result = $entity->extractOriginalChanged(['id', 'title', 'body']);
         $expected = [
             'body' => 'no',
         ];
