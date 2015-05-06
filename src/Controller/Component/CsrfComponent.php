@@ -144,6 +144,10 @@ class CsrfComponent extends Component
         $post = $request->data($this->_config['field']);
         $header = $request->header('X-CSRF-Token');
 
+        if (empty($cookie)) {
+            throw new ForbiddenException(__d('cake', 'Invalid CSRF token.'));
+        }
+
         if ($post !== $cookie && $header !== $cookie) {
             throw new ForbiddenException(__d('cake', 'Invalid CSRF token.'));
         }

@@ -163,7 +163,6 @@ class CsrfComponentTest extends TestCase
      * @dataProvider httpMethodProvider
      * @expectedException \Cake\Network\Exception\ForbiddenException
      * @return void
-     * @triggers Controller.startup $controller
      */
     public function testInvalidTokenRequestData($method)
     {
@@ -173,6 +172,49 @@ class CsrfComponentTest extends TestCase
         $controller->request = new Request([
             'post' => ['_csrfToken' => 'nope'],
             'cookies' => ['csrfToken' => 'testing123']
+        ]);
+        $controller->response = new Response();
+
+        $event = new Event('Controller.startup', $controller);
+        $this->component->startup($event);
+    }
+
+    /**
+     * Test that missing post field fails
+     *
+     * @expectedException \Cake\Network\Exception\ForbiddenException
+     * @return void
+     */
+    public function testInvalidTokenRequestDataMissing()
+    {
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+
+        $controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
+        $controller->request = new Request([
+            'post' => [],
+            'cookies' => ['csrfToken' => 'testing123']
+        ]);
+        $controller->response = new Response();
+
+        $event = new Event('Controller.startup', $controller);
+        $this->component->startup($event);
+    }
+
+    /**
+     * Test that missing header and cookie fails
+     *
+     * @dataProvider httpMethodProvider
+     * @expectedException \Cake\Network\Exception\ForbiddenException
+     * @return void
+     */
+    public function testInvalidTokenMissingCookie($method)
+    {
+        $_SERVER['REQUEST_METHOD'] = $method;
+
+        $controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
+        $controller->request = new Request([
+            'post' => ['_csrfToken' => 'could-be-valid'],
+            'cookies' => []
         ]);
         $controller->response = new Response();
 
