@@ -175,6 +175,8 @@ tag-component-%: component-% guard-VERSION guard-GITHUB_USER
 		"sha": "$(shell git rev-parse $*)" \
 	}'
 	git checkout $(CURRENT_BRANCH) > /dev/null
+	git branch -D $*
+	git remote rm $*
 
 # Top level alias for doing a release.
 release: guard-VERSION guard-GITHUB_USER tag-release package publish components-tag
