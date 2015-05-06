@@ -528,7 +528,7 @@ trait EntityTrait
      * Returns an array with the requested original properties
      * stored in this entity, indexed by property name.
      *
-     * Properties that have are unchanged changed will be included in the
+     * Properties that are unchanged from their original value will be included in the
      * return of this method.
      *
      * @param array $properties List of properties to be returned
@@ -551,7 +551,7 @@ trait EntityTrait
      * stored in this entity, indexed by property name.
      *
      * This method will only return properties that have been modified since
-     * the entity was built unchanged properties will be omitted.
+     * the entity was built. Unchanged properties will be omitted.
      *
      * @param array $properties List of properties to be returned
      * @return array
