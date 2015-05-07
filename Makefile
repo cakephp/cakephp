@@ -93,7 +93,7 @@ tag-release: guard-VERSION bump-version
 
 # Tasks for tagging the app skeleton and
 # creating a zipball of a fully built app skeleton.
-.PHONY: clean tag-app build-app package
+.PHONY: clean package
 
 clean:
 	rm -rf build
@@ -107,12 +107,6 @@ build/app: build
 
 build/cakephp: build
 	git checkout-index -a -f --prefix=build/cakephp/
-
-tag-app: guard-VERSION build/app
-	@echo "Tagging new version of application skeleton"
-	cd build/app && git tag -s $(VERSION) -m "CakePHP App $(VERSION)"
-	cd build/app && git push $(REMOTE)
-	cd build/app && git push $(REMOTE) --tags
 
 dist/cakephp-$(DASH_VERSION).zip: build/app build/cakephp composer.phar
 	mkdir -p dist
@@ -130,7 +124,7 @@ dist/cakephp-$(DASH_VERSION).zip: build/app build/cakephp composer.phar
 	cd build/app && find . -not -path '*.git*' | zip ../../dist/cakephp-$(DASH_VERSION).zip -@
 
 # Easier to type alias for zip balls
-package: tag-app dist/cakephp-$(DASH_VERSION).zip
+package: dist/cakephp-$(DASH_VERSION).zip
 
 
 
@@ -181,6 +175,8 @@ tag-component-%: component-% guard-VERSION guard-GITHUB_USER
 		"sha": "$(shell git rev-parse $*)" \
 	}'
 	git checkout $(CURRENT_BRANCH) > /dev/null
+	git branch -D $*
+	git remote rm $*
 
 # Top level alias for doing a release.
 release: guard-VERSION guard-GITHUB_USER tag-release package publish components-tag

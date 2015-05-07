@@ -674,6 +674,29 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test create() with no URL (no "action" attribute for <form> tag)
+     *
+     * @return void
+     */
+    public function testCreateNoUrl()
+    {
+        $result = $this->Form->create(false, ['url' => false]);
+        $expected = [
+            'form' => [
+                'method' => 'post',
+                'accept-charset' => strtolower(Configure::read('App.encoding'))
+            ],
+            'div' => ['style' => 'display:none;'],
+            'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->create(false, ['action' => false]);
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * test create() with a custom route
      *
      * @return void
@@ -3720,6 +3743,28 @@ class FormHelperTest extends TestCase
             ['label' => ['for' => 'model-custom-1']],
             ['input' => ['type' => 'radio', 'name' => 'Model[custom]', 'value' => '1', 'id' => 'model-custom-1']],
             'option B',
+            '/label',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->radio(
+            'Employee.gender',
+            [
+                ['value' => 'male', 'text' => 'Male', 'style' => 'width:20px'],
+                ['value' => 'female', 'text' => 'Female', 'style' => 'width:20px'],
+            ]
+        );
+        $expected = [
+            'input' => ['type' => 'hidden', 'name' => 'Employee[gender]', 'value' => ''],
+            ['label' => ['for' => 'employee-gender-male']],
+            ['input' => ['type' => 'radio', 'name' => 'Employee[gender]', 'value' => 'male',
+                'id' => 'employee-gender-male', 'style' => 'width:20px']],
+            'Male',
+            '/label',
+            ['label' => ['for' => 'employee-gender-female']],
+            ['input' => ['type' => 'radio', 'name' => 'Employee[gender]', 'value' => 'female',
+                'id' => 'employee-gender-female', 'style' => 'width:20px']],
+            'Female',
             '/label',
         ];
         $this->assertHtml($expected, $result);

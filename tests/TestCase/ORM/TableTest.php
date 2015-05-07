@@ -2577,6 +2577,32 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test delete with dependent records belonging to an aliased
+     * belongsToMany association.
+     *
+     * @return void
+     */
+    public function testDeleteDependentAliased()
+    {
+        $Authors = TableRegistry::get('authors');
+        $Authors->associations()->removeAll();
+        $Articles = TableRegistry::get('articles');
+        $Articles->associations()->removeAll();
+
+        $Authors->hasMany('AliasedArticles', [
+            'className' => 'articles',
+            'dependent' => true,
+            'cascadeCallbacks' => true
+        ]);
+        $Articles->belongsToMany('Tags');
+
+        $author = $Authors->get(1);
+        $result = $Authors->delete($author);
+
+        $this->assertTrue($result);
+    }
+
+    /**
      * Test that cascading associations are deleted first.
      *
      * @return void
