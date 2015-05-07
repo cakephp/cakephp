@@ -474,6 +474,39 @@ class RequestHandlerComponentTest extends TestCase
     }
 
     /**
+     * Test that processing data results in an array.
+     *
+     * @return void
+     * @triggers Controller.startup $this->Controller
+     */
+    public function testStartupProcessData()
+    {
+        $this->Controller->request = $this->getMock('Cake\Network\Request', ['_readInput']);
+        $this->Controller->request->expects($this->at(0))
+            ->method('_readInput')
+            ->will($this->returnValue(''));
+        $this->Controller->request->expects($this->at(1))
+            ->method('_readInput')
+            ->will($this->returnValue('"invalid"'));
+        $this->Controller->request->expects($this->at(2))
+            ->method('_readInput')
+            ->will($this->returnValue('{"valid":true}'));
+
+        $this->Controller->request->env('REQUEST_METHOD', 'POST');
+        $this->Controller->request->env('CONTENT_TYPE', 'application/json');
+
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->RequestHandler->startup($event);
+        $this->assertEquals([], $this->Controller->request->data);
+
+        $this->RequestHandler->startup($event);
+        $this->assertEquals(['invalid'], $this->Controller->request->data);
+
+        $this->RequestHandler->startup($event);
+        $this->assertEquals(['valid' => true], $this->Controller->request->data);
+    }
+
+    /**
      * Test mapping a new type and having startup process it.
      *
      * @return void

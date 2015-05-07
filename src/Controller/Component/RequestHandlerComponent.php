@@ -240,8 +240,8 @@ class RequestHandlerComponent extends Component
 
         foreach ($this->_inputTypeMap as $type => $handler) {
             if ($this->requestedWith($type)) {
-                $input = call_user_func_array([$controller->request, 'input'], $handler);
-                $request->data = $input;
+                $input = call_user_func_array([$request, 'input'], $handler);
+                $request->data = (array)$input;
             }
         }
     }
