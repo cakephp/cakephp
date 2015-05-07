@@ -116,7 +116,7 @@ trait EntityTrait
     protected $_registryAlias;
 
     /**
-     * Holds a list of properties that were mutaded using the get accessor
+     * Holds a list of properties that were mutated using the get accessor
      *
      * @var array
      */
