@@ -22,32 +22,35 @@ use Cake\Network\Response;
 /**
  * A view class that is used for JSON responses.
  *
- * It allows you to omit templates and layouts if you just need to emit JSON
- * string as response.
+ * It allows you to omit templates if you just need to emit JSON string as response.
  *
  * In your controller, you could do the following:
  *
  * ```
  * $this->set(['posts' => $posts]);
+ * $this->set('_serialize', true);
  * ```
  *
- * By default all view variables will be serialized to JSON. So for above example
- * the `$posts` view variable will be serialized into JSON.
+ * When the view is rendered, the `$posts` view variable will be serialized
+ * into JSON.
  *
- * You can also define `'_serialize'` to specify which view variables to serialize.
+ * You can also set multiple view variables for serialization. This will create
+ * a top level object containing all the named view variables:
  *
  * ```
  * $this->set(compact('posts', 'users', 'stuff'));
- * $this->set('_serialize', ['posts', 'users']);
+ * $this->set('_serialize', true);
  * ```
  *
  * The above would generate a JSON object that looks like:
  *
  * `{"posts": [...], "users": [...]}`
  *
- * If you need the regular view template processing you can set `_serialize` to
- * `false` which will turn off automatic serialization and instead view template
- * and layout will be used.
+ * You can also set `'_serialize'` to a string or array to serialize only the
+ * specified view variables.
+ *
+ * If you don't use the `_serialize`, you will need a view template. You can use
+ * extended views to provide layout-like functionality.
  *
  * You can also enable JSONP support by setting parameter `_jsonp` to true or a
  * string to specify custom query string parameter name which will contain the
@@ -105,9 +108,7 @@ class JsonView extends View
      */
     public function loadHelpers()
     {
-        if (isset($this->viewVars['_serialize']) &&
-            $this->viewVars['_serialize'] === false
-        ) {
+        if (empty($this->viewVars['_serialize'])) {
             parent::loadHelpers();
         }
     }
@@ -117,13 +118,14 @@ class JsonView extends View
      *
      * ### Special parameters
      * `_serialize` To convert a set of view variables into a JSON response.
-     *   Its value can be a string for single variable name or array for multiple names.
-     *   It can also be set to false to turn off serialization and use a normal
-     *   view + layout as well. If unset or true all view variables will be serialized.
-     * `_jsonp` Enables JSONP support and wraps response in callback function provided in query string.
+     *   Its value can be a string for single variable name or array for multiple
+     *   names. If true all view variables will be serialized. It unset normal
+     *   view template will be rendered.
+     * `_jsonp` Enables JSONP support and wraps response in callback function
+     *   provided in query string.
      *   - Setting it to true enables the default query string parameter "callback".
-     *   - Setting it to a string value, uses the provided query string parameter for finding the
-     *     JSONP callback name.
+     *   - Setting it to a string value, uses the provided query string parameter
+     *     for finding the JSONP callback name.
      *
      * @param string|null $view The view being rendered.
      * @param string|null $layout The layout being rendered.
@@ -131,7 +133,7 @@ class JsonView extends View
      */
     public function render($view = null, $layout = null)
     {
-        $serialize = true;
+        $serialize = false;
         if (isset($this->viewVars['_serialize'])) {
             $serialize = $this->viewVars['_serialize'];
         }
@@ -195,9 +197,9 @@ class JsonView extends View
      *   variables will be used.
      * @return mixed The data to serialize.
      */
-    protected function _dataToSerialize($serialize = null)
+    protected function _dataToSerialize($serialize = true)
     {
-        if ($serialize === null || $serialize === true) {
+        if ($serialize === true) {
             $data = array_diff_key(
                 $this->viewVars,
                 array_flip($this->_specialVars)
