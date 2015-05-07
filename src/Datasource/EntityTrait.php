@@ -116,6 +116,13 @@ trait EntityTrait
     protected $_registryAlias;
 
     /**
+     * Holds a list of properties that were mutaded using the get accessor
+     *
+     * @var array
+     */
+    protected $_mutated = [];
+
+    /**
      * Magic getter to access properties that have been set in this entity
      *
      * @param string $property Name of the property to access
@@ -235,6 +242,7 @@ trait EntityTrait
                 continue;
             }
 
+            unset($this->_mutated[$p]);
             $this->dirty($p, true);
 
             if (!isset($this->_original[$p]) &&
@@ -271,6 +279,10 @@ trait EntityTrait
             throw new InvalidArgumentException('Cannot get an empty property');
         }
 
+        if (array_key_exists($property, $this->_mutated)) {
+            return $this->_mutated[$property];
+        }
+
         $value = null;
         $method = '_get' . Inflector::camelize($property);
 
@@ -280,6 +292,7 @@ trait EntityTrait
 
         if ($this->_methodExists($method)) {
             $result = $this->{$method}($value);
+            $this->_mutated[$property] = $result;
             return $result;
         }
         return $value;
