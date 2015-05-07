@@ -674,7 +674,7 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * test create() with no url (no "action" attribute for <form> tag)
+     * Test create() with no URL (no "action" attribute for <form> tag)
      *
      * @return void
      */
