@@ -46,8 +46,8 @@ use Cake\Network\Response;
  * `{"posts": [...], "users": [...]}`
  *
  * If you need the regular view template processing you can set `_serialize` to
- * false which will turn off automatic serialization and instead view template
- * and layotu will be used.
+ * `false` which will turn off automatic serialization and instead view template
+ * and layout will be used.
  *
  * You can also enable JSONP support by setting parameter `_jsonp` to true or a
  * string to specify custom query string parameter name which will contain the
