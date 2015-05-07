@@ -17,6 +17,7 @@ namespace Cake\Validation;
 use ArrayAccess;
 use Cake\Validation\RulesProvider;
 use Cake\Validation\ValidationSet;
+use Cake\Utility\Hash;
 use Countable;
 use IteratorAggregate;
 
@@ -97,9 +98,11 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $requiredMessage = __d('cake', 'This field is required');
             $emptyMessage = __d('cake', 'This field cannot be left empty');
         }
+        $flat = Hash::flatten($data);
 
         foreach ($this->_fields as $name => $field) {
-            $keyPresent = array_key_exists($name, $data);
+            $isPath = strpos($name, '.') !== false;
+            $keyPresent = array_key_exists($name, $isPath ? $flat : $data);
 
             if (!$keyPresent && !$this->_checkPresence($field, $newRecord)) {
                 $errors[$name]['_required'] = isset($this->_presenceMessages[$name])
@@ -107,15 +110,15 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                     : $requiredMessage;
                 continue;
             }
-
             if (!$keyPresent) {
                 continue;
             }
+            $value = $isPath ? $flat[$name] : $data[$name];
 
             $providers = $this->_providers;
             $context = compact('data', 'newRecord', 'field', 'providers');
             $canBeEmpty = $this->_canBeEmpty($field, $context);
-            $isEmpty = $this->_fieldIsEmpty($data[$name]);
+            $isEmpty = $this->_fieldIsEmpty($value);
 
             if (!$canBeEmpty && $isEmpty) {
                 $errors[$name]['_empty'] = isset($this->_allowEmptyMessages[$name])
@@ -128,7 +131,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 continue;
             }
 
-            $result = $this->_processRules($name, $field, $data, $newRecord);
+            $result = $this->_processRules($name, $value, $field, $data, $newRecord);
             if ($result) {
                 $errors[$name] = $result;
             }
@@ -547,13 +550,13 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field that is being processed
      * @param ValidationSet $rules the list of rules for a field
+     * @param mixed $value The field value.
      * @param array $data the full data passed to the validator
      * @param bool $newRecord whether is it a new record or an existing one
      * @return array
      */
-    protected function _processRules($field, ValidationSet $rules, $data, $newRecord)
+    protected function _processRules($field, $value, ValidationSet $rules, $data, $newRecord)
     {
-        $value = $data[$field];
         $errors = [];
         // Loading default provider in case there is none
         $this->provider('default');

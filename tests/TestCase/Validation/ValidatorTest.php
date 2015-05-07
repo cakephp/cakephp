@@ -47,6 +47,31 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Testing you can add nested field rules
+     *
+     * @return void
+     */
+    public function testAddingNestedRulesToField()
+    {
+        $validator = new Validator;
+        $validator->add('user.username', 'not-blank', ['rule' => 'notBlank']);
+        $this->assertCount(0, $validator->field('user'));
+
+        $set = $validator->field('user.username');
+        $this->assertInstanceOf('Cake\Validation\ValidationSet', $set);
+        $this->assertCount(1, $set);
+
+        $validator->add('user.username', 'letters', ['rule' => 'alphanumeric']);
+        $this->assertCount(2, $set);
+
+        $validator->remove('user.username', 'letters');
+        $this->assertCount(1, $set);
+
+        $validator->requirePresence('user.twitter');
+        $this->assertTrue($validator->field('user.twitter')->isPresenceRequired());
+    }
+
+    /**
      * Tests that calling field will create a default validation set for it
      *
      * @return void
@@ -161,6 +186,33 @@ class ValidatorTest extends TestCase
 
         $validator->requirePresence('title', false);
         $this->assertEmpty($validator->errors(['foo' => 'bar']));
+    }
+
+    /**
+     * Test that errors() can work with nested data.
+     *
+     * @return void
+     */
+    public function testErrorsWithNestedFields()
+    {
+        $validator = new Validator;
+        $validator->add('user.username', 'letter', ['rule' => 'alphanumeric']);
+        $validator->add('comments.0.comment', 'letter', ['rule' => 'alphanumeric']);
+
+        $data = [
+            'user' => [
+                'username' => 'is wrong'
+            ],
+            'comments' => [
+                ['comment' => 'is wrong']
+            ]
+        ];
+        $errors = $validator->errors($data);
+        $expected = [
+            'user.username' => ['letter' => 'The provided value is invalid'],
+            'comments.0.comment' => ['letter' => 'The provided value is invalid']
+        ];
+        $this->assertEquals($expected, $errors);
     }
 
     /**
