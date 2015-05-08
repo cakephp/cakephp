@@ -590,6 +590,46 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test belongsToMany association with mixed data and _joinData
+     *
+     * @return void
+     */
+    public function testBelongsToManyWithMixedJoinData()
+    {
+        $data = [
+            'title' => 'My title',
+            'body' => 'My content',
+            'author_id' => 1,
+            'tags' => [
+                [
+                    'id' => 1,
+                    '_joinData' => [
+                        'active' => 0,
+                    ]
+                ],
+                [
+                    'name' => 'tag5',
+                    '_joinData' => [
+                        'active' => 1,
+                    ]
+                ]
+            ]
+        ];
+
+        $articlesTags = TableRegistry::get('ArticlesTags');
+        $articlesTags->belongsTo('Users');
+
+        $marshall = new Marshaller($this->articles);
+
+        $result = $marshall->one($data, ['associated' => ['Tags._joinData.Users']]);
+
+        $this->assertEquals($data['tags'][0]['id'], $result->tags[0]->id);
+        $this->assertEquals($data['tags'][1]['name'], $result->tags[1]->name);
+        $this->assertEquals(0, $result->tags[0]->_joinData->active);
+        $this->assertEquals(1, $result->tags[1]->_joinData->active);
+    }
+
+    /**
      * Test belongsToMany association with mixed data array
      *
      * @return void
