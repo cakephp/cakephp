@@ -71,6 +71,7 @@ class QueryLogger
 
         $keys = [];
         $limit = is_int(key($params)) ? 1 : -1;
+        $params = array_reverse($params);
         foreach ($params as $key => $param) {
             $keys[] = is_string($key) ? "/:$key/" : '/[?]/';
         }
