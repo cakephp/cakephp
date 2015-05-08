@@ -18,6 +18,7 @@ use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\Network\Request;
 use Cake\Network\Response;
+use Cake\View\SerializedView;
 
 /**
  * A view class that is used for JSON responses.
@@ -56,7 +57,7 @@ use Cake\Network\Response;
  * string to specify custom query string parameter name which will contain the
  * callback function name.
  */
-class JsonView extends View
+class JsonView extends SerializedView
 {
 
     /**
@@ -74,44 +75,18 @@ class JsonView extends View
     public $subDir = 'json';
 
     /**
+     * Response type.
+     *
+     * @var string
+     */
+    public $_responseType = 'json';
+
+    /**
      * List of special view vars.
      *
      * @var array
      */
     protected $_specialVars = ['_serialize', '_jsonOptions', '_jsonp'];
-
-    /**
-     * Constructor
-     *
-     * @param \Cake\Network\Request $request Request instance.
-     * @param \Cake\Network\Response $response Response instance.
-     * @param \Cake\Event\EventManager $eventManager EventManager instance.
-     * @param array $viewOptions An array of view options
-     */
-    public function __construct(
-        Request $request = null,
-        Response $response = null,
-        EventManager $eventManager = null,
-        array $viewOptions = []
-    ) {
-        parent::__construct($request, $response, $eventManager, $viewOptions);
-
-        if ($response && $response instanceof Response) {
-            $response->type('json');
-        }
-    }
-
-    /**
-     * Load helpers only if serialization is disabled.
-     *
-     * @return void
-     */
-    public function loadHelpers()
-    {
-        if (empty($this->viewVars['_serialize'])) {
-            parent::loadHelpers();
-        }
-    }
 
     /**
      * Render a JSON view.
@@ -133,17 +108,7 @@ class JsonView extends View
      */
     public function render($view = null, $layout = null)
     {
-        $serialize = false;
-        if (isset($this->viewVars['_serialize'])) {
-            $serialize = $this->viewVars['_serialize'];
-        }
-
-        $return = null;
-        if ($serialize !== false) {
-            $return = $this->_serialize($serialize);
-        } elseif ($view !== false && $this->_getViewFileName($view)) {
-            $return = parent::render($view, false);
-        }
+        $return = parent::render($view, $layout);
 
         if (!empty($this->viewVars['_jsonp'])) {
             $jsonpParam = $this->viewVars['_jsonp'];
