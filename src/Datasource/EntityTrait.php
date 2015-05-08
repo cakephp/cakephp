@@ -364,6 +364,7 @@ trait EntityTrait
         foreach ($property as $p) {
             unset($this->_properties[$p]);
             unset($this->_dirty[$p]);
+            unset($this->_mutated[$p]);
         }
 
         return $this;

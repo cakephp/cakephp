@@ -259,6 +259,26 @@ class EntityTest extends TestCase
     }
 
     /**
+     * Tests that the get cache is cleared by unsetProperty.
+     *
+     * @return void
+     */
+    public function testGetCacheClearedByUnset()
+    {
+        $entity = $this->getMock('\Cake\ORM\Entity', ['_getName']);
+        $entity->expects($this->any())->method('_getName')
+            ->will($this->returnCallback(function ($name) {
+                return 'Dr. ' . $name;
+            }));
+        $entity->set('name', 'Jones');
+        $this->assertEquals('Dr. Jones', $entity->get('name'));
+
+        $entity->unsetProperty('name');
+        $this->assertEquals('Dr. ', $entity->get('name'));
+    }
+
+
+    /**
      * Test magic property setting with no custom setter
      *
      * @return void
