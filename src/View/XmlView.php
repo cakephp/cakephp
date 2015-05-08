@@ -20,6 +20,7 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Hash;
 use Cake\Utility\Xml;
+use Cake\View\SerializeView;
 
 /**
  * A view class that is used for creating XML responses.
@@ -55,7 +56,7 @@ use Cake\Utility\Xml;
  * If you don't use the `_serialize` key, you will need a view. You can use extended
  * views to provide layout like functionality.
  */
-class XmlView extends View
+class XmlView extends SerializedView
 {
 
     /**
@@ -73,60 +74,18 @@ class XmlView extends View
     public $subDir = 'xml';
 
     /**
-     * Constructor
+     * Response type.
      *
-     * @param \Cake\Network\Request|null $request Request instance
-     * @param \Cake\Network\Response|null $response Response instance
-     * @param \Cake\Event\EventManager|null $eventManager Event Manager
-     * @param array $viewOptions View options.
+     * @var string
      */
-    public function __construct(
-        Request $request = null,
-        Response $response = null,
-        EventManager $eventManager = null,
-        array $viewOptions = []
-    ) {
-        parent::__construct($request, $response, $eventManager, $viewOptions);
-
-        if ($response && $response instanceof Response) {
-            $response->type('xml');
-        }
-    }
+    public $_responseType = 'xml';
 
     /**
-     * Skip loading helpers if this is a _serialize based view.
+     * List of special view vars.
      *
-     * @return void
+     * @var array
      */
-    public function loadHelpers()
-    {
-        if (isset($this->viewVars['_serialize'])) {
-            return;
-        }
-        parent::loadHelpers();
-    }
-
-    /**
-     * Render a XML view.
-     *
-     * Uses the special '_serialize' parameter to convert a set of
-     * view variables into a XML response. Makes generating simple
-     * XML responses very easy. You can omit the '_serialize' parameter,
-     * and use a normal view + layout as well.
-     *
-     * @param string|null $view The view being rendered.
-     * @param string|null $layout The layout being rendered.
-     * @return string The rendered view.
-     */
-    public function render($view = null, $layout = null)
-    {
-        if (isset($this->viewVars['_serialize'])) {
-            return $this->_serialize($this->viewVars['_serialize']);
-        }
-        if ($view !== false && $this->_getViewFileName($view)) {
-            return parent::render($view, false);
-        }
-    }
+    protected $_specialVars = ['_serialize', '_rootNode', '_xmlOptions'];
 
     /**
      * Serialize view vars.
@@ -141,6 +100,19 @@ class XmlView extends View
     protected function _serialize($serialize)
     {
         $rootNode = isset($this->viewVars['_rootNode']) ? $this->viewVars['_rootNode'] : 'response';
+
+        if ($serialize === true) {
+            $serialize = array_diff(
+                array_keys($this->viewVars),
+                $this->_specialVars
+            );
+
+            if (empty($serialize)) {
+                $serialize = null;
+            } elseif (count($serialize) === 1) {
+                $serialize = current($serialize);
+            }
+        }
 
         if (is_array($serialize)) {
             $data = [$rootNode => []];
