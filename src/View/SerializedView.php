@@ -28,7 +28,7 @@ class SerializedView extends View
      *
      * @var string
      */
-    public $_responseType;
+    protected $_responseType;
 
     /**
      * Constructor

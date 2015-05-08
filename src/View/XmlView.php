@@ -78,7 +78,7 @@ class XmlView extends SerializedView
      *
      * @var string
      */
-    public $_responseType = 'xml';
+    protected $_responseType = 'xml';
 
     /**
      * List of special view vars.

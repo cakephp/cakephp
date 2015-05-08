@@ -79,7 +79,7 @@ class JsonView extends SerializedView
      *
      * @var string
      */
-    public $_responseType = 'json';
+    protected $_responseType = 'json';
 
     /**
      * List of special view vars.
