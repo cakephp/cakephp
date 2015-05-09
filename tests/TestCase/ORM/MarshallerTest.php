@@ -590,6 +590,86 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test belongsToMany association with mixed data and _joinData
+     *
+     * @return void
+     */
+    public function testBelongsToManyWithMixedJoinData()
+    {
+        $data = [
+            'title' => 'My title',
+            'body' => 'My content',
+            'author_id' => 1,
+            'tags' => [
+                [
+                    'id' => 1,
+                    '_joinData' => [
+                        'active' => 0,
+                    ]
+                ],
+                [
+                    'name' => 'tag5',
+                    '_joinData' => [
+                        'active' => 1,
+                    ]
+                ]
+            ]
+        ];
+        $marshall = new Marshaller($this->articles);
+
+        $result = $marshall->one($data, ['associated' => ['Tags._joinData']]);
+
+        $this->assertEquals($data['tags'][0]['id'], $result->tags[0]->id);
+        $this->assertEquals($data['tags'][1]['name'], $result->tags[1]->name);
+        $this->assertEquals(0, $result->tags[0]->_joinData->active);
+        $this->assertEquals(1, $result->tags[1]->_joinData->active);
+    }
+
+    /**
+     * Test belongsToMany association with mixed data and _joinData
+     *
+     * @return void
+     */
+    public function testBelongsToManyWithMixedJoinDataOutOfOrder()
+    {
+        $data = [
+            'title' => 'My title',
+            'body' => 'My content',
+            'author_id' => 1,
+            'tags' => [
+                [
+                    'name' => 'tag5',
+                    '_joinData' => [
+                        'active' => 1,
+                    ]
+                ],
+                [
+                    'id' => 1,
+                    '_joinData' => [
+                        'active' => 0,
+                    ]
+                ],
+                [
+                    'name' => 'tag3',
+                    '_joinData' => [
+                        'active' => 1,
+                    ]
+                ],
+            ]
+        ];
+        $marshall = new Marshaller($this->articles);
+        $result = $marshall->one($data, ['associated' => ['Tags._joinData']]);
+
+        $this->assertEquals($data['tags'][0]['name'], $result->tags[0]->name);
+        $this->assertEquals($data['tags'][1]['id'], $result->tags[1]->id);
+        $this->assertEquals($data['tags'][2]['name'], $result->tags[2]->name);
+
+        $this->assertEquals(1, $result->tags[0]->_joinData->active);
+        $this->assertEquals(0, $result->tags[1]->_joinData->active);
+        $this->assertEquals(1, $result->tags[2]->_joinData->active);
+    }
+
+    /**
      * Test belongsToMany association with mixed data array
      *
      * @return void
