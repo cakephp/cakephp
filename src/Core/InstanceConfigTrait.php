@@ -250,7 +250,7 @@ trait InstanceConfigTrait
                 break;
             }
 
-            if ($i === $length - 2) {
+            if ($i === $length - 1) {
                 unset($update[$k]);
                 break;
             }
