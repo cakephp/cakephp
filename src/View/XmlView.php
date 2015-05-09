@@ -33,7 +33,7 @@ use Cake\View\SerializeView;
  * In your controller, you could do the following:
  *
  * ```
- * $this->set(['posts' => $posts, '_serialize' => 'posts']);
+ * $this->set(['posts' => $posts, '_serialize' => true]);
  * ```
  *
  * When the view is rendered, the `$posts` view variable will be serialized
@@ -46,12 +46,15 @@ use Cake\View\SerializeView;
  *
  * ```
  * $this->set(compact('posts', 'users', 'stuff'));
- * $this->set('_serialize', ['posts', 'users']);
+ * $this->set('_serialize', true);
  * ```
  *
  * The above would generate a XML object that looks like:
  *
  * `<response><posts>...</posts><users>...</users></response>`
+ *
+ * You can also set `'_serialize'` to a string or array to serialize only the
+ * specified view variables.
  *
  * If you don't use the `_serialize` key, you will need a view. You can use extended
  * views to provide layout like functionality.

@@ -69,7 +69,7 @@ class SerializedView extends View
      * ### Special parameters
      * `_serialize` To convert a set of view variables into a serialized form.
      *   Its value can be a string for single variable name or array for multiple
-     *   names. If true all view variables will be serialized. It unset normal
+     *   names. If true all view variables will be serialized. If unset normal
      *   view template will be rendered.
      *
      * @param string|null $view The view being rendered.
