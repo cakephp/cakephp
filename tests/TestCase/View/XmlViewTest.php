@@ -244,6 +244,37 @@ class XmlViewTest extends TestCase
     }
 
     /**
+     * test rendering with _serialize true
+     *
+     * @return void
+     */
+    public function testRenderWithSerializeTrue()
+    {
+        $Request = new Request();
+        $Response = new Response();
+        $Controller = new Controller($Request, $Response);
+        $data = ['users' => ['user' => ['user1', 'user2']]];
+        $Controller->set(['users' => $data, '_serialize' => true]);
+        $Controller->viewClass = 'Xml';
+        $View = $Controller->createView();
+        $output = $View->render();
+
+        $this->assertSame(Xml::build($data)->asXML(), $output);
+        $this->assertSame('application/xml', $Response->type());
+
+        $data = ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']];
+        $Controller->viewVars = [];
+        $Controller->set($data);
+        $Controller->set('_serialize', true);
+        $View = $Controller->createView();
+        $output = $View->render();
+        $expected = [
+            'response' => $data
+        ];
+        $this->assertSame(Xml::build($expected)->asXML(), $output);
+    }
+
+    /**
      * testRenderWithView method
      *
      * @return void
