@@ -299,25 +299,29 @@ class Marshaller
         }
 
         if (isset($query)) {
-            $queryData = $query->toArray();
-            foreach ($queryData as $queryItem) {
-                foreach ($data as $i => $row) {
-                    $matchCount = 0;
-                    foreach ($primaryKey as $key => $value) {
-                        if (isset($row[$key]) && $row[$key] == $queryItem->$key) {
-                            $matchCount++;
-                        }
-                        if ($matchCount === count($primaryKey)) {
-                            $records[$i] = $queryItem;
-                            break 2;
-                        }
+            $keyFields = array_keys($primaryKey);
+
+            $existing = [];
+            foreach ($query as $row) {
+                $k = implode(';', $row->extract($keyFields));
+                $existing[$k] = $row;
+            }
+
+            foreach ($data as $i => $row) {
+                $key = [];
+                foreach ($keyFields as $k) {
+                    if (isset($row[$k])) {
+                        $key[] = $row[$k];
                     }
+                }
+                $key = implode(';', $key);
+                if (isset($existing[$key])) {
+                    $records[$i] = $existing[$key];
                 }
             }
         }
 
-        $joint = $assoc->junction();
-        $jointMarshaller = $joint->marshaller();
+        $jointMarshaller = $assoc->junction()->marshaller();
 
         $nested = [];
         if (isset($associated['_joinData'])) {
