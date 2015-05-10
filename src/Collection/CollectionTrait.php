@@ -316,10 +316,9 @@ trait CollectionTrait
      */
     public function append($items)
     {
-        $items = $items instanceof Iterator ? $items : new Collection($items);
         $list = new AppendIterator;
         $list->append($this);
-        $list->append($items->_unwrap());
+        $list->append((new Collection($items))->_unwrap());
         return new Collection($list);
     }
 
@@ -540,13 +539,12 @@ trait CollectionTrait
         return iterator_count($this->take(1)) === 0;
     }
 
+
     /**
-     * Returns the closest nested iterator that can be safely traversed without
-     * losing any possible transformations.
+     * {@inheritDoc}
      *
-     * @return \Iterator
      */
-    protected function _unwrap()
+    public function _unwrap()
     {
         $iterator = $this;
         while (get_class($iterator) === 'Cake\Collection\Collection') {
