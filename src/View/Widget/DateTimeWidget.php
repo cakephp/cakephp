@@ -525,8 +525,8 @@ class DateTimeWidget implements WidgetInterface
         if ($leadingZero === false) {
             $i = 1;
             foreach ($months as $key => $name) {
-                $months[$i++] = $name;
                 unset($months[$key]);
+                $months[$i++] = $name;
             }
         }
 

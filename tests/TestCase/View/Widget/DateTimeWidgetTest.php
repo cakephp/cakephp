@@ -430,6 +430,7 @@ class DateTimeWidgetTest extends TestCase
             'minute' => false,
             'second' => false,
             'month' => ['data-foo' => 'test', 'names' => true, 'leadingZeroKey' => false],
+            'meridian' => false,
             'val' => $now,
         ], $this->context);
         $expected = [
@@ -454,8 +455,22 @@ class DateTimeWidgetTest extends TestCase
             $result,
             'no 01 in value'
         );
-        
-    }   
+        $this->assertNotContains(
+            'value="0"',
+            $result,
+            'no 0 in value'
+        );
+        $this->assertNotContains(
+            'value="00"',
+            $result,
+            'no 00 in value'
+        );
+        $this->assertNotContains(
+            'value="13"',
+            $result,
+            'no 13 in value'
+        );
+    }
     
     /**
      * Test rendering month widget with names.
