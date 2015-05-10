@@ -283,7 +283,7 @@ class Marshaller
         $primaryKey = array_flip($assoc->target()->schema()->primaryKey());
         $records = [];
 
-        foreach ($data as $row) {
+        foreach ($data as $i => $row) {
             if (array_intersect_key($primaryKey, $row) === $primaryKey) {
                 if (!isset($query)) {
                     $primaryCount = count($primaryKey);
@@ -294,16 +294,34 @@ class Marshaller
                     $query->orWhere($keys);
                 }
             } else {
-                $records[] = $this->one($row, $options);
+                $records[$i] = $this->one($row, $options);
             }
         }
 
         if (isset($query)) {
-            $records = array_merge($records, $query->toArray());
+            $keyFields = array_keys($primaryKey);
+
+            $existing = [];
+            foreach ($query as $row) {
+                $k = implode(';', $row->extract($keyFields));
+                $existing[$k] = $row;
+            }
+
+            foreach ($data as $i => $row) {
+                $key = [];
+                foreach ($keyFields as $k) {
+                    if (isset($row[$k])) {
+                        $key[] = $row[$k];
+                    }
+                }
+                $key = implode(';', $key);
+                if (isset($existing[$key])) {
+                    $records[$i] = $existing[$key];
+                }
+            }
         }
 
-        $joint = $assoc->junction();
-        $jointMarshaller = $joint->marshaller();
+        $jointMarshaller = $assoc->junction()->marshaller();
 
         $nested = [];
         if (isset($associated['_joinData'])) {

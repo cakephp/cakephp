@@ -35,7 +35,10 @@ class TestInstanceConfig
      */
     protected $_defaultConfig = [
         'some' => 'string',
-        'a' => ['nested' => 'value']
+        'a' => [
+            'nested' => 'value',
+            'other' => 'value'
+        ]
     ];
 }
 
@@ -56,7 +59,10 @@ class ReadOnlyTestInstanceConfig
      */
     protected $_defaultConfig = [
         'some' => 'string',
-        'a' => ['nested' => 'value']
+        'a' => [
+            'nested' => 'value',
+            'other' => 'value'
+        ]
     ];
 
     /**
@@ -101,7 +107,10 @@ class InstanceConfigTraitTest extends TestCase
         $this->assertSame(
             [
                 'some' => 'string',
-                'a' => ['nested' => 'value']
+                'a' => [
+                    'nested' => 'value',
+                    'other' => 'value'
+                ]
             ],
             $this->object->config(),
             'runtime config should match the defaults if not overridden'
@@ -122,7 +131,7 @@ class InstanceConfigTraitTest extends TestCase
         );
 
         $this->assertSame(
-            ['nested' => 'value'],
+            ['nested' => 'value', 'other' => 'value'],
             $this->object->config('a'),
             'should return the key value only'
         );
@@ -171,7 +180,7 @@ class InstanceConfigTraitTest extends TestCase
         $this->assertSame(
             [
                 'some' => 'zum',
-                'a' => ['nested' => 'value'],
+                'a' => ['nested' => 'value', 'other' => 'value'],
                 'foo' => 'bar',
             ],
             $this->object->config(),
@@ -203,7 +212,7 @@ class InstanceConfigTraitTest extends TestCase
         $this->assertSame(
             [
                 'some' => 'string',
-                'a' => ['nested' => 'zum'],
+                'a' => ['nested' => 'zum', 'other' => 'value'],
                 'new' => ['foo' => 'bar']
             ],
             $this->object->config(),
@@ -228,7 +237,7 @@ class InstanceConfigTraitTest extends TestCase
         $this->assertSame(
             [
                 'some' => 'string',
-                'a' => ['nested' => 'value'],
+                'a' => ['nested' => 'value', 'other' => 'value'],
                 'foo' => 'bar',
             ],
             $this->object->config(),
@@ -245,7 +254,7 @@ class InstanceConfigTraitTest extends TestCase
         $this->assertSame(
             [
                 'some' => 'string',
-                'a' => ['nested' => 'value'],
+                'a' => ['nested' => 'value', 'other' => 'value'],
                 'foo' => 'bar',
                 'new' => ['foo' => 'bar']
             ],
@@ -258,7 +267,7 @@ class InstanceConfigTraitTest extends TestCase
         $this->assertSame(
             [
                 'some' => 'string',
-                'a' => ['nested' => 'value', 'values' => ['to' => 'set']],
+                'a' => ['nested' => 'value', 'other' => 'value', 'values' => ['to' => 'set']],
                 'foo' => 'bar',
                 'new' => ['foo' => 'bar'],
                 'multiple' => 'different'
@@ -315,6 +324,7 @@ class InstanceConfigTraitTest extends TestCase
                 'some' => 'string',
                 'a' => [
                     'nested' => 'value',
+                    'other' => 'value',
                     'nother' => 'value'
                 ]
             ],
@@ -337,6 +347,7 @@ class InstanceConfigTraitTest extends TestCase
                 'some' => 'string',
                 'a' => [
                     'nested' => 'value',
+                    'other' => 'value',
                     'nother' => 'value'
                 ]
             ],
@@ -351,6 +362,7 @@ class InstanceConfigTraitTest extends TestCase
                 'some' => 'string',
                 'a' => [
                     'nested' => 'value',
+                    'other' => 'value',
                     'nother' => 'value',
                     'nextra' => 'value'
                 ]
@@ -374,6 +386,7 @@ class InstanceConfigTraitTest extends TestCase
                 'some' => 'string',
                 'a' => [
                     'nested' => 'value',
+                    'other' => 'value',
                     'nother' => 'value'
                 ]
             ],
@@ -421,7 +434,8 @@ class InstanceConfigTraitTest extends TestCase
                 'a' => [
                     'nested' => [
                         'value' => 'it is possible'
-                    ]
+                    ],
+                    'other' => 'value'
                 ]
             ],
             $this->object->config(),
@@ -443,7 +457,7 @@ class InstanceConfigTraitTest extends TestCase
         $this->assertSame(
             [
                 'some' => 'string',
-                'a' => ['nested' => 'value']
+                'a' => ['nested' => 'value', 'other' => 'value']
             ],
             $object->config(),
             'default config should be returned'
@@ -473,7 +487,7 @@ class InstanceConfigTraitTest extends TestCase
 
         $this->assertSame(
             [
-                'a' => ['nested' => 'value'],
+                'a' => ['nested' => 'value', 'other' => 'value'],
             ],
             $this->object->config(),
             'deleted keys should not be present'
@@ -498,10 +512,42 @@ class InstanceConfigTraitTest extends TestCase
             $this->object->config('a.nested'),
             'should delete the existing value'
         );
-
         $this->assertSame(
             [
                 'some' => 'string',
+                'a' => [
+                    'other' => 'value'
+                ]
+            ],
+            $this->object->config(),
+            'deleted keys should not be present'
+        );
+
+        $this->object->config('a.other', null);
+        $this->assertNull(
+            $this->object->config('a.other'),
+            'should delete the existing value'
+        );
+        $this->assertSame(
+            [
+                'some' => 'string',
+                'a' => []
+            ],
+            $this->object->config(),
+            'deleted keys should not be present'
+        );
+    }
+
+    public function testDeleteArray()
+    {
+        $this->object->config('a', null);
+        $this->assertNull(
+            $this->object->config('a'),
+            'should delete the existing value'
+        );
+        $this->assertSame(
+            [
+                'some' => 'string'
             ],
             $this->object->config(),
             'deleted keys should not be present'

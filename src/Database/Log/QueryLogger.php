@@ -72,7 +72,7 @@ class QueryLogger
         $keys = [];
         $limit = is_int(key($params)) ? 1 : -1;
         foreach ($params as $key => $param) {
-            $keys[] = is_string($key) ? "/:$key/" : '/[?]/';
+            $keys[] = is_string($key) ? "/:$key\b/" : '/[?]/';
         }
 
         return preg_replace($keys, $params, $query->query, $limit);

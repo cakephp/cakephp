@@ -805,7 +805,7 @@ class DateTimeWidgetTest extends TestCase
         $this->assertContains(
             '<option value="00">00</option>',
             $result,
-            'contains 1'
+            'contains 00'
         );
         $this->assertContains(
             '<option value="05">05</option>',
@@ -824,7 +824,65 @@ class DateTimeWidgetTest extends TestCase
         );
         $this->assertNotContains('value="60"', $result, 'No 60 value');
     }
-
+    
+    /**
+     * Test rendering the minute widget with empty at zero options.
+     *
+     * @return void
+     */
+    public function testRenderMinuteWidgetEmptyZeroDefault()
+    {
+        $now = new \DateTime('2010-09-09 13:00:23');
+        $result = $this->DateTime->render([
+            'name' => 'date',
+            'year' => false,
+            'month' => false,
+            'day' => false,
+            'hour' => false,
+            'minute' => [
+                'data-foo' => 'test',
+                
+            ],
+            'empty' => '-',
+            'default' => '',
+            'second' => false,
+            'val' => $now,
+        ], $this->context);
+        $this->assertContains('<select name="date[minute]" data-foo="test">', $result);
+        $this->assertContains(
+            '<option value="">-</option>',
+            $result,
+            'contains empty option -'
+        );
+        $this->assertContains(
+            '<option value="00" selected="selected">00</option>',
+            $result,
+            'selected value present and correct at 00'
+        );
+        $this->assertContains(
+            '<option value="05">05</option>',
+            $result,
+            'contains 05'
+        );
+        $this->assertContains(
+            '<option value="25">25</option>',
+            $result,
+            'contains 25'
+        );
+        $this->assertContains(
+            '<option value="59">59</option>',
+            $result,
+            'contains 59'
+        );
+        $this->assertNotContains(
+            '<option value="" selected="selected">-</option>',
+            $result,
+            'No 0 value as empty value'
+        );
+        $this->assertNotContains('value="0"', $result, 'No unpadded 0 value');
+        $this->assertNotContains('value="60"', $result, 'No 60 value');
+    }
+    
     /**
      * Test minutes with interval values.
      *
@@ -849,7 +907,7 @@ class DateTimeWidgetTest extends TestCase
         $this->assertContains(
             '<option value="00">00</option>',
             $result,
-            'contains 0'
+            'contains 00'
         );
         $this->assertContains(
             '<option value="05">05</option>',
@@ -864,7 +922,7 @@ class DateTimeWidgetTest extends TestCase
         $this->assertContains(
             '<option value="55">55</option>',
             $result,
-            'contains 59'
+            'contains 55'
         );
         $this->assertNotContains('value="2"', $result, 'No 2 value');
         $this->assertNotContains('value="23"', $result, 'No 23 value');
@@ -966,9 +1024,14 @@ class DateTimeWidgetTest extends TestCase
         ], $this->context);
         $this->assertContains('<select name="date[second]" data-foo="test">', $result);
         $this->assertContains(
+            '<option value="00">00</option>',
+            $result,
+            'contains 00'
+        );
+        $this->assertContains(
             '<option value="01">01</option>',
             $result,
-            'contains 1'
+            'contains 01'
         );
         $this->assertContains(
             '<option value="05">05</option>',
@@ -981,12 +1044,12 @@ class DateTimeWidgetTest extends TestCase
             'selected value present'
         );
         $this->assertContains(
-            '<option value="60">60</option>',
+            '<option value="59">59</option>',
             $result,
-            'contains 60'
+            'contains 59'
         );
-        $this->assertNotContains('value="0"', $result, 'No zero value');
-        $this->assertNotContains('value="61"', $result, 'No 61 value');
+        $this->assertNotContains('value="0"', $result, 'No unpadded zero value');
+        $this->assertNotContains('value="60"', $result, 'No 60 value');
     }
 
     /**
