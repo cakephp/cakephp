@@ -188,4 +188,19 @@ class Form
     {
         return true;
     }
+
+    /**
+     * Get the printable version of a Form instance.
+     *
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        $special = [
+            '_schema' => $this->schema()->__debugInfo(),
+            '_errors' => $this->errors(),
+            '_validator' => $this->validator()->__debugInfo()
+        ];
+        return $special + get_object_vars($this);
+    }
 }

@@ -121,4 +121,16 @@ class Schema
         }
         return $field['type'];
     }
+
+    /**
+     * Get the printable version of this object
+     *
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        return [
+            '_fields' => $this->_fields
+        ];
+    }
 }

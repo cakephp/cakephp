@@ -580,4 +580,28 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
         return $errors;
     }
+
+    /**
+     * Get the printable version of this object.
+     *
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        $fields = [];
+        foreach ($this->_fields as $name => $fieldSet) {
+            $fields[$name] = [
+                'isPresenceRequired' => $fieldSet->isPresenceRequired(),
+                'isEmptyAllowed' => $fieldSet->isEmptyAllowed(),
+                'rules' => array_keys($fieldSet->rules()),
+            ];
+        }
+        return [
+            '_presenceMessages' => $this->_presenceMessages,
+            '_allowEmptyMessages' => $this->_allowEmptyMessages,
+            '_useI18n' => $this->_useI18n,
+            '_providers' => array_keys($this->_providers),
+            '_fields' => $fields
+        ];
+    }
 }
