@@ -544,12 +544,23 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      */
-    public function _unwrap()
+    public function unwrap()
     {
         $iterator = $this;
         while (get_class($iterator) === 'Cake\Collection\Collection') {
             $iterator = $iterator->getInnerIterator();
         }
         return $iterator;
+    }
+
+    /**
+     * Backwards compatible wrapper for unwrap()
+     *
+     * @return \Iterator
+     * @deprecated
+     */
+    public function _unwrap()
+    {
+        return $this->unwrap();
     }
 }

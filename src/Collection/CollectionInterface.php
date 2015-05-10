@@ -855,5 +855,5 @@ interface CollectionInterface extends Iterator, JsonSerializable
      *
      * @return \Iterator
      */
-    public function _unwrap();
+    public function unwrap();
 }
