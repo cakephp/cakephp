@@ -847,4 +847,13 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * @return bool
      */
     public function isEmpty();
+
+    /**
+     * Returns the closest nested iterator that can be safely traversed without
+     * losing any possible transformations. This is used mainly to remove empty
+     * IteratorIterator wrappers that can only slowdown the iteration process.
+     *
+     * @return \Iterator
+     */
+    public function unwrap();
 }
