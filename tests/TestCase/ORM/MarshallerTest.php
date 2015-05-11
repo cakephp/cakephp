@@ -1301,7 +1301,7 @@ class MarshallerTest extends TestCase
         ]);
 
         $this->articles->Tags->eventManager()
-            ->on('Model.beforeFind', function($event, $query) use (&$called) {
+            ->on('Model.beforeFind', function ($event, $query) use (&$called) {
                 $called = true;
                 return $query->where(['Tags.id >=' => 1]);
             });
