@@ -17,7 +17,6 @@ namespace Cake\Validation;
 use ArrayAccess;
 use Cake\Validation\RulesProvider;
 use Cake\Validation\ValidationSet;
-use Cake\Utility\Hash;
 use Countable;
 use IteratorAggregate;
 
@@ -31,6 +30,12 @@ use IteratorAggregate;
  */
 class Validator implements ArrayAccess, IteratorAggregate, Countable
 {
+    /**
+     * Used to flag nested rules created with addNested() and addNestedMany()
+     *
+     * @var string
+     */
+    const NESTED = '_nested';
 
     /**
      * Holds the ValidationSet objects array
@@ -98,11 +103,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $requiredMessage = __d('cake', 'This field is required');
             $emptyMessage = __d('cake', 'This field cannot be left empty');
         }
-        $flat = Hash::flatten($data);
 
         foreach ($this->_fields as $name => $field) {
-            $isPath = strpos($name, '.') !== false;
-            $keyPresent = array_key_exists($name, $isPath ? $flat : $data);
+            $keyPresent = array_key_exists($name, $data);
 
             if (!$keyPresent && !$this->_checkPresence($field, $newRecord)) {
                 $errors[$name]['_required'] = isset($this->_presenceMessages[$name])
@@ -113,12 +116,11 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             if (!$keyPresent) {
                 continue;
             }
-            $value = $isPath ? $flat[$name] : $data[$name];
 
             $providers = $this->_providers;
             $context = compact('data', 'newRecord', 'field', 'providers');
             $canBeEmpty = $this->_canBeEmpty($field, $context);
-            $isEmpty = $this->_fieldIsEmpty($value);
+            $isEmpty = $this->_fieldIsEmpty($data[$name]);
 
             if (!$canBeEmpty && $isEmpty) {
                 $errors[$name]['_empty'] = isset($this->_allowEmptyMessages[$name])
@@ -131,7 +133,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 continue;
             }
 
-            $result = $this->_processRules($name, $value, $field, $data, $newRecord);
+            $result = $this->_processRules($name, $field, $data, $newRecord);
             if ($result) {
                 $errors[$name] = $result;
             }
@@ -305,6 +307,67 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $field->add($name, $rule);
         }
 
+        return $this;
+    }
+
+    /**
+     * Adds a nested validator.
+     *
+     * Nesting validators allows you to define validators for array
+     * types. For example, nested validators are ideal when you want to validate a
+     * sub-document, or complex array type.
+     *
+     * This method assumes that the sub-document has a 1:1 relationship with the parent.
+     *
+     * @param string $field The root field for the nested validator.
+     * @param \Cake\Validation\Validator $validator The nested validator.
+     * @return $this
+     */
+    public function addNested($field, Validator $validator)
+    {
+        $field = $this->field($field);
+        $field->add(static::NESTED, ['rule' => function ($value, $context) use ($validator) {
+            if (!is_array($value)) {
+                return false;
+            }
+            $errors = $validator->errors($value);
+            return empty($errors) ? true : $errors;
+        }]);
+        return $this;
+    }
+
+    /**
+     * Adds a nested validator.
+     *
+     * Nesting validators allows you to define validators for array
+     * types. For example, nested validators are ideal when you want to validate many
+     * similar sub-documents or complex array types.
+     *
+     * This method assumes that the sub-document has a 1:N relationship with the parent.
+     *
+     * @param string $field The root field for the nested validator.
+     * @param \Cake\Validation\Validator $validator The nested validator.
+     * @return $this
+     */
+    public function addNestedMany($field, Validator $validator)
+    {
+        $field = $this->field($field);
+        $field->add(static::NESTED, ['rule' => function ($value, $context) use ($validator) {
+            if (!is_array($value)) {
+                return false;
+            }
+            $errors = [];
+            foreach ($value as $i => $row) {
+                if (!is_array($row)) {
+                    return false;
+                }
+                $check = $validator->errors($row);
+                if (!empty($check)) {
+                    $errors[$i] = $check;
+                }
+            }
+            return empty($errors) ? true : $errors;
+        }]);
         return $this;
     }
 
@@ -550,12 +613,11 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field that is being processed
      * @param ValidationSet $rules the list of rules for a field
-     * @param mixed $value The field value.
      * @param array $data the full data passed to the validator
      * @param bool $newRecord whether is it a new record or an existing one
      * @return array
      */
-    protected function _processRules($field, $value, ValidationSet $rules, $data, $newRecord)
+    protected function _processRules($field, ValidationSet $rules, $data, $newRecord)
     {
         $errors = [];
         // Loading default provider in case there is none
@@ -567,12 +629,15 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         foreach ($rules as $name => $rule) {
-            $result = $rule->process($value, $this->_providers, compact('newRecord', 'data', 'field'));
+            $result = $rule->process($data[$field], $this->_providers, compact('newRecord', 'data', 'field'));
             if ($result === true) {
                 continue;
             }
 
             $errors[$name] = $message;
+            if (is_array($result) && $name === static::NESTED) {
+                $errors = $result;
+            }
             if (is_string($result)) {
                 $errors[$name] = $result;
             }
