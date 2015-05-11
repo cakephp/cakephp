@@ -572,7 +572,9 @@ SQL;
         $table = new Table('articles');
         $table->addColumn('id', [
                 'type' => 'integer',
-                'null' => false
+                'null' => false,
+                'length' => 11,
+                'unsigned' => true
             ])
             ->addConstraint('primary', [
                 'type' => 'primary',
