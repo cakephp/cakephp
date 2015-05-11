@@ -158,7 +158,7 @@ class SchemaShell extends AppShell {
 		}
 
 		if ($snapshot === true) {
-			$fileName = rtrim($this->params['file'], '.php');
+			$fileName = preg_replace('`\.php$`', '', $this->params['file'], 1);
 			$Folder = new Folder($this->Schema->path);
 			$result = $Folder->read();
 
@@ -285,7 +285,7 @@ class SchemaShell extends AppShell {
 			'connection' => $this->params['connection'],
 		);
 		if (!empty($this->params['snapshot'])) {
-			$fileName = rtrim($this->Schema->file, '.php');
+			$fileName = preg_replace('`\.php$`', '', $this->Schema->file, 1);
 			$options['file'] = $fileName . '_' . $this->params['snapshot'] . '.php';
 		}
 
