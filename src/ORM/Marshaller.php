@@ -282,20 +282,25 @@ class Marshaller
 
         $primaryKey = array_flip($assoc->target()->schema()->primaryKey());
         $records = [];
+        $conditions = [];
+        $primaryCount = count($primaryKey);
 
         foreach ($data as $i => $row) {
             if (array_intersect_key($primaryKey, $row) === $primaryKey) {
-                if (!isset($query)) {
-                    $primaryCount = count($primaryKey);
-                    $query = $assoc->find();
-                }
                 $keys = array_intersect_key($row, $primaryKey);
                 if (count($keys) === $primaryCount) {
-                    $query->orWhere($keys);
+                    $conditions[] = $keys;
                 }
             } else {
                 $records[$i] = $this->one($row, $options);
             }
+        }
+
+        if (!empty($conditions)) {
+            $query = $assoc->target()->find();
+            $query->andWhere(function ($exp) use ($conditions) {
+                return $exp->or_($conditions);
+            });
         }
 
         if (isset($query)) {
