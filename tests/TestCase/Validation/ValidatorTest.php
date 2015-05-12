@@ -62,6 +62,27 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Testing addNested connects providers
+     *
+     * @return void
+     */
+    public function testAddNestedSingleProviders()
+    {
+        $validator = new Validator();
+        $validator->provider('test', $this);
+
+        $inner = new Validator();
+        $inner->add('username', 'not-blank', ['rule' => function () use ($inner, $validator) {
+            $this->assertSame($validator->providers(), $inner->providers(), 'Providers should match');
+            return false;
+        }]);
+        $validator->addNested('user', $inner);
+
+        $result = $validator->errors(['user' => ['username' => 'example']]);
+        $this->assertNotEmpty($result, 'Validation should fail');
+    }
+
+    /**
      * Testing addNestedMany field rules
      *
      * @return void
@@ -74,6 +95,27 @@ class ValidatorTest extends TestCase
         $this->assertSame($validator, $validator->addNestedMany('comments', $inner));
 
         $this->assertCount(1, $validator->field('comments'));
+    }
+
+    /**
+     * Testing addNestedMany connects providers
+     *
+     * @return void
+     */
+    public function testAddNestedManyProviders()
+    {
+        $validator = new Validator();
+        $validator->provider('test', $this);
+
+        $inner = new Validator();
+        $inner->add('comment', 'not-blank', ['rule' => function () use ($inner, $validator) {
+            $this->assertSame($validator->providers(), $inner->providers(), 'Providers should match');
+            return false;
+        }]);
+        $validator->addNestedMany('comments', $inner);
+
+        $result = $validator->errors(['comments' => [['comment' => 'example']]]);
+        $this->assertNotEmpty($result, 'Validation should fail');
     }
 
     /**
