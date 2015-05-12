@@ -386,7 +386,7 @@ class Inflector {
 			self::$_plural['cacheIrregular'] = '(?:' . implode('|', array_keys(self::$_plural['merged']['irregular'])) . ')';
 		}
 
-		if (preg_match('/(.*)\\b(' . self::$_plural['cacheIrregular'] . ')$/i', $word, $regs)) {
+		if (preg_match('/(.*(?:\\b|_))(' . self::$_plural['cacheIrregular'] . ')$/i', $word, $regs)) {
 			self::$_cache['pluralize'][$word] = $regs[1] . substr($regs[2], 0, 1) . substr(self::$_plural['merged']['irregular'][strtolower($regs[2])], 1);
 			return self::$_cache['pluralize'][$word];
 		}
@@ -435,7 +435,7 @@ class Inflector {
 			self::$_singular['cacheIrregular'] = '(?:' . implode('|', array_keys(self::$_singular['merged']['irregular'])) . ')';
 		}
 
-		if (preg_match('/(.*)\\b(' . self::$_singular['cacheIrregular'] . ')$/i', $word, $regs)) {
+		if (preg_match('/(.*(?:\\b|_))(' . self::$_singular['cacheIrregular'] . ')$/i', $word, $regs)) {
 			self::$_cache['singularize'][$word] = $regs[1] . substr($regs[2], 0, 1) . substr(self::$_singular['merged']['irregular'][strtolower($regs[2])], 1);
 			return self::$_cache['singularize'][$word];
 		}
