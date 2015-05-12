@@ -200,6 +200,16 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
+     * Get the list of providers in this validator.
+     *
+     * @return array
+     */
+    public function providers()
+    {
+        return array_keys($this->_providers);
+    }
+
+    /**
      * Returns whether a rule set is defined for a field or not
      *
      * @param string $field name of the field to check
@@ -319,6 +329,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * This method assumes that the sub-document has a 1:1 relationship with the parent.
      *
+     * The providers of the parent validator will be synced into the nested validator, when
+     * errors are checked. This ensures that any validation rule providers connected
+     * in the parent will have the same values in the nested validator when rules are evaluated.
+     *
      * @param string $field The root field for the nested validator.
      * @param \Cake\Validation\Validator $validator The nested validator.
      * @return $this
@@ -329,6 +343,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $field->add(static::NESTED, ['rule' => function ($value, $context) use ($validator) {
             if (!is_array($value)) {
                 return false;
+            }
+            foreach ($this->providers() as $provider) {
+                $validator->provider($provider, $this->provider($provider));
             }
             $errors = $validator->errors($value);
             return empty($errors) ? true : $errors;
@@ -345,6 +362,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * This method assumes that the sub-document has a 1:N relationship with the parent.
      *
+     * The providers of the parent validator will be synced into the nested validator, when
+     * errors are checked. This ensures that any validation rule providers connected
+     * in the parent will have the same values in the nested validator when rules are evaluated.
+     *
      * @param string $field The root field for the nested validator.
      * @param \Cake\Validation\Validator $validator The nested validator.
      * @return $this
@@ -355,6 +376,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $field->add(static::NESTED, ['rule' => function ($value, $context) use ($validator) {
             if (!is_array($value)) {
                 return false;
+            }
+            foreach ($this->providers() as $provider) {
+                $validator->provider($provider, $this->provider($provider));
             }
             $errors = [];
             foreach ($value as $i => $row) {
