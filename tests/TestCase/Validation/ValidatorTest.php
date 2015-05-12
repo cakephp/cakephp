@@ -47,6 +47,78 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Testing addNested field rules
+     *
+     * @return void
+     */
+    public function testAddNestedSingle()
+    {
+        $validator = new Validator();
+        $inner = new Validator();
+        $inner->add('username', 'not-blank', ['rule' => 'notBlank']);
+        $this->assertSame($validator, $validator->addNested('user', $inner));
+
+        $this->assertCount(1, $validator->field('user'));
+    }
+
+    /**
+     * Testing addNested connects providers
+     *
+     * @return void
+     */
+    public function testAddNestedSingleProviders()
+    {
+        $validator = new Validator();
+        $validator->provider('test', $this);
+
+        $inner = new Validator();
+        $inner->add('username', 'not-blank', ['rule' => function () use ($inner, $validator) {
+            $this->assertSame($validator->providers(), $inner->providers(), 'Providers should match');
+            return false;
+        }]);
+        $validator->addNested('user', $inner);
+
+        $result = $validator->errors(['user' => ['username' => 'example']]);
+        $this->assertNotEmpty($result, 'Validation should fail');
+    }
+
+    /**
+     * Testing addNestedMany field rules
+     *
+     * @return void
+     */
+    public function testAddNestedMany()
+    {
+        $validator = new Validator();
+        $inner = new Validator();
+        $inner->add('comment', 'not-blank', ['rule' => 'notBlank']);
+        $this->assertSame($validator, $validator->addNestedMany('comments', $inner));
+
+        $this->assertCount(1, $validator->field('comments'));
+    }
+
+    /**
+     * Testing addNestedMany connects providers
+     *
+     * @return void
+     */
+    public function testAddNestedManyProviders()
+    {
+        $validator = new Validator();
+        $validator->provider('test', $this);
+
+        $inner = new Validator();
+        $inner->add('comment', 'not-blank', ['rule' => function () use ($inner, $validator) {
+            $this->assertSame($validator->providers(), $inner->providers(), 'Providers should match');
+            return false;
+        }]);
+        $validator->addNestedMany('comments', $inner);
+
+        $result = $validator->errors(['comments' => [['comment' => 'example']]]);
+        $this->assertNotEmpty($result, 'Validation should fail');
+    }
+
+    /**
      * Tests that calling field will create a default validation set for it
      *
      * @return void
@@ -161,6 +233,118 @@ class ValidatorTest extends TestCase
 
         $validator->requirePresence('title', false);
         $this->assertEmpty($validator->errors(['foo' => 'bar']));
+    }
+
+    /**
+     * Test that errors() can work with nested data.
+     *
+     * @return void
+     */
+    public function testErrorsWithNestedFields()
+    {
+        $validator = new Validator();
+        $user = new Validator();
+        $user->add('username', 'letter', ['rule' => 'alphanumeric']);
+
+        $comments = new Validator();
+        $comments->add('comment', 'letter', ['rule' => 'alphanumeric']);
+
+        $validator->addNested('user', $user);
+        $validator->addNestedMany('comments', $comments);
+
+        $data = [
+            'user' => [
+                'username' => 'is wrong'
+            ],
+            'comments' => [
+                ['comment' => 'is wrong']
+            ]
+        ];
+        $errors = $validator->errors($data);
+        $expected = [
+            'user' => [
+                'username' => ['letter' => 'The provided value is invalid']
+            ],
+            'comments' => [
+                0 => ['comment' => ['letter' => 'The provided value is invalid']]
+            ]
+        ];
+        $this->assertEquals($expected, $errors);
+    }
+
+    /**
+     * Test nested fields with many, but invalid data.
+     *
+     * @return void
+     */
+    public function testErrorsWithNestedSingleInvalidType()
+    {
+        $validator = new Validator();
+
+        $user = new Validator();
+        $user->add('user', 'letter', ['rule' => 'alphanumeric']);
+        $validator->addNested('user', $user);
+
+        $data = [
+            'user' => 'a string',
+        ];
+        $errors = $validator->errors($data);
+        $expected = [
+            'user' => ['_nested' => 'The provided value is invalid'],
+        ];
+        $this->assertEquals($expected, $errors);
+    }
+
+    /**
+     * Test nested fields with many, but invalid data.
+     *
+     * @return void
+     */
+    public function testErrorsWithNestedManyInvalidType()
+    {
+        $validator = new Validator();
+
+        $comments = new Validator();
+        $comments->add('comment', 'letter', ['rule' => 'alphanumeric']);
+        $validator->addNestedMany('comments', $comments);
+
+        $data = [
+            'comments' => 'a string',
+        ];
+        $errors = $validator->errors($data);
+        $expected = [
+            'comments' => ['_nested' => 'The provided value is invalid'],
+        ];
+        $this->assertEquals($expected, $errors);
+    }
+
+    /**
+     * Test nested fields with many, but invalid data.
+     *
+     * @return void
+     */
+    public function testErrorsWithNestedManySomeInvalid()
+    {
+        $validator = new Validator();
+
+        $comments = new Validator();
+        $comments->add('comment', 'letter', ['rule' => 'alphanumeric']);
+        $validator->addNestedMany('comments', $comments);
+
+        $data = [
+            'comments' => [
+                'a string',
+                ['comment' => 'letters'],
+                ['comment' => 'more invalid']
+            ]
+        ];
+        $errors = $validator->errors($data);
+        $expected = [
+            'comments' => [
+                '_nested' => 'The provided value is invalid',
+            ],
+        ];
+        $this->assertEquals($expected, $errors);
     }
 
     /**

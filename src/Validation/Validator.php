@@ -30,6 +30,12 @@ use IteratorAggregate;
  */
 class Validator implements ArrayAccess, IteratorAggregate, Countable
 {
+    /**
+     * Used to flag nested rules created with addNested() and addNestedMany()
+     *
+     * @var string
+     */
+    const NESTED = '_nested';
 
     /**
      * Holds the ValidationSet objects array
@@ -107,7 +113,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                     : $requiredMessage;
                 continue;
             }
-
             if (!$keyPresent) {
                 continue;
             }
@@ -192,6 +197,16 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
         $this->_providers[$name] = $object;
         return $this;
+    }
+
+    /**
+     * Get the list of providers in this validator.
+     *
+     * @return array
+     */
+    public function providers()
+    {
+        return array_keys($this->_providers);
     }
 
     /**
@@ -302,6 +317,81 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $field->add($name, $rule);
         }
 
+        return $this;
+    }
+
+    /**
+     * Adds a nested validator.
+     *
+     * Nesting validators allows you to define validators for array
+     * types. For example, nested validators are ideal when you want to validate a
+     * sub-document, or complex array type.
+     *
+     * This method assumes that the sub-document has a 1:1 relationship with the parent.
+     *
+     * The providers of the parent validator will be synced into the nested validator, when
+     * errors are checked. This ensures that any validation rule providers connected
+     * in the parent will have the same values in the nested validator when rules are evaluated.
+     *
+     * @param string $field The root field for the nested validator.
+     * @param \Cake\Validation\Validator $validator The nested validator.
+     * @return $this
+     */
+    public function addNested($field, Validator $validator)
+    {
+        $field = $this->field($field);
+        $field->add(static::NESTED, ['rule' => function ($value, $context) use ($validator) {
+            if (!is_array($value)) {
+                return false;
+            }
+            foreach ($this->providers() as $provider) {
+                $validator->provider($provider, $this->provider($provider));
+            }
+            $errors = $validator->errors($value);
+            return empty($errors) ? true : $errors;
+        }]);
+        return $this;
+    }
+
+    /**
+     * Adds a nested validator.
+     *
+     * Nesting validators allows you to define validators for array
+     * types. For example, nested validators are ideal when you want to validate many
+     * similar sub-documents or complex array types.
+     *
+     * This method assumes that the sub-document has a 1:N relationship with the parent.
+     *
+     * The providers of the parent validator will be synced into the nested validator, when
+     * errors are checked. This ensures that any validation rule providers connected
+     * in the parent will have the same values in the nested validator when rules are evaluated.
+     *
+     * @param string $field The root field for the nested validator.
+     * @param \Cake\Validation\Validator $validator The nested validator.
+     * @return $this
+     */
+    public function addNestedMany($field, Validator $validator)
+    {
+        $field = $this->field($field);
+        $field->add(static::NESTED, ['rule' => function ($value, $context) use ($validator) {
+            if (!is_array($value)) {
+                return false;
+            }
+            foreach ($this->providers() as $provider) {
+                $validator->provider($provider, $this->provider($provider));
+            }
+            $errors = [];
+            foreach ($value as $i => $row) {
+                if (!is_array($row)) {
+                    return false;
+                }
+                $check = $validator->errors($row);
+                if (!empty($check)) {
+                    $errors[$i] = $check;
+                }
+            }
+            return empty($errors) ? true : $errors;
+        }]);
         return $this;
     }
 
@@ -553,7 +643,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     protected function _processRules($field, ValidationSet $rules, $data, $newRecord)
     {
-        $value = $data[$field];
         $errors = [];
         // Loading default provider in case there is none
         $this->provider('default');
@@ -564,12 +653,15 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         foreach ($rules as $name => $rule) {
-            $result = $rule->process($value, $this->_providers, compact('newRecord', 'data', 'field'));
+            $result = $rule->process($data[$field], $this->_providers, compact('newRecord', 'data', 'field'));
             if ($result === true) {
                 continue;
             }
 
             $errors[$name] = $message;
+            if (is_array($result) && $name === static::NESTED) {
+                $errors = $result;
+            }
             if (is_string($result)) {
                 $errors[$name] = $result;
             }
