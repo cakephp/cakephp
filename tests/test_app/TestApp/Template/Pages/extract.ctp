@@ -29,3 +29,6 @@ __('Hot features!'
 
 // Context
 echo __x('mail', 'letter');
+
+// Duplicated message with different context
+echo __x('alphabet', 'letter');
