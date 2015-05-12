@@ -1045,6 +1045,7 @@ class FolderTest extends TestCase
         $result = $Folder->copy(['to' => $folderThree, 'recursive' => false]);
 
         $this->assertTrue(file_exists($folderThree . DS . 'file1.php'));
+        $this->assertFalse(is_dir($folderThree . DS . 'folderA'));
         $this->assertFalse(file_exists($folderThree . DS . 'folderA' . DS . 'fileA.php'));
     }
 
@@ -1233,5 +1234,17 @@ class FolderTest extends TestCase
 
         $Folder = new Folder($path);
         $Folder->delete();
+    }
+    
+    public function testMoveWithoutRecursive()
+    {
+        extract($this->_setupFilesystem());
+
+        $Folder = new Folder($folderOne);
+        $result = $Folder->move(['to' => $folderTwo, 'recursive' => false]);
+        $this->assertTrue($result);
+        $this->assertTrue(file_exists($folderTwo . '/file1.php'));
+        $this->assertFalse(is_dir($folderTwo . '/folderA'));
+        $this->assertFalse(file_exists($folderTwo . '/folderA/fileA.php'));
     }
 }

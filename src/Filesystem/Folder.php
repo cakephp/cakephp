@@ -725,7 +725,7 @@ class Folder
                         $this->delete($to);
                     }
 
-                    if(is_dir($from) && $options['recursive'] === false) {
+                    if (is_dir($from) && $options['recursive'] === false) {
                         continue;
                     }
 
