@@ -259,6 +259,32 @@ class InflectorTest extends TestCase
     }
 
     /**
+     * testInflectingMultiWordIrregulars
+     *
+     * @return void
+     */
+    public function testInflectingMultiWordIrregulars()
+    {
+        // unset the default rules in order to avoid them possibly matching
+        // the words in case the irregular regex won't match, the tests
+        // should fail in that case
+        Inflector::rules('plural', [
+            'rules' => [],
+        ]);
+        Inflector::rules('singular', [
+            'rules' => [],
+        ]);
+
+        $this->assertEquals(Inflector::singularize('wisdom teeth'), 'wisdom tooth');
+        $this->assertEquals(Inflector::singularize('wisdom-teeth'), 'wisdom-tooth');
+        $this->assertEquals(Inflector::singularize('wisdom_teeth'), 'wisdom_tooth');
+
+        $this->assertEquals(Inflector::pluralize('sweet potato'), 'sweet potatoes');
+        $this->assertEquals(Inflector::pluralize('sweet-potato'), 'sweet-potatoes');
+        $this->assertEquals(Inflector::pluralize('sweet_potato'), 'sweet_potatoes');
+    }
+
+    /**
      * testSlug method
      *
      * @return void
