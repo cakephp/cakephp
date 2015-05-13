@@ -2242,7 +2242,7 @@ class FormHelper extends Helper
         }
         unset($options['interval'], $options['round']);
 
-        if (!isset($options['val'])) {
+        if ($options['val'] === true) {
             $val = new DateTime();
             $currentYear = $val->format('Y');
             if (isset($options['year']['end']) && $options['year']['end'] < $currentYear) {
