@@ -244,7 +244,7 @@ class ClientTest extends TestCase
             'Category' => ['id' => [2, 3]]
         ];
         $result = $http->get('/search', http_build_query($data));
-        $this->assertSame($result, $response);
+        $this->assertSame($response, $result);
     }
 
     /**
