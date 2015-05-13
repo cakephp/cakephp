@@ -431,6 +431,39 @@ class ClientTest extends TestCase
     }
 
     /**
+     * Test that string payloads with no content type have a default content-type set.
+     *
+     * @return void
+     */
+    public function testPostWithStringDataDefaultsToFormEncoding()
+    {
+        $response = new Response();
+        $data = 'some=value&more=data';
+        $headers = [
+            'Connection' => 'close',
+            'User-Agent' => 'CakePHP',
+            'Content-Type' => 'application/x-www-form-urlencoded',
+        ];
+
+        $mock = $this->getMock('Cake\Network\Http\Adapter\Stream', ['send']);
+        $mock->expects($this->any())
+            ->method('send')
+            ->with($this->logicalAnd(
+                $this->attributeEqualTo('_body', $data),
+                $this->attributeEqualTo('_headers', $headers)
+            ))
+            ->will($this->returnValue([$response]));
+
+        $http = new Client([
+            'host' => 'cakephp.org',
+            'adapter' => $mock
+        ]);
+        $http->post('/projects/add', $data);
+        $http->put('/projects/add', $data);
+        $http->delete('/projects/add', $data);
+    }
+
+    /**
      * Test that exceptions are raised on invalid types.
      *
      * @expectedException \Cake\Core\Exception\Exception

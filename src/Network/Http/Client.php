@@ -419,11 +419,15 @@ class Client
         $request->method($method)
             ->url($url)
             ->body($data);
+
         if (isset($options['type'])) {
             $request->header($this->_typeHeaders($options['type']));
         }
         if (isset($options['headers'])) {
             $request->header($options['headers']);
+        }
+        if (is_string($data) && !$request->header('content-type')) {
+            $request->header('Content-Type', 'application/x-www-form-urlencoded');
         }
         $request->cookie($this->_cookies->get($url));
         if (isset($options['cookies'])) {
@@ -459,7 +463,7 @@ class Client
             'xml' => 'application/xml',
         ];
         if (!isset($typeMap[$type])) {
-            throw new Exception('Unknown type alias.');
+            throw new Exception("Unknown type alias '$type'.");
         }
         return [
             'Accept' => $typeMap[$type],
