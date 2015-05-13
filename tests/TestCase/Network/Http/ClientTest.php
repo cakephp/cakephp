@@ -218,6 +218,36 @@ class ClientTest extends TestCase
     }
 
     /**
+     * test get request with string of query data.
+     *
+     * @return void
+     */
+    public function testGetQuerystringString()
+    {
+        $response = new Response();
+
+        $mock = $this->getMock('Cake\Network\Http\Adapter\Stream', ['send']);
+        $mock->expects($this->once())
+            ->method('send')
+            ->with($this->logicalAnd(
+                $this->isInstanceOf('Cake\Network\Http\Request'),
+                $this->attributeEqualTo('_url', 'http://cakephp.org/search?q=hi+there&Category%5Bid%5D%5B0%5D=2&Category%5Bid%5D%5B1%5D=3')
+            ))
+            ->will($this->returnValue([$response]));
+
+        $http = new Client([
+            'host' => 'cakephp.org',
+            'adapter' => $mock
+        ]);
+        $data = [
+            'q' => 'hi there',
+            'Category' => ['id' => [2, 3]]
+        ];
+        $result = $http->get('/search', http_build_query($data));
+        $this->assertSame($result, $response);
+    }
+
+    /**
      * Test a GET with a request body. Services like
      * elasticsearch use this feature.
      *

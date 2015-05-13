@@ -192,7 +192,7 @@ class Client
      * @param array $options Additional options for the request.
      * @return \Cake\Network\Http\Response
      */
-    public function get($url, array $data = [], array $options = [])
+    public function get($url, $data = [], array $options = [])
     {
         $options = $this->_mergeOptions($options);
         $body = [];
@@ -369,7 +369,7 @@ class Client
      * Generate a URL based on the scoped client options.
      *
      * @param string $url Either a full URL or just the path.
-     * @param array $query The query data for the URL.
+     * @param string|array $query The query data for the URL.
      * @param array $options The config options stored with Client::config()
      * @return string A complete url with scheme, port, host, path.
      */
@@ -380,7 +380,8 @@ class Client
         }
         if ($query) {
             $q = (strpos($url, '?') === false) ? '?' : '&';
-            $url .= $q . http_build_query($query);
+            $url .= $q;
+            $url .= is_string($query) ? $query : http_build_query($query);
         }
         if (preg_match('#^https?://#', $url)) {
             return $url;
