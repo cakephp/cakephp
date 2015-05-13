@@ -46,6 +46,10 @@ class BinaryTypeTest extends TestCase
     {
         $this->assertNull($this->type->toPHP(null, $this->driver));
 
+        $result = $this->type->toPHP('536F6D652076616C7565', $this->driver);
+        $this->assertInternalType('resource', $result);
+        $this->assertSame('Some value', stream_get_contents($result));
+
         $result = $this->type->toPHP('some data', $this->driver);
         $this->assertInternalType('resource', $result);
 

@@ -55,6 +55,9 @@ class BinaryType extends Type
         if ($value === null) {
             return null;
         }
+        if (is_string($value) && preg_match('/^[a-zA-Z0-9]+$/', $value)) {
+            $value = pack('H*', $value);
+        }
         if (is_string($value)) {
             return fopen('data:text/plain;base64,' . base64_encode($value), 'rb');
         }
