@@ -16,6 +16,7 @@ namespace Cake\Console;
 
 use Cake\Console\ConsoleInput;
 use Cake\Console\ConsoleOutput;
+use Cake\Console\MacroRegistry;
 use Cake\Log\Engine\ConsoleLog;
 use Cake\Log\Log;
 
@@ -49,6 +50,13 @@ class ConsoleIo
      * @var \Cake\Console\ConsoleInput
      */
     protected $_in;
+
+    /**
+     * The macro registry.
+     *
+     * @var \Cake\Console\MacroRegistry
+     */
+    protected $_macros;
 
     /**
      * Output constant making verbose shells.
@@ -92,12 +100,14 @@ class ConsoleIo
      * @param \Cake\Console\ConsoleOutput|null $out A ConsoleOutput object for stdout.
      * @param \Cake\Console\ConsoleOutput|null $err A ConsoleOutput object for stderr.
      * @param \Cake\Console\ConsoleInput|null $in A ConsoleInput object for stdin.
+     * @param \Cake\Console\MacroRegistry|null $macros A MacroRegistry instance
      */
-    public function __construct(ConsoleOutput $out = null, ConsoleOutput $err = null, ConsoleInput $in = null)
+    public function __construct(ConsoleOutput $out = null, ConsoleOutput $err = null, ConsoleInput $in = null, MacroRegistry $macros = null)
     {
         $this->_out = $out ? $out : new ConsoleOutput('php://stdout');
         $this->_err = $err ? $err : new ConsoleOutput('php://stderr');
         $this->_in = $in ? $in : new ConsoleInput('php://stdin');
+        $this->_macros = $macros ? $macros : new MacroRegistry($this);
     }
 
     /**
@@ -362,5 +372,21 @@ class ConsoleIo
             'stream' => $this->_err,
         ]);
         Log::config('stderr', ['engine' => $stderr]);
+    }
+
+    /**
+     * Render a Console Macro
+     *
+     * Create and render the output for a macro object. If the macro
+     * object has not already been loaded, it will be loaded and constructed.
+     *
+     * This method accepts variadic arguments that are
+     *
+     * @param string $name The name of the macro to render
+     * @param array $args The arguments for the macro output.
+     * @return void
+     */
+    public function macro($name, $args)
+    {
     }
 }
