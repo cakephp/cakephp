@@ -116,4 +116,28 @@ class SchemaTest extends TestCase
         $this->assertEquals('decimal', $schema->fieldType('numbery'));
         $this->assertNull($schema->fieldType('nope'));
     }
+
+    /**
+     * test __debugInfo
+     *
+     * @return void
+     */
+    public function testDebugInfo()
+    {
+        $schema = new Schema();
+
+        $schema->addField('name', 'string')
+            ->addField('numbery', [
+                'type' => 'decimal',
+                'required' => true
+            ]);
+        $result = $schema->__debugInfo();
+        $expected = [
+            '_fields' => [
+                'name' => ['type' => 'string', 'length' => null, 'precision' => null],
+                'numbery' => ['type' => 'decimal', 'length' => null, 'precision' => null],
+            ],
+        ];
+        $this->assertEquals($expected, $result);
+    }
 }

@@ -154,4 +154,18 @@ class FormTest extends TestCase
 
         $this->assertTrue($form->execute($data));
     }
+
+    /**
+     * test __debugInfo
+     *
+     * @return void
+     */
+    public function testDebugInfo()
+    {
+        $form = new Form();
+        $result = $form->__debugInfo();
+        $this->assertArrayHasKey('_schema', $result);
+        $this->assertArrayHasKey('_errors', $result);
+        $this->assertArrayHasKey('_validator', $result);
+    }
 }

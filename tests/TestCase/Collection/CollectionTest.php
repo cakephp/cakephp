@@ -17,8 +17,30 @@ namespace Cake\Test\TestCase\Collection;
 use ArrayIterator;
 use ArrayObject;
 use Cake\Collection\Collection;
+use Cake\Collection\CollectionInterface;
+use Cake\Collection\CollectionTrait;
 use Cake\TestSuite\TestCase;
 use NoRewindIterator;
+
+class TestCollection extends \IteratorIterator implements CollectionInterface
+{
+    use CollectionTrait;
+
+
+    public function __construct($items)
+    {
+        if (is_array($items)) {
+            $items = new \ArrayIterator($items);
+        }
+
+        if (!($items instanceof \Traversable)) {
+            $msg = 'Only an array or \Traversable is allowed for Collection';
+            throw new \InvalidArgumentException($msg);
+        }
+
+        parent::__construct($items);
+    }
+}
 
 /**
  * CollectionTest
@@ -687,6 +709,24 @@ class CollectionTest extends TestCase
         $collection = new Collection(['a' => 1, 'b' => 2]);
         $combined = $collection->append(['c' => 3, 'a' => 4]);
         $this->assertEquals(['a' => 4, 'b' => 2, 'c' => 3], $combined->toArray());
+    }
+
+    /**
+     * Tests the append method with iterator
+     */
+    public function testAppendIterator()
+    {
+        $collection = new Collection([1, 2, 3]);
+        $iterator = new ArrayIterator([4, 5, 6]);
+        $combined = $collection->append($iterator);
+        $this->assertEquals([1, 2, 3, 4, 5, 6], $combined->toList());
+    }
+
+    public function testAppendNotCollectionInstance()
+    {
+        $collection = new TestCollection([1, 2, 3]);
+        $combined = $collection->append([4, 5, 6]);
+        $this->assertEquals([1, 2, 3, 4, 5, 6], $combined->toList());
     }
 
     /**

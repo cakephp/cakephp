@@ -242,7 +242,6 @@ trait EntityTrait
                 continue;
             }
 
-            unset($this->_mutated[$p]);
             $this->dirty($p, true);
 
             if (!isset($this->_original[$p]) &&
@@ -263,6 +262,8 @@ trait EntityTrait
             }
             $this->_properties[$p] = $value;
         }
+
+        $this->_mutated = [];
         return $this;
     }
 
@@ -364,9 +365,9 @@ trait EntityTrait
         foreach ($property as $p) {
             unset($this->_properties[$p]);
             unset($this->_dirty[$p]);
-            unset($this->_mutated[$p]);
         }
 
+        $this->_mutated = [];
         return $this;
     }
 

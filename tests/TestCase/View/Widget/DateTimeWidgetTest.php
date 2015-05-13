@@ -415,6 +415,64 @@ class DateTimeWidgetTest extends TestCase
     }
 
     /**
+     * Test rendering month widget with names and values without leading zeros.
+     *
+     * @return void
+     */
+    public function testRenderMonthWidgetWithNamesNoLeadingZeros()
+    {
+        $now = new \DateTime('2010-12-01 12:00:00');
+        $result = $this->DateTime->render([
+            'name' => 'date',
+            'year' => false,
+            'day' => false,
+            'hour' => false,
+            'minute' => false,
+            'second' => false,
+            'month' => ['data-foo' => 'test', 'names' => true, 'leadingZeroKey' => false],
+            'meridian' => false,
+            'val' => $now,
+        ], $this->context);
+        $expected = [
+            'select' => ['name' => 'date[month]', 'data-foo' => 'test'],
+            ['option' => ['value' => '1']], 'January', '/option',
+            ['option' => ['value' => '2']], 'February', '/option',
+            ['option' => ['value' => '3']], 'March', '/option',
+            ['option' => ['value' => '4']], 'April', '/option',
+            ['option' => ['value' => '5']], 'May', '/option',
+            ['option' => ['value' => '6']], 'June', '/option',
+            ['option' => ['value' => '7']], 'July', '/option',
+            ['option' => ['value' => '8']], 'August', '/option',
+            ['option' => ['value' => '9']], 'September', '/option',
+            ['option' => ['value' => '10']], 'October', '/option',
+            ['option' => ['value' => '11']], 'November', '/option',
+            ['option' => ['value' => '12', 'selected' => 'selected']], 'December', '/option',
+            '/select',
+        ];
+        $this->assertHtml($expected, $result);
+        $this->assertNotContains(
+            '<option value="01">January</option>',
+            $result,
+            'no 01 in value'
+        );
+        $this->assertNotContains(
+            'value="0"',
+            $result,
+            'no 0 in value'
+        );
+        $this->assertNotContains(
+            'value="00"',
+            $result,
+            'no 00 in value'
+        );
+        $this->assertNotContains(
+            'value="13"',
+            $result,
+            'no 13 in value'
+        );
+    }
+    
+    /**
      * Test rendering month widget with names.
      *
      * @return void

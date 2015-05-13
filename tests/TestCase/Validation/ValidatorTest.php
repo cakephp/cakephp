@@ -769,4 +769,44 @@ class ValidatorTest extends TestCase
         ];
         $this->assertNotEmpty($validator->errors($data), 'Validation should fail.');
     }
+
+    /**
+     * Test debugInfo helper method.
+     *
+     * @return void
+     */
+    public function testDebugInfo()
+    {
+        $validator = new Validator();
+        $validator->provider('test', $this);
+        $validator->add('title', 'not-empty', ['rule' => 'notEmpty']);
+        $validator->requirePresence('body');
+        $validator->allowEmpty('published');
+
+        $result = $validator->__debugInfo();
+        $expected = [
+            '_providers' => ['test'],
+            '_fields' => [
+                'title' => [
+                    'isPresenceRequired' => false,
+                    'isEmptyAllowed' => false,
+                    'rules' => ['not-empty'],
+                ],
+                'body' => [
+                    'isPresenceRequired' => true,
+                    'isEmptyAllowed' => false,
+                    'rules' => [],
+                ],
+                'published' => [
+                    'isPresenceRequired' => false,
+                    'isEmptyAllowed' => true,
+                    'rules' => [],
+                ],
+            ],
+            '_presenceMessages' => [],
+            '_allowEmptyMessages' => [],
+            '_useI18n' => true,
+        ];
+        $this->assertEquals($expected, $result);
+    }
 }
