@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\ConsoleIo;
+use Cake\Core\Configure;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 
@@ -32,6 +33,7 @@ class ConsoleIoTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        Configure::write('App.namespace', 'TestApp');
 
         $this->out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
         $this->err = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
@@ -354,5 +356,19 @@ class ConsoleIoTest extends TestCase
             ->method('styles')
             ->with('name', 'props');
         $this->io->styles('name', 'props');
+    }
+
+    /**
+     * Test the macro method.
+     *
+     * @return void
+     */
+    public function testMacro()
+    {
+        $this->out->expects($this->exactly(2))
+            ->method('write')
+            ->with('It works!well ish');
+        $this->io->macro('simple', ['well', 'ish']);
+        $this->io->simple('well', 'ish');
     }
 }

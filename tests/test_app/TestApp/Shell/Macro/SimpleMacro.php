@@ -7,6 +7,6 @@ class SimpleMacro extends Macro
 {
     public function output($args)
     {
-        $this->_io->out('It works!');
+        $this->_io->out('It works!' . implode(' ', $args));
     }
 }

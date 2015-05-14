@@ -380,13 +380,26 @@ class ConsoleIo
      * Create and render the output for a macro object. If the macro
      * object has not already been loaded, it will be loaded and constructed.
      *
-     * This method accepts variadic arguments that are
-     *
      * @param string $name The name of the macro to render
      * @param array $args The arguments for the macro output.
      * @return void
      */
-    public function macro($name, $args)
+    public function macro($name, $args = [])
     {
+        $name = ucfirst($name);
+        $macro = $this->_macros->load($name);
+        return $macro->output($args);
+    }
+
+    /**
+     * Conveinence wrapper around macro()
+     *
+     * @param string $method The macro to invoke.
+     * @param array $args The arguments for the macro.
+     * @return mixed
+     */
+    public function __call($method, $args)
+    {
+        return $this->macro($method, $args);
     }
 }
