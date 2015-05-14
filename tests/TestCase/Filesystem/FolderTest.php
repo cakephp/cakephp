@@ -1031,6 +1031,25 @@ class FolderTest extends TestCase
     }
 
     /**
+     * testCopyWithoutResursive
+     *
+     * Verify that only the files exist in the target directory.
+     *
+     * @return void
+     */
+    public function testCopyWithoutRecursive()
+    {
+        extract($this->_setupFilesystem());
+
+        $Folder = new Folder($folderOne);
+        $result = $Folder->copy(['to' => $folderThree, 'recursive' => false]);
+
+        $this->assertTrue(file_exists($folderThree . DS . 'file1.php'));
+        $this->assertFalse(is_dir($folderThree . DS . 'folderA'));
+        $this->assertFalse(file_exists($folderThree . DS . 'folderA' . DS . 'fileA.php'));
+    }
+
+    /**
      * Setup filesystem for copy tests
      * $path: folder_test/
      * - folder1/file1.php
@@ -1215,5 +1234,17 @@ class FolderTest extends TestCase
 
         $Folder = new Folder($path);
         $Folder->delete();
+    }
+    
+    public function testMoveWithoutRecursive()
+    {
+        extract($this->_setupFilesystem());
+
+        $Folder = new Folder($folderOne);
+        $result = $Folder->move(['to' => $folderTwo, 'recursive' => false]);
+        $this->assertTrue($result);
+        $this->assertTrue(file_exists($folderTwo . '/file1.php'));
+        $this->assertFalse(is_dir($folderTwo . '/folderA'));
+        $this->assertFalse(file_exists($folderTwo . '/folderA/fileA.php'));
     }
 }
