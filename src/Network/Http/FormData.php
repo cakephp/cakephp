@@ -87,6 +87,11 @@ class FormData implements Countable
         } elseif (is_resource($value)) {
             $this->_parts[] = $this->addFile($name, $value);
         } elseif (is_string($value) && strlen($value) && $value[0] === '@') {
+            trigger_error(
+                'Using the @ syntax for file uploads is not safe and is deprecated. ' .
+                'Instead you should use file handles.',
+                E_USER_DEPRECATED
+            );
             $this->_parts[] = $this->addFile($name, $value);
         } else {
             $this->_parts[] = $this->newPart($name, $value);
@@ -124,6 +129,12 @@ class FormData implements Countable
         $contentType = 'application/octet-stream';
         if (is_resource($value)) {
             $content = stream_get_contents($value);
+            if (stream_is_local($value)) {
+                $finfo = new \finfo(FILEINFO_MIME);
+                $metadata = stream_get_meta_data($value);
+                $contentType = $finfo->file($metadata['uri']);
+                $filename = basename($metadata['uri']);
+            }
         } else {
             $finfo = new \finfo(FILEINFO_MIME);
             $value = substr($value, 1);
