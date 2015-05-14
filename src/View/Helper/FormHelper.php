@@ -2212,7 +2212,6 @@ class FormHelper extends Helper
                 $options[$type]['empty'] = $options['empty'][$type];
             }
         }
-        unset($options['empty']);
 
         $hasYear = is_array($options['year']);
         if ($hasYear && isset($options['minYear'])) {
@@ -2242,7 +2241,7 @@ class FormHelper extends Helper
         }
         unset($options['interval'], $options['round']);
 
-        if ($options['val'] === true) {
+        if ($options['val'] === true || $options['val'] === null && isset($options['empty']) && $options['empty'] === false) {
             $val = new DateTime();
             $currentYear = $val->format('Y');
             if (isset($options['year']['end']) && $options['year']['end'] < $currentYear) {
@@ -2250,6 +2249,8 @@ class FormHelper extends Helper
             }
             $options['val'] = $val;
         }
+
+        unset($options['empty']);
 
         return $options;
     }
