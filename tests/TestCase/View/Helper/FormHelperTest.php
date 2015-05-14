@@ -4969,6 +4969,57 @@ class FormHelperTest extends TestCase
     {
         extract($this->dateRegex);
 
+        $result = $this->Form->dateTime('Contact.date', ['default' => true]);
+        $now = strtotime('now');
+        $expected = [
+            ['select' => ['name' => 'Contact[date][year]']],
+            ['option' => ['value' => '']],
+            '/option',
+            $yearsRegex,
+            ['option' => ['value' => date('Y', $now), 'selected' => 'selected']],
+            date('Y', $now),
+            '/option',
+            '*/select',
+
+            ['select' => ['name' => 'Contact[date][month]']],
+            ['option' => ['value' => '']],
+            '/option',
+            $monthsRegex,
+            ['option' => ['value' => date('m', $now), 'selected' => 'selected']],
+            date('F', $now),
+            '/option',
+            '*/select',
+
+            ['select' => ['name' => 'Contact[date][day]']],
+            ['option' => ['value' => '']],
+            '/option',
+            $daysRegex,
+            ['option' => ['value' => date('d', $now), 'selected' => 'selected']],
+            date('j', $now),
+            '/option',
+            '*/select',
+
+            ['select' => ['name' => 'Contact[date][hour]']],
+            ['option' => ['value' => '']],
+            '/option',
+            $hoursRegex,
+            ['option' => ['value' => date('H', $now), 'selected' => 'selected']],
+            date('G', $now),
+            '/option',
+            '*/select',
+
+            ['select' => ['name' => 'Contact[date][minute]']],
+            ['option' => ['value' => '']],
+            '/option',
+            $minutesRegex,
+            ['option' => ['value' => date('i', $now), 'selected' => 'selected']],
+            date('i', $now),
+            '/option',
+            '*/select',
+        ];
+        $this->assertHtml($expected, $result);
+
+        // Empty=>false implies Default=>true, as selecting the "first" dropdown value is useless
         $result = $this->Form->dateTime('Contact.date', ['empty' => false]);
         $now = strtotime('now');
         $expected = [
@@ -5069,6 +5120,7 @@ class FormHelperTest extends TestCase
         $result = $this->Form->dateTime('Contact.date', [
             'timeFormat' => 12,
             'empty' => true,
+            'default' => true
         ]);
         $expected = [
             ['select' => ['name' => 'Contact[date][year]']],
@@ -5248,7 +5300,8 @@ class FormHelperTest extends TestCase
                 'hour' => 'HOUR',
                 'minute' => 'MINUTE',
                 'meridian' => false
-            ]
+            ],
+            'default' => true
         ]);
 
         $this->assertRegExp('/<option value="">DAY<\/option>/', $result);
@@ -5259,7 +5312,8 @@ class FormHelperTest extends TestCase
         $this->assertNotRegExp('/<option value=""><\/option>/', $result);
 
         $result = $this->Form->dateTime('Contact.date', [
-            'empty' => ['day' => 'DAY', 'month' => 'MONTH', 'year' => 'YEAR']
+            'empty' => ['day' => 'DAY', 'month' => 'MONTH', 'year' => 'YEAR'],
+            'default' => true
         ]);
 
         $this->assertRegExp('/<option value="">DAY<\/option>/', $result);
@@ -5852,7 +5906,7 @@ class FormHelperTest extends TestCase
      * testInputDateMaxYear method
      *
      * Let's say we want to only allow users born from 2006 to 2008 to register
-     * This being the first singup page, we still don't have any data
+     * This being the first signup page, we still don't have any data
      *
      * @return void
      */
@@ -5864,7 +5918,8 @@ class FormHelperTest extends TestCase
             'label' => false,
             'type' => 'date',
             'minYear' => 2006,
-            'maxYear' => 2008
+            'maxYear' => 2008,
+            'default' => true
         ]);
         $this->assertContains('value="2008" selected="selected"', $result);
     }
