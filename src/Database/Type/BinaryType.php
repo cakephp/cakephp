@@ -16,6 +16,7 @@ namespace Cake\Database\Type;
 
 use Cake\Core\Exception\Exception;
 use Cake\Database\Driver;
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Type;
 use PDO;
 
@@ -55,7 +56,7 @@ class BinaryType extends Type
         if ($value === null) {
             return null;
         }
-        if (is_string($value) && preg_match('/^[a-zA-Z0-9]+$/', $value)) {
+        if (is_string($value) && $driver instanceof Sqlserver) {
             $value = pack('H*', $value);
         }
         if (is_string($value)) {
