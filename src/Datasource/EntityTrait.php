@@ -885,15 +885,14 @@ trait EntityTrait
      */
     public function __debugInfo()
     {
-        return [
-            'new' => $this->isNew(),
-            'accessible' => array_filter($this->_accessible),
-            'properties' => $this->_properties,
-            'dirty' => $this->_dirty,
-            'original' => $this->_original,
-            'virtual' => $this->_virtual,
-            'errors' => $this->_errors,
-            'repository' => $this->_registryAlias
+        return $this->_properties + [
+            '[new]' => $this->isNew(),
+            '[accessible]' => array_filter($this->_accessible),
+            '[dirty]' => $this->_dirty,
+            '[original]' => $this->_original,
+            '[virtual]' => $this->_virtual,
+            '[errors]' => $this->_errors,
+            '[repository]' => $this->_registryAlias
         ];
     }
 }
