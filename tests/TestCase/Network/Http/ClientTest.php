@@ -218,6 +218,36 @@ class ClientTest extends TestCase
     }
 
     /**
+     * test get request with string of query data.
+     *
+     * @return void
+     */
+    public function testGetQuerystringString()
+    {
+        $response = new Response();
+
+        $mock = $this->getMock('Cake\Network\Http\Adapter\Stream', ['send']);
+        $mock->expects($this->once())
+            ->method('send')
+            ->with($this->logicalAnd(
+                $this->isInstanceOf('Cake\Network\Http\Request'),
+                $this->attributeEqualTo('_url', 'http://cakephp.org/search?q=hi+there&Category%5Bid%5D%5B0%5D=2&Category%5Bid%5D%5B1%5D=3')
+            ))
+            ->will($this->returnValue([$response]));
+
+        $http = new Client([
+            'host' => 'cakephp.org',
+            'adapter' => $mock
+        ]);
+        $data = [
+            'q' => 'hi there',
+            'Category' => ['id' => [2, 3]]
+        ];
+        $result = $http->get('/search', http_build_query($data));
+        $this->assertSame($response, $result);
+    }
+
+    /**
      * Test a GET with a request body. Services like
      * elasticsearch use this feature.
      *
@@ -398,6 +428,39 @@ class ClientTest extends TestCase
             'adapter' => $mock
         ]);
         $http->post('/projects/add', $data, ['type' => $type]);
+    }
+
+    /**
+     * Test that string payloads with no content type have a default content-type set.
+     *
+     * @return void
+     */
+    public function testPostWithStringDataDefaultsToFormEncoding()
+    {
+        $response = new Response();
+        $data = 'some=value&more=data';
+        $headers = [
+            'Connection' => 'close',
+            'User-Agent' => 'CakePHP',
+            'Content-Type' => 'application/x-www-form-urlencoded',
+        ];
+
+        $mock = $this->getMock('Cake\Network\Http\Adapter\Stream', ['send']);
+        $mock->expects($this->any())
+            ->method('send')
+            ->with($this->logicalAnd(
+                $this->attributeEqualTo('_body', $data),
+                $this->attributeEqualTo('_headers', $headers)
+            ))
+            ->will($this->returnValue([$response]));
+
+        $http = new Client([
+            'host' => 'cakephp.org',
+            'adapter' => $mock
+        ]);
+        $http->post('/projects/add', $data);
+        $http->put('/projects/add', $data);
+        $http->delete('/projects/add', $data);
     }
 
     /**
