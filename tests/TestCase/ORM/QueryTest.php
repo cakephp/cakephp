@@ -2177,6 +2177,7 @@ class QueryTest extends TestCase
             });
 
         $expected = [
+            '(help)' => 'This is a Query object, to get the results execute or iterate it.',
             'sql' => $query->sql(),
             'params' => $query->valueBinder()->bindings(),
             'defaultTypes' => [

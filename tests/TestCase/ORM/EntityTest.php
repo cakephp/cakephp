@@ -1163,6 +1163,7 @@ class EntityTest extends TestCase
     public function testDebugInfo()
     {
         $entity = new Entity(['foo' => 'bar'], ['markClean' => true]);
+        $entity->somethingElse = 'value';
         $entity->accessible('name', true);
         $entity->virtualProperties(['baz']);
         $entity->dirty('foo', true);
@@ -1170,14 +1171,15 @@ class EntityTest extends TestCase
         $entity->source('foos');
         $result = $entity->__debugInfo();
         $expected = [
-            'new' => true,
-            'accessible' => ['*' => true, 'name' => true],
-            'properties' => ['foo' => 'bar'],
-            'dirty' => ['foo' => true],
-            'original' => [],
-            'virtual' => ['baz'],
-            'errors' => ['foo' => ['An error']],
-            'repository' => 'foos'
+            'foo' => 'bar',
+            'somethingElse' => 'value',
+            '[new]' => true,
+            '[accessible]' => ['*' => true, 'name' => true],
+            '[dirty]' => ['somethingElse' => true, 'foo' => true],
+            '[original]' => [],
+            '[virtual]' => ['baz'],
+            '[errors]' => ['foo' => ['An error']],
+            '[repository]' => 'foos'
         ];
         $this->assertSame($expected, $result);
     }
