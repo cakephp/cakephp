@@ -2949,6 +2949,7 @@ class QueryTest extends TestCase
             ->where(['id' => '1']);
 
         $expected = [
+            '(help)' => 'This is a Query object, to get the results execute or iterate it.',
             'sql' => $query->sql(),
             'params' => [
                 ':c0' => ['value' => '1', 'type' => 'integer', 'placeholder' => 'c0']
@@ -2962,6 +2963,7 @@ class QueryTest extends TestCase
 
         $query->execute();
         $expected = [
+            '(help)' => 'This is a Query object, to get the results execute or iterate it.',
             'sql' => $query->sql(),
             'params' => [
                 ':c0' => ['value' => '1', 'type' => 'integer', 'placeholder' => 'c0']
