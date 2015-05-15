@@ -392,7 +392,7 @@ class ConsoleIo
     }
 
     /**
-     * Conveinence wrapper around macro()
+     * Convenience wrapper around macro()
      *
      * @param string $method The macro to invoke.
      * @param array $args The arguments for the macro.

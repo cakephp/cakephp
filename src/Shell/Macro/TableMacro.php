@@ -32,7 +32,7 @@ class TableMacro extends Macro
         $widths = [];
         foreach ($rows as $line) {
             for ($i = 0, $len = count($line); $i < $len; $i++) {
-                $columnLength = strlen($line[$i]);
+                $columnLength = mb_strlen($line[$i]);
                 if ($columnLength > (isset($widths[$i]) ? $widths[$i] : 0)) {
                     $widths[$i] = $columnLength;
                 }
@@ -58,7 +58,7 @@ class TableMacro extends Macro
     }
 
     /**
-     * Output a row separator.
+     * Output a row.
      *
      * @param array $widths The widths of each column to output.
      * @return void
