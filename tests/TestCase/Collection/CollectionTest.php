@@ -1285,4 +1285,20 @@ class CollectionTest extends TestCase
         $collection = $collection->filter();
         $this->assertTrue($collection->isEmpty());
     }
+
+    /**
+     * Tests the zip() method
+     *
+     * @return void
+     */
+    public function testZip()
+    {
+        $collection = new Collection([1, 2]);
+        $zipped = $collection->zip([3, 4]);
+        $this->assertEquals([[1, 3], [2, 4]], $zipped->toList());
+
+        $collection = new Collection([1, 2]);
+        $zipped = $collection->zip([3]);
+        $this->assertEquals([[1, 3], [2, null]], $zipped->toList());
+    }
 }

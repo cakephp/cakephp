@@ -28,6 +28,7 @@ use Cake\Collection\Iterator\SortIterator;
 use Cake\Collection\Iterator\StoppableIterator;
 use Cake\Collection\Iterator\TreeIterator;
 use Cake\Collection\Iterator\UnfoldIterator;
+use Cake\Collection\Iterator\ZipIterator;
 use Iterator;
 use LimitIterator;
 use RecursiveIteratorIterator;
@@ -528,6 +529,18 @@ trait CollectionTrait
     {
         $result = $handler($this);
         return $result instanceof CollectionInterface ? $result: new Collection($result);
+    }
+
+    public function zip($items)
+    {
+        return new ZipIterator(array_merge([$this], func_get_args()));
+    }
+
+    public function zipWith($items, $callable)
+    {
+        $args = func_get_args();
+        $callable = array_pop($args);
+        return new ZipIterator($args, $callable);
     }
 
     /**
