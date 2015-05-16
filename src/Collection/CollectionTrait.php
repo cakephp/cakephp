@@ -286,8 +286,9 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      */
-    public function skip($howMany) {
-       return new Collection(new LimitIterator($this->unwrap(), $howMany));
+    public function skip($howMany)
+    {
+        return new Collection(new LimitIterator($this->unwrap(), $howMany));
     }
 
     /**
