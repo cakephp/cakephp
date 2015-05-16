@@ -1327,4 +1327,17 @@ class CollectionTest extends TestCase
         });
         $this->assertEquals([9, 12], $zipped->toList());
     }
+
+    /**
+     * Tests the skip() method
+     *
+     * @return void
+     */
+    public function testSkip()
+    {
+        $collection = new Collection([1, 2, 3, 4, 5]);
+        $this->assertEquals([3, 4, 5], $collection->skip(2)->toList());
+
+        $this->assertEquals([5], $collection->skip(4)->toList());
+    }
 }

@@ -286,6 +286,14 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      */
+    public function skip($howMany) {
+       return new Collection(new LimitIterator($this->unwrap(), $howMany));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
     public function match(array $conditions)
     {
         return $this->filter($this->_createMatcherFilter($conditions));

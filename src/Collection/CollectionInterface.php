@@ -483,6 +483,15 @@ interface CollectionInterface extends Iterator, JsonSerializable
     public function take($size = 1, $from = 0);
 
     /**
+     * Returns a new collection that will the specified amount of elements.
+     * at the beginning of the iteration.
+     *
+     * @param int $howMany The number of elements to skip.
+     * @return \Cake\Collection\CollectionInterface
+     */
+    public function skip($howMany);
+
+    /**
      * Looks through each value in the list, returning a Collection of all the
      * values that contain all of the key-value pairs listed in $conditions.
      *
