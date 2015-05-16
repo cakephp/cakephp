@@ -531,11 +531,19 @@ trait CollectionTrait
         return $result instanceof CollectionInterface ? $result: new Collection($result);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     */
     public function zip($items)
     {
         return new ZipIterator(array_merge([$this], func_get_args()));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     */
     public function zipWith($items, $callable)
     {
         $items = [$items];

@@ -25,8 +25,19 @@ use MultipleIterator;
  * ### Example
  *
  * {{{
- *  $iterator = new ZipIterator([1, 2], [3, 4]);
- *  $iterator->toList(); // Returns [[1, 2], [3, 4]]
+ *  $iterator = new ZipIterator([[1, 2], [3, 4]]);
+ *  $iterator->toList(); // Returns [[1, 3], [2, 4]]
+ * }}}
+ *
+ * You can also chose a custom function to zip the elements together, such
+ * as doing a sum by index:
+ *
+ * ### Example
+ * {{{
+ *  $iterator = new ZipIterator([[1, 2], [3, 4]], function ($a, $b) {
+ *    return $a + $b;
+ *  });
+ *  $iterator->toList(); // Returns [3, 6]
  * }}}
  */
 class ZipIterator extends MultipleIterator implements CollectionInterface
@@ -34,8 +45,20 @@ class ZipIterator extends MultipleIterator implements CollectionInterface
 
     use CollectionTrait;
 
+    /**
+     * The function to use for zipping items together
+     *
+     * @var callable
+     */
     protected $_callback;
 
+    /**
+     * Creates the iterator to merge together the values by for all the passed
+     * iterators by their corresponding index.
+     *
+     * @param array $sets The list of array or iterators to be zipped.
+     * @param callable $callable The function to use for zipping the elements of each iterator.
+     */
     public function __construct(array $sets, $callable = null)
     {
         $sets = array_map(function ($items) {
@@ -50,6 +73,12 @@ class ZipIterator extends MultipleIterator implements CollectionInterface
         }
     }
 
+    /**
+     * Returns the value resulting out of zipping all the elements for all the
+     * iterators with the same positional index.
+     *
+     * @return mixed
+     */
     public function current()
     {
         if ($this->_callback === null) {
