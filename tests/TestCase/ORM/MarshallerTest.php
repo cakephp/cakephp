@@ -670,6 +670,34 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test belongsToMany association with scalars
+     *
+     * @return void
+     */
+    public function testBelongsToManyInvalidData()
+    {
+        $data = [
+            'title' => 'My title',
+            'body' => 'My content',
+            'author_id' => 1,
+            'tags' => [
+                'id' => 1
+            ]
+        ];
+
+        $article = $this->articles->newEntity($data, [
+            'associated' => ['Tags']
+        ]);
+        $this->assertEmpty($article->tags, 'No entity should be created');
+
+        $data['tags'] = 1;
+        $article = $this->articles->newEntity($data, [
+            'associated' => ['Tags']
+        ]);
+        $this->assertEmpty($article->tags, 'No entity should be created');
+    }
+
+    /**
      * Test belongsToMany association with mixed data array
      *
      * @return void
@@ -740,6 +768,29 @@ class MarshallerTest extends TestCase
 
         $this->assertEquals($user->comments[0], $commentTable->get(1));
         $this->assertEquals($user->comments[1], $commentTable->get(2));
+    }
+
+    /**
+     * Test HasMany association with invalid data
+     *
+     * @return void
+     */
+    public function testHasManyInvalidData()
+    {
+        $data = [
+            'title' => 'new title',
+            'body' => 'some content',
+            'comments' => [
+                'id' => 1
+            ]
+        ];
+
+        $article = $this->articles->newEntity($data, ['associated' => ['Comments']]);
+        $this->assertEmpty($article->comments);
+
+        $data['comments'] = 1;
+        $article = $this->articles->newEntity($data, ['associated' => ['Comments']]);
+        $this->assertEmpty($article->comments);
     }
 
     /**
