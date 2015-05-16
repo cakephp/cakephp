@@ -1340,4 +1340,20 @@ class CollectionTest extends TestCase
 
         $this->assertEquals([5], $collection->skip(4)->toList());
     }
+
+    /**
+     * Tests the last() method
+     *
+     * @return void
+     */
+    public function testLast()
+    {
+        $collection = new Collection([1, 2, 3]);
+        $this->assertEquals(3, $collection->last());
+
+        $collection = $collection->map(function ($e) {
+            return $e * 2;
+        });
+        $this->assertEquals(6, $collection->last());
+    }
 }

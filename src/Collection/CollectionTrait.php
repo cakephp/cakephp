@@ -323,6 +323,21 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      */
+    public function last()
+    {
+        $iterator = $this->unwrap();
+        $count = $iterator instanceof Countable ?
+            count($iterator) :
+            iterator_count($iterator);
+        foreach ($this->take(1, $count - 1) as $last) {
+            return $last;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
     public function append($items)
     {
         $list = new AppendIterator;

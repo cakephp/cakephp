@@ -536,6 +536,14 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * @return mixed The first value in the collection will be returned.
      */
     public function first();
+
+    /**
+     * Returns the last result in this collection
+     *
+     * @return mixed The first value in the collection will be returned.
+     */
+    public function last();
+
     /**
      * Returns a new collection as the result of concatenating the list of elements
      * in this collection with the passed list of elements
