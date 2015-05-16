@@ -34,8 +34,6 @@ class ZipIterator extends MultipleIterator implements CollectionInterface
 
     use CollectionTrait;
 
-    protected $_firstIterator;
-
     protected $_callback;
 
     public function __construct(array $sets, $callable = null)
@@ -47,9 +45,17 @@ class ZipIterator extends MultipleIterator implements CollectionInterface
         $this->_callback = $callable;
         parent::__construct(MultipleIterator::MIT_NEED_ALL | MultipleIterator::MIT_KEYS_NUMERIC);
 
-        $this->_firstIterator = current($sets);
         foreach ($sets as $set) {
             $this->attachIterator($set);
         }
+    }
+
+    public function current()
+    {
+        if ($this->_callback === null) {
+            return parent::current();
+        }
+
+        return call_user_func_array($this->_callback, parent::current());
     }
 }

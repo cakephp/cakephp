@@ -538,9 +538,12 @@ trait CollectionTrait
 
     public function zipWith($items, $callable)
     {
-        $args = func_get_args();
-        $callable = array_pop($args);
-        return new ZipIterator($args, $callable);
+        $items = [$items];
+        if (func_num_args() > 2) {
+            $items = func_get_args();
+            $callable = array_pop($items);
+        }
+        return new ZipIterator(array_merge([$this], $items), $callable);
     }
 
     /**

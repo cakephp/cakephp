@@ -1308,4 +1308,23 @@ class CollectionTest extends TestCase
             [2, 4, 6, 8, 10]
         ], $zipped->toList());
     }
+
+    /**
+     * Tests the zipWith() method
+     *
+     * @return void
+     */
+    public function testZipWith()
+    {
+        $collection = new Collection([1, 2]);
+        $zipped = $collection->zipWith([3, 4], function ($a, $b) {
+            return $a * $b;
+        });
+        $this->assertEquals([3, 8], $zipped->toList());
+
+        $zipped = $collection->zipWith([3, 4], [5, 6, 7], function () {
+            return array_sum(func_get_args());
+        });
+        $this->assertEquals([9, 12], $zipped->toList());
+    }
 }
