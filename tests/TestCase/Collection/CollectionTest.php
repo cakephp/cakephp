@@ -1299,6 +1299,13 @@ class CollectionTest extends TestCase
 
         $collection = new Collection([1, 2]);
         $zipped = $collection->zip([3]);
-        $this->assertEquals([[1, 3], [2, null]], $zipped->toList());
+        $this->assertEquals([[1, 3]], $zipped->toList());
+
+        $collection = new Collection([1, 2]);
+        $zipped = $collection->zip([3, 4], [5, 6], [7, 8], [9, 10, 11]);
+        $this->assertEquals([
+            [1, 3, 5, 7, 9],
+            [2, 4, 6, 8, 10]
+        ], $zipped->toList());
     }
 }
