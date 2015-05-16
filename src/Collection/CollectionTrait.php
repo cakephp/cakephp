@@ -563,7 +563,6 @@ trait CollectionTrait
         return iterator_count($this->take(1)) === 0;
     }
 
-
     /**
      * {@inheritDoc}
      *
