@@ -150,7 +150,7 @@ class StringTemplateTest extends TestCase
         $attrs = ['disabled' => true, 'selected' => 1, 'checked' => '1', 'multiple' => 'multiple'];
         $result = $this->template->formatAttributes($attrs);
         $this->assertEquals(
-            ' disabled="disabled" selected="selected" checked="checked" multiple="multiple"',
+            ' disabled selected checked multiple',
             $result
         );
 
