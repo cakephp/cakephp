@@ -28,6 +28,7 @@ use Cake\Collection\Iterator\SortIterator;
 use Cake\Collection\Iterator\StoppableIterator;
 use Cake\Collection\Iterator\TreeIterator;
 use Cake\Collection\Iterator\UnfoldIterator;
+use Cake\Collection\Iterator\ZipIterator;
 use Iterator;
 use LimitIterator;
 use RecursiveIteratorIterator;
@@ -285,6 +286,15 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      */
+    public function skip($howMany)
+    {
+        return new Collection(new LimitIterator($this->unwrap(), $howMany));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
     public function match(array $conditions)
     {
         return $this->filter($this->_createMatcherFilter($conditions));
@@ -307,6 +317,21 @@ trait CollectionTrait
     {
         foreach ($this->take(1) as $result) {
             return $result;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
+    public function last()
+    {
+        $iterator = $this->unwrap();
+        $count = $iterator instanceof Countable ?
+            count($iterator) :
+            iterator_count($iterator);
+        foreach ($this->take(1, $count - 1) as $last) {
+            return $last;
         }
     }
 
@@ -534,11 +559,33 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      */
+    public function zip($items)
+    {
+        return new ZipIterator(array_merge([$this], func_get_args()));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
+    public function zipWith($items, $callable)
+    {
+        $items = [$items];
+        if (func_num_args() > 2) {
+            $items = func_get_args();
+            $callable = array_pop($items);
+        }
+        return new ZipIterator(array_merge([$this], $items), $callable);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
     public function isEmpty()
     {
         return iterator_count($this->take(1)) === 0;
     }
-
 
     /**
      * {@inheritDoc}
