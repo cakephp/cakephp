@@ -185,7 +185,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  *
  * ```
  *		$set
- *			->setRule('required', array('rule' => 'notEmpty', 'required' => true))
+ *			->setRule('required', array('rule' => 'notBlank', 'required' => true))
  *			->setRule('between', array('rule' => array('lengthBetween', 4, 10))
  * ```
  *
@@ -227,7 +227,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  *
  * ```
  *		$set->setRules(array(
- *			'required' => array('rule' => 'notEmpty', 'required' => true),
+ *			'required' => array('rule' => 'notBlank', 'required' => true),
  *			'inRange' => array('rule' => array('between', 4, 10)
  * 		));
  * ```

@@ -1106,7 +1106,7 @@ class ControllerTest extends CakeTestCase {
 		$TestController = new TestController();
 
 		$Post = new ControllerPost();
-		$Post->validate = array('title' => 'notEmpty');
+		$Post->validate = array('title' => 'notBlank');
 		$Post->set('title', '');
 		$result = $TestController->validateErrors($Post);
 
