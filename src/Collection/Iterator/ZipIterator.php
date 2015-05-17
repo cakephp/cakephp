@@ -24,21 +24,23 @@ use MultipleIterator;
  *
  * ### Example
  *
- * {{{
+ * ```
  *  $iterator = new ZipIterator([[1, 2], [3, 4]]);
  *  $iterator->toList(); // Returns [[1, 3], [2, 4]]
- * }}}
+ * ```
  *
  * You can also chose a custom function to zip the elements together, such
  * as doing a sum by index:
  *
  * ### Example
- * {{{
+ *
+ * ```
  *  $iterator = new ZipIterator([[1, 2], [3, 4]], function ($a, $b) {
  *    return $a + $b;
  *  });
- *  $iterator->toList(); // Returns [3, 6]
- * }}}
+ *  $iterator->toList(); // Returns [4, 6]
+ * ```
+ *
  */
 class ZipIterator extends MultipleIterator implements CollectionInterface
 {

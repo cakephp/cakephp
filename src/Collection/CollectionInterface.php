@@ -483,7 +483,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
     public function take($size = 1, $from = 0);
 
     /**
-     * Returns a new collection that will the specified amount of elements.
+     * Returns a new collection that will skip the specified amount of elements
      * at the beginning of the iteration.
      *
      * @param int $howMany The number of elements to skip.
@@ -540,7 +540,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
     /**
      * Returns the last result in this collection
      *
-     * @return mixed The first value in the collection will be returned.
+     * @return mixed The last value in the collection will be returned.
      */
     public function last();
 
@@ -874,7 +874,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      *
      * ```
      * $collection = new Collection([1, 2]);
-     * $zipped = $collection->zip([3, 4], [5, 6], function () {
+     * $zipped = $collection->zipWith([3, 4], [5, 6], function () {
      *   return array_sum(func_get_args());
      * });
      * $zipped->toList(); // returns [9, 12]; [(1 + 3 + 5), (2 + 4 + 6)]
