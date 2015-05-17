@@ -845,7 +845,8 @@ class QueryRegressionTest extends TestCase
      *
      * @return void
      */
-    public function testSubqueryInSelectExpression() {
+    public function testSubqueryInSelectExpression()
+    {
         $table = TableRegistry::get('Comments');
         $ratio = $table->find()
             ->select(function ($query) use ($table) {
