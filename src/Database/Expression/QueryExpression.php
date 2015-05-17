@@ -16,6 +16,7 @@ namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Query;
 use Cake\Database\TypeMapTrait;
 use Cake\Database\ValueBinder;
 use Countable;
@@ -406,7 +407,9 @@ class QueryExpression implements ExpressionInterface, Countable
         $template = ($this->count() === 1) ? '%s' : '(%s)';
         $parts = [];
         foreach ($this->_conditions as $part) {
-            if ($part instanceof ExpressionInterface) {
+            if ($part instanceof Query) {
+                $part = '(' . $part->sql($generator) . ')';
+            } elseif ($part instanceof ExpressionInterface) {
                 $part = $part->sql($generator);
             }
             $parts[] = $part;
