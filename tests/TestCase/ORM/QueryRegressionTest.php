@@ -840,7 +840,7 @@ class QueryRegressionTest extends TestCase
         $this->assertEquals([2], $results);
     }
 
-     /**
+    /**
      * Tests that using a subquery as part of an expression will not make invalid SQL
      *
      * @return void
