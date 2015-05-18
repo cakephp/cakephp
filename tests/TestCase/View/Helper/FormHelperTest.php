@@ -6329,8 +6329,8 @@ class FormHelperTest extends TestCase
     {
         $result = $this->Form->postLink(
             'Delete',
-            ['controller' => 'posts', 'action' => 'delete', 1, '?' => ['a' => 'b', 'c' => 'd']
-        ]);
+            ['controller' => 'posts', 'action' => 'delete', 1, '?' => ['a' => 'b', 'c' => 'd']]
+        );
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1?a=b&amp;c=d',
