@@ -712,9 +712,10 @@ class PaginatorHelper extends Helper
             ]);
         }
 
+        $url = array_merge($options['url'], ['page' => $params['page']]);
         $out .= $templater->format('current', [
             'text' => $params['page'],
-            'url' => $this->generateUrl(['page' => $params['page']], $options['model']),
+            'url' => $this->generateUrl($url, $options['model']),
         ]);
 
         $start = $params['page'] + 1;
@@ -796,15 +797,16 @@ class PaginatorHelper extends Helper
         $out = '';
         $out .= $options['before'];
         for ($i = 1; $i <= $params['pageCount']; $i++) {
+            $url = array_merge($options['url'], ['page' => $i]);
             if ($i == $params['page']) {
                 $out .= $templater->format('current', [
                     'text' => $params['page'],
-                    'url' => $this->generateUrl(['page' => $params['page']], $options['model']),
+                    'url' => $this->generateUrl($url, $options['model']),
                 ]);
             } else {
                 $vars = [
                     'text' => $i,
-                    'url' => $this->generateUrl(['page' => $i], $options['model']),
+                    'url' => $this->generateUrl($url, $options['model']),
                 ];
                 $out .= $templater->format('number', $vars);
             }
