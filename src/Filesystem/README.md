@@ -4,7 +4,7 @@ The Folder and File utilities are convenience classes to help you read from and 
 
 ## Basic Usage
 
-Create a folder instance and search for all the `.php` files within it:
+Create a folder instance and search for all the `.ctp` files within it:
 
 ```php
 use Cake\Filesystem\Folder;
