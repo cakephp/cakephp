@@ -15,11 +15,11 @@ namespace Cake\Console\Exception;
 use Cake\Core\Exception\Exception;
 
 /**
- * Used when a Macro cannot be found.
+ * Used when a Helper cannot be found.
  *
  */
-class MissingMacroException extends Exception
+class MissingHelperException extends Exception
 {
 
-    protected $_messageTemplate = 'Macro class %s could not be found.';
+    protected $_messageTemplate = 'Helper class %s could not be found.';
 }

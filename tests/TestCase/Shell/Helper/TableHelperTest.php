@@ -12,11 +12,11 @@
  * @since         3.1.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Shell\Macro;
+namespace Cake\Test\TestCase\Shell\Helper;
 
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOutput;
-use Cake\Shell\Macro\TableMacro;
+use Cake\Shell\Helper\TableHelper;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -38,9 +38,9 @@ class StubOutput extends ConsoleOutput
 }
 
 /**
- * TableMacro test.
+ * TableHelper test.
  */
-class TableMacroTest extends TestCase
+class TableHelperTest extends TestCase
 {
 
     /**
@@ -54,7 +54,7 @@ class TableMacroTest extends TestCase
 
         $this->stub = new StubOutput();
         $this->io = new ConsoleIo($this->stub);
-        $this->macro = new TableMacro($this->io);
+        $this->helper = new TableHelper($this->io);
     }
 
     /**
@@ -69,7 +69,7 @@ class TableMacroTest extends TestCase
             ['short', 'Longish thing', 'short'],
             ['Longer thing', 'short', 'Longest Value'],
         ];
-        $this->macro->output($data);
+        $this->helper->output($data);
         $expected = [
             '+--------------+---------------+---------------+',
             '| Header 1     | Header        | Long Header   |',

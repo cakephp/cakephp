@@ -17,13 +17,13 @@ namespace Cake\Console;
 use Cake\Console\ConsoleIo;
 
 /**
- * Base class for Macros.
+ * Base class for Helpers.
  *
- * Console Macros allow you to package up reusable blocks
+ * Console Helpers allow you to package up reusable blocks
  * of Console output logic. For example creating tables,
  * progress bars or ascii art.
  */
-abstract class Macro
+abstract class Helper
 {
     public function __construct(ConsoleIo $io)
     {

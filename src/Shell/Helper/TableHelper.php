@@ -12,15 +12,15 @@
  * @since         3.1.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Shell\Macro;
+namespace Cake\Shell\Helper;
 
-use Cake\Console\Macro;
+use Cake\Console\Helper;
 
 /**
  * Create a visually pleasing ASCII art table
  * from 2 dimensional array data.
  */
-class TableMacro extends Macro
+class TableHelper extends Helper
 {
     /**
      * Calculate the column widths
@@ -81,6 +81,9 @@ class TableMacro extends Macro
      */
     public function output($rows)
     {
+        if (count($rows) === 1) {
+            $rows = $rows[0];
+        }
         $widths = $this->_calculateWidths($rows);
 
         $this->_rowSeparator($widths);

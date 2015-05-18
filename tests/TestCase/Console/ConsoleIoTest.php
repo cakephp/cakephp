@@ -359,16 +359,30 @@ class ConsoleIoTest extends TestCase
     }
 
     /**
-     * Test the macro method.
+     * Test the helper method.
      *
      * @return void
      */
-    public function testMacro()
+    public function testHelper()
     {
-        $this->out->expects($this->exactly(2))
+        $this->out->expects($this->once())
             ->method('write')
             ->with('It works!well ish');
-        $this->io->macro('simple', ['well', 'ish']);
-        $this->io->simple('well', 'ish');
+        $helper = $this->io->helper('simple');
+        $this->assertInstanceOf('Cake\Console\Helper', $helper);
+        $helper->output(['well', 'ish']);
+    }
+
+    /**
+     * Test the helper __call.
+     *
+     * @return void
+     */
+    public function testHelperCall()
+    {
+        $this->out->expects($this->once())
+            ->method('write')
+            ->with('It works!well ish');
+        $helper = $this->io->simple('well', 'ish');
     }
 }

@@ -35,7 +35,7 @@ class RoutesShellTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->io = $this->getMock('Cake\Console\ConsoleIo');
+        $this->io = $this->getMock('Cake\Console\ConsoleIo', ['table', 'out', 'err']);
 
         $this->shell = new RoutesShell($this->io);
         Router::connect('/articles/:action/*', ['controller' => 'Articles']);
@@ -62,9 +62,8 @@ class RoutesShellTest extends TestCase
     public function testMain()
     {
         $this->io->expects($this->at(0))
-            ->method('macro')
+            ->method('table')
             ->with(
-                'table',
                 $this->logicalAnd(
                     $this->contains(['Route name', 'URI template', 'Defaults']),
                     $this->contains([
@@ -85,9 +84,8 @@ class RoutesShellTest extends TestCase
     public function testCheck()
     {
         $this->io->expects($this->at(0))
-            ->method('macro')
+            ->method('table')
             ->with(
-                'table',
                 $this->logicalAnd(
                     $this->contains(['Route name', 'URI template', 'Defaults']),
                     $this->contains([

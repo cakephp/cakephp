@@ -14,16 +14,16 @@
  */
 namespace Cake\Test\TestCase\Console;
 
-use Cake\Console\MacroRegistry;
+use Cake\Console\HelperRegistry;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class MacroRegistryTest
+ * Class HelperRegistryTest
  *
  */
-class MacroRegistryTest extends TestCase
+class HelperRegistryTest extends TestCase
 {
 
     /**
@@ -36,7 +36,7 @@ class MacroRegistryTest extends TestCase
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
         $io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
-        $this->macros = new MacroRegistry($io);
+        $this->helpers = new HelperRegistry($io);
     }
 
     /**
@@ -46,7 +46,7 @@ class MacroRegistryTest extends TestCase
      */
     public function tearDown()
     {
-        unset($this->macros);
+        unset($this->helpers);
         parent::tearDown();
     }
 
@@ -57,23 +57,23 @@ class MacroRegistryTest extends TestCase
      */
     public function testLoad()
     {
-        $result = $this->macros->load('Simple');
-        $this->assertInstanceOf('TestApp\Shell\Macro\SimpleMacro', $result);
-        $this->assertInstanceOf('TestApp\Shell\Macro\SimpleMacro', $this->macros->Simple);
+        $result = $this->helpers->load('Simple');
+        $this->assertInstanceOf('TestApp\Shell\Helper\SimpleHelper', $result);
+        $this->assertInstanceOf('TestApp\Shell\Helper\SimpleHelper', $this->helpers->Simple);
 
-        $result = $this->macros->loaded();
+        $result = $this->helpers->loaded();
         $this->assertEquals(['Simple'], $result, 'loaded() results are wrong.');
     }
 
     /**
      * test missingtask exception
      *
-     * @expectedException \Cake\Console\Exception\MissingMacroException
+     * @expectedException \Cake\Console\Exception\MissingHelperException
      * @return void
      */
-    public function testLoadMissingMacro()
+    public function testLoadMissingHelper()
     {
-        $this->macros->load('ThisTaskShouldAlwaysBeMissing');
+        $this->helpers->load('ThisTaskShouldAlwaysBeMissing');
     }
 
     /**
@@ -85,18 +85,18 @@ class MacroRegistryTest extends TestCase
     {
         Plugin::load('TestPlugin');
 
-        $result = $this->macros->load('SimpleAliased', ['className' => 'Simple']);
-        $this->assertInstanceOf('TestApp\Shell\Macro\SimpleMacro', $result);
-        $this->assertInstanceOf('TestApp\Shell\Macro\SimpleMacro', $this->macros->SimpleAliased);
+        $result = $this->helpers->load('SimpleAliased', ['className' => 'Simple']);
+        $this->assertInstanceOf('TestApp\Shell\Helper\SimpleHelper', $result);
+        $this->assertInstanceOf('TestApp\Shell\Helper\SimpleHelper', $this->helpers->SimpleAliased);
 
-        $result = $this->macros->loaded();
+        $result = $this->helpers->loaded();
         $this->assertEquals(['SimpleAliased'], $result, 'loaded() results are wrong.');
 
-        $result = $this->macros->load('SomeMacro', ['className' => 'TestPlugin.Example']);
-        $this->assertInstanceOf('TestPlugin\Shell\Macro\ExampleMacro', $result);
-        $this->assertInstanceOf('TestPlugin\Shell\Macro\ExampleMacro', $this->macros->SomeMacro);
+        $result = $this->helpers->load('SomeHelper', ['className' => 'TestPlugin.Example']);
+        $this->assertInstanceOf('TestPlugin\Shell\Helper\ExampleHelper', $result);
+        $this->assertInstanceOf('TestPlugin\Shell\Helper\ExampleHelper', $this->helpers->SomeHelper);
 
-        $result = $this->macros->loaded();
-        $this->assertEquals(['SimpleAliased', 'SomeMacro'], $result, 'loaded() results are wrong.');
+        $result = $this->helpers->loaded();
+        $this->assertEquals(['SimpleAliased', 'SomeHelper'], $result, 'loaded() results are wrong.');
     }
 }

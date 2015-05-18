@@ -1,9 +1,9 @@
 <?php
-namespace TestPlugin\Shell\Macro;
+namespace TestPlugin\Shell\Helper;
 
-use Cake\Console\Macro;
+use Cake\Console\Helper;
 
-class ExampleMacro extends Macro
+class ExampleHelper extends Helper
 {
     public function output($args)
     {

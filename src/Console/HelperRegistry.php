@@ -14,16 +14,16 @@
  */
 namespace Cake\Console;
 
-use Cake\Console\Exception\MissingMacroException;
+use Cake\Console\Exception\MissingHelperException;
 use Cake\Core\App;
 use Cake\Core\ObjectRegistry;
 use Cake\Console\ConsoleIo;
 
 /**
- * Registry for Macros. Provides features
- * for lazily loading macros.
+ * Registry for Helpers. Provides features
+ * for lazily loading helpers.
  */
-class MacroRegistry extends ObjectRegistry
+class HelperRegistry extends ObjectRegistry
 {
 
     /**
@@ -44,7 +44,7 @@ class MacroRegistry extends ObjectRegistry
     }
 
     /**
-     * Resolve a macro classname.
+     * Resolve a helper classname.
      *
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
@@ -53,36 +53,36 @@ class MacroRegistry extends ObjectRegistry
      */
     protected function _resolveClassName($class)
     {
-        return App::className($class, 'Shell/Macro', 'Macro');
+        return App::className($class, 'Shell/Helper', 'Helper');
     }
 
     /**
-     * Throws an exception when a macro is missing.
+     * Throws an exception when a helper is missing.
      *
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
      * @param string $class The classname that is missing.
-     * @param string $plugin The plugin the macro is missing in.
+     * @param string $plugin The plugin the helper is missing in.
      * @return void
-     * @throws \Cake\Console\Exception\MissingMacroException
+     * @throws \Cake\Console\Exception\MissingHelperException
      */
     protected function _throwMissingClassError($class, $plugin)
     {
-        throw new MissingMacroException([
+        throw new MissingHelperException([
             'class' => $class,
             'plugin' => $plugin
         ]);
     }
 
     /**
-     * Create the macro instance.
+     * Create the helper instance.
      *
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
      * @param string $class The classname to create.
-     * @param string $alias The alias of the macro.
-     * @param array $settings An array of settings to use for the macro.
-     * @return \Cake\Console\Macro The constructed macro class.
+     * @param string $alias The alias of the helper.
+     * @param array $settings An array of settings to use for the helper.
+     * @return \Cake\Console\Helper The constructed helper class.
      */
     protected function _create($class, $alias, $settings)
     {
