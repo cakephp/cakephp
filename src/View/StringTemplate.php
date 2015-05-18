@@ -78,7 +78,7 @@ class StringTemplate
         'spellcheck' => true,
         'truespeed' => true,
         'typemustmatch' => true,
-        'visible ' => true,
+        'visible' => true,
     ];
 
     /**
