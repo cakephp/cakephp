@@ -25,6 +25,7 @@ class TableHelper extends Helper
     /**
      * Calculate the column widths
      *
+     * @param array $rows The rows on which the columns width will be calculated on.
      * @return array
      */
     protected function _calculateWidths($rows)
@@ -60,6 +61,7 @@ class TableHelper extends Helper
     /**
      * Output a row.
      *
+     * @param array $row The row to ouptut.
      * @param array $widths The widths of each column to output.
      * @return void
      */
@@ -76,7 +78,7 @@ class TableHelper extends Helper
     /**
      * Output a table.
      *
-     * @param array $args The data to render out.
+     * @param array $rows The data to render out.
      * @return void
      */
     public function output($rows)

@@ -25,6 +25,11 @@ use Cake\Console\ConsoleIo;
  */
 abstract class Helper
 {
+    /**
+     * Constructor
+     *
+     * @param \Cake\Console\ConsoleIo $io An io instance.
+     */
     public function __construct(ConsoleIo $io)
     {
         $this->_io = $io;
@@ -33,7 +38,7 @@ abstract class Helper
     /**
      * This method should output content using `$this->_io`.
      *
-     * @param array $args The arguments for the macro.
+     * @param array $args The arguments for the helper.
      * @return void
      */
     abstract public function output($args);

@@ -14,10 +14,10 @@
  */
 namespace Cake\Console;
 
+use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\MissingHelperException;
 use Cake\Core\App;
 use Cake\Core\ObjectRegistry;
-use Cake\Console\ConsoleIo;
 
 /**
  * Registry for Helpers. Provides features
@@ -36,7 +36,7 @@ class HelperRegistry extends ObjectRegistry
     /**
      * Constructor
      *
-     * @param Shell $Shell Shell instance
+     * @param \Cake\Console\ConsoleIo $io An io instance.
      */
     public function __construct(ConsoleIo $io)
     {

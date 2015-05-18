@@ -52,7 +52,7 @@ class ConsoleIo
     protected $_in;
 
     /**
-     * The macro registry.
+     * The helper registry.
      *
      * @var \Cake\Console\HelperRegistry
      */
@@ -377,10 +377,10 @@ class ConsoleIo
     /**
      * Render a Console Helper
      *
-     * Create and render the output for a macro object. If the macro
+     * Create and render the output for a helper object. If the helper
      * object has not already been loaded, it will be loaded and constructed.
      *
-     * @param string $name The name of the macro to render
+     * @param string $name The name of the helper to render
      * @return Cake\Console\Helper The created helper instance.
      */
     public function helper($name)
@@ -390,10 +390,10 @@ class ConsoleIo
     }
 
     /**
-     * Convenience wrapper around macro()
+     * Convenience wrapper around helper()
      *
-     * @param string $method The macro to invoke.
-     * @param array $args The arguments for the macro.
+     * @param string $method The helper to invoke.
+     * @param array $args The arguments for the helper.
      * @return mixed
      */
     public function __call($method, $args)
