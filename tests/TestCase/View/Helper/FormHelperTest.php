@@ -3633,12 +3633,12 @@ class FormHelperTest extends TestCase
     public function testErrorMultipleMessages()
     {
         $this->article['errors'] = [
-            'field' => ['notEmpty', 'email', 'Something else']
+            'field' => ['notBlank', 'email', 'Something else']
         ];
         $this->Form->create($this->article);
 
         $result = $this->Form->error('field', [
-            'notEmpty' => 'Cannot be empty',
+            'notBlank' => 'Cannot be empty',
             'email' => 'No good!'
         ]);
         $expected = [

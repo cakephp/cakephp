@@ -59,7 +59,7 @@ trait ValidatorAwareTrait
      * {
      *  return $validator
      *  ->add('email', 'valid-email', ['rule' => 'email'])
-     *  ->add('password', 'valid', ['rule' => 'notEmpty'])
+     *  ->add('password', 'valid', ['rule' => 'notBlank'])
      *  ->requirePresence('username');
      * }
      * ```
@@ -70,7 +70,7 @@ trait ValidatorAwareTrait
      * $validator = new \Cake\Validation\Validator($table);
      * $validator
      *  ->add('email', 'valid-email', ['rule' => 'email'])
-     *  ->add('password', 'valid', ['rule' => 'notEmpty'])
+     *  ->add('password', 'valid', ['rule' => 'notBlank'])
      *  ->allowEmpty('bio');
      * $table->validator('forSubscription', $validator);
      * ```
