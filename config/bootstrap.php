@@ -19,15 +19,15 @@ define('TIME_START', microtime(true));
 
 // @deprecated Backward compatibility with 2.x series
 if (PHP_VERSION_ID < 70000) {
-    class_alias('Cake\Utility\Text', 'Cake\Utility\String');
+    class_alias('Cake\Utility\Text', 'Cake\Utility\String', false);
 }
 
 // @deprecated Backward compatibility with 2.x, 3.0.x
-class_alias('Cake\Mailer\AbstractTransport', 'Cake\Network\Email\AbstractTransport');
-class_alias('Cake\Mailer\Transport\DebugTransport', 'Cake\Network\Email\DebugTransport');
-class_alias('Cake\Mailer\Email', 'Cake\Network\Email\Email');
-class_alias('Cake\Mailer\Transport\MailTransport', 'Cake\Network\Email\MailTransport');
-class_alias('Cake\Mailer\Transport\SmtpTransport', 'Cake\Network\Email\SmtpTransport');
+class_alias('Cake\Mailer\AbstractTransport', 'Cake\Network\Email\AbstractTransport', false);
+class_alias('Cake\Mailer\Transport\DebugTransport', 'Cake\Network\Email\DebugTransport', false);
+class_alias('Cake\Mailer\Email', 'Cake\Network\Email\Email', false);
+class_alias('Cake\Mailer\Transport\MailTransport', 'Cake\Network\Email\MailTransport', false);
+class_alias('Cake\Mailer\Transport\SmtpTransport', 'Cake\Network\Email\SmtpTransport', false);
 
 require CAKE . 'basics.php';
 
