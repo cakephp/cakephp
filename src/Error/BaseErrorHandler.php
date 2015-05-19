@@ -253,6 +253,7 @@ abstract class BaseErrorHandler
      */
     protected function _getMessage(\Exception $exception)
     {
+        $config = $this->_options;
         $message = sprintf(
             "[%s] %s",
             get_class($exception),
@@ -270,7 +271,9 @@ abstract class BaseErrorHandler
                 $message .= "\nRequest URL: " . $request->here();
             }
         }
-        $message .= "\nStack Trace:\n" . $exception->getTraceAsString() . "\n\n";
+        if (!empty($config['trace'])) {
+            $message .= "\nStack Trace:\n" . $exception->getTraceAsString() . "\n\n";
+        }
         return $message;
     }
 
