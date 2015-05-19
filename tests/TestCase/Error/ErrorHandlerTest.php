@@ -251,19 +251,33 @@ class ErrorHandlerTest extends TestCase
     {
         $errorHandler = new TestErrorHandler([
             'log' => true,
+            'trace' => true,
         ]);
 
         $error = new NotFoundException('Kaboom!');
 
-        $this->_logger->expects($this->once())
+        $this->_logger->expects($this->at(0))
             ->method('log')
             ->with('error', $this->logicalAnd(
                 $this->stringContains('[Cake\Network\Exception\NotFoundException] Kaboom!'),
                 $this->stringContains('ErrorHandlerTest->testHandleExceptionLog')
             ));
 
+        $this->_logger->expects($this->at(1))
+            ->method('log')
+            ->with('error', $this->logicalAnd(
+                $this->stringContains('[Cake\Network\Exception\NotFoundException] Kaboom!'),
+                $this->logicalNot($this->stringContains('ErrorHandlerTest->testHandleExceptionLog'))
+            ));
+
         $errorHandler->handleException($error);
         $this->assertContains('Kaboom!', $errorHandler->response->body(), 'message missing.');
+
+        $errorHandler = new TestErrorHandler([
+            'log' => true,
+            'trace' => false,
+        ]);
+        $errorHandler->handleException($error);
     }
 
     /**
