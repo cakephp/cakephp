@@ -6321,6 +6321,31 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * test postLink() with query string args.
+     *
+     * @return void
+     */
+    public function testPostLinkWithQuery()
+    {
+        $result = $this->Form->postLink(
+            'Delete',
+            ['controller' => 'posts', 'action' => 'delete', 1, '?' => ['a' => 'b', 'c' => 'd']]
+        );
+        $expected = [
+            'form' => [
+                'method' => 'post', 'action' => '/posts/delete/1?a=b&amp;c=d',
+                'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
+            ],
+            'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
+            '/form',
+            'a' => ['href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'],
+            'Delete',
+            '/a'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * Test postLink with additional data.
      *
      * @return void

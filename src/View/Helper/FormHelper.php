@@ -1654,7 +1654,6 @@ class FormHelper extends Helper
 
         $formName = str_replace('.', '', uniqid('post_', true));
         $formOptions = [
-            'action' => $this->Url->build($url),
             'name' => $formName,
             'style' => 'display:none;',
             'method' => 'post',
@@ -1663,11 +1662,16 @@ class FormHelper extends Helper
             $formOptions['target'] = $options['target'];
             unset($options['target']);
         }
+        $templater = $this->templater();
 
         $this->_lastAction($url);
+        $action = $templater->formatAttributes([
+            'action' => $this->Url->build($url),
+            'escape' => false
+        ]);
 
-        $out = $this->formatTemplate('formStart', [
-            'attrs' => $this->templater()->formatAttributes($formOptions)
+        $out = $templater->format('formStart', [
+            'attrs' => $templater->formatAttributes($formOptions) . $action
         ]);
         $out .= $this->hidden('_method', ['value' => $requestMethod]);
         $out .= $this->_csrfField();
@@ -1681,7 +1685,7 @@ class FormHelper extends Helper
             unset($options['data']);
         }
         $out .= $this->secure($fields);
-        $out .= $this->formatTemplate('formEnd', []);
+        $out .= $templater->format('formEnd', []);
 
         if ($options['block']) {
             if ($options['block'] === true) {
