@@ -227,7 +227,8 @@ class EntityTest extends TestCase
     public function testGetCustomGetters()
     {
         $entity = $this->getMock('\Cake\ORM\Entity', ['_getName']);
-        $entity->expects($this->once())->method('_getName')
+        $entity->expects($this->any())
+            ->method('_getName')
             ->with('Jones')
             ->will($this->returnCallback(function ($name) {
                 return 'Dr. ' . $name;
@@ -245,7 +246,8 @@ class EntityTest extends TestCase
     public function testGetCustomGettersAfterSet()
     {
         $entity = $this->getMock('\Cake\ORM\Entity', ['_getName']);
-        $entity->expects($this->exactly(2))->method('_getName')
+        $entity->expects($this->any())
+            ->method('_getName')
             ->will($this->returnCallback(function ($name) {
                 return 'Dr. ' . $name;
             }));
@@ -275,28 +277,6 @@ class EntityTest extends TestCase
 
         $entity->unsetProperty('name');
         $this->assertEquals('Dr. ', $entity->get('name'));
-    }
-
-    /**
-     * Tests that the get cache is cleared by setting any property.
-     * This is because virtual properties can often rely on other
-     * properties in the entity.
-     *
-     * @return void
-     */
-    public function testGetCacheClearedBySet()
-    {
-        $entity = $this->getMock('\Cake\ORM\Entity', ['_getName']);
-        $entity->last_name = 'Smith';
-        $entity->name = 'John';
-        $entity->expects($this->any())->method('_getName')
-            ->will($this->returnCallback(function ($name) use ($entity) {
-                return 'Dr. ' . $name . ' ' . $entity->last_name;
-            }));
-        $this->assertEquals('Dr. John Smith', $entity->get('name'));
-
-        $entity->last_name = 'Jones';
-        $this->assertEquals('Dr. John Jones', $entity->get('name'));
     }
 
     /**
