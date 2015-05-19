@@ -381,12 +381,13 @@ class ConsoleIo
      * object has not already been loaded, it will be loaded and constructed.
      *
      * @param string $name The name of the helper to render
-     * @return Cake\Console\Helper The created helper instance.
+     * @param array $settings Configuration data for the helper.
+     * @return \Cake\Console\Helper The created helper instance.
      */
-    public function helper($name)
+    public function helper($name, array $settings = [])
     {
         $name = ucfirst($name);
-        return $this->_helpers->load($name);
+        return $this->_helpers->load($name, $settings);
     }
 
     /**

@@ -86,6 +86,6 @@ class HelperRegistry extends ObjectRegistry
      */
     protected function _create($class, $alias, $settings)
     {
-        return new $class($this->_io);
+        return new $class($this->_io, $settings);
     }
 }

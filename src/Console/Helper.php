@@ -15,6 +15,7 @@
 namespace Cake\Console;
 
 use Cake\Console\ConsoleIo;
+use Cake\Core\InstanceConfigTrait;
 
 /**
  * Base class for Helpers.
@@ -25,14 +26,25 @@ use Cake\Console\ConsoleIo;
  */
 abstract class Helper
 {
+    use InstanceConfigTrait;
+
     /**
-     * Constructor
+     * Default config for this helper.
      *
-     * @param \Cake\Console\ConsoleIo $io An io instance.
+     * @var array
      */
-    public function __construct(ConsoleIo $io)
+    protected $_defaultConfig = [];
+
+    /**
+     * Constructor.
+     *
+     * @param \Cake\Console\ConsoleIo $io The ConsoleIo instance to use.
+     * @param array $config The settings for this helper.
+     */
+    public function __construct(ConsoleIo $io, array $config = [])
     {
         $this->_io = $io;
+        $this->config($config);
     }
 
     /**

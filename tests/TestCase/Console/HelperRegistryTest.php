@@ -51,7 +51,7 @@ class HelperRegistryTest extends TestCase
     }
 
     /**
-     * test triggering callbacks on loaded tasks
+     * test loading helpers.
      *
      * @return void
      */
@@ -66,7 +66,18 @@ class HelperRegistryTest extends TestCase
     }
 
     /**
-     * test missingtask exception
+     * test triggering callbacks on loaded helpers
+     *
+     * @return void
+     */
+    public function testLoadWithConfig()
+    {
+        $result = $this->helpers->load('Simple', ['key' => 'value']);
+        $this->assertEquals('value', $result->config('key'));
+    }
+
+    /**
+     * test missing helper exception
      *
      * @expectedException \Cake\Console\Exception\MissingHelperException
      * @return void
