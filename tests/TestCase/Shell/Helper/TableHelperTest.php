@@ -80,4 +80,51 @@ class TableHelperTest extends TestCase
         ];
         $this->assertEquals($expected, $this->stub->messages());
     }
+
+    /**
+     * Test output array shifting
+     *
+     * @return voi
+     */
+    public function testOutputShifting()
+    {
+        $data = [
+            ['Header 1', 'Header', 'Long Header'],
+            ['short', 'Longish thing', 'short'],
+        ];
+        $this->helper->output([$data]);
+        $expected = [
+            '+----------+---------------+-------------+',
+            '| Header 1 | Header        | Long Header |',
+            '+----------+---------------+-------------+',
+            '| short    | Longish thing | short       |',
+            '+----------+---------------+-------------+',
+        ];
+        $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
+     * Test output with multibyte characters
+     *
+     * @return voi
+     */
+    public function testOutputUtf8()
+    {
+        $data = [
+            ['Header 1', 'Head', 'Long Header'],
+            ['short', 'ÄÄÄÜÜÜ', 'short'],
+            ['Longer thing', 'longerish', 'Longest Value'],
+        ];
+        $this->helper->output($data);
+        $expected = [
+            '+--------------+-----------+---------------+',
+            '| Header 1     | Head      | Long Header   |',
+            '+--------------+-----------+---------------+',
+            '| short        | ÄÄÄÜÜÜ    | short         |',
+            '| Longer thing | longerish | Longest Value |',
+            '+--------------+-----------+---------------+',
+        ];
+        debug($this->stub->messages());
+        $this->assertEquals($expected, $this->stub->messages());
+    }
 }

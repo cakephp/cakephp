@@ -69,7 +69,8 @@ class TableHelper extends Helper
     {
         $out = '';
         foreach ($row as $i => $column) {
-            $out .= '| ' . str_pad($column, $widths[$i], ' ', STR_PAD_RIGHT) . ' ';
+            $pad = $widths[$i] - mb_strlen($column);
+            $out .= '| ' . $column . str_repeat(' ', $pad) . ' ';
         }
         $out .= '|';
         $this->_io->out($out);
