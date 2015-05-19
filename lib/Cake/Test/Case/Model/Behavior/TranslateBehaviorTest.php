@@ -942,7 +942,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 
 		$TestModel = new TranslatedItem();
 		$TestModel->locale = 'eng';
-		$TestModel->validate['title'] = 'notEmpty';
+		$TestModel->validate['title'] = 'notBlank';
 		$data = array('TranslatedItem' => array(
 			'id' => 1,
 			'title' => array('eng' => 'New Title #1', 'deu' => 'Neue Titel #1', 'cze' => 'Novy Titulek #1'),

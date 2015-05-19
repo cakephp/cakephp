@@ -81,15 +81,15 @@ class Contact extends CakeTestModel {
 		'non_existing' => array(),
 		'idontexist' => array(),
 		'imrequired' => array('rule' => array('between', 5, 30), 'allowEmpty' => false),
-		'imrequiredonupdate' => array('notEmpty' => array('rule' => 'alphaNumeric', 'on' => 'update')),
+		'imrequiredonupdate' => array('notBlank' => array('rule' => 'alphaNumeric', 'on' => 'update')),
 		'imrequiredoncreate' => array('required' => array('rule' => 'alphaNumeric', 'on' => 'create')),
 		'imrequiredonboth' => array(
 			'required' => array('rule' => 'alphaNumeric'),
 		),
-		'string_required' => 'notEmpty',
+		'string_required' => 'notBlank',
 		'imalsorequired' => array('rule' => 'alphaNumeric', 'allowEmpty' => false),
-		'imrequiredtoo' => array('rule' => 'notEmpty'),
-		'required_one' => array('required' => array('rule' => array('notEmpty'))),
+		'imrequiredtoo' => array('rule' => 'notBlank'),
+		'required_one' => array('required' => array('rule' => array('notBlank'))),
 		'imnotrequired' => array('required' => false, 'rule' => 'alphaNumeric', 'allowEmpty' => true),
 		'imalsonotrequired' => array(
 			'alpha' => array('rule' => 'alphaNumeric', 'allowEmpty' => true),
@@ -3623,9 +3623,9 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$Contact->validationErrors['field'] = array('notEmpty', 'email', 'Something else');
+		$Contact->validationErrors['field'] = array('notBlank', 'email', 'Something else');
 		$result = $this->Form->error('Contact.field', array(
-			'notEmpty' => 'Cannot be empty',
+			'notBlank' => 'Cannot be empty',
 			'email' => 'No good!'
 		));
 		$expected = array(
@@ -3640,13 +3640,13 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		// Testing error messages list options
-		$Contact->validationErrors['field'] = array('notEmpty', 'email');
+		$Contact->validationErrors['field'] = array('notBlank', 'email');
 
 		$result = $this->Form->error('Contact.field', null, array('listOptions' => 'ol'));
 		$expected = array(
 			'div' => array('class' => 'error-message'),
 				'ol' => array(),
-					'<li', 'notEmpty', '/li',
+					'<li', 'notBlank', '/li',
 					'<li', 'email', '/li',
 				'/ol',
 			'/div'
@@ -3657,7 +3657,7 @@ class FormHelperTest extends CakeTestCase {
 		$expected = array(
 			'div' => array('class' => 'error-message'),
 				'ol' => array(),
-					'<li', 'notEmpty', '/li',
+					'<li', 'notBlank', '/li',
 					'<li', 'email', '/li',
 				'/ol',
 			'/div'
@@ -3675,7 +3675,7 @@ class FormHelperTest extends CakeTestCase {
 		$expected = array(
 			'div' => array('class' => 'error-message'),
 				'ul' => array('class' => 'ul-class'),
-					array('li' => array('class' => 'li-class')), 'notEmpty', '/li',
+					array('li' => array('class' => 'li-class')), 'notBlank', '/li',
 					array('li' => array('class' => 'li-class')), 'email', '/li',
 				'/ul',
 			'/div'
@@ -9070,7 +9070,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testFormInputRequiredDetectionModelValidator() {
-		ClassRegistry::getObject('ContactTag')->validator()->add('iwillberequired', 'required', array('rule' => 'notEmpty'));
+		ClassRegistry::getObject('ContactTag')->validator()->add('iwillberequired', 'required', array('rule' => 'notBlank'));
 
 		$this->Form->create('ContactTag');
 		$result = $this->Form->input('ContactTag.iwillberequired');

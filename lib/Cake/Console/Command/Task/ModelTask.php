@@ -383,6 +383,8 @@ class ModelTask extends BakeTask {
 		if (class_exists('Validation')) {
 			$options = get_class_methods('Validation');
 		}
+		$deprecatedOptions = array('notEmpty');
+		$options = array_diff($options, $deprecatedOptions);
 		sort($options);
 		$default = 1;
 		foreach ($options as $option) {
@@ -443,9 +445,9 @@ class ModelTask extends BakeTask {
 				} elseif ($metaData['type'] === 'string' && $metaData['length'] == 36) {
 					$guess = $methods['uuid'];
 				} elseif ($metaData['type'] === 'string') {
-					$guess = $methods['notEmpty'];
+					$guess = $methods['notBlank'];
 				} elseif ($metaData['type'] === 'text') {
-					$guess = $methods['notEmpty'];
+					$guess = $methods['notBlank'];
 				} elseif ($metaData['type'] === 'integer') {
 					$guess = $methods['numeric'];
 				} elseif ($metaData['type'] === 'float') {

@@ -129,15 +129,15 @@ class ValidationTest extends CakeTestCase {
  * @return void
  */
 	public function testNotEmpty() {
-		$this->assertTrue(Validation::notEmpty('abcdefg'));
-		$this->assertTrue(Validation::notEmpty('fasdf '));
-		$this->assertTrue(Validation::notEmpty('fooo' . chr(243) . 'blabla'));
-		$this->assertTrue(Validation::notEmpty('abçďĕʑʘπй'));
-		$this->assertTrue(Validation::notEmpty('José'));
-		$this->assertTrue(Validation::notEmpty('é'));
-		$this->assertTrue(Validation::notEmpty('π'));
-		$this->assertFalse(Validation::notEmpty("\t "));
-		$this->assertFalse(Validation::notEmpty(""));
+		$this->assertTrue(Validation::notBlank('abcdefg'));
+		$this->assertTrue(Validation::notBlank('fasdf '));
+		$this->assertTrue(Validation::notBlank('fooo' . chr(243) . 'blabla'));
+		$this->assertTrue(Validation::notBlank('abçďĕʑʘπй'));
+		$this->assertTrue(Validation::notBlank('José'));
+		$this->assertTrue(Validation::notBlank('é'));
+		$this->assertTrue(Validation::notBlank('π'));
+		$this->assertFalse(Validation::notBlank("\t "));
+		$this->assertFalse(Validation::notBlank(""));
 	}
 
 /**
@@ -147,14 +147,14 @@ class ValidationTest extends CakeTestCase {
  */
 	public function testNotEmptyISO88591AppEncoding() {
 		Configure::write('App.encoding', 'ISO-8859-1');
-		$this->assertTrue(Validation::notEmpty('abcdefg'));
-		$this->assertTrue(Validation::notEmpty('fasdf '));
-		$this->assertTrue(Validation::notEmpty('fooo' . chr(243) . 'blabla'));
-		$this->assertTrue(Validation::notEmpty('abçďĕʑʘπй'));
-		$this->assertTrue(Validation::notEmpty('José'));
-		$this->assertTrue(Validation::notEmpty(utf8_decode('José')));
-		$this->assertFalse(Validation::notEmpty("\t "));
-		$this->assertFalse(Validation::notEmpty(""));
+		$this->assertTrue(Validation::notBlank('abcdefg'));
+		$this->assertTrue(Validation::notBlank('fasdf '));
+		$this->assertTrue(Validation::notBlank('fooo' . chr(243) . 'blabla'));
+		$this->assertTrue(Validation::notBlank('abçďĕʑʘπй'));
+		$this->assertTrue(Validation::notBlank('José'));
+		$this->assertTrue(Validation::notBlank(utf8_decode('José')));
+		$this->assertFalse(Validation::notBlank("\t "));
+		$this->assertFalse(Validation::notBlank(""));
 	}
 
 /**

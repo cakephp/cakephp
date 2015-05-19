@@ -58,7 +58,7 @@ class CakeValidationRuleTest extends CakeTestCase {
  * @return void
  */
 	public function testIsValid() {
-		$def = array('rule' => 'notEmpty', 'message' => 'Can not be empty');
+		$def = array('rule' => 'notBlank', 'message' => 'Can not be empty');
 		$data = array(
 			'fieldName' => ''
 		);
@@ -122,19 +122,19 @@ class CakeValidationRuleTest extends CakeTestCase {
  * @return void
  */
 	public function testIsRequired() {
-		$def = array('rule' => 'notEmpty', 'required' => true);
+		$def = array('rule' => 'notBlank', 'required' => true);
 		$Rule = new CakeValidationRule($def);
 		$this->assertTrue($Rule->isRequired());
 
-		$def = array('rule' => 'notEmpty', 'required' => false);
+		$def = array('rule' => 'notBlank', 'required' => false);
 		$Rule = new CakeValidationRule($def);
 		$this->assertFalse($Rule->isRequired());
 
-		$def = array('rule' => 'notEmpty', 'required' => 'create');
+		$def = array('rule' => 'notBlank', 'required' => 'create');
 		$Rule = new CakeValidationRule($def);
 		$this->assertTrue($Rule->isRequired());
 
-		$def = array('rule' => 'notEmpty', 'required' => 'update');
+		$def = array('rule' => 'notBlank', 'required' => 'update');
 		$Rule = new CakeValidationRule($def);
 		$this->assertFalse($Rule->isRequired());
 
@@ -156,14 +156,14 @@ class CakeValidationRuleTest extends CakeTestCase {
 		$Rule = new CakeValidationRule($def);
 		$this->assertFalse($Rule->isEmptyAllowed());
 
-		$def = array('rule' => 'notEmpty', 'allowEmpty' => false, 'on' => 'update');
+		$def = array('rule' => 'notBlank', 'allowEmpty' => false, 'on' => 'update');
 		$Rule = new CakeValidationRule($def);
 		$this->assertTrue($Rule->isEmptyAllowed());
 
 		$Rule->isUpdate(true);
 		$this->assertFalse($Rule->isEmptyAllowed());
 
-		$def = array('rule' => 'notEmpty', 'allowEmpty' => false, 'on' => 'create');
+		$def = array('rule' => 'notBlank', 'allowEmpty' => false, 'on' => 'create');
 		$Rule = new CakeValidationRule($def);
 		$this->assertFalse($Rule->isEmptyAllowed());
 

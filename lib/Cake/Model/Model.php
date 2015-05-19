@@ -134,7 +134,7 @@ class Model extends Object implements CakeEventListener {
  *
  * ```
  * public $validate = array(
- *     'name' => 'notEmpty'
+ *     'name' => 'notBlank'
  * );
  * ```
  *
