@@ -124,11 +124,11 @@ class ValidationTest extends CakeTestCase {
 	}
 
 /**
- * testNotEmpty method
+ * Test notBlank method
  *
  * @return void
  */
-	public function testNotEmpty() {
+	public function testNotBlank() {
 		$this->assertTrue(Validation::notBlank('abcdefg'));
 		$this->assertTrue(Validation::notBlank('fasdf '));
 		$this->assertTrue(Validation::notBlank('fooo' . chr(243) . 'blabla'));
@@ -141,11 +141,11 @@ class ValidationTest extends CakeTestCase {
 	}
 
 /**
- * testNotEmptyISO88591Encoding method
+ * Test notBlank method with ISO88591 encoding
  *
  * @return void
  */
-	public function testNotEmptyISO88591AppEncoding() {
+	public function testNotBlankISO88591AppEncoding() {
 		Configure::write('App.encoding', 'ISO-8859-1');
 		$this->assertTrue(Validation::notBlank('abcdefg'));
 		$this->assertTrue(Validation::notBlank('fasdf '));
