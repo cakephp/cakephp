@@ -15,27 +15,9 @@
 namespace Cake\Test\TestCase\Shell\Helper;
 
 use Cake\Console\ConsoleIo;
-use Cake\Console\ConsoleOutput;
 use Cake\Shell\Helper\TableHelper;
+use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
-
-/**
- * StubOutput makes testing easier.
- */
-class StubOutput extends ConsoleOutput
-{
-    protected $_out = [];
-
-    public function write($message, $newlines = 1)
-    {
-        $this->_out[] = $message;
-    }
-
-    public function messages()
-    {
-        return $this->_out;
-    }
-}
 
 /**
  * TableHelper test.
@@ -52,7 +34,7 @@ class TableHelperTest extends TestCase
     {
         parent::setUp();
 
-        $this->stub = new StubOutput();
+        $this->stub = new ConsoleOutput();
         $this->io = new ConsoleIo($this->stub);
         $this->helper = new TableHelper($this->io);
     }
@@ -124,7 +106,6 @@ class TableHelperTest extends TestCase
             '| Longer thing | longerish | Longest Value |',
             '+--------------+-----------+---------------+',
         ];
-        debug($this->stub->messages());
         $this->assertEquals($expected, $this->stub->messages());
     }
 }
