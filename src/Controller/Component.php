@@ -180,4 +180,13 @@ class Component implements EventListenerInterface
         }
         return $events;
     }
+
+    public function __debugInfo()
+    {
+        return [
+            'components' => $this->components,
+            'implementedEvents' => $this->implementedEvents(),
+            '_config' => $this->config(),
+        ];
+    }
 }

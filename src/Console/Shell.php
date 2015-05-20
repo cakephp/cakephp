@@ -666,4 +666,17 @@ class Shell
     {
         exit($status);
     }
+
+    public function __debugInfo()
+    {
+        return [
+            'name' => $this->name,
+            'plugin' => $this->plugin,
+            'command' => $this->command,
+            'tasks' => $this->tasks,
+            'params' => $this->params,
+            'args' => $this->args,
+            'interactive' => $this->interactive,
+        ];
+    }
 }

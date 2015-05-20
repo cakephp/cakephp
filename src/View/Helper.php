@@ -219,4 +219,17 @@ class Helper implements EventListenerInterface
         }
         return $events;
     }
+
+    public function __debugInfo()
+    {
+        return [
+            'helpers' => $this->helpers,
+            'theme' => $this->theme,
+            'plugin' => $this->plugin,
+            'fieldset' => $this->fieldset,
+            'tags' => $this->tags,
+            'implementedEvents' => $this->implementedEvents(),
+            '_config' => $this->config(),
+        ];
+    }
 }
