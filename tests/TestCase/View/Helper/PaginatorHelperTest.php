@@ -1593,7 +1593,6 @@ class PaginatorHelperTest extends TestCase
             ['li' => []], ['a' => ['href' => '/index?page=4897&amp;foo=bar']], '4897', '/a', '/li',
         ];
         $this->assertHtml($expected, $result);
-        $this->assertHtml($expected, $result);
     }
 
     /**
