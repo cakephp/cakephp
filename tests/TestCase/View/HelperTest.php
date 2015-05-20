@@ -190,5 +190,4 @@ class HelperTest extends TestCase
         $result = $Helper->__debugInfo();
         $this->assertEquals($expected, $result);
     }
-
 }
