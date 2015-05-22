@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Routing;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Network\Request;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
@@ -220,6 +221,24 @@ class RequestActionTraitTest extends TestCase
         $this->assertEquals('RequestAction', $result['params']['controller']);
         $this->assertEquals('params_pass', $result['params']['action']);
         $this->assertNull($result['params']['plugin']);
+    }
+
+    /**
+     * Test that requestAction() is populates the base and webroot properties properly
+     *
+     * @return void
+     */
+    public function testRequestActionBaseAndWebroot()
+    {
+        $request = new Request([
+            'base' => '/subdir',
+            'webroot' => '/subdir/'
+        ]);
+        Router::setRequestInfo($request);
+        $result = $this->object->requestAction('/request_action/params_pass');
+        $result = json_decode($result, true);
+        $this->assertEquals($request->base, $result['base']);
+        $this->assertEquals($request->webroot, $result['webroot']);
     }
 
     /**

@@ -127,6 +127,11 @@ trait RequestActionTrait
                 $params['params']['pass'] = [];
             }
         }
+        $current = Router::getRequest();
+        if ($current) {
+            $params['base'] = $current->base;
+            $params['webroot'] = $current->webroot;
+        }
 
         $params['post'] = $params['query'] = [];
         if (isset($extra['post'])) {
