@@ -337,7 +337,7 @@ class PaginatorComponent extends Component
     /**
      * Prefixes the field with the table alias if possible.
      *
-     * @param \Cake\ORM\Table Table object.
+     * @param \Cake\ORM\Table $object Table object.
      * @param array $order Order array.
      * @param bool $validate If field should be validated. Defaults to false.
      * @return array Final order array.
