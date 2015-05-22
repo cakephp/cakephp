@@ -334,6 +334,15 @@ class HtmlHelper extends AppHelper {
 	public function link($title, $url = null, $options = array(), $confirmMessage = false) {
 		$escapeTitle = true;
 		if ($url !== null) {
+			
+			if (!empty($options['back_url']) && $url !== '#') :
+	            $options['back_url'] = ($options['back_url'] === true) ? $this->_View->here : $options['back_url'];
+	            $url['?'] = [
+	                'back_url' => $this->url($options['back_url'])
+	            ];
+	            unset($options['back_url']);
+	        endif;
+	        
 			$url = $this->url($url);
 		} else {
 			$url = $this->url($title);
@@ -359,6 +368,8 @@ class HtmlHelper extends AppHelper {
 			$confirmMessage = $options['confirm'];
 			unset($options['confirm']);
 		}
+		
+        
 		if ($confirmMessage) {
 			$options['onclick'] = $this->_confirm($confirmMessage, 'return true;', 'return false;', $options);
 		} elseif (isset($options['default']) && !$options['default']) {

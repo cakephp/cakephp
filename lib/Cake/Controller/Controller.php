@@ -775,6 +775,7 @@ class Controller extends Object implements CakeEventListener {
 		extract($this->_parseBeforeRedirect($response, $url, $status, $exit), EXTR_OVERWRITE);
 
 		if ($url !== null) {
+			$url = ($this->request->query['back_url'] === null) ? $url : $this->request->query['back_url'];
 			$this->response->header('Location', Router::url($url, true));
 		}
 
