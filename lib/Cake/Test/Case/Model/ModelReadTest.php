@@ -7837,6 +7837,38 @@ class ModelReadTest extends BaseModelTest {
 	}
 
 /**
+ * Test virtualfields that contain subqueries get correctly
+ * quoted allowing reserved words to be used.
+ *
+ * @return void
+ */
+	public function testVirtualFieldSubqueryReservedWords() {
+		$this->loadFixtures('User');
+		$user = ClassRegistry::init('User');
+		$user->cacheMethods = false;
+		$ds = $user->getDataSource();
+
+		$sub = $ds->buildStatement(
+			array(
+				'fields' => array('Table.user'),
+				'table' => $ds->fullTableName($user),
+				'alias' => 'Table',
+				'limit' => 1,
+				'conditions' => array(
+					"Table.id > 1"
+				)
+			),
+			$user
+		);
+		$user->virtualFields = array(
+			'sub_test' => $sub
+		);
+
+		$result = $user->find('first');
+		$this->assertNotEmpty($result);
+	}
+
+/**
  * testVirtualFieldsOrder()
  *
  * Test correct order on virtual fields
