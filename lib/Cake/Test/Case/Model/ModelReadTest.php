@@ -7864,7 +7864,7 @@ class ModelReadTest extends BaseModelTest {
 			'sub_test' => $sub
 		);
 
-		$result = $user->field('sub_test', array('id' => 1));
+		$result = $user->find('first');
 		$this->assertNotEmpty($result);
 	}
 
