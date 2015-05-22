@@ -731,4 +731,23 @@ class Shell
     {
         exit($status);
     }
+
+    /**
+     * Returns an array that can be used to describe the internal state of this
+     * object.
+     *
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        return [
+            'name' => $this->name,
+            'plugin' => $this->plugin,
+            'command' => $this->command,
+            'tasks' => $this->tasks,
+            'params' => $this->params,
+            'args' => $this->args,
+            'interactive' => $this->interactive,
+        ];
+    }
 }

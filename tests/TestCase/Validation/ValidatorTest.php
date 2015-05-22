@@ -33,7 +33,7 @@ class ValidatorTest extends TestCase
     public function testAddingRulesToField()
     {
         $validator = new Validator;
-        $validator->add('title', 'not-empty', ['rule' => 'notEmpty']);
+        $validator->add('title', 'not-blank', ['rule' => 'notBlank']);
         $set = $validator->field('title');
         $this->assertInstanceOf('Cake\Validation\ValidationSet', $set);
         $this->assertCount(1, $set);
@@ -155,14 +155,14 @@ class ValidatorTest extends TestCase
     public function testRemove()
     {
         $validator = new Validator;
-        $validator->add('title', 'not-empty', ['rule' => 'notEmpty']);
+        $validator->add('title', 'not-blank', ['rule' => 'notBlank']);
         $validator->add('title', 'foo', ['rule' => 'bar']);
         $this->assertCount(2, $validator->field('title'));
         $validator->remove('title');
         $this->assertCount(0, $validator->field('title'));
         $validator->remove('title');
 
-        $validator->add('title', 'not-empty', ['rule' => 'notEmpty']);
+        $validator->add('title', 'not-blank', ['rule' => 'notBlank']);
         $validator->add('title', 'foo', ['rule' => 'bar']);
         $this->assertCount(2, $validator->field('title'));
         $validator->remove('title', 'foo');
@@ -921,8 +921,8 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator;
         $validator->add('title', [
-            'notEmpty' => [
-                'rule' => 'notEmpty'
+            'notBlank' => [
+                'rule' => 'notBlank'
             ],
             'length' => [
                 'rule' => ['minLength', 10],

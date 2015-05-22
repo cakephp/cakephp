@@ -214,6 +214,9 @@ class Marshaller
      */
     protected function _marshalAssociation($assoc, $value, $options)
     {
+        if (!is_array($value)) {
+            return;
+        }
         $targetTable = $assoc->target();
         $marshaller = $targetTable->marshaller();
         $types = [Association::ONE_TO_ONE, Association::MANY_TO_ONE];
@@ -286,6 +289,9 @@ class Marshaller
         $primaryCount = count($primaryKey);
 
         foreach ($data as $i => $row) {
+            if (!is_array($row)) {
+                continue;
+            }
             if (array_intersect_key($primaryKey, $row) === $primaryKey) {
                 $keys = array_intersect_key($row, $primaryKey);
                 if (count($keys) === $primaryCount) {

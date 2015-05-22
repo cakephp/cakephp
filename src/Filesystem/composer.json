@@ -1,0 +1,16 @@
+{
+    "name": "cakephp/filesystem",
+    "description": "CakePHP filesystem convenience classes to help you work with files and folders.",
+    "license": "MIT",
+    "authors": [
+        {
+        "name": "CakePHP Community",
+        "homepage": "http://cakephp.org"
+    }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Cake\\Filesystem\\": "."
+        }
+    }
+}

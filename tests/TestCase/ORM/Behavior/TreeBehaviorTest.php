@@ -615,7 +615,13 @@ class TreeBehaviorTest extends TestCase
     public function testRecover()
     {
         $table = $this->table;
-        $table->updateAll(['lft' => null, 'rght' => null], []);
+
+        $expectedLevels = $table
+            ->find('list', ['valueField' => 'depth'])
+            ->order('lft')
+            ->toArray();
+        $table->updateAll(['lft' => null, 'rght' => null, 'depth' => null], []);
+        $table->behaviors()->Tree->config('level', 'depth');
         $table->recover();
 
         $expected = [
@@ -631,7 +637,13 @@ class TreeBehaviorTest extends TestCase
             '__17:18 - 10:radios',
             '21:22 - 11:alien hardware'
         ];
-        $this->assertMpttValues($expected, $this->table);
+        $this->assertMpttValues($expected, $table);
+
+        $result = $table
+            ->find('list', ['valueField' => 'depth'])
+            ->order('lft')
+            ->toArray();
+        $this->assertSame($expectedLevels, $result);
     }
 
     /**

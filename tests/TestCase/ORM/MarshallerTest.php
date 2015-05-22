@@ -670,6 +670,34 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test belongsToMany association with scalars
+     *
+     * @return void
+     */
+    public function testBelongsToManyInvalidData()
+    {
+        $data = [
+            'title' => 'My title',
+            'body' => 'My content',
+            'author_id' => 1,
+            'tags' => [
+                'id' => 1
+            ]
+        ];
+
+        $article = $this->articles->newEntity($data, [
+            'associated' => ['Tags']
+        ]);
+        $this->assertEmpty($article->tags, 'No entity should be created');
+
+        $data['tags'] = 1;
+        $article = $this->articles->newEntity($data, [
+            'associated' => ['Tags']
+        ]);
+        $this->assertEmpty($article->tags, 'No entity should be created');
+    }
+
+    /**
      * Test belongsToMany association with mixed data array
      *
      * @return void
@@ -693,16 +721,10 @@ class MarshallerTest extends TestCase
             ]
         ];
 
-        $articles = TableRegistry::get('Articles');
-        $articles->belongsToMany('Tags');
-
         $tags = TableRegistry::get('Tags');
 
-        $article = $articles->newEntity($data, [
-            'associated' => [
-                'Tags'
-            ]
-        ]);
+        $marshaller = new Marshaller($this->articles);
+        $article = $marshaller->one($data, ['associated' => ['Tags']]);
 
         $this->assertEquals($data['tags'][0]['name'], $article->tags[0]->name);
         $this->assertEquals($data['tags'][1]['name'], $article->tags[1]->name);
@@ -713,7 +735,7 @@ class MarshallerTest extends TestCase
         $this->assertEquals($article->tags[2]->isNew(), false);
 
         $tagCount = $tags->find()->count();
-        $articles->save($article);
+        $this->articles->save($article);
 
         $this->assertEquals($tagCount + 2, $tags->find()->count());
     }
@@ -726,20 +748,42 @@ class MarshallerTest extends TestCase
     public function testHasManyWithIds()
     {
         $data = [
-            'username' => 'lux',
-            'password' => 'passphrase',
+            'title' => 'article',
+            'body' => 'some content',
             'comments' => [
                 '_ids' => [1, 2]
             ]
         ];
 
-        $userTable = TableRegistry::get('Users');
-        $userTable->hasMany('Comments');
-        $commentTable = TableRegistry::get('Comments');
-        $user = $userTable->newEntity($data, ['associated' => ['Comments']]);
+        $marshaller = new Marshaller($this->articles);
+        $article = $marshaller->one($data, ['associated' => ['Comments']]);
 
-        $this->assertEquals($user->comments[0], $commentTable->get(1));
-        $this->assertEquals($user->comments[1], $commentTable->get(2));
+        $this->assertEquals($article->comments[0], $this->comments->get(1));
+        $this->assertEquals($article->comments[1], $this->comments->get(2));
+    }
+
+    /**
+     * Test HasMany association with invalid data
+     *
+     * @return void
+     */
+    public function testHasManyInvalidData()
+    {
+        $data = [
+            'title' => 'new title',
+            'body' => 'some content',
+            'comments' => [
+                'id' => 1
+            ]
+        ];
+
+        $marshaller = new Marshaller($this->articles);
+        $article = $marshaller->one($data, ['associated' => ['Comments']]);
+        $this->assertEmpty($article->comments);
+
+        $data['comments'] = 1;
+        $article = $marshaller->one($data, ['associated' => ['Comments']]);
+        $this->assertEmpty($article->comments);
     }
 
     /**

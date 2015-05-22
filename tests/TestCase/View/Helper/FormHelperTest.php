@@ -3633,12 +3633,12 @@ class FormHelperTest extends TestCase
     public function testErrorMultipleMessages()
     {
         $this->article['errors'] = [
-            'field' => ['notEmpty', 'email', 'Something else']
+            'field' => ['notBlank', 'email', 'Something else']
         ];
         $this->Form->create($this->article);
 
         $result = $this->Form->error('field', [
-            'notEmpty' => 'Cannot be empty',
+            'notBlank' => 'Cannot be empty',
             'email' => 'No good!'
         ]);
         $expected = [
@@ -6315,6 +6315,31 @@ class FormHelperTest extends TestCase
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
             'a' => ['class' => 'btn btn-danger', 'href' => '#', 'onclick' => 'preg:/if \(confirm\(\&quot\;Confirm thing\&quot\;\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/'],
+            '/a'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * test postLink() with query string args.
+     *
+     * @return void
+     */
+    public function testPostLinkWithQuery()
+    {
+        $result = $this->Form->postLink(
+            'Delete',
+            ['controller' => 'posts', 'action' => 'delete', 1, '?' => ['a' => 'b', 'c' => 'd']]
+        );
+        $expected = [
+            'form' => [
+                'method' => 'post', 'action' => '/posts/delete/1?a=b&amp;c=d',
+                'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
+            ],
+            'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
+            '/form',
+            'a' => ['href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'],
+            'Delete',
             '/a'
         ];
         $this->assertHtml($expected, $result);

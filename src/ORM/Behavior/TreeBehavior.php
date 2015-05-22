@@ -741,9 +741,10 @@ class TreeBehavior extends Behavior
      *
      * @param int $counter The Last left column value that was assigned
      * @param mixed $parentId the parent id of the level to be recovered
+     * @param int $level Node level
      * @return int The next value to use for the left column
      */
-    protected function _recoverTree($counter = 0, $parentId = null)
+    protected function _recoverTree($counter = 0, $parentId = null, $level = -1)
     {
         $config = $this->config();
         list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
@@ -756,17 +757,23 @@ class TreeBehavior extends Behavior
             ->hydrate(false);
 
         $leftCounter = $counter;
+        $nextLevel = $level + 1;
         foreach ($query as $row) {
             $counter++;
-            $counter = $this->_recoverTree($counter, $row[$pk[0]]);
+            $counter = $this->_recoverTree($counter, $row[$pk[0]], $nextLevel);
         }
 
         if ($parentId === null) {
             return $counter;
         }
 
+        $fields = [$left => $leftCounter, $right => $counter + 1];
+        if ($config['level']) {
+            $fields[$config['level']] = $level;
+        }
+
         $this->_table->updateAll(
-            [$left => $leftCounter, $right => $counter + 1],
+            $fields,
             [$pk[0] => $parentId]
         );
 

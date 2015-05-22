@@ -161,4 +161,33 @@ class HelperTest extends TestCase
         $resultA->testprop = 1;
         $this->assertEquals($resultA->testprop, $resultB->testprop);
     }
+
+    /**
+     * Tests __debugInfo
+     *
+     * @return void
+     */
+    public function testDebugInfo()
+    {
+        $Helper = new TestHelper($this->View);
+
+        $expected = [
+            'helpers' => [
+                'Html',
+                'TestPlugin.OtherHelper'
+            ],
+            'theme' => null,
+            'plugin' => null,
+            'fieldset' => [],
+            'tags' => [],
+            'implementedEvents' => [
+            ],
+            '_config' => [
+                'key1' => 'val1',
+                'key2' => ['key2.1' => 'val2.1', 'key2.2' => 'val2.2']
+            ]
+        ];
+        $result = $Helper->__debugInfo();
+        $this->assertEquals($expected, $result);
+    }
 }

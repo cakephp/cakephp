@@ -145,4 +145,27 @@ class ComponentTest extends TestCase
         $this->assertInstanceOf('TestApp\Controller\Component\SomethingWithCookieComponent', $Controller->SomethingWithCookie);
         $this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $Controller->SomethingWithCookie->Cookie);
     }
+
+    /**
+     * Tests __debugInfo
+     *
+     * @return void
+     */
+    public function testDebugInfo()
+    {
+        $Collection = new ComponentRegistry();
+        $Component = new AppleComponent($Collection);
+
+        $expected = [
+            'components' => [
+                'Orange'
+            ],
+            'implementedEvents' => [
+                'Controller.startup' => 'startup'
+            ],
+            '_config' => []
+        ];
+        $result = $Component->__debugInfo();
+        $this->assertEquals($expected, $result);
+    }
 }

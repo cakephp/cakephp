@@ -501,7 +501,7 @@ class ShellTest extends TestCase
         $this->assertTextEquals($contents, file_get_contents($file));
         $this->assertTrue($result, 'Did create file.');
     }
-    
+
     /**
      * Test that there is no user prompt in non-interactive mode while file already exists.
      *
@@ -511,14 +511,14 @@ class ShellTest extends TestCase
     {
         $path = TMP . 'shell_test';
         $file = $path . DS . 'file1.php';
-        
+
         new Folder($path, true);
-        
+
         touch($file);
         $this->assertTrue(file_exists($file));
-        
+
         $this->io->expects($this->never())->method('askChoice');
-        
+
         $this->Shell->interactive = false;
         $result = $this->Shell->createFile($file, 'My content');
         $this->assertTrue($result);
@@ -1088,5 +1088,25 @@ TEXT;
 
         $this->Shell = $this->getMock(__NAMESPACE__ . '\ShellTestShell', ['_useLogger'], [$io]);
         $this->Shell->runCommand(['foo', '--quiet']);
+    }
+
+    /**
+     * Tests __debugInfo
+     *
+     * @return void
+     */
+    public function testDebugInfo()
+    {
+        $expected = [
+            'name' => 'ShellTestShell',
+            'plugin' => null,
+            'command' => null,
+            'tasks' => [],
+            'params' => [],
+            'args' => [],
+            'interactive' => true
+        ];
+        $result = $this->Shell->__debugInfo();
+        $this->assertEquals($expected, $result);
     }
 }

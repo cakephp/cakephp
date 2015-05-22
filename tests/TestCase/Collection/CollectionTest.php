@@ -1285,4 +1285,75 @@ class CollectionTest extends TestCase
         $collection = $collection->filter();
         $this->assertTrue($collection->isEmpty());
     }
+
+    /**
+     * Tests the zip() method
+     *
+     * @return void
+     */
+    public function testZip()
+    {
+        $collection = new Collection([1, 2]);
+        $zipped = $collection->zip([3, 4]);
+        $this->assertEquals([[1, 3], [2, 4]], $zipped->toList());
+
+        $collection = new Collection([1, 2]);
+        $zipped = $collection->zip([3]);
+        $this->assertEquals([[1, 3]], $zipped->toList());
+
+        $collection = new Collection([1, 2]);
+        $zipped = $collection->zip([3, 4], [5, 6], [7, 8], [9, 10, 11]);
+        $this->assertEquals([
+            [1, 3, 5, 7, 9],
+            [2, 4, 6, 8, 10]
+        ], $zipped->toList());
+    }
+
+    /**
+     * Tests the zipWith() method
+     *
+     * @return void
+     */
+    public function testZipWith()
+    {
+        $collection = new Collection([1, 2]);
+        $zipped = $collection->zipWith([3, 4], function ($a, $b) {
+            return $a * $b;
+        });
+        $this->assertEquals([3, 8], $zipped->toList());
+
+        $zipped = $collection->zipWith([3, 4], [5, 6, 7], function () {
+            return array_sum(func_get_args());
+        });
+        $this->assertEquals([9, 12], $zipped->toList());
+    }
+
+    /**
+     * Tests the skip() method
+     *
+     * @return void
+     */
+    public function testSkip()
+    {
+        $collection = new Collection([1, 2, 3, 4, 5]);
+        $this->assertEquals([3, 4, 5], $collection->skip(2)->toList());
+
+        $this->assertEquals([5], $collection->skip(4)->toList());
+    }
+
+    /**
+     * Tests the last() method
+     *
+     * @return void
+     */
+    public function testLast()
+    {
+        $collection = new Collection([1, 2, 3]);
+        $this->assertEquals(3, $collection->last());
+
+        $collection = $collection->map(function ($e) {
+            return $e * 2;
+        });
+        $this->assertEquals(6, $collection->last());
+    }
 }

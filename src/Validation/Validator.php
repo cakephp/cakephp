@@ -289,7 +289,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * ```
      *      $validator
-     *          ->add('title', 'required', ['rule' => 'notEmpty'])
+     *          ->add('title', 'required', ['rule' => 'notBlank'])
      *          ->add('user_id', 'valid', ['rule' => 'numeric', 'message' => 'Invalid User'])
      *
      *      $validator->add('password', [

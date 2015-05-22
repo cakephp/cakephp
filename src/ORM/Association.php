@@ -633,9 +633,7 @@ abstract class Association
      */
     protected function _dispatchBeforeFind($query)
     {
-        $table = $this->target();
-        $options = $query->getOptions();
-        $table->dispatchEvent('Model.beforeFind', [$query, new \ArrayObject($options), false]);
+        $query->triggerBeforeFind();
     }
 
     /**
