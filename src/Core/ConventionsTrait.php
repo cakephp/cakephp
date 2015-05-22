@@ -55,10 +55,7 @@ trait ConventionsTrait
      */
     protected function _modelKey($name)
     {
-        $model = explode('.', $name);
-        if (isset($model[1])) {
-            $name = $model[1];
-        }
+        list(, $name) = pluginSplit($name);
         return Inflector::underscore(Inflector::singularize($name)) . '_id';
     }
 
