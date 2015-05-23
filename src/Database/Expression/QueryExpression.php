@@ -481,7 +481,7 @@ class QueryExpression implements ExpressionInterface, Countable
         if (in_array($method, ['and', 'or'])) {
             return call_user_func_array([$this, $method . '_'], $args);
         }
-        throw new \BadMethodCallException;
+        throw new \BadMethodCallException(sprintf('Method %s does not exist', $method));
     }
 
     /**
