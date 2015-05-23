@@ -112,8 +112,8 @@ class ProgressHelper extends Helper
     public function draw()
     {
         $numberLen = strlen(' 100%');
-        $complete = ($this->_progress / $this->_total);
-        $barLen = floor(($this->_width - $numberLen) * ($this->_progress / $this->_total));
+        $complete = round($this->_progress / $this->_total, 2);
+        $barLen = ($this->_width - $numberLen) * ($this->_progress / $this->_total);
         $bar = '';
         if ($barLen > 1) {
             $bar = str_repeat('=', $barLen - 1) . '>';
