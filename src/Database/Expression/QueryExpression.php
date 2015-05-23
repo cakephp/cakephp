@@ -469,6 +469,22 @@ class QueryExpression implements ExpressionInterface, Countable
     }
 
     /**
+     * Helps calling the `and()` and `or()` methods transparently.
+     *
+     * @param string $method The method name.
+     * @param array $args The argumemts to pass to the method.
+     * @return \Cake\Database\Expression\QueryExpression
+     * @throws \BadMethodCallException
+     */
+    public function __call($method, $args)
+    {
+        if (in_array($method, ['and', 'or'])) {
+            return call_user_func_array([$this, $method . '_'], $args);
+        }
+        throw new \BadMethodCallException;
+    }
+
+    /**
      * Auxiliary function used for decomposing a nested array of conditions and build
      * a tree structure inside this object to represent the full SQL expression.
      * String conditions are stored directly in the conditions, while any other
