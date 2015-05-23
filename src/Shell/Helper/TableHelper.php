@@ -83,9 +83,6 @@ class TableHelper extends Helper
      */
     public function output($rows)
     {
-        if (count($rows) === 1) {
-            $rows = $rows[0];
-        }
         $widths = $this->_calculateWidths($rows);
 
         $this->_rowSeparator($widths);

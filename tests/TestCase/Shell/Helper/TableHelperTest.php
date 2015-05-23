@@ -64,28 +64,6 @@ class TableHelperTest extends TestCase
     }
 
     /**
-     * Test output array shifting
-     *
-     * @return voi
-     */
-    public function testOutputShifting()
-    {
-        $data = [
-            ['Header 1', 'Header', 'Long Header'],
-            ['short', 'Longish thing', 'short'],
-        ];
-        $this->helper->output([$data]);
-        $expected = [
-            '+----------+---------------+-------------+',
-            '| Header 1 | Header        | Long Header |',
-            '+----------+---------------+-------------+',
-            '| short    | Longish thing | short       |',
-            '+----------+---------------+-------------+',
-        ];
-        $this->assertEquals($expected, $this->stub->messages());
-    }
-
-    /**
      * Test output with multibyte characters
      *
      * @return voi

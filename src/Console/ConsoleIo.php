@@ -399,7 +399,10 @@ class ConsoleIo
      */
     public function __call($method, $args)
     {
-        $helper = $this->helper($method, $args);
+        $helper = $this->helper($method);
+        if (count($args) === 1 && isset($args[0]) && is_array($args[0])) {
+            $args = $args[0];
+        }
         return $helper->output($args);
     }
 }

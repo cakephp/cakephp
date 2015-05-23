@@ -62,7 +62,7 @@ class ProgressHelper extends Helper
         if (isset($args[0])) {
             $args['callback'] = $args[0];
         }
-        if (!$args['callback'] || !is_callable($args[0])) {
+        if (!$args['callback'] || !is_callable($args['callback'])) {
             throw new RuntimeException('Callback option must be a callable.');
         }
         $this->init($args);
@@ -72,6 +72,7 @@ class ProgressHelper extends Helper
             $callback($this);
             $this->draw();
         }
+        $this->_io->out('');
     }
 
     /**
@@ -100,7 +101,7 @@ class ProgressHelper extends Helper
      */
     public function increment($num = 1)
     {
-        $this->_progress = max(0, $this->_progress + $num);
+        $this->_progress = min(max(0, $this->_progress + $num), $this->_total);
     }
 
     /**

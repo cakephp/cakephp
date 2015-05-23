@@ -380,9 +380,14 @@ class ConsoleIoTest extends TestCase
      */
     public function testHelperCall()
     {
-        $this->out->expects($this->once())
+        $this->out->expects($this->at(0))
             ->method('write')
             ->with('It works!well ish');
-        $helper = $this->io->simple('well', 'ish');
+        $this->out->expects($this->at(1))
+            ->method('write')
+            ->with('It works!well ish');
+
+        $this->io->simple('well', 'ish');
+        $this->io->simple(['well', 'ish']);
     }
 }
