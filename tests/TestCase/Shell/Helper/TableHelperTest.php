@@ -124,7 +124,6 @@ class TableHelperTest extends TestCase
             '| Longer thing | longerish | Longest Value |',
             '+--------------+-----------+---------------+',
         ];
-        debug($this->stub->messages());
         $this->assertEquals($expected, $this->stub->messages());
     }
 }
