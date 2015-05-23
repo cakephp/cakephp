@@ -115,7 +115,7 @@ class CsrfComponentTest extends TestCase
      * Test that the X-CSRF-Token works with the various http methods.
      *
      * @dataProvider httpMethodProvider
-     * @expectedException \Cake\Network\Exception\ForbiddenException
+     * @expectedException \Cake\Network\Exception\InvalidCsrfTokenException
      * @return void
      * @triggers Controller.startup $controller
      */
@@ -161,7 +161,7 @@ class CsrfComponentTest extends TestCase
      * Test that request data works with the various http methods.
      *
      * @dataProvider httpMethodProvider
-     * @expectedException \Cake\Network\Exception\ForbiddenException
+     * @expectedException \Cake\Network\Exception\InvalidCsrfTokenException
      * @return void
      */
     public function testInvalidTokenRequestData($method)
@@ -182,7 +182,7 @@ class CsrfComponentTest extends TestCase
     /**
      * Test that missing post field fails
      *
-     * @expectedException \Cake\Network\Exception\ForbiddenException
+     * @expectedException \Cake\Network\Exception\InvalidCsrfTokenException
      * @return void
      */
     public function testInvalidTokenRequestDataMissing()
@@ -204,7 +204,7 @@ class CsrfComponentTest extends TestCase
      * Test that missing header and cookie fails
      *
      * @dataProvider httpMethodProvider
-     * @expectedException \Cake\Network\Exception\ForbiddenException
+     * @expectedException \Cake\Network\Exception\InvalidCsrfTokenException
      * @return void
      */
     public function testInvalidTokenMissingCookie($method)
