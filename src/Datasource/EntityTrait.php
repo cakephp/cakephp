@@ -237,8 +237,8 @@ trait EntityTrait
 
             $this->dirty($p, true);
 
-            if (!isset($this->_original[$p]) &&
-                isset($this->_properties[$p]) &&
+            if (!array_key_exists($p, $this->_original) &&
+                array_key_exists($p, $this->_properties) &&
                 $this->_properties[$p] !== $value
             ) {
                 $this->_original[$p] = $this->_properties[$p];
@@ -298,7 +298,7 @@ trait EntityTrait
         if (!strlen((string)$property)) {
             throw new InvalidArgumentException('Cannot get an empty property');
         }
-        if (isset($this->_original[$property])) {
+        if (array_key_exists($property, $this->_original)) {
             return $this->_original[$property];
         }
         return $this->get($property);
@@ -539,10 +539,7 @@ trait EntityTrait
     {
         $result = [];
         foreach ($properties as $property) {
-            $original = $this->getOriginal($property);
-            if ($original !== null) {
-                $result[$property] = $original;
-            }
+            $result[$property] = $this->getOriginal($property);
         }
         return $result;
     }
