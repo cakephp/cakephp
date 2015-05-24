@@ -72,6 +72,29 @@ class EntityTest extends TestCase
     }
 
     /**
+     * Test that getOriginal() retains falsey values.
+     *
+     * @return void
+     */
+    public function testGetOriginal()
+    {
+        $entity = new Entity(
+            ['false' => false, 'null' => null, 'zero' => 0, 'empty' => ''],
+            ['markNew' => true]
+        );
+        $this->assertNull($entity->getOriginal('null'));
+        $this->assertFalse($entity->getOriginal('false'));
+        $this->assertSame(0, $entity->getOriginal('zero'));
+        $this->assertSame('', $entity->getOriginal('empty'));
+
+        $entity->set(['false' => 'y', 'null' => 'y', 'zero' => 'y', 'empty' => '']);
+        $this->assertNull($entity->getOriginal('null'));
+        $this->assertFalse($entity->getOriginal('false'));
+        $this->assertSame(0, $entity->getOriginal('zero'));
+        $this->assertSame('', $entity->getOriginal('empty'));
+    }
+
+    /**
      * Test extractOriginal()
      *
      * @return void
@@ -81,18 +104,20 @@ class EntityTest extends TestCase
         $entity = new Entity([
             'id' => 1,
             'title' => 'original',
-            'body' => 'no'
+            'body' => 'no',
+            'null' => null,
         ], ['markNew' => true]);
         $entity->set('body', 'updated body');
-        $result = $entity->extractOriginal(['id', 'title', 'body']);
+        $result = $entity->extractOriginal(['id', 'title', 'body', 'null']);
         $expected = [
             'id' => 1,
             'title' => 'original',
-            'body' => 'no'
+            'body' => 'no',
+            'null' => null,
         ];
         $this->assertEquals($expected, $result);
 
-        $result = $entity->extractOriginalChanged(['id', 'title', 'body']);
+        $result = $entity->extractOriginalChanged(['id', 'title', 'body', 'null']);
         $expected = [
             'body' => 'no',
         ];
