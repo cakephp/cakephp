@@ -564,7 +564,7 @@ class PaginatorComponentTest extends TestCase
         ];
         $result = $this->Paginator->validateSort($model, $options);
 
-        $expected = ['body' => 'asc'];
+        $expected = ['model.body' => 'asc'];
         $this->assertEquals($expected, $result['order']);
     }
 
