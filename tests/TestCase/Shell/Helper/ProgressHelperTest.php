@@ -50,7 +50,7 @@ class ProgressHelperTest extends TestCase
     }
 
     /**
-     * Test a callback that never reaches 100 fails.
+     * Test that the callback is invoked until 100 is reached.
      *
      * @return void
      */
