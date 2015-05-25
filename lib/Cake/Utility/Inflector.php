@@ -495,7 +495,12 @@ class Inflector {
  */
 	public static function humanize($lowerCaseAndUnderscoredWord) {
 		if (!($result = self::_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord))) {
-			$result = ucwords(str_replace('_', ' ', $lowerCaseAndUnderscoredWord));
+			$result = str_replace('_', ' ', $lowerCaseAndUnderscoredWord);
+			if (function_exists('mb_convert_case') && Multibyte::checkMultibyte($result)) {
+				$result = mb_convert_case($result, MB_CASE_TITLE, Configure::read('App.encoding'));
+			} else {
+				$result = ucwords($result);
+			}
 			self::_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord, $result);
 		}
 		return $result;
