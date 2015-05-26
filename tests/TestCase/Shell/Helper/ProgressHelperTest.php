@@ -76,6 +76,36 @@ class ProgressHelperTest extends TestCase
     }
 
     /**
+     * Test output with options
+     *
+     * @return void
+     */
+    public function testOutputSuccessOptions()
+    {
+        $this->helper->output([
+            'total' => 10,
+            'width' => 20,
+            'callback' => function ($progress) {
+                $progress->increment(2);
+            }
+        ]);
+        $expected = [
+            '',
+            '==>              20%',
+            '',
+            '=====>           40%',
+            '',
+            '========>        60%',
+            '',
+            '===========>     80%',
+            '',
+            '==============> 100%',
+            '',
+        ];
+        $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
      * Test using the helper manually.
      *
      * @return void
@@ -130,6 +160,35 @@ class ProgressHelperTest extends TestCase
             '',
             '===========================================================>                 80%',
         ];
+        $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
+     * Test increment and draw with options
+     *
+     * @return void
+     */
+    public function testIncrementWithOptions()
+    {
+        $this->helper->init([
+            'total' => 10,
+            'width' => 20,
+        ]);
+        $expected = [
+            '',
+            '=====>           40%',
+            '',
+            '===========>     80%',
+            '',
+            '==============> 100%',
+        ];
+        $this->helper->increment(4);
+        $this->helper->draw();
+        $this->helper->increment(4);
+        $this->helper->draw();
+        $this->helper->increment(4);
+        $this->helper->draw();
+
         $this->assertEquals($expected, $this->stub->messages());
     }
 }
