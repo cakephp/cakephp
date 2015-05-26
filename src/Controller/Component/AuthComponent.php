@@ -609,8 +609,9 @@ class AuthComponent extends Component
      */
     public function setUser(array $user, $stateless = false)
     {
+        $this->_user = $user;
+
         if ($stateless) {
-            $this->_user = $user;
             return;
         }
 
