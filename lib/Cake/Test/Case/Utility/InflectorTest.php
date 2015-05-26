@@ -399,12 +399,14 @@ class InflectorTest extends CakeTestCase {
 		$this->assertSame(Inflector::underscore('testThing'), 'test_thing');
 		$this->assertSame(Inflector::underscore('TestThingExtra'), 'test_thing_extra');
 		$this->assertSame(Inflector::underscore('testThingExtra'), 'test_thing_extra');
+		$this->assertSame(Inflector::underscore('testThingExtrå'), 'test_thing_extrå');
 
 		// Identical checks test the cache code path.
 		$this->assertSame(Inflector::underscore('TestThing'), 'test_thing');
 		$this->assertSame(Inflector::underscore('testThing'), 'test_thing');
 		$this->assertSame(Inflector::underscore('TestThingExtra'), 'test_thing_extra');
 		$this->assertSame(Inflector::underscore('testThingExtra'), 'test_thing_extra');
+		$this->assertSame(Inflector::underscore('testThingExtrå'), 'test_thing_extrå');
 
 		// Test stupid values
 		$this->assertSame(Inflector::underscore(''), '');
@@ -457,6 +459,8 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEquals(Inflector::humanize('posts'), 'Posts');
 		$this->assertEquals(Inflector::humanize('posts_tags'), 'Posts Tags');
 		$this->assertEquals(Inflector::humanize('file_systems'), 'File Systems');
+		$this->assertEquals(Inflector::humanize('hello_wörld'), 'Hello Wörld');
+		$this->assertEquals(Inflector::humanize('福岡_city'), '福岡 City');
 	}
 
 /**

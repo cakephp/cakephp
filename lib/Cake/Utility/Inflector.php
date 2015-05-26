@@ -479,7 +479,12 @@ class Inflector {
  */
 	public static function underscore($camelCasedWord) {
 		if (!($result = self::_cache(__FUNCTION__, $camelCasedWord))) {
-			$result = strtolower(preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $camelCasedWord));
+			$underscoredWord = preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $camelCasedWord);
+			if (function_exists('mb_convert_case')) {
+				$result = mb_convert_case($underscoredWord, MB_CASE_LOWER, Configure::read('App.encoding'));
+			} else {
+				$result = strtolower($underscoredWord);
+			}
 			self::_cache(__FUNCTION__, $camelCasedWord, $result);
 		}
 		return $result;
@@ -495,8 +500,9 @@ class Inflector {
  */
 	public static function humanize($lowerCaseAndUnderscoredWord) {
 		if (!($result = self::_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord))) {
+			$lowerCaseAndUnderscoredWord = self::underscore($lowerCaseAndUnderscoredWord);
 			$result = str_replace('_', ' ', $lowerCaseAndUnderscoredWord);
-			if (function_exists('mb_convert_case') && Multibyte::checkMultibyte($result)) {
+			if (function_exists('mb_convert_case')) {
 				$result = mb_convert_case($result, MB_CASE_TITLE, Configure::read('App.encoding'));
 			} else {
 				$result = ucwords($result);
