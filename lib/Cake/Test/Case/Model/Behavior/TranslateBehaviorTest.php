@@ -38,7 +38,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
-		'core.translated_item', 'core.translate', 'core.translate_table',
+		'core.translated_item', 'core.translated_item_title', 'core.translate_title', 'core.translate', 'core.translate_table',
 		'core.translated_article', 'core.translate_article', 'core.user', 'core.comment', 'core.tag', 'core.articles_tag',
 		'core.translate_with_prefix'
 	);
@@ -886,6 +886,42 @@ class TranslateBehaviorTest extends CakeTestCase {
 		$expected = array('TranslatedItem' => array_merge($oldData, $newData, array('locale' => 'spa')));
 		$this->assertEquals($expected, $result);
 	}
+
+/**
+ * testUpdateLang method
+ *
+ * @return void
+ */
+  public function testUpdateTitle() {
+    $this->loadFixtures('TranslateTitle', 'TranslatedItemTitle');
+
+    $TestModel = new TranslatedItemTitle();
+    $TestModel->id = 1;
+    $TestModel->locale = 'deu';
+    $data = $TestModel->read(null, $TestModel->id);
+    $newData = array_merge($data, array('TranslatedItemTitle' => array('title' => 'De Titel #1')));
+    $savedData = $TestModel->save($newData);
+    $expectedSave = array(
+      'TranslatedItemTitle' => array(
+        'id' => '1',
+        'translated_article_id' => '1',
+        'slug' => 'first_translated',
+        'locale' => 'deu'
+      )
+    );
+    $TestModel->Behaviors->unload('Translate');
+    $result = $TestModel->read(null, $TestModel->id);
+    $expected = array(
+      'TranslatedItemTitle' => array(
+        'id' => '1',
+        'translated_article_id' => '1',
+        'slug' => 'first_translated',
+        'title' => 'Title #1'
+      )
+    );
+    $this->assertEquals($expectedSave, $savedData);
+    $this->assertEquals($expected, $result);
+  }
 
 /**
  * testMultipleCreate method
