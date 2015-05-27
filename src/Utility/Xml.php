@@ -86,6 +86,9 @@ class Xml
      * - `return` Can be 'simplexml' to return object of SimpleXMLElement or 'domdocument' to return DOMDocument.
      * - `loadEntities` Defaults to false. Set to true to enable loading of `<!ENTITY` definitions. This
      *   is disabled by default for security reasons.
+     * - `readFile` Set to false to disable file reading. This is important to disable when
+     *   putting user data into Xml::build(). If enabled local files will be read if they exist.
+     *   Defaults to true for backwards compatibility reasons.
      * - If using array as input, you can pass `options` from Xml::fromArray.
      *
      * @param string|array $input XML string, a path to a file, a URL or an array
@@ -98,6 +101,7 @@ class Xml
         $defaults = [
             'return' => 'simplexml',
             'loadEntities' => false,
+            'readFile' => true
         ];
         $options += $defaults;
 
@@ -109,7 +113,7 @@ class Xml
             return static::_loadXml($input, $options);
         }
 
-        if (file_exists($input)) {
+        if ($options['readFile'] && file_exists($input)) {
             return static::_loadXml(file_get_contents($input), $options);
         }
 
