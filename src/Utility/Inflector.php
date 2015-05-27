@@ -641,7 +641,11 @@ class Inflector
         $result = static::_cache($cacheKey, $string);
 
         if ($result === false) {
-            $result = ucwords(str_replace($delimiter, ' ', $string));
+            $result = explode(' ', str_replace($delimiter, ' ', $string));
+            foreach ($result as &$word) {
+                $word = mb_strtoupper(mb_substr($word, 0, 1)) . mb_substr($word, 1);
+            }
+            $result = implode(' ', $result);
             static::_cache($cacheKey, $string, $result);
         }
 
@@ -662,7 +666,7 @@ class Inflector
         $result = static::_cache($cacheKey, $string);
 
         if ($result === false) {
-            $result = strtolower(preg_replace('/(?<=\\w)([A-Z])/', $delimiter . '\\1', $string));
+            $result = mb_strtolower(preg_replace('/(?<=\\w)([A-Z])/', $delimiter . '\\1', $string));
             static::_cache($cacheKey, $string, $result);
         }
 
