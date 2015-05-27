@@ -1112,19 +1112,18 @@ class AuthComponentTest extends TestCase
      */
     public function testSetUser()
     {
-        $this->Auth->session = $this->getMock(
-            'Cake\Network\Session',
-            ['renew', 'write']
+        $storage = $this->getMock(
+            'Cake\Auth\Storage\SessionStorage',
+            ['set'],
+            [$this->Auth->request]
         );
+        $this->Auth->storage($storage);
 
         $user = ['username' => 'mark', 'role' => 'admin'];
 
-        $this->Auth->session->expects($this->once())
-            ->method('renew');
-
-        $this->Auth->session->expects($this->once())
-            ->method('write')
-            ->with($this->Auth->sessionKey, $user);
+        $storage->expects($this->once())
+            ->method('set')
+            ->with($user);
 
         $this->Auth->setUser($user);
     }

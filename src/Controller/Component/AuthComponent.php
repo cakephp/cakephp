@@ -14,6 +14,7 @@
  */
 namespace Cake\Controller\Component;
 
+use Cake\Auth\Storage\StorageInterface;
 use Cake\Controller\Component;
 use Cake\Controller\Controller;
 use Cake\Core\App;
@@ -145,7 +146,8 @@ class AuthComponent extends Component
         'loginRedirect' => null,
         'logoutRedirect' => null,
         'authError' => null,
-        'unauthorizedRedirect' => true
+        'unauthorizedRedirect' => true,
+        'storage' => 'Session'
     ];
 
     /**
@@ -169,14 +171,7 @@ class AuthComponent extends Component
      */
     protected $_authorizeObjects = [];
 
-    /**
-     * The session key name where the record of the current user is stored. Default
-     * key is "Auth.User". If you are using only stateless authenticators set this
-     * to false to ensure session is not started.
-     *
-     * @var string
-     */
-    public $sessionKey = 'Auth.User';
+    protected $_storageObject;
 
     /**
      * The current user, used for stateless authentication when
@@ -606,8 +601,8 @@ class AuthComponent extends Component
      */
     public function setUser(array $user)
     {
-        $this->session->renew();
-        $this->session->write($this->sessionKey, $user);
+        $this->_user = $user;
+        $this->storage()->set($user);
     }
 
     /**
@@ -630,9 +625,8 @@ class AuthComponent extends Component
         }
         $user = (array)$this->user();
         $this->dispatchEvent('Auth.logout', [$user]);
-        $this->session->delete($this->sessionKey);
         $this->session->delete('Auth.redirect');
-        $this->session->renew();
+        $this->storage()->remove();
         return Router::normalize($this->_config['logoutRedirect']);
     }
 
@@ -651,11 +645,14 @@ class AuthComponent extends Component
     {
         if (!empty($this->_user)) {
             $user = $this->_user;
-        } elseif ($this->sessionKey && $this->session->check($this->sessionKey)) {
-            $user = $this->session->read($this->sessionKey);
         } else {
-            return null;
+            $user = $this->storage()->get();
         }
+
+        if (!$user) {
+            return;
+        }
+
         if ($key === null) {
             return $user;
         }
@@ -795,6 +792,34 @@ class AuthComponent extends Component
             $this->eventManager()->on($this->_authenticateObjects[$alias]);
         }
         return $this->_authenticateObjects;
+    }
+
+    public function storage(StorageInterface $storage = null)
+    {
+        if ($storage !== null) {
+            $this->_storageObject = $storage;
+            return;
+        }
+
+        if ($this->_storageObject) {
+            return $this->_storageObject;
+        }
+
+        $config = $this->_config['storage'];
+        if (is_string($config)) {
+            $class = $config;
+            $config = [];
+        } else {
+            $class = $config['className'];
+            unset($config['className']);
+        }
+        $className = App::className($class, 'Auth/Storage', 'Storage');
+        if (!class_exists($className)) {
+            throw new Exception(sprintf('Auth storage adapter "%s" was not found.', $class));
+        }
+        $this->_storageObject = new $className($this->request, $config);
+
+        return $this->_storageObject;
     }
 
     /**
