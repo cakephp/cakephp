@@ -1876,7 +1876,7 @@ class QueryTest extends TestCase
         ]);
         $query = $articles->find('all')->contain(['Authors']);
         $result = $query->toArray();
-        $this->assertCount(4, $result);
+        $this->assertCount(3, $result);
     }
 
     /**
