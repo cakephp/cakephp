@@ -403,8 +403,12 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function sql(ValueBinder $generator)
     {
+        $len = $this->count();
+        if ($len === 0) {
+            return '';
+        }
         $conjunction = $this->_conjunction;
-        $template = ($this->count() === 1) ? '%s' : '(%s)';
+        $template = ($len === 1) ? '%s' : '(%s)';
         $parts = [];
         foreach ($this->_conditions as $part) {
             if ($part instanceof Query) {
@@ -412,7 +416,9 @@ class QueryExpression implements ExpressionInterface, Countable
             } elseif ($part instanceof ExpressionInterface) {
                 $part = $part->sql($generator);
             }
-            $parts[] = $part;
+            if (strlen($part)) {
+                $parts[] = $part;
+            }
         }
         return sprintf($template, implode(" $conjunction ", $parts));
     }

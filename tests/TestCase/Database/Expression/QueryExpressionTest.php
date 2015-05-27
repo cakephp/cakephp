@@ -37,4 +37,56 @@ class QueryExpressionTest extends TestCase
         $this->assertInstanceOf($expected, $expr->and([]));
         $this->assertInstanceOf($expected, $expr->or([]));
     }
+
+    /**
+     * Test SQL generation with one element
+     *
+     * @return void
+     */
+    public function testSqlGenerationOneClause()
+    {
+        $expr = new QueryExpression();
+        $binder = new ValueBinder();
+        $expr->add(['Users.username' => 'sally'], ['Users.username' => 'string']);
+
+        $result = $expr->sql($binder);
+        $this->assertEquals('Users.username = :c0', $result);
+    }
+
+    /**
+     * Test SQL generation with many elements
+     *
+     * @return void
+     */
+    public function testSqlGenerationMultipleClauses()
+    {
+        $expr = new QueryExpression();
+        $binder = new ValueBinder();
+        $expr->add(
+            [
+                'Users.username' => 'sally',
+                'Users.active' => 1,
+            ],
+            [
+                'Users.username' => 'string',
+                'Users.active' => 'boolean'
+            ]
+        );
+
+        $result = $expr->sql($binder);
+        $this->assertEquals('(Users.username = :c0 AND Users.active = :c1)', $result);
+    }
+
+    /**
+     * Test that empty expressions don't emit invalid SQL.
+     *
+     * @return void
+     */
+    public function testSqlWhenEmpty()
+    {
+        $expr = new QueryExpression();
+        $binder = new ValueBinder();
+        $result = $expr->sql($binder);
+        $this->assertEquals('', $result);
+    }
 }
