@@ -77,6 +77,9 @@ class Xml {
  * - `return` Can be 'simplexml' to return object of SimpleXMLElement or 'domdocument' to return DOMDocument.
  * - `loadEntities` Defaults to false. Set to true to enable loading of `<!ENTITY` definitions. This
  *   is disabled by default for security reasons.
+ * - `readFile` Set to false to disable file reading. This is important to disable when
+ *   putting user data into Xml::build(). If enabled local & remote files will be read if they exist.
+ *   Defaults to true for backwards compatibility reasons.
  * - If using array as input, you can pass `options` from Xml::fromArray.
  *
  * @param string|array $input XML string, a path to a file, a URL or an array
@@ -91,6 +94,7 @@ class Xml {
 		$defaults = array(
 			'return' => 'simplexml',
 			'loadEntities' => false,
+			'readFile' => true
 		);
 		$options += $defaults;
 
@@ -98,9 +102,9 @@ class Xml {
 			return self::fromArray((array)$input, $options);
 		} elseif (strpos($input, '<') !== false) {
 			return self::_loadXml($input, $options);
-		} elseif (file_exists($input)) {
+		} elseif ($options['readFile'] && file_exists($input)) {
 			return self::_loadXml(file_get_contents($input), $options);
-		} elseif (strpos($input, 'http://') === 0 || strpos($input, 'https://') === 0) {
+		} elseif ($options['readFile'] && strpos($input, 'http://') === 0 || strpos($input, 'https://') === 0) {
 			try {
 				$socket = new HttpSocket(array('request' => array('redirect' => 10)));
 				$response = $socket->get($input);
