@@ -59,22 +59,26 @@ class MailerTest extends TestCase
         $email = $this->getMockForEmail('setHeaders');
         $email->expects($this->once())
             ->method('setHeaders')
-            ->with([]);
-        $result = (new TestMailer($email))->setHeaders([]);
+            ->with(['X-Something' => 'nice']);
+        $result = (new TestMailer($email))->setHeaders(['X-Something' => 'nice']);
         $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
 
         $email = $this->getMockForEmail('addHeaders');
         $email->expects($this->once())
             ->method('addHeaders')
-            ->with([]);
-        $result = (new TestMailer($email))->addHeaders([]);
+            ->with(['X-Something' => 'very nice', 'X-Other' => 'cool']);
+        $result = (new TestMailer($email))->addHeaders(['X-Something' => 'very nice', 'X-Other' => 'cool']);
         $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
 
         $email = $this->getMockForEmail('attachments');
         $email->expects($this->once())
             ->method('attachments')
-            ->with([]);
-        $result = (new TestMailer($email))->attachments([]);
+            ->with([
+                ['file' => CAKE . 'basics.php', 'mimetype' => 'text/plain']
+            ]);
+        $result = (new TestMailer($email))->attachments([
+            ['file' => CAKE . 'basics.php', 'mimetype' => 'text/plain']
+        ]);
         $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
     }
 
