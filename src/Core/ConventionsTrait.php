@@ -48,6 +48,7 @@ trait ConventionsTrait
 
     /**
      * Creates the proper underscored model key for associations
+     *
      * If the input contains a dot, assume that the right side is the real table name.
      *
      * @param string $name Model class name
