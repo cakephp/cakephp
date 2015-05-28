@@ -372,22 +372,4 @@ class ConsoleIoTest extends TestCase
         $this->assertInstanceOf('Cake\Console\Helper', $helper);
         $helper->output(['well', 'ish']);
     }
-
-    /**
-     * Test the helper __call.
-     *
-     * @return void
-     */
-    public function testHelperCall()
-    {
-        $this->out->expects($this->at(0))
-            ->method('write')
-            ->with('It works!well ish');
-        $this->out->expects($this->at(1))
-            ->method('write')
-            ->with('It works!well ish');
-
-        $this->io->simple('well', 'ish');
-        $this->io->simple(['well', 'ish']);
-    }
 }

@@ -721,6 +721,21 @@ class Shell
     }
 
     /**
+     * Render a Console Helper
+     *
+     * Create and render the output for a helper object. If the helper
+     * object has not already been loaded, it will be loaded and constructed.
+     *
+     * @param string $name The name of the helper to render
+     * @param array $settings Configuration data for the helper.
+     * @return \Cake\Console\Helper The created helper instance.
+     */
+    public function helper($name, array $settings = [])
+    {
+        return $this->_io->helper($name, $settings);
+    }
+
+    /**
      * Stop execution of the current script. Wraps exit() making
      * testing easier.
      *

@@ -40,7 +40,7 @@ class RoutesShell extends Shell
         foreach (Router::routes() as $route) {
             $output[] = [$route->getName(), $route->template, json_encode($route->defaults)];
         }
-        $this->_io->table($output);
+        $this->helper('table')->output($output);
     }
 
     /**
@@ -57,7 +57,7 @@ class RoutesShell extends Shell
                 ['Route name', 'URI template', 'Defaults'],
                 ['', $url, json_encode($route)]
             ];
-            $this->_io->table($output);
+            $this->helper('table')->output($output);
         } catch (MissingRouteException $e) {
             $this->err("<warning>'$url' did not match any routes.</warning>");
             return false;
