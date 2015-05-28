@@ -28,6 +28,7 @@
     },
     "require-dev": {
         "phpunit/phpunit": "*",
+        "phpunit/phpunit-mock-objects": "2.3.1",
         "cakephp/cakephp-codesniffer": "dev-master"
     },
     "autoload": {
