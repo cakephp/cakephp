@@ -1034,6 +1034,7 @@ class AuthComponentTest extends TestCase
         $this->Auth->config('authenticate', [
             'Basic' => ['userModel' => 'AuthUsers']
         ]);
+        $this->Auth->config('storage', 'Memory');
         $this->Auth->startup($event);
 
         $result = $this->Auth->user();
@@ -1041,6 +1042,7 @@ class AuthComponentTest extends TestCase
 
         $result = $this->Auth->user('username');
         $this->assertEquals('mariano', $result);
+        $this->assertFalse(isset($_SESSION));
     }
 
     /**
@@ -1351,7 +1353,6 @@ class AuthComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $_SESSION = [];
 
-        $this->sessionKey = false;
         $this->Auth->config('authenticate', ['Basic']);
         $this->Controller->request['action'] = 'add';
 

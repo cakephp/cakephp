@@ -174,14 +174,6 @@ class AuthComponent extends Component
     protected $_storageObject;
 
     /**
-     * The current user, used for stateless authentication when
-     * sessions are not available.
-     *
-     * @var array
-     */
-    protected $_user = [];
-
-    /**
      * Controller actions for which user validation is not required.
      *
      * @var array
@@ -601,7 +593,6 @@ class AuthComponent extends Component
      */
     public function setUser(array $user)
     {
-        $this->_user = $user;
         $this->storage()->set($user);
     }
 
@@ -643,12 +634,7 @@ class AuthComponent extends Component
      */
     public function user($key = null)
     {
-        if (!empty($this->_user)) {
-            $user = $this->_user;
-        } else {
-            $user = $this->storage()->get();
-        }
-
+        $user = $this->storage()->get();
         if (!$user) {
             return;
         }
@@ -679,7 +665,7 @@ class AuthComponent extends Component
         foreach ($this->_authenticateObjects as $auth) {
             $result = $auth->getUser($this->request);
             if (!empty($result) && is_array($result)) {
-                $this->_user = $result;
+                $this->storage()->set($result);
                 return true;
             }
         }
