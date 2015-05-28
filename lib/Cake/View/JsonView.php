@@ -125,6 +125,10 @@ class JsonView extends View {
 /**
  * Serialize view vars
  *
+ * ### Special parameters
+ * `_jsonOptions` You can set custom options for json_encode() this way,
+ *   e.g. `JSON_HEX_TAG | JSON_HEX_APOS`.
+ *
  * @param array $serialize The viewVars that need to be serialized
  * @throws CakeException
  * @return string The serialized data
@@ -145,15 +149,24 @@ class JsonView extends View {
 			$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
 		}
 
-		if (version_compare(PHP_VERSION, '5.4.0', '>=') && Configure::read('debug')) {
-			$json = json_encode($data, JSON_PRETTY_PRINT);
-		} else {
-			$json = json_encode($data);
+		$jsonOptions = 0;
+		if (isset($this->viewVars['_jsonOptions'])) {
+			if ($this->viewVars['_jsonOptions'] === false) {
+				$jsonOptions = 0;
+			} else {
+				$jsonOptions = $this->viewVars['_jsonOptions'];
+			}
 		}
+		if (version_compare(PHP_VERSION, '5.4.0', '>=') && Configure::read('debug')) {
+			$jsonOptions = $jsonOptions | JSON_PRETTY_PRINT;
+		}
+
+		$json = json_encode($data, $jsonOptions);
 
 		if (function_exists('json_last_error') && json_last_error() !== JSON_ERROR_NONE) {
 			throw new CakeException(json_last_error_msg());
-		} elseif ($json === false) {
+		}
+		if ($json === false) {
 			throw new CakeException('Failed to parse JSON');
 		}
 		return $json;

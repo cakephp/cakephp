@@ -3902,6 +3902,25 @@ class FormHelperTest extends CakeTestCase {
 			'/fieldset'
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->radio(
+			'Model.multibyte',
+			array('男性' => '男性')
+		);
+		$expected = array(
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[Model][multibyte]',
+				'id' => 'ModelMultibyte_', 'value' => '',
+			),
+			array('input' => array(
+				'type' => 'radio', 'name' => 'data[Model][multibyte]',
+				'id' => 'ModelMultibyte男性', 'value' => '男性')
+			),
+			array('label' => array('for' => 'ModelMultibyte男性')),
+			'男性',
+			'/label',
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**

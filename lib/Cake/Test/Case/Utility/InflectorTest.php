@@ -123,6 +123,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEquals(Inflector::singularize('fungi'), 'fungus');
 		$this->assertEquals(Inflector::singularize('nuclei'), 'nucleus');
 		$this->assertEquals(Inflector::singularize('octopuses'), 'octopus');
+		$this->assertEquals(Inflector::singularize('octopuses'), 'octopus');
 		$this->assertEquals(Inflector::singularize('radii'), 'radius');
 		$this->assertEquals(Inflector::singularize('stimuli'), 'stimulus');
 		$this->assertEquals(Inflector::singularize('syllabi'), 'syllabus');
@@ -178,6 +179,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEquals(Inflector::singularize('metadata'), 'metadata');
 		$this->assertEquals(Inflector::singularize('files_metadata'), 'files_metadata');
 		$this->assertEquals(Inflector::singularize('sieves'), 'sieve');
+		$this->assertEquals(Inflector::singularize('blue_octopuses'), 'blue_octopus');
 		$this->assertEquals(Inflector::singularize(''), '');
 	}
 
@@ -250,7 +252,33 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEquals(Inflector::pluralize('files_metadata'), 'files_metadata');
 		$this->assertEquals(Inflector::pluralize('stadia'), 'stadia');
 		$this->assertEquals(Inflector::pluralize('sieve'), 'sieves');
+		$this->assertEquals(Inflector::pluralize('blue_octopus'), 'blue_octopuses');
 		$this->assertEquals(Inflector::pluralize(''), '');
+	}
+
+/**
+ * testInflectingMultiWordIrregulars
+ *
+ * @return void
+ */
+	public function testInflectingMultiWordIrregulars() {
+		// unset the default rules in order to avoid them possibly matching
+		// the words in case the irregular regex won't match, the tests
+		// should fail in that case
+		Inflector::rules('plural', array(
+			'rules' => array(),
+		));
+		Inflector::rules('singular', array(
+			'rules' => array(),
+		));
+
+		$this->assertEquals(Inflector::singularize('wisdom teeth'), 'wisdom tooth');
+		$this->assertEquals(Inflector::singularize('wisdom-teeth'), 'wisdom-tooth');
+		$this->assertEquals(Inflector::singularize('wisdom_teeth'), 'wisdom_tooth');
+
+		$this->assertEquals(Inflector::pluralize('sweet potato'), 'sweet potatoes');
+		$this->assertEquals(Inflector::pluralize('sweet-potato'), 'sweet-potatoes');
+		$this->assertEquals(Inflector::pluralize('sweet_potato'), 'sweet_potatoes');
 	}
 
 /**
@@ -371,12 +399,14 @@ class InflectorTest extends CakeTestCase {
 		$this->assertSame(Inflector::underscore('testThing'), 'test_thing');
 		$this->assertSame(Inflector::underscore('TestThingExtra'), 'test_thing_extra');
 		$this->assertSame(Inflector::underscore('testThingExtra'), 'test_thing_extra');
+		$this->assertSame(Inflector::underscore('testThingExtrå'), 'test_thing_extrå');
 
 		// Identical checks test the cache code path.
 		$this->assertSame(Inflector::underscore('TestThing'), 'test_thing');
 		$this->assertSame(Inflector::underscore('testThing'), 'test_thing');
 		$this->assertSame(Inflector::underscore('TestThingExtra'), 'test_thing_extra');
 		$this->assertSame(Inflector::underscore('testThingExtra'), 'test_thing_extra');
+		$this->assertSame(Inflector::underscore('testThingExtrå'), 'test_thing_extrå');
 
 		// Test stupid values
 		$this->assertSame(Inflector::underscore(''), '');
@@ -429,6 +459,8 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEquals(Inflector::humanize('posts'), 'Posts');
 		$this->assertEquals(Inflector::humanize('posts_tags'), 'Posts Tags');
 		$this->assertEquals(Inflector::humanize('file_systems'), 'File Systems');
+		$this->assertEquals(Inflector::humanize('hello_wörld'), 'Hello Wörld');
+		$this->assertEquals(Inflector::humanize('福岡_city'), '福岡 City');
 	}
 
 /**

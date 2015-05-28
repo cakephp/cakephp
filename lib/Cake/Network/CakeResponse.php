@@ -68,6 +68,7 @@ class CakeResponse {
 		415 => 'Unsupported Media Type',
 		416 => 'Requested range not satisfiable',
 		417 => 'Expectation Failed',
+		429 => 'Too Many Requests',
 		500 => 'Internal Server Error',
 		501 => 'Not Implemented',
 		502 => 'Bad Gateway',
@@ -1495,9 +1496,10 @@ class CakeResponse {
  * @return bool
  */
 	protected function _clearBuffer() {
-		//@codingStandardsIgnoreStart
-		return @ob_end_clean();
-		//@codingStandardsIgnoreEnd
+		if (ob_get_length()) {
+			return ob_end_clean();
+		}
+		return true;
 	}
 
 /**

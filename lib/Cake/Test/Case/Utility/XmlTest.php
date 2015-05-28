@@ -168,6 +168,28 @@ class XmlTest extends CakeTestCase {
 	}
 
 /**
+ * Test that the readFile option disables local file parsing.
+ *
+ * @expectedException XmlException
+ * @return void
+ */
+	public function testBuildFromFileWhenDisabled() {
+		$xml = CAKE . 'Test' . DS . 'Fixture' . DS . 'sample.xml';
+		$obj = Xml::build($xml, array('readFile' => false));
+	}
+
+/**
+ * Test that the readFile option disables local file parsing.
+ *
+ * @expectedException XmlException
+ * @return void
+ */
+	public function testBuildFromUrlWhenDisabled() {
+		$xml = 'http://www.google.com';
+		$obj = Xml::build($xml, array('readFile' => false));
+	}
+
+/**
  * data provider function for testBuildInvalidData
  *
  * @return array

@@ -2872,10 +2872,17 @@ class DboSource extends DataSource {
 		if (!empty($this->endQuote)) {
 			$end = preg_quote($this->endQuote);
 		}
+		// Remove quotes and requote all the Model.field names.
 		$conditions = str_replace(array($start, $end), '', $conditions);
 		$conditions = preg_replace_callback(
 			'/(?:[\'\"][^\'\"\\\]*(?:\\\.[^\'\"\\\]*)*[\'\"])|([a-z0-9_][a-z0-9\\-_]*\\.[a-z0-9_][a-z0-9_\\-]*)/i',
 			array(&$this, '_quoteMatchedField'),
+			$conditions
+		);
+		// Quote `table_name AS Alias`
+		$conditions = preg_replace(
+			'/(\s[a-z0-9\\-_.' . $start . $end . ']*' . $end . ')\s+AS\s+([a-z0-9\\-_]+)/i',
+			'\1 AS ' . $this->startQuote . '\2' . $this->endQuote,
 			$conditions
 		);
 		if ($conditions !== null) {
