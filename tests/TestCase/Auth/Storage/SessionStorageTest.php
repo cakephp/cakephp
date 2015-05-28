@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         2.0.0
+ * @since         3.1.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Auth;
@@ -63,14 +63,25 @@ class SessionStorageTest extends TestCase
     public function testGet()
     {
         $this->session->expects($this->once())
-            ->method('check')
-            ->with('Auth.AuthUser')
-            ->will($this->returnValue(true));
-
-        $this->session->expects($this->once())
             ->method('read')
             ->with('Auth.AuthUser')
             ->will($this->returnValue($this->user));
+
+        $result = $this->storage->get();
+        $this->assertSame($this->user, $result);
+    }
+
+    /**
+     * Test get from local var
+     *
+     * @return void
+     */
+    public function testGetFromLocalVar()
+    {
+        $this->storage->set($this->user);
+
+        $this->session->expects($this->never())
+            ->method('read');
 
         $result = $this->storage->get();
         $this->assertSame($this->user, $result);

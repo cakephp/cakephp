@@ -26,6 +26,13 @@ class SessionStorage implements StorageInterface
     use InstanceConfigTrait;
 
     /**
+     * User record.
+     *
+     * @var array
+     */
+    protected $_user;
+
+    /**
      * Session object.
      *
      * @var \Cake\Network\Session
@@ -56,15 +63,16 @@ class SessionStorage implements StorageInterface
     /**
      * Get user record from session.
      *
-     * @return array|null
+     * @return array|null User record if available else null.
      */
     public function get()
     {
-        if (!$this->_session->check($this->_config['key'])) {
-            return;
+        if ($this->_user) {
+            return $this->_user;
         }
 
-        return $this->_session->read($this->_config['key']);
+        $this->_user = $this->_session->read($this->_config['key']);
+        return $this->_user;
     }
 
     /**
@@ -77,6 +85,8 @@ class SessionStorage implements StorageInterface
      */
     public function set(array $user)
     {
+        $this->_user = $user;
+
         $this->_session->renew();
         $this->_session->write($this->_config['key'], $user);
     }
@@ -90,6 +100,8 @@ class SessionStorage implements StorageInterface
      */
     public function remove()
     {
+        unset($this->_user);
+
         $this->_session->delete($this->_config['key']);
         $this->_session->renew();
     }
