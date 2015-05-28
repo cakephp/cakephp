@@ -1378,4 +1378,21 @@ class AuthComponentTest extends TestCase
 
         $this->assertEquals('/users/login', $this->Controller->testUrl);
     }
+
+    /**
+     * test for BC getting/setting AuthComponent::$sessionKey gets/sets `key`
+     * config of session storage.
+     *
+     * @return void
+     */
+    public function testSessionKeyBC()
+    {
+        $this->assertEquals('Auth.User', $this->Auth->sessionKey);
+
+        $this->Auth->sessionKey = 'Auth.Member';
+        $this->assertEquals('Auth.Member', $this->Auth->sessionKey);
+
+        $this->Auth->sessionKey = false;
+        $this->assertInstanceOf('Cake\Auth\Storage\MemoryStorage', $this->Auth->storage());
+    }
 }

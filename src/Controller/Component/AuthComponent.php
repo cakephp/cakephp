@@ -819,6 +819,46 @@ class AuthComponent extends Component
     }
 
     /**
+     * Magic accessor for backward compatibility for property `$sessionKey`.
+     *
+     * @param string $name Property name
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        if ($name === 'sessionKey') {
+            return $this->storage()->config('key');
+        }
+
+        return parent::__get($name);
+    }
+
+    /**
+     * Magic setter for backward compatibility for property `$sessionKey`.
+     *
+     * @param string $name Property name.
+     * @param mixed $value Value to set.
+     * @return void
+     */
+    public function __set($name, $value)
+    {
+        if ($name === 'sessionKey') {
+            $this->_storageObject = null;
+
+            if ($value === false) {
+                $this->config('storage', 'Memory');
+                return;
+            }
+
+            $this->config('storage', 'Session');
+            $this->storage()->config('key', $value);
+            return;
+        }
+
+        $this->{$name} = $value;
+    }
+
+    /**
      * Getter for authenticate objects. Will return a particular authenticate object.
      *
      * @param string $alias Alias for the authenticate object
