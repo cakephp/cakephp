@@ -204,7 +204,7 @@ abstract class Mailer implements ArrayAccess, EventListenerInterface
     public function offsetGet($offset)
     {
         if (!$this->offsetExists($offset)) {
-            throw \Exception();
+            return null;
         }
 
         if (isset($this->{$offset})) {
