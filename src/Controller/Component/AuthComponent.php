@@ -176,7 +176,7 @@ class AuthComponent extends Component
      *
      * @var \Cake\Auth\Storage\StorageInterface
      */
-    protected $_storageObject;
+    protected $_storage;
 
     /**
      * Controller actions for which user validation is not required.
@@ -793,12 +793,12 @@ class AuthComponent extends Component
     public function storage(StorageInterface $storage = null)
     {
         if ($storage !== null) {
-            $this->_storageObject = $storage;
+            $this->_storage = $storage;
             return;
         }
 
-        if ($this->_storageObject) {
-            return $this->_storageObject;
+        if ($this->_storage) {
+            return $this->_storage;
         }
 
         $config = $this->_config['storage'];
@@ -813,9 +813,9 @@ class AuthComponent extends Component
         if (!class_exists($className)) {
             throw new Exception(sprintf('Auth storage adapter "%s" was not found.', $class));
         }
-        $this->_storageObject = new $className($this->request, $config);
+        $this->_storage = new $className($this->request, $config);
 
-        return $this->_storageObject;
+        return $this->_storage;
     }
 
     /**
@@ -843,7 +843,7 @@ class AuthComponent extends Component
     public function __set($name, $value)
     {
         if ($name === 'sessionKey') {
-            $this->_storageObject = null;
+            $this->_storage = null;
 
             if ($value === false) {
                 $this->config('storage', 'Memory');
