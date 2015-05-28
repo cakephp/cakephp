@@ -783,6 +783,13 @@ class AuthComponent extends Component
         return $this->_authenticateObjects;
     }
 
+    /**
+     * Get/set user record storage object.
+     *
+     * @param \Cake\Auth\Storage\StorageInterface|null $storage Sets provided
+     *   object as storage or if null returns configuread storage object.
+     * @return \Cake\Auth\Storage\StorageInterface|null
+     */
     public function storage(StorageInterface $storage = null)
     {
         if ($storage !== null) {
