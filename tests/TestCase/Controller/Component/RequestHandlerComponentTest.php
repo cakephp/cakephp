@@ -507,6 +507,27 @@ class RequestHandlerComponentTest extends TestCase
     }
 
     /**
+     * Test that file handles are ignored as XML data.
+     *
+     * @return void
+     * @triggers Controller.startup $this->Controller
+     */
+    public function testStartupIgnoreFileAsXml()
+    {
+        $this->Controller->request = $this->getMock('Cake\Network\Request', ['_readInput']);
+        $this->Controller->request->expects($this->any())
+            ->method('_readInput')
+            ->will($this->returnValue('/dev/random'));
+
+        $this->Controller->request->env('REQUEST_METHOD', 'POST');
+        $this->Controller->request->env('CONTENT_TYPE', 'application/xml');
+
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->RequestHandler->startup($event);
+        $this->assertEquals([], $this->Controller->request->data);
+    }
+
+    /**
      * Test mapping a new type and having startup process it.
      *
      * @return void
