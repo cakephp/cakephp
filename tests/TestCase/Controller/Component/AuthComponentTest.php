@@ -199,14 +199,14 @@ class AuthComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $Users = TableRegistry::get('Users');
         $user = $Users->find('all')->hydrate(false)->first();
-        $this->Auth->session->write('Auth.User', $user);
+        $this->Controller->Auth->storage()->set($user);
         $this->Controller->Auth->config('userModel', 'Users');
         $this->Controller->Auth->config('authorize', false);
         $this->Controller->request->addParams(Router::parse('auth_test/add'));
         $result = $this->Controller->Auth->startup($event);
         $this->assertNull($result);
 
-        $this->Auth->session->delete('Auth');
+        $this->Controller->Auth->storage()->remove();
         $result = $this->Controller->Auth->startup($event);
         $this->assertTrue($event->isStopped());
         $this->assertInstanceOf('Cake\Network\Response', $result);
