@@ -449,6 +449,8 @@ class Marshaller
                 ) {
                     continue;
                 }
+            } elseif ($key === '_translations') {
+                $value = $this->mergeTranslations($original, $value);
             }
 
             $properties[$key] = $value;
@@ -477,6 +479,16 @@ class Marshaller
 
         $entity->errors($errors);
         return $entity;
+    }
+
+    public function mergeTranslations($original, $value) {
+        foreach ($value as $language => $fields) {
+            if (!isset($original[$language])) {
+                $original[$language] = new Entity();
+            }
+            $this->merge($original[$language], $fields);
+        }
+        return $original;
     }
 
     /**
