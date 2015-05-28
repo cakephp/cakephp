@@ -55,4 +55,15 @@ class TestsAppsController extends AppController
     {
         return $this->redirect('http://cakephp.org', 301);
     }
+
+    public function set_type()
+    {
+        $this->response->type('json');
+        return $this->response;
+    }
+
+    public function throw_exception()
+    {
+        throw new \RuntimeException('Foo');
+    }
 }

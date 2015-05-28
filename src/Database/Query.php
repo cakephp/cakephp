@@ -1696,6 +1696,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function __debugInfo()
     {
         return [
+            '(help)' => 'This is a Query object, to get the results execute or iterate it.',
             'sql' => $this->sql(),
             'params' => $this->valueBinder()->bindings(),
             'defaultTypes' => $this->defaultTypes(),

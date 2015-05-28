@@ -108,6 +108,78 @@ class XmlViewTest extends TestCase
     }
 
     /**
+     * Test that rendering with _serialize respects XML options.
+     *
+     * @return void
+     */
+    public function testRenderSerializeWithOptions()
+    {
+        $Request = new Request();
+        $Response = new Response();
+        $Controller = new Controller($Request, $Response);
+        $data = [
+            '_serialize' => ['tags'],
+            '_xmlOptions' => ['format' => 'attributes'],
+            'tags' => [
+                    'tag' => [
+                        [
+                            'id' => '1',
+                            'name' => 'defect'
+                        ],
+                        [
+                            'id' => '2',
+                            'name' => 'enhancement'
+                        ]
+                    ]
+            ]
+        ];
+        $Controller->set($data);
+        $Controller->viewClass = 'Xml';
+        $View = $Controller->createView();
+        $result = $View->render();
+
+        $expected = Xml::build(['response' => ['tags' => $data['tags']]], $data['_xmlOptions'])->asXML();
+        $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Test that rendering with _serialize can work with string setting.
+     *
+     * @return void
+     */
+    public function testRenderSerializeWithString()
+    {
+        $Request = new Request();
+        $Response = new Response();
+        $Controller = new Controller($Request, $Response);
+        $data = [
+            '_serialize' => 'tags',
+            '_xmlOptions' => ['format' => 'attributes'],
+            'tags' => [
+                'tags' => [
+                    'tag' => [
+                        [
+                            'id' => '1',
+                            'name' => 'defect'
+                        ],
+                        [
+                            'id' => '2',
+                            'name' => 'enhancement'
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $Controller->set($data);
+        $Controller->viewClass = 'Xml';
+        $View = $Controller->createView();
+        $result = $View->render();
+
+        $expected = Xml::build($data['tags'], $data['_xmlOptions'])->asXML();
+        $this->assertSame($expected, $result);
+    }
+
+    /**
      * Test render with an array in _serialize
      *
      * @return void
@@ -167,6 +239,37 @@ class XmlViewTest extends TestCase
         $output = $View->render(false);
         $expected = [
             'custom_name' => ['new_name' => $data['original_name'], 'user' => $data['user']]
+        ];
+        $this->assertSame(Xml::build($expected)->asXML(), $output);
+    }
+
+    /**
+     * test rendering with _serialize true
+     *
+     * @return void
+     */
+    public function testRenderWithSerializeTrue()
+    {
+        $Request = new Request();
+        $Response = new Response();
+        $Controller = new Controller($Request, $Response);
+        $data = ['users' => ['user' => ['user1', 'user2']]];
+        $Controller->set(['users' => $data, '_serialize' => true]);
+        $Controller->viewClass = 'Xml';
+        $View = $Controller->createView();
+        $output = $View->render();
+
+        $this->assertSame(Xml::build($data)->asXML(), $output);
+        $this->assertSame('application/xml', $Response->type());
+
+        $data = ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']];
+        $Controller->viewVars = [];
+        $Controller->set($data);
+        $Controller->set('_serialize', true);
+        $View = $Controller->createView();
+        $output = $View->render();
+        $expected = [
+            'response' => $data
         ];
         $this->assertSame(Xml::build($expected)->asXML(), $output);
     }

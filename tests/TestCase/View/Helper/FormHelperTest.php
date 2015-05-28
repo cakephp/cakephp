@@ -263,6 +263,35 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test that secureFields() of widget is called after calling render(),
+     * not before.
+     *
+     * @return void
+     */
+    public function testOrderForRenderingWidgetAndFetchingSecureFields()
+    {
+        $data = [
+            'val' => 1,
+            'name' => 'test'
+        ];
+        $mock = $this->getMock('Cake\View\Widget\WidgetInterface');
+        $this->assertNull($this->Form->addWidget('test', $mock));
+
+        $mock->expects($this->at(0))
+            ->method('render')
+            ->with($data)
+            ->will($this->returnValue('HTML'));
+
+        $mock->expects($this->at(1))
+            ->method('secureFields')
+            ->with($data)
+            ->will($this->returnValue(['test']));
+
+        $result = $this->Form->widget('test', $data + ['secure' => true]);
+        $this->assertEquals('HTML', $result);
+    }
+
+    /**
      * Test that empty string is not added to secure fields list when
      * rendering input widget without name.
      *
@@ -641,6 +670,29 @@ class FormHelperTest extends TestCase
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'PUT'],
             '/div'
         ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Test create() with no URL (no "action" attribute for <form> tag)
+     *
+     * @return void
+     */
+    public function testCreateNoUrl()
+    {
+        $result = $this->Form->create(false, ['url' => false]);
+        $expected = [
+            'form' => [
+                'method' => 'post',
+                'accept-charset' => strtolower(Configure::read('App.encoding'))
+            ],
+            'div' => ['style' => 'display:none;'],
+            'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->create(false, ['action' => false]);
         $this->assertHtml($expected, $result);
     }
 
@@ -3092,6 +3144,24 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testFormInputSubmit method
+     *
+     * test correct results for form::input() and type submit.
+     *
+     * @return void
+     */
+    public function testFormInputSubmit()
+    {
+        $result = $this->Form->input('Test Submit', ['type' => 'submit', 'class' => 'foobar']);
+        $expected = [
+            'div' => ['class' => 'submit'],
+            'input' => ['type' => 'submit', 'class' => 'foobar', 'id' => 'test-submit', 'value' => 'Test Submit'],
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * testFormInputs method
      *
      * test correct results from form::inputs().
@@ -3563,12 +3633,12 @@ class FormHelperTest extends TestCase
     public function testErrorMultipleMessages()
     {
         $this->article['errors'] = [
-            'field' => ['notEmpty', 'email', 'Something else']
+            'field' => ['notBlank', 'email', 'Something else']
         ];
         $this->Form->create($this->article);
 
         $result = $this->Form->error('field', [
-            'notEmpty' => 'Cannot be empty',
+            'notBlank' => 'Cannot be empty',
             'email' => 'No good!'
         ]);
         $expected = [
@@ -3673,6 +3743,28 @@ class FormHelperTest extends TestCase
             ['label' => ['for' => 'model-custom-1']],
             ['input' => ['type' => 'radio', 'name' => 'Model[custom]', 'value' => '1', 'id' => 'model-custom-1']],
             'option B',
+            '/label',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->radio(
+            'Employee.gender',
+            [
+                ['value' => 'male', 'text' => 'Male', 'style' => 'width:20px'],
+                ['value' => 'female', 'text' => 'Female', 'style' => 'width:20px'],
+            ]
+        );
+        $expected = [
+            'input' => ['type' => 'hidden', 'name' => 'Employee[gender]', 'value' => ''],
+            ['label' => ['for' => 'employee-gender-male']],
+            ['input' => ['type' => 'radio', 'name' => 'Employee[gender]', 'value' => 'male',
+                'id' => 'employee-gender-male', 'style' => 'width:20px']],
+            'Male',
+            '/label',
+            ['label' => ['for' => 'employee-gender-female']],
+            ['input' => ['type' => 'radio', 'name' => 'Employee[gender]', 'value' => 'female',
+                'id' => 'employee-gender-female', 'style' => 'width:20px']],
+            'Female',
             '/label',
         ];
         $this->assertHtml($expected, $result);
@@ -4877,6 +4969,57 @@ class FormHelperTest extends TestCase
     {
         extract($this->dateRegex);
 
+        $result = $this->Form->dateTime('Contact.date', ['default' => true]);
+        $now = strtotime('now');
+        $expected = [
+            ['select' => ['name' => 'Contact[date][year]']],
+            ['option' => ['value' => '']],
+            '/option',
+            $yearsRegex,
+            ['option' => ['value' => date('Y', $now), 'selected' => 'selected']],
+            date('Y', $now),
+            '/option',
+            '*/select',
+
+            ['select' => ['name' => 'Contact[date][month]']],
+            ['option' => ['value' => '']],
+            '/option',
+            $monthsRegex,
+            ['option' => ['value' => date('m', $now), 'selected' => 'selected']],
+            date('F', $now),
+            '/option',
+            '*/select',
+
+            ['select' => ['name' => 'Contact[date][day]']],
+            ['option' => ['value' => '']],
+            '/option',
+            $daysRegex,
+            ['option' => ['value' => date('d', $now), 'selected' => 'selected']],
+            date('j', $now),
+            '/option',
+            '*/select',
+
+            ['select' => ['name' => 'Contact[date][hour]']],
+            ['option' => ['value' => '']],
+            '/option',
+            $hoursRegex,
+            ['option' => ['value' => date('H', $now), 'selected' => 'selected']],
+            date('G', $now),
+            '/option',
+            '*/select',
+
+            ['select' => ['name' => 'Contact[date][minute]']],
+            ['option' => ['value' => '']],
+            '/option',
+            $minutesRegex,
+            ['option' => ['value' => date('i', $now), 'selected' => 'selected']],
+            date('i', $now),
+            '/option',
+            '*/select',
+        ];
+        $this->assertHtml($expected, $result);
+
+        // Empty=>false implies Default=>true, as selecting the "first" dropdown value is useless
         $result = $this->Form->dateTime('Contact.date', ['empty' => false]);
         $now = strtotime('now');
         $expected = [
@@ -4977,6 +5120,7 @@ class FormHelperTest extends TestCase
         $result = $this->Form->dateTime('Contact.date', [
             'timeFormat' => 12,
             'empty' => true,
+            'default' => true
         ]);
         $expected = [
             ['select' => ['name' => 'Contact[date][year]']],
@@ -5156,7 +5300,8 @@ class FormHelperTest extends TestCase
                 'hour' => 'HOUR',
                 'minute' => 'MINUTE',
                 'meridian' => false
-            ]
+            ],
+            'default' => true
         ]);
 
         $this->assertRegExp('/<option value="">DAY<\/option>/', $result);
@@ -5167,7 +5312,8 @@ class FormHelperTest extends TestCase
         $this->assertNotRegExp('/<option value=""><\/option>/', $result);
 
         $result = $this->Form->dateTime('Contact.date', [
-            'empty' => ['day' => 'DAY', 'month' => 'MONTH', 'year' => 'YEAR']
+            'empty' => ['day' => 'DAY', 'month' => 'MONTH', 'year' => 'YEAR'],
+            'default' => true
         ]);
 
         $this->assertRegExp('/<option value="">DAY<\/option>/', $result);
@@ -5760,7 +5906,7 @@ class FormHelperTest extends TestCase
      * testInputDateMaxYear method
      *
      * Let's say we want to only allow users born from 2006 to 2008 to register
-     * This being the first singup page, we still don't have any data
+     * This being the first signup page, we still don't have any data
      *
      * @return void
      */
@@ -5772,7 +5918,8 @@ class FormHelperTest extends TestCase
             'label' => false,
             'type' => 'date',
             'minYear' => 2006,
-            'maxYear' => 2008
+            'maxYear' => 2008,
+            'default' => true
         ]);
         $this->assertContains('value="2008" selected="selected"', $result);
     }
@@ -6168,6 +6315,31 @@ class FormHelperTest extends TestCase
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
             'a' => ['class' => 'btn btn-danger', 'href' => '#', 'onclick' => 'preg:/if \(confirm\(\&quot\;Confirm thing\&quot\;\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/'],
+            '/a'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * test postLink() with query string args.
+     *
+     * @return void
+     */
+    public function testPostLinkWithQuery()
+    {
+        $result = $this->Form->postLink(
+            'Delete',
+            ['controller' => 'posts', 'action' => 'delete', 1, '?' => ['a' => 'b', 'c' => 'd']]
+        );
+        $expected = [
+            'form' => [
+                'method' => 'post', 'action' => '/posts/delete/1?a=b&amp;c=d',
+                'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
+            ],
+            'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
+            '/form',
+            'a' => ['href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'],
+            'Delete',
             '/a'
         ];
         $this->assertHtml($expected, $result);

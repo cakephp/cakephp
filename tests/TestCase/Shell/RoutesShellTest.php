@@ -35,7 +35,7 @@ class RoutesShellTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->io = $this->getMock('Cake\Console\ConsoleIo');
+        $this->io = $this->getMock('Cake\Console\ConsoleIo', ['table', 'out', 'err']);
 
         $this->shell = new RoutesShell($this->io);
         Router::connect('/articles/:action/*', ['controller' => 'Articles']);
@@ -62,19 +62,17 @@ class RoutesShellTest extends TestCase
     public function testMain()
     {
         $this->io->expects($this->at(0))
-            ->method('out')
-            ->with($this->logicalAnd(
-                $this->stringContains('Route name'),
-                $this->stringContains('URI template'),
-                $this->stringContains('Defaults')
-            ));
-        $this->io->expects($this->at(1))
-            ->method('out')
-            ->with($this->logicalAnd(
-                $this->stringContains('articles:_action'),
-                $this->stringContains('/articles/:action'),
-                $this->stringContains('"controller":"Articles",')
-            ));
+            ->method('table')
+            ->with(
+                $this->logicalAnd(
+                    $this->contains(['Route name', 'URI template', 'Defaults']),
+                    $this->contains([
+                        'articles:_action',
+                        '/articles/:action/*',
+                        '{"controller":"Articles","action":"index","plugin":null}'
+                    ])
+                )
+            );
         $this->shell->main();
     }
 
@@ -85,12 +83,18 @@ class RoutesShellTest extends TestCase
      */
     public function testCheck()
     {
-        $this->io->expects($this->at(1))
-            ->method('out')
-            ->with($this->logicalAnd(
-                $this->stringContains('/articles/index'),
-                $this->stringContains('"controller":"Articles",')
-            ));
+        $this->io->expects($this->at(0))
+            ->method('table')
+            ->with(
+                $this->logicalAnd(
+                    $this->contains(['Route name', 'URI template', 'Defaults']),
+                    $this->contains([
+                        '',
+                        '/articles/index',
+                        '{"action":"index","pass":[],"controller":"Articles","plugin":null}'
+                    ])
+                )
+            );
         $this->shell->check('/articles/index');
     }
 

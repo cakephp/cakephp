@@ -318,37 +318,51 @@ class PaginatorComponent extends Component
             return $options;
         }
 
+        $validate = true;
         if (!empty($options['sortWhitelist'])) {
             $field = key($options['order']);
             $inWhitelist = in_array($field, $options['sortWhitelist'], true);
             if (!$inWhitelist) {
                 $options['order'] = [];
+                return $options;
             }
-            return $options;
+            $validate = false;
         }
 
-        $tableAlias = $object->alias();
-        $order = [];
+        $options['order'] = $this->_prefix($object, $options['order'], $validate);
 
-        foreach ($options['order'] as $key => $value) {
+        return $options;
+    }
+
+    /**
+     * Prefixes the field with the table alias if possible.
+     *
+     * @param \Cake\ORM\Table $object Table object.
+     * @param array $order Order array.
+     * @param bool $validate If field should be validated. Defaults to false.
+     * @return array Final order array.
+     */
+    protected function _prefix(Table $object, $order, $validate = false)
+    {
+        $tableAlias = $object->alias();
+        $tableOrder = [];
+        foreach ($order as $key => $value) {
             $field = $key;
             $alias = $tableAlias;
             if (is_numeric($key)) {
-                $order[] = $value;
+                $tableOrder[] = $value;
             } else {
                 if (strpos($key, '.') !== false) {
                     list($alias, $field) = explode('.', $key);
                 }
                 $correctAlias = ($tableAlias === $alias);
 
-                if ($correctAlias && $object->hasField($field)) {
-                    $order[$tableAlias . '.' . $field] = $value;
+                if ($correctAlias && (!$validate || $object->hasField($field))) {
+                    $tableOrder[$tableAlias . '.' . $field] = $value;
                 }
             }
         }
-        $options['order'] = $order;
-
-        return $options;
+        return $tableOrder;
     }
 
     /**

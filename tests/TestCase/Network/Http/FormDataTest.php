@@ -137,6 +137,9 @@ class FormDataTest extends TestCase
      */
     public function testAddArrayWithFile()
     {
+        $errorLevel = error_reporting();
+        error_reporting($errorLevel & ~E_USER_DEPRECATED);
+
         $file = CORE_PATH . 'VERSION.txt';
         $contents = file_get_contents($file);
 
@@ -163,6 +166,8 @@ class FormDataTest extends TestCase
             '',
         ];
         $this->assertEquals(implode("\r\n", $expected), $result);
+
+        error_reporting($errorLevel);
     }
 
     /**
@@ -176,7 +181,7 @@ class FormDataTest extends TestCase
         $contents = file_get_contents($file);
 
         $data = new FormData();
-        $data->add('upload', '@' . $file);
+        $data->add('upload', fopen($file, 'r'));
         $boundary = $data->boundary();
         $result = (string)$data;
 
@@ -213,8 +218,8 @@ class FormDataTest extends TestCase
 
         $expected = [
             '--' . $boundary,
-            'Content-Disposition: form-data; name="upload"',
-            'Content-Type: application/octet-stream',
+            'Content-Disposition: form-data; name="upload"; filename="VERSION.txt"',
+            'Content-Type: text/plain; charset=us-ascii',
             '',
             $contents,
             '--' . $boundary . '--',

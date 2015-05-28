@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Network\Session;
 use Cake\Network\Session\DatabaseSession;
+use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -161,5 +162,19 @@ class DatabaseSessionTest extends TestCase
         sleep(1);
         $storage->gc(0);
         $this->assertFalse($storage->read('foo'));
+    }
+
+    /**
+     * Tests serializing an entity
+     *
+     * @return void
+     */
+    public function testSerializeEntity()
+    {
+        $entity = new Entity();
+        $entity->value = 'something';
+        $result = $this->storage->write('key', serialize($entity));
+        $data = TableRegistry::get('Sessions')->get('key')->data;
+        $this->assertEquals(serialize($entity), stream_get_contents($data));
     }
 }

@@ -28,6 +28,7 @@
     },
     "require-dev": {
         "phpunit/phpunit": "*",
+        "phpunit/phpunit-mock-objects": "2.3.1",
         "cakephp/cakephp-codesniffer": "dev-master"
     },
     "autoload": {
@@ -59,6 +60,7 @@
         "cakephp/datasource": "self.version",
         "cakephp/database": "self.version",
         "cakephp/event": "self.version",
+        "cakephp/filesystem": "self.version",
         "cakephp/i18n": "self.version",
         "cakephp/log": "self.version",
         "cakephp/orm": "self.version",

@@ -33,7 +33,9 @@ namespace Cake\Console;
  *
  * You can format console output using tags with the name of the style to apply. From inside a shell object
  *
- * `$this->out('<warning>Overwrite:</warning> foo.php was overwritten.');`
+ * ```
+ * $this->out('<warning>Overwrite:</warning> foo.php was overwritten.');
+ * ```
  *
  * This would create orange 'Overwrite:' text, while the rest of the text would remain the normal color.
  * See ConsoleOutput::styles() to learn more about defining your own styles. Nested styles are not supported
@@ -92,7 +94,7 @@ class ConsoleOutput
      */
     protected static $_foregroundColors = [
         'black' => 30,
-        'red' => 31,
+        'red' => 91,
         'green' => 32,
         'yellow' => 33,
         'blue' => 34,
@@ -136,10 +138,10 @@ class ConsoleOutput
      * @var array
      */
     protected static $_styles = [
-        'emergency' => ['text' => 'red', 'underline' => true],
-        'alert' => ['text' => 'red', 'underline' => true],
-        'critical' => ['text' => 'red', 'underline' => true],
-        'error' => ['text' => 'red', 'underline' => true],
+        'emergency' => ['text' => 'red'],
+        'alert' => ['text' => 'red'],
+        'critical' => ['text' => 'red'],
+        'error' => ['text' => 'red'],
         'warning' => ['text' => 'yellow'],
         'info' => ['text' => 'cyan'],
         'debug' => ['text' => 'yellow'],
@@ -251,19 +253,27 @@ class ConsoleOutput
      *
      * ### Get a style definition
      *
-     * `$output->styles('error');`
+     * ```
+     * $output->styles('error');
+     * ```
      *
      * ### Get all the style definitions
      *
-     * `$output->styles();`
+     * ```
+     * $output->styles();
+     * ```
      *
      * ### Create or modify an existing style
      *
-     * `$output->styles('annoy', ['text' => 'purple', 'background' => 'yellow', 'blink' => true]);`
+     * ```
+     * $output->styles('annoy', ['text' => 'purple', 'background' => 'yellow', 'blink' => true]);
+     * ```
      *
      * ### Remove a style
      *
-     * `$this->output->styles('annoy', false);`
+     * ```
+     * $this->output->styles('annoy', false);
+     * ```
      *
      * @param string|null $style The style to get or create.
      * @param array|bool|null $definition The array definition of the style to change or create a style
@@ -291,7 +301,7 @@ class ConsoleOutput
      * Get/Set the output type to use. The output type how formatting tags are treated.
      *
      * @param int|null $type The output type to use. Should be one of the class constants.
-     * @return mixed Either null or the value if getting.
+     * @return int|void  Either null or the value if getting.
      */
     public function outputAs($type = null)
     {

@@ -99,15 +99,21 @@ class Request extends Message
      *
      * ### Getting headers
      *
-     * `$request->header('Content-Type');`
+     * ```
+     * $request->header('Content-Type');
+     * ```
      *
      * ### Setting one header
      *
-     * `$request->header('Content-Type', 'application/json');`
+     * ```
+     * $request->header('Content-Type', 'application/json');
+     * ```
      *
      * ### Setting multiple headers
      *
-     * `$request->header(['Connection' => 'close', 'User-Agent' => 'CakePHP']);`
+     * ```
+     * $request->header(['Connection' => 'close', 'User-Agent' => 'CakePHP']);
+     * ```
      *
      * @param string|array|null $name The name to get, or array of multiple values to set.
      * @param string|null $value The value to set for the header.
@@ -134,15 +140,21 @@ class Request extends Message
      *
      * ### Getting a cookie
      *
-     * `$request->cookie('session');`
+     * ```
+     * $request->cookie('session');
+     * ```
      *
      * ### Setting one cookie
      *
-     * `$request->cookie('session', '123456');`
+     * ```
+     * $request->cookie('session', '123456');
+     * ```
      *
      * ### Setting multiple headers
      *
-     * `$request->cookie(['test' => 'value', 'split' => 'banana']);`
+     * ```
+     * $request->cookie(['test' => 'value', 'split' => 'banana']);
+     * ```
      *
      * @param string $name The name of the cookie to get/set
      * @param string|null $value Either the value or null when getting values.
@@ -159,6 +171,23 @@ class Request extends Message
         foreach ($name as $key => $val) {
             $this->_cookies[$key] = $val;
         }
+        return $this;
+    }
+
+    /**
+     * Get/Set HTTP version.
+     *
+     * @param string|null $version The HTTP version.
+     *
+     * @return $this|string Either $this or the HTTP version.
+     */
+    public function version($version = null)
+    {
+        if ($version === null) {
+            return parent::version();
+        }
+
+        $this->_version = $version;
         return $this;
     }
 }

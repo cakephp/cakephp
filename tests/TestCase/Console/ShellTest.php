@@ -23,6 +23,7 @@ use Cake\Filesystem\Folder;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
+use TestApp\Shell\TestingDispatchShell;
 
 /**
  * Class for testing merging vars
@@ -500,7 +501,7 @@ class ShellTest extends TestCase
         $this->assertTextEquals($contents, file_get_contents($file));
         $this->assertTrue($result, 'Did create file.');
     }
-    
+
     /**
      * Test that there is no user prompt in non-interactive mode while file already exists.
      *
@@ -510,14 +511,14 @@ class ShellTest extends TestCase
     {
         $path = TMP . 'shell_test';
         $file = $path . DS . 'file1.php';
-        
+
         new Folder($path, true);
-        
+
         touch($file);
         $this->assertTrue(file_exists($file));
-        
+
         $this->io->expects($this->never())->method('askChoice');
-        
+
         $this->Shell->interactive = false;
         $result = $this->Shell->createFile($file, 'My content');
         $this->assertTrue($result);
@@ -613,6 +614,151 @@ class ShellTest extends TestCase
             ->will($this->returnValue(true));
         $result = $shell->runCommand(['hit_me', 'cakes', '--verbose'], true);
         $this->assertTrue($result);
+    }
+
+    /**
+     * test that a command called with an extra parameter passed merges the extra parameters
+     * to the shell's one
+     * Also tests that if an extra `requested` parameter prevents the welcome message from
+     * being displayed
+     *
+     * @return void
+     */
+    public function testRunCommandWithExtra()
+    {
+        $Parser = $this->getMock('Cake\Console\ConsoleOptionParser', ['help'], ['knife']);
+        $io = $this->getMock('Cake\Console\ConsoleIo');
+        $Shell = $this->getMock('Cake\Console\Shell', ['getOptionParser', 'slice', '_welcome', 'param'], [$io]);
+        $Parser->addSubCommand('slice');
+        $Shell->expects($this->once())
+            ->method('getOptionParser')
+            ->will($this->returnValue($Parser));
+        $Shell->expects($this->once())
+            ->method('slice')
+            ->with('cakes');
+        $Shell->expects($this->never())->method('_welcome');
+        $Shell->expects($this->once())->method('param')
+            ->with('requested')
+            ->will($this->returnValue(true));
+        $Shell->runCommand(['slice', 'cakes'], false, ['requested' => true]);
+    }
+
+    /**
+     * Test the dispatchShell() arguments parser
+     *
+     * @return void
+     */
+    public function testDispatchShellArgsParser()
+    {
+        $Shell = new Shell();
+
+        $expected = [['schema', 'create', 'DbAcl'], []];
+        // Shell::dispatchShell('schema create DbAcl');
+        $result = $Shell->parseDispatchArguments(['schema create DbAcl']);
+        $this->assertEquals($expected, $result);
+
+        // Shell::dispatchShell('schema', 'create', 'DbAcl');
+        $result = $Shell->parseDispatchArguments(['schema', 'create', 'DbAcl']);
+        $this->assertEquals($expected, $result);
+
+        // Shell::dispatchShell(['command' => 'schema create DbAcl']);
+        $result = $Shell->parseDispatchArguments([[
+            'command' => 'schema create DbAcl'
+        ]]);
+        $this->assertEquals($expected, $result);
+
+        // Shell::dispatchShell(['command' => ['schema', 'create', 'DbAcl']]);
+        $result = $Shell->parseDispatchArguments([[
+            'command' => ['schema', 'create', 'DbAcl']
+        ]]);
+        $this->assertEquals($expected, $result);
+
+        $expected[1] = ['param' => 'value'];
+        // Shell::dispatchShell(['command' => 'schema create DbAcl', 'extra' => ['param' => 'value']]);
+        $result = $Shell->parseDispatchArguments([[
+            'command' => 'schema create DbAcl',
+            'extra' => ['param' => 'value']
+        ]]);
+        $this->assertEquals($expected, $result);
+
+        // Shell::dispatchShell(['command' => ['schema', 'create', 'DbAcl'], 'extra' => ['param' => 'value']]);
+        $result = $Shell->parseDispatchArguments([[
+            'command' => ['schema', 'create', 'DbAcl'],
+            'extra' => ['param' => 'value']
+        ]]);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * test calling a shell that dispatch another one
+     *
+     * @return void
+     */
+    public function testDispatchShell()
+    {
+        $Shell = new TestingDispatchShell();
+        ob_start();
+        $Shell->runCommand(['test_task'], true);
+        $result = ob_get_clean();
+
+        $expected = <<<TEXT
+<info>Welcome to CakePHP Console</info>
+I am a test task, I dispatch another Shell
+I am a dispatched Shell
+
+TEXT;
+        $this->assertEquals($expected, $result);
+
+        ob_start();
+        $Shell->runCommand(['test_task_dispatch_array'], true);
+        $result = ob_get_clean();
+        $this->assertEquals($expected, $result);
+
+        ob_start();
+        $Shell->runCommand(['test_task_dispatch_command_string'], true);
+        $result = ob_get_clean();
+        $this->assertEquals($expected, $result);
+
+        ob_start();
+        $Shell->runCommand(['test_task_dispatch_command_array'], true);
+        $result = ob_get_clean();
+        $this->assertEquals($expected, $result);
+
+        $expected = <<<TEXT
+<info>Welcome to CakePHP Console</info>
+I am a test task, I dispatch another Shell
+I am a dispatched Shell. My param `foo` has the value `bar`
+
+TEXT;
+
+        ob_start();
+        $Shell->runCommand(['test_task_dispatch_with_param'], true);
+        $result = ob_get_clean();
+        $this->assertEquals($expected, $result);
+
+        $expected = <<<TEXT
+<info>Welcome to CakePHP Console</info>
+I am a test task, I dispatch another Shell
+I am a dispatched Shell. My param `foo` has the value `bar`
+My param `fooz` has the value `baz`
+
+TEXT;
+        ob_start();
+        $Shell->runCommand(['test_task_dispatch_with_multiple_params'], true);
+        $result = ob_get_clean();
+        $this->assertEquals($expected, $result);
+
+        $expected = <<<TEXT
+<info>Welcome to CakePHP Console</info>
+I am a test task, I dispatch another Shell
+<info>Welcome to CakePHP Console</info>
+I am a dispatched Shell
+
+TEXT;
+        ob_start();
+        $Shell->runCommand(['test_task_dispatch_with_requested_off'], true);
+        $result = ob_get_clean();
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -942,5 +1088,25 @@ TEXT;
 
         $this->Shell = $this->getMock(__NAMESPACE__ . '\ShellTestShell', ['_useLogger'], [$io]);
         $this->Shell->runCommand(['foo', '--quiet']);
+    }
+
+    /**
+     * Tests __debugInfo
+     *
+     * @return void
+     */
+    public function testDebugInfo()
+    {
+        $expected = [
+            'name' => 'ShellTestShell',
+            'plugin' => null,
+            'command' => null,
+            'tasks' => [],
+            'params' => [],
+            'args' => [],
+            'interactive' => true
+        ];
+        $result = $this->Shell->__debugInfo();
+        $this->assertEquals($expected, $result);
     }
 }

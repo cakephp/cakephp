@@ -327,7 +327,9 @@ trait QueryTrait
      *
      * ### Example:
      *
-     * `$singleUser = $query->select(['id', 'username'])->first();`
+     * ```
+     * $singleUser = $query->select(['id', 'username'])->first();
+     * ```
      *
      * @return mixed the first result from the ResultSet
      */

@@ -1538,6 +1538,27 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test update method.
+     *
+     * @return void
+     */
+    public function testUpdateWithTableExpression()
+    {
+        $this->skipIf(!$this->connection->driver() instanceof \Cake\Database\Driver\Mysql);
+        $table = TableRegistry::get('articles');
+
+        $query = $table->query();
+        $result = $query->update($query->newExpr('articles, authors'))
+            ->set(['title' => 'First'])
+            ->where(['articles.author_id = authors.id'])
+            ->andWhere(['authors.name' => 'mariano'])
+            ->execute();
+
+        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertTrue($result->rowCount() > 0);
+    }
+
+    /**
      * Test insert method.
      *
      * @return void
@@ -1726,6 +1747,32 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Integration test for query caching usigna  real cache engine and
+     * a formatResults callback
+     *
+     * @return void
+     */
+    public function testCacheIntegrationWithFormatResults()
+    {
+        $table = TableRegistry::get('Articles');
+        $query = new Query($this->connection, $table);
+        $cacher = new \Cake\Cache\Engine\FileEngine();
+        $cacher->init();
+
+        $query
+            ->select(['id', 'title'])
+            ->formatResults(function ($results) {
+                return $results->combine('id', 'title');
+            })
+            ->cache('my_key', $cacher);
+
+        $expected = $query->toArray();
+        $query = new Query($this->connection, $table);
+        $results = $query->cache('my_key', $cacher)->toArray();
+        $this->assertSame($expected, $results);
+    }
+
+    /**
      * Integration test to show filtering associations using contain and a closure
      *
      * @return void
@@ -1812,6 +1859,24 @@ class QueryTest extends TestCase
             ]);
         $result = $query->toArray();
         $this->assertEquals(1, $result[0]->author->id);
+    }
+
+    /**
+     * Test containing associations that have empty conditions.
+     *
+     * @return void
+     */
+    public function testContainAssociationWithEmptyConditions()
+    {
+        $articles = TableRegistry::get('Articles');
+        $articles->belongsTo('Authors', [
+            'conditions' => function ($exp, $query) {
+                return $exp;
+            }
+        ]);
+        $query = $articles->find('all')->contain(['Authors']);
+        $result = $query->toArray();
+        $this->assertCount(3, $result);
     }
 
     /**
@@ -2041,6 +2106,26 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test finding fields on the non-default table that
+     * have the same name as the primary table.
+     *
+     * @return void
+     */
+    public function testContainSelectedFields()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors');
+
+        $query = $table->find()
+            ->contain(['Authors'])
+            ->order(['Authors.id' => 'asc'])
+            ->select(['Authors.id']);
+        $results = $query->extract('Authors.id')->toList();
+        $expected = [1, 1, 3];
+        $this->assertEquals($expected, $results);
+    }
+
+    /**
      * Tests that it is possible to attach more association when using a query
      * builder for other associations
      *
@@ -2110,6 +2195,7 @@ class QueryTest extends TestCase
             });
 
         $expected = [
+            '(help)' => 'This is a Query object, to get the results execute or iterate it.',
             'sql' => $query->sql(),
             'params' => $query->valueBinder()->bindings(),
             'defaultTypes' => [
@@ -2363,6 +2449,26 @@ class QueryTest extends TestCase
     }
 
     /**
+     * test that cleanCopy retains bindings
+     *
+     * @return void
+     */
+    public function testCleanCopyRetainsBindings()
+    {
+        $table = TableRegistry::get('Articles');
+        $query = $table->find();
+        $query->offset(10)
+            ->limit(1)
+            ->where(['Articles.id BETWEEN :start AND :end'])
+            ->order(['Articles.id' => 'DESC'])
+            ->bind(':start', 1)
+            ->bind(':end', 2);
+        $copy = $query->cleanCopy();
+
+        $this->assertNotEmpty($copy->valueBinder()->bindings());
+    }
+
+    /**
      * test that cleanCopy makes a cleaned up clone with a beforeFind.
      *
      * @return void
@@ -2542,5 +2648,17 @@ class QueryTest extends TestCase
         $this->assertEquals(1, $result->id);
         $this->assertCount(2, $result->tags);
         $this->assertEquals(2, $result->_matchingData['tags']->id);
+    }
+
+    /**
+     * Tests that isEmpty() can be called on a query
+     *
+     * @return void
+     */
+    public function testIsEmpty()
+    {
+        $table = TableRegistry::get('articles');
+        $this->assertFalse($table->find()->isEmpty());
+        $this->assertTrue($table->find()->where(['id' => -1])->isEmpty());
     }
 }

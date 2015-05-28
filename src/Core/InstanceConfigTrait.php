@@ -44,27 +44,39 @@ trait InstanceConfigTrait
      *
      * Reading the whole config:
      *
-     * `$this->config();`
+     * ```
+     * $this->config();
+     * ```
      *
      * Reading a specific value:
      *
-     * `$this->config('key');`
+     * ```
+     * $this->config('key');
+     * ```
      *
      * Reading a nested value:
      *
-     * `$this->config('some.nested.key');`
+     * ```
+     * $this->config('some.nested.key');
+     * ```
      *
      * Setting a specific value:
      *
-     * `$this->config('key', $value);`
+     * ```
+     * $this->config('key', $value);
+     * ```
      *
      * Setting a nested value:
      *
-     * `$this->config('some.nested.key', $value);`
+     * ```
+     * $this->config('some.nested.key', $value);
+     * ```
      *
      * Updating multiple config settings at the same time:
      *
-     * `$this->config(['one' => 'value', 'another' => 'value']);`
+     * ```
+     * $this->config(['one' => 'value', 'another' => 'value']);
+     * ```
      *
      * @param string|array|null $key The key to get/set, or a complete array of configs.
      * @param mixed|null $value The value to set.
@@ -93,15 +105,21 @@ trait InstanceConfigTrait
      *
      * Setting a specific value:
      *
-     * `$this->config('key', $value);`
+     * ```
+     * $this->config('key', $value);
+     * ```
      *
      * Setting a nested value:
      *
-     * `$this->config('some.nested.key', $value);`
+     * ```
+     * $this->config('some.nested.key', $value);
+     * ```
      *
      * Updating multiple config settings at the same time:
      *
-     * `$this->config(['one' => 'value', 'another' => 'value']);`
+     * ```
+     * $this->config(['one' => 'value', 'another' => 'value']);
+     * ```
      *
      * @param string|array $key The key to set, or a complete array of configs.
      * @param mixed|null $value The value to set.
@@ -232,7 +250,7 @@ trait InstanceConfigTrait
                 break;
             }
 
-            if ($i === $length - 2) {
+            if ($i === $length - 1) {
                 unset($update[$k]);
                 break;
             }

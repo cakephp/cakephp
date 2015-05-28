@@ -99,7 +99,6 @@ class SecurityComponent extends Component
     public function startup(Event $event)
     {
         $controller = $event->subject();
-        $this->request = $controller->request;
         $this->session = $this->request->session();
         $this->_action = $this->request->params['action'];
         $this->_secureRequired($controller);
@@ -307,9 +306,11 @@ class SecurityComponent extends Component
         $multi = [];
 
         foreach ($fieldList as $i => $key) {
-            if (preg_match('/(\.\d){1,10}$/', $key)) {
+            if (preg_match('/(\.\d+){1,10}$/', $key)) {
                 $multi[$i] = preg_replace('/(\.\d+){1,10}$/', '', $key);
                 unset($fieldList[$i]);
+            } else {
+                $fieldList[$i] = (string)$key;
             }
         }
         if (!empty($multi)) {

@@ -367,4 +367,21 @@ class AssociationCollectionTest extends TestCase
         $expected = ['users' => [], 'categories' => []];
         $this->assertSame($expected, $this->associations->normalizeKeys(true));
     }
+
+    /**
+     * Ensure that the association collection can be iterated.
+     *
+     * @return void
+     */
+    public function testAssociationsCanBeIterated()
+    {
+        $belongsTo = new BelongsTo('');
+        $this->associations->add('Users', $belongsTo);
+        $belongsToMany = new BelongsToMany('');
+        $this->associations->add('Cart', $belongsToMany);
+
+        $expected = ['users' => $belongsTo, 'cart' => $belongsToMany];
+        $result = iterator_to_array($this->associations, true);
+        $this->assertSame($expected, $result);
+    }
 }

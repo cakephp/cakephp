@@ -253,13 +253,17 @@ class SqliteSchema extends BaseSchema
         if (in_array($data['type'], $hasUnsigned, true) &&
             isset($data['unsigned']) && $data['unsigned'] === true
         ) {
-            $out .= ' UNSIGNED';
+            if ($data['type'] !== 'integer' || [$name] !== (array)$table->primaryKey()) {
+                $out .= ' UNSIGNED';
+            }
         }
         $out .= $typeMap[$data['type']];
 
         $hasLength = ['integer', 'string'];
         if (in_array($data['type'], $hasLength, true) && isset($data['length'])) {
-            $out .= '(' . (int)$data['length'] . ')';
+            if ($data['type'] !== 'integer' || [$name] !== (array)$table->primaryKey()) {
+                $out .= '(' . (int)$data['length'] . ')';
+            }
         }
         $hasPrecision = ['float', 'decimal'];
         if (in_array($data['type'], $hasPrecision, true) &&

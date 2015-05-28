@@ -413,14 +413,6 @@ class StaticConfigTraitTest extends TestCase
      */
     public function testParseDsnPathSetting()
     {
-        $dsn = 'file:///';
-        $expected = [
-            'className' => 'Cake\Log\Engine\FileLog',
-            'path' => '/',
-            'scheme' => 'file',
-        ];
-        $this->assertEquals($expected, TestLogStaticConfig::parseDsn($dsn));
-
         $dsn = 'file:///?path=/tmp/persistent/';
         $expected = [
             'className' => 'Cake\Log\Engine\FileLog',

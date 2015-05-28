@@ -586,7 +586,9 @@ class ResultSet implements ResultSetInterface
         }
 
         $options['source'] = $this->_defaultTable->registryAlias();
-        $results = $results[$defaultAlias];
+        if (isset($results[$defaultAlias])) {
+            $results = $results[$defaultAlias];
+        }
         if ($this->_hydrate && !($results instanceof Entity)) {
             $results = new $this->_entityClass($results, $options);
         }

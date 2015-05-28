@@ -19,6 +19,7 @@ use Cake\Event\EventManager;
 use Cake\Event\EventManagerTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingCellViewException;
 use Cake\View\Exception\MissingTemplateException;
@@ -32,6 +33,7 @@ abstract class Cell
 {
 
     use EventManagerTrait;
+    use LocatorAwareTrait;
     use ModelAwareTrait;
     use ViewVarsTrait;
 
@@ -140,7 +142,7 @@ abstract class Cell
         $this->eventManager($eventManager);
         $this->request = $request;
         $this->response = $response;
-        $this->modelFactory('Table', ['Cake\ORM\TableRegistry', 'get']);
+        $this->modelFactory('Table', [$this->tableLocator(), 'get']);
 
         foreach ($this->_validCellOptions as $var) {
             if (isset($cellOptions[$var])) {

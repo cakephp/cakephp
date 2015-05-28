@@ -103,7 +103,7 @@ class DateTimeType extends Type
      */
     public function toPHP($value, Driver $driver)
     {
-        if ($value === null) {
+        if ($value === null || strpos($value, '0000-00-00') === 0) {
             return null;
         }
 
@@ -196,7 +196,7 @@ class DateTimeType extends Type
             $this->_useLocaleParser = $enable;
             return $this;
         }
-        throw new RuntimeException(
+        throw new \RuntimeException(
             sprintf('Cannot use locale parsing with the %s class', static::$dateTimeClass)
         );
     }

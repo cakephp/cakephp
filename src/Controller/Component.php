@@ -110,7 +110,7 @@ class Component implements EventListenerInterface
         $this->_registry = $registry;
         $controller = $registry->getController();
         if ($controller) {
-            $this->request = $controller->request;
+            $this->request =& $controller->request;
         }
 
         $this->config($config);
@@ -179,5 +179,20 @@ class Component implements EventListenerInterface
             }
         }
         return $events;
+    }
+
+    /**
+     * Returns an array that can be used to describe the internal state of this
+     * object.
+     *
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        return [
+            'components' => $this->components,
+            'implementedEvents' => $this->implementedEvents(),
+            '_config' => $this->config(),
+        ];
     }
 }

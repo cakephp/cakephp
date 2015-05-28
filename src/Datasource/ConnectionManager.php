@@ -170,7 +170,8 @@ class ConnectionManager
      *
      * If the connection has not been constructed an instance will be added
      * to the registry. This method will use any aliases that have been
-     * defined. If you want the original unaliased connections use getOriginal()
+     * defined. If you want the original unaliased connections pass `FALSE`
+     * as second parameter.
      *
      * @param string $name The connection name.
      * @param bool $useAliases Set to false to not use aliased connections.

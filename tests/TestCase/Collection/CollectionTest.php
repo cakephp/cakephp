@@ -17,8 +17,30 @@ namespace Cake\Test\TestCase\Collection;
 use ArrayIterator;
 use ArrayObject;
 use Cake\Collection\Collection;
+use Cake\Collection\CollectionInterface;
+use Cake\Collection\CollectionTrait;
 use Cake\TestSuite\TestCase;
 use NoRewindIterator;
+
+class TestCollection extends \IteratorIterator implements CollectionInterface
+{
+    use CollectionTrait;
+
+
+    public function __construct($items)
+    {
+        if (is_array($items)) {
+            $items = new \ArrayIterator($items);
+        }
+
+        if (!($items instanceof \Traversable)) {
+            $msg = 'Only an array or \Traversable is allowed for Collection';
+            throw new \InvalidArgumentException($msg);
+        }
+
+        parent::__construct($items);
+    }
+}
 
 /**
  * CollectionTest
@@ -690,6 +712,24 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests the append method with iterator
+     */
+    public function testAppendIterator()
+    {
+        $collection = new Collection([1, 2, 3]);
+        $iterator = new ArrayIterator([4, 5, 6]);
+        $combined = $collection->append($iterator);
+        $this->assertEquals([1, 2, 3, 4, 5, 6], $combined->toList());
+    }
+
+    public function testAppendNotCollectionInstance()
+    {
+        $collection = new TestCollection([1, 2, 3]);
+        $combined = $collection->append([4, 5, 6]);
+        $this->assertEquals([1, 2, 3, 4, 5, 6], $combined->toList());
+    }
+
+    /**
      * Tests that by calling compile internal iteration operations are not done
      * more than once
      *
@@ -1165,6 +1205,27 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests that the sortBy method does not die when something that is not a
+     * collection is passed
+     *
+     * @return void
+     */
+    public function testComplexSortBy()
+    {
+        $results = collection([3, 7])
+            ->unfold(function ($value) {
+                return [
+                    ['sorting' => $value * 2],
+                    ['sorting' => $value * 2]
+                ];
+            })
+            ->sortBy('sorting')
+            ->extract('sorting')
+            ->toList();
+        $this->assertEquals([14, 14, 6, 6], $results);
+    }
+
+    /**
      * Tests __debugInfo() or debug() usage
      *
      * @return void
@@ -1204,5 +1265,95 @@ class CollectionTest extends TestCase
             'count' => 0,
         ];
         $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Tests the isEmpty() method
+     *
+     * @return void
+     */
+    public function testIsEmpty()
+    {
+        $collection = new Collection([1, 2, 3]);
+        $this->assertFalse($collection->isEmpty());
+
+        $collection = $collection->map(function () {
+            return null;
+        });
+        $this->assertFalse($collection->isEmpty());
+
+        $collection = $collection->filter();
+        $this->assertTrue($collection->isEmpty());
+    }
+
+    /**
+     * Tests the zip() method
+     *
+     * @return void
+     */
+    public function testZip()
+    {
+        $collection = new Collection([1, 2]);
+        $zipped = $collection->zip([3, 4]);
+        $this->assertEquals([[1, 3], [2, 4]], $zipped->toList());
+
+        $collection = new Collection([1, 2]);
+        $zipped = $collection->zip([3]);
+        $this->assertEquals([[1, 3]], $zipped->toList());
+
+        $collection = new Collection([1, 2]);
+        $zipped = $collection->zip([3, 4], [5, 6], [7, 8], [9, 10, 11]);
+        $this->assertEquals([
+            [1, 3, 5, 7, 9],
+            [2, 4, 6, 8, 10]
+        ], $zipped->toList());
+    }
+
+    /**
+     * Tests the zipWith() method
+     *
+     * @return void
+     */
+    public function testZipWith()
+    {
+        $collection = new Collection([1, 2]);
+        $zipped = $collection->zipWith([3, 4], function ($a, $b) {
+            return $a * $b;
+        });
+        $this->assertEquals([3, 8], $zipped->toList());
+
+        $zipped = $collection->zipWith([3, 4], [5, 6, 7], function () {
+            return array_sum(func_get_args());
+        });
+        $this->assertEquals([9, 12], $zipped->toList());
+    }
+
+    /**
+     * Tests the skip() method
+     *
+     * @return void
+     */
+    public function testSkip()
+    {
+        $collection = new Collection([1, 2, 3, 4, 5]);
+        $this->assertEquals([3, 4, 5], $collection->skip(2)->toList());
+
+        $this->assertEquals([5], $collection->skip(4)->toList());
+    }
+
+    /**
+     * Tests the last() method
+     *
+     * @return void
+     */
+    public function testLast()
+    {
+        $collection = new Collection([1, 2, 3]);
+        $this->assertEquals(3, $collection->last());
+
+        $collection = $collection->map(function ($e) {
+            return $e * 2;
+        });
+        $this->assertEquals(6, $collection->last());
     }
 }

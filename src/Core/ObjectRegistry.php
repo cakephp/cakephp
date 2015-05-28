@@ -14,6 +14,7 @@
  */
 namespace Cake\Core;
 
+use Cake\Event\EventListenerInterface;
 use RuntimeException;
 
 /**
@@ -277,8 +278,8 @@ abstract class ObjectRegistry
     {
         list(, $name) = pluginSplit($objectName);
         $this->unload($objectName);
-        if (isset($this->_eventManager)) {
-            $this->eventManager()->attach($object);
+        if (isset($this->_eventManager) && $object instanceof EventListenerInterface) {
+            $this->eventManager()->on($object);
         }
         $this->_loaded[$name] = $object;
     }
@@ -297,7 +298,7 @@ abstract class ObjectRegistry
             return;
         }
         $object = $this->_loaded[$objectName];
-        if (isset($this->_eventManager)) {
+        if (isset($this->_eventManager) && $object instanceof EventListenerInterface) {
             $this->eventManager()->off($object);
         }
         unset($this->_loaded[$objectName]);

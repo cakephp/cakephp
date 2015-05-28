@@ -211,7 +211,7 @@ class AuthComponent extends Component
     /**
      * Instance of the Session object
      *
-     * @return void
+     * @var \Cake\Network\Session
      */
     public $session;
 
@@ -242,8 +242,7 @@ class AuthComponent extends Component
     {
         $controller = $this->_registry->getController();
         $this->eventManager($controller->eventManager());
-        $this->request = $controller->request;
-        $this->response = $controller->response;
+        $this->response =& $controller->response;
         $this->session = $controller->request->session();
     }
 
@@ -321,8 +320,8 @@ class AuthComponent extends Component
      * of the last authenticator in the chain will be called. The authenticator can
      * handle sending response or redirection as appropriate and return `true` to
      * indicate no further action is necessary. If authenticator returns null this
-     * method redirects user to login action. If it's an ajax request and config
-     * `ajaxLogin` is specified that element is rendered else a 403 http status code
+     * method redirects user to login action. If it's an AJAX request and config
+     * `ajaxLogin` is specified that element is rendered else a 403 HTTP status code
      * is returned.
      *
      * @param \Cake\Controller\Controller $controller A reference to the controller object.
@@ -537,9 +536,14 @@ class AuthComponent extends Component
      *
      * You can use allow with either an array or a simple string.
      *
-     * `$this->Auth->allow('view');`
-     * `$this->Auth->allow(['edit', 'add']);`
-     * `$this->Auth->allow();` to allow all actions
+     * ```
+     * $this->Auth->allow('view');
+     * $this->Auth->allow(['edit', 'add']);
+     * ```
+     * or to allow all actions
+     * ```
+     * $this->Auth->allow();
+     * ```
      *
      * @param string|array $actions Controller action name or array of actions
      * @return void
@@ -560,9 +564,15 @@ class AuthComponent extends Component
      *
      * You can use deny with either an array or a simple string.
      *
-     * `$this->Auth->deny('view');`
-     * `$this->Auth->deny(['edit', 'add']);`
-     * `$this->Auth->deny();` to remove all items from the allowed list
+     * ```
+     * $this->Auth->deny('view');
+     * $this->Auth->deny(['edit', 'add']);
+     * ```
+     * or
+     * ```
+     * $this->Auth->deny();
+     * ```
+     * to remove all items from the allowed list
      *
      * @param string|array $actions Controller action name or array of actions
      * @return void

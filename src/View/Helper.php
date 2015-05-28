@@ -219,4 +219,23 @@ class Helper implements EventListenerInterface
         }
         return $events;
     }
+
+    /**
+     * Returns an array that can be used to describe the internal state of this
+     * object.
+     *
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        return [
+            'helpers' => $this->helpers,
+            'theme' => $this->theme,
+            'plugin' => $this->plugin,
+            'fieldset' => $this->fieldset,
+            'tags' => $this->tags,
+            'implementedEvents' => $this->implementedEvents(),
+            '_config' => $this->config(),
+        ];
+    }
 }

@@ -9,9 +9,12 @@ php:
 sudo: false
 
 env:
-  - DB=mysql db_dsn='mysql://travis@0.0.0.0/cakephp_test'
-  - DB=pgsql db_dsn='postgres://postgres@127.0.0.1/cakephp_test'
-  - DB=sqlite db_dsn='sqlite:///:memory:'
+  matrix:
+    - DB=mysql db_dsn='mysql://travis@0.0.0.0/cakephp_test'
+    - DB=pgsql db_dsn='postgres://postgres@127.0.0.1/cakephp_test'
+    - DB=sqlite db_dsn='sqlite:///:memory:'
+  global:
+    - DEFAULT=1
 
 services:
   - memcached
@@ -19,33 +22,52 @@ services:
 
 matrix:
   fast_finish: true
+
   include:
     - php: 5.4
-      env: PHPCS=1
-    - php: hhvm-nightly
+      env: COVERALLS=1 DEFAULT=0
+
+    - php: 5.4
+      env: PHPCS=1 DEFAULT=0
+
+    - php: hhvm
       env: HHVM=1 DB=sqlite db_dsn='sqlite:///:memory:'
-    - php: hhvm-nightly
+
+    - php: hhvm
       env: HHVM=1 DB=mysql db_dsn='mysql://travis@0.0.0.0/cakephp_test'
+
   allow_failures:
     - php: 7.0
-    - php: hhvm-nightly
+
+    - php: hhvm
 
 before_script:
   - composer self-update
   - composer install --prefer-dist --no-interaction
+
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test2;'; fi"
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test3;'; fi"
+
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi"
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi"
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi"
+
+  - sh -c "if [ '$COVERALLS' = '1' ]; then composer require --dev satooshi/php-coveralls:dev-master; fi"
+  - sh -c "if [ '$COVERALLS' = '1' ]; then mkdir -p build/logs; fi"
+
   - sh -c "if [ '$HHVM' != '1' ]; then echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
+
   - phpenv rehash
   - set +H
 
 script:
-  - sh -c "if [ '$PHPCS' != '1' ]; then phpunit; fi"
+  - sh -c "if [ '$DEFAULT' = '1' ]; then phpunit; fi"
+
   - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi"
+
+  - sh -c "if [ '$COVERALLS' = '1' ]; then phpunit --coverage-clover build/logs/clover.xml; fi"
+  - sh -c "if [ '$COVERALLS' = '1' ]; then vendor/bin/coveralls -c .coveralls.yml -v; fi"
 
 notifications:
   email: false

@@ -107,6 +107,20 @@ class Message
     const METHOD_PATCH = 'PATCH';
 
     /**
+     * HTTP OPTIONS method
+     *
+     * @var string
+     */
+    const METHOD_OPTIONS = 'OPTIONS';
+
+    /**
+     * HTTP TRACE method
+     *
+     * @var string
+     */
+    const METHOD_TRACE = 'TRACE';
+
+    /**
      * HTTP HEAD method
      *
      * @var string

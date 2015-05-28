@@ -37,6 +37,9 @@ class ExtractTaskTest extends TestCase
     {
         parent::setUp();
         $this->io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
+        $progress = $this->getMock('Cake\Shell\Helper\ProgressHelper', [], [$this->io]);
+        $this->io->method('helper')
+            ->will($this->returnValue($progress));
 
         $this->Task = $this->getMock(
             'Cake\Shell\Task\ExtractTask',
@@ -108,8 +111,14 @@ class ExtractTaskTest extends TestCase
         $this->assertContains('msgid "double \\"quoted\\""', $result, 'Strings with quotes not handled correctly');
         $this->assertContains("msgid \"single 'quoted'\"", $result, 'Strings with quotes not handled correctly');
 
-        $pattern = '/\#: (\\\\|\/)extract\.ctp:31\n';
-        $pattern .= 'msgctxt "mail"/';
+        $pattern = '/\#: (\\\\|\/)extract\.ctp:\d+\n';
+        $pattern .= 'msgctxt "mail"\n';
+        $pattern .= 'msgid "letter"/';
+        $this->assertRegExp($pattern, $result);
+
+        $pattern = '/\#: (\\\\|\/)extract\.ctp:\d+\n';
+        $pattern .= 'msgctxt "alphabet"\n';
+        $pattern .= 'msgid "letter"/';
         $this->assertRegExp($pattern, $result);
 
         // extract.ctp - reading the domain.pot

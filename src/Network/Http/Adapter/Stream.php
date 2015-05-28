@@ -35,11 +35,18 @@ class Stream
     protected $_context;
 
     /**
-     * Array of options/content for the stream context.
+     * Array of options/content for the HTTP stream context.
      *
      * @var array
      */
     protected $_contextOptions;
+
+    /**
+     * Array of options/content for the SSL stream context.
+     *
+     * @var array
+     */
+    protected $_sslContextOptions;
 
     /**
      * The stream resource.
@@ -66,6 +73,8 @@ class Stream
     {
         $this->_stream = null;
         $this->_context = [];
+        $this->_contextOptions = [];
+        $this->_sslContextOptions = [];
         $this->_connectionErrors = [];
 
         $this->_buildContext($request, $options);
@@ -119,7 +128,8 @@ class Stream
             $this->_buildSslContext($request, $options);
         }
         $this->_context = stream_context_create([
-            'http' => $this->_contextOptions
+            'http' => $this->_contextOptions,
+            'ssl' => $this->_sslContextOptions,
         ]);
     }
 
@@ -219,17 +229,17 @@ class Stream
             'ssl_passphrase',
         ];
         if (empty($options['ssl_cafile'])) {
-            $options['ssl_cafile'] = CAKE . 'Config' . DS . 'cacert.pem';
+            $options['ssl_cafile'] = CORE_PATH . 'config' . DS . 'cacert.pem';
         }
         if (!empty($options['ssl_verify_host'])) {
             $url = $request->url();
             $host = parse_url($url, PHP_URL_HOST);
-            $this->_contextOptions['CN_match'] = $host;
+            $this->_sslContextOptions['peer_name'] = $host;
         }
         foreach ($sslOptions as $key) {
             if (isset($options[$key])) {
                 $name = substr($key, 4);
-                $this->_contextOptions[$name] = $options[$key];
+                $this->_sslContextOptions[$name] = $options[$key];
             }
         }
     }
@@ -302,6 +312,6 @@ class Stream
      */
     public function contextOptions()
     {
-        return $this->_contextOptions;
+        return array_merge($this->_contextOptions, $this->_sslContextOptions);
     }
 }

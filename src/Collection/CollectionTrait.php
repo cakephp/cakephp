@@ -28,6 +28,7 @@ use Cake\Collection\Iterator\SortIterator;
 use Cake\Collection\Iterator\StoppableIterator;
 use Cake\Collection\Iterator\TreeIterator;
 use Cake\Collection\Iterator\UnfoldIterator;
+use Cake\Collection\Iterator\ZipIterator;
 use Iterator;
 use LimitIterator;
 use RecursiveIteratorIterator;
@@ -46,7 +47,7 @@ trait CollectionTrait
      */
     public function each(callable $c)
     {
-        foreach ($this->_unwrap() as $k => $v) {
+        foreach ($this->unwrap() as $k => $v) {
             $c($v, $k);
         }
         return $this;
@@ -64,7 +65,7 @@ trait CollectionTrait
                 return (bool)$v;
             };
         }
-        return new FilterIterator($this->_unwrap(), $c);
+        return new FilterIterator($this->unwrap(), $c);
     }
 
     /**
@@ -74,7 +75,7 @@ trait CollectionTrait
      */
     public function reject(callable $c)
     {
-        return new FilterIterator($this->_unwrap(), function ($key, $value, $items) use ($c) {
+        return new FilterIterator($this->unwrap(), function ($key, $value, $items) use ($c) {
             return !$c($key, $value, $items);
         });
     }
@@ -85,7 +86,7 @@ trait CollectionTrait
      */
     public function every(callable $c)
     {
-        foreach ($this->_unwrap() as $key => $value) {
+        foreach ($this->unwrap() as $key => $value) {
             if (!$c($value, $key)) {
                 return false;
             }
@@ -99,7 +100,7 @@ trait CollectionTrait
      */
     public function some(callable $c)
     {
-        foreach ($this->_unwrap() as $key => $value) {
+        foreach ($this->unwrap() as $key => $value) {
             if ($c($value, $key) === true) {
                 return true;
             }
@@ -113,7 +114,7 @@ trait CollectionTrait
      */
     public function contains($value)
     {
-        foreach ($this->_unwrap() as $v) {
+        foreach ($this->unwrap() as $v) {
             if ($value === $v) {
                 return true;
             }
@@ -128,7 +129,7 @@ trait CollectionTrait
      */
     public function map(callable $c)
     {
-        return new ReplaceIterator($this->_unwrap(), $c);
+        return new ReplaceIterator($this->unwrap(), $c);
     }
 
     /**
@@ -143,7 +144,7 @@ trait CollectionTrait
         }
 
         $result = $zero;
-        foreach ($this->_unwrap() as $k => $value) {
+        foreach ($this->unwrap() as $k => $value) {
             if ($isFirst) {
                 $result = $value;
                 $isFirst = false;
@@ -161,7 +162,7 @@ trait CollectionTrait
      */
     public function extract($matcher)
     {
-        return new ExtractIterator($this->_unwrap(), $matcher);
+        return new ExtractIterator($this->unwrap(), $matcher);
     }
 
     /**
@@ -170,7 +171,7 @@ trait CollectionTrait
      */
     public function max($callback, $type = SORT_NUMERIC)
     {
-        return (new SortIterator($this->_unwrap(), $callback, SORT_DESC, $type))->first();
+        return (new SortIterator($this->unwrap(), $callback, SORT_DESC, $type))->first();
     }
 
     /**
@@ -179,7 +180,7 @@ trait CollectionTrait
      */
     public function min($callback, $type = SORT_NUMERIC)
     {
-        return (new SortIterator($this->_unwrap(), $callback, SORT_ASC, $type))->first();
+        return (new SortIterator($this->unwrap(), $callback, SORT_ASC, $type))->first();
     }
 
     /**
@@ -188,7 +189,7 @@ trait CollectionTrait
      */
     public function sortBy($callback, $dir = SORT_DESC, $type = SORT_NUMERIC)
     {
-        return new SortIterator($this->_unwrap(), $callback, $dir, $type);
+        return new SortIterator($this->unwrap(), $callback, $dir, $type);
     }
 
     /**
@@ -234,7 +235,7 @@ trait CollectionTrait
         $reducer = function ($values, $key, $mr) {
             $mr->emit(count($values), $key);
         };
-        return new Collection(new MapReduce($this->_unwrap(), $mapper, $reducer));
+        return new Collection(new MapReduce($this->unwrap(), $mapper, $reducer));
     }
 
     /**
@@ -278,7 +279,16 @@ trait CollectionTrait
      */
     public function take($size = 1, $from = 0)
     {
-        return new Collection(new LimitIterator($this->_unwrap(), $from, $size));
+        return new Collection(new LimitIterator($this->unwrap(), $from, $size));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
+    public function skip($howMany)
+    {
+        return new Collection(new LimitIterator($this->unwrap(), $howMany));
     }
 
     /**
@@ -314,12 +324,26 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      */
+    public function last()
+    {
+        $iterator = $this->unwrap();
+        $count = $iterator instanceof Countable ?
+            count($iterator) :
+            iterator_count($iterator);
+        foreach ($this->take(1, $count - 1) as $last) {
+            return $last;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
     public function append($items)
     {
-        $items = $items instanceof Iterator ? $items : new Collection($items);
         $list = new AppendIterator;
-        $list->append($this);
-        $list->append($items->_unwrap());
+        $list->append($this->unwrap());
+        $list->append((new Collection($items))->unwrap());
         return new Collection($list);
     }
 
@@ -359,7 +383,7 @@ trait CollectionTrait
             $mapReduce->emit($result, $key);
         };
 
-        return new Collection(new MapReduce($this->_unwrap(), $mapper, $reducer));
+        return new Collection(new MapReduce($this->unwrap(), $mapper, $reducer));
     }
 
     /**
@@ -402,7 +426,7 @@ trait CollectionTrait
             $parents[$key]['children'] = $children;
         };
 
-        return (new Collection(new MapReduce($this->_unwrap(), $mapper, $reducer)))
+        return (new Collection(new MapReduce($this->unwrap(), $mapper, $reducer)))
             ->map(function ($value) use (&$isObject) {
                 return $isObject ? $value : $value->getArrayCopy();
             });
@@ -415,7 +439,7 @@ trait CollectionTrait
      */
     public function insert($path, $values)
     {
-        return new InsertIterator($this->_unwrap(), $path, $values);
+        return new InsertIterator($this->unwrap(), $path, $values);
     }
 
     /**
@@ -424,7 +448,7 @@ trait CollectionTrait
      */
     public function toArray($preserveKeys = true)
     {
-        $iterator = $this->_unwrap();
+        $iterator = $this->unwrap();
         if ($iterator instanceof ArrayIterator) {
             $items = $iterator->getArrayCopy();
             return $preserveKeys ? $items : array_values($items);
@@ -532,17 +556,58 @@ trait CollectionTrait
     }
 
     /**
-     * Returns the closest nested iterator that can be safely traversed without
-     * losing any possible transformations.
+     * {@inheritDoc}
      *
-     * @return \Iterator
      */
-    protected function _unwrap()
+    public function zip($items)
+    {
+        return new ZipIterator(array_merge([$this], func_get_args()));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
+    public function zipWith($items, $callable)
+    {
+        $items = [$items];
+        if (func_num_args() > 2) {
+            $items = func_get_args();
+            $callable = array_pop($items);
+        }
+        return new ZipIterator(array_merge([$this], $items), $callable);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
+    public function isEmpty()
+    {
+        return iterator_count($this->take(1)) === 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
+    public function unwrap()
     {
         $iterator = $this;
         while (get_class($iterator) === 'Cake\Collection\Collection') {
             $iterator = $iterator->getInnerIterator();
         }
         return $iterator;
+    }
+
+    /**
+     * Backwards compatible wrapper for unwrap()
+     *
+     * @return \Iterator
+     * @deprecated
+     */
+    public function _unwrap()
+    {
+        return $this->unwrap();
     }
 }

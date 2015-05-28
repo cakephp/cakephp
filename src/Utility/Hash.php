@@ -89,6 +89,7 @@ class Hash
      *
      * - `{n}` Matches any numeric key, or integer.
      * - `{s}` Matches any string key.
+     * - `{*}` Matches any value.
      * - `Foo` Matches any key with the exact same value.
      *
      * There are a number of attribute operators:
@@ -191,16 +192,16 @@ class Hash
      */
     protected static function _matchToken($key, $token)
     {
-        if ($token === '{n}') {
-            return is_numeric($key);
+        switch ($token) {
+            case '{n}':
+                return is_numeric($key);
+            case '{s}':
+                return is_string($key);
+            case '{*}':
+                return true;
+            default:
+                return is_numeric($token) ? ($key == $token) : $key === $token;
         }
-        if ($token === '{s}') {
-            return is_string($key);
-        }
-        if (is_numeric($token)) {
-            return ($key == $token);
-        }
-        return ($key === $token);
     }
 
     /**
@@ -851,11 +852,15 @@ class Hash
      * You can easily count the results of an extract using apply().
      * For example to count the comments on an Article:
      *
-     * `$count = Hash::apply($data, 'Article.Comment.{n}', 'count');`
+     * ```
+     * $count = Hash::apply($data, 'Article.Comment.{n}', 'count');
+     * ```
      *
      * You could also use a function like `array_sum` to sum the results.
      *
-     * `$total = Hash::apply($data, '{n}.Item.price', 'array_sum');`
+     * ```
+     * $total = Hash::apply($data, '{n}.Item.price', 'array_sum');
+     * ```
      *
      * @param array $data The data to reduce.
      * @param string $path The path to extract from $data.

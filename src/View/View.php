@@ -1005,7 +1005,8 @@ class View
     /**
      * Find all sub templates path, based on $basePath
      * If a prefix is defined in the current request, this method will prepend
-     * the prefixed template path to the $basePath.
+     * the prefixed template path to the $basePath, cascading up in case the prefix
+     * is nested.
      * This is essentially used to find prefixed template paths for elements
      * and layouts.
      *
@@ -1016,14 +1017,16 @@ class View
     {
         $paths = [$basePath];
         if (!empty($this->request->params['prefix'])) {
-            $prefixPath = array_map(
-                'Cake\Utility\Inflector::camelize',
-                explode('/', $this->request->params['prefix'])
-            );
-            array_unshift(
-                $paths,
-                implode('/', $prefixPath) . DS . $basePath
-            );
+            $prefixPath = explode('/', $this->request->params['prefix']);
+            $path = '';
+            foreach ($prefixPath as $prefixPart) {
+                $path .= Inflector::camelize($prefixPart) . DS;
+
+                array_unshift(
+                    $paths,
+                    $path . $basePath
+                );
+            }
         }
 
         return $paths;

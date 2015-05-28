@@ -14,11 +14,13 @@
  */
 namespace Cake\ORM;
 
+use ArrayIterator;
 use Cake\ORM\Association;
 use Cake\ORM\AssociationsNormalizerTrait;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use InvalidArgumentException;
+use IteratorAggregate;
 
 /**
  * A container/collection for association classes.
@@ -26,7 +28,7 @@ use InvalidArgumentException;
  * Contains methods for managing associations, and
  * ordering operations around saving and deleting.
  */
-class AssociationCollection
+class AssociationCollection implements IteratorAggregate
 {
 
     use AssociationsNormalizerTrait;
@@ -251,6 +253,7 @@ class AssociationCollection
 
     /**
      * Cascade a delete across the various associations.
+     * Cascade first across associations for which cascadeCallbacks is true.
      *
      * @param \Cake\ORM\Entity $entity The entity to delete associations for.
      * @param array $options The options used in the delete operation.
@@ -258,7 +261,15 @@ class AssociationCollection
      */
     public function cascadeDelete(Entity $entity, array $options)
     {
+        $noCascade = [];
         foreach ($this->_items as $assoc) {
+            if (!$assoc->cascadeCallbacks()) {
+                $noCascade[] = $assoc;
+                continue;
+            }
+            $assoc->cascadeDelete($entity, $options);
+        }
+        foreach ($noCascade as $assoc) {
             $assoc->cascadeDelete($entity, $options);
         }
     }
@@ -282,5 +293,15 @@ class AssociationCollection
         }
 
         return $this->_normalizeAssociations($keys);
+    }
+
+    /**
+     * Allow looping through the associations
+     *
+     * @return ArrayIterator
+     */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->_items);
     }
 }

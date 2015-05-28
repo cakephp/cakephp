@@ -60,7 +60,9 @@ use Cake\Utility\Hash;
  * When sending request bodies you can use the `type` option to
  * set the Content-Type for the request:
  *
- * `$http->get('/users', [], ['type' => 'json']);`
+ * ```
+ * $http->get('/users', [], ['type' => 'json']);
+ * ```
  *
  * The `type` option sets both the `Content-Type` and `Accept` header, to
  * the same mime type. When using `type` you can use either a full mime
@@ -190,7 +192,7 @@ class Client
      * @param array $options Additional options for the request.
      * @return \Cake\Network\Http\Response
      */
-    public function get($url, array $data = [], array $options = [])
+    public function get($url, $data = [], array $options = [])
     {
         $options = $this->_mergeOptions($options);
         $body = [];
@@ -250,6 +252,36 @@ class Client
         $options = $this->_mergeOptions($options);
         $url = $this->buildUrl($url, [], $options);
         return $this->_doRequest(Request::METHOD_PATCH, $url, $data, $options);
+    }
+
+    /**
+     * Do an OPTIONS request.
+     *
+     * @param string $url The url or path you want to request.
+     * @param mixed $data The request data you want to send.
+     * @param array $options Additional options for the request.
+     * @return \Cake\Network\Http\Response
+     */
+    public function options($url, $data = [], array $options = [])
+    {
+        $options = $this->_mergeOptions($options);
+        $url = $this->buildUrl($url, [], $options);
+        return $this->_doRequest(Request::METHOD_OPTIONS, $url, $data, $options);
+    }
+
+    /**
+     * Do a TRACE request.
+     *
+     * @param string $url The url or path you want to request.
+     * @param mixed $data The request data you want to send.
+     * @param array $options Additional options for the request.
+     * @return \Cake\Network\Http\Response
+     */
+    public function trace($url, $data = [], array $options = [])
+    {
+        $options = $this->_mergeOptions($options);
+        $url = $this->buildUrl($url, [], $options);
+        return $this->_doRequest(Request::METHOD_TRACE, $url, $data, $options);
     }
 
     /**
@@ -337,7 +369,7 @@ class Client
      * Generate a URL based on the scoped client options.
      *
      * @param string $url Either a full URL or just the path.
-     * @param array $query The query data for the URL.
+     * @param string|array $query The query data for the URL.
      * @param array $options The config options stored with Client::config()
      * @return string A complete url with scheme, port, host, path.
      */
@@ -348,7 +380,8 @@ class Client
         }
         if ($query) {
             $q = (strpos($url, '?') === false) ? '?' : '&';
-            $url .= $q . http_build_query($query);
+            $url .= $q;
+            $url .= is_string($query) ? $query : http_build_query($query);
         }
         if (preg_match('#^https?://#', $url)) {
             return $url;
@@ -386,11 +419,15 @@ class Client
         $request->method($method)
             ->url($url)
             ->body($data);
+
         if (isset($options['type'])) {
             $request->header($this->_typeHeaders($options['type']));
         }
         if (isset($options['headers'])) {
             $request->header($options['headers']);
+        }
+        if (is_string($data) && !$request->header('content-type')) {
+            $request->header('Content-Type', 'application/x-www-form-urlencoded');
         }
         $request->cookie($this->_cookies->get($url));
         if (isset($options['cookies'])) {
@@ -426,7 +463,7 @@ class Client
             'xml' => 'application/xml',
         ];
         if (!isset($typeMap[$type])) {
-            throw new Exception('Unknown type alias.');
+            throw new Exception("Unknown type alias '$type'.");
         }
         return [
             'Accept' => $typeMap[$type],

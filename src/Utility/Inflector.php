@@ -511,8 +511,8 @@ class Inflector
             static::$_cache['irregular']['pluralize'] = '(?:' . implode('|', array_keys(static::$_irregular)) . ')';
         }
 
-        if (preg_match('/(.*)\\b(' . static::$_cache['irregular']['pluralize'] . ')$/i', $word, $regs)) {
-            static::$_cache['pluralize'][$word] = $regs[1] . substr($word, 0, 1) .
+        if (preg_match('/(.*(?:\\b|_))(' . static::$_cache['irregular']['pluralize'] . ')$/i', $word, $regs)) {
+            static::$_cache['pluralize'][$word] = $regs[1] . substr($regs[2], 0, 1) .
                 substr(static::$_irregular[strtolower($regs[2])], 1);
             return static::$_cache['pluralize'][$word];
         }
@@ -551,8 +551,8 @@ class Inflector
             static::$_cache['irregular']['singular'] = '(?:' . implode('|', static::$_irregular) . ')';
         }
 
-        if (preg_match('/(.*)\\b(' . static::$_cache['irregular']['singular'] . ')$/i', $word, $regs)) {
-            static::$_cache['singularize'][$word] = $regs[1] . substr($word, 0, 1) .
+        if (preg_match('/(.*(?:\\b|_))(' . static::$_cache['irregular']['singular'] . ')$/i', $word, $regs)) {
+            static::$_cache['singularize'][$word] = $regs[1] . substr($regs[2], 0, 1) .
                 substr(array_search(strtolower($regs[2]), static::$_irregular), 1);
             return static::$_cache['singularize'][$word];
         }
@@ -641,7 +641,11 @@ class Inflector
         $result = static::_cache($cacheKey, $string);
 
         if ($result === false) {
-            $result = ucwords(str_replace($delimiter, ' ', $string));
+            $result = explode(' ', str_replace($delimiter, ' ', $string));
+            foreach ($result as &$word) {
+                $word = mb_strtoupper(mb_substr($word, 0, 1)) . mb_substr($word, 1);
+            }
+            $result = implode(' ', $result);
             static::_cache($cacheKey, $string, $result);
         }
 
@@ -662,7 +666,7 @@ class Inflector
         $result = static::_cache($cacheKey, $string);
 
         if ($result === false) {
-            $result = strtolower(preg_replace('/(?<=\\w)([A-Z])/', $delimiter . '\\1', $string));
+            $result = mb_strtolower(preg_replace('/(?<=\\w)([A-Z])/', $delimiter . '\\1', $string));
             static::_cache($cacheKey, $string, $result);
         }
 
