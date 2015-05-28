@@ -1391,6 +1391,7 @@ class AuthComponentTest extends TestCase
 
         $this->Auth->sessionKey = 'Auth.Member';
         $this->assertEquals('Auth.Member', $this->Auth->sessionKey);
+        $this->assertEquals('Auth.Member', $this->Auth->storage()->config('key'));
 
         $this->Auth->sessionKey = false;
         $this->assertInstanceOf('Cake\Auth\Storage\MemoryStorage', $this->Auth->storage());
