@@ -144,9 +144,6 @@ class Behavior implements EventListenerInterface
      *
      * Merges config with the default and store in the config property
      *
-     * Does not retain a reference to the Table object. If you need this
-     * you should override the constructor.
-     *
      * @param \Cake\ORM\Table $table The table this behavior is attached to.
      * @param array $config The config for this behavior.
      */
