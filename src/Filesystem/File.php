@@ -206,7 +206,7 @@ class File
     public static function prepare($data, $forceWindows = false)
     {
         $lineBreak = "\n";
-        if (DS === '\\' || $forceWindows === true) {
+        if (DIRECTORY_SEPARATOR === '\\' || $forceWindows === true) {
             $lineBreak = "\r\n";
         }
         return strtr($data, ["\r\n" => $lineBreak, "\n" => $lineBreak, "\r" => $lineBreak]);

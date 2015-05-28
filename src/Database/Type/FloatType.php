@@ -132,7 +132,7 @@ class FloatType extends Type
             $this->_useLocaleParser = $enable;
             return $this;
         }
-        throw new RuntimeException(
+        throw new \RuntimeException(
             sprintf('Cannot use locale parsing with the %s class', static::$numberClass)
         );
     }

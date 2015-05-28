@@ -256,7 +256,7 @@ class RequestHandlerComponent extends Component
     public function convertXml($xml)
     {
         try {
-            $xml = Xml::build($xml);
+            $xml = Xml::build($xml, ['readFile' => false]);
             if (isset($xml->data)) {
                 return Xml::toArray($xml->data);
             }

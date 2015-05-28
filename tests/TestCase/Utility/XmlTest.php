@@ -116,6 +116,18 @@ class XmlTest extends TestCase
     }
 
     /**
+     * Test that the readFile option disables local file parsing.
+     *
+     * @expectedException \Cake\Utility\Exception\XmlException
+     * @return void
+     */
+    public function testBuildFromFileWhenDisabled()
+    {
+        $xml = CORE_TESTS . 'Fixture/sample.xml';
+        $obj = Xml::build($xml, ['readFile' => false]);
+    }
+
+    /**
      * Test build() with a Collection instance.
      *
      * @return void

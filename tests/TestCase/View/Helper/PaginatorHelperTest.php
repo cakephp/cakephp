@@ -1538,6 +1538,64 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
+     * Test that numbers() with url options.
+     *
+     * @return void
+     */
+    public function testNumbersWithUrlOptions()
+    {
+        $this->Paginator->request->params['paging'] = [
+            'Client' => [
+                'page' => 8,
+                'current' => 3,
+                'count' => 30,
+                'prevPage' => false,
+                'nextPage' => 2,
+                'pageCount' => 15,
+            ]
+        ];
+        $result = $this->Paginator->numbers(['url' => ['#' => 'foo']]);
+        $expected = [
+            ['li' => []], ['a' => ['href' => '/index?page=4#foo']], '4', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=5#foo']], '5', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=6#foo']], '6', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=7#foo']], '7', '/a', '/li',
+            ['li' => ['class' => 'active']], '<a href=""', '8', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=9#foo']], '9', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=10#foo']], '10', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=11#foo']], '11', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=12#foo']], '12', '/a', '/li',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->Paginator->request->params['paging'] = [
+            'Client' => [
+                'page' => 3,
+                'current' => 10,
+                'count' => 48962,
+                'prevPage' => 1,
+                'nextPage' => 1,
+                'pageCount' => 4897,
+            ]
+        ];
+        $result = $this->Paginator->numbers([
+            'first' => 2,
+            'modulus' => 2,
+            'last' => 2,
+            'url' => ['foo' => 'bar']]);
+        $expected = [
+            ['li' => []], ['a' => ['href' => '/index?foo=bar']], '1', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=2&amp;foo=bar']], '2', '/a', '/li',
+            ['li' => ['class' => 'active']], '<a href=""', '3', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4&amp;foo=bar']], '4', '/a', '/li',
+            ['li' => ['class' => 'ellipsis']], '...', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4896&amp;foo=bar']], '4896', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4897&amp;foo=bar']], '4897', '/a', '/li',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * test numbers() with routing parameters.
      *
      * @return void

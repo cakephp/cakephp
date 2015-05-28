@@ -403,8 +403,12 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function sql(ValueBinder $generator)
     {
+        $len = $this->count();
+        if ($len === 0) {
+            return '';
+        }
         $conjunction = $this->_conjunction;
-        $template = ($this->count() === 1) ? '%s' : '(%s)';
+        $template = ($len === 1) ? '%s' : '(%s)';
         $parts = [];
         foreach ($this->_conditions as $part) {
             if ($part instanceof Query) {
@@ -412,7 +416,9 @@ class QueryExpression implements ExpressionInterface, Countable
             } elseif ($part instanceof ExpressionInterface) {
                 $part = $part->sql($generator);
             }
-            $parts[] = $part;
+            if (strlen($part)) {
+                $parts[] = $part;
+            }
         }
         return sprintf($template, implode(" $conjunction ", $parts));
     }
@@ -466,6 +472,22 @@ class QueryExpression implements ExpressionInterface, Countable
         $this->_conditions = $parts;
 
         return $this;
+    }
+
+    /**
+     * Helps calling the `and()` and `or()` methods transparently.
+     *
+     * @param string $method The method name.
+     * @param array $args The argumemts to pass to the method.
+     * @return \Cake\Database\Expression\QueryExpression
+     * @throws \BadMethodCallException
+     */
+    public function __call($method, $args)
+    {
+        if (in_array($method, ['and', 'or'])) {
+            return call_user_func_array([$this, $method . '_'], $args);
+        }
+        throw new \BadMethodCallException(sprintf('Method %s does not exist', $method));
     }
 
     /**
