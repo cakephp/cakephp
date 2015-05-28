@@ -1130,6 +1130,31 @@ class AuthComponentTest extends TestCase
     }
 
     /**
+     * test setting user info in stateless manner.
+     *
+     * @return void
+     */
+    public function testSetUserStateless()
+    {
+        $this->Auth->session = $this->getMock(
+            'Cake\Network\Session',
+            ['renew', 'write']
+        );
+
+        $user = ['username' => 'mark', 'role' => 'admin'];
+
+        $this->Auth->session->expects($this->never())
+            ->method('renew');
+
+        $this->Auth->session->expects($this->never())
+            ->method('write');
+
+        $this->Auth->setUser($user, true);
+
+        $this->assertEquals($user, $this->Auth->user());
+    }
+
+    /**
      * testGettingUserAfterSetUser
      *
      * @return void
