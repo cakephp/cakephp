@@ -14,11 +14,31 @@
  */
 namespace Cake\Auth\Storage;
 
+/**
+ * Describes the methods that any class representing an Auth data storage should
+ * comply with.
+ */
 interface StorageInterface
 {
+    /**
+     * Get user record.
+     *
+     * @return array|null
+     */
     public function get();
 
+    /**
+     * Set user record.
+     *
+     * @param array $user User record.
+     * @return void
+     */
     public function set(array $user);
 
+    /**
+     * Remove user record.
+     *
+     * @return void
+     */
     public function remove();
 }

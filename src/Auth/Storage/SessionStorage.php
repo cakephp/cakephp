@@ -17,23 +17,47 @@ namespace Cake\Auth\Storage;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Network\Request;
 
+/**
+ * Session based persistent storage for authenticated user record.
+ */
 class SessionStorage implements StorageInterface
 {
 
     use InstanceConfigTrait;
 
+    /**
+     * Session object.
+     *
+     * @var \Cake\Network\Session
+     */
     protected $_session;
 
+    /**
+     * Default configuration for this class
+     *
+     * @var array
+     */
     protected $_defaultConfig = [
         'key' => 'Auth.User'
     ];
 
+    /**
+     * Constructor.
+     *
+     * @param \Cake\Network\Request $request Request instance.
+     * @param array $config Configuration list.
+     */
     public function __construct(Request $request, array $config = [])
     {
         $this->_session = $request->session();
         $this->config($config);
     }
 
+    /**
+     * Get user record from session.
+     *
+     * @return array|null
+     */
     public function get()
     {
         if (!$this->_session->check($this->_config['key'])) {
@@ -43,12 +67,27 @@ class SessionStorage implements StorageInterface
         return $this->_session->read($this->_config['key']);
     }
 
+    /**
+     * Set user record to session.
+     *
+     * The session id is also renewed to help mitigate issues with session replays.
+     *
+     * @param array $user User record.
+     * @return void
+     */
     public function set(array $user)
     {
         $this->_session->renew();
         $this->_session->write($this->_config['key'], $user);
     }
 
+    /**
+     * Remove user record from session.
+     *
+     * The session id is also renewed to help mitigate issues with session replays.
+     *
+     * @return void
+     */
     public function remove()
     {
         $this->_session->delete($this->_config['key']);

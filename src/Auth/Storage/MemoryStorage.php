@@ -17,22 +17,39 @@ namespace Cake\Auth\Storage;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Network\Request;
 
+/**
+ * Memory based non-persistent storage for authenticated user record.
+ */
 class MemoryStorage implements StorageInterface
 {
+    /**
+     * User record.
+     *
+     * @var array
+     */
     protected $_user;
 
+    /**
+     * {@inheritDoc}
+     */
     public function get()
     {
         return $this->_user;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function set(array $user)
     {
         $this->_user = $user;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function remove()
     {
-        $this->_user = null;
+        unset($this->_user);
     }
 }

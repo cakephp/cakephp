@@ -28,7 +28,7 @@ use Cake\Routing\Router;
 use Cake\Utility\Hash;
 
 /**
- * Authentication control component class
+ * Authentication control component class.
  *
  * Binds access control with user authentication and session management.
  *
@@ -171,6 +171,11 @@ class AuthComponent extends Component
      */
     protected $_authorizeObjects = [];
 
+    /**
+     * Storage object.
+     *
+     * @var \Cake\Auth\Storage\StorageInterface
+     */
     protected $_storageObject;
 
     /**
@@ -437,8 +442,10 @@ class AuthComponent extends Component
      * Each adapter will be checked in sequence, if any of them return true, then the user will
      * be authorized for the request.
      *
-     * @param array|null $user The user to check the authorization of. If empty the user in the session will be used.
-     * @param \Cake\Network\Request|null $request The request to authenticate for. If empty, the current request will be used.
+     * @param array|null $user The user to check the authorization of.
+     *   If empty the user fetched from storage will be used.
+     * @param \Cake\Network\Request|null $request The request to authenticate for.
+     *   If empty, the current request will be used.
      * @return bool True if $user is authorized, otherwise false
      */
     public function isAuthorized($user = null, Request $request = null)
@@ -582,10 +589,10 @@ class AuthComponent extends Component
     }
 
     /**
-     * Set provided user info to session as logged in user.
+     * Set provided user info to storage as logged in user.
      *
-     * The user record is written to the session key specified in AuthComponent::$sessionKey.
-     * The session id will also be changed in order to help mitigate session replays.
+     * The storage class is configured using `storage` config key or passing
+     * instance to AuthComponent::storage().
      *
      * @param array $user Array of user data.
      * @return void
@@ -601,9 +608,6 @@ class AuthComponent extends Component
      *
      * Returns the logout action to redirect to. Triggers the `Auth.logout` event
      * which the authenticate classes can listen for and perform custom logout logic.
-     * AuthComponent will remove the session data, so there is no need to do that
-     * in an authentication object. Logging out will also renew the session id.
-     * This helps mitigate issues with session replays.
      *
      * @return string Normalized config `logoutRedirect`
      * @link http://book.cakephp.org/3.0/en/controllers/components/authentication.html#logging-users-out
@@ -622,13 +626,9 @@ class AuthComponent extends Component
     }
 
     /**
-     * Get the current user.
+     * Get the current user from storage.
      *
-     * Will prefer the user cache over sessions. The user cache is primarily used for
-     * stateless authentication. For stateful authentication,
-     * cookies + sessions will be used.
-     *
-     * @param string $key field to retrieve. Leave null to get entire User record
+     * @param string $key Field to retrieve. Leave null to get entire User record.
      * @return array|null Either User record or null if no user is logged in.
      * @link http://book.cakephp.org/3.0/en/controllers/components/authentication.html#accessing-the-logged-in-user
      */
@@ -646,10 +646,13 @@ class AuthComponent extends Component
     }
 
     /**
-     * Similar to AuthComponent::user() except if the session user cannot be found, connected authentication
-     * objects will have their getUser() methods called. This lets stateless authentication methods function correctly.
+     * Similar to AuthComponent::user() except if user is not found in
+     * configured storage, connected authentication objects will have their
+     * getUser() methods called.
      *
-     * @return bool true if a user can be found, false if one cannot.
+     * This lets stateless authentication methods function correctly.
+     *
+     * @return bool true If a user can be found, false if one cannot.
      */
     protected function _getUser()
     {
