@@ -64,11 +64,11 @@ class SessionStorage implements StorageInterface
     }
 
     /**
-     * Get user record from session.
+     * Read user record from session.
      *
      * @return array|null User record if available else null.
      */
-    public function get()
+    public function read()
     {
         if ($this->_user !== null) {
             return $this->_user ?: null;
@@ -79,14 +79,14 @@ class SessionStorage implements StorageInterface
     }
 
     /**
-     * Set user record to session.
+     * Write user record to session.
      *
      * The session id is also renewed to help mitigate issues with session replays.
      *
      * @param array $user User record.
      * @return void
      */
-    public function set(array $user)
+    public function write(array $user)
     {
         $this->_user = $user;
 
@@ -95,13 +95,13 @@ class SessionStorage implements StorageInterface
     }
 
     /**
-     * Remove user record from session.
+     * Delete user record from session.
      *
      * The session id is also renewed to help mitigate issues with session replays.
      *
      * @return void
      */
-    public function remove()
+    public function delete()
     {
         $this->_user = false;
 

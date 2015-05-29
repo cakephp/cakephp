@@ -41,63 +41,63 @@ class SessionStorageTest extends TestCase
     }
 
     /**
-     * Test set
+     * Test write
      *
      * @return void
      */
-    public function testSet()
+    public function testWrite()
     {
         $this->session->expects($this->once())
             ->method('write')
             ->with('Auth.AuthUser', $this->user)
             ->will($this->returnValue(true));
 
-        $this->storage->set($this->user);
+        $this->storage->write($this->user);
     }
 
     /**
-     * Test get
+     * Test read
      *
      * @return void
      */
-    public function testGet()
+    public function testRead()
     {
         $this->session->expects($this->once())
             ->method('read')
             ->with('Auth.AuthUser')
             ->will($this->returnValue($this->user));
 
-        $result = $this->storage->get();
+        $result = $this->storage->read();
         $this->assertSame($this->user, $result);
     }
 
     /**
-     * Test get from local var
+     * Test read from local var
      *
      * @return void
      */
     public function testGetFromLocalVar()
     {
-        $this->storage->set($this->user);
+        $this->storage->write($this->user);
 
         $this->session->expects($this->never())
             ->method('read');
 
-        $result = $this->storage->get();
+        $result = $this->storage->read();
         $this->assertSame($this->user, $result);
     }
 
     /**
-     * Test remove
+     * Test delete
      *
      * @return void
      */
-    public function testRemove()
+    public function testDelete()
     {
         $this->session->expects($this->once())
             ->method('delete')
             ->with('Auth.AuthUser');
 
-        $this->storage->remove();
+        $this->storage->delete();
     }
 }

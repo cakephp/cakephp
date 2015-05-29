@@ -32,7 +32,7 @@ class MemoryStorage implements StorageInterface
     /**
      * {@inheritDoc}
      */
-    public function get()
+    public function read()
     {
         return $this->_user;
     }
@@ -40,7 +40,7 @@ class MemoryStorage implements StorageInterface
     /**
      * {@inheritDoc}
      */
-    public function set(array $user)
+    public function write(array $user)
     {
         $this->_user = $user;
     }
@@ -48,7 +48,7 @@ class MemoryStorage implements StorageInterface
     /**
      * {@inheritDoc}
      */
-    public function remove()
+    public function delete()
     {
         $this->_user = null;
     }

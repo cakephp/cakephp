@@ -21,24 +21,24 @@ namespace Cake\Auth\Storage;
 interface StorageInterface
 {
     /**
-     * Get user record.
+     * Read user record.
      *
      * @return array|null
      */
-    public function get();
+    public function read();
 
     /**
-     * Set user record.
+     * Write user record.
      *
      * @param array $user User record.
      * @return void
      */
-    public function set(array $user);
+    public function write(array $user);
 
     /**
-     * Remove user record.
+     * Delete user record.
      *
      * @return void
      */
-    public function remove();
+    public function delete();
 }

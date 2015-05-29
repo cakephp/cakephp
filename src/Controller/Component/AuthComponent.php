@@ -600,7 +600,7 @@ class AuthComponent extends Component
      */
     public function setUser(array $user)
     {
-        $this->storage()->set($user);
+        $this->storage()->write($user);
     }
 
     /**
@@ -621,7 +621,7 @@ class AuthComponent extends Component
         $user = (array)$this->user();
         $this->dispatchEvent('Auth.logout', [$user]);
         $this->session->delete('Auth.redirect');
-        $this->storage()->remove();
+        $this->storage()->delete();
         return Router::normalize($this->_config['logoutRedirect']);
     }
 
@@ -634,7 +634,7 @@ class AuthComponent extends Component
      */
     public function user($key = null)
     {
-        $user = $this->storage()->get();
+        $user = $this->storage()->read();
         if (!$user) {
             return;
         }
@@ -668,7 +668,7 @@ class AuthComponent extends Component
         foreach ($this->_authenticateObjects as $auth) {
             $result = $auth->getUser($this->request);
             if (!empty($result) && is_array($result)) {
-                $this->storage()->set($result);
+                $this->storage()->write($result);
                 return true;
             }
         }
