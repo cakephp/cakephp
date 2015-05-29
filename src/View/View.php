@@ -551,6 +551,23 @@ class View
     /**
      * Start capturing output for a 'block'
      *
+     * You can use start on a block multiple times to
+     * append or prepend content in a capture mode.
+     *
+     * ```
+     * // Append content to an existing block.
+     * $this->start('content');
+     * echo $this->fetch('content');
+     * echo 'Some new content';
+     * $this->end();
+     *
+     * // Prepend content to an existing block
+     * $this->start('content');
+     * echo 'Some new content';
+     * echo $this->fetch('content');
+     * $this->end();
+     * ```
+     *
      * @param string $name The name of the block to capture for.
      * @return void
      * @see ViewBlock::start()
