@@ -50,6 +50,6 @@ class MemoryStorage implements StorageInterface
      */
     public function remove()
     {
-        unset($this->_user);
+        $this->_user = null;
     }
 }
