@@ -28,7 +28,10 @@ class SessionStorage implements StorageInterface
     /**
      * User record.
      *
-     * @var array
+     * Stores user record array if fetched from session or false if session
+     * does not have user record.
+     *
+     * @var array|bool
      */
     protected $_user;
 
@@ -40,7 +43,7 @@ class SessionStorage implements StorageInterface
     protected $_session;
 
     /**
-     * Default configuration for this class
+     * Default configuration for this class.
      *
      * @var array
      */
@@ -67,11 +70,11 @@ class SessionStorage implements StorageInterface
      */
     public function get()
     {
-        if ($this->_user) {
-            return $this->_user;
+        if ($this->_user !== null) {
+            return $this->_user ?: null;
         }
 
-        $this->_user = $this->_session->read($this->_config['key']);
+        $this->_user = $this->_session->read($this->_config['key']) ?: false;
         return $this->_user;
     }
 
@@ -100,7 +103,7 @@ class SessionStorage implements StorageInterface
      */
     public function remove()
     {
-        $this->_user = null;
+        $this->_user = false;
 
         $this->_session->delete($this->_config['key']);
         $this->_session->renew();

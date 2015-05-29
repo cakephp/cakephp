@@ -183,7 +183,7 @@ class AuthComponentTest extends TestCase
         $this->Auth->startup($event);
         $this->assertEquals('/auth_test/add', $this->Auth->session->read('Auth.redirect'));
 
-        $this->Auth->session->write('Auth.User', ['username' => 'admad']);
+        $this->Auth->storage()->set(['username' => 'admad']);
         $this->Auth->startup($event, $this->Controller);
         $this->assertNull($this->Auth->session->read('Auth.redirect'));
     }
