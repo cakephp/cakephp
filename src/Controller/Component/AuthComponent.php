@@ -629,7 +629,7 @@ class AuthComponent extends Component
      * Get the current user from storage.
      *
      * @param string $key Field to retrieve. Leave null to get entire User record.
-     * @return array|null Either User record or null if no user is logged in.
+     * @return array|void Either User record or null if no user is logged in.
      * @link http://book.cakephp.org/3.0/en/controllers/components/authentication.html#accessing-the-logged-in-user
      */
     public function user($key = null)
@@ -788,7 +788,7 @@ class AuthComponent extends Component
      *
      * @param \Cake\Auth\Storage\StorageInterface|null $storage Sets provided
      *   object as storage or if null returns configuread storage object.
-     * @return \Cake\Auth\Storage\StorageInterface|null
+     * @return \Cake\Auth\Storage\StorageInterface|void
      */
     public function storage(StorageInterface $storage = null)
     {
