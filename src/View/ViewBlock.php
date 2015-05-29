@@ -55,6 +55,14 @@ class ViewBlock
     protected $_active = [];
 
     /**
+     * Should the currently captured content be discarded on ViewBlock::end()
+     *
+     * @see ViewBlock::end()
+     * @var bool
+     */
+    protected $_discardActiveBufferOnEnd = false;
+
+    /**
      * Start capturing output for a 'block'
      *
      * Blocks allow you to create slots or blocks of dynamic content in the layout.
