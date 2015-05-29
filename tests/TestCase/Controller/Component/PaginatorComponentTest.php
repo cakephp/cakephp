@@ -569,6 +569,35 @@ class PaginatorComponentTest extends TestCase
     }
 
     /**
+     * test that multiple fields in the whitelist are not validated and properly aliased.
+     *
+     * @return void
+     */
+    public function testValidateSortWhitelistMultiple()
+    {
+        $model = $this->getMock('Cake\ORM\Table');
+        $model->expects($this->any())
+            ->method('alias')
+            ->will($this->returnValue('model'));
+        $model->expects($this->never())->method('hasField');
+
+        $options = [
+            'order' => [
+                'body' => 'asc',
+                'foo.bar' => 'asc'
+            ],
+            'sortWhitelist' => ['body', 'foo.bar']
+        ];
+        $result = $this->Paginator->validateSort($model, $options);
+
+        $expected = [
+            'model.body' => 'asc',
+            'foo.bar' => 'asc'
+        ];
+        $this->assertEquals($expected, $result['order']);
+    }
+
+    /**
      * test that multiple sort works.
      *
      * @return void
