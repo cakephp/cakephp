@@ -89,43 +89,4 @@ class RulesChecker extends BaseRulesChecker
         $errorField = is_string($field) ? $field : current($field);
         return $this->_addError(new ExistsIn($field, $table), '_existsIn', compact('errorField', 'message'));
     }
-
-    /**
-     * Utility method for decorating any callable so that if it returns false, the correct
-     * property in the entity is marked as invalid.
-     *
-     * @param callable $rule The rule to decorate
-     * @param string $name The alias for a rule.
-     * @param array $options The options containing the error message and field
-     * @return callable
-     */
-    protected function _addError($rule, $name, $options)
-    {
-        if (is_array($name)) {
-            $options = $name;
-            $name = null;
-        }
-
-        return function ($entity, $scope) use ($rule, $name, $options) {
-            $pass = $rule($entity, $options + $scope);
-            if ($pass === true || empty($options['errorField'])) {
-                return $pass === true;
-            }
-
-            $message = 'invalid';
-            if (isset($options['message'])) {
-                $message = $options['message'];
-            }
-            if (is_string($pass)) {
-                $message = $pass;
-            }
-            if ($name) {
-                $message = [$name => $message];
-            } else {
-                $message = [$message];
-            }
-            $entity->errors($options['errorField'], $message);
-            return $pass === true;
-        };
-    }
 }
