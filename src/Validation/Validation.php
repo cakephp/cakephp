@@ -1037,6 +1037,9 @@ class Validation
 
         if (isset($value['hour'])) {
             if (isset($value['meridian'])) {
+                if ($value['hour'] === 12) {
+                    $value['hour'] = 0;
+                }
                 $value['hour'] = strtolower($value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
             }
             $value += ['minute' => 0, 'second' => 0];
