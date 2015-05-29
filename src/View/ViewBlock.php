@@ -57,9 +57,8 @@ class ViewBlock
     /**
      * Should the currently captured content be discarded on ViewBlock::end()
      *
-     * @var bool
      * @see ViewBlock::end()
-     * @see ViewBlock::startIfEmpty()
+     * @var bool
      */
     protected $_discardActiveBufferOnEnd = false;
 
