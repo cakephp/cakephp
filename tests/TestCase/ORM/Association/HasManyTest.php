@@ -84,6 +84,20 @@ class HasManyTest extends TestCase
     }
 
     /**
+     * Test that foreignKey generation ignores database names in target table.
+     *
+     * @return void
+     */
+    public function testForeignKey()
+    {
+        $this->author->table('schema.authors');
+        $assoc = new HasMany('Articles', [
+            'sourceTable' => $this->author
+        ]);
+        $this->assertEquals('author_id', $assoc->foreignKey());
+    }
+
+    /**
      * Tests that the association reports it can be joined
      *
      * @return void

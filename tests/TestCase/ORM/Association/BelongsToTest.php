@@ -92,6 +92,22 @@ class BelongsToTest extends TestCase
     }
 
     /**
+     * Test that foreignKey generation ignores database names in target table.
+     *
+     * @return void
+     */
+    public function testForeignKey()
+    {
+        $this->company->table('schema.companies');
+        $this->client->table('schema.clients');
+        $assoc = new BelongsTo('Companies', [
+            'sourceTable' => $this->client,
+            'targetTable' => $this->company,
+        ]);
+        $this->assertEquals('company_id', $assoc->foreignKey());
+    }
+
+    /**
      * Tests that the association reports it can be joined
      *
      * @return void

@@ -49,11 +49,14 @@ trait ConventionsTrait
     /**
      * Creates the proper underscored model key for associations
      *
+     * If the input contains a dot, assume that the right side is the real table name.
+     *
      * @param string $name Model class name
      * @return string Singular model key
      */
     protected function _modelKey($name)
     {
+        list(, $name) = pluginSplit($name);
         return Inflector::underscore(Inflector::singularize($name)) . '_id';
     }
 
