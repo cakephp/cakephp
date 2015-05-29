@@ -1520,6 +1520,12 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::time($date));
 
         $date = [
+            'hour' => 12, 'minute' => 14, 'second' => 15,
+            'meridian' => 'pm'
+        ];
+        $this->assertTrue(Validation::time($date));
+
+        $date = [
             'hour' => 'farts', 'minute' => 'farts'
         ];
         $this->assertFalse(Validation::time($date));
