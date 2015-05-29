@@ -569,9 +569,9 @@ class Router
         }
 
         if (empty($url)) {
-            $output = isset($here) ? $here : '/';
+            $output = isset($here) ? $here : $base . '/';
             if ($full) {
-                $output = static::fullBaseUrl() . $base . $output;
+                $output = static::fullBaseUrl() . $output;
             }
             return $output;
         } elseif (is_array($url)) {
