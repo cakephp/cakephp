@@ -242,8 +242,12 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      */
-    public function sumOf($matcher)
+    public function sumOf($matcher = null)
     {
+        if ($matcher === null) {
+            return array_sum($this->toList());
+        }
+
         $callback = $this->_propertyExtractor($matcher);
         $sum = 0;
         foreach ($this as $k => $v) {

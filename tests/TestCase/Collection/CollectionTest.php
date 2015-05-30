@@ -1367,4 +1367,18 @@ class CollectionTest extends TestCase
         $collection = new Collection([]);
         $this->assertNull($collection->last());
     }
+
+    /**
+     * Tests sumOf with no parameters
+     *
+     * @return void
+     */
+    public function testSumOfWithIdentity()
+    {
+        $collection = new Collection([1, 2, 3]);
+        $this->assertEquals(6, $collection->sumOf());
+
+        $collection = new Collection(['a' => 1, 'b' => 4, 'c' => 6]);
+        $this->assertEquals(11, $collection->sumOf());
+    }
 }
