@@ -98,6 +98,28 @@ class RouterTest extends TestCase
     }
 
     /**
+     * Test that Router uses the correct url including base path for requesting the current actions.
+     *
+     * @return void
+     */
+    public function testCurrentUrlWithBasePath()
+    {
+        Router::fullBaseUrl('http://example.com');
+        $request = new Request();
+        $request->addParams([
+            'action' => 'view',
+            'plugin' => null,
+            'controller' => 'pages',
+            'pass' => ['1']
+        ]);
+        $request->base = '/cakephp';
+        $request->here = '/cakephp/pages/view/1';
+        Router::setRequestInfo($request);
+        $this->assertEquals('http://example.com/cakephp/pages/view/1', Router::url(null, true));
+        $this->assertEquals('/cakephp/pages/view/1', Router::url());
+    }
+
+    /**
      * testRouteDefaultParams method
      *
      * @return void
