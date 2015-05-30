@@ -444,13 +444,17 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * $total = (new Collection($items))->sumOf('invoice.total');
      *
      * // Total: 300
+     *
+     * $total = (new Colletion([1, 2, 3]))->sumOf();
+     * // Total: 6
      * ```
      *
      * @param string|callable $matcher The property name to sum or a function
+     * If no value is passed, an identity function will be used.
      * that will return the value of the property to sum.
      * @return float|int
      */
-    public function sumOf($matcher);
+    public function sumOf($matcher = null);
 
     /**
      * Returns a new collection with the elements placed in a random order,
