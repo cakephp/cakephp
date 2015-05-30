@@ -14,8 +14,8 @@
  */
 namespace Cake\Test\TestCase\Datasource;
 
-use Cake\ORM\Entity;
 use Cake\Datasource\RulesChecker;
+use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 
 /**
