@@ -42,12 +42,17 @@ class ConsoleOutput extends ConsoleOutputBase
      * Write output to the buffer.
      *
      * @param string $message The message to write.
-     * @param int $newlines Unused.
+     * @param int $newline
      * @return void
      */
     public function write($message, $newlines = 1)
     {
+        $newlines--;
         $this->_out[] = $message;
+        while($newlines > 0) {
+            $this->_out[] = '';
+            $newlines--;
+        }
     }
 
     /**
