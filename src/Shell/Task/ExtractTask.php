@@ -349,7 +349,7 @@ class ExtractTask extends Shell
      */
     protected function _extractTokens()
     {
-        $progress = $this->_io->helper('progress');
+        $progress = $this->helper('progress');
         $progress->init(['total' => count($this->_files)]);
         $isVerbose = $this->param('verbose');
 

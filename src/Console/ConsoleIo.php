@@ -389,20 +389,4 @@ class ConsoleIo
         $name = ucfirst($name);
         return $this->_helpers->load($name, $settings);
     }
-
-    /**
-     * Convenience wrapper around helper()
-     *
-     * @param string $method The helper to invoke.
-     * @param array $args The arguments for the helper.
-     * @return mixed
-     */
-    public function __call($method, $args)
-    {
-        $helper = $this->helper($method);
-        if (count($args) === 1 && isset($args[0]) && is_array($args[0])) {
-            $args = $args[0];
-        }
-        return $helper->output($args);
-    }
 }
