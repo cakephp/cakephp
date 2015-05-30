@@ -98,7 +98,7 @@ class RouterTest extends TestCase
     }
 
     /**
-     * Test that Router used the correct url including base path for requesting current actions.
+     * Test that Router uses the correct url including base path for requesting the current actions.
      *
      * @return void
      */
@@ -117,7 +117,6 @@ class RouterTest extends TestCase
         Router::setRequestInfo($request);
         $this->assertEquals('http://example.com/cakephp/pages/view/1', Router::url(null, true));
         $this->assertEquals('/cakephp/pages/view/1', Router::url());
-
     }
 
     /**
