@@ -47,8 +47,11 @@ class ConsoleOutput extends ConsoleOutputBase
      */
     public function write($message, $newlines = 1)
     {
+        foreach((array)$message as $line) {
+            $this->_out[] = $line;
+        }
+
         $newlines--;
-        $this->_out[] = $message;
         while($newlines > 0) {
             $this->_out[] = '';
             $newlines--;
