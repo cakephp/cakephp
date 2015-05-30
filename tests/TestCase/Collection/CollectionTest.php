@@ -1356,4 +1356,15 @@ class CollectionTest extends TestCase
         });
         $this->assertEquals(6, $collection->last());
     }
+
+    /**
+     * Tests the last() method when on an empty collection
+     *
+     * @return void
+     */
+    public function testLAstWithEmptyCollection()
+    {
+        $collection = new Collection([]);
+        $this->assertNull($collection->last());
+    }
 }

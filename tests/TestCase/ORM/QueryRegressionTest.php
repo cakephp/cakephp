@@ -864,4 +864,18 @@ class QueryRegressionTest extends TestCase
             ->ratio;
         $this->assertEquals(0.5, $ratio);
     }
+
+    /**
+     * Tests calling last on an empty table
+     *
+     * @see https://github.com/cakephp/cakephp/issues/6683
+     * @return void
+     */
+    public function testFindLastOnEmptyTable()
+    {
+        $table = TableRegistry::get('Comments');
+        $table->deleteAll(['1 = 1']);
+        $this->assertEquals(0, $table->find()->count());
+        $this->assertNull($table->find()->last());
+    }
 }

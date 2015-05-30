@@ -330,6 +330,11 @@ trait CollectionTrait
         $count = $iterator instanceof Countable ?
             count($iterator) :
             iterator_count($iterator);
+
+        if ($count === 0) {
+            return null;
+        }
+
         foreach ($this->take(1, $count - 1) as $last) {
             return $last;
         }
