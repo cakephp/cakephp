@@ -24,6 +24,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\RulesAwareTrait;
+use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerTrait;
@@ -118,7 +119,7 @@ use RuntimeException;
  *
  * @see \Cake\Event\EventManager for reference on the events system.
  */
-class Table implements RepositoryInterface, EventListenerInterface
+class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface
 {
 
     use EventManagerTrait;

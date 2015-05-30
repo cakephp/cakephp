@@ -14,6 +14,7 @@
  */
 namespace Cake\Validation;
 
+use Cake\Event\EventDispatcherInterface;
 use Cake\Validation\Validator;
 
 /**
@@ -96,7 +97,7 @@ trait ValidatorAwareTrait
         if ($validator === null) {
             $validator = new Validator();
             $validator = $this->{'validation' . ucfirst($name)}($validator);
-            if (method_exists($this, 'dispatchEvent')) {
+            if ($this instanceof EventDispatcherInterface) {
                 $this->dispatchEvent('Model.buildValidator', compact('validator', 'name'));
             }
         }

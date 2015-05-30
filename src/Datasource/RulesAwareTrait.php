@@ -17,6 +17,7 @@ namespace Cake\Datasource;
 use ArrayObject;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\RulesChecker;
+use Cake\Event\EventDispatcherInterface;
 
 /**
  * A trait that allows a class to build and apply application.
@@ -51,7 +52,7 @@ trait RulesAwareTrait
         $rules = $this->rulesChecker();
         $options = $options ?: new ArrayObject;
         $options = is_array($options) ? new ArrayObject($options) : $options;
-        $hasEvents = method_exists($this, 'dispatchEvent');
+        $hasEvents = ($this instanceof EventDispatcherInterface);
 
         if ($hasEvents) {
             $event = $this->dispatchEvent(
