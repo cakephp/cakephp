@@ -128,7 +128,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      * @param string $username The username/identifier.
      * @return \Cake\ORM\Query
      */
-    public function _query($username)
+    protected function _query($username)
     {
         $config = $this->_config;
         $table = TableRegistry::get($this->_config['userModel']);
