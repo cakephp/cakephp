@@ -33,7 +33,7 @@ install:
   - echo extension=php_fileinfo.dll >> php.ini
   - cd C:\projects\cakephp
   - php -r "readfile('https://getcomposer.org/installer');" | php
-  - php composer.phar install --prefer-dist --no-interaction --dev
+  - php composer.phar install --prefer-dist --no-interaction
 before_test:
 # This script solves the "Database 'model' is being recovered. Waiting until recovery is finished."
 # This solution comes from https://gist.github.com/jonathanhickford/1cb0d6665adab8b9c664
