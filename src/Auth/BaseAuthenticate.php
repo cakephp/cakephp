@@ -102,27 +102,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      */
     protected function _findUser($username, $password = null)
     {
-        $userModel = $this->_config['userModel'];
-        list(, $model) = pluginSplit($userModel);
-        $fields = $this->_config['fields'];
-
-        $conditions = [$model . '.' . $fields['username'] => $username];
-
-        $scope = $this->_config['scope'];
-        if ($scope) {
-            $conditions = array_merge($conditions, $scope);
-        }
-
-        $table = TableRegistry::get($userModel)->find('all');
-
-        $contain = $this->_config['contain'];
-        if ($contain) {
-            $table = $table->contain($contain);
-        }
-
-        $result = $table
-            ->where($conditions)
-            ->first();
+        $result = $this->_query($username)->first();
 
         if (empty($result)) {
             return false;
@@ -130,16 +110,42 @@ abstract class BaseAuthenticate implements EventListenerInterface
 
         if ($password !== null) {
             $hasher = $this->passwordHasher();
-            $hashedPassword = $result->get($fields['password']);
+            $hashedPassword = $result->get($this->_config['fields']['password']);
             if (!$hasher->check($password, $hashedPassword)) {
                 return false;
             }
 
             $this->_needsPasswordRehash = $hasher->needsRehash($hashedPassword);
-            $result->unsetProperty($fields['password']);
+            $result->unsetProperty($this->_config['fields']['password']);
         }
 
         return $result->toArray();
+    }
+
+    /**
+     * Get query object for fetching user from database.
+     *
+     * @param string $username The username/identifier.
+     * @return \Cake\ORM\Query
+     */
+    protected function _query($username)
+    {
+        $config = $this->_config;
+        $table = TableRegistry::get($this->_config['userModel']);
+
+        $conditions = [$table->aliasField($config['fields']['username']) => $username];
+        if ($config['scope']) {
+            $conditions = array_merge($conditions, $config['scope']);
+        }
+
+        $query = $table->find('all')
+            ->where($conditions);
+
+        if ($config['contain']) {
+            $query = $query->contain($config['contain']);
+        }
+
+        return $query;
     }
 
     /**
