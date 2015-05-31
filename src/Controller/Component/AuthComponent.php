@@ -204,6 +204,7 @@ class AuthComponent extends Component
      * Instance of the Session object
      *
      * @var \Cake\Network\Session
+     * @deprecated 3.1.0 Will be removed in 4.0
      */
     public $session;
 
@@ -333,17 +334,17 @@ class AuthComponent extends Component
 
         if ($this->_isLoginAction($controller)) {
             if (empty($controller->request->data) &&
-                !$this->session->check('Auth.redirect') &&
+                !$this->storage()->redirectUrl() &&
                 $this->request->env('HTTP_REFERER')
             ) {
-                $this->session->write('Auth.redirect', $controller->referer(null, true));
+                $this->storage()->redirectUrl($controller->referer(null, true));
             }
             return;
         }
 
         if (!$controller->request->is('ajax')) {
             $this->flash($this->_config['authError']);
-            $this->session->write('Auth.redirect', $controller->request->here(false));
+            $this->storage()->redirectUrl($controller->request->here(false));
             return $controller->redirect($this->_config['loginAction']);
         }
 
@@ -620,7 +621,7 @@ class AuthComponent extends Component
         }
         $user = (array)$this->user();
         $this->dispatchEvent('Auth.logout', [$user]);
-        $this->session->delete('Auth.redirect');
+        $this->storage()->redirectUrl(false);
         $this->storage()->delete();
         return Router::normalize($this->_config['logoutRedirect']);
     }
@@ -658,7 +659,7 @@ class AuthComponent extends Component
     {
         $user = $this->user();
         if ($user) {
-            $this->session->delete('Auth.redirect');
+            $this->storage()->redirectUrl(false);
             return true;
         }
 
@@ -685,10 +686,10 @@ class AuthComponent extends Component
      * If no parameter is passed, gets the authentication redirect URL. The URL
      * returned is as per following rules:
      *
-     *  - Returns the normalized URL from session Auth.redirect value if it is
+     *  - Returns the normalized redirect URL from storage if it is
      *    present and for the same domain the current app is running on.
-     *  - If there is no session value and there is a config `loginRedirect`, the
-     *    `loginRedirect` value is returned.
+     *  - If there is no URL returned from storage and there is a config
+     *    `loginRedirect`, the `loginRedirect` value is returned.
      *  - If there is no session and no `loginRedirect`, / is returned.
      *
      * @param string|array $url Optional URL to write as the login redirect URL.
@@ -698,10 +699,9 @@ class AuthComponent extends Component
     {
         if ($url !== null) {
             $redir = $url;
-            $this->session->write('Auth.redirect', $redir);
-        } elseif ($this->session->check('Auth.redirect')) {
-            $redir = $this->session->read('Auth.redirect');
-            $this->session->delete('Auth.redirect');
+            $this->storage()->redirectUrl($redir);
+        } elseif ($redir = $this->storage()->redirectUrl()) {
+            $this->storage()->redirectUrl(false);
 
             if (Router::normalize($redir) === Router::normalize($this->_config['loginAction'])) {
                 $redir = $this->_config['loginRedirect'];

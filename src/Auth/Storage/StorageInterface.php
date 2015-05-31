@@ -41,4 +41,13 @@ interface StorageInterface
      * @return void
      */
     public function delete();
+
+    /**
+     * Get/set redirect url.
+     *
+     * @param mixed $url Redirect url. If `null` returns current url. If `false`
+     *   deletes currently set url.
+     * @return mixed
+     */
+    public function redirectUrl($url = null);
 }

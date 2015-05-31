@@ -108,4 +108,21 @@ class SessionStorage implements StorageInterface
         $this->_session->delete($this->_config['key']);
         $this->_session->renew();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function redirectUrl($url = null)
+    {
+        if ($url === null) {
+            return $this->_session->read('Auth.redirect');
+        }
+
+        if ($url === false) {
+            $this->_session->delete('Auth.redirect');
+            return;
+        }
+
+        $this->_session->write('Auth.redirect', $url);
+    }
 }
