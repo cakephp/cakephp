@@ -1425,7 +1425,7 @@ class CollectionTest extends TestCase
             ['not_comments' => []]
         ];
         $extracted = (new Collection($items))->extract('comments.{n}.voters.{n}.id');
-        $expected = [1, 2, 3, 4, 5, null];
+        $expected = [1, 2, 3, 4, 5, null, 6];
         $this->assertEquals($expected, $extracted->toList());
     }
 }

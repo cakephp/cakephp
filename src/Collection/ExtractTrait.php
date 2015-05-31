@@ -37,16 +37,22 @@ trait ExtractTrait
         }
 
         $path = explode('.', $callback);
-        $callback = function ($element) use ($path) {
-            return $this->_extract($element, $path);
-        };
 
-        return $callback;
+        if (strpos($callback, '{n}') !== false) {
+            return function ($element) use ($path) {
+                return $this->_extract($element, $path);
+            };
+        }
+
+        return function ($element) use ($path) {
+            return $this->_simpleExtract($element, $path);
+        };
     }
 
     /**
      * Returns a column from $data that can be extracted
-     * by iterating over the column names contained in $path
+     * by iterating over the column names contained in $path.
+     * It will return arrays for elements in represented with `{n}`
      *
      * @param array|\ArrayAccess $data Data.
      * @param array $path Path to extract from.
@@ -77,6 +83,27 @@ trait ExtractTrait
                 return null;
             }
 
+            $value = $data[$column];
+            $data = $value;
+        }
+        return $value;
+    }
+
+    /**
+     * Returns a column from $data that can be extracted
+     * by iterating over the column names contained in $path
+     *
+     * @param array|\ArrayAccess $data Data.
+     * @param array $path Path to extract from.
+     * @return mixed
+     */
+    protected function _simpleExtract($data, $path)
+    {
+        $value = null;
+        foreach ($path as $column) {
+            if (!isset($data[$column])) {
+                return null;
+            }
             $value = $data[$column];
             $data = $value;
         }
