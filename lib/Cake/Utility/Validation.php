@@ -56,7 +56,7 @@ class Validation {
  * @deprecated 2.7.0 Use Validation::notBlank() instead.
  * @see Validation::notBlank()
  */
-	public function notEmpty($check) {
+	public static function notEmpty($check) {
 		trigger_error('Validation::notEmpty() is deprecated. Use Validation::notBlank() instead.', E_USER_DEPRECATED);
 		return self::notBlank($check);
 	}
