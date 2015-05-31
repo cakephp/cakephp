@@ -219,7 +219,7 @@ class AuthComponent extends Component
 
     /**
      * The instance of the Authorize provider that was used to grant
-     * access to the current user to the url they are requesting.
+     * access to the current user to the URL they are requesting.
      *
      * @var \Cake\Auth\BaseAuthorize
      */
