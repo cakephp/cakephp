@@ -5,6 +5,8 @@
 [![Coverage Status](https://img.shields.io/coveralls/cakephp/cakephp/master.svg?style=flat-square)](https://coveralls.io/r/cakephp/cakephp?branch=master)
 [![Code Consistency](http://squizlabs.github.io/PHP_CodeSniffer/analysis/cakephp/cakephp/grade.svg)](http://squizlabs.github.io/PHP_CodeSniffer/analysis/cakephp/cakephp/)
 [![Total Downloads](https://img.shields.io/packagist/dt/cakephp/cakephp.svg?style=flat-square)](https://packagist.org/packages/cakephp/cakephp)
+[![Latest Stable Version](https://img.shields.io/packagist/v/cakephp/cakephp.svg?style=flat-square&label=stable)](https://packagist.org/packages/cakephp/cakephp)
+[![Latest Unstable Version](https://img.shields.io/packagist/vpre/cakephp/cakephp.svg?style=flat-square&label=unstable)](https://packagist.org/packages/cakephp/cakephp)
 
 [CakePHP](http://www.cakephp.org) is a rapid development framework for PHP which
 uses commonly known design patterns like Associative Data
