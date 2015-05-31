@@ -72,6 +72,7 @@ class TableHelper extends Helper
      *
      * @param array $row The row to output.
      * @param array $widths The widths of each column to output.
+     * @param array $options Options to be passed.
      * @return void
      */
     protected function _render($row, $widths, $options = [])
@@ -125,6 +126,6 @@ class TableHelper extends Helper
      */
     protected function _addStyle($text, $style)
     {
-        return '<' . $style .'>' . $text . '</' . $style .'>';
+        return '<' . $style . '>' . $text . '</' . $style . '>';
     }
 }
