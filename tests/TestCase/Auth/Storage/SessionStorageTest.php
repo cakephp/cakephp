@@ -102,4 +102,34 @@ class SessionStorageTest extends TestCase
 
         $this->storage->delete();
     }
+
+    /**
+     * Test redirectUrl()
+     *
+     * @return void
+     */
+    public function redirectUrl()
+    {
+        $url = '/url';
+
+        $this->session->expects($this->once())
+            ->method('write')
+            ->with('Auth.redirectUrl', $url);
+
+        $this->storage->redirectUrl($url);
+
+        $this->session->expects($this->once())
+            ->method('read')
+            ->with('Auth.redirectUrl')
+            ->will($this->returnValue($url));
+
+        $result = $this->storage->redirectUrl();
+        $this->assertEquals($url, $result);
+
+        $this->session->expects($this->once())
+            ->method('delete')
+            ->with('Auth.redirectUrl');
+
+        $this->storage->redirectUrl(false);
+    }
 }
