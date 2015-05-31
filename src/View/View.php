@@ -458,6 +458,7 @@ class View implements EventDispatcherInterface
             return;
         }
 
+        $this->decorateEntities();
         if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
             $this->_currentType = static::TYPE_VIEW;
             $this->dispatchEvent('View.beforeRender', [$viewFileName]);
@@ -765,6 +766,25 @@ class View implements EventDispatcherInterface
         $helpers = $registry->normalizeArray($this->helpers);
         foreach ($helpers as $properties) {
             $this->loadHelper($properties['class'], $properties['config']);
+        }
+    }
+
+    /**
+     *
+     *
+     */
+    public function decorateEntities() {
+        foreach($this->viewVars as $name => $var) {
+            if (is_object($var)) {
+                if ($var instanceof \Cake\ORM\Entity) {
+debug('ENTITY');
+                    continue;
+                }
+                if ($var instanceof \Cake\ORM\ResultSet) {
+debug('RESULTSET');
+                    continue;
+                }
+            }
         }
     }
 
