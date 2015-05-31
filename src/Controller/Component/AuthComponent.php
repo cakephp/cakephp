@@ -813,7 +813,7 @@ class AuthComponent extends Component
         if (!class_exists($className)) {
             throw new Exception(sprintf('Auth storage adapter "%s" was not found.', $class));
         }
-        $this->_storage = new $className($this->request, $config);
+        $this->_storage = new $className($this->request, $this->response, $config);
 
         return $this->_storage;
     }

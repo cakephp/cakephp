@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Auth;
 
 use Cake\Auth\Storage\SessionStorage;
 use Cake\Network\Request;
+use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -36,7 +37,8 @@ class SessionStorageTest extends TestCase
 
         $this->session = $this->getMock('Cake\Network\Session');
         $this->request = new Request(['session' => $this->session]);
-        $this->storage = new SessionStorage($this->request, ['key' => 'Auth.AuthUser']);
+        $this->response = new Response();
+        $this->storage = new SessionStorage($this->request, $this->response, ['key' => 'Auth.AuthUser']);
         $this->user = ['id' => 1];
     }
 

@@ -16,6 +16,7 @@ namespace Cake\Auth\Storage;
 
 use Cake\Core\InstanceConfigTrait;
 use Cake\Network\Request;
+use Cake\Network\Response;
 
 /**
  * Session based persistent storage for authenticated user record.
@@ -55,9 +56,10 @@ class SessionStorage implements StorageInterface
      * Constructor.
      *
      * @param \Cake\Network\Request $request Request instance.
+     * @param \Cake\Netowrk\Response $respose Response instance.
      * @param array $config Configuration list.
      */
-    public function __construct(Request $request, array $config = [])
+    public function __construct(Request $request, Response $respose, array $config = [])
     {
         $this->_session = $request->session();
         $this->config($config);

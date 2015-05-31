@@ -1117,7 +1117,7 @@ class AuthComponentTest extends TestCase
         $storage = $this->getMock(
             'Cake\Auth\Storage\SessionStorage',
             ['write'],
-            [$this->Auth->request]
+            [$this->Auth->request, $this->Auth->response]
         );
         $this->Auth->storage($storage);
 
