@@ -191,7 +191,7 @@ abstract class Mailer implements ArrayAccess, EventListenerInterface
      */
     public function offsetExists($offset)
     {
-        return in_array($offset, get_object_vars($this)) ||
+        return property_exists($this, $offset) ||
             method_exists($this->_email, $offset);
     }
 
