@@ -2107,6 +2107,17 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules)
+    {
+        return $rules;
+    }
+
+    /**
      * Returns an array that can be used to describe the internal state of this
      * object.
      *
