@@ -213,6 +213,19 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * ['Mark', 'Renan']
      * ```
      *
+     * It is also possible to extract a flattened collection out of nested properties
+     *
+     * ```
+     *  $items = [
+     *      ['comment' => ['votes' => [['value' => 1], ['value' => 2], ['value' => 3]]],
+     *      ['comment' => ['votes' => [['value' => 4]]
+     * ];
+     * $extracted = (new Collection($items))->extract('comment.votes.{n}.value');
+     *
+     * // Result will contain
+     * [1, 2, 3, 4]
+     * ```
+     *
      * @param string $matcher a dot separated string symbolizing the path to follow
      * inside the hierarchy of each value so that the column can be extracted.
      * @return \Cake\Collection\CollectionInterface

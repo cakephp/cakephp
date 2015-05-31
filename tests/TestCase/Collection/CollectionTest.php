@@ -1382,6 +1382,11 @@ class CollectionTest extends TestCase
         $this->assertEquals(11, $collection->sumOf());
     }
 
+    /**
+     * Tests using extract with the {n} notation
+     *
+     * @return void
+     */
     public function testUnfoldedExtract()
     {
         $items = [
