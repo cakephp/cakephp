@@ -1446,14 +1446,14 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$options = array('order' => array('lft' => 'asc'));
 		$records = $this->Tree->find('all', $options);
 
-		$result = $this->Tree->formatTreeList(
-			$records,
-			"{n}.$modelClass.id",
-			array('%s - %s', "{n}.$modelClass.id", "{n}.$modelClass.name")
-		);
+		$options = array(
+			'keyPath' => "{n}.$modelClass.id",
+			'valuePath' => array('%s - %s', "{n}.$modelClass.id", "{n}.$modelClass.name"),
+			'spacer' => '--');
+		$result = $this->Tree->formatTreeList($records, $options);
 		$this->assertEquals('1 - 1. Root', $result[1]);
-		$this->assertEquals('_2 - 1.1', $result[2]);
-		$this->assertEquals('__3 - 1.1.1', $result[3]);
+		$this->assertEquals('--2 - 1.1', $result[2]);
+		$this->assertEquals('----3 - 1.1.1', $result[3]);
 	}
 
 /**
