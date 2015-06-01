@@ -451,7 +451,7 @@ class TreeBehavior extends Behavior
      * - spacer: A string to be used as prefix for denoting the depth in the tree for each item
      *
      * @param \Cake\ORM\Query $query Query.
-     * @param array $options Array of options as described above
+     * @param array $options Array of options as described above.
      * @return \Cake\ORM\Query
      */
     public function findTreeList(Query $query, array $options)
@@ -477,8 +477,8 @@ class TreeBehavior extends Behavior
      *  return the value out of the provided row.
      * - spacer: A string to be used as prefix for denoting the depth in the tree for each item
      *
-     * @param \Cake\ORM\Query $query
-     * @param array $options Array of options as described above
+     * @param \Cake\ORM\Query $query Query.
+     * @param array $options Array of options as described above.
      * @return \Cake\ORM\Query
      */
     public function formatTreeList(Query $query, array $options = [])
