@@ -442,27 +442,61 @@ class TreeBehavior extends ModelBehavior {
 			$fields = array($Model->primaryKey, $Model->displayField, $left, $right);
 		}
 
-		if (!$keyPath) {
-			$keyPath = '{n}.' . $Model->alias . '.' . $Model->primaryKey;
-		}
-
-		if (!$valuePath) {
-			$valuePath = array('%s%s', '{n}.tree_prefix', '{n}.' . $Model->alias . '.' . $Model->displayField);
-
-		} elseif (is_string($valuePath)) {
-			$valuePath = array('%s%s', '{n}.tree_prefix', $valuePath);
-
-		} else {
-			array_unshift($valuePath, '%s' . $valuePath[0], '{n}.tree_prefix');
-		}
-
 		$conditions = (array)$conditions;
 		if ($scope) {
 			$conditions[] = $scope;
 		}
 
-		$order = $Model->escapeField($left) . " asc";
+		$order = $Model->escapeField($left) . ' asc';
 		$results = $Model->find('all', compact('conditions', 'fields', 'order', 'recursive'));
+
+		return $this->formatTreeList($Model, $results, compact('keyPath', 'valuePath', 'spacer'));
+	}
+
+/**
+ * Formats result of a find() call to a hierarchical array used for HTML select boxes.
+ *
+ * Note that when using your own find() call this expects the order to be "left" field asc in order
+ * to generate the same result as using generateTreeList() directly.
+ *
+ * Options:
+ *
+ * - 'keyPath': A string path to the key, i.e. "{n}.Post.id"
+ * - 'valuePath': A string path to the value, i.e. "{n}.Post.title"
+ * - 'spacer': The character or characters which will be repeated
+ *
+ * @param Model $Model Model using this behavior
+ * @param array $results Result array of a find() call
+ * @param array $options Options
+ * @return array An associative array of records, where the id is the key, and the display field is the value
+ */
+	public function formatTreeList(Model $Model, array $results, array $options = array()) {
+		if (empty($results)) {
+			return array();
+		}
+		$defaults = array(
+			'keyPath' => null,
+			'valuePath' => null,
+			'spacer' => '_'
+		);
+		$options += $defaults;
+
+		extract($this->settings[$Model->alias]);
+
+		if (!$options['keyPath']) {
+			$options['keyPath'] = '{n}.' . $Model->alias . '.' . $Model->primaryKey;
+		}
+
+		if (!$options['valuePath']) {
+			$options['valuePath'] = array('%s%s', '{n}.tree_prefix', '{n}.' . $Model->alias . '.' . $Model->displayField);
+
+		} elseif (is_string($options['valuePath'])) {
+			$options['valuePath'] = array('%s%s', '{n}.tree_prefix', $options['valuePath']);
+
+		} else {
+			array_unshift($options['valuePath'], '%s' . $options['valuePath'][0], '{n}.tree_prefix');
+		}
+
 		$stack = array();
 
 		foreach ($results as $i => $result) {
@@ -471,13 +505,11 @@ class TreeBehavior extends ModelBehavior {
 				array_pop($stack);
 				$count--;
 			}
-			$results[$i]['tree_prefix'] = str_repeat($spacer, $count);
+			$results[$i]['tree_prefix'] = str_repeat($options['spacer'], $count);
 			$stack[] = $result[$Model->alias][$right];
 		}
-		if (empty($results)) {
-			return array();
-		}
-		return Hash::combine($results, $keyPath, $valuePath);
+
+		return Hash::combine($results, $options['keyPath'], $options['valuePath']);
 	}
 
 /**
