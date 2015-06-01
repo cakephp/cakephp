@@ -38,7 +38,7 @@ trait ExtractTrait
 
         $path = explode('.', $callback);
 
-        if (strpos($callback, '{n}') !== false) {
+        if (strpos($callback, '{*}') !== false) {
             return function ($element) use ($path) {
                 return $this->_extract($element, $path);
             };
@@ -52,7 +52,7 @@ trait ExtractTrait
     /**
      * Returns a column from $data that can be extracted
      * by iterating over the column names contained in $path.
-     * It will return arrays for elements in represented with `{n}`
+     * It will return arrays for elements in represented with `{*}`
      *
      * @param array|\ArrayAccess $data Data.
      * @param array $path Path to extract from.
@@ -64,7 +64,7 @@ trait ExtractTrait
         $collectionTransform = false;
 
         foreach ($path as $i => $column) {
-            if ($column === '{n}') {
+            if ($column === '{*}') {
                 $collectionTransform = true;
                 continue;
             }

@@ -1383,7 +1383,7 @@ class CollectionTest extends TestCase
     }
 
     /**
-     * Tests using extract with the {n} notation
+     * Tests using extract with the {*} notation
      *
      * @return void
      */
@@ -1395,7 +1395,7 @@ class CollectionTest extends TestCase
             ['comments' => [['id' => 7], ['nope' => 8]]],
         ];
 
-        $extracted = (new Collection($items))->extract('comments.{n}.id');
+        $extracted = (new Collection($items))->extract('comments.{*}.id');
         $this->assertEquals([1, 2, 3, 4, 7, null], $extracted->toList());
 
         $items = [
@@ -1429,7 +1429,7 @@ class CollectionTest extends TestCase
             ],
             ['not_comments' => []]
         ];
-        $extracted = (new Collection($items))->extract('comments.{n}.voters.{n}.id');
+        $extracted = (new Collection($items))->extract('comments.{*}.voters.{*}.id');
         $expected = [1, 2, 3, 4, 5, null, 6];
         $this->assertEquals($expected, $extracted->toList());
     }

@@ -220,7 +220,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      *      ['comment' => ['votes' => [['value' => 1], ['value' => 2], ['value' => 3]]],
      *      ['comment' => ['votes' => [['value' => 4]]
      * ];
-     * $extracted = (new Collection($items))->extract('comment.votes.{n}.value');
+     * $extracted = (new Collection($items))->extract('comment.votes.{*}.value');
      *
      * // Result will contain
      * [1, 2, 3, 4]
