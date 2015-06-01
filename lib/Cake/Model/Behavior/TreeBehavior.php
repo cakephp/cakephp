@@ -459,12 +459,15 @@ class TreeBehavior extends ModelBehavior {
  * Note that when using your own find() call this expects the order to be "left" field asc in order
  * to generate the same result as using generateTreeList() directly.
  *
+ * Options:
+ *
+ * - 'keyPath': A string path to the key, i.e. "{n}.Post.id"
+ * - 'valuePath': A string path to the value, i.e. "{n}.Post.title"
+ * - 'spacer': The character or characters which will be repeated
+ *
  * @param Model $Model Model using this behavior
  * @param array $results Result array of a find() call
  * @param array $options Options
- * @param null $keyPath A string path to the key, i.e. "{n}.Post.id"
- * @param null $valuePath A string path to the value, i.e. "{n}.Post.title"
- * @param string $spacer The character or characters which will be repeated
  * @return array An associative array of records, where the id is the key, and the display field is the value
  */
 	public function formatTreeList(Model $Model, array $results, array $options = array()) {
