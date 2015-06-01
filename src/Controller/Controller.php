@@ -501,13 +501,13 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Redirects to given $url, after turning off $this->autoRender.
      * Script execution is halted after the redirect.
      *
-     * @param string|array $url A string or array-based URL pointing to another location within the app,
+     * @param string|array|null $url A string or array-based URL pointing to another location within the app,
      *     or an absolute URL
      * @param int $status HTTP status code (eg: 301)
      * @return void|\Cake\Network\Response
      * @link http://book.cakephp.org/3.0/en/controllers.html#Controller::redirect
      */
-    public function redirect($url, $status = 302)
+    public function redirect($url = null, $status = 302)
     {
         $this->autoRender = false;
 
