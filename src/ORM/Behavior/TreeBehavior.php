@@ -64,7 +64,8 @@ class TreeBehavior extends Behavior
             'moveDown' => 'moveDown',
             'recover' => 'recover',
             'removeFromTree' => 'removeFromTree',
-            'getLevel' => 'getLevel'
+            'getLevel' => 'getLevel',
+            'formatTreeList' => 'formatTreeList'
         ],
         'parent' => 'parent_id',
         'left' => 'lft',
