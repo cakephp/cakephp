@@ -483,7 +483,7 @@ class ControllerTest extends TestCase
         $Controller = new Controller(null);
         $Controller->response = new Response();
 
-        $response = $Controller->redirect();
+        $response = $Controller->redirect(null);
         $this->assertEquals(302, $response->statusCode());
         $this->assertEquals('http://localhost/', $response->header()['Location']);
         $this->assertFalse($Controller->autoRender);
