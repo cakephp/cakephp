@@ -97,7 +97,7 @@ class RoutesShell extends Shell
             'help' => 'Check a URL string against the routes. ' .
                 'Will output the routing parameters the route resolves to.'
         ])->addSubcommand('generate', [
-            'help' => 'Check a routing array agains the routes. ' .
+            'help' => 'Check a routing array against the routes. ' .
                 "Will output the URL if there is a match.\n\n" .
                 "Routing parameters should be supplied in a key:value format. " .
                 "For example `controller:Articles action:view 2`"

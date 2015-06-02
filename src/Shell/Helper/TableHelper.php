@@ -22,6 +22,16 @@ use Cake\Console\Helper;
 class TableHelper extends Helper
 {
     /**
+     * Default config for this helper.
+     *
+     * @var array
+     */
+    protected $_defaultConfig = [
+        'headers' => true,
+        'rowSeparator' => false,
+        'headerStyle' => 'info',
+    ];
+    /**
      * Calculate the column widths
      *
      * @param array $rows The rows on which the columns width will be calculated on.
@@ -60,15 +70,19 @@ class TableHelper extends Helper
     /**
      * Output a row.
      *
-     * @param array $row The row to ouptut.
+     * @param array $row The row to output.
      * @param array $widths The widths of each column to output.
+     * @param array $options Options to be passed.
      * @return void
      */
-    protected function _render($row, $widths)
+    protected function _render($row, $widths, $options = [])
     {
         $out = '';
         foreach ($row as $i => $column) {
             $pad = $widths[$i] - mb_strlen($column);
+            if (!empty($options['style'])) {
+                $column = $this->_addStyle($column, $options['style']);
+            }
             $out .= '| ' . $column . str_repeat(' ', $pad) . ' ';
         }
         $out .= '|';
@@ -83,15 +97,35 @@ class TableHelper extends Helper
      */
     public function output($rows)
     {
+        $config = $this->config();
         $widths = $this->_calculateWidths($rows);
 
         $this->_rowSeparator($widths);
-        $this->_render(array_shift($rows), $widths);
-        $this->_rowSeparator($widths);
+        if ($config['headers'] === true) {
+            $this->_render(array_shift($rows), $widths, ['style' => $config['headerStyle']]);
+            $this->_rowSeparator($widths);
+        }
 
         foreach ($rows as $line) {
             $this->_render($line, $widths);
+            if ($config['rowSeparator'] === true) {
+                $this->_rowSeparator($widths);
+            }
         }
-        $this->_rowSeparator($widths);
+        if ($config['rowSeparator'] !== true) {
+            $this->_rowSeparator($widths);
+        }
+    }
+
+    /**
+     * Add style tags
+     *
+     * @param string $text The text to be surrounded
+     * @param string $style The style to be applied
+     * @return string
+     */
+    protected function _addStyle($text, $style)
+    {
+        return '<' . $style . '>' . $text . '</' . $style . '>';
     }
 }
