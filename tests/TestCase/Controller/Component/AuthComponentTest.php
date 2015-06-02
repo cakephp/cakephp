@@ -183,7 +183,7 @@ class AuthComponentTest extends TestCase
         $this->Auth->startup($event);
         $this->assertEquals('/auth_test/add', $this->Auth->session->read('Auth.redirect'));
 
-        $this->Auth->session->write('Auth.User', ['username' => 'admad']);
+        $this->Auth->storage()->write(['username' => 'admad']);
         $this->Auth->startup($event, $this->Controller);
         $this->assertNull($this->Auth->session->read('Auth.redirect'));
     }
@@ -199,14 +199,14 @@ class AuthComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $Users = TableRegistry::get('Users');
         $user = $Users->find('all')->hydrate(false)->first();
-        $this->Auth->session->write('Auth.User', $user);
+        $this->Controller->Auth->storage()->write($user);
         $this->Controller->Auth->config('userModel', 'Users');
         $this->Controller->Auth->config('authorize', false);
         $this->Controller->request->addParams(Router::parse('auth_test/add'));
         $result = $this->Controller->Auth->startup($event);
         $this->assertNull($result);
 
-        $this->Auth->session->delete('Auth');
+        $this->Controller->Auth->storage()->delete();
         $result = $this->Controller->Auth->startup($event);
         $this->assertTrue($event->isStopped());
         $this->assertInstanceOf('Cake\Network\Response', $result);
@@ -1034,6 +1034,7 @@ class AuthComponentTest extends TestCase
         $this->Auth->config('authenticate', [
             'Basic' => ['userModel' => 'AuthUsers']
         ]);
+        $this->Auth->config('storage', 'Memory');
         $this->Auth->startup($event);
 
         $result = $this->Auth->user();
@@ -1041,6 +1042,7 @@ class AuthComponentTest extends TestCase
 
         $result = $this->Auth->user('username');
         $this->assertEquals('mariano', $result);
+        $this->assertFalse(isset($_SESSION));
     }
 
     /**
@@ -1112,19 +1114,18 @@ class AuthComponentTest extends TestCase
      */
     public function testSetUser()
     {
-        $this->Auth->session = $this->getMock(
-            'Cake\Network\Session',
-            ['renew', 'write']
+        $storage = $this->getMock(
+            'Cake\Auth\Storage\SessionStorage',
+            ['write'],
+            [$this->Auth->request, $this->Auth->response]
         );
+        $this->Auth->storage($storage);
 
         $user = ['username' => 'mark', 'role' => 'admin'];
 
-        $this->Auth->session->expects($this->once())
-            ->method('renew');
-
-        $this->Auth->session->expects($this->once())
+        $storage->expects($this->once())
             ->method('write')
-            ->with($this->Auth->sessionKey, $user);
+            ->with($user);
 
         $this->Auth->setUser($user);
     }
@@ -1352,7 +1353,6 @@ class AuthComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $_SESSION = [];
 
-        $this->sessionKey = false;
         $this->Auth->config('authenticate', ['Basic']);
         $this->Controller->request['action'] = 'add';
 
@@ -1377,5 +1377,23 @@ class AuthComponentTest extends TestCase
         $this->assertInstanceOf('Cake\Network\Response', $this->Auth->startup($event));
 
         $this->assertEquals('/users/login', $this->Controller->testUrl);
+    }
+
+    /**
+     * test for BC getting/setting AuthComponent::$sessionKey gets/sets `key`
+     * config of session storage.
+     *
+     * @return void
+     */
+    public function testSessionKeyBC()
+    {
+        $this->assertEquals('Auth.User', $this->Auth->sessionKey);
+
+        $this->Auth->sessionKey = 'Auth.Member';
+        $this->assertEquals('Auth.Member', $this->Auth->sessionKey);
+        $this->assertEquals('Auth.Member', $this->Auth->storage()->config('key'));
+
+        $this->Auth->sessionKey = false;
+        $this->assertInstanceOf('Cake\Auth\Storage\MemoryStorage', $this->Auth->storage());
     }
 }
