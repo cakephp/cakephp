@@ -464,8 +464,7 @@ class ControllerTest extends TestCase
      */
     public function testRedirectByCode($code, $msg)
     {
-        $Controller = new Controller(null);
-        $Controller->response = new Response();
+        $Controller = new Controller(null, new Response());
 
         $response = $Controller->redirect('http://cakephp.org', (int)$code, false);
         $this->assertEquals($code, $response->statusCode());
@@ -480,8 +479,7 @@ class ControllerTest extends TestCase
      */
     public function testRedirectSameUrl()
     {
-        $Controller = new Controller(null);
-        $Controller->response = new Response();
+        $Controller = new Controller(null, new Response());
 
         $response = $Controller->redirect(null);
         $this->assertEquals(302, $response->statusCode());
@@ -496,8 +494,7 @@ class ControllerTest extends TestCase
      */
     public function testRedirectBeforeRedirectModifyingUrl()
     {
-        $Controller = new Controller(null);
-        $Controller->response = new Response();
+        $Controller = new Controller(null, new Response());
 
         $Controller->eventManager()->attach(function ($event, $url, $response) {
             $response->location('http://book.cakephp.org');
