@@ -82,7 +82,7 @@ trait RulesAwareTrait
     /**
      * Returns the RulesChecker for this instance.
      *
-     * A RulesChecker object is used to test an entity for validity 
+     * A RulesChecker object is used to test an entity for validity
      * on rules that may involve complex logic or data that
      * needs to be fetched from relevant datasources.
      *

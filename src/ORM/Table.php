@@ -1063,7 +1063,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param \Cake\ORM\Query $query The query to find with
      * @param array $options The options to find with
-     * @return \Cake\ORM\Query The qury builder
+     * @return \Cake\ORM\Query The query builder
      */
     public function findThreaded(Query $query, array $options)
     {
