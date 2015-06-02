@@ -5922,6 +5922,9 @@ class FormHelperTest extends TestCase
             'default' => true
         ]);
         $this->assertContains('value="2008" selected="selected"', $result);
+        $this->assertContains('value="2006"', $result);
+        $this->assertNotContains('value="2005"', $result);
+        $this->assertNotContains('value="2009"', $result);
     }
 
     /**
