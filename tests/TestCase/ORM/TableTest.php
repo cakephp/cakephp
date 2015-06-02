@@ -136,6 +136,9 @@ class TableTest extends TestCase
 
         $table->table('other');
         $this->assertEquals('other', $table->table());
+
+        $table->table('database.other');
+        $this->assertEquals('database.other', $table->table());
     }
 
     /**

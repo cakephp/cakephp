@@ -23,6 +23,8 @@ use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\RepositoryInterface;
+use Cake\Datasource\RulesAwareTrait;
+use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerTrait;
@@ -117,10 +119,11 @@ use RuntimeException;
  *
  * @see \Cake\Event\EventManager for reference on the events system.
  */
-class Table implements RepositoryInterface, EventListenerInterface
+class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface
 {
 
     use EventManagerTrait;
+    use RulesAwareTrait;
     use ValidatorAwareTrait;
 
     /**
@@ -136,6 +139,13 @@ class Table implements RepositoryInterface, EventListenerInterface
      * @var string
      */
     const VALIDATOR_PROVIDER_NAME = 'table';
+
+    /**
+     * The rules class name that is used.
+     *
+     * @var string
+     */
+    const RULES_CLASS = 'Cake\ORM\RulesChecker';
 
     /**
      * Name of the table as it can be found in the database
@@ -207,13 +217,6 @@ class Table implements RepositoryInterface, EventListenerInterface
      * @var string
      */
     protected $_registryAlias;
-
-    /**
-     * The domain rules to be applied to entities saved by this table
-     *
-     * @var \Cake\ORM\RulesChecker
-     */
-    protected $_rulesChecker;
 
     /**
      * Initializes a new instance
@@ -2068,73 +2071,6 @@ class Table implements RepositoryInterface, EventListenerInterface
     }
 
     /**
-     * Returns whether or not the passed entity complies with all the rules stored in
-     * the rules checker.
-     *
-     * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.
-     * @param string $operation The operation being run. Either 'create', 'update' or 'delete'.
-     * @param \ArrayObject|array $options The options To be passed to the rules.
-     * @return bool
-     */
-    public function checkRules(EntityInterface $entity, $operation = RulesChecker::CREATE, $options = null)
-    {
-        $rules = $this->rulesChecker();
-        $options = $options ?: new ArrayObject;
-        $options = is_array($options) ? new ArrayObject($options) : $options;
-
-        $event = $this->dispatchEvent(
-            'Model.beforeRules',
-            compact('entity', 'options', 'operation')
-        );
-
-        if ($event->isStopped()) {
-            return $event->result;
-        }
-
-        $result = $rules->check($entity, $operation, $options->getArrayCopy());
-        $event = $this->dispatchEvent(
-            'Model.afterRules',
-            compact('entity', 'options', 'result', 'operation')
-        );
-
-        if ($event->isStopped()) {
-            return $event->result;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Returns the rule checker for this table. A rules checker object is used to
-     * test an entity for validity on rules that may involve complex logic or data that
-     * needs to be fetched from the database or other sources.
-     *
-     * @return \Cake\ORM\RulesChecker
-     */
-    public function rulesChecker()
-    {
-        if ($this->_rulesChecker !== null) {
-            return $this->_rulesChecker;
-        }
-        $this->_rulesChecker = $this->buildRules(new RulesChecker(['repository' => $this]));
-        $this->dispatchEvent('Model.buildRules', ['rules' => $this->_rulesChecker]);
-        return $this->_rulesChecker;
-    }
-
-    /**
-     * Returns rules checker object after modifying the one that was passed. Subclasses
-     * can override this method in order to initialize the rules to be applied to
-     * entities saved by this table.
-     *
-     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
-     * @return \Cake\ORM\RulesChecker
-     */
-    public function buildRules(RulesChecker $rules)
-    {
-        return $rules;
-    }
-
-    /**
      * Get the Model callbacks this table is interested in.
      *
      * By implementing the conventional methods a table class is assumed
@@ -2168,6 +2104,17 @@ class Table implements RepositoryInterface, EventListenerInterface
             $events[$event] = $method;
         }
         return $events;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules)
+    {
+        return $rules;
     }
 
     /**

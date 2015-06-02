@@ -242,8 +242,12 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      */
-    public function sumOf($matcher)
+    public function sumOf($matcher = null)
     {
+        if ($matcher === null) {
+            return array_sum($this->toList());
+        }
+
         $callback = $this->_propertyExtractor($matcher);
         $sum = 0;
         foreach ($this as $k => $v) {
@@ -330,6 +334,11 @@ trait CollectionTrait
         $count = $iterator instanceof Countable ?
             count($iterator) :
             iterator_count($iterator);
+
+        if ($count === 0) {
+            return null;
+        }
+
         foreach ($this->take(1, $count - 1) as $last) {
             return $last;
         }

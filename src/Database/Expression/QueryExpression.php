@@ -54,7 +54,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * expression objects. Optionally, you can set the conjunction keyword to be used
      * for joining each part of this level of the expression tree.
      *
-     * @param array $conditions tree-like array structure containing all the conditions
+     * @param string|array|QueryExpression $conditions tree-like array structure containing all the conditions
      * to be added or nested inside this expression object.
      * @param array|\Cake\Database\TypeMap $types associative array of types to be associated with the values
      * passed in $conditions.
@@ -128,7 +128,7 @@ class QueryExpression implements ExpressionInterface, Countable
     /**
      * Adds a new condition to the expression object in the form "field = value".
      *
-     * @param string $field database field to be compared against value
+     * @param string $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
      * @param string $type the type name for $value as configured using the Type map.
      * If it is suffixed with "[]" and the value is an array then multiple placeholders
@@ -143,7 +143,7 @@ class QueryExpression implements ExpressionInterface, Countable
     /**
      * Adds a new condition to the expression object in the form "field != value".
      *
-     * @param string $field database field to be compared against value
+     * @param string $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
      * @param string $type the type name for $value as configured using the Type map.
      * If it is suffixed with "[]" and the value is an array then multiple placeholders
@@ -158,7 +158,7 @@ class QueryExpression implements ExpressionInterface, Countable
     /**
      * Adds a new condition to the expression object in the form "field > value".
      *
-     * @param string $field database field to be compared against value
+     * @param string $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
      * @param string $type the type name for $value as configured using the Type map.
      * @return $this
@@ -171,7 +171,7 @@ class QueryExpression implements ExpressionInterface, Countable
     /**
      * Adds a new condition to the expression object in the form "field < value".
      *
-     * @param string $field database field to be compared against value
+     * @param string $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
      * @param string $type the type name for $value as configured using the Type map.
      * @return $this
@@ -184,7 +184,7 @@ class QueryExpression implements ExpressionInterface, Countable
     /**
      * Adds a new condition to the expression object in the form "field >= value".
      *
-     * @param string $field database field to be compared against value
+     * @param string $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
      * @param string $type the type name for $value as configured using the Type map.
      * @return $this
@@ -197,7 +197,7 @@ class QueryExpression implements ExpressionInterface, Countable
     /**
      * Adds a new condition to the expression object in the form "field <= value".
      *
-     * @param string $field database field to be compared against value
+     * @param string $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
      * @param string $type the type name for $value as configured using the Type map.
      * @return $this
@@ -240,7 +240,7 @@ class QueryExpression implements ExpressionInterface, Countable
     /**
      * Adds a new condition to the expression object in the form "field LIKE value".
      *
-     * @param string $field database field to be compared against value
+     * @param string $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
      * @param string $type the type name for $value as configured using the Type map.
      * @return $this
@@ -253,7 +253,7 @@ class QueryExpression implements ExpressionInterface, Countable
     /**
      * Adds a new condition to the expression object in the form "field NOT LIKE value".
      *
-     * @param string $field database field to be compared against value
+     * @param string $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
      * @param string $type the type name for $value as configured using the Type map.
      * @return $this
@@ -267,8 +267,8 @@ class QueryExpression implements ExpressionInterface, Countable
      * Adds a new condition to the expression object in the form
      * "field IN (value1, value2)".
      *
-     * @param string $field database field to be compared against value
-     * @param array $values the value to be bound to $field for comparison
+     * @param string $field Database field to be compared against value
+     * @param string|array $values the value to be bound to $field for comparison
      * @param string $type the type name for $value as configured using the Type map.
      * @return $this
      */
@@ -300,7 +300,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * Adds a new condition to the expression object in the form
      * "field NOT IN (value1, value2)".
      *
-     * @param string $field database field to be compared against value
+     * @param string $field Database field to be compared against value
      * @param array $values the value to be bound to $field for comparison
      * @param string $type the type name for $value as configured using the Type map.
      * @return $this
@@ -609,7 +609,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * Returns an array of placeholders that will have a bound value corresponding
      * to each value in the first argument.
      *
-     * @param string $field database field to be used to bind values
+     * @param string $field Database field to be used to bind values
      * @param array $values The values to bind
      * @param string $type the type to be used to bind the values
      * @return array

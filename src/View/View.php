@@ -17,6 +17,7 @@ namespace Cake\View;
 use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\Plugin;
+use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerTrait;
 use Cake\Log\LogTrait;
@@ -56,7 +57,7 @@ use RuntimeException;
  * @property      \Cake\View\Helper\TimeHelper $Time
  * @property      \Cake\View\ViewBlock $Blocks
  */
-class View
+class View implements EventDispatcherInterface
 {
 
     use CellTrait;
@@ -550,6 +551,23 @@ class View
 
     /**
      * Start capturing output for a 'block'
+     *
+     * You can use start on a block multiple times to
+     * append or prepend content in a capture mode.
+     *
+     * ```
+     * // Append content to an existing block.
+     * $this->start('content');
+     * echo $this->fetch('content');
+     * echo 'Some new content';
+     * $this->end();
+     *
+     * // Prepend content to an existing block
+     * $this->start('content');
+     * echo 'Some new content';
+     * echo $this->fetch('content');
+     * $this->end();
+     * ```
      *
      * @param string $name The name of the block to capture for.
      * @return void

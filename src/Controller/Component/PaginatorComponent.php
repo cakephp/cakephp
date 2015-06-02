@@ -357,7 +357,9 @@ class PaginatorComponent extends Component
                 }
                 $correctAlias = ($tableAlias === $alias);
 
-                if ($correctAlias && (!$validate || $object->hasField($field))) {
+                if (!$correctAlias && !$validate) {
+                    $tableOrder[$alias . '.' . $field] = $value;
+                } elseif ($correctAlias && (!$validate || $object->hasField($field))) {
                     $tableOrder[$tableAlias . '.' . $field] = $value;
                 }
             }

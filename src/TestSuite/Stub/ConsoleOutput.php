@@ -9,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @since         3.1.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\TestSuite\Stub;
@@ -42,13 +41,21 @@ class ConsoleOutput extends ConsoleOutputBase
     /**
      * Write output to the buffer.
      *
-     * @param string $message The message to write.
-     * @param int $newlines Unused.
+     * @param string|array $message A string or an array of strings to output
+     * @param int $newlines Number of newlines to append
      * @return void
      */
     public function write($message, $newlines = 1)
     {
-        $this->_out[] = $message;
+        foreach ((array)$message as $line) {
+            $this->_out[] = $line;
+        }
+
+        $newlines--;
+        while ($newlines > 0) {
+            $this->_out[] = '';
+            $newlines--;
+        }
     }
 
     /**
