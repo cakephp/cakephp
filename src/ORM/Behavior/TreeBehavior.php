@@ -442,44 +442,17 @@ class TreeBehavior extends Behavior
      * the primary key for the table and the values are the display field for the table.
      * Values are prefixed to visually indicate relative depth in the tree.
      *
-     * Available options are:
+     * ### Options
      *
-     * - keyPath: A dot separated path to fetch the field to use for the array key, or a closure to
-     *  return the key out of the provided row.
-     * - valuePath: A dot separated path to fetch the field to use for the array value, or a closure to
-     *  return the value out of the provided row.
-     * - spacer: A string to be used as prefix for denoting the depth in the tree for each item
+     * - keyPath: A dot separated path to the field that will be the result array key, or a closure to
+     *   return the key from the provided row.
+     * - valuePath: A dot separated path to the field that is the array's value, or a closure to
+     *   return the value from the provided row.
+     * - spacer: A string to be used as prefix for denoting the depth in the tree for each item.
      *
-     * @param \Cake\ORM\Query $query Query.
+     * @param \Cake\ORM\Query $query The query object to format.
      * @param array $options Array of options as described above.
-     * @return \Cake\ORM\Query
-     */
-    public function findTreeList(Query $query, array $options)
-    {
-        $results = $this->_scope($query)
-            ->find('threaded', [
-                'parentField' => $this->config('parent'),
-                'order' => [$this->config('left') => 'ASC']
-            ]);
-        return $this->formatTreeList($results, $options);
-    }
-
-    /**
-     * Formats query as a flat list where the keys are
-     * the primary key for the table and the values are the display field for the table.
-     * Values are prefixed to visually indicate relative depth in the tree.
-     *
-     * Available options are:
-     *
-     * - keyPath: A dot separated path to fetch the field to use for the array key, or a closure to
-     *  return the key out of the provided row.
-     * - valuePath: A dot separated path to fetch the field to use for the array value, or a closure to
-     *  return the value out of the provided row.
-     * - spacer: A string to be used as prefix for denoting the depth in the tree for each item
-     *
-     * @param \Cake\ORM\Query $query Query.
-     * @param array $options Array of options as described above.
-     * @return \Cake\ORM\Query
+     * @return \Cake\ORM\Query Augmented query.
      */
     public function formatTreeList(Query $query, array $options = [])
     {
