@@ -464,8 +464,7 @@ abstract class Association
      *   will be merged with any conditions originally configured for this association
      * - fields: a list of fields in the target table to include in the result
      * - type: The type of join to be used (e.g. INNER)
-     * - matching: Indicates whether the query records should be filtered based on
-     *   the records found on this association. This will force a 'INNER JOIN'
+     *   the records found on this association
      * - aliasPath: A dot separated string representing the path of association names
      *   followed from the passed query main table to this association.
      * - propertyPath: A dot separated string representing the path of association
@@ -488,7 +487,7 @@ abstract class Association
             'foreignKey' => $this->foreignKey(),
             'conditions' => [],
             'fields' => [],
-            'type' => empty($options['matching']) ? $joinType : 'INNER',
+            'type' => $joinType,
             'table' => $target->table(),
             'finder' => $this->finder()
         ];

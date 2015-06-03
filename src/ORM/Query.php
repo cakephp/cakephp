@@ -338,6 +338,69 @@ class Query extends DatabaseQuery implements JsonSerializable
     }
 
     /**
+     * Creates a LEFT JOIN with the passed association table while preserving
+     * the foreign key matching and the custom conditions that were originally set
+     * for it.
+     *
+     * This function will add entries in the `contain` graph.
+     *
+     * ### Example:
+     *
+     * ```
+     *  // Get the count of articles per user
+     *  $usersQuery
+     *      ->select(['total_articles' => $query->func()->count('Articles.id')])
+     *      ->leftJoin('Articles')
+     *      ->group(['Users.id'])
+     *      ->autoFields(true);
+     * ```
+     *
+     * You can also customize the conditions passed to the LEFT JOIN:
+     *
+     * ```
+     *  // Get the count of articles per user with at least 5 votes
+     *  $usersQuery
+     *      ->select(['total_articles' => $query->func()->count('Articles.id')])
+     *      ->leftJoin('Articles', function ($q) {
+     *          return $q->where(['Articles.votes >=' => 5]);
+     *      })
+     *      ->group(['Users.id'])
+     *      ->autoFields(true);
+     * ```
+     *
+     * It is possible to left join deep associations by using dot notation
+     *
+     * ### Example:
+     *
+     * ```
+     *  // Total comments in articles by 'markstory'
+     *  $query
+     *   ->select(['total_comments' => $query->func()->count('Comments.id')])
+     *   ->leftJoin('Comments.Users', function ($q) {
+     *      return $q->where(['username' => 'markstory']);
+     *  )
+     *  ->group(['Users.id']);
+     * ```
+     *
+     * Please note that the query passed to the closure will only accept calling
+     * `select`, `where`, `andWhere` and `orWhere` on it. If you wish to
+     * add more complex clauses you can do it directly in the main query.
+     *
+     * @param string $assoc The association to join with
+     * @param callable $builder a function that will receive a pre-made query object
+     * that can be used to add custom conditions or selecting some fields
+     * @return $this
+     */
+    public function leftJoinWith($assoc, callable $builder = null) {
+        $this->eagerLoader()->matching($assoc, $builder, [
+            'joinType' => 'LEFT',
+            'fields' => false
+        ]);
+        $this->_dirty();
+        return $this;
+    }
+
+    /**
      * Returns a key => value array representing a single aliased field
      * that can be passed directly to the select() method.
      * The key will contain the alias and the value the actual field name.
