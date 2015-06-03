@@ -493,11 +493,10 @@ class View implements EventDispatcherInterface
             return $this->Blocks->get('content');
         }
 
-        if (empty($content)) {
-            $content = $this->Blocks->get('content');
-        } else {
-            $this->Blocks->set('content', $content);
+        if (!empty($content)) {
+             $this->Blocks->set('content', $content);
         }
+
         $this->dispatchEvent('View.beforeLayout', [$layoutFileName]);
 
         $title = $this->Blocks->get('title');
