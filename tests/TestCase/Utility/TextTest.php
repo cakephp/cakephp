@@ -449,6 +449,56 @@ This is the song that never ends.
 TEXT;
         $this->assertTextEquals($expected, $result);
     }
+    /**
+     * test wrapBlock() indentical to wrap()
+     *
+     * @return void
+     */
+    public function testWrapBlockIndenticalToWrap()
+    {
+        $text = 'This is the song that never ends. This is the song that never ends. This is the song that never ends.';
+        $result = Text::wrapBlock($text, 33);
+        $expected = Text::wrap($text, 33);
+        $this->assertTextEquals($expected, $result);
+
+        $result = Text::wrapBlock($text, ['width' => 33, 'indentAt' => 0]);
+        $expected = Text::wrap($text, ['width' => 33, 'indentAt' => 0]);
+        $this->assertTextEquals($expected, $result);
+    }
+    /**
+     * test wrapBlock() indenting from first line
+     *
+     * @return void
+     */
+    public function testWrapBlockWithIndentAt0()
+    {
+        $text = 'This is the song that never ends. This is the song that never ends. This is the song that never ends.';
+        $result = Text::wrapBlock($text, ['width' => 33, 'indent' => "\t", 'indentAt' => 0]);
+        $expected = <<<TEXT
+	This is the song that never
+	ends. This is the song that
+	never ends. This is the song
+	that never ends.
+TEXT;
+        $this->assertTextEquals($expected, $result);
+    }
+    /**
+     * test wrapBlock() indenting from second line
+     *
+     * @return void
+     */
+    public function testWrapBlockWithIndentAt1()
+    {
+        $text = 'This is the song that never ends. This is the song that never ends. This is the song that never ends.';
+        $result = Text::wrapBlock($text, ['width' => 33, 'indent' => "\t", 'indentAt' => 1]);
+        $expected = <<<TEXT
+This is the song that never ends.
+	This is the song that never
+	ends. This is the song that
+	never ends.
+TEXT;
+        $this->assertTextEquals($expected, $result);
+    }
 
     /**
      * testTruncate method
