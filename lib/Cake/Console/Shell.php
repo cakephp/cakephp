@@ -185,7 +185,6 @@ class Shell extends Object {
  */
 	public function __construct($stdout = null, $stderr = null, $stdin = null) {
 		Debugger::getInstance()->output('txt');
-		
 		if (!$this->name) {
 			$this->name = Inflector::camelize(str_replace(array('Shell', 'Task'), '', get_class($this)));
 		}
