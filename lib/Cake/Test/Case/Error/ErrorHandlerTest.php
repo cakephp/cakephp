@@ -90,6 +90,7 @@ class ErrorHandlerTest extends CakeTestCase {
  */
 	public function testHandleErrorDebugOn() {
 		set_error_handler('ErrorHandler::handleError');
+		Debugger::getInstance()->output('html');
 		$this->_restoreError = true;
 
 		ob_start();
@@ -121,6 +122,7 @@ class ErrorHandlerTest extends CakeTestCase {
  */
 	public function testErrorMapping($error, $expected) {
 		set_error_handler('ErrorHandler::handleError');
+		Debugger::getInstance()->output('html');
 		$this->_restoreError = true;
 
 		ob_start();
@@ -160,6 +162,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		}
 
 		set_error_handler('ErrorHandler::handleError');
+		Debugger::getInstance()->output('html');
 		$this->_restoreError = true;
 
 		$out .= '';
