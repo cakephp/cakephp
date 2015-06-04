@@ -2754,19 +2754,23 @@ class QueryTest extends TestCase
             ->find()
             ->leftJoinWith('articles.tags', function ($q) {
                 return $q
-                    ->select(['articles.id', 'articles.title'])
+                    ->select(['articles.id', 'articles.title', 'tags.name'])
                     ->where(['tags.name' => 'tag3']);
             })
             ->autoFields(true)
+            ->where(['ArticlesTags.tag_id IS NOT' => null])
             ->group(['authors.id'])
             ->all();
 
-        $expected = ['id' => 3, 'title' => 'Third Article'];
+        $expected = ['id' => 2, 'title' => 'Second Article'];
         $this->assertEquals(
             $expected,
             $results->first()->_matchingData['articles']->toArray()
         );
-        $this->assertNull($results->last()->_matchingData['articles']->id);
+        $this->assertEquals(
+            ['name' => 'tag3'],
+            $results->first()->_matchingData['tags']->toArray()
+        );
     }
 
     /**
