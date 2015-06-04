@@ -254,10 +254,11 @@ class BelongsToMany extends Association
         }
 
         unset($options['queryBuilder']);
+        $type = array_intersect_key($options, ['joinType' => 1, 'fields' => 1]);
         $options = ['conditions' => [$cond]] + compact('includeFields');
         $options['foreignKey'] = $this->targetForeignKey();
         $assoc = $this->_targetTable->association($junction->alias());
-        $assoc->attachTo($query, $options);
+        $assoc->attachTo($query, $options + $type);
         $query->eagerLoader()->addToJoinsMap($junction->alias(), $assoc, true);
     }
 

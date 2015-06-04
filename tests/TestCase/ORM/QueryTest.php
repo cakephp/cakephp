@@ -2707,4 +2707,36 @@ class QueryTest extends TestCase
         $this->assertEquals([1, 1, 3], $results->extract('id')->toList());
         $this->assertEquals(['id', 'name'], array_keys($results->first()->toArray()));
     }
+
+    /**
+     * Tests that leftJoinWith() creates a left join with a given association and
+     * that no fields from such association are loaded.
+     *
+     * @return void
+     */
+    public function testLeftJoinWithNested()
+    {
+        $table = TableRegistry::get('authors');
+        $articles = $table->hasMany('articles');
+        $articles->belongsToMany('tags');
+
+        $results = $table
+            ->find()
+            ->select(['total_articles' => 'count(articles.id)'])
+            ->leftJoinWith('articles.tags', function ($q) {
+                return $q->where(['tags.name' => 'tag3']);
+            })
+            ->autoFields(true)
+            ->group(['authors.id']);
+
+        $expected = [
+            1 => 2,
+            2 => 0,
+            3 => 1,
+            4 => 0
+        ];
+        $this->assertEquals($expected, $results->combine('id', 'total_articles')->toArray());
+        $fields = ['total_articles', 'id', 'name'];
+        $this->assertEquals($fields, array_keys($results->first()->toArray()));
+    }
 }
