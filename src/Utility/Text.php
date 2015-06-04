@@ -342,7 +342,7 @@ class Text
         $wrapped = self::wrap($text, $options);
 
         if (!empty($options['indent'])) {
-            $indentationLength = strlen($options['indent']);
+            $indentationLength = mb_strlen($options['indent']);
             $chunks = explode("\n", $wrapped);
             $count = count($chunks);
             if ($count < 2) {
@@ -350,7 +350,7 @@ class Text
             }
             $toRewrap = '';
             for ($i = $options['indentAt']; $i < $count; $i++) {
-                $toRewrap .= substr($chunks[$i], $indentationLength) . ' ';
+                $toRewrap .= mb_substr($chunks[$i], $indentationLength) . ' ';
                 unset($chunks[$i]);
             }
             $options['width'] -= $indentationLength;

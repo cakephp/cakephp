@@ -504,6 +504,23 @@ TEXT;
     }
 
     /**
+     * test wrapBlock() indenting with multibyte caracters
+     *
+     * @return void
+     */
+    public function testWrapBlockIndentWithMultibyte()
+    {
+        $text = 'This is the song that never ends. 这是永远不会结束的歌曲。 This is the song that never ends.';
+        $result = Text::wrapBlock($text, ['width' => 33, 'indent' => " → ", 'indentAt' => 1]);
+        $expected = <<<TEXT
+This is the song that never ends.
+ → 这是永远不会结束的歌曲。 This is the song
+ → that never ends.
+TEXT;
+        $this->assertTextEquals($expected, $result);
+    }
+
+    /**
      * testTruncate method
      *
      * @return void
