@@ -35,7 +35,7 @@ class SqlserverTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->skipUnless(defined('PDO::SQLSRV_ENCODING_UTF8'), 'SQL Server extension not present');
+        $this->missingExtension = !defined('PDO::SQLSRV_ENCODING_UTF8');
     }
 
     /**
@@ -45,6 +45,7 @@ class SqlserverTest extends TestCase
      */
     public function testConnectionConfigCustom()
     {
+        $this->skipIf($this->missingExtension, 'pdo_sqlsrv is not installed.');
         $config = [
             'persistent' => false,
             'host' => 'foo',
