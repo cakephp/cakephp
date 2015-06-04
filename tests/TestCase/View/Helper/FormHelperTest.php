@@ -5830,6 +5830,28 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test minYear being prior to the unix epoch
+     *
+     * @return void
+     */
+    public function testInputDatetimePreEpoch()
+    {
+        $start = date('Y') - 80;
+        $end = date('Y') - 18;
+        $result = $this->Form->input('birth_year', [
+            'type' => 'date',
+            'label' => 'Birth Year',
+            'minYear' => $start,
+            'maxYear' => $end,
+            'month' => false,
+            'day' => false,
+        ]);
+        $this->assertContains('value="' . $start . '">' . $start, $result);
+        $this->assertContains('value="' . $end . '" selected="selected">' . $end, $result);
+        $this->assertNotContains('value="00">00', $result);
+    }
+
+    /**
      * testYearAutoExpandRange method
      *
      * @return void
