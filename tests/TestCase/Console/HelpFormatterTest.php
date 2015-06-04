@@ -155,6 +155,9 @@ txt;
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addSubcommand('method', ['help' => 'This is another command'])
             ->addOption('test', ['help' => 'A test option.']);
+        $parser->addSubcommand('plugin', ['help' =>
+            'Create the directory structure, AppController class and testing setup for a new plugin. ' .
+            'Can create plugins in any of your bootstrapped plugin paths.']);
 
         $formatter = new HelpFormatter($parser);
         $result = $formatter->text();
@@ -165,6 +168,9 @@ cake mycommand [subcommand] [-h] [--test]
 <info>Subcommands:</info>
 
 method  This is another command
+plugin  Create the directory structure, AppController class and testing
+        setup for a new plugin. Can create plugins in any of your
+        bootstrapped plugin paths.
 
 To see help on a subcommand use <info>`cake mycommand [subcommand] --help`</info>
 

@@ -76,7 +76,7 @@ class HelpFormatter
             $out[] = '';
             $max = $this->_getMaxLength($subcommands) + 2;
             foreach ($subcommands as $command) {
-                $out[] = Text::wrap($command->help($max), [
+                $out[] = Text::wrapBlock($command->help($max), [
                     'width' => $width,
                     'indent' => str_repeat(' ', $max),
                     'indentAt' => 1
@@ -93,7 +93,7 @@ class HelpFormatter
             $out[] = '<info>Options:</info>';
             $out[] = '';
             foreach ($options as $option) {
-                $out[] = Text::wrap($option->help($max), [
+                $out[] = Text::wrapBlock($option->help($max), [
                     'width' => $width,
                     'indent' => str_repeat(' ', $max),
                     'indentAt' => 1
@@ -108,7 +108,7 @@ class HelpFormatter
             $out[] = '<info>Arguments:</info>';
             $out[] = '';
             foreach ($arguments as $argument) {
-                $out[] = Text::wrap($argument->help($max), [
+                $out[] = Text::wrapBlock($argument->help($max), [
                     'width' => $width,
                     'indent' => str_repeat(' ', $max),
                     'indentAt' => 1
