@@ -730,10 +730,15 @@ abstract class Association
             $newContain[$options['aliasPath'] . '.' . $alias] = $value;
         }
 
-        $query->contain($newContain);
+        $eagerLoader = $query->eagerLoader();
+        $eagerLoader->contain($newContain);
 
         foreach ($matching as $alias => $value) {
-            $query->matching($options['aliasPath'] . '.' . $alias, $value['queryBuilder']);
+            $eagerLoader->matching(
+                $options['aliasPath'] . '.' . $alias,
+                $value['queryBuilder'],
+                $value
+            );
         }
     }
 
