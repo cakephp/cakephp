@@ -546,11 +546,10 @@ class ShellTest extends TestCase
             ->method('askChoice')
             ->will($this->returnValue('a'));
 
-        foreach ($files as $file => $content) {
+        foreach ($files as $file => $contents) {
             touch($file);
             $this->assertTrue(file_exists($file));
 
-            $contents = "My content";
             $result = $this->Shell->createFile($file, $contents);
             $this->assertTrue(file_exists($file));
             $this->assertTextEquals($contents, file_get_contents($file));
