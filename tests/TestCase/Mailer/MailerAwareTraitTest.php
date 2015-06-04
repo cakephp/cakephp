@@ -33,7 +33,6 @@ class Stub
 class MailerAwareTraitTest extends TestCase
 {
 
-
     /**
      * Test getMailer
      *

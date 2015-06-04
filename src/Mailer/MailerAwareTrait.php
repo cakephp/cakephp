@@ -39,9 +39,9 @@ trait MailerAwareTrait
      * Returns a mailer instance.
      *
      * @param string $name Mailer's name.
-     * @param Cake\Mailer\Email|null $email Email instance.
-     * @return Cake\Mailer\Mailer
-     * @throws Cake\Mailer\Exception\MissingMailerException if undefined mailer class.
+     * @param \Cake\Mailer\Email|null $email Email instance.
+     * @return \Cake\Mailer\Mailer
+     * @throws \Cake\Mailer\Exception\MissingMailerException if undefined mailer class.
      */
     public function getMailer($name, Email $email = null)
     {
@@ -55,7 +55,7 @@ trait MailerAwareTrait
 
         $className = App::className($name, 'Mailer', 'Mailer');
 
-        if (empty($className) || !class_exists($className)) {
+        if (empty($className)) {
             throw new MissingMailerException(compact('name'));
         }
 
