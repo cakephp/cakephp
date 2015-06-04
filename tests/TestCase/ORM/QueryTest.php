@@ -2739,4 +2739,33 @@ class QueryTest extends TestCase
         $fields = ['total_articles', 'id', 'name'];
         $this->assertEquals($fields, array_keys($results->first()->toArray()));
     }
+
+    /**
+     * Tests that leftJoinWith() can be used with select()
+     *
+     * @return void
+     */
+    public function testLeftJoinWithSelect()
+    {
+        $table = TableRegistry::get('authors');
+        $articles = $table->hasMany('articles');
+        $articles->belongsToMany('tags');
+        $results = $table
+            ->find()
+            ->leftJoinWith('articles.tags', function ($q) {
+                return $q
+                    ->select(['articles.id', 'articles.title'])
+                    ->where(['tags.name' => 'tag3']);
+            })
+            ->autoFields(true)
+            ->group(['authors.id'])
+            ->all();
+
+        $expected = ['id' => 3, 'title' => 'Third Article'];
+        $this->assertEquals(
+            $expected,
+            $results->first()->_matchingData['articles']->toArray()
+        );
+        $this->assertNull($results->last()->_matchingData['articles']->id);
+    }
 }
