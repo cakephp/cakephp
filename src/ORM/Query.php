@@ -401,6 +401,40 @@ class Query extends DatabaseQuery implements JsonSerializable
     }
 
     /**
+     * Creates an INNER JOIN with the passed association table while preserving
+     * the foreign key matching and the custom conditions that were originally set
+     * for it.
+     *
+     * This function will add entries in the `contain` graph.
+     *
+     * ### Example:
+     *
+     * ```
+     *  // Bring only articles that were tagged with 'cake'
+     *  $query->innerJoinWith('Tags', function ($q) {
+     *      return $q->where(['name' => 'cake']);
+     *  );
+     * ```
+     *
+     * This function works the same as `matching()` with the difference that it
+     * will select no fields from the association.
+     *
+     * @param string $assoc The association to join with
+     * @param callable $builder a function that will receive a pre-made query object
+     * that can be used to add custom conditions or selecting some fields
+     * @return $this
+     * @see \Cake\ORM\Query::matching()
+     */
+    public function innerJoinWith($assoc, callable $builder = null) {
+        $this->eagerLoader()->matching($assoc, $builder, [
+            'joinType' => 'INNER',
+            'fields' => false
+        ]);
+        $this->_dirty();
+        return $this;
+    }
+
+    /**
      * Returns a key => value array representing a single aliased field
      * that can be passed directly to the select() method.
      * The key will contain the alias and the value the actual field name.

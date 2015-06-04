@@ -2768,4 +2768,75 @@ class QueryTest extends TestCase
         );
         $this->assertNull($results->last()->_matchingData['articles']->id);
     }
+
+    /**
+     * Tests innerJoinWith()
+     *
+     * @return void
+     */
+    public function testInnerJoinWith()
+    {
+        $table = TableRegistry::get('authors');
+        $table->hasMany('articles');
+        $results = $table
+            ->find()
+            ->innerJoinWith('articles', function ($q) {
+                return $q->where(['articles.title' => 'Third Article']);
+            });
+        $expected = [
+            [
+            'id' => 1,
+            'name' => 'mariano'
+            ]
+        ];
+        $this->assertEquals($expected, $results->hydrate(false)->toArray());
+    }
+
+    /**
+     * Tests innerJoinWith() with nested associations
+     *
+     * @return void
+     */
+    public function testInnerJoinWithNested()
+    {
+        $table = TableRegistry::get('authors');
+        $articles = $table->hasMany('articles');
+        $articles->belongsToMany('tags');
+        $results = $table
+            ->find()
+            ->innerJoinWith('articles.tags', function ($q) {
+                return $q->where(['tags.name' => 'tag3']);
+            });
+        $expected = [
+            [
+            'id' => 3,
+            'name' => 'larry'
+            ]
+        ];
+        $this->assertEquals($expected, $results->hydrate(false)->toArray());
+    }
+
+    /**
+     * Tests innerJoinWith() with select
+     *
+     * @return void
+     */
+    public function testInnerJoinWithSelect()
+    {
+        $table = TableRegistry::get('authors');
+        $table->hasMany('articles');
+        $results = $table
+            ->find()
+            ->autoFields(true)
+            ->innerJoinWith('articles', function ($q) {
+                return $q->select(['id', 'author_id', 'title', 'body', 'published']);
+            })
+            ->toArray();
+
+        $expected = $table
+            ->find()
+            ->matching('articles')
+            ->toArray();
+        $this->assertEquals($expected, $results);
+    }
 }
