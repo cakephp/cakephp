@@ -449,6 +449,7 @@ This is the song that never ends.
 TEXT;
         $this->assertTextEquals($expected, $result);
     }
+
     /**
      * test wrapBlock() indentical to wrap()
      *
@@ -465,6 +466,7 @@ TEXT;
         $expected = Text::wrap($text, ['width' => 33, 'indentAt' => 0]);
         $this->assertTextEquals($expected, $result);
     }
+
     /**
      * test wrapBlock() indenting from first line
      *
@@ -482,6 +484,7 @@ TEXT;
 TEXT;
         $this->assertTextEquals($expected, $result);
     }
+
     /**
      * test wrapBlock() indenting from second line
      *
