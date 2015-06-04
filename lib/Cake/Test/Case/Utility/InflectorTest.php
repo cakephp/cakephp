@@ -184,6 +184,29 @@ class InflectorTest extends CakeTestCase {
 	}
 
 /**
+ * Test that overlapping irregulars don't collide.
+ *
+ * @return void
+ */
+	public function testSingularizeMultiWordIrregular() {
+		Inflector::rules('singular', array(
+			'irregular' => array(
+				'preguntas_frecuentes' => 'pregunta_frecuente',
+				'categorias_preguntas_frecuentes' => 'categoria_pregunta_frecuente',
+			)
+		));
+		$this->assertEquals('pregunta_frecuente', Inflector::singularize('preguntas_frecuentes'));
+		$this->assertEquals(
+			'categoria_pregunta_frecuente',
+			Inflector::singularize('categorias_preguntas_frecuentes')
+		);
+		$this->assertEquals(
+			'faq_categoria_pregunta_frecuente',
+			Inflector::singularize('faq_categorias_preguntas_frecuentes')
+		);
+	}
+
+/**
  * testInflectingPlurals method
  *
  * @return void
@@ -254,6 +277,29 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEquals(Inflector::pluralize('sieve'), 'sieves');
 		$this->assertEquals(Inflector::pluralize('blue_octopus'), 'blue_octopuses');
 		$this->assertEquals(Inflector::pluralize(''), '');
+	}
+
+/**
+ * Test that overlapping irregulars don't collide.
+ *
+ * @return void
+ */
+	public function testPluralizeMultiWordIrregular() {
+		Inflector::rules('plural', array(
+			'irregular' => array(
+				'pregunta_frecuente' => 'preguntas_frecuentes',
+				'categoria_pregunta_frecuente' => 'categorias_preguntas_frecuentes',
+			)
+		));
+		$this->assertEquals('preguntas_frecuentes', Inflector::pluralize('pregunta_frecuente'));
+		$this->assertEquals(
+			'categorias_preguntas_frecuentes',
+			Inflector::pluralize('categoria_pregunta_frecuente')
+		);
+		$this->assertEquals(
+			'faq_categorias_preguntas_frecuentes',
+			Inflector::pluralize('faq_categoria_pregunta_frecuente')
+		);
 	}
 
 /**
