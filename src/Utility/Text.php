@@ -342,27 +342,28 @@ class Text
         $wrapped = self::wrap($text, $options);
 
         if (!empty($options['indent'])) {
-            $indentationLength = !empty($options['indent']) ? strlen($options['indent']) : 0;
+            $indentationLength = strlen($options['indent']);
             $chunks = explode("\n", $wrapped);
-            if (count($chunks) < 2) {
+            $count = count($chunks);
+            if ($count < 2) {
                 return $wrapped;
             }
             $toRewrap = '';
-            for ($i = $options['indentAt'], $len = count($chunks); $i < $len; $i++) {
+            for ($i = $options['indentAt']; $i < $count; $i++) {
                 $toRewrap .= substr($chunks[$i], $indentationLength) . ' ';
                 unset($chunks[$i]);
             }
-            $options['width'] = $options['width'] - $indentationLength;
+            $options['width'] -= $indentationLength;
             $options['indentAt'] = 0;
             $rewrapped = self::wrap($toRewrap, $options);
             $newChunks = explode("\n", $rewrapped);
 
             $chunks = array_merge($chunks, $newChunks);
-            $wrapped =  implode("\n", $chunks);
+            $wrapped = implode("\n", $chunks);
         }
         return $wrapped;
     }
-    
+
     /**
      * Unicode and newline aware version of wordwrap.
      *
