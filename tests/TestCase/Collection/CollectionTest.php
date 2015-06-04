@@ -1381,4 +1381,56 @@ class CollectionTest extends TestCase
         $collection = new Collection(['a' => 1, 'b' => 4, 'c' => 6]);
         $this->assertEquals(11, $collection->sumOf());
     }
+
+    /**
+     * Tests using extract with the {*} notation
+     *
+     * @return void
+     */
+    public function testUnfoldedExtract()
+    {
+        $items = [
+            ['comments' => [['id' => 1], ['id' => 2]]],
+            ['comments' => [['id' => 3], ['id' => 4]]],
+            ['comments' => [['id' => 7], ['nope' => 8]]],
+        ];
+
+        $extracted = (new Collection($items))->extract('comments.{*}.id');
+        $this->assertEquals([1, 2, 3, 4, 7, null], $extracted->toList());
+
+        $items = [
+            [
+                'comments' => [
+                    [
+                        'voters' => [['id' => 1], ['id' => 2]]
+                    ]
+                ]
+            ],
+            [
+                'comments' => [
+                    [
+                        'voters' => [['id' => 3], ['id' => 4]]
+                    ]
+                ]
+            ],
+            [
+                'comments' => [
+                    [
+                        'voters' => [['id' => 5], ['nope' => 'fail'], ['id' => 6]]
+                    ]
+                ]
+            ],
+            [
+                'comments' => [
+                    [
+                        'not_voters' => [['id' => 5]]
+                    ]
+                ]
+            ],
+            ['not_comments' => []]
+        ];
+        $extracted = (new Collection($items))->extract('comments.{*}.voters.{*}.id');
+        $expected = [1, 2, 3, 4, 5, null, 6];
+        $this->assertEquals($expected, $extracted->toList());
+    }
 }

@@ -80,10 +80,13 @@ trait RulesAwareTrait
     }
 
     /**
-     * Returns the rule checker for this table. A rules checker object is used to
-     * test an entity for validity on rules that may involve complex logic or data that
-     * needs to be fetched from the database or other sources.
+     * Returns the RulesChecker for this instance.
      *
+     * A RulesChecker object is used to test an entity for validity
+     * on rules that may involve complex logic or data that
+     * needs to be fetched from relevant datasources.
+     *
+     * @see \Cake\Datasource\RulesChecker
      * @return \Cake\Datasource\RulesChecker
      */
     public function rulesChecker()
@@ -98,9 +101,10 @@ trait RulesAwareTrait
     }
 
     /**
-     * Returns rules checker object after modifying the one that was passed. Subclasses
-     * can override this method in order to initialize the rules to be applied to
-     * entities saved by this table.
+     * Returns a RulesChecker object after modifying the one that was supplied.
+     *
+     * Subclasses should override this method in order to initialize the rules to be applied to
+     * entities saved by this instance.
      *
      * @param \Cake\Datasource\RulesChecker $rules The rules object to be modified.
      * @return \Cake\Datasource\RulesChecker

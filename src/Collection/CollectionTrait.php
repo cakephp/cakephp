@@ -158,11 +158,19 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      *
-     * @return \Cake\Collection\Iterator\ExtractIterator
      */
     public function extract($matcher)
     {
-        return new ExtractIterator($this->unwrap(), $matcher);
+        $extractor = new ExtractIterator($this->unwrap(), $matcher);
+        if (is_string($matcher) && strpos($matcher, '{*}') !== false) {
+            $extractor = $extractor
+                ->filter(function ($data) {
+                    return $data !== null && ($data instanceof \Traversable || is_array($data));
+                })
+                ->unfold();
+        }
+
+        return $extractor;
     }
 
     /**

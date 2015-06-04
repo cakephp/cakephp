@@ -38,6 +38,27 @@ class AssetFilter extends DispatcherFilter
     protected $_priority = 9;
 
     /**
+     * The amount of time to cache the asset.
+     *
+     * @var string
+     */
+    protected $_cacheTime = '+1 day';
+
+    /**
+     *
+     * Constructor.
+     *
+     * @param array $config Array of config.
+     */
+    public function __construct($config = [])
+    {
+        if (!empty($config['cacheTime'])) {
+            $this->_cacheTime = $config['cacheTime'];
+        }
+        parent::__construct($config);
+    }
+
+    /**
      * Checks if a requested asset exists and sends it to the browser
      *
      * @param \Cake\Event\Event $event containing the request and response object
@@ -119,7 +140,7 @@ class AssetFilter extends DispatcherFilter
         if (!$compressionEnabled) {
             $response->header('Content-Length', filesize($assetFile));
         }
-        $response->cache(filemtime($assetFile));
+        $response->cache(filemtime($assetFile), $this->_cacheTime);
         $response->sendHeaders();
         readfile($assetFile);
         if ($compressionEnabled) {
