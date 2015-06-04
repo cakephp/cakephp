@@ -2758,7 +2758,7 @@ class QueryTest extends TestCase
                     ->where(['tags.name' => 'tag3']);
             })
             ->autoFields(true)
-            ->where(['ArticlesTags.tag_id IS NOT' => null])
+            ->where(['ArticlesTags.tag_id' => 3])
             ->group(['authors.id'])
             ->all();
 
