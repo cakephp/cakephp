@@ -32,14 +32,61 @@ trait ExtractTrait
      */
     protected function _propertyExtractor($callback)
     {
-        if (is_string($callback)) {
-            $path = explode('.', $callback);
-            $callback = function ($element) use ($path) {
+        if (!is_string($callback)) {
+            return $callback;
+        }
+
+        $path = explode('.', $callback);
+
+        if (strpos($callback, '{*}') !== false) {
+            return function ($element) use ($path) {
                 return $this->_extract($element, $path);
             };
         }
 
-        return $callback;
+        return function ($element) use ($path) {
+            return $this->_simpleExtract($element, $path);
+        };
+    }
+
+    /**
+     * Returns a column from $data that can be extracted
+     * by iterating over the column names contained in $path.
+     * It will return arrays for elements in represented with `{*}`
+     *
+     * @param array|\ArrayAccess $data Data.
+     * @param array $path Path to extract from.
+     * @return mixed
+     */
+    protected function _extract($data, $path)
+    {
+        $value = null;
+        $collectionTransform = false;
+
+        foreach ($path as $i => $column) {
+            if ($column === '{*}') {
+                $collectionTransform = true;
+                continue;
+            }
+
+            if ($collectionTransform &&
+                !($data instanceof \Traversable || is_array($data))) {
+                return null;
+            }
+
+            if ($collectionTransform) {
+                $rest = implode('.', array_slice($path, $i));
+                return (new Collection($data))->extract($rest);
+            }
+
+            if (!isset($data[$column])) {
+                return null;
+            }
+
+            $value = $data[$column];
+            $data = $value;
+        }
+        return $value;
     }
 
     /**
@@ -50,7 +97,7 @@ trait ExtractTrait
      * @param array $path Path to extract from.
      * @return mixed
      */
-    protected function _extract($data, $path)
+    protected function _simpleExtract($data, $path)
     {
         $value = null;
         foreach ($path as $column) {
