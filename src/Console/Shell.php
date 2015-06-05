@@ -614,11 +614,15 @@ class Shell
 
         if (is_file($path) && empty($this->params['force']) && $this->interactive) {
             $this->_io->out(sprintf('<warning>File `%s` exists</warning>', $path));
-            $key = $this->_io->askChoice('Do you want to overwrite?', ['y', 'n', 'q'], 'n');
+            $key = $this->_io->askChoice('Do you want to overwrite?', ['y', 'n', 'a', 'q'], 'n');
 
             if (strtolower($key) === 'q') {
                 $this->_io->out('<error>Quitting</error>.', 2);
                 return $this->_stop();
+            }
+            if (strtolower($key) === 'a') {
+                $this->params['force'] = true;
+                $key = 'y';
             }
             if (strtolower($key) !== 'y') {
                 $this->_io->out(sprintf('Skip `%s`', $path), 2);
