@@ -368,6 +368,15 @@ class Query extends DatabaseQuery implements JsonSerializable
      *      ->autoFields(true);
      * ```
      *
+     * This will create the following SQL:
+     *
+     * ```
+     *  SELECT COUNT(Articles.id) AS total_articles, Users.*
+     *  FROM users Users
+     *  LEFT JOIN articles Articles ON Articles.user_id = Users.id AND Articles.votes >= 5
+     *  GROUP BY USers.id
+     * ```
+     *
      * It is possible to left join deep associations by using dot notation
      *
      * ### Example:
@@ -414,6 +423,16 @@ class Query extends DatabaseQuery implements JsonSerializable
      *  $query->innerJoinWith('Tags', function ($q) {
      *      return $q->where(['name' => 'cake']);
      *  );
+     * ```
+     *
+     * This will create the following SQL:
+     *
+     * ```
+     *  SELECT Articles.*
+     *  FROM articles Articles
+     *  INNER JOIN tags Tags ON Tags.name = 'cake'
+     *  INNER JOIN articles_tags ArticlesTags ON ArticlesTags.tag_id = Tags.id
+     *    AND ArticlesTags.articles_id = Articles.id
      * ```
      *
      * This function works the same as `matching()` with the difference that it

@@ -2702,7 +2702,8 @@ class QueryTest extends TestCase
         $results = $table
             ->find()
             ->leftJoinWith('articles')
-            ->where(['articles.id IS NOT' => null]);
+            ->where(['articles.id IS NOT' => null])
+            ->order(['authors.id']);
 
         $this->assertEquals([1, 1, 3], $results->extract('id')->toList());
         $this->assertEquals(['id', 'name'], array_keys($results->first()->toArray()));
@@ -2759,7 +2760,7 @@ class QueryTest extends TestCase
             })
             ->autoFields(true)
             ->where(['ArticlesTags.tag_id' => 3])
-            ->group(['authors.id'])
+            ->distinct(['authors.id'])
             ->all();
 
         $expected = ['id' => 2, 'title' => 'Second Article'];
