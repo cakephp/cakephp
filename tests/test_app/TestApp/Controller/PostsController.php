@@ -47,4 +47,14 @@ class PostsController extends AppController
         ]);
         $this->set('test', 'value');
     }
+
+    /**
+     * Stub get method
+     *
+     * @return void
+     */
+    public function get()
+    {
+        // Do nothing.
+    }
 }
