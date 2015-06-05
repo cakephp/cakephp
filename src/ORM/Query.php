@@ -400,7 +400,8 @@ class Query extends DatabaseQuery implements JsonSerializable
      * that can be used to add custom conditions or selecting some fields
      * @return $this
      */
-    public function leftJoinWith($assoc, callable $builder = null) {
+    public function leftJoinWith($assoc, callable $builder = null)
+    {
         $this->eagerLoader()->matching($assoc, $builder, [
             'joinType' => 'LEFT',
             'fields' => false
@@ -444,7 +445,8 @@ class Query extends DatabaseQuery implements JsonSerializable
      * @return $this
      * @see \Cake\ORM\Query::matching()
      */
-    public function innerJoinWith($assoc, callable $builder = null) {
+    public function innerJoinWith($assoc, callable $builder = null)
+    {
         $this->eagerLoader()->matching($assoc, $builder, [
             'joinType' => 'INNER',
             'fields' => false
