@@ -350,7 +350,7 @@ class Query extends DatabaseQuery implements JsonSerializable
      *  // Get the count of articles per user
      *  $usersQuery
      *      ->select(['total_articles' => $query->func()->count('Articles.id')])
-     *      ->leftJoin('Articles')
+     *      ->leftJoinWith('Articles')
      *      ->group(['Users.id'])
      *      ->autoFields(true);
      * ```
@@ -361,7 +361,7 @@ class Query extends DatabaseQuery implements JsonSerializable
      *  // Get the count of articles per user with at least 5 votes
      *  $usersQuery
      *      ->select(['total_articles' => $query->func()->count('Articles.id')])
-     *      ->leftJoin('Articles', function ($q) {
+     *      ->leftJoinWith('Articles', function ($q) {
      *          return $q->where(['Articles.votes >=' => 5]);
      *      })
      *      ->group(['Users.id'])
@@ -385,7 +385,7 @@ class Query extends DatabaseQuery implements JsonSerializable
      *  // Total comments in articles by 'markstory'
      *  $query
      *   ->select(['total_comments' => $query->func()->count('Comments.id')])
-     *   ->leftJoin('Comments.Users', function ($q) {
+     *   ->leftJoinWith('Comments.Users', function ($q) {
      *      return $q->where(['username' => 'markstory']);
      *  )
      *  ->group(['Users.id']);
