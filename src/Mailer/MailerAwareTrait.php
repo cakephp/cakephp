@@ -49,7 +49,7 @@ trait MailerAwareTrait
             return $this->_mailers[$name];
         }
 
-        if (is_null($email)) {
+        if ($email === null) {
             $email = new Email();
         }
 
