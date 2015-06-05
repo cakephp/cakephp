@@ -500,7 +500,6 @@ class Inflector {
  */
 	public static function humanize($lowerCaseAndUnderscoredWord) {
 		if (!($result = self::_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord))) {
-			$lowerCaseAndUnderscoredWord = self::underscore($lowerCaseAndUnderscoredWord);
 			$result = explode(' ', str_replace('_', ' ', $lowerCaseAndUnderscoredWord));
 			foreach ($result as &$word) {
 				$word = mb_strtoupper(mb_substr($word, 0, 1)) . mb_substr($word, 1);

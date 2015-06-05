@@ -460,6 +460,20 @@ class InflectorTest extends CakeTestCase {
 		$this->assertSame(Inflector::underscore(false), '');
 	}
 
+
+/**
+ * Test camelize()
+ *
+ * @return void
+ */
+	public function testCamelize() {
+		$this->assertSame('BlogArticles', Inflector::camelize('blog_articles'));
+		$this->assertSame('BlogArticles', Inflector::camelize('blog articles'));
+		$this->assertSame('MyPlugin.MyClass', Inflector::camelize('MyPlugin.MyClass'));
+		$this->assertSame('MyPlugin.MyClass', Inflector::camelize('my_plugin.MyClass'));
+		$this->assertSame('MyPlugin.myClass', Inflector::camelize('MyPlugin.my_class'));
+	}
+
 /**
  * testVariableNaming method
  *
