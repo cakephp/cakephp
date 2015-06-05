@@ -504,10 +504,10 @@ class InflectorTest extends CakeTestCase {
  * @return void
  */
 	public function testTableNaming() {
-		$this->assertEquals(Inflector::tableize('ArtistsGenre'), 'artists_genres');
-		$this->assertEquals(Inflector::tableize('FileSystem'), 'file_systems');
-		$this->assertEquals(Inflector::tableize('News'), 'news');
-		$this->assertEquals(Inflector::tableize('Bureau'), 'bureaus');
+		$this->assertEquals('artists_genres', Inflector::tableize('ArtistsGenre'));
+		$this->assertEquals('file_systems', Inflector::tableize('FileSystem'));
+		$this->assertEquals('news', Inflector::tableize('News'));
+		$this->assertEquals('bureaus', Inflector::tableize('Bureau'));
 	}
 
 /**
@@ -516,11 +516,12 @@ class InflectorTest extends CakeTestCase {
  * @return void
  */
 	public function testHumanization() {
-		$this->assertEquals(Inflector::humanize('posts'), 'Posts');
-		$this->assertEquals(Inflector::humanize('posts_tags'), 'Posts Tags');
-		$this->assertEquals(Inflector::humanize('file_systems'), 'File Systems');
-		$this->assertEquals(Inflector::humanize('hello_wörld'), 'Hello Wörld');
-		$this->assertEquals(Inflector::humanize('福岡_city'), '福岡 City');
+		$this->assertEquals('Posts', Inflector::humanize('posts'));
+		$this->assertEquals('Posts Tags', Inflector::humanize('posts_tags'));
+		$this->assertEquals('File Systems', Inflector::humanize('file_systems'));
+		$this->assertEquals('FiLe SysTems', Inflector::humanize('FiLe_SysTems'));
+		$this->assertEquals('Hello Wörld', Inflector::humanize('hello_wörld'));
+		$this->assertEquals('福岡 City', Inflector::humanize('福岡_city'));
 	}
 
 /**
