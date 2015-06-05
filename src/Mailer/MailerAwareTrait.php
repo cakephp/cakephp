@@ -28,12 +28,6 @@ use InvalidArgumentException;
  */
 trait MailerAwareTrait
 {
-    /**
-     * Instantiated mailers' stack.
-     *
-     * @var array
-     */
-    protected $_mailers = [];
 
     /**
      * Returns a mailer instance.
@@ -45,10 +39,6 @@ trait MailerAwareTrait
      */
     public function getMailer($name, Email $email = null)
     {
-        if (isset($this->_mailers[$name])) {
-            return $this->_mailers[$name];
-        }
-
         if ($email === null) {
             $email = new Email();
         }
