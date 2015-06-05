@@ -24,7 +24,6 @@ class Stub
 {
 
     use MailerAwareTrait;
-
 }
 
 /**
