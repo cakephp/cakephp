@@ -2650,6 +2650,35 @@ class QueryTest extends TestCase
         $this->assertEquals(2, $result->_matchingData['tags']->id);
     }
 
+     /**
+     * Tests that select() can be called with Table and Association
+     * instance
+     *
+     * @return void
+     */
+    public function testSelectWithTableAndAssociationInstance()
+    {
+        $table = TableRegistry::get('articles');
+        $table->belongsTo('authors');
+        $result = $table
+            ->find()
+            ->select(['foo' => 'Authors.id'])
+            ->select($table)
+            ->select($table->authors)
+            ->contain(['authors'])
+            ->first();
+
+        $expected = $table
+            ->find()
+            ->select(['foo' => 'Authors.id'])
+            ->autoFields(true)
+            ->contain(['authors'])
+            ->first();
+
+        $this->assertNotEmpty($result);
+        $this->assertEquals($expected, $result);
+    }
+
     /**
      * Tests that isEmpty() can be called on a query
      *

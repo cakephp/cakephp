@@ -125,6 +125,30 @@ class Query extends DatabaseQuery implements JsonSerializable
     }
 
     /**
+     * {@inheritDocs}
+     *
+     * If you pass an instance of a `Cake\ORM\Table` or `Cake\ORM\Association` class,
+     * all the fields in the schema of the table or the association will be added to
+     * the select clause.
+     *
+     * @param array|ExpressionInterface|string|\Cake\ORM\Table|\Cake\ORM\Association $fields fields
+     * to be added to the list.
+     * @param bool $overwrite whether to reset fields with passed list or not
+     */
+    public function select($fields = [], $overwrite = false)
+    {
+        if ($fields instanceof Association) {
+            $fields = $fields->target();
+        }
+
+        if ($fields instanceof Table) {
+            $fields = $this->aliasFields($fields->schema()->columns(), $fields->alias());
+        }
+
+        return parent::select($fields, $overwrite);
+    }
+
+    /**
      * Hints this object to associate the correct types when casting conditions
      * for the database. This is done by extracting the field types from the schema
      * associated to the passed table object. This prevents the user from repeating
