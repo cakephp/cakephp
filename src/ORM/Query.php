@@ -125,7 +125,7 @@ class Query extends DatabaseQuery implements JsonSerializable
     }
 
     /**
-     * {@inheritDocs}
+     * {@inheritDoc}
      *
      * If you pass an instance of a `Cake\ORM\Table` or `Cake\ORM\Association` class,
      * all the fields in the schema of the table or the association will be added to

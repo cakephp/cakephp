@@ -2662,7 +2662,7 @@ class QueryTest extends TestCase
         $table->belongsTo('authors');
         $result = $table
             ->find()
-            ->select(['foo' => 'Authors.id'])
+            ->select(['foo' => '1 + 1'])
             ->select($table)
             ->select($table->authors)
             ->contain(['authors'])
@@ -2670,7 +2670,7 @@ class QueryTest extends TestCase
 
         $expected = $table
             ->find()
-            ->select(['foo' => 'Authors.id'])
+            ->select(['foo' => '1 + 1'])
             ->autoFields(true)
             ->contain(['authors'])
             ->first();
