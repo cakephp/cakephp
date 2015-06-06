@@ -1649,6 +1649,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             $append = $append($this->newExpr(), $this);
         }
 
+        $types = (array)$types + $this->defaultTypes();
         if ($expression->type() === $conjunction) {
             $expression->add($append, $types);
         } else {
