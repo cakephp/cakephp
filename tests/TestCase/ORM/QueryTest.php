@@ -2650,7 +2650,7 @@ class QueryTest extends TestCase
         $this->assertEquals(2, $result->_matchingData['tags']->id);
     }
 
-     /**
+    /**
      * Tests that select() can be called with Table and Association
      * instance
      *
