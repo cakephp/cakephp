@@ -2905,4 +2905,30 @@ class QueryTest extends TestCase
         ];
         $this->assertEquals($expected, $results);
     }
+
+    public function testNotMatchingDeep()
+    {
+        $table = TableRegistry::get('authors');
+        $articles = $table->hasMany('articles');
+        $articles->belongsToMany('tags');
+
+        $results = $table->find()
+            ->hydrate(false)
+            ->notMatching('articles.tags', function ($q) {
+                return $q->where(['tags.name' => 'tag3']);
+            })
+            ->distinct(['authors.id']);
+
+        $this->assertEquals([1, 2, 4], $results->extract('id')->toList());
+
+        $results = $table->find()
+            ->hydrate(false)
+            ->notMatching('articles.tags', function ($q) {
+                return $q->where(['tags.name' => 'tag3']);
+            })
+            ->matching('articles')
+            ->distinct(['authors.id']);
+
+        $this->assertEquals([1], $results->extract('id')->toList());
+    }
 }
