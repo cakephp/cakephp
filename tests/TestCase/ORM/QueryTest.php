@@ -2848,7 +2848,7 @@ class QueryTest extends TestCase
     public function testNotMatching()
     {
         $table = TableRegistry::get('authors');
-        $articles = $table->hasMany('articles');
+        $table->hasMany('articles');
 
         $results = $table->find()
             ->hydrate(false)
@@ -2871,6 +2871,37 @@ class QueryTest extends TestCase
             ['id' => 2, 'name' => 'nate'],
             ['id' => 3, 'name' => 'larry'],
             ['id' => 4, 'name' => 'garrett'],
+        ];
+        $this->assertEquals($expected, $results);
+    }
+
+    public function testNotMatchingBelongsToMany()
+    {
+        $table = TableRegistry::get('articles');
+        $table->belongsToMany('tags');
+
+        $results = $table->find()
+            ->hydrate(false)
+            ->notMatching('tags', function ($q) {
+                return $q->where(['tags.name' => 'tag2']);
+            })
+            ->toArray();
+
+        $expected = [
+            [
+                'id' => 2,
+                'author_id' => 3,
+                'title' => 'Second Article',
+                'body' => 'Second Article Body',
+                'published' => 'Y'
+            ],
+            [
+                'id' => 3,
+                'author_id' => 1,
+                'title' => 'Third Article',
+                'body' => 'Third Article Body',
+                'published' => 'Y'
+            ]
         ];
         $this->assertEquals($expected, $results);
     }

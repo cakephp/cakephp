@@ -262,6 +262,18 @@ class BelongsToMany extends Association
         $query->eagerLoader()->addToJoinsMap($junction->alias(), $assoc, true);
     }
 
+    protected function _appendNotMatching($query, $options)
+    {
+        $target = $junction = $this->junction();
+        if (!empty($options['negateMatch'])) {
+            $primaryKey = $query->aliasFields((array)$target->primaryKey(), $target->alias());
+            $query->andWhere(function ($exp) use ($primaryKey) {
+                array_map([$exp, 'isNull'], $primaryKey);
+                return $exp;
+            });
+        }
+    }
+
     /**
      * {@inheritDoc}
      */

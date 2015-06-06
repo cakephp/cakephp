@@ -499,14 +499,6 @@ abstract class Association
             }
         }
 
-        if ($options['negateMatch']) {
-            $primaryKey = $query->aliasFields((array)$target->primaryKey(), $this->_name);
-            $query->andWhere(function ($exp) use ($primaryKey) {
-                array_map([$exp, 'isNull'], $primaryKey);
-                return $exp;
-            });
-        }
-
         list($finder, $opts) = $this->_extractFinder($options['finder']);
         $dummy = $this
             ->find($finder, $opts)
@@ -531,6 +523,19 @@ abstract class Association
         $this->_appendFields($query, $dummy, $options);
         $this->_formatAssociationResults($query, $dummy, $options);
         $this->_bindNewAssociations($query, $dummy, $options);
+        $this->_appendNotMatching($query, $options);
+    }
+
+    protected function _appendNotMatching($query, $options)
+    {
+        $target = $this->_targetTable;
+        if (!empty($options['negateMatch'])) {
+            $primaryKey = $query->aliasFields((array)$target->primaryKey(), $this->_name);
+            $query->andWhere(function ($exp) use ($primaryKey) {
+                array_map([$exp, 'isNull'], $primaryKey);
+                return $exp;
+            });
+        }
     }
 
     /**
