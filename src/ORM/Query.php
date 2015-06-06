@@ -455,6 +455,17 @@ class Query extends DatabaseQuery implements JsonSerializable
         return $this;
     }
 
+    public function notMatching($assoc, callable $builder = null)
+    {
+        $this->eagerLoader()->matching($assoc, $builder, [
+            'joinType' => 'LEFT',
+            'fields' => false,
+            'negateMatch' => true
+        ]);
+        $this->_dirty();
+        return $this;
+    }
+
     /**
      * Returns a key => value array representing a single aliased field
      * that can be passed directly to the select() method.

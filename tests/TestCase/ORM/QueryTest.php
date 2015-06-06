@@ -2844,4 +2844,34 @@ class QueryTest extends TestCase
             ->toArray();
         $this->assertEquals($expected, $results);
     }
+
+    public function testNotMatching()
+    {
+        $table = TableRegistry::get('authors');
+        $articles = $table->hasMany('articles');
+
+        $results = $table->find()
+            ->hydrate(false)
+            ->notMatching('articles')
+            ->toArray();
+
+        $expected = [
+            ['id' => 2, 'name' => 'nate'],
+            ['id' => 4, 'name' => 'garrett'],
+        ];
+        $this->assertEquals($expected, $results);
+
+        $results = $table->find()
+            ->hydrate(false)
+            ->notMatching('articles', function ($q) {
+                return $q->where(['articles.author_id' => 1]);
+            })
+            ->toArray();
+        $expected = [
+            ['id' => 2, 'name' => 'nate'],
+            ['id' => 3, 'name' => 'larry'],
+            ['id' => 4, 'name' => 'garrett'],
+        ];
+        $this->assertEquals($expected, $results);
+    }
 }

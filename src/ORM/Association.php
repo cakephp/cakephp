@@ -499,6 +499,14 @@ abstract class Association
             }
         }
 
+        if ($options['negateMatch']) {
+            $primaryKey = $query->aliasFields((array)$target->primaryKey(), $this->_name);
+            $query->andWhere(function ($exp) use ($primaryKey) {
+                array_map([$exp, 'isNull'], $primaryKey);
+                return $exp;
+            });
+        }
+
         list($finder, $opts) = $this->_extractFinder($options['finder']);
         $dummy = $this
             ->find($finder, $opts)
@@ -518,7 +526,7 @@ abstract class Association
 
         $joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
         $options['conditions'] = $dummy->clause('where');
-        $query->join([$target->alias() => array_intersect_key($options, $joinOptions)]);
+        $query->join([$this->_name => array_intersect_key($options, $joinOptions)]);
 
         $this->_appendFields($query, $dummy, $options);
         $this->_formatAssociationResults($query, $dummy, $options);

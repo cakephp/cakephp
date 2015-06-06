@@ -64,7 +64,8 @@ class EagerLoader
         'queryBuilder' => 1,
         'finder' => 1,
         'joinType' => 1,
-        'strategy' => 1
+        'strategy' => 1,
+        'negateMatch' => 1
     ];
 
     /**
