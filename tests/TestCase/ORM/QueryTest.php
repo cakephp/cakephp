@@ -829,7 +829,8 @@ class QueryTest extends TestCase
 
         $this->assertEquals(['field_a', 'field_b'], $query->clause('select'));
 
-        $expected = new QueryExpression($options['conditions'], $this->fooTypeMap);
+        $expected = (new QueryExpression($options['conditions']))->typeMap($this->fooTypeMap);
+
         $result = $query->clause('where');
         $this->assertEquals($expected, $result);
 
