@@ -2845,6 +2845,11 @@ class QueryTest extends TestCase
         $this->assertEquals($expected, $results);
     }
 
+    /**
+     * Tests notMatching() with and without conditions
+     *
+     * @return void
+     */
     public function testNotMatching()
     {
         $table = TableRegistry::get('authors');
@@ -2875,6 +2880,11 @@ class QueryTest extends TestCase
         $this->assertEquals($expected, $results);
     }
 
+    /**
+     * Tests notMatching() with a belongsToMany association
+     *
+     * @return void
+     */
     public function testNotMatchingBelongsToMany()
     {
         $table = TableRegistry::get('articles');
@@ -2906,6 +2916,11 @@ class QueryTest extends TestCase
         $this->assertEquals($expected, $results);
     }
 
+    /**
+     * Tests notMatching() with a deeply nested belongsToMany association.
+     *
+     * @return void
+     */
     public function testNotMatchingDeep()
     {
         $table = TableRegistry::get('authors');

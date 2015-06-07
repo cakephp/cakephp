@@ -262,6 +262,9 @@ class BelongsToMany extends Association
         $query->eagerLoader()->addToJoinsMap($junction->alias(), $assoc, true);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected function _appendNotMatching($query, $options)
     {
         $target = $junction = $this->junction();

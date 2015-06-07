@@ -471,6 +471,8 @@ abstract class Association
      *   properties to be followed from the passed query main entity to this
      *   association
      * - joinType: The SQL join type to use in the query.
+     * - negateMatch: Will append a condition to the passed query for excluding matches.
+     *   with this association.
      *
      * @param Query $query the query to be altered to include the target table data
      * @param array $options Any extra options or overrides to be taken in account
@@ -526,6 +528,14 @@ abstract class Association
         $this->_appendNotMatching($query, $options);
     }
 
+    /**
+     * Conditionally adds a condition to the passed Query that will make it find
+     * records where there is no match with this association.
+     *
+     * @param \Cake\Database\Query $query The query to modify
+     * @param array $options Options array containing the `negateMatch` key.
+     * @return void
+     */
     protected function _appendNotMatching($query, $options)
     {
         $target = $this->_targetTable;
