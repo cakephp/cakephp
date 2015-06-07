@@ -587,10 +587,11 @@ trait CollectionTrait
      */
     public function zipWith($items, $callable)
     {
-        $items = [$items];
         if (func_num_args() > 2) {
             $items = func_get_args();
             $callable = array_pop($items);
+        } else {
+            $items = [$items];
         }
         return new ZipIterator(array_merge([$this], $items), $callable);
     }
