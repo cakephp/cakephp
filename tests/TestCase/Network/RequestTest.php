@@ -1300,6 +1300,25 @@ class RequestTest extends TestCase
     }
 
     /**
+     * Test that even if mod_rewrite is on, and the url contains index.php
+     * and there are numerous //s that the base/webroot is calculated correctly.
+     *
+     * @return void
+     */
+    public function testBaseUrlWithModRewriteAndExtraSlashes()
+    {
+        $_SERVER['REQUEST_URI'] = '/cakephp/webroot///index.php/bananas/eat';
+        $_SERVER['PHP_SELF'] = '/cakephp/webroot///index.php/bananas/eat';
+        $_SERVER['PATH_INFO'] = '/bananas/eat';
+        $request = Request::createFromGlobals();
+
+        $this->assertEquals('/cakephp', $request->base);
+        $this->assertEquals('/cakephp/', $request->webroot);
+        $this->assertEquals('bananas/eat', $request->url);
+        $this->assertEquals('/cakephp/bananas/eat', $request->here);
+    }
+
+    /**
      * Test base, webroot, and URL parsing when there is no URL rewriting
      *
      * @return void
