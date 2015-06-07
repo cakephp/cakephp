@@ -2963,26 +2963,24 @@ class QueryTest extends TestCase
             ->hydrate(false)
             ->matching('articles', function ($q) {
                 return $q->notMatching('tags', function ($q) {
-                  return $q->where(['tags.name' => 'tag3']);
+                    return $q->where(['tags.name' => 'tag3']);
                 });
             })
-            ->distinct(['authors.id']);
+            ->order(['authors.id' => 'ASC', 'articles.id' => 'ASC']);
 
         $expected = [
-            [
-                'id' => 1,
-                'name' => 'mariano',
-                '_matchingData' => [
-                    'articles' => [
-                        'id' => 1,
-                        'author_id' => 1,
-                        'title' => 'First Article',
-                        'body' => 'First Article Body',
-                        'published' => 'Y'
-                    ]
+            'id' => 1,
+            'name' => 'mariano',
+            '_matchingData' => [
+                'articles' => [
+                    'id' => 1,
+                    'author_id' => 1,
+                    'title' => 'First Article',
+                    'body' => 'First Article Body',
+                    'published' => 'Y'
                 ]
             ]
         ];
-        $this->assertEquals($expected, $results->toArray());
+        $this->assertEquals($expected, $results->first());
     }
 }
