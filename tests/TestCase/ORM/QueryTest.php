@@ -2214,7 +2214,8 @@ class QueryTest extends TestCase
             'matching' => [
                 'articles' => [
                     'queryBuilder' => null,
-                    'matching' => true
+                    'matching' => true,
+                    'joinType' => 'INNER'
                 ]
             ],
             'extraOptions' => ['foo' => 'bar'],
@@ -2660,5 +2661,187 @@ class QueryTest extends TestCase
         $table = TableRegistry::get('articles');
         $this->assertFalse($table->find()->isEmpty());
         $this->assertTrue($table->find()->where(['id' => -1])->isEmpty());
+    }
+
+    /**
+     * Tests that leftJoinWith() creates a left join with a given association and
+     * that no fields from such association are loaded.
+     *
+     * @return void
+     */
+    public function testLeftJoinWith()
+    {
+        $table = TableRegistry::get('authors');
+        $table->hasMany('articles');
+        $table->articles->deleteAll(['author_id' => 4]);
+        $results = $table
+            ->find()
+            ->select(['total_articles' => 'count(articles.id)'])
+            ->autoFields(true)
+            ->leftJoinWith('articles')
+            ->group(['authors.id']);
+
+        $expected = [
+            1 => 2,
+            2 => 0,
+            3 => 1,
+            4 => 0
+        ];
+        $this->assertEquals($expected, $results->combine('id', 'total_articles')->toArray());
+        $fields = ['total_articles', 'id', 'name'];
+        $this->assertEquals($fields, array_keys($results->first()->toArray()));
+
+        $results = $table
+            ->find()
+            ->leftJoinWith('articles')
+            ->where(['articles.id IS' => null]);
+
+        $this->assertEquals([2, 4], $results->extract('id')->toList());
+        $this->assertEquals(['id', 'name'], array_keys($results->first()->toArray()));
+
+        $results = $table
+            ->find()
+            ->leftJoinWith('articles')
+            ->where(['articles.id IS NOT' => null])
+            ->order(['authors.id']);
+
+        $this->assertEquals([1, 1, 3], $results->extract('id')->toList());
+        $this->assertEquals(['id', 'name'], array_keys($results->first()->toArray()));
+    }
+
+    /**
+     * Tests that leftJoinWith() creates a left join with a given association and
+     * that no fields from such association are loaded.
+     *
+     * @return void
+     */
+    public function testLeftJoinWithNested()
+    {
+        $table = TableRegistry::get('authors');
+        $articles = $table->hasMany('articles');
+        $articles->belongsToMany('tags');
+
+        $results = $table
+            ->find()
+            ->select(['total_articles' => 'count(articles.id)'])
+            ->leftJoinWith('articles.tags', function ($q) {
+                return $q->where(['tags.name' => 'tag3']);
+            })
+            ->autoFields(true)
+            ->group(['authors.id']);
+
+        $expected = [
+            1 => 2,
+            2 => 0,
+            3 => 1,
+            4 => 0
+        ];
+        $this->assertEquals($expected, $results->combine('id', 'total_articles')->toArray());
+        $fields = ['total_articles', 'id', 'name'];
+        $this->assertEquals($fields, array_keys($results->first()->toArray()));
+    }
+
+    /**
+     * Tests that leftJoinWith() can be used with select()
+     *
+     * @return void
+     */
+    public function testLeftJoinWithSelect()
+    {
+        $table = TableRegistry::get('authors');
+        $articles = $table->hasMany('articles');
+        $articles->belongsToMany('tags');
+        $results = $table
+            ->find()
+            ->leftJoinWith('articles.tags', function ($q) {
+                return $q
+                    ->select(['articles.id', 'articles.title', 'tags.name'])
+                    ->where(['tags.name' => 'tag3']);
+            })
+            ->autoFields(true)
+            ->where(['ArticlesTags.tag_id' => 3])
+            ->distinct(['authors.id'])
+            ->all();
+
+        $expected = ['id' => 2, 'title' => 'Second Article'];
+        $this->assertEquals(
+            $expected,
+            $results->first()->_matchingData['articles']->toArray()
+        );
+        $this->assertEquals(
+            ['name' => 'tag3'],
+            $results->first()->_matchingData['tags']->toArray()
+        );
+    }
+
+    /**
+     * Tests innerJoinWith()
+     *
+     * @return void
+     */
+    public function testInnerJoinWith()
+    {
+        $table = TableRegistry::get('authors');
+        $table->hasMany('articles');
+        $results = $table
+            ->find()
+            ->innerJoinWith('articles', function ($q) {
+                return $q->where(['articles.title' => 'Third Article']);
+            });
+        $expected = [
+            [
+            'id' => 1,
+            'name' => 'mariano'
+            ]
+        ];
+        $this->assertEquals($expected, $results->hydrate(false)->toArray());
+    }
+
+    /**
+     * Tests innerJoinWith() with nested associations
+     *
+     * @return void
+     */
+    public function testInnerJoinWithNested()
+    {
+        $table = TableRegistry::get('authors');
+        $articles = $table->hasMany('articles');
+        $articles->belongsToMany('tags');
+        $results = $table
+            ->find()
+            ->innerJoinWith('articles.tags', function ($q) {
+                return $q->where(['tags.name' => 'tag3']);
+            });
+        $expected = [
+            [
+            'id' => 3,
+            'name' => 'larry'
+            ]
+        ];
+        $this->assertEquals($expected, $results->hydrate(false)->toArray());
+    }
+
+    /**
+     * Tests innerJoinWith() with select
+     *
+     * @return void
+     */
+    public function testInnerJoinWithSelect()
+    {
+        $table = TableRegistry::get('authors');
+        $table->hasMany('articles');
+        $results = $table
+            ->find()
+            ->autoFields(true)
+            ->innerJoinWith('articles', function ($q) {
+                return $q->select(['id', 'author_id', 'title', 'body', 'published']);
+            })
+            ->toArray();
+
+        $expected = $table
+            ->find()
+            ->matching('articles')
+            ->toArray();
+        $this->assertEquals($expected, $results);
     }
 }
