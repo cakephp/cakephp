@@ -2946,4 +2946,43 @@ class QueryTest extends TestCase
 
         $this->assertEquals([1], $results->extract('id')->toList());
     }
+
+    /**
+     * Tests that it is possible to nest a notMatching call inside another
+     * eagerloader function.
+     *
+     * @return void
+     */
+    public function testNotMatchingNested()
+    {
+        $table = TableRegistry::get('authors');
+        $articles = $table->hasMany('articles');
+        $articles->belongsToMany('tags');
+
+        $results = $table->find()
+            ->hydrate(false)
+            ->matching('articles', function ($q) {
+                return $q->notMatching('tags', function ($q) {
+                  return $q->where(['tags.name' => 'tag3']);
+                });
+            })
+            ->distinct(['authors.id']);
+
+        $expected = [
+            [
+                'id' => 1,
+                'name' => 'mariano',
+                '_matchingData' => [
+                    'articles' => [
+                        'id' => 1,
+                        'author_id' => 1,
+                        'title' => 'First Article',
+                        'body' => 'First Article Body',
+                        'published' => 'Y'
+                    ]
+                ]
+            ]
+        ];
+        $this->assertEquals($expected, $results->toArray());
+    }
 }
