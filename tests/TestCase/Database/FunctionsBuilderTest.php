@@ -151,4 +151,32 @@ class FunctionsBuilderTest extends TestCase
         $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
         $this->assertEquals("CURRENT_TIME()", $function->sql(new ValueBinder));
     }
+
+    /**
+     * Tests generating a EXTRACT() function
+     *
+     * @return void
+     */
+    public function testExtract()
+    {
+        $function = $this->functions->extract('day', 'created');
+        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertEquals("EXTRACT(day FROM created)", $function->sql(new ValueBinder));
+
+        $function = $this->functions->datePart('year', 'modified');
+        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertEquals("EXTRACT(year FROM modified)", $function->sql(new ValueBinder));
+    }
+
+    /**
+     * Tests generating a DATE_ADD() function
+     *
+     * @return void
+     */
+    public function testExtract()
+    {
+        $function = $this->functions->dateAdd('created', -3, 'day');
+        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertEquals("DATE_ADD(created, INTERVAL -3 day)", $function->sql(new ValueBinder));
+    }
 }

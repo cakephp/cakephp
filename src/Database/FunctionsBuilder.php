@@ -155,6 +155,51 @@ class FunctionsBuilder
     }
 
     /**
+     * Returns the specified date part from the SQL expression.
+     *
+     * @param string $part Part of the date to return.
+     * @param string $expression Expression to obtain the date part from.
+     * @param array $types list of types to bind to the arguments
+     * @return FunctionExpression
+     */
+    public function datePart($part, $expression, $types = [])
+    {
+        return $this->extract($part, $expression);
+    }
+
+    /**
+     * Returns the specified date part from the SQL expression.
+     *
+     * @param string $part Part of the date to return.
+     * @param string $expression Expression to obtain the date part from.
+     * @param array $types list of types to bind to the arguments
+     * @return FunctionExpression
+     */
+    public function extract($part, $expression, $types = [])
+    {
+        $expression = $this->_literalArgumentFunction('EXTRACT', $expression, $types);
+        $expression->type(' FROM')->add([$part => 'literal'], [], true);
+        return $expression;
+    }
+
+    /**
+     * Add the time unit to the date expression
+     *
+     * @param string $expression Expression to obtain the date part from.
+     * @param string $value Value to be added. Use negative to substract.
+     * @param string $unit Unit of the value e.g. hour or day.
+     * @param array $types list of types to bind to the arguments
+     * @return FunctionExpression
+     */
+    public function dateAdd($expression, $value, $unit, $types = [])
+    {
+        $interval = $value . ' ' . $unit;
+        $expression = $this->_literalArgumentFunction('DATE_ADD', $expression, $types);
+        $expression->type(', INTERVAL')->add([$interval => 'literal']);
+        return $expression;
+    }
+
+    /**
      * Returns a FunctionExpression representing a call that will return the current
      * date and time. By default it returns both date and time, but you can also
      * make it generate only the date or only the time.

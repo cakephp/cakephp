@@ -53,6 +53,21 @@ trait SqliteDialectTrait
     protected $_schemaDialect;
 
     /**
+     * Mapping of date parts.
+     *
+     * @var array
+     */
+    protected $_dateParts = [
+        'day' => 'd',
+        'hour' => 'H',
+        'month' => 'm',
+        'minute' => 'M',
+        'second' => 'S',
+        'week' => 'W',
+        'year' => 'Y'
+    ];
+
+    /**
      * Returns a dictionary of expressions to be transformed when compiling a Query
      * to SQL. Array keys are method names to be called in this class
      *
@@ -99,6 +114,30 @@ trait SqliteDialectTrait
             case 'CURRENT_TIME':
                 $expression->name('TIME')->add(["'now'" => 'literal']);
                 break;
+            case 'EXTRACT':
+                $expression
+                    ->name('STRFTIME')
+                    ->type(' ,')
+                    ->iterateParts(function ($p, $key) {
+                        if ($key === 0) {
+                            $value = rtrim(key($p), 's');
+                            if (isset($this->_dateParts[$value])) {
+                                $p = '%' . $this->_dateParts[$value];
+                            }
+                        }
+                        return $p;
+                    });
+                break;
+            case 'DATE_ADD':
+                $expression
+                    ->name('DATE')
+                    ->type(',')
+                    ->iterateParts(function ($p, $key) {
+                        if ($key === 1) {
+                            $p = key($p);
+                        }
+                        return $p;
+                    });
         }
     }
 

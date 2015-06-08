@@ -129,6 +129,18 @@ trait PostgresDialectTrait
             case 'NOW':
                 $expression->name('LOCALTIMESTAMP')->add([' 0 ' => 'literal']);
                 break;
+            case 'DATE_ADD':
+                $expression
+                    ->name('')
+                    ->type(' + INTERVAL')
+                    ->iterateParts(function ($p, $key) {
+                        if ($key === 1) {
+                            $interval = sprintf("'%s'", key($p));
+                            $p = [$interval => 'literal'];
+                        }
+                        return $p;
+                    });
+                break;
         }
     }
 
