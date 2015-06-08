@@ -878,4 +878,30 @@ class QueryRegressionTest extends TestCase
         $this->assertEquals(0, $table->find()->count());
         $this->assertNull($table->find()->last());
     }
+
+    /**
+     * Test that the typemaps used in function expressions
+     * create the correct results.
+     *
+     * @return void
+     */
+    public function testTypemapInFunctions()
+    {
+        $table = TableRegistry::get('Comments');
+        $table->updateAll(['published' => null], ['1 = 1']);
+        $query = $table->find();
+        $query->select([
+            'id',
+            'coalesced' => $query->func()->coalesce(
+                ['published' => 'literal', -1],
+                ['integer']
+            )
+        ]);
+        $result = $query->all()->first();
+        $this->assertSame(
+            '-1',
+            $result['coalesced'],
+            'Output values for functions are not cast yet.'
+        );
+    }
 }
