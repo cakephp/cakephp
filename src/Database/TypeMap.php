@@ -21,8 +21,9 @@ class TypeMap
 {
 
     /**
-     * Associative array with the default fields and their types this query might contain
-     * used to avoid repetition when calling multiple times functions inside this class that
+     * Associative array with the default fields and the related types this query might contain.
+     *
+     * Used to avoid repetition when calling multiple functions inside this class that
      * may require a custom type for a specific field.
      *
      * @var array
@@ -30,8 +31,9 @@ class TypeMap
     protected $_defaults;
 
     /**
-     * Associative array with the fields and their types that override defaults this query might contain
-     * used to avoid repetition when calling multiple times functions inside this class that
+     * Associative array with the fields and the related types that override defaults this query might contain
+     *
+     * Used to avoid repetition when calling multiple functions inside this class that
      * may require a custom type for a specific field.
      *
      * @var array
