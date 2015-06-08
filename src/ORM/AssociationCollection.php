@@ -111,14 +111,17 @@ class AssociationCollection implements IteratorAggregate
     /**
      * Get an array of associations matching a specific type.
      *
-     * @param string $class The type of associations you want. For example 'BelongsTo'
+     * @param string|array $class The type of associations you want.
+     *   For example 'BelongsTo' or array like ['BelongsTo', 'HasOne']
      * @return array An array of Association objects.
      */
     public function type($class)
     {
+        $class = (array)$class;
+
         $out = array_filter($this->_items, function ($assoc) use ($class) {
             list(, $name) = namespaceSplit(get_class($assoc));
-            return $class === $name;
+            return in_array($name, $class, true);
         });
         return array_values($out);
     }

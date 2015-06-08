@@ -147,6 +147,10 @@ class AssociationCollectionTest extends TestCase
         $this->assertSame([$belongsTo], $this->associations->type('BelongsTo'));
         $this->assertSame([$belongsToMany], $this->associations->type('BelongsToMany'));
         $this->assertSame([], $this->associations->type('HasMany'));
+        $this->assertSame(
+            [$belongsTo, $belongsToMany],
+            $this->associations->type(['BelongsTo', 'BelongsToMany'])
+        );
     }
 
     /**
