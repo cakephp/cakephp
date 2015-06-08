@@ -99,9 +99,9 @@ trait SqlserverDialectTrait
     protected function _pagingSubquery($original, $limit, $offset)
     {
         $field = '_cake_paging_._cake_page_rownum_';
+        $order = $original->clause('order') ?: new OrderByExpression('(SELECT NULL)');
 
         $query = clone $original;
-        $order = $query->clause('order') ?: new OrderByExpression('NULL');
         $query->select([
                 '_cake_page_rownum_' => new UnaryExpression('ROW_NUMBER() OVER', $order)
             ])->limit(null)
