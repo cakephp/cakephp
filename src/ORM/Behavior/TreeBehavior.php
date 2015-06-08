@@ -362,7 +362,8 @@ class TreeBehavior extends Behavior
             ->where([
                 "$left <=" => $node->get($config['left']),
                 "$right >=" => $node->get($config['right'])
-            ]);
+            ])
+            ->order([$left => 'ASC']);
     }
 
     /**
