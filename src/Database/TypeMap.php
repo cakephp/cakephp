@@ -95,7 +95,7 @@ class TypeMap
     public function types(array $types = null)
     {
         if ($types === null) {
-            return $this->_types;
+            return $this->_types ?: $this->_defaults;
         }
         $this->_types = $types;
         return $this;
