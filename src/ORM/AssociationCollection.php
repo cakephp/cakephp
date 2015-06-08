@@ -121,7 +121,7 @@ class AssociationCollection implements IteratorAggregate
 
         $out = array_filter($this->_items, function ($assoc) use ($class) {
             list(, $name) = namespaceSplit(get_class($assoc));
-            return in_array($name, $class);
+            return in_array($name, $class, true);
         });
         return array_values($out);
     }
