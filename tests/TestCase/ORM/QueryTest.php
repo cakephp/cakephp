@@ -835,8 +835,7 @@ class QueryTest extends TestCase
 
         $this->assertEquals(1, $query->clause('limit'));
 
-        $expected = new QueryExpression(['a > b']);
-        $expected->typeMap($this->fooTypeMap);
+        $expected = new QueryExpression(['a > b'], $this->fooTypeMap);
         $result = $query->clause('join');
         $this->assertEquals([
             'table_a' => ['alias' => 'table_a', 'type' => 'INNER', 'conditions' => $expected]
