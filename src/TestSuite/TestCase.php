@@ -16,6 +16,7 @@ namespace Cake\TestSuite;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
+use Cake\Event\EventManager;
 use Cake\ORM\Exception\MissingTableClassException;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
@@ -100,6 +101,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         if (class_exists('Cake\Routing\Router', false)) {
             Router::reload();
         }
+ 
+        EventManager::instance(new EventManager());
     }
 
     /**
