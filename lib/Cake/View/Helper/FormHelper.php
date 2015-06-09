@@ -1484,6 +1484,7 @@ class FormHelper extends AppHelper {
  * - `disabled` - Set to `true` or `disabled` to disable all the radio buttons.
  * - `empty` - Set to `true` to create an input with the value '' as the first option. When `true`
  *   the radio label will be 'empty'. Set this option to a string to control the label value.
+ *   `titles` - define an array of 'radio value' => 'HTML title attribute' to set each radio HTML title attribute 
  *
  * @param string $fieldName Name of a field, like this "Modelname.fieldname"
  * @param array $options Radio button options array.
@@ -1536,6 +1537,12 @@ class FormHelper extends AppHelper {
 			$value = $this->value($fieldName);
 		}
 
+		$titles = null;
+		if (isset($attributes['titles'])) {
+			$titles = $attributes['titles'];
+			unset($attributes['titles']);
+		}
+
 		$disabled = array();
 		if (isset($attributes['disabled'])) {
 			$disabled = $attributes['disabled'];
@@ -1556,6 +1563,13 @@ class FormHelper extends AppHelper {
 
 			if (isset($value) && strval($optValue) === strval($value)) {
 				$optionsHere['checked'] = 'checked';
+			}
+			if (isset($titles)) {
+				if (is_array($titles) && isset($titles[$optValue])) {
+					$optionsHere['title'] = $titles[$optValue];
+				} else {
+					$optionsHere['title'] = $titles;
+				}
 			}
 			$isNumeric = is_numeric($optValue);
 			if ($disabled && (!is_array($disabled) || in_array((string)$optValue, $disabled, !$isNumeric))) {
