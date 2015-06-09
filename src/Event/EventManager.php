@@ -277,6 +277,10 @@ class EventManager
             $this->_detachSubscriber($callable, $eventKey);
             return;
         }
+        if ($callable === null && is_string($eventKey)) {
+            unset($this->_listeners[$eventKey]);
+            return;
+        }
         if ($callable === null) {
             foreach (array_keys($this->_listeners) as $name) {
                 $this->off($name, $eventKey);
