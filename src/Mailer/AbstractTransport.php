@@ -12,7 +12,7 @@
  * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Network\Email;
+namespace Cake\Mailer;
 
 use Cake\Core\InstanceConfigTrait;
 
@@ -35,7 +35,7 @@ abstract class AbstractTransport
     /**
      * Send mail
      *
-     * @param \Cake\Network\Email\Email $email Email instance.
+     * @param \Cake\Mailer\Email $email Email instance.
      * @return array
      */
     abstract public function send(Email $email);

@@ -14,8 +14,10 @@
  * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Network\Email;
+namespace Cake\Mailer\Transport;
 
+use Cake\Mailer\AbstractTransport;
+use Cake\Mailer\Email;
 use Cake\Network\Exception\SocketException;
 
 /**
@@ -28,7 +30,7 @@ class MailTransport extends AbstractTransport
     /**
      * Send mail
      *
-     * @param \Cake\Network\Email\Email $email Cake Email
+     * @param \Cake\Mailer\Email $email Cake Email
      * @return array
      */
     public function send(Email $email)
