@@ -41,7 +41,7 @@ class TimeHelperTest extends TestCase
         parent::setUp();
         $this->View = new View();
         $this->Time = new TimeHelper($this->View);
-        Time::$defaultLocale = 'en_US';
+        Time::setDefaultLocale('en_US');
     }
 
     /**
