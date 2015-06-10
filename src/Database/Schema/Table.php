@@ -508,6 +508,15 @@ class Table
                 throw new Exception($msg);
             }
         }
+
+        if ($attrs['type'] === static::CONSTRAINT_PRIMARY && count($attrs['columns']) === 1) {
+            $column = $attrs['columns'][0];
+            if (!$this->_hasAutoincrement() &&
+                in_array($this->columnType($column), ['integer', 'biginteger'])
+            ) {
+                $this->_columns[$attrs['columns'][0]]['autoIncrement'] = true;
+            }
+        }
         if ($attrs['type'] === static::CONSTRAINT_FOREIGN) {
             $attrs = $this->_checkForeignKey($attrs);
         } else {
@@ -515,6 +524,21 @@ class Table
         }
         $this->_constraints[$name] = $attrs;
         return $this;
+    }
+
+    /**
+     * Check whether or not a table has an autoIncrement column defined.
+     *
+     * @return bool
+     */
+    protected function _hasAutoincrement()
+    {
+        foreach ($this->_columns as $column) {
+            if (isset($column['autoIncrement']) && $column['autoIncrement']) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
