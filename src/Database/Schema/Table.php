@@ -508,6 +508,7 @@ class Table
                 throw new Exception($msg);
             }
         }
+
         if ($attrs['type'] === static::CONSTRAINT_FOREIGN) {
             $attrs = $this->_checkForeignKey($attrs);
         } else {
@@ -515,6 +516,21 @@ class Table
         }
         $this->_constraints[$name] = $attrs;
         return $this;
+    }
+
+    /**
+     * Check whether or not a table has an autoIncrement column defined.
+     *
+     * @return bool
+     */
+    public function hasAutoincrement()
+    {
+        foreach ($this->_columns as $column) {
+            if (isset($column['autoIncrement']) && $column['autoIncrement']) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
