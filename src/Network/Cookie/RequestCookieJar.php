@@ -7,6 +7,10 @@ use Cake\Core\Configure;
 class RequestCookieJar extends AbstractCookieJar
 {
 
+    /**
+     *
+     * @param array $cookies
+     */
     public function __construct(array $cookies)
     {
         foreach ($cookies as $name => $cookieData) {

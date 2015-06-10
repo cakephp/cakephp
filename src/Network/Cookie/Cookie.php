@@ -52,7 +52,7 @@ class Cookie
     /**
      *
      * @param string|array $config Cookie name or an array with cookie options.
-     * @param mixed        $value  An optional value to be set to this cookie.
+     * @param mixed $value An optional value to be set to this cookie.
      * @throws UnexpectedValueException
      */
     public function __construct($config = [], $value = null)
@@ -78,12 +78,17 @@ class Cookie
         }
 
         $config += [
-            'key' => Security::salt()
+            'salt' => Security::salt()
         ];
 
         $this->config($config);
     }
 
+    /**
+     *
+     * @param string|null $key
+     * @return mixed
+     */
     public function read($key = null)
     {
         if ($key === null) {
@@ -93,6 +98,12 @@ class Cookie
         return Hash::get($this->_value, $key);
     }
 
+    /**
+     *
+     * @param mixed $key
+     * @param mixed $value
+     * @return \Cake\Network\Cookie\Cookie
+     */
     public function write($key, $value = null)
     {
         if ($value !== null) {
@@ -104,11 +115,22 @@ class Cookie
         return $this;
     }
 
+    /**
+     *
+     * @param string $key
+     * @return \Cake\Network\Cookie\Cookie
+     */
     public function remove($key)
     {
-        return Hash::remove($this->_value, $key);
+        Hash::remove($this->_value, $key);
+
+        return $this;
     }
 
+    /**
+     *
+     * @return \Cake\Network\Cookie\Cookie
+     */
     public function forget()
     {
         $this->expires(static::TIMEOUT);
@@ -116,6 +138,11 @@ class Cookie
         return $this;
     }
 
+    /**
+     *
+     * @param string $name
+     * @return string|\Cake\Network\Cookie\Cookie
+     */
     public function name($name = null)
     {
         if ($name !== null) {
@@ -127,26 +154,51 @@ class Cookie
         return $name;
     }
 
+    /**
+     *
+     * @param string $path
+     * @return string|\Cake\Network\Cookie\Cookie
+     */
     public function path($path = null)
     {
         return $this->config('path', $path);
     }
 
+    /**
+     *
+     * @param string $domain
+     * @return string|\Cake\Network\Cookie\Cookie
+     */
     public function domain($domain = null)
     {
         return $this->config('domain', $domain);
     }
 
+    /**
+     *
+     * @param bool $secure
+     * @return bool|\Cake\Network\Cookie\Cookie
+     */
     public function secure($secure = null)
     {
         return $this->config('secure', $secure);
     }
 
+    /**
+     *
+     * @param bool $httpOnly
+     * @return bool|\Cake\Network\Cookie\Cookie
+     */
     public function httpOnly($httpOnly = null)
     {
         return $this->config('httpOnly', $httpOnly);
     }
 
+    /**
+     *
+     * @param mixed $expires
+     * @return int|\Cake\Network\Cookie\Cookie
+     */
     public function expires($expires = null)
     {
         $value = $this->config('expires', $expires);
@@ -160,11 +212,19 @@ class Cookie
         return $expires->format(self::EXPIRES_FORMAT);
     }
 
+    /**
+     *
+     * @return string
+     */
     public function value()
     {
         return $this->_encrypt();
     }
 
+    /**
+     *
+     * @return string
+     */
     protected function _encrypt()
     {
         $className = $this->_cookieEncryptor;
@@ -176,6 +236,11 @@ class Cookie
         );
     }
 
+    /**
+     *
+     * @param string $value
+     * @return mixed
+     */
     protected function _decrypt($value)
     {
         $className = $this->_cookieEncryptor;
