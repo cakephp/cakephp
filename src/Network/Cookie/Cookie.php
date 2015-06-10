@@ -73,7 +73,7 @@ class Cookie
         }
 
         if (isset($config['value'])) {
-            $this->_value = $this->_decrypt($config['value']);
+            $this->value($config['value']);
             unset($config['value']);
         }
 
@@ -214,11 +214,17 @@ class Cookie
 
     /**
      *
+     * @param string $value
      * @return string
      */
-    public function value()
+    public function value($value = null)
     {
-        return $this->_encrypt();
+        if ($value === null) {
+            return $this->_encrypt();
+        }
+        $this->_value = $this->_decrypt($value);
+
+        return $this;
     }
 
     /**
