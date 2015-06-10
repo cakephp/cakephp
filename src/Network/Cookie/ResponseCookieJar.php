@@ -2,42 +2,41 @@
 
 namespace Cake\Network\Cookie;
 
-class ResponseCookieJar
+class ResponseCookieJar extends AbstractCookieJar
 {
-    protected $_cookies = [];
 
-    public function get($name) {
-        return $this->_cookies[$name];
-    }
-    
-    public function create($name, $config = []) {
-        $cookie = new Cookie($name, $config);
+    /**
+     *
+     * @param string|array|Cookie $cookie String for a cookie name, array for a cookie config or a Cookie object.
+     * @param mixed               $value  Optional cookie value.
+     * @return \Cake\Network\Cookie\Cookie
+     */
+    public function add($cookie, $value = null)
+    {
+        if (!$cookie instanceof $this->_cookieClassName) {
+            $cookie = new $this->_cookieClassName($cookie, $value);
+        }
 
-        // $this->add($cookie) ???
+        $this->_cookies[$cookie->name()] = $cookie;
 
         return $cookie;
     }
 
-    public function add(Cookie $cookie) {
-        $this->_cookies[$cookie->name()] = $cookie;
+    public function remove($name)
+    {
+        if (isset($this->_cookies[$name])) {
+            $cookie = $this->_cookies[$name];
+            unset($this->_cookies[$name]);
 
-        return $this;
+            return $cookie;
+        }
     }
 
-    /**
-     * This would be called by Response at runtime.
-     */
-    public function set() {
-        foreach($this->_cookies as $cookie) {
-            setcookie(
-                $cookie->name(),
-                $cookie->value(),
-                $cookie->config('expire'),
-                $cookie->config('path'),
-                $cookie->config('domain'),
-                $cookie->config('secure'),
-                $cookie->config('httpOnly')
-            );
+    public function forget($name)
+    {
+        if (isset($this->_cookies[$name])) {
+            $cookie = $this->_cookies[$name];
+            $cookie->forget();
         }
     }
 }

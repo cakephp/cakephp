@@ -2,18 +2,19 @@
 
 namespace Cake\Network\Cookie;
 
-class RequestCookieJar
+use Cake\Core\Configure;
+
+class RequestCookieJar extends AbstractCookieJar
 {
-    protected $_cookies = [];
 
-    public function __construct()
+    public function __construct(array $cookies)
     {
-        foreach ($_COOKIE as $name => $value) {
-            $this->_cookies[$name] = new Cookie($name, $value);
-        }
-    }
+        foreach ($cookies as $name => $cookieData) {
+            $cookieData += (array)Configure::read("Cookies.$name");
+            $cookieData['name'] = $name;
 
-    public function get($name) {
-        return $this->_cookies[$name];
+            $cookie = new $this->_cookieClassName($cookieData);
+            $this->_cookies[$cookie->name()] = $cookie;
+        }
     }
 }
