@@ -332,7 +332,13 @@ class MysqlSchema extends BaseSchema
         if (isset($data['null']) && $data['null'] === false) {
             $out .= ' NOT NULL';
         }
-        if (in_array($data['type'], ['integer', 'biginteger']) && $data['autoIncrement'] === true) {
+        $addAutoIncrement = (
+            [$name] == (array)$table->primaryKey() &&
+            !$table->hasAutoIncrement()
+        );
+        if (in_array($data['type'], ['integer', 'biginteger']) &&
+            ($data['autoIncrement'] === true || $addAutoIncrement)
+        ) {
             $out .= ' AUTO_INCREMENT';
         }
         if (isset($data['null']) && $data['null'] === true) {

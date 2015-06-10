@@ -396,7 +396,7 @@ SQL;
         $connection = ConnectionManager::get('test');
 
         $sql = <<<SQL
-CREATE TEMPORARY TABLE `odd_primary_key` (
+CREATE TABLE `odd_primary_key` (
 `id` BIGINT UNSIGNED NOT NULL,
 `other_field` INTEGER(11) NOT NULL AUTO_INCREMENT,
 PRIMARY KEY (`id`),
@@ -406,6 +406,7 @@ SQL;
         $connection->execute($sql);
         $schema = new SchemaCollection($connection);
         $table = $schema->describe('odd_primary_key');
+        $connection->execute('DROP TABLE odd_primary_key');
 
         $column = $table->column('id');
         $this->assertNull($column['autoIncrement'], 'should not autoincrement');
