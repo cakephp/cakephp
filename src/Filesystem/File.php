@@ -556,11 +556,12 @@ class File
         }
         if (function_exists('finfo_open')) {
             $finfo = finfo_open(FILEINFO_MIME);
-            $finfo = finfo_file($finfo, $this->pwd());
             if (!$finfo) {
                 return false;
             }
-            list($type) = explode(';', $finfo);
+            $mime = finfo_file($finfo, $this->pwd());
+            finfo_close($finfo);
+            list($type) = explode(';', $mime);
             return $type;
         }
         if (function_exists('mime_content_type')) {
