@@ -862,14 +862,14 @@ class DateTimeWidgetTest extends TestCase
         ], $this->context);
         $this->assertContains('<select name="date[minute]" data-foo="test">', $result);
         $this->assertContains(
-            '<option value="00">00</option>',
+            '<option value="00">0</option>',
             $result,
-            'contains 00'
+            'contains 0'
         );
         $this->assertContains(
-            '<option value="05">05</option>',
+            '<option value="05">5</option>',
             $result,
-            'contains 05'
+            'contains 5'
         );
         $this->assertContains(
             '<option value="25" selected="selected">25</option>',
@@ -914,14 +914,14 @@ class DateTimeWidgetTest extends TestCase
             'contains empty option -'
         );
         $this->assertContains(
-            '<option value="00" selected="selected">00</option>',
+            '<option value="00" selected="selected">0</option>',
             $result,
-            'selected value present and correct at 00'
+            'selected value present and correct at 0'
         );
         $this->assertContains(
-            '<option value="05">05</option>',
+            '<option value="05">5</option>',
             $result,
-            'contains 05'
+            'contains 5'
         );
         $this->assertContains(
             '<option value="25">25</option>',
@@ -964,14 +964,14 @@ class DateTimeWidgetTest extends TestCase
         ], $this->context);
         $this->assertContains('<select name="date[minute]">', $result);
         $this->assertContains(
-            '<option value="00">00</option>',
+            '<option value="00">0</option>',
             $result,
-            'contains 00'
+            'contains 0'
         );
         $this->assertContains(
-            '<option value="05">05</option>',
+            '<option value="05">5</option>',
             $result,
-            'contains 05'
+            'contains 5'
         );
         $this->assertContains(
             '<option value="25" selected="selected">25</option>',
@@ -1050,7 +1050,7 @@ class DateTimeWidgetTest extends TestCase
         ], $this->context);
 
         $this->assertContains(
-            '<option value="00" selected="selected">00</option>',
+            '<option value="00" selected="selected">0</option>',
             $result,
             'selected minute present'
         );
@@ -1083,19 +1083,19 @@ class DateTimeWidgetTest extends TestCase
         ], $this->context);
         $this->assertContains('<select name="date[second]" data-foo="test">', $result);
         $this->assertContains(
-            '<option value="00">00</option>',
+            '<option value="00">0</option>',
             $result,
-            'contains 00'
+            'contains 0'
         );
         $this->assertContains(
-            '<option value="01">01</option>',
+            '<option value="01">1</option>',
             $result,
-            'contains 01'
+            'contains 1'
         );
         $this->assertContains(
-            '<option value="05">05</option>',
+            '<option value="05">5</option>',
             $result,
-            'contains 05'
+            'contains 5'
         );
         $this->assertContains(
             '<option value="25" selected="selected">25</option>',

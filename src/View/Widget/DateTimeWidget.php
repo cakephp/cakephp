@@ -634,7 +634,7 @@ class DateTimeWidget implements WidgetInterface
                 $value = sprintf('%02d', $value);
             }
             
-            if ($options['localization']['locale'] !== 'en_US') {
+            if ($options['localization']['locale'] !== null) {
                 $value = \Cake\I18n\Number::format($value, ['locale' => $options['localization']['locale'], 'pattern' => '####']);
             }
             $numbers[$key] = $value;
