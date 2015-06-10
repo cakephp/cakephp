@@ -3,10 +3,16 @@
 namespace Cake\Network\Cookie;
 
 use Cake\Core\InstanceConfigTrait;
+use Cake\I18n\Time;
 use Cake\Utility\Hash;
+use Cake\Utility\Security;
+use UnexpectedValueException;
 
 class Cookie
 {
+
+    const EXPIRES_FORMAT = 'U';
+    const TIMEOUT = '-1 month';
 
     use InstanceConfigTrait;
 
@@ -37,24 +43,53 @@ class Cookie
      */
     protected $_value;
 
-    public function __construct($name, $config = [])
-    {
-        $this->_name = $name;
+    /**
+     *
+     * @var string
+     */
+    protected $_cookieEncryptor = 'Cake\Network\Cookie\CookieEncryptor';
 
+    /**
+     *
+     * @param string|array $config Cookie name or an array with cookie options.
+     * @param mixed        $value  An optional value to be set to this cookie.
+     * @throws UnexpectedValueException
+     */
+    public function __construct($config = [], $value = null)
+    {
         if (is_string($config)) {
-            $config = ['value' => $config];
+            $config = ['name' => $config];
+        }
+
+        if (empty($config['name'])) {
+            throw new UnexpectedValueException('Cookie must have a name.');
+        }
+
+        $this->_name = $config['name'];
+        unset($config['name']);
+
+        if ($value !== null) {
+            $config['value'] = $value;
         }
 
         if (isset($config['value'])) {
-            $this->write($config['value']);
+            $this->_value = $this->_decrypt($config['value']);
             unset($config['value']);
         }
+
+        $config += [
+            'key' => Security::salt()
+        ];
 
         $this->config($config);
     }
 
-    public function read($key)
+    public function read($key = null)
     {
+        if ($key === null) {
+            return $this->_value;
+        }
+
         return Hash::get($this->_value, $key);
     }
 
@@ -76,7 +111,9 @@ class Cookie
 
     public function forget()
     {
-        //forget entire cookie - timeout or something
+        $this->expires(static::TIMEOUT);
+
+        return $this;
     }
 
     public function name($name = null)
@@ -90,8 +127,59 @@ class Cookie
         return $name;
     }
 
+    public function path($path = null)
+    {
+        return $this->config('path', $path);
+    }
+
+    public function domain($domain = null)
+    {
+        return $this->config('domain', $domain);
+    }
+
+    public function secure($secure = null)
+    {
+        return $this->config('secure', $secure);
+    }
+
+    public function httpOnly($httpOnly = null)
+    {
+        return $this->config('httpOnly', $httpOnly);
+    }
+
+    public function expires($expires = null)
+    {
+        $value = $this->config('expires', $expires);
+
+        if ($expires !== null) {
+            return $expires;
+        }
+
+        $expires = new Time($value);
+
+        return $expires->format(self::EXPIRES_FORMAT);
+    }
+
     public function value()
     {
-        //return encrypted value
+        return $this->_encrypt();
+    }
+
+    protected function _encrypt()
+    {
+        $className = $this->_cookieEncryptor;
+
+        return $className::encrypt(
+            $this->_value,
+            $this->_config['encryption'],
+            $this->_config['salt']
+        );
+    }
+
+    protected function _decrypt($value)
+    {
+        $className = $this->_cookieEncryptor;
+
+        return $className::decrypt($value, $this->_config['encryption'], $this->_config['salt']);
     }
 }
