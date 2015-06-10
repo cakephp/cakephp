@@ -555,7 +555,9 @@ class PaginatorComponentTest extends TestCase
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
-        $model->expects($this->never())->method('hasField');
+        $model->expects($this->once())
+            ->method('hasField')
+            ->will($this->returnValue(true));
 
         $options = [
             'sort' => 'body',
@@ -565,7 +567,40 @@ class PaginatorComponentTest extends TestCase
         $result = $this->Paginator->validateSort($model, $options);
 
         $expected = ['model.body' => 'asc'];
-        $this->assertEquals($expected, $result['order']);
+        $this->assertEquals(
+            $expected,
+            $result['order'],
+            'Trusted fields in schema should be prefixed'
+        );
+    }
+
+    /**
+     * test that fields in the whitelist are not validated
+     *
+     * @return void
+     */
+    public function testValidateSortWhitelistNotInSchema()
+    {
+        $model = $this->getMock('Cake\ORM\Table');
+        $model->expects($this->any())
+            ->method('alias')
+            ->will($this->returnValue('model'));
+        $model->expects($this->once())->method('hasField')
+            ->will($this->returnValue(false));
+
+        $options = [
+            'sort' => 'score',
+            'direction' => 'asc',
+            'sortWhitelist' => ['score']
+        ];
+        $result = $this->Paginator->validateSort($model, $options);
+
+        $expected = ['score' => 'asc'];
+        $this->assertEquals(
+            $expected,
+            $result['order'],
+            'Trusted fields not in schema should not be altered'
+        );
     }
 
     /**
@@ -579,7 +614,9 @@ class PaginatorComponentTest extends TestCase
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
-        $model->expects($this->never())->method('hasField');
+        $model->expects($this->once())
+            ->method('hasField')
+            ->will($this->returnValue(true));
 
         $options = [
             'order' => [
