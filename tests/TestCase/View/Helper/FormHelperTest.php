@@ -20,6 +20,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Form\Form;
+use Cake\I18n\Time;
 use Cake\Network\Request;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
@@ -4900,7 +4901,7 @@ class FormHelperTest extends TestCase
         ]);
         $this->assertContains('<option value="04" selected="selected">4</option>', $result);
         $this->assertContains('<option value="30" selected="selected">30</option>', $result);
-        $this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
+        $this->assertContains('<option value="pm" selected="selected">PM</option>', $result);
         $this->assertNotContains('year', $result);
         $this->assertNotContains('month', $result);
         $this->assertNotContains('day', $result);
@@ -4912,7 +4913,7 @@ class FormHelperTest extends TestCase
         ]);
         $this->assertContains('<option value="04" selected="selected">4</option>', $result);
         $this->assertContains('<option value="30" selected="selected">30</option>', $result);
-        $this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
+        $this->assertContains('<option value="pm" selected="selected">PM</option>', $result);
         $this->assertNotContains('year', $result);
         $this->assertNotContains('month', $result);
         $this->assertNotContains('day', $result);
@@ -5076,6 +5077,7 @@ class FormHelperTest extends TestCase
             'Contact.date.day',
             'Contact.date.hour',
             'Contact.date.minute',
+            'Contact.date.localization',
         ];
         $this->assertEquals($expected, $this->Form->fields);
 
@@ -5085,6 +5087,7 @@ class FormHelperTest extends TestCase
             'Contact.published.year',
             'Contact.published.month',
             'Contact.published.day',
+            'Contact.published.localization',
         ];
         $this->assertEquals($expected, $this->Form->fields);
     }
@@ -5281,7 +5284,7 @@ class FormHelperTest extends TestCase
             'value' => '0000-00-00'
         ]);
 
-        $this->assertRegExp('/<option value="">-<\/option>/', $result);
+        $this->assertRegExp('/<option value="" selected="selected">-<\/option>/', $result);
         $this->assertNotRegExp('/<option value="0" selected="selected">0<\/option>/', $result);
     }
 
@@ -5429,7 +5432,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data['Project']['release'] = '2050-02-10';
+        $this->Form->request->data['Project']['release'] = '2030-02-10';
         $result = $this->Form->month('Project.release');
 
         $expected = [
@@ -5519,7 +5522,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data['Project']['release'] = '2050-10-10';
+        $this->Form->request->data['Project']['release'] = '2030-10-10';
         $result = $this->Form->day('Project.release');
 
         $expected = [
@@ -5649,7 +5652,7 @@ class FormHelperTest extends TestCase
     {
         extract($this->dateRegex);
 
-        $now = new \DateTime();
+        $now = new Time();
         $result = $this->Form->meridian('Model.field', ['value' => 'am']);
         $expected = [
             ['select' => ['name' => 'Model[field][meridian]']],
@@ -5657,7 +5660,7 @@ class FormHelperTest extends TestCase
             '/option',
             $meridianRegex,
             ['option' => ['value' => $now->format('a'), 'selected' => 'selected']],
-            $now->format('a'),
+            strtoupper($now->format('a')),
             '/option',
             '*/select'
         ];
@@ -5742,7 +5745,7 @@ class FormHelperTest extends TestCase
         $optValue = date('G');
         $this->assertRegExp('/<option value="' . $thisHour . '" selected="selected">' . $optValue . '<\/option>/', $result);
 
-        $this->Form->request->data['Model']['field'] = '2050-10-10 01:12:32';
+        $this->Form->request->data['Model']['field'] = '2030-10-10 01:12:32';
         $result = $this->Form->hour('Model.field', ['format' => 24]);
         $expected = [
             ['select' => ['name' => 'Model[field][hour]']],
@@ -5861,28 +5864,27 @@ class FormHelperTest extends TestCase
         $this->Form->request->data['User']['birthday'] = '1930-10-10';
         $result = $this->Form->year('User.birthday');
         preg_match_all('/<option value="([\d]+)"/', $result, $matches);
-
+        $date = new Time();
         $result = $matches[1];
-        $expected = range(date('Y') + 5, 1930);
+        $expected = range($date->format('Y') + 5, 1930);
         $this->assertEquals($expected, $result);
 
-        $this->Form->request->data['Project']['release'] = '2050-10-10';
+        $this->Form->request->data['Project']['release'] = '2030-10-10';
         $result = $this->Form->year('Project.release');
         preg_match_all('/<option value="([\d]+)"/', $result, $matches);
-
         $result = $matches[1];
-        $expected = range(2050, date('Y') - 5);
+        $expected = range(2030, $date->format('Y') - 5);
         $this->assertEquals($expected, $result);
 
-        $this->Form->request->data['Project']['release'] = '1881-10-10';
+        $this->Form->request->data['Project']['release'] = '1951-10-10';
         $result = $this->Form->year('Project.release', [
-            'minYear' => 1890,
-            'maxYear' => 1900
+            'minYear' => 1960,
+            'maxYear' => 2000
         ]);
         preg_match_all('/<option value="([\d]+)"/', $result, $matches);
 
         $result = $matches[1];
-        $expected = range(1900, 1881);
+        $expected = range(2000, 1951);
         $this->assertEquals($expected, $result);
     }
 
