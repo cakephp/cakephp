@@ -204,7 +204,7 @@ class Cookie
         $value = $this->config('expires', $expires);
 
         if ($expires !== null) {
-            return $expires;
+            return $value;
         }
 
         $expires = new Time($value);
