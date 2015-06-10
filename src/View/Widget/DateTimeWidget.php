@@ -513,9 +513,8 @@ class DateTimeWidget implements WidgetInterface
             'val' => null,
             'leadingZeroKey' => true,
             'leadingZeroValue' => true,
-            'options' => $this->_generateNumbers(0, 59, $options)
         ];
-
+        $options['options'] = $this->_generateNumbers(0, 59, $options);
         unset(
             $options['leadingZeroKey'], $options['leadingZeroValue'],
             $options['localization']
@@ -635,7 +634,7 @@ class DateTimeWidget implements WidgetInterface
                 $value = sprintf('%02d', $value);
             }
             
-            if ($options['localization']['locale'] !== null) {
+            if ($options['localization']['locale'] !== 'en_US') {
                 $value = \Cake\I18n\Number::format($value, ['locale' => $options['localization']['locale'], 'pattern' => '####']);
             }
             $numbers[$key] = $value;
