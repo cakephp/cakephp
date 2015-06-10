@@ -104,7 +104,7 @@ class Cookie
         return $this;
     }
 
-    public function delete($key)
+    public function remove($key)
     {
         return Hash::remove($this->_value, $key);
     }
