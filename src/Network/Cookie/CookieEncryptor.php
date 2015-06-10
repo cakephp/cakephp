@@ -2,6 +2,9 @@
 
 namespace Cake\Network\Cookie;
 
+use RuntimeException;
+use Cake\Utility\Security;
+
 class CookieEncryptor
 {
 
@@ -14,6 +17,13 @@ class CookieEncryptor
      */
     protected static $_validCiphers = ['aes', 'rijndael'];
 
+    /**
+     *
+     * @param mixed $value
+     * @param string $mode
+     * @param string $salt
+     * @return string
+     */
     public static function encrypt($value, $mode, $salt)
     {
         if (is_array($value)) {
@@ -32,6 +42,13 @@ class CookieEncryptor
         return static::PREFIX . base64_encode($cipher);
     }
 
+    /**
+     *
+     * @param mixed $values
+     * @param string $mode
+     * @param string $salt
+     * @return mixed
+     */
     public static function decrypt($values, $mode, $salt)
     {
         if (is_string($values)) {
@@ -45,6 +62,11 @@ class CookieEncryptor
         return $decrypted;
     }
 
+    /**
+     *
+     * @param string $mode
+     * @throws \RuntimeException
+     */
     protected static function _checkCipher($mode)
     {
         if (!in_array($mode, static::$_validCiphers)) {
@@ -56,6 +78,13 @@ class CookieEncryptor
         }
     }
 
+    /**
+     *
+     * @param mixed $value
+     * @param string $mode
+     * @param string $salt
+     * @return mixed
+     */
     protected static function _decode($value, $mode, $salt)
     {
         if (!$mode) {
@@ -72,11 +101,21 @@ class CookieEncryptor
         return static::_explode($value);
     }
 
+    /**
+     *
+     * @param array $array
+     * @return string
+     */
     protected static function _implode(array $array)
     {
         return json_encode($array);
     }
 
+    /**
+     *
+     * @param string $string
+     * @return array
+     */
     protected static function _explode($string)
     {
         $first = substr($string, 0, 1);
