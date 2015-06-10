@@ -18,6 +18,68 @@ use Cake\Event\EventListenerInterface;
 use Cake\Mailer\Exception\MissingActionException;
 use Cake\Utility\Inflector;
 
+/**
+ * Mailer base class.
+ *
+ * Mailer classes let you encapsulate related Email logic into a reusable
+ * and testable class.
+ *
+ * ## Defining Messages
+ *
+ * Mailers make it easy for you to define methods that handle email formatting
+ * logic. For example:
+ *
+ * ```
+ * class UserMailer extends Mailer
+ * {
+ *   public function resetPassword($user)
+ *   {
+ *     $this->subject = 'Reset Password';
+ *     $this->to = $user->email;
+ *     $this->set(['token' => $user->token]);
+ *   }
+ * }
+ * ```
+ *
+ * Is a trivial example but shows how a mailer could be declared.
+ *
+ * ## Sending Messages
+ *
+ * After you have defined some messages you will want to send them:
+ *
+ * ```
+ * $mailer = new UserMailer();
+ * $mailer->send('resetPassword', $user);
+ * ```
+ *
+ * ## Event Listener
+ *
+ * Mailers can also subscribe to application event allowing you to
+ * decouple email delivery from your application code. By re-declaring the
+ * `implementedEvents()` method you can define event handlers that can
+ * convert events into email. For example, if your application had a user
+ * registation event:
+ *
+ * ```
+ * public function implementedEvents()
+ * {
+ *   return [
+ *     'Model.afterSave' => 'onRegistration',
+ *   ];
+ * }
+ *
+ * public function onRegistration(Event $event, Entity $entity, ArrayObject $options)
+ * {
+ *     if ($entity->isNew()) {
+ *          $this->send('welcome', [$entity]);
+ *      }
+ *  }
+ * ```
+ *
+ * The onRegistration method converts the application event into a mailer method.
+ * Our mailer could either be registered in the application bootstrap, or
+ * in the Table class' initialize() hook.
+ */
 abstract class Mailer implements ArrayAccess, EventListenerInterface
 {
     use ModelAwareTrait;
