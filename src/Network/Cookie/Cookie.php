@@ -135,7 +135,7 @@ class Cookie
      *
      * @return \Cake\Network\Cookie\Cookie
      */
-    public function forget()
+    public function invalidate()
     {
         $this->expires(static::TIMEOUT);
 

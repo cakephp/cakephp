@@ -42,11 +42,11 @@ class ResponseCookieJar extends AbstractCookieJar
      * @param string $name
      * @return null|\Cake\Network\Cookie\Cookie
      */
-    public function forget($name)
+    public function invalidate($name)
     {
         if (isset($this->_cookies[$name])) {
             $cookie = $this->_cookies[$name];
-            return $cookie->forget();
+            return $cookie->invalidate();
         }
     }
 }
