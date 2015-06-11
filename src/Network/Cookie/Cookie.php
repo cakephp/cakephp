@@ -5,7 +5,6 @@ namespace Cake\Network\Cookie;
 use Cake\Core\InstanceConfigTrait;
 use Cake\I18n\Time;
 use Cake\Utility\Hash;
-use Cake\Utility\Security;
 use UnexpectedValueException;
 
 class Cookie
@@ -44,12 +43,6 @@ class Cookie
 
     /**
      *
-     * @var string
-     */
-    protected $_cookieEncryptor = 'Cake\Network\Cookie\CookieEncryptor';
-
-    /**
-     *
      * @param string|array $config Cookie name or an array with cookie options.
      * @param mixed $value An optional value to be set to this cookie.
      * @throws UnexpectedValueException
@@ -77,13 +70,9 @@ class Cookie
         }
 
         if (isset($config['value'])) {
-            $this->value($config['value']);
+            $this->_value = $config['value'];
             unset($config['value']);
         }
-
-        $config += [
-            'salt' => Security::salt()
-        ];
 
         $this->config($config);
     }
@@ -212,47 +201,5 @@ class Cookie
         }
 
         return new Time($value);
-    }
-
-    /**
-     *
-     * @param string $value
-     * @return string
-     */
-    public function value($value = null)
-    {
-        if ($value === null) {
-            return $this->_encrypt();
-        }
-        $this->_value = $this->_decrypt($value);
-
-        return $this;
-    }
-
-    /**
-     *
-     * @return string
-     */
-    protected function _encrypt()
-    {
-        $className = $this->_cookieEncryptor;
-
-        return $className::encrypt(
-            $this->_value,
-            $this->_config['encryption'],
-            $this->_config['salt']
-        );
-    }
-
-    /**
-     *
-     * @param string $value
-     * @return mixed
-     */
-    protected function _decrypt($value)
-    {
-        $className = $this->_cookieEncryptor;
-
-        return $className::decrypt($value, $this->_config['encryption'], $this->_config['salt']);
     }
 }
