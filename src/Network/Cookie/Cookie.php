@@ -11,7 +11,6 @@ use UnexpectedValueException;
 class Cookie
 {
 
-    const EXPIRES_FORMAT = 'U';
     const TIMEOUT = '-1 month';
 
     use InstanceConfigTrait;
@@ -61,11 +60,16 @@ class Cookie
             $config = ['name' => $config];
         }
 
-        if (empty($config['name'])) {
+        if (!isset($config['name']) || $config['name'] === '') {
             throw new UnexpectedValueException('Cookie must have a name.');
         }
 
-        $this->_name = $config['name'];
+        if (is_string($config['name'])) {
+            $this->_name = $config['name'];
+        } else {
+            $msg = sprintf("Cookie name must be a string, %s given.", gettype($config['name']));
+            throw new UnexpectedValueException($msg);
+        }
         unset($config['name']);
 
         if ($value !== null) {
@@ -197,7 +201,7 @@ class Cookie
     /**
      *
      * @param mixed $expires
-     * @return int|\Cake\Network\Cookie\Cookie
+     * @return \Cake\I18n\Time|\Cake\Network\Cookie\Cookie
      */
     public function expires($expires = null)
     {
@@ -207,9 +211,7 @@ class Cookie
             return $value;
         }
 
-        $expires = new Time($value);
-
-        return $expires->format(self::EXPIRES_FORMAT);
+        return new Time($value);
     }
 
     /**
