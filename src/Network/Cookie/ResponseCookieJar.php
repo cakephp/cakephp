@@ -49,4 +49,43 @@ class ResponseCookieJar extends AbstractCookieJar
             return $cookie->invalidate();
         }
     }
+
+    /**
+     *
+     * @param string $name
+     * @param bool|string|array $encryption
+     * @return void
+     */
+    public function send($name, $encryption = null)
+    {
+        if (isset($this->_cookies[$name])) {
+            $cookie = $this->_cookies[$name];
+
+            $raw = [
+                'value' => $this->_encrypt($cookie, $encryption),
+                'path' => $cookie->path(),
+                'expire' => $cookie->expires()->format('U'),
+                'domain' => $cookie->domain(),
+                'secure' => $cookie->secure(),
+                'httpOnly' => $cookie->httpOnly()
+            ];
+
+            $this->_rawCookies[$cookie->name()] = $raw;
+
+            $this->remove($name);
+        }
+    }
+
+    /**
+     *
+     * @return array
+     */
+    public function raw()
+    {
+        foreach (array_keys($this->_cookies) as $name) {
+            $this->send($name);
+        }
+
+        return $this->_rawCookies;
+    }
 }
