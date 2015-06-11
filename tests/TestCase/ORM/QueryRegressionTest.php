@@ -904,4 +904,29 @@ class QueryRegressionTest extends TestCase
             'Output values for functions are not cast yet.'
         );
     }
+
+    /**
+     * Test that contain queries map types correctly.
+     *
+     * @return void
+     */
+    public function testBooleanConditionsInContain()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags', [
+            'foreignKey' => 'article_id',
+            'associationForeignKey' => 'tag_id',
+            'through' => 'SpecialTags'
+        ]);
+        $query = $table->find()
+            ->contain(['Tags' => function ($q) {
+                return $q->where(['SpecialTags.highlighted_time >' => new Time('2014-06-01 00:00:00')]);
+            }])
+            ->where(['Articles.id' => 2]);
+
+        $result = $query->first();
+        $this->assertEquals(2, $result->id);
+        $this->assertNotEmpty($result->tags, 'Missing tags');
+        $this->assertNotEmpty($result->tags[0]->_joinData, 'Missing join data');
+    }
 }

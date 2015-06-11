@@ -941,6 +941,7 @@ class BelongsToMany extends Association
 
         $assoc = $this->target()->association($name);
         $query
+            ->addDefaultTypes($assoc->target())
             ->join($matching + $joins, [], true)
             ->autoFields($query->clause('select') === [])
             ->select($query->aliasFields((array)$assoc->foreignKey(), $name));
