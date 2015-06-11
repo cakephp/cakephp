@@ -905,6 +905,11 @@ class QueryRegressionTest extends TestCase
         );
     }
 
+    /**
+     * Test that contain queries map types correctly.
+     *
+     * @return void
+     */
     public function testBooleanConditionsInContain()
     {
         $table = TableRegistry::get('Articles');
@@ -915,13 +920,13 @@ class QueryRegressionTest extends TestCase
         ]);
         $query = $table->find()
             ->contain(['Tags' => function ($q) {
-                return $q->where(['SpecialTags.highlighted' => false]);
+                return $q->where(['SpecialTags.highlighted_time >' => new Time('2014-06-01 00:00:00')]);
             }])
-            ->order(['Articles.id' => 'ASC']);
+            ->where(['Articles.id' => 2]);
 
         $result = $query->first();
-        $this->assertEquals(1, $result->id);
-        $this->assertNotEmpty($result->tags);
-        $this->assertNotEmpty($result->tags[0]->_joinData);
+        $this->assertEquals(2, $result->id);
+        $this->assertNotEmpty($result->tags, 'Missing tags');
+        $this->assertNotEmpty($result->tags[0]->_joinData, 'Missing join data');
     }
 }
