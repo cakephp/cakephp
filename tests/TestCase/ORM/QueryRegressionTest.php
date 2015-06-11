@@ -904,4 +904,24 @@ class QueryRegressionTest extends TestCase
             'Output values for functions are not cast yet.'
         );
     }
+
+    public function testBooleanConditionsInContain()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags', [
+            'foreignKey' => 'article_id',
+            'associationForeignKey' => 'tag_id',
+            'through' => 'SpecialTags'
+        ]);
+        $query = $table->find()
+            ->contain(['Tags' => function ($q) {
+                return $q->where(['SpecialTags.highlighted' => false]);
+            }])
+            ->order(['Articles.id' => 'ASC']);
+
+        $result = $query->first();
+        $this->assertEquals(1, $result->id);
+        $this->assertNotEmpty($result->tags);
+        $this->assertNotEmpty($result->tags[0]->_joinData);
+    }
 }
