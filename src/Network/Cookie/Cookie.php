@@ -86,7 +86,11 @@ class Cookie
             return $this->_value;
         }
 
-        return Hash::get($this->_value, $key);
+        if (is_array($this->_value)) {
+            return Hash::get($this->_value, $key);
+        } else {
+            return $this->_value;
+        }
     }
 
     /**
@@ -98,9 +102,9 @@ class Cookie
     public function write($key, $value = null)
     {
         if ($value !== null) {
-            Hash::insert($this->_value, $key, $value);
+            $this->_insert($key, $value);
         } else {
-            Hash::merge($this->_value, $key);
+            $this->_merge($key);
         }
 
         return $this;
@@ -108,12 +112,43 @@ class Cookie
 
     /**
      *
-     * @param string $key
+     * @param mixed $value
+     */
+    protected function _merge($value)
+    {
+        if (is_array($this->_value)) {
+            Hash::merge($this->_value, $value);
+        } else {
+            $this->_value = $value;
+        }
+    }
+
+    /**
+     *
+     * @param mixed $key
+     * @param mixed $value
+     */
+    protected function _insert($key, $value)
+    {
+        if (!is_array($this->_value)) {
+            $this->_value = (array)$this->_value;
+        }
+
+        Hash::insert($this->_value, $key, $value);
+    }
+
+    /**
+     *
+     * @param string|null $key
      * @return \Cake\Network\Cookie\Cookie
      */
-    public function remove($key)
+    public function remove($key = null)
     {
-        Hash::remove($this->_value, $key);
+        if (is_array($this->_value)) {
+            Hash::remove($this->_value, $key);
+        } else {
+            $this->_value = null;
+        }
 
         return $this;
     }
