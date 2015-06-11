@@ -2,6 +2,7 @@
 
 namespace Cake\Network\Cookie;
 
+use ArrayIterator;
 use IteratorAggregate;
 
 abstract class AbstractCookieJar implements IteratorAggregate
@@ -37,6 +38,6 @@ abstract class AbstractCookieJar implements IteratorAggregate
      */
     public function getIterator()
     {
-        return $this->_cookies;
+        return new ArrayIterator($this->_cookies);
     }
 }
