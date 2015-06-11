@@ -23,9 +23,7 @@ class Cookie
         'path' => null,
         'domain' => '',
         'secure' => false,
-        'salt' => null,
         'httpOnly' => false,
-        'encryption' => 'aes',
         'expires' => '+1 month',
     ];
 
