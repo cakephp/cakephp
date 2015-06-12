@@ -24,6 +24,11 @@ class CustomersFixture extends TestFixture
 {
 
     /**
+     * {@inheritDoc}
+     */
+    public $table = 'customers';
+
+    /**
      * fields property
      *
      * @var array

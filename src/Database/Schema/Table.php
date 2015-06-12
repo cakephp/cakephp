@@ -511,9 +511,27 @@ class Table
 
         if ($attrs['type'] === static::CONSTRAINT_FOREIGN) {
             $attrs = $this->_checkForeignKey($attrs);
+
+            if (isset($this->_constraints[$name])) {
+                $this->_constraints[$name]['columns'] = array_merge(
+                    $this->_constraints[$name]['columns'],
+                    $attrs['columns']
+                );
+
+                if (is_string($this->_constraints[$name]['references'][1])) {
+                    $this->_constraints[$name]['references'][1] = [$this->_constraints[$name]['references'][1]];
+                }
+
+                $this->_constraints[$name]['references'][1] = array_merge(
+                    $this->_constraints[$name]['references'][1],
+                    [$attrs['references'][1]]
+                );
+                return $this;
+            }
         } else {
             unset($attrs['references'], $attrs['update'], $attrs['delete']);
         }
+
         $this->_constraints[$name] = $attrs;
         return $this;
     }

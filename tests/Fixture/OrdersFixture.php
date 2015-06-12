@@ -17,11 +17,16 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Class ProductOrdersFixture
+ * Class OrdersFixture
  *
  */
-class ProductOrdersFixture extends TestFixture
+class OrdersFixture extends TestFixture
 {
+
+    /**
+     * {@inheritDoc}
+     */
+    public $table = 'orders';
 
     /**
      * fields property
@@ -47,17 +52,17 @@ class ProductOrdersFixture extends TestFixture
             'primary' => [
                 'type' => 'primary', 'columns' => ['id']
             ],
-            'product_order_ibfk_1' => [
+            'product_id_fk' => [
                 'type' => 'foreign',
-                'columns' => ['product_category', 'product_id'],
-                'references' => ['product', ['category', 'id']],
+                'columns' => ['product_id', 'product_category'],
+                'references' => ['products', ['id', 'category']],
                 'update' => 'cascade',
                 'delete' => 'cascade',
             ],
-            'product_order_ibfk_2' => [
+            'order_ibfk_2' => [
                 'type' => 'foreign',
                 'columns' => ['customer_id'],
-                'references' => ['customer', 'id'],
+                'references' => ['customers', 'id'],
                 'update' => 'cascade',
                 'delete' => 'cascade',
             ]

@@ -15,13 +15,18 @@
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Database\Schema\Table;
+use Cake\Datasource\ConnectionManager;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use Symfony\Component\Yaml\Exception\RuntimeException;
 
 /**
  * Test case for Table
  */
 class TableTest extends TestCase
 {
+
+    public $fixtures = ['core.customers', 'core.products', 'core.orders'];
 
     /**
      * Test construction with columns
@@ -406,6 +411,39 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test composite foreign keys support
+     *
+     * @return void
+     */
+    public function testAddConstraintForeignKeyTwoColumns()
+    {
+        $table = TableRegistry::get('Orders');
+        $compositeConstraint = $table->schema()->constraint('product_id_fk');
+        $expected = [
+            'type' => 'foreign',
+            'columns' => [
+                'product_id',
+                'product_category'
+            ],
+            'references' => [
+                'products',
+                ['id', 'category']
+            ],
+            'update' => 'cascade',
+            'delete' => 'cascade',
+            'length' => []
+        ];
+
+        $this->assertEquals($expected, $compositeConstraint);
+
+        $expectedSubstring = '#CONSTRAINT <product_id_fk> FOREIGN KEY \(<product_id>, <product_category>\)' .
+            ' REFERENCES <products> \(<id>, <category>\)#';
+        $expectedSubstring = str_replace(['<', '>'], ['[`"\[]', '[`"\]]'], $expectedSubstring);
+
+        $this->assertRegExp($expectedSubstring, $table->schema()->createSql(ConnectionManager::get('default'))[0]);
+    }
+
+    /**
      * Provider for exceptionally bad foreign key data.
      *
      * @return array
@@ -461,5 +499,26 @@ class TableTest extends TestCase
         $this->assertTrue($table->temporary());
         $table->temporary(false);
         $this->assertFalse($table->temporary());
+    }
+
+    /**
+     * Assertion for comparing a regex pattern against a query having its identifiers
+     * quoted. It accepts queries quoted with the characters `<` and `>`. If the third
+     * parameter is set to true, it will alter the pattern to both accept quoted and
+     * unquoted queries
+     *
+     * @param string $pattern
+     * @param string $query the result to compare against
+     * @param bool $optional
+     * @return void
+     */
+    public function assertQuotedQuery($pattern, $query, $optional = false)
+    {
+        if ($optional) {
+            $optional = '?';
+        }
+        $pattern = str_replace('<', '[`"\[]' . $optional, $pattern);
+        $pattern = str_replace('>', '[`"\]]' . $optional, $pattern);
+        $this->assertRegExp('#' . $pattern . '#', $query);
     }
 }

@@ -22,6 +22,10 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class ProductsFixture extends TestFixture
 {
+    /**
+     * {@inheritDoc}
+     */
+    public $table = 'products';
 
     /**
      * fields property
@@ -42,8 +46,8 @@ class ProductsFixture extends TestFixture
      * @var array
      */
     public $records = [
-        ['category' => 1, 'name' => 'First product', 'price' => 10],
-        ['category' => 2, 'name' => 'Second product', 'price' => 20],
-        ['category' => 3, 'name' => 'Third product', 'price' => 30]
+        ['id' => 1, 'category' => 1, 'name' => 'First product', 'price' => 10],
+        ['id' => 2, 'category' => 2, 'name' => 'Second product', 'price' => 20],
+        ['id' => 3, 'category' => 3, 'name' => 'Third product', 'price' => 30]
     ];
 }
