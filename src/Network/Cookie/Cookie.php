@@ -82,15 +82,11 @@ class Cookie
      */
     public function read($key = null)
     {
-        if ($key === null) {
+        if ($key === null || !is_array($this->_value)) {
             return $this->_value;
         }
-
-        if (is_array($this->_value)) {
-            return Hash::get($this->_value, $key);
-        } else {
-            return $this->_value;
-        }
+        
+        return Hash::get($this->_value, $key);
     }
 
     /**
@@ -117,7 +113,7 @@ class Cookie
     protected function _merge($value)
     {
         if (is_array($this->_value)) {
-            Hash::merge($this->_value, $value);
+            $this->_value = Hash::merge($this->_value, $value);
         } else {
             $this->_value = $value;
         }
@@ -134,7 +130,7 @@ class Cookie
             $this->_value = (array)$this->_value;
         }
 
-        Hash::insert($this->_value, $key, $value);
+        $this->_value = Hash::insert($this->_value, $key, $value);
     }
 
     /**
@@ -144,10 +140,10 @@ class Cookie
      */
     public function remove($key = null)
     {
-        if (is_array($this->_value)) {
-            Hash::remove($this->_value, $key);
-        } else {
+        if ($key == null || !is_array($this->_value)) {
             $this->_value = null;
+        } else {
+            $this->_value = Hash::remove($this->_value, $key);
         }
 
         return $this;
