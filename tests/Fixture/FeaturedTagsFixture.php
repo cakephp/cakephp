@@ -40,8 +40,8 @@ class FeaturedTagsFixture extends TestFixture
      * @var array
      */
     public $records = [
-        ['tag_id' => 1, 'priority' => 1],
-        ['tag_id' => 2, 'priority' => 2],
-        ['tag_id' => 3, 'priority' => 3]
+        ['priority' => 1],
+        ['priority' => 2],
+        ['priority' => 3]
     ];
 }
