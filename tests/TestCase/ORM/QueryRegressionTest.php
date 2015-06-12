@@ -43,6 +43,8 @@ class QueryRegressionTest extends TestCase
         'core.special_tags',
         'core.translates',
         'core.authors_tags',
+        'core.featured_tags',
+        'core.tags_translations',
     ];
 
     /**
@@ -521,6 +523,64 @@ class QueryRegressionTest extends TestCase
             collection($result[0]->author->tags)->extract('name')->toArray()
         );
         $this->assertEquals(3, $result[0]->author->id);
+    }
+
+    /**
+     * Tests that finding on a table with a primary key other than `id` will work
+     * seamlessly with either select or subquery.
+     *
+     * @see https://github.com/cakephp/cakephp/issues/6781
+     * @return void
+     */
+    public function testDeepHasManyEitherStrategy()
+    {
+        $tags = TableRegistry::get('Tags');
+        $featuredTags = TableRegistry::get('FeaturedTags');
+        $featuredTags->belongsTo('Tags');
+
+        $tags->hasMany('TagsTranslations', [
+            'foreignKey' => 'id',
+            'strategy' => 'select'
+        ]);
+        $findViaSelect = $featuredTags
+            ->find()
+            ->where(['FeaturedTags.tag_id' => 2])
+            ->contain('Tags.TagsTranslations')
+            ->first();
+
+        $tags->hasMany('TagsTranslations', [
+            'foreignKey' => 'id',
+            'strategy' => 'subquery'
+        ]);
+        $findViaSubquery = $featuredTags
+            ->find()
+            ->where(['FeaturedTags.tag_id' => 2])
+            ->contain('Tags.TagsTranslations')
+            ->first();
+
+        $expected = [
+            'tag_id' => 2,
+            'priority' => 2,
+            'tag' => [
+                'id' => 2,
+                'name' => 'tag2',
+                'tags_translations' => [
+                    [
+                        'id' => 2,
+                        'locale' => 'de_de',
+                        'name' => 'tag 2 translated into de_de'
+                    ],
+                    [
+                        'id' => 2,
+                        'locale' => 'en_us',
+                        'name' => 'tag 2 translated into en_us'
+                    ]
+                ]
+            ]
+        ];
+
+        $this->assertEquals($expected, $findViaSelect->toArray());
+        $this->assertEquals($expected, $findViaSubquery->toArray());
     }
 
     /**
