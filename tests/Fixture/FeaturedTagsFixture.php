@@ -1,6 +1,6 @@
 <?php
 /**
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) Tests <http://book.cakephp.org/3.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -8,8 +8,8 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         1.2.0
+ * @link          http://book.cakephp.org/3.0/en/development/testing.html CakePHP(tm) Tests
+ * @since         3.0.7
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\Fixture;
@@ -17,7 +17,7 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Class TagFixture
+ * Class FeaturedTagsFixture
  *
  */
 class FeaturedTagsFixture extends TestFixture
@@ -40,8 +40,8 @@ class FeaturedTagsFixture extends TestFixture
      * @var array
      */
     public $records = [
-        ['tag_id' => 1, 'priority' => 1],
-        ['tag_id' => 2, 'priority' => 2],
-        ['tag_id' => 3, 'priority' => 3]
+        ['priority' => 1],
+        ['priority' => 2],
+        ['priority' => 3]
     ];
 }
