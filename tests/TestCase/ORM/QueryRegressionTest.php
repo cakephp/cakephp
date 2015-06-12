@@ -545,8 +545,7 @@ class QueryRegressionTest extends TestCase
         $findViaSelect = $featuredTags
             ->find()
             ->where(['FeaturedTags.tag_id' => 2])
-            ->contain('Tags.TagsTranslations')
-            ->first();
+            ->contain('Tags.TagsTranslations');
 
         $tags->hasMany('TagsTranslations', [
             'foreignKey' => 'id',
@@ -555,32 +554,12 @@ class QueryRegressionTest extends TestCase
         $findViaSubquery = $featuredTags
             ->find()
             ->where(['FeaturedTags.tag_id' => 2])
-            ->contain('Tags.TagsTranslations')
-            ->first();
+            ->contain('Tags.TagsTranslations');
 
-        $expected = [
-            'tag_id' => 2,
-            'priority' => 2,
-            'tag' => [
-                'id' => 2,
-                'name' => 'tag2',
-                'tags_translations' => [
-                    [
-                        'id' => 2,
-                        'locale' => 'de_de',
-                        'name' => 'tag 2 translated into de_de'
-                    ],
-                    [
-                        'id' => 2,
-                        'locale' => 'en_us',
-                        'name' => 'tag 2 translated into en_us'
-                    ]
-                ]
-            ]
-        ];
+        $expected = [2 => 'tag 2 translated into en_us'];
 
-        $this->assertEquals($expected, $findViaSelect->toArray());
-        $this->assertEquals($expected, $findViaSubquery->toArray());
+        $this->assertEquals($expected, $findViaSelect->combine('tag_id', 'tag.tags_translations.1.name')->toArray());
+        $this->assertEquals($expected, $findViaSubquery->combine('tag_id', 'tag.tags_translations.1.name')->toArray());
     }
 
     /**
