@@ -16,8 +16,8 @@ class RequestCookieJar extends AbstractCookieJar
     {
         parent::__construct($encrypter);
 
-        foreach ($cookies as $name => $cookieData) {
-            $this->_rawCookies[$name] = $cookieData;
+        foreach ($cookies as $name => $value) {
+            $this->_cookies[$name] = $value;
         }
     }
 
@@ -25,20 +25,17 @@ class RequestCookieJar extends AbstractCookieJar
      *
      * @param string $name
      * @param string|bool|array $encryption
-     * @return \Cake\Network\Cookie\Cookie
+     * @return null|\Cake\Network\Cookie\Cookie
      */
     public function get($name, $encryption = null)
     {
-        $cookie = parent::get($name);
+        $value = parent::get($name);
 
-        if ($cookie === null && isset($this->_rawCookies[$name])) {
-            $value = $this->_decrypt($this->_rawCookies[$name], $encryption);
-
+        if ($value !== null) {
+            $value = $this->_decrypt($value, $encryption);
             $cookie = new $this->_cookieClassName($name, $value);
 
-            $this->_cookies[$cookie->name()] = $cookie;
+            return $cookie;
         }
-
-        return $cookie;
     }
 }
