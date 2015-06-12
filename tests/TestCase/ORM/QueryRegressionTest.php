@@ -558,8 +558,8 @@ class QueryRegressionTest extends TestCase
 
         $expected = [2 => 'tag 2 translated into en_us'];
 
-        $this->assertEquals($expected, $findViaSelect->combine('tag_id', 'tag.tags_translations.1.name')->toArray());
-        $this->assertEquals($expected, $findViaSubquery->combine('tag_id', 'tag.tags_translations.1.name')->toArray());
+        $this->assertEquals($expected, $findViaSelect->combine('tag_id', 'tag.tags_translations.0.name')->toArray());
+        $this->assertEquals($expected, $findViaSubquery->combine('tag_id', 'tag.tags_translations.0.name')->toArray());
     }
 
     /**
