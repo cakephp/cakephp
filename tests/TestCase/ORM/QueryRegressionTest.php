@@ -878,4 +878,55 @@ class QueryRegressionTest extends TestCase
         $this->assertEquals(0, $table->find()->count());
         $this->assertNull($table->find()->last());
     }
+
+    /**
+     * Test that the typemaps used in function expressions
+     * create the correct results.
+     *
+     * @return void
+     */
+    public function testTypemapInFunctions()
+    {
+        $table = TableRegistry::get('Comments');
+        $table->updateAll(['published' => null], ['1 = 1']);
+        $query = $table->find();
+        $query->select([
+            'id',
+            'coalesced' => $query->func()->coalesce(
+                ['published' => 'literal', -1],
+                ['integer']
+            )
+        ]);
+        $result = $query->all()->first();
+        $this->assertSame(
+            '-1',
+            $result['coalesced'],
+            'Output values for functions are not cast yet.'
+        );
+    }
+
+    /**
+     * Test that contain queries map types correctly.
+     *
+     * @return void
+     */
+    public function testBooleanConditionsInContain()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags', [
+            'foreignKey' => 'article_id',
+            'associationForeignKey' => 'tag_id',
+            'through' => 'SpecialTags'
+        ]);
+        $query = $table->find()
+            ->contain(['Tags' => function ($q) {
+                return $q->where(['SpecialTags.highlighted_time >' => new Time('2014-06-01 00:00:00')]);
+            }])
+            ->where(['Articles.id' => 2]);
+
+        $result = $query->first();
+        $this->assertEquals(2, $result->id);
+        $this->assertNotEmpty($result->tags, 'Missing tags');
+        $this->assertNotEmpty($result->tags[0]->_joinData, 'Missing join data');
+    }
 }

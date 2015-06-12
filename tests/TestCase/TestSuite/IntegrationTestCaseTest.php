@@ -118,6 +118,19 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Assert that the stored template doesn't change when cells are rendered.
+     *
+     * @return void
+     */
+    public function testAssertTemplateAfterCellRender()
+    {
+        $this->get('/posts/get');
+        $this->assertContains('Template' . DS . 'Posts' . DS . 'get.ctp', $this->_viewName);
+        $this->assertTemplate('get');
+        $this->assertResponseContains('cellcontent');
+    }
+
+    /**
      * Test array URLs
      *
      * @return void

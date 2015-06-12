@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase;
 use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Event\EventManager;
 use Cake\Filesystem\Folder;
 use Cake\Log\Log;
 use Cake\Network\Response;
@@ -559,5 +560,30 @@ EXPECTED;
         $collection = collection($items);
         $this->assertInstanceOf('Cake\Collection\Collection', $collection);
         $this->assertSame($items, $collection->toArray());
+    }
+
+    /**
+     * Test that works in tandem with testEventManagerReset2 to
+     * test the EventManager reset.
+     *
+     * The return value is passed to testEventManagerReset2 as
+     * an arguments.
+     *
+     * @return \Cake\Event\EventManager
+     */
+    public function testEventManagerReset1()
+    {
+        return EventManager::instance();
+    }
+
+    /**
+     * Test if the EventManager is reset between tests.
+     *
+     * @depends testEventManagerReset1
+     * @return void
+     */
+    public function testEventManagerReset2($prevEventManager)
+    {
+        $this->assertNotSame($prevEventManager, EventManager::instance());
     }
 }

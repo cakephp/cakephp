@@ -589,6 +589,7 @@ class TimeTest extends TestCase
     /**
      * test formatting dates with offset style timezone
      *
+     * @see https://github.com/facebook/hhvm/issues/3637
      * @return void
      */
     public function testI18nFormatWithOffsetTimezone()

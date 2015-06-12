@@ -526,6 +526,38 @@ class ShellTest extends TestCase
     }
 
     /**
+     * Test that all files are changed with a 'a' reply.
+     *
+     * @return void
+     */
+    public function testCreateFileOverwriteAll()
+    {
+        $eol = PHP_EOL;
+        $path = TMP . 'shell_test';
+        $files = [
+            $path . DS . 'file1.php' => 'My first content',
+            $path . DS . 'file2.php' => 'My second content',
+            $path . DS . 'file3.php' => 'My third content'
+        ];
+
+        new Folder($path, true);
+
+        $this->io->expects($this->once())
+            ->method('askChoice')
+            ->will($this->returnValue('a'));
+
+        foreach ($files as $file => $contents) {
+            touch($file);
+            $this->assertTrue(file_exists($file));
+
+            $result = $this->Shell->createFile($file, $contents);
+            $this->assertTrue(file_exists($file));
+            $this->assertTextEquals($contents, file_get_contents($file));
+            $this->assertTrue($result, 'Did create file.');
+        }
+    }
+
+    /**
      * Test that you can't create files that aren't writable.
      *
      * @return void

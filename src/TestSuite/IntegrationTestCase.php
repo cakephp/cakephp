@@ -14,7 +14,6 @@
 namespace Cake\TestSuite;
 
 use Cake\Core\Configure;
-use Cake\Event\EventManager;
 use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\Routing\DispatcherFactory;
@@ -98,17 +97,6 @@ abstract class IntegrationTestCase extends TestCase
      * @var \Cake\Network\Session
      */
     protected $_requestSession;
-
-    /**
-     * Resets the EventManager for before each test.
-     *
-     * @return void
-     */
-    public function setUp()
-    {
-        parent::setUp();
-        EventManager::instance(new EventManager());
-    }
 
     /**
      * Clears the state used for requests.
@@ -307,7 +295,9 @@ abstract class IntegrationTestCase extends TestCase
         $this->_controller = $event->data['controller'];
         $events = $this->_controller->eventManager();
         $events->on('View.beforeRender', function ($event, $viewFile) {
-            $this->_viewName = $viewFile;
+            if (!$this->_viewName) {
+                $this->_viewName = $viewFile;
+            }
         });
         $events->on('View.beforeLayout', function ($event, $viewFile) {
             $this->_layoutName = $viewFile;

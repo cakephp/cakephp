@@ -526,7 +526,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             return;
         }
 
-        if ($url !== null && !$response->location()) {
+        if (!$response->location()) {
             $response->location(Router::url($url, true));
         }
 

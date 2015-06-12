@@ -21,8 +21,9 @@ class TypeMap
 {
 
     /**
-     * Associative array with the default fields and their types this query might contain
-     * used to avoid repetition when calling multiple times functions inside this class that
+     * Associative array with the default fields and the related types this query might contain.
+     *
+     * Used to avoid repetition when calling multiple functions inside this class that
      * may require a custom type for a specific field.
      *
      * @var array
@@ -30,8 +31,9 @@ class TypeMap
     protected $_defaults;
 
     /**
-     * Associative array with the fields and their types that override defaults this query might contain
-     * used to avoid repetition when calling multiple times functions inside this class that
+     * Associative array with the fields and the related types that override defaults this query might contain
+     *
+     * Used to avoid repetition when calling multiple functions inside this class that
      * may require a custom type for a specific field.
      *
      * @var array
@@ -62,6 +64,8 @@ class TypeMap
      * $query->defaults(['created' => 'datetime', 'is_visible' => 'boolean']);
      * ```
      *
+     * This method will replace all the existing type maps with the ones provided.
+     *
      * @param array $defaults associative array where keys are field names and values
      * are the correspondent type.
      * @return $this|array
@@ -76,7 +80,20 @@ class TypeMap
     }
 
     /**
-     * Configures a map of fields and their associated types for single-use.
+     * Add additional default types into the type map.
+     *
+     * If a key already exists it will not be overwritten.
+     *
+     * @param array $types The additional types to add.
+     * @return void
+     */
+    public function addDefaults(array $types)
+    {
+        $this->_defaults = $this->_defaults + $types;
+    }
+
+    /**
+     * Sets a map of fields and their associated types for single-use.
      *
      * If called with no arguments it will return the currently configured types.
      *
@@ -85,6 +102,8 @@ class TypeMap
      * ```
      * $query->types(['created' => 'time']);
      * ```
+     *
+     * This method will replace all the existing type maps with the ones provided.
      *
      * @param array $types associative array where keys are field names and values
      * are the correspondent type.

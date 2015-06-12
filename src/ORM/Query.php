@@ -143,7 +143,7 @@ class Query extends DatabaseQuery implements JsonSerializable
         foreach ($schema->columns() as $f) {
             $fields[$f] = $fields[$alias . '.' . $f] = $schema->columnType($f);
         }
-        $this->defaultTypes($fields);
+        $this->typeMap()->addDefaults($fields);
 
         return $this;
     }

@@ -119,19 +119,30 @@ class TreeBehaviorTest extends TestCase
         $this->assertEquals([1, 6, 9], $nodes->extract('id')->toArray());
 
         $nodes = $this->table->find('path', ['for' => 10]);
-        $this->assertEquals([1, 6, 10], $nodes->extract('id')->toArray());
+        $this->assertSame([1, 6, 10], $nodes->extract('id')->toArray());
 
         $nodes = $this->table->find('path', ['for' => 5]);
-        $this->assertEquals([1, 2, 5], $nodes->extract('id')->toArray());
+        $this->assertSame([1, 2, 5], $nodes->extract('id')->toArray());
 
         $nodes = $this->table->find('path', ['for' => 1]);
-        $this->assertEquals([1], $nodes->extract('id')->toArray());
+        $this->assertSame([1], $nodes->extract('id')->toArray());
+
+        $entity = $this->table->newEntity(['name' => 'odd one', 'parent_id' => 1]);
+        $entity = $this->table->save($entity);
+        $newId = $entity->id;
+
+        $entity = $this->table->get(2);
+        $entity->parent_id = $newId;
+        $this->table->save($entity);
+
+        $nodes = $this->table->find('path', ['for' => 4]);
+        $this->assertSame([1, $newId, 2, 4], $nodes->extract('id')->toArray());
 
         // find path with scope
         $table = TableRegistry::get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
         $nodes = $table->find('path', ['for' => 5]);
-        $this->assertEquals([1, 3, 4, 5], $nodes->extract('id')->toArray());
+        $this->assertSame([1, 3, 4, 5], $nodes->extract('id')->toArray());
     }
 
     /**
@@ -313,6 +324,36 @@ class TreeBehaviorTest extends TestCase
         $result = $table
             ->find('treeList', ['keyPath' => 'url', 'valuePath' => 'id', 'spacer' => ' '])
             ->toArray();
+        $expected = [
+            '/link1.html' => '1',
+            'http://example.com' => ' 2',
+            '/what/even-more-links.html' => ' 3',
+            '/lorem/ipsum.html' => '  4',
+            '/what/the.html' => '   5',
+            '/yeah/another-link.html' => '6',
+            'http://cakephp.org' => ' 7',
+            '/page/who-we-are.html' => '8'
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests the testFormatTreeListCustom() method.
+     *
+     * @return void
+     */
+    public function testFormatTreeListCustom()
+    {
+        $table = TableRegistry::get('MenuLinkTrees');
+        $table->addBehavior('Tree');
+
+        $query = $table
+            ->find('threaded')
+            ->where(['menu' => 'main-menu']);
+
+        $options = ['keyPath' => 'url', 'valuePath' => 'id', 'spacer' => ' '];
+        $result = $table->formatTreeList($query, $options)->toArray();
+
         $expected = [
             '/link1.html' => '1',
             'http://example.com' => ' 2',

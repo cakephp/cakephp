@@ -312,6 +312,59 @@ class Text
     }
 
     /**
+     * Wraps a complete block of text to a specific width, can optionally wrap
+     * at word breaks.
+     *
+     * ### Options
+     *
+     * - `width` The width to wrap to. Defaults to 72.
+     * - `wordWrap` Only wrap on words breaks (spaces) Defaults to true.
+     * - `indent` String to indent with. Defaults to null.
+     * - `indentAt` 0 based index to start indenting at. Defaults to 0.
+     *
+     * @param string $text The text to format.
+     * @param array|int $options Array of options to use, or an integer to wrap the text to.
+     * @return string Formatted text.
+     */
+    public static function wrapBlock($text, $options = [])
+    {
+        if (is_numeric($options)) {
+            $options = ['width' => $options];
+        }
+        $options += ['width' => 72, 'wordWrap' => true, 'indent' => null, 'indentAt' => 0];
+
+        if (!empty($options['indentAt']) && $options['indentAt'] === 0) {
+            $indentLength = !empty($options['indent']) ? strlen($options['indent']) : 0;
+            $options['width'] = $options['width'] - $indentLength;
+            return self::wrap($text, $options);
+        }
+
+        $wrapped = self::wrap($text, $options);
+
+        if (!empty($options['indent'])) {
+            $indentationLength = mb_strlen($options['indent']);
+            $chunks = explode("\n", $wrapped);
+            $count = count($chunks);
+            if ($count < 2) {
+                return $wrapped;
+            }
+            $toRewrap = '';
+            for ($i = $options['indentAt']; $i < $count; $i++) {
+                $toRewrap .= mb_substr($chunks[$i], $indentationLength) . ' ';
+                unset($chunks[$i]);
+            }
+            $options['width'] -= $indentationLength;
+            $options['indentAt'] = 0;
+            $rewrapped = self::wrap($toRewrap, $options);
+            $newChunks = explode("\n", $rewrapped);
+
+            $chunks = array_merge($chunks, $newChunks);
+            $wrapped = implode("\n", $chunks);
+        }
+        return $wrapped;
+    }
+
+    /**
      * Unicode and newline aware version of wordwrap.
      *
      * @param string $text The text to format.

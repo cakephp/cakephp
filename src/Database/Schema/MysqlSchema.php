@@ -221,9 +221,9 @@ class MysqlSchema extends BaseSchema
     public function describeForeignKeySql($tableName, $config)
     {
         $sql = 'SELECT * FROM information_schema.key_column_usage AS kcu
-			INNER JOIN information_schema.referential_constraints AS rc
-			ON (kcu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME)
-			WHERE kcu.TABLE_SCHEMA = ? AND kcu.TABLE_NAME = ? and rc.TABLE_NAME = ?';
+            INNER JOIN information_schema.referential_constraints AS rc
+            ON (kcu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME)
+            WHERE kcu.TABLE_SCHEMA = ? AND kcu.TABLE_NAME = ? and rc.TABLE_NAME = ?';
 
         return [$sql, [$config['database'], $tableName, $tableName]];
     }
@@ -332,8 +332,12 @@ class MysqlSchema extends BaseSchema
         if (isset($data['null']) && $data['null'] === false) {
             $out .= ' NOT NULL';
         }
+        $addAutoIncrement = (
+            [$name] == (array)$table->primaryKey() &&
+            !$table->hasAutoIncrement()
+        );
         if (in_array($data['type'], ['integer', 'biginteger']) &&
-            ([$name] == (array)$table->primaryKey() || $data['autoIncrement'] === true)
+            ($data['autoIncrement'] === true || $addAutoIncrement)
         ) {
             $out .= ' AUTO_INCREMENT';
         }

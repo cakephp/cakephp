@@ -577,7 +577,7 @@ class Connection implements ConnectionInterface
     /**
      * Checks if a transaction is running.
      *
-     * @return bool True if a transaction is runnning else false.
+     * @return bool True if a transaction is running else false.
      */
     public function inTransaction()
     {

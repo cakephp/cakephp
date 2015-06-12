@@ -227,6 +227,24 @@ class EventManagerTest extends TestCase
     }
 
     /**
+     * Tests off'ing all listeners for an event
+     */
+    public function testRemoveAllListeners()
+    {
+        $manager = new EventManager();
+        $manager->on('fake.event', ['AClass', 'aMethod']);
+        $manager->on('another.event', ['priority' => 1], 'fakeFunction');
+
+        $manager->off('fake.event');
+
+        $expected = [
+            ['callable' => 'fakeFunction']
+        ];
+        $this->assertEquals($expected, $manager->listeners('another.event'));
+        $this->assertEquals([], $manager->listeners('fake.event'));
+    }
+
+    /**
      * Tests detaching an event from a event key queue
      *
      * @return void

@@ -390,6 +390,37 @@ SQL;
         $this->assertArrayHasKey('collation', $result->options());
     }
 
+    public function testDescribeNonPrimaryAutoIncrement()
+    {
+        $this->_needsConnection();
+        $connection = ConnectionManager::get('test');
+
+        $sql = <<<SQL
+CREATE TABLE `odd_primary_key` (
+`id` BIGINT UNSIGNED NOT NULL,
+`other_field` INTEGER(11) NOT NULL AUTO_INCREMENT,
+PRIMARY KEY (`id`),
+UNIQUE KEY `other_field` (`other_field`)
+)
+SQL;
+        $connection->execute($sql);
+        $schema = new SchemaCollection($connection);
+        $table = $schema->describe('odd_primary_key');
+        $connection->execute('DROP TABLE odd_primary_key');
+
+        $column = $table->column('id');
+        $this->assertNull($column['autoIncrement'], 'should not autoincrement');
+        $this->assertTrue($column['unsigned'], 'should be unsigned');
+
+        $column = $table->column('other_field');
+        $this->assertTrue($column['autoIncrement'], 'should not autoincrement');
+        $this->assertFalse($column['unsigned'], 'should not be unsigned');
+
+        $output = $table->createSql($connection);
+        $this->assertContains('`id` BIGINT UNSIGNED NOT NULL,', $output[0]);
+        $this->assertContains('`other_field` INTEGER(11) NOT NULL AUTO_INCREMENT,', $output[0]);
+    }
+
     /**
      * Column provider for creating column sql
      *
@@ -689,7 +720,7 @@ SQL;
         $table = new Table('articles');
         $table->addColumn('id', [
                 'type' => 'integer',
-                'null' => false
+                'null' => false,
             ])
             ->addConstraint('primary', [
                 'type' => 'primary',
