@@ -85,6 +85,13 @@ class RouteBuilder
     protected $_params;
 
     /**
+     * Name prefix for connected routes.
+     *
+     * @var string
+     */
+    protected $_namePrefix = '';
+
+    /**
      * The route collection routes should be added to.
      *
      * @var \Cake\Routing\RouteCollection
@@ -94,13 +101,16 @@ class RouteBuilder
     /**
      * Constructor
      *
+     * ### Options
+     *
+     * - `routeClass` - The default route class to use when adding routes.
+     * - `extensions` - The extensions to connect when adding routes.
+     * - `namePrefix` - The prefix to append to all route names.
+     *
      * @param \Cake\Routing\RouteCollection $collection The route collection to append routes into.
      * @param string $path The path prefix the scope is for.
      * @param array $params The scope's routing parameters.
      * @param array $options Options list. Valid keys are:
-     *
-     *   - `routeClass` - The default route class to use when adding routes.
-     *   - `extensions` - The extensions to connect when adding routes.
      */
     public function __construct($collection, $path, array $params = [], array $options = [])
     {
@@ -112,6 +122,9 @@ class RouteBuilder
         }
         if (isset($options['extensions'])) {
             $this->_extensions = $options['extensions'];
+        }
+        if (isset($options['namePrefix'])) {
+            $this->_namePrefix = $options['namePrefix'];
         }
     }
 
@@ -168,6 +181,16 @@ class RouteBuilder
     public function params()
     {
         return $this->_params;
+    }
+
+    /**
+     * Get the name prefix for this scope.
+     *
+     * @return string
+     */
+    public function namePrefix()
+    {
+        return $this->_namePrefix;
     }
 
     /**
@@ -585,10 +608,17 @@ class RouteBuilder
         if ($this->_path !== '/') {
             $path = $this->_path . $path;
         }
+        $namePrefix = $this->_namePrefix;
+        if (isset($params['_namePrefix'])) {
+            $namePrefix .= $params['_namePrefix'];
+        }
+        unset($params['_namePrefix']);
+
         $params = $params + $this->_params;
         $builder = new static($this->_collection, $path, $params, [
             'routeClass' => $this->_routeClass,
-            'extensions' => $this->_extensions
+            'extensions' => $this->_extensions,
+            'namePrefix' => $namePrefix,
         ]);
         $callback($builder);
     }
