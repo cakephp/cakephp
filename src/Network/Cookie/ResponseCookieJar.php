@@ -29,12 +29,12 @@ class ResponseCookieJar extends AbstractCookieJar
      */
     public function remove($name)
     {
-        if (isset($this->_cookies[$name])) {
-            $cookie = $this->_cookies[$name];
+        $cookie = $this->get($name);
+        if ($cookie) {
             unset($this->_cookies[$name]);
-
-            return $cookie;
         }
+
+        return $cookie;
     }
 
     /**
@@ -44,8 +44,8 @@ class ResponseCookieJar extends AbstractCookieJar
      */
     public function invalidate($name)
     {
-        if (isset($this->_cookies[$name])) {
-            $cookie = $this->_cookies[$name];
+        $cookie = $this->get($name);
+        if ($cookie) {
             return $cookie->invalidate();
         }
     }
@@ -58,9 +58,8 @@ class ResponseCookieJar extends AbstractCookieJar
      */
     public function queue($name, $encryption = null)
     {
-        if (isset($this->_cookies[$name])) {
-            $cookie = $this->_cookies[$name];
-
+        $cookie = $this->get($name);
+        if ($cookie) {
             $raw = [
                 'value' => $this->_encrypt($cookie, $encryption),
                 'path' => $cookie->path(),

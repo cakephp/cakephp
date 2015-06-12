@@ -72,7 +72,7 @@ abstract class AbstractCookieJar implements IteratorAggregate
      */
     public function get($name)
     {
-        if (isset($this->_cookies[$name])) {
+        if ($this->has($name)) {
             return $this->_cookies[$name];
         }
     }
