@@ -78,6 +78,22 @@ class ResponseCookieJar extends AbstractCookieJar
 
     /**
      *
+     * @param string $name
+     * @param bool|string|array $encryption
+     * @return null|\Cake\Network\Cookie\Cookie
+     */
+    public function unqueue($name, $encryption = null)
+    {
+        if (isset($this->_rawCookies[$name])) {
+            $cookie = $this->_rawCookies[$name];
+            $cookie['value'] = $this->_decrypt($cookie['value'], $encryption);
+
+            return $this->add($name, $cookie);
+        }
+    }
+
+    /**
+     *
      * @return array
      */
     public function raw()

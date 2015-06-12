@@ -79,6 +79,16 @@ abstract class AbstractCookieJar implements IteratorAggregate
 
     /**
      *
+     * @param string $name
+     * @return bool
+     */
+    public function has($name)
+    {
+        return isset($this->_cookies[$name]);
+    }
+
+    /**
+     *
      * @return array
      */
     public function getIterator()
