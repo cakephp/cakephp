@@ -56,7 +56,7 @@ class ResponseCookieJar extends AbstractCookieJar
      * @param bool|string|array $encryption
      * @return void
      */
-    public function send($name, $encryption = null)
+    public function queue($name, $encryption = null)
     {
         if (isset($this->_cookies[$name])) {
             $cookie = $this->_cookies[$name];
@@ -83,7 +83,7 @@ class ResponseCookieJar extends AbstractCookieJar
     public function raw()
     {
         foreach (array_keys($this->_cookies) as $name) {
-            $this->send($name);
+            $this->queue($name);
         }
 
         return $this->_rawCookies;
