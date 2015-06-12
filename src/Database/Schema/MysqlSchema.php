@@ -418,11 +418,20 @@ class MysqlSchema extends BaseSchema
             }
         }
         if ($data['type'] === Table::CONSTRAINT_FOREIGN) {
+            if (!is_array($data['references'][1])) {
+                $data['references'][1] = [$data['references'][1]];
+            }
+
+            $columnsReference = array_map(
+                [$this->_driver, 'quoteIdentifier'],
+                $data['references'][1]
+            );
+
             return $prefix . sprintf(
                 ' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s',
                 implode(', ', $columns),
                 $this->_driver->quoteIdentifier($data['references'][0]),
-                $this->_driver->quoteIdentifier($data['references'][1]),
+                implode(', ', $columnsReference),
                 $this->_foreignOnClause($data['update']),
                 $this->_foreignOnClause($data['delete'])
             );
