@@ -3,8 +3,8 @@
 namespace Cake\Network\Cookie;
 
 use ArrayIterator;
-use IteratorAggregate;
 use Cake\Network\Cookie\CookieEncrypter;
+use IteratorAggregate;
 
 abstract class AbstractCookieJar implements IteratorAggregate
 {

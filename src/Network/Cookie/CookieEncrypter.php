@@ -2,9 +2,9 @@
 
 namespace Cake\Network\Cookie;
 
-use RuntimeException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Utility\Security;
+use RuntimeException;
 
 class CookieEncrypter
 {
@@ -93,13 +93,15 @@ class CookieEncrypter
     /**
      *
      * @param string $mode
+     * @return void
      * @throws \RuntimeException
      */
     protected function _checkCipher($mode)
     {
         if (!in_array($mode, $this->_validCiphers)) {
             $msg = sprintf(
-                'Invalid encryption cipher. Must be one of %s.', implode(', ', $this->_validCiphers)
+                'Invalid encryption cipher. Must be one of %s.',
+                implode(', ', $this->_validCiphers)
             );
             throw new RuntimeException($msg);
         }

@@ -85,7 +85,7 @@ class Cookie
         if ($key === null || !is_array($this->_value)) {
             return $this->_value;
         }
-        
+
         return Hash::get($this->_value, $key);
     }
 
@@ -109,6 +109,7 @@ class Cookie
     /**
      *
      * @param mixed $value
+     * @return void
      */
     protected function _merge($value)
     {
@@ -123,6 +124,7 @@ class Cookie
      *
      * @param mixed $key
      * @param mixed $value
+     * @return void
      */
     protected function _insert($key, $value)
     {
