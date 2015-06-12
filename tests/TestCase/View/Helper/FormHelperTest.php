@@ -3802,6 +3802,29 @@ class FormHelperTest extends TestCase
         $result = $this->Form->input('test', [
             'type' => 'radio',
             'options' => ['A', 'B'],
+            'value' => '0'
+        ]);
+        $expected = [
+            ['div' => ['class' => 'input radio']],
+                '<label',
+                'Test',
+                '/label',
+                ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '']],
+                ['label' => ['for' => 'test-0']],
+                    ['input' => ['type' => 'radio', 'checked' => 'checked', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
+                    'A',
+                '/label',
+                ['label' => ['for' => 'test-1']],
+                    ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '1', 'id' => 'test-1']],
+                    'B',
+                '/label',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->input('test', [
+            'type' => 'radio',
+            'options' => ['A', 'B'],
             'label' => false
         ]);
         $expected = [
@@ -3891,6 +3914,26 @@ class FormHelperTest extends TestCase
             'label' => ['for' => 'model-1-field-0'],
             'input' => ['type' => 'radio', 'name' => 'Model[1][field]', 'value' => '0', 'id' => 'model-1-field-0'],
             'option A',
+            '/label'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * testRadio method
+     *
+     * Test radio element set generation
+     *
+     * @return void
+     */
+    public function testRadioOutOfRange()
+    {
+        $result = $this->Form->radio('Model.field', ['v' => 'value'], ['value' => 'nope']);
+        $expected = [
+            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => ''],
+            'label' => ['for' => 'model-field-v'],
+            ['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => 'v', 'id' => 'model-field-v']],
+            'value',
             '/label'
         ];
         $this->assertHtml($expected, $result);

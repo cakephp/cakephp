@@ -1450,7 +1450,7 @@ class FormHelper extends Helper
         $radio = $this->widget('radio', $attributes);
 
         $hidden = '';
-        if ($hiddenField && (!isset($value) || $value === '')) {
+        if ($hiddenField) {
             $hidden = $this->hidden($fieldName, [
                 'value' => '',
                 'form' => isset($attributes['form']) ? $attributes['form'] : null,
