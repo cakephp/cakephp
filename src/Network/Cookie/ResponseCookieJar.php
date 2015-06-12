@@ -89,6 +89,8 @@ class ResponseCookieJar extends AbstractCookieJar
             $cookie['name'] = $name;
             $cookie['value'] = $this->_decrypt($cookie['value'], $encryption);
 
+            unset($this->_rawCookies[$name]);
+
             return $this->add($cookie);
         }
     }
