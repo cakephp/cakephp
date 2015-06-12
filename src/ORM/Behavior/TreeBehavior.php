@@ -737,7 +737,7 @@ class TreeBehavior extends Behavior
 
         $node = $this->_scope($this->_table->find())
             ->select($fields)
-            ->where([$this->_table->alias() . '.' . $primaryKey => $id])
+            ->where([$this->_table->aliasField($primaryKey) => $id])
             ->first();
 
         if (!$node) {
