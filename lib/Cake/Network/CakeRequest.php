@@ -293,6 +293,8 @@ class CakeRequest implements ArrayAccess {
 
 		if (!$baseUrl) {
 			$base = dirname(env('PHP_SELF'));
+			// Clean up additional / which cause following code to fail..
+			$base = preg_replace('#/+#', '/', $base);
 
 			$indexPos = strpos($base, '/webroot/index.php');
 			if ($indexPos !== false) {
