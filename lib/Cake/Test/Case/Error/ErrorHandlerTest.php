@@ -127,7 +127,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->_restoreError = true;
 
 		Debugger::getInstance()->output('html');
-		
+
 		ob_start();
 		trigger_error('Test error', $error);
 

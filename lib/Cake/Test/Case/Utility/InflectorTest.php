@@ -460,7 +460,6 @@ class InflectorTest extends CakeTestCase {
 		$this->assertSame(Inflector::underscore(false), '');
 	}
 
-
 /**
  * Test camelize()
  *
