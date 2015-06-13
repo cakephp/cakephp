@@ -521,6 +521,29 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test that unary expressions in selects are built correctly.
+     *
+     * @return void
+     */
+    public function testSelectWhereUnary()
+    {
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['id'])
+            ->from('articles')
+            ->where([
+                'title is not' => null,
+                'user_id is' => null
+            ])
+            ->sql();
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> WHERE \(\(<title>\) IS NOT NULL AND \(<user_id>\) IS NULL\)',
+            $result,
+            true
+        );
+    }
+
+    /**
      * Tests selecting with conditions and specifying types for those
      *
      * @return void
