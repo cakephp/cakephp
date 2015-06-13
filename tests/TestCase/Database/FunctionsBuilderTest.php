@@ -173,10 +173,26 @@ class FunctionsBuilderTest extends TestCase
      *
      * @return void
      */
-    public function testExtract()
+    public function testDateAdd()
     {
         $function = $this->functions->dateAdd('created', -3, 'day');
         $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
         $this->assertEquals("DATE_ADD(created, INTERVAL -3 day)", $function->sql(new ValueBinder));
+    }
+
+    /**
+     * Tests generating a DAYOFWEEK() function
+     *
+     * @return void
+     */
+    public function testDayOfWeek()
+    {
+        $function = $this->functions->dayOfWeek('created');
+        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertEquals("DAYOFWEEK(created)", $function->sql(new ValueBinder));
+
+        $function = $this->functions->weekday('created');
+        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertEquals("DAYOFWEEK(created)", $function->sql(new ValueBinder));
     }
 }

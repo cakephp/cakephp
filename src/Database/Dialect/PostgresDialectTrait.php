@@ -134,12 +134,18 @@ trait PostgresDialectTrait
                     ->name('')
                     ->type(' + INTERVAL')
                     ->iterateParts(function ($p, $key) {
-                        if ($key === 1) {
+                    if ($key === 1) {
                             $interval = sprintf("'%s'", key($p));
                             $p = [$interval => 'literal'];
                         }
                         return $p;
                     });
+                break;
+            case 'DAYOFWEEK':
+                $expression
+                    ->name('EXTRACT')
+                    ->add(['DOW' => 'literal'], [], true)
+                    ->type(' FROM');
                 break;
         }
     }

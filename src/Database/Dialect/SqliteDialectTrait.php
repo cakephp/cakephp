@@ -138,6 +138,13 @@ trait SqliteDialectTrait
                         }
                         return $p;
                     });
+                break;
+            case 'DAYOFWEEK':
+                $expression
+                    ->name('STRFTIME')
+                    ->type(' ,')
+                    ->add(["'%w'" => 'literal'], [], true);
+                break;
         }
     }
 

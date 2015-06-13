@@ -200,6 +200,32 @@ class FunctionsBuilder
     }
 
     /**
+     * Returns a FunctionExpression representing a call to SQL WEEKDAY function.
+     * 0 - Sunday, 1 - Monday, 2 - Tuesday...
+     *
+     * @param mixed $expression the function argument
+     * @param array $types list of types to bind to the arguments
+     * @return FunctionExpression
+     */
+    public function dayOfWeek($expression, $types = [])
+    {
+        return $this->_literalArgumentFunction('DAYOFWEEK', $expression, $types);
+    }
+
+    /**
+     * Returns a FunctionExpression representing a call to SQL WEEKDAY function.
+     * 0 - Sunday, 1 - Monday, 2 - Tuesday...
+     *
+     * @param mixed $expression the function argument
+     * @param array $types list of types to bind to the arguments
+     * @return FunctionExpression
+     */
+    public function weekday($expression, $types = [])
+    {
+        return $this->dayOfWeek($expression, $types);
+    }
+
+    /**
      * Returns a FunctionExpression representing a call that will return the current
      * date and time. By default it returns both date and time, but you can also
      * make it generate only the date or only the time.

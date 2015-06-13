@@ -241,7 +241,7 @@ trait SqlserverDialectTrait
                 break;
             case 'DATE_ADD':
                 $params = [];
-                $visitor = function ($p, $key) (&$params) {
+                $visitor = function ($p, $key) use (&$params) {
                     if ($key === 0) {
                         $params[2] = $value;
                     } else {
@@ -250,8 +250,8 @@ trait SqlserverDialectTrait
                         $params[1] = $valueUnit[0];
                     }
                     return $p;
-                });
-                $manipulator = function ($p, $key) ($params) {
+                };
+                $manipulator = function ($p, $key) use ($params) {
                     return $params[$key];
                 };
 
@@ -261,6 +261,13 @@ trait SqlserverDialectTrait
                     ->iterateParts($visitor)
                     ->iterateParts($manipulator)
                     ->add($params[2]);
+                break;
+            case 'DAYOFWEEK':
+                $expression
+                    ->name('DATEPART')
+                    ->type(' ')
+                    ->add(['weekday, ' => 'literal'], [], true)
+                    ->add([') - (1' => 'literal']); // SqlServer starts on index 1
                 break;
         }
     }
