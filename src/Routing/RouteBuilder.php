@@ -184,12 +184,19 @@ class RouteBuilder
     }
 
     /**
-     * Get the name prefix for this scope.
+     * Get/set the name prefix for this scope.
      *
+     * Modifying the name prefix will only change the prefix
+     * used for routes connected after the prefix is changed.
+     *
+     * @param string|null $value Either the value to set or null.
      * @return string
      */
-    public function namePrefix()
+    public function namePrefix($value = null)
     {
+        if ($value !== null) {
+            $this->_namePrefix = $value;
+        }
         return $this->_namePrefix;
     }
 
@@ -419,6 +426,9 @@ class RouteBuilder
 
         if (empty($options['routeClass'])) {
             $options['routeClass'] = $this->_routeClass;
+        }
+        if (isset($options['_name']) && $this->_namePrefix) {
+            $options['_name'] = $this->_namePrefix . $options['_name'];
         }
 
         $route = $this->_makeRoute($route, $defaults, $options);

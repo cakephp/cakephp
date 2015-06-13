@@ -614,4 +614,25 @@ class RouteBuilderTest extends TestCase
             $this->assertEquals(['prefix' => 'api'], $routes->params());
         });
     }
+
+    /**
+     * Test using name prefixes.
+     *
+     * @return void
+     */
+    public function testNamePrefixes()
+    {
+        $routes = new RouteBuilder($this->collection, '/api', [], ['namePrefix' => 'api:']);
+        $routes->scope('/v1', ['version' => 1, '_namePrefix' => 'v1:'], function ($routes) {
+            $this->assertEquals('api:v1:', $routes->namePrefix());
+            $routes->connect('/ping', ['controller' => 'Pings'], ['_name' => 'ping']);
+
+            $routes->namePrefix('web:');
+            $routes->connect('/pong', ['controller' => 'Pongs'], ['_name' => 'pong']);
+        });
+
+        $all = $this->collection->named();
+        $this->assertArrayHasKey('api:v1:ping', $all);
+        $this->assertArrayHasKey('web:pong', $all);
+    }
 }
