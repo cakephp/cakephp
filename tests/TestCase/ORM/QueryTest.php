@@ -2651,6 +2651,39 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests that select() can be called with Table and Association
+     * instance
+     *
+     * @return void
+     */
+    public function testSelectWithTableAndAssociationInstance()
+    {
+        $table = TableRegistry::get('articles');
+        $table->belongsTo('authors');
+        $result = $table
+            ->find()
+            ->select(function ($q) {
+                return ['foo' => $q->newExpr('1 + 1')];
+            })
+            ->select($table)
+            ->select($table->authors)
+            ->contain(['authors'])
+            ->first();
+
+        $expected = $table
+            ->find()
+            ->select(function ($q) {
+                return ['foo' => $q->newExpr('1 + 1')];
+            })
+            ->autoFields(true)
+            ->contain(['authors'])
+            ->first();
+
+        $this->assertNotEmpty($result);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Tests that isEmpty() can be called on a query
      *
      * @return void
