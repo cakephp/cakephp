@@ -22,6 +22,7 @@ App::uses('ConsoleInputSubcommand', 'Console');
 App::uses('ConsoleOptionParser', 'Console');
 App::uses('ClassRegistry', 'Utility');
 App::uses('File', 'Utility');
+App::uses('Debugger', 'Utility');
 
 /**
  * Base class for command-line utilities for automating programmer chores.
@@ -183,6 +184,7 @@ class Shell extends Object {
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell
  */
 	public function __construct($stdout = null, $stderr = null, $stdin = null) {
+		Debugger::getInstance()->output('txt');
 		if (!$this->name) {
 			$this->name = Inflector::camelize(str_replace(array('Shell', 'Task'), '', get_class($this)));
 		}
