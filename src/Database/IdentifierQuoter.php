@@ -214,6 +214,10 @@ class IdentifierQuoter
         $expression->iterateParts(function ($part, &$field) {
             if (is_string($field)) {
                 $field = $this->_driver->quoteIdentifier($field);
+                return $part;
+            }
+            if (is_string($part)) {
+                return $this->_driver->quoteIdentifier($part);
             }
             return $part;
         });
