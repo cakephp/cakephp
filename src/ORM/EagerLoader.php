@@ -64,7 +64,8 @@ class EagerLoader
         'queryBuilder' => 1,
         'finder' => 1,
         'joinType' => 1,
-        'strategy' => 1
+        'strategy' => 1,
+        'negateMatch' => 1
     ];
 
     /**
@@ -190,9 +191,11 @@ class EagerLoader
         $containments = [];
         $pointer =& $containments;
         $options += ['joinType' => 'INNER'];
+        $opts = ['matching' => true] + $options;
+        unset($opts['negateMatch']);
 
         foreach ($assocs as $name) {
-            $pointer[$name] = ['matching' => true] + $options;
+            $pointer[$name] = $opts;
             $pointer =& $pointer[$name];
         }
 
