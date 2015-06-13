@@ -110,7 +110,7 @@ class RouteBuilder
      * @param \Cake\Routing\RouteCollection $collection The route collection to append routes into.
      * @param string $path The path prefix the scope is for.
      * @param array $params The scope's routing parameters.
-     * @param array $options Options list. Valid keys are:
+     * @param array $options Options list.
      */
     public function __construct($collection, $path, array $params = [], array $options = [])
     {
