@@ -26,6 +26,13 @@ trait ViewVarsTrait
 {
 
     /**
+     * The name of default View class.
+     *
+     * @var string
+     */
+    public $viewClass = null;
+
+    /**
      * Variables for the view
      *
      * @var array

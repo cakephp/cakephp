@@ -75,13 +75,6 @@ abstract class Cell
     public $response;
 
     /**
-     * The name of the View class this cell sends output to.
-     *
-     * @var string
-     */
-    public $viewClass = null;
-
-    /**
      * The theme name that will be used to render.
      *
      * @var string
