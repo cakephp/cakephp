@@ -15,8 +15,6 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-App::uses('Debugger', 'Utility');
-
 /**
  * Shell dispatcher handles dispatching cli commands.
  *
@@ -180,6 +178,7 @@ class ShellDispatcher {
 		set_exception_handler($exception['consoleHandler']);
 		set_error_handler($error['consoleHandler'], Configure::read('Error.level'));
 
+		App::uses('Debugger', 'Utility');
 		Debugger::getInstance()->output('txt');
 	}
 
