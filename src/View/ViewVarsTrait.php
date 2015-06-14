@@ -33,6 +33,15 @@ trait ViewVarsTrait
     public $viewClass = null;
 
     /**
+     * View instance.
+     *
+     * Won't be set until after ViewVarsTrait::createView() is called.
+     *
+     * @var \Cake\View\View
+     */
+    public $_view;
+
+    /**
      * Variables for the view
      *
      * @var array
@@ -48,8 +57,8 @@ trait ViewVarsTrait
      */
     public function getView($viewClass = null)
     {
-        if ($viewClass === null && $this->View) {
-            return $this->View;
+        if ($viewClass === null && $this->_view) {
+            return $this->_view;
         }
 
         if ($viewClass === null) {
@@ -71,11 +80,11 @@ trait ViewVarsTrait
             throw new Exception\MissingViewException(['class' => $viewClass]);
         }
 
-        if ($this->View && $this->View instanceof $className) {
-            return $this->View;
+        if ($this->_view && $this->_view instanceof $className) {
+            return $this->_view;
         }
 
-        return $this->View = $this->createView();
+        return $this->_view = $this->createView();
     }
 
     /**
