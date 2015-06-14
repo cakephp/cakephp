@@ -182,13 +182,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public $components = [];
 
     /**
-     * The name of the View class this controller sends output to.
-     *
-     * @var string
-     */
-    public $viewClass = null;
-
-    /**
      * The path to this controllers view templates.
      * Example `Articles`
      *
