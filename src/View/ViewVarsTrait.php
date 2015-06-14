@@ -58,6 +58,7 @@ trait ViewVarsTrait
     public function getView($viewClass = null)
     {
         if ($viewClass === null && $this->_view) {
+            $this->_view->viewVars = $this->viewVars;
             return $this->_view;
         }
 
@@ -81,6 +82,7 @@ trait ViewVarsTrait
         }
 
         if ($this->_view && $this->_view instanceof $className) {
+            $this->_view->viewVars = $this->viewVars;
             return $this->_view;
         }
 
@@ -109,7 +111,7 @@ trait ViewVarsTrait
         }
 
         $viewOptions = [];
-        foreach ($this->_validViewOptions as $option) {
+        foreach ($this->viewOptions() as $option) {
             if (property_exists($this, $option)) {
                 $viewOptions[$option] = $this->{$option};
             }
