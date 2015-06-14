@@ -204,6 +204,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Controller::render() is called.
      *
      * @var \Cake\View\View
+     * @deprecated 3.0.8 Use getView() instead.
      */
     public $View;
 
@@ -560,7 +561,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function render($view = null, $layout = null)
     {
         if (!empty($this->request->params['bare'])) {
-            $this->getView()->autoLayout = false;
+            $this->View = $this->getView();
+            $this->_view->autoLayout = false;
         }
 
         $event = $this->dispatchEvent('Controller.beforeRender');
@@ -574,7 +576,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         $this->autoRender = false;
-        $this->response->body($this->getView()->render($view, $layout));
+        $this->View = $this->getView();
+        $this->response->body($this->_view->render($view, $layout));
         return $this->response;
     }
 

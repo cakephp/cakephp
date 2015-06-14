@@ -42,6 +42,7 @@ abstract class Cell
      * Cell::__toString() is called.
      *
      * @var \Cake\View\View
+     * @deprecated 3.0.8 Use getView() instead.
      */
     public $View;
 
@@ -166,9 +167,9 @@ abstract class Cell
         if ($template === null) {
             $template = $this->template;
         }
-        $this->View = null;
-        $this->getView();
-        $this->View->layout = false;
+        $this->_view = null;
+        $this->View = $this->getView();
+        $this->_view->layout = false;
 
         $cache = [];
         if ($this->_cache) {
@@ -179,17 +180,17 @@ abstract class Cell
             $className = explode('\\', get_class($this));
             $className = array_pop($className);
             $name = substr($className, 0, strrpos($className, 'Cell'));
-            $this->View->subDir = 'Cell' . DS . $name;
+            $this->_view->subDir = 'Cell' . DS . $name;
 
             try {
-                return $this->View->render($template);
+                return $this->_view->render($template);
             } catch (MissingTemplateException $e) {
                 throw new MissingCellViewException(['file' => $template, 'name' => $name]);
             }
         };
 
         if ($cache) {
-            return $this->View->cache(function () use ($render) {
+            return $this->_view->cache(function () use ($render) {
                 echo $render();
             }, $cache);
         }
