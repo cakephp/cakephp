@@ -2711,7 +2711,7 @@ class QueryTest extends TestCase
             ->select(['total_articles' => 'count(articles.id)'])
             ->autoFields(true)
             ->leftJoinWith('articles')
-            ->group(['authors.id']);
+            ->group(['authors.id', 'authors.name']);
 
         $expected = [
             1 => 2,
@@ -2760,7 +2760,7 @@ class QueryTest extends TestCase
                 return $q->where(['tags.name' => 'tag3']);
             })
             ->autoFields(true)
-            ->group(['authors.id']);
+            ->group(['authors.id', 'authors.name']);
 
         $expected = [
             1 => 2,
