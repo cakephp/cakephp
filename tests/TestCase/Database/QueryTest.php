@@ -1436,6 +1436,23 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test that order() being a string works.
+     *
+     * @return void
+     */
+    public function testSelectOrderByString()
+    {
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('articles')
+            ->order('id asc');
+        $result = $query->execute();
+        $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+        $this->assertEquals(['id' => 2], $result->fetch('assoc'));
+        $this->assertEquals(['id' => 3], $result->fetch('assoc'));
+    }
+
+    /**
      * Tests that group by fields can be passed similar to select fields
      * and that it sends the correct query to the database
      *
