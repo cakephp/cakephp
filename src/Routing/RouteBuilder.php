@@ -105,7 +105,7 @@ class RouteBuilder
      *
      * - `routeClass` - The default route class to use when adding routes.
      * - `extensions` - The extensions to connect when adding routes.
-     * - `namePrefix` - The prefix to append to all route names.
+     * - `namePrefix` - The prefix to prepend to all route names.
      *
      * @param \Cake\Routing\RouteCollection $collection The route collection to append routes into.
      * @param string $path The path prefix the scope is for.
