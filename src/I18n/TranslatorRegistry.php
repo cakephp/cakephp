@@ -174,10 +174,12 @@ class TranslatorRegistry extends TranslatorLocator
      * @param string|null $name fallback domain
      * @return string
      */
-    public function defaultFallbackDomain($name = null) {
+    public function defaultFallbackDomain($name = null)
+    {
         if ($name === null) {
             return $this->_defaultFallbackDomain;
         }
+
         return $this->_defaultFallbackDomain = $name;
     }
 
@@ -252,7 +254,8 @@ class TranslatorRegistry extends TranslatorLocator
      * @param callable $loader invokable loader
      * @return callable loader
      */
-    public function setLoaderFallback($name, callable $loader) {
+    public function setLoaderFallback($name, callable $loader)
+    {
         if ($name !== $this->_defaultFallbackDomain) {
             $loader = function () use ($loader) {
                 $package = $loader();

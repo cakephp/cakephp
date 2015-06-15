@@ -113,7 +113,7 @@ class I18n
      * @param string|null $locale The locale for the translator.
      * @param callable|null $loader A callback function or callable class responsible for
      * constructing a translations package instance.
-     * @return \Aura\Intl\Translator The configured translator.
+     * @return \Aura\Intl\Translator|void The configured translator.
      */
     public static function translator($name = 'default', $locale = null, callable $loader = null)
     {

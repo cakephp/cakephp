@@ -524,17 +524,13 @@ class I18nTest extends TestCase
         I18n::translator('default', 'en_US', function () {
             $package = new Package('default');
             $package->setMessages(['Dog' => 'bark']);
-
             return $package;
         });
-        I18n::translator('custom', 'en_US',
-            function () {
-                $package = new Package('default');
-                $package->setMessages([]);
-
-                return $package;
-            }
-        );
+        I18n::translator('custom', 'en_US', function () {
+            $package = new Package('default');
+            $package->setMessages([]);
+            return $package;
+        });
         $result = __d('custom', 'Dog');
         $this->assertEquals('Dog', $result);
     }
@@ -551,21 +547,16 @@ class I18nTest extends TestCase
         I18n::translator($customDomain, 'en_US', function () {
             $package = new Package('default');
             $package->setMessages(['Dog' => 'bark']);
-
             return $package;
         });
-        I18n::translator('custom', 'en_US',
-            function () {
-                $package = new Package('default');
-                $package->setMessages([]);
-
-                return $package;
-            }
-        );
+        I18n::translator('custom', 'en_US', function () {
+            $package = new Package('default');
+            $package->setMessages([]);
+            return $package;
+        });
         $result = __d('custom', 'Dog');
         $this->assertEquals('bark', $result);
     }
-
 
     /**
      * Tests that it is possible to register a generic translators factory for a domain
