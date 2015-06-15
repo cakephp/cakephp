@@ -281,7 +281,10 @@ class EagerLoader
                 $options = isset($options['config']) ?
                     $options['config'] + $options['associations'] :
                     $options;
-                $options = $this->_reformatContain($options, []);
+                $options = $this->_reformatContain(
+                    $options,
+                    isset($pointer[$table]) ? $pointer[$table] : []
+                );
             }
 
             if ($options instanceof Closure) {
