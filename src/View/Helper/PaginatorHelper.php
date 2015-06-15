@@ -429,10 +429,10 @@ class PaginatorHelper extends Helper
             $url = array_merge($url, $this->_config['options']['url']);
         }
 
-        $callback = function($value) {
+        $url = array_filter($url, function ($value) {
             return ($value || is_numeric($value));
-        };
-        $url = array_merge(array_filter($url, $callback), $options);
+        });
+        $url = array_merge($url, $options);
 
         if (!empty($url['page']) && $url['page'] == 1) {
             $url['page'] = null;
