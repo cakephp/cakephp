@@ -96,7 +96,8 @@ abstract class BaseSchema
      * @param string|array $references The referenced columns of a foreign key constraint statement
      * @return string
      */
-    protected function _convertFkColumnsReference($references) {
+    protected function _convertFkColumnsReference($references)
+    {
         if (is_string($references)) {
             return $this->_driver->quoteIdentifier($references);
         }
