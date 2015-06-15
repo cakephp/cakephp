@@ -514,48 +514,59 @@ class I18nTest extends TestCase
     }
 
     /**
-     * Test that the fallback translators can be disabled
+     * Test that the translation fallback can be disabled
      *
      * @return void
      */
-    public function testFallbackTranslatorFallbackDisabled()
+    public function testFallbackTranslatorDisabled()
     {
-        I18n::defaultFallbackDomain(false);
-        I18n::translator('default', 'en_US', function () {
+        I18n::useTranslationFallback(false);
+
+        I18n::translator('default', 'fr_FR', function () {
             $package = new Package('default');
-            $package->setMessages(['Dog' => 'bark']);
+            $package->setMessages(['Dog' => 'Le bark']);
             return $package;
         });
-        I18n::translator('custom', 'en_US', function () {
+
+        I18n::translator('custom', 'fr_FR', function () {
             $package = new Package('default');
-            $package->setMessages([]);
+            $package->setMessages(['Cow' => 'Le moo']);
             return $package;
         });
-        $result = __d('custom', 'Dog');
-        $this->assertEquals('Dog', $result);
+
+        $translator = I18n::translator('custom', 'fr_FR');
+        $this->assertEquals('Le moo', $translator->translate('Cow'));
+        $this->assertEquals('Dog', $translator->translate('Dog'));
     }
 
     /**
-     * Test that an arbitrary fallback domain can be set
+     * Test that a different fallback domain can be set
      *
      * @return void
      */
-    public function testFallbackTranslatorCustomDomain()
+    public function testFallbackTranslatorSetFallbackDomain()
     {
-        $customDomain = 'foo';
-        I18n::defaultFallbackDomain($customDomain);
-        I18n::translator($customDomain, 'en_US', function () {
+        $this->assertEquals('default', I18n::defaultFallbackDomain());
+
+        $fallbackDomain = 'foo';
+        I18n::defaultFallbackDomain($fallbackDomain);
+        $this->assertEquals($fallbackDomain, I18n::defaultFallbackDomain());
+
+        I18n::translator($fallbackDomain, 'fr_FR', function () {
             $package = new Package('default');
-            $package->setMessages(['Dog' => 'bark']);
+            $package->setMessages(['Dog' => 'Le bark']);
             return $package;
         });
-        I18n::translator('custom', 'en_US', function () {
+
+        I18n::translator('custom', 'fr_FR', function () {
             $package = new Package('default');
-            $package->setMessages([]);
+            $package->setMessages(['Cow' => 'Le moo']);
             return $package;
         });
-        $result = __d('custom', 'Dog');
-        $this->assertEquals('bark', $result);
+
+        $translator = I18n::translator('custom', 'fr_FR');
+        $this->assertEquals('Le moo', $translator->translate('Cow'));
+        $this->assertEquals('Le bark', $translator->translate('Dog'));
     }
 
     /**

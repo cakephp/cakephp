@@ -267,6 +267,17 @@ class I18n
     }
 
     /**
+     * Set if the default domain fallback is used.
+     *
+     * @param bool $enable flag to enable or disable fallback
+     * @return void
+     */
+    public static function useTranslationFallback($enable = true)
+    {
+        static::translators()->useTranslationFallback($enable);
+    }
+
+    /**
      * Destroys all translator instances and creates a new empty translations
      * collection.
      *
