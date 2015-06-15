@@ -18,7 +18,6 @@ use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use Symfony\Component\Yaml\Exception\RuntimeException;
 
 /**
  * Test case for Table
