@@ -43,6 +43,17 @@ class TranslatorRegistry extends TranslatorLocator
     protected $_defaultFormatter = 'default';
 
     /**
+     * Domain used used as fallback if translation isn't found in specified domain.
+     *
+     * - true: 'default'
+     * - false: disable translation fallback
+     * - string: fallback domain name
+     *
+     * @var string|bool
+     */
+    protected $_defaultFallbackDomain = 'default';
+
+    /**
      * A CacheEngine object that is used to remember translator across
      * requests.
      *
@@ -155,6 +166,22 @@ class TranslatorRegistry extends TranslatorLocator
     }
 
     /**
+     * Set fallback domain. Messages from the fallback domain are used if
+     * a domain can't provide a localization message.
+     *
+     * Get the currently set domain if argument is null.
+     *
+     * @param string|null $name fallback domain
+     * @return string
+     */
+    public function defaultFallbackDomain($name = null) {
+        if ($name === null) {
+            return $this->_defaultFallbackDomain;
+        }
+        return $this->_defaultFallbackDomain = $name;
+    }
+
+    /**
      * Returns a new translator instance for the given name and locale
      * based of conventions.
      *
@@ -226,11 +253,15 @@ class TranslatorRegistry extends TranslatorLocator
      * @return callable loader
      */
     public function setLoaderFallback($name, callable $loader) {
-        if ($name !== 'default') {
+        if ($name !== $this->_defaultFallbackDomain) {
             $loader = function () use ($loader) {
                 $package = $loader();
-                if (!$package->getFallback()) {
-                    $package->setFallback('default');
+                if ($this->_defaultFallbackDomain !== false && !$package->getFallback()) {
+                    $fallback = $this->_defaultFallbackDomain;
+                    if ($fallback === true) {
+                        $fallback = 'default';
+                    }
+                    $package->setFallback($fallback);
                 }
                 return $package;
             };

@@ -238,6 +238,20 @@ class I18n
     }
 
     /**
+     * Set default fallback domain. If a domain can't provide a translation
+     * messages from the fallback domain are used.
+     *
+     * Get the currently set domain if argument is null.
+     *
+     * @param string|null $name name of the fallback-translator
+     * @return string
+     */
+    public static function defaultFallbackDomain($name = null)
+    {
+        return static::translators()->defaultFallbackDomain($name);
+    }
+
+    /**
      * Sets the name of the default messages formatter to use for future
      * translator instances. By default the `default` and `sprintf` formatters
      * are available.

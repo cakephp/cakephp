@@ -514,6 +514,60 @@ class I18nTest extends TestCase
     }
 
     /**
+     * Test that the fallback translators can be disabled
+     *
+     * @return void
+     */
+    public function testFallbackTranslatorFallbackDisabled()
+    {
+        I18n::defaultFallbackDomain(false);
+        I18n::translator('default', 'en_US', function () {
+            $package = new Package('default');
+            $package->setMessages(['Dog' => 'bark']);
+
+            return $package;
+        });
+        I18n::translator('custom', 'en_US',
+            function () {
+                $package = new Package('default');
+                $package->setMessages([]);
+
+                return $package;
+            }
+        );
+        $result = __d('custom', 'Dog');
+        $this->assertEquals('Dog', $result);
+    }
+
+    /**
+     * Test that an arbitrary fallback domain can be set
+     *
+     * @return void
+     */
+    public function testFallbackTranslatorCustomDomain()
+    {
+        $customDomain = 'foo';
+        I18n::defaultFallbackDomain($customDomain);
+        I18n::translator($customDomain, 'en_US', function () {
+            $package = new Package('default');
+            $package->setMessages(['Dog' => 'bark']);
+
+            return $package;
+        });
+        I18n::translator('custom', 'en_US',
+            function () {
+                $package = new Package('default');
+                $package->setMessages([]);
+
+                return $package;
+            }
+        );
+        $result = __d('custom', 'Dog');
+        $this->assertEquals('bark', $result);
+    }
+
+
+    /**
      * Tests that it is possible to register a generic translators factory for a domain
      * instead of having to create them manually
      *
