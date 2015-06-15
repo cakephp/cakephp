@@ -278,6 +278,8 @@ object(Cake\View\View) {
 	request => object(Cake\Network\Request) {}
 	response => object(Cake\Network\Response) {}
 	elementCache => 'default'
+	viewClass => null
+	_view => null
 	viewVars => []
 	Html => object(Cake\View\Helper\HtmlHelper) {}
 	Form => object(Cake\View\Helper\FormHelper) {}
