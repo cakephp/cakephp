@@ -786,9 +786,6 @@ class Mysql extends DboSource {
 		if (strpos($col, 'decimal') !== false || strpos($col, 'numeric') !== false) {
 			return 'decimal';
 		}
-		if (strpos($col, 'enum') !== false) {
-			return "enum($vals)";
-		}
 		if (strpos($col, 'set') !== false) {
 			return "set($vals)";
 		}
