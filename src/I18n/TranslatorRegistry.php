@@ -212,6 +212,20 @@ class TranslatorRegistry extends TranslatorLocator
             };
         }
 
+        $loader = $this->setLoaderFallback($name, $loader);
+
+        $this->packages->set($name, $locale, $loader);
+        return parent::get($name, $locale);
+    }
+
+    /**
+     * set lookup fallback for loader
+     *
+     * @param string $name The name of the fallback domain
+     * @param callable $loader invokable loader
+     * @return callable loader
+     */
+    public function setLoaderFallback($name, callable $loader) {
         if ($name !== 'default') {
             $loader = function () use ($loader) {
                 $package = $loader();
@@ -221,8 +235,6 @@ class TranslatorRegistry extends TranslatorLocator
                 return $package;
             };
         }
-
-        $this->packages->set($name, $locale, $loader);
-        return parent::get($name, $locale);
+        return $loader;
     }
 }

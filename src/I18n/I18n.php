@@ -118,19 +118,11 @@ class I18n
     public static function translator($name = 'default', $locale = null, callable $loader = null)
     {
         if ($loader !== null) {
-            $packages = static::translators()->getPackages();
             $locale = $locale ?: static::locale();
 
-            if ($name !== 'default') {
-                $loader = function () use ($loader) {
-                    $package = $loader();
-                    if (!$package->getFallback()) {
-                        $package->setFallback('default');
-                    }
-                    return $package;
-                };
-            }
+            $loader = static::translators()->setLoaderFallback($name, $loader);
 
+            $packages = static::translators()->getPackages();
             $packages->set($name, $locale, $loader);
             return;
         }
