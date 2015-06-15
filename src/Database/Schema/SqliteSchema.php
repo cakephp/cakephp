@@ -332,19 +332,10 @@ class SqliteSchema extends BaseSchema
         if ($data['type'] === Table::CONSTRAINT_FOREIGN) {
             $type = 'FOREIGN KEY';
 
-            if (!is_array($data['references'][1])) {
-                $data['references'][1] = [$data['references'][1]];
-            }
-
-            $columnsReference = array_map(
-                [$this->_driver, 'quoteIdentifier'],
-                $data['references'][1]
-            );
-
             $clause = sprintf(
                 ' REFERENCES %s (%s) ON UPDATE %s ON DELETE %s',
                 $this->_driver->quoteIdentifier($data['references'][0]),
-                implode(', ', $columnsReference),
+                $this->_convertFkColumnsReference($data['references'][1]),
                 $this->_foreignOnClause($data['update']),
                 $this->_foreignOnClause($data['delete'])
             );

@@ -436,11 +436,10 @@ class TableTest extends TestCase
 
         $this->assertEquals($expected, $compositeConstraint);
 
-        $expectedSubstring = '#CONSTRAINT <product_id_fk> FOREIGN KEY \(<product_id>, <product_category>\)' .
-            ' REFERENCES <products> \(<id>, <category>\)#';
-        $expectedSubstring = str_replace(['<', '>'], ['[`"\[]', '[`"\]]'], $expectedSubstring);
+        $expectedSubstring = 'CONSTRAINT <product_id_fk> FOREIGN KEY \(<product_id>, <product_category>\)' .
+            ' REFERENCES <products> \(<id>, <category>\)';
 
-        $this->assertRegExp($expectedSubstring, $table->schema()->createSql(ConnectionManager::get('default'))[0]);
+        $this->assertQuotedQuery($expectedSubstring, $table->schema()->createSql(ConnectionManager::get('default'))[0]);
     }
 
     /**
