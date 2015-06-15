@@ -1423,12 +1423,12 @@ class CakeRequestTest extends CakeTestCase {
 		$this->assertEquals('/cakephp/bananas/eat/tasty_banana', $request->here);
 	}
 
-	/**
-	 * Test that even if mod_rewrite is on, and the url contains index.php
-	 * and there are numerous //s that the base/webroot is calculated correctly.
-	 *
-	 * @return void
-	 */
+/**
+ * Test that even if mod_rewrite is on, and the url contains index.php
+ * and there are numerous //s that the base/webroot is calculated correctly.
+ *
+ * @return void
+ */
 	public function testBaseUrlWithModRewriteAndExtraSlashes() {
 		$_SERVER['REQUEST_URI'] = '/cakephp/webroot///index.php/bananas/eat';
 		$_SERVER['PHP_SELF'] = '/cakephp/webroot///index.php/bananas/eat';
