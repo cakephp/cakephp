@@ -440,13 +440,13 @@ trait EntityTrait
             if (is_array($value)) {
                 $result[$property] = [];
                 foreach ($value as $k => $entity) {
-                    if (method_exists($entity, 'toArray')) {
+                    if ($entity instanceof EntityInterface) {
                         $result[$property][$k] = $entity->toArray();
                     } else {
                         $result[$property][$k] = $entity;
                     }
                 }
-            } elseif (method_exists($value, 'toArray')) {
+            } elseif ($value instanceof EntityInterface) {
                 $result[$property] = $value->toArray();
             } else {
                 $result[$property] = $value;
