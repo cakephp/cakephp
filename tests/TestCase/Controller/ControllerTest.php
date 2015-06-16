@@ -384,7 +384,7 @@ class ControllerTest extends TestCase
         $result = $Controller->render('index');
         $this->assertRegExp('/posts index/', (string)$result);
 
-        $Controller->view = 'index';
+        $Controller->getView()->view = 'index';
         $Controller->getView()->hasRendered = false;
         $result = $Controller->render();
         $this->assertRegExp('/posts index/', (string)$result);
@@ -392,7 +392,6 @@ class ControllerTest extends TestCase
         $Controller->getView()->hasRendered = false;
         $result = $Controller->render('/Element/test_element');
         $this->assertRegExp('/this is the test element/', (string)$result);
-        $Controller->view = null;
     }
 
     /**
@@ -642,7 +641,6 @@ class ControllerTest extends TestCase
         $expected = ['testId' => 1, 'test2Id' => 2];
         $this->assertSame($expected, $TestController->request->data);
         $this->assertSame('view', $TestController->request->params['action']);
-        $this->assertSame('view', $TestController->view);
     }
 
     /**

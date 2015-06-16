@@ -169,14 +169,10 @@ class ViewVarsTraitTest extends TestCase
     {
         $expected = ['one' => 'one'];
         $this->subject->set($expected);
-        $this->subject->getView();
-
         $this->assertEquals($expected, $this->subject->getView()->viewVars);
 
         $expected = ['one' => 'one', 'two' => 'two'];
         $this->subject->set($expected);
-        $this->subject->getView();
-
         $this->assertEquals($expected, $this->subject->getView()->viewVars);
     }
 
