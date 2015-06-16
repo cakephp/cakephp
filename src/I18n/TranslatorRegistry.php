@@ -43,11 +43,11 @@ class TranslatorRegistry extends TranslatorLocator
     protected $_defaultFormatter = 'default';
 
     /**
-     * Enable translation fallback
+     * Use fallback-domain for translation loaders.
      *
      * @var bool
      */
-    protected $_fallback = true;
+    protected $_useFallback = true;
 
     /**
      * A CacheEngine object that is used to remember translator across
@@ -169,7 +169,7 @@ class TranslatorRegistry extends TranslatorLocator
      */
     public function useFallback($enable = true)
     {
-        $this->_fallback = $enable;
+        $this->_useFallback = $enable;
     }
 
     /**
@@ -246,7 +246,7 @@ class TranslatorRegistry extends TranslatorLocator
     public function setLoaderFallback($name, callable $loader)
     {
         $fallbackDomain = 'default';
-        if (!$this->_fallback || $name === $fallbackDomain) {
+        if (!$this->_useFallback || $name === $fallbackDomain) {
             return $loader;
         }
         $loader = function () use ($loader, $fallbackDomain) {
