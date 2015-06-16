@@ -169,6 +169,10 @@ class TableRegistry
         list(, $classAlias) = pluginSplit($alias);
         $options = ['alias' => $classAlias] + $options;
 
+        if (isset(static::$_config[$alias])) {
+            $options += static::$_config[$alias];
+        }
+
         if (empty($options['className'])) {
             $options['className'] = Inflector::camelize($alias);
         }
@@ -183,9 +187,6 @@ class TableRegistry
             $options['className'] = 'Cake\ORM\Table';
         }
 
-        if (isset(static::$_config[$alias])) {
-            $options += static::$_config[$alias];
-        }
         if (empty($options['connection'])) {
             $connectionName = $options['className']::defaultConnectionName();
             $options['connection'] = ConnectionManager::get($connectionName);
