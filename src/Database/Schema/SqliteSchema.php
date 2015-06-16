@@ -29,7 +29,7 @@ class SqliteSchema extends BaseSchema
      *
      * @var array
      */
-    protected $_fkIdMap = [];
+    protected $_constraint = [];
 
     /**
      * Convert a column definition to the abstract types.
@@ -227,10 +227,10 @@ class SqliteSchema extends BaseSchema
             'delete' => $this->_convertOnClause($delete),
         ];
 
-        if (isset($this->_fkIdMap[$table->name()][$row['id']])) {
-            $name = $this->_fkIdMap[$table->name()][$row['id']];
+        if (isset($this->_constraint[$table->name()][$row['id']])) {
+            $name = $this->_constraint[$table->name()][$row['id']];
         } else {
-            $this->_fkIdMap[$table->name()][$row['id']] = $name;
+            $this->_constraint[$table->name()][$row['id']] = $name;
         }
 
         $table->addConstraint($name, $data);
@@ -335,7 +335,7 @@ class SqliteSchema extends BaseSchema
             $clause = sprintf(
                 ' REFERENCES %s (%s) ON UPDATE %s ON DELETE %s',
                 $this->_driver->quoteIdentifier($data['references'][0]),
-                $this->_convertFkColumnsReference($data['references'][1]),
+                $this->_convertConstraintColumns($data['references'][1]),
                 $this->_foreignOnClause($data['update']),
                 $this->_foreignOnClause($data['delete'])
             );
