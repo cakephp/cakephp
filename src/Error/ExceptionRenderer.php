@@ -322,12 +322,11 @@ class ExceptionRenderer
     protected function _outputMessageSafe($template)
     {
         $this->controller->layoutPath = null;
-        $this->controller->subDir = null;
         $this->controller->viewPath = 'Error';
-        $this->controller->layout = 'error';
         $this->controller->helpers = ['Form', 'Html'];
 
         $view = $this->controller->createView();
+        $view->layout = 'error';
         $this->controller->response->body($view->render($template, 'error'));
         $this->controller->response->type('html');
         return $this->controller->response;
