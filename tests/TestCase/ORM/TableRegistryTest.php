@@ -223,6 +223,20 @@ class TableRegistryTest extends TestCase
     }
 
     /**
+     * Test that get() uses config data `className` set with config()
+     *
+     * @return void
+     */
+    public function testGetWithConfigClassName()
+    {
+        TableRegistry::config('MyUsersTableAlias', [
+            'className' => '\Cake\Test\TestCase\ORM\MyUsersTable',
+        ]);
+        $result = TableRegistry::get('MyUsersTableAlias');
+        $this->assertInstanceOf('\Cake\Test\TestCase\ORM\MyUsersTable', $result, 'Should use config() data className option.');
+    }
+
+    /**
      * Test get with config throws an exception if the alias exists already.
      *
      * @expectedException \RuntimeException
