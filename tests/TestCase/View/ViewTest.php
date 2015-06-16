@@ -1275,8 +1275,8 @@ class ViewTest extends TestCase
      */
     public function testRenderUsingViewProperty()
     {
-        $this->PostsController->view = 'cache_form';
         $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
+        $View->view = 'cache_form';
 
         $this->assertEquals('cache_form', $View->view);
         $result = $View->render();
@@ -1828,10 +1828,10 @@ TEXT;
         $this->ThemeController->plugin = null;
         $this->ThemeController->name = 'Posts';
         $this->ThemeController->viewPath = 'Posts';
-        $this->ThemeController->layout = 'whatever';
-        $this->ThemeController->theme = 'TestTheme';
 
         $View = $this->ThemeController->createView();
+        $View->layout = 'whatever';
+        $View->theme = 'TestTheme';
         $View->element('test_element');
 
         $start = memory_get_usage();

@@ -26,13 +26,6 @@ class RequestHandlerTestController extends Controller
 {
 
     /**
-     * uses property
-     *
-     * @var mixed
-     */
-    public $uses = null;
-
-    /**
      * test method for ajax redirection
      *
      * @return void
@@ -63,7 +56,7 @@ class RequestHandlerTestController extends Controller
      */
     public function ajax2_layout()
     {
-        $this->layout = 'ajax2';
+        $this->getView()->layout = 'ajax2';
         $this->destination();
     }
 }

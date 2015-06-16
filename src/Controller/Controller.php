@@ -183,21 +183,18 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
     /**
      * The path to this controllers view templates.
-     * Example `Articles`
-     *
-     * Set automatically using conventions in Controller::__construct().
+     * Example `Articles`.
      *
      * @var string
      */
     public $viewPath;
 
     /**
-     * The name of the view file to render. The name specified
-     * is the filename in /app/Template/<SubFolder> without the .ctp extension.
+     * The name of the layouts subfolder containing layouts.
      *
      * @var string
      */
-    public $view = null;
+    public $layoutPath;
 
     /**
      * Instance of the View created during rendering. Won't be set until after
@@ -215,8 +212,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @see \Cake\View\View
      */
     protected $_validViewOptions = [
-        'viewVars', 'autoLayout', 'helpers', 'view', 'layout', 'name', 'theme', 'layoutPath',
-        'viewPath', 'plugin', 'passedArgs'
+        'viewVars', 'helpers', 'name', 'layoutPath', 'viewPath', 'plugin', 'passedArgs'
     ];
 
     /**
@@ -334,11 +330,40 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function __get($name)
     {
+        if (in_array($name, ['layout', 'view', 'theme', 'autoLayout'], true)) {
+            trigger_error(
+                sprintf('Controller::$%s is deprecated. Use $this->getView()->$%s instead.', $name, $name),
+                E_USER_DEPRECATED
+            );
+            return $this->getView()->{$name};
+        }
+
         list($plugin, $class) = pluginSplit($this->modelClass, true);
         if ($class !== $name) {
             return false;
         }
         return $this->loadModel($plugin . $class);
+    }
+
+    /**
+     * Magic setter for removed properties.
+     *
+     * @param string $name Property name.
+     * @param mixed $value Value to set.
+     * @return void
+     */
+    public function __set($name, $value)
+    {
+        if (in_array($name, ['layout', 'view', 'theme', 'autoLayout'], true)) {
+            trigger_error(
+                sprintf('Controller::$%s is deprecated. Use $this->getView()->$%s instead.', $name, $name),
+                E_USER_DEPRECATED
+            );
+            $this->getView()->{$name} = $value;
+            return;
+        }
+
+        $this->{$name} = $value;
     }
 
     /**
@@ -348,12 +373,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * - $this->request - To the $request parameter
      * - $this->plugin - To the $request->params['plugin']
-     * - $this->autoRender - To false if $request->params['return'] == 1
-     * - $this->passedArgs - The combined results of params['named'] and params['pass]
-     * - View::$passedArgs - $this->passedArgs
+     * - $this->passedArgs - Same as $request->params['pass]
      * - View::$plugin - $this->plugin
-     * - View::$view - To the $request->params['action']
-     * - View::$autoLayout - To the false if $request->params['bare']; is set.
      *
      * @param \Cake\Network\Request $request Request instance.
      * @return void
@@ -362,7 +383,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     {
         $this->request = $request;
         $this->plugin = isset($request->params['plugin']) ? $request->params['plugin'] : null;
-        $this->view = isset($request->params['action']) ? $request->params['action'] : null;
 
         if (isset($request->params['pass'])) {
             $this->passedArgs = $request->params['pass'];
@@ -544,7 +564,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function setAction($action)
     {
         $this->request->params['action'] = $action;
-        $this->view = $action;
         $args = func_get_args();
         unset($args[0]);
         return call_user_func_array([&$this, $action], $args);
@@ -577,6 +596,9 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         $this->autoRender = false;
         $this->View = $this->getView();
+        if ($this->_view->view === null) {
+            $this->_view->view = isset($this->request->params['action']) ? $this->request->params['action'] : null;
+        }
         $this->response->body($this->_view->render($view, $layout));
         return $this->response;
     }
