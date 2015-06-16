@@ -518,12 +518,8 @@ class Table
                     $attrs['columns']
                 );
 
-                if (is_string($this->_constraints[$name]['references'][1])) {
-                    $this->_constraints[$name]['references'][1] = [$this->_constraints[$name]['references'][1]];
-                }
-
                 $this->_constraints[$name]['references'][1] = array_merge(
-                    $this->_constraints[$name]['references'][1],
+                    (array)$this->_constraints[$name]['references'][1],
                     [$attrs['references'][1]]
                 );
                 return $this;
