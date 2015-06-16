@@ -520,7 +520,7 @@ class I18nTest extends TestCase
      */
     public function testFallbackTranslatorDisabled()
     {
-        I18n::useTranslationFallback(false);
+        I18n::useFallback(false);
 
         I18n::translator('default', 'fr_FR', function () {
             $package = new Package('default');
@@ -537,36 +537,6 @@ class I18nTest extends TestCase
         $translator = I18n::translator('custom', 'fr_FR');
         $this->assertEquals('Le moo', $translator->translate('Cow'));
         $this->assertEquals('Dog', $translator->translate('Dog'));
-    }
-
-    /**
-     * Test that a different fallback domain can be set
-     *
-     * @return void
-     */
-    public function testFallbackTranslatorSetFallbackDomain()
-    {
-        $this->assertEquals('default', I18n::defaultFallbackDomain());
-
-        $fallbackDomain = 'foo';
-        I18n::defaultFallbackDomain($fallbackDomain);
-        $this->assertEquals($fallbackDomain, I18n::defaultFallbackDomain());
-
-        I18n::translator($fallbackDomain, 'fr_FR', function () {
-            $package = new Package('default');
-            $package->setMessages(['Dog' => 'Le bark']);
-            return $package;
-        });
-
-        I18n::translator('custom', 'fr_FR', function () {
-            $package = new Package('default');
-            $package->setMessages(['Cow' => 'Le moo']);
-            return $package;
-        });
-
-        $translator = I18n::translator('custom', 'fr_FR');
-        $this->assertEquals('Le moo', $translator->translate('Cow'));
-        $this->assertEquals('Le bark', $translator->translate('Dog'));
     }
 
     /**

@@ -43,13 +43,6 @@ class TranslatorRegistry extends TranslatorLocator
     protected $_defaultFormatter = 'default';
 
     /**
-     * Domain used as fallback if translation isn't found in original domain
-     *
-     * @var string
-     */
-    protected $_defaultFallbackDomain = 'default';
-
-    /**
      * Enable translation fallback
      *
      * @var bool
@@ -169,30 +162,12 @@ class TranslatorRegistry extends TranslatorLocator
     }
 
     /**
-     * Set fallback domain. Messages from the fallback domain are used if
-     * a domain can't provide a localization message.
-     *
-     * Get the currently set domain if argument is null.
-     *
-     * @param string|null $name fallback domain
-     * @return string
-     */
-    public function defaultFallbackDomain($name = null)
-    {
-        if ($name === null) {
-            return $this->_defaultFallbackDomain;
-        }
-
-        return $this->_defaultFallbackDomain = $name;
-    }
-
-    /**
      * Set if the default domain fallback is used.
      *
      * @param bool $enable flag to enable or disable fallback
      * @return void
      */
-    public function useTranslationFallback($enable = true)
+    public function useFallback($enable = true)
     {
         $this->_fallback = $enable;
     }
@@ -264,19 +239,20 @@ class TranslatorRegistry extends TranslatorLocator
     /**
      * Set domain fallback for loader.
      *
-     * @param string $name The name of the fallback domain
+     * @param string $name The name of the loader domain
      * @param callable $loader invokable loader
      * @return callable loader
      */
     public function setLoaderFallback($name, callable $loader)
     {
-        if (!$this->_fallback || $name === $this->_defaultFallbackDomain) {
+        $fallbackDomain = 'default';
+        if (!$this->_fallback || $name === $fallbackDomain) {
             return $loader;
         }
-        $loader = function () use ($loader) {
+        $loader = function () use ($loader, $fallbackDomain) {
             $package = $loader();
             if (!$package->getFallback()) {
-                $package->setFallback($this->_defaultFallbackDomain);
+                $package->setFallback($fallbackDomain);
             }
             return $package;
         };
