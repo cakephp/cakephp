@@ -184,7 +184,7 @@ class TableRegistry
         }
 
         if (isset(static::$_config[$alias])) {
-            $options += static::$_config[$alias];
+            $options = array_merge($options, static::$_config[$alias]);
         }
         if (empty($options['connection'])) {
             $connectionName = $options['className']::defaultConnectionName();
