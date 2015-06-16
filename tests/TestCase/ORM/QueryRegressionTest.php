@@ -968,4 +968,33 @@ class QueryRegressionTest extends TestCase
         $this->assertNotEmpty($result->tags, 'Missing tags');
         $this->assertNotEmpty($result->tags[0]->_joinData, 'Missing join data');
     }
+
+    /**
+     * Tests that it is possible to use matching with dot notation
+     * even when part of the part of the path in the dot notation is
+     * shared for two different calls
+     *
+     * @return void
+     */
+    public function testDotNotationNotOverride()
+    {
+        $table = TableRegistry::get('Comments');
+        $articles = $table->belongsTo('Articles');
+        $specialTags = $articles->hasMany('SpecialTags');
+        $specialTags->belongsTo('Authors');
+        $specialTags->belongsTo('Tags');
+
+        $results = $table
+            ->find()
+            ->select(['name' => 'Authors.name', 'tag' => 'Tags.name'])
+            ->matching('Articles.SpecialTags.Tags')
+            ->matching('Articles.SpecialTags.Authors', function ($q) {
+                return $q->where(['Authors.id' => 2]);
+            })
+            ->distinct()
+            ->hydrate(false)
+            ->toArray();
+
+        $this->assertEquals([['name' => 'nate', 'tag' => 'tag1']], $results);
+    }
 }
