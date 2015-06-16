@@ -4433,6 +4433,34 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test that radio() accepts a deep array for options
+ *
+ * @return void
+ */
+	public function testRadioOptionsArray() {
+		$result = $this->Form->input('Model.field', array(
+			'type' => 'radio',
+			'legend' => false,
+			'div' => false,
+			'options' => array(
+				'1' => array('name' => 'Option A', 'title' => 'A Title'),
+				'2' => array('name' => 'Option B', 'data-foo' => 'bar'))
+		));
+		$expected = array(
+			array('input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'id' => 'ModelField_', 'value' => '')),
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'id' => 'ModelField1', 'value' => '1', 'title' => 'A Title')),
+			array('label' => array('for' => 'ModelField1')),
+			'Option A',
+			'/label',
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'id' => 'ModelField2', 'value' => '2', 'data-foo' => 'bar')),
+			array('label' => array('for' => 'ModelField2')),
+			'Option B',
+			'/label'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * Test that radio() accepts an array for label
  *
  * @return void
