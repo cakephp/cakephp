@@ -59,11 +59,6 @@ trait ViewVarsTrait
     {
         if ($viewClass === null && $this->_view) {
             $this->_view->viewVars = $this->viewVars;
-            foreach (['viewPath', 'layoutPath'] as $var) {
-                if (isset($this->{$var})) {
-                    $this->_view->{$var} = $this->{$var};
-                }
-            }
             return $this->_view;
         }
 
@@ -88,11 +83,6 @@ trait ViewVarsTrait
 
         if ($this->_view && $this->_view instanceof $className) {
             $this->_view->viewVars = $this->viewVars;
-            foreach (['viewPath', 'layoutPath'] as $var) {
-                if (isset($this->{$var})) {
-                    $this->_view->{$var} = $this->{$var};
-                }
-            }
             return $this->_view;
         }
 

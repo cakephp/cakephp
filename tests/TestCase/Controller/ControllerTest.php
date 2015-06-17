@@ -379,7 +379,7 @@ class ControllerTest extends TestCase
         $request->params['action'] = 'index';
 
         $Controller = new Controller($request, new Response());
-        $Controller->viewPath = 'Posts';
+        $Controller->getView()->viewPath = 'Posts';
 
         $result = $Controller->render('index');
         $this->assertRegExp('/posts index/', (string)$result);
@@ -849,18 +849,30 @@ class ControllerTest extends TestCase
         ]);
         $response = $this->getMock('Cake\Network\Response');
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
-        $this->assertEquals('Admin' . DS . 'Posts', $Controller->viewPath);
+        $Controller->eventManager()->on('Controller.beforeRender', function(\Cake\Event\Event $e) {
+            return $e->subject()->response;
+        });
+        $Controller->render();
+        $this->assertEquals('Admin' . DS . 'Posts', $Controller->getView()->viewPath);
 
         $request->addParams([
             'prefix' => 'admin/super'
         ]);
         $response = $this->getMock('Cake\Network\Response');
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
-        $this->assertEquals('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewPath);
+        $Controller->eventManager()->on('Controller.beforeRender', function(\Cake\Event\Event $e) {
+            return $e->subject()->response;
+        });
+        $Controller->render();
+        $this->assertEquals('Admin' . DS . 'Super' . DS . 'Posts', $Controller->getView()->viewPath);
 
         $request = new Request('pages/home');
         $Controller = new \TestApp\Controller\PagesController($request, $response);
-        $this->assertEquals('Pages', $Controller->viewPath);
+        $Controller->eventManager()->on('Controller.beforeRender', function(\Cake\Event\Event $e) {
+            return $e->subject()->response;
+        });
+        $Controller->render();
+        $this->assertEquals('Pages', $Controller->getView()->viewPath);
     }
 
     /**
