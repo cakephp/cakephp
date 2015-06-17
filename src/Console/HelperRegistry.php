@@ -34,11 +34,12 @@ class HelperRegistry extends ObjectRegistry
     protected $_io;
 
     /**
-     * Constructor
+     * Sets The IO instance that should be passed to the shell helpers
      *
      * @param \Cake\Console\ConsoleIo $io An io instance.
+     * @return void
      */
-    public function __construct(ConsoleIo $io)
+    public function setIo(ConsoleIo $io)
     {
         $this->_io = $io;
     }

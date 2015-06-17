@@ -35,7 +35,8 @@ class HelperRegistryTest extends TestCase
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
         $io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
-        $this->helpers = new HelperRegistry($io);
+        $this->helpers = new HelperRegistry();
+        $this->helpers->setIo($io);
     }
 
     /**
