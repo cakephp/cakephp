@@ -107,7 +107,8 @@ class ConsoleIo
         $this->_out = $out ? $out : new ConsoleOutput('php://stdout');
         $this->_err = $err ? $err : new ConsoleOutput('php://stderr');
         $this->_in = $in ? $in : new ConsoleInput('php://stdin');
-        $this->_helpers = $helpers ? $helpers : new HelperRegistry($this);
+        $this->_helpers = $helpers ? $helpers : new HelperRegistry();
+        $this->_helpers->setIo($this);
     }
 
     /**
