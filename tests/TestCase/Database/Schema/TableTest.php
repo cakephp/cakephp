@@ -25,7 +25,7 @@ use Cake\TestSuite\TestCase;
 class TableTest extends TestCase
 {
 
-    public $fixtures = ['core.customers', 'core.products', 'core.orders'];
+    public $fixtures = ['core.articles_tags', 'core.products', 'core.orders'];
 
     /**
      * Test construction with columns
@@ -410,11 +410,35 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test single column foreign keys constraint support
+     *
+     * @return void
+     */
+    public function testConstraintForeignKey()
+    {
+        $table = TableRegistry::get('ArticlesTags');
+        $compositeConstraint = $table->schema()->constraint('tag_id_fk');
+        $expected = [
+            'type' => 'foreign',
+            'columns' => ['tag_id'],
+            'references' => ['tags', 'id'],
+            'update' => 'cascade',
+            'delete' => 'cascade',
+            'length' => []
+        ];
+
+        $this->assertEquals($expected, $compositeConstraint);
+
+        $expectedSubstring = 'CONSTRAINT <tag_id_fk> FOREIGN KEY \(<tag_id>\) REFERENCES <tags> \(<id>\)';
+        $this->assertQuotedQuery($expectedSubstring, $table->schema()->createSql(ConnectionManager::get('test'))[0]);
+    }
+
+    /**
      * Test composite foreign keys support
      *
      * @return void
      */
-    public function testAddConstraintForeignKeyTwoColumns()
+    public function testConstraintForeignKeyTwoColumns()
     {
         $table = TableRegistry::get('Orders');
         $compositeConstraint = $table->schema()->constraint('product_id_fk');
@@ -438,7 +462,7 @@ class TableTest extends TestCase
         $expectedSubstring = 'CONSTRAINT <product_id_fk> FOREIGN KEY \(<product_id>, <product_category>\)' .
             ' REFERENCES <products> \(<id>, <category>\)';
 
-        $this->assertQuotedQuery($expectedSubstring, $table->schema()->createSql(ConnectionManager::get('default'))[0]);
+        $this->assertQuotedQuery($expectedSubstring, $table->schema()->createSql(ConnectionManager::get('test'))[0]);
     }
 
     /**

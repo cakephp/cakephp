@@ -37,15 +37,10 @@ class OrdersFixture extends TestFixture
         'id' => ['type' => 'integer'],
         'product_category' => ['type' => 'integer', 'null' => false],
         'product_id' => ['type' => 'integer', 'null' => false],
-        'customer_id' => ['type' => 'integer', 'null' => false],
         '_indexes' => [
             'product_category' => [
                 'type' => 'index',
                 'columns' => ['product_category', 'product_id']
-            ],
-            'customer_id' => [
-                'type' => 'index',
-                'columns' => ['customer_id']
             ]
         ],
         '_constraints' => [
@@ -58,13 +53,6 @@ class OrdersFixture extends TestFixture
                 'references' => ['products', ['id', 'category']],
                 'update' => 'cascade',
                 'delete' => 'cascade',
-            ],
-            'order_ibfk_2' => [
-                'type' => 'foreign',
-                'columns' => ['customer_id'],
-                'references' => ['customers', 'id'],
-                'update' => 'cascade',
-                'delete' => 'cascade',
             ]
         ]
     ];
@@ -75,6 +63,6 @@ class OrdersFixture extends TestFixture
      * @var array
      */
     public $records = [
-        ['product_category' => 1, 'product_id' => 1, 'customer_id' => 1]
+        ['product_category' => 1, 'product_id' => 1]
     ];
 }
