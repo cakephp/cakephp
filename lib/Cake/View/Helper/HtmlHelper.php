@@ -71,7 +71,7 @@ class HtmlHelper extends AppHelper {
 		'submit' => '<input%s/>',
 		'submitimage' => '<input type="image" src="%s"%s/>',
 		'button' => '<button%s>%s</button>',
-		'image' => '<img src="%s"%s/>',
+		'image' => '<img src="%s" %s/>',
 		'tableheader' => '<th%s>%s</th>',
 		'tableheaderrow' => '<tr%s>%s</tr>',
 		'tablecell' => '<td%s>%s</td>',
