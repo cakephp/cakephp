@@ -305,16 +305,16 @@ class ViewTest extends TestCase
         $request = new Request();
         $this->Controller = new Controller($request);
         $this->PostsController = new ViewPostsController($request);
-        $this->PostsController->viewPath = 'Posts';
         $this->PostsController->index();
         $this->View = $this->PostsController->createView();
+        $this->View->viewPath = 'Posts';
 
         $themeRequest = new Request('posts/index');
         $this->ThemeController = new Controller($themeRequest);
         $this->ThemePostsController = new ThemePostsController($themeRequest);
-        $this->ThemePostsController->viewPath = 'Posts';
         $this->ThemePostsController->index();
         $this->ThemeView = $this->ThemePostsController->createView();
+        $this->ThemeView->viewPath = 'Posts';
 
         Plugin::load(['TestPlugin', 'PluginJs', 'TestTheme', 'Company/TestPluginThree']);
         Configure::write('debug', true);
@@ -985,6 +985,7 @@ class ViewTest extends TestCase
     public function testViewEvent()
     {
         $View = $this->PostsController->createView();
+        $View->viewPath = $this->PostsController->name;
         $View->autoLayout = false;
         $listener = new TestViewEventListenerInterface();
 
@@ -1092,6 +1093,7 @@ class ViewTest extends TestCase
     public function testHelperCallbackTriggering()
     {
         $View = $this->PostsController->createView();
+        $View->viewPath = $this->PostsController->name;
 
         $manager = $this->getMock('Cake\Event\EventManager');
         $View->eventManager($manager);
@@ -1183,6 +1185,7 @@ class ViewTest extends TestCase
             'Html'
         ];
         $View = $this->PostsController->createView();
+        $View->viewPath = $this->PostsController->name;
         $View->render('index');
         $this->assertEquals('Valuation', $View->helpers()->TestBeforeAfter->property);
     }
@@ -1201,6 +1204,7 @@ class ViewTest extends TestCase
         $this->PostsController->set('variable', 'values');
 
         $View = $this->PostsController->createView();
+        $View->viewPath = $this->PostsController->name;
 
         $content = 'This is my view output';
         $result = $View->renderLayout($content, 'default');
@@ -1217,6 +1221,7 @@ class ViewTest extends TestCase
     {
         $this->PostsController->helpers = ['Form', 'Number'];
         $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
+        $View->viewPath = $this->PostsController->name;
 
         $result = $View->render('index', false);
         $this->assertEquals('posts index', $result);
@@ -1227,6 +1232,7 @@ class ViewTest extends TestCase
 
         $this->PostsController->helpers = ['Html', 'Form', 'Number', 'TestPlugin.PluggedHelper'];
         $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
+        $View->viewPath = $this->PostsController->name;
 
         $result = $View->render('index', false);
         $this->assertEquals('posts index', $result);
@@ -1244,6 +1250,7 @@ class ViewTest extends TestCase
     public function testRender()
     {
         $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
+        $View->viewPath = $this->PostsController->name;
         $result = $View->render('index');
 
         $this->assertRegExp("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\"\/>\s*<title>/", $result);
@@ -1262,6 +1269,7 @@ class ViewTest extends TestCase
         Configure::write('Cache.check', true);
 
         $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
+        $View->viewPath = $this->PostsController->name;
         $result = $View->render('index');
 
         $this->assertRegExp("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\"\/>\s*<title>/", $result);
@@ -1276,6 +1284,7 @@ class ViewTest extends TestCase
     public function testRenderUsingViewProperty()
     {
         $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
+        $View->viewPath = $this->PostsController->name;
         $View->view = 'cache_form';
 
         $this->assertEquals('cache_form', $View->view);
@@ -1293,8 +1302,8 @@ class ViewTest extends TestCase
     {
         $this->PostsController->plugin = 'TestPlugin';
         $this->PostsController->name = 'Posts';
-        $this->PostsController->viewPath = 'Element';
         $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
+        $View->viewPath = 'Element';
         $pluginPath = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS;
         $result = $View->getViewFileName('sub_dir/sub_element');
         $expected = $pluginPath . 'src' . DS . 'Template' . DS . 'Element' . DS . 'sub_dir' . DS . 'sub_element.ctp';
@@ -1312,7 +1321,8 @@ class ViewTest extends TestCase
         $Controller = new ViewPostsController();
         $Controller->helpers = ['Html'];
         $Controller->set('html', 'I am some test html');
-        $View = $Controller->createView();
+        $View = $Controller->getView();
+        $View->viewPath = $Controller->name;
         $result = $View->render('helper_overwrite', false);
 
         $this->assertRegExp('/I am some test html/', $result);
@@ -1326,7 +1336,8 @@ class ViewTest extends TestCase
      */
     public function testViewFileName()
     {
-        $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
+        $View = $this->PostsController->getView('Cake\Test\TestCase\View\TestView');
+        $View->viewPath = 'Posts';
 
         $result = $View->getViewFileName('index');
         $this->assertRegExp('/Posts(\/|\\\)index.ctp/', $result);
@@ -1827,9 +1838,9 @@ TEXT;
     {
         $this->ThemeController->plugin = null;
         $this->ThemeController->name = 'Posts';
-        $this->ThemeController->viewPath = 'Posts';
 
         $View = $this->ThemeController->createView();
+        $View->viewPath = 'Posts';
         $View->layout = 'whatever';
         $View->theme = 'TestTheme';
         $View->element('test_element');
