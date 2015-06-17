@@ -49,7 +49,7 @@ trait TranslateTrait
         if ($created || empty($i18n[$language]) || !($i18n[$language] instanceof EntityInterface)) {
             $className = get_class($this);
 
-            $i18n[$language] = new $className;
+            $i18n[$language] = new $className();
             $created = true;
         }
 
