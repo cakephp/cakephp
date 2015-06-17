@@ -77,7 +77,7 @@ class Validation {
 			extract(self::_defaults($check));
 		}
 
-		if (empty($check) && $check != '0') {
+		if (empty($check) && (string)$check !== '0') {
 			return false;
 		}
 		return self::_check($check, '/[^\s]+/m');
