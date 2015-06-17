@@ -25,7 +25,13 @@ use Cake\TestSuite\TestCase;
 class TableTest extends TestCase
 {
 
-    public $fixtures = ['core.articles_tags', 'core.products', 'core.orders'];
+    public $fixtures = ['core.articles_tags', 'core.products', 'core.orders', 'core.tags'];
+
+    public function tearDown()
+    {
+        TableRegistry::clear();
+        parent::tearDown();
+    }
 
     /**
      * Test construction with columns
