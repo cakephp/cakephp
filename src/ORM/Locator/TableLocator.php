@@ -142,6 +142,10 @@ class TableLocator implements LocatorInterface
         list(, $classAlias) = pluginSplit($alias);
         $options = ['alias' => $classAlias] + $options;
 
+        if (isset($this->_config[$alias])) {
+            $options += $this->_config[$alias];
+        }
+
         if (empty($options['className'])) {
             $options['className'] = Inflector::camelize($alias);
         }
@@ -156,9 +160,6 @@ class TableLocator implements LocatorInterface
             $options['className'] = 'Cake\ORM\Table';
         }
 
-        if (isset($this->_config[$alias])) {
-            $options += $this->_config[$alias];
-        }
         if (empty($options['connection'])) {
             $connectionName = $options['className']::defaultConnectionName();
             $options['connection'] = ConnectionManager::get($connectionName);

@@ -14,6 +14,8 @@
  */
 namespace Cake\Filesystem;
 
+use finfo;
+
 /**
  * Convenience class for reading, writing and appending to files.
  *
@@ -554,13 +556,13 @@ class File
         if (!$this->exists()) {
             return false;
         }
-        if (function_exists('finfo_open')) {
-            $finfo = finfo_open(FILEINFO_MIME);
-            $finfo = finfo_file($finfo, $this->pwd());
-            if (!$finfo) {
+        if (class_exists('finfo')) {
+            $finfo = new finfo(FILEINFO_MIME);
+            $type = $finfo->file($this->pwd());
+            if (!$type) {
                 return false;
             }
-            list($type) = explode(';', $finfo);
+            list($type) = explode(';', $type);
             return $type;
         }
         if (function_exists('mime_content_type')) {

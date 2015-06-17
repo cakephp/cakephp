@@ -673,23 +673,6 @@ class Request implements ArrayAccess
     }
 
     /**
-     * Detects if a URL extension is present.
-     *
-     * @param array $detect Detector options array.
-     * @return bool Whether or not the request is the type you are checking.
-     */
-    protected function _extensionDetector($detect)
-    {
-        if (is_string($detect['extension'])) {
-            $detect['extension'] = [$detect['extension']];
-        }
-        if (in_array($this->params['_ext'], $detect['extension'])) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Detects if a specific accept header is present.
      *
      * @param array $detect Detector options array.

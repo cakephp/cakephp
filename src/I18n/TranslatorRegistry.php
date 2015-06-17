@@ -43,6 +43,13 @@ class TranslatorRegistry extends TranslatorLocator
     protected $_defaultFormatter = 'default';
 
     /**
+     * Use fallback-domain for translation loaders.
+     *
+     * @var bool
+     */
+    protected $_useFallback = true;
+
+    /**
      * A CacheEngine object that is used to remember translator across
      * requests.
      *
@@ -155,6 +162,17 @@ class TranslatorRegistry extends TranslatorLocator
     }
 
     /**
+     * Set if the default domain fallback is used.
+     *
+     * @param bool $enable flag to enable or disable fallback
+     * @return void
+     */
+    public function useFallback($enable = true)
+    {
+        $this->_useFallback = $enable;
+    }
+
+    /**
      * Returns a new translator instance for the given name and locale
      * based of conventions.
      *
@@ -212,17 +230,33 @@ class TranslatorRegistry extends TranslatorLocator
             };
         }
 
-        if ($name !== 'default') {
-            $loader = function () use ($loader) {
-                $package = $loader();
-                if (!$package->getFallback()) {
-                    $package->setFallback('default');
-                }
-                return $package;
-            };
-        }
+        $loader = $this->setLoaderFallback($name, $loader);
 
         $this->packages->set($name, $locale, $loader);
         return parent::get($name, $locale);
+    }
+
+    /**
+     * Set domain fallback for loader.
+     *
+     * @param string $name The name of the loader domain
+     * @param callable $loader invokable loader
+     * @return callable loader
+     */
+    public function setLoaderFallback($name, callable $loader)
+    {
+        $fallbackDomain = 'default';
+        if (!$this->_useFallback || $name === $fallbackDomain) {
+            return $loader;
+        }
+        $loader = function () use ($loader, $fallbackDomain) {
+            $package = $loader();
+            if (!$package->getFallback()) {
+                $package->setFallback($fallbackDomain);
+            }
+            return $package;
+        };
+
+        return $loader;
     }
 }

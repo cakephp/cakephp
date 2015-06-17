@@ -60,7 +60,7 @@ class TableLocatorTest extends TestCase
     {
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
-        
+
         $this->_locator = new TableLocator;
     }
 
@@ -219,6 +219,20 @@ class TableLocatorTest extends TestCase
         ]);
         $result = $this->_locator->get('Articles');
         $this->assertEquals('my_articles', $result->table(), 'Should use config() data.');
+    }
+
+    /**
+     * Test that get() uses config data `className` set with config()
+     *
+     * @return void
+     */
+    public function testGetWithConfigClassName()
+    {
+        $this->_locator->config('MyUsersTableAlias', [
+            'className' => '\Cake\Test\TestCase\ORM\Locator\MyUsersTable',
+        ]);
+        $result = $this->_locator->get('MyUsersTableAlias');
+        $this->assertInstanceOf('\Cake\Test\TestCase\ORM\Locator\MyUsersTable', $result, 'Should use config() data className option.');
     }
 
     /**

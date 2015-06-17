@@ -206,6 +206,9 @@ class IdentifierQuoter
     /**
      * Quotes identifiers in "order by" expression objects
      *
+     * Strings with spaces are treated as literal expressions
+     * and will not have identifiers quoted.
+     *
      * @param \Cake\Database\Expression\OrderByExpression $expression The expression to quote.
      * @return void
      */
@@ -214,6 +217,10 @@ class IdentifierQuoter
         $expression->iterateParts(function ($part, &$field) {
             if (is_string($field)) {
                 $field = $this->_driver->quoteIdentifier($field);
+                return $part;
+            }
+            if (is_string($part) && strpos($part, ' ') === false) {
+                return $this->_driver->quoteIdentifier($part);
             }
             return $part;
         });

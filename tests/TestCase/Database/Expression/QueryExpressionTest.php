@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class QueryExpressionTest extends TestCase
 {
-
     /**
      * Test and() and or() calls work transparently
      *

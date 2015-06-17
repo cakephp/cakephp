@@ -2141,8 +2141,8 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::multiple(''));
         $this->assertFalse(Validation::multiple(null));
         $this->assertFalse(Validation::multiple([]));
-        $this->assertFalse(Validation::multiple([0]));
-        $this->assertFalse(Validation::multiple(['0']));
+        $this->assertTrue(Validation::multiple([0]));
+        $this->assertTrue(Validation::multiple(['0']));
 
         $this->assertTrue(Validation::multiple([0, 3, 4, 5], ['in' => range(0, 10)]));
         $this->assertFalse(Validation::multiple([0, 15, 20, 5], ['in' => range(0, 10)]));
@@ -2150,8 +2150,9 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::multiple(['boo', 'foo', 'bar'], ['in' => ['foo', 'bar', 'baz']]));
         $this->assertFalse(Validation::multiple(['foo', '1bar'], ['in' => range(0, 10)]));
 
-        $this->assertTrue(Validation::multiple([0, 5, 10, 11], ['max' => 3]));
-        $this->assertFalse(Validation::multiple([0, 5, 10, 11, 55], ['max' => 3]));
+        $this->assertFalse(Validation::multiple([1, 5, 10, 11], ['max' => 3]));
+        $this->assertTrue(Validation::multiple([0, 5, 10, 11], ['max' => 4]));
+        $this->assertFalse(Validation::multiple([0, 5, 10, 11, 55], ['max' => 4]));
         $this->assertTrue(Validation::multiple(['foo', 'bar', 'baz'], ['max' => 3]));
         $this->assertFalse(Validation::multiple(['foo', 'bar', 'baz', 'squirrel'], ['max' => 3]));
 
@@ -2166,7 +2167,8 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::multiple([0, 5, 9, 8, 6, 2, 1], ['in' => range(0, 10), 'max' => 5]));
         $this->assertFalse(Validation::multiple([0, 5, 9, 8, 11], ['in' => range(0, 10), 'max' => 5]));
 
-        $this->assertFalse(Validation::multiple([0, 5, 9], ['in' => range(0, 10), 'max' => 5, 'min' => 3]));
+        $this->assertTrue(Validation::multiple([0, 5, 9], ['in' => range(0, 10), 'max' => 5, 'min' => 3]));
+        $this->assertFalse(Validation::multiple(['', '5', '9'], ['max' => 5, 'min' => 3]));
         $this->assertFalse(Validation::multiple([0, 5, 9, 8, 6, 2, 1], ['in' => range(0, 10), 'max' => 5, 'min' => 2]));
         $this->assertFalse(Validation::multiple([0, 5, 9, 8, 11], ['in' => range(0, 10), 'max' => 5, 'min' => 2]));
 

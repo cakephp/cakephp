@@ -812,6 +812,30 @@ class EntityTest extends TestCase
     }
 
     /**
+     * Tests that an entity with entities and other misc types can be properly toArray'd
+     *
+     * @return void
+     */
+    public function testToArrayMixed()
+    {
+        $test = new Entity([
+            'id' => 1,
+            'foo' => [
+                new Entity(['hi' => 'test']),
+                'notentity' => 1
+            ]
+        ]);
+        $expected = [
+            'id' => 1,
+            'foo' => [
+                ['hi' => 'test'],
+                'notentity' => 1
+            ]
+        ];
+        $this->assertEquals($expected, $test->toArray());
+    }
+
+    /**
      * Test that get accessors are called when converting to arrays.
      *
      * @return void

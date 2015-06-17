@@ -234,7 +234,7 @@ trait SelectableAssociationTrait
             $filterQuery->offset(null);
         }
 
-        $keys = (array)$query->repository()->primaryKey();
+        $keys = (array)$this->source()->primaryKey();
 
         if ($this->type() === $this::MANY_TO_ONE) {
             $keys = (array)$this->foreignKey();

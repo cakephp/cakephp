@@ -737,7 +737,7 @@ class TreeBehavior extends Behavior
 
         $node = $this->_scope($this->_table->find())
             ->select($fields)
-            ->where([$this->_table->alias() . '.' . $primaryKey => $id])
+            ->where([$this->_table->aliasField($primaryKey) => $id])
             ->first();
 
         if (!$node) {
@@ -772,19 +772,20 @@ class TreeBehavior extends Behavior
     {
         $config = $this->config();
         list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
-        $pk = (array)$this->_table->primaryKey();
+        $primaryKey = $this->_getPrimaryKey();
+        $aliasedPrimaryKey = $this->_table->aliasField($primaryKey);
 
         $query = $this->_scope($this->_table->query())
-            ->select($pk)
-            ->where([$parent . ' IS' => $parentId])
-            ->order($pk)
+            ->select([$aliasedPrimaryKey])
+            ->where([$this->_table->aliasField($parent) . ' IS' => $parentId])
+            ->order([$aliasedPrimaryKey])
             ->hydrate(false);
 
         $leftCounter = $counter;
         $nextLevel = $level + 1;
         foreach ($query as $row) {
             $counter++;
-            $counter = $this->_recoverTree($counter, $row[$pk[0]], $nextLevel);
+            $counter = $this->_recoverTree($counter, $row[$primaryKey], $nextLevel);
         }
 
         if ($parentId === null) {
@@ -798,7 +799,7 @@ class TreeBehavior extends Behavior
 
         $this->_table->updateAll(
             $fields,
-            [$pk[0] => $parentId]
+            [$primaryKey => $parentId]
         );
 
         return $counter + 1;
