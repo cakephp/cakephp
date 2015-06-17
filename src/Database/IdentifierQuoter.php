@@ -192,7 +192,10 @@ class IdentifierQuoter
     protected function _quoteUpdate($query)
     {
         $table = $query->clause('update')[0];
-        $query->update($this->_driver->quoteIdentifier($table));
+        
+        if (is_string($table)) {
+            $query->update($this->_driver->quoteIdentifier($table));
+        }
     }
 
     /**
