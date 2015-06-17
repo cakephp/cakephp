@@ -113,24 +113,16 @@ class I18n
      * @param string|null $locale The locale for the translator.
      * @param callable|null $loader A callback function or callable class responsible for
      * constructing a translations package instance.
-     * @return \Aura\Intl\Translator The configured translator.
+     * @return \Aura\Intl\Translator|void The configured translator.
      */
     public static function translator($name = 'default', $locale = null, callable $loader = null)
     {
         if ($loader !== null) {
-            $packages = static::translators()->getPackages();
             $locale = $locale ?: static::locale();
 
-            if ($name !== 'default') {
-                $loader = function () use ($loader) {
-                    $package = $loader();
-                    if (!$package->getFallback()) {
-                        $package->setFallback('default');
-                    }
-                    return $package;
-                };
-            }
+            $loader = static::translators()->setLoaderFallback($name, $loader);
 
+            $packages = static::translators()->getPackages();
             $packages->set($name, $locale, $loader);
             return;
         }
@@ -258,6 +250,17 @@ class I18n
     public static function defaultFormatter($name = null)
     {
         return static::translators()->defaultFormatter($name);
+    }
+
+    /**
+     * Set if the domain fallback is used.
+     *
+     * @param bool $enable flag to enable or disable fallback
+     * @return void
+     */
+    public static function useFallback($enable = true)
+    {
+        static::translators()->useFallback($enable);
     }
 
     /**
