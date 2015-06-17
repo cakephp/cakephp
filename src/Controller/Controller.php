@@ -201,7 +201,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Controller::render() is called.
      *
      * @var \Cake\View\View
-     * @deprecated 3.0.8 Use getView() instead.
+     * @deprecated 3.1.0 Use getView() instead.
      */
     public $View;
 
