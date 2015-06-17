@@ -14,8 +14,8 @@
  */
 namespace Cake\Controller;
 
-use Cake\Routing\Router;
 use Cake\Event\Event;
+use Cake\Routing\Router;
 
 /**
  * Error Handling Controller

@@ -705,7 +705,7 @@ class ExceptionRendererTest extends TestCase
 
         $ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', ['render']);
         $ExceptionRenderer->controller->helpers = ['Fail', 'Boom'];
-        $ExceptionRenderer->controller->eventManager()->on('Controller.beforeRender', function($event) {
+        $ExceptionRenderer->controller->eventManager()->on('Controller.beforeRender', function (Event $event) {
             $event->subject()->getView()->layoutPath = 'boom';
         });
         $ExceptionRenderer->controller->request = new Request;

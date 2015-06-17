@@ -443,7 +443,7 @@ class RequestHandlerComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);
-        $this->Controller->eventManager()->on('Controller.beforeRender', function() {
+        $this->Controller->eventManager()->on('Controller.beforeRender', function () {
             return $this->Controller->response;
         });
         $this->Controller->render();
@@ -698,7 +698,7 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testRenderAsCalledTwice()
     {
-        $this->Controller->eventManager()->on('Controller.beforeRender', function(\Cake\Event\Event $e) {
+        $this->Controller->eventManager()->on('Controller.beforeRender', function (\Cake\Event\Event $e) {
             return $e->subject()->response;
         });
         $this->Controller->render();

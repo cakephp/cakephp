@@ -849,7 +849,7 @@ class ControllerTest extends TestCase
         ]);
         $response = $this->getMock('Cake\Network\Response');
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
-        $Controller->eventManager()->on('Controller.beforeRender', function(\Cake\Event\Event $e) {
+        $Controller->eventManager()->on('Controller.beforeRender', function (Event $e) {
             return $e->subject()->response;
         });
         $Controller->render();
@@ -860,7 +860,7 @@ class ControllerTest extends TestCase
         ]);
         $response = $this->getMock('Cake\Network\Response');
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
-        $Controller->eventManager()->on('Controller.beforeRender', function(\Cake\Event\Event $e) {
+        $Controller->eventManager()->on('Controller.beforeRender', function (Event $e) {
             return $e->subject()->response;
         });
         $Controller->render();
@@ -868,7 +868,7 @@ class ControllerTest extends TestCase
 
         $request = new Request('pages/home');
         $Controller = new \TestApp\Controller\PagesController($request, $response);
-        $Controller->eventManager()->on('Controller.beforeRender', function(\Cake\Event\Event $e) {
+        $Controller->eventManager()->on('Controller.beforeRender', function (Event $e) {
             return $e->subject()->response;
         });
         $Controller->render();
