@@ -58,6 +58,8 @@ class IdentifierQuoter
 
         if ($query->type() === 'insert') {
             $this->_quoteInsert($query);
+        } elseif ($query->type() === 'update') {
+            $this->_quoteUpdate($query);
         } else {
             $this->_quoteParts($query);
         }
@@ -179,6 +181,21 @@ class IdentifierQuoter
             }
         }
         $query->insert($columns)->into($table);
+    }
+
+    /**
+     * Quotes the table name for an update query
+     *
+     * @param \Cake\Database\Query $query The update query to quote.
+     * @return void
+     */
+    protected function _quoteUpdate($query)
+    {
+        $table = $query->clause('update')[0];
+        
+        if (is_string($table)) {
+            $query->update($this->_driver->quoteIdentifier($table));
+        }
     }
 
     /**

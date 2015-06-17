@@ -539,7 +539,7 @@ class QueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> WHERE \(\(<title>\) IS NOT NULL AND \(<user_id>\) IS NULL\)',
             $result,
-            true
+            !$this->autoQuote
         );
     }
 
@@ -837,7 +837,7 @@ class QueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT <id> FROM <comments> WHERE \(<id> = :c0 OR <id> = :c1\)',
             $result,
-            true
+            !$this->autoQuote
         );
     }
 
@@ -1545,7 +1545,7 @@ class QueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT DISTINCTROW <city>, <state>, <country> FROM <addresses>',
             $result->sql(),
-            true
+            !$this->autoQuote
         );
 
         $query = new Query($this->connection);
@@ -1556,7 +1556,7 @@ class QueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT DISTINCTROW SQL_NO_CACHE <city>, <state>, <country> FROM <addresses>',
             $result->sql(),
-            true
+            !$this->autoQuote
         );
 
         $query = new Query($this->connection);
@@ -1579,7 +1579,7 @@ class QueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT TOP 10 <city>, <state>, <country> FROM <addresses>',
             $result->sql(),
-            true
+            !$this->autoQuote
         );
     }
 
@@ -2109,7 +2109,7 @@ class QueryTest extends TestCase
             ->where('1 = 1');
 
         $result = $query->sql();
-        $this->assertQuotedQuery('DELETE FROM <authors>', $result, true);
+        $this->assertQuotedQuery('DELETE FROM <authors>', $result, !$this->autoQuote);
 
         $result = $query->execute();
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
@@ -2130,7 +2130,7 @@ class QueryTest extends TestCase
             ->where(['a.id !=' => 99]);
 
         $result = $query->sql();
-        $this->assertQuotedQuery('DELETE FROM <authors> WHERE <id> != :c0', $result, true);
+        $this->assertQuotedQuery('DELETE FROM <authors> WHERE <id> != :c0', $result, !$this->autoQuote);
 
         $result = $query->execute();
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
@@ -2150,7 +2150,7 @@ class QueryTest extends TestCase
             ->where('1 = 1');
 
         $result = $query->sql();
-        $this->assertQuotedQuery('DELETE FROM <authors>', $result, true);
+        $this->assertQuotedQuery('DELETE FROM <authors>', $result, !$this->autoQuote);
 
         $result = $query->execute();
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
@@ -2170,7 +2170,7 @@ class QueryTest extends TestCase
             ->where('1 = 1');
         $result = $query->sql();
 
-        $this->assertQuotedQuery('DELETE FROM <authors>', $result, true);
+        $this->assertQuotedQuery('DELETE FROM <authors>', $result, !$this->autoQuote);
         $this->assertContains(' WHERE 1 = 1', $result);
     }
 
@@ -2186,7 +2186,7 @@ class QueryTest extends TestCase
             ->set('name', 'mark')
             ->where(['id' => 1]);
         $result = $query->sql();
-        $this->assertQuotedQuery('UPDATE <authors> SET <name> = :', $result, true);
+        $this->assertQuotedQuery('UPDATE <authors> SET <name> = :', $result, !$this->autoQuote);
 
         $result = $query->execute();
         $this->assertCount(1, $result);
@@ -2209,10 +2209,10 @@ class QueryTest extends TestCase
         $this->assertQuotedQuery(
             'UPDATE <articles> SET <title> = :c0 , <body> = :c1',
             $result,
-            true
+            !$this->autoQuote
         );
 
-        $this->assertQuotedQuery(' WHERE <id> = :c2$', $result, true);
+        $this->assertQuotedQuery(' WHERE <id> = :c2$', $result, !$this->autoQuote);
         $result = $query->execute();
         $this->assertCount(1, $result);
     }
@@ -2236,9 +2236,9 @@ class QueryTest extends TestCase
         $this->assertQuotedQuery(
             'UPDATE <articles> SET <title> = :c0 , <body> = :c1',
             $result,
-            true
+            !$this->autoQuote
         );
-        $this->assertQuotedQuery('WHERE <id> = :', $result, true);
+        $this->assertQuotedQuery('WHERE <id> = :', $result, !$this->autoQuote);
 
         $result = $query->execute();
         $this->assertCount(1, $result);
@@ -2263,7 +2263,7 @@ class QueryTest extends TestCase
         $this->assertQuotedQuery(
             'UPDATE <articles> SET title = author_id WHERE <id> = :',
             $result,
-            true
+            !$this->autoQuote
         );
 
         $result = $query->execute();
@@ -2287,10 +2287,10 @@ class QueryTest extends TestCase
         $this->assertQuotedQuery(
             'UPDATE <comments> SET <comment> = :c0 , <created> = :c1',
             $result,
-            true
+            !$this->autoQuote
         );
 
-        $this->assertQuotedQuery(' WHERE <id> = :c2$', $result, true);
+        $this->assertQuotedQuery(' WHERE <id> = :c2$', $result, !$this->autoQuote);
         $result = $query->execute();
         $this->assertCount(1, $result);
 
@@ -2310,10 +2310,10 @@ class QueryTest extends TestCase
     {
         $query = new Query($this->connection);
         $query->select('*')->values([
-                'id' => 1,
-                'title' => 'mark',
-                'body' => 'test insert'
-            ]);
+            'id' => 1,
+            'title' => 'mark',
+            'body' => 'test insert'
+        ]);
     }
 
     /**
@@ -2348,7 +2348,7 @@ class QueryTest extends TestCase
             'INSERT INTO <articles> \(<title>, <body>\) (OUTPUT INSERTED\.\* )?' .
             'VALUES \(:c0, :c1\)',
             $result,
-            true
+            !$this->autoQuote
         );
 
         $result = $query->execute();
@@ -2390,7 +2390,7 @@ class QueryTest extends TestCase
             'INSERT INTO <articles> \(<title>, <body>\) (OUTPUT INSERTED\.\* )?' .
             'VALUES \(:c0, :c1\)',
             $result,
-            true
+            !$this->autoQuote
         );
 
         $result = $query->execute();
@@ -2480,12 +2480,12 @@ class QueryTest extends TestCase
         $this->assertQuotedQuery(
             'INSERT INTO <articles> \(<title>, <body>, <author_id>\) (OUTPUT INSERTED\.\* )?SELECT',
             $result,
-            true
+            !$this->autoQuote
         );
         $this->assertQuotedQuery(
             'SELECT <name>, \'some text\', 99 FROM <authors>',
             $result,
-            true
+            !$this->autoQuote
         );
         $result = $query->execute();
         $result->closeCursor();
@@ -2973,7 +2973,7 @@ class QueryTest extends TestCase
             ->select(['title'])
             ->from('articles');
         $result = (string)$query;
-        $this->assertQuotedQuery('SELECT <title> FROM <articles>', $result, true);
+        $this->assertQuotedQuery('SELECT <title> FROM <articles>', $result, !$this->autoQuote);
     }
 
     /**
@@ -3083,7 +3083,7 @@ class QueryTest extends TestCase
             ->from(['authors'])
             ->where(['name IS' => null])
             ->sql();
-        $this->assertQuotedQuery('WHERE \(<name>\) IS NULL', $sql, true);
+        $this->assertQuotedQuery('WHERE \(<name>\) IS NULL', $sql, !$this->autoQuote);
 
         $results = (new Query($this->connection))
             ->select(['name'])
@@ -3107,7 +3107,7 @@ class QueryTest extends TestCase
             ->from(['authors'])
             ->where(['name IS NOT' => null])
             ->sql();
-        $this->assertQuotedQuery('WHERE \(<name>\) IS NOT NULL', $sql, true);
+        $this->assertQuotedQuery('WHERE \(<name>\) IS NOT NULL', $sql, !$this->autoQuote);
 
         $results = (new Query($this->connection))
             ->select(['name'])
