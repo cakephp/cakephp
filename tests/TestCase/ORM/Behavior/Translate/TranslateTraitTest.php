@@ -64,6 +64,22 @@ class TranslateTraitTest extends TestCase
     }
 
     /**
+     * Tests empty translations.
+     *
+     * @return void
+     */
+    public function testTranslationEmpty()
+    {
+        $entity = new TestEntity;
+        $entity->set('_translations', [
+            'eng' => new Entity(['title' => 'My Title']),
+            'spa' => new Entity(['title' => 'Titulo'])
+        ]);
+        $this->assertTrue($entity->translation('pol')->isNew());
+        $this->assertInstanceOf('Cake\Test\TestCase\ORM\Behavior\Translate\TestEntity', $entity->translation('pol'));
+    }
+
+    /**
      * Tests that just accessing the translation will mark the property as dirty, this
      * is to facilitate the saving process by not having to remember to mark the property
      * manually

@@ -14,7 +14,7 @@
  */
 namespace Cake\ORM\Behavior\Translate;
 
-use Cake\ORM\Entity;
+use Cake\Datasource\EntityInterface;
 
 /**
  * Contains a translation method aimed to help managing multiple translations
@@ -46,8 +46,10 @@ trait TranslateTrait
             $created = true;
         }
 
-        if ($created || empty($i18n[$language]) || !($i18n[$language] instanceof Entity)) {
-            $i18n[$language] = new Entity();
+        if ($created || empty($i18n[$language]) || !($i18n[$language] instanceof EntityInterface)) {
+            $className = get_class($this);
+
+            $i18n[$language] = new $className();
             $created = true;
         }
 
