@@ -47,13 +47,13 @@ class HtmlHelper extends AppHelper {
 		'meta' => '<meta%s/>',
 		'metalink' => '<link href="%s"%s/>',
 		'link' => '<a href="%s"%s>%s</a>',
-		'mailto' => '<a href="mailto:%s" %s>%s</a>',
+		'mailto' => '<a href="mailto:%s"%s>%s</a>',
 		'form' => '<form action="%s"%s>',
 		'formend' => '</form>',
 		'input' => '<input name="%s"%s/>',
 		'textarea' => '<textarea name="%s"%s>%s</textarea>',
 		'hidden' => '<input type="hidden" name="%s"%s/>',
-		'checkbox' => '<input type="checkbox" name="%s" %s/>',
+		'checkbox' => '<input type="checkbox" name="%s"%s/>',
 		'checkboxmultiple' => '<input type="checkbox" name="%s[]"%s />',
 		'radio' => '<input type="radio" name="%s" id="%s"%s />%s',
 		'selectstart' => '<select name="%s"%s>',
@@ -65,13 +65,13 @@ class HtmlHelper extends AppHelper {
 		'optiongroupend' => '</optgroup>',
 		'checkboxmultiplestart' => '',
 		'checkboxmultipleend' => '',
-		'password' => '<input type="password" name="%s" %s/>',
-		'file' => '<input type="file" name="%s" %s/>',
-		'file_no_model' => '<input type="file" name="%s" %s/>',
-		'submit' => '<input %s/>',
-		'submitimage' => '<input type="image" src="%s" %s/>',
+		'password' => '<input type="password" name="%s"%s/>',
+		'file' => '<input type="file" name="%s"%s/>',
+		'file_no_model' => '<input type="file" name="%s"%s/>',
+		'submit' => '<input%s/>',
+		'submitimage' => '<input type="image" src="%s"%s/>',
 		'button' => '<button%s>%s</button>',
-		'image' => '<img src="%s" %s/>',
+		'image' => '<img src="%s"%s/>',
 		'tableheader' => '<th%s>%s</th>',
 		'tableheaderrow' => '<tr%s>%s</tr>',
 		'tablecell' => '<td%s>%s</td>',
@@ -91,7 +91,7 @@ class HtmlHelper extends AppHelper {
 		'fieldsetstart' => '<fieldset><legend>%s</legend>',
 		'fieldsetend' => '</fieldset>',
 		'legend' => '<legend>%s</legend>',
-		'css' => '<link rel="%s" type="text/css" href="%s" %s/>',
+		'css' => '<link rel="%s" type="text/css" href="%s"%s/>',
 		'style' => '<style type="text/css"%s>%s</style>',
 		'charset' => '<meta http-equiv="Content-Type" content="text/html; charset=%s" />',
 		'ul' => '<ul%s>%s</ul>',
@@ -828,7 +828,7 @@ class HtmlHelper extends AppHelper {
 			unset($options['url']);
 		}
 
-		$image = sprintf($this->_tags['image'], $path, $this->_parseAttributes($options, null, '', ' '));
+		$image = sprintf($this->_tags['image'], $path, $this->_parseAttributes($options, null, ' ', ' '));
 
 		if ($url) {
 			return sprintf($this->_tags['link'], $this->url($url), null, $image);
@@ -1188,7 +1188,7 @@ class HtmlHelper extends AppHelper {
  *
  * ```
  * $tags = array(
- *		'meta' => '<meta %s>'
+ *		'meta' => '<meta%s>'
  * );
  * ```
  *
