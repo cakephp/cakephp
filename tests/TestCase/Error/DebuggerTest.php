@@ -266,7 +266,7 @@ object(Cake\View\View) {
 		(int) 0 => 'Html',
 		(int) 1 => 'Form'
 	]
-	viewPath => ''
+	viewPath => null
 	view => null
 	layout => 'default'
 	layoutPath => null
