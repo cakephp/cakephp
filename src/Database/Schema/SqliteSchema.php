@@ -24,12 +24,12 @@ class SqliteSchema extends BaseSchema
 {
 
     /**
-     * Array containing the FK names
+     * Array containing the foreign keys constraints names
      * Necessary for composite foreign keys to be handled
      *
      * @var array
      */
-    protected $_constraint = [];
+    protected $_constraintsIdMap = [];
 
     /**
      * Convert a column definition to the abstract types.
@@ -227,10 +227,10 @@ class SqliteSchema extends BaseSchema
             'delete' => $this->_convertOnClause($delete),
         ];
 
-        if (isset($this->_constraint[$table->name()][$row['id']])) {
-            $name = $this->_constraint[$table->name()][$row['id']];
+        if (isset($this->_constraintsIdMap[$table->name()][$row['id']])) {
+            $name = $this->_constraintsIdMap[$table->name()][$row['id']];
         } else {
-            $this->_constraint[$table->name()][$row['id']] = $name;
+            $this->_constraintsIdMap[$table->name()][$row['id']] = $name;
         }
 
         $table->addConstraint($name, $data);
