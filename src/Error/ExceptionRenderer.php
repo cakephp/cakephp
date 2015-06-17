@@ -113,6 +113,8 @@ class ExceptionRenderer
             $controller->startupProcess();
             $startup = true;
         } catch (Exception $e) {
+                debug($e);
+                die;
             $startup = false;
         }
 
@@ -128,7 +130,6 @@ class ExceptionRenderer
         }
         if (empty($controller)) {
             $controller = new Controller($request, $response);
-            $controller->viewPath = 'Error';
         }
         return $controller;
     }
@@ -330,12 +331,11 @@ class ExceptionRenderer
      */
     protected function _outputMessageSafe($template)
     {
-        $this->controller->layoutPath = null;
-        $this->controller->viewPath = 'Error';
         $this->controller->helpers = ['Form', 'Html'];
-
         $view = $this->controller->createView();
-        $view->layout = 'error';
+        $view->layoutPath = null;
+        $view->viewPath = 'Error';
+
         $this->controller->response->body($view->render($template, 'error'));
         $this->controller->response->type('html');
         return $this->controller->response;

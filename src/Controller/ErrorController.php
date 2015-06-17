@@ -15,6 +15,7 @@
 namespace Cake\Controller;
 
 use Cake\Routing\Router;
+use Cake\Event\Event;
 
 /**
  * Error Handling Controller
@@ -45,6 +46,16 @@ class ErrorController extends Controller
         if (isset($this->Security)) {
             $eventManager->off($this->Security);
         }
-        $this->viewPath = 'Error';
+    }
+
+    /**
+     * beforeRender callback.
+     *
+     * @param \Cake\Event\Event $event Event.
+     * @return void
+     */
+    public function beforeRender(Event $event)
+    {
+        $this->getView()->viewPath = 'Error';
     }
 }
