@@ -113,8 +113,6 @@ class ExceptionRenderer
             $controller->startupProcess();
             $startup = true;
         } catch (Exception $e) {
-                debug($e);
-                die;
             $startup = false;
         }
 
