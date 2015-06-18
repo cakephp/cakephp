@@ -352,6 +352,21 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * Get/set path for layout files.
+     *
+     * @param string $path Path for layout files. If null returns current path.
+     * @return string|void
+     */
+    public function layoutPath($path = null)
+    {
+        if ($path === null) {
+            return $this->layoutPath;
+        }
+
+        $this->layoutPath = $path;
+    }
+
+    /**
      * Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
      *
      * This realizes the concept of Elements, (or "partial layouts") and the $params array is used to send
@@ -992,7 +1007,7 @@ class View implements EventDispatcherInterface
         }
         $subDir = null;
 
-        if ($this->layoutPath !== null) {
+        if ($this->layoutPath) {
             $subDir = $this->layoutPath . DS;
         }
         list($plugin, $name) = $this->pluginSplit($name);

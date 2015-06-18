@@ -568,7 +568,7 @@ class RequestHandlerComponent extends Component
             }
 
             $this->_renderType = $type;
-            $controller->getView()->layoutPath = $type;
+            $controller->getView()->layoutPath($type);
         }
 
         $response = $this->response;
