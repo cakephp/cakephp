@@ -223,6 +223,9 @@ class Marshaller
         if (in_array($assoc->type(), $types)) {
             return $marshaller->one($value, (array)$options);
         }
+        if($this->_isAssociatedByIdsInvalid($assoc, $value, (array)$options)){
+            return [];
+        }
         if ($assoc->type() === Association::MANY_TO_MANY) {
             return $marshaller->_belongsToMany($assoc, $value, (array)$options);
         }
@@ -376,6 +379,13 @@ class Marshaller
         }
 
         return $target->find()->where($filter)->toArray();
+    }
+
+    protected function _isAssociatedByIdsInvalid($assoc, $value, $options){
+        if($assoc->type() === Association::MANY_TO_MANY || $assoc->type() === Association::ONE_TO_MANY){
+            return array_key_exists('ids', $options) && $options['ids'] && !array_key_exists('_ids', $value);
+        }
+        return false;
     }
 
     /**
@@ -603,6 +613,9 @@ class Marshaller
         if (in_array($assoc->type(), $types)) {
             return $marshaller->merge($original, $value, (array)$options);
         }
+        if($this->_isAssociatedByIdsInvalid($assoc, $value, (array)$options)){
+            return [];
+        }
         if ($assoc->type() === Association::MANY_TO_MANY) {
             return $marshaller->_mergeBelongsToMany($original, $assoc, $value, (array)$options);
         }
@@ -623,12 +636,11 @@ class Marshaller
     {
         $hasIds = array_key_exists('_ids', $value);
         $associated = isset($options['associated']) ? $options['associated'] : [];
-        $_ids = array_key_exists('_ids', $options) && $options['_ids'];
 
         if ($hasIds && is_array($value['_ids'])) {
             return $this->_loadAssociatedByIds($assoc, $value['_ids']);
         }
-        if ($hasIds || $_ids) {
+        if ($hasIds) {
             return [];
         }
 
