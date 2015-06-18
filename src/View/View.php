@@ -367,6 +367,23 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * Turns on or off CakePHP's conventional mode of applying layout files.
+     * On by default. Setting to off means that layouts will not be
+     * automatically applied to rendered views.
+     *
+     * @param string $autoLayout Boolean to turn on/off. If null returns current value.
+     * @return bool|void
+     */
+    public function autoLayout(bool $autoLayout = null)
+    {
+        if ($var === null) {
+            return $this->autoLayout;
+        }
+
+        $this->layoutPath = $autoLayout;
+    }
+
+    /**
      * Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
      *
      * This realizes the concept of Elements, (or "partial layouts") and the $params array is used to send

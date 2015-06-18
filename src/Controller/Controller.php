@@ -558,7 +558,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         if (!empty($this->request->params['bare'])) {
-            $this->_view->autoLayout = false;
+            $this->_view->autoLayout(false);
         }
 
         $viewClass = $this->viewClass;
