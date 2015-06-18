@@ -371,16 +371,16 @@ class View implements EventDispatcherInterface
      * On by default. Setting to off means that layouts will not be
      * automatically applied to rendered views.
      *
-     * @param string $autoLayout Boolean to turn on/off. If null returns current value.
+     * @param bool $autoLayout Boolean to turn on/off. If null returns current value.
      * @return bool|void
      */
-    public function autoLayout(bool $autoLayout = null)
+    public function autoLayout($autoLayout = null)
     {
-        if ($var === null) {
+        if ($autoLayout === null) {
             return $this->autoLayout;
         }
 
-        $this->layoutPath = $autoLayout;
+        $this->autoLayout = $autoLayout;
     }
 
     /**
