@@ -384,6 +384,54 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * The view theme to use.
+     *
+     * @param string $theme Theme name. If null returns current theme.
+     * @return string|void
+     */
+    public function theme($theme = null)
+    {
+        if ($theme === null) {
+            return $this->theme;
+        }
+
+        $this->theme = $theme;
+    }
+
+    /**
+     * Get/set the name of the view file to render. The name specified is the
+     * filename in /app/Template/<SubFolder> without the .ctp extension.
+     *
+     * @param string $name View file name to set. If null returns current name.
+     * @return string|void
+     */
+    public function view($name = null)
+    {
+        if ($name === null) {
+            return $this->view;
+        }
+
+        $this->view = $name;
+    }
+
+    /**
+     * Get/set the name of the layout file to render the view inside of.
+     * The name specified is the filename of the layout in /app/Template/Layout
+     * without the .ctp extension.
+     *
+     * @param string $name Layout file name to set. If null returns current name.
+     * @return string|void
+     */
+    public function layout($name = null)
+    {
+        if ($name === null) {
+            return $this->layout;
+        }
+
+        $this->layout = $name;
+    }
+
+    /**
      * Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
      *
      * This realizes the concept of Elements, (or "partial layouts") and the $params array is used to send

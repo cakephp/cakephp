@@ -169,7 +169,7 @@ abstract class Cell
         }
         $this->_view = null;
         $this->View = $this->getView();
-        $this->_view->layout = false;
+        $this->_view->layout(false);
 
         $cache = [];
         if ($this->_cache) {

@@ -317,10 +317,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     {
         if (in_array($name, ['layout', 'view', 'theme', 'autoLayout', 'viewPath', 'layoutPath'], true)) {
             trigger_error(
-                sprintf('Controller::$%s is deprecated. Use $this->getView()->%s instead.', $name, $name),
+                sprintf('Controller::$%s is deprecated. Use $this->getView()->%s() instead.', $name, $name),
                 E_USER_DEPRECATED
             );
-            return $this->getView()->{$name};
+            return $this->getView()->{$name}();
         }
 
         list($plugin, $class) = pluginSplit($this->modelClass, true);
@@ -341,10 +341,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     {
         if (in_array($name, ['layout', 'view', 'theme', 'autoLayout', 'viewPath', 'layoutPath'], true)) {
             trigger_error(
-                sprintf('Controller::$%s is deprecated. Use $this->getView()->%s instead.', $name, $name),
+                sprintf('Controller::$%s is deprecated. Use $this->getView()->%s() instead.', $name, $name),
                 E_USER_DEPRECATED
             );
-            $this->getView()->{$name} = $value;
+            $this->getView()->{$name}($value);
             return;
         }
 
@@ -578,9 +578,12 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
                 $this->_viewPath();
             }
         }
+
         $this->autoRender = false;
-        if ($this->_view->view === null) {
-            $this->_view->view = isset($this->request->params['action']) ? $this->request->params['action'] : null;
+        if ($this->_view->view() === null &&
+            isset($this->request->params['action'])
+        ) {
+            $this->_view->view($this->request->params['action']);
         }
 
         $this->response->body($this->_view->render($view, $layout));
