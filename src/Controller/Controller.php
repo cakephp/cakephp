@@ -553,7 +553,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function render($view = null, $layout = null)
     {
         $this->View = $this->getView();
-        if (!$this->_view->viewPath) {
+        if (!$this->_view->viewPath()) {
             $this->_viewPath();
         }
 
@@ -574,7 +574,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         if ($viewClass !== $this->viewClass) {
             $this->View = $this->getView($this->viewClass);
-            if (!$this->_view->viewPath) {
+            if (!$this->_view->viewPath()) {
                 $this->_viewPath();
             }
         }
@@ -602,7 +602,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             );
             $viewPath = implode(DS, $prefixes) . DS . $viewPath;
         }
-        $this->_view->viewPath = $viewPath;
+        $this->_view->viewPath($viewPath);
     }
 
     /**

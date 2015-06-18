@@ -337,6 +337,21 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * Get/set path for view files.
+     *
+     * @param string $path Path for view files. If null returns current path.
+     * @return string|void
+     */
+    public function viewPath($path = null)
+    {
+        if ($path === null) {
+            return $this->viewPath;
+        }
+
+        $this->viewPath = $path;
+    }
+
+    /**
      * Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
      *
      * This realizes the concept of Elements, (or "partial layouts") and the $params array is used to send
