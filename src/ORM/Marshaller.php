@@ -623,10 +623,12 @@ class Marshaller
     {
         $hasIds = array_key_exists('_ids', $value);
         $associated = isset($options['associated']) ? $options['associated'] : [];
+        $_ids = array_key_exists('_ids', $options) && $options['_ids'];
+
         if ($hasIds && is_array($value['_ids'])) {
             return $this->_loadAssociatedByIds($assoc, $value['_ids']);
         }
-        if ($hasIds) {
+        if ($hasIds || $_ids) {
             return [];
         }
 
