@@ -177,9 +177,8 @@ abstract class Cell
         }
 
         $render = function () use ($template) {
-            $className = explode('\\', get_class($this));
-            $className = array_pop($className);
-            $name = substr($className, 0, strrpos($className, 'Cell'));
+            $className = substr(strrchr(get_class($this), "\\"), 1);
+            $name = substr($className, 0, -4);
             $this->_view->viewPath('Cell' . DS . $name);
 
             try {
