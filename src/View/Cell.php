@@ -180,7 +180,7 @@ abstract class Cell
             $className = explode('\\', get_class($this));
             $className = array_pop($className);
             $name = substr($className, 0, strrpos($className, 'Cell'));
-            $this->_view->subDir = 'Cell' . DS . $name;
+            $this->_view->viewPath('Cell' . DS . $name);
 
             try {
                 return $this->_view->render($template);
