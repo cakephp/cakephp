@@ -557,18 +557,20 @@ class RequestHandlerComponent extends Component
         if ($viewClass) {
             $controller->viewClass = $viewClass;
         } else {
+            $view = $controller->getView();
+
             if (empty($this->_renderType)) {
-                $controller->getView()->viewPath($controller->getView()->viewPath() . DS . $type);
+                $view->viewPath($view->viewPath() . DS . $type);
             } else {
-                $controller->getView()->viewPath(preg_replace(
+                $view->viewPath(preg_replace(
                     "/([\/\\\\]{$this->_renderType})$/",
                     DS . $type,
-                    $controller->getView()->viewPath()
+                    $view->viewPath()
                 ));
             }
 
             $this->_renderType = $type;
-            $controller->getView()->layoutPath($type);
+            $view->layoutPath($type);
         }
 
         $response = $this->response;
