@@ -89,7 +89,8 @@ class StringTemplateTest extends TestCase
     public function testFormat()
     {
         $templates = [
-            'link' => '<a href="{{url}}">{{text}}</a>'
+            'link' => '<a href="{{url}}">{{text}}</a>',
+            'custom' => '<custom {{standard}} v1="{{var1}}" v2="{{var2}}" />'
         ];
         $this->template->add($templates);
 
@@ -101,6 +102,12 @@ class StringTemplateTest extends TestCase
             'text' => 'example'
         ]);
         $this->assertEquals('<a href="/">example</a>', $result);
+
+        $result = $this->template->format('custom', [
+            'standard' => 'default',
+            'templateParams' => ['var1' => 'foo']
+        ]);
+        $this->assertEquals('<custom default v1="foo" v2="" />', $result);
     }
 
     /**
@@ -184,6 +191,13 @@ class StringTemplateTest extends TestCase
         );
 
         $attrs = ['name' => 'bruce', 'data-hero' => '<batman>'];
+        $result = $this->template->formatAttributes($attrs, ['name']);
+        $this->assertEquals(
+            ' data-hero="&lt;batman&gt;"',
+            $result
+        );
+
+        $attrs = ['name' => 'bruce', 'data-hero' => '<batman>', 'templateParams' => ['foo' => 'bar']];
         $result = $this->template->formatAttributes($attrs, ['name']);
         $this->assertEquals(
             ' data-hero="&lt;batman&gt;"',
