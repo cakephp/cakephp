@@ -223,11 +223,19 @@ class Marshaller
         if (in_array($assoc->type(), $types)) {
             return $marshaller->one($value, (array)$options);
         }
+        if ($assoc->type() === Association::ONE_TO_MANY || $assoc->type() === Association::MANY_TO_MANY) {
+            $hasIds = array_key_exists('_ids', $data);
+            $idsOption = array_key_exists('ids', $options) && $options['ids'];
+
+            if ($hasIds && is_array($data['_ids'])) {
+                return $this->_loadAssociatedByIds($assoc, $data['_ids']);
+            }
+            if ($hasIds || $idsOption) {
+                return [];
+            }
+        }        
         if ($assoc->type() === Association::MANY_TO_MANY) {
             return $marshaller->_belongsToMany($assoc, $value, (array)$options);
-        }
-        if ($assoc->type() === Association::ONE_TO_MANY && array_key_exists('_ids', $value) && is_array($value['_ids'])) {
-            return $this->_loadAssociatedByIds($assoc, $value['_ids']);
         }
         return $marshaller->many($value, (array)$options);
     }
@@ -272,15 +280,8 @@ class Marshaller
      */
     protected function _belongsToMany(Association $assoc, array $data, $options = [])
     {
-        // Accept _ids = [1, 2]
         $associated = isset($options['associated']) ? $options['associated'] : [];
-        $hasIds = array_key_exists('_ids', $data);
-        if ($hasIds && is_array($data['_ids'])) {
-            return $this->_loadAssociatedByIds($assoc, $data['_ids']);
-        }
-        if ($hasIds) {
-            return [];
-        }
+
         $data = array_values($data);
 
         $target = $assoc->target();
@@ -621,14 +622,15 @@ class Marshaller
      */
     protected function _mergeBelongsToMany($original, $assoc, $value, $options)
     {
-        $hasIds = array_key_exists('_ids', $value);
         $associated = isset($options['associated']) ? $options['associated'] : [];
-        $_ids = array_key_exists('_ids', $options) && $options['_ids'];
 
-        if ($hasIds && is_array($value['_ids'])) {
-            return $this->_loadAssociatedByIds($assoc, $value['_ids']);
+        $hasIds = array_key_exists('_ids', $data);
+        $idsOption = array_key_exists('ids', $options) && $options['ids'];
+
+        if ($hasIds && is_array($data['_ids'])) {
+            return $this->_loadAssociatedByIds($assoc, $data['_ids']);
         }
-        if ($hasIds || $_ids) {
+        if ($hasIds || $idsOption) {
             return [];
         }
 
