@@ -224,11 +224,11 @@ class Marshaller
             return $marshaller->one($value, (array)$options);
         }
         if ($assoc->type() === Association::ONE_TO_MANY || $assoc->type() === Association::MANY_TO_MANY) {
-            $hasIds = array_key_exists('_ids', $data);
+            $hasIds = array_key_exists('_ids', $value);
             $idsOption = array_key_exists('ids', $options) && $options['ids'];
 
-            if ($hasIds && is_array($data['_ids'])) {
-                return $this->_loadAssociatedByIds($assoc, $data['_ids']);
+            if ($hasIds && is_array($value['_ids'])) {
+                return $this->_loadAssociatedByIds($assoc, $value['_ids']);
             }
             if ($hasIds || $idsOption) {
                 return [];
@@ -614,11 +614,11 @@ class Marshaller
     {
         $associated = isset($options['associated']) ? $options['associated'] : [];
 
-        $hasIds = array_key_exists('_ids', $data);
+        $hasIds = array_key_exists('_ids', $value);
         $idsOption = array_key_exists('ids', $options) && $options['ids'];
 
-        if ($hasIds && is_array($data['_ids'])) {
-            return $this->_loadAssociatedByIds($assoc, $data['_ids']);
+        if ($hasIds && is_array($value['_ids'])) {
+            return $this->_loadAssociatedByIds($assoc, $value['_ids']);
         }
         if ($hasIds || $idsOption) {
             return [];
