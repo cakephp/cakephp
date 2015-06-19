@@ -115,6 +115,8 @@ class PaginatorComponent extends Component
      * ];
      * ```
      *
+     * Passing an empty array as whitelist disallows sorting altogether.
+     *
      * ### Paginating with custom finders
      *
      * You can paginate with any find type defined on your table using the `finder` option.
@@ -319,7 +321,7 @@ class PaginatorComponent extends Component
         }
 
         $inWhitelist = false;
-        if (!empty($options['sortWhitelist'])) {
+        if (isset($options['sortWhitelist'])) {
             $field = key($options['order']);
             $inWhitelist = in_array($field, $options['sortWhitelist'], true);
             if (!$inWhitelist) {
