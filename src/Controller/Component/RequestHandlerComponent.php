@@ -194,19 +194,8 @@ class RequestHandlerComponent extends Component
      * The startup method of the RequestHandler enables several automatic behaviors
      * related to the detection of certain properties of the HTTP request, including:
      *
-     * - If Router::extensions() is enabled, the layout and template type are
-     *   switched based on the parsed extension or Accept-Type header. For example, if `controller/action.xml`
-     *   is requested, the view path becomes `app/View/Controller/xml/action.ctp`. Also if
-     *   `controller/action` is requested with `Accept-Type: application/xml` in the headers
-     *   the view path will become `app/View/Controller/xml/action.ctp`. Layout and template
-     *   types will only switch to mime-types recognized by Cake\Network\Response. If you need to declare
-     *   additional mime-types, you can do so using Cake\Network\Response::type() in your controller's beforeFilter()
-     *   method.
-     * - If a helper with the same name as the extension exists, it is added to the controller.
-     * - If the extension is of a type that RequestHandler understands, it will set that
-     *   Content-type in the response header.
-     * - If the XML data is POSTed, the data is parsed into an XML object, which is assigned
-     *   to the $data property of the controller, which can then be saved to a model object.
+     * If the XML data is POSTed, the data is parsed into an XML object, which is assigned
+     * to the $data property of the controller, which can then be saved to a model object.
      *
      * @param Event $event The startup event that was fired.
      * @return void
@@ -227,16 +216,6 @@ class RequestHandlerComponent extends Component
         }
 
         $request->params['isAjax'] = $this->request->is('ajax');
-        $isRecognized = (
-            !in_array($this->ext, ['html', 'htm']) &&
-            $this->response->getMimeType($this->ext)
-        );
-
-        if (!empty($this->ext) && $isRecognized) {
-            $this->renderAs($controller, $this->ext);
-        } elseif (empty($this->ext) || in_array($this->ext, ['html', 'htm'])) {
-            $this->respondAs('html', ['charset' => Configure::read('App.encoding')]);
-        }
 
         foreach ($this->_inputTypeMap as $type => $handler) {
             if ($this->requestedWith($type)) {
@@ -304,14 +283,39 @@ class RequestHandlerComponent extends Component
      * render process is skipped. And the client will get a blank response with a
      * "304 Not Modified" header.
      *
+     * - If Router::extensions() is enabled, the layout and template type are
+     *   switched based on the parsed extension or Accept-Type header. For example,
+     *   if `controller/action.xml` is requested, the view path becomes
+     *   `app/View/Controller/xml/action.ctp`. Also if `controller/action` is
+     *   requested with `Accept-Type: application/xml` in the headers the view
+     *   path will become `app/View/Controller/xml/action.ctp`. Layout and template
+     *   types will only switch to mime-types recognized by Cake\Network\Response.
+     *   If you need to declare additional mime-types, you can do so using
+     *   Cake\Network\Response::type() in your controller's beforeFilter() method.
+     * - If a helper with the same name as the extension exists, it is added to
+     *   the controller.
+     * - If the extension is of a type that RequestHandler understands, it will
+     *   set that Content-type in the response header.
+     *
      * @param Event $event The Controller.beforeRender event.
      * @return bool false if the render process should be aborted
      */
     public function beforeRender(Event $event)
     {
-        $response = $this->response;
-        $request = $this->request;
-        if ($this->_config['checkHttpCache'] && $response->checkNotModified($request)) {
+        $isRecognized = (
+            !in_array($this->ext, ['html', 'htm']) &&
+            $this->response->getMimeType($this->ext)
+        );
+
+        if (!empty($this->ext) && $isRecognized) {
+            $this->renderAs($event->subject(), $this->ext);
+        } elseif (empty($this->ext) || in_array($this->ext, ['html', 'htm'])) {
+            $this->respondAs('html', ['charset' => Configure::read('App.encoding')]);
+        }
+
+        if ($this->_config['checkHttpCache'] &&
+            $this->response->checkNotModified($this->request)
+        ) {
             return false;
         }
     }
@@ -553,18 +557,20 @@ class RequestHandlerComponent extends Component
         if ($viewClass) {
             $controller->viewClass = $viewClass;
         } else {
+            $view = $controller->getView();
+
             if (empty($this->_renderType)) {
-                $controller->viewPath .= DS . $type;
+                $view->viewPath($view->viewPath() . DS . $type);
             } else {
-                $controller->viewPath = preg_replace(
+                $view->viewPath(preg_replace(
                     "/([\/\\\\]{$this->_renderType})$/",
                     DS . $type,
-                    $controller->viewPath
-                );
+                    $view->viewPath()
+                ));
             }
 
             $this->_renderType = $type;
-            $controller->layoutPath = $type;
+            $view->layoutPath($type);
         }
 
         $response = $this->response;

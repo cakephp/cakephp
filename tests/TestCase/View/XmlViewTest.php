@@ -285,7 +285,6 @@ class XmlViewTest extends TestCase
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
         $Controller->name = 'Posts';
-        $Controller->viewPath = 'Posts';
 
         $data = [
             [
@@ -302,6 +301,7 @@ class XmlViewTest extends TestCase
         $Controller->set('users', $data);
         $Controller->viewClass = 'Xml';
         $View = $Controller->createView();
+        $View->viewPath = 'Posts';
         $output = $View->render('index');
 
         $expected = [

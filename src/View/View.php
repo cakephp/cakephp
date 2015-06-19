@@ -337,6 +337,101 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * Get/set path for view files.
+     *
+     * @param string $path Path for view files. If null returns current path.
+     * @return string|void
+     */
+    public function viewPath($path = null)
+    {
+        if ($path === null) {
+            return $this->viewPath;
+        }
+
+        $this->viewPath = $path;
+    }
+
+    /**
+     * Get/set path for layout files.
+     *
+     * @param string $path Path for layout files. If null returns current path.
+     * @return string|void
+     */
+    public function layoutPath($path = null)
+    {
+        if ($path === null) {
+            return $this->layoutPath;
+        }
+
+        $this->layoutPath = $path;
+    }
+
+    /**
+     * Turns on or off CakePHP's conventional mode of applying layout files.
+     * On by default. Setting to off means that layouts will not be
+     * automatically applied to rendered views.
+     *
+     * @param bool $autoLayout Boolean to turn on/off. If null returns current value.
+     * @return bool|void
+     */
+    public function autoLayout($autoLayout = null)
+    {
+        if ($autoLayout === null) {
+            return $this->autoLayout;
+        }
+
+        $this->autoLayout = $autoLayout;
+    }
+
+    /**
+     * The view theme to use.
+     *
+     * @param string $theme Theme name. If null returns current theme.
+     * @return string|void
+     */
+    public function theme($theme = null)
+    {
+        if ($theme === null) {
+            return $this->theme;
+        }
+
+        $this->theme = $theme;
+    }
+
+    /**
+     * Get/set the name of the view file to render. The name specified is the
+     * filename in /app/Template/<SubFolder> without the .ctp extension.
+     *
+     * @param string $name View file name to set. If null returns current name.
+     * @return string|void
+     */
+    public function view($name = null)
+    {
+        if ($name === null) {
+            return $this->view;
+        }
+
+        $this->view = $name;
+    }
+
+    /**
+     * Get/set the name of the layout file to render the view inside of.
+     * The name specified is the filename of the layout in /app/Template/Layout
+     * without the .ctp extension.
+     *
+     * @param string $name Layout file name to set. If null returns current name.
+     * @return string|void
+     */
+    public function layout($name = null)
+    {
+        if ($name === null) {
+            return $this->layout;
+        }
+
+        $this->layout = $name;
+    }
+
+    /**
      * Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
      *
      * This realizes the concept of Elements, (or "partial layouts") and the $params array is used to send
@@ -977,7 +1072,7 @@ class View implements EventDispatcherInterface
         }
         $subDir = null;
 
-        if ($this->layoutPath !== null) {
+        if ($this->layoutPath) {
             $subDir = $this->layoutPath . DS;
         }
         list($plugin, $name) = $this->pluginSplit($name);

@@ -42,6 +42,7 @@ abstract class Cell
      * Cell::__toString() is called.
      *
      * @var \Cake\View\View
+     * @deprecated 3.1.0 Use getView() instead.
      */
     public $View;
 
@@ -75,13 +76,6 @@ abstract class Cell
      * @var \Cake\Network\Response
      */
     public $response;
-
-    /**
-     * The name of the View class this cell sends output to.
-     *
-     * @var string
-     */
-    public $viewClass = null;
 
     /**
      * The theme name that will be used to render.
@@ -173,9 +167,9 @@ abstract class Cell
         if ($template === null) {
             $template = $this->template;
         }
-        $this->View = null;
-        $this->getView();
-        $this->View->layout = false;
+        $this->_view = null;
+        $this->View = $this->getView();
+        $this->_view->layout(false);
 
         $cache = [];
         if ($this->_cache) {
@@ -183,20 +177,19 @@ abstract class Cell
         }
 
         $render = function () use ($template) {
-            $className = explode('\\', get_class($this));
-            $className = array_pop($className);
-            $name = substr($className, 0, strrpos($className, 'Cell'));
-            $this->View->subDir = 'Cell' . DS . $name;
+            $className = substr(strrchr(get_class($this), "\\"), 1);
+            $name = substr($className, 0, -4);
+            $this->_view->viewPath('Cell' . DS . $name);
 
             try {
-                return $this->View->render($template);
+                return $this->_view->render($template);
             } catch (MissingTemplateException $e) {
                 throw new MissingCellViewException(['file' => $template, 'name' => $name]);
             }
         };
 
         if ($cache) {
-            return $this->View->cache(function () use ($render) {
+            return $this->_view->cache(function () use ($render) {
                 echo $render();
             }, $cache);
         }
