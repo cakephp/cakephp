@@ -999,6 +999,7 @@ class FormHelper extends Helper
             'required' => null,
             'options' => null,
             'templates' => [],
+            'templateVars' => []
         ];
         $options = $this->_parseOptions($fieldName, $options);
         $options += ['id' => $this->_domId($fieldName)];
@@ -1073,7 +1074,8 @@ class FormHelper extends Helper
         return $this->templater()->format($groupTemplate, [
             'input' => $options['input'],
             'label' => $options['label'],
-            'error' => $options['error']
+            'error' => $options['error'],
+            'templateVars' => isset($options['options']['templateVars']) ? $options['options']['templateVars'] : []
         ]);
     }
 
@@ -1094,7 +1096,8 @@ class FormHelper extends Helper
             'content' => $options['content'],
             'error' => $options['error'],
             'required' => $options['options']['required'] ? ' required' : '',
-            'type' => $options['options']['type']
+            'type' => $options['options']['type'],
+            'templateVars' => isset($options['options']['templateVars']) ? $options['options']['templateVars'] : []
         ]);
     }
 
@@ -1346,7 +1349,8 @@ class FormHelper extends Helper
      */
     protected function _inputLabel($fieldName, $label, $options)
     {
-        $labelAttributes = [];
+        $options += ['id' => null, 'input' => null, 'nestedInput' => false, 'templateVars' => []];
+        $labelAttributes = ['templateVars' => $options['templateVars']];
         if (is_array($label)) {
             $labelText = null;
             if (isset($label['text'])) {
@@ -1357,7 +1361,6 @@ class FormHelper extends Helper
         } else {
             $labelText = $label;
         }
-        $options += ['id' => null, 'input' => null, 'nestedInput' => false];
 
         $labelAttributes['for'] = $options['id'];
         $groupTypes = ['radio', 'multicheckbox', 'date', 'time', 'datetime'];
