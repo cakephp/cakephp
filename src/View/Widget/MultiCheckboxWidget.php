@@ -111,7 +111,8 @@ class MultiCheckboxWidget implements WidgetInterface
             'options' => [],
             'disabled' => null,
             'val' => null,
-            'idPrefix' => null
+            'idPrefix' => null,
+            'templateVars' => []
         ];
         $out = [];
         $this->_idPrefix = $data['idPrefix'];
@@ -120,6 +121,7 @@ class MultiCheckboxWidget implements WidgetInterface
             $checkbox = [
                 'value' => $key,
                 'text' => $val,
+                'templateVars' => $data['templateVars']
             ];
             if (is_array($val) && isset($val['text'], $val['value'])) {
                 $checkbox = $val;

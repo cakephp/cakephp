@@ -94,7 +94,8 @@ class RadioWidget implements WidgetInterface
             'escape' => true,
             'label' => true,
             'empty' => false,
-            'idPrefix' => null
+            'idPrefix' => null,
+            'templateVars' => [],
         ];
         if ($data['options'] instanceof Traversable) {
             $options = iterator_to_array($data['options']);
@@ -181,6 +182,7 @@ class RadioWidget implements WidgetInterface
         $input = $this->_templates->format('radio', [
             'name' => $radio['name'],
             'value' => $escape ? h($radio['value']) : $radio['value'],
+            'templateVars' => $data['templateVars'],
             'attrs' => $this->_templates->formatAttributes($radio, ['name', 'value', 'text']),
         ]);
 
@@ -201,6 +203,7 @@ class RadioWidget implements WidgetInterface
         return $this->_templates->format('radioWrapper', [
             'input' => $input,
             'label' => $label,
+            'templateVars' => $data['templateVars'],
         ]);
     }
 

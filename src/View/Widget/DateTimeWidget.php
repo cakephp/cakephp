@@ -127,7 +127,7 @@ class DateTimeWidget implements WidgetInterface
 
         $selected = $this->_deconstructDate($data['val'], $data);
 
-        $templateOptions = [];
+        $templateOptions = ['templateVars' => $data['templateVars']];
         foreach ($this->_selects as $select) {
             if ($data[$select] === false || $data[$select] === null) {
                 $templateOptions[$select] = '';
@@ -178,6 +178,7 @@ class DateTimeWidget implements WidgetInterface
             'minute' => [],
             'second' => [],
             'meridian' => null,
+            'templateVars' => [],
         ];
 
         $timeFormat = isset($data['hour']['format']) ? $data['hour']['format'] : null;
