@@ -607,7 +607,7 @@ class Validation {
 		$defaults = array('in' => null, 'max' => null, 'min' => null);
 		$options += $defaults;
 
-		$check = array_filter((array)$check);
+		$check = array_filter((array)$check, 'strlen');
 		if (empty($check)) {
 			return false;
 		}
