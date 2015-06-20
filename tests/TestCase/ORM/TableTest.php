@@ -4358,6 +4358,22 @@ class TableTest extends TestCase
         $this->assertSame(self::$nextUserId, $entity->id);
     }
 
+    public function testLoadIntoEntity()
+    {
+        $table = TableRegistry::get('Authors');
+        $table->hasMany('SiteArticles');
+        $articles = $table->hasMany('Articles');
+        $articles->belongsToMany('Tags');
+
+        $entity = $table->get(1);
+        $result = $table->loadInto($entity, ['SiteArticles', 'Articles.Tags']);
+        $this->assertSame($entity, $result);
+
+        $expected = $table->get(1, ['contain' => ['SiteArticles', 'Articles.Tags']]);
+        $this->assertEquals($expected, $result);
+    }
+
+
     /**
      * Helper method to skip tests when connection is SQLServer.
      *

@@ -2181,6 +2181,24 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         return $rules;
     }
 
+    public function loadInto($object, array $contain)
+    {
+        $query = $this
+            ->find()
+            ->where(['id' => $object->id])
+            ->contain($contain);
+
+        $loaded = $query->first();
+        $assocs = $this->associations();
+        foreach ($query->contain() as $assoc => $config) {
+            $property = $assocs->get($assoc)->property();
+            $object->set($property, $loaded->get($property), ['useSetters' => false]);
+            $object->dirty($property, false);
+        }
+
+        return $object;
+    }
+
     /**
      * Returns an array that can be used to describe the internal state of this
      * object.
