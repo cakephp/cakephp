@@ -112,7 +112,7 @@ class StringTemplateTest extends TestCase
 
         $result = $this->template->format('custom', [
             'standard' => 'default',
-            'templateParams' => ['var1' => 'foo']
+            'templateVars' => ['var1' => 'foo']
         ]);
         $this->assertEquals('<custom default v1="foo" v2="" />', $result);
     }
@@ -204,7 +204,7 @@ class StringTemplateTest extends TestCase
             $result
         );
 
-        $attrs = ['name' => 'bruce', 'data-hero' => '<batman>', 'templateParams' => ['foo' => 'bar']];
+        $attrs = ['name' => 'bruce', 'data-hero' => '<batman>', 'templateVars' => ['foo' => 'bar']];
         $result = $this->template->formatAttributes($attrs, ['name']);
         $this->assertEquals(
             ' data-hero="&lt;batman&gt;"',

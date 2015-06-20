@@ -232,9 +232,9 @@ class StringTemplate
             return null;
         }
 
-        if (isset($data['templateParams'])) {
-            $data += $data['templateParams'];
-            unset($data['templateParams']);
+        if (isset($data['templateVars'])) {
+            $data += $data['templateVars'];
+            unset($data['templateVars']);
         }
         $replace = [];
         foreach ($placeholders as $placeholder) {
@@ -278,7 +278,7 @@ class StringTemplate
             $exclude = [];
         }
 
-        $exclude = ['escape' => true, 'idPrefix' => true, 'templateParams' => true] + array_flip($exclude);
+        $exclude = ['escape' => true, 'idPrefix' => true, 'templateVars' => true] + array_flip($exclude);
         $escape = $options['escape'];
         $attributes = [];
 

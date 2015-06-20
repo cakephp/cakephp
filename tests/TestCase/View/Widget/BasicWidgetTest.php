@@ -133,7 +133,7 @@ class BasicWidgetTest extends TestCase
             'type' => 'email',
             'class' => 'form-control',
             'required' => true,
-            'templateParams' => ['help' => 'SOS']
+            'templateVars' => ['help' => 'SOS']
         ];
         $result = $text->render($data, $this->context);
         $expected = [
