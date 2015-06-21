@@ -90,6 +90,25 @@ abstract class BaseSchema
     }
 
     /**
+     * Convert foreign key constraints references to a valid
+     * stringified list
+     *
+     * @param string|array $references The referenced columns of a foreign key constraint statement
+     * @return string
+     */
+    protected function _convertConstraintColumns($references)
+    {
+        if (is_string($references)) {
+            return $this->_driver->quoteIdentifier($references);
+        }
+
+        return implode(', ', array_map(
+            [$this->_driver, 'quoteIdentifier'],
+            $references
+        ));
+    }
+
+    /**
      * Generate the SQL to drop a table.
      *
      * @param \Cake\Database\Schema\Table $table Table instance

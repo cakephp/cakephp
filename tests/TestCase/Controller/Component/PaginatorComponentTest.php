@@ -575,6 +575,34 @@ class PaginatorComponentTest extends TestCase
     }
 
     /**
+     * test that whitelist as empty array does not allow any sorting
+     *
+     * @return void
+     */
+    public function testValidateSortWhitelistEmpty()
+    {
+        $model = $this->getMock('Cake\ORM\Table');
+        $model->expects($this->any())
+            ->method('alias')
+            ->will($this->returnValue('model'));
+        $model->expects($this->any())->method('hasField')
+            ->will($this->returnValue(true));
+
+        $options = [
+            'order' => [
+                'body' => 'asc',
+                'foo.bar' => 'asc'
+            ],
+            'sort' => 'body',
+            'direction' => 'asc',
+            'sortWhitelist' => []
+        ];
+        $result = $this->Paginator->validateSort($model, $options);
+
+        $this->assertSame([], $result['order'], 'No sort should be applied');
+    }
+
+    /**
      * test that fields in the whitelist are not validated
      *
      * @return void

@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         1.2.0
+ * @since         3.0.7
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\Fixture;
@@ -17,11 +17,16 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Short description for class.
+ * Class OrdersFixture
  *
  */
-class ArticlesTagsFixture extends TestFixture
+class OrdersFixture extends TestFixture
 {
+
+    /**
+     * {@inheritDoc}
+     */
+    public $table = 'orders';
 
     /**
      * fields property
@@ -29,14 +34,23 @@ class ArticlesTagsFixture extends TestFixture
      * @var array
      */
     public $fields = [
-        'article_id' => ['type' => 'integer', 'null' => false],
-        'tag_id' => ['type' => 'integer', 'null' => false],
+        'id' => ['type' => 'integer'],
+        'product_category' => ['type' => 'integer', 'null' => false],
+        'product_id' => ['type' => 'integer', 'null' => false],
+        '_indexes' => [
+            'product_category' => [
+                'type' => 'index',
+                'columns' => ['product_category', 'product_id']
+            ]
+        ],
         '_constraints' => [
-            'unique_tag' => ['type' => 'primary', 'columns' => ['article_id', 'tag_id']],
-            'tag_id_fk' => [
+            'primary' => [
+                'type' => 'primary', 'columns' => ['id']
+            ],
+            'product_id_fk' => [
                 'type' => 'foreign',
-                'columns' => ['tag_id'],
-                'references' => ['tags', 'id'],
+                'columns' => ['product_id', 'product_category'],
+                'references' => ['products', ['id', 'category']],
                 'update' => 'cascade',
                 'delete' => 'cascade',
             ]
@@ -49,9 +63,6 @@ class ArticlesTagsFixture extends TestFixture
      * @var array
      */
     public $records = [
-        ['article_id' => 1, 'tag_id' => 1],
-        ['article_id' => 1, 'tag_id' => 2],
-        ['article_id' => 2, 'tag_id' => 1],
-        ['article_id' => 2, 'tag_id' => 3]
+        ['product_category' => 1, 'product_id' => 1]
     ];
 }

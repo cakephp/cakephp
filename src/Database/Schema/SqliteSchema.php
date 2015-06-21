@@ -24,6 +24,14 @@ class SqliteSchema extends BaseSchema
 {
 
     /**
+     * Array containing the foreign keys constraints names
+     * Necessary for composite foreign keys to be handled
+     *
+     * @var array
+     */
+    protected $_constraintsIdMap = [];
+
+    /**
      * Convert a column definition to the abstract types.
      *
      * The returned type will be a type that
@@ -207,6 +215,8 @@ class SqliteSchema extends BaseSchema
      */
     public function convertForeignKeyDescription(Table $table, $row)
     {
+        $name = $row['from'] . '_fk';
+
         $update = isset($row['on_update']) ? $row['on_update'] : '';
         $delete = isset($row['on_delete']) ? $row['on_delete'] : '';
         $data = [
@@ -216,7 +226,13 @@ class SqliteSchema extends BaseSchema
             'update' => $this->_convertOnClause($update),
             'delete' => $this->_convertOnClause($delete),
         ];
-        $name = $row['from'] . '_fk';
+
+        if (isset($this->_constraintsIdMap[$table->name()][$row['id']])) {
+            $name = $this->_constraintsIdMap[$table->name()][$row['id']];
+        } else {
+            $this->_constraintsIdMap[$table->name()][$row['id']] = $name;
+        }
+
         $table->addConstraint($name, $data);
     }
 
@@ -315,10 +331,11 @@ class SqliteSchema extends BaseSchema
         }
         if ($data['type'] === Table::CONSTRAINT_FOREIGN) {
             $type = 'FOREIGN KEY';
+
             $clause = sprintf(
                 ' REFERENCES %s (%s) ON UPDATE %s ON DELETE %s',
                 $this->_driver->quoteIdentifier($data['references'][0]),
-                $this->_driver->quoteIdentifier($data['references'][1]),
+                $this->_convertConstraintColumns($data['references'][1]),
                 $this->_foreignOnClause($data['update']),
                 $this->_foreignOnClause($data['delete'])
             );

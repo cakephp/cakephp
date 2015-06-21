@@ -422,7 +422,7 @@ class MysqlSchema extends BaseSchema
                 ' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s',
                 implode(', ', $columns),
                 $this->_driver->quoteIdentifier($data['references'][0]),
-                $this->_driver->quoteIdentifier($data['references'][1]),
+                $this->_convertConstraintColumns($data['references'][1]),
                 $this->_foreignOnClause($data['update']),
                 $this->_foreignOnClause($data['delete'])
             );

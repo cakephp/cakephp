@@ -274,35 +274,38 @@ class PostgresSchema extends BaseSchema
      */
     public function describeForeignKeySql($tableName, $config)
     {
-        $sql = "SELECT tc.constraint_name AS name,
+        $sql = "SELECT
+            rc.constraint_name AS name,
             tc.constraint_type AS type,
             kcu.column_name,
             rc.match_option AS match_type,
-
             rc.update_rule AS on_update,
             rc.delete_rule AS on_delete,
-            ccu.table_name AS references_table,
-            ccu.column_name AS references_field
-            FROM information_schema.table_constraints tc
 
-            LEFT JOIN information_schema.key_column_usage kcu
-            ON tc.constraint_catalog = kcu.constraint_catalog
-            AND tc.constraint_schema = kcu.constraint_schema
-            AND tc.constraint_name = kcu.constraint_name
+            kc.table_name AS references_table,
+            kc.column_name AS references_field
 
-            LEFT JOIN information_schema.referential_constraints rc
-            ON tc.constraint_catalog = rc.constraint_catalog
-            AND tc.constraint_schema = rc.constraint_schema
-            AND tc.constraint_name = rc.constraint_name
+            FROM information_schema.referential_constraints rc
 
-            LEFT JOIN information_schema.constraint_column_usage ccu
-            ON rc.unique_constraint_catalog = ccu.constraint_catalog
-            AND rc.unique_constraint_schema = ccu.constraint_schema
-            AND rc.unique_constraint_name = ccu.constraint_name
+            JOIN information_schema.table_constraints tc
+                ON tc.constraint_name = rc.constraint_name
+                AND tc.constraint_schema = rc.constraint_schema
+                AND tc.constraint_name = rc.constraint_name
 
-            WHERE tc.table_name = ?
-            AND tc.table_schema = ?
-            AND tc.constraint_type = 'FOREIGN KEY'";
+            JOIN information_schema.key_column_usage kcu
+                ON kcu.constraint_name = rc.constraint_name
+                AND kcu.constraint_schema = rc.constraint_schema
+                AND kcu.constraint_name = rc.constraint_name
+
+            JOIN information_schema.key_column_usage kc
+                ON kc.ordinal_position = kcu.position_in_unique_constraint
+                AND kc.constraint_name = rc.unique_constraint_name
+
+            WHERE kcu.table_name = ?
+              AND kc.table_schema = ?
+              AND tc.constraint_type = 'FOREIGN KEY'
+
+            ORDER BY rc.constraint_name, kcu.ordinal_position";
 
         $schema = empty($config['schema']) ? 'public' : $config['schema'];
         return [$sql, [$tableName, $schema]];
@@ -313,17 +316,13 @@ class PostgresSchema extends BaseSchema
      */
     public function convertForeignKeyDescription(Table $table, $row)
     {
-        $data = $table->constraint($row['name']);
-        if (empty($data)) {
-            $data = [
-                'type' => Table::CONSTRAINT_FOREIGN,
-                'columns' => [],
-                'references' => [$row['references_table'], $row['references_field']],
-                'update' => $this->_convertOnClause($row['on_update']),
-                'delete' => $this->_convertOnClause($row['on_delete']),
-            ];
-        }
-        $data['columns'][] = $row['column_name'];
+        $data = [
+            'type' => Table::CONSTRAINT_FOREIGN,
+            'columns' => $row['column_name'],
+            'references' => [$row['references_table'], $row['references_field']],
+            'update' => $this->_convertOnClause($row['on_update']),
+            'delete' => $this->_convertOnClause($row['on_delete']),
+        ];
         $table->addConstraint($row['name'], $data);
     }
 
@@ -468,7 +467,7 @@ class PostgresSchema extends BaseSchema
                 ' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s DEFERRABLE INITIALLY IMMEDIATE',
                 implode(', ', $columns),
                 $this->_driver->quoteIdentifier($data['references'][0]),
-                $this->_driver->quoteIdentifier($data['references'][1]),
+                $this->_convertConstraintColumns($data['references'][1]),
                 $this->_foreignOnClause($data['update']),
                 $this->_foreignOnClause($data['delete'])
             );
