@@ -66,28 +66,8 @@ class FormDataTest extends TestCase
         $this->assertCount(4, $data);
         $boundary = $data->boundary();
         $result = (string)$data;
-        $expected = [
-            '--' . $boundary,
-            'Content-Disposition: form-data; name="test"',
-            '',
-            'value',
-            '--' . $boundary,
-            'Content-Disposition: form-data; name="empty"',
-            '',
-            '',
-            '--' . $boundary,
-            'Content-Disposition: form-data; name="int"',
-            '',
-            '1',
-            '--' . $boundary,
-            'Content-Disposition: form-data; name="float"',
-            '',
-            '2.3',
-            '--' . $boundary . '--',
-            '',
-            '',
-        ];
-        $this->assertEquals(implode("\r\n", $expected), $result);
+        $expected = 'test=value&empty=&int=1&float=2.3';
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -103,31 +83,10 @@ class FormDataTest extends TestCase
             'published' => 'Y',
             'tags' => ['blog', 'cakephp']
         ]);
-        $boundary = $data->boundary();
         $result = (string)$data;
-
-        $expected = [
-            '--' . $boundary,
-            'Content-Disposition: form-data; name="Article[title]"',
-            '',
-            'first post',
-            '--' . $boundary,
-            'Content-Disposition: form-data; name="Article[published]"',
-            '',
-            'Y',
-            '--' . $boundary,
-            'Content-Disposition: form-data; name="Article[tags][0]"',
-            '',
-            'blog',
-            '--' . $boundary,
-            'Content-Disposition: form-data; name="Article[tags][1]"',
-            '',
-            'cakephp',
-            '--' . $boundary . '--',
-            '',
-            '',
-        ];
-        $this->assertEquals(implode("\r\n", $expected), $result);
+        $expected = 'Article%5Btitle%5D=first+post&Article%5Bpublished%5D=Y&' .
+            'Article%5Btags%5D%5B0%5D=blog&Article%5Btags%5D%5B1%5D=cakephp';
+        $this->assertEquals($expected, $result);
     }
 
     /**

@@ -55,7 +55,9 @@ use Cake\Utility\Hash;
  * ### Sending request bodies
  *
  * By default any POST/PUT/PATCH/DELETE request with $data will
- * send their data as `multipart/form-data`.
+ * send their data as `application/x-www-form-urlencoded` unless
+ * there are attached files. In that case `multipart/form-data`
+ * will be used.
  *
  * When sending request bodies you can use the `type` option to
  * set the Content-Type for the request:
