@@ -111,6 +111,7 @@ class Component implements EventListenerInterface
         $controller = $registry->getController();
         if ($controller) {
             $this->request =& $controller->request;
+            $this->response =& $controller->response;
         }
 
         $this->config($config);
