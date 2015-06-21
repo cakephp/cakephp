@@ -188,7 +188,7 @@ class FormData implements Countable
      * Check whether or not the current payload
      * has any files.
      *
-     * @return boolean
+     * @return bool Whether or not there is a file in this payload.
      */
     public function hasFile()
     {
