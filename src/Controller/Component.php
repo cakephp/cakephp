@@ -70,6 +70,13 @@ class Component implements EventListenerInterface
     public $request;
 
     /**
+     * Response object
+     *
+     * @var \Cake\Network\Response
+     */
+    public $response;
+
+    /**
      * Component registry class used to lazy load components.
      *
      * @var \Cake\Controller\ComponentRegistry
