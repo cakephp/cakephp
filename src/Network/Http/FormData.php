@@ -37,7 +37,7 @@ class FormData implements Countable
     /**
      * Whether or not this formdata object has attached files.
      *
-     * @var boolean
+     * @var bool
      */
     protected $_hasFile = false;
 
