@@ -2857,7 +2857,7 @@ class PaginatorHelperTest extends CakeTestCase {
 				'paramType' => 'querystring'
 			)
 		);
-		$expected = '<link href="/?page=2" rel="next" />';
+		$expected = '<link href="/?page=2" rel="next"/>';
 		$result = $this->Paginator->meta();
 		$this->assertSame($expected, $result);
 	}
@@ -2878,7 +2878,7 @@ class PaginatorHelperTest extends CakeTestCase {
 				'paramType' => 'querystring'
 			)
 		);
-		$expected = '<link href="/?page=2" rel="next" />';
+		$expected = '<link href="/?page=2" rel="next"/>';
 		$this->Paginator->meta(array('block' => true));
 		$result = $this->View->fetch('meta');
 		$this->assertSame($expected, $result);
@@ -2900,7 +2900,7 @@ class PaginatorHelperTest extends CakeTestCase {
 				'paramType' => 'querystring'
 			)
 		);
-		$expected = '<link href="/" rel="prev" />';
+		$expected = '<link href="/" rel="prev"/>';
 		$result = $this->Paginator->meta();
 		$this->assertSame($expected, $result);
 	}
@@ -2921,8 +2921,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				'paramType' => 'querystring'
 			)
 		);
-		$expected = '<link href="/?page=4" rel="prev" />';
-		$expected .= '<link href="/?page=6" rel="next" />';
+		$expected = '<link href="/?page=4" rel="prev"/>';
+		$expected .= '<link href="/?page=6" rel="next"/>';
 		$result = $this->Paginator->meta();
 		$this->assertSame($expected, $result);
 	}
