@@ -6443,20 +6443,25 @@ class FormHelperTest extends TestCase
     {
         $hash = Security::hash(
             '/posts/delete/1' .
-            serialize([]) .
+            serialize(['id' => '1']) .
             '' .
             Security::salt()
         );
-        $hash .= '%3A';
+        $hash .= '%3Aid';
         $this->Form->request->params['_Token']['key'] = 'test';
 
-        $result = $this->Form->postLink('Delete', '/posts/delete/1');
+        $result = $this->Form->postLink(
+            'Delete',
+            '/posts/delete/1',
+            ['data' => ['id' => 1]]
+        );
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
                 'name', 'style' => 'display:none;'
             ],
             ['input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'value' => '1']],
             'div' => ['style' => 'display:none;'],
             ['input' => ['type' => 'hidden', 'name' => '_Token[fields]', 'value' => $hash]],
             ['input' => ['type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '']],

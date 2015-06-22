@@ -558,6 +558,9 @@ class FormHelper extends Helper
 
         foreach ($fields as $key => $value) {
             if (!is_int($key)) {
+                if (is_numeric($value)) {
+                    $value = (string)$value;
+                }
                 $locked[$key] = $value;
                 unset($fields[$key]);
             }
