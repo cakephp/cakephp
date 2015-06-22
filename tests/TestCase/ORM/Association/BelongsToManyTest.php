@@ -829,11 +829,27 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Provider for empty values
+     *
+     * @return array
+     */
+    public function emptyProvider()
+    {
+        return [
+            [''],
+            [false],
+            [null],
+            [[]]
+        ];
+    }
+
+    /**
      * Test that saving an empty set on create works.
      *
+     * @dataProvider emptyProvider
      * @return void
      */
-    public function testSaveAssociatedEmptySetSuccess()
+    public function testSaveAssociatedEmptySetSuccess($value)
     {
         $assoc = $this->getMock(
             '\Cake\ORM\Association\BelongsToMany',
@@ -842,7 +858,7 @@ class BelongsToManyTest extends TestCase
         );
         $entity = new Entity([
             'id' => 1,
-            'tags' => []
+            'tags' => $value,
         ], ['markNew' => true]);
 
         $assoc->saveStrategy(BelongsToMany::SAVE_REPLACE);
@@ -850,6 +866,36 @@ class BelongsToManyTest extends TestCase
             ->method('replaceLinks');
         $assoc->expects($this->never())
             ->method('_saveTarget');
+        $this->assertSame($entity, $assoc->saveAssociated($entity));
+    }
+
+    /**
+     * Test that saving an empty set on update works.
+     *
+     * @dataProvider emptyProvider
+     * @return void
+     */
+    public function testSaveAssociatedEmptySetUpdateSuccess($value)
+    {
+        $assoc = $this->getMock(
+            '\Cake\ORM\Association\BelongsToMany',
+            ['_saveTarget', 'replaceLinks'],
+            ['tags']
+        );
+        $entity = new Entity([
+            'id' => 1,
+            'tags' => $value,
+        ], ['markNew' => false]);
+
+        $assoc->saveStrategy(BelongsToMany::SAVE_REPLACE);
+        $assoc->expects($this->once())
+            ->method('replaceLinks')
+            ->with($entity, [])
+            ->will($this->returnValue(true));
+
+        $assoc->expects($this->never())
+            ->method('_saveTarget');
+
         $this->assertSame($entity, $assoc->saveAssociated($entity));
     }
 
