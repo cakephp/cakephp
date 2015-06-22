@@ -35,6 +35,13 @@ class FormData implements Countable
     protected $_boundary;
 
     /**
+     * Whether or not this formdata object has attached files.
+     *
+     * @var bool
+     */
+    protected $_hasFile = false;
+
+    /**
      * The parts in the form data.
      *
      * @var array
@@ -125,6 +132,8 @@ class FormData implements Countable
      */
     public function addFile($name, $value)
     {
+        $this->_hasFile = true;
+
         $filename = false;
         $contentType = 'application/octet-stream';
         if (is_resource($value)) {
@@ -176,6 +185,33 @@ class FormData implements Countable
     }
 
     /**
+     * Check whether or not the current payload
+     * has any files.
+     *
+     * @return bool Whether or not there is a file in this payload.
+     */
+    public function hasFile()
+    {
+        return $this->_hasFile;
+    }
+
+    /**
+     * Get the content type for this payload.
+     *
+     * If this object contains files, `multipart/form-data` will be used,
+     * otherwise `application/x-www-form-urlencoded` will be used.
+     *
+     * @return string
+     */
+    public function contentType()
+    {
+        if (!$this->hasFile()) {
+            return 'application/x-www-form-urlencoded';
+        }
+        return 'multipart/form-data; boundary="' . $this->boundary() . '"';
+    }
+
+    /**
      * Converts the FormData and its parts into a string suitable
      * for use in an HTTP request.
      *
@@ -183,14 +219,21 @@ class FormData implements Countable
      */
     public function __toString()
     {
-        $boundary = $this->boundary();
-        $out = '';
-        foreach ($this->_parts as $part) {
-            $out .= "--$boundary\r\n";
-            $out .= (string)$part;
-            $out .= "\r\n";
+        if ($this->hasFile()) {
+            $boundary = $this->boundary();
+            $out = '';
+            foreach ($this->_parts as $part) {
+                $out .= "--$boundary\r\n";
+                $out .= (string)$part;
+                $out .= "\r\n";
+            }
+            $out .= "--$boundary--\r\n\r\n";
+            return $out;
         }
-        $out .= "--$boundary--\r\n\r\n";
-        return $out;
+        $data = [];
+        foreach ($this->_parts as $part) {
+            $data[$part->name()] = $part->value();
+        }
+        return http_build_query($data);
     }
 }

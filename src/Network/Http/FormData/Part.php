@@ -165,6 +165,26 @@ class Part
     }
 
     /**
+     * Get the part name.
+     *
+     * @return string
+     */
+    public function name()
+    {
+        return $this->_name;
+    }
+
+    /**
+     * Get the value.
+     *
+     * @return string
+     */
+    public function value()
+    {
+        return $this->_value;
+    }
+
+    /**
      * Convert the part into a string.
      *
      * Creates a string suitable for use in HTTP requests.
