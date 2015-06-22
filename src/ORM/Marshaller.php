@@ -86,6 +86,10 @@ class Marshaller
     /**
      * Hydrate one entity and its associated data.
      *
+     * When marshalling HasMany or BelongsToMany associations, `_ids` format can be used.
+     * `ids` option can also be used to determine whether the association must use the `_ids` 
+     * format.
+     *
      * ### Options:
      *
      * * associated: Associations listed here will be marshalled as well.
@@ -233,7 +237,7 @@ class Marshaller
             if ($hasIds || $idsOption) {
                 return [];
             }
-        }        
+        }
         if ($assoc->type() === Association::MANY_TO_MANY) {
             return $marshaller->_belongsToMany($assoc, $value, (array)$options);
         }
@@ -398,7 +402,8 @@ class Marshaller
      *
      * When merging HasMany or BelongsToMany associations, all the entities in the
      * `$data` array will appear, those that can be matched by primary key will get
-     * the data merged, but those that cannot, will be discarded.
+     * the data merged, but those that cannot, will be discarded. `ids` option can be used
+     * to determine whether the association must use the `_ids` format.
      *
      * ### Options:
      *
