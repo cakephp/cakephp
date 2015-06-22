@@ -87,7 +87,7 @@ class Marshaller
      * Hydrate one entity and its associated data.
      *
      * When marshalling HasMany or BelongsToMany associations, `_ids` format can be used.
-     * `ids` option can also be used to determine whether the association must use the `_ids` 
+     * `ids` option can also be used to determine whether the association must use the `_ids`
      * format.
      *
      * ### Options:
