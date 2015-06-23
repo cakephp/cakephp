@@ -58,9 +58,22 @@ class BehaviorRegistry extends ObjectRegistry
     /**
      * Constructor
      *
-     * @param \Cake\ORM\Table $table The table this registry is attached to
+     * @param \Cake\ORM\Table $table The table this registry is attached to.
      */
-    public function __construct(Table $table)
+    public function __construct(Table $table = null)
+    {
+        if ($table !== null) {
+            $this->setTable($table);
+        }
+    }
+
+    /**
+     * Attaches a table instance to this registry.
+     *
+     * @param \Cake\ORM\Table $table The table this registry is attached to.
+     * @return void
+     */
+    public function setTable(Table $table)
     {
         $this->_table = $table;
         $this->eventManager($table->eventManager());

@@ -279,7 +279,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         }
         $this->_eventManager = $eventManager ?: new EventManager();
-        $this->_behaviors = $behaviors ?: new BehaviorRegistry($this);
+        if ($behaviors) {
+            $behaviors->setTable($this);
+        } else {
+            $behaviors = new BehaviorRegistry($this);
+        }
+        $this->_behaviors = $behaviors;
         $this->_associations = $associations ?: new AssociationCollection();
 
         $this->initialize($config);
