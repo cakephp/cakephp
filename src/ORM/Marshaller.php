@@ -295,7 +295,9 @@ class Marshaller
             if (array_intersect_key($primaryKey, $row) === $primaryKey) {
                 $keys = array_intersect_key($row, $primaryKey);
                 if (count($keys) === $primaryCount) {
-                    $conditions[] = $keys;
+                    foreach ($keys as $key => $value) {
+                        $conditions[][$assoc->alias() . '.' . $key] = $value;
+                    }
                 }
             } else {
                 $records[$i] = $this->one($row, $options);
