@@ -350,4 +350,17 @@ class BehaviorRegistryTest extends TestCase
 
         $this->assertEquals(['Sluggable'], $this->Behaviors->loaded());
     }
+
+    /**
+     * Test setTable() method.
+     *
+     * @return void
+     */
+    public function testSetTable()
+    {
+        $table = $this->getMock('Cake\ORM\Table');
+        $table->expects($this->once())->method('eventManager');
+
+        $this->Behaviors->setTable($table);
+    }
 }
