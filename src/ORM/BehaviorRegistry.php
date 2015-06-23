@@ -60,7 +60,7 @@ class BehaviorRegistry extends ObjectRegistry
      *
      * @param \Cake\ORM\Table $table The table this registry is attached to.
      */
-    public function __construct(Table $table = null)
+    public function __construct($table = null)
     {
         if ($table !== null) {
             $this->setTable($table);
