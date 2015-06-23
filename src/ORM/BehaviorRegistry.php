@@ -58,7 +58,7 @@ class BehaviorRegistry extends ObjectRegistry
     /**
      * Constructor
      *
-     * @param \Cake\ORM\Table $table The table this registry is attached to.
+     * @param \Cake\ORM\Table|null $table The table this registry is attached to.
      */
     public function __construct($table = null)
     {
