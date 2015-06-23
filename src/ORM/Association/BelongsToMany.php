@@ -446,12 +446,12 @@ class BelongsToMany extends Association
         $targetEntity = $entity->get($this->property());
         $strategy = $this->saveStrategy();
 
-        if ($targetEntity === null) {
-            return false;
-        }
-
-        if ($targetEntity === [] && $entity->isNew()) {
+        $isEmpty = in_array($targetEntity, [null, [], '', false], true);
+        if ($isEmpty && $entity->isNew()) {
             return $entity;
+        }
+        if ($isEmpty) {
+            $targetEntity = [];
         }
 
         if ($strategy === self::SAVE_APPEND) {
