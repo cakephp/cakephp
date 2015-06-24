@@ -81,10 +81,9 @@ class I18nShell extends Shell
         }
 
         $this->_paths = [APP];
-        if (!empty($this->params['plugin'])) {
-            $plugin = Inflector::camelize($this->params['plugin']);
+        if ($this->param('plugin')) {
+            $plugin = Inflector::camelize($this->param('plugin'));
             $this->_paths = [Plugin::classPath($plugin)];
-            $this->params['plugin'] = $plugin;
         }
 
         $response = $this->in('What folder?', null, rtrim($this->_paths[0], DS) . DS . 'Locale');
@@ -103,7 +102,7 @@ class I18nShell extends Shell
             $filename = $fileinfo->getFilename();
             $newFilename = $fileinfo->getBasename('.pot');
             $newFilename = $newFilename . '.po';
-            if (empty($this->params['force']) && is_file($targetFolder . $newFilename)) {
+            if (!$this->param('force') && is_file($targetFolder . $newFilename)) {
                 $this->err('File ' . $newFilename . ' exists, skipping. Use --force or -f to force overwriting');
                 continue;
             }
