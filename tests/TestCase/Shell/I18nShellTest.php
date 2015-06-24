@@ -78,7 +78,7 @@ class I18nShellTest extends TestCase
         $this->shell->params['verbose'] = true;
         $this->shell->init();
 
-        $this->assertTrue(file_exists($deDir . 'default.po'));
-        $this->assertTrue(file_exists($deDir . 'cake.po'));
+        $this->assertFileExists($deDir . 'default.po');
+        $this->assertFileExists($deDir . 'cake.po');
     }
 }

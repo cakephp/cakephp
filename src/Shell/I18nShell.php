@@ -102,12 +102,8 @@ class I18nShell extends Shell
             $filename = $fileinfo->getFilename();
             $newFilename = $fileinfo->getBasename('.pot');
             $newFilename = $newFilename . '.po';
-            if (!$this->param('force') && is_file($targetFolder . $newFilename)) {
-                $this->err('File ' . $newFilename . ' exists, skipping. Use --force or -f to force overwriting');
-                continue;
-            }
 
-            copy($sourceFolder . $filename, $targetFolder . $newFilename);
+            $this->createFile($targetFolder . $newFilename, file_get_contents($sourceFolder . $filename));
             $count++;
         }
 
