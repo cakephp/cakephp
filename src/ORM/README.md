@@ -34,8 +34,8 @@ mappers if no explicit connection is defined.
 
 ## Creating Associations
 
-In your table classes you can define the relations between your tables. CakePHP
-ORM supports 4 association types out of the box:
+In your table classes you can define the relations between your tables. CakePHP's ORM 
+supports 4 association types out of the box:
 
 * belongsTo - E.g. Many articles belong to a user.
 * hasOne - E.g. A user has one profile
