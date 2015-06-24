@@ -16,6 +16,7 @@ namespace Cake\Shell\Task;
 
 use Cake\Console\Shell;
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\File;
 use Cake\Filesystem\Folder;
@@ -704,6 +705,9 @@ class ExtractTask extends Shell
      */
     protected function _isPathUsable($path)
     {
+        if (Configure::read('debug') && !is_dir($path)) {
+            mkdir($path, 0770, true);
+        }
         return is_dir($path) && is_writable($path);
     }
 }
