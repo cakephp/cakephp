@@ -16,6 +16,7 @@ namespace Cake\ORM;
 
 use ArrayObject;
 use BadMethodCallException;
+use Cake\Collection\Collection;
 use Cake\Core\App;
 use Cake\Database\Connection;
 use Cake\Database\Schema\Table as Schema;
@@ -2181,22 +2182,46 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         return $rules;
     }
 
-    public function loadInto($object, array $contain)
+    public function loadInto($objects, array $contain)
     {
-        $query = $this
-            ->find()
-            ->where(['id' => $object->id])
-            ->contain($contain);
+        $returnSingle = false;
 
-        $loaded = $query->first();
-        $assocs = $this->associations();
-        foreach ($query->contain() as $assoc => $config) {
-            $property = $assocs->get($assoc)->property();
-            $object->set($property, $loaded->get($property), ['useSetters' => false]);
-            $object->dirty($property, false);
+        if ($objects instanceof EntityInterface) {
+            $objects = [$objects];
+            $returnSingle = true;
         }
 
-        return $object;
+        $objects = new Collection($objects);
+        $primaryKey = $this->primaryKey();
+        $method = is_string($primaryKey) ? 'get' : 'extract';
+
+        $keys = $objects->map(function ($entity) use ($primaryKey, $method) {
+            return $entity->{$method}($primaryKey);
+        });
+
+        $query = $this
+            ->find()
+            ->where(function ($exp) use ($primaryKey, $keys) {
+                return $exp->in($this->primaryKey(), $keys->toList());
+            })
+            ->contain($contain);
+
+        $assocs = $this->associations();
+        $contain = $query->contain();
+        $results = $query->indexBy($primaryKey)->toArray();
+        $objects = $objects
+            ->indexBy($primaryKey)
+            ->map(function ($object, $key) use ($results, $contain, $assocs) {
+                $loaded = $results[$key];
+                foreach ($contain as $assoc => $config) {
+                    $property = $assocs->get($assoc)->property();
+                    $object->set($property, $loaded->get($property), ['useSetters' => false]);
+                    $object->dirty($property, false);
+                }
+                return $object;
+            });
+
+        return $returnSingle ? $objects->first() : $objects->toList();
     }
 
     /**
