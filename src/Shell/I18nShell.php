@@ -70,9 +70,11 @@ class I18nShell extends Shell
     /**
      * Inits PO file from POT file.
      *
-     * @return void
+     * @param string|null $language Language code to use.
+     * @return void|int
      */
-    public function init($language = null) {
+    public function init($language = null)
+    {
         if (!$language) {
             $language = strtolower($this->in('What language? Please use the two-letter ISO code, e.g. `en`.'));
         }
