@@ -86,13 +86,13 @@ class FlashHelper extends AppHelper {
 		CakeSession::delete("Message.$key");
 
 		// backwards compatibility with Session->setFlash
-        if($flash['element'] === 'default') {
-            $class = 'message';
-            if (!empty($flash['params']['class'])) {
-                $class = $flash['params']['class'];
-            }
-            return '<div id="' . $key . 'Message" class="' . $class . '">' . $flash['message'] . '</div>';
-        }
+		if($flash['element'] === 'default') {
+			$class = 'message';
+			if (!empty($flash['params']['class'])) {
+				$class = $flash['params']['class'];
+			}
+			return '<div id="' . $key . 'Message" class="' . $class . '">' . $flash['message'] . '</div>';
+		}
 
 		return $this->_View->element($flash['element'], $flash);
 	}
