@@ -287,6 +287,7 @@ class Marshaller
         $records = [];
         $conditions = [];
         $primaryCount = count($primaryKey);
+        $target = $assoc->target();
 
         foreach ($data as $i => $row) {
             if (!is_array($row)) {
@@ -296,7 +297,7 @@ class Marshaller
                 $keys = array_intersect_key($row, $primaryKey);
                 if (count($keys) === $primaryCount) {
                     foreach ($keys as $key => $value) {
-                        $conditions[][$assoc->alias() . '.' . $key] = $value;
+                        $conditions[][$target->aliasfield($key)] = $value;
                     }
                 }
             } else {
