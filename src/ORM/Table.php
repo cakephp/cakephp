@@ -346,10 +346,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Returns the table alias or sets a new one
-     *
-     * @param string|null $alias the new table alias
-     * @return string
+     * {@inheritDoc}
      */
     public function alias($alias = null)
     {
