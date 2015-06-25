@@ -17,12 +17,6 @@ abstract class AbstractCookieJar implements IteratorAggregate
 
     /**
      *
-     * @var array
-     */
-    protected $_rawCookies = [];
-
-    /**
-     *
      * @var \Cake\Network\Cookie\CookieEncrypter
      */
     protected $_encrypter;
