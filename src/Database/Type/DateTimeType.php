@@ -172,9 +172,13 @@ class DateTimeType extends Type
             $value['minute'],
             $value['second']
         );
-        $tz = isset($value['timezone']) ? $value['timezone'] : null;
-
-        return new $class($format, $tz);
+        $timezone = isset($value['timezone']) ? $value['timezone'] : null;
+        
+        if (isset($value['locale'])) {
+            $format = $this->_parseValue($format, $timezone, 'fa_IR@calendar=persian');
+        }
+        
+        return new $class($format, $timezone);
     }
 
     /**
@@ -221,11 +225,13 @@ class DateTimeType extends Type
      * aware parser with the specified format.
      *
      * @param string $value The value to parse and convert to an object.
+     * @param string $timezone The TimeZone to parse and convert to an object.
+     * @param string $locale The Locale to parse and convert to an object.
      * @return \Cake\I18n\Time|null
      */
-    protected function _parseValue($value)
+    protected function _parseValue($value, $timezone = null, $locale = null)
     {
         $class = static::$dateTimeClass;
-        return $class::parseDateTime($value, $this->_localeFormat);
+        return $class::parseDateTime($value, $this->_localeFormat, $timezone, $locale);
     }
 }

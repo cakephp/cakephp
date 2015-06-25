@@ -14,6 +14,7 @@
  */
 namespace Cake\I18n;
 
+use Cake\Collection\Collection;
 use Carbon\Carbon;
 use IntlDateFormatter;
 use JsonSerializable;
@@ -834,7 +835,7 @@ class Time extends Carbon implements JsonSerializable
             $format = [-1, $format];
         }
         $format = $format ?: [-1, IntlDateFormatter::SHORT];
-        return static::parseDateTime($time, $format);
+        return static::parseDateTime($time, $format, $timezone, $locale);
     }
 
     /**
@@ -844,7 +845,7 @@ class Time extends Carbon implements JsonSerializable
      */
     public static function detectCalendarType($locale = null)
     {
-        if (preg_match('/@calendar=(japanese|buddhist|chinese|persian|indian|islamic|hebrew|coptic|ethiopic)/', $locale)) {
+        if ($locale !== null && preg_match('/@calendar=(japanese|buddhist|chinese|persian|indian|islamic|hebrew|coptic|ethiopic)/', $locale)) {
             return \IntlDateFormatter::TRADITIONAL;
         }
         return \IntlDateFormatter::GREGORIAN;
@@ -855,9 +856,18 @@ class Time extends Carbon implements JsonSerializable
      *
      * @param string $calendar set calendar name.
      * @return void
+     * @throws \RuntimeException When calender is not in calenders list.
      */
-    public static function setDefaultCalendar($calendar)
+    public static function setDefaultCalendar($calendar = null)
     {
+        if (is_string($calendar) && !in_array($calendar, static::$calendars)) {
+            throw new RuntimeException('You should use the name of the calendar that can be supported by ICU.');
+        }
+        
+        if ($calendar === null) {
+            $calendar = false;
+        }
+        
         static::$defaultCalendar = $calendar;
     }
 
@@ -867,9 +877,13 @@ class Time extends Carbon implements JsonSerializable
      * @param string|null $locale The locale name in which the date should be displayed (e.g. pt-BR)
      * @return void
      */
-    public static function setDefaultLocale($locale)
+    public static function setDefaultLocale($locale = null)
     {
-        static::$defaultLocale = $locale;
+        if (!is_string($locale) || $locale === null) {
+            static::$defaultLocale = 'en_US';
+        } else {
+            static::$defaultLocale = $locale;
+        }
     }
 
     /**
@@ -909,7 +923,7 @@ class Time extends Carbon implements JsonSerializable
     public static function convertPattern($pattern = 'Y-m-d H:i:s')
     {
         if (!is_string($pattern) || $pattern === null) {
-            return $pattern;
+            return '';
         }
        
         $tables = [
@@ -922,7 +936,7 @@ class Time extends Carbon implements JsonSerializable
         ];
         $separator = '([- /.:,;])';
         $temp = array_flip(preg_split($separator, $pattern));
-        $temp = new \Cake\Collection\Collection($temp);
+        $temp = new Collection($temp);
         $temp = $temp->map(function ($value, $key) use ($tables) {
             return isset($tables[$key])? $tables[$key] : $key;
         });

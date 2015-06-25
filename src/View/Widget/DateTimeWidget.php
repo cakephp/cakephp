@@ -14,6 +14,7 @@
  */
 namespace Cake\View\Widget;
 
+use Cake\I18n\Number;
 use Cake\I18n\Time;
 use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
@@ -569,13 +570,13 @@ class DateTimeWidget implements WidgetInterface
     }
 
     /**
-     * Returns a translated list of month names
+     * Returns translated list of month names
      *
      * @param bool $leadingZero Whether to generate month keys with leading zero.
      * @param array $options The options to generate a month names.
      * @return array
      */
-    protected function _getMonthNames($leadingZero = false, $options = null)
+    protected function _getMonthNames($leadingZero = false, $options = [])
     {
         $date = new Time(null, $options['localization']['timezone']);
         $months = [];
@@ -635,7 +636,7 @@ class DateTimeWidget implements WidgetInterface
             }
             
             if ($options['localization']['locale'] !== null) {
-                $value = \Cake\I18n\Number::format($value, ['locale' => $options['localization']['locale'], 'pattern' => '####']);
+                $value = Number::format($value, ['locale' => $options['localization']['locale'], 'pattern' => '####']);
             }
             $numbers[$key] = $value;
             $i += $options['interval'];

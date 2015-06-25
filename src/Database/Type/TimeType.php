@@ -34,9 +34,9 @@ class TimeType extends DateTimeType
     /**
      * {@inheritDoc}
      */
-    protected function _parseValue($value)
+    protected function _parseValue($value, $timezone = null, $locale = null)
     {
         $class = static::$dateTimeClass;
-        return $class::parseTime($value, $this->_localeFormat);
+        return $class::parseTime($value, $this->_localeFormat, $timezone, $locale);
     }
 }
