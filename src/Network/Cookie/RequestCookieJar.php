@@ -12,7 +12,7 @@ class RequestCookieJar extends AbstractCookieJar
      * @param array $cookies
      * @param CookieEncrypter $encrypter
      */
-    public function __construct(array $cookies, CookieEncrypter $encrypter = null)
+    public function __construct(array $cookies, CookieEncrypter $encrypter)
     {
         parent::__construct($encrypter);
 

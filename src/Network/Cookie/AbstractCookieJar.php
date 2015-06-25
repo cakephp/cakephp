@@ -35,15 +35,9 @@ abstract class AbstractCookieJar implements IteratorAggregate
 
     /**
      *
-     * @var string
-     */
-    protected $_cookieEncrypterClassName = 'Cake\Network\Cookie\CookieEncrypter';
-
-    /**
-     *
      * @param \Cake\Network\Cookie\CookieEncrypter $encrypter
      */
-    public function __construct(CookieEncrypter $encrypter = null)
+    public function __construct(CookieEncrypter $encrypter)
     {
         $this->_encrypter = $encrypter;
     }
@@ -57,9 +51,6 @@ abstract class AbstractCookieJar implements IteratorAggregate
     {
         if ($encrypter !== null) {
             $this->_encrypter = $encrypter;
-        }
-        if ($this->_encrypter === null) {
-            $this->_encrypter = new $this->_cookieEncrypterClassName();
         }
 
         return $this->_encrypter;

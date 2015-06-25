@@ -28,7 +28,7 @@ class CookieFilter extends DispatcherFilter
         $requestJar = new $this->_requestJarClass($cookies, $encrypter);
         $request->cookies = $requestJar;
 
-        $responseJar = new $this->_responseJarClass([], $encrypter);
+        $responseJar = new $this->_responseJarClass($encrypter);
         $response->cookies = $responseJar;
     }
 
