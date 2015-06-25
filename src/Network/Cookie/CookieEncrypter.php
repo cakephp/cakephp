@@ -9,6 +9,7 @@ use RuntimeException;
 class CookieEncrypter
 {
 
+    const ALL = '_all_';
     const PREFIX = 'Q2FrZQ==.';
 
     use InstanceConfigTrait;
@@ -19,8 +20,10 @@ class CookieEncrypter
      * @var array
      */
     protected $_defaultConfig = [
-        'salt' => null,
-        'encryption' => 'aes'
+        static::ALL => [
+            'key' => null,
+            'encryption' => 'aes'
+        ]
     ];
 
     /**
@@ -36,22 +39,20 @@ class CookieEncrypter
      */
     protected function __construct(array $config = [])
     {
-        $config += [
-            'salt' => Security::salt()
-        ];
+        $this->_defaultConfig[static::ALL]['key'] = Security::salt();
 
         $this->config($config);
     }
 
     /**
      *
+     * @param string $name
      * @param mixed $value
-     * @param array $options
      * @return string
      */
-    public function encrypt($value, array $options = [])
+    public function encrypt($name, $value)
     {
-        $options += $this->_config;
+        $options = $this->_encryption($name);
 
         if (is_array($value)) {
             $value = $this->_implode($value);
@@ -61,23 +62,23 @@ class CookieEncrypter
         }
         $this->_checkCipher($options['mode']);
         if ($options['mode'] === 'rijndael') {
-            $cipher = Security::rijndael($value, $options['salt'], 'encrypt');
+            $cipher = Security::rijndael($value, $options['key'], 'encrypt');
         }
         if ($options['mode'] === 'aes') {
-            $cipher = Security::encrypt($value, $options['salt']);
+            $cipher = Security::encrypt($value, $options['key']);
         }
         return static::PREFIX . base64_encode($cipher);
     }
 
     /**
      *
+     * @param string $name
      * @param mixed $values
-     * @param array $options
      * @return mixed
      */
-    public function decrypt($values, array $options = [])
+    public function decrypt($name, $values)
     {
-        $options += $this->_config;
+        $options += $this->_encryption($name);
 
         if (is_string($values)) {
             return $this->_decode($values, $options);
@@ -121,10 +122,10 @@ class CookieEncrypter
         $this->_checkCipher($options['mode']);
         $value = base64_decode(substr($value, strlen(static::PREFIX)));
         if ($options['mode'] === 'rijndael') {
-            $value = Security::rijndael($value, $options['salt'], 'decrypt');
+            $value = Security::rijndael($value, $options['key'], 'decrypt');
         }
         if ($options['mode'] === 'aes') {
-            $value = Security::decrypt($value, $options['salt']);
+            $value = Security::decrypt($value, $options['key']);
         }
         return $this->_explode($value);
     }
@@ -160,5 +161,17 @@ class CookieEncrypter
             $array[$key[0]] = $key[1];
         }
         return $array;
+    }
+
+    /**
+     *
+     * @param string $name
+     * @return array
+     */
+    protected function _encryption($name) {
+        $config = (array)$this->config($name);
+        $config += $this->_config[static::ALL];
+
+        return $config;
     }
 }
