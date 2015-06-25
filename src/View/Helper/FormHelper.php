@@ -18,6 +18,7 @@ use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Form\Form;
+use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
@@ -94,7 +95,7 @@ class FormHelper extends Helper
             'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
             'checkboxFormGroup' => '{{label}}',
             'checkboxWrapper' => '<div class="checkbox">{{label}}</div>',
-            'dateWidget' => '{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}{{meridian}}',
+            'dateWidget' => '{{year}}{{month}}{{day}}{{localization}}{{hour}}{{minute}}{{second}}{{meridian}}',
             'error' => '<div class="error-message">{{content}}</div>',
             'errorList' => '<ul>{{content}}</ul>',
             'errorItem' => '<li>{{text}}</li>',
@@ -2154,6 +2155,8 @@ class FormHelper extends Helper
      * - `maxYear` The maximum year to use in the year select
      * - `orderYear` - Order of year values in select options.
      *   Possible values 'asc', 'desc'. Default 'desc'.
+     * - `locale` the locale name to use localization and convert date.
+     * - `timezone` the timezone name to use localization and convert date.
      *
      * ### Time options:
      *
@@ -2168,7 +2171,7 @@ class FormHelper extends Helper
      * To control the order of inputs, and any elements/content between the inputs you
      * can override the `dateWidget` template. By default the `dateWidget` template is:
      *
-     * `{{month}}{{day}}{{year}}{{hour}}{{minute}}{{second}}{{meridian}}`
+     * `{{month}}{{day}}{{year}}{{localization}}{{hour}}{{minute}}{{second}}{{meridian}}`
      *
      * @param string $fieldName Prefix name for the SELECT element
      * @param array $options Array of Options
@@ -2188,6 +2191,8 @@ class FormHelper extends Helper
             'orderYear' => 'desc',
             'timeFormat' => 24,
             'second' => false,
+            'locale' => null,
+            'timezone' => null
         ];
         $options = $this->_initInputField($fieldName, $options);
         $options = $this->_datetimeOptions($options);
@@ -2249,10 +2254,10 @@ class FormHelper extends Helper
         unset($options['interval'], $options['round']);
 
         if ($options['val'] === true || $options['val'] === null && isset($options['empty']) && $options['empty'] === false) {
-            $val = new DateTime();
-            $currentYear = $val->format('Y');
+            $val = new Time();
+            $currentYear = $val->i18nFormat('yyyy');
             if (isset($options['year']['end']) && $options['year']['end'] < $currentYear) {
-                $val->setDate($options['year']['end'], $val->format('n'), $val->format('j'));
+                $val->setDate($options['year']['end'], $val->i18nFormat('m'), $val->i18nFormat('d'));
             }
             $options['val'] = $val;
         }
@@ -2283,6 +2288,8 @@ class FormHelper extends Helper
             'round' => null,
             'timeFormat' => 24,
             'second' => false,
+            'locale' => null,
+            'timezone' => null
         ];
         $options['year'] = $options['month'] = $options['day'] = false;
         $options = $this->_initInputField($fieldName, $options);
@@ -2312,6 +2319,8 @@ class FormHelper extends Helper
             'minYear' => null,
             'maxYear' => null,
             'orderYear' => 'desc',
+            'locale' => null,
+            'timezone' => null
         ];
         $options['hour'] = $options['minute'] = false;
         $options['meridian'] = $options['second'] = false;
