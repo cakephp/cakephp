@@ -226,6 +226,10 @@ abstract class Mailer implements ArrayAccess, EventListenerInterface
 
         call_user_func_array([$this, $action], $args);
 
+        if (empty($this->template)) {
+            $this->template = $action;
+        }
+
         $result = $this->_email
             ->profile((array)$this)
             ->send();
