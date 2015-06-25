@@ -856,6 +856,51 @@ TEXT;
 	}
 
 /**
+ * Test reading params
+ *
+ * @dataProvider paramReadingDataProvider
+ */
+	public function testParamReading($toRead, $expected) {
+		$this->Shell->params = array(
+			'key' => 'value',
+			'help' => false,
+			'emptykey' => '',
+			'truthy' => true
+		);
+		$this->assertSame($expected, $this->Shell->param($toRead));
+	}
+
+/**
+ * Data provider for testing reading values with Shell::param()
+ *
+ * @return array
+ */
+	public function paramReadingDataProvider() {
+		return array(
+			array(
+				'key',
+				'value',
+			),
+			array(
+				'help',
+				false,
+			),
+			array(
+				'emptykey',
+				'',
+			),
+			array(
+				'truthy',
+				true,
+			),
+			array(
+				'does_not_exist',
+				null,
+			)
+		);
+	}
+
+/**
  * Test that option parsers are created with the correct name/command.
  *
  * @return void
