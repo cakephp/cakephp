@@ -24,15 +24,14 @@ class RequestCookieJar extends AbstractCookieJar
     /**
      *
      * @param string $name
-     * @param string|bool|array $encryption
      * @return null|\Cake\Network\Cookie\Cookie
      */
-    public function get($name, $encryption = null)
+    public function get($name)
     {
         $value = parent::get($name);
 
         if ($value !== null) {
-            $value = $this->_decrypt($value, $encryption);
+            $value = $this->_encrypter->decrypt($name, $value);
             $cookie = new $this->_cookieClassName($name, $value);
 
             return $cookie;

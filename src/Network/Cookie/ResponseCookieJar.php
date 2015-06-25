@@ -11,7 +11,7 @@ class ResponseCookieJar extends AbstractCookieJar
      * @param mixed $value Optional cookie value.
      * @return \Cake\Network\Cookie\Cookie
      */
-    public function add($cookie, $value = null)
+    public function set($cookie, $value = null)
     {
         if (!$cookie instanceof $this->_cookieClassName) {
             $cookie = new $this->_cookieClassName($cookie, $value);
@@ -52,16 +52,14 @@ class ResponseCookieJar extends AbstractCookieJar
 
     /**
      *
-     * @param string $name
-     * @param bool|string|array $encryption
-     * @return void
+     * @return array
      */
-    public function queue($name, $encryption = null)
+    public function raw()
     {
-        $cookie = $this->get($name);
-        if ($cookie) {
+        $cookies = [];
+        foreach ($this->_cookies as $cookie) {
             $raw = [
-                'value' => $this->_encrypt($cookie, $encryption),
+                'value' => $this->_encrypter->encrypt($cookie->name(), $cookie->read()),
                 'path' => $cookie->path(),
                 'expire' => $cookie->expires()->format('U'),
                 'domain' => $cookie->domain(),
@@ -69,41 +67,9 @@ class ResponseCookieJar extends AbstractCookieJar
                 'httpOnly' => $cookie->httpOnly()
             ];
 
-            $this->_rawCookies[$cookie->name()] = $raw;
-
-            $this->remove($name);
-        }
-    }
-
-    /**
-     *
-     * @param string $name
-     * @param bool|string|array $encryption
-     * @return null|\Cake\Network\Cookie\Cookie
-     */
-    public function unqueue($name, $encryption = null)
-    {
-        if (isset($this->_rawCookies[$name])) {
-            $cookie = $this->_rawCookies[$name];
-            $cookie['name'] = $name;
-            $cookie['value'] = $this->_decrypt($cookie['value'], $encryption);
-
-            unset($this->_rawCookies[$name]);
-
-            return $this->add($cookie);
-        }
-    }
-
-    /**
-     *
-     * @return array
-     */
-    public function raw()
-    {
-        foreach (array_keys($this->_cookies) as $name) {
-            $this->queue($name);
+            $cookies[] = $raw;
         }
 
-        return $this->_rawCookies;
+        return $cookies;
     }
 }

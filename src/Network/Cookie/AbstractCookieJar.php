@@ -59,7 +59,7 @@ abstract class AbstractCookieJar implements IteratorAggregate
             $this->_encrypter = $encrypter;
         }
         if ($this->_encrypter === null) {
-            $this->_encrypter = new $this->_cookieEncrypterClassName;
+            $this->_encrypter = new $this->_cookieEncrypterClassName();
         }
 
         return $this->_encrypter;
@@ -94,45 +94,5 @@ abstract class AbstractCookieJar implements IteratorAggregate
     public function getIterator()
     {
         return new ArrayIterator($this->_cookies);
-    }
-
-    /**
-     *
-     * @param string $value
-     * @param mixed $encryption
-     * @return mixed
-     */
-    protected function _decrypt($value, $encryption)
-    {
-        $encryption = $this->_encryption($encryption);
-
-        return $this->encrypter()->decrypt($value, $encryption);
-    }
-
-    /**
-     *
-     * @param mixed $value
-     * @param mixed $encryption
-     * @return string
-     */
-    protected function _encrypt($value, $encryption)
-    {
-        $encryption = $this->_encryption($encryption);
-
-        return $this->encrypter()->encrypt($value, $encryption);
-    }
-
-    /**
-     *
-     * @param mixed $encryption
-     * @return array
-     */
-    protected function _encryption($encryption)
-    {
-        if (!is_array($encryption)) {
-            $encryption = ['mode' => $encryption];
-        }
-
-        return $encryption;
     }
 }
