@@ -323,7 +323,7 @@ class Sqlite extends DboSource {
 				$j++;
 				continue;
 			}
-			if (preg_match('/\bAS\s+(.*)/i', $selects[$j], $matches)) {
+			if (preg_match('/\bAS(?!.*\bAS\b)\s+(.*)/i', $selects[$j], $matches)) {
 				$columnName = trim($matches[1], '"');
 			} else {
 				$columnName = trim(str_replace('"', '', $selects[$j]));
