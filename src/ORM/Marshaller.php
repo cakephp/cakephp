@@ -283,11 +283,10 @@ class Marshaller
         }
         $data = array_values($data);
 
-        $primaryKey = array_flip($assoc->target()->schema()->primaryKey());
-        $records = [];
-        $conditions = [];
-        $primaryCount = count($primaryKey);
         $target = $assoc->target();
+        $primaryKey = array_flip($target->schema()->primaryKey());
+        $records = $conditions = [];
+        $primaryCount = count($primaryKey);
 
         foreach ($data as $i => $row) {
             if (!is_array($row)) {
@@ -306,7 +305,7 @@ class Marshaller
         }
 
         if (!empty($conditions)) {
-            $query = $assoc->target()->find();
+            $query = $target->find();
             $query->andWhere(function ($exp) use ($conditions) {
                 return $exp->or_($conditions);
             });
