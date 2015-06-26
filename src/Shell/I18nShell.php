@@ -78,8 +78,8 @@ class I18nShell extends Shell
         if (!$language) {
             $language = strtolower($this->in('What language? Please use the two-letter ISO code, e.g. `en`.'));
         }
-        if (strlen($language) !== 2) {
-            return $this->error('Must be a two-letter ISO code');
+        if (strlen($language) < 2) {
+            return $this->error('Invalid language code. Valid is `en`, `eng`, `en_US` etc.');
         }
 
         $this->_paths = [APP];
