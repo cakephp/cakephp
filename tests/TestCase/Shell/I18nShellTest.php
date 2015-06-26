@@ -64,7 +64,6 @@ class I18nShellTest extends TestCase
      */
     public function testInit()
     {
-
         $deDir = $this->localeDir . 'de' . DS;
         if (!is_dir($deDir)) {
             mkdir($deDir, 0770, true);
