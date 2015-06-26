@@ -89,11 +89,18 @@ class StringTemplateTest extends TestCase
     public function testFormat()
     {
         $templates = [
-            'link' => '<a href="{{url}}">{{text}}</a>'
+            'link' => '<a href="{{url}}">{{text}}</a>',
+            'text' => '{{text}}'
         ];
         $this->template->add($templates);
 
         $result = $this->template->format('not there', []);
+        $this->assertNull($result);
+
+        $result = $this->template->format('text', ['text' => '']);
+        $this->assertSame('', $result);
+
+        $result = $this->template->format('text', []);
         $this->assertSame('', $result);
 
         $result = $this->template->format('link', [

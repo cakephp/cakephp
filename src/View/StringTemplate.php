@@ -220,16 +220,16 @@ class StringTemplate
      *
      * @param string $name The template name.
      * @param array $data The data to insert.
-     * @return string
+     * @return string|null Formatted string or null if template not found.
      */
     public function format($name, array $data)
     {
         if (!isset($this->_compiled[$name])) {
-            return '';
+            return null;
         }
         list($template, $placeholders) = $this->_compiled[$name];
         if ($template === null) {
-            return '';
+            return null;
         }
         $replace = [];
         foreach ($placeholders as $placeholder) {
