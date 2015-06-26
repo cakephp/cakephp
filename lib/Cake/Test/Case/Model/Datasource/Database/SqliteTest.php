@@ -560,4 +560,30 @@ class SqliteTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+	/**
+	 * Test parsing more complex field names.
+	 *
+	 * @return void
+	 */
+	public function testFetchColumnRowParsingMoreComplex()
+	{
+		$this->loadFixtures('User');
+		$sql = 'SELECT
+			COUNT(*) AS User__count,
+			COUNT(CASE id WHEN 2 THEN 1 ELSE NULL END) as User__case,
+			AVG(CAST("User"."id" AS BIGINT)) AS User__bigint
+			FROM "users" AS "User"
+			WHERE "User"."id" > 0';
+		$result = $this->Dbo->fetchRow($sql);
+
+		$expected = array(
+			'0' => array(
+				'User__count' => '4',
+				'User__case' => '1',
+				'User__bigint' => '2.5',
+			),
+		);
+		$this->assertEquals($expected, $result);
+	}
+
 }
