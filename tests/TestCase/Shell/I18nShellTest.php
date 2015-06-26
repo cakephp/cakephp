@@ -35,6 +35,8 @@ class I18nShellTest extends TestCase
         parent::setUp();
         $this->io = $this->getMock('Cake\Console\ConsoleIo');
         $this->shell = new I18nShell($this->io);
+
+        $this->localeDir = TMP . 'Locale' . DS;
     }
 
     /**
@@ -45,6 +47,14 @@ class I18nShellTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
+
+        $deDir = $this->localeDir . 'de' . DS;
+
+        unlink($this->localeDir . 'default.pot');
+        unlink($this->localeDir . 'cake.pot');
+
+        unlink($deDir . 'default.po');
+        unlink($deDir . 'cake.po');
     }
 
     /**
@@ -54,13 +64,13 @@ class I18nShellTest extends TestCase
      */
     public function testInit()
     {
-        $localeDir = TMP . 'Locale' . DS;
-        $deDir = $localeDir . 'de' . DS;
+
+        $deDir = $this->localeDir . 'de' . DS;
         if (!is_dir($deDir)) {
             mkdir($deDir, 0770, true);
         }
-        file_put_contents($localeDir . 'default.pot', 'Testing POT file.');
-        file_put_contents($localeDir . 'cake.pot', 'Testing POT file.');
+        file_put_contents($this->localeDir . 'default.pot', 'Testing POT file.');
+        file_put_contents($this->localeDir . 'cake.pot', 'Testing POT file.');
         if (file_exists($deDir . 'default.po')) {
             unlink($deDir . 'default.po');
         }
@@ -73,7 +83,7 @@ class I18nShellTest extends TestCase
             ->will($this->returnValue('de'));
         $this->shell->io()->expects($this->at(1))
             ->method('ask')
-            ->will($this->returnValue($localeDir));
+            ->will($this->returnValue($this->localeDir));
 
         $this->shell->params['verbose'] = true;
         $this->shell->init();
