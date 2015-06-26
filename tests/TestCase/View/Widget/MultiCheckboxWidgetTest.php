@@ -97,6 +97,7 @@ class MultiCheckboxWidgetTest extends TestCase
         $input = new MultiCheckboxWidget($this->templates, $label);
         $data = [
             'name' => 'Tags[id]',
+            'val' => 2,
             'options' => [
                 ['value' => '1', 'text' => 'CakePHP', 'data-test' => 'val'],
                 ['value' => '2', 'text' => 'Development', 'class' => 'custom'],
@@ -119,12 +120,13 @@ class MultiCheckboxWidgetTest extends TestCase
             ['div' => ['class' => 'checkbox']],
             ['input' => [
                 'type' => 'checkbox',
+                'checked' => 'checked',
                 'name' => 'Tags[id][]',
                 'value' => 2,
                 'id' => 'tags-id-2',
                 'class' => 'custom',
             ]],
-            ['label' => ['for' => 'tags-id-2']],
+            ['label' => ['class' => 'selected', 'for' => 'tags-id-2']],
             'Development',
             '/label',
             '/div',
