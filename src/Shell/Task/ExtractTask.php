@@ -714,6 +714,9 @@ class ExtractTask extends Shell
      */
     protected function _isPathUsable($path)
     {
+        if (!is_dir($path)) {
+            mkdir($path, 0770, true);
+        }
         return is_dir($path) && is_writable($path);
     }
 }

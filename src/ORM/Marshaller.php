@@ -283,9 +283,9 @@ class Marshaller
         }
         $data = array_values($data);
 
-        $primaryKey = array_flip($assoc->target()->schema()->primaryKey());
-        $records = [];
-        $conditions = [];
+        $target = $assoc->target();
+        $primaryKey = array_flip($target->schema()->primaryKey());
+        $records = $conditions = [];
         $primaryCount = count($primaryKey);
 
         foreach ($data as $i => $row) {
@@ -295,7 +295,9 @@ class Marshaller
             if (array_intersect_key($primaryKey, $row) === $primaryKey) {
                 $keys = array_intersect_key($row, $primaryKey);
                 if (count($keys) === $primaryCount) {
-                    $conditions[] = $keys;
+                    foreach ($keys as $key => $value) {
+                        $conditions[][$target->aliasfield($key)] = $value;
+                    }
                 }
             } else {
                 $records[$i] = $this->one($row, $options);
@@ -303,7 +305,7 @@ class Marshaller
         }
 
         if (!empty($conditions)) {
-            $query = $assoc->target()->find();
+            $query = $target->find();
             $query->andWhere(function ($exp) use ($conditions) {
                 return $exp->or_($conditions);
             });

@@ -423,8 +423,10 @@ class DateTimeWidget implements WidgetInterface
         }
 
         unset(
-            $options['end'], $options['start'],
-            $options['format'], $options['leadingZeroKey'],
+            $options['end'],
+            $options['start'],
+            $options['format'],
+            $options['leadingZeroKey'],
             $options['leadingZeroValue']
         );
         return $this->_select->render($options, $context);

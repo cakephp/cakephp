@@ -700,8 +700,15 @@ class Router
         $pass = isset($params['pass']) ? $params['pass'] : [];
 
         unset(
-            $params['pass'], $params['paging'], $params['models'], $params['url'], $url['url'],
-            $params['autoRender'], $params['bare'], $params['requested'], $params['return'],
+            $params['pass'],
+            $params['paging'],
+            $params['models'],
+            $params['url'],
+            $url['url'],
+            $params['autoRender'],
+            $params['bare'],
+            $params['requested'],
+            $params['return'],
             $params['_Token']
         );
         $params = array_merge($params, $pass);
