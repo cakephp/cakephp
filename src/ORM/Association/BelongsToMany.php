@@ -749,6 +749,11 @@ class BelongsToMany extends Association
                 $existing = $hasMany->find('all')
                     ->where(array_combine($foreignKey, $primaryValue));
 
+                $associationConditions = $this->conditions();
+                if ($associationConditions) {
+                    $existing->andWhere($associationConditions);
+                }
+
                 $jointEntities = $this->_collectJointEntities($sourceEntity, $targetEntities);
                 $inserts = $this->_diffLinks($existing, $jointEntities, $targetEntities);
 

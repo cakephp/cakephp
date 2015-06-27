@@ -59,6 +59,7 @@ class TableTest extends TestCase
         'core.members',
         'core.groups',
         'core.groups_members',
+        'core.polymorphic_tagged',
     ];
 
     /**
@@ -3284,6 +3285,80 @@ class TableTest extends TestCase
         $article = $articles->patchEntity($article, $data);
         $result = $articles->save($article);
         $this->assertSame($result, $article);
+    }
+
+    /**
+     * Test to check that association condition are used when fetching existing
+     * records to decide which records to unlink.
+     *
+     * @return void
+     */
+    public function testPolymorphicBelongsToManySave()
+    {
+        $articles = TableRegistry::get('Articles');
+        $articles->belongsToMany('Tags', [
+            'through' => 'PolymorphicTagged',
+            'foreignKey' => 'foreign_key',
+            'conditions' => [
+                'PolymorphicTagged.foreign_model' => 'Articles'
+            ],
+            'sort' => ['PolymorphicTagged.position' => 'ASC']
+        ]);
+
+        $articles->Tags->junction()->belongsTo('Tags');
+
+        $entity = $articles->get(1, ['contain' => ['Tags']]);
+        $data = [
+            'id' => 1,
+            'tags' => [
+                [
+                    'id' => 1,
+                    '_joinData' => [
+                        'id' => 2,
+                        'foreign_model' => 'Articles',
+                        'position' => 2
+                    ]
+                ],
+                [
+                    'id' => 2,
+                    '_joinData' => [
+                        'foreign_model' => 'Articles',
+                        'position' => 1
+                    ]
+                ]
+            ]
+        ];
+        $entity = $articles->patchEntity($entity, $data, ['associated' => ['Tags._joinData']]);
+        $entity = $articles->save($entity);
+
+        $expected = [
+            [
+                'id' => 1,
+                'tag_id' => 1,
+                'foreign_key' => 1,
+                'foreign_model' => 'Posts',
+                'position' => 1
+            ],
+            [
+                'id' => 2,
+                'tag_id' => 1,
+                'foreign_key' => 1,
+                'foreign_model' => 'Articles',
+                'position' => 2
+            ],
+            [
+                'id' => 3,
+                'tag_id' => 2,
+                'foreign_key' => 1,
+                'foreign_model' => 'Articles',
+                'position' => 1
+            ]
+        ];
+        $result = TableRegistry::get('PolymorphicTagged')
+            ->find('all', ['sort' => ['id' => 'DESC']])
+            ->hydrate(false)
+            ->toArray();
+        $this->assertEquals($expected, $result);
     }
 
     /**

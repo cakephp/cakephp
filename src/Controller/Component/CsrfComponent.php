@@ -125,7 +125,7 @@ class CsrfComponent extends Component
         $response->cookie([
             'name' => $this->_config['cookieName'],
             'value' => $value,
-            'expiry' => $this->_config['expiry'],
+            'expire' => $this->_config['expiry'],
             'path' => $request->webroot,
             'secure' => $this->_config['secure'],
         ]);
