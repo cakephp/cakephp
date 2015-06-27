@@ -98,6 +98,7 @@ class MultiCheckboxWidgetTest extends TestCase
         $data = [
             'name' => 'Tags[id]',
             'val' => 2,
+            'disabled' => ['1'],
             'options' => [
                 ['value' => '1', 'text' => 'CakePHP', 'data-test' => 'val'],
                 ['value' => '2', 'text' => 'Development', 'class' => 'custom'],
@@ -107,6 +108,7 @@ class MultiCheckboxWidgetTest extends TestCase
         $expected = [
             ['div' => ['class' => 'checkbox']],
             ['input' => [
+                'disabled' => 'disabled',
                 'type' => 'checkbox',
                 'name' => 'Tags[id][]',
                 'value' => 1,
