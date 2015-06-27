@@ -61,7 +61,7 @@ class FlashHelper extends AppHelper {
  * ));
  * ```
  *
- * @param string $key The [Flash.]key you are rendering in the view.
+ * @param string $key The [Message.]key you are rendering in the view.
  * @param array $options Additional options to use for the creation of this flash message.
  *    Supports the 'params', and 'element' keys that are used in the helper.
  * @return string|null Rendered flash message or null if flash key does not exist
@@ -69,11 +69,11 @@ class FlashHelper extends AppHelper {
  * @throws UnexpectedValueException If value for flash settings key is not an array.
  */
 	public function render($key = 'flash', $options = array()) {
-		if (!CakeSession::check("Flash.$key")) {
+		if (!CakeSession::check("Message.$key")) {
 			return;
 		}
 
-		$flash = CakeSession::read("Flash.$key");
+		$flash = CakeSession::read("Message.$key");
 
 		if (!is_array($flash)) {
 			throw new UnexpectedValueException(sprintf(
@@ -83,7 +83,7 @@ class FlashHelper extends AppHelper {
 		}
 
 		$flash = $options + $flash;
-		CakeSession::delete("Flash.$key");
+		CakeSession::delete("Message.$key");
 
 		return $this->_View->element($flash['element'], $flash);
 	}

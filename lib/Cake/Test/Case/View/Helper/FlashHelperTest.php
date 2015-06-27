@@ -55,7 +55,7 @@ class FlashHelperTest extends CakeTestCase {
 			CakeSession::start();
 		}
 		CakeSession::write(array(
-			'Flash' => array(
+			'Message' => array(
 				'flash' => array(
 					'key' => 'flash',
 					'message' => 'This is a calling',
@@ -108,7 +108,6 @@ class FlashHelperTest extends CakeTestCase {
 
 		$result = $this->Flash->render('notification');
 		$expected = "<div id=\"notificationLayout\">\n\t<h1>Alert!</h1>\n\t<h3>Notice!</h3>\n\t<p>Broadcast message testing</p>\n</div>";
-
 		$this->assertContains($expected, $result);
 
 		$this->assertNull($this->Flash->render('non-existent'));
@@ -120,7 +119,7 @@ class FlashHelperTest extends CakeTestCase {
  * @expectedException UnexpectedValueException
  */
 	public function testFlashThrowsException() {
-		CakeSession::write('Flash.foo', 'bar');
+		CakeSession::write('Message.foo', 'bar');
 		$this->Flash->render('foo');
 	}
 

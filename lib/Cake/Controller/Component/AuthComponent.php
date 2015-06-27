@@ -50,7 +50,7 @@ class AuthComponent extends Component {
  *
  * @var array
  */
-	public $components = array('Session', 'RequestHandler');
+	public $components = array('Session', 'Flash', 'RequestHandler');
 
 /**
  * An array of authentication objects to use for authenticating users. You can configure
@@ -840,7 +840,7 @@ class AuthComponent extends Component {
 		if ($message === false) {
 			return;
 		}
-		$this->Session->setFlash($message, $this->flash['element'], $this->flash['params'], $this->flash['key']);
+		$this->Flash->set($message, $this->flash);
 	}
 
 }

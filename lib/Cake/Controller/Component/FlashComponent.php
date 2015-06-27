@@ -84,7 +84,7 @@ class FlashComponent extends Component {
 			$options['element'] = 'Flash/' . $element;
 		}
 
-		CakeSession::write('Flash.' . $options['key'], array(
+		CakeSession::write('Message.' . $options['key'], array(
 			'message' => $message,
 			'key' => $options['key'],
 			'element' => $options['element'],
