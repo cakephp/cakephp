@@ -226,7 +226,7 @@ abstract class Mailer implements ArrayAccess, EventListenerInterface
 
         call_user_func_array([$this, $action], $args);
 
-        if (empty($this->template)) {
+        if ($this->template === null) {
             $this->template = $action;
         }
 
