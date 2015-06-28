@@ -37,7 +37,7 @@ matrix:
       env: HHVM=1 DB=mysql db_dsn='mysql://travis@0.0.0.0/cakephp_test'
 
   allow_failures:
-    - php: 7.0
+    - env: COVERALLS=1 DEFAULT=0
 
     - php: hhvm
 
