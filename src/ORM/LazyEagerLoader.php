@@ -20,26 +20,54 @@ use Cake\Datasource\EntityInterface;
 use Cake\ORM\Table;
 
 
+/**
+ * Contains methods that are capable of injecting eagerly loaded associations into
+ * entities or lists of entities by using the same syntax as the EagerLoader.
+ *
+ * @internal
+ */
 class LazyEagerLoader
 {
 
-    public function loadInto($objects, array $contain, Table $source)
+    /**
+     * Loads the specified associations in the passed entity or list of entities
+     * by executing extra queries in the database and merging the results in the
+     * appropriate properties.
+     *
+     * The properties for the associations to be loaded will be overwritten on each entity.
+     *
+     * @param Cake\Datasource\EntityInterface|array $entities a single entity or list of entities
+     * @param array $contain A `contain()` compatible array.
+     * @see Cake\ORM\Query\contain()
+     * @param Cake\ORM\Table The table to use for fetching the top level entities
+     * @return Cake\Datasource\EntityInterface|array
+     */
+    public function loadInto($entities, array $contain, Table $source)
     {
         $returnSingle = false;
 
-        if ($objects instanceof EntityInterface) {
-            $objects = [$objects];
+        if ($entities instanceof EntityInterface) {
+            $entities = [$entities];
             $returnSingle = true;
         }
 
-        $objects = new Collection($objects);
+        $entities = new Collection($entities);
         $query = $this->_getQuery($objects,  $contain, $source);
         $associations = array_keys($query->contain());
 
-        $objects = $this->_injectResults($objects, $query, $associations, $source);
-        return $returnSingle ? array_shift($objects) : $objects;
+        $entities = $this->_injectResults($entities, $query, $associations, $source);
+        return $returnSingle ? array_shift($entities) : $entities;
     }
 
+    /**
+     * Builds a query for loading the passed list of entity objects along with the
+     * associations specified in $contain.
+     *
+     * @param Cake\Collection\CollectionInterface $objects
+     * @param array $contain The associations to be loaded
+     * @param Cake\ORM\Table The table to use for fetching the top level entities
+     * @return Cake\ORM\Query
+     */
     protected function _getQuery($objects, $contain, $source)
     {
         $primaryKey = $source->primaryKey();
@@ -75,6 +103,14 @@ class LazyEagerLoader
         return $query;
     }
 
+    /**
+     * Returns a map of property names where the association results should be injected
+     * in the top level entities.
+     *
+     * @param Cake\ORM\Table $table The table having the top level associations
+     * @param array $associations The name of the top level associations
+     * @return array
+     */
     protected function _getPropertyMap($source, $associations)
     {
         $map = [];
@@ -84,6 +120,16 @@ class LazyEagerLoader
         return $map;
     }
 
+    /**
+     * Injects the results of the eager loader query into the original list of
+     * entities.
+     *
+     * @param array|Traversable $objects The original list of entities
+     * @param Cake\Collection\CollectionInterface $results The loaded results
+     * @param array $associations The top level associations that were loaded
+     * @param Cake\ORM\Table $table The table where the entities came from
+     * @return array
+     */
     protected function _injectResults($objects, $results, $associations, $source)
     {
         $injected = [];
