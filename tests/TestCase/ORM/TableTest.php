@@ -4358,6 +4358,11 @@ class TableTest extends TestCase
         $this->assertSame(self::$nextUserId, $entity->id);
     }
 
+    /**
+     * Tests the loadInto() method
+     *
+     * @return void
+     */
     public function testLoadIntoEntity()
     {
         $table = TableRegistry::get('Authors');
@@ -4373,6 +4378,73 @@ class TableTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * Tests that it is possible to pass conditions and fields to loadInto()
+     *
+     * @return void
+     */
+    public function testLoadIntoWithConditions()
+    {
+        $table = TableRegistry::get('Authors');
+        $table->hasMany('SiteArticles');
+        $articles = $table->hasMany('Articles');
+        $articles->belongsToMany('Tags');
+
+        $entity = $table->get(1);
+        $options = [
+            'SiteArticles' => ['fields' => ['title', 'author_id']],
+            'Articles.Tags' => function ($q) {
+                return $q->where(['Tags.name' => 'tag2']);
+            }
+        ];
+        $result = $table->loadInto($entity, $options);
+        $this->assertSame($entity, $result);
+        $expected = $table->get(1, ['contain' => $options]);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests loadInto() with a belongsTo association
+     *
+     * @return void
+     */
+    public function testLoadBelognsTo()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors');
+
+        $entity = $table->get(2);
+        $result = $table->loadInto($entity, ['Authors']);
+        $this->assertSame($entity, $result);
+
+        $expected = $table->get(2, ['contain' => ['Authors']]);
+        $this->assertEquals($expected, $entity);
+    }
+
+    /**
+     * Tests that it is possible to post-load associations for many entities at
+     * the same time
+     *
+     * @return void
+     */
+    public function testLoadIntoMany()
+    {
+        $table = TableRegistry::get('Authors');
+        $table->hasMany('SiteArticles');
+        $articles = $table->hasMany('Articles');
+        $articles->belongsToMany('Tags');
+
+        $entities = $table->find()->toList();
+        $contain = ['SiteArticles', 'Articles.Tags'];
+        $result = $table->loadInto($entities, $contain);
+
+        foreach ($entities as $k => $v) {
+            $this->assertSame($v, $result[$k]);
+        }
+
+        $expected = $table->find()->contain($contain)->toList();
+        $this->assertEquals($expected, $result);
+    }
 
     /**
      * Helper method to skip tests when connection is SQLServer.

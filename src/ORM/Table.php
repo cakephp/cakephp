@@ -2202,16 +2202,21 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $query = $this
             ->find()
             ->where(function ($exp) use ($primaryKey, $keys) {
-                return $exp->in($this->primaryKey(), $keys->toList());
+                return $exp->in($this->aliasField($this->primaryKey()), $keys->toList());
             })
             ->contain($contain);
 
         $assocs = $this->associations();
         $contain = $query->contain();
         $results = $query->indexBy($primaryKey)->toArray();
+        $primaryKey = (array)$primaryKey;
         $objects = $objects
-            ->indexBy($primaryKey)
-            ->map(function ($object, $key) use ($results, $contain, $assocs) {
+            ->map(function ($object) use ($results, $contain, $assocs, $primaryKey) {
+                $key = implode(';', $object->extract($primaryKey));
+                if (!isset($results[$key])) {
+                    return $object;
+                }
+
                 $loaded = $results[$key];
                 foreach ($contain as $assoc => $config) {
                     $property = $assocs->get($assoc)->property();
