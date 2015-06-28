@@ -974,6 +974,28 @@ class AuthComponentTest extends TestCase
     }
 
     /**
+     * test ajax unauthenticated
+     *
+     * @return void
+     * @triggers Controller.startup $this->Controller
+     */
+    public function testAjaxUnauthenticated()
+    {
+        $this->Controller->request = new Request([
+            'url' => '/ajax_auth/add',
+            'environment' => ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'],
+        ]);
+        $this->Controller->request->params['action'] = 'add';
+
+        $event = new Event('Controller.startup', $this->Controller);
+        $response = $this->Auth->startup($event);
+
+        $this->assertTrue($event->isStopped());
+        $this->assertEquals(403, $response->statusCode());
+        $this->assertArrayNotHasKey('Location', $response->header());
+    }
+
+    /**
      * testLoginActionRedirect method
      *
      * @return void

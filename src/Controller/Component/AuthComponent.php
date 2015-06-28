@@ -364,7 +364,8 @@ class AuthComponent extends Component
             $response->statusCode(403);
             return $response;
         }
-        return $controller->redirect(null, 403);
+        $this->response->statusCode(403);
+        return $this->response;
     }
 
     /**
