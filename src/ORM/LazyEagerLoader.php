@@ -52,7 +52,7 @@ class LazyEagerLoader
         }
 
         $entities = new Collection($entities);
-        $query = $this->_getQuery($objects,  $contain, $source);
+        $query = $this->_getQuery($entities,  $contain, $source);
         $associations = array_keys($query->contain());
 
         $entities = $this->_injectResults($entities, $query, $associations, $source);
