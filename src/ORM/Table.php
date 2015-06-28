@@ -16,7 +16,6 @@ namespace Cake\ORM;
 
 use ArrayObject;
 use BadMethodCallException;
-use Cake\Collection\Collection;
 use Cake\Core\App;
 use Cake\Database\Connection;
 use Cake\Database\Schema\Table as Schema;
@@ -2184,71 +2183,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
     public function loadInto($objects, array $contain)
     {
-        $returnSingle = false;
-
-        if ($objects instanceof EntityInterface) {
-            $objects = [$objects];
-            $returnSingle = true;
-        }
-
-        $objects = new Collection($objects);
-        $primaryKey = $this->primaryKey();
-        $method = is_string($primaryKey) ? 'get' : 'extract';
-
-        $keys = $objects->map(function ($entity) use ($primaryKey, $method) {
-            return $entity->{$method}($primaryKey);
-        });
-
-        $query = $this
-            ->find()
-            ->where(function ($exp) use ($primaryKey, $keys) {
-                if (is_array($primaryKey) && count($primaryKey) === 1) {
-                    $primaryKey = current($primaryKey);
-                }
-
-                if (is_string($primaryKey)) {
-                    return $exp->in($this->aliasField($primaryKey), $keys->toList());
-                }
-
-                $primaryKey = array_map([$this, 'aliasField'], $primaryKey);
-                return new \Cake\Database\Expression\TupleComparison($primaryKey, $keys->toList());
-            })
-            ->contain($contain);
-
-        $properties = (new Collection($this->associations()))
-            ->indexBy(function ($assoc) {
-                return $assoc->name();
-            })
-            ->map(function ($assoc) {
-                return $assoc->property();
-            })
-            ->toArray();
-
-        $contain = $query->contain();
-        $primaryKey = (array)$primaryKey;
-        $results = $query
-            ->indexBy(function ($e) use ($primaryKey) {
-                return implode(';', $e->extract($primaryKey));
-            })
-            ->toArray();
-
-        $objects = $objects
-            ->map(function ($object) use ($results, $contain, $properties, $primaryKey) {
-                $key = implode(';', $object->extract($primaryKey));
-                if (!isset($results[$key])) {
-                    return $object;
-                }
-
-                $loaded = $results[$key];
-                foreach ($contain as $assoc => $config) {
-                    $property = $properties[$assoc];
-                    $object->set($property, $loaded->get($property), ['useSetters' => false]);
-                    $object->dirty($property, false);
-                }
-                return $object;
-            });
-
-        return $returnSingle ? $objects->first() : $objects->toList();
+        return (new LazyEagerLoader)->loadInto($objects, $contain, $this);
     }
 
     /**
