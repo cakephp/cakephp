@@ -49,8 +49,9 @@ class LazyEagerLoader
             return $entity->{$method}($primaryKey);
         });
 
-        return $source
+        $query = $source
             ->find()
+            ->select((array)$primaryKey)
             ->where(function ($exp) use ($primaryKey, $keys, $source) {
                 if (is_array($primaryKey) && count($primaryKey) === 1) {
                     $primaryKey = current($primaryKey);
@@ -64,6 +65,14 @@ class LazyEagerLoader
                 return new TupleComparison($primaryKey, $keys->toList());
             })
             ->contain($contain);
+
+        foreach ($query->eagerLoader()->attachableAssociations($source) as $loadable) {
+            $config = $loadable->config();
+            $config['includeFields'] = true;
+            $loadable->config($config);
+        }
+
+        return $query;
     }
 
     protected function _getPropertyMap($source, $associations)
