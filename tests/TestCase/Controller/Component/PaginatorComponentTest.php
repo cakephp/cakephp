@@ -826,7 +826,7 @@ class PaginatorComponentTest extends TestCase
 
         $result = $this->Paginator->paginate($table);
         $this->assertCount(4, $result, '4 rows should come back');
-        $this->assertEquals(['First Post', 'Second Post', 'Third Post', 'Fourth Post'] , $titleExtractor($result));
+        $this->assertEquals(['First Post', 'Second Post', 'Third Post', 'Fourth Post'], $titleExtractor($result));
 
         $result = $this->request->params['paging']['PaginatorPosts'];
         $this->assertEquals(4, $result['current']);
