@@ -695,6 +695,27 @@ class CompositeKeyTest extends TestCase
 
     /**
      * Tets that loadInto() is capable of handling composite primary keys
+     * when loading belongsTo assocaitions
+     *
+     * @return void
+     */
+    public function testLoadIntoWithBelongsTo()
+    {
+        $table = TableRegistry::get('SiteArticles');
+        $table->belongsTo('SiteAuthors', [
+            'foreignKey' => ['author_id', 'site_id'],
+        ]);
+
+        $author = $table->get([2, 2]);
+        $result = $table->loadInto($author, ['SiteAuthors']);
+        $this->assertSame($author, $result);
+
+        $expected = $table->get([2, 2], ['contain' => ['SiteAuthors']]);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tets that loadInto() is capable of handling composite primary keys
      * when loading into multiple entities
      *
      * @return void
