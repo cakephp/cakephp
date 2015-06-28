@@ -2202,7 +2202,16 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $query = $this
             ->find()
             ->where(function ($exp) use ($primaryKey, $keys) {
-                return $exp->in($this->aliasField($this->primaryKey()), $keys->toList());
+                if (is_array($primaryKey) && count($primaryKey) === 1) {
+                    $primaryKey = current($primaryKey);
+                }
+
+                if (is_string($primaryKey)) {
+                    return $exp->in($this->aliasField($primaryKey), $keys->toList());
+                }
+
+                $primaryKey = array_map([$this, 'aliasField'], $primaryKey);
+                return new \Cake\Database\Expression\TupleComparison($primaryKey, $keys->toList());
             })
             ->contain($contain);
 
@@ -2216,8 +2225,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ->toArray();
 
         $contain = $query->contain();
-        $results = $query->indexBy($primaryKey)->toArray();
         $primaryKey = (array)$primaryKey;
+        $results = $query
+            ->indexBy(function ($e) use ($primaryKey) {
+                return implode(';', $e->extract($primaryKey));
+            })
+            ->toArray();
+
         $objects = $objects
             ->map(function ($object) use ($results, $contain, $properties, $primaryKey) {
                 $key = implode(';', $object->extract($primaryKey));
