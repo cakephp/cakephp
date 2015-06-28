@@ -79,7 +79,7 @@ class LazyEagerLoader
         $query = $source
             ->find()
             ->select((array)$primaryKey)
-            ->where(function ($exp) use ($primaryKey, $keys, $source) {
+            ->where(function ($exp, $q) use ($primaryKey, $keys, $source) {
                 if (is_array($primaryKey) && count($primaryKey) === 1) {
                     $primaryKey = current($primaryKey);
                 }
@@ -88,10 +88,12 @@ class LazyEagerLoader
                     return $exp->in($source->aliasField($primaryKey), $keys->toList());
                 }
 
+                $types = array_intersect_key($q->defaultTypes(), array_flip($primaryKey));
                 $primaryKey = array_map([$source, 'aliasField'], $primaryKey);
-                return new TupleComparison($primaryKey, $keys->toList());
+                return new TupleComparison($primaryKey, $keys->toList(), $types, 'IN');
             })
             ->contain($contain);
+
 
         foreach ($query->eagerLoader()->attachableAssociations($source) as $loadable) {
             $config = $loadable->config();
