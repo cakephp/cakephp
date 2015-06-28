@@ -2206,12 +2206,20 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             })
             ->contain($contain);
 
-        $assocs = $this->associations();
+        $properties = (new Collection($this->associations()))
+            ->indexBy(function ($assoc) {
+                return $assoc->name();
+            })
+            ->map(function ($assoc) {
+                return $assoc->property();
+            })
+            ->toArray();
+
         $contain = $query->contain();
         $results = $query->indexBy($primaryKey)->toArray();
         $primaryKey = (array)$primaryKey;
         $objects = $objects
-            ->map(function ($object) use ($results, $contain, $assocs, $primaryKey) {
+            ->map(function ($object) use ($results, $contain, $properties, $primaryKey) {
                 $key = implode(';', $object->extract($primaryKey));
                 if (!isset($results[$key])) {
                     return $object;
@@ -2219,7 +2227,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
                 $loaded = $results[$key];
                 foreach ($contain as $assoc => $config) {
-                    $property = $assocs->get($assoc)->property();
+                    $property = $properties[$assoc];
                     $object->set($property, $loaded->get($property), ['useSetters' => false]);
                     $object->dirty($property, false);
                 }
