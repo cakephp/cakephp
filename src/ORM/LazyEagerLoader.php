@@ -33,6 +33,15 @@ class LazyEagerLoader
         }
 
         $objects = new Collection($objects);
+        $query = $this->_getQuery($objects,  $contain, $source);
+        $associations = array_keys($query->contain());
+
+        $objects = $this->_injectResults($objects, $query, $associations, $source);
+        return $returnSingle ? array_shift($objects) : $objects;
+    }
+
+    protected function _getQuery($objects, $contain, $source)
+    {
         $primaryKey = $source->primaryKey();
         $method = is_string($primaryKey) ? 'get' : 'extract';
 
@@ -40,7 +49,7 @@ class LazyEagerLoader
             return $entity->{$method}($primaryKey);
         });
 
-        $query = $source
+        return $source
             ->find()
             ->where(function ($exp) use ($primaryKey, $keys, $source) {
                 if (is_array($primaryKey) && count($primaryKey) === 1) {
@@ -55,41 +64,44 @@ class LazyEagerLoader
                 return new TupleComparison($primaryKey, $keys->toList());
             })
             ->contain($contain);
+    }
 
-        $properties = (new Collection($source->associations()))
-            ->indexBy(function ($assoc) {
-                return $assoc->name();
-            })
-            ->map(function ($assoc) {
-                return $assoc->property();
-            })
-            ->toArray();
+    protected function _getPropertyMap($source, $associations)
+    {
+        $map = [];
+        foreach ($associations as $assoc) {
+            $map[$assoc] = $source->associations()->get($assoc)->property();
+        }
+        return $map;
+    }
 
-        $contain = $query->contain();
-        $primaryKey = (array)$primaryKey;
-        $results = $query
+    protected function _injectResults($objects, $results, $associations, $source)
+    {
+        $injected = [];
+        $properties = $this->_getPropertyMap($source, $associations);
+        $primaryKey = (array)$source->primaryKey();
+        $results = $results
             ->indexBy(function ($e) use ($primaryKey) {
                 return implode(';', $e->extract($primaryKey));
             })
             ->toArray();
 
-        $objects = $objects
-            ->map(function ($object) use ($results, $contain, $properties, $primaryKey) {
-                $key = implode(';', $object->extract($primaryKey));
-                if (!isset($results[$key])) {
-                    return $object;
-                }
+        foreach ($objects as $k => $object) {
+            $key = implode(';', $object->extract($primaryKey));
+            if (!isset($results[$key])) {
+                $injected[$k] = $object;
+                continue;
+            }
 
-                $loaded = $results[$key];
-                foreach ($contain as $assoc => $config) {
-                    $property = $properties[$assoc];
-                    $object->set($property, $loaded->get($property), ['useSetters' => false]);
-                    $object->dirty($property, false);
-                }
-                return $object;
-            });
+            $loaded = $results[$key];
+            foreach ($associations as $assoc) {
+                $property = $properties[$assoc];
+                $object->set($property, $loaded->get($property), ['useSetters' => false]);
+                $object->dirty($property, false);
+            }
+            $injected[$k] = $object;
+        }
 
-        return $returnSingle ? $objects->first() : $objects->toList();
+        return $injected;
     }
-
 }
