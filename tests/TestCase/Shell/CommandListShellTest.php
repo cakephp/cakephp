@@ -103,14 +103,13 @@ class CommandListShellTest extends TestCase
         $this->Shell->main();
         $output = $this->out->messages();
         $output = implode("\n", $output);
+        rename(APP . 'Shell' . DS . 'I18nShell.php', APP . 'Shell' . DS . 'I18mShell.php');
 
-        $expected = "/\[.*CORE.*\] orm_cache, plugin, server/";
+        $expected = "/\[.*CORE.*\] orm_cache, plugin, routes, server/";
         $this->assertRegExp($expected, $output);
 
         $expected = "/\[.*app.*\] i18n, sample/";
         $this->assertRegExp($expected, $output);
-
-        rename(APP . 'Shell' . DS . 'I18nShell.php', APP . 'Shell' . DS . 'I18mShell.php');
     }
 
     /**
