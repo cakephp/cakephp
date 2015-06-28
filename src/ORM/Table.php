@@ -2181,9 +2181,39 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         return $rules;
     }
 
-    public function loadInto($objects, array $contain)
+    /**
+     * Loads the specified associations in the passed entity or list of entities
+     * by executing extra queries in the database and merging the results in the
+     * appropriate properties.
+     *
+     * ### Example:
+     *
+     * ```
+     * $user = $usersTable->get(1);
+     * $user = $usersTable->loadInto($user, ['Articles.Tags', 'Articles.Comments']);
+     * echo $user->articles[0]->title;
+     * ```
+     *
+     * You can also load associations for multiple entities at once
+     *
+     * ### Example:
+     *
+     * ```
+     * $users = $usersTable->find()->where([...])->toList();
+     * $users = $usersTable->loadInto($users, ['Articles.Tags', 'Articles.Comments']);
+     * echo $user[1]->articles[0]->title;
+     * ```
+     *
+     * The properties for the associations to be loaded will be overwritten on each entity.
+     *
+     * @param Cake\Datasource\EntityInterface|array $entities a single entity or list of entities
+     * @param array $contain A `contain()` compatible array.
+     * @see Cake\ORM\Query\contain()
+     * @return Cake\Datasource\EntityInterface|array
+     */
+    public function loadInto($entities, array $contain)
     {
-        return (new LazyEagerLoader)->loadInto($objects, $contain, $this);
+        return (new LazyEagerLoader)->loadInto($entities, $contain, $this);
     }
 
     /**
