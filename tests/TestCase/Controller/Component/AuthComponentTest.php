@@ -1396,4 +1396,24 @@ class AuthComponentTest extends TestCase
         $this->Auth->sessionKey = false;
         $this->assertInstanceOf('Cake\Auth\Storage\MemoryStorage', $this->Auth->storage());
     }
+
+    /**
+     * Test that setting config 'earlyAuth' to true make AuthComponent do the initial
+     * checks in beforeFilter() instead of startup().
+     *
+     * @return void
+     */
+    public function testEarlyAuthConfig()
+    {
+        $this->Controller->components()->set('Auth', $this->Auth);
+        $this->Auth->earlyAuthTest = true;
+
+        $this->Controller->startupProcess();
+        $this->assertEquals('Controller.startup', $this->Auth->authCheckCalledFrom);
+
+        $this->Auth->authCheckCalledFrom = null;
+        $this->Auth->config('earlyAuth', true);
+        $this->Controller->startupProcess();
+        $this->assertEquals('Controller.initialize', $this->Auth->authCheckCalledFrom);
+    }
 }

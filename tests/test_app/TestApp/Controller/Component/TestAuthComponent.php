@@ -14,6 +14,7 @@
 namespace TestApp\Controller\Component;
 
 use Cake\Controller\Component\AuthComponent;
+use Cake\Event\Event;
 
 /**
  * TestAuthComponent class
@@ -21,6 +22,15 @@ use Cake\Controller\Component\AuthComponent;
  */
 class TestAuthComponent extends AuthComponent
 {
+    public function _authCheck(Event $event)
+    {
+        if (isset($this->earlyAuthTest)) {
+            $this->authCheckCalledFrom = $event->name;
+            return;
+        }
+
+        return parent::_authCheck($event);
+    }
 
     /**
      * Helper method to add/set an authenticate object instance

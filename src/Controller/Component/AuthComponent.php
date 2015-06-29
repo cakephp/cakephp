@@ -138,6 +138,10 @@ class AuthComponent extends Component
      * - `storage` - Storage class to use for persisting user record. When using
      *   stateless authenticator you should set this to 'Memory'. Defaults to 'Session'.
      *
+     * - 'earlyAuth' - If set to true initial auth checks are done in beforeFilter()
+     *   callback instead of startup(), i.e. before controller's beforeFilter().
+     *   Defaults to false for backwards compatibility.
+     *
      * @var array
      */
     protected $_defaultConfig = [
@@ -150,7 +154,8 @@ class AuthComponent extends Component
         'logoutRedirect' => null,
         'authError' => null,
         'unauthorizedRedirect' => true,
-        'storage' => 'Session'
+        'storage' => 'Session',
+        'earlyAuth' => false
     ];
 
     /**
@@ -243,13 +248,39 @@ class AuthComponent extends Component
     }
 
     /**
-     * Main execution method. Handles redirecting of invalid users, and processing
-     * of login form data.
+     * Callback for Controller.initialize event.
      *
-     * @param \Cake\Event\Event $event The startup event.
+     * @param \Cake\Event\Event $event The Controller.initialize event instance.
+     * @return void|\Cake\Network\Response
+     */
+    public function beforeFilter(Event $event)
+    {
+        if ($this->_config['earlyAuth']) {
+            return $this->_authCheck($event);
+        }
+    }
+
+    /**
+     * Callback for Controller.startup event.
+     *
+     * @param \Cake\Event\Event $event The Controller.startup event instance.
      * @return void|\Cake\Network\Response
      */
     public function startup(Event $event)
+    {
+        if (!$this->_config['earlyAuth']) {
+            return $this->_authCheck($event);
+        }
+    }
+
+    /**
+     * Main execution method. Handles initial authentication check and redirecting
+     * of invalid users.
+     *
+     * @param \Cake\Event\Event $event Event instance.
+     * @return void|\Cake\Network\Response
+     */
+    public function _authCheck(Event $event)
     {
         $controller = $event->subject();
 
