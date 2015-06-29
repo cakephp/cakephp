@@ -236,6 +236,7 @@ class SelectBoxWidget extends BasicWidget
             $out[] = $this->_templates->format('option', [
                 'value' => $escape ? h($optAttrs['value']) : $optAttrs['value'],
                 'text' => $escape ? h($optAttrs['text']) : $optAttrs['text'],
+                'templateVars' => isset($optAttrs['templateVars']) ? $optAttrs['templateVars'] : [],
                 'attrs' => $this->_templates->formatAttributes($optAttrs, ['text', 'value']),
             ]);
         }
