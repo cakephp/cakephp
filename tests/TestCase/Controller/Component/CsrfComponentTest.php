@@ -274,7 +274,7 @@ class CsrfComponentTest extends TestCase
         $cookie = $controller->response->cookie('token');
         $this->assertNotEmpty($cookie, 'Should set a token.');
         $this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
-        $this->assertWithinRange((new Time('+1 hour'))->format('U'), $cookie['expire'], 1);
+        $this->assertWithinRange((new Time('+1 hour'))->format('U'), $cookie['expire'], 1, 'session duration.');
         $this->assertEquals('/dir/', $cookie['path'], 'session path.');
         $this->assertTrue($cookie['secure'], 'cookie security flag missing');
     }

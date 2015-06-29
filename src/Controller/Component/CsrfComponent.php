@@ -121,14 +121,14 @@ class CsrfComponent extends Component
      */
     protected function _setCookie(Request $request, Response $response)
     {
-        $expires = new Time($this->_config['expiry']);
+        $expiry = new Time($this->_config['expiry']);
         $value = Security::hash(Text::uuid(), 'sha1', true);
 
         $request->params['_csrfToken'] = $value;
         $response->cookie([
             'name' => $this->_config['cookieName'],
             'value' => $value,
-            'expire' => $expires->format('U'),
+            'expire' => $expiry->format('U'),
             'path' => $request->webroot,
             'secure' => $this->_config['secure'],
         ]);
