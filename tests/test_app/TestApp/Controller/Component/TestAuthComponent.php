@@ -22,7 +22,7 @@ use Cake\Event\Event;
  */
 class TestAuthComponent extends AuthComponent
 {
-    public function _authCheck(Event $event)
+    protected function _authCheck(Event $event)
     {
         if (isset($this->earlyAuthTest)) {
             $this->authCheckCalledFrom = $event->name;

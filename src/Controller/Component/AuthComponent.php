@@ -280,7 +280,7 @@ class AuthComponent extends Component
      * @param \Cake\Event\Event $event Event instance.
      * @return void|\Cake\Network\Response
      */
-    public function _authCheck(Event $event)
+    protected function _authCheck(Event $event)
     {
         $controller = $event->subject();
 
