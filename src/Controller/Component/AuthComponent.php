@@ -135,6 +135,9 @@ class AuthComponent extends Component
      *   - If set to a string or array the value is used as a URL to redirect to.
      *   - If set to false a `ForbiddenException` exception is thrown instead of redirecting.
      *
+     * - `storage` - Storage class to use for persisting user record. When using
+     *   stateless authenticator you should set this to 'Memory'. Defaults to 'Session'.
+     *
      * @var array
      */
     protected $_defaultConfig = [
