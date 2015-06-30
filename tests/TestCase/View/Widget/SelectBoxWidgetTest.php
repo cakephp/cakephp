@@ -812,10 +812,10 @@ class SelectBoxWidgetTest extends TestCase
             ['option' => ['value' => 'a', 'opt' => 'opt-1']],
             'Albatross',
             '/option',
-            ['option' => ['value' => 'b', 'opt' => '']],
+            ['option' => ['value' => 'b', 'opt' => 'option']],
             'Budgie',
             '/option',
-            ['option' => ['value' => 'c', 'opt' => '']],
+            ['option' => ['value' => 'c', 'opt' => 'option']],
             'Canary',
             '/option',
             '/select'

@@ -161,7 +161,8 @@ class SelectBoxWidget extends BasicWidget
         if (isset($data['disabled']) && is_array($data['disabled'])) {
             $disabled = $data['disabled'];
         }
-        return $this->_renderOptions($options, $disabled, $selected, $data['escape']);
+        $templateVars = $data['templateVars'];
+        return $this->_renderOptions($options, $disabled, $selected, $templateVars, $data['escape']);
     }
 
     /**
@@ -171,10 +172,11 @@ class SelectBoxWidget extends BasicWidget
      * @param array $optgroup The opt group data.
      * @param array|null $disabled The options to disable.
      * @param array|string|null $selected The options to select.
+     * @param array $templateVars Additional template variables.
      * @param bool $escape Toggle HTML escaping
      * @return string Formatted template string
      */
-    protected function _renderOptgroup($label, $optgroup, $disabled, $selected, $escape)
+    protected function _renderOptgroup($label, $optgroup, $disabled, $selected, $templateVars, $escape)
     {
         $opts = $optgroup;
         $attrs = [];
@@ -183,11 +185,12 @@ class SelectBoxWidget extends BasicWidget
             $label = $optgroup['text'];
             $attrs = $optgroup;
         }
-        $groupOptions = $this->_renderOptions($opts, $disabled, $selected, $escape);
+        $groupOptions = $this->_renderOptions($opts, $disabled, $selected, $templateVars, $escape);
 
         return $this->_templates->format('optgroup', [
             'label' => $escape ? h($label) : $label,
             'content' => implode('', $groupOptions),
+            'templateVars' => $templateVars,
             'attrs' => $this->_templates->formatAttributes($attrs, ['text', 'options']),
         ]);
     }
@@ -200,10 +203,11 @@ class SelectBoxWidget extends BasicWidget
      * @param array $options The options to render.
      * @param array|null $disabled The options to disable.
      * @param array|string|null $selected The options to select.
+     * @param array $templateVars Additional template variables.
      * @param bool $escape Toggle HTML escaping.
      * @return array Option elements.
      */
-    protected function _renderOptions($options, $disabled, $selected, $escape)
+    protected function _renderOptions($options, $disabled, $selected, $templateVars, $escape)
     {
         $out = [];
         foreach ($options as $key => $val) {
@@ -212,7 +216,7 @@ class SelectBoxWidget extends BasicWidget
             if ((!is_int($key) && $arrayVal) ||
                 (is_int($key) && $arrayVal && isset($val['options']))
             ) {
-                $out[] = $this->_renderOptgroup($key, $val, $disabled, $selected, $escape);
+                $out[] = $this->_renderOptgroup($key, $val, $disabled, $selected, $templateVars, $escape);
                 continue;
             }
 
@@ -220,10 +224,14 @@ class SelectBoxWidget extends BasicWidget
             $optAttrs = [
                 'value' => $key,
                 'text' => $val,
+                'templateVars' => [],
             ];
             if (is_array($val) && isset($optAttrs['text'], $optAttrs['value'])) {
                 $optAttrs = $val;
                 $key = $optAttrs['value'];
+            }
+            if (!isset($optAttrs['templateVars'])) {
+                $optAttrs['templateVars'] = [];
             }
             if ($this->_isSelected($key, $selected)) {
                 $optAttrs['selected'] = true;
@@ -231,12 +239,15 @@ class SelectBoxWidget extends BasicWidget
             if ($this->_isDisabled($key, $disabled)) {
                 $optAttrs['disabled'] = true;
             }
+            if (!empty($templateVars)) {
+                $optAttrs['templateVars'] = array_merge($templateVars, $optAttrs['templateVars']);
+            }
             $optAttrs['escape'] = $escape;
 
             $out[] = $this->_templates->format('option', [
                 'value' => $escape ? h($optAttrs['value']) : $optAttrs['value'],
                 'text' => $escape ? h($optAttrs['text']) : $optAttrs['text'],
-                'templateVars' => isset($optAttrs['templateVars']) ? $optAttrs['templateVars'] : [],
+                'templateVars' => $optAttrs['templateVars'],
                 'attrs' => $this->_templates->formatAttributes($optAttrs, ['text', 'value']),
             ]);
         }
