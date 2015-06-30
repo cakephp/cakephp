@@ -657,4 +657,35 @@ class RadioWidgetTest extends TestCase
             $result
         );
     }
+
+    /**
+     * Ensure that template vars work.
+     *
+     * @return void
+     */
+    public function testRenderTemplateVars()
+    {
+        $this->templates->add([
+            'radioWrapper' => '<div class="radio" data-var="{{wrapperVar}}">{{label}}</div>',
+            'radio' => '<input type="radio" data-i="{{inputVar}}" name="{{name}}" value="{{value}}"{{attrs}}>',
+            'nestingLabel' => '<label{{attrs}}>{{input}}{{text}} {{labelVar}} {{wrapperVar}}</label>',
+        ]);
+        $label = new NestingLabelWidget($this->templates);
+        $radio = new RadioWidget($this->templates, $label);
+        $data = [
+            'name' => 'Versions[ver]',
+            'options' => [
+                ['value' => '1x', 'text' => 'one x', 'templateVars' => ['labelVar' => 'l-var', 'inputVar' => 'i-var']],
+                '2' => 'two',
+            ],
+            'templateVars' => [
+                'wrapperVar' => 'wrap-var',
+            ]
+        ];
+        $result = $radio->render($data, $this->context);
+        $this->assertContains('data-var="wrap-var"><label', $result);
+        $this->assertContains('type="radio" data-i="i-var"', $result);
+        $this->assertContains('one x l-var wrap-var</label>', $result);
+        $this->assertContains('two  wrap-var</label>', $result);
+    }
 }
