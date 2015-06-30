@@ -471,7 +471,7 @@ class DateTimeWidgetTest extends TestCase
             'no 13 in value'
         );
     }
-    
+
     /**
      * Test rendering month widget with names.
      *
@@ -882,7 +882,7 @@ class DateTimeWidgetTest extends TestCase
         );
         $this->assertNotContains('value="60"', $result, 'No 60 value');
     }
-    
+
     /**
      * Test rendering the minute widget with empty at zero options.
      *
@@ -899,7 +899,6 @@ class DateTimeWidgetTest extends TestCase
             'hour' => false,
             'minute' => [
                 'data-foo' => 'test',
-                
             ],
             'empty' => '-',
             'default' => '',
@@ -940,7 +939,7 @@ class DateTimeWidgetTest extends TestCase
         $this->assertNotContains('value="0"', $result, 'No unpadded 0 value');
         $this->assertNotContains('value="60"', $result, 'No 60 value');
     }
-    
+
     /**
      * Test minutes with interval values.
      *
