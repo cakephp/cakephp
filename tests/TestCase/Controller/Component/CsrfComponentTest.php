@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\CsrfComponent;
 use Cake\Event\Event;
+use Cake\I18n\Time;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
@@ -262,7 +263,7 @@ class CsrfComponentTest extends TestCase
 
         $component = new CsrfComponent($this->registry, [
             'cookieName' => 'token',
-            'expiry' => 90,
+            'expiry' => '+1 hour',
             'secure' => true
         ]);
 
@@ -273,7 +274,7 @@ class CsrfComponentTest extends TestCase
         $cookie = $controller->response->cookie('token');
         $this->assertNotEmpty($cookie, 'Should set a token.');
         $this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
-        $this->assertEquals(90, $cookie['expire'], 'session duration.');
+        $this->assertWithinRange((new Time('+1 hour'))->format('U'), $cookie['expire'], 1, 'session duration.');
         $this->assertEquals('/dir/', $cookie['path'], 'session path.');
         $this->assertTrue($cookie['secure'], 'cookie security flag missing');
     }

@@ -16,6 +16,7 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Event\Event;
+use Cake\I18n\Time;
 use Cake\Network\Exception\InvalidCsrfTokenException;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -120,12 +121,14 @@ class CsrfComponent extends Component
      */
     protected function _setCookie(Request $request, Response $response)
     {
+        $expiry = new Time($this->_config['expiry']);
         $value = Security::hash(Text::uuid(), 'sha1', true);
+
         $request->params['_csrfToken'] = $value;
         $response->cookie([
             'name' => $this->_config['cookieName'],
             'value' => $value,
-            'expire' => $this->_config['expiry'],
+            'expire' => $expiry->format('U'),
             'path' => $request->webroot,
             'secure' => $this->_config['secure'],
         ]);
