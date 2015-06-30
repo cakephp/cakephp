@@ -121,10 +121,15 @@ class MultiCheckboxWidget implements WidgetInterface
             $checkbox = [
                 'value' => $key,
                 'text' => $val,
-                'templateVars' => $data['templateVars']
             ];
             if (is_array($val) && isset($val['text'], $val['value'])) {
                 $checkbox = $val;
+            }
+            if (!isset($checkbox['templateVars'])) {
+                $checkbox['templateVars'] = $data['templateVars'];
+            }
+            if (!empty($data['templateVars'])) {
+                $checkbox['templateVars'] = array_merge($data['templateVars'], $checkbox['templateVars']);
             }
             $checkbox['name'] = $data['name'];
             $checkbox['escape'] = $data['escape'];
@@ -156,6 +161,7 @@ class MultiCheckboxWidget implements WidgetInterface
         $input = $this->_templates->format('checkbox', [
             'name' => $checkbox['name'] . '[]',
             'value' => $checkbox['escape'] ? h($checkbox['value']) : $checkbox['value'],
+            'templateVars' => $checkbox['templateVars'],
             'attrs' => $this->_templates->formatAttributes(
                 $checkbox,
                 ['name', 'value', 'text']
@@ -166,6 +172,7 @@ class MultiCheckboxWidget implements WidgetInterface
             'for' => $checkbox['id'],
             'escape' => $checkbox['escape'],
             'text' => $checkbox['text'],
+            'templateVars' => $checkbox['templateVars'],
             'input' => $input,
         ];
         if (!empty($checkbox['checked']) && empty($labelAttrs['class'])) {
@@ -174,6 +181,7 @@ class MultiCheckboxWidget implements WidgetInterface
         $label = $this->_label->render($labelAttrs, $context);
 
         return $this->_templates->format('checkboxWrapper', [
+            'templateVars' => $checkbox['templateVars'],
             'label' => $label,
             'input' => $input
         ]);

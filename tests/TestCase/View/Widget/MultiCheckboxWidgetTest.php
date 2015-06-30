@@ -312,4 +312,58 @@ class MultiCheckboxWidgetTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
     }
+
+    /**
+     * Test render templateVars
+     *
+     * @return void
+     */
+    public function testRenderTemplateVars()
+    {
+        $templates = [
+            'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}" data-var="{{inputVar}}" {{attrs}}>',
+            'label' => '<label{{attrs}}>{{text}} {{inputVar}}</label>',
+            'checkboxWrapper' => '<div class="checkbox" data-wrap="{{wrapVar}}">{{input}}{{label}}</div>',
+        ];
+        $this->templates->add($templates);
+
+        $label = new LabelWidget($this->templates);
+        $input = new MultiCheckboxWidget($this->templates, $label);
+        $data = [
+            'name' => 'Tags[id]',
+            'options' => [
+                ['value' => '1', 'text' => 'CakePHP', 'templateVars' => ['inputVar' => 'i-var']],
+                '1x' => 'Development',
+            ],
+            'templateVars' => ['inputVar' => 'default', 'wrapVar' => 'val'],
+        ];
+        $result = $input->render($data, $this->context);
+        $expected = [
+            ['div' => ['class' => 'checkbox', 'data-wrap' => 'val']],
+            ['input' => [
+                'type' => 'checkbox',
+                'name' => 'Tags[id][]',
+                'value' => 1,
+                'id' => 'tags-id-1',
+                'data-var' => 'i-var',
+            ]],
+            ['label' => ['for' => 'tags-id-1']],
+            'CakePHP i-var',
+            '/label',
+            '/div',
+            ['div' => ['class' => 'checkbox', 'data-wrap' => 'val']],
+            ['input' => [
+                'type' => 'checkbox',
+                'name' => 'Tags[id][]',
+                'value' => '1x',
+                'id' => 'tags-id-1x',
+                'data-var' => 'default'
+            ]],
+            ['label' => ['for' => 'tags-id-1x']],
+            'Development default',
+            '/label',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+    }
 }
