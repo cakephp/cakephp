@@ -4434,7 +4434,7 @@ class TableTest extends TestCase
         $articles = $table->hasMany('Articles');
         $articles->belongsToMany('Tags');
 
-        $entities = $table->find()->toList();
+        $entities = $table->find()->compile();
         $contain = ['SiteArticles', 'Articles.Tags'];
         $result = $table->loadInto($entities, $contain);
 
