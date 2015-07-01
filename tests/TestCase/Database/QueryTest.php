@@ -2669,6 +2669,38 @@ class QueryTest extends TestCase
             (new \DateTime($result->fetchAll('assoc')[0]['d']))->format('U'),
             1
         );
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select([
+                'd' => $query->func()->datePart('day', 'created'),
+                'm' => $query->func()->datePart('month', 'created'),
+                'y' => $query->func()->datePart('year', 'created'),
+                'de' => $query->func()->extract('day', 'created'),
+                'me' => $query->func()->extract('month', 'created'),
+                'ye' => $query->func()->extract('year', 'created'),
+                'wd' => $query->func()->weekday('created'),
+                'dow' => $query->func()->dayOfWeek('created'),
+                'addDays' => $query->func()->dateAdd('created', +2, 'days'),
+                'minusYears' => $query->func()->dateAdd('created', -2, 'years')
+            ])
+            ->from('users')
+            ->where(['username' => 'mariano'])
+            ->execute()
+            ->fetchAll('assoc');
+        $expected = [
+            'd' => '17',
+            'm' => '03',
+            'y' => '2007',
+            'de' => '17',
+            'me' => '03',
+            'ye' => '2007',
+            'wd' => '6', // Saturday
+            'dow' => '6',
+            'addDays' => '2007-03-19 01:16:23',
+            'minusYears' => '2005-03-17 01:16:23'
+        ];
+        $this->assertEquals($expected, $result[0]);
     }
 
     /**
