@@ -77,12 +77,14 @@ class LabelWidget implements WidgetInterface
             'input' => '',
             'hidden' => '',
             'escape' => true,
+            'templateVars' => []
         ];
 
         return $this->_templates->format($this->_labelTemplate, [
             'text' => $data['escape'] ? h($data['text']) : $data['text'],
             'input' => $data['input'],
             'hidden' => $data['hidden'],
+            'templateVars' => $data['templateVars'],
             'attrs' => $this->_templates->formatAttributes($data, ['text', 'input', 'hidden']),
         ]);
     }

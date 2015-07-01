@@ -66,6 +66,7 @@ class BasicWidget implements WidgetInterface
             'val' => null,
             'type' => 'text',
             'escape' => true,
+            'templateVars' => []
         ];
         $data['value'] = $data['val'];
         unset($data['val']);
@@ -73,6 +74,7 @@ class BasicWidget implements WidgetInterface
         return $this->_templates->format('input', [
             'name' => $data['name'],
             'type' => $data['type'],
+            'templateVars' => $data['templateVars'],
             'attrs' => $this->_templates->formatAttributes(
                 $data,
                 ['name', 'type']

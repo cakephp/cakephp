@@ -94,7 +94,8 @@ class RadioWidget implements WidgetInterface
             'escape' => true,
             'label' => true,
             'empty' => false,
-            'idPrefix' => null
+            'idPrefix' => null,
+            'templateVars' => [],
         ];
         if ($data['options'] instanceof Traversable) {
             $options = iterator_to_array($data['options']);
@@ -150,24 +151,27 @@ class RadioWidget implements WidgetInterface
         $escape = $data['escape'];
         if (is_int($val) && isset($text['text'], $text['value'])) {
             $radio = $text;
-            $text = $radio['text'];
         } else {
             $radio = ['value' => $val, 'text' => $text];
         }
         $radio['name'] = $data['name'];
 
+        if (!isset($radio['templateVars'])) {
+            $radio['templateVars'] = [];
+        }
+        if (!empty($data['templateVars'])) {
+            $radio['templateVars'] = array_merge($data['templateVars'], $radio['templateVars']);
+        }
+
         if (empty($radio['id'])) {
             $radio['id'] = $this->_id($radio['name'], $radio['value']);
         }
-
         if (isset($data['val']) && is_bool($data['val'])) {
             $data['val'] = $data['val'] ? 1 : 0;
         }
-
         if (isset($data['val']) && strval($data['val']) === strval($radio['value'])) {
             $radio['checked'] = true;
         }
-
         if ($this->_isDisabled($radio, $data['disabled'])) {
             $radio['disabled'] = true;
         }
@@ -181,6 +185,7 @@ class RadioWidget implements WidgetInterface
         $input = $this->_templates->format('radio', [
             'name' => $radio['name'],
             'value' => $escape ? h($radio['value']) : $radio['value'],
+            'templateVars' => $radio['templateVars'],
             'attrs' => $this->_templates->formatAttributes($radio, ['name', 'value', 'text']),
         ]);
 
@@ -201,6 +206,7 @@ class RadioWidget implements WidgetInterface
         return $this->_templates->format('radioWrapper', [
             'input' => $input,
             'label' => $label,
+            'templateVars' => $data['templateVars'],
         ]);
     }
 
@@ -227,6 +233,7 @@ class RadioWidget implements WidgetInterface
             'for' => $radio['id'],
             'escape' => $escape,
             'text' => $radio['text'],
+            'templateVars' => $radio['templateVars'],
             'input' => $input,
         ];
         return $this->_label->render($labelAttrs, $context);

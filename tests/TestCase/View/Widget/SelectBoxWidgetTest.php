@@ -780,4 +780,46 @@ class SelectBoxWidgetTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
     }
+
+    /**
+     * Ensure templateVars option is hooked up.
+     *
+     * @return void
+     */
+    public function testRenderTemplateVars()
+    {
+        $this->templates->add([
+            'select' => '<select custom="{{custom}}" name="{{name}}"{{attrs}}>{{content}}</select>',
+            'option' => '<option opt="{{opt}}" value="{{value}}"{{attrs}}>{{text}}</option>',
+        ]);
+
+        $input = new SelectBoxWidget($this->templates);
+        $data = [
+            'templateVars' => ['custom' => 'value', 'opt' => 'option'],
+            'name' => 'birds',
+            'options' => [
+                ['value' => 'a', 'text' => 'Albatross', 'templateVars' => ['opt' => 'opt-1']],
+                'b' => 'Budgie',
+                'c' => 'Canary',
+            ]
+        ];
+        $result = $input->render($data, $this->context);
+        $expected = [
+            'select' => [
+                'name' => 'birds',
+                'custom' => 'value',
+            ],
+            ['option' => ['value' => 'a', 'opt' => 'opt-1']],
+            'Albatross',
+            '/option',
+            ['option' => ['value' => 'b', 'opt' => 'option']],
+            'Budgie',
+            '/option',
+            ['option' => ['value' => 'c', 'opt' => 'option']],
+            'Canary',
+            '/option',
+            '/select'
+        ];
+        $this->assertHtml($expected, $result);
+    }
 }

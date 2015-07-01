@@ -117,4 +117,34 @@ class BasicWidgetTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
     }
+
+    /**
+     * Test render with template params.
+     *
+     * @return void
+     */
+    public function testRenderTemplateParams()
+    {
+        $text = new BasicWidget(new StringTemplate([
+            'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}><span>{{help}}</span>',
+        ]));
+        $data = [
+            'name' => 'my_input',
+            'type' => 'email',
+            'class' => 'form-control',
+            'required' => true,
+            'templateVars' => ['help' => 'SOS']
+        ];
+        $result = $text->render($data, $this->context);
+        $expected = [
+            'input' => [
+                'type' => 'email',
+                'name' => 'my_input',
+                'class' => 'form-control',
+                'required' => 'required',
+            ],
+            '<span', 'SOS', '/span'
+        ];
+        $this->assertHtml($expected, $result);
+    }
 }

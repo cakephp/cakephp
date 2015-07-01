@@ -57,11 +57,13 @@ class FileWidget implements WidgetInterface
         $data += [
             'name' => '',
             'escape' => true,
+            'templateVars' => [],
         ];
         unset($data['val']);
 
         return $this->_templates->format('file', [
             'name' => $data['name'],
+            'templateVars' => $data['templateVars'],
             'attrs' => $this->_templates->formatAttributes(
                 $data,
                 ['name', 'val']

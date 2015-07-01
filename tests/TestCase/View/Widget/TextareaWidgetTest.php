@@ -81,4 +81,30 @@ class TextareaWidgetTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
     }
+
+    /**
+     * Ensure templateVars option is hooked up.
+     *
+     * @return void
+     */
+    public function testRenderTemplateVars()
+    {
+        $this->templates->add([
+            'textarea' => '<textarea custom="{{custom}}" name="{{name}}"{{attrs}}>{{value}}</textarea>',
+        ]);
+
+        $input = new TextareaWidget($this->templates);
+        $data = [
+            'templateVars' => ['custom' => 'value'],
+            'name' => 'comment',
+            'val' => 'body'
+        ];
+        $result = $input->render($data, $this->context);
+        $expected = [
+            'textarea' => ['name' => 'comment', 'rows' => 5, 'custom' => 'value'],
+            'body',
+            '/textarea',
+        ];
+        $this->assertHtml($expected, $result);
+    }
 }
