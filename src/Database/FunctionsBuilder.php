@@ -193,6 +193,9 @@ class FunctionsBuilder
      */
     public function dateAdd($expression, $value, $unit, $types = [])
     {
+        if (!is_numeric($value)) {
+            $value = 0;
+        }
         $interval = $value . ' ' . $unit;
         $expression = $this->_literalArgumentFunction('DATE_ADD', $expression, $types);
         $expression->type(', INTERVAL')->add([$interval => 'literal']);
