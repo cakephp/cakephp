@@ -2681,7 +2681,7 @@ class QueryTest extends TestCase
                 'ye' => $query->func()->extract('year', 'created'),
                 'wd' => $query->func()->weekday('created'),
                 'dow' => $query->func()->dayOfWeek('created'),
-                'addDays' => $query->func()->dateAdd('created', +2, 'day'),
+                'addDays' => $query->func()->dateAdd('created', 2, 'day'),
                 'substractYears' => $query->func()->dateAdd('created', -2, 'year')
             ])
             ->from('comments')
