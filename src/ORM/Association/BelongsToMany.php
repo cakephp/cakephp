@@ -348,11 +348,11 @@ class BelongsToMany extends Association
             return true;
         }
         $foreignKey = (array)$this->foreignKey();
-        $primaryKey = (array)$this->source()->primaryKey();
+        $bindingKey = (array)$this->bindingKey();
         $conditions = [];
 
-        if ($primaryKey) {
-            $conditions = array_combine($foreignKey, $entity->extract((array)$primaryKey));
+        if ($bindingKey) {
+            $conditions = array_combine($foreignKey, $entity->extract($bindingKey));
         }
 
         $table = $this->junction();
@@ -533,7 +533,7 @@ class BelongsToMany extends Association
         $foreignKey = (array)$this->foreignKey();
         $assocForeignKey = (array)$belongsTo->foreignKey();
         $targetPrimaryKey = (array)$target->primaryKey();
-        $sourcePrimaryKey = (array)$source->primaryKey();
+        $bindingKey = (array)$this->bindingKey();
         $jointProperty = $this->_junctionProperty;
         $junctionAlias = $junction->alias();
 
@@ -545,7 +545,7 @@ class BelongsToMany extends Association
 
             $joint->set(array_combine(
                 $foreignKey,
-                $sourceEntity->extract($sourcePrimaryKey)
+                $sourceEntity->extract($bindingKey)
             ), ['guard' => false]);
             $joint->set(array_combine($assocForeignKey, $e->extract($targetPrimaryKey)), ['guard' => false]);
             $saved = $junction->save($joint, $options);
@@ -718,10 +718,10 @@ class BelongsToMany extends Association
      */
     public function replaceLinks(EntityInterface $sourceEntity, array $targetEntities, array $options = [])
     {
-        $primaryKey = (array)$this->source()->primaryKey();
-        $primaryValue = $sourceEntity->extract($primaryKey);
+        $bindingKey = (array)$this->bindingKey();
+        $primaryValue = $sourceEntity->extract($bindingKey);
 
-        if (count(array_filter($primaryValue, 'strlen')) !== count($primaryKey)) {
+        if (count(array_filter($primaryValue, 'strlen')) !== count($bindingKey)) {
             $message = 'Could not find primary key value for source entity';
             throw new InvalidArgumentException($message);
         }
