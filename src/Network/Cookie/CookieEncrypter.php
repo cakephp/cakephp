@@ -168,7 +168,8 @@ class CookieEncrypter
      * @param string $name
      * @return array
      */
-    protected function _encryption($name) {
+    protected function _encryption($name)
+    {
         $config = (array)$this->config($name);
         $config += $this->_config[static::ALL];
 

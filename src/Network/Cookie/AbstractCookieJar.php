@@ -2,8 +2,8 @@
 
 namespace Cake\Network\Cookie;
 
-use ArrayIterator;
 use ArrayAccess;
+use ArrayIterator;
 use IteratorAggregate;
 
 abstract class AbstractCookieJar implements ArrayAccess, IteratorAggregate

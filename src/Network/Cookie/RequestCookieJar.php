@@ -51,6 +51,5 @@ class RequestCookieJar extends AbstractCookieJar
      */
     public function offsetUnset($name)
     {
-
     }
 }
