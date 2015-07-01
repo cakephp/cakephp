@@ -1158,6 +1158,46 @@ class DateTimeWidgetTest extends TestCase
     }
 
     /**
+     * Test rendering with templateVars
+     *
+     * @return void
+     */
+    public function testRenderTemplateVars()
+    {
+        $templates = [
+            'select' => '<select data-s="{{svar}}" name="{{name}}"{{attrs}}>{{content}}</select>',
+            'option' => '<option data-o="{{ovar}}" value="{{value}}"{{attrs}}>{{text}}</option>',
+            'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
+            'dateWidget' => '{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}{{meridian}}{{help}}'
+        ];
+        $this->templates->add($templates);
+        $result = $this->DateTime->render([
+            'name' => 'date',
+            'year' => [
+                'templateVars' => ['ovar' => 'not-default']
+            ],
+            'month' => [
+                'names' => true
+            ],
+            'hour' => false,
+            'minute' => false,
+            'second' => false,
+            'meridian' => [],
+            'templateVars' => [
+                'svar' => 's-val',
+                'ovar' => 'o-val',
+                'help' => 'some help',
+            ]
+        ], $this->context);
+
+        $this->assertContains('<option data-o="not-default" value="2015">2015</option>', $result);
+        $this->assertContains('<option data-o="o-val" value="01">January</option>', $result);
+        $this->assertContains('<select data-s="s-val" name="date[year]">', $result);
+        $this->assertContains('<select data-s="s-val" name="date[month]">', $result);
+        $this->assertContains('</select>some help', $result);
+    }
+
+    /**
      * Test that secureFields omits removed selects
      *
      * @return void
