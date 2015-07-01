@@ -40,8 +40,8 @@ trait DependentDeleteTrait
         }
         $table = $this->target();
         $foreignKey = (array)$this->foreignKey();
-        $primaryKey = (array)$this->source()->primaryKey();
-        $conditions = array_combine($foreignKey, $entity->extract($primaryKey));
+        $bindingKey = (array)$this->bindingKey();
+        $conditions = array_combine($foreignKey, $entity->extract($bindingKey));
 
         if ($this->_cascadeCallbacks) {
             $query = $this->find('all')->where($conditions);

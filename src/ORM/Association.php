@@ -100,6 +100,13 @@ abstract class Association
     protected $_className;
 
     /**
+     * The field name in the owning side table that is used to match with the foreignKey
+     *
+     * @var string|array
+     */
+    protected $_bindingKey;
+
+    /**
      * The name of the field representing the foreign key to the table to load
      *
      * @var string|array
@@ -196,6 +203,7 @@ abstract class Association
             'conditions',
             'dependent',
             'finder',
+            'bindingKey',
             'foreignKey',
             'joinType',
             'propertyName',
@@ -314,6 +322,30 @@ abstract class Association
             $this->_conditions = $conditions;
         }
         return $this->_conditions;
+    }
+
+    /**
+     * Sets the name of the field representing the binding field with the target table.
+     * When no manually specified the primary key of the owning side table is used.
+     *
+     * If no parameters are passed the current field is returned
+     *
+     * @param string|null $key the table field to be used to link both tables together
+     * @return string|array
+     */
+    public function bindingKey($key = null)
+    {
+        if ($key !== null) {
+            $this->_bindingKey = $key;
+        }
+
+        if ($this->_bindingKey === null) {
+            $this->_bindingKey = $this->isOwningSide($this->source()) ?
+                $this->source()->primaryKey() :
+                $this->target()->primaryKey();
+        }
+
+        return $this->_bindingKey;
     }
 
     /**
