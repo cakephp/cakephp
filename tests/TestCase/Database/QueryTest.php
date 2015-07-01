@@ -2684,8 +2684,8 @@ class QueryTest extends TestCase
                 'addDays' => $query->func()->dateAdd('created', +2, 'day'),
                 'substractYears' => $query->func()->dateAdd('created', -2, 'year')
             ])
-            ->from('users')
-            ->where(['username' => 'mariano'])
+            ->from('comments')
+            ->where(['created' => '2007-03-18 10:45:23'])
             ->execute()
             ->fetchAll('assoc');
         $result[0]['m'] = ltrim($result[0]['m'], '0');
@@ -2693,16 +2693,16 @@ class QueryTest extends TestCase
         $result[0]['addDays'] = substr($result[0]['addDays'], 0, 19);
         $result[0]['substractYears'] = substr($result[0]['substractYears'], 0, 19);
         $expected = [
-            'd' => '17',
+            'd' => '18',
             'm' => '3',
             'y' => '2007',
-            'de' => '17',
+            'de' => '18',
             'me' => '3',
             'ye' => '2007',
-            'wd' => '6', // Saturday
-            'dow' => '6',
-            'addDays' => '2007-03-19 01:16:23',
-            'substractYears' => '2005-03-17 01:16:23'
+            'wd' => '0', // Sunday
+            'dow' => '0',
+            'addDays' => '2007-03-20 01:16:23',
+            'substractYears' => '2005-03-18 01:16:23'
         ];
         $this->assertEquals($expected, $result[0]);
     }
