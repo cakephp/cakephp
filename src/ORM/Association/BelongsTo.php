@@ -193,7 +193,7 @@ class BelongsTo extends Association
         $links = [];
         $name = $this->alias();
 
-        foreach ((array)$this->bindin as $key) {
+        foreach ((array)$this->bindingKey() as $key) {
             $links[] = sprintf('%s.%s', $name, $key);
         }
 
