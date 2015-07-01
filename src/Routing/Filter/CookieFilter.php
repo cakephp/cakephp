@@ -7,10 +7,24 @@ use Cake\Routing\DispatcherFilter;
 
 class CookieFilter extends DispatcherFilter
 {
+    
+    /**
+     *
+     * @var int
+     */
+    protected $_priority = 20;
 
-    public $_cookieEncrypterClass = 'Cake\Network\Cookie\CookieEncrypter';
-    public $_requestJarClass = 'Cake\Network\Cookie\RequestCookieJar';
-    public $_responseJarClass = 'Cake\Network\Cookie\ResponseCookieJar';
+    /**
+     *
+     * @var string
+     */
+    protected $_requestJarClassName = 'Cake\Network\Cookie\RequestCookieJar';
+
+    /**
+     *
+     * @var string
+     */
+    protected $_responseJarClassName = 'Cake\Network\Cookie\ResponseCookieJar';
 
     /**
      *
@@ -22,27 +36,29 @@ class CookieFilter extends DispatcherFilter
         $request = $event->data['request'];
         $response = $event->data['response'];
 
-        $encrypter = new $this->_cookieEncrypterClass;
-
-        $cookies = $request->getCookieParams(); //PSR-7 cookies "accessor" or anything else returning request cookies
-        $requestJar = new $this->_requestJarClass($cookies, $encrypter);
-        $request->cookies = $requestJar;
-
-        $responseJar = new $this->_responseJarClass($encrypter);
-        $response->cookies = $responseJar;
+        $this->_setRequestCookieJar($request);
+        $this->_setResponseCookieJar($response);
     }
 
     /**
      *
-     * @param \Cake\Event\Event $event
+     * @param \Cake\Network\Request $request
      * @return void
      */
-    public function afterDispatch(Event $event)
+    protected function _setRequestCookieJar($request)
     {
-        $response = $event->data['response'];
+        $requestJar = new $this->_requestJarClassName($request->cookies);
+        $request->cookies = $requestJar;
+    }
 
-        $cookies = $response->cookies->raw(); //returns encrypted cookies
-
-        $response->setCookies($cookies); //some wrapper for setcookie() or rather PSR-7 withHeader()
+    /**
+     *
+     * @param \Cake\Network\Response $response
+     * @return void
+     */
+    protected function _setResponseCookieJar($response)
+    {
+        $responseJar = new $this->_responseJarClassName();
+        $response->cookies = $responseJar;
     }
 }
