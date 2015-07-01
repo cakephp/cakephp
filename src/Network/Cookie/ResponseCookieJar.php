@@ -14,7 +14,7 @@ class ResponseCookieJar extends AbstractCookieJar
     public function set($cookie, $value = null)
     {
         if (!$cookie instanceof $this->_cookieClassName) {
-            $cookie = new $this->_cookieClassName($cookie, $value);
+            $cookie = $this->_create($cookie, $value);
         }
 
         $this->_cookies[$cookie->name()] = $cookie;
@@ -48,28 +48,5 @@ class ResponseCookieJar extends AbstractCookieJar
         if ($cookie) {
             return $cookie->invalidate();
         }
-    }
-
-    /**
-     *
-     * @return array
-     */
-    public function raw()
-    {
-        $cookies = [];
-        foreach ($this->_cookies as $cookie) {
-            $raw = [
-                'value' => $this->_encrypter->encrypt($cookie->name(), $cookie->read()),
-                'path' => $cookie->path(),
-                'expire' => $cookie->expires()->format('U'),
-                'domain' => $cookie->domain(),
-                'secure' => $cookie->secure(),
-                'httpOnly' => $cookie->httpOnly()
-            ];
-
-            $cookies[] = $raw;
-        }
-
-        return $cookies;
     }
 }

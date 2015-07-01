@@ -3,7 +3,6 @@
 namespace Cake\Network\Cookie;
 
 use ArrayIterator;
-use Cake\Network\Cookie\CookieEncrypter;
 use IteratorAggregate;
 
 abstract class AbstractCookieJar implements IteratorAggregate
@@ -17,38 +16,9 @@ abstract class AbstractCookieJar implements IteratorAggregate
 
     /**
      *
-     * @var \Cake\Network\Cookie\CookieEncrypter
-     */
-    protected $_encrypter;
-
-    /**
-     *
      * @var string
      */
     protected $_cookieClassName = 'Cake\Network\Cookie\Cookie';
-
-    /**
-     *
-     * @param \Cake\Network\Cookie\CookieEncrypter $encrypter
-     */
-    public function __construct(CookieEncrypter $encrypter)
-    {
-        $this->_encrypter = $encrypter;
-    }
-
-    /**
-     *
-     * @param null|\Cake\Network\Cookie\CookieEncrypter $encrypter
-     * @return \Cake\Network\Cookie\CookieEncrypter
-     */
-    public function encrypter(CookieEncrypter $encrypter = null)
-    {
-        if ($encrypter !== null) {
-            $this->_encrypter = $encrypter;
-        }
-
-        return $this->_encrypter;
-    }
 
     /**
      *
@@ -79,5 +49,16 @@ abstract class AbstractCookieJar implements IteratorAggregate
     public function getIterator()
     {
         return new ArrayIterator($this->_cookies);
+    }
+
+    /**
+     *
+     * @param mixed $name
+     * @param mixed $value
+     * @return \Cake\Network\Cookie\CookieInterface
+     */
+    protected function _create($name, $value)
+    {
+        return new $this->_cookieClassName($name, $value);
     }
 }

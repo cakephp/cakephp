@@ -2,20 +2,15 @@
 
 namespace Cake\Network\Cookie;
 
-use Cake\Network\Cookie\CookieEncrypter;
-
 class RequestCookieJar extends AbstractCookieJar
 {
 
     /**
      *
      * @param array $cookies
-     * @param CookieEncrypter $encrypter
      */
-    public function __construct(array $cookies, CookieEncrypter $encrypter)
+    public function __construct(array $cookies)
     {
-        parent::__construct($encrypter);
-
         foreach ($cookies as $name => $value) {
             $this->_cookies[$name] = $value;
         }
@@ -31,8 +26,7 @@ class RequestCookieJar extends AbstractCookieJar
         $value = parent::get($name);
 
         if ($value !== null) {
-            $value = $this->_encrypter->decrypt($name, $value);
-            $cookie = new $this->_cookieClassName($name, $value);
+            $cookie = $this->_create($name, $value);
 
             return $cookie;
         }
