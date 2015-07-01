@@ -236,6 +236,39 @@ trait SqlserverDialectTrait
             case 'NOW':
                 $expression->name('GETUTCDATE');
                 break;
+            case 'EXTRACT':
+                $expression->name('DATEPART')->type(' ,');
+                break;
+            case 'DATE_ADD':
+                $params = [];
+                $visitor = function ($p, $key) use (&$params) {
+                    if ($key === 0) {
+                        $params[2] = $value;
+                    } else {
+                        $valueUnit = explode(' ', key($p));
+                        $params[0] = $valueUnit[1];
+                        $params[1] = $valueUnit[0];
+                    }
+                    return $p;
+                };
+                $manipulator = function ($p, $key) use ($params) {
+                    return $params[$key];
+                };
+
+                $expression
+                    ->name('DATEADD')
+                    ->type(',')
+                    ->iterateParts($visitor)
+                    ->iterateParts($manipulator)
+                    ->add($params[2]);
+                break;
+            case 'DAYOFWEEK':
+                $expression
+                    ->name('DATEPART')
+                    ->type(' ')
+                    ->add(['weekday, ' => 'literal'], [], true)
+                    ->add([') - (1' => 'literal']); // SqlServer starts on index 1
+                break;
         }
     }
 
