@@ -49,4 +49,25 @@ class ResponseCookieJar extends AbstractCookieJar
             return $cookie->invalidate();
         }
     }
+
+    /**
+     *
+     * @param string $name
+     * @param mixed $value
+     * @return void
+     */
+    public function offsetSet($name, $value)
+    {
+        $this->set($name, $value);
+    }
+
+    /**
+     *
+     * @param string $name
+     * @return void
+     */
+    public function offsetUnset($name)
+    {
+        $this->remove($name);
+    }
 }

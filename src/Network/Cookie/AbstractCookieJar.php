@@ -3,9 +3,10 @@
 namespace Cake\Network\Cookie;
 
 use ArrayIterator;
+use ArrayAccess;
 use IteratorAggregate;
 
-abstract class AbstractCookieJar implements IteratorAggregate
+abstract class AbstractCookieJar implements ArrayAccess, IteratorAggregate
 {
 
     /**
@@ -60,5 +61,25 @@ abstract class AbstractCookieJar implements IteratorAggregate
     protected function _create($name, $value)
     {
         return new $this->_cookieClassName($name, $value);
+    }
+
+    /**
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function offsetExists($name)
+    {
+        return $this->has($name);
+    }
+
+    /**
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public function offsetGet($name)
+    {
+        return $this->get($name);
     }
 }

@@ -31,4 +31,26 @@ class RequestCookieJar extends AbstractCookieJar
             return $cookie;
         }
     }
+
+    /**
+     *
+     * @param string $name
+     * @param string $value
+     * @return void
+     */
+    public function offsetSet($name, $value)
+    {
+        $this->_cookies[$name] = $value;
+    }
+
+    /**
+     * No op - you can't remove cookies from a request.
+     *
+     * @param string $name
+     * @return void
+     */
+    public function offsetUnset($name)
+    {
+
+    }
 }
