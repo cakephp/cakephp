@@ -246,12 +246,12 @@ trait SqlserverDialectTrait
                         $params[2] = $p;
                     } else {
                         $valueUnit = explode(' ', $p);
-                        $params[0] = $valueUnit[1];
+                        $params[0] = rtrim($valueUnit[1], 's');
                         $params[1] = $valueUnit[0];
                     }
                     return $p;
                 };
-                $manipulator = function ($p, $key) use ($params) {
+                $manipulator = function ($p, $key) use (&$params) {
                     return $params[$key];
                 };
 
@@ -260,7 +260,7 @@ trait SqlserverDialectTrait
                     ->type(',')
                     ->iterateParts($visitor)
                     ->iterateParts($manipulator)
-                    ->add($params[2]);
+                    ->add([$params[2] => 'literal']);
                 break;
             case 'DAYOFWEEK':
                 $expression
