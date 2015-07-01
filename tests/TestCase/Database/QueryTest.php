@@ -2681,24 +2681,28 @@ class QueryTest extends TestCase
                 'ye' => $query->func()->extract('year', 'created'),
                 'wd' => $query->func()->weekday('created'),
                 'dow' => $query->func()->dayOfWeek('created'),
-                'addDays' => $query->func()->dateAdd('created', +2, 'days'),
-                'minusYears' => $query->func()->dateAdd('created', -2, 'years')
+                'addDays' => $query->func()->dateAdd('created', +2, 'day'),
+                'substractYears' => $query->func()->dateAdd('created', -2, 'year')
             ])
             ->from('users')
             ->where(['username' => 'mariano'])
             ->execute()
             ->fetchAll('assoc');
+        $result[0]['m'] = ltrim($result[0]['m'], '0');
+        $result[0]['me'] = ltrim($result[0]['me'], '0');
+        $result[0]['addDays'] = substr($result[0]['addDays'], 0, 19);
+        $result[0]['substractYears'] = substr($result[0]['substractYears'], 0, 19);
         $expected = [
             'd' => '17',
-            'm' => '03',
+            'm' => '3',
             'y' => '2007',
             'de' => '17',
-            'me' => '03',
+            'me' => '3',
             'ye' => '2007',
             'wd' => '6', // Saturday
             'dow' => '6',
             'addDays' => '2007-03-19 01:16:23',
-            'minusYears' => '2005-03-17 01:16:23'
+            'substractYears' => '2005-03-17 01:16:23'
         ];
         $this->assertEquals($expected, $result[0]);
     }

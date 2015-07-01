@@ -120,7 +120,7 @@ trait SqliteDialectTrait
                     ->type(' ,')
                     ->iterateParts(function ($p, $key) {
                         if ($key === 0) {
-                            $value = rtrim(key($p), 's');
+                            $value = rtrim($p, 's');
                             if (isset($this->_dateParts[$value])) {
                                 $p = '%' . $this->_dateParts[$value];
                             }
@@ -134,7 +134,7 @@ trait SqliteDialectTrait
                     ->type(',')
                     ->iterateParts(function ($p, $key) {
                         if ($key === 1) {
-                            $p = key($p);
+                            $p = ['value' => $p, 'type' => null];
                         }
                         return $p;
                     });

@@ -135,8 +135,7 @@ trait PostgresDialectTrait
                     ->type(' + INTERVAL')
                     ->iterateParts(function ($p, $key) {
                         if ($key === 1) {
-                            $interval = sprintf("'%s'", key($p));
-                            $p = [$interval => 'literal'];
+                            $p = sprintf("'%s'", $p);
                         }
                         return $p;
                     });

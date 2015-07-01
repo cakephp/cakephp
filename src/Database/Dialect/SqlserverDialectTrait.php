@@ -243,9 +243,9 @@ trait SqlserverDialectTrait
                 $params = [];
                 $visitor = function ($p, $key) use (&$params) {
                     if ($key === 0) {
-                        $params[2] = $value;
+                        $params[2] = $p;
                     } else {
-                        $valueUnit = explode(' ', key($p));
+                        $valueUnit = explode(' ', $p);
                         $params[0] = $valueUnit[1];
                         $params[1] = $valueUnit[0];
                     }
