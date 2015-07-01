@@ -9,7 +9,7 @@ class ResponseCookieJar extends AbstractCookieJar
      *
      * @param string|array|Cookie $cookie String for a cookie name, array for a cookie config or a Cookie object.
      * @param mixed $value Optional cookie value.
-     * @return \Cake\Network\Cookie\Cookie
+     * @return \Cake\Network\Cookie\CookieInterface
      */
     public function set($cookie, $value = null)
     {
@@ -25,7 +25,7 @@ class ResponseCookieJar extends AbstractCookieJar
     /**
      *
      * @param string $name
-     * @return null|\Cake\Network\Cookie\Cookie
+     * @return null|\Cake\Network\Cookie\CookieInterface
      */
     public function remove($name)
     {
@@ -40,7 +40,7 @@ class ResponseCookieJar extends AbstractCookieJar
     /**
      *
      * @param string $name
-     * @return null|\Cake\Network\Cookie\Cookie
+     * @return null|\Cake\Network\Cookie\CookieInterface
      */
     public function invalidate($name)
     {

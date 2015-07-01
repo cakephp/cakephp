@@ -24,7 +24,7 @@ class RequestCookieJar extends AbstractCookieJar
     /**
      *
      * @param string $name
-     * @return null|\Cake\Network\Cookie\Cookie
+     * @return null|\Cake\Network\CookieCookieInterface
      */
     public function get($name)
     {

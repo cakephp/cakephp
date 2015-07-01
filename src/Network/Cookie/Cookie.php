@@ -7,7 +7,7 @@ use Cake\I18n\Time;
 use Cake\Utility\Hash;
 use UnexpectedValueException;
 
-class Cookie
+class Cookie implements CookieInterface
 {
 
     const TIMEOUT = '-1 month';
