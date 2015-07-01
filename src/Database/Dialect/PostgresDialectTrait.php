@@ -143,8 +143,9 @@ trait PostgresDialectTrait
             case 'DAYOFWEEK':
                 $expression
                     ->name('EXTRACT')
-                    ->add(['DOW' => 'literal'], [], true)
-                    ->type(' FROM');
+                    ->type(' ')
+                    ->add(['DOW FROM' => 'literal'], [], true)
+                    ->add([') + (1' => 'literal']); // Postgres starts on index 0 but Sunday should be 1
                 break;
         }
     }

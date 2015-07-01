@@ -266,8 +266,7 @@ trait SqlserverDialectTrait
                 $expression
                     ->name('DATEPART')
                     ->type(' ')
-                    ->add(['weekday, ' => 'literal'], [], true)
-                    ->add([') - (1' => 'literal']); // SqlServer starts on index 1
+                    ->add(['weekday, ' => 'literal'], [], true);
                 break;
         }
     }

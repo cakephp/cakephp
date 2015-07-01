@@ -2699,10 +2699,10 @@ class QueryTest extends TestCase
             'de' => '18',
             'me' => '3',
             'ye' => '2007',
-            'wd' => '0', // Sunday
-            'dow' => '0',
-            'addDays' => '2007-03-20 01:16:23',
-            'substractYears' => '2005-03-18 01:16:23'
+            'wd' => '1', // Sunday
+            'dow' => '1',
+            'addDays' => '2007-03-20 10:45:23',
+            'substractYears' => '2005-03-18 10:45:23'
         ];
         $this->assertEquals($expected, $result[0]);
     }

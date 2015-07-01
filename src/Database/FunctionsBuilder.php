@@ -201,7 +201,7 @@ class FunctionsBuilder
 
     /**
      * Returns a FunctionExpression representing a call to SQL WEEKDAY function.
-     * 0 - Sunday, 1 - Monday, 2 - Tuesday...
+     * 1 - Sunday, 2 - Monday, 3 - Tuesday...
      *
      * @param mixed $expression the function argument
      * @param array $types list of types to bind to the arguments
@@ -214,7 +214,7 @@ class FunctionsBuilder
 
     /**
      * Returns a FunctionExpression representing a call to SQL WEEKDAY function.
-     * 0 - Sunday, 1 - Monday, 2 - Tuesday...
+     * 1 - Sunday, 2 - Monday, 3 - Tuesday...
      *
      * @param mixed $expression the function argument
      * @param array $types list of types to bind to the arguments

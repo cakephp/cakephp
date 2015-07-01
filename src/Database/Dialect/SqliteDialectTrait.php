@@ -120,9 +120,9 @@ trait SqliteDialectTrait
                     ->type(' ,')
                     ->iterateParts(function ($p, $key) {
                         if ($key === 0) {
-                            $value = rtrim($p, 's');
+                            $value = rtrim(strtolower($p), 's');
                             if (isset($this->_dateParts[$value])) {
-                                $p = '%' . $this->_dateParts[$value];
+                                $p = ['value' => '%' . $this->_dateParts[$value], 'type' => null];
                             }
                         }
                         return $p;
@@ -142,8 +142,9 @@ trait SqliteDialectTrait
             case 'DAYOFWEEK':
                 $expression
                     ->name('STRFTIME')
-                    ->type(' ,')
-                    ->add(["'%w'" => 'literal'], [], true);
+                    ->type(' ')
+                    ->add(["'%w', " => 'literal'], [], true)
+                    ->add([') + (1' => 'literal']); // Sqlite starts on index 0 but Sunday should be 1
                 break;
         }
     }
