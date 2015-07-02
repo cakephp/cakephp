@@ -222,8 +222,11 @@ class MysqlSchema extends BaseSchema
     {
         $sql = 'SELECT * FROM information_schema.key_column_usage AS kcu
             INNER JOIN information_schema.referential_constraints AS rc
-            ON (kcu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME)
-            WHERE kcu.TABLE_SCHEMA = ? AND kcu.TABLE_NAME = ? and rc.TABLE_NAME = ?';
+            ON (
+                kcu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME
+                AND kcu.CONSTRAINT_SCHEMA = rc.CONSTRAINT_SCHEMA
+            )
+            WHERE kcu.TABLE_SCHEMA = ? AND kcu.TABLE_NAME = ? AND rc.TABLE_NAME = ?';
 
         return [$sql, [$config['database'], $tableName, $tableName]];
     }
