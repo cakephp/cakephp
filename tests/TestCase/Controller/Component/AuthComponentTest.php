@@ -1403,16 +1403,17 @@ class AuthComponentTest extends TestCase
      *
      * @return void
      */
-    public function testEarlyAuthConfig()
+    public function testCheckAuthInConfig()
     {
         $this->Controller->components()->set('Auth', $this->Auth);
         $this->Auth->earlyAuthTest = true;
 
+        $this->Auth->authCheckCalledFrom = null;
         $this->Controller->startupProcess();
         $this->assertEquals('Controller.startup', $this->Auth->authCheckCalledFrom);
 
         $this->Auth->authCheckCalledFrom = null;
-        $this->Auth->config('earlyAuth', true);
+        $this->Auth->config('checkAuthIn', 'Controller.initialize');
         $this->Controller->startupProcess();
         $this->assertEquals('Controller.initialize', $this->Auth->authCheckCalledFrom);
     }

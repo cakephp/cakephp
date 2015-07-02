@@ -138,9 +138,9 @@ class AuthComponent extends Component
      * - `storage` - Storage class to use for persisting user record. When using
      *   stateless authenticator you should set this to 'Memory'. Defaults to 'Session'.
      *
-     * - 'earlyAuth' - If set to true initial auth checks are done in beforeFilter()
-     *   callback instead of startup(), i.e. before controller's beforeFilter().
-     *   Defaults to false for backwards compatibility.
+     * - 'checkAuthIn' - Name of event for which initial auth checks should be done.
+     *   Defaults to 'Controller.startup'. You can set it to 'Controller.initialize'
+     *   if you want the check to be done before controller's beforeFilter() is run.
      *
      * @var array
      */
@@ -155,7 +155,7 @@ class AuthComponent extends Component
         'authError' => null,
         'unauthorizedRedirect' => true,
         'storage' => 'Session',
-        'earlyAuth' => false
+        'checkAuthIn' => 'Controller.startup'
     ];
 
     /**
@@ -248,40 +248,32 @@ class AuthComponent extends Component
     }
 
     /**
-     * Callback for Controller.initialize event.
-     *
-     * @param \Cake\Event\Event $event The Controller.initialize event instance.
-     * @return void|\Cake\Network\Response
-     */
-    public function beforeFilter(Event $event)
-    {
-        if ($this->_config['earlyAuth']) {
-            return $this->_authCheck($event);
-        }
-    }
-
-    /**
      * Callback for Controller.startup event.
      *
-     * @param \Cake\Event\Event $event The Controller.startup event instance.
-     * @return void|\Cake\Network\Response
+     * @param \Cake\Event\Event $event
+     * @return void
      */
     public function startup(Event $event)
     {
-        if (!$this->_config['earlyAuth']) {
-            return $this->_authCheck($event);
-        }
+        return $this->authCheck($event);
     }
 
     /**
-     * Main execution method. Handles initial authentication check and redirecting
+     * Main execution method, handles initial authentication check and redirection
      * of invalid users.
+     *
+     * The auth check is done when event name is same as the one configured in
+     * `checkAuthIn` config.
      *
      * @param \Cake\Event\Event $event Event instance.
      * @return void|\Cake\Network\Response
      */
-    protected function _authCheck(Event $event)
+    public function authCheck(Event $event)
     {
+        if ($this->_config['checkAuthIn'] !== $event->name()) {
+            return;
+        }
+
         $controller = $event->subject();
 
         $action = strtolower($controller->request->params['action']);
@@ -322,7 +314,7 @@ class AuthComponent extends Component
     public function implementedEvents()
     {
         return [
-            'Controller.beforeFilter' => 'beforeFilter',
+            'Controller.initialize' => 'authCheck',
             'Controller.startup' => 'startup',
         ];
     }
