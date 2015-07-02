@@ -1535,6 +1535,23 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * Tests that it is possible to pass a median (AM, PM) to the dateTime validation
+     *
+     * @return void
+     */
+    public function testDateTimeWithMeriadian()
+    {
+        $this->assertTrue(Validation::dateTime('10/04/2007 1:50 AM', ['dmy']));
+        $this->assertTrue(Validation::dateTime('12/04/2017 1:38 PM', ['dmy']));
+        $this->assertTrue(Validation::dateTime('10/04/2007 1:50 am', ['dmy']));
+        $this->assertTrue(Validation::dateTime('12/04/2017 1:38 pm', ['dmy']));
+        $this->assertTrue(Validation::dateTime('12/04/2017 1:38pm', ['dmy']));
+        $this->assertTrue(Validation::dateTime('12/04/2017 1:38AM', ['dmy']));
+        $this->assertFalse(Validation::dateTime('12/04/2017 58:38AM', ['dmy']));
+    }
+
+
+    /**
      * testBoolean method
      *
      * @return void
@@ -2239,7 +2256,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::datetime('27/12/2006 1:00pm', 'dmy'));
         $this->assertFalse(Validation::datetime('27/12/2006 9:00', 'dmy'));
 
-        $this->assertTrue(Validation::datetime('27 12 2006 1:00pm', 'dmy'));
+        $this->assertFalse(Validation::datetime('27 12 2006 1:00pm', 'dmy'));
         $this->assertFalse(Validation::datetime('27 12 2006 24:00', 'dmy'));
 
         $this->assertFalse(Validation::datetime('00-00-0000 1:00pm', 'dmy'));
