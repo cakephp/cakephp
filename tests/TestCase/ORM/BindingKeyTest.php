@@ -30,20 +30,33 @@ class BindingKeyTest extends TestCase
      */
     public $fixtures = [
         'core.users',
-        'core.auth_users'
+        'core.auth_users',
+        'core.site_authors'
     ];
+
+    /**
+     * Data provider for the two types of strategies BelongsTo and HasOne implements
+     *
+     * @return void
+     */
+    public function strategiesProviderJoinable()
+    {
+        return [['join'], ['select']];
+    }
 
     /**
      * Tests that bindingKey can be used in belongsTo associations
      *
+     * @dataProvider strategiesProviderJoinable
      * @return void
      */
-    public function testBelongsto()
+    public function testBelongsto($strategy)
     {
         $users = TableRegistry::get('Users');
         $users->belongsTo('AuthUsers', [
             'bindingKey' => 'username',
-            'foreignKey' => 'username'
+            'foreignKey' => 'username',
+            'strategy' => $strategy
         ]);
 
         $result = $users->find()
@@ -61,5 +74,28 @@ class BindingKeyTest extends TestCase
             $expected,
             $result->combine('id', 'auth_user.id')->toArray()
         );
+    }
+
+    /**
+     * Tests that bindingKey can be used in hasOne associations
+     *
+     * @dataProvider strategiesProviderJoinable
+     * @return void
+     */
+    public function testHasOne($strategy) {
+        $users = TableRegistry::get('Users');
+        $users->hasOne('SiteAuthors', [
+            'bindingKey' => 'username',
+            'foreignKey' => 'name',
+            'strategy' => $strategy
+        ]);
+
+        $users->updateAll(['username' => 'jose'], ['username' => 'garrett']);
+        $result = $users->find()
+            ->contain(['SiteAuthors'])
+            ->where(['username' => 'jose'])
+            ->first();
+
+        $this->assertEquals(3, $result->site_author->id);
     }
 }

@@ -781,20 +781,20 @@ abstract class Association
         $tAlias = $this->target()->alias();
         $sAlias = $this->source()->alias();
         $foreignKey = (array)$options['foreignKey'];
-        $primaryKey = (array)$this->_sourceTable->primaryKey();
+        $bindingKey = (array)$this->bindingKey();
 
-        if (count($foreignKey) !== count($primaryKey)) {
+        if (count($foreignKey) !== count($bindingKey)) {
             $msg = 'Cannot match provided foreignKey for "%s", got "(%s)" but expected foreign key for "(%s)"';
             throw new RuntimeException(sprintf(
                 $msg,
                 $this->_name,
                 implode(', ', $foreignKey),
-                implode(', ', $primaryKey)
+                implode(', ', $bindingKey)
             ));
         }
 
         foreach ($foreignKey as $k => $f) {
-            $field = sprintf('%s.%s', $sAlias, $primaryKey[$k]);
+            $field = sprintf('%s.%s', $sAlias, $bindingKey[$k]);
             $value = new IdentifierExpression(sprintf('%s.%s', $tAlias, $f));
             $conditions[$field] = $value;
         }
