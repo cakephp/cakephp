@@ -92,7 +92,8 @@ class BindingKeyTest extends TestCase
      * @dataProvider strategiesProviderJoinable
      * @return void
      */
-    public function testHasOne($strategy) {
+    public function testHasOne($strategy)
+    {
         $users = TableRegistry::get('Users');
         $users->hasOne('SiteAuthors', [
             'bindingKey' => 'username',
