@@ -18,7 +18,7 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
- * Integration tetss for table operations involving composite keys
+ * Integration tests for usinge the bindingKey in associations
  */
 class BindingKeyTest extends TestCase
 {
@@ -42,6 +42,16 @@ class BindingKeyTest extends TestCase
     public function strategiesProviderJoinable()
     {
         return [['join'], ['select']];
+    }
+
+    /**
+     * Data provider for the two types of strategies HasMany and BelongsToMany implements
+     *
+     * @return void
+     */
+    public function strategiesProviderExternal()
+    {
+        return [['subquery'], ['select']];
     }
 
     /**
@@ -97,5 +107,30 @@ class BindingKeyTest extends TestCase
             ->first();
 
         $this->assertEquals(3, $result->site_author->id);
+    }
+
+    /**
+     * Tests that bindingKey can be used in hasOne associations
+     *
+     * @dataProvider strategiesProviderExternal
+     * @return void
+     */
+    public function testHasMany($strategy)
+    {
+        $users = TableRegistry::get('Users');
+        $authors = $users->hasMany('SiteAuthors', [
+            'bindingKey' => 'username',
+            'foreignKey' => 'name',
+            'strategy' => $strategy
+        ]);
+
+        $authors->updateAll(['name' => 'garrett'], ['id >' => 2]);
+        $result = $users->find()
+            ->contain(['SiteAuthors'])
+            ->where(['username' => 'garrett']);
+
+        $expected = [3, 4];
+        $result = $result->extract('site_authors.{*}.id')->toList();
+        $this->assertEquals($expected, $result);
     }
 }
