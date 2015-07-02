@@ -315,6 +315,19 @@ class AuthComponent extends Component
     }
 
     /**
+     * Events supported by this component.
+     *
+     * @return array
+     */
+    public function implementedEvents()
+    {
+        return [
+            'Controller.beforeFilter' => 'beforeFilter',
+            'Controller.startup' => 'startup',
+        ];
+    }
+
+    /**
      * Checks whether current action is accessible without authentication.
      *
      * @param \Cake\Controller\Controller $controller A reference to the instantiating
