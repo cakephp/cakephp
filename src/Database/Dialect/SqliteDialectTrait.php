@@ -53,6 +53,21 @@ trait SqliteDialectTrait
     protected $_schemaDialect;
 
     /**
+     * Mapping of date parts.
+     *
+     * @var array
+     */
+    protected $_dateParts = [
+        'day' => 'd',
+        'hour' => 'H',
+        'month' => 'm',
+        'minute' => 'M',
+        'second' => 'S',
+        'week' => 'W',
+        'year' => 'Y'
+    ];
+
+    /**
      * Returns a dictionary of expressions to be transformed when compiling a Query
      * to SQL. Array keys are method names to be called in this class
      *
@@ -98,6 +113,38 @@ trait SqliteDialectTrait
                 break;
             case 'CURRENT_TIME':
                 $expression->name('TIME')->add(["'now'" => 'literal']);
+                break;
+            case 'EXTRACT':
+                $expression
+                    ->name('STRFTIME')
+                    ->type(' ,')
+                    ->iterateParts(function ($p, $key) {
+                        if ($key === 0) {
+                            $value = rtrim(strtolower($p), 's');
+                            if (isset($this->_dateParts[$value])) {
+                                $p = ['value' => '%' . $this->_dateParts[$value], 'type' => null];
+                            }
+                        }
+                        return $p;
+                    });
+                break;
+            case 'DATE_ADD':
+                $expression
+                    ->name('DATE')
+                    ->type(',')
+                    ->iterateParts(function ($p, $key) {
+                        if ($key === 1) {
+                            $p = ['value' => $p, 'type' => null];
+                        }
+                        return $p;
+                    });
+                break;
+            case 'DAYOFWEEK':
+                $expression
+                    ->name('STRFTIME')
+                    ->type(' ')
+                    ->add(["'%w', " => 'literal'], [], true)
+                    ->add([') + (1' => 'literal']); // Sqlite starts on index 0 but Sunday should be 1
                 break;
         }
     }
