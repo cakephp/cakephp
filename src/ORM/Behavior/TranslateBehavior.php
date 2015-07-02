@@ -444,11 +444,11 @@ class TranslateBehavior extends Behavior
 
             $result = [];
             foreach ($grouped->combine('field', 'content', 'locale') as $locale => $keys) {
-                $translation = $this->_table->newEntity($keys + ['locale' => $locale], [
+                $entityClass = $this->_table->entityClass();
+                $translation = new $entityClass($keys + ['locale' => $locale], [
                     'markNew' => false,
                     'useSetters' => false,
-                    'markClean' => true,
-                    'validate' => false
+                    'markClean' => true
                 ]);
                 $result[$locale] = $translation;
             }
