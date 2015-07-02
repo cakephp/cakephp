@@ -33,6 +33,11 @@ class BindingKeyTest extends TestCase
         'core.auth_users'
     ];
 
+    /**
+     * Tests that bindingKey can be used in belongsTo associations
+     *
+     * @return void
+     */
     public function testBelongsto()
     {
         $users = TableRegistry::get('Users');
@@ -43,8 +48,18 @@ class BindingKeyTest extends TestCase
 
         $result = $users->find()
             ->contain(['AuthUsers']);
-        debug($result);
-        debug($result->toArray());
-    }
 
+        $expected = ['mariano', 'nate', 'larry', 'garrett'];
+        $expected = array_combine($expected, $expected);
+        $this->assertEquals(
+            $expected,
+            $result->combine('username', 'auth_user.username')->toArray()
+        );
+
+        $expected = [1 => 1, 2 => 5, 3 => 2, 4 => 4];
+        $this->assertEquals(
+            $expected,
+            $result->combine('id', 'auth_user.id')->toArray()
+        );
+    }
 }
