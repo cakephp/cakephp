@@ -160,7 +160,7 @@ class FunctionsBuilder
      * @param string $part Part of the date to return.
      * @param string $expression Expression to obtain the date part from.
      * @param array $types list of types to bind to the arguments
-     * @return FunctionExpression
+     * @return \Cake\Database\Expression\FunctionExpression
      */
     public function datePart($part, $expression, $types = [])
     {
@@ -173,7 +173,7 @@ class FunctionsBuilder
      * @param string $part Part of the date to return.
      * @param string $expression Expression to obtain the date part from.
      * @param array $types list of types to bind to the arguments
-     * @return FunctionExpression
+     * @return \Cake\Database\Expression\FunctionExpression
      */
     public function extract($part, $expression, $types = [])
     {
@@ -189,7 +189,7 @@ class FunctionsBuilder
      * @param string $value Value to be added. Use negative to substract.
      * @param string $unit Unit of the value e.g. hour or day.
      * @param array $types list of types to bind to the arguments
-     * @return FunctionExpression
+     * @return \Cake\Database\Expression\FunctionExpression
      */
     public function dateAdd($expression, $value, $unit, $types = [])
     {
@@ -208,7 +208,7 @@ class FunctionsBuilder
      *
      * @param mixed $expression the function argument
      * @param array $types list of types to bind to the arguments
-     * @return FunctionExpression
+     * @return \Cake\Database\Expression\FunctionExpression
      */
     public function dayOfWeek($expression, $types = [])
     {
@@ -221,7 +221,7 @@ class FunctionsBuilder
      *
      * @param mixed $expression the function argument
      * @param array $types list of types to bind to the arguments
-     * @return FunctionExpression
+     * @return \Cake\Database\Expression\FunctionExpression
      */
     public function weekday($expression, $types = [])
     {
@@ -234,7 +234,7 @@ class FunctionsBuilder
      * make it generate only the date or only the time.
      *
      * @param string $type (datetime|date|time)
-     * @return FunctionExpression
+     * @return \Cake\Database\Expression\FunctionExpression
      */
     public function now($type = 'datetime')
     {
