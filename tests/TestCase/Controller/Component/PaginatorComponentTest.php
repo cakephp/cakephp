@@ -1,6 +1,6 @@
 <?php
 /**
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -8,7 +8,7 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -811,22 +811,22 @@ class PaginatorComponentTest extends TestCase
     public function testPaginateCustomFind()
     {
         $this->loadFixtures('Posts');
-        $idExtractor = function ($result) {
+        $titleExtractor = function ($result) {
             $ids = [];
             foreach ($result as $record) {
-                $ids[] = $record->id;
+                $ids[] = $record->title;
             }
             return $ids;
         };
 
         $table = TableRegistry::get('PaginatorPosts');
-        $data = ['author_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N'];
+        $data = ['author_id' => 3, 'title' => 'Fourth Post', 'body' => 'Article Body, unpublished', 'published' => 'N'];
         $result = $table->save(new \Cake\ORM\Entity($data));
         $this->assertNotEmpty($result);
 
         $result = $this->Paginator->paginate($table);
         $this->assertCount(4, $result, '4 rows should come back');
-        $this->assertEquals([1, 2, 3, 4], $idExtractor($result));
+        $this->assertEquals(['First Post', 'Second Post', 'Third Post', 'Fourth Post'], $titleExtractor($result));
 
         $result = $this->request->params['paging']['PaginatorPosts'];
         $this->assertEquals(4, $result['current']);
@@ -835,16 +835,26 @@ class PaginatorComponentTest extends TestCase
         $settings = ['finder' => 'published'];
         $result = $this->Paginator->paginate($table, $settings);
         $this->assertCount(3, $result, '3 rows should come back');
-        $this->assertEquals([1, 2, 3], $idExtractor($result));
+        $this->assertEquals(['First Post', 'Second Post', 'Third Post'], $titleExtractor($result));
 
         $result = $this->request->params['paging']['PaginatorPosts'];
         $this->assertEquals(3, $result['current']);
         $this->assertEquals(3, $result['count']);
 
+        $settings = ['finder' => 'published', 'limit' => 2, 'page' => 2];
+        $result = $this->Paginator->paginate($table, $settings);
+        $this->assertCount(1, $result, '1 rows should come back');
+        $this->assertEquals(['Third Post'], $titleExtractor($result));
+
+        $result = $this->request->params['paging']['PaginatorPosts'];
+        $this->assertEquals(1, $result['current']);
+        $this->assertEquals(3, $result['count']);
+        $this->assertEquals(2, $result['pageCount']);
+
         $settings = ['finder' => 'published', 'limit' => 2];
         $result = $this->Paginator->paginate($table, $settings);
         $this->assertCount(2, $result, '2 rows should come back');
-        $this->assertEquals([1, 2], $idExtractor($result));
+        $this->assertEquals(['First Post', 'Second Post'], $titleExtractor($result));
 
         $result = $this->request->params['paging']['PaginatorPosts'];
         $this->assertEquals(2, $result['current']);

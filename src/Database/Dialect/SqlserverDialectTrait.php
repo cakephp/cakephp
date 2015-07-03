@@ -113,10 +113,11 @@ trait SqlserverDialectTrait
             ->from(['_cake_paging_' => $query]);
 
         if ($offset) {
-            $outer->where(["$field >" => $offset]);
+            $outer->where(["$field > " . (int)$offset]);
         }
         if ($limit) {
-            $outer->where(["$field <=" => (int)$offset + (int)$limit]);
+            $value = (int)$offset + (int)$limit;
+            $outer->where(["$field <= $value"]);
         }
 
         // Decorate the original query as that is what the
