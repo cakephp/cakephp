@@ -829,6 +829,22 @@ class TimeTest extends TestCase
     }
 
     /**
+     * Tests the remaining time calculation.
+     *
+     * @return void
+     */
+    public function testRemainingTime()
+    {
+        $date = clone $this->now;
+        $date->modify('-1 year');
+        $date->modify('-6 days');
+        $date->modify('-51 seconds');
+        $interval = Time::remainingTime($date);
+        $result = $interval->format("%y %m %d %H %i %s");
+        $this->assertEquals($result, '1 0 6 00 0 51');
+    }
+
+    /**
      * Custom assert to allow for variation in the version of the intl library, where
      * some translations contain a few extra commas.
      *
