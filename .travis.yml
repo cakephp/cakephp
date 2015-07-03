@@ -27,7 +27,7 @@ matrix:
     - php: 5.4
       env: COVERALLS=1 DEFAULT=0
 
-    - php: 5.4
+    - php: 7.0
       env: PHPCS=1 DEFAULT=0
 
     - php: hhvm
