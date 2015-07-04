@@ -5079,3 +5079,50 @@ class Example extends AppModel {
 	);
 
 }
+
+/**
+ * UserHasOneArticle class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class UserHasOneArticle extends AppModel {
+
+/**
+ * useTable property
+ *
+ * @var string
+ */
+	public $useTable = 'users';
+
+/**
+ * hasOne property
+ *
+ * @var array
+ */
+	public $hasOne = array('Article');
+
+}
+
+
+/**
+ * ArticlesTagBelongsToArticle class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class ArticlesTagBelongsToArticle extends CakeTestModel {
+
+/**
+ * useTable property
+ *
+ * @var string
+ */
+	public $useTable = 'articles_tags';
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ */
+	public $belongsTo = array('Article');
+
+}
