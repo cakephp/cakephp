@@ -406,7 +406,7 @@ class Table
             throw new Exception(sprintf('Invalid index type "%s" in index "%s" in table "%s".', $attrs['type'], $name, $this->_table));
         }
         if (empty($attrs['columns'])) {
-            throw new Exception(sprintf('Index "%s" in table "%s" must have at least one column.', $name,  $this->_table));
+            throw new Exception(sprintf('Index "%s" in table "%s" must have at least one column.', $name, $this->_table));
         }
         $attrs['columns'] = (array)$attrs['columns'];
         foreach ($attrs['columns'] as $field) {
@@ -414,7 +414,9 @@ class Table
                 $msg = sprintf(
                     'Columns used in index "%s" in table "%s" must be added to the Table schema first. ' .
                     'The column "%s" was not found.',
-                    $name, $this->_table, $field
+                    $name,
+                    $this->_table,
+                    $field
                 );
                 throw new Exception($msg);
             }
@@ -503,7 +505,8 @@ class Table
                 $msg = sprintf(
                     'Columns used in constraints must be added to the Table schema first. ' .
                     'The column "%s" was not found in table "%s".',
-                    $field, $this->_table
+                    $field,
+                    $this->_table
                 );
                 throw new Exception($msg);
             }
