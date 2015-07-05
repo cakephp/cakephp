@@ -326,7 +326,7 @@ abstract class Association
 
     /**
      * Sets the name of the field representing the binding field with the target table.
-     * When no manually specified the primary key of the owning side table is used.
+     * When not manually specified the primary key of the owning side table is used.
      *
      * If no parameters are passed the current field is returned
      *
