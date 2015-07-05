@@ -546,10 +546,10 @@ class Response
     protected function _sendContent($content)
     {
         if (!is_string($content) && is_callable($content)) {
-            call_user_func($content);
-        } else {
-            echo $content;
+            $content = $content();
         }
+
+        echo $content;
     }
 
     /**
