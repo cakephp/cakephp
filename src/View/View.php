@@ -594,6 +594,7 @@ class View implements EventDispatcherInterface
             $this->Blocks->set('content', $content);
         }
         $this->dispatchEvent('View.beforeLayout', [$layoutFileName]);
+        $this->_getScripts();
 
         $title = $this->Blocks->get('title');
         if ($title === '') {
@@ -1253,6 +1254,7 @@ class View implements EventDispatcherInterface
         }
 
         $element = $this->_render($file, array_merge($this->viewVars, $data));
+        $this->_loadMagicScripts('e', $data);
 
         if ($options['callbacks']) {
             $this->dispatchEvent('View.afterRender', [$file, $element]);
@@ -1262,5 +1264,74 @@ class View implements EventDispatcherInterface
         $this->_current = $current;
 
         return $element;
+    }
+
+    /**
+     * Convenience function to load each of the model, view and action scripts
+     *
+     * @return void
+     */
+    protected function _getScripts(){
+
+        $scripts = ['view', 'controller', 'action'];
+
+        foreach ($scripts as $type) {
+            $this->_loadMagicScripts($type);
+        }
+
+    }
+
+
+    /**
+     * Loads the script in question, whether it's a model, view, action or element script
+     * Loads the scripts using the HtmlHelper
+     * @param string|null $type The type of script that's being magically loaded (see above)
+     * @param array|null $data Data that is passed on by an element
+     * @throws \Cake\Core\Exception\Exception When an  unknown type is passed
+     */
+    protected function _loadMagicScripts($type=null, $data=null){
+
+        $type = substr($type, 0, 1);
+
+        if(!in_array($type, ['v','c','a','e'])){
+            throw new \Cake\Core\Exception\Exception("_loadMagicScripts can only accept certain types");
+        }
+
+
+        $path_appends = [];
+
+        switch($type){
+            case 'v':
+                if($this->_currentType == static::TYPE_VIEW){
+                    $path_appends[] = 'v'.DS.Inflector::underscore($this->name).DS.Inflector::underscore($this->view);
+                }
+                break;
+            case 'c':
+                if($this->_currentType == static::TYPE_VIEW){
+                    $path_appends[] = 'c'.DS.Inflector::underscore($this->name);
+                }
+                break;
+            case 'a':
+                if($this->_currentType == static::TYPE_VIEW){
+                    $path_appends[] = 'c'.DS.Inflector::underscore($this->name).DS.Inflector::underscore($this->request->param('action'));
+                }
+                break;
+            case 'e':
+                if($this->_currentType == static::TYPE_ELEMENT
+                    && array_key_exists('element', $data)
+                    && !is_null(@$data['element']) ){
+                    $path_appends[] = 'e'.DS.Inflector::underscore($data['element']);
+                }
+                break;
+        }
+        foreach ($path_appends as $path_append) {
+
+            if(file_exists(WWW_ROOT."js".DS.$path_append.".js")) {
+                $this->Html->script($path_append, ['block' => ($this->_currentType != static::TYPE_ELEMENT ? true: 'element_script')]);
+            }
+
+        }
+
+
     }
 }

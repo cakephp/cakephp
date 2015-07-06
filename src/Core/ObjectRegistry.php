@@ -69,7 +69,12 @@ abstract class ObjectRegistry
      */
     public function load($objectName, $config = [])
     {
-        list(, $name) = pluginSplit($objectName);
+        if (empty($config) && !isset($this->_loaded[$objectName])) {
+            list(, $name) = pluginSplit($objectName);
+        } else {
+            $name = $objectName;
+        }
+
         $loaded = isset($this->_loaded[$name]);
         if ($loaded && !empty($config)) {
             $this->_checkDuplicate($name, $config);
