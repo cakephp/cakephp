@@ -76,7 +76,7 @@ class LoadTask extends Shell
             $append = "\nPlugin::load('%s', [%s]);\n";
             $options = implode(', ', array_filter([$autoloadString, $bootstrapString, $routesString]));
 
-            $bootstrap->append(sprintf($append, $plugin, $options));
+            $bootstrap->append(str_replace(', []', '', sprintf($append, $plugin, $options)));
             $this->out('');
             $this->out(sprintf('%s modified', $this->bootstrap));
             return true;
