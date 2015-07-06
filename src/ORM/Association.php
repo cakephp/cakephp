@@ -100,6 +100,13 @@ abstract class Association
     protected $_className;
 
     /**
+     * The field name in the owning side table that is used to match with the foreignKey
+     *
+     * @var string|array
+     */
+    protected $_bindingKey;
+
+    /**
      * The name of the field representing the foreign key to the table to load
      *
      * @var string|array
@@ -196,6 +203,7 @@ abstract class Association
             'conditions',
             'dependent',
             'finder',
+            'bindingKey',
             'foreignKey',
             'joinType',
             'propertyName',
@@ -314,6 +322,30 @@ abstract class Association
             $this->_conditions = $conditions;
         }
         return $this->_conditions;
+    }
+
+    /**
+     * Sets the name of the field representing the binding field with the target table.
+     * When not manually specified the primary key of the owning side table is used.
+     *
+     * If no parameters are passed the current field is returned
+     *
+     * @param string|null $key the table field to be used to link both tables together
+     * @return string|array
+     */
+    public function bindingKey($key = null)
+    {
+        if ($key !== null) {
+            $this->_bindingKey = $key;
+        }
+
+        if ($this->_bindingKey === null) {
+            $this->_bindingKey = $this->isOwningSide($this->source()) ?
+                $this->source()->primaryKey() :
+                $this->target()->primaryKey();
+        }
+
+        return $this->_bindingKey;
     }
 
     /**
@@ -749,20 +781,20 @@ abstract class Association
         $tAlias = $this->target()->alias();
         $sAlias = $this->source()->alias();
         $foreignKey = (array)$options['foreignKey'];
-        $primaryKey = (array)$this->_sourceTable->primaryKey();
+        $bindingKey = (array)$this->bindingKey();
 
-        if (count($foreignKey) !== count($primaryKey)) {
+        if (count($foreignKey) !== count($bindingKey)) {
             $msg = 'Cannot match provided foreignKey for "%s", got "(%s)" but expected foreign key for "(%s)"';
             throw new RuntimeException(sprintf(
                 $msg,
                 $this->_name,
                 implode(', ', $foreignKey),
-                implode(', ', $primaryKey)
+                implode(', ', $bindingKey)
             ));
         }
 
         foreach ($foreignKey as $k => $f) {
-            $field = sprintf('%s.%s', $sAlias, $primaryKey[$k]);
+            $field = sprintf('%s.%s', $sAlias, $bindingKey[$k]);
             $value = new IdentifierExpression(sprintf('%s.%s', $tAlias, $f));
             $conditions[$field] = $value;
         }

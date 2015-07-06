@@ -98,7 +98,7 @@ class HasMany extends Association
 
         $properties = array_combine(
             (array)$this->foreignKey(),
-            $entity->extract((array)$this->source()->primaryKey())
+            $entity->extract((array)$this->bindingKey())
         );
         $target = $this->target();
         $original = $targetEntities;

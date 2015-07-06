@@ -636,7 +636,7 @@ class EagerLoader
             $source = $instance->source();
             $keys = $instance->type() === Association::MANY_TO_ONE ?
                 (array)$instance->foreignKey() :
-                (array)$source->primaryKey();
+                (array)$instance->bindingKey();
 
             $alias = $source->alias();
             $pkFields = [];

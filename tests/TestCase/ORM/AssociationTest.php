@@ -121,6 +121,53 @@ class AssociationTest extends TestCase
     }
 
     /**
+     * Tests the bindingKey method as a setter/getter
+     *
+     * @return void
+     */
+    public function testBindingKey()
+    {
+        $this->association->bindingKey('foo_id');
+        $this->assertEquals('foo_id', $this->association->bindingKey());
+    }
+
+    /**
+     * Tests the bindingKey() method when called with its defaults
+     *
+     * @return void
+     */
+    public function testBindingKeyDefault()
+    {
+        $this->source->primaryKey(['id', 'site_id']);
+        $this->association
+            ->expects($this->once())
+            ->method('isOwningSide')
+            ->will($this->returnValue(true));
+        $result = $this->association->bindingKey();
+        $this->assertEquals(['id', 'site_id'], $result);
+    }
+
+    /**
+     * Tests the bindingKey() method when the association source is not the
+     * owning side
+     *
+     * @return void
+     */
+    public function testBindingDefaultNoOwningSide()
+    {
+        $target = new Table;
+        $target->primaryKey(['foo', 'site_id']);
+        $this->association->target($target);
+
+        $this->association
+            ->expects($this->once())
+            ->method('isOwningSide')
+            ->will($this->returnValue(false));
+        $result = $this->association->bindingKey();
+        $this->assertEquals(['foo', 'site_id'], $result);
+    }
+
+    /**
      * Tests that name() returns the correct configured value
      *
      * @return void

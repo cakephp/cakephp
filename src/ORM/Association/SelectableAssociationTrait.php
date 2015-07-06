@@ -25,8 +25,8 @@ trait SelectableAssociationTrait
 {
 
     /**
-     * Returns true if the eager loading process will require a set of parent table's
-     * primary keys in order to use them as a filter in the finder query.
+     * Returns true if the eager loading process will require a set of the owning table's
+     * binding keys in order to use them as a filter in the finder query.
      *
      * @param array $options The options containing the strategy to be used.
      * @return bool true if a list of keys will be required
@@ -234,7 +234,7 @@ trait SelectableAssociationTrait
             $filterQuery->offset(null);
         }
 
-        $keys = (array)$this->source()->primaryKey();
+        $keys = (array)$this->bindingKey();
 
         if ($this->type() === $this::MANY_TO_ONE) {
             $keys = (array)$this->foreignKey();
@@ -271,7 +271,7 @@ trait SelectableAssociationTrait
         $sAlias = $source->alias();
         $keys = $this->type() === $this::MANY_TO_ONE ?
             $this->foreignKey() :
-            $source->primaryKey();
+            $this->bindingKey();
 
         $sourceKeys = [];
         foreach ((array)$keys as $key) {
