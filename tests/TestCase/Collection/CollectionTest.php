@@ -1433,4 +1433,18 @@ class CollectionTest extends TestCase
         $expected = [1, 2, 3, 4, 5, null, 6];
         $this->assertEquals($expected, $extracted->toList());
     }
+
+    /**
+     * Tests serializing a simple collection
+     *
+     * @return void
+     */
+    public function testSerializeSimpleCollection()
+    {
+        $collection = new Collection([1, 2, 3]);
+        $selialized = serialize($collection);
+        $unserialized = unserialize($selialized);
+        $this->assertEquals($collection->toList(), $unserialized->toList());
+        $this->assertEquals($collection->toArray(), $unserialized->toArray());
+    }
 }
