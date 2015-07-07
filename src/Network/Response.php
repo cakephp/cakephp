@@ -538,9 +538,11 @@ class Response
 
     /**
      * Sends a content string to the client.
-     * If the content is a callable, it is invoked.
      *
-     * @param string $content string to send as response body
+     * If the content is a callable, it is invoked. The callable should either
+     * return a string or output content directly and have no return value.
+     *
+     * @param string $content String to send as response body.
      * @return void
      */
     protected function _sendContent($content)
