@@ -1433,4 +1433,69 @@ class CollectionTest extends TestCase
         $expected = [1, 2, 3, 4, 5, null, 6];
         $this->assertEquals($expected, $extracted->toList());
     }
+
+    /**
+     * Tests serializing a simple collection
+     *
+     * @return void
+     */
+    public function testSerializeSimpleCollection()
+    {
+        $collection = new Collection([1, 2, 3]);
+        $selialized = serialize($collection);
+        $unserialized = unserialize($selialized);
+        $this->assertEquals($collection->toList(), $unserialized->toList());
+        $this->assertEquals($collection->toArray(), $unserialized->toArray());
+    }
+
+    /**
+     * Tests serialization when using append
+     *
+     * @return void
+     */
+    public function testSerializeWithAppendIterators()
+    {
+        $collection = new Collection([1, 2, 3]);
+        $collection = $collection->append(['a' => 4, 'b' => 5, 'c' => 6]);
+        $selialized = serialize($collection);
+        $unserialized = unserialize($selialized);
+        $this->assertEquals($collection->toList(), $unserialized->toList());
+        $this->assertEquals($collection->toArray(), $unserialized->toArray());
+    }
+
+    /**
+     * Tests serialization when using nested iterators
+     *
+     * @return void
+     */
+    public function testSerializeWithNestedIterators()
+    {
+        $collection = new Collection([1, 2, 3]);
+        $collection = $collection->map(function ($e) {
+            return $e * 3;
+        });
+
+        $collection = $collection->groupBy(function ($e) {
+            return $e % 2;
+        });
+
+        $selialized = serialize($collection);
+        $unserialized = unserialize($selialized);
+        $this->assertEquals($collection->toList(), $unserialized->toList());
+        $this->assertEquals($collection->toArray(), $unserialized->toArray());
+    }
+
+    /**
+     * Tests serializing a zip() call
+     *
+     * @return void
+     */
+    public function testSerializeWithZipIterator()
+    {
+        $collection = new Collection([4, 5]);
+        $collection = $collection->zip([1, 2]);
+        $selialized = serialize($collection);
+        $unserialized = unserialize($selialized);
+        $this->assertEquals($collection->toList(), $unserialized->toList());
+    }
 }
