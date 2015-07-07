@@ -250,8 +250,8 @@ class AuthComponent extends Component
     /**
      * Callback for Controller.startup event.
      *
-     * @param \Cake\Event\Event $event
-     * @return void
+     * @param \Cake\Event\Event $event Event instance.
+     * @return void|\Cake\Network\Response
      */
     public function startup(Event $event)
     {
