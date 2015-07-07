@@ -1464,7 +1464,7 @@ class CollectionTest extends TestCase
     }
 
     /**
-     * Tests serialization when using append
+     * Tests serialization when using nested iterators
      *
      * @return void
      */
