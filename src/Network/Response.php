@@ -542,7 +542,8 @@ class Response
      * If the content is a callable, it is invoked. The callable should either
      * return a string or output content directly and have no return value.
      *
-     * @param string $content String to send as response body.
+     * @param string|callable $content String to send as response body or callable
+     *  which returns/outputs content.
      * @return void
      */
     protected function _sendContent($content)
