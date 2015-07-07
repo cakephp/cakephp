@@ -96,7 +96,7 @@ class CakeResponse {
 		'cpio' => 'application/x-cpio',
 		'cpt' => 'application/mac-compactpro',
 		'csh' => 'application/x-csh',
-		'csv' => array('text/csv', 'application/vnd.ms-excel', 'text/plain'),
+		'csv' => array('text/csv', 'application/vnd.ms-excel'),
 		'dcr' => 'application/x-director',
 		'dir' => 'application/x-director',
 		'dms' => 'application/octet-stream',
