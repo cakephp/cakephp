@@ -50,11 +50,23 @@ class Collection extends IteratorIterator implements CollectionInterface, Serial
         parent::__construct($items);
     }
 
+    /**
+     * Returns a string representation of this object that can be used
+     * to reconstruct it
+     *
+     * @return string
+     */
     public function serialize()
     {
         return serialize($this->buffered());
     }
 
+    /**
+     * Unserializes the passed string and rebuilds the Collection instance
+     *
+     * @param string $collection The serialized collection
+     * @return void
+     */
     public function unserialize($collection)
     {
         $this->__construct(unserialize($collection));

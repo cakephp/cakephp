@@ -178,6 +178,12 @@ class BufferedIterator extends Collection implements Countable, Serializable
         return $this->_buffer->count();
     }
 
+    /**
+     * Returns a string representation of this object that can be used
+     * to reconstruct it
+     *
+     * @return string
+     */
     public function serialize()
     {
         if (!$this->_finished) {
@@ -187,6 +193,12 @@ class BufferedIterator extends Collection implements Countable, Serializable
         return serialize($this->_buffer);
     }
 
+    /**
+     * Unserializes the passed string and rebuilds the BufferedIterator instance
+     *
+     * @param string $buffer The serialized buffer iterator
+     * @return void
+     */
     public function unserialize($buffer)
     {
         $this->__construct([]);
