@@ -41,7 +41,7 @@ use Cake\Utility\Inflector;
  *
  * `cake myshell command --connection default --name=something`
  *
- * Short options can be defined signally or in groups.
+ * Short options can be defined singly or in groups.
  *
  * `cake myshell command -cn`
  *
