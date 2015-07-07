@@ -2339,7 +2339,7 @@ class Model extends Object implements CakeEventListener {
 					}
 				}
 
-				$validates = ($validates && ($saved === true || (is_array($saved) && !in_array(false, $saved, true))));
+				$validates = ($validates && ($saved === true || (is_array($saved) && !in_array(false, Hash::flatten($saved), true))));
 				if (!$validates) {
 					$validationErrors[$key] = $this->validationErrors;
 				}
@@ -2480,7 +2480,7 @@ class Model extends Object implements CakeEventListener {
 					} else {
 						$saved = $Model->save($values, array('atomic' => false) + $options);
 					}
-					$validates = ($saved === true || (is_array($saved) && !in_array(false, $saved, true)));
+					$validates = ($saved === true || (is_array($saved) && !in_array(false, Hash::flatten($saved), true)));
 				}
 
 				if ($validates) {
@@ -2538,7 +2538,7 @@ class Model extends Object implements CakeEventListener {
 							}
 						}
 
-						$validates = ($validates && ($saved === true || (is_array($saved) && !in_array(false, $saved, true))));
+						$validates = ($validates && ($saved === true || (is_array($saved) && !in_array(false, Hash::flatten($saved), true))));
 						if (!$validates) {
 							$validationErrors[$association] = $Model->validationErrors;
 						}
