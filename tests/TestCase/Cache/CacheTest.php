@@ -251,6 +251,26 @@ class CacheTest extends TestCase
     }
 
     /**
+     * test config() with dotted name
+     *
+     * @return void
+     */
+    public function testConfigDottedAlias()
+    {
+        Cache::config('cache.dotted', [
+            'className' => 'File',
+            'path' => TMP,
+            'prefix' => 'cache_value_'
+        ]);
+
+        $engine = Cache::engine('cache.dotted');
+        $this->assertContains('cache.dotted', Cache::configured());
+        $this->assertNotContains('dotted', Cache::configured());
+        $this->assertInstanceOf('Cake\Cache\Engine\FileEngine', $engine);
+        Cache::drop('cache.dotted');
+    }
+
+    /**
      * testGroupConfigs method
      */
     public function testGroupConfigs()

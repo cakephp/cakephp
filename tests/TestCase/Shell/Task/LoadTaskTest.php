@@ -145,4 +145,26 @@ class LoadTaskTest extends TestCase
         $bootstrap = new File($this->bootstrap, false);
         $this->assertContains($expected, $bootstrap->read());
     }
+
+    /**
+     * testLoad
+     *
+     * @return void
+     */
+    public function testLoadNothing()
+    {
+        $this->Task->params = [
+            'bootstrap' => false,
+            'routes' => false,
+            'autoload' => false,
+        ];
+
+        $action = $this->Task->main('TestPlugin');
+
+        $this->assertTrue($action);
+
+        $expected = "Plugin::load('TestPlugin');";
+        $bootstrap = new File($this->bootstrap, false);
+        $this->assertContains($expected, $bootstrap->read());
+    }
 }

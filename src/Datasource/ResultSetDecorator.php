@@ -43,29 +43,4 @@ class ResultSetDecorator extends Collection implements ResultSetInterface
 
         return count($this->toArray());
     }
-
-    /**
-     * Serialize a resultset.
-     *
-     * Part of Serializable interface.
-     *
-     * @return string Serialized object
-     */
-    public function serialize()
-    {
-        return serialize($this->toArray());
-    }
-
-    /**
-     * Unserialize a resultset.
-     *
-     * Part of Serializable interface.
-     *
-     * @param string $serialized Serialized object
-     * @return void
-     */
-    public function unserialize($serialized)
-    {
-        parent::__construct(unserialize($serialized));
-    }
 }

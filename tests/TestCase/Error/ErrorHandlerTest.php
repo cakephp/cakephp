@@ -26,6 +26,7 @@ use Cake\Network\Exception\ForbiddenException;
 use Cake\Network\Exception\NotFoundException;
 use Cake\Network\Request;
 use Cake\Network\Response;
+use Cake\Routing\Exception\MissingControllerException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 
@@ -277,6 +278,45 @@ class ErrorHandlerTest extends TestCase
             'log' => true,
             'trace' => false,
         ]);
+        $errorHandler->handleException($error);
+    }
+
+    /**
+     * test logging attributes with/without debug
+     *
+     * @return void
+     */
+    public function testHandleExceptionLogAttributes()
+    {
+        $errorHandler = new TestErrorHandler([
+            'log' => true,
+            'trace' => true,
+        ]);
+
+        $error = new MissingControllerException(['class' => 'Derp']);
+
+        $this->_logger->expects($this->at(0))
+            ->method('log')
+            ->with('error', $this->logicalAnd(
+                $this->stringContains(
+                    '[Cake\Routing\Exception\MissingControllerException] ' .
+                    'Controller class Derp could not be found.'
+                ),
+                $this->stringContains('Exception Attributes:')
+            ));
+
+        $this->_logger->expects($this->at(1))
+            ->method('log')
+            ->with('error', $this->logicalAnd(
+                $this->stringContains(
+                    '[Cake\Routing\Exception\MissingControllerException] ' .
+                    'Controller class Derp could not be found.'
+                ),
+                $this->logicalNot($this->stringContains('Exception Attributes:'))
+            ));
+        $errorHandler->handleException($error);
+
+        Configure::write('debug', false);
         $errorHandler->handleException($error);
     }
 

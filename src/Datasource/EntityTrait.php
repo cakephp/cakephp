@@ -563,7 +563,7 @@ trait EntityTrait
         $result = [];
         foreach ($properties as $property) {
             $original = $this->getOriginal($property);
-            if ($original !== null && $original !== $this->get($property)) {
+            if ($original !== $this->get($property)) {
                 $result[$property] = $original;
             }
         }

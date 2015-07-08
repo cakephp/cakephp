@@ -101,7 +101,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * value is an array, it will create as many placeholders as values are in it.
      *
      * @param string|array|QueryExpression $conditions single or multiple conditions to
-     * be added. When using and array and the key is 'OR' or 'AND' a new expression
+     * be added. When using an array and the key is 'OR' or 'AND' a new expression
      * object will be created with that conjunction and internal array value passed
      * as conditions.
      * @param array $types associative array of fields pointing to the type of the
