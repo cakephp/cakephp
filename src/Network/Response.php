@@ -335,7 +335,7 @@ class Response
     protected $_headers = [];
 
     /**
-     * Buffer string for response message
+     * Buffer string or callable for response message
      *
      * @var string
      */
@@ -539,11 +539,19 @@ class Response
     /**
      * Sends a content string to the client.
      *
-     * @param string $content string to send as response body
+     * If the content is a callable, it is invoked. The callable should either
+     * return a string or output content directly and have no return value.
+     *
+     * @param string|callable $content String to send as response body or callable
+     *  which returns/outputs content.
      * @return void
      */
     protected function _sendContent($content)
     {
+        if (!is_string($content) && is_callable($content)) {
+            $content = $content();
+        }
+
         echo $content;
     }
 
@@ -629,7 +637,7 @@ class Response
      * Buffers the response message to be sent
      * if $content is null the current buffer is returned
      *
-     * @param string|null $content the string message to be sent
+     * @param string|callable|null $content the string or callable message to be sent
      * @return string Current message buffer if $content param is passed as null
      */
     public function body($content = null)
@@ -1228,11 +1236,15 @@ class Response
     /**
      * String conversion. Fetches the response body as a string.
      * Does *not* send headers.
+     * If body is a callable, a blank string is returned.
      *
      * @return string
      */
     public function __toString()
     {
+        if (!is_string($this->_body) && is_callable($this->_body)) {
+            return '';
+        }
         return (string)$this->_body;
     }
 

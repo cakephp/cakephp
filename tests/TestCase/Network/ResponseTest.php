@@ -315,6 +315,41 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Tests the send method and changing the content type
+     *
+     * @return void
+     */
+    public function testSendWithCallableBody()
+    {
+        $response = $this->getMock('Cake\Network\Response', ['_sendHeader']);
+        $response->body(function () {
+            echo 'the response body';
+        });
+
+        ob_start();
+        $response->send();
+        $this->assertEquals('the response body', ob_get_clean());
+    }
+
+    /**
+     * Tests that the returned a string from a body callable is also sent
+     * as the response body
+     *
+     * @return void
+     */
+    public function testSendWithCallableBodyWithReturn()
+    {
+        $response = $this->getMock('Cake\Network\Response', ['_sendHeader']);
+        $response->body(function () {
+            return 'the response body';
+        });
+
+        ob_start();
+        $response->send();
+        $this->assertEquals('the response body', ob_get_clean());
+    }
+
+    /**
      * Tests the disableCache method
      *
      * @return void
