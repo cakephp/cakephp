@@ -100,9 +100,12 @@ class EmailTest extends TestCase
         parent::setUp();
         $this->CakeEmail = new TestEmail();
 
-        Email::configTransport('debug', [
-            'className' => 'Debug'
-        ]);
+        $this->transports = [
+            'debug' => [
+                'className' => 'Debug'
+            ]
+        ];
+        Email::configTransport($this->transports);
     }
 
     /**
@@ -879,6 +882,22 @@ class EmailTest extends TestCase
         $instance = new DebugTransport();
         Email::configTransport('debug', $instance);
         $this->assertEquals(['className' => $instance], Email::configTransport('debug'));
+    }
+
+    /**
+     * Test enumerating all transport configurations
+     *
+     * @return void
+     */
+    public function testConfiguredTransport()
+    {
+        $result = Email::configuredTransport();
+        $this->assertInternalType('array', $result, 'Should have config keys');
+        $this->assertEquals(
+            array_keys($this->transports),
+            $result,
+            'Loaded transports should be present in enumeration.'
+        );
     }
 
     /**
