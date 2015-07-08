@@ -259,7 +259,9 @@ abstract class BaseErrorHandler
             get_class($exception),
             $exception->getMessage()
         );
-        if (method_exists($exception, 'getAttributes')) {
+        $debug = Configure::read('debug');
+
+        if ($debug && method_exists($exception, 'getAttributes')) {
             $attributes = $exception->getAttributes();
             if ($attributes) {
                 $message .= "\nException Attributes: " . var_export($exception->getAttributes(), true);
