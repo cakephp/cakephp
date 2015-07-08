@@ -7685,6 +7685,128 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * testSaveManyDeepHasManyValidationFailure method
+ *
+ * @return void
+ */
+	public function testSaveManyDeepHasManyValidationFailure() {
+		$this->loadFixtures('Article', 'Comment');
+		$TestModel = new Article();
+		$TestModel->Comment->validate = array(
+			'comment' => array(
+				'notEmpty' => array(
+					'rule' => array('notEmpty'),
+				)
+			)
+		);
+
+		$result = $TestModel->saveMany(array(
+			array(
+				'user_id' => 1,
+				'title' => 'New Article',
+				'body' => 'This article contains a invalid comment',
+				'Comment' => array(
+					array(
+						'user_id' => 1,
+						'comment' => ''
+					)
+				)
+			)
+		), array('deep' => true));
+		$this->assertFalse($result);
+		$this->assertEquals(array(
+			array(
+				'Comment' => array(
+					array('comment' => array('notEmpty'))
+				)
+			)
+		), $TestModel->validationErrors);
+	}
+
+/**
+ * testSaveAssociatedDeepHasOneHasManyValidateTrueValidationFailure method
+ *
+ * @return void
+ */
+	public function testSaveAssociatedDeepHasOneHasManyValidateTrueValidationFailure() {
+		$this->loadFixtures('User', 'Article', 'Comment');
+		$TestModel = new UserHasOneArticle();
+		$TestModel->Article->Comment->validate = array(
+			'comment' => array(
+				'notEmpty' => array(
+					'rule' => array('notEmpty'),
+				)
+			)
+		);
+
+		$result = $TestModel->saveAssociated(array(
+			'User' => array(
+				'user' => 'hiromi',
+				'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+			),
+			'Article' => array(
+				'title' => 'Article with User',
+				'body' => 'This article will be saved with an user and contains a invalid comment',
+				'Comment' => array(
+					array(
+						'user_id' => 1,
+						'comment' => ''
+					)
+				)
+			)
+		), array('deep' => true, 'validate' => true));
+		$this->assertFalse($result);
+		$this->assertEquals(array(
+			'Article' => array(
+				'Comment' => array(
+					array('comment' => array('notEmpty'))
+				)
+			)
+		), $TestModel->validationErrors);
+	}
+
+/**
+ * testSaveAssociatedDeepBelongsToHasManyValidateTrueValidationFailure method
+ *
+ * @return void
+ */
+	public function testSaveAssociatedDeepBelongsToHasManyValidateTrueValidationFailure() {
+		$this->loadFixtures('ArticlesTag', 'Article', 'Comment');
+		$TestModel = new ArticlesTagBelongsToArticle();
+		$TestModel->Article->Comment->validate = array(
+			'comment' => array(
+				'notEmpty' => array(
+					'rule' => array('notEmpty'),
+				)
+			)
+		);
+
+		$result = $TestModel->saveAssociated(array(
+			'ArticlesTagBelongsToArticle' => array(
+				'tag_id' => 1,
+			),
+			'Article' => array(
+				'title' => 'Article with User',
+				'body' => 'This article will be saved with an user and contains a invalid comment',
+				'Comment' => array(
+					array(
+						'user_id' => 1,
+						'comment' => ''
+					)
+				)
+			)
+		), array('deep' => true, 'validate' => true));
+		$this->assertFalse($result);
+		$this->assertEquals(array(
+			'Article' => array(
+				'Comment' => array(
+					array('comment' => array('notEmpty'))
+				)
+			)
+		), $TestModel->validationErrors);
+	}
+
+/**
  * testUpdateAllBoolean
  *
  * @return void

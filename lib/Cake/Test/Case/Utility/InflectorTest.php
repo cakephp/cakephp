@@ -287,6 +287,9 @@ class InflectorTest extends CakeTestCase {
 	public function testPluralizeMultiWordIrregular() {
 		Inflector::rules('plural', array(
 			'irregular' => array(
+				'mytable1' => 'mytables1',
+				'mytable2' => 'mytables2',
+				'mytable1_mytable2' => 'mytables1_mytables2',
 				'pregunta_frecuente' => 'preguntas_frecuentes',
 				'categoria_pregunta_frecuente' => 'categorias_preguntas_frecuentes',
 			)
@@ -300,6 +303,10 @@ class InflectorTest extends CakeTestCase {
 			'faq_categorias_preguntas_frecuentes',
 			Inflector::pluralize('faq_categoria_pregunta_frecuente')
 		);
+		$this->assertEquals('mytables1', Inflector::pluralize('mytable1'));
+		$this->assertEquals('mytables2', Inflector::pluralize('mytable2'));
+		$this->assertEquals('mytables1_mytables2', Inflector::pluralize('mytable1_mytable2'));
+		$this->assertEquals('mytables1_mytables2', Inflector::tableize('Mytable1Mytable2'));
 	}
 
 /**
