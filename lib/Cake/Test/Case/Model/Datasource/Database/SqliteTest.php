@@ -560,13 +560,12 @@ class SqliteTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
-	/**
-	 * Test parsing more complex field names.
-	 *
-	 * @return void
-	 */
-	public function testFetchColumnRowParsingMoreComplex()
-	{
+/**
+ * Test parsing more complex field names.
+ *
+ * @return void
+ */
+	public function testFetchColumnRowParsingMoreComplex() {
 		$this->loadFixtures('User');
 		$sql = 'SELECT
 			COUNT(*) AS User__count,
