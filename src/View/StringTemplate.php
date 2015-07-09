@@ -178,7 +178,7 @@ class StringTemplate
                 $this->_compiled[$name] = [null, null];
             }
 
-            preg_match_all('#\{\{(\w+)\}\}#', $template, $matches);
+            preg_match_all('#\{\{([\w\d\._]+)\}\}#', $template, $matches);
             $this->_compiled[$name] = [
                 str_replace($matches[0], '%s', $template),
                 $matches[1]
