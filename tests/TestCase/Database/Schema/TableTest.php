@@ -41,9 +41,19 @@ class TableTest extends TestCase
 
     public $fixtures = ['core.articles_tags', 'core.products', 'core.orders', 'core.tags'];
 
+    protected $_map;
+
+    public function setUp()
+    {
+        $this->_map = Type::map();
+        parent::setUp();
+    }
+
     public function tearDown()
     {
         TableRegistry::clear();
+        Type::clear();
+        Type::map($this->_map);
         parent::tearDown();
     }
 

@@ -363,9 +363,7 @@ class Table
             return null;
         }
 
-        $map = Type::map($type);
-
-        if (isset($map[$type])) {
+        if (Type::map($type)) {
             $type = Type::build($type)->getBaseType();
         }
         return $this->_columns[$column]['baseType'] = $type;
