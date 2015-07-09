@@ -394,6 +394,7 @@ SQL;
         $expected = [
             'id' => [
                 'type' => 'integer',
+                'baseType' => null,
                 'null' => false,
                 'default' => null,
                 'length' => 10,
@@ -404,6 +405,7 @@ SQL;
             ],
             'name' => [
                 'type' => 'string',
+                'baseType' => null,
                 'null' => true,
                 'default' => 'bob',
                 'length' => 50,
@@ -413,6 +415,7 @@ SQL;
             ],
             'bio' => [
                 'type' => 'date',
+                'baseType' => null,
                 'null' => true,
                 'default' => null,
                 'length' => null,
@@ -421,6 +424,7 @@ SQL;
             ],
             'position' => [
                 'type' => 'integer',
+                'baseType' => null,
                 'null' => true,
                 'default' => '1',
                 'length' => 10,
@@ -431,6 +435,7 @@ SQL;
             ],
             'created' => [
                 'type' => 'timestamp',
+                'baseType' => null,
                 'null' => true,
                 'default' => null,
                 'length' => null,
