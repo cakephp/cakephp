@@ -64,7 +64,7 @@ class Folder {
 	public $sort = false;
 
 /**
- * Mode to be used on create. Does nothing on windows platforms.
+ * Mode to be used on create. Does nothing on Windows platforms.
  *
  * @var int
  * http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::$mode
@@ -263,7 +263,7 @@ class Folder {
  * Returns true if given $path is a Windows path.
  *
  * @param string $path Path to check
- * @return bool true if windows path, false otherwise
+ * @return bool true if Windows path, false otherwise
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::isWindowsPath
  */
 	public static function isWindowsPath($path) {

@@ -455,7 +455,7 @@ class Validation {
  * Validates for an email address.
  *
  * Only uses getmxrr() checking for deep validation if PHP 5.3.0+ is used, or
- * any PHP version on a non-windows distribution
+ * any PHP version on a non-Windows distribution
  *
  * @param string $check Value to check
  * @param bool $deep Perform a deeper validation (if true), by also checking availability of host

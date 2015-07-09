@@ -123,12 +123,12 @@ class CakeTime {
 
 /**
  * Converts a string representing the format for the function strftime and returns a
- * windows safe and i18n aware format.
+ * Windows safe and i18n aware format.
  *
  * @param string $format Format with specifiers for strftime function.
  *    Accepts the special specifier %S which mimics the modifier S for date()
  * @param string $time UNIX timestamp
- * @return string windows safe and date() function compatible format for strftime
+ * @return string Windows safe and date() function compatible format for strftime
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::convertSpecifiers
  */
 	public static function convertSpecifiers($format, $time = null) {
@@ -141,7 +141,7 @@ class CakeTime {
 
 /**
  * Auxiliary function to translate a matched specifier element from a regular expression into
- * a windows safe and i18n aware specifier
+ * a Windows safe and i18n aware specifier
  *
  * @param array $specifier match from regular expression
  * @return string converted element
