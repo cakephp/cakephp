@@ -15,9 +15,23 @@
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Database\Schema\Table;
+use Cake\Database\Type;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+
+/**
+ * Mock class for testing baseType inheritance
+ *
+ */
+class FooType extends Type
+{
+
+    public function getBaseType()
+    {
+        return 'integer';
+    }
+}
 
 /**
  * Test case for Table
@@ -133,6 +147,41 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests getting the baseType as configured when creating the column
+     *
+     * @return void
+     */
+    public function testBaseColumnType()
+    {
+        $table = new Table('articles');
+        $table->addColumn('title', [
+            'type' => 'json',
+            'baseType' => 'text',
+            'length' => 25,
+            'null' => false
+        ]);
+        $this->assertEquals('json', $table->columnType('title'));
+        $this->assertEquals('text', $table->baseColumnType('title'));
+    }
+
+    /**
+     * Tests getting the base type as it is retuned by the Type class
+     *
+     * @return void
+     */
+    public function testBaseColumnTypeInherited()
+    {
+        Type::map('foo', __NAMESPACE__ . '\FooType');
+        $table = new Table('articles');
+        $table->addColumn('thing', [
+            'type' => 'foo',
+            'null' => false
+        ]);
+        $this->assertEquals('foo', $table->columnType('thing'));
+        $this->assertEquals('integer', $table->baseColumnType('thing'));
+    }
+
+    /**
      * Attribute keys should be filtered and have defaults set.
      *
      * @return void
@@ -146,6 +195,7 @@ class TableTest extends TestCase
         $result = $table->column('title');
         $expected = [
             'type' => 'string',
+            'baseType' => null,
             'length' => null,
             'precision' => null,
             'default' => null,
@@ -161,6 +211,7 @@ class TableTest extends TestCase
         $result = $table->column('author_id');
         $expected = [
             'type' => 'integer',
+            'baseType' => null,
             'length' => null,
             'precision' => null,
             'default' => null,
@@ -177,6 +228,7 @@ class TableTest extends TestCase
         $result = $table->column('amount');
         $expected = [
             'type' => 'decimal',
+            'baseType' => null,
             'length' => null,
             'precision' => null,
             'default' => null,

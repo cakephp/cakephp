@@ -1076,7 +1076,7 @@ class EntityContextTest extends TestCase
             'id' => ['type' => 'integer', 'length' => 11, 'null' => false],
             'title' => ['type' => 'string', 'length' => 255],
             'user_id' => ['type' => 'integer', 'length' => 11, 'null' => false],
-            'body' => ['type' => 'text']
+            'body' => ['type' => 'crazy_text', 'baseType' => 'text']
         ]);
         $users->schema([
             'id' => ['type' => 'integer', 'length' => 11],
