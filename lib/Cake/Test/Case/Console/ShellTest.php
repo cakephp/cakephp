@@ -668,7 +668,7 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testCreateFileNoPermissions() {
-		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'Cant perform operations using permissions on windows.');
+		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'Cant perform operations using permissions on Windows.');
 
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'no_perms';
