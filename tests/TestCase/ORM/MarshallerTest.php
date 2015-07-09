@@ -37,6 +37,17 @@ class OpenEntity extends Entity
 /**
  * Test entity for mass assignment.
  */
+class Tag extends Entity
+{
+
+    protected $_accessible = [
+        'tag' => true,
+    ];
+}
+
+/**
+ * Test entity for mass assignment.
+ */
 class ProtectedArticle extends Entity
 {
 
@@ -125,6 +136,7 @@ class MarshallerTest extends TestCase
         $this->articles = $articles;
         $this->comments = $comments;
         $this->users = $users;
+        $this->tags = $tags;
     }
 
     /**
@@ -630,6 +642,57 @@ class MarshallerTest extends TestCase
      *
      * @return void
      */
+    public function testBelongsToManyAddingNewExisting()
+    {
+        $this->tags->entityClass(__NAMESPACE__ . '\Tag');
+        $data = [
+            'title' => 'My title',
+            'body' => 'My content',
+            'author_id' => 1,
+            'tags' => [
+                [
+                    'id' => 1,
+                    '_joinData' => [
+                        'active' => 0,
+                    ]
+                ],
+            ]
+        ];
+        $marshall = new Marshaller($this->articles);
+        $result = $marshall->one($data, ['associated' => ['Tags._joinData']]);
+        $data = [
+            'title' => 'New Title',
+            'tags' => [
+                [
+                    'id' => 1,
+                    '_joinData' => [
+                        'active' => 0,
+                    ]
+                ],
+                [
+                    'id' => 2,
+                    '_joinData' => [
+                        'active' => 1,
+                    ]
+                ]
+            ]
+        ];
+        $result = $marshall->merge($result, $data, ['associated' => ['Tags._joinData']]);
+
+        $this->assertEquals($data['title'], $result->title);
+        $this->assertEquals($data['tags'][0]['id'], $result->tags[0]->id);
+        $this->assertEquals($data['tags'][1]['id'], $result->tags[1]->id);
+        $this->assertNotEmpty($result->tags[0]->_joinData);
+        $this->assertNotEmpty($result->tags[1]->_joinData);
+        $this->assertEquals(0, $result->tags[0]->_joinData->active);
+        $this->assertEquals(1, $result->tags[1]->_joinData->active);
+    }
+
+    /**
+     * Test belongsToMany association with mixed data and _joinData
+     *
+     * @return void
+     */
     public function testBelongsToManyWithMixedJoinDataOutOfOrder()
     {
         $data = [
@@ -968,6 +1031,34 @@ class MarshallerTest extends TestCase
         $this->assertEquals($data + ['body' => 'My Content'], $result->toArray());
         $this->assertTrue($result->dirty(), 'Should be a dirty entity.');
         $this->assertFalse($result->isNew(), 'Should not change the entity state');
+    }
+
+    /**
+     * Test merge() with accessibleFields options
+     *
+     * @return void
+     */
+    public function testMergeAccessibleFields()
+    {
+        $data = [
+            'title' => 'My title',
+            'body' => 'New content',
+            'author_id' => 1,
+            'not_in_schema' => true
+        ];
+        $marshall = new Marshaller($this->articles);
+        $entity = new Entity([
+            'title' => 'Foo',
+            'body' => 'My Content'
+        ]);
+        $entity->accessible('*', false);
+        $entity->isNew(false);
+        $entity->clean();
+        $result = $marshall->merge($entity, $data, ['accessibleFields' => ['body' => true]]);
+
+        $this->assertSame($entity, $result);
+        $this->assertEquals(['title' => 'Foo', 'body' => 'New content'], $result->toArray());
+        $this->assertTrue($entity->accessible('body'));
     }
 
     /**
