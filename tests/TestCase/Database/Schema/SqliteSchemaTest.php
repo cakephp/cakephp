@@ -277,7 +277,6 @@ SQL;
         $expected = [
             'id' => [
                 'type' => 'integer',
-                'baseType' => null,
                 'null' => false,
                 'default' => null,
                 'length' => null,
@@ -288,7 +287,6 @@ SQL;
             ],
             'title' => [
                 'type' => 'string',
-                'baseType' => null,
                 'null' => true,
                 'default' => 'testing',
                 'length' => 20,
@@ -298,7 +296,6 @@ SQL;
             ],
             'body' => [
                 'type' => 'text',
-                'baseType' => null,
                 'null' => true,
                 'default' => null,
                 'length' => null,
@@ -307,7 +304,6 @@ SQL;
             ],
             'author_id' => [
                 'type' => 'integer',
-                'baseType' => null,
                 'null' => false,
                 'default' => null,
                 'length' => 11,
@@ -318,7 +314,6 @@ SQL;
             ],
             'published' => [
                 'type' => 'boolean',
-                'baseType' => null,
                 'null' => true,
                 'default' => 0,
                 'length' => null,
@@ -327,7 +322,6 @@ SQL;
             ],
             'created' => [
                 'type' => 'datetime',
-                'baseType' => null,
                 'null' => true,
                 'default' => null,
                 'length' => null,

@@ -205,7 +205,6 @@ class TableTest extends TestCase
         $result = $table->column('title');
         $expected = [
             'type' => 'string',
-            'baseType' => null,
             'length' => null,
             'precision' => null,
             'default' => null,
@@ -221,7 +220,6 @@ class TableTest extends TestCase
         $result = $table->column('author_id');
         $expected = [
             'type' => 'integer',
-            'baseType' => null,
             'length' => null,
             'precision' => null,
             'default' => null,
@@ -238,7 +236,6 @@ class TableTest extends TestCase
         $result = $table->column('amount');
         $expected = [
             'type' => 'decimal',
-            'baseType' => null,
             'length' => null,
             'precision' => null,
             'default' => null,

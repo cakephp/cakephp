@@ -321,7 +321,9 @@ class Table
         if (!isset($this->_columns[$name])) {
             return null;
         }
-        return $this->_columns[$name];
+        $column = $this->_columns[$name];
+        unset($column['baseType']);
+        return $column;
     }
 
     /**
