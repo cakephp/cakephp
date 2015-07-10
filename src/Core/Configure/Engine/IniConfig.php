@@ -148,7 +148,7 @@ class IniConfig implements ConfigEngineInterface
      * @param string $key The identifier to write to. If the key has a . it will be treated
      *  as a plugin prefix.
      * @param array $data The data to convert to ini file.
-     * @return int Bytes saved.
+     * @return bool Success.
      */
     public function dump($key, array $data)
     {
@@ -172,7 +172,7 @@ class IniConfig implements ConfigEngineInterface
         $contents = trim(implode("\n", $result));
 
         $filename = $this->_getFilePath($key);
-        return file_put_contents($filename, $contents);
+        return file_put_contents($filename, $contents) > 0;
     }
 
     /**

@@ -218,7 +218,7 @@ abstract class CacheEngine
      * Generates a safe key for use with cache engine storage engines.
      *
      * @param string $key the key passed over
-     * @return mixed string $key or false
+     * @return bool|string string key or false
      */
     public function key($key)
     {

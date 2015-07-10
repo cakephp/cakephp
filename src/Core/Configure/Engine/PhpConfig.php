@@ -25,7 +25,6 @@ use Cake\Core\Exception\Exception;
  * Files compatible with PhpConfig should return an array that
  * contains all of the configuration data contained in the file.
  *
- * @deprecated 3.0.0 Setting a `$config` variable is deprecated. Use `return` instead.
  */
 class PhpConfig implements ConfigEngineInterface
 {
@@ -58,6 +57,8 @@ class PhpConfig implements ConfigEngineInterface
      * Files with `.` in the name will be treated as values in plugins. Instead of
      * reading from the initialized path, plugin keys will be located using Plugin::path().
      *
+     * Setting a `$config` variable is deprecated. Use `return` instead.
+     *
      * @param string $key The identifier to read from. If the key has a . it will be treated
      *  as a plugin prefix.
      * @return array Parsed configuration values.
@@ -87,13 +88,13 @@ class PhpConfig implements ConfigEngineInterface
      * @param string $key The identifier to write to. If the key has a . it will be treated
      *  as a plugin prefix.
      * @param array $data Data to dump.
-     * @return int Bytes saved.
+     * @return bool Success
      */
     public function dump($key, array $data)
     {
         $contents = '<?php' . "\n" . 'return ' . var_export($data, true) . ';';
 
         $filename = $this->_getFilePath($key);
-        return file_put_contents($filename, $contents);
+        return file_put_contents($filename, $contents) > 0;
     }
 }
