@@ -247,7 +247,7 @@ class Time extends Carbon implements JsonSerializable
     public function timeAgoInWords(array $options = [])
     {
         $time = $this;
-        
+
         $timezone = null;
         $format = static::$wordFormat;
         $end = static::$wordEnd;
