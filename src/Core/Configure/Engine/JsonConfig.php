@@ -88,11 +88,11 @@ class JsonConfig implements ConfigEngineInterface
      * @param string $key The identifier to write to. If the key has a . it will
      *  be treated as a plugin prefix.
      * @param array $data Data to dump.
-     * @return int Bytes saved.
+     * @return bool Success
      */
     public function dump($key, array $data)
     {
         $filename = $this->_getFilePath($key);
-        return file_put_contents($filename, json_encode($data));
+        return file_put_contents($filename, json_encode($data)) > 0;
     }
 }

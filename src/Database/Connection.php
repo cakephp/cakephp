@@ -237,7 +237,7 @@ class Connection
      */
     public function execute($query, array $params = [], array $types = [])
     {
-        if ($params) {
+        if (!empty($params)) {
             $statement = $this->prepare($query);
             $statement->bind($params, $types);
             $statement->execute();
