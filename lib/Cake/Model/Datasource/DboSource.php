@@ -402,7 +402,7 @@ class DboSource extends DataSource {
  */
 	public function rawQuery($sql, $params = array()) {
 		$this->took = $this->numRows = false;
-		return $this->execute($sql, $params);
+		return $this->execute($sql, array(), $params);
 	}
 
 /**
