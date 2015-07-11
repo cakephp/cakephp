@@ -1114,7 +1114,7 @@ class DboSource extends DataSource {
  * @return string The built SQL statement
  */
 	public function getQueryStatement(Model $Model, &$queryData = null, $recursive = null) {
-		$queryData = is_null($queryData) ? array() : $queryData;
+		$queryData = $queryData === null ? array() : $queryData;
 		$queryData = $this->_scrubQueryData($queryData);
 
 		if ($recursive === null && isset($queryData['recursive'])) {

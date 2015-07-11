@@ -3459,7 +3459,7 @@ class Model extends Object implements CakeEventListener {
  * Builds and execute the query. Return DataSource object to retrieve the result explicitly using `fetchResult()`
  *
  * @param array $query Option fields (conditions / fields / joins / limit / offset / order / page / group / callbacks)
- * @param int $recursive Number of levels of association
+ * @param int|null $recursive Number of levels of association
  * @return mixed DataSource object if query executes with no problem, null on failure
  */
 	public function runQuery($query = array(), $recursive = null) {
@@ -3469,7 +3469,7 @@ class Model extends Object implements CakeEventListener {
 		}
 
 		$queryData = $this->buildQuery('all', $query);
-		if (is_null($queryData)) {
+		if ($queryData === null) {
 			return null;
 		}
 
