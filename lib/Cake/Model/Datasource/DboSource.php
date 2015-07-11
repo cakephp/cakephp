@@ -1109,7 +1109,7 @@ class DboSource extends DataSource {
  * and return it in order to use with the query execution methods
  *
  * @param Model $Model A Model object that the query is for.
- * @param array $queryData An array of queryData information containing keys similar to Model::find(), but it is passed by reference.
+ * @param array &$queryData An array of queryData information containing keys similar to Model::find(), but it is passed by reference.
  * @param int $recursive Number of levels of association
  * @return string The built SQL statement
  */
