@@ -315,6 +315,11 @@ class TextTest extends TestCase
         $result = Text::tokenize('tagA "single tag" tagB', ' ', '"', '"');
         $expected = ['tagA', '"single tag"', 'tagB'];
         $this->assertEquals($expected, $result);
+
+        // Ideographic width space.
+        $result = Text::tokenize("tagA\xe3\x80\x80\"single\xe3\x80\x80tag\"\xe3\x80\x80tagB", "\xe3\x80\x80", '"', '"');
+        $expected = ['tagA', '"single　tag"', 'tagB'];
+        $this->assertEquals($expected, $result);
     }
 
     public function testReplaceWithQuestionMarkInString()
