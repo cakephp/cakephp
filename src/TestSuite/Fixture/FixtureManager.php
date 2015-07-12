@@ -284,9 +284,9 @@ class FixtureManager
                 $db->logQueries(false);
             }
             $db->transactional(function ($db) use ($fixtures, $operation) {
-                $db->disableForeignKeys();
-                $operation($db, $fixtures);
-                $db->enableForeignKeys();
+                $db->disableConstraints(function ($db) use ($fixtures, $operation) {
+                    $operation($db, $fixtures);
+                });
             });
             if ($logQueries) {
                 $db->logQueries(true);
