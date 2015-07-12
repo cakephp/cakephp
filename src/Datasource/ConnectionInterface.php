@@ -43,7 +43,7 @@ interface ConnectionInterface
      *
      * The callback will receive the connection instance as its first argument.
      *
-     * @param callable $callable The callback to execute within a transaction.
+     * @param callable $transaction The callback to execute within a transaction.
      * @return mixed The return value of the callback.
      * @throws \Exception Will re-throw any exception raised in $callback after
      *   rolling back the transaction.
@@ -55,7 +55,7 @@ interface ConnectionInterface
      *
      * Constraints should be re-enabled after the callback succeeds/fails.
      *
-     * @param callable $callable The callback to execute within a transaction.
+     * @param callable $operation The callback to execute within a transaction.
      * @return mixed The return value of the callback.
      * @throws \Exception Will re-throw any exception raised in $callback after
      *   rolling back the transaction.
