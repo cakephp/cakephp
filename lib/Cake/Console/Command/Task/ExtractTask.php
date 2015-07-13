@@ -49,13 +49,6 @@ class ExtractTask extends AppShell {
 	protected $_merge = false;
 
 /**
- * Write lines with locations of each message string
- *
- * @var bool
- */
-	protected $_locations = true;
-
-/**
  * Current file being processed
  *
  * @var string
@@ -231,10 +224,6 @@ class ExtractTask extends AppShell {
 			$this->_merge = strtolower($response) === 'y';
 		}
 
-		if (isset($this->params['locations'])) {
-			$this->_locations = !(strtolower($this->params['locations']) === 'no');
-		}
-
 		if (empty($this->_files)) {
 			$this->_searchFiles();
 		}
@@ -327,9 +316,10 @@ class ExtractTask extends AppShell {
 		))->addOption('merge', array(
 			'help' => __d('cake_console', 'Merge all domain and category strings into the default.po file.'),
 			'choices' => array('yes', 'no')
-		))->addOption('locations', array(
-			'help' => __d('cake_console', 'Write lines with locations of each message string'),
-			'choices' => array('yes', 'no')
+		))->addOption('no-location', array(
+			'boolean' => true,
+			'default' => false,
+			'help' => __d('cake_console', 'Do not write lines with locations'),
 		))->addOption('output', array(
 			'help' => __d('cake_console', 'Full path to output directory.')
 		))->addOption('files', array(
@@ -587,7 +577,7 @@ class ExtractTask extends AppShell {
 					foreach ($contexts as $context => $details) {
 						$plural = $details['msgid_plural'];
 						$header = '';
-						if ($this->_locations) {
+						if (empty($this->params['no-location'])) {
 							$files = $details['references'];
 							$occurrences = array();
 							foreach ($files as $file => $lines) {

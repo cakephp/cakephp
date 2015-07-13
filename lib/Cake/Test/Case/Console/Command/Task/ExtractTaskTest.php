@@ -233,7 +233,7 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['extract-core'] = 'no';
 		$this->Task->params['merge'] = 'no';
-		$this->Task->params['locations'] = 'no';
+		$this->Task->params['no-location'] = true;
 
 		$this->Task->expects($this->never())->method('err');
 		$this->Task->expects($this->any())->method('in')
