@@ -458,6 +458,9 @@ class EntityContextTest extends TestCase
         $row = new Article([
             'title' => 'Test entity',
             'types' => [1, 2, 3],
+            'tag' => [
+                'name' => 'Test tag',
+            ],
             'author' => new Entity([
                 'roles' => ['admin', 'publisher']
             ])
@@ -471,6 +474,9 @@ class EntityContextTest extends TestCase
 
         $result = $context->val('author.roles');
         $this->assertEquals($row->author->roles, $result);
+
+        $result = $context->val('tag.name');
+        $this->assertEquals($row->tag['name'], $result);
     }
 
     /**
