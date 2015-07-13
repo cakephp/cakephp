@@ -115,15 +115,15 @@ class CakeText {
 		$offset = 0;
 		$buffer = '';
 		$results = array();
-		$length = strlen($data);
+		$length = mb_strlen($data);
 		$open = false;
 
 		while ($offset <= $length) {
 			$tmpOffset = -1;
 			$offsets = array(
-				strpos($data, $separator, $offset),
-				strpos($data, $leftBound, $offset),
-				strpos($data, $rightBound, $offset)
+				mb_strpos($data, $separator, $offset),
+				mb_strpos($data, $leftBound, $offset),
+				mb_strpos($data, $rightBound, $offset)
 			);
 			for ($i = 0; $i < 3; $i++) {
 				if ($offsets[$i] !== false && ($offsets[$i] < $tmpOffset || $tmpOffset == -1)) {
@@ -131,22 +131,23 @@ class CakeText {
 				}
 			}
 			if ($tmpOffset !== -1) {
-				$buffer .= substr($data, $offset, ($tmpOffset - $offset));
-				if (!$depth && $data{$tmpOffset} === $separator) {
+				$buffer .= mb_substr($data, $offset, ($tmpOffset - $offset));
+				$char = mb_substr($data, $tmpOffset, 1);
+				if (!$depth && $char === $separator) {
 					$results[] = $buffer;
 					$buffer = '';
 				} else {
-					$buffer .= $data{$tmpOffset};
+					$buffer .= $char;
 				}
 				if ($leftBound !== $rightBound) {
-					if ($data{$tmpOffset} === $leftBound) {
+					if ($char === $leftBound) {
 						$depth++;
 					}
-					if ($data{$tmpOffset} === $rightBound) {
+					if ($char === $rightBound) {
 						$depth--;
 					}
 				} else {
-					if ($data{$tmpOffset} === $leftBound) {
+					if ($char === $leftBound) {
 						if (!$open) {
 							$depth++;
 							$open = true;
@@ -157,7 +158,7 @@ class CakeText {
 				}
 				$offset = ++$tmpOffset;
 			} else {
-				$results[] = $buffer . substr($data, $offset);
+				$results[] = $buffer . mb_substr($data, $offset);
 				$offset = $length + 1;
 			}
 		}

@@ -304,6 +304,11 @@ class CakeTextTest extends CakeTestCase {
 		$expected = array('tagA', '"single tag"', 'tagB');
 		$this->assertEquals($expected, $result);
 
+		// Ideographic width space.
+		$result = CakeText::tokenize("tagA\xe3\x80\x80\"single\xe3\x80\x80tag\"\xe3\x80\x80tagB", "\xe3\x80\x80", '"', '"');
+		$expected = array('tagA', '"single　tag"', 'tagB');
+		$this->assertEquals($expected, $result);
+
 		$result = CakeText::tokenize('');
 		$expected = array();
 		$this->assertEquals($expected, $result);

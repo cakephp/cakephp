@@ -7694,8 +7694,8 @@ class ModelWriteTest extends BaseModelTest {
 		$TestModel = new Article();
 		$TestModel->Comment->validate = array(
 			'comment' => array(
-				'notEmpty' => array(
-					'rule' => array('notEmpty'),
+				'notBlank' => array(
+					'rule' => array('notBlank'),
 				)
 			)
 		);
@@ -7717,7 +7717,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals(array(
 			array(
 				'Comment' => array(
-					array('comment' => array('notEmpty'))
+					array('comment' => array('notBlank'))
 				)
 			)
 		), $TestModel->validationErrors);
@@ -7733,8 +7733,8 @@ class ModelWriteTest extends BaseModelTest {
 		$TestModel = new UserHasOneArticle();
 		$TestModel->Article->Comment->validate = array(
 			'comment' => array(
-				'notEmpty' => array(
-					'rule' => array('notEmpty'),
+				'notBlank' => array(
+					'rule' => array('notBlank'),
 				)
 			)
 		);
@@ -7759,7 +7759,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals(array(
 			'Article' => array(
 				'Comment' => array(
-					array('comment' => array('notEmpty'))
+					array('comment' => array('notBlank'))
 				)
 			)
 		), $TestModel->validationErrors);
@@ -7775,8 +7775,8 @@ class ModelWriteTest extends BaseModelTest {
 		$TestModel = new ArticlesTagBelongsToArticle();
 		$TestModel->Article->Comment->validate = array(
 			'comment' => array(
-				'notEmpty' => array(
-					'rule' => array('notEmpty'),
+				'notBlank' => array(
+					'rule' => array('notBlank'),
 				)
 			)
 		);
@@ -7800,7 +7800,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals(array(
 			'Article' => array(
 				'Comment' => array(
-					array('comment' => array('notEmpty'))
+					array('comment' => array('notBlank'))
 				)
 			)
 		), $TestModel->validationErrors);
