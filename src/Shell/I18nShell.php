@@ -92,7 +92,7 @@ class I18nShell extends Shell
         $sourceFolder = rtrim($response, DS) . DS;
         $targetFolder = $sourceFolder . $language . DS;
         if (!is_dir($targetFolder)) {
-            mkdir($targetFolder, 0770, true);
+            mkdir($targetFolder, 0775, true);
         }
 
         $count = 0;
