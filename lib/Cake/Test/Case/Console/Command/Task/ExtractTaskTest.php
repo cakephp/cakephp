@@ -222,18 +222,18 @@ class ExtractTaskTest extends CakeTestCase {
 	}
 
  /**
- * testExtractWithoutHeaders method
+ * testExtractWithoutLocations method
  *
  * @return void
  */
-	public function testExtractWithoutHeaders() {
+	public function testExtractWithoutLocations() {
 		$this->Task->interactive = false;
 
 		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Pages';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['extract-core'] = 'no';
 		$this->Task->params['merge'] = 'no';
-		$this->Task->params['headers'] = 'no';
+		$this->Task->params['locations'] = 'no';
 
 		$this->Task->expects($this->never())->method('err');
 		$this->Task->expects($this->any())->method('in')

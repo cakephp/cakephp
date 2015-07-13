@@ -49,11 +49,11 @@ class ExtractTask extends AppShell {
 	protected $_merge = false;
 
 /**
- * Add headers for each sentence showing references
+ * Write lines with locations of each message string
  *
  * @var bool
  */
-	protected $_headers = true;
+	protected $_locations = true;
 
 /**
  * Current file being processed
@@ -231,8 +231,8 @@ class ExtractTask extends AppShell {
 			$this->_merge = strtolower($response) === 'y';
 		}
 
-		if (isset($this->params['headers'])) {
-			$this->_headers = !(strtolower($this->params['headers']) === 'no');
+		if (isset($this->params['locations'])) {
+			$this->_locations = !(strtolower($this->params['locations']) === 'no');
 		}
 
 		if (empty($this->_files)) {
@@ -327,8 +327,8 @@ class ExtractTask extends AppShell {
 		))->addOption('merge', array(
 			'help' => __d('cake_console', 'Merge all domain and category strings into the default.po file.'),
 			'choices' => array('yes', 'no')
-		))->addOption('headers', array(
-			'help' => __d('cake_console', 'Add headers for each sentence showing references'),
+		))->addOption('locations', array(
+			'help' => __d('cake_console', 'Write lines with locations of each message string'),
 			'choices' => array('yes', 'no')
 		))->addOption('output', array(
 			'help' => __d('cake_console', 'Full path to output directory.')
@@ -587,7 +587,7 @@ class ExtractTask extends AppShell {
 					foreach ($contexts as $context => $details) {
 						$plural = $details['msgid_plural'];
 						$header = '';
-						if ($this->_headers) {
+						if ($this->_locations) {
 							$files = $details['references'];
 							$occurrences = array();
 							foreach ($files as $file => $lines) {
