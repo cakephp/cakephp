@@ -49,6 +49,13 @@ class ExtractTask extends AppShell {
 	protected $_merge = false;
 
 /**
+ * Add headers for each sentence showing references
+ *
+ * @var bool
+ */
+	protected $_headers = true;
+
+/**
  * Current file being processed
  *
  * @var string
@@ -224,6 +231,10 @@ class ExtractTask extends AppShell {
 			$this->_merge = strtolower($response) === 'y';
 		}
 
+		if (isset($this->params['headers'])) {
+			$this->_headers = !(strtolower($this->params['headers']) === 'no');
+		}
+
 		if (empty($this->_files)) {
 			$this->_searchFiles();
 		}
@@ -315,6 +326,9 @@ class ExtractTask extends AppShell {
 			'help' => __d('cake_console', 'Comma separated list of paths.')
 		))->addOption('merge', array(
 			'help' => __d('cake_console', 'Merge all domain and category strings into the default.po file.'),
+			'choices' => array('yes', 'no')
+		))->addOption('headers', array(
+			'help' => __d('cake_console', 'Add headers for each sentence showing references'),
 			'choices' => array('yes', 'no')
 		))->addOption('output', array(
 			'help' => __d('cake_console', 'Full path to output directory.')
@@ -572,14 +586,17 @@ class ExtractTask extends AppShell {
 				foreach ($translations as $msgid => $contexts) {
 					foreach ($contexts as $context => $details) {
 						$plural = $details['msgid_plural'];
-						$files = $details['references'];
-						$occurrences = array();
-						foreach ($files as $file => $lines) {
-							$lines = array_unique($lines);
-							$occurrences[] = $file . ':' . implode(';', $lines);
+						$header = '';
+						if ($this->_headers) {
+							$files = $details['references'];
+							$occurrences = array();
+							foreach ($files as $file => $lines) {
+								$lines = array_unique($lines);
+								$occurrences[] = $file . ':' . implode(';', $lines);
+							}
+							$occurrences = implode("\n#: ", $occurrences);
+							$header = '#: ' . str_replace(DS, '/', str_replace($paths, '', $occurrences)) . "\n";
 						}
-						$occurrences = implode("\n#: ", $occurrences);
-						$header = '#: ' . str_replace(DS, '/', str_replace($paths, '', $occurrences)) . "\n";
 
 						$sentence = '';
 						if ($context) {
