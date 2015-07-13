@@ -456,7 +456,7 @@ class EntityContext implements ContextInterface
     {
         $parts = explode('.', $field);
         $table = $this->_getTable($parts);
-        return $table->schema()->columnType(array_pop($parts));
+        return $table->schema()->baseColumnType(array_pop($parts));
     }
 
     /**
