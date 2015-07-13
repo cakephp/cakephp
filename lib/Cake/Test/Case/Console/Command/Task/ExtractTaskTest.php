@@ -241,8 +241,7 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->Task->expects($this->never())->method('_stop');
 
 		$this->Task->execute();
-		$this->assertTrue(file_exists($this->path . DS . 'LC_NUMERIC' . DS . 'default.pot'));
-		$this->assertFalse(file_exists($this->path . DS . 'LC_TIME' . DS . 'default.pot'));
+		$this->assertTrue(file_exists($this->path . DS . 'default.pot'));
 
 		$result = file_get_contents($this->path . DS . 'default.pot');
 
