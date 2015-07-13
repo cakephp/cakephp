@@ -495,6 +495,7 @@ class Cache {
  */
 	public static function isInitialized($config = 'default') {
 		if (Configure::read('Cache.disable')) {
+			trigger_error('Cache is disabled in your config/core.php');
 			return false;
 		}
 		return isset(self::$_engines[$config]);
