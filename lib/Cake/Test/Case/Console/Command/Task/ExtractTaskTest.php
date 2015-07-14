@@ -221,7 +221,7 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->assertNotRegExp($pattern, $result);
 	}
 
- /**
+/**
  * testExtractWithoutLocations method
  *
  * @return void
