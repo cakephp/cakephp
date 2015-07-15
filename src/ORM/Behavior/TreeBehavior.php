@@ -126,7 +126,7 @@ class TreeBehavior extends Behavior
 
             if ($level) {
                 $parentNode = $this->_getNode($parent);
-                $entity->set($config[$level], $parentNode[$level] + 1);
+                $entity->set($level, $parentNode[$level] + 1);
             }
             return;
         }
