@@ -756,6 +756,7 @@ class Hash {
  * number of dimensions in a mixed array.
  *
  * @param array $data Array to count dimensions on
+ * @param int $count current depth count for this interation of the function
  * @return int The maximum number of dimensions in $data
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::maxDimensions
  */
