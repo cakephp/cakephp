@@ -1445,8 +1445,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 ['_primary' => false] + $options->getArrayCopy()
             );
             if ($success || !$options['atomic']) {
-                $entity->clean();
                 $this->dispatchEvent('Model.afterSave', compact('entity', 'options'));
+                $entity->clean();
                 if (!$options['atomic'] && !$options['_primary']) {
                     $entity->isNew(false);
                     $entity->source($this->registryAlias());
