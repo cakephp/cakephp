@@ -1340,6 +1340,11 @@ class TreeBehaviorTest extends TestCase
 
         $entity = $this->table->get(8);
         $this->assertEquals(2, $entity->depth);
+
+        $entity->parent_id = 6;
+        $this->table->save($entity);
+        $entity = $this->table->get(8);
+        $this->assertEquals(1, $entity->depth);
     }
 
     /**
