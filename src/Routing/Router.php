@@ -29,9 +29,8 @@ use Cake\Utility\Inflector;
  * ### Connecting routes
  *
  * Connecting routes is done using Router::connect(). When parsing incoming requests or reverse matching
- * parameters, routes are enumerated in the order they were connected. You can modify the order of connected
- * routes using Router::promote(). For more information on routes and how to connect them see Router::connect().
- *
+ * parameters, routes are enumerated in the order they were connected. For more information on routes and
+ * how to connect them see Router::connect().
  */
 class Router
 {
