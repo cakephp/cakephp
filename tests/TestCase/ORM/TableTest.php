@@ -4322,6 +4322,11 @@ class TableTest extends TestCase
         $this->assertEquals(4, $cloned->id);
     }
 
+    /**
+     * Tests that the _ids notation can be used for HasMany
+     *
+     * @return void
+     */
     public function testSaveHasManyWithIds()
     {
         $data = [
@@ -4338,6 +4343,43 @@ class TableTest extends TestCase
         $retrievedUser = $userTable->find('all')->where(['id' => $savedUser->id])->contain(['Comments'])->first();
         $this->assertEquals($savedUser->comments[0]->user_id, $retrievedUser->comments[0]->user_id);
         $this->assertEquals($savedUser->comments[1]->user_id, $retrievedUser->comments[1]->user_id);
+    }
+
+    /**
+     * Tests that on second save, entities for the has many relation are not marked
+     * as dirty unnecessarily. This helps avoid wasteful database statements and makes
+     * for a cleaner transaction log
+     *
+     * @return void
+     */
+    public function testSaveHasManyNoWasteSave()
+    {
+        $data = [
+            'username' => 'lux',
+            'password' => 'passphrase',
+            'comments' => [
+                '_ids' => [1, 2]
+            ]
+        ];
+
+        $userTable = TableRegistry::get('Users');
+        $userTable->hasMany('Comments');
+        $savedUser = $userTable->save($userTable->newEntity($data, ['associated' => ['Comments']]));
+
+        $counter = 0;
+        $userTable->Comments
+            ->eventManager()
+            ->on('Model.afterSave', function ($event, $entity) use (&$counter) {
+                if ($entity->dirty()) {
+                    $counter++;
+                }
+        });
+
+        $savedUser->comments[] = $userTable->Comments->get(5);
+        $this->assertCount(3, $savedUser->comments);
+        $savedUser->dirty('comments', true);
+        $userTable->save($savedUser);
+        $this->assertEquals(1, $counter);
     }
 
     /**
