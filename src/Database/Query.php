@@ -755,6 +755,9 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function where($conditions = null, $types = [], $overwrite = false)
     {
+        if (empty($conditions)) {
+            return $this;
+        }
         if ($overwrite) {
             $this->_parts['where'] = $this->newExpr();
         }
