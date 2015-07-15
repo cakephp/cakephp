@@ -1159,12 +1159,25 @@ class ResponseTest extends TestCase
      * test file with ..
      *
      * @expectedException \Cake\Network\Exception\NotFoundException
+     * @expectedExceptionMessage The requested file contains `..` and will not be read.
      * @return void
      */
     public function testFileWithPathTraversal()
     {
         $response = new Response();
         $response->file('my/../cat.gif');
+    }
+    /**
+     * test file with ..
+     *
+     * @expectedException \Cake\Network\Exception\NotFoundException
+     * @expectedExceptionMessage my/ca..t.gif was not found or not readable
+     * @return void
+     */
+    public function testFileWithDotIntheName()
+    {
+        $response = new Response();
+        $response->file('my/ca..t.gif');
     }
 
     /**
