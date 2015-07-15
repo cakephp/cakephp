@@ -4373,7 +4373,7 @@ class TableTest extends TestCase
                 if ($entity->dirty()) {
                     $counter++;
                 }
-        });
+            });
 
         $savedUser->comments[] = $userTable->Comments->get(5);
         $this->assertCount(3, $savedUser->comments);
