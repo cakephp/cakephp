@@ -1888,6 +1888,7 @@ class TableTest extends TestCase
         $called = false;
         $listener = function ($e, $entity, $options) use ($data, &$called) {
             $this->assertSame($data, $entity);
+            $this->assertTrue($entity->dirty());
             $called = true;
         };
         $table->eventManager()->on('Model.afterSave', $listener);
@@ -1895,6 +1896,7 @@ class TableTest extends TestCase
         $calledAfterCommit = false;
         $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
             $this->assertSame($data, $entity);
+            $this->assertFalse($entity->dirty());
             $calledAfterCommit = true;
         };
         $table->eventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
