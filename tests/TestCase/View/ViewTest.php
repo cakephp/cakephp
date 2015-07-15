@@ -82,8 +82,6 @@ class ViewPostsController extends Controller
 class ThemePostsController extends Controller
 {
 
-    public $theme = null;
-
     /**
      * index method
      *
