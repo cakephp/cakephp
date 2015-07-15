@@ -968,5 +968,4 @@ class ControllerTest extends TestCase
         $this->assertEquals($theme, @$controller->getView()->theme);
         // @codingStandardsIgnoreEnd
     }
-
 }
