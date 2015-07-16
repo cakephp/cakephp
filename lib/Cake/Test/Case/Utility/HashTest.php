@@ -303,6 +303,12 @@ class HashTest extends CakeTestCase {
 		$data = array('1' => array('1.1' => '1.1.1'), '2', '3' => array('3.1' => array('3.1.1' => '3.1.1.1')));
 		$result = Hash::maxDimensions($data);
 		$this->assertEquals($result, 3);
+		
+		$data = array('1' => array('1.1' => '1.1.1', '1.2' => array('1.2.1' => '1.2.1.1')),'2' => array(
+			'2.1' => '2.1.1',)
+		);
+		$result = Hash::maxDimensions($data);
+		$this->assertEquals($result, 3);
 
 		$data = array(
 			'1' => array('1.1' => '1.1.1'),
