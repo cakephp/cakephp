@@ -21,7 +21,7 @@
         "php": ">=5.4.16",
         "ext-intl": "*",
         "ext-mbstring": "*",
-        "nesbot/Carbon": "1.20.*",
+        "nesbot/Carbon": "1.13.*",
         "ircmaxell/password-compat": "1.0.*",
         "aura/intl": "1.1.*",
         "psr/log": "1.0"
