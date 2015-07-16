@@ -756,18 +756,16 @@ class Hash {
  * number of dimensions in a mixed array.
  *
  * @param array $data Array to count dimensions on
+ * @param int $count counts current depth of this iteration
  * @return int The maximum number of dimensions in $data
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::maxDimensions
  */
-	public static function maxDimensions(array $data) {
-		$depth = array();
+ 
+	public static function maxDimensions($data, $count = 0) {
+		$depth = array($count);
 		if (is_array($data) && reset($data) !== false) {
 			foreach ($data as $value) {
-				if (is_array($value)) {
-					$depth[] = self::dimensions($value) + 1;
-				} else {
-					$depth[] = 1;
-				}
+				$depth[] = static::maxDimensions($value, $count + 1 );
 			}
 		}
 		return empty($depth) ? 0 : max($depth);
