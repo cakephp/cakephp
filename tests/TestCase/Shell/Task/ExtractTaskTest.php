@@ -166,13 +166,11 @@ class ExtractTaskTest extends TestCase
      */
     public function testExtractWithoutLocations()
     {
-
         $this->Task->params['paths'] = TEST_APP . 'TestApp/Template';
         $this->Task->params['output'] = $this->path . DS;
         $this->Task->params['exclude'] = 'Pages,Layout';
         $this->Task->params['extract-core'] = 'no';
         $this->Task->params['no-location'] = true;
-
 
         $this->Task->expects($this->never())->method('err');
         $this->Task->expects($this->any())->method('in')
