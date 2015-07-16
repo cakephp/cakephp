@@ -222,6 +222,34 @@ class ExtractTaskTest extends CakeTestCase {
 	}
 
 /**
+ * testExtractWithoutLocations method
+ *
+ * @return void
+ */
+	public function testExtractWithoutLocations() {
+		$this->Task->interactive = false;
+
+		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Pages';
+		$this->Task->params['output'] = $this->path . DS;
+		$this->Task->params['extract-core'] = 'no';
+		$this->Task->params['merge'] = 'no';
+		$this->Task->params['no-location'] = true;
+
+		$this->Task->expects($this->never())->method('err');
+		$this->Task->expects($this->any())->method('in')
+			->will($this->returnValue('y'));
+		$this->Task->expects($this->never())->method('_stop');
+
+		$this->Task->execute();
+		$this->assertTrue(file_exists($this->path . DS . 'default.pot'));
+
+		$result = file_get_contents($this->path . DS . 'default.pot');
+
+		$pattern = '/\n\#: .*\n/';
+		$this->assertNotRegExp($pattern, $result);
+	}
+
+/**
  * test exclusions
  *
  * @return void
