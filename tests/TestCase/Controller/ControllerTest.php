@@ -66,6 +66,13 @@ class TestController extends ControllerTestAppController
 {
 
     /**
+     * Theme property
+     *
+     * @var string
+     */
+    public $theme = 'Foo';
+
+    /**
      * helpers property
      *
      * @var array
@@ -946,5 +953,19 @@ class ControllerTest extends TestCase
         $this->assertFalse($controller->isAction('redirect'));
         $this->assertFalse($controller->isAction('beforeFilter'));
         $this->assertTrue($controller->isAction('index'));
+    }
+
+    /**
+     * Test declared deprecated properties like $theme are properly passed to view.
+     * @return void
+     */
+    public function testDeclaredDeprecatedProperty()
+    {
+        $controller = new TestController(new Request(), new Response());
+        $theme = $controller->theme;
+
+        // @codingStandardsIgnoreStart
+        $this->assertEquals($theme, @$controller->getView()->theme);
+        // @codingStandardsIgnoreEnd
     }
 }

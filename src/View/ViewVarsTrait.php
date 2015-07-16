@@ -110,10 +110,26 @@ trait ViewVarsTrait
             throw new Exception\MissingViewException([$viewClass]);
         }
 
+        $validViewOptions = $this->viewOptions();
         $viewOptions = [];
-        foreach ($this->viewOptions() as $option) {
+        foreach ($validViewOptions as $option) {
             if (property_exists($this, $option)) {
                 $viewOptions[$option] = $this->{$option};
+            }
+        }
+        $deprecatedOptions = array_diff(
+            ['layout', 'view', 'theme', 'autoLayout', 'viewPath', 'layoutPath'],
+            $validViewOptions
+        );
+        foreach ($deprecatedOptions as $option) {
+            if (property_exists($this, $option)) {
+                $viewOptions[$option] = $this->{$option};
+                unset($this->{$option});
+                trigger_error(sprintf(
+                    'Property $%s is deprecated. Use $this->getView()->%s() instead in beforeRender().',
+                    $option,
+                    $option
+                ), E_USER_DEPRECATED);
             }
         }
         return new $className($this->request, $this->response, $this->eventManager(), $viewOptions);
