@@ -4383,6 +4383,43 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests that on second save, entities for the belongsToMany relation are not marked
+     * as dirty unnecessarily. This helps avoid wasteful database statements and makes
+     * for a cleaner transaction log
+     *
+     * @return void
+     */
+    public function testSaveBelongsToManyNoWasteSave()
+    {
+        $data = [
+            'title' => 'foo',
+            'body' => 'bar',
+            'tags' => [
+                '_ids' => [1, 2]
+            ]
+        ];
+
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags');
+        $article = $table->save($table->newEntity($data, ['associated' => ['Tags']]));
+
+        $counter = 0;
+        $table->Tags->junction()
+            ->eventManager()
+            ->on('Model.afterSave', function ($event, $entity) use (&$counter) {
+                if ($entity->dirty()) {
+                    $counter++;
+                }
+            });
+
+        $article->tags[] = $table->Tags->get(3);
+        $this->assertCount(3, $article->tags);
+        $article->dirty('tags', true);
+        $table->save($article);
+        $this->assertEquals(1, $counter);
+    }
+
+    /**
      * Tests that after saving then entity contains the right primary
      * key casted to the right type
      *
