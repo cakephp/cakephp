@@ -47,7 +47,7 @@ class SecurityComponent extends Component {
  * List of controller actions for which a POST request is required
  *
  * @var array
- * @deprecated 3.0.0 Use CakeRequest::onlyAllow() instead.
+ * @deprecated 3.0.0 Use CakeRequest::allowMethod() instead.
  * @see SecurityComponent::requirePost()
  */
 	public $requirePost = array();
@@ -56,7 +56,7 @@ class SecurityComponent extends Component {
  * List of controller actions for which a GET request is required
  *
  * @var array
- * @deprecated 3.0.0 Use CakeRequest::onlyAllow() instead.
+ * @deprecated 3.0.0 Use CakeRequest::allowMethod() instead.
  * @see SecurityComponent::requireGet()
  */
 	public $requireGet = array();
@@ -65,7 +65,7 @@ class SecurityComponent extends Component {
  * List of controller actions for which a PUT request is required
  *
  * @var array
- * @deprecated 3.0.0 Use CakeRequest::onlyAllow() instead.
+ * @deprecated 3.0.0 Use CakeRequest::allowMethod() instead.
  * @see SecurityComponent::requirePut()
  */
 	public $requirePut = array();
@@ -74,7 +74,7 @@ class SecurityComponent extends Component {
  * List of controller actions for which a DELETE request is required
  *
  * @var array
- * @deprecated 3.0.0 Use CakeRequest::onlyAllow() instead.
+ * @deprecated 3.0.0 Use CakeRequest::allowMethod() instead.
  * @see SecurityComponent::requireDelete()
  */
 	public $requireDelete = array();
