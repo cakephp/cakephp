@@ -373,7 +373,9 @@ class AuthComponent extends Component {
 			$this->_stop();
 			return false;
 		}
-		$controller->redirect(null, 403);
+		$controller->response->statusCode(403);
+		$controller->response->send();
+		$this->_stop();
 		return false;
 	}
 
