@@ -89,7 +89,7 @@ class ConsoleLog extends BaseLog
     public function log($level, $message, array $context = [])
     {
         $message = $this->_format($message, $context);
-        $output = date('Y-m-d H:i:s') . ' ' . ucfirst($level) . ': ' . $message . "\n";
-        return $this->_output->write(sprintf('<%s>%s</%s>', $level, $output, $level), false);
+        $output = date('Y-m-d H:i:s') . ' ' . ucfirst($level) . ': ' . $message;
+        return $this->_output->write(sprintf('<%s>%s</%s>', $level, $output, $level));
     }
 }
