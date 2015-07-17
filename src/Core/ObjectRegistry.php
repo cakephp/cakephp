@@ -69,10 +69,11 @@ abstract class ObjectRegistry
      */
     public function load($objectName, $config = [])
     {
-        if (empty($config) && !isset($this->_loaded[$objectName])) {
-            list(, $name) = pluginSplit($objectName);
-        } else {
+        if (is_array($config) && isset($config['className'])) {
             $name = $objectName;
+            $objectName = $config['className'];
+        } else {
+            list(, $name) = pluginSplit($objectName);
         }
 
         $loaded = isset($this->_loaded[$name]);
@@ -83,9 +84,6 @@ abstract class ObjectRegistry
             return $this->_loaded[$name];
         }
 
-        if (is_array($config) && isset($config['className'])) {
-            $objectName = $config['className'];
-        }
         $className = $this->_resolveClassName($objectName);
         if (!$className || (is_string($className) && !class_exists($className))) {
             list($plugin, $objectName) = pluginSplit($objectName);
