@@ -458,7 +458,7 @@ class ExtractTask extends Shell
                         $occurrences[] = $file . ':' . implode(';', $lines);
                     }
                     $occurrences = implode("\n#: ", $occurrences);
-                    $header = "\n";
+                    $header = "";
                     if (!$this->param('no-location')) {
                         $header = '#: ' . str_replace(DS, '/', str_replace($paths, '', $occurrences)) . "\n";
                     }
