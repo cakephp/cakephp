@@ -829,17 +829,17 @@ class TimeTest extends TestCase
     }
 
     /**
-     * Tests the remaining time calculation.
+     * Tests the "from now" time calculation.
      *
      * @return void
      */
-    public function testRemainingTime()
+    public function testFromNow()
     {
         $date = clone $this->now;
         $date->modify('-1 year');
         $date->modify('-6 days');
         $date->modify('-51 seconds');
-        $interval = Time::remainingTime($date);
+        $interval = Time::fromNow($date);
         $result = $interval->format("%y %m %d %H %i %s");
         $this->assertEquals($result, '1 0 6 00 0 51');
     }
