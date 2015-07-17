@@ -196,32 +196,6 @@ class HelperRegistryTest extends TestCase
     }
 
     /**
-     * test loading helpers with dotted aliases
-     *
-     * @return void
-     */
-    public function testLoadPluginHelperDottedAlias()
-    {
-        Plugin::load(['TestPlugin']);
-
-        $result = $this->Helpers->load('thing.helper', [
-            'className' => 'TestPlugin.OtherHelper',
-        ]);
-        $this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $result, 'Helper class is wrong.');
-        $this->assertInstanceOf(
-            'TestPlugin\View\Helper\OtherHelperHelper',
-            $this->Helpers->get('thing.helper'),
-            'Class is wrong'
-        );
-        $this->assertTrue($this->Helpers->has('thing.helper'));
-        $this->assertFalse($this->Helpers->has('thing'));
-        $this->assertFalse($this->Helpers->has('helper'));
-
-        $this->Helpers->unload('thing.helper');
-        $this->assertFalse($this->Helpers->has('thing.helper'), 'Should be gone now.');
-    }
-
-    /**
      * Test reset.
      *
      * @return void
