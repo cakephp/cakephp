@@ -559,6 +559,7 @@ class Router
 
         $request = static::getRequest(true);
         if ($request) {
+            $request->params += $params;
             $params = $request->params;
             $here = $request->here;
             $base = $request->base;
