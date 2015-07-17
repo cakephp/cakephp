@@ -35,7 +35,7 @@ class ConsoleLogTest extends TestCase
         $output->expects($this->at(0))
             ->method('outputAs');
 
-        $message = " Error: oh noes\n</error>";
+        $message = " Error: oh noes</error>";
         $output->expects($this->at(1))
             ->method('write')
             ->with($this->stringContains($message));
