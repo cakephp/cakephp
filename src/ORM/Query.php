@@ -375,6 +375,10 @@ class Query extends DatabaseQuery implements JsonSerializable
             $aliasedField = $alias . '.' . $field;
         }
 
+        if ($this->_autoAlias === false) {
+            return [$aliasedField];
+        }
+
         return [$key => $aliasedField];
     }
 
@@ -391,7 +395,8 @@ class Query extends DatabaseQuery implements JsonSerializable
         $aliased = [];
         foreach ($fields as $alias => $field) {
             if (is_numeric($alias) && is_string($field)) {
-                $aliased += $this->aliasField($field, $defaultAlias);
+                $aliasField = $this->aliasField($field, $defaultAlias);
+                $aliased = array_merge($aliased, $aliasField);
                 continue;
             }
             $aliased[$alias] = $field;
