@@ -99,6 +99,14 @@ abstract class Mailer implements ArrayAccess, EventListenerInterface
     public $layout;
 
     /**
+     * Email view template to render, defaults to the triggered mailer
+     * action's name.
+     *
+     * @var string
+     */
+    public $template;
+
+    /**
      * Email instance.
      *
      * @var \Cake\Mailer\Email
