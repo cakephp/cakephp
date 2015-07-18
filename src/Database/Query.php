@@ -1643,6 +1643,9 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     protected function _conjugate($part, $append, $conjunction, $types)
     {
+        if (empty($append)) {
+            return;
+        }
         $expression = $this->_parts[$part] ?: $this->newExpr();
 
         if (!is_string($append) && is_callable($append)) {

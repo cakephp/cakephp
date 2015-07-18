@@ -16,6 +16,7 @@ namespace Cake\Database\Schema;
 
 use Cake\Database\Connection;
 use Cake\Database\Exception;
+use Cake\Database\Type;
 
 /**
  * Represents a single table in a database schema.
@@ -81,6 +82,7 @@ class Table
      */
     protected static $_columnKeys = [
         'type' => null,
+        'baseType' => null,
         'length' => null,
         'precision' => null,
         'null' => null,
@@ -319,7 +321,9 @@ class Table
         if (!isset($this->_columns[$name])) {
             return null;
         }
-        return $this->_columns[$name];
+        $column = $this->_columns[$name];
+        unset($column['baseType']);
+        return $column;
     }
 
     /**
@@ -339,6 +343,32 @@ class Table
             $this->_columns[$name]['type'] = $type;
         }
         return $this->_columns[$name]['type'];
+    }
+
+    /**
+     * Returns the base type name for the provided column.
+     * This represent the database type a more complex class is
+     * based upon.
+     *
+     * @param string $column The column name to get the base type from
+     * @return string The base type name
+     */
+    public function baseColumnType($column)
+    {
+        if (isset($this->_columns[$column]['baseType'])) {
+            return $this->_columns[$column]['baseType'];
+        }
+
+        $type = $this->columnType($column);
+
+        if ($type === null) {
+            return null;
+        }
+
+        if (Type::map($type)) {
+            $type = Type::build($type)->getBaseType();
+        }
+        return $this->_columns[$column]['baseType'] = $type;
     }
 
     /**

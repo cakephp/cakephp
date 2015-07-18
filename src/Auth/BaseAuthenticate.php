@@ -220,7 +220,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      *
      * - `Auth.afterIdentify` - Fired after a user has been identified using one of
      *   configured authenticate class. The callback function should have signature
-     *   like `afteIndentify(Event $event, array $user)` when `$user` is the
+     *   like `afterIdentify(Event $event, array $user)` when `$user` is the
      *   identified user record.
      *
      * - `Auth.logout` - Fired when AuthComponent::logout() is called. The callback

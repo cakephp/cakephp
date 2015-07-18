@@ -559,11 +559,17 @@ class BelongsToMany extends Association
                 $joint = new $entityClass([], ['markNew' => true, 'source' => $junctionAlias]);
             }
 
-            $joint->set(array_combine(
-                $foreignKey,
-                $sourceEntity->extract($bindingKey)
-            ), ['guard' => false]);
-            $joint->set(array_combine($assocForeignKey, $e->extract($targetPrimaryKey)), ['guard' => false]);
+            $sourceKeys = array_combine($foreignKey, $sourceEntity->extract($bindingKey));
+            $targetKeys = array_combine($assocForeignKey, $e->extract($targetPrimaryKey));
+
+            if ($sourceKeys !== $joint->extract($foreignKey)) {
+                $joint->set($sourceKeys, ['guard' => false]);
+            }
+
+            if ($targetKeys !== $joint->extract($assocForeignKey)) {
+                $joint->set($targetKeys, ['guard' => false]);
+            }
+
             $saved = $junction->save($joint, $options);
 
             if (!$saved && !empty($options['atomic'])) {

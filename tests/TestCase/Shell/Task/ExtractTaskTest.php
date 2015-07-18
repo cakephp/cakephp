@@ -162,6 +162,31 @@ class ExtractTaskTest extends TestCase
         $pattern = '/\#: .*default\.ctp:\d+\n/';
         $this->assertNotRegExp($pattern, $result);
     }
+    /**
+     * testExtractWithoutLocations method
+     *
+     * @return void
+     */
+    public function testExtractWithoutLocations()
+    {
+        $this->Task->params['paths'] = TEST_APP . 'TestApp/Template';
+        $this->Task->params['output'] = $this->path . DS;
+        $this->Task->params['exclude'] = 'Pages,Layout';
+        $this->Task->params['extract-core'] = 'no';
+        $this->Task->params['no-location'] = true;
+
+        $this->Task->expects($this->never())->method('err');
+        $this->Task->expects($this->any())->method('in')
+            ->will($this->returnValue('y'));
+
+        $this->Task->main();
+        $this->assertTrue(file_exists($this->path . DS . 'default.pot'));
+
+        $result = file_get_contents($this->path . DS . 'default.pot');
+
+        $pattern = '/\n\#: .*\n/';
+        $this->assertNotRegExp($pattern, $result);
+    }
 
     /**
      * test extract can read more than one path.

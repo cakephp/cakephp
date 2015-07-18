@@ -25,6 +25,10 @@ use PDO;
 class FooType extends \Cake\Database\Type
 {
 
+    public function getBaseType()
+    {
+        return 'text';
+    }
 }
 
 /**
@@ -74,6 +78,7 @@ class TypeTest extends TestCase
         $type = Type::build($name);
         $this->assertInstanceOf('Cake\Database\Type', $type);
         $this->assertEquals($name, $type->getName());
+        $this->assertEquals($name, $type->getBaseType());
     }
 
     /**
@@ -133,6 +138,7 @@ class TypeTest extends TestCase
         $type = Type::build('foo');
         $this->assertInstanceOf($fooType, $type);
         $this->assertEquals('foo', $type->getName());
+        $this->assertEquals('text', $type->getBaseType());
     }
 
     /**

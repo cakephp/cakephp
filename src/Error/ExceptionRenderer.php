@@ -203,7 +203,7 @@ class ExceptionRenderer
      * @param \Exception $exception Exception instance.
      * @return string
      */
-    protected function _method(\Exception $exception)
+    protected function _method(Exception $exception)
     {
         list(, $baseClass) = namespaceSplit(get_class($exception));
 
@@ -222,7 +222,7 @@ class ExceptionRenderer
      * @param int $code Error code.
      * @return string Error message
      */
-    protected function _message(\Exception $exception, $code)
+    protected function _message(Exception $exception, $code)
     {
         $message = $this->error->getMessage();
 
@@ -247,7 +247,7 @@ class ExceptionRenderer
      * @param int $code Error code.
      * @return string Template name
      */
-    protected function _template(\Exception $exception, $method, $code)
+    protected function _template(Exception $exception, $method, $code)
     {
         $isHttpException = $exception instanceof HttpException;
 
@@ -282,7 +282,7 @@ class ExceptionRenderer
      * @param \Exception $exception Exception.
      * @return int Error code value within range 400 to 506
      */
-    protected function _code(\Exception $exception)
+    protected function _code(Exception $exception)
     {
         $code = 500;
         $errorCode = $exception->getCode();

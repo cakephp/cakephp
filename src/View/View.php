@@ -55,6 +55,7 @@ use RuntimeException;
  * @property      \Cake\View\Helper\SessionHelper $Session
  * @property      \Cake\View\Helper\TextHelper $Text
  * @property      \Cake\View\Helper\TimeHelper $Time
+ * @property      \Cake\View\Helper\UrlHelper $Url
  * @property      \Cake\View\ViewBlock $Blocks
  */
 class View implements EventDispatcherInterface

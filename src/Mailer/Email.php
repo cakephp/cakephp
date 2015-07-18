@@ -1249,6 +1249,16 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
+     * Returns an array containing the named transport configurations
+     *
+     * @return array Array of configurations.
+     */
+    public static function configuredTransport()
+    {
+        return array_keys(static::$_transportConfig);
+    }
+
+    /**
      * Delete transport configuration.
      *
      * @param string $key The transport name to remove.

@@ -1180,6 +1180,23 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests that empty values don't set where clauses.
+     *
+     * @return void
+     */
+    public function testWhereEmptyValues()
+    {
+        $query = new Query($this->connection);
+        $query->from('comments')
+            ->where('');
+
+        $this->assertNull($query->clause('where'));
+
+        $query->where([]);
+        $this->assertNull($query->clause('where'));
+    }
+
+    /**
      * Tests that it is possible to use a between expression
      * in a where condition
      *
