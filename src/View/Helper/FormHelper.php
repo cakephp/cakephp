@@ -42,7 +42,8 @@ use Traversable;
  *
  * Automatic generation of HTML FORMs from given data.
  *
- * @property      HtmlHelper $Html
+ * @property HtmlHelper $Html
+ * @property UrlHelper $Url
  * @link http://book.cakephp.org/3.0/en/views/helpers/form.html
  */
 class FormHelper extends Helper

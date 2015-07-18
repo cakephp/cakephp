@@ -213,7 +213,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * Theme for the View
      *
-     * @var array
+     * @var string
      */
     protected $_theme = null;
 
