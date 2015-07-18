@@ -316,7 +316,7 @@ class File
     /**
      * Returns the file extension.
      *
-     * @return string The file extension
+     * @return string|false The file extension, false if extension cannot be extracted.
      */
     public function ext()
     {
@@ -332,7 +332,7 @@ class File
     /**
      * Returns the file name without extension.
      *
-     * @return string The file name without extension.
+     * @return string|false The file name without extension, false if name cannot be extracted.
      */
     public function name()
     {
