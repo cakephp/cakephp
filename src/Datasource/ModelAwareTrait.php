@@ -71,8 +71,8 @@ trait ModelAwareTrait
      * be thrown.
      *
      * @param string|null $modelClass Name of model class to load. Defaults to $this->modelClass
-     * @param string $type The type of repository to load. Defaults to 'Table' which
-     *   delegates to Cake\ORM\TableRegistry.
+     * @param string|callable $type The type of repository to load. Defaults to 'Table' which
+     *   delegates to Cake\ORM\TableRegistry or a callable used to create instances.
      * @return object The model instance created.
      * @throws \Cake\Datasource\Exception\MissingModelException If the model class cannot be found.
      * @throws \InvalidArgumentException When using a type that has not been registered.
@@ -87,6 +87,10 @@ trait ModelAwareTrait
 
         if (isset($this->{$alias})) {
             return $this->{$alias};
+        }
+
+        if (is_callable($type)) {
+            return call_user_func($type, $modelClass);
         }
 
         if (!isset($this->_modelFactories[$type])) {
