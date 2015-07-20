@@ -477,6 +477,12 @@ class EntityContextTest extends TestCase
 
         $result = $context->val('tag.name');
         $this->assertEquals($row->tag['name'], $result);
+
+        $result = $context->val('tag.nope');
+        $this->assertNull($result);
+
+        $result = $context->val('author.roles.3');
+        $this->assertNull($result);
     }
 
     /**
