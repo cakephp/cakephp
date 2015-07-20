@@ -137,7 +137,11 @@ class CakeSocket {
 		if (!empty($this->config['context'])) {
 			$context = stream_context_create($this->config['context']);
 		} else {
-			$context = stream_context_create();
+		    $options = [];
+		    if (!empty($this->config['ssl'])) {
+		        $options = array('ssl' => $this->config['ssl']);
+		    }
+		    $context = stream_context_create($options);
 		}
 
 		$connectAs = STREAM_CLIENT_CONNECT;
