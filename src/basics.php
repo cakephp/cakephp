@@ -160,5 +160,9 @@ if (!function_exists('breakpoint')) {
         if (PHP_SAPI === 'cli' && class_exists('\Psy\Shell')) {
             return 'extract(\Psy\Shell::debug(get_defined_vars(), isset($this) ? $this : null));';
         }
+        trigger_error(
+            "psy/psysh must be loaded and you should be in CLI to use the breakpoint method",
+            E_USER_WARNING
+        );
     }
 }
