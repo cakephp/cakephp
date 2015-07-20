@@ -16,6 +16,7 @@ namespace Cake\View;
 
 use Cake\Core\App;
 use Cake\Core\ObjectRegistry;
+use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventManagerTrait;
 use Cake\View\View;
 
@@ -23,7 +24,7 @@ use Cake\View\View;
  * HelperRegistry is used as a registry for loaded helpers and handles loading
  * and constructing helper class objects.
  */
-class HelperRegistry extends ObjectRegistry
+class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
 {
 
     use EventManagerTrait;
