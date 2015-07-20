@@ -137,7 +137,7 @@ class CakeSocket {
 		if (!empty($this->config['context'])) {
 			$context = stream_context_create($this->config['context']);
 		} else {
-			$options = array;
+			$options = array();
 			if (!empty($this->config['ssl'])) {
 				$options = array('ssl' => $this->config['ssl']);
 			}
