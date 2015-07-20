@@ -21,6 +21,7 @@ define('TIME_START', microtime(true));
 if (PHP_VERSION_ID < 70000) {
     class_alias('Cake\Utility\Text', 'Cake\Utility\String');
 }
+class_alias('Cake\Event\EventDispatcherTrait', 'Cake\Event\EventManagerTrait');
 
 require CAKE . 'basics.php';
 

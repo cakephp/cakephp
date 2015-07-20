@@ -18,7 +18,7 @@ use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\App;
 use Cake\Core\ObjectRegistry;
 use Cake\Event\EventDispatcherInterface;
-use Cake\Event\EventManagerTrait;
+use Cake\Event\EventDispatcherTrait;
 
 /**
  * ComponentRegistry is a registry for loaded components
@@ -28,7 +28,7 @@ use Cake\Event\EventManagerTrait;
 class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterface
 {
 
-    use EventManagerTrait;
+    use EventDispatcherTrait;
 
     /**
      * The controller that this collection was initialized with.

@@ -27,7 +27,7 @@ use Cake\Datasource\RulesAwareTrait;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
-use Cake\Event\EventManagerTrait;
+use Cake\Event\EventDispatcherTrait;
 use Cake\ORM\AssociationCollection;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
@@ -122,7 +122,7 @@ use RuntimeException;
 class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface
 {
 
-    use EventManagerTrait;
+    use EventDispatcherTrait;
     use RulesAwareTrait;
     use ValidatorAwareTrait;
 

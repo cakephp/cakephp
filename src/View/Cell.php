@@ -16,7 +16,7 @@ namespace Cake\View;
 
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventManager;
-use Cake\Event\EventManagerTrait;
+use Cake\Event\EventDispatcherTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Inflector;
@@ -31,7 +31,7 @@ use Cake\View\ViewVarsTrait;
 abstract class Cell
 {
 
-    use EventManagerTrait;
+    use EventDispatcherTrait;
     use ModelAwareTrait;
     use ViewVarsTrait;
 

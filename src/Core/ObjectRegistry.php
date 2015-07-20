@@ -28,7 +28,7 @@ use RuntimeException;
  * the template method load().
  *
  * The ObjectRegistry is EventManager aware, but each extending class will need to use
- * \Cake\Event\EventManagerTrait to attach and detach on set and bind
+ * \Cake\Event\EventDispatcherTrait to attach and detach on set and bind
  *
  * @see \Cake\Controller\ComponentRegistry
  * @see \Cake\View\HelperRegistry

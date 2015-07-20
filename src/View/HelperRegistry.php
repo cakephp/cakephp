@@ -17,7 +17,7 @@ namespace Cake\View;
 use Cake\Core\App;
 use Cake\Core\ObjectRegistry;
 use Cake\Event\EventDispatcherInterface;
-use Cake\Event\EventManagerTrait;
+use Cake\Event\EventDispatcherTrait;
 use Cake\View\View;
 
 /**
@@ -27,7 +27,7 @@ use Cake\View\View;
 class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
 {
 
-    use EventManagerTrait;
+    use EventDispatcherTrait;
 
     /**
      * View object to use when making helpers.
