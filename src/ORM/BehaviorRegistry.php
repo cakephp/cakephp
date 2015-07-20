@@ -17,6 +17,7 @@ namespace Cake\ORM;
 use BadMethodCallException;
 use Cake\Core\App;
 use Cake\Core\ObjectRegistry;
+use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventManagerTrait;
 use Cake\ORM\Behavior;
 use Cake\ORM\Exception\MissingBehaviorException;
@@ -29,7 +30,7 @@ use LogicException;
  *
  * This class also provides method for checking and dispatching behavior methods.
  */
-class BehaviorRegistry extends ObjectRegistry
+class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterface
 {
 
     use EventManagerTrait;
