@@ -760,11 +760,11 @@ class Hash {
  * @return int The maximum number of dimensions in $data
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::maxDimensions
  */
-	public static function maxDimensions($data, $count = 0) {
-		$depth = array($count);
+	public static function maxDimensions($data) {
+		$depth = array();
 		if (is_array($data) && reset($data) !== false) {
 			foreach ($data as $value) {
-				$depth[] = static::maxDimensions($value, $count + 1 );
+				$depth[] = static::maxDimensions($value) + 1;
 			}
 		}
 		return empty($depth) ? 0 : max($depth);
