@@ -3825,7 +3825,7 @@ class TableTest extends TestCase
     public function providerForTestGetWithCustomFinder()
     {
         return [
-            [ ['fields' => ['id'], 'finderName' => 'custom'] ]
+            [ ['fields' => ['id'], 'finder' => 'custom'] ]
         ];
     }
 
