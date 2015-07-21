@@ -17,7 +17,7 @@ namespace Cake\Event;
 /**
  * Provides the event manager interface features for usage in classes that require it.
  *
- * @deprecated 3.0.10 Use EventDispatcherTrait instead.
+ * @deprecated 3.0.10 Use Cake\Event\EventDispatcherTrait instead.
  */
 trait EventManagerTrait
 {
