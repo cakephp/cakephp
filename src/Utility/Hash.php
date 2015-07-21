@@ -803,7 +803,7 @@ class Hash
         if (is_array($data) && reset($data) !== false) {
             foreach ($data as $value) {
                 if (is_array($value)) {
-                    $depth[] = static::dimensions($value) + 1;
+                    $depth[] = static::maxDimensions($value) + 1;
                 } else {
                     $depth[] = 1;
                 }
