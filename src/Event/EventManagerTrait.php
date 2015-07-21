@@ -9,20 +9,18 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         0.2.9
+ * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Event;
 
-use Cake\Routing\Router;
+/**
+ * Provides the event manager interface features for usage in classes that require it.
+ *
+ * @deprecated 3.0.10 Use EventDispatcherTrait instead.
+ */
+trait EventManagerTrait
+{
 
-define('TIME_START', microtime(true));
-
-// @deprecated Backward compatibility with 2.x series
-if (PHP_VERSION_ID < 70000) {
-    class_alias('Cake\Utility\Text', 'Cake\Utility\String');
+    use EventDispatcherTrait;
 }
-
-require CAKE . 'basics.php';
-
-// Sets the initial router state so future reloads work.
-Router::reload();
