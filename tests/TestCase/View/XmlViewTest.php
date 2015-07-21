@@ -118,7 +118,7 @@ class XmlViewTest extends TestCase
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
         $data = [
-            '_serialize' => ['tags'],
+            '_serialize' => ['tags', 'nope'],
             '_xmlOptions' => ['format' => 'attributes'],
             'tags' => [
                     'tag' => [
