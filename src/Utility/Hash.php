@@ -300,12 +300,10 @@ class Hash
 
         foreach ($data as $k => $v) {
             if (static::_matchToken($k, $token)) {
-                if ($conditions && static::_matches($v, $conditions)) {
-                    $data[$k] = array_merge($v, $values);
-                    continue;
-                }
-                if (!$conditions) {
-                    $data[$k] = static::insert($v, $nextPath, $values);
+                if (!$conditions || static::_matches($v, $conditions)) {
+                    $data[$k] = $nextPath
+                        ? static::insert($v, $nextPath, $values)
+                        : array_merge($v, (array) $values);
                 }
             }
         }
