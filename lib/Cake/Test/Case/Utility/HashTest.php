@@ -318,7 +318,7 @@ class HashTest extends CakeTestCase {
 					)
 				)
 			),
-			'2' => array('2.1' => '2.1.1',)
+			'2' => array('2.1' => '2.1.1')
 		);
 		$result = Hash::maxDimensions($data);
 		$this->assertEquals($result, 5);
