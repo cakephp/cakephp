@@ -19,7 +19,7 @@ use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventManager;
-use Cake\Event\EventManagerTrait;
+use Cake\Event\EventDispatcherTrait;
 use Cake\Log\LogTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -62,7 +62,7 @@ class View implements EventDispatcherInterface
 {
 
     use CellTrait;
-    use EventManagerTrait;
+    use EventDispatcherTrait;
     use LogTrait;
     use RequestActionTrait;
     use ViewVarsTrait;

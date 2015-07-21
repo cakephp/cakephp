@@ -13,12 +13,12 @@ of the action.
 
 ```php
 use Cake\Event\Event;
-use Cake\Event\EventManagerTrait;
+use Cake\Event\EventDispatcherTrait;
 
 class Orders
 {
 
-	use EventManagerTrait;
+	use EventDispatcherTrait;
 
 	public function placeOrder($order)
 	{
