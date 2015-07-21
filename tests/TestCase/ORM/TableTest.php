@@ -3822,6 +3822,58 @@ class TableTest extends TestCase
         $this->assertSame($entity, $result);
     }
 
+    public function providerForTestGetWithCustomFinder()
+    {
+        return [
+            [ ['fields' => ['id'], 'finderName' => 'custom'] ]
+        ];
+    }
+
+    /**
+     * Test that get() will call a custom finder.
+     *
+     * @dataProvider providerForTestGetWithCustomFinder
+     * @param array $options
+     * @return void
+     */
+    public function testGetWithCustomFinder($options)
+    {
+        $table = $this->getMock(
+            '\Cake\ORM\Table',
+            ['callFinder', 'query'],
+            [[
+                'connection' => $this->connection,
+                'schema' => [
+                    'id' => ['type' => 'integer'],
+                    'bar' => ['type' => 'integer'],
+                    '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['bar']]]
+                ]
+            ]]
+        );
+
+        $query = $this->getMock(
+            '\Cake\ORM\Query',
+            ['addDefaultTypes', 'firstOrFail', 'where', 'cache'],
+            [$this->connection, $table]
+        );
+
+        $entity = new \Cake\ORM\Entity;
+        $table->expects($this->once())->method('query')
+            ->will($this->returnValue($query));
+        $table->expects($this->once())->method('callFinder')
+            ->with('custom', $query, ['fields' => ['id']])
+            ->will($this->returnValue($query));
+
+        $query->expects($this->once())->method('where')
+            ->with([$table->alias() . '.bar' => 10])
+            ->will($this->returnSelf());
+        $query->expects($this->never())->method('cache');
+        $query->expects($this->once())->method('firstOrFail')
+            ->will($this->returnValue($entity));
+        $result = $table->get(10, $options);
+        $this->assertSame($entity, $result);
+    }
+
     public function providerForTestGetWithCache()
     {
         return [
