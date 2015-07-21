@@ -1086,13 +1086,13 @@ class FormHelper extends AppHelper {
 				unset($options['options']);
 				return $this->select($fieldName, $list, $options);
 			case 'time':
-				$options['value'] = $selected;
+				$options += array('value' => $selected);
 				return $this->dateTime($fieldName, null, $timeFormat, $options);
 			case 'date':
-				$options['value'] = $selected;
+				$options += array('value' => $selected);
 				return $this->dateTime($fieldName, $dateFormat, null, $options);
 			case 'datetime':
-				$options['value'] = $selected;
+				$options += array('value' => $selected);
 				return $this->dateTime($fieldName, $dateFormat, $timeFormat, $options);
 			case 'textarea':
 				return $this->textarea($fieldName, $options + array('cols' => '30', 'rows' => '6'));
