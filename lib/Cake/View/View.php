@@ -468,7 +468,7 @@ class View extends Object {
 		}
 
 		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
-			$this->_currentType = self::TYPE_VIEW;
+			$this->_currentType = static::TYPE_VIEW;
 			$this->getEventManager()->dispatch(new CakeEvent('View.beforeRender', $this, array($viewFileName)));
 			$this->Blocks->set('content', $this->_render($viewFileName));
 			$this->getEventManager()->dispatch(new CakeEvent('View.afterRender', $this, array($viewFileName)));
@@ -542,7 +542,7 @@ class View extends Object {
 		$this->viewVars['title_for_layout'] = $title;
 		$this->Blocks->set('title', $title);
 
-		$this->_currentType = self::TYPE_LAYOUT;
+		$this->_currentType = static::TYPE_LAYOUT;
 		$this->Blocks->set('content', $this->_render($layoutFileName));
 
 		$this->getEventManager()->dispatch(new CakeEvent('View.afterLayout', $this, array($layoutFileName)));
@@ -728,11 +728,11 @@ class View extends Object {
  * @throws LogicException when you extend an element which doesn't exist
  */
 	public function extend($name) {
-		if ($name[0] === '/' || $this->_currentType === self::TYPE_VIEW) {
+		if ($name[0] === '/' || $this->_currentType === static::TYPE_VIEW) {
 			$parent = $this->_getViewFileName($name);
 		} else {
 			switch ($this->_currentType) {
-				case self::TYPE_ELEMENT:
+				case static::TYPE_ELEMENT:
 					$parent = $this->_getElementFileName($name);
 					if (!$parent) {
 						list($plugin, $name) = $this->pluginSplit($name);
@@ -745,7 +745,7 @@ class View extends Object {
 						));
 					}
 					break;
-				case self::TYPE_LAYOUT:
+				case static::TYPE_LAYOUT:
 					$parent = $this->_getLayoutFileName($name);
 					break;
 				default:
@@ -1218,7 +1218,7 @@ class View extends Object {
 	protected function _renderElement($file, $data, $options) {
 		$current = $this->_current;
 		$restore = $this->_currentType;
-		$this->_currentType = self::TYPE_ELEMENT;
+		$this->_currentType = static::TYPE_ELEMENT;
 
 		if ($options['callbacks']) {
 			$this->getEventManager()->dispatch(new CakeEvent('View.beforeRender', $this, array($file)));

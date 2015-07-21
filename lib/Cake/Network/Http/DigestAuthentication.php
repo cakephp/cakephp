@@ -33,10 +33,10 @@ class DigestAuthentication {
  */
 	public static function authentication(HttpSocket $http, &$authInfo) {
 		if (isset($authInfo['user'], $authInfo['pass'])) {
-			if (!isset($authInfo['realm']) && !self::_getServerInformation($http, $authInfo)) {
+			if (!isset($authInfo['realm']) && !static::_getServerInformation($http, $authInfo)) {
 				return;
 			}
-			$http->request['header']['Authorization'] = self::_generateHeader($http, $authInfo);
+			$http->request['header']['Authorization'] = static::_generateHeader($http, $authInfo);
 		}
 	}
 

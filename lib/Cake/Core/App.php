@@ -218,14 +218,14 @@ class App {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::path
  */
 	public static function path($type, $plugin = null) {
-		if (!empty(self::$legacy[$type])) {
-			$type = self::$legacy[$type];
+		if (!empty(static::$legacy[$type])) {
+			$type = static::$legacy[$type];
 		}
 
 		if (!empty($plugin)) {
 			$path = array();
 			$pluginPath = CakePlugin::path($plugin);
-			$packageFormat = self::_packageFormat();
+			$packageFormat = static::_packageFormat();
 			if (!empty($packageFormat[$type])) {
 				foreach ($packageFormat[$type] as $f) {
 					$path[] = sprintf($f, $pluginPath);
@@ -234,10 +234,10 @@ class App {
 			return $path;
 		}
 
-		if (!isset(self::$_packages[$type])) {
+		if (!isset(static::$_packages[$type])) {
 			return array();
 		}
-		return self::$_packages[$type];
+		return static::$_packages[$type];
 	}
 
 /**
@@ -249,7 +249,7 @@ class App {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::paths
  */
 	public static function paths() {
-		return self::$_packages;
+		return static::$_packages;
 	}
 
 /**
@@ -279,8 +279,8 @@ class App {
 		//Provides Backwards compatibility for old-style package names
 		$legacyPaths = array();
 		foreach ($paths as $type => $path) {
-			if (!empty(self::$legacy[$type])) {
-				$type = self::$legacy[$type];
+			if (!empty(static::$legacy[$type])) {
+				$type = static::$legacy[$type];
 			}
 			$legacyPaths[$type] = $path;
 		}
@@ -288,17 +288,17 @@ class App {
 
 		if ($mode === App::RESET) {
 			foreach ($paths as $type => $new) {
-				self::$_packages[$type] = (array)$new;
-				self::objects($type, null, false);
+				static::$_packages[$type] = (array)$new;
+				static::objects($type, null, false);
 			}
 			return;
 		}
 
 		if (empty($paths)) {
-			self::$_packageFormat = null;
+			static::$_packageFormat = null;
 		}
 
-		$packageFormat = self::_packageFormat();
+		$packageFormat = static::_packageFormat();
 
 		if ($mode === App::REGISTER) {
 			foreach ($paths as $package => $formats) {
@@ -309,7 +309,7 @@ class App {
 					$packageFormat[$package] = array_values(array_unique($formats));
 				}
 			}
-			self::$_packageFormat = $packageFormat;
+			static::$_packageFormat = $packageFormat;
 		}
 
 		$defaults = array();
@@ -320,7 +320,7 @@ class App {
 		}
 
 		if (empty($paths)) {
-			self::$_packages = $defaults;
+			static::$_packages = $defaults;
 			return;
 		}
 
@@ -329,8 +329,8 @@ class App {
 		}
 
 		foreach ($defaults as $type => $default) {
-			if (!empty(self::$_packages[$type])) {
-				$path = self::$_packages[$type];
+			if (!empty(static::$_packages[$type])) {
+				$path = static::$_packages[$type];
 			} else {
 				$path = $default;
 			}
@@ -347,7 +347,7 @@ class App {
 				$path = array_values(array_unique($path));
 			}
 
-			self::$_packages[$type] = $path;
+			static::$_packages[$type] = $path;
 		}
 	}
 
@@ -380,12 +380,12 @@ class App {
  */
 	public static function themePath($theme) {
 		$themeDir = 'Themed' . DS . Inflector::camelize($theme);
-		foreach (self::$_packages['View'] as $path) {
+		foreach (static::$_packages['View'] as $path) {
 			if (is_dir($path . $themeDir)) {
 				return $path . $themeDir . DS;
 			}
 		}
-		return self::$_packages['View'][0] . $themeDir . DS;
+		return static::$_packages['View'][0] . $themeDir . DS;
 	}
 
 /**
@@ -427,8 +427,8 @@ class App {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::objects
  */
 	public static function objects($type, $path = null, $cache = true) {
-		if (empty(self::$_objects) && $cache === true) {
-			self::$_objects = (array)Cache::read('object_map', '_cake_core_');
+		if (empty(static::$_objects) && $cache === true) {
+			static::$_objects = (array)Cache::read('object_map', '_cake_core_');
 		}
 
 		$extension = '/\.php$/';
@@ -446,8 +446,8 @@ class App {
 
 		list($plugin, $type) = pluginSplit($type);
 
-		if (isset(self::$legacy[$type . 's'])) {
-			$type = self::$legacy[$type . 's'];
+		if (isset(static::$legacy[$type . 's'])) {
+			$type = static::$legacy[$type . 's'];
 		}
 
 		if ($type === 'file' && !$path) {
@@ -459,11 +459,11 @@ class App {
 
 		$cacheLocation = empty($plugin) ? 'app' : $plugin;
 
-		if ($cache !== true || !isset(self::$_objects[$cacheLocation][$name])) {
+		if ($cache !== true || !isset(static::$_objects[$cacheLocation][$name])) {
 			$objects = array();
 
 			if (empty($path)) {
-				$path = self::path($type, $plugin);
+				$path = static::path($type, $plugin);
 			}
 
 			foreach ((array)$path as $dir) {
@@ -494,13 +494,13 @@ class App {
 				return $objects;
 			}
 
-			self::$_objects[$cacheLocation][$name] = $objects;
+			static::$_objects[$cacheLocation][$name] = $objects;
 			if ($cache) {
-				self::$_objectCacheChange = true;
+				static::$_objectCacheChange = true;
 			}
 		}
 
-		return self::$_objects[$cacheLocation][$name];
+		return static::$_objects[$cacheLocation][$name];
 	}
 
 /**
@@ -519,7 +519,7 @@ class App {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::uses
  */
 	public static function uses($className, $location) {
-		self::$_classMap[$className] = $location;
+		static::$_classMap[$className] = $location;
 	}
 
 /**
@@ -532,24 +532,24 @@ class App {
  * @return bool
  */
 	public static function load($className) {
-		if (!isset(self::$_classMap[$className])) {
+		if (!isset(static::$_classMap[$className])) {
 			return false;
 		}
 		if (strpos($className, '..') !== false) {
 			return false;
 		}
 
-		$parts = explode('.', self::$_classMap[$className], 2);
+		$parts = explode('.', static::$_classMap[$className], 2);
 		list($plugin, $package) = count($parts) > 1 ? $parts : array(null, current($parts));
 
-		$file = self::_mapped($className, $plugin);
+		$file = static::_mapped($className, $plugin);
 		if ($file) {
 			return include $file;
 		}
-		$paths = self::path($package, $plugin);
+		$paths = static::path($package, $plugin);
 
 		if (empty($plugin)) {
-			$appLibs = empty(self::$_packages['Lib']) ? APPLIBS : current(self::$_packages['Lib']);
+			$appLibs = empty(static::$_packages['Lib']) ? APPLIBS : current(static::$_packages['Lib']);
 			$paths[] = $appLibs . $package . DS;
 			$paths[] = APP . $package . DS;
 			$paths[] = CAKE . $package . DS;
@@ -563,7 +563,7 @@ class App {
 		foreach ($paths as $path) {
 			$file = $path . $normalizedClassName . '.php';
 			if (file_exists($file)) {
-				self::_map($file, $className, $plugin);
+				static::_map($file, $className, $plugin);
 				return include $file;
 			}
 		}
@@ -579,8 +579,8 @@ class App {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::location
  */
 	public static function location($className) {
-		if (!empty(self::$_classMap[$className])) {
-			return self::$_classMap[$className];
+		if (!empty(static::$_classMap[$className])) {
+			return static::$_classMap[$className];
 		}
 		return null;
 	}
@@ -629,8 +629,8 @@ class App {
 
 		$originalType = strtolower($type);
 		$specialPackage = in_array($originalType, array('file', 'vendor'));
-		if (!$specialPackage && isset(self::$legacy[$originalType . 's'])) {
-			$type = self::$legacy[$originalType . 's'];
+		if (!$specialPackage && isset(static::$legacy[$originalType . 's'])) {
+			$type = static::$legacy[$originalType . 's'];
 		}
 		list($plugin, $name) = pluginSplit($name);
 		if (!empty($plugin)) {
@@ -640,15 +640,15 @@ class App {
 		}
 
 		if (!$specialPackage) {
-			return self::_loadClass($name, $plugin, $type, $originalType, $parent);
+			return static::_loadClass($name, $plugin, $type, $originalType, $parent);
 		}
 
 		if ($originalType === 'file' && !empty($file)) {
-			return self::_loadFile($name, $plugin, $search, $file, $return);
+			return static::_loadFile($name, $plugin, $search, $file, $return);
 		}
 
 		if ($originalType === 'vendor') {
-			return self::_loadVendor($name, $plugin, $file, $ext);
+			return static::_loadVendor($name, $plugin, $file, $ext);
 		}
 
 		return false;
@@ -668,12 +668,12 @@ class App {
 	protected static function _loadClass($name, $plugin, $type, $originalType, $parent) {
 		if ($type === 'Console/Command' && $name === 'Shell') {
 			$type = 'Console';
-		} elseif (isset(self::$types[$originalType]['suffix'])) {
-			$suffix = self::$types[$originalType]['suffix'];
+		} elseif (isset(static::$types[$originalType]['suffix'])) {
+			$suffix = static::$types[$originalType]['suffix'];
 			$name .= ($suffix === $name) ? '' : $suffix;
 		}
-		if ($parent && isset(self::$types[$originalType]['extends'])) {
-			$extends = self::$types[$originalType]['extends'];
+		if ($parent && isset(static::$types[$originalType]['extends'])) {
+			$extends = static::$types[$originalType]['extends'];
 			$extendType = $type;
 			if (strpos($extends, '/') !== false) {
 				$parts = explode('/', $extends);
@@ -704,7 +704,7 @@ class App {
  * @return mixed if $return contents of the file after php parses it, boolean indicating success otherwise
  */
 	protected static function _loadFile($name, $plugin, $search, $file, $return) {
-		$mapped = self::_mapped($name, $plugin);
+		$mapped = static::_mapped($name, $plugin);
 		if ($mapped) {
 			$file = $mapped;
 		} elseif (!empty($search)) {
@@ -721,7 +721,7 @@ class App {
 			}
 		}
 		if (!empty($file) && file_exists($file)) {
-			self::_map($file, $name, $plugin);
+			static::_map($file, $name, $plugin);
 			$returnValue = include $file;
 			if ($return) {
 				return $returnValue;
@@ -741,7 +741,7 @@ class App {
  * @return bool true if the file was loaded successfully, false otherwise
  */
 	protected static function _loadVendor($name, $plugin, $file, $ext) {
-		if ($mapped = self::_mapped($name, $plugin)) {
+		if ($mapped = static::_mapped($name, $plugin)) {
 			return (bool)include_once $mapped;
 		}
 		$fileTries = array();
@@ -759,7 +759,7 @@ class App {
 		foreach ($fileTries as $file) {
 			foreach ($paths as $path) {
 				if (file_exists($path . $file)) {
-					self::_map($path . $file, $name, $plugin);
+					static::_map($path . $file, $name, $plugin);
 					return (bool)include $path . $file;
 				}
 			}
@@ -773,7 +773,7 @@ class App {
  * @return void
  */
 	public static function init() {
-		self::$_map += (array)Cache::read('file_map', '_cake_core_');
+		static::$_map += (array)Cache::read('file_map', '_cake_core_');
 		register_shutdown_function(array('App', 'shutdown'));
 	}
 
@@ -790,14 +790,14 @@ class App {
 		if ($plugin) {
 			$key = 'plugin.' . $name;
 		}
-		if ($plugin && empty(self::$_map[$name])) {
-			self::$_map[$key] = $file;
+		if ($plugin && empty(static::$_map[$name])) {
+			static::$_map[$key] = $file;
 		}
-		if (!$plugin && empty(self::$_map['plugin.' . $name])) {
-			self::$_map[$key] = $file;
+		if (!$plugin && empty(static::$_map['plugin.' . $name])) {
+			static::$_map[$key] = $file;
 		}
-		if (!self::$bootstrapping) {
-			self::$_cacheChange = true;
+		if (!static::$bootstrapping) {
+			static::$_cacheChange = true;
 		}
 	}
 
@@ -813,7 +813,7 @@ class App {
 		if ($plugin) {
 			$key = 'plugin.' . $name;
 		}
-		return isset(self::$_map[$key]) ? self::$_map[$key] : false;
+		return isset(static::$_map[$key]) ? static::$_map[$key] : false;
 	}
 
 /**
@@ -822,8 +822,8 @@ class App {
  * @return array templates for each customizable package path
  */
 	protected static function _packageFormat() {
-		if (empty(self::$_packageFormat)) {
-			self::$_packageFormat = array(
+		if (empty(static::$_packageFormat)) {
+			static::$_packageFormat = array(
 				'Model' => array(
 					'%s' . 'Model' . DS
 				),
@@ -885,7 +885,7 @@ class App {
 			);
 		}
 
-		return self::$_packageFormat;
+		return static::$_packageFormat;
 	}
 
 /**
@@ -897,13 +897,13 @@ class App {
  * @return void
  */
 	public static function shutdown() {
-		if (self::$_cacheChange) {
-			Cache::write('file_map', array_filter(self::$_map), '_cake_core_');
+		if (static::$_cacheChange) {
+			Cache::write('file_map', array_filter(static::$_map), '_cake_core_');
 		}
-		if (self::$_objectCacheChange) {
-			Cache::write('object_map', self::$_objects, '_cake_core_');
+		if (static::$_objectCacheChange) {
+			Cache::write('object_map', static::$_objects, '_cake_core_');
 		}
-		self::_checkFatalError();
+		static::_checkFatalError();
 	}
 
 /**

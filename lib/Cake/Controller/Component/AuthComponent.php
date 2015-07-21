@@ -610,7 +610,7 @@ class AuthComponent extends Component {
 		}
 		if ($user) {
 			$this->Session->renew();
-			$this->Session->write(self::$sessionKey, $user);
+			$this->Session->write(static::$sessionKey, $user);
 			$event = new CakeEvent('Auth.afterIdentify', $this, array('user' => $user));
 			$this->_Collection->getController()->getEventManager()->dispatch($event);
 		}
@@ -639,7 +639,7 @@ class AuthComponent extends Component {
 		foreach ($this->_authenticateObjects as $auth) {
 			$auth->logout($user);
 		}
-		$this->Session->delete(self::$sessionKey);
+		$this->Session->delete(static::$sessionKey);
 		$this->Session->delete('Auth.redirect');
 		$this->Session->renew();
 		return Router::normalize($this->logoutRedirect);
@@ -657,10 +657,10 @@ class AuthComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#accessing-the-logged-in-user
  */
 	public static function user($key = null) {
-		if (!empty(self::$_user)) {
-			$user = self::$_user;
-		} elseif (self::$sessionKey && CakeSession::check(self::$sessionKey)) {
-			$user = CakeSession::read(self::$sessionKey);
+		if (!empty(static::$_user)) {
+			$user = static::$_user;
+		} elseif (static::$sessionKey && CakeSession::check(static::$sessionKey)) {
+			$user = CakeSession::read(static::$sessionKey);
 		} else {
 			return null;
 		}
@@ -689,7 +689,7 @@ class AuthComponent extends Component {
 		foreach ($this->_authenticateObjects as $auth) {
 			$result = $auth->getUser($this->request);
 			if (!empty($result) && is_array($result)) {
-				self::$_user = $result;
+				static::$_user = $result;
 				return true;
 			}
 		}

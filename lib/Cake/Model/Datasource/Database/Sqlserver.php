@@ -544,7 +544,7 @@ class Sqlserver extends DboSource {
 					$page = (int)($limitOffset[1] / $limitOffset[2]);
 					$offset = (int)($limitOffset[2] * $page);
 
-					$rowCounter = self::ROW_COUNTER;
+					$rowCounter = static::ROW_COUNTER;
 					$sql = "SELECT {$limit} * FROM (
 							SELECT {$fields}, ROW_NUMBER() OVER ({$order}) AS {$rowCounter}
 							FROM {$table} {$alias} {$joins} {$conditions} {$group}
@@ -634,7 +634,7 @@ class Sqlserver extends DboSource {
 			$resultRow = array();
 			foreach ($this->map as $col => $meta) {
 				list($table, $column, $type) = $meta;
-				if ($table === 0 && $column === self::ROW_COUNTER) {
+				if ($table === 0 && $column === static::ROW_COUNTER) {
 					continue;
 				}
 				$resultRow[$table][$column] = $row[$col];

@@ -781,7 +781,7 @@ class CakeEmail {
 
 		$headers += $this->_headers;
 		if (!isset($headers['X-Mailer'])) {
-			$headers['X-Mailer'] = self::EMAIL_CLIENT;
+			$headers['X-Mailer'] = static::EMAIL_CLIENT;
 		}
 		if (!isset($headers['Date'])) {
 			$headers['Date'] = date(DATE_RFC2822);
@@ -1113,9 +1113,9 @@ class CakeEmail {
  */
 	public function message($type = null) {
 		switch ($type) {
-			case self::MESSAGE_HTML:
+			case static::MESSAGE_HTML:
 				return $this->_htmlMessage;
-			case self::MESSAGE_TEXT:
+			case static::MESSAGE_TEXT:
 				return $this->_textMessage;
 		}
 		return $this->_message;
@@ -1315,7 +1315,7 @@ class CakeEmail {
 		$this->headerCharset = null;
 		$this->_attachments = array();
 		$this->_config = array();
-		$this->_emailPattern = self::EMAIL_PATTERN;
+		$this->_emailPattern = static::EMAIL_PATTERN;
 		return $this;
 	}
 

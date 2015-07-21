@@ -332,7 +332,7 @@ class CakeText {
 		}
 		$options += array('width' => 72, 'wordWrap' => true, 'indent' => null, 'indentAt' => 0);
 		if ($options['wordWrap']) {
-			$wrapped = self::wordWrap($text, $options['width'], "\n");
+			$wrapped = static::wordWrap($text, $options['width'], "\n");
 		} else {
 			$wrapped = trim(chunk_split($text, $options['width'] - 1, "\n"));
 		}
@@ -358,7 +358,7 @@ class CakeText {
 	public static function wordWrap($text, $width = 72, $break = "\n", $cut = false) {
 		$paragraphs = explode($break, $text);
 		foreach ($paragraphs as &$paragraph) {
-			$paragraph = self::_wordWrap($paragraph, $width, $break, $cut);
+			$paragraph = static::_wordWrap($paragraph, $width, $break, $cut);
 		}
 		return implode($break, $paragraphs);
 	}
@@ -657,7 +657,7 @@ class CakeText {
  */
 	public static function excerpt($text, $phrase, $radius = 100, $ellipsis = '...') {
 		if (empty($text) || empty($phrase)) {
-			return self::truncate($text, $radius * 2, array('ellipsis' => $ellipsis));
+			return static::truncate($text, $radius * 2, array('ellipsis' => $ellipsis));
 		}
 
 		$append = $prepend = $ellipsis;

@@ -288,7 +288,7 @@ class FormAuthenticateTest extends CakeTestCase {
 			'username' => 'gwoo',
 			'created' => '2007-03-17 01:16:23'
 		);
-		$this->assertEquals(self::date(), $result['updated']);
+		$this->assertEquals(static::date(), $result['updated']);
 		unset($result['updated']);
 		$this->assertEquals($expected, $result);
 		CakePlugin::unload();
