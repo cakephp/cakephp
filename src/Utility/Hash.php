@@ -303,7 +303,7 @@ class Hash
                 if (!$conditions || static::_matches($v, $conditions)) {
                     $data[$k] = $nextPath
                         ? static::insert($v, $nextPath, $values)
-                        : array_merge($v, (array) $values);
+                        : array_merge($v, (array)$values);
                 }
             }
         }
