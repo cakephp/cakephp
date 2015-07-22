@@ -319,7 +319,7 @@ class HashTest extends TestCase
                    ]
                ]
            ],
-           '2' => ['2.1' => '2.1.1',]
+           '2' => ['2.1' => '2.1.1']
         ];
         $result = Hash::maxDimensions($data);
         $this->assertEquals($result, 5);

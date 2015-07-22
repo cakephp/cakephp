@@ -15,8 +15,8 @@
 namespace Cake\Routing;
 
 use Cake\Controller\Controller;
-use Cake\Event\EventListenerInterface;
 use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventListenerInterface;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Exception\MissingControllerException;

@@ -15,8 +15,8 @@
 namespace Cake\View;
 
 use Cake\Datasource\ModelAwareTrait;
-use Cake\Event\EventManager;
 use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventManager;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Inflector;
