@@ -7685,6 +7685,37 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * Test that boolean fields don't cause saveMany to fail
+ *
+ * @return void
+ */
+	public function testSaveManyBooleanFields() {
+		$this->loadFixtures('Item', 'Syfile', 'Image');
+		$data = array(
+			array(
+				'Item' => array(
+					'name' => 'testing',
+					'syfile_id' => 1,
+					'published' => false
+				)
+			),
+			array(
+				'Item' => array(
+					'name' => 'testing 2',
+					'syfile_id' => 1,
+					'published' => true
+				)
+			),
+		);
+		$item = ClassRegistry::init('Item');
+		$result = $item->saveMany($data, array('atomic' => false));
+
+		$this->assertCount(2, $result, '2 records should have been saved.');
+		$this->assertTrue($result[0], 'Both should have succeded');
+		$this->assertTrue($result[1], 'Both should have succeded');
+	}
+
+/**
  * testSaveManyDeepHasManyValidationFailure method
  *
  * @return void
@@ -7804,6 +7835,65 @@ class ModelWriteTest extends BaseModelTest {
 				)
 			)
 		), $TestModel->validationErrors);
+	}
+
+/**
+ * Test that boolean fields don't cause saveAssociated to fail
+ *
+ * @return void
+ */
+	public function testSaveAssociatedHasOneBooleanFields() {
+		$this->loadFixtures('Item', 'Syfile', 'Image');
+		$data = array(
+			'Syfile' => array(
+				'image_id' => 1,
+				'name' => 'Some file',
+			),
+			'Item' => array(
+				'name' => 'testing',
+				'published' => false
+			),
+		);
+		$syfile = ClassRegistry::init('Syfile');
+		$syfile->bindModel(array('hasOne' => array('Item')), false);
+		$result = $syfile->saveAssociated($data, array('atomic' => false));
+
+		$this->assertCount(2, $result, '2 records should have been saved.');
+		$this->assertTrue($result['Syfile'], 'Both should have succeded');
+		$this->assertTrue($result['Item'], 'Both should have succeded');
+	}
+
+/**
+ * Test that boolean fields don't cause saveAssociated to fail
+ *
+ * @return void
+ */
+	public function testSaveAssociatedBelongsToBooleanFields() {
+		$this->loadFixtures('Item', 'Syfile', 'Image');
+		$data = array(
+			'Syfile' => array(
+				'image_id' => 1,
+				'name' => 'Some file',
+			),
+			'Item' => array(
+				'name' => 'testing',
+				'syfile_id' => 2,
+				'published' => false
+			),
+		);
+		$item = ClassRegistry::init('Item');
+		$item->bindModel(array(
+			'belongsTo' => array(
+				'Item' => array(
+					'foreignKey' => 'image_id'
+				)
+			)
+		), false);
+		$result = $item->saveAssociated($data, array('atomic' => false));
+
+		$this->assertCount(2, $result, '2 records should have been saved.');
+		$this->assertTrue($result['Syfile'], 'Both should have succeded');
+		$this->assertTrue($result['Item'], 'Both should have succeded');
 	}
 
 /**
