@@ -1059,6 +1059,8 @@ class Hash {
 		$parentKeys = explode('.', $options['parentPath']);
 		array_shift($parentKeys);
 
+		$root = $options['root'] ? $options['root'] : false;
+
 		foreach ($data as $result) {
 			$result[$options['children']] = array();
 
@@ -1075,6 +1077,9 @@ class Hash {
 			} else {
 				$idMap[$parentId][$options['children']][] =& $idMap[$id];
 			}
+			if (!$parentId && $root === false) {
+				$root = $parentId;
+			}
 		}
 
 		if (!$return) {
@@ -1083,9 +1088,7 @@ class Hash {
 			));
 		}
 
-		if ($options['root']) {
-			$root = $options['root'];
-		} else {
+		if ($root === false) {
 			$root = self::get($return[0], $parentKeys);
 		}
 
