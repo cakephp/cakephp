@@ -900,7 +900,7 @@ class DboSource extends DataSource {
 		if (empty($log['log'])) {
 			return;
 		}
-		if (PHP_SAPI !== 'cli') {
+		if (php_sapi_name() !== 'cli') {
 			$controller = null;
 			$View = new View($controller, false);
 			$View->set('sqlLogs', array($this->configKeyName => $log));

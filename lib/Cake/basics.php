@@ -364,7 +364,7 @@ if (!function_exists('env')) {
 			case 'PHP_SELF':
 				return str_replace(env('DOCUMENT_ROOT'), '', env('SCRIPT_FILENAME'));
 			case 'CGI_MODE':
-				return (PHP_SAPI === 'cgi');
+				return (php_sapi_name() === 'cgi');
 			case 'HTTP_BASE':
 				$host = env('HTTP_HOST');
 				$parts = explode('.', $host);
