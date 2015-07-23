@@ -390,11 +390,17 @@ class Hash
         foreach ($data as $k => $v) {
             $match = static::_matchToken($k, $token);
             if ($match && is_array($v)) {
-                if ($conditions && static::_matches($v, $conditions)) {
-                    unset($data[$k]);
-                    continue;
+                if ($conditions) {
+                    if (static::_matches($v, $conditions)) {
+                        if ($nextPath) {
+                            $data[$k] = static::remove($v, $nextPath);
+                        } else {
+                            unset($data[$k]);
+                        }
+                    }
+                } else {
+                    $data[$k] = static::remove($v, $nextPath);
                 }
-                $data[$k] = static::remove($v, $nextPath);
                 if (empty($data[$k])) {
                     unset($data[$k]);
                 }
