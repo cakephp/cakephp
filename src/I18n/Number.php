@@ -15,6 +15,7 @@
 namespace Cake\I18n;
 
 use NumberFormatter;
+use Locale;
 
 /**
  * Number helper library.
@@ -312,4 +313,23 @@ class Number
 
         return $formatter;
     }
+
+    /**
+     * Returns a formatted integer as an ordinal number string (e.g. 1st, 2nd, 3rd, 4th, [...])
+     *
+     * ### Options
+     *
+     * - `locale` - The locale name to use for parsing the number, e.g. fr_FR
+     *
+     * @param string $value An integer or integer string.
+     * @param array $options An array with options.
+     * @return string
+     */
+    public static function ordinal($value, array $options = [])
+    {
+        $locale = isset($options['locale']) ? $options['locale'] : Locale::getDefault();
+        $formatter = new NumberFormatter($locale, NumberFormatter::ORDINAL);
+        return $formatter->format($value);
+    }
+
 }

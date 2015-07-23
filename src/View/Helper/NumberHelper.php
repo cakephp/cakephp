@@ -230,4 +230,9 @@ class NumberHelper extends Helper
     {
         return [];
     }
+
+    public function ordinal($value, $options = [])
+    {
+        return $this->_engine->ordinal($value);
+    }
 }
