@@ -116,13 +116,13 @@ class CakeNumber {
 			case $size < 1024:
 				return __dn('cake', '%d Byte', '%d Bytes', $size, $size);
 			case round($size / 1024) < 1024:
-				return __d('cake', '%s KB', self::precision($size / 1024, 0));
+				return __d('cake', '%s KB', static::precision($size / 1024, 0));
 			case round($size / 1024 / 1024, 2) < 1024:
-				return __d('cake', '%s MB', self::precision($size / 1024 / 1024, 2));
+				return __d('cake', '%s MB', static::precision($size / 1024 / 1024, 2));
 			case round($size / 1024 / 1024 / 1024, 2) < 1024:
-				return __d('cake', '%s GB', self::precision($size / 1024 / 1024 / 1024, 2));
+				return __d('cake', '%s GB', static::precision($size / 1024 / 1024 / 1024, 2));
 			default:
-				return __d('cake', '%s TB', self::precision($size / 1024 / 1024 / 1024 / 1024, 2));
+				return __d('cake', '%s TB', static::precision($size / 1024 / 1024 / 1024 / 1024, 2));
 		}
 	}
 
@@ -181,7 +181,7 @@ class CakeNumber {
 		if ($options['multiply']) {
 			$value *= 100;
 		}
-		return self::precision($value, $precision) . '%';
+		return static::precision($value, $precision) . '%';
 	}
 
 /**
@@ -221,8 +221,8 @@ class CakeNumber {
 			extract($options);
 		}
 
-		$value = self::_numberFormat($value, $places, '.', '');
-		$out = $before . self::_numberFormat($value, $places, $decimals, $thousands) . $after;
+		$value = static::_numberFormat($value, $places, '.', '');
+		$out = $before . static::_numberFormat($value, $places, $decimals, $thousands) . $after;
 
 		if ($escape) {
 			return h($out);
@@ -249,10 +249,10 @@ class CakeNumber {
  */
 	public static function formatDelta($value, $options = array()) {
 		$places = isset($options['places']) ? $options['places'] : 0;
-		$value = self::_numberFormat($value, $places, '.', '');
+		$value = static::_numberFormat($value, $places, '.', '');
 		$sign = $value > 0 ? '+' : '';
 		$options['before'] = isset($options['before']) ? $options['before'] . $sign : $sign;
-		return self::format($value, $options);
+		return static::format($value, $options);
 	}
 
 /**
@@ -265,10 +265,10 @@ class CakeNumber {
  * @return string
  */
 	protected static function _numberFormat($value, $places = 0, $decimals = '.', $thousands = ',') {
-		if (!isset(self::$_numberFormatSupport)) {
-			self::$_numberFormatSupport = version_compare(PHP_VERSION, '5.4.0', '>=');
+		if (!isset(static::$_numberFormatSupport)) {
+			static::$_numberFormatSupport = version_compare(PHP_VERSION, '5.4.0', '>=');
 		}
-		if (self::$_numberFormatSupport) {
+		if (static::$_numberFormatSupport) {
 			return number_format($value, $places, $decimals, $thousands);
 		}
 		$value = number_format($value, $places, '.', '');
@@ -323,13 +323,13 @@ class CakeNumber {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::currency
  */
 	public static function currency($value, $currency = null, $options = array()) {
-		$defaults = self::$_currencyDefaults;
+		$defaults = static::$_currencyDefaults;
 		if ($currency === null) {
-			$currency = self::defaultCurrency();
+			$currency = static::defaultCurrency();
 		}
 
-		if (isset(self::$_currencies[$currency])) {
-			$defaults = self::$_currencies[$currency];
+		if (isset(static::$_currencies[$currency])) {
+			$defaults = static::$_currencies[$currency];
 		} elseif (is_string($currency)) {
 			$options['before'] = $currency;
 		}
@@ -364,7 +364,7 @@ class CakeNumber {
 		$options[$position] = $options[$symbolKey . 'Symbol'];
 
 		$abs = abs($value);
-		$result = self::format($abs, $options);
+		$result = static::format($abs, $options);
 
 		if ($value < 0) {
 			if ($options['negative'] === '()') {
@@ -396,7 +396,7 @@ class CakeNumber {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::addFormat
  */
 	public static function addFormat($formatName, $options) {
-		self::$_currencies[$formatName] = $options + self::$_currencyDefaults;
+		static::$_currencies[$formatName] = $options + static::$_currencyDefaults;
 	}
 
 /**
@@ -408,9 +408,9 @@ class CakeNumber {
  */
 	public static function defaultCurrency($currency = null) {
 		if ($currency) {
-			self::$_defaultCurrency = $currency;
+			static::$_defaultCurrency = $currency;
 		}
-		return self::$_defaultCurrency;
+		return static::$_defaultCurrency;
 	}
 
 }

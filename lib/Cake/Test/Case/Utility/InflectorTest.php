@@ -406,7 +406,7 @@ class InflectorTest extends CakeTestCase {
  * @return void
  */
 	public function testInflectorSlugCharList() {
-		foreach (self::$maps as $language => $list) {
+		foreach (static::$maps as $language => $list) {
 			foreach ($list as $from => $to) {
 				$result = Inflector::slug($from);
 				$this->assertEquals($to, $result, $from . ' (' . $language . ') should be ' . $to . ' - but is ' . $result);

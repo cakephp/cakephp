@@ -35,7 +35,7 @@ class TestConsoleLog extends ConsoleLog {
 class TestCakeLog extends CakeLog {
 
 	public static function replace($key, &$engine) {
-		self::$_Collection->{$key} = $engine;
+		static::$_Collection->{$key} = $engine;
 	}
 
 }

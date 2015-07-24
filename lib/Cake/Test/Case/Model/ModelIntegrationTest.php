@@ -1994,7 +1994,7 @@ class ModelIntegrationTest extends BaseModelTest {
 					'afterFind' => 'Successfully added by AfterFind'
 				)
 			));
-		$this->assertEquals(self::date(), $result['Something']['updated']);
+		$this->assertEquals(static::date(), $result['Something']['updated']);
 		unset($result['Something']['updated']);
 		$this->assertEquals($expected, $result);
 	}

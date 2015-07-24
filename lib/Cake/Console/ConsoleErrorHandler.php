@@ -40,10 +40,10 @@ class ConsoleErrorHandler {
  * @return ConsoleOutput
  */
 	public static function getStderr() {
-		if (empty(self::$stderr)) {
-			self::$stderr = new ConsoleOutput('php://stderr');
+		if (empty(static::$stderr)) {
+			static::$stderr = new ConsoleOutput('php://stderr');
 		}
-		return self::$stderr;
+		return static::$stderr;
 	}
 
 /**
@@ -53,7 +53,7 @@ class ConsoleErrorHandler {
  * @return void
  */
 	public function handleException(Exception $exception) {
-		$stderr = self::getStderr();
+		$stderr = static::getStderr();
 		$stderr->write(__d('cake_console', "<error>Error:</error> %s\n%s",
 			$exception->getMessage(),
 			$exception->getTraceAsString()
@@ -78,7 +78,7 @@ class ConsoleErrorHandler {
 		if (error_reporting() === 0) {
 			return;
 		}
-		$stderr = self::getStderr();
+		$stderr = static::getStderr();
 		list($name, $log) = ErrorHandler::mapErrorCode($code);
 		$message = __d('cake_console', '%s in [%s, line %s]', $description, $file, $line);
 		$stderr->write(__d('cake_console', "<error>%s Error:</error> %s\n", $name, $message));

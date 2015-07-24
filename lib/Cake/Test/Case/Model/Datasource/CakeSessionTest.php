@@ -28,11 +28,11 @@ App::uses('CacheSession', 'Model/Datasource/Session');
 class TestCakeSession extends CakeSession {
 
 	public static function setUserAgent($value) {
-		self::$_userAgent = $value;
+		static::$_userAgent = $value;
 	}
 
 	public static function setHost($host) {
-		self::_setHost($host);
+		static::_setHost($host);
 	}
 
 }
@@ -86,7 +86,7 @@ class CakeSessionTest extends CakeTestCase {
  */
 	public static function setupBeforeClass() {
 		// Make sure garbage colector will be called
-		self::$_gcDivisor = ini_get('session.gc_divisor');
+		static::$_gcDivisor = ini_get('session.gc_divisor');
 		ini_set('session.gc_divisor', '1');
 	}
 
@@ -97,7 +97,7 @@ class CakeSessionTest extends CakeTestCase {
  */
 	public static function teardownAfterClass() {
 		// Revert to the default setting
-		ini_set('session.gc_divisor', self::$_gcDivisor);
+		ini_set('session.gc_divisor', static::$_gcDivisor);
 	}
 
 /**

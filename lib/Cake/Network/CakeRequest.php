@@ -853,7 +853,7 @@ class CakeRequest implements ArrayAccess {
  * @return mixed If a $language is provided, a boolean. Otherwise the array of accepted languages.
  */
 	public static function acceptLanguage($language = null) {
-		$raw = self::_parseAcceptWithQualifier(self::header('Accept-Language'));
+		$raw = static::_parseAcceptWithQualifier(static::header('Accept-Language'));
 		$accept = array();
 		foreach ($raw as $languages) {
 			foreach ($languages as &$lang) {

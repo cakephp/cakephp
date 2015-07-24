@@ -285,7 +285,7 @@ class Folder {
 		return $path[0] === '/' ||
 			preg_match('/^[A-Z]:\\\\/i', $path) ||
 			substr($path, 0, 2) === '\\\\' ||
-			self::isRegisteredStreamWrapper($path);
+			static::isRegisteredStreamWrapper($path);
 	}
 
 /**
@@ -525,8 +525,8 @@ class Folder {
 			return true;
 		}
 
-		if (!self::isAbsolute($pathname)) {
-			$pathname = self::addPathElement($this->pwd(), $pathname);
+		if (!static::isAbsolute($pathname)) {
+			$pathname = static::addPathElement($this->pwd(), $pathname);
 		}
 
 		if (!$mode) {

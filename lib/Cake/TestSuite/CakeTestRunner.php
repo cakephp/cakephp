@@ -48,7 +48,7 @@ class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
  */
 	public function doRun(PHPUnit_Framework_Test $suite, array $arguments = array()) {
 		if (isset($arguments['printer'])) {
-			self::$versionStringPrinted = true;
+			static::$versionStringPrinted = true;
 		}
 
 		$fixture = $this->_getFixtureManager($arguments);

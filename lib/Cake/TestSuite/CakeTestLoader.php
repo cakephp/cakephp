@@ -85,8 +85,8 @@ class CakeTestLoader extends PHPUnit_Runner_StandardTestSuiteLoader {
  * @return array
  */
 	public static function generateTestList($params) {
-		$directory = self::_basePath($params);
-		$fileList = self::_getRecursiveFileList($directory);
+		$directory = static::_basePath($params);
+		$fileList = static::_getRecursiveFileList($directory);
 
 		$testCases = array();
 		foreach ($fileList as $testCaseFile) {

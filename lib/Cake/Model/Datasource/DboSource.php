@@ -759,7 +759,7 @@ class DboSource extends DataSource {
  */
 	public function flushMethodCache() {
 		$this->_methodCacheChange = true;
-		self::$methodCache = array();
+		static::$methodCache = array();
 	}
 
 /**
@@ -778,14 +778,14 @@ class DboSource extends DataSource {
 		if ($this->cacheMethods === false) {
 			return $value;
 		}
-		if (!$this->_methodCacheChange && empty(self::$methodCache)) {
-			self::$methodCache = (array)Cache::read('method_cache', '_cake_core_');
+		if (!$this->_methodCacheChange && empty(static::$methodCache)) {
+			static::$methodCache = (array)Cache::read('method_cache', '_cake_core_');
 		}
 		if ($value === null) {
-			return (isset(self::$methodCache[$method][$key])) ? self::$methodCache[$method][$key] : null;
+			return (isset(static::$methodCache[$method][$key])) ? static::$methodCache[$method][$key] : null;
 		}
 		$this->_methodCacheChange = true;
-		return self::$methodCache[$method][$key] = $value;
+		return static::$methodCache[$method][$key] = $value;
 	}
 
 /**
@@ -3571,7 +3571,7 @@ class DboSource extends DataSource {
  */
 	public function __destruct() {
 		if ($this->_methodCacheChange) {
-			Cache::write('method_cache', self::$methodCache, '_cake_core_');
+			Cache::write('method_cache', static::$methodCache, '_cake_core_');
 		}
 		parent::__destruct();
 	}
