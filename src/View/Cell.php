@@ -15,8 +15,8 @@
 namespace Cake\View;
 
 use Cake\Datasource\ModelAwareTrait;
+use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
-use Cake\Event\EventManagerTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -32,7 +32,7 @@ use Cake\View\ViewVarsTrait;
 abstract class Cell
 {
 
-    use EventManagerTrait;
+    use EventDispatcherTrait;
     use LocatorAwareTrait;
     use ModelAwareTrait;
     use ViewVarsTrait;

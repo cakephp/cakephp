@@ -1190,10 +1190,10 @@ class QueryTest extends TestCase
         $query->from('comments')
             ->where('');
 
-        $this->assertNull($query->clause('where'));
+        $this->assertCount(0, $query->clause('where'));
 
         $query->where([]);
-        $this->assertNull($query->clause('where'));
+        $this->assertCount(0, $query->clause('where'));
     }
 
     /**

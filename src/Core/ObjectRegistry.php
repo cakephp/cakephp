@@ -14,6 +14,7 @@
  */
 namespace Cake\Core;
 
+use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventListenerInterface;
 use RuntimeException;
 
@@ -27,7 +28,7 @@ use RuntimeException;
  * the template method load().
  *
  * The ObjectRegistry is EventManager aware, but each extending class will need to use
- * \Cake\Event\EventManagerTrait to attach and detach on set and bind
+ * \Cake\Event\EventDispatcherTrait to attach and detach on set and bind
  *
  * @see \Cake\Controller\ComponentRegistry
  * @see \Cake\View\HelperRegistry
@@ -281,7 +282,7 @@ abstract class ObjectRegistry
     {
         list(, $name) = pluginSplit($objectName);
         $this->unload($objectName);
-        if (isset($this->_eventManager) && $object instanceof EventListenerInterface) {
+        if ($this instanceof EventDispatcherInterface && $object instanceof EventListenerInterface) {
             $this->eventManager()->on($object);
         }
         $this->_loaded[$name] = $object;
@@ -301,7 +302,7 @@ abstract class ObjectRegistry
             return;
         }
         $object = $this->_loaded[$objectName];
-        if (isset($this->_eventManager) && $object instanceof EventListenerInterface) {
+        if ($this instanceof EventDispatcherInterface && $object instanceof EventListenerInterface) {
             $this->eventManager()->off($object);
         }
         unset($this->_loaded[$objectName]);

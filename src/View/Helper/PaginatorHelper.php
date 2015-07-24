@@ -24,6 +24,9 @@ use Cake\View\View;
  *
  * PaginationHelper encloses all methods needed when working with pagination.
  *
+ * @property UrlHelper $Url
+ * @property NumberHelper $Number
+ * @property HtmlHelper $Html
  * @link http://book.cakephp.org/3.0/en/views/helpers/paginator.html
  */
 class PaginatorHelper extends Helper

@@ -880,6 +880,31 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
+     * Test that empty conditions in a matching clause don't cause errors.
+     *
+     * @return void
+     */
+    public function testMatchingEmptyQuery()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags');
+
+        $rows = $table->find()
+            ->matching('Tags', function ($q) {
+                return $q->where([]);
+            })
+            ->all();
+        $this->assertNotEmpty($rows);
+
+        $rows = $table->find()
+            ->matching('Tags', function ($q) {
+                return $q->where(null);
+            })
+            ->all();
+        $this->assertNotEmpty($rows);
+    }
+
+    /**
      * Tests that using a subquery as part of an expression will not make invalid SQL
      *
      * @return void

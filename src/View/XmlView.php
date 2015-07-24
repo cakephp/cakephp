@@ -123,7 +123,9 @@ class XmlView extends SerializedView
                 if (is_numeric($alias)) {
                     $alias = $key;
                 }
-                $data[$rootNode][$alias] = $this->viewVars[$key];
+                if (array_key_exists($key, $this->viewVars)) {
+                    $data[$rootNode][$alias] = $this->viewVars[$key];
+                }
             }
         } else {
             $data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;

@@ -223,7 +223,8 @@ class EntityContext implements ContextInterface
         if ($entity instanceof EntityInterface) {
             return $entity->get(array_pop($parts));
         } elseif (is_array($entity)) {
-            return $entity[array_pop($parts)];
+            $key = array_pop($parts);
+            return isset($entity[$key]) ? $entity[$key] : null;
         }
         return null;
     }

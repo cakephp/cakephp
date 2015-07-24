@@ -14,15 +14,15 @@
 
 namespace Cake\Test\TestCase\Event;
 
+use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
-use Cake\Event\EventManagerTrait;
 use Cake\TestSuite\TestCase;
 
 /**
- * EventManagerTrait test case
+ * EventDispatcherTrait test case
  *
  */
-class EventManagerTraitTest extends TestCase
+class EventDispatcherTraitTest extends TestCase
 {
 
     /**
@@ -34,7 +34,7 @@ class EventManagerTraitTest extends TestCase
     {
         parent::setUp();
 
-        $this->subject = $this->getObjectForTrait('Cake\Event\EventManagerTrait');
+        $this->subject = $this->getObjectForTrait('Cake\Event\EventDispatcherTrait');
     }
 
     /**
@@ -50,7 +50,7 @@ class EventManagerTraitTest extends TestCase
     /**
      * testSettingEventManager
      *
-     * @covers \Cake\Event\EventManagerTrait::eventManager
+     * @covers \Cake\Event\EventDispatcherTrait::eventManager
      * @return void
      */
     public function testSettingEventManager()

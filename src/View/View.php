@@ -18,8 +18,8 @@ use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\Event\EventDispatcherInterface;
+use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
-use Cake\Event\EventManagerTrait;
 use Cake\Log\LogTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -62,7 +62,7 @@ class View implements EventDispatcherInterface
 {
 
     use CellTrait;
-    use EventManagerTrait;
+    use EventDispatcherTrait;
     use LogTrait;
     use RequestActionTrait;
     use ViewVarsTrait;
@@ -589,11 +589,10 @@ class View implements EventDispatcherInterface
             return $this->Blocks->get('content');
         }
 
-        if (empty($content)) {
-            $content = $this->Blocks->get('content');
-        } else {
-            $this->Blocks->set('content', $content);
+        if (!empty($content)) {
+             $this->Blocks->set('content', $content);
         }
+
         $this->dispatchEvent('View.beforeLayout', [$layoutFileName]);
 
         $title = $this->Blocks->get('title');

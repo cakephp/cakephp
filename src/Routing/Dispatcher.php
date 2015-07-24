@@ -15,8 +15,8 @@
 namespace Cake\Routing;
 
 use Cake\Controller\Controller;
+use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
-use Cake\Event\EventManagerTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Exception\MissingControllerException;
@@ -31,7 +31,7 @@ use LogicException;
 class Dispatcher
 {
 
-    use EventManagerTrait;
+    use EventDispatcherTrait;
 
     /**
      * Connected filter objects

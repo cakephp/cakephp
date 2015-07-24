@@ -18,8 +18,8 @@ use Cake\Controller\Exception\MissingActionException;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\Event;
 use Cake\Event\EventDispatcherInterface;
+use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
-use Cake\Event\EventManagerTrait;
 use Cake\Log\LogTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -85,7 +85,7 @@ use RuntimeException;
 class Controller implements EventListenerInterface, EventDispatcherInterface
 {
 
-    use EventManagerTrait;
+    use EventDispatcherTrait;
     use LocatorAwareTrait;
     use LogTrait;
     use MergeVariablesTrait;
