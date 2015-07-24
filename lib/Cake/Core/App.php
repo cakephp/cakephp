@@ -922,7 +922,7 @@ class App {
 			return;
 		}
 
-		if (PHP_SAPI === 'cli') {
+		if (php_sapi_name() === 'cli') {
 			$errorHandler = Configure::read('Error.consoleHandler');
 		} else {
 			$errorHandler = Configure::read('Error.handler');
