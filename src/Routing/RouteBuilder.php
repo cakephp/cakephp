@@ -102,7 +102,7 @@ class RouteBuilder
      *   - `routeClass` - The default route class to use when adding routes.
      *   - `extensions` - The extensions to connect when adding routes.
      */
-    public function __construct($collection, $path, array $params = [], array $options = [])
+    public function __construct(RouteCollection $collection, $path, array $params = [], array $options = [])
     {
         $this->_collection = $collection;
         $this->_path = $path;
