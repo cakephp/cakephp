@@ -814,6 +814,10 @@ class FormHelper extends AppHelper {
  * <label for="post-publish">Publish</label>
  * ```
  *
+ * *Warning* Unlike most FormHelper methods, this method does not automatically
+ * escape the $text parameter. You must escape the $text parameter yourself if you
+ * are using user supplied data.
+ *
  * @param string $fieldName This should be "Modelname.fieldname"
  * @param string $text Text that will appear in the label field. If
  *   $text is left undefined the text will be inflected from the
