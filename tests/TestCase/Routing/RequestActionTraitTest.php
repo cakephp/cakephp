@@ -195,6 +195,22 @@ class RequestActionTraitTest extends TestCase
     }
 
     /**
+     * Test that the required parameter names are seeded by requestAction.
+     *
+     * @return void
+     */
+    public function testRequestActionArraySetParamNames()
+    {
+        $result = $this->object->requestAction(
+            ['controller' => 'RequestAction', 'action' => 'params_pass']
+        );
+        $result = json_decode($result, true);
+        $this->assertArrayHasKey('action', $result['params']);
+        $this->assertArrayHasKey('controller', $result['params']);
+        $this->assertArrayHasKey('plugin', $result['params']);
+    }
+
+    /**
      * Test that requestAction() does not forward the 0 => return value.
      *
      * @return void

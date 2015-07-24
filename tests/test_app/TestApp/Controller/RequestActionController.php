@@ -116,6 +116,7 @@ class RequestActionController extends AppController
     public function params_pass()
     {
         $this->response->body(json_encode([
+            'params' => $this->request->params,
             'base' => $this->request->base,
             'webroot' => $this->request->webroot,
             'params' => $this->request->params,
