@@ -35,7 +35,7 @@ class TestConsoleLog extends ConsoleLog {
 class TestCakeLog extends CakeLog {
 
 	public static function replace($key, &$engine) {
-		self::$_Collection->{$key} = $engine;
+		static::$_Collection->{$key} = $engine;
 	}
 
 }
@@ -139,7 +139,7 @@ class ConsoleLogTest extends CakeTestCase {
 		TestCakeLog::config('test_console_log', array(
 			'engine' => 'TestConsole',
 			));
-		if ((DS === '\\' && !(bool)env('ANSICON')) ||
+		if ((DS === '\\' && !(bool)env('ANSICON') && env('ConEmuANSI') !== 'ON') ||
 			(function_exists('posix_isatty') && !posix_isatty(null))
 		) {
 			$expected = ConsoleOutput::PLAIN;

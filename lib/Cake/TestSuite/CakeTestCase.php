@@ -548,7 +548,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @return void
  */
 	protected static function assertEqual($result, $expected, $message = '') {
-		return self::assertEquals($expected, $result, $message);
+		return static::assertEquals($expected, $result, $message);
 	}
 
 /**
@@ -561,7 +561,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @return void
  */
 	protected static function assertNotEqual($result, $expected, $message = '') {
-		return self::assertNotEquals($expected, $result, $message);
+		return static::assertNotEquals($expected, $result, $message);
 	}
 
 /**
@@ -574,7 +574,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @return void
  */
 	protected static function assertPattern($pattern, $string, $message = '') {
-		return self::assertRegExp($pattern, $string, $message);
+		return static::assertRegExp($pattern, $string, $message);
 	}
 
 /**
@@ -587,7 +587,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @return void
  */
 	protected static function assertIdentical($actual, $expected, $message = '') {
-		return self::assertSame($expected, $actual, $message);
+		return static::assertSame($expected, $actual, $message);
 	}
 
 /**
@@ -600,7 +600,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @return void
  */
 	protected static function assertNotIdentical($actual, $expected, $message = '') {
-		return self::assertNotSame($expected, $actual, $message);
+		return static::assertNotSame($expected, $actual, $message);
 	}
 
 /**
@@ -613,7 +613,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @return void
  */
 	protected static function assertNoPattern($pattern, $string, $message = '') {
-		return self::assertNotRegExp($pattern, $string, $message);
+		return static::assertNotRegExp($pattern, $string, $message);
 	}
 
 /**
@@ -662,7 +662,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @return void
  */
 	protected static function assertReference(&$first, &$second, $message = '') {
-		return self::assertSame($first, $second, $message);
+		return static::assertSame($first, $second, $message);
 	}
 
 /**
@@ -675,7 +675,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @return void
  */
 	protected static function assertIsA($object, $type, $message = '') {
-		return self::assertInstanceOf($type, $object, $message);
+		return static::assertInstanceOf($type, $object, $message);
 	}
 
 /**
@@ -690,7 +690,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 	protected static function assertWithinMargin($result, $expected, $margin, $message = '') {
 		$upper = $result + $margin;
 		$lower = $result - $margin;
-		return self::assertTrue((($expected <= $upper) && ($expected >= $lower)), $message);
+		return static::assertTrue((($expected <= $upper) && ($expected >= $lower)), $message);
 	}
 
 /**

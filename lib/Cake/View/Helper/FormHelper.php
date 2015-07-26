@@ -428,7 +428,7 @@ class FormHelper extends AppHelper {
 			case 'delete':
 				$append .= $this->hidden('_method', array(
 					'name' => '_method', 'value' => strtoupper($options['type']), 'id' => null,
-					'secure' => self::SECURE_SKIP
+					'secure' => static::SECURE_SKIP
 				));
 			default:
 				$htmlAttributes['method'] = 'post';
@@ -488,7 +488,7 @@ class FormHelper extends AppHelper {
 		}
 		return $this->hidden('_Token.key', array(
 			'value' => $this->request->params['_Token']['key'], 'id' => 'Token' . mt_rand(),
-			'secure' => self::SECURE_SKIP
+			'secure' => static::SECURE_SKIP
 		));
 	}
 
@@ -813,6 +813,10 @@ class FormHelper extends AppHelper {
  * ));
  * <label for="post-publish">Publish</label>
  * ```
+ *
+ * *Warning* Unlike most FormHelper methods, this method does not automatically
+ * escape the $text parameter. You must escape the $text parameter yourself if you
+ * are using user supplied data.
  *
  * @param string $fieldName This should be "Modelname.fieldname"
  * @param string $text Text that will appear in the label field. If
@@ -1696,7 +1700,7 @@ class FormHelper extends AppHelper {
 		unset($options['secure']);
 
 		$options = $this->_initInputField($fieldName, array_merge(
-			$options, array('secure' => self::SECURE_SKIP)
+			$options, array('secure' => static::SECURE_SKIP)
 		));
 
 		if ($secure === true) {
@@ -1717,7 +1721,7 @@ class FormHelper extends AppHelper {
 	public function file($fieldName, $options = array()) {
 		$options += array('secure' => true);
 		$secure = $options['secure'];
-		$options['secure'] = self::SECURE_SKIP;
+		$options['secure'] = static::SECURE_SKIP;
 
 		$options = $this->_initInputField($fieldName, $options);
 		$field = $this->entity();
@@ -2067,7 +2071,7 @@ class FormHelper extends AppHelper {
 		$id = $this->_extractOption('id', $attributes);
 
 		$attributes = $this->_initInputField($fieldName, array_merge(
-			(array)$attributes, array('secure' => self::SECURE_SKIP)
+			(array)$attributes, array('secure' => static::SECURE_SKIP)
 		));
 
 		if (is_string($options) && isset($this->_options[$options])) {
@@ -3007,7 +3011,7 @@ class FormHelper extends AppHelper {
 			$result['required'] = true;
 		}
 
-		if ($secure === self::SECURE_SKIP) {
+		if ($secure === static::SECURE_SKIP) {
 			return $result;
 		}
 

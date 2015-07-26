@@ -153,19 +153,19 @@ class ConsoleOutput {
 /**
  * Construct the output object.
  *
- * Checks for a pretty console environment. Ansicon allows pretty consoles
- * on Windows, and is supported.
+ * Checks for a pretty console environment. Ansicon and ConEmu allows
+ * pretty consoles on Windows, and is supported.
  *
  * @param string $stream The identifier of the stream to write output to.
  */
 	public function __construct($stream = 'php://stdout') {
 		$this->_output = fopen($stream, 'w');
 
-		if ((DS === '\\' && !(bool)env('ANSICON')) ||
+		if ((DS === '\\' && !(bool)env('ANSICON') && env('ConEmuANSI') !== 'ON') ||
 			$stream === 'php://output' ||
 			(function_exists('posix_isatty') && !posix_isatty($this->_output))
 		) {
-			$this->_outputAs = self::PLAIN;
+			$this->_outputAs = static::PLAIN;
 		}
 	}
 
@@ -179,9 +179,9 @@ class ConsoleOutput {
  */
 	public function write($message, $newlines = 1) {
 		if (is_array($message)) {
-			$message = implode(self::LF, $message);
+			$message = implode(static::LF, $message);
 		}
-		return $this->_write($this->styleText($message . str_repeat(self::LF, $newlines)));
+		return $this->_write($this->styleText($message . str_repeat(static::LF, $newlines)));
 	}
 
 /**
@@ -191,11 +191,11 @@ class ConsoleOutput {
  * @return string String with color codes added.
  */
 	public function styleText($text) {
-		if ($this->_outputAs == self::RAW) {
+		if ($this->_outputAs == static::RAW) {
 			return $text;
 		}
-		if ($this->_outputAs == self::PLAIN) {
-			$tags = implode('|', array_keys(self::$_styles));
+		if ($this->_outputAs == static::PLAIN) {
+			$tags = implode('|', array_keys(static::$_styles));
 			return preg_replace('#</?(?:' . $tags . ')>#', '', $text);
 		}
 		return preg_replace_callback(
@@ -216,16 +216,16 @@ class ConsoleOutput {
 		}
 
 		$styleInfo = array();
-		if (!empty($style['text']) && isset(self::$_foregroundColors[$style['text']])) {
-			$styleInfo[] = self::$_foregroundColors[$style['text']];
+		if (!empty($style['text']) && isset(static::$_foregroundColors[$style['text']])) {
+			$styleInfo[] = static::$_foregroundColors[$style['text']];
 		}
-		if (!empty($style['background']) && isset(self::$_backgroundColors[$style['background']])) {
-			$styleInfo[] = self::$_backgroundColors[$style['background']];
+		if (!empty($style['background']) && isset(static::$_backgroundColors[$style['background']])) {
+			$styleInfo[] = static::$_backgroundColors[$style['background']];
 		}
 		unset($style['text'], $style['background']);
 		foreach ($style as $option => $value) {
 			if ($value) {
-				$styleInfo[] = self::$_options[$option];
+				$styleInfo[] = static::$_options[$option];
 			}
 		}
 		return "\033[" . implode($styleInfo, ';') . 'm' . $matches['text'] . "\033[0m";
@@ -268,16 +268,16 @@ class ConsoleOutput {
  */
 	public function styles($style = null, $definition = null) {
 		if ($style === null && $definition === null) {
-			return self::$_styles;
+			return static::$_styles;
 		}
 		if (is_string($style) && $definition === null) {
-			return isset(self::$_styles[$style]) ? self::$_styles[$style] : null;
+			return isset(static::$_styles[$style]) ? static::$_styles[$style] : null;
 		}
 		if ($definition === false) {
-			unset(self::$_styles[$style]);
+			unset(static::$_styles[$style]);
 			return true;
 		}
-		self::$_styles[$style] = $definition;
+		static::$_styles[$style] = $definition;
 		return true;
 	}
 
