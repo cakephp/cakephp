@@ -111,7 +111,7 @@ class ViewBlock
             $mode   = end($this->_active);
             $active = key($this->_active);
             $content = ob_get_clean();
-            if($mode === ViewBlock::OVERRIDE) {
+            if ($mode === ViewBlock::OVERRIDE) {
                 $this->_blocks[$active] = $content;
             } else {
                 $this->concat($active, $content, $mode);
@@ -136,7 +136,7 @@ class ViewBlock
      */
     public function concat($name, $value = null, $mode = ViewBlock::APPEND)
     {
-        if($value === null) {
+        if ($value === null) {
             $this->start($name, $mode);
             return;
         }
