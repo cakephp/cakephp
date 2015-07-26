@@ -111,12 +111,12 @@ class ViewBlock
             $mode   = end($this->_active);
             $active = key($this->_active);
             $content = ob_get_clean();
+            array_pop($this->_active);
             if($mode === ViewBlock::OVERRIDE) {
                 $this->_blocks[$active] = $content;
             } else {
                 $this->concat($active, $content, $mode);
             }
-            array_pop($this->_active);
         }
     }
 
