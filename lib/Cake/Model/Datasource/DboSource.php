@@ -1048,62 +1048,7 @@ class DboSource extends DataSource {
 			$Model->recursive = $recursive;
 		}
 
-		if (!empty($queryData['fields'])) {
-			$noAssocFields = true;
-			$queryData['fields'] = $this->fields($Model, null, $queryData['fields']);
-		} else {
-			$noAssocFields = false;
-			$queryData['fields'] = $this->fields($Model);
-		}
-
-		if ($Model->recursive === -1) {
-			// Primary model data only, no joins.
-			$associations = array();
-
-		} else {
-			$associations = $Model->associations();
-
-			if ($Model->recursive === 0) {
-				// Primary model data and its domain.
-				unset($associations[2], $associations[3]);
-			}
-		}
-
-		$originalJoins = $queryData['joins'];
-		$queryData['joins'] = array();
-
-		// Generate hasOne and belongsTo associations inside $queryData
-		$linkedModels = array();
-		foreach ($associations as $type) {
-			if ($type !== 'hasOne' && $type !== 'belongsTo') {
-				continue;
-			}
-
-			foreach ($Model->{$type} as $assoc => $assocData) {
-				$LinkModel = $Model->{$assoc};
-
-				if ($Model->useDbConfig !== $LinkModel->useDbConfig) {
-					continue;
-				}
-
-				if ($noAssocFields) {
-					$assocData['fields'] = false;
-				}
-
-				$external = isset($assocData['external']);
-
-				if ($this->generateAssociationQuery($Model, $LinkModel, $type, $assoc, $assocData, $queryData, $external) === true) {
-					$linkedModels[$type . '/' . $assoc] = true;
-				}
-			}
-		}
-
-		if (!empty($originalJoins)) {
-			$queryData['joins'] = array_merge($queryData['joins'], $originalJoins);
-		}
-
-		// Build SQL statement with the primary model, plus hasOne and belongsTo associations
-		$query = $this->buildAssociationQuery($Model, $queryData);
+		$query = $this->getQueryStatement($Model, $queryData, $recursive);
 
 		$resultSet = $this->fetchAll($query, $Model->cacheQueries);
 		unset($query);
@@ -1121,6 +1066,9 @@ class DboSource extends DataSource {
 			if (isset($queryData['joins'][0]['alias'])) {
 				$joined[$Model->alias] = (array)Hash::extract($queryData['joins'], '{n}.alias');
 			}
+
+			$linkedModels = $queryData['linkedModels'];
+			$associations = $Model->getAssociationsByRecursive();
 
 			foreach ($associations as $type) {
 				foreach ($Model->{$type} as $assoc => $assocData) {
@@ -1156,6 +1104,83 @@ class DboSource extends DataSource {
 		}
 
 		return $resultSet;
+	}
+
+/**
+ * Build SQL statement with the primary model, plus hasOne and belongsTo associations and
+ * and return it in order to use with the query execution methods
+ *
+ * @param Model $Model A Model object that the query is for.
+ * @param array &$queryData An array of queryData information containing keys similar to Model::find(), but it is passed by reference.
+ * @param int $recursive Number of levels of association
+ * @return string The built SQL statement
+ */
+	public function getQueryStatement(Model $Model, &$queryData = null, $recursive = null) {
+		$queryData = $queryData === null ? array() : $queryData;
+		$queryData = $this->_scrubQueryData($queryData);
+
+		if ($recursive === null && isset($queryData['recursive'])) {
+			$recursive = $queryData['recursive'];
+		}
+
+		if ($recursive !== null) {
+			$modelRecursive = $Model->recursive;
+			$Model->recursive = $recursive;
+		}
+
+		if (!empty($queryData['fields'])) {
+			$noAssocFields = true;
+			$queryData['fields'] = $this->fields($Model, null, $queryData['fields']);
+		} else {
+			$noAssocFields = false;
+			$queryData['fields'] = $this->fields($Model);
+		}
+
+		$originalJoins = $queryData['joins'];
+		$queryData['joins'] = array();
+
+		$associations = $Model->getAssociationsByRecursive();
+
+		// Generate hasOne and belongsTo associations inside $queryData
+		$linkedModels = array();
+		foreach ($associations as $type) {
+			if ($type !== 'hasOne' && $type !== 'belongsTo') {
+				continue;
+			}
+
+			foreach ($Model->{$type} as $assoc => $assocData) {
+				$LinkModel = $Model->{$assoc};
+
+				if ($Model->useDbConfig !== $LinkModel->useDbConfig) {
+					continue;
+				}
+
+				if ($noAssocFields) {
+					$assocData['fields'] = false;
+				}
+
+				$external = isset($assocData['external']);
+
+				if ($this->generateAssociationQuery($Model, $LinkModel, $type, $assoc, $assocData, $queryData, $external) === true) {
+					$linkedModels[$type . '/' . $assoc] = true;
+				}
+			}
+		}
+
+		$queryData['linkedModels'] = $linkedModels;
+
+		if (!empty($originalJoins)) {
+			$queryData['joins'] = array_merge($queryData['joins'], $originalJoins);
+		}
+
+		// Build SQL statement with the primary model, plus hasOne and belongsTo associations
+		$query = $this->buildAssociationQuery($Model, $queryData);
+
+		if ($recursive !== null) {
+			$Model->recursive = $modelRecursive;
+		}
+
+		return $query;
 	}
 
 /**

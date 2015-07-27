@@ -3368,6 +3368,24 @@ class Model extends Object implements CakeEventListener {
 	}
 
 /**
+ * This gets the association arrays according to the recursive level set
+ * @return array Array of associations or empty array
+ */
+	public function getAssociationsByRecursive() {
+		if ($this->recursive === -1) {
+			// Primary model data only, no joins.
+			return array();
+		}
+
+		$associations = $this->associations();
+		if ($this->recursive === 0) {
+			// Primary model data and its domain.
+			unset($associations[2], $associations[3]);
+		}
+		return $associations;
+	}
+
+/**
  * Returns false if any fields passed match any (by default, all if $or = false) of their matching values.
  *
  * Can be used as a validation method. When used as a validation method, the `$or` parameter
@@ -3445,6 +3463,38 @@ class Model extends Object implements CakeEventListener {
 		$params = func_get_args();
 		$db = $this->getDataSource();
 		return call_user_func_array(array(&$db, 'query'), $params);
+	}
+
+/**
+ * Builds and execute the query. Return DataSource object to retrieve the result explicitly using `fetchResult()`
+ *
+ * @param array $query Option fields (conditions / fields / joins / limit / offset / order / page / group / callbacks)
+ * @param int|null $recursive Number of levels of association
+ * @return mixed DataSource object if query executes with no problem, null on failure
+ */
+	public function runQuery($query = array(), $recursive = null) {
+		$db = clone $this->getDataSource();
+		if (!$db) {
+			return null;
+		}
+
+		$queryData = $this->buildQuery('all', $query);
+		if ($queryData === null) {
+			return null;
+		}
+
+		$sql = $db->getQueryStatement($this, $queryData, $recursive);
+		if (!$sql) {
+			return null;
+		}
+
+		if ($result = $db->execute($sql)) {
+			$db->resultSet($result);
+		} else {
+			return null;
+		}
+
+		return $db;
 	}
 
 /**
