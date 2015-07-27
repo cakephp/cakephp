@@ -719,7 +719,7 @@ class HttpSocket extends CakeSocket {
 			unset($this->config[$key]);
 		}
 		if (version_compare(PHP_VERSION, '5.3.2', '>=')) {
-			if (empty($this->config['context']['ssl']['SNI_enabled'])) {
+			if (!isset($this->config['context']['ssl']['SNI_enabled'])) {
 				$this->config['context']['ssl']['SNI_enabled'] = true;
 			}
 			if (version_compare(PHP_VERSION, '5.6.0', '>=')) {
