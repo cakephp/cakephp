@@ -45,6 +45,7 @@ class RoutesShellTest extends TestCase
         $this->shell = new RoutesShell($this->io);
         Router::connect('/articles/:action/*', ['controller' => 'Articles']);
         Router::connect('/bake/:controller/:action', ['plugin' => 'Bake']);
+        Router::connect('/tests/:action/*', ['controller' => 'Tests'], ['_name' => 'testName']);
     }
 
     /**
@@ -75,6 +76,16 @@ class RoutesShellTest extends TestCase
                         'articles:_action',
                         '/articles/:action/*',
                         '{"controller":"Articles","action":"index","plugin":null}'
+                    ]),
+                    $this->contains([
+                        'bake._controller:_action',
+                        '/bake/:controller/:action',
+                        '{"plugin":"Bake","action":"index"}',
+                    ]),
+                    $this->contains([
+                        'testName',
+                        '/tests/:action/*',
+                        '{"controller":"Tests","action":"index","plugin":null}'
                     ])
                 )
             );
