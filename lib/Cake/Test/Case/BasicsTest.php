@@ -952,7 +952,7 @@ EXPECTED;
 ###########################
 
 EXPECTED;
-		if (php_sapi_name() === 'cli') {
+		if (PHP_SAPI === 'cli') {
 			$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 18);
 		} else {
 			$expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 20);
@@ -977,7 +977,7 @@ EXPECTED;
 ###########################
 
 EXPECTED;
-		if (php_sapi_name() === 'cli') {
+		if (PHP_SAPI === 'cli') {
 			$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 18);
 		} else {
 			$expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);
@@ -1043,7 +1043,7 @@ EXPECTED;
  * @return void
  */
 	public function testPr() {
-		$this->skipIf(php_sapi_name() === 'cli', 'Skipping web test in cli mode');
+		$this->skipIf(PHP_SAPI === 'cli', 'Skipping web test in cli mode');
 		ob_start();
 		pr('this is a test');
 		$result = ob_get_clean();
@@ -1063,7 +1063,7 @@ EXPECTED;
  * @return void
  */
 	public function testPrCli() {
-		$this->skipIf(php_sapi_name() != 'cli', 'Skipping cli test in web mode');
+		$this->skipIf(PHP_SAPI !== 'cli', 'Skipping cli test in web mode');
 		ob_start();
 		pr('this is a test');
 		$result = ob_get_clean();
