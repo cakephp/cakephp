@@ -38,7 +38,8 @@ class RoutesShell extends Shell
             ['Route name', 'URI template', 'Defaults']
         ];
         foreach (Router::routes() as $route) {
-            $output[] = [$route->getName(), $route->template, json_encode($route->defaults)];
+            $name = isset($route->options['_name']) ? $route->options['_name'] : $route->getName();
+            $output[] = [$name, $route->template, json_encode($route->defaults)];
         }
         $this->helper('table')->output($output);
     }
