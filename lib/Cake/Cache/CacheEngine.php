@@ -84,6 +84,17 @@ abstract class CacheEngine {
 	abstract public function write($key, $value, $duration);
 
 /**
+ * Write value for a key into cache if it doesn't already exist
+ *
+ * @param string $key Identifier for the data
+ * @param mixed $value Data to be cached
+ * @param int $duration How long to cache for.
+ * @return bool True if the data was successfully cached, false on failure
+ */
+	public function add($key, $value, $duration) {
+	}
+
+/**
  * Read a key from the cache
  *
  * @param string $key Identifier for the data
@@ -176,5 +187,4 @@ abstract class CacheEngine {
 		$key = preg_replace('/[\s]+/', '_', strtolower(trim(str_replace(array(DS, '/', '.'), '_', strval($key)))));
 		return $prefix . $key;
 	}
-
 }

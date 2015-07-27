@@ -335,4 +335,24 @@ class MemcachedEngine extends CacheEngine {
 	public function clearGroup($group) {
 		return (bool)$this->_Memcached->increment($this->settings['prefix'] . $group);
 	}
+
+/**
+ * Write data for key into cache if it doesn't exist already. When using memcached as your cache engine
+ * remember that the Memcached pecl extension does not support cache expiry times greater
+ * than 30 days in the future. Any duration greater than 30 days will be treated as never expiring.
+ * If it already exists, it fails and returns false.
+ *
+ * @param string $key Identifier for the data.
+ * @param mixed $value Data to be cached.
+ * @param int $duration How long to cache the data, in seconds.
+ * @return bool True if the data was successfully cached, false on failure.
+ * @link http://php.net/manual/en/memcached.add.php
+ */
+	public function add($key, $value, $duration) {
+		if ($duration > 30 * DAY) {
+			$duration = 0;
+		}
+
+		return $this->_Memcached->add($key, $value, $duration);
+	}
 }

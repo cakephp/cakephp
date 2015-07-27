@@ -188,4 +188,20 @@ class WincacheEngine extends CacheEngine {
 		return $success;
 	}
 
+/**
+ * Write data for key into cache if it doesn't exist already.
+ * If it already exists, it fails and returns false.
+ *
+ * @param string $key Identifier for the data.
+ * @param mixed $value Data to be cached.
+ * @param int $duration How long to cache the data, in seconds.
+ * @return bool True if the data was successfully cached, false on failure.
+ */
+	public function add($key, $value, $duration) {
+		$cachedValue = $this->read($key);
+		if ($cachedValue === false) {
+			return $this->write($key, $value, $duration);
+		}
+		return false;
+	}
 }

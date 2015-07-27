@@ -227,4 +227,23 @@ class RedisEngine extends CacheEngine {
 			$this->_Redis->close();
 		}
 	}
+
+/**
+ * Write data for key into cache if it doesn't exist already. 
+ * If it already exists, it fails and returns false.
+ *
+ * @param string $key Identifier for the data.
+ * @param mixed $value Data to be cached.
+ * @param int $duration How long to cache the data, in seconds.
+ * @return bool True if the data was successfully cached, false on failure.
+ * @link https://github.com/phpredis/phpredis#setnx
+ */
+	public function add($key, $value, $duration) {
+		$result = $this->_Redis->setnx($key, $value);
+		// setnx() doesn't have an expiry option, so overwrite the key with one
+		if ($result) {
+			return $this->_Redis->setex($key, $value, $duration);
+		}
+		return false;
+	}
 }

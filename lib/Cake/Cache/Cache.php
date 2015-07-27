@@ -578,4 +578,41 @@ class Cache {
 		return $results;
 	}
 
+/**
+ * Write data for key into a cache engine if it doesn't exist already.
+ *
+ * ### Usage:
+ *
+ * Writing to the active cache config:
+ *
+ * `Cache::add('cached_data', $data);`
+ *
+ * Writing to a specific cache config:
+ *
+ * `Cache::add('cached_data', $data, 'long_term');`
+ *
+ * @param string $key Identifier for the data.
+ * @param mixed $value Data to be cached - anything except a resource.
+ * @param string $config Optional string configuration name to write to. Defaults to 'default'.
+ * @return bool True if the data was successfully cached, false on failure.
+ */
+	public static function add($key, $value, $config = 'default') {
+		$settings = self::settings($config);
+
+		if (empty($settings)) {
+			return false;
+		}
+		if (!self::isInitialized($config)) {
+			return false;
+		}
+		$key = self::$_engines[$config]->key($key);
+
+		if (!$key || is_resource($value)) {
+			return false;
+		}
+
+		$success = self::$_engines[$config]->add($settings['prefix'] . $key, $value, $settings['duration']);
+		self::set(null, $config);
+		return $success;
+	}
 }
