@@ -385,11 +385,11 @@ class EagerLoaderTest extends TestCase
     {
         $contains = [
             'clients' => [
-            'orders' => [
+                'orders' => [
                     'orderTypes',
                     'stuff' => ['stuffTypes']
                 ],
-            'companies' => [
+                'companies' => [
                     'categories'
                 ]
             ]
