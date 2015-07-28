@@ -378,7 +378,7 @@ class HttpSocket extends CakeSocket {
 
 		$response = null;
 		$inHeader = true;
-		while ($data = $this->read()) {
+		while (($data = $this->read()) !== false) {
 			if ($this->_contentResource) {
 				if ($inHeader) {
 					$response .= $data;
