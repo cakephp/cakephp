@@ -385,6 +385,13 @@ class EagerLoader
                 sprintf('%s is not associated with %s', $parent->alias(), $alias)
             );
         }
+        if ($instance->alias() !== $alias) {
+            throw new InvalidArgumentException(sprintf(
+                "You have contained '%s' but that association was bound as '%s'.",
+                $alias,
+                $instance->alias()
+            ));
+        }
 
         $paths += ['aliasPath' => '', 'propertyPath' => '', 'root' => $alias];
         $paths['aliasPath'] .= '.' . $alias;

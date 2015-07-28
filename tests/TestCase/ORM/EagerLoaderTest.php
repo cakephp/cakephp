@@ -376,6 +376,21 @@ class EagerLoaderTest extends TestCase
     }
 
     /**
+     * Check that normalizing contains checks alias names.
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage You have contained 'Clients' but that association was bound as 'clients'
+     * @return void
+     */
+    public function testNormalizedChecksAliasNames()
+    {
+        $contains = ['Clients'];
+        $loader = new EagerLoader;
+        $loader->contain($contains);
+        $loader->normalized($this->table);
+    }
+
+    /**
      * Tests that the path for gettings to a deep assocition is materialized in an
      * array key
      *
@@ -385,11 +400,11 @@ class EagerLoaderTest extends TestCase
     {
         $contains = [
             'clients' => [
-            'orders' => [
+                'orders' => [
                     'orderTypes',
                     'stuff' => ['stuffTypes']
                 ],
-            'companies' => [
+                'companies' => [
                     'categories'
                 ]
             ]
