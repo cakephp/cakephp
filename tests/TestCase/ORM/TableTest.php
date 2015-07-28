@@ -3277,7 +3277,7 @@ class TableTest extends TestCase
     public function testSaveBelongsToManyJoinData()
     {
         $articles = TableRegistry::get('Articles');
-        $article = $articles->get(1, ['contain' => ['Tags']]);
+        $article = $articles->get(1, ['contain' => ['tags']]);
         $data = [
             'tags' => [
                 ['id' => 1, '_joinData' => ['highlighted' => 1]],
@@ -3376,7 +3376,7 @@ class TableTest extends TestCase
             'saveStrategy' => 'replace',
         ]);
 
-        $entity = $table->get(1, ['contain' => 'Tags']);
+        $entity = $table->get(1, ['contain' => 'tags']);
         $this->assertCount(2, $entity->tags, 'Fixture data did not change.');
 
         $entity->tags = [];
@@ -3384,7 +3384,7 @@ class TableTest extends TestCase
         $this->assertSame($result, $entity);
         $this->assertSame([], $entity->tags, 'No tags on the entity.');
 
-        $entity = $table->get(1, ['contain' => 'Tags']);
+        $entity = $table->get(1, ['contain' => 'tags']);
         $this->assertSame([], $entity->tags, 'No tags in the db either.');
     }
 
@@ -3401,7 +3401,7 @@ class TableTest extends TestCase
             'saveStrategy' => 'replace',
         ]);
 
-        $entity = $table->get(1, ['contain' => 'Tags']);
+        $entity = $table->get(1, ['contain' => 'tags']);
         $this->assertCount(2, $entity->tags, 'Fixture data did not change.');
 
         $tag = new \Cake\ORM\Entity([
@@ -3413,7 +3413,7 @@ class TableTest extends TestCase
         $this->assertCount(1, $entity->tags, 'Only one tag left.');
         $this->assertEquals($tag, $entity->tags[0]);
 
-        $entity = $table->get(1, ['contain' => 'Tags']);
+        $entity = $table->get(1, ['contain' => 'tags']);
         $this->assertCount(1, $entity->tags, 'Only one tag in the db.');
         $this->assertEquals($tag->id, $entity->tags[0]->id);
     }
@@ -3425,8 +3425,8 @@ class TableTest extends TestCase
      */
     public function testSaveBelongsToManyIgnoreNonEntityData()
     {
-        $articles = TableRegistry::get('Articles');
-        $article = $articles->get(1, ['contain' => ['Tags']]);
+        $articles = TableRegistry::get('articles');
+        $article = $articles->get(1, ['contain' => ['tags']]);
         $article->tags = [
             '_ids' => [2, 1]
         ];
