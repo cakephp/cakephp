@@ -76,11 +76,12 @@ class FormData implements Countable
      * If the $value is an array, multiple parts will be added.
      * Files will be read from their current position and saved in memory.
      *
-     * @param string $name The name of the part.
+     * @param string|\Cake\Network\Http\FormData $name The name of the part to add,
+     *   or the part data object.
      * @param mixed $value The value for the part.
      * @return $this
      */
-    public function add($name, $value)
+    public function add($name, $value = null)
     {
         if (is_array($value)) {
             $this->addRecursive($name, $value);
@@ -93,6 +94,8 @@ class FormData implements Countable
                 E_USER_DEPRECATED
             );
             $this->_parts[] = $this->addFile($name, $value);
+        } elseif ($name instanceof Part && $value === null) {
+            $this->_parts[] = $name;
         } else {
             $this->_parts[] = $this->newPart($name, $value);
         }
