@@ -20,6 +20,7 @@ use Aura\Intl\TranslatorFactory;
 use Cake\Cache\Cache;
 use Cake\I18n\Formatter\IcuFormatter;
 use Cake\I18n\Formatter\SprintfFormatter;
+use InvalidArgumentException;
 use Locale;
 
 /**
@@ -70,7 +71,11 @@ class I18n
         );
 
         if (class_exists('Cake\Cache\Cache')) {
-            static::$_collection->setCacher(Cache::engine('_cake_core_'));
+            try {
+                static::$_collection->setCacher(Cache::engine('_cake_i18n_'));
+            } catch (InvalidArgumentException $e) {
+                static::$_collection->setCacher(Cache::engine('_cake_core_'));
+            }
         }
         return static::$_collection;
     }
