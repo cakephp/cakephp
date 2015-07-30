@@ -439,6 +439,9 @@ class TranslateBehavior extends Behavior
     public function groupTranslations($results)
     {
         return $results->map(function ($row) {
+            if (!$row instanceof EntityInterface) {
+                return $row;
+            }
             $translations = (array)$row->get('_i18n');
             $grouped = new Collection($translations);
 
