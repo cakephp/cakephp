@@ -641,7 +641,7 @@ class PaginatorHelper extends Helper
             $templater->{$method}($options['templates']);
         }
 
-        if ($options['modulus'] && $params['pageCount'] > $options['modulus']) {
+        if ($options['modulus'] !== false && $params['pageCount'] > $options['modulus']) {
             $out = $this->_modulusNumbers($templater, $params, $options);
         } else {
             $out = $this->_numbers($templater, $params, $options);
