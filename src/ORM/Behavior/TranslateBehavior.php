@@ -439,26 +439,27 @@ class TranslateBehavior extends Behavior
     public function groupTranslations($results)
     {
         return $results->map(function ($row) {
-            if ($row instanceof EntityInterface) {
-                $translations = (array)$row->get('_i18n');
-                $grouped = new Collection($translations);
-
-                $result = [];
-                foreach ($grouped->combine('field', 'content', 'locale') as $locale => $keys) {
-                    $entityClass = $this->_table->entityClass();
-                    $translation = new $entityClass($keys + ['locale' => $locale], [
-                        'markNew' => false,
-                        'useSetters' => false,
-                        'markClean' => true
-                    ]);
-                    $result[$locale] = $translation;
-                }
-
-                $options = ['setter' => false, 'guard' => false];
-                $row->set('_translations', $result, $options);
-                unset($row['_i18n']);
-                $row->clean();
+            if (!$row instanceof EntityInterface) {
+                return $row;
             }
+            $translations = (array)$row->get('_i18n');
+            $grouped = new Collection($translations);
+
+            $result = [];
+            foreach ($grouped->combine('field', 'content', 'locale') as $locale => $keys) {
+                $entityClass = $this->_table->entityClass();
+                $translation = new $entityClass($keys + ['locale' => $locale], [
+                    'markNew' => false,
+                    'useSetters' => false,
+                    'markClean' => true
+                ]);
+                $result[$locale] = $translation;
+            }
+
+            $options = ['setter' => false, 'guard' => false];
+            $row->set('_translations', $result, $options);
+            unset($row['_i18n']);
+            $row->clean();
             return $row;
         });
     }
