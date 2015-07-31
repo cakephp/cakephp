@@ -604,7 +604,7 @@ class PaginatorHelper extends Helper
      * - `after` Content to be inserted after the numbers, but before the last links.
      * - `model` Model to create numbers for, defaults to PaginatorHelper::defaultModel()
      * - `modulus` How many numbers to include on either side of the current page, defaults to 8.
-     *    Set to `false` to disable.
+     *    Set to `false` to disable and to show all numbers.
      * - `first` Whether you want first links generated, set to an integer to define the number of 'first'
      *    links to generate.
      * - `last` Whether you want last links generated, set to an integer to define the number of 'last'
