@@ -67,6 +67,9 @@ class SortIterator extends Collection
         $callback = $this->_propertyExtractor($callback);
         $results = [];
         foreach ($items as $key => $value) {
+            if ($value instanceof \DateTime && $type === SORT_NUMERIC) {
+                $value = $value->format('U');
+            }
             $results[$key] = $callback($value);
         }
 

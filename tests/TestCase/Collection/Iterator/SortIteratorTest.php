@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Collection\Iterator;
 
 use ArrayObject;
 use Cake\Collection\Iterator\SortIterator;
+use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -188,6 +189,38 @@ class SortIteratorTest extends TestCase
             ['foo' => ['bar' => 2], 'bar' => 'a'],
             ['foo' => ['bar' => 10], 'bar' => 'a'],
             ['foo' => ['bar' => 12], 'bar' => 'a'],
+        ];
+        $this->assertEquals($expected, $sorted->toList());
+    }
+
+    /**
+     * Tests sorting datetime
+     *
+     * @return void
+     */
+    public function testSortDateTime()
+    {
+        $items = new ArrayObject([
+            new Time('2014-07-21'),
+            new Time('2015-06-30'),
+            new Time('2013-08-12')
+        ]);
+        $identity = function ($a) {
+            return $a;
+        };
+        $sorted = new SortIterator($items, $identity);
+        $expected = [
+            new Time('2015-06-30'),
+            new Time('2014-07-21'),
+            new Time('2013-08-12')
+        ];
+        $this->assertEquals($expected, $sorted->toList());
+
+        $sorted = new SortIterator($items, $identity, SORT_ASC);
+        $expected = [
+            new Time('2013-08-12'),
+            new Time('2014-07-21'),
+            new Time('2015-06-30')
         ];
         $this->assertEquals($expected, $sorted->toList());
     }
