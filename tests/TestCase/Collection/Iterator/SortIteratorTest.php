@@ -205,22 +205,22 @@ class SortIteratorTest extends TestCase
             new Time('2015-06-30'),
             new Time('2013-08-12')
         ]);
-        $identity = function ($a) {
-            return $a;
+        $callback = function ($a) {
+            return $a->addYear();
         };
-        $sorted = new SortIterator($items, $identity);
+        $sorted = new SortIterator($items, $callback);
         $expected = [
-            new Time('2015-06-30'),
-            new Time('2014-07-21'),
-            new Time('2013-08-12')
+            new Time('2016-06-30'),
+            new Time('2015-07-21'),
+            new Time('2014-08-12')
         ];
         $this->assertEquals($expected, $sorted->toList());
 
-        $sorted = new SortIterator($items, $identity, SORT_ASC);
+        $sorted = new SortIterator($items, $callback, SORT_ASC);
         $expected = [
-            new Time('2013-08-12'),
-            new Time('2014-07-21'),
-            new Time('2015-06-30')
+            new Time('2014-08-12'),
+            new Time('2015-07-21'),
+            new Time('2016-06-30')
         ];
         $this->assertEquals($expected, $sorted->toList());
     }
