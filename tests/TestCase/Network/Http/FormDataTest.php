@@ -84,6 +84,8 @@ class FormDataTest extends TestCase
         $part->contentId('abc123');
         $data->add($part);
 
+        $this->assertTrue($data->isMultipart());
+        $this->assertFalse($data->hasFile());
         $this->assertCount(1, $data, 'Should have 1 part');
         $expected = [
             '--' . $boundary,

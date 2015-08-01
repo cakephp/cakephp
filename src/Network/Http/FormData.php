@@ -42,6 +42,13 @@ class FormData implements Countable
     protected $_hasFile = false;
 
     /**
+     * Whether or not this formdata object has a complex part.
+     *
+     * @var bool
+     */
+    protected $_hasComplexPart = false;
+
+    /**
      * The parts in the form data.
      *
      * @var array
@@ -102,6 +109,7 @@ class FormData implements Countable
             );
             $this->_parts[] = $this->addFile($name, $value);
         } elseif ($name instanceof Part && $value === null) {
+            $this->_hasComplexPart = true;
             $this->_parts[] = $name;
         } else {
             $this->_parts[] = $this->newPart($name, $value);
@@ -199,6 +207,20 @@ class FormData implements Countable
     }
 
     /**
+     * Check whether or not the current payload
+     * is multipart.
+     *
+     * A payload will become multipart when you add files
+     * or use add() with a Part instance.
+     *
+     * @return bool Whether or not the payload is multipart.
+     */
+    public function isMultipart()
+    {
+        return $this->hasFile() || $this->_hasComplexPart;
+    }
+
+    /**
      * Get the content type for this payload.
      *
      * If this object contains files, `multipart/form-data` will be used,
@@ -208,7 +230,7 @@ class FormData implements Countable
      */
     public function contentType()
     {
-        if (!$this->hasFile()) {
+        if (!$this->isMultipart()) {
             return 'application/x-www-form-urlencoded';
         }
         return 'multipart/form-data; boundary="' . $this->boundary() . '"';
@@ -222,7 +244,7 @@ class FormData implements Countable
      */
     public function __toString()
     {
-        if ($this->hasFile()) {
+        if ($this->isMultipart()) {
             $boundary = $this->boundary();
             $out = '';
             foreach ($this->_parts as $part) {
