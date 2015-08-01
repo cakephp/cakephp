@@ -216,11 +216,17 @@ class SortIteratorTest extends TestCase
         ];
         $this->assertEquals($expected, $sorted->toList());
 
+        $items = new ArrayObject([
+            new Time('2014-07-21'),
+            new Time('2015-06-30'),
+            new Time('2013-08-12')
+        ]);
+
         $sorted = new SortIterator($items, $callback, SORT_ASC);
         $expected = [
             new Time('2014-08-12'),
             new Time('2015-07-21'),
-            new Time('2016-06-30')
+            new Time('2016-06-30'),
         ];
         $this->assertEquals($expected, $sorted->toList());
     }
