@@ -71,6 +71,34 @@ class FormDataTest extends TestCase
     }
 
     /**
+     * Test adding a part object.
+     *
+     * @return void
+     */
+    public function testAddPartObject()
+    {
+        $data = new FormData();
+        $boundary = $data->boundary();
+
+        $part = $data->newPart('test', 'value');
+        $part->contentId('abc123');
+        $data->add($part);
+
+        $this->assertCount(1, $data, 'Should have 1 part');
+        $expected = [
+            '--' . $boundary,
+            'Content-Disposition: form-data; name="test"',
+            'Content-ID: <abc123>',
+            '',
+            'value',
+            '--' . $boundary . '--',
+            '',
+            '',
+        ];
+        $this->assertEquals(implode("\r\n", $expected), (string)$data);
+    }
+
+    /**
      * Test adding parts that are arrays.
      *
      * @return void

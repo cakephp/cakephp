@@ -266,8 +266,8 @@ class Stream
             throw new Exception('Connection timed out ' . $url);
         }
         $headers = $meta['wrapper_data'];
-        if (isset($meta['wrapper_type']) && strtolower($meta['wrapper_type']) === 'curl') {
-            $headers = $meta['wrapper_data']['headers'];
+        if (isset($headers['headers']) && is_array($headers['headers'])) {
+            $headers = $headers['headers'];
         }
         return $this->createResponses($headers, $content);
     }

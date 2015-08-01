@@ -685,12 +685,7 @@ class View implements EventDispatcherInterface
      */
     public function append($name, $value = null)
     {
-        if ($value !== null) {
-            $this->Blocks->concat($name, $value);
-            return;
-        }
-        $this->Blocks->start($name);
-        echo $this->Blocks->get($name);
+        $this->Blocks->concat($name, $value);
     }
 
     /**
