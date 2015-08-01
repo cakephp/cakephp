@@ -67,10 +67,10 @@ class SortIterator extends Collection
         $callback = $this->_propertyExtractor($callback);
         $results = [];
         foreach ($items as $key => $value) {
-            if ($value instanceof \DateTime && $type === SORT_NUMERIC) {
-                $value = $value->format('U');
-            }
             $results[$key] = $callback($value);
+            if ($results[$key] instanceof \DateTime && $type === SORT_NUMERIC) {
+                $results[$key] = $results[$key]->format('U');
+            }
         }
 
         $dir === SORT_DESC ? arsort($results, $type) : asort($results, $type);
