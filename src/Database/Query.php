@@ -1649,7 +1649,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             return;
         }
 
-        if (!is_string($append) && is_callable($append)) {
+        if ($expression->isCallable($append)) {
             $append = $append($this->newExpr(), $this);
         }
 
