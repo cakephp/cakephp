@@ -497,6 +497,9 @@ class I18n {
 					$msgid = substr($data, $r["offs"], $r["len"]);
 					unset($msgid_plural);
 
+					if (strpos($msgid, "\x04") !== false) {
+						list($context, $msgid) = explode("\x04", $msgid);
+					}
 					if (strpos($msgid, "\000")) {
 						list($msgid, $msgid_plural) = explode("\000", $msgid);
 					}
@@ -508,9 +511,10 @@ class I18n {
 					}
 
 					if ($msgid != '') {
-						$msgstr = array($context => $msgstr);
+						$translations[$msgid][$context] = $msgstr;
+					} else {
+						$translations[$msgid] = $msgstr;
 					}
-					$translations[$msgid] = $msgstr;
 
 					if (isset($msgid_plural)) {
 						$translations[$msgid_plural] =& $translations[$msgid];
