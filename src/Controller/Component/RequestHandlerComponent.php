@@ -535,7 +535,6 @@ class RequestHandlerComponent extends Component
     public function renderAs(Controller $controller, $type, array $options = [])
     {
         $defaults = ['charset' => 'UTF-8'];
-        $view = null;
         $viewClassMap = $this->viewClassMap();
 
         if (Configure::read('App.encoding') !== null) {
