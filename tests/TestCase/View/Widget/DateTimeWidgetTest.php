@@ -118,7 +118,7 @@ class DateTimeWidgetTest extends TestCase
     {
         $result = $this->DateTime->render([
             'val' => '',
-            'year' =>  [
+            'year' => [
                 'empty' => ['nope' => '(choose one)'],
             ]
         ], $this->context);
