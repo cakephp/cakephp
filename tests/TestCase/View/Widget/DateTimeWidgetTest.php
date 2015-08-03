@@ -471,7 +471,7 @@ class DateTimeWidgetTest extends TestCase
             'no 13 in value'
         );
     }
-    
+
     /**
      * Test rendering month widget with names.
      *
@@ -899,7 +899,6 @@ class DateTimeWidgetTest extends TestCase
             'hour' => false,
             'minute' => [
                 'data-foo' => 'test',
-                
             ],
             'empty' => '-',
             'default' => '',
