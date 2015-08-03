@@ -46,7 +46,7 @@ class SortIterator extends Collection
      *
      * The callback will receive as first argument each of the elements in $items,
      * the value returned in the callback will be used as the value for sorting such
-     * element. Please not that the callback function could be called more than once
+     * element. Please note that the callback function could be called more than once
      * per element.
      *
      * @param array|\Traversable $items The values to sort
@@ -67,7 +67,11 @@ class SortIterator extends Collection
         $callback = $this->_propertyExtractor($callback);
         $results = [];
         foreach ($items as $key => $value) {
-            $results[$key] = $callback($value);
+            $value = $callback($value);
+            if ($value instanceof \DateTime && $type === SORT_NUMERIC) {
+                $value = $value->format('U');
+            }
+            $results[$key] = $value;
         }
 
         $dir === SORT_DESC ? arsort($results, $type) : asort($results, $type);
