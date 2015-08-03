@@ -110,6 +110,23 @@ class DateTimeWidgetTest extends TestCase
     }
 
     /**
+     * Test empty with custom values.
+     *
+     * @return void
+     */
+    public function testRenderEmptyCustom()
+    {
+        $result = $this->DateTime->render([
+            'val' => '',
+            'year' =>  [
+                'empty' => ['nope' => '(choose one)'],
+            ]
+        ], $this->context);
+        $this->assertContains('<option value="nope">(choose one)</option>', $result);
+        $this->assertNotContains('<optgroup', $result, 'No optgroups should be present.');
+    }
+
+    /**
      * Data provider for testing various acceptable selected values.
      *
      * @return array
