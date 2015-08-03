@@ -35,5 +35,4 @@ class AuthUsersTable extends Table
 
         return $query;
     }
-
 }
