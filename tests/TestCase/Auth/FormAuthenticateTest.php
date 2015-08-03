@@ -250,23 +250,6 @@ class FormAuthenticateTest extends TestCase
     }
 
     /**
-     * test scope failure.
-     *
-     * @return void
-     */
-    public function testAuthenticateScopeFail()
-    {
-        $this->auth->config('scope', ['Users.id' => 2]);
-        $request = new Request('posts/index');
-        $request->data = [
-            'username' => 'mariano',
-            'password' => 'password'
-        ];
-
-        $this->assertFalse($this->auth->authenticate($request, $this->response));
-    }
-
-    /**
      * test a model in a plugin.
      *
      * @return void

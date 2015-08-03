@@ -35,13 +35,12 @@ abstract class BaseAuthenticate implements EventListenerInterface
      *
      * - `fields` The fields to use to identify a user by.
      * - `userModel` The alias for users table, defaults to Users.
-     * - `scope` Additional conditions to use when looking up and authenticating users,
-     *    i.e. `['Users.is_active' => 1].`
      * - `finder` The finder method to use to fetch user record. Defaults to 'all'.
-     * - `contain` Extra models to contain and store in session.
      * - `passwordHasher` Password hasher class. Can be a string specifying class name
      *    or an array containing `className` key, any other keys will be passed as
      *    config to the class. Defaults to 'Default'.
+     * - Options `scope` and `contain` have been deprecated since 3.1. Use custom
+     *   finder instead to modify the query to fetch user record.
      *
      * @var array
      */
@@ -139,10 +138,10 @@ abstract class BaseAuthenticate implements EventListenerInterface
             'conditions' => [$table->aliasField($config['fields']['username']) => $username]
         ];
 
-        if ($config['scope']) {
+        if (!empty($config['scope'])) {
             $options['conditions'] = array_merge($options['conditions'], $config['scope']);
         }
-        if ($config['contain']) {
+        if (!empty($config['contain'])) {
             $options['contain'] = $config['contain'];
         }
 
