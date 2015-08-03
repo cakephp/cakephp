@@ -603,7 +603,8 @@ class PaginatorHelper extends Helper
      * - `before` Content to be inserted before the numbers, but after the first links.
      * - `after` Content to be inserted after the numbers, but before the last links.
      * - `model` Model to create numbers for, defaults to PaginatorHelper::defaultModel()
-     * - `modulus` how many numbers to include on either side of the current page, defaults to 8.
+     * - `modulus` How many numbers to include on either side of the current page, defaults to 8.
+     *    Set to `false` to disable and to show all numbers.
      * - `first` Whether you want first links generated, set to an integer to define the number of 'first'
      *    links to generate.
      * - `last` Whether you want last links generated, set to an integer to define the number of 'last'
@@ -641,7 +642,7 @@ class PaginatorHelper extends Helper
             $templater->{$method}($options['templates']);
         }
 
-        if ($options['modulus'] && $params['pageCount'] > $options['modulus']) {
+        if ($options['modulus'] !== false && $params['pageCount'] > $options['modulus']) {
             $out = $this->_modulusNumbers($templater, $params, $options);
         } else {
             $out = $this->_numbers($templater, $params, $options);

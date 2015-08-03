@@ -1379,8 +1379,8 @@ class PaginatorHelperTest extends TestCase
                 'pageCount' => 3,
             ]
         ];
-        $options = ['modulus' => 10];
-        $result = $this->Paginator->numbers($options);
+
+        $result = $this->Paginator->numbers(['modulus' => 10]);
         $expected = [
             ['li' => ['class' => 'active']], '<a href=""', '1', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/index?page=2']], '2', '/a', '/li',
@@ -1533,6 +1533,48 @@ class PaginatorHelperTest extends TestCase
             ['li' => ['class' => 'ellipsis']], '...', '/li',
             ['li' => []], ['a' => ['href' => '/index?page=4896']], '4896', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/index?page=4897']], '4897', '/a', '/li',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->Paginator->request->params['paging']['Client']['page'] = 3;
+        $result = $this->Paginator->numbers(['first' => 2, 'modulus' => 0, 'last' => 2]);
+        $expected = [
+            ['li' => []], ['a' => ['href' => '/index']], '1', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=2']], '2', '/a', '/li',
+            ['li' => ['class' => 'active']], '<a href=""', '3', '/a', '/li',
+            ['li' => ['class' => 'ellipsis']], '...', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4896']], '4896', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4897']], '4897', '/a', '/li',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Tests that disabling modulus displays all page links.
+     *
+     * @return void
+     */
+    public function testModulusDisabled()
+    {
+        $this->Paginator->request->params['paging'] = [
+            'Client' => [
+                'page' => 4,
+                'current' => 2,
+                'count' => 30,
+                'prevPage' => 1,
+                'nextPage' => 1,
+                'pageCount' => 6,
+            ]
+        ];
+
+        $result = $this->Paginator->numbers(['modulus' => false]);
+        $expected = [
+            ['li' => []], '<a href="/index"', '1', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=2']], '2', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=3']], '3', '/a', '/li',
+            ['li' => ['class' => 'active']], ['a' => ['href' => '']], '4', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=5']], '5', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=6']], '6', '/a', '/li',
         ];
         $this->assertHtml($expected, $result);
     }
