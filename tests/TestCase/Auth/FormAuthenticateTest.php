@@ -323,7 +323,7 @@ class FormAuthenticateTest extends TestCase
             'id' => 1,
             'username' => 'mariano',
         ];
-        $this->assertEquals($expected, $result, 'Result should not contain "created" and "modifield" fields');
+        $this->assertEquals($expected, $result, 'Result should not contain "created" and "modified" fields');
     }
 
     /**
