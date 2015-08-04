@@ -1035,24 +1035,24 @@ class Validation
  * - `longLat` - By default `both`, can be `long` and `lat` as well to validate
  *   only a part of the coordinate.
  *
- * @param string Geographic location as string
+ * @param string $value Geographic location as string
  * @param array $options Options for the validation logic.
- * @return boolean
+ * @return bool
  */
     public static function geoCoordinate($value, array $options = [])
     {
         $options += [
-            'longLat' => 'both',
+            'latLong' => 'both',
             'type' => 'longLat'
         ];
         if ($options['type'] === 'longLat') {
-            if ($options['longLat'] === 'both') {
+            if ($options['latLong'] === 'both') {
                 $pattern = '/^' . self::$_pattern['latitude'] . ',\s*' . self::$_pattern['longitude'] . '$/';
             }
-            if ($options['longLat'] === 'long') {
+            if ($options['latLong'] === 'long') {
                 $pattern = '/^' . self::$_pattern['longitude'] . '$/';
             }
-            if ($options['longLat'] === 'lat') {
+            if ($options['latLong'] === 'lat') {
                 $pattern = '/^' . self::$_pattern['latitude'] . '$/';
             }
         } else {
