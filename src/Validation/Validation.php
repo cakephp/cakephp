@@ -34,7 +34,9 @@ class Validation
      * @var array
      */
     protected static $_pattern = [
-        'hostname' => '(?:[_\p{L}0-9][-_\p{L}0-9]*\.)*(?:[\p{L}0-9][-\p{L}0-9]{0,62})\.(?:(?:[a-z]{2}\.)?[a-z]{2,})'
+        'hostname' => '(?:[_\p{L}0-9][-_\p{L}0-9]*\.)*(?:[\p{L}0-9][-\p{L}0-9]{0,62})\.(?:(?:[a-z]{2}\.)?[a-z]{2,})',
+        'latitude' => '[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)',
+        'longitude' => '[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)',
     ];
 
     /**
@@ -1018,6 +1020,45 @@ class Validation
             return false;
         }
         return true;
+    }
+
+/**
+ * Validates a geographic coordinate.
+ *
+ * Supported formats are right now:
+ *
+ * - <latitude>, <longitude> Example: -25.274398, 133.775136
+ *
+ * ### Options
+ *
+ * - `type` - A string of the coordinate format, right now only `longLat`.
+ * - `longLat` - By default `both`, can be `long` and `lat` as well to validate
+ *   only a part of the coordinate.
+ *
+ * @param string Geographic location as string
+ * @param array $options Options for the validation logic.
+ * @return boolean
+ */
+    public static function geoCoordinate($value, array $options = [])
+    {
+        $options += [
+            'longLat' => 'both',
+            'type' => 'longLat'
+        ];
+        if ($options['type'] === 'longLat') {
+            if ($options['longLat'] === 'both') {
+                $pattern = '/^' . self::$_pattern['latitude'] . ',\s*' . self::$_pattern['longitude'] . '$/';
+            }
+            if ($options['longLat'] === 'long') {
+                $pattern = '/^' . self::$_pattern['longitude'] . '$/';
+            }
+            if ($options['longLat'] === 'lat') {
+                $pattern = '/^' . self::$_pattern['latitude'] . '$/';
+            }
+        } else {
+            throw new \RuntimeException(sprintf('Unsupported coordinate type "%s".', $options['type']));
+        }
+        return (bool)preg_match($pattern, $value);
     }
 
     /**
