@@ -802,7 +802,7 @@ class Time extends Carbon implements JsonSerializable
      * Convenience method for getting the remaining time from a given time.
      *
      * @param DateTime $datetime The date to get the remaining time from.
-     * @return DateInterval|boolean The DateInterval object representing the difference between the two dates or FALSE on failure.
+     * @return DateInterval|bool The DateInterval object representing the difference between the two dates or FALSE on failure.
      */
     public static function fromNow($datetime)
     {
