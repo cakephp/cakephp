@@ -307,7 +307,7 @@ object(Cake\View\View) {
 	[protected] _currentType => ''
 	[protected] _stack => []
 	[protected] _eventManager => object(Cake\Event\EventManager) {}
-	[protected] _eventClass => '\Cake\Event\Event'
+	[protected] _eventClass => '\Cake\View\Event\ViewEvent'
 }
 TEXT;
 

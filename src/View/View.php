@@ -304,6 +304,7 @@ class View implements EventDispatcherInterface
                 $this->{$var} = $viewOptions[$var];
             }
         }
+        $this->eventClass('\Cake\View\Event\ViewEvent');
         $this->eventManager($eventManager);
         $this->request = $request;
         $this->response = $response;
