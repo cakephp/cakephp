@@ -56,6 +56,24 @@ trait EventDispatcherTrait
     }
 
     /**
+     * Returns the class name for new event objects
+     *
+     * You can use this method to change the class name as well
+     *
+     * @param string|null $eventClass the class name for new event objects
+     *
+     * @return string the class name for new event objects
+     */
+    public function eventClass($eventClass = null)
+    {
+        if ($eventClass !== null) {
+            $this->_eventClass = $eventClass;
+        }
+
+        return $this->_eventClass;
+    }
+
+    /**
      * Wrapper for creating and dispatching events.
      *
      * Returns a dispatched event.
