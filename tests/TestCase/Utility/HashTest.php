@@ -1476,6 +1476,17 @@ class HashTest extends TestCase
             4 => ['Item' => ['id' => 5, 'title' => 'fifth']],
         ];
         $this->assertEquals($expected, $result);
+
+        $data[3]['testable'] = true;
+        $result = Hash::insert($data, '{n}[testable].Item[id=/\b2|\b4/].test', 2);
+        $expected = [
+            0 => ['Item' => ['id' => 1, 'title' => 'first']],
+            1 => ['Item' => ['id' => 2, 'title' => 'second']],
+            2 => ['Item' => ['id' => 3, 'title' => 'third']],
+            3 => ['Item' => ['id' => 4, 'title' => 'fourth', 'test' => 2], 'testable' => true],
+            4 => ['Item' => ['id' => 5, 'title' => 'fifth']],
+        ];
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -1603,6 +1614,17 @@ class HashTest extends TestCase
         $expected = [
             0 => ['Item' => ['id' => 1, 'title' => 'first']],
             2 => ['Item' => ['id' => 3, 'title' => 'third']],
+            4 => ['Item' => ['id' => 5, 'title' => 'fifth']],
+        ];
+        $this->assertEquals($expected, $result);
+
+        $data[3]['testable'] = true;
+        $result = Hash::remove($data, '{n}[testable].Item[id=/\b2|\b4/].title');
+        $expected = [
+            0 => ['Item' => ['id' => 1, 'title' => 'first']],
+            1 => ['Item' => ['id' => 2, 'title' => 'second']],
+            2 => ['Item' => ['id' => 3, 'title' => 'third']],
+            3 => ['Item' => ['id' => 4], 'testable' => true],
             4 => ['Item' => ['id' => 5, 'title' => 'fifth']],
         ];
         $this->assertEquals($expected, $result);
