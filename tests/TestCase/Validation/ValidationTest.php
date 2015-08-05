@@ -2505,4 +2505,26 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::geoCoordinate('51.165691', ['latLong' => 'lat']));
         $this->assertTrue(Validation::geoCoordinate('10.451526', ['latLong' => 'long']));
     }
+
+    /**
+     * Test the geoCoordinate method.
+     *
+     * @return void
+     */
+    public function testLatitude()
+    {
+        $this->assertTrue(Validation::latitude('51.165691'));
+        $this->assertFalse(Validation::latitude('200.23552'));
+    }
+
+    /**
+     * Test the geoCoordinate method.
+     *
+     * @return void
+     */
+    public function testLongitude()
+    {
+        $this->assertTrue(Validation::longitude('10.451526'));
+        $this->assertFalse(Validation::longitude('-190.52236'));
+    }
 }
