@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\RequestHandlerComponent;
 use Cake\Controller\Controller;
+use Cake\Controller\Event\ControllerEvent;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Event\Event;
@@ -336,7 +337,7 @@ class RequestHandlerComponentTest extends TestCase
     public function testIsAjaxParams()
     {
         $this->request->env('HTTP_X_REQUESTED_WITH', 'XMLHttpRequest');
-        $event = new Event('Controller.startup', $this->Controller);
+        $event = new ControllerEvent('Controller.startup', $this->Controller);
         $this->RequestHandler->initialize([]);
         $this->Controller->beforeFilter($event);
         $this->RequestHandler->startup($event);

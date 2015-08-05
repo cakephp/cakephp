@@ -256,6 +256,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         $this->_mergeControllerVars();
         $this->_loadComponents();
+
+        $this->eventClass('\Cake\Controller\Event\ControllerEvent');
         $this->eventManager()->on($this);
     }
 
