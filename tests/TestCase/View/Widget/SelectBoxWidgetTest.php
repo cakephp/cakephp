@@ -671,6 +671,17 @@ class SelectBoxWidgetTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
+        $data['empty'] = ['99' => '(choose one)'];
+        $result = $select->render($data, $this->context);
+        $expected = [
+            'select' => ['name' => 'Birds[name]', 'id' => 'BirdName'],
+            ['option' => ['value' => '99']], '(choose one)', '/option',
+            ['option' => ['value' => 'a']], 'Albatross', '/option',
+            ['option' => ['value' => 'b']], 'Budgie', '/option',
+            '/select'
+        ];
+        $this->assertHtml($expected, $result);
+
         $data['empty'] = 'empty';
         $data['val'] = '';
         $result = $select->render($data, $this->context);

@@ -92,11 +92,6 @@ class RedisEngine extends CacheEngine
     protected function _connect()
     {
         try {
-            $server = $this->_config['host'];
-            if (empty($server) && !empty($this->_config['server'])) {
-                $server = $this->_config['server'];
-            }
-
             $this->_Redis = new \Redis();
             if (!empty($this->settings['unix_socket'])) {
                 $return = $this->_Redis->connect($this->settings['unix_socket']);

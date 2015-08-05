@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Collection\Iterator;
 
 use ArrayObject;
 use Cake\Collection\Iterator\SortIterator;
+use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -188,6 +189,47 @@ class SortIteratorTest extends TestCase
             ['foo' => ['bar' => 2], 'bar' => 'a'],
             ['foo' => ['bar' => 10], 'bar' => 'a'],
             ['foo' => ['bar' => 12], 'bar' => 'a'],
+        ];
+        $this->assertEquals($expected, $sorted->toList());
+    }
+
+    /**
+     * Tests sorting datetime
+     *
+     * @return void
+     */
+    public function testSortDateTime()
+    {
+        $items = new ArrayObject([
+            new \DateTime('2014-07-21'),
+            new \DateTime('2015-06-30'),
+            new \DateTime('2013-08-12')
+        ]);
+        $a = new \DateTime();
+
+        $callback = function ($a) {
+            return $a->add(new \DateInterval('P1Y'));
+        };
+        $sorted = new SortIterator($items, $callback);
+        $expected = [
+            new \DateTime('2016-06-30'),
+            new \DateTime('2015-07-21'),
+            new \DateTime('2014-08-12')
+
+        ];
+        $this->assertEquals($expected, $sorted->toList());
+
+        $items = new ArrayObject([
+            new \DateTime('2014-07-21'),
+            new \DateTime('2015-06-30'),
+            new \DateTime('2013-08-12')
+        ]);
+
+        $sorted = new SortIterator($items, $callback, SORT_ASC);
+        $expected = [
+            new \DateTime('2014-08-12'),
+            new \DateTime('2015-07-21'),
+            new \DateTime('2016-06-30'),
         ];
         $this->assertEquals($expected, $sorted->toList());
     }

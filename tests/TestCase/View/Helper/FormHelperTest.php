@@ -5438,6 +5438,26 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * test datetime second=true
+     *
+     * @return void
+     */
+    public function testDateTimeSecondOptions()
+    {
+        $result = $this->Form->dateTime('updated', ['second' => true]);
+        $this->assertContains('updated[second]', $result, 'Should have seconds');
+
+        $result = $this->Form->dateTime('updated', ['second' => []]);
+        $this->assertContains('updated[second]', $result, 'Should have seconds');
+
+        $result = $this->Form->dateTime('updated', ['second' => null]);
+        $this->assertNotContains('updated[second]', $result, 'Should not have seconds');
+
+        $result = $this->Form->dateTime('updated', ['second' => false]);
+        $this->assertNotContains('updated[second]', $result, 'Should not have seconds');
+    }
+
+    /**
      * testMonth method
      *
      * @return void

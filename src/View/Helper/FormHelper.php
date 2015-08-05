@@ -2210,7 +2210,10 @@ class FormHelper extends Helper
     protected function _datetimeOptions($options)
     {
         foreach ($this->_datetimeParts as $type) {
-            if (!isset($options[$type])) {
+            if (!array_key_exists($type, $options)) {
+                $options[$type] = [];
+            }
+            if ($options[$type] === true) {
                 $options[$type] = [];
             }
 

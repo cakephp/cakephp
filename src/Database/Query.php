@@ -1384,8 +1384,8 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * ```
      *
-     * $expression = $query->newExpression(); // Returns an empty expression object
-     * $expression = $query->newExpression('Table.column = Table2.column'); // Return a raw SQL expression
+     * $expression = $query->newExpr(); // Returns an empty expression object
+     * $expression = $query->newExpr('Table.column = Table2.column'); // Return a raw SQL expression
      * ```
      *
      * @param mixed $rawExpression A string, array or anything you want wrapped in an expression object
