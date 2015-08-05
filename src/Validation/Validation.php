@@ -231,11 +231,7 @@ class Validation
         if (is_array($check1)) {
             extract($check1, EXTR_OVERWRITE);
         }
-        $type = gettype($check2);
-        if ($type === 'double' && (float)$check1 != $check1) {
-            return false;
-        }
-        if ($type === 'integer' && (int)$check1 != $check1) {
+        if ((float)$check1 != $check1) {
             return false;
         }
 
@@ -730,6 +726,9 @@ class Validation
     public static function range($check, $lower = null, $upper = null)
     {
         if (!is_numeric($check)) {
+            return false;
+        }
+        if ((float)$check != $check) {
             return false;
         }
         if (isset($lower) && isset($upper)) {
