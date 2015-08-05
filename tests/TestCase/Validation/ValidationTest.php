@@ -847,6 +847,23 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * Test comparison casting values before comparisons.
+     *
+     * @return void
+     */
+    public function testComparisonTypeChecks()
+    {
+        $this->assertFalse(Validation::comparison('\x028', '>=', 1), 'hexish encoding fails');
+        $this->assertFalse(Validation::comparison('0b010', '>=', 1), 'binary string data fails');
+        $this->assertFalse(Validation::comparison('0x01', '>=', 1), 'hex string data fails');
+        $this->assertFalse(Validation::comparison('0x1', '>=', 1), 'hex string data fails');
+
+        $this->assertFalse(Validation::comparison('\x028', '>=', 1.5), 'hexish encoding fails');
+        $this->assertFalse(Validation::comparison('0b010', '>=', 1.5), 'binary string data fails');
+        $this->assertFalse(Validation::comparison('0x02', '>=', 1.5), 'hex string data fails');
+    }
+
+    /**
      * testComparisonAsArray method
      *
      * @return void

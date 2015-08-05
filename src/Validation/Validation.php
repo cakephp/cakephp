@@ -231,8 +231,15 @@ class Validation
         if (is_array($check1)) {
             extract($check1, EXTR_OVERWRITE);
         }
-        $operator = str_replace([' ', "\t", "\n", "\r", "\0", "\x0B"], '', strtolower($operator));
+        $type = gettype($check2);
+        if ($type === 'double' && (float)$check1 != $check1) {
+            return false;
+        }
+        if ($type === 'integer' && (int)$check1 != $check1) {
+            return false;
+        }
 
+        $operator = str_replace([' ', "\t", "\n", "\r", "\0", "\x0B"], '', strtolower($operator));
         switch ($operator) {
             case 'isgreater':
             case '>':
