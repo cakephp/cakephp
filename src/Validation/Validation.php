@@ -1043,9 +1043,9 @@ class Validation
     {
         $options += [
             'latLong' => 'both',
-            'type' => 'longLat'
+            'type' => 'latLong'
         ];
-        if ($options['type'] === 'longLat') {
+        if ($options['type'] === 'latLong') {
             if ($options['latLong'] === 'both') {
                 $pattern = '/^' . self::$_pattern['latitude'] . ',\s*' . self::$_pattern['longitude'] . '$/';
             }
