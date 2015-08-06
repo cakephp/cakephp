@@ -340,7 +340,7 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function and_($conditions, $types = [])
     {
-        if (!is_string($conditions) && is_callable($conditions)) {
+        if ($this->isCallable($conditions)) {
             return $conditions(new self([], $this->typeMap()->types($types)));
         }
         return new self($conditions, $this->typeMap()->types($types));
@@ -357,7 +357,7 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function or_($conditions, $types = [])
     {
-        if (!is_string($conditions) && is_callable($conditions)) {
+        if ($this->isCallable($conditions)) {
             return $conditions(new self([], $this->typeMap()->types($types), 'OR'));
         }
         return new self($conditions, $this->typeMap()->types($types), 'OR');
@@ -491,6 +491,30 @@ class QueryExpression implements ExpressionInterface, Countable
     }
 
     /**
+     * Check whether or not a callable is acceptable.
+     *
+     * We don't accept ['class', 'method'] style callbacks,
+     * as they often contain user input and arrays of strings
+     * are easy to sneak in.
+     *
+     * @param callable $c The callable to check.
+     * @return bool Valid callable.
+     */
+    public function isCallable($c)
+    {
+        if (is_string($c)) {
+            return false;
+        }
+        if (is_object($c) && is_callable($c)) {
+            return true;
+        }
+        if (is_array($c) && isset($c[0]) && is_object($c[0]) && is_callable($c)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Auxiliary function used for decomposing a nested array of conditions and build
      * a tree structure inside this object to represent the full SQL expression.
      * String conditions are stored directly in the conditions, while any other
@@ -513,7 +537,7 @@ class QueryExpression implements ExpressionInterface, Countable
                 continue;
             }
 
-            if (!is_string($c) && is_callable($c)) {
+            if ($this->isCallable($c)) {
                 $expr = new QueryExpression([], $typeMap);
                 $c = $c($expr, $this);
             }

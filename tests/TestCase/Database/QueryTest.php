@@ -1180,6 +1180,30 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests where() with callable types.
+     *
+     * @return void
+     */
+    public function testWhereCallables()
+    {
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('articles')
+            ->where([
+                'id' => '\Cake\Error\Debugger::dump',
+                'title' => ['\Cake\Error\Debugger', 'dump'],
+                'author_id' => function ($exp) {
+                    return 1;
+                }
+            ]);
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> WHERE \(<id> = :c0 AND <title> = :c1 AND <author_id> = :c2\)',
+            $query->sql(),
+            !$this->autoQuote
+        );
+    }
+
+    /**
      * Tests that empty values don't set where clauses.
      *
      * @return void

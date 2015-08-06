@@ -231,8 +231,11 @@ class Validation
         if (is_array($check1)) {
             extract($check1, EXTR_OVERWRITE);
         }
-        $operator = str_replace([' ', "\t", "\n", "\r", "\0", "\x0B"], '', strtolower($operator));
+        if ((float)$check1 != $check1) {
+            return false;
+        }
 
+        $operator = str_replace([' ', "\t", "\n", "\r", "\0", "\x0B"], '', strtolower($operator));
         switch ($operator) {
             case 'isgreater':
             case '>':
@@ -723,6 +726,9 @@ class Validation
     public static function range($check, $lower = null, $upper = null)
     {
         if (!is_numeric($check)) {
+            return false;
+        }
+        if ((float)$check != $check) {
             return false;
         }
         if (isset($lower) && isset($upper)) {
