@@ -149,19 +149,7 @@ class JsonView extends View {
 			$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
 		}
 
-		$jsonOptions = 0;
-		if (isset($this->viewVars['_jsonOptions'])) {
-			if ($this->viewVars['_jsonOptions'] === false) {
-				$jsonOptions = 0;
-			} else {
-				$jsonOptions = $this->viewVars['_jsonOptions'];
-			}
-		}
-		if (version_compare(PHP_VERSION, '5.4.0', '>=') && Configure::read('debug')) {
-			$jsonOptions = $jsonOptions | JSON_PRETTY_PRINT;
-		}
-
-		$json = json_encode($data, $jsonOptions);
+		$json = json_encode($data);
 
 		if (function_exists('json_last_error') && json_last_error() !== JSON_ERROR_NONE) {
 			throw new CakeException(json_last_error_msg());
