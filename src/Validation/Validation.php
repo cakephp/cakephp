@@ -1032,7 +1032,7 @@ class Validation
      * ### Options
      *
      * - `type` - A string of the coordinate format, right now only `longLat`.
-     * - `longLat` - By default `both`, can be `long` and `lat` as well to validate
+     * - `latLong` - By default `both`, can be `long` and `lat` as well to validate
      *   only a part of the coordinate.
      *
      * @param string $value Geographic location as string
@@ -1064,11 +1064,11 @@ class Validation
     /**
      * Convenience method for latitude validation.
      *
-     * @link https://en.wikipedia.org/wiki/Latitude
-     * @see Validation::geoCoordinate()
      * @param string $value Latitude as string
      * @param array $options Options for the validation logic.
      * @return bool
+     * @link https://en.wikipedia.org/wiki/Latitude
+     * @see Validation::geoCoordinate()
      */
     public static function latitude($value, array $options = [])
     {
@@ -1079,11 +1079,11 @@ class Validation
     /**
      * Convenience method for longitude validation.
      *
-     * @link https://en.wikipedia.org/wiki/Longitude
-     * @see Validation::geoCoordinate()
      * @param string $value Latitude as string
      * @param array $options Options for the validation logic.
      * @return bool
+     * @link https://en.wikipedia.org/wiki/Longitude
+     * @see Validation::geoCoordinate()
      */
     public static function longitude($value, array $options = [])
     {
