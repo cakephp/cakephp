@@ -1031,7 +1031,7 @@ class Validation
      *
      * ### Options
      *
-     * - `type` - A string of the coordinate format, right now only `longLat`.
+     * - `type` - A string of the coordinate format, right now only `latLong`.
      * - `latLong` - By default `both`, can be `long` and `lat` as well to validate
      *   only a part of the coordinate.
      *
@@ -1045,18 +1045,17 @@ class Validation
             'latLong' => 'both',
             'type' => 'latLong'
         ];
+        if  ($options['type'] !== 'latLong') {
+            throw new \RuntimeException(sprintf('Unsupported coordinate type "%s".', $options['type']));
+        }
         if ($options['type'] === 'latLong') {
-            if ($options['latLong'] === 'both') {
-                $pattern = '/^' . self::$_pattern['latitude'] . ',\s*' . self::$_pattern['longitude'] . '$/';
-            }
+            $pattern = '/^' . self::$_pattern['latitude'] . ',\s*' . self::$_pattern['longitude'] . '$/';
             if ($options['latLong'] === 'long') {
                 $pattern = '/^' . self::$_pattern['longitude'] . '$/';
             }
             if ($options['latLong'] === 'lat') {
                 $pattern = '/^' . self::$_pattern['latitude'] . '$/';
             }
-        } else {
-            throw new \RuntimeException(sprintf('Unsupported coordinate type "%s".', $options['type']));
         }
         return (bool)preg_match($pattern, $value);
     }
