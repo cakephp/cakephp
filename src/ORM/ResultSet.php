@@ -508,7 +508,7 @@ class ResultSet implements ResultSetInterface
                 )
             );
             if ($this->_hydrate) {
-                $options['source'] = $alias;
+                $options['source'] = $matching['instance']->registryAlias();
                 $entity = new $matching['entityClass']($results['_matchingData'][$alias], $options);
                 $entity->clean();
                 $results['_matchingData'][$alias] = $entity;
@@ -547,7 +547,7 @@ class ResultSet implements ResultSetInterface
             }
 
             $target = $instance->target();
-            $options['source'] = $target->alias();
+            $options['source'] = $target->registryAlias();
             unset($presentAliases[$alias]);
 
             if ($assoc['canBeJoined']) {
