@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -29,7 +30,7 @@ use Cake\TestSuite\TestCase;
 class ResultSetTest extends TestCase
 {
 
-    public $fixtures = ['core.articles', 'core.comments'];
+    public $fixtures = ['core.authors', 'core.articles', 'core.comments'];
 
     /**
      * setup
@@ -342,5 +343,29 @@ class ResultSetTest extends TestCase
 
         $result->valid();
         $data = $result->current();
+    }
+
+    /**
+     * Test that associations have source() correctly set.
+     *
+     * @return void
+     */
+    public function testSourceOnContainAssociations()
+    {
+        Plugin::load('TestPlugin');
+        $comments = TableRegistry::get('TestPlugin.Comments');
+        $comments->belongsTo('Authors', [
+            'className' => 'TestPlugin.Authors',
+            'foreignKey' => 'user_id'
+        ]);
+        $result = $comments->find()->contain(['Authors'])->first();
+        $this->assertEquals('TestPlugin.Comments', $result->source());
+        $this->assertEquals('TestPlugin.Authors', $result->author->source());
+
+        $result = $comments->find()->matching('Authors', function ($q) {
+            return $q->where(['Authors.id' => 1]);
+        })->first();
+        $this->assertEquals('TestPlugin.Comments', $result->source());
+        $this->assertEquals('TestPlugin.Authors', $result->_matchingData['Authors']->source());
     }
 }
