@@ -857,6 +857,12 @@ class DboSource extends DataSource {
  * @return bool True if the database is connected, else false
  */
 	public function isConnected() {
+		try {
+			$connected = $this->_connection->query('SELECT 1');
+		} catch (Exception $e) {
+			$connected = false;
+		}
+		$this->connected = ! empty($connected);
 		return $this->connected;
 	}
 
