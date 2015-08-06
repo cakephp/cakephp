@@ -309,7 +309,8 @@ class EmailComponent extends Component {
 			$lib->readReceipt($this->_formatAddresses((array)$this->readReceipt));
 		}
 
-		$lib->subject($this->subject)->messageID($this->messageId);
+		$lib->subject($this->subject);
+		$lib->messageID($this->messageId);
 		$lib->helpers($this->_controller->helpers);
 
 		$headers = array('X-Mailer' => $this->xMailer);
