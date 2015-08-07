@@ -915,6 +915,18 @@ class PaginatorHelperTest extends TestCase
             '/li'
         ];
         $this->assertHtml($expected, $result);
+
+        $result = $this->Paginator->prev('Prev', [
+            'templates' => [
+                'prevActive' => '<a rel="prev" href="{{url}}">{{text}}</a>'
+            ]
+        ]);
+        $expected = [
+            'a' => ['href' => '/index', 'rel' => 'prev'],
+            'Prev',
+            '/a',
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**
@@ -957,6 +969,18 @@ class PaginatorHelperTest extends TestCase
             'Next &gt;&gt;',
             '/a',
             '/li'
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Paginator->next('Next', [
+            'templates' => [
+                'nextActive' => '<a rel="next" href="{{url}}">{{text}}</a>'
+            ]
+        ]);
+        $expected = [
+            'a' => ['href' => '/index?page=2', 'rel' => 'next'],
+            'Next',
+            '/a',
         ];
         $this->assertHtml($expected, $result);
 
