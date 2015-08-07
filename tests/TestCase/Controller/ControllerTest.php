@@ -28,6 +28,7 @@ use Cake\TestSuite\Fixture\TestModel;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Hash;
+use TestApp\Controller\Admin\PostsController;
 use TestPlugin\Controller\TestPluginController;
 
 /**
@@ -967,5 +968,26 @@ class ControllerTest extends TestCase
         // @codingStandardsIgnoreStart
         $this->assertEquals($theme, @$controller->getView()->theme);
         // @codingStandardsIgnoreEnd
+    }
+
+    /**
+     * Test that view variables are being set after the beforeRender event gets dispatched
+     *
+     * @return void
+     */
+    public function testBeforeRenderViewVariables()
+    {
+        $controller = new PostsController();
+
+        $controller->eventManager()->on('Controller.beforeRender', function (Event $event) {
+            /* @var Controller $controller */
+            $controller = $event->subject();
+
+            $controller->set('testVariable', 'test');
+        });
+
+        $controller->render('index');
+
+        $this->assertArrayHasKey('testVariable', $controller->View->viewVars);
     }
 }
