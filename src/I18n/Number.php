@@ -259,6 +259,8 @@ class Number
      * - `pattern` - An ICU number pattern to use for formatting the number. e.g #,###.00
      * - `useIntlCode` - Whether or not to replace the currency symbol with the international
      *   currency code.
+     * - `persistOptions` - If set to true the options 'places', 'precision' & 'pattern'
+     *   will be set for the cached formatter for 'locale', 'type' pair and persist across calls.
      *
      * @param array $options An array with options.
      * @return \NumberFormatter The configured formatter instance
@@ -285,7 +287,9 @@ class Number
         $hasPrecision = isset($options['precision']);
         $hasPattern = !empty($options['pattern']) || !empty($options['useIntlCode']);
 
-        if ($hasPlaces || $hasPrecision || $hasPattern) {
+        if (empty($options['persistOptions']) &&
+            ($hasPlaces || $hasPrecision || $hasPattern)
+        ) {
             $formatter = clone $formatter;
         }
 
