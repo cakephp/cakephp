@@ -538,4 +538,23 @@ class NumberTest extends TestCase
         $result = $this->Number->toReadableSize(512.05 * 1024 * 1024 * 1024);
         $this->assertEquals('512,05 GB', $result);
     }
+
+    /**
+     * test config()
+     *
+     * @return void
+     */
+    public function testConfig()
+    {
+        $result = $this->Number->currency(15000, 'INR', ['locale' => 'en_IN']);
+        $this->assertEquals('₹ 15,000.00', $result);
+
+        Number::config('en_IN', \NumberFormatter::CURRENCY, [
+            'pattern' => '¤ #,##,##0',
+            'persistOptions' => true
+        ]);
+
+        $result = $this->Number->currency(15000, 'INR', ['locale' => 'en_IN']);
+        $this->assertEquals('₹ 15,000', $result);
+    }
 }

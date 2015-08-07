@@ -281,19 +281,51 @@ class Number
         }
 
         $formatter = static::$_formatters[$locale][$type];
-        $hasPlaces = isset($options['places']);
-        $hasPrecision = isset($options['precision']);
-        $hasPattern = !empty($options['pattern']) || !empty($options['useIntlCode']);
 
-        if ($hasPlaces || $hasPrecision || $hasPattern) {
-            $formatter = clone $formatter;
+        $options = array_intersect_key($options, [
+            'places' => null,
+            'precision' => null,
+            'pattern' => null,
+            'useIntlCode' => null
+        ]);
+        if (empty($options)) {
+            return $formatter;
         }
 
-        if ($hasPlaces) {
+        $formatter = clone $formatter;
+        return static::_setAttributes($formatter, $options);
+    }
+
+    /**
+     * Configure formatters.
+     *
+     * @param string $locale The locale name to use for formatting the number, e.g. fr_FR
+     * @param int $type The formatter type to construct. Defaults to NumberFormatter::DECIMAL.
+     * @param array $options See Number::formatter() for possible options.
+     * @return void
+     */
+    public static function config($locale, $type = NumberFormatter::DECIMAL, array $options = [])
+    {
+        static::$_formatters[$locale][$type] = static::_setAttributes(
+            new NumberFormatter($locale, $type),
+            $options
+        );
+    }
+
+    /**
+     * Set formatter attributes
+     *
+     * @param \NumberFormatter $formatter Number formatter instance.
+     * @param array $options See Number::formatter() for possible options.
+     * @return \NumberFormatter
+     */
+    protected static function _setAttributes(NumberFormatter $formatter, array $options = [])
+    {
+        if (isset($options['places'])) {
             $formatter->setAttribute(NumberFormatter::MIN_FRACTION_DIGITS, $options['places']);
         }
 
-        if ($hasPrecision) {
+        if (isset($options['precision'])) {
             $formatter->setAttribute(NumberFormatter::MAX_FRACTION_DIGITS, $options['precision']);
         }
 
