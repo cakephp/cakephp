@@ -1045,7 +1045,7 @@ class Validation
             'latLong' => 'both',
             'type' => 'latLong'
         ];
-        if  ($options['type'] !== 'latLong') {
+        if ($options['type'] !== 'latLong') {
             throw new \RuntimeException(sprintf('Unsupported coordinate type "%s".', $options['type']));
         }
         if ($options['type'] === 'latLong') {
