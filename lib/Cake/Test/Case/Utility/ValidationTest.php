@@ -930,6 +930,25 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::comparison(7, '==', 6));
 		$this->assertFalse(Validation::comparison(7, 'not equal', 7));
 		$this->assertFalse(Validation::comparison(7, '!=', 7));
+
+		$this->assertTrue(Validation::comparison('6.5', '!=', 6));
+		$this->assertTrue(Validation::comparison('6.5', '<', 7));
+	}
+
+/**
+ * Test comparison casting values before comparisons.
+ *
+ * @return void
+ */
+	public function testComparisonTypeChecks() {
+		$this->assertFalse(Validation::comparison('\x028', '>=', 1), 'hexish encoding fails');
+		$this->assertFalse(Validation::comparison('0b010', '>=', 1), 'binary string data fails');
+		$this->assertFalse(Validation::comparison('0x01', '>=', 1), 'hex string data fails');
+		$this->assertFalse(Validation::comparison('0x1', '>=', 1), 'hex string data fails');
+
+		$this->assertFalse(Validation::comparison('\x028', '>=', 1.5), 'hexish encoding fails');
+		$this->assertFalse(Validation::comparison('0b010', '>=', 1.5), 'binary string data fails');
+		$this->assertFalse(Validation::comparison('0x02', '>=', 1.5), 'hex string data fails');
 	}
 
 /**
@@ -2002,6 +2021,22 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::range(5));
 		$this->assertTrue(Validation::range(-5, -10, 1));
 		$this->assertFalse(Validation::range('word'));
+	}
+
+/**
+ * Test range type checks
+ *
+ * @return void
+ */
+	public function testRangeTypeChecks() {
+		$this->assertFalse(Validation::range('\x028', 1, 5), 'hexish encoding fails');
+		$this->assertFalse(Validation::range('0b010', 1, 5), 'binary string data fails');
+		$this->assertFalse(Validation::range('0x01', 1, 5), 'hex string data fails');
+		$this->assertFalse(Validation::range('0x1', 1, 5), 'hex string data fails');
+
+		$this->assertFalse(Validation::range('\x028', 1, 5), 'hexish encoding fails');
+		$this->assertFalse(Validation::range('0b010', 1, 5), 'binary string data fails');
+		$this->assertFalse(Validation::range('0x02', 1, 5), 'hex string data fails');
 	}
 
 /**
