@@ -65,7 +65,7 @@ trait SqlserverDialectTrait
         }
 
         if ($offset !== null && !$query->clause('order')) {
-            $query->order($query->newExpr()->add('SELECT NULL'));
+            $query->order($query->newExpr()->add('(SELECT NULL)'));
         }
 
         if ($this->_version() < 11 && $offset !== null) {
