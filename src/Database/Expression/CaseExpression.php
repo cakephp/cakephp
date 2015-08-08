@@ -111,6 +111,8 @@ class CaseExpression implements ExpressionInterface
      */
     protected function _addExpressions($conditions, $values, $types)
     {
+        $rawValues = array_values($values);
+        $keyValues = array_keys($values);
         foreach ($conditions as $k => $c) {
             $numericKey = is_numeric($k);
 
@@ -123,10 +125,10 @@ class CaseExpression implements ExpressionInterface
             }
             array_push($this->_conditions, $c);
 
-            $value = !empty($values[$k]) ? $values[$k] : 1;
+            $value = !empty($rawValues[$k]) ? $rawValues[$k] : 1;
 
             if ($value === 'literal') {
-                $value = $k;
+                $value = $keyValues[$k];
                 array_push($this->_values, $value);
                 continue;
             } elseif ($value instanceof ExpressionInterface) {
