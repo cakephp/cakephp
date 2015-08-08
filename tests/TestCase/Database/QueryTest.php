@@ -1504,6 +1504,8 @@ class QueryTest extends TestCase
         $query->select(['id'])
             ->from('articles')
             ->orderAsc('id');
+
+        $sql = $query->sql();
         $result = $query->execute()->fetchAll('assoc');
         $expected = [
             ['id' => 1],
@@ -1511,6 +1513,11 @@ class QueryTest extends TestCase
             ['id' => 3],
         ];
         $this->assertEquals($expected, $result);
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> ORDER BY <id> ASC',
+            $sql,
+            !$this->autoQuote
+        );
 
         $query = new Query($this->connection);
         $query->select(['id'])
@@ -1537,6 +1544,7 @@ class QueryTest extends TestCase
         $query->select(['id'])
             ->from('articles')
             ->orderDesc('id');
+        $sql = $query->sql();
         $result = $query->execute()->fetchAll('assoc');
         $expected = [
             ['id' => 3],
@@ -1544,6 +1552,11 @@ class QueryTest extends TestCase
             ['id' => 1],
         ];
         $this->assertEquals($expected, $result);
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> ORDER BY <id> DESC',
+            $sql,
+            !$this->autoQuote
+        );
 
         $query = new Query($this->connection);
         $query->select(['id'])
