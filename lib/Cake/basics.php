@@ -100,7 +100,7 @@ HTML;
 
 TEXT;
 		$template = $html;
-		if (php_sapi_name() === 'cli' || $showHtml === false) {
+		if (PHP_SAPI === 'cli' || $showHtml === false) {
 			$template = $text;
 			if ($showFrom) {
 				$lineInfo = sprintf('%s (line %s)', $file, $line);
@@ -275,7 +275,7 @@ if (!function_exists('pr')) {
  */
 	function pr($var) {
 		if (Configure::read('debug') > 0) {
-			$template = php_sapi_name() !== 'cli' ? '<pre>%s</pre>' : "\n%s\n";
+			$template = PHP_SAPI !== 'cli' ? '<pre>%s</pre>' : "\n%s\n";
 			printf($template, print_r($var, true));
 		}
 	}

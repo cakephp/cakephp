@@ -378,7 +378,7 @@ class HttpSocket extends CakeSocket {
 
 		$response = null;
 		$inHeader = true;
-		while ($data = $this->read()) {
+		while (($data = $this->read()) !== false) {
 			if ($this->_contentResource) {
 				if ($inHeader) {
 					$response .= $data;
@@ -719,7 +719,7 @@ class HttpSocket extends CakeSocket {
 			unset($this->config[$key]);
 		}
 		if (version_compare(PHP_VERSION, '5.3.2', '>=')) {
-			if (empty($this->config['context']['ssl']['SNI_enabled'])) {
+			if (!isset($this->config['context']['ssl']['SNI_enabled'])) {
 				$this->config['context']['ssl']['SNI_enabled'] = true;
 			}
 			if (version_compare(PHP_VERSION, '5.6.0', '>=')) {

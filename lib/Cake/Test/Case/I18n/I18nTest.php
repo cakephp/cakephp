@@ -2041,6 +2041,22 @@ class I18nTest extends CakeTestCase {
 	}
 
 /**
+ * Test basic context support using mo files.
+ *
+ * @return void
+ */
+	public function testContextMoFile() {
+		Configure::write('Config.language', 'nld_mo');
+
+		$this->assertSame("brief", __x('mail', 'letter'));
+		$this->assertSame("letter", __x('character', 'letter'));
+		$this->assertSame("bal", __x('spherical object', 'ball'));
+		$this->assertSame("danspartij", __x('social gathering', 'ball'));
+		$this->assertSame("balans", __('balance'));
+		$this->assertSame("saldo", __x('money', 'balance'));
+	}
+
+/**
  * Singular method
  *
  * @return void

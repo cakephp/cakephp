@@ -34,7 +34,7 @@ class ApcEngineTest extends CakeTestCase {
 		parent::setUp();
 		$this->skipIf(!function_exists('apc_store'), 'Apc is not installed or configured properly.');
 
-		if (php_sapi_name() === 'cli') {
+		if (PHP_SAPI === 'cli') {
 			$this->skipIf(!ini_get('apc.enable_cli'), 'APC is not enabled for the CLI.');
 		}
 

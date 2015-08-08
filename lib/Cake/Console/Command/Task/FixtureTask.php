@@ -414,19 +414,26 @@ class FixtureTask extends BakeTask {
  * @return array Array of records.
  */
 	protected function _getRecordsFromTable($modelName, $useTable = null) {
+		$modelObject = new Model(array('name' => $modelName, 'table' => $useTable, 'ds' => $this->connection));
 		if ($this->interactive) {
 			$condition = null;
 			$prompt = __d('cake_console', "Please provide a SQL fragment to use as conditions\nExample: WHERE 1=1");
 			while (!$condition) {
 				$condition = $this->in($prompt, null, 'WHERE 1=1');
 			}
+
+			$recordsFound = $modelObject->find('count', array(
+				'conditions' => $condition,
+				'recursive' => -1,
+			));
+
 			$prompt = __d('cake_console', "How many records do you want to import?");
-			$recordCount = $this->in($prompt, null, 10);
+			$recordCount = $this->in($prompt, null, ($recordsFound < 10 ) ? $recordsFound : 10);
 		} else {
 			$condition = 'WHERE 1=1';
 			$recordCount = (isset($this->params['count']) ? $this->params['count'] : 10);
 		}
-		$modelObject = new Model(array('name' => $modelName, 'table' => $useTable, 'ds' => $this->connection));
+
 		$records = $modelObject->find('all', array(
 			'conditions' => $condition,
 			'recursive' => -1,

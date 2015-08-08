@@ -340,6 +340,32 @@ HTMLBLOC;
 	}
 
 /**
+ * test send with null properties
+ *
+ * @return void
+ */
+	public function testSendNullProperties() {
+		$this->Controller->EmailTest->to = 'test@example.com';
+		$this->Controller->EmailTest->from = 'test@example.com';
+		$this->Controller->EmailTest->subject = null;
+		$this->Controller->EmailTest->replyTo = null;
+		$this->Controller->EmailTest->messageId = null;
+		$this->Controller->EmailTest->template = null;
+
+		$this->Controller->EmailTest->delivery = 'DebugComp';
+		$this->assertTrue($this->Controller->EmailTest->send(null));
+		$result = DebugCompTransport::$lastEmail;
+
+		$this->assertRegExp('/To: test@example.com\n/', $result);
+		$this->assertRegExp('/Subject: \n/', $result);
+		$this->assertRegExp('/From: test@example.com\n/', $result);
+		$this->assertRegExp('/Date: ' . preg_quote(static::$sentDate) . '\n/', $result);
+		$this->assertRegExp('/X-Mailer: CakePHP Email Component\n/', $result);
+		$this->assertRegExp('/Content-Type: text\/plain; charset=UTF-8\n/', $result);
+		$this->assertRegExp('/Content-Transfer-Encoding: 8bitMessage:\n/', $result);
+	}
+
+/**
  * testSendDebug method
  *
  * @return void
