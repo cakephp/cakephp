@@ -244,10 +244,24 @@ class PaginatorHelper extends Helper
         }
         $text = $options['escape'] ? h($text) : $text;
 
+        $templater = $this->templater();
+        $newTemplates = !empty($options['templates']) ? $options['templates'] : false;
+        if ($newTemplates) {
+            $templater->push();
+            $templateMethod = is_string($options['templates']) ? 'load' : 'add';
+            $templater->{$templateMethod}($options['templates']);
+        }
+
         if (!$enabled) {
-            return $this->templater()->format($template, [
+            $out = $templater->format($template, [
                 'text' => $text,
             ]);
+
+            if ($newTemplates) {
+                $templater->pop();
+            }
+
+            return $out;
         }
         $paging = $this->params($options['model']);
 
@@ -256,10 +270,17 @@ class PaginatorHelper extends Helper
             ['page' => $paging['page'] + $options['step']]
         );
         $url = $this->generateUrl($url, $options['model']);
-        return $this->templater()->format($template, [
+
+        $out = $templater->format($template, [
             'url' => $url,
             'text' => $text,
         ]);
+
+        if ($newTemplates) {
+            $templater->pop();
+        }
+
+        return $out;
     }
 
     /**
@@ -273,6 +294,9 @@ class PaginatorHelper extends Helper
      * - `escape` Whether you want the contents html entity encoded, defaults to true
      * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
      * - `url` An array of additional URL options to use for link generation.
+     * - `templates` An array of templates, or template file name containing the
+     *   templates you'd like to use when generating the link for previous page.
+     *   The helper's original templates will be restored once prev() is done.
      *
      * @param string $title Title for the link. Defaults to '<< Previous'.
      * @param array $options Options for pagination link. See above for list of keys.
@@ -309,6 +333,9 @@ class PaginatorHelper extends Helper
      * - `escape` Whether you want the contents html entity encoded, defaults to true
      * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
      * - `url` An array of additional URL options to use for link generation.
+     * - `templates` An array of templates, or template file name containing the
+     *   templates you'd like to use when generating the link for next page.
+     *   The helper's original templates will be restored once next() is done.
      *
      * @param string $title Title for the link. Defaults to 'Next >>'.
      * @param array $options Options for pagination link. See above for list of keys.
