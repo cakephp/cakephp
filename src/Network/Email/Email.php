@@ -1013,8 +1013,14 @@ class Email implements JsonSerializable, Serializable
      */
     protected function _constructTransport($name)
     {
-        if (!isset(static::$_transportConfig[$name]['className'])) {
+        if (!isset(static::$_transportConfig[$name])) {
             throw new InvalidArgumentException(sprintf('Transport config "%s" is missing.', $name));
+        }
+
+        if (!isset(static::$_transportConfig[$name]['className'])) {
+            throw new InvalidArgumentException(
+                sprintf('Transport config "%s" is invalid, the required `className` option is missing', $name)
+            );
         }
 
         $config = static::$_transportConfig[$name];
