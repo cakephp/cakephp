@@ -68,8 +68,8 @@ class OrderClauseExpression implements ExpressionInterface
     public function traverse(callable $visitor)
     {
         if ($this->_field instanceof ExpressionInterface) {
-            $callable($this->_field);
-            $this->_field->traverse($callable);
+            $visitor($this->_field);
+            $this->_field->traverse($visitor);
         }
     }
 }
