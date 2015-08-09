@@ -422,6 +422,9 @@ class MemcachedEngine extends CacheEngine
         }
 
         $keys = $this->_Memcached->getAllKeys();
+        if ($keys === false) {
+            return false;
+        }
 
         foreach ($keys as $key) {
             if (strpos($key, $this->_config['prefix']) === 0) {
@@ -430,6 +433,24 @@ class MemcachedEngine extends CacheEngine
         }
 
         return true;
+    }
+
+    /**
+     * Add a key to the cache if it does not already exist.
+     *
+     * @param string $key Identifier for the data.
+     * @param mixed $value Data to be cached.
+     * @return bool True if the data was successfully cached, false on failure.
+     */
+    public function add($key, $value)
+    {
+        $duration = $this->_config['duration'];
+        if ($duration > 30 * DAY) {
+            $duration = 0;
+        }
+
+        $key = $this->_key($key);
+        return $this->_Memcached->add($key, $value, $duration);
     }
 
     /**
