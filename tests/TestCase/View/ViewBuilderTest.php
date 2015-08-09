@@ -43,6 +43,19 @@ class ViewBuilderTest extends TestCase
     }
 
     /**
+     * data provider for array properties.
+     *
+     * @return array
+     */
+    public function arrayPropertyProvider()
+    {
+        return [
+            ['helpers', ['Html', 'Form']],
+            ['options', ['key' => 'value']],
+        ];
+    }
+
+    /**
      * Test string property accessor/mutator methods.
      *
      * @dataProvider stringPropertyProvider
@@ -52,6 +65,20 @@ class ViewBuilderTest extends TestCase
     {
         $builder = new ViewBuilder();
         $this->assertNull($builder->{$property}(), 'Default value should be null');
+        $this->assertSame($builder, $builder->{$property}($value), 'Setter returns this');
+        $this->assertSame($value, $builder->{$property}(), 'Getter gets value.');
+    }
+
+    /**
+     * Test array property accessor/mutator methods.
+     *
+     * @dataProvider arrayPropertyProvider
+     * @return void
+     */
+    public function testArrayProperties($property, $value)
+    {
+        $builder = new ViewBuilder();
+        $this->assertSame([], $builder->{$property}(), 'Default value should be empty list');
         $this->assertSame($builder, $builder->{$property}($value), 'Setter returns this');
         $this->assertSame($value, $builder->{$property}(), 'Getter gets value.');
     }
