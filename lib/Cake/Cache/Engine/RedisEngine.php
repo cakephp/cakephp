@@ -229,7 +229,7 @@ class RedisEngine extends CacheEngine {
 	}
 
 /**
- * Write data for key into cache if it doesn't exist already. 
+ * Write data for key into cache if it doesn't exist already.
  * If it already exists, it fails and returns false.
  *
  * @param string $key Identifier for the data.

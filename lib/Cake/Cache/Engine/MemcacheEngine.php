@@ -292,7 +292,7 @@ class MemcacheEngine extends CacheEngine {
 
 /**
  * Write data for key into cache if it doesn't exist already. When using memcached as your cache engine
- * remember that the Memcached pecl extension does not support cache expiry times greater
+ * remember that the Memcached PECL extension does not support cache expiry times greater
  * than 30 days in the future. Any duration greater than 30 days will be treated as never expiring.
  * If it already exists, it fails and returns false.
  *

@@ -595,6 +595,7 @@ class Cache {
  * @param mixed $value Data to be cached - anything except a resource.
  * @param string $config Optional string configuration name to write to. Defaults to 'default'.
  * @return bool True if the data was successfully cached, false on failure.
+ *   Or if the key existed already.
  */
 	public static function add($key, $value, $config = 'default') {
 		$settings = self::settings($config);
