@@ -37,11 +37,11 @@ class ViewBuilder
     protected $viewPath;
 
     /**
-     * The view file to render.
+     * The template file to render.
      *
      * @var string
      */
-    protected $view;
+    protected $template;
 
     /**
      * The plugin name to use.
@@ -90,7 +90,7 @@ class ViewBuilder
      *
      * @var string
      */
-    protected $viewClass;
+    protected $className;
 
     /**
      * The view variables to use
@@ -143,7 +143,7 @@ class ViewBuilder
      * On by default. Setting to off means that layouts will not be
      * automatically applied to rendered views.
      *
-     * @param bool|ull $autoLayout Boolean to turn on/off. If null returns current value.
+     * @param bool|null $autoLayout Boolean to turn on/off. If null returns current value.
      * @return bool|$this
      */
     public function autoLayout($autoLayout = null)
@@ -152,7 +152,7 @@ class ViewBuilder
             return $this->autoLayout;
         }
 
-        $this->autoLayout = $autoLayout;
+        $this->autoLayout = (bool)$autoLayout;
         return $this;
     }
 
@@ -211,13 +211,13 @@ class ViewBuilder
      * @param string|null $name View file name to set. If null returns current name.
      * @return string|$this
      */
-    public function view($name = null)
+    public function template($name = null)
     {
         if ($name === null) {
-            return $this->view;
+            return $this->template;
         }
 
-        $this->view = $name;
+        $this->template = $name;
         return $this;
     }
 
