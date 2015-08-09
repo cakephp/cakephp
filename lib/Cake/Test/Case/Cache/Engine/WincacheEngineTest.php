@@ -259,4 +259,23 @@ class WincacheEngineTest extends CakeTestCase {
 		$this->assertTrue(Cache::clearGroup('group_b', 'wincache_groups'));
 		$this->assertFalse(Cache::read('test_groups', 'wincache_groups'));
 	}
+
+/**
+ * Test that failed add write return false.
+ *
+ * @return void
+ */
+	public function testAdd() {
+		Cache::delete('test_add_key', 'wincache');
+
+		$result = Cache::add('test_add_key', 'test data', 'wincache');
+		$this->assertTrue($result);
+
+		$expected = 'test data';
+		$result = Cache::read('test_add_key', 'wincache');
+		$this->assertEquals($expected, $result);
+
+		$result = Cache::add('test_add_key', 'test data 2', 'wincache');
+		$this->assertFalse($result);
+	}
 }

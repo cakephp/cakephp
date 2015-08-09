@@ -519,4 +519,23 @@ class CacheTest extends CakeTestCase {
 	public function cacher() {
 		return 'This is some data ' . $this->_count;
 	}
+
+/**
+ * Test add method.
+ *
+ * @return void
+ */
+	public function testAdd() {
+		Cache::delete('test_add_key', 'default');
+
+		$result = Cache::add('test_add_key', 'test data', 'default');
+		$this->assertTrue($result);
+
+		$expected = 'test data';
+		$result = Cache::read('test_add_key', 'default');
+		$this->assertEquals($expected, $result);
+
+		$result = Cache::add('test_add_key', 'test data 2', 'default');
+		$this->assertFalse($result);
+	}
 }
