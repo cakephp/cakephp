@@ -100,9 +100,16 @@ class ViewBuilder
     protected $options = [];
 
     /**
+     * The helpers to use
+     *
+     * @var array
+     */
+    protected $helpers = [];
+
+    /**
      * Get/set path for view files.
      *
-     * @param string $path Path for view files. If null returns current path.
+     * @param string|null $path Path for view files. If null returns current path.
      * @return string|$this
      */
     public function viewPath($path = null)
@@ -118,7 +125,7 @@ class ViewBuilder
     /**
      * Get/set path for layout files.
      *
-     * @param string $path Path for layout files. If null returns current path.
+     * @param string|null $path Path for layout files. If null returns current path.
      * @return string|void
      */
     public function layoutPath($path = null)
@@ -136,7 +143,7 @@ class ViewBuilder
      * On by default. Setting to off means that layouts will not be
      * automatically applied to rendered views.
      *
-     * @param bool $autoLayout Boolean to turn on/off. If null returns current value.
+     * @param bool|ull $autoLayout Boolean to turn on/off. If null returns current value.
      * @return bool|$this
      */
     public function autoLayout($autoLayout = null)
@@ -152,27 +159,39 @@ class ViewBuilder
     /**
      * The plugin name to use
      *
-     * @param string $theme Plugin name. If null returns current plugin.
+     * @param string|null $name Plugin name. If null returns current plugin.
      * @return string|$this
      */
-    public function plugin($theme = null)
+    public function plugin($name = null)
     {
+        if ($name === null) {
+            return $this->plugin;
+        }
+
+        $this->plugin = $name;
+        return $this;
     }
 
     /**
      * The helpers to use
      *
-     * @param array $helpers Helpers to use.
+     * @param array|null $helpers Helpers to use.
      * @return array|$this
      */
-    public function helpers($helpers = null)
+    public function helpers(array $helpers = null)
     {
+        if ($helpers === null) {
+            return $this->helpers;
+        }
+
+        $this->helpers = array_merge($this->helpers, $helpers);
+        return $this;
     }
 
     /**
      * The view theme to use.
      *
-     * @param string $theme Theme name. If null returns current theme.
+     * @param string|null $theme Theme name. If null returns current theme.
      * @return string|$this
      */
     public function theme($theme = null)
@@ -189,7 +208,7 @@ class ViewBuilder
      * Get/set the name of the view file to render. The name specified is the
      * filename in /app/Template/<SubFolder> without the .ctp extension.
      *
-     * @param string $name View file name to set. If null returns current name.
+     * @param string|null $name View file name to set. If null returns current name.
      * @return string|$this
      */
     public function view($name = null)
@@ -207,7 +226,7 @@ class ViewBuilder
      * The name specified is the filename of the layout in /app/Template/Layout
      * without the .ctp extension.
      *
-     * @param string $name Layout file name to set. If null returns current name.
+     * @param string|null $name Layout file name to set. If null returns current name.
      * @return string|$this
      */
     public function layout($name = null)
@@ -226,26 +245,45 @@ class ViewBuilder
      * @param array|null $options Either an array of options or null to get current options.
      * @return array|$this
      */
-    public function options($options = null)
+    public function options(array $options = null)
     {
+        if ($options === null) {
+            return $this->options;
+        }
+        $this->options = array_merge($this->options, $options);
+        return $this;
     }
 
     /**
      * Get/set the view name
      *
+     * @param string|null $name The name of the view
      * @return array|$this
      */
-    public function name($vars = null)
+    public function name($name = null)
     {
+        if ($name === null) {
+            return $this->name;
+        }
+        $this->name = $name;
+        return $this;
     }
 
     /**
      * Get/set the view classname
      *
+     * @param string|null $name The class name for the view. Can
+     *   be a plugin.class name reference, a short alias, or a fully
+     *   namespaced name.
      * @return array|$this
      */
     public function className($name = null)
     {
+        if ($name === null) {
+            return $this->className;
+        }
+        $this->className = $name;
+        return $this;
     }
 
     /**
