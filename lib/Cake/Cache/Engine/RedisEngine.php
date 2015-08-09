@@ -239,6 +239,10 @@ class RedisEngine extends CacheEngine {
  * @link https://github.com/phpredis/phpredis#setnx
  */
 	public function add($key, $value, $duration) {
+		if (!is_int($value)) {
+			$value = serialize($value);
+		}
+
 		$result = $this->_Redis->setnx($key, $value);
 		// setnx() doesn't have an expiry option, so overwrite the key with one
 		if ($result) {
