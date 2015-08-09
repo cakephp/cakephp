@@ -176,15 +176,18 @@ class ViewBuilder
      * The helpers to use
      *
      * @param array|null $helpers Helpers to use.
+     * @param bool $merge Whether or not to merge existing data with the new data.
      * @return array|$this
      */
-    public function helpers(array $helpers = null)
+    public function helpers(array $helpers = null, $merge = true)
     {
         if ($helpers === null) {
             return $this->helpers;
         }
-
-        $this->helpers = array_merge($this->helpers, $helpers);
+        if ($merge) {
+            $helpers = array_merge($this->helpers, $helpers);
+        }
+        $this->helpers = $helpers;
         return $this;
     }
 
@@ -243,14 +246,18 @@ class ViewBuilder
      * Set additional options for the view.
      *
      * @param array|null $options Either an array of options or null to get current options.
+     * @param bool $merge Whether or not to merge existing data with the new data.
      * @return array|$this
      */
-    public function options(array $options = null)
+    public function options(array $options = null, $merge = true)
     {
         if ($options === null) {
             return $this->options;
         }
-        $this->options = array_merge($this->options, $options);
+        if ($merge) {
+            $options = array_merge($this->options, $options);
+        }
+        $this->options = $options;
         return $this;
     }
 

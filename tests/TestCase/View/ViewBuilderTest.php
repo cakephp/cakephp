@@ -82,4 +82,44 @@ class ViewBuilderTest extends TestCase
         $this->assertSame($builder, $builder->{$property}($value), 'Setter returns this');
         $this->assertSame($value, $builder->{$property}(), 'Getter gets value.');
     }
+
+    /**
+     * Test array property accessor/mutator methods.
+     *
+     * @dataProvider arrayPropertyProvider
+     * @return void
+     */
+    public function testArrayPropertyMerge($property, $value)
+    {
+        $builder = new ViewBuilder();
+        $builder->{$property}($value);
+
+        $builder->{$property}(['Merged'], true);
+        $this->assertSame(array_merge($value, ['Merged']), $builder->{$property}(), 'Should merge');
+
+        $builder->{$property}($value, false);
+        $this->assertSame($value, $builder->{$property}(), 'Should replace');
+    }
+
+    /**
+     * test building with all the options.
+     *
+     * @return void
+     */
+    public function testBuildComplete()
+    {
+        $this->markTestIncomplete('not done');
+    }
+
+    /**
+     * test missing view class
+     *
+     * @expectedException \Cake\View\Exception\MissingViewException
+     * @expectedExceptionMessage View class "Foo" is missing.
+     * @return void
+     */
+    public function testBuildMissingViewClass()
+    {
+        $this->markTestIncomplete('not done');
+    }
 }
