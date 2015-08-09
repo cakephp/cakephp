@@ -1522,7 +1522,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->orderAsc($query->func()->concat(['id' => 'literal', 'test']));
+            ->orderAsc($query->func()->concat(['id' => 'literal', '3']));
 
         $result = $query->execute()->fetchAll('assoc');
         $expected = [
@@ -1561,7 +1561,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->orderDesc($query->func()->concat(['id' => 'literal', 'test']));
+            ->orderDesc($query->func()->concat(['id' => 'literal', '3']));
 
         $result = $query->execute()->fetchAll('assoc');
         $expected = [
