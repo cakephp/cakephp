@@ -382,7 +382,7 @@ class RedisEngineTest extends CakeTestCase {
 	}
 
 /**
- * Test that failed add write return false.
+ * Test add method.
  *
  * @return void
  */
