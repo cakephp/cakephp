@@ -1022,4 +1022,30 @@ class QueryRegressionTest extends TestCase
 
         $this->assertEquals([['name' => 'nate', 'tag' => 'tag1']], $results);
     }
+
+    /**
+     * Test expression based ordering with unions.
+     *
+     * @return void
+     */
+    public function testComplexOrderWithUnion()
+    {
+        $table = TableRegistry::get('Comments');
+        $query = $table->find();
+        $inner = $table->find()
+            ->select(['content' => 'comment'])
+            ->where(['id >' => 3]);
+        $inner2 = $table->find()
+            ->select(['content' => 'comment'])
+            ->where(['id <' => 3]);
+
+        $order = $query->func()->concat(['content' => 'literal', 'test']);
+
+        $query->select(['inside.content'])
+            ->from(['inside' => $inner->unionAll($inner2)])
+            ->orderAsc($order);
+
+        $results = $query->toArray();
+        $this->assertCount(5, $results);
+    }
 }

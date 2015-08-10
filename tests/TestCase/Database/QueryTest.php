@@ -1494,6 +1494,85 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test orderAsc() and its input types.
+     *
+     * @return void
+     */
+    public function testSelectOrderAsc()
+    {
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('articles')
+            ->orderAsc('id');
+
+        $sql = $query->sql();
+        $result = $query->execute()->fetchAll('assoc');
+        $expected = [
+            ['id' => 1],
+            ['id' => 2],
+            ['id' => 3],
+        ];
+        $this->assertEquals($expected, $result);
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> ORDER BY <id> ASC',
+            $sql,
+            !$this->autoQuote
+        );
+
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('articles')
+            ->orderAsc($query->func()->concat(['id' => 'literal', '3']));
+
+        $result = $query->execute()->fetchAll('assoc');
+        $expected = [
+            ['id' => 1],
+            ['id' => 2],
+            ['id' => 3],
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test orderDesc() and its input types.
+     *
+     * @return void
+     */
+    public function testSelectOrderDesc()
+    {
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('articles')
+            ->orderDesc('id');
+        $sql = $query->sql();
+        $result = $query->execute()->fetchAll('assoc');
+        $expected = [
+            ['id' => 3],
+            ['id' => 2],
+            ['id' => 1],
+        ];
+        $this->assertEquals($expected, $result);
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> ORDER BY <id> DESC',
+            $sql,
+            !$this->autoQuote
+        );
+
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('articles')
+            ->orderDesc($query->func()->concat(['id' => 'literal', '3']));
+
+        $result = $query->execute()->fetchAll('assoc');
+        $expected = [
+            ['id' => 3],
+            ['id' => 2],
+            ['id' => 1],
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Tests that group by fields can be passed similar to select fields
      * and that it sends the correct query to the database
      *
