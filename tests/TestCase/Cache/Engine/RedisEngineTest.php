@@ -412,7 +412,7 @@ class RedisEngineTest extends TestCase
     }
 
     /**
-     * Test that failed add write return false.
+     * Test add
      *
      * @return void
      */
