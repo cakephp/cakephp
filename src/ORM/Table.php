@@ -1786,15 +1786,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                     count($fields)
                 ));
             }
-			foreach ($fields as $field) {
-				$value = array_shift($args);
+            foreach ($fields as $field) {
+                $value = array_shift($args);
 
-				if(is_array($value)) {
-					$field .= ' IN';
-				}
+                if (is_array($value)) {
+                    $field .= ' IN';
+                }
 
-				$conditions[$this->aliasField($field)] = $value;
-			}
+                $conditions[$this->aliasField($field)] = $value;
+            }
             return $conditions;
         };
 
