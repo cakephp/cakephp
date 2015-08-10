@@ -548,11 +548,15 @@ class Cache
      *
      * Writing to the active cache config:
      *
-     * `Cache::add('cached_data', $data);`
+     * ```
+     * Cache::add('cached_data', $data);
+     * ````
      *
      * Writing to a specific cache config:
      *
-     * `Cache::add('cached_data', $data, 'long_term');`
+     * ```
+     * Cache::add('cached_data', $data, 'long_term');
+     * ```
      *
      * @param string $key Identifier for the data.
      * @param mixed $value Data to be cached - anything except a resource.
