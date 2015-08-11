@@ -19,6 +19,7 @@ use Cake\Network\Request;
 use Cake\Routing\Filter\LocaleSelectorFilter;
 use Cake\TestSuite\TestCase;
 use Locale;
+use Cake\I18n\I18n;
 
 /**
  * Locale selector filter test.
@@ -63,19 +64,19 @@ class LocaleSelectorFilterTest extends TestCase
             'environment' => ['HTTP_ACCEPT_LANGUAGE' => 'en-GB,en;q=0.8,es;q=0.6,da;q=0.4']
         ]);
         $filter->beforeDispatch(new Event('name', null, ['request' => $request]));
-        $this->assertEquals('en_GB', Locale::getDefault());
+        $this->assertEquals('en_GB', I18n::locale());
 
         $request = new Request([
             'environment' => ['HTTP_ACCEPT_LANGUAGE' => 'es_VE,en;q=0.8,es;q=0.6,da;q=0.4']
         ]);
         $filter->beforeDispatch(new Event('name', null, ['request' => $request]));
-        $this->assertEquals('es_VE', Locale::getDefault());
+        $this->assertEquals('es_VE', I18n::locale());
 
         $request = new Request([
             'environment' => ['HTTP_ACCEPT_LANGUAGE' => 'en;q=0.4,es;q=0.6,da;q=0.8']
         ]);
         $filter->beforeDispatch(new Event('name', null, ['request' => $request]));
-        $this->assertEquals('da', Locale::getDefault());
+        $this->assertEquals('da', I18n::locale());
     }
 
     /**
@@ -97,7 +98,7 @@ class LocaleSelectorFilterTest extends TestCase
             ]
         ]);
         $filter->beforeDispatch(new Event('name', null, ['request' => $request]));
-        $this->assertEquals('es_VE', Locale::getDefault());
+        $this->assertEquals('es_VE', I18n::locale());
 
         Locale::setDefault('en_US');
         $request = new Request([
@@ -106,6 +107,6 @@ class LocaleSelectorFilterTest extends TestCase
             ]
         ]);
         $filter->beforeDispatch(new Event('name', null, ['request' => $request]));
-        $this->assertEquals('en_US', Locale::getDefault());
+        $this->assertEquals('en_US', I18n::locale());
     }
 }
