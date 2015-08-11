@@ -572,6 +572,9 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             return $this->response;
         }
 
+        // Re-fetch View class to pass view variables set in beforeRender callbacks
+        $this->View = $this->getView();
+
         if ($viewClass !== $this->viewClass) {
             $this->View = $this->getView($this->viewClass);
             if (!$this->_view->viewPath()) {
