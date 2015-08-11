@@ -32,7 +32,7 @@ class RequestHandlerTestController extends Controller
      */
     public function destination()
     {
-        $this->getView()->viewPath('Posts');
+        $this->viewBuilder()->viewPath('Posts');
         $this->render('index');
     }
 
@@ -56,7 +56,7 @@ class RequestHandlerTestController extends Controller
      */
     public function ajax2_layout()
     {
-        $this->getView()->layout = 'ajax2';
+        $this->viewBuilder()->layout('ajax2');
         $this->destination();
     }
 }

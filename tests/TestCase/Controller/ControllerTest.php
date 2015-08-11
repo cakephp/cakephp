@@ -397,7 +397,7 @@ class ControllerTest extends TestCase
         $request->params['action'] = 'index';
 
         $Controller = new Controller($request, new Response());
-        $Controller->getView()->viewPath = 'Posts';
+        $Controller->viewBuilder()->viewPath('Posts');
 
         $result = $Controller->render('index');
         $this->assertRegExp('/posts index/', (string)$result);
@@ -421,10 +421,10 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(new Request, new Response());
 
-        $Controller->eventManager()->attach(function ($event) {
+        $Controller->eventManager()->on('Controller.beforeRender', function ($event) {
             $controller = $event->subject();
             $controller->viewClass = 'Json';
-        }, 'Controller.beforeRender');
+        });
 
         $Controller->set([
             'test' => 'value',

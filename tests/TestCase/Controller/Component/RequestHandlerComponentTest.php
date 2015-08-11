@@ -447,8 +447,8 @@ class RequestHandlerComponentTest extends TestCase
             return $this->Controller->response;
         });
         $this->Controller->render();
-        $this->assertEquals('RequestHandlerTest' . DS . 'csv', $this->Controller->getView()->viewPath);
-        $this->assertEquals('csv', $this->Controller->getView()->layoutPath);
+        $this->assertEquals('RequestHandlerTest' . DS . 'csv', $this->Controller->viewBuilder()->viewPath());
+        $this->assertEquals('csv', $this->Controller->viewBuilder()->layoutPath());
     }
 
     /**
@@ -610,9 +610,9 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->renderAs($this->Controller, 'rss');
         $this->assertTrue(in_array('Rss', $this->Controller->helpers));
 
-        $this->Controller->getView()->viewPath = 'request_handler_test\\rss';
+        $this->Controller->viewBuilder()->viewPath('request_handler_test\\rss');
         $this->RequestHandler->renderAs($this->Controller, 'js');
-        $this->assertEquals('request_handler_test' . DS . 'js', $this->Controller->getView()->viewPath);
+        $this->assertEquals('request_handler_test' . DS . 'js', $this->Controller->viewBuilder()->viewPath());
     }
 
     /**
@@ -704,12 +704,12 @@ class RequestHandlerComponentTest extends TestCase
         $this->Controller->render();
 
         $this->RequestHandler->renderAs($this->Controller, 'print');
-        $this->assertEquals('RequestHandlerTest' . DS . 'print', $this->Controller->getView()->viewPath);
-        $this->assertEquals('print', $this->Controller->getView()->layoutPath);
+        $this->assertEquals('RequestHandlerTest' . DS . 'print', $this->Controller->viewBuilder()->viewPath());
+        $this->assertEquals('print', $this->Controller->viewBuilder()->layoutPath());
 
         $this->RequestHandler->renderAs($this->Controller, 'js');
-        $this->assertEquals('RequestHandlerTest' . DS . 'js', $this->Controller->getView()->viewPath);
-        $this->assertEquals('js', $this->Controller->getView()->layoutPath);
+        $this->assertEquals('RequestHandlerTest' . DS . 'js', $this->Controller->viewBuilder()->viewPath());
+        $this->assertEquals('js', $this->Controller->viewBuilder()->layoutPath());
     }
 
     /**
