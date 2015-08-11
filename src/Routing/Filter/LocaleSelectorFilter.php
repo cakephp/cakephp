@@ -15,9 +15,9 @@
 namespace Cake\Routing\Filter;
 
 use Cake\Event\Event;
+use Cake\I18n\I18n;
 use Cake\Routing\DispatcherFilter;
 use Locale;
-use Cake\I18n\I18n;
 
 /**
  * Sets the runtime default locale for the request based on the

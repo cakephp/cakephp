@@ -15,11 +15,11 @@
 namespace Cake\Test\TestCase\Routing\Filter;
 
 use Cake\Event\Event;
+use Cake\I18n\I18n;
 use Cake\Network\Request;
 use Cake\Routing\Filter\LocaleSelectorFilter;
 use Cake\TestSuite\TestCase;
 use Locale;
-use Cake\I18n\I18n;
 
 /**
  * Locale selector filter test.
