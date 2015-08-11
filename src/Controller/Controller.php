@@ -28,6 +28,7 @@ use Cake\Routing\Router;
 use Cake\Utility\MergeVariablesTrait;
 use Cake\View\ViewVarsTrait;
 use LogicException;
+use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 use RuntimeException;
@@ -653,15 +654,16 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function isAction($action)
     {
+        $baseClass = new ReflectionClass('Cake\Controller\Controller');
+        if ($baseClass->hasMethod($action)) {
+            return false;
+        }
         try {
             $method = new ReflectionMethod($this, $action);
         } catch (ReflectionException $e) {
             return false;
         }
         if (!$method->isPublic()) {
-            return false;
-        }
-        if ($method->getDeclaringClass()->name === 'Cake\Controller\Controller') {
             return false;
         }
         return true;
