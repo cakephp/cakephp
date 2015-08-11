@@ -99,6 +99,7 @@ class View implements EventDispatcherInterface
      * Current passed params. Passed to View from the creating Controller for convenience.
      *
      * @var array
+     * @TODO Deprecate and replace with __get + warning
      */
     public $passedArgs = [];
 

@@ -108,7 +108,39 @@ class ViewBuilderTest extends TestCase
      */
     public function testBuildComplete()
     {
-        $this->markTestIncomplete('not done');
+        $request = $this->getMock('Cake\Network\Request');
+        $response = $this->getMock('Cake\Network\Response');
+        $events = $this->getMock('Cake\Event\EventManager');
+
+        $builder = new ViewBuilder();
+        $builder->name('Articles')
+            ->className('Ajax')
+            ->template('edit')
+            ->layout('default')
+            ->viewPath('Articles/')
+            ->helpers(['Form', 'Html'])
+            ->layoutPath('Admin/')
+            ->theme('TestTheme')
+            ->plugin('TestPlugin');
+        $view = $builder->build(
+            ['one' => 'value'],
+            $request,
+            $response,
+            $events
+        );
+        $this->assertInstanceOf('Cake\View\AjaxView', $view);
+        $this->assertEquals('edit', $view->view);
+        $this->assertEquals('default', $view->layout);
+        $this->assertEquals('Articles/', $view->viewPath);
+        $this->assertEquals('Admin/', $view->layoutPath);
+        $this->assertEquals('TestPlugin', $view->plugin);
+        $this->assertEquals('TestTheme', $view->theme);
+        $this->assertSame($request, $view->request);
+        $this->assertSame($response, $view->response);
+        $this->assertSame($events, $view->eventManager());
+        $this->assertSame(['one' => 'value'], $view->viewVars);
+        $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $view->Html);
+        $this->assertInstanceOf('Cake\View\Helper\FormHelper', $view->Form);
     }
 
     /**
@@ -120,6 +152,8 @@ class ViewBuilderTest extends TestCase
      */
     public function testBuildMissingViewClass()
     {
-        $this->markTestIncomplete('not done');
+        $builder = new ViewBuilder();
+        $builder->className('Foo');
+        $builder->build();
     }
 }

@@ -15,6 +15,7 @@
 namespace Cake\View;
 
 use Cake\Core\App;
+use Cake\Event\EventManager;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\View\View;
@@ -305,5 +306,27 @@ class ViewBuilder
      */
     public function build($vars = [], Request $request = null, Response $response = null, EventManager $events = null)
     {
+        if ($this->className === 'View') {
+            $className = App::className($this->className, 'View');
+        } else {
+            $className = App::className($this->className, 'View', 'View');
+        }
+        if (!$className) {
+            throw new Exception\MissingViewException([$this->className]);
+        }
+        $data = [
+            'name' => $this->name,
+            'viewPath' => $this->viewPath,
+            'view' => $this->template,
+            'plugin' => $this->plugin,
+            'theme' => $this->theme,
+            'layout' => $this->layout,
+            'autoLayout' => $this->autoLayout,
+            'layoutPath' => $this->layoutPath,
+            'helpers' => $this->helpers,
+            'viewVars' => $vars,
+        ];
+        $data += $this->options;
+        return new $className($request, $response, $events, $data);
     }
 }
