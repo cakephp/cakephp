@@ -916,4 +916,24 @@ class MemcachedEngineTest extends TestCase
         $this->assertTrue(Cache::clearGroup('group_b', 'memcached_groups'));
         $this->assertFalse(Cache::read('test_groups', 'memcached_groups'));
     }
+
+    /**
+     * Test add
+     *
+     * @return void
+     */
+    public function testAdd()
+    {
+        Cache::delete('test_add_key', 'memcached');
+
+        $result = Cache::add('test_add_key', 'test data', 'memcached');
+        $this->assertTrue($result);
+
+        $expected = 'test data';
+        $result = Cache::read('test_add_key', 'memcached');
+        $this->assertEquals($expected, $result);
+
+        $result = Cache::add('test_add_key', 'test data 2', 'memcached');
+        $this->assertFalse($result);
+    }
 }

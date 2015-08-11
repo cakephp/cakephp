@@ -215,6 +215,31 @@ class RedisEngine extends CacheEngine
     }
 
     /**
+     * Write data for key into cache if it doesn't exist already.
+     * If it already exists, it fails and returns false.
+     *
+     * @param string $key Identifier for the data.
+     * @param mixed $value Data to be cached.
+     * @return bool True if the data was successfully cached, false on failure.
+     * @link https://github.com/phpredis/phpredis#setnx
+     */
+    public function add($key, $value)
+    {
+        $duration = $this->_config['duration'];
+        $key = $this->_key($key);
+
+        if (!is_int($value)) {
+            $value = serialize($value);
+        }
+
+        // setnx() doesn't have an expiry option, so overwrite the key with one
+        if ($this->_Redis->setnx($key, $value)) {
+            return $this->_Redis->setex($key, $duration, $value);
+        }
+        return false;
+    }
+
+    /**
      * Returns the `group value` for each of the configured groups
      * If the group initial value was not found, then it initializes
      * the group accordingly.

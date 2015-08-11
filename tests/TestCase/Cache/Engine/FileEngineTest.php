@@ -621,4 +621,24 @@ class FileEngineTest extends TestCase
         $this->assertFalse(Cache::read('key_1', 'file_groups'), 'Did not delete');
         $this->assertFalse(Cache::read('key_2', 'file_groups'), 'Did not delete');
     }
+
+    /**
+     * Test that failed add write return false.
+     *
+     * @return void
+     */
+    public function testAdd()
+    {
+        Cache::delete('test_add_key', 'file_test');
+
+        $result = Cache::add('test_add_key', 'test data', 'file_test');
+        $this->assertTrue($result);
+
+        $expected = 'test data';
+        $result = Cache::read('test_add_key', 'file_test');
+        $this->assertEquals($expected, $result);
+
+        $result = Cache::add('test_add_key', 'test data 2', 'file_test');
+        $this->assertFalse($result);
+    }
 }
