@@ -87,6 +87,16 @@ class TestController extends ControllerTestAppController
     public $modelClass = 'Comments';
 
     /**
+     * beforeFilter handler
+     *
+     * @param \Cake\Event\Event $event
+     * @retun void
+     */
+    public function beforeFilter(Event $event)
+    {
+    }
+
+    /**
      * index method
      *
      * @param mixed $testId
