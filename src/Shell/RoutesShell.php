@@ -42,6 +42,7 @@ class RoutesShell extends Shell
             $output[] = [$name, $route->template, json_encode($route->defaults)];
         }
         $this->helper('table')->output($output);
+        $this->out();
     }
 
     /**
@@ -54,13 +55,21 @@ class RoutesShell extends Shell
     {
         try {
             $route = Router::parse($url);
+            foreach (Router::routes() as $r) {
+                if ($r->match($route)) {
+                    $name = isset($r->options['_name']) ? $r->options['_name'] : $r->getName();
+                    break;
+                }
+            }
             $output = [
                 ['Route name', 'URI template', 'Defaults'],
-                ['', $url, json_encode($route)]
+                [$name, $url, json_encode($route)]
             ];
             $this->helper('table')->output($output);
+            $this->out();
         } catch (MissingRouteException $e) {
             $this->err("<warning>'$url' did not match any routes.</warning>");
+            $this->out();
             return false;
         }
     }
@@ -77,8 +86,10 @@ class RoutesShell extends Shell
             $args = $this->_splitArgs($this->args);
             $url = Router::url($args);
             $this->out("> $url");
+            $this->out();
         } catch (MissingRouteException $e) {
             $this->err("<warning>The provided parameters do not match any routes.</warning>");
+            $this->out();
             return false;
         }
     }
