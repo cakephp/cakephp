@@ -78,13 +78,6 @@ abstract class Cell
     public $response;
 
     /**
-     * The theme name that will be used to render.
-     *
-     * @var string
-     */
-    public $theme;
-
-    /**
      * The helpers this cell uses.
      *
      * This property is copied automatically when using the CellTrait
@@ -100,7 +93,7 @@ abstract class Cell
      * @see \Cake\View\View
      */
     protected $_validViewOptions = [
-        'viewVars', 'helpers', 'viewPath', 'plugin', 'theme'
+        'viewPath'
     ];
 
     /**
@@ -167,14 +160,15 @@ abstract class Cell
         if ($template === null) {
             $template = $this->template;
         }
-        $this->_view = null;
-        $this->View = $this->getView();
-        $this->_view->layout(false);
+        $builder = $this->viewBuilder();
+        $builder->layout(false);
+        $builder->template($template);
 
         $cache = [];
         if ($this->_cache) {
             $cache = $this->_cacheConfig($template);
         }
+        $this->View = $this->getView();
 
         $render = function () use ($template) {
             $className = substr(strrchr(get_class($this), "\\"), 1);

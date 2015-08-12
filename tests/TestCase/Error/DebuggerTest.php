@@ -308,6 +308,7 @@ object(Cake\View\View) {
 	[protected] _stack => []
 	[protected] _eventManager => object(Cake\Event\EventManager) {}
 	[protected] _eventClass => '\Cake\Event\Event'
+	[protected] _viewBuilder => null
 }
 TEXT;
 

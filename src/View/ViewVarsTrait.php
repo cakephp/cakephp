@@ -130,8 +130,10 @@ trait ViewVarsTrait
             }
         }
 
-        if (isset($this->name)) {
-            $builder->name($this->name);
+        foreach (['name', 'helpers', 'plugin'] as $prop) {
+            if (isset($this->{$prop})) {
+                $builder->{$prop}($this->{$prop});
+            }
         }
 
         return $builder->build(
