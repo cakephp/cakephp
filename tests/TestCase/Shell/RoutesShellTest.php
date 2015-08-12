@@ -161,7 +161,7 @@ class RoutesShellTest extends TestCase
         $this->io->expects($this->at(0))
             ->method('out')
             ->with($this->stringContains('> /articles/index'));
-        $this->io->expects($this->at(1))
+        $this->io->expects($this->at(2))
             ->method('out')
             ->with($this->stringContains('> /articles/view/2/3'));
 
