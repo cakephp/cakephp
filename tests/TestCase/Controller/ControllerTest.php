@@ -871,6 +871,9 @@ class ControllerTest extends TestCase
         $this->assertEquals('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewPath);
 
         $request = new Request('pages/home');
+        $request->addParams([
+            'prefix' => false
+        ]);
         $Controller = new \TestApp\Controller\PagesController($request, $response);
         $this->assertEquals('Pages', $Controller->viewPath);
     }

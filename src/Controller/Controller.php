@@ -375,7 +375,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         if (!$this->viewPath) {
             $viewPath = $this->name;
-            if (isset($request->params['prefix'])) {
+            if (!empty($request->params['prefix'])) {
                 $prefixes = array_map(
                     'Cake\Utility\Inflector::camelize',
                     explode('/', $request->params['prefix'])
