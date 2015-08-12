@@ -843,10 +843,11 @@ class Hash {
  * @param string $path A Set-compatible path to the array value
  * @param string $dir See directions above. Defaults to 'asc'.
  * @param string $type See direction types above. Defaults to 'regular'.
+ * @param string $ignoreCase Case insensitive sorting. Defaults to false.
  * @return array Sorted array of data
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::sort
  */
-	public static function sort(array $data, $path, $dir = 'asc', $type = 'regular') {
+	public static function sort(array $data, $path, $dir = 'asc', $type = 'regular', $ignoreCase = false) {
 		if (empty($data)) {
 			return array();
 		}
@@ -870,9 +871,16 @@ class Hash {
 
 		$dir = strtolower($dir);
 		$type = strtolower($type);
-		if ($type === 'natural' && version_compare(PHP_VERSION, '5.4.0', '<')) {
-			$type = 'regular';
+
+		// Natural and case insensitive sort is only supported from >= 5.4.0
+		if (version_compare(PHP_VERSION, '5.4.0', '<')) {
+			if ($type === 'natural' || $type === 'natural_ignore_case' || $type === 'regular_ignore_case') {
+				$type = 'regular';
+			} elseif ($type == 'string_ignore_case') {
+				$type = 'string';
+			}
 		}
+
 		if ($dir === 'asc') {
 			$dir = SORT_ASC;
 		} else {
@@ -887,7 +895,12 @@ class Hash {
 		} else {
 			$type = SORT_REGULAR;
 		}
-		array_multisort($values, $dir, $type, $keys, $dir, $type);
+
+		if ($ignoreCase) {
+			$values = array_map('strtolower', $values);
+		}
+		array_multisort($values, $dir, $type, $keys, $dir);
+
 		$sorted = array();
 		$keys = array_unique($keys);
 
