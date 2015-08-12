@@ -814,6 +814,20 @@ class EmailTest extends TestCase
     }
 
     /**
+     * Test that using misconfigured transports fails.
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Transport config "debug" is invalid, the required `className` option is missing
+     */
+    public function testTransportMissingClassName()
+    {
+        Email::dropTransport('debug');
+        Email::configTransport('debug', []);
+
+        $this->CakeEmail->transport('debug');
+    }
+
+    /**
      * Test configuring a transport.
      *
      * @return void

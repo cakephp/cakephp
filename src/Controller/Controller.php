@@ -29,6 +29,7 @@ use Cake\Routing\Router;
 use Cake\Utility\MergeVariablesTrait;
 use Cake\View\ViewVarsTrait;
 use LogicException;
+use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 use RuntimeException;
@@ -601,7 +602,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     protected function _viewPath()
     {
         $viewPath = $this->name;
-        if (isset($this->request->params['prefix'])) {
+        if (!empty($this->request->params['prefix'])) {
             $prefixes = array_map(
                 'Cake\Utility\Inflector::camelize',
                 explode('/', $this->request->params['prefix'])
@@ -681,15 +682,16 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function isAction($action)
     {
+        $baseClass = new ReflectionClass('Cake\Controller\Controller');
+        if ($baseClass->hasMethod($action)) {
+            return false;
+        }
         try {
             $method = new ReflectionMethod($this, $action);
         } catch (ReflectionException $e) {
             return false;
         }
         if (!$method->isPublic()) {
-            return false;
-        }
-        if ($method->getDeclaringClass()->name === 'Cake\Controller\Controller') {
             return false;
         }
         return true;

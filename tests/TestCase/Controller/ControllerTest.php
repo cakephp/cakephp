@@ -95,6 +95,16 @@ class TestController extends ControllerTestAppController
     public $modelClass = 'Comments';
 
     /**
+     * beforeFilter handler
+     *
+     * @param \Cake\Event\Event $event
+     * @retun void
+     */
+    public function beforeFilter(Event $event)
+    {
+    }
+
+    /**
      * index method
      *
      * @param mixed $testId
@@ -875,6 +885,9 @@ class ControllerTest extends TestCase
         $this->assertEquals('Admin' . DS . 'Super' . DS . 'Posts', $Controller->getView()->viewPath);
 
         $request = new Request('pages/home');
+        $request->addParams([
+            'prefix' => false
+        ]);
         $Controller = new \TestApp\Controller\PagesController($request, $response);
         $Controller->eventManager()->on('Controller.beforeRender', function (Event $e) {
             return $e->subject()->response;
