@@ -35,15 +35,6 @@ trait ViewVarsTrait
     public $viewClass = null;
 
     /**
-     * View instance.
-     *
-     * Won't be set until after ViewVarsTrait::createView() is called.
-     *
-     * @var \Cake\View\View
-     */
-    public $_view;
-
-    /**
      * Variables for the view
      *
      * @var array
@@ -68,30 +59,6 @@ trait ViewVarsTrait
             $this->_viewBuilder = new ViewBuilder();
         }
         return $this->_viewBuilder;
-    }
-
-    /**
-     * Get a view instance.
-     *
-     * @param string|null $viewClass View class name or null to use $viewClass
-     * @return \Cake\View\View
-     * @throws \Cake\View\Exception\MissingViewException If view class was not found.
-     * @deprecated 3.1.0 Use the viewBuilder() method to define view properties
-     *   before building a view with createView().
-     */
-    public function getView($viewClass = null)
-    {
-        if ($viewClass === null) {
-            $viewClass = $this->viewClass;
-        }
-        if ($viewClass) {
-            $this->_view = null;
-        }
-        if ($this->_view === null) {
-            $this->_view = $this->createView($viewClass);
-        }
-        $this->_view->viewVars = $this->viewVars;
-        return $this->_view;
     }
 
     /**
