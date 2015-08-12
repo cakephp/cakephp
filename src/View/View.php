@@ -554,6 +554,11 @@ class View implements EventDispatcherInterface
             return;
         }
 
+        if ($layout !== null) {
+            $defaultLayout = $this->layout;
+            $this->layout = $layout;
+        }
+
         if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
             $this->_currentType = static::TYPE_VIEW;
             $this->dispatchEvent('View.beforeRender', [$viewFileName]);
@@ -561,12 +566,13 @@ class View implements EventDispatcherInterface
             $this->dispatchEvent('View.afterRender', [$viewFileName]);
         }
 
-        if ($layout === null) {
-            $layout = $this->layout;
+        if ($this->layout && $this->autoLayout) {
+            $this->Blocks->set('content', $this->renderLayout('', $this->layout));
         }
-        if ($layout && $this->autoLayout) {
-            $this->Blocks->set('content', $this->renderLayout('', $layout));
+        if ($layout !== null) {
+            $this->layout = $defaultLayout;
         }
+
         $this->hasRendered = true;
         return $this->Blocks->get('content');
     }
