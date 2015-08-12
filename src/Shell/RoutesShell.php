@@ -54,9 +54,15 @@ class RoutesShell extends Shell
     {
         try {
             $route = Router::parse($url);
+            foreach (Router::routes() as $r) {
+                if ($r->match($route)) {
+                    $name = isset($r->options['_name']) ? $r->options['_name'] : $r->getName();
+                    break;
+                }
+            }
             $output = [
                 ['Route name', 'URI template', 'Defaults'],
-                ['', $url, json_encode($route)]
+                [$name, $url, json_encode($route)]
             ];
             $this->helper('table')->output($output);
         } catch (MissingRouteException $e) {

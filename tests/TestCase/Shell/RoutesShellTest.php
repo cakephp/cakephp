@@ -105,13 +105,35 @@ class RoutesShellTest extends TestCase
                 $this->logicalAnd(
                     $this->contains(['Route name', 'URI template', 'Defaults']),
                     $this->contains([
-                        '',
+                        'articles:_action',
                         '/articles/index',
                         '{"action":"index","pass":[],"controller":"Articles","plugin":null}'
                     ])
                 )
             );
         $this->shell->check('/articles/index');
+    }
+
+    /**
+     * Test checking an existing route with named route.
+     *
+     * @return void
+     */
+    public function testCheckWithNamedRoute()
+    {
+        $this->table->expects($this->once())
+            ->method('output')
+            ->with(
+                $this->logicalAnd(
+                    $this->contains(['Route name', 'URI template', 'Defaults']),
+                    $this->contains([
+                        'testName',
+                        '/tests/index',
+                        '{"action":"index","pass":[],"controller":"Tests","plugin":null}'
+                    ])
+                )
+            );
+        $this->shell->check('/tests/index');
     }
 
     /**
