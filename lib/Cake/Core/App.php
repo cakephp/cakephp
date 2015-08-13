@@ -889,6 +889,35 @@ class App {
 	}
 
 /**
+ * Increases the PHP "memory_limit" ini setting by the specified amount
+ * in kilobytes
+ *  
+ * @param string $additionalKb Number in kilobytes
+ * @return void
+ */
+	public static function increaseMemoryLimit($additionalKb) {
+		$limit = ini_get("memory_limit");
+		if (!is_string($limit) || !strlen($limit)) {
+			return;
+		}
+		$limit = trim($limit);
+		$units = strtoupper(substr($limit, -1));
+		$current = substr($limit, 0, strlen($limit) - 1);
+		if ($units === "M") {
+			$current = $current * 1024;
+			$units = "K";
+		}
+		if ($units === "G") {
+			$current = $current * 1024 * 1024;
+			$units = "K";
+		}
+
+		if ($units === "K") {
+			ini_set("memory_limit", ceil($current + $additionalKb) . "K");
+		}
+	}
+
+/**
  * Object destructor.
  *
  * Writes cache file if changes have been made to the $_map. Also, check if a fatal
@@ -897,6 +926,14 @@ class App {
  * @return void
  */
 	public static function shutdown() {
+		$megabytes = Configure::read('Error.extraFatalErrorMemory');
+		if ($megabytes === null) {
+			$megabytes = 4;
+		}
+		if ($megabytes !== false && $megabytes > 0) {
+			static::increaseMemoryLimit($megabytes * 1024);
+		}
+
 		if (static::$_cacheChange) {
 			Cache::write('file_map', array_filter(static::$_map), '_cake_core_');
 		}
