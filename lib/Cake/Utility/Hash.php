@@ -838,16 +838,18 @@ class Hash {
  * - `string` Compare values as strings
  * - `natural` Compare items as strings using "natural ordering" in a human friendly way.
  *   Will sort foo10 below foo2 as an example. Requires PHP 5.4 or greater or it will fallback to 'regular'
+ * To do case insensitive sorting, pass the type as an array as follows:
+ * ['type' => 'regular', 'ignoreCase' => true]
  *
  * @param array $data An array of data to sort
  * @param string $path A Set-compatible path to the array value
  * @param string $dir See directions above. Defaults to 'asc'.
- * @param string $type See direction types above. Defaults to 'regular'.
- * @param string $ignoreCase Case insensitive sorting. Defaults to false.
+ * @param mixed $type See direction types above. Defaults to 'regular'.
  * @return array Sorted array of data
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::sort
+ * @throws InvalidArgumentException
  */
-	public static function sort(array $data, $path, $dir = 'asc', $type = 'regular', $ignoreCase = false) {
+	public static function sort(array $data, $path, $dir = 'asc', $type = 'regular') {
 		if (empty($data)) {
 			return array();
 		}
@@ -870,15 +872,28 @@ class Hash {
 		$values = static::extract($result, '{n}.value');
 
 		$dir = strtolower($dir);
-		$type = strtolower($type);
+		$ignoreCase = false;
+		
+		// $type can be overloaded for case insensitive sort
+		if (is_array($type)) {
 
-		// Natural and case insensitive sort is only supported from >= 5.4.0
-		if (version_compare(PHP_VERSION, '5.4.0', '<')) {
-			if ($type === 'natural' || $type === 'natural_ignore_case' || $type === 'regular_ignore_case') {
-				$type = 'regular';
-			} elseif ($type == 'string_ignore_case') {
-				$type = 'string';
+			if (!empty($type['ignoreCase'])) {
+				$ignoreCase = $type['ignoreCase'];
 			}
+
+			if (!empty($type['ignoreCase'])) {
+				$type = $type['type'];
+			} else {
+				throw new InvalidArgumentException(__d('cake_dev',
+					'Invalid parameter $type. It requires type key to be specified.'
+				));
+			}
+		} else {
+			$type = strtolower($type);
+		}
+
+		if (version_compare(PHP_VERSION, '5.4.0', '<')) {
+			$type = 'regular';
 		}
 
 		if ($dir === 'asc') {
