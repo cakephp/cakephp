@@ -29,6 +29,7 @@ use Cake\Collection\Iterator\StoppableIterator;
 use Cake\Collection\Iterator\TreeIterator;
 use Cake\Collection\Iterator\UnfoldIterator;
 use Cake\Collection\Iterator\ZipIterator;
+use Countable;
 use Iterator;
 use LimitIterator;
 use RecursiveIteratorIterator;
