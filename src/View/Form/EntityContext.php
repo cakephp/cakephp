@@ -256,7 +256,7 @@ class EntityContext implements ContextInterface
      *
      * @param array|null $path Each one of the parts in a path for a field name
      *  or null to get the entity passed in contructor context.
-     * @return \Cake\DataSource\EntityInterface|\Traversable|array|bool
+     * @return \Cake\Datasource\EntityInterface|\Traversable|array|bool
      * @throws \RuntimeException When properties cannot be read.
      */
     public function entity($path = null)
