@@ -88,11 +88,12 @@ trait ViewVarsTrait
         $deprecatedOptions = ['layout', 'view', 'theme', 'autoLayout', 'viewPath', 'layoutPath'];
         foreach ($deprecatedOptions as $option) {
             if (property_exists($this, $option)) {
-                $builder->{$option}($this->{$option});
+                $method = $option === 'viewPath' ? 'templatePath' : $option;
+                $builder->{$method}($this->{$option});
                 trigger_error(sprintf(
                     'Property $%s is deprecated. Use $this->viewBuilder()->%s() instead in beforeRender().',
                     $option,
-                    $option
+                    $method
                 ), E_USER_DEPRECATED);
             }
         }
