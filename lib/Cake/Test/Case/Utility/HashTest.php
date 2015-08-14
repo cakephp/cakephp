@@ -1476,7 +1476,7 @@ class HashTest extends CakeTestCase {
  */
 	public function testSortInvalidType() {
 		$toSort = array('a', 'b', 'c');
-		Hash::sort($toSort, '{n}', 'asc', ['regular'], true);
+		Hash::sort($toSort, '{n}', 'asc', array('regular'), true);
 	}
 
 /**
