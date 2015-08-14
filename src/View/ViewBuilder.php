@@ -35,77 +35,77 @@ class ViewBuilder
      *
      * @var string
      */
-    protected $viewPath;
+    protected $_viewPath;
 
     /**
      * The template file to render.
      *
      * @var string
      */
-    protected $template;
+    protected $_template;
 
     /**
      * The plugin name to use.
      *
      * @var string
      */
-    protected $plugin;
+    protected $_plugin;
 
     /**
      * The theme name to use.
      *
      * @var string
      */
-    protected $theme;
+    protected $_theme;
 
     /**
      * The layout name to render.
      *
      * @var string
      */
-    protected $layout;
+    protected $_layout;
 
     /**
      * Whether or not autoLayout should be enabled.
      *
      * @var bool
      */
-    protected $autoLayout;
+    protected $_autoLayout;
 
     /**
      * The layout path to build the view with.
      *
      * @var string
      */
-    protected $layoutPath;
+    protected $_layoutPath;
 
     /**
      * The view variables to use
      *
      * @var string
      */
-    protected $name;
+    protected $_name;
 
     /**
      * The view variables to use
      *
      * @var string
      */
-    protected $className;
+    protected $_className;
 
     /**
      * The view variables to use
      *
      * @var array
      */
-    protected $options = [];
+    protected $_options = [];
 
     /**
      * The helpers to use
      *
      * @var array
      */
-    protected $helpers = [];
+    protected $_helpers = [];
 
     /**
      * Get/set path for view files.
@@ -116,10 +116,10 @@ class ViewBuilder
     public function viewPath($path = null)
     {
         if ($path === null) {
-            return $this->viewPath;
+            return $this->_viewPath;
         }
 
-        $this->viewPath = $path;
+        $this->_viewPath = $path;
         return $this;
     }
 
@@ -132,10 +132,10 @@ class ViewBuilder
     public function layoutPath($path = null)
     {
         if ($path === null) {
-            return $this->layoutPath;
+            return $this->_layoutPath;
         }
 
-        $this->layoutPath = $path;
+        $this->_layoutPath = $path;
         return $this;
     }
 
@@ -150,10 +150,10 @@ class ViewBuilder
     public function autoLayout($autoLayout = null)
     {
         if ($autoLayout === null) {
-            return $this->autoLayout;
+            return $this->_autoLayout;
         }
 
-        $this->autoLayout = (bool)$autoLayout;
+        $this->_autoLayout = (bool)$autoLayout;
         return $this;
     }
 
@@ -166,10 +166,10 @@ class ViewBuilder
     public function plugin($name = null)
     {
         if ($name === null) {
-            return $this->plugin;
+            return $this->_plugin;
         }
 
-        $this->plugin = $name;
+        $this->_plugin = $name;
         return $this;
     }
 
@@ -183,12 +183,12 @@ class ViewBuilder
     public function helpers(array $helpers = null, $merge = true)
     {
         if ($helpers === null) {
-            return $this->helpers;
+            return $this->_helpers;
         }
         if ($merge) {
-            $helpers = array_merge($this->helpers, $helpers);
+            $helpers = array_merge($this->_helpers, $helpers);
         }
-        $this->helpers = $helpers;
+        $this->_helpers = $helpers;
         return $this;
     }
 
@@ -201,10 +201,10 @@ class ViewBuilder
     public function theme($theme = null)
     {
         if ($theme === null) {
-            return $this->theme;
+            return $this->_theme;
         }
 
-        $this->theme = $theme;
+        $this->_theme = $theme;
         return $this;
     }
 
@@ -218,10 +218,10 @@ class ViewBuilder
     public function template($name = null)
     {
         if ($name === null) {
-            return $this->template;
+            return $this->_template;
         }
 
-        $this->template = $name;
+        $this->_template = $name;
         return $this;
     }
 
@@ -236,10 +236,10 @@ class ViewBuilder
     public function layout($name = null)
     {
         if ($name === null) {
-            return $this->layout;
+            return $this->_layout;
         }
 
-        $this->layout = $name;
+        $this->_layout = $name;
         return $this;
     }
 
@@ -253,12 +253,12 @@ class ViewBuilder
     public function options(array $options = null, $merge = true)
     {
         if ($options === null) {
-            return $this->options;
+            return $this->_options;
         }
         if ($merge) {
-            $options = array_merge($this->options, $options);
+            $options = array_merge($this->_options, $options);
         }
-        $this->options = $options;
+        $this->_options = $options;
         return $this;
     }
 
@@ -271,9 +271,9 @@ class ViewBuilder
     public function name($name = null)
     {
         if ($name === null) {
-            return $this->name;
+            return $this->_name;
         }
-        $this->name = $name;
+        $this->_name = $name;
         return $this;
     }
 
@@ -288,9 +288,9 @@ class ViewBuilder
     public function className($name = null)
     {
         if ($name === null) {
-            return $this->className;
+            return $this->_className;
         }
-        $this->className = $name;
+        $this->_className = $name;
         return $this;
     }
 
@@ -306,27 +306,27 @@ class ViewBuilder
      */
     public function build($vars = [], Request $request = null, Response $response = null, EventManager $events = null)
     {
-        if ($this->className === 'View') {
-            $className = App::className($this->className, 'View');
+        if ($this->_className === 'View') {
+            $className = App::className($this->_className, 'View');
         } else {
-            $className = App::className($this->className, 'View', 'View');
+            $className = App::className($this->_className, 'View', 'View');
         }
         if (!$className) {
-            throw new Exception\MissingViewException([$this->className]);
+            throw new Exception\MissingViewException([$this->_className]);
         }
         $data = [
-            'name' => $this->name,
-            'viewPath' => $this->viewPath,
-            'view' => $this->template,
-            'plugin' => $this->plugin,
-            'theme' => $this->theme,
-            'layout' => $this->layout,
-            'autoLayout' => $this->autoLayout,
-            'layoutPath' => $this->layoutPath,
-            'helpers' => $this->helpers,
+            'name' => $this->_name,
+            'viewPath' => $this->_viewPath,
+            'view' => $this->_template,
+            'plugin' => $this->_plugin,
+            'theme' => $this->_theme,
+            'layout' => $this->_layout,
+            'autoLayout' => $this->_autoLayout,
+            'layoutPath' => $this->_layoutPath,
+            'helpers' => $this->_helpers,
             'viewVars' => $vars,
         ];
-        $data += $this->options;
+        $data += $this->_options;
         return new $className($request, $response, $events, $data);
     }
 }
