@@ -18,8 +18,8 @@ use Cake\Core\App;
 use Cake\Event\EventManager;
 use Cake\Network\Request;
 use Cake\Network\Response;
-use Cake\View\View;
 use Cake\View\Exception\MissingViewException;
+use Cake\View\View;
 
 
 /**
@@ -297,6 +297,9 @@ class ViewBuilder
     /**
      * Using the data in the builder, create a view instance.
      *
+     * If className() is null, App\View\AppView will be used.
+     * If that class does not exist, then Cake\View\View will be used.
+     *
      * @param array $vars The view variables/context to use.
      * @param \Cake\Network\Request $request The request to use.
      * @param \Cake\Network\Response $response The response to use.
@@ -306,14 +309,19 @@ class ViewBuilder
      */
     public function build($vars = [], Request $request = null, Response $response = null, EventManager $events = null)
     {
-        if ($this->_className === 'View') {
-            $className = App::className($this->_className, 'View');
+        $className = $this->_className;
+        if ($className === null) {
+            $className = App::className('App', 'View', 'View') ?: 'Cake\View\View';
+        }
+        if ($className === 'View') {
+            $className = App::className($className, 'View');
         } else {
-            $className = App::className($this->_className, 'View', 'View');
+            $className = App::className($className, 'View', 'View');
         }
         if (!$className) {
             throw new MissingViewException([$this->_className]);
         }
+
         $data = [
             'name' => $this->_name,
             'viewPath' => $this->_templatePath,

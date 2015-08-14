@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\View;
 
+use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Cake\View\ViewBuilder;
 
@@ -141,6 +142,32 @@ class ViewBuilderTest extends TestCase
         $this->assertSame(['one' => 'value'], $view->viewVars);
         $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $view->Html);
         $this->assertInstanceOf('Cake\View\Helper\FormHelper', $view->Form);
+    }
+
+    /**
+     * Test that the default is AppView.
+     *
+     * @return void
+     */
+    public function testBuildAppViewMissing()
+    {
+        Configure::write('App.namespace', 'Nope');
+        $builder = new ViewBuilder();
+        $view = $builder->build();
+        $this->assertInstanceOf('Cake\View\View', $view);
+    }
+
+    /**
+     * Test that the default is AppView.
+     *
+     * @return void
+     */
+    public function testBuildAppViewPresent()
+    {
+        Configure::write('App.namespace', 'TestApp');
+        $builder = new ViewBuilder();
+        $view = $builder->build();
+        $this->assertInstanceOf('TestApp\View\AppView', $view);
     }
 
     /**
