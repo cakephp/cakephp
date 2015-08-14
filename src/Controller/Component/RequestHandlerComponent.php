@@ -559,12 +559,12 @@ class RequestHandlerComponent extends Component
             $builder->className($viewClass);
         } else {
             if (empty($this->_renderType)) {
-                $builder->viewPath($builder->viewPath() . DS . $type);
+                $builder->templatePath($builder->templatePath() . DS . $type);
             } else {
-                $builder->viewPath(preg_replace(
+                $builder->templatePath(preg_replace(
                     "/([\/\\\\]{$this->_renderType})$/",
                     DS . $type,
-                    $builder->viewPath()
+                    $builder->templatePath()
                 ));
             }
 

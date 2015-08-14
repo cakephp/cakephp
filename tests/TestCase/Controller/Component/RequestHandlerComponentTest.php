@@ -447,7 +447,7 @@ class RequestHandlerComponentTest extends TestCase
             return $this->Controller->response;
         });
         $this->Controller->render();
-        $this->assertEquals('RequestHandlerTest' . DS . 'csv', $this->Controller->viewBuilder()->viewPath());
+        $this->assertEquals('RequestHandlerTest' . DS . 'csv', $this->Controller->viewBuilder()->templatePath());
         $this->assertEquals('csv', $this->Controller->viewBuilder()->layoutPath());
     }
 
@@ -610,9 +610,9 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->renderAs($this->Controller, 'rss');
         $this->assertTrue(in_array('Rss', $this->Controller->helpers));
 
-        $this->Controller->viewBuilder()->viewPath('request_handler_test\\rss');
+        $this->Controller->viewBuilder()->templatePath('request_handler_test\\rss');
         $this->RequestHandler->renderAs($this->Controller, 'js');
-        $this->assertEquals('request_handler_test' . DS . 'js', $this->Controller->viewBuilder()->viewPath());
+        $this->assertEquals('request_handler_test' . DS . 'js', $this->Controller->viewBuilder()->templatePath());
     }
 
     /**
@@ -704,11 +704,11 @@ class RequestHandlerComponentTest extends TestCase
         $this->Controller->render();
 
         $this->RequestHandler->renderAs($this->Controller, 'print');
-        $this->assertEquals('RequestHandlerTest' . DS . 'print', $this->Controller->viewBuilder()->viewPath());
+        $this->assertEquals('RequestHandlerTest' . DS . 'print', $this->Controller->viewBuilder()->templatePath());
         $this->assertEquals('print', $this->Controller->viewBuilder()->layoutPath());
 
         $this->RequestHandler->renderAs($this->Controller, 'js');
-        $this->assertEquals('RequestHandlerTest' . DS . 'js', $this->Controller->viewBuilder()->viewPath());
+        $this->assertEquals('RequestHandlerTest' . DS . 'js', $this->Controller->viewBuilder()->templatePath());
         $this->assertEquals('js', $this->Controller->viewBuilder()->layoutPath());
     }
 

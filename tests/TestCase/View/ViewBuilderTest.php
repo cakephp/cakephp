@@ -31,7 +31,7 @@ class ViewBuilderTest extends TestCase
     {
         return [
             ['layoutPath', 'Admin/'],
-            ['viewPath', 'Admin/'],
+            ['templatePath', 'Admin/'],
             ['plugin', 'TestPlugin'],
             ['layout', 'admin'],
             ['theme', 'TestPlugin'],
@@ -117,7 +117,7 @@ class ViewBuilderTest extends TestCase
             ->className('Ajax')
             ->template('edit')
             ->layout('default')
-            ->viewPath('Articles/')
+            ->templatePath('Articles/')
             ->helpers(['Form', 'Html'])
             ->layoutPath('Admin/')
             ->theme('TestTheme')

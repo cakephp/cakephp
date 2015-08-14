@@ -727,7 +727,7 @@ class ExceptionRendererTest extends TestCase
 
         $ExceptionRenderer->render();
         $this->assertEquals('', $ExceptionRenderer->controller->viewBuilder()->layoutPath());
-        $this->assertEquals('Error', $ExceptionRenderer->controller->viewBuilder()->viewPath());
+        $this->assertEquals('Error', $ExceptionRenderer->controller->viewBuilder()->templatePath());
     }
 
     /**

@@ -397,7 +397,7 @@ class ControllerTest extends TestCase
         $request->params['action'] = 'index';
 
         $Controller = new Controller($request, new Response());
-        $Controller->viewBuilder()->viewPath('Posts');
+        $Controller->viewBuilder()->templatePath('Posts');
 
         $result = $Controller->render('index');
         $this->assertRegExp('/posts index/', (string)$result);
@@ -869,7 +869,7 @@ class ControllerTest extends TestCase
             return $e->subject()->response;
         });
         $Controller->render();
-        $this->assertEquals('Admin' . DS . 'Posts', $Controller->viewBuilder()->viewPath());
+        $this->assertEquals('Admin' . DS . 'Posts', $Controller->viewBuilder()->templatePath());
 
         $request->addParams([
             'prefix' => 'admin/super'
@@ -880,7 +880,7 @@ class ControllerTest extends TestCase
             return $e->subject()->response;
         });
         $Controller->render();
-        $this->assertEquals('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewBuilder()->viewPath());
+        $this->assertEquals('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewBuilder()->templatePath());
 
         $request = new Request('pages/home');
         $request->addParams([
@@ -891,7 +891,7 @@ class ControllerTest extends TestCase
             return $e->subject()->response;
         });
         $Controller->render();
-        $this->assertEquals('Pages', $Controller->viewBuilder()->viewPath());
+        $this->assertEquals('Pages', $Controller->viewBuilder()->templatePath());
     }
 
     /**

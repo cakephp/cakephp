@@ -334,7 +334,7 @@ class ExceptionRenderer
         $builder = $this->controller->viewBuilder();
         $builder->helpers($helpers, false)
             ->layoutPath('')
-            ->viewPath('Error');
+            ->templatePath('Error');
         $view = $this->controller->createView();
 
         $this->controller->response->body($view->render($template, 'error'));

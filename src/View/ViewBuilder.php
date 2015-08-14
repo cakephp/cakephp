@@ -31,11 +31,11 @@ use Cake\View\Exception\MissingViewException;
 class ViewBuilder
 {
     /**
-     * The subdirectory to the view.
+     * The subdirectory to the template.
      *
      * @var string
      */
-    protected $_viewPath;
+    protected $_templatePath;
 
     /**
      * The template file to render.
@@ -108,18 +108,18 @@ class ViewBuilder
     protected $_helpers = [];
 
     /**
-     * Get/set path for view files.
+     * Get/set path for template files.
      *
      * @param string|null $path Path for view files. If null returns current path.
      * @return string|$this
      */
-    public function viewPath($path = null)
+    public function templatePath($path = null)
     {
         if ($path === null) {
-            return $this->_viewPath;
+            return $this->_templatePath;
         }
 
-        $this->_viewPath = $path;
+        $this->_templatePath = $path;
         return $this;
     }
 
@@ -316,7 +316,7 @@ class ViewBuilder
         }
         $data = [
             'name' => $this->_name,
-            'viewPath' => $this->_viewPath,
+            'viewPath' => $this->_templatePath,
             'view' => $this->_template,
             'plugin' => $this->_plugin,
             'theme' => $this->_theme,

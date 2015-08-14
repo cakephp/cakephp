@@ -40,7 +40,7 @@ class PagesControllerTest extends TestCase
     {
         $Pages = new PagesController(new Request(), new Response());
 
-        $Pages->viewBuilder()->viewPath('Posts');
+        $Pages->viewBuilder()->templatePath('Posts');
         $Pages->display('index');
         $this->assertRegExp('/posts index/', $Pages->response->body());
         $this->assertEquals('index', $Pages->viewVars['page']);
