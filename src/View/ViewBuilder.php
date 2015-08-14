@@ -127,7 +127,7 @@ class ViewBuilder
      * Get/set path for layout files.
      *
      * @param string|null $path Path for layout files. If null returns current path.
-     * @return string|void
+     * @return string|$this
      */
     public function layoutPath($path = null)
     {
@@ -312,7 +312,7 @@ class ViewBuilder
             $className = App::className($this->_className, 'View', 'View');
         }
         if (!$className) {
-            throw new Exception\MissingViewException([$this->_className]);
+            throw new MissingViewException([$this->_className]);
         }
         $data = [
             'name' => $this->_name,
