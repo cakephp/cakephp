@@ -21,7 +21,6 @@ use Cake\Network\Response;
 use Cake\View\Exception\MissingViewException;
 use Cake\View\View;
 
-
 /**
  * Provides an API for iteratively building a view up.
  *
