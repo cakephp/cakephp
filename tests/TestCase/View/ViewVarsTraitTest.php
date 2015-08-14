@@ -161,7 +161,7 @@ class ViewVarsTraitTest extends TestCase
     }
 
     /**
-     * test that getView() updates viewVars of View instance on each call.
+     * test that createView() updates viewVars of View instance on each call.
      *
      * @return void
      */
@@ -169,23 +169,11 @@ class ViewVarsTraitTest extends TestCase
     {
         $expected = ['one' => 'one'];
         $this->subject->set($expected);
-        $this->assertEquals($expected, $this->subject->getView()->viewVars);
+        $this->assertEquals($expected, $this->subject->createView()->viewVars);
 
         $expected = ['one' => 'one', 'two' => 'two'];
         $this->subject->set($expected);
-        $this->assertEquals($expected, $this->subject->getView()->viewVars);
-    }
-
-    /**
-     * test getView() throws exception if view class cannot be found
-     *
-     * @expectedException \Cake\View\Exception\MissingViewException
-     * @expectedExceptionMessage View class "Foo" is missing.
-     * @return void
-     */
-    public function testGetViewException()
-    {
-        $this->subject->getView('Foo');
+        $this->assertEquals($expected, $this->subject->createView()->viewVars);
     }
 
     /**
@@ -197,6 +185,6 @@ class ViewVarsTraitTest extends TestCase
      */
     public function testCreateViewException()
     {
-        $this->subject->getView('Foo');
+        $this->subject->createView('Foo');
     }
 }

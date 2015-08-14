@@ -397,17 +397,15 @@ class ControllerTest extends TestCase
         $request->params['action'] = 'index';
 
         $Controller = new Controller($request, new Response());
-        $Controller->getView()->viewPath = 'Posts';
+        $Controller->viewBuilder()->templatePath('Posts');
 
         $result = $Controller->render('index');
         $this->assertRegExp('/posts index/', (string)$result);
 
-        $Controller->getView()->view = 'index';
-        $Controller->getView()->hasRendered = false;
+        $Controller->viewBuilder()->template('index');
         $result = $Controller->render();
         $this->assertRegExp('/posts index/', (string)$result);
 
-        $Controller->getView()->hasRendered = false;
         $result = $Controller->render('/Element/test_element');
         $this->assertRegExp('/this is the test element/', (string)$result);
     }
@@ -421,10 +419,10 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(new Request, new Response());
 
-        $Controller->eventManager()->attach(function ($event) {
+        $Controller->eventManager()->on('Controller.beforeRender', function ($event) {
             $controller = $event->subject();
             $controller->viewClass = 'Json';
-        }, 'Controller.beforeRender');
+        });
 
         $Controller->set([
             'test' => 'value',
@@ -871,7 +869,7 @@ class ControllerTest extends TestCase
             return $e->subject()->response;
         });
         $Controller->render();
-        $this->assertEquals('Admin' . DS . 'Posts', $Controller->getView()->viewPath);
+        $this->assertEquals('Admin' . DS . 'Posts', $Controller->viewBuilder()->templatePath());
 
         $request->addParams([
             'prefix' => 'admin/super'
@@ -882,7 +880,7 @@ class ControllerTest extends TestCase
             return $e->subject()->response;
         });
         $Controller->render();
-        $this->assertEquals('Admin' . DS . 'Super' . DS . 'Posts', $Controller->getView()->viewPath);
+        $this->assertEquals('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewBuilder()->templatePath());
 
         $request = new Request('pages/home');
         $request->addParams([
@@ -893,7 +891,7 @@ class ControllerTest extends TestCase
             return $e->subject()->response;
         });
         $Controller->render();
-        $this->assertEquals('Pages', $Controller->getView()->viewPath);
+        $this->assertEquals('Pages', $Controller->viewBuilder()->templatePath());
     }
 
     /**
@@ -979,7 +977,7 @@ class ControllerTest extends TestCase
         $theme = $controller->theme;
 
         // @codingStandardsIgnoreStart
-        $this->assertEquals($theme, @$controller->getView()->theme);
+        $this->assertEquals($theme, @$controller->createView()->theme);
         // @codingStandardsIgnoreEnd
     }
 

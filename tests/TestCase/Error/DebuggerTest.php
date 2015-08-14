@@ -279,7 +279,6 @@ object(Cake\View\View) {
 	response => object(Cake\Network\Response) {}
 	elementCache => 'default'
 	viewClass => null
-	_view => null
 	viewVars => []
 	Html => object(Cake\View\Helper\HtmlHelper) {}
 	Form => object(Cake\View\Helper\FormHelper) {}
@@ -308,6 +307,7 @@ object(Cake\View\View) {
 	[protected] _stack => []
 	[protected] _eventManager => object(Cake\Event\EventManager) {}
 	[protected] _eventClass => '\Cake\Event\Event'
+	[protected] _viewBuilder => null
 }
 TEXT;
 

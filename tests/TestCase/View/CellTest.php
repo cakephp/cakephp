@@ -168,9 +168,9 @@ class CellTest extends TestCase
         $this->View->theme = 'TestTheme';
         $cell = $this->View->cell('Articles', ['msg' => 'hello world!']);
 
-        $this->assertEquals($this->View->theme, $cell->theme);
+        $this->assertEquals($this->View->theme, $cell->viewBuilder()->theme());
         $this->assertContains('Themed cell content.', $cell->render());
-        $this->assertEquals($cell->View->theme, $cell->theme);
+        $this->assertEquals($cell->View->theme, $cell->viewBuilder()->theme());
     }
 
     /**

@@ -42,7 +42,7 @@ abstract class Cell
      * Cell::__toString() is called.
      *
      * @var \Cake\View\View
-     * @deprecated 3.1.0 Use getView() instead.
+     * @deprecated 3.1.0 Use createView() instead.
      */
     public $View;
 
@@ -78,13 +78,6 @@ abstract class Cell
     public $response;
 
     /**
-     * The theme name that will be used to render.
-     *
-     * @var string
-     */
-    public $theme;
-
-    /**
      * The helpers this cell uses.
      *
      * This property is copied automatically when using the CellTrait
@@ -100,7 +93,7 @@ abstract class Cell
      * @see \Cake\View\View
      */
     protected $_validViewOptions = [
-        'viewVars', 'helpers', 'viewPath', 'plugin', 'theme'
+        'viewPath'
     ];
 
     /**
@@ -167,29 +160,30 @@ abstract class Cell
         if ($template === null) {
             $template = $this->template;
         }
-        $this->_view = null;
-        $this->View = $this->getView();
-        $this->_view->layout(false);
+        $builder = $this->viewBuilder();
+        $builder->layout(false);
+        $builder->template($template);
 
         $cache = [];
         if ($this->_cache) {
             $cache = $this->_cacheConfig($template);
         }
+        $this->View = $this->createView();
 
         $render = function () use ($template) {
             $className = substr(strrchr(get_class($this), "\\"), 1);
             $name = substr($className, 0, -4);
-            $this->_view->viewPath('Cell' . DS . $name);
+            $this->View->viewPath('Cell' . DS . $name);
 
             try {
-                return $this->_view->render($template);
+                return $this->View->render($template);
             } catch (MissingTemplateException $e) {
                 throw new MissingCellViewException(['file' => $template, 'name' => $name]);
             }
         };
 
         if ($cache) {
-            return $this->_view->cache(function () use ($render) {
+            return $this->View->cache(function () use ($render) {
                 echo $render();
             }, $cache);
         }

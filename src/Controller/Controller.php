@@ -187,7 +187,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Controller::render() is called.
      *
      * @var \Cake\View\View
-     * @deprecated 3.1.0 Use getView() instead.
+     * @deprecated 3.1.0 Use viewBuilder() instead.
      */
     public $View;
 
@@ -198,7 +198,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @see \Cake\View\View
      */
     protected $_validViewOptions = [
-        'viewVars', 'helpers', 'name', 'plugin', 'passedArgs'
+        'passedArgs'
     ];
 
     /**
@@ -212,6 +212,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Holds all passed params.
      *
      * @var mixed
+     * @deprecated 3.1.0 Use `$this->request->params['pass']` instead.
      */
     public $passedArgs = [];
 
@@ -317,11 +318,12 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function __get($name)
     {
         if (in_array($name, ['layout', 'view', 'theme', 'autoLayout', 'viewPath', 'layoutPath'], true)) {
+            $method = $name == 'viewPath' ? 'templatePath' : $name;
             trigger_error(
-                sprintf('Controller::$%s is deprecated. Use $this->getView()->%s() instead.', $name, $name),
+                sprintf('Controller::$%s is deprecated. Use $this->viewBuilder()->%s() instead.', $name, $method),
                 E_USER_DEPRECATED
             );
-            return $this->getView()->{$name}();
+            return $this->viewBuilder()->{$name}();
         }
 
         list($plugin, $class) = pluginSplit($this->modelClass, true);
@@ -342,10 +344,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     {
         if (in_array($name, ['layout', 'view', 'theme', 'autoLayout', 'viewPath', 'layoutPath'], true)) {
             trigger_error(
-                sprintf('Controller::$%s is deprecated. Use $this->getView()->%s() instead.', $name, $name),
+                sprintf('Controller::$%s is deprecated. Use $this->viewBuilder()->%s() instead.', $name, $name),
                 E_USER_DEPRECATED
             );
-            $this->getView()->{$name}($value);
+            $this->viewBuilder()->{$name}($value);
             return;
         }
 
@@ -553,51 +555,41 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function render($view = null, $layout = null)
     {
-        $this->View = $this->getView();
-        if (!$this->_view->viewPath()) {
-            $this->_viewPath();
+        $builder = $this->viewBuilder();
+        if (!$builder->templatePath()) {
+            $builder->templatePath($this->_viewPath());
         }
 
         if (!empty($this->request->params['bare'])) {
-            $this->_view->autoLayout(false);
+            $builder->autoLayout(false);
         }
+        $builder->className($this->viewClass);
 
-        $viewClass = $this->viewClass;
+        $this->autoRender = false;
+
         $event = $this->dispatchEvent('Controller.beforeRender');
         if ($event->result instanceof Response) {
-            $this->autoRender = false;
             return $event->result;
         }
         if ($event->isStopped()) {
-            $this->autoRender = false;
             return $this->response;
         }
 
-        // Re-fetch View class to pass view variables set in beforeRender callbacks
-        $this->View = $this->getView();
-
-        if ($viewClass !== $this->viewClass) {
-            $this->View = $this->getView($this->viewClass);
-            if (!$this->_view->viewPath()) {
-                $this->_viewPath();
-            }
-        }
-
-        $this->autoRender = false;
-        if ($this->_view->view() === null &&
+        if ($builder->template() === null &&
             isset($this->request->params['action'])
         ) {
-            $this->_view->view($this->request->params['action']);
+            $builder->template($this->request->params['action']);
         }
 
+        $this->View = $this->_view = $this->createView();
         $this->response->body($this->_view->render($view, $layout));
         return $this->response;
     }
 
     /**
-     * Set View::$viewPath property based on controller name and request prefix.
+     * Get the viewPath based on controller name and request prefix.
      *
-     * @return void
+     * @return string
      */
     protected function _viewPath()
     {
@@ -609,7 +601,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             );
             $viewPath = implode(DS, $prefixes) . DS . $viewPath;
         }
-        $this->_view->viewPath($viewPath);
+        return $viewPath;
     }
 
     /**

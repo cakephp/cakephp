@@ -546,6 +546,7 @@ class RequestHandlerComponent extends Component
         }
         $options += $defaults;
 
+        $builder = $controller->viewBuilder();
         if (array_key_exists($type, $viewClassMap)) {
             $view = $viewClassMap[$type];
         } else {
@@ -555,21 +556,20 @@ class RequestHandlerComponent extends Component
 
         if ($viewClass) {
             $controller->viewClass = $viewClass;
+            $builder->className($viewClass);
         } else {
-            $view = $controller->getView();
-
             if (empty($this->_renderType)) {
-                $view->viewPath($view->viewPath() . DS . $type);
+                $builder->templatePath($builder->templatePath() . DS . $type);
             } else {
-                $view->viewPath(preg_replace(
+                $builder->templatePath(preg_replace(
                     "/([\/\\\\]{$this->_renderType})$/",
                     DS . $type,
-                    $view->viewPath()
+                    $builder->templatePath()
                 ));
             }
 
             $this->_renderType = $type;
-            $view->layoutPath($type);
+            $builder->layoutPath($type);
         }
 
         $response = $this->response;

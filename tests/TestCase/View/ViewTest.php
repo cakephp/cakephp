@@ -1319,7 +1319,7 @@ class ViewTest extends TestCase
         $Controller = new ViewPostsController();
         $Controller->helpers = ['Html'];
         $Controller->set('html', 'I am some test html');
-        $View = $Controller->getView();
+        $View = $Controller->createView();
         $View->viewPath = $Controller->name;
         $result = $View->render('helper_overwrite', false);
 
@@ -1334,7 +1334,7 @@ class ViewTest extends TestCase
      */
     public function testViewFileName()
     {
-        $View = $this->PostsController->getView('Cake\Test\TestCase\View\TestView');
+        $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
         $View->viewPath = 'Posts';
 
         $result = $View->getViewFileName('index');
