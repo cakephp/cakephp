@@ -589,7 +589,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Get the viewPath based on controller name and request prefix.
      *
-     * @return void
+     * @return string
      */
     protected function _viewPath()
     {
