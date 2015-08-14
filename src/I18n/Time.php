@@ -45,6 +45,22 @@ class Time extends Carbon implements JsonSerializable
     protected static $_toStringFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::SHORT];
 
     /**
+     * The format to use when when converting this object to json
+     *
+     * The format should be either the formatting constants from IntlDateFormatter as
+     * described in (http://www.php.net/manual/en/class.intldateformatter.php) or a pattern
+     * as specified in (http://www.icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details)
+     *
+     * It is possible to provide an array of 2 constants. In this case, the first position
+     * will be used for formatting the date part of the object and the second position
+     * will be used to format the time part.
+     *
+     * @var mixed
+     * @see \Cake\I18n\Time::i18nFormat()
+     */
+    protected static $_jsonEncodeFormat = "yyyy-MM-dd'T'HH:mm:ssxx";
+
+    /**
      * The format to use when formatting a time using `Cake\I18n\Time::nice()`
      *
      * The format should be either the formatting constants from IntlDateFormatter as
@@ -681,6 +697,17 @@ class Time extends Carbon implements JsonSerializable
     }
 
     /**
+     * Sets the default format used when converting this object to json
+     *
+     * @param string|array|int $format Format.
+     * @return void
+     */
+    public static function setJsonEncodeFormat($format)
+    {
+        static::$_jsonEncodeFormat = $format;
+    }
+
+    /**
      * Returns a new Time object after parsing the provided time string based on
      * the passed or configured date time format. This method is locale dependent,
      * Any string that is passed to this function will be interpreted as a locale
@@ -799,7 +826,7 @@ class Time extends Carbon implements JsonSerializable
      */
     public function jsonSerialize()
     {
-        return $this->format(static::ISO8601);
+        return $this->i18nFormat(static::$_jsonEncodeFormat);
     }
 
     /**
