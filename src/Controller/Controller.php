@@ -212,7 +212,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Holds all passed params.
      *
      * @var mixed
-     * @TODO Deprecate and replace with __get + warning
+     * @deprecated 3.1.0 Use `$this->request->params['pass']` instead.
      */
     public $passedArgs = [];
 
