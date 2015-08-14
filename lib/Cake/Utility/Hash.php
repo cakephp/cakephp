@@ -892,7 +892,7 @@ class Hash {
 			$type = strtolower($type);
 		}
 
-		if (version_compare(PHP_VERSION, '5.4.0', '<')) {
+		if ($type === 'natural' && version_compare(PHP_VERSION, '5.4.0', '<')) {
 			$type = 'regular';
 		}
 
