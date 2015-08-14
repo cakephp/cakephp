@@ -839,7 +839,7 @@ class Hash {
  * - `natural` Compare items as strings using "natural ordering" in a human friendly way.
  *   Will sort foo10 below foo2 as an example. Requires PHP 5.4 or greater or it will fallback to 'regular'
  * To do case insensitive sorting, pass the type as an array as follows:
- * ['type' => 'regular', 'ignoreCase' => true]
+ *   array('type' => 'regular', 'ignoreCase' => true)
  *
  * @param array $data An array of data to sort
  * @param string $path A Set-compatible path to the array value

@@ -1317,7 +1317,7 @@ class HashTest extends CakeTestCase {
 			array('Item' => array('image' => 'Img10.jpg')),
 			array('Item' => array('image' => 'img2.jpg')),
 		);
-		$result = Hash::sort($items, '{n}.Item.image', 'desc', ['type' => 'natural', 'ignoreCase' => true]);
+		$result = Hash::sort($items, '{n}.Item.image', 'desc', array('type' => 'natural', 'ignoreCase' => true));
 		$expected = array(
 			array('Item' => array('image' => 'img99.jpg')),
 			array('Item' => array('image' => 'Img12.jpg')),
@@ -1327,7 +1327,7 @@ class HashTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = Hash::sort($items, '{n}.Item.image', 'asc', ['type' => 'natural', 'ignoreCase' => true]);
+		$result = Hash::sort($items, '{n}.Item.image', 'asc', array('type' => 'natural', 'ignoreCase' => true));
 		$expected = array(
 			array('Item' => array('image' => 'img1.jpg')),
 			array('Item' => array('image' => 'img2.jpg')),
@@ -1436,7 +1436,7 @@ class HashTest extends CakeTestCase {
 			array('Item' => array('name' => 'Baz')),
 			array('Item' => array('name' => 'bat')),
 		);
-		$sorted = Hash::sort($toSort, '{n}.Item.name', 'asc', ['type' => 'string', 'ignoreCase' => true]);
+		$sorted = Hash::sort($toSort, '{n}.Item.name', 'asc', array('type' => 'string', 'ignoreCase' => true));
 		$expected = array(
 			array('Item' => array('name' => 'Baby')),
 			array('Item' => array('name' => 'bar')),
@@ -1458,7 +1458,7 @@ class HashTest extends CakeTestCase {
 			array('Item' => array('name' => 'Baz')),
 			array('Item' => array('name' => 'bat')),
 		);
-		$sorted = Hash::sort($toSort, '{n}.Item.name', 'asc', ['type' => 'regular', 'ignoreCase' => true]);
+		$sorted = Hash::sort($toSort, '{n}.Item.name', 'asc', array('type' => 'regular', 'ignoreCase' => true));
 		$expected = array(
 			array('Item' => array('name' => 'Baby')),
 			array('Item' => array('name' => 'bar')),
