@@ -14,6 +14,7 @@
 namespace Cake\View;
 
 use Cake\Core\App;
+use Cake\Event\EventManagerTrait;
 use Cake\View\ViewBuilder;
 
 /**
@@ -106,9 +107,9 @@ trait ViewVarsTrait
 
         return $builder->build(
             $this->viewVars,
-            $this->request,
-            $this->response,
-            $this->eventManager(),
+            isset($this->request) ? $this->request : null,
+            isset($this->response) ? $this->response : null,
+            $this instanceof EventManagerTrait ? $this->eventManager() : null,
             $viewOptions
         );
     }

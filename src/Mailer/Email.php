@@ -23,6 +23,7 @@ use Cake\Log\Log;
 use Cake\Network\Http\FormData\Part;
 use Cake\Utility\Hash;
 use Cake\Utility\Text;
+use Cake\View\ViewVarsTrait;
 use Closure;
 use Exception;
 use InvalidArgumentException;
@@ -51,6 +52,7 @@ class Email implements JsonSerializable, Serializable
 {
 
     use StaticConfigTrait;
+    use ViewVarsTrait;
 
     /**
      * Line length - no should more - RFC 2822 - 2.1.1
@@ -181,48 +183,6 @@ class Email implements JsonSerializable, Serializable
      * @var array
      */
     protected $_headers = [];
-
-    /**
-     * Layout for the View
-     *
-     * @var string
-     */
-    protected $_layout = 'default';
-
-    /**
-     * Template for the view
-     *
-     * @var string
-     */
-    protected $_template = '';
-
-    /**
-     * View for render
-     *
-     * @var string
-     */
-    protected $_viewRender = 'Cake\View\View';
-
-    /**
-     * Vars to sent to render
-     *
-     * @var array
-     */
-    protected $_viewVars = [];
-
-    /**
-     * Theme for the View
-     *
-     * @var string
-     */
-    protected $_theme = null;
-
-    /**
-     * Helpers to be used in the render
-     *
-     * @var array
-     */
-    protected $_helpers = ['Html'];
 
     /**
      * Text message
@@ -378,6 +338,12 @@ class Email implements JsonSerializable, Serializable
         if (empty($this->_domain)) {
             $this->_domain = php_uname('n');
         }
+
+        $this->viewBuilder()
+            ->className('Cake\View\View')
+            ->template('')
+            ->layout('default')
+            ->helpers(['Html']);
 
         if ($config) {
             $this->profile($config);
@@ -879,13 +845,13 @@ class Email implements JsonSerializable, Serializable
     {
         if ($template === false) {
             return [
-                'template' => $this->_template,
-                'layout' => $this->_layout
+                'template' => $this->viewBuilder()->template(),
+                'layout' => $this->viewBuilder()->layout()
             ];
         }
-        $this->_template = $template;
+        $this->viewBuilder()->template($template ?: '');
         if ($layout !== false) {
-            $this->_layout = $layout;
+            $this->viewBuilder()->layout($layout ?: false);
         }
         return $this;
     }
@@ -899,9 +865,9 @@ class Email implements JsonSerializable, Serializable
     public function viewRender($viewClass = null)
     {
         if ($viewClass === null) {
-            return $this->_viewRender;
+            return $this->viewBuilder()->className();
         }
-        $this->_viewRender = $viewClass;
+        $this->viewBuilder()->className($viewClass);
         return $this;
     }
 
@@ -914,9 +880,9 @@ class Email implements JsonSerializable, Serializable
     public function viewVars($viewVars = null)
     {
         if ($viewVars === null) {
-            return $this->_viewVars;
+            return $this->viewVars;
         }
-        $this->_viewVars = array_merge($this->_viewVars, (array)$viewVars);
+        $this->set((array)$viewVars);
         return $this;
     }
 
@@ -929,9 +895,9 @@ class Email implements JsonSerializable, Serializable
     public function theme($theme = null)
     {
         if ($theme === null) {
-            return $this->_theme;
+            return $this->viewBuilder()->theme();
         }
-        $this->_theme = $theme;
+        $this->viewBuilder()->theme($theme);
         return $this;
     }
 
@@ -944,9 +910,9 @@ class Email implements JsonSerializable, Serializable
     public function helpers($helpers = null)
     {
         if ($helpers === null) {
-            return $this->_helpers;
+            return $this->viewBuilder()->helpers();
         }
-        $this->_helpers = (array)$helpers;
+        $this->viewBuilder()->helpers((array)$helpers, false);
         return $this;
     }
 
@@ -1407,37 +1373,44 @@ class Email implements JsonSerializable, Serializable
             }
             unset($name);
         }
+
         $this->_profile = array_merge($this->_profile, $config);
-        if (!empty($config['charset'])) {
-            $this->charset = $config['charset'];
-        }
-        if (!empty($config['headerCharset'])) {
-            $this->headerCharset = $config['headerCharset'];
-        }
-        if (empty($this->headerCharset)) {
-            $this->headerCharset = $this->charset;
-        }
+
         $simpleMethods = [
-            'from', 'sender', 'to', 'replyTo', 'readReceipt', 'returnPath', 'cc', 'bcc',
-            'messageId', 'domain', 'subject', 'viewRender', 'viewVars', 'attachments',
-            'transport', 'emailFormat', 'theme', 'helpers', 'emailPattern'
+            'from', 'sender', 'to', 'replyTo', 'readReceipt', 'returnPath',
+            'cc', 'bcc', 'messageId', 'domain', 'subject', 'attachments',
+            'transport', 'emailFormat', 'emailPattern', 'charset', 'headerCharset'
         ];
         foreach ($simpleMethods as $method) {
             if (isset($config[$method])) {
                 $this->$method($config[$method]);
-                unset($config[$method]);
             }
+        }
+
+        if (empty($this->headerCharset)) {
+            $this->headerCharset = $this->charset;
         }
         if (isset($config['headers'])) {
             $this->setHeaders($config['headers']);
-            unset($config['headers']);
         }
 
-        if (array_key_exists('template', $config)) {
-            $this->_template = $config['template'];
+        $viewBuilderMethods = [
+            'template', 'layout', 'theme'
+        ];
+        foreach ($viewBuilderMethods as $method) {
+            if (array_key_exists($method, $config)) {
+                $this->viewBuilder()->$method($config[$method]);
+            }
         }
-        if (array_key_exists('layout', $config)) {
-            $this->_layout = $config['layout'];
+
+        if (array_key_exists('helpers', $config)) {
+            $this->viewBuilder()->helpers($config['helpers'], false);
+        }
+        if (array_key_exists('viewRender', $config)) {
+            $this->viewBuilder()->className($config['viewRender']);
+        }
+        if (array_key_exists('viewVars', $config)) {
+            $this->set($config['viewVars']);
         }
     }
 
@@ -1459,12 +1432,6 @@ class Email implements JsonSerializable, Serializable
         $this->_messageId = true;
         $this->_subject = '';
         $this->_headers = [];
-        $this->_layout = 'default';
-        $this->_template = '';
-        $this->_viewRender = 'Cake\View\View';
-        $this->_viewVars = [];
-        $this->_theme = null;
-        $this->_helpers = ['Html'];
         $this->_textMessage = '';
         $this->_htmlMessage = '';
         $this->_message = '';
@@ -1475,6 +1442,14 @@ class Email implements JsonSerializable, Serializable
         $this->_attachments = [];
         $this->_profile = [];
         $this->_emailPattern = self::EMAIL_PATTERN;
+
+        $this->viewBuilder()->layout('default');
+        $this->viewBuilder()->template('');
+        $this->viewBuilder()->classname('Cake\View\View');
+        $this->viewVars = [];
+        $this->viewBuilder()->theme(false);
+        $this->viewBuilder()->helpers(['Html'], false);
+
         return $this;
     }
 
@@ -1828,31 +1803,18 @@ class Email implements JsonSerializable, Serializable
     {
         $types = $this->_getTypes();
         $rendered = [];
-        if (empty($this->_template)) {
+        if (empty($this->viewBuilder()->template())) {
             foreach ($types as $type) {
                 $rendered[$type] = $this->_encodeString($content, $this->charset);
             }
             return $rendered;
         }
-        $viewClass = $this->_viewRender;
-        if ($viewClass === 'View') {
-            $viewClass = App::className('View', 'View');
-        } else {
-            $viewClass = App::className($viewClass, 'View', 'View');
-        }
 
-        $View = new $viewClass(null);
-        $View->viewVars = $this->_viewVars;
-        $View->helpers = $this->_helpers;
-
-        if ($this->_theme) {
-            $View->theme = $this->_theme;
-        }
-
+        $View = $this->createView();
         $View->loadHelpers();
 
-        list($templatePlugin) = pluginSplit($this->_template);
-        list($layoutPlugin) = pluginSplit($this->_layout);
+        list($templatePlugin) = pluginSplit($View->view());
+        list($layoutPlugin) = pluginSplit($View->layout());
         if ($templatePlugin) {
             $View->plugin = $templatePlugin;
         } elseif ($layoutPlugin) {
@@ -1863,17 +1825,12 @@ class Email implements JsonSerializable, Serializable
             $View->set('content', $content);
         }
 
-        // Convert null to false, as View needs false to disable
-        // the layout.
-        if ($this->_layout === null) {
-            $this->_layout = false;
-        }
-
         foreach ($types as $type) {
             $View->hasRendered = false;
-            $View->viewPath = $View->layoutPath = 'Email/' . $type;
+            $View->viewPath('Email/' . $type);
+            $View->layoutPath('Email/' . $type);
 
-            $render = $View->render($this->_template, $this->_layout);
+            $render = $View->render();
             $render = str_replace(["\r\n", "\r"], "\n", $render);
             $rendered[$type] = $this->_encodeString($render, $this->charset);
         }
