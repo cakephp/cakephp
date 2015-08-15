@@ -159,7 +159,8 @@ class ViewBuilder
     /**
      * The plugin name to use
      *
-     * @param string|null $name Plugin name. If null returns current plugin.
+     * @param string|null|false $name Plugin name. If null returns current plugin.
+     *   Use false to remove the current plugin name.
      * @return string|$this
      */
     public function plugin($name = null)
@@ -194,7 +195,8 @@ class ViewBuilder
     /**
      * The view theme to use.
      *
-     * @param string|null $theme Theme name. If null returns current theme.
+     * @param string|null|false $theme Theme name. If null returns current theme.
+     *   Use false to remove the current theme.
      * @return string|$this
      */
     public function theme($theme = null)
