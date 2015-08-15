@@ -28,7 +28,6 @@ class MailerTest extends TestCase
     {
         $mailer = new TestMailer();
         $this->assertInstanceOf('Cake\Mailer\Email', $mailer->getEmailForAssertion());
-        $this->assertEquals('test', $mailer->layout);
     }
 
     public function testReset()
