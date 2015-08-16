@@ -37,8 +37,8 @@ use RuntimeException;
  * in from the controller to render the results of the controller action. Often this is HTML,
  * but can also take the form of JSON, XML, PDF's or streaming files.
  *
- * CakePHP uses a two-step-view pattern. This means that the view content is rendered first,
- * and then inserted into the selected layout. This also means you can pass data from the view to the
+ * CakePHP uses a two-step-view pattern. This means that the template content is rendered first,
+ * and then inserted into the selected layout. This also means you can pass data from the template to the
  * layout using `$this->set()`
  *
  * View class supports using plugins as themes. You can set
@@ -126,7 +126,7 @@ class View implements EventDispatcherInterface
     public $template = null;
 
     /**
-     * The name of the layout file to render the view inside of. The name specified
+     * The name of the layout file to render the template inside of. The name specified
      * is the filename of the layout in /app/Template/Layout without the .ctp
      * extension.
      *
@@ -143,7 +143,7 @@ class View implements EventDispatcherInterface
 
     /**
      * Turns on or off CakePHP's conventional mode of applying layout files. On by default.
-     * Setting to off means that layouts will not be automatically applied to rendered views.
+     * Setting to off means that layouts will not be automatically applied to rendered templates.
      *
      * @var bool
      */
@@ -157,7 +157,7 @@ class View implements EventDispatcherInterface
     protected $_ext = '.ctp';
 
     /**
-     * Sub-directory for this view file. This is often used for extension based routing.
+     * Sub-directory for this template file. This is often used for extension based routing.
      * Eg. With an `xml` extension, $subDir would be `xml/`
      *
      * @var string
@@ -377,7 +377,7 @@ class View implements EventDispatcherInterface
     /**
      * Turns on or off CakePHP's conventional mode of applying layout files.
      * On by default. Setting to off means that layouts will not be
-     * automatically applied to rendered views.
+     * automatically applied to rendered templates.
      *
      * @param bool $autoLayout Boolean to turn on/off. If null returns current value.
      * @return bool|void
@@ -423,7 +423,7 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Get/set the name of the layout file to render the view inside of.
+     * Get/set the name of the layout file to render the template inside of.
      * The name specified is the filename of the layout in /app/Template/Layout
      * without the .ctp extension.
      *
@@ -532,9 +532,9 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Renders view for given view file and layout.
+     * Renders view for given template file and layout.
      *
-     * Render triggers helper callbacks, which are fired before and after the view are rendered,
+     * Render triggers helper callbacks, which are fired before and after the template are rendered,
      * as well as before and after the layout. The helper callbacks are called:
      *
      * - `beforeRender`
@@ -542,11 +542,11 @@ class View implements EventDispatcherInterface
      * - `beforeLayout`
      * - `afterLayout`
      *
-     * If View::$autoRender is false and no `$layout` is provided, the view will be returned bare.
+     * If View::$autoRender is false and no `$layout` is provided, the template will be returned bare.
      *
-     * View and layout names can point to plugin views/layouts. Using the `Plugin.view` syntax
-     * a plugin view/layout can be used instead of the app ones. If the chosen plugin is not found
-     * the view will be located along the regular view path cascade.
+     * Template and layout names can point to plugin templates/layouts. Using the `Plugin.template` syntax
+     * a plugin template/layout can be used instead of the app ones. If the chosen plugin is not found
+     * the template will be located along the regular view path cascade.
      *
      * @param string|null $view Name of view file to use
      * @param string|null $layout Layout to use.
@@ -582,7 +582,7 @@ class View implements EventDispatcherInterface
      * Renders a layout. Returns output from _render(). Returns false on error.
      * Several variables are created for use in layout.
      *
-     * @param string $content Content to render in a view, wrapped by the surrounding layout.
+     * @param string $content Content to render in a template, wrapped by the surrounding layout.
      * @param string|null $layout Layout name
      * @return mixed Rendered output, or false on error
      * @throws \Cake\Core\Exception\Exception if there is an error in the view.
@@ -762,12 +762,12 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Provides view or element extension/inheritance. Views can extends a
+     * Provides template or element extension/inheritance. Views can extends a
      * parent view and populate blocks in the parent template.
      *
-     * @param string $name The view or element to 'extend' the current one with.
+     * @param string $name The template or element to 'extend' the current one with.
      * @return void
-     * @throws \LogicException when you extend a view with itself or make extend loops.
+     * @throws \LogicException when you extend a template with itself or make extend loops.
      * @throws \LogicException when you extend an element which doesn't exist
      */
     public function extend($name)
@@ -893,8 +893,8 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Renders and returns output for given view filename with its
-     * array of data. Handles parent/extended views.
+     * Renders and returns output for given template filename with its
+     * array of data. Handles parent/extended templates.
      *
      * @param string $viewFile Filename of the view
      * @param array $data Data to include in rendered view. If empty the current
