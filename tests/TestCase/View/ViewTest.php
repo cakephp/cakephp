@@ -43,13 +43,6 @@ class ViewPostsController extends Controller
     public $name = 'Posts';
 
     /**
-     * uses property
-     *
-     * @var mixed
-     */
-    public $uses = null;
-
-    /**
      * index method
      *
      * @return void
