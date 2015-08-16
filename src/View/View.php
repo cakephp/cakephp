@@ -217,8 +217,8 @@ class View implements EventDispatcherInterface
      * @var array
      */
     protected $_passedVars = [
-        'viewVars', 'autoLayout', 'helpers', 'view', 'layout', 'name', 'theme',
-        'layoutPath', 'viewPath', 'plugin', 'passedArgs'
+        'viewVars', 'autoLayout', 'helpers', 'template', 'layout', 'name', 'theme',
+        'layoutPath', 'templatePath', 'plugin', 'passedArgs'
     ];
 
     /**
@@ -300,6 +300,12 @@ class View implements EventDispatcherInterface
         EventManager $eventManager = null,
         array $viewOptions = []
     ) {
+        if (isset($viewOptions['view'])) {
+            $this->template($viewOptions['view']);
+        }
+        if (isset($viewOptions['viewPath'])) {
+            $this->templatePath($viewOptions['viewPath']);
+        }
         foreach ($this->_passedVars as $var) {
             if (isset($viewOptions[$var])) {
                 $this->{$var} = $viewOptions[$var];
