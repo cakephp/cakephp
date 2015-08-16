@@ -111,19 +111,19 @@ class View implements EventDispatcherInterface
     public $helpers = [];
 
     /**
-     * The name of the views subfolder containing views for this View.
+     * The name of the subfolder containing templates for this View.
      *
      * @var string
      */
-    public $viewPath = null;
+    public $templatePath = null;
 
     /**
-     * The name of the view file to render. The name specified
+     * The name of the template file to render. The name specified
      * is the filename in /app/Template/<SubFolder> without the .ctp extension.
      *
      * @var string
      */
-    public $view = null;
+    public $template = null;
 
     /**
      * The name of the layout file to render the view inside of. The name specified
@@ -339,18 +339,18 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Get/set path for view files.
+     * Get/set path for templates files.
      *
-     * @param string $path Path for view files. If null returns current path.
+     * @param string $path Path for template files. If null returns current path.
      * @return string|void
      */
-    public function viewPath($path = null)
+    public function templatePath($path = null)
     {
         if ($path === null) {
-            return $this->viewPath;
+            return $this->templatePath;
         }
 
-        $this->viewPath = $path;
+        $this->templatePath = $path;
     }
 
     /**
@@ -401,19 +401,19 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Get/set the name of the view file to render. The name specified is the
+     * Get/set the name of the template file to render. The name specified is the
      * filename in /app/Template/<SubFolder> without the .ctp extension.
      *
-     * @param string $name View file name to set. If null returns current name.
+     * @param string $name Template file name to set. If null returns current name.
      * @return string|void
      */
-    public function view($name = null)
+    public function template($name = null)
     {
         if ($name === null) {
-            return $this->view;
+            return $this->template;
         }
 
-        $this->view = $name;
+        $this->template = $name;
     }
 
     /**
@@ -598,7 +598,7 @@ class View implements EventDispatcherInterface
 
         $title = $this->Blocks->get('title');
         if ($title === '') {
-            $title = Inflector::humanize($this->viewPath);
+            $title = Inflector::humanize($this->templatePath);
             $this->Blocks->set('title', $title);
         }
 
@@ -837,12 +837,39 @@ class View implements EventDispatcherInterface
      */
     public function __get($name)
     {
+        if ($name === 'view') {
+            return $this->template;
+        }
+        if ($name === 'viewPath') {
+            return $this->templatePath;
+        }
+
         $registry = $this->helpers();
         if (isset($registry->{$name})) {
             $this->{$name} = $registry->{$name};
             return $registry->{$name};
         }
         return $this->{$name};
+    }
+
+    /**
+     * Magic setter for deprecated properties.
+     *
+     * @param string $name Name to property.
+     * @param mixed $value Value for property.
+     */
+    public function __set($name, $value)
+    {
+        if ($name === 'view') {
+            $this->template = $value;
+            return;
+        }
+        if ($name === 'viewPath') {
+            $this->templatePath = $value;
+            return;
+        }
+
+        $this->{$name} = $value;
     }
 
     /**
@@ -971,12 +998,12 @@ class View implements EventDispatcherInterface
         if ($this->subDir !== null) {
             $subDir = $this->subDir . DS;
         }
-        if ($this->viewPath) {
-            $viewPath = $this->viewPath . DS;
+        if ($this->templatePath) {
+            $viewPath = $this->templatePath . DS;
         }
 
         if ($name === null) {
-            $name = $this->view;
+            $name = $this->template;
         }
 
         list($plugin, $name) = $this->pluginSplit($name);
@@ -990,7 +1017,7 @@ class View implements EventDispatcherInterface
                     return $name;
                 }
                 $name = trim($name, DS);
-            } elseif (!$plugin || $this->viewPath !== $this->name) {
+            } elseif (!$plugin || $this->templatePath !== $this->name) {
                 $name = $viewPath . $subDir . $name;
             } else {
                 $name = DS . $subDir . $name;
