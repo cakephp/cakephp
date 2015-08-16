@@ -268,8 +268,16 @@ class View implements EventDispatcherInterface
      * Constant for view file type 'view'
      *
      * @var string
+     * @deprecated 3.0.1 Use TYPE_TEMPLATE instead.
      */
     const TYPE_VIEW = 'view';
+
+    /**
+     * Constant for view file type 'template'.
+     *
+     * @var string
+     */
+    const TYPE_TEMPLATE = 'view';
 
     /**
      * Constant for view file type 'element'
@@ -562,7 +570,7 @@ class View implements EventDispatcherInterface
         }
 
         if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
-            $this->_currentType = static::TYPE_VIEW;
+            $this->_currentType = static::TYPE_TEMPLATE;
             $this->dispatchEvent('View.beforeRender', [$viewFileName]);
             $this->Blocks->set('content', $this->_render($viewFileName));
             $this->dispatchEvent('View.afterRender', [$viewFileName]);
@@ -772,7 +780,7 @@ class View implements EventDispatcherInterface
      */
     public function extend($name)
     {
-        if ($name[0] === '/' || $this->_currentType === static::TYPE_VIEW) {
+        if ($name[0] === '/' || $this->_currentType === static::TYPE_TEMPLATE) {
             $parent = $this->_getViewFileName($name);
         } else {
             switch ($this->_currentType) {
