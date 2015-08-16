@@ -993,13 +993,13 @@ class View implements EventDispatcherInterface
      */
     protected function _getViewFileName($name = null)
     {
-        $viewPath = $subDir = '';
+        $templatePath = $subDir = '';
 
         if ($this->subDir !== null) {
             $subDir = $this->subDir . DS;
         }
         if ($this->templatePath) {
-            $viewPath = $this->templatePath . DS;
+            $templatePath = $this->templatePath . DS;
         }
 
         if ($name === null) {
@@ -1010,7 +1010,7 @@ class View implements EventDispatcherInterface
         $name = str_replace('/', DS, $name);
 
         if (strpos($name, DS) === false && $name[0] !== '.') {
-            $name = $viewPath . $subDir . Inflector::underscore($name);
+            $name = $templatePath . $subDir . Inflector::underscore($name);
         } elseif (strpos($name, DS) !== false) {
             if ($name[0] === DS || $name[1] === ':') {
                 if (is_file($name)) {
@@ -1018,7 +1018,7 @@ class View implements EventDispatcherInterface
                 }
                 $name = trim($name, DS);
             } elseif (!$plugin || $this->templatePath !== $this->name) {
-                $name = $viewPath . $subDir . $name;
+                $name = $templatePath . $subDir . $name;
             } else {
                 $name = DS . $subDir . $name;
             }
@@ -1185,11 +1185,11 @@ class View implements EventDispatcherInterface
                 return $this->_pathsForPlugin[$plugin];
             }
         }
-        $viewPaths = App::path('Template');
+        $templatePaths = App::path('Template');
         $pluginPaths = $themePaths = [];
         if (!empty($plugin)) {
-            for ($i = 0, $count = count($viewPaths); $i < $count; $i++) {
-                $pluginPaths[] = $viewPaths[$i] . 'Plugin' . DS . $plugin . DS;
+            for ($i = 0, $count = count($templatePaths); $i < $count; $i++) {
+                $pluginPaths[] = $templatePaths[$i] . 'Plugin' . DS . $plugin . DS;
             }
             $pluginPaths = array_merge($pluginPaths, App::path('Template', $plugin));
         }
@@ -1198,7 +1198,7 @@ class View implements EventDispatcherInterface
             $themePaths = App::path('Template', Inflector::camelize($this->theme));
 
             if ($plugin) {
-                for ($i = 0, $count = count($viewPaths); $i < $count; $i++) {
+                for ($i = 0, $count = count($templatePaths); $i < $count; $i++) {
                     array_unshift($themePaths, $themePaths[$i] . 'Plugin' . DS . $plugin . DS);
                 }
             }
@@ -1207,7 +1207,7 @@ class View implements EventDispatcherInterface
         $paths = array_merge(
             $themePaths,
             $pluginPaths,
-            $viewPaths,
+            $templatePaths,
             [dirname(__DIR__) . DS . 'Template' . DS]
         );
 
