@@ -1890,4 +1890,22 @@ TEXT;
         $result = $this->View->helpers();
         $this->assertSame($result, $this->View->helpers());
     }
+
+    /**
+     * Test magic getter and setter for removed properties.
+     *
+     * @return void
+     */
+    public function testMagicGetterSetter()
+    {
+        $View = $this->View;
+
+        $View->view = 'myview';
+        $this->assertEquals('myview', $View->template());
+        $this->assertEquals('myview', $View->view);
+
+        $View->viewPath = 'mypath';
+        $this->assertEquals('mypath', $View->templatePath());
+        $this->assertEquals('mypath', $View->templatePath);
+    }
 }
