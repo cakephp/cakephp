@@ -871,6 +871,7 @@ class View implements EventDispatcherInterface
      *
      * @param string $name Name to property.
      * @param mixed $value Value for property.
+     * @return void
      */
     public function __set($name, $value)
     {
