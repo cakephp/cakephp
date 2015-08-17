@@ -734,24 +734,32 @@ class AuthComponentTest extends TestCase
     public function testDefaultToLoginRedirect()
     {
         $url = '/party/on';
-        $this->Auth->request = $Request = new Request($url);
-        $Request->env('HTTP_REFERER', false);
-        $this->Auth->request->addParams(Router::parse($url));
+        $this->Auth->request = $request = new Request($url);
+        $request->env('HTTP_REFERER', false);
+        $request->addParams(Router::parse($url));
+        $request->addPaths([
+            'base' => 'dirname',
+            'webroot' => '/dirname/',
+        ]);
+        Router::pushRequest($request);
+
         $this->Auth->config('authorize', ['Controller']);
         $this->Auth->setUser(['username' => 'mariano', 'password' => 'cake']);
         $this->Auth->config('loginRedirect', [
-            'controller' => 'something', 'action' => 'else'
+            'controller' => 'something',
+            'action' => 'else'
         ]);
 
         $response = new Response();
         $Controller = $this->getMock(
             'Cake\Controller\Controller',
             ['on', 'redirect'],
-            [$Request, $response]
+            [$request, $response]
         );
         $event = new Event('Controller.startup', $Controller);
 
-        $expected = Router::url($this->Auth->config('loginRedirect'));
+        // Should not contain basedir when redirect is called.
+        $expected = '/something/else';
         $Controller->expects($this->once())
             ->method('redirect')
             ->with($this->equalTo($expected));
