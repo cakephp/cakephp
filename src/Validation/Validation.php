@@ -34,7 +34,9 @@ class Validation
      * @var array
      */
     protected static $_pattern = [
-        'hostname' => '(?:[_\p{L}0-9][-_\p{L}0-9]*\.)*(?:[\p{L}0-9][-\p{L}0-9]{0,62})\.(?:(?:[a-z]{2}\.)?[a-z]{2,})'
+        'hostname' => '(?:[_\p{L}0-9][-_\p{L}0-9]*\.)*(?:[\p{L}0-9][-\p{L}0-9]{0,62})\.(?:(?:[a-z]{2}\.)?[a-z]{2,})',
+        'latitude' => '[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)',
+        'longitude' => '[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)',
     ];
 
     /**
@@ -1024,6 +1026,75 @@ class Validation
             return false;
         }
         return true;
+    }
+
+    /**
+     * Validates a geographic coordinate.
+     *
+     * Supported formats:
+     *
+     * - `<latitude>, <longitude>` Example: `-25.274398, 133.775136`
+     *
+     * ### Options
+     *
+     * - `type` - A string of the coordinate format, right now only `latLong`.
+     * - `format` - By default `both`, can be `long` and `lat` as well to validate
+     *   only a part of the coordinate.
+     *
+     * @param string $value Geographic location as string
+     * @param array $options Options for the validation logic.
+     * @return bool
+     */
+    public static function geoCoordinate($value, array $options = [])
+    {
+        $options += [
+            'format' => 'both',
+            'type' => 'latLong'
+        ];
+        if ($options['type'] !== 'latLong') {
+            throw new \RuntimeException(sprintf(
+                'Unsupported coordinate type "%s". Use "latLong" instead.',
+                $options['type']
+            ));
+        }
+        $pattern = '/^' . self::$_pattern['latitude'] . ',\s*' . self::$_pattern['longitude'] . '$/';
+        if ($options['format'] === 'long') {
+            $pattern = '/^' . self::$_pattern['longitude'] . '$/';
+        }
+        if ($options['format'] === 'lat') {
+            $pattern = '/^' . self::$_pattern['latitude'] . '$/';
+        }
+        return (bool)preg_match($pattern, $value);
+    }
+
+    /**
+     * Convenience method for latitude validation.
+     *
+     * @param string $value Latitude as string
+     * @param array $options Options for the validation logic.
+     * @return bool
+     * @link https://en.wikipedia.org/wiki/Latitude
+     * @see Validation::geoCoordinate()
+     */
+    public static function latitude($value, array $options = [])
+    {
+        $options['format'] = 'lat';
+        return self::geoCoordinate($value, $options);
+    }
+
+    /**
+     * Convenience method for longitude validation.
+     *
+     * @param string $value Latitude as string
+     * @param array $options Options for the validation logic.
+     * @return bool
+     * @link https://en.wikipedia.org/wiki/Longitude
+     * @see Validation::geoCoordinate()
+     */
+    public static function longitude($value, array $options = [])
+    {
+        $options['format'] = 'long';
+        return self::geoCoordinate($value, $options);
     }
 
     /**

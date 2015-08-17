@@ -2527,4 +2527,41 @@ class ValidationTest extends TestCase
         $context = [];
         $this->assertFalse(Validation::compareWith('a value', 'other', $context));
     }
+
+    /**
+     * Test the geoCoordinate method.
+     *
+     * @return void
+     */
+    public function testGeoCoordinate()
+    {
+        $this->assertTrue(Validation::geoCoordinate('51.165691, 10.451526'));
+        $this->assertTrue(Validation::geoCoordinate('-25.274398, 133.775136'));
+        $this->assertFalse(Validation::geoCoordinate('51.165691 10.451526'));
+        $this->assertFalse(Validation::geoCoordinate('-245.274398, -133.775136'));
+        $this->assertTrue(Validation::geoCoordinate('51.165691', ['format' => 'lat']));
+        $this->assertTrue(Validation::geoCoordinate('10.451526', ['format' => 'long']));
+    }
+
+    /**
+     * Test the geoCoordinate method.
+     *
+     * @return void
+     */
+    public function testLatitude()
+    {
+        $this->assertTrue(Validation::latitude('51.165691'));
+        $this->assertFalse(Validation::latitude('200.23552'));
+    }
+
+    /**
+     * Test the geoCoordinate method.
+     *
+     * @return void
+     */
+    public function testLongitude()
+    {
+        $this->assertTrue(Validation::longitude('10.451526'));
+        $this->assertFalse(Validation::longitude('-190.52236'));
+    }
 }
