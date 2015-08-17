@@ -1803,7 +1803,8 @@ class Email implements JsonSerializable, Serializable
     {
         $types = $this->_getTypes();
         $rendered = [];
-        if (empty($this->viewBuilder()->template())) {
+        $template = $this->viewBuilder()->template();
+        if (empty($template)) {
             foreach ($types as $type) {
                 $rendered[$type] = $this->_encodeString($content, $this->charset);
             }
