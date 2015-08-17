@@ -1025,14 +1025,14 @@ class Validation
     /**
      * Validates a geographic coordinate.
      *
-     * Supported formats are right now:
+     * Supported formats:
      *
-     * - <latitude>, <longitude> Example: -25.274398, 133.775136
+     * - `<latitude>, <longitude>` Example: `-25.274398, 133.775136`
      *
      * ### Options
      *
      * - `type` - A string of the coordinate format, right now only `latLong`.
-     * - `latLong` - By default `both`, can be `long` and `lat` as well to validate
+     * - `format` - By default `both`, can be `long` and `lat` as well to validate
      *   only a part of the coordinate.
      *
      * @param string $value Geographic location as string
@@ -1042,20 +1042,21 @@ class Validation
     public static function geoCoordinate($value, array $options = [])
     {
         $options += [
-            'latLong' => 'both',
+            'format' => 'both',
             'type' => 'latLong'
         ];
         if ($options['type'] !== 'latLong') {
-            throw new \RuntimeException(sprintf('Unsupported coordinate type "%s".', $options['type']));
+            throw new \RuntimeException(sprintf(
+                'Unsupported coordinate type "%s". Use "latLong" instead.',
+                $options['type']
+            ));
         }
-        if ($options['type'] === 'latLong') {
-            $pattern = '/^' . self::$_pattern['latitude'] . ',\s*' . self::$_pattern['longitude'] . '$/';
-            if ($options['latLong'] === 'long') {
-                $pattern = '/^' . self::$_pattern['longitude'] . '$/';
-            }
-            if ($options['latLong'] === 'lat') {
-                $pattern = '/^' . self::$_pattern['latitude'] . '$/';
-            }
+        $pattern = '/^' . self::$_pattern['latitude'] . ',\s*' . self::$_pattern['longitude'] . '$/';
+        if ($options['format'] === 'long') {
+            $pattern = '/^' . self::$_pattern['longitude'] . '$/';
+        }
+        if ($options['format'] === 'lat') {
+            $pattern = '/^' . self::$_pattern['latitude'] . '$/';
         }
         return (bool)preg_match($pattern, $value);
     }
@@ -1071,7 +1072,7 @@ class Validation
      */
     public static function latitude($value, array $options = [])
     {
-        $options['latLong'] = 'lat';
+        $options['format'] = 'lat';
         return self::geoCoordinate($value, $options);
     }
 
@@ -1086,7 +1087,7 @@ class Validation
      */
     public static function longitude($value, array $options = [])
     {
-        $options['latLong'] = 'long';
+        $options['format'] = 'long';
         return self::geoCoordinate($value, $options);
     }
 
