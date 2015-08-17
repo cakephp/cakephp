@@ -110,7 +110,25 @@ class MailerTest extends TestCase
             ->method('test')
             ->with('foo', 'bar');
 
+        $mailer->template = 'foobar';
         $mailer->send('test', ['foo', 'bar']);
+        $this->assertEquals($mailer->template, 'foobar');
+    }
+
+    public function testSendWithUnsetTemplateDefaultsToActionName()
+    {
+        $email = $this->getMockForEmail('send');
+        $email->expects($this->any())
+            ->method('send')
+            ->will($this->returnValue([]));
+
+        $mailer = $this->getMock('TestApp\Mailer\TestMailer', ['test'], [$email]);
+        $mailer->expects($this->once())
+            ->method('test')
+            ->with('foo', 'bar');
+
+        $mailer->send('test', ['foo', 'bar']);
+        $this->assertEquals($mailer->template, 'test');
     }
 
     /**

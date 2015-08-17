@@ -100,6 +100,14 @@ abstract class Mailer implements ArrayAccess, EventListenerInterface
     public $layout;
 
     /**
+     * Email view template to render, defaults to the triggered mailer
+     * action's name.
+     *
+     * @var string
+     */
+    public $template;
+
+    /**
      * Email instance.
      *
      * @var \Cake\Mailer\Email
@@ -222,6 +230,10 @@ abstract class Mailer implements ArrayAccess, EventListenerInterface
         $this->setHeaders($headers);
 
         call_user_func_array([$this, $action], $args);
+
+        if ($this->template === null) {
+            $this->template = $action;
+        }
 
         $result = $this->_email
             ->profile((array)$this)
