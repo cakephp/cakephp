@@ -555,7 +555,7 @@ class ModelValidationTest extends BaseModelTest {
 	}
 
 /**
- * test that validates() still performs correctly when useTable = false on the mode.
+ * test that validates() still performs correctly when useTable = false on the model.
  *
  * @return void
  */
