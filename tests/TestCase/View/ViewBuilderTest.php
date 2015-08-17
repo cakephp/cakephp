@@ -183,4 +183,33 @@ class ViewBuilderTest extends TestCase
         $builder->className('Foo');
         $builder->build();
     }
+
+    /**
+     * testJsonSerialize()
+     *
+     * @return void
+     */
+    public function testJsonSerialize()
+    {
+        $builder = new ViewBuilder();
+
+        $builder
+            ->template('default')
+            ->layout('test')
+            ->helpers(['Html'])
+            ->className('JsonView');
+
+        $result = json_decode(json_encode($builder), true);
+
+        $expected = [
+            '_template' => 'default',
+            '_layout' => 'test',
+            '_helpers' => ['Html'],
+            '_className' => 'JsonView',
+        ];
+        $this->assertEquals($expected, $result);
+
+        $result = json_decode(json_encode(unserialize(serialize($builder))), true);
+        $this->assertEquals($expected, $result);
+    }
 }

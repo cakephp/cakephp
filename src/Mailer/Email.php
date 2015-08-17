@@ -1891,12 +1891,12 @@ class Email implements JsonSerializable, Serializable
     public function jsonSerialize()
     {
         $properties = [
-            '_to', '_from', '_sender', '_replyTo', '_cc', '_bcc', '_subject', '_returnPath', '_readReceipt',
-            '_template', '_layout', '_viewRender', '_viewVars', '_theme', '_helpers', '_emailFormat',
-            '_emailPattern', '_attachments', '_domain', '_messageId', '_headers', 'charset', 'headerCharset',
+            '_to', '_from', '_sender', '_replyTo', '_cc', '_bcc', '_subject',
+            '_returnPath', '_readReceipt', '_emailFormat', '_emailPattern', '_domain',
+            '_attachments', '_messageId', '_headers', 'viewVars', 'charset', 'headerCharset'
         ];
 
-        $array = [];
+        $array = ['viewConfig' => $this->viewBuilder()->jsonSerialize()];
 
         foreach ($properties as $property) {
             $array[$property] = $this->{$property};
@@ -1909,7 +1909,7 @@ class Email implements JsonSerializable, Serializable
             }
         });
 
-        array_walk_recursive($array['_viewVars'], [$this, '_checkViewVars']);
+        array_walk_recursive($array['viewVars'], [$this, '_checkViewVars']);
 
         return array_filter($array, function ($i) {
             return !is_array($i) && strlen($i) || !empty($i);
@@ -1950,6 +1950,11 @@ class Email implements JsonSerializable, Serializable
      */
     public function createFromArray($config)
     {
+        if (isset($config['viewConfig'])) {
+            $this->viewBuilder()->createFromArray($config['viewConfig']);
+            unset($config['viewConfig']);
+        }
+
         foreach ($config as $property => $value) {
             $this->{$property} = $value;
         }

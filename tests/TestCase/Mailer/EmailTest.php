@@ -2648,7 +2648,6 @@ XML;
             ->cc(['mark@cakephp.org', 'juan@cakephp.org' => 'Juan Basso'])
             ->bcc('phpnut@cakephp.org')
             ->subject('Test Serialize')
-            ->template('default', 'test')
             ->messageId('<uuid@server.com>')
             ->domain('foo.bar')
             ->viewVars([
@@ -2664,9 +2663,13 @@ XML;
                 ]
             ]);
 
+        $this->CakeEmail->viewBuilder()
+            ->template('default')
+            ->layout('test');
+
         $result = json_decode(json_encode($this->CakeEmail), true);
-        $this->assertContains('test', $result['_viewVars']['exception']);
-        unset($result['_viewVars']['exception']);
+        $this->assertContains('test', $result['viewVars']['exception']);
+        unset($result['viewVars']['exception']);
 
         $encode = function ($path) {
             return chunk_split(base64_encode(file_get_contents($path)), 76, "\r\n");
@@ -2679,16 +2682,18 @@ XML;
             '_cc' => ['mark@cakephp.org' => 'mark@cakephp.org', 'juan@cakephp.org' => 'Juan Basso'],
             '_bcc' => ['phpnut@cakephp.org' => 'phpnut@cakephp.org'],
             '_subject' => 'Test Serialize',
-            '_template' => 'default',
-            '_layout' => 'test',
-            '_viewRender' => 'Cake\View\View',
-            '_helpers' => ['Html'],
             '_emailFormat' => 'text',
             '_messageId' => '<uuid@server.com>',
             '_domain' => 'foo.bar',
             'charset' => 'utf-8',
             'headerCharset' => 'utf-8',
-            '_viewVars' => [
+            'viewConfig' => [
+                '_template' => 'default',
+                '_layout' => 'test',
+                '_helpers' => ['Html'],
+                '_className' => 'Cake\View\View',
+            ],
+            'viewVars' => [
                 'users' => [
                     'id' => 1,
                     'username' => 'mariano'
@@ -2712,10 +2717,9 @@ XML;
         ];
         $this->assertEquals($expected, $result);
 
-        debug(unserialize(serialize($this->CakeEmail)));
         $result = json_decode(json_encode(unserialize(serialize($this->CakeEmail))), true);
-        $this->assertContains('test', $result['_viewVars']['exception']);
-        unset($result['_viewVars']['exception']);
+        $this->assertContains('test', $result['viewVars']['exception']);
+        unset($result['viewVars']['exception']);
         $this->assertEquals($expected, $result);
     }
 
