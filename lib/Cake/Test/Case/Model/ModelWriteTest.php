@@ -2787,7 +2787,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertFalse($TestModel->exists());
 
 		$TestModel->id = 5;
-		$this->assertTrue($TestModel->exists());
+		$this->assertFalse($TestModel->exists());
 	}
 
 /**

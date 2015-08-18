@@ -2896,7 +2896,7 @@ class Model extends Object implements CakeEventListener {
 		}
 
 		if ($this->useTable === false) {
-			return true;
+			return false;
 		}
 
 		return (bool)$this->find('count', array(
