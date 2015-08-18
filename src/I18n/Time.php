@@ -58,7 +58,7 @@ class Time extends Carbon implements JsonSerializable
      * @var mixed
      * @see \Cake\I18n\Time::i18nFormat()
      */
-    protected static $_jsonEncodeFormat = "yyyy-MM-dd'T'HH:mm:ssxx";
+    protected static $_jsonEncodeFormat = "yyyy-MM-dd'T'HH:mm:ssZ";
 
     /**
      * The format to use when formatting a time using `Cake\I18n\Time::nice()`
