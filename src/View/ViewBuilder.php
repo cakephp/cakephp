@@ -325,8 +325,8 @@ class ViewBuilder
 
         $data = [
             'name' => $this->_name,
-            'viewPath' => $this->_templatePath,
-            'view' => $this->_template,
+            'templatePath' => $this->_templatePath,
+            'template' => $this->_template,
             'plugin' => $this->_plugin,
             'theme' => $this->_theme,
             'layout' => $this->_layout,
