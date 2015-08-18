@@ -1814,7 +1814,7 @@ class Email implements JsonSerializable, Serializable
         $View = $this->createView();
         $View->loadHelpers();
 
-        list($templatePlugin) = pluginSplit($View->view());
+        list($templatePlugin) = pluginSplit($View->template());
         list($layoutPlugin) = pluginSplit($View->layout());
         if ($templatePlugin) {
             $View->plugin = $templatePlugin;
@@ -1828,7 +1828,7 @@ class Email implements JsonSerializable, Serializable
 
         foreach ($types as $type) {
             $View->hasRendered = false;
-            $View->viewPath('Email/' . $type);
+            $View->templatePath('Email/' . $type);
             $View->layoutPath('Email/' . $type);
 
             $render = $View->render();
