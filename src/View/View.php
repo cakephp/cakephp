@@ -268,7 +268,7 @@ class View implements EventDispatcherInterface
      * Constant for view file type 'view'
      *
      * @var string
-     * @deprecated 3.0.1 Use TYPE_TEMPLATE instead.
+     * @deprecated 3.1.0 Use TYPE_TEMPLATE instead.
      */
     const TYPE_VIEW = 'view';
 
