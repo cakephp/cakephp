@@ -1291,6 +1291,27 @@ class ViewTest extends TestCase
     }
 
     /**
+     * Test that layout set from view file takes precedence over layout set
+     * as argument to render().
+     *
+     * @return void
+     */
+    public function testRenderUsingLayoutArgument()
+    {
+        $error = new \PDOException();
+        $error->queryString = 'this is sql string';
+        $message = 'it works';
+
+        $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
+        $View->set(compact('error', 'message'));
+        $View->viewPath = 'Error';
+
+        $result = $View->render('pdo_error', 'error');
+        $this->assertRegExp('/this is sql string/', $result);
+        $this->assertRegExp('/it works/', $result);
+    }
+
+    /**
      * Test render()ing a file in a subdir from a custom viewPath
      * in a plugin.
      *
