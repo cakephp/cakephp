@@ -720,7 +720,7 @@ class Query extends DatabaseQuery implements JsonSerializable
         }
 
         $count = ['count' => $query->func()->count('*')];
-        $complex = count($query->clause('group')) || $query->clause('distinct');
+        $complex = count($query->clause('group')) || $query->clause('distinct') || $query->clause('having');
         $complex = $complex || count($query->clause('union'));
 
         if (!$complex) {

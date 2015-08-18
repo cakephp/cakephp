@@ -73,7 +73,7 @@ use Cake\Utility\Inflector;
  *     if ($entity->isNew()) {
  *          $this->send('welcome', [$entity]);
  *      }
- *  }
+ * }
  * ```
  *
  * The onRegistration method converts the application event into a mailer method.
@@ -82,6 +82,7 @@ use Cake\Utility\Inflector;
  */
 abstract class Mailer implements ArrayAccess, EventListenerInterface
 {
+
     use ModelAwareTrait;
 
     /**
@@ -99,6 +100,14 @@ abstract class Mailer implements ArrayAccess, EventListenerInterface
     public $layout;
 
     /**
+     * Email view template to render, defaults to the triggered mailer
+     * action's name.
+     *
+     * @var string
+     */
+    public $template;
+
+    /**
      * Email instance.
      *
      * @var \Cake\Mailer\Email
@@ -114,10 +123,6 @@ abstract class Mailer implements ArrayAccess, EventListenerInterface
     {
         if ($email === null) {
             $email = new Email();
-        }
-
-        if ($this->layout === null) {
-            $this->layout = Inflector::underscore($this->getName());
         }
 
         $this->_email = $email;
@@ -225,6 +230,10 @@ abstract class Mailer implements ArrayAccess, EventListenerInterface
         $this->setHeaders($headers);
 
         call_user_func_array([$this, $action], $args);
+
+        if ($this->template === null) {
+            $this->template = $action;
+        }
 
         $result = $this->_email
             ->profile((array)$this)
