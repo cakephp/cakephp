@@ -1966,7 +1966,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * Serializes the Email object.
      *
-     * @return void.
+     * @return string
      */
     public function serialize()
     {

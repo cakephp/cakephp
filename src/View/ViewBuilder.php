@@ -383,7 +383,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Serializes the view builder object.
      *
-     * @return void
+     * @return string
      */
     public function serialize()
     {
