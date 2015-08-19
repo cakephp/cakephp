@@ -1812,7 +1812,6 @@ class Email implements JsonSerializable, Serializable
         }
 
         $View = $this->createView();
-        $View->loadHelpers();
 
         list($templatePlugin) = pluginSplit($View->template());
         list($layoutPlugin) = pluginSplit($View->layout());
