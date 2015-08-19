@@ -1337,7 +1337,7 @@ class CakeResponse {
 			'download' => null
 		);
 
-		if (strpos($path, '..' . DS) !== false) {
+		if (strpos($path, '../') !== false || strpos($path, '..\\') !== false) {
 			throw new NotFoundException(__d(
 				'cake_dev',
 				'The requested file contains `..` and will not be read.'
