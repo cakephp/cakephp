@@ -1098,6 +1098,48 @@ class Validation
     }
 
     /**
+     * Check that the input value is within the ascii byte range.
+     *
+     * This method will reject all non-string values.
+     *
+     * @param string $value The value to check
+     * @return bool
+     */
+    public static function ascii($value)
+    {
+        if (!is_string($value)) {
+            return false;
+        }
+        return strlen($value) <= mb_strlen($value, 'utf-8');
+    }
+
+    /**
+     * Check that the input value is a utf8 string.
+     *
+     * This method will reject all non-string values.
+     *
+     * # Options
+     *
+     * - `extended` - Disallow bytes higher within the basic multilingual plane.
+     *   MySQL's older utf8 encoding type does not allow characters above
+     *   the basic multilingual plane. Defaults to false.
+     *
+     * @param string $value The value to check
+     * @return bool
+     */
+    public static function utf8($value, array $options = [])
+    {
+        if (!is_string($value)) {
+            return false;
+        }
+        $options += ['extended' => false];
+        if ($options['extended']) {
+            return true;
+        }
+        return preg_match('/[\x{10000}-\x{10FFFF}]/u', $value) === 0;
+    }
+
+    /**
      * Check that the input value is an integer
      *
      * This method will accept strings that contain only integer data
