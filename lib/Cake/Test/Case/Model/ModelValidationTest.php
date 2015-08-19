@@ -555,6 +555,44 @@ class ModelValidationTest extends BaseModelTest {
 	}
 
 /**
+ * test that validates() still performs correctly when useTable = false on the model.
+ *
+ * @return void
+ */
+	public function testValidatesWithNoTable() {
+		$TestModel = new TheVoid();
+		$TestModel->validate = array(
+			'title' => array(
+				'notEmpty' => array(
+					'rule' => array('notBlank'),
+					'required' => true,
+				),
+				'tooShort' => array(
+					'rule' => array('minLength', 10),
+				),
+			),
+		);
+		$data = array(
+			'TheVoid' => array(
+				'title' => 'too short',
+			),
+		);
+		$TestModel->create($data);
+		$result = $TestModel->validates();
+		$this->assertFalse($result);
+
+		$data = array(
+			'TheVoid' => array(
+				'id' => '1',
+				'title' => 'A good title',
+			),
+		);
+		$TestModel->create($data);
+		$result = $TestModel->validates();
+		$this->assertTrue($result);
+	}
+
+/**
  * test that validates() checks all the 'with' associations as well for validation
  * as this can cause partial/wrong data insertion.
  *

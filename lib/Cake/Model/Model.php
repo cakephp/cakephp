@@ -2895,6 +2895,10 @@ class Model extends Object implements CakeEventListener {
 			return false;
 		}
 
+		if ($this->useTable === false) {
+			return false;
+		}
+
 		return (bool)$this->find('count', array(
 			'conditions' => array(
 				$this->alias . '.' . $this->primaryKey => $id
