@@ -39,7 +39,7 @@ class Time extends Carbon implements JsonSerializable
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var mixed
+     * @var string|array|int
      * @see \Cake\I18n\Time::i18nFormat()
      */
     protected static $_toStringFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::SHORT];
@@ -55,7 +55,7 @@ class Time extends Carbon implements JsonSerializable
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var mixed
+     * @var string|array|int
      * @see \Cake\I18n\Time::i18nFormat()
      */
     protected static $_jsonEncodeFormat = "yyyy-MM-dd'T'HH:mm:ssZ";
@@ -71,7 +71,7 @@ class Time extends Carbon implements JsonSerializable
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var mixed
+     * @var string|array|int
      * @see \Cake\I18n\Time::nice()
      */
     public static $niceFormat = [IntlDateFormatter::MEDIUM, IntlDateFormatter::SHORT];
