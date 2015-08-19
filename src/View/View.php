@@ -851,7 +851,7 @@ class View
      * CamelCased action names will be under_scored by default.
      * This means that you can have LongActionNames that refer to
      * long_action_names.ctp views. You can change the inflection rule by
-     * overriding _inflectViewTemplate.
+     * overriding _inflectViewFileName.
      *
      * @param string|null $name Controller action to find template filename for
      * @return string Template filename
