@@ -33,10 +33,10 @@
 		if ($this->request->is('post')) {
 			$this->BakeArticle->create();
 			if ($this->BakeArticle->save($this->request->data)) {
-				$this->Session->setFlash(__('The bake article has been saved.'));
+				$this->Flash->success(__('The bake article has been saved.'));
 				return $this->redirect(array('action' => 'index'));
 			} else {
-				$this->Session->setFlash(__('The bake article could not be saved. Please, try again.'));
+				$this->Flash->error(__('The bake article could not be saved. Please, try again.'));
 			}
 		}
 		$bakeTags = $this->BakeArticle->BakeTag->find('list');
@@ -56,10 +56,10 @@
 		}
 		if ($this->request->is(array('post', 'put'))) {
 			if ($this->BakeArticle->save($this->request->data)) {
-				$this->Session->setFlash(__('The bake article has been saved.'));
+				$this->Flash->success(__('The bake article has been saved.'));
 				return $this->redirect(array('action' => 'index'));
 			} else {
-				$this->Session->setFlash(__('The bake article could not be saved. Please, try again.'));
+				$this->Flash->error(__('The bake article could not be saved. Please, try again.'));
 			}
 		} else {
 			$options = array('conditions' => array('BakeArticle.' . $this->BakeArticle->primaryKey => $id));
@@ -83,9 +83,9 @@
 		}
 		$this->request->allowMethod('post', 'delete');
 		if ($this->BakeArticle->delete()) {
-			$this->Session->setFlash(__('The bake article has been deleted.'));
+			$this->Flash->success(__('The bake article has been deleted.'));
 		} else {
-			$this->Session->setFlash(__('The bake article could not be deleted. Please, try again.'));
+			$this->Flash->error(__('The bake article could not be deleted. Please, try again.'));
 		}
 		return $this->redirect(array('action' => 'index'));
 	}
