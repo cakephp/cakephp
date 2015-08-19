@@ -579,8 +579,7 @@ class AuthComponentTest extends TestCase
 
         $this->Auth->session->write(
             'Auth',
-            [
-            'AuthUsers' => ['id' => '1', 'username' => 'nate']]
+            ['AuthUsers' => ['id' => '1', 'username' => 'nate']]
         );
         $this->Controller->testUrl = null;
         $this->Auth->request->addParams(Router::parse($url));
@@ -596,21 +595,7 @@ class AuthComponentTest extends TestCase
         $expected = Router::normalize('/auth_test/login');
         $this->assertEquals($expected, $this->Controller->testUrl);
 
-        $this->Auth->session->delete('Auth');
-        $this->Auth->session->write('Auth', [
-            'AuthUsers' => ['id' => '1', 'username' => 'nate']
-        ]);
-        $this->Auth->request->params['action'] = 'login';
-        $this->Auth->request->url = 'auth_test/login';
-        $this->Controller->request->env('HTTP_REFERER', Router::url('/admin', true));
-        $this->Auth->config('loginAction', 'auth_test/login');
-        $this->Auth->config('loginRedirect', false);
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->Auth->startup($event);
-        $expected = Router::normalize('/admin');
-        $this->assertEquals($expected, $this->Auth->redirectUrl());
-
-        // Passed Arguments
+        // Auth.redirect gets set when accessing a protected action without being authenticated
         $this->Auth->session->delete('Auth');
         $url = '/posts/view/1';
         $this->Auth->request->addParams(Router::parse($url));
@@ -621,7 +606,7 @@ class AuthComponentTest extends TestCase
         $expected = Router::normalize('posts/view/1');
         $this->assertEquals($expected, $this->Auth->session->read('Auth.redirect'));
 
-        // QueryString parameters
+        // QueryString parameters are preserved when setting Auth.redirect
         $this->Auth->session->delete('Auth');
         $url = '/posts/view/29';
         $this->Auth->request->addParams(Router::parse($url));
@@ -676,19 +661,6 @@ class AuthComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->Auth->startup($event);
         $expected = Router::normalize('/posts/view/1');
-        $this->assertEquals($expected, $this->Auth->session->read('Auth.redirect'));
-
-        // External Direct Login Link
-        $this->Auth->session->delete('Auth');
-        $url = '/auth_test/login';
-        $this->Auth->request = $this->Controller->request = new Request($url);
-        $this->Auth->request->env('HTTP_REFERER', 'http://webmail.example.com/view/message');
-        $this->Auth->request->addParams(Router::parse($url));
-        $this->Auth->request->url = Router::normalize($url);
-        $this->Auth->config('loginAction', ['controller' => 'AuthTest', 'action' => 'login']);
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->Auth->startup($event);
-        $expected = Router::normalize('/');
         $this->assertEquals($expected, $this->Auth->session->read('Auth.redirect'));
 
         $this->Auth->session->delete('Auth');
