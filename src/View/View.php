@@ -848,8 +848,10 @@ class View
 
     /**
      * Returns filename of given action's template file (.ctp) as a string.
-     * CamelCased action names will be under_scored! This means that you can have
-     * LongActionNames that refer to long_action_names.ctp views.
+     * CamelCased action names will be under_scored by default.
+     * This means that you can have LongActionNames that refer to
+     * long_action_names.ctp views. You can change the inflection rule by
+     * overriding _inflectViewTemplate.
      *
      * @param string|null $name Controller action to find template filename for
      * @return string Template filename
@@ -874,7 +876,7 @@ class View
         $name = str_replace('/', DS, $name);
 
         if (strpos($name, DS) === false && $name[0] !== '.') {
-            $name = $viewPath . $subDir . Inflector::underscore($name);
+            $name = $viewPath . $subDir . $this->_inflectViewFileName($name);
         } elseif (strpos($name, DS) !== false) {
             if ($name[0] === DS || $name[1] === ':') {
                 if (is_file($name)) {
@@ -894,6 +896,18 @@ class View
             }
         }
         throw new Exception\MissingTemplateException(['file' => $name . $this->_ext]);
+    }
+
+    /**
+     * Change the name of a view template file into underscored format.
+     *
+     * Extracted so that who wants to change the inflection rule can override.
+     *
+     * @param string $name Name of file which should be underscored.
+     * @return string File name after conversion
+     */
+    protected function _inflectViewFileName($name) {
+        return Inflector::underscore($name);
     }
 
     /**
