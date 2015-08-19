@@ -191,7 +191,7 @@ class TimeTest extends TestCase
         );
         $this->assertEquals('on 31-07-1990 13:33:00', $result);
     }
-     
+
     /**
      * test the end option for timeAgoInWords
      *
@@ -688,6 +688,8 @@ class TimeTest extends TestCase
     {
         $time = new Time('2014-04-20 10:10:10');
         $this->assertEquals('"2014-04-20T10:10:10+0000"', json_encode($time));
+        Time::setJsonEncodeFormat('yyyy-MM-dd HH:mm:ss');
+        $this->assertEquals('"2014-04-20 10:10:10"', json_encode($time));
     }
 
     /**
