@@ -260,8 +260,7 @@ class SecurityTest extends TestCase
      */
     public function testEngineEquivalence()
     {
-        $this->skipIf(!defined('MCRYPT_RIJNDAEL_128'), 'This needs mcrypt extension to be laoded.');
-
+        $this->skipIf(!defined('MCRYPT_RIJNDAEL_128'), 'This needs mcrypt extension to be loaded.');
 
         $restore = Security::engine();
         $txt = "Obi-wan you're our only hope";
