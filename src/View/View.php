@@ -1061,7 +1061,8 @@ class View implements EventDispatcherInterface
      * @param string $name Name of file which should be inflected.
      * @return string File name after conversion
      */
-    protected function _inflectViewFileName($name) {
+    protected function _inflectViewFileName($name)
+    {
         return Inflector::underscore($name);
     }
 
