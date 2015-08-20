@@ -1125,6 +1125,7 @@ class Validation
      *   the basic multilingual plane. Defaults to false.
      *
      * @param string $value The value to check
+     * @param array $options An array of options. See above for the supported options.
      * @return bool
      */
     public static function utf8($value, array $options = [])
