@@ -20,6 +20,8 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\View\Exception\MissingViewException;
 use Cake\View\View;
+use JsonSerializable;
+use Serializable;
 
 /**
  * Provides an API for iteratively building a view up.
@@ -27,7 +29,7 @@ use Cake\View\View;
  * Once you have configured the view and established all the context
  * you can create a view instance with `build()`.
  */
-class ViewBuilder
+class ViewBuilder implements JsonSerializable, Serializable
 {
     /**
      * The subdirectory to the template.
@@ -337,5 +339,66 @@ class ViewBuilder
         ];
         $data += $this->_options;
         return new $className($request, $response, $events, $data);
+    }
+
+    /**
+     * Serializes the view builder object to a value that can be natively
+     * serialized and re-used to clone this builder instance.
+     *
+     * @return array Serializable array of configuration properties.
+     */
+    public function jsonSerialize()
+    {
+        $properties = [
+            '_templatePath', '_template', '_plugin', '_theme', '_layout', '_autoLayout',
+            '_layoutPath', '_name', '_className', '_options', '_helpers'
+        ];
+
+        $array = [];
+
+        foreach ($properties as $property) {
+            $array[$property] = $this->{$property};
+        }
+
+        return array_filter($array, function ($i) {
+            return !is_array($i) && strlen($i) || !empty($i);
+        });
+    }
+
+    /**
+     * Configures a view builder instance from serialized config.
+     *
+     * @param array $config View builder configuration array.
+     * @return $this Configured view builder instance.
+     */
+    public function createFromArray($config)
+    {
+        foreach ($config as $property => $value) {
+            $this->{$property} = $value;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Serializes the view builder object.
+     *
+     * @return string
+     */
+    public function serialize()
+    {
+        $array = $this->jsonSerialize();
+        return serialize($array);
+    }
+
+    /**
+     * Unserializes the view builder object.
+     *
+     * @param string $data Serialized string.
+     * @return $this Configured view builder instance.
+     */
+    public function unserialize($data)
+    {
+        return $this->createFromArray(unserialize($data));
     }
 }
