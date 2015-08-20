@@ -287,7 +287,12 @@ class AuthComponent extends Component
             return;
         }
 
+        $isLoginAction = $this->_isLoginAction($controller);
+
         if (!$this->_getUser()) {
+            if ($isLoginAction) {
+                return;
+            }
             $result = $this->_unauthenticated($controller);
             if ($result instanceof Response) {
                 $event->stopPropagation();
@@ -295,7 +300,7 @@ class AuthComponent extends Component
             return $result;
         }
 
-        if ($this->_isLoginAction($controller) ||
+        if ($isLoginAction ||
             empty($this->_config['authorize']) ||
             $this->isAuthorized($this->user())
         ) {
@@ -359,14 +364,8 @@ class AuthComponent extends Component
             return $result;
         }
 
-        if ($this->_isLoginAction($controller)) {
-            if (empty($controller->request->data) &&
-                !$this->storage()->redirectUrl() &&
-                $this->request->env('HTTP_REFERER')
-            ) {
-                $this->storage()->redirectUrl($controller->referer(null, true));
-            }
-            return;
+        if (!$this->storage()->redirectUrl()) {
+            $this->storage()->redirectUrl($this->request->here(false));
         }
 
         if (!$controller->request->is('ajax')) {
