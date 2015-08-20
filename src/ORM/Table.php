@@ -1657,7 +1657,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Will delete the entity provided. Will remove rows from any
      * dependent associations, and clear out join tables for BelongsToMany associations.
      *
-     * @param \Cake\DataSource\EntityInterface $entity The entity to delete.
+     * @param \Cake\Datasource\EntityInterface $entity The entity to delete.
      * @param \ArrayObject $options The options for the delete.
      * @throws \InvalidArgumentException if there are no primary key values of the
      * passed entity

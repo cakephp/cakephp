@@ -17,6 +17,8 @@
 namespace Cake\Shell;
 
 use Cake\Console\Shell;
+use Cake\Core\Plugin;
+use Cake\Utility\Inflector;
 
 /**
  * Shell for I18N management.

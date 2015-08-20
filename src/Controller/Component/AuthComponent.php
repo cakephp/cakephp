@@ -425,6 +425,7 @@ class AuthComponent extends Component
             if (!empty($this->_config['loginRedirect'])) {
                 $default = $this->_config['loginRedirect'];
             }
+            $default['_base'] = false;
             $url = $controller->referer($default, true);
         } else {
             $url = $this->_config['unauthorizedRedirect'];
