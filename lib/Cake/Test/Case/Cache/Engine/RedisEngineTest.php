@@ -381,4 +381,22 @@ class RedisEngineTest extends CakeTestCase {
 		$this->assertFalse(Cache::read('test_groups', 'redis_groups'));
 	}
 
+/**
+ * Test add method.
+ *
+ * @return void
+ */
+	public function testAdd() {
+		Cache::delete('test_add_key', 'redis');
+
+		$result = Cache::add('test_add_key', 'test data', 'redis');
+		$this->assertTrue($result);
+
+		$expected = 'test data';
+		$result = Cache::read('test_add_key', 'redis');
+		$this->assertEquals($expected, $result);
+
+		$result = Cache::add('test_add_key', 'test data 2', 'redis');
+		$this->assertFalse($result);
+	}
 }

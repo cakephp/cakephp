@@ -273,4 +273,23 @@ class ApcEngineTest extends CakeTestCase {
 		$this->assertTrue(Cache::clearGroup('group_b', 'apc_groups'));
 		$this->assertFalse(Cache::read('test_groups', 'apc_groups'));
 	}
+
+/**
+ * Test add method.
+ *
+ * @return void
+ */
+	public function testAdd() {
+		Cache::delete('test_add_key', 'apc');
+
+		$result = Cache::add('test_add_key', 'test data', 'apc');
+		$this->assertTrue($result);
+
+		$expected = 'test data';
+		$result = Cache::read('test_add_key', 'apc');
+		$this->assertEquals($expected, $result);
+
+		$result = Cache::add('test_add_key', 'test data 2', 'apc');
+		$this->assertFalse($result);
+	}
 }

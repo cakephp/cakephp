@@ -490,4 +490,23 @@ class MemcacheEngineTest extends CakeTestCase {
 		$this->assertTrue(Cache::clearGroup('group_b', 'memcache_groups'));
 		$this->assertFalse(Cache::read('test_groups', 'memcache_groups'));
 	}
+
+/**
+ * Test that failed add write return false.
+ *
+ * @return void
+ */
+	public function testAdd() {
+		Cache::delete('test_add_key', 'memcache');
+
+		$result = Cache::add('test_add_key', 'test data', 'memcache');
+		$this->assertTrue($result);
+
+		$expected = 'test data';
+		$result = Cache::read('test_add_key', 'memcache');
+		$this->assertEquals($expected, $result);
+
+		$result = Cache::add('test_add_key', 'test data 2', 'memcache');
+		$this->assertFalse($result);
+	}
 }

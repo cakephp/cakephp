@@ -188,4 +188,22 @@ class ApcEngine extends CacheEngine {
 		return $success;
 	}
 
+/**
+ * Write data for key into cache if it doesn't exist already. 
+ * If it already exists, it fails and returns false.
+ *
+ * @param string $key Identifier for the data.
+ * @param mixed $value Data to be cached.
+ * @param int $duration How long to cache the data, in seconds.
+ * @return bool True if the data was successfully cached, false on failure.
+ * @link http://php.net/manual/en/function.apc-add.php
+ */
+	public function add($key, $value, $duration) {
+		$expires = 0;
+		if ($duration) {
+			$expires = time() + $duration;
+		}
+		apc_add($key . '_expires', $expires, $duration);
+		return apc_add($key, $value, $duration);
+	}
 }

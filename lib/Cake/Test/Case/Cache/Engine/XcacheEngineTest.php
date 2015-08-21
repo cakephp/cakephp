@@ -268,4 +268,24 @@ class XcacheEngineTest extends CakeTestCase {
 		$this->assertTrue(Cache::clearGroup('group_b', 'xcache_groups'));
 		$this->assertFalse(Cache::read('test_groups', 'xcache_groups'));
 	}
+
+/**
+ * Test that failed add write return false.
+ *
+ * @return void
+ */
+	public function testAdd() {
+		Cache::set(array('duration' => 1), null);
+		Cache::delete('test_add_key', 'default');
+
+		$result = Cache::add('test_add_key', 'test data', 'default');
+		$this->assertTrue($result);
+
+		$expected = 'test data';
+		$result = Cache::read('test_add_key', 'default');
+		$this->assertEquals($expected, $result);
+
+		$result = Cache::add('test_add_key', 'test data 2', 'default');
+		$this->assertFalse($result);
+	}
 }
