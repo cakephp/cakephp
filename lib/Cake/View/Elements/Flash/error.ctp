@@ -1,1 +1,1 @@
-<div class="message error"><?= h($message) ?></div>
+<div id="<?= $key ?>Message" class="message error"><?= h($message) ?></div>
