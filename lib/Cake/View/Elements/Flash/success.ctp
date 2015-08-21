@@ -1,1 +1,1 @@
-<div id="<?= $key ?>Message" class="message success"><?= h($message) ?></div>
+<div id="<?php echo h($key) ?>Message" class="message success"><?php echo h($message) ?></div>
