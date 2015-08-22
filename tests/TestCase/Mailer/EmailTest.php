@@ -979,6 +979,20 @@ class EmailTest extends TestCase
     }
 
     /**
+     * test that default profile is used by constructor if available.
+     *
+     * @return void
+     */
+    public function testDefaultProfile()
+    {
+        $config = ['test' => 'ok', 'test2' => true];
+        Configure::write('Email.default', $config);
+        $Email = new Email();
+        $this->assertSame($Email->profile(), $config);
+        Configure::delete('Email');
+    }
+
+    /**
      * Test that using an invalid profile fails.
      *
      * @expectedException \InvalidArgumentException

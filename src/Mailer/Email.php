@@ -345,6 +345,9 @@ class Email implements JsonSerializable, Serializable
             ->layout('default')
             ->helpers(['Html']);
 
+        if ($config === null) {
+            $config = Configure::read('Email.default');
+        }
         if ($config) {
             $this->profile($config);
         }
