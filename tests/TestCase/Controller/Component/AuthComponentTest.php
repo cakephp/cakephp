@@ -810,6 +810,47 @@ class AuthComponentTest extends TestCase
     }
 
     /**
+     * test unauthorized redirect defaults to loginRedirect
+     * which is a string URL.
+     *
+     * @return void
+     */
+    public function testRedirectToUnauthorizedRedirectLoginAction()
+    {
+        $url = '/party/on';
+        $this->Auth->Flash = $this->getMock(
+            'Cake\Controller\Component\FlashComponent',
+            ['set'],
+            [$this->Controller->components()]
+        );
+        $this->Auth->request = $request = new Request([
+            'url' => $url,
+            'session' => $this->Auth->session
+        ]);
+        $this->Auth->request->addParams(Router::parse($url));
+        $this->Auth->config('authorize', ['Controller']);
+        $this->Auth->setUser(['username' => 'admad', 'password' => 'cake']);
+
+        $this->Auth->config('unauthorizedRedirect', true);
+        $this->Auth->config('loginAction', '/users/login');
+
+        $response = new Response();
+        $Controller = $this->getMock(
+            'Cake\Controller\Controller',
+            ['on', 'redirect'],
+            [$request, $response]
+        );
+
+        // Uses referrer instead of loginAction.
+        $Controller->expects($this->once())
+            ->method('redirect')
+            ->with($this->equalTo('/'));
+
+        $event = new Event('Controller.startup', $Controller);
+        $this->Auth->startup($event);
+    }
+
+    /**
      * testRedirectToUnauthorizedRedirectSuppressedAuthError
      *
      * @return void
