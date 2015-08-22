@@ -1473,8 +1473,10 @@ class QueryTest extends TestCase
         $counter->select([
                 'total' => $counter->func()->count('*')
             ])
-            ->where(['ArticlesTags.tag_id' => 1])
-            ->where(['ArticlesTags.article_id = Articles.id']);
+            ->where([
+                'ArticlesTags.tag_id' => 1,
+                'ArticlesTags.article_id' => new IdentifierExpression('Articles.id')
+            ]);
 
         $result = $table->find('all')
             ->select([
@@ -1498,12 +1500,12 @@ class QueryTest extends TestCase
         $table = TableRegistry::get('Articles');
         $query = $table->find();
         $query->select([
-            'admin' => $query->func()->concat(
-                ['Articles.title' => 'literal', 'test'],
+            'title' => $query->func()->concat(
+                ['title' => 'literal', 'test'],
                 ['string']
             ),
         ]);
-        $query->where(['Articles.id' => 1]);
+        $query->where(['id' => 1]);
         $this->assertCount(1, $query->all());
         $this->assertEquals(1, $query->count());
     }
