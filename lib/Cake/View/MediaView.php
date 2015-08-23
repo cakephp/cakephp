@@ -65,7 +65,7 @@ class MediaView extends View {
  * @return void
  */
 	public function render($view = null, $layout = null) {
-		$name = $download = $id = $modified = $path = $cache = $mimeType = $compress = null;
+		$name = $extension = $download = $id = $modified = $path = $cache = $mimeType = $compress = null;
 		extract($this->viewVars, EXTR_OVERWRITE);
 
 		$path = $path . $id;
@@ -86,7 +86,12 @@ class MediaView extends View {
 		}
 
 		if ($name !== null) {
-			$name .= '.' . pathinfo($id, PATHINFO_EXTENSION);
+			if (empty($extension)) {
+				$extension = pathinfo($id, PATHINFO_EXTENSION);
+			}
+			if (!empty($extension)) {
+				$name .= '.' . $extension;
+			}
 		}
 		$this->response->file($path, compact('name', 'download'));
 

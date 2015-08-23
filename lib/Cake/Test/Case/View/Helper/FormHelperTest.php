@@ -1291,6 +1291,30 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test that a hidden field followed by a visible field
+ * undoes the hidden field locking.
+ *
+ * @return void
+ */
+	public function testSecuredInputDuplicate() {
+		$this->Form->request['_Token'] = array('key' => 'testKey');
+		$this->assertEquals(array(), $this->Form->fields);
+
+		$this->Form->input('text_val', array(
+			'type' => 'hidden',
+			'value' => 'some text',
+		));
+		$expected = array('text_val' => 'some text');
+		$this->assertEquals($expected, $this->Form->fields);
+
+		$this->Form->input('text_val', array(
+			'type' => 'text',
+		));
+		$expected = array('text_val');
+		$this->assertEquals($expected, $this->Form->fields);
+	}
+
+/**
  * Test secured inputs with custom names.
  *
  * @return void
