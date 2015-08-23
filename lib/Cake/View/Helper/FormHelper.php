@@ -661,6 +661,8 @@ class FormHelper extends AppHelper {
 			if (!in_array($field, $this->fields)) {
 				if ($value !== null) {
 					return $this->fields[$field] = $value;
+				} elseif (isset($this->fields[$field]) && $value === null) {
+					unset($this->fields[$field]);
 				}
 				$this->fields[] = $field;
 			}
