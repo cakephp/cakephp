@@ -1667,6 +1667,31 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test that a hidden field followed by a visible field
+     * undoes the hidden field locking.
+     *
+     * @return void
+     */
+    public function testSecuredInputDuplicate()
+    {
+        $this->Form->request->params['_Token'] = ['key' => 'testKey'];
+        $this->assertEquals([], $this->Form->fields);
+
+        $this->Form->input('text_val', [
+                'type' => 'hidden',
+                'value' => 'some text',
+        ]);
+        $expected = ['text_val' => 'some text'];
+        $this->assertEquals($expected, $this->Form->fields);
+
+        $this->Form->input('text_val', [
+                'type' => 'text',
+        ]);
+        $expected = ['text_val'];
+        $this->assertEquals($expected, $this->Form->fields);
+    }
+
+    /**
      * Tests that the correct keys are added to the field hash index
      *
      * @return void
