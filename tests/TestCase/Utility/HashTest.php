@@ -256,6 +256,9 @@ class HashTest extends TestCase
 
         $return = Hash::get($data, 'non-existent');
         $this->assertNull($return);
+
+        $data = ['a' => ['b' => ['c' => ['d' => 1]]]];
+        $this->assertEquals(1, Hash::get(new ArrayObject($data), 'a.b.c.d'));
     }
 
     /**

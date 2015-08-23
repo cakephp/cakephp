@@ -13,6 +13,7 @@
  */
 namespace Cake\Utility;
 
+use ArrayAccess;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -71,7 +72,7 @@ class Hash
                 return isset($data[$parts[0]][$parts[1]][$parts[2]]) ? $data[$parts[0]][$parts[1]][$parts[2]] : $default;
             default:
                 foreach ($parts as $key) {
-                    if (is_array($data) && isset($data[$key])) {
+                    if ((is_array($data) || $data instanceof ArrayAccess) && isset($data[$key])) {
                         $data = $data[$key];
                     } else {
                         return $default;
