@@ -1458,6 +1458,57 @@ class QueryTest extends TestCase
         $this->assertSame(3, $result);
     }
 
+    /**
+     * Test getting counts from queries with contain.
+     *
+     * @return void
+     */
+    public function testCountWithSubselect()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors');
+        $table->hasMany('ArticlesTags');
+
+        $counter = $table->ArticlesTags->find();
+        $counter->select([
+                'total' => $counter->func()->count('*')
+            ])
+            ->where([
+                'ArticlesTags.tag_id' => 1,
+                'ArticlesTags.article_id' => new IdentifierExpression('Articles.id')
+            ]);
+
+        $result = $table->find('all')
+            ->select([
+                'Articles.title',
+                'tag_count' => $counter
+            ])
+            ->matching('Authors', function ($q) {
+                return $q->where(['Authors.id' => 1]);
+            })
+            ->count();
+        $this->assertSame(2, $result);
+    }
+
+    /**
+     * Test getting counts with complex fields.
+     *
+     * @return void
+     */
+    public function testCountWithExpressions()
+    {
+        $table = TableRegistry::get('Articles');
+        $query = $table->find();
+        $query->select([
+            'title' => $query->func()->concat(
+                ['title' => 'literal', 'test'],
+                ['string']
+            ),
+        ]);
+        $query->where(['id' => 1]);
+        $this->assertCount(1, $query->all());
+        $this->assertEquals(1, $query->count());
+    }
 
     /**
      * test count with a beforeFind.
