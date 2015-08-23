@@ -35,7 +35,7 @@ class Hash
      * Does not support the full dot notation feature set,
      * but is faster for simple read operations.
      *
-     * @param array $data Array of data to operate on.
+     * @param array|\ArrayAccess $data Array of data to operate on.
      * @param string|array $path The path being searched for. Either a dot
      *   separated string, or an array of path segments.
      * @param mixed $default The return value when the path does not exist
@@ -43,7 +43,7 @@ class Hash
      * @return mixed The value fetched from the array, or null.
      * @link http://book.cakephp.org/3.0/en/core-libraries/hash.html#Hash::get
      */
-    public static function get(array $data, $path, $default = null)
+    public static function get($data, $path, $default = null)
     {
         if (empty($data) || $path === null || $path === '') {
             return $default;

@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Utility;
 
+use ArrayObject;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
 
@@ -234,6 +235,27 @@ class HashTest extends TestCase
 
         $result = Hash::get($data, ['1', 'Article']);
         $this->assertEquals($data[1]['Article'], $result);
+
+        // Object which implements ArrayAccess
+        $nested = new ArrayObject([
+            'user' => 'bar'
+        ]);
+        $data = new ArrayObject([
+            'name' => 'foo',
+            'associated' => $nested
+        ]);
+
+        $return = Hash::get($data, 'name');
+        $this->assertEquals('foo', $return);
+
+        $return = Hash::get($data, 'associated');
+        $this->assertEquals($nested, $return);
+
+        $return = Hash::get($data, 'associated.user');
+        $this->assertEquals('bar', $return);
+
+        $return = Hash::get($data, 'non-existent');
+        $this->assertNull($return);
     }
 
     /**
