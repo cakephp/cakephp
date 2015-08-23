@@ -262,6 +262,18 @@ class HashTest extends TestCase
     }
 
     /**
+     * Test get() for invalid $data type
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid data type, must an array or \ArrayAccess instance.
+     * @return void
+     */
+    public function testGetInvalidData()
+    {
+        Hash::get('string', 'path');
+    }
+
+    /**
      * Test get() with an invalid path
      *
      * @expectedException \InvalidArgumentException

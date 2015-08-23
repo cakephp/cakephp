@@ -36,7 +36,8 @@ class Hash
      * Does not support the full dot notation feature set,
      * but is faster for simple read operations.
      *
-     * @param array|\ArrayAccess $data Array of data to operate on.
+     * @param array|\ArrayAccess $data Array of data or object implementing
+     *   \ArrayAccess interface to operate on.
      * @param string|array $path The path being searched for. Either a dot
      *   separated string, or an array of path segments.
      * @param mixed $default The return value when the path does not exist
@@ -46,6 +47,12 @@ class Hash
      */
     public static function get($data, $path, $default = null)
     {
+        if (!(is_array($data) || $data instanceof ArrayAccess)) {
+            throw new InvalidArgumentException(
+                'Invalid data type, must an array or \ArrayAccess instance.'
+            );
+        }
+
         if (empty($data) || $path === null || $path === '') {
             return $default;
         }
