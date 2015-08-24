@@ -1090,12 +1090,13 @@ class CakeTime {
 				'group' => $options,
 			);
 		}
-		$options = array_merge(array(
+		$defaults = array(
 			'group' => true,
 			'abbr' => false,
 			'before' => ' - ',
 			'after' => null,
-		), $options);
+		);
+		$options += $defaults;
 		$group = $options['group'];
 
 		$regex = null;
