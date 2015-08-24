@@ -656,12 +656,13 @@ class Time extends Carbon implements JsonSerializable
                 'group' => $options,
             ];
         }
-        $options = array_merge([
+        $defaults = [
             'group' => true,
             'abbr' => false,
             'before' => ' - ',
             'after' => null,
-        ], $options);
+        ];
+        $options += $defaults;
         $group = $options['group'];
 
         $regex = null;
