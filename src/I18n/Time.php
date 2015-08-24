@@ -641,12 +641,29 @@ class Time extends Carbon implements JsonSerializable
      *   Or one of DateTimeZone class constants
      * @param string $country A two-letter ISO 3166-1 compatible country code.
      *   This option is only used when $filter is set to DateTimeZone::PER_COUNTRY
-     * @param bool $group If true (default value) groups the identifiers list by primary region
+     * @param bool|array $options If true (default value) groups the identifiers list by primary region.
+     *   Otherwise, an array containing `group`, `abbr`, `before`, and `after`
+     *   keys. Setting `group` and `abbr` to true will group results and append
+     *   timezone abbreviation in the display value. Set `before` and `after`
+     *   to customize the abbreviation wrapper.
      * @return array List of timezone identifiers
      * @since 2.2
      */
-    public static function listTimezones($filter = null, $country = null, $group = true)
+    public static function listTimezones($filter = null, $country = null, $options = [])
     {
+        if (is_bool($options)) {
+            $options = [
+                'group' => $options,
+            ];
+        }
+        $options = array_merge([
+            'group' => true,
+            'abbr' => false,
+            'before' => ' - ',
+            'after' => null,
+        ], $options);
+        $group = $options['group'];
+
         $regex = null;
         if (is_string($filter)) {
             $regex = $filter;
@@ -667,12 +684,23 @@ class Time extends Carbon implements JsonSerializable
 
         if ($group) {
             $groupedIdentifiers = [];
+            $now = time();
+            $before = $options['before'];
+            $after = $options['after'];
             foreach ($identifiers as $key => $tz) {
+                $abbr = null;
+                if ($options['abbr']) {
+                    $dateTimeZone = new \DateTimeZone($tz);
+                    $trans = $dateTimeZone->getTransitions($now, $now);
+                    $abbr = isset($trans[0]['abbr']) ?
+                        $before . $trans[0]['abbr'] . $after :
+                        null;
+                }
                 $item = explode('/', $tz, 2);
                 if (isset($item[1])) {
-                    $groupedIdentifiers[$item[0]][$tz] = $item[1];
+                    $groupedIdentifiers[$item[0]][$tz] = $item[1] . $abbr;
                 } else {
-                    $groupedIdentifiers[$item[0]] = [$tz => $item[0]];
+                    $groupedIdentifiers[$item[0]] = [$tz => $item[0] . $abbr];
                 }
             }
             return $groupedIdentifiers;
