@@ -40,13 +40,12 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     /**
      * Constructor.
      *
-     * @param \Cake\Controller\Controller $Controller Controller instance.
+     * @param \Cake\Controller\Controller $controller Controller instance.
      */
-    public function __construct(Controller $Controller = null)
+    public function __construct(Controller $controller = null)
     {
-        if ($Controller) {
-            $this->_Controller = $Controller;
-            $this->eventManager($Controller->eventManager());
+        if ($controller) {
+            $this->setController($controller);
         }
     }
 
@@ -58,6 +57,18 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     public function getController()
     {
         return $this->_Controller;
+    }
+
+    /**
+     * Set the controller associated with the collection.
+     *
+     * @param \Cake\Controller\Controller $controller Controller instance.
+     * @return void
+     */
+    public function setController(Controller $controller)
+    {
+        $this->_Controller = $controller;
+        $this->eventManager($controller->eventManager());
     }
 
     /**
