@@ -630,6 +630,19 @@ class TimeTest extends TestCase
         $this->assertTrue(isset($return['Asia']['Asia/Bangkok']));
         $this->assertFalse(isset($return['Pacific']));
 
+        $return = Time::listTimezones(null, null, ['abbr' => true]);
+        $this->assertTrue(isset($return['Asia']['Asia/Jakarta']));
+        $this->assertEquals('Jakarta - WIB', $return['Asia']['Asia/Jakarta']);
+        $this->assertEquals('Amsterdam - CEST', $return['Europe']['Europe/Amsterdam']);
+
+        $return = Time::listTimezones(null, null, [
+            'abbr' => true,
+            'before' => ' (',
+            'after' => ')',
+        ]);
+        $this->assertEquals('Jayapura (WIT)', $return['Asia']['Asia/Jayapura']);
+        $this->assertEquals('Amsterdam (CEST)', $return['Europe']['Europe/Amsterdam']);
+
         $return = Time::listTimezones('#^(America|Pacific)/#', null, false);
         $this->assertTrue(isset($return['America/Argentina/Buenos_Aires']));
         $this->assertTrue(isset($return['Pacific/Tahiti']));
