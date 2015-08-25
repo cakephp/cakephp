@@ -15,6 +15,7 @@
 namespace Cake\ORM;
 
 use ArrayObject;
+use Cake\Database\ExpressionInterface;
 use Cake\Database\Query as DatabaseQuery;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\QueryTrait;
@@ -713,15 +714,28 @@ class Query extends DatabaseQuery implements JsonSerializable
     {
         $query = $this->cleanCopy();
         $counter = $this->_counter;
-
         if ($counter) {
             $query->counter(null);
             return (int)$counter($query);
         }
 
+        $complex = (
+            $query->clause('distinct') ||
+            count($query->clause('group')) ||
+            count($query->clause('union')) ||
+            $query->clause('having')
+        );
+        if (!$complex) {
+            // Expression fields could have bound parameters.
+            foreach ($query->clause('select') as $field) {
+                if ($field instanceof ExpressionInterface) {
+                    $complex = true;
+                    break;
+                }
+            }
+        }
+
         $count = ['count' => $query->func()->count('*')];
-        $complex = count($query->clause('group')) || $query->clause('distinct') || $query->clause('having');
-        $complex = $complex || count($query->clause('union'));
 
         if (!$complex) {
             $query->eagerLoader()->autoFields(false);
