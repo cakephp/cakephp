@@ -511,7 +511,7 @@ class Shell
      */
     public function verbose($message, $newlines = 1)
     {
-        return $this->io->verbose($message, $newlines);
+        return $this->_io->verbose($message, $newlines);
     }
 
     /**
@@ -523,7 +523,7 @@ class Shell
      */
     public function quiet($message, $newlines = 1)
     {
-        return $this->io->quiet($message, $newlines);
+        return $this->_io->quiet($message, $newlines);
     }
 
     /**
