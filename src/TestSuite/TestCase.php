@@ -122,7 +122,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     /**
      * Chooses which fixtures to load for a given test
      *
-     * Each parameter is a model name that corresponds to a fixture, i.e. 'Post', 'Author', etc.
+     * Each parameter is a model name that corresponds to a fixture, i.e. 'Posts', 'Authors', etc.
      *
      * @return void
      * @see \Cake\TestSuite\TestCase::$autoFixtures
