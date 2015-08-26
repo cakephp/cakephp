@@ -1446,6 +1446,53 @@ class HashTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+
+    /**
+     * test sorting with string ignoring case.
+     *
+     * @return void
+     */
+    public function testSortStringIgnoreCase()
+    {
+        $toSort = [
+            ['Item' => ['name' => 'bar']],
+            ['Item' => ['name' => 'Baby']],
+            ['Item' => ['name' => 'Baz']],
+            ['Item' => ['name' => 'bat']],
+        ];
+        $sorted = Hash::sort($toSort, '{n}.Item.name', 'asc', ['type' => 'string', 'ignoreCase' => true]);
+        $expected = [
+            ['Item' => ['name' => 'Baby']],
+            ['Item' => ['name' => 'bar']],
+            ['Item' => ['name' => 'bat']],
+            ['Item' => ['name' => 'Baz']],
+        ];
+        $this->assertEquals($expected, $sorted);
+    }
+
+    /**
+     * test regular sorting ignoring case.
+     *
+     * @return void
+     */
+    public function testSortRegularIgnoreCase()
+    {
+        $toSort = [
+            ['Item' => ['name' => 'bar']],
+            ['Item' => ['name' => 'Baby']],
+            ['Item' => ['name' => 'Baz']],
+            ['Item' => ['name' => 'bat']],
+        ];
+        $sorted = Hash::sort($toSort, '{n}.Item.name', 'asc', ['type' => 'regular', 'ignoreCase' => true]);
+        $expected = [
+            ['Item' => ['name' => 'Baby']],
+            ['Item' => ['name' => 'bar']],
+            ['Item' => ['name' => 'bat']],
+            ['Item' => ['name' => 'Baz']],
+        ];
+        $this->assertEquals($expected, $sorted);
+    }
+
     /**
      * Test insert()
      *
