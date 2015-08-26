@@ -227,8 +227,9 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param \Cake\Network\Response|null $response Response object for this controller.
      * @param string|null $name Override the name useful in testing when using mocks.
      * @param \Cake\Event\EventManager|null $eventManager The event manager. Defaults to a new instance.
+     * @param \Cake\Controller\ComponentRegistry|null $components The component registry. Defaults to a new instance.
      */
-    public function __construct(Request $request = null, Response $response = null, $name = null, $eventManager = null)
+    public function __construct(Request $request = null, Response $response = null, $name = null, $eventManager = null, $components = null)
     {
         if ($name !== null) {
             $this->name = $name;
@@ -254,6 +255,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $modelClass = ($this->plugin ? $this->plugin . '.' : '') . $this->name;
         $this->_setModelClass($modelClass);
 
+        if ($components !== null) {
+            $this->components($components);
+        }
+
         $this->initialize();
 
         $this->_mergeControllerVars();
@@ -276,12 +281,20 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Get the component registry for this controller.
      *
+     * If called with the first parameter, it will be set as the controller $this->_components property
+     *
+     * @param \Cake\Controller\ComponentRegistry|null $components Component registry.
+     *
      * @return \Cake\Controller\ComponentRegistry
      */
-    public function components()
+    public function components($components = null)
     {
-        if ($this->_components === null) {
+        if ($components === null && $this->_components === null) {
             $this->_components = new ComponentRegistry($this);
+        }
+        if ($components !== null) {
+            $components->setController($this);
+            $this->_components = $components;
         }
         return $this->_components;
     }
