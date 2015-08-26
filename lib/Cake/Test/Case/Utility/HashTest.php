@@ -1469,17 +1469,6 @@ class HashTest extends CakeTestCase {
 	}
 
 /**
- * Tests that sort() throws an InvalidArgumentException when providing an invalid input.
- *
- * @expectedException InvalidArgumentException
- * @return void
- */
-	public function testSortInvalidType() {
-		$toSort = array('a', 'b', 'c');
-		Hash::sort($toSort, '{n}', 'asc', array('regular'), true);
-	}
-
-/**
  * Test insert()
  *
  * @return void

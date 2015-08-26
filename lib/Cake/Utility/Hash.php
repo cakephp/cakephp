@@ -838,16 +838,22 @@ class Hash {
  * - `string` Compare values as strings
  * - `natural` Compare items as strings using "natural ordering" in a human friendly way.
  *   Will sort foo10 below foo2 as an example. Requires PHP 5.4 or greater or it will fallback to 'regular'
+ *
  * To do case insensitive sorting, pass the type as an array as follows:
- *   array('type' => 'regular', 'ignoreCase' => true)
+ *
+ * ```
+ * array('type' => 'regular', 'ignoreCase' => true)
+ * ```
+ *
+ * When using the array form, `type` defaults to 'regular'. The `ignoreCase` option
+ * defaults to `false`.
  *
  * @param array $data An array of data to sort
  * @param string $path A Set-compatible path to the array value
  * @param string $dir See directions above. Defaults to 'asc'.
- * @param mixed $type See direction types above. Defaults to 'regular'.
+ * @param array|string $type See direction types above. Defaults to 'regular'.
  * @return array Sorted array of data
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::sort
- * @throws InvalidArgumentException
  */
 	public static function sort(array $data, $path, $dir = 'asc', $type = 'regular') {
 		if (empty($data)) {
@@ -873,21 +879,12 @@ class Hash {
 
 		$dir = strtolower($dir);
 		$ignoreCase = false;
-		
+
 		// $type can be overloaded for case insensitive sort
 		if (is_array($type)) {
-
-			if (!empty($type['ignoreCase'])) {
-				$ignoreCase = $type['ignoreCase'];
-			}
-
-			if (!empty($type['ignoreCase'])) {
-				$type = $type['type'];
-			} else {
-				throw new InvalidArgumentException(__d('cake_dev',
-					'Invalid parameter $type. It requires type key to be specified.'
-				));
-			}
+			$type += array('ignoreCase' => false, 'type' => 'regular');
+			$ignoreCase = $type['ignoreCase'];
+			$type = $type['type'];
 		} else {
 			$type = strtolower($type);
 		}
