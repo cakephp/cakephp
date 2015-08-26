@@ -36,5 +36,4 @@ class TestMailer extends Mailer
 
         return parent::__call($method, $args);
     }
-
 }
