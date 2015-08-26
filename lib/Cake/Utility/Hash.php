@@ -909,7 +909,7 @@ class Hash {
 		}
 
 		if ($ignoreCase) {
-			$values = array_map('strtolower', $values);
+			$values = array_map('mb_strtolower', $values);
 		}
 		array_multisort($values, $dir, $type, $keys, $dir);
 
