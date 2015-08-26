@@ -132,6 +132,29 @@ class MailerTest extends TestCase
     }
 
     /**
+     * test that initial email instance config is restored after email is sent.
+     *
+     * @return [type]
+     */
+    public function testDefaultProfileRestoration()
+    {
+        $email = $this->getMockForEmail('send', [['template' => 'cakephp']]);
+        $email->expects($this->any())
+            ->method('send')
+            ->will($this->returnValue([]));
+
+        $mailer = $this->getMock('TestApp\Mailer\TestMailer', ['test'], [$email]);
+        $mailer->expects($this->once())
+            ->method('test')
+            ->with('foo', 'bar');
+
+        $mailer->template('test');
+        $mailer->send('test', ['foo', 'bar']);
+        $this->assertEquals($mailer->template, 'test');
+        $this->assertEquals('cakephp', $mailer->viewBuilder()->template());
+    }
+
+    /**
      * @expectedException Cake\Mailer\Exception\MissingActionException
      * @expectedExceptionMessage Mail TestMailer::test() could not be found, or is not accessible.
      */

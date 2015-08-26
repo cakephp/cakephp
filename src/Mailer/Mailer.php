@@ -99,6 +99,13 @@ abstract class Mailer implements EventListenerInterface
     protected $_email;
 
     /**
+     * Serialized Email instance config.
+     *
+     * @var string
+     */
+    protected $_emailConfig;
+
+    /**
      * Constructor.
      *
      * @param \Cake\Mailer\Email|null $email Email instance.
@@ -110,6 +117,7 @@ abstract class Mailer implements EventListenerInterface
         }
 
         $this->_email = $email;
+        $this->_emailConfig = $this->_email->serialize();
     }
 
     /**
@@ -201,6 +209,8 @@ abstract class Mailer implements EventListenerInterface
         $result = $this->_email->send();
 
         $this->reset();
+        $this->_email->unserialize($this->_emailConfig);
+
         return $result;
     }
 
