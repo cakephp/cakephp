@@ -485,6 +485,8 @@ class ViewTest extends TestCase
         $pluginPath = Plugin::path('TestPlugin');
         $themePath = Plugin::path('TestTheme');
         $expected = [
+            TEST_APP . 'TestApp' . DS . 'Template' . DS . 'TestTheme' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
+            TEST_APP . 'TestApp' . DS . 'Template' . DS . 'TestTheme' . DS,
             $themePath . 'src' . DS . 'Template' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
             $themePath . 'src' . DS . 'Template' . DS,
             TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Plugin' . DS . 'TestPlugin' . DS,

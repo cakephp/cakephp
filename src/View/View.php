@@ -1240,10 +1240,12 @@ class View implements EventDispatcherInterface
 
         $themeOverridePaths = [];
         if (!empty($this->theme)) {
-            $themeOverridePaths = [dirname(__DIR__) . DS . 'Template' . DS . $this->theme . DS];
-            
-            if ($plugin) {
-                $themeOverridePaths[] = $themeOverridePaths[0] . 'Plugin' . DS . $plugin . DS;
+            for ($i = 0, $count = count($templatePaths); $i < $count; $i++) {
+                $themeOverridePaths[] = $templatePaths[$i] . $this->theme . DS;
+                if ($plugin) {
+                    $themedPluginOverride = end($themeOverridePaths) . 'Plugin' . DS . $plugin . DS;
+                    array_unshift($themeOverridePaths, $themedPluginOverride);
+                }
             }
         }
 
