@@ -1238,7 +1238,17 @@ class View implements EventDispatcherInterface
             }
         }
 
+        $themeOverridePaths = [];
+        if (!empty($this->theme)) {
+            $themeOverridePaths = [dirname(__DIR__) . DS . 'Template' . DS . $this->theme . DS];
+            
+            if ($plugin) {
+                $themeOverridePaths[] = $themeOverridePaths[0] . 'Plugin' . DS . $plugin . DS;
+            }
+        }
+
         $paths = array_merge(
+            $themeOverridePaths,
             $themePaths,
             $pluginPaths,
             $templatePaths,
