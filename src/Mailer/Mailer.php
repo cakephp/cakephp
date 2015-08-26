@@ -149,6 +149,11 @@ abstract class Mailer implements EventListenerInterface
         return $this;
     }
 
+    /**
+     * Get Email instance's view builder.
+     *
+     * @return \Cake\View\ViewBuilder
+     */
     public function viewBuilder()
     {
         return $this->_email->viewBuilder();
