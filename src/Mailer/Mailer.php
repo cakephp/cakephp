@@ -12,7 +12,6 @@
  */
 namespace Cake\Mailer;
 
-use ArrayAccess;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Mailer\Exception\MissingActionException;
@@ -80,7 +79,7 @@ use Cake\Utility\Inflector;
  * Our mailer could either be registered in the application bootstrap, or
  * in the Table class' initialize() hook.
  */
-abstract class Mailer implements ArrayAccess, EventListenerInterface
+abstract class Mailer implements EventListenerInterface
 {
 
     use ModelAwareTrait;
@@ -91,21 +90,6 @@ abstract class Mailer implements ArrayAccess, EventListenerInterface
      * @var string
      */
     static public $name;
-
-    /**
-     * Layout.
-     *
-     * @var string
-     */
-    public $layout;
-
-    /**
-     * Email view template to render, defaults to the triggered mailer
-     * action's name.
-     *
-     * @var string
-     */
-    public $template;
 
     /**
      * Email instance.
@@ -146,52 +130,32 @@ abstract class Mailer implements ArrayAccess, EventListenerInterface
     }
 
     /**
-     * Sets layout to use. Defaults to configured layout template if a custom layout
-     * could not be found.
+     * Sets layout to use.
      *
      * @param string $layout Name of the layout to use.
      * @return $this object.
      */
     public function layout($layout)
     {
-        $this->layout = $layout;
+        $this->_email->viewBuilder()->layout($layout);
         return $this;
     }
 
-    /**
-     * Sets headers.
-     *
-     * @param array $headers Headers to set.
-     * @return $this object.
-     */
-    public function setHeaders(array $headers)
+    public function viewBuilder()
     {
-        $this->_email->setHeaders($headers);
-        return $this;
+        return $this->_email->viewBuilder();
     }
 
     /**
-     * Adds headers.
+     * Magic method to forward method class to Email instance.
      *
-     * @param array $headers Headers to set.
-     * @return $this object.
+     * @param string $method Method name.
+     * @param array $args Method arguments
+     * @return $this
      */
-    public function addHeaders(array $headers)
+    public function __call($method, $args)
     {
-        $this->_email->addHeaders($headers);
-        return $this;
-    }
-
-    /**
-     * Sets attachments.
-     *
-     * @param string|array $attachments String with the filename or array with filenames
-     * @return $this object.
-     * @throws \InvalidArgumentException
-     */
-    public function attachments($attachments)
-    {
-        $this->_email->attachments($attachments);
+        call_user_func_array([$this->_email, $method], $args);
         return $this;
     }
 
@@ -227,85 +191,17 @@ abstract class Mailer implements ArrayAccess, EventListenerInterface
             ]);
         }
 
-        $this->setHeaders($headers);
+        $this->_email->setHeaders($headers);
+        if (!$this->_email->viewBuilder()->template()) {
+            $this->_email->viewBuilder()->template($action);
+        }
 
         call_user_func_array([$this, $action], $args);
 
-        if ($this->template === null) {
-            $this->template = $action;
-        }
-
-        $result = $this->_email
-            ->profile((array)$this)
-            ->send();
+        $result = $this->_email->send();
 
         $this->reset();
         return $result;
-    }
-
-    /**
-     * Resets email instance to original config.
-     *
-     * @return $this object.
-     */
-    public function reset()
-    {
-        $this->_email->reset();
-        return $this;
-    }
-
-    /**
-     * Checks if the property exists.
-     *
-     * @param string $offset Property name.
-     * @return bool True if it exists.
-     */
-    public function offsetExists($offset)
-    {
-        return property_exists($this, $offset) ||
-            method_exists($this->_email, $offset);
-    }
-
-    /**
-     * Gets the property value if it exists.
-     *
-     * @param string $offset Property name.
-     * @return mixed Value.
-     */
-    public function offsetGet($offset)
-    {
-        if (!$this->offsetExists($offset)) {
-            return null;
-        }
-
-        if (isset($this->{$offset})) {
-            return $this->{$offset};
-        }
-
-        return call_user_func([$this->_email, $offset]);
-    }
-
-    /**
-     * Sets property's value.
-     *
-     * @param string $offset Property name.
-     * @param mixed $value Value.
-     * @return void
-     */
-    public function offsetSet($offset, $value)
-    {
-        $this->{$offset} = $value;
-    }
-
-    /**
-     * Unset a property.
-     *
-     * @param string $offset Property name.
-     * @return void
-     */
-    public function offsetUnset($offset)
-    {
-        unset($this->{$offset});
     }
 
     /**

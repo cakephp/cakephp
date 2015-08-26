@@ -50,7 +50,7 @@ class MailerTest extends TestCase
     {
         $result = (new TestMailer())->layout('foo');
         $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
-        $this->assertEquals('foo', $result->layout);
+        $this->assertEquals('foo', $result->viewBuilder()->layout());
     }
 
     public function testProxies()
@@ -110,7 +110,7 @@ class MailerTest extends TestCase
             ->method('test')
             ->with('foo', 'bar');
 
-        $mailer->template = 'foobar';
+        $mailer->template('foobar');
         $mailer->send('test', ['foo', 'bar']);
         $this->assertEquals($mailer->template, 'foobar');
     }

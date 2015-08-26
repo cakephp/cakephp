@@ -27,4 +27,14 @@ class TestMailer extends Mailer
     {
         return $this->_email;
     }
+
+    public function __call($method, $args)
+    {
+        if ($method === 'reset') {
+            $this->template = $this->viewBuilder()->template();
+        }
+
+        return parent::__call($method, $args);
+    }
+
 }
