@@ -31,12 +31,13 @@ use Cake\Utility\Inflector;
  * ```
  * class UserMailer extends Mailer
  * {
- *   public function resetPassword($user)
- *   {
- *     $this->subject = 'Reset Password';
- *     $this->to = $user->email;
- *     $this->set(['token' => $user->token]);
- *   }
+ *     public function resetPassword($user)
+ *     {
+ *         $this
+ *             ->subject('Reset Password');
+ *             ->to($user->email);
+ *             ->set(['token' => $user->token]);
+ *     }
  * }
  * ```
  *
@@ -62,16 +63,16 @@ use Cake\Utility\Inflector;
  * ```
  * public function implementedEvents()
  * {
- *   return [
- *     'Model.afterSave' => 'onRegistration',
- *   ];
+ *     return [
+ *         'Model.afterSave' => 'onRegistration',
+ *     ];
  * }
  *
  * public function onRegistration(Event $event, Entity $entity, ArrayObject $options)
  * {
  *     if ($entity->isNew()) {
  *          $this->send('welcome', [$entity]);
- *      }
+ *     }
  * }
  * ```
  *
