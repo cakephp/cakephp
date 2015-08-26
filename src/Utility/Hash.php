@@ -901,10 +901,19 @@ class Hash
      * - `natural` Compare items as strings using "natural ordering" in a human friendly way.
      *   Will sort foo10 below foo2 as an example.
      *
+     * To do case insensitive sorting, pass the type as an array as follows:
+     *
+     * ```
+     * Hash::sort($data, 'some.attribute', 'asc', ['type' => 'regular', 'ignoreCase' => true]);
+     * ```
+     *
+     * When using the array form, `type` defaults to 'regular'. The `ignoreCase` option
+     * defaults to `false`.
+     *
      * @param array $data An array of data to sort
      * @param string $path A Set-compatible path to the array value
      * @param string $dir See directions above. Defaults to 'asc'.
-     * @param string $type See direction types above. Defaults to 'regular'.
+     * @param array|string $type See direction types above. Defaults to 'regular'.
      * @return array Sorted array of data
      * @link http://book.cakephp.org/3.0/en/core-libraries/hash.html#Hash::sort
      */
@@ -932,7 +941,16 @@ class Hash
         $values = static::extract($result, '{n}.value');
 
         $dir = strtolower($dir);
+        $ignoreCase = false;
+
+        // $type can be overloaded for case insensitive sort
+        if (is_array($type)) {
+            $type += ['ignoreCase' => false, 'type' => 'regular'];
+            $ignoreCase = $type['ignoreCase'];
+            $type = $type['type'];
+        }
         $type = strtolower($type);
+
         if ($dir === 'asc') {
             $dir = SORT_ASC;
         } else {
@@ -946,6 +964,9 @@ class Hash
             $type = SORT_NATURAL;
         } else {
             $type = SORT_REGULAR;
+        }
+        if ($ignoreCase) {
+            $values = array_map('mb_strtolower', $values);
         }
         array_multisort($values, $dir, $type, $keys, $dir, $type);
         $sorted = [];
