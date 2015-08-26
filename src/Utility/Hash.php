@@ -945,7 +945,7 @@ class Hash
 
         // $type can be overloaded for case insensitive sort
         if (is_array($type)) {
-            $type += array('ignoreCase' => false, 'type' => 'regular');
+            $type += ['ignoreCase' => false, 'type' => 'regular'];
             $ignoreCase = $type['ignoreCase'];
             $type = $type['type'];
         }
