@@ -34,8 +34,8 @@ use Cake\Utility\Inflector;
  *     public function resetPassword($user)
  *     {
  *         $this
- *             ->subject('Reset Password');
- *             ->to($user->email);
+ *             ->subject('Reset Password')
+ *             ->to($user->email)
  *             ->set(['token' => $user->token]);
  *     }
  * }
