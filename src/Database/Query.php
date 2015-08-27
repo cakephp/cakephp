@@ -751,7 +751,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset conditions with passed list or not
      * @see \Cake\Database\Type
-     * @see \Cake\Database\QueryExpression
+     * @see \Cake\Database\Expression\QueryExpression
      * @return $this
      */
     public function where($conditions = null, $types = [], $overwrite = false)
@@ -957,7 +957,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * This method allows you to set complex expressions
      * as order conditions unlike order()
      *
-     * @param string|\Cake\Database\QueryExpression $field The field to order on.
+     * @param string|\Cake\Database\Expression\QueryExpression $field The field to order on.
      * @param bool $overwrite Whether or not to reset the order clauses.
      * @return $this
      */
@@ -983,7 +983,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * This method allows you to set complex expressions
      * as order conditions unlike order()
      *
-     * @param string|\Cake\Database\QueryExpression $field The field to order on.
+     * @param string|\Cake\Database\Expression\QueryExpression $field The field to order on.
      * @param bool $overwrite Whether or not to reset the order clauses.
      * @return $this
      */
@@ -1432,7 +1432,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * if required.
      *
      * You can optionally pass a single raw SQL string or an array or expressions in
-     * any format accepted by \Cake\Database\QueryExpression:
+     * any format accepted by \Cake\Database\Expression\QueryExpression:
      *
      * ```
      *
