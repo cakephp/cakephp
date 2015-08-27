@@ -109,7 +109,7 @@ class Type
      * Returns a Type object capable of converting a type identified by $name
      *
      * @param string $name The type identifier you want to set.
-     * @param \Cake\Databse\Type $instance The type instance you want to set.
+     * @param \Cake\Database\Type $instance The type instance you want to set.
      * @return void
      */
     public static function set($name, Type $instance)
