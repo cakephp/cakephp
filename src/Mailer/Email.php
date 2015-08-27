@@ -357,6 +357,16 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
+     * Clone ViewBuilder instance when email object is cloned.
+     *
+     * @return void
+     */
+    public function __clone()
+    {
+        $this->_viewBuilder = clone $this->viewBuilder();
+    }
+
+    /**
      * From
      *
      * @param string|array|null $email Null to get, String with email,

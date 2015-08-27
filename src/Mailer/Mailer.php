@@ -100,11 +100,12 @@ abstract class Mailer implements EventListenerInterface
     protected $_email;
 
     /**
-     * Serialized Email instance config.
+     * Cloned Email instance for restoring instance after email is sent by
+     * mailer action.
      *
      * @var string
      */
-    protected $_emailConfig;
+    protected $_clonedEmail;
 
     /**
      * Constructor.
@@ -118,7 +119,7 @@ abstract class Mailer implements EventListenerInterface
         }
 
         $this->_email = $email;
-        $this->_emailConfig = $this->_email->serialize();
+        $this->_clonedEmail = clone $email;
     }
 
     /**
@@ -213,11 +214,20 @@ abstract class Mailer implements EventListenerInterface
         call_user_func_array([$this, $action], $args);
 
         $result = $this->_email->send();
-
         $this->reset();
-        $this->_email->unserialize($this->_emailConfig);
 
         return $result;
+    }
+
+    /**
+     * Reset email instance.
+     *
+     * @return $this
+     */
+    protected function reset()
+    {
+        $this->_email = clone $this->_clonedEmail;
+        return $this;
     }
 
     /**
