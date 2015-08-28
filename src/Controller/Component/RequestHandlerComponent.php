@@ -680,6 +680,10 @@ class RequestHandlerComponent extends Component
      */
     public function addInputType($type, $handler)
     {
+        trigger_error(
+            'RequestHandlerComponent::addInputType() is deprecated. Use config("inputTypeMap", ...) instead.',
+            E_USER_DEPRECATED
+        );
         if (!is_array($handler) || !isset($handler[0]) || !is_callable($handler[0])) {
             throw new Exception('You must give a handler callback.');
         }
@@ -696,6 +700,10 @@ class RequestHandlerComponent extends Component
      */
     public function viewClassMap($type = null, $viewClass = null)
     {
+        trigger_error(
+            'RequestHandlerComponent::viewClassMap() is deprecated. Use config("viewClassMap", ...) instead.',
+            E_USER_DEPRECATED
+        );
         if (!$viewClass && is_string($type)) {
             return $this->config('viewClassMap.' . $type);
         }
