@@ -1065,4 +1065,50 @@ class RequestHandlerComponentTest extends TestCase
         $RequestHandler->response->expects($this->never())->method('notModified');
         $this->assertNull($RequestHandler->beforeRender($event, '', $RequestHandler->response));
     }
+
+    /**
+     * Test default options in construction
+     *
+     * @return void
+     */
+    public function testConstructDefaultOptions()
+    {
+        $requestHandler = new RequestHandlerComponent($this->Controller->components());
+        $viewClass = $requestHandler->config('viewClassMap');
+        $expected = [
+            'json' => 'Json',
+            'xml' => 'Xml',
+            'ajax' => 'Ajax',
+        ];
+        $this->assertEquals($expected, $viewClass);
+
+        $inputs = $requestHandler->config('inputTypeMap');
+        $this->assertArrayHasKey('json', $inputs);
+        $this->assertArrayHasKey('xml', $inputs);
+    }
+
+    /**
+     * Test options in constructor replace defaults
+     *
+     * @return void
+     */
+    public function testConstructReplaceOptions()
+    {
+        $requestHandler = new RequestHandlerComponent(
+            $this->Controller->components(),
+            [
+                'viewClassMap' => ['json' => 'Json'],
+                'inputTypeMap' => ['json' => ['json_decode', true]]
+            ]
+        );
+        $viewClass = $requestHandler->config('viewClassMap');
+        $expected = [
+            'json' => 'Json',
+        ];
+        $this->assertEquals($expected, $viewClass);
+
+        $inputs = $requestHandler->config('inputTypeMap');
+        $this->assertArrayHasKey('json', $inputs);
+        $this->assertCount(1, $inputs);
+    }
 }
