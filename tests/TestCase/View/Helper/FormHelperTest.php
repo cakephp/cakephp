@@ -556,7 +556,7 @@ class FormHelperTest extends TestCase
     {
         $result = $this->Form->input('text', [
             'templates' => [
-                'input' => '<input custom="{{forinput}}" type="{{type}}" name="{{name}}"{{attrs}}>',
+                'input' => '<input custom="{{forinput}}" type="{{type}}" name="{{name}}"{{attrs}}/>',
                 'label' => '<label{{attrs}}>{{text}} {{forlabel}}</label>',
                 'formGroup' => '{{label}}{{forgroup}}{{input}}',
                 'inputContainer' => '<div class="input {{type}}{{required}}">{{content}}{{forcontainer}}</div>',
@@ -917,7 +917,7 @@ class FormHelperTest extends TestCase
             'name' => 'password', 'type' => 'password'
         ]];
         $this->assertHtml($expected, $result);
-        $this->assertNotRegExp('/<input[^<>]+[^id|name|type|value]=[^<>]*>$/', $result);
+        $this->assertNotRegExp('/<input[^<>]+[^id|name|type|value]=[^<>]*\/>$/', $result);
 
         $result = $this->Form->text('user_form');
         $expected = ['input' => [
@@ -3534,7 +3534,7 @@ class FormHelperTest extends TestCase
             'label' => '<label{{attrs}}>{{input}}{{text}}</label>',
         ]);
         $result = $this->Form->label('Person.accept_terms', 'Accept', [
-            'input' => '<input type="checkbox" name="accept_tos" >'
+            'input' => '<input type="checkbox" name="accept_tos"/>'
         ]);
         $expected = [
             'label' => ['for' => 'person-accept-terms'],
@@ -7338,11 +7338,11 @@ class FormHelperTest extends TestCase
      */
     public function testResetTemplates()
     {
-        $this->Form->templates(['input' => '<input>']);
-        $this->assertEquals('<input>', $this->Form->templater()->get('input'));
+        $this->Form->templates(['input' => '<input/>']);
+        $this->assertEquals('<input/>', $this->Form->templater()->get('input'));
 
         $this->assertNull($this->Form->resetTemplates());
-        $this->assertNotEquals('<input>', $this->Form->templater()->get('input'));
+        $this->assertNotEquals('<input/>', $this->Form->templater()->get('input'));
     }
 
     /**
