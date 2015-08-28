@@ -322,7 +322,7 @@ class ViewBuilder implements JsonSerializable, Serializable
             $className = App::className($className, 'View', 'View');
         }
         if (!$className) {
-            throw new MissingViewException([$this->_className]);
+            throw new MissingViewException(['class' => $this->_className]);
         }
 
         $data = [
