@@ -47,13 +47,13 @@ class PagesControllerTest extends TestCase
     }
 
     /**
-     * Test that missing view renders 404 page in production
+     * Test that missing template renders 404 page in production
      *
      * @expectedException \Cake\Network\Exception\NotFoundException
      * @expectedExceptionCode 404
      * @return void
      */
-    public function testMissingView()
+    public function testMissingTemplate()
     {
         Configure::write('debug', false);
         $Pages = new PagesController(new Request(), new Response());
@@ -61,13 +61,13 @@ class PagesControllerTest extends TestCase
     }
 
     /**
-     * Test that missing view in debug mode renders missing_view error page
+     * Test that missing template in debug mode renders missing_template error page
      *
      * @expectedException \Cake\View\Exception\MissingTemplateException
      * @expectedExceptionCode 500
      * @return void
      */
-    public function testMissingViewInDebug()
+    public function testMissingTemplateInDebug()
     {
         Configure::write('debug', true);
         $Pages = new PagesController(new Request(), new Response());
