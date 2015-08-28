@@ -222,15 +222,39 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Sets a number of properties based on conventions if they are empty. To override the
      * conventions CakePHP uses you can define properties in your class declaration.
      *
-     * @param \Cake\Network\Request|null $request Request object for this controller. Can be null for testing,
+     * The $config array understands the following keys:
+     *
+     * - request: instance of \Cake\Network\Request object for this controller. Can be null for testing,
      *   but expect that features that use the request parameters will not work.
-     * @param \Cake\Network\Response|null $response Response object for this controller.
-     * @param string|null $name Override the name useful in testing when using mocks.
-     * @param \Cake\Event\EventManager|null $eventManager The event manager. Defaults to a new instance.
-     * @param \Cake\Controller\ComponentRegistry|null $components The component registry. Defaults to a new instance.
+     * - response: instance of \Cake\Network\Response object for this controller.
+     * - name: Override the name useful in testing when using mocks.
+     * - eventManager: Instance of \Cake\Event\EventManager. Defaults to a new instance.
+     * - components: Instance of \Cake\Controller\ComponentRegistry. Defaults to a new instance.
+     * @param array $options Options
      */
-    public function __construct(Request $request = null, Response $response = null, $name = null, $eventManager = null, $components = null)
+    public function __construct($options = [])
     {
+        $defaults = [
+            'request' => null,
+            'response' => null,
+            'name' => null,
+            'eventManager' => null,
+            'components' => null,
+        ];
+
+        if (is_array($options)) {
+            $options += $defaults;
+        } else {
+            $arg = func_get_args();
+            for ($i = count($arg); $i < 5; $i++) {
+                $arg[] = null;
+            }
+            $options = array_combine(array_keys($defaults), array_values($arg));
+        }
+
+        $request = $response = $name = $eventManager = $components = null;
+        extract($options, EXTR_IF_EXISTS | EXTR_REFS);
+
         if ($name !== null) {
             $this->name = $name;
         }
