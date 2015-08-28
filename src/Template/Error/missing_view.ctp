@@ -42,7 +42,7 @@ $this->start('subheading');
     Make sure your plugin <em><?= h($plugin) ?></em> is in the <?= h($pluginPath) ?> directory and was loaded.
     <?php endif ?>
     <?= $this->element('plugin_class_error', ['pluginPath' => $pluginPath]) ?>
-</p>
+
 <?php $this->end() ?>
 
 <?php $this->start('file') ?>
