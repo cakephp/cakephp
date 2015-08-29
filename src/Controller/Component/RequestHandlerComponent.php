@@ -96,19 +96,17 @@ class RequestHandlerComponent extends Component
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
-        if (!isset($config['viewClassMap'])) {
-            $config['viewClassMap'] = [
+        $config += [
+            'viewClassMap' => [
                 'json' => 'Json',
                 'xml' => 'Xml',
                 'ajax' => 'Ajax'
-            ];
-        }
-        if (!isset($config['inputTypeMap'])) {
-            $config['inputTypeMap'] = [
+            ],
+            'inputTypeMap' => [
                 'json' => ['json_decode', true],
                 'xml' => [[$this, 'convertXml']],
-            ];
-        }
+            ]
+        ];
         parent::__construct($registry, $config);
     }
 
