@@ -458,7 +458,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      *
      * // Total: 300
      *
-     * $total = (new Colletion([1, 2, 3]))->sumOf();
+     * $total = (new Collection([1, 2, 3]))->sumOf();
      * // Total: 6
      * ```
      *
