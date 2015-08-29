@@ -21,7 +21,7 @@ convert them back when retrieving.
 This library is able to work with the following databases:
 
 * MySQL
-* Postges
+* Postgres
 * SQLite
 * Microsoft SQL Server (2008 and above)
 

@@ -478,7 +478,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * Helps calling the `and()` and `or()` methods transparently.
      *
      * @param string $method The method name.
-     * @param array $args The argumemts to pass to the method.
+     * @param array $args The arguments to pass to the method.
      * @return \Cake\Database\Expression\QueryExpression
      * @throws \BadMethodCallException
      */
