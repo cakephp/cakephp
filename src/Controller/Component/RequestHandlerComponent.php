@@ -26,6 +26,7 @@ use Cake\Routing\Router;
 use Cake\Utility\Exception\XmlException;
 use Cake\Utility\Inflector;
 use Cake\Utility\Xml;
+use RuntimeException;
 
 /**
  * Request object for handling alternative HTTP requests
@@ -74,35 +75,17 @@ class RequestHandlerComponent extends Component
      * These are merged with user-provided config when the component is used.
      *
      * - `checkHttpCache` - Whether to check for HTTP cache.
-     * - `viewClassMap` - Mapping between type and view class.
+     * - `viewClassMap` - Mapping between type and view classes. If undefined
+     *   json, xml, and ajax will be mapped. Defining any types will omit the defaults.
+     * - `inputTypeMap` - A mapping between types and deserializers for request bodies.
+     *   If undefined json & xml will be mapped. Defining any types will omit the defaults.
      *
      * @var array
      */
     protected $_defaultConfig = [
         'checkHttpCache' => true,
-        'viewClassMap' => '',
-    ];
-
-    /**
-     * A mapping between extensions and deserializers for request bodies of that type.
-     * By default only JSON and XML are mapped, use RequestHandlerComponent::addInputType()
-     *
-     * @var array
-     */
-    protected $_inputTypeMap = [
-        'json' => ['json_decode', true]
-    ];
-
-    /**
-     * A mapping between type and viewClass. By default only JSON, XML, and AJAX are mapped.
-     * Use RequestHandlerComponent::viewClassMap() to manipulate this map.
-     *
-     * @var array
-     */
-    protected $_viewClassMap = [
-        'json' => 'Json',
-        'xml' => 'Xml',
-        'ajax' => 'Ajax'
+        'viewClassMap' => [],
+        'inputTypeMap' => []
     ];
 
     /**
@@ -113,8 +96,18 @@ class RequestHandlerComponent extends Component
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
+        $config += [
+            'viewClassMap' => [
+                'json' => 'Json',
+                'xml' => 'Xml',
+                'ajax' => 'Ajax'
+            ],
+            'inputTypeMap' => [
+                'json' => ['json_decode', true],
+                'xml' => [[$this, 'convertXml']],
+            ]
+        ];
         parent::__construct($registry, $config);
-        $this->addInputType('xml', [[$this, 'convertXml']]);
     }
 
     /**
@@ -146,10 +139,6 @@ class RequestHandlerComponent extends Component
     {
         $controller = $this->_registry->getController();
         $this->response =& $controller->response;
-
-        if ($this->_config['viewClassMap']) {
-            $this->viewClassMap($this->_config['viewClassMap']);
-        }
     }
 
     /**
@@ -217,7 +206,10 @@ class RequestHandlerComponent extends Component
 
         $request->params['isAjax'] = $this->request->is('ajax');
 
-        foreach ($this->_inputTypeMap as $type => $handler) {
+        foreach ($this->config('inputTypeMap') as $type => $handler) {
+            if (!is_callable($handler[0])) {
+                throw new RuntimeException(sprintf("Invalid callable for '%s' type.", $type));
+            }
             if ($this->requestedWith($type)) {
                 $input = call_user_func_array([$request, 'input'], $handler);
                 $request->data = (array)$input;
@@ -539,7 +531,7 @@ class RequestHandlerComponent extends Component
     public function renderAs(Controller $controller, $type, array $options = [])
     {
         $defaults = ['charset' => 'UTF-8'];
-        $viewClassMap = $this->viewClassMap();
+        $viewClassMap = $this->config('viewClassMap');
 
         if (Configure::read('App.encoding') !== null) {
             $defaults['charset'] = Configure::read('App.encoding');
@@ -682,13 +674,18 @@ class RequestHandlerComponent extends Component
      *    for the handler.
      * @return void
      * @throws \Cake\Core\Exception\Exception
+     * @deprecated 3.1.0 Use config('addInputType', ...) instead.
      */
     public function addInputType($type, $handler)
     {
+        trigger_error(
+            'RequestHandlerComponent::addInputType() is deprecated. Use config("inputTypeMap", ...) instead.',
+            E_USER_DEPRECATED
+        );
         if (!is_array($handler) || !isset($handler[0]) || !is_callable($handler[0])) {
             throw new Exception('You must give a handler callback.');
         }
-        $this->_inputTypeMap[$type] = $handler;
+        $this->config('inputTypeMap.' . $type, $handler);
     }
 
     /**
@@ -697,19 +694,22 @@ class RequestHandlerComponent extends Component
      * @param array|string|null $type The type string or array with format `['type' => 'viewClass']` to map one or more
      * @param array|null $viewClass The viewClass to be used for the type without `View` appended
      * @return array|string Returns viewClass when only string $type is set, else array with viewClassMap
+     * @deprecated 3.1.0 Use config('viewClassMap', ...) instead.
      */
     public function viewClassMap($type = null, $viewClass = null)
     {
-        if (!$viewClass && is_string($type) && isset($this->_viewClassMap[$type])) {
-            return $this->_viewClassMap[$type];
+        trigger_error(
+            'RequestHandlerComponent::viewClassMap() is deprecated. Use config("viewClassMap", ...) instead.',
+            E_USER_DEPRECATED
+        );
+        if (!$viewClass && is_string($type)) {
+            return $this->config('viewClassMap.' . $type);
         }
         if (is_string($type)) {
-            $this->_viewClassMap[$type] = $viewClass;
+            $this->config('viewClassMap.' . $type, $viewClass);
         } elseif (is_array($type)) {
-            foreach ($type as $key => $value) {
-                $this->viewClassMap($key, $value);
-            }
+            $this->config('viewClassMap', $type, true);
         }
-        return $this->_viewClassMap;
+        return $this->config('viewClassMap');
     }
 }

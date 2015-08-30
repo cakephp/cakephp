@@ -304,6 +304,8 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testViewClassMap()
     {
+        $restore = error_reporting(E_ALL & ~E_USER_DEPRECATED);
+
         $this->RequestHandler->config(['viewClassMap' => ['json' => 'CustomJson']]);
         $this->RequestHandler->initialize([]);
         $result = $this->RequestHandler->viewClassMap();
@@ -325,6 +327,7 @@ class RequestHandlerComponentTest extends TestCase
 
         $this->RequestHandler->renderAs($this->Controller, 'json');
         $this->assertEquals('TestApp\View\CustomJsonView', $this->Controller->viewClass);
+        error_reporting($restore);
     }
 
     /**
@@ -547,9 +550,7 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testStartupCustomTypeProcess()
     {
-        if (!function_exists('str_getcsv')) {
-            $this->markTestSkipped('Need "str_getcsv" for this test.');
-        }
+        $restore = error_reporting(E_ALL & ~E_USER_DEPRECATED);
         $this->Controller->request = $this->getMock('Cake\Network\Request', ['_readInput']);
         $this->Controller->request->expects($this->once())
             ->method('_readInput')
@@ -563,6 +564,7 @@ class RequestHandlerComponentTest extends TestCase
             'A', 'csv', 'string'
         ];
         $this->assertEquals($expected, $this->Controller->request->data);
+        error_reporting($restore);
     }
 
     /**
@@ -991,7 +993,9 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testAddInputTypeException()
     {
+        $restore = error_reporting(E_ALL & ~E_USER_DEPRECATED);
         $this->RequestHandler->addInputType('csv', ['I am not callable']);
+        error_reporting($restore);
     }
 
     /**
@@ -1060,5 +1064,51 @@ class RequestHandlerComponentTest extends TestCase
         $RequestHandler->response = $this->getMock('Cake\Network\Response', ['notModified', 'stop']);
         $RequestHandler->response->expects($this->never())->method('notModified');
         $this->assertNull($RequestHandler->beforeRender($event, '', $RequestHandler->response));
+    }
+
+    /**
+     * Test default options in construction
+     *
+     * @return void
+     */
+    public function testConstructDefaultOptions()
+    {
+        $requestHandler = new RequestHandlerComponent($this->Controller->components());
+        $viewClass = $requestHandler->config('viewClassMap');
+        $expected = [
+            'json' => 'Json',
+            'xml' => 'Xml',
+            'ajax' => 'Ajax',
+        ];
+        $this->assertEquals($expected, $viewClass);
+
+        $inputs = $requestHandler->config('inputTypeMap');
+        $this->assertArrayHasKey('json', $inputs);
+        $this->assertArrayHasKey('xml', $inputs);
+    }
+
+    /**
+     * Test options in constructor replace defaults
+     *
+     * @return void
+     */
+    public function testConstructReplaceOptions()
+    {
+        $requestHandler = new RequestHandlerComponent(
+            $this->Controller->components(),
+            [
+                'viewClassMap' => ['json' => 'Json'],
+                'inputTypeMap' => ['json' => ['json_decode', true]]
+            ]
+        );
+        $viewClass = $requestHandler->config('viewClassMap');
+        $expected = [
+            'json' => 'Json',
+        ];
+        $this->assertEquals($expected, $viewClass);
+
+        $inputs = $requestHandler->config('inputTypeMap');
+        $this->assertArrayHasKey('json', $inputs);
+        $this->assertCount(1, $inputs);
     }
 }
