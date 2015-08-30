@@ -4,7 +4,7 @@ The I18n library provides a `I18n` service locator that can be used for setting
 the current locale, building translation bundles and translating messages.
 
 Additionally, it provides the `Time` and `Number` classes which can be used to
-ouput dates, currencies and any numbers in the right format for the specified locale.
+output dates, currencies and any numbers in the right format for the specified locale.
 
 ## Usage
 

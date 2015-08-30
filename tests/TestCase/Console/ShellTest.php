@@ -264,6 +264,34 @@ class ShellTest extends TestCase
     }
 
     /**
+     * testVerbose method
+     *
+     * @return void
+     */
+    public function testVerbose()
+    {
+        $this->io->expects($this->once())
+            ->method('verbose')
+            ->with('Just a test', 1);
+
+        $this->Shell->verbose('Just a test');
+    }
+
+    /**
+     * testQuiet method
+     *
+     * @return void
+     */
+    public function testQuiet()
+    {
+        $this->io->expects($this->once())
+            ->method('quiet')
+            ->with('Just a test', 1);
+
+        $this->Shell->quiet('Just a test');
+    }
+
+    /**
      * testOut method
      *
      * @return void

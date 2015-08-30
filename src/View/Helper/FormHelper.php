@@ -511,7 +511,7 @@ class FormHelper extends Helper
      * Closes an HTML form, cleans up values set by FormHelper::create(), and writes hidden
      * input fields where appropriate.
      *
-     * @param array $secureAttributes Secure attibutes which will be passed as HTML attributes
+     * @param array $secureAttributes Secure attributes which will be passed as HTML attributes
      *   into the hidden input elements generated for the Security Component.
      * @return string A closing FORM tag.
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#closing-the-form

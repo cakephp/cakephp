@@ -568,6 +568,30 @@ class Shell
     }
 
     /**
+     * Output at the verbose level.
+     *
+     * @param string|array $message A string or an array of strings to output
+     * @param int $newlines Number of newlines to append
+     * @return int|bool Returns the number of bytes returned from writing to stdout.
+     */
+    public function verbose($message, $newlines = 1)
+    {
+        return $this->_io->verbose($message, $newlines);
+    }
+
+    /**
+     * Output at all levels.
+     *
+     * @param string|array $message A string or an array of strings to output
+     * @param int $newlines Number of newlines to append
+     * @return int|bool Returns the number of bytes returned from writing to stdout.
+     */
+    public function quiet($message, $newlines = 1)
+    {
+        return $this->_io->quiet($message, $newlines);
+    }
+
+    /**
      * Outputs a single or multiple messages to stdout. If no parameters
      * are passed outputs just a newline.
      *
