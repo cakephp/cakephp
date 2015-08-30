@@ -109,21 +109,25 @@ trait CellTrait
         if (!empty($plugin)) {
             $builder->plugin($plugin);
         }
-        if (!empty($this->theme)) {
-            $builder->theme($this->theme);
-        }
         if (!empty($this->helpers)) {
             $builder->helpers($this->helpers);
             $instance->helpers = $this->helpers;
         }
-        if (isset($this->viewClass)) {
-            $builder->className($this->viewClass);
-            $instance->viewClass = $this->viewClass;
-        }
+
         if ($this instanceof View) {
+            if (!empty($this->theme)) {
+                $builder->theme($this->theme);
+            }
+
             $class = get_class($this);
             $builder->className($class);
             $instance->viewClass = $class;
+            return $instance;
+        }
+
+        if (isset($this->viewClass)) {
+            $builder->className($this->viewClass);
+            $instance->viewClass = $this->viewClass;
         }
         return $instance;
     }
