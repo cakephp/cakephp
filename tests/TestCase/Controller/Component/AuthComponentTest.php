@@ -1142,12 +1142,20 @@ class AuthComponentTest extends TestCase
             'Test' => ['className' => 'TestApp\Auth\TestAuthenticate']
         ]);
 
-        $this->Auth->identify();
+        $user = $this->Auth->identify();
         $this->Auth->logout();
         $authObject = $this->Auth->authenticationProvider();
 
         $expected = ['afterIdentify', 'logout'];
         $this->assertEquals($expected, $authObject->callStack);
+        $expected = ['id' => 1, 'username' => 'admad'];
+        $this->assertEquals($expected, $user);
+
+        // Callback for Auth.afterIdentify returns a value
+        $authObject->modifiedUser = true;
+        $user = $this->Auth->identify();
+        $expected = ['id' => 1, 'username' => 'admad', 'extra' => 'foo'];
+        $this->assertEquals($expected, $user);
     }
 
     /**

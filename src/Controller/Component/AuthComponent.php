@@ -767,7 +767,10 @@ class AuthComponent extends Component
             $result = $auth->authenticate($this->request, $this->response);
             if (!empty($result) && is_array($result)) {
                 $this->_authenticationProvider = $auth;
-                $this->dispatchEvent('Auth.afterIdentify', [$result]);
+                $event = $this->dispatchEvent('Auth.afterIdentify', [$result]);
+                if ($event->result !== null) {
+                    return $event->result;
+                }
                 return $result;
             }
         }
