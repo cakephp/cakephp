@@ -209,6 +209,9 @@ class Stream
         if (isset($options['redirect'])) {
             $this->_contextOptions['max_redirects'] = (int)$options['redirect'];
         }
+        if (isset($options['proxy']['proxy'])) {
+            $this->_contextOptions['proxy'] = $options['proxy']['proxy'];
+        }
     }
 
     /**
