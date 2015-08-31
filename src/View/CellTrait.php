@@ -125,6 +125,10 @@ trait CellTrait
             return $instance;
         }
 
+        if (method_exists($this, 'viewBuilder')) {
+            $builder->theme($this->viewBuilder()->theme());
+        }
+
         if (isset($this->viewClass)) {
             $builder->className($this->viewClass);
             $instance->viewClass = $this->viewClass;
