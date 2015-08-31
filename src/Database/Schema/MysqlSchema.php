@@ -138,12 +138,12 @@ class MysqlSchema extends BaseSchema
                 'unsigned' => $unsigned
             ];
         }
-        if ($col == 'enum') {
+        if ($col === 'enum') {
             preg_match("(\(.*\))", $column, $members);
             if (empty($members)) {
                 throw new Exception(sprintf('Unable to parse members of enum column "%s"', $column));
             }
-            return['type' => $col, 'members' => $members[0]];
+            return ['type' => $col, 'members' => $members[0]];
         }
         return ['type' => 'text', 'length' => null];
     }
