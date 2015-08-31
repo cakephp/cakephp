@@ -231,7 +231,7 @@ class NumberHelper extends Helper
         return [];
     }
 
-    public function ordinal($value, $options = [])
+    public function ordinal($value)
     {
         return $this->_engine->ordinal($value);
     }

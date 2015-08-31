@@ -325,9 +325,9 @@ class Number
      * @param array $options An array with options.
      * @return string
      */
-    public static function ordinal($value, array $options = [])
+    public static function ordinal($value)
     {
-        $locale = isset($options['locale']) ? $options['locale'] : Locale::getDefault();
+        $locale = Locale::getDefault();
         $formatter = new NumberFormatter($locale, NumberFormatter::ORDINAL);
         return $formatter->format($value);
     }
