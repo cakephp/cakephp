@@ -609,7 +609,7 @@ abstract class Association
     public function find($type = null, array $options = [])
     {
         $type = $type ?: $this->finder();
-        list($type, $opts) = $this->_extractFinder($type, $options);
+        list($type, $opts) = $this->_extractFinder($type);
         return $this->target()
             ->find($type, $options + $opts)
             ->where($this->conditions());
