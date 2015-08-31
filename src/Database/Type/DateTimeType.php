@@ -99,7 +99,7 @@ class DateTimeType extends Type
      *
      * @param string $value The value to convert.
      * @param Driver $driver The driver instance to convert with.
-     * @return \Cake\I18n\Time|DateTime
+     * @return \Cake\I18n\Time|\DateTime
      */
     public function toPHP($value, Driver $driver)
     {
@@ -119,7 +119,7 @@ class DateTimeType extends Type
      * Convert request data into a datetime object.
      *
      * @param mixed $value Request data
-     * @return \Cake\I18n\Time|DateTime
+     * @return \Cake\I18n\Time|\DateTime
      */
     public function marshal($value)
     {
