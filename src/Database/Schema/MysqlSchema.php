@@ -138,6 +138,13 @@ class MysqlSchema extends BaseSchema
                 'unsigned' => $unsigned
             ];
         }
+        if ($col == 'enum') {
+            preg_match("(\(.*\))", $column, $members);
+            if (empty($members)) {
+                throw new Exception(sprintf('Unable to parse members of enum column "%s"', $column));
+            }
+            return['type' => $col, 'members' => $members[0]];
+        }
         return ['type' => 'text', 'length' => null];
     }
 
@@ -296,12 +303,16 @@ class MysqlSchema extends BaseSchema
             'datetime' => ' DATETIME',
             'timestamp' => ' TIMESTAMP',
             'uuid' => ' CHAR(36)',
+            'enum' => ' ENUM',
         ];
         $specialMap = [
             'string' => true,
         ];
         if (isset($typeMap[$data['type']])) {
             $out .= $typeMap[$data['type']];
+        }
+        if ($data['type'] == 'enum') {
+            $out .= $data['members'];
         }
         if (isset($specialMap[$data['type']])) {
             switch ($data['type']) {
