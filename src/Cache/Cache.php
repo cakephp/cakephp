@@ -252,7 +252,7 @@ class Cache
         $engine = static::engine($config);
         $return = $engine->writeMany($data);
         foreach ($return as $key => $success) {
-            if ($success === false && !empty($data[$key])) {
+            if ($success === false && $data[$key] !== '') {
                 throw new RuntimeException(sprintf(
                     '%s cache was unable to write \'%s\' to %s cache',
                     $config,
