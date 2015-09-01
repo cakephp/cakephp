@@ -14,8 +14,8 @@
  */
 namespace Cake\I18n;
 
-use NumberFormatter;
 use Locale;
+use NumberFormatter;
 
 /**
  * Number helper library.
@@ -326,5 +326,4 @@ class Number
         $formatter = new NumberFormatter($locale, NumberFormatter::ORDINAL);
         return $formatter->format($value);
     }
-
 }
