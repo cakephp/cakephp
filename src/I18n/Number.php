@@ -322,7 +322,7 @@ class Number
      */
     public static function ordinal($value)
     {
-        $locale = Locale::getDefault();
+        $locale = Locale::locale();
         $formatter = new NumberFormatter($locale, NumberFormatter::ORDINAL);
         return $formatter->format($value);
     }
