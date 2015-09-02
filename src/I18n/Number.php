@@ -14,6 +14,7 @@
  */
 namespace Cake\I18n;
 
+use Cake\I18n\I18n;
 use Locale;
 use NumberFormatter;
 
@@ -322,7 +323,7 @@ class Number
      */
     public static function ordinal($value)
     {
-        $locale = Locale::locale();
+        $locale = I18n::locale();
         $formatter = new NumberFormatter($locale, NumberFormatter::ORDINAL);
         return $formatter->format($value);
     }
