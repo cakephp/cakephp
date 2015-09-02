@@ -550,20 +550,20 @@ class NumberTest extends TestCase
         $result = $this->Number->ordinal(1);
         $this->assertEquals('1st', $result);
 
-        $result = $this->Number->toReadableSize(2);
+        $result = $this->Number->ordinal(2);
         $this->assertEquals('2nd', $result);
 
-        $result = $this->Number->toReadableSize(3);
+        $result = $this->Number->ordinal(3);
         $this->assertEquals('3rd', $result);
 
-        $result = $this->Number->toReadableSize(4);
+        $result = $this->Number->ordinal(4);
         $this->assertEquals('4th', $result);
 
         I18n::locale('fr_FR');
-        $result = $this->Number->toReadableSize(1);
+        $result = $this->Number->ordinal(1);
         $this->assertEquals('1er', $result);
 
-        $result = $this->Number->toReadableSize(2);
+        $result = $this->Number->ordinal(2);
         $this->assertEquals('2e', $result);
     }
 }
