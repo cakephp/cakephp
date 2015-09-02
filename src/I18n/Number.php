@@ -15,7 +15,6 @@
 namespace Cake\I18n;
 
 use Cake\I18n\I18n;
-use Locale;
 use NumberFormatter;
 
 /**
