@@ -82,6 +82,13 @@ class PaginatorHelper extends Helper
     ];
 
     /**
+     * Default model of the paged sets
+     *
+     * @var string
+     */
+    protected $_defaultModel;
+
+    /**
      * Constructor. Overridden to merge passed args with URL options.
      *
      * @param \Cake\View\View $View The View this helper is being attached to.

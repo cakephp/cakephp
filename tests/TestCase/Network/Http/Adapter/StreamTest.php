@@ -74,7 +74,7 @@ class StreamTest extends TestCase
             ]);
 
         $options = [
-            'redirect' => 20
+            'redirect' => 20,
         ];
         $this->stream->send($request, $options);
         $result = $this->stream->contextOptions();
@@ -184,6 +184,9 @@ class StreamTest extends TestCase
             'ssl_verify_peer' => true,
             'ssl_verify_depth' => 9000,
             'ssl_allow_self_signed' => false,
+            'proxy' => [
+                'proxy' => '127.0.0.1:8080'
+            ]
         ];
 
         $this->stream->send($request, $options);
@@ -193,6 +196,7 @@ class StreamTest extends TestCase
             'verify_peer' => true,
             'verify_depth' => 9000,
             'allow_self_signed' => false,
+            'proxy' => '127.0.0.1:8080',
         ];
         foreach ($expected as $k => $v) {
             $this->assertEquals($v, $result[$k]);

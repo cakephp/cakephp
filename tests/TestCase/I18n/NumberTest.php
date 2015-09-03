@@ -557,4 +557,32 @@ class NumberTest extends TestCase
         $result = $this->Number->currency(15000, 'INR', ['locale' => 'en_IN']);
         $this->assertEquals('₹ 15,000', $result);
     }
+
+    /**
+     * test ordinal() with locales
+     *
+     * @return void
+     */
+    public function testOrdinal()
+    {
+        I18n::locale('en_US');
+        $result = $this->Number->ordinal(1);
+        $this->assertEquals('1st', $result);
+
+        $result = $this->Number->ordinal(2);
+        $this->assertEquals('2nd', $result);
+
+        $result = $this->Number->ordinal(3);
+        $this->assertEquals('3rd', $result);
+
+        $result = $this->Number->ordinal(4);
+        $this->assertEquals('4th', $result);
+
+        I18n::locale('fr_FR');
+        $result = $this->Number->ordinal(1);
+        $this->assertEquals('1er', $result);
+
+        $result = $this->Number->ordinal(2);
+        $this->assertEquals('2e', $result);
+    }
 }

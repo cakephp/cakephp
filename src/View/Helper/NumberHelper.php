@@ -230,4 +230,15 @@ class NumberHelper extends Helper
     {
         return [];
     }
+
+    /**
+     * Formats a number into locale specific ordinal suffix.
+     *
+     * @param int|float $value An integer
+     * @return string formatted number
+     */
+    public function ordinal($value)
+    {
+        return $this->_engine->ordinal($value);
+    }
 }
