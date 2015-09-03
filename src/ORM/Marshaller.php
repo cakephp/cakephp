@@ -86,16 +86,22 @@ class Marshaller
     /**
      * Hydrate one entity and its associated data.
      *
-     * When marshalling HasMany or BelongsToMany associations, `_ids` format can be used.
-     * `ids` option can also be used to determine whether the association must use the `_ids`
-     * format.
-     *
      * ### Options:
      *
      * * associated: Associations listed here will be marshalled as well.
      * * fieldList: A whitelist of fields to be assigned to the entity. If not present,
      *   the accessible fields list in the entity will be used.
      * * accessibleFields: A list of fields to allow or deny in entity accessible fields.
+     *
+     * The above options can be used in each nested `associated` array. In addition to the above
+     * options you can also use the `ids` option for HasMany and BelongsToMany associations.
+     * When true this option restricts the request data to only be read from `_ids`.
+     *
+     * ```
+     * $result = $marshaller->one($data, [
+     *   'associated' => ['Tags' => ['ids' => true]]
+     * ]);
+     * ```
      *
      * @param array $data The data to hydrate.
      * @param array $options List of options
@@ -415,6 +421,16 @@ class Marshaller
      * * fieldList: A whitelist of fields to be assigned to the entity. If not present
      *   the accessible fields list in the entity will be used.
      * * accessibleFields: A list of fields to allow or deny in entity accessible fields.
+     *
+     * The above options can be used in each nested `associated` array. In addition to the above
+     * options you can also use the `ids` option for HasMany and BelongsToMany associations.
+     * When true this option restricts the request data to only be read from `_ids`.
+     *
+     * ```
+     * $result = $marshaller->merge($entity, $data, [
+     *   'associated' => ['Tags' => ['ids' => true]]
+     * ]);
+     * ```
      *
      * @param \Cake\Datasource\EntityInterface $entity the entity that will get the
      * data merged in
