@@ -97,6 +97,7 @@ class TableUuidTest extends TestCase
         ]);
         $table = TableRegistry::get('uuiditems');
         $this->assertSame($entity, $table->save($entity));
+        $this->assertSame($id, $entity->id);
 
         $row = $table->find('all')->where(['id' => $id])->first();
         $this->assertNotEmpty($row);
