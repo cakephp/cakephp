@@ -312,4 +312,17 @@ class Number
 
         return $formatter;
     }
+
+    /**
+     * Returns a formatted integer as an ordinal number string (e.g. 1st, 2nd, 3rd, 4th, [...])
+     *
+     * @param int|float $value An integer
+     * @return string
+     */
+    public static function ordinal($value)
+    {
+        $locale = I18n::locale();
+        $formatter = new NumberFormatter($locale, NumberFormatter::ORDINAL);
+        return $formatter->format($value);
+    }
 }
