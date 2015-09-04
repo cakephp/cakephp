@@ -94,12 +94,12 @@ class Marshaller
      * * accessibleFields: A list of fields to allow or deny in entity accessible fields.
      *
      * The above options can be used in each nested `associated` array. In addition to the above
-     * options you can also use the `ids` option for HasMany and BelongsToMany associations.
+     * options you can also use the `onlyIds` option for HasMany and BelongsToMany associations.
      * When true this option restricts the request data to only be read from `_ids`.
      *
      * ```
      * $result = $marshaller->one($data, [
-     *   'associated' => ['Tags' => ['ids' => true]]
+     *   'associated' => ['Tags' => ['onlyIds' => true]]
      * ]);
      * ```
      *
@@ -235,12 +235,12 @@ class Marshaller
         }
         if ($assoc->type() === Association::ONE_TO_MANY || $assoc->type() === Association::MANY_TO_MANY) {
             $hasIds = array_key_exists('_ids', $value);
-            $idsOption = array_key_exists('ids', $options) && $options['ids'];
+            $onlyIds = array_key_exists('onlyIds', $options) && $options['onlyIds'];
 
             if ($hasIds && is_array($value['_ids'])) {
                 return $this->_loadAssociatedByIds($assoc, $value['_ids']);
             }
-            if ($hasIds || $idsOption) {
+            if ($hasIds || $onlyIds) {
                 return [];
             }
         }
@@ -423,12 +423,12 @@ class Marshaller
      * * accessibleFields: A list of fields to allow or deny in entity accessible fields.
      *
      * The above options can be used in each nested `associated` array. In addition to the above
-     * options you can also use the `ids` option for HasMany and BelongsToMany associations.
+     * options you can also use the `onlyIds` option for HasMany and BelongsToMany associations.
      * When true this option restricts the request data to only be read from `_ids`.
      *
      * ```
      * $result = $marshaller->merge($entity, $data, [
-     *   'associated' => ['Tags' => ['ids' => true]]
+     *   'associated' => ['Tags' => ['onlyIds' => true]]
      * ]);
      * ```
      *
@@ -646,12 +646,12 @@ class Marshaller
         $associated = isset($options['associated']) ? $options['associated'] : [];
 
         $hasIds = array_key_exists('_ids', $value);
-        $idsOption = array_key_exists('ids', $options) && $options['ids'];
+        $onlyIds = array_key_exists('onlyIds', $options) && $options['onlyIds'];
 
         if ($hasIds && is_array($value['_ids'])) {
             return $this->_loadAssociatedByIds($assoc, $value['_ids']);
         }
-        if ($hasIds || $idsOption) {
+        if ($hasIds || $onlyIds) {
             return [];
         }
 

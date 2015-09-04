@@ -491,7 +491,7 @@ class MarshallerTest extends TestCase
     }
 
     /**
-     * Test that the ids option restricts to only accepting ids for belongs to many associations.
+     * Test that the onlyIds option restricts to only accepting ids for belongs to many associations.
      *
      * @return void
      */
@@ -508,13 +508,13 @@ class MarshallerTest extends TestCase
         ];
         $marshall = new Marshaller($this->articles);
         $result = $marshall->one($data, [
-            'associated' => ['Tags' => ['ids' => true]]
+            'associated' => ['Tags' => ['onlyIds' => true]]
         ]);
         $this->assertEmpty($result->tags, 'Only ids should be marshalled.');
     }
 
     /**
-     * Test that the ids option restricts to only accepting ids for belongs to many associations.
+     * Test that the onlyIds option restricts to only accepting ids for belongs to many associations.
      *
      * @return void
      */
@@ -531,7 +531,7 @@ class MarshallerTest extends TestCase
         ];
         $marshall = new Marshaller($this->articles);
         $result = $marshall->one($data, [
-            'associated' => ['Tags' => ['ids' => true]]
+            'associated' => ['Tags' => ['onlyIds' => true]]
         ]);
         $this->assertCount(2, $result->tags, 'Ids should be marshalled.');
     }
@@ -872,7 +872,7 @@ class MarshallerTest extends TestCase
     }
 
     /**
-     * Test that the ids option restricts to only accepting ids for hasmany associations.
+     * Test that the onlyIds option restricts to only accepting ids for hasmany associations.
      *
      * @return void
      */
@@ -889,13 +889,13 @@ class MarshallerTest extends TestCase
 
         $marshaller = new Marshaller($this->articles);
         $article = $marshaller->one($data, [
-            'associated' => ['Comments' => ['ids' => true]]
+            'associated' => ['Comments' => ['onlyIds' => true]]
         ]);
         $this->assertEmpty($article->comments);
     }
 
     /**
-     * Test that the ids option restricts to only accepting ids for hasmany associations.
+     * Test that the onlyIds option restricts to only accepting ids for hasmany associations.
      *
      * @return void
      */
@@ -912,7 +912,7 @@ class MarshallerTest extends TestCase
 
         $marshaller = new Marshaller($this->articles);
         $article = $marshaller->one($data, [
-            'associated' => ['Comments' => ['ids' => true]]
+            'associated' => ['Comments' => ['onlyIds' => true]]
         ]);
         $this->assertCount(2, $article->comments);
     }
@@ -1623,7 +1623,7 @@ class MarshallerTest extends TestCase
         $entity->accessible('*', true);
         $marshall = new Marshaller($this->articles);
         $result = $marshall->merge($entity, $data, [
-            'associated' => ['Tags' => ['ids' => true]]
+            'associated' => ['Tags' => ['onlyIds' => true]]
         ]);
         $this->assertCount(0, $result->tags);
     }
