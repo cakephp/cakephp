@@ -134,7 +134,7 @@ class ViewVarsTraitTest extends TestCase
     }
 
     /**
-     * test setting $merge `false` overrides currect options.
+     * test setting $merge `false` overrides correct options.
      *
      * @return void
      */
@@ -174,6 +174,19 @@ class ViewVarsTraitTest extends TestCase
         $expected = ['one' => 'one', 'two' => 'two'];
         $this->subject->set($expected);
         $this->assertEquals($expected, $this->subject->createView()->viewVars);
+    }
+
+    /**
+     * test that options are passed to the view builder when using createView().
+     *
+     * @return void
+     */
+    public function testViewOptionsGetsToBuilder()
+    {
+        $this->subject->passedArgs = 'test';
+        $this->subject->createView();
+        $result = $this->subject->viewbuilder()->options();
+        $this->assertEquals(['passedArgs' => 'test'], $result);
     }
 
     /**
