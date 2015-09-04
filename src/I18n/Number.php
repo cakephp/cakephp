@@ -253,7 +253,7 @@ class Number
      *
      * - `locale` - The locale name to use for formatting the number, e.g. fr_FR
      * - `type` - The formatter type to construct, set it to `currency` if you need to format
-     *    numbers representing money.
+     *    numbers representing money or 'ordinal' for the ordinal numbers.
      * - `places` - Number of decimal places to use. e.g. 2
      * - `precision` - Maximum Number of decimal places to use, e.g. 2
      * - `pattern` - An ICU number pattern to use for formatting the number. e.g #,###.00
@@ -274,6 +274,10 @@ class Number
         $type = NumberFormatter::DECIMAL;
         if (!empty($options['type']) && $options['type'] === 'currency') {
             $type = NumberFormatter::CURRENCY;
+        }
+
+        if (!empty($options['type']) && $options['type'] === 'ordinal') {
+            $type = NumberFormatter::ORDINAL;
         }
 
         if (!isset(static::$_formatters[$locale][$type])) {
@@ -317,12 +321,11 @@ class Number
      * Returns a formatted integer as an ordinal number string (e.g. 1st, 2nd, 3rd, 4th, [...])
      *
      * @param int|float $value An integer
+     * @param array $options An array with options.
      * @return string
      */
-    public static function ordinal($value)
+    public static function ordinal($value, array $options = [])
     {
-        $locale = I18n::locale();
-        $formatter = new NumberFormatter($locale, NumberFormatter::ORDINAL);
-        return $formatter->format($value);
+        return static::formatter(['type' => 'ordinal'] + $options)->format($value);
     }
 }

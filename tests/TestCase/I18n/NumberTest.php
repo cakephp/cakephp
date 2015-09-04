@@ -553,6 +553,11 @@ class NumberTest extends TestCase
         $result = $this->Number->ordinal(2);
         $this->assertEquals('2nd', $result);
 
+        $result = $this->Number->ordinal(2, [
+            'locale' => 'fr_FR'
+        ]);
+        $this->assertEquals('2e', $result);
+
         $result = $this->Number->ordinal(3);
         $this->assertEquals('3rd', $result);
 
