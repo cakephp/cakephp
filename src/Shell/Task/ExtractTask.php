@@ -482,9 +482,10 @@ class ExtractTask extends Shell
                         $sentence .= "msgstr[1] \"\"\n\n";
                     }
 
-                    $this->_store($domain, $header, $sentence);
                     if ($domain !== 'default' && $this->_merge) {
                         $this->_store('default', $header, $sentence);
+                    } else {
+                        $this->_store($domain, $header, $sentence);
                     }
                 }
             }
