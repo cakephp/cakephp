@@ -93,6 +93,16 @@ class Marshaller
      *   the accessible fields list in the entity will be used.
      * * accessibleFields: A list of fields to allow or deny in entity accessible fields.
      *
+     * The above options can be used in each nested `associated` array. In addition to the above
+     * options you can also use the `onlyIds` option for HasMany and BelongsToMany associations.
+     * When true this option restricts the request data to only be read from `_ids`.
+     *
+     * ```
+     * $result = $marshaller->one($data, [
+     *   'associated' => ['Tags' => ['onlyIds' => true]]
+     * ]);
+     * ```
+     *
      * @param array $data The data to hydrate.
      * @param array $options List of options
      * @return \Cake\ORM\Entity
@@ -223,11 +233,19 @@ class Marshaller
         if (in_array($assoc->type(), $types)) {
             return $marshaller->one($value, (array)$options);
         }
+        if ($assoc->type() === Association::ONE_TO_MANY || $assoc->type() === Association::MANY_TO_MANY) {
+            $hasIds = array_key_exists('_ids', $value);
+            $onlyIds = array_key_exists('onlyIds', $options) && $options['onlyIds'];
+
+            if ($hasIds && is_array($value['_ids'])) {
+                return $this->_loadAssociatedByIds($assoc, $value['_ids']);
+            }
+            if ($hasIds || $onlyIds) {
+                return [];
+            }
+        }
         if ($assoc->type() === Association::MANY_TO_MANY) {
             return $marshaller->_belongsToMany($assoc, $value, (array)$options);
-        }
-        if ($assoc->type() === Association::ONE_TO_MANY && array_key_exists('_ids', $value) && is_array($value['_ids'])) {
-            return $this->_loadAssociatedByIds($assoc, $value['_ids']);
         }
         return $marshaller->many($value, (array)$options);
     }
@@ -272,15 +290,8 @@ class Marshaller
      */
     protected function _belongsToMany(Association $assoc, array $data, $options = [])
     {
-        // Accept _ids = [1, 2]
         $associated = isset($options['associated']) ? $options['associated'] : [];
-        $hasIds = array_key_exists('_ids', $data);
-        if ($hasIds && is_array($data['_ids'])) {
-            return $this->_loadAssociatedByIds($assoc, $data['_ids']);
-        }
-        if ($hasIds) {
-            return [];
-        }
+
         $data = array_values($data);
 
         $target = $assoc->target();
@@ -399,7 +410,8 @@ class Marshaller
      *
      * When merging HasMany or BelongsToMany associations, all the entities in the
      * `$data` array will appear, those that can be matched by primary key will get
-     * the data merged, but those that cannot, will be discarded.
+     * the data merged, but those that cannot, will be discarded. `ids` option can be used
+     * to determine whether the association must use the `_ids` format.
      *
      * ### Options:
      *
@@ -409,6 +421,16 @@ class Marshaller
      * * fieldList: A whitelist of fields to be assigned to the entity. If not present
      *   the accessible fields list in the entity will be used.
      * * accessibleFields: A list of fields to allow or deny in entity accessible fields.
+     *
+     * The above options can be used in each nested `associated` array. In addition to the above
+     * options you can also use the `onlyIds` option for HasMany and BelongsToMany associations.
+     * When true this option restricts the request data to only be read from `_ids`.
+     *
+     * ```
+     * $result = $marshaller->merge($entity, $data, [
+     *   'associated' => ['Tags' => ['onlyIds' => true]]
+     * ]);
+     * ```
      *
      * @param \Cake\Datasource\EntityInterface $entity the entity that will get the
      * data merged in
@@ -621,12 +643,15 @@ class Marshaller
      */
     protected function _mergeBelongsToMany($original, $assoc, $value, $options)
     {
-        $hasIds = array_key_exists('_ids', $value);
         $associated = isset($options['associated']) ? $options['associated'] : [];
+
+        $hasIds = array_key_exists('_ids', $value);
+        $onlyIds = array_key_exists('onlyIds', $options) && $options['onlyIds'];
+
         if ($hasIds && is_array($value['_ids'])) {
             return $this->_loadAssociatedByIds($assoc, $value['_ids']);
         }
-        if ($hasIds) {
+        if ($hasIds || $onlyIds) {
             return [];
         }
 
