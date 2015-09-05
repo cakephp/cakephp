@@ -1452,7 +1452,6 @@ class FormHelper extends Helper
         $attributes['idPrefix'] = $this->_idPrefix;
         $attributes = $this->_initInputField($fieldName, $attributes);
 
-        $value = $attributes['val'];
         $hiddenField = isset($attributes['hiddenField']) ? $attributes['hiddenField'] : true;
         unset($attributes['hiddenField']);
 

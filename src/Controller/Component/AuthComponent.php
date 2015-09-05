@@ -334,10 +334,7 @@ class AuthComponent extends Component
     protected function _isAllowed(Controller $controller)
     {
         $action = strtolower($controller->request->params['action']);
-        if (in_array($action, array_map('strtolower', $this->allowedActions))) {
-            return true;
-        }
-        return false;
+        return in_array($action, array_map('strtolower', $this->allowedActions));
     }
 
     /**

@@ -276,10 +276,7 @@ class Shell
             if (!$method->isPublic()) {
                 return false;
             }
-            if ($method->getDeclaringClass()->name === 'Cake\Console\Shell') {
-                return false;
-            }
-            return true;
+            return $method->getDeclaringClass()->name !== 'Cake\Console\Shell';
         } catch (\ReflectionException $e) {
             return false;
         }

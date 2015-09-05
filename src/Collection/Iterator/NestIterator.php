@@ -71,10 +71,6 @@ class NestIterator extends Collection implements RecursiveIterator
             return !empty($children);
         }
 
-        if ($children instanceof \Traversable) {
-            return true;
-        }
-
-        return false;
+        return $children instanceof \Traversable;
     }
 }

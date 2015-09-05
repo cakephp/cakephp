@@ -296,12 +296,8 @@ class Folder
      */
     public static function isRegisteredStreamWrapper($path)
     {
-        if (preg_match('/^[A-Z]+(?=:\/\/)/i', $path, $matches) &&
-            in_array($matches[0], stream_get_wrappers())
-        ) {
-            return true;
-        }
-        return false;
+        return preg_match('/^[A-Z]+(?=:\/\/)/i', $path, $matches) &&
+            in_array($matches[0], stream_get_wrappers());
     }
 
     /**
@@ -753,10 +749,7 @@ class Folder
             return false;
         }
 
-        if (!empty($this->_errors)) {
-            return false;
-        }
-        return true;
+        return empty($this->_errors);
     }
 
     /**

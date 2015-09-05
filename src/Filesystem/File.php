@@ -134,10 +134,7 @@ class File
         }
 
         $this->handle = fopen($this->path, $mode);
-        if (is_resource($this->handle)) {
-            return true;
-        }
-        return false;
+        return is_resource($this->handle);
     }
 
     /**
