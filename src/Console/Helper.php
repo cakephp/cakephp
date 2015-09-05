@@ -36,6 +36,13 @@ abstract class Helper
     protected $_defaultConfig = [];
 
     /**
+     * ConsoleIo instance.
+     *
+     * @var \Cake\Console\ConsoleIo
+     */
+    protected $_io;
+
+    /**
      * Constructor.
      *
      * @param \Cake\Console\ConsoleIo $io The ConsoleIo instance to use.
