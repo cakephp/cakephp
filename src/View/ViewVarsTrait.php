@@ -104,13 +104,12 @@ trait ViewVarsTrait
                 $builder->{$prop}($this->{$prop});
             }
         }
-
+        $builder->options($viewOptions);
         return $builder->build(
             $this->viewVars,
             isset($this->request) ? $this->request : null,
             isset($this->response) ? $this->response : null,
-            $this instanceof EventDispatcherInterface ? $this->eventManager() : null,
-            $viewOptions
+            $this instanceof EventDispatcherInterface ? $this->eventManager() : null
         );
     }
 
