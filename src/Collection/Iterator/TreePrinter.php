@@ -49,6 +49,13 @@ class TreePrinter extends RecursiveIteratorIterator
     protected $_current;
 
     /**
+     * The string to use for prefixing the values according to their depth in the tree.
+     *
+     * @var string
+     */
+    protected $_spacer;
+
+    /**
      * Constructor
      *
      * @param \RecursiveIterator $items The iterator to flatten.
