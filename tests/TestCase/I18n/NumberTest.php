@@ -550,8 +550,7 @@ class NumberTest extends TestCase
         $this->assertEquals('₹ 15,000.00', $result);
 
         Number::config('en_IN', \NumberFormatter::CURRENCY, [
-            'pattern' => '¤ #,##,##0',
-            'persistOptions' => true
+            'pattern' => '¤ #,##,##0'
         ]);
 
         $result = $this->Number->currency(15000, 'INR', ['locale' => 'en_IN']);
