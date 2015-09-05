@@ -23,7 +23,6 @@ use PHPUnit_Framework_TestListener;
 use PHPUnit_Framework_TestSuite;
 use PHPUnit_Framework_Warning;
 
-
 /**
  * Test listener used to inject a fixture manager in all tests that
  * are composed inside a Test Suite
