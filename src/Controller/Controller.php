@@ -594,8 +594,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $builder->template($this->request->params['action']);
         }
 
-        $this->View = $this->_view = $this->createView();
-        $this->response->body($this->_view->render($view, $layout));
+        $this->View = $this->createView();
+        $this->response->body($this->View->render($view, $layout));
         return $this->response;
     }
 
@@ -696,10 +696,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         } catch (ReflectionException $e) {
             return false;
         }
-        if (!$method->isPublic()) {
-            return false;
-        }
-        return true;
+
+        return $method->isPublic();
     }
 
     /**

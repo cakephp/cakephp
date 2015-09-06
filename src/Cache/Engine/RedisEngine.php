@@ -16,6 +16,8 @@
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
+use Redis;
+use RedisException;
 
 /**
  * Redis storage engine for cache.
@@ -92,16 +94,16 @@ class RedisEngine extends CacheEngine
     protected function _connect()
     {
         try {
-            $this->_Redis = new \Redis();
-            if (!empty($this->settings['unix_socket'])) {
-                $return = $this->_Redis->connect($this->settings['unix_socket']);
+            $this->_Redis = new Redis();
+            if (!empty($this->_config['unix_socket'])) {
+                $return = $this->_Redis->connect($this->_config['unix_socket']);
             } elseif (empty($this->_config['persistent'])) {
                 $return = $this->_Redis->connect($this->_config['server'], $this->_config['port'], $this->_config['timeout']);
             } else {
                 $persistentId = $this->_config['port'] . $this->_config['timeout'] . $this->_config['database'];
                 $return = $this->_Redis->pconnect($this->_config['server'], $this->_config['port'], $this->_config['timeout'], $persistentId);
             }
-        } catch (\RedisException $e) {
+        } catch (RedisException $e) {
             return false;
         }
         if ($return && $this->_config['password']) {
@@ -277,7 +279,7 @@ class RedisEngine extends CacheEngine
      */
     public function __destruct()
     {
-        if (empty($this->_config['persistent']) && $this->_Redis instanceof \Redis) {
+        if (empty($this->_config['persistent']) && $this->_Redis instanceof Redis) {
             $this->_Redis->close();
         }
     }

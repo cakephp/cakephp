@@ -59,7 +59,7 @@ class Connection implements ConnectionInterface
     /**
      * Whether a transaction is active in this connection.
      *
-     * @var int
+     * @var bool
      */
     protected $_transactionStarted = false;
 

@@ -267,7 +267,7 @@ class BelongsToMany extends Association
      */
     protected function _appendNotMatching($query, $options)
     {
-        $target = $junction = $this->junction();
+        $target = $this->junction();
         if (!empty($options['negateMatch'])) {
             $primaryKey = $query->aliasFields((array)$target->primaryKey(), $target->alias());
             $query->andWhere(function ($exp) use ($primaryKey) {
@@ -543,7 +543,6 @@ class BelongsToMany extends Association
     {
         $target = $this->target();
         $junction = $this->junction();
-        $source = $this->source();
         $entityClass = $junction->entityClass();
         $belongsTo = $junction->association($target->alias());
         $foreignKey = (array)$this->foreignKey();

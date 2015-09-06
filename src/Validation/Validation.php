@@ -827,10 +827,7 @@ class Validation
      */
     protected static function _check($check, $regex)
     {
-        if (is_string($regex) && preg_match($regex, $check)) {
-            return true;
-        }
-        return false;
+        return is_string($regex) && preg_match($regex, $check);
     }
 
     /**

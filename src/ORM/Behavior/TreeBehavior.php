@@ -615,7 +615,7 @@ class TreeBehavior extends Behavior
             }
         }
 
-        list($targetLeft, $targetRight) = array_values($targetNode->extract([$left, $right]));
+        list($targetLeft) = array_values($targetNode->extract([$left, $right]));
         $edge = $this->_getMax();
         $leftBoundary = $targetLeft;
         $rightBoundary = $nodeLeft - 1;
@@ -697,7 +697,7 @@ class TreeBehavior extends Behavior
             }
         }
 
-        list($targetLeft, $targetRight) = array_values($targetNode->extract([$left, $right]));
+        list(, $targetRight) = array_values($targetNode->extract([$left, $right]));
         $edge = $this->_getMax();
         $leftBoundary = $nodeRight + 1;
         $rightBoundary = $targetRight;

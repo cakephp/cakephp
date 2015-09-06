@@ -101,7 +101,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         if (class_exists('Cake\Routing\Router', false)) {
             Router::reload();
         }
- 
+
         EventManager::instance(new EventManager());
     }
 

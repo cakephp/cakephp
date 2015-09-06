@@ -268,7 +268,6 @@ class Xml
                         continue;
                     }
                     if ($key[0] !== '@' && $format === 'tags') {
-                        $child = null;
                         if (!is_numeric($value)) {
                             // Escape special characters
                             // http://www.w3.org/TR/REC-xml/#syntax

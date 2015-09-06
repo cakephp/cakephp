@@ -171,7 +171,7 @@ class ResultSet implements ResultSetInterface
         $repository = $query->repository();
         $this->_query = $query;
         $this->_statement = $statement;
-        $this->_driver = $driver = $this->_query->connection()->driver();
+        $this->_driver = $this->_query->connection()->driver();
         $this->_defaultTable = $this->_query->repository();
         $this->_calculateAssociationMap();
         $this->_hydrate = $this->_query->hydrate();
@@ -254,7 +254,6 @@ class ResultSet implements ResultSetInterface
      */
     public function valid()
     {
-        $valid = true;
         if ($this->_useBuffering) {
             $valid = $this->_index < $this->_count;
             if ($valid && $this->_results[$this->_index] !== null) {

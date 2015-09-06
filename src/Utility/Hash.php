@@ -623,10 +623,7 @@ class Hash
      */
     protected static function _filter($var)
     {
-        if ($var === 0 || $var === '0' || !empty($var)) {
-            return true;
-        }
-        return false;
+        return $var === 0 || $var === '0' || !empty($var);
     }
 
     /**
