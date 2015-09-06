@@ -22,10 +22,11 @@ use Cake\Network\Request;
  */
 class MemoryStorage implements StorageInterface
 {
+
     /**
      * User record.
      *
-     * @var array
+     * @var array|null
      */
     protected $_user;
 
