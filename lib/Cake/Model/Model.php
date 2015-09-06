@@ -1835,7 +1835,12 @@ class Model extends Object implements CakeEventListener {
 		$now = time();
 
 		foreach ($dateFields as $updateCol) {
-			if (in_array($updateCol, $fields) || !$this->hasField($updateCol)) {
+			$fieldHasValue = in_array($updateCol, $fields);
+			$fieldInWhitelist = (
+				count($this->whitelist) === 0 ||
+				in_array($updateCol, $this->whitelist)
+			);
+			if (($fieldHasValue && $fieldInWhitelist) || !$this->hasField($updateCol)) {
 				continue;
 			}
 
