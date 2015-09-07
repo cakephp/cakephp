@@ -396,7 +396,9 @@ class ModelWriteTest extends BaseModelTest {
 	public function testSaveUpdatedWithFieldList() {
 		$this->loadFixtures('Post', 'Author');
 		$model = ClassRegistry::init('Post');
-		$original = $model->find('first', ['conditions' => ['Post.id' => 1]]);
+		$original = $model->find('first', array(
+			'conditions' => array('Post.id' => 1)
+		));
 		$data = array(
 			'Post' => array(
 				'id' => 1,
@@ -405,9 +407,11 @@ class ModelWriteTest extends BaseModelTest {
 			)
 		);
 		$model->save($data, array(
-			'fieldList' => ['title']
+			'fieldList' => array('title')
 		));
-		$new = $model->find('first', ['conditions' => ['Post.id' => 1]]);
+		$new = $model->find('first', array(
+			'conditions' => array('Post.id' => 1)
+		));
 		$this->assertGreaterThan($original['Post']['updated'], $new['Post']['updated']);
 	}
 
