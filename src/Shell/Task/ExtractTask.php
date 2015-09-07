@@ -106,6 +106,15 @@ class ExtractTask extends Shell
     protected $_extractCore = false;
 
     /**
+     * No welcome message.
+     *
+     * @return void
+     */
+    protected function _welcome()
+    {
+    }
+
+    /**
      * Method to interact with the User and get path selections.
      *
      * @return void
@@ -182,10 +191,6 @@ class ExtractTask extends Shell
 
         if ($this->_extractCore) {
             $this->_paths[] = CAKE;
-            $this->_exclude = array_merge($this->_exclude, [
-                CAKE . 'Test',
-                CAKE . 'Console' . DS . 'Templates'
-            ]);
         }
 
         if (isset($this->params['output'])) {
@@ -477,9 +482,10 @@ class ExtractTask extends Shell
                         $sentence .= "msgstr[1] \"\"\n\n";
                     }
 
-                    $this->_store($domain, $header, $sentence);
                     if ($domain !== 'default' && $this->_merge) {
                         $this->_store('default', $header, $sentence);
+                    } else {
+                        $this->_store($domain, $header, $sentence);
                     }
                 }
             }
