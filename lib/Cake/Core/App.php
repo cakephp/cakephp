@@ -16,8 +16,9 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-App::uses('Inflector', 'Utility');
+App::uses('CakeEventManager', 'Event');
 App::uses('CakePlugin', 'Core');
+App::uses('Inflector', 'Utility');
 
 /**
  * App is responsible for path management, class location and class loading.
@@ -773,6 +774,7 @@ class App {
  * @return void
  */
 	public static function init() {
+		CakeEventManager::instance()->dispatch('App.init');
 		static::$_map += (array)Cache::read('file_map', '_cake_core_');
 		register_shutdown_function(array('App', 'shutdown'));
 	}
@@ -897,6 +899,7 @@ class App {
  * @return void
  */
 	public static function shutdown() {
+		CakeEventManager::instance()->dispatch('App.shutdown');
 		if (static::$_cacheChange) {
 			Cache::write('file_map', array_filter(static::$_map), '_cake_core_');
 		}
