@@ -353,6 +353,48 @@ class SelectBoxWidgetTest extends TestCase
     }
 
     /**
+     * test rendering with numeric option group keys
+     *
+     * @return void
+     */
+    public function testRenderOptionGroupsIntegerKeys()
+    {
+        $select = new SelectBoxWidget($this->templates);
+        $data = [
+            'name' => 'Year[key]',
+            'options' => [
+                2014 => [
+                    'key' => 'value'
+                ],
+                2013 => [
+                    'text' => '2013-text',
+                    'options' => [
+                        'key2' => 'value2'
+                    ]
+                ]
+            ]
+        ];
+        $result = $select->render($data, $this->context);
+        $expected = [
+            'select' => [
+                'name' => 'Year[key]',
+            ],
+            ['optgroup' => ['label' => '2014']],
+            ['option' => ['value' => 'key']],
+            'value',
+            '/option',
+            '/optgroup',
+            ['optgroup' => ['label' => '2013-text']],
+            ['option' => ['value' => 'key2']],
+            'value2',
+            '/option',
+            '/optgroup',
+            '/select'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * test rendering with option groups and escaping
      *
      * @return void
