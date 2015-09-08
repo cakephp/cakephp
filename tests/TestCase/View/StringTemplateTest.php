@@ -104,6 +104,31 @@ class StringTemplateTest extends TestCase
     }
 
     /**
+     * Formatting array data should not trigger errors.
+     *
+     * @return void
+     */
+    public function testFormatArrayData()
+    {
+        $templates = [
+            'link' => '<a href="{{url}}">{{text}}</a>'
+        ];
+        $this->template->add($templates);
+
+        $result = $this->template->format('link', [
+            'url' => '/',
+            'text' => ['example', 'text']
+        ]);
+        $this->assertEquals('<a href="/">exampletext</a>', $result);
+
+        $result = $this->template->format('link', [
+            'url' => '/',
+            'text' => ['key' => 'example', 'text']
+        ]);
+        $this->assertEquals('<a href="/">exampletext</a>', $result);
+    }
+
+    /**
      * Test loading templates files in the app.
      *
      * @return void
