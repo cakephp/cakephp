@@ -24,7 +24,8 @@
         "nesbot/Carbon": "1.13.*",
         "ircmaxell/password-compat": "1.0.*",
         "aura/intl": "1.1.*",
-        "psr/log": "1.0"
+        "psr/log": "1.0",
+        "cakephp/debug_kit": "~3.0"
     },
     "require-dev": {
         "phpunit/phpunit": "*",
