@@ -844,6 +844,8 @@ class FormHelper extends AppHelper {
 				$text = substr($text, 0, -3);
 			}
 			$text = __(Inflector::humanize(Inflector::underscore($text)));
+		} else {
+			$text = __($text);
 		}
 
 		if (is_string($options)) {
