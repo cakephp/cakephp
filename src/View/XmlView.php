@@ -20,7 +20,7 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Hash;
 use Cake\Utility\Xml;
-use Cake\View\SerializeView;
+use Cake\View\SerializedView;
 
 /**
  * A view class that is used for creating XML responses.
