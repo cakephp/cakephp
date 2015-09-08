@@ -452,7 +452,6 @@ class Router
             }
         }
         static::$_collection = new RouteCollection();
-        static::$_defaultExtensions = [];
     }
 
     /**
