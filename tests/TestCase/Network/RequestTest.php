@@ -1932,11 +1932,14 @@ class RequestTest extends TestCase
     public function testQuery()
     {
         $request = new Request([
-            'query' => ['foo' => 'bar']
+            'query' => ['foo' => 'bar', 'zero' => '0']
         ]);
 
         $result = $request->query('foo');
-        $this->assertEquals('bar', $result);
+        $this->assertSame('bar', $result);
+
+        $result = $request->query('zero');
+        $this->assertSame('0', $result);
 
         $result = $request->query('imaginary');
         $this->assertNull($result);
@@ -1981,9 +1984,9 @@ class RequestTest extends TestCase
         ]);
         $this->assertFalse($request->param('not_set'));
         $this->assertTrue($request->param('admin'));
-        $this->assertEquals(1, $request->param('truthy'));
-        $this->assertEquals('posts', $request->param('controller'));
-        $this->assertEquals('0', $request->param('zero'));
+        $this->assertSame(1, $request->param('truthy'));
+        $this->assertSame('posts', $request->param('controller'));
+        $this->assertSame('0', $request->param('zero'));
     }
 
     /**
