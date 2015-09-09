@@ -1932,11 +1932,14 @@ class RequestTest extends TestCase
     public function testQuery()
     {
         $request = new Request([
-            'query' => ['foo' => 'bar']
+            'query' => ['foo' => 'bar', 'zero' => '0']
         ]);
 
         $result = $request->query('foo');
         $this->assertEquals('bar', $result);
+
+        $result = $request->query('zero');
+        $this->assertEquals('0', $result);
 
         $result = $request->query('imaginary');
         $this->assertNull($result);
