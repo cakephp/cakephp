@@ -27,6 +27,20 @@ class Number
 {
 
     /**
+     * Default locale
+     *
+     * @var string
+     */
+    const DEFAULT_LOCALE = 'en_US';
+
+    /**
+     * Format type to format as currency
+     *
+     * @var string
+     */
+    const FORMAT_CURRENCY = 'currency';
+
+    /**
      * A list of number formatters indexed by locale and type
      *
      * @var array
@@ -203,7 +217,7 @@ class Number
             return $options['zero'];
         }
 
-        $formatter = static::formatter(['type' => 'currency'] + $options);
+        $formatter = static::formatter(['type' => static::FORMAT_CURRENCY] + $options);
         $abs = abs($value);
         if (!empty($options['fractionSymbol']) && $abs > 0 && $abs < 1) {
             $value = $value * 100;
@@ -235,7 +249,7 @@ class Number
         }
 
         if (empty(self::$_defaultCurrency)) {
-            $locale = ini_get('intl.default_locale') ?: 'en_US';
+            $locale = ini_get('intl.default_locale') ?: static::DEFAULT_LOCALE;
             $formatter = new NumberFormatter($locale, NumberFormatter::CURRENCY);
             self::$_defaultCurrency = $formatter->getTextAttribute(NumberFormatter::CURRENCY_CODE);
         }
@@ -249,7 +263,7 @@ class Number
      * using other methods in this class as only one formatter object needs to be
      * constructed.
      *
-     * The options array accepts the following keys:
+     * ### Options
      *
      * - `locale` - The locale name to use for formatting the number, e.g. fr_FR
      * - `type` - The formatter type to construct, set it to `currency` if you need to format
@@ -268,13 +282,13 @@ class Number
         $locale = isset($options['locale']) ? $options['locale'] : ini_get('intl.default_locale');
 
         if (!$locale) {
-            $locale = 'en_US';
+            $locale = static::DEFAULT_LOCALE;
         }
 
         $type = NumberFormatter::DECIMAL;
         if (!empty($options['type'])) {
             $type = $options['type'];
-            if ($options['type'] === 'currency') {
+            if ($options['type'] === static::FORMAT_CURRENCY) {
                 $type = NumberFormatter::CURRENCY;
             }
         }
@@ -318,6 +332,13 @@ class Number
 
     /**
      * Returns a formatted integer as an ordinal number string (e.g. 1st, 2nd, 3rd, 4th, [...])
+     *
+     * ### Options
+     *
+     * - `type` - The formatter type to construct, set it to `currency` if you need to format
+     *    numbers representing money or a NumberFormatter constant.
+     *
+     * For all other options see formatter().
      *
      * @param int|float $value An integer
      * @param array $options An array with options.
