@@ -89,7 +89,8 @@ class RequestHandlerComponentTest extends TestCase
     {
         parent::tearDown();
         DispatcherFactory::clear();
-        $this->_init();
+        Router::reload();
+        Router::$initialized = false;
         unset($this->RequestHandler, $this->Controller);
     }
 
@@ -129,8 +130,9 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testInitializeContentTypeSettingExt()
     {
+        Router::reload();
+        Router::$initialized = true;
         $this->request->env('HTTP_ACCEPT', 'application/json');
-        Router::extensions('json', false);
 
         $this->RequestHandler->ext = null;
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
@@ -144,6 +146,8 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testInitializeContentTypeWithjQueryAccept()
     {
+        Router::reload();
+        Router::$initialized = true;
         $this->request->env('HTTP_ACCEPT', 'application/json, application/javascript, */*; q=0.01');
         $this->request->env('HTTP_X_REQUESTED_WITH', 'XMLHttpRequest');
         $this->RequestHandler->ext = null;
@@ -160,7 +164,8 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testInitializeContentTypeWithjQueryTextPlainAccept()
     {
-        Router::extensions('csv', false);
+        Router::reload();
+        Router::$initialized = true;
         $this->request->env('HTTP_ACCEPT', 'text/plain, */*; q=0.01');
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
@@ -175,6 +180,8 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testInitializeContentTypeWithjQueryAcceptAndMultiplesExtensions()
     {
+        Router::reload();
+        Router::$initialized = true;
         $this->request->env('HTTP_ACCEPT', 'application/json, application/javascript, */*; q=0.01');
         $this->RequestHandler->ext = null;
         Router::extensions(['rss', 'json'], false);
@@ -190,9 +197,10 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testInitializeNoContentTypeWithSingleAccept()
     {
+        Router::reload();
+        Router::$initialized = true;
         $_SERVER['HTTP_ACCEPT'] = 'application/json, text/html, */*; q=0.01';
         $this->assertNull($this->RequestHandler->ext);
-        Router::extensions('json', false);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertNull($this->RequestHandler->ext);
@@ -232,12 +240,13 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testInitializeContentTypeWithMultipleAcceptedTypes()
     {
+        Router::reload();
+        Router::$initialized = true;
         $this->request->env(
             'HTTP_ACCEPT',
             'text/csv;q=1.0, application/json;q=0.8, application/xml;q=0.7'
         );
         $this->RequestHandler->ext = null;
-        Router::extensions(['xml', 'json'], false);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertEquals('json', $this->RequestHandler->ext);
@@ -250,12 +259,13 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testInitializeAmbiguousAndroidAccepts()
     {
+        Router::reload();
+        Router::$initialized = true;
         $this->request->env(
             'HTTP_ACCEPT',
             'application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5'
         );
         $this->RequestHandler->ext = null;
-        Router::extensions(['html', 'xml'], false);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertNull($this->RequestHandler->ext);
