@@ -29,6 +29,13 @@ class Validation
 {
 
     /**
+     * Default locale
+     *
+     * @var string
+     */
+    const DEFAULT_LOCALE = 'en_US';
+
+    /**
      * Some complex patterns needed in multiple places
      *
      * @var array
@@ -497,7 +504,7 @@ class Validation
         }
 
         // account for localized floats.
-        $locale = ini_get('intl.default_locale') ?: 'en_US';
+        $locale = ini_get('intl.default_locale') ?: static::DEFAULT_LOCALE;
         $formatter = new NumberFormatter($locale, NumberFormatter::DECIMAL);
         $decimalPoint = $formatter->getSymbol(NumberFormatter::DECIMAL_SEPARATOR_SYMBOL);
         $groupingSep = $formatter->getSymbol(NumberFormatter::GROUPING_SEPARATOR_SYMBOL);

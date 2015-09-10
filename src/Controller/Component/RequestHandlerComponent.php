@@ -169,7 +169,9 @@ class RequestHandlerComponent extends Component
             return;
         }
 
-        $extensions = Router::extensions();
+        $extensions = array_unique(
+            array_merge(Router::extensions(), array_keys($this->_viewClassMap))
+        );
         foreach ($accepts as $types) {
             $ext = array_intersect($extensions, $types);
             if (!empty($ext)) {

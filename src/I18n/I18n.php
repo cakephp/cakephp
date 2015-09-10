@@ -29,6 +29,13 @@ class I18n
 {
 
     /**
+     * Default locale
+     *
+     * @var string
+     */
+    const DEFAULT_LOCALE = 'en_US';
+
+    /**
      * The translators collection
      *
      * @var \Aura\Intl\TranslatorLocator
@@ -215,7 +222,7 @@ class I18n
 
         $current = Locale::getDefault();
         if ($current === '') {
-            $current = 'en_US';
+            $current = static::DEFAULT_LOCALE;
             Locale::setDefault($current);
         }
 
@@ -232,7 +239,7 @@ class I18n
     public static function defaultLocale()
     {
         if (static::$_defaultLocale === null) {
-            static::$_defaultLocale = Locale::getDefault() ?: 'en_US';
+            static::$_defaultLocale = Locale::getDefault() ?: static::DEFAULT_LOCALE;
         }
         return static::$_defaultLocale;
     }

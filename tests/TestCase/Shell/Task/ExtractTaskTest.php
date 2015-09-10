@@ -72,11 +72,11 @@ class ExtractTaskTest extends TestCase
      */
     public function testExecute()
     {
-        $this->Task->interactive = false;
-
         $this->Task->params['paths'] = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Pages';
         $this->Task->params['output'] = $this->path . DS;
         $this->Task->params['extract-core'] = 'no';
+        $this->Task->params['merge'] = 'no';
+
         $this->Task->expects($this->never())->method('err');
         $this->Task->expects($this->any())->method('in')
             ->will($this->returnValue('y'));
@@ -133,6 +133,29 @@ class ExtractTaskTest extends TestCase
         $this->assertRegExp($pattern, $result);
         $pattern = '/msgid "You deleted %d message \(domain\)."\nmsgid_plural "You deleted %d messages \(domain\)."/';
         $this->assertRegExp($pattern, $result);
+    }
+
+    /**
+     * testExecute with merging on method
+     *
+     * @return void
+     */
+    public function testExecuteMerge()
+    {
+        $this->Task->params['paths'] = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Pages';
+        $this->Task->params['output'] = $this->path . DS;
+        $this->Task->params['extract-core'] = 'no';
+        $this->Task->params['merge'] = 'yes';
+
+        $this->Task->expects($this->never())->method('err');
+        $this->Task->expects($this->any())->method('in')
+            ->will($this->returnValue('y'));
+        $this->Task->expects($this->never())->method('_stop');
+
+        $this->Task->main();
+        $this->assertFileExists($this->path . DS . 'default.pot');
+        $this->assertFileNotExists($this->path . DS . 'cake.pot');
+        $this->assertFileNotExists($this->path . DS . 'domain.pot');
     }
 
     /**
