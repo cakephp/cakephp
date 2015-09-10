@@ -85,6 +85,9 @@ class PostgresSchema extends BaseSchema
         if (strpos($col, 'timestamp') !== false) {
             return ['type' => 'timestamp', 'length' => null];
         }
+        if (strpos($col, 'time') !== false) {
+            return ['type' => 'time', 'length' => null];
+        }
         if ($col === 'serial' || $col === 'integer') {
             return ['type' => 'integer', 'length' => 10];
         }
