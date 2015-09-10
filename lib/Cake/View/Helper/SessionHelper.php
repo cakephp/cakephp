@@ -156,6 +156,7 @@ class SessionHelper extends AppHelper {
 				}
 				$tmpVars = $flash['params'];
 				$tmpVars['message'] = $message;
+				$tmpVars['key'] = $key;
 				$out = $this->_View->element($flash['element'], $tmpVars, $options);
 			}
 		}
