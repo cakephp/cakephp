@@ -559,4 +559,14 @@ class CacheTest extends TestCase
         $result = Cache::remember('test_key', $cacher, 'tests');
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * test registry method
+     *
+     * @return void
+     */
+    public function testRegistry()
+    {
+        $this->assertInstanceOf('\Cake\Cache\CacheRegistry', Cache::registry());
+    }
 }

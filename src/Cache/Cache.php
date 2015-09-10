@@ -113,6 +113,20 @@ class Cache
     protected static $_registry;
 
     /**
+     * Returns the Cache Registry instance used for creating and using cache adapters.
+     *
+     * @return \Cake\Cache\CacheRegistry
+     */
+    public static function registry()
+    {
+        if (empty(static::$_registry)) {
+            static::$_registry = new CacheRegistry();
+        }
+
+        return static::$_registry;
+    }
+
+    /**
      * Finds and builds the instance of the required engine class.
      *
      * @param string $name Name of the config array that needs an engine instance built
