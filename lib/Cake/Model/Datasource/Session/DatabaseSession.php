@@ -90,7 +90,7 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  */
 	public function read($id) {
 		$row = $this->_model->find('first', array(
-			'conditions' => array($this->_model->primaryKey => $id)
+			'conditions' => array($this->_model->alias . '.' . $this->_model->primaryKey => $id)
 		));
 
 		if (empty($row[$this->_model->alias]['data'])) {
