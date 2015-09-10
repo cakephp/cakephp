@@ -567,6 +567,6 @@ class CacheTest extends TestCase
      */
     public function testRegistry()
     {
-        $this->assertInstanceOf('\Cake\Cache\CacheRegistry', Cache::registry());
+        $this->assertInstanceOf('Cake\Cache\CacheRegistry', Cache::registry());
     }
 }
