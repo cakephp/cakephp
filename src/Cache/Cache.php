@@ -135,9 +135,7 @@ class Cache
      */
     protected static function _buildEngine($name)
     {
-        if (empty(static::$_registry)) {
-            static::$_registry = new CacheRegistry();
-        }
+        $registry = static::registry();
 
         if (empty(static::$_config[$name]['className'])) {
             throw new InvalidArgumentException(
@@ -146,7 +144,7 @@ class Cache
         }
 
         $config = static::$_config[$name];
-        static::$_registry->load($name, $config);
+        $registry->load($name, $config);
 
         if (!empty($config['groups'])) {
             foreach ($config['groups'] as $group) {
@@ -172,12 +170,14 @@ class Cache
             return new NullEngine();
         }
 
-        if (isset(static::$_registry->{$config})) {
-            return static::$_registry->{$config};
+        $registry = static::registry();
+
+        if (isset($registry->{$config})) {
+            return $registry->{$config};
         }
 
         static::_buildEngine($config);
-        return static::$_registry->{$config};
+        return $registry->{$config};
     }
 
     /**
