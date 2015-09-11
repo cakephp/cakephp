@@ -15,6 +15,7 @@
 namespace Cake\Cache;
 
 use Cake\Cache\Engine\NullEngine;
+use Cake\Core\ObjectRegistry;
 use Cake\Core\StaticConfigTrait;
 use InvalidArgumentException;
 use RuntimeException;
@@ -114,11 +115,17 @@ class Cache
 
     /**
      * Returns the Cache Registry instance used for creating and using cache adapters.
+     * Also allows for injecting of a new registry instance.
      *
+     * @param \Cake\Core\ObjectRegistry $registry Injectable registry object.
      * @return \Cake\Cache\CacheRegistry
      */
-    public static function registry()
+    public static function registry(ObjectRegistry $registry = null)
     {
+        if ($registry) {
+            static::$_registry = $registry;
+        }
+        
         if (empty(static::$_registry)) {
             static::$_registry = new CacheRegistry();
         }
