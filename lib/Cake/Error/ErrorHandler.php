@@ -233,7 +233,6 @@ class ErrorHandler {
 			//https://bugs.php.net/bug.php?id=65322
 			if (version_compare(PHP_VERSION, '5.4.21', '<')) {
 				if (!class_exists('Debugger')) {
-					App::uses('Debugger', 'Utility');
 					App::load('Debugger');
 				}
 				if (!class_exists('CakeText')) {
