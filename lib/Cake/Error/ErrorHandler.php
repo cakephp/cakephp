@@ -230,6 +230,16 @@ class ErrorHandler {
 		}
 		$message = $error . ' (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']';
 		if (!empty($errorConfig['trace'])) {
+			// https://bugs.php.net/bug.php?id=65322
+			if (version_compare(PHP_VERSION, '5.4.21', '<')) {
+				if (!class_exists('Debugger')) {
+					App::load('Debugger');
+				}
+				if (!class_exists('CakeText')) {
+					App::uses('CakeText', 'Utility');
+					App::load('CakeText');
+				}
+			}
 			$trace = Debugger::trace(array('start' => 1, 'format' => 'log'));
 			$message .= "\nTrace:\n" . $trace . "\n";
 		}
