@@ -72,6 +72,7 @@ body TEXT,
 author_id INTEGER NOT NULL,
 published BOOLEAN DEFAULT false,
 views SMALLINT DEFAULT 0,
+readingtime TIME,
 created TIMESTAMP,
 CONSTRAINT "content_idx" UNIQUE ("title", "body"),
 CONSTRAINT "author_idx" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
@@ -106,6 +107,10 @@ SQL;
             ],
             [
                 'TIME',
+                ['type' => 'time', 'length' => null]
+            ],
+            [
+                'TIME WITHOUT TIME ZONE',
                 ['type' => 'time', 'length' => null]
             ],
             // Integer
@@ -329,6 +334,14 @@ SQL;
                 'unsigned' => null,
                 'comment' => null,
                 'autoIncrement' => null,
+            ],
+            'readingtime' => [
+                'type' => 'time',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
             ],
             'created' => [
                 'type' => 'timestamp',
