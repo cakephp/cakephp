@@ -437,7 +437,7 @@ class Session
             $write = [$name => $value];
         }
 
-        $data = $_SESSION ?: [];
+        $data = isset($_SESSION) ? $_SESSION : [];
         foreach ($write as $key => $val) {
             $data = Hash::insert($data, $key, $val);
         }
