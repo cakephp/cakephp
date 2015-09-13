@@ -74,7 +74,7 @@ class FixtureTask extends BakeTask {
 		))->addOption('count', array(
 			'help' => __d('cake_console', 'When using generated data, the number of records to include in the fixture(s).'),
 			'short' => 'n',
-			'default' => 10
+			'default' => 1
 		))->addOption('connection', array(
 			'help' => __d('cake_console', 'Which database configuration to use for baking.'),
 			'short' => 'c',
