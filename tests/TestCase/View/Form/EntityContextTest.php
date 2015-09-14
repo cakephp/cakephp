@@ -740,6 +740,34 @@ class EntityContextTest extends TestCase
     }
 
     /**
+     * Test isRequired on associated entities with boolean fields
+     *
+     * @return void
+     */
+    public function testIsRequiredAssociatedHasManyBoolean()
+    {
+        $this->_setupTables();
+
+        $comments = TableRegistry::get('Comments');
+        $comments->schema()->addColumn('starred', 'boolean');
+        $comments->validator()->add('starred', 'valid', ['rule' => 'boolean']);
+
+        $row = new Article([
+            'title' => 'My title',
+            'comments' => [
+                new Entity(['comment' => 'First comment']),
+            ]
+        ]);
+        $context = new EntityContext($this->request, [
+            'entity' => $row,
+            'table' => 'Articles',
+            'validator' => 'default',
+        ]);
+
+        $this->assertFalse($context->isRequired('comments.0.starred'));
+    }
+
+    /**
      * Test isRequired on associated entities with custom validators.
      *
      * Ensures that missing associations use the correct entity class

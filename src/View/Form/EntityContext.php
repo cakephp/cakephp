@@ -348,12 +348,12 @@ class EntityContext implements ContextInterface
         }
 
         $validator = $this->_getValidator($parts);
-        $field = array_pop($parts);
-        if (!$validator->hasField($field)) {
+        $fieldName = array_pop($parts);
+        if (!$validator->hasField($fieldName)) {
             return false;
         }
         if ($this->type($field) !== 'boolean') {
-            return $validator->isEmptyAllowed($field, $isNew) === false;
+            return $validator->isEmptyAllowed($fieldName, $isNew) === false;
         }
         return false;
     }
