@@ -14,7 +14,6 @@
  */
 namespace Cake\Routing\Route;
 
-use Cake\Routing\Route\InflectedRoute;
 
 /**
  * Plugin short route, that copies the plugin param to the controller parameters

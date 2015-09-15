@@ -15,8 +15,6 @@
 namespace Cake\Datasource;
 
 use ArrayObject;
-use Cake\Datasource\EntityInterface;
-use Cake\Datasource\RulesChecker;
 use Cake\Event\EventDispatcherInterface;
 
 /**

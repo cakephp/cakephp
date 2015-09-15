@@ -19,9 +19,6 @@ use Cake\Database\ExpressionInterface;
 use Cake\Database\Query as DatabaseQuery;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\QueryTrait;
-use Cake\ORM\EagerLoader;
-use Cake\ORM\ResultSet;
-use Cake\ORM\Table;
 use JsonSerializable;
 use RuntimeException;
 

@@ -15,7 +15,6 @@
 namespace Cake\Datasource;
 
 use Cake\Core\StaticConfigTrait;
-use Cake\Datasource\ConnectionRegistry;
 use Cake\Datasource\Exception\MissingDatasourceConfigException;
 
 /**

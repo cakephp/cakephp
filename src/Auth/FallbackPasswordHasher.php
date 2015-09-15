@@ -14,7 +14,6 @@
  */
 namespace Cake\Auth;
 
-use Cake\Auth\AbstractPasswordHasher;
 
 /**
  * A password hasher that can use multiple different hashes where only

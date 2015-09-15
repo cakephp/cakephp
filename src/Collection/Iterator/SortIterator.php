@@ -15,7 +15,6 @@
 namespace Cake\Collection\Iterator;
 
 use Cake\Collection\Collection;
-use Cake\Collection\CollectionInterface;
 
 /**
  * An iterator that will return the passed items in order. The order is given by

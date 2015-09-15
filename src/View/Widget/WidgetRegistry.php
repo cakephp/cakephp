@@ -18,7 +18,6 @@ use Cake\Core\App;
 use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\View\StringTemplate;
 use Cake\View\View;
-use Cake\View\Widget\WidgetInterface;
 use ReflectionClass;
 use RuntimeException;
 

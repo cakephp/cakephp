@@ -16,8 +16,6 @@ namespace Cake\Routing;
 
 use Cake\Core\Configure;
 use Cake\Network\Request;
-use Cake\Routing\RouteBuilder;
-use Cake\Routing\RouteCollection;
 use Cake\Utility\Inflector;
 
 /**

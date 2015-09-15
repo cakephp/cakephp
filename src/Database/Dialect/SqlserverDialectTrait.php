@@ -14,7 +14,6 @@
  */
 namespace Cake\Database\Dialect;
 
-use Cake\Database\Dialect\TupleComparisonTranslatorTrait;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\UnaryExpression;

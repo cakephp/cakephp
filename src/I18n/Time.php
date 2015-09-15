@@ -17,7 +17,6 @@ namespace Cake\I18n;
 use Carbon\Carbon;
 use IntlDateFormatter;
 use JsonSerializable;
-use RuntimeException;
 
 /**
  * Extends the built-in DateTime class to provide handy methods and locale-aware

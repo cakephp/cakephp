@@ -14,7 +14,6 @@
  */
 namespace Cake\Database;
 
-use Cake\Database\Driver;
 use InvalidArgumentException;
 use PDO;
 
