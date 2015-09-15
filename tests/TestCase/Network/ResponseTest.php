@@ -1074,13 +1074,33 @@ class ResponseTest extends TestCase
      * @param string|array $domains
      * @param string|array $methods
      * @param string|array $headers
+     * @param string|array $credentials
+     * @param string|array $maxAge
+     * @param string|array $exposedHeaders
      * @param string|bool $expectedOrigin
      * @param string|bool $expectedMethods
      * @param string|bool $expectedHeaders
+     * @param string|bool $expectedCredentials
+     * @param string|bool $expectedMaxAge
+     * @param string|bool $expectedExposedHeaders
      * @return void
      */
-    public function testCors($request, $origin, $domains, $methods, $headers, $expectedOrigin, $expectedMethods = false, $expectedHeaders = false)
-    {
+    public function testCors(
+        $request,
+        $origin,
+        $domains,
+        $methods,
+        $headers,
+        $credentials,
+        $maxAge,
+        $exposedHeaders,
+        $expectedOrigin,
+        $expectedMethods = false,
+        $expectedHeaders = false,
+        $expectedCredentials = false,
+        $expectedMaxAge = false,
+        $expectedExposedHeaders = false
+    ) {
         $request->env('HTTP_ORIGIN', $origin);
 
         $response = $this->getMock('Cake\Network\Response', ['header']);
@@ -1099,8 +1119,23 @@ class ResponseTest extends TestCase
                 ->method('header')
                 ->with('Access-Control-Allow-Headers', $expectedHeaders ? $expectedHeaders : $this->anything());
         }
+        if ($expectedExposedHeaders) {
+            $response->expects($this->at($i++))
+                ->method('header')
+                ->with('Access-Control-Expose-Headers', $expectedExposedHeaders);
+        }
+        if ($expectedCredentials) {
+            $response->expects($this->at($i++))
+                ->method('header')
+                ->with('Access-Control-Allow-Credentials', $expectedCredentials);
+        }
+        if ($expectedMaxAge) {
+            $response->expects($this->at($i++))
+                ->method('header')
+                ->with('Access-Control-Max-Age', $expectedMaxAge);
+        }
 
-        $response->cors($request, $domains, $methods, $headers);
+        $response->cors($request, $domains, $methods, $headers, $credentials, $maxAge, $exposedHeaders);
         unset($_SERVER['HTTP_ORIGIN']);
     }
 
@@ -1120,26 +1155,26 @@ class ResponseTest extends TestCase
             ->will($this->returnValue(true));
 
         return [
-            [$fooRequest, null, '*', '', '', false, false],
-            [$fooRequest, 'http://www.foo.com', '*', '', '', '*', false],
-            [$fooRequest, 'http://www.foo.com', 'www.foo.com', '', '', 'http://www.foo.com', false],
-            [$fooRequest, 'http://www.foo.com', '*.foo.com', '', '', 'http://www.foo.com', false],
-            [$fooRequest, 'http://www.foo.com', 'http://*.foo.com', '', '', 'http://www.foo.com', false],
-            [$fooRequest, 'http://www.foo.com', 'https://www.foo.com', '', '', false, false],
-            [$fooRequest, 'http://www.foo.com', 'https://*.foo.com', '', '', false, false],
-            [$fooRequest, 'http://www.foo.com', ['*.bar.com', '*.foo.com'], '', '', 'http://www.foo.com', false],
+            [$fooRequest, null, '*', '', '', false, false, false, false, false],
+            [$fooRequest, 'http://www.foo.com', '*', '', '', false, false, false, '*', false],
+            [$fooRequest, 'http://www.foo.com', 'www.foo.com', '', '', false, false, false, 'http://www.foo.com', false],
+            [$fooRequest, 'http://www.foo.com', '*.foo.com', '', '', false, false, false, 'http://www.foo.com', false],
+            [$fooRequest, 'http://www.foo.com', 'http://*.foo.com', '', '', false, false, false, 'http://www.foo.com', false],
+            [$fooRequest, 'http://www.foo.com', 'https://www.foo.com', '', '', false, false, false, false, false],
+            [$fooRequest, 'http://www.foo.com', 'https://*.foo.com', '', '', false, false, false, false, false],
+            [$fooRequest, 'http://www.foo.com', ['*.bar.com', '*.foo.com'], '', '', false, false, false, 'http://www.foo.com', false],
 
-            [$secureRequest, 'https://www.bar.com', 'www.bar.com', '', '', 'https://www.bar.com', false],
-            [$secureRequest, 'https://www.bar.com', 'http://www.bar.com', '', '', false, false],
-            [$secureRequest, 'https://www.bar.com', '*.bar.com', '', '', 'https://www.bar.com', false],
+            [$secureRequest, 'https://www.bar.com', 'www.bar.com', '', '', false, false, false, 'https://www.bar.com', false],
+            [$secureRequest, 'https://www.bar.com', 'http://www.bar.com', '', '', false, false, false, false, false],
+            [$secureRequest, 'https://www.bar.com', '*.bar.com', '', '', false, false, false, 'https://www.bar.com', false],
 
-            [$fooRequest, 'http://www.foo.com', '*', 'GET', '', '*', 'GET'],
-            [$fooRequest, 'http://www.foo.com', '*.foo.com', 'GET', '', 'http://www.foo.com', 'GET'],
-            [$fooRequest, 'http://www.foo.com', '*.foo.com', ['GET', 'POST'], '', 'http://www.foo.com', 'GET, POST'],
-
-            [$fooRequest, 'http://www.foo.com', '*', '', 'X-CakePHP', '*', false, 'X-CakePHP'],
-            [$fooRequest, 'http://www.foo.com', '*', '', ['X-CakePHP', 'X-MyApp'], '*', false, 'X-CakePHP, X-MyApp'],
-            [$fooRequest, 'http://www.foo.com', '*', ['GET', 'OPTIONS'], ['X-CakePHP', 'X-MyApp'], '*', 'GET, OPTIONS', 'X-CakePHP, X-MyApp'],
+            [$fooRequest, 'http://www.foo.com', '*', 'GET', '', false, false, false, '*', 'GET'],
+            [$fooRequest, 'http://www.foo.com', '*.foo.com', 'GET', '', false, false, false, 'http://www.foo.com', 'GET'],
+            [$fooRequest, 'http://www.foo.com', '*.foo.com', ['GET', 'POST'], '', false, false, false, 'http://www.foo.com', 'GET, POST'],
+            [$fooRequest, 'http://www.foo.com', '*', '', 'X-CakePHP', false, false, false, '*', false, 'X-CakePHP'],
+            [$fooRequest, 'http://www.foo.com', '*', '', ['X-CakePHP', 'X-MyApp'], false, false, false, '*', false, 'X-CakePHP, X-MyApp'],
+            [$fooRequest, 'http://www.foo.com', '*', ['GET', 'OPTIONS'], ['X-CakePHP', 'X-MyApp'], false, false, false, '*', 'GET, OPTIONS', 'X-CakePHP, X-MyApp'],
+            [$fooRequest, 'http://www.foo.com', ['foo.com'], '', '', true, 75, ['X-Phillies', 'X-Scranton'], 'http://www.foo.com', '', false, 'true', 75, 'X-Phillies, X-Scranton']
         ];
     }
 

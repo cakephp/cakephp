@@ -1348,10 +1348,21 @@ class Response
      * @param string|array $allowedDomains List of allowed domains, see method description for more details
      * @param string|array $allowedMethods List of HTTP verbs allowed
      * @param string|array $allowedHeaders List of HTTP headers allowed
+     * @param string|bool $withCredentials Value for Access-Control-Allow-Credentials
+     * @param null|int $maxAge The time in seconds to cache a preflight request
+     * @param string|array $exposedHeaders The whitelist of headers browsers can access
+     *
      * @return void
      */
-    public function cors(Request $request, $allowedDomains, $allowedMethods = [], $allowedHeaders = [])
-    {
+    public function cors(
+        Request $request,
+        $allowedDomains,
+        $allowedMethods = [],
+        $allowedHeaders = [],
+        $withCredentials = '',
+        $maxAge = null,
+        $exposedHeaders = []
+    ) {
         $origin = $request->header('Origin');
         if (!$origin) {
             return;
@@ -1365,6 +1376,16 @@ class Response
             $this->header('Access-Control-Allow-Origin', $domain['original'] === '*' ? '*' : $origin);
             $allowedMethods && $this->header('Access-Control-Allow-Methods', implode(', ', (array)$allowedMethods));
             $allowedHeaders && $this->header('Access-Control-Allow-Headers', implode(', ', (array)$allowedHeaders));
+            $exposedHeaders && $this->header('Access-Control-Expose-Headers', implode(', ', (array)$exposedHeaders));
+            if ($withCredentials !== '') {
+                if (is_bool($withCredentials)) {
+                    $withCredentials = $withCredentials ? 'true' : 'false';
+                }
+                $this->header('Access-Control-Allow-Credentials', $withCredentials);
+            }
+            if ($maxAge !== null) {
+                $this->header('Access-Control-Max-Age', $maxAge);
+            }
             break;
         }
     }
