@@ -83,7 +83,7 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
         }
 
         foreach ($parts as $name => $part) {
-            if ($field instanceof ExpressionInterface) {
+            if ($part instanceof ExpressionInterface) {
                 $parts[$name] = $part->sql($generator);
                 continue;
             }
