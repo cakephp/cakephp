@@ -14,8 +14,6 @@
  */
 namespace Cake\View\Widget;
 
-use Cake\View\Widget\LabelWidget;
-
 /**
  * Form 'widget' for creating labels that contain their input.
  *

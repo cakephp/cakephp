@@ -13,8 +13,6 @@
  */
 namespace Cake\Network\Http;
 
-use Cake\Network\Http\Response;
-
 /**
  * Container class for cookies used in Http\Client.
  *

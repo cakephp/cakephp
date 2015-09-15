@@ -14,8 +14,6 @@
  */
 namespace Cake\Database;
 
-use Cake\Database\TypeMap;
-
 /*
  * Represents a class that holds a TypeMap object
  */

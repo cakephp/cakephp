@@ -14,7 +14,6 @@
  */
 namespace Cake\TestSuite\Fixture;
 
-use Cake\TestSuite\Fixture\FixtureManager;
 use Cake\TestSuite\TestCase;
 use Exception;
 use PHPUnit_Framework_AssertionFailedError;

@@ -14,8 +14,6 @@
  */
 namespace Cake\Core;
 
-use Cake\Core\Plugin;
-
 /**
  * App is responsible for resource location, and path management.
  *

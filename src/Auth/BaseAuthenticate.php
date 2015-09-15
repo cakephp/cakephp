@@ -13,7 +13,6 @@
  */
 namespace Cake\Auth;
 
-use Cake\Auth\PasswordHasherFactory;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventListenerInterface;

@@ -14,9 +14,6 @@
  */
 namespace Cake\Database;
 
-use Cake\Database\Query;
-use Cake\Database\ValueBinder;
-
 /**
  * Responsible for compiling a Query object into its SQL representation
  *

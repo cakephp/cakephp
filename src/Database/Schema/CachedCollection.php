@@ -16,7 +16,6 @@ namespace Cake\Database\Schema;
 
 use Cake\Cache\Cache;
 use Cake\Database\Connection;
-use Cake\Database\Schema\Collection;
 
 /**
  * Extends the schema collection class to provide caching

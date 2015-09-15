@@ -14,7 +14,6 @@
 namespace Cake\Network\Http;
 
 use Cake\Core\Exception\Exception;
-use Cake\Network\Http\Message;
 
 /**
  * Implements methods for HTTP requests.

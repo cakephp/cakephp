@@ -15,7 +15,6 @@
 namespace Cake\Database\Schema;
 
 use Cake\Database\Driver;
-use Cake\Database\Schema\Table;
 
 /**
  * Base class for schema implementations.

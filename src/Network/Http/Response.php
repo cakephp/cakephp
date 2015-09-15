@@ -13,7 +13,6 @@
  */
 namespace Cake\Network\Http;
 
-use Cake\Network\Http\Message;
 use RuntimeException;
 
 /**

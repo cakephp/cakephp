@@ -16,7 +16,6 @@ namespace Cake\View;
 
 use Cake\Core\App;
 use Cake\Utility\Inflector;
-use Cake\View\View;
 
 /**
  * Provides cell() method for usage in Controller and View classes.

@@ -16,8 +16,6 @@ namespace Cake\Datasource;
 
 use Cake\Collection\Iterator\MapReduce;
 use Cake\Datasource\Exception\RecordNotFoundException;
-use Cake\Datasource\QueryCacher;
-use Cake\Datasource\RepositoryInterface;
 
 /**
  * Contains the characteristics for an object that is attached to a repository and
