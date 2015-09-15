@@ -720,6 +720,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   will be used
      * - conditions: array with a list of conditions to filter the join with
      * - joinType: The type of join to be used (e.g. INNER)
+     * - strategy: The loading strategy to use. 'join' and 'select' are supported.
+     * - finder: The finder method to use when loading records from this association.
+     *   Defaults to 'all'. When the strategy is 'join', only the fields, containments,
+     *   and where conditions will be used from the finder.
      *
      * This method will return the association object that was built.
      *
@@ -758,6 +762,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   When true records will be loaded and then deleted.
      * - conditions: array with a list of conditions to filter the join with
      * - joinType: The type of join to be used (e.g. LEFT)
+     * - strategy: The loading strategy to use. 'join' and 'select' are supported.
+     * - finder: The finder method to use when loading records from this association.
+     *   Defaults to 'all'. When the strategy is 'join', only the fields, containments,
+     *   and where conditions will be used from the finder.
      *
      * This method will return the association object that was built.
      *
@@ -800,6 +808,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   or 'subquery'. If subquery is selected the query used to return results
      *   in the source table will be used as conditions for getting rows in the
      *   target table.
+     * - finder: The finder method to use when loading records from this association.
+     *   Defaults to 'all'.
      *
      * This method will return the association object that was built.
      *
@@ -846,6 +856,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   for saving associated entities. The former will only create new links
      *   between both side of the relation and the latter will do a wipe and
      *   replace to create the links between the passed entities when saving.
+     * - strategy: The loading strategy to use. 'select' and 'subquery' are supported.
+     * - finder: The finder method to use when loading records from this association.
+     *   Defaults to 'all'.
      *
      * This method will return the association object that was built.
      *
