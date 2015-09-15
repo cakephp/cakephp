@@ -14,7 +14,6 @@
  */
 namespace Cake\Database\Type;
 
-
 /**
  * Time type converter.
  *

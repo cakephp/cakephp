@@ -17,7 +17,8 @@ namespace Cake\TestSuite\Fixture;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Database\Connection;
-use Cake\Datasource\ConnectionManager;use Cake\Utility\Inflector;
+use Cake\Datasource\ConnectionManager;
+use Cake\Utility\Inflector;
 
 /**
  * A factory class to manage the life cycle of test fixtures

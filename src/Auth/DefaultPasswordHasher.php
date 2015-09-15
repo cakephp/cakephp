@@ -14,7 +14,6 @@
  */
 namespace Cake\Auth;
 
-
 /**
  * Default password hashing class.
  *

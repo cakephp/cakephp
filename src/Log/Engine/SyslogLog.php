@@ -14,7 +14,6 @@
  */
 namespace Cake\Log\Engine;
 
-
 /**
  * Syslog stream for Logging. Writes logs to the system logger
  */

@@ -14,7 +14,8 @@
  */
 namespace Cake\Database\Expression;
 
-use Cake\Database\ExpressionInterface;use Cake\Database\ValueBinder;
+use Cake\Database\ExpressionInterface;
+use Cake\Database\ValueBinder;
 
 /**
  * An expression object for ORDER BY clauses

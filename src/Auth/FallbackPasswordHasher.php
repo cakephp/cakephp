@@ -14,7 +14,6 @@
  */
 namespace Cake\Auth;
 
-
 /**
  * A password hasher that can use multiple different hashes where only
  * one is the preferred one. This is useful when trying to migrate an

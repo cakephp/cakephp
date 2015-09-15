@@ -14,7 +14,6 @@
  */
 namespace Cake\Database;
 
-
 /**
  * Responsible for compiling a Query object into its SQL representation
  *

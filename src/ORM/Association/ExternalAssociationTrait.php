@@ -14,7 +14,6 @@
  */
 namespace Cake\ORM\Association;
 
-
 /**
  * Represents a type of association that that needs to be recovered by performing
  * an extra query.
