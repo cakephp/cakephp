@@ -927,6 +927,41 @@ SQL;
 	}
 
 /**
+ * Test that describe() ignores `default current_timestamp` in datetime columns.
+ * This is for MySQL >= 5.6.
+ *
+ * @return void
+ */
+	public function testDescribeHandleCurrentTimestampDatetime() {
+		$name = $this->Dbo->fullTableName('timestamp_default_values');
+		$sql = <<<SQL
+CREATE TABLE $name (
+	id INT(11) NOT NULL AUTO_INCREMENT,
+	phone VARCHAR(10),
+	limit_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY(id)
+);
+SQL;
+		$this->Dbo->execute($sql);
+		$model = new Model(array(
+			'table' => 'timestamp_default_values',
+			'ds' => 'test',
+			'alias' => 'TimestampDefaultValue'
+		));
+		$result = $this->Dbo->describe($model);
+		$this->Dbo->execute('DROP TABLE ' . $name);
+
+		$this->assertNull($result['limit_date']['default']);
+
+		$schema = new CakeSchema(array(
+			'connection' => 'test',
+			'testdescribes' => $result
+		));
+		$result = $this->Dbo->createSchema($schema);
+		$this->assertContains('`limit_date` datetime NOT NULL,', $result);
+	}
+
+	/**
  * test that a describe() gets additional fieldParameters
  *
  * @return void
