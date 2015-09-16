@@ -170,7 +170,7 @@ class RequestHandlerComponent extends Component
         }
 
         $extensions = array_unique(
-            array_merge(Router::extensions(), array_keys($this->_viewClassMap))
+            array_merge(Router::extensions(), array_keys($this->config('viewClassMap')))
         );
         foreach ($accepts as $types) {
             $ext = array_intersect($extensions, $types);
