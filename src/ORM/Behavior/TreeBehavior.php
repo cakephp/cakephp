@@ -71,7 +71,8 @@ class TreeBehavior extends Behavior
         'left' => 'lft',
         'right' => 'rght',
         'scope' => null,
-        'level' => null
+        'level' => null,
+        'recoverOrder' => null
     ];
 
     /**
@@ -774,11 +775,12 @@ class TreeBehavior extends Behavior
         list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
         $primaryKey = $this->_getPrimaryKey();
         $aliasedPrimaryKey = $this->_table->aliasField($primaryKey);
+        $order = $config['recoverOrder'] ? $config['recoverOrder'] : $aliasedPrimaryKey;
 
         $query = $this->_scope($this->_table->query())
             ->select([$aliasedPrimaryKey])
             ->where([$this->_table->aliasField($parent) . ' IS' => $parentId])
-            ->order([$aliasedPrimaryKey])
+            ->order($order)
             ->hydrate(false);
 
         $leftCounter = $counter;
