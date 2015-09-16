@@ -2203,13 +2203,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function __debugInfo()
     {
         $conn = $this->connection();
+        $associations = $this->_associations ?: false;
+        $behaviors = $this->_behaviors ?: false;
         return [
             'registryAlias' => $this->registryAlias(),
             'table' => $this->table(),
             'alias' => $this->alias(),
             'entityClass' => $this->entityClass(),
-            'associations' => $this->_associations->keys(),
-            'behaviors' => $this->_behaviors->loaded(),
+            'associations' => $associations ? $associations->keys() : false,
+            'behaviors' => $behaviors ? $behaviors->loaded() : false,
             'defaultConnection' => $this->defaultConnectionName(),
             'connectionName' => $conn ? $conn->configName() : null
         ];
