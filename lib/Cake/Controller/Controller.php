@@ -329,7 +329,7 @@ class Controller extends Object implements CakeEventListener {
 		$this->Components = new ComponentCollection();
 
 		$childMethods = get_class_methods($this);
-		$parentMethods = get_class_methods('Controller');
+		$parentMethods = get_class_methods(get_parent_class($this));
 
 		$this->methods = array_diff($childMethods, $parentMethods);
 
