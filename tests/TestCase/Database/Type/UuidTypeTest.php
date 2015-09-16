@@ -91,4 +91,14 @@ class UuidTypeTest extends TestCase
         $this->assertRegExp('/^[a-f0-9-]+$/', $one, 'Should quack like a uuid');
         $this->assertRegExp('/^[a-f0-9-]+$/', $two, 'Should quack like a uuid');
     }
+
+    /**
+     * Tests that marshalling an empty string results in null
+     *
+     * @return void
+     */
+    public function testMarshalEmptyString()
+    {
+        $this->assertNull($this->type->marshal(''));
+    }
 }
