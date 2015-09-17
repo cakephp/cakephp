@@ -352,7 +352,7 @@ class Mysql extends DboSource {
 			if (in_array($fields[$column->Field]['type'], $this->fieldParameters['unsigned']['types'], true)) {
 				$fields[$column->Field]['unsigned'] = $this->_unsigned($column->Type);
 			}
-			if ($fields[$column->Field]['type'] === 'timestamp' && strtoupper($column->Default) === 'CURRENT_TIMESTAMP') {
+			if (in_array($fields[$column->Field]['type'], array('timestamp', 'datetime')) && strtoupper($column->Default) === 'CURRENT_TIMESTAMP') {
 				$fields[$column->Field]['default'] = null;
 			}
 			if (!empty($column->Key) && isset($this->index[$column->Key])) {
