@@ -933,6 +933,9 @@ SQL;
  * @return void
  */
 	public function testDescribeHandleCurrentTimestampDatetime() {
+		$mysqlVersion = $this->Dbo->query('SELECT VERSION() as version', array('log' => false));
+		$this->skipIf(version_compare($mysqlVersion[0][0]['version'], '5.6.0', '<'));
+
 		$name = $this->Dbo->fullTableName('timestamp_default_values');
 		$sql = <<<SQL
 CREATE TABLE $name (
