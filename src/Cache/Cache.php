@@ -118,7 +118,7 @@ class Cache
      * Also allows for injecting of a new registry instance.
      *
      * @param \Cake\Core\ObjectRegistry $registry Injectable registry object.
-     * @return \Cake\Cache\CacheRegistry
+     * @return \Cake\Core\ObjectRegistry
      */
     public static function registry(ObjectRegistry $registry = null)
     {
