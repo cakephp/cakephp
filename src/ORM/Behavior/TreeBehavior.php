@@ -775,7 +775,7 @@ class TreeBehavior extends Behavior
         list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
         $primaryKey = $this->_getPrimaryKey();
         $aliasedPrimaryKey = $this->_table->aliasField($primaryKey);
-        $order = $config['recoverOrder'] ? $config['recoverOrder'] : $aliasedPrimaryKey;
+        $order = $config['recoverOrder'] ?: $aliasedPrimaryKey;
 
         $query = $this->_scope($this->_table->query())
             ->select([$aliasedPrimaryKey])
