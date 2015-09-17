@@ -964,7 +964,7 @@ SQL;
 		$this->assertContains('`limit_date` datetime NOT NULL,', $result);
 	}
 
-	/**
+/**
  * test that a describe() gets additional fieldParameters
  *
  * @return void
