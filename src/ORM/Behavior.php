@@ -61,26 +61,26 @@ use Cake\Event\EventListenerInterface;
  *   Fired when the rules checking object for the table is being built. You can use this
  *   callback to add more rules to the set.
  *
- * - `beforeRules(Event $event, Entity $entity, ArrayObject $options, $operation)`
+ * - `beforeRules(Event $event, EntityInterface $entity, ArrayObject $options, $operation)`
  *   Fired before an entity is validated using by a rules checker. By stopping this event,
  *   you can return the final value of the rules checking operation.
  *
- * - `afterRules(Event $event, Entity $entity, ArrayObject $options, bool $result, $operation)`
+ * - `afterRules(Event $event, EntityInterface $entity, ArrayObject $options, bool $result, $operation)`
  *   Fired after the rules have been checked on the entity. By stopping this event,
  *   you can return the final value of the rules checking operation.
  *
- * - `beforeSave(Event $event, Entity $entity, ArrayObject $options)`
+ * - `beforeSave(Event $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired before each entity is saved. Stopping this event will abort the save
  *   operation. When the event is stopped the result of the event will be returned.
  *
- * - `afterSave(Event $event, Entity $entity, ArrayObject $options)`
+ * - `afterSave(Event $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired after an entity is saved.
  *
- * - `beforeDelete(Event $event, Entity $entity, ArrayObject $options)`
+ * - `beforeDelete(Event $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired before an entity is deleted. By stopping this event you will abort
  *   the delete operation.
  *
- * - `afterDelete(Event $event, Entity $entity, ArrayObject $options)`
+ * - `afterDelete(Event $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired after an entity has been deleted.
  *
  * In addition to the core events, behaviors can respond to any

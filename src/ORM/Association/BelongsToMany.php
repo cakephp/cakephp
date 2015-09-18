@@ -854,7 +854,7 @@ class BelongsToMany extends Association
     /**
      * Throws an exception should any of the passed entities is not persisted.
      *
-     * @param \Cake\ORM\Entity $sourceEntity the row belonging to the `source` side
+     * @param \Cake\Datasource\EntityInterface $sourceEntity the row belonging to the `source` side
      *   of this association
      * @param array $targetEntities list of entities belonging to the `target` side
      *   of this association
