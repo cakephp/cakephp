@@ -15,6 +15,7 @@
 namespace Cake\ORM;
 
 use ArrayIterator;
+use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\AssociationsNormalizerTrait;
 use Cake\ORM\Entity;
@@ -160,13 +161,13 @@ class AssociationCollection implements IteratorAggregate
      * is the owning side.
      *
      * @param \Cake\ORM\Table $table The table entity is for.
-     * @param \Cake\ORM\Entity $entity The entity to save associated data for.
+     * @param \Cake\Datasource\EntityInterface $entity The entity to save associated data for.
      * @param array $associations The list of associations to save parents from.
      *   associations not in this list will not be saved.
      * @param array $options The options for the save operation.
      * @return bool Success
      */
-    public function saveParents(Table $table, Entity $entity, $associations, array $options = [])
+    public function saveParents(Table $table, EntityInterface $entity, $associations, array $options = [])
     {
         if (empty($associations)) {
             return true;
@@ -181,13 +182,13 @@ class AssociationCollection implements IteratorAggregate
      * is not the owning side.
      *
      * @param \Cake\ORM\Table $table The table entity is for.
-     * @param \Cake\ORM\Entity $entity The entity to save associated data for.
+     * @param \Cake\Datasource\EntityInterface $entity The entity to save associated data for.
      * @param array $associations The list of associations to save children from.
      *   associations not in this list will not be saved.
      * @param array $options The options for the save operation.
      * @return bool Success
      */
-    public function saveChildren(Table $table, Entity $entity, array $associations, array $options)
+    public function saveChildren(Table $table, EntityInterface $entity, array $associations, array $options)
     {
         if (empty($associations)) {
             return true;
@@ -199,7 +200,7 @@ class AssociationCollection implements IteratorAggregate
      * Helper method for saving an association's data.
      *
      * @param \Cake\ORM\Table $table The table the save is currently operating on
-     * @param \Cake\ORM\Entity $entity The entity to save
+     * @param \Cake\Datasource\EntityInterface $entity The entity to save
      * @param array $associations Array of associations to save.
      * @param array $options Original options
      * @param bool $owningSide Compared with association classes'
@@ -207,7 +208,7 @@ class AssociationCollection implements IteratorAggregate
      * @return bool Success
      * @throws \InvalidArgumentException When an unknown alias is used.
      */
-    protected function _saveAssociations($table, $entity, $associations, $options, $owningSide)
+    protected function _saveAssociations($table, EntityInterface $entity, $associations, $options, $owningSide)
     {
         unset($options['associated']);
         foreach ($associations as $alias => $nested) {
@@ -238,12 +239,12 @@ class AssociationCollection implements IteratorAggregate
      * Helper method for saving an association's data.
      *
      * @param \Cake\ORM\Association $association The association object to save with.
-     * @param \Cake\ORM\Entity $entity The entity to save
+     * @param \Cake\Datasource\EntityInterface $entity The entity to save
      * @param array $nested Options for deeper associations
      * @param array $options Original options
      * @return bool Success
      */
-    protected function _save($association, $entity, $nested, $options)
+    protected function _save($association, EntityInterface $entity, $nested, $options)
     {
         if (!$entity->dirty($association->property())) {
             return true;
@@ -258,11 +259,11 @@ class AssociationCollection implements IteratorAggregate
      * Cascade a delete across the various associations.
      * Cascade first across associations for which cascadeCallbacks is true.
      *
-     * @param \Cake\ORM\Entity $entity The entity to delete associations for.
+     * @param \Cake\Datasource\EntityInterface $entity The entity to delete associations for.
      * @param array $options The options used in the delete operation.
      * @return void
      */
-    public function cascadeDelete(Entity $entity, array $options)
+    public function cascadeDelete(EntityInterface $entity, array $options)
     {
         $noCascade = [];
         foreach ($this->_items as $assoc) {

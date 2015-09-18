@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM\Behavior;
 
+use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\ORM\Behavior;
@@ -79,12 +80,12 @@ class TimestampBehavior extends Behavior
      * There is only one event handler, it can be configured to be called for any event
      *
      * @param \Cake\Event\Event $event Event instance.
-     * @param \Cake\ORM\Entity $entity Entity instance.
+     * @param \Cake\Datasource\EntityInterface $entity Entity instance.
      * @throws \UnexpectedValueException if a field's when value is misdefined
      * @return true (irrespective of the behavior logic, the save will not be prevented)
      * @throws \UnexpectedValueException When the value for an event is not 'always', 'new' or 'existing'
      */
-    public function handleEvent(Event $event, Entity $entity)
+    public function handleEvent(Event $event, EntityInterface $entity)
     {
         $eventName = $event->name();
         $events = $this->_config['events'];
@@ -153,11 +154,11 @@ class TimestampBehavior extends Behavior
      * "always" or "existing", update the timestamp value. This method will overwrite
      * any pre-existing value.
      *
-     * @param \Cake\ORM\Entity $entity Entity instance.
+     * @param \Cake\Datasource\EntityInterface $entity Entity instance.
      * @param string $eventName Event name.
      * @return bool true if a field is updated, false if no action performed
      */
-    public function touch(Entity $entity, $eventName = 'Model.beforeSave')
+    public function touch(EntityInterface $entity, $eventName = 'Model.beforeSave')
     {
         $events = $this->_config['events'];
         if (empty($events[$eventName])) {
@@ -181,12 +182,12 @@ class TimestampBehavior extends Behavior
     /**
      * Update a field, if it hasn't been updated already
      *
-     * @param \Cake\ORM\Entity $entity Entity instance.
+     * @param \Cake\Datasource\EntityInterface $entity Entity instance.
      * @param string $field Field name
      * @param bool $refreshTimestamp Whether to refresh timestamp.
      * @return void
      */
-    protected function _updateField(Entity $entity, $field, $refreshTimestamp)
+    protected function _updateField(EntityInterface $entity, $field, $refreshTimestamp)
     {
         if ($entity->dirty($field)) {
             return;

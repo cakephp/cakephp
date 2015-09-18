@@ -80,11 +80,11 @@ class TreeBehavior extends Behavior
      * included in the parameters to be saved.
      *
      * @param \Cake\Event\Event $event The beforeSave event that was fired
-     * @param \Cake\ORM\Entity $entity the entity that is going to be saved
+     * @param \Cake\Datasource\EntityInterface $entity the entity that is going to be saved
      * @return void
      * @throws \RuntimeException if the parent to set for the node is invalid
      */
-    public function beforeSave(Event $event, Entity $entity)
+    public function beforeSave(Event $event, EntityInterface $entity)
     {
         $isNew = $entity->isNew();
         $config = $this->config();
@@ -146,10 +146,10 @@ class TreeBehavior extends Behavior
      * Manages updating level of descendents of currently saved entity.
      *
      * @param \Cake\Event\Event $event The beforeSave event that was fired
-     * @param \Cake\ORM\Entity $entity the entity that is going to be saved
+     * @param \Cake\Datasource\EntityInterface $entity the entity that is going to be saved
      * @return void
      */
-    public function afterSave(Event $event, Entity $entity)
+    public function afterSave(Event $event, EntityInterface $entity)
     {
         if (!$this->_config['level'] || $entity->isNew()) {
             return;
@@ -161,10 +161,10 @@ class TreeBehavior extends Behavior
     /**
      * Set level for descendents.
      *
-     * @param \Cake\ORM\Entity $entity The entity whose descendents need to be updated.
+     * @param \Cake\Datasource\EntityInterface $entity The entity whose descendents need to be updated.
      * @return void
      */
-    protected function _setChildrenLevel(Entity $entity)
+    protected function _setChildrenLevel(EntityInterface $entity)
     {
         $config = $this->config();
 
@@ -198,10 +198,10 @@ class TreeBehavior extends Behavior
      * Also deletes the nodes in the subtree of the entity to be delete
      *
      * @param \Cake\Event\Event $event The beforeDelete event that was fired
-     * @param \Cake\ORM\Entity $entity The entity that is going to be saved
+     * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @return void
      */
-    public function beforeDelete(Event $event, Entity $entity)
+    public function beforeDelete(Event $event, EntityInterface $entity)
     {
         $config = $this->config();
         $this->_ensureFields($entity);
@@ -224,12 +224,12 @@ class TreeBehavior extends Behavior
      * updated to a new parent. It also makes the hole in the tree so the node
      * move can be done without corrupting the structure.
      *
-     * @param \Cake\ORM\Entity $entity The entity to re-parent
+     * @param \Cake\Datasource\EntityInterface $entity The entity to re-parent
      * @param mixed $parent the id of the parent to set
      * @return void
      * @throws \RuntimeException if the parent to set to the entity is not valid
      */
-    protected function _setParent($entity, $parent)
+    protected function _setParent(EntityInterface $entity, $parent)
     {
         $config = $this->config();
         $parentNode = $this->_getNode($parent);
@@ -286,10 +286,10 @@ class TreeBehavior extends Behavior
      * a new root in the tree. It also modifies the ordering in the rest of the tree
      * so the structure remains valid
      *
-     * @param \Cake\ORM\Entity $entity The entity to set as a new root
+     * @param \Cake\Datasource\EntityInterface $entity The entity to set as a new root
      * @return void
      */
-    protected function _setAsRoot($entity)
+    protected function _setAsRoot(EntityInterface $entity)
     {
         $config = $this->config();
         $edge = $this->_getMax();
@@ -369,12 +369,12 @@ class TreeBehavior extends Behavior
     /**
      * Get the number of children nodes.
      *
-     * @param \Cake\ORM\Entity $node The entity to count children for
+     * @param \Cake\Datasource\EntityInterface $node The entity to count children for
      * @param bool $direct whether to count all nodes in the subtree or just
      * direct children
      * @return int Number of children nodes.
      */
-    public function childCount(Entity $node, $direct = false)
+    public function childCount(EntityInterface $node, $direct = false)
     {
         $config = $this->config();
         $parent = $this->_table->aliasField($config['parent']);
@@ -503,11 +503,11 @@ class TreeBehavior extends Behavior
      * Note that the node will not be deleted just moved away from its current position
      * without moving its children with it.
      *
-     * @param \Cake\ORM\Entity $node The node to remove from the tree
+     * @param \Cake\Datasource\EntityInterface $node The node to remove from the tree
      * @return \Cake\ORM\Entity|false the node after being removed from the tree or
      * false on error
      */
-    public function removeFromTree(Entity $node)
+    public function removeFromTree(EntityInterface $node)
     {
         return $this->_table->connection()->transactional(function () use ($node) {
             $this->_ensureFields($node);
@@ -518,11 +518,11 @@ class TreeBehavior extends Behavior
     /**
      * Helper function containing the actual code for removeFromTree
      *
-     * @param \Cake\ORM\Entity $node The node to remove from the tree
+     * @param \Cake\Datasource\EntityInterface $node The node to remove from the tree
      * @return \Cake\ORM\Entity|false the node after being removed from the tree or
      * false on error
      */
-    protected function _removeFromTree($node)
+    protected function _removeFromTree(EntityInterface $node)
     {
         $config = $this->config();
         $left = $node->get($config['left']);
@@ -561,12 +561,12 @@ class TreeBehavior extends Behavior
      * If the node is the first child, or is a top level node with no previous node
      * this method will return false
      *
-     * @param \Cake\ORM\Entity $node The node to move
+     * @param \Cake\Datasource\EntityInterface $node The node to move
      * @param int|bool $number How many places to move the node, or true to move to first position
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      * @return \Cake\ORM\Entity|bool $node The node after being moved or false on failure
      */
-    public function moveUp(Entity $node, $number = 1)
+    public function moveUp(EntityInterface $node, $number = 1)
     {
         if ($number < 1) {
             return false;
@@ -581,12 +581,12 @@ class TreeBehavior extends Behavior
     /**
      * Helper function used with the actual code for moveUp
      *
-     * @param \Cake\ORM\Entity $node The node to move
+     * @param \Cake\Datasource\EntityInterface $node The node to move
      * @param int|bool $number How many places to move the node, or true to move to first position
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      * @return \Cake\ORM\Entity|bool $node The node after being moved or false on failure
      */
-    protected function _moveUp($node, $number)
+    protected function _moveUp(EntityInterface $node, $number)
     {
         $config = $this->config();
         list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
@@ -642,12 +642,12 @@ class TreeBehavior extends Behavior
      * If the node is the last child, or is a top level node with no subsequent node
      * this method will return false
      *
-     * @param \Cake\ORM\Entity $node The node to move
+     * @param \Cake\Datasource\EntityInterface $node The node to move
      * @param int|bool $number How many places to move the node or true to move to last position
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      * @return \Cake\ORM\Entity|bool the entity after being moved or false on failure
      */
-    public function moveDown(Entity $node, $number = 1)
+    public function moveDown(EntityInterface $node, $number = 1)
     {
         if ($number < 1) {
             return false;
@@ -662,12 +662,12 @@ class TreeBehavior extends Behavior
     /**
      * Helper function used with the actual code for moveDown
      *
-     * @param \Cake\ORM\Entity $node The node to move
+     * @param \Cake\Datasource\EntityInterface $node The node to move
      * @param int|bool $number How many places to move the node, or true to move to last position
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      * @return \Cake\ORM\Entity|bool $node The node after being moved or false on failure
      */
-    protected function _moveDown($node, $number)
+    protected function _moveDown(EntityInterface $node, $number)
     {
         $config = $this->config();
         list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
@@ -879,7 +879,7 @@ class TreeBehavior extends Behavior
      * Ensures that the provided entity contains non-empty values for the left and
      * right fields
      *
-     * @param \Cake\ORM\Entity $entity The entity to ensure fields for
+     * @param \Cake\Datasource\EntityInterface $entity The entity to ensure fields for
      * @return void
      */
     protected function _ensureFields($entity)
