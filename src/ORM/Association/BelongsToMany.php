@@ -861,7 +861,7 @@ class BelongsToMany extends Association
      * @return bool
      * @throws \InvalidArgumentException
      */
-    protected function _checkPersistenceStatus(EntityInterface $sourceEntity, array $targetEntities)
+    protected function _checkPersistenceStatus($sourceEntity, array $targetEntities)
     {
         if ($sourceEntity->isNew()) {
             $error = 'Source entity needs to be persisted before proceeding';

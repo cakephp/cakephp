@@ -208,7 +208,7 @@ class AssociationCollection implements IteratorAggregate
      * @return bool Success
      * @throws \InvalidArgumentException When an unknown alias is used.
      */
-    protected function _saveAssociations($table, EntityInterface $entity, $associations, $options, $owningSide)
+    protected function _saveAssociations($table, $entity, $associations, $options, $owningSide)
     {
         unset($options['associated']);
         foreach ($associations as $alias => $nested) {
@@ -244,7 +244,7 @@ class AssociationCollection implements IteratorAggregate
      * @param array $options Original options
      * @return bool Success
      */
-    protected function _save($association, EntityInterface $entity, $nested, $options)
+    protected function _save($association, $entity, $nested, $options)
     {
         if (!$entity->dirty($association->property())) {
             return true;

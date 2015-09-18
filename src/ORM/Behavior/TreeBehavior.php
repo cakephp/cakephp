@@ -164,7 +164,7 @@ class TreeBehavior extends Behavior
      * @param \Cake\Datasource\EntityInterface $entity The entity whose descendents need to be updated.
      * @return void
      */
-    protected function _setChildrenLevel(EntityInterface $entity)
+    protected function _setChildrenLevel($entity)
     {
         $config = $this->config();
 
@@ -229,7 +229,7 @@ class TreeBehavior extends Behavior
      * @return void
      * @throws \RuntimeException if the parent to set to the entity is not valid
      */
-    protected function _setParent(EntityInterface $entity, $parent)
+    protected function _setParent($entity, $parent)
     {
         $config = $this->config();
         $parentNode = $this->_getNode($parent);
@@ -289,7 +289,7 @@ class TreeBehavior extends Behavior
      * @param \Cake\Datasource\EntityInterface $entity The entity to set as a new root
      * @return void
      */
-    protected function _setAsRoot(EntityInterface $entity)
+    protected function _setAsRoot($entity)
     {
         $config = $this->config();
         $edge = $this->_getMax();
@@ -522,7 +522,7 @@ class TreeBehavior extends Behavior
      * @return \Cake\ORM\Entity|false the node after being removed from the tree or
      * false on error
      */
-    protected function _removeFromTree(EntityInterface $node)
+    protected function _removeFromTree($node)
     {
         $config = $this->config();
         $left = $node->get($config['left']);
@@ -586,7 +586,7 @@ class TreeBehavior extends Behavior
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      * @return \Cake\ORM\Entity|bool $node The node after being moved or false on failure
      */
-    protected function _moveUp(EntityInterface $node, $number)
+    protected function _moveUp($node, $number)
     {
         $config = $this->config();
         list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
@@ -667,7 +667,7 @@ class TreeBehavior extends Behavior
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      * @return \Cake\ORM\Entity|bool $node The node after being moved or false on failure
      */
-    protected function _moveDown(EntityInterface $node, $number)
+    protected function _moveDown($node, $number)
     {
         $config = $this->config();
         list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
