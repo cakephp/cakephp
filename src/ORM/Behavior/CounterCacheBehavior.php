@@ -14,8 +14,8 @@
  */
 namespace Cake\ORM\Behavior;
 
-use Cake\Event\Event;
 use Cake\Datasource\EntityInterface;
+use Cake\Event\Event;
 use Cake\ORM\Association;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
