@@ -176,10 +176,11 @@ if (!function_exists('env')) {
      * environment information.
      *
      * @param string $key Environment variable name.
+     * @param string $default Specify a default value in case the environment variable is not defined.
      * @return string|null Environment variable setting.
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#env
      */
-    function env($key)
+    function env($key, $default = null)
     {
         if ($key === 'HTTPS') {
             if (isset($_SERVER['HTTPS'])) {
@@ -228,7 +229,7 @@ if (!function_exists('env')) {
             case 'CGI_MODE':
                 return (PHP_SAPI === 'cgi');
         }
-        return null;
+        return $default;
     }
 
 }
