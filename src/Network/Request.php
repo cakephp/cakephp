@@ -1227,10 +1227,12 @@ class Request implements ArrayAccess
      *
      * @param string $key The key you want to read/write from/to.
      * @param string|null $value Value to set. Default null.
+     * @param string|null $default Default value when trying to retrieve an environment
+     *   variable's value that does not exist. The value parameter must be null.
      * @return $this|string|null This instance if used as setter,
      *   if used as getter either the environment value, or null if the value doesn't exist.
      */
-    public function env($key, $value = null)
+    public function env($key, $value = null, $default = null)
     {
         if ($value !== null) {
             $this->_environment[$key] = $value;
@@ -1242,7 +1244,7 @@ class Request implements ArrayAccess
         if (!array_key_exists($key, $this->_environment)) {
             $this->_environment[$key] = env($key);
         }
-        return $this->_environment[$key];
+        return $this->_environment[$key] !== null ? $this->_environment[$key] : $default;
     }
 
     /**
