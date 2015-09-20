@@ -383,7 +383,7 @@ class FileEngine extends CacheEngine
         if (!$createKey && !$path->isFile()) {
             return false;
         }
-        if (empty($this->_File) || $this->_File->getBaseName() !== $key) {
+        if (empty($this->_File) || $this->_File->getBasename() !== $key) {
             $exists = file_exists($path->getPathname());
             try {
                 $this->_File = $path->openFile('c+');
@@ -463,13 +463,13 @@ class FileEngine extends CacheEngine
             \RecursiveIteratorIterator::CHILD_FIRST
         );
         foreach ($contents as $object) {
-            $containsGroup = strpos($object->getPathName(), DS . $group . DS) !== false;
+            $containsGroup = strpos($object->getPathname(), DS . $group . DS) !== false;
             $hasPrefix = true;
             if (strlen($this->_config['prefix']) !== 0) {
-                $hasPrefix = strpos($object->getBaseName(), $this->_config['prefix']) === 0;
+                $hasPrefix = strpos($object->getBasename(), $this->_config['prefix']) === 0;
             }
             if ($object->isFile() && $containsGroup && $hasPrefix) {
-                $path = $object->getPathName();
+                $path = $object->getPathname();
                 $object = null;
                 //@codingStandardsIgnoreStart
                 @unlink($path);
