@@ -15,7 +15,6 @@ namespace Cake\Mailer;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Mailer\Exception\MissingActionException;
-use Cake\Utility\Inflector;
 
 /**
  * Mailer base class.
@@ -79,6 +78,39 @@ use Cake\Utility\Inflector;
  * The onRegistration method converts the application event into a mailer method.
  * Our mailer could either be registered in the application bootstrap, or
  * in the Table class' initialize() hook.
+ * 
+ * @method Email to($email = null, $name = null)
+ * @method Email from($email = null, $name = null)
+ * @method Email sender($email = null, $name = null)
+ * @method Email replyTo($email = null, $name = null)
+ * @method Email readReceipt($email = null, $name = null)
+ * @method Email returnPath($email = null, $name = null)
+ * @method Email addTo($email, $name = null)
+ * @method Email cc($email = null, $name = null)
+ * @method Email addCc($email, $name = null)
+ * @method Email bcc($email = null, $name = null)
+ * @method Email addBcc($email, $name = null)
+ * @method Email charset($charset = null)
+ * @method Email headerCharset($charset = null)
+ * @method Email subject($subject = null)
+ * @method Email setHeaders(array $headers)
+ * @method Email addHeaders(array $headers)
+ * @method Email getHeaders(array $include = [])
+ * @method Email template($template = false, $layout = false)
+ * @method Email viewRender($viewClass = null)
+ * @method Email viewVars($viewVars = null)
+ * @method Email theme($theme = null)
+ * @method Email helpers($helpers = null)
+ * @method Email emailFormat($format = null)
+ * @method Email transport($name = null)
+ * @method Email messageId($message = null)
+ * @method Email domain($domain = null)
+ * @method Email attachments($attachments = null)
+ * @method Email addAttachments($attachments)
+ * @method Email message($type = null)
+ * @method Email profile($config = null)
+ * @method Email send($content = null)
+ * @method Email reset()
  */
 abstract class Mailer implements EventListenerInterface
 {
