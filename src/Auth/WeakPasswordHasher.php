@@ -14,7 +14,6 @@
  */
 namespace Cake\Auth;
 
-use Cake\Auth\AbstractPasswordHasher;
 use Cake\Core\Configure;
 use Cake\Error\Debugger;
 use Cake\Utility\Security;

@@ -15,6 +15,7 @@
 namespace Cake\Cache;
 
 use Cake\Cache\Engine\NullEngine;
+use Cake\Core\ObjectRegistry;
 use Cake\Core\StaticConfigTrait;
 use InvalidArgumentException;
 use RuntimeException;
@@ -113,6 +114,26 @@ class Cache
     protected static $_registry;
 
     /**
+     * Returns the Cache Registry instance used for creating and using cache adapters.
+     * Also allows for injecting of a new registry instance.
+     *
+     * @param \Cake\Core\ObjectRegistry $registry Injectable registry object.
+     * @return \Cake\Core\ObjectRegistry
+     */
+    public static function registry(ObjectRegistry $registry = null)
+    {
+        if ($registry) {
+            static::$_registry = $registry;
+        }
+        
+        if (empty(static::$_registry)) {
+            static::$_registry = new CacheRegistry();
+        }
+
+        return static::$_registry;
+    }
+
+    /**
      * Finds and builds the instance of the required engine class.
      *
      * @param string $name Name of the config array that needs an engine instance built
@@ -121,9 +142,7 @@ class Cache
      */
     protected static function _buildEngine($name)
     {
-        if (empty(static::$_registry)) {
-            static::$_registry = new CacheRegistry();
-        }
+        $registry = static::registry();
 
         if (empty(static::$_config[$name]['className'])) {
             throw new InvalidArgumentException(
@@ -132,7 +151,7 @@ class Cache
         }
 
         $config = static::$_config[$name];
-        static::$_registry->load($name, $config);
+        $registry->load($name, $config);
 
         if (!empty($config['groups'])) {
             foreach ($config['groups'] as $group) {
@@ -158,12 +177,14 @@ class Cache
             return new NullEngine();
         }
 
-        if (isset(static::$_registry->{$config})) {
-            return static::$_registry->{$config};
+        $registry = static::registry();
+
+        if (isset($registry->{$config})) {
+            return $registry->{$config};
         }
 
         static::_buildEngine($config);
-        return static::$_registry->{$config};
+        return $registry->{$config};
     }
 
     /**

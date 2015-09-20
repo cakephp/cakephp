@@ -18,7 +18,6 @@ use Cake\Core\App;
 use Cake\Core\ObjectRegistry;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
-use Cake\View\View;
 
 /**
  * HelperRegistry is used as a registry for loaded helpers and handles loading

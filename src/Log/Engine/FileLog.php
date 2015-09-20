@@ -15,7 +15,6 @@
 namespace Cake\Log\Engine;
 
 use Cake\Core\Configure;
-use Cake\Log\Engine\BaseLog;
 use Cake\Utility\Text;
 
 /**

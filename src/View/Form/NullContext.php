@@ -15,7 +15,6 @@
 namespace Cake\View\Form;
 
 use Cake\Network\Request;
-use Cake\View\Form\ContextInterface;
 
 /**
  * Provides a context provider that does nothing.

@@ -15,8 +15,6 @@
 namespace Cake\Validation;
 
 use ArrayAccess;
-use Cake\Validation\RulesProvider;
-use Cake\Validation\ValidationSet;
 use Countable;
 use IteratorAggregate;
 

@@ -23,7 +23,6 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingCellViewException;
 use Cake\View\Exception\MissingTemplateException;
-use Cake\View\ViewVarsTrait;
 
 /**
  * Cell base.

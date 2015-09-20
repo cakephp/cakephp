@@ -17,7 +17,6 @@
 namespace Cake\Error;
 
 use Cake\Core\App;
-use Cake\Error\Debugger;
 use Exception;
 
 /**

@@ -13,7 +13,6 @@
  */
 namespace Cake\Auth;
 
-use Cake\Auth\PasswordHasherFactory;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventListenerInterface;
@@ -97,7 +96,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      * helps mitigate timing attacks that are attempting to find valid usernames.
      *
      * @param string $username The username/identifier.
-     * @param string|null $password The password, if not provide password checking is skipped
+     * @param string|null $password The password, if not provided password checking is skipped
      *   and result of find is returned.
      * @return bool|array Either false on failure, or an array of user data.
      */

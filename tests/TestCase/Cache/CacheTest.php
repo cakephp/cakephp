@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Cache;
 
 use Cake\Cache\Cache;
+use Cake\Cache\CacheRegistry;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -579,5 +580,28 @@ class CacheTest extends TestCase
 
         $result = Cache::add('test_add_key', 'test data 2', 'tests');
         $this->assertFalse($result);
+    }
+
+    /**
+     * test registry method
+     *
+     * @return void
+     */
+    public function testRegistry()
+    {
+        $this->assertInstanceOf('Cake\Cache\CacheRegistry', Cache::registry());
+    }
+
+    /**
+     * test registry method setting
+     *
+     * @return void
+     */
+    public function testRegistrySet()
+    {
+        $registry = new CacheRegistry();
+        Cache::registry($registry);
+
+        $this->assertSame($registry, Cache::registry());
     }
 }

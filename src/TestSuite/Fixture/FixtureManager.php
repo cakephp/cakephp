@@ -18,7 +18,6 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Database\Connection;
 use Cake\Datasource\ConnectionManager;
-use Cake\TestSuite\Fixture\TestFixture;
 use Cake\Utility\Inflector;
 
 /**

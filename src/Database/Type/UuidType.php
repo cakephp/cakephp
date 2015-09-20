@@ -79,4 +79,18 @@ class UuidType extends Type
     {
         return Text::uuid();
     }
+
+    /**
+     * Marshalls request data into a PHP string
+     *
+     * @param mixed $value The value to convert.
+     * @return string|null Converted value.
+     */
+    public function marshal($value)
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+        return (string)$value;
+    }
 }

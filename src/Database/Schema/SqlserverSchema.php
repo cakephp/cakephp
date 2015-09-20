@@ -14,8 +14,6 @@
  */
 namespace Cake\Database\Schema;
 
-use Cake\Database\Schema\Table;
-
 /**
  * Schema management/reflection features for SQLServer.
  */

@@ -14,7 +14,6 @@
  */
 namespace Cake\Console;
 
-use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\ConsoleException;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;

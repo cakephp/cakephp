@@ -28,15 +28,11 @@ use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
-use Cake\ORM\AssociationCollection;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
-use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Exception\MissingEntityException;
-use Cake\ORM\Marshaller;
-use Cake\ORM\RulesChecker;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
 use Cake\Validation\ValidatorAwareTrait;
@@ -721,6 +717,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   will be used
      * - conditions: array with a list of conditions to filter the join with
      * - joinType: The type of join to be used (e.g. INNER)
+     * - strategy: The loading strategy to use. 'join' and 'select' are supported.
+     * - finder: The finder method to use when loading records from this association.
+     *   Defaults to 'all'. When the strategy is 'join', only the fields, containments,
+     *   and where conditions will be used from the finder.
      *
      * This method will return the association object that was built.
      *
@@ -759,6 +759,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   When true records will be loaded and then deleted.
      * - conditions: array with a list of conditions to filter the join with
      * - joinType: The type of join to be used (e.g. LEFT)
+     * - strategy: The loading strategy to use. 'join' and 'select' are supported.
+     * - finder: The finder method to use when loading records from this association.
+     *   Defaults to 'all'. When the strategy is 'join', only the fields, containments,
+     *   and where conditions will be used from the finder.
      *
      * This method will return the association object that was built.
      *
@@ -801,6 +805,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   or 'subquery'. If subquery is selected the query used to return results
      *   in the source table will be used as conditions for getting rows in the
      *   target table.
+     * - finder: The finder method to use when loading records from this association.
+     *   Defaults to 'all'.
      *
      * This method will return the association object that was built.
      *
@@ -847,6 +853,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   for saving associated entities. The former will only create new links
      *   between both side of the relation and the latter will do a wipe and
      *   replace to create the links between the passed entities when saving.
+     * - strategy: The loading strategy to use. 'select' and 'subquery' are supported.
+     * - finder: The finder method to use when loading records from this association.
+     *   Defaults to 'all'.
      *
      * This method will return the association object that was built.
      *
@@ -2230,13 +2239,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function __debugInfo()
     {
         $conn = $this->connection();
+        $associations = $this->_associations ?: false;
+        $behaviors = $this->_behaviors ?: false;
         return [
             'registryAlias' => $this->registryAlias(),
             'table' => $this->table(),
             'alias' => $this->alias(),
             'entityClass' => $this->entityClass(),
-            'associations' => $this->_associations->keys(),
-            'behaviors' => $this->_behaviors->loaded(),
+            'associations' => $associations ? $associations->keys() : false,
+            'behaviors' => $behaviors ? $behaviors->loaded() : false,
             'defaultConnection' => $this->defaultConnectionName(),
             'connectionName' => $conn ? $conn->configName() : null
         ];

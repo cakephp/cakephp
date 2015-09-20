@@ -15,8 +15,6 @@
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
-use Cake\Database\Expression\FieldInterface;
-use Cake\Database\Expression\FieldTrait;
 use Cake\Database\ValueBinder;
 
 /**
@@ -85,7 +83,7 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
         }
 
         foreach ($parts as $name => $part) {
-            if ($field instanceof ExpressionInterface) {
+            if ($part instanceof ExpressionInterface) {
                 $parts[$name] = $part->sql($generator);
                 continue;
             }

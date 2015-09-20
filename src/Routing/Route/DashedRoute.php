@@ -14,7 +14,6 @@
  */
 namespace Cake\Routing\Route;
 
-use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
 
 /**

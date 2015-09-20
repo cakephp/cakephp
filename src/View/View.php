@@ -26,8 +26,6 @@ use Cake\Network\Response;
 use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
-use Cake\View\CellTrait;
-use Cake\View\ViewVarsTrait;
 use InvalidArgumentException;
 use LogicException;
 use RuntimeException;

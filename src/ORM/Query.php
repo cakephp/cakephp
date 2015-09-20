@@ -19,9 +19,6 @@ use Cake\Database\ExpressionInterface;
 use Cake\Database\Query as DatabaseQuery;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\QueryTrait;
-use Cake\ORM\EagerLoader;
-use Cake\ORM\ResultSet;
-use Cake\ORM\Table;
 use JsonSerializable;
 use RuntimeException;
 
@@ -1033,8 +1030,8 @@ class Query extends DatabaseQuery implements JsonSerializable
             'buffered' => $this->_useBufferedResults,
             'formatters' => count($this->_formatters),
             'mapReducers' => count($this->_mapReduce),
-            'contain' => $eagerLoader->contain(),
-            'matching' => $eagerLoader->matching(),
+            'contain' => $eagerLoader ? $eagerLoader->contain() : [],
+            'matching' => $eagerLoader ? $eagerLoader->matching() : [],
             'extraOptions' => $this->_options,
             'repository' => $this->_repository
         ];

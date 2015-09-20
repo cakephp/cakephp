@@ -14,8 +14,6 @@
  */
 namespace Cake\Event;
 
-use Cake\Event\EventManager;
-
 /**
  * Objects implementing this interface can emit events.
  *
