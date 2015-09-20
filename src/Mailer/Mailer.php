@@ -109,8 +109,6 @@ use Cake\Mailer\Exception\MissingActionException;
  * @method Email addAttachments($attachments)
  * @method Email message($type = null)
  * @method Email profile($config = null)
- * @method Email send($content = null)
- * @method Email reset()
  */
 abstract class Mailer implements EventListenerInterface
 {
