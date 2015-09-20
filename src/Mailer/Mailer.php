@@ -78,7 +78,7 @@ use Cake\Mailer\Exception\MissingActionException;
  * The onRegistration method converts the application event into a mailer method.
  * Our mailer could either be registered in the application bootstrap, or
  * in the Table class' initialize() hook.
- * 
+ *
  * @method Email to($email = null, $name = null)
  * @method Email from($email = null, $name = null)
  * @method Email sender($email = null, $name = null)
