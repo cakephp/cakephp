@@ -46,6 +46,7 @@ class CheckboxWidget extends BasicWidget
             'value' => 1,
             'val' => null,
             'disabled' => false,
+            'templateVars' => []
         ];
         if ($this->_isChecked($data)) {
             $data['checked'] = true;
@@ -60,6 +61,7 @@ class CheckboxWidget extends BasicWidget
         return $this->_templates->format('checkbox', [
             'name' => $data['name'],
             'value' => $data['value'],
+            'templateVars' => $data['templateVars'],
             'attrs' => $attrs
         ]);
     }
@@ -75,9 +77,6 @@ class CheckboxWidget extends BasicWidget
         if (array_key_exists('checked', $data)) {
             return (bool)$data['checked'];
         }
-        if ((string)$data['val'] === (string)$data['value']) {
-            return true;
-        }
-        return false;
+        return (string)$data['val'] === (string)$data['value'];
     }
 }

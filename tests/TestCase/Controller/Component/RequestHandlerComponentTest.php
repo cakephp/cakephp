@@ -71,7 +71,7 @@ class RequestHandlerComponentTest extends TestCase
         $request = new Request('controller_posts/index');
         $response = $this->getMock('Cake\Network\Response', ['_sendHeader', 'stop']);
         $this->Controller = new RequestHandlerTestController($request, $response);
-        $this->RequestHandler = new RequestHandlerComponent($this->Controller->components());
+        $this->RequestHandler = $this->Controller->components()->load('RequestHandler');
         $this->request = $request;
 
         Router::scope('/', function ($routes) {
@@ -314,6 +314,8 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testViewClassMap()
     {
+        $restore = error_reporting(E_ALL & ~E_USER_DEPRECATED);
+
         $this->RequestHandler->config(['viewClassMap' => ['json' => 'CustomJson']]);
         $this->RequestHandler->initialize([]);
         $result = $this->RequestHandler->viewClassMap();
@@ -335,6 +337,7 @@ class RequestHandlerComponentTest extends TestCase
 
         $this->RequestHandler->renderAs($this->Controller, 'json');
         $this->assertEquals('TestApp\View\CustomJsonView', $this->Controller->viewClass);
+        error_reporting($restore);
     }
 
     /**
@@ -365,6 +368,8 @@ class RequestHandlerComponentTest extends TestCase
         $this->request->env('HTTP_X_REQUESTED_WITH', 'XMLHttpRequest');
         $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);
+        $event = new Event('Controller.beforeRender', $this->Controller);
+        $this->RequestHandler->beforeRender($event);
         $this->assertEquals($this->Controller->viewClass, 'Cake\View\AjaxView');
         $view = $this->Controller->createView();
         $this->assertEquals('ajax', $view->layout);
@@ -389,6 +394,8 @@ class RequestHandlerComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);
+        $event = new Event('Controller.beforeRender', $this->Controller);
+        $this->RequestHandler->beforeRender($event);
         $this->assertEquals('Cake\View\JsonView', $this->Controller->viewClass);
         $view = $this->Controller->createView();
         $this->assertEquals('json', $view->layoutPath);
@@ -408,6 +415,8 @@ class RequestHandlerComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);
+        $event = new Event('Controller.beforeRender', $this->Controller);
+        $this->RequestHandler->beforeRender($event);
         $this->assertEquals('Cake\View\XmlView', $this->Controller->viewClass);
         $view = $this->Controller->createView();
         $this->assertEquals('xml', $view->layoutPath);
@@ -427,6 +436,8 @@ class RequestHandlerComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);
+        $event = new Event('Controller.beforeRender', $this->Controller);
+        $this->RequestHandler->beforeRender($event);
         $this->assertEquals('Cake\View\AjaxView', $this->Controller->viewClass);
         $view = $this->Controller->createView();
         $this->assertEquals('ajax', $view->layout);
@@ -436,7 +447,7 @@ class RequestHandlerComponentTest extends TestCase
      * test configured extension but no view class set.
      *
      * @return void
-     * @triggers Controller.startup $this->Controller
+     * @triggers Controller.beforeRender $this->Controller
      */
     public function testNoViewClassExtension()
     {
@@ -445,23 +456,27 @@ class RequestHandlerComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);
-        $this->assertEquals('RequestHandlerTest' . DS . 'csv', $this->Controller->viewPath);
-        $this->assertEquals('csv', $this->Controller->layoutPath);
+        $this->Controller->eventManager()->on('Controller.beforeRender', function () {
+            return $this->Controller->response;
+        });
+        $this->Controller->render();
+        $this->assertEquals('RequestHandlerTest' . DS . 'csv', $this->Controller->viewBuilder()->templatePath());
+        $this->assertEquals('csv', $this->Controller->viewBuilder()->layoutPath());
     }
 
     /**
      * testStartupCallback method
      *
      * @return void
-     * @triggers Controller.startup $this->Controller
+     * @triggers Controller.beforeRender $this->Controller
      */
     public function testStartupCallback()
     {
-        $event = new Event('Controller.startup', $this->Controller);
+        $event = new Event('Controller.beforeRender', $this->Controller);
         $_SERVER['REQUEST_METHOD'] = 'PUT';
         $_SERVER['CONTENT_TYPE'] = 'application/xml';
         $this->Controller->request = $this->getMock('Cake\Network\Request', ['_readInput']);
-        $this->RequestHandler->startup($event);
+        $this->RequestHandler->beforeRender($event);
         $this->assertTrue(is_array($this->Controller->request->data));
         $this->assertFalse(is_object($this->Controller->request->data));
     }
@@ -545,9 +560,7 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testStartupCustomTypeProcess()
     {
-        if (!function_exists('str_getcsv')) {
-            $this->markTestSkipped('Need "str_getcsv" for this test.');
-        }
+        $restore = error_reporting(E_ALL & ~E_USER_DEPRECATED);
         $this->Controller->request = $this->getMock('Cake\Network\Request', ['_readInput']);
         $this->Controller->request->expects($this->once())
             ->method('_readInput')
@@ -561,6 +574,7 @@ class RequestHandlerComponentTest extends TestCase
             'A', 'csv', 'string'
         ];
         $this->assertEquals($expected, $this->Controller->request->data);
+        error_reporting($restore);
     }
 
     /**
@@ -608,9 +622,9 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->renderAs($this->Controller, 'rss');
         $this->assertTrue(in_array('Rss', $this->Controller->helpers));
 
-        $this->Controller->viewPath = 'request_handler_test\\rss';
+        $this->Controller->viewBuilder()->templatePath('request_handler_test\\rss');
         $this->RequestHandler->renderAs($this->Controller, 'js');
-        $this->assertEquals('request_handler_test' . DS . 'js', $this->Controller->viewPath);
+        $this->assertEquals('request_handler_test' . DS . 'js', $this->Controller->viewBuilder()->templatePath());
     }
 
     /**
@@ -696,13 +710,18 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testRenderAsCalledTwice()
     {
+        $this->Controller->eventManager()->on('Controller.beforeRender', function (\Cake\Event\Event $e) {
+            return $e->subject()->response;
+        });
+        $this->Controller->render();
+
         $this->RequestHandler->renderAs($this->Controller, 'print');
-        $this->assertEquals('RequestHandlerTest' . DS . 'print', $this->Controller->viewPath);
-        $this->assertEquals('print', $this->Controller->layoutPath);
+        $this->assertEquals('RequestHandlerTest' . DS . 'print', $this->Controller->viewBuilder()->templatePath());
+        $this->assertEquals('print', $this->Controller->viewBuilder()->layoutPath());
 
         $this->RequestHandler->renderAs($this->Controller, 'js');
-        $this->assertEquals('RequestHandlerTest' . DS . 'js', $this->Controller->viewPath);
-        $this->assertEquals('js', $this->Controller->layoutPath);
+        $this->assertEquals('RequestHandlerTest' . DS . 'js', $this->Controller->viewBuilder()->templatePath());
+        $this->assertEquals('js', $this->Controller->viewBuilder()->layoutPath());
     }
 
     /**
@@ -984,7 +1003,9 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testAddInputTypeException()
     {
+        $restore = error_reporting(E_ALL & ~E_USER_DEPRECATED);
         $this->RequestHandler->addInputType('csv', ['I am not callable']);
+        error_reporting($restore);
     }
 
     /**
@@ -1053,5 +1074,51 @@ class RequestHandlerComponentTest extends TestCase
         $RequestHandler->response = $this->getMock('Cake\Network\Response', ['notModified', 'stop']);
         $RequestHandler->response->expects($this->never())->method('notModified');
         $this->assertNull($RequestHandler->beforeRender($event, '', $RequestHandler->response));
+    }
+
+    /**
+     * Test default options in construction
+     *
+     * @return void
+     */
+    public function testConstructDefaultOptions()
+    {
+        $requestHandler = new RequestHandlerComponent($this->Controller->components());
+        $viewClass = $requestHandler->config('viewClassMap');
+        $expected = [
+            'json' => 'Json',
+            'xml' => 'Xml',
+            'ajax' => 'Ajax',
+        ];
+        $this->assertEquals($expected, $viewClass);
+
+        $inputs = $requestHandler->config('inputTypeMap');
+        $this->assertArrayHasKey('json', $inputs);
+        $this->assertArrayHasKey('xml', $inputs);
+    }
+
+    /**
+     * Test options in constructor replace defaults
+     *
+     * @return void
+     */
+    public function testConstructReplaceOptions()
+    {
+        $requestHandler = new RequestHandlerComponent(
+            $this->Controller->components(),
+            [
+                'viewClassMap' => ['json' => 'Json'],
+                'inputTypeMap' => ['json' => ['json_decode', true]]
+            ]
+        );
+        $viewClass = $requestHandler->config('viewClassMap');
+        $expected = [
+            'json' => 'Json',
+        ];
+        $this->assertEquals($expected, $viewClass);
+
+        $inputs = $requestHandler->config('inputTypeMap');
+        $this->assertArrayHasKey('json', $inputs);
+        $this->assertCount(1, $inputs);
     }
 }

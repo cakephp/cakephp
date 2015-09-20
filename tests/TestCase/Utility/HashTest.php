@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Utility;
 
+use ArrayObject;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
 
@@ -234,6 +235,42 @@ class HashTest extends TestCase
 
         $result = Hash::get($data, ['1', 'Article']);
         $this->assertEquals($data[1]['Article'], $result);
+
+        // Object which implements ArrayAccess
+        $nested = new ArrayObject([
+            'user' => 'bar'
+        ]);
+        $data = new ArrayObject([
+            'name' => 'foo',
+            'associated' => $nested
+        ]);
+
+        $return = Hash::get($data, 'name');
+        $this->assertEquals('foo', $return);
+
+        $return = Hash::get($data, 'associated');
+        $this->assertEquals($nested, $return);
+
+        $return = Hash::get($data, 'associated.user');
+        $this->assertEquals('bar', $return);
+
+        $return = Hash::get($data, 'non-existent');
+        $this->assertNull($return);
+
+        $data = ['a' => ['b' => ['c' => ['d' => 1]]]];
+        $this->assertEquals(1, Hash::get(new ArrayObject($data), 'a.b.c.d'));
+    }
+
+    /**
+     * Test get() for invalid $data type
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid data type, must be an array or \ArrayAccess instance.
+     * @return void
+     */
+    public function testGetInvalidData()
+    {
+        Hash::get('string', 'path');
     }
 
     /**
@@ -1407,6 +1444,53 @@ class HashTest extends TestCase
         ];
         $result = Hash::sort($menus, '{s}.weight', 'ASC');
         $this->assertEquals($expected, $result);
+    }
+
+
+    /**
+     * test sorting with string ignoring case.
+     *
+     * @return void
+     */
+    public function testSortStringIgnoreCase()
+    {
+        $toSort = [
+            ['Item' => ['name' => 'bar']],
+            ['Item' => ['name' => 'Baby']],
+            ['Item' => ['name' => 'Baz']],
+            ['Item' => ['name' => 'bat']],
+        ];
+        $sorted = Hash::sort($toSort, '{n}.Item.name', 'asc', ['type' => 'string', 'ignoreCase' => true]);
+        $expected = [
+            ['Item' => ['name' => 'Baby']],
+            ['Item' => ['name' => 'bar']],
+            ['Item' => ['name' => 'bat']],
+            ['Item' => ['name' => 'Baz']],
+        ];
+        $this->assertEquals($expected, $sorted);
+    }
+
+    /**
+     * test regular sorting ignoring case.
+     *
+     * @return void
+     */
+    public function testSortRegularIgnoreCase()
+    {
+        $toSort = [
+            ['Item' => ['name' => 'bar']],
+            ['Item' => ['name' => 'Baby']],
+            ['Item' => ['name' => 'Baz']],
+            ['Item' => ['name' => 'bat']],
+        ];
+        $sorted = Hash::sort($toSort, '{n}.Item.name', 'asc', ['type' => 'regular', 'ignoreCase' => true]);
+        $expected = [
+            ['Item' => ['name' => 'Baby']],
+            ['Item' => ['name' => 'bar']],
+            ['Item' => ['name' => 'bat']],
+            ['Item' => ['name' => 'Baz']],
+        ];
+        $this->assertEquals($expected, $sorted);
     }
 
     /**

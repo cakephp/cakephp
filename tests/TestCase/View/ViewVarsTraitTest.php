@@ -121,7 +121,7 @@ class ViewVarsTraitTest extends TestCase
     }
 
     /**
-     * test empty params reads _validViewOptions.
+     * test empty params reads _viewOptions.
      *
      * @return void
      */
@@ -134,7 +134,7 @@ class ViewVarsTraitTest extends TestCase
     }
 
     /**
-     * test setting $merge `false` overrides currect options.
+     * test setting $merge `false` overrides correct options.
      *
      * @return void
      */
@@ -148,7 +148,7 @@ class ViewVarsTraitTest extends TestCase
     }
 
     /**
-     * test _validViewOptions is undefined and $opts is null, an empty array is returned.
+     * test _viewOptions is undefined and $opts is null, an empty array is returned.
      *
      * @return void
      */
@@ -161,7 +161,7 @@ class ViewVarsTraitTest extends TestCase
     }
 
     /**
-     * test that getView() updates viewVars of View instance on each call.
+     * test that createView() updates viewVars of View instance on each call.
      *
      * @return void
      */
@@ -169,23 +169,24 @@ class ViewVarsTraitTest extends TestCase
     {
         $expected = ['one' => 'one'];
         $this->subject->set($expected);
-        $this->assertEquals($expected, $this->subject->getView()->viewVars);
+        $this->assertEquals($expected, $this->subject->createView()->viewVars);
 
         $expected = ['one' => 'one', 'two' => 'two'];
         $this->subject->set($expected);
-        $this->assertEquals($expected, $this->subject->getView()->viewVars);
+        $this->assertEquals($expected, $this->subject->createView()->viewVars);
     }
 
     /**
-     * test getView() throws exception if view class cannot be found
+     * test that options are passed to the view builder when using createView().
      *
-     * @expectedException \Cake\View\Exception\MissingViewException
-     * @expectedExceptionMessage View class "Foo" is missing.
      * @return void
      */
-    public function testGetViewException()
+    public function testViewOptionsGetsToBuilder()
     {
-        $this->subject->getView('Foo');
+        $this->subject->passedArgs = 'test';
+        $this->subject->createView();
+        $result = $this->subject->viewbuilder()->options();
+        $this->assertEquals(['passedArgs' => 'test'], $result);
     }
 
     /**
@@ -197,6 +198,6 @@ class ViewVarsTraitTest extends TestCase
      */
     public function testCreateViewException()
     {
-        $this->subject->getView('Foo');
+        $this->subject->createView('Foo');
     }
 }

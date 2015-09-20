@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\CsrfComponent;
 use Cake\Event\Event;
+use Cake\I18n\Time;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
@@ -115,7 +116,7 @@ class CsrfComponentTest extends TestCase
      * Test that the X-CSRF-Token works with the various http methods.
      *
      * @dataProvider httpMethodProvider
-     * @expectedException \Cake\Network\Exception\ForbiddenException
+     * @expectedException \Cake\Network\Exception\InvalidCsrfTokenException
      * @return void
      * @triggers Controller.startup $controller
      */
@@ -161,7 +162,7 @@ class CsrfComponentTest extends TestCase
      * Test that request data works with the various http methods.
      *
      * @dataProvider httpMethodProvider
-     * @expectedException \Cake\Network\Exception\ForbiddenException
+     * @expectedException \Cake\Network\Exception\InvalidCsrfTokenException
      * @return void
      */
     public function testInvalidTokenRequestData($method)
@@ -182,7 +183,7 @@ class CsrfComponentTest extends TestCase
     /**
      * Test that missing post field fails
      *
-     * @expectedException \Cake\Network\Exception\ForbiddenException
+     * @expectedException \Cake\Network\Exception\InvalidCsrfTokenException
      * @return void
      */
     public function testInvalidTokenRequestDataMissing()
@@ -204,7 +205,7 @@ class CsrfComponentTest extends TestCase
      * Test that missing header and cookie fails
      *
      * @dataProvider httpMethodProvider
-     * @expectedException \Cake\Network\Exception\ForbiddenException
+     * @expectedException \Cake\Network\Exception\InvalidCsrfTokenException
      * @return void
      */
     public function testInvalidTokenMissingCookie($method)
@@ -262,7 +263,7 @@ class CsrfComponentTest extends TestCase
 
         $component = new CsrfComponent($this->registry, [
             'cookieName' => 'token',
-            'expiry' => 90,
+            'expiry' => '+1 hour',
             'secure' => true
         ]);
 
@@ -273,7 +274,7 @@ class CsrfComponentTest extends TestCase
         $cookie = $controller->response->cookie('token');
         $this->assertNotEmpty($cookie, 'Should set a token.');
         $this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
-        $this->assertEquals(90, $cookie['expire'], 'session duration.');
+        $this->assertWithinRange((new Time('+1 hour'))->format('U'), $cookie['expire'], 1, 'session duration.');
         $this->assertEquals('/dir/', $cookie['path'], 'session path.');
         $this->assertTrue($cookie['secure'], 'cookie security flag missing');
     }

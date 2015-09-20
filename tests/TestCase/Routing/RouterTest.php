@@ -2791,6 +2791,7 @@ class RouterTest extends TestCase
             $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
             $this->assertEquals('/path', $routes->path());
             $this->assertEquals(['param' => 'value'], $routes->params());
+            $this->assertEquals('', $routes->namePrefix());
 
             $routes->connect('/articles', ['controller' => 'Articles']);
         });
@@ -2845,6 +2846,23 @@ class RouterTest extends TestCase
     }
 
     /**
+     * Test the scope() method
+     *
+     * @return void
+     */
+    public function testScopeNamePrefix()
+    {
+        Router::scope('/path', ['param' => 'value', '_namePrefix' => 'path:'], function ($routes) {
+            $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
+            $this->assertEquals('/path', $routes->path());
+            $this->assertEquals(['param' => 'value'], $routes->params());
+            $this->assertEquals('path:', $routes->namePrefix());
+
+            $routes->connect('/articles', ['controller' => 'Articles']);
+        });
+    }
+
+    /**
      * Test that prefix() creates a scope.
      *
      * @return void
@@ -2854,6 +2872,12 @@ class RouterTest extends TestCase
         Router::prefix('admin', function ($routes) {
             $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
             $this->assertEquals('/admin', $routes->path());
+            $this->assertEquals(['prefix' => 'admin'], $routes->params());
+        });
+
+        Router::prefix('admin', ['_namePrefix' => 'admin:'], function ($routes) {
+            $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
+            $this->assertEquals('admin:', $routes->namePrefix());
             $this->assertEquals(['prefix' => 'admin'], $routes->params());
         });
     }
@@ -2897,6 +2921,11 @@ class RouterTest extends TestCase
             $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
             $this->assertEquals('/debugger', $routes->path());
             $this->assertEquals(['plugin' => 'DebugKit'], $routes->params());
+        });
+
+        Router::plugin('Contacts', ['_namePrefix' => 'contacts:'], function ($routes) {
+            $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
+            $this->assertEquals('contacts:', $routes->namePrefix());
         });
     }
 

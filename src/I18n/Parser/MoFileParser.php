@@ -90,7 +90,6 @@ class MoFileParser
 
         for ($i = 0; $i < $count; $i++) {
             $pluralId = null;
-            $translated = null;
             $context = null;
             $plurals = null;
 

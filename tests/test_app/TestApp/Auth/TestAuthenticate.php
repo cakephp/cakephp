@@ -43,6 +43,10 @@ class TestAuthenticate extends BaseAuthenticate
     public function afterIdentify(Event $event, array $user)
     {
         $this->callStack[] = __FUNCTION__;
+
+        if (!empty($this->modifiedUser)) {
+            return $user + ['extra' => 'foo'];
+        }
     }
 
     public function logout(Event $event, array $user)

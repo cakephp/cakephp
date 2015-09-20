@@ -129,6 +129,24 @@ trait PostgresDialectTrait
             case 'NOW':
                 $expression->name('LOCALTIMESTAMP')->add([' 0 ' => 'literal']);
                 break;
+            case 'DATE_ADD':
+                $expression
+                    ->name('')
+                    ->type(' + INTERVAL')
+                    ->iterateParts(function ($p, $key) {
+                        if ($key === 1) {
+                            $p = sprintf("'%s'", $p);
+                        }
+                        return $p;
+                    });
+                break;
+            case 'DAYOFWEEK':
+                $expression
+                    ->name('EXTRACT')
+                    ->type(' ')
+                    ->add(['DOW FROM' => 'literal'], [], true)
+                    ->add([') + (1' => 'literal']); // Postgres starts on index 0 but Sunday should be 1
+                break;
         }
     }
 

@@ -37,6 +37,9 @@ class ExtractTaskTest extends TestCase
     {
         parent::setUp();
         $this->io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
+        $progress = $this->getMock('Cake\Shell\Helper\ProgressHelper', [], [$this->io]);
+        $this->io->method('helper')
+            ->will($this->returnValue($progress));
 
         $this->Task = $this->getMock(
             'Cake\Shell\Task\ExtractTask',

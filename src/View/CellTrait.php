@@ -103,16 +103,34 @@ trait CellTrait
     {
         $instance = new $className($this->request, $this->response, $this->eventManager(), $options);
         $instance->template = Inflector::underscore($action);
-        $instance->plugin = !empty($plugin) ? $plugin : null;
-        $instance->theme = !empty($this->theme) ? $this->theme : null;
+
+        $builder = $instance->viewBuilder();
+        if (!empty($plugin)) {
+            $builder->plugin($plugin);
+        }
         if (!empty($this->helpers)) {
+            $builder->helpers($this->helpers);
             $instance->helpers = $this->helpers;
         }
-        if (isset($this->viewClass)) {
-            $instance->viewClass = $this->viewClass;
-        }
+
         if ($this instanceof View) {
-            $instance->viewClass = get_class($this);
+            if (!empty($this->theme)) {
+                $builder->theme($this->theme);
+            }
+
+            $class = get_class($this);
+            $builder->className($class);
+            $instance->viewClass = $class;
+            return $instance;
+        }
+
+        if (method_exists($this, 'viewBuilder')) {
+            $builder->theme($this->viewBuilder()->theme());
+        }
+
+        if (isset($this->viewClass)) {
+            $builder->className($this->viewClass);
+            $instance->viewClass = $this->viewClass;
         }
         return $instance;
     }

@@ -182,7 +182,7 @@ class Stream
         if (is_array($content)) {
             $formData = new FormData();
             $formData->addMany($content);
-            $type = 'multipart/form-data; boundary="' . $formData->boundary() . '"';
+            $type = $formData->contentType();
             $request->header('Content-Type', $type);
             $this->_contextOptions['content'] = (string)$formData;
             return;

@@ -298,12 +298,14 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * // Filters products in the same city
      * $query->distinct(['city']);
+     * $query->distinct('city');
      *
      * // Filter products with the same name
      * $query->distinct(['name'], true);
+     * $query->distinct('name', true);
      * ```
      *
-     * @param array|ExpressionInterface $on fields to be filtered on
+     * @param array|ExpressionInterface|string $on fields to be filtered on
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
      */
@@ -311,6 +313,8 @@ class Query implements ExpressionInterface, IteratorAggregate
     {
         if ($on === []) {
             $on = true;
+        } elseif (is_string($on)) {
+            $on = [$on];
         }
 
         if (is_array($on)) {

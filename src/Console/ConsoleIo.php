@@ -14,6 +14,9 @@
  */
 namespace Cake\Console;
 
+use Cake\Console\ConsoleInput;
+use Cake\Console\ConsoleOutput;
+use Cake\Console\HelperRegistry;
 use Cake\Log\Engine\ConsoleLog;
 use Cake\Log\Log;
 
@@ -47,6 +50,13 @@ class ConsoleIo
      * @var \Cake\Console\ConsoleInput
      */
     protected $_in;
+
+    /**
+     * The helper registry.
+     *
+     * @var \Cake\Console\HelperRegistry
+     */
+    protected $_helpers;
 
     /**
      * Output constant making verbose shells.
@@ -90,12 +100,15 @@ class ConsoleIo
      * @param \Cake\Console\ConsoleOutput|null $out A ConsoleOutput object for stdout.
      * @param \Cake\Console\ConsoleOutput|null $err A ConsoleOutput object for stderr.
      * @param \Cake\Console\ConsoleInput|null $in A ConsoleInput object for stdin.
+     * @param \Cake\Console\HelperRegistry|null $helpers A HelperRegistry instance
      */
-    public function __construct(ConsoleOutput $out = null, ConsoleOutput $err = null, ConsoleInput $in = null)
+    public function __construct(ConsoleOutput $out = null, ConsoleOutput $err = null, ConsoleInput $in = null, HelperRegistry $helpers = null)
     {
         $this->_out = $out ? $out : new ConsoleOutput('php://stdout');
         $this->_err = $err ? $err : new ConsoleOutput('php://stderr');
         $this->_in = $in ? $in : new ConsoleInput('php://stdin');
+        $this->_helpers = $helpers ? $helpers : new HelperRegistry();
+        $this->_helpers->setIo($this);
     }
 
     /**
@@ -360,5 +373,21 @@ class ConsoleIo
             'stream' => $this->_err,
         ]);
         Log::config('stderr', ['engine' => $stderr]);
+    }
+
+    /**
+     * Render a Console Helper
+     *
+     * Create and render the output for a helper object. If the helper
+     * object has not already been loaded, it will be loaded and constructed.
+     *
+     * @param string $name The name of the helper to render
+     * @param array $settings Configuration data for the helper.
+     * @return \Cake\Console\Helper The created helper instance.
+     */
+    public function helper($name, array $settings = [])
+    {
+        $name = ucfirst($name);
+        return $this->_helpers->load($name, $settings);
     }
 }

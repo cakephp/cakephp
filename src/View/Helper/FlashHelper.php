@@ -57,6 +57,9 @@ class FlashHelper extends Helper
      * ]);
      * ```
      *
+     * If you have several messages stored in the Session, each message will be rendered in its own
+     * element.
+     *
      * @param string $key The [Flash.]key you are rendering in the view.
      * @param array $options Additional options to use for the creation of this flash message.
      *    Supports the 'params', and 'element' keys that are used in the helper.
@@ -77,10 +80,15 @@ class FlashHelper extends Helper
                 $key
             ));
         }
-        $flash = $options + $flash;
         $this->request->session()->delete("Flash.$key");
 
-        return $this->_View->element($flash['element'], $flash);
+        $out = '';
+        foreach ($flash as $message) {
+            $message = $options + $message;
+            $out .= $this->_View->element($message['element'], $message);
+        }
+
+        return $out;
     }
 
     /**

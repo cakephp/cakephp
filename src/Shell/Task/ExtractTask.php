@@ -358,9 +358,15 @@ class ExtractTask extends Shell
      */
     protected function _extractTokens()
     {
+        $progress = $this->helper('progress');
+        $progress->init(['total' => count($this->_files)]);
+        $isVerbose = $this->param('verbose');
+
         foreach ($this->_files as $file) {
             $this->_file = $file;
-            $this->out(sprintf('Processing %s...', $file), 1, Shell::VERBOSE);
+            if ($isVerbose) {
+                $this->out(sprintf('Processing %s...', $file), 1, Shell::VERBOSE);
+            }
 
             $code = file_get_contents($file);
             $allTokens = token_get_all($code);
@@ -381,6 +387,10 @@ class ExtractTask extends Shell
             $this->_parse('__dx', ['domain', 'context', 'singular']);
             $this->_parse('__dxn', ['domain', 'context', 'singular', 'plural']);
 
+            if (!$isVerbose) {
+                $progress->increment(1);
+                $progress->draw();
+            }
         }
     }
 

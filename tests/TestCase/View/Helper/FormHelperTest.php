@@ -548,6 +548,40 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test using template vars in various templates used by input() method.
+     *
+     * @return void
+     */
+    public function testInputTemplateVars()
+    {
+        $result = $this->Form->input('text', [
+            'templates' => [
+                'input' => '<input custom="{{forinput}}" type="{{type}}" name="{{name}}"{{attrs}}/>',
+                'label' => '<label{{attrs}}>{{text}} {{forlabel}}</label>',
+                'formGroup' => '{{label}}{{forgroup}}{{input}}',
+                'inputContainer' => '<div class="input {{type}}{{required}}">{{content}}{{forcontainer}}</div>',
+            ],
+            'templateVars' => [
+                'forinput' => 'in-input',
+                'forlabel' => 'in-label',
+                'forgroup' => 'in-group',
+                'forcontainer' => 'in-container'
+            ]
+        ]);
+        $expected = [
+            'div' => ['class'],
+            'label' => ['for'],
+            'Text in-label',
+            '/label',
+            'in-group',
+            'input' => ['name', 'type' => 'text', 'id', 'custom' => 'in-input'],
+            'in-container',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * test the create() method
      *
      * @dataProvider requestTypeProvider
@@ -883,7 +917,7 @@ class FormHelperTest extends TestCase
             'name' => 'password', 'type' => 'password'
         ]];
         $this->assertHtml($expected, $result);
-        $this->assertNotRegExp('/<input[^<>]+[^id|name|type|value]=[^<>]*>$/', $result);
+        $this->assertNotRegExp('/<input[^<>]+[^id|name|type|value]=[^<>]*\/>$/', $result);
 
         $result = $this->Form->text('user_form');
         $expected = ['input' => [
@@ -2687,6 +2721,7 @@ class FormHelperTest extends TestCase
                 'empty' => false,
                 'id' => 'prueba',
                 'required' => false,
+                'templateVars' => []
             ])
             ->will($this->returnValue('This is it!'));
         $result = $this->Form->input('prueba', [
@@ -2730,6 +2765,7 @@ class FormHelperTest extends TestCase
                 'empty' => false,
                 'id' => 'prefix-prueba',
                 'required' => false,
+                'templateVars' => []
             ])
             ->will($this->returnValue('This is it!'));
         $result = $this->Form->input('prueba', [
@@ -3498,7 +3534,7 @@ class FormHelperTest extends TestCase
             'label' => '<label{{attrs}}>{{input}}{{text}}</label>',
         ]);
         $result = $this->Form->label('Person.accept_terms', 'Accept', [
-            'input' => '<input type="checkbox" name="accept_tos" >'
+            'input' => '<input type="checkbox" name="accept_tos"/>'
         ]);
         $expected = [
             'label' => ['for' => 'person-accept-terms'],
@@ -7302,11 +7338,11 @@ class FormHelperTest extends TestCase
      */
     public function testResetTemplates()
     {
-        $this->Form->templates(['input' => '<input>']);
-        $this->assertEquals('<input>', $this->Form->templater()->get('input'));
+        $this->Form->templates(['input' => '<input/>']);
+        $this->assertEquals('<input/>', $this->Form->templater()->get('input'));
 
         $this->assertNull($this->Form->resetTemplates());
-        $this->assertNotEquals('<input>', $this->Form->templater()->get('input'));
+        $this->assertNotEquals('<input/>', $this->Form->templater()->get('input'));
     }
 
     /**

@@ -562,6 +562,27 @@ class CacheTest extends TestCase
     }
 
     /**
+     * Test add method.
+     *
+     * @return void
+     */
+    public function testAdd()
+    {
+        $this->_configCache();
+        Cache::delete('test_add_key', 'tests');
+
+        $result = Cache::add('test_add_key', 'test data', 'tests');
+        $this->assertTrue($result);
+
+        $expected = 'test data';
+        $result = Cache::read('test_add_key', 'tests');
+        $this->assertEquals($expected, $result);
+
+        $result = Cache::add('test_add_key', 'test data 2', 'tests');
+        $this->assertFalse($result);
+    }
+
+    /**
      * test registry method
      *
      * @return void

@@ -18,7 +18,6 @@ use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use RuntimeException;
@@ -164,6 +163,7 @@ class BelongsToMany extends Association
         $source = $this->source();
         $sAlias = $source->alias();
         $tAlias = $target->alias();
+        $tableLocator = $this->tableLocator();
 
         if ($table === null) {
             if (!empty($this->_junctionTable)) {
@@ -177,15 +177,15 @@ class BelongsToMany extends Association
                 $tableAlias = Inflector::camelize($tableName);
 
                 $config = [];
-                if (!TableRegistry::exists($tableAlias)) {
+                if (!$tableLocator->exists($tableAlias)) {
                     $config = ['table' => $tableName];
                 }
-                $table = TableRegistry::get($tableAlias, $config);
+                $table = $tableLocator->get($tableAlias, $config);
             }
         }
 
         if (is_string($table)) {
-            $table = TableRegistry::get($table);
+            $table = $tableLocator->get($table);
         }
         $junctionAlias = $table->alias();
 
@@ -254,11 +254,27 @@ class BelongsToMany extends Association
         }
 
         unset($options['queryBuilder']);
+        $type = array_intersect_key($options, ['joinType' => 1, 'fields' => 1]);
         $options = ['conditions' => [$cond]] + compact('includeFields');
         $options['foreignKey'] = $this->targetForeignKey();
         $assoc = $this->_targetTable->association($junction->alias());
-        $assoc->attachTo($query, $options);
+        $assoc->attachTo($query, $options + $type);
         $query->eagerLoader()->addToJoinsMap($junction->alias(), $assoc, true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function _appendNotMatching($query, $options)
+    {
+        $target = $this->junction();
+        if (!empty($options['negateMatch'])) {
+            $primaryKey = $query->aliasFields((array)$target->primaryKey(), $target->alias());
+            $query->andWhere(function ($exp) use ($primaryKey) {
+                array_map([$exp, 'isNull'], $primaryKey);
+                return $exp;
+            });
+        }
     }
 
     /**
@@ -527,7 +543,6 @@ class BelongsToMany extends Association
     {
         $target = $this->target();
         $junction = $this->junction();
-        $source = $this->source();
         $entityClass = $junction->entityClass();
         $belongsTo = $junction->association($target->alias());
         $foreignKey = (array)$this->foreignKey();
@@ -839,7 +854,7 @@ class BelongsToMany extends Association
     /**
      * Throws an exception should any of the passed entities is not persisted.
      *
-     * @param \Cake\ORM\Entity $sourceEntity the row belonging to the `source` side
+     * @param \Cake\Datasource\EntityInterface $sourceEntity the row belonging to the `source` side
      *   of this association
      * @param array $targetEntities list of entities belonging to the `target` side
      *   of this association

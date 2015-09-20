@@ -2527,4 +2527,143 @@ class ValidationTest extends TestCase
         $context = [];
         $this->assertFalse(Validation::compareWith('a value', 'other', $context));
     }
+
+    /**
+     * Test the geoCoordinate method.
+     *
+     * @return void
+     */
+    public function testGeoCoordinate()
+    {
+        $this->assertTrue(Validation::geoCoordinate('51.165691, 10.451526'));
+        $this->assertTrue(Validation::geoCoordinate('-25.274398, 133.775136'));
+        $this->assertFalse(Validation::geoCoordinate('51.165691 10.451526'));
+        $this->assertFalse(Validation::geoCoordinate('-245.274398, -133.775136'));
+        $this->assertTrue(Validation::geoCoordinate('51.165691', ['format' => 'lat']));
+        $this->assertTrue(Validation::geoCoordinate('10.451526', ['format' => 'long']));
+    }
+
+    /**
+     * Test the geoCoordinate method.
+     *
+     * @return void
+     */
+    public function testLatitude()
+    {
+        $this->assertTrue(Validation::latitude('51.165691'));
+        $this->assertFalse(Validation::latitude('200.23552'));
+    }
+
+    /**
+     * Test the geoCoordinate method.
+     *
+     * @return void
+     */
+    public function testLongitude()
+    {
+        $this->assertTrue(Validation::longitude('10.451526'));
+        $this->assertFalse(Validation::longitude('-190.52236'));
+    }
+
+    /**
+     * Test isInteger
+     *
+     * @return void
+     */
+    public function testIsInteger()
+    {
+        $this->assertTrue(Validation::isInteger(-10));
+        $this->assertTrue(Validation::isInteger(0));
+        $this->assertTrue(Validation::isInteger(10));
+        $this->assertTrue(Validation::isInteger('-10'));
+        $this->assertTrue(Validation::isInteger('0'));
+        $this->assertTrue(Validation::isInteger('10'));
+
+        $this->assertFalse(Validation::isInteger('2.5'));
+        $this->assertFalse(Validation::isInteger([]));
+        $this->assertFalse(Validation::isInteger(new \StdClass));
+        $this->assertFalse(Validation::isInteger('2 bears'));
+    }
+
+    /**
+     * Test ascii
+     *
+     * @return void
+     */
+    public function testAscii()
+    {
+        $this->assertTrue(Validation::ascii('1 big blue bus.'));
+        $this->assertTrue(Validation::ascii(',.<>[]{;/?\)()'));
+
+        $this->assertFalse(Validation::ascii([]));
+        $this->assertFalse(Validation::ascii(1001));
+        $this->assertFalse(Validation::ascii(3.14));
+        $this->assertFalse(Validation::ascii(new \StdClass));
+
+        // Latin-1 supplement
+        $this->assertFalse(Validation::ascii('some' . "\xc2\x82" . 'value'));
+        $this->assertFalse(Validation::ascii('some' . "\xc3\xbf" . 'value'));
+
+        // End of BMP
+        $this->assertFalse(Validation::ascii('some' . "\xef\xbf\xbd" . 'value'));
+
+        // Start of supplementary multilingual plane
+        $this->assertFalse(Validation::ascii('some' . "\xf0\x90\x80\x80" . 'value'));
+    }
+
+    /**
+     * Test utf8 basic
+     *
+     * @return void
+     */
+    public function testUtf8Basic()
+    {
+        $this->assertFalse(Validation::utf8([]));
+        $this->assertFalse(Validation::utf8(1001));
+        $this->assertFalse(Validation::utf8(3.14));
+        $this->assertFalse(Validation::utf8(new \StdClass));
+        $this->assertTrue(Validation::utf8('1 big blue bus.'));
+        $this->assertTrue(Validation::utf8(',.<>[]{;/?\)()'));
+
+        // Latin-1 supplement
+        $this->assertTrue(Validation::utf8('some' . "\xc2\x82" . 'value'));
+        $this->assertTrue(Validation::utf8('some' . "\xc3\xbf" . 'value'));
+
+        // End of BMP
+        $this->assertTrue(Validation::utf8('some' . "\xef\xbf\xbd" . 'value'));
+
+        // Start of supplementary multilingual plane
+        $this->assertFalse(Validation::utf8('some' . "\xf0\x90\x80\x80" . 'value'));
+
+        // Grinning face
+        $this->assertFalse(Validation::utf8('some' . "\xf0\x9f\x98\x80" . 'value'));
+    }
+
+    /**
+     * Test utf8 extended
+     *
+     * @return void
+     */
+    public function testUtf8Extended()
+    {
+        $this->assertFalse(Validation::utf8([], ['extended' => true]));
+        $this->assertFalse(Validation::utf8(1001, ['extended' => true]));
+        $this->assertFalse(Validation::utf8(3.14, ['extended' => true]));
+        $this->assertFalse(Validation::utf8(new \StdClass, ['extended' => true]));
+        $this->assertTrue(Validation::utf8('1 big blue bus.', ['extended' => true]));
+        $this->assertTrue(Validation::utf8(',.<>[]{;/?\)()', ['extended' => true]));
+
+        // Latin-1 supplement
+        $this->assertTrue(Validation::utf8('some' . "\xc2\x82" . 'value', ['extended' => true]));
+        $this->assertTrue(Validation::utf8('some' . "\xc3\xbf" . 'value', ['extended' => true]));
+
+        // End of BMP
+        $this->assertTrue(Validation::utf8('some' . "\xef\xbf\xbd" . 'value', ['extended' => true]));
+
+        // Start of supplementary multilingual plane
+        $this->assertTrue(Validation::utf8('some' . "\xf0\x90\x80\x80" . 'value', ['extended' => true]));
+
+        // Grinning face
+        $this->assertTrue(Validation::utf8('some' . "\xf0\x9f\x98\x80" . 'value', ['extended' => true]));
+    }
 }

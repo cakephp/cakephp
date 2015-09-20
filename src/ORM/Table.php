@@ -91,26 +91,26 @@ use RuntimeException;
  * - `buildRules(Event $event, RulesChecker $rules)`
  *   Allows listeners to modify the rules checker by adding more rules.
  *
- * - `beforeRules(Event $event, Entity $entity, ArrayObject $options, string $operation)`
+ * - `beforeRules(Event $event, EntityInterface $entity, ArrayObject $options, string $operation)`
  *   Fired before an entity is validated using the rules checker. By stopping this event,
  *   you can return the final value of the rules checking operation.
  *
- * - `afterRules(Event $event, Entity $entity, ArrayObject $options, bool $result, string $operation)`
+ * - `afterRules(Event $event, EntityInterface $entity, ArrayObject $options, bool $result, string $operation)`
  *   Fired after the rules have been checked on the entity. By stopping this event,
  *   you can return the final value of the rules checking operation.
  *
- * - `beforeSave(Event $event, Entity $entity, ArrayObject $options)`
+ * - `beforeSave(Event $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired before each entity is saved. Stopping this event will abort the save
  *   operation. When the event is stopped the result of the event will be returned.
  *
- * - `afterSave(Event $event, Entity $entity, ArrayObject $options)`
+ * - `afterSave(Event $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired after an entity is saved.
  *
- * - `beforeDelete(Event $event, Entity $entity, ArrayObject $options)`
+ * - `beforeDelete(Event $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired before an entity is deleted. By stopping this event you will abort
  *   the delete operation.
  *
- * - `afterDelete(Event $event, Entity $entity, ArrayObject $options)`
+ * - `afterDelete(Event $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired after an entity has been deleted.
  *
  * @see \Cake\Event\EventManager for reference on the events system.
@@ -275,7 +275,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         }
         $this->_eventManager = $eventManager ?: new EventManager();
-        $this->_behaviors = $behaviors ?: new BehaviorRegistry($this);
+        $this->_behaviors = $behaviors ?: new BehaviorRegistry();
+        $this->_behaviors->setTable($this);
         $this->_associations = $associations ?: new AssociationCollection();
 
         $this->initialize($config);
@@ -2192,6 +2193,41 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function buildRules(RulesChecker $rules)
     {
         return $rules;
+    }
+
+    /**
+     * Loads the specified associations in the passed entity or list of entities
+     * by executing extra queries in the database and merging the results in the
+     * appropriate properties.
+     *
+     * ### Example:
+     *
+     * ```
+     * $user = $usersTable->get(1);
+     * $user = $usersTable->loadInto($user, ['Articles.Tags', 'Articles.Comments']);
+     * echo $user->articles[0]->title;
+     * ```
+     *
+     * You can also load associations for multiple entities at once
+     *
+     * ### Example:
+     *
+     * ```
+     * $users = $usersTable->find()->where([...])->toList();
+     * $users = $usersTable->loadInto($users, ['Articles.Tags', 'Articles.Comments']);
+     * echo $user[1]->articles[0]->title;
+     * ```
+     *
+     * The properties for the associations to be loaded will be overwritten on each entity.
+     *
+     * @param Cake\Datasource\EntityInterface|array $entities a single entity or list of entities
+     * @param array $contain A `contain()` compatible array.
+     * @see Cake\ORM\Query\contain()
+     * @return Cake\Datasource\EntityInterface|array
+     */
+    public function loadInto($entities, array $contain)
+    {
+        return (new LazyEagerLoader)->loadInto($entities, $contain, $this);
     }
 
     /**

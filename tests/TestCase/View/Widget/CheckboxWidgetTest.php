@@ -233,4 +233,33 @@ class CheckboxWidgetTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
     }
+
+    /**
+     * Ensure templateVars option is hooked up.
+     *
+     * @return void
+     */
+    public function testRenderTemplateVars()
+    {
+        $this->templates->add([
+            'checkbox' => '<input type="checkbox" custom="{{custom}}" name="{{name}}" value="{{value}}"{{attrs}}>',
+        ]);
+
+        $checkbox = new CheckboxWidget($this->templates);
+        $data = [
+            'templateVars' => ['custom' => 'value'],
+            'name' => 'Comment[spam]',
+            'value' => 1,
+        ];
+        $result = $checkbox->render($data, $this->context);
+        $expected = [
+            'input' => [
+                'type' => 'checkbox',
+                'custom' => 'value',
+                'name' => 'Comment[spam]',
+                'value' => 1,
+            ]
+        ];
+        $this->assertHtml($expected, $result);
+    }
 }

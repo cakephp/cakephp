@@ -108,15 +108,15 @@ class JsonViewTest extends TestCase
                 ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']],
                 false,
                 null,
-                json_encode(null)
+                null
             ],
 
             // Test render with True in _serialize.
             [
                 ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']],
                 true,
-                null,
-                json_encode(null)
+                JSON_HEX_QUOT,
+                json_encode(['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']])
             ],
 
             // Test render with empty string in _serialize.
@@ -294,7 +294,6 @@ class JsonViewTest extends TestCase
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
         $Controller->name = 'Posts';
-        $Controller->viewPath = 'Posts';
 
         $data = [
             'User' => [
@@ -308,6 +307,7 @@ class JsonViewTest extends TestCase
         $Controller->set('user', $data);
         $Controller->viewClass = 'Json';
         $View = $Controller->createView();
+        $View->viewPath = $Controller->name;
         $output = $View->render('index');
 
         $expected = json_encode(['user' => 'fake', 'list' => ['item1', 'item2'], 'paging' => null]);

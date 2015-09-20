@@ -35,6 +35,20 @@ class FormData implements Countable
     protected $_boundary;
 
     /**
+     * Whether or not this formdata object has attached files.
+     *
+     * @var bool
+     */
+    protected $_hasFile = false;
+
+    /**
+     * Whether or not this formdata object has a complex part.
+     *
+     * @var bool
+     */
+    protected $_hasComplexPart = false;
+
+    /**
      * The parts in the form data.
      *
      * @var array
@@ -95,6 +109,7 @@ class FormData implements Countable
             );
             $this->_parts[] = $this->addFile($name, $value);
         } elseif ($name instanceof Part && $value === null) {
+            $this->_hasComplexPart = true;
             $this->_parts[] = $name;
         } else {
             $this->_parts[] = $this->newPart($name, $value);
@@ -128,6 +143,8 @@ class FormData implements Countable
      */
     public function addFile($name, $value)
     {
+        $this->_hasFile = true;
+
         $filename = false;
         $contentType = 'application/octet-stream';
         if (is_resource($value)) {
@@ -179,6 +196,47 @@ class FormData implements Countable
     }
 
     /**
+     * Check whether or not the current payload
+     * has any files.
+     *
+     * @return bool Whether or not there is a file in this payload.
+     */
+    public function hasFile()
+    {
+        return $this->_hasFile;
+    }
+
+    /**
+     * Check whether or not the current payload
+     * is multipart.
+     *
+     * A payload will become multipart when you add files
+     * or use add() with a Part instance.
+     *
+     * @return bool Whether or not the payload is multipart.
+     */
+    public function isMultipart()
+    {
+        return $this->hasFile() || $this->_hasComplexPart;
+    }
+
+    /**
+     * Get the content type for this payload.
+     *
+     * If this object contains files, `multipart/form-data` will be used,
+     * otherwise `application/x-www-form-urlencoded` will be used.
+     *
+     * @return string
+     */
+    public function contentType()
+    {
+        if (!$this->isMultipart()) {
+            return 'application/x-www-form-urlencoded';
+        }
+        return 'multipart/form-data; boundary="' . $this->boundary() . '"';
+    }
+
+    /**
      * Converts the FormData and its parts into a string suitable
      * for use in an HTTP request.
      *
@@ -186,14 +244,21 @@ class FormData implements Countable
      */
     public function __toString()
     {
-        $boundary = $this->boundary();
-        $out = '';
-        foreach ($this->_parts as $part) {
-            $out .= "--$boundary\r\n";
-            $out .= (string)$part;
-            $out .= "\r\n";
+        if ($this->isMultipart()) {
+            $boundary = $this->boundary();
+            $out = '';
+            foreach ($this->_parts as $part) {
+                $out .= "--$boundary\r\n";
+                $out .= (string)$part;
+                $out .= "\r\n";
+            }
+            $out .= "--$boundary--\r\n\r\n";
+            return $out;
         }
-        $out .= "--$boundary--\r\n\r\n";
-        return $out;
+        $data = [];
+        foreach ($this->_parts as $part) {
+            $data[$part->name()] = $part->value();
+        }
+        return http_build_query($data);
     }
 }

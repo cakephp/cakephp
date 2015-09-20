@@ -137,11 +137,37 @@ class StreamTest extends TestCase
         $expected = [
             'Connection: close',
             'User-Agent: CakePHP',
-            'Content-Type: multipart/form-data; boundary="',
+            'Content-Type: application/x-www-form-urlencoded',
         ];
         $this->assertStringStartsWith(implode("\r\n", $expected), $result['header']);
-        $this->assertContains('Content-Disposition: form-data; name="a"', $result['content']);
-        $this->assertContains('my value', $result['content']);
+        $this->assertContains('a=my+value', $result['content']);
+        $this->assertContains('my+value', $result['content']);
+    }
+
+    /**
+     * Test send() + context options with array content.
+     *
+     * @return void
+     */
+    public function testSendContextContentArrayFiles()
+    {
+        $request = new Request();
+        $request->url('http://localhost')
+            ->header([
+                'Content-Type' => 'application/json'
+            ])
+            ->body(['upload' => fopen(CORE_PATH . 'VERSION.txt', 'r')]);
+
+        $this->stream->send($request, []);
+        $result = $this->stream->contextOptions();
+        $expected = [
+            'Connection: close',
+            'User-Agent: CakePHP',
+            'Content-Type: multipart/form-data',
+        ];
+        $this->assertStringStartsWith(implode("\r\n", $expected), $result['header']);
+        $this->assertContains('name="upload"', $result['content']);
+        $this->assertContains('filename="VERSION.txt"', $result['content']);
     }
 
     /**

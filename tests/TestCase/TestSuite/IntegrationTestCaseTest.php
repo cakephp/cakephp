@@ -150,7 +150,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     {
         $this->post('/posts/index');
 
-        $this->assertSession('An error message', 'Flash.flash.message');
+        $this->assertSession('An error message', 'Flash.flash.0.message');
         $this->assertCookie(1, 'remember_me');
     }
 

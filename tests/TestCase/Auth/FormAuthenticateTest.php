@@ -57,6 +57,12 @@ class FormAuthenticateTest extends TestCase
         TableRegistry::clear();
         $Users = TableRegistry::get('Users');
         $Users->updateAll(['password' => $password], []);
+
+        $AuthUsers = TableRegistry::get('AuthUsers', [
+            'className' => 'TestApp\Model\Table\AuthUsersTable'
+        ]);
+        $AuthUsers->updateAll(['password' => $password], []);
+
         $this->response = $this->getMock('Cake\Network\Response');
     }
 
@@ -244,30 +250,12 @@ class FormAuthenticateTest extends TestCase
     }
 
     /**
-     * test scope failure.
-     *
-     * @return void
-     */
-    public function testAuthenticateScopeFail()
-    {
-        $this->auth->config('scope', ['Users.id' => 2]);
-        $request = new Request('posts/index');
-        $request->data = [
-            'username' => 'mariano',
-            'password' => 'password'
-        ];
-
-        $this->assertFalse($this->auth->authenticate($request, $this->response));
-    }
-
-    /**
      * test a model in a plugin.
      *
      * @return void
      */
     public function testPluginModel()
     {
-        Cache::delete('object_map', '_cake_core_');
         Plugin::load('TestPlugin');
 
         $PluginModel = TableRegistry::get('TestPlugin.AuthUsers');
@@ -293,6 +281,32 @@ class FormAuthenticateTest extends TestCase
         ];
         $this->assertEquals($expected, $result);
         Plugin::unload();
+    }
+
+    /**
+     * Test using custom finder
+     *
+     * @return void
+     */
+    public function testFinder()
+    {
+        $request = new Request('posts/index');
+        $request->data = [
+            'username' => 'mariano',
+            'password' => 'password'
+        ];
+
+        $this->auth->config([
+            'userModel' => 'AuthUsers',
+            'finder' => 'auth'
+        ]);
+
+        $result = $this->auth->authenticate($request, $this->response);
+        $expected = [
+            'id' => 1,
+            'username' => 'mariano',
+        ];
+        $this->assertEquals($expected, $result, 'Result should not contain "created" and "modified" fields');
     }
 
     /**

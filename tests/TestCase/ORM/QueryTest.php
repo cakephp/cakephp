@@ -2264,7 +2264,8 @@ class QueryTest extends TestCase
             'matching' => [
                 'articles' => [
                     'queryBuilder' => null,
-                    'matching' => true
+                    'matching' => true,
+                    'joinType' => 'INNER'
                 ]
             ],
             'extraOptions' => ['foo' => 'bar'],
@@ -2701,6 +2702,39 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests that select() can be called with Table and Association
+     * instance
+     *
+     * @return void
+     */
+    public function testSelectWithTableAndAssociationInstance()
+    {
+        $table = TableRegistry::get('articles');
+        $table->belongsTo('authors');
+        $result = $table
+            ->find()
+            ->select(function ($q) {
+                return ['foo' => $q->newExpr('1 + 1')];
+            })
+            ->select($table)
+            ->select($table->authors)
+            ->contain(['authors'])
+            ->first();
+
+        $expected = $table
+            ->find()
+            ->select(function ($q) {
+                return ['foo' => $q->newExpr('1 + 1')];
+            })
+            ->autoFields(true)
+            ->contain(['authors'])
+            ->first();
+
+        $this->assertNotEmpty($result);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Tests that isEmpty() can be called on a query
      *
      * @return void
@@ -2710,5 +2744,326 @@ class QueryTest extends TestCase
         $table = TableRegistry::get('articles');
         $this->assertFalse($table->find()->isEmpty());
         $this->assertTrue($table->find()->where(['id' => -1])->isEmpty());
+    }
+
+    /**
+     * Tests that leftJoinWith() creates a left join with a given association and
+     * that no fields from such association are loaded.
+     *
+     * @return void
+     */
+    public function testLeftJoinWith()
+    {
+        $table = TableRegistry::get('authors');
+        $table->hasMany('articles');
+        $table->articles->deleteAll(['author_id' => 4]);
+        $results = $table
+            ->find()
+            ->select(['total_articles' => 'count(articles.id)'])
+            ->autoFields(true)
+            ->leftJoinWith('articles')
+            ->group(['authors.id', 'authors.name']);
+
+        $expected = [
+            1 => 2,
+            2 => 0,
+            3 => 1,
+            4 => 0
+        ];
+        $this->assertEquals($expected, $results->combine('id', 'total_articles')->toArray());
+        $fields = ['total_articles', 'id', 'name'];
+        $this->assertEquals($fields, array_keys($results->first()->toArray()));
+
+        $results = $table
+            ->find()
+            ->leftJoinWith('articles')
+            ->where(['articles.id IS' => null]);
+
+        $this->assertEquals([2, 4], $results->extract('id')->toList());
+        $this->assertEquals(['id', 'name'], array_keys($results->first()->toArray()));
+
+        $results = $table
+            ->find()
+            ->leftJoinWith('articles')
+            ->where(['articles.id IS NOT' => null])
+            ->order(['authors.id']);
+
+        $this->assertEquals([1, 1, 3], $results->extract('id')->toList());
+        $this->assertEquals(['id', 'name'], array_keys($results->first()->toArray()));
+    }
+
+    /**
+     * Tests that leftJoinWith() creates a left join with a given association and
+     * that no fields from such association are loaded.
+     *
+     * @return void
+     */
+    public function testLeftJoinWithNested()
+    {
+        $table = TableRegistry::get('authors');
+        $articles = $table->hasMany('articles');
+        $articles->belongsToMany('tags');
+
+        $results = $table
+            ->find()
+            ->select(['total_articles' => 'count(articles.id)'])
+            ->leftJoinWith('articles.tags', function ($q) {
+                return $q->where(['tags.name' => 'tag3']);
+            })
+            ->autoFields(true)
+            ->group(['authors.id', 'authors.name']);
+
+        $expected = [
+            1 => 2,
+            2 => 0,
+            3 => 1,
+            4 => 0
+        ];
+        $this->assertEquals($expected, $results->combine('id', 'total_articles')->toArray());
+        $fields = ['total_articles', 'id', 'name'];
+        $this->assertEquals($fields, array_keys($results->first()->toArray()));
+    }
+
+    /**
+     * Tests that leftJoinWith() can be used with select()
+     *
+     * @return void
+     */
+    public function testLeftJoinWithSelect()
+    {
+        $table = TableRegistry::get('authors');
+        $articles = $table->hasMany('articles');
+        $articles->belongsToMany('tags');
+        $results = $table
+            ->find()
+            ->leftJoinWith('articles.tags', function ($q) {
+                return $q
+                    ->select(['articles.id', 'articles.title', 'tags.name'])
+                    ->where(['tags.name' => 'tag3']);
+            })
+            ->autoFields(true)
+            ->where(['ArticlesTags.tag_id' => 3])
+            ->distinct(['authors.id'])
+            ->all();
+
+        $expected = ['id' => 2, 'title' => 'Second Article'];
+        $this->assertEquals(
+            $expected,
+            $results->first()->_matchingData['articles']->toArray()
+        );
+        $this->assertEquals(
+            ['name' => 'tag3'],
+            $results->first()->_matchingData['tags']->toArray()
+        );
+    }
+
+    /**
+     * Tests innerJoinWith()
+     *
+     * @return void
+     */
+    public function testInnerJoinWith()
+    {
+        $table = TableRegistry::get('authors');
+        $table->hasMany('articles');
+        $results = $table
+            ->find()
+            ->innerJoinWith('articles', function ($q) {
+                return $q->where(['articles.title' => 'Third Article']);
+            });
+        $expected = [
+            [
+            'id' => 1,
+            'name' => 'mariano'
+            ]
+        ];
+        $this->assertEquals($expected, $results->hydrate(false)->toArray());
+    }
+
+    /**
+     * Tests innerJoinWith() with nested associations
+     *
+     * @return void
+     */
+    public function testInnerJoinWithNested()
+    {
+        $table = TableRegistry::get('authors');
+        $articles = $table->hasMany('articles');
+        $articles->belongsToMany('tags');
+        $results = $table
+            ->find()
+            ->innerJoinWith('articles.tags', function ($q) {
+                return $q->where(['tags.name' => 'tag3']);
+            });
+        $expected = [
+            [
+            'id' => 3,
+            'name' => 'larry'
+            ]
+        ];
+        $this->assertEquals($expected, $results->hydrate(false)->toArray());
+    }
+
+    /**
+     * Tests innerJoinWith() with select
+     *
+     * @return void
+     */
+    public function testInnerJoinWithSelect()
+    {
+        $table = TableRegistry::get('authors');
+        $table->hasMany('articles');
+        $results = $table
+            ->find()
+            ->autoFields(true)
+            ->innerJoinWith('articles', function ($q) {
+                return $q->select(['id', 'author_id', 'title', 'body', 'published']);
+            })
+            ->toArray();
+
+        $expected = $table
+            ->find()
+            ->matching('articles')
+            ->toArray();
+        $this->assertEquals($expected, $results);
+    }
+
+    /**
+     * Tests notMatching() with and without conditions
+     *
+     * @return void
+     */
+    public function testNotMatching()
+    {
+        $table = TableRegistry::get('authors');
+        $table->hasMany('articles');
+
+        $results = $table->find()
+            ->hydrate(false)
+            ->notMatching('articles')
+            ->toArray();
+
+        $expected = [
+            ['id' => 2, 'name' => 'nate'],
+            ['id' => 4, 'name' => 'garrett'],
+        ];
+        $this->assertEquals($expected, $results);
+
+        $results = $table->find()
+            ->hydrate(false)
+            ->notMatching('articles', function ($q) {
+                return $q->where(['articles.author_id' => 1]);
+            })
+            ->toArray();
+        $expected = [
+            ['id' => 2, 'name' => 'nate'],
+            ['id' => 3, 'name' => 'larry'],
+            ['id' => 4, 'name' => 'garrett'],
+        ];
+        $this->assertEquals($expected, $results);
+    }
+
+    /**
+     * Tests notMatching() with a belongsToMany association
+     *
+     * @return void
+     */
+    public function testNotMatchingBelongsToMany()
+    {
+        $table = TableRegistry::get('articles');
+        $table->belongsToMany('tags');
+
+        $results = $table->find()
+            ->hydrate(false)
+            ->notMatching('tags', function ($q) {
+                return $q->where(['tags.name' => 'tag2']);
+            })
+            ->toArray();
+
+        $expected = [
+            [
+                'id' => 2,
+                'author_id' => 3,
+                'title' => 'Second Article',
+                'body' => 'Second Article Body',
+                'published' => 'Y'
+            ],
+            [
+                'id' => 3,
+                'author_id' => 1,
+                'title' => 'Third Article',
+                'body' => 'Third Article Body',
+                'published' => 'Y'
+            ]
+        ];
+        $this->assertEquals($expected, $results);
+    }
+
+    /**
+     * Tests notMatching() with a deeply nested belongsToMany association.
+     *
+     * @return void
+     */
+    public function testNotMatchingDeep()
+    {
+        $table = TableRegistry::get('authors');
+        $articles = $table->hasMany('articles');
+        $articles->belongsToMany('tags');
+
+        $results = $table->find()
+            ->hydrate(false)
+            ->notMatching('articles.tags', function ($q) {
+                return $q->where(['tags.name' => 'tag3']);
+            })
+            ->distinct(['authors.id']);
+
+        $this->assertEquals([1, 2, 4], $results->extract('id')->toList());
+
+        $results = $table->find()
+            ->hydrate(false)
+            ->notMatching('articles.tags', function ($q) {
+                return $q->where(['tags.name' => 'tag3']);
+            })
+            ->matching('articles')
+            ->distinct(['authors.id']);
+
+        $this->assertEquals([1], $results->extract('id')->toList());
+    }
+
+    /**
+     * Tests that it is possible to nest a notMatching call inside another
+     * eagerloader function.
+     *
+     * @return void
+     */
+    public function testNotMatchingNested()
+    {
+        $table = TableRegistry::get('authors');
+        $articles = $table->hasMany('articles');
+        $articles->belongsToMany('tags');
+
+        $results = $table->find()
+            ->hydrate(false)
+            ->matching('articles', function ($q) {
+                return $q->notMatching('tags', function ($q) {
+                    return $q->where(['tags.name' => 'tag3']);
+                });
+            })
+            ->order(['authors.id' => 'ASC', 'articles.id' => 'ASC']);
+
+        $expected = [
+            'id' => 1,
+            'name' => 'mariano',
+            '_matchingData' => [
+                'articles' => [
+                    'id' => 1,
+                    'author_id' => 1,
+                    'title' => 'First Article',
+                    'body' => 'First Article Body',
+                    'published' => 'Y'
+                ]
+            ]
+        ];
+        $this->assertEquals($expected, $results->first());
     }
 }

@@ -14,6 +14,8 @@
 namespace Cake\View;
 
 use Cake\Core\App;
+use Cake\Event\EventDispatcherInterface;
+use Cake\View\ViewBuilder;
 
 /**
  * Provides the set() method for collecting template context.
@@ -26,6 +28,14 @@ trait ViewVarsTrait
 {
 
     /**
+     * The name of default View class.
+     *
+     * @var string
+     * @deprecated 3.1.0 Use `$this->viewBuilder()->className()` instead.
+     */
+    public $viewClass = null;
+
+    /**
      * Variables for the view
      *
      * @var array
@@ -33,48 +43,27 @@ trait ViewVarsTrait
     public $viewVars = [];
 
     /**
-     * Get view instance
+     * The view builder instance being used.
      *
-     * @param string|null $viewClass View class name or null to use $viewClass
-     * @return \Cake\View\View
-     * @throws \Cake\View\Exception\MissingViewException If view class was not found.
+     * @var \Cake\View\ViewBuilder
      */
-    public function getView($viewClass = null)
+    protected $_viewBuilder;
+
+    /**
+     * Get the view builder being used.
+     *
+     * @return \Cake\View\ViewBuilder
+     */
+    public function viewBuilder()
     {
-        if ($viewClass === null && $this->View) {
-            $this->View->viewVars = $this->viewVars;
-            return $this->View;
+        if (!isset($this->_viewBuilder)) {
+            $this->_viewBuilder = new ViewBuilder();
         }
-
-        if ($viewClass === null) {
-            $viewClass = $this->viewClass;
-        }
-        if ($viewClass === null) {
-            $viewClass = App::className('App', 'View', 'View');
-            if ($viewClass === false) {
-                $viewClass = 'Cake\View\View';
-            }
-        }
-        if ($viewClass === 'View') {
-            $viewClass = 'Cake\View\View';
-        }
-
-        $this->viewClass = $viewClass;
-        $className = App::className($this->viewClass, 'View', 'View');
-        if (!$className) {
-            throw new Exception\MissingViewException(['class' => $viewClass]);
-        }
-
-        if ($this->View && $this->View instanceof $className) {
-            $this->View->viewVars = $this->viewVars;
-            return $this->View;
-        }
-
-        return $this->View = $this->createView();
+        return $this->_viewBuilder;
     }
 
     /**
-     * Constructs the view class instance based on object properties.
+     * Constructs the view class instance based on the current configuration.
      *
      * @param string|null $viewClass Optional namespaced class name of the View class to instantiate.
      * @return \Cake\View\View
@@ -82,25 +71,46 @@ trait ViewVarsTrait
      */
     public function createView($viewClass = null)
     {
+        $builder = $this->viewBuilder();
         if ($viewClass === null) {
             $viewClass = $this->viewClass;
         }
-        if ($viewClass === 'View') {
-            $className = App::className($viewClass, 'View');
-        } else {
-            $className = App::className($viewClass, 'View', 'View');
-        }
-        if (!$className) {
-            throw new Exception\MissingViewException([$viewClass]);
+        if ($viewClass) {
+            $builder->className($viewClass);
         }
 
+        $validViewOptions = $this->viewOptions();
         $viewOptions = [];
-        foreach ($this->viewOptions() as $option) {
+        foreach ($validViewOptions as $option) {
             if (property_exists($this, $option)) {
                 $viewOptions[$option] = $this->{$option};
             }
         }
-        return new $className($this->request, $this->response, $this->eventManager(), $viewOptions);
+        $deprecatedOptions = ['layout', 'view', 'theme', 'autoLayout', 'viewPath', 'layoutPath'];
+        foreach ($deprecatedOptions as $option) {
+            if (property_exists($this, $option)) {
+                $method = $option === 'viewPath' ? 'templatePath' : $option;
+                $builder->{$method}($this->{$option});
+                trigger_error(sprintf(
+                    'Property $%s is deprecated. Use $this->viewBuilder()->%s() instead in beforeRender().',
+                    $option,
+                    $method
+                ), E_USER_DEPRECATED);
+            }
+        }
+
+        foreach (['name', 'helpers', 'plugin'] as $prop) {
+            if (isset($this->{$prop})) {
+                $builder->{$prop}($this->{$prop});
+            }
+        }
+        $builder->options($viewOptions);
+        return $builder->build(
+            $this->viewVars,
+            isset($this->request) ? $this->request : null,
+            isset($this->response) ? $this->response : null,
+            $this instanceof EventDispatcherInterface ? $this->eventManager() : null
+        );
     }
 
     /**

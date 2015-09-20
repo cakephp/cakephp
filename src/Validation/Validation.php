@@ -41,7 +41,9 @@ class Validation
      * @var array
      */
     protected static $_pattern = [
-        'hostname' => '(?:[_\p{L}0-9][-_\p{L}0-9]*\.)*(?:[\p{L}0-9][-\p{L}0-9]{0,62})\.(?:(?:[a-z]{2}\.)?[a-z]{2,})'
+        'hostname' => '(?:[_\p{L}0-9][-_\p{L}0-9]*\.)*(?:[\p{L}0-9][-\p{L}0-9]{0,62})\.(?:(?:[a-z]{2}\.)?[a-z]{2,})',
+        'latitude' => '[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)',
+        'longitude' => '[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)',
     ];
 
     /**
@@ -832,10 +834,7 @@ class Validation
      */
     protected static function _check($check, $regex)
     {
-        if (is_string($regex) && preg_match($regex, $check)) {
-            return true;
-        }
-        return false;
+        return is_string($regex) && preg_match($regex, $check);
     }
 
     /**
@@ -1031,6 +1030,138 @@ class Validation
             return false;
         }
         return true;
+    }
+
+    /**
+     * Validates a geographic coordinate.
+     *
+     * Supported formats:
+     *
+     * - `<latitude>, <longitude>` Example: `-25.274398, 133.775136`
+     *
+     * ### Options
+     *
+     * - `type` - A string of the coordinate format, right now only `latLong`.
+     * - `format` - By default `both`, can be `long` and `lat` as well to validate
+     *   only a part of the coordinate.
+     *
+     * @param string $value Geographic location as string
+     * @param array $options Options for the validation logic.
+     * @return bool
+     */
+    public static function geoCoordinate($value, array $options = [])
+    {
+        $options += [
+            'format' => 'both',
+            'type' => 'latLong'
+        ];
+        if ($options['type'] !== 'latLong') {
+            throw new \RuntimeException(sprintf(
+                'Unsupported coordinate type "%s". Use "latLong" instead.',
+                $options['type']
+            ));
+        }
+        $pattern = '/^' . self::$_pattern['latitude'] . ',\s*' . self::$_pattern['longitude'] . '$/';
+        if ($options['format'] === 'long') {
+            $pattern = '/^' . self::$_pattern['longitude'] . '$/';
+        }
+        if ($options['format'] === 'lat') {
+            $pattern = '/^' . self::$_pattern['latitude'] . '$/';
+        }
+        return (bool)preg_match($pattern, $value);
+    }
+
+    /**
+     * Convenience method for latitude validation.
+     *
+     * @param string $value Latitude as string
+     * @param array $options Options for the validation logic.
+     * @return bool
+     * @link https://en.wikipedia.org/wiki/Latitude
+     * @see Validation::geoCoordinate()
+     */
+    public static function latitude($value, array $options = [])
+    {
+        $options['format'] = 'lat';
+        return self::geoCoordinate($value, $options);
+    }
+
+    /**
+     * Convenience method for longitude validation.
+     *
+     * @param string $value Latitude as string
+     * @param array $options Options for the validation logic.
+     * @return bool
+     * @link https://en.wikipedia.org/wiki/Longitude
+     * @see Validation::geoCoordinate()
+     */
+    public static function longitude($value, array $options = [])
+    {
+        $options['format'] = 'long';
+        return self::geoCoordinate($value, $options);
+    }
+
+    /**
+     * Check that the input value is within the ascii byte range.
+     *
+     * This method will reject all non-string values.
+     *
+     * @param string $value The value to check
+     * @return bool
+     */
+    public static function ascii($value)
+    {
+        if (!is_string($value)) {
+            return false;
+        }
+        return strlen($value) <= mb_strlen($value, 'utf-8');
+    }
+
+    /**
+     * Check that the input value is a utf8 string.
+     *
+     * This method will reject all non-string values.
+     *
+     * # Options
+     *
+     * - `extended` - Disallow bytes higher within the basic multilingual plane.
+     *   MySQL's older utf8 encoding type does not allow characters above
+     *   the basic multilingual plane. Defaults to false.
+     *
+     * @param string $value The value to check
+     * @param array $options An array of options. See above for the supported options.
+     * @return bool
+     */
+    public static function utf8($value, array $options = [])
+    {
+        if (!is_string($value)) {
+            return false;
+        }
+        $options += ['extended' => false];
+        if ($options['extended']) {
+            return true;
+        }
+        return preg_match('/[\x{10000}-\x{10FFFF}]/u', $value) === 0;
+    }
+
+    /**
+     * Check that the input value is an integer
+     *
+     * This method will accept strings that contain only integer data
+     * as well.
+     *
+     * @param string $value The value to check
+     * @return bool
+     */
+    public static function isInteger($value)
+    {
+        if (!is_scalar($value) || is_float($value)) {
+            return false;
+        }
+        if (is_int($value)) {
+            return true;
+        }
+        return (bool)preg_match('/^-?[0-9]+$/', $value);
     }
 
     /**

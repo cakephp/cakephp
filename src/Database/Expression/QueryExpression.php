@@ -507,10 +507,7 @@ class QueryExpression implements ExpressionInterface, Countable
         if (is_object($c) && is_callable($c)) {
             return true;
         }
-        if (is_array($c) && isset($c[0]) && is_object($c[0]) && is_callable($c)) {
-            return true;
-        }
-        return false;
+        return is_array($c) && isset($c[0]) && is_object($c[0]) && is_callable($c);
     }
 
     /**

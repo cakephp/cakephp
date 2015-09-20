@@ -266,8 +266,8 @@ object(Cake\View\View) {
 		(int) 0 => 'Html',
 		(int) 1 => 'Form'
 	]
-	viewPath => ''
-	view => null
+	templatePath => null
+	template => null
 	layout => 'default'
 	layoutPath => null
 	autoLayout => true
@@ -278,6 +278,7 @@ object(Cake\View\View) {
 	request => object(Cake\Network\Request) {}
 	response => object(Cake\Network\Response) {}
 	elementCache => 'default'
+	viewClass => null
 	viewVars => []
 	Html => object(Cake\View\Helper\HtmlHelper) {}
 	Form => object(Cake\View\Helper\FormHelper) {}
@@ -289,12 +290,12 @@ object(Cake\View\View) {
 		(int) 0 => 'viewVars',
 		(int) 1 => 'autoLayout',
 		(int) 2 => 'helpers',
-		(int) 3 => 'view',
+		(int) 3 => 'template',
 		(int) 4 => 'layout',
 		(int) 5 => 'name',
 		(int) 6 => 'theme',
 		(int) 7 => 'layoutPath',
-		(int) 8 => 'viewPath',
+		(int) 8 => 'templatePath',
 		(int) 9 => 'plugin',
 		(int) 10 => 'passedArgs'
 	]
@@ -306,6 +307,7 @@ object(Cake\View\View) {
 	[protected] _stack => []
 	[protected] _eventManager => object(Cake\Event\EventManager) {}
 	[protected] _eventClass => '\Cake\Event\Event'
+	[protected] _viewBuilder => null
 }
 TEXT;
 

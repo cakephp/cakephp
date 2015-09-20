@@ -673,6 +673,75 @@ class CompositeKeyTest extends TestCase
     }
 
     /**
+     * Tets that loadInto() is capable of handling composite primary keys
+     *
+     * @return void
+     */
+    public function testLoadInto()
+    {
+        $table = TableRegistry::get('SiteAuthors');
+        $tags = TableRegistry::get('SiteTags');
+        $table->hasMany('SiteArticles', [
+            'foreignKey' => ['author_id', 'site_id'],
+        ]);
+
+        $author = $table->get([1, 1]);
+        $result = $table->loadInto($author, ['SiteArticles']);
+        $this->assertSame($author, $result);
+        $this->assertNotEmpty($result->site_articles);
+
+        $expected = $table->get([1, 1], ['contain' => ['SiteArticles']]);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tets that loadInto() is capable of handling composite primary keys
+     * when loading belongsTo assocaitions
+     *
+     * @return void
+     */
+    public function testLoadIntoWithBelongsTo()
+    {
+        $table = TableRegistry::get('SiteArticles');
+        $table->belongsTo('SiteAuthors', [
+            'foreignKey' => ['author_id', 'site_id'],
+        ]);
+
+        $author = $table->get([2, 2]);
+        $result = $table->loadInto($author, ['SiteAuthors']);
+        $this->assertSame($author, $result);
+        $this->assertNotEmpty($result->site_author);
+
+        $expected = $table->get([2, 2], ['contain' => ['SiteAuthors']]);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tets that loadInto() is capable of handling composite primary keys
+     * when loading into multiple entities
+     *
+     * @return void
+     */
+    public function testLoadIntoMany()
+    {
+        $table = TableRegistry::get('SiteAuthors');
+        $tags = TableRegistry::get('SiteTags');
+        $table->hasMany('SiteArticles', [
+            'foreignKey' => ['author_id', 'site_id'],
+        ]);
+
+        $authors = $table->find()->toList();
+        $result = $table->loadInto($authors, ['SiteArticles']);
+
+        foreach ($authors as $k => $v) {
+            $this->assertSame($result[$k], $v);
+        }
+
+        $expected = $table->find('all', ['contain' => ['SiteArticles']])->toList();
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Helper method to skip tests when connection is SQLite.
      *
      * @return void

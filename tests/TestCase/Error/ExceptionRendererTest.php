@@ -694,19 +694,20 @@ class ExceptionRendererTest extends TestCase
     }
 
     /**
-     * Test that missing subDir/layoutPath don't cause other fatal errors.
+     * Test that missing layoutPath don't cause other fatal errors.
      *
      * @return void
      */
-    public function testMissingSubdirRenderSafe()
+    public function testMissingLayoutPathRenderSafe()
     {
         $exception = new NotFoundException();
         $ExceptionRenderer = new ExceptionRenderer($exception);
 
         $ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', ['render']);
         $ExceptionRenderer->controller->helpers = ['Fail', 'Boom'];
-        $ExceptionRenderer->controller->layoutPath = 'boom';
-        $ExceptionRenderer->controller->subDir = 'boom';
+        $ExceptionRenderer->controller->eventManager()->on('Controller.beforeRender', function (Event $event) {
+            $event->subject()->viewBuilder()->layoutPath('boom');
+        });
         $ExceptionRenderer->controller->request = new Request;
 
         $ExceptionRenderer->controller->expects($this->once())
@@ -725,9 +726,8 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer->controller->response = $response;
 
         $ExceptionRenderer->render();
-        $this->assertEquals('', $ExceptionRenderer->controller->layoutPath);
-        $this->assertEquals('', $ExceptionRenderer->controller->subDir);
-        $this->assertEquals('Error', $ExceptionRenderer->controller->viewPath);
+        $this->assertEquals('', $ExceptionRenderer->controller->viewBuilder()->layoutPath());
+        $this->assertEquals('Error', $ExceptionRenderer->controller->viewBuilder()->templatePath());
     }
 
     /**

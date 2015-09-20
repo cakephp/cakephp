@@ -12,13 +12,13 @@
  * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Network\Email;
+namespace Cake\Test\TestCase\Mailer;
 
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Log\Log;
-use Cake\Network\Email\DebugTransport;
-use Cake\Network\Email\Email;
+use Cake\Mailer\Email;
+use Cake\Mailer\Transport\DebugTransport;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Exception;
@@ -663,7 +663,7 @@ class EmailTest extends TestCase
         $this->assertSame($expected, $this->CakeEmail->getHeaders(['from' => true, 'to' => true]));
 
         $result = $this->CakeEmail->setHeaders([]);
-        $this->assertInstanceOf('Cake\Network\Email\Email', $result);
+        $this->assertInstanceOf('Cake\Mailer\Email', $result);
     }
 
     /**
@@ -682,11 +682,11 @@ class EmailTest extends TestCase
         $this->assertSame($expected, $this->CakeEmail->template());
 
         $this->CakeEmail->template('template', null);
-        $expected = ['template' => 'template', 'layout' => null];
+        $expected = ['template' => 'template', 'layout' => false];
         $this->assertSame($expected, $this->CakeEmail->template());
 
         $this->CakeEmail->template(null, null);
-        $expected = ['template' => null, 'layout' => null];
+        $expected = ['template' => '', 'layout' => false];
         $this->assertSame($expected, $this->CakeEmail->template());
     }
 
@@ -717,7 +717,7 @@ class EmailTest extends TestCase
         $this->assertSame(['value' => 12345], $this->CakeEmail->viewVars());
 
         $this->CakeEmail->viewVars(['name' => 'CakePHP']);
-        $this->assertSame(['value' => 12345, 'name' => 'CakePHP'], $this->CakeEmail->viewVars());
+        $this->assertEquals(['value' => 12345, 'name' => 'CakePHP'], $this->CakeEmail->viewVars());
 
         $this->CakeEmail->viewVars(['value' => 4567]);
         $this->assertSame(['value' => 4567, 'name' => 'CakePHP'], $this->CakeEmail->viewVars());
@@ -774,9 +774,9 @@ class EmailTest extends TestCase
         $this->assertSame($this->CakeEmail, $result);
 
         $result = $this->CakeEmail->transport();
-        $this->assertInstanceOf('Cake\Network\Email\DebugTransport', $result);
+        $this->assertInstanceOf('Cake\Mailer\Transport\DebugTransport', $result);
 
-        $instance = $this->getMock('Cake\Network\Email\DebugTransport');
+        $instance = $this->getMock('Cake\Mailer\Transport\DebugTransport');
         $this->CakeEmail->transport($instance);
         $this->assertSame($instance, $this->CakeEmail->transport());
     }
@@ -979,6 +979,20 @@ class EmailTest extends TestCase
     }
 
     /**
+     * test that default profile is used by constructor if available.
+     *
+     * @return void
+     */
+    public function testDefaultProfile()
+    {
+        $config = ['test' => 'ok', 'test2' => true];
+        Configure::write('Email.default', $config);
+        $Email = new Email();
+        $this->assertSame($Email->profile(), $config);
+        Configure::delete('Email');
+    }
+
+    /**
      * Test that using an invalid profile fails.
      *
      * @expectedException \InvalidArgumentException
@@ -1021,7 +1035,7 @@ class EmailTest extends TestCase
         $this->assertEquals($config['theme'], $result);
 
         $result = $this->CakeEmail->transport();
-        $this->assertInstanceOf('Cake\Network\Email\DebugTransport', $result);
+        $this->assertInstanceOf('Cake\Mailer\Transport\DebugTransport', $result);
 
         $result = $this->CakeEmail->helpers();
         $this->assertEquals($config['helpers'], $result);
@@ -1679,7 +1693,7 @@ class EmailTest extends TestCase
         $this->CakeEmail->viewVars(['time' => $timestamp]);
 
         $result = $this->CakeEmail->helpers(['Time']);
-        $this->assertInstanceOf('Cake\Network\Email\Email', $result);
+        $this->assertInstanceOf('Cake\Mailer\Email', $result);
 
         $result = $this->CakeEmail->send();
         $dateTime = new \DateTime;
@@ -1856,7 +1870,7 @@ class EmailTest extends TestCase
     public function testDeliver()
     {
         $instance = Email::deliver('all@cakephp.org', 'About', 'Everything ok', ['from' => 'root@cakephp.org'], false);
-        $this->assertInstanceOf('Cake\Network\Email\Email', $instance);
+        $this->assertInstanceOf('Cake\Mailer\Email', $instance);
         $this->assertSame($instance->to(), ['all@cakephp.org' => 'all@cakephp.org']);
         $this->assertSame($instance->subject(), 'About');
         $this->assertSame($instance->from(), ['root@cakephp.org' => 'root@cakephp.org']);
@@ -1875,7 +1889,7 @@ class EmailTest extends TestCase
         $this->assertSame($instance->to(), ['debug@cakephp.org' => 'debug@cakephp.org']);
         $this->assertSame($instance->subject(), 'Update ok');
         $this->assertSame($instance->template(), ['template' => 'custom', 'layout' => 'custom_layout']);
-        $this->assertSame($instance->viewVars(), ['value' => 123, 'name' => 'CakePHP']);
+        $this->assertEquals($instance->viewVars(), ['value' => 123, 'name' => 'CakePHP']);
         $this->assertSame($instance->cc(), ['cake@cakephp.org' => 'Myself']);
 
         $configs = ['from' => 'root@cakephp.org', 'message' => 'Message from configs', 'transport' => 'debug'];
@@ -1938,7 +1952,7 @@ class EmailTest extends TestCase
 
         $this->CakeEmail->reset();
         $this->assertSame([], $this->CakeEmail->to());
-        $this->assertNull($this->CakeEmail->theme());
+        $this->assertFalse($this->CakeEmail->theme());
         $this->assertSame(Email::EMAIL_PATTERN, $this->CakeEmail->emailPattern());
     }
 
@@ -2065,7 +2079,7 @@ class EmailTest extends TestCase
         $this->assertEquals($configs['subject'], $result);
 
         $result = $this->CakeEmail->transport();
-        $this->assertInstanceOf('Cake\Network\Email\DebugTransport', $result);
+        $this->assertInstanceOf('Cake\Mailer\Transport\DebugTransport', $result);
 
         $result = $this->CakeEmail->send('This is the message');
 
@@ -2121,7 +2135,7 @@ class EmailTest extends TestCase
         $this->assertEquals($configs['subject'], $result);
 
         $result = $this->CakeEmail->transport();
-        $this->assertInstanceOf('Cake\Network\Email\DebugTransport', $result);
+        $this->assertInstanceOf('Cake\Mailer\Transport\DebugTransport', $result);
 
         $result = $this->CakeEmail->send('This is the message');
 
@@ -2140,7 +2154,7 @@ class EmailTest extends TestCase
         $this->assertEquals('Cake\View\View', $result);
 
         $result = $this->CakeEmail->viewRender('Cake\View\ThemeView');
-        $this->assertInstanceOf('Cake\Network\Email\Email', $result);
+        $this->assertInstanceOf('Cake\Mailer\Email', $result);
 
         $result = $this->CakeEmail->viewRender();
         $this->assertEquals('Cake\View\ThemeView', $result);
@@ -2157,7 +2171,7 @@ class EmailTest extends TestCase
         $this->assertEquals('text', $result);
 
         $result = $this->CakeEmail->emailFormat('html');
-        $this->assertInstanceOf('Cake\Network\Email\Email', $result);
+        $this->assertInstanceOf('Cake\Mailer\Email', $result);
 
         $result = $this->CakeEmail->emailFormat();
         $this->assertEquals('html', $result);
@@ -2596,7 +2610,7 @@ HTML;
      */
     public function testMockTransport()
     {
-        $mock = $this->getMock('\Cake\Network\Email\AbstractTransport');
+        $mock = $this->getMock('\Cake\Mailer\AbstractTransport');
         $config = ['from' => 'tester@example.org', 'transport' => 'default'];
 
         Email::config('default', $config);
@@ -2648,7 +2662,6 @@ XML;
             ->cc(['mark@cakephp.org', 'juan@cakephp.org' => 'Juan Basso'])
             ->bcc('phpnut@cakephp.org')
             ->subject('Test Serialize')
-            ->template('default', 'test')
             ->messageId('<uuid@server.com>')
             ->domain('foo.bar')
             ->viewVars([
@@ -2664,9 +2677,13 @@ XML;
                 ]
             ]);
 
+        $this->CakeEmail->viewBuilder()
+            ->template('default')
+            ->layout('test');
+
         $result = json_decode(json_encode($this->CakeEmail), true);
-        $this->assertContains('test', $result['_viewVars']['exception']);
-        unset($result['_viewVars']['exception']);
+        $this->assertContains('test', $result['viewVars']['exception']);
+        unset($result['viewVars']['exception']);
 
         $encode = function ($path) {
             return chunk_split(base64_encode(file_get_contents($path)), 76, "\r\n");
@@ -2679,16 +2696,18 @@ XML;
             '_cc' => ['mark@cakephp.org' => 'mark@cakephp.org', 'juan@cakephp.org' => 'Juan Basso'],
             '_bcc' => ['phpnut@cakephp.org' => 'phpnut@cakephp.org'],
             '_subject' => 'Test Serialize',
-            '_template' => 'default',
-            '_layout' => 'test',
-            '_viewRender' => 'Cake\View\View',
-            '_helpers' => ['Html'],
             '_emailFormat' => 'text',
             '_messageId' => '<uuid@server.com>',
             '_domain' => 'foo.bar',
             'charset' => 'utf-8',
             'headerCharset' => 'utf-8',
-            '_viewVars' => [
+            'viewConfig' => [
+                '_template' => 'default',
+                '_layout' => 'test',
+                '_helpers' => ['Html'],
+                '_className' => 'Cake\View\View',
+            ],
+            'viewVars' => [
                 'users' => [
                     'id' => 1,
                     'username' => 'mariano'
@@ -2713,8 +2732,8 @@ XML;
         $this->assertEquals($expected, $result);
 
         $result = json_decode(json_encode(unserialize(serialize($this->CakeEmail))), true);
-        $this->assertContains('test', $result['_viewVars']['exception']);
-        unset($result['_viewVars']['exception']);
+        $this->assertContains('test', $result['viewVars']['exception']);
+        unset($result['viewVars']['exception']);
         $this->assertEquals($expected, $result);
     }
 

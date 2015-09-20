@@ -128,6 +128,13 @@ class ConsoleOptionParser
     protected $_command = '';
 
     /**
+     * Array of args (argv).
+     *
+     * @var array
+     */
+    protected $_tokens = [];
+
+    /**
      * Construct an OptionParser so you can define its behavior
      *
      * @param string|null $command The command name this parser is for. The command name is used for generating help.

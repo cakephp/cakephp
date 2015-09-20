@@ -879,7 +879,7 @@ class Router
     {
         $builder = new RouteBuilder(static::$_collection, '/', [], [
             'routeClass' => static::defaultRouteClass(),
-            'extensions' => static::$_defaultExtensions
+            'extensions' => static::$_defaultExtensions,
         ]);
         $builder->scope($path, $params, $callback);
     }
@@ -944,6 +944,9 @@ class Router
         if (empty($options['path'])) {
             $options['path'] = '/' . Inflector::underscore($name);
         }
+        if (isset($options['_namePrefix'])) {
+            $params['_namePrefix'] = $options['_namePrefix'];
+        }
         static::scope($options['path'], $params, $callback);
     }
 
@@ -954,6 +957,9 @@ class Router
      */
     public static function routes()
     {
+        if (!static::$initialized) {
+            static::_loadRoutes();
+        }
         return static::$_collection->routes();
     }
 

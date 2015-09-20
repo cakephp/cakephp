@@ -19,6 +19,7 @@ use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
 use Cake\Network\Request;
 use Cake\Network\Response;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingCellViewException;
 use Cake\View\Exception\MissingTemplateException;
@@ -31,6 +32,7 @@ abstract class Cell
 {
 
     use EventDispatcherTrait;
+    use LocatorAwareTrait;
     use ModelAwareTrait;
     use ViewVarsTrait;
 
@@ -39,6 +41,7 @@ abstract class Cell
      * Cell::__toString() is called.
      *
      * @var \Cake\View\View
+     * @deprecated 3.1.0 Use createView() instead.
      */
     public $View;
 
@@ -74,20 +77,6 @@ abstract class Cell
     public $response;
 
     /**
-     * The name of the View class this cell sends output to.
-     *
-     * @var string
-     */
-    public $viewClass = null;
-
-    /**
-     * The theme name that will be used to render.
-     *
-     * @var string
-     */
-    public $theme;
-
-    /**
      * The helpers this cell uses.
      *
      * This property is copied automatically when using the CellTrait
@@ -103,7 +92,7 @@ abstract class Cell
      * @see \Cake\View\View
      */
     protected $_validViewOptions = [
-        'viewVars', 'helpers', 'viewPath', 'plugin', 'theme'
+        'viewPath'
     ];
 
     /**
@@ -139,7 +128,7 @@ abstract class Cell
         $this->eventManager($eventManager);
         $this->request = $request;
         $this->response = $response;
-        $this->modelFactory('Table', ['Cake\ORM\TableRegistry', 'get']);
+        $this->modelFactory('Table', [$this->tableLocator(), 'get']);
 
         foreach ($this->_validCellOptions as $var) {
             if (isset($cellOptions[$var])) {
@@ -170,20 +159,20 @@ abstract class Cell
         if ($template === null) {
             $template = $this->template;
         }
-        $this->View = null;
-        $this->getView();
-        $this->View->layout = false;
+        $builder = $this->viewBuilder();
+        $builder->layout(false);
+        $builder->template($template);
 
         $cache = [];
         if ($this->_cache) {
             $cache = $this->_cacheConfig($template);
         }
+        $this->View = $this->createView();
 
         $render = function () use ($template) {
-            $className = explode('\\', get_class($this));
-            $className = array_pop($className);
-            $name = substr($className, 0, strrpos($className, 'Cell'));
-            $this->View->subDir = 'Cell' . DS . $name;
+            $className = substr(strrchr(get_class($this), "\\"), 1);
+            $name = substr($className, 0, -4);
+            $this->View->templatePath('Cell' . DS . $name);
 
             try {
                 return $this->View->render($template);

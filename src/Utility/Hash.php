@@ -13,6 +13,7 @@
  */
 namespace Cake\Utility;
 
+use ArrayAccess;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -35,7 +36,8 @@ class Hash
      * Does not support the full dot notation feature set,
      * but is faster for simple read operations.
      *
-     * @param array $data Array of data to operate on.
+     * @param array|\ArrayAccess $data Array of data or object implementing
+     *   \ArrayAccess interface to operate on.
      * @param string|array $path The path being searched for. Either a dot
      *   separated string, or an array of path segments.
      * @param mixed $default The return value when the path does not exist
@@ -43,8 +45,14 @@ class Hash
      * @return mixed The value fetched from the array, or null.
      * @link http://book.cakephp.org/3.0/en/core-libraries/hash.html#Hash::get
      */
-    public static function get(array $data, $path, $default = null)
+    public static function get($data, $path, $default = null)
     {
+        if (!(is_array($data) || $data instanceof ArrayAccess)) {
+            throw new InvalidArgumentException(
+                'Invalid data type, must be an array or \ArrayAccess instance.'
+            );
+        }
+
         if (empty($data) || $path === null || $path === '') {
             return $default;
         }
@@ -71,7 +79,7 @@ class Hash
                 return isset($data[$parts[0]][$parts[1]][$parts[2]]) ? $data[$parts[0]][$parts[1]][$parts[2]] : $default;
             default:
                 foreach ($parts as $key) {
-                    if (is_array($data) && isset($data[$key])) {
+                    if ((is_array($data) || $data instanceof ArrayAccess) && isset($data[$key])) {
                         $data = $data[$key];
                     } else {
                         return $default;
@@ -615,10 +623,7 @@ class Hash
      */
     protected static function _filter($var)
     {
-        if ($var === 0 || $var === '0' || !empty($var)) {
-            return true;
-        }
-        return false;
+        return $var === 0 || $var === '0' || !empty($var);
     }
 
     /**
@@ -893,10 +898,19 @@ class Hash
      * - `natural` Compare items as strings using "natural ordering" in a human friendly way.
      *   Will sort foo10 below foo2 as an example.
      *
+     * To do case insensitive sorting, pass the type as an array as follows:
+     *
+     * ```
+     * Hash::sort($data, 'some.attribute', 'asc', ['type' => 'regular', 'ignoreCase' => true]);
+     * ```
+     *
+     * When using the array form, `type` defaults to 'regular'. The `ignoreCase` option
+     * defaults to `false`.
+     *
      * @param array $data An array of data to sort
      * @param string $path A Set-compatible path to the array value
      * @param string $dir See directions above. Defaults to 'asc'.
-     * @param string $type See direction types above. Defaults to 'regular'.
+     * @param array|string $type See direction types above. Defaults to 'regular'.
      * @return array Sorted array of data
      * @link http://book.cakephp.org/3.0/en/core-libraries/hash.html#Hash::sort
      */
@@ -924,7 +938,16 @@ class Hash
         $values = static::extract($result, '{n}.value');
 
         $dir = strtolower($dir);
+        $ignoreCase = false;
+
+        // $type can be overloaded for case insensitive sort
+        if (is_array($type)) {
+            $type += ['ignoreCase' => false, 'type' => 'regular'];
+            $ignoreCase = $type['ignoreCase'];
+            $type = $type['type'];
+        }
         $type = strtolower($type);
+
         if ($dir === 'asc') {
             $dir = SORT_ASC;
         } else {
@@ -938,6 +961,9 @@ class Hash
             $type = SORT_NATURAL;
         } else {
             $type = SORT_REGULAR;
+        }
+        if ($ignoreCase) {
+            $values = array_map('mb_strtolower', $values);
         }
         array_multisort($values, $dir, $type, $keys, $dir, $type);
         $sorted = [];

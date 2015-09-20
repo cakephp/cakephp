@@ -123,6 +123,30 @@ class Query extends DatabaseQuery implements JsonSerializable
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * If you pass an instance of a `Cake\ORM\Table` or `Cake\ORM\Association` class,
+     * all the fields in the schema of the table or the association will be added to
+     * the select clause.
+     *
+     * @param array|ExpressionInterface|string|\Cake\ORM\Table|\Cake\ORM\Association $fields fields
+     * to be added to the list.
+     * @param bool $overwrite whether to reset fields with passed list or not
+     */
+    public function select($fields = [], $overwrite = false)
+    {
+        if ($fields instanceof Association) {
+            $fields = $fields->target();
+        }
+
+        if ($fields instanceof Table) {
+            $fields = $this->aliasFields($fields->schema()->columns(), $fields->alias());
+        }
+
+        return parent::select($fields, $overwrite);
+    }
+
+    /**
      * Hints this object to associate the correct types when casting conditions
      * for the database. This is done by extracting the field types from the schema
      * associated to the passed table object. This prevents the user from repeating
@@ -336,6 +360,185 @@ class Query extends DatabaseQuery implements JsonSerializable
     }
 
     /**
+     * Creates a LEFT JOIN with the passed association table while preserving
+     * the foreign key matching and the custom conditions that were originally set
+     * for it.
+     *
+     * This function will add entries in the `contain` graph.
+     *
+     * ### Example:
+     *
+     * ```
+     *  // Get the count of articles per user
+     *  $usersQuery
+     *      ->select(['total_articles' => $query->func()->count('Articles.id')])
+     *      ->leftJoinWith('Articles')
+     *      ->group(['Users.id'])
+     *      ->autoFields(true);
+     * ```
+     *
+     * You can also customize the conditions passed to the LEFT JOIN:
+     *
+     * ```
+     *  // Get the count of articles per user with at least 5 votes
+     *  $usersQuery
+     *      ->select(['total_articles' => $query->func()->count('Articles.id')])
+     *      ->leftJoinWith('Articles', function ($q) {
+     *          return $q->where(['Articles.votes >=' => 5]);
+     *      })
+     *      ->group(['Users.id'])
+     *      ->autoFields(true);
+     * ```
+     *
+     * This will create the following SQL:
+     *
+     * ```
+     *  SELECT COUNT(Articles.id) AS total_articles, Users.*
+     *  FROM users Users
+     *  LEFT JOIN articles Articles ON Articles.user_id = Users.id AND Articles.votes >= 5
+     *  GROUP BY USers.id
+     * ```
+     *
+     * It is possible to left join deep associations by using dot notation
+     *
+     * ### Example:
+     *
+     * ```
+     *  // Total comments in articles by 'markstory'
+     *  $query
+     *   ->select(['total_comments' => $query->func()->count('Comments.id')])
+     *   ->leftJoinWith('Comments.Users', function ($q) {
+     *      return $q->where(['username' => 'markstory']);
+     *  )
+     *  ->group(['Users.id']);
+     * ```
+     *
+     * Please note that the query passed to the closure will only accept calling
+     * `select`, `where`, `andWhere` and `orWhere` on it. If you wish to
+     * add more complex clauses you can do it directly in the main query.
+     *
+     * @param string $assoc The association to join with
+     * @param callable $builder a function that will receive a pre-made query object
+     * that can be used to add custom conditions or selecting some fields
+     * @return $this
+     */
+    public function leftJoinWith($assoc, callable $builder = null)
+    {
+        $this->eagerLoader()->matching($assoc, $builder, [
+            'joinType' => 'LEFT',
+            'fields' => false
+        ]);
+        $this->_dirty();
+        return $this;
+    }
+
+    /**
+     * Creates an INNER JOIN with the passed association table while preserving
+     * the foreign key matching and the custom conditions that were originally set
+     * for it.
+     *
+     * This function will add entries in the `contain` graph.
+     *
+     * ### Example:
+     *
+     * ```
+     *  // Bring only articles that were tagged with 'cake'
+     *  $query->innerJoinWith('Tags', function ($q) {
+     *      return $q->where(['name' => 'cake']);
+     *  );
+     * ```
+     *
+     * This will create the following SQL:
+     *
+     * ```
+     *  SELECT Articles.*
+     *  FROM articles Articles
+     *  INNER JOIN tags Tags ON Tags.name = 'cake'
+     *  INNER JOIN articles_tags ArticlesTags ON ArticlesTags.tag_id = Tags.id
+     *    AND ArticlesTags.articles_id = Articles.id
+     * ```
+     *
+     * This function works the same as `matching()` with the difference that it
+     * will select no fields from the association.
+     *
+     * @param string $assoc The association to join with
+     * @param callable $builder a function that will receive a pre-made query object
+     * that can be used to add custom conditions or selecting some fields
+     * @return $this
+     * @see \Cake\ORM\Query::matching()
+     */
+    public function innerJoinWith($assoc, callable $builder = null)
+    {
+        $this->eagerLoader()->matching($assoc, $builder, [
+            'joinType' => 'INNER',
+            'fields' => false
+        ]);
+        $this->_dirty();
+        return $this;
+    }
+
+    /**
+     * Adds filtering conditions to this query to only bring rows that have no match
+     * to another from an associated table, based on conditions in the associated table.
+     *
+     * This function will add entries in the `contain` graph.
+     *
+     * ### Example:
+     *
+     * ```
+     *  // Bring only articles that were not tagged with 'cake'
+     *  $query->notMatching('Tags', function ($q) {
+     *      return $q->where(['name' => 'cake']);
+     *  );
+     * ```
+     *
+     * It is possible to filter by deep associations by using dot notation:
+     *
+     * ### Example:
+     *
+     * ```
+     *  // Bring only articles that weren't commented by 'markstory'
+     *  $query->notMatching('Comments.Users', function ($q) {
+     *      return $q->where(['username' => 'markstory']);
+     *  );
+     * ```
+     *
+     * As this function will create a `LEFT JOIN`, you might want to consider
+     * calling `distinct` on this query as you might get duplicate rows if
+     * your conditions don't filter them already. This might be the case, for example,
+     * of the same article having multiple comments.
+     *
+     * ### Example:
+     *
+     * ```
+     *  // Bring unique articles that were commented by 'markstory'
+     *  $query->distinct(['Articles.id'])
+     *  ->notMatching('Comments.Users', function ($q) {
+     *      return $q->where(['username' => 'markstory']);
+     *  );
+     * ```
+     *
+     * Please note that the query passed to the closure will only accept calling
+     * `select`, `where`, `andWhere` and `orWhere` on it. If you wish to
+     * add more complex clauses you can do it directly in the main query.
+     *
+     * @param string $assoc The association to filter by
+     * @param callable $builder a function that will receive a pre-made query object
+     * that can be used to add custom conditions or selecting some fields
+     * @return $this
+     */
+    public function notMatching($assoc, callable $builder = null)
+    {
+        $this->eagerLoader()->matching($assoc, $builder, [
+            'joinType' => 'LEFT',
+            'fields' => false,
+            'negateMatch' => true
+        ]);
+        $this->_dirty();
+        return $this;
+    }
+
+    /**
      * Returns a key => value array representing a single aliased field
      * that can be passed directly to the select() method.
      * The key will contain the alias and the value the actual field name.
@@ -516,7 +719,8 @@ class Query extends DatabaseQuery implements JsonSerializable
         $complex = (
             $query->clause('distinct') ||
             count($query->clause('group')) ||
-            count($query->clause('union'))
+            count($query->clause('union')) ||
+            $query->clause('having')
         );
         if (!$complex) {
             // Expression fields could have bound parameters.

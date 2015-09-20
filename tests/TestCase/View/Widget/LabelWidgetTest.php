@@ -103,4 +103,29 @@ class LabelWidgetTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
     }
+
+    /**
+     * Ensure templateVars option is hooked up.
+     *
+     * @return void
+     */
+    public function testRenderTemplateVars()
+    {
+        $this->templates->add([
+            'label' => '<label custom="{{custom}}" {{attrs}}>{{text}}</label>',
+        ]);
+
+        $label = new LabelWidget($this->templates);
+        $data = [
+            'templateVars' => ['custom' => 'value'],
+            'text' => 'Label Text',
+        ];
+        $result = $label->render($data, $this->context);
+        $expected = [
+            'label' => ['custom' => 'value'],
+            'Label Text',
+            '/label'
+        ];
+        $this->assertHtml($expected, $result);
+    }
 }

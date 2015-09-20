@@ -128,4 +128,32 @@ class ButtonWidgetTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
     }
+
+    /**
+     * Ensure templateVars option is hooked up.
+     *
+     * @return void
+     */
+    public function testRenderTemplateVars()
+    {
+        $this->templates->add([
+            'button' => '<button {{attrs}} custom="{{custom}}">{{text}}</button>',
+        ]);
+
+        $button = new ButtonWidget($this->templates);
+        $data = [
+            'templateVars' => ['custom' => 'value'],
+            'text' => 'Go',
+        ];
+        $result = $button->render($data, $this->context);
+        $expected = [
+            'button' => [
+                'type' => 'submit',
+                'custom' => 'value'
+            ],
+            'Go',
+            '/button'
+        ];
+        $this->assertHtml($expected, $result);
+    }
 }

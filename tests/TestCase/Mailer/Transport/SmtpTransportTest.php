@@ -12,10 +12,10 @@
  * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Network\Email;
+namespace Cake\Test\TestCase\Mailer\Transport;
 
-use Cake\Network\Email\Email;
-use Cake\Network\Email\SmtpTransport;
+use Cake\Mailer\Email;
+use Cake\Mailer\Transport\SmtpTransport;
 use Cake\Network\Socket;
 use Cake\TestSuite\TestCase;
 
@@ -379,7 +379,7 @@ class SmtpTransportTest extends TestCase
      */
     public function testSendData()
     {
-        $email = $this->getMock('Cake\Network\Email\Email', ['message']);
+        $email = $this->getMock('Cake\Mailer\Email', ['message']);
         $email->from('noreply@cakephp.org', 'CakePHP Test');
         $email->returnPath('pleasereply@cakephp.org', 'CakePHP Return');
         $email->to('cake@cakephp.org', 'CakePHP');
@@ -618,7 +618,7 @@ class SmtpTransportTest extends TestCase
     {
         $this->SmtpTransport->config(['keepAlive' => true]);
 
-        $email = $this->getMock('Cake\Network\Email\Email', ['message']);
+        $email = $this->getMock('Cake\Mailer\Email', ['message']);
         $email->from('noreply@cakephp.org', 'CakePHP Test');
         $email->to('cake@cakephp.org', 'CakePHP');
         $email->expects($this->exactly(2))->method('message')->will($this->returnValue(['First Line']));
@@ -680,7 +680,7 @@ class SmtpTransportTest extends TestCase
      */
     public function testSendDefaults()
     {
-        $email = $this->getMock('Cake\Network\Email\Email', ['message']);
+        $email = $this->getMock('Cake\Mailer\Email', ['message']);
         $email->from('noreply@cakephp.org', 'CakePHP Test');
         $email->to('cake@cakephp.org', 'CakePHP');
         $email->expects($this->once())->method('message')->will($this->returnValue(['First Line']));

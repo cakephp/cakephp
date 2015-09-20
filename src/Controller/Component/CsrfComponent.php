@@ -16,7 +16,8 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Event\Event;
-use Cake\Network\Exception\ForbiddenException;
+use Cake\I18n\Time;
+use Cake\Network\Exception\InvalidCsrfTokenException;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Security;
@@ -30,7 +31,7 @@ use Cake\Utility\Text;
  * PUT, or DELETE request.
  *
  * If the request data is missing or does not match the cookie data,
- * a ForbiddenException will be raised.
+ * an InvalidCsrfTokenException will be raised.
  *
  * This component integrates with the FormHelper automatically and when
  * used together your forms will have CSRF tokens automatically added
@@ -120,12 +121,14 @@ class CsrfComponent extends Component
      */
     protected function _setCookie(Request $request, Response $response)
     {
+        $expiry = new Time($this->_config['expiry']);
         $value = Security::hash(Text::uuid(), 'sha1', true);
+
         $request->params['_csrfToken'] = $value;
         $response->cookie([
             'name' => $this->_config['cookieName'],
             'value' => $value,
-            'expire' => $this->_config['expiry'],
+            'expire' => $expiry->format('U'),
             'path' => $request->webroot,
             'secure' => $this->_config['secure'],
         ]);
@@ -135,7 +138,7 @@ class CsrfComponent extends Component
      * Validate the request data against the cookie token.
      *
      * @param \Cake\Network\Request $request The request to validate against.
-     * @throws \Cake\Network\Exception\ForbiddenException when the CSRF token is invalid or missing.
+     * @throws \Cake\Network\Exception\InvalidCsrfTokenException when the CSRF token is invalid or missing.
      * @return void
      */
     protected function _validateToken(Request $request)
@@ -145,11 +148,11 @@ class CsrfComponent extends Component
         $header = $request->header('X-CSRF-Token');
 
         if (empty($cookie)) {
-            throw new ForbiddenException(__d('cake', 'Invalid CSRF token.'));
+            throw new InvalidCsrfTokenException(__d('cake', 'Missing CSRF token cookie'));
         }
 
         if ($post !== $cookie && $header !== $cookie) {
-            throw new ForbiddenException(__d('cake', 'Invalid CSRF token.'));
+            throw new InvalidCsrfTokenException(__d('cake', 'CSRF token mismatch.'));
         }
     }
 }

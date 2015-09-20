@@ -183,7 +183,7 @@ class AuthComponentTest extends TestCase
         $this->Auth->startup($event);
         $this->assertEquals('/auth_test/add', $this->Auth->session->read('Auth.redirect'));
 
-        $this->Auth->session->write('Auth.User', ['username' => 'admad']);
+        $this->Auth->storage()->write(['username' => 'admad']);
         $this->Auth->startup($event, $this->Controller);
         $this->assertNull($this->Auth->session->read('Auth.redirect'));
     }
@@ -199,14 +199,14 @@ class AuthComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $Users = TableRegistry::get('Users');
         $user = $Users->find('all')->hydrate(false)->first();
-        $this->Auth->session->write('Auth.User', $user);
+        $this->Controller->Auth->storage()->write($user);
         $this->Controller->Auth->config('userModel', 'Users');
         $this->Controller->Auth->config('authorize', false);
         $this->Controller->request->addParams(Router::parse('auth_test/add'));
         $result = $this->Controller->Auth->startup($event);
         $this->assertNull($result);
 
-        $this->Auth->session->delete('Auth');
+        $this->Controller->Auth->storage()->delete();
         $result = $this->Controller->Auth->startup($event);
         $this->assertTrue($event->isStopped());
         $this->assertInstanceOf('Cake\Network\Response', $result);
@@ -579,8 +579,7 @@ class AuthComponentTest extends TestCase
 
         $this->Auth->session->write(
             'Auth',
-            [
-            'AuthUsers' => ['id' => '1', 'username' => 'nate']]
+            ['AuthUsers' => ['id' => '1', 'username' => 'nate']]
         );
         $this->Controller->testUrl = null;
         $this->Auth->request->addParams(Router::parse($url));
@@ -596,21 +595,7 @@ class AuthComponentTest extends TestCase
         $expected = Router::normalize('/auth_test/login');
         $this->assertEquals($expected, $this->Controller->testUrl);
 
-        $this->Auth->session->delete('Auth');
-        $this->Auth->session->write('Auth', [
-            'AuthUsers' => ['id' => '1', 'username' => 'nate']
-        ]);
-        $this->Auth->request->params['action'] = 'login';
-        $this->Auth->request->url = 'auth_test/login';
-        $this->Controller->request->env('HTTP_REFERER', Router::url('/admin', true));
-        $this->Auth->config('loginAction', 'auth_test/login');
-        $this->Auth->config('loginRedirect', false);
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->Auth->startup($event);
-        $expected = Router::normalize('/admin');
-        $this->assertEquals($expected, $this->Auth->redirectUrl());
-
-        // Passed Arguments
+        // Auth.redirect gets set when accessing a protected action without being authenticated
         $this->Auth->session->delete('Auth');
         $url = '/posts/view/1';
         $this->Auth->request->addParams(Router::parse($url));
@@ -621,7 +606,7 @@ class AuthComponentTest extends TestCase
         $expected = Router::normalize('posts/view/1');
         $this->assertEquals($expected, $this->Auth->session->read('Auth.redirect'));
 
-        // QueryString parameters
+        // QueryString parameters are preserved when setting Auth.redirect
         $this->Auth->session->delete('Auth');
         $url = '/posts/view/29';
         $this->Auth->request->addParams(Router::parse($url));
@@ -676,19 +661,6 @@ class AuthComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->Auth->startup($event);
         $expected = Router::normalize('/posts/view/1');
-        $this->assertEquals($expected, $this->Auth->session->read('Auth.redirect'));
-
-        // External Direct Login Link
-        $this->Auth->session->delete('Auth');
-        $url = '/auth_test/login';
-        $this->Auth->request = $this->Controller->request = new Request($url);
-        $this->Auth->request->env('HTTP_REFERER', 'http://webmail.example.com/view/message');
-        $this->Auth->request->addParams(Router::parse($url));
-        $this->Auth->request->url = Router::normalize($url);
-        $this->Auth->config('loginAction', ['controller' => 'AuthTest', 'action' => 'login']);
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->Auth->startup($event);
-        $expected = Router::normalize('/');
         $this->assertEquals($expected, $this->Auth->session->read('Auth.redirect'));
 
         $this->Auth->session->delete('Auth');
@@ -1105,6 +1077,7 @@ class AuthComponentTest extends TestCase
         $this->Auth->config('authenticate', [
             'Basic' => ['userModel' => 'AuthUsers']
         ]);
+        $this->Auth->config('storage', 'Memory');
         $this->Auth->startup($event);
 
         $result = $this->Auth->user();
@@ -1112,6 +1085,7 @@ class AuthComponentTest extends TestCase
 
         $result = $this->Auth->user('username');
         $this->assertEquals('mariano', $result);
+        $this->assertFalse(isset($_SESSION));
     }
 
     /**
@@ -1168,12 +1142,20 @@ class AuthComponentTest extends TestCase
             'Test' => ['className' => 'TestApp\Auth\TestAuthenticate']
         ]);
 
-        $this->Auth->identify();
+        $user = $this->Auth->identify();
         $this->Auth->logout();
         $authObject = $this->Auth->authenticationProvider();
 
         $expected = ['afterIdentify', 'logout'];
         $this->assertEquals($expected, $authObject->callStack);
+        $expected = ['id' => 1, 'username' => 'admad'];
+        $this->assertEquals($expected, $user);
+
+        // Callback for Auth.afterIdentify returns a value
+        $authObject->modifiedUser = true;
+        $user = $this->Auth->identify();
+        $expected = ['id' => 1, 'username' => 'admad', 'extra' => 'foo'];
+        $this->assertEquals($expected, $user);
     }
 
     /**
@@ -1183,19 +1165,18 @@ class AuthComponentTest extends TestCase
      */
     public function testSetUser()
     {
-        $this->Auth->session = $this->getMock(
-            'Cake\Network\Session',
-            ['renew', 'write']
+        $storage = $this->getMock(
+            'Cake\Auth\Storage\SessionStorage',
+            ['write'],
+            [$this->Auth->request, $this->Auth->response]
         );
+        $this->Auth->storage($storage);
 
         $user = ['username' => 'mark', 'role' => 'admin'];
 
-        $this->Auth->session->expects($this->once())
-            ->method('renew');
-
-        $this->Auth->session->expects($this->once())
+        $storage->expects($this->once())
             ->method('write')
-            ->with($this->Auth->sessionKey, $user);
+            ->with($user);
 
         $this->Auth->setUser($user);
     }
@@ -1423,7 +1404,6 @@ class AuthComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $_SESSION = [];
 
-        $this->sessionKey = false;
         $this->Auth->config('authenticate', ['Basic']);
         $this->Controller->request['action'] = 'add';
 
@@ -1448,5 +1428,44 @@ class AuthComponentTest extends TestCase
         $this->assertInstanceOf('Cake\Network\Response', $this->Auth->startup($event));
 
         $this->assertEquals('/users/login', $this->Controller->testUrl);
+    }
+
+    /**
+     * test for BC getting/setting AuthComponent::$sessionKey gets/sets `key`
+     * config of session storage.
+     *
+     * @return void
+     */
+    public function testSessionKeyBC()
+    {
+        $this->assertEquals('Auth.User', $this->Auth->sessionKey);
+
+        $this->Auth->sessionKey = 'Auth.Member';
+        $this->assertEquals('Auth.Member', $this->Auth->sessionKey);
+        $this->assertEquals('Auth.Member', $this->Auth->storage()->config('key'));
+
+        $this->Auth->sessionKey = false;
+        $this->assertInstanceOf('Cake\Auth\Storage\MemoryStorage', $this->Auth->storage());
+    }
+
+    /**
+     * Test that setting config 'earlyAuth' to true make AuthComponent do the initial
+     * checks in beforeFilter() instead of startup().
+     *
+     * @return void
+     */
+    public function testCheckAuthInConfig()
+    {
+        $this->Controller->components()->set('Auth', $this->Auth);
+        $this->Auth->earlyAuthTest = true;
+
+        $this->Auth->authCheckCalledFrom = null;
+        $this->Controller->startupProcess();
+        $this->assertEquals('Controller.startup', $this->Auth->authCheckCalledFrom);
+
+        $this->Auth->authCheckCalledFrom = null;
+        $this->Auth->config('checkAuthIn', 'Controller.initialize');
+        $this->Controller->startupProcess();
+        $this->assertEquals('Controller.initialize', $this->Auth->authCheckCalledFrom);
     }
 }
