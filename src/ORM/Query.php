@@ -287,7 +287,7 @@ class Query extends DatabaseQuery implements JsonSerializable
      */
     public function contain($associations = null, $override = false)
     {
-        if (empty($associations) && $override) {
+        if ($override) {
             $this->_eagerLoader = null;
         }
 
