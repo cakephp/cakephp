@@ -16,8 +16,6 @@ namespace Cake\Network\Http;
 use Cake\Core\App;
 use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Network\Http\CookieCollection;
-use Cake\Network\Http\Request;
 use Cake\Utility\Hash;
 
 /**

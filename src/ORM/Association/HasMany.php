@@ -17,8 +17,6 @@ namespace Cake\ORM\Association;
 
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
-use Cake\ORM\Association\DependentDeleteTrait;
-use Cake\ORM\Association\ExternalAssociationTrait;
 use Cake\ORM\Table;
 use InvalidArgumentException;
 use RuntimeException;

@@ -16,7 +16,6 @@ namespace Cake\Collection;
 
 use AppendIterator;
 use ArrayIterator;
-use Cake\Collection\Collection;
 use Cake\Collection\Iterator\BufferedIterator;
 use Cake\Collection\Iterator\ExtractIterator;
 use Cake\Collection\Iterator\FilterIterator;
@@ -30,7 +29,6 @@ use Cake\Collection\Iterator\TreeIterator;
 use Cake\Collection\Iterator\UnfoldIterator;
 use Cake\Collection\Iterator\ZipIterator;
 use Countable;
-use Iterator;
 use LimitIterator;
 use RecursiveIteratorIterator;
 

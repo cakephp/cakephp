@@ -16,7 +16,6 @@ namespace Cake\View\Widget;
 
 use Cake\View\Form\ContextInterface;
 use Cake\View\Helper\IdGeneratorTrait;
-use Cake\View\Widget\WidgetInterface;
 
 /**
  * Input widget class for generating multiple checkboxes.

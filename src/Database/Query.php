@@ -14,13 +14,11 @@
  */
 namespace Cake\Database;
 
-use Cake\Database\Exception;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\ValuesExpression;
 use Cake\Database\Statement\CallbackStatement;
-use Cake\Database\ValueBinder;
 use IteratorAggregate;
 use RuntimeException;
 

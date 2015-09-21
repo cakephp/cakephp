@@ -14,9 +14,6 @@
  */
 namespace Cake\Database;
 
-use Cake\Database\Query;
-use Cake\Database\QueryCompiler;
-use Cake\Database\ValueBinder;
 use InvalidArgumentException;
 
 /**

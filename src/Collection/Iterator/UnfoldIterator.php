@@ -14,7 +14,6 @@
  */
 namespace Cake\Collection\Iterator;
 
-use Cake\Collection\Iterator\NoChildrenIterator;
 use IteratorIterator;
 use RecursiveIterator;
 

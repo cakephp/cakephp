@@ -15,7 +15,6 @@
 namespace Cake\Database\Schema;
 
 use Cake\Database\Exception;
-use Cake\Database\Schema\Table;
 
 /**
  * Schema generation/reflection features for MySQL
@@ -348,14 +347,16 @@ class MysqlSchema extends BaseSchema
             $out .= $data['type'] === 'timestamp' ? ' NULL' : ' DEFAULT NULL';
             unset($data['default']);
         }
-        if (isset($data['default']) && $data['type'] !== 'timestamp') {
+        if (isset($data['default']) && !in_array($data['type'], ['timestamp', 'datetime'])) {
             $out .= ' DEFAULT ' . $this->_driver->schemaValue($data['default']);
+            unset($data['default']);
         }
         if (isset($data['default']) &&
-            $data['type'] === 'timestamp' &&
+            in_array($data['type'], ['timestamp', 'datetime']) &&
             strtolower($data['default']) === 'current_timestamp'
         ) {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
+            unset($data['default']);
         }
         if (isset($data['comment']) && $data['comment'] !== '') {
             $out .= ' COMMENT ' . $this->_driver->schemaValue($data['comment']);
@@ -376,6 +377,8 @@ class MysqlSchema extends BaseSchema
             );
             return sprintf('PRIMARY KEY (%s)', implode(', ', $columns));
         }
+
+        $out = '';
         if ($data['type'] === Table::CONSTRAINT_UNIQUE) {
             $out = 'UNIQUE KEY ';
         }

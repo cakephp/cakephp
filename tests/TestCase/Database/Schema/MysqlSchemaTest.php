@@ -568,6 +568,11 @@ SQL;
                 ['type' => 'timestamp', 'null' => false, 'default' => 'current_timestamp'],
                 '`created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP'
             ],
+            [
+                'created',
+                ['type' => 'datetime', 'null' => false, 'default' => 'current_timestamp'],
+                '`created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP'
+            ],
         ];
     }
 

@@ -1299,6 +1299,33 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests that it is possible to use an expression object
+     * as any of the parts of the between expression
+     *
+     * @return void
+     */
+    public function testWhereWithBetweenWithExpressionParts()
+    {
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['id'])
+            ->from('comments')
+            ->where(function ($exp, $q) {
+                $from = $q->newExpr("'2007-03-18 10:51:00'");
+                $to = $q->newExpr("'2007-03-18 10:54:00'");
+                return $exp->between('created', $from, $to);
+            })
+            ->execute();
+
+        $this->assertCount(2, $result);
+        $first = $result->fetch('assoc');
+        $this->assertEquals(4, $first['id']);
+
+        $second = $result->fetch('assoc');
+        $this->assertEquals(5, $second['id']);
+    }
+
+    /**
      * Tests nesting query expressions both using arrays and closures
      *
      * @return void

@@ -14,8 +14,6 @@
  */
 namespace Cake\Datasource;
 
-use ArrayObject;
-use BadMethodCallException;
 use InvalidArgumentException;
 
 /**

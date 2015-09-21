@@ -49,7 +49,7 @@ class Hash
     {
         if (!(is_array($data) || $data instanceof ArrayAccess)) {
             throw new InvalidArgumentException(
-                'Invalid data type, must an array or \ArrayAccess instance.'
+                'Invalid data type, must be an array or \ArrayAccess instance.'
             );
         }
 

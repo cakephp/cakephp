@@ -19,7 +19,6 @@ use Cake\Network\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\Stub\Response;
-use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
 
 /**

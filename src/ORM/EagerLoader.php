@@ -16,10 +16,6 @@ namespace Cake\ORM;
 
 use Cake\Database\Statement\BufferedStatement;
 use Cake\Database\Statement\CallbackStatement;
-use Cake\ORM\Association;
-use Cake\ORM\EagerLoadable;
-use Cake\ORM\Query;
-use Cake\ORM\Table;
 use Closure;
 use InvalidArgumentException;
 

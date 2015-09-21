@@ -123,6 +123,7 @@ class Response
         'ips' => 'application/x-ipscript',
         'ipx' => 'application/x-ipix',
         'js' => 'application/javascript',
+        'jsonapi' => 'application/vnd.api+json',
         'latex' => 'application/x-latex',
         'lha' => 'application/octet-stream',
         'lsp' => 'application/x-lisp',
@@ -880,7 +881,7 @@ class Response
             if (!$public && !$private && !$noCache) {
                 return null;
             }
-            $sharable = $public || ! ($private || $noCache);
+            $sharable = $public || !($private || $noCache);
             return $sharable;
         }
         if ($public) {

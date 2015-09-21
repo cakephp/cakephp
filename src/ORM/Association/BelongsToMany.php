@@ -792,7 +792,7 @@ class BelongsToMany extends Association
      * @param \Cake\ORM\Query $existing a query for getting existing links
      * @param array $jointEntities link entities that should be persisted
      * @param array $targetEntities entities in target table that are related to
-     * the `$jointEntitites`
+     * the `$jointEntities`
      * @return array
      */
     protected function _diffLinks($existing, $jointEntities, $targetEntities)

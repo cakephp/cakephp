@@ -15,7 +15,6 @@
 namespace Cake\View\Widget;
 
 use Cake\View\Form\ContextInterface;
-use Cake\View\Widget\BasicWidget;
 
 /**
  * Input widget for creating checkbox widgets.

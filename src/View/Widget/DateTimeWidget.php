@@ -16,8 +16,6 @@ namespace Cake\View\Widget;
 
 use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
-use Cake\View\Widget\SelectBoxWidget;
-use Cake\View\Widget\WidgetInterface;
 use RuntimeException;
 
 /**

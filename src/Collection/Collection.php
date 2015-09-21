@@ -15,8 +15,6 @@
 namespace Cake\Collection;
 
 use ArrayIterator;
-use Cake\Collection\CollectionInterface;
-use Cake\Collection\CollectionTrait;
 use InvalidArgumentException;
 use IteratorIterator;
 use Serializable;

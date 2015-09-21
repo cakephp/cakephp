@@ -14,8 +14,6 @@
  */
 namespace Cake\Core;
 
-use Cake\Core\ClassLoader;
-use Cake\Core\Configure;
 use Cake\Core\Exception\MissingPluginException;
 use DirectoryIterator;
 
@@ -230,7 +228,7 @@ class Plugin
             $dir = new DirectoryIterator($path);
             foreach ($dir as $path) {
                 if ($path->isDir() && !$path->isDot()) {
-                    $plugins[] = $path->getBaseName();
+                    $plugins[] = $path->getBasename();
                 }
             }
         }

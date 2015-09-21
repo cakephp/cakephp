@@ -14,7 +14,6 @@
  */
 namespace Cake\Database\Statement;
 
-use Cake\Database\Statement\PDOStatement;
 use PDO;
 
 /**

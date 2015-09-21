@@ -44,7 +44,7 @@ class I18nShell extends Shell
         $this->out('<info>I18n Shell</info>');
         $this->hr();
         $this->out('[E]xtract POT file from sources');
-        $this->out('[I]inialize a language from POT file');
+        $this->out('[I]nitialize a language from POT file');
         $this->out('[H]elp');
         $this->out('[Q]uit');
 

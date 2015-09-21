@@ -14,8 +14,6 @@
  */
 namespace Cake\Datasource;
 
-use Cake\Datasource\EntityInterface;
-
 /**
  * Describes the methods that any class representing a data storage should
  * comply with.
