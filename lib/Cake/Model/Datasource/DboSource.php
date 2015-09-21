@@ -284,7 +284,7 @@ class DboSource extends DataSource {
 		if ($this->_result instanceof PDOStatement) {
 			$this->_result->closeCursor();
 		}
-		unset($this->_connection);
+		$this->_connection = null;
 		$this->connected = false;
 		return true;
 	}
