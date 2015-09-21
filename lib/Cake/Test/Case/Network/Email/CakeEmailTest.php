@@ -2288,10 +2288,10 @@ class CakeEmailTest extends CakeTestCase {
 	protected function _getEmailByOldStyleCharset($charset, $headerCharset) {
 		$email = new CakeEmail(array('transport' => 'Debug'));
 
-		if (! empty($charset)) {
+		if (!empty($charset)) {
 			$email->charset = $charset;
 		}
-		if (! empty($headerCharset)) {
+		if (!empty($headerCharset)) {
 			$email->headerCharset = $headerCharset;
 		}
 
@@ -2312,10 +2312,10 @@ class CakeEmailTest extends CakeTestCase {
 	protected function _getEmailByNewStyleCharset($charset, $headerCharset) {
 		$email = new CakeEmail(array('transport' => 'Debug'));
 
-		if (! empty($charset)) {
+		if (!empty($charset)) {
 			$email->charset($charset);
 		}
-		if (! empty($headerCharset)) {
+		if (!empty($headerCharset)) {
 			$email->headerCharset($headerCharset);
 		}
 
