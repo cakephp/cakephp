@@ -862,7 +862,7 @@ class DboSource extends DataSource {
 		} catch (Exception $e) {
 			$connected = false;
 		}
-		$this->connected = ! empty($connected);
+		$this->connected = !empty($connected);
 		return $this->connected;
 	}
 
