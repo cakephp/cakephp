@@ -857,7 +857,7 @@ class DboSource extends DataSource {
  * @return bool True if the database is connected, else false
  */
 	public function isConnected() {
-		if (is_null($this->_connection)) {
+		if ($this->_connection === null) {
 			$connected = false;
 		} else {
 			try {
