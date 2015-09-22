@@ -222,6 +222,7 @@ class TestShell extends Shell {
 		$options = array();
 		$params = $this->params;
 		unset($params['help']);
+		unset($params['quiet']);
 
 		if (!empty($params['no-colors'])) {
 			unset($params['no-colors'], $params['colors']);
