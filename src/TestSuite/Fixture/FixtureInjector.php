@@ -98,14 +98,14 @@ class FixtureInjector implements PHPUnit_Framework_TestListener
      * Not Implemented
      *
      * @param \PHPUnit_Framework_Test $test The test to add warnings from.
-     * @param \PHPUnit_Warning $e The warning
+     * @param \PHPUnit_Framework_Warning $e The warning
      * @param float $time current time
      * @return void
      */
     public function addWarning(PHPUnit_Framework_Test $test, PHPUnit_Framework_Warning $e, $time)
     {
     }
-    
+
     /**
      * Not Implemented
      *
