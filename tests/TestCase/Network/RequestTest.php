@@ -507,22 +507,21 @@ class RequestTest extends TestCase
         $_ENV['DOES_NOT_EXIST'] = null;
         $request = new Request();
         $this->assertNull($request->env('DOES_NOT_EXIST'));
-        $request = new Request();
         $this->assertEquals('default', $request->env('DOES_NOT_EXIST', null, 'default'));
+
         $_ENV['DOES_EXIST'] = 'some value';
         $request = new Request();
         $this->assertEquals('some value', $request->env('DOES_EXIST'));
-        $request = new Request();
         $this->assertEquals('some value', $request->env('DOES_EXIST', null, 'default'));
+
         $_ENV['EMPTY_VALUE'] = '';
         $request = new Request();
         $this->assertEquals('', $request->env('EMPTY_VALUE'));
-        $request = new Request();
         $this->assertEquals('', $request->env('EMPTY_VALUE', null, 'default'));
+
         $_ENV['ZERO'] = '0';
         $request = new Request();
         $this->assertEquals('0', $request->env('ZERO'));
-        $request = new Request();
         $this->assertEquals('0', $request->env('ZERO', null, 'default'));
     }
 

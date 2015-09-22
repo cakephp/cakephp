@@ -27,24 +27,19 @@ class FunctionsTest extends TestCase
     public function testEnv()
     {
         $_ENV['DOES_NOT_EXIST'] = null;
-        $actual = env('DOES_NOT_EXIST');
-        $this->assertNull($actual);
-        $actual = env('DOES_NOT_EXIST', 'default');
-        $this->assertEquals('default', $actual);
+        $this->assertNull(env('DOES_NOT_EXIST'));
+        $this->assertEquals('default', env('DOES_NOT_EXIST', 'default'));
+
         $_ENV['DOES_EXIST'] = 'some value';
-        $actual = env('DOES_EXIST');
-        $this->assertEquals('some value', $actual);
-        $actual = env('DOES_EXIST', 'default');
-        $this->assertEquals('some value', $actual);
+        $this->assertEquals('some value', env('DOES_EXIST'));
+        $this->assertEquals('some value', env('DOES_EXIST', 'default'));
+
         $_ENV['EMPTY_VALUE'] = '';
-        $actual = env('EMPTY_VALUE');
-        $this->assertEquals('', $actual);
-        $actuaal = env('EMPTY_VALUE', 'default');
-        $this->assertEquals('', $actual);
+        $this->assertEquals('', env('EMPTY_VALUE'));
+        $this->assertEquals('', env('EMPTY_VALUE', 'default'));
+
         $_ENV['ZERO'] = '0';
-        $actual = env('ZERO');
-        $this->assertEquals('0', $actual);
-        $actual = env('ZERO', '1');
-        $this->assertEquals('0', $actual);
+        $this->assertEquals('0', env('ZERO'));
+        $this->assertEquals('0', env('ZERO', '1'));
     }
 }
