@@ -4130,4 +4130,17 @@ SQL;
 		$this->assertEquals("'a'", $result);
 	}
 
+/**
+ * Test isConnected
+ *
+ * @return void
+ */
+	public function testIsConnected() {
+		$this->Dbo->disconnect();
+		$this->assertFalse($this->Dbo->isConnected(), 'Not connected now.');
+
+		$this->Dbo->connect();
+		$this->assertTrue($this->Dbo->isConnected(), 'Should be connected.');
+	}
+
 }
