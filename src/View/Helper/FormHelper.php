@@ -17,8 +17,8 @@ namespace Cake\View\Helper;
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
+use Cake\Datasource\EntityInterface;
 use Cake\Form\Form;
-use Cake\ORM\Entity;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
@@ -265,7 +265,7 @@ class FormHelper extends Helper
                     return new EntityContext($request, $data);
                 }
             }
-            if ($data['entity'] instanceof Entity) {
+            if ($data['entity'] instanceof EntityInterface) {
                 return new EntityContext($request, $data);
             }
             if (is_array($data['entity']) && empty($data['entity']['schema'])) {
