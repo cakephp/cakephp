@@ -14,12 +14,15 @@
 namespace Cake\TestSuite;
 
 use Cake\Core\Configure;
+use Cake\Database\Exception as DatabaseException;
 use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\Stub\Response;
 use Cake\Utility\Hash;
+use Exception;
+use PHPUnit_Exception;
 
 /**
  * A test case class intended to make integration tests of
@@ -272,9 +275,11 @@ abstract class IntegrationTestCase extends TestCase
             $dispatcher->dispatch($request, $response);
             $this->_requestSession = $request->session();
             $this->_response = $response;
-        } catch (\PHPUnit_Exception $e) {
+        } catch (PHPUnit_Exception $e) {
             throw $e;
-        } catch (\Exception $e) {
+        } catch (DatabaseException $e) {
+            throw $e;
+        } catch (Exception $e) {
             $this->_exception = $e;
             $this->_handleError($e);
         }
