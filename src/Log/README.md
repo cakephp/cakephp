@@ -6,7 +6,7 @@ possible to send a single message to multiple logging backends at the same time
 or just a subset of them based on the log level or context.
 
 By default you can use Files or Syslog as logging backends, but you can use any
-object implementing `Psr\Log\LogInterface` as an engine for the `Log` class.
+object implementing `Psr\Log\LoggerInterface` as an engine for the `Log` class.
 
 ## Usage
 

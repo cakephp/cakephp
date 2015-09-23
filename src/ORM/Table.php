@@ -2220,10 +2220,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * The properties for the associations to be loaded will be overwritten on each entity.
      *
-     * @param Cake\Datasource\EntityInterface|array $entities a single entity or list of entities
+     * @param \Cake\Datasource\EntityInterface|array $entities a single entity or list of entities
      * @param array $contain A `contain()` compatible array.
-     * @see Cake\ORM\Query\contain()
-     * @return Cake\Datasource\EntityInterface|array
+     * @see \Cake\ORM\Query::contain()
+     * @return \Cake\Datasource\EntityInterface|array
      */
     public function loadInto($entities, array $contain)
     {

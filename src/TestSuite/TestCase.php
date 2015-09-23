@@ -578,7 +578,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      * @param mixed $methods The list of methods to mock
      * @param array $options The config data for the mock's constructor.
      * @throws \Cake\ORM\Exception\MissingTableClassException
-     * @return Model
+     * @return \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject
      */
     public function getMockForModel($alias, array $methods = [], array $options = [])
     {
