@@ -13,6 +13,10 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Filesystem;
+use DirectoryIterator;
+use Exception;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 /**
  * Folder structure browser, lists folders and files.
@@ -173,8 +177,8 @@ class Folder
         $skipHidden = isset($exceptions['.']) || $exceptions === true;
 
         try {
-            $iterator = new \DirectoryIterator($this->path);
-        } catch (\Exception $e) {
+            $iterator = new DirectoryIterator($this->path);
+        } catch (Exception $e) {
             return [$dirs, $files];
         }
 
@@ -469,9 +473,9 @@ class Folder
         }
 
         try {
-            $directory = new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::KEY_AS_PATHNAME | \RecursiveDirectoryIterator::CURRENT_AS_SELF);
-            $iterator = new \RecursiveIteratorIterator($directory, \RecursiveIteratorIterator::SELF_FIRST);
-        } catch (\Exception $e) {
+            $directory = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::KEY_AS_PATHNAME | RecursiveDirectoryIterator::CURRENT_AS_SELF);
+            $iterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::SELF_FIRST);
+        } catch (Exception $e) {
             if ($type === null) {
                 return [[], []];
             }
@@ -606,9 +610,9 @@ class Folder
         $path = Folder::slashTerm($path);
         if (is_dir($path)) {
             try {
-                $directory = new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::CURRENT_AS_SELF);
-                $iterator = new \RecursiveIteratorIterator($directory, \RecursiveIteratorIterator::CHILD_FIRST);
-            } catch (\Exception $e) {
+                $directory = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::CURRENT_AS_SELF);
+                $iterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::CHILD_FIRST);
+            } catch (Exception $e) {
                 return false;
             }
 

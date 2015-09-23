@@ -15,6 +15,8 @@
 namespace Cake\I18n;
 
 use Carbon\Carbon;
+use DateTime;
+use DateTimeZone;
 use IntlDateFormatter;
 use JsonSerializable;
 
@@ -128,7 +130,7 @@ class Time extends Carbon implements JsonSerializable
      */
     public function __construct($time = null, $tz = null)
     {
-        if ($time instanceof \DateTime) {
+        if ($time instanceof DateTime) {
             $tz = $time->getTimeZone();
             $time = $time->format('Y-m-d H:i:s');
         }
@@ -598,9 +600,9 @@ class Time extends Carbon implements JsonSerializable
         }
 
         if (preg_match('/@calendar=(japanese|buddhist|chinese|persian|indian|islamic|hebrew|coptic|ethiopic)/', $locale)) {
-            $calendar = \IntlDateFormatter::TRADITIONAL;
+            $calendar = IntlDateFormatter::TRADITIONAL;
         } else {
-            $calendar = \IntlDateFormatter::GREGORIAN;
+            $calendar = IntlDateFormatter::GREGORIAN;
         }
 
         $timezone = $date->getTimezone()->getName();
@@ -670,9 +672,9 @@ class Time extends Carbon implements JsonSerializable
             $filter = null;
         }
         if ($filter === null) {
-            $filter = \DateTimeZone::ALL;
+            $filter = DateTimeZone::ALL;
         }
-        $identifiers = \DateTimeZone::listIdentifiers($filter, $country);
+        $identifiers = DateTimeZone::listIdentifiers($filter, $country);
 
         if ($regex) {
             foreach ($identifiers as $key => $tz) {
@@ -690,7 +692,7 @@ class Time extends Carbon implements JsonSerializable
             foreach ($identifiers as $key => $tz) {
                 $abbr = null;
                 if ($options['abbr']) {
-                    $dateTimeZone = new \DateTimeZone($tz);
+                    $dateTimeZone = new DateTimeZone($tz);
                     $trans = $dateTimeZone->getTransitions($now, $now);
                     $abbr = isset($trans[0]['abbr']) ?
                         $before . $trans[0]['abbr'] . $after :
@@ -859,7 +861,7 @@ class Time extends Carbon implements JsonSerializable
      * @param \DateTime $datetime The date to get the remaining time from.
      * @return \DateInterval|bool The DateInterval object representing the difference between the two dates or FALSE on failure.
      */
-    public static function fromNow(\DateTime $datetime)
+    public static function fromNow(DateTime $datetime)
     {
         $timeNow = new Time();
         return $timeNow->diff($datetime);

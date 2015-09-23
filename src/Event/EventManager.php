@@ -14,7 +14,7 @@
  */
 namespace Cake\Event;
 
-use \InvalidArgumentException;
+use InvalidArgumentException;
 
 /**
  * The event manager is responsible for keeping track of event listeners, passing the correct

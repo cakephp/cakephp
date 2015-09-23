@@ -23,6 +23,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingCellViewException;
 use Cake\View\Exception\MissingTemplateException;
+use Exception;
 
 /**
  * Cell base.
@@ -228,7 +229,7 @@ abstract class Cell
     {
         try {
             return $this->render();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             trigger_error('Could not render cell - ' . $e->getMessage(), E_USER_WARNING);
             return '';
         }

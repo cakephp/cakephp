@@ -15,6 +15,7 @@
 namespace Cake\Database;
 
 use InvalidArgumentException;
+use PDO;
 
 /**
  * Represents a database diver containing all specificities for
@@ -252,7 +253,7 @@ abstract class Driver
         ) {
             return $value;
         }
-        return $this->_connection->quote($value, \PDO::PARAM_STR);
+        return $this->_connection->quote($value, PDO::PARAM_STR);
     }
 
     /**

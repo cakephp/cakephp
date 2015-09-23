@@ -238,7 +238,7 @@ class EntityContext implements ContextInterface
      */
     protected function _extractMultiple($values, $path)
     {
-        if (!(is_array($values) || $values instanceof \Traversable)) {
+        if (!(is_array($values) || $values instanceof Traversable)) {
             return null;
         }
         $table = $this->_getTable($path, false);

@@ -15,6 +15,7 @@
 namespace Cake\Validation;
 
 use Cake\Utility\Text;
+use DateTime;
 use LogicException;
 use NumberFormatter;
 use RuntimeException;
@@ -352,7 +353,7 @@ class Validation
      */
     public static function date($check, $format = 'ymd', $regex = null)
     {
-        if ($check instanceof \DateTime) {
+        if ($check instanceof DateTime) {
             return true;
         }
 
@@ -417,7 +418,7 @@ class Validation
      */
     public static function datetime($check, $dateFormat = 'ymd', $regex = null)
     {
-        if ($check instanceof \DateTime) {
+        if ($check instanceof DateTime) {
             return true;
         }
         $valid = false;
@@ -444,7 +445,7 @@ class Validation
      */
     public static function time($check)
     {
-        if ($check instanceof \DateTime) {
+        if ($check instanceof DateTime) {
             return true;
         }
         if (is_array($check)) {
@@ -1056,7 +1057,7 @@ class Validation
             'type' => 'latLong'
         ];
         if ($options['type'] !== 'latLong') {
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 'Unsupported coordinate type "%s". Use "latLong" instead.',
                 $options['type']
             ));

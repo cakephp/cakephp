@@ -16,6 +16,8 @@ namespace Cake\Database\Statement;
 
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeConverterTrait;
+use Countable;
+use IteratorAggregate;
 
 /**
  * Represents a database statement. Statements contains queries that can be
@@ -26,7 +28,7 @@ use Cake\Database\TypeConverterTrait;
  * This class is but a decorator of an actual statement implementation, such as
  * PDOStatement.
  */
-class StatementDecorator implements StatementInterface, \Countable, \IteratorAggregate
+class StatementDecorator implements StatementInterface, Countable, IteratorAggregate
 {
 
     use TypeConverterTrait;

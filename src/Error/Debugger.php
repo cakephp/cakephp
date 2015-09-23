@@ -20,6 +20,8 @@ use Cake\Utility\Security;
 use Cake\Utility\Text;
 use Exception;
 use InvalidArgumentException;
+use ReflectionObject;
+use ReflectionProperty;
 
 /**
  * Provide custom logging and error handling.
@@ -235,7 +237,7 @@ class Debugger
      */
     public static function formatTrace($backtrace, $options = [])
     {
-        if ($backtrace instanceof \Exception) {
+        if ($backtrace instanceof Exception) {
             $backtrace = $backtrace->getTrace();
         }
         $self = Debugger::getInstance();
@@ -554,11 +556,11 @@ class Debugger
                 $props[] = "$key => " . $value;
             }
 
-            $ref = new \ReflectionObject($var);
+            $ref = new ReflectionObject($var);
 
             $filters = [
-                \ReflectionProperty::IS_PROTECTED => 'protected',
-                \ReflectionProperty::IS_PRIVATE => 'private',
+                ReflectionProperty::IS_PROTECTED => 'protected',
+                ReflectionProperty::IS_PRIVATE => 'private',
             ];
             foreach ($filters as $filter => $visibility) {
                 $reflectionProperties = $ref->getProperties($filter);

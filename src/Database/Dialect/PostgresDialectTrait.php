@@ -15,6 +15,7 @@
 namespace Cake\Database\Dialect;
 
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Schema\PostgresSchema;
 use Cake\Database\SqlDialectTrait;
 
 /**
@@ -161,7 +162,7 @@ trait PostgresDialectTrait
     public function schemaDialect()
     {
         if (!$this->_schemaDialect) {
-            $this->_schemaDialect = new \Cake\Database\Schema\PostgresSchema($this);
+            $this->_schemaDialect = new PostgresSchema($this);
         }
         return $this->_schemaDialect;
     }

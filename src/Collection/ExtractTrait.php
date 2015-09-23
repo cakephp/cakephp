@@ -13,6 +13,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Collection;
+use Traversable;
 
 /**
  * Provides utility protected methods for extracting a property or column
@@ -70,7 +71,7 @@ trait ExtractTrait
             }
 
             if ($collectionTransform &&
-                !($data instanceof \Traversable || is_array($data))) {
+                !($data instanceof Traversable || is_array($data))) {
                 return null;
             }
 

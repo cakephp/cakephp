@@ -17,6 +17,8 @@ namespace Cake\ORM;
 use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventListenerInterface;
+use ReflectionClass;
+use ReflectionMethod;
 
 /**
  * Base class for behaviors.
@@ -377,9 +379,9 @@ class Behavior implements EventListenerInterface
             'methods' => []
         ];
 
-        $reflection = new \ReflectionClass($class);
+        $reflection = new ReflectionClass($class);
 
-        foreach ($reflection->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+        foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             $methodName = $method->getName();
             if (in_array($methodName, $baseMethods) ||
                 isset($eventMethods[$methodName])

@@ -18,6 +18,7 @@ use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Network\Exception\InternalErrorException;
 use Cake\Utility\Inflector;
+use Exception;
 
 /**
  * The CakePHP FlashComponent provides a way for you to write a flash variable
@@ -82,7 +83,7 @@ class FlashComponent extends Component
     {
         $options += $this->config();
 
-        if ($message instanceof \Exception) {
+        if ($message instanceof Exception) {
             $options['params'] += ['code' => $message->getCode()];
             $message = $message->getMessage();
         }

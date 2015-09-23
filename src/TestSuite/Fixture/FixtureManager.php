@@ -19,6 +19,8 @@ use Cake\Core\Exception\Exception;
 use Cake\Database\Connection;
 use Cake\Datasource\ConnectionManager;
 use Cake\Utility\Inflector;
+use PDOException;
+use UnexpectedValueException;
 
 /**
  * A factory class to manage the life cycle of test fixtures
@@ -183,7 +185,7 @@ class FixtureManager
                     $fixture,
                     get_class($test)
                 );
-                throw new \UnexpectedValueException($msg);
+                throw new UnexpectedValueException($msg);
             }
         }
     }
@@ -260,7 +262,7 @@ class FixtureManager
                 }
             };
             $this->_runOperation($fixtures, $insert);
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             $msg = sprintf('Unable to insert fixtures for "%s" test case. %s', get_class($test), $e->getMessage());
             throw new Exception($msg);
         }
@@ -359,7 +361,7 @@ class FixtureManager
             }
             $fixture->insert($db);
         } else {
-            throw new \UnexpectedValueException(sprintf('Referenced fixture class %s not found', $name));
+            throw new UnexpectedValueException(sprintf('Referenced fixture class %s not found', $name));
         }
     }
 

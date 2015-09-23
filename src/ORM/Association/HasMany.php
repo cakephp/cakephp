@@ -20,6 +20,7 @@ use Cake\ORM\Association;
 use Cake\ORM\Table;
 use InvalidArgumentException;
 use RuntimeException;
+use Traversable;
 
 /**
  * Represents an N - 1 relationship where the target side of the relationship
@@ -88,7 +89,7 @@ class HasMany extends Association
             return $entity;
         }
 
-        if (!is_array($targetEntities) && !($targetEntities instanceof \Traversable)) {
+        if (!is_array($targetEntities) && !($targetEntities instanceof Traversable)) {
             $name = $this->property();
             $message = sprintf('Could not save %s, it cannot be traversed', $name);
             throw new InvalidArgumentException($message);

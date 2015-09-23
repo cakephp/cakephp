@@ -18,6 +18,7 @@ use Cake\Mailer\AbstractTransport;
 use Cake\Mailer\Email;
 use Cake\Network\Exception\SocketException;
 use Cake\Network\Socket;
+use Exception;
 
 /**
  * Send mail using SMTP protocol
@@ -72,7 +73,7 @@ class SmtpTransport extends AbstractTransport
     {
         try {
             $this->disconnect();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 // avoid fatal error on script termination
         }
     }

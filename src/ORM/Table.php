@@ -1762,7 +1762,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $this->_behaviors->callFinder($type, [$query, $options]);
         }
 
-        throw new \BadMethodCallException(
+        throw new BadMethodCallException(
             sprintf('Unknown finder method "%s"', $type)
         );
     }
@@ -1849,7 +1849,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $this->_dynamicFinder($method, $args);
         }
 
-        throw new \BadMethodCallException(
+        throw new BadMethodCallException(
             sprintf('Unknown method "%s"', $method)
         );
     }

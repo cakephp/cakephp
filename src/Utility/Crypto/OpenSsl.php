@@ -13,6 +13,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Utility\Crypto;
+use LogicException;
 
 /**
  * OpenSSL implementation of crypto features for Cake\Utility\Security
@@ -39,7 +40,7 @@ class OpenSsl
      */
     public static function rijndael($text, $key, $operation)
     {
-        throw new \LogicException('rijndael is not compatible with OpenSSL. Use mcrypt instead.');
+        throw new LogicException('rijndael is not compatible with OpenSSL. Use mcrypt instead.');
     }
 
     /**

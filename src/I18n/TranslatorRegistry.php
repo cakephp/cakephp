@@ -14,6 +14,7 @@
  */
 namespace Cake\I18n;
 
+use Aura\Intl\Exception;
 use Aura\Intl\TranslatorLocator;
 use Cake\Cache\CacheEngine;
 
@@ -119,7 +120,7 @@ class TranslatorRegistry extends TranslatorLocator
     {
         try {
             return parent::get($name, $locale);
-        } catch (\Aura\Intl\Exception $e) {
+        } catch (Exception $e) {
         }
 
         if (!isset($this->_loaders[$name])) {

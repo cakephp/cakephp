@@ -22,12 +22,13 @@ use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Exception;
+use PHPUnit_Framework_TestCase;
 
 /**
  * Cake TestCase class
  *
  */
-abstract class TestCase extends \PHPUnit_Framework_TestCase
+abstract class TestCase extends PHPUnit_Framework_TestCase
 {
 
     /**

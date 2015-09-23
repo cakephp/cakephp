@@ -18,6 +18,7 @@ use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\UnaryExpression;
 use Cake\Database\Query;
+use Cake\Database\Schema\SqlserverSchema;
 use Cake\Database\SqlDialectTrait;
 use Cake\Database\SqlserverCompiler;
 use PDO;
@@ -281,7 +282,7 @@ trait SqlserverDialectTrait
      */
     public function schemaDialect()
     {
-        return new \Cake\Database\Schema\SqlserverSchema($this);
+        return new SqlserverSchema($this);
     }
 
     /**

@@ -15,6 +15,8 @@ namespace Cake\Collection\Iterator;
 
 use ArrayIterator;
 use IteratorAggregate;
+use LogicException;
+use Traversable;
 
 /**
  * Implements a simplistic version of the popular Map-Reduce algorithm. Acts
@@ -111,7 +113,7 @@ class MapReduce implements IteratorAggregate
      * of the bucket that was created during the mapping phase and third one is an
      * instance of this class.
      */
-    public function __construct(\Traversable $data, callable $mapper, callable $reducer = null)
+    public function __construct(Traversable $data, callable $mapper, callable $reducer = null)
     {
         $this->_data = $data;
         $this->_mapper = $mapper;
@@ -177,7 +179,7 @@ class MapReduce implements IteratorAggregate
         $this->_data = null;
 
         if (!empty($this->_intermediate) && empty($this->_reducer)) {
-            throw new \LogicException('No reducer function was provided');
+            throw new LogicException('No reducer function was provided');
         }
 
         $reducer = $this->_reducer;
