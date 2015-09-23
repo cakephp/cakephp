@@ -16,6 +16,7 @@ namespace Cake\Test\TestSuite;
 
 use Cake\Core\Plugin;
 use Cake\Database\ConnectionManager;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\Fixture\FixtureManager;
 use Cake\TestSuite\TestCase;
 
@@ -50,6 +51,63 @@ class FixtureManagerTest extends TestCase
         $this->assertCount(1, $fixtures);
         $this->assertArrayHasKey('core.articles', $fixtures);
         $this->assertInstanceOf('Cake\Test\Fixture\ArticlesFixture', $fixtures['core.articles']);
+    }
+
+    /**
+     * Test loading fixtures with constraints.
+     *
+     * @return void
+     */
+    public function testFixturizeCoreConstraint()
+    {
+        $test = $this->getMock('Cake\TestSuite\TestCase');
+        $test->fixtures = ['core.articles', 'core.articles_tags', 'core.tags'];
+        $this->manager->fixturize($test);
+        $this->manager->load($test);
+
+        $table = TableRegistry::get('ArticlesTags');
+        $schema = $table->schema();
+
+        $this->assertEquals(['primary', 'tag_id_fk'], $schema->constraints());
+
+        $expectedConstraint = [
+            'type' => 'foreign',
+            'columns' => [
+                'tag_id'
+            ],
+            'references' => [
+                'tags',
+                'id'
+            ],
+            'update' => 'cascade',
+            'delete' => 'cascade',
+            'length' => []
+        ];
+        $this->assertEquals($expectedConstraint, $schema->constraint('tag_id_fk'));
+        $this->manager->unload($test);
+
+        $this->manager->load($test);
+        $table = TableRegistry::get('ArticlesTags');
+        $schema = $table->schema();
+
+        $this->assertEquals(['primary', 'tag_id_fk'], $schema->constraints());
+        $expectedConstraint = [
+            'type' => 'foreign',
+            'columns' => [
+                'tag_id'
+            ],
+            'references' => [
+                'tags',
+                'id'
+            ],
+            'update' => 'cascade',
+            'delete' => 'cascade',
+            'length' => []
+        ];
+        $this->assertEquals($expectedConstraint, $schema->constraint('tag_id_fk'));
+
+        $this->manager->unload($test);
+        $this->manager->shutDown($test);
     }
 
     /**

@@ -565,6 +565,13 @@ class Table
         return $this;
     }
 
+    public function dropConstraint($name)
+    {
+        if (isset($this->_constraints[$name])) {
+            unset($this->_constraints[$name]);
+        }
+    }
+
     /**
      * Check whether or not a table has an autoIncrement column defined.
      *
@@ -709,5 +716,17 @@ class Table
     {
         $dialect = $connection->driver()->schemaDialect();
         return $dialect->truncateTableSql($this);
+    }
+
+    public function addConstraintSql(Connection $connection)
+    {
+        $dialect = $connection->driver()->schemaDialect();
+        return $dialect->addConstraintSql($this);
+    }
+
+    public function dropConstraintSql(Connection $connection)
+    {
+        $dialect = $connection->driver()->schemaDialect();
+        return $dialect->dropConstraintSql($this);
     }
 }

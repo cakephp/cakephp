@@ -14,6 +14,7 @@
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Exception\Exception as CakeException;
+use Cake\Database\Connection;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
@@ -78,6 +79,13 @@ class TestFixture implements FixtureInterface
      * @var \Cake\Database\Schema\Table
      */
     protected $_schema;
+
+    /**
+     * Fixture constraints to be created.
+     *
+     * @var array
+     */
+    public $constraints = [];
 
     /**
      * Instantiate the fixture.
@@ -159,7 +167,11 @@ class TestFixture implements FixtureInterface
         }
         if (!empty($this->fields['_constraints'])) {
             foreach ($this->fields['_constraints'] as $name => $data) {
-                $this->_schema->addConstraint($name, $data);
+                if ($data['type'] !== 'foreign') {
+                    $this->_schema->addConstraint($name, $data);
+                } else {
+                    $this->constraints[$name] = $data;
+                }
             }
         }
         if (!empty($this->fields['_indexes'])) {
@@ -281,6 +293,72 @@ class TestFixture implements FixtureInterface
             return $statement;
         }
 
+        return true;
+    }
+
+    /**
+     * Build and execute SQL queries necessary to create the constraints for the
+     * fixture
+     *
+     * @param \Cake\Database\Connection $db An instance of the database into which the constraints will be created
+     * @return bool on success or if there are no constraints to create, or false on failure
+     */
+    public function createConstraints(Connection $db)
+    {
+        if (empty($this->constraints)) {
+            return true;
+        }
+
+        foreach ($this->constraints as $name => $data) {
+            $this->_schema->addConstraint($name, $data);
+        }
+
+        $sql = $this->_schema->addConstraintSql($db);
+
+        if (empty($sql)) {
+            return true;
+        }
+
+        try {
+            foreach ($sql as $stmt) {
+                $db->execute($stmt)->closeCursor();
+            }
+        } catch (\Exception $e) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Build and execute SQL queries necessary to drop the constraints for the
+     * fixture
+     *
+     * @param \Cake\Database\Connection $db An instance of the database into which the constraints will be dropped
+     * @return bool on success or if there are no constraints to drop, or false on failure
+     */
+    public function dropConstraints(Connection $db)
+    {
+        if (empty($this->constraints)) {
+            return true;
+        }
+
+        $sql = $this->_schema->dropConstraintSql($db);
+
+        if (empty($sql)) {
+            return true;
+        }
+
+        try {
+            foreach ($sql as $stmt) {
+                $db->execute($stmt)->closeCursor();
+            }
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        foreach ($this->constraints as $name => $data) {
+            $this->_schema->dropConstraint($name);
+        }
         return true;
     }
 
