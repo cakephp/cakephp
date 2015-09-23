@@ -346,6 +346,36 @@ class ConsoleIoTest extends TestCase
     }
 
     /**
+     * Tests that setLoggers works properly with quiet
+     *
+     * @return void
+     */
+    public function testSetLoggersQuiet()
+    {
+        Log::drop('stdout');
+        Log::drop('stderr');
+        $this->io->setLoggers(ConsoleIo::QUIET);
+        $this->assertEmpty(Log::engine('stdout'));
+        $this->assertNotEmpty(Log::engine('stderr'));
+    }
+
+    /**
+     * Tests that setLoggers works properly with verbose
+     *
+     * @return void
+     */
+    public function testSetLoggersVerbose()
+    {
+        Log::drop('stdout');
+        Log::drop('stderr');
+        $this->io->setLoggers(ConsoleIo::VERBOSE);
+
+        $this->assertNotEmpty(Log::engine('stderr'));
+        $engine = Log::engine('stdout');
+        $this->assertEquals(['notice', 'info', 'debug'], $engine->config('levels'));
+    }
+
+    /**
      * Ensure that styles() just proxies to stdout.
      *
      * @return void

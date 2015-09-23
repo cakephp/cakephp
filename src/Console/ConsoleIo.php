@@ -353,21 +353,30 @@ class ConsoleIo
      * If you don't wish all log output in stdout or stderr
      * through Cake's Log class, call this function with `$enable=false`.
      *
-     * @param bool $enable Whether you want loggers on or off.
+     * @param int|bool $enable Use a boolean to enable/toggle all logging. Use
+     *   one of the verbosity constants (self::VERBOSE, self::QUIET, self::NORMAL)
+     *   to control logging levels. VERBOSE enables debug logs, NORMAL does not include debug logs,
+     *   QUIET disables notice, info and debug logs.
      * @return void
      */
     public function setLoggers($enable)
     {
         Log::drop('stdout');
         Log::drop('stderr');
-        if (!$enable) {
+        if ($enable === false) {
             return;
         }
-        $stdout = new ConsoleLog([
-            'types' => ['notice', 'info', 'debug'],
-            'stream' => $this->_out
-        ]);
-        Log::config('stdout', ['engine' => $stdout]);
+        $outLevels = ['notice', 'info'];
+        if ($enable === static::VERBOSE || $enable === true) {
+            $outLevels[] = 'debug';
+        }
+        if ($enable !== static::QUIET) {
+            $stdout = new ConsoleLog([
+                'types' => $outLevels,
+                'stream' => $this->_out
+            ]);
+            Log::config('stdout', ['engine' => $stdout]);
+        }
         $stderr = new ConsoleLog([
             'types' => ['emergency', 'alert', 'critical', 'error', 'warning'],
             'stream' => $this->_err,
