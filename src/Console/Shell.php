@@ -165,11 +165,11 @@ class Shell
         $this->modelFactory('Table', [$locator, 'get']);
         $this->Tasks = new TaskRegistry($this);
 
-        $this->_io->setLoggers(true);
         $this->_mergeVars(
             ['tasks'],
             ['associative' => ['tasks']]
         );
+        $this->_io->setLoggers(true);
 
         if (isset($this->modelClass)) {
             $this->loadModel();
@@ -412,14 +412,7 @@ class Shell
         if (!empty($extra) && is_array($extra)) {
             $this->params = array_merge($this->params, $extra);
         }
-
-        if (!empty($this->params['quiet'])) {
-            $this->_io->level(ConsoleIo::QUIET);
-            $this->_io->setLoggers(false);
-        }
-        if (!empty($this->params['verbose'])) {
-            $this->_io->level(ConsoleIo::VERBOSE);
-        }
+        $this->_setOutputLevel();
         if (!empty($this->params['plugin'])) {
             Plugin::load($this->params['plugin']);
         }
@@ -456,6 +449,27 @@ class Shell
 
         $this->out($this->OptionParser->help($command));
         return false;
+    }
+
+    /**
+     * Set the output level based on the parameters.
+     *
+     * This reconfigures both the output level for out()
+     * and the configured stdout/stderr logging
+     *
+     * @return void
+     */
+    protected function _setOutputLevel()
+    {
+        $this->_io->setLoggers(ConsoleIo::NORMAL);
+        if (!empty($this->params['quiet'])) {
+            $this->_io->level(ConsoleIo::QUIET);
+            $this->_io->setLoggers(ConsoleIo::QUIET);
+        }
+        if (!empty($this->params['verbose'])) {
+            $this->_io->level(ConsoleIo::VERBOSE);
+            $this->_io->setLoggers(ConsoleIo::VERBOSE);
+        }
     }
 
     /**

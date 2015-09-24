@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Console;
 
+use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\App;
@@ -93,11 +94,6 @@ class ShellTestShell extends Shell
         $this->log($this->testMessage);
     }
     //@codingStandardsIgnoreEnd
-
-    public function useLogger($enable = true)
-    {
-        $this->_useLogger($enable);
-    }
 }
 
 /**
@@ -926,6 +922,7 @@ TEXT;
     public function testRunCommandBaseclassMethod()
     {
         $shell = $this->getMock('Cake\Console\Shell', ['startup', 'getOptionParser', 'out'], [], '', false);
+        $shell->io($this->getMock('Cake\Console\ConsoleIo'));
         $parser = $this->getMock('Cake\Console\ConsoleOptionParser', [], [], '', false);
 
         $parser->expects($this->once())->method('help');
@@ -945,6 +942,7 @@ TEXT;
     public function testRunCommandMissingMethod()
     {
         $shell = $this->getMock('Cake\Console\Shell', ['startup', 'getOptionParser', 'out'], [], '', false);
+        $shell->io($this->getMock('Cake\Console\ConsoleIo'));
         $parser = $this->getMock('Cake\Console\ConsoleOptionParser', [], [], '', false);
 
         $parser->expects($this->once())->method('help');
@@ -963,18 +961,19 @@ TEXT;
      */
     public function testRunCommandTriggeringHelp()
     {
-        $Parser = $this->getMock('Cake\Console\ConsoleOptionParser', [], [], '', false);
-        $Parser->expects($this->once())->method('parse')
+        $parser = $this->getMock('Cake\Console\ConsoleOptionParser', [], [], '', false);
+        $parser->expects($this->once())->method('parse')
             ->with(['--help'])
             ->will($this->returnValue([['help' => true], []]));
-        $Parser->expects($this->once())->method('help');
+        $parser->expects($this->once())->method('help');
 
-        $Shell = $this->getMock('Cake\Console\Shell', ['getOptionParser', 'out', 'startup', '_welcome'], [], '', false);
-        $Shell->expects($this->once())->method('getOptionParser')
-            ->will($this->returnValue($Parser));
-        $Shell->expects($this->once())->method('out');
+        $shell = $this->getMock('Cake\Console\Shell', ['getOptionParser', 'out', 'startup', '_welcome'], [], '', false);
+        $shell->io($this->getMock('Cake\Console\ConsoleIo'));
+        $shell->expects($this->once())->method('getOptionParser')
+            ->will($this->returnValue($parser));
+        $shell->expects($this->once())->method('out');
 
-        $Shell->runCommand(['--help']);
+        $shell->runCommand(['--help']);
     }
 
     /**
@@ -985,6 +984,7 @@ TEXT;
     public function testRunCommandNotCallUnexposedTask()
     {
         $shell = $this->getMock('Cake\Console\Shell', ['startup', 'hasTask', 'out'], [], '', false);
+        $shell->io($this->getMock('Cake\Console\ConsoleIo'));
         $task = $this->getMock('Cake\Console\Shell', ['runCommand'], [], '', false);
 
         $task->expects($this->never())
@@ -1010,9 +1010,12 @@ TEXT;
     {
         $parser = new ConsoleOptionParser('knife');
         $parser->addSubcommand('slice');
+        $io = $this->getMock('Cake\Console\ConsoleIo');
 
         $shell = $this->getMock('Cake\Console\Shell', ['hasTask', 'startup', 'getOptionParser'], [], '', false);
+        $shell->io($io);
         $task = $this->getMock('Cake\Console\Shell', ['main', 'runCommand'], [], '', false);
+        $task->io($io);
         $task->expects($this->once())
             ->method('runCommand')
             ->with(['one'], false);
@@ -1142,11 +1145,11 @@ TEXT;
         $io->expects($this->at(0))
             ->method('setLoggers')
             ->with(true);
-        $io->expects($this->at(2))
+        $io->expects($this->at(3))
             ->method('setLoggers')
-            ->with(false);
+            ->with(ConsoleIo::QUIET);
 
-        $this->Shell = $this->getMock(__NAMESPACE__ . '\ShellTestShell', ['_useLogger'], [$io]);
+        $this->Shell = $this->getMock(__NAMESPACE__ . '\ShellTestShell', ['welcome'], [$io]);
         $this->Shell->runCommand(['foo', '--quiet']);
     }
 
