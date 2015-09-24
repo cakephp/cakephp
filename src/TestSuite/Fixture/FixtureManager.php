@@ -344,6 +344,13 @@ class FixtureManager
         }
         $truncate = function ($db, $fixtures) {
             $configName = $db->configName();
+
+            foreach ($fixtures as $name => $fixture) {
+                if ($this->isFixtureSetup($configName, $fixture)) {
+                    $fixture->dropConstraints($db);
+                }
+            }
+
             foreach ($fixtures as $fixture) {
                 if ($this->isFixtureSetup($configName, $fixture)) {
                     $fixture->truncate($db);

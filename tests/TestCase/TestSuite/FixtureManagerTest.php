@@ -107,7 +107,6 @@ class FixtureManagerTest extends TestCase
         $this->assertEquals($expectedConstraint, $schema->constraint('tag_id_fk'));
 
         $this->manager->unload($test);
-        $this->manager->shutDown($test);
     }
 
     /**
