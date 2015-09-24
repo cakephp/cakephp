@@ -17,6 +17,7 @@ namespace Cake\Network;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Network\Exception\SocketException;
 use Cake\Validation\Validation;
+use Exception;
 use InvalidArgumentException;
 
 /**
@@ -380,7 +381,7 @@ class Socket
         }
         try {
             $enableCryptoResult = stream_socket_enable_crypto($this->connection, $enable, $this->_encryptMethods[$type . '_' . $clientOrServer]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->setLastError(null, $e->getMessage());
             throw new SocketException($e->getMessage());
         }

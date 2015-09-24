@@ -16,6 +16,7 @@ namespace Cake\Collection\Iterator;
 
 use Cake\Collection\Collection;
 use RecursiveIterator;
+use Traversable;
 
 /**
  * A type of collection that is aware of nested items and exposes methods to
@@ -71,6 +72,6 @@ class NestIterator extends Collection implements RecursiveIterator
             return !empty($children);
         }
 
-        return $children instanceof \Traversable;
+        return $children instanceof Traversable;
     }
 }

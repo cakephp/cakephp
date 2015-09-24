@@ -16,6 +16,8 @@
  */
 namespace Cake\Console;
 
+use SimpleXmlElement;
+
 /**
  * An object to represent a single subcommand used in the command line.
  * Created when you call ConsoleOptionParser::addSubcommand()
@@ -115,7 +117,7 @@ class ConsoleInputSubcommand
      * @param \SimpleXmlElement $parent The parent element.
      * @return \SimpleXmlElement The parent with this subcommand appended.
      */
-    public function xml(\SimpleXmlElement $parent)
+    public function xml(SimpleXmlElement $parent)
     {
         $command = $parent->addChild('command');
         $command->addAttribute('name', $this->_name);

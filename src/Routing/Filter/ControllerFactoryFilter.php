@@ -17,6 +17,7 @@ namespace Cake\Routing\Filter;
 use Cake\Core\App;
 use Cake\Event\Event;
 use Cake\Routing\DispatcherFilter;
+use ReflectionClass;
 
 /**
  * A dispatcher filter that builds the controller to dispatch
@@ -83,7 +84,7 @@ class ControllerFactoryFilter extends DispatcherFilter
         if (!$className) {
             return false;
         }
-        $reflection = new \ReflectionClass($className);
+        $reflection = new ReflectionClass($className);
         if ($reflection->isAbstract() || $reflection->isInterface()) {
             return false;
         }

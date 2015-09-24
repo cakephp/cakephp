@@ -16,6 +16,7 @@ namespace Cake\Database\Dialect;
 
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Schema\SqliteSchema;
 use Cake\Database\SqlDialectTrait;
 use Cake\Database\SqliteCompiler;
 
@@ -212,7 +213,7 @@ trait SqliteDialectTrait
     public function schemaDialect()
     {
         if (!$this->_schemaDialect) {
-            $this->_schemaDialect = new \Cake\Database\Schema\SqliteSchema($this);
+            $this->_schemaDialect = new SqliteSchema($this);
         }
         return $this->_schemaDialect;
     }

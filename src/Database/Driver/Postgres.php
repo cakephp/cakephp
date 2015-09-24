@@ -15,9 +15,10 @@
 namespace Cake\Database\Driver;
 
 use Cake\Database\Dialect\PostgresDialectTrait;
+use Cake\Database\Driver;
 use PDO;
 
-class Postgres extends \Cake\Database\Driver
+class Postgres extends Driver
 {
 
     use PDODriverTrait;

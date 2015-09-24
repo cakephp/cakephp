@@ -18,6 +18,7 @@ use Cake\Console\ConsoleOutput;
 use Cake\Console\Shell;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
+use SimpleXmlElement;
 
 /**
  * Shows a list of commands available from the console.
@@ -102,7 +103,7 @@ class CommandListShell extends Shell
     protected function _asXml($shellList)
     {
         $plugins = Plugin::loaded();
-        $shells = new \SimpleXmlElement('<shells></shells>');
+        $shells = new SimpleXmlElement('<shells></shells>');
         foreach ($shellList as $plugin => $commands) {
             foreach ($commands as $command) {
                 $callable = $command;

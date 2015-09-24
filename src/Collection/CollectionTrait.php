@@ -31,6 +31,7 @@ use Cake\Collection\Iterator\ZipIterator;
 use Countable;
 use LimitIterator;
 use RecursiveIteratorIterator;
+use Traversable;
 
 /**
  * Offers a handful of method to manipulate iterators
@@ -164,7 +165,7 @@ trait CollectionTrait
         if (is_string($matcher) && strpos($matcher, '{*}') !== false) {
             $extractor = $extractor
                 ->filter(function ($data) {
-                    return $data !== null && ($data instanceof \Traversable || is_array($data));
+                    return $data !== null && ($data instanceof Traversable || is_array($data));
                 })
                 ->unfold();
         }

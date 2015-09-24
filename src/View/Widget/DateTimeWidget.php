@@ -16,6 +16,8 @@ namespace Cake\View\Widget;
 
 use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
+use DateTime;
+use Exception;
 use RuntimeException;
 
 /**
@@ -217,11 +219,11 @@ class DateTimeWidget implements WidgetInterface
         }
         try {
             if (is_string($value)) {
-                $date = new \DateTime($value);
+                $date = new DateTime($value);
             } elseif (is_bool($value)) {
-                $date = new \DateTime();
+                $date = new DateTime();
             } elseif (is_int($value)) {
-                $date = new \DateTime('@' . $value);
+                $date = new DateTime('@' . $value);
             } elseif (is_array($value)) {
                 $dateArray = [
                     'year' => '', 'month' => '', 'day' => '',
@@ -254,12 +256,12 @@ class DateTimeWidget implements WidgetInterface
                     return $dateArray;
                 }
 
-                $date = new \DateTime();
+                $date = new DateTime();
             } else {
                 $date = clone $value;
             }
-        } catch (\Exception $e) {
-            $date = new \DateTime();
+        } catch (Exception $e) {
+            $date = new DateTime();
         }
 
         if (isset($options['minute']['interval'])) {

@@ -24,6 +24,8 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
 use Cake\Utility\Text;
+use ReflectionException;
+use ReflectionMethod;
 
 /**
  * Base class for command-line utilities for automating programmer chores.
@@ -271,12 +273,12 @@ class Shell
     public function hasMethod($name)
     {
         try {
-            $method = new \ReflectionMethod($this, $name);
+            $method = new ReflectionMethod($this, $name);
             if (!$method->isPublic()) {
                 return false;
             }
             return $method->getDeclaringClass()->name !== 'Cake\Console\Shell';
-        } catch (\ReflectionException $e) {
+        } catch (ReflectionException $e) {
             return false;
         }
     }

@@ -22,12 +22,13 @@ use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Exception;
+use PHPUnit_Framework_TestCase;
 
 /**
  * Cake TestCase class
  *
  */
-abstract class TestCase extends \PHPUnit_Framework_TestCase
+abstract class TestCase extends PHPUnit_Framework_TestCase
 {
 
     /**
@@ -578,7 +579,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      * @param mixed $methods The list of methods to mock
      * @param array $options The config data for the mock's constructor.
      * @throws \Cake\ORM\Exception\MissingTableClassException
-     * @return Model
+     * @return \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject
      */
     public function getMockForModel($alias, array $methods = [], array $options = [])
     {

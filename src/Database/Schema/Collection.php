@@ -16,6 +16,7 @@ namespace Cake\Database\Schema;
 
 use Cake\Database\Connection;
 use Cake\Database\Exception;
+use PDOException;
 
 /**
  * Represents a database schema collection
@@ -125,7 +126,7 @@ class Collection
         }
         try {
             $statement = $this->_connection->execute($sql, $params);
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             throw new Exception($e->getMessage(), 500, $e);
         }
         foreach ($statement->fetchAll('assoc') as $row) {

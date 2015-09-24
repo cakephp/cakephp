@@ -794,7 +794,7 @@ class View implements EventDispatcherInterface
                         list($plugin, $name) = $this->pluginSplit($name);
                         $paths = $this->_paths($plugin);
                         $defaultPath = $paths[0] . 'Element' . DS;
-                        throw new \LogicException(sprintf(
+                        throw new LogicException(sprintf(
                             'You cannot extend an element which does not exist (%s).',
                             $defaultPath . $name . $this->_ext
                         ));
@@ -809,10 +809,10 @@ class View implements EventDispatcherInterface
         }
 
         if ($parent == $this->_current) {
-            throw new \LogicException('You cannot have views extend themselves.');
+            throw new LogicException('You cannot have views extend themselves.');
         }
         if (isset($this->_parents[$parent]) && $this->_parents[$parent] == $this->_current) {
-            throw new \LogicException('You cannot have views extend in a loop.');
+            throw new LogicException('You cannot have views extend in a loop.');
         }
         $this->_parents[$this->_current] = $parent;
     }

@@ -19,6 +19,7 @@ namespace Cake\Shell;
 use Cake\Console\Shell;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
+use DirectoryIterator;
 
 /**
  * Shell for I18N management.
@@ -98,7 +99,7 @@ class I18nShell extends Shell
         }
 
         $count = 0;
-        $iterator = new \DirectoryIterator($sourceFolder);
+        $iterator = new DirectoryIterator($sourceFolder);
         foreach ($iterator as $fileinfo) {
             if (!$fileinfo->isFile()) {
                 continue;

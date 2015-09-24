@@ -13,13 +13,14 @@
  */
 namespace Cake\TestSuite\Fixture;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\Exception as CakeException;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
 use Cake\Log\Log;
 use Cake\Utility\Inflector;
+use Exception;
 
 /**
  * Cake TestFixture is responsible for building and destroying tables to be used
@@ -93,7 +94,7 @@ class TestFixture implements FixtureInterface
                     $connection,
                     $this->name
                 );
-                throw new Exception($message);
+                throw new CakeException($message);
             }
         }
         $this->init();
@@ -188,7 +189,7 @@ class TestFixture implements FixtureInterface
         );
 
         if (empty($import['table'])) {
-            throw new Exception('Cannot import from undefined table.');
+            throw new CakeException('Cannot import from undefined table.');
         } else {
             $this->table = $import['table'];
         }
@@ -229,7 +230,7 @@ class TestFixture implements FixtureInterface
                 $db->execute($query)->closeCursor();
             }
             $this->created[] = $db->configName();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $msg = sprintf(
                 'Fixture creation for "%s" failed "%s"',
                 $this->table,
@@ -255,7 +256,7 @@ class TestFixture implements FixtureInterface
             foreach ($sql as $stmt) {
                 $db->execute($stmt)->closeCursor();
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
         return true;

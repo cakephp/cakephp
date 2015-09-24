@@ -15,12 +15,13 @@
 namespace Cake\Database\Driver;
 
 use Cake\Database\Dialect\SqliteDialectTrait;
+use Cake\Database\Driver;
 use Cake\Database\Query;
 use Cake\Database\Statement\PDOStatement;
 use Cake\Database\Statement\SqliteStatement;
 use PDO;
 
-class Sqlite extends \Cake\Database\Driver
+class Sqlite extends Driver
 {
 
     use PDODriverTrait;

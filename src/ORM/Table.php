@@ -1762,7 +1762,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $this->_behaviors->callFinder($type, [$query, $options]);
         }
 
-        throw new \BadMethodCallException(
+        throw new BadMethodCallException(
             sprintf('Unknown finder method "%s"', $type)
         );
     }
@@ -1849,7 +1849,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $this->_dynamicFinder($method, $args);
         }
 
-        throw new \BadMethodCallException(
+        throw new BadMethodCallException(
             sprintf('Unknown method "%s"', $method)
         );
     }
@@ -2220,10 +2220,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * The properties for the associations to be loaded will be overwritten on each entity.
      *
-     * @param Cake\Datasource\EntityInterface|array $entities a single entity or list of entities
+     * @param \Cake\Datasource\EntityInterface|array $entities a single entity or list of entities
      * @param array $contain A `contain()` compatible array.
-     * @see Cake\ORM\Query\contain()
-     * @return Cake\Datasource\EntityInterface|array
+     * @see \Cake\ORM\Query::contain()
+     * @return \Cake\Datasource\EntityInterface|array
      */
     public function loadInto($entities, array $contain)
     {

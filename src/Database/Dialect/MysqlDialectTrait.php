@@ -14,6 +14,7 @@
  */
 namespace Cake\Database\Dialect;
 
+use Cake\Database\Schema\MysqlSchema;
 use Cake\Database\SqlDialectTrait;
 
 /**
@@ -59,7 +60,7 @@ trait MysqlDialectTrait
     public function schemaDialect()
     {
         if (!$this->_schemaDialect) {
-            $this->_schemaDialect = new \Cake\Database\Schema\MysqlSchema($this);
+            $this->_schemaDialect = new MysqlSchema($this);
         }
         return $this->_schemaDialect;
     }

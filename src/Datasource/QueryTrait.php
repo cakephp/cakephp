@@ -14,6 +14,7 @@
  */
 namespace Cake\Datasource;
 
+use BadMethodCallException;
 use Cake\Collection\Iterator\MapReduce;
 use Cake\Datasource\Exception\RecordNotFoundException;
 
@@ -392,7 +393,7 @@ trait QueryTrait
             $results = $this->all();
             return call_user_func_array([$results, $method], $arguments);
         }
-        throw new \BadMethodCallException(
+        throw new BadMethodCallException(
             sprintf('Unknown method "%s"', $method)
         );
     }

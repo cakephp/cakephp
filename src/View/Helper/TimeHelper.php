@@ -17,6 +17,7 @@ namespace Cake\View\Helper;
 use Cake\I18n\Time;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
+use Exception;
 
 /**
  * Time Helper class for easy use of time data.
@@ -323,7 +324,7 @@ class TimeHelper extends Helper
      * @param bool|string $invalid Default value to display on invalid dates
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
      * @return string Formatted and translated date string
-     * @throws \InvalidArgumentException When the date cannot be parsed
+     * @throws \Exception When the date cannot be parsed
      * @see \Cake\I18n\Time::i18nFormat()
      */
     public function i18nFormat($date, $format = null, $invalid = false, $timezone = null)
@@ -335,7 +336,7 @@ class TimeHelper extends Helper
         try {
             $time = new Time($date, $timezone);
             return $time->i18nFormat($format, $timezone);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             if ($invalid === false) {
                 throw $e;
             }

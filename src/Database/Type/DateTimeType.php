@@ -16,6 +16,9 @@ namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
 use Cake\Database\Type;
+use DateTime;
+use Exception;
+use RuntimeException;
 
 /**
  * Datetime type converter.
@@ -123,7 +126,7 @@ class DateTimeType extends Type
      */
     public function marshal($value)
     {
-        if ($value instanceof \DateTime) {
+        if ($value instanceof DateTime) {
             return $value;
         }
 
@@ -146,7 +149,7 @@ class DateTimeType extends Type
             if ($date) {
                 return $date;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $value;
         }
 
@@ -196,7 +199,7 @@ class DateTimeType extends Type
             $this->_useLocaleParser = $enable;
             return $this;
         }
-        throw new \RuntimeException(
+        throw new RuntimeException(
             sprintf('Cannot use locale parsing with the %s class', static::$dateTimeClass)
         );
     }

@@ -14,6 +14,8 @@
  */
 namespace Cake\Collection;
 
+use Traversable;
+
 /**
  * Provides utility protected methods for extracting a property or column
  * from an array or object.
@@ -70,7 +72,7 @@ trait ExtractTrait
             }
 
             if ($collectionTransform &&
-                !($data instanceof \Traversable || is_array($data))) {
+                !($data instanceof Traversable || is_array($data))) {
                 return null;
             }
 

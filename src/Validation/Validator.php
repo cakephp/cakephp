@@ -15,6 +15,7 @@
 namespace Cake\Validation;
 
 use ArrayAccess;
+use ArrayIterator;
 use Countable;
 use IteratorAggregate;
 
@@ -265,7 +266,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function getIterator()
     {
-        return new \ArrayIterator($this->_fields);
+        return new ArrayIterator($this->_fields);
     }
 
     /**

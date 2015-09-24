@@ -15,6 +15,7 @@
 namespace Cake\ORM;
 
 use ArrayObject;
+use BadMethodCallException;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query as DatabaseQuery;
 use Cake\Database\ValueBinder;
@@ -1014,7 +1015,7 @@ class Query extends DatabaseQuery implements JsonSerializable
             return $this->_call($method, $arguments);
         }
 
-        throw new \BadMethodCallException(
+        throw new BadMethodCallException(
             sprintf('Cannot call method "%s" on a "%s" query', $method, $this->type())
         );
     }

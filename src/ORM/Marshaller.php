@@ -14,11 +14,12 @@
  */
 namespace Cake\ORM;
 
+use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
-use \RuntimeException;
+use RuntimeException;
 
 /**
  * Contains logic to convert array data into entities.
@@ -204,8 +205,8 @@ class Marshaller
             $data = $data[$tableName];
         }
 
-        $data = new \ArrayObject($data);
-        $options = new \ArrayObject($options);
+        $data = new ArrayObject($data);
+        $options = new ArrayObject($options);
         $this->_table->dispatchEvent('Model.beforeMarshal', compact('data', 'options'));
 
         return [(array)$data, (array)$options];

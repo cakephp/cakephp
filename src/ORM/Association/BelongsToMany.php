@@ -21,6 +21,8 @@ use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use RuntimeException;
+use SplObjectStorage;
+use Traversable;
 
 /**
  * Represents an M - N relationship where there exists a junction - or join - table
@@ -487,7 +489,7 @@ class BelongsToMany extends Association
         }
         unset($options['associated'][$this->_junctionProperty]);
 
-        if (!(is_array($entities) || $entities instanceof \Traversable)) {
+        if (!(is_array($entities) || $entities instanceof Traversable)) {
             $name = $this->property();
             $message = sprintf('Could not save %s, it cannot be traversed', $name);
             throw new InvalidArgumentException($message);
@@ -673,7 +675,7 @@ class BelongsToMany extends Association
             return;
         }
 
-        $storage = new \SplObjectStorage;
+        $storage = new SplObjectStorage;
         foreach ($targetEntities as $e) {
             $storage->attach($e);
         }
