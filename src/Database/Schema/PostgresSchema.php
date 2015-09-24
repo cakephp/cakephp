@@ -417,6 +417,37 @@ class PostgresSchema extends BaseSchema
         return $out;
     }
 
+
+    public function addConstraintSql(Table $table)
+    {
+        $sqlPattern = 'ALTER TABLE %s ADD %s';
+        $sql = [];
+
+        foreach ($table->constraints() as $name) {
+            $constraint = $table->constraint($name);
+            if ($constraint['type'] === Table::CONSTRAINT_FOREIGN) {
+                $sql[] = sprintf($sqlPattern, $table->name(), $this->constraintSql($table, $name));
+            }
+        }
+
+        return $sql;
+    }
+
+    public function dropConstraintSql(Table $table)
+    {
+        $sqlPattern = 'ALTER TABLE %s DROP CONSTRAINT %s';
+        $sql = [];
+
+        foreach ($table->constraints() as $name) {
+            $constraint = $table->constraint($name);
+            if ($constraint['type'] === Table::CONSTRAINT_FOREIGN) {
+                $sql[] = sprintf($sqlPattern, $table->name(), $name);
+            }
+        }
+
+        return $sql;
+    }
+
     /**
      * {@inheritDoc}
      */
