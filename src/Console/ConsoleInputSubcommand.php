@@ -15,6 +15,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Console;
+
 use SimpleXmlElement;
 
 /**
