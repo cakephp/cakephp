@@ -858,10 +858,10 @@ class Time extends Carbon implements JsonSerializable
     /**
      * Convenience method for getting the remaining time from a given time.
      *
-     * @param \DateTime $datetime The date to get the remaining time from.
+     * @param \DateTime|\DateTimeImmutable $datetime The date to get the remaining time from.
      * @return \DateInterval|bool The DateInterval object representing the difference between the two dates or FALSE on failure.
      */
-    public static function fromNow(DateTime $datetime)
+    public static function fromNow($datetime)
     {
         $timeNow = new Time();
         return $timeNow->diff($datetime);
