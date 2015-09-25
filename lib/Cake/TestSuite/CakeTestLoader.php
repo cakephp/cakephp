@@ -42,9 +42,9 @@ class CakeTestLoader extends PHPUnit_Runner_StandardTestSuiteLoader {
 /**
  * Convert path fragments used by CakePHP's test runner to absolute paths that can be fed to PHPUnit.
  *
- * @param string $filePath The file path to load
- * @param string $params Additional parameters
- * @return void
+ * @param string $filePath The file path to load.
+ * @param string $params Additional parameters.
+ * @return string Converted path fragments.
  */
 	protected function _resolveTestFile($filePath, $params) {
 		$basePath = $this->_basePath($params) . DS . $filePath;

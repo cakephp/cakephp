@@ -486,7 +486,7 @@ class PaginatorComponentTest extends CakeTestCase {
 
 		$Controller->request->params['named'] = array('limit' => 12);
 		$Controller->Paginator->settings = array('limit' => 30, 'maxLimit' => 100, 'paramType' => 'named');
-		$result = $Controller->Paginator->paginate('PaginatorControllerPost');
+		$Controller->Paginator->paginate('PaginatorControllerPost');
 		$paging = $Controller->params['paging']['PaginatorControllerPost'];
 
 		$this->assertEquals(12, $Controller->PaginatorControllerPost->lastQueries[0]['limit']);
@@ -504,7 +504,7 @@ class PaginatorComponentTest extends CakeTestCase {
 				'paramType' => 'named'
 			)
 		);
-		$result = $Controller->Paginator->paginate('ControllerPaginateModel');
+		$Controller->Paginator->paginate('ControllerPaginateModel');
 		$expected = array(
 			'contain' => array('ControllerPaginateModel'),
 			'group' => 'Comment.author_id',

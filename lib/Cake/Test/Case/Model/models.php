@@ -4781,7 +4781,6 @@ class MysqlTestModel extends Model {
 
 /**
  * Test model for datasource prefixes
- *
  */
 class PrefixTestModel extends CakeTestModel {
 }

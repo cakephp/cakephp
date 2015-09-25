@@ -566,7 +566,7 @@ class CakeResponseTest extends CakeTestCase {
 		$response->send();
 
 		ob_start();
-		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
 		$goofyOutput = 'I am goofily sending output in the controller';
 		echo $goofyOutput;
 		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
@@ -1746,7 +1746,7 @@ class CakeResponseTest extends CakeTestCase {
 		);
 
 		$this->assertEquals(416, $response->statusCode());
-		$result = $response->send();
+		$response->send();
 	}
 
 /**
@@ -1787,7 +1787,7 @@ class CakeResponseTest extends CakeTestCase {
 		);
 
 		ob_start();
-		$result = $response->send();
+		$response->send();
 		ob_get_clean();
 	}
 
@@ -1876,7 +1876,7 @@ class CakeResponseTest extends CakeTestCase {
 		);
 
 		$this->assertEquals(416, $response->statusCode());
-		$result = $response->send();
+		$response->send();
 	}
 
 /**

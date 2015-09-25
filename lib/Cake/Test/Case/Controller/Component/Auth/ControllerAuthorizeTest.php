@@ -45,6 +45,8 @@ class ControllerAuthorizeTest extends CakeTestCase {
 	}
 
 /**
+ * testControllerTypeError
+ *
  * @expectedException PHPUnit_Framework_Error
  * @return void
  */
@@ -53,6 +55,8 @@ class ControllerAuthorizeTest extends CakeTestCase {
 	}
 
 /**
+ * testControllerErrorOnMissingMethod
+ *
  * @expectedException CakeException
  * @return void
  */

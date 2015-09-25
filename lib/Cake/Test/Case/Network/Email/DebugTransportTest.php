@@ -22,7 +22,6 @@ App::uses('DebugTransport', 'Network/Email');
 
 /**
  * Test case
- *
  */
 class DebugTransportTest extends CakeTestCase {
 
