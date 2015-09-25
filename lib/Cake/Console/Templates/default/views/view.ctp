@@ -133,3 +133,4 @@ echo "\t<?php endforeach; ?>\n";
 </div>
 <?php
 endforeach;
+?>

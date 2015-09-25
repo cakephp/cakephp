@@ -38,3 +38,4 @@ class <?php echo h($class); ?> extends AppHelper {
 
 <?php
 echo $this->element('exception_stack_trace');
+?>

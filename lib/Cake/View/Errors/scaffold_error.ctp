@@ -35,3 +35,4 @@ function _scaffoldError() {<br />
 if (isset($error) && $error instanceof Exception) {
 	echo $this->element('exception_stack_trace');
 }
+?>

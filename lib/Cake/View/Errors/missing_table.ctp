@@ -26,3 +26,4 @@
 
 <?php
 echo $this->element('exception_stack_trace');
+?>

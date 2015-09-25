@@ -38,3 +38,4 @@ class <?php echo h($class); ?> extends ModelBehavior {
 
 <?php
 echo $this->element('exception_stack_trace');
+?>

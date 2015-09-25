@@ -40,3 +40,4 @@ class <?php echo h($controller); ?> extends AppController {
 </p>
 <?php
 echo $this->element('exception_stack_trace');
+?>
