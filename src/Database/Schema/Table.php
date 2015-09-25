@@ -703,7 +703,7 @@ class Table
      * Generate the SQL statements to truncate a table
      *
      * @param \Cake\Datasource\ConnectionInterface $connection The connection to generate SQL for.
-     * @return array SQL to drop a table.
+     * @return array SQL to truncate a table.
      */
     public function truncateSql(ConnectionInterface $connection)
     {
