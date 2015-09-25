@@ -14,9 +14,9 @@
  */
 namespace Cake\Database\Schema;
 
-use Cake\Database\Connection;
 use Cake\Database\Exception;
 use Cake\Database\Type;
+use Cake\Datasource\ConnectionInterface;
 
 /**
  * Represents a single table in a database schema.
@@ -664,11 +664,11 @@ class Table
      * Uses the connection to access the schema dialect
      * to generate platform specific SQL.
      *
-     * @param Connection $connection The connection to generate SQL for
+     * @param \Cake\Datasource\ConnectionInterface $connection The connection to generate SQL for
      * @return array List of SQL statements to create the table and the
      *    required indexes.
      */
-    public function createSql(Connection $connection)
+    public function createSql(ConnectionInterface $connection)
     {
         $dialect = $connection->driver()->schemaDialect();
         $columns = $constraints = $indexes = [];
@@ -690,10 +690,10 @@ class Table
      * Uses the connection to access the schema dialect to generate platform
      * specific SQL.
      *
-     * @param Connection $connection The connection to generate SQL for.
+     * @param \Cake\Datasource\ConnectionInterface $connection The connection to generate SQL for.
      * @return array SQL to drop a table.
      */
-    public function dropSql(Connection $connection)
+    public function dropSql(ConnectionInterface $connection)
     {
         $dialect = $connection->driver()->schemaDialect();
         return $dialect->dropTableSql($this);
@@ -702,10 +702,10 @@ class Table
     /**
      * Generate the SQL statements to truncate a table
      *
-     * @param Connection $connection The connection to generate SQL for.
+     * @param \Cake\Datasource\ConnectionInterface $connection The connection to generate SQL for.
      * @return array SQL to drop a table.
      */
-    public function truncateSql(Connection $connection)
+    public function truncateSql(ConnectionInterface $connection)
     {
         $dialect = $connection->driver()->schemaDialect();
         return $dialect->truncateTableSql($this);
