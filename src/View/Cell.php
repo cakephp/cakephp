@@ -15,6 +15,7 @@
 namespace Cake\View;
 
 use BadMethodCallException;
+use Cake\Cache\Cache;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
@@ -169,6 +170,25 @@ abstract class Cell
      */
     public function render($template = null)
     {
+        if ($template !== null &&
+            strpos($template, '/') === false &&
+            strpos($template, '.') === false
+        ) {
+            $template = Inflector::underscore($template);
+        }
+        if ($template === null) {
+            $template = $this->template;
+        }
+
+        $cache = [];
+        if ($this->_cache) {
+            $cache = $this->_cacheConfig($template);
+            $result = Cache::read($cache['key'], $cache['config']);
+            if ($result !== false) {
+                return $result;
+            }
+        }
+
         try {
             $reflect = new ReflectionMethod($this, $this->action);
             $reflect->invokeArgs($this, $this->args);
@@ -180,23 +200,10 @@ abstract class Cell
             ));
         }
 
-        if ($template !== null &&
-            strpos($template, '/') === false &&
-            strpos($template, '.') === false
-        ) {
-            $template = Inflector::underscore($template);
-        }
-        if ($template === null) {
-            $template = $this->template;
-        }
         $builder = $this->viewBuilder();
         $builder->layout(false);
         $builder->template($template);
 
-        $cache = [];
-        if ($this->_cache) {
-            $cache = $this->_cacheConfig($template);
-        }
         $this->View = $this->createView();
 
         $render = function () use ($template) {

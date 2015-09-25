@@ -316,6 +316,28 @@ class CellTest extends TestCase
     }
 
     /**
+     * Test read cached cell.
+     *
+     * @return void
+     */
+    public function testReadCachedCell()
+    {
+        $mock = $this->getMock('Cake\Cache\CacheEngine');
+        $mock->method('init')
+            ->will($this->returnValue(true));
+        $mock->method('read')
+            ->will($this->returnValue("dummy\n"));
+        $mock->expects($this->never())
+            ->method('write');
+        Cache::config('default', $mock);
+
+        $cell = $this->View->cell('Articles', [], ['cache' => true]);
+        $result = $cell->render();
+        $this->assertEquals("dummy\n", $result);
+        Cache::drop('default');
+    }
+
+    /**
      * Test cached render array config
      *
      * @return void
