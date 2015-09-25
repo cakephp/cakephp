@@ -422,13 +422,14 @@ class PostgresSchema extends BaseSchema
      */
     public function addConstraintSql(Table $table)
     {
-        $sqlPattern = 'ALTER TABLE %s ADD %s';
+        $sqlPattern = 'ALTER TABLE %s ADD %s;';
         $sql = [];
 
         foreach ($table->constraints() as $name) {
             $constraint = $table->constraint($name);
             if ($constraint['type'] === Table::CONSTRAINT_FOREIGN) {
-                $sql[] = sprintf($sqlPattern, $table->name(), $this->constraintSql($table, $name));
+                $tableName = $this->_driver->quoteIdentifier($table->name());
+                $sql[] = sprintf($sqlPattern, $tableName, $this->constraintSql($table, $name));
             }
         }
 
@@ -440,13 +441,15 @@ class PostgresSchema extends BaseSchema
      */
     public function dropConstraintSql(Table $table)
     {
-        $sqlPattern = 'ALTER TABLE %s DROP CONSTRAINT %s';
+        $sqlPattern = 'ALTER TABLE %s DROP CONSTRAINT %s;';
         $sql = [];
 
         foreach ($table->constraints() as $name) {
             $constraint = $table->constraint($name);
             if ($constraint['type'] === Table::CONSTRAINT_FOREIGN) {
-                $sql[] = sprintf($sqlPattern, $table->name(), $name);
+                $tableName = $this->_driver->quoteIdentifier($table->name());
+                $constraintName = $this->_driver->quoteIdentifier($name);
+                $sql[] = sprintf($sqlPattern, $tableName, $constraintName);
             }
         }
 
