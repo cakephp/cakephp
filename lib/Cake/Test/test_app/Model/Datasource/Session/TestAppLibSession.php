@@ -1,7 +1,6 @@
 <?php
 /**
  * Test suite app/Model/Datasource/Session session handler
- *
  */
 
 App::uses('CakeSessionHandlerInterface', 'Model/Datasource/Session');

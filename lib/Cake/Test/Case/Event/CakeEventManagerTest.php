@@ -88,7 +88,6 @@ class CustomTestEventListener extends CakeEventTestListener implements CakeEvent
 
 /**
  * Tests the CakeEventManager class functionality
- *
  */
 class CakeEventManagerTest extends CakeTestCase {
 

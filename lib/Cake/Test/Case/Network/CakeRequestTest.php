@@ -318,12 +318,6 @@ class CakeRequestTest extends CakeTestCase {
 		$request->reConstruct();
 		$this->assertEquals($data, $request->data);
 
-		$data = array(
-			'data' => array(
-				'Article' => array('title' => 'Testing'),
-			),
-			'action' => 'update'
-		);
 		$request = $this->getMock('TestCakeRequest', array('_readInput'));
 		$request->expects($this->at(0))->method('_readInput')
 			->will($this->returnValue('data[Article][title]=Testing&action=update'));
@@ -2261,7 +2255,7 @@ class CakeRequestTest extends CakeTestCase {
 
 		// Checking if requested
 		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'es_mx,en_ca';
-		$result = CakeRequest::acceptLanguage();
+		CakeRequest::acceptLanguage();
 
 		$result = CakeRequest::acceptLanguage('en-ca');
 		$this->assertTrue($result);

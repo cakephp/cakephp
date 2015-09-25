@@ -324,7 +324,7 @@ class SecurityTest extends CakeTestCase {
 	public function testDecryptKeyFailure() {
 		$txt = 'The quick brown fox';
 		$key = 'This key is longer than 32 bytes long.';
-		$result = Security::encrypt($txt, $key);
+		Security::encrypt($txt, $key);
 
 		$key = 'Not the same key. This one will fail';
 		$this->assertFalse(Security::decrypt($txt, $key), 'Modified key will fail.');

@@ -1026,7 +1026,7 @@ class FolderTest extends CakeTestCase {
 		extract($this->_setupFilesystem());
 
 		$Folder = new Folder($folderOne);
-		$result = $Folder->copy(array('to' => $folderThree, 'scheme' => Folder::OVERWRITE));
+		$Folder->copy(array('to' => $folderThree, 'scheme' => Folder::OVERWRITE));
 
 		$this->assertTrue(file_exists($folderThree . DS . 'file1.php'));
 		$this->assertTrue(file_exists($folderThree . DS . 'folderA' . DS . 'fileA.php'));

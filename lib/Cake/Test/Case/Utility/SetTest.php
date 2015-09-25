@@ -2763,7 +2763,6 @@ class SetTest extends CakeTestCase {
 /**
  * testSetApply method
  * @return void
- *
  */
 	public function testApply() {
 		$data = array(

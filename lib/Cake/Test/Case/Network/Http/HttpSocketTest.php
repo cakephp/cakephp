@@ -29,8 +29,8 @@ class TestAuthentication {
 /**
  * authentication method
  *
- * @param HttpSocket $http
- * @param array $authInfo
+ * @param HttpSocket $http A HTTP socket.
+ * @param array &$authInfo Some auth info.
  * @return void
  */
 	public static function authentication(HttpSocket $http, &$authInfo) {
@@ -40,8 +40,8 @@ class TestAuthentication {
 /**
  * proxyAuthentication method
  *
- * @param HttpSocket $http
- * @param array $proxyInfo
+ * @param HttpSocket $http A HTTP socket.
+ * @param array &$proxyInfo Some proxy info.
  * @return void
  */
 	public static function proxyAuthentication(HttpSocket $http, &$proxyInfo) {
@@ -52,7 +52,6 @@ class TestAuthentication {
 
 /**
  * CustomResponse
- *
  */
 class CustomResponse {
 
@@ -66,6 +65,7 @@ class CustomResponse {
 /**
  * Constructor
  *
+ * @param string $message A message.
  */
 	public function __construct($message) {
 		$this->first10 = substr($message, 0, 10);
@@ -75,7 +75,6 @@ class CustomResponse {
 
 /**
  * TestHttpSocket
- *
  */
 class TestHttpSocket extends HttpSocket {
 
@@ -135,7 +134,6 @@ class TestHttpSocket extends HttpSocket {
  * Convenience method for testing protected method
  *
  * @param array $request Needs to contain a 'uri' key. Should also contain a 'method' key, otherwise defaults to GET.
- * @param string $versionToken The version token to use, defaults to HTTP/1.1
  * @return string Request line
  */
 	public function buildRequestLine($request = array()) {
@@ -583,7 +581,7 @@ class HttpSocketTest extends CakeTestCase {
 
 		$this->Socket->reset();
 		$request = array('method' => 'POST', 'uri' => 'http://www.cakephp.org/posts/add', 'body' => array('name' => 'HttpSocket-is-released', 'date' => 'today'));
-		$response = $this->Socket->request($request);
+		$this->Socket->request($request);
 		$this->assertEquals("name=HttpSocket-is-released&date=today", $this->Socket->request['body']);
 	}
 
