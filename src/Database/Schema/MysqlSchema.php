@@ -92,7 +92,7 @@ class MysqlSchema extends BaseSchema
             $precision = (int)$precision;
         }
 
-        if (in_array($col, ['date', 'time', 'datetime', 'timestamp'])) {
+        if (in_array($col, ['date', 'time', 'datetime', 'timestamp', 'year'])) {
             return ['type' => $col, 'length' => null];
         }
         if (($col === 'tinyint' && $length === 1) || $col === 'boolean') {
