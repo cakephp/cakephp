@@ -106,7 +106,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         foreach ($this->_fields as $name => $field) {
             $keyPresent = array_key_exists($name, $data);
 
-            if (!$keyPresent && !$this->_checkPresence($field, $newRecord)) {
+            $providers = $this->_providers;
+            $context = compact('data', 'newRecord', 'field', 'providers');
+
+            if (!$keyPresent && !$this->_checkPresence($field, $context)) {
                 $errors[$name]['_required'] = isset($this->_presenceMessages[$name])
                     ? $this->_presenceMessages[$name]
                     : $requiredMessage;
@@ -116,8 +119,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 continue;
             }
 
-            $providers = $this->_providers;
-            $context = compact('data', 'newRecord', 'field', 'providers');
             $canBeEmpty = $this->_canBeEmpty($field, $context);
             $isEmpty = $this->_fieldIsEmpty($data[$name]);
 
@@ -423,7 +424,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Sets whether a field is required to be present in data array.
      *
      * @param string $field the name of the field
-     * @param bool|string $mode Valid values are true, false, 'create', 'update'
+     * @param bool|string|callable $mode Valid values are true, false, 'create', 'update'.
+     * If a callable is passed then the field will be required only when the callback
+     * returns true.
      * @param string|null $message The message to show if the field presence validation fails.
      * @return $this
      */
@@ -553,25 +556,34 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * record.
      *
      * @param string $field Field name.
-     * @param bool $newRecord whether the data to be validated is new or to be updated.
+     * @param bool $newRecord Whether the data to be validated is new or to be updated.
      * @return bool
      */
     public function isPresenceRequired($field, $newRecord)
     {
-        return !$this->_checkPresence($this->field($field), $newRecord);
+        $providers = $this->_providers;
+        $data = [];
+        $context = compact('data', 'newRecord', 'field', 'providers');
+        return !$this->_checkPresence($this->field($field), $context);
     }
 
     /**
      * Returns false if any validation for the passed rule set should be stopped
      * due to the field missing in the data array
      *
-     * @param ValidationSet $field the set of rules for a field
-     * @param bool $newRecord whether the data to be validated is new or to be updated.
+     * @param ValidationSet $field The set of rules for a field.
+     * @param array $context A key value list of data containing the validation context.
      * @return bool
      */
-    protected function _checkPresence($field, $newRecord)
+    protected function _checkPresence($field, $context)
     {
         $required = $field->isPresenceRequired();
+
+        if (!is_string($required) && is_callable($required)) {
+            return !$required($context);
+        }
+
+        $newRecord = $context['newRecord'];
         if (in_array($required, ['create', 'update'], true)) {
             return (
                 ($required === 'create' && !$newRecord) ||
