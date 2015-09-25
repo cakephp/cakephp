@@ -297,13 +297,9 @@ class TestFixture implements FixtureInterface
     }
 
     /**
-     * Build and execute SQL queries necessary to create the constraints for the
-     * fixture
-     *
-     * @param \Cake\Database\Connection $db An instance of the database into which the constraints will be created
-     * @return bool on success or if there are no constraints to create, or false on failure
+     * {@inheritDoc}
      */
-    public function createConstraints(Connection $db)
+    public function createConstraints(ConnectionInterface $db)
     {
         if (empty($this->constraints)) {
             return true;
@@ -330,13 +326,9 @@ class TestFixture implements FixtureInterface
     }
 
     /**
-     * Build and execute SQL queries necessary to drop the constraints for the
-     * fixture
-     *
-     * @param \Cake\Database\Connection $db An instance of the database into which the constraints will be dropped
-     * @return bool on success or if there are no constraints to drop, or false on failure
+     * {@inheritDoc}
      */
-    public function dropConstraints(Connection $db)
+    public function dropConstraints(ConnectionInterface $db)
     {
         if (empty($this->constraints)) {
             return true;

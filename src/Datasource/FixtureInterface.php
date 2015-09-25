@@ -46,6 +46,24 @@ interface FixtureInterface
     public function insert(ConnectionInterface $db);
 
     /**
+     * Build and execute SQL queries necessary to create the constraints for the
+     * fixture
+     *
+     * @param \Cake\Datasource\ConnectionInterface $db An instance of the database into which the constraints will be created
+     * @return bool on success or if there are no constraints to create, or false on failure
+     */
+    public function createConstraints(ConnectionInterface $db);
+
+    /**
+     * Build and execute SQL queries necessary to drop the constraints for the
+     * fixture
+     *
+     * @param \Cake\Datasource\ConnectionInterface $db An instance of the database into which the constraints will be dropped
+     * @return bool on success or if there are no constraints to drop, or false on failure
+     */
+    public function dropConstraints(ConnectionInterface $db);
+
+    /**
      * Truncates the current fixture.
      *
      * @param \Cake\Datasource\ConnectionInterface $db A reference to a db instance
