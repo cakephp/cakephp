@@ -14,6 +14,7 @@
  */
 namespace Cake\View;
 
+use BadMethodCallException;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
@@ -24,6 +25,8 @@ use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingCellViewException;
 use Cake\View\Exception\MissingTemplateException;
 use Exception;
+use ReflectionException;
+use ReflectionMethod;
 
 /**
  * Cell base.
@@ -87,6 +90,20 @@ abstract class Cell
     public $helpers = [];
 
     /**
+     * The cell's action to invoke.
+     *
+     * @var string
+     */
+    public $action;
+
+    /**
+     * Arguments to pass to cell's action.
+     *
+     * @var array
+     */
+    public $args = [];
+
+    /**
      * These properties can be set directly on Cell and passed to the View as options.
      *
      * @var array
@@ -131,6 +148,7 @@ abstract class Cell
         $this->response = $response;
         $this->modelFactory('Table', [$this->tableLocator(), 'get']);
 
+        $this->_validCellOptions = array_merge(['action', 'args'], $this->_validCellOptions);
         foreach ($this->_validCellOptions as $var) {
             if (isset($cellOptions[$var])) {
                 $this->{$var} = $cellOptions[$var];
@@ -151,6 +169,17 @@ abstract class Cell
      */
     public function render($template = null)
     {
+        try {
+            $reflect = new ReflectionMethod($this, $this->action);
+            $reflect->invokeArgs($this, $this->args);
+        } catch (ReflectionException $e) {
+            throw new BadMethodCallException(sprintf(
+                'Class %s does not have a "%s" method.',
+                get_class($this),
+                $this->action
+            ));
+        }
+
         if ($template !== null &&
             strpos($template, '/') === false &&
             strpos($template, '.') === false

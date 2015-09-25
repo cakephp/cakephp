@@ -250,7 +250,8 @@ class CellTest extends TestCase
      */
     public function testCellMissingMethod()
     {
-        $this->View->cell('Articles::nope');
+        $cell = $this->View->cell('Articles::nope');
+        $cell->render();
     }
 
     /**
