@@ -164,8 +164,8 @@ class RequestHandlerComponent extends Component
         }
 
         $accepts = $response->mapType($accept);
-        $preferedTypes = current($accepts);
-        if (array_intersect($preferedTypes, ['html', 'xhtml'])) {
+        $preferredTypes = current($accepts);
+        if (array_intersect($preferredTypes, ['html', 'xhtml'])) {
             return;
         }
 
@@ -546,7 +546,11 @@ class RequestHandlerComponent extends Component
         } else {
             $view = Inflector::classify($type);
         }
-        $viewClass = App::className($view, 'View', 'View');
+
+        $viewClass = null;
+        if ($builder->className() === null) {
+            $viewClass = App::className($view, 'View', 'View');
+        }
 
         if ($viewClass) {
             $controller->viewClass = $viewClass;
