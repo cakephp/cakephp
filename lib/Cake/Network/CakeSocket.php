@@ -216,7 +216,7 @@ class CakeSocket {
  */
 	public function context() {
 		if (!$this->connection) {
-			return;
+			return null;
 		}
 		return stream_context_get_options($this->connection);
 	}

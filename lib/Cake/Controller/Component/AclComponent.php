@@ -79,7 +79,7 @@ class AclComponent extends Component {
  * Will call the initialize method on the adapter if setting a new one.
  *
  * @param AclInterface|string $adapter Instance of AclInterface or a string name of the class to use. (optional)
- * @return AclInterface|void either null, or the adapter implementation.
+ * @return AclInterface|null Either null, or the adapter implementation.
  * @throws CakeException when the given class is not an instance of AclInterface
  */
 	public function adapter($adapter = null) {
@@ -92,7 +92,7 @@ class AclComponent extends Component {
 			}
 			$this->_Instance = $adapter;
 			$this->_Instance->initialize($this);
-			return;
+			return null;
 		}
 		return $this->_Instance;
 	}

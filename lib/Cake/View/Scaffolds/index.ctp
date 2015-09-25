@@ -26,21 +26,21 @@
 <?php
 foreach (${$pluralVar} as ${$singularVar}):
 	echo '<tr>';
-		foreach ($scaffoldFields as $_field) {
+		foreach ($scaffoldFields as $_field):
 			$isKey = false;
-			if (!empty($associations['belongsTo'])) {
-				foreach ($associations['belongsTo'] as $_alias => $_details) {
-					if ($_field === $_details['foreignKey']) {
+			if (!empty($associations['belongsTo'])):
+				foreach ($associations['belongsTo'] as $_alias => $_details):
+					if ($_field === $_details['foreignKey']):
 						$isKey = true;
 						echo '<td>' . $this->Html->link(${$singularVar}[$_alias][$_details['displayField']], array('controller' => $_details['controller'], 'action' => 'view', ${$singularVar}[$_alias][$_details['primaryKey']])) . '</td>';
 						break;
-					}
-				}
-			}
-			if ($isKey !== true) {
+					endif;
+				endforeach;
+			endif;
+			if ($isKey !== true):
 				echo '<td>' . h(${$singularVar}[$modelClass][$_field]) . '</td>';
-			}
-		}
+			endif;
+		endforeach;
 
 		echo '<td class="actions">';
 		echo $this->Html->link(__d('cake', 'View'), array('action' => 'view', ${$singularVar}[$modelClass][$primaryKey]));
@@ -67,7 +67,7 @@ endforeach;
 	<?php
 		echo $this->Paginator->prev('< ' . __d('cake', 'previous'), array(), null, array('class' => 'prev disabled'));
 		echo $this->Paginator->numbers(array('separator' => ''));
-		echo $this->Paginator->next(__d('cake', 'next') .' >', array(), null, array('class' => 'next disabled'));
+		echo $this->Paginator->next(__d('cake', 'next') . ' >', array(), null, array('class' => 'next disabled'));
 	?>
 	</div>
 </div>

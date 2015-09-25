@@ -35,9 +35,9 @@
 		<li><?php echo $this->Html->link(__d('cake', 'List') . ' ' . $pluralHumanName, array('action' => 'index')); ?></li>
 <?php
 		$done = array();
-		foreach ($associations as $_type => $_data) {
-			foreach ($_data as $_alias => $_details) {
-				if ($_details['controller'] != $this->name && !in_array($_details['controller'], $done)) {
+		foreach ($associations as $_type => $_data):
+			foreach ($_data as $_alias => $_details):
+				if ($_details['controller'] != $this->name && !in_array($_details['controller'], $done)):
 					echo "\t\t<li>" . $this->Html->link(
 						__d('cake', 'List %s', Inflector::humanize($_details['controller'])),
 						array('plugin' => $_details['plugin'], 'controller' => $_details['controller'], 'action' => 'index')
@@ -47,9 +47,9 @@
 						array('plugin' => $_details['plugin'], 'controller' => $_details['controller'], 'action' => 'add')
 					) . "</li>\n";
 					$done[] = $_details['controller'];
-				}
-			}
-		}
+				endif;
+			endforeach;
+		endforeach;
 ?>
 	</ul>
 </div>

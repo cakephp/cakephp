@@ -34,7 +34,7 @@ class SessionComponent extends Component {
  * Get / Set the userAgent
  *
  * @param string $userAgent Set the userAgent
- * @return void
+ * @return string Current user agent.
  */
 	public function userAgent($userAgent = null) {
 		return CakeSession::userAgent($userAgent);

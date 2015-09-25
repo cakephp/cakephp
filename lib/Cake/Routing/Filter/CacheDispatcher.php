@@ -39,7 +39,7 @@ class CacheDispatcher extends DispatcherFilter {
  */
 	public function beforeDispatch(CakeEvent $event) {
 		if (Configure::read('Cache.check') !== true) {
-			return;
+			return null;
 		}
 
 		$path = $event->data['request']->here();

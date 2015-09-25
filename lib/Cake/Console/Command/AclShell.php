@@ -558,7 +558,7 @@ class AclShell extends AppShell {
  * or an array of properties to use in AcoNode::node()
  *
  * @param string $class Class type you want (Aro/Aco)
- * @param string|array $identifier A mixed identifier for finding the node.
+ * @param string|array|null $identifier A mixed identifier for finding the node, otherwise null.
  * @return int Integer of NodeId. Will trigger an error if nothing is found.
  */
 	protected function _getNodeId($class, $identifier) {
@@ -568,7 +568,7 @@ class AclShell extends AppShell {
 				$identifier = var_export($identifier, true);
 			}
 			$this->error(__d('cake_console', 'Could not find node using reference "%s"', $identifier));
-			return;
+			return null;
 		}
 		return Hash::get($node, "0.{$class}.id");
 	}

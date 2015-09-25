@@ -182,7 +182,7 @@ class FileLog extends BaseLog {
  * Also if `rotate` count is reached oldest file is removed.
  *
  * @param string $filename Log file name
- * @return mixed True if rotated successfully or false in case of error.
+ * @return mixed True if rotated successfully or false in case of error, otherwise null.
  *   Void if file doesn't need to be rotated.
  */
 	protected function _rotateFile($filename) {
@@ -196,7 +196,7 @@ class FileLog extends BaseLog {
 		if (!file_exists($filepath) ||
 			filesize($filepath) < $this->_size
 		) {
-			return;
+			return null;
 		}
 
 		if ($this->_config['rotate'] === 0) {

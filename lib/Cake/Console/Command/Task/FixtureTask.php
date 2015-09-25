@@ -210,7 +210,7 @@ class FixtureTask extends BakeTask {
  * @param string $model Name of model to bake.
  * @param string $useTable Name of table to use.
  * @param array $importOptions Options for public $import
- * @return string Baked fixture content
+ * @return string|null Baked fixture content, otherwise null.
  */
 	public function bake($model, $useTable = false, $importOptions = array()) {
 		App::uses('CakeSchema', 'Model');
@@ -243,7 +243,7 @@ class FixtureTask extends BakeTask {
 		$data = $this->_Schema->read(array('models' => false, 'connection' => $this->connection));
 		if (!isset($data['tables'][$useTable])) {
 			$this->err("<warning>Warning:</warning> Could not find the '${useTable}' table for ${model}.");
-			return;
+			return null;
 		}
 
 		$tableInfo = $data['tables'][$useTable];
