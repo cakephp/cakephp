@@ -357,7 +357,7 @@ class CakeSession {
  * Get / Set the user agent
  *
  * @param string|null $userAgent Set the user agent
- * @return string Current user agent
+ * @return string Current user agent.
  */
 	public static function userAgent($userAgent = null) {
 		if ($userAgent) {

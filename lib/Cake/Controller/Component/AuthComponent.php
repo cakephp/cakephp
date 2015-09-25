@@ -481,7 +481,7 @@ class AuthComponent extends Component {
  */
 	public function constructAuthorize() {
 		if (empty($this->authorize)) {
-			return;
+			return null;
 		}
 		$this->_authorizeObjects = array();
 		$config = Hash::normalize((array)$this->authorize);
@@ -772,12 +772,12 @@ class AuthComponent extends Component {
 /**
  * Loads the configured authentication objects.
  *
- * @return mixed either null on empty authenticate value, or an array of loaded objects.
+ * @return mixed Either null on empty authenticate value, or an array of loaded objects.
  * @throws CakeException
  */
 	public function constructAuthenticate() {
 		if (empty($this->authenticate)) {
-			return;
+			return null;
 		}
 		$this->_authenticateObjects = array();
 		$config = Hash::normalize((array)$this->authenticate);

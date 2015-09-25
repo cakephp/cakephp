@@ -89,7 +89,7 @@ class ViewTask extends BakeTask {
 			$this->_interactive();
 		}
 		if (empty($this->args[0])) {
-			return;
+			return null;
 		}
 		if (!isset($this->connection)) {
 			$this->connection = 'default';

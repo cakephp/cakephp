@@ -131,4 +131,5 @@ echo "\t<?php endforeach; ?>\n";
 		</ul>
 	</div>
 </div>
-<?php endforeach; ?>
+<?php
+endforeach;

@@ -446,7 +446,7 @@ class HtmlHelper extends AppHelper {
 			if (empty($options['block'])) {
 				return $out . "\n";
 			}
-			return;
+			return '';
 		}
 
 		if ($options['once'] && isset($this->_includedAssets[__METHOD__][$path])) {

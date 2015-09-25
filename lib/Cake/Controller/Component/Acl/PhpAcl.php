@@ -196,7 +196,6 @@ class PhpAcl extends Object implements AclInterface {
 
 /**
  * Access Control Object
- *
  */
 class PhpAco {
 
@@ -361,7 +360,6 @@ class PhpAco {
 
 /**
  * Access Request Object
- *
  */
 class PhpAro {
 

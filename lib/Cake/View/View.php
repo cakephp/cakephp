@@ -464,7 +464,7 @@ class View extends Object {
  */
 	public function render($view = null, $layout = null) {
 		if ($this->hasRendered) {
-			return;
+			return null;
 		}
 
 		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {

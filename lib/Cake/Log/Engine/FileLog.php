@@ -196,7 +196,7 @@ class FileLog extends BaseLog {
 		if (!file_exists($filepath) ||
 			filesize($filepath) < $this->_size
 		) {
-			return;
+			return null;
 		}
 
 		if ($this->_config['rotate'] === 0) {

@@ -172,10 +172,10 @@ class CakeEventManager {
 			foreach (array_keys($this->_listeners) as $eventKey) {
 				$this->detach($callable, $eventKey);
 			}
-			return;
+			return null;
 		}
 		if (empty($this->_listeners[$eventKey])) {
-			return;
+			return null;
 		}
 		foreach ($this->_listeners[$eventKey] as $priority => $callables) {
 			foreach ($callables as $k => $callback) {

@@ -95,10 +95,10 @@ foreach ($associations['hasOne'] as $_alias => $_details): ?>
 	<dl>
 <?php
 		$otherFields = array_keys(${$singularVar}[$_alias]);
-		foreach ($otherFields as $_field) {
+		foreach ($otherFields as $_field):
 			echo "\t\t<dt>" . Inflector::humanize($_field) . "</dt>\n";
 			echo "\t\t<dd>\n\t" . ${$singularVar}[$_alias][$_field] . "\n&nbsp;</dd>\n";
-		}
+		endforeach;
 ?>
 	</dl>
 <?php endif; ?>

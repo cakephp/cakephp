@@ -152,7 +152,7 @@ class Dispatcher implements CakeEventListener {
 				return $beforeEvent->result->body();
 			}
 			$beforeEvent->result->send();
-			return;
+			return null;
 		}
 
 		$controller = $this->_getController($request, $response);

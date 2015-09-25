@@ -70,7 +70,7 @@ class FlashHelper extends AppHelper {
  */
 	public function render($key = 'flash', $options = array()) {
 		if (!CakeSession::check("Message.$key")) {
-			return;
+			return null;
 		}
 
 		$flash = CakeSession::read("Message.$key");

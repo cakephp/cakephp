@@ -31,7 +31,6 @@ class Object {
 
 /**
  * Constructor, no-op
- *
  */
 	public function __construct() {
 	}
