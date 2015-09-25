@@ -48,7 +48,6 @@ Cache::config('default', array('engine' => 'File'));
  *     'Vendor'                    => array('/path/to/vendors/', '/next/path/to/vendors/'),
  *     'Plugin'                    => array('/path/to/plugins/', '/next/path/to/plugins/'),
  * ));
- *
  */
 
 /**
@@ -57,7 +56,6 @@ Cache::config('default', array('engine' => 'File'));
  *
  * Inflector::rules('singular', array('rules' => array(), 'irregular' => array(), 'uninflected' => array()));
  * Inflector::rules('plural', array('rules' => array(), 'irregular' => array(), 'uninflected' => array()));
- *
  */
 
 /**
@@ -67,7 +65,6 @@ Cache::config('default', array('engine' => 'File'));
  *
  * CakePlugin::loadAll(); // Loads all plugins at once
  * CakePlugin::load('DebugKit'); //Loads a single plugin named DebugKit
- *
  */
 
 /**
