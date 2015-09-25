@@ -57,7 +57,7 @@ use Cake\Mailer\Exception\MissingActionException;
  * decouple email delivery from your application code. By re-declaring the
  * `implementedEvents()` method you can define event handlers that can
  * convert events into email. For example, if your application had a user
- * registation event:
+ * registration event:
  *
  * ```
  * public function implementedEvents()
