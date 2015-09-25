@@ -389,6 +389,9 @@ class MysqlSchema extends BaseSchema
         return $this->_keySql($out, $data);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function addConstraintSql(Table $table)
     {
         $sqlPattern = 'ALTER TABLE %s ADD %s';
@@ -404,6 +407,9 @@ class MysqlSchema extends BaseSchema
         return $sql;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function dropConstraintSql(Table $table)
     {
         $sqlPattern = 'ALTER TABLE %s DROP FOREIGN KEY %s';

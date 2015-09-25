@@ -417,7 +417,9 @@ class PostgresSchema extends BaseSchema
         return $out;
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     public function addConstraintSql(Table $table)
     {
         $sqlPattern = 'ALTER TABLE %s ADD %s';
@@ -433,6 +435,9 @@ class PostgresSchema extends BaseSchema
         return $sql;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function dropConstraintSql(Table $table)
     {
         $sqlPattern = 'ALTER TABLE %s DROP CONSTRAINT %s';

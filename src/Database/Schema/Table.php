@@ -718,13 +718,25 @@ class Table
         return $dialect->truncateTableSql($this);
     }
 
-    public function addConstraintSql(Connection $connection)
+    /**
+     * Generate the SQL statements to add the constraints to the table
+     *
+     * @param \Cake\Datasource\ConnectionInterface $connection The connection to generate SQL for.
+     * @return array SQL to drop a table.
+     */
+    public function addConstraintSql(ConnectionInterface $connection)
     {
         $dialect = $connection->driver()->schemaDialect();
         return $dialect->addConstraintSql($this);
     }
 
-    public function dropConstraintSql(Connection $connection)
+    /**
+     * Generate the SQL statements to drop the constraints to the table
+     *
+     * @param \Cake\Datasource\ConnectionInterface $connection The connection to generate SQL for.
+     * @return array SQL to drop a table.
+     */
+    public function dropConstraintSql(ConnectionInterface $connection)
     {
         $dialect = $connection->driver()->schemaDialect();
         return $dialect->dropConstraintSql($this);
