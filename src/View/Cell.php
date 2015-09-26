@@ -182,7 +182,7 @@ abstract class Cell
 
         $cache = [];
         if ($this->_cache) {
-            $cache = $this->_cacheConfig($template);
+            $cache = $this->_cacheConfig($this->action);
             $result = Cache::read($cache['key'], $cache['config']);
             if ($result !== false) {
                 return $result;
@@ -229,17 +229,17 @@ abstract class Cell
     /**
      * Generate the cache key to use for this cell.
      *
-     * If the key is undefined, the cell class and template will be used.
+     * If the key is undefined, the cell class and action name will be used.
      *
-     * @param string $template The template being rendered.
+     * @param string $action The action invoked.
      * @return array The cache configuration.
      */
-    protected function _cacheConfig($template)
+    protected function _cacheConfig($action)
     {
         if (empty($this->_cache)) {
             return [];
         }
-        $key = 'cell_' . Inflector::underscore(get_class($this)) . '_' . $template;
+        $key = 'cell_' . Inflector::underscore(get_class($this)) . '_' . $action;
         $key = str_replace('\\', '_', $key);
         $default = [
             'config' => 'default',
