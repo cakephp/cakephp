@@ -281,7 +281,7 @@ abstract class Cell
         return [
             'plugin' => $this->plugin,
             'action' => $this->action,
-            'arg' => $this->args,
+            'args' => $this->args,
             'template' => $this->template,
             'viewClass' => $this->viewClass,
             'request' => $this->request,
