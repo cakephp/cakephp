@@ -192,6 +192,28 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the requirePresence method when passing a callback
+     *
+     * @return void
+     */
+    public function testRequirePresenceCallback()
+    {
+        $validator = new Validator;
+        $require = true;
+        $validator->requirePresence('title', function ($context) use (&$require) {
+            $this->assertEquals([], $context['data']);
+            $this->assertEquals([], $context['providers']);
+            $this->assertEquals('title', $context['field']);
+            $this->assertTrue($context['newRecord']);
+            return $require;
+        });
+        $this->assertTrue($validator->isPresenceRequired('title', true));
+
+        $require = false;
+        $this->assertFalse($validator->isPresenceRequired('title', true));
+    }
+
+    /**
      * Tests the isPresenceRequired method
      *
      * @return void
