@@ -170,47 +170,42 @@ abstract class Cell
      */
     public function render($template = null)
     {
-        if ($template !== null &&
-            strpos($template, '/') === false &&
-            strpos($template, '.') === false
-        ) {
-            $template = Inflector::underscore($template);
-        }
-        if ($template === null) {
-            $template = $this->template;
-        }
-
         $cache = [];
         if ($this->_cache) {
             $cache = $this->_cacheConfig($this->action);
-            $result = Cache::read($cache['key'], $cache['config']);
-            if ($result !== false) {
-                return $result;
-            }
         }
-
-        try {
-            $reflect = new ReflectionMethod($this, $this->action);
-            $reflect->invokeArgs($this, $this->args);
-        } catch (ReflectionException $e) {
-            throw new BadMethodCallException(sprintf(
-                'Class %s does not have a "%s" method.',
-                get_class($this),
-                $this->action
-            ));
-        }
-
-        $builder = $this->viewBuilder();
-        $builder->layout(false);
-        $builder->template($template);
-
-        $this->View = $this->createView();
 
         $render = function () use ($template) {
+            if ($template !== null &&
+                strpos($template, '/') === false &&
+                strpos($template, '.') === false
+            ) {
+                $template = Inflector::underscore($template);
+            }
+            if ($template === null) {
+                $template = $this->template;
+            }
+
+            $builder = $this->viewBuilder();
+            $builder->layout(false);
+            $builder->template($template);
+
             $className = substr(strrchr(get_class($this), "\\"), 1);
             $name = substr($className, 0, -4);
-            $this->View->templatePath('Cell' . DS . $name);
+            $builder->templatePath('Cell' . DS . $name);
 
+            try {
+                $reflect = new ReflectionMethod($this, $this->action);
+                $reflect->invokeArgs($this, $this->args);
+            } catch (ReflectionException $e) {
+                throw new BadMethodCallException(sprintf(
+                    'Class %s does not have a "%s" method.',
+                    get_class($this),
+                    $this->action
+                ));
+            }
+
+            $this->View = $this->createView();
             try {
                 return $this->View->render($template);
             } catch (MissingTemplateException $e) {
@@ -219,9 +214,7 @@ abstract class Cell
         };
 
         if ($cache) {
-            return $this->View->cache(function () use ($render) {
-                echo $render();
-            }, $cache);
+            return Cache::remember($cache['key'], $render, $cache['config']);
         }
         return $render();
     }
