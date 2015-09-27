@@ -3076,7 +3076,7 @@ class Model extends Object implements CakeEventListener {
 			$query['order'] = $this->order;
 		}
 
-		$query['order'] = array($query['order']);
+		$query['order'] = (array)$query['order'];
 
 		if ($query['callbacks'] === true || $query['callbacks'] === 'before') {
 			$event = new CakeEvent('Model.beforeFind', $this, array($query));

@@ -6309,9 +6309,7 @@ class ModelReadTest extends BaseModelTest {
 			'joins' => array(),
 			'limit' => null,
 			'offset' => null,
-			'order' => array(
-				0 => null
-			),
+			'order' => array(),
 			'page' => 1,
 			'group' => null,
 			'callbacks' => true,
@@ -8079,8 +8077,8 @@ class ModelReadTest extends BaseModelTest {
 
 /**
  * test after find callback on related model
- * 
- * @return void 
+ *
+ * @return void
  */
 	public function testRelatedAfterFindCallback() {
 		$this->loadFixtures('Something', 'SomethingElse', 'JoinThing');
