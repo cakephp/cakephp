@@ -14,7 +14,6 @@
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Exception\Exception as CakeException;
-use Cake\Database\Connection;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
@@ -315,6 +314,7 @@ class TestFixture implements FixtureInterface
             return true;
         }
 
+        $db->disableForeignKeys();
         try {
             foreach ($sql as $stmt) {
                 $db->execute($stmt)->closeCursor();
@@ -340,6 +340,7 @@ class TestFixture implements FixtureInterface
             return true;
         }
 
+        $db->disableForeignKeys();
         try {
             foreach ($sql as $stmt) {
                 $db->execute($stmt)->closeCursor();

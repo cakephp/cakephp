@@ -761,7 +761,7 @@ SQL;
             ]);
 
         $expected = <<<SQL
-ALTER TABLE [posts] DROP FOREIGN KEY [category_fk];
+ALTER TABLE [posts] DROP CONSTRAINT [category_fk];
 SQL;
         $result = $table->dropConstraintSql($connection);
         $this->assertCount(2, $result);

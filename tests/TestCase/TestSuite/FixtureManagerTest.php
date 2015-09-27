@@ -15,7 +15,7 @@
 namespace Cake\Test\TestSuite;
 
 use Cake\Core\Plugin;
-use Cake\Database\ConnectionManager;
+use Cake\Datasource\ConnectionManager;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\Fixture\FixtureManager;
 use Cake\TestSuite\TestCase;
@@ -67,9 +67,6 @@ class FixtureManagerTest extends TestCase
 
         $table = TableRegistry::get('ArticlesTags');
         $schema = $table->schema();
-
-        $this->assertEquals(['primary', 'tag_id_fk'], $schema->constraints());
-
         $expectedConstraint = [
             'type' => 'foreign',
             'columns' => [
@@ -89,8 +86,6 @@ class FixtureManagerTest extends TestCase
         $this->manager->load($test);
         $table = TableRegistry::get('ArticlesTags');
         $schema = $table->schema();
-
-        $this->assertEquals(['primary', 'tag_id_fk'], $schema->constraints());
         $expectedConstraint = [
             'type' => 'foreign',
             'columns' => [

@@ -565,6 +565,12 @@ class Table
         return $this;
     }
 
+    /**
+     * Remove a constraint.
+     *
+     * @param string $name Name of the constraint to remove
+     * @return void
+     */
     public function dropConstraint($name)
     {
         if (isset($this->_constraints[$name])) {

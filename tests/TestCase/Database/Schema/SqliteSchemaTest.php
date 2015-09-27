@@ -545,6 +545,155 @@ SQL;
     }
 
     /**
+     * Test the addConstraintSql method.
+     *
+     * @return void
+     */
+    public function testAddConstraintSql()
+    {
+        $driver = $this->_getMockedDriver();
+        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+        $connection->expects($this->any())->method('driver')
+            ->will($this->returnValue($driver));
+
+        $table = (new Table('posts'))
+            ->addColumn('author_id', [
+                'type' => 'integer',
+                'null' => false
+            ])
+            ->addColumn('category_id', [
+                'type' => 'integer',
+                'null' => false
+            ])
+            ->addColumn('category_name', [
+                'type' => 'integer',
+                'null' => false
+            ])
+            ->addConstraint('author_fk', [
+                'type' => 'foreign',
+                'columns' => ['author_id'],
+                'references' => ['authors', 'id'],
+                'update' => 'cascade',
+                'delete' => 'cascade'
+            ]);
+
+        $expected = [
+            'DROP TABLE IF EXISTS "tmp_posts"',
+            'ALTER TABLE "posts" RENAME TO "tmp_posts"',
+            'CREATE TABLE "posts" (
+"author_id" INTEGER NOT NULL,
+"category_id" INTEGER NOT NULL,
+"category_name" INTEGER NOT NULL,
+CONSTRAINT "author_fk" FOREIGN KEY ("author_id") REFERENCES "authors" ("id") ON UPDATE CASCADE ON DELETE CASCADE
+)',
+            'INSERT INTO "posts"(author_id, category_id, category_name) SELECT author_id, category_id, category_name FROM "tmp_posts"',
+            'DROP TABLE IF EXISTS "tmp_posts"'
+        ];
+        $result = $table->addConstraintSql($connection);
+        $this->assertCount(5, $result);
+        $this->assertTextEquals($expected, $result);
+
+        $table
+            ->addConstraint('category_fk', [
+                'type' => 'foreign',
+                'columns' => ['category_id', 'category_name'],
+                'references' => ['categories', ['id', 'name']],
+                'update' => 'cascade',
+                'delete' => 'cascade'
+            ]);
+
+        $expected = [
+            'DROP TABLE IF EXISTS "tmp_posts"',
+            'ALTER TABLE "posts" RENAME TO "tmp_posts"',
+            'CREATE TABLE "posts" (
+"author_id" INTEGER NOT NULL,
+"category_id" INTEGER NOT NULL,
+"category_name" INTEGER NOT NULL,
+CONSTRAINT "author_fk" FOREIGN KEY ("author_id") REFERENCES "authors" ("id") ON UPDATE CASCADE ON DELETE CASCADE,
+CONSTRAINT "category_fk" FOREIGN KEY ("category_id", "category_name") REFERENCES "categories" ("id", "name") ON UPDATE CASCADE ON DELETE CASCADE
+)',
+            'INSERT INTO "posts"(author_id, category_id, category_name) SELECT author_id, category_id, category_name FROM "tmp_posts"',
+            'DROP TABLE IF EXISTS "tmp_posts"'
+        ];
+        $result = $table->addConstraintSql($connection);
+        $this->assertCount(5, $result);
+        $this->assertTextEquals($expected, $result);
+    }
+
+    /**
+     * Test the dropConstraintSql method.
+     *
+     * @return void
+     */
+    public function testDropConstraintSql()
+    {
+        $driver = $this->_getMockedDriver();
+        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+        $connection->expects($this->any())->method('driver')
+            ->will($this->returnValue($driver));
+
+        $table = (new Table('posts'))
+            ->addColumn('author_id', [
+                'type' => 'integer',
+                'null' => false
+            ])
+            ->addColumn('category_id', [
+                'type' => 'integer',
+                'null' => false
+            ])
+            ->addColumn('category_name', [
+                'type' => 'integer',
+                'null' => false
+            ])
+            ->addConstraint('author_fk', [
+                'type' => 'foreign',
+                'columns' => ['author_id'],
+                'references' => ['authors', 'id'],
+                'update' => 'cascade',
+                'delete' => 'cascade'
+            ]);
+
+        $expected = [
+            'DROP TABLE IF EXISTS "tmp_posts"',
+            'ALTER TABLE "posts" RENAME TO "tmp_posts"',
+            'CREATE TABLE "posts" (
+"author_id" INTEGER NOT NULL,
+"category_id" INTEGER NOT NULL,
+"category_name" INTEGER NOT NULL
+)',
+            'INSERT INTO "posts"(author_id, category_id, category_name) SELECT author_id, category_id, category_name FROM "tmp_posts"',
+            'DROP TABLE IF EXISTS "tmp_posts"'
+        ];
+        $result = $table->dropConstraintSql($connection);
+        $this->assertCount(5, $result);
+        $this->assertTextEquals($expected, $result);
+
+        $table
+            ->addConstraint('category_fk', [
+                'type' => 'foreign',
+                'columns' => ['category_id', 'category_name'],
+                'references' => ['categories', ['id', 'name']],
+                'update' => 'cascade',
+                'delete' => 'cascade'
+            ]);
+
+        $expected = [
+            'DROP TABLE IF EXISTS "tmp_posts"',
+            'ALTER TABLE "posts" RENAME TO "tmp_posts"',
+            'CREATE TABLE "posts" (
+"author_id" INTEGER NOT NULL,
+"category_id" INTEGER NOT NULL,
+"category_name" INTEGER NOT NULL
+)',
+            'INSERT INTO "posts"(author_id, category_id, category_name) SELECT author_id, category_id, category_name FROM "tmp_posts"',
+            'DROP TABLE IF EXISTS "tmp_posts"'
+        ];
+        $result = $table->dropConstraintSql($connection);
+        $this->assertCount(5, $result);
+        $this->assertTextEquals($expected, $result);
+    }
+
+    /**
      * Test generating column definitions
      *
      * @dataProvider columnSqlProvider
