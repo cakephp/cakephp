@@ -704,7 +704,7 @@ SQL;
             ]);
 
         $expected = <<<SQL
-ALTER TABLE [posts] ADD CONSTRAINT [category_fk] FOREIGN KEY (]category_id], [category_name]) REFERENCES [categories] ([id], [name]) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE [posts] ADD CONSTRAINT [category_fk] FOREIGN KEY ([category_id], [category_name]) REFERENCES [categories] ([id], [name]) ON UPDATE CASCADE ON DELETE CASCADE;
 SQL;
         $result = $table->addConstraintSql($connection);
         $this->assertCount(2, $result);
@@ -745,7 +745,7 @@ SQL;
             ]);
 
         $expected = <<<SQL
-ALTER TABLE [posts] DROP FOREIGN KEY [author_fk];
+ALTER TABLE [posts] DROP CONSTRAINT [author_fk];
 SQL;
         $result = $table->dropConstraintSql($connection);
         $this->assertCount(1, $result);
