@@ -1896,16 +1896,19 @@ class Model extends Object implements CakeEventListener {
 
 		$count = count($fields);
 
+		$originalId = $this->id;
 		if (!$exists && $count > 0) {
 			$this->id = false;
 		}
 
 		$success = true;
 		$created = false;
+		$tryAgain = false;
 
 		if ($count > 0) {
 			$cache = $this->_prepareUpdateFields(array_combine($fields, $values));
 
+			trySave:
 			if (!empty($this->id)) {
 				$this->__safeUpdateMode = true;
 				try {
@@ -1925,10 +1928,21 @@ class Model extends Object implements CakeEventListener {
 					}
 				}
 
-				if (!$db->create($this, $fields, $values)) {
-					$success = false;
-				} else {
-					$created = true;
+				try {
+					if (!$db->create($this, $fields, $values)) {
+						$success = false;
+					} else {
+						$created = true;
+					}
+				} catch (PDOException $e) {
+					throw $e;
+					if ($tryAgain || !isset($e->errorInfo[1]) || $e->errorInfo[1] !== 1062) {
+						throw $e;
+					}
+
+					$this->id = $originalId;
+					$tryAgain = true;
+					goto trySave;
 				}
 			}
 
