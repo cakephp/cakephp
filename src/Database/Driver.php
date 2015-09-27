@@ -249,7 +249,7 @@ abstract class Driver
         }
         if ((is_int($value) || $value === '0') || (
             is_numeric($value) && strpos($value, ',') === false &&
-            $value[0] != '0' && strpos($value, 'e') === false)
+            $value[0] !== '0' && strpos($value, 'e') === false)
         ) {
             return $value;
         }
