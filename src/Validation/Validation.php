@@ -308,6 +308,25 @@ class Validation
     }
 
     /**
+     * Checks if a string contains one or more non-alphanumeric characters.
+     *
+     * Returns true if string contains at least the specified number of non-alphanumeric characters
+     *
+     * @param string $check Value to check
+     * @param int $count Number of non-alphanumerics to check for
+     * @return bool Success
+     */
+    public static function containsNonAlphaNumeric($check, $count = 1)
+    {
+        if (!is_string($check)) {
+            return false;
+        }
+
+        $matches = preg_match_all('/[^a-zA-Z0-9]/', $check);
+        return $matches >= $count;
+    }
+
+    /**
      * Used when a custom regular expression is needed.
      *
      * @param string|array $check When used as a string, $regex must also be a valid regular expression.
