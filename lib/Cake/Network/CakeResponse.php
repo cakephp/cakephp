@@ -452,7 +452,7 @@ class CakeResponse {
 
 /**
  * Formats the Content-Type header based on the configured contentType and charset
- * the charset will only be set in the header if the response is of type text/*
+ * the charset will only be set in the header if the response is of type text
  *
  * @return void
  */
@@ -832,7 +832,7 @@ class CakeResponse {
 			if (!$public && !$private && !$noCache) {
 				return null;
 			}
-			$sharable = $public || ! ($private || $noCache);
+			$sharable = $public || !($private || $noCache);
 			return $sharable;
 		}
 		if ($public) {

@@ -27,6 +27,11 @@
  */
 class I18nSchema extends CakeSchema {
 
+/**
+ * The name property
+ *
+ * @var string
+ */
 	public $name = 'i18n';
 
 /**
@@ -48,6 +53,11 @@ class I18nSchema extends CakeSchema {
 	public function after($event = array()) {
 	}
 
+/**
+ * The i18n table definition
+ *
+ * @var array
+ */
 	public $i18n = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'primary'),
 		'locale' => array('type' => 'string', 'null' => false, 'length' => 6, 'key' => 'index'),

@@ -1190,12 +1190,12 @@ class Model extends Object implements CakeEventListener {
  *
  * @param string|array|SimpleXmlElement|DomNode $one Array or string of data
  * @param string $two Value string for the alternative indata method
- * @return array Data with all of $one's keys and values
+ * @return array|null Data with all of $one's keys and values, otherwise null.
  * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html
  */
 	public function set($one, $two = null) {
 		if (!$one) {
-			return;
+			return null;
 		}
 
 		if (is_object($one)) {
@@ -1835,7 +1835,12 @@ class Model extends Object implements CakeEventListener {
 		$now = time();
 
 		foreach ($dateFields as $updateCol) {
-			if (in_array($updateCol, $fields) || !$this->hasField($updateCol)) {
+			$fieldHasValue = in_array($updateCol, $fields);
+			$fieldInWhitelist = (
+				count($this->whitelist) === 0 ||
+				in_array($updateCol, $this->whitelist)
+			);
+			if (($fieldHasValue && $fieldInWhitelist) || !$this->hasField($updateCol)) {
 				continue;
 			}
 

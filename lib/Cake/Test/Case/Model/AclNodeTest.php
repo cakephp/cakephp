@@ -181,8 +181,7 @@ class DbAroUserTest extends CakeTestModel {
 class TestDbAcl extends DbAcl {
 
 /**
- * construct method
- *
+ * Constructor
  */
 	public function __construct() {
 		$this->Aro = new DbAroTest();

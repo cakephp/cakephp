@@ -32,7 +32,6 @@ App::uses('Xml', 'Utility');
  *
  * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/request-handling.html
- *
  */
 class RequestHandlerComponent extends Component {
 
@@ -280,7 +279,7 @@ class RequestHandlerComponent extends Component {
  * "304 Not Modified" header.
  *
  * @param Controller $controller Controller instance.
- * @return bool false if the render process should be aborted
+ * @return bool False if the render process should be aborted.
  */
 	public function beforeRender(Controller $controller) {
 		if ($this->settings['checkHttpCache'] && $this->response->checkNotModified($this->request)) {

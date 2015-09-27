@@ -1,2 +1,2 @@
 In TestTheme
-<?php echo $this->Html->image('test.jpg') ?>
+<?php echo $this->Html->image('test.jpg'); ?>

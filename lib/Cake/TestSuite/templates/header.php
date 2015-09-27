@@ -106,7 +106,7 @@
 			div.code-coverage-results span.line-num strong { color:#666; }
 			div.code-coverage-results div.start {
 				border:1px solid #aaa;
-				border-width:1px 1px 0px 1px;
+				border-width:1px 1px 0 1px;
 				margin-top:30px;
 				padding-top:5px;
 			}

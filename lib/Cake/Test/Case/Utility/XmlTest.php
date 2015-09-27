@@ -175,7 +175,7 @@ class XmlTest extends CakeTestCase {
  */
 	public function testBuildFromFileWhenDisabled() {
 		$xml = CAKE . 'Test' . DS . 'Fixture' . DS . 'sample.xml';
-		$obj = Xml::build($xml, array('readFile' => false));
+		Xml::build($xml, array('readFile' => false));
 	}
 
 /**
@@ -186,7 +186,7 @@ class XmlTest extends CakeTestCase {
  */
 	public function testBuildFromUrlWhenDisabled() {
 		$xml = 'http://www.google.com';
-		$obj = Xml::build($xml, array('readFile' => false));
+		Xml::build($xml, array('readFile' => false));
 	}
 
 /**
@@ -222,7 +222,7 @@ class XmlTest extends CakeTestCase {
  */
 	public function testBuildInvalidDataSimpleXml() {
 		$input = '<derp';
-		$xml = Xml::build($input, array('return' => 'simplexml'));
+		Xml::build($input, array('return' => 'simplexml'));
 	}
 
 /**

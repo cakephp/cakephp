@@ -22,14 +22,13 @@ App::uses('SmtpTransport', 'Network/Email');
 
 /**
  * Help to test SmtpTransport
- *
  */
 class SmtpTestTransport extends SmtpTransport {
 
 /**
  * Helper to change the socket
  *
- * @param object $socket
+ * @param CakeSocket $socket A socket.
  * @return void
  */
 	public function setSocket(CakeSocket $socket) {
@@ -39,7 +38,7 @@ class SmtpTestTransport extends SmtpTransport {
 /**
  * Helper to change the CakeEmail
  *
- * @param object $cakeEmail
+ * @param object $cakeEmail An email object.
  * @return void
  */
 	public function setCakeEmail($cakeEmail) {
@@ -57,8 +56,8 @@ class SmtpTestTransport extends SmtpTransport {
 /**
  * Magic function to call protected methods
  *
- * @param string $method
- * @param string $args
+ * @param string $method The method to call.
+ * @param string $args The arguments.
  * @return mixed
  */
 	public function __call($method, $args) {
@@ -70,7 +69,6 @@ class SmtpTestTransport extends SmtpTransport {
 
 /**
  * Test case
- *
  */
 class SmtpTransportTest extends CakeTestCase {
 

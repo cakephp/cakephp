@@ -33,7 +33,6 @@ if (!defined('DS')) {
 
 /**
  * The full path to the directory which holds "app", WITHOUT a trailing DS.
- *
  */
 if (!defined('ROOT')) {
 	define('ROOT', dirname(dirname(dirname(__FILE__))));
@@ -41,7 +40,6 @@ if (!defined('ROOT')) {
 
 /**
  * The actual directory name for the "app".
- *
  */
 if (!defined('APP_DIR')) {
 	define('APP_DIR', basename(dirname(dirname(__FILE__))));
@@ -76,7 +74,6 @@ if (!defined('CAKE_CORE_INCLUDE_PATH') && file_exists($vendorPath . DS . $dispat
 /**
  * Editing below this line should NOT be necessary.
  * Change at your own risk.
- *
  */
 if (!defined('WEBROOT_DIR')) {
 	define('WEBROOT_DIR', basename(dirname(__FILE__)));
@@ -86,7 +83,7 @@ if (!defined('WWW_ROOT')) {
 }
 
 // for built-in server
-if (php_sapi_name() === 'cli-server') {
+if (PHP_SAPI === 'cli-server') {
 	if ($_SERVER['REQUEST_URI'] !== '/' && file_exists(WWW_ROOT . $_SERVER['PHP_SELF'])) {
 		return false;
 	}

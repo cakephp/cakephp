@@ -465,7 +465,7 @@ class Hash {
 		$count = count($paths);
 
 		if (!$count) {
-			return;
+			return null;
 		}
 
 		for ($i = 0; $i < $count; $i++) {

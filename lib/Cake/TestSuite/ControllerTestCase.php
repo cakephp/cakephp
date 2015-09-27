@@ -258,7 +258,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 		$Dispatch->parseParams(new CakeEvent('ControllerTestCase', $Dispatch, array('request' => $request)));
 		if (!isset($request->params['controller']) && Router::currentRoute()) {
 			$this->headers = Router::currentRoute()->response->header();
-			return;
+			return null;
 		}
 		if ($this->_dirtyController) {
 			$this->controller = null;

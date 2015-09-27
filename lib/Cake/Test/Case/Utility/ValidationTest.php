@@ -28,7 +28,7 @@ class CustomValidator {
 /**
  * Makes sure that a given $email address is valid and unique
  *
- * @param string $email
+ * @param string $check Email to check.
  * @return bool
  */
 	public static function customValidate($check) {

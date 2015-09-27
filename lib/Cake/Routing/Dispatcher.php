@@ -137,7 +137,7 @@ class Dispatcher implements CakeEventListener {
  * @param CakeRequest $request Request object to dispatch.
  * @param CakeResponse $response Response object to put the results of the dispatch into.
  * @param array $additionalParams Settings array ("bare", "return") which is melded with the GET and POST params
- * @return string|void if `$request['return']` is set then it returns response body, null otherwise
+ * @return string|null if `$request['return']` is set then it returns response body, null otherwise
  * @triggers Dispatcher.beforeDispatch $this, compact('request', 'response', 'additionalParams')
  * @triggers Dispatcher.afterDispatch $this, compact('request', 'response')
  * @throws MissingControllerException When the controller is missing.
@@ -152,7 +152,7 @@ class Dispatcher implements CakeEventListener {
 				return $beforeEvent->result->body();
 			}
 			$beforeEvent->result->send();
-			return;
+			return null;
 		}
 
 		$controller = $this->_getController($request, $response);

@@ -21,7 +21,6 @@ App::uses('File', 'Utility');
 
 /**
  * Help to test CakeEmail
- *
  */
 class TestCakeEmail extends CakeEmail {
 
@@ -36,7 +35,6 @@ class TestCakeEmail extends CakeEmail {
 
 /**
  * Config
- *
  */
 	protected $_config = array();
 
@@ -89,7 +87,6 @@ class TestCakeEmail extends CakeEmail {
 
 /**
  * EmailConfig class
- *
  */
 class TestEmailConfig {
 
@@ -135,7 +132,6 @@ class TestEmailConfig {
 /**
  * ExtendTransport class
  * test class to ensure the class has send() method
- *
  */
 class ExtendTransport {
 
@@ -217,7 +213,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertSame($this->CakeEmail, $result);
 
 		$this->setExpectedException('SocketException');
-		$result = $this->CakeEmail->from(array('cake@cakephp.org' => 'CakePHP', 'fail@cakephp.org' => 'From can only be one address'));
+		$this->CakeEmail->from(array('cake@cakephp.org' => 'CakePHP', 'fail@cakephp.org' => 'From can only be one address'));
 	}
 
 /**
@@ -866,7 +862,7 @@ class CakeEmailTest extends CakeTestCase {
 
 		$this->setExpectedException('SocketException');
 		$this->CakeEmail->transport('Invalid');
-		$result = $this->CakeEmail->transportClass();
+		$this->CakeEmail->transportClass();
 	}
 
 /**
@@ -955,7 +951,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertEquals($expected, $this->CakeEmail->transportClass()->config());
 
 		$this->CakeEmail->config(array('log' => true));
-		$result = $this->CakeEmail->transportClass()->config();
+		$this->CakeEmail->transportClass()->config();
 		$expected += array('log' => true);
 		$this->assertEquals($expected, $this->CakeEmail->transportClass()->config());
 
@@ -2028,7 +2024,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertEquals('html', $result);
 
 		$this->setExpectedException('SocketException');
-		$result = $this->CakeEmail->emailFormat('invalid');
+		$this->CakeEmail->emailFormat('invalid');
 	}
 
 /**
@@ -2288,10 +2284,10 @@ class CakeEmailTest extends CakeTestCase {
 	protected function _getEmailByOldStyleCharset($charset, $headerCharset) {
 		$email = new CakeEmail(array('transport' => 'Debug'));
 
-		if (! empty($charset)) {
+		if (!empty($charset)) {
 			$email->charset = $charset;
 		}
-		if (! empty($headerCharset)) {
+		if (!empty($headerCharset)) {
 			$email->headerCharset = $headerCharset;
 		}
 
@@ -2312,10 +2308,10 @@ class CakeEmailTest extends CakeTestCase {
 	protected function _getEmailByNewStyleCharset($charset, $headerCharset) {
 		$email = new CakeEmail(array('transport' => 'Debug'));
 
-		if (! empty($charset)) {
+		if (!empty($charset)) {
 			$email->charset($charset);
 		}
-		if (! empty($headerCharset)) {
+		if (!empty($headerCharset)) {
 			$email->headerCharset($headerCharset);
 		}
 
@@ -2385,7 +2381,6 @@ class CakeEmailTest extends CakeTestCase {
         style="font-weight: bold">The tag is across multiple lines</th>
 </table>
 HTML;
-		$length = strlen($str);
 		$message = $str . str_repeat('x', CakeEmail::LINE_LENGTH_MUST + 1);
 
 		$this->CakeEmail->reset();

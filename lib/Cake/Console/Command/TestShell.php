@@ -179,11 +179,11 @@ class TestShell extends Shell {
 /**
  * Parse the CLI options into an array CakeTestDispatcher can use.
  *
- * @return array Array of params for CakeTestDispatcher
+ * @return array|null Array of params for CakeTestDispatcher or null.
  */
 	protected function _parseArgs() {
 		if (empty($this->args)) {
-			return;
+			return null;
 		}
 		$params = array(
 			'core' => false,

@@ -73,7 +73,7 @@ class RequestActionController extends Controller {
 /**
  * normal_request_action method
  *
- * @return void
+ * @return string Hello World!
  */
 	public function normal_request_action() {
 		return 'Hello World';
@@ -82,7 +82,7 @@ class RequestActionController extends Controller {
 /**
  * returns $this->here
  *
- * @return void
+ * @return string $this->here.
  */
 	public function return_here() {
 		return $this->here;
@@ -91,7 +91,7 @@ class RequestActionController extends Controller {
 /**
  * paginate_request_action method
  *
- * @return void
+ * @return true
  */
 	public function paginate_request_action() {
 		$this->paginate();
@@ -251,8 +251,9 @@ class TestObject extends Object {
 	}
 
 /**
- * undocumented function
+ * Set properties.
  *
+ * @param array $properties The $properties.
  * @return void
  */
 	public function set($properties = array()) {

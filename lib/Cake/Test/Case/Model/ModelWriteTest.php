@@ -388,6 +388,34 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * Test that save() with a fieldList continues to write
+ * updated in all cases.
+ *
+ * @return void
+ */
+	public function testSaveUpdatedWithFieldList() {
+		$this->loadFixtures('Post', 'Author');
+		$model = ClassRegistry::init('Post');
+		$original = $model->find('first', array(
+			'conditions' => array('Post.id' => 1)
+		));
+		$data = array(
+			'Post' => array(
+				'id' => 1,
+				'title' => 'New title',
+				'updated' => '1999-01-01 00:00:00',
+			)
+		);
+		$model->save($data, array(
+			'fieldList' => array('title')
+		));
+		$new = $model->find('first', array(
+			'conditions' => array('Post.id' => 1)
+		));
+		$this->assertGreaterThan($original['Post']['updated'], $new['Post']['updated']);
+	}
+
+/**
  * Test save() resets the whitelist after afterSave
  *
  * @return void
@@ -1960,8 +1988,8 @@ class ModelWriteTest extends BaseModelTest {
 				'title' => 'New Article With Tags and fieldList',
 				'body' => '',
 				'published' => 'N',
-				'created' => '',
-				'updated' => ''
+				'created' => static::date(),
+				'updated' => static::date(),
 			),
 			'Tag' => array(
 				0 => array(

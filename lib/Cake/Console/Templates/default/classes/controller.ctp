@@ -23,10 +23,10 @@ echo "App::uses('{$plugin}AppController', '{$pluginPath}Controller');\n";
 ?>
 /**
  * <?php echo $controllerName; ?> Controller
- *
 <?php
 if (!$isScaffold) {
 	$defaultModel = Inflector::singularize($controllerName);
+	echo " *\n";
 	echo " * @property {$defaultModel} \${$defaultModel}\n";
 	if (!empty($components)) {
 		foreach ($components as $component) {

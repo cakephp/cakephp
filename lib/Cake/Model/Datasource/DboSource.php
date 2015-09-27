@@ -284,7 +284,7 @@ class DboSource extends DataSource {
 		if ($this->_result instanceof PDOStatement) {
 			$this->_result->closeCursor();
 		}
-		unset($this->_connection);
+		$this->_connection = null;
 		$this->connected = false;
 		return true;
 	}
@@ -857,12 +857,16 @@ class DboSource extends DataSource {
  * @return bool True if the database is connected, else false
  */
 	public function isConnected() {
-		try {
-			$connected = $this->_connection->query('SELECT 1');
-		} catch (Exception $e) {
+		if ($this->_connection === null) {
 			$connected = false;
+		} else {
+			try {
+				$connected = $this->_connection->query('SELECT 1');
+			} catch (Exception $e) {
+				$connected = false;
+			}
 		}
-		$this->connected = ! empty($connected);
+		$this->connected = !empty($connected);
 		return $this->connected;
 	}
 
@@ -1264,7 +1268,7 @@ class DboSource extends DataSource {
 
 		$queryTemplate = $this->generateAssociationQuery($Model, $LinkModel, $type, $association, $assocData, $queryData, $external);
 		if (empty($queryTemplate)) {
-			return;
+			return null;
 		}
 
 		if (!is_array($resultSet)) {
@@ -1958,7 +1962,7 @@ class DboSource extends DataSource {
  *
  * @param string $type type of query being run. e.g select, create, update, delete, schema, alter.
  * @param array $data Array of data to insert into the query.
- * @return string Rendered SQL expression to be run.
+ * @return string|null Rendered SQL expression to be run, otherwise null.
  */
 	public function renderStatement($type, $data) {
 		extract($data);
@@ -1992,7 +1996,7 @@ class DboSource extends DataSource {
 				}
 				return "CREATE TABLE {$table} (\n{$columns}{$indexes}) {$tableParameters};";
 			case 'alter':
-				return;
+				return null;
 		}
 	}
 

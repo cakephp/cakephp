@@ -69,6 +69,7 @@ class ConfigureTest extends CakeTestCase {
 
 /**
  * Test to ensure bootrapping doesn't overwrite prior configs set under 'App' key
+ *
  * @return void
  */
 	public function testBootstrap() {
@@ -469,6 +470,8 @@ class ConfigureTest extends CakeTestCase {
 	}
 
 /**
+ * testDumpNoAdapter
+ *
  * @expectedException ConfigureException
  * @return void
  */

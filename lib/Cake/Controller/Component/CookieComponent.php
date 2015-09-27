@@ -27,7 +27,6 @@ App::uses('Hash', 'Utility');
  *
  * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html
- *
  */
 class CookieComponent extends Component {
 

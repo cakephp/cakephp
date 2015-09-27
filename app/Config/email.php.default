@@ -1,7 +1,5 @@
 <?php
 /**
- *
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -35,7 +33,6 @@
  *
  * from =>
  * The origin email. See CakeEmail::from() about the valid values
- *
  */
 class EmailConfig {
 
