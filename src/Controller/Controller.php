@@ -331,7 +331,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function __get($name)
     {
         if (in_array($name, ['layout', 'view', 'theme', 'autoLayout', 'viewPath', 'layoutPath'], true)) {
-            $method = $name == 'viewPath' ? 'templatePath' : $name;
+            $method = $name === 'viewPath' ? 'templatePath' : $name;
             trigger_error(
                 sprintf('Controller::$%s is deprecated. Use $this->viewBuilder()->%s() instead.', $name, $method),
                 E_USER_DEPRECATED

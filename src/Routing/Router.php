@@ -445,7 +445,7 @@ class Router
             return;
         }
         foreach (static::$_initialState as $key => $val) {
-            if ($key != '_initialState') {
+            if ($key !== '_initialState') {
                 static::${$key} = $val;
             }
         }
