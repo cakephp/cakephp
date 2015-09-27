@@ -247,8 +247,8 @@ class SmtpTransport extends AbstractTransport
     protected function _auth()
     {
         if (isset($this->_config['username']) && isset($this->_config['password'])) {
-            $replyCode = $this->_smtpSend('AUTH LOGIN', '334|500|502|504');
-            if ($replyCode == '334') {
+            $replyCode = (string)$this->_smtpSend('AUTH LOGIN', '334|500|502|504');
+            if ($replyCode === '334') {
                 try {
                     $this->_smtpSend(base64_encode($this->_config['username']), '334');
                 } catch (SocketException $e) {
@@ -259,7 +259,7 @@ class SmtpTransport extends AbstractTransport
                 } catch (SocketException $e) {
                     throw new SocketException('SMTP server did not accept the password.');
                 }
-            } elseif ($replyCode == '504') {
+            } elseif ($replyCode === '504') {
                 throw new SocketException('SMTP authentication method not allowed, check if SMTP server requires TLS.');
             } else {
                 throw new SocketException('AUTH command not recognized or not implemented, SMTP server may not require authentication.');
