@@ -1935,7 +1935,6 @@ class Model extends Object implements CakeEventListener {
 						$created = true;
 					}
 				} catch (PDOException $e) {
-					throw $e;
 					if ($tryAgain || !isset($e->errorInfo[1]) || $e->errorInfo[1] !== 1062) {
 						throw $e;
 					}
