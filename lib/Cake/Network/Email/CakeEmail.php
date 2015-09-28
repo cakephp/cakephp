@@ -360,7 +360,7 @@ class CakeEmail {
 
 		if ($config) {
 			$this->config($config);
-		} elseif (class_exists($this->_configClass) && config('email')) {
+		} elseif (config('email') && class_exists($this->_configClass)) {
 			$this->_configInstance = new $this->_configClass();
 			if (isset($this->_configInstance->default)) {
 				$this->config('default');
