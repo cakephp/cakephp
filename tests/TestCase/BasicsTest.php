@@ -132,6 +132,8 @@ class BasicsTest extends TestCase
         unset($_ENV['TEST_ME']);
         $this->assertEquals(env('TEST_ME'), 'b');
 
+        $this->assertEquals(env('TEST_DEFAULT', 'default-test'), 'default-test');
+
         $_SERVER = $server;
         $_ENV = $env;
     }
