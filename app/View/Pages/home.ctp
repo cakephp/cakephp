@@ -138,7 +138,7 @@ endif;
 		echo '<span class="notice">';
 			echo __d('cake_dev', 'DebugKit is not installed. It will help you inspect and debug different aspects of your application.');
 			echo '<br/>';
-			echo __d('cake_dev', 'You can install it from %s', $this->Html->link('GitHub', 'https://github.com/cakephp/debug_kit'));
+			echo __d('cake_dev', 'You can install it from %s', $this->Html->link('GitHub', 'https://github.com/cakephp/debug_kit/tree/2.2'));
 		echo '</span>';
 	endif;
 	?>
