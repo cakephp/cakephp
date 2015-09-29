@@ -987,6 +987,7 @@ class ControllerTest extends TestCase
 
     /**
      * Test declared deprecated properties like $theme are properly passed to view.
+     *
      * @return void
      */
     public function testDeclaredDeprecatedProperty()
