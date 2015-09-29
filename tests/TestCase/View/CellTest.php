@@ -250,7 +250,8 @@ class CellTest extends TestCase
      */
     public function testCellMissingMethod()
     {
-        $this->View->cell('Articles::nope');
+        $cell = $this->View->cell('Articles::nope');
+        $cell->render();
     }
 
     /**
@@ -306,6 +307,28 @@ class CellTest extends TestCase
         $mock->expects($this->once())
             ->method('write')
             ->with('cell_test_app_view_cell_articles_cell_display', "dummy\n");
+        Cache::config('default', $mock);
+
+        $cell = $this->View->cell('Articles', [], ['cache' => true]);
+        $result = $cell->render();
+        $this->assertEquals("dummy\n", $result);
+        Cache::drop('default');
+    }
+
+    /**
+     * Test read cached cell.
+     *
+     * @return void
+     */
+    public function testReadCachedCell()
+    {
+        $mock = $this->getMock('Cake\Cache\CacheEngine');
+        $mock->method('init')
+            ->will($this->returnValue(true));
+        $mock->method('read')
+            ->will($this->returnValue("dummy\n"));
+        $mock->expects($this->never())
+            ->method('write');
         Cache::config('default', $mock);
 
         $cell = $this->View->cell('Articles', [], ['cache' => true]);
