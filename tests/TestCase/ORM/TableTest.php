@@ -1737,6 +1737,109 @@ class TableTest extends TestCase
         $this->assertSame($entity, $table->save($entity));
     }
 
+
+    /**
+     * Test that save works with replace saveStrategy
+     *
+     * @return void
+     */
+    public function testSaveReplaceSaveStrategy()
+    {
+        $authors = $this->getMock(
+            'Cake\ORM\Table',
+            ['exists'],
+            [
+                [
+                    'connection' => $this->connection,
+                    'alias' => 'Authors',
+                    'table' => 'authors',
+                ]
+            ]
+        );
+        $authors->hasMany('Articles', ['saveStrategy' => 'replace']);
+
+        $entity = $authors->newEntity([
+            'name' => 'mylux',
+            'articles' => [
+                ['title' => 'One Random Post', 'body' => 'The cake is not a lie'],
+                ['title' => 'Another Random Post', 'body' => 'The cake is nice'],
+            ]
+        ], ['associated' => ['Articles']]);
+
+        $entity = $authors->save($entity, ['associated' => ['Articles']]);
+
+        $this->assertEquals(2, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+
+        unset($entity->articles[0]);
+        $entity->dirty('articles', true);
+        
+        $authors->save($entity, ['associated' => ['Articles']]);
+        
+        $this->assertEquals(1, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+    }
+
+
+    /**
+     * Test that save works with append saveStrategy
+     *
+     * @return void
+     */
+    public function testSaveAppendSaveStrategy()
+    {
+        $authors = $this->getMock(
+            'Cake\ORM\Table',
+            ['exists'],
+            [
+                [
+                    'connection' => $this->connection,
+                    'alias' => 'Authors',
+                    'table' => 'authors',
+                ]
+            ]
+        );
+        $authors->hasMany('Articles', ['saveStrategy' => 'append']);
+
+        $entity = $authors->newEntity([
+            'name' => 'mylux',
+            'articles' => [
+                ['title' => 'One Random Post', 'body' => 'The cake is not a lie'],
+                ['title' => 'Another Random Post', 'body' => 'The cake is nice'],
+            ]
+        ], ['associated' => ['Articles']]);
+
+        $entity = $authors->save($entity, ['associated' => ['Articles']]);
+
+        $this->assertEquals(2, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+
+        unset($entity->articles[0]);
+        $entity->dirty('articles', true);
+        
+        $authors->save($entity, ['associated' => ['Articles']]);
+        
+        $this->assertEquals(2, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+    }
+    /**
+     * Test that save has append as the default save strategy
+     *
+     * @return void
+     */
+    public function testSaveDefaultSaveStrategy()
+    {
+        $authors = $this->getMock(
+            'Cake\ORM\Table',
+            ['exists'],
+            [
+                [
+                    'connection' => $this->connection,
+                    'alias' => 'Authors',
+                    'table' => 'authors',
+                ]
+            ]
+        );
+        $authors->hasMany('Articles', ['saveStrategy' => 'append']);
+        $this->assertEquals('append', $authors->association('articles')->saveStrategy());
+    }
+
     /**
      * Test that saving a new entity with a Primary Key set does not call exists when checkExisting is false.
      *

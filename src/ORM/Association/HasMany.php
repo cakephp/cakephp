@@ -32,7 +32,9 @@ class HasMany extends Association
 {
 
     use DependentDeleteTrait;
-    use ExternalAssociationTrait;
+    use ExternalAssociationTrait {
+        _options as _externalOptions;
+    }
 
     /**
      * The type of join to be used when adding the association to a query
@@ -56,6 +58,27 @@ class HasMany extends Association
     protected $_validStrategies = [self::STRATEGY_SELECT, self::STRATEGY_SUBQUERY];
 
     /**
+     * Saving strategy that will only append to the links set
+     *
+     * @var string
+     */
+    const SAVE_APPEND = 'append';
+
+    /**
+     * Saving strategy that will replace the links with the provided set
+     *
+     * @var string
+     */
+    const SAVE_REPLACE = 'replace';
+
+    /**
+     * Saving strategy to be used by this association
+     *
+     * @var string
+     */
+    protected $_saveStrategy = self::SAVE_APPEND;
+
+    /**
      * Returns whether or not the passed table is the owning side for this
      * association. This means that rows in the 'target' table would miss important
      * or required information if the row in 'source' did not exist.
@@ -66,6 +89,26 @@ class HasMany extends Association
     public function isOwningSide(Table $side)
     {
         return $side === $this->source();
+    }
+
+    /**
+     * Sets the strategy that should be used for saving. If called with no
+     * arguments, it will return the currently configured strategy
+     *
+     * @param string|null $strategy the strategy name to be used
+     * @throws \InvalidArgumentException if an invalid strategy name is passed
+     * @return string the strategy to be used for saving
+     */
+    public function saveStrategy($strategy = null)
+    {
+        if ($strategy === null) {
+            return $this->_saveStrategy;
+        }
+        if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE])) {
+            $msg = sprintf('Invalid save strategy "%s"', $strategy);
+            throw new InvalidArgumentException($msg);
+        }
+        return $this->_saveStrategy = $strategy;
     }
 
     /**
@@ -104,6 +147,11 @@ class HasMany extends Association
         $original = $targetEntities;
         $options['_sourceTable'] = $this->source();
 
+        if ($this->_saveStrategy === self::SAVE_REPLACE) {
+            $updateFields = array_fill_keys(array_keys($properties), null);
+            $target->updateAll($updateFields, $properties);
+        }
+
         foreach ($targetEntities as $k => $targetEntity) {
             if (!($targetEntity instanceof EntityInterface)) {
                 break;
@@ -115,6 +163,10 @@ class HasMany extends Association
 
             if ($properties !== $targetEntity->extract($foreignKey)) {
                 $targetEntity->set($properties, ['guard' => false]);
+            }
+
+            if ($this->_saveStrategy === self::SAVE_REPLACE) {
+                $targetEntity->isNew(true);
             }
 
             if ($target->save($targetEntity, $options)) {
@@ -165,5 +217,19 @@ class HasMany extends Association
     public function type()
     {
         return self::ONE_TO_MANY;
+    }
+
+    /**
+     * Parse extra options passed in the constructor.
+     *
+     * @param array $opts original list of options passed in constructor
+     * @return void
+     */
+    protected function _options(array $opts)
+    {
+        $this->_externalOptions($opts);
+        if (!empty($opts['saveStrategy'])) {
+            $this->saveStrategy($opts['saveStrategy']);
+        }
     }
 }
