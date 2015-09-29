@@ -268,7 +268,8 @@ class HashTest extends TestCase
      *
      * @return array
      */
-    public static function articleDataSets() {
+    public static function articleDataSets()
+    {
         return [
             [static::articleData()],
             [static::articleDataObject()]
