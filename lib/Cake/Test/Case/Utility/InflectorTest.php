@@ -128,7 +128,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEquals(Inflector::singularize('stimuli'), 'stimulus');
 		$this->assertEquals(Inflector::singularize('syllabi'), 'syllabus');
 		$this->assertEquals(Inflector::singularize('termini'), 'terminus');
-		$this->assertEquals(Inflector::singularize('viri'), 'virus');
+		$this->assertEquals(Inflector::singularize('viruses'), 'virus');
 		$this->assertEquals(Inflector::singularize('people'), 'person');
 		$this->assertEquals(Inflector::singularize('gloves'), 'glove');
 		$this->assertEquals(Inflector::singularize('doves'), 'dove');
@@ -246,7 +246,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEquals(Inflector::pluralize('stimulus'), 'stimuli');
 		$this->assertEquals(Inflector::pluralize('syllabus'), 'syllabi');
 		$this->assertEquals(Inflector::pluralize('terminus'), 'termini');
-		$this->assertEquals(Inflector::pluralize('virus'), 'viri');
+		$this->assertEquals(Inflector::pluralize('virus'), 'viruses');
 		$this->assertEquals(Inflector::pluralize('person'), 'people');
 		$this->assertEquals(Inflector::pluralize('people'), 'people');
 		$this->assertEquals(Inflector::pluralize('glove'), 'gloves');
