@@ -355,12 +355,25 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function __set($name, $value)
     {
-        if (in_array($name, ['layout', 'view', 'theme', 'autoLayout', 'viewPath', 'layoutPath'], true)) {
+        $deprecated = [
+            'layout' => 'layout',
+            'view' => 'template',
+            'theme' => 'theme',
+            'autoLayout' => 'autoLayout',
+            'viewPath' => 'templatePath',
+            'layoutPath' => 'layoutPath',
+        ];
+        if (isset($deprecated[$name])) {
+            $method = $deprecated[$name];
             trigger_error(
-                sprintf('Controller::$%s is deprecated. Use $this->viewBuilder()->%s() instead.', $name, $name),
+                sprintf(
+                    'Controller::$%s is deprecated. Use $this->viewBuilder()->%s() instead.',
+                    $name,
+                    $method
+                ),
                 E_USER_DEPRECATED
             );
-            $this->viewBuilder()->{$name}($value);
+            $this->viewBuilder()->{$method}($value);
             return;
         }
 
