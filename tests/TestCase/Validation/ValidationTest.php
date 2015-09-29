@@ -1,7 +1,5 @@
 <?php
 /**
- * ValidationTest file
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -1470,6 +1468,17 @@ class ValidationTest extends TestCase
      */
     public function testDateTimeArray()
     {
+        $date = [
+            'year' => 2014,
+            'month' => '02',
+            'day' => '14',
+            'hour' => '12',
+            'minute' => '14',
+            'second' => '15',
+            'meridian' => 'pm'
+        ];
+        $this->assertTrue(Validation::datetime($date));
+
         $date = ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15];
         $this->assertTrue(Validation::datetime($date));
 
