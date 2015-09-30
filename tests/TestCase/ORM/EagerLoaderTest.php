@@ -444,6 +444,35 @@ class EagerLoaderTest extends TestCase
     }
 
     /**
+     * Test clearing containments but not matching joins.
+     *
+     * @return void
+     */
+    public function testClearContain()
+    {
+        $contains = [
+            'clients' => [
+                'orders' => [
+                    'orderTypes',
+                    'stuff' => ['stuffTypes']
+                ],
+                'companies' => [
+                    'categories'
+                ]
+            ]
+        ];
+
+        $loader = new EagerLoader();
+        $loader->contain($contains);
+        $loader->matching('clients.addresses');
+
+        $this->assertNull($loader->clearContain());
+        $result = $loader->normalized($this->table);
+        $this->assertEquals([], $result);
+        $this->assertArrayHasKey('clients', $loader->matching());
+    }
+
+    /**
      * Helper function sued to quoted both keys and values in an array in case
      * the test suite is running with auto quoting enabled
      *
