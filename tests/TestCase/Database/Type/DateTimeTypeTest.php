@@ -155,6 +155,14 @@ class DateTimeTypeTest extends TestCase
             [
                 [
                     'year' => 2014, 'month' => 2, 'day' => 14,
+                    'hour' => 12, 'minute' => 04, 'second' => 15,
+                    'meridian' => 'pm'
+                ],
+                new Time('2014-02-14 12:04:15')
+            ],
+            [
+                [
+                    'year' => 2014, 'month' => 2, 'day' => 14,
                     'hour' => 1, 'minute' => 14, 'second' => 15,
                     'meridian' => 'pm'
                 ],
