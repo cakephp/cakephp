@@ -393,6 +393,10 @@ class InflectorTest extends TestCase
 
         $result = Inflector::slug("non\xc2\xa0breaking\xc2\xa0space");
         $this->assertEquals('non-breaking-space', $result);
+
+        $result = Inflector::slug('Foo Bar: Not just for breakfast any-more', '');
+        $expected = 'FooBarNotjustforbreakfastanymore';
+        $this->assertEquals($expected, $result);
     }
 
     /**
