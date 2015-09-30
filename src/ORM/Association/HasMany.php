@@ -148,8 +148,7 @@ class HasMany extends Association
         $options['_sourceTable'] = $this->source();
 
         if ($this->_saveStrategy === self::SAVE_REPLACE) {
-            $updateFields = array_fill_keys(array_keys($properties), null);
-            $target->updateAll($updateFields, $properties);
+            $this->_unlinkAssociated($properties, $entity, $target, $options);
         }
 
         foreach ($targetEntities as $k => $targetEntity) {
@@ -183,6 +182,25 @@ class HasMany extends Association
 
         $entity->set($this->property(), $targetEntities);
         return $entity;
+    }
+
+    /**
+     * Deletes/sets null the related objects according to the dependency between source and targets
+     *
+     * @param array $properties array of foreignKey properties
+     * @param EntityInterface $entity the entity which should have its associated entities unassigned
+     * @param Table $target The associated table
+     * @param array $options original list of options passed in constructor
+     * @return void
+     */
+    protected function _unlinkAssociated(array $properties, EntityInterface $entity, Table $target, array $options)
+    {
+        if ($this->dependent()) {
+                $this->cascadeDelete($entity, $options);
+        } else {
+            $updateFields = array_fill_keys(array_keys($properties), null);
+            $target->updateAll($updateFields, $properties);
+        }
     }
 
     /**

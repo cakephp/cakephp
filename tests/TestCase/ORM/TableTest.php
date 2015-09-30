@@ -1739,7 +1739,7 @@ class TableTest extends TestCase
 
 
     /**
-     * Test that save works with replace saveStrategy
+     * Test that save works with replace saveStrategy and are not deleted once they are not null
      *
      * @return void
      */
@@ -1770,17 +1770,19 @@ class TableTest extends TestCase
 
         $this->assertEquals(2, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
 
+        $articleId = $entity->articles[0]->id;
         unset($entity->articles[0]);
         $entity->dirty('articles', true);
         
         $authors->save($entity, ['associated' => ['Articles']]);
         
         $this->assertEquals(1, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $this->assertTrue($authors->Articles->exists(['id' => $articleId]));
     }
 
 
     /**
-     * Test that save works with append saveStrategy
+     * Test that save works with append saveStrategy not deleting or setting null anything
      *
      * @return void
      */
@@ -1810,13 +1812,15 @@ class TableTest extends TestCase
         $entity = $authors->save($entity, ['associated' => ['Articles']]);
 
         $this->assertEquals(2, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
-
+        
+        $articleId = $entity->articles[0]->id;
         unset($entity->articles[0]);
         $entity->dirty('articles', true);
         
         $authors->save($entity, ['associated' => ['Articles']]);
         
         $this->assertEquals(2, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $this->assertTrue($authors->Articles->exists(['id' => $articleId]));
     }
     /**
      * Test that save has append as the default save strategy
@@ -1838,6 +1842,48 @@ class TableTest extends TestCase
         );
         $authors->hasMany('Articles', ['saveStrategy' => 'append']);
         $this->assertEquals('append', $authors->association('articles')->saveStrategy());
+    }
+
+    /**
+     * Test that the associated entities are unlinked and deleted when they are dependent
+     *
+     * @return void
+     */
+    public function testSaveReplaceSaveStrategyDependent()
+    {
+        $authors = $this->getMock(
+            'Cake\ORM\Table',
+            ['exists'],
+            [
+                [
+                    'connection' => $this->connection,
+                    'alias' => 'Authors',
+                    'table' => 'authors',
+                ]
+            ]
+        );
+        $authors->hasMany('Articles', ['saveStrategy' => 'replace', 'dependent' => true]);
+
+        $entity = $authors->newEntity([
+            'name' => 'mylux',
+            'articles' => [
+                ['title' => 'One Random Post', 'body' => 'The cake is not a lie'],
+                ['title' => 'Another Random Post', 'body' => 'The cake is nice'],
+            ]
+        ], ['associated' => ['Articles']]);
+
+        $entity = $authors->save($entity, ['associated' => ['Articles']]);
+
+        $this->assertEquals(2, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+
+        $articleId = $entity->articles[0]->id;
+        unset($entity->articles[0]);
+        $entity->dirty('articles', true);
+        
+        $authors->save($entity, ['associated' => ['Articles']]);
+        
+        $this->assertEquals(1, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $this->assertFalse($authors->Articles->exists(['id' => $articleId]));
     }
 
     /**
