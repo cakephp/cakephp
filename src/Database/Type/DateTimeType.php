@@ -165,6 +165,9 @@ class DateTimeType extends Type
             $format .= sprintf('%d-%02d-%02d', $value['year'], $value['month'], $value['day']);
         }
 
+        if (isset($value['meridian']) && (int)$value['hour'] === 12) {
+            $value['hour'] = 0;
+        }
         if (isset($value['meridian'])) {
             $value['hour'] = strtolower($value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
         }
