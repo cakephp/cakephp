@@ -142,6 +142,21 @@ class EagerLoader
     }
 
     /**
+     * Remove any existing non-matching based containments.
+     *
+     * This will reset/clear out any contained associations that were not
+     * added via matching().
+     *
+     * @return void
+     */
+    public function clearContain()
+    {
+        $this->_containments = [];
+        $this->_normalized = $this->_loadExternal = null;
+        $this->_aliasList = [];
+    }
+
+    /**
      * Set whether or not contained associations will load fields automatically.
      *
      * @param bool $value The value to set.
