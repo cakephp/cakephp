@@ -122,6 +122,12 @@ class Hash
      */
     public static function extract($data, $path)
     {
+        if (!(is_array($data) || $data instanceof ArrayAccess)) {
+            throw new InvalidArgumentException(
+                'Invalid data type, must be an array or \ArrayAccess instance.'
+            );
+        }
+
         if (empty($path)) {
             return $data;
         }
