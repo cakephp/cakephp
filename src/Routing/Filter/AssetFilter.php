@@ -101,19 +101,20 @@ class AssetFilter extends DispatcherFilter
     protected function _getAssetFile($url)
     {
         $parts = explode('/', $url);
-        $pluginPart = [];
-        for ($i = 0; $i < 2; $i++) {
+        $pluginPart = array_map('\\Cake\\Utility\\Inflector::camelize', array_slice($parts, 0 , 2));
+        for ($i = 2; $i > 0; $i--) {
             if (!isset($parts[$i])) {
                 break;
             }
-            $pluginPart[] = Inflector::camelize($parts[$i]);
             $plugin = implode('/', $pluginPart);
             if ($plugin && Plugin::loaded($plugin)) {
-                $parts = array_slice($parts, $i + 1);
+                $parts = array_slice($parts, $i);
                 $fileFragment = implode(DS, $parts);
                 $pluginWebroot = Plugin::path($plugin) . 'webroot' . DS;
                 return $pluginWebroot . $fileFragment;
             }
+
+            array_pop($pluginPart);
         }
     }
 
