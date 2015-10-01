@@ -406,5 +406,19 @@ class CakeSocket {
 		throw new SocketException($errorMessage);
 	}
 
+/**
+ * Accept Self-signed certificate on current stream socket
+ *
+ * @return bool True on success
+ * @see stream_context_set_option
+ */
+	public function enableSelfSigned() {
+		$options['ssl'] = array(
+			'allow_self_signed' => true,
+			'verify_peer' => false,
+			'verify_peer_name' => false
+		);
+		return stream_context_set_option($this->connection, $options);
+	}
 }
 
