@@ -173,10 +173,6 @@ class JsonView extends SerializedView
                 return null;
             }
 
-            if (count($data) === 1) {
-                return current($data);
-            }
-
             return $data;
         }
 
