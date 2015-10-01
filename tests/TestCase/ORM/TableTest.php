@@ -1829,15 +1829,12 @@ class TableTest extends TestCase
      */
     public function testSaveDefaultSaveStrategy()
     {
-        $authors = $this->getMock(
-            'Cake\ORM\Table',
-            ['exists'],
+        $authors = new Table(
             [
-                [
-                    'connection' => $this->connection,
-                    'alias' => 'Authors',
-                    'table' => 'authors',
-                ]
+                'table' => 'authors',
+                'alias' => 'Authors',
+                'connection' => $this->connection,
+                'entityClass' => 'Cake\ORM\Entity',
             ]
         );
         $authors->hasMany('Articles', ['saveStrategy' => 'append']);
@@ -1884,6 +1881,56 @@ class TableTest extends TestCase
         
         $this->assertEquals(1, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
         $this->assertFalse($authors->Articles->exists(['id' => $articleId]));
+    }
+
+    /**
+     * Test that the associated entities are unlinked and deleted when they have a not nullable foreign key
+     *
+     * @return void
+     */
+    public function testSaveReplaceSaveStrategyNotNullable()
+    {
+        $articles = $this->getMock(
+            'Cake\ORM\Table',
+            ['exists'],
+            [
+                [
+                    'connection' => $this->connection,
+                    'alias' => 'Articles',
+                    'table' => 'articles',
+                ]
+            ]
+        );
+
+        $articles->hasMany('Comments', ['saveStrategy' => 'replace']);
+
+        $article = $articles->newEntity([
+            'title' => 'Bakeries are sky rocketing',
+            'body' => 'All because of cake',
+            'comments' => [
+                [
+                    'user_id' => 1,
+                    'comment' => 'That is true!'
+                ],
+                [
+                    'user_id' => 2,
+                    'comment' => 'Of course'
+                ]
+            ]
+        ], ['associated' => ['Comments']]);
+
+        $article = $articles->save($article, ['associated' => ['Comments']]);
+        $commentId = $article->comments[0]->id;
+
+        $this->assertEquals(2, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
+        $this->assertTrue($articles->Comments->exists(['id' => $commentId]));
+        
+        unset($article->comments[0]);
+        $article->dirty('comments', true);
+        $article = $articles->save($article, ['associated' => ['Comments']]);
+
+        $this->assertEquals(1, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
+        $this->assertFalse($articles->Comments->exists(['id' => $commentId]));
     }
 
     /**

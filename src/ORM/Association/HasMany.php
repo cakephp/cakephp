@@ -185,7 +185,7 @@ class HasMany extends Association
     }
 
     /**
-     * Deletes/sets null the related objects according to the dependency between source and targets
+     * Deletes/sets null the related objects according to the dependency between source and targets and foreign key nullability
      *
      * @param array $properties array of foreignKey properties
      * @param EntityInterface $entity the entity which should have its associated entities unassigned
@@ -195,12 +195,34 @@ class HasMany extends Association
      */
     protected function _unlinkAssociated(array $properties, EntityInterface $entity, Table $target, array $options)
     {
-        if ($this->dependent()) {
+        $mustBeDependent = (!$this->_foreignKeyAcceptsNull($target, $properties) || $this->dependent());
+        $this->dependent($mustBeDependent);
+
+        if ($mustBeDependent) {
                 $this->cascadeDelete($entity, $options);
         } else {
             $updateFields = array_fill_keys(array_keys($properties), null);
             $target->updateAll($updateFields, $properties);
         }
+    }
+
+    /**
+     * Checks the nullable flag of the foreign key
+     *
+     * @param Table $table the table containing the foreign key
+     * @param array $properties the list of fields that compose the foreign key
+     * @return bool
+     */
+    protected function _foreignKeyAcceptsNull(Table $table, array $properties)
+    {
+        return array_product(
+            array_map(
+                function ($prop) use ($table) {
+                    return $table->schema()->isNullable($prop);
+                },
+                array_keys($properties)
+            )
+        );
     }
 
     /**
