@@ -15,7 +15,6 @@ namespace Cake\View;
 
 use Cake\Core\App;
 use Cake\Event\EventDispatcherInterface;
-use Cake\View\ViewBuilder;
 
 /**
  * Provides the set() method for collecting template context.

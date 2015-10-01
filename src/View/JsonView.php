@@ -18,7 +18,6 @@ use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\Network\Request;
 use Cake\Network\Response;
-use Cake\View\SerializedView;
 
 /**
  * A view class that is used for JSON responses.

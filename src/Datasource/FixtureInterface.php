@@ -14,8 +14,6 @@
  */
 namespace Cake\Datasource;
 
-use Cake\Datasource\ConnectionInterface;
-
 /**
  * Defines the interface that testing fixtures use.
  */

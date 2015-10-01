@@ -14,7 +14,6 @@
  */
 namespace Cake\Console;
 
-use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\MissingHelperException;
 use Cake\Core\App;
 use Cake\Core\ObjectRegistry;

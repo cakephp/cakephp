@@ -19,7 +19,6 @@ use Cake\Event\EventManager;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\View\Exception\MissingViewException;
-use Cake\View\View;
 use JsonSerializable;
 use Serializable;
 
