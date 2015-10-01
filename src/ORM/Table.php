@@ -161,7 +161,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Connection instance
      *
-     * @var \Cake\Database\Connection
+     * @var \Cake\Datasource\ConnectionInterface
      */
     protected $_connection;
 

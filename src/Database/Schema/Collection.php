@@ -30,7 +30,7 @@ class Collection
     /**
      * Connection object
      *
-     * @var \Cake\Database\Connection
+     * @var \Cake\Datasource\ConnectionInterface
      */
     protected $_connection;
 
