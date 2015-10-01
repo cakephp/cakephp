@@ -39,7 +39,7 @@ class FooType extends Type
 class TableTest extends TestCase
 {
 
-    public $fixtures = ['core.articles_tags', 'core.products', 'core.orders', 'core.tags'];
+    public $fixtures = ['core.articles_tags', 'core.orders', 'core.products', 'core.tags'];
 
     protected $_map;
 

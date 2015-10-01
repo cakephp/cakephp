@@ -48,18 +48,18 @@ class TableTest extends TestCase
 {
 
     public $fixtures = [
-        'core.comments',
-        'core.users',
-        'core.categories',
         'core.articles',
-        'core.authors',
-        'core.tags',
         'core.articles_tags',
-        'core.site_articles',
-        'core.members',
+        'core.authors',
+        'core.categories',
+        'core.comments',
         'core.groups',
         'core.groups_members',
+        'core.members',
         'core.polymorphic_tagged',
+        'core.site_articles',
+        'core.tags',
+        'core.users'
     ];
 
     /**

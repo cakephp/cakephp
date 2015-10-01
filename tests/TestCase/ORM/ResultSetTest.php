@@ -30,7 +30,7 @@ use Cake\TestSuite\TestCase;
 class ResultSetTest extends TestCase
 {
 
-    public $fixtures = ['core.authors', 'core.articles', 'core.comments'];
+    public $fixtures = ['core.articles', 'core.authors', 'core.comments'];
 
     /**
      * setup
