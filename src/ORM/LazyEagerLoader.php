@@ -17,7 +17,6 @@ namespace Cake\ORM;
 use Cake\Collection\Collection;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Datasource\EntityInterface;
-use Cake\ORM\Table;
 
 /**
  * Contains methods that are capable of injecting eagerly loaded associations into

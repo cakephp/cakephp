@@ -19,8 +19,6 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Cake\ORM\Query;
-use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use RuntimeException;

@@ -16,7 +16,6 @@ namespace Cake\ORM\Locator;
 
 use Cake\Core\App;
 use Cake\Datasource\ConnectionManager;
-use Cake\ORM\Locator\LocatorInterface;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use RuntimeException;

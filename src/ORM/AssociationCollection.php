@@ -16,10 +16,6 @@ namespace Cake\ORM;
 
 use ArrayIterator;
 use Cake\Datasource\EntityInterface;
-use Cake\ORM\Association;
-use Cake\ORM\AssociationsNormalizerTrait;
-use Cake\ORM\Entity;
-use Cake\ORM\Table;
 use InvalidArgumentException;
 use IteratorAggregate;
 
