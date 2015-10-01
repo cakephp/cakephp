@@ -36,7 +36,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * Connection instance to be used to execute this query.
      *
-     * @var \Cake\Database\Connection
+     * @var \Cake\Datasource\ConnectionInterface
      */
     protected $_connection;
 
@@ -124,7 +124,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * Constructor.
      *
-     * @param \Cake\Database\Connection $connection The connection
+     * @param \Cake\Datasource\ConnectionInterface $connection The connection
      * object to be used for transforming and executing this query
      */
     public function __construct($connection)
@@ -136,8 +136,8 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Sets the connection instance to be used for executing and transforming this query
      * When called with a null argument, it will return the current connection instance.
      *
-     * @param \Cake\Database\Connection $connection instance
-     * @return $this|\Cake\Database\Connection
+     * @param \Cake\Datasource\ConnectionInterface $connection instance
+     * @return $this|\Cake\Datasource\ConnectionInterface
      */
     public function connection($connection = null)
     {
