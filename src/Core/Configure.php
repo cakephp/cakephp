@@ -208,7 +208,7 @@ class Configure
      */
     public static function configured($name = null)
     {
-        if ($name) {
+        if ($name !== null) {
             return isset(static::$_engines[$name]);
         }
         return array_keys(static::$_engines);
@@ -344,7 +344,7 @@ class Configure
     public static function version()
     {
         if (!isset(static::$_values['Cake']['version'])) {
-            require CORE_PATH . 'config/config.php';
+            $config = require CORE_PATH . 'config/config.php';
             static::write($config);
         }
         return static::$_values['Cake']['version'];

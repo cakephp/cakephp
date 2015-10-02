@@ -265,7 +265,7 @@ abstract class CacheEngine
     protected function _key($key)
     {
         $key = $this->key($key);
-        if (!$key) {
+        if ($key === false) {
             throw new InvalidArgumentException('An empty value is not valid as a cache key');
         }
 
