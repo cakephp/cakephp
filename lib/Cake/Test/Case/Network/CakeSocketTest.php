@@ -350,6 +350,18 @@ class CakeSocketTest extends CakeTestCase {
 	}
 
 /**
+ * testEnableCryptoSelfSigned
+ *
+ * @return void
+ */
+	public function testEnableCryptoSelfSigned() {
+		$this->_connectSocketToSslTls();
+		$this->assertTrue($this->Socket->enableSelfSigned());
+		$this->assertTrue($this->Socket->enableCrypto('tls', 'client'));
+		$this->Socket->disconnect();
+	}
+
+/**
  * test getting the context for a socket.
  *
  * @return void
