@@ -18,7 +18,6 @@ use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\Network\Request;
 use Cake\Network\Response;
-use Cake\View\SerializedView;
 
 /**
  * A view class that is used for JSON responses.
@@ -171,10 +170,6 @@ class JsonView extends SerializedView
 
             if (empty($data)) {
                 return null;
-            }
-
-            if (count($data) === 1) {
-                return current($data);
             }
 
             return $data;

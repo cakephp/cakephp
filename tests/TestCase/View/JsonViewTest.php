@@ -119,6 +119,14 @@ class JsonViewTest extends TestCase
                 json_encode(['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']])
             ],
 
+            // Test render with True in _serialize and single var
+            [
+                ['no' => 'nope'],
+                true,
+                null,
+                json_encode(['no' => 'nope'])
+            ],
+
             // Test render with empty string in _serialize.
             [
                 ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']],

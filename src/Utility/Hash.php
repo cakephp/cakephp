@@ -114,14 +114,20 @@ class Hash
      * - `{n}.User[id>=2]` Get the name of every user with an id key greater than or equal to 2.
      * - `{n}.User[username=/^paul/]` Get User elements with username matching `^paul`.
      *
-     * @param array $data The data to extract from.
+     * @param array|\ArrayAccess $data The data to extract from.
      * @param string $path The path to extract.
      * @return array An array of the extracted values. Returns an empty array
      *   if there are no matches.
      * @link http://book.cakephp.org/3.0/en/core-libraries/hash.html#Hash::extract
      */
-    public static function extract(array $data, $path)
+    public static function extract($data, $path)
     {
+        if (!(is_array($data) || $data instanceof ArrayAccess)) {
+            throw new InvalidArgumentException(
+                'Invalid data type, must be an array or \ArrayAccess instance.'
+            );
+        }
+
         if (empty($path)) {
             return $data;
         }
@@ -161,7 +167,9 @@ class Hash
             if ($conditions) {
                 $filter = [];
                 foreach ($next as $item) {
-                    if (is_array($item) && static::_matches($item, $conditions)) {
+                    if ((is_array($item) || $item instanceof ArrayAccess) &&
+                        static::_matches($item, $conditions)
+                    ) {
                         $filter[] = $item;
                     }
                 }
@@ -215,11 +223,11 @@ class Hash
     /**
      * Checks whether or not $data matches the attribute patterns
      *
-     * @param array $data Array of data to match.
+     * @param array|\ArrayAccess $data Array of data to match.
      * @param string $selector The patterns to match.
      * @return bool Fitness of expression.
      */
-    protected static function _matches(array $data, $selector)
+    protected static function _matches($data, $selector)
     {
         preg_match_all(
             '/(\[ (?P<attr>[^=><!]+?) (\s* (?P<op>[><!]?[=]|[><]) \s* (?P<val>(?:\/.*?\/ | [^\]]+)) )? \])/x',

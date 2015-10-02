@@ -14,7 +14,6 @@
  */
 namespace Cake\Console;
 
-use Cake\Console\ConsoleIo;
 use Cake\Core\InstanceConfigTrait;
 
 /**

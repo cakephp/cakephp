@@ -86,7 +86,7 @@ class Validation
             extract(static::_defaults($check));
         }
 
-        if (empty($check) && $check != '0') {
+        if (empty($check) && $check !== '0') {
             return false;
         }
         return static::_check($check, '/[^\s]+/m');
@@ -109,7 +109,7 @@ class Validation
             extract(static::_defaults($check));
         }
 
-        if (empty($check) && $check != '0') {
+        if (empty($check) && $check !== '0') {
             return false;
         }
         return self::_check($check, '/^[\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}]+$/Du');
@@ -305,6 +305,25 @@ class Validation
             return false;
         }
         return $context['data'][$field] === $check;
+    }
+
+    /**
+     * Checks if a string contains one or more non-alphanumeric characters.
+     *
+     * Returns true if string contains at least the specified number of non-alphanumeric characters
+     *
+     * @param string $check Value to check
+     * @param int $count Number of non-alphanumerics to check for
+     * @return bool Success
+     */
+    public static function containsNonAlphaNumeric($check, $count = 1)
+    {
+        if (!is_string($check)) {
+            return false;
+        }
+
+        $matches = preg_match_all('/[^a-zA-Z0-9]/', $check);
+        return $matches >= $count;
     }
 
     /**
@@ -1183,10 +1202,10 @@ class Validation
         }
 
         if (isset($value['hour'])) {
+            if (isset($value['meridian']) && (int)$value['hour'] === 12) {
+                $value['hour'] = 0;
+            }
             if (isset($value['meridian'])) {
-                if ($value['hour'] === 12) {
-                    $value['hour'] = 0;
-                }
                 $value['hour'] = strtolower($value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
             }
             $value += ['minute' => 0, 'second' => 0];

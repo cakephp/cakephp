@@ -987,9 +987,11 @@ class EmailTest extends TestCase
     {
         $config = ['test' => 'ok', 'test2' => true];
         Configure::write('Email.default', $config);
+        Email::config(Configure::consume('Email'));
         $Email = new Email();
         $this->assertSame($Email->profile(), $config);
         Configure::delete('Email');
+        Email::drop('default');
     }
 
     /**

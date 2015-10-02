@@ -19,7 +19,6 @@ use Cake\Event\EventManager;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\View\Exception\MissingViewException;
-use Cake\View\View;
 use JsonSerializable;
 use Serializable;
 
@@ -88,14 +87,19 @@ class ViewBuilder implements JsonSerializable, Serializable
     protected $_name;
 
     /**
-     * The view variables to use
+     * The view class name to use.
+     * Can either use plugin notation, a short name
+     * or a fully namespaced classname.
      *
      * @var string
      */
     protected $_className;
 
     /**
-     * The view variables to use
+     * Additional options used when constructing the view.
+     *
+     * This options array lets you provide custom constructor
+     * arguments to application/plugin view classes.
      *
      * @var array
      */
@@ -249,6 +253,8 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Set additional options for the view.
      *
+     * This lets you provide custom constructor arguments to application/plugin view classes.
+     *
      * @param array|null $options Either an array of options or null to get current options.
      * @param bool $merge Whether or not to merge existing data with the new data.
      * @return array|$this
@@ -281,7 +287,10 @@ class ViewBuilder implements JsonSerializable, Serializable
     }
 
     /**
-     * Get/set the view classname
+     * Get/set the view classname.
+     *
+     * Accepts either a short name (Ajax) a plugin name (MyPlugin.Ajax)
+     * or a fully namespaced name (App\View\AppView).
      *
      * @param string|null $name The class name for the view. Can
      *   be a plugin.class name reference, a short alias, or a fully

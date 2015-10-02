@@ -15,7 +15,6 @@
 namespace Cake\Mailer;
 
 use Cake\Core\App;
-use Cake\Mailer\Email;
 use Cake\Mailer\Exception\MissingMailerException;
 use InvalidArgumentException;
 

@@ -1823,6 +1823,28 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test overwriting the contained associations.
+     *
+     * @return void
+     */
+    public function testContainOverwrite()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->hasMany('Comments');
+        $table->belongsTo('Authors');
+
+        $query = $table->find();
+        $query->contain(['Comments']);
+        $this->assertEquals(['Comments'], array_keys($query->contain()));
+
+        $query->contain(['Authors'], true);
+        $this->assertEquals(['Authors'], array_keys($query->contain()));
+
+        $query->contain(['Comments', 'Authors'], true);
+        $this->assertEquals(['Comments', 'Authors'], array_keys($query->contain()));
+    }
+
+    /**
      * Integration test to show filtering associations using contain and a closure
      *
      * @return void

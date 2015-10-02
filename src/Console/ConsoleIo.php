@@ -14,9 +14,6 @@
  */
 namespace Cake\Console;
 
-use Cake\Console\ConsoleInput;
-use Cake\Console\ConsoleOutput;
-use Cake\Console\HelperRegistry;
 use Cake\Log\Engine\ConsoleLog;
 use Cake\Log\Log;
 
