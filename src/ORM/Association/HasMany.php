@@ -148,7 +148,7 @@ class HasMany extends Association
         $options['_sourceTable'] = $this->source();
 
         if ($this->_saveStrategy === self::SAVE_REPLACE) {
-            $this->_unlinkAssociated($properties, $entity, $target, $options);
+            $this->_unlinkAssociated($properties, $entity, $target, $targetEntities);
         }
 
         foreach ($targetEntities as $k => $targetEntity) {
@@ -164,9 +164,9 @@ class HasMany extends Association
                 $targetEntity->set($properties, ['guard' => false]);
             }
 
-            if ($this->_saveStrategy === self::SAVE_REPLACE) {
+            /*if ($this->_saveStrategy === self::SAVE_REPLACE) {
                 $targetEntity->isNew(true);
-            }
+            }*/
 
             if ($target->save($targetEntity, $options)) {
                 $targetEntities[$k] = $targetEntity;
@@ -186,23 +186,39 @@ class HasMany extends Association
 
     /**
      * Deletes/sets null the related objects according to the dependency between source and targets and foreign key nullability
+     * Skips deleting records present in $remainingEntities
      *
      * @param array $properties array of foreignKey properties
      * @param EntityInterface $entity the entity which should have its associated entities unassigned
      * @param Table $target The associated table
-     * @param array $options original list of options passed in constructor
+     * @param array $remainingEntities Entities that should not be deleted
      * @return void
      */
-    protected function _unlinkAssociated(array $properties, EntityInterface $entity, Table $target, array $options)
+    protected function _unlinkAssociated(array $properties, EntityInterface $entity, Table $target, array $remainingEntities)
     {
+        $primaryKey = (array)$target->primaryKey();
         $mustBeDependent = (!$this->_foreignKeyAcceptsNull($target, $properties) || $this->dependent());
+        $conditions = [
+            'AND' => [
+                'NOT' => [
+                    'AND' => array_map(
+                        function ($ent) use ($primaryKey) {
+                            return $ent->extract($primaryKey);
+                        },
+                        $remainingEntities
+                    )
+                ],
+                $properties
+            ]
+        ];
+
         $this->dependent($mustBeDependent);
 
         if ($mustBeDependent) {
-                $this->cascadeDelete($entity, $options);
+                $target->deleteAll($conditions);
         } else {
             $updateFields = array_fill_keys(array_keys($properties), null);
-            $target->updateAll($updateFields, $properties);
+            $target->updateAll($updateFields, $conditions);
         }
     }
 
@@ -215,7 +231,7 @@ class HasMany extends Association
      */
     protected function _foreignKeyAcceptsNull(Table $table, array $properties)
     {
-        return array_product(
+        return (bool)array_product(
             array_map(
                 function ($prop) use ($table) {
                     return $table->schema()->isNullable($prop);
