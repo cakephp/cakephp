@@ -448,7 +448,7 @@ class RequestHandlerComponent extends Component
             list($contentType) = explode(';', $request->header('CONTENT_TYPE'));
         }
         $response = $this->response;
-        if (!$type) {
+        if ($type === null) {
             return $response->mapType($contentType);
         }
         if (is_string($type)) {
@@ -579,7 +579,7 @@ class RequestHandlerComponent extends Component
 
         if (!in_array($helper, $controller->helpers) && empty($controller->helpers[$helper])) {
             $helperClass = App::className($helper, 'View/Helper', 'Helper');
-            if ($helperClass) {
+            if ($helperClass !== false) {
                 $controller->helpers[] = $helper;
             }
         }

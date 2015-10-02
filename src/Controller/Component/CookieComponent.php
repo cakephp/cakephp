@@ -363,7 +363,7 @@ class CookieComponent extends Component
         if (is_array($value)) {
             $value = $this->_implode($value);
         }
-        if (!$encrypt) {
+        if ($encrypt === false) {
             return $value;
         }
         $this->_checkCipher($encrypt);

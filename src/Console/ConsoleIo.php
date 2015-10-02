@@ -162,7 +162,7 @@ class ConsoleIo
      * @param int $level The message's output level, see above.
      * @return int|bool Returns the number of bytes returned from writing to stdout.
      */
-    public function out($message = null, $newlines = 1, $level = ConsoleIo::NORMAL)
+    public function out($message = '', $newlines = 1, $level = ConsoleIo::NORMAL)
     {
         if ($level <= $this->_level) {
             $this->_lastWritten = $this->_out->write($message, $newlines);
@@ -212,7 +212,7 @@ class ConsoleIo
      * @param int $newlines Number of newlines to append
      * @return void
      */
-    public function err($message = null, $newlines = 1)
+    public function err($message = '', $newlines = 1)
     {
         $this->_err->write($message, $newlines);
     }

@@ -350,7 +350,7 @@ class Plugin
      */
     public static function loaded($plugin = null)
     {
-        if ($plugin) {
+        if ($plugin !== null) {
             return isset(static::$_plugins[$plugin]);
         }
         $return = array_keys(static::$_plugins);

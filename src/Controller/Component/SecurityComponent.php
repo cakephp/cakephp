@@ -300,10 +300,10 @@ class SecurityComponent extends Component
         $locked = explode('|', $locked);
         $unlocked = explode('|', $unlocked);
 
-        $lockedFields = [];
         $fields = Hash::flatten($check);
         $fieldList = array_keys($fields);
-        $multi = [];
+        $multi = $lockedFields = [];
+        $isUnlocked = false;
 
         foreach ($fieldList as $i => $key) {
             if (preg_match('/(\.\d+){1,10}$/', $key)) {
