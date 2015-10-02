@@ -164,10 +164,6 @@ class HasMany extends Association
                 $targetEntity->set($properties, ['guard' => false]);
             }
 
-            /*if ($this->_saveStrategy === self::SAVE_REPLACE) {
-                $targetEntity->isNew(true);
-            }*/
-
             if ($target->save($targetEntity, $options)) {
                 $targetEntities[$k] = $targetEntity;
                 continue;
