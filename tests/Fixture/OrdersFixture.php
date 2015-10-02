@@ -49,8 +49,8 @@ class OrdersFixture extends TestFixture
             ],
             'product_id_fk' => [
                 'type' => 'foreign',
-                'columns' => ['product_id', 'product_category'],
-                'references' => ['products', ['id', 'category']],
+                'columns' => ['product_category', 'product_id'],
+                'references' => ['products', ['category', 'id']],
                 'update' => 'cascade',
                 'delete' => 'cascade',
             ]

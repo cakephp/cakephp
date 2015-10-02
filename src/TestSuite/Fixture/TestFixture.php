@@ -346,6 +346,7 @@ class TestFixture implements FixtureInterface
                 $db->execute($stmt)->closeCursor();
             }
         } catch (\Exception $e) {
+            debug($e);
             return false;
         }
 

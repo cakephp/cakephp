@@ -510,12 +510,12 @@ class TableTest extends TestCase
         $expected = [
             'type' => 'foreign',
             'columns' => [
-                'product_id',
-                'product_category'
+                'product_category',
+                'product_id'
             ],
             'references' => [
                 'products',
-                ['id', 'category']
+                ['category', 'id']
             ],
             'update' => 'cascade',
             'delete' => 'cascade',
@@ -524,8 +524,8 @@ class TableTest extends TestCase
 
         $this->assertEquals($expected, $compositeConstraint);
 
-        $expectedSubstring = 'CONSTRAINT <product_id_fk> FOREIGN KEY \(<product_id>, <product_category>\)' .
-            ' REFERENCES <products> \(<id>, <category>\)';
+        $expectedSubstring = 'CONSTRAINT <product_id_fk> FOREIGN KEY \(<product_category>, <product_id>\)' .
+            ' REFERENCES <products> \(<category>, <id>\)';
 
         $this->assertQuotedQuery($expectedSubstring, $table->schema()->createSql(ConnectionManager::get('test'))[0]);
     }
