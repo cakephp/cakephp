@@ -84,7 +84,7 @@ class TestFixture implements FixtureInterface
      *
      * @var array
      */
-    public $constraints = [];
+    protected $_constraints = [];
 
     /**
      * Instantiate the fixture.
@@ -169,7 +169,7 @@ class TestFixture implements FixtureInterface
                 if ($data['type'] !== Table::CONSTRAINT_FOREIGN) {
                     $this->_schema->addConstraint($name, $data);
                 } else {
-                    $this->constraints[$name] = $data;
+                    $this->_constraints[$name] = $data;
                 }
             }
         }
@@ -240,7 +240,6 @@ class TestFixture implements FixtureInterface
             foreach ($queries as $query) {
                 $db->execute($query)->closeCursor();
             }
-            $this->created[] = $db->configName();
         } catch (Exception $e) {
             $msg = sprintf(
                 'Fixture creation for "%s" failed "%s"',
@@ -300,11 +299,11 @@ class TestFixture implements FixtureInterface
      */
     public function createConstraints(ConnectionInterface $db)
     {
-        if (empty($this->constraints)) {
+        if (empty($this->_constraints)) {
             return true;
         }
 
-        foreach ($this->constraints as $name => $data) {
+        foreach ($this->_constraints as $name => $data) {
             $this->_schema->addConstraint($name, $data);
         }
 
@@ -330,7 +329,7 @@ class TestFixture implements FixtureInterface
      */
     public function dropConstraints(ConnectionInterface $db)
     {
-        if (empty($this->constraints)) {
+        if (empty($this->_constraints)) {
             return true;
         }
 
@@ -350,7 +349,7 @@ class TestFixture implements FixtureInterface
             return false;
         }
 
-        foreach ($this->constraints as $name => $data) {
+        foreach ($this->_constraints as $name => $data) {
             $this->_schema->dropConstraint($name);
         }
         return true;
