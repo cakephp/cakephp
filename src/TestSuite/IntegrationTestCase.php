@@ -352,6 +352,9 @@ abstract class IntegrationTestCase extends TestCase
             'session' => $session,
             'query' => $query
         ];
+        if (is_string($data)) {
+            $props['input'] = $data;
+        }
         $env = [];
         if (isset($this->_request['headers'])) {
             foreach ($this->_request['headers'] as $k => $v) {
