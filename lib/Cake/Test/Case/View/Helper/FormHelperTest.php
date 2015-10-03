@@ -353,6 +353,7 @@ class ValidateUser extends CakeTestModel {
 		'email' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 		'balance' => array('type' => 'float', 'null' => false, 'length' => '5,2'),
 		'cost_decimal' => array('type' => 'decimal', 'null' => false, 'length' => '6,3'),
+		'null_decimal' => array('type' => 'decimal', 'null' => false, 'length' => null),
 		'ratio' => array('type' => 'decimal', 'null' => false, 'length' => '10,6'),
 		'population' => array('type' => 'decimal', 'null' => false, 'length' => '15,0'),
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
@@ -2041,6 +2042,17 @@ class FormHelperTest extends CakeTestCase {
 			'Cost Decimal',
 			'/label',
 			'input' => array('name', 'type' => 'number', 'step' => '0.001', 'id'),
+			'/div',
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('ValidateUser.null_decimal');
+		$expected = array(
+			'div' => array('class'),
+			'label' => array('for'),
+			'Null Decimal',
+			'/label',
+			'input' => array('name', 'type' => 'number', 'step' => 'any', 'id'),
 			'/div',
 		);
 		$this->assertTags($result, $expected);
