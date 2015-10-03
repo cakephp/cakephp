@@ -197,7 +197,7 @@ class HasMany extends Association
         $conditions = [
             'AND' => [
                 'NOT' => [
-                    'AND' => array_map(
+                    'OR' => array_map(
                         function ($ent) use ($primaryKey) {
                             return $ent->extract($primaryKey);
                         },
@@ -207,8 +207,6 @@ class HasMany extends Association
                 $properties
             ]
         ];
-
-        $this->dependent($mustBeDependent);
 
         if ($mustBeDependent) {
                 $target->deleteAll($conditions);
@@ -227,7 +225,8 @@ class HasMany extends Association
      */
     protected function _foreignKeyAcceptsNull(Table $table, array $properties)
     {
-        return (bool)array_product(
+        return !in_array(
+            false,
             array_map(
                 function ($prop) use ($table) {
                     return $table->schema()->isNullable($prop);

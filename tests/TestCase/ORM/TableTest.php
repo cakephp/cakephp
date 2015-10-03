@@ -1763,12 +1763,13 @@ class TableTest extends TestCase
             'articles' => [
                 ['title' => 'One Random Post', 'body' => 'The cake is not a lie'],
                 ['title' => 'Another Random Post', 'body' => 'The cake is nice'],
+                //['title' => 'One more random post','body'=>'The cake is forever']
             ]
         ], ['associated' => ['Articles']]);
 
         $entity = $authors->save($entity, ['associated' => ['Articles']]);
-
-        $this->assertEquals(2, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $sizeArticles = count($entity->articles);
+        $this->assertEquals($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
 
         $articleId = $entity->articles[0]->id;
         unset($entity->articles[0]);
@@ -1776,7 +1777,7 @@ class TableTest extends TestCase
         
         $authors->save($entity, ['associated' => ['Articles']]);
         
-        $this->assertEquals(1, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $this->assertEquals($sizeArticles - 1, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
         $this->assertTrue($authors->Articles->exists(['id' => $articleId]));
     }
 
@@ -1806,12 +1807,14 @@ class TableTest extends TestCase
             'articles' => [
                 ['title' => 'One Random Post', 'body' => 'The cake is not a lie'],
                 ['title' => 'Another Random Post', 'body' => 'The cake is nice'],
+                ['title' => 'One more random post', 'body' => 'The cake is forever']
             ]
         ], ['associated' => ['Articles']]);
 
         $entity = $authors->save($entity, ['associated' => ['Articles']]);
+        $sizeArticles = count($entity->articles);
 
-        $this->assertEquals(2, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $this->assertEquals($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
         
         $articleId = $entity->articles[0]->id;
         unset($entity->articles[0]);
@@ -1819,7 +1822,7 @@ class TableTest extends TestCase
         
         $authors->save($entity, ['associated' => ['Articles']]);
         
-        $this->assertEquals(2, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $this->assertEquals($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
         $this->assertTrue($authors->Articles->exists(['id' => $articleId]));
     }
     /**
@@ -1866,12 +1869,13 @@ class TableTest extends TestCase
             'articles' => [
                 ['title' => 'One Random Post', 'body' => 'The cake is not a lie'],
                 ['title' => 'Another Random Post', 'body' => 'The cake is nice'],
+                ['title' => 'One more random post', 'body' => 'The cake is forever']
             ]
         ], ['associated' => ['Articles']]);
 
         $entity = $authors->save($entity, ['associated' => ['Articles']]);
-
-        $this->assertEquals(2, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $sizeArticles = count($entity->articles);
+        $this->assertEquals($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
 
         $articleId = $entity->articles[0]->id;
         unset($entity->articles[0]);
@@ -1879,7 +1883,7 @@ class TableTest extends TestCase
         
         $authors->save($entity, ['associated' => ['Articles']]);
         
-        $this->assertEquals(1, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $this->assertEquals($sizeArticles - 1, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
         $this->assertFalse($authors->Articles->exists(['id' => $articleId]));
     }
 
