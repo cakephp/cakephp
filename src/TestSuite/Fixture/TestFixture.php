@@ -166,7 +166,7 @@ class TestFixture implements FixtureInterface
         }
         if (!empty($this->fields['_constraints'])) {
             foreach ($this->fields['_constraints'] as $name => $data) {
-                if ($data['type'] !== 'foreign') {
+                if ($data['type'] !== Table::CONSTRAINT_FOREIGN) {
                     $this->_schema->addConstraint($name, $data);
                 } else {
                     $this->constraints[$name] = $data;
