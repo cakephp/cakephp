@@ -743,16 +743,7 @@ SQL;
                 'references' => ['authors', 'id'],
                 'update' => 'cascade',
                 'delete' => 'cascade'
-            ]);
-
-        $expected = <<<SQL
-ALTER TABLE `posts` ADD CONSTRAINT `author_fk` FOREIGN KEY (`author_id`) REFERENCES `authors` (`id`) ON UPDATE CASCADE ON DELETE CASCADE;
-SQL;
-        $result = $table->addConstraintSql($connection);
-        $this->assertCount(1, $result);
-        $this->assertTextEquals($expected, $result[0]);
-
-        $table
+            ])
             ->addConstraint('category_fk', [
                 'type' => 'foreign',
                 'columns' => ['category_id', 'category_name'],
@@ -761,12 +752,13 @@ SQL;
                 'delete' => 'cascade'
             ]);
 
-        $expected = <<<SQL
-ALTER TABLE `posts` ADD CONSTRAINT `category_fk` FOREIGN KEY (`category_id`, `category_name`) REFERENCES `categories` (`id`, `name`) ON UPDATE CASCADE ON DELETE CASCADE;
-SQL;
+        $expected = [
+            'ALTER TABLE `posts` ADD CONSTRAINT `author_fk` FOREIGN KEY (`author_id`) REFERENCES `authors` (`id`) ON UPDATE CASCADE ON DELETE CASCADE;',
+            'ALTER TABLE `posts` ADD CONSTRAINT `category_fk` FOREIGN KEY (`category_id`, `category_name`) REFERENCES `categories` (`id`, `name`) ON UPDATE CASCADE ON DELETE CASCADE;'
+        ];
         $result = $table->addConstraintSql($connection);
         $this->assertCount(2, $result);
-        $this->assertTextEquals($expected, $result[1]);
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -800,16 +792,7 @@ SQL;
                 'references' => ['authors', 'id'],
                 'update' => 'cascade',
                 'delete' => 'cascade'
-            ]);
-
-        $expected = <<<SQL
-ALTER TABLE `posts` DROP FOREIGN KEY `author_fk`;
-SQL;
-        $result = $table->dropConstraintSql($connection);
-        $this->assertCount(1, $result);
-        $this->assertTextEquals($expected, $result[0]);
-
-        $table
+            ])
             ->addConstraint('category_fk', [
                 'type' => 'foreign',
                 'columns' => ['category_id', 'category_name'],
@@ -818,12 +801,13 @@ SQL;
                 'delete' => 'cascade'
             ]);
 
-        $expected = <<<SQL
-ALTER TABLE `posts` DROP FOREIGN KEY `category_fk`;
-SQL;
+        $expected = [
+            'ALTER TABLE `posts` DROP FOREIGN KEY `author_fk`;',
+            'ALTER TABLE `posts` DROP FOREIGN KEY `category_fk`;'
+        ];
         $result = $table->dropConstraintSql($connection);
         $this->assertCount(2, $result);
-        $this->assertTextEquals($expected, $result[1]);
+        $this->assertEquals($expected, $result);
     }
 
     /**

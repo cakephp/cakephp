@@ -575,25 +575,7 @@ SQL;
                 'references' => ['authors', 'id'],
                 'update' => 'cascade',
                 'delete' => 'cascade'
-            ]);
-
-        $expected = [
-            'DROP TABLE IF EXISTS "tmp_posts"',
-            'ALTER TABLE "posts" RENAME TO "tmp_posts"',
-            'CREATE TABLE "posts" (
-"author_id" INTEGER NOT NULL,
-"category_id" INTEGER NOT NULL,
-"category_name" INTEGER NOT NULL,
-CONSTRAINT "author_fk" FOREIGN KEY ("author_id") REFERENCES "authors" ("id") ON UPDATE CASCADE ON DELETE CASCADE
-)',
-            'INSERT INTO "posts"(author_id, category_id, category_name) SELECT author_id, category_id, category_name FROM "tmp_posts"',
-            'DROP TABLE IF EXISTS "tmp_posts"'
-        ];
-        $result = $table->addConstraintSql($connection);
-        $this->assertCount(5, $result);
-        $this->assertTextEquals($expected, $result);
-
-        $table
+            ])
             ->addConstraint('category_fk', [
                 'type' => 'foreign',
                 'columns' => ['category_id', 'category_name'],
@@ -651,24 +633,7 @@ CONSTRAINT "category_fk" FOREIGN KEY ("category_id", "category_name") REFERENCES
                 'references' => ['authors', 'id'],
                 'update' => 'cascade',
                 'delete' => 'cascade'
-            ]);
-
-        $expected = [
-            'DROP TABLE IF EXISTS "tmp_posts"',
-            'ALTER TABLE "posts" RENAME TO "tmp_posts"',
-            'CREATE TABLE "posts" (
-"author_id" INTEGER NOT NULL,
-"category_id" INTEGER NOT NULL,
-"category_name" INTEGER NOT NULL
-)',
-            'INSERT INTO "posts"(author_id, category_id, category_name) SELECT author_id, category_id, category_name FROM "tmp_posts"',
-            'DROP TABLE IF EXISTS "tmp_posts"'
-        ];
-        $result = $table->dropConstraintSql($connection);
-        $this->assertCount(5, $result);
-        $this->assertTextEquals($expected, $result);
-
-        $table
+            ])
             ->addConstraint('category_fk', [
                 'type' => 'foreign',
                 'columns' => ['category_id', 'category_name'],
