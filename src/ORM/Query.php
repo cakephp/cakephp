@@ -150,8 +150,8 @@ class Query extends DatabaseQuery implements JsonSerializable
     /**
      * Hints this object to associate the correct types when casting conditions
      * for the database. This is done by extracting the field types from the schema
-     * associated to the passed table object. This prevents the user from repeating
-     * himself when specifying conditions.
+     * associated to the passed table object. This prevents developers from repeating
+     * themselves when specifying conditions.
      *
      * This method returns the same query object for chaining.
      *
@@ -281,6 +281,10 @@ class Query extends DatabaseQuery implements JsonSerializable
      * If called with an empty first argument and $override is set to true, the
      * previous list will be emptied.
      *
+     * Contained associations will have their column types mapped allowing you
+     * to use complex types in where() conditions. Nested associations will not have
+     * their types mapped.
+     *
      * @param array|string $associations list of table aliases to be queried
      * @param bool $override whether override previous list with the one passed
      * defaults to merging previous list with the new one.
@@ -298,6 +302,10 @@ class Query extends DatabaseQuery implements JsonSerializable
         }
         if ($associations === null) {
             return $result;
+        }
+
+        foreach ($this->eagerLoader()->normalized($this->repository()) as $loader) {
+            $this->addDefaultTypes($loader->instance()->target());
         }
 
         return $this;
@@ -851,8 +859,7 @@ class Query extends DatabaseQuery implements JsonSerializable
         $this->triggerBeforeFind();
 
         $this->_transformQuery();
-        $sql = parent::sql($binder);
-        return $sql;
+        return parent::sql($binder);
     }
 
     /**
@@ -880,6 +887,7 @@ class Query extends DatabaseQuery implements JsonSerializable
      * specified and applies the joins required to eager load associations defined
      * using `contain`
      *
+     * @see \Cake\ORM\Query::sql()
      * @see \Cake\Database\Query::execute()
      * @return void
      */

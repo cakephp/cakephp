@@ -178,7 +178,7 @@ trait QueryTrait
     }
 
     /**
-     * Sets the query instance to be the eager loaded query. If no argument is
+     * Sets the query instance to be an eager loaded query. If no argument is
      * passed, the current configured query `_eagerLoaded` value is returned.
      *
      * @param bool|null $value Whether or not to eager load.
