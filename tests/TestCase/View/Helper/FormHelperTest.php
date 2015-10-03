@@ -92,6 +92,7 @@ class ValidateUsersTable extends Table
         'email' => ['type' => 'string', 'null' => '', 'default' => '', 'length' => '255'],
         'balance' => ['type' => 'float', 'null' => false, 'length' => 5, 'precision' => 2],
         'cost_decimal' => ['type' => 'decimal', 'null' => false, 'length' => 6, 'precision' => 3],
+        'null_decimal' => ['type' => 'decimal', 'null' => false, 'length' => null, 'precision' => null],
         'ratio' => ['type' => 'decimal', 'null' => false, 'length' => 10, 'precision' => 6],
         'population' => ['type' => 'decimal', 'null' => false, 'length' => 15, 'precision' => 0],
         'created' => ['type' => 'date', 'null' => '1', 'default' => '', 'length' => ''],
@@ -2259,6 +2260,17 @@ class FormHelperTest extends TestCase
             'Cost Decimal',
             '/label',
             'input' => ['name', 'type' => 'number', 'step' => '0.001', 'id'],
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->input('ValidateUser.null_decimal');
+        $expected = [
+            'div' => ['class'],
+            'label' => ['for'],
+            'Null Decimal',
+            '/label',
+            'input' => ['name', 'type' => 'number', 'id'],
             '/div',
         ];
         $this->assertHtml($expected, $result);
