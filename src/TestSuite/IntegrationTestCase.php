@@ -352,7 +352,7 @@ abstract class IntegrationTestCase extends TestCase
             'session' => $session,
             'query' => $query
         ];
-        if (!is_array($data)) {
+        if (is_string($data)) {
             $props['input'] = $data;
         }
         $env = [];
