@@ -194,38 +194,39 @@ class HasMany extends Association
     {
         $primaryKey = (array)$target->primaryKey();
         $mustBeDependent = (!$this->_foreignKeyAcceptsNull($target, $properties) || $this->dependent());
-        $conditions = [
-            'NOT' => [
-                'OR' => array_merge(
-                    array_filter(
-                        array_map(
-                            function ($ent) use ($primaryKey) {
-                                return $ent->extract($primaryKey);
-                            },
-                            $remainingEntities
-                        ),
-                        function ($v) {
-                            return !in_array(null, array_values($v), true);
-                        }
-                    ),
-                    ['1 =' => 0]
-                )
-            ],
-            $properties
-        ];
+        $exclusions = array_filter(
+            array_map(
+                function ($ent) use ($primaryKey) {
+                    return $ent->extract($primaryKey);
+                },
+                $remainingEntities
+            ),
+            function ($v) {
+                return !in_array(null, array_values($v), true);
+            }
+        );
 
-        if ($mustBeDependent) {
-            if ($this->_cascadeCallbacks) {
-                $query = $this->find('all')->where($conditions);
-                foreach ($query as $assoc) {
-                    $target->delete($assoc);
+        if (count($exclusions) > 0) {
+            $conditions = [
+                'NOT' => [
+                    'OR' => $exclusions
+                ],
+                $properties
+            ];
+
+            if ($mustBeDependent) {
+                if ($this->_cascadeCallbacks) {
+                    $query = $this->find('all')->where($conditions);
+                    foreach ($query as $assoc) {
+                        $target->delete($assoc);
+                    }
+                } else {
+                    $target->deleteAll($conditions);
                 }
             } else {
-                $target->deleteAll($conditions);
+                $updateFields = array_fill_keys(array_keys($properties), null);
+                $target->updateAll($updateFields, $conditions);
             }
-        } else {
-            $updateFields = array_fill_keys(array_keys($properties), null);
-            $target->updateAll($updateFields, $conditions);
         }
     }
 
