@@ -196,11 +196,19 @@ class HasMany extends Association
         $mustBeDependent = (!$this->_foreignKeyAcceptsNull($target, $properties) || $this->dependent());
         $conditions = [
             'NOT' => [
-                'OR' => array_map(
-                    function ($ent) use ($primaryKey) {
-                        return $ent->extract($primaryKey);
-                    },
-                    $remainingEntities
+                'OR' => array_merge(
+                    array_filter(
+                        array_map(
+                            function ($ent) use ($primaryKey) {
+                                return $ent->extract($primaryKey);
+                            },
+                            $remainingEntities
+                        ),
+                        function ($v) {
+                            return !in_array(null, array_values($v), true);
+                        }
+                    ),
+                    ['1 =' => 0]
                 )
             ],
             $properties

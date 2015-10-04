@@ -1939,6 +1939,64 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test that the associated entities are unlinked and deleted when they have a not nullable foreign key
+     *
+     * @return void
+     */
+    public function testSaveReplaceSaveStrategyAdding()
+    {
+        $articles = $this->getMock(
+            'Cake\ORM\Table',
+            ['exists'],
+            [
+                [
+                    'connection' => $this->connection,
+                    'alias' => 'Articles',
+                    'table' => 'articles',
+                ]
+            ]
+        );
+
+        $articles->hasMany('Comments', ['saveStrategy' => 'replace']);
+
+        $article = $articles->newEntity([
+            'title' => 'Bakeries are sky rocketing',
+            'body' => 'All because of cake',
+            'comments' => [
+                [
+                    'user_id' => 1,
+                    'comment' => 'That is true!'
+                ],
+                [
+                    'user_id' => 2,
+                    'comment' => 'Of course'
+                ]
+            ]
+        ], ['associated' => ['Comments']]);
+
+        $article = $articles->save($article, ['associated' => ['Comments']]);
+        $commentId = $article->comments[0]->id;
+        $sizeComments = count($article->comments);
+        $articleId = $article->id;
+
+        $this->assertEquals($sizeComments, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
+        $this->assertTrue($articles->Comments->exists(['id' => $commentId]));
+        
+        unset($article->comments[0]);
+        $article->comments[] = $articles->comments->newEntity([
+            'user_id' => 1,
+            'comment' => 'new comment'
+        ]);
+
+        $article->dirty('comments', true);
+        $article = $articles->save($article, ['associated' => ['Comments']]);
+
+        $this->assertEquals($sizeComments, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
+        $this->assertFalse($articles->Comments->exists(['id' => $commentId]));
+        $this->assertTrue($articles->Comments->exists(['comment' => 'new comment', 'article_id' => $articleId]));
+    }
+
+    /**
      * Test that saving a new entity with a Primary Key set does not call exists when checkExisting is false.
      *
      * @group save
