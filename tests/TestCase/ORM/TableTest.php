@@ -1763,7 +1763,7 @@ class TableTest extends TestCase
             'articles' => [
                 ['title' => 'One Random Post', 'body' => 'The cake is not a lie'],
                 ['title' => 'Another Random Post', 'body' => 'The cake is nice'],
-                ['title' => 'One more random post','body'=>'The cake is forever']
+                ['title' => 'One more random post', 'body' => 'The cake is forever']
             ]
         ], ['associated' => ['Articles']]);
 
