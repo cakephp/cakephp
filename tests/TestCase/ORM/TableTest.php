@@ -1925,15 +1925,16 @@ class TableTest extends TestCase
 
         $article = $articles->save($article, ['associated' => ['Comments']]);
         $commentId = $article->comments[0]->id;
+        $sizeComments = count($article->comments);
 
-        $this->assertEquals(2, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
+        $this->assertEquals($sizeComments, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
         $this->assertTrue($articles->Comments->exists(['id' => $commentId]));
         
         unset($article->comments[0]);
         $article->dirty('comments', true);
         $article = $articles->save($article, ['associated' => ['Comments']]);
 
-        $this->assertEquals(1, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
+        $this->assertEquals($sizeComments - 1, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
         $this->assertFalse($articles->Comments->exists(['id' => $commentId]));
     }
 

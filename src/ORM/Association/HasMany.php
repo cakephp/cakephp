@@ -195,21 +195,26 @@ class HasMany extends Association
         $primaryKey = (array)$target->primaryKey();
         $mustBeDependent = (!$this->_foreignKeyAcceptsNull($target, $properties) || $this->dependent());
         $conditions = [
-            'AND' => [
-                'NOT' => [
-                    'OR' => array_map(
-                        function ($ent) use ($primaryKey) {
-                            return $ent->extract($primaryKey);
-                        },
-                        $remainingEntities
-                    )
-                ],
-                $properties
-            ]
+            'NOT' => [
+                'OR' => array_map(
+                    function ($ent) use ($primaryKey) {
+                        return $ent->extract($primaryKey);
+                    },
+                    $remainingEntities
+                )
+            ],
+            $properties
         ];
 
         if ($mustBeDependent) {
+            if ($this->_cascadeCallbacks) {
+                $query = $this->find('all')->where($conditions);
+                foreach ($query as $assoc) {
+                    $target->delete($assoc);
+                }
+            } else {
                 $target->deleteAll($conditions);
+            }
         } else {
             $updateFields = array_fill_keys(array_keys($properties), null);
             $target->updateAll($updateFields, $conditions);
