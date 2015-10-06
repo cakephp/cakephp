@@ -1017,6 +1017,34 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
+     * Test that nested contain queries map types correctly.
+     *
+     * @return void
+     */
+    public function testComplexNestedTypesInJoinedWhere()
+    {
+        $table = TableRegistry::get('Users');
+        $table->hasOne('Comments', [
+            'foreignKey' => 'user_id',
+        ]);
+        $table->Comments->belongsTo('Articles');
+        $table->Comments->Articles->belongsTo('Authors', [
+            'className' => 'Users',
+            'foreignKey' => 'author_id'
+        ]);
+
+        $query = $table->find()
+            ->contain('Comments.Articles.Authors')
+            ->where([
+                'Authors.created >' => new \DateTime('2007-03-17 01:16:00')
+            ]);
+
+        $result = $query->first();
+        $this->assertNotEmpty($result);
+        $this->assertInstanceOf('Cake\I18n\Time', $result->comment->article->author->updated);
+    }
+
+    /**
      * Tests that it is possible to use matching with dot notation
      * even when part of the part of the path in the dot notation is
      * shared for two different calls

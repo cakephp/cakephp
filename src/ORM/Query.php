@@ -15,7 +15,6 @@
 namespace Cake\ORM;
 
 use ArrayObject;
-use BadMethodCallException;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query as DatabaseQuery;
 use Cake\Database\ValueBinder;
@@ -110,7 +109,7 @@ class Query extends DatabaseQuery implements JsonSerializable
     /**
      * Constructor
      *
-     * @param \Cake\Datasource\ConnectionInterface $connection The connection object
+     * @param \Cake\Database\Connection $connection The connection object
      * @param \Cake\ORM\Table $table The table this query is starting on
      */
     public function __construct($connection, $table)
@@ -150,8 +149,8 @@ class Query extends DatabaseQuery implements JsonSerializable
     /**
      * Hints this object to associate the correct types when casting conditions
      * for the database. This is done by extracting the field types from the schema
-     * associated to the passed table object. This prevents developers from repeating
-     * themselves when specifying conditions.
+     * associated to the passed table object. This prevents the user from repeating
+     * himself when specifying conditions.
      *
      * This method returns the same query object for chaining.
      *
@@ -281,10 +280,6 @@ class Query extends DatabaseQuery implements JsonSerializable
      * If called with an empty first argument and $override is set to true, the
      * previous list will be emptied.
      *
-     * Contained associations will have their column types mapped allowing you
-     * to use complex types in where() conditions. Nested associations will not have
-     * their types mapped.
-     *
      * @param array|string $associations list of table aliases to be queried
      * @param bool $override whether override previous list with the one passed
      * defaults to merging previous list with the new one.
@@ -292,23 +287,46 @@ class Query extends DatabaseQuery implements JsonSerializable
      */
     public function contain($associations = null, $override = false)
     {
-        if ($override) {
-            $this->_eagerLoader->clearContain();
-        }
-
-        $result = $this->eagerLoader()->contain($associations);
-        if ($associations !== null || $override) {
+        $loader = $this->eagerLoader();
+        if ($override === true) {
+            $loader->clearContain();
             $this->_dirty();
         }
+
+        $result = $loader->contain($associations);
         if ($associations === null) {
             return $result;
         }
 
-        foreach ($this->eagerLoader()->normalized($this->repository()) as $loader) {
-            $this->addDefaultTypes($loader->instance()->target());
-        }
-
+        $this->_addAssociationsToTypeMap($this->repository(), $this->typeMap(), $result);
         return $this;
+    }
+
+    /**
+     * Used to recursively add contained association column types to
+     * the query.
+     *
+     * @param \Cake\ORM\Table $table The table instance to pluck associations from.
+     * @param array $associations The nested tree of associations to walk.
+     * @return void
+     */
+    protected function _addAssociationsToTypeMap($table, $typeMap, $associations)
+    {
+        $typeMap = $this->typeMap();
+        foreach ($associations as $name => $nested) {
+            $association = $table->association($name);
+            if (!$association) {
+                continue;
+            }
+            $target = $association->target();
+            $primary = (array)$target->primaryKey();
+            if ($typeMap->type($target->aliasField($primary[0])) === null) {
+                $this->addDefaultTypes($target);
+            }
+            if (!empty($nested)) {
+                $this->_addAssociationsToTypeMap($target, $typeMap, $nested);
+            }
+        }
     }
 
     /**
@@ -859,7 +877,8 @@ class Query extends DatabaseQuery implements JsonSerializable
         $this->triggerBeforeFind();
 
         $this->_transformQuery();
-        return parent::sql($binder);
+        $sql = parent::sql($binder);
+        return $sql;
     }
 
     /**
@@ -887,7 +906,6 @@ class Query extends DatabaseQuery implements JsonSerializable
      * specified and applies the joins required to eager load associations defined
      * using `contain`
      *
-     * @see \Cake\ORM\Query::sql()
      * @see \Cake\Database\Query::execute()
      * @return void
      */
@@ -1023,7 +1041,7 @@ class Query extends DatabaseQuery implements JsonSerializable
             return $this->_call($method, $arguments);
         }
 
-        throw new BadMethodCallException(
+        throw new \BadMethodCallException(
             sprintf('Cannot call method "%s" on a "%s" query', $method, $this->type())
         );
     }
