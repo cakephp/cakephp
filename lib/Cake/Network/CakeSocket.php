@@ -413,7 +413,7 @@ class CakeSocket {
  * @link http://php.net/manual/en/context.ssl.php About the 'allow_self_signed' option.
  * @see stream_context_set_option
  */
-	public function enableSelfSigned() {
+	public function allowSelfSigned() {
 		return stream_context_set_option($this->connection, 'ssl', 'allow_self_signed', true);
 	}
 }

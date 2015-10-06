@@ -119,7 +119,7 @@ class SmtpTransport extends AbstractTransport {
 			'password' => null,
 			'client' => null,
 			'tls' => false,
-			'selfSigned' => false
+			'ssl_allow_self_signed' => false
 		);
 		$this->_config = array_merge($default, $this->_config, $config);
 		return $this->_config;
@@ -169,8 +169,8 @@ class SmtpTransport extends AbstractTransport {
 			$this->_smtpSend("EHLO {$host}", '250');
 			if ($this->_config['tls']) {
 				$this->_smtpSend("STARTTLS", '220');
-				if ($this->_config['selfSigned']) {
-					$this->_socket->enableSelfSigned();
+				if ($this->_config['ssl_allow_self_signed']) {
+					$this->_socket->allowSelfSigned();
 				}
 				$this->_socket->enableCrypto('tls');
 				$this->_smtpSend("EHLO {$host}", '250');

@@ -947,7 +947,7 @@ class CakeEmailTest extends CakeTestCase {
 			'password' => null,
 			'client' => null,
 			'tls' => false,
-			'selfSigned' => false
+			'ssl_allow_self_signed' => false
 		);
 		$this->assertEquals($expected, $this->CakeEmail->transportClass()->config());
 
