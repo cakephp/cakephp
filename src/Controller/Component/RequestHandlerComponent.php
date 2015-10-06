@@ -259,13 +259,19 @@ class RequestHandlerComponent extends Component
         if (is_array($url)) {
             $url = Router::url($url + ['_base' => false]);
         }
+        $query = [];
+        if (strpos($url, '?') !== false) {
+            list($url, $querystr) = explode('?', $url);
+            parse_str($querystr, $query);
+        }
         $controller = $event->subject();
         $response->body($controller->requestAction($url, [
             'return',
             'bare' => false,
             'environment' => [
                 'REQUEST_METHOD' => 'GET'
-            ]
+            ],
+            'query' => $query
         ]));
         $response->statusCode(200);
         return $response;
