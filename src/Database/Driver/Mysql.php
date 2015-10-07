@@ -125,4 +125,12 @@ class Mysql extends Driver
         }
         return $result;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function supportsDynamicConstraints()
+    {
+        return true;
+    }
 }

@@ -528,6 +528,17 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Returns whether the driver supports adding or dropping constraints
+     * to already created tables.
+     *
+     * @return bool true if driver supports dynamic constraints
+     */
+    public function supportsDynamicConstraints()
+    {
+        return $this->_driver->supportsDynamicConstraints();
+    }
+
+    /**
      * {@inheritDoc}
      *
      * ### Example:

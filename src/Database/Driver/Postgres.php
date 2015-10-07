@@ -118,4 +118,12 @@ class Postgres extends Driver
         $this->connect();
         $this->_connection->exec('SET search_path TO ' . $this->_connection->quote($schema));
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function supportsDynamicConstraints()
+    {
+        return true;
+    }
 }

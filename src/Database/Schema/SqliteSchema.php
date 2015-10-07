@@ -14,7 +14,9 @@
  */
 namespace Cake\Database\Schema;
 
+use Cake\Core\Configure;
 use Cake\Database\Exception;
+use RuntimeException;
 
 /**
  * Schema management/reflection features for Sqlite
@@ -354,96 +356,24 @@ class SqliteSchema extends BaseSchema
 
     /**
      * {@inheritDoc}
+     *
+     * SQLite can not properly handle adding a constraint to an existing table.
+     * This method is no-op
      */
     public function addConstraintSql(Table $table)
     {
-        $tmpTableName = $this->_driver->quoteIdentifier('tmp_' . $table->name());
-        $tableName = $this->_driver->quoteIdentifier($table->name());
-
-        $columns = $indexes = $constraints = [];
-        foreach ($table->columns() as $column) {
-            $columns[] = $this->columnSql($table, $column);
-        }
-
-        foreach ($table->constraints() as $constraint) {
-            $constraints[] = $this->constraintSql($table, $constraint);
-        }
-
-        foreach ($table->indexes() as $index) {
-            $indexes[] = $this->indexSql($table, $index);
-        }
-        $createSql = $this->createTableSql($table, $columns, $constraints, $indexes);
-
-        $columnsList = implode(', ', $table->columns());
-        $copySql = sprintf(
-            'INSERT INTO %s(%s) SELECT %s FROM %s',
-            $tableName,
-            $columnsList,
-            $columnsList,
-            $tmpTableName
-        );
-
-        $dropSql = sprintf('DROP TABLE IF EXISTS %s', $tmpTableName);
-
-        $sql = [
-            $dropSql,
-            sprintf('ALTER TABLE %s RENAME TO %s', $tableName, $tmpTableName),
-            $createSql[0],
-            $copySql,
-            $dropSql
-        ];
-
-        return $sql;
+        return [];
     }
 
     /**
      * {@inheritDoc}
+     *
+     * SQLite can not properly handle dropping a constraint to an existing table.
+     * This method is no-op
      */
     public function dropConstraintSql(Table $table)
     {
-        $tmpTableName = $this->_driver->quoteIdentifier('tmp_' . $table->name());
-        $tableName = $this->_driver->quoteIdentifier($table->name());
-
-        $columns = [];
-        foreach ($table->columns() as $column) {
-            $columns[$column] = $this->columnSql($table, $column);
-        }
-
-        $indexes = [];
-        foreach ($table->indexes() as $index) {
-            $indexes[$index] = $this->indexSql($table, $index);
-        }
-
-        $constraints = [];
-        foreach ($table->constraints() as $constraint) {
-            $constraintDefinition = $table->constraint($constraint);
-            if ($constraintDefinition['type'] == Table::CONSTRAINT_FOREIGN) {
-                $table->dropConstraint($constraint);
-            } else {
-                $constraints[$constraint] = $this->constraintSql($table, $constraint);
-            }
-        }
-        $createSql = $this->createTableSql($table, $columns, $constraints, $indexes);
-
-        $columnsList = implode(', ', $table->columns());
-        $copySql = sprintf(
-            'INSERT INTO %s(%s) SELECT %s FROM %s',
-            $tableName,
-            $columnsList,
-            $columnsList,
-            $tmpTableName
-        );
-
-        $dropSql = sprintf('DROP TABLE IF EXISTS %s', $tmpTableName);
-        $sql = [
-            $dropSql,
-            sprintf('ALTER TABLE %s RENAME TO %s', $tableName, $tmpTableName),
-            $createSql[0],
-            $copySql,
-            $dropSql
-        ];
-
-        return $sql;
+        return [];
     }
 
     /**

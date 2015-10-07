@@ -14,6 +14,7 @@
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Exception\Exception as CakeException;
+use Cake\Database\Driver\Sqlite;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
@@ -157,6 +158,7 @@ class TestFixture implements FixtureInterface
      */
     protected function _schemaFromFields()
     {
+        $connection = ConnectionManager::get($this->connection());
         $this->_schema = new Table($this->table);
         foreach ($this->fields as $field => $data) {
             if ($field === '_constraints' || $field === '_indexes' || $field === '_options') {
@@ -166,7 +168,7 @@ class TestFixture implements FixtureInterface
         }
         if (!empty($this->fields['_constraints'])) {
             foreach ($this->fields['_constraints'] as $name => $data) {
-                if ($data['type'] !== Table::CONSTRAINT_FOREIGN) {
+                if (!$connection->supportsDynamicConstraints() || $data['type'] !== Table::CONSTRAINT_FOREIGN) {
                     $this->_schema->addConstraint($name, $data);
                 } else {
                     $this->_constraints[$name] = $data;
@@ -313,7 +315,6 @@ class TestFixture implements FixtureInterface
             return true;
         }
 
-        $db->disableForeignKeys();
         try {
             foreach ($sql as $stmt) {
                 $db->execute($stmt)->closeCursor();
@@ -339,7 +340,6 @@ class TestFixture implements FixtureInterface
             return true;
         }
 
-        $db->disableForeignKeys();
         try {
             foreach ($sql as $stmt) {
                 $db->execute($stmt)->closeCursor();

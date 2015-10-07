@@ -506,7 +506,7 @@ class TableTest extends TestCase
     public function testConstraintForeignKeyTwoColumns()
     {
         $table = TableRegistry::get('Orders');
-        $compositeConstraint = $table->schema()->constraint('product_id_fk');
+        $compositeConstraint = $table->schema()->constraint('product_category_fk');
         $expected = [
             'type' => 'foreign',
             'columns' => [
@@ -524,7 +524,7 @@ class TableTest extends TestCase
 
         $this->assertEquals($expected, $compositeConstraint);
 
-        $expectedSubstring = 'CONSTRAINT <product_id_fk> FOREIGN KEY \(<product_category>, <product_id>\)' .
+        $expectedSubstring = 'CONSTRAINT <product_category_fk> FOREIGN KEY \(<product_category>, <product_id>\)' .
             ' REFERENCES <products> \(<category>, <id>\)';
 
         $this->assertQuotedQuery($expectedSubstring, $table->schema()->createSql(ConnectionManager::get('test'))[0]);

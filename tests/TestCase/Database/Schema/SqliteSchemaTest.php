@@ -556,50 +556,10 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = (new Table('posts'))
-            ->addColumn('author_id', [
-                'type' => 'integer',
-                'null' => false
-            ])
-            ->addColumn('category_id', [
-                'type' => 'integer',
-                'null' => false
-            ])
-            ->addColumn('category_name', [
-                'type' => 'integer',
-                'null' => false
-            ])
-            ->addConstraint('author_fk', [
-                'type' => 'foreign',
-                'columns' => ['author_id'],
-                'references' => ['authors', 'id'],
-                'update' => 'cascade',
-                'delete' => 'cascade'
-            ])
-            ->addConstraint('category_fk', [
-                'type' => 'foreign',
-                'columns' => ['category_id', 'category_name'],
-                'references' => ['categories', ['id', 'name']],
-                'update' => 'cascade',
-                'delete' => 'cascade'
-            ]);
+        $table = new Table('posts');
 
-        $expected = [
-            'DROP TABLE IF EXISTS "tmp_posts"',
-            'ALTER TABLE "posts" RENAME TO "tmp_posts"',
-            'CREATE TABLE "posts" (
-"author_id" INTEGER NOT NULL,
-"category_id" INTEGER NOT NULL,
-"category_name" INTEGER NOT NULL,
-CONSTRAINT "author_fk" FOREIGN KEY ("author_id") REFERENCES "authors" ("id") ON UPDATE CASCADE ON DELETE CASCADE,
-CONSTRAINT "category_fk" FOREIGN KEY ("category_id", "category_name") REFERENCES "categories" ("id", "name") ON UPDATE CASCADE ON DELETE CASCADE
-)',
-            'INSERT INTO "posts"(author_id, category_id, category_name) SELECT author_id, category_id, category_name FROM "tmp_posts"',
-            'DROP TABLE IF EXISTS "tmp_posts"'
-        ];
         $result = $table->addConstraintSql($connection);
-        $this->assertCount(5, $result);
-        $this->assertTextEquals($expected, $result);
+        $this->assertEmpty($result);
     }
 
     /**
@@ -614,48 +574,9 @@ CONSTRAINT "category_fk" FOREIGN KEY ("category_id", "category_name") REFERENCES
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
-        $table = (new Table('posts'))
-            ->addColumn('author_id', [
-                'type' => 'integer',
-                'null' => false
-            ])
-            ->addColumn('category_id', [
-                'type' => 'integer',
-                'null' => false
-            ])
-            ->addColumn('category_name', [
-                'type' => 'integer',
-                'null' => false
-            ])
-            ->addConstraint('author_fk', [
-                'type' => 'foreign',
-                'columns' => ['author_id'],
-                'references' => ['authors', 'id'],
-                'update' => 'cascade',
-                'delete' => 'cascade'
-            ])
-            ->addConstraint('category_fk', [
-                'type' => 'foreign',
-                'columns' => ['category_id', 'category_name'],
-                'references' => ['categories', ['id', 'name']],
-                'update' => 'cascade',
-                'delete' => 'cascade'
-            ]);
-
-        $expected = [
-            'DROP TABLE IF EXISTS "tmp_posts"',
-            'ALTER TABLE "posts" RENAME TO "tmp_posts"',
-            'CREATE TABLE "posts" (
-"author_id" INTEGER NOT NULL,
-"category_id" INTEGER NOT NULL,
-"category_name" INTEGER NOT NULL
-)',
-            'INSERT INTO "posts"(author_id, category_id, category_name) SELECT author_id, category_id, category_name FROM "tmp_posts"',
-            'DROP TABLE IF EXISTS "tmp_posts"'
-        ];
+        $table = new Table('posts');
         $result = $table->dropConstraintSql($connection);
-        $this->assertCount(5, $result);
-        $this->assertTextEquals($expected, $result);
+        $this->assertEmpty($result);
     }
 
     /**
