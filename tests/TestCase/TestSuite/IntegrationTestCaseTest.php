@@ -66,10 +66,34 @@ class IntegrationTestCaseTest extends IntegrationTestCase
 
         $this->assertEquals('abc123', $request->header('X-CSRF-Token'));
         $this->assertEquals('tasks/add', $request->url);
-        $this->assertEquals(['split_token' => 'def345'], $request->cookies);
+        $this->assertArrayHasKey('split_token', $request->cookies);
+        $this->assertEquals('def345', $request->cookies['split_token']);
         $this->assertEquals(['id' => '1', 'username' => 'mark'], $request->session()->read('User'));
         $this->assertEquals('foo', $request->env('PHP_AUTH_USER'));
         $this->assertEquals('bar', $request->env('PHP_AUTH_PW'));
+    }
+
+    /**
+     * Test request building adds csrf tokens
+     *
+     * @return void
+     */
+    public function testRequestBuildingCsrfTokens()
+    {
+        $request = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
+
+        $this->assertArrayHasKey('csrfToken', $request->cookies);
+        $this->assertArrayHasKey('_csrfToken', $request->data);
+        $this->assertSame($request->cookies['csrfToken'], $request->data['_csrfToken']);
+
+        $this->cookie('csrfToken', '');
+        $request = $this->_buildRequest('/tasks/add', 'POST', [
+            '_csrfToken' => 'fale',
+            'title' => 'First post'
+        ]);
+
+        $this->assertSame('', $request->cookies['csrfToken']);
+        $this->assertSame('fale', $request->data['_csrfToken']);
     }
 
     /**

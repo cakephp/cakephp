@@ -21,6 +21,7 @@ use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\Stub\Response;
 use Cake\Utility\Hash;
+use Cake\Utility\Text;
 use Exception;
 use PHPUnit_Exception;
 
@@ -343,6 +344,14 @@ abstract class IntegrationTestCase extends TestCase
         ];
         $session = Session::create($sessionConfig);
         $session->write($this->_session);
+
+        $token = Text::uuid();
+        if ($method !== 'GET' && !isset($data['_csrfToken'])) {
+            $data['_csrfToken'] = $token;
+        }
+        if (!isset($this->_cookie['csrfToken'])) {
+            $this->_cookie['csrfToken'] = $token;
+        }
 
         list ($url, $query) = $this->_url($url);
         $props = [
