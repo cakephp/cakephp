@@ -1708,7 +1708,7 @@ class FormHelper extends Helper
 
         $url = '#';
 
-        if(isset($options['class']) && !empty($options['class'])) {
+        if(!empty($options['class'])) {
             $options['class'] .= ' cake-core-' . __FUNCTION__;
         } else {
             $options['class'] = 'cake-core-' . __FUNCTION__;
