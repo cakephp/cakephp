@@ -1676,8 +1676,8 @@ class FormHelper extends Helper
 
         $this->_lastAction($url);
         $action = $templater->formatAttributes([
-           'action' => $this->Url->build($url),
-           'escape' => false
+            'action' => $this->Url->build($url),
+            'escape' => false
         ]);
 
         $out = $templater->format('formStart', [
