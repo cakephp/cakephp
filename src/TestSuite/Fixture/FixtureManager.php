@@ -221,9 +221,10 @@ class FixtureManager
         } elseif (!$exists) {
             $fixture->create($db);
         } else {
-            $this->_insertionMap[$configName][] = $fixture;
             $fixture->truncate($db);
         }
+
+        $this->_insertionMap[$configName][] = $fixture;
     }
 
     /**
