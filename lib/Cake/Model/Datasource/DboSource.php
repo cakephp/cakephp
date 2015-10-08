@@ -739,9 +739,9 @@ class DboSource extends DataSource {
 /**
  * Returns a single field of the first of query results for a given SQL query, or false if empty.
  *
- * @param string $name Name of the field
- * @param string $sql SQL query
- * @return mixed Value of field read.
+ * @param string $name The name of the field to get.
+ * @param string $sql The SQL query.
+ * @return mixed Value of field read, or false if not found.
  */
 	public function field($name, $sql) {
 		$data = $this->fetchRow($sql);
