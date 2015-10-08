@@ -377,19 +377,17 @@ class FixtureManager
                 $db = ConnectionManager::get($fixture->connection());
             }
 
-            $fixture->dropConstraints($db);
-
             if (!$this->isFixtureSetup($db->configName(), $fixture)) {
                 $sources = $db->schemaCollection()->listTables();
                 $this->_setupTable($fixture, $db, $sources, $dropTables);
             }
 
-            $fixture->createConstraints($db);
-
             if (!$dropTables) {
                 $fixture->dropConstraints($db);
                 $fixture->truncate($db);
             }
+
+            $fixture->createConstraints($db);
             $fixture->insert($db);
         } else {
             throw new UnexpectedValueException(sprintf('Referenced fixture class %s not found', $name));
