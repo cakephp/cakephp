@@ -23,13 +23,6 @@ class RequestActionController extends AppController
 {
 
     /**
-     * modelClass property
-     *
-     * @var string
-     */
-    public $modelClass = 'Posts';
-
-    /**
      * test_request_action method
      *
      * @return \Cake\Network\Response
