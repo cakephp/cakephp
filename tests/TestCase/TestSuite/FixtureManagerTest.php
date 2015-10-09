@@ -156,4 +156,65 @@ class FixtureManagerTest extends TestCase
         $test->fixtures = ['derp.derp'];
         $this->manager->fixturize($test);
     }
+
+    /**
+     * Test loading fixtures using loadSingle()
+     *
+     * @return void
+     */
+    public function testLoadSingle()
+    {
+        $test = $this->getMock('Cake\TestSuite\TestCase');
+        $test->autoFixtures = false;
+        $test->fixtures = ['core.articles', 'core.articles_tags', 'core.tags'];
+        $this->manager->fixturize($test);
+        $this->manager->loadSingle('Articles');
+        $this->manager->loadSingle('Tags');
+        $this->manager->loadSingle('ArticlesTags');
+
+        $table = TableRegistry::get('ArticlesTags');
+        $results = $table->find('all')->toArray();
+        $schema = $table->schema();
+        $expectedConstraint = [
+            'type' => 'foreign',
+            'columns' => [
+                'tag_id'
+            ],
+            'references' => [
+                'tags',
+                'id'
+            ],
+            'update' => 'cascade',
+            'delete' => 'cascade',
+            'length' => []
+        ];
+        $this->assertEquals($expectedConstraint, $schema->constraint('tag_id_fk'));
+        $this->assertCount(4, $results);
+
+        $this->manager->unload($test);
+
+        $this->manager->loadSingle('Articles');
+        $this->manager->loadSingle('Tags');
+        $this->manager->loadSingle('ArticlesTags');
+
+        $table = TableRegistry::get('ArticlesTags');
+        $results = $table->find('all')->toArray();
+        $schema = $table->schema();
+        $expectedConstraint = [
+            'type' => 'foreign',
+            'columns' => [
+                'tag_id'
+            ],
+            'references' => [
+                'tags',
+                'id'
+            ],
+            'update' => 'cascade',
+            'delete' => 'cascade',
+            'length' => []
+        ];
+        $this->assertEquals($expectedConstraint, $schema->constraint('tag_id_fk'));
+        $this->assertCount(4, $results);
+        $this->manager->unload($test);
+    }
 }
