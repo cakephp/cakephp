@@ -32,7 +32,7 @@ trait SecureFieldTokenTrait
      *    field validation.
      * @return array The token data.
      */
-    protected function _buildFieldToken($url, $fields, $unlockedFields)
+    protected function _buildFieldToken($url, $fields, $unlockedFields = [])
     {
         $locked = [];
         foreach ($fields as $key => $value) {

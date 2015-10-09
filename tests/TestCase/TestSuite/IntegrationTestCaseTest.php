@@ -192,6 +192,38 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test posting to a secured form action action.
+     *
+     * @return void
+     */
+    public function testPostSecuredForm()
+    {
+        $this->enableSecurityToken();
+        $data = [
+            'title' => 'Some title',
+            'body' => 'Some text'
+        ];
+        $this->post('/posts/securePost', $data);
+        $this->assertResponseOk();
+        $this->assertResponseContains('Request was accepted');
+    }
+
+    /**
+     * Test posting to a secured form action action.
+     *
+     * @return void
+     */
+    public function testPostSecuredFormFailure()
+    {
+        $data = [
+            'title' => 'Some title',
+            'body' => 'Some text'
+        ];
+        $this->post('/posts/securePost', $data);
+        $this->assertResponseError();
+    }
+
+    /**
      * Test that exceptions being thrown are handled correctly.
      *
      * @return void

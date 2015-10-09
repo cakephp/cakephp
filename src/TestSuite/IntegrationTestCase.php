@@ -22,6 +22,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\Stub\Response;
 use Cake\Utility\Hash;
 use Cake\Utility\Text;
+use Cake\View\Helper\SecureFieldTokenTrait;
 use Exception;
 use PHPUnit_Exception;
 
@@ -37,6 +38,7 @@ use PHPUnit_Exception;
  */
 abstract class IntegrationTestCase extends TestCase
 {
+    use SecureFieldTokenTrait;
 
     /**
      * The data used to build the next request.
@@ -102,6 +104,14 @@ abstract class IntegrationTestCase extends TestCase
     protected $_requestSession;
 
     /**
+     * Boolean flag for whether or not the request should have
+     * a SecurityComponent token added.
+     *
+     * @var bool
+     */
+    protected $_securityToken = false;
+
+    /**
      * Clears the state used for requests.
      *
      * @return void
@@ -118,6 +128,19 @@ abstract class IntegrationTestCase extends TestCase
         $this->_viewName = null;
         $this->_layoutName = null;
         $this->_requestSession = null;
+        $this->_securityToken = false;
+    }
+
+    /**
+     * Calling this method will enable a SecurityComponent
+     * compatible token to be added to request data. This
+     * lets you easily test actions protected by SecurityComponent.
+     *
+     * @return void
+     */
+    public function enableSecurityToken()
+    {
+        $this->_securityToken = true;
     }
 
     /**
@@ -344,19 +367,11 @@ abstract class IntegrationTestCase extends TestCase
         ];
         $session = Session::create($sessionConfig);
         $session->write($this->_session);
-
-        $token = Text::uuid();
-        if ($method !== 'GET' && !isset($data['_csrfToken'])) {
-            $data['_csrfToken'] = $token;
-        }
-        if (!isset($this->_cookie['csrfToken'])) {
-            $this->_cookie['csrfToken'] = $token;
-        }
-
         list ($url, $query) = $this->_url($url);
+
         $props = [
             'url' => $url,
-            'post' => $data,
+            'post' => $this->_addTokens($url, $method, $data),
             'cookies' => $this->_cookie,
             'session' => $session,
             'query' => $query
@@ -375,6 +390,32 @@ abstract class IntegrationTestCase extends TestCase
         $props['environment'] = $env;
         $props = Hash::merge($props, $this->_request);
         return new Request($props);
+    }
+
+    /**
+     * Add the CSRF and Security Component tokens if necessary.
+     *
+     * @param string $url The URL the form is being submitted on.
+     * @param string $method The HTTP method being used.
+     * @param array $data The request body data.
+     * @return array The request body with tokens added.
+     */
+    protected function _addTokens($url, $method, $data)
+    {
+        if ($this->_securityToken === true) {
+            $keys = Hash::flatten($data);
+            $tokenData = $this->_buildFieldToken($url, $keys);
+            $data['_Token'] = $tokenData;
+        }
+
+        $csrfToken = Text::uuid();
+        if ($method !== 'GET' && !isset($data['_csrfToken'])) {
+            $data['_csrfToken'] = $csrfToken;
+        }
+        if (!isset($this->_cookie['csrfToken'])) {
+            $this->_cookie['csrfToken'] = $csrfToken;
+        }
+        return $data;
     }
 
     /**
