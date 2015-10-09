@@ -29,6 +29,7 @@ use Cake\View\Form\EntityContext;
 use Cake\View\Form\FormContext;
 use Cake\View\Form\NullContext;
 use Cake\View\Helper;
+use Cake\View\Helper\SecureFieldTokenTrait;
 use Cake\View\StringTemplateTrait;
 use Cake\View\View;
 use Cake\View\Widget\WidgetRegistry;
@@ -49,6 +50,7 @@ class FormHelper extends Helper
 {
 
     use IdGeneratorTrait;
+    use SecureFieldTokenTrait;
     use StringTemplateTrait;
 
     /**
@@ -554,39 +556,18 @@ class FormHelper extends Helper
             return;
         }
         $locked = [];
-        $unlockedFields = $this->_unlockedFields;
 
-        foreach ($fields as $key => $value) {
-            if (is_numeric($value)) {
-                $value = (string)$value;
-            }
-            if (!is_int($key)) {
-                $locked[$key] = $value;
-                unset($fields[$key]);
-            }
-        }
-
-        sort($unlockedFields, SORT_STRING);
-        sort($fields, SORT_STRING);
-        ksort($locked, SORT_STRING);
-        $fields += $locked;
-
-        $locked = implode(array_keys($locked), '|');
-        $unlocked = implode($unlockedFields, '|');
-        $hashParts = [
+        $tokenData = $this->_buildFieldToken(
             $this->_lastAction,
-            serialize($fields),
-            $unlocked,
-            Security::salt()
-        ];
-        $fields = Security::hash(implode('', $hashParts), 'sha1');
-
+            $fields,
+            $this->_unlockedFields
+        );
         $tokenFields = array_merge($secureAttributes, [
-            'value' => urlencode($fields . ':' . $locked),
+            'value' => $tokenData['fields'],
         ]);
         $out = $this->hidden('_Token.fields', $tokenFields);
         $tokenUnlocked = array_merge($secureAttributes, [
-            'value' => urlencode($unlocked),
+            'value' => $tokenData['unlocked'],
         ]);
         $out .= $this->hidden('_Token.unlocked', $tokenUnlocked);
         return $this->formatTemplate('hiddenBlock', ['content' => $out]);
