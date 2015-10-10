@@ -271,27 +271,27 @@ class AuthComponent extends Component
     public function authCheck(Event $event)
     {
         if ($this->_config['checkAuthIn'] !== $event->name()) {
-            return;
+            return null;
         }
 
         $controller = $event->subject();
 
         $action = strtolower($controller->request->params['action']);
         if (!$controller->isAction($action)) {
-            return;
+            return null;
         }
 
         $this->_setDefaults();
 
         if ($this->_isAllowed($controller)) {
-            return;
+            return null;
         }
 
         $isLoginAction = $this->_isLoginAction($controller);
 
         if (!$this->_getUser()) {
             if ($isLoginAction) {
-                return;
+                return null;
             }
             $result = $this->_unauthenticated($controller);
             if ($result instanceof Response) {
@@ -304,7 +304,7 @@ class AuthComponent extends Component
             empty($this->_config['authorize']) ||
             $this->isAuthorized($this->user())
         ) {
-            return;
+            return null;
         }
 
         $event->stopPropagation();

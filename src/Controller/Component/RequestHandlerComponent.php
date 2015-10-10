@@ -251,10 +251,10 @@ class RequestHandlerComponent extends Component
     {
         $request = $this->request;
         if (!$request->is('ajax')) {
-            return;
+            return null;
         }
         if (empty($url)) {
-            return;
+            return null;
         }
         if (is_array($url)) {
             $url = Router::url($url + ['_base' => false]);
