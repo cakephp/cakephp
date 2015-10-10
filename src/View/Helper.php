@@ -142,7 +142,7 @@ class Helper implements EventListenerInterface
      * Lazy loads helpers.
      *
      * @param string $name Name of the property being accessed.
-     * @return \Cake\View\Helper|void Helper instance if helper with provided name exists
+     * @return \Cake\View\Helper|null Helper instance if helper with provided name exists
      */
     public function __get($name)
     {

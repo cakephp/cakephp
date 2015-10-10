@@ -1580,7 +1580,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @param callable $callback the function to be executed for each ExpressionInterface
      *   found inside this query.
-     * @return void|$this
+     * @return $this|null
      */
     public function traverseExpressions(callable $callback)
     {
@@ -1589,7 +1589,7 @@ class Query implements ExpressionInterface, IteratorAggregate
                 foreach ($expression as $e) {
                     $visitor($e);
                 }
-                return;
+                return null;
             }
 
             if ($expression instanceof ExpressionInterface) {

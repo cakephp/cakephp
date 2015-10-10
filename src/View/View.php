@@ -354,7 +354,7 @@ class View implements EventDispatcherInterface
      * Get/set path for templates files.
      *
      * @param string $path Path for template files. If null returns current path.
-     * @return string|void
+     * @return string|null
      */
     public function templatePath($path = null)
     {
@@ -369,7 +369,7 @@ class View implements EventDispatcherInterface
      * Get/set path for layout files.
      *
      * @param string $path Path for layout files. If null returns current path.
-     * @return string|void
+     * @return string|null
      */
     public function layoutPath($path = null)
     {
@@ -386,7 +386,7 @@ class View implements EventDispatcherInterface
      * automatically applied to rendered templates.
      *
      * @param bool $autoLayout Boolean to turn on/off. If null returns current value.
-     * @return bool|void
+     * @return bool|null
      */
     public function autoLayout($autoLayout = null)
     {
@@ -401,7 +401,7 @@ class View implements EventDispatcherInterface
      * The view theme to use.
      *
      * @param string $theme Theme name. If null returns current theme.
-     * @return string|void
+     * @return string|null
      */
     public function theme($theme = null)
     {
@@ -417,7 +417,7 @@ class View implements EventDispatcherInterface
      * filename in /app/Template/<SubFolder> without the .ctp extension.
      *
      * @param string $name Template file name to set. If null returns current name.
-     * @return string|void
+     * @return string|null
      */
     public function template($name = null)
     {
@@ -434,7 +434,7 @@ class View implements EventDispatcherInterface
      * without the .ctp extension.
      *
      * @param string $name Layout file name to set. If null returns current name.
-     * @return string|void
+     * @return string|null
      */
     public function layout($name = null)
     {
@@ -556,7 +556,7 @@ class View implements EventDispatcherInterface
      *
      * @param string|null $view Name of view file to use
      * @param string|null $layout Layout to use.
-     * @return string|void Rendered content or null if content already rendered and returned earlier.
+     * @return string|null Rendered content or null if content already rendered and returned earlier.
      * @throws \Cake\Core\Exception\Exception If there is an error in the view.
      * @triggers View.beforeRender $this, [$viewFileName]
      * @triggers View.afterRender $this, [$viewFileName]
@@ -564,7 +564,7 @@ class View implements EventDispatcherInterface
     public function render($view = null, $layout = null)
     {
         if ($this->hasRendered) {
-            return;
+            return null;
         }
 
         if ($layout !== null) {

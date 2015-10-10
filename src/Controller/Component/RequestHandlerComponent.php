@@ -245,16 +245,16 @@ class RequestHandlerComponent extends Component
      * @param Event $event The Controller.beforeRedirect event.
      * @param string|array $url A string or array containing the redirect location
      * @param \Cake\Network\Response $response The response object.
-     * @return void|\Cake\Network\Response The response object if the redirect is caught.
+     * @return \Cake\Network\Response|null The response object if the redirect is caught.
      */
     public function beforeRedirect(Event $event, $url, Response $response)
     {
         $request = $this->request;
         if (!$request->is('ajax')) {
-            return;
+            return null;
         }
         if (empty($url)) {
-            return;
+            return null;
         }
         if (is_array($url)) {
             $url = Router::url($url + ['_base' => false]);
