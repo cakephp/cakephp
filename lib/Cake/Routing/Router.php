@@ -207,8 +207,8 @@ class Router {
 /**
  * Set the default route class to use or return the current one
  *
- * @param string $routeClass to set as default
- * @return mixed void|string
+ * @param string $routeClass The route class to set as default.
+ * @return string|null The default route class.
  * @throws RouterException
  */
 	public static function defaultRouteClass($routeClass = null) {
