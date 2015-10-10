@@ -251,7 +251,7 @@ class AuthComponent extends Component
      * Callback for Controller.startup event.
      *
      * @param \Cake\Event\Event $event Event instance.
-     * @return void|\Cake\Network\Response
+     * @return \Cake\Network\Response|null
      */
     public function startup(Event $event)
     {
@@ -266,7 +266,7 @@ class AuthComponent extends Component
      * `checkAuthIn` config.
      *
      * @param \Cake\Event\Event $event Event instance.
-     * @return void|\Cake\Network\Response
+     * @return \Cake\Network\Response|null
      */
     public function authCheck(Event $event)
     {
@@ -347,7 +347,7 @@ class AuthComponent extends Component
      * is returned.
      *
      * @param \Cake\Controller\Controller $controller A reference to the controller object.
-     * @return void|\Cake\Network\Response Null if current action is login action
+     * @return \Cake\Network\Response|null Null if current action is login action
      *   else response object returned by authenticate object or Controller::redirect().
      */
     protected function _unauthenticated(Controller $controller)
@@ -657,14 +657,14 @@ class AuthComponent extends Component
      * Get the current user from storage.
      *
      * @param string $key Field to retrieve. Leave null to get entire User record.
-     * @return array|void Either User record or null if no user is logged in.
+     * @return array|null Either User record or null if no user is logged in.
      * @link http://book.cakephp.org/3.0/en/controllers/components/authentication.html#accessing-the-logged-in-user
      */
     public function user($key = null)
     {
         $user = $this->storage()->read();
         if (!$user) {
-            return;
+            return null;
         }
 
         if ($key === null) {
@@ -818,13 +818,13 @@ class AuthComponent extends Component
      *
      * @param \Cake\Auth\Storage\StorageInterface|null $storage Sets provided
      *   object as storage or if null returns configuread storage object.
-     * @return \Cake\Auth\Storage\StorageInterface|void
+     * @return \Cake\Auth\Storage\StorageInterface|null
      */
     public function storage(StorageInterface $storage = null)
     {
         if ($storage !== null) {
             $this->_storage = $storage;
-            return;
+            return null;
         }
 
         if ($this->_storage) {

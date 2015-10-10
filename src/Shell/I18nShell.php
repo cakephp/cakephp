@@ -74,7 +74,7 @@ class I18nShell extends Shell
      * Inits PO file from POT file.
      *
      * @param string|null $language Language code to use.
-     * @return void|int
+     * @return int|null
      */
     public function init($language = null)
     {

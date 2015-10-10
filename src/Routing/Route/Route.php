@@ -116,7 +116,7 @@ class Route
      * Get/Set the supported extensions for this route.
      *
      * @param null|string|array $extensions The extensions to set. Use null to get.
-     * @return array|void The extensions or null.
+     * @return array|null The extensions or null.
      */
     public function extensions($extensions = null)
     {

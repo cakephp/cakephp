@@ -204,13 +204,13 @@ class TestFixture implements FixtureInterface
      * Get/Set the Cake\Database\Schema\Table instance used by this fixture.
      *
      * @param \Cake\Database\Schema\Table $schema The table to set.
-     * @return void|\Cake\Database\Schema\Table
+     * @return \Cake\Database\Schema\Table|null
      */
     public function schema(Table $schema = null)
     {
         if ($schema) {
             $this->_schema = $schema;
-            return;
+            return null;
         }
         return $this->_schema;
     }

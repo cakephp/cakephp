@@ -51,7 +51,7 @@ class CompletionShell extends Shell
     /**
      * list commands
      *
-     * @return void|int|bool Returns the number of bytes returned from writing to stdout.
+     * @return int|bool|null Returns the number of bytes returned from writing to stdout.
      */
     public function commands()
     {
@@ -62,7 +62,7 @@ class CompletionShell extends Shell
     /**
      * list options for the named command
      *
-     * @return void|int|bool Returns the number of bytes returned from writing to stdout.
+     * @return int|bool|null Returns the number of bytes returned from writing to stdout.
      */
     public function options()
     {
@@ -78,7 +78,7 @@ class CompletionShell extends Shell
     /**
      * list subcommands for the named command
      *
-     * @return void|int|bool Returns the number of bytes returned from writing to stdout.
+     * @return int|bool|null Returns the number of bytes returned from writing to stdout.
      */
     public function subcommands()
     {
@@ -93,7 +93,7 @@ class CompletionShell extends Shell
     /**
      * Guess autocomplete from the whole argument string
      *
-     * @return void|int|bool Returns the number of bytes returned from writing to stdout.
+     * @return int|bool|null Returns the number of bytes returned from writing to stdout.
      */
     public function fuzzy()
     {
@@ -151,7 +151,7 @@ class CompletionShell extends Shell
      * Emit results as a string, space delimited
      *
      * @param array $options The options to output
-     * @return void|int|bool Returns the number of bytes returned from writing to stdout.
+     * @return int|bool|null Returns the number of bytes returned from writing to stdout.
      */
     protected function _output($options = [])
     {

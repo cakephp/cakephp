@@ -484,7 +484,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * - Calls the controller `beforeFilter`.
      * - triggers Component `startup` methods.
      *
-     * @return void|\Cake\Network\Response
+     * @return \Cake\Network\Response|null
      */
     public function startupProcess()
     {
@@ -505,7 +505,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * - triggers the component `shutdown` callback.
      * - calls the Controller's `afterFilter` method.
      *
-     * @return void|\Cake\Network\Response
+     * @return \Cake\Network\Response|null
      */
     public function shutdownProcess()
     {
@@ -522,7 +522,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param string|array $url A string or array-based URL pointing to another location within the app,
      *     or an absolute URL
      * @param int $status HTTP status code (eg: 301)
-     * @return void|\Cake\Network\Response
+     * @return \Cake\Network\Response|null
      * @link http://book.cakephp.org/3.0/en/controllers.html#Controller::redirect
      */
     public function redirect($url, $status = 302)
