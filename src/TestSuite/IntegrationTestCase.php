@@ -112,6 +112,14 @@ abstract class IntegrationTestCase extends TestCase
     protected $_securityToken = false;
 
     /**
+     * Boolean flag for whether or not the request should have
+     * a CSRF token added.
+     *
+     * @var bool
+     */
+    protected $_csrfToken = false;
+
+    /**
      * Clears the state used for requests.
      *
      * @return void
@@ -129,6 +137,7 @@ abstract class IntegrationTestCase extends TestCase
         $this->_layoutName = null;
         $this->_requestSession = null;
         $this->_securityToken = false;
+        $this->_csrfToken = false;
     }
 
     /**
@@ -141,6 +150,19 @@ abstract class IntegrationTestCase extends TestCase
     public function enableSecurityToken()
     {
         $this->_securityToken = true;
+    }
+
+    /**
+     * Calling this method will add a CSRF token to the request.
+     *
+     * Both the POST data and cookie will be populated when this option
+     * is enabled. The default parameter names will be used.
+     *
+     * @return void
+     */
+    public function enableCsrfToken()
+    {
+        $this->_csrfToken = true;
     }
 
     /**
@@ -371,7 +393,7 @@ abstract class IntegrationTestCase extends TestCase
 
         $props = [
             'url' => $url,
-            'post' => $this->_addTokens($url, $method, $data),
+            'post' => $this->_addTokens($url, $data),
             'cookies' => $this->_cookie,
             'session' => $session,
             'query' => $query
@@ -396,11 +418,10 @@ abstract class IntegrationTestCase extends TestCase
      * Add the CSRF and Security Component tokens if necessary.
      *
      * @param string $url The URL the form is being submitted on.
-     * @param string $method The HTTP method being used.
      * @param array $data The request body data.
      * @return array The request body with tokens added.
      */
-    protected function _addTokens($url, $method, $data)
+    protected function _addTokens($url, $data)
     {
         if ($this->_securityToken === true) {
             $keys = Hash::flatten($data);
@@ -408,12 +429,14 @@ abstract class IntegrationTestCase extends TestCase
             $data['_Token'] = $tokenData;
         }
 
-        $csrfToken = Text::uuid();
-        if ($method !== 'GET' && !isset($data['_csrfToken'])) {
-            $data['_csrfToken'] = $csrfToken;
-        }
-        if (!isset($this->_cookie['csrfToken'])) {
-            $this->_cookie['csrfToken'] = $csrfToken;
+        if ($this->_csrfToken === true) {
+            $csrfToken = Text::uuid();
+            if (!isset($data['_csrfToken'])) {
+                $data['_csrfToken'] = $csrfToken;
+            }
+            if (!isset($this->_cookie['csrfToken'])) {
+                $this->_cookie['csrfToken'] = $csrfToken;
+            }
         }
         return $data;
     }

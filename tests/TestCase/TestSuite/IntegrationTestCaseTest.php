@@ -80,6 +80,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
      */
     public function testRequestBuildingCsrfTokens()
     {
+        $this->enableCsrfToken();
         $request = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
 
         $this->assertArrayHasKey('csrfToken', $request->cookies);
