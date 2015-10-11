@@ -261,7 +261,7 @@ class RequestHandlerComponent extends Component
         }
         $query = [];
         if (strpos($url, '?') !== false) {
-            list($url, $querystr) = explode('?', $url);
+            list($url, $querystr) = explode('?', $url, 2);
             parse_str($querystr, $query);
         }
         $controller = $event->subject();
