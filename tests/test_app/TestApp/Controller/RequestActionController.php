@@ -23,6 +23,13 @@ class RequestActionController extends AppController
 {
 
     /**
+     * The default model to use.
+     *
+     * @var string
+     */
+    public $modelClass = 'Posts';
+
+    /**
      * test_request_action method
      *
      * @return \Cake\Network\Response
