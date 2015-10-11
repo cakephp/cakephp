@@ -980,10 +980,10 @@ class PaginatorHelper extends AppHelper {
  * ### Options:
  *
  * - `model` The model to use defaults to PaginatorHelper::defaultModel()
- * - `block` The block name to append the output to, or false/absenst to return as a string
+ * - `block` The block name to append the output to, or false/absent to return as a string
  *
- * @param array $options Array of options
- * @return string|void Meta links
+ * @param array $options Array of options.
+ * @return string|null Meta links.
  */
 	public function meta($options = array()) {
 		$model = isset($options['model']) ? $options['model'] : null;
