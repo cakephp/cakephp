@@ -903,6 +903,45 @@ class RequestHandlerComponentTest extends TestCase
     }
 
     /**
+     * Test that AJAX requests involving redirects handle querystrings
+     *
+     * @return void
+     * @triggers Controller.beforeRedirect $this->Controller
+     */
+    public function testAjaxRedirectAsRequestActionWithQueryString()
+    {
+        Configure::write('App.namespace', 'TestApp');
+        Router::connect('/:controller/:action');
+        $event = new Event('Controller.beforeRedirect', $this->Controller);
+
+        $this->Controller->RequestHandler = new RequestHandlerComponent($this->Controller->components());
+        $this->Controller->request = $this->getMock('Cake\Network\Request', ['is']);
+        $this->Controller->response = $this->getMock('Cake\Network\Response', ['_sendHeader', 'stop']);
+        $this->Controller->RequestHandler->request = $this->Controller->request;
+        $this->Controller->RequestHandler->response = $this->Controller->response;
+        $this->Controller->request->expects($this->any())
+            ->method('is')
+            ->with('ajax')
+            ->will($this->returnValue(true));
+
+        $response = $this->Controller->RequestHandler->beforeRedirect(
+            $event,
+            '/request_action/params_pass?a=b&x=y?ish',
+            $this->Controller->response
+        );
+        $data = json_decode($response, true);
+        $this->assertEquals('/request_action/params_pass', $data['here']);
+
+        $response = $this->Controller->RequestHandler->beforeRedirect(
+            $event,
+            '/request_action/query_pass?a=b&x=y?ish',
+            $this->Controller->response
+        );
+        $data = json_decode($response, true);
+        $this->assertEquals('y?ish', $data['x']);
+    }
+
+    /**
      * Tests that AJAX requests involving redirects don't let the status code bleed through.
      *
      * @return void
