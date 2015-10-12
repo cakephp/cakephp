@@ -539,7 +539,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             return $event->result;
         }
         if ($event->isStopped()) {
-            return;
+            return null;
         }
 
         if (!$response->location()) {

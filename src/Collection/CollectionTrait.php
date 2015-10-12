@@ -382,7 +382,7 @@ trait CollectionTrait
 
             if (!($options['groupPath'])) {
                 $mapReduce->emit($rowVal($value, $key), $rowKey($value, $key));
-                return;
+                return null;
             }
 
             $key = $options['groupPath']($value, $key);
@@ -433,7 +433,7 @@ trait CollectionTrait
                     $parents[$id] = $isObject ? $parents[$id] : new ArrayIterator($parents[$id], 1);
                     $mapReduce->emit($parents[$id]);
                 }
-                return;
+                return null;
             }
 
             $children = [];

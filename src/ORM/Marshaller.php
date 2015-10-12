@@ -223,7 +223,7 @@ class Marshaller
     protected function _marshalAssociation($assoc, $value, $options)
     {
         if (!is_array($value)) {
-            return;
+            return null;
         }
         $targetTable = $assoc->target();
         $marshaller = $targetTable->marshaller();

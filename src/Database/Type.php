@@ -133,7 +133,7 @@ class Type
         }
         if (!is_string($type)) {
             self::$_types = $type;
-            return;
+            return null;
         }
         if ($className === null) {
             return isset(self::$_types[$type]) ? self::$_types[$type] : null;
