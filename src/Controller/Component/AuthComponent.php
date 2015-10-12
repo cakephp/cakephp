@@ -783,7 +783,7 @@ class AuthComponent extends Component
     public function constructAuthenticate()
     {
         if (empty($this->_config['authenticate'])) {
-            return;
+            return null;
         }
         $this->_authenticateObjects = [];
         $authenticate = Hash::normalize((array)$this->_config['authenticate']);

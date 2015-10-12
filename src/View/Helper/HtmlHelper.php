@@ -416,7 +416,7 @@ class HtmlHelper extends Helper
      *   CSS stylesheets. If `$path` is prefixed with '/', the path will be relative to the webroot
      *   of your application. Otherwise, the path will be relative to your CSS path, usually webroot/css.
      * @param array $options Array of options and HTML arguments.
-     * @return string CSS <link /> or <style /> tag, depending on the type of link.
+     * @return string|null CSS <link /> or <style /> tag, depending on the type of link.
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#linking-to-css-files
      */
     public function css($path, array $options = [])
@@ -431,7 +431,7 @@ class HtmlHelper extends Helper
             if (empty($options['block'])) {
                 return $out . "\n";
             }
-            return;
+            return null;
         }
 
         if (strpos($path, '//') !== false) {
@@ -442,7 +442,7 @@ class HtmlHelper extends Helper
         }
 
         if ($options['once'] && isset($this->_includedAssets[__METHOD__][$path])) {
-            return '';
+            return null;
         }
         unset($options['once']);
         $this->_includedAssets[__METHOD__][$path] = true;
