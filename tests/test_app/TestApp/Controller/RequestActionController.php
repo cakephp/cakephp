@@ -23,7 +23,7 @@ class RequestActionController extends AppController
 {
 
     /**
-     * modelClass property
+     * The default model to use.
      *
      * @var string
      */
