@@ -74,7 +74,7 @@ class SmtpTransport extends AbstractTransport
         try {
             $this->disconnect();
         } catch (Exception $e) {
-// avoid fatal error on script termination
+            // avoid fatal error on script termination
         }
     }
 
