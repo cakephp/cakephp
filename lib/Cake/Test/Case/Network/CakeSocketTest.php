@@ -367,7 +367,37 @@ class CakeSocketTest extends CakeTestCase {
 		$this->Socket = new CakeSocket($config);
 		$this->Socket->connect();
 		$result = $this->Socket->context();
-		$this->assertEquals($config['context'], $result);
+		$this->assertSame($config['context']['ssl']['capture_peer'], $result['ssl']['capture_peer']);
 	}
 
+/**
+ * test configuring the context from the flat keys.
+ *
+ * @return void
+ */
+	public function testConfigContext() {
+		$this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
+		$config = array(
+			'host' => 'smtp.gmail.com',
+			'port' => 465,
+			'timeout' => 5,
+			'ssl_verify_peer' => true,
+			'ssl_allow_self_signed' => false,
+			'ssl_verify_depth' => 5,
+			'ssl_verify_host' => true,
+		);
+		$this->Socket = new CakeSocket($config);
+
+		$this->Socket->connect();
+		$result = $this->Socket->context();
+
+		$this->assertTrue($result['ssl']['verify_peer']);
+		$this->assertFalse($result['ssl']['allow_self_signed']);
+		$this->assertEquals(5, $result['ssl']['verify_depth']);
+		$this->assertEquals('smtp.gmail.com', $result['ssl']['CN_match']);
+		$this->assertArrayNotHasKey('ssl_verify_peer', $this->Socket->config);
+		$this->assertArrayNotHasKey('ssl_allow_self_signed', $this->Socket->config);
+		$this->assertArrayNotHasKey('ssl_verify_host', $this->Socket->config);
+		$this->assertArrayNotHasKey('ssl_verify_depth', $this->Socket->config);
+	}
 }
