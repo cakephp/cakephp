@@ -964,7 +964,7 @@ class HashTest extends TestCase
 
         $data = new ArrayObject([
             'User' => new ArrayObject([
-                0 => new ArrayObject([
+                0 => new Entity([
                     'id' => 4,
                     'name' => 'Neo'
                 ]),
@@ -978,6 +978,19 @@ class HashTest extends TestCase
             ])
         ]);
         $result = Hash::extract($data, 'User.{n}.name');
+        $this->assertEquals($expected, $result);
+
+        $data = [
+            0 => new Entity([
+                'id' => 4,
+                'name' => 'Neo'
+            ]),
+            'stringKey' => new ArrayObject([
+                'name' => 'Fail'
+            ])
+        ];
+        $result = Hash::extract($data, '{n}.name');
+        $expected = ['Neo'];
         $this->assertEquals($expected, $result);
     }
 
