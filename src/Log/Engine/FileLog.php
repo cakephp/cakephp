@@ -124,7 +124,7 @@ class FileLog extends BaseLog
         $message = $this->_format($message, $context);
         $output = date('Y-m-d H:i:s') . ' ' . ucfirst($level) . ': ' . $message . "\n";
         $filename = $this->_getFilename($level);
-        if (!empty($this->_size)) {
+        if (!empty($this->_size) && $this->_config['rotate'] !== false) {
             $this->_rotateFile($filename);
         }
 
