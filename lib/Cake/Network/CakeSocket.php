@@ -446,16 +446,4 @@ class CakeSocket {
 		$this->setLastError(null, $errorMessage);
 		throw new SocketException($errorMessage);
 	}
-
-/**
- * Accept Self-signed certificate on current stream socket
- *
- * @return bool True on success
- * @link http://php.net/manual/en/context.ssl.php About the 'allow_self_signed' option.
- * @see stream_context_set_option
- */
-	public function allowSelfSigned() {
-		return stream_context_set_option($this->connection, 'ssl', 'allow_self_signed', true);
-	}
 }
-
