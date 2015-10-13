@@ -78,6 +78,14 @@ class Query extends DatabaseQuery implements JsonSerializable
     protected $_autoFields;
 
     /**
+     * Tracks whether or not the original query should create
+     * aliases for the fields.
+     *
+     * @var bool
+     */
+    protected $_autoAlias = true;
+
+    /**
      * Whether to hydrate results into entity objects
      *
      * @var bool
@@ -569,6 +577,10 @@ class Query extends DatabaseQuery implements JsonSerializable
             $aliasedField = $alias . '.' . $field;
         }
 
+        if ($this->_autoAlias === false) {
+            return [$aliasedField];
+        }
+
         return [$key => $aliasedField];
     }
 
@@ -585,7 +597,8 @@ class Query extends DatabaseQuery implements JsonSerializable
         $aliased = [];
         foreach ($fields as $alias => $field) {
             if (is_numeric($alias) && is_string($field)) {
-                $aliased += $this->aliasField($field, $defaultAlias);
+                $aliasField = $this->aliasField($field, $defaultAlias);
+                $aliased = array_merge($aliased, $aliasField);
                 continue;
             }
             $aliased[$alias] = $field;
@@ -1065,6 +1078,24 @@ class Query extends DatabaseQuery implements JsonSerializable
             return $this->_autoFields;
         }
         $this->_autoFields = (bool)$value;
+        return $this;
+    }
+
+    /**
+     * Get/Set whether or not the ORM aliasing fields automatically.
+     *
+     * By default calling select() will enable auto-alias. You can disable
+     * auto-alias with this method.
+     *
+     * @param bool|null $value The value to set or null to read the current value.
+     * @return bool|$this Either the current value or the query object.
+     */
+    public function autoAlias($value = null)
+    {
+        if ($value === null) {
+            return $this->_autoAlias;
+        }
+        $this->_autoAlias = (bool)$value;
         return $this;
     }
 
