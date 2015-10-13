@@ -201,8 +201,7 @@ class CakeSocket {
  *
  * @param string $host The host name being connected to.
  */
-	protected function _setSslContext($host)
-	{
+	protected function _setSslContext($host) {
 		foreach ($this->config as $key => $value) {
 			if (substr($key, 0, 4) !== 'ssl_') {
 				continue;
