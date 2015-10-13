@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Utility;
 
 use ArrayObject;
+use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
 
@@ -152,7 +153,7 @@ class HashTest extends TestCase
     public static function articleDataObject()
     {
         return new ArrayObject([
-            new ArrayObject([
+            new Entity([
                 'Article' => new ArrayObject([
                     'id' => '1',
                     'user_id' => '1',

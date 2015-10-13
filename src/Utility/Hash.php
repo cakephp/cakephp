@@ -156,6 +156,9 @@ class Hash
             list($token, $conditions) = self::_splitConditions($token);
 
             foreach ($context[$_key] as $item) {
+                if (is_object($item) && method_exists($item, 'toArray')) {
+                    $item = $item->toArray();
+                }
                 foreach ((array)$item as $k => $v) {
                     if (static::_matchToken($k, $token)) {
                         $next[] = $v;
