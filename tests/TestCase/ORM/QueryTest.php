@@ -40,7 +40,7 @@ class QueryTest extends TestCase
         'core.articles',
         'core.articles_tags',
         'core.authors',
-        'core.comments'
+        'core.comments',
         'core.posts',
         'core.tags'
     ];

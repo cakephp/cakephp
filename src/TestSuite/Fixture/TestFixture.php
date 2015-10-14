@@ -315,13 +315,10 @@ class TestFixture implements FixtureInterface
             return true;
         }
 
-        try {
-            foreach ($sql as $stmt) {
-                $db->execute($stmt)->closeCursor();
-            }
-        } catch (\Exception $e) {
-            return false;
+        foreach ($sql as $stmt) {
+            $db->execute($stmt)->closeCursor();
         }
+
         return true;
     }
 
@@ -340,13 +337,8 @@ class TestFixture implements FixtureInterface
             return true;
         }
 
-        try {
-            foreach ($sql as $stmt) {
-                $db->execute($stmt)->closeCursor();
-            }
-        } catch (\Exception $e) {
-            debug($e);
-            return false;
+        foreach ($sql as $stmt) {
+            $db->execute($stmt)->closeCursor();
         }
 
         foreach ($this->_constraints as $name => $data) {
