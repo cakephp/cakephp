@@ -194,6 +194,61 @@ trait QueryTrait
     }
 
     /**
+     * Returns a key => value array representing a single aliased field
+     * that can be passed directly to the select() method.
+     * The key will contain the alias and the value the actual field name.
+     *
+     * If the field is already aliased, then it will not be changed.
+     * If no $alias is passed, the default table for this query will be used.
+     *
+     * @param string $field The field to alias
+     * @param string $alias the alias used to prefix the field
+     * @return array
+     */
+    public function aliasField($field, $alias = null)
+    {
+        $namespaced = strpos($field, '.') !== false;
+        $aliasedField = $field;
+
+        if ($namespaced) {
+            list($alias, $field) = explode('.', $field);
+        }
+
+        if (!$alias) {
+            $alias = $this->repository()->alias();
+        }
+
+        $key = sprintf('%s__%s', $alias, $field);
+        if (!$namespaced) {
+            $aliasedField = $alias . '.' . $field;
+        }
+
+        return [$key => $aliasedField];
+    }
+
+    /**
+     * Runs `aliasField()` for each field in the provided list and returns
+     * the result under a single array.
+     *
+     * @param array $fields The fields to alias
+     * @param string|null $defaultAlias The default alias
+     * @return array
+     */
+    public function aliasFields($fields, $defaultAlias = null)
+    {
+        $aliased = [];
+        foreach ($fields as $alias => $field) {
+            if (is_numeric($alias) && is_string($field)) {
+                $aliased += $this->aliasField($field, $defaultAlias);
+                continue;
+            }
+            $aliased[$alias] = $field;
+        }
+
+        return $aliased;
+    }
+
+    /**
      * Fetch the results for this query.
      *
      * Will return either the results set through setResult(), or execute this query
