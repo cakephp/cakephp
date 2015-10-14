@@ -15,7 +15,6 @@
 namespace Cake\ORM;
 
 use ArrayObject;
-use BadMethodCallException;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query as DatabaseQuery;
 use Cake\Database\ValueBinder;
@@ -111,7 +110,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * Constructor
      *
-     * @param \Cake\Datasource\ConnectionInterface $connection The connection object
+     * @param \Cake\Database\Connection $connection The connection object
      * @param \Cake\ORM\Table $table The table this query is starting on
      */
     public function __construct($connection, $table)
@@ -289,19 +288,48 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function contain($associations = null, $override = false)
     {
-        if ($override) {
-            $this->_eagerLoader->clearContain();
-        }
-
-        $result = $this->eagerLoader()->contain($associations);
-        if ($associations !== null || $override) {
+        $loader = $this->eagerLoader();
+        if ($override === true) {
+            $loader->clearContain();
             $this->_dirty();
         }
+
+        $result = $loader->contain($associations);
         if ($associations === null) {
             return $result;
         }
 
+        $this->_addAssociationsToTypeMap($this->repository(), $this->typeMap(), $result);
         return $this;
+    }
+
+    /**
+     * Used to recursively add contained association column types to
+     * the query.
+     *
+     * @param \Cake\ORM\Table $table The table instance to pluck associations from.
+     * @param \Cake\Database\TypeMap $typeMap The typemap to check for columns in.
+     *   This typemap is indirectly mutated via Cake\ORM\Query::addDefaultTypes()
+     * @param array $associations The nested tree of associations to walk.
+     * @return void
+     */
+    protected function _addAssociationsToTypeMap($table, $typeMap, $associations)
+    {
+        $typeMap = $this->typeMap();
+        foreach ($associations as $name => $nested) {
+            $association = $table->association($name);
+            if (!$association) {
+                continue;
+            }
+            $target = $association->target();
+            $primary = (array)$target->primaryKey();
+            if ($typeMap->type($target->aliasField($primary[0])) === null) {
+                $this->addDefaultTypes($target);
+            }
+            if (!empty($nested)) {
+                $this->_addAssociationsToTypeMap($target, $typeMap, $nested);
+            }
+        }
     }
 
     /**
@@ -948,7 +976,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             return $this->_call($method, $arguments);
         }
 
-        throw new BadMethodCallException(
+        throw new \BadMethodCallException(
             sprintf('Cannot call method "%s" on a "%s" query', $method, $this->type())
         );
     }
