@@ -138,9 +138,6 @@ class Hash
         }
 
         if (strpos($path, '[') === false) {
-            if (function_exists('array_column') && preg_match('|^\{n\}\.(\w+)$|', $path, $matches)) {
-                return array_column($data, $matches[1]);
-            }
             $tokens = explode('.', $path);
         } else {
             $tokens = Text::tokenize($path, '.', '[', ']');
@@ -156,6 +153,9 @@ class Hash
             list($token, $conditions) = self::_splitConditions($token);
 
             foreach ($context[$_key] as $item) {
+                if (is_object($item) && method_exists($item, 'toArray')) {
+                    $item = $item->toArray();
+                }
                 foreach ((array)$item as $k => $v) {
                     if (static::_matchToken($k, $token)) {
                         $next[] = $v;
