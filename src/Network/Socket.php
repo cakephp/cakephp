@@ -177,8 +177,10 @@ class Socket
      * Configure the SSL context options.
      *
      * @param string $host The host name being connected to.
+     * @return void
      */
-    protected function _setSslContext($host) {
+    protected function _setSslContext($host)
+    {
         foreach ($this->_config as $key => $value) {
             if (substr($key, 0, 4) !== 'ssl_') {
                 continue;

@@ -419,29 +419,30 @@ class SocketTest extends TestCase
      *
      * @return void
      */
-    public function testConfigContext() {
-       $this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
-       $config = array(
-           'host' => 'smtp.gmail.com',
-           'port' => 465,
-           'timeout' => 5,
-           'ssl_verify_peer' => true,
-           'ssl_allow_self_signed' => false,
-           'ssl_verify_depth' => 5,
-           'ssl_verify_host' => true,
-       );
-       $socket = new Socket($config);
+    public function testConfigContext()
+    {
+        $this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
+        $config = [
+            'host' => 'smtp.gmail.com',
+            'port' => 465,
+            'timeout' => 5,
+            'ssl_verify_peer' => true,
+            'ssl_allow_self_signed' => false,
+            'ssl_verify_depth' => 5,
+            'ssl_verify_host' => true,
+        ];
+        $socket = new Socket($config);
 
-       $socket->connect();
-       $result = $socket->context();
+        $socket->connect();
+        $result = $socket->context();
 
-       $this->assertTrue($result['ssl']['verify_peer']);
-       $this->assertFalse($result['ssl']['allow_self_signed']);
-       $this->assertEquals(5, $result['ssl']['verify_depth']);
-       $this->assertEquals('smtp.gmail.com', $result['ssl']['CN_match']);
-       $this->assertArrayNotHasKey('ssl_verify_peer', $socket->config());
-       $this->assertArrayNotHasKey('ssl_allow_self_signed', $socket->config());
-       $this->assertArrayNotHasKey('ssl_verify_host', $socket->config());
-       $this->assertArrayNotHasKey('ssl_verify_depth', $socket->config());
+        $this->assertTrue($result['ssl']['verify_peer']);
+        $this->assertFalse($result['ssl']['allow_self_signed']);
+        $this->assertEquals(5, $result['ssl']['verify_depth']);
+        $this->assertEquals('smtp.gmail.com', $result['ssl']['CN_match']);
+        $this->assertArrayNotHasKey('ssl_verify_peer', $socket->config());
+        $this->assertArrayNotHasKey('ssl_allow_self_signed', $socket->config());
+        $this->assertArrayNotHasKey('ssl_verify_host', $socket->config());
+        $this->assertArrayNotHasKey('ssl_verify_depth', $socket->config());
     }
 }
