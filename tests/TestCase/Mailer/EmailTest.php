@@ -2701,6 +2701,7 @@ XML;
             '_emailFormat' => 'text',
             '_messageId' => '<uuid@server.com>',
             '_domain' => 'foo.bar',
+            '_appCharset' => 'UTF-8',
             'charset' => 'utf-8',
             'headerCharset' => 'utf-8',
             'viewConfig' => [

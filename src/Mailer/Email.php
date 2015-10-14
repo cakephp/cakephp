@@ -1906,7 +1906,7 @@ class Email implements JsonSerializable, Serializable
         $properties = [
             '_to', '_from', '_sender', '_replyTo', '_cc', '_bcc', '_subject',
             '_returnPath', '_readReceipt', '_emailFormat', '_emailPattern', '_domain',
-            '_attachments', '_messageId', '_headers', 'viewVars', 'charset', 'headerCharset'
+            '_attachments', '_messageId', '_headers', '_appCharset', 'viewVars', 'charset', 'headerCharset'
         ];
 
         $array = ['viewConfig' => $this->viewBuilder()->jsonSerialize()];
