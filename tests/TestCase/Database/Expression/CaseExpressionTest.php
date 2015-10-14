@@ -54,6 +54,26 @@ class CaseExpressionTest extends TestCase
     }
 
     /**
+     * Test sql generation with 0 case.
+     *
+     * @return void
+     */
+    public function testSqlOutputZero()
+    {
+        $expression = new QueryExpression();
+        $expression->add(['id' => 'test']);
+        $caseExpression = new CaseExpression([$expression], [0], ['integer']);
+        $expected = 'CASE WHEN id = :c0 THEN :c1 END';
+        $binder = new ValueBinder();
+        $this->assertSame($expected, $caseExpression->sql($binder));
+        $expected = [
+            ':c0' => ['value' => 'test', 'type' => null, 'placeholder' => 'c0'],
+            ':c1' => ['value' => 0, 'type' => 'integer', 'placeholder' => 'c1'],
+        ];
+        $this->assertEquals($expected, $binder->bindings());
+    }
+
+    /**
      * Tests that the expression is correctly traversed
      *
      * @return void
