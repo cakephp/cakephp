@@ -652,7 +652,18 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function cleanCopy()
     {
-        return clone $this;
+        $clone = clone $this;
+        $clone->_iterator = null;
+        $clone->triggerBeforeFind();
+        $clone->eagerLoader(clone $this->eagerLoader());
+        $clone->valueBinder(clone $this->valueBinder());
+        $clone->autoFields(false);
+        $clone->limit(null);
+        $clone->order([], true);
+        $clone->offset(null);
+        $clone->mapReduce(null, null, true);
+        $clone->formatResults(null, true);
+        return $clone;
     }
 
     /**
@@ -665,15 +676,8 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function __clone()
     {
         $this->_iterator = null;
-        $this->triggerBeforeFind();
         $this->eagerLoader(clone $this->eagerLoader());
         $this->valueBinder(clone $this->valueBinder());
-        $this->autoFields(false);
-        $this->limit(null);
-        $this->order([], true);
-        $this->offset(null);
-        $this->mapReduce(null, null, true);
-        $this->formatResults(null, true);
     }
 
     /**
