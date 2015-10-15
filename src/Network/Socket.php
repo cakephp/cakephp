@@ -204,7 +204,7 @@ class Socket
             }
         }
         if (empty($this->_config['context']['ssl']['cafile'])) {
-            $dir = dirname(__DIR__);
+            $dir = dirname(dirname(__DIR__));
             $this->_config['context']['ssl']['cafile'] = $dir . DIRECTORY_SEPARATOR .
                 'config' . DIRECTORY_SEPARATOR . 'cacert.pem';
         }
