@@ -1745,17 +1745,15 @@ class TableTest extends TestCase
      */
     public function testSaveReplaceSaveStrategy()
     {
-        $authors = $this->getMock(
-            'Cake\ORM\Table',
-            ['exists'],
+        $authors = new Table(
             [
-                [
-                    'connection' => $this->connection,
-                    'alias' => 'Authors',
-                    'table' => 'authors',
-                ]
+                'table' => 'authors',
+                'alias' => 'Authors',
+                'connection' => $this->connection,
+                'entityClass' => 'Cake\ORM\Entity',
             ]
         );
+        
         $authors->hasMany('Articles', ['saveStrategy' => 'replace']);
 
         $entity = $authors->newEntity([
@@ -1781,7 +1779,6 @@ class TableTest extends TestCase
         $this->assertTrue($authors->Articles->exists(['id' => $articleId]));
     }
 
-
     /**
      * Test that save works with append saveStrategy not deleting or setting null anything
      *
@@ -1789,17 +1786,15 @@ class TableTest extends TestCase
      */
     public function testSaveAppendSaveStrategy()
     {
-        $authors = $this->getMock(
-            'Cake\ORM\Table',
-            ['exists'],
+        $authors = new Table(
             [
-                [
-                    'connection' => $this->connection,
-                    'alias' => 'Authors',
-                    'table' => 'authors',
-                ]
+                'table' => 'authors',
+                'alias' => 'Authors',
+                'connection' => $this->connection,
+                'entityClass' => 'Cake\ORM\Entity',
             ]
         );
+
         $authors->hasMany('Articles', ['saveStrategy' => 'append']);
 
         $entity = $authors->newEntity([
@@ -1825,6 +1820,7 @@ class TableTest extends TestCase
         $this->assertEquals($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
         $this->assertTrue($authors->Articles->exists(['id' => $articleId]));
     }
+
     /**
      * Test that save has append as the default save strategy
      *
@@ -1851,17 +1847,15 @@ class TableTest extends TestCase
      */
     public function testSaveReplaceSaveStrategyDependent()
     {
-        $authors = $this->getMock(
-            'Cake\ORM\Table',
-            ['exists'],
+        $authors = new Table(
             [
-                [
-                    'connection' => $this->connection,
-                    'alias' => 'Authors',
-                    'table' => 'authors',
-                ]
+                'table' => 'authors',
+                'alias' => 'Authors',
+                'connection' => $this->connection,
+                'entityClass' => 'Cake\ORM\Entity',
             ]
         );
+
         $authors->hasMany('Articles', ['saveStrategy' => 'replace', 'dependent' => true]);
 
         $entity = $authors->newEntity([
@@ -1894,15 +1888,12 @@ class TableTest extends TestCase
      */
     public function testSaveReplaceSaveStrategyNotNullable()
     {
-        $articles = $this->getMock(
-            'Cake\ORM\Table',
-            ['exists'],
+        $articles = new Table(
             [
-                [
-                    'connection' => $this->connection,
-                    'alias' => 'Articles',
-                    'table' => 'articles',
-                ]
+                'table' => 'articles',
+                'alias' => 'Articles',
+                'connection' => $this->connection,
+                'entityClass' => 'Cake\ORM\Entity',
             ]
         );
 
@@ -1945,15 +1936,12 @@ class TableTest extends TestCase
      */
     public function testSaveReplaceSaveStrategyAdding()
     {
-        $articles = $this->getMock(
-            'Cake\ORM\Table',
-            ['exists'],
+        $articles = new Table(
             [
-                [
-                    'connection' => $this->connection,
-                    'alias' => 'Articles',
-                    'table' => 'articles',
-                ]
+                'table' => 'articles',
+                'alias' => 'Articles',
+                'connection' => $this->connection,
+                'entityClass' => 'Cake\ORM\Entity',
             ]
         );
 
@@ -1983,7 +1971,7 @@ class TableTest extends TestCase
         $this->assertTrue($articles->Comments->exists(['id' => $commentId]));
         
         unset($article->comments[0]);
-        $article->comments[] = $articles->comments->newEntity([
+        $article->comments[] = $articles->Comments->newEntity([
             'user_id' => 1,
             'comment' => 'new comment'
         ]);

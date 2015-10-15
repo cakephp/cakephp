@@ -15,6 +15,7 @@
  */
 namespace Cake\ORM\Association;
 
+use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
@@ -190,21 +191,22 @@ class HasMany extends Association
      * @param array $remainingEntities Entities that should not be deleted
      * @return void
      */
-    protected function _unlinkAssociated(array $properties, EntityInterface $entity, Table $target, array $remainingEntities)
+    protected function _unlinkAssociated(array $properties, EntityInterface $entity, Table $target, array $remainingEntities = [])
     {
         $primaryKey = (array)$target->primaryKey();
         $mustBeDependent = (!$this->_foreignKeyAcceptsNull($target, $properties) || $this->dependent());
-        $exclusions = array_filter(
-            array_map(
-                function ($ent) use ($primaryKey) {
-                    return $ent->extract($primaryKey);
-                },
-                $remainingEntities
-            ),
+        $exclusions = new Collection($remainingEntities);
+        $exclusions = $exclusions->map(
+            function ($ent) use ($primaryKey) {
+                return $ent->extract($primaryKey);
+            }
+        )
+        ->filter(
             function ($v) {
                 return !in_array(null, array_values($v), true);
             }
-        );
+        )
+        ->toArray();
 
         if (count($exclusions) > 0) {
             $conditions = [
