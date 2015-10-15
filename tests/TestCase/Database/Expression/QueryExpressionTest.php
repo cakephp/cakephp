@@ -88,4 +88,28 @@ class QueryExpressionTest extends TestCase
         $result = $expr->sql($binder);
         $this->assertEquals('', $result);
     }
+
+    /**
+     * Test deep cloning of expression trees.
+     *
+     * @return void
+     */
+    public function testDeepCloning()
+    {
+        $expr = new QueryExpression();
+        $expr = $expr->add(new QueryExpression('1 + 1'))
+            ->isNull('deleted')
+            ->like('title', 'things%');
+
+        $dupe = clone $expr;
+        $this->assertEquals($dupe, $expr);
+        $this->assertNotSame($dupe, $expr);
+        $originalParts = [];
+        $expr->iterateParts(function ($part) use (&$originalParts) {
+            $originalParts[] = $part;
+        });
+        $dupe->iterateParts(function ($part, $i) use ($originalParts) {
+            $this->assertNotSame($originalParts[$i], $part);
+        });
+    }
 }
