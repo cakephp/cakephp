@@ -93,4 +93,24 @@ class CaseExpressionTest extends TestCase
         $caseExpression->traverse($visitor);
         $this->assertSame(4, $count);
     }
+
+    /**
+     * Test cloning
+     *
+     * @return void
+     */
+    public function testClone()
+    {
+        $expr = new QueryExpression();
+        $expr->eq('test', 'true');
+        $expr2 = new QueryExpression();
+        $expr2->eq('test2', 'false');
+
+        $caseExpression = new CaseExpression([$expr, $expr2], 'foobar');
+        $dupe = clone $caseExpression;
+        $dupe->elseValue('nope');
+
+        $this->assertNotEquals($caseExpression, $dupe);
+        $this->assertNotSame($caseExpression, $dupe);
+    }
 }
