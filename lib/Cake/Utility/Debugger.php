@@ -455,8 +455,6 @@ class Debugger {
  *  - host
  *  - database
  *  - port
- *  - prefix
- *  - schema
  *
  * This is done to protect database credentials, which could be accidentally
  * shown in an error message if CakePHP is deployed in development mode.
@@ -514,8 +512,6 @@ class Debugger {
  * - host
  * - database
  * - port
- * - prefix
- * - schema
  *
  * @param array $var The array to export.
  * @param int $depth The current depth, used for recursion tracking.
@@ -528,9 +524,7 @@ class Debugger {
 			'login' => '*****',
 			'host' => '*****',
 			'database' => '*****',
-			'port' => '*****',
-			'prefix' => '*****',
-			'schema' => '*****'
+			'port' => '*****'
 		);
 		$replace = array_intersect_key($secrets, $var);
 		$var = $replace + $var;
