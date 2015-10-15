@@ -98,12 +98,12 @@ class MarshallerTest extends TestCase
 {
 
     public $fixtures = [
-        'core.tags',
-        'core.articles_tags',
         'core.articles',
-        'core.users',
+        'core.articles_tags',
         'core.comments',
-        'core.special_tags'
+        'core.special_tags',
+        'core.tags',
+        'core.users'
     ];
 
     /**

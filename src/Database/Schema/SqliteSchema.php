@@ -14,7 +14,9 @@
  */
 namespace Cake\Database\Schema;
 
+use Cake\Core\Configure;
 use Cake\Database\Exception;
+use RuntimeException;
 
 /**
  * Schema management/reflection features for Sqlite
@@ -350,6 +352,28 @@ class SqliteSchema extends BaseSchema
             implode(', ', $columns),
             $clause
         );
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * SQLite can not properly handle adding a constraint to an existing table.
+     * This method is no-op
+     */
+    public function addConstraintSql(Table $table)
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * SQLite can not properly handle dropping a constraint to an existing table.
+     * This method is no-op
+     */
+    public function dropConstraintSql(Table $table)
+    {
+        return [];
     }
 
     /**

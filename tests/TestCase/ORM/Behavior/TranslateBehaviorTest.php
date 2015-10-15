@@ -44,10 +44,10 @@ class TranslateBehaviorTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.translates',
         'core.articles',
+        'core.authors',
         'core.comments',
-        'core.authors'
+        'core.translates'
     ];
 
     public function tearDown()

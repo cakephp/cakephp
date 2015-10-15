@@ -282,7 +282,7 @@ class ViewTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.users', 'core.posts'];
+    public $fixtures = ['core.posts', 'core.users'];
 
     /**
      * setUp method

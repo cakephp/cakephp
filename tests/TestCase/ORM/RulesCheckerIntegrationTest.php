@@ -30,7 +30,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.articles', 'core.authors', 'core.tags', 'core.articles_tags'];
+    public $fixtures = ['core.articles', 'core.articles_tags', 'core.authors', 'core.tags'];
 
     /**
      * Tear down

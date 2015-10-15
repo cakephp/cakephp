@@ -63,7 +63,7 @@ class SessionTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.sessions', 'core.cake_sessions'];
+    public $fixtures = ['core.cake_sessions', 'core.sessions'];
 
     /**
      * setup before class.

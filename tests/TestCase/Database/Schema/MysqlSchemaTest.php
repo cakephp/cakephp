@@ -713,6 +713,104 @@ SQL;
     }
 
     /**
+     * Test the addConstraintSql method.
+     *
+     * @return void
+     */
+    public function testAddConstraintSql()
+    {
+        $driver = $this->_getMockedDriver();
+        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+        $connection->expects($this->any())->method('driver')
+            ->will($this->returnValue($driver));
+
+        $table = (new Table('posts'))
+            ->addColumn('author_id', [
+                'type' => 'integer',
+                'null' => false
+            ])
+            ->addColumn('category_id', [
+                'type' => 'integer',
+                'null' => false
+            ])
+            ->addColumn('category_name', [
+                'type' => 'integer',
+                'null' => false
+            ])
+            ->addConstraint('author_fk', [
+                'type' => 'foreign',
+                'columns' => ['author_id'],
+                'references' => ['authors', 'id'],
+                'update' => 'cascade',
+                'delete' => 'cascade'
+            ])
+            ->addConstraint('category_fk', [
+                'type' => 'foreign',
+                'columns' => ['category_id', 'category_name'],
+                'references' => ['categories', ['id', 'name']],
+                'update' => 'cascade',
+                'delete' => 'cascade'
+            ]);
+
+        $expected = [
+            'ALTER TABLE `posts` ADD CONSTRAINT `author_fk` FOREIGN KEY (`author_id`) REFERENCES `authors` (`id`) ON UPDATE CASCADE ON DELETE CASCADE;',
+            'ALTER TABLE `posts` ADD CONSTRAINT `category_fk` FOREIGN KEY (`category_id`, `category_name`) REFERENCES `categories` (`id`, `name`) ON UPDATE CASCADE ON DELETE CASCADE;'
+        ];
+        $result = $table->addConstraintSql($connection);
+        $this->assertCount(2, $result);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test the dropConstraintSql method.
+     *
+     * @return void
+     */
+    public function testDropConstraintSql()
+    {
+        $driver = $this->_getMockedDriver();
+        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+        $connection->expects($this->any())->method('driver')
+            ->will($this->returnValue($driver));
+
+        $table = (new Table('posts'))
+            ->addColumn('author_id', [
+                'type' => 'integer',
+                'null' => false
+            ])
+            ->addColumn('category_id', [
+                'type' => 'integer',
+                'null' => false
+            ])
+            ->addColumn('category_name', [
+                'type' => 'integer',
+                'null' => false
+            ])
+            ->addConstraint('author_fk', [
+                'type' => 'foreign',
+                'columns' => ['author_id'],
+                'references' => ['authors', 'id'],
+                'update' => 'cascade',
+                'delete' => 'cascade'
+            ])
+            ->addConstraint('category_fk', [
+                'type' => 'foreign',
+                'columns' => ['category_id', 'category_name'],
+                'references' => ['categories', ['id', 'name']],
+                'update' => 'cascade',
+                'delete' => 'cascade'
+            ]);
+
+        $expected = [
+            'ALTER TABLE `posts` DROP FOREIGN KEY `author_fk`;',
+            'ALTER TABLE `posts` DROP FOREIGN KEY `category_fk`;'
+        ];
+        $result = $table->dropConstraintSql($connection);
+        $this->assertCount(2, $result);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Test generating a column that is a primary key.
      *
      * @return void

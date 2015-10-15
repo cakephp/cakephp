@@ -166,6 +166,14 @@ abstract class Driver
     abstract public function enableForeignKeySQL();
 
     /**
+     * Returns whether the driver supports adding or dropping constraints
+     * to already created tables.
+     *
+     * @return bool true if driver supports dynamic constraints
+     */
+    abstract public function supportsDynamicConstraints();
+
+    /**
      * Returns whether this driver supports save points for nested transactions
      *
      * @return bool true if save points are supported, false otherwise

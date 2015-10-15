@@ -14,6 +14,7 @@
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Exception\Exception as CakeException;
+use Cake\Database\Driver\Sqlite;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
@@ -78,6 +79,13 @@ class TestFixture implements FixtureInterface
      * @var \Cake\Database\Schema\Table
      */
     protected $_schema;
+
+    /**
+     * Fixture constraints to be created.
+     *
+     * @var array
+     */
+    protected $_constraints = [];
 
     /**
      * Instantiate the fixture.
@@ -150,6 +158,7 @@ class TestFixture implements FixtureInterface
      */
     protected function _schemaFromFields()
     {
+        $connection = ConnectionManager::get($this->connection());
         $this->_schema = new Table($this->table);
         foreach ($this->fields as $field => $data) {
             if ($field === '_constraints' || $field === '_indexes' || $field === '_options') {
@@ -159,7 +168,11 @@ class TestFixture implements FixtureInterface
         }
         if (!empty($this->fields['_constraints'])) {
             foreach ($this->fields['_constraints'] as $name => $data) {
-                $this->_schema->addConstraint($name, $data);
+                if (!$connection->supportsDynamicConstraints() || $data['type'] !== Table::CONSTRAINT_FOREIGN) {
+                    $this->_schema->addConstraint($name, $data);
+                } else {
+                    $this->_constraints[$name] = $data;
+                }
             }
         }
         if (!empty($this->fields['_indexes'])) {
@@ -229,7 +242,6 @@ class TestFixture implements FixtureInterface
             foreach ($queries as $query) {
                 $db->execute($query)->closeCursor();
             }
-            $this->created[] = $db->configName();
         } catch (Exception $e) {
             $msg = sprintf(
                 'Fixture creation for "%s" failed "%s"',
@@ -281,6 +293,57 @@ class TestFixture implements FixtureInterface
             return $statement;
         }
 
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function createConstraints(ConnectionInterface $db)
+    {
+        if (empty($this->_constraints)) {
+            return true;
+        }
+
+        foreach ($this->_constraints as $name => $data) {
+            $this->_schema->addConstraint($name, $data);
+        }
+
+        $sql = $this->_schema->addConstraintSql($db);
+
+        if (empty($sql)) {
+            return true;
+        }
+
+        foreach ($sql as $stmt) {
+            $db->execute($stmt)->closeCursor();
+        }
+
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function dropConstraints(ConnectionInterface $db)
+    {
+        if (empty($this->_constraints)) {
+            return true;
+        }
+
+        $sql = $this->_schema->dropConstraintSql($db);
+
+        if (empty($sql)) {
+            return true;
+        }
+
+        foreach ($sql as $stmt) {
+            $db->execute($stmt)->closeCursor();
+        }
+
+        foreach ($this->_constraints as $name => $data) {
+            $this->_schema->dropConstraint($name);
+        }
         return true;
     }
 
