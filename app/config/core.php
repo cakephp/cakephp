@@ -248,6 +248,11 @@
 	//date_default_timezone_set('UTC');
 
 /**
+ * Add files or folders that should be ignored by CakePHP when scanning application folder.
+ */
+	//Configure::write('ignorePaths', array('.svn', '.git', 'CVS', 'tests', 'templates', 'node_modules'));
+
+/**
  *
  * Cache Engine Configuration
  * Default settings provided below
