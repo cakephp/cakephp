@@ -24,6 +24,23 @@ use PDO;
  */
 class UuidType extends StringType
 {
+
+    /**
+     * Casts given value from a PHP type to one acceptable by database
+     *
+     * @param mixed $value value to be converted to database equivalent
+     * @param Driver $driver object from which database preferences and configuration will be extracted
+     * @return mixed
+     */
+    public function toDatabase($value, Driver $driver)
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        return parent::toDatabase($value, $driver);
+    }
+
     /**
      * Generate a new UUID
      *
@@ -34,6 +51,12 @@ class UuidType extends StringType
         return Text::uuid();
     }
 
+    /**
+     * Marshalls request data into a PHP string
+     *
+     * @param mixed $value The value to convert.
+     * @return string|null Converted value.
+     */
     public function marshal($value)
     {
         if ($value === null || $value === '') {
