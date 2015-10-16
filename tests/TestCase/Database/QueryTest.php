@@ -3438,6 +3438,38 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test that cloning goes deep.
+     *
+     * @return void
+     */
+    public function testDeepClone()
+    {
+        $query = new Query($this->connection);
+        $query->select(['id', 'title' => $query->func()->concat(['title' => 'literal', 'test'])])
+            ->from('articles')
+            ->where(['Articles.id' => 1])
+            ->offset(10)
+            ->limit(1)
+            ->order(['Articles.id' => 'DESC']);
+        $dupe = clone $query;
+
+        $this->assertEquals($query->clause('where'), $dupe->clause('where'));
+        $this->assertNotSame($query->clause('where'), $dupe->clause('where'));
+        $dupe->where(['Articles.title' => 'thinger']);
+        $this->assertNotEquals($query->clause('where'), $dupe->clause('where'));
+
+        $this->assertNotSame(
+            $query->clause('select')['title'],
+            $dupe->clause('select')['title']
+        );
+        $this->assertEquals($query->clause('order'), $dupe->clause('order'));
+        $this->assertNotSame($query->clause('order'), $dupe->clause('order'));
+
+        $query->order(['Articles.title' => 'ASC']);
+        $this->assertNotEquals($query->clause('order'), $dupe->clause('order'));
+    }
+
+    /**
      * Assertion for comparing a table's contents with what is in it.
      *
      * @param string $table
