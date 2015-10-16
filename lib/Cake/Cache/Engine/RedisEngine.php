@@ -113,6 +113,11 @@ class RedisEngine extends CacheEngine {
 		if (!is_int($value)) {
 			$value = serialize($value);
 		}
+
+		if (!$this->_Redis->isConnected()) {
+			$this->_connect();
+		}
+
 		if ($duration === 0) {
 			return $this->_Redis->set($key, $value);
 		}
