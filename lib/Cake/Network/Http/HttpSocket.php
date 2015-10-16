@@ -72,7 +72,7 @@ class HttpSocket extends CakeSocket {
  * Contain information about the last response (read only)
  *
  * @var array
- */
+*/
 	public $response = null;
 
 /**
@@ -361,8 +361,6 @@ class HttpSocket extends CakeSocket {
 			return false;
 		}
 
-		$this->_configContext($this->request['uri']['host']);
-
 		$this->request['raw'] = '';
 		if ($this->request['line'] !== false) {
 			$this->request['raw'] = $this->request['line'];
@@ -374,6 +372,8 @@ class HttpSocket extends CakeSocket {
 
 		$this->request['raw'] .= "\r\n";
 		$this->request['raw'] .= $this->request['body'];
+
+		// SSL context is set during the connect() method.
 		$this->write($this->request['raw']);
 
 		$response = null;
@@ -698,47 +698,6 @@ class HttpSocket extends CakeSocket {
 		$this->config = Hash::merge($this->config, $config);
 		$this->config = Hash::merge($this->config, array_intersect_key($this->config['request']['uri'], $this->config));
 		return true;
-	}
-
-/**
- * Configure the socket's context. Adds in configuration
- * that can not be declared in the class definition.
- *
- * @param string $host The host you're connecting to.
- * @return void
- */
-	protected function _configContext($host) {
-		foreach ($this->config as $key => $value) {
-			if (substr($key, 0, 4) !== 'ssl_') {
-				continue;
-			}
-			$contextKey = substr($key, 4);
-			if (empty($this->config['context']['ssl'][$contextKey])) {
-				$this->config['context']['ssl'][$contextKey] = $value;
-			}
-			unset($this->config[$key]);
-		}
-		if (version_compare(PHP_VERSION, '5.3.2', '>=')) {
-			if (!isset($this->config['context']['ssl']['SNI_enabled'])) {
-				$this->config['context']['ssl']['SNI_enabled'] = true;
-			}
-			if (version_compare(PHP_VERSION, '5.6.0', '>=')) {
-				if (empty($this->config['context']['ssl']['peer_name'])) {
-					$this->config['context']['ssl']['peer_name'] = $host;
-				}
-			} else {
-				if (empty($this->config['context']['ssl']['SNI_server_name'])) {
-					$this->config['context']['ssl']['SNI_server_name'] = $host;
-				}
-			}
-		}
-		if (empty($this->config['context']['ssl']['cafile'])) {
-			$this->config['context']['ssl']['cafile'] = CAKE . 'Config' . DS . 'cacert.pem';
-		}
-		if (!empty($this->config['context']['ssl']['verify_host'])) {
-			$this->config['context']['ssl']['CN_match'] = $host;
-		}
-		unset($this->config['context']['ssl']['verify_host']);
 	}
 
 /**

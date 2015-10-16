@@ -1209,10 +1209,10 @@ class FormHelper extends AppHelper {
 			if ($options['type'] === 'number' &&
 				!isset($options['step'])
 			) {
-				if ($type === 'decimal') {
+				if ($type === 'decimal' && isset($fieldDef['length'])) {
 					$decimalPlaces = substr($fieldDef['length'], strpos($fieldDef['length'], ',') + 1);
 					$options['step'] = sprintf('%.' . $decimalPlaces . 'F', pow(10, -1 * $decimalPlaces));
-				} elseif ($type === 'float') {
+				} elseif ($type === 'float' || $type === 'decimal') {
 					$options['step'] = 'any';
 				}
 			}

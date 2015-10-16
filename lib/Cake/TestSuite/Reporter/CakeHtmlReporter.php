@@ -58,7 +58,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  */
 	public function paintDocumentStart() {
 		ob_start();
-		$this->params['baseDir'];
+		$baseDir = $this->params['baseDir'];
 		include CAKE . 'TestSuite' . DS . 'templates' . DS . 'header.php';
 	}
 
@@ -69,7 +69,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @return void
  */
 	public function paintTestMenu() {
-		$this->baseUrl() . '?show=cases';
+		$cases = $this->baseUrl() . '?show=cases';
 		$plugins = App::objects('plugin', null, false);
 		sort($plugins);
 		include CAKE . 'TestSuite' . DS . 'templates' . DS . 'menu.php';
