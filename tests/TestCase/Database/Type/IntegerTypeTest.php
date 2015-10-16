@@ -74,9 +74,17 @@ class IntegerTypeTest extends TestCase
 
         $result = $this->type->toDatabase('2', $this->driver);
         $this->assertSame(2, $result);
+    }
 
-        $result = $this->type->toDatabase(['3', '4'], $this->driver);
-        $this->assertSame(1, $result);
+    /**
+     * Tests that passing an invalid value will throw an exception
+     *
+     * @expectedException InvalidArgumentException
+     * @return void
+     */
+    public function testToDatabseInvalid()
+    {
+        $this->type->toDatabase(['3', '4'], $this->driver);
     }
 
     /**
