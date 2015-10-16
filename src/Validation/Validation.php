@@ -447,7 +447,7 @@ class Validation
         }
         $parts = explode(' ', $check);
         if (!empty($parts) && count($parts) > 1) {
-            $date = array_shift($parts);
+            $date = rtrim(array_shift($parts), ',');
             $time = implode(' ', $parts);
             $valid = static::date($date, $dateFormat, $regex) && static::time($time);
         }

@@ -1576,6 +1576,8 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::dateTime('12/04/2017 1:38 pm', ['dmy']));
         $this->assertTrue(Validation::dateTime('12/04/2017 1:38pm', ['dmy']));
         $this->assertTrue(Validation::dateTime('12/04/2017 1:38AM', ['dmy']));
+        $this->assertTrue(Validation::dateTime('12/04/2017, 1:38AM', ['dmy']));
+        $this->assertTrue(Validation::dateTime('28/10/2015, 3:21 PM', ['dmy']));
         $this->assertFalse(Validation::dateTime('12/04/2017 58:38AM', ['dmy']));
     }
 
