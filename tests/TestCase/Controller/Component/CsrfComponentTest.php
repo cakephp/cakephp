@@ -156,6 +156,7 @@ class CsrfComponentTest extends TestCase
         $event = new Event('Controller.startup', $controller);
         $result = $this->component->startup($event);
         $this->assertNull($result, 'No exception means valid.');
+        $this->assertFalse(isset($controller->request->data['_csrfToken']));
     }
 
     /**

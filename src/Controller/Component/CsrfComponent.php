@@ -94,6 +94,7 @@ class CsrfComponent extends Component
         }
         if ($request->is(['patch', 'put', 'post', 'delete'])) {
             $this->_validateToken($request);
+            unset($request->data[$this->_config['field']]);
         }
     }
 

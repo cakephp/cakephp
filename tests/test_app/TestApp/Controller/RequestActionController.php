@@ -23,7 +23,7 @@ class RequestActionController extends AppController
 {
 
     /**
-     * modelClass property
+     * The default model to use.
      *
      * @var string
      */
@@ -118,6 +118,7 @@ class RequestActionController extends AppController
         $this->response->body(json_encode([
             'params' => $this->request->params,
             'base' => $this->request->base,
+            'here' => $this->request->here,
             'webroot' => $this->request->webroot,
             'params' => $this->request->params,
             'query' => $this->request->query,

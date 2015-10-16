@@ -1090,6 +1090,16 @@ class RouterTest extends TestCase
         ]);
         $expected = '/articles.json';
         $this->assertEquals($expected, $result);
+
+        $result = Router::url([
+            'plugin' => null,
+            'controller' => 'articles',
+            'action' => 'index',
+            'id' => 'testing',
+            '_ext' => 'json'
+        ]);
+        $expected = '/articles.json?id=testing';
+        $this->assertEquals($expected, $result);
     }
 
     /**

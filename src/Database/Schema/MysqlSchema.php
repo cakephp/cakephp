@@ -392,6 +392,45 @@ class MysqlSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
+    public function addConstraintSql(Table $table)
+    {
+        $sqlPattern = 'ALTER TABLE %s ADD %s;';
+        $sql = [];
+
+        foreach ($table->constraints() as $name) {
+            $constraint = $table->constraint($name);
+            if ($constraint['type'] === Table::CONSTRAINT_FOREIGN) {
+                $tableName = $this->_driver->quoteIdentifier($table->name());
+                $sql[] = sprintf($sqlPattern, $tableName, $this->constraintSql($table, $name));
+            }
+        }
+
+        return $sql;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function dropConstraintSql(Table $table)
+    {
+        $sqlPattern = 'ALTER TABLE %s DROP FOREIGN KEY %s;';
+        $sql = [];
+
+        foreach ($table->constraints() as $name) {
+            $constraint = $table->constraint($name);
+            if ($constraint['type'] === Table::CONSTRAINT_FOREIGN) {
+                $tableName = $this->_driver->quoteIdentifier($table->name());
+                $constraintName = $this->_driver->quoteIdentifier($name);
+                $sql[] = sprintf($sqlPattern, $tableName, $constraintName);
+            }
+        }
+
+        return $sql;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function indexSql(Table $table, $name)
     {
         $data = $table->index($name);

@@ -545,6 +545,41 @@ SQL;
     }
 
     /**
+     * Test the addConstraintSql method.
+     *
+     * @return void
+     */
+    public function testAddConstraintSql()
+    {
+        $driver = $this->_getMockedDriver();
+        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+        $connection->expects($this->any())->method('driver')
+            ->will($this->returnValue($driver));
+
+        $table = new Table('posts');
+
+        $result = $table->addConstraintSql($connection);
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * Test the dropConstraintSql method.
+     *
+     * @return void
+     */
+    public function testDropConstraintSql()
+    {
+        $driver = $this->_getMockedDriver();
+        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+        $connection->expects($this->any())->method('driver')
+            ->will($this->returnValue($driver));
+
+        $table = new Table('posts');
+        $result = $table->dropConstraintSql($connection);
+        $this->assertEmpty($result);
+    }
+
+    /**
      * Test generating column definitions
      *
      * @dataProvider columnSqlProvider

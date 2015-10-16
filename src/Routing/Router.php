@@ -161,7 +161,7 @@ class Router
      * Get or set default route class.
      *
      * @param string|null $routeClass Class name.
-     * @return string|void
+     * @return string|null
      */
     public static function defaultRouteClass($routeClass = null)
     {

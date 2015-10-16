@@ -96,4 +96,12 @@ class Sqlite extends Driver
         }
         return $result;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function supportsDynamicConstraints()
+    {
+        return false;
+    }
 }

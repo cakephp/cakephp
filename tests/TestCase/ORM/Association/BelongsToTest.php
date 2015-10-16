@@ -36,7 +36,7 @@ class BelongsToTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.articles', 'core.comments', 'core.authors'];
+    public $fixtures = ['core.articles', 'core.authors', 'core.comments'];
 
     /**
      * Don't autoload fixtures as most tests uses mocks.

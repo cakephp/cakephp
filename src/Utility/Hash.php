@@ -138,9 +138,6 @@ class Hash
         }
 
         if (strpos($path, '[') === false) {
-            if (function_exists('array_column') && preg_match('|^\{n\}\.(\w+)$|', $path, $matches)) {
-                return array_column($data, $matches[1]);
-            }
             $tokens = explode('.', $path);
         } else {
             $tokens = Text::tokenize($path, '.', '[', ']');
@@ -156,6 +153,9 @@ class Hash
             list($token, $conditions) = self::_splitConditions($token);
 
             foreach ($context[$_key] as $item) {
+                if (is_object($item) && method_exists($item, 'toArray')) {
+                    $item = $item->toArray();
+                }
                 foreach ((array)$item as $k => $v) {
                     if (static::_matchToken($k, $token)) {
                         $next[] = $v;
@@ -510,7 +510,7 @@ class Hash
      * @param array $data Source array from which to extract the data
      * @param array $paths An array containing one or more Hash::extract()-style key paths
      * @param string $format Format string into which values will be inserted, see sprintf()
-     * @return void|array An array of strings extracted from `$path` and formatted with `$format`
+     * @return array|null An array of strings extracted from `$path` and formatted with `$format`
      * @link http://book.cakephp.org/3.0/en/core-libraries/hash.html#Hash::format
      * @see sprintf()
      * @see Hash::extract()
@@ -521,7 +521,7 @@ class Hash
         $count = count($paths);
 
         if (!$count) {
-            return;
+            return null;
         }
 
         for ($i = 0; $i < $count; $i++) {
@@ -549,7 +549,7 @@ class Hash
      *
      * @param array $data The data to search through.
      * @param array $needle The values to file in $data
-     * @return bool true if $data contains $needle, false otherwise
+     * @return bool true If $data contains $needle, false otherwise
      * @link http://book.cakephp.org/3.0/en/core-libraries/hash.html#Hash::contains
      */
     public static function contains(array $data, array $needle)

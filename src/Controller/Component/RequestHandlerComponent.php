@@ -245,19 +245,24 @@ class RequestHandlerComponent extends Component
      * @param Event $event The Controller.beforeRedirect event.
      * @param string|array $url A string or array containing the redirect location
      * @param \Cake\Network\Response $response The response object.
-     * @return void|\Cake\Network\Response The response object if the redirect is caught.
+     * @return \Cake\Network\Response|null The response object if the redirect is caught.
      */
     public function beforeRedirect(Event $event, $url, Response $response)
     {
         $request = $this->request;
         if (!$request->is('ajax')) {
-            return;
+            return null;
         }
         if (empty($url)) {
-            return;
+            return null;
         }
         if (is_array($url)) {
             $url = Router::url($url + ['_base' => false]);
+        }
+        $query = [];
+        if (strpos($url, '?') !== false) {
+            list($url, $querystr) = explode('?', $url, 2);
+            parse_str($querystr, $query);
         }
         $controller = $event->subject();
         $response->body($controller->requestAction($url, [
@@ -265,7 +270,8 @@ class RequestHandlerComponent extends Component
             'bare' => false,
             'environment' => [
                 'REQUEST_METHOD' => 'GET'
-            ]
+            ],
+            'query' => $query
         ]));
         $response->statusCode(200);
         return $response;
@@ -448,7 +454,7 @@ class RequestHandlerComponent extends Component
             list($contentType) = explode(';', $request->header('CONTENT_TYPE'));
         }
         $response = $this->response;
-        if (!$type) {
+        if ($type === null) {
             return $response->mapType($contentType);
         }
         if (is_string($type)) {
@@ -579,7 +585,7 @@ class RequestHandlerComponent extends Component
 
         if (!in_array($helper, $controller->helpers) && empty($controller->helpers[$helper])) {
             $helperClass = App::className($helper, 'View/Helper', 'Helper');
-            if ($helperClass) {
+            if ($helperClass !== false) {
                 $controller->helpers[] = $helper;
             }
         }

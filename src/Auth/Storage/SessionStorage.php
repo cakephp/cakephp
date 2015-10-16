@@ -128,7 +128,7 @@ class SessionStorage implements StorageInterface
 
         if ($url === false) {
             $this->_session->delete($this->_config['redirect']);
-            return;
+            return null;
         }
 
         $this->_session->write($this->_config['redirect'], $url);

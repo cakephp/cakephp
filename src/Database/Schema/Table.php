@@ -566,6 +566,19 @@ class Table
     }
 
     /**
+     * Remove a constraint.
+     *
+     * @param string $name Name of the constraint to remove
+     * @return void
+     */
+    public function dropConstraint($name)
+    {
+        if (isset($this->_constraints[$name])) {
+            unset($this->_constraints[$name]);
+        }
+    }
+
+    /**
      * Check whether or not a table has an autoIncrement column defined.
      *
      * @return bool
@@ -709,5 +722,29 @@ class Table
     {
         $dialect = $connection->driver()->schemaDialect();
         return $dialect->truncateTableSql($this);
+    }
+
+    /**
+     * Generate the SQL statements to add the constraints to the table
+     *
+     * @param \Cake\Datasource\ConnectionInterface $connection The connection to generate SQL for.
+     * @return array SQL to drop a table.
+     */
+    public function addConstraintSql(ConnectionInterface $connection)
+    {
+        $dialect = $connection->driver()->schemaDialect();
+        return $dialect->addConstraintSql($this);
+    }
+
+    /**
+     * Generate the SQL statements to drop the constraints to the table
+     *
+     * @param \Cake\Datasource\ConnectionInterface $connection The connection to generate SQL for.
+     * @return array SQL to drop a table.
+     */
+    public function dropConstraintSql(ConnectionInterface $connection)
+    {
+        $dialect = $connection->driver()->schemaDialect();
+        return $dialect->dropConstraintSql($this);
     }
 }

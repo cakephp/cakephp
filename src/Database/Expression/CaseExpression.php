@@ -119,13 +119,12 @@ class CaseExpression implements ExpressionInterface
             if ($numericKey && empty($c)) {
                 continue;
             }
-
             if (!$c instanceof ExpressionInterface) {
                 continue;
             }
             array_push($this->_conditions, $c);
 
-            $value = !empty($rawValues[$k]) ? $rawValues[$k] : 1;
+            $value = isset($rawValues[$k]) ? $rawValues[$k] : 1;
 
             if ($value === 'literal') {
                 $value = $keyValues[$k];

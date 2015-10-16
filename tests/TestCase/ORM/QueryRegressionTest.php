@@ -34,17 +34,17 @@ class QueryRegressionTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.users',
         'core.articles',
-        'core.comments',
-        'core.tags',
         'core.articles_tags',
         'core.authors',
-        'core.special_tags',
-        'core.translates',
         'core.authors_tags',
+        'core.comments',
         'core.featured_tags',
+        'core.special_tags',
+        'core.tags',
         'core.tags_translations',
+        'core.translates',
+        'core.users'
     ];
 
     /**
@@ -992,6 +992,56 @@ class QueryRegressionTest extends TestCase
         $this->assertEquals(2, $result->id);
         $this->assertNotEmpty($result->tags, 'Missing tags');
         $this->assertNotEmpty($result->tags[0]->_joinData, 'Missing join data');
+    }
+
+    /**
+     * Test that contain queries map types correctly.
+     *
+     * @return void
+     */
+    public function testComplexTypesInJoinedWhere()
+    {
+        $table = TableRegistry::get('Users');
+        $table->hasOne('Comments', [
+            'foreignKey' => 'user_id',
+        ]);
+        $query = $table->find()
+            ->contain('Comments')
+            ->where([
+                'Comments.updated >' => new \DateTime('2007-03-18 10:55:00')
+            ]);
+
+        $result = $query->first();
+        $this->assertNotEmpty($result);
+        $this->assertInstanceOf('Cake\I18n\Time', $result->comment->updated);
+    }
+
+    /**
+     * Test that nested contain queries map types correctly.
+     *
+     * @return void
+     */
+    public function testComplexNestedTypesInJoinedWhere()
+    {
+        $table = TableRegistry::get('Users');
+        $table->hasOne('Comments', [
+            'foreignKey' => 'user_id',
+        ]);
+        $table->Comments->belongsTo('Articles');
+        $table->Comments->Articles->belongsTo('Authors', [
+            'className' => 'Users',
+            'foreignKey' => 'author_id'
+        ]);
+
+        $query = $table->find()
+            ->contain('Comments.Articles.Authors')
+            ->where([
+                'Authors.created >' => new \DateTime('2007-03-17 01:16:00')
+            ]);
+
+        $result = $query->first();
+        $this->assertNotEmpty($result);
+        $this->assertInstanceOf('Cake\I18n\Time', $result->comment->article->author->updated);
     }
 
     /**

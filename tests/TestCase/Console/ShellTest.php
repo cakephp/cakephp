@@ -128,13 +128,13 @@ class ShellTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.posts',
-        'core.comments',
         'core.articles',
-        'core.users',
-        'core.tags',
         'core.articles_tags',
-        'core.attachments'
+        'core.attachments',
+        'core.comments',
+        'core.posts',
+        'core.tags',
+        'core.users'
     ];
 
     /**

@@ -190,13 +190,13 @@ trait StaticConfigTrait
             throw new InvalidArgumentException('Only strings can be passed to parseDsn');
         }
 
+        $scheme = '';
         if (preg_match("/^([\w\\\]+)/", $dsn, $matches)) {
             $scheme = $matches[1];
             $dsn = preg_replace("/^([\w\\\]+)/", 'file', $dsn);
         }
 
         $parsed = parse_url($dsn);
-
         if ($parsed === false) {
             return $dsn;
         }

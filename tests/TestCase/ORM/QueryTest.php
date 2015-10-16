@@ -36,8 +36,14 @@ class QueryTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.articles', 'core.authors', 'core.tags',
-        'core.articles_tags', 'core.posts'];
+    public $fixtures = [
+        'core.articles',
+        'core.articles_tags',
+        'core.authors',
+        'core.comments',
+        'core.posts',
+        'core.tags'
+    ];
 
     /**
      * setUp method
@@ -813,6 +819,21 @@ class QueryTest extends TestCase
      */
     public function testApplyOptions()
     {
+        $this->table->belongsTo('articles');
+        $typeMap = new TypeMap([
+            'foo.id' => 'integer',
+            'id' => 'integer',
+            'articles.id' => 'integer',
+            'articles.author_id' => 'integer',
+            'author_id' => 'integer',
+            'articles.title' => 'string',
+            'title' => 'string',
+            'articles.body' => 'text',
+            'body' => 'text',
+            'articles.published' => 'string',
+            'published' => 'string',
+        ]);
+
         $options = [
             'fields' => ['field_a', 'field_b'],
             'conditions' => ['field_a' => 1, 'field_b' => 'something'],
@@ -821,7 +842,7 @@ class QueryTest extends TestCase
             'offset' => 5,
             'group' => ['field_a'],
             'having' => ['field_a >' => 100],
-            'contain' => ['table_a' => ['table_b']],
+            'contain' => ['articles'],
             'join' => ['table_a' => ['conditions' => ['a > b']]]
         ];
         $query = new Query($this->connection, $this->table);
@@ -829,13 +850,13 @@ class QueryTest extends TestCase
 
         $this->assertEquals(['field_a', 'field_b'], $query->clause('select'));
 
-        $expected = new QueryExpression($options['conditions'], $this->fooTypeMap);
+        $expected = new QueryExpression($options['conditions'], $typeMap);
         $result = $query->clause('where');
         $this->assertEquals($expected, $result);
 
         $this->assertEquals(1, $query->clause('limit'));
 
-        $expected = new QueryExpression(['a > b'], $this->fooTypeMap);
+        $expected = new QueryExpression(['a > b'], $typeMap);
         $result = $query->clause('join');
         $this->assertEquals([
             'table_a' => ['alias' => 'table_a', 'type' => 'INNER', 'conditions' => $expected]
@@ -847,11 +868,10 @@ class QueryTest extends TestCase
         $this->assertEquals(5, $query->clause('offset'));
         $this->assertEquals(['field_a'], $query->clause('group'));
 
-        $expected = new QueryExpression($options['having']);
-        $expected->typeMap($this->fooTypeMap);
+        $expected = new QueryExpression($options['having'], $typeMap);
         $this->assertEquals($expected, $query->clause('having'));
 
-        $expected = ['table_a' => ['table_b' => []]];
+        $expected = ['articles' => []];
         $this->assertEquals($expected, $query->contain());
     }
 

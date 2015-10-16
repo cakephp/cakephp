@@ -132,7 +132,7 @@ class RouteBuilder
      * Get or set default route class.
      *
      * @param string|null $routeClass Class name.
-     * @return string|void
+     * @return string|null
      */
     public function routeClass($routeClass = null)
     {
@@ -149,7 +149,7 @@ class RouteBuilder
      * extensions applied. However, setting extensions does not modify existing routes.
      *
      * @param null|string|array $extensions Either the extensions to use or null.
-     * @return array|void
+     * @return array|null
      */
     public function extensions($extensions = null)
     {
