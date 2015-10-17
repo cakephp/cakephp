@@ -72,7 +72,7 @@ class HttpSocket extends CakeSocket {
  * Contain information about the last response (read only)
  *
  * @var array
-*/
+ */
 	public $response = null;
 
 /**
