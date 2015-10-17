@@ -38,6 +38,7 @@ class FlashComponent extends Component {
 		'key' => 'flash',
 		'element' => 'default',
 		'params' => array(),
+		'plugin' => '',
 	);
 
 /**
@@ -79,7 +80,11 @@ class FlashComponent extends Component {
 		list($plugin, $element) = pluginSplit($options['element']);
 
 		if ($plugin) {
-			$options['element'] = $plugin . '.Flash/' . $element;
+			$options['plugin'] = $plugin;
+		}
+
+		if (!empty($options['plugin'])) {
+			$options['element'] = $options['plugin'] . '.Flash/' . $element;
 		} else {
 			$options['element'] = 'Flash/' . $element;
 		}
