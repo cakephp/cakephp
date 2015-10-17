@@ -129,7 +129,7 @@ class HasMany extends Association
     public function saveAssociated(EntityInterface $entity, array $options = [])
     {
         $targetEntities = $entity->get($this->property());
-        if (empty($targetEntities)) {
+        if (empty($targetEntities) && $this->_saveStrategy !== self::SAVE_REPLACE) {
             return $entity;
         }
 
@@ -182,6 +182,116 @@ class HasMany extends Association
     }
 
     /**
+     * Associates the source entity to each of the target entities provided.
+     * When using this method, all entities in `$targetEntities` will be appended to
+     * the source entity's property corresponding to this association object.
+     *
+     * This method does not check link uniqueness.
+     *
+     * ### Example:
+     *
+     * ```
+     * $user = $users->get(1);
+     * $allArticles = $articles->find('all')->execute();
+     * $users->Articles->link($user, $allArticles);
+     * ```
+     *
+     * `$user->get('articles')` will contain all articles in `$allArticles` after linking
+     *
+     * @param \Cake\Datasource\EntityInterface $sourceEntity the row belonging to the `source` side
+     * of this association
+     * @param array $targetEntities list of entities belonging to the `target` side
+     * of this association
+     * @param array $options list of options to be passed to the save method
+     * @return bool true on success, false otherwise
+     */
+    public function link(EntityInterface $sourceEntity, array $targetEntities, array $options = [])
+    {
+        $saveStrategy = $this->saveStrategy();
+        $this->saveStrategy(self::SAVE_APPEND);
+        $source = $this->source();
+        $property = $this->property();
+
+        $currentEntities = (new Collection((array)$sourceEntity->get($property)))->append($targetEntities);
+
+        $sourceEntity->set($property, $currentEntities->toList());
+
+        $savedEntity = $this->saveAssociated($sourceEntity);
+
+        $ok = ($savedEntity instanceof EntityInterface);
+
+        $this->saveStrategy($saveStrategy);
+
+        if ($ok) {
+            $sourceEntity->set($property, $savedEntity->get($property));
+            $sourceEntity->clean($property);
+        }
+
+        return $ok;
+    }
+
+    /**
+     * Removes all links between the passed source entity and each of the provided
+     * target entities. This method assumes that all passed objects are already persisted
+     * in the database and that each of them contain a primary key value.
+     *
+     * By default this method will also unset each of the entity objects stored inside
+     * the source entity.
+     *
+     * ### Example:
+     *
+     * ```
+     * $user = $users->get(1);
+     * $user->articles = [$article1, $article2, $article3, $article4];
+     * $users->save($user, ['Associated' => ['Articles']]);
+     * $allArticles = [$article1, $article2, $article3];
+     * $users->Articles->unlink($user, $allArticles);
+     * ```
+     *
+     * `$article->get('articles')` will contain only `[$article4]` after deleting in the database
+     *
+     * @param \Cake\Datasource\EntityInterface $sourceEntity an entity persisted in the source table for
+     * this association
+     * @param array $targetEntities list of entities persisted in the target table for
+     * this association
+     * @param bool $cleanProperty whether or not to remove all the objects in $targetEntities
+     * that are stored in $sourceEntity
+     * @throws \InvalidArgumentException if non persisted entities are passed or if
+     * any of them is lacking a primary key value
+     * @return void
+     */
+    public function unlink(EntityInterface $sourceEntity, array $targetEntities, $cleanProperty = true)
+    {
+        $foreignKey = (array)$this->foreignKey();
+        $target = $this->target();
+        $targetPrimaryKey = array_merge((array)$target->primaryKey(), (array)$foreignKey);
+        $property = $this->property();
+
+        $conditions = [
+        'OR' => (new Collection($targetEntities) )
+            ->map(function ($entity) use ($targetPrimaryKey) {
+                return $entity->extract($targetPrimaryKey);
+            })
+            ->toList()
+        ];
+
+        $this->_unlink($foreignKey, $target, $conditions);
+
+        if ($cleanProperty) {
+            $sourceEntity->set(
+                $property,
+                (new Collection($sourceEntity->get($property)))
+                ->reject(
+                    function ($assoc) use ($targetEntities) {
+                        return in_array($assoc, $targetEntities);
+                    }
+                )
+                ->toList()
+            );
+        }
+    }
+
+    /**
      * Deletes/sets null the related objects according to the dependency between source and targets and foreign key nullability
      * Skips deleting records present in $remainingEntities
      *
@@ -194,7 +304,6 @@ class HasMany extends Association
     protected function _unlinkAssociated(array $properties, EntityInterface $entity, Table $target, array $remainingEntities = [])
     {
         $primaryKey = (array)$target->primaryKey();
-        $mustBeDependent = (!$this->_foreignKeyAcceptsNull($target, $properties) || $this->dependent());
         $exclusions = new Collection($remainingEntities);
         $exclusions = $exclusions->map(
             function ($ent) use ($primaryKey) {
@@ -208,6 +317,8 @@ class HasMany extends Association
         )
         ->toArray();
 
+        $conditions = $properties;
+
         if (count($exclusions) > 0) {
             $conditions = [
                 'NOT' => [
@@ -215,20 +326,36 @@ class HasMany extends Association
                 ],
                 $properties
             ];
+        }
 
-            if ($mustBeDependent) {
-                if ($this->_cascadeCallbacks) {
-                    $query = $this->find('all')->where($conditions);
-                    foreach ($query as $assoc) {
-                        $target->delete($assoc);
-                    }
-                } else {
-                    $target->deleteAll($conditions);
+        $this->_unlink(array_keys($properties), $target, $conditions);
+    }
+
+    /**
+     * Deletes/sets null the related objects matching $conditions.
+     * The action which is taken depends on the dependency between source and targets and also on foreign key nullability
+     *
+     * @param array $foreignKey array of foreign key properties
+     * @param Table $target The associated table
+     * @param array $conditions The conditions that specifies what are the objects to be unlinked
+     * @return void
+     */
+    protected function _unlink(array $foreignKey, Table $target, array $conditions = [])
+    {
+        $mustBeDependent = (!$this->_foreignKeyAcceptsNull($target, $foreignKey) || $this->dependent());
+        if ($mustBeDependent) {
+            if ($this->_cascadeCallbacks) {
+                $query = $this->find('all')->where($conditions);
+                foreach ($query as $assoc) {
+                    $target->delete($assoc);
                 }
             } else {
-                $updateFields = array_fill_keys(array_keys($properties), null);
-                $target->updateAll($updateFields, $conditions);
+                $target->deleteAll($conditions);
             }
+        } else {
+            $updateFields = array_fill_keys($foreignKey, null);
+            $target->updateAll($updateFields, $conditions);
+
         }
     }
 
@@ -247,7 +374,7 @@ class HasMany extends Association
                 function ($prop) use ($table) {
                     return $table->schema()->isNullable($prop);
                 },
-                array_keys($properties)
+                $properties
             )
         );
     }

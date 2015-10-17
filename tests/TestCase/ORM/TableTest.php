@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\ORM;
 
 use ArrayObject;
+use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Database\Exception;
@@ -1777,6 +1778,45 @@ class TableTest extends TestCase
         
         $this->assertEquals($sizeArticles - 1, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
         $this->assertTrue($authors->Articles->exists(['id' => $articleId]));
+    }
+
+
+    /**
+     * Test that save works with replace saveStrategy, replacing the already persisted entities even if no new entities are passed
+     *
+     * @return void
+     */
+    public function testSaveReplaceSaveStrategyNotAdding()
+    {
+        $authors = new Table(
+            [
+                'table' => 'authors',
+                'alias' => 'Authors',
+                'connection' => $this->connection,
+                'entityClass' => 'Cake\ORM\Entity',
+            ]
+        );
+        
+        $authors->hasMany('Articles', ['saveStrategy' => 'replace']);
+
+        $entity = $authors->newEntity([
+            'name' => 'mylux',
+            'articles' => [
+                ['title' => 'One Random Post', 'body' => 'The cake is not a lie'],
+                ['title' => 'Another Random Post', 'body' => 'The cake is nice'],
+                ['title' => 'One more random post', 'body' => 'The cake is forever']
+            ]
+        ], ['associated' => ['Articles']]);
+
+        $entity = $authors->save($entity, ['associated' => ['Articles']]);
+        $sizeArticles = count($entity->articles);
+        $this->assertEquals($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+
+        $entity->set('articles', []);
+        
+        $entity = $authors->save($entity, ['associated' => ['Articles']]);
+        
+        $this->assertEquals(0, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
     }
 
     /**
@@ -3839,6 +3879,190 @@ class TableTest extends TestCase
         $article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
         $this->assertEquals($article->tags[2]->id, $tags[0]->id);
         $this->assertEquals($article->tags[3], $tags[1]);
+    }
+
+    /**
+     * Integration test for linking entities with HasMany
+     *
+     * @return void
+     */
+    public function testLinkHasMany()
+    {
+        $authors = TableRegistry::get('Authors');
+        $articles = TableRegistry::get('Articles');
+
+        $authors->hasMany('Articles', [
+            'foreignKey' => 'author_id'
+        ]);
+
+        $author = $authors->newEntity(['name' => 'mylux']);
+        $author = $authors->save($author);
+
+        $newArticles = $articles->newEntities(
+            [
+                [
+                    'title' => 'New bakery next corner',
+                    'body' => 'They sell tastefull cakes'
+                ],
+                [
+                    'title' => 'Spicy cake recipe',
+                    'body' => 'chocolate and peppers'
+                ]
+            ]
+        );
+
+        $sizeArticles = count($newArticles);
+
+        $this->assertTrue($authors->Articles->link($author, $newArticles));
+
+
+        $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles);
+        $this->assertEquals(count($author->articles), $sizeArticles);
+    }
+
+    /**
+     * Integration test for linking entities with HasMany combined with ReplaceSaveStrategy. It must append, not unlinking anything
+     *
+     * @return void
+     */
+    public function testLinkHasManyReplaceSaveStrategy()
+    {
+        $authors = TableRegistry::get('Authors');
+        $articles = TableRegistry::get('Articles');
+
+        $authors->hasMany('Articles', [
+            'foreignKey' => 'author_id',
+            'saveStrategy' => 'replace'
+        ]);
+
+        $author = $authors->newEntity(['name' => 'mylux']);
+        $author = $authors->save($author);
+
+        $newArticles = $articles->newEntities(
+            [
+                [
+                    'title' => 'New bakery next corner',
+                    'body' => 'They sell tastefull cakes'
+                ],
+                [
+                    'title' => 'Spicy cake recipe',
+                    'body' => 'chocolate and peppers'
+                ]
+            ]
+        );
+
+        $this->assertTrue($authors->Articles->link($author, $newArticles));
+
+        $sizeArticles = count($newArticles);
+
+        $newArticles = $articles->newEntities(
+            [
+                [
+                    'title' => 'Nothing but the cake',
+                    'body' => 'It is all that we need'
+                ]
+            ]
+        );
+        $this->assertTrue($authors->Articles->link($author, $newArticles));
+
+        $sizeArticles++;
+
+        $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles);
+        $this->assertEquals(count($author->articles), $sizeArticles);
+    }
+
+    /**
+     * Integration test for unlinking entities with HasMany. The association property must be cleaned
+     *
+     * @return void
+     */
+    public function testUnlinkHasManyCleanProperty()
+    {
+        $authors = TableRegistry::get('Authors');
+        $articles = TableRegistry::get('Articles');
+
+        $authors->hasMany('Articles', [
+            'foreignKey' => 'author_id',
+            'saveStrategy' => 'replace'
+        ]);
+
+        $author = $authors->newEntity(['name' => 'mylux']);
+        $author = $authors->save($author);
+
+        $newArticles = $articles->newEntities(
+            [
+                [
+                    'title' => 'New bakery next corner',
+                    'body' => 'They sell tastefull cakes'
+                ],
+                [
+                    'title' => 'Spicy cake recipe',
+                    'body' => 'chocolate and peppers'
+                ],
+                [
+                    'title' => 'Creamy cake recipe',
+                    'body' => 'chocolate and cream'
+                ],
+            ]
+        );
+
+        $this->assertTrue($authors->Articles->link($author, $newArticles));
+
+        $sizeArticles = count($newArticles);
+
+        $articlesToUnlink = [ $author->articles[0], $author->articles[1] ];
+
+        $authors->Articles->unlink($author, $articlesToUnlink);
+
+        $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles - count($articlesToUnlink));
+        $this->assertEquals(count($author->articles), $sizeArticles - count($articlesToUnlink));
+    }
+
+    /**
+     * Integration test for unlinking entities with HasMany. The association property must stay unchanged
+     *
+     * @return void
+     */
+    public function testUnlinkHasManyNotCleanProperty()
+    {
+        $authors = TableRegistry::get('Authors');
+        $articles = TableRegistry::get('Articles');
+
+        $authors->hasMany('Articles', [
+            'foreignKey' => 'author_id',
+            'saveStrategy' => 'replace'
+        ]);
+
+        $author = $authors->newEntity(['name' => 'mylux']);
+        $author = $authors->save($author);
+
+        $newArticles = $articles->newEntities(
+            [
+                [
+                    'title' => 'New bakery next corner',
+                    'body' => 'They sell tastefull cakes'
+                ],
+                [
+                    'title' => 'Spicy cake recipe',
+                    'body' => 'chocolate and peppers'
+                ],
+                [
+                    'title' => 'Creamy cake recipe',
+                    'body' => 'chocolate and cream'
+                ],
+            ]
+        );
+
+        $this->assertTrue($authors->Articles->link($author, $newArticles));
+
+        $sizeArticles = count($newArticles);
+
+        $articlesToUnlink = [ $author->articles[0], $author->articles[1] ];
+
+        $authors->Articles->unlink($author, $articlesToUnlink, false);
+
+        $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles - count($articlesToUnlink));
+        $this->assertEquals(count($author->articles), $sizeArticles);
     }
 
     /**
