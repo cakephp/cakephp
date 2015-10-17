@@ -119,7 +119,7 @@ class ProgressHelper extends Helper
             $bar = str_repeat('=', $barLen - 1) . '>';
         }
 
-        $pad = $this->_width - $numberLen - $barLen;
+        $pad = ceil($this->_width - $numberLen - $barLen);
         if ($pad > 0) {
             $bar .= str_repeat(' ', $pad);
         }
