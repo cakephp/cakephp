@@ -653,10 +653,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function cleanCopy()
     {
         $clone = clone $this;
-        $clone->_iterator = null;
         $clone->triggerBeforeFind();
-        $clone->eagerLoader(clone $this->eagerLoader());
-        $clone->valueBinder(clone $this->valueBinder());
         $clone->autoFields(false);
         $clone->limit(null);
         $clone->order([], true);
