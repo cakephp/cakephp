@@ -1175,7 +1175,8 @@ class ResponseTest extends TestCase
      * @expectedExceptionMessage The requested file contains `..` and will not be read.
      * @return void
      */
-    public function testFileWithBackwardSlashPathTraversal() {
+    public function testFileWithBackwardSlashPathTraversal()
+    {
         $response = new Response();
         $response->file('my\..\cat.gif');
     }
