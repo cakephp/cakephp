@@ -40,7 +40,7 @@ class BoolType extends Type
             return $value;
         }
 
-        if (in_array($value, [1,  0, '1', '0'], true)) {
+        if (in_array($value, [1, 0, '1', '0'], true)) {
             return (bool)$value;
         }
 
