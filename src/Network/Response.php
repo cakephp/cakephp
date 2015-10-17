@@ -1422,7 +1422,7 @@ class Response
             'download' => null
         ];
 
-        if (strpos(dirname($path), '..') !== false) {
+        if (strpos($path, '../') !== false || strpos($path, '..\\') !== false) {
             throw new NotFoundException('The requested file contains `..` and will not be read.');
         }
 
