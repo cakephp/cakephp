@@ -1187,10 +1187,23 @@ class ResponseTest extends TestCase
      * @expectedExceptionMessage my/ca..t.gif was not found or not readable
      * @return void
      */
-    public function testFileWithDotIntheName()
+    public function testFileWithDotsInTheFilename()
     {
         $response = new Response();
         $response->file('my/ca..t.gif');
+    }
+
+    /**
+     * test file with .. in a path fragment
+     *
+     * @expectedException \Cake\Network\Exception\NotFoundException
+     * @expectedExceptionMessage my/ca..t/image.gif was not found or not readable
+     * @return void
+     */
+    public function testFileWithDotsInAPathFragment()
+    {
+        $response = new Response();
+        $response->file('my/ca..t/image.gif');
     }
 
     /**
