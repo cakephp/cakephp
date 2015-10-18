@@ -209,7 +209,6 @@ class HasMany extends Association
     {
         $saveStrategy = $this->saveStrategy();
         $this->saveStrategy(self::SAVE_APPEND);
-        $source = $this->source();
         $property = $this->property();
 
         $currentEntities = (new Collection((array)$sourceEntity->get($property)))->append($targetEntities);
@@ -268,11 +267,11 @@ class HasMany extends Association
         $property = $this->property();
 
         $conditions = [
-        'OR' => (new Collection($targetEntities) )
-            ->map(function ($entity) use ($targetPrimaryKey) {
-                return $entity->extract($targetPrimaryKey);
-            })
-            ->toList()
+            'OR' => (new Collection($targetEntities))
+                ->map(function ($entity) use ($targetPrimaryKey) {
+                    return $entity->extract($targetPrimaryKey);
+                })
+                ->toList()
         ];
 
         $this->_unlink($foreignKey, $target, $conditions);
