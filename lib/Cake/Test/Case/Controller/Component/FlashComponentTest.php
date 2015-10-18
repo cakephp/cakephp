@@ -158,6 +158,16 @@ class FlashComponentTest extends CakeTestCase {
 		$result = CakeSession::read('Message.flash');
 		$this->assertEquals($expected, $result);
 
+		$this->Flash->alert('It worked', array('plugin' => 'MyPlugin'));
+		$expected = array(
+			'message' => 'It worked',
+			'key' => 'flash',
+			'element' => 'MyPlugin.Flash/alert',
+			'params' => array()
+		);
+		$result = CakeSession::read('Message.flash');
+		$this->assertEquals($expected, $result);
+
 		$this->Flash->error('It did not work', array('element' => 'error_thing'));
 		$expected = array(
 			'message' => 'It did not work',
