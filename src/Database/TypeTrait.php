@@ -12,29 +12,26 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Database\Type;
+namespace Cake\Database;
 
 /**
- * Time type converter.
+ * Trait containing repeated functionality for database specific types
  *
- * Use to convert time instances to strings & back.
+ * @package Cake\Database
  */
-class TimeType extends DateTimeType
+trait TypeTrait
 {
 
     /**
-     * Time format for DateTime object
+     * Casts give value to Statement equivalent
      *
-     * @var string
+     * @param mixed $value value to be converted to PHP equivalent
+     * @param Driver $driver The driver.
+     *
+     * @return mixed
      */
-    protected $_format = 'H:i:s';
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function _parseValue($value)
+    public function toStatement($value, Driver $driver)
     {
-        $class = static::$dateTimeClass;
-        return $class::parseTime($value, $this->_localeFormat);
+        return Type::toStatementType($this, $value, $driver);
     }
 }

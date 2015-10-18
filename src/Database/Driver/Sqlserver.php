@@ -18,6 +18,7 @@ use Cake\Database\Dialect\SqlserverDialectTrait;
 use Cake\Database\Driver;
 use Cake\Database\Query;
 use Cake\Database\Statement\SqlserverStatement;
+use Cake\Datasource\Type;
 use PDO;
 
 /**
@@ -45,6 +46,7 @@ class Sqlserver extends Driver
         'flags' => [],
         'init' => [],
         'settings' => [],
+        'typeOverride' => true
     ];
 
     /**
@@ -69,6 +71,10 @@ class Sqlserver extends Driver
 
         $dsn = "sqlsrv:Server={$config['host']};Database={$config['database']};MultipleActiveResultSets=false";
         $this->_connect($dsn, $config);
+
+        if ((empty($config['typeOverride'])) || ($config['typeOverride'] === true)) {
+            Type::map('binary', 'Cake\Database\Type\SqlserverBinaryType');
+        }
 
         $connection = $this->connection();
         if (!empty($config['init'])) {

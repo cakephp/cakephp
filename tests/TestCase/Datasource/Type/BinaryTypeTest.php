@@ -12,10 +12,9 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Database\Type;
+namespace Cake\Test\TestCase\Datasource\Type;
 
-use Cake\Database\Type;
-use Cake\Database\Type\BinaryType;
+use Cake\Datasource\Type;
 use Cake\TestSuite\TestCase;
 use \PDO;
 
@@ -33,8 +32,8 @@ class BinaryTypeTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+
         $this->type = Type::build('binary');
-        $this->driver = $this->getMock('Cake\Database\Driver');
     }
 
     /**
@@ -44,29 +43,15 @@ class BinaryTypeTest extends TestCase
      */
     public function testToPHP()
     {
-        $this->assertNull($this->type->toPHP(null, $this->driver));
+        $this->assertNull($this->type->toPHP(null));
 
-        $result = $this->type->toPHP('some data', $this->driver);
+        $result = $this->type->toPHP('some data');
         $this->assertInternalType('resource', $result);
 
         $fh = fopen(__FILE__, 'r');
-        $result = $this->type->toPHP($fh, $this->driver);
+        $result = $this->type->toPHP($fh);
         $this->assertSame($fh, $result);
         fclose($fh);
-    }
-
-    /**
-     * SQLServer returns binary fields as hexidecimal
-     * Ensure decoding happens for SQLServer drivers
-     *
-     * @return void
-     */
-    public function testToPHPSqlserver()
-    {
-        $driver = $this->getMock('Cake\Database\Driver\Sqlserver', [], [], '', false);
-        $result = $this->type->toPHP('536F6D652076616C7565', $driver);
-        $this->assertInternalType('resource', $result);
-        $this->assertSame('Some value', stream_get_contents($result));
     }
 
     /**
@@ -77,7 +62,7 @@ class BinaryTypeTest extends TestCase
      */
     public function testToPHPFailure()
     {
-        $this->type->toPHP([], $this->driver);
+        $this->type->toPHP([]);
     }
 
     /**
@@ -85,24 +70,14 @@ class BinaryTypeTest extends TestCase
      *
      * @return void
      */
-    public function testToDatabase()
+    public function testToDatasource()
     {
         $value = 'some data';
-        $result = $this->type->toDatabase($value, $this->driver);
+        $result = $this->type->toDatasource($value);
         $this->assertEquals($value, $result);
 
         $fh = fopen(__FILE__, 'r');
-        $result = $this->type->toDatabase($fh, $this->driver);
+        $result = $this->type->toDatasource($fh);
         $this->assertSame($fh, $result);
-    }
-
-    /**
-     * Test that the PDO binding type is correct.
-     *
-     * @return void
-     */
-    public function testToStatement()
-    {
-        $this->assertEquals(PDO::PARAM_LOB, $this->type->toStatement('', $this->driver));
     }
 }

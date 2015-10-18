@@ -16,8 +16,8 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
-use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\TypeMap;
 use Cake\ORM\EagerLoader;
 use Cake\ORM\Query;
 use Cake\ORM\Table;

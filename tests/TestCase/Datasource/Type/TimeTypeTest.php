@@ -12,17 +12,16 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Database\Type;
+namespace Cake\Test\TestCase\Datasource\Type;
 
 use Cake\Database\Type;
-use Cake\Database\Type\DateType;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
 
 /**
- * Test for the Date type.
+ * Test for the Time type.
  */
-class DateTypeTest extends TestCase
+class TimeTypeTest extends TestCase
 {
 
     /**
@@ -33,8 +32,7 @@ class DateTypeTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->type = Type::build('date');
-        $this->driver = $this->getMock('Cake\Database\Driver');
+        $this->type = Type::build('time');
     }
 
     /**
@@ -44,14 +42,19 @@ class DateTypeTest extends TestCase
      */
     public function testToPHP()
     {
-        $this->assertNull($this->type->toPHP(null, $this->driver));
-        $this->assertNull($this->type->toPHP('0000-00-00', $this->driver));
+        $this->assertNull($this->type->toPHP(null));
 
-        $result = $this->type->toPHP('2001-01-04', $this->driver);
+        $result = $this->type->toPHP('00:00:00');
+        $this->assertEquals('00', $result->format('s'));
+
+        $result = $this->type->toPHP('00:00:15');
+        $this->assertEquals('15', $result->format('s'));
+
+        $result = $this->type->toPHP('16:30:15');
         $this->assertInstanceOf('DateTime', $result);
-        $this->assertEquals('2001', $result->format('Y'));
-        $this->assertEquals('01', $result->format('m'));
-        $this->assertEquals('04', $result->format('d'));
+        $this->assertEquals('16', $result->format('H'));
+        $this->assertEquals('30', $result->format('i'));
+        $this->assertEquals('15', $result->format('s'));
     }
 
     /**
@@ -59,19 +62,19 @@ class DateTypeTest extends TestCase
      *
      * @return void
      */
-    public function testToDatabase()
+    public function testToDatasource()
     {
-        $value = '2001-01-04';
-        $result = $this->type->toDatabase($value, $this->driver);
+        $value = '16:30:15';
+        $result = $this->type->toDatasource($value);
         $this->assertEquals($value, $result);
 
-        $date = new Time('2013-08-12');
-        $result = $this->type->toDatabase($date, $this->driver);
-        $this->assertEquals('2013-08-12', $result);
+        $date = new Time('16:30:15');
+        $result = $this->type->toDatasource($date);
+        $this->assertEquals('16:30:15', $result);
 
         $date = new Time('2013-08-12 15:16:18');
-        $result = $this->type->toDatabase($date, $this->driver);
-        $this->assertEquals('2013-08-12', $result);
+        $result = $this->type->toDatasource($date);
+        $this->assertEquals('15:16:18', $result);
     }
 
     /**
@@ -82,7 +85,6 @@ class DateTypeTest extends TestCase
     public function marshalProvider()
     {
         $date = new Time('@1392387900');
-        $date->setTime(0, 0, 0);
 
         return [
             // invalid types.
@@ -91,23 +93,27 @@ class DateTypeTest extends TestCase
             [true, null],
             ['', null],
             ['derpy', 'derpy'],
-            ['2013-nope!', '2013-nope!'],
-            ['14-02-14', '14-02-14'],
+            ['16-nope!', '16-nope!'],
+            ['14:15', '14:15'],
             ['2014-02-14 13:14:15', '2014-02-14 13:14:15'],
 
             // valid string types
             ['1392387900', $date],
             [1392387900, $date],
-            ['2014-02-14', new Time('2014-02-14')],
+            ['13:10:10', new Time('13:10:10')],
 
             // valid array types
             [
-                ['year' => '', 'month' => '', 'day' => ''],
+                ['hour' => '', 'minute' => '', 'second' => ''],
+                null,
+            ],
+            [
+                ['hour' => '', 'minute' => '', 'meridian' => ''],
                 null,
             ],
             [
                 ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
-                new Time('2014-02-14 00:00:00')
+                new Time('2014-02-14 13:14:15')
             ],
             [
                 [
@@ -115,7 +121,7 @@ class DateTypeTest extends TestCase
                     'hour' => 1, 'minute' => 14, 'second' => 15,
                     'meridian' => 'am'
                 ],
-                new Time('2014-02-14 00:00:00')
+                new Time('2014-02-14 01:14:15')
             ],
             [
                 [
@@ -123,28 +129,24 @@ class DateTypeTest extends TestCase
                     'hour' => 1, 'minute' => 14, 'second' => 15,
                     'meridian' => 'pm'
                 ],
-                new Time('2014-02-14 00:00:00')
+                new Time('2014-02-14 13:14:15')
             ],
             [
                 [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
+                    'hour' => 1, 'minute' => 14, 'second' => 15,
                 ],
-                new Time('2014-02-14 00:00:00')
+                new Time('01:14:15')
             ],
 
             // Invalid array types
             [
-                ['year' => 'farts', 'month' => 'derp'],
-                new Time(date('Y-m-d 00:00:00'))
-            ],
-            [
-                ['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
-                new Time(date('Y-m-d 00:00:00'))
+                ['hour' => 'nope', 'minute' => 14, 'second' => 15],
+                new Time(date('Y-m-d 00:14:15'))
             ],
             [
                 [
                     'year' => '2014', 'month' => '02', 'day' => '14',
-                    'hour' => 'farts', 'minute' => 'farts'
+                    'hour' => 'nope', 'minute' => 'nope'
                 ],
                 new Time('2014-02-14 00:00:00')
             ],
@@ -152,7 +154,7 @@ class DateTypeTest extends TestCase
     }
 
     /**
-     * test marshaling data.
+     * test marshalling data.
      *
      * @dataProvider marshalProvider
      * @return void
@@ -175,23 +177,10 @@ class DateTypeTest extends TestCase
     public function testMarshalWithLocaleParsing()
     {
         $this->type->useLocaleParser();
-        $expected = new Time('13-10-2013');
-        $result = $this->type->marshal('10/13/2013');
-        $this->assertEquals($expected->format('Y-m-d'), $result->format('Y-m-d'));
+        $expected = new Time('23:23:00');
+        $result = $this->type->marshal('11:23pm');
+        $this->assertEquals($expected->format('H:i'), $result->format('H:i'));
 
-        $this->assertNull($this->type->marshal('11/derp/2013'));
-    }
-
-    /**
-     * Tests marshalling dates using the locale aware parser and custom format
-     *
-     * @return void
-     */
-    public function testMarshalWithLocaleParsingWithFormat()
-    {
-        $this->type->useLocaleParser()->setLocaleFormat('dd MMM, y');
-        $expected = new Time('13-10-2013');
-        $result = $this->type->marshal('13 Oct, 2013');
-        $this->assertEquals($expected->format('Y-m-d'), $result->format('Y-m-d'));
+        $this->assertNull($this->type->marshal('derp:23'));
     }
 }

@@ -12,12 +12,10 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Database\Type;
+namespace Cake\Test\TestCase\Datasource\Type;
 
 use Cake\Database\Type;
-use Cake\Database\Type\UuidType;
 use Cake\TestSuite\TestCase;
-use \PDO;
 
 /**
  * Test for the Uuid type.
@@ -34,7 +32,6 @@ class UuidTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = Type::build('uuid');
-        $this->driver = $this->getMock('Cake\Database\Driver');
     }
 
     /**
@@ -44,12 +41,12 @@ class UuidTypeTest extends TestCase
      */
     public function testToPHP()
     {
-        $this->assertNull($this->type->toPHP(null, $this->driver));
+        $this->assertNull($this->type->toPHP(null));
 
-        $result = $this->type->toPHP('some data', $this->driver);
+        $result = $this->type->toPHP('some data');
         $this->assertSame('some data', $result);
 
-        $result = $this->type->toPHP(2, $this->driver);
+        $result = $this->type->toPHP(2);
         $this->assertSame('2', $result);
     }
 
@@ -58,23 +55,13 @@ class UuidTypeTest extends TestCase
      *
      * @return void
      */
-    public function testToDatabase()
+    public function testToDatasource()
     {
-        $result = $this->type->toDatabase('some data', $this->driver);
+        $result = $this->type->toDatasource('some data');
         $this->assertSame('some data', $result);
 
-        $result = $this->type->toDatabase(2, $this->driver);
+        $result = $this->type->toDatasource(2);
         $this->assertSame('2', $result);
-    }
-
-    /**
-     * Test that the PDO binding type is correct.
-     *
-     * @return void
-     */
-    public function testToStatement()
-    {
-        $this->assertEquals(PDO::PARAM_STR, $this->type->toStatement('', $this->driver));
     }
 
     /**

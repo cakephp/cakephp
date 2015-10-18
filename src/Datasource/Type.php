@@ -16,7 +16,11 @@ namespace Cake\Datasource;
 
 use InvalidArgumentException;
 
-class Type
+/**
+ * Encapsulates all conversion functions for values coming from datasources into PHP and
+ * going from PHP into datasources.
+ */
+class Type implements TypeInterface
 {
 
     /**
@@ -171,10 +175,7 @@ class Type
     }
 
     /**
-     * Casts given value from a PHP type to one acceptable by database
-     *
-     * @param mixed $value value to be converted to database equivalent
-     * @return mixed
+     * {@inheritDoc}
      */
     public function toDatasource($value)
     {
@@ -182,10 +183,18 @@ class Type
     }
 
     /**
-     * Casts given value from a datasource type to PHP equivalent
+     * {@inheritDoc}
      *
-     * @param mixed $value value to be converted to PHP equivalent
-     * @return mixed
+     * @deprecated Use toDatasource instead
+     * @see \Cake\Datasource\Type::toDatasource
+     */
+    public function toDatabase($value)
+    {
+        return $this->toDatasource($value);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function toPHP($value)
     {

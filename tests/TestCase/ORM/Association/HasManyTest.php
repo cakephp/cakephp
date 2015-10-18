@@ -17,7 +17,7 @@ namespace Cake\Test\TestCase\ORM\Association;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
-use Cake\Database\TypeMap;
+use Cake\Datasource\TypeMap;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;

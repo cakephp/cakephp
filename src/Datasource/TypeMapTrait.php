@@ -12,7 +12,7 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Database;
+namespace Cake\Datasource;
 
 /*
  * Represents a class that holds a TypeMap object
@@ -21,7 +21,7 @@ trait TypeMapTrait
 {
 
     /**
-     * @var \Cake\Database\TypeMap
+     * @var \Cake\Datasource\TypeMap
      */
     protected $_typeMap;
 

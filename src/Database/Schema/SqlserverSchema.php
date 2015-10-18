@@ -66,7 +66,7 @@ class SqlserverSchema extends BaseSchema
      * Convert a column definition to the abstract types.
      *
      * The returned type will be a type that
-     * Cake\Database\Type can handle.
+     * Cake\Datasource\Type can handle.
      *
      * @param string $col The column type
      * @param int|null $length the column length

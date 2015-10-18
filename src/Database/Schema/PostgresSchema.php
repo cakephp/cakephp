@@ -59,7 +59,7 @@ class PostgresSchema extends BaseSchema
      * Convert a column definition to the abstract types.
      *
      * The returned type will be a type that
-     * Cake\Database\Type can handle.
+     * Cake\Datasource\Type can handle.
      *
      * @param string $column The column type + length
      * @throws \Cake\Database\Exception when column cannot be parsed.

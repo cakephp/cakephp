@@ -17,9 +17,9 @@ namespace Cake\ORM;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionTrait;
 use Cake\Database\Exception;
-use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetInterface;
+use Cake\Datasource\Type;
 use SplFixedArray;
 
 /**
@@ -442,11 +442,11 @@ class ResultSet implements ResultSetInterface
         $map = array_keys(Type::map() + ['string' => 1, 'text' => 1, 'boolean' => 1]);
         $typeMap = array_combine(
             $map,
-            array_map(['Cake\Database\Type', 'build'], $map)
+            array_map(['Cake\Datasource\Type', 'build'], $map)
         );
 
         foreach (['string', 'text'] as $t) {
-            if (get_class($typeMap[$t]) === 'Cake\Database\Type') {
+            if (get_class($typeMap[$t]) === 'Cake\Datasource\Type') {
                 unset($typeMap[$t]);
             }
         }
@@ -607,7 +607,7 @@ class ResultSet implements ResultSetInterface
     protected function _castValues($alias, $values)
     {
         foreach ($this->_types[$alias] as $field => $type) {
-            $values[$field] = $type->toPHP($values[$field], $this->_driver);
+            $values[$field] = $type->toPHP($values[$field]);
         }
 
         return $values;

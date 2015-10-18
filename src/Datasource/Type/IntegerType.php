@@ -12,12 +12,10 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Database\Type;
+namespace Cake\Datasource\Type;
 
-use Cake\Database\Driver;
-use Cake\Database\Type;
+use Cake\Datasource\Type;
 use InvalidArgumentException;
-use PDO;
 
 /**
  * Integer type converter.
@@ -31,10 +29,9 @@ class IntegerType extends Type
      * Convert integer data into the database format.
      *
      * @param mixed $value The value to convert.
-     * @param Driver $driver The driver instance to convert with.
      * @return int
      */
-    public function toDatabase($value, Driver $driver)
+    public function toDatasource($value)
     {
         if ($value === null || $value === '') {
             return null;
@@ -51,27 +48,14 @@ class IntegerType extends Type
      * Convert integer values to PHP integers
      *
      * @param mixed $value The value to convert.
-     * @param Driver $driver The driver instance to convert with.
      * @return int
      */
-    public function toPHP($value, Driver $driver)
+    public function toPHP($value)
     {
         if ($value === null) {
             return null;
         }
         return (int)$value;
-    }
-
-    /**
-     * Get the correct PDO binding type for integer data.
-     *
-     * @param mixed $value The value being bound.
-     * @param Driver $driver The driver.
-     * @return int
-     */
-    public function toStatement($value, Driver $driver)
-    {
-        return PDO::PARAM_INT;
     }
 
     /**

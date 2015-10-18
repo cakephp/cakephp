@@ -19,6 +19,7 @@ use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\ValuesExpression;
 use Cake\Database\Statement\CallbackStatement;
+use Cake\Datasource\TypeMapTrait;
 use IteratorAggregate;
 use RuntimeException;
 
@@ -492,7 +493,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param array|string|null $tables list of tables to be joined in the query
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset joins with passed list or not
-     * @see \Cake\Database\Type
+     * @see \Cake\Datasource\Type
      * @return $this
      */
     public function join($tables = null, $types = [], $overwrite = false)
@@ -752,7 +753,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param string|array|\Cake\Database\ExpressionInterface|callback|null $conditions The conditions to filter on.
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset conditions with passed list or not
-     * @see \Cake\Database\Type
+     * @see \Cake\Datasource\Type
      * @see \Cake\Database\Expression\QueryExpression
      * @return $this
      */
@@ -818,7 +819,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param string|array|ExpressionInterface|callback $conditions The conditions to add with AND.
      * @param array $types associative array of type names used to bind values to query
      * @see \Cake\Database\Query::where()
-     * @see \Cake\Database\Type
+     * @see \Cake\Datasource\Type
      * @return $this
      */
     public function andWhere($conditions, $types = [])
@@ -880,7 +881,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param string|array|ExpressionInterface|callback $conditions The conditions to add with OR.
      * @param array $types associative array of type names used to bind values to query
      * @see \Cake\Database\Query::where()
-     * @see \Cake\Database\Type
+     * @see \Cake\Datasource\Type
      * @return $this
      */
     public function orWhere($conditions, $types = [])

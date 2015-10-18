@@ -15,8 +15,8 @@
 namespace Cake\Database\Schema;
 
 use Cake\Database\Exception;
-use Cake\Database\Type;
 use Cake\Datasource\ConnectionInterface;
+use Cake\Datasource\Type;
 
 /**
  * Represents a single table in a database schema.
