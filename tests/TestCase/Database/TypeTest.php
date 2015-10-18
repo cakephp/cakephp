@@ -206,7 +206,19 @@ class TypeTest extends TestCase
         $this->assertEquals('foo', $type->toPHP($string, $driver));
         $this->assertEquals('3', $type->toPHP(3, $driver));
         $this->assertEquals('3.14159', $type->toPHP(3.14159, $driver));
-        $this->assertEquals('', $type->toPHP([3, 'elf'], $driver));
+    }
+
+    /**
+     * Tests that passing a non-scalar value will thow an exception
+     *
+     * @expectedException InvalidArgumentException
+     * @return void
+     */
+    public function testStringToDatabaseNoScalar()
+    {
+        $type = Type::build('string');
+        $driver = $this->getMock('\Cake\Database\Driver');
+        $type->toDatabase(['123'], $driver);
     }
 
     /**
@@ -235,7 +247,6 @@ class TypeTest extends TestCase
         $this->assertEquals('foo', $type->toPHP($string, $driver));
         $this->assertEquals('3', $type->toPHP(3, $driver));
         $this->assertEquals('3.14159', $type->toPHP(3.14159, $driver));
-        $this->assertEquals('', $type->toPHP([2, 3], $driver));
     }
 
     /**
@@ -252,7 +263,7 @@ class TypeTest extends TestCase
     }
 
     /**
-     * Test convertring booleans to database types.
+     * Test converting booleans to database types.
      *
      * @return void
      */
@@ -267,6 +278,18 @@ class TypeTest extends TestCase
         $this->assertFalse($type->toDatabase(0, $driver));
         $this->assertTrue($type->toDatabase('1', $driver));
         $this->assertFalse($type->toDatabase('0', $driver));
+    }
+
+    /**
+     * Test converting an array to boolean results in an exception
+     *
+     * @expectedException InvalidArgumentException
+     * @return void
+     */
+    public function testBooleanToDatabaseError()
+    {
+        $type = Type::build('boolean');
+        $driver = $this->getMock('\Cake\Database\Driver');
         $this->assertTrue($type->toDatabase([1, 2], $driver));
     }
 
@@ -325,7 +348,7 @@ class TypeTest extends TestCase
         $this->assertFalse($type->marshal('0'));
         $this->assertFalse($type->marshal(0));
         $this->assertFalse($type->marshal(''));
-        $this->assertFalse($type->marshal('invalid'));
+        $this->assertTrue($type->marshal('not empty'));
         $this->assertTrue($type->marshal(['2', '3']));
     }
 

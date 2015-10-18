@@ -15,6 +15,7 @@
  */
 namespace Cake\ORM\Association;
 
+use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
@@ -32,7 +33,9 @@ class HasMany extends Association
 {
 
     use DependentDeleteTrait;
-    use ExternalAssociationTrait;
+    use ExternalAssociationTrait {
+        _options as _externalOptions;
+    }
 
     /**
      * The type of join to be used when adding the association to a query
@@ -56,6 +59,27 @@ class HasMany extends Association
     protected $_validStrategies = [self::STRATEGY_SELECT, self::STRATEGY_SUBQUERY];
 
     /**
+     * Saving strategy that will only append to the links set
+     *
+     * @var string
+     */
+    const SAVE_APPEND = 'append';
+
+    /**
+     * Saving strategy that will replace the links with the provided set
+     *
+     * @var string
+     */
+    const SAVE_REPLACE = 'replace';
+
+    /**
+     * Saving strategy to be used by this association
+     *
+     * @var string
+     */
+    protected $_saveStrategy = self::SAVE_APPEND;
+
+    /**
      * Returns whether or not the passed table is the owning side for this
      * association. This means that rows in the 'target' table would miss important
      * or required information if the row in 'source' did not exist.
@@ -66,6 +90,26 @@ class HasMany extends Association
     public function isOwningSide(Table $side)
     {
         return $side === $this->source();
+    }
+
+    /**
+     * Sets the strategy that should be used for saving. If called with no
+     * arguments, it will return the currently configured strategy
+     *
+     * @param string|null $strategy the strategy name to be used
+     * @throws \InvalidArgumentException if an invalid strategy name is passed
+     * @return string the strategy to be used for saving
+     */
+    public function saveStrategy($strategy = null)
+    {
+        if ($strategy === null) {
+            return $this->_saveStrategy;
+        }
+        if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE])) {
+            $msg = sprintf('Invalid save strategy "%s"', $strategy);
+            throw new InvalidArgumentException($msg);
+        }
+        return $this->_saveStrategy = $strategy;
     }
 
     /**
@@ -104,6 +148,10 @@ class HasMany extends Association
         $original = $targetEntities;
         $options['_sourceTable'] = $this->source();
 
+        if ($this->_saveStrategy === self::SAVE_REPLACE) {
+            $this->_unlinkAssociated($properties, $entity, $target, $targetEntities);
+        }
+
         foreach ($targetEntities as $k => $targetEntity) {
             if (!($targetEntity instanceof EntityInterface)) {
                 break;
@@ -131,6 +179,77 @@ class HasMany extends Association
 
         $entity->set($this->property(), $targetEntities);
         return $entity;
+    }
+
+    /**
+     * Deletes/sets null the related objects according to the dependency between source and targets and foreign key nullability
+     * Skips deleting records present in $remainingEntities
+     *
+     * @param array $properties array of foreignKey properties
+     * @param EntityInterface $entity the entity which should have its associated entities unassigned
+     * @param Table $target The associated table
+     * @param array $remainingEntities Entities that should not be deleted
+     * @return void
+     */
+    protected function _unlinkAssociated(array $properties, EntityInterface $entity, Table $target, array $remainingEntities = [])
+    {
+        $primaryKey = (array)$target->primaryKey();
+        $mustBeDependent = (!$this->_foreignKeyAcceptsNull($target, $properties) || $this->dependent());
+        $exclusions = new Collection($remainingEntities);
+        $exclusions = $exclusions->map(
+            function ($ent) use ($primaryKey) {
+                return $ent->extract($primaryKey);
+            }
+        )
+        ->filter(
+            function ($v) {
+                return !in_array(null, array_values($v), true);
+            }
+        )
+        ->toArray();
+
+        if (count($exclusions) > 0) {
+            $conditions = [
+                'NOT' => [
+                    'OR' => $exclusions
+                ],
+                $properties
+            ];
+
+            if ($mustBeDependent) {
+                if ($this->_cascadeCallbacks) {
+                    $query = $this->find('all')->where($conditions);
+                    foreach ($query as $assoc) {
+                        $target->delete($assoc);
+                    }
+                } else {
+                    $target->deleteAll($conditions);
+                }
+            } else {
+                $updateFields = array_fill_keys(array_keys($properties), null);
+                $target->updateAll($updateFields, $conditions);
+            }
+        }
+    }
+
+    /**
+     * Checks the nullable flag of the foreign key
+     *
+     * @param Table $table the table containing the foreign key
+     * @param array $properties the list of fields that compose the foreign key
+     * @return bool
+     */
+    protected function _foreignKeyAcceptsNull(Table $table, array $properties)
+    {
+        return !in_array(
+            false,
+            array_map(
+                function ($prop) use ($table) {
+                    return $table->schema()->isNullable($prop);
+                },
+                array_keys($properties)
+            )
+        );
     }
 
     /**
@@ -165,5 +284,19 @@ class HasMany extends Association
     public function type()
     {
         return self::ONE_TO_MANY;
+    }
+
+    /**
+     * Parse extra options passed in the constructor.
+     *
+     * @param array $opts original list of options passed in constructor
+     * @return void
+     */
+    protected function _options(array $opts)
+    {
+        $this->_externalOptions($opts);
+        if (!empty($opts['saveStrategy'])) {
+            $this->saveStrategy($opts['saveStrategy']);
+        }
     }
 }

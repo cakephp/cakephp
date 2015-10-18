@@ -120,4 +120,18 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
         $generator->bind($placeholder, $value, $type);
         return $placeholder;
     }
+
+    /**
+     * Do a deep clone of this expression.
+     *
+     * @return void
+     */
+    public function __clone()
+    {
+        foreach (['_field', '_from', '_to'] as $part) {
+            if ($this->{$part} instanceof ExpressionInterface) {
+                $this->{$part} = clone $this->{$part};
+            }
+        }
+    }
 }

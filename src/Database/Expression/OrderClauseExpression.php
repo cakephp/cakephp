@@ -67,4 +67,16 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
             $this->_field->traverse($visitor);
         }
     }
+
+    /**
+     * Create a deep clone of the order clause.
+     *
+     * @return void
+     */
+    public function __clone()
+    {
+        if ($this->_field instanceof ExpressionInterface) {
+            $this->_field = clone $this->_field;
+        }
+    }
 }

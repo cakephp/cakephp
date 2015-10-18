@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         3.1.2
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Database\Type;
@@ -20,50 +20,54 @@ use InvalidArgumentException;
 use PDO;
 
 /**
- * Integer type converter.
+ * String type converter.
  *
- * Use to convert integer data between PHP and the database types.
+ * Use to convert string data between PHP and the database types.
  */
-class IntegerType extends Type
+class StringType extends Type
 {
 
     /**
-     * Convert integer data into the database format.
+     * Convert string data into the database format.
      *
      * @param mixed $value The value to convert.
      * @param Driver $driver The driver instance to convert with.
-     * @return int
+     * @return string|null
      */
     public function toDatabase($value, Driver $driver)
     {
-        if ($value === null || $value === '') {
-            return null;
+        if ($value === null || is_string($value)) {
+            return $value;
         }
 
-        if (!is_scalar($value)) {
-            throw new InvalidArgumentException('Cannot convert value to integer');
+        if (is_object($value) && method_exists($value, '__toString')) {
+            return $value->__toString();
         }
 
-        return (int)$value;
+        if (is_scalar($value)) {
+            return (string)$value;
+        }
+
+        throw new InvalidArgumentException('Cannot convert value to string');
     }
 
     /**
-     * Convert integer values to PHP integers
+     * Convert string values to PHP integers
      *
      * @param mixed $value The value to convert.
      * @param Driver $driver The driver instance to convert with.
-     * @return int
+     * @return string|null
      */
     public function toPHP($value, Driver $driver)
     {
         if ($value === null) {
             return null;
         }
-        return (int)$value;
+        return (string)$value;
     }
 
     /**
-     * Get the correct PDO binding type for integer data.
+     * Get the correct PDO binding type for string data.
      *
      * @param mixed $value The value being bound.
      * @param Driver $driver The driver.
@@ -71,29 +75,23 @@ class IntegerType extends Type
      */
     public function toStatement($value, Driver $driver)
     {
-        return PDO::PARAM_INT;
+        return PDO::PARAM_STR;
     }
 
     /**
-     * Marshalls request data into PHP floats.
+     * Marshalls request data into PHP strings.
      *
      * @param mixed $value The value to convert.
      * @return mixed Converted value.
      */
     public function marshal($value)
     {
-        if ($value === null || $value === '') {
+        if ($value === null) {
             return null;
         }
-        if (is_int($value)) {
-            return $value;
-        }
-        if (ctype_digit($value)) {
-            return (int)$value;
-        }
         if (is_array($value)) {
-            return 1;
+            return '';
         }
-        return $value;
+        return (string)$value;
     }
 }

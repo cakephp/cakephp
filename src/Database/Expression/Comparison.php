@@ -153,6 +153,22 @@ class Comparison implements ExpressionInterface, FieldInterface
     }
 
     /**
+     * Create a deep clone.
+     *
+     * Clones the field and value if they are expression objects.
+     *
+     * @return void
+     */
+    public function __clone()
+    {
+        foreach (['_value', '_field'] as $prop) {
+            if ($prop instanceof ExpressionInterface) {
+                $this->{$prop} = clone $this->{$prop};
+            }
+        }
+    }
+
+    /**
      * Returns a template and a placeholder for the value after registering it
      * with the placeholder $generator
      *
