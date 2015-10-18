@@ -38,7 +38,6 @@ class FlashComponent extends Component {
 		'key' => 'flash',
 		'element' => 'default',
 		'params' => array(),
-		'plugin' => '',
 	);
 
 /**
@@ -77,17 +76,11 @@ class FlashComponent extends Component {
 			$message = $message->getMessage();
 		}
 
-		list($plugin, $element) = pluginSplit($options['element']);
-
-		if ($plugin) {
-			$options['plugin'] = $plugin;
-		}
-
+		list($plugin, $element) = pluginSplit($options['element'], true);
 		if (!empty($options['plugin'])) {
-			$options['element'] = $options['plugin'] . '.Flash/' . $element;
-		} else {
-			$options['element'] = 'Flash/' . $element;
+			$plugin = $options['plugin'] . '.';
 		}
+		$options['element'] = $plugin . 'Flash/' . $element;
 
 		CakeSession::write('Message.' . $options['key'], array(
 			'message' => $message,
