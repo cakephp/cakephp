@@ -76,13 +76,11 @@ class FlashComponent extends Component {
 			$message = $message->getMessage();
 		}
 
-		list($plugin, $element) = pluginSplit($options['element']);
-
-		if ($plugin) {
-			$options['element'] = $plugin . '.Flash/' . $element;
-		} else {
-			$options['element'] = 'Flash/' . $element;
+		list($plugin, $element) = pluginSplit($options['element'], true);
+		if (!empty($options['plugin'])) {
+			$plugin = $options['plugin'] . '.';
 		}
+		$options['element'] = $plugin . 'Flash/' . $element;
 
 		CakeSession::write('Message.' . $options['key'], array(
 			'message' => $message,

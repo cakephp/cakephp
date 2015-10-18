@@ -1562,6 +1562,7 @@ class DboSource extends DataSource {
 					}
 				} else {
 					if (is_array($merge[0][$association])) {
+						$mergeAssocTmp = array();
 						foreach ($dataAssociation as $k => $v) {
 							if (!is_array($v)) {
 								$dataAssocTmp[$k] = $v;
