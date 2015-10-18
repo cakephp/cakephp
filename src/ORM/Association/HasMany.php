@@ -187,6 +187,7 @@ class HasMany extends Association
      * the source entity's property corresponding to this association object.
      *
      * This method does not check link uniqueness.
+     * Changes are persisted in the database and also in the source entity.
      *
      * ### Example:
      *
@@ -211,9 +212,14 @@ class HasMany extends Association
         $this->saveStrategy(self::SAVE_APPEND);
         $property = $this->property();
 
-        $currentEntities = (new Collection((array)$sourceEntity->get($property)))->append($targetEntities);
+        $currentEntities = array_unique(
+            array_merge(
+                (array)$sourceEntity->get($property),
+                $targetEntities
+            )
+        );
 
-        $sourceEntity->set($property, array_unique($currentEntities->toList()));
+        $sourceEntity->set($property, $currentEntities);
 
         $savedEntity = $this->saveAssociated($sourceEntity);
 
@@ -223,7 +229,7 @@ class HasMany extends Association
 
         if ($ok) {
             $sourceEntity->set($property, $savedEntity->get($property));
-            $sourceEntity->clean($property);
+            $sourceEntity->clean();
         }
 
         return $ok;
@@ -236,6 +242,8 @@ class HasMany extends Association
      *
      * By default this method will also unset each of the entity objects stored inside
      * the source entity.
+     *
+     * Changes are persisted in the database and also in the source entity.
      *
      * ### Example:
      *
@@ -263,7 +271,7 @@ class HasMany extends Association
     {
         $foreignKey = (array)$this->foreignKey();
         $target = $this->target();
-        $targetPrimaryKey = array_merge((array)$target->primaryKey(), (array)$foreignKey);
+        $targetPrimaryKey = array_merge((array)$target->primaryKey(), $foreignKey);
         $property = $this->property();
 
         $conditions = [
@@ -288,6 +296,8 @@ class HasMany extends Association
                 ->toList()
             );
         }
+
+        $sourceEntity->clean();
     }
 
     /**

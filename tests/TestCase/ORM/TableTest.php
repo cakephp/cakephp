@@ -1810,13 +1810,13 @@ class TableTest extends TestCase
 
         $entity = $authors->save($entity, ['associated' => ['Articles']]);
         $sizeArticles = count($entity->articles);
-        $this->assertEquals($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $this->assertCount($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']]));
 
         $entity->set('articles', []);
         
         $entity = $authors->save($entity, ['associated' => ['Articles']]);
         
-        $this->assertEquals(0, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $this->assertCount(0, $authors->Articles->find('all')->where(['author_id' => $entity['id']]));
     }
 
     /**
@@ -3916,8 +3916,9 @@ class TableTest extends TestCase
         $this->assertTrue($authors->Articles->link($author, $newArticles));
 
 
-        $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles);
-        $this->assertEquals(count($author->articles), $sizeArticles);
+        $this->assertCount($sizeArticles, $authors->Articles->findAllByAuthorId($author->id));
+        $this->assertCount($sizeArticles, $author->articles);
+        $this->assertFalse($author->dirty('articles'));
     }
 
     /**
@@ -3967,8 +3968,9 @@ class TableTest extends TestCase
 
         $sizeArticles++;
 
-        $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles);
-        $this->assertEquals($sizeArticles, count($author->articles));
+        $this->assertCount($sizeArticles, $authors->Articles->findAllByAuthorId($author->id));
+        $this->assertCount($sizeArticles, $author->articles);
+        $this->assertFalse($author->dirty('articles'));
     }
 
     /**
@@ -4021,8 +4023,9 @@ class TableTest extends TestCase
 
         $sizeArticles++;
 
-        $this->assertEquals($sizeArticles, $authors->Articles->findAllByAuthorId($author->id)->count());
-        $this->assertEquals($sizeArticles, count($author->articles));
+        $this->assertCount($sizeArticles, $authors->Articles->findAllByAuthorId($author->id));
+        $this->assertCount($sizeArticles, $author->articles);
+        $this->assertFalse($author->dirty('articles'));
     }
 
     /**
@@ -4068,8 +4071,9 @@ class TableTest extends TestCase
 
         $authors->Articles->unlink($author, $articlesToUnlink);
 
-        $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles - count($articlesToUnlink));
-        $this->assertEquals(count($author->articles), $sizeArticles - count($articlesToUnlink));
+        $this->assertCount($sizeArticles - count($articlesToUnlink), $authors->Articles->findAllByAuthorId($author->id));
+        $this->assertCount($sizeArticles - count($articlesToUnlink), $author->articles);
+        $this->assertFalse($author->dirty('articles'));
     }
 
     /**
@@ -4115,8 +4119,9 @@ class TableTest extends TestCase
 
         $authors->Articles->unlink($author, $articlesToUnlink, false);
 
-        $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles - count($articlesToUnlink));
-        $this->assertEquals(count($author->articles), $sizeArticles);
+        $this->assertCount($sizeArticles - count($articlesToUnlink), $authors->Articles->findAllByAuthorId($author->id));
+        $this->assertCount($sizeArticles, $author->articles);
+        $this->assertFalse($author->dirty('articles'));
     }
 
     /**
