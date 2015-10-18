@@ -9,18 +9,13 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         3.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Database;
+namespace Cake\Datasource;
 
 use InvalidArgumentException;
-use PDO;
 
-/**
- * Encapsulates all conversion functions for values coming from database into PHP and
- * going from PHP into database.
- */
 class Type
 {
 
@@ -32,19 +27,19 @@ class Type
      * @var array
      */
     protected static $_types = [
-        'biginteger' => 'Cake\Database\Type\IntegerType',
-        'binary' => 'Cake\Database\Type\BinaryType',
-        'boolean' => 'Cake\Database\Type\BoolType',
-        'date' => 'Cake\Database\Type\DateType',
-        'datetime' => 'Cake\Database\Type\DateTimeType',
-        'decimal' => 'Cake\Database\Type\FloatType',
-        'float' => 'Cake\Database\Type\FloatType',
-        'integer' => 'Cake\Database\Type\IntegerType',
-        'string' => 'Cake\Database\Type\StringType',
-        'text' => 'Cake\Database\Type\StringType',
-        'time' => 'Cake\Database\Type\TimeType',
-        'timestamp' => 'Cake\Database\Type\DateTimeType',
-        'uuid' => 'Cake\Database\Type\UuidType',
+        'biginteger' => 'Cake\Datasource\Type\IntegerType',
+        'binary' => 'Cake\Datasource\Type\BinaryType',
+        'boolean' => 'Cake\Datasource\Type\BoolType',
+        'date' => 'Cake\Datasource\Type\DateType',
+        'datetime' => 'Cake\Datasource\Type\DateTimeType',
+        'decimal' => 'Cake\Datasource\Type\FloatType',
+        'float' => 'Cake\Datasource\Type\FloatType',
+        'integer' => 'Cake\Datasource\Type\IntegerType',
+        'string' => 'Cake\Datasource\Type\StringType',
+        'text' => 'Cake\Datasource\Type\StringType',
+        'time' => 'Cake\Datasource\Type\TimeType',
+        'timestamp' => 'Cake\Datasource\Type\DateTimeType',
+        'uuid' => 'Cake\Datasource\Type\UuidType',
     ];
 
     /**
@@ -55,20 +50,12 @@ class Type
      * @deprecated 3.1 All types will now use a specific class
      */
     protected static $_basicTypes = [
-        'string' => ['callback' => ['\Cake\Database\Type', 'strval']],
-        'text' => ['callback' => ['\Cake\Database\Type', 'strval']],
+        'string' => ['callback' => ['\Cake\Datasource\Type', 'strval']],
+        'text' => ['callback' => ['\Cake\Datasource\Type', 'strval']],
         'boolean' => [
-            'callback' => ['\Cake\Database\Type', 'boolval'],
-            'pdo' => PDO::PARAM_BOOL
+            'callback' => ['\Cake\Datasource\Type', 'boolval']
         ],
     ];
-
-    /**
-     * Contains a map of type object instances to be reused if needed
-     *
-     * @var array
-     */
-    protected static $_builtTypes = [];
 
     /**
      * Identifier name for this type
@@ -86,6 +73,36 @@ class Type
     {
         $this->_name = $name;
     }
+
+    /**
+     * Returns type identifier name for this object
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->_name;
+    }
+
+    /**
+     * Returns the base type name that this class is inheriting.
+     * This is useful when extending base type for adding extra functionality
+     * but still want the rest of the framework to use the same assumptions it would
+     * do about the base type it inherits from.
+     *
+     * @return string
+     */
+    public function getBaseType()
+    {
+        return $this->_name;
+    }
+
+    /**
+     * Contains a map of type object instances to be reused if needed
+     *
+     * @var array
+     */
+    protected static $_builtTypes = [];
 
     /**
      * Returns a Type object capable of converting a type identified by $name
@@ -109,7 +126,7 @@ class Type
      * Returns a Type object capable of converting a type identified by $name
      *
      * @param string $name The type identifier you want to set.
-     * @param \Cake\Database\Type $instance The type instance you want to set.
+     * @param \Cake\Datasource\Type $instance The type instance you want to set.
      * @return void
      */
     public static function set($name, Type $instance)
@@ -154,48 +171,23 @@ class Type
     }
 
     /**
-     * Returns type identifier name for this object
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->_name;
-    }
-
-    /**
-     * Returns the base type name that this class is inheriting.
-     * This is useful when extending base type for adding extra functionality
-     * but still want the rest of the framework to use the same assumptions it would
-     * do about the base type it inherits from.
-     *
-     * @return string
-     */
-    public function getBaseType()
-    {
-        return $this->_name;
-    }
-
-    /**
      * Casts given value from a PHP type to one acceptable by database
      *
      * @param mixed $value value to be converted to database equivalent
-     * @param Driver $driver object from which database preferences and configuration will be extracted
      * @return mixed
      */
-    public function toDatabase($value, Driver $driver)
+    public function toDatasource($value)
     {
         return $this->_basicTypeCast($value);
     }
 
     /**
-     * Casts given value from a database type to PHP equivalent
+     * Casts given value from a datasource type to PHP equivalent
      *
      * @param mixed $value value to be converted to PHP equivalent
-     * @param Driver $driver object from which database preferences and configuration will be extracted
      * @return mixed
      */
-    public function toPHP($value, Driver $driver)
+    public function toPHP($value)
     {
         return $this->_basicTypeCast($value);
     }
@@ -223,22 +215,6 @@ class Type
     }
 
     /**
-     * Casts give value to Statement equivalent
-     *
-     * @param mixed $value value to be converted to PHP equivalent
-     * @param Driver $driver object from which database preferences and configuration will be extracted
-     * @return mixed
-     */
-    public function toStatement($value, Driver $driver)
-    {
-        if ($value === null) {
-            return PDO::PARAM_NULL;
-        }
-
-        return PDO::PARAM_STR;
-    }
-
-    /**
      * Type converter for boolean values.
      *
      * Will convert string true/false into booleans.
@@ -253,7 +229,6 @@ class Type
         }
         return !empty($value);
     }
-
     /**
      * Type converter for string values.
      *
@@ -277,7 +252,7 @@ class Type
      * when entities are inserted.
      *
      * @return mixed A new primary key value.
-     * @see \Cake\Database\Type\UuidType
+     * @see \Cake\Datasource\Type\UuidType
      */
     public function newId()
     {
