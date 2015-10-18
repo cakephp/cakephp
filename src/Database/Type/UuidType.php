@@ -22,23 +22,8 @@ use PDO;
 /**
  * Provides behavior for the uuid type
  */
-class UuidType extends Type
+class UuidType extends StringType
 {
-
-    /**
-     * Casts give value to Statement equivalent
-     *
-     * @param mixed $value value to be converted to PHP equivalent
-     * @param Driver $driver object from which database preferences and configuration will be extracted
-     * @return mixed
-     */
-    public function toStatement($value, Driver $driver)
-    {
-        if ($value === null) {
-            return PDO::PARAM_NULL;
-        }
-        return PDO::PARAM_STR;
-    }
 
     /**
      * Casts given value from a PHP type to one acceptable by database
@@ -52,22 +37,8 @@ class UuidType extends Type
         if ($value === null || $value === '') {
             return null;
         }
-        return strval($value);
-    }
 
-    /**
-     * Casts given value from a database type to PHP equivalent
-     *
-     * @param mixed $value value to be converted to PHP equivalent
-     * @param Driver $driver object from which database preferences and configuration will be extracted
-     * @return mixed
-     */
-    public function toPHP($value, Driver $driver)
-    {
-        if ($value === null) {
-            return null;
-        }
-        return strval($value);
+        return parent::toDatabase($value, $driver);
     }
 
     /**
