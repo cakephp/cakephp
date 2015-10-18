@@ -65,7 +65,7 @@ class ExtractIterator extends Collection
      */
     public function current()
     {
-        $extractor = $this->_extractor;debug($extractor);
+        $extractor = $this->_extractor;
         return $extractor(parent::current());
     }
 }
