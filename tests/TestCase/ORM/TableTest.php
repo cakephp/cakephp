@@ -3968,7 +3968,61 @@ class TableTest extends TestCase
         $sizeArticles++;
 
         $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles);
-        $this->assertEquals(count($author->articles), $sizeArticles);
+        $this->assertEquals($sizeArticles, count($author->articles));
+    }
+
+    /**
+     * Integration test for linking entities with HasMany. The input contains already linked entities and they should not appeat duplicated
+     *
+     * @return void
+     */
+    public function testLinkHasManyExisting()
+    {
+        $authors = TableRegistry::get('Authors');
+        $articles = TableRegistry::get('Articles');
+
+        $authors->hasMany('Articles', [
+            'foreignKey' => 'author_id',
+            'saveStrategy' => 'replace'
+        ]);
+
+        $author = $authors->newEntity(['name' => 'mylux']);
+        $author = $authors->save($author);
+
+        $newArticles = $articles->newEntities(
+            [
+                [
+                    'title' => 'New bakery next corner',
+                    'body' => 'They sell tastefull cakes'
+                ],
+                [
+                    'title' => 'Spicy cake recipe',
+                    'body' => 'chocolate and peppers'
+                ]
+            ]
+        );
+
+        $this->assertTrue($authors->Articles->link($author, $newArticles));
+
+        $sizeArticles = count($newArticles);
+
+        $newArticles = array_merge(
+            $author->articles,
+            $articles->newEntities(
+                [
+                    [
+                        'title' => 'Nothing but the cake',
+                        'body' => 'It is all that we need'
+                    ]
+                ]
+            )
+        );
+        $this->assertTrue($authors->Articles->link($author, $newArticles));
+
+        $sizeArticles++;
+
+        $this->assertEquals($sizeArticles, $authors->Articles->findAllByAuthorId($author->id)->count());
+        $this->assertEquals($sizeArticles, count($author->articles));
     }
 
     /**
@@ -4215,6 +4269,60 @@ class TableTest extends TestCase
         $this->assertCount(2, $article->tags);
         $this->assertEquals(2, $article->tags[0]->id);
         $this->assertEquals(3, $article->tags[1]->id);
+    }
+
+    public function testReplaceLinksHasMany()
+    {
+        $authors = TableRegistry::get('Authors');
+        $articles = TableRegistry::get('Articles');
+
+        $authors->hasMany('Articles', [
+            'foreignKey' => 'author_id'
+        ]);
+
+        $author = $authors->newEntity(['name' => 'mylux']);
+        $author = $authors->save($author);
+
+        $newArticles = $articles->newEntities(
+            [
+                [
+                    'title' => 'New bakery next corner',
+                    'body' => 'They sell tastefull cakes'
+                ],
+                [
+                    'title' => 'Spicy cake recipe',
+                    'body' => 'chocolate and peppers'
+                ]
+            ]
+        );
+
+        $sizeArticles = count($newArticles);
+
+        $this->assertTrue($authors->Articles->link($author, $newArticles));
+
+        $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles);
+        $this->assertEquals(count($author->articles), $sizeArticles);
+
+        $newArticles = array_merge(
+            $author->articles,
+            $articles->newEntities(
+                [
+                    [
+                        'title' => 'Cheese cake recipe',
+                        'body' => 'The secrets of mixing salt and sugar'
+                    ],
+                    [
+                        'title' => 'Not another piece of cake',
+                        'body' => 'This is the best'
+                    ]
+                ]
+            )
+        );
+        unset($newArticles[0]);
+
+        $this->assertTrue($authors->Articles->replaceLinks($author, $newArticles));
+        $this->assertEquals(count($newArticles), count($author->articles));
+        $this->assertEquals((new Collection($newArticles))->extract('title'), (new Collection($author->articles))->extract('title'));
     }
 
     /**

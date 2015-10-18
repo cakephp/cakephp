@@ -214,7 +214,7 @@ class HasMany extends Association
 
         $currentEntities = (new Collection((array)$sourceEntity->get($property)))->append($targetEntities);
 
-        $sourceEntity->set($property, $currentEntities->toList());
+        $sourceEntity->set($property, array_unique($currentEntities->toList()));
 
         $savedEntity = $this->saveAssociated($sourceEntity);
 
@@ -289,6 +289,65 @@ class HasMany extends Association
                 ->toList()
             );
         }
+    }
+
+    /**
+     * Replaces existing association links between the source entity and the target
+     * with the ones passed. This method does a smart cleanup, links that are already
+     * persisted and present in `$targetEntities` will not be deleted, new links will
+     * be created for the passed target entities that are not already in the database
+     * and the rest will be removed.
+     *
+     * For example, if an author has many articles, such as 'article1','article 2' and 'article 3' and you pass
+     * to this method an array containing the entities for articles 'article 1' and 'article 4',
+     * only the link for 'article 1' will be kept in database, the links for 'article 2' and 'article 3' will be
+     * deleted and the link for 'article 4' will be created.
+     *
+     * Existing links are not deleted and created again, they are either left untouched
+     * or updated.
+     *
+     * This method does not check link uniqueness.
+     *
+     * On success, the passed `$sourceEntity` will contain `$targetEntities` as  value
+     * in the corresponding property for this association.
+     *
+     * Additional options for new links to be saved can be passed in the third argument,
+     * check `Table::save()` for information on the accepted options.
+     *
+     * ### Example:
+     *
+     * ```
+     * $author->articles = [$article1, $article2, $article3, $article4];
+     * $authors->save($author);
+     * $articles = [$article1, $article3];
+     * $authors->association('articles')->replaceLinks($author, $articles);
+     * ```
+     *
+     * `$author->get('articles')` will contain only `[$article1, $article3]` at the end
+     *
+     * @param \Cake\Datasource\EntityInterface $sourceEntity an entity persisted in the source table for
+     * this association
+     * @param array $targetEntities list of entities from the target table to be linked
+     * @param array $options list of options to be passed to `save` persisting or
+     * updating new links
+     * @throws \InvalidArgumentException if non persisted entities are passed or if
+     * any of them is lacking a primary key value
+     * @return bool success
+     */
+    public function replaceLinks(EntityInterface $sourceEntity, array $targetEntities, array $options = [])
+    {
+        $property = $this->property();
+        $sourceEntity->set($property, $targetEntities);
+        $saveStrategy = $this->saveStrategy();
+        $this->saveStrategy(self::SAVE_REPLACE);
+        $result = $this->saveAssociated($sourceEntity, $options);
+        $ok = ($result instanceof EntityInterface);
+
+        if ($ok) {
+            $sourceEntity = $result;
+        }
+        $this->saveStrategy($saveStrategy);
+        return $ok;
     }
 
     /**
