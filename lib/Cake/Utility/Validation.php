@@ -1031,7 +1031,7 @@ class Validation {
 			$check = $check['error'];
 		}
 		if ($allowNoFile) {
-			return in_array((int)$check, [UPLOAD_ERR_OK, UPLOAD_ERR_NO_FILE], true);
+			return in_array((int)$check, array(UPLOAD_ERR_OK, UPLOAD_ERR_NO_FILE), true);
 		}
 
 		return (int)$check === UPLOAD_ERR_OK;
