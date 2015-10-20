@@ -2547,6 +2547,19 @@ class ValidationTest extends CakeTestCase {
 			'maxSize' => 100
 		);
 		$this->assertFalse(Validation::uploadedFile($file, $options), 'Too big');
+		$options = array(
+			'minSize' => 100,
+		);
+		$this->assertTrue(Validation::uploadedFile($file, $options));
+		$options = array(
+			'maxSize' => 500,
+		);
+		$this->assertTrue(Validation::uploadedFile($file, $options));
+		$options = array(
+			'minSize' => 100,
+			'maxSize' => 500
+		);
+		$this->assertTrue(Validation::uploadedFile($file, $options));
 	}
 
 /**
