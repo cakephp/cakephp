@@ -272,6 +272,7 @@ class TypeTest extends TestCase
         $type = Type::build('boolean');
         $driver = $this->getMock('\Cake\Database\Driver');
 
+        $this->assertNull($type->toDatabase(null, $driver));
         $this->assertTrue($type->toDatabase(true, $driver));
         $this->assertFalse($type->toDatabase(false, $driver));
         $this->assertTrue($type->toDatabase(1, $driver));
