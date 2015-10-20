@@ -16,6 +16,7 @@ namespace Cake\Datasource;
 
 use Cake\Datasource\Exception\MissingModelException;
 use InvalidArgumentException;
+use UnexpectedValueException;
 
 /**
  * Provides functionality for loading table classes
@@ -47,6 +48,13 @@ trait ModelAwareTrait
     protected $_modelFactories = [];
 
     /**
+     * The model type to use.
+     *
+     * @var string
+     */
+    protected $_modelType = 'Table';
+
+    /**
      * Set the modelClass and modelKey properties based on conventions.
      *
      * If the properties are already set they will not be overwritten
@@ -71,16 +79,23 @@ trait ModelAwareTrait
      * be thrown.
      *
      * @param string|null $modelClass Name of model class to load. Defaults to $this->modelClass
-     * @param string $type The type of repository to load. Defaults to 'Table' which
-     *   delegates to Cake\ORM\TableRegistry.
+     * @param string|null $modelType The type of repository to load. Defaults to the modelType() value.
      * @return object The model instance created.
      * @throws \Cake\Datasource\Exception\MissingModelException If the model class cannot be found.
      * @throws \InvalidArgumentException When using a type that has not been registered.
+     * @throws \UnexpectedValueException If no model type has been defined
      */
-    public function loadModel($modelClass = null, $type = 'Table')
+    public function loadModel($modelClass = null, $modelType = null)
     {
         if ($modelClass === null) {
             $modelClass = $this->modelClass;
+        }
+        if ($modelType === null) {
+            $modelType = $this->modelType();
+
+            if ($modelType === null) {
+                throw new UnexpectedValueException('No model type has been defined');
+            }
         }
 
         list(, $alias) = pluginSplit($modelClass, true);
@@ -89,16 +104,16 @@ trait ModelAwareTrait
             return $this->{$alias};
         }
 
-        if (!isset($this->_modelFactories[$type])) {
+        if (!isset($this->_modelFactories[$modelType])) {
             throw new InvalidArgumentException(sprintf(
                 'Unknown repository type "%s". Make sure you register a type before trying to use it.',
-                $type
+                $modelType
             ));
         }
-        $factory = $this->_modelFactories[$type];
+        $factory = $this->_modelFactories[$modelType];
         $this->{$alias} = $factory($modelClass);
         if (!$this->{$alias}) {
-            throw new MissingModelException([$modelClass, $type]);
+            throw new MissingModelException([$modelClass, $modelType]);
         }
         return $this->{$alias};
     }
@@ -113,5 +128,23 @@ trait ModelAwareTrait
     public function modelFactory($type, callable $factory)
     {
         $this->_modelFactories[$type] = $factory;
+    }
+
+    /**
+     * Set or get the model type to be used by this class
+     *
+     * @param string|null $modelType The model type or null to retrieve the current
+     *
+     * @return string|$this
+     */
+    public function modelType($modelType = null)
+    {
+        if ($modelType === null) {
+            return $this->_modelType;
+        }
+
+        $this->_modelType = $modelType;
+
+        return $this;
     }
 }
