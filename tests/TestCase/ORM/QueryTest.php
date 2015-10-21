@@ -2062,6 +2062,68 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Verify that only one count query is issued
+     * A subsequent request for the count will take the previously
+     * returned value
+     *
+     * @return void
+     */
+    public function testCountCache()
+    {
+        $query = $this->getMockBuilder('Cake\ORM\Query')
+            ->disableOriginalConstructor()
+            ->setMethods(['_performCount'])
+            ->getMock();
+
+        $query->expects($this->once())
+            ->method('_performCount')
+            ->will($this->returnValue(1));
+
+        $result = $query->count();
+        $this->assertSame(1, $result, 'The result of the sql query should be returned');
+
+        $resultAgain = $query->count();
+        $this->assertSame(1, $resultAgain, 'No query should be issued and the cached value returned');
+    }
+
+    /**
+     * If the query is dirty the cached value should be ignored
+     * and a new count query issued
+     *
+     * @return void
+     */
+    public function testCountCacheDirty()
+    {
+        $query = $this->getMockBuilder('Cake\ORM\Query')
+            ->disableOriginalConstructor()
+            ->setMethods(['_performCount'])
+            ->getMock();
+
+        $query->expects($this->at(0))
+            ->method('_performCount')
+            ->will($this->returnValue(1));
+
+        $query->expects($this->at(1))
+            ->method('_performCount')
+            ->will($this->returnValue(2));
+
+        $query->expects($this->at(2))
+            ->method('_performCount')
+            ->will($this->returnValue(3));
+
+        $result = $query->count();
+        $this->assertSame(1, $result, 'The result of the sql query should be returned');
+
+        $query->where(['dirty' => 'cache']);
+
+        $secondResult = $query->count();
+        $this->assertSame(2, $secondResult, 'The query is dirty, the cache should be ignored');
+
+        $thirdResult = $query->count();
+        $this->assertSame(3, $thirdResult, 'The query is still dirty, the cache should be ignored');
+    }
+
+    /**
      * Tests that it is possible to apply formatters inside the query builder
      * for belongsTo associations
      *
