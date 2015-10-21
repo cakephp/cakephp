@@ -1553,7 +1553,7 @@ class QueryTest extends TestCase
     }
 
     /**
-     * test count with a beforeFind.
+     * Tests that beforeFind is only ever called once, even if you trigger it again in the beforeFind
      *
      * @return void
      */
