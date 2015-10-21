@@ -690,14 +690,26 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * {@inheritDoc}
      *
-     * Returns the COUNT(*) for the query.
+     * Returns the COUNT(*) for the query. If the query has not been
+     * modified, and the count has already been performed the cached
+     * value is returned
      */
     public function count()
     {
-        if (!$this->_dirty && isset($this->_resultsCount)) {
-            return $this->_resultsCount;
+        if ($this->_dirty || $this->_resultsCount === null) {
+            $this->_resultsCount = $this->_performCount();
         }
 
+        return $this->_resultsCount;
+    }
+
+    /**
+     * Performs and returns the COUNT(*) for the query.
+     *
+     * @return int
+     */
+    protected function _performCount()
+    {
         $query = $this->cleanCopy();
         $counter = $this->_counter;
         if ($counter) {
@@ -736,10 +748,9 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
                 ->execute();
         }
 
-        $this->_resultsCount = (int)$statement->fetch('assoc')['count'];
+        $result = $statement->fetch('assoc')['count'];
         $statement->closeCursor();
-
-        return $this->_resultsCount;
+        return (int)$result;
     }
 
     /**
