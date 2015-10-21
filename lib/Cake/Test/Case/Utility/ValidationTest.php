@@ -2454,6 +2454,12 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::uploadError(2));
 		$this->assertFalse(Validation::uploadError(array('error' => 2)));
 		$this->assertFalse(Validation::uploadError(array('error' => '2')));
+
+		$this->assertFalse(Validation::uploadError(UPLOAD_ERR_NO_FILE));
+		$this->assertFalse(Validation::uploadError(UPLOAD_ERR_FORM_SIZE, true));
+		$this->assertFalse(Validation::uploadError(UPLOAD_ERR_INI_SIZE, true));
+		$this->assertFalse(Validation::uploadError(UPLOAD_ERR_NO_TMP_DIR, true));
+		$this->assertTrue(Validation::uploadError(UPLOAD_ERR_NO_FILE, true));
 	}
 
 /**
@@ -2474,4 +2480,110 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::fileSize(array('tmp_name' => $image), '>', '1KB'));
 	}
 
+/**
+ * Test uploaded file validation.
+ *
+ * @return void
+ */
+	public function testUploadedFileErrorCode() {
+		$this->assertFalse(Validation::uploadedFile('derp'));
+		$invalid = array(
+			'name' => 'testing'
+		);
+		$this->assertFalse(Validation::uploadedFile($invalid));
+		$file = array(
+			'name' => 'cake.power.gif',
+			'tmp_name' => CORE_PATH . 'Cake' . DS . 'Test' . DS . 'test_app' . DS . 'webroot/img/cake.power.gif',
+			'error' => UPLOAD_ERR_OK,
+			'type' => 'image/gif',
+			'size' => 201
+		);
+		$this->assertTrue(Validation::uploadedFile($file));
+		$file['error'] = UPLOAD_ERR_NO_FILE;
+		$this->assertFalse(Validation::uploadedFile($file), 'Error upload should fail.');
+	}
+
+/**
+ * Test uploaded file validation.
+ *
+ * @return void
+ */
+	public function testUploadedFileMimeType() {
+		$file = array(
+			'name' => 'cake.power.gif',
+			'tmp_name' => CORE_PATH . 'Cake' . DS . 'Test' . DS . 'test_app' . DS . 'webroot/img/cake.power.gif',
+			'error' => UPLOAD_ERR_OK,
+			'type' => 'text/plain',
+			'size' => 201
+		);
+		$options = array(
+			'types' => array('text/plain')
+		);
+		$this->assertFalse(Validation::uploadedFile($file, $options), 'Incorrect mimetype.');
+		$options = array(
+			'types' => array('image/gif', 'image/png')
+		);
+		$this->assertTrue(Validation::uploadedFile($file, $options));
+	}
+
+/**
+ * Test uploaded file validation.
+ *
+ * @return void
+ */
+	public function testUploadedFileSize() {
+		$file = array(
+			'name' => 'cake.power.gif',
+			'tmp_name' => CORE_PATH . 'Cake' . DS . 'Test' . DS . 'test_app' . DS . 'webroot/img/cake.power.gif',
+			'error' => UPLOAD_ERR_OK,
+			'type' => 'text/plain',
+			'size' => 201
+		);
+		$options = array(
+			'minSize' => 500
+		);
+		$this->assertFalse(Validation::uploadedFile($file, $options), 'Too small');
+		$options = array(
+			'maxSize' => 100
+		);
+		$this->assertFalse(Validation::uploadedFile($file, $options), 'Too big');
+		$options = array(
+			'minSize' => 100,
+		);
+		$this->assertTrue(Validation::uploadedFile($file, $options));
+		$options = array(
+			'maxSize' => 500,
+		);
+		$this->assertTrue(Validation::uploadedFile($file, $options));
+		$options = array(
+			'minSize' => 100,
+			'maxSize' => 500
+		);
+		$this->assertTrue(Validation::uploadedFile($file, $options));
+	}
+
+/**
+ * Test uploaded file validation.
+ *
+ * @return void
+ */
+	public function testUploadedFileNoFile() {
+		$file = array(
+			'name' => '',
+			'tmp_name' => CORE_PATH . 'Cake' . DS . 'Test' . DS . 'test_app' . DS . 'webroot/img/cake.power.gif',
+			'error' => UPLOAD_ERR_NO_FILE,
+			'type' => '',
+			'size' => 0
+		);
+		$options = array(
+			'optional' => true,
+			'minSize' => 500,
+			'types' => array('image/gif', 'image/png')
+		);
+		$this->assertTrue(Validation::uploadedFile($file, $options), 'No file should be ok.');
+		$options = array(
+			'optional' => false
+		);
+		$this->assertFalse(Validation::uploadedFile($file, $options), 'File is required.');
+	}
 }
