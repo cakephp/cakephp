@@ -694,7 +694,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function count()
     {
-        if (isset($this->_resultsCount)) {
+        if (!$this->_dirty && isset($this->_resultsCount)) {
             return $this->_resultsCount;
         }
 
