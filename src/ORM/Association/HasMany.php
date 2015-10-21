@@ -229,7 +229,7 @@ class HasMany extends Association
 
         if ($ok) {
             $sourceEntity->set($property, $savedEntity->get($property));
-            $sourceEntity->clean();
+            $sourceEntity->dirty($property, false);
         }
 
         return $ok;
@@ -297,7 +297,7 @@ class HasMany extends Association
             );
         }
 
-        $sourceEntity->clean();
+        $sourceEntity->dirty($property, false);
     }
 
     /**
