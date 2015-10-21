@@ -696,7 +696,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function count()
     {
-        if ($this->_dirty || $this->_resultsCount === null) {
+        if ($this->_resultsCount === null) {
             $this->_resultsCount = $this->_performCount();
         }
 
@@ -938,6 +938,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     protected function _dirty()
     {
         $this->_results = null;
+        $this->_resultsCount = null;
         parent::_dirty();
     }
 
