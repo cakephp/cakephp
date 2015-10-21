@@ -108,6 +108,15 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     protected $_beforeFindFired = false;
 
     /**
+     * The COUNT(*) for the query.
+     *
+     * When set, count query execution will be bypassed.
+     *
+     * @var int
+     */
+    protected $_resultsCount;
+
+    /**
      * Constructor
      *
      * @param \Cake\Database\Connection $connection The connection object
@@ -681,9 +690,25 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * {@inheritDoc}
      *
-     * Returns the COUNT(*) for the query.
+     * Returns the COUNT(*) for the query. If the query has not been
+     * modified, and the count has already been performed the cached
+     * value is returned
      */
     public function count()
+    {
+        if ($this->_resultsCount === null) {
+            $this->_resultsCount = $this->_performCount();
+        }
+
+        return $this->_resultsCount;
+    }
+
+    /**
+     * Performs and returns the COUNT(*) for the query.
+     *
+     * @return int
+     */
+    protected function _performCount()
     {
         $query = $this->cleanCopy();
         $counter = $this->_counter;
@@ -913,6 +938,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     protected function _dirty()
     {
         $this->_results = null;
+        $this->_resultsCount = null;
         parent::_dirty();
     }
 

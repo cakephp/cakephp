@@ -172,7 +172,9 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function execute()
     {
         $statement = $this->_connection->run($this);
-        return $this->_iterator = $this->_decorateStatement($statement);
+        $this->_iterator = $this->_decorateStatement($statement);
+        $this->_dirty = false;
+        return $this->_iterator;
     }
 
     /**
