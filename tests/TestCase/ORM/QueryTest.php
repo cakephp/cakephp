@@ -18,6 +18,7 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
+use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
@@ -1549,6 +1550,28 @@ class QueryTest extends TestCase
         $query = $table->find();
         $result = $query->count();
         $this->assertSame(3, $result);
+    }
+
+    /**
+     * Tests that beforeFind is only ever called once, even if you trigger it again in the beforeFind
+     *
+     * @return void
+     */
+    public function testBeforeFindCalledOnce()
+    {
+        $callCount = 0;
+        $table = TableRegistry::get('Articles');
+        $table->eventManager()
+            ->attach(function ($event, $query) use (&$callCount) {
+                $valueBinder = new ValueBinder();
+                $query->sql($valueBinder);
+                $callCount++;
+            }, 'Model.beforeFind');
+
+        $query = $table->find();
+        $valueBinder = new ValueBinder();
+        $query->sql($valueBinder);
+        $this->assertSame(1, $callCount);
     }
 
     /**
