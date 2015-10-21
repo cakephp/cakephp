@@ -809,12 +809,12 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         if (!$this->_beforeFindFired && $this->_type === 'select') {
             $table = $this->repository();
+            $this->_beforeFindFired = true;
             $table->dispatchEvent('Model.beforeFind', [
                 $this,
                 new ArrayObject($this->_options),
                 !$this->eagerLoaded()
             ]);
-            $this->_beforeFindFired = true;
         }
     }
 
