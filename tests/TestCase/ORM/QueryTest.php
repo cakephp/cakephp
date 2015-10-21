@@ -2107,20 +2107,16 @@ class QueryTest extends TestCase
             ->method('_performCount')
             ->will($this->returnValue(2));
 
-        $query->expects($this->at(2))
-            ->method('_performCount')
-            ->will($this->returnValue(3));
-
         $result = $query->count();
         $this->assertSame(1, $result, 'The result of the sql query should be returned');
 
         $query->where(['dirty' => 'cache']);
 
         $secondResult = $query->count();
-        $this->assertSame(2, $secondResult, 'The query is dirty, the cache should be ignored');
+        $this->assertSame(2, $secondResult, 'The query cache should be droppped with any modification');
 
         $thirdResult = $query->count();
-        $this->assertSame(3, $thirdResult, 'The query is still dirty, the cache should be ignored');
+        $this->assertSame(2, $thirdResult, 'The query has not been modified, the cached value is valid');
     }
 
     /**
