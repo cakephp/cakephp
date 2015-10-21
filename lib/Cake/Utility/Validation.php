@@ -1038,25 +1038,25 @@ class Validation {
 	}
 
 /**
-* Validate an uploaded file.
-*
-* Helps join `uploadError`, `fileSize` and `mimeType` into
-* one higher level validation method.
-*
-* ### Options
-*
-* - `types` - A list of valid mime types. If empty all types
-*   will be accepted. The `type` will not be looked at, instead
-*   the file type will be checked with ext/finfo.
-* - `minSize` - The minimum file size. Defaults to not checking.
-* - `maxSize` - The maximum file size. Defaults to not checking.
-* - `optional` - Whether or not this file is optional. Defaults to false.
-*   If true a missing file will pass the validator regardless of other constraints.
-*
-* @param array $file The uploaded file data from PHP.
-* @param array $options An array of options for the validation.
-* @return bool
-*/
+ * Validate an uploaded file.
+ *
+ * Helps join `uploadError`, `fileSize` and `mimeType` into
+ * one higher level validation method.
+ *
+ * ### Options
+ *
+ * - `types` - A list of valid mime types. If empty all types
+ *   will be accepted. The `type` will not be looked at, instead
+ *   the file type will be checked with ext/finfo.
+ * - `minSize` - The minimum file size. Defaults to not checking.
+ * - `maxSize` - The maximum file size. Defaults to not checking.
+ * - `optional` - Whether or not this file is optional. Defaults to false.
+ *   If true a missing file will pass the validator regardless of other constraints.
+ *
+ * @param array $file The uploaded file data from PHP.
+ * @param array $options An array of options for the validation.
+ * @return bool
+ */
 	public static function uploadedFile($file, $options = array()) {
 		$options += array(
 			'minSize' => null,

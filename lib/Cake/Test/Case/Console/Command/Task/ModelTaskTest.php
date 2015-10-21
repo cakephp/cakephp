@@ -400,7 +400,7 @@ class ModelTaskTest extends CakeTestCase {
 	public function testInteractiveDoValidationWithSkipping() {
 		$this->Task->expects($this->any())
 			->method('in')
-			->will($this->onConsecutiveCalls('34', '24', 'n', '10', 's'));
+			->will($this->onConsecutiveCalls('35', '24', 'n', '10', 's'));
 		$this->Task->interactive = true;
 		$Model = $this->getMock('Model');
 		$Model->primaryKey = 'id';
