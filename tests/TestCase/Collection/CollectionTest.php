@@ -612,6 +612,19 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests that issuing a count will throw an exception
+     *
+     * @expectedException \LogicException
+     * @return void
+     */
+    public function testCollectionCount()
+    {
+        $data = [1, 2, 3, 4];
+        $collection = new Collection($data);
+        $collection->count();
+    }
+
+    /**
      * Tests take method
      *
      * @return void
