@@ -343,7 +343,7 @@ class HasMany extends Association
      * any of them is lacking a primary key value
      * @return bool success
      */
-    public function replaceLinks(EntityInterface $sourceEntity, array $targetEntities, array $options = [])
+    public function replace(EntityInterface $sourceEntity, array $targetEntities, array $options = [])
     {
         $property = $this->property();
         $sourceEntity->set($property, $targetEntities);
