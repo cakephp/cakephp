@@ -221,7 +221,10 @@ class BelongsToMany extends Association
         }
 
         if (!$source->association($table->alias())) {
-            $source->hasMany($junctionAlias)->target($table);
+			$source->hasMany($junctionAlias, [
+				'targetTable' => $table,
+				'foreignKey' => $this->foreignKey()
+			]);
         }
 
         return $this->_junctionTable = $table;
