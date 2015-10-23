@@ -1351,23 +1351,48 @@ class Response
      * @param string|array $allowedDomains List of allowed domains, see method description for more details
      * @param string|array $allowedMethods List of HTTP verbs allowed
      * @param string|array $allowedHeaders List of HTTP headers allowed
+     * @param array $options Params for specific headers
+     *
      * @return void
      */
-    public function cors(Request $request, $allowedDomains, $allowedMethods = [], $allowedHeaders = [])
-    {
+    public function cors(Request $request, $allowedDomains, $allowedMethods = [], $allowedHeaders = [], array $options = []) {
         $origin = $request->header('Origin');
         if (!$origin) {
             return;
         }
 
-        $allowedDomains = $this->_normalizeCorsDomains((array)$allowedDomains, $request->is('ssl'));
+        // For BC. This can be removed in 4.x when the $allowedDomains, $allowedMethods, $allowedHeaders params are gone.
+        $options += [
+            'allowedDomains' => (array)$allowedDomains,
+            'allowedMethods' => (array)$allowedMethods,
+            'allowedHeaders' => (array)$allowedHeaders
+        ];
+
+        $allowedDomains = $this->_normalizeCorsDomains($options['allowedDomains'], $request->is('ssl'));
         foreach ($allowedDomains as $domain) {
             if (!preg_match($domain['preg'], $origin)) {
                 continue;
             }
             $this->header('Access-Control-Allow-Origin', $domain['original'] === '*' ? '*' : $origin);
-            $allowedMethods && $this->header('Access-Control-Allow-Methods', implode(', ', (array)$allowedMethods));
-            $allowedHeaders && $this->header('Access-Control-Allow-Headers', implode(', ', (array)$allowedHeaders));
+            
+            if (isset($options['allowedMethods']) && $options['allowedMethods']) {
+                $this->header('Access-Control-Allow-Methods', implode(', ', (array)$options['allowedMethods']));
+            }
+            if (isset($options['allowedHeaders']) && $options['allowedHeaders']) {
+                $this->header('Access-Control-Allow-Headers', implode(', ', (array)$options['allowedHeaders']));
+            }
+            if (isset($options['exposedHeaders']) && $options['exposedHeaders']) {
+                $this->header('Access-Control-Expose-Headers', implode(', ', (array)$options['exposedHeaders']));
+            }
+            if (isset($options['allowCredentials'])) {
+                if (is_bool($options['allowCredentials'])) {
+                    $options['allowCredentials'] = $options['allowCredentials'] ? 'true' : 'false';
+                }
+                $this->header('Access-Control-Allow-Credentials', $options['allowCredentials']);
+            }
+            if (isset($options['maxAge'])) {
+                $this->header('Access-Control-Max-Age', (int)$options['maxAge']);
+            }
             break;
         }
     }
