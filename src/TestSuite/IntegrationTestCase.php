@@ -425,7 +425,7 @@ abstract class IntegrationTestCase extends TestCase
     {
         if ($this->_securityToken === true) {
             $keys = Hash::flatten($data);
-            $tokenData = $this->_buildFieldToken($url, $keys);
+            $tokenData = $this->_buildFieldToken($url, array_keys($keys));
             $data['_Token'] = $tokenData;
         }
 
