@@ -17,8 +17,8 @@ namespace Cake\Database\Expression;
 use Cake\Database\Exception;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
-use Cake\Database\TypeMapTrait;
 use Cake\Database\ValueBinder;
+use Cake\Datasource\TypeMapTrait;
 
 /**
  * An expression object to contain values being inserted.
@@ -58,7 +58,7 @@ class ValuesExpression implements ExpressionInterface
      * Constructor
      *
      * @param array $columns The list of columns that are going to be part of the values.
-     * @param \Cake\Database\TypeMap $typeMap A dictionary of column -> type names
+     * @param \Cake\Datasource\TypeMap $typeMap A dictionary of column -> type names
      */
     public function __construct(array $columns, $typeMap)
     {

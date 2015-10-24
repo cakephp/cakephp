@@ -12,10 +12,9 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Database\Type;
+namespace Cake\Datasource\Type;
 
-use Cake\Database\Driver;
-use Cake\Database\Type;
+use Cake\Datasource\Type;
 use DateTime;
 use Exception;
 use RuntimeException;
@@ -83,10 +82,9 @@ class DateTimeType extends Type
      * Convert DateTime instance into strings.
      *
      * @param string|int|\DateTime $value The value to convert.
-     * @param Driver $driver The driver instance to convert with.
      * @return string
      */
-    public function toDatabase($value, Driver $driver)
+    public function toDatasource($value)
     {
         if ($value === null || is_string($value)) {
             return $value;
@@ -101,10 +99,9 @@ class DateTimeType extends Type
      * Convert strings into DateTime instances.
      *
      * @param string $value The value to convert.
-     * @param Driver $driver The driver instance to convert with.
      * @return \Cake\I18n\Time|\DateTime
      */
-    public function toPHP($value, Driver $driver)
+    public function toPHP($value)
     {
         if ($value === null || strpos($value, '0000-00-00') === 0) {
             return null;

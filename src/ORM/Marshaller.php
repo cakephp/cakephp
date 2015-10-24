@@ -17,8 +17,8 @@ namespace Cake\ORM;
 use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Database\Expression\TupleComparison;
-use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\Type;
 use RuntimeException;
 
 /**

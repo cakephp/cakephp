@@ -12,12 +12,10 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Database\Type;
+namespace Cake\Datasource\Type;
 
-use Cake\Database\Driver;
-use Cake\Database\Type;
+use Cake\Datasource\Type;
 use Cake\Utility\Text;
-use PDO;
 
 /**
  * Provides behavior for the uuid type
@@ -29,16 +27,15 @@ class UuidType extends StringType
      * Casts given value from a PHP type to one acceptable by database
      *
      * @param mixed $value value to be converted to database equivalent
-     * @param Driver $driver object from which database preferences and configuration will be extracted
      * @return mixed
      */
-    public function toDatabase($value, Driver $driver)
+    public function toDatasource($value)
     {
         if ($value === null || $value === '') {
             return null;
         }
 
-        return parent::toDatabase($value, $driver);
+        return parent::toDatasource($value);
     }
 
     /**

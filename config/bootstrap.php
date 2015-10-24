@@ -29,6 +29,15 @@ class_alias('Cake\Mailer\Email', 'Cake\Network\Email\Email');
 class_alias('Cake\Mailer\Transport\MailTransport', 'Cake\Network\Email\MailTransport');
 class_alias('Cake\Mailer\Transport\SmtpTransport', 'Cake\Network\Email\SmtpTransport');
 
+// @deprecated Backwords compatibility for database types
+class_alias('Cake\Datasource\Type\BinaryType', 'Cake\Database\Type\BinaryType');
+class_alias('Cake\Datasource\Type\DateTimeType', 'Cake\Database\Type\DateTimeType');
+class_alias('Cake\Datasource\Type\DateType', 'Cake\Database\Type\DateType');
+class_alias('Cake\Datasource\Type\FloatType', 'Cake\Database\Type\FloatType');
+class_alias('Cake\Datasource\Type\IntegerType', 'Cake\Database\Type\IntegerType');
+class_alias('Cake\Datasource\Type\TimeType', 'Cake\Database\Type\TimeType');
+class_alias('Cake\Datasource\Type\UuidType', 'Cake\Database\Type\UuidType');
+
 require CAKE . 'basics.php';
 
 // Sets the initial router state so future reloads work.

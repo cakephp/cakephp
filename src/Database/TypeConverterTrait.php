@@ -14,6 +14,11 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\Type as DatabaseType;
+use Cake\Database\TypeInterface as DatabaseTypeInterface;
+use Cake\Datasource\Type as DatasourceType;
+use Cake\Datasource\TypeInterface;
+
 /**
  * Type converter trait
  */
@@ -25,17 +30,17 @@ trait TypeConverterTrait
      * and return relevant internal statement type
      *
      * @param mixed $value The value to cast
-     * @param \Cake\Database\Type|string $type The type name or type instance to use.
+     * @param \Cake\Datasource\TypeInterface|string $type The type name or type instance to use.
      * @return array list containing converted value and internal type
      */
     public function cast($value, $type)
     {
         if (is_string($type)) {
-            $type = Type::build($type);
+            $type = DatasourceType ::build($type);
         }
-        if ($type instanceof Type) {
-            $value = $type->toDatabase($value, $this->_driver);
-            $type = $type->toStatement($value, $this->_driver);
+        if ($type instanceof TypeInterface) {
+            $value = $type->toDatasource($value);
+            $type = ($type instanceof DatabaseTypeInterface) ? $type->toStatement($value, $this->_driver) : DatabaseType::toStatementType($type, $value, $this->_driver);
         }
         return [$value, $type];
     }

@@ -12,9 +12,8 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Database\Type;
+namespace Cake\Datasource\Type;
 
-use Cake\Database\Driver;
 use DateTime;
 
 class DateType extends DateTimeType
@@ -46,12 +45,11 @@ class DateType extends DateTimeType
      * Convert strings into Date instances.
      *
      * @param string $value The value to convert.
-     * @param Driver $driver The driver instance to convert with.
      * @return \Carbon\Carbon
      */
-    public function toPHP($value, Driver $driver)
+    public function toPHP($value)
     {
-        $date = parent::toPHP($value, $driver);
+        $date = parent::toPHP($value);
         if ($date instanceof DateTime) {
             $date->setTime(0, 0, 0);
         }
