@@ -14,7 +14,7 @@
  */
 namespace Cake\I18n;
 
-use Carbon\Carbon;
+use Cake\Chronos\Chronos;
 use DateTime;
 use DateTimeZone;
 use IntlDateFormatter;
@@ -25,7 +25,7 @@ use JsonSerializable;
  * formatting helpers
  *
  */
-class Time extends Carbon implements JsonSerializable
+class Time extends Chronos implements JsonSerializable
 {
 
     /**
@@ -156,36 +156,6 @@ class Time extends Carbon implements JsonSerializable
     public function nice($timezone = null, $locale = null)
     {
         return $this->i18nFormat(static::$niceFormat, $timezone, $locale);
-    }
-
-    /**
-     * Returns true if this object represents a date within the current week
-     *
-     * @return bool
-     */
-    public function isThisWeek()
-    {
-        return static::now($this->getTimezone())->format('W o') == $this->format('W o');
-    }
-
-    /**
-     * Returns true if this object represents a date within the current month
-     *
-     * @return bool
-     */
-    public function isThisMonth()
-    {
-        return static::now($this->getTimezone())->format('m Y') == $this->format('m Y');
-    }
-
-    /**
-     * Returns true if this object represents a date within the current year
-     *
-     * @return bool
-     */
-    public function isThisYear()
-    {
-        return static::now($this->getTimezone())->format('Y') == $this->format('Y');
     }
 
     /**
