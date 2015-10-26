@@ -36,7 +36,7 @@ class BoolType extends Type
      */
     public function toDatabase($value, Driver $driver)
     {
-        if ($value === true || $value === false) {
+        if ($value === true || $value === false || $value === null) {
             return $value;
         }
 

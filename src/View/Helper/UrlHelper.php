@@ -153,7 +153,7 @@ class UrlHelper extends Helper
 
         if (!empty($this->theme)) {
             $file = trim($file, '/');
-            $theme = Inflector::underscore($this->theme) . '/';
+            $theme = $this->_inflectThemeName($this->theme) . '/';
 
             if (DS === '\\') {
                 $file = str_replace('/', '\\', $file);
@@ -173,6 +173,17 @@ class UrlHelper extends Helper
             return str_replace('//', '/', $webPath . $asset[1]);
         }
         return $webPath . $asset[1];
+    }
+
+    /**
+     * Inflect the theme name to its underscored version.
+     *
+     * @param string $name Name of the theme which should be inflected.
+     * @return string Inflected name of the theme
+     */
+    protected function _inflectThemeName($name)
+    {
+        return Inflector::underscore($name);
     }
 
     /**

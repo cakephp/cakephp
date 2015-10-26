@@ -128,8 +128,12 @@ class Socket
             $this->disconnect();
         }
 
+        $hasProtocol = strpos($this->_config['host'], '://') !== false;
+        if ($hasProtocol) {
+            list($this->_config['protocol'], $this->_config['host']) = explode('://', $this->_config['host']);
+        }
         $scheme = null;
-        if (!empty($this->_config['protocol']) && strpos($this->_config['host'], '://') === false) {
+        if (!empty($this->_config['protocol'])) {
             $scheme = $this->_config['protocol'] . '://';
         }
 
