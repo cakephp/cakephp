@@ -402,7 +402,7 @@ class PaginatorHelper extends Helper
 
             $title = __(Inflector::humanize(preg_replace('/_id$/', '', $title)));
         }
-        $defaultDir = isset($options['direction']) ? $options['direction'] : 'asc';
+        $defaultDir = isset($options['direction']) ? strtolower($options['direction']) : 'asc';
         unset($options['direction']);
 
         $locked = isset($options['lock']) ? $options['lock'] : false;
