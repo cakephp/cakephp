@@ -75,7 +75,7 @@ class FixtureManager
      * Modify the debug mode.
      *
      * @param bool $debug Whether or not fixture debug mode is enabled.
-     * @retun void
+     * @return void
      */
     public function setDebug($debug)
     {
