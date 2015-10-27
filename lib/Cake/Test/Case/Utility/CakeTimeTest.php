@@ -1169,7 +1169,7 @@ class CakeTimeTest extends CakeTestCase {
 		$return = CakeTime::listTimezones(null, null, array('abbr' => true));
 		$this->assertTrue(isset($return['Asia']['Asia/Jakarta']));
 		$this->assertEquals('Jakarta - WIB', $return['Asia']['Asia/Jakarta']);
-		$this->assertEquals('Amsterdam - CEST', $return['Europe']['Europe/Amsterdam']);
+		$this->assertEquals('Regina - CST', $return['America']['America/Regina']);
 
 		$return = CakeTime::listTimezones(null, null, array(
 			'abbr' => true,
@@ -1177,7 +1177,7 @@ class CakeTimeTest extends CakeTestCase {
 			'after' => ')',
 		));
 		$this->assertEquals('Jayapura (WIT)', $return['Asia']['Asia/Jayapura']);
-		$this->assertEquals('Amsterdam (CEST)', $return['Europe']['Europe/Amsterdam']);
+		$this->assertEquals('Regina (CST)', $return['America']['America/Regina']);
 
 		$return = CakeTime::listTimezones('#^(America|Pacific)/#', null, false);
 		$this->assertTrue(isset($return['America/Argentina/Buenos_Aires']));
