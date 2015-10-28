@@ -21,7 +21,7 @@
         "php": ">=5.5.0",
         "ext-intl": "*",
         "ext-mbstring": "*",
-        "cakephp/chronos": "~1.0",
+        "cakephp/chronos": "*",
         "aura/intl": "1.1.*",
         "psr/log": "1.0"
     },

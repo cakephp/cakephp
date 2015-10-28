@@ -101,6 +101,11 @@ Configure::write('Session', [
 ]);
 
 Log::config([
+    // 'queries' => [
+    //     'className' => 'Console',
+    //     'stream' => 'php://stderr',
+    //     'scopes' => ['queriesLog']
+    // ],
     'debug' => [
         'engine' => 'Cake\Log\Engine\FileLog',
         'levels' => ['notice', 'info', 'debug'],
@@ -113,6 +118,7 @@ Log::config([
     ]
 ]);
 
-Carbon\Carbon::setTestNow(Carbon\Carbon::now());
+Cake\Chronos\Chronos::setTestNow(Cake\Chronos\Chronos::now());
+Cake\Chronos\Date::setTestNow(Cake\Chronos\Date::now());
 
 ini_set('intl.default_locale', 'en_US');
