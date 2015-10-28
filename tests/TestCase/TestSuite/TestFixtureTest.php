@@ -228,9 +228,11 @@ class TestFixtureTest extends TestCase
             ->will($this->returnValue(['sql', 'sql']));
         $fixture->schema($table);
 
-        $statement = $this->getMock('\PDOStatement', ['closeCursor']);
+        $statement = $this->getMock('\PDOStatement', ['execute', 'closeCursor']);
         $statement->expects($this->atLeastOnce())->method('closeCursor');
-        $db->expects($this->exactly(2))->method('execute')
+        $statement->expects($this->atLeastOnce())->method('execute');
+        $db->expects($this->exactly(2))
+            ->method('prepare')
             ->will($this->returnValue($statement));
         $this->assertTrue($fixture->create($db));
     }
