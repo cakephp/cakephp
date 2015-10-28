@@ -34,7 +34,7 @@ class TimeHelper extends AppHelper {
 /**
  * CakeTime instance
  *
- * @var stdClass
+ * @var CakeTime
  */
 	protected $_engine = null;
 
@@ -193,7 +193,7 @@ class TimeHelper extends AppHelper {
 /**
  * Returns a formatted descriptive date string for given datetime string.
  *
- * @param int|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime objectp
+ * @param int|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object.
  * @param string|DateTimeZone $timezone User's timezone string or DateTimeZone object
  * @return string Described, relative date string
  * @see CakeTime::niceShort()
@@ -465,7 +465,7 @@ class TimeHelper extends AppHelper {
  * ```
  *   $this->Time->format('2012-02-15', '%m-%d-%Y'); // returns 02-15-2012
  *   $this->Time->format('2012-02-15 23:01:01', '%c'); // returns preferred date and time based on configured locale
- *   $this->Time->format('0000-00-00', '%d-%m-%Y', 'N/A'); // return N/A becuase an invalid date was passed
+ *   $this->Time->format('0000-00-00', '%d-%m-%Y', 'N/A'); // return N/A because an invalid date was passed
  *   $this->Time->format('2012-02-15 23:01:01', '%c', 'N/A', 'America/New_York'); // converts passed date to timezone
  * ```
  *
