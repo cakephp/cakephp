@@ -61,14 +61,6 @@ class Time extends Chronos implements JsonSerializable
      * @see \Cake\I18n\Time::nice()
      */
     public static $niceFormat = [IntlDateFormatter::MEDIUM, IntlDateFormatter::SHORT];
-
-    /**
-     * The default locale to be used for displaying formatted date strings.
-     *
-     * @var string
-     */
-    public static $defaultLocale;
-
     /**
      * The format to use when formatting a time using `Cake\I18n\Time::timeAgoInWords()`
      * and the difference is more than `Cake\I18n\Time::$wordEnd`
@@ -102,13 +94,6 @@ class Time extends Chronos implements JsonSerializable
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
     public static $wordEnd = '+1 month';
-
-    /**
-     * In-memory cache of date formatters
-     *
-     * @var array
-     */
-    protected static $_formatters = [];
 
     /**
      * {@inheritDoc}

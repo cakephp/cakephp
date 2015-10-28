@@ -24,6 +24,19 @@ use IntlDateFormatter;
  */
 trait DateFormatTrait
 {
+    /**
+     * The default locale to be used for displaying formatted date strings.
+     *
+     * @var string
+     */
+    public static $defaultLocale;
+
+    /**
+     * In-memory cache of date formatters
+     *
+     * @var array
+     */
+    protected static $_formatters = [];
 
     /**
      * The format to use when when converting this object to json
@@ -169,7 +182,7 @@ trait DateFormatTrait
             );
         }
 
-        return static::$_formatters[$key]->format($date);
+        return static::$_formatters[$key]->format($date->format('U'));
     }
 
     /**
@@ -259,8 +272,7 @@ trait DateFormatTrait
         $time = $formatter->parse($time);
         if ($time) {
             $result = new static('@' . $time);
-            $result->setTimezone(date_default_timezone_get());
-            return $result;
+            return $result->setTimezone(date_default_timezone_get());
         }
         return null;
     }
