@@ -138,7 +138,7 @@ class AuthComponent extends Component
      * - `storage` - Storage class to use for persisting user record. When using
      *   stateless authenticator you should set this to 'Memory'. Defaults to 'Session'.
      *
-     * - 'checkAuthIn' - Name of event for which initial auth checks should be done.
+     * - `checkAuthIn` - Name of event for which initial auth checks should be done.
      *   Defaults to 'Controller.startup'. You can set it to 'Controller.initialize'
      *   if you want the check to be done before controller's beforeFilter() is run.
      *
