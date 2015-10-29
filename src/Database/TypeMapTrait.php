@@ -34,7 +34,7 @@ trait TypeMapTrait
      */
     public function typeMap($typeMap = null)
     {
-        if (!$this->_typeMap) {
+        if ($this->_typeMap === null) {
             $this->_typeMap = new TypeMap();
         }
         if ($typeMap === null) {
