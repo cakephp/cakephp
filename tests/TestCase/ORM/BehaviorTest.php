@@ -50,6 +50,13 @@ class TestBehavior extends Behavior
     public function buildRules()
     {
     }
+
+    /**
+     * Test for event bindings.
+     */
+    public function afterSaveCommit()
+    {
+    }
 }
 
 /**
@@ -209,6 +216,7 @@ class BehaviorTest extends TestCase
         $behavior = new TestBehavior($table);
         $expected = [
             'Model.beforeFind' => 'beforeFind',
+            'Model.afterSaveCommit' => 'afterSaveCommit',
             'Model.buildRules' => 'buildRules',
             'Model.beforeRules' => 'beforeRules',
             'Model.afterRules' => 'afterRules',
@@ -229,6 +237,10 @@ class BehaviorTest extends TestCase
             'Model.beforeFind' => [
                 'priority' => 10,
                 'callable' => 'beforeFind'
+            ],
+            'Model.afterSaveCommit' => [
+                'priority' => 10,
+                'callable' => 'afterSaveCommit'
             ],
             'Model.beforeRules' => [
                 'priority' => 10,
