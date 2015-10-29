@@ -170,10 +170,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function addDefaultTypes(Table $table)
     {
         $alias = $table->alias();
-        $schema = $table->schema();
+        $map = $table->schema()->typeMap();
         $fields = [];
-        foreach ($schema->columns() as $f) {
-            $fields[$f] = $fields[$alias . '.' . $f] = $schema->columnType($f);
+        foreach ($map as $f => $type) {
+            $fields[$f] = $fields[$alias . '.' . $f] = $type;
         }
         $this->typeMap()->addDefaults($fields);
 
