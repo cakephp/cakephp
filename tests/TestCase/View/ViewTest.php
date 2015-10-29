@@ -347,11 +347,6 @@ class ViewTest extends TestCase
         $request->params['pass'] = ['home'];
 
         $ThemeView = new TestView(null, null, null, $viewOptions);
-        $expected = TEST_APP . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS . 'src' . DS . 'Template' . DS . 'Pages' . DS . 'index.ctp';
-        $result = $ThemeView->getViewFileName('Company/TestPluginThree./Pages/index');
-        $this->assertPathEquals($expected, $result);
-
-        $ThemeView = new TestView(null, null, null, $viewOptions);
         $ThemeView->theme = 'TestTheme';
         $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Pages' . DS . 'home.ctp';
         $result = $ThemeView->getViewFileName('home');
@@ -405,6 +400,34 @@ class ViewTest extends TestCase
         $expected = Plugin::path('TestPlugin') . 'src' . DS . 'Template' . DS . 'Layout' . DS . 'default.ctp';
         $result = $View->getLayoutFileName();
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test that plugin files with absolute file paths are scoped
+     * to the plugin and do now allow any file path.
+     *
+     * @expectedException Cake\View\Exception\MissingTemplateException
+     * @return void
+     */
+    public function testPluginGetTemplateAbsoluteFail()
+    {
+        $request = $this->getMock('Cake\Network\Request');
+        $response = $this->getMock('Cake\Network\Response');
+
+        $viewOptions = [
+            'plugin' => null,
+            'name' => 'Pages',
+            'viewPath' => 'Pages'
+        ];
+        $request->action = 'display';
+        $request->params['pass'] = ['home'];
+
+        $view = new TestView(null, null, null, $viewOptions);
+        $expected = TEST_APP . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS . 'src' . DS . 'Template' . DS . 'Pages' . DS . 'index.ctp';
+        $result = $view->getViewFileName('Company/TestPluginThree./Pages/index');
+        $this->assertPathEquals($expected, $result);
+
+        $view->getViewFileName('Company/TestPluginThree./etc/passwd');
     }
 
     /**

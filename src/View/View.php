@@ -1035,9 +1035,6 @@ class View implements EventDispatcherInterface
             $name = $templatePath . $subDir . $this->_inflectViewFileName($name);
         } elseif (strpos($name, DS) !== false) {
             if ($name[0] === DS || $name[1] === ':') {
-                if (is_file($name)) {
-                    return $name;
-                }
                 $name = trim($name, DS);
             } elseif (!$plugin || $this->templatePath !== $this->name) {
                 $name = $templatePath . $subDir . $name;
