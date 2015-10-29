@@ -381,7 +381,7 @@ class Table
     }
 
     /**
-     * Returns an array where the kyes are the column names in the schema
+     * Returns an array where the keys are the column names in the schema
      * and the values the database type they have.
      *
      * @return array
