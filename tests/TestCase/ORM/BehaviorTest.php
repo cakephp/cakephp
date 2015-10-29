@@ -57,6 +57,13 @@ class TestBehavior extends Behavior
     public function afterSaveCommit()
     {
     }
+
+    /**
+     * Test for event bindings.
+     */
+    public function afterDeleteCommit()
+    {
+    }
 }
 
 /**
@@ -220,6 +227,7 @@ class BehaviorTest extends TestCase
             'Model.buildRules' => 'buildRules',
             'Model.beforeRules' => 'beforeRules',
             'Model.afterRules' => 'afterRules',
+            'Model.afterDeleteCommit' => 'afterDeleteCommit',
         ];
         $this->assertEquals($expected, $behavior->implementedEvents());
     }
@@ -253,6 +261,10 @@ class BehaviorTest extends TestCase
             'Model.buildRules' => [
                 'priority' => 10,
                 'callable' => 'buildRules'
+            ],
+            'Model.afterDeleteCommit' => [
+                'priority' => 10,
+                'callable' => 'afterDeleteCommit'
             ],
         ];
         $this->assertEquals($expected, $behavior->implementedEvents());
