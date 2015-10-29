@@ -135,11 +135,11 @@ class CounterCacheBehavior extends Behavior
     protected function _processAssociation(Event $event, EntityInterface $entity, Association $assoc, array $settings)
     {
         $foreignKeys = (array)$assoc->foreignKey();
-        $primaryKeys = (array)$assoc->target()->primaryKey();
+        $primaryKeys = (array)$assoc->bindingKey();
         $countConditions = $entity->extract($foreignKeys);
         $updateConditions = array_combine($primaryKeys, $countConditions);
-
         $countOriginalConditions = $entity->extractOriginalChanged($foreignKeys);
+
         if ($countOriginalConditions !== []) {
             $updateOriginalConditions = array_combine($primaryKeys, $countOriginalConditions);
         }
