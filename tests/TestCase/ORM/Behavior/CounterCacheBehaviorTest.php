@@ -80,7 +80,7 @@ class CounterCacheBehaviorTest extends TestCase
             'connection' => $this->connection
         ]);
 
-        $this->user_category_posts = new Table([
+        $this->userCategoryPosts = new Table([
             'alias' => 'UserCategoryPosts',
             'table' => 'counter_cache_user_category_posts',
             'connection' => $this->connection
@@ -372,7 +372,7 @@ class CounterCacheBehaviorTest extends TestCase
         $this->assertEquals(2, $before->get('post_count'));
         $this->assertEquals(3, $after->get('post_count'));
     }
-    
+
     /**
      * Tests to see that the binding key configuration is respected.
      *
@@ -384,20 +384,20 @@ class CounterCacheBehaviorTest extends TestCase
             'bindingKey' => ['category_id', 'user_id'],
             'foreignKey' => ['category_id', 'user_id']
         ]);
-        $this->post->association('UserCategoryPosts')->target($this->user_category_posts);
+        $this->post->association('UserCategoryPosts')->target($this->userCategoryPosts);
         $this->post->addBehavior('CounterCache', [
             'UserCategoryPosts' => ['post_count']
         ]);
-        
-        $before = $this->user_category_posts->find()
+
+        $before = $this->userCategoryPosts->find()
             ->where(['user_id' => 1, 'category_id' => 2])
             ->first();
         $entity = $this->_getEntity()->set('category_id', 2);
         $this->post->save($entity);
-        $after = $this->user_category_posts->find()
+        $after = $this->userCategoryPosts->find()
             ->where(['user_id' => 1, 'category_id' => 2])
             ->first();
-        
+
         $this->assertEquals(1, $before->get('post_count'));
         $this->assertEquals(2, $after->get('post_count'));
     }

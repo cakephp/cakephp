@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         1.2.0
+ * @since         3.1.4
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\Fixture;
@@ -17,8 +17,7 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Short description for class.
- *
+ * CounterCache test fixture for testing binding keys.
  */
 class CounterCacheUserCategoryPostsFixture extends TestFixture
 {

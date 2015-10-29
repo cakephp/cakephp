@@ -139,7 +139,7 @@ class CounterCacheBehavior extends Behavior
         $countConditions = $entity->extract($foreignKeys);
         $updateConditions = array_combine($primaryKeys, $countConditions);
         $countOriginalConditions = $entity->extractOriginalChanged($foreignKeys);
-        
+
         if ($countOriginalConditions !== []) {
             $updateOriginalConditions = array_combine($primaryKeys, $countOriginalConditions);
         }
