@@ -67,7 +67,6 @@ class BasicsTest extends TestCase
         $two = [];
         $result = array_diff_key($one, $two);
         $this->assertSame($one, $result);
-
     }
 
     /**
