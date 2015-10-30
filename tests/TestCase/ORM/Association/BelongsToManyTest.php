@@ -828,6 +828,110 @@ class BelongsToManyTest extends TestCase
         $this->assertFalse($entity->dirty('tags'));
     }
 
+
+    /**
+     * Tests that replaceLinks() will contain() the target table when
+     * there are conditions present on the association.
+     *
+     * @return void
+     */
+    public function testReplaceLinkWithConditions()
+    {
+        $connection = ConnectionManager::get('test');
+        $joint = $this->getMock(
+            '\Cake\ORM\Table',
+            ['delete', 'find'],
+            [['alias' => 'ArticlesTags', 'connection' => $connection]]
+        );
+        $config = [
+            'sourceTable' => $this->article,
+            'targetTable' => $this->tag,
+            'through' => $joint,
+            'joinTable' => 'tags_articles',
+            'conditions' => ['Tags.id' => 'blah'],
+        ];
+        $assoc = $this->getMock(
+            '\Cake\ORM\Association\BelongsToMany',
+            ['_collectJointEntities', '_saveTarget'],
+            ['tags', $config]
+        );
+        $assoc->junction();
+
+        $this->article
+            ->association('ArticlesTags')
+            ->conditions(['foo' => 1]);
+
+        $query1 = $this->getMock(
+            '\Cake\ORM\Query',
+            ['where', 'andWhere', 'addDefaultTypes', 'contain'],
+            [$connection, $joint]
+        );
+        $query1->expects($this->at(0))
+            ->method('where')
+            ->with(['foo' => 1])
+            ->will($this->returnSelf());
+        $query1->expects($this->at(1))
+            ->method('where')
+            ->with(['article_id' => 1])
+            ->will($this->returnSelf());
+        $query1->expects($this->at(2))
+            ->method('contain')
+            ->with('Tags')
+            ->will($this->returnSelf());
+        $query1->expects($this->at(3))
+            ->method('andWhere')
+            ->with($config['conditions'])
+            ->will($this->returnSelf());
+
+        $existing = [
+            new Entity(['article_id' => 1, 'tag_id' => 2]),
+            new Entity(['article_id' => 1, 'tag_id' => 4]),
+            new Entity(['article_id' => 1, 'tag_id' => 5]),
+            new Entity(['article_id' => 1, 'tag_id' => 6])
+        ];
+        $query1->setResult(new \ArrayIterator($existing));
+
+        $joint->expects($this->at(0))->method('find')
+            ->with('all')
+            ->will($this->returnValue($query1));
+
+        $opts = ['markNew' => false];
+        $tags = [
+            new Entity(['id' => 2], $opts),
+            new Entity(['id' => 3], $opts),
+            new Entity(['id' => 6])
+        ];
+        $entity = new Entity(['id' => 1, 'test' => $tags], $opts);
+
+        $jointEntities = [
+            new Entity(['article_id' => 1, 'tag_id' => 2])
+        ];
+        $assoc->expects($this->once())->method('_collectJointEntities')
+            ->with($entity, $tags)
+            ->will($this->returnValue($jointEntities));
+
+        $joint->expects($this->at(1))
+            ->method('delete')
+            ->with($existing[1]);
+        $joint->expects($this->at(2))
+            ->method('delete')
+            ->with($existing[2]);
+
+        $options = ['foo' => 'bar'];
+        $assoc->expects($this->once())
+            ->method('_saveTarget')
+            ->with($entity, [1 => $tags[1], 2 => $tags[2]], $options + ['associated' => false])
+            ->will($this->returnCallback(function ($entity, $inserts) use ($tags) {
+                $this->assertSame([1 => $tags[1], 2 => $tags[2]], $inserts);
+                $entity->tags = $inserts;
+                return true;
+            }));
+
+        $assoc->replaceLinks($entity, $tags, $options + ['associated' => false]);
+        $this->assertSame($tags, $entity->tags);
+        $this->assertFalse($entity->dirty('tags'));
+    }
+
     /**
      * Provider for empty values
      *

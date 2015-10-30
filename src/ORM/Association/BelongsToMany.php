@@ -758,6 +758,7 @@ class BelongsToMany extends Association
 
                 $associationConditions = $this->conditions();
                 if ($associationConditions) {
+                    $existing->contain($this->target()->alias());
                     $existing->andWhere($associationConditions);
                 }
 
