@@ -1074,7 +1074,7 @@ class Validation {
 		if (!static::uploadError($file, $options['optional'])) {
 			return false;
 		}
-		if ($options['optional'] && (int) $file['error'] === UPLOAD_ERR_NO_FILE) {
+		if ($options['optional'] && (int)$file['error'] === UPLOAD_ERR_NO_FILE) {
 			return true;
 		}
 		if (isset($options['minSize']) && !static::fileSize($file, '>=', $options['minSize'])) {
