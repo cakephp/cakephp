@@ -1035,10 +1035,7 @@ class App extends Object {
 					require LIBS . 'folder.php';
 				}
 				$Folder =& new Folder();
-				$ignorePaths = Configure::read('ignorePaths');
-				if(empty($ignorePaths)) {
-					$ignorePaths = array('.svn', '.git', 'CVS', 'tests', 'templates');
-				}
+				$ignorePaths = array('.svn', '.git', 'CVS', 'tests', 'templates', 'node_modules');
 				$directories = $Folder->tree($path, $ignorePaths, 'dir');
 				sort($directories);
 				$this->__paths[$path] = $directories;
