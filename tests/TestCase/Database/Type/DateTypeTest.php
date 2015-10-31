@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Database\Type;
 
+use Cake\Chronos\Date;
 use Cake\Database\Type;
 use Cake\Database\Type\DateType;
 use Cake\I18n\Time;
@@ -48,7 +49,7 @@ class DateTypeTest extends TestCase
         $this->assertNull($this->type->toPHP('0000-00-00', $this->driver));
 
         $result = $this->type->toPHP('2001-01-04', $this->driver);
-        $this->assertInstanceOf('DateTime', $result);
+        $this->assertInstanceOf('DateTimeImmutable', $result);
         $this->assertEquals('2001', $result->format('Y'));
         $this->assertEquals('01', $result->format('m'));
         $this->assertEquals('04', $result->format('d'));
@@ -81,8 +82,7 @@ class DateTypeTest extends TestCase
      */
     public function marshalProvider()
     {
-        $date = new Time('@1392387900');
-        $date->setTime(0, 0, 0);
+        $date = new Date('@1392387900');
 
         return [
             // invalid types.
@@ -98,7 +98,7 @@ class DateTypeTest extends TestCase
             // valid string types
             ['1392387900', $date],
             [1392387900, $date],
-            ['2014-02-14', new Time('2014-02-14')],
+            ['2014-02-14', new Date('2014-02-14')],
 
             // valid array types
             [
@@ -107,7 +107,7 @@ class DateTypeTest extends TestCase
             ],
             [
                 ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
-                new Time('2014-02-14 00:00:00')
+                new Date('2014-02-14')
             ],
             [
                 [
@@ -115,7 +115,7 @@ class DateTypeTest extends TestCase
                     'hour' => 1, 'minute' => 14, 'second' => 15,
                     'meridian' => 'am'
                 ],
-                new Time('2014-02-14 00:00:00')
+                new Date('2014-02-14')
             ],
             [
                 [
@@ -123,30 +123,30 @@ class DateTypeTest extends TestCase
                     'hour' => 1, 'minute' => 14, 'second' => 15,
                     'meridian' => 'pm'
                 ],
-                new Time('2014-02-14 00:00:00')
+                new Date('2014-02-14')
             ],
             [
                 [
                     'year' => 2014, 'month' => 2, 'day' => 14,
                 ],
-                new Time('2014-02-14 00:00:00')
+                new Date('2014-02-14')
             ],
 
             // Invalid array types
             [
                 ['year' => 'farts', 'month' => 'derp'],
-                new Time(date('Y-m-d 00:00:00'))
+                new Date(date('Y-m-d'))
             ],
             [
                 ['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
-                new Time(date('Y-m-d 00:00:00'))
+                new Date(date('Y-m-d'))
             ],
             [
                 [
                     'year' => '2014', 'month' => '02', 'day' => '14',
                     'hour' => 'farts', 'minute' => 'farts'
                 ],
-                new Time('2014-02-14 00:00:00')
+                new Date('2014-02-14')
             ],
         ];
     }

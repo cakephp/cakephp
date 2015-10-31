@@ -2087,7 +2087,7 @@ class MarshallerTest extends TestCase
         ];
         $marshall = new Marshaller($this->comments);
         $result = $marshall->merge($entity, $data);
-        $this->assertInstanceOf('DateTime', $entity->created);
+        $this->assertInstanceOf('DateTimeImmutable', $entity->created);
         $this->assertEquals('2014-02-14', $entity->created->format('Y-m-d'));
     }
 

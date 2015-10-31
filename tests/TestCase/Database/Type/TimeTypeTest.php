@@ -53,7 +53,7 @@ class TimeTypeTest extends TestCase
         $this->assertEquals('15', $result->format('s'));
 
         $result = $this->type->toPHP('16:30:15', $this->driver);
-        $this->assertInstanceOf('DateTime', $result);
+        $this->assertInstanceOf('DateTimeImmutable', $result);
         $this->assertEquals('16', $result->format('H'));
         $this->assertEquals('30', $result->format('i'));
         $this->assertEquals('15', $result->format('s'));
