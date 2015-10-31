@@ -857,9 +857,6 @@ class View extends Object {
 			$name = $this->viewPath . DS . $subDir . Inflector::underscore($name);
 		} elseif (strpos($name, DS) !== false) {
 			if ($name{0} === DS || $name{1} === ':') {
-				if (is_file($name)) {
-					return $name;
-				}
 				$name = trim($name, DS);
 			} else if ($name[0] === '.') {
 				$name = substr($name, 3);
