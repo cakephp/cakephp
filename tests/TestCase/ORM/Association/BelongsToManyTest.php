@@ -840,7 +840,7 @@ class BelongsToManyTest extends TestCase
         $connection = ConnectionManager::get('test');
         $joint = $this->getMock(
             '\Cake\ORM\Table',
-            ['delete', 'find'],
+            ['find'],
             [['alias' => 'ArticlesTags', 'connection' => $connection]]
         );
         $config = [
@@ -852,14 +852,10 @@ class BelongsToManyTest extends TestCase
         ];
         $assoc = $this->getMock(
             '\Cake\ORM\Association\BelongsToMany',
-            ['_collectJointEntities', '_saveTarget'],
+            ['_collectJointEntities'],
             ['tags', $config]
         );
         $assoc->junction();
-
-        $this->article
-            ->association('ArticlesTags')
-            ->conditions(['foo' => 1]);
 
         $query1 = $this->getMock(
             '\Cake\ORM\Query',
@@ -868,11 +864,9 @@ class BelongsToManyTest extends TestCase
         );
         $query1->expects($this->at(0))
             ->method('where')
-            ->with(['foo' => 1])
             ->will($this->returnSelf());
         $query1->expects($this->at(1))
             ->method('where')
-            ->with(['article_id' => 1])
             ->will($this->returnSelf());
         $query1->expects($this->at(2))
             ->method('contain')
@@ -882,54 +876,19 @@ class BelongsToManyTest extends TestCase
             ->method('andWhere')
             ->with($config['conditions'])
             ->will($this->returnSelf());
-
-        $existing = [
-            new Entity(['article_id' => 1, 'tag_id' => 2]),
-            new Entity(['article_id' => 1, 'tag_id' => 4]),
-            new Entity(['article_id' => 1, 'tag_id' => 5]),
-            new Entity(['article_id' => 1, 'tag_id' => 6])
-        ];
-        $query1->setResult(new \ArrayIterator($existing));
+        $query1->setResult(new \ArrayIterator([]));
 
         $joint->expects($this->at(0))->method('find')
             ->with('all')
             ->will($this->returnValue($query1));
 
-        $opts = ['markNew' => false];
-        $tags = [
-            new Entity(['id' => 2], $opts),
-            new Entity(['id' => 3], $opts),
-            new Entity(['id' => 6])
-        ];
-        $entity = new Entity(['id' => 1, 'test' => $tags], $opts);
+        $entity = new Entity(['id' => 1, 'test' => []]);
 
-        $jointEntities = [
-            new Entity(['article_id' => 1, 'tag_id' => 2])
-        ];
         $assoc->expects($this->once())->method('_collectJointEntities')
-            ->with($entity, $tags)
-            ->will($this->returnValue($jointEntities));
+            ->with($entity, [])
+            ->will($this->returnValue([]));
 
-        $joint->expects($this->at(1))
-            ->method('delete')
-            ->with($existing[1]);
-        $joint->expects($this->at(2))
-            ->method('delete')
-            ->with($existing[2]);
-
-        $options = ['foo' => 'bar'];
-        $assoc->expects($this->once())
-            ->method('_saveTarget')
-            ->with($entity, [1 => $tags[1], 2 => $tags[2]], $options + ['associated' => false])
-            ->will($this->returnCallback(function ($entity, $inserts) use ($tags) {
-                $this->assertSame([1 => $tags[1], 2 => $tags[2]], $inserts);
-                $entity->tags = $inserts;
-                return true;
-            }));
-
-        $assoc->replaceLinks($entity, $tags, $options + ['associated' => false]);
-        $this->assertSame($tags, $entity->tags);
-        $this->assertFalse($entity->dirty('tags'));
+        $assoc->replaceLinks($entity, [], ['associated' => false]);
     }
 
     /**
