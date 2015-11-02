@@ -25,6 +25,8 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\I18n\Time;
+use Cake\ORM\AssociationCollection;
+use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
@@ -4122,6 +4124,318 @@ class TableTest extends TestCase
         $this->assertCount($sizeArticles - count($articlesToUnlink), $authors->Articles->findAllByAuthorId($author->id));
         $this->assertCount($sizeArticles, $author->articles);
         $this->assertFalse($author->dirty('articles'));
+    }
+
+    /**
+     * Integration test for replacing entities with HasMany and failing transaction. False should be returned when
+     * unlinking fails while replacing
+     *
+     * @return void
+     */
+    public function testReplaceHasManyOnError()
+    {
+        $articles = $this->getMock(
+            'Cake\ORM\Table',
+            ['updateAll'],
+            [[
+                'connection' => $this->connection,
+                'alias' => 'Articles',
+                'table' => 'articles',
+            ]]
+        );
+
+        $articles->method('updateAll')->willReturn(false);
+
+        $associations = new AssociationCollection();
+
+        $hasManyArticles = $this->getMock(
+            'Cake\ORM\Association\HasMany',
+            ['target'],
+            [
+                'articles',
+                [
+                    'target' => $articles,
+                    'foreignKey' => 'author_id',
+                ]
+            ]
+        );
+        $hasManyArticles->method('target')->willReturn($articles);
+
+        $associations->add('articles', $hasManyArticles);
+
+        $authors = new Table([
+            'connection' => $this->connection,
+            'alias' => 'Authors',
+            'table' => 'authors',
+            'associations' => $associations
+        ]);
+        $authors->Articles->source($authors);
+
+        $author = $authors->newEntity(['name' => 'mylux']);
+        $author = $authors->save($author);
+
+        $newArticles = $articles->newEntities(
+            [
+                [
+                    'title' => 'New bakery next corner',
+                    'body' => 'They sell tastefull cakes'
+                ],
+                [
+                    'title' => 'Spicy cake recipe',
+                    'body' => 'chocolate and peppers'
+                ]
+            ]
+        );
+
+        $sizeArticles = count($newArticles);
+
+        $this->assertTrue($authors->Articles->link($author, $newArticles));
+        $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles);
+        $this->assertEquals(count($author->articles), $sizeArticles);
+
+        $newArticles = array_merge(
+            $author->articles,
+            $articles->newEntities(
+                [
+                    [
+                        'title' => 'Cheese cake recipe',
+                        'body' => 'The secrets of mixing salt and sugar'
+                    ],
+                    [
+                        'title' => 'Not another piece of cake',
+                        'body' => 'This is the best'
+                    ]
+                ]
+            )
+        );
+        unset($newArticles[0]);
+
+        $this->assertFalse($authors->Articles->replace($author, $newArticles));
+        $this->assertCount($sizeArticles, $authors->Articles->findAllByAuthorId($author->id));
+    }
+
+
+    /**
+     * Integration test for replacing entities which depend on their source entity with HasMany and failing transaction. False should be returned when
+     * unlinking fails while replacing
+     *
+     * @return void
+     */
+    public function testReplaceHasManyOnErrorDependent()
+    {
+        $articles = $this->getMock(
+            'Cake\ORM\Table',
+            ['deleteAll'],
+            [[
+                'connection' => $this->connection,
+                'alias' => 'Articles',
+                'table' => 'articles',
+            ]]
+        );
+
+        $articles->method('deleteAll')->willReturn(false);
+
+        $associations = new AssociationCollection();
+
+        $hasManyArticles = $this->getMock(
+            'Cake\ORM\Association\HasMany',
+            ['target'],
+            [
+                'articles',
+                [
+                    'target' => $articles,
+                    'foreignKey' => 'author_id',
+                    'dependent' => true
+                ]
+            ]
+        );
+        $hasManyArticles->method('target')->willReturn($articles);
+
+        $associations->add('articles', $hasManyArticles);
+
+        $authors = new Table([
+            'connection' => $this->connection,
+            'alias' => 'Authors',
+            'table' => 'authors',
+            'associations' => $associations
+        ]);
+        $authors->Articles->source($authors);
+
+        $author = $authors->newEntity(['name' => 'mylux']);
+        $author = $authors->save($author);
+
+        $newArticles = $articles->newEntities(
+            [
+                [
+                    'title' => 'New bakery next corner',
+                    'body' => 'They sell tastefull cakes'
+                ],
+                [
+                    'title' => 'Spicy cake recipe',
+                    'body' => 'chocolate and peppers'
+                ]
+            ]
+        );
+
+        $sizeArticles = count($newArticles);
+
+        $this->assertTrue($authors->Articles->link($author, $newArticles));
+        $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles);
+        $this->assertEquals(count($author->articles), $sizeArticles);
+
+        $newArticles = array_merge(
+            $author->articles,
+            $articles->newEntities(
+                [
+                    [
+                        'title' => 'Cheese cake recipe',
+                        'body' => 'The secrets of mixing salt and sugar'
+                    ],
+                    [
+                        'title' => 'Not another piece of cake',
+                        'body' => 'This is the best'
+                    ]
+                ]
+            )
+        );
+        unset($newArticles[0]);
+
+        $this->assertFalse($authors->Articles->replace($author, $newArticles));
+        $this->assertCount($sizeArticles, $authors->Articles->findAllByAuthorId($author->id));
+    }
+
+
+    /**
+     * Integration test for replacing entities which depend on their source entity with HasMany and failing transaction. False should be returned when
+     * unlinking fails while replacing even when cascadeCallbacks is enabled
+     *
+     * @return void
+     */
+    public function testReplaceHasManyOnErrorDependentCascadeCallbacks()
+    {
+        $articles = $this->getMock(
+            'Cake\ORM\Table',
+            ['delete'],
+            [[
+                'connection' => $this->connection,
+                'alias' => 'Articles',
+                'table' => 'articles',
+            ]]
+        );
+
+        $articles->method('delete')->willReturn(false);
+
+        $associations = new AssociationCollection();
+
+        $hasManyArticles = $this->getMock(
+            'Cake\ORM\Association\HasMany',
+            ['target'],
+            [
+                'articles',
+                [
+                    'target' => $articles,
+                    'foreignKey' => 'author_id',
+                    'dependent' => true,
+                    'cascadeCallbacks' => true
+                ]
+            ]
+        );
+        $hasManyArticles->method('target')->willReturn($articles);
+
+        $associations->add('articles', $hasManyArticles);
+
+        $authors = new Table([
+            'connection' => $this->connection,
+            'alias' => 'Authors',
+            'table' => 'authors',
+            'associations' => $associations
+        ]);
+        $authors->Articles->source($authors);
+
+        $author = $authors->newEntity(['name' => 'mylux']);
+        $author = $authors->save($author);
+
+        $newArticles = $articles->newEntities(
+            [
+                [
+                    'title' => 'New bakery next corner',
+                    'body' => 'They sell tastefull cakes'
+                ],
+                [
+                    'title' => 'Spicy cake recipe',
+                    'body' => 'chocolate and peppers'
+                ]
+            ]
+        );
+
+        $sizeArticles = count($newArticles);
+
+        $this->assertTrue($authors->Articles->link($author, $newArticles));
+        $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles);
+        $this->assertEquals(count($author->articles), $sizeArticles);
+
+        $newArticles = array_merge(
+            $author->articles,
+            $articles->newEntities(
+                [
+                    [
+                        'title' => 'Cheese cake recipe',
+                        'body' => 'The secrets of mixing salt and sugar'
+                    ],
+                    [
+                        'title' => 'Not another piece of cake',
+                        'body' => 'This is the best'
+                    ]
+                ]
+            )
+        );
+        unset($newArticles[0]);
+
+        $this->assertFalse($authors->Articles->replace($author, $newArticles));
+        $this->assertCount($sizeArticles, $authors->Articles->findAllByAuthorId($author->id));
+    }
+
+
+    /**
+     * Integration test for replacing entities with HasMany and an empty target list. The transaction must be successfull
+     *
+     * @return void
+     */
+    public function testReplaceHasManyEmptyList()
+    {
+        $authors = new Table([
+            'connection' => $this->connection,
+            'alias' => 'Authors',
+            'table' => 'authors',
+        ]);
+        $authors->hasMany('Articles');
+
+        $author = $authors->newEntity(['name' => 'mylux']);
+        $author = $authors->save($author);
+
+        $newArticles = $authors->Articles->newEntities(
+            [
+                [
+                    'title' => 'New bakery next corner',
+                    'body' => 'They sell tastefull cakes'
+                ],
+                [
+                    'title' => 'Spicy cake recipe',
+                    'body' => 'chocolate and peppers'
+                ]
+            ]
+        );
+
+        $sizeArticles = count($newArticles);
+
+        $this->assertTrue($authors->Articles->link($author, $newArticles));
+        $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles);
+        $this->assertEquals(count($author->articles), $sizeArticles);
+
+        $newArticles = [];
+
+        $this->assertTrue($authors->Articles->replace($author, $newArticles));
+        $this->assertCount(0, $authors->Articles->findAllByAuthorId($author->id));
     }
 
     /**
