@@ -368,6 +368,10 @@ class Marshaller
      */
     protected function _loadAssociatedByIds($assoc, $ids)
     {
+        if (empty($ids)) {
+            return [];
+        }
+
         $target = $assoc->target();
         $primaryKey = (array)$target->primaryKey();
         $multi = count($primaryKey) > 1;
