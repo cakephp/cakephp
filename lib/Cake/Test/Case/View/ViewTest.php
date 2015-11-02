@@ -396,6 +396,26 @@ class ViewTest extends CakeTestCase {
 	}
 
 /**
+ * Test that plugin files with absolute file paths are scoped
+ * to the plugin and do now allow any file path.
+ *
+ * @expectedException MissingViewException
+ * @return void
+ */
+	public function testPluginGetTemplateAbsoluteFail() {
+		$this->Controller->viewPath = 'Pages';
+		$this->Controller->action = 'display';
+		$this->Controller->params['pass'] = array('home');
+
+		$view = new TestThemeView($this->Controller);
+		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS . 'View' . DS . 'Pages' . DS . 'index.ctp';
+		$result = $view->getViewFileName('Company/TestPluginThree./Pages/index');
+		$this->assertPathEquals($expected, $result);
+
+		$view->getViewFileName('Company/TestPluginThree./etc/passwd');
+	}
+
+/**
  * Test getLayoutFileName method on plugin
  *
  * @return void
