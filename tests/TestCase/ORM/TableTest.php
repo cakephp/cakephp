@@ -4439,6 +4439,48 @@ class TableTest extends TestCase
     }
 
     /**
+     * Integration test for replacing entities with HasMany and no already persisted entities. The transaction must be successfull.
+     * Replace operation should prevent considering 0 changed records an error when they are not found in the table
+     *
+     * @return void
+     */
+    public function testReplaceHasManyNoPersistedEntities()
+    {
+        $authors = new Table([
+            'connection' => $this->connection,
+            'alias' => 'Authors',
+            'table' => 'authors',
+        ]);
+        $authors->hasMany('Articles');
+
+        $author = $authors->newEntity(['name' => 'mylux']);
+        $author = $authors->save($author);
+
+        $newArticles = $authors->Articles->newEntities(
+            [
+                [
+                    'title' => 'New bakery next corner',
+                    'body' => 'They sell tastefull cakes'
+                ],
+                [
+                    'title' => 'Spicy cake recipe',
+                    'body' => 'chocolate and peppers'
+                ]
+            ]
+        );
+
+        $authors->Articles->deleteAll(['1=1']);
+
+        $sizeArticles = count($newArticles);
+
+        $this->assertTrue($authors->Articles->link($author, $newArticles));
+        $this->assertEquals($authors->Articles->findAllByAuthorId($author->id)->count(), $sizeArticles);
+        $this->assertEquals(count($author->articles), $sizeArticles);
+        $this->assertTrue($authors->Articles->replace($author, $newArticles));
+        $this->assertCount($sizeArticles, $authors->Articles->findAllByAuthorId($author->id));
+    }
+
+    /**
      * Integration test for replacing entities with HasMany.
      *
      * @return void
