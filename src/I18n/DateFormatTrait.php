@@ -355,9 +355,9 @@ trait DateFormatTrait
     public function __debugInfo()
     {
         return [
-            'time' => $this->format(DateTime::ISO8601),
+            'time' => $this->toIso8601String(),
             'timezone' => $this->getTimezone()->getName(),
-            'fixedNowTime' => $this->hasTestNow() ? $this->getTestNow()->format(DateTime::ISO8601) : false
+            'fixedNowTime' => $this->hasTestNow() ? $this->getTestNow()->toIso8601String() : false
         ];
     }
 }

@@ -604,9 +604,9 @@ class TimeTest extends TestCase
     {
         $time = new Time('2014-04-20 10:10:10');
         $expected = [
-            'time' => '2014-04-20T10:10:10+0000',
+            'time' => '2014-04-20T10:10:10+00:00',
             'timezone' => 'UTC',
-            'fixedNowTime' => Time::getTestNow()->toISO8601String()
+            'fixedNowTime' => Time::getTestNow()->toIso8601String()
         ];
         $this->assertEquals($expected, $time->__debugInfo());
     }
