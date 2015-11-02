@@ -639,7 +639,7 @@ class QueryTest extends TestCase
      * result in a SQL error, but an internal exception
      *
      * @expectedException Cake\Database\Exception
-     * @expectedExceptionMessage Imposible to generate condition with empty list of values for field
+     * @expectedExceptionMessage Impossible to generate condition with empty list of values for field
      * @return void
      */
     public function testSelectWhereArrayTypeEmpty()
