@@ -723,6 +723,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function beforeFilter(Event $event)
     {
+        return null;
     }
 
     /**
@@ -735,6 +736,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function beforeRender(Event $event)
     {
+        return null;
     }
 
     /**
@@ -755,6 +757,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function beforeRedirect(Event $event, $url, Response $response)
     {
+        return null;
     }
 
     /**
@@ -766,5 +769,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function afterFilter(Event $event)
     {
+        return null;
     }
 }
