@@ -718,7 +718,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * or perform logic that needs to happen before each controller action.
      *
      * @param Event $event An Event instance
-     * @return void
+     * @return \Cake\Network\Response|null
      * @link http://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
     public function beforeFilter(Event $event)
@@ -730,7 +730,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * to perform logic or set view variables that are required on every request.
      *
      * @param Event $event An Event instance
-     * @return void
+     * @return \Cake\Network\Response|null
      * @link http://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
     public function beforeRender(Event $event)
@@ -750,7 +750,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param string|array $url A string or array-based URL pointing to another location within the app,
      *     or an absolute URL
      * @param \Cake\Network\Response $response The response object.
-     * @return void
+     * @return \Cake\Network\Response|null
      * @link http://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
     public function beforeRedirect(Event $event, $url, Response $response)
@@ -761,7 +761,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Called after the controller action is run and rendered.
      *
      * @param Event $event An Event instance
-     * @return void
+     * @return \Cake\Network\Response|null
      * @link http://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
     public function afterFilter(Event $event)
