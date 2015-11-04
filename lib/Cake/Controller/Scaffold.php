@@ -145,9 +145,9 @@ class Scaffold {
 			$this->controller->viewClass = 'Scaffold';
 		}
 		$this->_validSession = (
-			isset($this->controller->Session) && 
+			isset($this->controller->Session) &&
 			$this->controller->Session->valid() &&
-			isset($this->controller->Flash)	
+			isset($this->controller->Flash)
 		);
 		$this->_scaffold($request);
 	}
