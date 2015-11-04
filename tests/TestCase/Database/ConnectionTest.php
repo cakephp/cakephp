@@ -962,4 +962,27 @@ class ConnectionTest extends TestCase
         $connection->schemaCollection($schema);
         $this->assertSame($schema, $connection->schemaCollection());
     }
+
+    /**
+     * Tests supportsCrossWith
+     *
+     * @return void
+     */
+    public function testSupportsCrossWith()
+    {
+        $connection = new Connection(ConnectionManager::config('test'));
+        $targetConnection = new Connection(ConnectionManager::config('test'));
+
+        $this->assertFalse($connection->supportsCrossWith($targetConnection), 'The same connection can\'t used in cross');
+
+        $connection = new Connection(ConnectionManager::config('test'));
+        $targetConnection = new Connection(['name' => 'test2'] + ConnectionManager::config('test'));
+
+        $this->assertTrue($connection->supportsCrossWith($targetConnection), 'Cross should be supported on databases on the same server');
+
+        $connection = new Connection(ConnectionManager::config('test'));
+        $targetConnection = new Connection(['port' => 999999] + ConnectionManager::config('test'));
+
+        $this->assertFalse($connection->supportsCrossWith($targetConnection), 'Cross is not supported across different server instances');
+    }
 }

@@ -694,6 +694,38 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Check if cross talk is supported between two connections
+     *
+     * @param ConnectionInterface $target Connection to check cross talk with
+     *
+     * @return bool
+     */
+    public function supportsCrossWith(ConnectionInterface $target)
+    {
+        $sourceConfig = $this->config();
+        $targetConfig = $target->config();
+
+        // No need to do report cross support in case the same connection is being used
+        if ($sourceConfig['name'] === $targetConfig['name']) {
+            return false;
+        }
+
+        $configToCheck = [
+            'driver',
+            'host',
+            'port'
+        ];
+
+        foreach ($configToCheck as $config) {
+            if ((isset($sourceConfig[$config])) && ($sourceConfig[$config] !== $targetConfig[$config])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Returns a new statement object that will log the activity
      * for the passed original statement instance.
      *
