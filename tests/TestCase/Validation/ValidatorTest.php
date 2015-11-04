@@ -1015,4 +1015,36 @@ class ValidatorTest extends TestCase
         ];
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * Tests that the 'create' and 'update' modes are preserved when using
+     * nested validators
+     *
+     * @return void
+     */
+    public function testNestedValidatorCreate()
+    {
+        $validator = new Validator();
+        $inner = new Validator();
+        $inner->add('username', 'email', ['rule' => 'email', 'on' => 'create']);
+        $validator->addNested('user', $inner);
+        $this->assertNotEmpty($validator->errors(['user' => ['username' => 'example']], true));
+        $this->assertEmpty($validator->errors(['user' => ['username' => 'a']], false));
+    }
+
+    /**
+     * Tests that the 'create' and 'update' modes are preserved when using
+     * nested validators
+     *
+     * @return void
+     */
+    public function testNestedManyValidatorCreate()
+    {
+        $validator = new Validator();
+        $inner = new Validator();
+        $inner->add('username', 'email', ['rule' => 'email', 'on' => 'create']);
+        $validator->addNestedMany('user', $inner);
+        $this->assertNotEmpty($validator->errors(['user' => [['username' => 'example']]], true));
+        $this->assertEmpty($validator->errors(['user' => [['username' => 'a']]], false));
+    }
 }
