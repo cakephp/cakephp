@@ -993,6 +993,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller->constructClasses();
 
 		$this->assertFalse(isset($Controller->Session));
+		$this->assertFalse(isset($Controller->Flash));
 	}
 
 /**
