@@ -148,8 +148,13 @@ class HasMany extends Association
         $original = $targetEntities;
         $options['_sourceTable'] = $this->source();
 
+        $unlinkSuccessful = null;
         if ($this->_saveStrategy === self::SAVE_REPLACE) {
-            $this->_unlinkAssociated($properties, $entity, $target, $targetEntities);
+            $unlinkSuccessful = $this->_unlinkAssociated($properties, $entity, $target, $targetEntities);
+        }
+
+        if ($unlinkSuccessful === false) {
+            return false;
         }
 
         foreach ($targetEntities as $k => $targetEntity) {
@@ -367,7 +372,7 @@ class HasMany extends Association
      * @param EntityInterface $entity the entity which should have its associated entities unassigned
      * @param Table $target The associated table
      * @param array $remainingEntities Entities that should not be deleted
-     * @return void
+     * @return bool success
      */
     protected function _unlinkAssociated(array $properties, EntityInterface $entity, Table $target, array $remainingEntities = [])
     {
@@ -396,7 +401,7 @@ class HasMany extends Association
             ];
         }
 
-        $this->_unlink(array_keys($properties), $target, $conditions);
+        return $this->_unlink(array_keys($properties), $target, $conditions);
     }
 
     /**
@@ -406,23 +411,28 @@ class HasMany extends Association
      * @param array $foreignKey array of foreign key properties
      * @param Table $target The associated table
      * @param array $conditions The conditions that specifies what are the objects to be unlinked
-     * @return void
+     * @return bool success
      */
     protected function _unlink(array $foreignKey, Table $target, array $conditions = [])
     {
         $mustBeDependent = (!$this->_foreignKeyAcceptsNull($target, $foreignKey) || $this->dependent());
+
         if ($mustBeDependent) {
             if ($this->_cascadeCallbacks) {
                 $query = $this->find('all')->where($conditions);
+                $ok = true;
                 foreach ($query as $assoc) {
-                    $target->delete($assoc);
+                    $ok = $ok && $target->delete($assoc);
                 }
+                return $ok;
             } else {
                 $target->deleteAll($conditions);
+                return true;
             }
         } else {
             $updateFields = array_fill_keys($foreignKey, null);
             $target->updateAll($updateFields, $conditions);
+            return true;
 
         }
     }
