@@ -431,7 +431,8 @@ class HasMany extends Association
             }
         } else {
             $updateFields = array_fill_keys($foreignKey, null);
-            return $target->updateAll($updateFields, $conditions);
+            $target->updateAll($updateFields, $conditions);
+            return true;
 
         }
     }
