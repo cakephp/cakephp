@@ -492,8 +492,14 @@ class AuthComponent extends Component
         }
         foreach ($this->_authorizeObjects as $authorizer) {
             if ($authorizer->authorize($user, $request) === true) {
-                $this->_authorizationProvider = $authorizer;
-                return true;
+                if ($authorizer->config('last') !== true) {
+                    $this->_authorizationProvider = $authorizer;
+                    return true;
+                }
+            } else {
+                if ($authorizer->config('last') === true) {
+                    return false;
+                }
             }
         }
         return false;
