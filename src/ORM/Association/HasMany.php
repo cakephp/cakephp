@@ -148,11 +148,12 @@ class HasMany extends Association
         $original = $targetEntities;
         $options['_sourceTable'] = $this->source();
 
+        $unlinkSuccessful = null;
         if ($this->_saveStrategy === self::SAVE_REPLACE) {
             $unlinkSuccessful = $this->_unlinkAssociated($properties, $entity, $target, $targetEntities);
         }
 
-        if (isset($unlinkSuccessful) && !$unlinkSuccessful) {
+        if ($unlinkSuccessful === false) {
             return false;
         }
 
@@ -414,27 +415,25 @@ class HasMany extends Association
      */
     protected function _unlink(array $foreignKey, Table $target, array $conditions = [])
     {
-        $ok = true;
         $mustBeDependent = (!$this->_foreignKeyAcceptsNull($target, $foreignKey) || $this->dependent());
-        $persistedEntitiesExist = $this->exists($conditions);
 
-        if ($persistedEntitiesExist) {
-            if ($mustBeDependent) {
-                if ($this->_cascadeCallbacks) {
-                    $query = $this->find('all')->where($conditions);
-                    foreach ($query as $assoc) {
-                        $ok = $ok && $target->delete($assoc);
-                    }
-                } else {
-                    $ok = ($target->deleteAll($conditions) > 0);
+        if ($mustBeDependent) {
+            if ($this->_cascadeCallbacks) {
+                $query = $this->find('all')->where($conditions);
+                $ok = true;
+                foreach ($query as $assoc) {
+                    $ok = $ok && $target->delete($assoc);
                 }
+                return $ok;
             } else {
-                $updateFields = array_fill_keys($foreignKey, null);
-                $ok = $target->updateAll($updateFields, $conditions);
-
+                $target->deleteAll($conditions);
+                return true;
             }
+        } else {
+            $updateFields = array_fill_keys($foreignKey, null);
+            return $target->updateAll($updateFields, $conditions);
+
         }
-        return $ok;
     }
 
     /**
