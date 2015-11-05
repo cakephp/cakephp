@@ -60,11 +60,10 @@ class Validation {
  * @return bool Success
  */
 	public static function notEmpty($check) {
-		if (is_array($check)) {
-			extract(self::_defaults($check));
+		if (!is_scalar($check)) {
+			return false;
 		}
-
-		if (empty($check) && $check != '0') {
+		if (empty($check) && (string)$check !== '0') {
 			return false;
 		}
 		return self::_check($check, '/[^\s]+/m');
@@ -82,10 +81,6 @@ class Validation {
  * @return bool Success
  */
 	public static function alphaNumeric($check) {
-		if (is_array($check)) {
-			extract(self::_defaults($check));
-		}
-
 		if (empty($check) && $check != '0') {
 			return false;
 		}
@@ -132,9 +127,6 @@ class Validation {
  * @return bool Success
  */
 	public static function blank($check) {
-		if (is_array($check)) {
-			extract(self::_defaults($check));
-		}
 		return !self::_check($check, '/[^\\s]/');
 	}
 
@@ -153,8 +145,8 @@ class Validation {
  * @see Validation::luhn()
  */
 	public static function cc($check, $type = 'fast', $deep = false, $regex = null) {
-		if (is_array($check)) {
-			extract(self::_defaults($check));
+		if (!is_scalar($check)) {
+			return false;
 		}
 
 		$check = str_replace(array('-', ' '), '', $check);
@@ -287,8 +279,8 @@ class Validation {
  * @return bool Success
  */
 	public static function custom($check, $regex = null) {
-		if (is_array($check)) {
-			extract(self::_defaults($check));
+		if (!is_scalar($check)) {
+			return false;
 		}
 		if ($regex === null) {
 			self::$errors[] = __d('cake_dev', 'You must define a regular expression for %s', 'Validation::custom()');
@@ -467,10 +459,6 @@ class Validation {
  * @return bool Success
  */
 	public static function email($check, $deep = false, $regex = null) {
-		if (is_array($check)) {
-			extract(self::_defaults($check));
-		}
-
 		if ($regex === null) {
 			$regex = '/^[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]+(?:\.[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]+)*@' . self::$_pattern['hostname'] . '$/ui';
 		}
@@ -657,10 +645,6 @@ class Validation {
  * @return bool Success
  */
 	public static function phone($check, $regex = null, $country = 'all') {
-		if (is_array($check)) {
-			extract(self::_defaults($check));
-		}
-
 		if ($regex === null) {
 			switch ($country) {
 				case 'us':
@@ -702,10 +686,6 @@ class Validation {
  * @return bool Success
  */
 	public static function postal($check, $regex = null, $country = 'us') {
-		if (is_array($check)) {
-			extract(self::_defaults($check));
-		}
-
 		if ($regex === null) {
 			switch ($country) {
 				case 'uk':
@@ -767,10 +747,6 @@ class Validation {
  * @deprecated Deprecated 2.6. Will be removed in 3.0.
  */
 	public static function ssn($check, $regex = null, $country = null) {
-		if (is_array($check)) {
-			extract(self::_defaults($check));
-		}
-
 		if ($regex === null) {
 			switch ($country) {
 				case 'dk':
@@ -892,33 +868,10 @@ class Validation {
  * @return bool Success of match
  */
 	protected static function _check($check, $regex) {
-		if (is_string($regex) && preg_match($regex, $check)) {
+		if (is_string($regex) && is_scalar($check) && preg_match($regex, $check)) {
 			return true;
 		}
 		return false;
-	}
-
-/**
- * Get the values to use when value sent to validation method is
- * an array.
- *
- * @param array $params Parameters sent to validation method
- * @return void
- */
-	protected static function _defaults($params) {
-		self::_reset();
-		$defaults = array(
-			'check' => null,
-			'regex' => null,
-			'country' => null,
-			'deep' => false,
-			'type' => null
-		);
-		$params += $defaults;
-		if ($params['country'] !== null) {
-			$params['country'] = mb_strtolower($params['country']);
-		}
-		return $params;
 	}
 
 /**
@@ -930,8 +883,8 @@ class Validation {
  * @see http://en.wikipedia.org/wiki/Luhn_algorithm
  */
 	public static function luhn($check, $deep = false) {
-		if (is_array($check)) {
-			extract(self::_defaults($check));
+		if (!is_scalar($check)) {
+			return false;
 		}
 		if ($deep !== true) {
 			return true;
