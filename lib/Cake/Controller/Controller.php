@@ -189,7 +189,7 @@ class Controller extends Object implements CakeEventListener {
  * @var array
  * @link http://book.cakephp.org/2.0/en/controllers/components.html
  */
-	public $components = array('Session');
+	public $components = array('Session', 'Flash');
 
 /**
  * The name of the View class this controller sends output to.
