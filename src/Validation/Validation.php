@@ -82,10 +82,6 @@ class Validation
      */
     public static function notBlank($check)
     {
-        if (is_array($check)) {
-            extract(static::_defaults($check));
-        }
-
         if (empty($check) && $check !== '0') {
             return false;
         }
@@ -105,10 +101,6 @@ class Validation
      */
     public static function alphaNumeric($check)
     {
-        if (is_array($check)) {
-            extract(static::_defaults($check));
-        }
-
         if (empty($check) && $check !== '0') {
             return false;
         }
@@ -127,6 +119,9 @@ class Validation
      */
     public static function lengthBetween($check, $min, $max)
     {
+        if (!is_string($check)) {
+            return false;
+        }
         $length = mb_strlen($check);
         return ($length >= $min && $length <= $max);
     }
@@ -145,9 +140,6 @@ class Validation
     public static function blank($check)
     {
         trigger_error('Validation::blank() is deprecated.', E_USER_DEPRECATED);
-        if (is_array($check)) {
-            extract(static::_defaults($check));
-        }
         return !static::_check($check, '/[^\\s]/');
     }
 
@@ -166,8 +158,8 @@ class Validation
      */
     public static function cc($check, $type = 'fast', $deep = false, $regex = null)
     {
-        if (is_array($check)) {
-            extract(static::_defaults($check));
+        if (!is_scalar($check)) {
+            return false;
         }
 
         $check = str_replace(['-', ' '], '', $check);
@@ -177,7 +169,7 @@ class Validation
 
         if ($regex !== null) {
             if (static::_check($check, $regex)) {
-                return static::luhn($check, $deep);
+                return !$deep || static::luhn($check, $deep);
             }
         }
         $cards = [
@@ -228,7 +220,7 @@ class Validation
     /**
      * Used to compare 2 numeric values.
      *
-     * @param string|array $check1 if string is passed for, a string must also be passed for $check2
+     * @param string $check1 if string is passed for, a string must also be passed for $check2
      *    used as an array it must be passed as ['check1' => value, 'operator' => 'value', 'check2' => value]
      * @param string $operator Can be either a word or operand
      *    is greater >, is less <, greater or equal >=
@@ -236,11 +228,8 @@ class Validation
      * @param int $check2 only needed if $check1 is a string
      * @return bool Success
      */
-    public static function comparison($check1, $operator = null, $check2 = null)
+    public static function comparison($check1, $operator, $check2)
     {
-        if (is_array($check1)) {
-            extract($check1, EXTR_OVERWRITE);
-        }
         if ((float)$check1 != $check1) {
             return false;
         }
@@ -318,7 +307,7 @@ class Validation
      */
     public static function containsNonAlphaNumeric($check, $count = 1)
     {
-        if (!is_string($check)) {
+        if (!is_scalar($check)) {
             return false;
         }
 
@@ -336,9 +325,6 @@ class Validation
      */
     public static function custom($check, $regex = null)
     {
-        if (is_array($check)) {
-            extract(static::_defaults($check));
-        }
         if ($regex === null) {
             static::$errors[] = 'You must define a regular expression for Validation::custom()';
             return false;
@@ -548,8 +534,8 @@ class Validation
      */
     public static function email($check, $deep = false, $regex = null)
     {
-        if (is_array($check)) {
-            extract(static::_defaults($check));
+        if (!is_string($check)) {
+            return false;
         }
 
         if ($regex === null) {
@@ -854,31 +840,7 @@ class Validation
      */
     protected static function _check($check, $regex)
     {
-        return is_string($regex) && preg_match($regex, $check);
-    }
-
-    /**
-     * Get the values to use when value sent to validation method is
-     * an array.
-     *
-     * @param array $params Parameters sent to validation method
-     * @return array
-     */
-    protected static function _defaults($params)
-    {
-        static::_reset();
-        $defaults = [
-            'check' => null,
-            'regex' => null,
-            'country' => null,
-            'deep' => false,
-            'type' => null
-        ];
-        $params += $defaults;
-        if ($params['country'] !== null) {
-            $params['country'] = mb_strtolower($params['country']);
-        }
-        return $params;
+        return is_string($regex) && is_scalar($check) && preg_match($regex, $check);
     }
 
     /**
@@ -891,13 +853,7 @@ class Validation
      */
     public static function luhn($check, $deep = false)
     {
-        if (is_array($check)) {
-            extract(static::_defaults($check));
-        }
-        if ($deep !== true) {
-            return true;
-        }
-        if ((int)$check === 0) {
+        if (!is_scalar($check) || (int)$check === 0) {
             return false;
         }
         $sum = 0;
