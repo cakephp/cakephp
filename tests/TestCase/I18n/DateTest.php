@@ -23,6 +23,35 @@ use Cake\TestSuite\TestCase;
 class DateTest extends TestCase
 {
     /**
+     * Backup the locale property
+     *
+     * @var string
+     */
+    protected $locale;
+
+    /**
+     * setup
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->locale = Date::$defaultLocale;
+    }
+
+    /**
+     * Teardown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        Date::$defaultLocale = $this->locale;
+    }
+
+    /**
      * test formatting dates taking in account preferred i18n locale file
      *
      * @return void
