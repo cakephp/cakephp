@@ -176,6 +176,7 @@ class InflectorTest extends TestCase
         $this->assertEquals('address', Inflector::singularize('addresses'));
         $this->assertEquals('sieve', Inflector::singularize('sieves'));
         $this->assertEquals('blue_octopus', Inflector::singularize('blue_octopuses'));
+        $this->assertEquals('staff', Inflector::singularize('staff'));
         $this->assertEquals('', Inflector::singularize(''));
     }
 
@@ -277,6 +278,7 @@ class InflectorTest extends TestCase
         $this->assertEquals('Addresses', Inflector::pluralize('Address'));
         $this->assertEquals('sieves', Inflector::pluralize('sieve'));
         $this->assertEquals('blue_octopuses', Inflector::pluralize('blue_octopus'));
+        $this->assertEquals('staff', Inflector::pluralize('staff'));
         $this->assertEquals('', Inflector::pluralize(''));
     }
 
@@ -668,5 +670,16 @@ class InflectorTest extends TestCase
         $this->assertEquals('Atlas', Inflector::pluralize('Atlas'));
         $this->assertEquals('Alcool', Inflector::singularize('Alcoois'));
         $this->assertEquals('Atlas', Inflector::singularize('Atlas'));
+    }
+
+    /**
+     * Test uninflected words.
+     *
+     * @return void
+     */
+    public function testUninflectedWords()
+    {
+        $this->assertEquals('staff', Inflector::pluralize('staff'));
+        $this->assertEquals('staff', Inflector::singularize('staff'));
     }
 }
