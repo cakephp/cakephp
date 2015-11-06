@@ -272,10 +272,6 @@ class TimeTest extends TestCase
         $result = $time->timeAgoInWords(['format' => 'yyyy-MM-dd']);
         $this->assertEquals('on 2007-09-25', $result);
 
-        $time = new Time('2007-9-25');
-        $result = $time->timeAgoInWords(['format' => 'yyyy-MM-dd']);
-        $this->assertEquals('on 2007-09-25', $result);
-
         $time = new Time('+2 weeks +2 days');
         $result = $time->timeAgoInWords(['format' => 'yyyy-MM-dd']);
         $this->assertRegExp('/^2 weeks, [1|2] day(s)?$/', $result);
