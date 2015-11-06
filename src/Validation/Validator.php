@@ -347,7 +347,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             foreach ($this->providers() as $provider) {
                 $validator->provider($provider, $this->provider($provider));
             }
-            $errors = $validator->errors($value);
+            $errors = $validator->errors($value, $context['newRecord']);
             return empty($errors) ? true : $errors;
         }]);
         return $this;
@@ -385,7 +385,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 if (!is_array($row)) {
                     return false;
                 }
-                $check = $validator->errors($row);
+                $check = $validator->errors($row, $context['newRecord']);
                 if (!empty($check)) {
                     $errors[$i] = $check;
                 }

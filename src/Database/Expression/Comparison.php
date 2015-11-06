@@ -14,6 +14,7 @@
  */
 namespace Cake\Database\Expression;
 
+use Cake\Database\Exception as DatabaseException;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 
@@ -189,9 +190,12 @@ class Comparison implements ExpressionInterface, FieldInterface
             $value = $this->_flattenValue($this->_value, $generator, $type);
 
             // To avoid SQL errors when comparing a field to a list of empty values,
-            // generate a condition that will always evaluate to false
+            // better just throw an exception here
             if ($value === '') {
-                return ['1 != 1', ''];
+                $field = $this->_field instanceof ExpressionInterface ? $this->_field->sql($generator) : $this->_field;
+                throw new DatabaseException(
+                    "Impossible to generate condition with empty list of values for field ($field)"
+                );
             }
         } else {
             $template .= '%s %s';

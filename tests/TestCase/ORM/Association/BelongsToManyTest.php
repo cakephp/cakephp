@@ -828,6 +828,69 @@ class BelongsToManyTest extends TestCase
         $this->assertFalse($entity->dirty('tags'));
     }
 
+
+    /**
+     * Tests that replaceLinks() will contain() the target table when
+     * there are conditions present on the association.
+     *
+     * @return void
+     */
+    public function testReplaceLinkWithConditions()
+    {
+        $connection = ConnectionManager::get('test');
+        $joint = $this->getMock(
+            '\Cake\ORM\Table',
+            ['find'],
+            [['alias' => 'ArticlesTags', 'connection' => $connection]]
+        );
+        $config = [
+            'sourceTable' => $this->article,
+            'targetTable' => $this->tag,
+            'through' => $joint,
+            'joinTable' => 'tags_articles',
+            'conditions' => ['Tags.id' => 'blah'],
+        ];
+        $assoc = $this->getMock(
+            '\Cake\ORM\Association\BelongsToMany',
+            ['_collectJointEntities'],
+            ['tags', $config]
+        );
+        $assoc->junction();
+
+        $query1 = $this->getMock(
+            '\Cake\ORM\Query',
+            ['where', 'andWhere', 'addDefaultTypes', 'contain'],
+            [$connection, $joint]
+        );
+        $query1->expects($this->at(0))
+            ->method('where')
+            ->will($this->returnSelf());
+        $query1->expects($this->at(1))
+            ->method('where')
+            ->will($this->returnSelf());
+        $query1->expects($this->at(2))
+            ->method('contain')
+            ->with('Tags')
+            ->will($this->returnSelf());
+        $query1->expects($this->at(3))
+            ->method('andWhere')
+            ->with($config['conditions'])
+            ->will($this->returnSelf());
+        $query1->setResult(new \ArrayIterator([]));
+
+        $joint->expects($this->at(0))->method('find')
+            ->with('all')
+            ->will($this->returnValue($query1));
+
+        $entity = new Entity(['id' => 1, 'test' => []]);
+
+        $assoc->expects($this->once())->method('_collectJointEntities')
+            ->with($entity, [])
+            ->will($this->returnValue([]));
+
+        $assoc->replaceLinks($entity, [], ['associated' => false]);
+    }
+
     /**
      * Provider for empty values
      *

@@ -1086,6 +1086,14 @@ class MarshallerTest extends TestCase
         $data = [
             'title' => 'Haz tags',
             'body' => 'Some content here',
+            'tags' => ['_ids' => []]
+        ];
+        $result = $marshall->one($data, ['associated' => ['Tags']]);
+        $this->assertCount(0, $result->tags);
+
+        $data = [
+            'title' => 'Haz tags',
+            'body' => 'Some content here',
             'tags' => ['_ids' => [1, 2, 3]]
         ];
         $marshall = new Marshaller($this->articles);

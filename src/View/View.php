@@ -45,6 +45,7 @@ use RuntimeException;
  * template file `plugins/SuperHot/Template/Posts/index.ctp`. If a theme template
  * is not found for the current action the default app template file is used.
  *
+ * @property      \Cake\View\Helper\FlashHelper $Flash
  * @property      \Cake\View\Helper\FormHelper $Form
  * @property      \Cake\View\Helper\HtmlHelper $Html
  * @property      \Cake\View\Helper\NumberHelper $Number
@@ -1034,9 +1035,6 @@ class View implements EventDispatcherInterface
             $name = $templatePath . $subDir . $this->_inflectViewFileName($name);
         } elseif (strpos($name, DS) !== false) {
             if ($name[0] === DS || $name[1] === ':') {
-                if (is_file($name)) {
-                    return $name;
-                }
                 $name = trim($name, DS);
             } elseif (!$plugin || $this->templatePath !== $this->name) {
                 $name = $templatePath . $subDir . $name;

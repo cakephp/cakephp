@@ -636,8 +636,10 @@ class QueryTest extends TestCase
 
     /**
      * Tests that passing an empty array type to any where condition will not
-     * result in an error, but in an empty result set
+     * result in a SQL error, but an internal exception
      *
+     * @expectedException Cake\Database\Exception
+     * @expectedExceptionMessage Impossible to generate condition with empty list of values for field
      * @return void
      */
     public function testSelectWhereArrayTypeEmpty()
@@ -648,7 +650,24 @@ class QueryTest extends TestCase
             ->from('comments')
             ->where(['id' => []], ['id' => 'integer[]'])
             ->execute();
-        $this->assertCount(0, $result);
+    }
+
+    /**
+     * Tests exception message for impossible condition when using an expression
+     * @expectedException Cake\Database\Exception
+     * @expectedExceptionMessage with empty list of values for field (SELECT 1)
+     * @return void
+     */
+    public function testSelectWhereArrayTypeEmptyWithExpression()
+    {
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['id'])
+            ->from('comments')
+            ->where(function ($exp, $q) {
+                return $exp->in($q->newExpr('SELECT 1'), []);
+            })
+            ->execute();
     }
 
     /**

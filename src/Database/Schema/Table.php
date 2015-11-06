@@ -47,6 +47,13 @@ class Table
     protected $_columns = [];
 
     /**
+     * A map with columns to types
+     *
+     * @var array
+     */
+    protected $_typeMap = [];
+
+    /**
      * Indexes in the table.
      *
      * @var array
@@ -297,6 +304,7 @@ class Table
         }
         $attrs = array_intersect_key($attrs, $valid);
         $this->_columns[$name] = $attrs + $valid;
+        $this->_typeMap[$name] = $this->_columns[$name]['type'];
         return $this;
     }
 
@@ -341,6 +349,7 @@ class Table
         }
         if ($type !== null) {
             $this->_columns[$name]['type'] = $type;
+            $this->_typeMap[$name] = $type;
         }
         return $this->_columns[$name]['type'];
     }
@@ -369,6 +378,17 @@ class Table
             $type = Type::build($type)->getBaseType();
         }
         return $this->_columns[$column]['baseType'] = $type;
+    }
+
+    /**
+     * Returns an array where the keys are the column names in the schema
+     * and the values the database type they have.
+     *
+     * @return array
+     */
+    public function typeMap()
+    {
+        return $this->_typeMap;
     }
 
     /**

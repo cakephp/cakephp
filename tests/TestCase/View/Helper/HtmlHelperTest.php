@@ -1621,6 +1621,12 @@ class HtmlHelperTest extends TestCase
             'meta' => ['property' => 'og:site_name', 'content' => 'CakePHP']
         ];
         $this->assertHtml($expected, $result);
+
+        $result = $this->Html->meta(['link' => 'http://example.com/manifest', 'rel' => 'manifest']);
+        $expected = [
+            'link' => ['href' => 'http://example.com/manifest', 'rel' => 'manifest']
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**

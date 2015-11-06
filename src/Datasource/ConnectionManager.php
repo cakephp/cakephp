@@ -101,7 +101,7 @@ class ConnectionManager
      *
      * Note that querystring arguments are also parsed and set as values in the returned configuration.
      *
-     * @param array $config An array with a `url` key mapping to a string DSN
+     * @param string $config The DSN string to convert to a configuration array
      * @return array The configuration array to be stored after parsing the DSN
      */
     public static function parseDsn($config = null)
