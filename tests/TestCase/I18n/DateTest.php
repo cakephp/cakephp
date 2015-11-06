@@ -152,4 +152,278 @@ class DateTest extends TestCase
         $date = Date::parseDate('13 10, 2015 12:54:12');
         $this->assertEquals('2015-10-13 00:00:00', $date->format('Y-m-d H:i:s'));
     }
+
+    /**
+     * provider for timeAgoInWords() tests
+     *
+     * @return array
+     */
+    public static function timeAgoProvider()
+    {
+        return [
+            ['-12 seconds', 'today'],
+            ['-12 minutes', 'today'],
+            ['-2 hours', 'today'],
+            ['-1 day', '1 day ago'],
+            ['-2 days', '2 days ago'],
+            ['-1 week', '1 week ago'],
+            ['-2 weeks -2 days', '2 weeks, 2 days ago'],
+            ['+1 second', 'today'],
+            ['+1 minute, +10 seconds', 'today'],
+            ['+1 week', '1 week'],
+            ['+1 week 1 day', '1 week, 1 day'],
+            ['+2 weeks 2 day', '2 weeks, 2 days'],
+            ['2007-9-24', 'on 9/24/07'],
+            ['now', 'today'],
+        ];
+    }
+
+    /**
+     * testTimeAgoInWords method
+     *
+     * @dataProvider timeAgoProvider
+     * @return void
+     */
+    public function testTimeAgoInWords($input, $expected)
+    {
+        $date = new Date($input);
+        $result = $date->timeAgoInWords();
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * test the timezone option for timeAgoInWords
+     *
+     * @return void
+     */
+    public function testTimeAgoInWordsTimezone()
+    {
+        $date = new Date('1990-07-31 20:33:00 UTC');
+        $result = $date->timeAgoInWords(
+            [
+                'timezone' => 'America/Vancouver',
+                'end' => '+1month',
+                'format' => 'dd-MM-YYYY'
+            ]
+        );
+        $this->assertEquals('on 31-07-1990', $result);
+    }
+
+    /**
+     * provider for timeAgo with an end date.
+     *
+     * @return void
+     */
+    public function timeAgoEndProvider()
+    {
+        return [
+            [
+                '+4 months +2 weeks +3 days',
+                '4 months, 2 weeks, 3 days',
+                '8 years'
+            ],
+            [
+                '+4 months +2 weeks +1 day',
+                '4 months, 2 weeks, 1 day',
+                '8 years'
+            ],
+            [
+                '+3 months +2 weeks',
+                '3 months, 2 weeks',
+                '8 years'
+            ],
+            [
+                '+3 months +2 weeks +1 day',
+                '3 months, 2 weeks, 1 day',
+                '8 years'
+            ],
+            [
+                '+1 months +1 week +1 day',
+                '1 month, 1 week, 1 day',
+                '8 years'
+            ],
+            [
+                '+2 months +2 days',
+                '2 months, 2 days',
+                '+2 months +2 days'
+            ],
+            [
+                '+2 months +12 days',
+                '2 months, 1 week, 5 days',
+                '3 months'
+            ],
+        ];
+    }
+
+    /**
+     * test the end option for timeAgoInWords
+     *
+     * @dataProvider timeAgoEndProvider
+     * @return void
+     */
+    public function testTimeAgoInWordsEnd($input, $expected, $end)
+    {
+        $time = new Date($input);
+        $result = $time->timeAgoInWords(['end' => $end]);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * test the custom string options for timeAgoInWords
+     *
+     * @return void
+     */
+    public function testTimeAgoInWordsCustomStrings()
+    {
+        $date = new Date('-8 years -4 months -2 weeks -3 days');
+        $result = $date->timeAgoInWords([
+            'relativeString' => 'at least %s ago',
+            'accuracy' => ['year' => 'year'],
+            'end' => '+10 years'
+        ]);
+        $expected = 'at least 8 years ago';
+        $this->assertEquals($expected, $result);
+
+        $date = new Date('+4 months +2 weeks +3 days');
+        $result = $date->timeAgoInWords([
+            'absoluteString' => 'exactly on %s',
+            'accuracy' => ['year' => 'year'],
+            'end' => '+2 months'
+        ]);
+        $expected = 'exactly on ' . date('n/j/y', strtotime('+4 months +2 weeks +3 days'));
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test the accuracy option for timeAgoInWords()
+     *
+     * @return void
+     */
+    public function testDateAgoInWordsAccuracy()
+    {
+        $date = new Date('+8 years +4 months +2 weeks +3 days');
+        $result = $date->timeAgoInWords([
+            'accuracy' => ['year' => 'year'],
+            'end' => '+10 years'
+        ]);
+        $expected = '8 years';
+        $this->assertEquals($expected, $result);
+
+        $date = new Date('+8 years +4 months +2 weeks +3 days');
+        $result = $date->timeAgoInWords([
+            'accuracy' => ['year' => 'month'],
+            'end' => '+10 years'
+        ]);
+        $expected = '8 years, 4 months';
+        $this->assertEquals($expected, $result);
+
+        $date = new Date('+8 years +4 months +2 weeks +3 days');
+        $result = $date->timeAgoInWords([
+            'accuracy' => ['year' => 'week'],
+            'end' => '+10 years'
+        ]);
+        $expected = '8 years, 4 months, 2 weeks';
+        $this->assertEquals($expected, $result);
+
+        $date = new Date('+8 years +4 months +2 weeks +3 days');
+        $result = $date->timeAgoInWords([
+            'accuracy' => ['year' => 'day'],
+            'end' => '+10 years'
+        ]);
+        $expected = '8 years, 4 months, 2 weeks, 3 days';
+        $this->assertEquals($expected, $result);
+
+        $date = new Date('+1 years +5 weeks');
+        $result = $date->timeAgoInWords([
+            'accuracy' => ['year' => 'year'],
+            'end' => '+10 years'
+        ]);
+        $expected = '1 year';
+        $this->assertEquals($expected, $result);
+
+        $date = new Date('+23 hours');
+        $result = $date->timeAgoInWords([
+            'accuracy' => 'day'
+        ]);
+        $expected = 'today';
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test the format option of timeAgoInWords()
+     *
+     * @return void
+     */
+    public function testDateAgoInWordsWithFormat()
+    {
+        $date = new Date('2007-9-25');
+        $result = $date->timeAgoInWords(['format' => 'yyyy-MM-dd']);
+        $this->assertEquals('on 2007-09-25', $result);
+
+        $date = new Date('2007-9-25');
+        $result = $date->timeAgoInWords(['format' => 'yyyy-MM-dd']);
+        $this->assertEquals('on 2007-09-25', $result);
+
+        $date = new Date('+2 weeks +2 days');
+        $result = $date->timeAgoInWords(['format' => 'yyyy-MM-dd']);
+        $this->assertRegExp('/^2 weeks, [1|2] day(s)?$/', $result);
+
+        $date = new Date('+2 months +2 days');
+        $result = $date->timeAgoInWords(['end' => '1 month', 'format' => 'yyyy-MM-dd']);
+        $this->assertEquals('on ' . date('Y-m-d', strtotime('+2 months +2 days')), $result);
+    }
+
+    /**
+     * test timeAgoInWords() with negative values.
+     *
+     * @return void
+     */
+    public function testDateAgoInWordsNegativeValues()
+    {
+        $date = new Date('-2 months -2 days');
+        $result = $date->timeAgoInWords(['end' => '3 month']);
+        $this->assertEquals('2 months, 2 days ago', $result);
+
+        $date = new Date('-2 months -2 days');
+        $result = $date->timeAgoInWords(['end' => '3 month']);
+        $this->assertEquals('2 months, 2 days ago', $result);
+
+        $date = new Date('-2 months -2 days');
+        $result = $date->timeAgoInWords(['end' => '1 month', 'format' => 'yyyy-MM-dd']);
+        $this->assertEquals('on ' . date('Y-m-d', strtotime('-2 months -2 days')), $result);
+
+        $date = new Date('-2 years -5 months -2 days');
+        $result = $date->timeAgoInWords(['end' => '3 years']);
+        $this->assertEquals('2 years, 5 months, 2 days ago', $result);
+
+        $date = new Date('-2 weeks -2 days');
+        $result = $date->timeAgoInWords(['format' => 'yyyy-MM-dd']);
+        $this->assertEquals('2 weeks, 2 days ago', $result);
+
+        $date = new Date('-3 years -12 months');
+        $result = $date->timeAgoInWords();
+        $expected = 'on ' . $date->format('n/j/y');
+        $this->assertEquals($expected, $result);
+
+        $date = new Date('-1 month -1 week -6 days');
+        $result = $date->timeAgoInWords(
+            ['end' => '1 year', 'accuracy' => ['month' => 'month']]
+        );
+        $this->assertEquals('1 month ago', $result);
+
+        $date = new Date('-1 years -2 weeks -3 days');
+        $result = $date->timeAgoInWords(
+            ['accuracy' => ['year' => 'year']]
+        );
+        $expected = 'on ' . $date->format('n/j/y');
+        $this->assertEquals($expected, $result);
+
+        $date = new Date('-13 months -5 days');
+        $result = $date->timeAgoInWords(['end' => '2 years']);
+        $this->assertEquals('1 year, 1 month, 5 days ago', $result);
+
+        $date = new Date('-23 hours');
+        $result = $date->timeAgoInWords(['accuracy' => 'day']);
+        $this->assertEquals('today', $result);
+    }
 }
