@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\I18n;
 
 use Cake\I18n\Date;
 use Cake\TestSuite\TestCase;
+use DateTimeZone;
 
 /**
  * DateTest class
@@ -86,23 +87,69 @@ class DateTest extends TestCase
         $this->assertEquals($expected, $result, 'Default locale should not be used');
     }
 
+    /**
+     * test __toString
+     *
+     * @return void
+     */
     public function testToString()
     {
-        $this->markTestIncomplete();
+        $date = new Date('2015-11-06 11:32:45');
+        $this->assertEquals('11/6/15', (string)$date);
     }
 
+    /**
+     * test nice()
+     *
+     * @return void
+     */
+    public function testNice()
+    {
+        $date = new Date('2015-11-06 11:32:45');
+
+        $this->assertEquals('Nov 6, 2015', $date->nice());
+        $this->assertEquals('Nov 6, 2015', $date->nice(new DateTimeZone('America/New_York')));
+        $this->assertEquals('6 nov. 2015', $date->nice(null, 'fr-FR'));
+    }
+
+    /**
+     * test jsonSerialize()
+     *
+     * @return void
+     */
     public function testJsonSerialize()
     {
-        $this->markTestIncomplete();
+        $date = new Date('2015-11-06 11:32:45');
+        $this->assertEquals('"2015-11-06T00:00:00+0000"', json_encode($date));
     }
 
+    /**
+     * test parseDate()
+     *
+     * @return void
+     */
     public function testParseDate()
     {
-        $this->markTestIncomplete();
+        $date = Date::parseDate('11/6/15');
+        $this->assertEquals('2015-11-06 00:00:00', $date->format('Y-m-d H:i:s'));
+
+        Date::$defaultLocale = 'fr-FR';
+        $date = Date::parseDate('13 10, 2015');
+        $this->assertEquals('2015-10-13 00:00:00', $date->format('Y-m-d H:i:s'));
     }
 
+    /**
+     * test parseDateTime()
+     *
+     * @return void
+     */
     public function testParseDateTime()
     {
-        $this->markTestIncomplete();
+        $date = Date::parseDate('11/6/15 12:33:12');
+        $this->assertEquals('2015-11-06 00:00:00', $date->format('Y-m-d H:i:s'));
+
+        Date::$defaultLocale = 'fr-FR';
+        $date = Date::parseDate('13 10, 2015 12:54:12');
+        $this->assertEquals('2015-10-13 00:00:00', $date->format('Y-m-d H:i:s'));
     }
 }
