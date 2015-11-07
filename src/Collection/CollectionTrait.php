@@ -470,6 +470,8 @@ trait CollectionTrait
             $items = $iterator->getArrayCopy();
             return $preserveKeys ? $items : array_values($items);
         }
+        // RecursiveIteratorIterator can return duplicate key values causing
+        // data loss when converted into an array
         if ($preserveKeys && get_class($iterator) === 'RecursiveIteratorIterator') {
             $preserveKeys = false;
         }
