@@ -81,6 +81,12 @@ class FloatTypeTest extends TestCase
      */
     public function testToDatabase()
     {
+        $result = $this->type->toDatabase('', $this->driver);
+        $this->assertNull($result);
+
+        $result = $this->type->toDatabase(null, $this->driver);
+        $this->assertNull($result);
+
         $result = $this->type->toDatabase('some data', $this->driver);
         $this->assertSame(0.0, $result);
 
@@ -141,6 +147,17 @@ class FloatTypeTest extends TestCase
         $expected = 5987123.231;
         $result = $this->type->marshal('5.987.123,231');
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test that exceptions are raised on invalid parsers.
+     *
+     * @expectedException RuntimeException
+     * @return void
+     */
+    public function testUseLocaleParsingInvalid()
+    {
+        $this->type->useLocaleParser('stdClass');
     }
 
     /**
