@@ -470,6 +470,9 @@ trait CollectionTrait
             $items = $iterator->getArrayCopy();
             return $preserveKeys ? $items : array_values($items);
         }
+        if ($preserveKeys && get_class($iterator) === 'RecursiveIteratorIterator') {
+            $preserveKeys = false;
+        }
         return iterator_to_array($this, $preserveKeys);
     }
 
