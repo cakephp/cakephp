@@ -1409,7 +1409,7 @@ class CollectionTest extends TestCase
         ];
 
         $extracted = (new Collection($items))->extract('comments.{*}.id');
-        $this->assertEquals([1, 2, 3, 4, 7, null], $extracted->toList());
+        $this->assertEquals([1, 2, 3, 4, 7, null], $extracted->toArray());
 
         $items = [
             [
@@ -1444,6 +1444,7 @@ class CollectionTest extends TestCase
         ];
         $extracted = (new Collection($items))->extract('comments.{*}.voters.{*}.id');
         $expected = [1, 2, 3, 4, 5, null, 6];
+        $this->assertEquals($expected, $extracted->toArray());
         $this->assertEquals($expected, $extracted->toList());
     }
 
