@@ -37,6 +37,7 @@ class FloatTypeTest extends TestCase
         $this->type = Type::build('float');
         $this->driver = $this->getMock('Cake\Database\Driver');
         $this->locale = I18n::locale();
+        $this->numberClass = FloatType::$numberClass;
 
         I18n::locale($this->locale);
     }
@@ -50,6 +51,7 @@ class FloatTypeTest extends TestCase
     {
         parent::tearDown();
         I18n::locale($this->locale);
+        FloatType::$numberClass = $this->numberClass;
     }
 
     /**
@@ -157,7 +159,8 @@ class FloatTypeTest extends TestCase
      */
     public function testUseLocaleParsingInvalid()
     {
-        $this->type->useLocaleParser('stdClass');
+        FloatType::$numberClass = 'stdClass';
+        $this->type->useLocaleParser();
     }
 
     /**
