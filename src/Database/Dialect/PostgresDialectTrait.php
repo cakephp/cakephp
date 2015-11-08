@@ -103,12 +103,12 @@ trait PostgresDialectTrait
         switch ($expression->name()) {
             case 'CONCAT':
                 // CONCAT function is expressed as exp1 || exp2
-                $expression->name('')->type(' ||');
+                $expression->name('')->tieWith(' ||');
                 break;
             case 'DATEDIFF':
                 $expression
                     ->name('')
-                    ->type('-')
+                    ->tieWith('-')
                     ->iterateParts(function ($p) {
                         if (is_string($p)) {
                             $p = ['value' => [$p => 'literal'], 'type' => null];
@@ -121,11 +121,11 @@ trait PostgresDialectTrait
                 break;
             case 'CURRENT_DATE':
                 $time = new FunctionExpression('LOCALTIMESTAMP', [' 0 ' => 'literal']);
-                $expression->name('CAST')->type(' AS ')->add([$time, 'date' => 'literal']);
+                $expression->name('CAST')->tieWith(' AS ')->add([$time, 'date' => 'literal']);
                 break;
             case 'CURRENT_TIME':
                 $time = new FunctionExpression('LOCALTIMESTAMP', [' 0 ' => 'literal']);
-                $expression->name('CAST')->type(' AS ')->add([$time, 'time' => 'literal']);
+                $expression->name('CAST')->tieWith(' AS ')->add([$time, 'time' => 'literal']);
                 break;
             case 'NOW':
                 $expression->name('LOCALTIMESTAMP')->add([' 0 ' => 'literal']);
@@ -133,7 +133,7 @@ trait PostgresDialectTrait
             case 'DATE_ADD':
                 $expression
                     ->name('')
-                    ->type(' + INTERVAL')
+                    ->tieWith(' + INTERVAL')
                     ->iterateParts(function ($p, $key) {
                         if ($key === 1) {
                             $p = sprintf("'%s'", $p);
@@ -144,7 +144,7 @@ trait PostgresDialectTrait
             case 'DAYOFWEEK':
                 $expression
                     ->name('EXTRACT')
-                    ->type(' ')
+                    ->tieWith(' ')
                     ->add(['DOW FROM' => 'literal'], [], true)
                     ->add([') + (1' => 'literal']); // Postgres starts on index 0 but Sunday should be 1
                 break;
