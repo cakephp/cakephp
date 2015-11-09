@@ -332,7 +332,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             }
             $target = $association->target();
             $primary = (array)$target->primaryKey();
-            if ($typeMap->type($target->aliasField($primary[0])) === null) {
+            if (empty($primary) || $typeMap->type($target->aliasField($primary[0])) === null) {
                 $this->addDefaultTypes($target);
             }
             if (!empty($nested)) {
