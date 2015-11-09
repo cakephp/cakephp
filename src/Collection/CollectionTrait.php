@@ -607,7 +607,7 @@ trait CollectionTrait
      */
     public function isEmpty()
     {
-        return iterator_count($this->take(1)) === 0;
+        return iterator_count($this->unwrap()) === 0;
     }
 
     /**
