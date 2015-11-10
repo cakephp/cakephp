@@ -1300,6 +1300,21 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests the isEmpty() method does not consume data
+     * from buffered iterators.
+     *
+     * @return void
+     */
+    public function testIsEmptyDoesNotConsume()
+    {
+        $array = new \ArrayIterator([1, 2, 3]);
+        $inner = new \Cake\Collection\Iterator\BufferedIterator($array);
+        $collection = new Collection($inner);
+        $this->assertFalse($collection->isEmpty());
+        $this->assertCount(3, $collection->toArray());
+    }
+
+    /**
      * Tests the zip() method
      *
      * @return void

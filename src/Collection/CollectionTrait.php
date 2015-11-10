@@ -607,7 +607,10 @@ trait CollectionTrait
      */
     public function isEmpty()
     {
-        return iterator_count($this->take(1)) === 0;
+        foreach ($this->unwrap() as $el) {
+            return false;
+        }
+        return true;
     }
 
     /**
