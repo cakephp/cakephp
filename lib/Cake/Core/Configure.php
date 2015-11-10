@@ -87,6 +87,12 @@ class Configure {
 				'handler' => 'ErrorHandler::handleError',
 				'level' => E_ALL & ~E_DEPRECATED,
 			);
+			if (PHP_SAPI === 'cli') {
+				App::uses('ConsoleErrorHandler', 'Console');
+				$console = new ConsoleErrorHandler();
+				$exception['handler'] = array($console, 'handleException');
+				$error['handler'] = array($console, 'handleError');
+			}
 			static::_setErrorHandlers($error, $exception);
 
 			if (!include APP . 'Config' . DS . 'bootstrap.php') {
