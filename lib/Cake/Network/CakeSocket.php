@@ -134,7 +134,7 @@ class CakeSocket {
 			$scheme = $this->config['protocol'] . '://';
 		}
 
-		$this->_setSslContext($this->config['host']);
+		$this->_setSslContext($this->config['request']['uri']['host']);
 		if (!empty($this->config['context'])) {
 			$context = stream_context_create($this->config['context']);
 		} else {
