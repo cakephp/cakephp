@@ -17,7 +17,6 @@ namespace Cake\Database\Type;
 use Cake\Database\Driver;
 use Cake\Database\Type;
 use DateTimeInterface;
-use DateTimeImmutable;
 use Exception;
 use RuntimeException;
 
@@ -127,7 +126,7 @@ class DateTimeType extends Type
      */
     public function marshal($value)
     {
-        if ($value instanceof DateTime || $value instanceof DateTimeImmutable) {
+        if ($value instanceof DateTimeInterface) {
             return $value;
         }
 

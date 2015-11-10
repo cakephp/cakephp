@@ -45,8 +45,8 @@ class Date extends BaseDate implements JsonSerializable
     protected static $_toStringFormat = [IntlDateFormatter::SHORT, -1];
 
     /**
-     * The format to use when formatting a time using `Cake\I18n\Time::timeAgoInWords()`
-     * and the difference is more than `Cake\I18n\Time::$wordEnd`
+     * The format to use when formatting a time using `Cake\I18n\Date::timeAgoInWords()`
+     * and the difference is more than `Cake\I18n\Date::$wordEnd`
      *
      * @var string
      * @see \Cake\I18n\DateFormatTrait::parseDate()
@@ -54,7 +54,7 @@ class Date extends BaseDate implements JsonSerializable
     public static $wordFormat = [IntlDateFormatter::SHORT, -1];
 
     /**
-     * The format to use when formatting a time using `Cake\I18n\Time::nice()`
+     * The format to use when formatting a time using `Cake\I18n\Date::nice()`
      *
      * The format should be either the formatting constants from IntlDateFormatter as
      * described in (http://www.php.net/manual/en/class.intldateformatter.php) or a pattern
@@ -70,8 +70,8 @@ class Date extends BaseDate implements JsonSerializable
     public static $niceFormat = [IntlDateFormatter::MEDIUM, -1];
 
     /**
-     * The format to use when formatting a time using `Time::timeAgoInWords()`
-     * and the difference is less than `Time::$wordEnd`
+     * The format to use when formatting a time using `Date::timeAgoInWords()`
+     * and the difference is less than `Date::$wordEnd`
      *
      * @var array
      * @see \Cake\I18n\Date::timeAgoInWords()
