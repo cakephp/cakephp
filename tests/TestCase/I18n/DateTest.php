@@ -64,10 +64,6 @@ class DateTest extends TestCase
         $expected = '1/14/10';
         $this->assertEquals($expected, $result);
 
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'es-ES');
-        $expected = 'jueves, 14 de enero de 2010, 0:00:00 (GMT)';
-        $this->assertEquals($expected, $result);
-
         $format = [\IntlDateFormatter::NONE, \IntlDateFormatter::SHORT];
         $result = $time->i18nFormat($format);
         $expected = '12:00 AM';
@@ -82,8 +78,8 @@ class DateTest extends TestCase
         $expected = 'jeudi 14 janvier 2010 00:00:00 UTC';
         $this->assertEquals($expected, $result);
 
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'es-ES');
-        $expected = 'jueves, 14 de enero de 2010, 0:00:00 (GMT)';
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'de-DE');
+        $expected = 'Donnerstag, 14. Januar 2010 um 00:00:00 GMT';
         $this->assertEquals($expected, $result, 'Default locale should not be used');
     }
 
