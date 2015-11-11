@@ -145,7 +145,11 @@ trait SelectableAssociationTrait
         $aliasedTable = $this->source()->alias();
 
         foreach ($subquery->clause('select') as $aliasedField => $field) {
-            $filter[] = new IdentifierExpression($field);
+            if (is_int($aliasedField)) {
+                $filter[] = new IdentifierExpression($field);
+            } else {
+                $filter[$aliasedField] = $field;
+            }
         }
         $subquery->select($filter, true);
 
@@ -234,15 +238,40 @@ trait SelectableAssociationTrait
             $filterQuery->offset(null);
         }
 
-        $keys = (array)$this->bindingKey();
+        $fields = $this->_subqueryFields($query);
+        $filterQuery->select($fields['select'], true)->group($fields['group']);
+        return $filterQuery;
+    }
 
+    /**
+     * Calculate the fields that need to participate in a subquery.
+     *
+     * Normally this includes the binding key columns. If there is a an ORDER BY,
+     * those columns are also included as the fields may be calculated or constant values,
+     * that need to be present to ensure the correct association data is loaded.
+     *
+     * @param \Cake\ORM\Query $query The query to get fields from.
+     * @return array The list of fields for the subquery.
+     */
+    protected function _subqueryFields($query)
+    {
+        $keys = (array)$this->bindingKey();
         if ($this->type() === $this::MANY_TO_ONE) {
             $keys = (array)$this->foreignKey();
         }
-
         $fields = $query->aliasFields($keys, $this->source()->alias());
-        $filterQuery->select($fields, true)->group(array_values($fields));
-        return $filterQuery;
+        $group = $fields = array_values($fields);
+
+        $order = $query->clause('order');
+        if ($order) {
+            $columns = $query->clause('select');
+            $order->iterateParts(function ($direction, $field) use (&$fields, $columns) {
+                if (isset($columns[$field])) {
+                    $fields[$field] = $columns[$field];
+                }
+            });
+        }
+        return ['select' => $fields, 'group' => $group];
     }
 
     /**
