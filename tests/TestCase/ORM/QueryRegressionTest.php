@@ -1098,4 +1098,26 @@ class QueryRegressionTest extends TestCase
         $results = $query->toArray();
         $this->assertCount(5, $results);
     }
+
+    /**
+     * Test that associations that are loaded with subqueries
+     * do not cause errors when the subquery has a limit & order clause.
+     *
+     * @return void
+     */
+    public function testEagerLoadOrderAndSubquery()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->hasMany('Comments', [
+            'strategy' => 'subquery'
+        ]);
+        $query = $table->find()
+            ->select(['score' => 100])
+            ->autoFields(true)
+            ->contain(['Comments'])
+            ->limit(5)
+            ->order(['score' => 'desc']);
+        $result = $query->all();
+        $this->assertCount(3, $result);
+    }
 }
