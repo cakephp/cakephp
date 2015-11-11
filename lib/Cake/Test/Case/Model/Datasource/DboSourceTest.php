@@ -542,6 +542,73 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->db->query('findByFieldName', array(), $this->Model);
 		$expected = false;
 		$this->assertEquals($expected, $result);
+
+		// findBy<X>And<Y>
+		$result = $this->db->query('findByFieldXAndFieldY', array('x', 'y'), $this->Model);
+		$expected = array('first', array(
+			'conditions' => array('TestModel.field_x' => 'x', 'TestModel.field_y' => 'y'),
+			'fields' => null, 'order' => null, 'recursive' => null
+		));
+		$this->assertEquals($expected, $result);
+
+		// findBy<X>Or<Y>
+		$result = $this->db->query('findByFieldXOrFieldY', array('x', 'y'), $this->Model);
+		$expected = array('first', array(
+			'conditions' => array('OR' => array('TestModel.field_x' => 'x', 'TestModel.field_y' => 'y')),
+			'fields' => null, 'order' => null, 'recursive' => null
+		));
+		$this->assertEquals($expected, $result);
+
+		// findMyFancySearchBy<X>
+		$result = $this->db->query('findMyFancySearchByFieldX', array('x'), $this->Model);
+		$expected = array('myFancySearch', array(
+			'conditions' => array('TestModel.field_x' => 'x'),
+			'fields' => null, 'order' => null, 'limit' => null,
+			'page' => null, 'recursive' => null
+		));
+		$this->assertEquals($expected, $result);
+
+		// findFirstBy<X>
+		$result = $this->db->query('findFirstByFieldX', array('x'), $this->Model);
+		$expected = array('first', array(
+			'conditions' => array('TestModel.field_x' => 'x'),
+			'fields' => null, 'order' => null, 'recursive' => null
+		));
+		$this->assertEquals($expected, $result);
+
+		// findBy<X> with optional parameters
+		$result = $this->db->query('findByFieldX', array('x', 'y', 'priority', -1), $this->Model);
+		$expected = array('first', array(
+			'conditions' => array('TestModel.field_x' => 'x'),
+			'fields' => 'y', 'order' => 'priority', 'recursive' => -1
+		));
+		$this->assertEquals($expected, $result);
+
+		// findBy<X>And<Y> with optional parameters
+		$result = $this->db->query('findByFieldXAndFieldY', array('x', 'y', 'z', 'priority', -1), $this->Model);
+		$expected = array('first', array(
+			'conditions' => array('TestModel.field_x' => 'x', 'TestModel.field_y' => 'y'),
+			'fields' => 'z', 'order' => 'priority', 'recursive' => -1
+		));
+		$this->assertEquals($expected, $result);
+
+		// findAllBy<X> with optional parameters
+		$result = $this->db->query('findAllByFieldX', array('x', 'y', 'priority', 10, 2, -1), $this->Model);
+		$expected = array('all', array(
+			'conditions' => array('TestModel.field_x' => 'x'),
+			'fields' => 'y', 'order' => 'priority', 'limit' => 10,
+			'page' => 2, 'recursive' => -1
+		));
+		$this->assertEquals($expected, $result);
+
+		// findAllBy<X>And<Y> with optional parameters
+		$result = $this->db->query('findAllByFieldXAndFieldY', array('x', 'y', 'z', 'priority', 10, 2, -1), $this->Model);
+		$expected = array('all', array(
+			'conditions' => array('TestModel.field_x' => 'x', 'TestModel.field_y' => 'y'),
+			'fields' => 'z', 'order' => 'priority', 'limit' => 10,
+			'page' => 2, 'recursive' => -1
+		));
+		$this->assertEquals($expected, $result);
 	}
 
 /**
