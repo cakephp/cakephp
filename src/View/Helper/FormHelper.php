@@ -1814,8 +1814,8 @@ class FormHelper extends Helper
      *
      * ```
      * $options = [
-     *     ['name' => 'United states', 'value' => 'USA'],
-     *     ['name' => 'USA', 'value' => 'USA'],
+     *     ['text' => 'United states', 'value' => 'USA'],
+     *     ['text' => 'USA', 'value' => 'USA'],
      * ];
      * ```
      *
