@@ -265,7 +265,7 @@ trait SelectableAssociationTrait
         $order = $query->clause('order');
         if ($order) {
             $columns = $query->clause('select');
-            $order->iterateParts(function($direction, $field) use (&$fields, $columns) {
+            $order->iterateParts(function ($direction, $field) use (&$fields, $columns) {
                 if (isset($columns[$field])) {
                     $fields[$field] = $columns[$field];
                 }
