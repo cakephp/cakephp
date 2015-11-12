@@ -184,25 +184,6 @@ class ValidationTest extends CakeTestCase {
 	}
 
 /**
- * testAlphaNumericPassedAsArray method
- *
- * @return void
- */
-	public function testAlphaNumericPassedAsArray() {
-		$this->assertTrue(Validation::alphaNumeric(array('check' => 'frferrf')));
-		$this->assertTrue(Validation::alphaNumeric(array('check' => '12234')));
-		$this->assertTrue(Validation::alphaNumeric(array('check' => '1w2e2r3t4y')));
-		$this->assertTrue(Validation::alphaNumeric(array('check' => '0')));
-		$this->assertFalse(Validation::alphaNumeric(array('check' => '12 234')));
-		$this->assertFalse(Validation::alphaNumeric(array('check' => 'dfd 234')));
-		$this->assertFalse(Validation::alphaNumeric(array('check' => "\n")));
-		$this->assertFalse(Validation::alphaNumeric(array('check' => "\t")));
-		$this->assertFalse(Validation::alphaNumeric(array('check' => "\r")));
-		$this->assertFalse(Validation::alphaNumeric(array('check' => ' ')));
-		$this->assertFalse(Validation::alphaNumeric(array('check' => '')));
-	}
-
-/**
  * testLengthBetween method
  *
  * @return void
@@ -229,21 +210,6 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::blank("\r"));
 		$this->assertFalse(Validation::blank('    Blank'));
 		$this->assertFalse(Validation::blank('Blank'));
-	}
-
-/**
- * testBlankAsArray method
- *
- * @return void
- */
-	public function testBlankAsArray() {
-		$this->assertTrue(Validation::blank(array('check' => '')));
-		$this->assertTrue(Validation::blank(array('check' => ' ')));
-		$this->assertTrue(Validation::blank(array('check' => "\n")));
-		$this->assertTrue(Validation::blank(array('check' => "\t")));
-		$this->assertTrue(Validation::blank(array('check' => "\r")));
-		$this->assertFalse(Validation::blank(array('check' => '    Blank')));
-		$this->assertFalse(Validation::blank(array('check' => 'Blank')));
 	}
 
 /**
@@ -997,17 +963,6 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::custom('Text', '/(?<!\\S)\\d++(?!\\S)/'));
 		$this->assertFalse(Validation::custom('123.45', '/(?<!\\S)\\d++(?!\\S)/'));
 		$this->assertFalse(Validation::custom('missing regex'));
-	}
-
-/**
- * testCustomAsArray method
- *
- * @return void
- */
-	public function testCustomAsArray() {
-		$this->assertTrue(Validation::custom(array('check' => '12345', 'regex' => '/(?<!\\S)\\d++(?!\\S)/')));
-		$this->assertFalse(Validation::custom(array('check' => 'Text', 'regex' => '/(?<!\\S)\\d++(?!\\S)/')));
-		$this->assertFalse(Validation::custom(array('check' => '123.45', 'regex' => '/(?<!\\S)\\d++(?!\\S)/')));
 	}
 
 /**

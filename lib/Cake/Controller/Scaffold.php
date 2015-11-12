@@ -145,7 +145,9 @@ class Scaffold {
 			$this->controller->viewClass = 'Scaffold';
 		}
 		$this->_validSession = (
-			isset($this->controller->Session) && $this->controller->Session->valid()
+			isset($this->controller->Session) &&
+			$this->controller->Session->valid() &&
+			isset($this->controller->Flash)
 		);
 		$this->_scaffold($request);
 	}
@@ -246,12 +248,12 @@ class Scaffold {
 							Inflector::humanize($this->modelKey),
 							$success
 						);
-						return $this->_sendMessage($message);
+						return $this->_sendMessage($message, 'success');
 					}
 					return $this->controller->afterScaffoldSaveError($action);
 				}
 				if ($this->_validSession) {
-					$this->controller->Session->setFlash(__d('cake', 'Please correct errors below.'));
+					$this->controller->Flash->set(__d('cake', 'Please correct errors below.'));
 				}
 			}
 
@@ -303,7 +305,7 @@ class Scaffold {
 			}
 			if ($this->ScaffoldModel->delete()) {
 				$message = __d('cake', 'The %1$s with id: %2$s has been deleted.', Inflector::humanize($this->modelClass), $id);
-				return $this->_sendMessage($message);
+				return $this->_sendMessage($message, 'success');
 			}
 			$message = __d('cake',
 				'There was an error deleting the %1$s with id: %2$s',
@@ -321,11 +323,12 @@ class Scaffold {
  * on the availability of a session
  *
  * @param string $message Message to display
+ * @param string $element Flash template to use
  * @return void
  */
-	protected function _sendMessage($message) {
+	protected function _sendMessage($message, $element = 'default') {
 		if ($this->_validSession) {
-			$this->controller->Session->setFlash($message);
+			$this->controller->Flash->set($message, compact('element'));
 			return $this->controller->redirect($this->redirect);
 		}
 		$this->controller->flash($message, $this->redirect);

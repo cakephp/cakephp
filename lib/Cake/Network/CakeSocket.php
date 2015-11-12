@@ -134,7 +134,12 @@ class CakeSocket {
 			$scheme = $this->config['protocol'] . '://';
 		}
 
-		$this->_setSslContext($this->config['host']);
+		$host = $this->config['host'];
+		if (isset($this->config['request']['uri']['host'])) {
+			$host = $this->config['request']['uri']['host'];
+		}
+		$this->_setSslContext($host);
+
 		if (!empty($this->config['context'])) {
 			$context = stream_context_create($this->config['context']);
 		} else {
@@ -200,6 +205,7 @@ class CakeSocket {
  * Configure the SSL context options.
  *
  * @param string $host The host name being connected to.
+ * @return void
  */
 	protected function _setSslContext($host) {
 		foreach ($this->config as $key => $value) {
