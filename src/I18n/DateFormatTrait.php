@@ -127,7 +127,8 @@ trait DateFormatTrait
         $time = $this;
 
         if ($timezone) {
-            $time = $time->timezone($timezone);
+            $time = clone $this;
+            $time->timezone($timezone);
         }
 
         $format = $format !== null ? $format : static::$_toStringFormat;

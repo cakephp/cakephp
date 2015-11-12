@@ -49,7 +49,7 @@ class DateTypeTest extends TestCase
         $this->assertNull($this->type->toPHP('0000-00-00', $this->driver));
 
         $result = $this->type->toPHP('2001-01-04', $this->driver);
-        $this->assertInstanceOf('DateTimeImmutable', $result);
+        $this->assertInstanceOf('DateTime', $result);
         $this->assertEquals('2001', $result->format('Y'));
         $this->assertEquals('01', $result->format('m'));
         $this->assertEquals('04', $result->format('d'));

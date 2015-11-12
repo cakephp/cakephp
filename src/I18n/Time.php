@@ -14,7 +14,8 @@
  */
 namespace Cake\I18n;
 
-use Cake\Chronos\Chronos;
+use Cake\Chronos\ChronosInterface;
+use Cake\Chronos\MutableDateTime;
 use DateTime;
 use DateTimeZone;
 use IntlDateFormatter;
@@ -25,7 +26,7 @@ use JsonSerializable;
  * formatting helpers
  *
  */
-class Time extends Chronos implements JsonSerializable
+class Time extends MutableDateTime implements JsonSerializable
 {
     use DateFormatTrait;
 
@@ -348,12 +349,12 @@ class Time extends Chronos implements JsonSerializable
      * See `Time::timeAgoInWords()` for a full list of options that can be passed
      * to this method.
      *
-     * @param \Cake\Chronos\Chronos|null $other the date to diff with
+     * @param \Cake\Chronos\ChronosInterface|null $other the date to diff with
      * @param array $options options accepted by timeAgoInWords
      * @return string
      * @see Time::timeAgoInWords()
      */
-    public function diffForHumans(Chronos $other = null, array $options = [])
+    public function diffForHumans(ChronosInterface $other = null, array $options = [])
     {
         $options = ['from' => $other] + $options;
         return $this->timeAgoInWords($options);

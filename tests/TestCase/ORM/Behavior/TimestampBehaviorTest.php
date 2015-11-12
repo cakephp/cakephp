@@ -225,7 +225,7 @@ class TimestampBehaviorTest extends TestCase
 
         $return = $this->Behavior->timestamp();
         $this->assertInstanceOf(
-            'DateTimeImmutable',
+            'DateTime',
             $return,
             'Should return a timestamp object'
         );

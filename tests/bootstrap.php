@@ -119,6 +119,7 @@ Log::config([
 ]);
 
 Cake\Chronos\Chronos::setTestNow(Cake\Chronos\Chronos::now());
+Cake\Chronos\MutableDateTime::setTestNow(Cake\Chronos\MutableDateTime::now());
 Cake\Chronos\Date::setTestNow(Cake\Chronos\Date::now());
 
 ini_set('intl.default_locale', 'en_US');
