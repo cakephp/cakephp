@@ -751,7 +751,7 @@ class AuthComponent extends Component
      * Triggers `Auth.afterIdentify` event which the authenticate classes can listen
      * to.
      *
-     * @return array User record data, or false, if the user could not be identified.
+     * @return array|bool User record data, or false, if the user could not be identified.
      */
     public function identify()
     {
