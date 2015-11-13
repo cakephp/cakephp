@@ -71,6 +71,8 @@
  * - `renderer` - string - The class responsible for rendering uncaught exceptions. If you choose a custom class you
  *   should place the file for that class in app/Lib/Error. This class needs to implement a render method.
  * - `log` - boolean - Should Exceptions be logged?
+ * - `extraFatalErrorMemory` - integer - Increases memory limit at shutdown so fatal errors are logged. Specify
+ *   amount in megabytes or use 0 to disable (default: 4 MB)
  * - `skipLog` - array - list of exceptions to skip for logging. Exceptions that
  *   extend one of the listed exceptions will also be skipped for logging.
  *   Example: `'skipLog' => array('NotFoundException', 'UnauthorizedException')`
