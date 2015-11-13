@@ -15,7 +15,7 @@
 namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
-use DateTimeImmutable;
+use DateTime;
 
 class DateType extends DateTimeType
 {

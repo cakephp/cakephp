@@ -14,7 +14,7 @@
  */
 namespace Cake\I18n;
 
-use Cake\Chronos\Date as BaseDate;
+use Cake\Chronos\MutableDate;
 use IntlDateFormatter;
 use JsonSerializable;
 
@@ -23,7 +23,7 @@ use JsonSerializable;
  *
  * Adds handy methods and locale-aware formatting helpers
  */
-class Date extends BaseDate implements JsonSerializable
+class Date extends MutableDate implements JsonSerializable
 {
     use DateFormatTrait;
 
