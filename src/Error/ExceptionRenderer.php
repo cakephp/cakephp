@@ -19,6 +19,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception as CakeException;
 use Cake\Core\Exception\MissingPluginException;
+use Cake\Error\PHP7ErrorException;
 use Cake\Event\Event;
 use Cake\Network\Exception\HttpException;
 use Cake\Network\Request;
@@ -92,6 +93,18 @@ class ExceptionRenderer
     }
 
     /**
+     * Returns the unwrapped exception object in case we are dealing with
+     * a PHP 7 Error object
+     *
+     * @param \Exception $exception The object to unwrap
+     * @return \Exception|\Error
+     */
+    protected function _unwrap($exception)
+    {
+        return $exception instanceof PHP7ErrorException ? $exception->getError() : $exception;
+    }
+
+    /**
      * Get the controller instance to handle the exception.
      * Override this method in subclasses to customize the controller used.
      * This method returns the built in `ErrorController` normally, or if an error is repeated
@@ -143,12 +156,13 @@ class ExceptionRenderer
         $code = $this->_code($exception);
         $method = $this->_method($exception);
         $template = $this->_template($exception, $method, $code);
+        $unwrapped = $this->_unwrap($exception);
 
         $isDebug = Configure::read('debug');
         if (($isDebug || $exception instanceof HttpException) &&
             method_exists($this, $method)
         ) {
-            return $this->_customMethod($method, $exception);
+            return $this->_customMethod($method, $unwrapped);
         }
 
         $message = $this->_message($exception, $code);
@@ -161,12 +175,12 @@ class ExceptionRenderer
         $viewVars = [
             'message' => $message,
             'url' => h($url),
-            'error' => $exception,
+            'error' => $unwrapped,
             'code' => $code,
             '_serialize' => ['message', 'url', 'code']
         ];
         if ($isDebug) {
-            $viewVars['trace'] = Debugger::formatTrace($exception->getTrace(), [
+            $viewVars['trace'] = Debugger::formatTrace($unwrapped->getTrace(), [
                 'format' => 'array',
                 'args' => false
             ]);
@@ -174,8 +188,8 @@ class ExceptionRenderer
         }
         $this->controller->set($viewVars);
 
-        if ($exception instanceof CakeException && $isDebug) {
-            $this->controller->set($this->error->getAttributes());
+        if ($unwrapped instanceof CakeException && $isDebug) {
+            $this->controller->set($unwrapped->getAttributes());
         }
         return $this->_outputMessage($template);
     }
@@ -205,6 +219,7 @@ class ExceptionRenderer
      */
     protected function _method(Exception $exception)
     {
+        $exception = $this->_unwrap($exception);
         list(, $baseClass) = namespaceSplit(get_class($exception));
 
         if (substr($baseClass, -9) === 'Exception') {
@@ -224,7 +239,8 @@ class ExceptionRenderer
      */
     protected function _message(Exception $exception, $code)
     {
-        $message = $this->error->getMessage();
+        $exception = $this->_unwrap($exception);
+        $message = $exception->getMessage();
 
         if (!Configure::read('debug') &&
             !($exception instanceof HttpException)
@@ -249,6 +265,7 @@ class ExceptionRenderer
      */
     protected function _template(Exception $exception, $method, $code)
     {
+        $exception = $this->_unwrap($exception);
         $isHttpException = $exception instanceof HttpException;
 
         if (!Configure::read('debug') && !$isHttpException) {
@@ -285,6 +302,7 @@ class ExceptionRenderer
     protected function _code(Exception $exception)
     {
         $code = 500;
+        $exception = $this->_unwrap($exception);
         $errorCode = $exception->getCode();
         if ($errorCode >= 400 && $errorCode < 506) {
             $code = $errorCode;
