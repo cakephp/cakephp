@@ -21,6 +21,7 @@ use Cake\Core\Plugin;
 use Cake\Error;
 use Cake\Error\ErrorHandler;
 use Cake\Error\ExceptionRenderer;
+use Cake\Error\PHP7ErrorException;
 use Cake\Log\Log;
 use Cake\Network\Exception\ForbiddenException;
 use Cake\Network\Exception\NotFoundException;
@@ -29,6 +30,7 @@ use Cake\Network\Response;
 use Cake\Routing\Exception\MissingControllerException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use ParseError;
 
 /**
  * Testing stub.
@@ -415,5 +417,20 @@ class ErrorHandlerTest extends TestCase
 
         $errorHandler = new TestErrorHandler(['log' => true]);
         $errorHandler->handleFatalError(E_ERROR, 'Something wrong', __FILE__, __LINE__);
+    }
+
+    /**
+     * Tests Handling a PHP7 error
+     *
+     * @return void
+     */
+    public function testHandlePHP7Error()
+    {
+        $this->skipIf(!class_exists('Error'), 'Requires PHP7');
+        $error = new PHP7ErrorException(new ParseError('Unexpected variable foo'));
+        $errorHandler = new TestErrorHandler();
+
+        $errorHandler->handleException($error);
+        $this->assertContains('Unexpected variable foo', $errorHandler->response->body(), 'message missing.');
     }
 }
