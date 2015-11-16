@@ -193,6 +193,32 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Tests the junction method custom keys
+     *
+     * @return void
+     */
+    public function testJunctionCustomKeys()
+    {
+        $this->article->belongsToMany('Tags', [
+            'joinTable' => 'articles_tags',
+            'foreignKey' => 'article',
+            'targetForeignKey' => 'tag'
+        ]);
+        $this->tag->belongsToMany('Articles', [
+            'joinTable' => 'articles_tags',
+            'foreignKey' => 'tag',
+            'targetForeignKey' => 'article'
+        ]);
+        $junction = $this->article->association('Tags')->junction();
+        $this->assertEquals('article', $junction->association('Articles')->foreignKey());
+        $this->assertEquals('article', $this->article->association('ArticlesTags')->foreignKey());
+
+        $junction = $this->tag->association('Articles')->junction();
+        $this->assertEquals('tag', $junction->association('Tags')->foreignKey());
+        $this->assertEquals('tag', $this->tag->association('ArticlesTags')->foreignKey());
+    }
+
+    /**
      * Tests it is possible to set the table name for the join table
      *
      * @return void

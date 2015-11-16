@@ -213,7 +213,7 @@ class QueryRegressionTest extends TestCase
      *
      * @return void
      */
-    public function testReciprocalBelongsToMany2()
+    public function testReciprocalBelongsToManyNoOverwrite()
     {
         $articles = TableRegistry::get('Articles');
         $tags = TableRegistry::get('Tags');

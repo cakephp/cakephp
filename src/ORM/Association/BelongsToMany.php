@@ -210,6 +210,13 @@ class BelongsToMany extends Association
             ]);
         }
 
+        if (!$source->association($junctionAlias)) {
+            $source->hasMany($junctionAlias, [
+                'targetTable' => $table,
+                'foreignKey' => $this->foreignKey(),
+            ]);
+        }
+
         if (!$target->association($sAlias)) {
             $target->belongsToMany($sAlias, [
                 'sourceTable' => $target,
@@ -218,10 +225,6 @@ class BelongsToMany extends Association
                 'targetForeignKey' => $this->foreignKey(),
                 'through' => $table
             ]);
-        }
-
-        if (!$source->association($table->alias())) {
-            $source->hasMany($junctionAlias)->target($table);
         }
 
         return $this->_junctionTable = $table;
