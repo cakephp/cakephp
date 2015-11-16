@@ -45,17 +45,17 @@ use RuntimeException;
  * template file `plugins/SuperHot/Template/Posts/index.ctp`. If a theme template
  * is not found for the current action the default app template file is used.
  *
- * @property      \Cake\View\Helper\FlashHelper $Flash
- * @property      \Cake\View\Helper\FormHelper $Form
- * @property      \Cake\View\Helper\HtmlHelper $Html
- * @property      \Cake\View\Helper\NumberHelper $Number
- * @property      \Cake\View\Helper\PaginatorHelper $Paginator
- * @property      \Cake\View\Helper\RssHelper $Rss
- * @property      \Cake\View\Helper\SessionHelper $Session
- * @property      \Cake\View\Helper\TextHelper $Text
- * @property      \Cake\View\Helper\TimeHelper $Time
- * @property      \Cake\View\Helper\UrlHelper $Url
- * @property      \Cake\View\ViewBlock $Blocks
+ * @property \Cake\View\Helper\FlashHelper $Flash
+ * @property \Cake\View\Helper\FormHelper $Form
+ * @property \Cake\View\Helper\HtmlHelper $Html
+ * @property \Cake\View\Helper\NumberHelper $Number
+ * @property \Cake\View\Helper\PaginatorHelper $Paginator
+ * @property \Cake\View\Helper\RssHelper $Rss
+ * @property \Cake\View\Helper\SessionHelper $Session
+ * @property \Cake\View\Helper\TextHelper $Text
+ * @property \Cake\View\Helper\TimeHelper $Time
+ * @property \Cake\View\Helper\UrlHelper $Url
+ * @property \Cake\View\ViewBlock $Blocks
  */
 class View implements EventDispatcherInterface
 {
