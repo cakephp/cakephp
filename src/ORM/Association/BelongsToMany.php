@@ -161,10 +161,6 @@ class BelongsToMany extends Association
      */
     public function junction($table = null)
     {
-        $target = $this->target();
-        $source = $this->source();
-        $sAlias = $source->alias();
-        $tAlias = $target->alias();
         $tableLocator = $this->tableLocator();
 
         if ($table === null) {
@@ -189,45 +185,111 @@ class BelongsToMany extends Association
         if (is_string($table)) {
             $table = $tableLocator->get($table);
         }
-        $junctionAlias = $table->alias();
+        $target = $this->target();
+        $source = $this->source();
 
-        if (!$table->association($sAlias)) {
-            $table
-                ->belongsTo($sAlias, ['foreignKey' => $this->foreignKey()])
-                ->target($source);
-        }
+        $this->_generateSourceAssociations($table, $source);
+        $this->_generateTargetAssociations($table, $source, $target);
+        $this->_generateJunctionAssociations($table, $source, $target);
+        return $this->_junctionTable = $table;
+    }
 
-        if (!$table->association($tAlias)) {
-            $table
-                ->belongsTo($tAlias, ['foreignKey' => $this->targetForeignKey()])
-                ->target($target);
-        }
+    /**
+     * Generate reciprocal associations as necessary.
+     *
+     * Generates the following associations:
+     *
+     * - target hasMany junction e.g. Articles hasMany ArticlesTags
+     * - target belongsToMany source e.g Articles belongsToMany Tags.
+     *
+     * You can override these generated associations by defining associations
+     * with the correct aliases.
+     *
+     * @param \Cake\ORM\Table $junction The junction table.
+     * @param \Cake\ORM\Table $source The source table.
+     * @param \Cake\ORM\Table $target The target table.
+     * @return void
+     */
+    protected function _generateTargetAssociations($junction, $source, $target)
+    {
+        $junctionAlias = $junction->alias();
+        $sAlias = $source->alias();
 
         if (!$target->association($junctionAlias)) {
             $target->hasMany($junctionAlias, [
-                'targetTable' => $table,
+                'targetTable' => $junction,
                 'foreignKey' => $this->targetForeignKey(),
             ]);
         }
-
-        if (!$source->association($junctionAlias)) {
-            $source->hasMany($junctionAlias, [
-                'targetTable' => $table,
-                'foreignKey' => $this->foreignKey(),
-            ]);
-        }
-
         if (!$target->association($sAlias)) {
             $target->belongsToMany($sAlias, [
                 'sourceTable' => $target,
                 'targetTable' => $source,
                 'foreignKey' => $this->targetForeignKey(),
                 'targetForeignKey' => $this->foreignKey(),
-                'through' => $table
+                'through' => $junction
             ]);
         }
+    }
 
-        return $this->_junctionTable = $table;
+    /**
+     * Generate additional source table associations as necessary.
+     *
+     * Generates the following associations:
+     *
+     * - source hasMany junction e.g. Tags hasMany ArticlesTags
+     *
+     * You can override these generated associations by defining associations
+     * with the correct aliases.
+     *
+     * @param \Cake\ORM\Table $junction The junction table.
+     * @param \Cake\ORM\Table $source The source table.
+     * @return void
+     */
+    protected function _generateSourceAssociations($junction, $source)
+    {
+        $junctionAlias = $junction->alias();
+        if (!$source->association($junctionAlias)) {
+            $source->hasMany($junctionAlias, [
+                'targetTable' => $junction,
+                'foreignKey' => $this->foreignKey(),
+            ]);
+        }
+    }
+
+    /**
+     * Generate associations on the junction table as necessary
+     *
+     * Generates the following associations:
+     *
+     * - junction belongsTo source e.g. ArticlesTags belongsTo Tags
+     * - junction belongsTo target e.g. ArticlesTags belongsTo Articles
+     *
+     * You can override these generated associations by defining associations
+     * with the correct aliases.
+     *
+     * @param \Cake\ORM\Table $junction The junction table.
+     * @param \Cake\ORM\Table $source The source table.
+     * @param \Cake\ORM\Table $target The target table.
+     * @return void
+     */
+    protected function _generateJunctionAssociations($junction, $source, $target)
+    {
+        $tAlias = $target->alias();
+        $sAlias = $source->alias();
+
+        if (!$junction->association($tAlias)) {
+            $junction->belongsTo($tAlias, [
+                'foreignKey' => $this->targetForeignKey(),
+                'targetTable' => $target
+            ]);
+        }
+        if (!$junction->association($sAlias)) {
+            $junction->belongsTo($sAlias, [
+                'foreignKey' => $this->foreignKey(),
+                'targetTable' => $source
+            ]);
+        }
     }
 
     /**
