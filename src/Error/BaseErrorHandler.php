@@ -15,11 +15,11 @@
 namespace Cake\Error;
 
 use Cake\Core\Configure;
+use Cake\Error\PHP7ErrorException;
 use Cake\Log\Log;
 use Cake\Routing\Router;
-use Exception;
 use Error;
-use Cake\Error\PHP7ErrorException;
+use Exception;
 
 /**
  * Base error handler that provides logic common to the CLI + web
