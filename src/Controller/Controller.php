@@ -74,14 +74,14 @@ use RuntimeException;
  * - `afterFilter(Event $event)`
  *   Called after each action is complete and after the view is rendered.
  *
- * @property      \Cake\Controller\Component\AuthComponent $Auth
- * @property      \Cake\Controller\Component\CookieComponent $Cookie
- * @property      \Cake\Controller\Component\CsrfComponent $Csrf
- * @property      \Cake\Controller\Component\FlashComponent $Flash
- * @property      \Cake\Controller\Component\PaginatorComponent $Paginator
- * @property      \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
- * @property      \Cake\Controller\Component\SecurityComponent $Security
- * @link          http://book.cakephp.org/3.0/en/controllers.html
+ * @property \Cake\Controller\Component\AuthComponent $Auth
+ * @property \Cake\Controller\Component\CookieComponent $Cookie
+ * @property \Cake\Controller\Component\CsrfComponent $Csrf
+ * @property \Cake\Controller\Component\FlashComponent $Flash
+ * @property \Cake\Controller\Component\PaginatorComponent $Paginator
+ * @property \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
+ * @property \Cake\Controller\Component\SecurityComponent $Security
+ * @link http://book.cakephp.org/3.0/en/controllers.html
  */
 class Controller implements EventListenerInterface, EventDispatcherInterface
 {
