@@ -85,15 +85,12 @@ class IntegerType extends Type
         if ($value === null || $value === '') {
             return null;
         }
-        if (is_int($value)) {
-            return $value;
-        }
-        if (ctype_digit($value)) {
+        if (is_numeric($value) || ctype_digit($value)) {
             return (int)$value;
         }
         if (is_array($value)) {
             return 1;
         }
-        return $value;
+        return null;
     }
 }
