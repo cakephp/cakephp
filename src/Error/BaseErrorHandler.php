@@ -15,8 +15,10 @@
 namespace Cake\Error;
 
 use Cake\Core\Configure;
+use Cake\Error\PHP7ErrorException;
 use Cake\Log\Log;
 use Cake\Routing\Router;
+use Error;
 use Exception;
 
 /**
@@ -65,7 +67,7 @@ abstract class BaseErrorHandler
         }
         error_reporting($level);
         set_error_handler([$this, 'handleError'], $level);
-        set_exception_handler([$this, 'handleException']);
+        set_exception_handler([$this, 'wrapAndHandleException']);
         register_shutdown_function(function () {
             if (PHP_SAPI === 'cli') {
                 return;
@@ -137,6 +139,22 @@ abstract class BaseErrorHandler
         $this->_displayError($data, $debug);
         $this->_logError($log, $data);
         return true;
+    }
+
+    /**
+     * Checks the passed exception type. If it is an instance of `Error`
+     * then, it wraps the passed object inside another Exception object
+     * for backwards compatibility purposes.
+     *
+     * @param Exception|Error $exception The exception to handle
+     * @return void
+     */
+    public function wrapAndHandleException($exception)
+    {
+        if ($exception instanceof Error) {
+            $exception = new PHP7ErrorException($exception);
+        }
+        $this->handleException($exception);
     }
 
     /**
@@ -231,13 +249,17 @@ abstract class BaseErrorHandler
     protected function _logException(Exception $exception)
     {
         $config = $this->_options;
+        $unwrapped = $exception instanceof PHP7ErrorException ?
+            $exception->getError() :
+            $exception;
+
         if (empty($config['log'])) {
             return false;
         }
 
         if (!empty($config['skipLog'])) {
             foreach ((array)$config['skipLog'] as $class) {
-                if ($exception instanceof $class) {
+                if ($unwrapped instanceof $class) {
                     return false;
                 }
             }
@@ -253,6 +275,9 @@ abstract class BaseErrorHandler
      */
     protected function _getMessage(Exception $exception)
     {
+        $exception = $exception instanceof PHP7ErrorException ?
+            $exception->getError() :
+            $exception;
         $config = $this->_options;
         $message = sprintf(
             "[%s] %s",
