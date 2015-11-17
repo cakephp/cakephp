@@ -264,7 +264,7 @@ class MarshallerTest extends TestCase
         $result = $marshall->one($data, []);
 
         $this->assertSame($data['title'], $result->title);
-        $this->assertSame($data['author_id'], $result->author_id, 'No cast on bad data.');
+        $this->assertNull($result->author_id, 'No cast on bad data.');
         $this->assertSame($data['created'], $result->created, 'No cast on bad data.');
     }
 
