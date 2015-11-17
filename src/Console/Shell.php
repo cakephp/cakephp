@@ -444,6 +444,7 @@ class Shell
 
         if ($this->hasMethod('main')) {
             $this->startup();
+            $this->command = 'main';
             return call_user_func_array([$this, 'main'], $this->args);
         }
 
