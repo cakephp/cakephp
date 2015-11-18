@@ -19,6 +19,12 @@ use DateTime;
 
 class DateType extends DateTimeType
 {
+    /**
+     * The class to use for representing date objects
+     *
+     * @var string
+     */
+    public static $dateTimeClass = 'Cake\I18n\Date';
 
     /**
      * Date format for DateTime object

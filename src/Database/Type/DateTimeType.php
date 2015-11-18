@@ -16,7 +16,7 @@ namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
 use Cake\Database\Type;
-use DateTime;
+use DateTimeInterface;
 use Exception;
 use RuntimeException;
 
@@ -126,7 +126,7 @@ class DateTimeType extends Type
      */
     public function marshal($value)
     {
-        if ($value instanceof DateTime) {
+        if ($value instanceof DateTimeInterface) {
             return $value;
         }
 
@@ -196,9 +196,7 @@ class DateTimeType extends Type
             $this->_useLocaleParser = $enable;
             return $this;
         }
-        if (static::$dateTimeClass === 'Cake\I18n\Time' ||
-            is_subclass_of(static::$dateTimeClass, 'Cake\I18n\Time')
-        ) {
+        if (method_exists(static::$dateTimeClass, 'parseDateTime')) {
             $this->_useLocaleParser = $enable;
             return $this;
         }

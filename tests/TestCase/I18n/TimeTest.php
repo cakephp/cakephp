@@ -1,7 +1,5 @@
 <?php
 /**
- * TimeTest file
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -25,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class TimeTest extends TestCase
 {
-
     /**
      * setUp method
      *
@@ -61,35 +58,6 @@ class TimeTest extends TestCase
     protected function _restoreSystemTimezone()
     {
         date_default_timezone_set($this->_systemTimezoneIdentifier);
-    }
-
-    /**
-     * Provides values and expectations for the toQuarter method
-     *
-     * @return array
-     */
-    public function toQuarterProvider()
-    {
-        return [
-            ['2007-12-25', 4],
-            ['2007-9-25', 3],
-            ['2007-3-25', 1],
-            ['2007-3-25', ['2007-01-01', '2007-03-31'], true],
-            ['2007-5-25', ['2007-04-01', '2007-06-30'], true],
-            ['2007-8-25', ['2007-07-01', '2007-09-30'], true],
-            ['2007-12-25', ['2007-10-01', '2007-12-31'], true],
-        ];
-    }
-
-    /**
-     * testToQuarter method
-     *
-     * @dataProvider toQuarterProvider
-     * @return void
-     */
-    public function testToQuarter($date, $expected, $range = false)
-    {
-        $this->assertEquals($expected, (new Time($date))->toQuarter($range));
     }
 
     /**
@@ -304,10 +272,6 @@ class TimeTest extends TestCase
         $result = $time->timeAgoInWords(['format' => 'yyyy-MM-dd']);
         $this->assertEquals('on 2007-09-25', $result);
 
-        $time = new Time('2007-9-25');
-        $result = $time->timeAgoInWords(['format' => 'yyyy-MM-dd']);
-        $this->assertEquals('on 2007-09-25', $result);
-
         $time = new Time('+2 weeks +2 days');
         $result = $time->timeAgoInWords(['format' => 'yyyy-MM-dd']);
         $this->assertRegExp('/^2 weeks, [1|2] day(s)?$/', $result);
@@ -391,124 +355,6 @@ class TimeTest extends TestCase
 
         $this->assertTimeFormat('20 avr. 2014 20:00', $time->nice(null, 'fr-FR'));
         $this->assertTimeFormat('20 avr. 2014 16:00', $time->nice('America/New_York', 'fr-FR'));
-    }
-
-    /**
-     * testToUnix method
-     *
-     * @return void
-     */
-    public function testToUnix()
-    {
-        $time = new Time('2014-04-20 08:00:00');
-        $this->assertEquals('1397980800', $time->toUnixString());
-
-        $time = new Time('2021-12-11 07:00:01');
-        $this->assertEquals('1639206001', $time->toUnixString());
-    }
-
-    /**
-     * testIsThisWeek method
-     *
-     * @return void
-     */
-    public function testIsThisWeek()
-    {
-        $time = new Time('this sunday');
-        $this->assertTrue($time->isThisWeek());
-
-        $this->assertTrue($time->modify('-1 day')->isThisWeek());
-        $this->assertFalse($time->modify('-6 days')->isThisWeek());
-
-        $time = new Time();
-        $time->year = $time->year - 1;
-        $this->assertFalse($time->isThisWeek());
-    }
-
-    /**
-     * testIsThisMonth method
-     *
-     * @return void
-     */
-    public function testIsThisMonth()
-    {
-        $time = new Time();
-        $this->assertTrue($time->isThisMonth());
-
-        $time->year = $time->year + 1;
-        $this->assertFalse($time->isThisMonth());
-
-        $time = new Time();
-        $this->assertFalse($time->modify('next month')->isThisMonth());
-    }
-
-    /**
-     * testIsThisYear method
-     *
-     * @return void
-     */
-    public function testIsThisYear()
-    {
-        $time = new Time();
-        $this->assertTrue($time->isThisYear());
-
-        $time->year = $time->year + 1;
-        $this->assertFalse($time->isThisYear());
-
-        $thisYear = date('Y');
-        $time = new Time("$thisYear-01-01 00:00", 'Australia/Sydney');
-
-        $now = clone $time;
-        $now->timezone('UTC');
-        Time::setTestNow($now);
-        $this->assertFalse($time->isThisYear());
-    }
-
-    /**
-     * testWasWithinLast method
-     *
-     * @return void
-     */
-    public function testWasWithinLast()
-    {
-        $this->assertTrue((new Time('-1 day'))->wasWithinLast('1 day'));
-        $this->assertTrue((new Time('-1 week'))->wasWithinLast('1 week'));
-        $this->assertTrue((new Time('-1 year'))->wasWithinLast('1 year'));
-        $this->assertTrue((new Time('-1 second'))->wasWithinLast('1 second'));
-        $this->assertTrue((new Time('-1 day'))->wasWithinLast('1 week'));
-        $this->assertTrue((new Time('-1 week'))->wasWithinLast('2 week'));
-        $this->assertTrue((new Time('-1 second'))->wasWithinLast('10 minutes'));
-        $this->assertTrue((new Time('-1 month'))->wasWithinLast('13 month'));
-        $this->assertTrue((new Time('-1 seconds'))->wasWithinLast('1 hour'));
-
-        $this->assertFalse((new Time('-1 year'))->wasWithinLast('1 second'));
-        $this->assertFalse((new Time('-1 year'))->wasWithinLast('0 year'));
-        $this->assertFalse((new Time('-1 weeks'))->wasWithinLast('1 day'));
-
-        $this->assertTrue((new Time('-3 days'))->wasWithinLast('5'));
-    }
-
-    /**
-     * testWasWithinLast method
-     *
-     * @return void
-     */
-    public function testIsWithinNext()
-    {
-        $this->assertFalse((new Time('-1 day'))->isWithinNext('1 day'));
-        $this->assertFalse((new Time('-1 week'))->isWithinNext('1 week'));
-        $this->assertFalse((new Time('-1 year'))->isWithinNext('1 year'));
-        $this->assertFalse((new Time('-1 second'))->isWithinNext('1 second'));
-        $this->assertFalse((new Time('-1 day'))->isWithinNext('1 week'));
-        $this->assertFalse((new Time('-1 week'))->isWithinNext('2 week'));
-        $this->assertFalse((new Time('-1 second'))->isWithinNext('10 minutes'));
-        $this->assertFalse((new Time('-1 month'))->isWithinNext('13 month'));
-        $this->assertFalse((new Time('-1 seconds'))->isWithinNext('1 hour'));
-
-        $this->assertTrue((new Time('+1 day'))->isWithinNext('1 day'));
-        $this->assertTrue((new Time('+1 week'))->isWithinNext('7 day'));
-        $this->assertTrue((new Time('+1 second'))->isWithinNext('1 minute'));
-        $this->assertTrue((new Time('+1 month'))->isWithinNext('1 month'));
     }
 
     /**
@@ -754,9 +600,9 @@ class TimeTest extends TestCase
     {
         $time = new Time('2014-04-20 10:10:10');
         $expected = [
-            'time' => '2014-04-20T10:10:10+0000',
+            'time' => '2014-04-20T10:10:10+00:00',
             'timezone' => 'UTC',
-            'fixedNowTime' => Time::getTestNow()->toISO8601String()
+            'fixedNowTime' => Time::getTestNow()->toIso8601String()
         ];
         $this->assertEquals($expected, $time->__debugInfo());
     }
@@ -841,22 +687,6 @@ class TimeTest extends TestCase
         $result = Time::parseDate('12/03/2015');
         $this->assertEquals('2015-03-12', $result->format('Y-m-d'));
         $this->assertEquals(new \DateTimeZone('Europe/Paris'), $result->tz);
-    }
-
-    /**
-     * Tests the "from now" time calculation.
-     *
-     * @return void
-     */
-    public function testFromNow()
-    {
-        $date = clone $this->now;
-        $date->modify('-1 year');
-        $date->modify('-6 days');
-        $date->modify('-51 seconds');
-        $interval = Time::fromNow($date);
-        $result = $interval->format("%y %m %d %H %i %s");
-        $this->assertEquals($result, '1 0 6 00 0 51');
     }
 
     /**
