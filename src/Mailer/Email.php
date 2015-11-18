@@ -1839,8 +1839,8 @@ class Email implements JsonSerializable, Serializable
 
         foreach ($types as $type) {
             $View->hasRendered = false;
-            $View->templatePath('Email/' . $type);
-            $View->layoutPath('Email/' . $type);
+            $View->templatePath('Email' . DIRECTORY_SEPARATOR . $type);
+            $View->layoutPath('Email' . DIRECTORY_SEPARATOR . $type);
 
             $render = $View->render();
             $render = str_replace(["\r\n", "\r"], "\n", $render);
