@@ -160,6 +160,18 @@ class RouteBuilder
     }
 
     /**
+     * Add additional extensions to what is already in current scope
+     *
+     * @param string|array $extensions One or more extensions to add
+     * @return void
+     */
+    public function addExtensions($extensions)
+    {
+        $extensions = array_merge($this->_extensions, (array)$extensions);
+        $this->_extensions = array_unique($extensions);
+    }
+
+    /**
      * Get the path this scope is for.
      *
      * @return string
