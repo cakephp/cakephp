@@ -146,7 +146,7 @@ class TableLocator implements LocatorInterface
             $options += $this->_config[$alias];
         }
 
-        $className = $this->_getClassName($alias, $options);
+        $className = $options['className'] = $this->_getClassName($alias, $options);
         if ($className) {
             $options['className'] = $className;
         } else {
