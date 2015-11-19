@@ -16,7 +16,6 @@ namespace Cake\ORM\Locator;
 
 use Cake\Core\App;
 use Cake\Datasource\ConnectionManager;
-use Cake\ORM\Locator\LocatorInterface;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use RuntimeException;
@@ -146,7 +145,11 @@ class TableLocator implements LocatorInterface
             $options += $this->_config[$alias];
         }
 
-        $className = $options['className'] = $this->_getClassName($alias, $options);
+        if (empty($options['className'])) {
+            $options['className'] = Inflector::camelize($alias);
+        }
+
+        $className = $this->_getClassName($alias, $options);
         if ($className) {
             $options['className'] = $className;
         } else {
