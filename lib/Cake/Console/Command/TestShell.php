@@ -226,6 +226,8 @@ class TestShell extends Shell {
 
 		if (!empty($params['no-colors'])) {
 			unset($params['no-colors'], $params['colors']);
+		} elseif (strtolower(substr(php_uname(), 0, 3)) === 'win') {
+			$params['colors'] = false;
 		} else {
 			$params['colors'] = true;
 		}
