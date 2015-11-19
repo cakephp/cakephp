@@ -182,7 +182,8 @@ class TableLocator implements LocatorInterface
      * @param array $options Table options array.
      * @return string
      */
-    protected function _getClassName($alias, array $options = []) {
+    protected function _getClassName($alias, array $options = [])
+    {
         if (empty($options['className'])) {
             $options['className'] = Inflector::camelize($alias);
         }
