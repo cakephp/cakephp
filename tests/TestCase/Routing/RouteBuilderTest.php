@@ -191,6 +191,28 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
+     * Test adding additional extensions will be merged with current.
+     *
+     * @return void
+     */
+    public function testConnectExtensionsAdd()
+    {
+        $routes = new RouteBuilder(
+            $this->collection,
+            '/l',
+            [],
+            ['extensions' => ['json']]
+        );
+        $this->assertEquals(['json'], $routes->extensions());
+
+        $routes->addExtensions(['xml']);
+        $this->assertEquals(['json', 'xml'], $routes->extensions());
+
+        $routes->addExtensions('csv');
+        $this->assertEquals(['json', 'xml', 'csv'], $routes->extensions());
+    }
+
+    /**
      * test that extensions() accepts a string.
      *
      * @return void
