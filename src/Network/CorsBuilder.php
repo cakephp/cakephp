@@ -58,18 +58,30 @@ class CorsBuilder
         return $result;
     }
 
-    public function allowMethods($methods)
+    public function allowMethods(array $methods)
     {
+        if (empty($this->_origin)) {
+            return $this;
+        }
+        $this->_response->header('Access-Control-Allow-Methods', implode(', ', $methods));
         return $this;
     }
 
     public function allowCredentials()
     {
+        if (empty($this->_origin)) {
+            return $this;
+        }
+        $this->_response->header('Access-Control-Allow-Credentials', 'true');
         return $this;
     }
 
-    public function allowHeaders($headers)
+    public function allowHeaders(array $headers)
     {
+        if (empty($this->_origin)) {
+            return $this;
+        }
+        $this->_response->header('Access-Control-Allow-Headers', implode(', ', $headers));
         return $this;
     }
 
