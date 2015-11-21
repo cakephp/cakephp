@@ -1,0 +1,85 @@
+<?php
+
+namespace Cake\Network;
+
+use Cake\Network\Response;
+
+class CorsBuilder
+{
+    protected $_response;
+    protected $_origin;
+    protected $_isSsl;
+
+    public function __construct(Response $response, $origin, $isSsl = false)
+    {
+        $this->_origin = $origin;
+        $this->_isSsl = $isSsl;
+        $this->_response = $response;
+    }
+
+    public function allowOrigin($domain)
+    {
+        if (empty($this->_origin)) {
+            return $this;
+        }
+        $allowed = $this->_normalizeDomains((array)$domain);
+        foreach ($allowed as $domain) {
+            if (!preg_match($domain['preg'], $this->_origin)) {
+                continue;
+            }
+            $this->_response->header('Access-Control-Origin', $this->_origin);
+            break;
+        }
+        return $this;
+    }
+
+    /**
+     * Normalize the origin to regular expressions and put in an array format
+     *
+     * @param array $domains Domain names to normalize.
+     * @return array
+     */
+    protected function _normalizeDomains($domains)
+    {
+        $result = [];
+        foreach ($domains as $domain) {
+            if ($domain === '*') {
+                $result[] = ['preg' => '@.@', 'original' => '*'];
+                continue;
+            }
+
+            $original = $preg = $domain;
+            if (strpos($domain, '://') === false) {
+                $preg = ($this->_isSsl ? 'https://' : 'http://') . $domain;
+            }
+            $preg = '@' . str_replace('*', '.*', $domain) . '@';
+            $result[] = compact('original', 'preg');
+        }
+        return $result;
+    }
+
+    public function allowMethods($methods)
+    {
+        return $this;
+    }
+
+    public function allowCredentials()
+    {
+        return $this;
+    }
+
+    public function allowHeaders($headers)
+    {
+        return $this;
+    }
+
+    public function exposeHeaders($headers)
+    {
+        return $this;
+    }
+
+    public function maxAge($headers)
+    {
+        return $this;
+    }
+}
