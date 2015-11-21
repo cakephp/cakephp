@@ -1347,6 +1347,9 @@ class Response
      * cors($request, ['http://www.cakephp.org', '*.google.com', 'https://myproject.github.io']);
      * ```
      *
+     * *Note* The `$allowedDomains`, `$allowedMethods`, `$allowedHeaders` parameters are deprectated.
+     * Instead the builder object should be used.
+     *
      * @param \Cake\Network\Request $request Request object
      * @param string|array $allowedDomains List of allowed domains, see method description for more details
      * @param string|array $allowedMethods List of HTTP verbs allowed
@@ -1354,7 +1357,7 @@ class Response
      * @return \Cake\Network\CorsBuilder A builder object the provides a fluent interface for defining
      *   additional CORS headers.
      */
-    public function cors(Request $request, $allowedDomains, $allowedMethods = [], $allowedHeaders = [])
+    public function cors(Request $request, $allowedDomains = [], $allowedMethods = [], $allowedHeaders = [])
     {
         $origin = $request->header('Origin');
         $ssl = $request->is('ssl');
@@ -1362,7 +1365,9 @@ class Response
         if (!$origin) {
             return $builder;
         }
-        $builder->allowOrigin($allowedDomains);
+        if ($allowedDomains) {
+            $builder->allowOrigin($allowedDomains);
+        }
         if ($allowedMethods) {
             $builder->allowMethods((array)$allowedMethods);
         }
