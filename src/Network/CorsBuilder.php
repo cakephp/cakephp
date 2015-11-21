@@ -27,7 +27,7 @@ class CorsBuilder
             if (!preg_match($domain['preg'], $this->_origin)) {
                 continue;
             }
-            $this->_response->header('Access-Control-Origin', $this->_origin);
+            $this->_response->header('Access-Control-Allow-Origin', $this->_origin);
             break;
         }
         return $this;
@@ -85,13 +85,21 @@ class CorsBuilder
         return $this;
     }
 
-    public function exposeHeaders($headers)
+    public function exposeHeaders(array $headers)
     {
+        if (empty($this->_origin)) {
+            return $this;
+        }
+        $this->_response->header('Access-Control-Expose-Headers', implode(', ', $headers));
         return $this;
     }
 
-    public function maxAge($headers)
+    public function maxAge($age)
     {
+        if (empty($this->_origin)) {
+            return $this;
+        }
+        $this->_response->header('Access-Control-Max-Age', $age);
         return $this;
     }
 }

@@ -30,12 +30,12 @@ class CorsBuilderTest extends TestCase
         $response = new Response();
         $builder = new CorsBuilder($response, 'http://www.example.com');
         $this->assertSame($builder, $builder->allowOrigin(['*.example.com', '*.foo.com']));
-        $this->assertHeader('http://www.example.com', $response, 'Access-Control-Origin');
+        $this->assertHeader('http://www.example.com', $response, 'Access-Control-Allow-Origin');
 
         $response = new Response();
         $builder = new CorsBuilder($response, 'http://www.example.com');
         $this->assertSame($builder, $builder->allowOrigin('*.example.com'));
-        $this->assertHeader('http://www.example.com', $response, 'Access-Control-Origin');
+        $this->assertHeader('http://www.example.com', $response, 'Access-Control-Allow-Origin');
     }
 
     /**
@@ -48,17 +48,17 @@ class CorsBuilderTest extends TestCase
         $response = new Response();
         $builder = new CorsBuilder($response, 'https://www.example.com', true);
         $this->assertSame($builder, $builder->allowOrigin('http://example.com'));
-        $this->assertNoHeader($response, 'Access-Control-Origin');
+        $this->assertNoHeader($response, 'Access-Control-Allow-Origin');
 
         $response = new Response();
         $builder = new CorsBuilder($response, 'http://www.example.com', true);
         $this->assertSame($builder, $builder->allowOrigin('https://example.com'));
-        $this->assertNoHeader($response, 'Access-Control-Origin');
+        $this->assertNoHeader($response, 'Access-Control-Allow-Origin');
 
         $response = new Response();
         $builder = new CorsBuilder($response, 'http://www.example.com');
         $this->assertSame($builder, $builder->allowOrigin('https://example.com'));
-        $this->assertNoHeader($response, 'Access-Control-Origin');
+        $this->assertNoHeader($response, 'Access-Control-Allow-Origin');
     }
 
     public function testAllowMethodsNoOrigin()
@@ -107,6 +107,38 @@ class CorsBuilderTest extends TestCase
         $builder = new CorsBuilder($response, 'http://example.com');
         $this->assertSame($builder, $builder->allowHeaders(['Content-Type', 'Accept']));
         $this->assertHeader('Content-Type, Accept', $response, 'Access-Control-Allow-Headers');
+    }
+
+    public function testExposeHeadersNoOrigin()
+    {
+        $response = new Response();
+        $builder = new CorsBuilder($response, '');
+        $this->assertSame($builder, $builder->exposeHeaders(['X-THING']));
+        $this->assertNoHeader($response, 'Access-Control-Expose-Headers');
+    }
+
+    public function testExposeHeaders()
+    {
+        $response = new Response();
+        $builder = new CorsBuilder($response, 'http://example.com');
+        $this->assertSame($builder, $builder->exposeHeaders(['Content-Type', 'Accept']));
+        $this->assertHeader('Content-Type, Accept', $response, 'Access-Control-Expose-Headers');
+    }
+
+    public function testMaxAgeNoOrigin()
+    {
+        $response = new Response();
+        $builder = new CorsBuilder($response, '');
+        $this->assertSame($builder, $builder->maxAge(300));
+        $this->assertNoHeader($response, 'Access-Control-Max-Age');
+    }
+
+    public function testMaxAge()
+    {
+        $response = new Response();
+        $builder = new CorsBuilder($response, 'http://example.com');
+        $this->assertSame($builder, $builder->maxAge(300));
+        $this->assertHeader('300', $response, 'Access-Control-Max-Age');
     }
 
     /**
