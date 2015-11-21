@@ -27,7 +27,8 @@ class CorsBuilder
             if (!preg_match($domain['preg'], $this->_origin)) {
                 continue;
             }
-            $this->_response->header('Access-Control-Allow-Origin', $this->_origin);
+            $value = $domain['original'] === '*' ? '*' : $this->_origin;
+            $this->_response->header('Access-Control-Allow-Origin', $value);
             break;
         }
         return $this;

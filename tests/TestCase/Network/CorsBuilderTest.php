@@ -29,6 +29,11 @@ class CorsBuilderTest extends TestCase
     {
         $response = new Response();
         $builder = new CorsBuilder($response, 'http://www.example.com');
+        $this->assertSame($builder, $builder->allowOrigin('*'));
+        $this->assertHeader('*', $response, 'Access-Control-Allow-Origin');
+
+        $response = new Response();
+        $builder = new CorsBuilder($response, 'http://www.example.com');
         $this->assertSame($builder, $builder->allowOrigin(['*.example.com', '*.foo.com']));
         $this->assertHeader('http://www.example.com', $response, 'Access-Control-Allow-Origin');
 
