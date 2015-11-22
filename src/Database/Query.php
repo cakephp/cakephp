@@ -1698,7 +1698,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * When called with no arguments, the current TypeMap object is returned.
      *
-     * @param \Cake\Database\TypeMap $typeMap The map object to use
+     * @param \Cake\Database\TypeMap|null $typeMap The map object to use
      * @return $this|\Cake\Database\TypeMap
      */
     public function selectTypeMap(TypeMap $typeMap = null)

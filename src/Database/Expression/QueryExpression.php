@@ -75,7 +75,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * Changes the conjunction for the conditions at this level of the expression tree.
      * If called with no arguments it will return the currently configured value.
      *
-     * @param string $conjunction value to be used for joining conditions. If null it
+     * @param string|null $conjunction value to be used for joining conditions. If null it
      * will not set any value, but return the currently stored one
      * @return string|$this
      */
@@ -92,7 +92,7 @@ class QueryExpression implements ExpressionInterface, Countable
     /**
      * Backwards compatible wrapper for tieWith()
      *
-     * @param string $conjunction value to be used for joining conditions. If null it
+     * @param string|null $conjunction value to be used for joining conditions. If null it
      * will not set any value, but return the currently stored one
      * @return string|$this
      * @deprecated 3.2.0 Use tieWith() instead
