@@ -87,6 +87,9 @@ class EagerLoaderTest extends TestCase
             'name' => 'string',
             'clients.phone' => 'string',
             'phone' => 'string',
+            'clients__id' => 'integer',
+            'clients__name' => 'string',
+            'clients__phone' => 'string',
         ]);
         $this->ordersTypeMap = new TypeMap([
             'orders.id' => 'integer',
@@ -95,26 +98,34 @@ class EagerLoaderTest extends TestCase
             'total' => 'string',
             'orders.placed' => 'datetime',
             'placed' => 'datetime',
+            'orders__id' => 'integer',
+            'orders__total' => 'string',
+            'orders__placed' => 'datetime',
         ]);
         $this->orderTypesTypeMap = new TypeMap([
             'orderTypes.id' => 'integer',
             'id' => 'integer',
+            'orderTypes__id' => 'integer',
         ]);
         $this->stuffTypeMap = new TypeMap([
             'stuff.id' => 'integer',
             'id' => 'integer',
+            'stuff__id' => 'integer',
         ]);
         $this->stuffTypesTypeMap = new TypeMap([
             'stuffTypes.id' => 'integer',
             'id' => 'integer',
+            'stuffTypes__id' => 'integer',
         ]);
         $this->companiesTypeMap = new TypeMap([
             'companies.id' => 'integer',
             'id' => 'integer',
+            'companies__id' => 'integer',
         ]);
         $this->categoriesTypeMap = new TypeMap([
             'categories.id' => 'integer',
             'id' => 'integer',
+            'categories__id' => 'integer',
         ]);
     }
 

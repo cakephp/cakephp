@@ -19,6 +19,7 @@ use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\ValuesExpression;
 use Cake\Database\Statement\CallbackStatement;
+use Cake\Database\TypeMap;
 use IteratorAggregate;
 use RuntimeException;
 
@@ -122,6 +123,13 @@ class Query implements ExpressionInterface, IteratorAggregate
     protected $_useBufferedResults = true;
 
     /**
+     * The Type map for fields in the select clause
+     *
+     * @var \Cake\Database\TypeMap
+     */
+    protected $_selectTypeMap;
+
+    /**
      * Constructor.
      *
      * @param \Cake\Datasource\ConnectionInterface $connection The connection
@@ -172,6 +180,13 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function execute()
     {
         $statement = $this->_connection->run($this);
+        $driver = $this->_connection->driver();
+        $typeMap = $this->selectTypeMap();
+
+        if ($typeMap->toArray()) {
+            $this->decorateResults(new FieldTypeConverter($typeMap, $driver));
+        }
+
         $this->_iterator = $this->_decorateStatement($statement);
         $this->_dirty = false;
         return $this->_iterator;
@@ -1674,6 +1689,29 @@ class Query implements ExpressionInterface, IteratorAggregate
 
         $this->_dirty();
         $this->_useBufferedResults = (bool)$enable;
+        return $this;
+    }
+
+    /**
+     * Sets the TypeMap class where the types for each of the fields in the
+     * select clause are stored.
+     *
+     * When called with no arguments, the current TypeMap object is returned.
+     *
+     * @param \Cake\Database\TypeMap $typeMap The map object to use
+     * @return $this|\Cake\Database\TypeMap
+     */
+    public function selectTypeMap(TypeMap $typeMap = null)
+    {
+        if ($typeMap === null && $this->_selectTypeMap === null) {
+            $this->_selectTypeMap = new TypeMap();
+        }
+
+        if ($typeMap === null) {
+            return $this->_selectTypeMap;
+        }
+
+        $this->_selectTypeMap = $typeMap;
         return $this;
     }
 

@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Database;
 use Cake\Core\Configure;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Query;
+use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
@@ -3486,6 +3487,40 @@ class QueryTest extends TestCase
 
         $query->order(['Articles.title' => 'ASC']);
         $this->assertNotEquals($query->clause('order'), $dupe->clause('order'));
+    }
+
+    /**
+     * Tests the selectTypeMap method
+     *
+     * @return void
+     */
+    public function testSelectTypeMap()
+    {
+        $query = new Query($this->connection);
+        $typeMap = $query->selectTypeMap();
+        $this->assertInstanceOf(TypeMap::class, $typeMap);
+        $another = clone $typeMap;
+        $query->selectTypeMap($another);
+        $this->assertSame($another, $query->selectTypeMap());
+    }
+
+    /**
+     * Tests the automatic type conversion for the fields in the result
+     *
+     * @return void
+     */
+    public function testSelectTypeConversion()
+    {
+        $query = new Query($this->connection);
+        $time = new \DateTime('2007-03-18 10:50:00');
+        $query
+            ->select(['id', 'comment', 'the_date' => 'created'])
+            ->from('comments')
+            ->limit(1)
+            ->selectTypeMap()->types(['id' => 'integer', 'the_date' => 'datetime']);
+        $result = $query->execute()->fetchAll('assoc');
+        $this->assertInternalType('integer', $result[0]['id']);
+        $this->assertInstanceOf('DateTime', $result[0]['the_date']);
     }
 
     /**
