@@ -9,6 +9,7 @@ class CorsBuilder
     protected $_response;
     protected $_origin;
     protected $_isSsl;
+    protected $_headers = [];
 
     public function __construct(Response $response, $origin, $isSsl = false)
     {
@@ -17,18 +18,26 @@ class CorsBuilder
         $this->_response = $response;
     }
 
-    public function allowOrigin($domain)
+    public function build()
     {
         if (empty($this->_origin)) {
-            return $this;
+            return $this->_response;
         }
+        if (isset($this->_headers['Access-Control-Allow-Origin'])) {
+            $this->_response->header($this->_headers);
+        }
+        return $this->_response;
+    }
+
+    public function allowOrigin($domain)
+    {
         $allowed = $this->_normalizeDomains((array)$domain);
         foreach ($allowed as $domain) {
             if (!preg_match($domain['preg'], $this->_origin)) {
                 continue;
             }
             $value = $domain['original'] === '*' ? '*' : $this->_origin;
-            $this->_response->header('Access-Control-Allow-Origin', $value);
+            $this->_headers['Access-Control-Allow-Origin'] = $value;
             break;
         }
         return $this;
@@ -61,46 +70,31 @@ class CorsBuilder
 
     public function allowMethods(array $methods)
     {
-        if (empty($this->_origin)) {
-            return $this;
-        }
-        $this->_response->header('Access-Control-Allow-Methods', implode(', ', $methods));
+        $this->_headers['Access-Control-Allow-Methods'] = implode(', ', $methods);
         return $this;
     }
 
     public function allowCredentials()
     {
-        if (empty($this->_origin)) {
-            return $this;
-        }
-        $this->_response->header('Access-Control-Allow-Credentials', 'true');
+        $this->_headers['Access-Control-Allow-Credentials'] = 'true';
         return $this;
     }
 
     public function allowHeaders(array $headers)
     {
-        if (empty($this->_origin)) {
-            return $this;
-        }
-        $this->_response->header('Access-Control-Allow-Headers', implode(', ', $headers));
+        $this->_headers['Access-Control-Allow-Headers'] = implode(', ', $headers);
         return $this;
     }
 
     public function exposeHeaders(array $headers)
     {
-        if (empty($this->_origin)) {
-            return $this;
-        }
-        $this->_response->header('Access-Control-Expose-Headers', implode(', ', $headers));
+        $this->_headers['Access-Control-Expose-Headers'] = implode(', ', $headers);
         return $this;
     }
 
     public function maxAge($age)
     {
-        if (empty($this->_origin)) {
-            return $this;
-        }
-        $this->_response->header('Access-Control-Max-Age', $age);
+        $this->_headers['Access-Control-Max-Age'] = $age;
         return $this;
     }
 }
