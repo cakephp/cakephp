@@ -1365,15 +1365,14 @@ class Response
         if (!$origin) {
             return $builder;
         }
-        if ($allowedDomains) {
-            $builder->allowOrigin($allowedDomains);
+        if (empty($allowedDomains) && empty($allowedMethods) && empty($allowedHeaders)) {
+            return $builder;
         }
-        if ($allowedMethods) {
-            $builder->allowMethods((array)$allowedMethods);
-        }
-        if ($allowedHeaders) {
-            $builder->allowHeaders((array)$allowedHeaders);
-        }
+
+        $builder->allowOrigin($allowedDomains)
+            ->allowMethods((array)$allowedMethods)
+            ->allowHeaders((array)$allowedHeaders)
+            ->build();
         return $builder;
     }
 
