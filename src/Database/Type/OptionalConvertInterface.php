@@ -27,5 +27,5 @@ interface OptionalConvertInterface
      *
      * @return boolean
      */
-    public function requiresToPHPCast();
+    public function requiresToPhpCast();
 }

@@ -51,7 +51,7 @@ class FieldTypeConverter
         $result = [];
 
         foreach ($types as $k => $type) {
-            if ($type instanceof OptionalConvertInterface && !$type->requiresToPHPCast()) {
+            if ($type instanceof OptionalConvertInterface && !$type->requiresToPhpCast()) {
                 unset($types[$k]);
             }
         }
