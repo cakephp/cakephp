@@ -47,8 +47,7 @@ class FieldTypeConverter
     {
         $this->_driver = $driver;
         $map = $typeMap->toArray();
-        $types = array_keys(Type::map());
-        $types = array_map(['Cake\Database\Type', 'build'], array_combine($types, $types));
+        $types = Type::buildAll();
         $result = [];
 
         foreach ($types as $k => $type) {
