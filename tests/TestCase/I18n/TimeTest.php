@@ -569,13 +569,13 @@ class TimeTest extends TestCase
     {
         $time = new Time('2014-04-20 10:10:10');
         $other = new Time('2014-04-27 10:10:10');
-        $this->assertEquals('1 week ago', $time->diffForHumans($other));
+        $this->assertEquals('1 week before', $time->diffForHumans($other));
 
         $other = new Time('2014-04-21 09:10:10');
-        $this->assertEquals('23 hours ago', $time->diffForHumans($other));
+        $this->assertEquals('23 hours before', $time->diffForHumans($other));
 
         $other = new Time('2014-04-13 09:10:10');
-        $this->assertEquals('1 week', $time->diffForHumans($other));
+        $this->assertEquals('1 week after', $time->diffForHumans($other));
     }
 
     /**
