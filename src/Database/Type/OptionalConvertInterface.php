@@ -25,7 +25,7 @@ interface OptionalConvertInterface
      * Returns whehter the cast to PHP is required to be invoked, since
      * it is not a indentity function.
      *
-     * @return boolean
+     * @return bool
      */
     public function requiresToPhpCast();
 }
