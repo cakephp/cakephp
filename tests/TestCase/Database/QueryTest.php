@@ -3487,6 +3487,11 @@ class QueryTest extends TestCase
 
         $query->order(['Articles.title' => 'ASC']);
         $this->assertNotEquals($query->clause('order'), $dupe->clause('order'));
+
+        $this->assertNotSame(
+            $query->selectTypeMap(),
+            $dupe->selectTypeMap()
+        );
     }
 
     /**

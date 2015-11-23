@@ -1790,8 +1790,11 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function __clone()
     {
         $this->_iterator = null;
-        if ($this->_valueBinder) {
+        if ($this->_valueBinder !== null) {
             $this->_valueBinder = clone $this->_valueBinder;
+        }
+        if ($this->_selectTypeMap !== null) {
+            $this->_selectTypeMap = clone $this->_selectTypeMap;
         }
         foreach ($this->_parts as $name => $part) {
             if (empty($part)) {
