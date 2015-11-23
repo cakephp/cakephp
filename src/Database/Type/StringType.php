@@ -100,7 +100,7 @@ class StringType extends Type implements OptionalConvertInterface
      *
      * @return boolean False as databse results are returned already as strings
      */
-    public function requiresToPHPCast()
+    public function requiresToPhpCast()
     {
         return false;
     }
