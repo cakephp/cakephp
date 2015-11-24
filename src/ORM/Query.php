@@ -17,6 +17,7 @@ namespace Cake\ORM;
 use ArrayObject;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query as DatabaseQuery;
+use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\QueryTrait;
@@ -173,7 +174,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $map = $table->schema()->typeMap();
         $fields = [];
         foreach ($map as $f => $type) {
-            $fields[$f] = $fields[$alias . '.' . $f] = $type;
+            $fields[$f] = $fields[$alias . '.' . $f] = $fields[$alias . '__' . $f] = $type;
         }
         $this->typeMap()->addDefaults($fields);
 
@@ -669,6 +670,8 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $clone->offset(null);
         $clone->mapReduce(null, null, true);
         $clone->formatResults(null, true);
+        $clone->selectTypeMap(new TypeMap());
+        $clone->decorateResults(null, true);
         return $clone;
     }
 
@@ -869,6 +872,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             $decorator = $this->_decoratorClass();
             return new $decorator($this->_results);
         }
+
         $statement = $this->eagerLoader()->loadExternal($this, $this->execute());
         return new ResultSet($this, $statement);
     }
@@ -880,22 +884,23 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * specified and applies the joins required to eager load associations defined
      * using `contain`
      *
+     * It also sets the default types for the columns in the select clause
+     *
      * @see \Cake\Database\Query::execute()
      * @return void
      */
     protected function _transformQuery()
     {
-        if (!$this->_dirty) {
+        if (!$this->_dirty || $this->_type !== 'select') {
             return;
         }
 
-        if ($this->_type === 'select') {
-            if (empty($this->_parts['from'])) {
-                $this->from([$this->_repository->alias() => $this->_repository->table()]);
-            }
-            $this->_addDefaultFields();
-            $this->eagerLoader()->attachAssociations($this, $this->_repository, !$this->_hasFields);
+        if (empty($this->_parts['from'])) {
+            $this->from([$this->_repository->alias() => $this->_repository->table()]);
         }
+        $this->_addDefaultFields();
+        $this->eagerLoader()->attachAssociations($this, $this->_repository, !$this->_hasFields);
+        $this->_addDefaultSelectTypes();
     }
 
     /**
@@ -917,6 +922,26 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 
         $aliased = $this->aliasFields($select, $this->repository()->alias());
         $this->select($aliased, true);
+    }
+
+    /**
+     * Sets the default types for converting the fields in the select clause
+     *
+     * @return void
+     */
+    protected function _addDefaultSelectTypes()
+    {
+        $typeMap = $this->typeMap()->defaults();
+        $selectTypeMap = $this->selectTypeMap();
+        $select = array_keys($this->clause('select'));
+        $types = [];
+
+        foreach ($select as $alias) {
+            if (isset($typeMap[$alias])) {
+                $types[$alias] = $typeMap[$alias];
+            }
+        }
+        $this->selectTypeMap()->addDefaults($types);
     }
 
     /**

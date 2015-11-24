@@ -824,14 +824,20 @@ class QueryTest extends TestCase
         $typeMap = new TypeMap([
             'foo.id' => 'integer',
             'id' => 'integer',
+            'foo__id' => 'integer',
             'articles.id' => 'integer',
+            'articles__id' => 'integer',
             'articles.author_id' => 'integer',
+            'articles__author_id' => 'integer',
             'author_id' => 'integer',
             'articles.title' => 'string',
+            'articles__title' => 'string',
             'title' => 'string',
             'articles.body' => 'text',
+            'articles__body' => 'text',
             'body' => 'text',
             'articles.published' => 'string',
+            'articles__published' => 'string',
             'published' => 'string',
         ]);
 
@@ -2372,10 +2378,12 @@ class QueryTest extends TestCase
             'sql' => $query->sql(),
             'params' => $query->valueBinder()->bindings(),
             'defaultTypes' => [
+                'authors__id' => 'integer',
                 'authors.id' => 'integer',
                 'id' => 'integer',
+                'authors__name' => 'string',
                 'authors.name' => 'string',
-                'name' => 'string'
+                'name' => 'string',
             ],
             'decorators' => 0,
             'executed' => false,

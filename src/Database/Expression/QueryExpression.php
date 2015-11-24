@@ -65,7 +65,7 @@ class QueryExpression implements ExpressionInterface, Countable
     public function __construct($conditions = [], $types = [], $conjunction = 'AND')
     {
         $this->typeMap($types);
-        $this->type(strtoupper($conjunction));
+        $this->tieWith(strtoupper($conjunction));
         if (!empty($conditions)) {
             $this->add($conditions, $this->typeMap()->types());
         }
@@ -75,11 +75,11 @@ class QueryExpression implements ExpressionInterface, Countable
      * Changes the conjunction for the conditions at this level of the expression tree.
      * If called with no arguments it will return the currently configured value.
      *
-     * @param string $conjunction value to be used for joining conditions. If null it
+     * @param string|null $conjunction value to be used for joining conditions. If null it
      * will not set any value, but return the currently stored one
      * @return string|$this
      */
-    public function type($conjunction = null)
+    public function tieWith($conjunction = null)
     {
         if ($conjunction === null) {
             return $this->_conjunction;
@@ -87,6 +87,19 @@ class QueryExpression implements ExpressionInterface, Countable
 
         $this->_conjunction = strtoupper($conjunction);
         return $this;
+    }
+
+    /**
+     * Backwards compatible wrapper for tieWith()
+     *
+     * @param string|null $conjunction value to be used for joining conditions. If null it
+     * will not set any value, but return the currently stored one
+     * @return string|$this
+     * @deprecated 3.2.0 Use tieWith() instead
+     */
+    public function type($conjunction = null)
+    {
+        return $this->tieWith($conjunction);
     }
 
     /**
