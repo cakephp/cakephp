@@ -221,6 +221,17 @@ class DateTimeType extends Type
     }
 
     /**
+     * Change the preferred class name to the FrozenTime implementation.
+     *
+     * @return $this
+     */
+    public function useImmutable()
+    {
+        static::$dateTimeClass = 'Cake\I18n\FrozenTime';
+        return $this;
+    }
+
+    /**
      * Converts a string into a DateTime object after parseing it using the locale
      * aware parser with the specified format.
      *

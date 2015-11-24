@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\I18n;
 
+use Cake\I18n\FrozenDate;
 use Cake\I18n\Date;
 use Cake\TestSuite\TestCase;
 use DateTimeZone;
@@ -50,16 +51,28 @@ class DateTest extends TestCase
     {
         parent::tearDown();
         Date::$defaultLocale = $this->locale;
+        FrozenDate::$defaultLocale = $this->locale;
+    }
+
+    /**
+     * Provider for ensuring that Date and FrozenDate work the same way.
+     *
+     * @return void
+     */
+    public static function classNameProvider()
+    {
+        return ['mutable' => ['Cake\I18n\Date'], 'immutable' => ['Cake\I18n\FrozenDate']];
     }
 
     /**
      * test formatting dates taking in account preferred i18n locale file
      *
+     * @dataProvider classNameProvider
      * @return void
      */
-    public function testI18nFormat()
+    public function testI18nFormat($class)
     {
-        $time = new Date('Thu Jan 14 13:59:28 2010');
+        $time = new $class('Thu Jan 14 13:59:28 2010');
         $result = $time->i18nFormat();
         $expected = '1/14/10';
         $this->assertEquals($expected, $result);
@@ -73,7 +86,7 @@ class DateTest extends TestCase
         $expected = '00:00:00';
         $this->assertEquals($expected, $result);
 
-        Date::$defaultLocale = 'fr-FR';
+        $class::$defaultLocale = 'fr-FR';
         $result = $time->i18nFormat(\IntlDateFormatter::FULL);
         $expected = 'jeudi 14 janvier 2010 00:00:00 UTC';
         $this->assertEquals($expected, $result);
@@ -85,22 +98,24 @@ class DateTest extends TestCase
     /**
      * test __toString
      *
+     * @dataProvider classNameProvider
      * @return void
      */
-    public function testToString()
+    public function testToString($class)
     {
-        $date = new Date('2015-11-06 11:32:45');
+        $date = new $class('2015-11-06 11:32:45');
         $this->assertEquals('11/6/15', (string)$date);
     }
 
     /**
      * test nice()
      *
+     * @dataProvider classNameProvider
      * @return void
      */
-    public function testNice()
+    public function testNice($class)
     {
-        $date = new Date('2015-11-06 11:32:45');
+        $date = new $class('2015-11-06 11:32:45');
 
         $this->assertEquals('Nov 6, 2015', $date->nice());
         $this->assertEquals('Nov 6, 2015', $date->nice(new DateTimeZone('America/New_York')));
@@ -110,41 +125,44 @@ class DateTest extends TestCase
     /**
      * test jsonSerialize()
      *
+     * @dataProvider classNameProvider
      * @return void
      */
-    public function testJsonSerialize()
+    public function testJsonSerialize($class)
     {
-        $date = new Date('2015-11-06 11:32:45');
+        $date = new $class('2015-11-06 11:32:45');
         $this->assertEquals('"2015-11-06T00:00:00+0000"', json_encode($date));
     }
 
     /**
      * test parseDate()
      *
+     * @dataProvider classNameProvider
      * @return void
      */
-    public function testParseDate()
+    public function testParseDate($class)
     {
-        $date = Date::parseDate('11/6/15');
+        $date = $class::parseDate('11/6/15');
         $this->assertEquals('2015-11-06 00:00:00', $date->format('Y-m-d H:i:s'));
 
-        Date::$defaultLocale = 'fr-FR';
-        $date = Date::parseDate('13 10, 2015');
+        $class::$defaultLocale = 'fr-FR';
+        $date = $class::parseDate('13 10, 2015');
         $this->assertEquals('2015-10-13 00:00:00', $date->format('Y-m-d H:i:s'));
     }
 
     /**
      * test parseDateTime()
      *
+     * @dataProvider classNameProvider
      * @return void
      */
-    public function testParseDateTime()
+    public function testParseDateTime($class)
     {
-        $date = Date::parseDate('11/6/15 12:33:12');
+        $date = $class::parseDate('11/6/15 12:33:12');
         $this->assertEquals('2015-11-06 00:00:00', $date->format('Y-m-d H:i:s'));
 
-        Date::$defaultLocale = 'fr-FR';
-        $date = Date::parseDate('13 10, 2015 12:54:12');
+        $class::$defaultLocale = 'fr-FR';
+        $date = $class::parseDate('13 10, 2015 12:54:12');
         $this->assertEquals('2015-10-13 00:00:00', $date->format('Y-m-d H:i:s'));
     }
 
@@ -187,13 +205,27 @@ class DateTest extends TestCase
     }
 
     /**
-     * test the timezone option for timeAgoInWords
+     * testTimeAgoInWords with Frozen Date
      *
+     * @dataProvider timeAgoProvider
      * @return void
      */
-    public function testTimeAgoInWordsTimezone()
+    public function testTimeAgoInWordsFrozenDate($input, $expected)
     {
-        $date = new Date('1990-07-31 20:33:00 UTC');
+        $date = new FrozenDate($input);
+        $result = $date->timeAgoInWords();
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * test the timezone option for timeAgoInWords
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testTimeAgoInWordsTimezone($class)
+    {
+        $date = new $class('1990-07-31 20:33:00 UTC');
         $result = $date->timeAgoInWords(
             [
                 'timezone' => 'America/Vancouver',
@@ -264,13 +296,27 @@ class DateTest extends TestCase
     }
 
     /**
-     * test the custom string options for timeAgoInWords
+     * test the end option for timeAgoInWords
      *
+     * @dataProvider timeAgoEndProvider
      * @return void
      */
-    public function testTimeAgoInWordsCustomStrings()
+    public function testTimeAgoInWordsEndFrozenDate($input, $expected, $end)
     {
-        $date = new Date('-8 years -4 months -2 weeks -3 days');
+        $time = new FrozenDate($input);
+        $result = $time->timeAgoInWords(['end' => $end]);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * test the custom string options for timeAgoInWords
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testTimeAgoInWordsCustomStrings($class)
+    {
+        $date = new $class('-8 years -4 months -2 weeks -3 days');
         $result = $date->timeAgoInWords([
             'relativeString' => 'at least %s ago',
             'accuracy' => ['year' => 'year'],
@@ -279,7 +325,7 @@ class DateTest extends TestCase
         $expected = 'at least 8 years ago';
         $this->assertEquals($expected, $result);
 
-        $date = new Date('+4 months +2 weeks +3 days');
+        $date = new $class('+4 months +2 weeks +3 days');
         $result = $date->timeAgoInWords([
             'absoluteString' => 'exactly on %s',
             'accuracy' => ['year' => 'year'],
@@ -292,11 +338,12 @@ class DateTest extends TestCase
     /**
      * Test the accuracy option for timeAgoInWords()
      *
+     * @dataProvider classNameProvider
      * @return void
      */
-    public function testDateAgoInWordsAccuracy()
+    public function testDateAgoInWordsAccuracy($class)
     {
-        $date = new Date('+8 years +4 months +2 weeks +3 days');
+        $date = new $class('+8 years +4 months +2 weeks +3 days');
         $result = $date->timeAgoInWords([
             'accuracy' => ['year' => 'year'],
             'end' => '+10 years'
@@ -304,7 +351,7 @@ class DateTest extends TestCase
         $expected = '8 years';
         $this->assertEquals($expected, $result);
 
-        $date = new Date('+8 years +4 months +2 weeks +3 days');
+        $date = new $class('+8 years +4 months +2 weeks +3 days');
         $result = $date->timeAgoInWords([
             'accuracy' => ['year' => 'month'],
             'end' => '+10 years'
@@ -312,7 +359,7 @@ class DateTest extends TestCase
         $expected = '8 years, 4 months';
         $this->assertEquals($expected, $result);
 
-        $date = new Date('+8 years +4 months +2 weeks +3 days');
+        $date = new $class('+8 years +4 months +2 weeks +3 days');
         $result = $date->timeAgoInWords([
             'accuracy' => ['year' => 'week'],
             'end' => '+10 years'
@@ -320,7 +367,7 @@ class DateTest extends TestCase
         $expected = '8 years, 4 months, 2 weeks';
         $this->assertEquals($expected, $result);
 
-        $date = new Date('+8 years +4 months +2 weeks +3 days');
+        $date = new $class('+8 years +4 months +2 weeks +3 days');
         $result = $date->timeAgoInWords([
             'accuracy' => ['year' => 'day'],
             'end' => '+10 years'
@@ -328,7 +375,7 @@ class DateTest extends TestCase
         $expected = '8 years, 4 months, 2 weeks, 3 days';
         $this->assertEquals($expected, $result);
 
-        $date = new Date('+1 years +5 weeks');
+        $date = new $class('+1 years +5 weeks');
         $result = $date->timeAgoInWords([
             'accuracy' => ['year' => 'year'],
             'end' => '+10 years'
@@ -336,7 +383,7 @@ class DateTest extends TestCase
         $expected = '1 year';
         $this->assertEquals($expected, $result);
 
-        $date = new Date('+23 hours');
+        $date = new $class('+23 hours');
         $result = $date->timeAgoInWords([
             'accuracy' => 'day'
         ]);
@@ -347,23 +394,24 @@ class DateTest extends TestCase
     /**
      * Test the format option of timeAgoInWords()
      *
+     * @dataProvider classNameProvider
      * @return void
      */
-    public function testDateAgoInWordsWithFormat()
+    public function testDateAgoInWordsWithFormat($class)
     {
-        $date = new Date('2007-9-25');
+        $date = new $class('2007-9-25');
         $result = $date->timeAgoInWords(['format' => 'yyyy-MM-dd']);
         $this->assertEquals('on 2007-09-25', $result);
 
-        $date = new Date('2007-9-25');
+        $date = new $class('2007-9-25');
         $result = $date->timeAgoInWords(['format' => 'yyyy-MM-dd']);
         $this->assertEquals('on 2007-09-25', $result);
 
-        $date = new Date('+2 weeks +2 days');
+        $date = new $class('+2 weeks +2 days');
         $result = $date->timeAgoInWords(['format' => 'yyyy-MM-dd']);
         $this->assertRegExp('/^2 weeks, [1|2] day(s)?$/', $result);
 
-        $date = new Date('+2 months +2 days');
+        $date = new $class('+2 months +2 days');
         $result = $date->timeAgoInWords(['end' => '1 month', 'format' => 'yyyy-MM-dd']);
         $this->assertEquals('on ' . date('Y-m-d', strtotime('+2 months +2 days')), $result);
     }
@@ -371,53 +419,54 @@ class DateTest extends TestCase
     /**
      * test timeAgoInWords() with negative values.
      *
+     * @dataProvider classNameProvider
      * @return void
      */
-    public function testDateAgoInWordsNegativeValues()
+    public function testDateAgoInWordsNegativeValues($class)
     {
-        $date = new Date('-2 months -2 days');
+        $date = new $class('-2 months -2 days');
         $result = $date->timeAgoInWords(['end' => '3 month']);
         $this->assertEquals('2 months, 2 days ago', $result);
 
-        $date = new Date('-2 months -2 days');
+        $date = new $class('-2 months -2 days');
         $result = $date->timeAgoInWords(['end' => '3 month']);
         $this->assertEquals('2 months, 2 days ago', $result);
 
-        $date = new Date('-2 months -2 days');
+        $date = new $class('-2 months -2 days');
         $result = $date->timeAgoInWords(['end' => '1 month', 'format' => 'yyyy-MM-dd']);
         $this->assertEquals('on ' . date('Y-m-d', strtotime('-2 months -2 days')), $result);
 
-        $date = new Date('-2 years -5 months -2 days');
+        $date = new $class('-2 years -5 months -2 days');
         $result = $date->timeAgoInWords(['end' => '3 years']);
         $this->assertEquals('2 years, 5 months, 2 days ago', $result);
 
-        $date = new Date('-2 weeks -2 days');
+        $date = new $class('-2 weeks -2 days');
         $result = $date->timeAgoInWords(['format' => 'yyyy-MM-dd']);
         $this->assertEquals('2 weeks, 2 days ago', $result);
 
-        $date = new Date('-3 years -12 months');
+        $date = new $class('-3 years -12 months');
         $result = $date->timeAgoInWords();
         $expected = 'on ' . $date->format('n/j/y');
         $this->assertEquals($expected, $result);
 
-        $date = new Date('-1 month -1 week -6 days');
+        $date = new $class('-1 month -1 week -6 days');
         $result = $date->timeAgoInWords(
             ['end' => '1 year', 'accuracy' => ['month' => 'month']]
         );
         $this->assertEquals('1 month ago', $result);
 
-        $date = new Date('-1 years -2 weeks -3 days');
+        $date = new $class('-1 years -2 weeks -3 days');
         $result = $date->timeAgoInWords(
             ['accuracy' => ['year' => 'year']]
         );
         $expected = 'on ' . $date->format('n/j/y');
         $this->assertEquals($expected, $result);
 
-        $date = new Date('-13 months -5 days');
+        $date = new $class('-13 months -5 days');
         $result = $date->timeAgoInWords(['end' => '2 years']);
         $this->assertEquals('1 year, 1 month, 5 days ago', $result);
 
-        $date = new Date('-23 hours');
+        $date = new $class('-23 hours');
         $result = $date->timeAgoInWords(['accuracy' => 'day']);
         $this->assertEquals('today', $result);
     }

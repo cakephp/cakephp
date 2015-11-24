@@ -34,6 +34,17 @@ class DateType extends DateTimeType
     protected $_format = 'Y-m-d';
 
     /**
+     * Change the preferred class name to the FrozenDate implementation.
+     *
+     * @return $this
+     */
+    public function useImmutable()
+    {
+        static::$dateTimeClass = 'Cake\I18n\FrozenDate';
+        return $this;
+    }
+
+    /**
      * Convert request data into a datetime object.
      *
      * @param mixed $value Request data
