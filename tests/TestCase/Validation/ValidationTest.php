@@ -2104,12 +2104,19 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::extension('extension.jpg', ['GIF']));
         $this->assertTrue(Validation::extension(['extension.JPG', 'extension.gif', 'extension.png']));
         $this->assertTrue(Validation::extension(['file' => ['name' => 'file.jpg']]));
-        $this->assertTrue(Validation::extension(['file1' => ['name' => 'file.jpg'],
-                                                'file2' => ['name' => 'file.jpg'],
-                                                'file3' => ['name' => 'file.jpg']]));
-        $this->assertFalse(Validation::extension(['file1' => ['name' => 'file.jpg'],
-                                                'file2' => ['name' => 'file.jpg'],
-                                                'file3' => ['name' => 'file.jpg']], ['gif']));
+        $this->assertTrue(Validation::extension([
+            'file1' => ['name' => 'file.jpg'],
+            'file2' => ['name' => 'file.jpg'],
+            'file3' => ['name' => 'file.jpg']
+        ]));
+        $this->assertFalse(Validation::extension(
+            [
+                'file1' => ['name' => 'file.jpg'],
+                'file2' => ['name' => 'file.jpg'],
+                'file3' => ['name' => 'file.jpg']
+            ],
+            ['gif']
+        ));
 
         $this->assertFalse(Validation::extension(['noextension', 'extension.JPG', 'extension.gif', 'extension.png']));
         $this->assertFalse(Validation::extension(['extension.pdf', 'extension.JPG', 'extension.gif', 'extension.png']));
