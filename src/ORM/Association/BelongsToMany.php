@@ -540,7 +540,7 @@ class BelongsToMany extends Association
      * entities to be saved.
      * @param array|\Traversable $entities list of entities to persist in target table and to
      * link to the parent entity
-     * @param array $options list of options accepted by Table::save()
+     * @param array $options list of options accepted by `Table::save()`
      * @throws \InvalidArgumentException if the property representing the association
      * in the parent entity cannot be traversed
      * @return \Cake\Datasource\EntityInterface|bool The parent entity after all links have been
@@ -603,7 +603,7 @@ class BelongsToMany extends Association
      * association
      * @param array $targetEntities list of entities to link to link to the source entity using the
      * junction table
-     * @param array $options list of options accepted by Table::save()
+     * @param array $options list of options accepted by `Table::save()`
      * @return bool success
      */
     protected function _saveLinks(EntityInterface $sourceEntity, $targetEntities, $options)
@@ -673,7 +673,7 @@ class BelongsToMany extends Association
      * of this association
      * @param array $targetEntities list of entities belonging to the `target` side
      * of this association
-     * @param array $options list of options to be passed to the save method
+     * @param array $options list of options to be passed to the internal `save` call
      * @throws \InvalidArgumentException when any of the values in $targetEntities is
      * detected to not be already persisted
      * @return bool true on success, false otherwise
@@ -717,20 +717,21 @@ class BelongsToMany extends Association
      * this association
      * @param bool $cleanProperty whether or not to remove all the objects in $targetEntities
      * that are stored in $sourceEntity
+     * @param array $options list of options to be passed to the internal `delete` call
      * @throws \InvalidArgumentException if non persisted entities are passed or if
      * any of them is lacking a primary key value
      * @return void
      */
-    public function unlink(EntityInterface $sourceEntity, array $targetEntities, $cleanProperty = true)
+    public function unlink(EntityInterface $sourceEntity, array $targetEntities, $cleanProperty = true, array $options = [])
     {
         $this->_checkPersistenceStatus($sourceEntity, $targetEntities);
         $property = $this->property();
 
         $this->junction()->connection()->transactional(
-            function () use ($sourceEntity, $targetEntities) {
+            function () use ($sourceEntity, $targetEntities, $options) {
                 $links = $this->_collectJointEntities($sourceEntity, $targetEntities);
                 foreach ($links as $entity) {
-                    $this->_junctionTable->delete($entity);
+                    $this->_junctionTable->delete($entity, $options);
                 }
             }
         );
@@ -798,8 +799,8 @@ class BelongsToMany extends Association
      * @param \Cake\Datasource\EntityInterface $sourceEntity an entity persisted in the source table for
      * this association
      * @param array $targetEntities list of entities from the target table to be linked
-     * @param array $options list of options to be passed to `save` persisting or
-     * updating new links
+     * @param array $options list of options to be passed to the internal `save`/`delete` calls
+     * when persisting/updating new links, or deleting existing ones
      * @throws \InvalidArgumentException if non persisted entities are passed or if
      * any of them is lacking a primary key value
      * @return bool success
@@ -828,7 +829,7 @@ class BelongsToMany extends Association
                 }
 
                 $jointEntities = $this->_collectJointEntities($sourceEntity, $targetEntities);
-                $inserts = $this->_diffLinks($existing, $jointEntities, $targetEntities);
+                $inserts = $this->_diffLinks($existing, $jointEntities, $targetEntities, $options);
 
                 if ($inserts && !$this->_saveTarget($sourceEntity, $inserts, $options)) {
                     return false;
@@ -861,9 +862,10 @@ class BelongsToMany extends Association
      * @param array $jointEntities link entities that should be persisted
      * @param array $targetEntities entities in target table that are related to
      * the `$jointEntities`
+     * @param array $options list of options accepted by `Table::delete()`
      * @return array
      */
-    protected function _diffLinks($existing, $jointEntities, $targetEntities)
+    protected function _diffLinks($existing, $jointEntities, $targetEntities, $options = [])
     {
         $junction = $this->junction();
         $target = $this->target();
@@ -912,7 +914,7 @@ class BelongsToMany extends Association
 
         if ($deletes) {
             foreach ($deletes as $entity) {
-                $junction->delete($entity);
+                $junction->delete($entity, $options);
             }
         }
 
