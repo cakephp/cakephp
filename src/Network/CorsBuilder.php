@@ -25,7 +25,7 @@ use Cake\Network\Response;
  * a modified Response.
  *
  * It is most convenient to get this object via `Request::cors()`.
- * 
+ *
  * @see Cake\Network\Response::cors()
  */
 class CorsBuilder
@@ -142,7 +142,7 @@ class CorsBuilder
     /**
      * Set the list of allowed HTTP Methods.
      *
-     * @param array $domain The allowed HTTP methods
+     * @param array $methods The allowed HTTP methods
      * @return $this
      */
     public function allowMethods(array $methods)
