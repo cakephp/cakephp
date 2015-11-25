@@ -1019,4 +1019,23 @@ class TranslateBehaviorTest extends TestCase
         $result = $table->find()->first();
         $this->assertNull($result->description);
     }
+
+    /**
+     * Test save with clean translate fields
+     *
+     * @return void
+     */
+    public function testSaveWithCleanFields()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title']]);
+        $table->entityClass(__NAMESPACE__ . '\Article');
+        I18n::locale('fra');
+        $article = $table->get(1);
+        $article->set('body', 'New Body');
+        $table->save($article);
+        $result = $table->get(1);
+        $this->assertEquals('New Body', $result->body);
+        $this->assertSame($article->title, $result->title);
+    }
 }
