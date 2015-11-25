@@ -698,8 +698,16 @@ class BelongsToMany extends Association
      * target entities. This method assumes that all passed objects are already persisted
      * in the database and that each of them contain a primary key value.
      *
-     * By default this method will also unset each of the entity objects stored inside
-     * the source entity.
+     * ### Options
+     *
+     * Additionally to the default options accepted by `Table::delete()`, the following
+     * keys are supported:
+     *
+     * - cleanProperty: Whether or not to remove all the objects in `$targetEntities` that
+     * are stored in `$sourceEntity` (default: true)
+     *
+     * By default this method will unset each of the entity objects stored inside the
+     * source entity.
      *
      * ### Example:
      *
@@ -715,15 +723,22 @@ class BelongsToMany extends Association
      * this association
      * @param array $targetEntities list of entities persisted in the target table for
      * this association
-     * @param bool $cleanProperty whether or not to remove all the objects in $targetEntities
-     * that are stored in $sourceEntity
-     * @param array $options list of options to be passed to the internal `delete` call
+     * @param array|bool $options list of options to be passed to the internal `delete` call,
+     * or a `boolean`
      * @throws \InvalidArgumentException if non persisted entities are passed or if
      * any of them is lacking a primary key value
      * @return void
      */
-    public function unlink(EntityInterface $sourceEntity, array $targetEntities, $cleanProperty = true, array $options = [])
+    public function unlink(EntityInterface $sourceEntity, array $targetEntities, $options = [])
     {
+        if (is_bool($options)) {
+            $options = [
+                'cleanProperty' => $options
+            ];
+        } else {
+            $options += ['cleanProperty' => true];
+        }
+
         $this->_checkPersistenceStatus($sourceEntity, $targetEntities);
         $property = $this->property();
 
@@ -737,7 +752,7 @@ class BelongsToMany extends Association
         );
 
         $existing = $sourceEntity->get($property) ?: [];
-        if (!$cleanProperty || empty($existing)) {
+        if (!$options['cleanProperty'] || empty($existing)) {
             return;
         }
 

@@ -656,7 +656,7 @@ class BelongsToManyTest extends TestCase
             ->method('delete')
             ->with($jointEntities[1]);
 
-        $assoc->unlink($entity, $tags, false);
+        $assoc->unlink($entity, $tags, ['cleanProperty' => false]);
         $this->assertEquals($tags, $entity->get('test'));
     }
 

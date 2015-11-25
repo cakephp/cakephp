@@ -4120,7 +4120,7 @@ class TableTest extends TestCase
 
         $articlesToUnlink = [ $author->articles[0], $author->articles[1] ];
 
-        $authors->Articles->unlink($author, $articlesToUnlink, false);
+        $authors->Articles->unlink($author, $articlesToUnlink, ['cleanProperty' => false]);
 
         $this->assertCount($sizeArticles - count($articlesToUnlink), $authors->Articles->findAllByAuthorId($author->id));
         $this->assertCount($sizeArticles, $author->articles);
@@ -4611,13 +4611,14 @@ class TableTest extends TestCase
 
         $article = $articles->get(1);
 
-        $tags->unlink($article, [$tags->target()->get(2)], true, ['foo' => 'bar']);
+        $tags->unlink($article, [$tags->target()->get(2)], ['foo' => 'bar']);
 
         $expected = [
             '_primary' => true,
             'foo' => 'bar',
             'atomic' => true,
-            'checkRules' => true
+            'checkRules' => true,
+            'cleanProperty' => true
         ];
         $this->assertEquals($expected, $actualOptions);
     }
@@ -4783,13 +4784,14 @@ class TableTest extends TestCase
         $author->articles = [];
         $author->dirty('articles', true);
 
-        $articles->unlink($author, [$articles->target()->get(1)], true, ['foo' => 'bar']);
+        $articles->unlink($author, [$articles->target()->get(1)], ['foo' => 'bar']);
 
         $expected = [
             '_primary' => true,
             'foo' => 'bar',
             'atomic' => true,
-            'checkRules' => true
+            'checkRules' => true,
+            'cleanProperty' => true
         ];
         $this->assertEquals($expected, $actualOptions);
     }
@@ -4856,6 +4858,70 @@ class TableTest extends TestCase
             '_sourceTable' => $authors
         ];
         $this->assertEquals($expected, $actualDeleteOptions);
+    }
+
+    /**
+     * Tests backwards compatibility of the the `$options` argument, formerly `$cleanProperty`.
+     *
+     * @return void
+     */
+    public function testBackwardsCompatibilityForBelongsToManyUnlinkCleanPropertyOption()
+    {
+        $articles = TableRegistry::get('Articles');
+        $tags = $articles->belongsToMany('Tags');
+
+        $actualOptions = null;
+        $tags->junction()->eventManager()->on(
+            'Model.beforeDelete',
+            function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
+                $actualOptions = $options->getArrayCopy();
+            }
+        );
+
+        $article = $articles->get(1);
+
+        $tags->unlink($article, [$tags->target()->get(1)], false);
+        $this->assertArrayHasKey('cleanProperty', $actualOptions);
+        $this->assertFalse($actualOptions['cleanProperty']);
+
+        $actualOptions = null;
+        $tags->unlink($article, [$tags->target()->get(2)]);
+        $this->assertArrayHasKey('cleanProperty', $actualOptions);
+        $this->assertTrue($actualOptions['cleanProperty']);
+    }
+
+    /**
+     * Tests backwards compatibility of the the `$options` argument, formerly `$cleanProperty`.
+     *
+     * @return void
+     */
+    public function testBackwardsCompatibilityForHasManyUnlinkCleanPropertyOption()
+    {
+        $authors = TableRegistry::get('Authors');
+        $articles = $authors->hasMany('Articles');
+        $articles->dependent(true);
+        $articles->cascadeCallbacks(true);
+
+        $actualOptions = null;
+        $articles->target()->eventManager()->on(
+            'Model.beforeDelete',
+            function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
+                $actualOptions = $options->getArrayCopy();
+            }
+        );
+
+        $author = $authors->get(1);
+        $author->articles = [];
+        $author->dirty('articles', true);
+
+        $articles->unlink($author, [$articles->target()->get(1)], false);
+        $this->assertArrayHasKey('cleanProperty', $actualOptions);
+        $this->assertFalse($actualOptions['cleanProperty']);
+
+        $actualOptions = null;
+        $articles->unlink($author, [$articles->target()->get(3)]);
+        $this->assertArrayHasKey('cleanProperty', $actualOptions);
+        $this->assertTrue($actualOptions['cleanProperty']);
     }
 
     /**

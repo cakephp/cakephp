@@ -245,8 +245,16 @@ class HasMany extends Association
      * target entities. This method assumes that all passed objects are already persisted
      * in the database and that each of them contain a primary key value.
      *
-     * By default this method will also unset each of the entity objects stored inside
-     * the source entity.
+     * ### Options
+     *
+     * Additionally to the default options accepted by `Table::delete()`, the following
+     * keys are supported:
+     *
+     * - cleanProperty: Whether or not to remove all the objects in `$targetEntities` that
+     * are stored in `$sourceEntity` (default: true)
+     *
+     * By default this method will unset each of the entity objects stored inside the
+     * source entity.
      *
      * Changes are persisted in the database and also in the source entity.
      *
@@ -266,15 +274,21 @@ class HasMany extends Association
      * this association
      * @param array $targetEntities list of entities persisted in the target table for
      * this association
-     * @param bool $cleanProperty whether or not to remove all the objects in $targetEntities
-     * that are stored in $sourceEntity
      * @param array $options list of options to be passed to the internal `delete` call
      * @throws \InvalidArgumentException if non persisted entities are passed or if
      * any of them is lacking a primary key value
      * @return void
      */
-    public function unlink(EntityInterface $sourceEntity, array $targetEntities, $cleanProperty = true, array $options = [])
+    public function unlink(EntityInterface $sourceEntity, array $targetEntities, $options = [])
     {
+        if (is_bool($options)) {
+            $options = [
+                'cleanProperty' => $options
+            ];
+        } else {
+            $options += ['cleanProperty' => true];
+        }
+
         $foreignKey = (array)$this->foreignKey();
         $target = $this->target();
         $targetPrimaryKey = array_merge((array)$target->primaryKey(), $foreignKey);
@@ -290,7 +304,7 @@ class HasMany extends Association
 
         $this->_unlink($foreignKey, $target, $conditions, $options);
 
-        if ($cleanProperty) {
+        if ($options['cleanProperty']) {
             $sourceEntity->set(
                 $property,
                 (new Collection($sourceEntity->get($property)))
