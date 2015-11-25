@@ -10,15 +10,14 @@ experience for everyone, regardless of level of experience, gender, gender
 identity and expression, sexual orientation, disability, personal appearance,  
 body size, race, ethnicity, age, religion, or nationality.
 
-Examples of unacceptable behavior by participants include:
+In essence: **Don't be Evil**, where...
 
-* The use of sexualized language or imagery  
-* Personal attacks  
-* Trolling or insulting/derogatory comments  
-* Public or private harassment  
-* Publishing other's private information, such as physical or electronic  
-  addresses, without explicit permission  
-* Other unethical or unprofessional conduct
+* 'Evil' is: Discriminating others because of their language, gender, religion or reputation. Don't do that.
+* 'Evil' is: Disregarding works of others because of their language, gender, religion or reputation. Don't do that.
+* 'Evil' is: Harassing individuals or groups on Github, google groups or public IRC chat. Don't do that.
+* 'Evil' is: Insulting others (limited amounts of swearing are tolerated, as long as the target are dead things, not beings). Don't do that.
+* 'Evil' is: Intimidation and threats of violence. Don't do that.
+* 'Evil' is: Being impatient and demanding. Don't do that.
 
 Project maintainers have the right and responsibility to remove, edit, or  
 reject comments, commits, code, wiki edits, issues, and other contributions  
@@ -42,7 +41,7 @@ obligated to maintain confidentiality with regard to the reporter of an
 incident.  
 
 
-This Code of Conduct is adapted from the [Contributor Covenant][homepage],  
+This Code of Conduct is losely based on the [Contributor Covenant][homepage],  
 version 1.3.0, available at
 [http://contributor-covenant.org/version/1/3/0/][version]
 
