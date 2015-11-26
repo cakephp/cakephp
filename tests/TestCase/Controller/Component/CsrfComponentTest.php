@@ -85,6 +85,41 @@ class CsrfComponentTest extends TestCase
      *
      * @return void
      */
+    public static function safeHttpMethodProvider()
+    {
+        return [
+            ['GET'], ['OPTIONS'], ['HEAD']
+        ];
+    }
+
+    /**
+     * Test that the CSRF tokens are not required for idempotent operations
+     *
+     * @dataProvider safeHttpMethodProvider
+     * @return void
+     */
+    public function testSafeMethodNoCsrfRequired($method)
+    {
+        $controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
+        $controller->request = new Request([
+            'environment' => [
+                'REQUEST_METHOD' => $method,
+                'HTTP_X_CSRF_TOKEN' => 'nope',
+            ],
+            'cookies' => ['csrfToken' => 'testing123']
+        ]);
+        $controller->response = new Response();
+
+        $event = new Event('Controller.startup', $controller);
+        $result = $this->component->startup($event);
+        $this->assertNull($result, 'No exception means valid.');
+    }
+
+    /**
+     * Data provider for HTTP method tests.
+     *
+     * @return void
+     */
     public static function httpMethodProvider()
     {
         return [
