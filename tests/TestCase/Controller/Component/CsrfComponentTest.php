@@ -265,7 +265,8 @@ class CsrfComponentTest extends TestCase
         $component = new CsrfComponent($this->registry, [
             'cookieName' => 'token',
             'expiry' => '+1 hour',
-            'secure' => true
+            'secure' => true,
+            'httpOnly' => true
         ]);
 
         $event = new Event('Controller.startup', $controller);
@@ -278,6 +279,7 @@ class CsrfComponentTest extends TestCase
         $this->assertWithinRange((new Time('+1 hour'))->format('U'), $cookie['expire'], 1, 'session duration.');
         $this->assertEquals('/dir/', $cookie['path'], 'session path.');
         $this->assertTrue($cookie['secure'], 'cookie security flag missing');
+        $this->assertTrue($cookie['httpOnly'], 'cookie httpOnly flag missing');
     }
 
     /**
