@@ -94,7 +94,7 @@ class CsrfComponent extends Component
         if ($request->is('get') && $cookieData === null) {
             $this->_setCookie($request, $response);
         }
-        if ($request->is(['patch', 'put', 'post', 'delete'])) {
+        if (!$request->is(['head', 'get', 'options'])) {
             $this->_validateToken($request);
             unset($request->data[$this->_config['field']]);
         }
