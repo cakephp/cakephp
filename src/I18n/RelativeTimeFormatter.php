@@ -4,51 +4,36 @@ namespace Cake\I18n;
 use Cake\I18n\FrozenDate;
 use Cake\I18n\FrozenTime;
 
+/**
+ * Helper class for formatting relative dates & times.
+ *
+ * @internal
+ */
 class RelativeTimeFormatter
 {
+    /**
+     * The datetime instance being formatted.
+     *
+     * @var \DateTime
+     */
     protected $_time;
 
+    /**
+     * Constructor
+     *
+     * @var \DateTime $time The DateTime instance to format.
+     */
     public function __construct($time)
     {
         $this->_time = $time;
     }
 
     /**
-     * Returns either a relative or a formatted absolute date depending
-     * on the difference between the current time and this object.
-     *
-     * ### Options:
-     *
-     * - `from` => another Time object representing the "now" time
-     * - `format` => a fall back format if the relative time is longer than the duration specified by end
-     * - `accuracy` => Specifies how accurate the date should be described (array)
-     *    - year =>   The format if years > 0   (default "day")
-     *    - month =>  The format if months > 0  (default "day")
-     *    - week =>   The format if weeks > 0   (default "day")
-     *    - day =>    The format if weeks > 0   (default "hour")
-     *    - hour =>   The format if hours > 0   (default "minute")
-     *    - minute => The format if minutes > 0 (default "minute")
-     *    - second => The format if seconds > 0 (default "second")
-     * - `end` => The end of relative time telling
-     * - `relativeString` => The printf compatible string when outputting relative time
-     * - `absoluteString` => The printf compatible string when outputting absolute time
-     * - `timezone` => The user timezone the timestamp should be formatted in.
-     *
-     * Relative dates look something like this:
-     *
-     * - 3 weeks, 4 days ago
-     * - 15 seconds ago
-     *
-     * Default date formatting is d/M/YY e.g: on 18/2/09. Formatting is done internally using
-     * `i18nFormat`, see the method for the valid formatting strings
-     *
-     * The returned string includes 'ago' or 'on' and assumes you'll properly add a word
-     * like 'Posted ' before the function output.
-     *
-     * NOTE: If the difference is one week or more, the lowest level of accuracy is day
+     * Format a into a relative timestring.
      *
      * @param array $options Array of options.
      * @return string Relative time string.
+     * @see Cake\I18n\Time::timeAgoInWords()
      */
     public function timeAgoInWords(array $options = [])
     {
@@ -242,6 +227,13 @@ class RelativeTimeFormatter
         return $relativeDate;
     }
 
+    /**
+     * Format a into a relative date string.
+     *
+     * @param array $options Array of options.
+     * @return string Relative date string.
+     * @see Cake\I18n\Date::timeAgoInWords()
+     */
     public function dateAgoInWords(array $options = [])
     {
         $date = $this->_time;
