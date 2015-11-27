@@ -12,7 +12,7 @@ chance of keeping on top of things.
 
 ## Code of Conduct
 
-Help us keep CakePHP open and inclusive. Please read and follow our [Code of Conduct](https://github.com/cakephp/CoC/blob/master/CODE_OF_CONDUCT.md).
+Help us keep CakePHP open and inclusive. Please read and follow our [Code of Conduct](https://github.com/cakephp/code-of-conduct/blob/master/CODE_OF_CONDUCT.md).
 
 ## Getting Started
 
