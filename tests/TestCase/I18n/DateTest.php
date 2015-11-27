@@ -14,8 +14,8 @@
  */
 namespace Cake\Test\TestCase\I18n;
 
-use Cake\I18n\FrozenDate;
 use Cake\I18n\Date;
+use Cake\I18n\FrozenDate;
 use Cake\TestSuite\TestCase;
 use DateTimeZone;
 

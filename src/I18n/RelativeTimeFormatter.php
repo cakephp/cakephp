@@ -21,7 +21,7 @@ class RelativeTimeFormatter
     /**
      * Constructor
      *
-     * @var \DateTime $time The DateTime instance to format.
+     * @param \DateTime $time The DateTime instance to format.
      */
     public function __construct($time)
     {
