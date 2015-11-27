@@ -106,7 +106,7 @@ class MysqlSchema extends BaseSchema
         if (in_array($col, ['int', 'integer', 'tinyint', 'smallint', 'mediumint'])) {
             return ['type' => 'integer', 'length' => $length, 'unsigned' => $unsigned];
         }
-        if ($col === 'char' && $length === 36) {
+        if (strpos($col, 'char') !== false && $length === 36) {
             return ['type' => 'uuid', 'length' => null];
         }
         if ($col === 'char') {
