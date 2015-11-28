@@ -344,7 +344,7 @@ class RouteBuilder
         }
 
         if (is_callable($callback)) {
-            $idName = Inflector::underscore(Inflector::singularize($name)) . '_id';
+            $idName = Inflector::singularize(str_replace('-', '_', $urlName)) . '_id';
             $path = '/' . $urlName . '/:' . $idName;
             $this->scope($path, [], $callback);
         }
