@@ -434,6 +434,19 @@ class TimeHelperTest extends TestCase
     }
 
     /**
+     * Test format() with a Time instance.
+     *
+     * @return void
+     */
+    public function testFormatTimeInstance()
+    {
+        $time = new Time('2010-01-14 13:59:28', 'UTC');
+        $result = $this->Time->format($time, 'HH:mm', null, 'America/New_York');
+        $expected = '08:59';
+        $this->assertTimeFormat($expected, $result);
+    }
+
+    /**
      * Custom assert to allow for variation in the version of the intl library, where
      * some translations contain a few extra commas.
      *

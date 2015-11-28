@@ -368,4 +368,22 @@ class ResultSetTest extends TestCase
         $this->assertEquals('TestPlugin.Comments', $result->source());
         $this->assertEquals('TestPlugin.Authors', $result->_matchingData['Authors']->source());
     }
+
+    /**
+     * Ensure that isEmpty() on a ResultSet doesn't result in loss
+     * of records. This behavior is provided by CollectionTrait.
+     *
+     * @return void
+     */
+    public function testIsEmptyDoesNotConsumeData()
+    {
+        $table = TableRegistry::get('Comments');
+        $query = $table->find()
+            ->formatResults(function ($results) {
+                return $results;
+            });
+        $res = $query->all();
+        $res->isEmpty();
+        $this->assertCount(6, $res->toArray());
+    }
 }

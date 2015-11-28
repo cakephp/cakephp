@@ -1623,8 +1623,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   will be aborted. Receives the event, entity, and options.
      * - `Model.afterDelete` Fired after the delete has been successful. Receives
      *   the event, entity, and options.
-     * - `Model.afterDelete` Fired after the delete has been successful. Receives
-     *   the event, entity, and options.
      * - `Model.afterDeleteCommit` Fired after the transaction is committed for
      *   an atomic delete. Receives the event, entity, and options.
      *

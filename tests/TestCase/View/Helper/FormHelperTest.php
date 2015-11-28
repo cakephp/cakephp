@@ -3716,11 +3716,11 @@ class FormHelperTest extends TestCase
         ]);
         $expected = [
             'div' => ['class' => 'error-message'],
-                'ul' => [],
-                    '<li', 'Cannot be empty', '/li',
-                    '<li', 'No good!', '/li',
-                    '<li', 'Something else', '/li',
-                '/ul',
+            'ul' => [],
+            '<li', 'Cannot be empty', '/li',
+            '<li', 'No good!', '/li',
+            '<li', 'Something else', '/li',
+            '/ul',
             '/div'
         ];
         $this->assertHtml($expected, $result);
@@ -6173,11 +6173,11 @@ class FormHelperTest extends TestCase
         $result = $this->Form->input('other', ['type' => 'textarea']);
         $expected = [
             'div' => ['class' => 'input textarea'],
-                'label' => ['for' => 'other'],
-                    'Other',
-                '/label',
-                'textarea' => ['name' => 'other', 'id' => 'other', 'rows' => 5],
-                '/textarea',
+            'label' => ['for' => 'other'],
+            'Other',
+            '/label',
+            'textarea' => ['name' => 'other', 'id' => 'other', 'rows' => 5],
+            '/textarea',
             '/div'
         ];
         $this->assertHtml($expected, $result);
@@ -6185,11 +6185,11 @@ class FormHelperTest extends TestCase
         $result = $this->Form->input('stuff', ['type' => 'textarea']);
         $expected = [
             'div' => ['class' => 'input textarea'],
-                'label' => ['for' => 'stuff'],
-                    'Stuff',
-                '/label',
-                'textarea' => ['name' => 'stuff', 'maxlength' => 10, 'id' => 'stuff', 'rows' => 5],
-                '/textarea',
+            'label' => ['for' => 'stuff'],
+            'Stuff',
+            '/label',
+            'textarea' => ['name' => 'stuff', 'maxlength' => 10, 'id' => 'stuff', 'rows' => 5],
+            '/textarea',
             '/div'
         ];
         $this->assertHtml($expected, $result);

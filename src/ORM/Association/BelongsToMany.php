@@ -161,10 +161,6 @@ class BelongsToMany extends Association
      */
     public function junction($table = null)
     {
-        $target = $this->target();
-        $source = $this->source();
-        $sAlias = $source->alias();
-        $tAlias = $target->alias();
         $tableLocator = $this->tableLocator();
 
         if ($table === null) {
@@ -189,42 +185,111 @@ class BelongsToMany extends Association
         if (is_string($table)) {
             $table = $tableLocator->get($table);
         }
-        $junctionAlias = $table->alias();
+        $target = $this->target();
+        $source = $this->source();
 
-        if (!$table->association($sAlias)) {
-            $table
-                ->belongsTo($sAlias, ['foreignKey' => $this->foreignKey()])
-                ->target($source);
-        }
+        $this->_generateSourceAssociations($table, $source);
+        $this->_generateTargetAssociations($table, $source, $target);
+        $this->_generateJunctionAssociations($table, $source, $target);
+        return $this->_junctionTable = $table;
+    }
 
-        if (!$table->association($tAlias)) {
-            $table
-                ->belongsTo($tAlias, ['foreignKey' => $this->targetForeignKey()])
-                ->target($target);
-        }
+    /**
+     * Generate reciprocal associations as necessary.
+     *
+     * Generates the following associations:
+     *
+     * - target hasMany junction e.g. Articles hasMany ArticlesTags
+     * - target belongsToMany source e.g Articles belongsToMany Tags.
+     *
+     * You can override these generated associations by defining associations
+     * with the correct aliases.
+     *
+     * @param \Cake\ORM\Table $junction The junction table.
+     * @param \Cake\ORM\Table $source The source table.
+     * @param \Cake\ORM\Table $target The target table.
+     * @return void
+     */
+    protected function _generateTargetAssociations($junction, $source, $target)
+    {
+        $junctionAlias = $junction->alias();
+        $sAlias = $source->alias();
 
         if (!$target->association($junctionAlias)) {
             $target->hasMany($junctionAlias, [
-                'targetTable' => $table,
+                'targetTable' => $junction,
                 'foreignKey' => $this->targetForeignKey(),
             ]);
         }
-
         if (!$target->association($sAlias)) {
             $target->belongsToMany($sAlias, [
                 'sourceTable' => $target,
                 'targetTable' => $source,
                 'foreignKey' => $this->targetForeignKey(),
                 'targetForeignKey' => $this->foreignKey(),
-                'through' => $table
+                'through' => $junction
             ]);
         }
+    }
 
-        if (!$source->association($table->alias())) {
-            $source->hasMany($junctionAlias)->target($table);
+    /**
+     * Generate additional source table associations as necessary.
+     *
+     * Generates the following associations:
+     *
+     * - source hasMany junction e.g. Tags hasMany ArticlesTags
+     *
+     * You can override these generated associations by defining associations
+     * with the correct aliases.
+     *
+     * @param \Cake\ORM\Table $junction The junction table.
+     * @param \Cake\ORM\Table $source The source table.
+     * @return void
+     */
+    protected function _generateSourceAssociations($junction, $source)
+    {
+        $junctionAlias = $junction->alias();
+        if (!$source->association($junctionAlias)) {
+            $source->hasMany($junctionAlias, [
+                'targetTable' => $junction,
+                'foreignKey' => $this->foreignKey(),
+            ]);
         }
+    }
 
-        return $this->_junctionTable = $table;
+    /**
+     * Generate associations on the junction table as necessary
+     *
+     * Generates the following associations:
+     *
+     * - junction belongsTo source e.g. ArticlesTags belongsTo Tags
+     * - junction belongsTo target e.g. ArticlesTags belongsTo Articles
+     *
+     * You can override these generated associations by defining associations
+     * with the correct aliases.
+     *
+     * @param \Cake\ORM\Table $junction The junction table.
+     * @param \Cake\ORM\Table $source The source table.
+     * @param \Cake\ORM\Table $target The target table.
+     * @return void
+     */
+    protected function _generateJunctionAssociations($junction, $source, $target)
+    {
+        $tAlias = $target->alias();
+        $sAlias = $source->alias();
+
+        if (!$junction->association($tAlias)) {
+            $junction->belongsTo($tAlias, [
+                'foreignKey' => $this->targetForeignKey(),
+                'targetTable' => $target
+            ]);
+        }
+        if (!$junction->association($sAlias)) {
+            $junction->belongsTo($sAlias, [
+                'foreignKey' => $this->foreignKey(),
+                'targetTable' => $source
+            ]);
+        }
     }
 
     /**
@@ -475,7 +540,7 @@ class BelongsToMany extends Association
      * entities to be saved.
      * @param array|\Traversable $entities list of entities to persist in target table and to
      * link to the parent entity
-     * @param array $options list of options accepted by Table::save()
+     * @param array $options list of options accepted by `Table::save()`
      * @throws \InvalidArgumentException if the property representing the association
      * in the parent entity cannot be traversed
      * @return \Cake\Datasource\EntityInterface|bool The parent entity after all links have been
@@ -538,7 +603,7 @@ class BelongsToMany extends Association
      * association
      * @param array $targetEntities list of entities to link to link to the source entity using the
      * junction table
-     * @param array $options list of options accepted by Table::save()
+     * @param array $options list of options accepted by `Table::save()`
      * @return bool success
      */
     protected function _saveLinks(EntityInterface $sourceEntity, $targetEntities, $options)
@@ -608,7 +673,7 @@ class BelongsToMany extends Association
      * of this association
      * @param array $targetEntities list of entities belonging to the `target` side
      * of this association
-     * @param array $options list of options to be passed to the save method
+     * @param array $options list of options to be passed to the internal `save` call
      * @throws \InvalidArgumentException when any of the values in $targetEntities is
      * detected to not be already persisted
      * @return bool true on success, false otherwise
@@ -633,8 +698,16 @@ class BelongsToMany extends Association
      * target entities. This method assumes that all passed objects are already persisted
      * in the database and that each of them contain a primary key value.
      *
-     * By default this method will also unset each of the entity objects stored inside
-     * the source entity.
+     * ### Options
+     *
+     * Additionally to the default options accepted by `Table::delete()`, the following
+     * keys are supported:
+     *
+     * - cleanProperty: Whether or not to remove all the objects in `$targetEntities` that
+     * are stored in `$sourceEntity` (default: true)
+     *
+     * By default this method will unset each of the entity objects stored inside the
+     * source entity.
      *
      * ### Example:
      *
@@ -650,28 +723,36 @@ class BelongsToMany extends Association
      * this association
      * @param array $targetEntities list of entities persisted in the target table for
      * this association
-     * @param bool $cleanProperty whether or not to remove all the objects in $targetEntities
-     * that are stored in $sourceEntity
+     * @param array|bool $options list of options to be passed to the internal `delete` call,
+     * or a `boolean`
      * @throws \InvalidArgumentException if non persisted entities are passed or if
      * any of them is lacking a primary key value
      * @return void
      */
-    public function unlink(EntityInterface $sourceEntity, array $targetEntities, $cleanProperty = true)
+    public function unlink(EntityInterface $sourceEntity, array $targetEntities, $options = [])
     {
+        if (is_bool($options)) {
+            $options = [
+                'cleanProperty' => $options
+            ];
+        } else {
+            $options += ['cleanProperty' => true];
+        }
+
         $this->_checkPersistenceStatus($sourceEntity, $targetEntities);
         $property = $this->property();
 
         $this->junction()->connection()->transactional(
-            function () use ($sourceEntity, $targetEntities) {
+            function () use ($sourceEntity, $targetEntities, $options) {
                 $links = $this->_collectJointEntities($sourceEntity, $targetEntities);
                 foreach ($links as $entity) {
-                    $this->_junctionTable->delete($entity);
+                    $this->_junctionTable->delete($entity, $options);
                 }
             }
         );
 
         $existing = $sourceEntity->get($property) ?: [];
-        if (!$cleanProperty || empty($existing)) {
+        if (!$options['cleanProperty'] || empty($existing)) {
             return;
         }
 
@@ -733,8 +814,8 @@ class BelongsToMany extends Association
      * @param \Cake\Datasource\EntityInterface $sourceEntity an entity persisted in the source table for
      * this association
      * @param array $targetEntities list of entities from the target table to be linked
-     * @param array $options list of options to be passed to `save` persisting or
-     * updating new links
+     * @param array $options list of options to be passed to the internal `save`/`delete` calls
+     * when persisting/updating new links, or deleting existing ones
      * @throws \InvalidArgumentException if non persisted entities are passed or if
      * any of them is lacking a primary key value
      * @return bool success
@@ -763,7 +844,7 @@ class BelongsToMany extends Association
                 }
 
                 $jointEntities = $this->_collectJointEntities($sourceEntity, $targetEntities);
-                $inserts = $this->_diffLinks($existing, $jointEntities, $targetEntities);
+                $inserts = $this->_diffLinks($existing, $jointEntities, $targetEntities, $options);
 
                 if ($inserts && !$this->_saveTarget($sourceEntity, $inserts, $options)) {
                     return false;
@@ -796,9 +877,10 @@ class BelongsToMany extends Association
      * @param array $jointEntities link entities that should be persisted
      * @param array $targetEntities entities in target table that are related to
      * the `$jointEntities`
+     * @param array $options list of options accepted by `Table::delete()`
      * @return array
      */
-    protected function _diffLinks($existing, $jointEntities, $targetEntities)
+    protected function _diffLinks($existing, $jointEntities, $targetEntities, $options = [])
     {
         $junction = $this->junction();
         $target = $this->target();
@@ -847,7 +929,7 @@ class BelongsToMany extends Association
 
         if ($deletes) {
             foreach ($deletes as $entity) {
-                $junction->delete($entity);
+                $junction->delete($entity, $options);
             }
         }
 
