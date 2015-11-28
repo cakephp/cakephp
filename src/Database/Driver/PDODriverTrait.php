@@ -77,6 +77,26 @@ trait PDODriverTrait
     }
 
     /**
+     * Check whether or not the driver is connected.
+     *
+     * @return bool
+     */
+    public function isConnected()
+    {
+        if ($this->_connection === null) {
+            $connected = false;
+        } else {
+            try {
+                $connected = $this->_connection->query('SELECT 1');
+            } catch (\PDOException $e) {
+                $connected = false;
+            }
+        }
+        $this->connected = !empty($connected);
+        return $this->connected;
+    }
+
+    /**
      * Prepares a sql statement to be executed
      *
      * @param string|\Cake\Database\Query $query The query to turn into a prepared statement.
