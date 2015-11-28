@@ -14,9 +14,6 @@
  */
 namespace Cake\I18n;
 
-use Cake\I18n\FrozenDate;
-use Cake\I18n\FrozenTime;
-
 /**
  * Helper class for formatting relative dates & times.
  *
