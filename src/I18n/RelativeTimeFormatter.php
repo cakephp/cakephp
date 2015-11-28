@@ -63,6 +63,79 @@ class RelativeTimeFormatter
             return sprintf($options['absoluteString'], $time->i18nFormat($options['format']));
         }
 
+        $diffData = $this->_diffData($futureTime, $pastTime, $backwards, $options);
+        list($fNum, $fWord, $years, $months, $weeks, $days, $hours, $minutes, $seconds) = array_values($diffData);
+
+        $relativeDate = '';
+        if ($fNum >= 1 && $years > 0) {
+            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} year', '{0} years', $years, $years);
+        }
+        if ($fNum >= 2 && $months > 0) {
+            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} month', '{0} months', $months, $months);
+        }
+        if ($fNum >= 3 && $weeks > 0) {
+            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} week', '{0} weeks', $weeks, $weeks);
+        }
+        if ($fNum >= 4 && $days > 0) {
+            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} day', '{0} days', $days, $days);
+        }
+        if ($fNum >= 5 && $hours > 0) {
+            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} hour', '{0} hours', $hours, $hours);
+        }
+        if ($fNum >= 6 && $minutes > 0) {
+            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} minute', '{0} minutes', $minutes, $minutes);
+        }
+        if ($fNum >= 7 && $seconds > 0) {
+            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} second', '{0} seconds', $seconds, $seconds);
+        }
+
+        // When time has passed
+        if (!$backwards && $relativeDate) {
+            return sprintf($options['relativeString'], $relativeDate);
+        }
+        if (!$backwards) {
+            $aboutAgo = [
+                'second' => __d('cake', 'about a second ago'),
+                'minute' => __d('cake', 'about a minute ago'),
+                'hour' => __d('cake', 'about an hour ago'),
+                'day' => __d('cake', 'about a day ago'),
+                'week' => __d('cake', 'about a week ago'),
+                'year' => __d('cake', 'about a year ago')
+            ];
+
+            return $aboutAgo[$fWord];
+        }
+
+        // When time is to come
+        if (!$relativeDate) {
+            $aboutIn = [
+                'second' => __d('cake', 'in about a second'),
+                'minute' => __d('cake', 'in about a minute'),
+                'hour' => __d('cake', 'in about an hour'),
+                'day' => __d('cake', 'in about a day'),
+                'week' => __d('cake', 'in about a week'),
+                'year' => __d('cake', 'in about a year')
+            ];
+
+            return $aboutIn[$fWord];
+        }
+
+        return $relativeDate;
+    }
+
+    /**
+     * Calculate the data needed to format a relative difference string.
+     *
+     * @param \DateTime $futureTime The time from the future.
+     * @param \DateTime $pastTime The time from the past.
+     * @param bool $backwards Whether or not the difference was backwards.
+     * @param array $options An array of options.
+     * @return array An array of values.
+     */
+    protected function _diffData($futureTime, $pastTime, $backwards, $options)
+    {
+        $diff = $futureTime - $pastTime;
+
         // If more than a week, then take into account the length of months
         if ($diff >= 604800) {
             list($future['H'], $future['i'], $future['s'], $future['d'], $future['m'], $future['Y']) = explode('/', date('H/i/s/d/m/Y', $futureTime));
@@ -142,62 +215,7 @@ class RelativeTimeFormatter
         }
 
         $fNum = str_replace(['year', 'month', 'week', 'day', 'hour', 'minute', 'second'], [1, 2, 3, 4, 5, 6, 7], $fWord);
-
-        $relativeDate = '';
-        if ($fNum >= 1 && $years > 0) {
-            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} year', '{0} years', $years, $years);
-        }
-        if ($fNum >= 2 && $months > 0) {
-            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} month', '{0} months', $months, $months);
-        }
-        if ($fNum >= 3 && $weeks > 0) {
-            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} week', '{0} weeks', $weeks, $weeks);
-        }
-        if ($fNum >= 4 && $days > 0) {
-            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} day', '{0} days', $days, $days);
-        }
-        if ($fNum >= 5 && $hours > 0) {
-            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} hour', '{0} hours', $hours, $hours);
-        }
-        if ($fNum >= 6 && $minutes > 0) {
-            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} minute', '{0} minutes', $minutes, $minutes);
-        }
-        if ($fNum >= 7 && $seconds > 0) {
-            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} second', '{0} seconds', $seconds, $seconds);
-        }
-
-        // When time has passed
-        if (!$backwards && $relativeDate) {
-            return sprintf($options['relativeString'], $relativeDate);
-        }
-        if (!$backwards) {
-            $aboutAgo = [
-                'second' => __d('cake', 'about a second ago'),
-                'minute' => __d('cake', 'about a minute ago'),
-                'hour' => __d('cake', 'about an hour ago'),
-                'day' => __d('cake', 'about a day ago'),
-                'week' => __d('cake', 'about a week ago'),
-                'year' => __d('cake', 'about a year ago')
-            ];
-
-            return $aboutAgo[$fWord];
-        }
-
-        // When time is to come
-        if (!$relativeDate) {
-            $aboutIn = [
-                'second' => __d('cake', 'in about a second'),
-                'minute' => __d('cake', 'in about a minute'),
-                'hour' => __d('cake', 'in about an hour'),
-                'day' => __d('cake', 'in about a day'),
-                'week' => __d('cake', 'in about a week'),
-                'year' => __d('cake', 'in about a year')
-            ];
-
-            return $aboutIn[$fWord];
-        }
-
-        return $relativeDate;
+        return [$fNum, $fWord, $years, $months, $weeks, $days, $hours, $minutes, $seconds];
     }
 
     /**
@@ -235,81 +253,8 @@ class RelativeTimeFormatter
             return sprintf($options['absoluteString'], $date->i18nFormat($options['format']));
         }
 
-        // If more than a week, then take into account the length of months
-        if ($diff >= 604800) {
-            list($future['H'], $future['i'], $future['s'], $future['d'], $future['m'], $future['Y']) = explode('/', date('H/i/s/d/m/Y', $futureTime));
-
-            list($past['H'], $past['i'], $past['s'], $past['d'], $past['m'], $past['Y']) = explode('/', date('H/i/s/d/m/Y', $pastTime));
-            $weeks = $days = $hours = $minutes = $seconds = 0;
-
-            $years = $future['Y'] - $past['Y'];
-            $months = $future['m'] + ((12 * $years) - $past['m']);
-
-            if ($months >= 12) {
-                $years = floor($months / 12);
-                $months = $months - ($years * 12);
-            }
-            if ($future['m'] < $past['m'] && $future['Y'] - $past['Y'] === 1) {
-                $years--;
-            }
-
-            if ($future['d'] >= $past['d']) {
-                $days = $future['d'] - $past['d'];
-            } else {
-                $daysInPastMonth = date('t', $pastTime);
-                $daysInFutureMonth = date('t', mktime(0, 0, 0, $future['m'] - 1, 1, $future['Y']));
-
-                if (!$backwards) {
-                    $days = ($daysInPastMonth - $past['d']) + $future['d'];
-                } else {
-                    $days = ($daysInFutureMonth - $past['d']) + $future['d'];
-                }
-
-                if ($future['m'] != $past['m']) {
-                    $months--;
-                }
-            }
-
-            if (!$months && $years >= 1 && $diff < ($years * 31536000)) {
-                $months = 11;
-                $years--;
-            }
-
-            if ($months >= 12) {
-                $years = $years + 1;
-                $months = $months - 12;
-            }
-
-            if ($days >= 7) {
-                $weeks = floor($days / 7);
-                $days = $days - ($weeks * 7);
-            }
-        } else {
-            $years = $months = $weeks = 0;
-            $days = floor($diff / 86400);
-
-            $diff = $diff - ($days * 86400);
-
-            $hours = floor($diff / 3600);
-            $diff = $diff - ($hours * 3600);
-
-            $minutes = floor($diff / 60);
-            $diff = $diff - ($minutes * 60);
-            $seconds = $diff;
-        }
-
-        $fWord = $options['accuracy']['day'];
-        if ($years > 0) {
-            $fWord = $options['accuracy']['year'];
-        } elseif (abs($months) > 0) {
-            $fWord = $options['accuracy']['month'];
-        } elseif (abs($weeks) > 0) {
-            $fWord = $options['accuracy']['week'];
-        } elseif (abs($days) > 0) {
-            $fWord = $options['accuracy']['day'];
-        }
-
-        $fNum = str_replace(['year', 'month', 'week', 'day'], [1, 2, 3, 4], $fWord);
+        $diffData = $this->_diffData($futureTime, $pastTime, $backwards, $options);
+        list($fNum, $fWord, $years, $months, $weeks, $days, $hours, $minutes, $seconds) = array_values($diffData);
 
         $relativeDate = '';
         if ($fNum >= 1 && $years > 0) {
