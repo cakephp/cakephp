@@ -38,39 +38,12 @@ class RelativeTimeFormatter
     public function timeAgoInWords(array $options = [])
     {
         $time = $this->_time;
-
-        $timezone = null;
-        // TODO use options like below.
-        $format = FrozenTime::$wordFormat;
-        $end = FrozenTime::$wordEnd;
-        $relativeString = __d('cake', '%s ago');
-        $absoluteString = __d('cake', 'on %s');
-        $accuracy = FrozenTime::$wordAccuracy;
-        $from = FrozenTime::now();
-        $opts = ['timezone', 'format', 'end', 'relativeString', 'absoluteString', 'from'];
-
-        foreach ($opts as $option) {
-            if (isset($options[$option])) {
-                ${$option} = $options[$option];
-                unset($options[$option]);
-            }
+        $options = $this->_options($options, FrozenTime::class);
+        if ($options['timezone']) {
+            $time = $time->timezone($options['timezone']);
         }
 
-        if (isset($options['accuracy'])) {
-            if (is_array($options['accuracy'])) {
-                $accuracy = $options['accuracy'] + $accuracy;
-            } else {
-                foreach ($accuracy as $key => $level) {
-                    $accuracy[$key] = $options['accuracy'];
-                }
-            }
-        }
-
-        if ($timezone) {
-            $time = $time->timezone($timezone);
-        }
-
-        $now = $from->format('U');
+        $now = $options['from']->format('U');
         $inSeconds = $time->format('U');
         $backwards = ($inSeconds > $now);
 
@@ -86,8 +59,8 @@ class RelativeTimeFormatter
             return __d('cake', 'just now', 'just now');
         }
 
-        if ($diff > abs($now - (new FrozenTime($end))->format('U'))) {
-            return sprintf($absoluteString, $time->i18nFormat($format));
+        if ($diff > abs($now - (new FrozenTime($options['end']))->format('U'))) {
+            return sprintf($options['absoluteString'], $time->i18nFormat($options['format']));
         }
 
         // If more than a week, then take into account the length of months
@@ -153,19 +126,19 @@ class RelativeTimeFormatter
             $seconds = $diff;
         }
 
-        $fWord = $accuracy['second'];
+        $fWord = $options['accuracy']['second'];
         if ($years > 0) {
-            $fWord = $accuracy['year'];
+            $fWord = $options['accuracy']['year'];
         } elseif (abs($months) > 0) {
-            $fWord = $accuracy['month'];
+            $fWord = $options['accuracy']['month'];
         } elseif (abs($weeks) > 0) {
-            $fWord = $accuracy['week'];
+            $fWord = $options['accuracy']['week'];
         } elseif (abs($days) > 0) {
-            $fWord = $accuracy['day'];
+            $fWord = $options['accuracy']['day'];
         } elseif (abs($hours) > 0) {
-            $fWord = $accuracy['hour'];
+            $fWord = $options['accuracy']['hour'];
         } elseif (abs($minutes) > 0) {
-            $fWord = $accuracy['minute'];
+            $fWord = $options['accuracy']['minute'];
         }
 
         $fNum = str_replace(['year', 'month', 'week', 'day', 'hour', 'minute', 'second'], [1, 2, 3, 4, 5, 6, 7], $fWord);
@@ -195,7 +168,7 @@ class RelativeTimeFormatter
 
         // When time has passed
         if (!$backwards && $relativeDate) {
-            return sprintf($relativeString, $relativeDate);
+            return sprintf($options['relativeString'], $relativeDate);
         }
         if (!$backwards) {
             $aboutAgo = [
@@ -237,22 +210,7 @@ class RelativeTimeFormatter
     public function dateAgoInWords(array $options = [])
     {
         $date = $this->_time;
-        $options += [
-            'from' => FrozenDate::now(),
-            'timezone' => null,
-            'format' => FrozenDate::$wordFormat,
-            'accuracy' => FrozenDate::$wordAccuracy,
-            'end' => FrozenDate::$wordEnd,
-            'relativeString' => __d('cake', '%s ago'),
-            'absoluteString' => __d('cake', 'on %s'),
-        ];
-        if (is_string($options['accuracy'])) {
-            foreach (FrozenDate::$wordAccuracy as $key => $level) {
-                $options[$key] = $options['accuracy'];
-            }
-        } else {
-            $options['accuracy'] += FrozenDate::$wordAccuracy;
-        }
+        $options = $this->_options($options, FrozenDate::class);
         if ($options['timezone']) {
             $date = $date->timezone($options['timezone']);
         }
@@ -394,5 +352,34 @@ class RelativeTimeFormatter
             return $aboutIn[$fWord];
         }
         return $relativeDate;
+    }
+
+    /**
+     * Build the options for relative date formatting.
+     *
+     * @param array $options The options provided by the user.
+     * @param string $class The class name to use for defaults.
+     */
+    protected function _options($options, $class)
+    {
+        $options += [
+            'from' => $class::now(),
+            'timezone' => null,
+            'format' => $class::$wordFormat,
+            'accuracy' => $class::$wordAccuracy,
+            'end' => $class::$wordEnd,
+            'relativeString' => __d('cake', '%s ago'),
+            'absoluteString' => __d('cake', 'on %s'),
+        ];
+        if (is_string($options['accuracy'])) {
+            $accuracy = $options['accuracy'];
+            $options['accuracy'] = [];
+            foreach ($class::$wordAccuracy as $key => $level) {
+                $options['accuracy'][$key] = $accuracy;
+            }
+        } else {
+            $options['accuracy'] += $class::$wordAccuracy;
+        }
+        return $options;
     }
 }
