@@ -79,33 +79,31 @@ class RelativeTimeFormatter
         $diffData = $this->_diffData($futureTime, $pastTime, $backwards, $options);
         list($fNum, $fWord, $years, $months, $weeks, $days, $hours, $minutes, $seconds) = array_values($diffData);
 
-        $relativeDate = '';
+        $relativeDate = [];
         if ($fNum >= 1 && $years > 0) {
-            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} year', '{0} years', $years, $years);
+            $relativeDate[] =  __dn('cake', '{0} year', '{0} years', $years, $years);
         }
         if ($fNum >= 2 && $months > 0) {
-            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} month', '{0} months', $months, $months);
+            $relativeDate[] = __dn('cake', '{0} month', '{0} months', $months, $months);
         }
         if ($fNum >= 3 && $weeks > 0) {
-            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} week', '{0} weeks', $weeks, $weeks);
+            $relativeDate[] = __dn('cake', '{0} week', '{0} weeks', $weeks, $weeks);
         }
         if ($fNum >= 4 && $days > 0) {
-            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} day', '{0} days', $days, $days);
+            $relativeDate[] = __dn('cake', '{0} day', '{0} days', $days, $days);
         }
         if ($fNum >= 5 && $hours > 0) {
-            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} hour', '{0} hours', $hours, $hours);
+            $relativeDate[] = __dn('cake', '{0} hour', '{0} hours', $hours, $hours);
         }
         if ($fNum >= 6 && $minutes > 0) {
-            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} minute', '{0} minutes', $minutes, $minutes);
+            $relativeDate[] = __dn('cake', '{0} minute', '{0} minutes', $minutes, $minutes);
         }
         if ($fNum >= 7 && $seconds > 0) {
-            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} second', '{0} seconds', $seconds, $seconds);
+            $relativeDate[] = __dn('cake', '{0} second', '{0} seconds', $seconds, $seconds);
         }
+        $relativeDate = implode(', ', $relativeDate);
 
         // When time has passed
-        if (!$backwards && $relativeDate) {
-            return sprintf($options['relativeString'], $relativeDate);
-        }
         if (!$backwards) {
             $aboutAgo = [
                 'second' => __d('cake', 'about a second ago'),
@@ -115,25 +113,22 @@ class RelativeTimeFormatter
                 'week' => __d('cake', 'about a week ago'),
                 'year' => __d('cake', 'about a year ago')
             ];
-
-            return $aboutAgo[$fWord];
+            return $relativeDate ? sprintf($options['relativeString'], $relativeDate) : $aboutAgo[$fWord];
         }
 
         // When time is to come
-        if (!$relativeDate) {
-            $aboutIn = [
-                'second' => __d('cake', 'in about a second'),
-                'minute' => __d('cake', 'in about a minute'),
-                'hour' => __d('cake', 'in about an hour'),
-                'day' => __d('cake', 'in about a day'),
-                'week' => __d('cake', 'in about a week'),
-                'year' => __d('cake', 'in about a year')
-            ];
-
-            return $aboutIn[$fWord];
+        if ($relativeDate) {
+            return $relativeDate;
         }
-
-        return $relativeDate;
+        $aboutIn = [
+            'second' => __d('cake', 'in about a second'),
+            'minute' => __d('cake', 'in about a minute'),
+            'hour' => __d('cake', 'in about an hour'),
+            'day' => __d('cake', 'in about a day'),
+            'week' => __d('cake', 'in about a week'),
+            'year' => __d('cake', 'in about a year')
+        ];
+        return $aboutIn[$fWord];
     }
 
     /**
@@ -269,24 +264,22 @@ class RelativeTimeFormatter
         $diffData = $this->_diffData($futureTime, $pastTime, $backwards, $options);
         list($fNum, $fWord, $years, $months, $weeks, $days, $hours, $minutes, $seconds) = array_values($diffData);
 
-        $relativeDate = '';
+        $relativeDate = [];
         if ($fNum >= 1 && $years > 0) {
-            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} year', '{0} years', $years, $years);
+            $relativeDate[] = __dn('cake', '{0} year', '{0} years', $years, $years);
         }
         if ($fNum >= 2 && $months > 0) {
-            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} month', '{0} months', $months, $months);
+            $relativeDate[] = __dn('cake', '{0} month', '{0} months', $months, $months);
         }
         if ($fNum >= 3 && $weeks > 0) {
-            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} week', '{0} weeks', $weeks, $weeks);
+            $relativeDate[] = __dn('cake', '{0} week', '{0} weeks', $weeks, $weeks);
         }
         if ($fNum >= 4 && $days > 0) {
-            $relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} day', '{0} days', $days, $days);
+            $relativeDate[] =  __dn('cake', '{0} day', '{0} days', $days, $days);
         }
+        $relativeDate = implode(', ', $relativeDate);
 
         // When time has passed
-        if (!$backwards && $relativeDate) {
-            return sprintf($options['relativeString'], $relativeDate);
-        }
         if (!$backwards) {
             $aboutAgo = [
                 'day' => __d('cake', 'about a day ago'),
@@ -294,22 +287,20 @@ class RelativeTimeFormatter
                 'month' => __d('cake', 'about a month ago'),
                 'year' => __d('cake', 'about a year ago')
             ];
-
-            return $aboutAgo[$fWord];
+            return $relativeDate ? sprintf($options['relativeString'], $relativeDate) : $aboutAgo[$fWord];
         }
 
         // When time is to come
-        if (!$relativeDate) {
-            $aboutIn = [
-                'day' => __d('cake', 'in about a day'),
-                'week' => __d('cake', 'in about a week'),
-                'month' => __d('cake', 'in about a month'),
-                'year' => __d('cake', 'in about a year')
-            ];
-
-            return $aboutIn[$fWord];
+        if ($relativeDate) {
+            return $relativeDate;
         }
-        return $relativeDate;
+        $aboutIn = [
+            'day' => __d('cake', 'in about a day'),
+            'week' => __d('cake', 'in about a week'),
+            'month' => __d('cake', 'in about a month'),
+            'year' => __d('cake', 'in about a year')
+        ];
+        return $aboutIn[$fWord];
     }
 
     /**
