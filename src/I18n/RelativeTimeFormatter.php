@@ -78,7 +78,7 @@ class RelativeTimeFormatter
 
         $relativeDate = [];
         if ($fNum >= 1 && $years > 0) {
-            $relativeDate[] =  __dn('cake', '{0} year', '{0} years', $years, $years);
+            $relativeDate[] = __dn('cake', '{0} year', '{0} years', $years, $years);
         }
         if ($fNum >= 2 && $months > 0) {
             $relativeDate[] = __dn('cake', '{0} month', '{0} months', $months, $months);
@@ -272,7 +272,7 @@ class RelativeTimeFormatter
             $relativeDate[] = __dn('cake', '{0} week', '{0} weeks', $weeks, $weeks);
         }
         if ($fNum >= 4 && $days > 0) {
-            $relativeDate[] =  __dn('cake', '{0} day', '{0} days', $days, $days);
+            $relativeDate[] = __dn('cake', '{0} day', '{0} days', $days, $days);
         }
         $relativeDate = implode(', ', $relativeDate);
 
