@@ -851,14 +851,14 @@ class AppTest extends CakeTestCase {
 /**
  * Data provider function for testIncreaseMemoryLimit 
  *
- * @return 
+ * @return void
  */
 	public function memoryVariationProvider() {
 		return array(
 			array('131072K', 100000, '231072K'),
 			array('256M', 1, '262145K'),
 			array('1G', 1, '1048577K'),
-			array('-1', 100000, -1)
+			array('-1', 100000, '-1')
 		);
 	}
 }
