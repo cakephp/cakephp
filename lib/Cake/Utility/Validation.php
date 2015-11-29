@@ -231,7 +231,6 @@ class Validation {
  * @return bool Success
  */
 	public static function comparison($check1, $operator = null, $check2 = null) {
-
 		if ((float)$check1 != $check1) {
 			return false;
 		}
