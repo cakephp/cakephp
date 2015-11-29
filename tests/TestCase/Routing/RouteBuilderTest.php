@@ -395,9 +395,13 @@ class RouteBuilderTest extends TestCase
     public function testResourcesNestedInflection()
     {
         $routes = new RouteBuilder($this->collection, '/api');
-        $routes->resources('NetworkObjects', ['inflect' => 'dasherize'], function($routes) {
-            $routes->resources('Attributes');
-        });
+        $routes->resources(
+            'NetworkObjects',
+            ['inflect' => 'dasherize'],
+            function ($routes) {
+                $routes->resources('Attributes');
+            }
+        );
 
         $all = $this->collection->routes();
         $this->assertCount(10, $all);
