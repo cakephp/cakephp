@@ -14,7 +14,7 @@
  */
 namespace Cake\I18n;
 
-use Cake\Chronos\MutableDate;
+use Cake\Chronos\Date as ChronosDate;
 use IntlDateFormatter;
 use JsonSerializable;
 
@@ -22,8 +22,10 @@ use JsonSerializable;
  * Extends the Date class provided by Chronos.
  *
  * Adds handy methods and locale-aware formatting helpers
+ *
+ * This object provides an immutable variant of Cake\I18n\Date
  */
-class Date extends MutableDate implements JsonSerializable
+class FrozenDate extends ChronosDate implements JsonSerializable
 {
     use DateFormatTrait;
 
