@@ -918,42 +918,6 @@ class ValidationTest extends CakeTestCase {
 	}
 
 /**
- * testComparisonAsArray method
- *
- * @return void
- */
-	public function testComparisonAsArray() {
-		$this->assertTrue(Validation::comparison(array('check1' => 7, 'operator' => 'is greater', 'check2' => 6)));
-		$this->assertTrue(Validation::comparison(array('check1' => 7, 'operator' => '>', 'check2' => 6)));
-		$this->assertTrue(Validation::comparison(array('check1' => 6, 'operator' => 'is less', 'check2' => 7)));
-		$this->assertTrue(Validation::comparison(array('check1' => 6, 'operator' => '<', 'check2' => 7)));
-		$this->assertTrue(Validation::comparison(array('check1' => 7, 'operator' => 'greater or equal', 'check2' => 7)));
-		$this->assertTrue(Validation::comparison(array('check1' => 7, 'operator' => '>=', 'check2' => 7)));
-		$this->assertTrue(Validation::comparison(array('check1' => 7, 'operator' => 'greater or equal', 'check2' => 6)));
-		$this->assertTrue(Validation::comparison(array('check1' => 7, 'operator' => '>=', 'check2' => 6)));
-		$this->assertTrue(Validation::comparison(array('check1' => 6, 'operator' => 'less or equal', 'check2' => 7)));
-		$this->assertTrue(Validation::comparison(array('check1' => 6, 'operator' => '<=', 'check2' => 7)));
-		$this->assertTrue(Validation::comparison(array('check1' => 7, 'operator' => 'equal to', 'check2' => 7)));
-		$this->assertTrue(Validation::comparison(array('check1' => 7, 'operator' => '==', 'check2' => 7)));
-		$this->assertTrue(Validation::comparison(array('check1' => 7, 'operator' => 'not equal', 'check2' => 6)));
-		$this->assertTrue(Validation::comparison(array('check1' => 7, 'operator' => '!=', 'check2' => 6)));
-		$this->assertFalse(Validation::comparison(array('check1' => 6, 'operator' => 'is greater', 'check2' => 7)));
-		$this->assertFalse(Validation::comparison(array('check1' => 6, 'operator' => '>', 'check2' => 7)));
-		$this->assertFalse(Validation::comparison(array('check1' => 7, 'operator' => 'is less', 'check2' => 6)));
-		$this->assertFalse(Validation::comparison(array('check1' => 7, 'operator' => '<', 'check2' => 6)));
-		$this->assertFalse(Validation::comparison(array('check1' => 6, 'operator' => 'greater or equal', 'check2' => 7)));
-		$this->assertFalse(Validation::comparison(array('check1' => 6, 'operator' => '>=', 'check2' => 7)));
-		$this->assertFalse(Validation::comparison(array('check1' => 6, 'operator' => 'greater or equal', 'check2' => 7)));
-		$this->assertFalse(Validation::comparison(array('check1' => 6, 'operator' => '>=', 'check2' => 7)));
-		$this->assertFalse(Validation::comparison(array('check1' => 7, 'operator' => 'less or equal', 'check2' => 6)));
-		$this->assertFalse(Validation::comparison(array('check1' => 7, 'operator' => '<=', 'check2' => 6)));
-		$this->assertFalse(Validation::comparison(array('check1' => 7, 'operator' => 'equal to', 'check2' => 6)));
-		$this->assertFalse(Validation::comparison(array('check1' => 7, 'operator' => '==', 'check2' => 6)));
-		$this->assertFalse(Validation::comparison(array('check1' => 7, 'operator' => 'not equal', 'check2' => 7)));
-		$this->assertFalse(Validation::comparison(array('check1' => 7, 'operator' => '!=', 'check2' => 7)));
-	}
-
-/**
  * testCustom method
  *
  * @return void
