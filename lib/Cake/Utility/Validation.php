@@ -231,10 +231,11 @@ class Validation {
  * @return bool Success
  */
 	public static function comparison($check1, $operator = null, $check2 = null) {
-		if (is_array($check1)) {
-			extract($check1, EXTR_OVERWRITE);
+		if ($operator === null && $check2 === null && isset($check1['check1']) && isset($check1['operator']) && isset($check1['check2'])) {
+			$operator = $check1['operator'];
+			$check2 = $check1['check2'];
+			$check1 = $check1['check1'];
 		}
-
 		if ((float)$check1 != $check1) {
 			return false;
 		}
