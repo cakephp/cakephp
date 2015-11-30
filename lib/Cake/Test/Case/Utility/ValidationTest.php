@@ -954,6 +954,15 @@ class ValidationTest extends CakeTestCase {
 	}
 
 /**
+ * testComparisonCanNotOverwriteOperator rmethod
+ *
+ * @return void
+ */
+	public function testComparisonCanNotOverwriteOperator() {
+		$this->assertFalse(Validation::comparison(array('check1' => 2, 'operator' => '>', 'check2' => 1), '>', '10'));
+	}
+
+/**
  * testCustom method
  *
  * @return void
