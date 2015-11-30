@@ -231,7 +231,7 @@ class Validation {
  * @return bool Success
  */
 	public static function comparison($check1, $operator = null, $check2 = null) {
-		if (is_null($operator) && is_null($check2) && isset($check1['check1']) && isset($check1['operator']) && isset($check1['check2'])) {
+		if ($operator === null && $check2 === null && isset($check1['check1']) && isset($check1['operator']) && isset($check1['check2'])) {
 			$operator = $check1['operator'];
 			$check2 = $check1['check2'];
 			$check1 = $check1['check1'];
