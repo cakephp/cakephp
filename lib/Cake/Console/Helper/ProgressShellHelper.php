@@ -81,7 +81,7 @@ class ProgressShellHelper extends ShellHelper {
  * @param array $args The initialization data.
  * @return void
  */
-	public function init(array $args = []) {
+	public function init(array $args = array()) {
 		$args += ['total' => 100, 'width' => 80];
 		$this->_progress = 0;
 		$this->_width = $args['width'];

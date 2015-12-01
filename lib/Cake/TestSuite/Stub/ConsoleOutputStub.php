@@ -33,7 +33,7 @@ class ConsoleOutputStub extends ConsoleOutput {
  *
  * @var array
  */
-	protected $_out = [];
+	protected $_out = array();
 
 /**
  * The number of bytes written by last call to write

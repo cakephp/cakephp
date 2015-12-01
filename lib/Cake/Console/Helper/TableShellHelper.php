@@ -25,11 +25,11 @@ class TableShellHelper extends ShellHelper {
  *
  * @var array
  */
-	protected $_defaultConfig = [
+	protected $_defaultConfig = array(
 		'headers' => true,
 		'rowSeparator' => false,
 		'headerStyle' => 'info',
-	];
+	);
 
 /**
  * Calculate the column widths
@@ -38,7 +38,7 @@ class TableShellHelper extends ShellHelper {
  * @return array
  */
 	protected function _calculateWidths($rows) {
-		$widths = [];
+		$widths = array();
 		foreach ($rows as $line) {
 			for ($i = 0, $len = count($line); $i < $len; $i++) {
 				$columnLength = mb_strlen($line[$i]);
@@ -73,7 +73,7 @@ class TableShellHelper extends ShellHelper {
  * @param array $options Options to be passed.
  * @return void
  */
-	protected function _render($row, $widths, $options = []) {
+	protected function _render($row, $widths, $options = array()) {
 		$out = '';
 		foreach ($row as $i => $column) {
 			$pad = $widths[$i] - mb_strlen($column);

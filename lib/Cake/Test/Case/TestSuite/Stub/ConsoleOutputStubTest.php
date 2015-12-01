@@ -45,8 +45,8 @@ class ConsoleOutputStubTest extends CakeTestCase {
  * @return void
  */
 	public function testWrite() {
-		$this->stub->write(["foo", "bar", "baz"]);
-		$this->assertEquals(["foo", "bar", "baz"], $this->stub->messages());
+		$this->stub->write(array("foo", "bar", "baz"));
+		$this->assertEquals(array("foo", "bar", "baz"), $this->stub->messages());
 	}
 
 /**
@@ -55,8 +55,8 @@ class ConsoleOutputStubTest extends CakeTestCase {
  * @return void
  */
 	public function testOverwrite() {
-		$this->stub->write(["foo", "bar", "baz"]);
+		$this->stub->write(array("foo", "bar", "baz"));
 		$this->stub->overwrite("bat");
-		$this->assertEquals(["foo", "bar", "baz", "", "bat"], $this->stub->messages());
+		$this->assertEquals(array("foo", "bar", "baz", "", "bat"), $this->stub->messages());
 	}
 }

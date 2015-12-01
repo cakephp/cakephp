@@ -41,7 +41,7 @@ class ProgressShellHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testOutputFailure() {
-		$this->helper->output(['not a callback']);
+		$this->helper->output(array('not a callback'));
 	}
 
 /**
@@ -50,10 +50,10 @@ class ProgressShellHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testOutputSuccess() {
-		$this->helper->output([function ($progress) {
+		$this->helper->output(array(function ($progress) {
 			$progress->increment(20);
-		}]);
-		$expected = [
+		}));
+		$expected = array(
 			'',
 			'==============>                                                              20%',
 			'',
@@ -65,7 +65,7 @@ class ProgressShellHelperTest extends CakeTestCase {
 			'',
 			'==========================================================================> 100%',
 			'',
-		];
+		);
 		$this->assertEquals($expected, $this->consoleOutput->messages());
 	}
 
@@ -75,14 +75,14 @@ class ProgressShellHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testOutputSuccessOptions() {
-		$this->helper->output([
+		$this->helper->output(array(
 			'total' => 10,
 			'width' => 20,
 			'callback' => function ($progress) {
 				$progress->increment(2);
 			}
-		]);
-		$expected = [
+		));
+		$expected = array(
 			'',
 			'==>              20%',
 			'',
@@ -94,7 +94,7 @@ class ProgressShellHelperTest extends CakeTestCase {
 			'',
 			'==============> 100%',
 			'',
-		];
+		);
 		$this->assertEquals($expected, $this->consoleOutput->messages());
 	}
 
@@ -111,14 +111,14 @@ class ProgressShellHelperTest extends CakeTestCase {
 		$this->helper->draw();
 		$this->helper->increment(40);
 		$this->helper->draw();
-		$expected = [
+		$expected = array(
 			'',
 			'==============>                                                              20%',
 			'',
 			'============================================>                                60%',
 			'',
 			'==========================================================================> 100%',
-		];
+		);
 		$this->assertEquals($expected, $this->consoleOutput->messages());
 	}
 
@@ -135,14 +135,14 @@ class ProgressShellHelperTest extends CakeTestCase {
 		$this->helper->draw();
 		$this->helper->increment(80);
 		$this->helper->draw();
-		$expected = [
+		$expected = array(
 			'',
 			'=============================>                                               40%',
 			'',
 			'                                                                              0%',
 			'',
 			'===========================================================>                 80%',
-		];
+		);
 		$this->assertEquals($expected, $this->consoleOutput->messages());
 	}
 
@@ -152,10 +152,10 @@ class ProgressShellHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testIncrementWithOptions() {
-		$this->helper->init([
+		$this->helper->init(array(
 			'total' => 10,
 			'width' => 20,
-		]);
+		));
 		$this->helper->increment(4);
 		$this->helper->draw();
 		$this->helper->increment(4);
@@ -163,14 +163,14 @@ class ProgressShellHelperTest extends CakeTestCase {
 		$this->helper->increment(4);
 		$this->helper->draw();
 
-		$expected = [
+		$expected = array(
 			'',
 			'=====>           40%',
 			'',
 			'===========>     80%',
 			'',
 			'==============> 100%',
-		];
+		);
 		$this->assertEquals($expected, $this->consoleOutput->messages());
 	}
 
@@ -181,9 +181,9 @@ class ProgressShellHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testIncrementFloatPad() {
-		$this->helper->init([
+		$this->helper->init(array(
 			'total' => 50
-		]);
+		));
 		$this->helper->increment(7);
 		$this->helper->draw();
 		$this->helper->increment(7);
@@ -200,7 +200,7 @@ class ProgressShellHelperTest extends CakeTestCase {
 		$this->helper->draw();
 		$this->helper->increment(8);
 		$this->helper->draw();
-		$expected = [
+		$expected = array(
 			'',
 			'=========>                                                                   14%',
 			'',
@@ -217,7 +217,7 @@ class ProgressShellHelperTest extends CakeTestCase {
 			'==============================================================>              84%',
 			'',
 			'==========================================================================> 100%',
-		];
+		);
 		$this->assertEquals($expected, $this->consoleOutput->messages());
 	}
 }
