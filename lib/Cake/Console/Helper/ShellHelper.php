@@ -20,7 +20,7 @@ abstract class ShellHelper {
  *
  * @var array
  */
-	protected $_defaultConfig = [];
+	protected $_defaultConfig = array();
 
 /**
  * ConsoleOutput instance.
@@ -34,7 +34,7 @@ abstract class ShellHelper {
  *
  * @var array
  */
-	protected $_config = [];
+	protected $_config = array();
 
 /**
  * Whether the config property has already been configured with defaults
