@@ -970,6 +970,24 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
+     * Test that the typemaps used in function expressions
+     * create the correct results.
+     *
+     * @return void
+     */
+    public function testTypemapInFunctions2()
+    {
+        $table = TableRegistry::get('Comments');
+        $query = $table->find();
+        $query->select([
+            'id',
+            'max' => $query->func()->max('created', ['datetime'])
+        ]);
+        $result = $query->all()->first();
+        $this->assertEquals(new Time('2007-03-18 10:55:23'), $result['max']);
+    }
+
+    /**
      * Test that contain queries map types correctly.
      *
      * @return void
