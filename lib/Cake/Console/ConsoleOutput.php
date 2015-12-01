@@ -85,7 +85,7 @@ class ConsoleOutput {
  *
  * @var int
  */
-    protected $_lastWritten = 0;
+	protected $_lastWritten = 0;
 
 /**
  * The current output type. Manipulated with ConsoleOutput::outputAs();
@@ -206,21 +206,20 @@ class ConsoleOutput {
  *    length of the last message output.
  * @return void
  */
-    public function overwrite($message, $newlines = 1, $size = null)
-    {
-        $size = $size ?: $this->_lastWritten;
-        // Output backspaces.
-        $this->write(str_repeat("\x08", $size), 0);
-        $newBytes = $this->write($message, 0);
-        // Fill any remaining bytes with spaces.
-        $fill = $size - $newBytes;
-        if ($fill > 0) {
-            $this->write(str_repeat(' ', $fill), 0);
-        }
-        if ($newlines) {
-            $this->write("", $newlines);
-        }
-    }
+	public function overwrite($message, $newlines = 1, $size = null) {
+		$size = $size ?: $this->_lastWritten;
+		// Output backspaces.
+		$this->write(str_repeat("\x08", $size), 0);
+		$newBytes = $this->write($message, 0);
+		// Fill any remaining bytes with spaces.
+		$fill = $size - $newBytes;
+		if ($fill > 0) {
+			$this->write(str_repeat(' ', $fill), 0);
+		}
+		if ($newlines) {
+			$this->write("", $newlines);
+		}
+	}
 
 /**
  * Apply styling to text.
@@ -277,7 +276,7 @@ class ConsoleOutput {
  */
 	protected function _write($message) {
 		$this->_lastWritten = fwrite($this->_output, $message);
-        return $this->_lastWritten;
+		return $this->_lastWritten;
 	}
 
 /**

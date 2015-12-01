@@ -981,20 +981,18 @@ TEXT;
  *
  * @return void
  */
-    public function testGetInstanceOfHelper()
-    {
-        $actual = $this->Shell->helper("progress");
-        $this->assertInstanceOf("ProgressShellHelper", $actual);
-    }
+	public function testGetInstanceOfHelper() {
+		$actual = $this->Shell->helper("progress");
+		$this->assertInstanceOf("ProgressShellHelper", $actual);
+	}
 
 /**
  * Test getting an invalid helper
  *
  * @expectedException RunTimeException
+ * @return void
  */
-    public function testGetInvalidHelper()
-    {
-        $this->Shell->helper("tomato");
-    }
-
+	public function testGetInvalidHelper() {
+		$this->Shell->helper("tomato");
+	}
 }
