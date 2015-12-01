@@ -97,7 +97,7 @@ class TableShellHelper extends ShellHelper {
 		$widths = $this->_calculateWidths($rows);
 		$this->_rowSeparator($widths);
 		if ($config['headers'] === true) {
-			$this->_render(array_shift($rows), $widths, ['style' => $config['headerStyle']]);
+			$this->_render(array_shift($rows), $widths, array('style' => $config['headerStyle']));
 			$this->_rowSeparator($widths);
 		}
 		foreach ($rows as $line) {
