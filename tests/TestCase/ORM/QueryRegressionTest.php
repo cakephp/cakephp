@@ -963,9 +963,9 @@ class QueryRegressionTest extends TestCase
         ]);
         $result = $query->all()->first();
         $this->assertSame(
-            '-1',
+            -1,
             $result['coalesced'],
-            'Output values for functions are not cast yet.'
+            'Output values for functions should be casted'
         );
     }
 

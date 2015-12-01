@@ -18,6 +18,7 @@ use ArrayObject;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query as DatabaseQuery;
 use Cake\Database\TypeMap;
+use Cake\Database\TypedResultInterface;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\QueryTrait;
@@ -933,12 +934,16 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $typeMap = $this->typeMap()->defaults();
         $selectTypeMap = $this->selectTypeMap();
-        $select = array_keys($this->clause('select'));
+        $select = $this->clause('select');
         $types = [];
 
-        foreach ($select as $alias) {
+        foreach ($select as $alias => $value) {
             if (isset($typeMap[$alias])) {
                 $types[$alias] = $typeMap[$alias];
+                continue;
+            }
+            if ($value instanceof TypedResultInterface) {
+                $types[$alias] = $value->returnType();
             }
         }
         $this->selectTypeMap()->addDefaults($types);
