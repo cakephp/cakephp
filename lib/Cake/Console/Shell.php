@@ -175,6 +175,13 @@ class Shell extends Object {
 	protected $_lastWritten = 0;
 
 /**
+ * Contains helpers which have been previously instantiated
+ *
+ * @var array
+ */
+    protected $_helpers = array();
+
+/**
  *  Constructs this Shell instance.
  *
  * @param ConsoleOutput $stdout A ConsoleOutput object for stdout.
@@ -778,6 +785,29 @@ class Shell extends Object {
 		$this->err(__d('cake_console', '<error>Could not write to `%s`</error>.', $path), 2);
 		return false;
 	}
+
+/**
+ * Load given shell helper class
+ *
+ * @param string $name Name of the helper class. Supports plugin syntax.
+ * @return ShellHelper Instance of helper class
+ * @throws RunTimeException If invalid class name is provided
+ */
+    public function helper($name)
+    {
+        list($plugin, $helperClassName) = pluginSplit($name, true);
+        $helperClassName = Inflector::camelize($name) . "ShellHelper";
+        if (isset($this->_helpers[$name])) {
+            return $this->_helpers[$name];
+        }
+        App::uses($helperClassName, $plugin . "Console/Helper");
+        if (!class_exists($helperClassName)) {
+            throw new RuntimeException("Class " . $helperClassName . " not found");
+        }
+        $helper = new $helperClassName($this->stdout);
+        $this->_helpers[$name] = $helper;
+        return $helper;
+    }
 
 /**
  * Action to create a Unit Test
