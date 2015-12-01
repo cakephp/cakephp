@@ -202,7 +202,7 @@ class ConsoleOutput {
  *
  * @param array|string $message The message to output.
  * @param int $newlines Number of newlines to append.
- * @param int $size The number of bytes to overwrite. Defaults to the
+ * @param int|null $size The number of bytes to overwrite. Defaults to the
  *    length of the last message output.
  * @return void
  */
