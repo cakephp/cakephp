@@ -55,7 +55,7 @@ class ProgressShellHelper extends ShellHelper {
  * @throws RuntimeException
  */
 	public function output($args) {
-		$args += ['callback' => null];
+		$args += array('callback' => null);
 		if (isset($args[0])) {
 			$args['callback'] = $args[0];
 		}
@@ -82,7 +82,7 @@ class ProgressShellHelper extends ShellHelper {
  * @return void
  */
 	public function init(array $args = array()) {
-		$args += ['total' => 100, 'width' => 80];
+		$args += array('total' => 100, 'width' => 80);
 		$this->_progress = 0;
 		$this->_width = $args['width'];
 		$this->_total = $args['total'];
