@@ -266,6 +266,24 @@ class CakeSocketTest extends CakeTestCase {
 	}
 
 /**
+ * Test that protocol in the host doesn't cause cert errors.
+ *
+ * @return void
+ */
+	public function testConnectProtocolInHost() {
+		$this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
+		$configSslTls = array('host' => 'ssl://smtp.gmail.com', 'port' => 465, 'timeout' => 5);
+		$socket = new CakeSocket($configSslTls);
+		try {
+			$socket->connect();
+			$this->assertEquals('smtp.gmail.com', $socket->config['host']);
+			$this->assertEquals('ssl', $socket->config['protocol']);
+		} catch (SocketException $e) {
+			$this->markTestSkipped('Cannot test network, skipping.');
+		}
+	}
+
+/**
  * _connectSocketToSslTls
  *
  * @return void
