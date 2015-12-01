@@ -1,13 +1,13 @@
 <?php
-App::uses("ProgressHelper", "Console/Helper");
+App::uses("ProgressShellHelper", "Console/Helper");
 App::uses("ConsoleOutputStub", "TestSuite/Stub");
 
 /**
  * ProgressHelper test.
  * @property ConsoleOutputStub $consoleOutput
- * @property ProgressHelper $helper
+ * @property ProgressShellHelper $helper
  */
-class ProgressHelperTest extends CakeTestCase
+class ProgressShellHelperTest extends CakeTestCase
 {
 
     /**
@@ -20,7 +20,7 @@ class ProgressHelperTest extends CakeTestCase
         parent::setUp();
 
         $this->consoleOutput = new ConsoleOutputStub();
-        $this->helper = new ProgressHelper($this->consoleOutput);
+        $this->helper = new ProgressShellHelper($this->consoleOutput);
     }
 
     /**

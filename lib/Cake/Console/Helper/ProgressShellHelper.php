@@ -4,7 +4,7 @@ App::uses("ShellHelper", "Console/Helper");
 /**
  * Create a progress bar using a supplied callback.
  */
-class ProgressHelper extends ShellHelper
+class ProgressShellHelper extends ShellHelper
 {
     /**
      * The current progress.
