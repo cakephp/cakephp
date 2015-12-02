@@ -134,7 +134,8 @@ class MysqlTest extends TestCase
      *
      * @return void
      */
-    public function testIsConnected() {
+    public function testIsConnected()
+    {
         $connection = ConnectionManager::get('test');
         $connection->disconnect();
         $this->assertFalse($connection->isConnected(), 'Not connected now.');
