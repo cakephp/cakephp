@@ -1083,6 +1083,11 @@ class AuthComponentTest extends TestCase
         $result = $this->Auth->user();
         $this->assertEquals('mariano', $result['username']);
 
+        $this->assertInstanceOf(
+            'Cake\Auth\BasicAuthenticate',
+            $this->Auth->authenticationProvider()
+        );
+
         $result = $this->Auth->user('username');
         $this->assertEquals('mariano', $result);
         $this->assertFalse(isset($_SESSION));
