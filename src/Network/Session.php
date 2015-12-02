@@ -93,7 +93,6 @@ class Session
      */
     public static function create($sessionConfig = [])
     {
-        $sessionIni = ini_get_all("session");
         if (isset($sessionConfig['defaults'])) {
             $defaults = static::_defaultConfig($sessionConfig['defaults']);
             if ($defaults) {
@@ -101,7 +100,7 @@ class Session
             }
         }
 
-        if (!isset($sessionConfig['ini']['session.cookie_secure']) && env('HTTPS') && $sessionIni["session.cookie_secure"]['local'] != 1) {
+        if (!isset($sessionConfig['ini']['session.cookie_secure']) && env('HTTPS') && get_ini("session.cookie_secure") != 1) {
             $sessionConfig['ini']['session.cookie_secure'] = 1;
         }
 
@@ -113,7 +112,7 @@ class Session
             $sessionConfig['ini']['session.save_handler'] = 'user';
         }
 
-        if (!isset($sessionConfig['ini']['session.cookie_httponly']) && $sessionIni["session.cookie_httponly"]['local'] != 1) {
+        if (!isset($sessionConfig['ini']['session.cookie_httponly']) && get_ini("session.cookie_httponly") != 1) {
             $sessionConfig['ini']['session.cookie_httponly'] = 1;
         }
 
