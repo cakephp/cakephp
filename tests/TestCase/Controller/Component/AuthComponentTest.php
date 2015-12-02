@@ -20,6 +20,7 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Event\Event;
+use Cake\Event\EventManager;
 use Cake\Network\Exception\ForbiddenException;
 use Cake\Network\Exception\UnauthorizedException;
 use Cake\Network\Request;
@@ -1161,6 +1162,36 @@ class AuthComponentTest extends TestCase
         $user = $this->Auth->identify();
         $expected = ['id' => 1, 'username' => 'admad', 'extra' => 'foo'];
         $this->assertEquals($expected, $user);
+    }
+
+    /**
+     * testAfterIdentifyForStatelessAuthentication
+     *
+     * @return void
+     * @triggers Controller.startup $this->Controller
+     */
+    public function testAfterIdentifyForStatelessAuthentication()
+    {
+        $event = new Event('Controller.startup', $this->Controller);
+        $url = '/auth_test/add';
+        $this->Auth->request->addParams(Router::parse($url));
+        $this->Auth->request->env('PHP_AUTH_USER', 'mariano');
+        $this->Auth->request->env('PHP_AUTH_PW', 'cake');
+
+        $this->Auth->config('authenticate', [
+            'Basic' => ['userModel' => 'AuthUsers']
+        ]);
+        $this->Auth->config('storage', 'Memory');
+
+        EventManager::instance()->on('Auth.afterIdentify', function ($event) {
+            $user = $event->data[0];
+            $user['from_callback'] = true;
+            return $user;
+        });
+
+        $this->Auth->startup($event);
+        $this->assertEquals('mariano', $this->Auth->user('username'));
+        $this->assertTrue($this->Auth->user('from_callback'));
     }
 
     /**
