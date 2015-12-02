@@ -1156,6 +1156,10 @@ class AuthComponentTest extends TestCase
         $this->assertEquals($expected, $authObject->callStack);
         $expected = ['id' => 1, 'username' => 'admad'];
         $this->assertEquals($expected, $user);
+        $this->assertInstanceOf(
+            'TestApp\Auth\TestAuthenticate',
+            $authObject->authenticationProvider
+        );
 
         // Callback for Auth.afterIdentify returns a value
         $authObject->modifiedUser = true;
