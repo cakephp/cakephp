@@ -19,6 +19,7 @@ use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
+use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use ReflectionClass;
 use ReflectionMethod;
@@ -109,11 +110,14 @@ class CommandTask extends Shell
     public function commands()
     {
         $shellList = $this->getShellList();
+        $flatten = Hash::flatten($shellList);
+        $duplicates = array_intersect($flatten, array_unique(array_diff_key($flatten, array_unique($flatten))));
+        $duplicates = Hash::expand($duplicates);
 
         $options = [];
         foreach ($shellList as $type => $commands) {
             $prefix = '';
-            if (!in_array(strtolower($type), ['app', 'core'])) {
+            if (!in_array(strtolower($type), ['app', 'core']) && isset($duplicates[$type])) {
                 $prefix = $type . '.';
             }
 
@@ -143,7 +147,7 @@ class CommandTask extends Shell
         $return = array_keys($taskMap);
         $return = array_map('Cake\Utility\Inflector::underscore', $return);
 
-        $shellMethodNames = ['main', 'help', 'getOptionParser'];
+        $shellMethodNames = ['main', 'help', 'getOptionParser', 'initialize', 'runCommand'];
 
         $baseClasses = ['Object', 'Shell', 'AppShell'];
 
@@ -180,6 +184,16 @@ class CommandTask extends Shell
 
         if (!in_array($commandName, $this->commands())) {
             return false;
+        }
+
+        if (empty($pluginDot)) {
+            $shellList = $this->getShellList();
+            unset($shellList['CORE'], $shellList['app']);
+            foreach ($shellList as $plugin => $commands) {
+                if (in_array($commandName, $commands)) {
+                    $pluginDot = $plugin . '.';
+                }
+            }
         }
 
         $name = Inflector::camelize($name);
