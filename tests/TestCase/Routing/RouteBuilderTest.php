@@ -388,6 +388,30 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
+     * Test connecting nested resources with the inflection option
+     *
+     * @return void
+     */
+    public function testResourcesNestedInflection()
+    {
+        $routes = new RouteBuilder($this->collection, '/api');
+        $routes->resources(
+            'NetworkObjects',
+            ['inflect' => 'dasherize'],
+            function ($routes) {
+                $routes->resources('Attributes');
+            }
+        );
+
+        $all = $this->collection->routes();
+        $this->assertCount(10, $all);
+
+        $this->assertEquals('/api/network-objects', $all[0]->template);
+        $this->assertEquals('/api/network-objects/:id', $all[2]->template);
+        $this->assertEquals('/api/network-objects/:network_object_id/attributes', $all[5]->template);
+    }
+
+    /**
      * Test connecting resources with additional mappings
      *
      * @return void
