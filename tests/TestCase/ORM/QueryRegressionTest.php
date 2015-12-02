@@ -980,7 +980,6 @@ class QueryRegressionTest extends TestCase
         $table = TableRegistry::get('Comments');
         $query = $table->find();
         $query->select([
-            'id',
             'max' => $query->func()->max('created', ['datetime'])
         ]);
         $result = $query->all()->first();
