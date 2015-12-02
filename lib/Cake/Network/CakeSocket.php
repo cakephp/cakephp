@@ -129,8 +129,12 @@ class CakeSocket {
 			$this->disconnect();
 		}
 
+		$hasProtocol = strpos($this->config['host'], '://') !== false;
+		if ($hasProtocol) {
+			list($this->config['protocol'], $this->config['host']) = explode('://', $this->config['host']);
+		}
 		$scheme = null;
-		if (!empty($this->config['protocol']) && strpos($this->config['host'], '://') === false && empty($this->config['proxy'])) {
+		if (!empty($this->config['protocol'])) {
 			$scheme = $this->config['protocol'] . '://';
 		}
 
