@@ -632,7 +632,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 
         ksort($options);
         foreach ($options as $option => $values) {
-            if (isset($valid[$option]) && isset($values)) {
+            if (isset($valid[$option], $values)) {
                 $this->{$valid[$option]}($values);
             } else {
                 $this->_options[$option] = $values;

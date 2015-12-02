@@ -51,7 +51,7 @@ class IcuFormatter implements FormatterInterface
             return $this->_formatMessage($locale, $message, $vars);
         }
 
-        if (isset($vars['_context']) && isset($message['_context'])) {
+        if (isset($vars['_context'], $message['_context'])) {
             $message = $message['_context'][$vars['_context']];
             unset($vars['_context']);
         }

@@ -332,7 +332,7 @@ class Request implements ArrayAccess
             } else {
                 $uri = substr($_SERVER['REQUEST_URI'], strlen(Configure::read('App.fullBaseUrl')));
             }
-        } elseif (isset($_SERVER['PHP_SELF']) && isset($_SERVER['SCRIPT_NAME'])) {
+        } elseif (isset($_SERVER['PHP_SELF'], $_SERVER['SCRIPT_NAME'])) {
             $uri = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['PHP_SELF']);
         } elseif (isset($_SERVER['HTTP_X_REWRITE_URL'])) {
             $uri = $_SERVER['HTTP_X_REWRITE_URL'];
@@ -828,7 +828,7 @@ class Request implements ArrayAccess
             static::$_detectors[$name] = $callable;
             return;
         }
-        if (isset(static::$_detectors[$name]) && isset($callable['options'])) {
+        if (isset(static::$_detectors[$name], $callable['options'])) {
             $callable = Hash::merge(static::$_detectors[$name], $callable);
         }
         static::$_detectors[$name] = $callable;
