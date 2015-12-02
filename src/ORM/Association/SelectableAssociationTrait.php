@@ -314,7 +314,7 @@ trait SelectableAssociationTrait
 
         $sourceKey = $sourceKeys[0];
         return function ($row) use ($resultMap, $sourceKey, $nestKey) {
-            if (isset($row[$sourceKey]) && isset($resultMap[$row[$sourceKey]])) {
+            if (isset($row[$sourceKey], $resultMap[$row[$sourceKey]])) {
                 $row[$nestKey] = $resultMap[$row[$sourceKey]];
             }
             return $row;

@@ -51,7 +51,7 @@ class PluginShortRoute extends InflectedRoute
      */
     public function match(array $url, array $context = [])
     {
-        if (isset($url['controller']) && isset($url['plugin']) && $url['plugin'] !== $url['controller']) {
+        if (isset($url['controller'], $url['plugin']) && $url['plugin'] !== $url['controller']) {
             return false;
         }
         $this->defaults['controller'] = $url['controller'];
