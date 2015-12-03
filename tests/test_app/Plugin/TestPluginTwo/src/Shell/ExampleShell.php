@@ -34,7 +34,13 @@ class ExampleShell extends Shell
         $this->out('This is the main method called from TestPluginTwo.ExampleShell');
     }
 
-    public function say_hello() {
+    /**
+     * say_hello method
+     *
+     * @return void
+     */
+    public function say_hello()
+    {
     	$this->out('Hello from the TestPluginTwo.ExampleShell');
     }
 }
