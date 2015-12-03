@@ -116,12 +116,16 @@ class CommandTask extends Shell
 
         $options = [];
         foreach ($shellList as $type => $commands) {
-            $prefix = '';
-            if (!in_array(strtolower($type), ['app', 'core']) && isset($duplicates[$type])) {
-                $prefix = $type . '.';
-            }
-
             foreach ($commands as $shell) {
+                $prefix = '';
+                if (
+                    !in_array(strtolower($type), ['app', 'core']) &&
+                    isset($duplicates[$type]) &&
+                    in_array($shell, $duplicates[$type])
+                ) {
+                    $prefix = $type . '.';
+                }
+
                 $options[] = $prefix . $shell;
             }
         }
@@ -192,6 +196,7 @@ class CommandTask extends Shell
             foreach ($shellList as $plugin => $commands) {
                 if (in_array($commandName, $commands)) {
                     $pluginDot = $plugin . '.';
+                    break;
                 }
             }
         }

@@ -119,7 +119,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['commands']);
         $output = $this->out->output;
 
-        $expected = "TestPlugin.example TestPlugin.sample TestPluginTwo.example TestPluginTwo.welcome " .
+        $expected = "TestPlugin.example TestPlugin.sample TestPluginTwo.example unique welcome " .
             "i18n orm_cache plugin routes server i18m sample testing_dispatch\n";
         $this->assertTextEquals($expected, $output);
     }
@@ -195,13 +195,28 @@ class CompletionShellTest extends TestCase
     }
 
     /**
-     * test that subCommands with a existing plugin command returns the proper sub commands
+     * test that subCommands with an existing plugin command returns the proper sub commands
+     * when the Shell name is unique and the dot notation not mandatory
      *
      * @return void
      */
     public function testSubCommandsPlugin()
     {
-        $this->Shell->runCommand(['subcommands', 'TestPluginTwo.welcome']);
+        $this->Shell->runCommand(['subcommands', 'welcome']);
+        $output = $this->out->output;
+
+        $expected = "say_hello\n";
+        $this->assertTextEquals($expected, $output);
+    }
+
+    /**
+     * test that subCommands with an existing plugin command returns the proper sub commands
+     *
+     * @return void
+     */
+    public function testSubCommandsPluginDotNotation()
+    {
+        $this->Shell->runCommand(['subcommands', 'TestPluginTwo.example']);
         $output = $this->out->output;
 
         $expected = "say_hello\n";

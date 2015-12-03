@@ -14,14 +14,14 @@
  */
 
 /**
- * Class ExampleShell
+ * Class UniqueShell
  *
  */
 namespace TestPluginTwo\Shell;
 
 use Cake\Console\Shell;
 
-class ExampleShell extends Shell
+class UniqueShell extends Shell
 {
 
     /**
@@ -31,10 +31,6 @@ class ExampleShell extends Shell
      */
     public function main()
     {
-        $this->out('This is the main method called from TestPluginTwo.ExampleShell');
-    }
-
-    public function say_hello() {
-    	$this->out('Hello from the TestPluginTwo.ExampleShell');
+        $this->out('This is the main method called from TestPluginTwo.UniqueShell');
     }
 }
