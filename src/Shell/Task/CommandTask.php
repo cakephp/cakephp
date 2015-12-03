@@ -192,11 +192,14 @@ class CommandTask extends Shell
 
         if (empty($pluginDot)) {
             $shellList = $this->getShellList();
-            unset($shellList['CORE'], $shellList['app']);
-            foreach ($shellList as $plugin => $commands) {
-                if (in_array($commandName, $commands)) {
-                    $pluginDot = $plugin . '.';
-                    break;
+
+            if (!in_array($commandName, $shellList['app']) && !in_array($commandName, $shellList['CORE'])) {
+                unset($shellList['CORE'], $shellList['app']);
+                foreach ($shellList as $plugin => $commands) {
+                    if (in_array($commandName, $commands)) {
+                        $pluginDot = $plugin . '.';
+                        break;
+                    }
                 }
             }
         }

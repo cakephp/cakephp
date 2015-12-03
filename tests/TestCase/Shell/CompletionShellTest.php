@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Shell;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOutput;
 use Cake\Console\Shell;
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Shell\CompletionShell;
 use Cake\Shell\Task\CommandTask;
@@ -51,6 +52,7 @@ class CompletionShellTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        Configure::write('App.namespace', 'TestApp');
         Plugin::load(['TestPlugin', 'TestPluginTwo']);
 
         $this->out = new TestCompletionStringOutput();
@@ -78,6 +80,7 @@ class CompletionShellTest extends TestCase
     {
         parent::tearDown();
         unset($this->Shell);
+        Configure::write('App.namespace', 'App');
         Plugin::unload();
     }
 
@@ -190,7 +193,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['subcommands', 'app.sample']);
         $output = $this->out->output;
 
-        $expected = '';
+        $expected = "derp\n";
         $this->assertEquals($expected, $output);
     }
 
@@ -235,6 +238,35 @@ class CompletionShellTest extends TestCase
 
         $expected = "say_hello\n";
         $this->assertTextEquals($expected, $output);
+    }
+
+    /**
+     * test that subCommands with an app shell that is also defined in a plugin and without the prefix "app."
+     * returns proper sub commands
+     *
+     * @return void
+     */
+    public function testSubCommandsAppDuplicatePluginNoDot()
+    {
+        $this->Shell->runCommand(['subcommands', 'sample']);
+        $output = $this->out->output;
+
+        $expected = "derp\n";
+        $this->assertEquals($expected, $output);
+    }
+
+    /**
+     * test that subCommands with a plugin shell that is also defined in the returns proper sub commands
+     *
+     * @return void
+     */
+    public function testSubCommandsPluginDuplicateApp()
+    {
+        $this->Shell->runCommand(['subcommands', 'TestPlugin.sample']);
+        $output = $this->out->output;
+
+        $expected = "example\n";
+        $this->assertEquals($expected, $output);
     }
 
     /**
