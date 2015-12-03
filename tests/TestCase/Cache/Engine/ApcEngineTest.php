@@ -36,7 +36,7 @@ class ApcEngineTest extends TestCase
         parent::setUp();
         $this->skipIf(!function_exists('apc_store'), 'Apc is not installed or configured properly.');
 
-        if (PHP_SAPI === 'cli') {
+        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) {
             $this->skipIf(!ini_get('apc.enable_cli'), 'APC is not enabled for the CLI.');
         }
 
