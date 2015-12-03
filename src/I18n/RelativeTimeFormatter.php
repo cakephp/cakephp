@@ -14,6 +14,8 @@
  */
 namespace Cake\I18n;
 
+use DatetimeInterface;
+
 /**
  * Helper class for formatting relative dates & times.
  *
@@ -22,33 +24,16 @@ namespace Cake\I18n;
 class RelativeTimeFormatter
 {
     /**
-     * The datetime instance being formatted.
-     *
-     * @var \DateTime
-     */
-    protected $_time;
-
-    /**
-     * Constructor
-     *
-     * @param \DateTime $time The DateTime instance to format.
-     */
-    public function __construct($time)
-    {
-        $this->_time = $time;
-    }
-
-    /**
      * Format a into a relative timestring.
      *
+     * @param \DateTimeInterface $time The time instance to format.
      * @param array $options Array of options.
      * @return string Relative time string.
      * @see Cake\I18n\Time::timeAgoInWords()
      */
-    public function timeAgoInWords(array $options = [])
+    public static function timeAgoInWords(DatetimeInterface $time, array $options = [])
     {
-        $time = $this->_time;
-        $options = $this->_options($options, FrozenTime::class);
+        $options = static::_options($options, FrozenTime::class);
         if ($options['timezone']) {
             $time = $time->timezone($options['timezone']);
         }
@@ -73,7 +58,7 @@ class RelativeTimeFormatter
             return sprintf($options['absoluteString'], $time->i18nFormat($options['format']));
         }
 
-        $diffData = $this->_diffData($futureTime, $pastTime, $backwards, $options);
+        $diffData = static::_diffData($futureTime, $pastTime, $backwards, $options);
         list($fNum, $fWord, $years, $months, $weeks, $days, $hours, $minutes, $seconds) = array_values($diffData);
 
         $relativeDate = [];
@@ -137,7 +122,7 @@ class RelativeTimeFormatter
      * @param array $options An array of options.
      * @return array An array of values.
      */
-    protected function _diffData($futureTime, $pastTime, $backwards, $options)
+    protected static function _diffData($futureTime, $pastTime, $backwards, $options)
     {
         $diff = $futureTime - $pastTime;
 
@@ -226,14 +211,14 @@ class RelativeTimeFormatter
     /**
      * Format a into a relative date string.
      *
+     * @param \DatetimeInterface $date The date to format.
      * @param array $options Array of options.
      * @return string Relative date string.
      * @see Cake\I18n\Date::timeAgoInWords()
      */
-    public function dateAgoInWords(array $options = [])
+    public static function dateAgoInWords(DatetimeInterface $date, array $options = [])
     {
-        $date = $this->_time;
-        $options = $this->_options($options, FrozenDate::class);
+        $options = static::_options($options, FrozenDate::class);
         if ($options['timezone']) {
             $date = $date->timezone($options['timezone']);
         }
@@ -258,7 +243,7 @@ class RelativeTimeFormatter
             return sprintf($options['absoluteString'], $date->i18nFormat($options['format']));
         }
 
-        $diffData = $this->_diffData($futureTime, $pastTime, $backwards, $options);
+        $diffData = static::_diffData($futureTime, $pastTime, $backwards, $options);
         list($fNum, $fWord, $years, $months, $weeks, $days, $hours, $minutes, $seconds) = array_values($diffData);
 
         $relativeDate = [];
@@ -307,7 +292,7 @@ class RelativeTimeFormatter
      * @param string $class The class name to use for defaults.
      * @return array Options with defaults applied.
      */
-    protected function _options($options, $class)
+    protected static function _options($options, $class)
     {
         $options += [
             'from' => $class::now(),
