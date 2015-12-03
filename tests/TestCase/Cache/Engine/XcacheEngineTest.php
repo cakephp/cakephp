@@ -35,7 +35,7 @@ class XcacheEngineTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        if (PHP_SAPI === 'cli') {
+        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) {
             $this->markTestSkipped('Xcache is not available for the CLI.');
         }
         if (!function_exists('xcache_set')) {
