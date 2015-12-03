@@ -772,6 +772,29 @@ class BelongsToMany extends Association
     }
 
     /**
+     * Proxies the finding operation to the target table's find method
+     * and modifies the query accordingly based of this association
+     * configuration.
+     *
+     * If your association includes conditions, the junction table will be
+     * included in the query's contained associations.
+     *
+     * @param string|array $type the type of query to perform, if an array is passed,
+     *   it will be interpreted as the `$options` parameter
+     * @param array $options The options to for the find
+     * @see \Cake\ORM\Table::find()
+     * @return \Cake\ORM\Query
+     */
+    public function find($type = null, array $options = [])
+    {
+        $query = parent::find($type, $options);
+        if ($this->conditions()) {
+            $query->contain([$this->junction()->alias()]);
+        }
+        return $query;
+    }
+
+    /**
      * Replaces existing association links between the source entity and the target
      * with the ones passed. This method does a smart cleanup, links that are already
      * persisted and present in `$targetEntities` will not be deleted, new links will
