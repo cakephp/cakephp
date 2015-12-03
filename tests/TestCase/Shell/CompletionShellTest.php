@@ -210,6 +210,20 @@ class CompletionShellTest extends TestCase
     }
 
     /**
+     * test that using the dot notation when not mandatory works to provide backward compatibility
+     *
+     * @return void
+     */
+    public function testSubCommandsPluginDotNotationBackwardCompatibility()
+    {
+        $this->Shell->runCommand(['subcommands', 'TestPluginTwo.welcome']);
+        $output = $this->out->output;
+
+        $expected = "say_hello\n";
+        $this->assertTextEquals($expected, $output);
+    }
+
+    /**
      * test that subCommands with an existing plugin command returns the proper sub commands
      *
      * @return void

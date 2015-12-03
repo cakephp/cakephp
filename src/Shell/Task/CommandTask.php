@@ -186,7 +186,7 @@ class CommandTask extends Shell
             $pluginDot = '';
         }
 
-        if (!in_array($commandName, $this->commands())) {
+        if (!in_array($commandName, $this->commands()) && (empty($pluginDot) && !in_array($name, $this->commands()))) {
             return false;
         }
 
