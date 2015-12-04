@@ -33,4 +33,14 @@ class SampleShell extends Shell
     {
         $this->out('This is the main method called from SampleShell');
     }
+
+    /**
+     * example method
+     *
+     * @return void
+     */
+    public function example()
+    {
+        $this->out('This is the example method called from TestPlugin.SampleShell');
+    }
 }
