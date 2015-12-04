@@ -132,6 +132,6 @@ class FrozenDate extends ChronosDate implements JsonSerializable
      */
     public function timeAgoInWords(array $options = [])
     {
-        return RelativeTimeFormatter::dateAgoInWords($this, $options);
+        return $this->diffFormatter()->dateAgoInWords($this, $options);
     }
 }

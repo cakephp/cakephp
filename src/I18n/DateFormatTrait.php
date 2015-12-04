@@ -14,6 +14,7 @@
  */
 namespace Cake\I18n;
 
+use Cake\I18n\RelativeTimeFormatter;
 use DateTime;
 use IntlDateFormatter;
 
@@ -347,6 +348,24 @@ trait DateFormatTrait
     public function jsonSerialize()
     {
         return $this->i18nFormat(static::$_jsonEncodeFormat);
+    }
+
+    /**
+     * Get the difference formatter instance or overwrite the current one.
+     *
+     * @param \Cake\I18n\RelativeTimeFormatter|null $formatter The formatter instance when setting.
+     * @return \Cake\I18n\RelativeTimeFormatter The formatter instance.
+     */
+    public function diffFormatter($formatter = null)
+    {
+        if ($formatter === null) {
+            // Use the static property defined in chronos.
+            if (static::$diffFormatter === null) {
+                static::$diffFormatter = new RelativeTimeFormatter();
+            }
+            return static::$diffFormatter;
+        }
+        return static::$diffFormatter = $translator;
     }
 
     /**

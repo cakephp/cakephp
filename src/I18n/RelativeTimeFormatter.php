@@ -14,6 +14,7 @@
  */
 namespace Cake\I18n;
 
+use Cake\Chronos\ChronosInterface;
 use DatetimeInterface;
 
 /**
@@ -24,6 +25,64 @@ use DatetimeInterface;
 class RelativeTimeFormatter
 {
     /**
+     * Get the difference in a human readable format.
+     *
+     * @param \Cake\Chronos\ChronosInterface $date The datetime to start with.
+     * @param \Cake\Chronos\ChronosInterface|null $other The datetime to compare against.
+     * @param bool $absolute removes time difference modifiers ago, after, etc
+     * @return string The difference between the two days in a human readable format
+     * @see Cake\Chronos\ChronosInterface::diffForHumans
+     */
+    public function diffForHumans(ChronosInterface $date, ChronosInterface $other = null, $absolute = false)
+    {
+        $isNow = $other === null;
+        if ($isNow) {
+            $other = $date->now($date->tz);
+        }
+        $diffInterval = $date->diff($other);
+
+        switch (true) {
+            case ($diffInterval->y > 0):
+                $count = $diffInterval->y;
+                $message = __dn('cake', '{0} year', '{0} years', $count, $count);
+                break;
+            case ($diffInterval->m > 0):
+                $count = $diffInterval->m;
+                $message = __dn('cake', '{0} month', '{0} months', $count, $count);
+                break;
+            case ($diffInterval->d > 0):
+                $count = $diffInterval->d;
+                if ($count >= ChronosInterface::DAYS_PER_WEEK) {
+                    $count = (int)($count / ChronosInterface::DAYS_PER_WEEK);
+                    $message = __dn('cake', '{0} week', '{0} weeks', $count, $count);
+                } else {
+                    $message = __dn('cake', '{0} day', '{0} days', $count, $count);
+                }
+                break;
+            case ($diffInterval->h > 0):
+                $count = $diffInterval->h;
+                $message = __dn('cake', '{0} hour', '{0} hours', $count, $count);
+                break;
+            case ($diffInterval->i > 0):
+                $count = $diffInterval->i;
+                $message = __dn('cake', '{0} minute', '{0} minutes', $count, $count);
+                break;
+            default:
+                $count = $diffInterval->s;
+                $message = __dn('cake', '{0} second', '{0} seconds', $count, $count);
+                break;
+        }
+        if ($absolute) {
+            return $message;
+        }
+        $isFuture = $diffInterval->invert === 1;
+        if ($isNow) {
+            return $isFuture ? __d('cake', '{0} from now', $message) : __d('cake', '{0} ago', $message);
+        }
+        return $isFuture ? __d('cake', '{0} after', $message) : __d('cake', '{0} before', $message);
+    }
+
+    /**
      * Format a into a relative timestring.
      *
      * @param \DateTimeInterface $time The time instance to format.
@@ -31,9 +90,9 @@ class RelativeTimeFormatter
      * @return string Relative time string.
      * @see Cake\I18n\Time::timeAgoInWords()
      */
-    public static function timeAgoInWords(DatetimeInterface $time, array $options = [])
+    public function timeAgoInWords(DatetimeInterface $time, array $options = [])
     {
-        $options = static::_options($options, FrozenTime::class);
+        $options = $this->_options($options, FrozenTime::class);
         if ($options['timezone']) {
             $time = $time->timezone($options['timezone']);
         }
@@ -58,7 +117,7 @@ class RelativeTimeFormatter
             return sprintf($options['absoluteString'], $time->i18nFormat($options['format']));
         }
 
-        $diffData = static::_diffData($futureTime, $pastTime, $backwards, $options);
+        $diffData = $this->_diffData($futureTime, $pastTime, $backwards, $options);
         list($fNum, $fWord, $years, $months, $weeks, $days, $hours, $minutes, $seconds) = array_values($diffData);
 
         $relativeDate = [];
@@ -122,7 +181,7 @@ class RelativeTimeFormatter
      * @param array $options An array of options.
      * @return array An array of values.
      */
-    protected static function _diffData($futureTime, $pastTime, $backwards, $options)
+    protected function _diffData($futureTime, $pastTime, $backwards, $options)
     {
         $diff = $futureTime - $pastTime;
 
@@ -216,9 +275,9 @@ class RelativeTimeFormatter
      * @return string Relative date string.
      * @see Cake\I18n\Date::timeAgoInWords()
      */
-    public static function dateAgoInWords(DatetimeInterface $date, array $options = [])
+    public function dateAgoInWords(DatetimeInterface $date, array $options = [])
     {
-        $options = static::_options($options, FrozenDate::class);
+        $options = $this->_options($options, FrozenDate::class);
         if ($options['timezone']) {
             $date = $date->timezone($options['timezone']);
         }
@@ -243,7 +302,7 @@ class RelativeTimeFormatter
             return sprintf($options['absoluteString'], $date->i18nFormat($options['format']));
         }
 
-        $diffData = static::_diffData($futureTime, $pastTime, $backwards, $options);
+        $diffData = $this->_diffData($futureTime, $pastTime, $backwards, $options);
         list($fNum, $fWord, $years, $months, $weeks, $days, $hours, $minutes, $seconds) = array_values($diffData);
 
         $relativeDate = [];
@@ -292,7 +351,7 @@ class RelativeTimeFormatter
      * @param string $class The class name to use for defaults.
      * @return array Options with defaults applied.
      */
-    protected static function _options($options, $class)
+    protected function _options($options, $class)
     {
         $options += [
             'from' => $class::now(),

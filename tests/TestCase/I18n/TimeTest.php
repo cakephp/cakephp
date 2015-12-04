@@ -623,6 +623,7 @@ class TimeTest extends TestCase
     public function testDiffForHumans($class)
     {
         $time = new $class('2014-04-20 10:10:10');
+
         $other = new $class('2014-04-27 10:10:10');
         $this->assertEquals('1 week before', $time->diffForHumans($other));
 
@@ -631,6 +632,60 @@ class TimeTest extends TestCase
 
         $other = new $class('2014-04-13 09:10:10');
         $this->assertEquals('1 week after', $time->diffForHumans($other));
+
+        $other = new $class('2014-04-06 09:10:10');
+        $this->assertEquals('2 weeks after', $time->diffForHumans($other));
+
+        $other = new $class('2014-04-21 10:10:10');
+        $this->assertEquals('1 day before', $time->diffForHumans($other));
+
+        $other = new $class('2014-04-22 10:10:10');
+        $this->assertEquals('2 days before', $time->diffForHumans($other));
+
+        $other = new $class('2014-04-20 10:11:10');
+        $this->assertEquals('1 minute before', $time->diffForHumans($other));
+
+        $other = new $class('2014-04-20 10:12:10');
+        $this->assertEquals('2 minutes before', $time->diffForHumans($other));
+
+        $other = new $class('2014-04-20 10:10:09');
+        $this->assertEquals('1 second after', $time->diffForHumans($other));
+
+        $other = new $class('2014-04-20 10:10:08');
+        $this->assertEquals('2 seconds after', $time->diffForHumans($other));
+    }
+
+    /**
+     * Tests diffForHumans absolute
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testDiffForHumansAbsolute($class)
+    {
+        $time = new $class('2014-04-20 10:10:10');
+        $this->assertEquals('1 year', $time->diffForHumans(null, ['absolute' => true]));
+
+        $other = new $class('2014-04-27 10:10:10');
+        $this->assertEquals('1 week', $time->diffForHumans($other, ['absolute' => true]));
+
+        $time = new $class('2016-04-20 10:10:10');
+        $this->assertEquals('4 months', $time->diffForHumans(null, ['absolute' => true]));
+    }
+
+    /**
+     * Tests diffForHumans with now
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testDiffForHumansNow($class)
+    {
+        $time = new $class('2014-04-20 10:10:10');
+        $this->assertEquals('1 year ago', $time->diffForHumans());
+
+        $time = new $class('2016-04-20 10:10:10');
+        $this->assertEquals('4 months from now', $time->diffForHumans());
     }
 
     /**
