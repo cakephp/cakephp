@@ -292,7 +292,7 @@ abstract class BaseErrorHandler
                 $message .= "\nException Attributes: " . var_export($exception->getAttributes(), true);
             }
         }
-        if (PHP_SAPI !== 'cli') {
+        if ((PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg')) {
             $request = Router::getRequest();
             if ($request) {
                 $message .= "\nRequest URL: " . $request->here();
