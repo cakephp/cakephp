@@ -194,7 +194,7 @@ class CompletionShellTest extends TestCase
         $output = $this->out->output;
 
         $expected = "derp\n";
-        $this->assertEquals($expected, $output);
+        $this->assertTextEquals($expected, $output);
     }
 
     /**
@@ -252,7 +252,7 @@ class CompletionShellTest extends TestCase
         $output = $this->out->output;
 
         $expected = "derp\n";
-        $this->assertEquals($expected, $output);
+        $this->assertTextEquals($expected, $output);
     }
 
     /**
@@ -266,7 +266,7 @@ class CompletionShellTest extends TestCase
         $output = $this->out->output;
 
         $expected = "example\n";
-        $this->assertEquals($expected, $output);
+        $this->assertTextEquals($expected, $output);
     }
 
     /**
