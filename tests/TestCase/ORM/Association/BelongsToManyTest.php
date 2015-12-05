@@ -855,36 +855,6 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
-     * Test that find() applies a contain() when the association uses conditions.
-     *
-     * @return void
-     */
-    public function testFindAppliesContainWithConditions()
-    {
-        $connection = ConnectionManager::get('test');
-        $this->article->belongsToMany('Tags', [
-            'targetTable' => $this->tag,
-            'conditions' => ['ArticlesTags.favorite' => true]
-        ]);
-        $query = $this->getMock(
-            '\Cake\ORM\Query',
-            [],
-            [$connection, $this->article]
-        );
-        $query->expects($this->once())
-            ->method('where')
-            ->with(['ArticlesTags.favorite' => true])
-            ->will($this->returnSelf());
-        $query->expects($this->once())
-            ->method('contain')
-            ->with(['ArticlesTags'])
-            ->will($this->returnSelf());
-        $this->tag->method('find')->will($this->returnValue($query));
-
-        $this->article->Tags->find();
-    }
-
-    /**
      * Tests that replaceLinks() will contain() the target table when
      * there are conditions present on the association.
      *
