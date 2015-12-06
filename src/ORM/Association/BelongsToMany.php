@@ -799,8 +799,8 @@ class BelongsToMany extends Association
         $belongsTo = $junction->association($target->alias());
 
         $conditions = $belongsTo->_joinCondition([
-            'foreignKey' => $this->foreignKey()]
-        );
+            'foreignKey' => $this->foreignKey()
+        ]);
         $join = [
             'table' => $junction->table(),
             'conditions' => $conditions,
