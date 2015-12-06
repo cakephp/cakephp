@@ -128,7 +128,7 @@ class CompletionShellTest extends TestCase
     }
 
     /**
-     * test that options without argument returns the default options
+     * test that options without argument returns nothing
      *
      * @return void
      */
@@ -137,12 +137,12 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['options']);
         $output = $this->out->output;
 
-        $expected = "--help -h --verbose -v --quiet -q\n";
+        $expected = "";
         $this->assertTextEquals($expected, $output);
     }
 
     /**
-     * test that options with a nonexisting command returns the default options
+     * test that options with a nonexisting command returns nothing
      *
      * @return void
      */
@@ -150,13 +150,12 @@ class CompletionShellTest extends TestCase
     {
         $this->Shell->runCommand(['options', 'foo']);
         $output = $this->out->output;
-
-        $expected = "--help -h --verbose -v --quiet -q\n";
+        $expected = "";
         $this->assertTextEquals($expected, $output);
     }
 
     /**
-     * test that options with a existing command returns the proper options
+     * test that options with an existing command returns the proper options
      *
      * @return void
      */
@@ -166,6 +165,20 @@ class CompletionShellTest extends TestCase
         $output = $this->out->output;
 
         $expected = "--help -h --verbose -v --quiet -q --connection -c\n";
+        $this->assertTextEquals($expected, $output);
+    }
+
+    /**
+     * test that options with an existing command / subcommand pair returns the proper options
+     *
+     * @return void
+     */
+    public function testOptionsTask()
+    {
+        $this->Shell->runCommand(['options', 'sample', 'sample']);
+        $output = $this->out->output;
+
+        $expected = "--help -h --verbose -v --quiet -q --sample -s\n";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -193,7 +206,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['subcommands', 'app.sample']);
         $output = $this->out->output;
 
-        $expected = "derp\n";
+        $expected = "derp sample\n";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -251,7 +264,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['subcommands', 'sample']);
         $output = $this->out->output;
 
-        $expected = "derp\n";
+        $expected = "derp sample\n";
         $this->assertTextEquals($expected, $output);
     }
 

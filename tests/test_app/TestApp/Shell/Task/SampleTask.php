@@ -1,6 +1,6 @@
 <?php
 /**
- * SampleShell file
+ * SampleTask file
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -14,37 +14,20 @@
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-
-/**
- * Class SampleShell
- *
- */
-namespace TestApp\Shell;
+namespace TestApp\Shell\Task;
 
 use Cake\Console\Shell;
 
-class SampleShell extends Shell
+class SampleTask extends Shell
 {
 
-    public $tasks = ['Sample'];
-
-    /**
-     * main method
-     *
-     * @return void
-     */
-    public function main()
+    public function getOptionParser()
     {
-        $this->out('This is the main method called from SampleShell');
-    }
-
-    /**
-     * derp method
-     *
-     * @return void
-     */
-    public function derp()
-    {
-        $this->out('This is the example method called from TestPlugin.SampleShell');
+        $parser = parent::getOptionParser();
+        $parser->addOption('sample', [
+            'short' => 's',
+            'help' => 'This is a sample option for the sample task.',
+        ]);
+        return $parser;
     }
 }
