@@ -434,7 +434,7 @@ class BelongsToMany extends Association
         $bindingKey = (array)$this->bindingKey();
         $conditions = [];
 
-        if ($bindingKey) {
+        if (!empty($bindingKey)) {
             $conditions = array_combine($foreignKey, $entity->extract($bindingKey));
         }
 
