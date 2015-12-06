@@ -334,14 +334,22 @@ class EagerLoader
             return;
         }
 
-        foreach ($this->attachableAssociations($repository) as $loadable) {
-            $config = $loadable->config() + [
-                'aliasPath' => $loadable->aliasPath(),
-                'propertyPath' => $loadable->propertyPath(),
-                'includeFields' => $includeFields,
-            ];
-            $loadable->instance()->attachTo($query, $config);
-        }
+        $attachable = $this->attachableAssociations($repository);
+        $processed = [];
+        do {
+            foreach ($attachable as $alias => $loadable) {
+                $config = $loadable->config() + [
+                    'aliasPath' => $loadable->aliasPath(),
+                    'propertyPath' => $loadable->propertyPath(),
+                    'includeFields' => $includeFields,
+                ];
+                $loadable->instance()->attachTo($query, $config);
+                $processed[$alias] = true;
+            }
+
+            $newAttachable = $this->attachableAssociations($repository);
+            $attachable = array_diff_key($newAttachable, $processed);
+        } while ($attachable);
     }
 
     /**
