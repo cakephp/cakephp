@@ -68,7 +68,11 @@ class FunctionsBuilder
      */
     public function sum($expression, $types = [])
     {
-        return $this->_literalArgumentFunction('SUM', $expression, $types, 'float');
+        $returnType = 'float';
+        if (current($types) === 'integer') {
+            $returnType = 'integer';
+        }
+        return $this->_literalArgumentFunction('SUM', $expression, $types, $returnType);
     }
 
     /**
