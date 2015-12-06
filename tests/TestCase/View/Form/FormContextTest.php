@@ -208,13 +208,22 @@ class FormContextTest extends TestCase
      */
     public function testHasError()
     {
+        $nestedValidator = new Validator();
+        $nestedValidator
+            ->add('password', 'length', ['rule' => ['minLength', 8]])
+            ->add('confirm', 'length', ['rule' => ['minLength', 8]]);
         $form = new Form();
         $form->validator()
             ->add('email', 'format', ['rule' => 'email'])
-            ->add('name', 'length', ['rule' => ['minLength', 10]]);
+            ->add('name', 'length', ['rule' => ['minLength', 10]])
+            ->addNested('pass', $nestedValidator);
         $form->validate([
             'email' => 'derp',
-            'name' => 'derp'
+            'name' => 'derp',
+            'pass' => [
+                'password' => 'short',
+                'confirm' => 'long enough',
+            ],
         ]);
 
         $context = new FormContext($this->request, ['entity' => $form]);
@@ -222,5 +231,6 @@ class FormContextTest extends TestCase
         $this->assertTrue($context->hasError('name'));
         $this->assertFalse($context->hasError('nope'));
         $this->assertFalse($context->hasError('nope.nope'));
+        $this->assertTrue($context->hasError('pass.password'));
     }
 }
