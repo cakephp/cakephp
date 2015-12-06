@@ -41,6 +41,6 @@ class ExampleShell extends Shell
      */
     public function say_hello()
     {
-    	$this->out('Hello from the TestPluginTwo.ExampleShell');
+        $this->out('Hello from the TestPluginTwo.ExampleShell');
     }
 }
