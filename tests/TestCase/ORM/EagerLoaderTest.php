@@ -309,6 +309,31 @@ class EagerLoaderTest extends TestCase
     }
 
     /**
+     * Tests that query builders are stacked
+     *
+     * @return void
+     */
+    public function testContainMergeBuilders()
+    {
+        $loader = new EagerLoader;
+        $loader->contain([
+            'clients' => function ($query) {
+                return $query->select(['a']);
+            }
+        ]);
+        $loader->contain([
+            'clients' => function ($query) {
+                return $query->select(['b']);
+            }
+        ]);
+        $builder = $loader->contain()['clients']['queryBuilder'];
+        $table = TableRegistry::get('foo');
+        $query = new Query($this->connection, $table);
+        $query = $builder($query);
+        $this->assertEquals(['a', 'b'], $query->clause('select'));
+    }
+
+    /**
      * Test that fields for contained models are aliased and added to the select clause
      *
      * @return void
