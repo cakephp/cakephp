@@ -110,7 +110,7 @@ class ResultSet implements ResultSetInterface
     /**
      * Results that have been fetched or hydrated into the results.
      *
-     * @var array
+     * @var array|\ArrayAccess
      */
     protected $_results = [];
 

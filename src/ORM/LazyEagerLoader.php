@@ -126,7 +126,7 @@ class LazyEagerLoader
      * entities.
      *
      * @param array|\Traversable $objects The original list of entities
-     * @param \Cake\Collection\CollectionInterface $results The loaded results
+     * @param \Cake\Collection\CollectionInterface|\Cake\Database\Query $results The loaded results
      * @param array $associations The top level associations that were loaded
      * @param \Cake\ORM\Table $source The table where the entities came from
      * @return array
