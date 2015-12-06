@@ -88,6 +88,7 @@ class DateTest extends TestCase
 
         $class::$defaultLocale = 'fr-FR';
         $result = $time->i18nFormat(\IntlDateFormatter::FULL);
+        $result = str_replace(' à', '', $result);
         $expected = 'jeudi 14 janvier 2010 00:00:00 UTC';
         $this->assertEquals($expected, $result);
 
