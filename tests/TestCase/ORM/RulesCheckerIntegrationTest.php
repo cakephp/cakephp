@@ -434,6 +434,33 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
+     * Tests exists in uses the bindingKey of the association
+     *
+     * @return
+     */
+    public function testExistsInWithBindingKey()
+    {
+        $entity = new Entity([
+            'title' => 'An Article',
+        ]);
+
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors', [
+            'bindingKey' => 'name',
+            'foreignKey' => 'title'
+        ]);
+        $rules = $table->rulesChecker();
+        $rules->add($rules->existsIn('title', 'Authors'));
+
+        $this->assertFalse($table->save($entity));
+        $this->assertNotEmpty($entity->errors('title'));
+
+        $entity->clean();
+        $entity->title = 'larry';
+        $this->assertEquals($entity, $table->save($entity));
+    }
+
+    /**
      * Tests the checkRules save option
      *
      * @group save
