@@ -355,7 +355,7 @@ trait DateFormatTrait
      * @param \Cake\I18n\RelativeTimeFormatter|null $formatter The formatter instance when setting.
      * @return \Cake\I18n\RelativeTimeFormatter The formatter instance.
      */
-    public function diffFormatter($formatter = null)
+    public static function diffFormatter($formatter = null)
     {
         if ($formatter === null) {
             // Use the static property defined in chronos.
