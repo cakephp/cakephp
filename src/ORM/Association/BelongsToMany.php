@@ -320,11 +320,13 @@ class BelongsToMany extends Association
             $includeFields = $options['includeFields'];
         }
 
+        $assoc = $this->_targetTable->association($junction->alias());
+        $query->removeJoin($assoc->name());
+
         unset($options['queryBuilder']);
         $type = array_intersect_key($options, ['joinType' => 1, 'fields' => 1]);
         $options = ['conditions' => [$cond]] + compact('includeFields');
         $options['foreignKey'] = $this->targetForeignKey();
-        $assoc = $this->_targetTable->association($junction->alias());
         $assoc->attachTo($query, $options + $type);
         $query->eagerLoader()->addToJoinsMap($junction->alias(), $assoc, true);
     }
@@ -788,9 +790,25 @@ class BelongsToMany extends Association
     public function find($type = null, array $options = [])
     {
         $query = parent::find($type, $options);
-        if ($this->conditions()) {
-            $query->contain([$this->junction()->alias()]);
+        if (!$this->conditions()) {
+            return $query;
         }
+
+        $junction = $this->junction();
+        $target = $this->target();
+        $belongsTo = $junction->association($target->alias());
+
+        $conditions = $belongsTo->_joinCondition([
+            'foreignKey' => $this->foreignKey()]
+        );
+        $join = [
+            'table' => $junction->table(),
+            'conditions' => $conditions,
+            'type' => 'INNER'
+        ];
+        $name = $this->_junctionAssociationName();
+        $query->join([$name => $join]);
+        $query->eagerLoader()->addToJoinsMap($name, $belongsTo);
         return $query;
     }
 
@@ -1062,7 +1080,8 @@ class BelongsToMany extends Association
     {
         $name = $this->_junctionAssociationName();
         $query = $this->_buildBaseQuery($options);
-        $joins = $query->join() ?: [];
+
+        $joins = $query->join();
         $keys = $this->_linkField($options);
 
         $matching = [
