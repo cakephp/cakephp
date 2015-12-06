@@ -1949,6 +1949,17 @@ class QueryTest extends TestCase
         $this->assertCount(2, $result);
         $this->assertEquals(['id' => 2], $result->fetch('assoc'));
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+        $query = new Query($this->connection);
+        $query->select('id')->from('comments')
+            ->limit(1)
+            ->offset(1)
+            ->execute();
+        $dirty = $this->readAttribute($query, '_dirty');
+        $this->assertFalse($dirty);
+        $query->offset(2);
+        $dirty = $this->readAttribute($query, '_dirty');
+        $this->assertTrue($dirty);
     }
 
     /**

@@ -81,7 +81,7 @@ class CommandListShellTest extends TestCase
         $expected = "/\[.*TestPlugin.*\] example/";
         $this->assertRegExp($expected, $output);
 
-        $expected = "/\[.*TestPluginTwo.*\] example, welcome/";
+        $expected = "/\[.*TestPluginTwo.*\] example, unique, welcome/";
         $this->assertRegExp($expected, $output);
 
         $expected = "/\[.*CORE.*\] i18n, orm_cache, plugin, routes, server/";

@@ -39,6 +39,12 @@ class FixtureManagerTest extends TestCase
         $this->manager = new FixtureManager();
     }
 
+    public function tearDown()
+    {
+        parent::tearDown();
+        Log::reset();
+    }
+
     /**
      * Test loading core fixtures.
      *

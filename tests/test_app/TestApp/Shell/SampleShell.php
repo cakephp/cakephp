@@ -35,4 +35,14 @@ class SampleShell extends Shell
     {
         $this->out('This is the main method called from SampleShell');
     }
+
+    /**
+     * derp method
+     *
+     * @return void
+     */
+    public function derp()
+    {
+        $this->out('This is the example method called from TestPlugin.SampleShell');
+    }
 }

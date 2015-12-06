@@ -334,7 +334,7 @@ class TimeHelper extends Helper
         }
 
         try {
-            $time = new Time($date, $timezone);
+            $time = new Time($date);
             return $time->i18nFormat($format, $timezone);
         } catch (Exception $e) {
             if ($invalid === false) {

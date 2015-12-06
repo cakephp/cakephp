@@ -21,7 +21,7 @@ use Cake\Error\Debugger;
 foreach ($error->getTrace() as $i => $stack):
     $excerpt = $params = [];
 
-    if (isset($stack['file']) && isset($stack['line'])):
+    if (isset($stack['file'], $stack['line'])):
         $excerpt = Debugger::excerpt($stack['file'], $stack['line'], 4);
     endif;
 
