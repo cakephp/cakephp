@@ -62,6 +62,11 @@ class FunctionsBuilderTest extends TestCase
         $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
         $this->assertEquals('SUM(total)', $function->sql(new ValueBinder));
         $this->assertEquals('float', $function->returnType());
+
+        $function = $this->functions->sum('total', ['integer']);
+        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertEquals('SUM(total)', $function->sql(new ValueBinder));
+        $this->assertEquals('integer', $function->returnType());
     }
 
     /**
