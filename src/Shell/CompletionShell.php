@@ -66,11 +66,14 @@ class CompletionShell extends Shell
      */
     public function options()
     {
-        $commandName = '';
+        $commandName = $subCommandName = '';
         if (!empty($this->args[0])) {
             $commandName = $this->args[0];
         }
-        $options = $this->Command->options($commandName);
+        if (!empty($this->args[1])) {
+            $subCommandName = $this->args[1];
+        }
+        $options = $this->Command->options($commandName, $subCommandName);
 
         return $this->_output($options);
     }
@@ -134,6 +137,10 @@ class CompletionShell extends Shell
                 'arguments' => [
                     'command' => [
                         'help' => 'The command name',
+                        'required' => false,
+                    ],
+                    'subcommand' => [
+                        'help' => 'The subcommand name',
                         'required' => false,
                     ]
                 ]

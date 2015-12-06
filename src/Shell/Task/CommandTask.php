@@ -174,8 +174,8 @@ class CommandTask extends Shell
     /**
      * Get Shell instance for the given command
      *
-     * @param mixed $commandName The command you want.
-     * @return mixed
+     * @param string $commandName The command you want.
+     * @return \Cake\Console\Shell|bool Shell instance if the command can be found, false otherwise.
      */
     public function getShell($commandName)
     {
@@ -219,18 +219,30 @@ class CommandTask extends Shell
     }
 
     /**
-     * Get Shell instance for the given command
+     * Get options list for the given command or subcommand
      *
-     * @param mixed $commandName The command to get options for.
-     * @return array
+     * @param string $commandName The command to get options for.
+     * @param string $subCommandName The subcommand to get options for. Can be empty to get options for the command.
+     * If this parameter is used, the subcommand must be a valid subcommand of the command passed
+     * @return array Options list for the given command or subcommand
      */
-    public function options($commandName)
+    public function options($commandName, $subCommandName = '')
     {
         $Shell = $this->getShell($commandName);
+
         if (!$Shell) {
-            $parser = new ConsoleOptionParser();
-        } else {
-            $parser = $Shell->getOptionParser();
+            return [];
+        }
+
+        $parser = $Shell->getOptionParser();
+
+        if (!empty($subCommandName)) {
+            $subCommandName = Inflector::camelize($subCommandName);
+            if ($Shell->hasTask($subCommandName)) {
+                $parser = $Shell->{$subCommandName}->getOptionParser();
+            } else {
+                return [];
+            }
         }
 
         $options = [];
