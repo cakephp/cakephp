@@ -794,21 +794,37 @@ class BelongsToMany extends Association
             return $query;
         }
 
-        $junction = $this->junction();
-        $target = $this->target();
-        $belongsTo = $junction->association($target->alias());
-
+        $belongsTo = $this->junction()->association($this->target()->alias());
         $conditions = $belongsTo->_joinCondition([
             'foreignKey' => $this->foreignKey()
         ]);
-        $join = [
-            'table' => $junction->table(),
-            'conditions' => $conditions,
-            'type' => 'INNER'
-        ];
+        return $this->_appendJunctionJoin($query, $conditions);
+    }
+
+    /**
+     * Append a join to the junction table.
+     *
+     * @param \Cake\ORM\Query $query The query to append.
+     * @param string|array $conditions The query conditions to use.
+     * @return \Cake\ORM\Query The modified query.
+     */
+    protected function _appendJunctionJoin($query, $conditions)
+    {
         $name = $this->_junctionAssociationName();
-        $query->join([$name => $join]);
-        $query->eagerLoader()->addToJoinsMap($name, $belongsTo);
+        $joins = $query->join();
+        $matching = [
+            $name => [
+                'table' => $this->junction()->table(),
+                'conditions' => $conditions,
+                'type' => 'INNER'
+            ]
+        ];
+
+        $assoc = $this->target()->association($name);
+        $query
+            ->addDefaultTypes($assoc->target())
+            ->join($matching + $joins, [], true);
+        $query->eagerLoader()->addToJoinsMap($name, $assoc);
         return $query;
     }
 
@@ -1081,25 +1097,13 @@ class BelongsToMany extends Association
         $name = $this->_junctionAssociationName();
         $query = $this->_buildBaseQuery($options);
 
-        $joins = $query->join();
         $keys = $this->_linkField($options);
-
-        $matching = [
-            $name => [
-                'table' => $this->junction()->table(),
-                'conditions' => $keys,
-                'type' => 'INNER'
-            ]
-        ];
-
+        $query = $this->_appendJunctionJoin($query, $keys);
         $assoc = $this->target()->association($name);
-        $query
-            ->addDefaultTypes($assoc->target())
-            ->join($matching + $joins, [], true)
-            ->autoFields($query->clause('select') === [])
+
+        $query->autoFields($query->clause('select') === [])
             ->select($query->aliasFields((array)$assoc->foreignKey(), $name));
 
-        $query->eagerLoader()->addToJoinsMap($name, $assoc);
         $assoc->attachTo($query);
         return $query;
     }
