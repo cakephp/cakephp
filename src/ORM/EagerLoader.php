@@ -349,7 +349,7 @@ class EagerLoader
 
             $newAttachable = $this->attachableAssociations($repository);
             $attachable = array_diff_key($newAttachable, $processed);
-        } while ($attachable);
+        } while (!empty($attachable));
     }
 
     /**
