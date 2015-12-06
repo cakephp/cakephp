@@ -73,7 +73,7 @@ HTML;
 
 TEXT;
         $template = $html;
-        if (PHP_SAPI === 'cli' || $showHtml === false) {
+        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') || $showHtml === false) {
             $template = $text;
             if ($showFrom) {
                 $lineInfo = sprintf('%s (line %s)', $file, $line);
@@ -157,7 +157,7 @@ if (!function_exists('breakpoint')) {
      */
     function breakpoint()
     {
-        if (PHP_SAPI === 'cli' && class_exists('\Psy\Shell')) {
+        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && class_exists('\Psy\Shell')) {
             return 'extract(\Psy\Shell::debug(get_defined_vars(), isset($this) ? $this : null));';
         }
         trigger_error(

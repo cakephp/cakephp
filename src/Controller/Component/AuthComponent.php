@@ -696,6 +696,11 @@ class AuthComponent extends Component
         foreach ($this->_authenticateObjects as $auth) {
             $result = $auth->getUser($this->request);
             if (!empty($result) && is_array($result)) {
+                $this->_authenticationProvider = $auth;
+                $event = $this->dispatchEvent('Auth.afterIdentify', [$result, $auth]);
+                if ($event->result !== null) {
+                    $result = $event->result;
+                }
                 $this->storage()->write($result);
                 return true;
             }
@@ -764,7 +769,7 @@ class AuthComponent extends Component
             $result = $auth->authenticate($this->request, $this->response);
             if (!empty($result) && is_array($result)) {
                 $this->_authenticationProvider = $auth;
-                $event = $this->dispatchEvent('Auth.afterIdentify', [$result]);
+                $event = $this->dispatchEvent('Auth.afterIdentify', [$result, $auth]);
                 if ($event->result !== null) {
                     return $event->result;
                 }

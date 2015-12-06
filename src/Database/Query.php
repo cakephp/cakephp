@@ -1192,6 +1192,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function offset($num)
     {
+        $this->_dirty();
         if ($num !== null && !is_object($num)) {
             $num = (int)$num;
         }
