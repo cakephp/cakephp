@@ -169,11 +169,11 @@ class ErrorHandler {
 /**
  * Handles exception logging
  *
- * @param Exception $exception The exception to render.
+ * @param Exception|ParseError $exception The exception to render.
  * @param array $config An array of configuration for logging.
  * @return bool
  */
-	protected static function _log(Exception $exception, $config) {
+	protected static function _log($exception, $config) {
 		if (empty($config['log'])) {
 			return false;
 		}
