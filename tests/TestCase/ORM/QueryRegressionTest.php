@@ -944,6 +944,27 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
+     * Tests calling contain in a nested closure
+     *
+     * @see https://github.com/cakephp/cakephp/issues/7591
+     * @return void
+     */
+    public function testContainInNestedClosure()
+    {
+        $table = TableRegistry::get('Comments');
+        $table->belongsTo('Articles');
+        $table->Articles->belongsTo('Authors');
+        $table->Articles->Authors->belongsToMany('Tags');
+
+        $query = $table->find()->where(['Comments.id' => 5])->contain(['Articles' => function ($q) {
+            return $q->contain(['Authors' => function ($q) {
+                return $q->contain('Tags');
+            }]);
+        }]);
+        $this->assertCount(2, $query->first()->article->author->tags);
+    }
+
+    /**
      * Test that the typemaps used in function expressions
      * create the correct results.
      *
