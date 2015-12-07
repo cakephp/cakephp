@@ -942,6 +942,39 @@ class RequestHandlerComponentTest extends TestCase
     }
 
     /**
+     * Test that AJAX requests involving redirects handle cookie data
+     *
+     * @return void
+     * @triggers Controller.beforeRedirect $this->Controller
+     */
+    public function testAjaxRedirectAsRequestActionWithCookieData()
+    {
+        Configure::write('App.namespace', 'TestApp');
+        Router::connect('/:controller/:action');
+        $event = new Event('Controller.beforeRedirect', $this->Controller);
+
+        $this->Controller->RequestHandler = new RequestHandlerComponent($this->Controller->components());
+        $this->Controller->request = $this->getMock('Cake\Network\Request', ['is']);
+        $this->Controller->response = $this->getMock('Cake\Network\Response', ['_sendHeader', 'stop']);
+        $this->Controller->RequestHandler->request = $this->Controller->request;
+        $this->Controller->RequestHandler->response = $this->Controller->response;
+        $this->Controller->request->expects($this->any())->method('is')->will($this->returnValue(true));
+
+        $cookies = [
+            'foo' => 'bar'
+        ];
+        $this->Controller->request->cookies = $cookies;
+
+        $response = $this->Controller->RequestHandler->beforeRedirect(
+            $event,
+            '/request_action/cookie_pass',
+            $this->Controller->response
+        );
+        $data = json_decode($response, true);
+        $this->assertEquals($cookies, $data);
+    }
+
+    /**
      * Tests that AJAX requests involving redirects don't let the status code bleed through.
      *
      * @return void
