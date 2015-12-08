@@ -66,10 +66,16 @@ class ExistsIn
         }
 
         $source = !empty($options['repository']) ? $options['repository'] : $this->_repository;
+
         $source = $source instanceof Association ? $source->source() : $source;
-        $target = $this->_repository instanceof Association ?
-            $this->_repository->target() :
-            $this->_repository;
+        $target = $this->_repository;
+
+        if ($target instanceof Association) {
+            $bindingKey = (array)$target->bindingKey();
+            $target = $this->_repository->target();
+        } else {
+            $bindingKey = (array)$target->primaryKey();
+        }
 
         if (!empty($options['_sourceTable']) && $target === $options['_sourceTable']) {
             return true;
@@ -92,7 +98,7 @@ class ExistsIn
 
         $primary = array_map(
             [$this->_repository, 'aliasField'],
-            (array)$this->_repository->primaryKey()
+            $bindingKey
         );
         $conditions = array_combine(
             $primary,
