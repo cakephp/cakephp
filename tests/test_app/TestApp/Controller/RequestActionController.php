@@ -109,6 +109,17 @@ class RequestActionController extends AppController
     }
 
     /**
+     * cookie pass, testing cookie passing
+     *
+     * @return \Cake\Network\Response
+     */
+    public function cookie_pass()
+    {
+        $this->response->body(json_encode($this->request->cookies));
+        return $this->response;
+    }
+
+    /**
      * test param passing and parsing.
      *
      * @return \Cake\Network\Response

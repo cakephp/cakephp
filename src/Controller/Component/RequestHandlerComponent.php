@@ -271,7 +271,8 @@ class RequestHandlerComponent extends Component
             'environment' => [
                 'REQUEST_METHOD' => 'GET'
             ],
-            'query' => $query
+            'query' => $query,
+            'cookies' => $request->cookies
         ]));
         $response->statusCode(200);
         return $response;
