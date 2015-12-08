@@ -854,7 +854,6 @@ class BelongsToManyTest extends TestCase
         $this->assertFalse($entity->dirty('tags'));
     }
 
-
     /**
      * Tests that replaceLinks() will contain() the target table when
      * there are conditions present on the association.

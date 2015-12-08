@@ -543,6 +543,22 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
+     * Remove a join if it has been defined.
+     *
+     * Useful when you are redefining joins or want to re-order
+     * the join clauses.
+     *
+     * @param string $name The alias/name of the join to remove.
+     * @return $this
+     */
+    public function removeJoin($name)
+    {
+        unset($this->_parts['join'][$name]);
+        $this->_dirty();
+        return $this;
+    }
+
+    /**
      * Adds a single LEFT JOIN clause to the query.
      *
      * This is a shorthand method for building joins via `join()`.

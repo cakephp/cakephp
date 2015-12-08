@@ -320,11 +320,13 @@ class BelongsToMany extends Association
             $includeFields = $options['includeFields'];
         }
 
+        $assoc = $this->_targetTable->association($junction->alias());
+        $query->removeJoin($assoc->name());
+
         unset($options['queryBuilder']);
         $type = array_intersect_key($options, ['joinType' => 1, 'fields' => 1]);
         $options = ['conditions' => [$cond]] + compact('includeFields');
         $options['foreignKey'] = $this->targetForeignKey();
-        $assoc = $this->_targetTable->association($junction->alias());
         $assoc->attachTo($query, $options + $type);
         $query->eagerLoader()->addToJoinsMap($junction->alias(), $assoc, true);
     }
@@ -772,6 +774,61 @@ class BelongsToMany extends Association
     }
 
     /**
+     * Proxies the finding operation to the target table's find method
+     * and modifies the query accordingly based of this association
+     * configuration.
+     *
+     * If your association includes conditions, the junction table will be
+     * included in the query's contained associations.
+     *
+     * @param string|array $type the type of query to perform, if an array is passed,
+     *   it will be interpreted as the `$options` parameter
+     * @param array $options The options to for the find
+     * @see \Cake\ORM\Table::find()
+     * @return \Cake\ORM\Query
+     */
+    public function find($type = null, array $options = [])
+    {
+        $query = parent::find($type, $options);
+        if (!$this->conditions()) {
+            return $query;
+        }
+
+        $belongsTo = $this->junction()->association($this->target()->alias());
+        $conditions = $belongsTo->_joinCondition([
+            'foreignKey' => $this->foreignKey()
+        ]);
+        return $this->_appendJunctionJoin($query, $conditions);
+    }
+
+    /**
+     * Append a join to the junction table.
+     *
+     * @param \Cake\ORM\Query $query The query to append.
+     * @param string|array $conditions The query conditions to use.
+     * @return \Cake\ORM\Query The modified query.
+     */
+    protected function _appendJunctionJoin($query, $conditions)
+    {
+        $name = $this->_junctionAssociationName();
+        $joins = $query->join();
+        $matching = [
+            $name => [
+                'table' => $this->junction()->table(),
+                'conditions' => $conditions,
+                'type' => 'INNER'
+            ]
+        ];
+
+        $assoc = $this->target()->association($name);
+        $query
+            ->addDefaultTypes($assoc->target())
+            ->join($matching + $joins, [], true);
+        $query->eagerLoader()->addToJoinsMap($name, $assoc);
+        return $query;
+    }
+
+    /**
      * Replaces existing association links between the source entity and the target
      * with the ones passed. This method does a smart cleanup, links that are already
      * persisted and present in `$targetEntities` will not be deleted, new links will
@@ -1039,25 +1096,14 @@ class BelongsToMany extends Association
     {
         $name = $this->_junctionAssociationName();
         $query = $this->_buildBaseQuery($options);
-        $joins = $query->join() ?: [];
+
         $keys = $this->_linkField($options);
-
-        $matching = [
-            $name => [
-                'table' => $this->junction()->table(),
-                'conditions' => $keys,
-                'type' => 'INNER'
-            ]
-        ];
-
+        $query = $this->_appendJunctionJoin($query, $keys);
         $assoc = $this->target()->association($name);
-        $query
-            ->addDefaultTypes($assoc->target())
-            ->join($matching + $joins, [], true)
-            ->autoFields($query->clause('select') === [])
+
+        $query->autoFields($query->clause('select') === [])
             ->select($query->aliasFields((array)$assoc->foreignKey(), $name));
 
-        $query->eagerLoader()->addToJoinsMap($name, $assoc);
         $assoc->attachTo($query);
         return $query;
     }
