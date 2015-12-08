@@ -260,7 +260,6 @@ class ResultSetTest extends TestCase
         $query = $this->table->find('all');
         $results = $query->all();
         $expected = [
-            'query' => $query,
             'items' => $results->toArray()
         ];
         $this->assertSame($expected, $results->__debugInfo());
