@@ -45,7 +45,7 @@ class DashedRoute extends Route
         if (strpos($plugin, '/') === false) {
             return Inflector::camelize($plugin);
         }
-        list($vendor, $plugin) = explode('/', $plugin, 1);
+        list($vendor, $plugin) = explode('/', $plugin, 2);
         return Inflector::camelize($vendor) . '/' . Inflector::camelize($plugin);
     }
 
