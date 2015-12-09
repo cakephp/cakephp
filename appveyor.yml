@@ -25,8 +25,8 @@ install:
   - cd c:\
   - appveyor DownloadFile http://windows.php.net/downloads/releases/archives/php-5.5.8-nts-Win32-VC11-x86.zip -FileName php.zip
   - 7z x php.zip -oc:\php
-  - appveyor DownloadFile https://dl.dropboxusercontent.com/s/1cdq70jbx8vcf56/sqlsrv_unofficial_3.0.2.2.zip -FileName sqlsrv.zip
-  - 7z x sqlsrv.zip -oc:\php\ext php*_55_nts.dll
+  - appveyor DownloadFile https://dl.dropboxusercontent.com/s/euip490d9183jkr/SQLSRV32.cab -FileName sqlsrv.cab
+  - 7z x sqlsrv.cab -oc:\php\ext php*_55_nts.dll
   - cd c:\php
   - copy php.ini-production php.ini
   - echo date.timezone="UTC" >> php.ini
