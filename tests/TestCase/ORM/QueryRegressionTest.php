@@ -1181,4 +1181,29 @@ class QueryRegressionTest extends TestCase
         $result = $query->all();
         $this->assertCount(3, $result);
     }
+
+    /**
+     * Tests that decorating the results does not result in a memory leak
+     *
+     * @return void
+     */
+    public function testFormatResultsMemory()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors');
+        $table->belongsToMany('Tags');
+        gc_collect_cycles();
+        $memory = memory_get_usage() / 1024 / 1024;
+        foreach (range(1, 3) as $time) {
+                $table->find()
+                ->contain(['Authors', 'Tags'])
+                ->formatResults(function ($results) {
+                    return $results;
+                })
+                ->all();
+        }
+        gc_collect_cycles();
+        $endMemory = memory_get_usage() / 1024 / 1024;
+        $this->assertWithinRange($endMemory, $memory, 1.25, 'Memory leak in ResultSet');
+    }
 }
