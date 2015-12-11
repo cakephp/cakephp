@@ -93,7 +93,7 @@ class AclShell extends Shell {
 			require_once (CONFIGS.'database.php');
 
 			if (!in_array($this->command, array('initdb'))) {
-				$this->Acl =& new AclComponent();
+				$this->Acl = new AclComponent();
 				$controller = null;
 				$this->Acl->startup($controller);
 			}

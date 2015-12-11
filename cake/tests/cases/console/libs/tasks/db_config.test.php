@@ -80,8 +80,8 @@ class DbConfigTaskTest extends CakeTestCase {
  * @access public
  */
 	function startTest() {
-		$this->Dispatcher =& new TestDbConfigTaskMockShellDispatcher();
-		$this->Task =& new MockDbConfigTask($this->Dispatcher);
+		$this->Dispatcher = new TestDbConfigTaskMockShellDispatcher();
+		$this->Task = new MockDbConfigTask($this->Dispatcher);
 		$this->Task->Dispatch =& $this->Dispatcher;
 		$this->Task->Dispatch->shellPaths = App::path('shells');
 

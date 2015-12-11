@@ -294,7 +294,7 @@ class DboSqliteTest extends CakeTestCase {
  * @return void
  */
 	function testDescribe() {
-		$Model =& new Model(array('name' => 'User', 'ds' => 'test_suite', 'table' => 'users'));
+		$Model = new Model(array('name' => 'User', 'ds' => 'test_suite', 'table' => 'users'));
 		$result = $this->db->describe($Model);
 		$expected = array(
 			'id' => array(
@@ -340,7 +340,7 @@ class DboSqliteTest extends CakeTestCase {
 	function testDescribeWithUuidPrimaryKey() {
 		$tableName = 'uuid_tests';
 		$this->db->query("CREATE TABLE {$tableName} (id VARCHAR(36) PRIMARY KEY, name VARCHAR, created DATETIME, modified DATETIME)");
-		$Model =& new Model(array('name' => 'UuidTest', 'ds' => 'test_suite', 'table' => 'uuid_tests'));
+		$Model = new Model(array('name' => 'UuidTest', 'ds' => 'test_suite', 'table' => 'uuid_tests'));
 		$result = $this->db->describe($Model);
 		$expected = array(
 			'type' => 'string',

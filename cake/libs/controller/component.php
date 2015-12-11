@@ -244,12 +244,12 @@ class Component extends Object {
 				}
 			} else {
 				if ($componentCn === 'SessionComponent') {
-					$object->{$component} =& new $componentCn($base);
+					$object->{$component} = new $componentCn($base);
 				} else {
 					if (PHP5) {
 						$object->{$component} = new $componentCn();
 					} else {
-						$object->{$component} =& new $componentCn();
+						$object->{$component} = new $componentCn();
 					}
 				}
 				$object->{$component}->enabled = true;

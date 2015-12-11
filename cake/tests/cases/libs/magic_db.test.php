@@ -40,7 +40,7 @@ class MagicDbTest extends UnitTestCase {
  * @access public
  */
 	function setUp() {
-		$this->Db =& new MagicDb();
+		$this->Db = new MagicDb();
 	}
 /**
  * MagicDb::analyze should properly detect the file type and output additional info as requested.

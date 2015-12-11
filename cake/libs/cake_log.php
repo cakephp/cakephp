@@ -65,7 +65,7 @@ class CakeLog {
 	function &getInstance() {
 		static $instance = array();
 		if (!isset($instance[0])) {
-			$instance[0] =& new CakeLog();
+			$instance[0] = new CakeLog();
 		}
 		return $instance[0];
 	}
@@ -179,7 +179,7 @@ class CakeLog {
 		if (!class_exists('FileLog')) {
 			App::import('Core', 'log/FileLog');
 		}
-		$this->_streams['default'] =& new FileLog(array('path' => LOGS));
+		$this->_streams['default'] = new FileLog(array('path' => LOGS));
 	}
 
 /**

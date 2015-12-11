@@ -27,7 +27,7 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
  * @return void
  */
 	function startTest() {
-		$this->Proto =& new PrototypeEngineHelper();
+		$this->Proto = new PrototypeEngineHelper();
 	}
 
 /**

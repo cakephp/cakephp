@@ -29,7 +29,7 @@
 		<?php
 			App::import('Core', 'View');
 			$null = null;
-			$View =& new View($null, false);
+			$View = new View($null, false);
 			echo $View->element('sql_dump');
 		?>
 	</div>

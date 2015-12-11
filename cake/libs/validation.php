@@ -101,7 +101,7 @@ class Validation extends Object {
 		static $instance = array();
 
 		if (!$instance) {
-			$instance[0] =& new Validation();
+			$instance[0] = new Validation();
 		}
 		return $instance[0];
 	}

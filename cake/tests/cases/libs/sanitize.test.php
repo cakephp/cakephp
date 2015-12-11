@@ -486,7 +486,7 @@ HTML;
 	function testFormatColumns() {
 		$this->loadFixtures('DataTest', 'Article');
 
-		$this->DataTest =& new SanitizeDataTest(array('alias' => 'DataTest'));
+		$this->DataTest = new SanitizeDataTest(array('alias' => 'DataTest'));
 		$data = array('DataTest' => array(
 						'id' => 'z',
 						'count' => '12a',
@@ -505,7 +505,7 @@ HTML;
 		$result = $this->DataTest->data;
 		$this->assertEqual($result, $expected);
 
-		$this->Article =& new SanitizeArticle(array('alias' => 'Article'));
+		$this->Article = new SanitizeArticle(array('alias' => 'Article'));
 		$data = array('Article' => array(
 			'id' => 'ZB',
 			'user_id' => '12',

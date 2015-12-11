@@ -81,7 +81,7 @@ class CodeCoverageManager {
 	function &getInstance() {
 		static $instance = array();
 		if (!$instance) {
-			$instance[0] =& new CodeCoverageManager();
+			$instance[0] = new CodeCoverageManager();
 		}
 		return $instance[0];
 	}
@@ -498,10 +498,10 @@ class CodeCoverageManager {
 				break;
 			}
 		}
-		$testManager =& new TestManager();
+		$testManager = new TestManager();
 		$testFile = str_replace(array('/', $testManager->_testExtension), array(DS, '.php'), $file);
 
-		$folder =& new Folder();
+		$folder = new Folder();
 		$folder->cd(ROOT . DS . CAKE_TESTS_LIB);
 		$contents = $folder->read();
 
@@ -528,7 +528,7 @@ class CodeCoverageManager {
  */
 	function __testObjectFilesFromGroupFile($groupFile, $isApp = true) {
 		$manager = CodeCoverageManager::getInstance();
-		$testManager =& new TestManager();
+		$testManager = new TestManager();
 
 		$path = TESTS;
 		if (!$isApp) {

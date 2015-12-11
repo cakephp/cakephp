@@ -289,7 +289,7 @@ class FixtureTask extends BakeTask {
 							isset($fieldInfo['length']) && $fieldInfo['length'] == 36
 						);
 						if ($isPrimaryUuid) {
-							$insert = String::uuid();
+							$insert = CakeString::uuid();
 						} else {
 							$insert = "Lorem ipsum dolor sit amet";
 							if (!empty($fieldInfo['length'])) {
@@ -372,7 +372,7 @@ class FixtureTask extends BakeTask {
 			$condition = 'WHERE 1=1 LIMIT ' . (isset($this->params['count']) ? $this->params['count'] : 10);
 		}
 		App::import('Model', 'Model', false);
-		$modelObject =& new Model(array('name' => $modelName, 'table' => $useTable, 'ds' => $this->connection));
+		$modelObject = new Model(array('name' => $modelName, 'table' => $useTable, 'ds' => $this->connection));
 		$records = $modelObject->find('all', array(
 			'conditions' => $condition,
 			'recursive' => -1

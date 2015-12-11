@@ -36,7 +36,7 @@ class ModelDeleteTest extends BaseModelTest {
 	function testDeleteHabtmReferenceWithConditions() {
 		$this->loadFixtures('Portfolio', 'Item', 'ItemsPortfolio');
 
-		$Portfolio =& new Portfolio();
+		$Portfolio = new Portfolio();
 		$Portfolio->hasAndBelongsToMany['Item']['conditions'] = array('ItemsPortfolio.item_id >' => 1);
 
 		$result = $Portfolio->find('first', array(
@@ -126,7 +126,7 @@ class ModelDeleteTest extends BaseModelTest {
  */
 	function testDeleteArticleBLinks() {
 		$this->loadFixtures('Article', 'ArticlesTag', 'Tag');
-		$TestModel =& new ArticleB();
+		$TestModel = new ArticleB();
 
 		$result = $TestModel->ArticlesTag->find('all');
 		$expected = array(
@@ -156,9 +156,9 @@ class ModelDeleteTest extends BaseModelTest {
 	function testDeleteDependentWithConditions() {
 		$this->loadFixtures('Cd','Book','OverallFavorite');
 
-		$Cd =& new Cd();
-		$Book =& new Book();
-		$OverallFavorite =& new OverallFavorite();
+		$Cd = new Cd();
+		$Book = new Book();
+		$OverallFavorite = new OverallFavorite();
 
 		$Cd->delete(1);
 
@@ -195,7 +195,7 @@ class ModelDeleteTest extends BaseModelTest {
  */
 	function testDelete() {
 		$this->loadFixtures('Article');
-		$TestModel =& new Article();
+		$TestModel = new Article();
 
 		$result = $TestModel->delete(2);
 		$this->assertTrue($result);
@@ -239,7 +239,7 @@ class ModelDeleteTest extends BaseModelTest {
 		// make sure deleting a non-existent record doesn't break save()
 		// ticket #6293
 		$this->loadFixtures('Uuid');
-		$Uuid =& new Uuid();
+		$Uuid = new Uuid();
 		$data = array(
 			'B607DAB9-88A2-46CF-B57C-842CA9E3B3B3',
 			'52C8865C-10EE-4302-AE6C-6E7D8E12E2C8',
@@ -273,7 +273,7 @@ class ModelDeleteTest extends BaseModelTest {
  */
 	function testDeleteUpdatingCounterCacheCorrectly() {
 		$this->loadFixtures('CounterCacheUser', 'CounterCachePost');
-		$User =& new CounterCacheUser();
+		$User = new CounterCacheUser();
 
 		$User->Post->delete(3);
 		$result = $User->read(null, 301);
@@ -291,7 +291,7 @@ class ModelDeleteTest extends BaseModelTest {
  */
 	function testDeleteAll() {
 		$this->loadFixtures('Article');
-		$TestModel =& new Article();
+		$TestModel = new Article();
 
 		$data = array('Article' => array(
 			'user_id' => 2,
@@ -439,7 +439,7 @@ class ModelDeleteTest extends BaseModelTest {
  */
 	function testRecursiveDel() {
 		$this->loadFixtures('Article', 'Comment', 'Attachment');
-		$TestModel =& new Article();
+		$TestModel = new Article();
 
 		$result = $TestModel->delete(2);
 		$this->assertTrue($result);
@@ -475,7 +475,7 @@ class ModelDeleteTest extends BaseModelTest {
  */
 	function testDependentExclusiveDelete() {
 		$this->loadFixtures('Article', 'Comment');
-		$TestModel =& new Article10();
+		$TestModel = new Article10();
 
 		$result = $TestModel->find('all');
 		$this->assertEqual(count($result[0]['Comment']), 4);
@@ -494,7 +494,7 @@ class ModelDeleteTest extends BaseModelTest {
  */
 	function testDeleteLinks() {
 		$this->loadFixtures('Article', 'ArticlesTag', 'Tag');
-		$TestModel =& new Article();
+		$TestModel = new Article();
 
 		$result = $TestModel->ArticlesTag->find('all');
 		$expected = array(
@@ -621,7 +621,7 @@ class ModelDeleteTest extends BaseModelTest {
  */
 	function testDeleteLinksWithMultipleHabtmAssociations() {
 		$this->loadFixtures('JoinA', 'JoinB', 'JoinC', 'JoinAB', 'JoinAC');
-		$JoinA =& new JoinA();
+		$JoinA = new JoinA();
 
 		//create two new join records to expose the issue.
 		$JoinA->JoinAsJoinC->create(array(
@@ -658,7 +658,7 @@ class ModelDeleteTest extends BaseModelTest {
 	function testHabtmDeleteLinksWhenNoPrimaryKeyInJoinTable() {
 
 		$this->loadFixtures('Apple', 'Device', 'ThePaperMonkies');
-		$ThePaper =& new ThePaper();
+		$ThePaper = new ThePaper();
 		$ThePaper->id = 1;
 		$ThePaper->save(array('Monkey' => array(2, 3)));
 
@@ -678,7 +678,7 @@ class ModelDeleteTest extends BaseModelTest {
 		));
 		$this->assertEqual($result['Monkey'], $expected);
 
-		$ThePaper =& new ThePaper();
+		$ThePaper = new ThePaper();
 		$ThePaper->id = 2;
 		$ThePaper->save(array('Monkey' => array(2, 3)));
 
@@ -723,7 +723,7 @@ class ModelDeleteTest extends BaseModelTest {
  */
 	function testBeforeDeleteDeleteAbortion() {
 		$this->loadFixtures('Post');
-		$Model =& new CallbackPostTestModel();
+		$Model = new CallbackPostTestModel();
 		$Model->beforeDeleteReturn = false;
 
 		$result = $Model->delete(1);
@@ -797,7 +797,7 @@ class ModelDeleteTest extends BaseModelTest {
 	function testBeforeDeleteWipingTable() {
 		$this->loadFixtures('Comment');
 
-		$Comment =& new BeforeDeleteComment();
+		$Comment = new BeforeDeleteComment();
 		// Delete 3 records.
 		$Comment->delete(4);
 		$result = $Comment->find('count');
@@ -825,7 +825,7 @@ class ModelDeleteTest extends BaseModelTest {
 	function testBeforeDeleteWipingTableWithDuplicateDelete() {
 		$this->loadFixtures('Comment');
 
-		$Comment =& new BeforeDeleteComment();
+		$Comment = new BeforeDeleteComment();
 		$Comment->delete(1);
 
 		$result = $Comment->find('count');

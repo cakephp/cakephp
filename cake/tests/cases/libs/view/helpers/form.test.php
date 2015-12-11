@@ -672,10 +672,10 @@ class FormHelperTest extends CakeTestCase {
 		parent::setUp();
 		Router::reload();
 
-		$this->Form =& new FormHelper();
-		$this->Form->Html =& new HtmlHelper();
-		$this->Controller =& new ContactTestController();
-		$this->View =& new View($this->Controller);
+		$this->Form = new FormHelper();
+		$this->Form->Html = new HtmlHelper();
+		$this->Controller = new ContactTestController();
+		$this->View = new View($this->Controller);
 		$this->Form->params['action'] = 'add';
 
 		ClassRegistry::addObject('view', $view);
@@ -5479,11 +5479,11 @@ class FormHelperTest extends CakeTestCase {
  */
 	function testFileUploadOnOtherModel() {
 		ClassRegistry::removeObject('view');
-		$controller =& new Controller();
+		$controller = new Controller();
 		$controller->name = 'ValidateUsers';
 		$controller->uses = array('ValidateUser');
 		$controller->constructClasses();
-		$view =& new View($controller, true);
+		$view = new View($controller, true);
 
 		$this->Form->create('ValidateUser', array('type' => 'file'));
 		$result = $this->Form->file('ValidateProfile.city');

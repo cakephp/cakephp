@@ -94,7 +94,7 @@ class SchemaShell extends Shell {
 				$name = $plugin;
 			}
 		}
-		$this->Schema =& new CakeSchema(compact('name', 'path', 'file', 'connection', 'plugin'));
+		$this->Schema = new CakeSchema(compact('name', 'path', 'file', 'connection', 'plugin'));
 	}
 
 /**
@@ -162,7 +162,7 @@ class SchemaShell extends Shell {
 		Configure::write('Cache.disable', $cacheDisable);
 
 		if ($snapshot === true) {
-			$Folder =& new Folder($this->Schema->path);
+			$Folder = new Folder($this->Schema->path);
 			$result = $Folder->read();
 
 			$numToUse = false;
@@ -230,9 +230,9 @@ class SchemaShell extends Shell {
 				$write .= '.sql';
 			}
 			if (strpos($write, DS) !== false) {
-				$File =& new File($write, true);
+				$File = new File($write, true);
 			} else {
-				$File =& new File($this->Schema->path . DS . $write, true);
+				$File = new File($this->Schema->path . DS . $write, true);
 			}
 
 			if ($File->write($contents)) {

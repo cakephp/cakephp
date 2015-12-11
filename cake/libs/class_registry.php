@@ -65,7 +65,7 @@ class ClassRegistry {
 	function &getInstance() {
 		static $instance = array();
 		if (!$instance) {
-			$instance[0] =& new ClassRegistry();
+			$instance[0] = new ClassRegistry();
 		}
 		return $instance[0];
 	}
@@ -139,7 +139,7 @@ class ClassRegistry {
 				}
 
 				if (class_exists($class) || App::import($type, $pluginPath . $class)) {
-					${$class} =& new $class($settings);
+					${$class} = new $class($settings);
 				} elseif ($type === 'Model') {
 					if ($plugin && class_exists($plugin . 'AppModel')) {
 						$appModel = $plugin . 'AppModel';
@@ -147,7 +147,7 @@ class ClassRegistry {
 						$appModel = 'AppModel';
 					}
 					$settings['name'] = $class;
-					${$class} =& new $appModel($settings);
+					${$class} = new $appModel($settings);
 				}
 
 				if (!isset(${$class})) {

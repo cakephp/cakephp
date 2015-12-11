@@ -34,8 +34,8 @@ class RssHelperTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->Rss =& new RssHelper();
-		$this->Rss->Time =& new TimeHelper();
+		$this->Rss = new RssHelper();
+		$this->Rss->Time = new TimeHelper();
 		$this->Rss->beforeRender();
 
 		$manager =& XmlManager::getInstance();

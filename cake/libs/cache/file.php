@@ -80,7 +80,7 @@ class FileEngine extends CacheEngine {
 			$settings
 		));
 		if (!isset($this->_File)) {
-			$this->_File =& new File($this->settings['path'] . DS . 'cake');
+			$this->_File = new File($this->settings['path'] . DS . 'cake');
 		}
 
 		if (DIRECTORY_SEPARATOR === '\\') {

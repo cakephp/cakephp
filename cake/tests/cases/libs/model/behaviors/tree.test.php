@@ -59,7 +59,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testInitialize() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$result = $this->Tree->find('count');
@@ -77,7 +77,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testDetectInvalidLeft() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$result = $this->Tree->findByName('1.1');
@@ -104,7 +104,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testDetectInvalidRight() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$result = $this->Tree->findByName('1.1');
@@ -131,7 +131,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testDetectInvalidParent() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$result = $this->Tree->findByName('1.1');
@@ -157,7 +157,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testDetectNoneExistantParent() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$result = $this->Tree->findByName('1.1');
@@ -232,7 +232,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testRecoverFromMissingParent() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$result = $this->Tree->findByName('1.1');
@@ -256,7 +256,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testDetectInvalidParents() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$this->Tree->updateAll(array($parentField => null));
@@ -279,7 +279,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testDetectInvalidLftsRghts() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$this->Tree->updateAll(array($leftField => 0, $rightField => 0));
@@ -301,7 +301,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testDetectEqualLftsRghts() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(1, 3);
 
 		$result = $this->Tree->findByName('1.1');
@@ -329,7 +329,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testAddOrphan() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$this->Tree->save(array($modelClass => array('name' => 'testAddOrphan', $parentField => null)));
@@ -349,7 +349,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testAddMiddle() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$data= $this->Tree->find(array($modelClass . '.name' => '1.1'), array('id'));
@@ -383,7 +383,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testAddInvalid() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 		$this->Tree->id = null;
 
@@ -408,7 +408,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testAddNotIndexedByModel() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$this->Tree->save(array('name' => 'testAddNotIndexed', $parentField => null));
@@ -428,7 +428,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testMovePromote() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 		$this->Tree->id = null;
 
@@ -455,7 +455,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testMoveWithWhitelist() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 		$this->Tree->id = null;
 
@@ -483,7 +483,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testInsertWithWhitelist() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$this->Tree->whitelist = array('name', $parentField);
@@ -502,7 +502,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testMoveBefore() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 		$this->Tree->id = null;
 
@@ -531,7 +531,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testMoveAfter() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 		$this->Tree->id = null;
 
@@ -560,7 +560,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testMoveDemoteInvalid() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 		$this->Tree->id = null;
 
@@ -594,7 +594,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testMoveInvalid() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 		$this->Tree->id = null;
 
@@ -621,7 +621,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testMoveSelfInvalid() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 		$this->Tree->id = null;
 
@@ -648,7 +648,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testMoveUpSuccess() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$data = $this->Tree->find(array($modelClass . '.name' => '1.2'), array('id'));
@@ -670,7 +670,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testMoveUpFail() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$data = $this->Tree->find(array($modelClass . '.name' => '1.1'));
@@ -693,7 +693,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testMoveUp2() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(1, 10);
 
 		$data = $this->Tree->find(array($modelClass . '.name' => '1.5'), array('id'));
@@ -724,7 +724,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testMoveUpFirst() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(1, 10);
 
 		$data = $this->Tree->find(array($modelClass . '.name' => '1.5'), array('id'));
@@ -755,7 +755,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testMoveDownSuccess() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$data = $this->Tree->find(array($modelClass . '.name' => '1.1'), array('id'));
@@ -777,7 +777,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testMoveDownFail() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$data = $this->Tree->find(array($modelClass . '.name' => '1.2'));
@@ -799,7 +799,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testMoveDownLast() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(1, 10);
 
 		$data = $this->Tree->find(array($modelClass . '.name' => '1.5'), array('id'));
@@ -830,7 +830,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testMoveDown2() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(1, 10);
 
 		$data = $this->Tree->find(array($modelClass . '.name' => '1.5'), array('id'));
@@ -861,7 +861,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testSaveNoMove() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(1, 10);
 
 		$data = $this->Tree->find(array($modelClass . '.name' => '1.5'), array('id'));
@@ -892,7 +892,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testMoveToRootAndMoveUp() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(1, 1);
 		$data = $this->Tree->find(array($modelClass . '.name' => '1.1'), array('id'));
 		$this->Tree->id = $data[$modelClass]['id'];
@@ -917,7 +917,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testDelete() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$initialCount = $this->Tree->find('count');
@@ -953,7 +953,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testRemove() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 		$initialCount = $this->Tree->find('count');
 		$result = $this->Tree->findByName('1.1');
@@ -986,7 +986,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testRemoveLastTopParent() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$initialCount = $this->Tree->find('count');
@@ -1020,7 +1020,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testRemoveNoChildren() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 		$initialCount = $this->Tree->find('count');
 
@@ -1055,7 +1055,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testRemoveAndDelete() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$initialCount = $this->Tree->find('count');
@@ -1088,7 +1088,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testRemoveAndDeleteNoChildren() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 		$initialCount = $this->Tree->find('count');
 
@@ -1121,7 +1121,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testChildren() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$data = $this->Tree->find(array($modelClass . '.name' => '1. Root'));
@@ -1152,7 +1152,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testCountChildren() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$data = $this->Tree->find(array($modelClass . '.name' => '1. Root'));
@@ -1178,7 +1178,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testGetParentNode() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$data = $this->Tree->find(array($modelClass . '.name' => '1.2.2'));
@@ -1197,7 +1197,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testGetPath() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$data = $this->Tree->find(array($modelClass . '.name' => '1.2.2'));
@@ -1218,7 +1218,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testNoAmbiguousColumn() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->bindModel(array('belongsTo' => array('Dummy' =>
 			array('className' => $modelClass, 'foreignKey' => $parentField, 'conditions' => array('Dummy.id' => null)))), false);
 		$this->Tree->initialize(2, 2);
@@ -1251,7 +1251,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testReorderTree() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(3, 3);
 		$nodes = $this->Tree->find('list', array('order' => $leftField));
 
@@ -1282,7 +1282,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testReorderBigTreeWithQueryCaching() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 10);
 
 		$original = $this->Tree->cacheQueries;
@@ -1299,7 +1299,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testGenerateTreeListWithSelfJoin() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->bindModel(array('belongsTo' => array('Dummy' =>
 			array('className' => $modelClass, 'foreignKey' => $parentField, 'conditions' => array('Dummy.id' => null)))), false);
 		$this->Tree->initialize(2, 2);
@@ -1317,7 +1317,7 @@ class NumberTreeTest extends CakeTestCase {
  */
 	function testArraySyntax() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(3, 3);
 		$this->assertIdentical($this->Tree->childCount(2), $this->Tree->childCount(array('id' => 2)));
 		$this->assertIdentical($this->Tree->getParentNode(2), $this->Tree->getParentNode(array('id' => 2)));
@@ -1361,7 +1361,7 @@ class ScopedTreeTest extends NumberTreeTest {
  * @return void
  */
 	function testStringScope() {
-		$this->Tree =& new FlagTree();
+		$this->Tree = new FlagTree();
 		$this->Tree->initialize(2, 3);
 
 		$this->Tree->id = 1;
@@ -1398,7 +1398,7 @@ class ScopedTreeTest extends NumberTreeTest {
  * @return void
  */
 	function testArrayScope() {
-		$this->Tree =& new FlagTree();
+		$this->Tree = new FlagTree();
 		$this->Tree->initialize(2, 3);
 
 		$this->Tree->id = 1;
@@ -1435,7 +1435,7 @@ class ScopedTreeTest extends NumberTreeTest {
  * @return void
  */
 	function testMoveUpWithScope() {
-		$this->Ad =& new Ad();
+		$this->Ad = new Ad();
 		$this->Ad->Behaviors->attach('Tree', array('scope'=>'Campaign'));
 		$this->Ad->moveUp(6);
 
@@ -1452,7 +1452,7 @@ class ScopedTreeTest extends NumberTreeTest {
  * @return void
  */
 	function testMoveDownWithScope() {
-		$this->Ad =& new Ad();
+		$this->Ad = new Ad();
 		$this->Ad->Behaviors->attach('Tree', array('scope' => 'Campaign'));
 		$this->Ad->moveDown(6);
 
@@ -1470,7 +1470,7 @@ class ScopedTreeTest extends NumberTreeTest {
  * @return void
  */
 	function testTranslatingTree() {
-		$this->Tree =& new FlagTree();
+		$this->Tree = new FlagTree();
 		$this->Tree->cacheQueries = false;
 		$this->Tree->translateModel = 'TranslateTreeTestModel';
 		$this->Tree->Behaviors->attach('Translate', array('name'));
@@ -1570,10 +1570,10 @@ class ScopedTreeTest extends NumberTreeTest {
  */
 	function testAliasesWithScopeInTwoTreeAssociations() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
-		$this->TreeTwo =& new NumberTreeTwo();
+		$this->TreeTwo = new NumberTreeTwo();
 
 		$record = $this->Tree->find('first');
 
@@ -1655,7 +1655,7 @@ class AfterTreeTest extends NumberTreeTest {
  * @return void
  */
 	function testAftersaveCallback() {
-		$this->Tree =& new AfterTree();
+		$this->Tree = new AfterTree();
 
 		$expected = array('AfterTree' => array('name' => 'Six and One Half Changed in AfterTree::afterSave() but not in database', 'parent_id' => 6, 'lft' => 11, 'rght' => 12));
 		$result = $this->Tree->save(array('AfterTree' => array('name' => 'Six and One Half', 'parent_id' => 6)));
@@ -1734,7 +1734,7 @@ class UuidTreeTest extends NumberTreeTest {
  */
 	function testMovePromote() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 		$this->Tree->id = null;
 
@@ -1761,7 +1761,7 @@ class UuidTreeTest extends NumberTreeTest {
  */
 	function testMoveWithWhitelist() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 		$this->Tree->id = null;
 
@@ -1789,7 +1789,7 @@ class UuidTreeTest extends NumberTreeTest {
  */
 	function testRemoveNoChildren() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 		$initialCount = $this->Tree->find('count');
 
@@ -1824,7 +1824,7 @@ class UuidTreeTest extends NumberTreeTest {
  */
 	function testRemoveAndDeleteNoChildren() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 		$initialCount = $this->Tree->find('count');
 
@@ -1857,7 +1857,7 @@ class UuidTreeTest extends NumberTreeTest {
  */
 	function testChildren() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$data = $this->Tree->find(array($modelClass . '.name' => '1. Root'));
@@ -1886,7 +1886,7 @@ class UuidTreeTest extends NumberTreeTest {
  */
 	function testNoAmbiguousColumn() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->initialize(2, 2);
 
 		$this->Tree->bindModel(array('belongsTo' => array('Dummy' =>
@@ -1920,7 +1920,7 @@ class UuidTreeTest extends NumberTreeTest {
  */
 	function testGenerateTreeListWithSelfJoin() {
 		extract($this->settings);
-		$this->Tree =& new $modelClass();
+		$this->Tree = new $modelClass();
 		$this->Tree->bindModel(array('belongsTo' => array('Dummy' =>
 			array('className' => $modelClass, 'foreignKey' => $parentField, 'conditions' => array('Dummy.id' => null)))), false);
 		$this->Tree->initialize(2, 2);

@@ -55,7 +55,7 @@ class AclComponent extends Object {
 				trigger_error(sprintf(__('Could not find %s.', true), $name), E_USER_WARNING);
 			}
 		}
-		$this->_Instance =& new $name();
+		$this->_Instance = new $name();
 		$this->_Instance->initialize($this);
 	}
 

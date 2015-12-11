@@ -100,8 +100,8 @@ class I18n extends Object {
 	function &getInstance() {
 		static $instance = array();
 		if (!$instance) {
-			$instance[0] =& new I18n();
-			$instance[0]->l10n =& new L10n();
+			$instance[0] = new I18n();
+			$instance[0]->l10n = new L10n();
 		}
 		return $instance[0];
 	}

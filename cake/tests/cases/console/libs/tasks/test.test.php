@@ -262,12 +262,12 @@ class TestTaskTest extends CakeTestCase {
  * @access public
  */
 	function startTest() {
-		$this->Dispatcher =& new TestTestTaskMockShellDispatcher();
+		$this->Dispatcher = new TestTestTaskMockShellDispatcher();
 		$this->Dispatcher->shellPaths = App::path('shells');
-		$this->Task =& new MockTestTask($this->Dispatcher);
+		$this->Task = new MockTestTask($this->Dispatcher);
 		$this->Task->name = 'TestTask';
 		$this->Task->Dispatch =& $this->Dispatcher;
-		$this->Task->Template =& new TemplateTask($this->Dispatcher);
+		$this->Task->Template = new TemplateTask($this->Dispatcher);
 	}
 
 /**
@@ -502,7 +502,7 @@ class TestTaskTest extends CakeTestCase {
 		$this->assertPattern('/function redirect\(\$url, \$status = null, \$exit = true\)/', $result);
 
 		$this->assertPattern('/function startTest\(\)/', $result);
-		$this->assertPattern("/\\\$this->TestTaskComments \=\& new TestTestTaskCommentsController\(\)/", $result);
+		$this->assertPattern("/\\\$this->TestTaskComments \=\ new TestTestTaskCommentsController\(\)/", $result);
 		$this->assertPattern("/\\\$this->TestTaskComments->constructClasses\(\)/", $result);
 
 		$this->assertPattern('/function endTest\(\)/', $result);

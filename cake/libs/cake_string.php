@@ -25,7 +25,7 @@
  * @package       cake
  * @subpackage    cake.cake.libs
  */
-class CakeString {
+class String {
 
 /**
  * Generate a random UUID

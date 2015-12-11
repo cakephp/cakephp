@@ -305,7 +305,7 @@ class DboMysqliTest extends CakeTestCase {
  * @return void
  */
 	function testFloatParsing() {
-		$model =& new Model(array('ds' => 'test_suite', 'table' => 'datatypes', 'name' => 'Datatype'));
+		$model = new Model(array('ds' => 'test_suite', 'table' => 'datatypes', 'name' => 'Datatype'));
 		$result = $this->db->describe($model);
 		$this->assertEqual((string)$result['float_field']['length'], '5,2');
 	}
