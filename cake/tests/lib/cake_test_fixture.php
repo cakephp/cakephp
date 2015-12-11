@@ -84,7 +84,7 @@ class CakeTestFixture extends Object {
 				ClassRegistry::config(array('ds' => 'test_suite'));
 				ClassRegistry::flush();
 			} elseif (isset($import['table'])) {
-				$model =& new Model(null, $import['table'], $import['connection']);
+				$model = new Model(null, $import['table'], $import['connection']);
 				$db =& ConnectionManager::getDataSource($import['connection']);
 				$db->cacheSources = false;
 				$model->useDbConfig = $import['connection'];

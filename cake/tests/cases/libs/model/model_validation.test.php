@@ -36,7 +36,7 @@ class ModelValidationTest extends BaseModelTest {
  * @return void
  */
 	function testValidationParams() {
-		$TestModel =& new ValidationTest1();
+		$TestModel = new ValidationTest1();
 		$TestModel->validate['title'] = array(
 			'rule' => 'customValidatorWithParams',
 			'required' => true
@@ -128,7 +128,7 @@ class ModelValidationTest extends BaseModelTest {
  * @return void
  */
 	function testInvalidFieldsWithFieldListParams() {
-		$TestModel =& new ValidationTest1();
+		$TestModel = new ValidationTest1();
 		$TestModel->validate = $validate = array(
 			'title' => array(
 				'rule' => 'alphaNumeric',
@@ -175,7 +175,7 @@ class ModelValidationTest extends BaseModelTest {
  * @return void
  */
 	function testInvalidFieldsWhitelist() {
-		$TestModel =& new ValidationTest1();
+		$TestModel = new ValidationTest1();
 		$TestModel->validate = array(
 			'title' => array(
 				'rule' => 'alphaNumeric',
@@ -200,7 +200,7 @@ class ModelValidationTest extends BaseModelTest {
  * @return void
  */
 	function testValidates() {
-		$TestModel =& new TestValidate();
+		$TestModel = new TestValidate();
 
 		$TestModel->validate = array(
 			'user_id' => 'numeric',
@@ -565,7 +565,7 @@ class ModelValidationTest extends BaseModelTest {
 			)
 		);
 
-		$Something =& new Something();
+		$Something = new Something();
 		$JoinThing =& $Something->JoinThing;
 
 		$JoinThing->validate = array('doomed' => array('rule' => 'notEmpty'));
@@ -618,7 +618,7 @@ class ModelValidationTest extends BaseModelTest {
 				array('something_else_id' => 1, 'doomed' => '')
 			)
 		);
-		$Something =& new Something();
+		$Something = new Something();
 		$JoinThing =& $Something->JoinThing;
 
 		$JoinThing->validate = array('doomed' => array('rule' => 'notEmpty'));
@@ -661,7 +661,7 @@ class ModelValidationTest extends BaseModelTest {
 				array('word' => 'World'),
 			)
 		);
-		$Article =& new Article();
+		$Article = new Article();
 		$Comment =& $Article->Comment;
 
 		$Comment->validate = array('article_id' => array('rule' => 'numeric'));
@@ -695,7 +695,7 @@ class ModelValidationTest extends BaseModelTest {
 		$restore = Configure::read('debug');
 		Configure::write('debug', 2);
 
-		$TestModel =& new ValidationTest1();
+		$TestModel = new ValidationTest1();
 		$TestModel->create(array('title' => 'foo'));
 		$TestModel->validate = array(
 			'title' => array(
@@ -718,7 +718,7 @@ class ModelValidationTest extends BaseModelTest {
  * @return void
  */
 	function testStateValidation() {
-		$Article =& new Article();
+		$Article = new Article();
 
 		$data = array(
 			'Article' => array(

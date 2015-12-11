@@ -58,9 +58,9 @@ class ProjectTaskTest extends CakeTestCase {
  * @access public
  */
 	function startTest() {
-		$this->Dispatcher =& new TestProjectTaskMockShellDispatcher();
+		$this->Dispatcher = new TestProjectTaskMockShellDispatcher();
 		$this->Dispatcher->shellPaths = App::path('shells');
-		$this->Task =& new MockProjectTask($this->Dispatcher);
+		$this->Task = new MockProjectTask($this->Dispatcher);
 		$this->Task->Dispatch =& $this->Dispatcher;
 		$this->Task->path = TMP . 'tests' . DS;
 	}
@@ -74,7 +74,7 @@ class ProjectTaskTest extends CakeTestCase {
 	function endTest() {
 		ClassRegistry::flush();
 
-		$Folder =& new Folder($this->Task->path . 'bake_test_app');
+		$Folder = new Folder($this->Task->path . 'bake_test_app');
 		$Folder->delete();
 	}
 
@@ -168,7 +168,7 @@ class ProjectTaskTest extends CakeTestCase {
 		$result = $this->Task->securitySalt($path);
 		$this->assertTrue($result);
 
-		$file =& new File($path . 'config' . DS . 'core.php');
+		$file = new File($path . 'config' . DS . 'core.php');
 		$contents = $file->read();
 		$this->assertNoPattern('/DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi/', $contents, 'Default Salt left behind. %s');
 	}
@@ -186,7 +186,7 @@ class ProjectTaskTest extends CakeTestCase {
 			$result = $this->Task->securityCipherSeed($path);
 			$this->assertTrue($result);
 
-			$file =& new File($path . 'config' . DS . 'core.php');
+			$file = new File($path . 'config' . DS . 'core.php');
 			$contents = $file->read();
 			$this->assertNoPattern('/76859309657453542496749683645/', $contents, 'Default CipherSeed left behind. %s');
 		}
@@ -203,11 +203,11 @@ class ProjectTaskTest extends CakeTestCase {
 		$path = $this->Task->path . 'bake_test_app' . DS;
 		$this->Task->corePath($path);
 
-		$file =& new File($path . 'webroot' . DS . 'index.php');
+		$file = new File($path . 'webroot' . DS . 'index.php');
 		$contents = $file->read();
 		$this->assertNoPattern('/define\(\'CAKE_CORE_INCLUDE_PATH\', \'ROOT/', $contents);
 
-		$file =& new File($path . 'webroot' . DS . 'test.php');
+		$file = new File($path . 'webroot' . DS . 'test.php');
 		$contents = $file->read();
 		$this->assertNoPattern('/define\(\'CAKE_CORE_INCLUDE_PATH\', \'ROOT/', $contents);
 	}
@@ -231,7 +231,7 @@ class ProjectTaskTest extends CakeTestCase {
 		$result = $this->Task->getPrefix();
 		$this->assertEqual($result, 'super_duper_admin_');
 
-		$file =& new File($this->Task->configPath . 'core.php');
+		$file = new File($this->Task->configPath . 'core.php');
 		$file->delete();
 	}
 
@@ -242,9 +242,9 @@ class ProjectTaskTest extends CakeTestCase {
  * @access public
  */
 	function testCakeAdmin() {
-		$file =& new File(CONFIGS . 'core.php');
+		$file = new File(CONFIGS . 'core.php');
 		$contents = $file->read();;
-		$file =& new File(TMP . 'tests' . DS . 'core.php');
+		$file = new File(TMP . 'tests' . DS . 'core.php');
 		$file->write($contents);
 
 		Configure::write('Routing.prefixes', null);

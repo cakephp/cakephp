@@ -252,15 +252,15 @@ class ViewTaskTest extends CakeTestCase {
  * @access public
  */
 	function startTest() {
-		$this->Dispatcher =& new TestViewTaskMockShellDispatcher();
+		$this->Dispatcher = new TestViewTaskMockShellDispatcher();
 		$this->Dispatcher->shellPaths = App::path('shells');
-		$this->Task =& new MockViewTask($this->Dispatcher);
+		$this->Task = new MockViewTask($this->Dispatcher);
 		$this->Task->name = 'ViewTask';
 		$this->Task->Dispatch =& $this->Dispatcher;
-		$this->Task->Template =& new TemplateTask($this->Dispatcher);
-		$this->Task->Controller =& new ViewTaskMockControllerTask();
-		$this->Task->Project =& new ViewTaskMockProjectTask();
-		$this->Task->DbConfig =& new ViewTaskMockProjectTask();
+		$this->Task->Template = new TemplateTask($this->Dispatcher);
+		$this->Task->Controller = new ViewTaskMockControllerTask();
+		$this->Task->Project = new ViewTaskMockProjectTask();
+		$this->Task->DbConfig = new ViewTaskMockProjectTask();
 		$this->Task->path = TMP;
 		$this->Task->Template->params['theme'] = 'default';
 		

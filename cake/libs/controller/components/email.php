@@ -592,7 +592,7 @@ class EmailComponent extends Object{
 
 		if ($this->messageId !== false) {
 			if ($this->messageId === true) {
-				$headers['Message-ID'] = '<' . str_replace('-', '', String::uuid()) . '@' . env('HTTP_HOST') . '>';
+				$headers['Message-ID'] = '<' . str_replace('-', '', CakeString::uuid()) . '@' . env('HTTP_HOST') . '>';
 			} else {
 				$headers['Message-ID'] = $this->messageId;
 			}
@@ -841,7 +841,7 @@ class EmailComponent extends Object{
  * @access protected
  */
 	function _getSocket($config) {
-		$this->__smtpConnection =& new CakeSocket($config);
+		$this->__smtpConnection = new CakeSocket($config);
 	}
 
 /**

@@ -76,15 +76,15 @@ class ModelTaskTest extends CakeTestCase {
  * @access public
  */
 	function startTest() {
-		$this->Dispatcher =& new TestModelTaskMockShellDispatcher();
-		$this->Task =& new MockModelTask($this->Dispatcher);
+		$this->Dispatcher = new TestModelTaskMockShellDispatcher();
+		$this->Task = new MockModelTask($this->Dispatcher);
 		$this->Task->name = 'ModelTask';
 		$this->Task->interactive = true;
 		$this->Task->Dispatch =& $this->Dispatcher;
 		$this->Task->Dispatch->shellPaths = App::path('shells');
-		$this->Task->Template =& new TemplateTask($this->Task->Dispatch);
-		$this->Task->Fixture =& new MockModelTaskFixtureTask();
-		$this->Task->Test =& new MockModelTaskFixtureTask();
+		$this->Task->Template = new TemplateTask($this->Task->Dispatch);
+		$this->Task->Fixture = new MockModelTaskFixtureTask();
+		$this->Task->Test = new MockModelTaskFixtureTask();
 	}
 
 /**
@@ -284,7 +284,7 @@ class ModelTaskTest extends CakeTestCase {
  * @access public
  */
 	function testNonInteractiveDoValidation() {
-		$Model =& new MockModelTaskModel();
+		$Model = new MockModelTaskModel();
 		$Model->primaryKey = 'id';
 		$Model->setReturnValue('schema', array(
 			'id' => array(

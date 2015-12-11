@@ -61,11 +61,11 @@ class PaginatorHelperTest extends CakeTestCase {
 				)
 			)
 		);
-		$this->Paginator->Html =& new HtmlHelper();
-		$this->Paginator->Ajax =& new AjaxHelper();
-		$this->Paginator->Ajax->Html =& new HtmlHelper();
-		$this->Paginator->Ajax->Javascript =& new JavascriptHelper();
-		$this->Paginator->Ajax->Form =& new FormHelper();
+		$this->Paginator->Html = new HtmlHelper();
+		$this->Paginator->Ajax = new AjaxHelper();
+		$this->Paginator->Ajax->Html = new HtmlHelper();
+		$this->Paginator->Ajax->Javascript = new JavascriptHelper();
+		$this->Paginator->Ajax->Form = new FormHelper();
 
 		Configure::write('Routing.prefixes', array());
 		Router::reload();
@@ -1905,7 +1905,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @return void
  */
 	function testMockAjaxProviderClassInjection() {
-		$Paginator =& new PaginatorHelper(array('ajax' => 'PaginatorMockJs'));
+		$Paginator = new PaginatorHelper(array('ajax' => 'PaginatorMockJs'));
 		$Paginator->params['paging'] = array(
 			'Article' => array(
 				'current' => 9,
@@ -1917,11 +1917,11 @@ class PaginatorHelperTest extends CakeTestCase {
 				'options' => array()
 			)
 		);
-		$Paginator->PaginatorMockJs =& new PaginatorMockJsHelper();
+		$Paginator->PaginatorMockJs = new PaginatorMockJsHelper();
 		$Paginator->PaginatorMockJs->expectOnce('link');
 		$result = $Paginator->link('Page 2', array('page' => 2), array('update' => '#content'));
 
 		$this->expectError();
-		$Paginator =& new PaginatorHelper(array('ajax' => 'Form'));
+		$Paginator = new PaginatorHelper(array('ajax' => 'Form'));
 	}
 }

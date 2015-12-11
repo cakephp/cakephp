@@ -42,7 +42,7 @@ class NumberHelperTest extends CakeTestCase {
  * @return void
  */
 	function startTest() {
-		$this->Number =& new NumberHelper();
+		$this->Number = new NumberHelper();
 	}
 
 /**

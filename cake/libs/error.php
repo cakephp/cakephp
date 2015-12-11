@@ -87,9 +87,9 @@ class ErrorHandler extends Object {
 
 		if ($__previousError != array($method, $messages)) {
 			$__previousError = array($method, $messages);
-			$this->controller =& new CakeErrorController();
+			$this->controller = new CakeErrorController();
 		} else {
-			$this->controller =& new Controller();
+			$this->controller = new Controller();
 			$this->controller->viewPath = 'errors';
 		}
 		$options = array('escape' => false);

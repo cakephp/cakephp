@@ -58,8 +58,8 @@ class ApiShellTest extends CakeTestCase {
  * @access public
  */
 	function startTest() {
-		$this->Dispatcher =& new ApiShellMockShellDispatcher();
-		$this->Shell =& new MockApiShell($this->Dispatcher);
+		$this->Dispatcher = new ApiShellMockShellDispatcher();
+		$this->Shell = new MockApiShell($this->Dispatcher);
 		$this->Shell->Dispatch =& $this->Dispatcher;
 	}
 

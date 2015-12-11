@@ -72,8 +72,8 @@ class BakeShellTestCase extends CakeTestCase {
  * @access public
  */
 	function startTest() {
-		$this->Dispatch =& new BakeShellMockShellDispatcher();
-		$this->Shell =& new MockBakeShell();
+		$this->Dispatch = new BakeShellMockShellDispatcher();
+		$this->Shell = new MockBakeShell();
 		$this->Shell->Dispatch =& $this->Dispatch;
 		$this->Shell->Dispatch->shellPaths = App::path('shells');
 	}
@@ -100,10 +100,10 @@ class BakeShellTestCase extends CakeTestCase {
 		if ($this->skipIf($userExists, 'User class exists, cannot test `bake all [param]`. %s')) {
 			return;
 		}
-		$this->Shell->Model =& new BakeShellMockModelTask();
-		$this->Shell->Controller =& new BakeShellMockControllerTask();
-		$this->Shell->View =& new BakeShellMockModelTask();
-		$this->Shell->DbConfig =& new BakeShellMockDbConfigTask();
+		$this->Shell->Model = new BakeShellMockModelTask();
+		$this->Shell->Controller = new BakeShellMockControllerTask();
+		$this->Shell->View = new BakeShellMockModelTask();
+		$this->Shell->DbConfig = new BakeShellMockDbConfigTask();
 
 		$this->Shell->DbConfig->expectOnce('getConfig');
 		$this->Shell->DbConfig->setReturnValue('getConfig', 'test_suite');

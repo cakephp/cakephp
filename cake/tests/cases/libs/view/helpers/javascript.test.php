@@ -119,10 +119,10 @@ class JavascriptTest extends CakeTestCase {
  * @return void
  */
 	function startTest() {
-		$this->Javascript =& new JavascriptHelper();
-		$this->Javascript->Html =& new HtmlHelper();
-		$this->Javascript->Form =& new FormHelper();
-		$this->View =& new TheView(new TheJsTestController());
+		$this->Javascript = new JavascriptHelper();
+		$this->Javascript->Html = new HtmlHelper();
+		$this->Javascript->Form = new FormHelper();
+		$this->View = new TheView(new TheJsTestController());
 		ClassRegistry::addObject('view', $this->View);
 	}
 
@@ -147,10 +147,10 @@ class JavascriptTest extends CakeTestCase {
  * @return void
  */
 	function testConstruct() {
-		$Javascript =& new JavascriptHelper(array('safe'));
+		$Javascript = new JavascriptHelper(array('safe'));
 		$this->assertTrue($Javascript->safe);
 
-		$Javascript =& new JavascriptHelper(array('safe' => false));
+		$Javascript = new JavascriptHelper(array('safe' => false));
 		$this->assertFalse($Javascript->safe);
 	}
 

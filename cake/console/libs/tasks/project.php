@@ -205,7 +205,7 @@ class ProjectTask extends Shell {
  * @access public
  */
 	function securitySalt($path) {
-		$File =& new File($path . 'config' . DS . 'core.php');
+		$File = new File($path . 'config' . DS . 'core.php');
 		$contents = $File->read();
 		if (preg_match('/([\\t\\x20]*Configure::write\\(\\\'Security.salt\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
 			if (!class_exists('Security')) {
@@ -229,7 +229,7 @@ class ProjectTask extends Shell {
 	 * @access public
 	 */
 		function securityCipherSeed($path) {
-			$File =& new File($path . 'config' . DS . 'core.php');
+			$File = new File($path . 'config' . DS . 'core.php');
 			$contents = $File->read();
 			if (preg_match('/([\\t\\x20]*Configure::write\\(\\\'Security.cipherSeed\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
 				if (!class_exists('Security')) {
@@ -254,7 +254,7 @@ class ProjectTask extends Shell {
  */
 	function corePath($path) {
 		if (dirname($path) !== CAKE_CORE_INCLUDE_PATH) {
-			$File =& new File($path . 'webroot' . DS . 'index.php');
+			$File = new File($path . 'webroot' . DS . 'index.php');
 			$contents = $File->read();
 			if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_CORE_INCLUDE_PATH\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
 				$root = strpos(CAKE_CORE_INCLUDE_PATH, '/') === 0 ? " DS . '" : "'";
@@ -266,7 +266,7 @@ class ProjectTask extends Shell {
 				return false;
 			}
 
-			$File =& new File($path . 'webroot' . DS . 'test.php');
+			$File = new File($path . 'webroot' . DS . 'test.php');
 			$contents = $File->read();
 			if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_CORE_INCLUDE_PATH\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
 				$result = str_replace($match[0], "\t\tdefine('CAKE_CORE_INCLUDE_PATH', " . $root . str_replace(DS, "' . DS . '", trim(CAKE_CORE_INCLUDE_PATH, DS)) . "');", $contents);
@@ -289,7 +289,7 @@ class ProjectTask extends Shell {
  */
 	function cakeAdmin($name) {
 		$path = (empty($this->configPath)) ? CONFIGS : $this->configPath;
-		$File =& new File($path . 'core.php');
+		$File = new File($path . 'core.php');
 		$contents = $File->read();
 		if (preg_match('%([/\\t\\x20]*Configure::write\(\'Routing.prefixes\',[\\t\\x20\'a-z,\)\(]*\\);)%', $contents, $match)) {
 			$result = str_replace($match[0], "\t" . 'Configure::write(\'Routing.prefixes\', array(\''.$name.'\'));', $contents);

@@ -75,7 +75,7 @@ class XmlHelperTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->Xml =& new XmlHelper();
+		$this->Xml = new XmlHelper();
 		$this->Xml->beforeRender();
 		$manager =& XmlManager::getInstance();
 		$manager->namespaces = array();

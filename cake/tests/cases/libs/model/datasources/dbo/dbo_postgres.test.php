@@ -533,7 +533,7 @@ class DboPostgresTest extends CakeTestCase {
 		ªºnh˚ºO^∏…®[Ó“‚ÅfıÌ≥∫F!Eœ(π∑T6`¬tΩÆ0ì»rTÎ`»Ñ«
 		]≈åp˝)=¿Ô0∆öVÂmˇˆ„ø~¯ÁÔ∏b*fc»‡Îı„Ú}∆tœs∂Y∫ÜaÆ˙X∏~<ÿ·Ùvé1‹p¿TD∆ÔîÄ“úhˆ*Ú€îe)K–p¨ÚJ3Ÿ∞ã>ÊuNê°“√Ü ‹Ê9iÙ0˙AAEÍ ˙`∂£\'ûce•åƒX›ŸÁ´1SK{qdá"tÏ[wQ#SµBe∞∑µó…ÌV`B"Ñ≥„!è_ÓÏ†-º*ºú¿Ë0ˆeê∂´ë+HFj…‡zvHÓN|ÔL÷ûñ3õÜ$z%sá…pÎóV38âs	Çoµ•ß3†<9B·¨û~¢3)ÂxóÿÁCÕòÆ∫Í=»ÿSπS;∆~±êÆTEp∑óÈ÷ÀuìDHÈ$ÉõæÜjÃ»§"≤ÃONM®RËíRr{õS	∏Ê™op±W;ÂUÔ P∫kÔˇﬂTæ∑óﬂË”ÆC©Ô[≥◊HÁ˚¨hê"ÆbF?ú%h˙ˇ4xèÕ(ó2ÙáíM])Ñd|=fë-cI0ñL¢kÖêk‰Rƒ«ıÄWñ8mO3∏&√æËX¯Hó—ì]yF2»–˜ádàà‡‹ÇÎ¿„≥7mªHAS∑¶.;Œx(1} _kd©.ﬁdç48M\'àáªCp^Krí<É‰XÓıïl!Ì$N<ı∞B»G]…∂Ó¯>˛ÔbõÒπÀ•:ôO<j∂™œ%âÏ—>@È$pÖu‹Ê´-QqV ?V≥JÆÍqÛX8(lπï@zgÖ}Fe<ˇ‡Sñ“ÿ˜ê?6‡L∫Oß~µ –?ËeäÚ®YîÕ=Ü=¢DÁu*GvBk;)L¬N«î:flö∂≠ÇΩq„Ñmí•˜Ë∂‚"û≥§:±≤i^ΩÑ!)WıyÅ§ô á„RÄ÷Òôc’≠—s™rı‚Pdêãh˘ßHVç5ﬁﬁÈF€çÌÛuçÖ/M=gëµ±ÿGû1coÔuñæ‘z®. õ∑7ÉÏÜÆ,°’H†ÍÉÌ∂7e	º® íˆ⁄◊øNWK”ÂYµ‚ñé;µ¶gV-ﬂ>µtË¥áßN2 ¯¶BaP-)eW.àôt^∏1›C∑Ö?L„&”5’4jvã–ªZ	÷+4% ´0l…»ú^°´© ûiπ∑é®óÜ±Òÿ‰ïˆÌ–dˆ◊Æ19rQ=Í|ı•rMæ¬;ò‰Y‰é9.”‹˝V«ã¯∏,+ë®j*¡·/';
 
-		$model =& new AppModel(array('name' => 'BinaryTest', 'ds' => 'test_suite'));
+		$model = new AppModel(array('name' => 'BinaryTest', 'ds' => 'test_suite'));
 		$model->save(compact('data'));
 
 		$result = $model->find('first');
@@ -659,7 +659,7 @@ class DboPostgresTest extends CakeTestCase {
  * @return void
  */
 	function testAlterSchema() {
-		$Old =& new CakeSchema(array(
+		$Old = new CakeSchema(array(
 			'connection' => 'test_suite',
 			'name' => 'AlterPosts',
 			'alter_posts' => array(
@@ -674,7 +674,7 @@ class DboPostgresTest extends CakeTestCase {
 		));
 		$this->db->query($this->db->createSchema($Old));
 
-		$New =& new CakeSchema(array(
+		$New = new CakeSchema(array(
 			'connection' => 'test_suite',
 			'name' => 'AlterPosts',
 			'alter_posts' => array(
@@ -700,7 +700,7 @@ class DboPostgresTest extends CakeTestCase {
 
 		$this->db->query($this->db->dropSchema($New));
 
-		$New =& new CakeSchema(array(
+		$New = new CakeSchema(array(
 			'connection' => 'test_suite',
 			'name' => 'AlterPosts',
 			'alter_posts' => array(
@@ -726,7 +726,7 @@ class DboPostgresTest extends CakeTestCase {
 	function testAlterIndexes() {
 		$this->db->cacheSources = false;
 
-		$schema1 =& new CakeSchema(array(
+		$schema1 = new CakeSchema(array(
 			'name' => 'AlterTest1',
 			'connection' => 'test_suite',
 			'altertest' => array(
@@ -738,7 +738,7 @@ class DboPostgresTest extends CakeTestCase {
 		));
 		$this->db->query($this->db->createSchema($schema1));
 
-		$schema2 =& new CakeSchema(array(
+		$schema2 = new CakeSchema(array(
 			'name' => 'AlterTest2',
 			'connection' => 'test_suite',
 			'altertest' => array(
@@ -760,7 +760,7 @@ class DboPostgresTest extends CakeTestCase {
 		$this->assertEqual($schema2->tables['altertest']['indexes'], $indexes);
 
 		// Change three indexes, delete one and add another one
-		$schema3 =& new CakeSchema(array(
+		$schema3 = new CakeSchema(array(
 			'name' => 'AlterTest3',
 			'connection' => 'test_suite',
 			'altertest' => array(
@@ -871,7 +871,7 @@ class DboPostgresTest extends CakeTestCase {
  */
 	function testUpdateAllWithNonQualifiedConditions() {
 		$this->loadFixtures('Article');
-		$Article =& new Article();
+		$Article = new Article();
 		$result = $Article->updateAll(array('title' => "'Awesome'"), array('title' => 'Third Article'));
 		$this->assertTrue($result);
 
@@ -887,7 +887,7 @@ class DboPostgresTest extends CakeTestCase {
  * @return void
  */
 	function testAlteringTwoTables() {
-		$schema1 =& new CakeSchema(array(
+		$schema1 = new CakeSchema(array(
 			'name' => 'AlterTest1',
 			'connection' => 'test_suite',
 			'altertest' => array(
@@ -899,7 +899,7 @@ class DboPostgresTest extends CakeTestCase {
 				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
 			)
 		));
-		$schema2 =& new CakeSchema(array(
+		$schema2 = new CakeSchema(array(
 			'name' => 'AlterTest1',
 			'connection' => 'test_suite',
 			'altertest' => array(

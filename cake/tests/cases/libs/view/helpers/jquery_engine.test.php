@@ -27,7 +27,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
  * @return void
  */
 	function startTest() {
-		$this->Jquery =& new JqueryEngineHelper();
+		$this->Jquery = new JqueryEngineHelper();
 	}
 
 /**

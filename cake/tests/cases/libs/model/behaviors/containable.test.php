@@ -3205,7 +3205,7 @@ class ContainableBehaviorTest extends CakeTestCase {
  * @return void
  */
 	function testPaginate() {
-		$Controller =& new Controller();
+		$Controller = new Controller();
 		$Controller->uses = array('Article');
 		$Controller->passedArgs[] = '1';
 		$Controller->params['url'] = array();

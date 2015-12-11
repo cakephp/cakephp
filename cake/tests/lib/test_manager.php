@@ -101,11 +101,11 @@ class TestManager {
 	function runAllTests(&$reporter, $testing = false) {
 		$testCases =& $this->_getTestFileList($this->_getTestsPath());
 		if ($this->appTest) {
-			$test =& new TestSuite(__('All App Tests', true));
+			$test = new TestSuite(__('All App Tests', true));
 		} else if ($this->pluginTest) {
-			$test =& new TestSuite(sprintf(__('All %s Plugin Tests', true), Inflector::humanize($this->pluginTest)));
+			$test = new TestSuite(sprintf(__('All %s Plugin Tests', true), Inflector::humanize($this->pluginTest)));
 		} else {
-			$test =& new TestSuite(__('All Core Tests', true));
+			$test = new TestSuite(__('All Core Tests', true));
 		}
 
 		if ($testing) {
@@ -143,7 +143,7 @@ class TestManager {
 			return true;
 		}
 
-		$test =& new TestSuite(sprintf(__('Individual test case: %s', true), $testCaseFile));
+		$test = new TestSuite(sprintf(__('Individual test case: %s', true), $testCaseFile));
 		$test->addTestFile($testCaseFileWithPath);
 		return $test->run($reporter);
 	}
@@ -170,7 +170,7 @@ class TestManager {
 		}
 
 		require_once $filePath;
-		$test =& new TestSuite(sprintf(__('%s group test', true), $groupTestName));
+		$test = new TestSuite(sprintf(__('%s group test', true), $groupTestName));
 		foreach ($this->_getGroupTestClassNames($filePath) as $groupTest) {
 			$testCase = new $groupTest();
 			$test->addTestCase($testCase);
@@ -191,7 +191,7 @@ class TestManager {
  * @static
  */
 	function addTestCasesFromDirectory(&$groupTest, $directory = '.') {
-		$manager =& new TestManager();
+		$manager = new TestManager();
 		$testCases =& $manager->_getTestFileList($directory);
 		foreach ($testCases as $testCase) {
 			$groupTest->addTestFile($testCase);
@@ -208,7 +208,7 @@ class TestManager {
  * @static
  */
 	function addTestFile(&$groupTest, $file) {
-		$manager =& new TestManager();
+		$manager = new TestManager();
 
 		if (file_exists($file . $manager->_testExtension)) {
 			$file .= $manager->_testExtension;
@@ -225,7 +225,7 @@ class TestManager {
  * @static
  */
 	function &getTestCaseList() {
-		$manager =& new TestManager();
+		$manager = new TestManager();
 		$return = $manager->_getTestCaseList($manager->_getTestsPath());
 		return $return;
 	}
@@ -263,7 +263,7 @@ class TestManager {
  * @static
  */
 	function &getGroupTestList() {
-		$manager =& new TestManager();
+		$manager = new TestManager();
 		$return = $manager->_getTestGroupList($manager->_getTestsPath('groups'));
 		return $return;
 	}

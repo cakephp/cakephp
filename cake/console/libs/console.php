@@ -62,7 +62,7 @@ class ConsoleShell extends Shell {
 		foreach ($this->models as $model) {
 			$class = Inflector::camelize(str_replace('.php', '', $model));
 			$this->models[$model] = $class;
-			$this->{$class} =& new $class();
+			$this->{$class} = new $class();
 		}
 		$this->out('Model classes:');
 		$this->out('--------------');

@@ -136,7 +136,7 @@ class PluginTask extends Shell {
 		if (strtolower($looksGood) == 'y') {
 			$verbose = $this->in(__('Do you want verbose output?', true), array('y', 'n'), 'n');
 
-			$Folder =& new Folder($this->path . $pluginPath);
+			$Folder = new Folder($this->path . $pluginPath);
 			$directories = array(
 				'config' . DS . 'schema',
 				'models' . DS . 'behaviors',
@@ -159,7 +159,7 @@ class PluginTask extends Shell {
 			foreach ($directories as $directory) {
 				$dirPath = $this->path . $pluginPath . DS . $directory;
 				$Folder->create($dirPath);
-				$File =& new File($dirPath . DS . 'empty', true);
+				$File = new File($dirPath . DS . 'empty', true);
 			}
 
 			if (strtolower($verbose) == 'y') {

@@ -31,7 +31,7 @@ if (!class_exists('CakeLog')) {
 	require_once LIBS . 'cake_log.php';
 }
 if (!class_exists('String')) {
-	require_once LIBS . 'string.php';
+	require_once LIBS . 'cake_string.php';
 }
 
 /**
@@ -184,7 +184,7 @@ class Debugger extends Object {
 		static $instance = array();
 		if (!empty($class)) {
 			if (!$instance || strtolower($class) != strtolower(get_class($instance[0]))) {
-				$instance[0] = & new $class();
+				$instance[0] =  new $class();
 				if (Configure::read() > 0) {
 					Configure::version(); // Make sure the core config is loaded
 					$instance[0]->helpPath = Configure::read('Cake.Debugger.HelpPath');
@@ -193,7 +193,7 @@ class Debugger extends Object {
 		}
 
 		if (!$instance) {
-			$instance[0] =& new Debugger();
+			$instance[0] = new Debugger();
 			if (Configure::read() > 0) {
 				Configure::version(); // Make sure the core config is loaded
 				$instance[0]->helpPath = Configure::read('Cake.Debugger.HelpPath');
@@ -308,7 +308,7 @@ class Debugger extends Object {
 		if (Configure::read('log')) {
 			$tpl = $_this->_templates['log']['error'];
 			$options = array('before' => '{:', 'after' => '}');
-			CakeLog::write($level, String::insert($tpl, $data, $options));
+			CakeLog::write($level, CakeString::insert($tpl, $data, $options));
 		}
 
 		if ($error == 'Fatal Error') {
@@ -395,7 +395,7 @@ class Debugger extends Object {
 				$trace['path'] = Debugger::trimPath($trace['file']);
 				$trace['reference'] = $reference;
 				unset($trace['object'], $trace['args']);
-				$back[] = String::insert($tpl, $trace, array('before' => '{:', 'after' => '}'));
+				$back[] = CakeString::insert($tpl, $trace, array('before' => '{:', 'after' => '}'));
 			}
 		}
 
@@ -667,7 +667,7 @@ class Debugger extends Object {
 				if (isset($detect[$key]) && empty($insert[$detect[$key]])) {
 					continue;
 				}
-				$links[$key] = String::insert($val, $insert, $insertOpts);
+				$links[$key] = CakeString::insert($val, $insert, $insertOpts);
 			}
 		}
 
@@ -678,12 +678,12 @@ class Debugger extends Object {
 			if (is_array($$key)) {
 				$$key = join("\n", $$key);
 			}
-			$info .= String::insert($tpl[$key], compact($key) + $insert, $insertOpts);
+			$info .= CakeString::insert($tpl[$key], compact($key) + $insert, $insertOpts);
 		}
 		$links = join(' | ', $links);
 		unset($data['context']);
 
-		echo String::insert($tpl['error'], compact('links', 'info') + $data, $insertOpts);
+		echo CakeString::insert($tpl['error'], compact('links', 'info') + $data, $insertOpts);
 	}
 
 /**

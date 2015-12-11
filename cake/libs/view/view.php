@@ -810,7 +810,7 @@ class View extends Object {
 						return false;
 					}
 				}
-				$loaded[$helper] =& new $helperCn($options);
+				$loaded[$helper] = new $helperCn($options);
 				$vars = array('base', 'webroot', 'here', 'params', 'action', 'data', 'theme', 'plugin');
 				$c = count($vars);
 

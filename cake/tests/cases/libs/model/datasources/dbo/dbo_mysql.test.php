@@ -428,7 +428,7 @@ class DboMysqlTest extends CakeTestCase {
 	function testIndexOnMySQL4Output() {
 		$name = $this->db->fullTableName('simple');
 
-		$mockDbo =& new QueryMockDboMysql($this);
+		$mockDbo = new QueryMockDboMysql($this);
 		$columnData = array(
 			array('0' => array(
 				'Table' => 'with_compound_keys',
@@ -571,7 +571,7 @@ class DboMysqlTest extends CakeTestCase {
 		App::import('Model', 'CakeSchema');
 		$this->db->cacheSources = false;
 
-		$schema1 =& new CakeSchema(array(
+		$schema1 = new CakeSchema(array(
 			'name' => 'AlterTest1',
 			'connection' => 'test_suite',
 			'altertest' => array(
@@ -582,7 +582,7 @@ class DboMysqlTest extends CakeTestCase {
 		)));
 		$this->db->query($this->db->createSchema($schema1));
 
-		$schema2 =& new CakeSchema(array(
+		$schema2 = new CakeSchema(array(
 			'name' => 'AlterTest2',
 			'connection' => 'test_suite',
 			'altertest' => array(
@@ -602,7 +602,7 @@ class DboMysqlTest extends CakeTestCase {
 		$this->assertEqual($schema2->tables['altertest']['indexes'], $indexes);
 
 		// Change three indexes, delete one and add another one
-		$schema3 =& new CakeSchema(array(
+		$schema3 = new CakeSchema(array(
 			'name' => 'AlterTest3',
 			'connection' => 'test_suite',
 			'altertest' => array(
@@ -645,7 +645,7 @@ class DboMysqlTest extends CakeTestCase {
 		  ¢îè©ÀÌ#¥⁄ã≥ﬁ:¯Ü‚Héá¶jV∂ÓúÎL≥çÀóËıÎ…>ï ≈ vFE%ÒâLFI<†µw˝±≈£7˘ç^H“≤«>ÉÃ¢*∑Ç nÖA•Ù|ﬂêèj£:=ÿ6óUàµ5'∂®àA¬ñ∆ˆGE(gt’≈àÚyÁó«7	‚VìöÇ√˙Ç™
 		k”:;kÀAõ{*¡€Î˚˚[  ;;";
 
-		$model =& new AppModel(array('name' => 'BinaryTest', 'ds' => 'test_suite'));
+		$model = new AppModel(array('name' => 'BinaryTest', 'ds' => 'test_suite'));
 		$model->save(compact('data'));
 
 		$result = $model->find('first');
@@ -661,7 +661,7 @@ class DboMysqlTest extends CakeTestCase {
 		App::import('Model', 'CakeSchema');
 		$this->db->cacheSources = false;
 
-		$schema1 =& new CakeSchema(array(
+		$schema1 = new CakeSchema(array(
 			'name' => 'AlterTest1',
 			'connection' => 'test_suite',
 			'altertest' => array(
@@ -675,7 +675,7 @@ class DboMysqlTest extends CakeTestCase {
 			)
 		));
 		$this->db->query($this->db->createSchema($schema1));
-		$schema2 =& new CakeSchema(array(
+		$schema2 = new CakeSchema(array(
 			'name' => 'AlterTest1',
 			'connection' => 'test_suite',
 			'altertest' => array(
@@ -708,7 +708,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testAlteringTwoTables() {
-		$schema1 =& new CakeSchema(array(
+		$schema1 = new CakeSchema(array(
 			'name' => 'AlterTest1',
 			'connection' => 'test_suite',
 			'altertest' => array(
@@ -720,7 +720,7 @@ class DboMysqlTest extends CakeTestCase {
 				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
 			)
 		));
-		$schema2 =& new CakeSchema(array(
+		$schema2 = new CakeSchema(array(
 			'name' => 'AlterTest1',
 			'connection' => 'test_suite',
 			'altertest' => array(
@@ -803,7 +803,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testVirtualFieldSeparators() {
-		$model =& new CakeTestModel(array('table' => 'binary_tests', 'ds' => 'test_suite', 'name' => 'BinaryTest'));
+		$model = new CakeTestModel(array('table' => 'binary_tests', 'ds' => 'test_suite', 'name' => 'BinaryTest'));
 		$model->virtualFields = array(
 			'other__field' => 'SUM(id)'
 		);
@@ -820,7 +820,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testDescribeGettingFieldParameters() {
-		$schema =& new CakeSchema(array(
+		$schema = new CakeSchema(array(
 			'connection' => 'test_suite',
 			'testdescribes' => array(
 				'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -840,7 +840,7 @@ class DboMysqlTest extends CakeTestCase {
 		));
 		$this->db->execute($this->db->createSchema($schema));
 
-		$model =& new CakeTestModel(array('table' => 'testdescribes', 'name' => 'Testdescribes'));
+		$model = new CakeTestModel(array('table' => 'testdescribes', 'name' => 'Testdescribes'));
 		$result = $this->db->describe($model);
 		$this->assertEqual($result['stringy']['collate'], 'cp1250_general_ci');
 		$this->assertEqual($result['stringy']['charset'], 'cp1250');
@@ -855,8 +855,8 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testSimpleDeleteConditionsNoJoins() {
-		$model =& new Post();
-		$mockDbo =& new QueryMockDboMysql($this);
+		$model = new Post();
+		$mockDbo = new QueryMockDboMysql($this);
 		$mockDbo->expectAt(0, 'execute', array(new PatternExpectation('/AS\s+`Post`\s+WHERE\s+`Post/')));
 		$mockDbo->setReturnValue('execute', true);
 
@@ -869,8 +869,8 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testDeleteWithJoins() {
-		$model =& new Post();
-		$mockDbo =& new QueryMockDboMysql($this);
+		$model = new Post();
+		$mockDbo = new QueryMockDboMysql($this);
 		$mockDbo->expectAt(0, 'execute', array(new PatternExpectation('/LEFT JOIN `authors`/')));
 		$mockDbo->setReturnValue('execute', true);
 
@@ -883,8 +883,8 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testDeleteWithJoinsAndMultipleConditions() {
-		$model =& new Post();
-		$mockDbo =& new QueryMockDboMysql($this);
+		$model = new Post();
+		$mockDbo = new QueryMockDboMysql($this);
 		$mockDbo->expectAt(0, 'execute', array(new PatternExpectation('/LEFT JOIN `authors`/')));
 		$mockDbo->expectAt(1, 'execute', array(new PatternExpectation('/LEFT JOIN `authors`/')));
 		$mockDbo->setReturnValue('execute', true);

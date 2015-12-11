@@ -180,7 +180,7 @@ class CakeSchema extends Object {
 		}
 
 		if (class_exists($class)) {
-			$Schema =& new $class($options);
+			$Schema = new $class($options);
 			return $Schema;
 		}
 		$false = false;
@@ -384,7 +384,7 @@ class CakeSchema extends Object {
 		}
 		$out .= "}\n";
 
-		$File =& new File($path . DS . $file, true);
+		$File = new File($path . DS . $file, true);
 		$header = '$Id';
 		$content = "<?php \n/* {$name} schema generated on: " . date('Y-m-d H:i:s') . " : ". time() . "*/\n{$out}?>";
 		$content = $File->prepare($content);

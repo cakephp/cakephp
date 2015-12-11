@@ -132,8 +132,8 @@ class SchemaShellTest extends CakeTestCase {
  * @access public
  */
 	function startTest() {
-		$this->Dispatcher =& new TestSchemaShellMockShellDispatcher();
-		$this->Shell =& new MockSchemaShell($this->Dispatcher);
+		$this->Dispatcher = new TestSchemaShellMockShellDispatcher();
+		$this->Shell = new MockSchemaShell($this->Dispatcher);
 		$this->Shell->Dispatch =& $this->Dispatcher;
 	}
 
@@ -237,7 +237,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->startup();
 		$this->Shell->dump();
 
-		$sql =& new File(TMP . 'tests' . DS . 'i18n.sql');
+		$sql = new File(TMP . 'tests' . DS . 'i18n.sql');
 		$contents = $sql->read();
 		$this->assertPattern('/DROP TABLE/', $contents);
 		$this->assertPattern('/CREATE TABLE `i18n`/', $contents);
@@ -270,7 +270,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->expectOnce('_stop');
 		$this->Shell->dump();
 
-		$file =& new File(TMP . 'tests' . DS . 'dump_test.sql');
+		$file = new File(TMP . 'tests' . DS . 'dump_test.sql');
 		$contents = $file->read();
 
 		$this->assertPattern('/CREATE TABLE `acos`/', $contents);
@@ -291,7 +291,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->path = TMP;
 		$this->Shell->params['file'] = 'schema.php';
 		$this->Shell->args = array('snapshot');
-		$this->Shell->Schema =& new MockSchemaCakeSchema();
+		$this->Shell->Schema = new MockSchemaCakeSchema();
 		$this->Shell->Schema->setReturnValue('read', array('schema data'));
 		$this->Shell->Schema->setReturnValue('write', true);
 
@@ -313,7 +313,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->args = array();
 
 		$this->Shell->setReturnValue('in', 'q');
-		$this->Shell->Schema =& new MockSchemaCakeSchema();
+		$this->Shell->Schema = new MockSchemaCakeSchema();
 		$this->Shell->Schema->path = TMP;
 		$this->Shell->Schema->expectNever('read');
 
@@ -334,7 +334,7 @@ class SchemaShellTest extends CakeTestCase {
 
 		$this->Shell->setReturnValue('in', 'o');
 		$this->Shell->expectAt(1, 'out', array(new PatternExpectation('/Schema file:\s[a-z\.]+\sgenerated/')));
-		$this->Shell->Schema =& new MockSchemaCakeSchema();
+		$this->Shell->Schema = new MockSchemaCakeSchema();
 		$this->Shell->Schema->path = TMP;
 		$this->Shell->Schema->setReturnValue('read', array('schema data'));
 		$this->Shell->Schema->setReturnValue('write', true);
@@ -365,7 +365,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->Schema->path = TMP . 'tests' . DS;
 
 		$this->Shell->generate();
-		$file =& new File(TMP . 'tests' . DS . 'schema.php');
+		$file = new File(TMP . 'tests' . DS . 'schema.php');
 		$contents = $file->read();
 
 		$this->assertPattern('/class TestPluginSchema/', $contents);
@@ -400,7 +400,7 @@ class SchemaShellTest extends CakeTestCase {
 		$sources = $db->listSources();
 		$this->assertTrue(in_array($db->config['prefix'] . 'i18n', $sources));
 
-		$schema =& new i18nSchema();
+		$schema = new i18nSchema();
 		$db->execute($db->dropSchema($schema));
 	}
 
@@ -446,7 +446,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->setReturnValue('in', 'y');
 		$this->Shell->update();
 
-		$article =& new Model(array('name' => 'Article', 'ds' => 'test_suite'));
+		$article = new Model(array('name' => 'Article', 'ds' => 'test_suite'));
 		$fields = $article->schema();
 		$this->assertTrue(isset($fields['summary']));
 

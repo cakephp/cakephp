@@ -36,7 +36,7 @@ class FileLogTest extends CakeTestCase {
  */
 	function testLogFileWriting() {
 		@unlink(LOGS . 'error.log');
-		$log =& new FileLog();
+		$log = new FileLog();
 		$log->write('warning', 'Test warning');
 		$this->assertTrue(file_exists(LOGS . 'error.log'));
 
@@ -70,7 +70,7 @@ class FileLogTest extends CakeTestCase {
 		$path = TMP . 'tests' . DS;
 		@unlink($path . 'error.log');
 
-		$log =& new FileLog(compact('path'));
+		$log = new FileLog(compact('path'));
 		$log->write('warning', 'Test warning');
 		$this->assertTrue(file_exists($path . 'error.log'));
 		unlink($path . 'error.log');

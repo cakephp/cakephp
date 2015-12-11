@@ -48,7 +48,7 @@ class Configure extends Object {
 			if (!class_exists('Set')) {
 				require LIBS . 'set.php';
 			}
-			$instance[0] =& new Configure();
+			$instance[0] = new Configure();
 			$instance[0]->__loadBootstrap($boot);
 		}
 		return $instance[0];
@@ -987,7 +987,7 @@ class App extends Object {
 	function &getInstance() {
 		static $instance = array();
 		if (!$instance) {
-			$instance[0] =& new App();
+			$instance[0] = new App();
 			$instance[0]->__map = (array)Cache::read('file_map', '_cake_core_');
 		}
 		return $instance[0];
@@ -1034,7 +1034,7 @@ class App extends Object {
 				if (!class_exists('Folder')) {
 					require LIBS . 'folder.php';
 				}
-				$Folder =& new Folder();
+				$Folder = new Folder();
 				$ignorePaths = array('.svn', '.git', 'CVS', 'tests', 'templates', 'node_modules');
 				$directories = $Folder->tree($path, $ignorePaths, 'dir');
 				sort($directories);
@@ -1274,7 +1274,7 @@ class App extends Object {
 			require LIBS . 'folder.php';
 		}
 		$items = array();
-		$Folder =& new Folder($path);
+		$Folder = new Folder($path);
 		$contents = $Folder->read(false, true);
 
 		if (is_array($contents)) {

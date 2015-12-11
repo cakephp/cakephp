@@ -704,7 +704,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 			array('base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/')
 		));
 
-		$RequestHandler =& new NoStopRequestHandler();
+		$RequestHandler = new NoStopRequestHandler();
 
 		ob_start();
 		$RequestHandler->beforeRedirect(
@@ -721,8 +721,8 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @return void
  */
 	function testBeforeRedirectCallingHeader() {
-		$controller =& new RequestHandlerMockController();
-		$RequestHandler =& new NoStopRequestHandler();
+		$controller = new RequestHandlerMockController();
+		$RequestHandler = new NoStopRequestHandler();
 
 		$controller->expectOnce('header', array('HTTP/1.1 403 Forbidden'));
 

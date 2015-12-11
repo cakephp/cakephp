@@ -66,7 +66,7 @@ class CodeCoverageManagerTest extends CakeTestCase {
 		if ($this->skipIf(PHP_SAPI == 'cli', 'Is cli, cannot run this test %s')) {
 			return;
 		}
-		$reporter =& new CakeHtmlReporter(null, array('group' => false, 'app' => false, 'plugin' => false));
+		$reporter = new CakeHtmlReporter(null, array('group' => false, 'app' => false, 'plugin' => false));
 
 		CodeCoverageManager::init(substr(md5(microtime()), 0, 5), $reporter);
 		CodeCoverageManager::report(false);
@@ -86,7 +86,7 @@ class CodeCoverageManagerTest extends CakeTestCase {
 		if ($this->skipIf(PHP_SAPI == 'cli', 'Is cli, cannot run this test %s')) {
 			return;
 		}
-		$reporter =& new CakeHtmlReporter(null, array('group' => false, 'app' => false, 'plugin' => false));
+		$reporter = new CakeHtmlReporter(null, array('group' => false, 'app' => false, 'plugin' => false));
 		$path = LIBS;
 		if (strpos(LIBS, ROOT) === false) {
 			$path = ROOT.DS.LIBS;
