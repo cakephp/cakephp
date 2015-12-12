@@ -1390,9 +1390,9 @@ class Response
 
             $original = $preg = $domain;
             if (strpos($domain, '://') === false) {
-                $preg = ($requestIsSSL ? 'https://' : 'http://') . $domain;
+                $domain = ($requestIsSSL ? 'https://' : 'http://') . $domain;
             }
-            $preg = '@' . str_replace('*', '.*', $domain) . '@';
+            $preg = '@^' . str_replace('\*', '.*', preg_quote($domain, '@')) . '$@';
             $result[] = compact('original', 'preg');
         }
         return $result;
