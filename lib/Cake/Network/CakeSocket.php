@@ -137,6 +137,9 @@ class CakeSocket {
 		if (!empty($this->config['protocol'])) {
 			$scheme = $this->config['protocol'] . '://';
 		}
+		if (!empty($this->config['proxy'])) {
+			$scheme = 'tcp://';
+		}
 
 		$host = $this->config['host'];
 		if (isset($this->config['request']['uri']['host'])) {
