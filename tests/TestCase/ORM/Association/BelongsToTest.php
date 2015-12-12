@@ -198,7 +198,6 @@ class BelongsToTest extends TestCase
     public function testAttachToMultiPrimaryKey()
     {
         $this->company->primaryKey(['id', 'tenant_id']);
-        // $query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
         $config = [
             'foreignKey' => ['company_id', 'company_tenant_id'],
             'sourceTable' => $this->client,
