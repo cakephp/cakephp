@@ -15,9 +15,11 @@
 namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\TypeMap;
+use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -31,6 +33,12 @@ use Cake\TestSuite\TestCase;
  */
 class HasManyTest extends TestCase
 {
+    /**
+     * Fixtures
+     *
+     * @var array
+     */
+    public $fixtures = ['core.comments', 'core.articles', 'core.authors'];
 
     /**
      * Set up
@@ -49,10 +57,11 @@ class HasManyTest extends TestCase
                 ]
             ]
         ]);
+        $connection = ConnectionManager::get('test');
         $this->article = $this->getMock(
             'Cake\ORM\Table',
             ['find', 'deleteAll', 'delete'],
-            [['alias' => 'Articles', 'table' => 'articles']]
+            [['alias' => 'Articles', 'table' => 'articles', 'connection' => $connection]]
         );
         $this->article->schema([
             'id' => ['type' => 'integer'],
@@ -62,6 +71,7 @@ class HasManyTest extends TestCase
                 'primary' => ['type' => 'primary', 'columns' => ['id']]
             ]
         ]);
+
         $this->articlesTypeMap = new TypeMap([
             'Articles.id' => 'integer',
             'id' => 'integer',
@@ -130,8 +140,10 @@ class HasManyTest extends TestCase
     {
         $assoc = new HasMany('Test');
         $this->assertTrue($assoc->requiresKeys());
+
         $assoc->strategy(HasMany::STRATEGY_SUBQUERY);
         $this->assertFalse($assoc->requiresKeys());
+
         $assoc->strategy(HasMany::STRATEGY_SELECT);
         $this->assertTrue($assoc->requiresKeys());
     }
@@ -162,31 +174,32 @@ class HasManyTest extends TestCase
             'strategy' => 'select'
         ];
         $association = new HasMany('Articles', $config);
-        $keys = [1, 2, 3, 4];
-        $query = $this->getMock('Cake\ORM\Query', ['all'], [null, null]);
-        $this->article->expects($this->once())->method('find')->with('all')
+        $query = $this->article->query();
+        $this->article->method('find')
+            ->with('all')
             ->will($this->returnValue($query));
-        $results = [
-            ['id' => 1, 'title' => 'article 1', 'author_id' => 2],
-            ['id' => 2, 'title' => 'article 2', 'author_id' => 1]
-        ];
-        $query->expects($this->once())->method('all')
-            ->will($this->returnValue($results));
+        $keys = [1, 2, 3, 4];
 
         $callable = $association->eagerLoader(compact('keys', 'query'));
-        $row = ['Authors__id' => 1, 'username' => 'author 1'];
-        $result = $callable($row);
-        $row['Articles'] = [
-            ['id' => 2, 'title' => 'article 2', 'author_id' => 1]
-            ];
-        $this->assertEquals($row, $result);
+        $row = ['Authors__id' => 1];
 
-        $row = ['Authors__id' => 2, 'username' => 'author 2'];
         $result = $callable($row);
-        $row['Articles'] = [
-            ['id' => 1, 'title' => 'article 1', 'author_id' => 2]
-            ];
-        $this->assertEquals($row, $result);
+        $this->assertArrayHasKey('Articles', $result);
+        $this->assertEquals($row['Authors__id'], $result['Articles'][0]->author_id);
+        $this->assertEquals($row['Authors__id'], $result['Articles'][1]->author_id);
+
+        $row = ['Authors__id' => 2];
+        $result = $callable($row);
+        $this->assertArrayNotHasKey('Articles', $result);
+
+        $row = ['Authors__id' => 3];
+        $result = $callable($row);
+        $this->assertArrayHasKey('Articles', $result);
+        $this->assertEquals($row['Authors__id'], $result['Articles'][0]->author_id);
+
+        $row = ['Authors__id' => 4];
+        $result = $callable($row);
+        $this->assertArrayNotHasKey('Articles', $result);
     }
 
     /**
@@ -199,44 +212,28 @@ class HasManyTest extends TestCase
         $config = [
             'sourceTable' => $this->author,
             'targetTable' => $this->article,
-            'conditions' => ['Articles.is_active' => true],
+            'conditions' => ['Articles.published' => 'Y'],
             'sort' => ['id' => 'ASC'],
             'strategy' => 'select'
         ];
         $association = new HasMany('Articles', $config);
         $keys = [1, 2, 3, 4];
-        $query = $this->getMock(
-            'Cake\ORM\Query',
-            ['all', 'where', 'andWhere', 'order'],
-            [null, null]
-        );
-        $this->article->expects($this->once())->method('find')->with('all')
+
+        $query = $this->article->query();
+        $this->article->method('find')
+            ->with('all')
             ->will($this->returnValue($query));
-        $results = [
-            ['id' => 1, 'title' => 'article 1', 'author_id' => 2],
-            ['id' => 2, 'title' => 'article 2', 'author_id' => 1]
-        ];
-
-        $query->expects($this->once())->method('all')
-            ->will($this->returnValue($results));
-
-        $query->expects($this->at(0))->method('where')
-            ->with(['Articles.is_active' => true])
-            ->will($this->returnSelf());
-
-        $query->expects($this->at(1))->method('where')
-            ->with([])
-            ->will($this->returnSelf());
-
-        $query->expects($this->once())->method('andWhere')
-            ->with(['Articles.author_id IN' => $keys])
-            ->will($this->returnSelf());
-
-        $query->expects($this->once())->method('order')
-            ->with(['id' => 'ASC'])
-            ->will($this->returnSelf());
 
         $association->eagerLoader(compact('keys', 'query'));
+
+        $expected = new QueryExpression(
+            ['Articles.published' => 'Y', 'Articles.author_id IN' => $keys],
+            $this->articlesTypeMap
+        );
+        $this->assertEquals($expected, $query->clause('where'));
+
+        $expected = new OrderByExpression(['id' => 'ASC']);
+        $this->assertEquals($expected, $query->clause('order'));
     }
 
     /**
@@ -249,64 +246,47 @@ class HasManyTest extends TestCase
         $config = [
             'sourceTable' => $this->author,
             'targetTable' => $this->article,
-            'conditions' => ['Articles.is_active' => true],
+            'conditions' => ['Articles.published' => 'Y'],
             'sort' => ['id' => 'ASC'],
             'strategy' => 'select'
         ];
+        $this->article->hasMany('Comments');
+
         $association = new HasMany('Articles', $config);
         $keys = [1, 2, 3, 4];
-        $query = $this->getMock(
-            'Cake\ORM\Query',
-            ['all', 'where', 'andWhere', 'order', 'select', 'contain'],
-            [null, null]
-        );
-        $this->article->expects($this->once())->method('find')->with('all')
+        $query = $this->article->query();
+        $query->addDefaultTypes($this->article->Comments->source());
+
+        $this->article->method('find')
+            ->with('all')
             ->will($this->returnValue($query));
-        $results = [
-            ['id' => 1, 'title' => 'article 1', 'author_id' => 2],
-            ['id' => 2, 'title' => 'article 2', 'author_id' => 1]
-        ];
-
-        $query->expects($this->once())->method('all')
-            ->will($this->returnValue($results));
-
-        $query->expects($this->at(0))->method('where')
-            ->with(['Articles.is_active' => true])
-            ->will($this->returnSelf());
-
-        $query->expects($this->at(1))->method('where')
-            ->with(['Articles.id !=' => 3])
-            ->will($this->returnSelf());
-
-        $query->expects($this->once())->method('andWhere')
-            ->with(['Articles.author_id IN' => $keys])
-            ->will($this->returnSelf());
-
-        $query->expects($this->once())->method('order')
-            ->with(['title' => 'DESC'])
-            ->will($this->returnSelf());
-
-        $query->expects($this->once())->method('select')
-            ->with([
-                'Articles__title' => 'Articles.title',
-                'Articles__author_id' => 'Articles.author_id'
-            ])
-            ->will($this->returnSelf());
-
-        $query->expects($this->once())->method('contain')
-            ->with([
-                'Categories' => ['fields' => ['a', 'b']],
-            ])
-            ->will($this->returnSelf());
 
         $association->eagerLoader([
             'conditions' => ['Articles.id !=' => 3],
             'sort' => ['title' => 'DESC'],
             'fields' => ['title', 'author_id'],
-            'contain' => ['Categories' => ['fields' => ['a', 'b']]],
+            'contain' => ['Comments' => ['fields' => ['comment']]],
             'keys' => $keys,
             'query' => $query
         ]);
+        $expected = [
+            'Articles__title' => 'Articles.title',
+            'Articles__author_id' => 'Articles.author_id'
+        ];
+        $this->assertEquals($expected, $query->clause('select'));
+
+        $expected = new QueryExpression([
+                'Articles.published' => 'Y',
+                'Articles.id !=' => 3,
+                'Articles.author_id IN' => $keys
+            ],
+            $query->typeMap()
+        );
+        $this->assertEquals($expected, $query->clause('where'));
+
+        $expected = new OrderByExpression(['title' => 'DESC']);
+        $this->assertEquals($expected, $query->clause('order'));
+        $this->assertArrayHasKey('Comments', $query->contain());
     }
 
     /**
@@ -326,12 +306,9 @@ class HasManyTest extends TestCase
         ];
         $association = new HasMany('Articles', $config);
         $keys = [1, 2, 3, 4];
-        $query = $this->getMock(
-            'Cake\ORM\Query',
-            ['all'],
-            [null, null]
-        );
-        $this->article->expects($this->once())->method('find')->with('all')
+        $query = $this->article->query();
+        $this->article->method('find')
+            ->with('all')
             ->will($this->returnValue($query));
 
         $association->eagerLoader([
@@ -355,42 +332,38 @@ class HasManyTest extends TestCase
         ];
         $association = new HasMany('Articles', $config);
         $keys = [1, 2, 3, 4];
-        $query = $this->getMock(
-            'Cake\ORM\Query',
-            ['all', 'select', 'join', 'where'],
-            [null, null]
-        );
-        $this->article->expects($this->once())->method('find')->with('all')
+        $query = $this->article->query();
+        $this->article->method('find')
+            ->with('all')
             ->will($this->returnValue($query));
-        $results = [
-            ['id' => 1, 'title' => 'article 1', 'author_id' => 2],
-            ['id' => 2, 'title' => 'article 2', 'author_id' => 1]
-        ];
-
-        $query->expects($this->once())->method('all')
-            ->will($this->returnValue($results));
-
-        $query->expects($this->any())->method('select')
-            ->will($this->returnSelf());
-        $query->expects($this->at(2))->method('select')
-            ->with(['a', 'b'])
-            ->will($this->returnSelf());
-
-        $query->expects($this->at(3))->method('join')
-            ->with('foo')
-            ->will($this->returnSelf());
-
-        $query->expects($this->any())->method('where')
-            ->will($this->returnSelf());
-        $query->expects($this->at(4))->method('where')
-            ->with(['a' => 1])
-            ->will($this->returnSelf());
 
         $queryBuilder = function ($query) {
-            return $query->select(['a', 'b'])->join('foo')->where(['a' => 1]);
+            return $query->select(['author_id'])->join('comments')->where(['Comments.id' => 1]);
         };
-
         $association->eagerLoader(compact('keys', 'query', 'queryBuilder'));
+
+        $expected = [
+            'Articles__author_id' => 'Articles.author_id'
+        ];
+        $this->assertEquals($expected, $query->clause('select'));
+
+        $expected = [
+            [
+                'type' => 'INNER',
+                'alias' => null,
+                'table' => 'comments',
+                'conditions' => new QueryExpression([], $query->typeMap()),
+            ]
+        ];
+        $this->assertEquals($expected, $query->clause('join'));
+
+        $expected = new QueryExpression([
+                'Articles.author_id IN' => $keys,
+                'Comments.id' => 1,
+            ],
+            $query->typeMap()
+        );
+        $this->assertEquals($expected, $query->clause('where'));
     }
 
     /**
@@ -411,13 +384,15 @@ class HasManyTest extends TestCase
         $association = new HasMany('Articles', $config);
         $keys = [[1, 10], [2, 20], [3, 30], [4, 40]];
         $query = $this->getMock('Cake\ORM\Query', ['all', 'andWhere'], [null, null]);
-        $this->article->expects($this->once())->method('find')->with('all')
+        $this->article->method('find')
+            ->with('all')
             ->will($this->returnValue($query));
+
         $results = [
             ['id' => 1, 'title' => 'article 1', 'author_id' => 2, 'site_id' => 10],
             ['id' => 2, 'title' => 'article 2', 'author_id' => 1, 'site_id' => 20]
         ];
-        $query->expects($this->once())->method('all')
+        $query->method('all')
             ->will($this->returnValue($results));
 
         $tuple = new TupleComparison(
@@ -479,50 +454,24 @@ class HasManyTest extends TestCase
      */
     public function testCascadeDeleteCallbacks()
     {
+        $articles = TableRegistry::get('Articles');
         $config = [
             'dependent' => true,
             'sourceTable' => $this->author,
-            'targetTable' => $this->article,
-            'conditions' => ['Articles.is_active' => true],
+            'targetTable' => $articles,
+            'conditions' => ['Articles.published' => 'Y'],
             'cascadeCallbacks' => true,
         ];
         $association = new HasMany('Articles', $config);
 
-        $articleOne = new Entity(['id' => 2, 'title' => 'test']);
-        $articleTwo = new Entity(['id' => 3, 'title' => 'testing']);
-        $iterator = new \ArrayIterator([
-            $articleOne,
-            $articleTwo
-        ]);
+        $author = new Entity(['id' => 1, 'name' => 'mark']);
+        $this->assertTrue($association->cascadeDelete($author));
 
-        $query = $this->getMock('\Cake\ORM\Query', [], [], '', false);
-        $query->expects($this->at(0))
-            ->method('where')
-            ->with(['Articles.is_active' => true])
-            ->will($this->returnSelf());
-        $query->expects($this->at(1))
-            ->method('where')
-            ->with(['author_id' => 1])
-            ->will($this->returnSelf());
-        $query->expects($this->any())
-            ->method('getIterator')
-            ->will($this->returnValue($iterator));
-        $query->expects($this->never())
-            ->method('bufferResults');
+        $query = $articles->query()->where(['author_id' => 1]);
+        $this->assertEquals(0, $query->count(), 'Cleared related rows');
 
-        $this->article->expects($this->once())
-            ->method('find')
-            ->will($this->returnValue($query));
-
-        $this->article->expects($this->at(1))
-            ->method('delete')
-            ->with($articleOne, []);
-        $this->article->expects($this->at(2))
-            ->method('delete')
-            ->with($articleTwo, []);
-
-        $entity = new Entity(['id' => 1, 'name' => 'mark']);
-        $this->assertTrue($association->cascadeDelete($entity));
+        $query = $articles->query()->where(['author_id' => 3]);
+        $this->assertEquals(1, $query->count(), 'other records left behind');
     }
 
     /**
