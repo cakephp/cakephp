@@ -2227,7 +2227,11 @@ class ModelValidationTest extends BaseModelTest {
  * @return void
  */
 	public function testValidatorTypehintException() {
-		new ModelValidator('asdasds');
+		try {
+			new ModelValidator('asdasds');
+		} catch (Throwable $t) {
+			throw new PHPUnit_Framework_Error($t);
+		}
 	}
 
 /**

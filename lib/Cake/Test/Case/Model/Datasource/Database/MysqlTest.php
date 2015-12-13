@@ -2912,7 +2912,11 @@ SQL;
  * @return void
  */
 	public function testDropSchemaNoSchema() {
-		$this->Dbo->dropSchema(null);
+		try {
+			$this->Dbo->dropSchema(null);
+		} catch (Throwable $t) {
+			throw new PHPUnit_Framework_Error($t);
+		}
 	}
 
 /**

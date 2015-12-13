@@ -51,9 +51,11 @@ class ControllerAuthorizeTest extends CakeTestCase {
  * @return void
  */
 	public function testControllerTypeError() {
-		$this->skipIf(version_compare(PHP_VERSION, '7.0', '<='), 'PHP Type Error in PHP7+');
-
-		$this->auth->controller(new StdClass());
+		try {
+			$this->auth->controller(new StdClass());
+		} catch (Throwable $t) {
+			throw new PHPUnit_Framework_Error($t);
+		}
 	}
 
 /**

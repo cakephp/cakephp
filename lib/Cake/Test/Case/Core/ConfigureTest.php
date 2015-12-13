@@ -454,7 +454,12 @@ class ConfigureTest extends CakeTestCase {
  */
 	public function testReaderExceptionOnIncorrectClass() {
 		$reader = new StdClass();
-		Configure::config('test', $reader);
+
+		try {
+			Configure::config('test', $reader);
+		} catch (Throwable $t) {
+			throw new PHPUnit_Framework_Error($t);
+		}
 	}
 
 /**
