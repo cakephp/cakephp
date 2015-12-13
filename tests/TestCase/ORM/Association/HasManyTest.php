@@ -18,6 +18,7 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
+use Cake\Database\IdentifierQuoter;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Association\HasMany;
@@ -80,6 +81,7 @@ class HasManyTest extends TestCase
             'Articles.author_id' => 'integer',
             'author_id' => 'integer',
         ]);
+        $this->autoQuote = $connection->driver()->autoQuoting();
     }
 
     /**
@@ -230,10 +232,10 @@ class HasManyTest extends TestCase
             ['Articles.published' => 'Y', 'Articles.author_id IN' => $keys],
             $this->articlesTypeMap
         );
-        $this->assertEquals($expected, $query->clause('where'));
+        $this->assertWhereClause($expected, $query);
 
         $expected = new OrderByExpression(['id' => 'ASC']);
-        $this->assertEquals($expected, $query->clause('order'));
+        $this->assertOrderClause($expected, $query);
     }
 
     /**
@@ -273,7 +275,7 @@ class HasManyTest extends TestCase
             'Articles__title' => 'Articles.title',
             'Articles__author_id' => 'Articles.author_id'
         ];
-        $this->assertEquals($expected, $query->clause('select'));
+        $this->assertSelectClause($expected, $query);
 
         $expected = new QueryExpression([
                 'Articles.published' => 'Y',
@@ -282,10 +284,10 @@ class HasManyTest extends TestCase
             ],
             $query->typeMap()
         );
-        $this->assertEquals($expected, $query->clause('where'));
+        $this->assertWhereClause($expected, $query);
 
         $expected = new OrderByExpression(['title' => 'DESC']);
-        $this->assertEquals($expected, $query->clause('order'));
+        $this->assertOrderClause($expected, $query);
         $this->assertArrayHasKey('Comments', $query->contain());
     }
 
@@ -345,7 +347,7 @@ class HasManyTest extends TestCase
         $expected = [
             'Articles__author_id' => 'Articles.author_id'
         ];
-        $this->assertEquals($expected, $query->clause('select'));
+        $this->assertSelectClause($expected, $query);
 
         $expected = [
             [
@@ -355,7 +357,7 @@ class HasManyTest extends TestCase
                 'conditions' => new QueryExpression([], $query->typeMap()),
             ]
         ];
-        $this->assertEquals($expected, $query->clause('join'));
+        $this->assertJoin($expected, $query);
 
         $expected = new QueryExpression([
                 'Articles.author_id IN' => $keys,
@@ -363,7 +365,7 @@ class HasManyTest extends TestCase
             ],
             $query->typeMap()
         );
-        $this->assertEquals($expected, $query->clause('where'));
+        $this->assertWhereClause($expected, $query);
     }
 
     /**
@@ -529,5 +531,78 @@ class HasManyTest extends TestCase
         ];
         $association = new HasMany('Contacts.Addresses', $config);
         $this->assertEquals('addresses', $association->property());
+    }
+
+    /**
+     * Assertion method for order by clause contents.
+     *
+     * @param array $expected The expected join clause.
+     * @param \Cake\ORM\Query $query The query to check.
+     * @return void
+     */
+    protected function assertJoin($expected, $query)
+    {
+        if ($this->autoQuote) {
+            $driver = $query->connection()->driver();
+            $quoter = new IdentifierQuoter($driver);
+            foreach ($expected as &$join) {
+                $join['table'] = $driver->quoteIdentifier($join['table']);
+                if ($join['conditions']) {
+                    $quoter->quoteExpression($join['conditions']);
+                }
+            }
+        }
+        $this->assertEquals($expected, array_values($query->clause('join')));
+    }
+
+    /**
+     * Assertion method for where clause contents.
+     *
+     * @param \Cake\Database\QueryExpression $expected The expected where clause.
+     * @param \Cake\ORM\Query $query The query to check.
+     * @return void
+     */
+    protected function assertWhereClause($expected, $query)
+    {
+        if ($this->autoQuote) {
+            $quoter = new IdentifierQuoter($query->connection()->driver());
+            $expected->traverse([$quoter, 'quoteExpression']);
+        }
+        $this->assertEquals($expected, $query->clause('where'));
+    }
+
+    /**
+     * Assertion method for order by clause contents.
+     *
+     * @param \Cake\Database\QueryExpression $expected The expected where clause.
+     * @param \Cake\ORM\Query $query The query to check.
+     * @return void
+     */
+    protected function assertOrderClause($expected, $query)
+    {
+        if ($this->autoQuote) {
+            $quoter = new IdentifierQuoter($query->connection()->driver());
+            $quoter->quoteExpression($expected);
+        }
+        $this->assertEquals($expected, $query->clause('order'));
+    }
+
+    /**
+     * Assertion method for select clause contents.
+     *
+     * @param array $expected Array of expected fields.
+     * @param \Cake\ORM\Query $query The query to check.
+     * @return void
+     */
+    protected function assertSelectClause($expected, $query)
+    {
+        if ($this->autoQuote) {
+            $connection = $query->connection();
+            foreach ($expected as $key => $value) {
+                $expected[$connection->quoteIdentifier($key)] = $connection->quoteIdentifier($value);
+                unset($expected[$key]);
+            }
+        }
+        $this->assertEquals($expected, $query->clause('select'));
     }
 }
