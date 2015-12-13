@@ -2909,6 +2909,7 @@ SQL;
  * testDropSchemaNoSchema method
  *
  * @expectedException PHPUnit_Framework_Error
+ * @throws PHPUnit_Framework_Error
  * @return void
  */
 	public function testDropSchemaNoSchema() {

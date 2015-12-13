@@ -48,6 +48,7 @@ class ControllerAuthorizeTest extends CakeTestCase {
  * testControllerTypeError
  *
  * @expectedException PHPUnit_Framework_Error
+ * @throws PHPUnit_Framework_Error
  * @return void
  */
 	public function testControllerTypeError() {
