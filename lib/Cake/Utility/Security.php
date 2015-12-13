@@ -187,7 +187,7 @@ class Security {
 			return '';
 		}
 
-		srand(Configure::read('Security.cipherSeed'));
+		srand((int)Configure::read('Security.cipherSeed'));
 		$out = '';
 		$keyLength = strlen($key);
 		for ($i = 0, $textLength = strlen($text); $i < $textLength; $i++) {
