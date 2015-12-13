@@ -98,6 +98,39 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test multiple actions using CSRF tokens don't fail
+     *
+     * @return void
+     */
+    public function testEnableCsrfMultipleRequests()
+    {
+        $this->enableCsrfToken();
+        $first = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
+        $second = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'Second post']);
+        $this->assertSame($first->cookies['csrfToken'], $second->data['_csrfToken'], 'Csrf token should match cookie');
+        $this->assertSame(
+            $first->data['_csrfToken'],
+            $second->data['_csrfToken'],
+            'Tokens should be consistent per test method'
+        );
+    }
+
+    /**
+     * Test pre-determined CSRF tokens.
+     *
+     * @return void
+     */
+    public function testEnableCsrfPredeterminedCookie()
+    {
+        $this->enableCsrfToken();
+        $value = 'I am a teapot';
+        $this->cookie('csrfToken', $value);
+        $request = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
+        $this->assertSame($value, $request->cookies['csrfToken'], 'Csrf token should match cookie');
+        $this->assertSame($value, $request->data['_csrfToken'], 'Tokens should match');
+    }
+
+    /**
      * Test building a request, with query parameters
      *
      * @return void

@@ -430,12 +430,11 @@ abstract class IntegrationTestCase extends TestCase
         }
 
         if ($this->_csrfToken === true) {
-            $csrfToken = Text::uuid();
-            if (!isset($data['_csrfToken'])) {
-                $data['_csrfToken'] = $csrfToken;
-            }
             if (!isset($this->_cookie['csrfToken'])) {
-                $this->_cookie['csrfToken'] = $csrfToken;
+                $this->_cookie['csrfToken'] = Text::uuid();
+            }
+            if (!isset($data['_csrfToken'])) {
+                $data['_csrfToken'] = $this->_cookie['csrfToken'];
             }
         }
         return $data;
