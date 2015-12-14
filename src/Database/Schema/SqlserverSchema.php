@@ -79,23 +79,7 @@ class SqlserverSchema extends BaseSchema
             INNER JOIN sys.[schemas] S ON S.[schema_id] = T.[schema_id]
             INNER JOIN sys.[all_columns] AC ON T.[object_id] = AC.[object_id]
             INNER JOIN sys.[types] TY ON TY.[user_type_id] = AC.[user_type_id]
-            WHERE T.[name] = ? AND S.[name] = 'dbo'
-            UNION
-            SELECT DISTINCT
-            AC.column_id AS [column_id],
-            AC.name AS [name],
-            TY.name AS [type],
-            AC.max_length AS [char_length],
-            AC.precision AS [precision],
-            AC.scale AS [scale],
-            AC.is_identity AS [autoincrement],
-            AC.is_nullable AS [null],
-            OBJECT_DEFINITION(AC.default_object_id) AS [default]
-            FROM sys.[objects] T
-            INNER JOIN sys.[schemas] S ON S.[schema_id] = T.[schema_id]
-            INNER JOIN sys.[all_columns] AC ON T.[object_id] = AC.[object_id]
-            INNER JOIN sys.[types] TY ON TY.[user_type_id] = AC.[user_type_id]
-            WHERE T.[name] = ? AND S.[name] = 'dbo'";
+            WHERE T.[name] = ? AND S.[name] = ?";
 
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
         return [$sql, [$tableName, $schema]];
@@ -185,10 +169,10 @@ class SqlserverSchema extends BaseSchema
         $field = $this->_convertColumn(
                 $row['type'], $row['char_length'], $row['precision'], $row['scale']
         );
-        if (!empty($row['default'])) {
+        if ( ! empty($row['default'])) {
             $row['default'] = trim($row['default'], '()');
         }
-        if (!empty($row['autoincrement'])) {
+        if ( ! empty($row['autoincrement'])) {
             $field['autoIncrement'] = true;
         }
         if ($field['type'] === 'boolean') {
@@ -247,7 +231,7 @@ class SqlserverSchema extends BaseSchema
         }
 
         $columns = [$row['column_name']];
-        if (!empty($existing)) {
+        if ( ! empty($existing)) {
             $columns = array_merge($existing['columns'], $columns);
         }
 
@@ -364,11 +348,11 @@ class SqlserverSchema extends BaseSchema
         if ($data['type'] === 'string') {
             $type = ' NVARCHAR';
 
-            if (!empty($data['fixed'])) {
+            if ( ! empty($data['fixed'])) {
                 $type = ' NCHAR';
             }
 
-            if (!isset($data['length'])) {
+            if ( ! isset($data['length'])) {
                 $data['length'] = 255;
             }
 
