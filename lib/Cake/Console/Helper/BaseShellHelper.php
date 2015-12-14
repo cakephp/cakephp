@@ -13,7 +13,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-abstract class ShellHelper {
+abstract class BaseShellHelper {
 
 /**
  * Default config for this helper.

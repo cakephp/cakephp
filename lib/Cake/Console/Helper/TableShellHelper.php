@@ -12,13 +12,13 @@
  * @since         2.8
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-App::uses("ShellHelper", "Console/Helper");
+App::uses("BaseShellHelper", "Console/Helper");
 
 /**
  * Create a visually pleasing ASCII art table
  * from 2 dimensional array data.
  */
-class TableShellHelper extends ShellHelper {
+class TableShellHelper extends BaseShellHelper {
 
 /**
  * Default config for this helper.

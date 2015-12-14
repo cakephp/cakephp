@@ -12,12 +12,12 @@
  * @since         2.8
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-App::uses("ShellHelper", "Console/Helper");
+App::uses("BaseShellHelper", "Console/Helper");
 
 /**
  * Create a progress bar using a supplied callback.
  */
-class ProgressShellHelper extends ShellHelper {
+class ProgressShellHelper extends BaseShellHelper {
 
 /**
  * The current progress.

@@ -789,7 +789,7 @@ class Shell extends Object {
  * Load given shell helper class
  *
  * @param string $name Name of the helper class. Supports plugin syntax.
- * @return ShellHelper Instance of helper class
+ * @return BaseShellHelper Instance of helper class
  * @throws RuntimeException If invalid class name is provided
  */
 	public function helper($name) {
