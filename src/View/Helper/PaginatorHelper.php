@@ -640,9 +640,11 @@ class PaginatorHelper extends Helper
      * - `modulus` How many numbers to include on either side of the current page, defaults to 8.
      *    Set to `false` to disable and to show all numbers.
      * - `first` Whether you want first links generated, set to an integer to define the number of 'first'
-     *    links to generate.
+     *    links to generate. If a string is set a link to the first page will be generated with the value
+     *    as the title.
      * - `last` Whether you want last links generated, set to an integer to define the number of 'last'
-     *    links to generate.
+     *    links to generate. If a string is set a link to the last page will be generated with the value
+     *    as the title.
      * - `templates` An array of templates, or template file name containing the templates you'd like to
      *    use when generating the numbers. The helper's original templates will be restored once
      *    numbers() is done.
