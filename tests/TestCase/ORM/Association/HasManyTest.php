@@ -340,7 +340,7 @@ class HasManyTest extends TestCase
             ->will($this->returnValue($query));
 
         $queryBuilder = function ($query) {
-            return $query->select(['author_id'])->join('comments')->where(['Comments.id' => 1]);
+            return $query->select(['author_id'])->join('comments')->where(['comments.id' => 1]);
         };
         $association->eagerLoader(compact('keys', 'query', 'queryBuilder'));
 
@@ -361,7 +361,7 @@ class HasManyTest extends TestCase
 
         $expected = new QueryExpression([
                 'Articles.author_id IN' => $keys,
-                'Comments.id' => 1,
+                'comments.id' => 1,
             ],
             $query->typeMap()
         );
