@@ -47,15 +47,12 @@ class SqlserverSchema extends BaseSchema
      */
     public function listTablesSql($config)
     {
+
         $sql = "SELECT TABLE_NAME
                 FROM INFORMATION_SCHEMA.TABLES
-                WHERE TABLE_SCHEMA = 'dbo'
-                    AND TABLE_TYPE = 'BASE TABLE'
-                UNION
-                SELECT TABLE_NAME
-                FROM INFORMATION_SCHEMA.VIEWS
-                WHERE TABLE_SCHEMA = 'dbo'
-                ORDER BY TABLE_NAME";
+                WHERE TABLE_SCHEMA = ?
+                    AND (TABLE_TYPE = 'BASE TABLE' OR TABLE_TYPE = 'VIEW') 
+                    ORDER BY TABLE_NAME, TABLE_TYPE";
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
         return [$sql, [$schema]];
     }
@@ -205,7 +202,6 @@ class SqlserverSchema extends BaseSchema
             INNER JOIN sys.[all_columns] AC ON T.[object_id] = AC.[object_id] AND IC.[column_id] = AC.[column_id]
             WHERE T.[is_ms_shipped] = 0 AND I.[type_desc] <> 'HEAP' AND T.[name] = ? AND S.[name] = ?
             ORDER BY I.[index_id], IC.[index_column_id]";
-
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
         return [$sql, [$tableName, $schema]];
     }
