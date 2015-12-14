@@ -800,10 +800,11 @@ class PaginatorHelper extends Helper
     protected function _firstNumber($ellipsis, $params, $start, $options)
     {
         $out = '';
+        $first = is_int($options['first']) ? $options['first'] : 0;
         if ($options['first'] && $start > 1) {
-            $offset = ($start <= (int)$options['first']) ? $start - 1 : $options['first'];
+            $offset = ($start <= $first) ? $start - 1 : $options['first'];
             $out .= $this->first($offset, $options);
-            if ($offset < $start - 1) {
+            if ($first < $start - 1) {
                 $out .= $ellipsis;
             }
         }
