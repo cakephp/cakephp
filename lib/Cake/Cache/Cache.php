@@ -278,7 +278,7 @@ class Cache {
  * @return void
  */
 	public static function gc($config = 'default', $expires = null) {
-		return (bool)static::$_engines[$config]->gc($expires);
+		return static::$_engines[$config]->gc($expires);
 	}
 
 /**
