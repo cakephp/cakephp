@@ -793,11 +793,11 @@ class Shell extends Object {
  * @throws RuntimeException If invalid class name is provided
  */
 	public function helper($name) {
-		list($plugin, $helperClassName) = pluginSplit($name, true);
-		$helperClassName = Inflector::camelize($name) . "ShellHelper";
 		if (isset($this->_helpers[$name])) {
 			return $this->_helpers[$name];
 		}
+		list($plugin, $helperClassName) = pluginSplit($name, true);
+		$helperClassName = Inflector::camelize($name) . "ShellHelper";
 		App::uses($helperClassName, $plugin . "Console/Helper");
 		if (!class_exists($helperClassName)) {
 			throw new RuntimeException("Class " . $helperClassName . " not found");
