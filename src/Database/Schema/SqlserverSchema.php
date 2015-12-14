@@ -45,15 +45,12 @@ class SqlserverSchema extends BaseSchema {
      * {@inheritDoc}
      */
     public function listTablesSql($config) {
+      
         $sql = "SELECT TABLE_NAME
                 FROM INFORMATION_SCHEMA.TABLES
-                WHERE TABLE_SCHEMA = 'dbo'
-                    AND TABLE_TYPE = 'BASE TABLE'
-                UNION
-                SELECT TABLE_NAME
-                FROM INFORMATION_SCHEMA.VIEWS
-                WHERE TABLE_SCHEMA = 'dbo'
-                ORDER BY TABLE_NAME";
+                WHERE TABLE_SCHEMA = ?
+                    AND (TABLE_TYPE = 'BASE TABLE' OR TABLE_TYPE = 'VIEW') 
+                    ORDER BY TABLE_NAME, TABLE_TYPE";
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
         return [$sql, [$schema]];
     }
