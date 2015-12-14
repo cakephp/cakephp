@@ -15,6 +15,7 @@
 namespace Cake\Datasource;
 
 use Cake\Collection\Collection;
+use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use Traversable;
@@ -273,6 +274,16 @@ trait EntityTrait
     /**
      * Returns the value of a property by name
      *
+     * Supports simple dotted paths for traversing deep into an Entity's
+     * properties.
+     *
+     * ### Example:
+     *
+     * ```
+     * $entity = new Entity(['sizes' => ['med' => 5, 'lrg' => 15]]);
+     * $entity->get('sizes.med'); // 5
+     * ```
+     *
      * @param string $property the name of the property to retrieve
      * @return mixed
      * @throws \InvalidArgumentException if an empty property name is passed
@@ -281,6 +292,23 @@ trait EntityTrait
     {
         if (!strlen((string)$property)) {
             throw new InvalidArgumentException('Cannot get an empty property');
+        }
+
+        $nested = false;
+        if (strpos($property, '.') > 0 && !array_key_exists($property, $this->_properties)) {
+            list($property, $nested) = explode('.', $property, 2);
+        }
+
+        if ($nested) {
+            if ($this->_properties[$property] instanceof EntityInterface) {
+                $result = $this->_properties[$property]->get($nested);
+                return $result;
+            } elseif (is_array($this->_properties[$property])
+                || ($this->_properties[$property] instanceof \ArrayAccess)
+            ) {
+                $value = Hash::get($this->_properties[$property], $nested);
+                return $value; //@TODO: Or remove this line and let getters engage below?
+            }
         }
 
         $value = null;
@@ -294,6 +322,7 @@ trait EntityTrait
             $result = $this->{$method}($value);
             return $result;
         }
+
         return $value;
     }
 

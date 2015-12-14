@@ -87,6 +87,7 @@ class EntityTest extends TestCase
         $this->assertSame('', $entity->getOriginal('empty'));
 
         $entity->set(['false' => 'y', 'null' => 'y', 'zero' => 'y', 'empty' => '']);
+        $entity->nested->set('deep', 256);
         $this->assertNull($entity->getOriginal('null'));
         $this->assertFalse($entity->getOriginal('false'));
         $this->assertSame(0, $entity->getOriginal('zero'));
@@ -333,6 +334,37 @@ class EntityTest extends TestCase
     }
 
     /**
+     * Tests get with nested paths and getters.
+     *
+     * @return void
+     */
+    public function testNestedGetCustomGetters()
+    {
+        $top = $this->getMock('\Cake\ORM\Entity', ['_getNested']);
+        $top->expects($this->any())
+            ->method('_getNested')
+            ->will($this->returnCallback(function ($nested) {
+                $nested->extra .= 'added';
+                return $nested;
+            }));
+
+        $nested = $this->getMock('\Cake\ORM\Entity', ['_getDeep']);
+        $nested->expects($this->any())
+            ->method('_getDeep')
+            ->will($this->returnCallback(function ($deep) {
+                return $deep . ' modified';
+            }));
+        $top->set('nested', $nested);
+        $this->assertNull($nested->extra);
+        $this->assertSame($nested, $top->get('nested')); // 1
+
+        $nested->set('deep', 'story');
+        $this->assertEquals('story modified', $top->get('nested.deep'));
+        $this->assertEquals('story modified', $nested->get('deep'));
+        $this->assertEquals('added', $nested->extra);
+    }
+
+    /**
      * Tests that the get cache is cleared by unsetProperty.
      *
      * @return void
@@ -366,6 +398,39 @@ class EntityTest extends TestCase
         $entity->virtualProperties(['ListIdName']);
         $this->assertSame('A name', $entity->list_id_name, 'underscored virtual field should be accessible');
         $this->assertSame('A name', $entity->listIdName, 'Camelbacked virtual field should be accessible');
+    }
+
+    /**
+     * Tests that the get can retrieve dotted notation paths via Hash::get.
+     *
+     * @return void
+     */
+    public function testGetDotted()
+    {
+        $entity = $this->getMock('\Cake\ORM\Entity', ['_getArtifacts', '_getLocations']);
+        $entity->expects($this->any())->method('_getArtifacts')
+            ->will($this->returnCallback(function ($artifacts) {
+                $artifacts['crusade'] = 'cup';
+                return $artifacts;
+            }));
+        $entity->expects($this->any())->method('_getLocations')
+            ->will($this->returnCallback(function ($locations) {
+                $locations['crusade'] = 'venice';
+                return $locations;
+            }));
+        $entity->set('artifacts', new Entity(['raiders' => 'ark', 'temple' => 'stones']));
+        $entity->set('locations', ['raiders' => 'desert', 'temple' => 'jungle']);
+
+        $this->assertEquals('ark', $entity->artifacts->get('raiders'));
+        $this->assertEquals('cup', $entity->get('artifacts.crusade'));
+        $this->assertNull($entity->get('artifacts.kingdom'));
+
+        $this->assertEquals('desert', $entity->locations['raiders']);
+        $this->assertEquals('jungle', $entity->get('locations.temple'));
+        $this->assertNull($entity->get('locations.kingdom'));
+
+        $entity = new Entity(['a' => new \ArrayObject(['b' => 'fizz/buzz'])]); // Object that implements ArrayAccess
+        $this->assertEquals('fizz/buzz', $entity->get('a.b'));
     }
 
     /**
@@ -493,6 +558,14 @@ class EntityTest extends TestCase
         $entity->expects($this->once())->method('_getThings')
             ->will($this->returnValue(0));
         $this->assertTrue($entity->has('things'));
+
+        $child = new Entity(['name' => 'child']);
+        $parent = new Entity(['name' => 'parent', 'child' => $child]);
+        $this->assertTrue($parent->has('child'));
+        $this->assertTrue($parent->has('child.name'));
+        $this->assertFalse($parent->has('child.notThere'));
+        $this->assertTrue($parent->has(['name', 'child.name']));
+        $this->assertFalse($parent->has(['name', 'child.missing']));
     }
 
     /**
