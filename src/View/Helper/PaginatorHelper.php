@@ -820,9 +820,10 @@ class PaginatorHelper extends Helper
     protected function _lastNumber($ellipsis, $params, $end, $options)
     {
         $out = '';
+        $last = is_int($options['last']) ? $options['last'] : 0;
         if ($options['last'] && $end < $params['pageCount']) {
-            $offset = ($params['pageCount'] < $end + (int)$options['last']) ? $params['pageCount'] - $end : $options['last'];
-            if ($offset <= $options['last'] && $params['pageCount'] - $end > $offset) {
+            $offset = ($params['pageCount'] < $end + $last) ? $params['pageCount'] - $end : $options['last'];
+            if ($offset <= $options['last'] && $params['pageCount'] - $end > $last) {
                 $out .= $ellipsis;
             }
             $out .= $this->last($offset, $options);
