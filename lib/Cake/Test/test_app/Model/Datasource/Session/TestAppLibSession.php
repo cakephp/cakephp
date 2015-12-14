@@ -12,6 +12,7 @@ class TestAppLibSession implements CakeSessionHandlerInterface {
 	}
 
 	public function close() {
+		return true;
 	}
 
 	public function read($id) {
@@ -21,9 +22,12 @@ class TestAppLibSession implements CakeSessionHandlerInterface {
 	}
 
 	public function destroy($id) {
+		return true;
 	}
 
 	public function gc($expires = null) {
+		return true;
 	}
+
 
 }

@@ -83,7 +83,7 @@ class CacheSession implements CakeSessionHandlerInterface {
  * @return bool Success
  */
 	public function gc($expires = null) {
-		return Cache::gc(Configure::read('Session.handler.config'), $expires);
+		return (bool)Cache::gc(Configure::read('Session.handler.config'), $expires);
 	}
 
 }

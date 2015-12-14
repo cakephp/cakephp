@@ -278,7 +278,7 @@ class Cache {
  * @return void
  */
 	public static function gc($config = 'default', $expires = null) {
-		static::$_engines[$config]->gc($expires);
+		return (bool)static::$_engines[$config]->gc($expires);
 	}
 
 /**
@@ -452,7 +452,7 @@ class Cache {
 
 		$success = static::$_engines[$config]->delete($settings['prefix'] . $key);
 		static::set(null, $config);
-		return $success;
+		return (bool)$success;
 	}
 
 /**
