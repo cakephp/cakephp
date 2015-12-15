@@ -30,7 +30,6 @@ use Cake\TestSuite\TestCase;
  */
 class HasOneTest extends TestCase
 {
-
     /**
      * Set up
      *

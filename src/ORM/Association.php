@@ -771,13 +771,11 @@ abstract class Association
         $loader = $surrogate->eagerLoader();
         $contain = $loader->contain();
         $matching = $loader->matching();
-        $target = $this->_targetTable;
 
         if (!$contain && !$matching) {
             return;
         }
 
-        $loader->attachAssociations($query, $target, $options['includeFields']);
         $newContain = [];
         foreach ($contain as $alias => $value) {
             $newContain[$options['aliasPath'] . '.' . $alias] = $value;

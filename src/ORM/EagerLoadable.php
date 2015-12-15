@@ -176,7 +176,7 @@ class EagerLoadable
      * If called with no arguments it returns the current value.
      *
      * @param bool|null $possible The value to set.
-     * @return bool|null
+     * @return bool
      */
     public function canBeJoined($possible = null)
     {
@@ -194,7 +194,7 @@ class EagerLoadable
      * value.
      *
      * @param array|null $config The value to set.
-     * @return array|null
+     * @return array
      */
     public function config(array $config = null)
     {

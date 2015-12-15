@@ -102,6 +102,46 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
+     * Test that association proxy find() applies joins when conditions are involved.
+     *
+     * @return void
+     */
+    public function testBelongsToManyAssociationProxyFindWithConditions()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags', [
+            'foreignKey' => 'article_id',
+            'associationForeignKey' => 'tag_id',
+            'conditions' => ['SpecialTags.highlighted' => true],
+            'through' => 'SpecialTags'
+        ]);
+        $query = $table->Tags->find();
+        $result = $query->toArray();
+        $this->assertCount(1, $result);
+    }
+
+    /**
+     * Test that association proxy find() with matching resolves joins correctly
+     *
+     * @return void
+     */
+    public function testBelongsToManyAssociationProxyFindWithConditionsMatching()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags', [
+            'foreignKey' => 'article_id',
+            'associationForeignKey' => 'tag_id',
+            'conditions' => ['SpecialTags.highlighted' => true],
+            'through' => 'SpecialTags'
+        ]);
+        $query = $table->Tags->find()->matching('Articles', function ($query) {
+            return $query->where(['Articles.id' => 1]);
+        });
+        // The inner join on special_tags excludes the results.
+        $this->assertEquals(0, $query->count());
+    }
+
+    /**
      * Tests that duplicate aliases in contain() can be used, even when they would
      * naturally be attached to the query instead of eagerly loaded. What should
      * happen here is that One of the duplicates will be changed to be loaded using
@@ -221,11 +261,11 @@ class QueryRegressionTest extends TestCase
         $articles->belongsToMany('Tags');
         $tags->belongsToMany('Articles');
 
-        $sub = $articles->Tags->find()->select(['id'])->matching('Articles', function ($q) {
+        $sub = $articles->Tags->find()->select(['Tags.id'])->matching('Articles', function ($q) {
             return $q->where(['Articles.id' => 1]);
         });
 
-        $query = $articles->Tags->find()->where(['id NOT IN' => $sub]);
+        $query = $articles->Tags->find()->where(['Tags.id NOT IN' => $sub]);
         $this->assertEquals(1, $query->count());
     }
 
@@ -944,6 +984,27 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
+     * Tests calling contain in a nested closure
+     *
+     * @see https://github.com/cakephp/cakephp/issues/7591
+     * @return void
+     */
+    public function testContainInNestedClosure()
+    {
+        $table = TableRegistry::get('Comments');
+        $table->belongsTo('Articles');
+        $table->Articles->belongsTo('Authors');
+        $table->Articles->Authors->belongsToMany('Tags');
+
+        $query = $table->find()->where(['Comments.id' => 5])->contain(['Articles' => function ($q) {
+            return $q->contain(['Authors' => function ($q) {
+                return $q->contain('Tags');
+            }]);
+        }]);
+        $this->assertCount(2, $query->first()->article->author->tags);
+    }
+
+    /**
      * Test that the typemaps used in function expressions
      * create the correct results.
      *
@@ -1136,5 +1197,30 @@ class QueryRegressionTest extends TestCase
             ->order(['score' => 'desc']);
         $result = $query->all();
         $this->assertCount(3, $result);
+    }
+
+    /**
+     * Tests that decorating the results does not result in a memory leak
+     *
+     * @return void
+     */
+    public function testFormatResultsMemory()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors');
+        $table->belongsToMany('Tags');
+        gc_collect_cycles();
+        $memory = memory_get_usage() / 1024 / 1024;
+        foreach (range(1, 3) as $time) {
+                $table->find()
+                ->contain(['Authors', 'Tags'])
+                ->formatResults(function ($results) {
+                    return $results;
+                })
+                ->all();
+        }
+        gc_collect_cycles();
+        $endMemory = memory_get_usage() / 1024 / 1024;
+        $this->assertWithinRange($endMemory, $memory, 1.25, 'Memory leak in ResultSet');
     }
 }

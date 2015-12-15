@@ -1489,6 +1489,22 @@ class ViewTest extends TestCase
     }
 
     /**
+     * Test resetting a block's content with reset.
+     *
+     * @return void
+     */
+    public function testBlockResetFunc()
+    {
+        $this->View->assign('test', 'Block content');
+        $result = $this->View->fetch('test', 'This should not be returned');
+        $this->assertSame('Block content', $result);
+
+        $this->View->reset('test');
+        $result = $this->View->fetch('test', 'This should not be returned');
+        $this->assertSame('', $result);
+    }
+
+    /**
      * Test checking a block's existance.
      *
      * @return void

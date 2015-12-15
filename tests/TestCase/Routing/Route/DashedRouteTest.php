@@ -192,4 +192,25 @@ class DashedRouteTest extends TestCase
         $this->assertEquals('searchIt', $result['action']);
         $this->assertEquals(['tv_shows'], $result['pass']);
     }
+
+    /**
+     * @return void
+     */
+    public function testMatchThenParse()
+    {
+        $route = new DashedRoute('/plugin/:controller/:action', [
+            'plugin' => 'Vendor/PluginName'
+        ]);
+        $url = $route->match([
+            'plugin' => 'Vendor/PluginName',
+            'controller' => 'ControllerName',
+            'action' => 'actionName'
+        ]);
+        $expected_url = '/plugin/controller-name/action-name';
+        $this->assertEquals($expected_url, $url);
+        $result = $route->parse($expected_url);
+        $this->assertEquals('ControllerName', $result['controller']);
+        $this->assertEquals('actionName', $result['action']);
+        $this->assertEquals('Vendor/PluginName', $result['plugin']);
+    }
 }

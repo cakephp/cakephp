@@ -3540,6 +3540,26 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test removeJoin().
+     *
+     * @return void
+     */
+    public function testRemoveJoin()
+    {
+        $query = new Query($this->connection);
+        $query->select(['id', 'title'])
+            ->from('articles')
+            ->join(['authors' => [
+                'type' => 'INNER',
+                'conditions' => ['articles.author_id = authors.id']
+            ]]);
+        $this->assertArrayHasKey('authors', $query->join());
+
+        $this->assertSame($query, $query->removeJoin('authors'));
+        $this->assertArrayNotHasKey('authors', $query->join());
+    }
+
+    /**
      * Assertion for comparing a table's contents with what is in it.
      *
      * @param string $table

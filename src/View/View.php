@@ -738,6 +738,19 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * Reset the content for a block. This will overwrite any
+     * existing content.
+     *
+     * @param string $name Name of the block
+     * @return void
+     * @see ViewBlock::set()
+     */
+    public function reset($name)
+    {
+        $this->assign($name, '');
+    }
+
+    /**
      * Fetch the content for a block. If a block is
      * empty or undefined '' will be returned.
      *
