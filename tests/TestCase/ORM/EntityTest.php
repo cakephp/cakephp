@@ -94,6 +94,22 @@ class EntityTest extends TestCase
     }
 
     /**
+     * Test that getOriginal() throws an exception on empty param.
+     *
+     * @return void
+     * @expectedException \InvalidArgumentException
+     */
+    public function testGetOriginalEmptyParam()
+    {
+        $entity = new Entity(
+            ['foo' => 'bar'],
+            ['markNew' => true]
+        );
+
+        $entity->getOriginal('');
+    }
+
+    /**
      * Test extractOriginal()
      *
      * @return void
