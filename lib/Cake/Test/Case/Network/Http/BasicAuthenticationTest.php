@@ -20,11 +20,11 @@ App::uses('HttpSocket', 'Network/Http');
 App::uses('BasicAuthentication', 'Network/Http');
 
 /**
- * class TestHttpSocket
+ * class TestSslHttpSocket
  *
  * @package       Cake.Test.Case.Network.Http
  */
-class TestHttpSocket extends HttpSocket {
+class TestSslHttpSocket extends HttpSocket {
 
 /**
  * testSetProxy method
@@ -84,7 +84,7 @@ class BasicAuthenticationTest extends CakeTestCase {
  * @return void
  */
 	public function testProxyAuthenticationSsl() {
-		$http = new TestHttpSocket();
+		$http = new TestSslHttpSocket();
 		$http->request['uri']['scheme'] = 'https';
 		$proxy = array(
 			'host' => 'localhost',
