@@ -313,7 +313,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * $query->distinct('name', true);
      * ```
      *
-     * @param array|ExpressionInterface|string|boolean $on Enable/disable distinct class
+     * @param array|ExpressionInterface|string|bool $on Enable/disable distinct class
      * or list of fields to be filtered on
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
