@@ -143,7 +143,7 @@ class CakeSession {
 	public static function init($base = null) {
 		static::$time = time();
 
-		if (env('HTTP_USER_AGENT') && !static::$_userAgent) {
+		if (env('HTTP_USER_AGENT')) {
 			static::$_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
 		}
 
