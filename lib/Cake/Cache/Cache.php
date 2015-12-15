@@ -275,10 +275,10 @@ class Cache {
  *
  * @param string $config [optional] The config name you wish to have garbage collected. Defaults to 'default'
  * @param int $expires [optional] An expires timestamp. Defaults to NULL
- * @return bool
+ * @return void
  */
 	public static function gc($config = 'default', $expires = null) {
-		return static::$_engines[$config]->gc($expires);
+		static::$_engines[$config]->gc($expires);
 	}
 
 /**
