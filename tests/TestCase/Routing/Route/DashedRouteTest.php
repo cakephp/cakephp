@@ -206,9 +206,9 @@ class DashedRouteTest extends TestCase
             'controller' => 'ControllerName',
             'action' => 'actionName'
         ]);
-        $expected_url = '/plugin/controller-name/action-name';
-        $this->assertEquals($expected_url, $url);
-        $result = $route->parse($expected_url);
+        $expectedUrl = '/plugin/controller-name/action-name';
+        $this->assertEquals($expectedUrl, $url);
+        $result = $route->parse($expectedUrl);
         $this->assertEquals('ControllerName', $result['controller']);
         $this->assertEquals('actionName', $result['action']);
         $this->assertEquals('Vendor/PluginName', $result['plugin']);
