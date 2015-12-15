@@ -200,6 +200,7 @@ class CakeSocket {
  * Configure the SSL context options.
  *
  * @param string $host The host name being connected to.
+ * @return void
  */
 	protected function _setSslContext($host) {
 		foreach ($this->config as $key => $value) {
