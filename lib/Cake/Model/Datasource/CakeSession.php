@@ -218,7 +218,7 @@ class CakeSession {
  * @return bool True if session has been started.
  */
 	public static function started() {
-		return (session_status() === PHP_SESSION_ACTIVE);
+		return isset($_SESSION) && session_id();
 	}
 
 /**
