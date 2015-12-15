@@ -73,7 +73,7 @@ class CacheSession implements CakeSessionHandlerInterface {
  * @return bool True for successful delete, false otherwise.
  */
 	public function destroy($id) {
-		return (bool)Cache::delete($id, Configure::read('Session.handler.config'));
+		return Cache::delete($id, Configure::read('Session.handler.config'));
 	}
 
 /**
