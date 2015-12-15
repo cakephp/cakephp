@@ -32,9 +32,10 @@ class TestSslHttpSocket extends HttpSocket {
  * @return void
  */
 	public function testSetProxy($proxy = null) {
-		$this->_proxy=$proxy;
+		$this->_proxy = $proxy;
 		$this->_setProxy();
 	}
+
 }
 
 /**
