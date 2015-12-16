@@ -668,6 +668,13 @@ class HttpSocket extends CakeSocket {
 			throw new SocketException(__d('cake_dev', 'The %s does not support proxy authentication.', $authClass));
 		}
 		call_user_func_array("$authClass::proxyAuthentication", array($this, &$this->_proxy));
+
+		if (!empty($this->request['header']['Proxy-Authorization'])) {
+			$this->config['proxyauth'] = $this->request['header']['Proxy-Authorization'];
+			if ($this->request['uri']['scheme'] === 'https') {
+				$this->request['header'] = Hash::remove($this->request['header'], 'Proxy-Authorization');
+			}
+		}
 	}
 
 /**

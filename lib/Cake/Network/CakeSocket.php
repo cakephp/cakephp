@@ -192,6 +192,9 @@ class CakeSocket {
 					$this->config['request']['uri']['port'] . ' HTTP/1.1';
 				$req[] = 'Host: ' . $this->config['host'];
 				$req[] = 'User-Agent: php proxy';
+				if (!empty($this->config['proxyauth'])) {
+					$req[] = 'Proxy-Authorization: ' . $this->config['proxyauth'];
+				}
 
 				fwrite($this->connection, implode("\r\n", $req) . "\r\n\r\n");
 
