@@ -229,7 +229,7 @@ class PostgresSchema extends BaseSchema
         if ($row['indisunique'] && $type === Table::INDEX_INDEX) {
             $type = Table::CONSTRAINT_UNIQUE;
         }
-        preg_match('/\(([^\)]+)\)/', $row['statement'], $matches);
+        preg_match('/\(([^\)]+?)\s*(?:ASC|DESC)?(?:NULLS FIRST|LAST)?\)/', $row['statement'], $matches);
         $columns = $this->_convertColumnList($matches[1]);
         if ($type === Table::CONSTRAINT_PRIMARY || $type === Table::CONSTRAINT_UNIQUE) {
             $table->addConstraint($name, [
