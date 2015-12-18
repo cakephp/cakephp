@@ -478,6 +478,7 @@ class I18n {
  *
  * @param string $filename Binary .mo file to load
  * @return mixed Array of translations on success or false on failure
+ * @link https://www.gnu.org/software/gettext/manual/html_node/MO-Files.html
  */
 	public static function loadMo($filename) {
 		$translations = false;
@@ -486,7 +487,6 @@ class I18n {
 		// Binary files extracted makes non-standard local variables
 		if ($data = file_get_contents($filename)) {
 			$translations = array();
-			$context = null;
 			$header = substr($data, 0, 20);
 			$header = unpack('L1magic/L1version/L1count/L1o_msg/L1o_trn', $header);
 			extract($header);
@@ -496,6 +496,7 @@ class I18n {
 					$r = unpack("L1len/L1offs", substr($data, $o_msg + $n * 8, 8));
 					$msgid = substr($data, $r["offs"], $r["len"]);
 					unset($msgid_plural);
+					$context = null;
 
 					if (strpos($msgid, "\x04") !== false) {
 						list($context, $msgid) = explode("\x04", $msgid);
