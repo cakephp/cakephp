@@ -16,11 +16,29 @@ namespace Cake\TestSuite;
 use Cake\Controller\Component\CookieComponent;
 use Cake\Controller\ComponentRegistry;
 
+/**
+ * Class TestCookieEncrypter
+ *
+ * This class is to encrypt a cookie value in the IntegrationTestCase as if CookieComponent would do.
+ *
+ * @package Cake\TestSuite
+ */
 class TestCookieEncrypter extends CookieComponent {
+    /**
+     * TestCookieEncrypter constructor.
+     */
     public function __construct() {
         return parent::__construct(new ComponentRegistry());
     }
 
+    /**
+     * Encrypt a cookie value as if CookieComponent would do.
+     *
+     * @param string $value Value to encrypt
+     * @param string|bool $encrypt Encryption mode to use. False
+     *   disabled encryption.
+     * @return string Encoded values
+     */
     public function encrypt($value, $encrypt)
     {
         return $this->_encrypt($value, $encrypt);
