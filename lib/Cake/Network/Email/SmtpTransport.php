@@ -369,7 +369,7 @@ class SmtpTransport extends AbstractTransport {
 				if ($code[2] === '-') {
 					continue;
 				}
-				return $code[1];
+				return;
 			}
 			throw new SocketException(__d('cake_dev', 'SMTP Error: %s', $response));
 		}
