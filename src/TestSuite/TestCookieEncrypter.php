@@ -13,8 +13,8 @@
  */
 namespace Cake\TestSuite;
 
-use Cake\Controller\Component\CookieComponent;
 use Cake\Controller\ComponentRegistry;
+use Cake\Controller\Component\CookieComponent;
 
 /**
  * Class TestCookieEncrypter
@@ -23,11 +23,13 @@ use Cake\Controller\ComponentRegistry;
  *
  * @package Cake\TestSuite
  */
-class TestCookieEncrypter extends CookieComponent {
+class TestCookieEncrypter extends CookieComponent
+{
     /**
      * TestCookieEncrypter constructor.
      */
-    public function __construct() {
+    public function __construct()
+    {
         return parent::__construct(new ComponentRegistry());
     }
 
