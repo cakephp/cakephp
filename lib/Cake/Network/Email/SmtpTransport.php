@@ -342,7 +342,7 @@ class SmtpTransport extends AbstractTransport {
  *
  * @param string|null $data Data to be sent to SMTP server
  * @param string|bool $checkCode Code to check for in server response, false to skip
- * @return string Response code
+ * @return string|null The matched code, or null if nothing matched
  * @throws SocketException
  */
 	protected function _smtpSend($data, $checkCode = '250') {
