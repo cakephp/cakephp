@@ -672,6 +672,28 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Test that saveAssociated() fails on non-empty, non-iterable value
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Could not save tags, it cannot be traversed
+     * @return void
+     */
+    public function testSaveAssociatedNotEmptyNotIterable()
+    {
+        $articles = TableRegistry::get('Articles');
+        $assoc = $articles->belongsToMany('Tags', [
+            'saveStrategy' => BelongsToMany::SAVE_APPEND,
+            'joinTable' => 'articles_tags',
+        ]);
+        $entity = new Entity([
+            'id' => 1,
+            'tags' => 'oh noes',
+        ], ['markNew' => true]);
+
+        $assoc->saveAssociated($entity);
+    }
+
+    /**
      * Test that saving an empty set on create works.
      *
      * @dataProvider emptyProvider
