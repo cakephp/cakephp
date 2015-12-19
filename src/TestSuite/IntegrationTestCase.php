@@ -8,7 +8,7 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @since         3.0.0
+ * @since         3.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\TestSuite;
@@ -211,10 +211,17 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @param string $name The cookie name to use.
      * @param mixed $value The value of the cookie.
+     * @param string|bool|null $encryption By default, the CookieComponent
+     *   isn't be used. If specified the encryption mode like 'aes' or false,
+     *   the CookieComponent is used to encrypt and json_encode if array.
      * @return void
      */
-    public function cookie($name, $value)
+    public function cookie($name, $value, $encryption = null)
     {
+        if ($encryption !== null) {
+            $CookieEncrypter = new TestCookieEncrypter();
+            $value = $CookieEncrypter->encrypt($value, $encryption);
+        }
         $this->_cookie[$name] = $value;
     }
 
