@@ -234,28 +234,7 @@ class PostgresSchema extends BaseSchema
             $type = Table::CONSTRAINT_UNIQUE;
         }
         if ($type === Table::CONSTRAINT_PRIMARY || $type === Table::CONSTRAINT_UNIQUE) {
-            $constraint = $table->constraint($name);
-            if (!$constraint) {
-                $constraint = [
-                    'type' => $type,
-                    'columns' => []
-                ];
-            }
-            $constraint['columns'][] = $row['attname'];
-            $table->addConstraint($name, $constraint);
-
-            // If there is only one column in the primary key and it is integery,
-            // make it autoincrement.
-            $columns = $constraint['columns'];
-            $columnDef = $table->column($columns[0]);
-
-            if ($type === Table::CONSTRAINT_PRIMARY &&
-                count($columns) === 1 &&
-                in_array($columnDef['type'], ['integer', 'biginteger'])
-            ) {
-                $columnDef['autoIncrement'] = true;
-                $table->addColumn($columns[0], $columnDef);
-            }
+            $this->_convertConstraint($table, $name, $type, $row);
             return;
         }
         $index = $table->index($name);
@@ -267,6 +246,41 @@ class PostgresSchema extends BaseSchema
         }
         $index['columns'][] = $row['attname'];
         $table->addIndex($name, $index);
+    }
+
+    /**
+     * Add/update a constraint into the schema object.
+     *
+     * @param \Cake\Database\Schema\Table $table The table to update.
+     * @param string $name The index name.
+     * @param string $type The index type.
+     * @param array $row The metadata record to update with.
+     * @return void
+     */
+    protected function _convertConstraint($table, $name, $type, $row)
+    {
+        $constraint = $table->constraint($name);
+        if (!$constraint) {
+            $constraint = [
+                'type' => $type,
+                'columns' => []
+            ];
+        }
+        $constraint['columns'][] = $row['attname'];
+        $table->addConstraint($name, $constraint);
+
+        // If there is only one column in the primary key and it is integery,
+        // make it autoincrement.
+        $columns = $constraint['columns'];
+        $columnDef = $table->column($columns[0]);
+
+        if ($type === Table::CONSTRAINT_PRIMARY &&
+            count($columns) === 1 &&
+            in_array($columnDef['type'], ['integer', 'biginteger'])
+        ) {
+            $columnDef['autoIncrement'] = true;
+            $table->addColumn($columns[0], $columnDef);
+        }
     }
 
     /**
