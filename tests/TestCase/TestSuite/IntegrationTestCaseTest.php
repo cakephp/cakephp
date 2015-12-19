@@ -144,19 +144,22 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->assertEquals('yes', $request->query('archived'));
     }
 
-    public function testCookieWithNoEncription() {
+    public function testCookieWithNoEncription()
+    {
         $this->cookie('KeyOfCookie', 'CookieComponent is not used');
         $request = $this->_buildRequest('/tasks/view', 'GET', []);
         $this->assertEquals('CookieComponent is not used', $request->cookies['KeyOfCookie']);
     }
 
-    public function testCookieWithEncriptionFalse() {
+    public function testCookieWithEncriptionFalse()
+    {
         $this->cookie('KeyOfCookie', ['Array is', 'json-encoded', 'by CookieComponent'], false);
         $request = $this->_buildRequest('/tasks/view', 'GET', []);
         $this->assertEquals('["Array is","json-encoded","by CookieComponent"]', $request->cookies['KeyOfCookie']);
     }
 
-    public function testCookieWithEncriptionAes() {
+    public function testCookieWithEncriptionAes()
+    {
         Security::salt('foo!foo!foo!foo!foo!foo!foo!foo!');
         $this->cookie('KeyOfCookie', 'Encrypted by CookieComponent', 'aes');
         $request = $this->_buildRequest('/tasks/view', 'GET', []);
