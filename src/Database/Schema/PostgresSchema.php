@@ -191,13 +191,15 @@ class PostgresSchema extends BaseSchema
     {
         $sql = 'SELECT
             c2.relname,
+            a.attname,
             i.indisprimary,
             i.indisunique,
             i.indisvalid,
             pg_catalog.pg_get_indexdef(i.indexrelid, 0, true) AS statement
         FROM pg_catalog.pg_class AS c,
             pg_catalog.pg_class AS c2,
-            pg_catalog.pg_index AS i
+            pg_catalog.pg_index AS i,
+            pg_catalog.pg_attribute AS a
         WHERE c.oid  = (
             SELECT c.oid
             FROM pg_catalog.pg_class c
@@ -206,8 +208,10 @@ class PostgresSchema extends BaseSchema
                 AND n.nspname = ?
         )
         AND c.oid = i.indrelid
+        AND c.oid = a.attrelid
+        AND a.attnum = ANY(i.indkey)
         AND i.indexrelid = c2.oid
-        ORDER BY i.indisprimary DESC, i.indisunique DESC, c2.relname';
+        ORDER BY i.indisprimary DESC, i.indisunique DESC, c2.relname, a.attnum';
 
         $schema = 'public';
         if (!empty($config['schema'])) {
@@ -229,16 +233,20 @@ class PostgresSchema extends BaseSchema
         if ($row['indisunique'] && $type === Table::INDEX_INDEX) {
             $type = Table::CONSTRAINT_UNIQUE;
         }
-        preg_match('/\(([^\)]+?)\s*(?:ASC|DESC)?(?:NULLS FIRST|LAST)?\)/', $row['statement'], $matches);
-        $columns = $this->_convertColumnList($matches[1]);
         if ($type === Table::CONSTRAINT_PRIMARY || $type === Table::CONSTRAINT_UNIQUE) {
-            $table->addConstraint($name, [
-                'type' => $type,
-                'columns' => $columns
-            ]);
+            $constraint = $table->constraint($name);
+            if (!$constraint) {
+                $constraint = [
+                    'type' => $type,
+                    'columns' => []
+                ];
+            }
+            $constraint['columns'][] = $row['attname'];
+            $table->addConstraint($name, $constraint);
 
             // If there is only one column in the primary key and it is integery,
             // make it autoincrement.
+            $columns = $constraint['columns'];
             $columnDef = $table->column($columns[0]);
 
             if ($type === Table::CONSTRAINT_PRIMARY &&
@@ -250,25 +258,15 @@ class PostgresSchema extends BaseSchema
             }
             return;
         }
-        $table->addIndex($name, [
-            'type' => $type,
-            'columns' => $columns
-        ]);
-    }
-
-    /**
-     * Convert a column list into a clean array.
-     *
-     * @param string $columns comma separated column list.
-     * @return array
-     */
-    protected function _convertColumnList($columns)
-    {
-        $columns = explode(', ', $columns);
-        foreach ($columns as &$column) {
-            $column = trim($column, '"');
+        $index = $table->index($name);
+        if (!$index) {
+            $index = [
+                'type' => $type,
+                'columns' => []
+            ];
         }
-        return $columns;
+        $index['columns'][] = $row['attname'];
+        $table->addIndex($name, $index);
     }
 
     /**
