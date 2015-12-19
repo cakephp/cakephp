@@ -24,7 +24,9 @@ class TestCookieEncrypterTest extends TestCase
 {
     public function testEncryptedAsSameSpecAsCookieComponent()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TestCookieEncrypter $TestCookieEncrypter */
+        /**
+         * @var \PHPUnit_Framework_MockObject_MockObject|TestCookieEncrypter $TestCookieEncrypter
+         */
         $TestCookieEncrypter = $this->getMock('Cake\\TestSuite\\TestCookieEncrypter', ['_encrypt']);
         $TestCookieEncrypter->expects($this->once())
             ->method('_encrypt')
