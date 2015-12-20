@@ -248,7 +248,7 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * Sets a encrypted request cookie for future requests.
      *
-     * The difference from cookie() is this encrypts the coolie
+     * The difference from cookie() is this encrypts the cookie
      * value like the CookieComponent.
      *
      * @param string $name The cookie name to use.
