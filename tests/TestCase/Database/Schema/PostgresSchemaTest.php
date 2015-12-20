@@ -288,7 +288,7 @@ SQL;
                 'precision' => null,
                 'unsigned' => null,
                 'comment' => null,
-                'autoIncrement' => true,
+                'autoIncrement' => false,
             ],
             'title' => [
                 'type' => 'string',
@@ -381,8 +381,8 @@ SQL;
         $connection->execute('DROP TABLE schema_composite');
 
         $this->assertEquals(['id', 'site_id'], $result->primaryKey());
-        $this->assertNull($result->column('site_id')['autoIncrement'], 'site_id should not be autoincrement');
         $this->assertTrue($result->column('id')['autoIncrement'], 'id should be autoincrement');
+        $this->assertNull($result->column('site_id')['autoIncrement'], 'site_id should not be autoincrement');
     }
 
     /**
