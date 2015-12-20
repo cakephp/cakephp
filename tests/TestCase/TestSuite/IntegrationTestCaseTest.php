@@ -21,6 +21,7 @@ use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestCase;
 use Cake\Test\Fixture\AssertIntegrationTestCase;
+use Cake\Utility\Security;
 
 /**
  * Self test of the IntegrationTestCase
@@ -150,6 +151,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
      */
     public function testCookieEncrypted()
     {
+        Security::salt('abcdabcdabcdabcdabcdabcdabcdabcdabcd');
         $this->cookieEncrypted('KeyOfCookie', 'Encrypted with aes by default');
         $request = $this->_buildRequest('/tasks/view', 'GET', []);
         $this->assertStringStartsWith('Q2FrZQ==.', $request->cookies['KeyOfCookie']);
