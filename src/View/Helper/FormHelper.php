@@ -555,7 +555,6 @@ class FormHelper extends Helper
         if (empty($this->request['_Token'])) {
             return null;
         }
-        $locked = [];
 
         $tokenData = $this->_buildFieldToken(
             $this->_lastAction,
