@@ -515,7 +515,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * Returns true if this expression contains any other nested
      * ExpressionInterface objects
      *
-     * @return boolean
+     * @return bool
      */
     public function hasNestedExpression()
     {
