@@ -40,8 +40,8 @@ use PHPUnit_Exception;
  */
 abstract class IntegrationTestCase extends TestCase
 {
-    use SecureFieldTokenTrait;
     use CookieCryptTrait;
+    use SecureFieldTokenTrait;
 
     /**
      * The data used to build the next request.
