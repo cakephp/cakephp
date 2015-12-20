@@ -512,6 +512,22 @@ class QueryExpression implements ExpressionInterface, Countable
     }
 
     /**
+     * Returns true if this expression contains any other nested
+     * ExpressionInterface objects
+     *
+     * @return bool
+     */
+    public function hasNestedExpression()
+    {
+        foreach ($this->_conditions as $c) {
+            if ($c instanceof ExpressionInterface) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Auxiliary function used for decomposing a nested array of conditions and build
      * a tree structure inside this object to represent the full SQL expression.
      * String conditions are stored directly in the conditions, while any other
