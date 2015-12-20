@@ -344,7 +344,13 @@ class CookieComponent extends Component
         ]);
     }
 
-    protected function _getCookieEncryptionKey() {
+    /**
+     * Returns the encryption key to be used.
+     *
+     * @return string
+     */
+    protected function _getCookieEncryptionKey()
+    {
         return $this->_config['key'];
     }
 }
