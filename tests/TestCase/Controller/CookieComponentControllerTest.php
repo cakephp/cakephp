@@ -36,6 +36,7 @@ class CookieComponentControllerTest extends IntegrationTestCase
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
 
+        Security::salt('abcdabcdabcdabcdabcdabcdabcdabcdabcd');
         Router::connect('/:controller/:action/*', [], ['routeClass' => 'InflectedRoute']);
         DispatcherFactory::clear();
         DispatcherFactory::add('Routing');
