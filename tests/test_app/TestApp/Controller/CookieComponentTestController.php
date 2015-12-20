@@ -24,9 +24,7 @@ class CookieComponentTestController extends Controller
      * @var array
      */
     public $components = [
-        'Cookie' => [
-            //'encryption' => 'aes', // default
-        ],
+        'Cookie',
     ];
 
     /**
