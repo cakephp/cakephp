@@ -233,7 +233,8 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @return string
      */
-    protected function _getCookieEncryptionKey() {
+    protected function _getCookieEncryptionKey()
+    {
         if (isset($this->_cookieEncriptionKey)) {
             return $this->_cookieEncriptionKey;
         }
