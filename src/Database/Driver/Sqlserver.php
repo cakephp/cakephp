@@ -109,6 +109,7 @@ class Sqlserver extends Driver
             $options = [];
         }
         $statement = $this->_connection->prepare($isObject ? $query->sql() : $query, $options);
+        debug($statement->queryString);
         return new SqlserverStatement($statement, $this);
     }
 
