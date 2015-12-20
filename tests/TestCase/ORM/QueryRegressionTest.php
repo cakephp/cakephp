@@ -1217,7 +1217,10 @@ class QueryRegressionTest extends TestCase
     {
         $table = TableRegistry::get('Articles');
         $query = $table->find();
-        $query->orderDesc($query->newExpr()->add(['id' => 3]));
+        $query->orderDesc($query->newExpr()->addCase(
+            [$query->newExpr()->add(['id' => 3])],
+            [1, 0]
+        ));
         $query->order(['title' => 'desc']);
         // Executing the normal query before getting the count
         $query->all();
@@ -1225,8 +1228,11 @@ class QueryRegressionTest extends TestCase
 
         $table = TableRegistry::get('Articles');
         $query = $table->find();
+        $query->orderDesc($query->newExpr()->addCase(
+            [$query->newExpr()->add(['id' => 3])],
+            [1, 0]
+        ));
         $query->orderDesc($query->newExpr()->add(['id' => 3]));
-        $query->order(['title' => 'desc']);
         // Not executing the query first, just getting the count
         $this->assertEquals(3, $query->count());
     }
