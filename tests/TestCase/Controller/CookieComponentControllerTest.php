@@ -76,8 +76,11 @@ class CookieComponentControllerTest extends IntegrationTestCase
 
         $this->get('/cookie_component_test/view/');
         $this->assertStringStartsWith('Q2FrZQ==.', $this->viewVariable('ValueFromRequest'), 'Encrypted');
-        $this->assertEquals(['Value1 of Cookie', 'Value2 of Cookie'], $this->viewVariable('ValueFromCookieComponent'),
-            'Decrypted');
+        $this->assertEquals(
+            ['Value1 of Cookie', 'Value2 of Cookie'],
+            $this->viewVariable('ValueFromCookieComponent'),
+            'Decrypted'
+        );
     }
 
     /**
