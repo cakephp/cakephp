@@ -144,6 +144,18 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test cookie encrypted
+     *
+     * @see CookieComponentControllerTest
+     */
+    public function testCookieEncrypted()
+    {
+        $this->cookieEncrypted('KeyOfCookie', 'Encrypted with aes by default');
+        $request = $this->_buildRequest('/tasks/view', 'GET', []);
+        $this->assertStringStartsWith('Q2FrZQ==.', $request->cookies['KeyOfCookie']);
+    }
+
+    /**
      * Test sending get requests.
      *
      * @return void
