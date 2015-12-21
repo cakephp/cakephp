@@ -231,10 +231,6 @@ class Validation {
  * @return bool Success
  */
 	public static function comparison($check1, $operator = null, $check2 = null) {
-		if (is_array($check1)) {
-			extract($check1, EXTR_OVERWRITE);
-		}
-
 		if ((float)$check1 != $check1) {
 			return false;
 		}

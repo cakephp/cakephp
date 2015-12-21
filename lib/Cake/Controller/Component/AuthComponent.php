@@ -419,7 +419,7 @@ class AuthComponent extends Component {
 		} else {
 			$url = $this->unauthorizedRedirect;
 		}
-		$controller->redirect($url, null, true);
+		$controller->redirect($url);
 		return false;
 	}
 

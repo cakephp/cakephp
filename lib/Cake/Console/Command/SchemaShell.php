@@ -403,6 +403,9 @@ class SchemaShell extends AppShell {
 			$this->out();
 			$this->out(__d('cake_console', 'Updating Database...'));
 			$this->_run($contents, 'update', $Schema);
+
+			Configure::write('Cache.disable', false);
+			Cache::clear(false, '_cake_model_');
 		}
 
 		$this->out(__d('cake_console', 'End update.'));

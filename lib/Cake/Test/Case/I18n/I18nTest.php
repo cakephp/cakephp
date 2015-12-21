@@ -2054,6 +2054,9 @@ class I18nTest extends CakeTestCase {
 		$this->assertSame("danspartij", __x('social gathering', 'ball'));
 		$this->assertSame("balans", __('balance'));
 		$this->assertSame("saldo", __x('money', 'balance'));
+
+		// MO file is sorted by msgid, 'zoo' should be last
+		$this->assertSame("dierentuin", __('zoo'));
 	}
 
 /**
