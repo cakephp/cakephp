@@ -829,4 +829,36 @@ class AppTest extends CakeTestCase {
 		App::uses('TestPluginOtherLibrary', 'TestPlugin.Lib');
 		$this->assertTrue(class_exists('TestPluginOtherLibrary'));
 	}
+
+/**
+ * Test that increaseMemoryLimit increases the maximum amount of memory actually
+ *
+ * @dataProvider memoryVariationProvider
+ * @return void
+ */
+	public function testIncreaseMemoryLimit($memoryLimit, $additionalKb, $expected) {
+		$this->skipIf(!function_exists('ini_set'));
+
+		$originalMemoryLimit = ini_get('memory_limit');
+
+		ini_set('memory_limit', $memoryLimit);
+		App::increaseMemoryLimit($additionalKb);
+		$this->assertEquals($expected, ini_get('memory_limit'));
+
+		ini_set('memory_limit', $originalMemoryLimit);
+	}
+
+/**
+ * Data provider function for testIncreaseMemoryLimit 
+ *
+ * @return void
+ */
+	public function memoryVariationProvider() {
+		return array(
+			array('131072K', 100000, '231072K'),
+			array('256M', 1, '262145K'),
+			array('1G', 1, '1048577K'),
+			array('-1', 100000, '-1')
+		);
+	}
 }

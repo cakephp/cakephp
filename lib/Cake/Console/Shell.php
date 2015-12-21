@@ -175,6 +175,13 @@ class Shell extends Object {
 	protected $_lastWritten = 0;
 
 /**
+ * Contains helpers which have been previously instantiated
+ *
+ * @var array
+ */
+	protected $_helpers = array();
+
+/**
  *  Constructs this Shell instance.
  *
  * @param ConsoleOutput $stdout A ConsoleOutput object for stdout.
@@ -645,8 +652,7 @@ class Shell extends Object {
  *
  * @param array|string $message The message to output.
  * @param int $newlines Number of newlines to append.
- * @param int $size The number of bytes to overwrite. Defaults to the
- *    length of the last message output.
+ * @param int $size The number of bytes to overwrite. Defaults to the length of the last message output.
  * @return int|bool Returns the number of bytes returned from writing to stdout.
  */
 	public function overwrite($message, $newlines = 1, $size = null) {
@@ -777,6 +783,28 @@ class Shell extends Object {
 
 		$this->err(__d('cake_console', '<error>Could not write to `%s`</error>.', $path), 2);
 		return false;
+	}
+
+/**
+ * Load given shell helper class
+ *
+ * @param string $name Name of the helper class. Supports plugin syntax.
+ * @return BaseShellHelper Instance of helper class
+ * @throws RuntimeException If invalid class name is provided
+ */
+	public function helper($name) {
+		if (isset($this->_helpers[$name])) {
+			return $this->_helpers[$name];
+		}
+		list($plugin, $helperClassName) = pluginSplit($name, true);
+		$helperClassName = Inflector::camelize($name) . "ShellHelper";
+		App::uses($helperClassName, $plugin . "Console/Helper");
+		if (!class_exists($helperClassName)) {
+			throw new RuntimeException("Class " . $helperClassName . " not found");
+		}
+		$helper = new $helperClassName($this->stdout);
+		$this->_helpers[$name] = $helper;
+		return $helper;
 	}
 
 /**
