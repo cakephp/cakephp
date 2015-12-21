@@ -727,7 +727,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->create(false, ['action' => false]);
+        $result = $this->Form->create(false, ['url' => ['action' => false]]);
         $this->assertHtml($expected, $result);
     }
 
@@ -783,7 +783,7 @@ class FormHelperTest extends TestCase
         $result = $this->Form->create(
             $this->article,
             [
-                'type' => 'post', 'action' => 'index', 'encoding' => 'iso-8859-1'
+                'type' => 'post', 'url' => ['action' => 'index'], 'encoding' => 'iso-8859-1'
             ]
         );
         $expected = [
