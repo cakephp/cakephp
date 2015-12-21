@@ -658,7 +658,7 @@ class FormHelperTest extends TestCase
         $this->article['defaults'] = ['id' => 1];
         $this->Form->request->here = '/articles/edit/1';
         $this->Form->request['action'] = 'delete';
-        $result = $this->Form->create($this->article, ['action' => 'edit']);
+        $result = $this->Form->create($this->article, ['url' => ['action' => 'edit']]);
         $expected = [
             'form' => [
                 'method' => 'post',
@@ -695,7 +695,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $this->Form->request['controller'] = 'Pages';
-        $result = $this->Form->create($this->article, ['action' => 'signup']);
+        $result = $this->Form->create($this->article, ['url' => ['action' => 'signup']]);
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/Pages/signup/1',
@@ -743,7 +743,7 @@ class FormHelperTest extends TestCase
 
         $this->Form->request['controller'] = 'users';
 
-        $result = $this->Form->create(false, ['action' => 'login']);
+        $result = $this->Form->create(false, ['url' => ['action' => 'login']]);
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/login',
