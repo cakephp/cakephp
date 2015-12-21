@@ -715,7 +715,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreateNoUrl()
     {
-        $result = $this->Form->create(false, ['url' => false]);
+        $result = $this->Form->create(false, ['url' => ['action' => false]]);
         $expected = [
             'form' => [
                 'method' => 'post',
@@ -725,9 +725,6 @@ class FormHelperTest extends TestCase
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/div'
         ];
-        $this->assertHtml($expected, $result);
-
-        $result = $this->Form->create(false, ['url' => ['action' => false]]);
         $this->assertHtml($expected, $result);
     }
 
