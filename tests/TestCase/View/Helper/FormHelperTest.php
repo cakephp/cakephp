@@ -715,7 +715,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreateNoUrl()
     {
-        $result = $this->Form->create(false, ['url' => ['action' => false]]);
+        $result = $this->Form->create(false, ['url' => false]);
         $expected = [
             'form' => [
                 'method' => 'post',
