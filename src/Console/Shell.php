@@ -640,6 +640,47 @@ class Shell
     }
 
     /**
+     * Convenience method for out() that wraps message between <info /> tag
+     *
+     * @param string|array|null $message A string or an array of strings to output
+     * @param int $newlines Number of newlines to append
+     * @param int $level The message's output level, see above.
+     * @return int|bool Returns the number of bytes returned from writing to stdout.
+     * @see http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
+     */
+    public function info($message = null, $newlines = 1, $level = Shell::NORMAL)
+    {
+        return $this->out('<info>' . $message . '</info>', $newlines, $level);
+    }
+
+    /**
+     * Convenience method for err() that wraps message between <warning /> tag
+     *
+     * @param string|array|null $message A string or an array of strings to output
+     * @param int $newlines Number of newlines to append
+     * @return void
+     * @see http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::err
+     */
+    public function warn($message = null, $newlines = 1)
+    {
+        return $this->err('<warning>' . $message . '</warning>', $newlines);
+    }
+
+    /**
+     * Convenience method for out() that wraps message between <success /> tag
+     *
+     * @param string|array|null $message A string or an array of strings to output
+     * @param int $newlines Number of newlines to append
+     * @param int $level The message's output level, see above.
+     * @return int|bool Returns the number of bytes returned from writing to stdout.
+     * @see http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
+     */
+    public function success($message = null, $newlines = 1, $level = Shell::NORMAL)
+    {
+        return $this->out('<success>' . $message . '</success>', $newlines, $level);
+    }
+
+    /**
      * Returns a single or multiple linefeeds sequences.
      *
      * @param int $multiplier Number of times the linefeed sequence should be repeated
