@@ -238,12 +238,7 @@ abstract class IntegrationTestCase extends TestCase
         if (isset($this->_cookieEncriptionKey)) {
             return $this->_cookieEncriptionKey;
         }
-        $key = Security::salt();
-        if (isset($key)) {
-            return $key;
-        }
-        $key = Security::salt('foo!foo!foo!foo!foo!foo!foo!foo!');
-        return $key;
+        return Security::salt();
     }
 
     /**
