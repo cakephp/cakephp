@@ -84,24 +84,11 @@ class CookieComponentControllerTest extends IntegrationTestCase
     }
 
     /**
-     * @return array
-     */
-    public function encryptionKeyCases()
-    {
-        return [
-            ['foo!foo!foo!foo!foo!foo!foo!foo!'],
-            ['bar!bar!bar!bar!bar!bar!bar!bar!'],
-        ];
-    }
-
-    /**
      * Can specify the encryption key.
-     *
-     * @dataProvider encryptionKeyCases
-     * @param string $key Encryption Key
      */
-    public function testCanSpecifyEncryptionKey($key)
+    public function testCanSpecifyEncryptionKey()
     {
+        $key = 'another salt xxxxxxxxxxxxxxxxxxx';
         $this->cookieEncrypted('NameOfCookie', 'Value of Cookie', 'aes', $key);
 
         $this->get('/cookie_component_test/view/' . urlencode($key));
@@ -111,12 +98,10 @@ class CookieComponentControllerTest extends IntegrationTestCase
 
     /**
      * Can be used Security::salt() as the encryption key.
-     *
-     * @dataProvider encryptionKeyCases
-     * @param string $key Encryption Key
      */
-    public function testCanBeUsedSecuritySaltAsEncryptionKey($key)
+    public function testCanBeUsedSecuritySaltAsEncryptionKey()
     {
+        $key = 'another salt xxxxxxxxxxxxxxxxxxx';
         Security::salt($key);
         $this->cookieEncrypted('NameOfCookie', 'Value of Cookie', 'aes');
 
