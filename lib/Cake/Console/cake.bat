@@ -16,9 +16,6 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-:: In order for this script to work as intended, the cake\console\ folder must be in your PATH
-
-@echo.
 @echo off
 
 SET app=%0
