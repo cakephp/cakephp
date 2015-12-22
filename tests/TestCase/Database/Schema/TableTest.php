@@ -343,7 +343,7 @@ class TableTest extends TestCase
         $table->addColumn('title', [
             'type' => 'string'
         ]);
-	$table->addColumn('priority', [
+        $table->addColumn('priority', [
             'type' => 'integer'
         ]);
         $result = $table->addIndex('faster', [
