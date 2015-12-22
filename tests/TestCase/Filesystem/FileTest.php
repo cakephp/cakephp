@@ -1,7 +1,5 @@
 <?php
 /**
- * FileTest file
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -291,6 +289,24 @@ class FileTest extends TestCase
         $tmpFile = TMP . 'tests/cakephp.file.test.tmp';
         $File = new File($tmpFile, true, 0777);
         $this->assertTrue($File->exists());
+    }
+
+    /**
+     * Tests the exists() method.
+     *
+     * @return void
+     */
+    public function testExists()
+    {
+        $tmpFile = TMP . 'tests/cakephp.file.test.tmp';
+        $file = new File($tmpFile, true, 0777);
+        $this->assertTrue($file->exists(), 'absolute path should exist');
+
+        $file = new File('file://' . $tmpFile, false);
+        $this->assertTrue($file->exists(), 'file:// should exist.');
+
+        $file = new File('/something/bad', false);
+        $this->assertFalse($file->exists(), 'missing file should not exist.');
     }
 
     /**
