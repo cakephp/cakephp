@@ -459,8 +459,9 @@ class Table
             throw new Exception(sprintf('Index "%s" in table "%s" must have at least one column.', $name, $this->_table));
         }
         $attrs['columns'] = (array)$attrs['columns'];
-        foreach ($attrs['columns'] as $field) {
-            $field = explode(' ', $field)[0];
+        foreach ($attrs['columns'] as $parts) {
+            $parts = explode(' ', $parts);
+            $field = $parts[0];
             if (empty($this->_columns[$field])) {
                 $msg = sprintf(
                     'Columns used in index "%s" in table "%s" must be added to the Table schema first. ' .
