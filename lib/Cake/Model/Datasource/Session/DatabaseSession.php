@@ -136,7 +136,6 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * @return bool True for successful delete, false otherwise.
  */
 	public function destroy($id) {
-		return true;
 		return (bool)$this->_model->delete($id);
 	}
 
