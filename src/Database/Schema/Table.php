@@ -460,6 +460,7 @@ class Table
         }
         $attrs['columns'] = (array)$attrs['columns'];
         foreach ($attrs['columns'] as $field) {
+            $field = explode(' ', $field)[0];
             if (empty($this->_columns[$field])) {
                 $msg = sprintf(
                     'Columns used in index "%s" in table "%s" must be added to the Table schema first. ' .
