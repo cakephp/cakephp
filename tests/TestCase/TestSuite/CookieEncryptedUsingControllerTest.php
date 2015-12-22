@@ -22,9 +22,9 @@ use Cake\TestSuite\IntegrationTestCase;
 use Cake\Utility\Security;
 
 /**
- * CookieComponentControllerTest class
+ * CookieEncryptedUsingControllerTest class
  */
-class CookieComponentControllerTest extends IntegrationTestCase
+class CookieEncryptedUsingControllerTest extends IntegrationTestCase
 {
     /**
      * reset environment.
