@@ -647,6 +647,7 @@ class TimeTest extends TestCase
      */
     public function testDiffForHumansAbsolute($class)
     {
+        $class::setTestNow(new $class('2015-12-12 10:10:10'));
         $time = new $class('2014-04-20 10:10:10');
         $this->assertEquals('1 year', $time->diffForHumans(null, ['absolute' => true]));
 
@@ -665,6 +666,7 @@ class TimeTest extends TestCase
      */
     public function testDiffForHumansNow($class)
     {
+        $class::setTestNow(new $class('2015-12-12 10:10:10'));
         $time = new $class('2014-04-20 10:10:10');
         $this->assertEquals('1 year ago', $time->diffForHumans());
 
