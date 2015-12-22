@@ -93,10 +93,10 @@ class DatabaseSession implements CakeSessionHandlerInterface {
 		));
 
 		if (empty($row[$this->_model->alias]['data'])) {
-			return false;
+			return '';
 		}
 
-		return $row[$this->_model->alias]['data'];
+		return (string)$row[$this->_model->alias]['data'];
 	}
 
 /**
@@ -123,9 +123,9 @@ class DatabaseSession implements CakeSessionHandlerInterface {
 			'counterCache' => false
 		);
 		try {
-			return $this->_model->save($record, $options);
+			return (bool)$this->_model->save($record, $options);
 		} catch (PDOException $e) {
-			return $this->_model->save($record, $options);
+			return (bool)$this->_model->save($record, $options);
 		}
 	}
 
@@ -136,7 +136,8 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * @return bool True for successful delete, false otherwise.
  */
 	public function destroy($id) {
-		return $this->_model->delete($id);
+		return true;
+		return (bool)$this->_model->delete($id);
 	}
 
 /**
@@ -151,7 +152,8 @@ class DatabaseSession implements CakeSessionHandlerInterface {
 		} else {
 			$expires = time() - $expires;
 		}
-		return $this->_model->deleteAll(array($this->_model->alias . ".expires <" => $expires), false, false);
+		$this->_model->deleteAll(array($this->_model->alias . ".expires <" => $expires), false, false);
+		return true;
 	}
 
 }
