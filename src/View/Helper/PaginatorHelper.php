@@ -640,9 +640,11 @@ class PaginatorHelper extends Helper
      * - `modulus` How many numbers to include on either side of the current page, defaults to 8.
      *    Set to `false` to disable and to show all numbers.
      * - `first` Whether you want first links generated, set to an integer to define the number of 'first'
-     *    links to generate.
+     *    links to generate. If a string is set a link to the first page will be generated with the value
+     *    as the title.
      * - `last` Whether you want last links generated, set to an integer to define the number of 'last'
-     *    links to generate.
+     *    links to generate. If a string is set a link to the last page will be generated with the value
+     *    as the title.
      * - `templates` An array of templates, or template file name containing the templates you'd like to
      *    use when generating the numbers. The helper's original templates will be restored once
      *    numbers() is done.
@@ -798,10 +800,11 @@ class PaginatorHelper extends Helper
     protected function _firstNumber($ellipsis, $params, $start, $options)
     {
         $out = '';
+        $first = is_int($options['first']) ? $options['first'] : 0;
         if ($options['first'] && $start > 1) {
-            $offset = ($start <= (int)$options['first']) ? $start - 1 : $options['first'];
+            $offset = ($start <= $first) ? $start - 1 : $options['first'];
             $out .= $this->first($offset, $options);
-            if ($offset < $start - 1) {
+            if ($first < $start - 1) {
                 $out .= $ellipsis;
             }
         }
@@ -820,9 +823,10 @@ class PaginatorHelper extends Helper
     protected function _lastNumber($ellipsis, $params, $end, $options)
     {
         $out = '';
+        $last = is_int($options['last']) ? $options['last'] : 0;
         if ($options['last'] && $end < $params['pageCount']) {
-            $offset = ($params['pageCount'] < $end + (int)$options['last']) ? $params['pageCount'] - $end : $options['last'];
-            if ($offset <= $options['last'] && $params['pageCount'] - $end > $offset) {
+            $offset = ($params['pageCount'] < $end + $last) ? $params['pageCount'] - $end : $options['last'];
+            if ($offset <= $options['last'] && $params['pageCount'] - $end > $last) {
                 $out .= $ellipsis;
             }
             $out .= $this->last($offset, $options);
