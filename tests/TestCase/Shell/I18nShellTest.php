@@ -48,7 +48,7 @@ class I18nShellTest extends TestCase
     {
         parent::tearDown();
 
-        $deDir = $this->localeDir . 'de' . DS;
+        $deDir = $this->localeDir . 'de_DE' . DS;
 
         unlink($this->localeDir . 'default.pot');
         unlink($this->localeDir . 'cake.pot');
@@ -64,7 +64,7 @@ class I18nShellTest extends TestCase
      */
     public function testInit()
     {
-        $deDir = $this->localeDir . 'de' . DS;
+        $deDir = $this->localeDir . 'de_DE' . DS;
         if (!is_dir($deDir)) {
             mkdir($deDir, 0770, true);
         }
@@ -79,7 +79,7 @@ class I18nShellTest extends TestCase
 
         $this->shell->io()->expects($this->at(0))
             ->method('ask')
-            ->will($this->returnValue('de'));
+            ->will($this->returnValue('de_DE'));
         $this->shell->io()->expects($this->at(1))
             ->method('ask')
             ->will($this->returnValue($this->localeDir));
