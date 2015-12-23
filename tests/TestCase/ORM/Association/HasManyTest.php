@@ -280,7 +280,8 @@ class HasManyTest extends TestCase
         ];
         $this->assertSelectClause($expected, $query);
 
-        $expected = new QueryExpression([
+        $expected = new QueryExpression(
+            [
                 'Articles.published' => 'Y',
                 'Articles.id !=' => 3,
                 'Articles.author_id IN' => $keys
@@ -362,7 +363,8 @@ class HasManyTest extends TestCase
         ];
         $this->assertJoin($expected, $query);
 
-        $expected = new QueryExpression([
+        $expected = new QueryExpression(
+            [
                 'Articles.author_id IN' => $keys,
                 'comments.id' => 1,
             ],

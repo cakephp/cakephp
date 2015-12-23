@@ -37,7 +37,6 @@ matrix:
 
   allow_failures:
     - env: COVERALLS=1 DEFAULT=0
-    - env: PHPCS=1 DEFAULT=0
 
     - php: hhvm
 

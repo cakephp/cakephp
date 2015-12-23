@@ -2513,6 +2513,29 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test that nested inputs end with brackets
+     *
+     * @return void
+     */
+    public function testNestedInputsEndWithBrackets()
+    {
+        $result = $this->Form->text('nested.text[]');
+        $expected = [
+            'input' => [
+                'type' => 'text', 'name' => 'nested[text][]'
+            ],
+        ];
+
+        $result = $this->Form->file('nested.file[]');
+        $expected = [
+            'input' => [
+                'type' => 'file', 'name' => 'nested[file][]'
+            ],
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * Test id prefix
      *
      * @return void
