@@ -651,25 +651,6 @@ class QueryExpression implements ExpressionInterface, Countable
     }
 
     /**
-     * Returns an array of placeholders that will have a bound value corresponding
-     * to each value in the first argument.
-     *
-     * @param string $field Database field to be used to bind values
-     * @param array $values The values to bind
-     * @param string $type the type to be used to bind the values
-     * @return array
-     */
-    protected function _bindMultiplePlaceholders($field, $values, $type)
-    {
-        $type = str_replace('[]', '', $type);
-        $params = [];
-        foreach ($values as $value) {
-            $params[] = $this->_bindValue($field, $value, $type);
-        }
-        return implode(', ', $params);
-    }
-
-    /**
      * Clone this object and its subtree of expressions.
      *
      * @return void
