@@ -1,7 +1,5 @@
 <?php
 /**
- * Internationalization Management Shell
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -79,7 +77,7 @@ class I18nShell extends Shell
     public function init($language = null)
     {
         if (!$language) {
-            $language = strtolower($this->in('Please specify language code, e.g. `en`, `eng`, `en_US` etc.'));
+            $language = $this->in('Please specify language code, e.g. `en`, `eng`, `en_US` etc.');
         }
         if (strlen($language) < 2) {
             return $this->error('Invalid language code. Valid is `en`, `eng`, `en_US` etc.');
