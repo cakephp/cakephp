@@ -658,7 +658,7 @@ class Shell
      *
      * @param string|array|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return void
+     * @return int|bool Returns the number of bytes returned from writing to stderr.
      * @see http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::err
      */
     public function warn($message = null, $newlines = 1)
