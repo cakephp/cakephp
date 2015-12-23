@@ -19,6 +19,7 @@ use BadMethodCallException;
 use Cake\Core\Configure;
 use Cake\Network\Exception\MethodNotAllowedException;
 use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
 
 /**
  * A class that helps wrap Request information and particulars about a single request.
@@ -1359,4 +1360,45 @@ class Request implements ArrayAccess
     {
         unset($this->params[$name]);
     }
+
+    /**
+     * Returns string representation of the current request in pluginDot syntax
+     *
+     * @params array $options Valid keys are `prefix`, `action`, `pass`, and `query`
+     * @return string Path
+     */
+    public function toPath($options = []) {
+        $prefix = $plugin = $controller = $action = $pass = $query = null;
+        if ($this->plugin) {
+            $plugin = $this->plugin . '.';
+        }
+        if ($prefix = $this->param('prefix')) {
+            $controller = Inflector::camelize($prefix) . '/';
+        }
+        $controller .= $this->param('controller') . 'Controller';
+
+        if (!empty($options['action'])) {
+            $action = '/' . $this->param('action');
+        }
+
+        if (!empty($options['pass']) && $passedArgs = $this->param('pass')) {
+            $pass = '/' . implode('/', $passedArgs);
+        }
+
+        if (!empty($options['query']) && $this->query) {
+            $query = '?' . http_build_query($this->query);
+        }
+
+        return $plugin . $controller . $action . $pass . $query;
+    }
+
+    /**
+     * Convenience method for toPath() that includes `action` of the current request
+     *
+     * @return string
+     */
+    public function toActionPath() {
+        return $this->toPath(['action' => true]);
+    }
+
 }
