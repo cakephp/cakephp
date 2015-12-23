@@ -100,7 +100,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * then it will cause the placeholder to be re-written dynamically so if the
      * value is an array, it will create as many placeholders as values are in it.
      *
-     * @param string|array|QueryExpression $conditions single or multiple conditions to
+     * @param string|array|\Cake\Database\ExpressionInterface $conditions single or multiple conditions to
      * be added. When using an array and the key is 'OR' or 'AND' a new expression
      * object will be created with that conjunction and internal array value passed
      * as conditions.
