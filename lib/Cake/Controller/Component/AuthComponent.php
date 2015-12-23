@@ -448,8 +448,8 @@ class AuthComponent extends Component {
  * Each adapter will be checked in sequence, if any of them return true, then the user will
  * be authorized for the request.
  *
- * @param array $user The user to check the authorization of. If empty the user in the session will be used.
- * @param CakeRequest $request The request to authenticate for. If empty, the current request will be used.
+ * @param array|null $user The user to check the authorization of. If empty the user in the session will be used.
+ * @param CakeRequest|null $request The request to authenticate for. If empty, the current request will be used.
  * @return bool True if $user is authorized, otherwise false
  */
 	public function isAuthorized($user = null, CakeRequest $request = null) {
@@ -516,7 +516,7 @@ class AuthComponent extends Component {
  * `$this->Auth->allow('edit', 'add');` or
  * `$this->Auth->allow();` to allow all actions
  *
- * @param string|array $action Controller action name or array of actions
+ * @param string|array|null $action Controller action name or array of actions
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#making-actions-public
  */
@@ -541,7 +541,7 @@ class AuthComponent extends Component {
  * `$this->Auth->deny('edit', 'add');` or
  * `$this->Auth->deny();` to remove all items from the allowed list
  *
- * @param string|array $action Controller action name or array of actions
+ * @param string|array|null $action Controller action name or array of actions
  * @return void
  * @see AuthComponent::allow()
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#making-actions-require-authorization
@@ -572,7 +572,7 @@ class AuthComponent extends Component {
  * attached authorize objects.
  *
  * @param array $map Actions to map
- * @return void
+ * @return array
  * @see BaseAuthorize::mapActions()
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#mapping-actions-when-using-crudauthorize
  * @deprecated 3.0.0 Map actions using `actionMap` config key on authorize objects instead
@@ -588,6 +588,8 @@ class AuthComponent extends Component {
 		if (empty($map)) {
 			return $mappedActions;
 		}
+
+		return [];
 	}
 
 /**
@@ -598,7 +600,7 @@ class AuthComponent extends Component {
  * the user record is written to the session key specified in AuthComponent::$sessionKey. Logging in
  * will also change the session id in order to help mitigate session replays.
  *
- * @param array $user Either an array of user data, or null to identify a user using the current request.
+ * @param array|null $user Either an array of user data, or null to identify a user using the current request.
  * @return bool True on login success, false on failure
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#identifying-users-and-logging-them-in
  */
@@ -652,7 +654,7 @@ class AuthComponent extends Component {
  * cache is primarily used for stateless authentication. For stateful authentication,
  * cookies + sessions will be used.
  *
- * @param string $key field to retrieve. Leave null to get entire User record
+ * @param string|null $key field to retrieve. Leave null to get entire User record
  * @return array|null User record. or null if no user is logged in.
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#accessing-the-logged-in-user
  */
@@ -674,7 +676,7 @@ class AuthComponent extends Component {
  * Similar to AuthComponent::user() except if the session user cannot be found, connected authentication
  * objects will have their getUser() methods called. This lets stateless authentication methods function correctly.
  *
- * @return bool true if a user can be found, false if one cannot.
+ * @return bool True if a user can be found, false if one cannot.
  */
 	protected function _getUser() {
 		$user = $this->user();
@@ -700,7 +702,7 @@ class AuthComponent extends Component {
 /**
  * Backwards compatible alias for AuthComponent::redirectUrl().
  *
- * @param string|array $url Optional URL to write as the login redirect URL.
+ * @param string|array|null $url Optional URL to write as the login redirect URL.
  * @return string Redirect URL
  * @deprecated 3.0.0 Since 2.3.0, use AuthComponent::redirectUrl() instead
  */
@@ -723,7 +725,7 @@ class AuthComponent extends Component {
  *    value is returned.
  *  - If there is no session and no $loginRedirect, / is returned.
  *
- * @param string|array $url Optional URL to write as the login redirect URL.
+ * @param string|array|null $url Optional URL to write as the login redirect URL.
  * @return string Redirect URL
  */
 	public function redirectUrl($url = null) {
