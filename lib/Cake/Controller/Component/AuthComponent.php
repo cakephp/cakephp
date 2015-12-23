@@ -589,7 +589,7 @@ class AuthComponent extends Component {
 			return $mappedActions;
 		}
 
-		return [];
+		return array();
 	}
 
 /**
