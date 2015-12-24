@@ -302,6 +302,23 @@ class FileTest extends CakeTestCase {
 	}
 
 /**
+ * Tests the exists() method.
+ *
+ * @return void
+ */
+	public function testExists() {
+		$tmpFile = TMP . 'tests/cakephp.file.test.tmp';
+		$file = new File($tmpFile, true, 0777);
+		$this->assertTrue($file->exists(), 'absolute path should exist');
+
+		$file = new File('file://' . $tmpFile, false);
+		$this->assertTrue($file->exists(), 'file:// should exist.');
+
+		$file = new File('/something/bad', false);
+		$this->assertFalse($file->exists(), 'missing file should not exist.');
+	}
+
+/**
  * testOpeningNonExistentFileCreatesIt method
  *
  * @return void
