@@ -1722,7 +1722,11 @@ class FormHelper extends Helper
         if (!is_string($caption) && empty($caption)) {
             $caption = __d('cake', 'Submit');
         }
-        $options += ['type' => 'submit', 'secure' => false];
+        $options += [
+            'type' => 'submit', 
+            'secure' => false,
+            'templateVars' => []
+        ];
 
         if (isset($options['name'])) {
             $this->_secure($options['secure'], $this->_secureFieldName($options['name']));
@@ -1765,11 +1769,12 @@ class FormHelper extends Helper
 
         $input = $this->formatTemplate('inputSubmit', [
             'type' => $type,
-            'attrs' => $this->templater()->formatAttributes($options),
+            'attrs' => $this->templater()->formatAttributes($options)
         ]);
 
         return $this->formatTemplate('submitContainer', [
-            'content' => $input
+            'content' => $input,
+            'templateVars' => $options['templateVars']
         ]);
     }
 
