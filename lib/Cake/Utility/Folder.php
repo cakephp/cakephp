@@ -821,13 +821,13 @@ class Folder {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::realpath
  */
 	public function realpath($path) {
-		$path = str_replace('/', DS, trim($path));
 		if (strpos($path, '..') === false) {
 			if (!Folder::isAbsolute($path)) {
 				$path = Folder::addPathElement($this->path, $path);
 			}
 			return $path;
 		}
+		$path = str_replace('/', DS, trim($path));
 		$parts = explode(DS, $path);
 		$newparts = array();
 		$newpath = '';
