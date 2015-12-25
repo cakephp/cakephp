@@ -75,13 +75,16 @@ class ExistsIn
             }
         }
 
-        $source = !empty($options['repository']) ? $options['repository'] : $this->_repository;
-        $source = $source instanceof Association ? $source->source() : $source;
-        $target = $this->_repository;
-
+        $source = $target = $this->_repository;
+        if (!empty($options['repository'])) {
+            $source = $options['repository'];
+        }
+        if ($source instanceof Association) {
+            $source = $source->source();
+        }
         if ($target instanceof Association) {
             $bindingKey = (array)$target->bindingKey();
-            $target = $this->_repository->target();
+            $target = $target->target();
         } else {
             $bindingKey = (array)$target->primaryKey();
         }
@@ -94,6 +97,30 @@ class ExistsIn
             return true;
         }
 
+        if ($this->_fieldsAreNull($entity, $source)) {
+            return true;
+        }
+
+        $primary = array_map(
+            [$target, 'aliasField'],
+            $bindingKey
+        );
+        $conditions = array_combine(
+            $primary,
+            $entity->extract($this->_fields)
+        );
+        return $target->exists($conditions);
+    }
+
+    /**
+     * Check whether or not the entity fields are null and nullable.
+     *
+     * @param \Cake\ORM\EntityInterface $entity The entity to check.
+     * @param \Cake\ORM\Table $table The table to use schema from.
+     * @return bool
+     */
+    protected function _fieldsAreNull($entity, $source)
+    {
         $nulls = 0;
         $schema = $source->schema();
         foreach ($this->_fields as $field) {
@@ -101,18 +128,6 @@ class ExistsIn
                 $nulls++;
             }
         }
-        if ($nulls === count($this->_fields)) {
-            return true;
-        }
-
-        $primary = array_map(
-            [$this->_repository, 'aliasField'],
-            $bindingKey
-        );
-        $conditions = array_combine(
-            $primary,
-            $entity->extract($this->_fields)
-        );
-        return $this->_repository->exists($conditions);
+        return $nulls === count($this->_fields);
     }
 }
