@@ -16,6 +16,7 @@ namespace Cake\ORM\Rule;
 
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
+use RuntimeException;
 
 /**
  * Checks that the value provided in a field exists as the primary key of another
@@ -57,16 +58,24 @@ class ExistsIn
      * @param \Cake\Datasource\EntityInterface $entity The entity from where to extract the fields
      * @param array $options Options passed to the check,
      * where the `repository` key is required.
+     * @throws \RuntimeException When the rule refers to an undefined association.
      * @return bool
      */
     public function __invoke(EntityInterface $entity, array $options)
     {
         if (is_string($this->_repository)) {
-            $this->_repository = $options['repository']->association($this->_repository);
+            $alias = $this->_repository;
+            $this->_repository = $options['repository']->association($alias);
+
+            if (empty($this->_repository)) {
+                throw new RuntimeException(sprintf(
+                    "ExistsIn rule for 'author_id' is invalid. The '%s' association is not defined.",
+                    $alias
+                ));
+            }
         }
 
         $source = !empty($options['repository']) ? $options['repository'] : $this->_repository;
-
         $source = $source instanceof Association ? $source->source() : $source;
         $target = $this->_repository;
 
