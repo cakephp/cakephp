@@ -69,7 +69,8 @@ class ExistsIn
 
             if (empty($this->_repository)) {
                 throw new RuntimeException(sprintf(
-                    "ExistsIn rule for 'author_id' is invalid. The '%s' association is not defined.",
+                    "ExistsIn rule for '%s' is invalid. The '%s' association is not defined.",
+                    implode(', ', $this->_fields),
                     $alias
                 ));
             }
@@ -113,10 +114,10 @@ class ExistsIn
     }
 
     /**
-     * Check whether or not the entity fields are null and nullable.
+     * Check whether or not the entity fields nullable and null.
      *
      * @param \Cake\ORM\EntityInterface $entity The entity to check.
-     * @param \Cake\ORM\Table $table The table to use schema from.
+     * @param \Cake\ORM\Table $source The table to use schema from.
      * @return bool
      */
     protected function _fieldsAreNull($entity, $source)
