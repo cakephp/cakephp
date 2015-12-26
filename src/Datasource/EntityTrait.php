@@ -788,11 +788,14 @@ trait EntityTrait
     }
 
     /**
-     * Sets a field as invalid and not patchable into the entity.
+     * Sets the invalid value state for a field.
      *
-     * This is useful for batch operations when one needs to get the original value for an error message after patching.
-     * This value could not be patched into the entity and is simply copied into the _invalid property for debugging purposes
-     * or to be able to log it away.
+     * This can be used to track property values that failed validation.
+     * Adding values here will allow you to retain the invalid value without
+     * modifying the current state of the entity.
+     *
+     * This is useful for batch operations when one needs to get the
+     * original value when building an error message.
      *
      * @param string|array|null $field
      * @param string|null $value
