@@ -128,6 +128,9 @@ class Marshaller
         $properties = [];
         foreach ($data as $key => $value) {
             if (!empty($errors[$key])) {
+                if (method_exists($entity, 'invalid')) {
+                    $entity->invalid($key, $value);
+                }
                 continue;
             }
             $columnType = $schema->columnType($key);
@@ -463,6 +466,9 @@ class Marshaller
         $properties = $marshalledAssocs = [];
         foreach ($data as $key => $value) {
             if (!empty($errors[$key])) {
+                if (method_exists($entity, 'invalid')) {
+                    $entity->invalid($key, $value);
+                }
                 continue;
             }
 
