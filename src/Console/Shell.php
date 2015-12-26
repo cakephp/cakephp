@@ -670,7 +670,7 @@ class Shell
      *
      * @param string $title Title of the error
      * @param string|null $message An optional error message
-     * @return void
+     * @return int Error code
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#styling-output
      */
     public function error($title, $message = null)
@@ -681,6 +681,8 @@ class Shell
             $this->_io->err($message);
         }
         $this->_stop(1);
+
+        return 1;
     }
 
     /**
@@ -720,7 +722,8 @@ class Shell
 
             if (strtolower($key) === 'q') {
                 $this->_io->out('<error>Quitting</error>.', 2);
-                return $this->_stop();
+                $this->_stop();
+                return false;
             }
             if (strtolower($key) === 'a') {
                 $this->params['force'] = true;
