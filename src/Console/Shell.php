@@ -726,7 +726,7 @@ class Shell
      *
      * @param string $title Title of the error
      * @param string|null $message An optional error message
-     * @return void
+     * @return int Error code
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#styling-output
      * @deprecated Since 3.2.0. Use Shell::abort() instead.
      */
@@ -738,6 +738,8 @@ class Shell
             $this->_io->err($message);
         }
         $this->_stop($exitCode);
+
+        return $exitCode;
     }
 
     /**
