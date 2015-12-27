@@ -1527,4 +1527,30 @@ class CollectionTest extends TestCase
         $unserialized = unserialize($selialized);
         $this->assertEquals($collection->toList(), $unserialized->toList());
     }
+
+    /**
+     * Tests the chunk method with exact chunks
+     *
+     * @return void
+     */
+    public function testChunk()
+    {
+        $collection = new Collection(range(1, 10));
+        $chunked = $collection->chunk(2)->toList();
+        $expected = [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10]];
+        $this->assertEquals($expected, $chunked);
+    }
+
+    /**
+     * Tests the chunk method with overflowing chunk size
+     *
+     * @return void
+     */
+    public function testChunkOverflow()
+    {
+        $collection = new Collection(range(1, 11));
+        $chunked = $collection->chunk(2)->toList();
+        $expected = [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11]];
+        $this->assertEquals($expected, $chunked);
+    }
 }
