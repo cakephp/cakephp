@@ -705,9 +705,11 @@ class PaginatorHelper extends AppHelper {
  * - `separator` Separator content defaults to ' | '
  * - `tag` The tag to wrap links in, defaults to 'span'
  * - `first` Whether you want first links generated, set to an integer to define the number of 'first'
- *    links to generate.
+ *    links to generate. If a string is set a link to the first page will be generated with the value
+ *    as the title.
  * - `last` Whether you want last links generated, set to an integer to define the number of 'last'
- *    links to generate.
+ *    links to generate. If a string is set a link to the last page will be generated with the value
+ *    as the title.
  * - `ellipsis` Ellipsis content, defaults to '...'
  * - `class` Class for wrapper tag
  * - `currentClass` Class for wrapper tag on current active page, defaults to 'current'
@@ -743,7 +745,6 @@ class PaginatorHelper extends AppHelper {
 			$options['modulus'], $options['separator'], $options['first'], $options['last'],
 			$options['ellipsis'], $options['class'], $options['currentClass'], $options['currentTag']
 		);
-
 		$out = '';
 
 		if ($modulus && $params['pageCount'] > $modulus) {
@@ -759,9 +760,10 @@ class PaginatorHelper extends AppHelper {
 				$end = $params['page'] + ($modulus - $params['page']) + 1;
 			}
 
+			$firstPage = is_int($first) ? $first : 0;
 			if ($first && $start > 1) {
-				$offset = ($start <= (int)$first) ? $start - 1 : $first;
-				if ($offset < $start - 1) {
+				$offset = ($start <= $firstPage) ? $start - 1 : $first;
+				if ($firstPage < $start - 1) {
 					$out .= $this->first($offset, compact('tag', 'separator', 'ellipsis', 'class'));
 				} else {
 					$out .= $this->first($offset, compact('tag', 'separator', 'class', 'ellipsis') + array('after' => $separator));
@@ -798,8 +800,9 @@ class PaginatorHelper extends AppHelper {
 			$out .= $after;
 
 			if ($last && $end < $params['pageCount']) {
-				$offset = ($params['pageCount'] < $end + (int)$last) ? $params['pageCount'] - $end : $last;
-				if ($offset <= $last && $params['pageCount'] - $end > $offset) {
+				$lastPage = is_int($last) ? $last : 0;
+				$offset = ($params['pageCount'] < $end + $lastPage) ? $params['pageCount'] - $end : $last;
+				if ($offset <= $lastPage && $params['pageCount'] - $end > $lastPage) {
 					$out .= $this->last($offset, compact('tag', 'separator', 'ellipsis', 'class'));
 				} else {
 					$out .= $this->last($offset, compact('tag', 'separator', 'class', 'ellipsis') + array('before' => $separator));
@@ -880,7 +883,7 @@ class PaginatorHelper extends AppHelper {
 
 		$out = '';
 
-		if (is_int($first) && $params['page'] >= $first) {
+		if ((is_int($first) || ctype_digit($first)) && $params['page'] >= $first) {
 			if ($after === null) {
 				$after = $ellipsis;
 			}
@@ -945,7 +948,7 @@ class PaginatorHelper extends AppHelper {
 		$out = '';
 		$lower = $params['pageCount'] - $last + 1;
 
-		if (is_int($last) && $params['page'] <= $lower) {
+		if ((is_int($last) || ctype_digit($last)) && $params['page'] <= $lower) {
 			if ($before === null) {
 				$before = $ellipsis;
 			}

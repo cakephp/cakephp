@@ -2210,7 +2210,54 @@ class PaginatorHelperTest extends CakeTestCase {
 			array('span' => array()), array('a' => array('href' => '/index/page:4897')), '4897', '/a', '/span',
 		);
 		$this->assertTags($result, $expected);
+	}
 
+/**
+ * Test first/last options as strings.
+ *
+ * @return void
+ */
+	public function testNumbersStringFirstAndLast() {
+		$this->Paginator->request->params['paging'] = array(
+			'Client' => array(
+				'page' => 10,
+				'current' => 3,
+				'count' => 30,
+				'prevPage' => false,
+				'nextPage' => 2,
+				'pageCount' => 15,
+				'options' => array(
+					'page' => 1,
+				),
+				'paramType' => 'named'
+			)
+		);
+
+		$result = $this->Paginator->numbers(array('first' => '1', 'last' => '1'));
+		$expected = array(
+			array('span' => array()), array('a' => array('href' => '/')), '1', '/a', '/span',
+			'...',
+			array('span' => array()), array('a' => array('href' => '/index/page:6')), '6', '/a', '/span',
+			' | ',
+			array('span' => array()), array('a' => array('href' => '/index/page:7')), '7', '/a', '/span',
+			' | ',
+			array('span' => array()), array('a' => array('href' => '/index/page:8')), '8', '/a', '/span',
+			' | ',
+			array('span' => array()), array('a' => array('href' => '/index/page:9')), '9', '/a', '/span',
+			' | ',
+			array('span' => array('class' => 'current')), '10', '/span',
+			' | ',
+			array('span' => array()), array('a' => array('href' => '/index/page:11')), '11', '/a', '/span',
+			' | ',
+			array('span' => array()), array('a' => array('href' => '/index/page:12')), '12', '/a', '/span',
+			' | ',
+			array('span' => array()), array('a' => array('href' => '/index/page:13')), '13', '/a', '/span',
+			' | ',
+			array('span' => array()), array('a' => array('href' => '/index/page:14')), '14', '/a', '/span',
+			' | ',
+			array('span' => array()), array('a' => array('href' => '/index/page:15')), '15', '/a', '/span',
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -2240,6 +2287,9 @@ class PaginatorHelperTest extends CakeTestCase {
 			array('a' => array('href' => '/index/page:7')), '7', '/a',
 			'/li',
 		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Paginator->last('2', array('tag' => 'li', 'class' => 'last'));
 		$this->assertTags($result, $expected);
 	}
 
@@ -2390,6 +2440,10 @@ class PaginatorHelperTest extends CakeTestCase {
 			array('a' => array('href' => '/index/page:7')), '7', '/a',
 			'/span',
 		);
+		$this->assertTags($result, $expected);
+
+		// Test stringy number.
+		$result = $this->Paginator->last('2');
 		$this->assertTags($result, $expected);
 
 		$result = $this->Paginator->last(3);
