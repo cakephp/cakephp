@@ -904,6 +904,22 @@ interface CollectionInterface extends Iterator, JsonSerializable
     public function zipWith($items, $callable);
 
     /**
+     * Breaks the collection into smaller arrays of the given size.
+     *
+     * ### Example:
+     *
+     * ```
+     * $items [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+     * $chunked = (new Collection($items))->chunk(3)->toList();
+     * // Returns [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11]]
+     * ```
+     *
+     * @param int $chunkSize The maximum size for each chunk
+     * @return \Cake\Collection\CollectionInterface
+     */
+    public function chunk($chunkSize);
+
+    /**
      * Returns whether or not there are elements in this collection
      *
      * ### Example:
