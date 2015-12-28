@@ -122,19 +122,8 @@ class DatabaseSessionTest extends CakeTestCase {
  * @return void
  */
 	public function testWrite() {
-		$result = $this->storage->write('foo', 'Some value');
-		$expected = array(
-			'Session' => array(
-				'id' => 'foo',
-				'data' => 'Some value',
-			)
-		);
-		$expires = $result['Session']['expires'];
-		unset($result['Session']['expires']);
-		$this->assertEquals($expected, $result);
-
-		$expected = time() + (Configure::read('Session.timeout') * 60);
-		$this->assertWithinMargin($expires, $expected, 1);
+		$this->storage->write('foo', 'Some value');
+		$this->assertEquals($this->storage->read('foo'), 'Some value');
 	}
 
 /**
@@ -154,13 +143,8 @@ class DatabaseSessionTest extends CakeTestCase {
  */
 	public function testRead() {
 		$this->storage->write('foo', 'Some value');
-
-		$result = $this->storage->read('foo');
-		$expected = 'Some value';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->storage->read('made up value');
-		$this->assertFalse($result);
+		$this->assertEquals($this->storage->read('foo'), 'Some value');
+		$this->assertSame('', $this->storage->read('made up value'));
 	}
 
 /**
@@ -172,7 +156,8 @@ class DatabaseSessionTest extends CakeTestCase {
 		$this->storage->write('foo', 'Some value');
 
 		$this->assertTrue($this->storage->destroy('foo'), 'Destroy failed');
-		$this->assertFalse($this->storage->read('foo'), 'Value still present.');
+		$this->assertSame($this->storage->read('foo'), '');
+
 	}
 
 /**
@@ -189,7 +174,7 @@ class DatabaseSessionTest extends CakeTestCase {
 
 		sleep(1);
 		$storage->gc();
-		$this->assertFalse($storage->read('foo'));
+		$this->assertSame($storage->read('foo'), '');
 	}
 
 /**
