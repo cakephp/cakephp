@@ -115,7 +115,7 @@ class SessionComponentTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$_SESSION = null;
+		$_SESSION = array();
 		$this->ComponentCollection = new ComponentCollection();
 	}
 
