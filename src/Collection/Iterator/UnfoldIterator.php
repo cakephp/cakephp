@@ -18,8 +18,8 @@ use IteratorIterator;
 use RecursiveIterator;
 
 /**
- * An iterator that can be used to generate nested iterators out of each of
- * applying an function to each of the elements in this iterator.
+ * An iterator that can be used to generate nested iterators out of a collection
+ * of items by applying an function to each of the elements in this iterator.
  *
  * @internal
  * @see Collection::unfold()
