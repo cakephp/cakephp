@@ -218,7 +218,7 @@ class CakeSession {
  * @return bool True if session has been started.
  */
 	public static function started() {
-		return isset($_SESSION) && session_id();
+		return (isset($_SESSION) && session_id()) || isset($_SESSION) && (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg');
 	}
 
 /**
@@ -461,7 +461,14 @@ class CakeSession {
 		}
 
 		if (static::started()) {
+			if(session_id() && isset($_SESSION)){
+				session_write_close();
+			}
+			session_start();
 			session_destroy();
+			if (isset($_COOKIE[static::_cookieName()])){
+				unset($_COOKIE[static::_cookieName()]);
+			}
 		}
 
 		$_SESSION = null;
@@ -753,7 +760,11 @@ class CakeSession {
 		if (isset($_COOKIE[session_name()])) {
 			setcookie(Configure::read('Session.cookie'), '', time() - 42000, static::$path);
 		}
-		session_regenerate_id(true);
+		if (!headers_sent()){
+			session_write_close();
+			session_start();
+			session_regenerate_id(true);
+		}
 	}
 
 /**
