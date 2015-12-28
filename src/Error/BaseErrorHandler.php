@@ -93,7 +93,7 @@ abstract class BaseErrorHandler
             }
             $this->handleFatalError(
                 $error['type'],
-               $error['message'],
+                $error['message'],
                 $error['file'],
                 $error['line']
             );
