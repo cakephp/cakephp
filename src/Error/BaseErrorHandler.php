@@ -76,8 +76,8 @@ abstract class BaseErrorHandler
             if ($megabytes === null) {
                 $megabytes = 4;
             }
-            if ($megabytes !== false && $megabytes > 0) {
-                static::increaseMemoryLimit($megabytes * 1024);
+            if ($megabytes > 0) {
+                $this->increaseMemoryLimit($megabytes * 1024);
             }
             $error = error_get_last();
             if (!is_array($error)) {
@@ -93,7 +93,7 @@ abstract class BaseErrorHandler
             }
             $this->handleFatalError(
                 $error['type'],
-                $error['message'],
+               $error['message'],
                 $error['file'],
                 $error['line']
             );
@@ -222,30 +222,30 @@ abstract class BaseErrorHandler
     /**
      * Increases the PHP "memory_limit" ini setting by the specified amount
      * in kilobytes
-     * 
+     *
      * @param string $additionalKb Number in kilobytes
      * @return void
      */
-    public static function increaseMemoryLimit($additionalKb)
+    public function increaseMemoryLimit($additionalKb)
     {
-        $limit = ini_get("memory_limit");
-        if (!is_string($limit) || !strlen($limit)) {
+        $limit = ini_get('memory_limit');
+        if (!strlen($limit) || $limit === '-1') {
             return;
         }
         $limit = trim($limit);
         $units = strtoupper(substr($limit, -1));
         $current = substr($limit, 0, strlen($limit) - 1);
-        if ($units === "M") {
+        if ($units === 'M') {
             $current = $current * 1024;
-            $units = "K";
+            $units = 'K';
         }
-        if ($units === "G") {
+        if ($units === 'G') {
             $current = $current * 1024 * 1024;
-            $units = "K";
+            $units = 'K';
         }
 
-        if ($units === "K") {
-            ini_set("memory_limit", ceil($current + $additionalKb) . "K");
+        if ($units === 'K') {
+            ini_set('memory_limit', ceil($current + $additionalKb) . 'K');
         }
     }
 
