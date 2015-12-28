@@ -169,7 +169,7 @@ class ConsoleOptionParser
      *
      * @param string|null $command The command name this parser is for. The command name is used for generating help.
      * @param bool $defaultOptions Whether you want the verbose and quiet options set.
-     * @return \Cake\Console\ConsoleOptionParser
+     * @return $this
      */
     public static function create($command, $defaultOptions = true)
     {
@@ -197,7 +197,7 @@ class ConsoleOptionParser
      *
      * @param array $spec The spec to build the OptionParser with.
      * @param bool $defaultOptions Whether you want the verbose and quiet options set.
-     * @return \Cake\Console\ConsoleOptionParser
+     * @return $this
      */
     public static function buildFromArray($spec, $defaultOptions = true)
     {
@@ -371,7 +371,7 @@ class ConsoleOptionParser
      * Remove an option from the option parser.
      *
      * @param string $name The option name to remove.
-     * @return \Cake\Console\ConsoleOptionParser this
+     * @return $this
      */
     public function removeOption($name)
     {
