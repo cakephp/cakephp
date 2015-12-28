@@ -909,7 +909,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * ### Example:
      *
      * ```
-     * $items [1, 2, 3, 4, 5, ,6 ,7 ,8 ,9, 10, 11];
+     * $items [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
      * $chunked = (new Collection($items))->chunk(3)->toList();
      * // Returns [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11]]
      * ```
