@@ -217,7 +217,7 @@ class CakeSession {
  * @return bool True if session has been started.
  */
 	public static function started() {
-		if (PHP_VERSION >=5.4) {
+		if (PHP_VERSION >= 5.4) {
 			return isset($_SESSION) && (session_status() === PHP_SESSION_ACTIVE);
 		}
 		return isset($_SESSION) && session_id();
@@ -463,12 +463,12 @@ class CakeSession {
 		}
 
 		if (static::started()) {
-			if (session_id() && static::_hasSession()){
+			if (session_id() && static::_hasSession()) {
 				session_write_close();
 				session_start();
 			}
 			session_destroy();
-			if (isset($_COOKIE[static::_cookieName()])){
+			if (isset($_COOKIE[static::_cookieName()])) {
 				unset($_COOKIE[static::_cookieName()]);
 			}
 		}
@@ -762,7 +762,7 @@ class CakeSession {
 		if (isset($_COOKIE[session_name()])) {
 			setcookie(Configure::read('Session.cookie'), '', time() - 42000, static::$path);
 		}
-		if (!headers_sent()){
+		if (!headers_sent()) {
 			session_write_close();
 			session_start();
 			session_regenerate_id(true);
