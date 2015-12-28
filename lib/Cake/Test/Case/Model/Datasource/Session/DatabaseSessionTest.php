@@ -157,7 +157,6 @@ class DatabaseSessionTest extends CakeTestCase {
 
 		$this->assertTrue($this->storage->destroy('foo'), 'Destroy failed');
 		$this->assertSame($this->storage->read('foo'), '');
-
 	}
 
 /**
