@@ -108,8 +108,8 @@ class FileEngine extends CacheEngine {
  * @param int $duration How long to cache the data, in seconds
  * @return bool True if the data was successfully cached, false on failure
  */
-	public function write($key, $data, $duration) {
-		if ($data === '' || !$this->_init) {
+	public function write($key, $data = null, $duration) {
+		if (!$this->_init) {
 			return false;
 		}
 
