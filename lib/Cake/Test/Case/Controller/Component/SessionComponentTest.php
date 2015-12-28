@@ -115,7 +115,7 @@ class SessionComponentTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$_SESSION = array();
+		$_SESSION = null;
 		$this->ComponentCollection = new ComponentCollection();
 	}
 
@@ -202,7 +202,8 @@ class SessionComponentTest extends CakeTestCase {
 		$this->assertEquals($Session->read('Test'), $array);
 		$Session->delete('Test');
 
-		$this->assertTrue($Session->write(array('Test'), 'some value'));
+		//This test creates a numeric key 0 which is not a valid session key
+		//$this->assertTrue($Session->write(array('Test'), 'some value'));
 		$this->assertTrue($Session->write(array('Test' => 'some value')));
 		$this->assertEquals('some value', $Session->read('Test'));
 		$Session->delete('Test');
