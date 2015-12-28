@@ -607,7 +607,7 @@ trait CollectionTrait
      */
     public function chunk($chunkSize)
     {
-        return $this->unfold(function ($v, $k, $iterator) use ($chunkSize) {
+        return $this->map(function ($v, $k, $iterator) use ($chunkSize) {
             $values = [$v];
             for ($i = 1; $i < $chunkSize; $i++) {
                 $iterator->next();
@@ -617,7 +617,7 @@ trait CollectionTrait
                 $values[] = $iterator->current();
             }
 
-            return empty($values) ? $values : [$values];
+            return $values;
         });
     }
 
