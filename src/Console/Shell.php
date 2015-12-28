@@ -709,19 +709,37 @@ class Shell
      * Displays a formatted error message
      * and exits the application with status code 1
      *
+     * @param string|null $message Error message
+     * @param int $exitCode Exit code
+     * @return int Exit code
+     */
+    public function abort($message, $exitCode = 1) {
+        $this->_io->err('<error>' . $message . '</error>');
+        $this->_stop($exitCode);
+
+        return $exitCode;
+    }
+
+    /**
+     * Displays a formatted error message
+     * and exits the application with status code 1
+     *
      * @param string $title Title of the error
      * @param string|null $message An optional error message
-     * @return void
+     * @return int Error code
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#styling-output
+     * @deprecated Since 3.2.0. Use Shell::abort() instead.
      */
-    public function error($title, $message = null)
+    public function error($title, $message = null, $exitCode = 1)
     {
         $this->_io->err(sprintf('<error>Error:</error> %s', $title));
 
         if (!empty($message)) {
             $this->_io->err($message);
         }
-        $this->_stop(1);
+        $this->_stop($exitCode);
+
+        return $exitCode;
     }
 
     /**
