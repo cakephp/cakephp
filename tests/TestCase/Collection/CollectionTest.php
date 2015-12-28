@@ -1563,7 +1563,7 @@ class CollectionTest extends TestCase
     {
         $collection = new Collection([1, 2, 3, [4, 5], 6, [7, [8, 9], 10], 11]);
         $chunked = $collection->chunk(2)->toList();
-        $expected = [[1, 2], [3, [4, 5]], [6, [7, [8, 9,], 10]], [11]];
+        $expected = [[1, 2], [3, [4, 5]], [6, [7, [8, 9], 10]], [11]];
         $this->assertEquals($expected, $chunked);
     }
 }
