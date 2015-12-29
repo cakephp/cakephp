@@ -723,7 +723,7 @@ class Shell
      * @return void
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#styling-output
      */
-    public function abort($message, $exitCode)
+    public function abort($message, $exitCode = self::CODE_ERROR)
     {
         $this->_io->err('<error>' . $message . '</error>');
         throw new StopException($message, $exitCode);
