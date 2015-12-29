@@ -468,9 +468,7 @@ class CakeSession {
 				session_start();
 			}
 			session_destroy();
-			if (isset($_COOKIE[static::_cookieName()])) {
-				unset($_COOKIE[static::_cookieName()]);
-			}
+			unset($_COOKIE[static::_cookieName()]);
 		}
 
 		$_SESSION = null;
