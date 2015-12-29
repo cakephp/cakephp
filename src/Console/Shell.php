@@ -15,6 +15,7 @@
 namespace Cake\Console;
 
 use Cake\Console\Exception\ConsoleException;
+use Cake\Console\Exception\StopException;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Datasource\ModelAwareTrait;
@@ -716,21 +717,40 @@ class Shell
      * Displays a formatted error message
      * and exits the application with status code 1
      *
-     * @param string $title Title of the error
-     * @param string|null $message An optional error message
-     * @return int Error code
+     * @param string $message The error message
+     * @param int $exitCode The exit code for the shell task.
+     * @throws \Cake\Console\Exception\StopException
+     * @return void
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#styling-output
      */
-    public function error($title, $message = null)
+    public function abort($message, $exitCode)
+    {
+        $this->_io->err('<error>' . $message . '</error>');
+        throw new StopException($message, $exitCode);
+    }
+
+    /**
+     * Displays a formatted error message
+     * and exits the application with status code 1
+     *
+     * @param string $title Title of the error
+     * @param string|null $message An optional error message
+     * @param int $exitCode The exit code for the shell task.
+     * @throws \Cake\Console\Exception\StopException
+     * @return int Error code
+     * @link http://book.cakephp.org/3.0/en/console-and-shells.html#styling-output
+     * @deprecated Since 3.2.0. Use Shell::abort() instead.
+     */
+    public function error($title, $message = null, $exitCode = self::CODE_ERROR)
     {
         $this->_io->err(sprintf('<error>Error:</error> %s', $title));
 
         if (!empty($message)) {
             $this->_io->err($message);
         }
-        $this->_stop(self::CODE_ERROR);
 
-        return self::CODE_ERROR;
+        $this->_stop($exitCode);
+        return $exitCode;
     }
 
     /**
@@ -827,15 +847,16 @@ class Shell
     }
 
     /**
-     * Stop execution of the current script. Wraps exit() making
-     * testing easier.
+     * Stop execution of the current script.
+     * Raises a StopException to try and halt the execution.
      *
      * @param int|string $status see http://php.net/exit for values
+     * @throws \Cake\Console\Exception\StopException
      * @return void
      */
     protected function _stop($status = 0)
     {
-        exit($status);
+        throw new StopException('Halting error reached', $status);
     }
 
     /**
