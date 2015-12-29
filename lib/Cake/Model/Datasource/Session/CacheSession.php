@@ -53,7 +53,8 @@ class CacheSession implements CakeSessionHandlerInterface {
  */
 	public function read($id) {
 		$data = Cache::read($id, Configure::read('Session.handler.config'));
-		if (empty($data)) {
+
+		if (!is_numeric($data) && empty($data)) {
 			return '';
 		}
 		return $data;

@@ -92,7 +92,7 @@ class DatabaseSession implements CakeSessionHandlerInterface {
 			'conditions' => array($this->_model->alias . '.' . $this->_model->primaryKey => $id)
 		));
 
-		if (empty($row[$this->_model->alias]['data'])) {
+		if (!is_numeric($row[$this->_model->alias]['data']) && empty($row[$this->_model->alias]['data'])) {
 			return '';
 		}
 
