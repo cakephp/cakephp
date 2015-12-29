@@ -147,7 +147,6 @@ class DatabaseSessionTest extends CakeTestCase {
 		$this->storage->write('bar', 0);
 		$this->assertEquals(0, $this->storage->read('bar'));
 		$this->assertSame('', $this->storage->read('made up value'));
-
 	}
 
 /**
