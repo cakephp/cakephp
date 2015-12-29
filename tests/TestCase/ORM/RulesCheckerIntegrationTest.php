@@ -461,6 +461,29 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
+     * Tests existsIn with invalid associations
+     *
+     * @group save
+     * @expectedException RuntimeException
+     * @expectedExceptionMessage ExistsIn rule for 'author_id' is invalid. The 'NotValid' association is not defined.
+     * @return void
+     */
+    public function testExistsInInvalidAssociation()
+    {
+        $entity = new Entity([
+            'title' => 'An Article',
+            'author_id' => 500
+        ]);
+
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors');
+        $rules = $table->rulesChecker();
+        $rules->add($rules->existsIn('author_id', 'NotValid'));
+
+        $table->save($entity);
+    }
+
+    /**
      * Tests the checkRules save option
      *
      * @group save

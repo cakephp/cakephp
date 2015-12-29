@@ -41,6 +41,13 @@ class Shell
     use ModelAwareTrait;
 
     /**
+     * Default error code
+     *
+     * @var int
+     */
+    const CODE_ERROR = 1;
+
+    /**
      * Output constant making verbose shells.
      *
      * @var int
@@ -496,7 +503,7 @@ class Shell
      *
      * By overriding this method you can configure the ConsoleOptionParser before returning it.
      *
-     * @return ConsoleOptionParser
+     * @return \Cake\Console\ConsoleOptionParser
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#configuring-options-and-generating-help
      */
     public function getOptionParser()
@@ -711,7 +718,7 @@ class Shell
      *
      * @param string $title Title of the error
      * @param string|null $message An optional error message
-     * @return void
+     * @return int Error code
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#styling-output
      */
     public function error($title, $message = null)
@@ -721,7 +728,9 @@ class Shell
         if (!empty($message)) {
             $this->_io->err($message);
         }
-        $this->_stop(1);
+        $this->_stop(self::CODE_ERROR);
+
+        return self::CODE_ERROR;
     }
 
     /**
@@ -761,7 +770,8 @@ class Shell
 
             if (strtolower($key) === 'q') {
                 $this->_io->out('<error>Quitting</error>.', 2);
-                return $this->_stop();
+                $this->_stop();
+                return false;
             }
             if (strtolower($key) === 'a') {
                 $this->params['force'] = true;
