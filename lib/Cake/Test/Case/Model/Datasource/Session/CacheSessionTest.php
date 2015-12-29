@@ -104,6 +104,8 @@ class CacheSessionTest extends CakeTestCase {
 	public function testRead() {
 		$this->storage->write('test_one', 'Some other value');
 		$this->assertEquals('Some other value', $this->storage->read('test_one'), 'Incorrect value.');
+		$this->storage->write('test_two', 0);
+		$this->assertEquals(0, $this->storage->read('test_two'));
 	}
 
 /**

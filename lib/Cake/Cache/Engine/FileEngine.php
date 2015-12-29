@@ -109,7 +109,7 @@ class FileEngine extends CacheEngine {
  * @return bool True if the data was successfully cached, false on failure
  */
 	public function write($key, $data, $duration) {
-		if ($data === '' || !$this->_init) {
+		if (!$this->_init) {
 			return false;
 		}
 

@@ -202,7 +202,6 @@ class SessionComponentTest extends CakeTestCase {
 		$this->assertEquals($Session->read('Test'), $array);
 		$Session->delete('Test');
 
-		$this->assertTrue($Session->write(array('Test'), 'some value'));
 		$this->assertTrue($Session->write(array('Test' => 'some value')));
 		$this->assertEquals('some value', $Session->read('Test'));
 		$Session->delete('Test');
