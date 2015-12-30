@@ -20,6 +20,11 @@ services:
   - memcached
   - redis-server
 
+cache:
+  directories:
+    - vendor
+    - $HOME/.composer/cache
+
 matrix:
   fast_finish: true
 
