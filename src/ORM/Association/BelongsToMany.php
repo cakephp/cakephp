@@ -1095,11 +1095,23 @@ class BelongsToMany extends Association
     protected function _buildQuery($options)
     {
         $name = $this->_junctionAssociationName();
+        $assoc = $this->target()->association($name);
+        $queryBuilder = false;
+
+        if (!empty($options['queryBuilder'])) {
+            $queryBuilder = $options['queryBuilder'];
+            unset($options['queryBuilder']);
+        }
+
         $query = $this->_buildBaseQuery($options);
+        $query->addDefaultTypes($assoc->target());
+
+        if ($queryBuilder) {
+            $query = $queryBuilder($query);
+        }
 
         $keys = $this->_linkField($options);
         $query = $this->_appendJunctionJoin($query, $keys);
-        $assoc = $this->target()->association($name);
 
         $query->autoFields($query->clause('select') === [])
             ->select($query->aliasFields((array)$assoc->foreignKey(), $name));

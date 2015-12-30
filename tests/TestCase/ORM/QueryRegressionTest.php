@@ -1236,4 +1236,26 @@ class QueryRegressionTest extends TestCase
         // Not executing the query first, just getting the count
         $this->assertEquals(3, $query->count());
     }
+
+    /**
+     * Tests that fetching belongsToMany association will not force
+     * all fields being returned, but intead will honor the select() clause
+     *
+     * @see https://github.com/cakephp/cakephp/issues/7913
+     * @return void
+     */
+    public function testEagerLoadingBelongsToManyLimitedFields()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags');
+        $result = $table
+            ->find()
+            ->contain(['Tags' => function ($q) {
+                return $q->select(['id']);
+            }])
+            ->first();
+
+        $this->assertNotEmpty($result->tags[0]->id);
+        $this->assertEmpty($result->tags[0]->name);
+    }
 }
