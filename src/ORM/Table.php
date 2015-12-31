@@ -1814,6 +1814,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             );
         }
 
+        $conditions = [];
         if ($hasOr === false && $hasAnd === false) {
             $conditions = $makeConditions([$fields], $args);
         } elseif ($hasOr !== false) {
