@@ -913,4 +913,26 @@ class BelongsToManyTest extends TestCase
         $association = new BelongsToMany('Contacts.Tags', $config);
         $this->assertEquals('tags', $association->property());
     }
+
+    /**
+     * Tests that fetching belongsToMany association will not force
+     * all fields being returned, but intead will honor the select() clause
+     *
+     * @see https://github.com/cakephp/cakephp/issues/7916
+     * @return void
+     */
+    public function testEagerLoadingBelongsToManyLimitedFields()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags');
+        $result = $table
+            ->find()
+            ->contain(['Tags' => function ($q) {
+                return $q->select(['id']);
+            }])
+            ->first();
+
+        $this->assertNotEmpty($result->tags[0]->id);
+        $this->assertEmpty($result->tags[0]->name);
+    }
 }
