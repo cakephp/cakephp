@@ -29,7 +29,7 @@ matrix:
   fast_finish: true
 
   include:
-    - php: 5.4
+    - php: 5.6
       env: COVERALLS=1 DEFAULT=0
 
     - php: 7.0
