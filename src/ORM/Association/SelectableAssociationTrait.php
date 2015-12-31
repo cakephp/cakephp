@@ -295,7 +295,8 @@ trait SelectableAssociationTrait
 
         $sourceKeys = [];
         foreach ((array)$keys as $key) {
-            $sourceKeys[] = key($fetchQuery->aliasField($key, $sAlias));
+            $f = $fetchQuery->aliasField($key, $sAlias);
+            $sourceKeys[] = key($f);
         }
 
         $nestKey = $options['nestKey'];
