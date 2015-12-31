@@ -138,6 +138,31 @@ class Configure
     }
 
     /**
+     * Used to get information stored in Configure. It's not
+     * possible to store `null` values in Configure.
+     *
+     * Acts as a wrapper around Configure::read() and Configure::check().
+     * The configure value fetched via get is expected to exist. 
+     * In case it does not an exception will be thrown.
+     *
+     * Usage:
+     * ```
+     * Configure::get('Name'); will return all values for Name
+     * Configure::get('Name.key'); will return only the value of Configure::Name[key]
+     * ```
+     *
+     * @param string $var Variable to obtain. Use '.' to access array elements.
+     * @return mixed value stored in configure.
+     * @throws \Cake\Core\Exception\Exception if the requested configuration is not set.
+     */
+    public static function get($var) {
+        if (static::check($var) === false) {
+            throw new Exception(sprintf('Expected "%s" configuration.', $var));
+        }
+        return static::read($var);
+    }
+
+    /**
      * Used to delete a variable from Configure.
      *
      * Usage:

@@ -69,6 +69,26 @@ class ConfigureTest extends TestCase
     }
 
     /**
+     * testGet method
+     *
+     * @return void
+     */
+    public function testGet()
+    {
+        $expected = 'ok';
+        Configure::write('This.Key.Exists', $expected);
+        $result = Configure::get('This.Key.Exists');
+        $this->assertEquals($expected, $result);
+
+        try {
+            $void = Configure::get('This.Key.Does.Not.exist');
+            $this->fail('Expected exception to be thrown.');
+        } catch (\Exception $e) {
+            $this->assertEquals('Expected "This.Key.Does.Not.exist" configuration.', $e->getMessage());
+        }
+    }
+
+    /**
      * testRead method
      *
      * @return void
