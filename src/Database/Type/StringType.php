@@ -52,7 +52,7 @@ class StringType extends Type
     }
 
     /**
-     * Convert string values to PHP integers
+     * Convert string values to PHP strings.
      *
      * @param mixed $value The value to convert.
      * @param Driver $driver The driver instance to convert with.
