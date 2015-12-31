@@ -4,7 +4,8 @@ platform: 'x86'
 clone_folder: c:\projects\cakephp
 
 cache:
-  - '%LOCALAPPDATA%\Composer'
+  - %LOCALAPPDATA%\Composer
+  - %APPDATA%\Composer
 
 branches:
   only:
