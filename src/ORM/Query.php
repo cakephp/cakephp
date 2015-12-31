@@ -737,7 +737,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         if (!$complex && $this->_valueBinder !== null) {
             $order = $this->clause('order');
             $complex = $order === null ? false : $order->hasNestedExpression();
-            var_dump($order);
         }
 
         $count = ['count' => $query->func()->count('*')];
