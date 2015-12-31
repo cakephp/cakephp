@@ -1430,7 +1430,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     {
         $this->_dirty();
         $this->_type = 'delete';
-        if ($table) {
+        if ($table !== null) {
             $this->from($table);
         }
         return $this;
@@ -1796,7 +1796,6 @@ class Query implements ExpressionInterface, IteratorAggregate
     protected function _dirty()
     {
         $this->_dirty = true;
-        $this->_transformedQuery = null;
 
         if ($this->_iterator && $this->_valueBinder) {
             $this->valueBinder()->reset();

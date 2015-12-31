@@ -443,7 +443,7 @@ class BelongsToMany extends Association
         $table = $this->junction();
         $hasMany = $this->source()->association($table->alias());
         if ($this->_cascadeCallbacks) {
-            foreach ($hasMany->find('all')->where($conditions) as $related) {
+            foreach ($hasMany->find('all')->where($conditions)->toList() as $related) {
                 $table->delete($related, $options);
             }
             return true;
@@ -1095,11 +1095,23 @@ class BelongsToMany extends Association
     protected function _buildQuery($options)
     {
         $name = $this->_junctionAssociationName();
+        $assoc = $this->target()->association($name);
+        $queryBuilder = false;
+
+        if (!empty($options['queryBuilder'])) {
+            $queryBuilder = $options['queryBuilder'];
+            unset($options['queryBuilder']);
+        }
+
         $query = $this->_buildBaseQuery($options);
+        $query->addDefaultTypes($assoc->target());
+
+        if ($queryBuilder) {
+            $query = $queryBuilder($query);
+        }
 
         $keys = $this->_linkField($options);
         $query = $this->_appendJunctionJoin($query, $keys);
-        $assoc = $this->target()->association($name);
 
         $query->autoFields($query->clause('select') === [])
             ->select($query->aliasFields((array)$assoc->foreignKey(), $name));
