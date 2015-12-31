@@ -112,7 +112,7 @@ class Configure
      * ```
      *
      * @param string $var Variable to obtain. Use '.' to access array elements.
-     * @return mixed value stored in configure, or null.
+     * @return mixed Value stored in configure, or null.
      * @link http://book.cakephp.org/3.0/en/development/configuration.html#reading-configuration-data
      */
     public static function read($var = null)
@@ -142,7 +142,7 @@ class Configure
      * possible to store `null` values in Configure.
      *
      * Acts as a wrapper around Configure::read() and Configure::check().
-     * The configure value fetched via get is expected to exist. 
+     * The configure value fetched via this method is expected to exist. 
      * In case it does not an exception will be thrown.
      *
      * Usage:
@@ -152,7 +152,7 @@ class Configure
      * ```
      *
      * @param string $var Variable to obtain. Use '.' to access array elements.
-     * @return mixed value stored in configure.
+     * @return mixed Value stored in configure.
      * @throws \Cake\Core\Exception\Exception if the requested configuration is not set.
      */
     public static function get($var) {
