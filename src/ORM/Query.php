@@ -723,11 +723,13 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             count($query->clause('union')) ||
             $query->clause('having')
         );
+        debug($complex);
 
         if (!$complex) {
             // Expression fields could have bound parameters.
             foreach ($query->clause('select') as $field) {
                 if ($field instanceof ExpressionInterface) {
+                    debug($field);
                     $complex = true;
                     break;
                 }
@@ -737,6 +739,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         if (!$complex && $this->_valueBinder !== null) {
             $order = $this->clause('order');
             $complex = $order === null ? false : $order->hasNestedExpression();
+            debug($complex);
         }
 
         $count = ['count' => $query->func()->count('*')];
