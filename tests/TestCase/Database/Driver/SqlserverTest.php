@@ -67,6 +67,7 @@ class SqlserverTest extends TestCase
         $expected = $config;
         $expected['flags'] += [
             PDO::ATTR_PERSISTENT => false,
+            PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::SQLSRV_ATTR_ENCODING => 'a-language'
         ];

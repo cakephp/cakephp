@@ -53,6 +53,7 @@ class PostgresTest extends TestCase
 
         $expected['flags'] += [
             PDO::ATTR_PERSISTENT => true,
+            PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ];
 
@@ -107,6 +108,7 @@ class PostgresTest extends TestCase
         $expected = $config;
         $expected['flags'] += [
             PDO::ATTR_PERSISTENT => false,
+            PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ];
 
