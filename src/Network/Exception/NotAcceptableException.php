@@ -10,7 +10,6 @@
  * @since         3.1.7
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-
 namespace Cake\Network\Exception;
 
 /**
@@ -23,7 +22,7 @@ class NotAcceptableException extends HttpException
     /**
      * Constructor
      *
-     * @param string $message If no message is given 'Not Acceptable' will be the message
+     * @param string|null $message If no message is given 'Not Acceptable' will be the message
      * @param int $code Status code, defaults to 406
      */
     public function __construct($message = null, $code = 406)
