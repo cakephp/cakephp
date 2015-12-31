@@ -305,11 +305,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             $this->_dirty();
         }
 
-        $result = $loader->contain($associations);
         if ($associations === null) {
-            return $result;
+            return $loader->contain();
         }
 
+        $result = $loader->contain($associations);
         $this->_addAssociationsToTypeMap($this->repository(), $this->typeMap(), $result);
         return $this;
     }
@@ -326,7 +326,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     protected function _addAssociationsToTypeMap($table, $typeMap, $associations)
     {
-        $typeMap = $this->typeMap();
         foreach ($associations as $name => $nested) {
             $association = $table->association($name);
             if (!$association) {
@@ -775,7 +774,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * The callback will receive as first argument a clone of this query and not this
      * query itself.
      *
-     * @param callable $counter The counter value
+     * If the first param is a null value, the built-in counter function will be called
+     * instead
+     *
+     * @param callable|null $counter The counter value
      * @return $this
      */
     public function counter($counter)

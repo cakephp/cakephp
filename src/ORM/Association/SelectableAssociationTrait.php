@@ -43,16 +43,7 @@ trait SelectableAssociationTrait
     public function eagerLoader(array $options)
     {
         $options += $this->_defaultOptions();
-        $queryBuilder = false;
-        if (!empty($options['queryBuilder'])) {
-            $queryBuilder = $options['queryBuilder'];
-            unset($options['queryBuilder']);
-        }
-
         $fetchQuery = $this->_buildQuery($options);
-        if ($queryBuilder) {
-            $fetchQuery = $queryBuilder($fetchQuery);
-        }
         $resultMap = $this->_buildResultMap($fetchQuery, $options);
         return $this->_resultInjector($fetchQuery, $resultMap, $options);
     }
@@ -123,7 +114,7 @@ trait SelectableAssociationTrait
         }
 
         if (!empty($options['queryBuilder'])) {
-            $options['queryBuilder']($fetchQuery);
+            $fetchQuery = $options['queryBuilder']($fetchQuery);
         }
 
         return $fetchQuery;
@@ -304,7 +295,8 @@ trait SelectableAssociationTrait
 
         $sourceKeys = [];
         foreach ((array)$keys as $key) {
-            $sourceKeys[] = key($fetchQuery->aliasField($key, $sAlias));
+            $f = $fetchQuery->aliasField($key, $sAlias);
+            $sourceKeys[] = key($f);
         }
 
         $nestKey = $options['nestKey'];

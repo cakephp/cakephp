@@ -337,17 +337,6 @@ class QueryTest extends TestCase
             ->innerJoin(['c' => 'comments'], ['created <' => $time], $types)
             ->execute();
         $this->assertCount(0, $result->fetchAll());
-
-        $query = new Query($this->connection);
-        $result = $query
-            ->select(['title', 'name' => 'c.comment'])
-            ->from('articles')
-            ->leftJoin(['c' => 'comments'], ['created >' => $time], $types)
-            ->execute();
-        $this->assertEquals(
-            ['title' => 'First Article', 'name' => 'Second Comment for First Article'],
-            $result->fetch('assoc')
-        );
     }
 
     /**

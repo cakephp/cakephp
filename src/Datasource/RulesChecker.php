@@ -279,11 +279,11 @@ class RulesChecker
 
     /**
      * Used by top level functions checkDelete, checkCreate and checkUpdate, this function
-     * iterates an array containing the rules to be checked and check them all.
+     * iterates an array containing the rules to be checked and checks them all.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.
      * @param array $options Extra options to pass to checker functions.
-     * @param array $rules the list of rules that must be checked
+     * @param array $rules The list of rules that must be checked.
      * @return bool
      */
     protected function _checkRules(EntityInterface $entity, array $options = [], array $rules = [])
@@ -302,7 +302,7 @@ class RulesChecker
      *
      * @param callable $rule The rule to decorate
      * @param string $name The alias for a rule.
-     * @param array $options The options containing the error message and field
+     * @param array $options The options containing the error message and field.
      * @return callable
      */
     protected function _addError($rule, $name, $options)

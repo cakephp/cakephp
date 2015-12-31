@@ -3,6 +3,10 @@ shallow_clone: false
 platform: 'x86'
 clone_folder: c:\projects\cakephp
 
+cache:
+  - '%LOCALAPPDATA%\Composer'
+  - '%APPDATA%\Composer'
+
 branches:
   only:
     - master
