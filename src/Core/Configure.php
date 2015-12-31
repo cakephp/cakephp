@@ -19,6 +19,7 @@ use Cake\Core\Configure\ConfigEngineInterface;
 use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\Core\Exception\Exception;
 use Cake\Utility\Hash;
+use RuntimeException;
 
 /**
  * Configuration class. Used for managing runtime configuration information.
@@ -142,22 +143,23 @@ class Configure
      * possible to store `null` values in Configure.
      *
      * Acts as a wrapper around Configure::read() and Configure::check().
-     * The configure value fetched via this method is expected to exist. 
+     * The configure key/value pair fetched via this method is expected to exist. 
      * In case it does not an exception will be thrown.
      *
      * Usage:
      * ```
-     * Configure::get('Name'); will return all values for Name
-     * Configure::get('Name.key'); will return only the value of Configure::Name[key]
+     * Configure::readOrFail('Name'); will return all values for Name
+     * Configure::readOrFail('Name.key'); will return only the value of Configure::Name[key]
      * ```
      *
      * @param string $var Variable to obtain. Use '.' to access array elements.
      * @return mixed Value stored in configure.
-     * @throws \Cake\Core\Exception\Exception if the requested configuration is not set.
+     * @throws \RuntimeException if the requested configuration is not set.
+     * @link http://book.cakephp.org/3.0/en/development/configuration.html#reading-configuration-data
      */
-    public static function get($var) {
+    public static function readOrFail($var) {
         if (static::check($var) === false) {
-            throw new Exception(sprintf('Expected "%s" configuration.', $var));
+            throw new RuntimeException(sprintf('Expected "%s" configuration.', $var));
         }
         return static::read($var);
     }

@@ -69,21 +69,30 @@ class ConfigureTest extends TestCase
     }
 
     /**
-     * testGet method
+     * testReadOrFail method
      *
      * @return void
      */
-    public function testGet()
+    public function testReadOrFail()
     {
         $expected = 'ok';
         Configure::write('This.Key.Exists', $expected);
-        $result = Configure::get('This.Key.Exists');
+        $result = Configure::readOrFail('This.Key.Exists');
         $this->assertEquals($expected, $result);
+    }
 
+    /**
+     * testReadOrFail method
+     *
+     * @return void
+     */
+    public function testReadOrFailThrowingException()
+    {
         try {
-            $void = Configure::get('This.Key.Does.Not.exist');
+            $void = Configure::readOrFail('This.Key.Does.Not.exist');
             $this->fail('Expected exception to be thrown.');
         } catch (\Exception $e) {
+            $this->assertTrue($e instanceof \RuntimeException);
             $this->assertEquals('Expected "This.Key.Does.Not.exist" configuration.', $e->getMessage());
         }
     }
