@@ -233,7 +233,7 @@ class PaginatorHelperTest extends TestCase
 
         $this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
         $this->Paginator->request->params['paging']['Article']['direction'] = 'desc';
-        $result = $this->Paginator->sort('title', 'Title', ['direction' => 'asc']);
+        $result = $this->Paginator->sort('title', 'Title', ['direction' => 'ASC']);
         $expected = [
             'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=asc', 'class' => 'desc'],
             'Title',
@@ -1147,6 +1147,42 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
+        $result = $this->Paginator->numbers(['first' => '2', 'last' => '8']);
+        $expected = [
+            ['li' => ['class' => 'first']], ['a' => ['href' => '/index']], '2', '/a', '/li',
+            ['li' => ['class' => 'ellipsis']], '...', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4']], '4', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=5']], '5', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=6']], '6', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=7']], '7', '/a', '/li',
+            ['li' => ['class' => 'active']], '<a href=""', '8', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=9']], '9', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=10']], '10', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=11']], '11', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=12']], '12', '/a', '/li',
+            ['li' => ['class' => 'ellipsis']], '...', '/li',
+            ['li' => ['class' => 'last']], ['a' => ['href' => '/index?page=15']], '8', '/a', '/li',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Paginator->numbers(['first' => '8', 'last' => '8']);
+        $expected = [
+            ['li' => ['class' => 'first']], ['a' => ['href' => '/index']], '8', '/a', '/li',
+            ['li' => ['class' => 'ellipsis']], '...', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=4']], '4', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=5']], '5', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=6']], '6', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=7']], '7', '/a', '/li',
+            ['li' => ['class' => 'active']], '<a href=""', '8', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=9']], '9', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=10']], '10', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=11']], '11', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index?page=12']], '12', '/a', '/li',
+            ['li' => ['class' => 'ellipsis']], '...', '/li',
+            ['li' => ['class' => 'last']], ['a' => ['href' => '/index?page=15']], '8', '/a', '/li',
+        ];
+        $this->assertHtml($expected, $result);
+
         $this->Paginator->request->params['paging'] = [
             'Client' => [
                 'page' => 1,
@@ -1750,6 +1786,16 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
+        $result = $this->Paginator->first('5');
+        $expected = [
+            'li' => ['class' => 'first'],
+            'a' => ['href' => '/index'],
+            '5',
+            '/a',
+            '/li'
+        ];
+        $this->assertHtml($expected, $result);
+
         $result = $this->Paginator->last(2);
         $expected = [
             '<li',
@@ -1758,6 +1804,16 @@ class PaginatorHelperTest extends TestCase
             '<li',
             ['a' => ['href' => '/index?page=7']], '7', '/a',
             '/li',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Paginator->last('9');
+        $expected = [
+            'li' => ['class' => 'last'],
+            'a' => ['href' => '/index?page=7'],
+            '9',
+            '/a',
+            '/li'
         ];
         $this->assertHtml($expected, $result);
     }

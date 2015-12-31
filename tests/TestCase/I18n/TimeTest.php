@@ -543,23 +543,11 @@ class TimeTest extends TestCase
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'es-ES');
         $expected = 'jueves, 14 de enero de 2010, 13:59:28 (GMT)';
-        $this->assertTimeFormat($expected, $result, 'DEfault locale should not be used');
-
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'fa-AF');
-        $expected = 'پنجشنبه ۱۴ جنوری ۲۰۱۰، ساعت ۱۳:۵۹:۲۸ (GMT)';
-        $this->assertTimeFormat($expected, $result);
+        $this->assertTimeFormat($expected, $result, 'Default locale should not be used');
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'fa-SA');
         $expected = 'پنجشنبه ۱۴ ژانویهٔ ۲۰۱۰، ساعت ۱۳:۵۹:۲۸ (GMT)';
-        $this->assertTimeFormat($expected, $result);
-
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'fa-IR');
-        $expected = 'پنجشنبه ۱۴ ژانویهٔ ۲۰۱۰ م.، ساعت ۱۳:۵۹:۲۸ (GMT)';
-        $this->assertTimeFormat($expected, $result);
-
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'fa-IR@calendar=persian');
-        $expected = 'پنجشنبه ۲۴ دی ۱۳۸۸ ه‍.ش.، ساعت ۱۳:۵۹:۲۸ (GMT)';
-        $this->assertTimeFormat($expected, $result);
+        $this->assertTimeFormat($expected, $result, 'fa-SA locale should be used');
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-IR@calendar=persian');
         $expected = 'Thursday, Dey 24, 1388 at 1:59:28 PM GMT';
@@ -567,10 +555,6 @@ class TimeTest extends TestCase
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'ps-IR@calendar=persian');
         $expected = 'پنجشنبه د  ۱۳۸۸ د مرغومی ۲۴ ۱۳:۵۹:۲۸ (GMT)';
-        $this->assertTimeFormat($expected, $result);
-
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'fa-KW@calendar=islamic');
-        $expected = 'پنجشنبه ۲۹ محرم ۱۴۳۱ هجری قمری، ساعت ۱۳:۵۹:۲۸ (GMT)';
         $this->assertTimeFormat($expected, $result);
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-KW@calendar=islamic');
@@ -633,7 +617,7 @@ class TimeTest extends TestCase
         $return = Time::listTimezones(null, null, ['abbr' => true]);
         $this->assertTrue(isset($return['Asia']['Asia/Jakarta']));
         $this->assertEquals('Jakarta - WIB', $return['Asia']['Asia/Jakarta']);
-        $this->assertEquals('Amsterdam - CEST', $return['Europe']['Europe/Amsterdam']);
+        $this->assertEquals('Regina - CST', $return['America']['America/Regina']);
 
         $return = Time::listTimezones(null, null, [
             'abbr' => true,
@@ -641,7 +625,7 @@ class TimeTest extends TestCase
             'after' => ')',
         ]);
         $this->assertEquals('Jayapura (WIT)', $return['Asia']['Asia/Jayapura']);
-        $this->assertEquals('Amsterdam (CEST)', $return['Europe']['Europe/Amsterdam']);
+        $this->assertEquals('Regina (CST)', $return['America']['America/Regina']);
 
         $return = Time::listTimezones('#^(America|Pacific)/#', null, false);
         $this->assertTrue(isset($return['America/Argentina/Buenos_Aires']));
@@ -867,14 +851,15 @@ class TimeTest extends TestCase
      * @param string $result
      * @return void
      */
-    public function assertTimeFormat($expected, $result)
+    public function assertTimeFormat($expected, $result, $message = "")
     {
-        $expected = str_replace([',', '(', ')', ' at', ' م.', ' ه‍.ش.', ' AP', ' AH', ' SAKA'], '', $expected);
+        $expected = str_replace([',', '(', ')', ' at', ' م.', ' ه‍.ش.', ' AP', ' AH', ' SAKA', 'à '], '', $expected);
         $expected = str_replace(['  '], ' ', $expected);
 
-        $result = str_replace([',', '(', ')', ' at', ' م.', ' ه‍.ش.', ' AP', ' AH', ' SAKA'], '', $result);
+        $result = str_replace([',', '(', ')', ' at', ' م.', ' ه‍.ش.', ' AP', ' AH', ' SAKA', 'à '], '', $result);
+        $result = str_replace(['گرینویچ'], 'GMT', $result);
         $result = str_replace(['  '], ' ', $result);
 
-        return $this->assertEquals($expected, $result);
+        return $this->assertSame($expected, $result, $message);
     }
 }

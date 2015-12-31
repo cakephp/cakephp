@@ -128,4 +128,19 @@ class MysqlTest extends TestCase
             ->will($this->returnValue($connection));
         $driver->connect($config);
     }
+
+    /**
+     * Test isConnected
+     *
+     * @return void
+     */
+    public function testIsConnected()
+    {
+        $connection = ConnectionManager::get('test');
+        $connection->disconnect();
+        $this->assertFalse($connection->isConnected(), 'Not connected now.');
+
+        $connection->connect();
+        $this->assertTrue($connection->isConnected(), 'Should be connected.');
+    }
 }

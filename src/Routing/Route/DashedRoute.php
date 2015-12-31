@@ -35,6 +35,22 @@ class DashedRoute extends Route
     protected $_inflectedDefaults = false;
 
     /**
+     * Camelizes the previously dashed plugin route taking into account plugin vendors
+     *
+     * @param string $plugin Plugin name
+     * @return string
+     */
+    protected function _camelizePlugin($plugin)
+    {
+        $plugin = str_replace('-', '_', $plugin);
+        if (strpos($plugin, '/') === false) {
+            return Inflector::camelize($plugin);
+        }
+        list($vendor, $plugin) = explode('/', $plugin, 2);
+        return Inflector::camelize($vendor) . '/' . Inflector::camelize($plugin);
+    }
+
+    /**
      * Parses a string URL into an array. If it matches, it will convert the
      * controller and plugin keys to their CamelCased form and action key to
      * camelBacked form.
@@ -56,11 +72,7 @@ class DashedRoute extends Route
             ));
         }
         if (!empty($params['plugin'])) {
-            $params['plugin'] = Inflector::camelize(str_replace(
-                '-',
-                '_',
-                $params['plugin']
-            ));
+            $params['plugin'] = $this->_camelizePlugin($params['plugin']);
         }
         if (!empty($params['action'])) {
             $params['action'] = Inflector::variable(str_replace(

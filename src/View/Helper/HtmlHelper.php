@@ -250,7 +250,7 @@ class HtmlHelper extends Helper
                 } else {
                     $type = ['name' => $type, 'content' => $content];
                 }
-            } elseif (isset($options['type']) && isset($types[$options['type']])) {
+            } elseif (isset($options['type'], $types[$options['type']])) {
                 $type = $types[$options['type']];
                 unset($options['type']);
             } else {
@@ -312,7 +312,7 @@ class HtmlHelper extends Helper
      *
      * If $url starts with "http://" this is treated as an external link. Else,
      * it is treated as a path to controller/action and parsed with the
-     * UrlHelper::url() method.
+     * UrlHelper::build() method.
      *
      * If the $url is empty, $title is used instead.
      *

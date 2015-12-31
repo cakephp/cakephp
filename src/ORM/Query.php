@@ -170,10 +170,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function addDefaultTypes(Table $table)
     {
         $alias = $table->alias();
-        $schema = $table->schema();
+        $map = $table->schema()->typeMap();
         $fields = [];
-        foreach ($schema->columns() as $f) {
-            $fields[$f] = $fields[$alias . '.' . $f] = $schema->columnType($f);
+        foreach ($map as $f => $type) {
+            $fields[$f] = $fields[$alias . '.' . $f] = $type;
         }
         $this->typeMap()->addDefaults($fields);
 
@@ -332,7 +332,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             }
             $target = $association->target();
             $primary = (array)$target->primaryKey();
-            if ($typeMap->type($target->aliasField($primary[0])) === null) {
+            if (empty($primary) || $typeMap->type($target->aliasField($primary[0])) === null) {
                 $this->addDefaultTypes($target);
             }
             if (!empty($nested)) {
@@ -632,7 +632,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 
         ksort($options);
         foreach ($options as $option => $values) {
-            if (isset($valid[$option]) && isset($values)) {
+            if (isset($valid[$option], $values)) {
                 $this->{$valid[$option]}($values);
             } else {
                 $this->_options[$option] = $values;
@@ -723,6 +723,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             count($query->clause('union')) ||
             $query->clause('having')
         );
+
         if (!$complex) {
             // Expression fields could have bound parameters.
             foreach ($query->clause('select') as $field) {
@@ -731,6 +732,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
                     break;
                 }
             }
+        }
+
+        if (!$complex && $this->_valueBinder !== null) {
+            $order = $this->clause('order');
+            $complex = $order === null ? false : $order->hasNestedExpression();
         }
 
         $count = ['count' => $query->func()->count('*')];

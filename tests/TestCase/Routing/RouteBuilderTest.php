@@ -191,6 +191,28 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
+     * Test adding additional extensions will be merged with current.
+     *
+     * @return void
+     */
+    public function testConnectExtensionsAdd()
+    {
+        $routes = new RouteBuilder(
+            $this->collection,
+            '/l',
+            [],
+            ['extensions' => ['json']]
+        );
+        $this->assertEquals(['json'], $routes->extensions());
+
+        $routes->addExtensions(['xml']);
+        $this->assertEquals(['json', 'xml'], $routes->extensions());
+
+        $routes->addExtensions('csv');
+        $this->assertEquals(['json', 'xml', 'csv'], $routes->extensions());
+    }
+
+    /**
      * test that extensions() accepts a string.
      *
      * @return void
@@ -363,6 +385,30 @@ class RouteBuilderTest extends TestCase
             array_keys($all[0]->defaults)
         );
         $this->assertEquals('BlogPosts', $all[0]->defaults['controller']);
+    }
+
+    /**
+     * Test connecting nested resources with the inflection option
+     *
+     * @return void
+     */
+    public function testResourcesNestedInflection()
+    {
+        $routes = new RouteBuilder($this->collection, '/api');
+        $routes->resources(
+            'NetworkObjects',
+            ['inflect' => 'dasherize'],
+            function ($routes) {
+                $routes->resources('Attributes');
+            }
+        );
+
+        $all = $this->collection->routes();
+        $this->assertCount(10, $all);
+
+        $this->assertEquals('/api/network-objects', $all[0]->template);
+        $this->assertEquals('/api/network-objects/:id', $all[2]->template);
+        $this->assertEquals('/api/network-objects/:network_object_id/attributes', $all[5]->template);
     }
 
     /**

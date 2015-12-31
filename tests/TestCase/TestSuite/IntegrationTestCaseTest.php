@@ -21,6 +21,7 @@ use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestCase;
 use Cake\Test\Fixture\AssertIntegrationTestCase;
+use Cake\Utility\Security;
 
 /**
  * Self test of the IntegrationTestCase
@@ -98,6 +99,39 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test multiple actions using CSRF tokens don't fail
+     *
+     * @return void
+     */
+    public function testEnableCsrfMultipleRequests()
+    {
+        $this->enableCsrfToken();
+        $first = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
+        $second = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'Second post']);
+        $this->assertSame($first->cookies['csrfToken'], $second->data['_csrfToken'], 'Csrf token should match cookie');
+        $this->assertSame(
+            $first->data['_csrfToken'],
+            $second->data['_csrfToken'],
+            'Tokens should be consistent per test method'
+        );
+    }
+
+    /**
+     * Test pre-determined CSRF tokens.
+     *
+     * @return void
+     */
+    public function testEnableCsrfPredeterminedCookie()
+    {
+        $this->enableCsrfToken();
+        $value = 'I am a teapot';
+        $this->cookie('csrfToken', $value);
+        $request = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
+        $this->assertSame($value, $request->cookies['csrfToken'], 'Csrf token should match cookie');
+        $this->assertSame($value, $request->data['_csrfToken'], 'Tokens should match');
+    }
+
+    /**
      * Test building a request, with query parameters
      *
      * @return void
@@ -108,6 +142,19 @@ class IntegrationTestCaseTest extends IntegrationTestCase
 
         $this->assertEquals('/tasks/view?archived=yes', $request->here());
         $this->assertEquals('yes', $request->query('archived'));
+    }
+
+    /**
+     * Test cookie encrypted
+     *
+     * @see CookieComponentControllerTest
+     */
+    public function testCookieEncrypted()
+    {
+        Security::salt('abcdabcdabcdabcdabcdabcdabcdabcdabcd');
+        $this->cookieEncrypted('KeyOfCookie', 'Encrypted with aes by default');
+        $request = $this->_buildRequest('/tasks/view', 'GET', []);
+        $this->assertStringStartsWith('Q2FrZQ==.', $request->cookies['KeyOfCookie']);
     }
 
     /**

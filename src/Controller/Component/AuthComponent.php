@@ -138,7 +138,7 @@ class AuthComponent extends Component
      * - `storage` - Storage class to use for persisting user record. When using
      *   stateless authenticator you should set this to 'Memory'. Defaults to 'Session'.
      *
-     * - 'checkAuthIn' - Name of event for which initial auth checks should be done.
+     * - `checkAuthIn` - Name of event for which initial auth checks should be done.
      *   Defaults to 'Controller.startup'. You can set it to 'Controller.initialize'
      *   if you want the check to be done before controller's beforeFilter() is run.
      *
@@ -696,6 +696,11 @@ class AuthComponent extends Component
         foreach ($this->_authenticateObjects as $auth) {
             $result = $auth->getUser($this->request);
             if (!empty($result) && is_array($result)) {
+                $this->_authenticationProvider = $auth;
+                $event = $this->dispatchEvent('Auth.afterIdentify', [$result, $auth]);
+                if ($event->result !== null) {
+                    $result = $event->result;
+                }
                 $this->storage()->write($result);
                 return true;
             }
@@ -751,7 +756,7 @@ class AuthComponent extends Component
      * Triggers `Auth.afterIdentify` event which the authenticate classes can listen
      * to.
      *
-     * @return array User record data, or false, if the user could not be identified.
+     * @return array|bool User record data, or false, if the user could not be identified.
      */
     public function identify()
     {
@@ -764,7 +769,7 @@ class AuthComponent extends Component
             $result = $auth->authenticate($this->request, $this->response);
             if (!empty($result) && is_array($result)) {
                 $this->_authenticationProvider = $auth;
-                $event = $this->dispatchEvent('Auth.afterIdentify', [$result]);
+                $event = $this->dispatchEvent('Auth.afterIdentify', [$result, $auth]);
                 if ($event->result !== null) {
                     return $event->result;
                 }

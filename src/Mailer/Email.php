@@ -35,7 +35,7 @@ use Serializable;
 use SimpleXmlElement;
 
 /**
- * CakePHP email class.
+ * CakePHP Email class.
  *
  * This class is used for sending Internet Message Format based
  * on the standard outlined in http://www.rfc-editor.org/rfc/rfc2822.txt
@@ -46,7 +46,6 @@ use SimpleXmlElement;
  * Email::config() can be used to add or read a configuration profile for Email instances.
  * Once made configuration profiles can be used to re-use across various email messages your
  * application sends.
- *
  */
 class Email implements JsonSerializable, Serializable
 {
@@ -1840,8 +1839,8 @@ class Email implements JsonSerializable, Serializable
 
         foreach ($types as $type) {
             $View->hasRendered = false;
-            $View->templatePath('Email/' . $type);
-            $View->layoutPath('Email/' . $type);
+            $View->templatePath('Email' . DIRECTORY_SEPARATOR . $type);
+            $View->layoutPath('Email' . DIRECTORY_SEPARATOR . $type);
 
             $render = $View->render();
             $render = str_replace(["\r\n", "\r"], "\n", $render);

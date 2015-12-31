@@ -240,7 +240,9 @@ class TestFixture implements FixtureInterface
         try {
             $queries = $this->_schema->createSql($db);
             foreach ($queries as $query) {
-                $db->execute($query)->closeCursor();
+                $stmt = $db->prepare($query);
+                $stmt->execute();
+                $stmt->closeCursor();
             }
         } catch (Exception $e) {
             $msg = sprintf(

@@ -29,7 +29,7 @@ class FixtureManager
 {
 
     /**
-     * Was this class already initialized?
+     * Was this instance already initialized?
      *
      * @var bool
      */
@@ -62,6 +62,25 @@ class FixtureManager
      * @var array
      */
     protected $_processed = [];
+
+    /**
+     * Is the test runner being run with `--debug` enabled.
+     * When true, fixture SQL will also be logged.
+     *
+     * @var bool
+     */
+    protected $_debug = false;
+
+    /**
+     * Modify the debug mode.
+     *
+     * @param bool $debug Whether or not fixture debug mode is enabled.
+     * @return void
+     */
+    public function setDebug($debug)
+    {
+        $this->_debug = $debug;
+    }
 
     /**
      * Inspects the test to look for unloaded fixtures and loads them
@@ -113,13 +132,13 @@ class FixtureManager
                 continue;
             }
             if (strpos($connection, 'test_') === 0) {
-                $map[$connection] = substr($connection, 5);
+                $map[substr($connection, 5)] = $connection;
             } else {
                 $map['test_' . $connection] = $connection;
             }
         }
         foreach ($map as $alias => $connection) {
-            ConnectionManager::alias($alias, $connection);
+            ConnectionManager::alias($connection, $alias);
         }
     }
 
@@ -299,7 +318,7 @@ class FixtureManager
         foreach ($dbs as $connection => $fixtures) {
             $db = ConnectionManager::get($connection, false);
             $logQueries = $db->logQueries();
-            if ($logQueries) {
+            if ($logQueries && !$this->_debug) {
                 $db->logQueries(false);
             }
             $db->transactional(function ($db) use ($fixtures, $operation) {

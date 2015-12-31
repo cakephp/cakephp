@@ -801,6 +801,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   When true records will be loaded and then deleted.
      * - conditions: array with a list of conditions to filter the join with
      * - sort: The order in which results for this association should be returned
+     * - saveStrategy: Either 'append' or 'replace'. When 'append' the current records
+     *   are appended to any records in the database. When 'replace' associated records
+     *   not in the current set will be removed. If the foreign key is a null able column
+     *   or if `dependent` is true records will be orphaned.
      * - strategy: The strategy to be used for selecting results Either 'select'
      *   or 'subquery'. If subquery is selected the query used to return results
      *   in the source table will be used as conditions for getting rows in the
@@ -1621,8 +1625,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * - `Model.beforeDelete` Fired before the delete occurs. If stopped the delete
      *   will be aborted. Receives the event, entity, and options.
-     * - `Model.afterDelete` Fired after the delete has been successful. Receives
-     *   the event, entity, and options.
      * - `Model.afterDelete` Fired after the delete has been successful. Receives
      *   the event, entity, and options.
      * - `Model.afterDeleteCommit` Fired after the transaction is committed for

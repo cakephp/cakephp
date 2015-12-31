@@ -82,6 +82,10 @@ class RedisEngine extends CacheEngine
             return false;
         }
 
+        if (!empty($config['host'])) {
+            $config['server'] = $config['host'];
+        }
+
         parent::init($config);
         return $this->_connect();
     }

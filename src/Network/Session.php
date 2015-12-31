@@ -100,7 +100,7 @@ class Session
             }
         }
 
-        if (!isset($sessionConfig['ini']['session.cookie_secure']) && env('HTTPS')) {
+        if (!isset($sessionConfig['ini']['session.cookie_secure']) && env('HTTPS') && ini_get("session.cookie_secure") != 1) {
             $sessionConfig['ini']['session.cookie_secure'] = 1;
         }
 
@@ -112,7 +112,7 @@ class Session
             $sessionConfig['ini']['session.save_handler'] = 'user';
         }
 
-        if (!isset($sessionConfig['ini']['session.cookie_httponly'])) {
+        if (!isset($sessionConfig['ini']['session.cookie_httponly']) && ini_get("session.cookie_httponly") != 1) {
             $sessionConfig['ini']['session.cookie_httponly'] = 1;
         }
 
@@ -219,7 +219,7 @@ class Session
         }
 
         $this->_lifetime = ini_get('session.gc_maxlifetime');
-        $this->_isCLI = PHP_SAPI === 'cli';
+        $this->_isCLI = (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg');
         session_register_shutdown();
     }
 

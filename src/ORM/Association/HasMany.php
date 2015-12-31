@@ -148,8 +148,13 @@ class HasMany extends Association
         $original = $targetEntities;
         $options['_sourceTable'] = $this->source();
 
+        $unlinkSuccessful = null;
         if ($this->_saveStrategy === self::SAVE_REPLACE) {
-            $this->_unlinkAssociated($properties, $entity, $target, $targetEntities);
+            $unlinkSuccessful = $this->_unlinkAssociated($properties, $entity, $target, $targetEntities, $options);
+        }
+
+        if ($unlinkSuccessful === false) {
+            return false;
         }
 
         foreach ($targetEntities as $k => $targetEntity) {
@@ -203,7 +208,7 @@ class HasMany extends Association
      * of this association
      * @param array $targetEntities list of entities belonging to the `target` side
      * of this association
-     * @param array $options list of options to be passed to the save method
+     * @param array $options list of options to be passed to the internal `save` call
      * @return bool true on success, false otherwise
      */
     public function link(EntityInterface $sourceEntity, array $targetEntities, array $options = [])
@@ -221,7 +226,7 @@ class HasMany extends Association
 
         $sourceEntity->set($property, $currentEntities);
 
-        $savedEntity = $this->saveAssociated($sourceEntity);
+        $savedEntity = $this->saveAssociated($sourceEntity, $options);
 
         $ok = ($savedEntity instanceof EntityInterface);
 
@@ -240,8 +245,16 @@ class HasMany extends Association
      * target entities. This method assumes that all passed objects are already persisted
      * in the database and that each of them contain a primary key value.
      *
-     * By default this method will also unset each of the entity objects stored inside
-     * the source entity.
+     * ### Options
+     *
+     * Additionally to the default options accepted by `Table::delete()`, the following
+     * keys are supported:
+     *
+     * - cleanProperty: Whether or not to remove all the objects in `$targetEntities` that
+     * are stored in `$sourceEntity` (default: true)
+     *
+     * By default this method will unset each of the entity objects stored inside the
+     * source entity.
      *
      * Changes are persisted in the database and also in the source entity.
      *
@@ -261,14 +274,21 @@ class HasMany extends Association
      * this association
      * @param array $targetEntities list of entities persisted in the target table for
      * this association
-     * @param bool $cleanProperty whether or not to remove all the objects in $targetEntities
-     * that are stored in $sourceEntity
+     * @param array $options list of options to be passed to the internal `delete` call
      * @throws \InvalidArgumentException if non persisted entities are passed or if
      * any of them is lacking a primary key value
      * @return void
      */
-    public function unlink(EntityInterface $sourceEntity, array $targetEntities, $cleanProperty = true)
+    public function unlink(EntityInterface $sourceEntity, array $targetEntities, $options = [])
     {
+        if (is_bool($options)) {
+            $options = [
+                'cleanProperty' => $options
+            ];
+        } else {
+            $options += ['cleanProperty' => true];
+        }
+
         $foreignKey = (array)$this->foreignKey();
         $target = $this->target();
         $targetPrimaryKey = array_merge((array)$target->primaryKey(), $foreignKey);
@@ -282,9 +302,9 @@ class HasMany extends Association
                 ->toList()
         ];
 
-        $this->_unlink($foreignKey, $target, $conditions);
+        $this->_unlink($foreignKey, $target, $conditions, $options);
 
-        if ($cleanProperty) {
+        if ($options['cleanProperty']) {
             $sourceEntity->set(
                 $property,
                 (new Collection($sourceEntity->get($property)))
@@ -337,8 +357,8 @@ class HasMany extends Association
      * @param \Cake\Datasource\EntityInterface $sourceEntity an entity persisted in the source table for
      * this association
      * @param array $targetEntities list of entities from the target table to be linked
-     * @param array $options list of options to be passed to `save` persisting or
-     * updating new links
+     * @param array $options list of options to be passed to the internal `save`/`delete` calls
+     * when persisting/updating new links, or deleting existing ones
      * @throws \InvalidArgumentException if non persisted entities are passed or if
      * any of them is lacking a primary key value
      * @return bool success
@@ -367,9 +387,10 @@ class HasMany extends Association
      * @param EntityInterface $entity the entity which should have its associated entities unassigned
      * @param Table $target The associated table
      * @param array $remainingEntities Entities that should not be deleted
-     * @return void
+     * @param array $options list of options accepted by `Table::delete()`
+     * @return bool success
      */
-    protected function _unlinkAssociated(array $properties, EntityInterface $entity, Table $target, array $remainingEntities = [])
+    protected function _unlinkAssociated(array $properties, EntityInterface $entity, Table $target, array $remainingEntities = [], array $options = [])
     {
         $primaryKey = (array)$target->primaryKey();
         $exclusions = new Collection($remainingEntities);
@@ -396,7 +417,7 @@ class HasMany extends Association
             ];
         }
 
-        $this->_unlink(array_keys($properties), $target, $conditions);
+        return $this->_unlink(array_keys($properties), $target, $conditions, $options);
     }
 
     /**
@@ -406,23 +427,29 @@ class HasMany extends Association
      * @param array $foreignKey array of foreign key properties
      * @param Table $target The associated table
      * @param array $conditions The conditions that specifies what are the objects to be unlinked
-     * @return void
+     * @param array $options list of options accepted by `Table::delete()`
+     * @return bool success
      */
-    protected function _unlink(array $foreignKey, Table $target, array $conditions = [])
+    protected function _unlink(array $foreignKey, Table $target, array $conditions = [], array $options = [])
     {
         $mustBeDependent = (!$this->_foreignKeyAcceptsNull($target, $foreignKey) || $this->dependent());
+
         if ($mustBeDependent) {
             if ($this->_cascadeCallbacks) {
                 $query = $this->find('all')->where($conditions);
+                $ok = true;
                 foreach ($query as $assoc) {
-                    $target->delete($assoc);
+                    $ok = $ok && $target->delete($assoc, $options);
                 }
+                return $ok;
             } else {
                 $target->deleteAll($conditions);
+                return true;
             }
         } else {
             $updateFields = array_fill_keys($foreignKey, null);
             $target->updateAll($updateFields, $conditions);
+            return true;
 
         }
     }

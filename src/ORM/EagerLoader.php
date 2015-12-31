@@ -136,7 +136,8 @@ class EagerLoader
 
         $associations = (array)$associations;
         $associations = $this->_reformatContain($associations, $this->_containments);
-        $this->_normalized = $this->_loadExternal = null;
+        $this->_normalized = null;
+        $this->_loadExternal = [];
         $this->_aliasList = [];
         return $this->_containments = $associations;
     }
@@ -152,7 +153,8 @@ class EagerLoader
     public function clearContain()
     {
         $this->_containments = [];
-        $this->_normalized = $this->_loadExternal = null;
+        $this->_normalized = null;
+        $this->_loadExternal = [];
         $this->_aliasList = [];
     }
 
@@ -334,14 +336,22 @@ class EagerLoader
             return;
         }
 
-        foreach ($this->attachableAssociations($repository) as $loadable) {
-            $config = $loadable->config() + [
-                'aliasPath' => $loadable->aliasPath(),
-                'propertyPath' => $loadable->propertyPath(),
-                'includeFields' => $includeFields,
-            ];
-            $loadable->instance()->attachTo($query, $config);
-        }
+        $attachable = $this->attachableAssociations($repository);
+        $processed = [];
+        do {
+            foreach ($attachable as $alias => $loadable) {
+                $config = $loadable->config() + [
+                    'aliasPath' => $loadable->aliasPath(),
+                    'propertyPath' => $loadable->propertyPath(),
+                    'includeFields' => $includeFields,
+                ];
+                $loadable->instance()->attachTo($query, $config);
+                $processed[$alias] = true;
+            }
+
+            $newAttachable = $this->attachableAssociations($repository);
+            $attachable = array_diff_key($newAttachable, $processed);
+        } while (!empty($attachable));
     }
 
     /**
@@ -358,6 +368,7 @@ class EagerLoader
         $contain = $this->normalized($repository);
         $matching = $this->_matching ? $this->_matching->normalized($repository) : [];
         $this->_fixStrategies();
+        $this->_loadExternal = [];
         return $this->_resolveJoins($contain, $matching);
     }
 

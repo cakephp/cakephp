@@ -228,4 +228,26 @@ class ConnectionManagerTest extends TestCase
         $this->assertNotContains('test_kaboom', ConnectionManager::configured());
         ConnectionManager::alias('test_kaboom', 'other_name');
     }
+
+    /**
+     * Test parseDsn method.
+     *
+     * @return void
+     */
+    public function testParseDsn()
+    {
+        $result = ConnectionManager::parseDsn('mysql://root:secret@localhost:3306/database?log=1');
+        $expected = [
+            'scheme' => 'mysql',
+            'className' => 'Cake\Database\Connection',
+            'driver' => 'Cake\Database\Driver\Mysql',
+            'host' => 'localhost',
+            'username' => 'root',
+            'password' => 'secret',
+            'port' => 3306,
+            'database' => 'database',
+            'log' => '1'
+        ];
+        $this->assertEquals($expected, $result);
+    }
 }

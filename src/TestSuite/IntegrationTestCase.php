@@ -20,7 +20,9 @@ use Cake\Network\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\Stub\Response;
+use Cake\Utility\CookieCryptTrait;
 use Cake\Utility\Hash;
+use Cake\Utility\Security;
 use Cake\Utility\Text;
 use Cake\View\Helper\SecureFieldTokenTrait;
 use Exception;
@@ -38,6 +40,7 @@ use PHPUnit_Exception;
  */
 abstract class IntegrationTestCase extends TestCase
 {
+    use CookieCryptTrait;
     use SecureFieldTokenTrait;
 
     /**
@@ -118,6 +121,13 @@ abstract class IntegrationTestCase extends TestCase
      * @var bool
      */
     protected $_csrfToken = false;
+
+    /**
+     *
+     *
+     * @var null|string
+     */
+    protected $_cookieEncriptionKey = null;
 
     /**
      * Clears the state used for requests.
@@ -216,6 +226,39 @@ abstract class IntegrationTestCase extends TestCase
     public function cookie($name, $value)
     {
         $this->_cookie[$name] = $value;
+    }
+
+    /**
+     * Returns the encryption key to be used.
+     *
+     * @return string
+     */
+    protected function _getCookieEncryptionKey()
+    {
+        if (isset($this->_cookieEncriptionKey)) {
+            return $this->_cookieEncriptionKey;
+        }
+        return Security::salt();
+    }
+
+    /**
+     * Sets a encrypted request cookie for future requests.
+     *
+     * The difference from cookie() is this encrypts the cookie
+     * value like the CookieComponent.
+     *
+     * @param string $name The cookie name to use.
+     * @param mixed $value The value of the cookie.
+     * @param string|bool $encrypt Encryption mode to use.
+     * @param string|null $key Encryption key used. Defaults
+     *   to Security.salt.
+     * @return void
+     * @see CookieCryptTrait::_encrypt
+     */
+    public function cookieEncrypted($name, $value, $encrypt = 'aes', $key = null)
+    {
+        $this->_cookieEncriptionKey = $key;
+        $this->_cookie[$name] = $this->_encrypt($value, $encrypt);
     }
 
     /**
@@ -425,17 +468,16 @@ abstract class IntegrationTestCase extends TestCase
     {
         if ($this->_securityToken === true) {
             $keys = Hash::flatten($data);
-            $tokenData = $this->_buildFieldToken($url, $keys);
+            $tokenData = $this->_buildFieldToken($url, array_keys($keys));
             $data['_Token'] = $tokenData;
         }
 
         if ($this->_csrfToken === true) {
-            $csrfToken = Text::uuid();
-            if (!isset($data['_csrfToken'])) {
-                $data['_csrfToken'] = $csrfToken;
-            }
             if (!isset($this->_cookie['csrfToken'])) {
-                $this->_cookie['csrfToken'] = $csrfToken;
+                $this->_cookie['csrfToken'] = Text::uuid();
+            }
+            if (!isset($data['_csrfToken'])) {
+                $data['_csrfToken'] = $this->_cookie['csrfToken'];
             }
         }
         return $data;

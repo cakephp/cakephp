@@ -10,6 +10,10 @@ CakePHP loves to welcome your contributions. There are several ways to help out:
 There are a few guidelines that we need contributors to follow so that we have a
 chance of keeping on top of things.
 
+## Code of Conduct
+
+Help us keep CakePHP open and inclusive. Please read and follow our [Code of Conduct](https://github.com/cakephp/code-of-conduct/blob/master/CODE_OF_CONDUCT.md).
+
 ## Getting Started
 
 * Make sure you have a [GitHub account](https://github.com/signup/free).

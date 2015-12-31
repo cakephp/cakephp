@@ -264,7 +264,7 @@ class MarshallerTest extends TestCase
         $result = $marshall->one($data, []);
 
         $this->assertSame($data['title'], $result->title);
-        $this->assertSame($data['author_id'], $result->author_id, 'No cast on bad data.');
+        $this->assertNull($result->author_id, 'No cast on bad data.');
         $this->assertSame($data['created'], $result->created, 'No cast on bad data.');
     }
 
@@ -1079,6 +1079,14 @@ class MarshallerTest extends TestCase
             'title' => 'Haz tags',
             'body' => 'Some content here',
             'tags' => ['_ids' => null]
+        ];
+        $result = $marshall->one($data, ['associated' => ['Tags']]);
+        $this->assertCount(0, $result->tags);
+
+        $data = [
+            'title' => 'Haz tags',
+            'body' => 'Some content here',
+            'tags' => ['_ids' => []]
         ];
         $result = $marshall->one($data, ['associated' => ['Tags']]);
         $this->assertCount(0, $result->tags);

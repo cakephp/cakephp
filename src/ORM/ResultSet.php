@@ -38,6 +38,7 @@ class ResultSet implements ResultSetInterface
      * Original query from where results were generated
      *
      * @var Query
+     * @deprecated 3.1.6 Due to a memory leak, this property cannot be used anymore
      */
     protected $_query;
 
@@ -110,7 +111,7 @@ class ResultSet implements ResultSetInterface
     /**
      * Results that have been fetched or hydrated into the results.
      *
-     * @var array
+     * @var array|\ArrayAccess
      */
     protected $_results = [];
 
@@ -169,16 +170,15 @@ class ResultSet implements ResultSetInterface
     public function __construct($query, $statement)
     {
         $repository = $query->repository();
-        $this->_query = $query;
         $this->_statement = $statement;
-        $this->_driver = $this->_query->connection()->driver();
-        $this->_defaultTable = $this->_query->repository();
-        $this->_calculateAssociationMap();
-        $this->_hydrate = $this->_query->hydrate();
+        $this->_driver = $query->connection()->driver();
+        $this->_defaultTable = $query->repository();
+        $this->_calculateAssociationMap($query);
+        $this->_hydrate = $query->hydrate();
         $this->_entityClass = $repository->entityClass();
         $this->_useBuffering = $query->bufferResults();
         $this->_defaultAlias = $this->_defaultTable->alias();
-        $this->_calculateColumnMap();
+        $this->_calculateColumnMap($query);
         $this->_calculateTypeMap();
 
         if ($this->_useBuffering) {
@@ -347,11 +347,12 @@ class ResultSet implements ResultSetInterface
      * Calculates the list of associations that should get eager loaded
      * when fetching each record
      *
+     * @param \Cake\ORM\Query $query The query from where to derive the associations
      * @return void
      */
-    protected function _calculateAssociationMap()
+    protected function _calculateAssociationMap($query)
     {
-        $map = $this->_query->eagerLoader()->associationsMap($this->_defaultTable);
+        $map = $query->eagerLoader()->associationsMap($this->_defaultTable);
         $this->_matchingMap = (new Collection($map))
             ->match(['matching' => true])
             ->indexBy('alias')
@@ -367,12 +368,13 @@ class ResultSet implements ResultSetInterface
      * Creates a map of row keys out of the query select clause that can be
      * used to hydrate nested result sets more quickly.
      *
+     * @param \Cake\ORM\Query $query The query from where to derive the column map
      * @return void
      */
-    protected function _calculateColumnMap()
+    protected function _calculateColumnMap($query)
     {
         $map = [];
-        foreach ($this->_query->clause('select') as $key => $field) {
+        foreach ($query->clause('select') as $key => $field) {
             $key = trim($key, '"`[]');
             if (strpos($key, '__') > 0) {
                 $parts = explode('__', $key, 2);
@@ -622,7 +624,6 @@ class ResultSet implements ResultSetInterface
     public function __debugInfo()
     {
         return [
-            'query' => $this->_query,
             'items' => $this->toArray(),
         ];
     }

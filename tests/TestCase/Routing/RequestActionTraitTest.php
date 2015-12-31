@@ -359,6 +359,24 @@ class RequestActionTraitTest extends TestCase
     }
 
     /**
+     * Test that requestAction handles cookies correctly.
+     *
+     * @return void
+     */
+    public function testRequestActionCookies()
+    {
+        $cookies = [
+            'foo' => 'bar'
+        ];
+        $result = $this->object->requestAction(
+            '/request_action/cookie_pass',
+            ['cookies' => $cookies]
+        );
+        $result = json_decode($result, true);
+        $this->assertEquals($cookies, $result);
+    }
+
+    /**
      * Test that environment overrides can be set.
      *
      * @return void

@@ -636,8 +636,10 @@ class QueryTest extends TestCase
 
     /**
      * Tests that passing an empty array type to any where condition will not
-     * result in an error, but in an empty result set
+     * result in a SQL error, but an internal exception
      *
+     * @expectedException Cake\Database\Exception
+     * @expectedExceptionMessage Impossible to generate condition with empty list of values for field
      * @return void
      */
     public function testSelectWhereArrayTypeEmpty()
@@ -648,7 +650,24 @@ class QueryTest extends TestCase
             ->from('comments')
             ->where(['id' => []], ['id' => 'integer[]'])
             ->execute();
-        $this->assertCount(0, $result);
+    }
+
+    /**
+     * Tests exception message for impossible condition when using an expression
+     * @expectedException Cake\Database\Exception
+     * @expectedExceptionMessage with empty list of values for field (SELECT 1)
+     * @return void
+     */
+    public function testSelectWhereArrayTypeEmptyWithExpression()
+    {
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['id'])
+            ->from('comments')
+            ->where(function ($exp, $q) {
+                return $exp->in($q->newExpr('SELECT 1'), []);
+            })
+            ->execute();
     }
 
     /**
@@ -1929,6 +1948,17 @@ class QueryTest extends TestCase
         $this->assertCount(2, $result);
         $this->assertEquals(['id' => 2], $result->fetch('assoc'));
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+        $query = new Query($this->connection);
+        $query->select('id')->from('comments')
+            ->limit(1)
+            ->offset(1)
+            ->execute();
+        $dirty = $this->readAttribute($query, '_dirty');
+        $this->assertFalse($dirty);
+        $query->offset(2);
+        $dirty = $this->readAttribute($query, '_dirty');
+        $this->assertTrue($dirty);
     }
 
     /**
@@ -3467,6 +3497,26 @@ class QueryTest extends TestCase
 
         $query->order(['Articles.title' => 'ASC']);
         $this->assertNotEquals($query->clause('order'), $dupe->clause('order'));
+    }
+
+    /**
+     * Test removeJoin().
+     *
+     * @return void
+     */
+    public function testRemoveJoin()
+    {
+        $query = new Query($this->connection);
+        $query->select(['id', 'title'])
+            ->from('articles')
+            ->join(['authors' => [
+                'type' => 'INNER',
+                'conditions' => ['articles.author_id = authors.id']
+            ]]);
+        $this->assertArrayHasKey('authors', $query->join());
+
+        $this->assertSame($query, $query->removeJoin('authors'));
+        $this->assertArrayNotHasKey('authors', $query->join());
     }
 
     /**

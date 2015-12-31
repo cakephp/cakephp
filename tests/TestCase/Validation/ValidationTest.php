@@ -122,17 +122,18 @@ class ValidationTest extends TestCase
      */
     public function testAlphaNumericPassedAsArray()
     {
-        $this->assertTrue(Validation::alphaNumeric(['check' => 'frferrf']));
-        $this->assertTrue(Validation::alphaNumeric(['check' => '12234']));
-        $this->assertTrue(Validation::alphaNumeric(['check' => '1w2e2r3t4y']));
-        $this->assertTrue(Validation::alphaNumeric(['check' => '0']));
-        $this->assertFalse(Validation::alphaNumeric(['check' => '12 234']));
-        $this->assertFalse(Validation::alphaNumeric(['check' => 'dfd 234']));
-        $this->assertFalse(Validation::alphaNumeric(['check' => "\n"]));
-        $this->assertFalse(Validation::alphaNumeric(['check' => "\t"]));
-        $this->assertFalse(Validation::alphaNumeric(['check' => "\r"]));
-        $this->assertFalse(Validation::alphaNumeric(['check' => ' ']));
-        $this->assertFalse(Validation::alphaNumeric(['check' => '']));
+        $this->assertTrue(Validation::alphaNumeric('frferrf'));
+        $this->assertTrue(Validation::alphaNumeric('12234'));
+        $this->assertTrue(Validation::alphaNumeric('1w2e2r3t4y'));
+        $this->assertTrue(Validation::alphaNumeric('0'));
+        $this->assertFalse(Validation::alphaNumeric('12 234'));
+        $this->assertFalse(Validation::alphaNumeric('dfd 234'));
+        $this->assertFalse(Validation::alphaNumeric("\n"));
+        $this->assertFalse(Validation::alphaNumeric("\t"));
+        $this->assertFalse(Validation::alphaNumeric("\r"));
+        $this->assertFalse(Validation::alphaNumeric(' '));
+        $this->assertFalse(Validation::alphaNumeric(''));
+        $this->assertFalse(Validation::alphaNumeric(['foo']));
     }
 
     /**
@@ -657,9 +658,8 @@ class ValidationTest extends TestCase
      */
     public function testCustomRegexForCc()
     {
-        $this->assertTrue(Validation::cc('12332105933743585', null, null, '/123321\\d{11}/'));
-        $this->assertFalse(Validation::cc('1233210593374358', null, null, '/123321\\d{11}/'));
-        $this->assertFalse(Validation::cc('12312305933743585', null, null, '/123321\\d{11}/'));
+        $this->assertTrue(Validation::cc('370482756063980', null, false, '/123321\\d{11}/'));
+        $this->assertFalse(Validation::cc('1233210593374358', null, false, '/123321\\d{11}/'));
     }
 
     /**
@@ -865,43 +865,6 @@ class ValidationTest extends TestCase
     }
 
     /**
-     * testComparisonAsArray method
-     *
-     * @return void
-     */
-    public function testComparisonAsArray()
-    {
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => 'is greater', 'check2' => 6]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => '>', 'check2' => 6]));
-        $this->assertTrue(Validation::comparison(['check1' => 6, 'operator' => 'is less', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 6, 'operator' => '<', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => 'greater or equal', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => '>=', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => 'greater or equal', 'check2' => 6]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => '>=', 'check2' => 6]));
-        $this->assertTrue(Validation::comparison(['check1' => 6, 'operator' => 'less or equal', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 6, 'operator' => '<=', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => 'equal to', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => '==', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => 'not equal', 'check2' => 6]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => '!=', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 6, 'operator' => 'is greater', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 6, 'operator' => '>', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => 'is less', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => '<', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 6, 'operator' => 'greater or equal', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 6, 'operator' => '>=', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 6, 'operator' => 'greater or equal', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 6, 'operator' => '>=', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => 'less or equal', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => '<=', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => 'equal to', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => '==', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => 'not equal', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => '!=', 'check2' => 7]));
-    }
-
-    /**
      * testCustom method
      *
      * @return void
@@ -921,9 +884,9 @@ class ValidationTest extends TestCase
      */
     public function testCustomAsArray()
     {
-        $this->assertTrue(Validation::custom(['check' => '12345', 'regex' => '/(?<!\\S)\\d++(?!\\S)/']));
-        $this->assertFalse(Validation::custom(['check' => 'Text', 'regex' => '/(?<!\\S)\\d++(?!\\S)/']));
-        $this->assertFalse(Validation::custom(['check' => '123.45', 'regex' => '/(?<!\\S)\\d++(?!\\S)/']));
+        $this->assertTrue(Validation::custom('12345', '/(?<!\\S)\\d++(?!\\S)/'));
+        $this->assertFalse(Validation::custom('Text', '/(?<!\\S)\\d++(?!\\S)/'));
+        $this->assertFalse(Validation::custom('123.45', '/(?<!\\S)\\d++(?!\\S)/'));
     }
 
     /**
@@ -2141,12 +2104,19 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::extension('extension.jpg', ['GIF']));
         $this->assertTrue(Validation::extension(['extension.JPG', 'extension.gif', 'extension.png']));
         $this->assertTrue(Validation::extension(['file' => ['name' => 'file.jpg']]));
-        $this->assertTrue(Validation::extension(['file1' => ['name' => 'file.jpg'],
-                                                'file2' => ['name' => 'file.jpg'],
-                                                'file3' => ['name' => 'file.jpg']]));
-        $this->assertFalse(Validation::extension(['file1' => ['name' => 'file.jpg'],
-                                                'file2' => ['name' => 'file.jpg'],
-                                                'file3' => ['name' => 'file.jpg']], ['gif']));
+        $this->assertTrue(Validation::extension([
+            'file1' => ['name' => 'file.jpg'],
+            'file2' => ['name' => 'file.jpg'],
+            'file3' => ['name' => 'file.jpg']
+        ]));
+        $this->assertFalse(Validation::extension(
+            [
+                'file1' => ['name' => 'file.jpg'],
+                'file2' => ['name' => 'file.jpg'],
+                'file3' => ['name' => 'file.jpg']
+            ],
+            ['gif']
+        ));
 
         $this->assertFalse(Validation::extension(['noextension', 'extension.JPG', 'extension.gif', 'extension.png']));
         $this->assertFalse(Validation::extension(['extension.pdf', 'extension.JPG', 'extension.gif', 'extension.png']));

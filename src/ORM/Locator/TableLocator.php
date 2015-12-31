@@ -148,7 +148,8 @@ class TableLocator implements LocatorInterface
         if (empty($options['className'])) {
             $options['className'] = Inflector::camelize($alias);
         }
-        $className = App::className($options['className'], 'Model/Table', 'Table');
+
+        $className = $this->_getClassName($alias, $options);
         if ($className) {
             $options['className'] = $className;
         } else {
@@ -172,6 +173,21 @@ class TableLocator implements LocatorInterface
         }
 
         return $this->_instances[$alias];
+    }
+
+    /**
+     * Gets the table class name.
+     *
+     * @param string $alias The alias name you want to get.
+     * @param array $options Table options array.
+     * @return string
+     */
+    protected function _getClassName($alias, array $options = [])
+    {
+        if (empty($options['className'])) {
+            $options['className'] = Inflector::camelize($alias);
+        }
+        return App::className($options['className'], 'Model/Table', 'Table');
     }
 
     /**

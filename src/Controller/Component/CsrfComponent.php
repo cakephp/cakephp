@@ -46,6 +46,7 @@ class CsrfComponent extends Component
      *  - cookieName = The name of the cookie to send.
      *  - expiry = How long the CSRF token should last. Defaults to browser session.
      *  - secure = Whether or not the cookie will be set with the Secure flag. Defaults to false.
+     *  - httpOnly = Whether or not the cookie will be set with the HttpOnly flag. Defaults to false.
      *  - field = The form field to check. Changing this will also require configuring
      *    FormHelper.
      *
@@ -55,6 +56,7 @@ class CsrfComponent extends Component
         'cookieName' => 'csrfToken',
         'expiry' => 0,
         'secure' => false,
+        'httpOnly' => false,
         'field' => '_csrfToken',
     ];
 
@@ -92,7 +94,7 @@ class CsrfComponent extends Component
         if ($request->is('get') && $cookieData === null) {
             $this->_setCookie($request, $response);
         }
-        if ($request->is(['patch', 'put', 'post', 'delete'])) {
+        if (!$request->is(['head', 'get', 'options'])) {
             $this->_validateToken($request);
             unset($request->data[$this->_config['field']]);
         }
@@ -132,6 +134,7 @@ class CsrfComponent extends Component
             'expire' => $expiry->format('U'),
             'path' => $request->webroot,
             'secure' => $this->_config['secure'],
+            'httpOnly' => $this->_config['httpOnly'],
         ]);
     }
 

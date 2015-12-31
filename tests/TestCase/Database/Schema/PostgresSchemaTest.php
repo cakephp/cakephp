@@ -288,7 +288,7 @@ SQL;
                 'precision' => null,
                 'unsigned' => null,
                 'comment' => null,
-                'autoIncrement' => true,
+                'autoIncrement' => false,
             ],
             'title' => [
                 'type' => 'string',
@@ -381,8 +381,8 @@ SQL;
         $connection->execute('DROP TABLE schema_composite');
 
         $this->assertEquals(['id', 'site_id'], $result->primaryKey());
-        $this->assertNull($result->column('site_id')['autoIncrement'], 'site_id should not be autoincrement');
         $this->assertTrue($result->column('id')['autoIncrement'], 'id should be autoincrement');
+        $this->assertNull($result->column('site_id')['autoIncrement'], 'site_id should not be autoincrement');
     }
 
     /**
@@ -537,6 +537,50 @@ SQL;
             'length' => []
         ];
         $this->assertEquals($expected, $result->index('author_idx'));
+    }
+
+    /**
+     * Test describing a table with indexes with nulls first
+     *
+     * @return void
+     */
+    public function testDescribeTableIndexesNullsFirst()
+    {
+        $this->_needsConnection();
+        $connection = ConnectionManager::get('test');
+        $connection->execute('DROP TABLE IF EXISTS schema_index');
+
+        $table = <<<SQL
+CREATE TABLE schema_index (
+  id serial NOT NULL,
+  user_id integer NOT NULL,
+  group_id integer NOT NULL,
+  grade double precision
+)
+WITH (
+  OIDS=FALSE
+)
+SQL;
+        $connection->execute($table);
+
+        $index = <<<SQL
+CREATE INDEX schema_index_nulls
+  ON schema_index
+  USING btree
+  (group_id, grade DESC NULLS FIRST);
+SQL;
+        $connection->execute($index);
+        $schema = new SchemaCollection($connection);
+
+        $result = $schema->describe('schema_index');
+        $this->assertCount(1, $result->indexes());
+        $expected = [
+            'type' => 'index',
+            'columns' => ['group_id', 'grade'],
+            'length' => []
+        ];
+        $this->assertEquals($expected, $result->index('schema_index_nulls'));
+        $connection->execute('DROP TABLE schema_index');
     }
 
     /**

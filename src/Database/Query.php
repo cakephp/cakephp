@@ -243,6 +243,9 @@ class Query implements ExpressionInterface, IteratorAggregate
      * real field to be aliased. It is possible to alias strings, Expression objects or
      * even other Query objects.
      *
+     * If a callable function is passed, the returning array of the function will
+     * be used as the list of fields.
+     *
      * By default this function will append any passed argument to the list of fields
      * to be selected, unless the second argument is set to true.
      *
@@ -253,13 +256,16 @@ class Query implements ExpressionInterface, IteratorAggregate
      * $query->select(['author' => 'author_id']); // Appends author: SELECT id, title, author_id as author
      * $query->select('id', true); // Resets the list: SELECT id
      * $query->select(['total' => $countQuery]); // SELECT id, (SELECT ...) AS total
+     * $query->select(function ($query) {
+     *     return ['article_id', 'total' => $query->count('*')];
+     * })
      * ```
      *
      * By default no fields are selected, if you have an instance of `Cake\ORM\Query` and try to append
      * fields you should also call `Cake\ORM\Query::autoFields()` to select the default fields
      * from the table.
      *
-     * @param array|ExpressionInterface|string $fields fields to be added to the list
+     * @param array|ExpressionInterface|string|callable $fields fields to be added to the list.
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
      */
@@ -307,7 +313,8 @@ class Query implements ExpressionInterface, IteratorAggregate
      * $query->distinct('name', true);
      * ```
      *
-     * @param array|ExpressionInterface|string $on fields to be filtered on
+     * @param array|ExpressionInterface|string|bool $on Enable/disable distinct class
+     * or list of fields to be filtered on
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
      */
@@ -531,6 +538,22 @@ class Query implements ExpressionInterface, IteratorAggregate
             $this->_parts['join'] = array_merge($this->_parts['join'], $joins);
         }
 
+        $this->_dirty();
+        return $this;
+    }
+
+    /**
+     * Remove a join if it has been defined.
+     *
+     * Useful when you are redefining joins or want to re-order
+     * the join clauses.
+     *
+     * @param string $name The alias/name of the join to remove.
+     * @return $this
+     */
+    public function removeJoin($name)
+    {
+        unset($this->_parts['join'][$name]);
         $this->_dirty();
         return $this;
     }
@@ -1177,6 +1200,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function offset($num)
     {
+        $this->_dirty();
         if ($num !== null && !is_object($num)) {
             $num = (int)$num;
         }

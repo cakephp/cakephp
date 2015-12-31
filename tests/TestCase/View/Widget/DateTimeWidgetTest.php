@@ -137,6 +137,7 @@ class DateTimeWidgetTest extends TestCase
         return [
             'DateTime' => [$date],
             'string' => [$date->format('Y-m-d H:i:s')],
+            'int string' => [$date->format('U')],
             'int' => [$date->getTimestamp()],
             'array' => [[
                 'year' => '2014', 'month' => '01', 'day' => '20',
