@@ -467,8 +467,10 @@ abstract class IntegrationTestCase extends TestCase
     protected function _addTokens($url, $data)
     {
         if ($this->_securityToken === true) {
-            $keys = Hash::flatten($data);
-            $tokenData = $this->_buildFieldToken($url, array_keys($keys));
+            $keys = array_map(function ($field) {
+                return preg_replace('/(\.\d+)+$/', '', $field);
+            }, array_keys(Hash::flatten($data)));
+            $tokenData = $this->_buildFieldToken($url, array_unique($keys));
             $data['_Token'] = $tokenData;
         }
 
