@@ -47,7 +47,7 @@ matrix:
     - php: hhvm
 
 before_script:
-  - phpenv config-rm xdebug.ini
+  - sh -c "if [ '$HHVM' != '1' ]; then phpenv config-rm xdebug.ini; fi"
   - composer self-update
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
   - composer install --prefer-dist --no-interaction
