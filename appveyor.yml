@@ -31,8 +31,6 @@ install:
   - 7z x php.zip -oc:\php
   - appveyor DownloadFile https://dl.dropboxusercontent.com/s/euip490d9183jkr/SQLSRV32.cab -FileName sqlsrv.cab
   - 7z x sqlsrv.cab -oc:\php\ext php*_55_nts.dll
-  - cd c:\php\ext
-  - appveyor DownloadFile http://xdebug.org/files/php_xdebug-2.3.3-5.5-vc11-nts.dll
   - cd c:\php
   - copy php.ini-production php.ini
   - echo date.timezone="UTC" >> php.ini
@@ -43,7 +41,6 @@ install:
   - echo extension=php_intl.dll >> php.ini
   - echo extension=php_mbstring.dll >> php.ini
   - echo extension=php_fileinfo.dll >> php.ini
-  - echo extension=php_xdebug-2.3.3-5.5-vc11-nts.dll >> php.ini
   - cd C:\projects\cakephp
   - appveyor DownloadFile https://getcomposer.org/composer.phar
   - php composer.phar install --prefer-dist --no-interaction --ansi --no-progress
