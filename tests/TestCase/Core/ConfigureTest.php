@@ -84,17 +84,13 @@ class ConfigureTest extends TestCase
     /**
      * testReadOrFail method
      *
+     * @expectedException RuntimeException
+     * @expectedExceptionMessage Expected "This.Key.Does.Not.exist" configuration
      * @return void
      */
     public function testReadOrFailThrowingException()
     {
-        try {
-            $void = Configure::readOrFail('This.Key.Does.Not.exist');
-            $this->fail('Expected exception to be thrown.');
-        } catch (\Exception $e) {
-            $this->assertTrue($e instanceof \RuntimeException);
-            $this->assertEquals('Expected "This.Key.Does.Not.exist" configuration.', $e->getMessage());
-        }
+        Configure::readOrFail('This.Key.Does.Not.exist');
     }
 
     /**
