@@ -17,6 +17,7 @@ namespace Cake\Validation;
 use ArrayAccess;
 use ArrayIterator;
 use Countable;
+use InvalidArgumentException;
 use IteratorAggregate;
 
 /**
@@ -533,6 +534,324 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $this->_allowEmptyMessages[$field] = $message;
         }
         return $this;
+    }
+
+    public function notBlank($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'notBlank', $extra + [
+            'rule' => 'notBlank',
+        ]);
+    }
+
+    public function alphaNumeric($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'alphaNumeric', $extra + [
+            'rule' => 'alphaNumeric',
+        ]);
+    }
+
+    public function lengthBetween($field, array $range, $message = null, $when = null)
+    {
+        if (count($range) !== 2) {
+            throw new InvalidArgumentException('The $range argument requires 2 numbers');
+        }
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'lengthBetween', $extra + [
+            'rule' => ['lengthBetween', array_shift($range), array_shift($range)],
+        ]);
+    }
+
+    public function creditCard($field, $type = 'all', $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'creditCard', $extra + [
+            'rule' => ['cc', $type, true],
+        ]);
+    }
+
+    public function greaterThan($field, $value, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'greaterThan', $extra + [
+            'rule' => ['comparison', '>', $value]
+        ]);
+    }
+
+    public function greaterThanOrEqual($field, $value, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'greaterThanOrEqual', $extra + [
+            'rule' => ['comparison', '>=', $value]
+        ]);
+    }
+
+    public function lessThan($field, $value, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'lessThan', $extra + [
+            'rule' => ['comparison', '<', $value]
+        ]);
+    }
+
+    public function lessThanOrEqual($field, $value, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'lessThanOrEqual', $extra + [
+            'rule' => ['comparison', '<=', $value]
+        ]);
+    }
+
+    public function equals($field, $value, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'equals', $extra + [
+            'rule' => ['comparison', '=', $value]
+        ]);
+    }
+
+    public function notEquals($field, $value, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'notEquals', $extra + [
+            'rule' => ['comparison', '!=', $value]
+        ]);
+    }
+
+    public function sameAs($field, $secondField, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'sameAs', $extra + [
+            'rule' => ['compareWith', $secondField]
+        ]);
+    }
+
+    public function containsNonAlphaNumeric($field, $limit = 1, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'containsNonAlphaNumeric', $extra + [
+            'rule' => ['containsNonAlphaNumeric', $limit]
+        ]);
+    }
+
+    public function date($field, $formats = ['ymd'], $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'date', $extra + [
+            'rule' => ['date', $formats]
+        ]);
+    }
+
+    public function dateTime($field, $formats = ['ymd'], $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'dateTime', $extra + [
+            'rule' => ['datetime', $formats]
+        ]);
+    }
+
+    public function time($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'time', $extra + [
+            'rule' => 'time'
+        ]);
+    }
+
+    public function boolean($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'boolean', $extra + [
+            'rule' => 'boolean'
+        ]);
+    }
+
+    public function decimal($field, $places = null, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'decimal', $extra + [
+            'rule' => ['decimal', $places]
+        ]);
+    }
+
+    public function email($field, $checkMX = false, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'email', $extra + [
+            'rule' => ['email', $checkMX]
+        ]);
+    }
+
+    public function ip($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'ip', $extra + [
+            'rule' => 'ip'
+        ]);
+    }
+
+    public function ipv4($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'ipv4', $extra + [
+            'rule' => ['ip', 'ipv4']
+        ]);
+    }
+
+    public function ipv6($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'ipv6', $extra + [
+            'rule' => ['ip', 'ipv6']
+        ]);
+    }
+
+    public function minLength($field, $min, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'minLength', $extra + [
+            'rule' => ['minLength', $min]
+        ]);
+    }
+
+    public function maxLength($field, $max, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'maxLength', $extra + [
+            'rule' => ['maxLength', $max]
+        ]);
+    }
+
+    public function numeric($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'numeric', $extra + [
+            'rule' => 'numeric'
+        ]);
+    }
+
+    public function naturalNumber($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'naturalNumber', $extra + [
+            'rule' => ['naturalNumber', false]
+        ]);
+    }
+
+    public function nonNegativeInteger($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'nonNegativeInteger', $extra + [
+            'rule' => ['naturalNumber', true]
+        ]);
+    }
+
+    public function range($field, array $range, $message = null, $when = null)
+    {
+        if (count($range) !== 2) {
+            throw new InvalidArgumentException('The $range argument requires 2 numbers');
+        }
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'range', $extra + [
+            'rule' => ['range', array_shift($range), array_shift($range)]
+        ]);
+    }
+
+    public function url($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'url', $extra + [
+            'rule' => ['url', false]
+        ]);
+    }
+
+    public function urlWithProtocol($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'urlWithProtocol', $extra + [
+            'rule' => ['url', true]
+        ]);
+    }
+
+    public function inList($field, array $list, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'inList', $extra + [
+            'rule' => ['inList', $list]
+        ]);
+    }
+
+    public function uuid($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'uuid', $extra + [
+            'rule' => 'uuid'
+        ]);
+    }
+
+    public function uploadedFile($field, array $options, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'uploadedFile', $extra + [
+            'rule' => ['uploadedFile', $options]
+        ]);
+    }
+
+    public function latLong($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'latLong', $extra + [
+            'rule' => 'geoCoordinate'
+        ]);
+    }
+
+    public function latitude($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'latitude', $extra + [
+            'rule' => 'latitude'
+        ]);
+    }
+
+    public function longitude($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'longitude', $extra + [
+            'rule' => 'longitude'
+        ]);
+    }
+
+    public function ascii($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'ascii', $extra + [
+            'rule' => 'ascii'
+        ]);
+    }
+
+    public function utf8($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'utf8', $extra + [
+            'rule' => ['utf8', ['extended' => false]]
+        ]);
+    }
+
+    public function utf8Strict($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'utf8Strict', $extra + [
+            'rule' => ['utf8', ['extended' => true]]
+        ]);
+    }
+
+    public function integer($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, 'integer', $extra + [
+            'rule' =>'isInteger'
+        ]);
     }
 
     /**
