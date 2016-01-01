@@ -159,7 +159,7 @@ class Configure
      */
     public static function readOrFail($var) {
         if (static::check($var) === false) {
-            throw new RuntimeException(sprintf('Expected "%s" configuration.', $var));
+            throw new RuntimeException(sprintf('Expected configuration key "%s" not found.', $var));
         }
         return static::read($var);
     }
