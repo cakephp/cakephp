@@ -240,7 +240,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
-     * Test posting to a secured form action action.
+     * Test posting to a secured form action.
      *
      * @return void
      */
@@ -250,6 +250,26 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $data = [
             'title' => 'Some title',
             'body' => 'Some text'
+        ];
+        $this->post('/posts/securePost', $data);
+        $this->assertResponseOk();
+        $this->assertResponseContains('Request was accepted');
+    }
+
+    /**
+     * Test posting to a secured form action with nested data.
+     *
+     * @return void
+     */
+    public function testPostSecuredFormNestedData()
+    {
+        $this->enableSecurityToken();
+        $data = [
+            'title' => 'New post',
+            'comments' => [
+                ['comment' => 'A new comment']
+            ],
+            'tags' => ['_ids' => [1, 2, 3, 4]]
         ];
         $this->post('/posts/securePost', $data);
         $this->assertResponseOk();
