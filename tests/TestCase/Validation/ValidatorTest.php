@@ -1085,6 +1085,18 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the lengthBetween proxy method
+     *
+     * @expectedException InvalidArgumentException
+     * @return void
+     */
+    public function testLengthBetweenFailure()
+    {
+        $validator = new Validator();
+        $validator->lengthBetween('username', [7]);
+    }
+
+    /**
      * Tests the creditCard proxy method
      *
      * @return void
@@ -1273,6 +1285,18 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the minLength proxy method
+     *
+     * @return void
+     */
+    public function testMinLength()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'minLength', 2, [2]);
+        $this->assertNotEmpty($validator->errors(['username' => 'a']));
+    }
+
+    /**
      * Tests the maxLength proxy method
      *
      * @return void
@@ -1282,6 +1306,19 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'maxLength', 2, [2]);
         $this->assertNotEmpty($validator->errors(['username' => 'aaa']));
+    }
+
+    /**
+     * Tests the numeric proxy method
+     *
+     * @return void
+     */
+    public function testNumeric()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'numeric');
+        $this->assertEmpty($validator->errors(['username' => '22']));
+        $this->assertNotEmpty($validator->errors(['username' => 'a']));
     }
 
     /**
@@ -1320,6 +1357,17 @@ class ValidatorTest extends TestCase
         $this->assertNotEmpty($validator->errors(['username' => 5]));
     }
 
+    /**
+     * Tests the range failure case
+     *
+     * @expectedException InvalidArgumentException
+     * @return void
+     */
+    public function testRangeFailure()
+    {
+        $validator = new Validator();
+        $validator->range('username', [1]);
+    }
     /**
      * Tests the url proxy method
      *
@@ -1443,6 +1491,19 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the email proxy method
+     *
+     * @return void
+     */
+    public function testEmail()
+    {
+        $validator = new Validator();
+        $validator->email('username');
+        $this->assertEmpty($validator->errors(['username' => 'test@example.com']));
+        $this->assertNotEmpty($validator->errors(['username' => 'not an email']));
+    }
+
+    /**
      * Tests the integer proxy method
      *
      * @return void
@@ -1464,11 +1525,11 @@ class ValidatorTest extends TestCase
         }
 
         $rule = $validator->field('username')->rule($method);
-        $this->assertNull($rule->get('message'));
-        $this->assertNull($rule->get('on'));
-        $this->assertEquals($name, $rule->get('rule'));
-        $this->assertEquals($pass, $rule->get('pass'));
-        $this->assertEquals('default', $rule->get('provider'));
+        $this->assertNull($rule->get('message'), 'Message is present when it should not be');
+        $this->assertNull($rule->get('on'), 'On clause is present when it should not be');
+        $this->assertEquals($name, $rule->get('rule'), 'Rule name does not match');
+        $this->assertEquals($pass, $rule->get('pass'), 'Passed options are different');
+        $this->assertEquals('default', $rule->get('provider'), 'Provider does not match');
 
         if ($extra !== null) {
             $validator->{$method}('username', $extra, 'the message', 'create');
@@ -1477,7 +1538,7 @@ class ValidatorTest extends TestCase
         }
 
         $rule = $validator->field('username')->rule($method);
-        $this->assertEquals('the message', $rule->get('message'));
-        $this->assertEquals('create', $rule->get('on'));
+        $this->assertEquals('the message', $rule->get('message'), 'Error messages are not the same');
+        $this->assertEquals('create', $rule->get('on'), 'On clause is wrong');
     }
 }
