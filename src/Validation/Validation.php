@@ -847,11 +847,10 @@ class Validation
      * Luhn algorithm
      *
      * @param string|array $check Value to check.
-     * @param bool $deep If true performs deep check.
      * @return bool Success
      * @see http://en.wikipedia.org/wiki/Luhn_algorithm
      */
-    public static function luhn($check, $deep = false)
+    public static function luhn($check)
     {
         if (!is_scalar($check) || (int)$check === 0) {
             return false;
