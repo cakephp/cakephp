@@ -169,7 +169,7 @@ class Validation
 
         if ($regex !== null) {
             if (static::_check($check, $regex)) {
-                return !$deep || static::luhn($check, $deep);
+                return !$deep || static::luhn($check);
             }
         }
         $cards = [
@@ -196,7 +196,7 @@ class Validation
                 $regex = $cards['all'][strtolower($value)];
 
                 if (static::_check($check, $regex)) {
-                    return static::luhn($check, $deep);
+                    return static::luhn($check);
                 }
             }
         } elseif ($type === 'all') {
@@ -204,14 +204,14 @@ class Validation
                 $regex = $value;
 
                 if (static::_check($check, $regex)) {
-                    return static::luhn($check, $deep);
+                    return static::luhn($check);
                 }
             }
         } else {
             $regex = $cards['fast'];
 
             if (static::_check($check, $regex)) {
-                return static::luhn($check, $deep);
+                return static::luhn($check);
             }
         }
         return false;
