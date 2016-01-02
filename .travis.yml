@@ -29,7 +29,7 @@ matrix:
   fast_finish: true
 
   include:
-    - php: 5.6
+    - php: 7.0
       env: COVERALLS=1 DEFAULT=0
 
     - php: 7.0
@@ -47,7 +47,7 @@ matrix:
     - php: hhvm
 
 before_script:
-  - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+  - sh -c "if [ '$HHVM' != '1' ]; then phpenv config-rm xdebug.ini; fi"
   - composer self-update
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
   - composer install --prefer-dist --no-interaction
@@ -74,7 +74,7 @@ script:
 
   - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi"
 
-  - sh -c "if [ '$COVERALLS' = '1' ]; then phpunit --coverage-clover build/logs/clover.xml; fi"
+  - sh -c "if [ '$COVERALLS' = '1' ]; then phpdbg -qrr vendor/bin/phpunit --coverage-clover build/logs/clover.xml || true; fi"
   - sh -c "if [ '$COVERALLS' = '1' ]; then vendor/bin/coveralls -c .coveralls.yml -v; fi"
 
 notifications:
