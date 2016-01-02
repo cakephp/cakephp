@@ -772,7 +772,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Add a date format validation rule to a field.
      *
      * @param string $field The field you want to apply the rule to.
-     * @param array $format A list of accepted date formats.
+     * @param array $formats A list of accepted date formats.
      * @param string $message The error message when the rule fails.
      * @param string|callable $when Either 'create' or 'update' or a callable that returns
      *   true when the valdiation rule should be applied.
@@ -791,7 +791,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Add a date time format validation rule to a field.
      *
      * @param string $field The field you want to apply the rule to.
-     * @param array $format A list of accepted date formats.
+     * @param array $formats A list of accepted date formats.
      * @param string $message The error message when the rule fails.
      * @param string|callable $when Either 'create' or 'update' or a callable that returns
      *   true when the valdiation rule should be applied.
@@ -810,7 +810,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Add a time format validation rule to a field.
      *
      * @param string $field The field you want to apply the rule to.
-     * @param array $format A list of accepted date formats.
      * @param string $message The error message when the rule fails.
      * @param string|callable $when Either 'create' or 'update' or a callable that returns
      *   true when the valdiation rule should be applied.
@@ -1275,7 +1274,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     {
         $extra = array_filter(['on' => $when, 'message' => $message]);
         return $this->add($field, 'integer', $extra + [
-            'rule' =>'isInteger'
+            'rule' => 'isInteger'
         ]);
     }
 
