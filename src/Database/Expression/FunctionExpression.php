@@ -139,4 +139,15 @@ class FunctionExpression extends QueryExpression
             $parts
         ));
     }
+
+    /**
+     * The name of the function is in itself an expression to generate, thus
+     * always adding 1 to the amount of expressions stored in this object.
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return 1 + count($this->_conditions);
+    }
 }
