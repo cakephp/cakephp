@@ -1421,7 +1421,7 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'utf8', null, [['extended' => false]]);
         $this->assertEmpty($validator->errors(['username' => 'ü']));
 
-        $this->assertProxyMethod($validator, 'utf8Strict', null, [['extended' => true]], 'utf8');
+        $this->assertProxyMethod($validator, 'utf8Extended', null, [['extended' => true]], 'utf8');
         $this->assertEmpty($validator->errors(['username' => 'ü']));
     }
 
