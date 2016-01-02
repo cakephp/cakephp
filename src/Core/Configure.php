@@ -143,7 +143,7 @@ class Configure
      * possible to store `null` values in Configure.
      *
      * Acts as a wrapper around Configure::read() and Configure::check().
-     * The configure key/value pair fetched via this method is expected to exist. 
+     * The configure key/value pair fetched via this method is expected to exist.
      * In case it does not an exception will be thrown.
      *
      * Usage:
@@ -157,7 +157,8 @@ class Configure
      * @throws \RuntimeException if the requested configuration is not set.
      * @link http://book.cakephp.org/3.0/en/development/configuration.html#reading-configuration-data
      */
-    public static function readOrFail($var) {
+    public static function readOrFail($var)
+    {
         if (static::check($var) === false) {
             throw new RuntimeException(sprintf('Expected configuration key "%s" not found.', $var));
         }
