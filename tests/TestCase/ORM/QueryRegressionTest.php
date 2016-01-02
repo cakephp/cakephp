@@ -1236,4 +1236,20 @@ class QueryRegressionTest extends TestCase
         // Not executing the query first, just getting the count
         $this->assertEquals(3, $query->count());
     }
+
+    /**
+     * Tests that the now() function expression can be used in the
+     * where clause of a query
+     *
+     * @see https://github.com/cakephp/cakephp/issues/7943
+     * @return void
+     */
+    public function testFunctionInWhereClause()
+    {
+        $table = TableRegistry::get('Comments');
+        $table->updateAll(['updated' => Time::tomorrow()], ['id' => 6]);
+        $query = $table->find();
+        $result = $query->where(['updated >' => $query->func()->now('datetime')])->first();
+        $this->assertSame(6, $result->id);
+    }
 }
