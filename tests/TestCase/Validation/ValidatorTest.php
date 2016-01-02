@@ -1417,12 +1417,29 @@ class ValidatorTest extends TestCase
      */
     public function testUtf8()
     {
+        // Grinning face
+        $extended = 'some' . "\xf0\x9f\x98\x80" . 'value';
         $validator = new Validator();
+
         $this->assertProxyMethod($validator, 'utf8', null, [['extended' => false]]);
         $this->assertEmpty($validator->errors(['username' => 'ü']));
+        $this->assertNotEmpty($validator->errors(['username' => $extended]));
+    }
+
+    /**
+     * Test utf8extended proxy method.
+     *
+     * @return void
+     */
+    public function testUtf8Extended()
+    {
+        // Grinning face
+        $extended = 'some' . "\xf0\x9f\x98\x80" . 'value';
+        $validator = new Validator();
 
         $this->assertProxyMethod($validator, 'utf8Extended', null, [['extended' => true]], 'utf8');
         $this->assertEmpty($validator->errors(['username' => 'ü']));
+        $this->assertEmpty($validator->errors(['username' => $extended]));
     }
 
     /**
