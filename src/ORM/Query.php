@@ -18,8 +18,8 @@ use ArrayObject;
 use Cake\Collection\CollectionInterface;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query as DatabaseQuery;
-use Cake\Database\TypeMap;
 use Cake\Database\TypedResultInterface;
+use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\QueryTrait;
@@ -48,25 +48,26 @@ use Traversable;
  * @method CollectionInterface indexBy(string|callable $field) Returns the results indexed by the value of a column.
  * @method int countBy(string|callable $field) Returns the number of unique values for a column
  * @method float sumOf(string|callable $field) Returns the sum of all values for a single column
- * @method CollectionInterface shuffle() In-memory randomize he order the results are returned
+ * @method CollectionInterface shuffle() In-memory randomize the order the results are returned
  * @method CollectionInterface sample($size = 10) In-memory shuffle the results and return a subset of them.
  * @method CollectionInterface take($size = 1, $from = 0) In-memory limit and offset for the query results.
  * @method CollectionInterface skip(int $howMany) Skips some rows from the start of the query result.
  * @method mixed last() Return the last row of the query result
  * @method CollectionInterface append(array|Traversable $items) Appends more rows to the result of the query.
  * @method CollectionInterface combine($k, $v, $g = null) Returns the values of the column $v index by column $k,
- * and grouped by $g.
+ *   and grouped by $g.
  * @method CollectionInterface nest($k, $p) Creates a tree structure by nesting the values of column $p into that
- * with the same value for $k.
+ *   with the same value for $k.
  * @method array toArray() Returns a key-value array with the results of this query.
  * @method array toList() Returns a numerically indexed array with the results of this query.
  * @method CollectionInterface stopWhen(callable $c) Returns each row until the callable returns true.
  * @method CollectionInterface zip(array|Traversable $c) Returns the first result of both the query and $c in an array,
- * then the second results and so on.
+ *   then the second results and so on.
  * @method CollectionInterface zipWith(...$collections, callable $c) Returns each of the results out of calling $c
- * with the first rows of the query and each of the items, then the second rows and so on.
+ *   with the first rows of the query and each of the items, then the second rows and so on.
  * @method CollectionInterface chunk($size) Groups the results in arrays of $size rows each.
  * @method bool isEmpty($size) Returns true if this query found no results.
+ * @method $this find(string $type, array $options) Compose this query with another finder from the same table.
  */
 class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 {
