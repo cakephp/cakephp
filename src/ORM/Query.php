@@ -67,7 +67,6 @@ use Traversable;
  *   with the first rows of the query and each of the items, then the second rows and so on.
  * @method CollectionInterface chunk($size) Groups the results in arrays of $size rows each.
  * @method bool isEmpty($size) Returns true if this query found no results.
- * @method $this find(string $type, array $options) Compose this query with another finder from the same table.
  */
 class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 {
