@@ -138,7 +138,7 @@ class QueryTest extends TestCase
         $this->assertEquals(['text' => 'Second Comment for First Article', 'article_id' => 1], $result->fetch('assoc'));
 
         $query = new Query($this->connection);
-        $result = $query->select(['text' => 'comment', 'article' =>  'article_id'])->from('comments')->execute();
+        $result = $query->select(['text' => 'comment', 'article' => 'article_id'])->from('comments')->execute();
         $this->assertEquals(['text' => 'First Comment for First Article', 'article' => 1], $result->fetch('assoc'));
         $this->assertEquals(['text' => 'Second Comment for First Article', 'article' => 1], $result->fetch('assoc'));
 
