@@ -126,8 +126,12 @@ class Marshaller
 
         $errors = $this->_validate($data, $options, true);
         $properties = [];
+        $setInvalidProperty = method_exists($entity, 'invalid');
         foreach ($data as $key => $value) {
             if (!empty($errors[$key])) {
+                if ($setInvalidProperty) {
+                    $entity->invalid($key, $value);
+                }
                 continue;
             }
             $columnType = $schema->columnType($key);
@@ -461,8 +465,13 @@ class Marshaller
         $errors = $this->_validate($data + $keys, $options, $isNew);
         $schema = $this->_table->schema();
         $properties = $marshalledAssocs = [];
+
+        $setInvalidProperty = method_exists($entity, 'invalid');
         foreach ($data as $key => $value) {
             if (!empty($errors[$key])) {
+                if ($setInvalidProperty) {
+                    $entity->invalid($key, $value);
+                }
                 continue;
             }
 
