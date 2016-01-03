@@ -2795,25 +2795,24 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $result = $query->select(
             function ($q) {
-                    return ['total' => $q->func()->count('*')];
+                return ['total' => $q->func()->count('*')];
             }
         )
-            ->from('articles')
+            ->from('comments')
             ->execute();
-        $expected = [['total' => 3]];
+        $expected = [['total' => 6]];
         $this->assertEquals($expected, $result->fetchAll('assoc'));
 
         $query = new Query($this->connection);
         $result = $query->select([
-                'c' => $query->func()->concat(['title' => 'literal', ' is appended'])
+                'c' => $query->func()->concat(['comment' => 'literal', ' is appended'])
             ])
-            ->from('articles')
+            ->from('comments')
             ->order(['c' => 'ASC'])
+            ->limit(1)
             ->execute();
         $expected = [
-            ['c' => 'First Article is appended'],
-            ['c' => 'Second Article is appended'],
-            ['c' => 'Third Article is appended']
+            ['c' => 'First Comment for First Article is appended'],
         ];
         $this->assertEquals($expected, $result->fetchAll('assoc'));
 
