@@ -133,28 +133,29 @@ class QueryTest extends TestCase
     public function testSelectAliasedFieldsFromTable()
     {
         $query = new Query($this->connection);
-        $result = $query->select(['text' => 'body', 'author_id'])->from('articles')->execute();
-        $this->assertEquals(['text' => 'First Article Body', 'author_id' => 1], $result->fetch('assoc'));
-        $this->assertEquals(['text' => 'Second Article Body', 'author_id' => 3], $result->fetch('assoc'));
+        $result = $query->select(['text' => 'comment', 'article_id'])->from('comments')->execute();
+        $this->assertEquals(['text' => 'First Comment for First Article', 'article_id' => 1], $result->fetch('assoc'));
+        $this->assertEquals(['text' => 'Second Comment for First Article', 'article_id' => 1], $result->fetch('assoc'));
 
         $query = new Query($this->connection);
-        $result = $query->select(['text' => 'body', 'author' => 'author_id'])->from('articles')->execute();
-        $this->assertEquals(['text' => 'First Article Body', 'author' => 1], $result->fetch('assoc'));
-        $this->assertEquals(['text' => 'Second Article Body', 'author' => 3], $result->fetch('assoc'));
+        $result = $query->select(['text' => 'comment', 'article' =>  'article_id'])->from('comments')->execute();
+        $this->assertEquals(['text' => 'First Comment for First Article', 'article' => 1], $result->fetch('assoc'));
+        $this->assertEquals(['text' => 'Second Comment for First Article', 'article' => 1], $result->fetch('assoc'));
 
         $query = new Query($this->connection);
-        $query->select(['text' => 'body'])->select(['author_id', 'foo' => 'body']);
-        $result = $query->from('articles')->execute();
-        $this->assertEquals(['foo' => 'First Article Body', 'text' => 'First Article Body', 'author_id' => 1], $result->fetch('assoc'));
-        $this->assertEquals(['foo' => 'Second Article Body', 'text' => 'Second Article Body', 'author_id' => 3], $result->fetch('assoc'));
+        $query->select(['text' => 'comment'])->select(['article_id', 'foo' => 'comment']);
+        $result = $query->from('comments')->execute();
+        $this->assertEquals(
+            ['foo' => 'First Comment for First Article', 'text' => 'First Comment for First Article', 'article_id' => 1],
+            $result->fetch('assoc')
+        );
 
         $query = new Query($this->connection);
         $exp = $query->newExpr('1 + 1');
-        $comp = $query->newExpr(['author_id +' => 2]);
-        $result = $query->select(['text' => 'body', 'two' => $exp, 'three' => $comp])
-            ->from('articles')->execute();
-        $this->assertEquals(['text' => 'First Article Body', 'two' => 2, 'three' => 3], $result->fetch('assoc'));
-        $this->assertEquals(['text' => 'Second Article Body', 'two' => 2, 'three' => 5], $result->fetch('assoc'));
+        $comp = $query->newExpr(['article_id +' => 2]);
+        $result = $query->select(['text' => 'comment', 'two' => $exp, 'three' => $comp])
+            ->from('comments')->execute();
+        $this->assertEquals(['text' => 'First Comment for First Article', 'two' => 2, 'three' => 3], $result->fetch('assoc'));
     }
 
     /**
