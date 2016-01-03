@@ -794,9 +794,9 @@ trait EntityTrait
      * This value could not be patched into the entity and is simply copied into the _invalid property for debugging purposes
      * or to be able to log it away.
      *
-     * @param string|array|null $field
-     * @param string|null $value
-     * @param bool $overwrite
+     * @param string|array|null $field The field to get invalid value for, or the value to set.
+     * @param mixed|null $value The invalid value to be set for $field.
+     * @param bool $overwrite Whether or not to overwrite pre-existing values for $field.
      * @return $this|mixed
      */
     public function invalid($field = null, $value = null, $overwrite = false)

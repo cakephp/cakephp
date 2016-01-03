@@ -2524,11 +2524,12 @@ class MarshallerTest extends TestCase
     }
 
     /**
-     * Tests that invalid propery is being filled when data cannot be patched into an entity
+     * Tests that invalid property is being filled when data cannot be patched into an entity.
      *
      * @return void
      */
-    public function testValidationWithInvalidFilled() {
+    public function testValidationWithInvalidFilled()
+    {
         $data = [
             'title' => 'foo',
             'number' => 'bar',

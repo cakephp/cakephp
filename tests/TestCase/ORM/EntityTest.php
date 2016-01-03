@@ -1205,6 +1205,7 @@ class EntityTest extends TestCase
         $entity->virtualProperties(['baz']);
         $entity->dirty('foo', true);
         $entity->errors('foo', ['An error']);
+        $entity->invalid('foo', 'a value');
         $entity->source('foos');
         $result = $entity->__debugInfo();
         $expected = [
@@ -1216,6 +1217,7 @@ class EntityTest extends TestCase
             '[original]' => [],
             '[virtual]' => ['baz'],
             '[errors]' => ['foo' => ['An error']],
+            '[invalid]' => ['foo' => 'a value'],
             '[repository]' => 'foos'
         ];
         $this->assertSame($expected, $result);

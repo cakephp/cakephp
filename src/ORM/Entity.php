@@ -15,8 +15,8 @@
 namespace Cake\ORM;
 
 use Cake\Datasource\EntityInterface;
-use Cake\Datasource\InvalidPropertyInterface;
 use Cake\Datasource\EntityTrait;
+use Cake\Datasource\InvalidPropertyInterface;
 
 /**
  * An entity represents a single result row from a repository. It exposes the
@@ -24,7 +24,6 @@ use Cake\Datasource\EntityTrait;
  */
 class Entity implements EntityInterface, InvalidPropertyInterface
 {
-
     use EntityTrait;
 
     /**
