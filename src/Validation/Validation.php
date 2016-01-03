@@ -169,7 +169,7 @@ class Validation
 
         if ($regex !== null) {
             if (static::_check($check, $regex)) {
-                return !$deep || static::luhn($check, $deep);
+                return !$deep || static::luhn($check);
             }
         }
         $cards = [
@@ -196,7 +196,7 @@ class Validation
                 $regex = $cards['all'][strtolower($value)];
 
                 if (static::_check($check, $regex)) {
-                    return static::luhn($check, $deep);
+                    return static::luhn($check);
                 }
             }
         } elseif ($type === 'all') {
@@ -204,14 +204,14 @@ class Validation
                 $regex = $value;
 
                 if (static::_check($check, $regex)) {
-                    return static::luhn($check, $deep);
+                    return static::luhn($check);
                 }
             }
         } else {
             $regex = $cards['fast'];
 
             if (static::_check($check, $regex)) {
-                return static::luhn($check, $deep);
+                return static::luhn($check);
             }
         }
         return false;
@@ -847,11 +847,10 @@ class Validation
      * Luhn algorithm
      *
      * @param string|array $check Value to check.
-     * @param bool $deep If true performs deep check.
      * @return bool Success
      * @see http://en.wikipedia.org/wiki/Luhn_algorithm
      */
-    public static function luhn($check, $deep = false)
+    public static function luhn($check)
     {
         if (!is_scalar($check) || (int)$check === 0) {
             return false;
