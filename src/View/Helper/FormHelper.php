@@ -1707,6 +1707,7 @@ class FormHelper extends Helper
      * ### Options
      *
      * - `type` - Set to 'reset' for reset inputs. Defaults to 'submit'
+     * - `templateVars` - Additional template variables for the input element and its container.
      * - Other attributes will be assigned to the input element.
      *
      * @param string $caption The label appearing on the button OR if string contains :// or the
