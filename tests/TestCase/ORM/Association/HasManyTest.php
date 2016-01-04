@@ -80,6 +80,9 @@ class HasManyTest extends TestCase
             'title' => 'string',
             'Articles.author_id' => 'integer',
             'author_id' => 'integer',
+            'Articles__id' => 'integer',
+            'Articles__title' => 'string',
+            'Articles__author_id' => 'integer',
         ]);
         $this->autoQuote = $connection->driver()->autoQuoting();
     }

@@ -34,7 +34,7 @@ class ApcEngineTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->skipIf(!function_exists('apc_store'), 'Apc is not installed or configured properly.');
+        $this->skipIf(!function_exists('apcu_store'), 'APCu is not installed or configured properly.');
 
         if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) {
             $this->skipIf(!ini_get('apc.enable_cli'), 'APC is not enabled for the CLI.');
@@ -155,8 +155,6 @@ class ApcEngineTest extends TestCase
      */
     public function testDecrement()
     {
-        $this->skipIf(!function_exists('apc_dec'), 'No apc_dec() function, cannot test decrement().');
-
         $result = Cache::write('test_decrement', 5, 'apc');
         $this->assertTrue($result);
 
@@ -180,8 +178,6 @@ class ApcEngineTest extends TestCase
      */
     public function testIncrement()
     {
-        $this->skipIf(!function_exists('apc_inc'), 'No apc_inc() function, cannot test increment().');
-
         $result = Cache::write('test_increment', 5, 'apc');
         $this->assertTrue($result);
 
@@ -205,14 +201,14 @@ class ApcEngineTest extends TestCase
      */
     public function testClear()
     {
-        apc_store('not_cake', 'survive');
+        apcu_store('not_cake', 'survive');
         Cache::write('some_value', 'value', 'apc');
 
         $result = Cache::clear(false, 'apc');
         $this->assertTrue($result);
         $this->assertFalse(Cache::read('some_value', 'apc'));
-        $this->assertEquals('survive', apc_fetch('not_cake'));
-        apc_delete('not_cake');
+        $this->assertEquals('survive', apcu_fetch('not_cake'));
+        apcu_delete('not_cake');
     }
 
     /**
@@ -233,12 +229,12 @@ class ApcEngineTest extends TestCase
         $this->assertTrue(Cache::write('test_groups', 'value', 'apc_groups'));
         $this->assertEquals('value', Cache::read('test_groups', 'apc_groups'));
 
-        apc_inc('test_group_a');
+        apcu_inc('test_group_a');
         $this->assertFalse(Cache::read('test_groups', 'apc_groups'));
         $this->assertTrue(Cache::write('test_groups', 'value2', 'apc_groups'));
         $this->assertEquals('value2', Cache::read('test_groups', 'apc_groups'));
 
-        apc_inc('test_group_b');
+        apcu_inc('test_group_b');
         $this->assertFalse(Cache::read('test_groups', 'apc_groups'));
         $this->assertTrue(Cache::write('test_groups', 'value3', 'apc_groups'));
         $this->assertEquals('value3', Cache::read('test_groups', 'apc_groups'));

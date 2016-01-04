@@ -16,7 +16,7 @@ namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
 use Cake\Database\Type;
-use DateTime;
+use DateTimeInterface;
 use Exception;
 use RuntimeException;
 
@@ -31,7 +31,11 @@ class DateTimeType extends Type
     /**
      * The class to use for representing date objects
      *
+     * This property can only be used before an instance of this type
+     * class is constructed. After that use `useMutable()` or `useImmutable()` instead.
+     *
      * @var string
+     * @deprecated Use DateTimeType::useMutable() or DateTimeType::useImmutable() instead.
      */
     public static $dateTimeClass = 'Cake\I18n\Time';
 
@@ -66,17 +70,19 @@ class DateTimeType extends Type
     protected $_datetimeInstance;
 
     /**
+     * The classname to use when creating objects.
+     *
+     * @var string
+     */
+    protected $_className;
+
+    /**
      * {@inheritDoc}
      */
     public function __construct($name = null)
     {
         parent::__construct($name);
-
-        if (!class_exists(static::$dateTimeClass)) {
-            static::$dateTimeClass = 'DateTime';
-        }
-
-        $this->_datetimeInstance = new static::$dateTimeClass;
+        $this->_setClassName(static::$dateTimeClass, 'DateTime');
     }
 
     /**
@@ -92,7 +98,8 @@ class DateTimeType extends Type
             return $value;
         }
         if (is_int($value)) {
-            $value = new static::$dateTimeClass('@' . $value);
+            $class = $this->_className;
+            $value = new $class('@' . $value);
         }
         return $value->format($this->_format);
     }
@@ -126,11 +133,11 @@ class DateTimeType extends Type
      */
     public function marshal($value)
     {
-        if ($value instanceof DateTime) {
+        if ($value instanceof DateTimeInterface) {
             return $value;
         }
 
-        $class = static::$dateTimeClass;
+        $class = $this->_className;
         try {
             $compare = $date = false;
             if ($value === '' || $value === null || $value === false || $value === true) {
@@ -196,14 +203,12 @@ class DateTimeType extends Type
             $this->_useLocaleParser = $enable;
             return $this;
         }
-        if (static::$dateTimeClass === 'Cake\I18n\Time' ||
-            is_subclass_of(static::$dateTimeClass, 'Cake\I18n\Time')
-        ) {
+        if (method_exists($this->_className, 'parseDateTime')) {
             $this->_useLocaleParser = $enable;
             return $this;
         }
         throw new RuntimeException(
-            sprintf('Cannot use locale parsing with the %s class', static::$dateTimeClass)
+            sprintf('Cannot use locale parsing with the %s class', $this->_className)
         );
     }
 
@@ -223,6 +228,44 @@ class DateTimeType extends Type
     }
 
     /**
+     * Change the preferred class name to the FrozenTime implementation.
+     *
+     * @return $this
+     */
+    public function useImmutable()
+    {
+        $this->_setClassName('Cake\I18n\FrozenTime', 'DateTimeImmutable');
+        return $this;
+    }
+
+    /**
+     * Set the classname to use when building objects.
+     *
+     * @param string $class The classname to use.
+     * @param string $fallback The classname to use when the preferred class does not exist.
+     * @return void
+     */
+    protected function _setClassName($class, $fallback)
+    {
+        if (!class_exists($class)) {
+            $class = $fallback;
+        }
+        $this->_className = $class;
+        $this->_datetimeInstance = new $this->_className;
+    }
+
+    /**
+     * Change the preferred class name to the mutable Time implementation.
+     *
+     * @return $this
+     */
+    public function useMutable()
+    {
+        $this->_setClassName('Cake\I18n\Time', 'DateTime');
+        return $this;
+    }
+
+    /**
      * Converts a string into a DateTime object after parseing it using the locale
      * aware parser with the specified format.
      *
@@ -231,7 +274,7 @@ class DateTimeType extends Type
      */
     protected function _parseValue($value)
     {
-        $class = static::$dateTimeClass;
+        $class = $this->_className;
         return $class::parseDateTime($value, $this->_localeFormat);
     }
 }

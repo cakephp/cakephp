@@ -294,7 +294,7 @@ class CookieComponentTest extends TestCase
         $this->Cookie->configKey('Testing', 'expires', '+90 years');
         $this->Cookie->write('Testing', 'value');
         $future = new Time('now');
-        $future->modify('+90 years');
+        $future = $future->modify('+90 years');
 
         $expected = [
             'name' => 'Testing',

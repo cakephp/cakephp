@@ -9,32 +9,23 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         3.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Database\Type;
 
 /**
- * Time type converter.
- *
- * Use to convert time instances to strings & back.
+ * An interface used by Type objects to signal whether the casting
+ * is actually required.
  */
-class TimeType extends DateTimeType
+interface OptionalConvertInterface
 {
 
     /**
-     * Time format for DateTime object
+     * Returns whehter the cast to PHP is required to be invoked, since
+     * it is not a indentity function.
      *
-     * @var string
+     * @return bool
      */
-    protected $_format = 'H:i:s';
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function _parseValue($value)
-    {
-        $class = $this->_className;
-        return $class::parseTime($value, $this->_localeFormat);
-    }
+    public function requiresToPhpCast();
 }

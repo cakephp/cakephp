@@ -9,13 +9,13 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         3.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\I18n;
 
+use Cake\Chronos\Chronos;
 use Cake\Chronos\ChronosInterface;
-use Cake\Chronos\MutableDateTime;
 use DateTime;
 use DateTimeZone;
 use IntlDateFormatter;
@@ -25,13 +25,14 @@ use JsonSerializable;
  * Extends the built-in DateTime class to provide handy methods and locale-aware
  * formatting helpers
  *
+ * This object provides an immutable variant of Cake\I18n\Time
  */
-class Time extends MutableDateTime implements JsonSerializable
+class FrozenTime extends Chronos implements JsonSerializable
 {
     use DateFormatTrait;
 
     /**
-     * The format to use when formatting a time using `Cake\I18n\Time::i18nFormat()`
+     * The format to use when formatting a time using `Cake\I18n\FrozenTime::i18nFormat()`
      * and `__toString`
      *
      * The format should be either the formatting constants from IntlDateFormatter as
@@ -43,12 +44,12 @@ class Time extends MutableDateTime implements JsonSerializable
      * will be used to format the time part.
      *
      * @var string|array|int
-     * @see \Cake\I18n\Time::i18nFormat()
+     * @see \Cake\I18n\FrozenTime::i18nFormat()
      */
     protected static $_toStringFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::SHORT];
 
     /**
-     * The format to use when formatting a time using `Cake\I18n\Time::nice()`
+     * The format to use when formatting a time using `Cake\I18n\FrozenTime::nice()`
      *
      * The format should be either the formatting constants from IntlDateFormatter as
      * described in (http://www.php.net/manual/en/class.intldateformatter.php) or a pattern
@@ -59,16 +60,16 @@ class Time extends MutableDateTime implements JsonSerializable
      * will be used to format the time part.
      *
      * @var string|array|int
-     * @see \Cake\I18n\Time::nice()
+     * @see \Cake\I18n\FrozenTime::nice()
      */
     public static $niceFormat = [IntlDateFormatter::MEDIUM, IntlDateFormatter::SHORT];
 
     /**
-     * The format to use when formatting a time using `Cake\I18n\Time::timeAgoInWords()`
-     * and the difference is more than `Cake\I18n\Time::$wordEnd`
+     * The format to use when formatting a time using `Cake\I18n\FrozenTime::timeAgoInWords()`
+     * and the difference is more than `Cake\I18n\FrozenTime::$wordEnd`
      *
      * @var string
-     * @see \Cake\I18n\Time::timeAgoInWords()
+     * @see \Cake\I18n\FrozenTime::timeAgoInWords()
      */
     public static $wordFormat = [IntlDateFormatter::SHORT, -1];
 
@@ -77,7 +78,7 @@ class Time extends MutableDateTime implements JsonSerializable
      * and the difference is less than `Time::$wordEnd`
      *
      * @var array
-     * @see \Cake\I18n\Time::timeAgoInWords()
+     * @see \Cake\I18n\FrozenTime::timeAgoInWords()
      */
     public static $wordAccuracy = [
         'year' => "day",
@@ -93,7 +94,7 @@ class Time extends MutableDateTime implements JsonSerializable
      * The end of relative time telling
      *
      * @var string
-     * @see \Cake\I18n\Time::timeAgoInWords()
+     * @see \Cake\I18n\FrozenTime::timeAgoInWords()
      */
     public static $wordEnd = '+1 month';
 

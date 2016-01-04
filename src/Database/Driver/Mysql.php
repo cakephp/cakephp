@@ -70,7 +70,7 @@ class Mysql extends Driver
         $config['flags'] += [
             PDO::ATTR_PERSISTENT => $config['persistent'],
             PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 
         if (!empty($config['ssl_key']) && !empty($config['ssl_cert'])) {

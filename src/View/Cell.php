@@ -14,6 +14,8 @@
  */
 namespace Cake\View;
 
+use BadMethodCallException;
+use Cake\Cache\Cache;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
@@ -24,6 +26,8 @@ use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingCellViewException;
 use Cake\View\Exception\MissingTemplateException;
 use Exception;
+use ReflectionException;
+use ReflectionMethod;
 
 /**
  * Cell base.
@@ -87,6 +91,20 @@ abstract class Cell
     public $helpers = [];
 
     /**
+     * The cell's action to invoke.
+     *
+     * @var string
+     */
+    public $action;
+
+    /**
+     * Arguments to pass to cell's action.
+     *
+     * @var array
+     */
+    public $args = [];
+
+    /**
      * These properties can be set directly on Cell and passed to the View as options.
      *
      * @var array
@@ -131,6 +149,7 @@ abstract class Cell
         $this->response = $response;
         $this->modelFactory('Table', [$this->tableLocator(), 'get']);
 
+        $this->_validCellOptions = array_merge(['action', 'args'], $this->_validCellOptions);
         foreach ($this->_validCellOptions as $var) {
             if (isset($cellOptions[$var])) {
                 $this->{$var} = $cellOptions[$var];
@@ -151,30 +170,42 @@ abstract class Cell
      */
     public function render($template = null)
     {
-        if ($template !== null &&
-            strpos($template, '/') === false &&
-            strpos($template, '.') === false
-        ) {
-            $template = Inflector::underscore($template);
-        }
-        if ($template === null) {
-            $template = $this->template;
-        }
-        $builder = $this->viewBuilder();
-        $builder->layout(false);
-        $builder->template($template);
-
         $cache = [];
         if ($this->_cache) {
-            $cache = $this->_cacheConfig($template);
+            $cache = $this->_cacheConfig($this->action);
         }
-        $this->View = $this->createView();
 
         $render = function () use ($template) {
+            if ($template !== null &&
+                strpos($template, '/') === false &&
+                strpos($template, '.') === false
+            ) {
+                $template = Inflector::underscore($template);
+            }
+            if ($template === null) {
+                $template = $this->template;
+            }
+
+            $builder = $this->viewBuilder();
+            $builder->layout(false);
+            $builder->template($template);
+
             $className = substr(strrchr(get_class($this), "\\"), 1);
             $name = substr($className, 0, -4);
-            $this->View->templatePath('Cell' . DS . $name);
+            $builder->templatePath('Cell' . DS . $name);
 
+            try {
+                $reflect = new ReflectionMethod($this, $this->action);
+                $reflect->invokeArgs($this, $this->args);
+            } catch (ReflectionException $e) {
+                throw new BadMethodCallException(sprintf(
+                    'Class %s does not have a "%s" method.',
+                    get_class($this),
+                    $this->action
+                ));
+            }
+
+            $this->View = $this->createView();
             try {
                 return $this->View->render($template);
             } catch (MissingTemplateException $e) {
@@ -183,9 +214,7 @@ abstract class Cell
         };
 
         if ($cache) {
-            return $this->View->cache(function () use ($render) {
-                echo $render();
-            }, $cache);
+            return Cache::remember($cache['key'], $render, $cache['config']);
         }
         return $render();
     }
@@ -193,17 +222,17 @@ abstract class Cell
     /**
      * Generate the cache key to use for this cell.
      *
-     * If the key is undefined, the cell class and template will be used.
+     * If the key is undefined, the cell class and action name will be used.
      *
-     * @param string $template The template being rendered.
+     * @param string $action The action invoked.
      * @return array The cache configuration.
      */
-    protected function _cacheConfig($template)
+    protected function _cacheConfig($action)
     {
         if (empty($this->_cache)) {
             return [];
         }
-        $key = 'cell_' . Inflector::underscore(get_class($this)) . '_' . $template;
+        $key = 'cell_' . Inflector::underscore(get_class($this)) . '_' . $action;
         $key = str_replace('\\', '_', $key);
         $default = [
             'config' => 'default',
@@ -244,6 +273,8 @@ abstract class Cell
     {
         return [
             'plugin' => $this->plugin,
+            'action' => $this->action,
+            'args' => $this->args,
             'template' => $this->template,
             'viewClass' => $this->viewClass,
             'request' => $this->request,

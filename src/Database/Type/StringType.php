@@ -24,7 +24,7 @@ use PDO;
  *
  * Use to convert string data between PHP and the database types.
  */
-class StringType extends Type
+class StringType extends Type implements OptionalConvertInterface
 {
 
     /**
@@ -93,5 +93,15 @@ class StringType extends Type
             return '';
         }
         return (string)$value;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return boolean False as databse results are returned already as strings
+     */
+    public function requiresToPhpCast()
+    {
+        return false;
     }
 }

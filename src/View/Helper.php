@@ -124,6 +124,8 @@ class Helper implements EventListenerInterface
         if (!empty($this->helpers)) {
             $this->_helperMap = $View->helpers()->normalizeArray($this->helpers);
         }
+        
+        $this->initialize($config);
     }
 
     /**
@@ -218,6 +220,18 @@ class Helper implements EventListenerInterface
             }
         }
         return $events;
+    }
+
+    /**
+     * Constructor hook method.
+     *
+     * Implement this method to avoid having to overwrite the constructor and call parent.
+     *
+     * @param array $config The configuration settings provided to this helper.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
     }
 
     /**

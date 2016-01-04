@@ -9,32 +9,23 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         3.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Database\Type;
+namespace Cake\Database;
 
 /**
- * Time type converter.
- *
- * Use to convert time instances to strings & back.
+ * Represents an expression that is known to return a specific type
  */
-class TimeType extends DateTimeType
+interface TypedResultInterface
 {
 
     /**
-     * Time format for DateTime object
+     * Sets the type of the value this object will generate.
+     * If called without arguments, returns the current known type
      *
-     * @var string
+     * @param string|null $type The name of the type that is to be returned
+     * @return string|$this
      */
-    protected $_format = 'H:i:s';
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function _parseValue($value)
-    {
-        $class = $this->_className;
-        return $class::parseTime($value, $this->_localeFormat);
-    }
+    public function returnType($type = null);
 }
