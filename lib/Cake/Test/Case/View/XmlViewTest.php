@@ -107,7 +107,7 @@ class XmlViewTest extends CakeTestCase {
 		$Controller = new Controller($Request, $Response);
 		$data = array(
 			'_serialize' => array('tags'),
-			'_xmlOptions' => array('format' => 'attributes'),
+			'_xmlOptions' => array('format' => 'attributes', 'return' => 'domdocument'),
 			'tags' => array(
 				'tag' => array(
 					array(
@@ -126,7 +126,7 @@ class XmlViewTest extends CakeTestCase {
 		$View = new XmlView($Controller);
 		$result = $View->render();
 
-		$expected = Xml::build(array('response' => array('tags' => $data['tags'])), $data['_xmlOptions'])->asXML();
+		$expected = Xml::build(array('response' => array('tags' => $data['tags'])), $data['_xmlOptions'])->saveXML();
 		$this->assertSame($expected, $result);
 	}
 

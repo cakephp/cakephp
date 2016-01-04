@@ -142,6 +142,9 @@ class XmlView extends View {
 			$options['pretty'] = true;
 		}
 
+		if (isset($options['return']) && strtolower($options['return']) === 'domdocument') {
+			return Xml::fromArray($data, $options)->saveXML();
+		}
 		return Xml::fromArray($data, $options)->asXML();
 	}
 
