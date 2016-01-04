@@ -1780,7 +1780,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertFalse(empty($result));
 		$this->assertFalse($this->UserForm->OpenidUrl->validates());
 
-		$result = $this->Form->create('UserForm', array('type' => 'post', 'action' => 'login'));
+		$result = $this->Form->create('UserForm', array('type' => 'post', 'url' => array('action' => 'login')));
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$expected = array(
 			'form' => array(
@@ -1822,7 +1822,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertFalse($this->ValidateUser->validates());
 		$this->assertFalse($this->ValidateUser->ValidateProfile->validates());
 
-		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'action' => 'add'));
+		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'url' => array('action' => 'add')));
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$expected = array(
 			'form' => array('method' => 'post', 'action' => '/validate_users/add', 'id', 'accept-charset' => $encoding),
@@ -1875,7 +1875,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertFalse($this->ValidateUser->ValidateProfile->validates());
 		$this->assertFalse($this->ValidateUser->ValidateProfile->ValidateItem->validates());
 
-		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'action' => 'add'));
+		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'url' => array('action' => 'add')));
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$expected = array(
 			'form' => array('method' => 'post', 'action' => '/validate_users/add', 'id', 'accept-charset' => $encoding),
@@ -8688,7 +8688,7 @@ class FormHelperTest extends CakeTestCase {
 		Router::connect('/login', array('controller' => 'users', 'action' => 'login'));
 		$encoding = strtolower(Configure::read('App.encoding'));
 
-		$result = $this->Form->create('User', array('action' => 'login'));
+		$result = $this->Form->create('User', array('url' => array('action' => 'login')));
 		$expected = array(
 			'form' => array(
 				'id' => 'UserLoginForm', 'method' => 'post', 'action' => '/login',
@@ -8760,7 +8760,7 @@ class FormHelperTest extends CakeTestCase {
  */
 	public function testCreateWithAcceptCharset() {
 		$result = $this->Form->create('UserForm', array(
-				'type' => 'post', 'action' => 'login', 'encoding' => 'iso-8859-1'
+				'type' => 'post', 'url' => array('action' => 'login'), 'encoding' => 'iso-8859-1'
 			)
 		);
 		$expected = array(
