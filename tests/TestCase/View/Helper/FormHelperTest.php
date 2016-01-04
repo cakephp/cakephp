@@ -583,23 +583,25 @@ class FormHelperTest extends TestCase
     }
     
     /**
-     * Test using template vars in submitContainer template.
+     * Test using template vars in inputSubmit and submitContainer template.
      *
      * @return void
      */
     public function testSubmitTemplateVars()
     {
         $this->Form->templates([
+            'inputSubmit' => '<input custom="{{forinput}}" type="{{type}}"{{attrs}}/>',
             'submitContainer' => '<div class="submit">{{content}}{{forcontainer}}</div>'
         ]);
         $result = $this->Form->submit('Submit', [
             'templateVars' => [
+                'forinput' => 'in-input',
                 'forcontainer' => 'in-container'
             ]
         ]);
         $expected = [
             'div' => ['class'],
-            'input' => ['type' => 'submit', 'value' => 'Submit'],
+            'input' => ['custom' => 'in-input', 'type' => 'submit', 'value' => 'Submit'],
             'in-container',
             '/div',
         ];

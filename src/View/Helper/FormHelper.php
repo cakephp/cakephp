@@ -1769,7 +1769,8 @@ class FormHelper extends Helper
 
         $input = $this->formatTemplate('inputSubmit', [
             'type' => $type,
-            'attrs' => $this->templater()->formatAttributes($options)
+            'attrs' => $this->templater()->formatAttributes($options),
+            'templateVars' => $options['templateVars']
         ]);
 
         return $this->formatTemplate('submitContainer', [
