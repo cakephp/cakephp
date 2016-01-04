@@ -382,6 +382,9 @@ class FormHelper extends AppHelper {
 		if (isset($options['action'])) {
 			trigger_error('Using key `action` is deprecated, use `url` directly instead.', E_USER_DEPRECATED);
 		}
+		if (isset($options['url']) && isset($options['url']['action'])) {
+			$options['action'] = $options['url']['action'];
+		}
 
 		if (!isset($options['id'])) {
 			$domId = isset($options['action']) ? $options['action'] : $this->request['action'];
