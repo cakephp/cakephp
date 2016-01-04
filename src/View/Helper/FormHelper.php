@@ -1723,7 +1723,7 @@ class FormHelper extends Helper
             $caption = __d('cake', 'Submit');
         }
         $options += [
-            'type' => 'submit', 
+            'type' => 'submit',
             'secure' => false,
             'templateVars' => []
         ];
