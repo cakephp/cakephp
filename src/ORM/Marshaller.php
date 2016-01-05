@@ -467,7 +467,7 @@ class Marshaller
         $properties = $marshalledAssocs = [];
         foreach ($data as $key => $value) {
             if (!empty($errors[$key])) {
-                if (method_exists($entity, 'invalid')) {
+                if ($entity instanceof InvalidPropertyInterface) {
                     $entity->invalid($key, $value);
                 }
                 continue;
