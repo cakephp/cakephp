@@ -14,6 +14,7 @@
  */
 namespace Cake\Datasource;
 
+use Cake\Datasource\InvalidPropertyInterface;
 use InvalidArgumentException;
 
 /**
@@ -331,6 +332,12 @@ class RulesChecker
                 $message = [$message];
             }
             $entity->errors($options['errorField'], $message);
+
+            if ($entity instanceof InvalidPropertyInterface && isset($entity->{$options['errorField']})) {
+                $invalidValue = $entity->{$options['errorField']};
+                $entity->invalid($options['errorField'], $invalidValue);
+            }
+
             return $pass === true;
         };
     }

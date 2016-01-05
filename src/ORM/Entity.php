@@ -16,14 +16,14 @@ namespace Cake\ORM;
 
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\EntityTrait;
+use Cake\Datasource\InvalidPropertyInterface;
 
 /**
  * An entity represents a single result row from a repository. It exposes the
  * methods for retrieving and storing properties associated in this row.
  */
-class Entity implements EntityInterface
+class Entity implements EntityInterface, InvalidPropertyInterface
 {
-
     use EntityTrait;
 
     /**

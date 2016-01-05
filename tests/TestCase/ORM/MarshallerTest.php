@@ -2524,6 +2524,25 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Tests that invalid property is being filled when data cannot be patched into an entity.
+     *
+     * @return void
+     */
+    public function testValidationWithInvalidFilled()
+    {
+        $data = [
+            'title' => 'foo',
+            'number' => 'bar',
+        ];
+        $validator = (new Validator)->add('number', 'numeric', ['rule' => 'numeric']);
+        $marshall = new Marshaller($this->articles);
+        $entity = $marshall->one($data, ['validate' => $validator]);
+        $this->assertNotEmpty($entity->errors('number'));
+        $this->assertNull($entity->number);
+        $this->assertSame(['number' => 'bar'], $entity->invalid());
+    }
+
+    /**
      * Test merge with validation error
      *
      * @return void
@@ -2541,6 +2560,8 @@ class MarshallerTest extends TestCase
             'body' => 'My Content',
             'author_id' => 1
         ]);
+        $this->assertEmpty($entity->invalid());
+
         $entity->accessible('*', true);
         $entity->isNew(false);
         $entity->clean();
@@ -2561,7 +2582,9 @@ class MarshallerTest extends TestCase
 
         $this->articles->validator()->requirePresence('thing', 'create');
         $result = $marshall->merge($entity, $data, []);
+
         $this->assertEmpty($result->errors('thing'));
+        $this->assertSame(['author_id' => 'foo'], $result->invalid());
     }
 
     /**
