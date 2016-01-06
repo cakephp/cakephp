@@ -109,4 +109,32 @@ class CookieEncryptedUsingControllerTest extends IntegrationTestCase
         $this->assertStringStartsWith('Q2FrZQ==.', $this->viewVariable('ValueFromRequest'), 'Encrypted');
         $this->assertEquals('Value of Cookie', $this->viewVariable('ValueFromCookieComponent'), 'Decrypted');
     }
+
+    /**
+     * Can AssertCookie even if the value is encrypted by
+     * the CookieComponent.
+     */
+    public function testCanAssertCookieEncrypted() {
+        $this->get('/cookie_component_test/set_cookie');
+        $this->assertCookieEncrypted('abc', 'NameOfCookie');
+    }
+
+    /**
+     * Can AssertCookie even if encrypted with the aes.
+     */
+    public function testCanAssertCookieEncryptedWithAes() {
+        $this->get('/cookie_component_test/set_cookie');
+        $this->assertCookieEncrypted('abc', 'NameOfCookie', 'aes');
+    }
+
+    /**
+     * Can AssertCookie even if encrypted with the another
+     * encrypted key.
+     */
+    public function testCanAssertCookieEncryptedWithAnotherEncryptionKey() {
+        $key = 'another salt xxxxxxxxxxxxxxxxxxx';
+        Security::salt($key);
+        $this->get('/cookie_component_test/set_cookie');
+        $this->assertCookieEncrypted('abc', 'NameOfCookie', 'aes', $key);
+    }
 }
