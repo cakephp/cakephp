@@ -20,6 +20,7 @@ use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
 use Cake\Log\Log;
+use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use Exception;
 
@@ -100,7 +101,7 @@ class TestFixture implements FixtureInterface
                 $message = sprintf(
                     'Invalid datasource name "%s" for "%s" fixture. Fixture datasource names must begin with "test".',
                     $connection,
-                    $this->name
+                    $this->table
                 );
                 throw new CakeException($message);
             }
@@ -196,16 +197,17 @@ class TestFixture implements FixtureInterface
         if (!is_array($this->import)) {
             return;
         }
-        $import = array_merge(
-            ['connection' => 'default', 'table' => null],
-            $this->import
-        );
+        $import = $this->import + ['connection' => 'default', 'table' => null, 'model' => null];
+
+        if (!empty($import['model'])) {
+            $import['table'] = TableRegistry::get($import['model'])->table();
+        }
 
         if (empty($import['table'])) {
             throw new CakeException('Cannot import from undefined table.');
-        } else {
-            $this->table = $import['table'];
         }
+
+        $this->table = $import['table'];
 
         $db = ConnectionManager::get($import['connection'], false);
         $schemaCollection = $db->schemaCollection();
