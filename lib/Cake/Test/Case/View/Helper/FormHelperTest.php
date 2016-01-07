@@ -8627,7 +8627,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 	}
 
-	/**
+/**
  * Test the onsubmit option for create()
  *
  * @return void
