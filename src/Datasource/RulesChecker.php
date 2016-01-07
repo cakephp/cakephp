@@ -314,24 +314,37 @@ class RulesChecker
 
         return function ($entity, $scope) use ($rule, $name, $options) {
             $pass = $rule($entity, $options + $scope);
-            if ($pass === true || empty($options['errorField'])) {
-                return $pass === true;
+            
+            if ($pass === true) {
+                return true;
             }
 
             $message = 'invalid';
+            $save = false;
             if (isset($options['message'])) {
                 $message = $options['message'];
+                $save = true;
             }
             if (is_string($pass)) {
                 $message = $pass;
+                $save = true;
             }
             if ($name) {
                 $message = [$name => $message];
             } else {
                 $message = [$message];
             }
-            $entity->errors($options['errorField'], $message);
-            return $pass === true;
+            
+            $errorField = '_rules';
+            if (isset($options['errorField'])) {
+                $errorField = $options['errorField'];
+                $save = true;
+            }
+            
+            if ($save) {
+                $entity->errors($errorField, $message);
+            }
+            return false;
         };
     }
 }
