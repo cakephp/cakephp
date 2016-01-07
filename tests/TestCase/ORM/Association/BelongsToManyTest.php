@@ -657,6 +657,38 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Tests that replaceLinks will apply _joinData when it has not been converted
+     * to an entity if that data is an array.
+     *
+     * @return void
+     */
+    public function testReplaceLinkJoinDataHandling()
+    {
+        $joint = TableRegistry::get('SpecialTags');
+        $articles = TableRegistry::get('Articles');
+
+        $assoc = $articles->belongsToMany('Tags', [
+            'through' => 'SpecialTags',
+            'conditions' => ['SpecialTags.highlighted' => true]
+        ]);
+        $id = 2;
+        $entity = $articles->get($id, ['contain' => 'Tags']);
+
+        // New tag
+        $tagData = [
+            new Entity(['id' => 2, '_joinData' => ['highlighted' => true]]),
+        ];
+
+        $assoc->replaceLinks($entity, $tagData);
+        $this->assertSame($tagData, $entity->tags, 'Tags should match replaced objects');
+        $this->assertFalse($entity->dirty('tags'), 'Should be clean');
+
+        $jointRecords = $joint->find()->where(['article_id' => $id])->toArray();
+        $this->assertCount(1, $jointRecords);
+        $this->assertTrue($jointRecords[0]->highlighted, 'joinData should be set.');
+    }
+
+    /**
      * Provider for empty values
      *
      * @return array
