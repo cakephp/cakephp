@@ -8608,6 +8608,26 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test create() with no URL (no "action" attribute for <form> tag)
+ *
+ * @return void
+ */
+	public function testCreateNoUrl() {
+		$result = $this->Form->create(false, array('url' => false));
+		$expected = array(
+			'form' => array(
+				'id' => 'addForm',
+				'method' => 'post',
+				'accept-charset' => strtolower(Configure::read('App.encoding'))
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+	/**
  * Test the onsubmit option for create()
  *
  * @return void

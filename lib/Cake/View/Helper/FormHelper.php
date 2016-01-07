@@ -393,7 +393,7 @@ class FormHelper extends AppHelper {
 
 		if ($options['action'] === null && $options['url'] === null) {
 			$options['action'] = $this->request->here(false);
-		} elseif (empty($options['url']) || is_array($options['url'])) {
+		} elseif (is_array($options['url'])) {
 			if (empty($options['url']['controller'])) {
 				if (!empty($model)) {
 					$options['url']['controller'] = Inflector::underscore(Inflector::pluralize($model));
@@ -421,7 +421,6 @@ class FormHelper extends AppHelper {
 		} elseif (is_string($options['url'])) {
 			$options['action'] = $options['url'];
 		}
-		unset($options['url']);
 
 		switch (strtolower($options['type'])) {
 			case 'get':
@@ -442,7 +441,13 @@ class FormHelper extends AppHelper {
 		}
 		$this->requestType = strtolower($options['type']);
 
-		$action = $this->url($options['action']);
+		if ($options['action'] === false || $options['url'] === false) {
+			$action = null;
+		} else {
+			$action = $this->url($options['action']);
+		}
+		unset($options['url']);
+
 		$this->_lastAction($options['action']);
 		unset($options['type'], $options['action']);
 
@@ -473,6 +478,10 @@ class FormHelper extends AppHelper {
 		if ($model !== false) {
 			$this->setEntity($model, true);
 			$this->_introspectModel($model, 'fields');
+		}
+
+		if ($action === null) {
+			return $this->Html->useTag('formwithoutaction', $htmlAttributes) . $append;
 		}
 
 		return $this->Html->useTag('form', $action, $htmlAttributes) . $append;
