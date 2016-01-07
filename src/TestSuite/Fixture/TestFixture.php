@@ -59,11 +59,11 @@ class TestFixture implements FixtureInterface
     /**
      * Configuration for importing fixture schema
      *
-     * Accepts a `connection` and `table` key, to define
+     * Accepts a `connection` and `model` or `table` key, to define
      * which table and which connection contain the schema to be
      * imported.
      *
-     * @var array
+     * @var array|null
      */
     public $import = null;
 
