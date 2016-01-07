@@ -441,9 +441,8 @@ class FormHelper extends AppHelper {
 		}
 		$this->requestType = strtolower($options['type']);
 
-		if ($options['action'] === false || $options['url'] === false) {
-			$action = null;
-		} else {
+		$action = null;
+		if ($options['action'] !== false && $options['url'] !== false) {
 			$action = $this->url($options['action']);
 		}
 		unset($options['url']);
