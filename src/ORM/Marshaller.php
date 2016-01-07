@@ -657,7 +657,7 @@ class Marshaller
             return [];
         }
 
-        if (!in_array('_joinData', $associated) && !isset($associated['_joinData'])) {
+        if (!empty($associated) && !in_array('_joinData', $associated) && !isset($associated['_joinData'])) {
             return $this->mergeMany($original, $value, $options);
         }
 
