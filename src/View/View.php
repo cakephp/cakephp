@@ -40,14 +40,17 @@ use RuntimeException;
  * layout using `$this->set()`
  *
  * View class supports using plugins as themes. You can set
- * 
- * `public function beforeRender(\Cake\Event\Event $event)
+ *
+ * ```
+ * public function beforeRender(\Cake\Event\Event $event)
  * {
  *      $this->viewBuilder()->theme('SuperHot');
- *  }`
- * in your Controller to use plugin `SuperHot` as a
- * theme. Eg. If current action is Posts::index() then View class will look for
- * template file `plugins/SuperHot/Template/Posts/index.ctp`. If a theme template
+ * }
+ * ```
+ *
+ * in your Controller to use plugin `SuperHot` as a theme. Eg. If current action
+ * is PostsController::index() then View class will look for template file
+ * `plugins/SuperHot/Template/Posts/index.ctp`. If a theme template
  * is not found for the current action the default app template file is used.
  *
  * @property \Cake\View\Helper\FlashHelper $Flash
