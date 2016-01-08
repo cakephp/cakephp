@@ -17,7 +17,7 @@
     "require": {
         "cakephp/core": "~3.0",
         "ext-intl": "*",
-        "nesbot/Carbon": "1.13.*",
+        "cakephp/chronos": "*",
         "aura/intl": "1.1.*"
     },
     "suggest": {
