@@ -49,6 +49,7 @@ class HtmlHelper extends AppHelper {
 		'link' => '<a href="%s"%s>%s</a>',
 		'mailto' => '<a href="mailto:%s"%s>%s</a>',
 		'form' => '<form action="%s"%s>',
+		'formwithoutaction' => '<form%s>',
 		'formend' => '</form>',
 		'input' => '<input name="%s"%s/>',
 		'textarea' => '<textarea name="%s"%s>%s</textarea>',
