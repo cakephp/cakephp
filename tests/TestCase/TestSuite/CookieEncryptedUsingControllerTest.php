@@ -114,7 +114,8 @@ class CookieEncryptedUsingControllerTest extends IntegrationTestCase
      * Can AssertCookie even if the value is encrypted by
      * the CookieComponent.
      */
-    public function testCanAssertCookieEncrypted() {
+    public function testCanAssertCookieEncrypted()
+    {
         $this->get('/cookie_component_test/set_cookie');
         $this->assertCookieEncrypted('abc', 'NameOfCookie');
     }
@@ -122,7 +123,8 @@ class CookieEncryptedUsingControllerTest extends IntegrationTestCase
     /**
      * Can AssertCookie even if encrypted with the aes.
      */
-    public function testCanAssertCookieEncryptedWithAes() {
+    public function testCanAssertCookieEncryptedWithAes()
+    {
         $this->get('/cookie_component_test/set_cookie');
         $this->assertCookieEncrypted('abc', 'NameOfCookie', 'aes');
     }
@@ -131,7 +133,8 @@ class CookieEncryptedUsingControllerTest extends IntegrationTestCase
      * Can AssertCookie even if encrypted with the another
      * encrypted key.
      */
-    public function testCanAssertCookieEncryptedWithAnotherEncryptionKey() {
+    public function testCanAssertCookieEncryptedWithAnotherEncryptionKey()
+    {
         $key = 'another salt xxxxxxxxxxxxxxxxxxx';
         Security::salt($key);
         $this->get('/cookie_component_test/set_cookie');
