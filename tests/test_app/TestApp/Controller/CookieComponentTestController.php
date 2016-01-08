@@ -41,4 +41,19 @@ class CookieComponentTestController extends Controller
         $this->set('ValueFromRequest', $this->request->cookie('NameOfCookie'));
         $this->set('ValueFromCookieComponent', $this->Cookie->read('NameOfCookie'));
     }
+
+    /**
+     * action to set a cookie
+     *
+     * @param string|null $key Encryption key used. By defaults,
+     *   CookieComponent::_config['key'].
+     */
+    public function set_cookie($key = null)
+    {
+        $this->autoRender = false;
+        if (isset($key)) {
+            $this->Cookie->config('key', $key);
+        }
+        $this->Cookie->write('NameOfCookie', 'abc');
+    }
 }

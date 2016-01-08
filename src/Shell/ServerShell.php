@@ -153,7 +153,7 @@ class ServerShell extends Shell
 
         $parser->description([
             'PHP Built-in Server for CakePHP',
-            '<warning>[WARN] Don\'t use this at the production environment</warning>',
+            '<warning>[WARN] Don\'t use this in a production environment</warning>',
         ])->addOption('host', [
             'short' => 'H',
             'help' => 'ServerHost'

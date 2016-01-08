@@ -838,4 +838,31 @@ abstract class IntegrationTestCase extends TestCase
         $result = $this->_response->cookie($name);
         $this->assertEquals($expected, $result['value'], 'Cookie data differs. ' . $message);
     }
+
+    /**
+     * Asserts cookie values which are encrypted by the
+     * CookieComponent.
+     *
+     * The difference from assertCookie() is this decrypts the cookie
+     * value like the CookieComponent for this assertion.
+     *
+     * @param string $expected The expected contents.
+     * @param string $name The cookie name.
+     * @param string|bool $encrypt Encryption mode to use.
+     * @param string|null $key Encryption key used. Defaults
+     *   to Security.salt.
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     * @see CookieCryptTrait::_encrypt
+     */
+    public function assertCookieEncrypted($expected, $name, $encrypt = 'aes', $key = null, $message = '')
+    {
+        if (empty($this->_response)) {
+            $this->fail('Not response set, cannot assert cookies.');
+        }
+        $result = $this->_response->cookie($name);
+        $this->_cookieEncriptionKey = $key;
+        $result['value'] = $this->_decrypt($result['value'], $encrypt);
+        $this->assertEquals($expected, $result['value'], 'Cookie data differs. ' . $message);
+    }
 }
