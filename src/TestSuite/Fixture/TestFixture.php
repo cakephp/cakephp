@@ -200,6 +200,9 @@ class TestFixture implements FixtureInterface
         $import = $this->import + ['connection' => 'default', 'table' => null, 'model' => null];
 
         if (!empty($import['model'])) {
+            if (!empty($import['table'])) {
+                throw new CakeException('You cannot define both table and model.');
+            }
             $import['table'] = TableRegistry::get($import['model'])->table();
         }
 
