@@ -626,7 +626,6 @@ class BelongsToMany extends Association
             if (!$joint || !($joint instanceof EntityInterface)) {
                 $joint = new $entityClass([], ['markNew' => true, 'source' => $junctionAlias]);
             }
-
             $sourceKeys = array_combine($foreignKey, $sourceEntity->extract($bindingKey));
             $targetKeys = array_combine($assocForeignKey, $e->extract($targetPrimaryKey));
 
