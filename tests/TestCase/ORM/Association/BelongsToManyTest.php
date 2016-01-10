@@ -980,4 +980,66 @@ class BelongsToManyTest extends TestCase
         $this->assertNotEmpty($result->tags[0]->id);
         $this->assertEmpty($result->tags[0]->name);
     }
+
+    /**
+     * Test that association proxy find() applies joins when conditions are involved.
+     *
+     * @return void
+     */
+    public function testAssociationProxyFindWithConditions()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags', [
+            'foreignKey' => 'article_id',
+            'associationForeignKey' => 'tag_id',
+            'conditions' => ['SpecialTags.highlighted' => true],
+            'through' => 'SpecialTags'
+        ]);
+        $query = $table->Tags->find();
+        $result = $query->toArray();
+        $this->assertCount(1, $result);
+    }
+
+    /**
+     * Test that matching() works on belongsToMany associations.
+     *
+     * @return void
+     */
+    public function testBelongsToManyAssociationWithConditions()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags', [
+            'foreignKey' => 'article_id',
+            'associationForeignKey' => 'tag_id',
+            'conditions' => ['SpecialTags.highlighted' => true],
+            'through' => 'SpecialTags'
+        ]);
+        $query = $table->find()->matching('Tags', function ($q) {
+            return $q->where(['Tags.name' => 'tag1']);
+        });
+        $results = $query->toArray();
+        $this->assertCount(1, $results);
+        $this->assertNotEmpty($results[0]->_matchingData);
+    }
+
+    /**
+     * Test that association proxy find() with matching resolves joins correctly
+     *
+     * @return void
+     */
+    public function testAssociationProxyFindWithConditionsMatching()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags', [
+            'foreignKey' => 'article_id',
+            'associationForeignKey' => 'tag_id',
+            'conditions' => ['SpecialTags.highlighted' => true],
+            'through' => 'SpecialTags'
+        ]);
+        $query = $table->Tags->find()->matching('Articles', function ($query) {
+            return $query->where(['Articles.id' => 1]);
+        });
+        // The inner join on special_tags excludes the results.
+        $this->assertEquals(0, $query->count());
+    }
 }
