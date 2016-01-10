@@ -227,7 +227,8 @@ class BelongsToMany extends Association
                 'targetTable' => $source,
                 'foreignKey' => $this->targetForeignKey(),
                 'targetForeignKey' => $this->foreignKey(),
-                'through' => $junction
+                'through' => $junction,
+                'conditions' => $this->conditions(),
             ]);
         }
     }
@@ -322,6 +323,8 @@ class BelongsToMany extends Association
             $includeFields = $options['includeFields'];
         }
 
+        // TODO see if this can be removed and replaced with eagerly splitting
+        // up conditions when defining associations.
         $assoc = $this->_targetTable->association($junction->alias());
         $query->removeJoin($assoc->name());
 
