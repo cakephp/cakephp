@@ -69,7 +69,7 @@ class IntegerTypeTest extends TestCase
      */
     public function testToDatabase()
     {
-        $this->asserNull($this->type->toDatabase(null, $this->driver));
+        $this->assertNull($this->type->toDatabase(null, $this->driver));
 
         $result = $this->type->toDatabase('some data', $this->driver);
         $this->assertSame(0, $result);
