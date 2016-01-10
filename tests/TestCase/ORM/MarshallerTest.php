@@ -1731,6 +1731,46 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test that _joinData is marshalled consistently with both
+     * new and existing records
+     *
+     * @return void
+     */
+    public function testMergeBelongsToManyHandleJoinDataConsistently()
+    {
+        TableRegistry::clear();
+        $articles = TableRegistry::get('Articles');
+        $articles->belongsToMany('Tags', [
+            'through' => 'SpecialTags'
+        ]);
+
+        $entity = $articles->get(1);
+        $data = [
+            'title' => 'Haz data',
+            'tags' => [
+                ['id' => 3, 'tag' => 'Cake', '_joinData' => ['highlighted' => true]],
+            ]
+        ];
+        $marshall = new Marshaller($articles);
+        $result = $marshall->merge($entity, $data, ['associated' => 'Tags']);
+        $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]->_joinData);
+        $this->assertTrue($result->tags[0]->_joinData->highlighted);
+
+        // Also ensure merge() overwrites existing data.
+        $entity = $articles->get(1, ['contain' => 'Tags']);
+        $data = [
+            'title' => 'Haz data',
+            'tags' => [
+                ['id' => 3, 'tag' => 'Cake', '_joinData' => ['highlighted' => true]],
+            ]
+        ];
+        $marshall = new Marshaller($articles);
+        $result = $marshall->merge($entity, $data, ['associated' => 'Tags']);
+        $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]->_joinData);
+        $this->assertTrue($result->tags[0]->_joinData->highlighted);
+    }
+
+    /**
      * Test merging belongsToMany data doesn't create 'new' entities.
      *
      * @return void
