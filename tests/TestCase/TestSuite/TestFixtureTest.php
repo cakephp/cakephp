@@ -213,6 +213,31 @@ class TestFixtureTest extends TestCase
     }
 
     /**
+     * test import fixture initialization
+     *
+     * @return void
+     */
+    public function testInitImportModel()
+    {
+        $fixture = new ImportsFixture();
+        $fixture->fields = $fixture->records = null;
+        $fixture->import = [
+            'model' => 'Posts',
+            'connection' => 'test',
+        ];
+        $fixture->init();
+
+        $expected = [
+            'id',
+            'author_id',
+            'title',
+            'body',
+            'published',
+        ];
+        $this->assertEquals($expected, $fixture->schema()->columns());
+    }
+
+    /**
      * test create method
      *
      * @return void
