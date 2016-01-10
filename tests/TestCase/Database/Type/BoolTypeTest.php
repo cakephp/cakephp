@@ -82,6 +82,7 @@ class BoolTypeTest extends TestCase
      */
     public function testToPHP()
     {
+        $this->assertNull($this->type->toPHP(null, $this->driver));
         $this->assertTrue($this->type->toPHP(true, $this->driver));
         $this->assertTrue($this->type->toPHP(1, $this->driver));
         $this->assertTrue($this->type->toPHP('1', $this->driver));
@@ -103,6 +104,7 @@ class BoolTypeTest extends TestCase
      */
     public function testMarshal()
     {
+        $this->assertNull($this->type->marshal(null));
         $this->assertTrue($this->type->marshal(true));
         $this->assertTrue($this->type->marshal(1));
         $this->assertTrue($this->type->marshal('1'));
