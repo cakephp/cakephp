@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM\Association;
 
+use Cake\Database\ExpressionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Query;
@@ -133,6 +134,20 @@ class BelongsToMany extends Association
      * @var bool
      */
     protected $_dependent = true;
+
+    /**
+     * Filtered conditions that reference the target table.
+     *
+     * @var null|array
+     */
+    protected $_targetConditions;
+
+    /**
+     * Filtered conditions that reference the junction table.
+     *
+     * @var null|array
+     */
+    protected $_junctionConditions;
 
     /**
      * Sets the name of the field representing the foreign key to the target table.
@@ -323,17 +338,16 @@ class BelongsToMany extends Association
             $includeFields = $options['includeFields'];
         }
 
-        // TODO see if this can be removed and replaced with eagerly splitting
-        // up conditions when defining associations.
+        // Attach the junction table as well we need it to populate _joinData.
         $assoc = $this->_targetTable->association($junction->alias());
         $query->removeJoin($assoc->name());
-
-        unset($options['queryBuilder']);
-        // TODO clean up the definition of $options
-        $type = array_intersect_key($options, ['joinType' => 1, 'fields' => 1]);
-        $options = ['conditions' => $cond] + compact('includeFields');
-        $options['foreignKey'] = $this->targetForeignKey();
-        $assoc->attachTo($query, $options + $type);
+        $options = array_intersect_key($options, ['joinType' => 1, 'fields' => 1]);
+        $options += [
+            'conditions' => $cond,
+            'includeFields' => $includeFields,
+            'foreignKey' => $this->targetForeignKey(),
+        ];
+        $assoc->attachTo($query, $options);
         $query->eagerLoader()->addToJoinsMap($junction->alias(), $assoc, true);
     }
 
@@ -778,30 +792,72 @@ class BelongsToMany extends Association
         $sourceEntity->dirty($property, false);
     }
 
-    protected function targetConditions()
+    /**
+     * {@inheritDoc}
+     */
+    public function conditions($conditions = null)
     {
-        $alias = $this->alias() . '.';
-        $matching = [];
-        // TODO add handling for strings, expression objects.
-        foreach ($this->conditions() as $field => $value) {
-            if (strpos($field, $alias) === 0) {
-                $matching[$field] = $value;
-            }
+        if ($conditions !== null) {
+            $this->_conditions = $conditions;
+            $this->_targetConditions = $this->_junctionConditions = [];
         }
-        return $matching;
+        return $this->_conditions;
     }
 
-    protected function junctionConditions()
+    /**
+     * Returns filtered conditions that reference the target table.
+     *
+     * Any string expressions, or expression objects will
+     * also be returned in this list.
+     *
+     * @return mixed Generally an array. If the conditions
+     *   are not an array, the association conditions will be
+     *   returned unmodified.
+     */
+    protected function targetConditions()
     {
-        $alias = $this->_junctionAssociationName() . '.';
+        if ($this->_targetConditions !== null) {
+            return $this->_targetConditions;
+        }
+        $conditions = $this->conditions();
+        if (!is_array($conditions)) {
+            return $conditions;
+        }
         $matching = [];
-        foreach ($this->conditions() as $field => $value) {
-            // TODO add handling for strings, expression objects.
-            if (strpos($field, $alias) === 0) {
+        $alias = $this->alias() . '.';
+        foreach ($conditions as $field => $value) {
+            if (is_string($field) && strpos($field, $alias) === 0) {
+                $matching[$field] = $value;
+            } elseif (is_int($field) || $value instanceof ExpressionInterface) {
                 $matching[$field] = $value;
             }
         }
-        return $matching;
+        return $this->_targetConditions = $matching;
+    }
+
+    /**
+     * Returns filtered conditions that specifically reference
+     * the junction table.
+     *
+     * @return array
+     */
+    protected function junctionConditions()
+    {
+        if ($this->_junctionConditions !== null) {
+            return $this->_junctionConditions;
+        }
+        $matching = [];
+        $conditions = $this->conditions();
+        if (!is_array($conditions)) {
+            return $matching;
+        }
+        $alias = $this->_junctionAssociationName() . '.';
+        foreach ($conditions as $field => $value) {
+            if (is_string($field) && strpos($field, $alias) === 0) {
+                $matching[$field] = $value;
+            }
+        }
+        return $this->_junctionConditions = $matching;
     }
 
     /**
@@ -820,17 +876,6 @@ class BelongsToMany extends Association
      */
     public function find($type = null, array $options = [])
     {
-        // The parent method applies the conditions.
-        // The application of the conditions causes issues as often the conditions
-        // reference the junction table.
-        // Ideally we'd get a query like:
-        //
-        // select * from articles
-        // inner join tags on (matching cond AND relvant assoc cond)
-        // inner join articles_tags on (tags.id = a_t.tag_id and articles.id = a_t.article_id and relevant assoc cond)
-        //
-        // Overriding conditions() and adding junctionConditions() might help here. Or filtering
-        // the conditions when defining the junction association.
         $type = $type ?: $this->finder();
         list($type, $opts) = $this->_extractFinder($type);
         $query = $this->target()

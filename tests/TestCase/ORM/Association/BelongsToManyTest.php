@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
-use Cake\Database\Expression\TupleComparison;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Association\BelongsToMany;
@@ -1005,13 +1004,35 @@ class BelongsToManyTest extends TestCase
      *
      * @return void
      */
-    public function testBelongsToManyAssociationWithConditions()
+    public function testBelongsToManyAssociationWithArrayConditions()
     {
         $table = TableRegistry::get('Articles');
         $table->belongsToMany('Tags', [
             'foreignKey' => 'article_id',
             'associationForeignKey' => 'tag_id',
             'conditions' => ['SpecialTags.highlighted' => true],
+            'through' => 'SpecialTags'
+        ]);
+        $query = $table->find()->matching('Tags', function ($q) {
+            return $q->where(['Tags.name' => 'tag1']);
+        });
+        $results = $query->toArray();
+        $this->assertCount(1, $results);
+        $this->assertNotEmpty($results[0]->_matchingData);
+    }
+
+    /**
+     * Test that matching() works on belongsToMany associations.
+     *
+     * @return void
+     */
+    public function testBelongsToManyAssociationWithExpressionConditions()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags', [
+            'foreignKey' => 'article_id',
+            'associationForeignKey' => 'tag_id',
+            'conditions' => [new QueryExpression('Tags.name LIKE "tag%"')],
             'through' => 'SpecialTags'
         ]);
         $query = $table->find()->matching('Tags', function ($q) {
