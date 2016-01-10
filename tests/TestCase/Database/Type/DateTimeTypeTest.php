@@ -221,6 +221,23 @@ class DateTimeTypeTest extends TestCase
     }
 
     /**
+     * Test that useLocaleParser() can disable locale parsing.
+     *
+     * @return void
+     */
+    public function testLocaleParserDisable()
+    {
+        $expected = new Time('13-10-2013 23:28:00');
+        $this->type->useLocaleParser();
+        $result = $this->type->marshal('10/13/2013 11:28pm');
+        $this->assertEquals($expected, $result);
+
+        $this->type->useLocaleParser(false);
+        $result = $this->type->marshal('10/13/2013 11:28pm');
+        $this->assertNotEquals($expected, $result);
+    }
+
+    /**
      * Tests marshalling dates using the locale aware parser
      *
      * @return void
