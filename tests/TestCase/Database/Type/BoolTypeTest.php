@@ -70,7 +70,7 @@ class BoolTypeTest extends TestCase
      * @expectedException InvalidArgumentException
      * @return void
      */
-    public function testToDatabseInvalidArray()
+    public function testToDatabaseInvalidArray()
     {
         $this->type->toDatabase([1, 2, 3], $this->driver);
     }
