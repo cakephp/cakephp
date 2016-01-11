@@ -71,7 +71,7 @@ class LogEngineRegistry extends ObjectRegistry
     protected function _create($class, $alias, $settings)
     {
         if (is_callable($class)) {
-            $class = $class();
+            $class = $class($alias);
         }
 
         if (is_object($class)) {
