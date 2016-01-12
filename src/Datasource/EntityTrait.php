@@ -174,7 +174,9 @@ trait EntityTrait
      *
      * ### Example:
      *
-     * ``$entity->set('name', 'Andrew');``
+     * ```
+     * $entity->set('name', 'Andrew');
+     * ```
      *
      * It is also possible to mass-assign multiple properties to this entity
      * with one call by passing a hashed array as properties in the form of

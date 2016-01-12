@@ -250,4 +250,34 @@ class ConnectionManagerTest extends TestCase
         ];
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * Tests that directly setting an instance in a config, will not return a different
+     * instance later on
+     *
+     * @return void
+     */
+    public function testConfigWithObject()
+    {
+        $connection = new FakeConnection;
+        ConnectionManager::config('test_variant', $connection);
+        $this->assertSame($connection, ConnectionManager::get('test_variant'));
+    }
+
+    /**
+     * Tests configuring an instance with a callable
+     *
+     * @return void
+     */
+    public function testConfigWithCallable()
+    {
+        $connection = new FakeConnection;
+        $callable = function ($alias) use ($connection) {
+            $this->assertEquals('test_variant', $alias);
+            return $connection;
+        };
+
+        ConnectionManager::config('test_variant', $callable);
+        $this->assertSame($connection, ConnectionManager::get('test_variant'));
+    }
 }

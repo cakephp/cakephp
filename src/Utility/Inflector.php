@@ -587,7 +587,7 @@ class Inflector
 
         if ($result === false) {
             $result = str_replace(' ', '', static::humanize($string, $delimiter));
-            static::_cache(__FUNCTION__, $string, $result);
+            static::_cache($cacheKey, $string, $result);
         }
 
         return $result;
