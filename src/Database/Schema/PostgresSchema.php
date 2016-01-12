@@ -292,18 +292,21 @@ class PostgresSchema extends BaseSchema
                 ON tc.constraint_name = rc.constraint_name
                 AND tc.constraint_schema = rc.constraint_schema
                 AND tc.constraint_name = rc.constraint_name
+                AND tc.table_schema = rc.constraint_schema
 
             JOIN information_schema.key_column_usage kcu
                 ON kcu.constraint_name = rc.constraint_name
                 AND kcu.constraint_schema = rc.constraint_schema
                 AND kcu.constraint_name = rc.constraint_name
+                AND kcu.constraint_schema = rc.constraint_schema
 
             JOIN information_schema.key_column_usage kc
                 ON kc.ordinal_position = kcu.position_in_unique_constraint
                 AND kc.constraint_name = rc.unique_constraint_name
+                AND kc.constraint_schema = rc.constraint_schema
 
             WHERE kcu.table_name = ?
-              AND kc.table_schema = ?
+              AND rc.constraint_schema = ?
               AND tc.constraint_type = 'FOREIGN KEY'
 
             ORDER BY rc.constraint_name, kcu.ordinal_position";
