@@ -83,7 +83,7 @@ class TreeBehavior extends Behavior
     {
         parent::__construct($table, $config);
         $connection = $table->connection();
-        if (!is_null($connection)) {
+        if ($connection !== null) {
             $driver = $connection->driver();
             $this->config('leftField', $driver->quoteIdentifier($this->config('left')));
             $this->config('rightField', $driver->quoteIdentifier($this->config('right')));
