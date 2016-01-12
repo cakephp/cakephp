@@ -353,7 +353,7 @@ class FileEngine extends CacheEngine
     /**
      * Not implemented
      *
-     * @param string $key The key to decrement
+     * @param string $key The key to increment
      * @param int $offset The number to offset
      * @return void
      * @throws \LogicException
