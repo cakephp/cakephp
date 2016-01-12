@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
-use Cake\Database\Expression\TupleComparison;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Association\BelongsToMany;
@@ -915,6 +914,51 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Test that the generated associations are correct.
+     *
+     * @return void
+     */
+    public function testGeneratedAssociations()
+    {
+        $articles = TableRegistry::get('Articles');
+        $tags = TableRegistry::get('Tags');
+        $conditions = ['SpecialTags.highlighted' => true];
+        $assoc = $articles->belongsToMany('Tags', [
+            'sourceTable' => $articles,
+            'targetTable' => $tags,
+            'foreignKey' => 'foreign_key',
+            'targetForeignKey' => 'target_foreign_key',
+            'through' => 'SpecialTags',
+            'conditions' => $conditions,
+        ]);
+        // Generate associations
+        $assoc->junction();
+
+        $tagAssoc = $articles->association('Tags');
+        $this->assertNotEmpty($tagAssoc, 'btm should exist');
+        $this->assertEquals($conditions, $tagAssoc->conditions());
+        $this->assertEquals('target_foreign_key', $tagAssoc->targetForeignKey());
+        $this->assertEquals('foreign_key', $tagAssoc->foreignKey());
+
+        $jointAssoc = $articles->association('SpecialTags');
+        $this->assertNotEmpty($jointAssoc, 'has many to junction should exist');
+        $this->assertInstanceOf('Cake\ORM\Association\HasMany', $jointAssoc);
+        $this->assertEquals('foreign_key', $jointAssoc->foreignKey());
+
+        $articleAssoc = $tags->association('Articles');
+        $this->assertNotEmpty($articleAssoc, 'reverse btm should exist');
+        $this->assertInstanceOf('Cake\ORM\Association\BelongsToMany', $articleAssoc);
+        $this->assertEquals($conditions, $articleAssoc->conditions());
+        $this->assertEquals('foreign_key', $articleAssoc->targetForeignKey(), 'keys should swap');
+        $this->assertEquals('target_foreign_key', $articleAssoc->foreignKey(), 'keys should swap');
+
+        $jointAssoc = $tags->association('SpecialTags');
+        $this->assertNotEmpty($jointAssoc, 'has many to junction should exist');
+        $this->assertInstanceOf('Cake\ORM\Association\HasMany', $jointAssoc);
+        $this->assertEquals('target_foreign_key', $jointAssoc->foreignKey());
+    }
+
+    /**
      * Tests that fetching belongsToMany association will not force
      * all fields being returned, but intead will honor the select() clause
      *
@@ -934,5 +978,89 @@ class BelongsToManyTest extends TestCase
 
         $this->assertNotEmpty($result->tags[0]->id);
         $this->assertEmpty($result->tags[0]->name);
+    }
+
+    /**
+     * Test that association proxy find() applies joins when conditions are involved.
+     *
+     * @return void
+     */
+    public function testAssociationProxyFindWithConditions()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags', [
+            'foreignKey' => 'article_id',
+            'associationForeignKey' => 'tag_id',
+            'conditions' => ['SpecialTags.highlighted' => true],
+            'through' => 'SpecialTags'
+        ]);
+        $query = $table->Tags->find();
+        $result = $query->toArray();
+        $this->assertCount(1, $result);
+    }
+
+    /**
+     * Test that matching() works on belongsToMany associations.
+     *
+     * @return void
+     */
+    public function testBelongsToManyAssociationWithArrayConditions()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags', [
+            'foreignKey' => 'article_id',
+            'associationForeignKey' => 'tag_id',
+            'conditions' => ['SpecialTags.highlighted' => true],
+            'through' => 'SpecialTags'
+        ]);
+        $query = $table->find()->matching('Tags', function ($q) {
+            return $q->where(['Tags.name' => 'tag1']);
+        });
+        $results = $query->toArray();
+        $this->assertCount(1, $results);
+        $this->assertNotEmpty($results[0]->_matchingData);
+    }
+
+    /**
+     * Test that matching() works on belongsToMany associations.
+     *
+     * @return void
+     */
+    public function testBelongsToManyAssociationWithExpressionConditions()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags', [
+            'foreignKey' => 'article_id',
+            'associationForeignKey' => 'tag_id',
+            'conditions' => [new QueryExpression("name LIKE 'tag%'")],
+            'through' => 'SpecialTags'
+        ]);
+        $query = $table->find()->matching('Tags', function ($q) {
+            return $q->where(['Tags.name' => 'tag1']);
+        });
+        $results = $query->toArray();
+        $this->assertCount(1, $results);
+        $this->assertNotEmpty($results[0]->_matchingData);
+    }
+
+    /**
+     * Test that association proxy find() with matching resolves joins correctly
+     *
+     * @return void
+     */
+    public function testAssociationProxyFindWithConditionsMatching()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags', [
+            'foreignKey' => 'article_id',
+            'associationForeignKey' => 'tag_id',
+            'conditions' => ['SpecialTags.highlighted' => true],
+            'through' => 'SpecialTags'
+        ]);
+        $query = $table->Tags->find()->matching('Articles', function ($query) {
+            return $query->where(['Articles.id' => 1]);
+        });
+        // The inner join on special_tags excludes the results.
+        $this->assertEquals(0, $query->count());
     }
 }

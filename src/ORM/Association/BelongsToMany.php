@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM\Association;
 
+use Cake\Database\ExpressionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Query;
@@ -135,6 +136,20 @@ class BelongsToMany extends Association
     protected $_dependent = true;
 
     /**
+     * Filtered conditions that reference the target table.
+     *
+     * @var null|array
+     */
+    protected $_targetConditions;
+
+    /**
+     * Filtered conditions that reference the junction table.
+     *
+     * @var null|array
+     */
+    protected $_junctionConditions;
+
+    /**
      * Sets the name of the field representing the foreign key to the target table.
      * If no parameters are passed current field is returned
      *
@@ -227,7 +242,8 @@ class BelongsToMany extends Association
                 'targetTable' => $source,
                 'foreignKey' => $this->targetForeignKey(),
                 'targetForeignKey' => $this->foreignKey(),
-                'through' => $junction
+                'through' => $junction,
+                'conditions' => $this->conditions(),
             ]);
         }
     }
@@ -312,22 +328,26 @@ class BelongsToMany extends Association
     public function attachTo(Query $query, array $options = [])
     {
         parent::attachTo($query, $options);
+
         $junction = $this->junction();
         $belongsTo = $junction->association($this->source()->alias());
         $cond = $belongsTo->_joinCondition(['foreignKey' => $belongsTo->foreignKey()]);
+        $cond += $this->junctionConditions();
 
         if (isset($options['includeFields'])) {
             $includeFields = $options['includeFields'];
         }
 
+        // Attach the junction table as well we need it to populate _joinData.
         $assoc = $this->_targetTable->association($junction->alias());
         $query->removeJoin($assoc->name());
-
-        unset($options['queryBuilder']);
-        $type = array_intersect_key($options, ['joinType' => 1, 'fields' => 1]);
-        $options = ['conditions' => [$cond]] + compact('includeFields');
-        $options['foreignKey'] = $this->targetForeignKey();
-        $assoc->attachTo($query, $options + $type);
+        $options = array_intersect_key($options, ['joinType' => 1, 'fields' => 1]);
+        $options += [
+            'conditions' => $cond,
+            'includeFields' => $includeFields,
+            'foreignKey' => $this->targetForeignKey(),
+        ];
+        $assoc->attachTo($query, $options);
         $query->eagerLoader()->addToJoinsMap($junction->alias(), $assoc, true);
     }
 
@@ -773,6 +793,74 @@ class BelongsToMany extends Association
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function conditions($conditions = null)
+    {
+        if ($conditions !== null) {
+            $this->_conditions = $conditions;
+            $this->_targetConditions = $this->_junctionConditions = [];
+        }
+        return $this->_conditions;
+    }
+
+    /**
+     * Returns filtered conditions that reference the target table.
+     *
+     * Any string expressions, or expression objects will
+     * also be returned in this list.
+     *
+     * @return mixed Generally an array. If the conditions
+     *   are not an array, the association conditions will be
+     *   returned unmodified.
+     */
+    protected function targetConditions()
+    {
+        if ($this->_targetConditions !== null) {
+            return $this->_targetConditions;
+        }
+        $conditions = $this->conditions();
+        if (!is_array($conditions)) {
+            return $conditions;
+        }
+        $matching = [];
+        $alias = $this->alias() . '.';
+        foreach ($conditions as $field => $value) {
+            if (is_string($field) && strpos($field, $alias) === 0) {
+                $matching[$field] = $value;
+            } elseif (is_int($field) || $value instanceof ExpressionInterface) {
+                $matching[$field] = $value;
+            }
+        }
+        return $this->_targetConditions = $matching;
+    }
+
+    /**
+     * Returns filtered conditions that specifically reference
+     * the junction table.
+     *
+     * @return array
+     */
+    protected function junctionConditions()
+    {
+        if ($this->_junctionConditions !== null) {
+            return $this->_junctionConditions;
+        }
+        $matching = [];
+        $conditions = $this->conditions();
+        if (!is_array($conditions)) {
+            return $matching;
+        }
+        $alias = $this->_junctionAssociationName() . '.';
+        foreach ($conditions as $field => $value) {
+            if (is_string($field) && strpos($field, $alias) === 0) {
+                $matching[$field] = $value;
+            }
+        }
+        return $this->_junctionConditions = $matching;
+    }
+
+    /**
      * Proxies the finding operation to the target table's find method
      * and modifies the query accordingly based of this association
      * configuration.
@@ -788,8 +876,13 @@ class BelongsToMany extends Association
      */
     public function find($type = null, array $options = [])
     {
-        $query = parent::find($type, $options);
-        if (!$this->conditions()) {
+        $type = $type ?: $this->finder();
+        list($type, $opts) = $this->_extractFinder($type);
+        $query = $this->target()
+            ->find($type, $options + $opts)
+            ->where($this->targetConditions());
+
+        if (!$this->junctionConditions()) {
             return $query;
         }
 
@@ -797,6 +890,7 @@ class BelongsToMany extends Association
         $conditions = $belongsTo->_joinCondition([
             'foreignKey' => $this->foreignKey()
         ]);
+        $conditions += $this->junctionConditions();
         return $this->_appendJunctionJoin($query, $conditions);
     }
 
@@ -1109,10 +1203,12 @@ class BelongsToMany extends Association
             $query = $queryBuilder($query);
         }
 
-        $keys = $this->_linkField($options);
-        $query = $this->_appendJunctionJoin($query, $keys);
-
-        $query->autoFields($query->clause('select') === [])
+        $query = $this->_appendJunctionJoin($query, []);
+        // Ensure that association conditions are applied
+        // and that the required keys are in the selected columns.
+        $query
+            ->where($this->junctionConditions())
+            ->autoFields($query->clause('select') === [])
             ->select($query->aliasFields((array)$assoc->foreignKey(), $name));
 
         $assoc->attachTo($query);
