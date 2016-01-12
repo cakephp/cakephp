@@ -433,7 +433,7 @@ class MemcachedEngineTest extends CakeTestCase {
 	public function testParseServerStringUnix() {
 		$Memcached = new TestMemcachedEngine();
 		$result = $Memcached->parseServerString('unix:///path/to/memcachedd.sock');
-		$this->assertEquals(array('unix:///path/to/memcachedd.sock', 0), $result);
+		$this->assertEquals(array('/path/to/memcachedd.sock', 0), $result);
 	}
 
 /**
