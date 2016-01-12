@@ -1032,7 +1032,7 @@ class BelongsToManyTest extends TestCase
         $table->belongsToMany('Tags', [
             'foreignKey' => 'article_id',
             'associationForeignKey' => 'tag_id',
-            'conditions' => [new QueryExpression("Tags.name LIKE 'tag%'")],
+            'conditions' => [new QueryExpression("name LIKE 'tag%'")],
             'through' => 'SpecialTags'
         ]);
         $query = $table->find()->matching('Tags', function ($q) {
