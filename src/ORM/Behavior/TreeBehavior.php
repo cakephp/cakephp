@@ -341,7 +341,7 @@ class TreeBehavior extends Behavior
         $this->_table->updateAll(
             function ($exp) use ($config) {
                 $leftInverse = clone $exp;
-                $leftInverse->add('-1')->type('*');
+                $leftInverse->type('*')->add('-1');
                 $rightInverse = clone $leftInverse;
                 return $exp
                     ->eq($config['leftField'], $leftInverse->add($config['leftField']))
@@ -884,7 +884,7 @@ class TreeBehavior extends Behavior
 
             $inverse = clone $exp;
             $movement = $mark ?
-                $inverse->add($movement)->add('-1')->type('*') :
+                $inverse->add($movement)->type('*')->add('-1'):
                 $movement;
 
             $where = clone $exp;
