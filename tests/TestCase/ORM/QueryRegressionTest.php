@@ -102,46 +102,6 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
-     * Test that association proxy find() applies joins when conditions are involved.
-     *
-     * @return void
-     */
-    public function testBelongsToManyAssociationProxyFindWithConditions()
-    {
-        $table = TableRegistry::get('Articles');
-        $table->belongsToMany('Tags', [
-            'foreignKey' => 'article_id',
-            'associationForeignKey' => 'tag_id',
-            'conditions' => ['SpecialTags.highlighted' => true],
-            'through' => 'SpecialTags'
-        ]);
-        $query = $table->Tags->find();
-        $result = $query->toArray();
-        $this->assertCount(1, $result);
-    }
-
-    /**
-     * Test that association proxy find() with matching resolves joins correctly
-     *
-     * @return void
-     */
-    public function testBelongsToManyAssociationProxyFindWithConditionsMatching()
-    {
-        $table = TableRegistry::get('Articles');
-        $table->belongsToMany('Tags', [
-            'foreignKey' => 'article_id',
-            'associationForeignKey' => 'tag_id',
-            'conditions' => ['SpecialTags.highlighted' => true],
-            'through' => 'SpecialTags'
-        ]);
-        $query = $table->Tags->find()->matching('Articles', function ($query) {
-            return $query->where(['Articles.id' => 1]);
-        });
-        // The inner join on special_tags excludes the results.
-        $this->assertEquals(0, $query->count());
-    }
-
-    /**
      * Tests that duplicate aliases in contain() can be used, even when they would
      * naturally be attached to the query instead of eagerly loaded. What should
      * happen here is that One of the duplicates will be changed to be loaded using
