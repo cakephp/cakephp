@@ -185,8 +185,9 @@ class MemcachedEngine extends CacheEngine {
  * @return array Array containing host, port
  */
 	protected function _parseServerString($server) {
-		if (strpos($server, 'unix://') === 0) {
-			return array($server, 0);
+		$socketTransport = 'unix://';
+		if (strpos($server, $socketTransport) === 0) {
+			return array(substr($server, strlen($socketTransport)), 0);
 		}
 		if (substr($server, 0, 1) === '[') {
 			$position = strpos($server, ']:');
