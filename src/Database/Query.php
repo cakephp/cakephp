@@ -1388,6 +1388,12 @@ class Query implements ExpressionInterface, IteratorAggregate
             $this->_parts['set'] = $this->newExpr()->type(',');
         }
 
+        if ($this->_parts['set']->isCallable($key)) {
+            $exp = $this->newExpr()->type(',');
+            $this->_parts['set']->add($key($exp));
+            return $this;
+        }
+
         if (is_array($key) || $key instanceof ExpressionInterface) {
             $types = (array)$value;
             $this->_parts['set']->add($key, $types);
