@@ -1374,8 +1374,31 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * Set one or many fields to update.
      *
-     * @param string|array|QueryExpression $key The column name or array of keys
+     * ### Examples
+     *
+     * Passing a string:
+     *
+     * ```
+     * $query->update('articles')->set('title', 'The Title');
+     * ```
+     *
+     * Passing an array:
+     *
+     * ```
+     * $query->update('articles')->set(['title' => 'The Title'], ['title' => 'string']);
+     * ```
+     *
+     * Passing a callable:
+     *
+     * ```
+     * $query->update('articles')->set(function ($exp) {
+     *  return $exp->eq('title', 'The title', 'string');
+     * });
+     * ```
+     *
+     * @param string|array|callable|QueryExpression $key The column name or array of keys
      *    + values to set. This can also be a QueryExpression containing a SQL fragment.
+     *    It can also be a callable, that is required to return an expression object.
      * @param mixed $value The value to update $key to. Can be null if $key is an
      *    array or QueryExpression. When $key is an array, this parameter will be
      *    used as $types instead.

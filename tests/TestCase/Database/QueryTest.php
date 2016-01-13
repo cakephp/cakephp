@@ -2492,7 +2492,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $date = new \DateTime;
         $query->update('comments')
-            ->set(function ($exp) use ($date ){
+            ->set(function ($exp) use ($date) {
                 return $exp
                     ->eq('comment', 'mark')
                     ->eq('created', $date, 'date');
