@@ -92,9 +92,34 @@ class PhpConfig implements ConfigEngineInterface
      */
     public function dump($key, array $data)
     {
-        $contents = '<?php' . "\n" . 'return ' . var_export($data, true) . ';';
+        $contents = '<?php' . "\n" . 'return ' . $this->shortArrayVarExport($data) . ';';
 
         $filename = $this->_getFilePath($key);
         return file_put_contents($filename, $contents) > 0;
+    }
+
+    /** 
+    *
+    * Converts an array $data into a string of PHP code using the Short Array Syntax.
+    *
+    * Similar to var_export() except it uses the Short Array Syntax;
+    * 
+    * @param array $data Data to dump in Short Array Syntax
+    * @return string returns a parsable string representation of a short array syntax variable
+    */
+
+    private function shortArrayVarExport($data){
+
+        $varExport      = var_export($data, TRUE);
+        $pattern        = array('/array \(/', '/\)/');
+        $replacements   = array('[', ']');
+
+        $shortArrayVarExport =  preg_replace(
+            $pattern,
+            $replacements,
+            $varExport
+        );
+
+        return $shortArrayVarExport;
     }
 }
