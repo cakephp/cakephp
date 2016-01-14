@@ -110,8 +110,12 @@ class PhpConfig implements ConfigEngineInterface
     public function shortArrayVarExport($data)
     {
         $varExport = var_export($data, true);
-        $pattern = ['/array \(/', '/\)/'];
-        $replacements = ['[', ']'];
+        $pattern = [
+            '/array \(/', // Matches opening "array("
+            '/(\),)$/m', // Matches ending "),"
+            '/^\)$/m' // Matches last ) in file
+        ];
+        $replacements = ['[', '],', ']'];
 
         $shortArrayVarExport = preg_replace(
             $pattern,
