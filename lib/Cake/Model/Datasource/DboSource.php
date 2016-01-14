@@ -345,6 +345,11 @@ class DboSource extends DataSource {
 			case 'boolean':
 				return $this->_connection->quote($this->boolean($data, true), PDO::PARAM_BOOL);
 			case 'string':
+				if ($data === '') {
+					return 'NULL';
+				} else {
+					return $this->_connection->quote($data, PDO::PARAM_STR);
+				}
 			case 'text':
 				return $this->_connection->quote($data, PDO::PARAM_STR);
 			default:

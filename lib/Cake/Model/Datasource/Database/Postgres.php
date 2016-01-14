@@ -68,7 +68,8 @@ class Postgres extends DboSource {
 		'binary' => array('name' => 'bytea'),
 		'boolean' => array('name' => 'boolean'),
 		'number' => array('name' => 'numeric'),
-		'inet' => array('name' => 'inet')
+		'inet' => array('name' => 'inet'),
+		'uuid' => array('name' => 'uuid')
 	);
 
 /**
