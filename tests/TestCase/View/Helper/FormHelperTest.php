@@ -583,6 +583,32 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test ensuring template variables work in template files loaded
+     * during input().
+     *
+     * @return void
+     */
+    public function testInputTemplatesFromFile()
+    {
+        $result = $this->Form->input('title', [
+            'templates' => 'test_templates',
+            'templateVars' => [
+                'forcontainer' => 'container-data'
+            ]
+        ]);
+        $expected = [
+            'div' => ['class'],
+            'label' => ['for'],
+            'Title',
+            '/label',
+            'input' => ['name', 'type' => 'text', 'id'],
+            'container-data',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * Test using template vars in inputSubmit and submitContainer template.
      *
      * @return void
