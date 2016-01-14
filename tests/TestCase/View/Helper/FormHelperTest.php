@@ -581,7 +581,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
     }
-    
+
     /**
      * Test using template vars in inputSubmit and submitContainer template.
      *
