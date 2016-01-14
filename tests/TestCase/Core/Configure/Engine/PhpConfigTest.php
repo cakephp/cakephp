@@ -42,8 +42,10 @@ class PhpConfigTest extends TestCase
             'bool_true' => true,
         ],
         'Asset' => [
-            'timestamp' => 'force'
+            'timestamp' => 'force',
         ],
+        ')',
+        '),'
     ];
 
     /**
@@ -161,6 +163,8 @@ return [
   [
     'timestamp' => 'force',
   ],
+  0 => ')',
+  1 => '),',
 ];
 PHP;
         $file = TMP . 'test.php';
