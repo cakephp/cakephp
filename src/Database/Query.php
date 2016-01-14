@@ -427,10 +427,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      * to be joined, unless the third argument is set to true.
      *
      * When no join type is specified an INNER JOIN is used by default:
-     * ``$query->join(['authors'])`` Will produce ``INNER JOIN authors ON 1 = 1``
+     * `$query->join(['authors'])` will produce `INNER JOIN authors ON 1 = 1`
      *
      * It is also possible to alias joins using the array key:
-     * ``$query->join(['a' => 'authors'])`` Will produce ``INNER JOIN authors a ON 1 = 1``
+     * `$query->join(['a' => 'authors'])`` will produce `INNER JOIN authors a ON 1 = 1`
      *
      * A join can be fully described and aliased using the array notation:
      *
@@ -694,7 +694,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * The previous example produces:
      *
-     * ``WHERE posted >= 2012-01-27 AND title LIKE 'Hello W%' AND author_id = 1``
+     * `WHERE posted >= 2012-01-27 AND title LIKE 'Hello W%' AND author_id = 1`
      *
      * Second parameter is used to specify what type is expected for each passed
      * key. Valid types can be used from the mapped with Database\Type class.
@@ -711,13 +711,13 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * The previous example produces:
      *
-     * ``WHERE author_id = 1 AND (published = 1 OR posted < '2012-02-01') AND NOT (title = 'Hello')``
+     * `WHERE author_id = 1 AND (published = 1 OR posted < '2012-02-01') AND NOT (title = 'Hello')`
      *
      * You can nest conditions using conjunctions as much as you like. Sometimes, you
      * may want to define 2 different options for the same key, in that case, you can
      * wrap each condition inside a new array:
      *
-     * ``$query->where(['OR' => [['published' => false], ['published' => true]])``
+     * `$query->where(['OR' => [['published' => false], ['published' => true]])`
      *
      * Keep in mind that every time you call where() with the third param set to false
      * (default), it will join the passed conditions to the previous stored list using
@@ -733,7 +733,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * The previous example produces:
      *
-     * ``WHERE (id != 100 OR author_id != 1) AND published = 1``
+     * `WHERE (id != 100 OR author_id != 1) AND published = 1`
      *
      * Other Query objects that be used as conditions for any field.
      *
@@ -756,7 +756,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * * The previous example produces:
      *
-     * ``WHERE title != 'Hello World' AND (id = 1 OR (id > 2 AND id < 10))``
+     * `WHERE title != 'Hello World' AND (id = 1 OR (id > 2 AND id < 10))`
      *
      * ### Conditions as strings:
      *
@@ -766,7 +766,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * The previous example produces:
      *
-     * ``WHERE articles.author_id = authors.id AND modified IS NULL``
+     * `WHERE articles.author_id = authors.id AND modified IS NULL`
      *
      * Please note that when using the array notation or the expression objects, all
      * values will be correctly quoted and transformed to the correspondent database
@@ -824,7 +824,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * Produces:
      *
-     * ``WHERE (published = 0 OR published IS NULL) AND author_id = 1 AND comments_count > 10``
+     * `WHERE (published = 0 OR published IS NULL) AND author_id = 1 AND comments_count > 10`
      *
      * ```
      * $query
@@ -838,7 +838,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * Generates the following conditions:
      *
-     * ``WHERE (title = 'Foo') AND (author_id = 1 OR author_id = 2)``
+     * `WHERE (title = 'Foo') AND (author_id = 1 OR author_id = 2)`
      *
      * @param string|array|ExpressionInterface|callback $conditions The conditions to add with AND.
      * @param array $types associative array of type names used to bind values to query
@@ -876,7 +876,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * Will produce:
      *
-     * ``WHERE title = 'Hello World' OR title = 'Foo'``
+     * `WHERE title = 'Hello World' OR title = 'Foo'`
      *
      * ```
      * $query
@@ -886,7 +886,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * Produces:
      *
-     * ``WHERE (published = 0 OR published IS NULL) OR (author_id = 1 AND comments_count > 10)``
+     * `WHERE (published = 0 OR published IS NULL) OR (author_id = 1 AND comments_count > 10)`
      *
      * ```
      * $query
@@ -900,7 +900,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * Generates the following conditions:
      *
-     * ``WHERE (title = 'Foo') OR (author_id = 1 OR author_id = 2)``
+     * `WHERE (title = 'Foo') OR (author_id = 1 OR author_id = 2)`
      *
      * @param string|array|ExpressionInterface|callback $conditions The conditions to add with OR.
      * @param array $types associative array of type names used to bind values to query
@@ -935,7 +935,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * Produces:
      *
-     * ``ORDER BY title DESC, author_id ASC``
+     * `ORDER BY title DESC, author_id ASC`
      *
      * ```
      * $query->order(['title' => 'DESC NULLS FIRST'])->order('author_id');
@@ -943,7 +943,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * Will generate:
      *
-     * ``ORDER BY title DESC NULLS FIRST, author_id``
+     * `ORDER BY title DESC NULLS FIRST, author_id`
      *
      * ```
      * $expression = $query->newExpr()->add(['id % 2 = 0']);
@@ -952,7 +952,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * Will become:
      *
-     * ``ORDER BY (id %2 = 0), title ASC``
+     * `ORDER BY (id %2 = 0), title ASC`
      *
      * If you need to set complex expressions as order conditions, you
      * should use `orderAsc()` or `orderDesc()`.
@@ -1091,7 +1091,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * Connects any previously defined set of conditions to the provided list
      * using the AND operator in the HAVING clause. This method operates in exactly
-     * the same way as the method ``andWhere()`` does. Please refer to its
+     * the same way as the method `andWhere()` does. Please refer to its
      * documentation for an insight on how to using each parameter.
      *
      * @param string|array|ExpressionInterface|callback $conditions The AND conditions for HAVING.
@@ -1108,7 +1108,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * Connects any previously defined set of conditions to the provided list
      * using the OR operator in the HAVING clause. This method operates in exactly
-     * the same way as the method ``orWhere()`` does. Please refer to its
+     * the same way as the method `orWhere()` does. Please refer to its
      * documentation for an insight on how to using each parameter.
      *
      * @param string|array|ExpressionInterface|callback $conditions The OR conditions for HAVING.
@@ -1226,7 +1226,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * Will produce:
      *
-     * ``SELECT id, name FROM things d UNION SELECT id, title FROM articles a``
+     * `SELECT id, name FROM things d UNION SELECT id, title FROM articles a`
      *
      * @param string|Query $query full SQL query to be used in UNION operator
      * @param bool $overwrite whether to reset the list of queries to be operated or not
@@ -1260,7 +1260,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * Will produce:
      *
-     * ``SELECT id, name FROM things d UNION ALL SELECT id, title FROM articles a``
+     * `SELECT id, name FROM things d UNION ALL SELECT id, title FROM articles a`
      *
      * @param string|Query $query full SQL query to be used in UNION operator
      * @param bool $overwrite whether to reset the list of queries to be operated or not
@@ -1463,7 +1463,6 @@ class Query implements ExpressionInterface, IteratorAggregate
      * any format accepted by \Cake\Database\Expression\QueryExpression:
      *
      * ```
-     *
      * $expression = $query->newExpr(); // Returns an empty expression object
      * $expression = $query->newExpr('Table.column = Table2.column'); // Return a raw SQL expression
      * ```

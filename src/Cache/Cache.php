@@ -571,7 +571,7 @@ class Cache
      *
      * ```
      * Cache::add('cached_data', $data);
-     * ````
+     * ```
      *
      * Writing to a specific cache config:
      *
