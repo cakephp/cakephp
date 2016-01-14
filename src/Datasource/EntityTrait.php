@@ -73,7 +73,7 @@ trait EntityTrait
     protected $_dirty = [];
 
     /**
-     * Holds a cached list of methods that exist in the instanced class
+     * Holds a cached list of getters/setters per class
      *
      * @var array
      */
@@ -251,8 +251,8 @@ trait EntityTrait
                 continue;
             }
 
-            $setter = '_set' . Inflector::camelize($p);
-            if ($this->_methodExists($setter)) {
+            $setter = $this->_accessor($p, 'set');
+            if ($setter) {
                 $value = $this->{$setter}($value);
             }
             $this->_properties[$p] = $value;
@@ -275,13 +275,13 @@ trait EntityTrait
         }
 
         $value = null;
-        $method = '_get' . Inflector::camelize($property);
+        $method = $this->_accessor($property);
 
         if (isset($this->_properties[$property])) {
             $value =& $this->_properties[$property];
         }
 
-        if ($this->_methodExists($method)) {
+        if ($method) {
             $result = $this->{$method}($value);
             return $result;
         }
@@ -499,17 +499,33 @@ trait EntityTrait
     }
 
     /**
-     * Determines whether a method exists in this class
+     * Fetch accessor method name
+     * Accessor methods (available or not) are cached in $_accessors
      *
-     * @param string $method the method to check for existence
-     * @return bool true if method exists
+     * @param string $property the field name to derive getter name from
+     * @param string $type the accessor type ('get' or 'set')
+     * @return string method name or empty string (no method available)
      */
-    protected function _methodExists($method)
+    protected function _accessor($property, $type = 'get')
     {
-        if (empty(static::$_accessors[$this->_className])) {
-            static::$_accessors[$this->_className] = array_flip(get_class_methods($this));
+        if (!isset(static::$_accessors[$this->_className][$type][$property])) {
+            /* first time for this class: build all fields */
+            if (empty(static::$_accessors[$this->_className])) {
+                foreach (get_class_methods($this) as $m) {
+                    $t = substr($m, 1, 3);
+                    if ($m[0] === '_' && in_array($t, ['get', 'set'])) {
+                        $p = Inflector::underscore(substr($m, 4));
+                        static::$_accessors[$this->_className][$t][$p] = $m;
+                    }
+                }
+            }
+            /* if still not set, remember that the method indeed is not present */
+            if (!isset(static::$_accessors[$this->_className][$type][$property])) {
+                static::$_accessors[$this->_className][$type][$property] = '';
+            }
+            // now static::$_accessors[$this->_className] is always set
         }
-        return isset(static::$_accessors[$this->_className][$method]);
+        return static::$_accessors[$this->_className][$type][$property];
     }
 
     /**
