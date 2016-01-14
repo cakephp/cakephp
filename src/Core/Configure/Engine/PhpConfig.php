@@ -105,7 +105,7 @@ class PhpConfig implements ConfigEngineInterface
      * Similar to var_export() except it uses the Short Array Syntax;
      *
      * @param array $data Data to dump in Short Array Syntax
-     * @return string returns a parsable string representation of a short array syntax variable
+     * @return string A parsable string representation of a short array syntax variable
      */
     public function shortArrayVarExport($data)
     {
