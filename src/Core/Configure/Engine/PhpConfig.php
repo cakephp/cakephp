@@ -97,7 +97,7 @@ class PhpConfig implements ConfigEngineInterface
         $filename = $this->_getFilePath($key);
         return file_put_contents($filename, $contents) > 0;
     }
-    
+
     /**
      *
      * Converts an array $data into a string of PHP code using the Short Array Syntax.
@@ -110,7 +110,7 @@ class PhpConfig implements ConfigEngineInterface
      */
     public function shortArrayVarExport($array, $indent)
     {
-        $whiteSpace = "    "; // 4 Whitespace CakePHP Style
+        $whiteSpace = "    "; // 4 Whitespace
         $indentation = str_repeat($whiteSpace, $indent);
         $opening = $indentation . "[";
         $closing = PHP_EOL . $indentation . "]";
