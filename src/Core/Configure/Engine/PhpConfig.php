@@ -97,7 +97,7 @@ class PhpConfig implements ConfigEngineInterface
         $filename = $this->_getFilePath($key);
         return file_put_contents($filename, $contents) > 0;
     }
-
+    
     /**
      *
      * Converts an array $data into a string of PHP code using the Short Array Syntax.
@@ -121,6 +121,8 @@ class PhpConfig implements ConfigEngineInterface
 
             if (is_array($value)) {
                 $value = PHP_EOL . $this->shortArrayVarExport($value, $indent + 1);
+            } elseif (is_null($value)) {
+                $value = "null";
             } else {
                 $value = var_export($value, true);
             }

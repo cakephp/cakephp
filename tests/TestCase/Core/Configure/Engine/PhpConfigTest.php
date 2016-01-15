@@ -155,7 +155,7 @@ return [
         [
             'four' => 'value four'
         ],
-        'is_null' => NULL,
+        'is_null' => null,
         'bool_false' => false,
         'bool_true' => true
     ],
