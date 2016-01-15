@@ -104,24 +104,25 @@ class PhpConfig implements ConfigEngineInterface
      *
      * Similar to var_export() except it uses the Short Array Syntax;
      *
-     * @param array $data Data to dump in Short Array Syntax
+     * @param array $array Array to dump in Short Array Syntax
+     * @param int $indent Indentation Level
      * @return string A parsable string representation of a short array syntax variable
      */
     public function shortArrayVarExport($array, $indent)
     {
         $whiteSpace = "    "; // 4 Whitespace CakePHP Style
-        $indentation = str_repeat($whiteSpace, $indent);        
-        $opening =  $indentation . "[";
+        $indentation = str_repeat($whiteSpace, $indent);
+        $opening = $indentation . "[";
         $closing = PHP_EOL . $indentation . "]";
-
+        
         $vars = [];
-        foreach( $array as $key => $value ){
-            $key = (is_integer($key)) ? (int) $key : "'$key'";
+        foreach ($array as $key => $value) {
+            $key = (is_integer($key)) ? (int)$key : "'$key'";
 
-            if( is_array($value) ){
+            if (is_array($value)) {
                 $value = PHP_EOL . $this->shortArrayVarExport($value, $indent + 1);
             } else {
-                $value = var_export($value, TRUE);
+                $value = var_export($value, true);
             }
 
             $vars[] = PHP_EOL . str_repeat($whiteSpace, $indent + 1) . "$key => " . $value;
