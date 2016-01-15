@@ -1150,7 +1150,7 @@ class PostgresTest extends CakeTestCase {
 		$data = $db->describe('test_uuid_describe');
 
 		$expected = array(
-			'type' => 'string',
+			'type' => 'uuid',
 			'null' => false,
 			'default' => null,
 			'length' => 36,
