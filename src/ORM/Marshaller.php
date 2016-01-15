@@ -289,6 +289,7 @@ class Marshaller
     protected function _belongsToMany(Association $assoc, array $data, $options = [])
     {
         $associated = isset($options['associated']) ? $options['associated'] : [];
+        $forceTargetInsert = $assoc->forceTargetInsert();
 
         $data = array_values($data);
 
@@ -307,6 +308,9 @@ class Marshaller
                     foreach ($keys as $key => $value) {
                         $conditions[][$target->aliasfield($key)] = $value;
                     }
+                }
+                if ($forceTargetInsert && !$target->exists($conditions)) {
+                    $records[$i] = $this->one($row, $options);
                 }
             } else {
                 $records[$i] = $this->one($row, $options);
