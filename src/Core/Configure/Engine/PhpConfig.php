@@ -114,10 +114,10 @@ class PhpConfig implements ConfigEngineInterface
         $indentation = str_repeat($whiteSpace, $indent);
         $opening = $indentation . "[";
         $closing = PHP_EOL . $indentation . "]";
-        
+
         $vars = [];
         foreach ($array as $key => $value) {
-            $key = (is_integer($key)) ? (int)$key : "'$key'";
+            $key = (is_int($key)) ? (int)$key : "'$key'";
 
             if (is_array($value)) {
                 $value = PHP_EOL . $this->shortArrayVarExport($value, $indent + 1);
