@@ -1982,7 +1982,7 @@ class Model extends Object implements CakeEventListener {
  */
 	protected function _isUUIDField($field) {
 		$field = $this->schema($field);
-		return $field['length'] == 36 && in_array($field['type'], array('string', 'binary'));
+		return $field['length'] == 36 && in_array($field['type'], array('string', 'binary', 'uuid'));
 	}
 
 /**

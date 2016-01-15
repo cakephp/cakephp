@@ -344,12 +344,13 @@ class DboSource extends DataSource {
 				return $this->_connection->quote($data, PDO::PARAM_LOB);
 			case 'boolean':
 				return $this->_connection->quote($this->boolean($data, true), PDO::PARAM_BOOL);
-			case 'string':
+			case 'uuid':
 				if ($data === '') {
 					return 'NULL';
 				} else {
 					return $this->_connection->quote($data, PDO::PARAM_STR);
 				}
+			case 'string':
 			case 'text':
 				return $this->_connection->quote($data, PDO::PARAM_STR);
 			default:
