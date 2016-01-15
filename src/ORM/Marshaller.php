@@ -274,7 +274,7 @@ class Marshaller
     {
         // Accept _ids = [1, 2]
         $associated = isset($options['associated']) ? $options['associated'] : [];
-        $forceTargetInsert = isset($options['forceTargetInsert']) ? $options['forceTargetInsert'] : [];
+        $forceTargetInsert = isset($options['forceTargetInsert']) ? $options['forceTargetInsert'] : false
         
         $hasIds = array_key_exists('_ids', $data);
         if ($hasIds && is_array($data['_ids'])) {
