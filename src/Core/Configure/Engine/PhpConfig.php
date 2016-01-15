@@ -92,7 +92,7 @@ class PhpConfig implements ConfigEngineInterface
      */
     public function dump($key, array $data)
     {
-        $contents = '<?php' . "\n" . 'return ' . $this->shortArrayVarExport($data) . ';';
+        $contents = '<?php' . "\n" . 'return ' . $this->shortArrayVarExport($data, 0) . ';';
 
         $filename = $this->_getFilePath($key);
         return file_put_contents($filename, $contents) > 0;
@@ -107,22 +107,26 @@ class PhpConfig implements ConfigEngineInterface
      * @param array $data Data to dump in Short Array Syntax
      * @return string A parsable string representation of a short array syntax variable
      */
-    public function shortArrayVarExport($data)
+    public function shortArrayVarExport($array, $indent)
     {
-        $varExport = var_export($data, true);
-        $pattern = [
-            '/array \(/', // Matches opening "array("
-            '/(\),)$/m', // Matches ending "),"
-            '/^\)$/m' // Matches last ) in file
-        ];
-        $replacements = ['[', '],', ']'];
+        $whiteSpace = "    "; // 4 Whitespace CakePHP Style
+        $indentation = str_repeat($whiteSpace, $indent);        
+        $opening =  $indentation . "[";
+        $closing = PHP_EOL . $indentation . "]";
 
-        $shortArrayVarExport = preg_replace(
-            $pattern,
-            $replacements,
-            $varExport
-        );
+        $vars = [];
+        foreach( $array as $key => $value ){
+            $key = (is_integer($key)) ? (int) $key : "'$key'";
 
-        return $shortArrayVarExport;
+            if( is_array($value) ){
+                $value = PHP_EOL . $this->shortArrayVarExport($value, $indent + 1);
+            } else {
+                $value = var_export($value, TRUE);
+            }
+
+            $vars[] = PHP_EOL . str_repeat($whiteSpace, $indent + 1) . "$key => " . $value;
+        }
+
+        return $opening . implode(',', $vars) . $closing;
     }
 }
