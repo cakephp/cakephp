@@ -338,6 +338,10 @@ class TextHelperTest extends TestCase
                 'Text with a partial http://www.küchenschöhn-not-working.de URL',
                 'Text with a partial <a href="http://www.küchenschöhn-not-working.de">http://www.küchenschöhn-not-working.de</a> URL'
             ],
+            [
+                "Text with partial www.cakephp.org\r\nwww.cakephp.org urls and CRLF",
+                "Text with partial <a href=\"http://www.cakephp.org\">www.cakephp.org</a>\r\n<a href=\"http://www.cakephp.org\">www.cakephp.org</a> urls and CRLF"
+            ]
         ];
     }
 

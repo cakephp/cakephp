@@ -437,7 +437,11 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         foreach ($regex as $i => $assertion) {
             $matches = false;
             if (isset($assertion['attrs'])) {
-                $string = $this->_assertAttributes($assertion, $string);
+                $string = $this->_assertAttributes($assertion, $string, $fullDebug, $regex);
+                if ($fullDebug === true && $string === false) {
+                    debug($string, true);
+                    debug($regex, true);
+                }
                 continue;
             }
 
@@ -451,11 +455,11 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
                 }
             }
             if (!$matches) {
-                $this->assertRegExp($expression, $string, sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description));
-                if ($fullDebug) {
-                    debug($string, true);
-                    debug($regex, true);
+                if ($fullDebug === true) {
+                    debug($string);
+                    debug($regex);
                 }
+                $this->assertRegExp($expression, $string, sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description));
                 return false;
             }
         }
@@ -469,9 +473,11 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
      *
      * @param array $assertions Assertions to run.
      * @param string $string The HTML string to check.
+     * @param bool $fullDebug Whether or not more verbose output should be used.
+     * @param array $regex Full regexp from `assertHtml`
      * @return string
      */
-    protected function _assertAttributes($assertions, $string)
+    protected function _assertAttributes($assertions, $string, $fullDebug = false, $regex = '')
     {
         $asserts = $assertions['attrs'];
         $explains = $assertions['explains'];
@@ -488,6 +494,10 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
                 }
             }
             if ($matches === false) {
+                if ($fullDebug === true) {
+                    debug($string);
+                    debug($regex);
+                }
                 $this->assertTrue(false, 'Attribute did not match. Was expecting ' . $explains[$j]);
             }
             $len = count($asserts);
