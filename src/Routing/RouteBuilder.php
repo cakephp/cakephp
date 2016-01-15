@@ -515,7 +515,7 @@ class RouteBuilder
      * redirect destination allows you to use other routes to define where an URL string should be redirected to.
      *
      * ```
-     * $routes-redirect('/posts/*', 'http://google.com', ['status' => 302]);
+     * $routes->redirect('/posts/*', 'http://google.com', ['status' => 302]);
      * ```
      *
      * Redirects /posts/* to http://google.com with a HTTP status of 302
