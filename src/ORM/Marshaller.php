@@ -274,6 +274,8 @@ class Marshaller
     {
         // Accept _ids = [1, 2]
         $associated = isset($options['associated']) ? $options['associated'] : [];
+        $forceTargetInsert = isset($options['forceTargetInsert']) ? $options['forceTargetInsert'] : [];
+        
         $hasIds = array_key_exists('_ids', $data);
         if ($hasIds && is_array($data['_ids'])) {
             return $this->_loadAssociatedByIds($assoc, $data['_ids']);
@@ -297,6 +299,9 @@ class Marshaller
                 if (count($keys) === $primaryCount) {
                     foreach ($keys as $key => $value) {
                         $conditions[][$target->aliasfield($key)] = $value;
+                    }
+                    if ($forceTargetInsert && !$target->exists($conditions) {
+                        $records[$i] = $this->one($row, $options);
                     }
                 }
             } else {
