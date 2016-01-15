@@ -210,7 +210,7 @@ abstract class Association
             'tableLocator',
             'propertyName',
             'sourceTable',
-            'targetTable'.
+            'targetTable',
             'forceTargetInsert'
         ];
         foreach ($defaults as $property) {
