@@ -148,28 +148,27 @@ class PhpConfigTest extends TestCase
         $expected = <<<PHP
 <?php
 return [
-  'One' => 
-  [
-    'two' => 'value',
-    'three' => 
+    'One' => 
     [
-      'four' => 'value four',
+        'two' => 'value',
+        'three' => 
+        [
+            'four' => 'value four'
+        ],
+        'is_null' => NULL,
+        'bool_false' => false,
+        'bool_true' => true
     ],
-    'is_null' => NULL,
-    'bool_false' => false,
-    'bool_true' => true,
-  ],
-  'Asset' => 
-  [
-    'timestamp' => 'force',
-  ],
-  0 => ')',
-  1 => '),',
+    'Asset' => 
+    [
+        'timestamp' => 'force'
+    ],
+    0 => ')',
+    1 => '),'
 ];
 PHP;
         $file = TMP . 'test.php';
         $contents = file_get_contents($file);
-
         unlink($file);
         $this->assertTextEquals($expected, $contents);
 
