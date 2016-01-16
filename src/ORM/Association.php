@@ -187,6 +187,8 @@ abstract class Association
      */
     protected $_validStrategies = [self::STRATEGY_JOIN, self::STRATEGY_SELECT, self::STRATEGY_SUBQUERY];
 
+    protected $_forceTargetInsert = false;
+    
     /**
      * Constructor. Subclasses can override _options function to get the original
      * list of passed options if expecting any other special key
@@ -208,7 +210,8 @@ abstract class Association
             'tableLocator',
             'propertyName',
             'sourceTable',
-            'targetTable'
+            'targetTable',
+            'forceTargetInsert'
         ];
         foreach ($defaults as $property) {
             if (isset($options[$property])) {
@@ -243,6 +246,14 @@ abstract class Association
             $this->_name = $name;
         }
         return $this->_name;
+    }
+
+    public function forceTargetInsert($forceTargetInsert = null)
+    {
+        if ($forceTargetInsert !== null) {
+            $this->_forceTargetInsert = $forceTargetInsert;
+        }
+        return $this->_forceTargetInsert;
     }
 
     /**
