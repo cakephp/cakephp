@@ -513,10 +513,11 @@ trait EntityTrait
             if (empty(static::$_accessors[$this->_className])) {
                 foreach (get_class_methods($this) as $m) {
                     $t = substr($m, 1, 3);
-                    if ($m[0] === '_' && in_array($t, ['get', 'set'])) {
-                        $p = Inflector::underscore(substr($m, 4));
-                        static::$_accessors[$this->_className][$t][$p] = $m;
+                    if ($m[0] !== '_' || !in_array($t, ['get', 'set'])) {
+                        continue;
                     }
+                    $p = Inflector::underscore(substr($m, 4));
+                    static::$_accessors[$this->_className][$t][$p] = $m;
                 }
             }
             /* if still not set, remember that the method indeed is not present */
