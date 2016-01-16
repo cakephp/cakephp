@@ -418,24 +418,26 @@ trait EntityTrait
      * This method will recursively transform entities assigned to properties
      * into arrays as well.
      *
+     * @param bool $includeHiddenProperties Include hidden properties in array
      * @return array
      */
-    public function toArray()
+    public function toArray($includeHiddenProperties = false)
     {
+        $properties = $includeHiddenProperties ? array_merge($this->visibleProperties(), $this->hiddenProperties()): $this->visibleProperties();
         $result = [];
-        foreach ($this->visibleProperties() as $property) {
+        foreach ($properties as $property) {
             $value = $this->get($property);
             if (is_array($value)) {
                 $result[$property] = [];
                 foreach ($value as $k => $entity) {
                     if ($entity instanceof EntityInterface) {
-                        $result[$property][$k] = $entity->toArray();
+                        $result[$property][$k] = $entity->toArray($includeHiddenProperties);
                     } else {
                         $result[$property][$k] = $entity;
                     }
                 }
             } elseif ($value instanceof EntityInterface) {
-                $result[$property] = $value->toArray();
+                $result[$property] = $value->toArray($includeHiddenProperties);
             } else {
                 $result[$property] = $value;
             }

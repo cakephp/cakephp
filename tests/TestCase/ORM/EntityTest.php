@@ -871,7 +871,22 @@ class EntityTest extends TestCase
         $data = ['secret' => 'sauce', 'name' => 'mark', 'id' => 1];
         $entity = new Entity($data);
         $entity->hiddenProperties(['secret']);
-        $this->assertEquals(['name' => 'mark', 'id' => 1], $entity->toArray());
+        $expected = ['name' => 'mark', 'id' => 1];
+        $this->assertEquals($expected, $entity->toArray());
+        $this->assertEquals($expected, $entity->toArray(false));
+}
+
+    /**
+     * Test that toArray array includes hidden properties when `$includeHiddenProperties` param is set to true.
+     *
+     * @return void
+     */
+    public function testToArrayIncludeHiddenProperties()
+    {
+        $data = ['secret' => 'sauce', 'name' => 'mark', 'id' => 1];
+        $entity = new Entity($data);
+        $entity->hiddenProperties(['secret']);
+        $this->assertEquals($data, $entity->toArray(true));
     }
 
     /**
