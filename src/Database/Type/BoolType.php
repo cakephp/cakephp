@@ -85,7 +85,7 @@ class BoolType extends Type
      * Marshalls request data into PHP booleans.
      *
      * @param mixed $value The value to convert.
-     * @return mixed Converted value.
+     * @return bool|null Converted value.
      */
     public function marshal($value)
     {

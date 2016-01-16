@@ -113,7 +113,7 @@ class View implements EventDispatcherInterface
     /**
      * An array of names of built-in helpers to include.
      *
-     * @var mixed
+     * @var array
      */
     public $helpers = [];
 
@@ -1170,7 +1170,7 @@ class View implements EventDispatcherInterface
      * Finds an element filename, returns false on failure.
      *
      * @param string $name The name of the element to find.
-     * @return mixed Either a string to the element filename or false when one can't be found.
+     * @return string|bool Either a string to the element filename or false when one can't be found.
      */
     protected function _getElementFileName($name)
     {

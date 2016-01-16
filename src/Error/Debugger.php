@@ -585,7 +585,7 @@ class Debugger
      *
      * @param string|null $format The format you want errors to be output as.
      *   Leave null to get the current format.
-     * @return mixed Returns null when setting. Returns the current format when getting.
+     * @return string|null Returns null when setting. Returns the current format when getting.
      * @throws \InvalidArgumentException When choosing a format that doesn't exist.
      */
     public static function outputAs($format = null)

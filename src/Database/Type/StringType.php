@@ -82,7 +82,7 @@ class StringType extends Type
      * Marshalls request data into PHP strings.
      *
      * @param mixed $value The value to convert.
-     * @return mixed Converted value.
+     * @return string|null Converted value.
      */
     public function marshal($value)
     {

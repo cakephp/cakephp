@@ -406,7 +406,7 @@ class Route
      * @param array $context An array of the current request context.
      *   Contains information such as the current host, scheme, port, base
      *   directory and other url params.
-     * @return mixed Either a string url for the parameters if they match or false.
+     * @return string|false Either a string URL for the parameters if they match or false.
      */
     public function match(array $url, array $context = [])
     {

@@ -281,7 +281,7 @@ class Configure
      * @param string $key name of configuration resource to load.
      * @param string $config Name of the configured engine to use to read the resource identified by $key.
      * @param bool $merge if config files should be merged instead of simply overridden
-     * @return mixed false if file not found, void if load successful.
+     * @return bool False if file not found, true if load successful.
      * @link http://book.cakephp.org/3.0/en/development/configuration.html#reading-and-writing-configuration-files
      */
     public static function load($key, $config = 'default', $merge = true)
@@ -325,7 +325,7 @@ class Configure
      * @param string $config The name of the configured adapter to dump data with.
      * @param array $keys The name of the top-level keys you want to dump.
      *   This allows you save only some data stored in Configure.
-     * @return bool success
+     * @return bool Success
      * @throws \Cake\Core\Exception\Exception if the adapter does not implement a `dump` method.
      */
     public static function dump($key, $config = 'default', $keys = [])
@@ -346,7 +346,7 @@ class Configure
      * Will create new PhpConfig for default if not configured yet.
      *
      * @param string $config The name of the configured adapter
-     * @return mixed Engine instance or false
+     * @return ConfigEngineInterface|bool Engine instance or false
      */
     protected static function _getEngine($config)
     {
