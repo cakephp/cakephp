@@ -257,7 +257,7 @@ class Route
      * false will be returned. String URLs are parsed if they match a routes regular expression.
      *
      * @param string $url The URL to attempt to parse.
-     * @return array|false Boolean false on failure, otherwise an array of parameters.
+     * @return array|false An array of request parameters, or false on failure.
      */
     public function parse($url)
     {

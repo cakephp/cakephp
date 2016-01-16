@@ -61,7 +61,7 @@ class RedirectRoute extends Route
      * redirection.
      *
      * @param string $url The URL to parse.
-     * @return bool|null False on failure, null otherwise.
+     * @return false|null False on failure, null otherwise.
      */
     public function parse($url)
     {
