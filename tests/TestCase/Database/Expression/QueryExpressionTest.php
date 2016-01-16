@@ -133,4 +133,37 @@ class QueryExpressionTest extends TestCase
         $expr->add(new QueryExpression('1 = 1'));
         $this->assertTrue($expr->hasNestedExpression());
     }
+
+    /**
+     * Returns the list of specific comparison methods
+     *
+     * @return void
+     */
+    public function methodsProvider()
+    {
+        return [
+            ['eq'], ['notEq'], ['gt'], ['lt'], ['gte'], ['lte'], ['like'],
+            ['notLike'], ['in'], ['notIn']
+        ];
+    }
+
+    /**
+     * Tests that the query expression uses the type map when the
+     * specific comparison functions are used.
+     *
+     * @dataProvider methodsProvider
+     * @return void
+     */
+    public function testTypeMapUsage($method)
+    {
+        $expr = new QueryExpression([], ['created' => 'date']);
+        $expr->{$method}('created', 'foo');
+
+        $binder = new ValueBinder();
+        $expr->sql($binder);
+        $bindings = $binder->bindings();
+        $type = current($bindings)['type'];
+
+        $this->assertEquals('date', $type);
+    }
 }

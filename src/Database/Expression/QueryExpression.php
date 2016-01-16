@@ -150,6 +150,9 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function eq($field, $value, $type = null)
     {
+        if ($type === null) {
+            $type = $this->_calculateType($field);
+        }
         return $this->add(new Comparison($field, $value, $type, '='));
     }
 
@@ -165,6 +168,9 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function notEq($field, $value, $type = null)
     {
+        if ($type === null) {
+            $type = $this->_calculateType($field);
+        }
         return $this->add(new Comparison($field, $value, $type, '!='));
     }
 
@@ -178,6 +184,9 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function gt($field, $value, $type = null)
     {
+        if ($type === null) {
+            $type = $this->_calculateType($field);
+        }
         return $this->add(new Comparison($field, $value, $type, '>'));
     }
 
@@ -191,6 +200,9 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function lt($field, $value, $type = null)
     {
+        if ($type === null) {
+            $type = $this->_calculateType($field);
+        }
         return $this->add(new Comparison($field, $value, $type, '<'));
     }
 
@@ -204,6 +216,9 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function gte($field, $value, $type = null)
     {
+        if ($type === null) {
+            $type = $this->_calculateType($field);
+        }
         return $this->add(new Comparison($field, $value, $type, '>='));
     }
 
@@ -217,6 +232,9 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function lte($field, $value, $type = null)
     {
+        if ($type === null) {
+            $type = $this->_calculateType($field);
+        }
         return $this->add(new Comparison($field, $value, $type, '<='));
     }
 
@@ -260,6 +278,9 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function like($field, $value, $type = null)
     {
+        if ($type === null) {
+            $type = $this->_calculateType($field);
+        }
         return $this->add(new Comparison($field, $value, $type, 'LIKE'));
     }
 
@@ -273,6 +294,9 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function notLike($field, $value, $type = null)
     {
+        if ($type === null) {
+            $type = $this->_calculateType($field);
+        }
         return $this->add(new Comparison($field, $value, $type, 'NOT LIKE'));
     }
 
@@ -287,6 +311,9 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function in($field, $values, $type = null)
     {
+        if ($type === null) {
+            $type = $this->_calculateType($field);
+        }
         $type = $type ?: 'string';
         $type .= '[]';
         $values = $values instanceof ExpressionInterface ? $values : (array)$values;
@@ -320,6 +347,9 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function notIn($field, $values, $type = null)
     {
+        if ($type === null) {
+            $type = $this->_calculateType($field);
+        }
         $type = $type ?: 'string';
         $type .= '[]';
         $values = $values instanceof ExpressionInterface ? $values : (array)$values;
@@ -338,6 +368,9 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function between($field, $from, $to, $type = null)
     {
+        if ($type === null) {
+            $type = $this->_calculateType($field);
+        }
         return $this->add(new BetweenExpression($field, $from, $to, $type));
     }
 
@@ -661,6 +694,21 @@ class QueryExpression implements ExpressionInterface, Countable
         }
 
         return new Comparison($expression, $value, $type, $operator);
+    }
+
+    /**
+     * Returns the type name for the passed field if it was stored in the typeMap
+     *
+     * @param mixed $field
+     * @return string|null
+     */
+    protected function _calculateType($field)
+    {
+        $field = $field instanceof IdentifierExpression ? $field->getIdentifier() : $field;
+        if (is_string($field)) {
+            return $this->typeMap()->type($field);
+        }
+        return null;
     }
 
     /**

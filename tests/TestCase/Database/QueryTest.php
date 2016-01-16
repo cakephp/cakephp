@@ -3550,6 +3550,26 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests that types in the type map are used in the
+     * specific comparison functions when using a callable
+     *
+     * @return void
+     */
+    public function testBetweenExpressionAndTypeMap()
+    {
+        $query = new Query($this->connection);
+        $query->select('id')
+            ->from('comments')
+            ->defaultTypes(['created' => 'datetime'])
+            ->where(function ($expr) {
+                $from = new \DateTime('2007-03-18 10:45:00');
+                $to = new \DateTime('2007-03-18 10:48:00');
+                return $expr->between('created', $from, $to);
+            });
+        $this->assertCount(2, $query->execute()->fetchAll());
+    }
+
+    /**
      * Assertion for comparing a table's contents with what is in it.
      *
      * @param string $table
