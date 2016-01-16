@@ -1170,7 +1170,7 @@ class View implements EventDispatcherInterface
      * Finds an element filename, returns false on failure.
      *
      * @param string $name The name of the element to find.
-     * @return string|bool Either a string to the element filename or false when one can't be found.
+     * @return string|false Either a string to the element filename or false when one can't be found.
      */
     protected function _getElementFileName($name)
     {

@@ -47,7 +47,7 @@ class PluginShortRoute extends InflectedRoute
      * @param array $context An array of the current request context.
      *   Contains information such as the current host, scheme, port, and base
      *   directory.
-     * @return string|bool Either a string URL for the parameters if they match or false.
+     * @return string|false Either a string URL for the parameters if they match or false.
      */
     public function match(array $url, array $context = [])
     {

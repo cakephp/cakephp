@@ -78,7 +78,7 @@ class BufferedStatement extends StatementDecorator
      * {@inheritDoc}
      *
      * @param string $type The type to fetch.
-     * @return array|bool
+     * @return array|false
      */
     public function fetch($type = 'num')
     {

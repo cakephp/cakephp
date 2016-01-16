@@ -55,7 +55,7 @@ class ControllerFactoryFilter extends DispatcherFilter
      *
      * @param \Cake\Network\Request $request Request object
      * @param \Cake\Network\Response $response Response for the controller.
-     * @return \Cake\Controller\Controller|bool Object if loaded, bool false otherwise.
+     * @return \Cake\Controller\Controller|false Object if loaded, boolean false otherwise.
      */
     protected function _getController($request, $response)
     {
