@@ -56,7 +56,7 @@ trait PDODriverTrait
      * result to the value passed
      *
      * @param null|\PDO $connection The PDO connection instance.
-     * @return mixed connection object used internally
+     * @return \PDO connection object used internally
      */
     public function connection($connection = null)
     {

@@ -163,7 +163,7 @@ class Folder
      *   to false to get unsorted results.
      * @param array|bool $exceptions Either an array or boolean true will not grab dot files
      * @param bool $fullPath True returns the full path
-     * @return mixed Contents of current directory as an array, an empty array on failure
+     * @return array Contents of current directory as an array, an empty array on failure
      */
     public function read($sort = true, $exceptions = false, $fullPath = false)
     {
@@ -451,7 +451,7 @@ class Folder
      * @param array|bool $exceptions Either an array of files/folder to exclude
      *   or boolean true to not grab dot files/folders
      * @param string|null $type either 'file' or 'dir'. Null returns both files and directories
-     * @return mixed array of nested directories and files in each directory
+     * @return array Array of nested directories and files in each directory
      */
     public function tree($path = null, $exceptions = false, $type = null)
     {

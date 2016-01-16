@@ -35,10 +35,10 @@ class InflectedRoute extends Route
 
     /**
      * Parses a string URL into an array. If it matches, it will convert the prefix, controller and
-     * plugin keys to their camelized form
+     * plugin keys to their camelized form.
      *
      * @param string $url The URL to parse
-     * @return mixed false on failure, or an array of request parameters
+     * @return array|false An array of request parameters, or false on failure.
      */
     public function parse($url)
     {
@@ -63,7 +63,7 @@ class InflectedRoute extends Route
      * @param array $context An array of the current request context.
      *   Contains information such as the current host, scheme, port, and base
      *   directory.
-     * @return mixed either false or a string URL.
+     * @return string|false Either a string URL for the parameters if they match or false.
      */
     public function match(array $url, array $context = [])
     {

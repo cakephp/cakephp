@@ -20,7 +20,7 @@ use Cake\Utility\Text;
 use PDO;
 
 /**
- * Provides behavior for the uuid type
+ * Provides behavior for the UUID type
  */
 class UuidType extends StringType
 {
@@ -30,7 +30,7 @@ class UuidType extends StringType
      *
      * @param mixed $value value to be converted to database equivalent
      * @param Driver $driver object from which database preferences and configuration will be extracted
-     * @return mixed
+     * @return string|null
      */
     public function toDatabase($value, Driver $driver)
     {
@@ -52,7 +52,7 @@ class UuidType extends StringType
     }
 
     /**
-     * Marshalls request data into a PHP string
+     * Marshals request data into a PHP string
      *
      * @param mixed $value The value to convert.
      * @return string|null Converted value.

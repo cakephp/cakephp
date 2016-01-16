@@ -507,7 +507,7 @@ class HtmlHelper extends Helper
      *
      * @param string|array $url String or array of javascript files to include
      * @param array $options Array of options, and html attributes see above.
-     * @return mixed String of `<script />` tags or null if block is specified in options
+     * @return string|null String of `<script />` tags or null if block is specified in options
      *   or if $once is true and the file has been included before.
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#linking-to-javascript-files
      */
@@ -562,7 +562,7 @@ class HtmlHelper extends Helper
      * @param string $script The script to wrap
      * @param array $options The options to use. Options not listed above will be
      *    treated as HTML attributes.
-     * @return mixed string or null depending on the value of `$options['block']`
+     * @return string|null String or null depending on the value of `$options['block']`
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-inline-javascript-blocks
      */
     public function scriptBlock($script, array $options = [])
@@ -614,7 +614,7 @@ class HtmlHelper extends Helper
      * Generates a script tag inline or appends to specified view block depending on
      * the settings used when the scriptBlock was started
      *
-     * @return mixed depending on the settings of scriptStart() either a script tag or null
+     * @return string|null Depending on the settings of scriptStart() either a script tag or null
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-javascript-blocks
      */
     public function scriptEnd()

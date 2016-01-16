@@ -107,7 +107,7 @@ interface StatementInterface
      * ```
      *
      * @param string $type 'num' for positional columns, assoc for named columns
-     * @return mixed Result array containing columns and values or false if no results
+     * @return array|false Result array containing columns and values or false if no results
      * are left
      */
     public function fetch($type = 'num');

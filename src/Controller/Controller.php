@@ -112,7 +112,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * public $helpers = ['Form', 'Html', 'Time'];
      * ```
      *
-     * @var mixed
+     * @var array
      * @link http://book.cakephp.org/3.0/en/controllers.html#configuring-helpers-to-load
      */
     public $helpers = [];
@@ -211,7 +211,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Holds all passed params.
      *
-     * @var mixed
+     * @var array
      * @deprecated 3.1.0 Use `$this->request->params['pass']` instead.
      */
     public $passedArgs = [];

@@ -14,6 +14,7 @@
  */
 namespace Cake\I18n;
 
+use Cake\Core\Exception\Exception;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeZone;
@@ -192,7 +193,7 @@ class Time extends Carbon implements JsonSerializable
      * Returns the quarter
      *
      * @param bool $range Range.
-     * @return mixed 1, 2, 3, or 4 quarter of year or array if $range true
+     * @return int|array 1, 2, 3, or 4 quarter of year, or array if $range true
      */
     public function toQuarter($range = false)
     {
@@ -241,8 +242,8 @@ class Time extends Carbon implements JsonSerializable
      *    - minute => The format if minutes > 0 (default "minute")
      *    - second => The format if seconds > 0 (default "second")
      * - `end` => The end of relative time telling
-     * - `relativeString` => The printf compatible string when outputting relative time
-     * - `absoluteString` => The printf compatible string when outputting absolute time
+     * - `relativeString` => The `printf` compatible string when outputting relative time
+     * - `absoluteString` => The `printf` compatible string when outputting absolute time
      * - `timezone` => The user timezone the timestamp should be formatted in.
      *
      * Relative dates look something like this:

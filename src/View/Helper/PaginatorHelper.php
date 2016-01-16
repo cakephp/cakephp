@@ -448,7 +448,7 @@ class PaginatorHelper extends Helper
      * @param array $options Pagination/URL options array
      * @param string|null $model Which model to paginate on
      * @param bool $full If true, the full base URL will be prepended to the result
-     * @return mixed By default, returns a full pagination URL string for use in non-standard contexts (i.e. JavaScript)
+     * @return string By default, returns a full pagination URL string for use in non-standard contexts (i.e. JavaScript)
      * @link http://book.cakephp.org/3.0/en/views/helpers/paginator.html#generating-pagination-urls
      */
     public function generateUrl(array $options = [], $model = null, $full = false)
@@ -510,7 +510,7 @@ class PaginatorHelper extends Helper
     /**
      * Returns true if the given result set has the page number given by $page
      *
-     * @param string $model Optional model name. Uses the default if none is specified.
+     * @param string|null $model Optional model name. Uses the default if none is specified.
      * @param int $page The page number - if not set defaults to 1.
      * @return bool True if the given result set has the specified page number.
      * @link http://book.cakephp.org/3.0/en/views/helpers/paginator.html#checking-the-pagination-state

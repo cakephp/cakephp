@@ -33,7 +33,7 @@ class NumberHelper extends Helper
     /**
      * Default config for this class
      *
-     * @var mixed
+     * @var array
      */
     protected $_defaultConfig = [
         'engine' => 'Cake\I18n\Number'

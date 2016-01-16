@@ -502,13 +502,13 @@ class AuthComponent extends Component
     /**
      * Loads the authorization objects configured.
      *
-     * @return mixed Either null when authorize is empty, or the loaded authorization objects.
+     * @return array|null The loaded authorization objects, or null when authorize is empty.
      * @throws \Cake\Core\Exception\Exception
      */
     public function constructAuthorize()
     {
         if (empty($this->_config['authorize'])) {
-            return;
+            return null;
         }
         $this->_authorizeObjects = [];
         $authorize = Hash::normalize((array)$this->_config['authorize']);
@@ -782,7 +782,7 @@ class AuthComponent extends Component
     /**
      * Loads the configured authentication objects.
      *
-     * @return mixed either null on empty authenticate value, or an array of loaded objects.
+     * @return array|null The loaded authorization objects, or null on empty authenticate value.
      * @throws \Cake\Core\Exception\Exception
      */
     public function constructAuthenticate()
@@ -822,7 +822,7 @@ class AuthComponent extends Component
      * Get/set user record storage object.
      *
      * @param \Cake\Auth\Storage\StorageInterface|null $storage Sets provided
-     *   object as storage or if null returns configuread storage object.
+     *   object as storage or if null returns configured storage object.
      * @return \Cake\Auth\Storage\StorageInterface|null
      */
     public function storage(StorageInterface $storage = null)

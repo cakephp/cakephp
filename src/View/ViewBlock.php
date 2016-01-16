@@ -203,7 +203,7 @@ class ViewBlock
     /**
      * Get the name of the currently open block.
      *
-     * @return mixed Either null or the name of the last open block.
+     * @return string|null Either null or the name of the last open block.
      */
     public function active()
     {
