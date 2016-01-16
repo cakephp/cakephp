@@ -15,9 +15,23 @@
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Database\Schema\Table;
+use Cake\Database\Type;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+
+/**
+ * Mock class for testing baseType inheritance
+ *
+ */
+class FooType extends Type
+{
+
+    public function getBaseType()
+    {
+        return 'integer';
+    }
+}
 
 /**
  * Test case for Table
@@ -25,11 +39,21 @@ use Cake\TestSuite\TestCase;
 class TableTest extends TestCase
 {
 
-    public $fixtures = ['core.articles_tags', 'core.products', 'core.orders', 'core.tags'];
+    public $fixtures = ['core.articles_tags', 'core.orders', 'core.products', 'core.tags'];
+
+    protected $_map;
+
+    public function setUp()
+    {
+        $this->_map = Type::map();
+        parent::setUp();
+    }
 
     public function tearDown()
     {
         TableRegistry::clear();
+        Type::clear();
+        Type::map($this->_map);
         parent::tearDown();
     }
 
@@ -130,6 +154,41 @@ class TableTest extends TestCase
         $this->assertEquals('string', $table->columnType('title'));
         $table->columnType('title', 'json');
         $this->assertEquals('json', $table->columnType('title'));
+    }
+
+    /**
+     * Tests getting the baseType as configured when creating the column
+     *
+     * @return void
+     */
+    public function testBaseColumnType()
+    {
+        $table = new Table('articles');
+        $table->addColumn('title', [
+            'type' => 'json',
+            'baseType' => 'text',
+            'length' => 25,
+            'null' => false
+        ]);
+        $this->assertEquals('json', $table->columnType('title'));
+        $this->assertEquals('text', $table->baseColumnType('title'));
+    }
+
+    /**
+     * Tests getting the base type as it is retuned by the Type class
+     *
+     * @return void
+     */
+    public function testBaseColumnTypeInherited()
+    {
+        Type::map('foo', __NAMESPACE__ . '\FooType');
+        $table = new Table('articles');
+        $table->addColumn('thing', [
+            'type' => 'foo',
+            'null' => false
+        ]);
+        $this->assertEquals('foo', $table->columnType('thing'));
+        $this->assertEquals('integer', $table->baseColumnType('thing'));
     }
 
     /**
@@ -447,16 +506,16 @@ class TableTest extends TestCase
     public function testConstraintForeignKeyTwoColumns()
     {
         $table = TableRegistry::get('Orders');
-        $compositeConstraint = $table->schema()->constraint('product_id_fk');
+        $compositeConstraint = $table->schema()->constraint('product_category_fk');
         $expected = [
             'type' => 'foreign',
             'columns' => [
-                'product_id',
-                'product_category'
+                'product_category',
+                'product_id'
             ],
             'references' => [
                 'products',
-                ['id', 'category']
+                ['category', 'id']
             ],
             'update' => 'cascade',
             'delete' => 'cascade',
@@ -465,8 +524,8 @@ class TableTest extends TestCase
 
         $this->assertEquals($expected, $compositeConstraint);
 
-        $expectedSubstring = 'CONSTRAINT <product_id_fk> FOREIGN KEY \(<product_id>, <product_category>\)' .
-            ' REFERENCES <products> \(<id>, <category>\)';
+        $expectedSubstring = 'CONSTRAINT <product_category_fk> FOREIGN KEY \(<product_category>, <product_id>\)' .
+            ' REFERENCES <products> \(<category>, <id>\)';
 
         $this->assertQuotedQuery($expectedSubstring, $table->schema()->createSql(ConnectionManager::get('test'))[0]);
     }

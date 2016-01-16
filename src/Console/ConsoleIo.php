@@ -14,8 +14,6 @@
  */
 namespace Cake\Console;
 
-use Cake\Console\ConsoleInput;
-use Cake\Console\ConsoleOutput;
 use Cake\Log\Engine\ConsoleLog;
 use Cake\Log\Log;
 
@@ -49,6 +47,13 @@ class ConsoleIo
      * @var \Cake\Console\ConsoleInput
      */
     protected $_in;
+
+    /**
+     * The helper registry.
+     *
+     * @var \Cake\Console\HelperRegistry
+     */
+    protected $_helpers;
 
     /**
      * Output constant making verbose shells.
@@ -92,12 +97,15 @@ class ConsoleIo
      * @param \Cake\Console\ConsoleOutput|null $out A ConsoleOutput object for stdout.
      * @param \Cake\Console\ConsoleOutput|null $err A ConsoleOutput object for stderr.
      * @param \Cake\Console\ConsoleInput|null $in A ConsoleInput object for stdin.
+     * @param \Cake\Console\HelperRegistry|null $helpers A HelperRegistry instance
      */
-    public function __construct(ConsoleOutput $out = null, ConsoleOutput $err = null, ConsoleInput $in = null)
+    public function __construct(ConsoleOutput $out = null, ConsoleOutput $err = null, ConsoleInput $in = null, HelperRegistry $helpers = null)
     {
         $this->_out = $out ? $out : new ConsoleOutput('php://stdout');
         $this->_err = $err ? $err : new ConsoleOutput('php://stderr');
         $this->_in = $in ? $in : new ConsoleInput('php://stdin');
+        $this->_helpers = $helpers ? $helpers : new HelperRegistry();
+        $this->_helpers->setIo($this);
     }
 
     /**
@@ -154,7 +162,7 @@ class ConsoleIo
      * @param int $level The message's output level, see above.
      * @return int|bool Returns the number of bytes returned from writing to stdout.
      */
-    public function out($message = null, $newlines = 1, $level = ConsoleIo::NORMAL)
+    public function out($message = '', $newlines = 1, $level = ConsoleIo::NORMAL)
     {
         if ($level <= $this->_level) {
             $this->_lastWritten = $this->_out->write($message, $newlines);
@@ -204,7 +212,7 @@ class ConsoleIo
      * @param int $newlines Number of newlines to append
      * @return void
      */
-    public function err($message = null, $newlines = 1)
+    public function err($message = '', $newlines = 1)
     {
         $this->_err->write($message, $newlines);
     }
@@ -342,25 +350,50 @@ class ConsoleIo
      * If you don't wish all log output in stdout or stderr
      * through Cake's Log class, call this function with `$enable=false`.
      *
-     * @param bool $enable Whether you want loggers on or off.
+     * @param int|bool $enable Use a boolean to enable/toggle all logging. Use
+     *   one of the verbosity constants (self::VERBOSE, self::QUIET, self::NORMAL)
+     *   to control logging levels. VERBOSE enables debug logs, NORMAL does not include debug logs,
+     *   QUIET disables notice, info and debug logs.
      * @return void
      */
     public function setLoggers($enable)
     {
         Log::drop('stdout');
         Log::drop('stderr');
-        if (!$enable) {
+        if ($enable === false) {
             return;
         }
-        $stdout = new ConsoleLog([
-            'types' => ['notice', 'info', 'debug'],
-            'stream' => $this->_out
-        ]);
-        Log::config('stdout', ['engine' => $stdout]);
+        $outLevels = ['notice', 'info'];
+        if ($enable === static::VERBOSE || $enable === true) {
+            $outLevels[] = 'debug';
+        }
+        if ($enable !== static::QUIET) {
+            $stdout = new ConsoleLog([
+                'types' => $outLevels,
+                'stream' => $this->_out
+            ]);
+            Log::config('stdout', ['engine' => $stdout]);
+        }
         $stderr = new ConsoleLog([
             'types' => ['emergency', 'alert', 'critical', 'error', 'warning'],
             'stream' => $this->_err,
         ]);
         Log::config('stderr', ['engine' => $stderr]);
+    }
+
+    /**
+     * Render a Console Helper
+     *
+     * Create and render the output for a helper object. If the helper
+     * object has not already been loaded, it will be loaded and constructed.
+     *
+     * @param string $name The name of the helper to render
+     * @param array $settings Configuration data for the helper.
+     * @return \Cake\Console\Helper The created helper instance.
+     */
+    public function helper($name, array $settings = [])
+    {
+        $name = ucfirst($name);
+        return $this->_helpers->load($name, $settings);
     }
 }

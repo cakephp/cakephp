@@ -17,10 +17,9 @@ namespace Cake\ORM;
 use BadMethodCallException;
 use Cake\Core\App;
 use Cake\Core\ObjectRegistry;
-use Cake\Event\EventManagerTrait;
-use Cake\ORM\Behavior;
+use Cake\Event\EventDispatcherInterface;
+use Cake\Event\EventDispatcherTrait;
 use Cake\ORM\Exception\MissingBehaviorException;
-use Cake\ORM\Table;
 use LogicException;
 
 /**
@@ -29,10 +28,10 @@ use LogicException;
  *
  * This class also provides method for checking and dispatching behavior methods.
  */
-class BehaviorRegistry extends ObjectRegistry
+class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterface
 {
 
-    use EventManagerTrait;
+    use EventDispatcherTrait;
 
     /**
      * The table using this registry.
@@ -58,9 +57,22 @@ class BehaviorRegistry extends ObjectRegistry
     /**
      * Constructor
      *
-     * @param \Cake\ORM\Table $table The table this registry is attached to
+     * @param \Cake\ORM\Table|null $table The table this registry is attached to.
      */
-    public function __construct(Table $table)
+    public function __construct($table = null)
+    {
+        if ($table !== null) {
+            $this->setTable($table);
+        }
+    }
+
+    /**
+     * Attaches a table instance to this registry.
+     *
+     * @param \Cake\ORM\Table $table The table this registry is attached to.
+     * @return void
+     */
+    public function setTable(Table $table)
     {
         $this->_table = $table;
         $this->eventManager($table->eventManager());

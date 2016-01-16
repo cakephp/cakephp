@@ -1,6 +1,6 @@
 <?php
 /**
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -14,13 +14,19 @@
 namespace Cake\TestSuite;
 
 use Cake\Core\Configure;
+use Cake\Database\Exception as DatabaseException;
 use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\Stub\Response;
-use Cake\TestSuite\TestCase;
+use Cake\Utility\CookieCryptTrait;
 use Cake\Utility\Hash;
+use Cake\Utility\Security;
+use Cake\Utility\Text;
+use Cake\View\Helper\SecureFieldTokenTrait;
+use Exception;
+use PHPUnit_Exception;
 
 /**
  * A test case class intended to make integration tests of
@@ -34,6 +40,8 @@ use Cake\Utility\Hash;
  */
 abstract class IntegrationTestCase extends TestCase
 {
+    use CookieCryptTrait;
+    use SecureFieldTokenTrait;
 
     /**
      * The data used to build the next request.
@@ -99,6 +107,29 @@ abstract class IntegrationTestCase extends TestCase
     protected $_requestSession;
 
     /**
+     * Boolean flag for whether or not the request should have
+     * a SecurityComponent token added.
+     *
+     * @var bool
+     */
+    protected $_securityToken = false;
+
+    /**
+     * Boolean flag for whether or not the request should have
+     * a CSRF token added.
+     *
+     * @var bool
+     */
+    protected $_csrfToken = false;
+
+    /**
+     *
+     *
+     * @var null|string
+     */
+    protected $_cookieEncriptionKey = null;
+
+    /**
      * Clears the state used for requests.
      *
      * @return void
@@ -115,6 +146,33 @@ abstract class IntegrationTestCase extends TestCase
         $this->_viewName = null;
         $this->_layoutName = null;
         $this->_requestSession = null;
+        $this->_securityToken = false;
+        $this->_csrfToken = false;
+    }
+
+    /**
+     * Calling this method will enable a SecurityComponent
+     * compatible token to be added to request data. This
+     * lets you easily test actions protected by SecurityComponent.
+     *
+     * @return void
+     */
+    public function enableSecurityToken()
+    {
+        $this->_securityToken = true;
+    }
+
+    /**
+     * Calling this method will add a CSRF token to the request.
+     *
+     * Both the POST data and cookie will be populated when this option
+     * is enabled. The default parameter names will be used.
+     *
+     * @return void
+     */
+    public function enableCsrfToken()
+    {
+        $this->_csrfToken = true;
     }
 
     /**
@@ -168,6 +226,39 @@ abstract class IntegrationTestCase extends TestCase
     public function cookie($name, $value)
     {
         $this->_cookie[$name] = $value;
+    }
+
+    /**
+     * Returns the encryption key to be used.
+     *
+     * @return string
+     */
+    protected function _getCookieEncryptionKey()
+    {
+        if (isset($this->_cookieEncriptionKey)) {
+            return $this->_cookieEncriptionKey;
+        }
+        return Security::salt();
+    }
+
+    /**
+     * Sets a encrypted request cookie for future requests.
+     *
+     * The difference from cookie() is this encrypts the cookie
+     * value like the CookieComponent.
+     *
+     * @param string $name The cookie name to use.
+     * @param mixed $value The value of the cookie.
+     * @param string|bool $encrypt Encryption mode to use.
+     * @param string|null $key Encryption key used. Defaults
+     *   to Security.salt.
+     * @return void
+     * @see CookieCryptTrait::_encrypt
+     */
+    public function cookieEncrypted($name, $value, $encrypt = 'aes', $key = null)
+    {
+        $this->_cookieEncriptionKey = $key;
+        $this->_cookie[$name] = $this->_encrypt($value, $encrypt);
     }
 
     /**
@@ -273,9 +364,11 @@ abstract class IntegrationTestCase extends TestCase
             $dispatcher->dispatch($request, $response);
             $this->_requestSession = $request->session();
             $this->_response = $response;
-        } catch (\PHPUnit_Exception $e) {
+        } catch (PHPUnit_Exception $e) {
             throw $e;
-        } catch (\Exception $e) {
+        } catch (DatabaseException $e) {
+            throw $e;
+        } catch (Exception $e) {
             $this->_exception = $e;
             $this->_handleError($e);
         }
@@ -339,15 +432,18 @@ abstract class IntegrationTestCase extends TestCase
         ];
         $session = Session::create($sessionConfig);
         $session->write($this->_session);
-
         list ($url, $query) = $this->_url($url);
+
         $props = [
             'url' => $url,
-            'post' => $data,
+            'post' => $this->_addTokens($url, $data),
             'cookies' => $this->_cookie,
             'session' => $session,
             'query' => $query
         ];
+        if (is_string($data)) {
+            $props['input'] = $data;
+        }
         $env = [];
         if (isset($this->_request['headers'])) {
             foreach ($this->_request['headers'] as $k => $v) {
@@ -359,6 +455,34 @@ abstract class IntegrationTestCase extends TestCase
         $props['environment'] = $env;
         $props = Hash::merge($props, $this->_request);
         return new Request($props);
+    }
+
+    /**
+     * Add the CSRF and Security Component tokens if necessary.
+     *
+     * @param string $url The URL the form is being submitted on.
+     * @param array $data The request body data.
+     * @return array The request body with tokens added.
+     */
+    protected function _addTokens($url, $data)
+    {
+        if ($this->_securityToken === true) {
+            $keys = array_map(function ($field) {
+                return preg_replace('/(\.\d+)+$/', '', $field);
+            }, array_keys(Hash::flatten($data)));
+            $tokenData = $this->_buildFieldToken($url, array_unique($keys));
+            $data['_Token'] = $tokenData;
+        }
+
+        if ($this->_csrfToken === true) {
+            if (!isset($this->_cookie['csrfToken'])) {
+                $this->_cookie['csrfToken'] = Text::uuid();
+            }
+            if (!isset($data['_csrfToken'])) {
+                $data['_csrfToken'] = $this->_cookie['csrfToken'];
+            }
+        }
+        return $data;
     }
 
     /**
@@ -712,6 +836,33 @@ abstract class IntegrationTestCase extends TestCase
             $this->fail('Not response set, cannot assert cookies.');
         }
         $result = $this->_response->cookie($name);
+        $this->assertEquals($expected, $result['value'], 'Cookie data differs. ' . $message);
+    }
+
+    /**
+     * Asserts cookie values which are encrypted by the
+     * CookieComponent.
+     *
+     * The difference from assertCookie() is this decrypts the cookie
+     * value like the CookieComponent for this assertion.
+     *
+     * @param string $expected The expected contents.
+     * @param string $name The cookie name.
+     * @param string|bool $encrypt Encryption mode to use.
+     * @param string|null $key Encryption key used. Defaults
+     *   to Security.salt.
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     * @see CookieCryptTrait::_encrypt
+     */
+    public function assertCookieEncrypted($expected, $name, $encrypt = 'aes', $key = null, $message = '')
+    {
+        if (empty($this->_response)) {
+            $this->fail('Not response set, cannot assert cookies.');
+        }
+        $result = $this->_response->cookie($name);
+        $this->_cookieEncriptionKey = $key;
+        $result['value'] = $this->_decrypt($result['value'], $encrypt);
         $this->assertEquals($expected, $result['value'], 'Cookie data differs. ' . $message);
     }
 }

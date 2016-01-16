@@ -16,7 +16,6 @@ namespace Cake\Routing\Route;
 
 use Cake\Network\Response;
 use Cake\Routing\Router;
-use Cake\Routing\Route\Route;
 
 /**
  * Redirect route will perform an immediate redirect. Redirect routes
@@ -37,7 +36,7 @@ class RedirectRoute extends Route
     /**
      * The location to redirect to. Either a string or a CakePHP array URL.
      *
-     * @var mixed
+     * @var array|string
      */
     public $redirect;
 
@@ -59,10 +58,10 @@ class RedirectRoute extends Route
 
     /**
      * Parses a string URL into an array. Parsed URLs will result in an automatic
-     * redirection
+     * redirection.
      *
-     * @param string $url The URL to parse
-     * @return bool False on failure
+     * @param string $url The URL to parse.
+     * @return false|null False on failure, null otherwise.
      */
     public function parse($url)
     {
@@ -101,11 +100,11 @@ class RedirectRoute extends Route
     }
 
     /**
-     * There is no reverse routing redirection routes
+     * There is no reverse routing redirection routes.
      *
      * @param array $url Array of parameters to convert to a string.
      * @param array $context Array of request context parameters.
-     * @return mixed either false or a string url.
+     * @return bool Always false.
      */
     public function match(array $url, array $context = [])
     {

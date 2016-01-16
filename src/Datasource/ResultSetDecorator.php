@@ -15,7 +15,7 @@
 namespace Cake\Datasource;
 
 use Cake\Collection\Collection;
-use Cake\Datasource\ResultSetInterface;
+use Countable;
 
 /**
  * Generic ResultSet decorator. This will make any traversable object appear to
@@ -37,35 +37,10 @@ class ResultSetDecorator extends Collection implements ResultSetInterface
      */
     public function count()
     {
-        if ($this->getInnerIterator() instanceof \Countable) {
+        if ($this->getInnerIterator() instanceof Countable) {
             return $this->getInnerIterator()->count();
         }
 
         return count($this->toArray());
-    }
-
-    /**
-     * Serialize a resultset.
-     *
-     * Part of Serializable interface.
-     *
-     * @return string Serialized object
-     */
-    public function serialize()
-    {
-        return serialize($this->toArray());
-    }
-
-    /**
-     * Unserialize a resultset.
-     *
-     * Part of Serializable interface.
-     *
-     * @param string $serialized Serialized object
-     * @return void
-     */
-    public function unserialize($serialized)
-    {
-        parent::__construct(unserialize($serialized));
     }
 }

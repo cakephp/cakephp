@@ -2,7 +2,7 @@
 /**
  * JsonViewTest file
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -10,7 +10,7 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @since         2.1.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -108,15 +108,23 @@ class JsonViewTest extends TestCase
                 ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']],
                 false,
                 null,
-                json_encode(null)
+                null
             ],
 
             // Test render with True in _serialize.
             [
                 ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']],
                 true,
+                JSON_HEX_QUOT,
+                json_encode(['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']])
+            ],
+
+            // Test render with True in _serialize and single var
+            [
+                ['no' => 'nope'],
+                true,
                 null,
-                json_encode(null)
+                json_encode(['no' => 'nope'])
             ],
 
             // Test render with empty string in _serialize.
@@ -294,7 +302,6 @@ class JsonViewTest extends TestCase
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
         $Controller->name = 'Posts';
-        $Controller->viewPath = 'Posts';
 
         $data = [
             'User' => [
@@ -308,6 +315,7 @@ class JsonViewTest extends TestCase
         $Controller->set('user', $data);
         $Controller->viewClass = 'Json';
         $View = $Controller->createView();
+        $View->viewPath = $Controller->name;
         $output = $View->render('index');
 
         $expected = json_encode(['user' => 'fake', 'list' => ['item1', 'item2'], 'paging' => null]);

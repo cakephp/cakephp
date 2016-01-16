@@ -14,6 +14,11 @@
  */
 namespace Cake\Filesystem;
 
+use DirectoryIterator;
+use Exception;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+
 /**
  * Folder structure browser, lists folders and files.
  * Provides an Object interface for Common directory related tasks.
@@ -158,7 +163,7 @@ class Folder
      *   to false to get unsorted results.
      * @param array|bool $exceptions Either an array or boolean true will not grab dot files
      * @param bool $fullPath True returns the full path
-     * @return mixed Contents of current directory as an array, an empty array on failure
+     * @return array Contents of current directory as an array, an empty array on failure
      */
     public function read($sort = true, $exceptions = false, $fullPath = false)
     {
@@ -173,8 +178,8 @@ class Folder
         $skipHidden = isset($exceptions['.']) || $exceptions === true;
 
         try {
-            $iterator = new \DirectoryIterator($this->path);
-        } catch (\Exception $e) {
+            $iterator = new DirectoryIterator($this->path);
+        } catch (Exception $e) {
             return [$dirs, $files];
         }
 
@@ -182,12 +187,12 @@ class Folder
             if ($item->isDot()) {
                 continue;
             }
-            $name = $item->getFileName();
+            $name = $item->getFilename();
             if ($skipHidden && $name[0] === '.' || isset($exceptions[$name])) {
                 continue;
             }
             if ($fullPath) {
-                $name = $item->getPathName();
+                $name = $item->getPathname();
             }
             if ($item->isDir()) {
                 $dirs[] = $name;
@@ -281,7 +286,6 @@ class Folder
         if (empty($path)) {
             return false;
         }
-
         return $path[0] === '/' ||
             preg_match('/^[A-Z]:\\\\/i', $path) ||
             substr($path, 0, 2) === '\\\\' ||
@@ -296,12 +300,8 @@ class Folder
      */
     public static function isRegisteredStreamWrapper($path)
     {
-        if (preg_match('/^[A-Z]+(?=:\/\/)/i', $path, $matches) &&
-            in_array($matches[0], stream_get_wrappers())
-        ) {
-            return true;
-        }
-        return false;
+        return preg_match('/^[A-Z]+(?=:\/\/)/i', $path, $matches) &&
+            in_array($matches[0], stream_get_wrappers());
     }
 
     /**
@@ -451,7 +451,7 @@ class Folder
      * @param array|bool $exceptions Either an array of files/folder to exclude
      *   or boolean true to not grab dot files/folders
      * @param string|null $type either 'file' or 'dir'. Null returns both files and directories
-     * @return mixed array of nested directories and files in each directory
+     * @return array Array of nested directories and files in each directory
      */
     public function tree($path = null, $exceptions = false, $type = null)
     {
@@ -473,9 +473,9 @@ class Folder
         }
 
         try {
-            $directory = new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::KEY_AS_PATHNAME | \RecursiveDirectoryIterator::CURRENT_AS_SELF);
-            $iterator = new \RecursiveIteratorIterator($directory, \RecursiveIteratorIterator::SELF_FIRST);
-        } catch (\Exception $e) {
+            $directory = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::KEY_AS_PATHNAME | RecursiveDirectoryIterator::CURRENT_AS_SELF);
+            $iterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::SELF_FIRST);
+        } catch (Exception $e) {
             if ($type === null) {
                 return [[], []];
             }
@@ -610,9 +610,9 @@ class Folder
         $path = Folder::slashTerm($path);
         if (is_dir($path)) {
             try {
-                $directory = new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::CURRENT_AS_SELF);
-                $iterator = new \RecursiveIteratorIterator($directory, \RecursiveIteratorIterator::CHILD_FIRST);
-            } catch (\Exception $e) {
+                $directory = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::CURRENT_AS_SELF);
+                $iterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::CHILD_FIRST);
+            } catch (Exception $e) {
                 return false;
             }
 
@@ -753,10 +753,7 @@ class Folder
             return false;
         }
 
-        if (!empty($this->_errors)) {
-            return false;
-        }
-        return true;
+        return empty($this->_errors);
     }
 
     /**
@@ -829,13 +826,13 @@ class Folder
      */
     public function realpath($path)
     {
-        $path = str_replace('/', DIRECTORY_SEPARATOR, trim($path));
         if (strpos($path, '..') === false) {
             if (!Folder::isAbsolute($path)) {
                 $path = Folder::addPathElement($this->path, $path);
             }
             return $path;
         }
+        $path = str_replace('/', DIRECTORY_SEPARATOR, trim($path));
         $parts = explode(DIRECTORY_SEPARATOR, $path);
         $newparts = [];
         $newpath = '';

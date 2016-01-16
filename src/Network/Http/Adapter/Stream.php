@@ -182,7 +182,7 @@ class Stream
         if (is_array($content)) {
             $formData = new FormData();
             $formData->addMany($content);
-            $type = 'multipart/form-data; boundary="' . $formData->boundary() . '"';
+            $type = $formData->contentType();
             $request->header('Content-Type', $type);
             $this->_contextOptions['content'] = (string)$formData;
             return;
@@ -208,6 +208,9 @@ class Stream
         }
         if (isset($options['redirect'])) {
             $this->_contextOptions['max_redirects'] = (int)$options['redirect'];
+        }
+        if (isset($options['proxy']['proxy'])) {
+            $this->_contextOptions['proxy'] = $options['proxy']['proxy'];
         }
     }
 
@@ -266,8 +269,8 @@ class Stream
             throw new Exception('Connection timed out ' . $url);
         }
         $headers = $meta['wrapper_data'];
-        if (isset($meta['wrapper_type']) && $meta['wrapper_type'] === 'curl') {
-            $headers = $meta['wrapper_data']['headers'];
+        if (isset($headers['headers']) && is_array($headers['headers'])) {
+            $headers = $headers['headers'];
         }
         return $this->createResponses($headers, $content);
     }

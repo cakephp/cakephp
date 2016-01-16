@@ -71,7 +71,7 @@ class ClassLoader
      * Loads the class file for a given class name.
      *
      * @param string $class The fully-qualified class name.
-     * @return mixed The mapped file name on success, or boolean false on
+     * @return string|false The mapped file name on success, or boolean false on
      * failure.
      */
     public function loadClass($class)

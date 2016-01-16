@@ -192,6 +192,28 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the requirePresence method when passing a callback
+     *
+     * @return void
+     */
+    public function testRequirePresenceCallback()
+    {
+        $validator = new Validator;
+        $require = true;
+        $validator->requirePresence('title', function ($context) use (&$require) {
+            $this->assertEquals([], $context['data']);
+            $this->assertEquals([], $context['providers']);
+            $this->assertEquals('title', $context['field']);
+            $this->assertTrue($context['newRecord']);
+            return $require;
+        });
+        $this->assertTrue($validator->isPresenceRequired('title', true));
+
+        $require = false;
+        $this->assertFalse($validator->isPresenceRequired('title', true));
+    }
+
+    /**
      * Tests the isPresenceRequired method
      *
      * @return void
@@ -992,5 +1014,37 @@ class ValidatorTest extends TestCase
             '_useI18n' => true,
         ];
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests that the 'create' and 'update' modes are preserved when using
+     * nested validators
+     *
+     * @return void
+     */
+    public function testNestedValidatorCreate()
+    {
+        $validator = new Validator();
+        $inner = new Validator();
+        $inner->add('username', 'email', ['rule' => 'email', 'on' => 'create']);
+        $validator->addNested('user', $inner);
+        $this->assertNotEmpty($validator->errors(['user' => ['username' => 'example']], true));
+        $this->assertEmpty($validator->errors(['user' => ['username' => 'a']], false));
+    }
+
+    /**
+     * Tests that the 'create' and 'update' modes are preserved when using
+     * nested validators
+     *
+     * @return void
+     */
+    public function testNestedManyValidatorCreate()
+    {
+        $validator = new Validator();
+        $inner = new Validator();
+        $inner->add('username', 'email', ['rule' => 'email', 'on' => 'create']);
+        $validator->addNestedMany('user', $inner);
+        $this->assertNotEmpty($validator->errors(['user' => [['username' => 'example']]], true));
+        $this->assertEmpty($validator->errors(['user' => [['username' => 'a']]], false));
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -8,7 +8,7 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -213,6 +213,31 @@ class TestFixtureTest extends TestCase
     }
 
     /**
+     * test import fixture initialization
+     *
+     * @return void
+     */
+    public function testInitImportModel()
+    {
+        $fixture = new ImportsFixture();
+        $fixture->fields = $fixture->records = null;
+        $fixture->import = [
+            'model' => 'Posts',
+            'connection' => 'test',
+        ];
+        $fixture->init();
+
+        $expected = [
+            'id',
+            'author_id',
+            'title',
+            'body',
+            'published',
+        ];
+        $this->assertEquals($expected, $fixture->schema()->columns());
+    }
+
+    /**
      * test create method
      *
      * @return void
@@ -228,9 +253,11 @@ class TestFixtureTest extends TestCase
             ->will($this->returnValue(['sql', 'sql']));
         $fixture->schema($table);
 
-        $statement = $this->getMock('\PDOStatement', ['closeCursor']);
+        $statement = $this->getMock('\PDOStatement', ['execute', 'closeCursor']);
         $statement->expects($this->atLeastOnce())->method('closeCursor');
-        $db->expects($this->exactly(2))->method('execute')
+        $statement->expects($this->atLeastOnce())->method('execute');
+        $db->expects($this->exactly(2))
+            ->method('prepare')
             ->will($this->returnValue($statement));
         $this->assertTrue($fixture->create($db));
     }

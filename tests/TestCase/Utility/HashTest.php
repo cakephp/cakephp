@@ -14,6 +14,8 @@
  */
 namespace Cake\Test\TestCase\Utility;
 
+use ArrayObject;
+use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
 
@@ -148,6 +150,138 @@ class HashTest extends TestCase
      *
      * @return array
      */
+    public static function articleDataObject()
+    {
+        return new ArrayObject([
+            new Entity([
+                'Article' => new ArrayObject([
+                    'id' => '1',
+                    'user_id' => '1',
+                    'title' => 'First Article',
+                    'body' => 'First Article Body'
+                ]),
+                'User' => new ArrayObject([
+                    'id' => '1',
+                    'user' => 'mariano',
+                    'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+                ]),
+                'Comment' => new ArrayObject([
+                    new ArrayObject([
+                        'id' => '1',
+                        'article_id' => '1',
+                        'user_id' => '2',
+                        'comment' => 'First Comment for First Article',
+                    ]),
+                    new ArrayObject([
+                        'id' => '2',
+                        'article_id' => '1',
+                        'user_id' => '4',
+                        'comment' => 'Second Comment for First Article',
+                    ]),
+                ]),
+                'Tag' => new ArrayObject([
+                    new ArrayObject([
+                        'id' => '1',
+                        'tag' => 'tag1',
+                    ]),
+                    new ArrayObject([
+                        'id' => '2',
+                        'tag' => 'tag2',
+                    ])
+                ]),
+                'Deep' => new ArrayObject([
+                    'Nesting' => new ArrayObject([
+                        'test' => new ArrayObject([
+                            1 => 'foo',
+                            2 => new ArrayObject([
+                                'and' => new ArrayObject(['more' => 'stuff'])
+                            ])
+                        ])
+                    ])
+                ])
+            ]),
+            new ArrayObject([
+                'Article' => new ArrayObject([
+                    'id' => '2',
+                    'user_id' => '1',
+                    'title' => 'Second Article',
+                    'body' => 'Second Article Body',
+                    'published' => 'Y',
+                ]),
+                'User' => new ArrayObject([
+                    'id' => '2',
+                    'user' => 'mariano',
+                    'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+                ]),
+                'Comment' => new ArrayObject([]),
+                'Tag' => new ArrayObject([])
+            ]),
+            new ArrayObject([
+                'Article' => new ArrayObject([
+                    'id' => '3',
+                    'user_id' => '1',
+                    'title' => 'Third Article',
+                    'body' => 'Third Article Body',
+                ]),
+                'User' => new ArrayObject([
+                    'id' => '3',
+                    'user' => 'mariano',
+                    'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+                ]),
+                'Comment' => new ArrayObject([]),
+                'Tag' => new ArrayObject([])
+            ]),
+            new ArrayObject([
+                'Article' => new ArrayObject([
+                    'id' => '4',
+                    'user_id' => '1',
+                    'title' => 'Fourth Article',
+                    'body' => 'Fourth Article Body',
+                ]),
+                'User' => new ArrayObject([
+                    'id' => '4',
+                    'user' => 'mariano',
+                    'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+                ]),
+                'Comment' => new ArrayObject([]),
+                'Tag' => new ArrayObject([])
+            ]),
+            new ArrayObject([
+                'Article' => new ArrayObject([
+                    'id' => '5',
+                    'user_id' => '1',
+                    'title' => 'Fifth Article',
+                    'body' => 'Fifth Article Body',
+                ]),
+                'User' => new ArrayObject([
+                    'id' => '5',
+                    'user' => 'mariano',
+                    'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+                    ]),
+                'Comment' => new ArrayObject([]),
+                'Tag' => new ArrayObject([])
+            ])
+        ]);
+    }
+
+    /**
+     * Data provider
+     *
+     * @return array
+     */
+    public static function articleDataSets()
+    {
+        return [
+            [static::articleData()],
+            [static::articleDataObject()]
+        ];
+    }
+
+    /**
+     * Data provider
+     *
+     * @return array
+     */
     public static function userData()
     {
         return [
@@ -234,6 +368,42 @@ class HashTest extends TestCase
 
         $result = Hash::get($data, ['1', 'Article']);
         $this->assertEquals($data[1]['Article'], $result);
+
+        // Object which implements ArrayAccess
+        $nested = new ArrayObject([
+            'user' => 'bar'
+        ]);
+        $data = new ArrayObject([
+            'name' => 'foo',
+            'associated' => $nested
+        ]);
+
+        $return = Hash::get($data, 'name');
+        $this->assertEquals('foo', $return);
+
+        $return = Hash::get($data, 'associated');
+        $this->assertEquals($nested, $return);
+
+        $return = Hash::get($data, 'associated.user');
+        $this->assertEquals('bar', $return);
+
+        $return = Hash::get($data, 'non-existent');
+        $this->assertNull($return);
+
+        $data = ['a' => ['b' => ['c' => ['d' => 1]]]];
+        $this->assertEquals(1, Hash::get(new ArrayObject($data), 'a.b.c.d'));
+    }
+
+    /**
+     * Test get() for invalid $data type
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid data type, must be an array or \ArrayAccess instance.
+     * @return void
+     */
+    public function testGetInvalidData()
+    {
+        Hash::get('string', 'path');
     }
 
     /**
@@ -310,25 +480,16 @@ class HashTest extends TestCase
         $this->assertEquals($result, 4);
 
         $data = [
-            '1' => ['1.1' => '1.1.1'],
-            ['2' => ['2.1' => ['2.1.1' => ['2.1.1.1']]]],
-            '3' => ['3.1' => ['3.1.1' => '3.1.1.1']]
-        ];
-        $result = Hash::maxDimensions($data);
-        $this->assertEquals($result, 5);
-
-        $data = [
-            '1' => ['1.1' => '1.1.1'],
-            ['2' => ['2.1' => ['2.1.1' => ['2.1.1.1' => '2.1.1.1.1']]]],
-            '3' => ['3.1' => ['3.1.1' => '3.1.1.1']]
-        ];
-        $result = Hash::maxDimensions($data);
-        $this->assertEquals($result, 5);
-
-        $data = [
-            '1' => ['1.1' => '1.1.1'],
-            ['2' => ['2.1' => ['2.1.1' => ['2.1.1.1' => '2.1.1.1.1']]]],
-            '3' => ['3.1' => ['3.1.1' => '3.1.1.1']]
+           '1' => [
+               '1.1' => '1.1.1',
+               '1.2' => [
+                   '1.2.1' => [
+                       '1.2.1.1',
+                       ['1.2.2.1']
+                   ]
+               ]
+           ],
+           '2' => ['2.1' => '2.1.1']
         ];
         $result = Hash::maxDimensions($data);
         $this->assertEquals($result, 5);
@@ -720,14 +881,25 @@ class HashTest extends TestCase
     }
 
     /**
-     * Test simple paths.
+     * Test passing invalid argument type
      *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid data type, must be an array or \ArrayAccess instance.
      * @return void
      */
-    public function testExtractBasic()
+    public function testExtractInvalidArgument()
     {
-        $data = static::articleData();
+        Hash::extract('foo', '');
+    }
 
+    /**
+     * Test simple paths.
+     *
+     * @dataProvider articleDataSets
+     * @return void
+     */
+    public function testExtractBasic($data)
+    {
         $result = Hash::extract($data, '');
         $this->assertEquals($data, $result);
 
@@ -744,11 +916,11 @@ class HashTest extends TestCase
     /**
      * Test the {n} selector
      *
+     * @dataProvider articleDataSets
      * @return void
      */
-    public function testExtractNumericKey()
+    public function testExtractNumericKey($data)
     {
-        $data = static::articleData();
         $result = Hash::extract($data, '{n}.Article.title');
         $expected = [
             'First Article', 'Second Article',
@@ -789,6 +961,37 @@ class HashTest extends TestCase
         $result = Hash::extract($data, 'User.{n}.name');
         $expected = ['Neo', 'Morpheus'];
         $this->assertEquals($expected, $result);
+
+        $data = new ArrayObject([
+            'User' => new ArrayObject([
+                0 => new Entity([
+                    'id' => 4,
+                    'name' => 'Neo'
+                ]),
+                1 => new ArrayObject([
+                    'id' => 5,
+                    'name' => 'Morpheus'
+                ]),
+                'stringKey' => new ArrayObject([
+                    'name' => 'Fail'
+                ])
+            ])
+        ]);
+        $result = Hash::extract($data, 'User.{n}.name');
+        $this->assertEquals($expected, $result);
+
+        $data = [
+            0 => new Entity([
+                'id' => 4,
+                'name' => 'Neo'
+            ]),
+            'stringKey' => new ArrayObject([
+                'name' => 'Fail'
+            ])
+        ];
+        $result = Hash::extract($data, '{n}.name');
+        $expected = ['Neo'];
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -821,16 +1024,40 @@ class HashTest extends TestCase
         $result = Hash::extract($data, '{n}.User.name');
         $expected = ['John', 'Bob', 'Tony'];
         $this->assertEquals($expected, $result);
+
+        $data = new ArrayObject([
+            1 => new ArrayObject([
+                'User' => new ArrayObject([
+                    'id' => 1,
+                    'name' => 'John',
+                ])
+            ]),
+            2 => new ArrayObject([
+                'User' => new ArrayObject([
+                    'id' => 2,
+                    'name' => 'Bob',
+                ])
+            ]),
+            3 => new ArrayObject([
+                'User' => new ArrayObject([
+                    'id' => 3,
+                    'name' => 'Tony',
+                ])
+            ])
+        ]);
+        $result = Hash::extract($data, '{n}.User.name');
+        $expected = ['John', 'Bob', 'Tony'];
+        $this->assertEquals($expected, $result);
     }
 
     /**
      * Test the {s} selector.
      *
+     * @dataProvider articleDataSets
      * @return void
      */
-    public function testExtractStringKey()
+    public function testExtractStringKey($data)
     {
-        $data = static::articleData();
         $result = Hash::extract($data, '{n}.{s}.user');
         $expected = [
             'mariano',
@@ -870,17 +1097,35 @@ class HashTest extends TestCase
             'Ms. Bool',
         ];
         $this->assertEquals($expected, $result);
+
+        $data = new ArrayObject([
+            '02000009C5560001' => new ArrayObject(['name' => 'Mr. Alphanumeric']),
+            '2300000918020101' => new ArrayObject(['name' => 'Mr. Numeric']),
+            '390000096AB30001' => new ArrayObject(['name' => 'Mrs. Alphanumeric']),
+            'stuff' => new ArrayObject(['name' => 'Ms. Word']),
+            123 => new ArrayObject(['name' => 'Mr. Number']),
+            true => new ArrayObject(['name' => 'Ms. Bool']),
+        ]);
+        $result = Hash::extract($data, '{*}.name');
+        $expected = [
+            'Mr. Alphanumeric',
+            'Mr. Numeric',
+            'Mrs. Alphanumeric',
+            'Ms. Word',
+            'Mr. Number',
+            'Ms. Bool',
+        ];
+        $this->assertEquals($expected, $result);
     }
 
     /**
      * Test the attribute presense selector.
      *
+     * @dataProvider articleDataSets
      * @return void
      */
-    public function testExtractAttributePresence()
+    public function testExtractAttributePresence($data)
     {
-        $data = static::articleData();
-
         $result = Hash::extract($data, '{n}.Article[published]');
         $expected = [$data[1]['Article']];
         $this->assertEquals($expected, $result);
@@ -893,12 +1138,11 @@ class HashTest extends TestCase
     /**
      * Test = and != operators.
      *
+     * @dataProvider articleDataSets
      * @return void
      */
-    public function testExtractAttributeEquality()
+    public function testExtractAttributeEquality($data)
     {
-        $data = static::articleData();
-
         $result = Hash::extract($data, '{n}.Article[id=3]');
         $expected = [$data[2]['Article']];
         $this->assertEquals($expected, $result);
@@ -921,7 +1165,7 @@ class HashTest extends TestCase
      */
     public function testExtractAttributeBoolean()
     {
-        $users = [
+        $usersArray = [
             [
                 'id' => 2,
                 'username' => 'johndoe',
@@ -938,23 +1182,44 @@ class HashTest extends TestCase
                 'active' => false
             ],
         ];
-        $result = Hash::extract($users, '{n}[active=0]');
-        $this->assertCount(1, $result);
-        $this->assertEquals($users[2], $result[0]);
 
-        $result = Hash::extract($users, '{n}[active=false]');
-        $this->assertCount(1, $result);
-        $this->assertEquals($users[2], $result[0]);
+        $usersObject = new ArrayObject([
+            new ArrayObject([
+                'id' => 2,
+                'username' => 'johndoe',
+                'active' => true
+            ]),
+            new ArrayObject([
+                'id' => 5,
+                'username' => 'kevin',
+                'active' => true
+            ]),
+            new ArrayObject([
+                'id' => 9,
+                'username' => 'samantha',
+                'active' => false
+            ]),
+        ]);
 
-        $result = Hash::extract($users, '{n}[active=1]');
-        $this->assertCount(2, $result);
-        $this->assertEquals($users[0], $result[0]);
-        $this->assertEquals($users[1], $result[1]);
+        foreach ([$usersArray, $usersObject] as $users) {
+            $result = Hash::extract($users, '{n}[active=0]');
+            $this->assertCount(1, $result);
+            $this->assertEquals($users[2], $result[0]);
 
-        $result = Hash::extract($users, '{n}[active=true]');
-        $this->assertCount(2, $result);
-        $this->assertEquals($users[0], $result[0]);
-        $this->assertEquals($users[1], $result[1]);
+            $result = Hash::extract($users, '{n}[active=false]');
+            $this->assertCount(1, $result);
+            $this->assertEquals($users[2], $result[0]);
+
+            $result = Hash::extract($users, '{n}[active=1]');
+            $this->assertCount(2, $result);
+            $this->assertEquals($users[0], $result[0]);
+            $this->assertEquals($users[1], $result[1]);
+
+            $result = Hash::extract($users, '{n}[active=true]');
+            $this->assertCount(2, $result);
+            $this->assertEquals($users[0], $result[0]);
+            $this->assertEquals($users[1], $result[1]);
+        }
     }
 
     /**
@@ -964,29 +1229,37 @@ class HashTest extends TestCase
      */
     public function testExtractAttributeEqualityOnScalarValue()
     {
-        $data = [
+        $dataArray = [
             'Entity' => [
                 'id' => 1,
                 'data1' => 'value',
             ]
         ];
-        $result = Hash::extract($data, 'Entity[id=1].data1');
-        $this->assertEquals(['value'], $result);
+        $dataObject = new ArrayObject([
+            'Entity' => new ArrayObject([
+                'id' => 1,
+                'data1' => 'value',
+            ])
+        ]);
 
-        $data = ['Entity' => false ];
-        $result = Hash::extract($data, 'Entity[id=1].data1');
-        $this->assertEquals([], $result);
+        foreach ([$dataArray, $dataObject] as $data) {
+            $result = Hash::extract($data, 'Entity[id=1].data1');
+            $this->assertEquals(['value'], $result);
+
+            $data = ['Entity' => false];
+            $result = Hash::extract($data, 'Entity[id=1].data1');
+            $this->assertEquals([], $result);
+        }
     }
 
     /**
      * Test comparison operators.
      *
+     * @dataProvider articleDataSets
      * @return void
      */
-    public function testExtractAttributeComparison()
+    public function testExtractAttributeComparison($data)
     {
-        $data = static::articleData();
-
         $result = Hash::extract($data, '{n}.Comment.{n}[user_id > 2]');
         $expected = [$data[0]['Comment'][1]];
         $this->assertEquals($expected, $result);
@@ -1011,12 +1284,11 @@ class HashTest extends TestCase
     /**
      * Test multiple attributes with conditions.
      *
+     * @dataProvider articleDataSets
      * @return void
      */
-    public function testExtractAttributeMultiple()
+    public function testExtractAttributeMultiple($data)
     {
-        $data = static::articleData();
-
         $result = Hash::extract($data, '{n}.Comment.{n}[user_id > 2][id=1]');
         $this->assertEmpty($result);
 
@@ -1029,12 +1301,11 @@ class HashTest extends TestCase
     /**
      * Test attribute pattern matching.
      *
+     * @dataProvider articleDataSets
      * @return void
      */
-    public function testExtractAttributePattern()
+    public function testExtractAttributePattern($data)
     {
-        $data = static::articleData();
-
         $result = Hash::extract($data, '{n}.Article[title=/^First/]');
         $expected = [$data[0]['Article']];
         $this->assertEquals($expected, $result);
@@ -1068,6 +1339,16 @@ class HashTest extends TestCase
             ],
         ];
         $this->assertEquals($expected, $result);
+
+        $data = new ArrayObject([
+            'Country' => new ArrayObject([
+                ['name' => 'Canada'],
+                ['name' => 'Australia'],
+                ['name' => null],
+            ])
+        ]);
+        $result = Hash::extract($data, 'Country.{n}[name=/Canada|^$/]');
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -1092,6 +1373,21 @@ class HashTest extends TestCase
             Hash::extract($data, 'Level1.Level2bis')
         );
 
+        $data = new ArrayObject([
+            'Level1' => new ArrayObject([
+                'Level2' => ['test1', 'test2'],
+                'Level2bis' => ['test3', 'test4']
+            ])
+        ]);
+        $this->assertEquals(
+            ['test1', 'test2'],
+            Hash::extract($data, 'Level1.Level2')
+        );
+        $this->assertEquals(
+            ['test3', 'test4'],
+            Hash::extract($data, 'Level1.Level2bis')
+        );
+
         $data = [
             'Level1' => [
                 'Level2bis' => [
@@ -1104,6 +1400,19 @@ class HashTest extends TestCase
             ['test3', 'test4'],
             ['test5', 'test6']
         ];
+        $this->assertEquals($expected, Hash::extract($data, 'Level1.Level2bis'));
+
+        $data['Level1']['Level2'] = ['test1', 'test2'];
+        $this->assertEquals($expected, Hash::extract($data, 'Level1.Level2bis'));
+
+        $data = new ArrayObject([
+            'Level1' => new ArrayObject([
+                'Level2bis' => [
+                    ['test3', 'test4'],
+                    ['test5', 'test6']
+                ]
+            ])
+        ]);
         $this->assertEquals($expected, Hash::extract($data, 'Level1.Level2bis'));
 
         $data['Level1']['Level2'] = ['test1', 'test2'];
@@ -1418,6 +1727,53 @@ class HashTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+
+    /**
+     * test sorting with string ignoring case.
+     *
+     * @return void
+     */
+    public function testSortStringIgnoreCase()
+    {
+        $toSort = [
+            ['Item' => ['name' => 'bar']],
+            ['Item' => ['name' => 'Baby']],
+            ['Item' => ['name' => 'Baz']],
+            ['Item' => ['name' => 'bat']],
+        ];
+        $sorted = Hash::sort($toSort, '{n}.Item.name', 'asc', ['type' => 'string', 'ignoreCase' => true]);
+        $expected = [
+            ['Item' => ['name' => 'Baby']],
+            ['Item' => ['name' => 'bar']],
+            ['Item' => ['name' => 'bat']],
+            ['Item' => ['name' => 'Baz']],
+        ];
+        $this->assertEquals($expected, $sorted);
+    }
+
+    /**
+     * test regular sorting ignoring case.
+     *
+     * @return void
+     */
+    public function testSortRegularIgnoreCase()
+    {
+        $toSort = [
+            ['Item' => ['name' => 'bar']],
+            ['Item' => ['name' => 'Baby']],
+            ['Item' => ['name' => 'Baz']],
+            ['Item' => ['name' => 'bat']],
+        ];
+        $sorted = Hash::sort($toSort, '{n}.Item.name', 'asc', ['type' => 'regular', 'ignoreCase' => true]);
+        $expected = [
+            ['Item' => ['name' => 'Baby']],
+            ['Item' => ['name' => 'bar']],
+            ['Item' => ['name' => 'bat']],
+            ['Item' => ['name' => 'Baz']],
+        ];
+        $this->assertEquals($expected, $sorted);
+    }
+
     /**
      * Test insert()
      *
@@ -1482,6 +1838,17 @@ class HashTest extends TestCase
             1 => ['Item' => ['id' => 2, 'title' => 'second', 'test' => 2]],
             2 => ['Item' => ['id' => 3, 'title' => 'third']],
             3 => ['Item' => ['id' => 4, 'title' => 'fourth', 'test' => 2]],
+            4 => ['Item' => ['id' => 5, 'title' => 'fifth']],
+        ];
+        $this->assertEquals($expected, $result);
+
+        $data[3]['testable'] = true;
+        $result = Hash::insert($data, '{n}[testable].Item[id=/\b2|\b4/].test', 2);
+        $expected = [
+            0 => ['Item' => ['id' => 1, 'title' => 'first']],
+            1 => ['Item' => ['id' => 2, 'title' => 'second']],
+            2 => ['Item' => ['id' => 3, 'title' => 'third']],
+            3 => ['Item' => ['id' => 4, 'title' => 'fourth', 'test' => 2], 'testable' => true],
             4 => ['Item' => ['id' => 5, 'title' => 'fifth']],
         ];
         $this->assertEquals($expected, $result);
@@ -1612,6 +1979,17 @@ class HashTest extends TestCase
         $expected = [
             0 => ['Item' => ['id' => 1, 'title' => 'first']],
             2 => ['Item' => ['id' => 3, 'title' => 'third']],
+            4 => ['Item' => ['id' => 5, 'title' => 'fifth']],
+        ];
+        $this->assertEquals($expected, $result);
+
+        $data[3]['testable'] = true;
+        $result = Hash::remove($data, '{n}[testable].Item[id=/\b2|\b4/].title');
+        $expected = [
+            0 => ['Item' => ['id' => 1, 'title' => 'first']],
+            1 => ['Item' => ['id' => 2, 'title' => 'second']],
+            2 => ['Item' => ['id' => 3, 'title' => 'third']],
+            3 => ['Item' => ['id' => 4], 'testable' => true],
             4 => ['Item' => ['id' => 5, 'title' => 'fifth']],
         ];
         $this->assertEquals($expected, $result);

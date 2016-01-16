@@ -1,6 +1,6 @@
 <?php
 /**
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -8,7 +8,7 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -21,6 +21,7 @@ use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestCase;
 use Cake\Test\Fixture\AssertIntegrationTestCase;
+use Cake\Utility\Security;
 
 /**
  * Self test of the IntegrationTestCase
@@ -66,10 +67,68 @@ class IntegrationTestCaseTest extends IntegrationTestCase
 
         $this->assertEquals('abc123', $request->header('X-CSRF-Token'));
         $this->assertEquals('tasks/add', $request->url);
-        $this->assertEquals(['split_token' => 'def345'], $request->cookies);
+        $this->assertArrayHasKey('split_token', $request->cookies);
+        $this->assertEquals('def345', $request->cookies['split_token']);
         $this->assertEquals(['id' => '1', 'username' => 'mark'], $request->session()->read('User'));
         $this->assertEquals('foo', $request->env('PHP_AUTH_USER'));
         $this->assertEquals('bar', $request->env('PHP_AUTH_PW'));
+    }
+
+    /**
+     * Test request building adds csrf tokens
+     *
+     * @return void
+     */
+    public function testRequestBuildingCsrfTokens()
+    {
+        $this->enableCsrfToken();
+        $request = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
+
+        $this->assertArrayHasKey('csrfToken', $request->cookies);
+        $this->assertArrayHasKey('_csrfToken', $request->data);
+        $this->assertSame($request->cookies['csrfToken'], $request->data['_csrfToken']);
+
+        $this->cookie('csrfToken', '');
+        $request = $this->_buildRequest('/tasks/add', 'POST', [
+            '_csrfToken' => 'fale',
+            'title' => 'First post'
+        ]);
+
+        $this->assertSame('', $request->cookies['csrfToken']);
+        $this->assertSame('fale', $request->data['_csrfToken']);
+    }
+
+    /**
+     * Test multiple actions using CSRF tokens don't fail
+     *
+     * @return void
+     */
+    public function testEnableCsrfMultipleRequests()
+    {
+        $this->enableCsrfToken();
+        $first = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
+        $second = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'Second post']);
+        $this->assertSame($first->cookies['csrfToken'], $second->data['_csrfToken'], 'Csrf token should match cookie');
+        $this->assertSame(
+            $first->data['_csrfToken'],
+            $second->data['_csrfToken'],
+            'Tokens should be consistent per test method'
+        );
+    }
+
+    /**
+     * Test pre-determined CSRF tokens.
+     *
+     * @return void
+     */
+    public function testEnableCsrfPredeterminedCookie()
+    {
+        $this->enableCsrfToken();
+        $value = 'I am a teapot';
+        $this->cookie('csrfToken', $value);
+        $request = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
+        $this->assertSame($value, $request->cookies['csrfToken'], 'Csrf token should match cookie');
+        $this->assertSame($value, $request->data['_csrfToken'], 'Tokens should match');
     }
 
     /**
@@ -83,6 +142,19 @@ class IntegrationTestCaseTest extends IntegrationTestCase
 
         $this->assertEquals('/tasks/view?archived=yes', $request->here());
         $this->assertEquals('yes', $request->query('archived'));
+    }
+
+    /**
+     * Test cookie encrypted
+     *
+     * @see CookieComponentControllerTest
+     */
+    public function testCookieEncrypted()
+    {
+        Security::salt('abcdabcdabcdabcdabcdabcdabcdabcdabcd');
+        $this->cookieEncrypted('KeyOfCookie', 'Encrypted with aes by default');
+        $request = $this->_buildRequest('/tasks/view', 'GET', []);
+        $this->assertStringStartsWith('Q2FrZQ==.', $request->cookies['KeyOfCookie']);
     }
 
     /**
@@ -150,7 +222,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     {
         $this->post('/posts/index');
 
-        $this->assertSession('An error message', 'Flash.flash.message');
+        $this->assertSession('An error message', 'Flash.flash.0.message');
         $this->assertCookie(1, 'remember_me');
     }
 
@@ -165,6 +237,58 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->assertResponseNotEmpty();
         $this->assertResponseContains('Not there or here');
         $this->assertResponseContains('<!DOCTYPE html>');
+    }
+
+    /**
+     * Test posting to a secured form action.
+     *
+     * @return void
+     */
+    public function testPostSecuredForm()
+    {
+        $this->enableSecurityToken();
+        $data = [
+            'title' => 'Some title',
+            'body' => 'Some text'
+        ];
+        $this->post('/posts/securePost', $data);
+        $this->assertResponseOk();
+        $this->assertResponseContains('Request was accepted');
+    }
+
+    /**
+     * Test posting to a secured form action with nested data.
+     *
+     * @return void
+     */
+    public function testPostSecuredFormNestedData()
+    {
+        $this->enableSecurityToken();
+        $data = [
+            'title' => 'New post',
+            'comments' => [
+                ['comment' => 'A new comment']
+            ],
+            'tags' => ['_ids' => [1, 2, 3, 4]]
+        ];
+        $this->post('/posts/securePost', $data);
+        $this->assertResponseOk();
+        $this->assertResponseContains('Request was accepted');
+    }
+
+    /**
+     * Test posting to a secured form action action.
+     *
+     * @return void
+     */
+    public function testPostSecuredFormFailure()
+    {
+        $data = [
+            'title' => 'Some title',
+            'body' => 'Some text'
+        ];
+        $this->post('/posts/securePost', $data);
+        $this->assertResponseError();
     }
 
     /**

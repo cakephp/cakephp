@@ -15,8 +15,6 @@
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
-use Cake\Database\Expression\FieldInterface;
-use Cake\Database\Expression\FieldTrait;
 use Cake\Database\ValueBinder;
 
 /**
@@ -85,7 +83,7 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
         }
 
         foreach ($parts as $name => $part) {
-            if ($field instanceof ExpressionInterface) {
+            if ($part instanceof ExpressionInterface) {
                 $parts[$name] = $part->sql($generator);
                 continue;
             }
@@ -121,5 +119,19 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
         $placeholder = $generator->placeholder('c');
         $generator->bind($placeholder, $value, $type);
         return $placeholder;
+    }
+
+    /**
+     * Do a deep clone of this expression.
+     *
+     * @return void
+     */
+    public function __clone()
+    {
+        foreach (['_field', '_from', '_to'] as $part) {
+            if ($this->{$part} instanceof ExpressionInterface) {
+                $this->{$part} = clone $this->{$part};
+            }
+        }
     }
 }

@@ -116,7 +116,7 @@ class Route
      * Get/Set the supported extensions for this route.
      *
      * @param null|string|array $extensions The extensions to set. Use null to get.
-     * @return array|void The extensions or null.
+     * @return array|null The extensions or null.
      */
     public function extensions($extensions = null)
     {
@@ -257,7 +257,7 @@ class Route
      * false will be returned. String URLs are parsed if they match a routes regular expression.
      *
      * @param string $url The URL to attempt to parse.
-     * @return array|false Boolean false on failure, otherwise an array of parameters.
+     * @return array|false An array of request parameters, or false on failure.
      */
     public function parse($url)
     {
@@ -406,7 +406,7 @@ class Route
      * @param array $context An array of the current request context.
      *   Contains information such as the current host, scheme, port, base
      *   directory and other url params.
-     * @return mixed Either a string url for the parameters if they match or false.
+     * @return string|false Either a string URL for the parameters if they match or false.
      */
     public function match(array $url, array $context = [])
     {
@@ -646,7 +646,7 @@ class Route
      * router caching.
      *
      * @param array $fields Key/Value of object attributes
-     * @return CakeRoute A new instance of the route
+     * @return \Cake\Routing\Route\Route A new instance of the route
      */
     public static function __set_state($fields)
     {

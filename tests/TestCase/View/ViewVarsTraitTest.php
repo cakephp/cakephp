@@ -13,6 +13,7 @@
  */
 namespace Cake\Test\TestCase\View;
 
+use Cake\Controller\Controller;
 use Cake\TestSuite\TestCase;
 use Cake\View\ViewVarsTrait;
 
@@ -32,7 +33,7 @@ class ViewVarsTraitTest extends TestCase
     {
         parent::setUp();
 
-        $this->subject = $this->getObjectForTrait('Cake\View\ViewVarsTrait');
+        $this->subject = new Controller;
     }
 
     /**
@@ -100,7 +101,7 @@ class ViewVarsTraitTest extends TestCase
         $option = 'newOption';
         $this->subject->viewOptions($option);
 
-        $this->assertContains($option, $this->subject->_validViewOptions);
+        $this->assertContains($option, $this->subject->viewOptions());
     }
 
     /**
@@ -110,7 +111,7 @@ class ViewVarsTraitTest extends TestCase
      */
     public function testAddTwoViewOption()
     {
-        $this->subject->_validViewOptions = ['oldOption'];
+        $this->subject->viewOptions(['oldOption'], false);
         $option = ['newOption', 'anotherOption'];
         $result = $this->subject->viewOptions($option);
         $expects = ['oldOption', 'newOption', 'anotherOption'];
@@ -120,26 +121,26 @@ class ViewVarsTraitTest extends TestCase
     }
 
     /**
-     * test empty params reads _validViewOptions.
+     * test empty params reads _viewOptions.
      *
      * @return void
      */
     public function testReadingViewOptions()
     {
-        $expected = $this->subject->_validViewOptions = ['one', 'two', 'three'];
+        $expected = $this->subject->viewOptions(['one', 'two', 'three'], false);
         $result = $this->subject->viewOptions();
 
         $this->assertEquals($expected, $result);
     }
 
     /**
-     * test setting $merge `false` overrides currect options.
+     * test setting $merge `false` overrides correct options.
      *
      * @return void
      */
     public function testMergeFalseViewOptions()
     {
-        $this->subject->_validViewOptions = ['one', 'two', 'three'];
+        $this->subject->viewOptions(['one', 'two', 'three'], false);
         $expected = ['four', 'five', 'six'];
         $result = $this->subject->viewOptions($expected, false);
 
@@ -147,28 +148,45 @@ class ViewVarsTraitTest extends TestCase
     }
 
     /**
-     * test _validViewOptions is undefined and $opts is null, an empty array is returned.
+     * test _viewOptions is undefined and $opts is null, an empty array is returned.
      *
      * @return void
      */
     public function testUndefinedValidViewOptions()
     {
-        $result = $this->subject->viewOptions();
+        $result = $this->subject->viewOptions([], false);
 
         $this->assertTrue(is_array($result));
         $this->assertTrue(empty($result));
     }
 
     /**
-     * test getView() throws exception if view class cannot be found
+     * test that createView() updates viewVars of View instance on each call.
      *
-     * @expectedException \Cake\View\Exception\MissingViewException
-     * @expectedExceptionMessage View class "Foo" is missing.
      * @return void
      */
-    public function testGetViewException()
+    public function testUptoDateViewVars()
     {
-        $this->subject->getView('Foo');
+        $expected = ['one' => 'one'];
+        $this->subject->set($expected);
+        $this->assertEquals($expected, $this->subject->createView()->viewVars);
+
+        $expected = ['one' => 'one', 'two' => 'two'];
+        $this->subject->set($expected);
+        $this->assertEquals($expected, $this->subject->createView()->viewVars);
+    }
+
+    /**
+     * test that options are passed to the view builder when using createView().
+     *
+     * @return void
+     */
+    public function testViewOptionsGetsToBuilder()
+    {
+        $this->subject->passedArgs = 'test';
+        $this->subject->createView();
+        $result = $this->subject->viewbuilder()->options();
+        $this->assertEquals(['passedArgs' => 'test'], $result);
     }
 
     /**
@@ -180,6 +198,6 @@ class ViewVarsTraitTest extends TestCase
      */
     public function testCreateViewException()
     {
-        $this->subject->getView('Foo');
+        $this->subject->createView('Foo');
     }
 }

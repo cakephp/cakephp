@@ -17,6 +17,8 @@ namespace Cake\Network;
 use Cake\Core\Configure;
 use Cake\Filesystem\File;
 use Cake\Network\Exception\NotFoundException;
+use DateTime;
+use DateTimeZone;
 use InvalidArgumentException;
 
 /**
@@ -123,6 +125,7 @@ class Response
         'ips' => 'application/x-ipscript',
         'ipx' => 'application/x-ipix',
         'js' => 'application/javascript',
+        'jsonapi' => 'application/vnd.api+json',
         'latex' => 'application/x-latex',
         'lha' => 'application/octet-stream',
         'lsp' => 'application/x-lisp',
@@ -335,7 +338,7 @@ class Response
     protected $_headers = [];
 
     /**
-     * Buffer string for response message
+     * Buffer string or callable for response message
      *
      * @var string
      */
@@ -539,11 +542,19 @@ class Response
     /**
      * Sends a content string to the client.
      *
-     * @param string $content string to send as response body
+     * If the content is a callable, it is invoked. The callable should either
+     * return a string or output content directly and have no return value.
+     *
+     * @param string|callable $content String to send as response body or callable
+     *  which returns/outputs content.
      * @return void
      */
     protected function _sendContent($content)
     {
+        if (!is_string($content) && is_callable($content)) {
+            $content = $content();
+        }
+
         echo $content;
     }
 
@@ -629,7 +640,7 @@ class Response
      * Buffers the response message to be sent
      * if $content is null the current buffer is returned
      *
-     * @param string|null $content the string message to be sent
+     * @param string|callable|null $content the string or callable message to be sent
      * @return string Current message buffer if $content param is passed as null
      */
     public function body($content = null)
@@ -786,7 +797,7 @@ class Response
      * e.g `mapType('application/pdf'); // returns 'pdf'`
      *
      * @param string|array $ctype Either a string content type to map, or an array of types.
-     * @return mixed Aliases for the types provided.
+     * @return string|array|null Aliases for the types provided.
      */
     public function mapType($ctype)
     {
@@ -872,7 +883,7 @@ class Response
             if (!$public && !$private && !$noCache) {
                 return null;
             }
-            $sharable = $public || ! ($private || $noCache);
+            $sharable = $public || !($private || $noCache);
             return $sharable;
         }
         if ($public) {
@@ -1111,14 +1122,14 @@ class Response
      */
     protected function _getUTCDate($time = null)
     {
-        if ($time instanceof \DateTime) {
+        if ($time instanceof DateTime) {
             $result = clone $time;
         } elseif (is_int($time)) {
-            $result = new \DateTime(date('Y-m-d H:i:s', $time));
+            $result = new DateTime(date('Y-m-d H:i:s', $time));
         } else {
-            $result = new \DateTime($time);
+            $result = new DateTime($time);
         }
-        $result->setTimeZone(new \DateTimeZone('UTC'));
+        $result->setTimeZone(new DateTimeZone('UTC'));
         return $result;
     }
 
@@ -1228,11 +1239,15 @@ class Response
     /**
      * String conversion. Fetches the response body as a string.
      * Does *not* send headers.
+     * If body is a callable, a blank string is returned.
      *
      * @return string
      */
     public function __toString()
     {
+        if (!is_string($this->_body) && is_callable($this->_body)) {
+            return '';
+        }
         return (string)$this->_body;
     }
 
@@ -1375,9 +1390,9 @@ class Response
 
             $original = $preg = $domain;
             if (strpos($domain, '://') === false) {
-                $preg = ($requestIsSSL ? 'https://' : 'http://') . $domain;
+                $domain = ($requestIsSSL ? 'https://' : 'http://') . $domain;
             }
-            $preg = '@' . str_replace('*', '.*', $domain) . '@';
+            $preg = '@^' . str_replace('\*', '.*', preg_quote($domain, '@')) . '$@';
             $result[] = compact('original', 'preg');
         }
         return $result;
@@ -1407,7 +1422,7 @@ class Response
             'download' => null
         ];
 
-        if (strpos($path, '..') !== false) {
+        if (strpos($path, '../') !== false || strpos($path, '..\\') !== false) {
             throw new NotFoundException('The requested file contains `..` and will not be read.');
         }
 

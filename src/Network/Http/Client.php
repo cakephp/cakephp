@@ -16,8 +16,6 @@ namespace Cake\Network\Http;
 use Cake\Core\App;
 use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Network\Http\CookieCollection;
-use Cake\Network\Http\Request;
 use Cake\Utility\Hash;
 
 /**
@@ -55,7 +53,9 @@ use Cake\Utility\Hash;
  * ### Sending request bodies
  *
  * By default any POST/PUT/PATCH/DELETE request with $data will
- * send their data as `multipart/form-data`.
+ * send their data as `application/x-www-form-urlencoded` unless
+ * there are attached files. In that case `multipart/form-data`
+ * will be used.
  *
  * When sending request bodies you can use the `type` option to
  * set the Content-Type for the request:

@@ -14,9 +14,9 @@
  */
 namespace Cake\Database\Dialect;
 
-use Cake\Database\Dialect\TupleComparisonTranslatorTrait;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Schema\SqliteSchema;
 use Cake\Database\SqlDialectTrait;
 use Cake\Database\SqliteCompiler;
 
@@ -51,6 +51,21 @@ trait SqliteDialectTrait
      * @var \Cake\Database\Schema\SqliteSchema
      */
     protected $_schemaDialect;
+
+    /**
+     * Mapping of date parts.
+     *
+     * @var array
+     */
+    protected $_dateParts = [
+        'day' => 'd',
+        'hour' => 'H',
+        'month' => 'm',
+        'minute' => 'M',
+        'second' => 'S',
+        'week' => 'W',
+        'year' => 'Y'
+    ];
 
     /**
      * Returns a dictionary of expressions to be transformed when compiling a Query
@@ -98,6 +113,38 @@ trait SqliteDialectTrait
                 break;
             case 'CURRENT_TIME':
                 $expression->name('TIME')->add(["'now'" => 'literal']);
+                break;
+            case 'EXTRACT':
+                $expression
+                    ->name('STRFTIME')
+                    ->type(' ,')
+                    ->iterateParts(function ($p, $key) {
+                        if ($key === 0) {
+                            $value = rtrim(strtolower($p), 's');
+                            if (isset($this->_dateParts[$value])) {
+                                $p = ['value' => '%' . $this->_dateParts[$value], 'type' => null];
+                            }
+                        }
+                        return $p;
+                    });
+                break;
+            case 'DATE_ADD':
+                $expression
+                    ->name('DATE')
+                    ->type(',')
+                    ->iterateParts(function ($p, $key) {
+                        if ($key === 1) {
+                            $p = ['value' => $p, 'type' => null];
+                        }
+                        return $p;
+                    });
+                break;
+            case 'DAYOFWEEK':
+                $expression
+                    ->name('STRFTIME')
+                    ->type(' ')
+                    ->add(["'%w', " => 'literal'], [], true)
+                    ->add([') + (1' => 'literal']); // Sqlite starts on index 0 but Sunday should be 1
                 break;
         }
     }
@@ -166,7 +213,7 @@ trait SqliteDialectTrait
     public function schemaDialect()
     {
         if (!$this->_schemaDialect) {
-            $this->_schemaDialect = new \Cake\Database\Schema\SqliteSchema($this);
+            $this->_schemaDialect = new SqliteSchema($this);
         }
         return $this->_schemaDialect;
     }

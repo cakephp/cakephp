@@ -1,6 +1,6 @@
 <?php
 /**
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -8,7 +8,7 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -265,8 +265,8 @@ class XmlTest extends TestCase
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tags>
-	<tag id="1" name="defect"/>
-	<tag id="2" name="enhancement"/>
+  <tag id="1" name="defect"/>
+  <tag id="2" name="enhancement"/>
 </tags>
 XML;
         $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
@@ -278,14 +278,14 @@ XML;
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tags>
-	<tag>
-		<id>1</id>
-		<name>defect</name>
-	</tag>
-	<tag>
-		<id>2</id>
-		<name>enhancement</name>
-	</tag>
+  <tag>
+    <id>1</id>
+    <name>defect</name>
+  </tag>
+  <tag>
+    <id>2</id>
+    <name>enhancement</name>
+  </tag>
 </tags>
 XML;
         $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
@@ -335,12 +335,12 @@ XML;
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tags>
-	<tag id="1">
-		<name>defect</name>
-	</tag>
-	<tag id="2">
-		<name>enhancement</name>
-	</tag>
+  <tag id="1">
+    <name>defect</name>
+  </tag>
+  <tag id="2">
+    <name>enhancement</name>
+  </tag>
 </tags>
 XML;
         $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
@@ -420,13 +420,13 @@ XML;
         $expected = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <Event>
-	<id>235</id>
-	<Attribute>
-		<id>9646</id>
-	</Attribute>
-	<Attribute>
-		<id>9647</id>
-	</Attribute>
+  <id>235</id>
+  <Attribute>
+    <id>9646</id>
+  </Attribute>
+  <Attribute>
+    <id>9647</id>
+  </Attribute>
 </Event>
 XML;
         $this->assertXmlStringEqualsXmlString($expected, $obj->asXML());
@@ -592,15 +592,15 @@ XML;
         $expected = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <products>
-	<product_ID>GENERT-DL</product_ID>
-	<deeplink>http://example.com/deep</deeplink>
-	<image_URL>http://example.com/image</image_URL>
-	<thumbnail_image_URL>http://example.com/thumb</thumbnail_image_URL>
-	<brand>Malte Lange &amp; Co</brand>
-	<availability>in stock</availability>
-	<authors>
-		<author>Malte Lange &amp; Co</author>
-	</authors>
+  <product_ID>GENERT-DL</product_ID>
+  <deeplink>http://example.com/deep</deeplink>
+  <image_URL>http://example.com/image</image_URL>
+  <thumbnail_image_URL>http://example.com/thumb</thumbnail_image_URL>
+  <brand>Malte Lange &amp; Co</brand>
+  <availability>in stock</availability>
+  <authors>
+    <author>Malte Lange &amp; Co</author>
+  </authors>
 </products>
 XML;
         $this->assertXmlStringEqualsXmlString($expected, $xml->asXML());
@@ -825,21 +825,21 @@ XML;
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
-<channel>
-	<atom:link href="http://bakery.cakephp.org/articles/rss" rel="self" type="application/rss+xml"/>
-	<title>The Bakery: </title>
-	<link>http://bakery.cakephp.org/</link>
-	<description>Recent  Articles at The Bakery.</description>
-	<pubDate>Sun, 12 Sep 2010 04:18:26 -0500</pubDate>
-	<item>
-		<title>CakePHP 1.3.4 released</title>
-		<link>http://bakery.cakephp.org/articles/view/cakephp-1-3-4-released</link>
-	</item>
-	<item>
-		<title>Wizard Component 1.2 Tutorial</title>
-		<link>http://bakery.cakephp.org/articles/view/wizard-component-1-2-tutorial</link>
-	</item>
-</channel>
+  <channel>
+    <atom:link href="http://bakery.cakephp.org/articles/rss" rel="self" type="application/rss+xml"/>
+    <title>The Bakery: </title>
+    <link>http://bakery.cakephp.org/</link>
+    <description>Recent  Articles at The Bakery.</description>
+    <pubDate>Sun, 12 Sep 2010 04:18:26 -0500</pubDate>
+    <item>
+      <title>CakePHP 1.3.4 released</title>
+      <link>http://bakery.cakephp.org/articles/view/cakephp-1-3-4-released</link>
+    </item>
+    <item>
+      <title>Wizard Component 1.2 Tutorial</title>
+      <link>http://bakery.cakephp.org/articles/view/wizard-component-1-2-tutorial</link>
+    </item>
+  </channel>
 </rss>
 XML;
         $this->assertXmlStringEqualsXmlString($xmlText, $rssAsSimpleXML->asXML());
@@ -888,22 +888,22 @@ XML;
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <methodResponse>
-	<params>
-		<param>
-			<value>
-				<array>
-					<data>
-						<value>
-							<int>1</int>
-						</value>
-						<value>
-							<string>testing</string>
-						</value>
-					</data>
-				</array>
-			</value>
-		</param>
-	</params>
+  <params>
+    <param>
+      <value>
+        <array>
+          <data>
+            <value>
+              <int>1</int>
+            </value>
+            <value>
+              <string>testing</string>
+            </value>
+          </data>
+        </array>
+      </value>
+    </param>
+  </params>
 </methodResponse>
 XML;
         $xml = Xml::build($xmlText);
@@ -980,9 +980,11 @@ XML;
         $xmlText = <<<XML
 <?xml version="1.0"?>
 <soap:Envelope xmlns:soap="http://www.w3.org/2001/12/soap-envelope" soap:encodingStyle="http://www.w3.org/2001/12/soap-encoding">
-	<soap:Body xmlns:m="http://www.example.org/stock">
-	<m:GetStockPrice><m:StockName>IBM</m:StockName></m:GetStockPrice>
-	</soap:Body>
+  <soap:Body xmlns:m="http://www.example.org/stock">
+    <m:GetStockPrice>
+      <m:StockName>IBM</m:StockName>
+    </m:GetStockPrice>
+  </soap:Body>
 </soap:Envelope>
 XML;
         $this->assertXmlStringEqualsXmlString($xmlText, $xmlRequest->asXML());
@@ -1067,10 +1069,10 @@ XML;
         $expected = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-	<tag xmlns:pref="http://cakephp.org">
-		<pref:item>item 1</pref:item>
-		<pref:item>item 2</pref:item>
-	</tag>
+  <tag xmlns:pref="http://cakephp.org">
+    <pref:item>item 1</pref:item>
+    <pref:item>item 2</pref:item>
+  </tag>
 </root>
 XML;
         $xmlResponse = Xml::fromArray($xml);

@@ -41,7 +41,7 @@ help:
 	@echo "  Publish the dist/cakephp-VERSION.zip to github."
 	@echo ""
 	@echo "components"
-	@echo "  Split each of the public namespaces into separate repos and push the to github."
+	@echo "  Split each of the public namespaces into separate repos and push the to Github."
 	@echo ""
 	@echo "test"
 	@echo "  Run the tests for CakePHP."
@@ -128,7 +128,7 @@ package: dist/cakephp-$(DASH_VERSION).zip
 
 
 
-# Tasks to publish zipballs to github.
+# Tasks to publish zipballs to Github.
 .PHONY: publish release
 
 publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(DASH_VERSION).zip
@@ -153,7 +153,7 @@ publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(DASH_VERSION).zip
 	rm release.json
 	rm id.txt
 
-# Tasks for publishing separate reporsitories out of each cake namespace
+# Tasks for publishing separate repositories out of each CakePHP namespace
 
 components: $(foreach component, $(COMPONENTS), component-$(component))
 components-tag: $(foreach component, $(COMPONENTS), tag-component-$(component))
@@ -164,7 +164,7 @@ component-%:
 	- (git branch -D $* 2> /dev/null)
 	git checkout -b $*
 	git filter-branch --prune-empty --subdirectory-filter src/$(shell php -r "echo ucfirst('$*');") -f $*
-	git push $* $*:master
+	git push $* $*:$(CURRENT_BRANCH)
 	git checkout $(CURRENT_BRANCH) > /dev/null
 
 tag-component-%: component-% guard-VERSION guard-GITHUB_USER

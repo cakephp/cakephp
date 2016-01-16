@@ -14,13 +14,13 @@
  */
 namespace Cake\TestSuite\Fixture;
 
-use Cake\TestSuite\Fixture\FixtureManager;
 use Cake\TestSuite\TestCase;
 use Exception;
 use PHPUnit_Framework_AssertionFailedError;
 use PHPUnit_Framework_Test;
 use PHPUnit_Framework_TestListener;
 use PHPUnit_Framework_TestSuite;
+use PHPUnit_Framework_Warning;
 
 /**
  * Test listener used to inject a fixture manager in all tests that
@@ -50,6 +50,9 @@ class FixtureInjector implements PHPUnit_Framework_TestListener
      */
     public function __construct(FixtureManager $manager)
     {
+        if (isset($_SERVER['argv'])) {
+            $manager->setDebug(in_array('--debug', $_SERVER['argv']));
+        }
         $this->_fixtureManager = $manager;
         $this->_fixtureManager->shutdown();
     }
@@ -91,6 +94,18 @@ class FixtureInjector implements PHPUnit_Framework_TestListener
      * @return void
      */
     public function addError(PHPUnit_Framework_Test $test, Exception $e, $time)
+    {
+    }
+
+    /**
+     * Not Implemented
+     *
+     * @param \PHPUnit_Framework_Test $test The test to add warnings from.
+     * @param \PHPUnit_Framework_Warning $e The warning
+     * @param float $time current time
+     * @return void
+     */
+    public function addWarning(PHPUnit_Framework_Test $test, PHPUnit_Framework_Warning $e, $time)
     {
     }
 

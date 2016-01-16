@@ -8,7 +8,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -193,6 +193,32 @@ class HelperRegistryTest extends TestCase
         $result = $this->Helpers->load('TestPlugin.OtherHelper');
         $this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $result, 'Helper class is wrong.');
         $this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $this->Helpers->OtherHelper, 'Class is wrong');
+    }
+
+    /**
+     * test loading helpers with dotted aliases
+     *
+     * @return void
+     */
+    public function testLoadPluginHelperDottedAlias()
+    {
+        Plugin::load(['TestPlugin']);
+
+        $result = $this->Helpers->load('thing.helper', [
+            'className' => 'TestPlugin.OtherHelper',
+        ]);
+        $this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $result, 'Helper class is wrong.');
+        $this->assertInstanceOf(
+            'TestPlugin\View\Helper\OtherHelperHelper',
+            $this->Helpers->get('thing.helper'),
+            'Class is wrong'
+        );
+        $this->assertTrue($this->Helpers->has('thing.helper'));
+        $this->assertFalse($this->Helpers->has('thing'));
+        $this->assertFalse($this->Helpers->has('helper'));
+
+        $this->Helpers->unload('thing.helper');
+        $this->assertFalse($this->Helpers->has('thing.helper'), 'Should be gone now.');
     }
 
     /**

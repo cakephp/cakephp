@@ -1,6 +1,6 @@
 <?php
 /**
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -8,13 +8,14 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Cache;
 
 use Cake\Cache\Cache;
+use Cake\Cache\CacheRegistry;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -92,6 +93,38 @@ class CacheTest extends TestCase
 
         $result = Cache::engine('tests');
         $this->assertInstanceOf('Cake\Cache\Engine\NullEngine', $result);
+    }
+
+    /**
+     * Test configuring an invalid class fails
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Cache engines must use Cake\Cache\CacheEngine
+     * @return void
+     */
+    public function testConfigInvalidClassType()
+    {
+        Cache::config('tests', [
+            'className' => '\StdClass'
+        ]);
+        Cache::engine('tests');
+    }
+
+    /**
+     * Test engine init failing causes an error
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage not properly configured
+     * @return void
+     */
+    public function testConfigFailedInit()
+    {
+        $mock = $this->getMockForAbstractClass('Cake\Cache\CacheEngine', [], '', true, true, true, ['init']);
+        $mock->method('init')->will($this->returnValue(false));
+        Cache::config('tests', [
+            'engine' => $mock
+        ]);
+        Cache::engine('tests');
     }
 
     /**
@@ -248,6 +281,26 @@ class CacheTest extends TestCase
         $expected['className'] = $config['engine'];
         unset($expected['engine']);
         $this->assertEquals($expected, Cache::config('tests'));
+    }
+
+    /**
+     * test config() with dotted name
+     *
+     * @return void
+     */
+    public function testConfigDottedAlias()
+    {
+        Cache::config('cache.dotted', [
+            'className' => 'File',
+            'path' => TMP,
+            'prefix' => 'cache_value_'
+        ]);
+
+        $engine = Cache::engine('cache.dotted');
+        $this->assertContains('cache.dotted', Cache::configured());
+        $this->assertNotContains('dotted', Cache::configured());
+        $this->assertInstanceOf('Cake\Cache\Engine\FileEngine', $engine);
+        Cache::drop('cache.dotted');
     }
 
     /**
@@ -538,5 +591,49 @@ class CacheTest extends TestCase
         $counter = 1;
         $result = Cache::remember('test_key', $cacher, 'tests');
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test add method.
+     *
+     * @return void
+     */
+    public function testAdd()
+    {
+        $this->_configCache();
+        Cache::delete('test_add_key', 'tests');
+
+        $result = Cache::add('test_add_key', 'test data', 'tests');
+        $this->assertTrue($result);
+
+        $expected = 'test data';
+        $result = Cache::read('test_add_key', 'tests');
+        $this->assertEquals($expected, $result);
+
+        $result = Cache::add('test_add_key', 'test data 2', 'tests');
+        $this->assertFalse($result);
+    }
+
+    /**
+     * test registry method
+     *
+     * @return void
+     */
+    public function testRegistry()
+    {
+        $this->assertInstanceOf('Cake\Cache\CacheRegistry', Cache::registry());
+    }
+
+    /**
+     * test registry method setting
+     *
+     * @return void
+     */
+    public function testRegistrySet()
+    {
+        $registry = new CacheRegistry();
+        Cache::registry($registry);
+
+        $this->assertSame($registry, Cache::registry());
     }
 }

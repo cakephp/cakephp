@@ -44,10 +44,10 @@ class TranslateBehaviorTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.translates',
         'core.articles',
+        'core.authors',
         'core.comments',
-        'core.authors'
+        'core.translates'
     ];
 
     public function tearDown()
@@ -1018,5 +1018,24 @@ class TranslateBehaviorTest extends TestCase
         $table->locale('spa');
         $result = $table->find()->first();
         $this->assertNull($result->description);
+    }
+
+    /**
+     * Test save with clean translate fields
+     *
+     * @return void
+     */
+    public function testSaveWithCleanFields()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title']]);
+        $table->entityClass(__NAMESPACE__ . '\Article');
+        I18n::locale('fra');
+        $article = $table->get(1);
+        $article->set('body', 'New Body');
+        $table->save($article);
+        $result = $table->get(1);
+        $this->assertEquals('New Body', $result->body);
+        $this->assertSame($article->title, $result->title);
     }
 }

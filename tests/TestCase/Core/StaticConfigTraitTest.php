@@ -101,9 +101,9 @@ class TestEmailStaticConfig
      * @var array
      */
     protected static $_dsnClassMap = [
-        'debug' => 'Cake\Network\Email\DebugTransport',
-        'mail' => 'Cake\Network\Email\MailTransport',
-        'smtp' => 'Cake\Network\Email\SmtpTransport',
+        'debug' => 'Cake\Mailer\Transport\DebugTransport',
+        'mail' => 'Cake\Mailer\Transport\MailTransport',
+        'smtp' => 'Cake\Mailer\Transport\SmtpTransport',
     ];
 }
 
@@ -353,7 +353,7 @@ class StaticConfigTraitTest extends TestCase
 
         $dsn = 'mail:///?timeout=30&key=true&key2=false&client=null&tls=null';
         $expected = [
-            'className' => 'Cake\Network\Email\MailTransport',
+            'className' => 'Cake\Mailer\Transport\MailTransport',
             'client' => null,
             'key' => true,
             'key2' => false,
@@ -366,7 +366,7 @@ class StaticConfigTraitTest extends TestCase
 
         $dsn = 'mail://true:false@null/1?timeout=30&key=true&key2=false&client=null&tls=null';
         $expected = [
-            'className' => 'Cake\Network\Email\MailTransport',
+            'className' => 'Cake\Mailer\Transport\MailTransport',
             'client' => null,
             'host' => 'null',
             'key' => true,
@@ -382,7 +382,7 @@ class StaticConfigTraitTest extends TestCase
 
         $dsn = 'mail://user:secret@localhost:25?timeout=30&client=null&tls=null';
         $expected = [
-            'className' => 'Cake\Network\Email\MailTransport',
+            'className' => 'Cake\Mailer\Transport\MailTransport',
             'client' => null,
             'host' => 'localhost',
             'password' => 'secret',

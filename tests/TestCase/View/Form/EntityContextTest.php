@@ -458,6 +458,9 @@ class EntityContextTest extends TestCase
         $row = new Article([
             'title' => 'Test entity',
             'types' => [1, 2, 3],
+            'tag' => [
+                'name' => 'Test tag',
+            ],
             'author' => new Entity([
                 'roles' => ['admin', 'publisher']
             ])
@@ -471,6 +474,15 @@ class EntityContextTest extends TestCase
 
         $result = $context->val('author.roles');
         $this->assertEquals($row->author->roles, $result);
+
+        $result = $context->val('tag.name');
+        $this->assertEquals($row->tag['name'], $result);
+
+        $result = $context->val('tag.nope');
+        $this->assertNull($result);
+
+        $result = $context->val('author.roles.3');
+        $this->assertNull($result);
     }
 
     /**
@@ -725,6 +737,34 @@ class EntityContextTest extends TestCase
         $this->assertFalse($context->isRequired('comments.0.other'));
         $this->assertFalse($context->isRequired('user.0.other'));
         $this->assertFalse($context->isRequired(''));
+    }
+
+    /**
+     * Test isRequired on associated entities with boolean fields
+     *
+     * @return void
+     */
+    public function testIsRequiredAssociatedHasManyBoolean()
+    {
+        $this->_setupTables();
+
+        $comments = TableRegistry::get('Comments');
+        $comments->schema()->addColumn('starred', 'boolean');
+        $comments->validator()->add('starred', 'valid', ['rule' => 'boolean']);
+
+        $row = new Article([
+            'title' => 'My title',
+            'comments' => [
+                new Entity(['comment' => 'First comment']),
+            ]
+        ]);
+        $context = new EntityContext($this->request, [
+            'entity' => $row,
+            'table' => 'Articles',
+            'validator' => 'default',
+        ]);
+
+        $this->assertFalse($context->isRequired('comments.0.starred'));
     }
 
     /**
@@ -1076,7 +1116,7 @@ class EntityContextTest extends TestCase
             'id' => ['type' => 'integer', 'length' => 11, 'null' => false],
             'title' => ['type' => 'string', 'length' => 255],
             'user_id' => ['type' => 'integer', 'length' => 11, 'null' => false],
-            'body' => ['type' => 'text']
+            'body' => ['type' => 'crazy_text', 'baseType' => 'text']
         ]);
         $users->schema([
             'id' => ['type' => 'integer', 'length' => 11],

@@ -19,6 +19,7 @@ use Cake\Core\Configure\ConfigEngineInterface;
 use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\Core\Exception\Exception;
 use Cake\Utility\Hash;
+use RuntimeException;
 
 /**
  * Configuration class. Used for managing runtime configuration information.
@@ -38,7 +39,7 @@ class Configure
      * @var array
      */
     protected static $_values = [
-        'debug' => 0
+        'debug' => false
     ];
 
     /**
@@ -112,7 +113,7 @@ class Configure
      * ```
      *
      * @param string $var Variable to obtain. Use '.' to access array elements.
-     * @return mixed value stored in configure, or null.
+     * @return mixed Value stored in configure, or null.
      * @link http://book.cakephp.org/3.0/en/development/configuration.html#reading-configuration-data
      */
     public static function read($var = null)
@@ -135,6 +136,33 @@ class Configure
             return false;
         }
         return static::read($var) !== null;
+    }
+
+    /**
+     * Used to get information stored in Configure. It's not
+     * possible to store `null` values in Configure.
+     *
+     * Acts as a wrapper around Configure::read() and Configure::check().
+     * The configure key/value pair fetched via this method is expected to exist.
+     * In case it does not an exception will be thrown.
+     *
+     * Usage:
+     * ```
+     * Configure::readOrFail('Name'); will return all values for Name
+     * Configure::readOrFail('Name.key'); will return only the value of Configure::Name[key]
+     * ```
+     *
+     * @param string $var Variable to obtain. Use '.' to access array elements.
+     * @return mixed Value stored in configure.
+     * @throws \RuntimeException if the requested configuration is not set.
+     * @link http://book.cakephp.org/3.0/en/development/configuration.html#reading-configuration-data
+     */
+    public static function readOrFail($var)
+    {
+        if (static::check($var) === false) {
+            throw new RuntimeException(sprintf('Expected configuration key "%s" not found.', $var));
+        }
+        return static::read($var);
     }
 
     /**
@@ -208,7 +236,7 @@ class Configure
      */
     public static function configured($name = null)
     {
-        if ($name) {
+        if ($name !== null) {
             return isset(static::$_engines[$name]);
         }
         return array_keys(static::$_engines);
@@ -253,7 +281,7 @@ class Configure
      * @param string $key name of configuration resource to load.
      * @param string $config Name of the configured engine to use to read the resource identified by $key.
      * @param bool $merge if config files should be merged instead of simply overridden
-     * @return mixed false if file not found, void if load successful.
+     * @return bool False if file not found, true if load successful.
      * @link http://book.cakephp.org/3.0/en/development/configuration.html#reading-and-writing-configuration-files
      */
     public static function load($key, $config = 'default', $merge = true)
@@ -297,7 +325,7 @@ class Configure
      * @param string $config The name of the configured adapter to dump data with.
      * @param array $keys The name of the top-level keys you want to dump.
      *   This allows you save only some data stored in Configure.
-     * @return bool success
+     * @return bool Success
      * @throws \Cake\Core\Exception\Exception if the adapter does not implement a `dump` method.
      */
     public static function dump($key, $config = 'default', $keys = [])
@@ -318,7 +346,7 @@ class Configure
      * Will create new PhpConfig for default if not configured yet.
      *
      * @param string $config The name of the configured adapter
-     * @return mixed Engine instance or false
+     * @return ConfigEngineInterface|false Engine instance or false
      */
     protected static function _getEngine($config)
     {
@@ -344,7 +372,7 @@ class Configure
     public static function version()
     {
         if (!isset(static::$_values['Cake']['version'])) {
-            require CORE_PATH . 'config/config.php';
+            $config = require CORE_PATH . 'config/config.php';
             static::write($config);
         }
         return static::$_values['Cake']['version'];

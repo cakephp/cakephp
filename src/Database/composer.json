@@ -9,7 +9,8 @@
         }
     ],
     "require": {
-        "cakephp/core": "~3.0"
+        "cakephp/core": "~3.0",
+        "cakephp/datasource": "~3.0"
     },
     "suggest": {
         "cakephp/log": "Require this if you want to use the built-in query logger",

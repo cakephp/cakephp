@@ -1,6 +1,6 @@
 <?php
 /**
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -8,7 +8,7 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -92,6 +92,7 @@ class ValidateUsersTable extends Table
         'email' => ['type' => 'string', 'null' => '', 'default' => '', 'length' => '255'],
         'balance' => ['type' => 'float', 'null' => false, 'length' => 5, 'precision' => 2],
         'cost_decimal' => ['type' => 'decimal', 'null' => false, 'length' => 6, 'precision' => 3],
+        'null_decimal' => ['type' => 'decimal', 'null' => false, 'length' => null, 'precision' => null],
         'ratio' => ['type' => 'decimal', 'null' => false, 'length' => 10, 'precision' => 6],
         'population' => ['type' => 'decimal', 'null' => false, 'length' => 15, 'precision' => 0],
         'created' => ['type' => 'date', 'null' => '1', 'default' => '', 'length' => ''],
@@ -548,6 +549,92 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test using template vars in various templates used by input() method.
+     *
+     * @return void
+     */
+    public function testInputTemplateVars()
+    {
+        $result = $this->Form->input('text', [
+            'templates' => [
+                'input' => '<input custom="{{forinput}}" type="{{type}}" name="{{name}}"{{attrs}}/>',
+                'label' => '<label{{attrs}}>{{text}} {{forlabel}}</label>',
+                'formGroup' => '{{label}}{{forgroup}}{{input}}',
+                'inputContainer' => '<div class="input {{type}}{{required}}">{{content}}{{forcontainer}}</div>',
+            ],
+            'templateVars' => [
+                'forinput' => 'in-input',
+                'forlabel' => 'in-label',
+                'forgroup' => 'in-group',
+                'forcontainer' => 'in-container'
+            ]
+        ]);
+        $expected = [
+            'div' => ['class'],
+            'label' => ['for'],
+            'Text in-label',
+            '/label',
+            'in-group',
+            'input' => ['name', 'type' => 'text', 'id', 'custom' => 'in-input'],
+            'in-container',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Test ensuring template variables work in template files loaded
+     * during input().
+     *
+     * @return void
+     */
+    public function testInputTemplatesFromFile()
+    {
+        $result = $this->Form->input('title', [
+            'templates' => 'test_templates',
+            'templateVars' => [
+                'forcontainer' => 'container-data'
+            ]
+        ]);
+        $expected = [
+            'div' => ['class'],
+            'label' => ['for'],
+            'Title',
+            '/label',
+            'input' => ['name', 'type' => 'text', 'id'],
+            'container-data',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Test using template vars in inputSubmit and submitContainer template.
+     *
+     * @return void
+     */
+    public function testSubmitTemplateVars()
+    {
+        $this->Form->templates([
+            'inputSubmit' => '<input custom="{{forinput}}" type="{{type}}"{{attrs}}/>',
+            'submitContainer' => '<div class="submit">{{content}}{{forcontainer}}</div>'
+        ]);
+        $result = $this->Form->submit('Submit', [
+            'templateVars' => [
+                'forinput' => 'in-input',
+                'forcontainer' => 'in-container'
+            ]
+        ]);
+        $expected = [
+            'div' => ['class'],
+            'input' => ['custom' => 'in-input', 'type' => 'submit', 'value' => 'Submit'],
+            'in-container',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * test the create() method
      *
      * @dataProvider requestTypeProvider
@@ -883,7 +970,7 @@ class FormHelperTest extends TestCase
             'name' => 'password', 'type' => 'password'
         ]];
         $this->assertHtml($expected, $result);
-        $this->assertNotRegExp('/<input[^<>]+[^id|name|type|value]=[^<>]*>$/', $result);
+        $this->assertNotRegExp('/<input[^<>]+[^id|name|type|value]=[^<>]*\/>$/', $result);
 
         $result = $this->Form->text('user_form');
         $expected = ['input' => [
@@ -1667,6 +1754,31 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test that a hidden field followed by a visible field
+     * undoes the hidden field locking.
+     *
+     * @return void
+     */
+    public function testSecuredInputDuplicate()
+    {
+        $this->Form->request->params['_Token'] = ['key' => 'testKey'];
+        $this->assertEquals([], $this->Form->fields);
+
+        $this->Form->input('text_val', [
+                'type' => 'hidden',
+                'value' => 'some text',
+        ]);
+        $expected = ['text_val' => 'some text'];
+        $this->assertEquals($expected, $this->Form->fields);
+
+        $this->Form->input('text_val', [
+                'type' => 'text',
+        ]);
+        $expected = ['text_val'];
+        $this->assertEquals($expected, $this->Form->fields);
+    }
+
+    /**
      * Tests that the correct keys are added to the field hash index
      *
      * @return void
@@ -2203,6 +2315,17 @@ class FormHelperTest extends TestCase
             '/div',
         ];
         $this->assertHtml($expected, $result);
+
+        $result = $this->Form->input('ValidateUser.null_decimal');
+        $expected = [
+            'div' => ['class'],
+            'label' => ['for'],
+            'Null Decimal',
+            '/label',
+            'input' => ['name', 'type' => 'number', 'id'],
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**
@@ -2442,6 +2565,29 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test that nested inputs end with brackets
+     *
+     * @return void
+     */
+    public function testNestedInputsEndWithBrackets()
+    {
+        $result = $this->Form->text('nested.text[]');
+        $expected = [
+            'input' => [
+                'type' => 'text', 'name' => 'nested[text][]'
+            ],
+        ];
+
+        $result = $this->Form->file('nested.file[]');
+        $expected = [
+            'input' => [
+                'type' => 'file', 'name' => 'nested[file][]'
+            ],
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * Test id prefix
      *
      * @return void
@@ -2662,6 +2808,7 @@ class FormHelperTest extends TestCase
                 'empty' => false,
                 'id' => 'prueba',
                 'required' => false,
+                'templateVars' => []
             ])
             ->will($this->returnValue('This is it!'));
         $result = $this->Form->input('prueba', [
@@ -2705,6 +2852,7 @@ class FormHelperTest extends TestCase
                 'empty' => false,
                 'id' => 'prefix-prueba',
                 'required' => false,
+                'templateVars' => []
             ])
             ->will($this->returnValue('This is it!'));
         $result = $this->Form->input('prueba', [
@@ -3473,7 +3621,7 @@ class FormHelperTest extends TestCase
             'label' => '<label{{attrs}}>{{input}}{{text}}</label>',
         ]);
         $result = $this->Form->label('Person.accept_terms', 'Accept', [
-            'input' => '<input type="checkbox" name="accept_tos" >'
+            'input' => '<input type="checkbox" name="accept_tos"/>'
         ]);
         $expected = [
             'label' => ['for' => 'person-accept-terms'],
@@ -3643,11 +3791,11 @@ class FormHelperTest extends TestCase
         ]);
         $expected = [
             'div' => ['class' => 'error-message'],
-                'ul' => [],
-                    '<li', 'Cannot be empty', '/li',
-                    '<li', 'No good!', '/li',
-                    '<li', 'Something else', '/li',
-                '/ul',
+            'ul' => [],
+            '<li', 'Cannot be empty', '/li',
+            '<li', 'No good!', '/li',
+            '<li', 'Something else', '/li',
+            '/ul',
             '/div'
         ];
         $this->assertHtml($expected, $result);
@@ -5402,6 +5550,26 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * test datetime second=true
+     *
+     * @return void
+     */
+    public function testDateTimeSecondOptions()
+    {
+        $result = $this->Form->dateTime('updated', ['second' => true]);
+        $this->assertContains('updated[second]', $result, 'Should have seconds');
+
+        $result = $this->Form->dateTime('updated', ['second' => []]);
+        $this->assertContains('updated[second]', $result, 'Should have seconds');
+
+        $result = $this->Form->dateTime('updated', ['second' => null]);
+        $this->assertNotContains('updated[second]', $result, 'Should not have seconds');
+
+        $result = $this->Form->dateTime('updated', ['second' => false]);
+        $this->assertNotContains('updated[second]', $result, 'Should not have seconds');
+    }
+
+    /**
      * testMonth method
      *
      * @return void
@@ -6080,11 +6248,11 @@ class FormHelperTest extends TestCase
         $result = $this->Form->input('other', ['type' => 'textarea']);
         $expected = [
             'div' => ['class' => 'input textarea'],
-                'label' => ['for' => 'other'],
-                    'Other',
-                '/label',
-                'textarea' => ['name' => 'other', 'id' => 'other', 'rows' => 5],
-                '/textarea',
+            'label' => ['for' => 'other'],
+            'Other',
+            '/label',
+            'textarea' => ['name' => 'other', 'id' => 'other', 'rows' => 5],
+            '/textarea',
             '/div'
         ];
         $this->assertHtml($expected, $result);
@@ -6092,11 +6260,11 @@ class FormHelperTest extends TestCase
         $result = $this->Form->input('stuff', ['type' => 'textarea']);
         $expected = [
             'div' => ['class' => 'input textarea'],
-                'label' => ['for' => 'stuff'],
-                    'Stuff',
-                '/label',
-                'textarea' => ['name' => 'stuff', 'maxlength' => 10, 'id' => 'stuff', 'rows' => 5],
-                '/textarea',
+            'label' => ['for' => 'stuff'],
+            'Stuff',
+            '/label',
+            'textarea' => ['name' => 'stuff', 'maxlength' => 10, 'id' => 'stuff', 'rows' => 5],
+            '/textarea',
             '/div'
         ];
         $this->assertHtml($expected, $result);
@@ -6443,20 +6611,25 @@ class FormHelperTest extends TestCase
     {
         $hash = Security::hash(
             '/posts/delete/1' .
-            serialize([]) .
+            serialize(['id' => '1']) .
             '' .
             Security::salt()
         );
-        $hash .= '%3A';
+        $hash .= '%3Aid';
         $this->Form->request->params['_Token']['key'] = 'test';
 
-        $result = $this->Form->postLink('Delete', '/posts/delete/1');
+        $result = $this->Form->postLink(
+            'Delete',
+            '/posts/delete/1',
+            ['data' => ['id' => 1]]
+        );
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
                 'name', 'style' => 'display:none;'
             ],
             ['input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST']],
+            ['input' => ['type' => 'hidden', 'name' => 'id', 'value' => '1']],
             'div' => ['style' => 'display:none;'],
             ['input' => ['type' => 'hidden', 'name' => '_Token[fields]', 'value' => $hash]],
             ['input' => ['type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '']],
@@ -7252,11 +7425,11 @@ class FormHelperTest extends TestCase
      */
     public function testResetTemplates()
     {
-        $this->Form->templates(['input' => '<input>']);
-        $this->assertEquals('<input>', $this->Form->templater()->get('input'));
+        $this->Form->templates(['input' => '<input/>']);
+        $this->assertEquals('<input/>', $this->Form->templater()->get('input'));
 
         $this->assertNull($this->Form->resetTemplates());
-        $this->assertNotEquals('<input>', $this->Form->templater()->get('input'));
+        $this->assertNotEquals('<input/>', $this->Form->templater()->get('input'));
     }
 
     /**

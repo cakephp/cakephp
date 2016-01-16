@@ -15,9 +15,11 @@
 namespace Cake\Error;
 
 use Cake\Core\Configure;
-use Cake\Error\Debugger;
+use Cake\Error\PHP7ErrorException;
 use Cake\Log\Log;
 use Cake\Routing\Router;
+use Error;
+use Exception;
 
 /**
  * Base error handler that provides logic common to the CLI + web
@@ -65,9 +67,9 @@ abstract class BaseErrorHandler
         }
         error_reporting($level);
         set_error_handler([$this, 'handleError'], $level);
-        set_exception_handler([$this, 'handleException']);
+        set_exception_handler([$this, 'wrapAndHandleException']);
         register_shutdown_function(function () {
-            if (PHP_SAPI === 'cli') {
+            if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) {
                 return;
             }
             $error = error_get_last();
@@ -140,6 +142,22 @@ abstract class BaseErrorHandler
     }
 
     /**
+     * Checks the passed exception type. If it is an instance of `Error`
+     * then, it wraps the passed object inside another Exception object
+     * for backwards compatibility purposes.
+     *
+     * @param Exception|Error $exception The exception to handle
+     * @return void
+     */
+    public function wrapAndHandleException($exception)
+    {
+        if ($exception instanceof Error) {
+            $exception = new PHP7ErrorException($exception);
+        }
+        $this->handleException($exception);
+    }
+
+    /**
      * Handle uncaught exceptions.
      *
      * Uses a template method provided by subclasses to display errors in an
@@ -150,7 +168,7 @@ abstract class BaseErrorHandler
      * @throws \Exception When renderer class not found
      * @see http://php.net/manual/en/function.set-exception-handler.php
      */
-    public function handleException(\Exception $exception)
+    public function handleException(Exception $exception)
     {
         $this->_displayException($exception);
         $this->_logException($exception);
@@ -228,16 +246,20 @@ abstract class BaseErrorHandler
      * @param \Exception $exception Exception instance.
      * @return bool
      */
-    protected function _logException(\Exception $exception)
+    protected function _logException(Exception $exception)
     {
         $config = $this->_options;
+        $unwrapped = $exception instanceof PHP7ErrorException ?
+            $exception->getError() :
+            $exception;
+
         if (empty($config['log'])) {
             return false;
         }
 
         if (!empty($config['skipLog'])) {
             foreach ((array)$config['skipLog'] as $class) {
-                if ($exception instanceof $class) {
+                if ($unwrapped instanceof $class) {
                     return false;
                 }
             }
@@ -251,21 +273,26 @@ abstract class BaseErrorHandler
      * @param \Exception $exception Exception instance
      * @return string Formatted message
      */
-    protected function _getMessage(\Exception $exception)
+    protected function _getMessage(Exception $exception)
     {
+        $exception = $exception instanceof PHP7ErrorException ?
+            $exception->getError() :
+            $exception;
         $config = $this->_options;
         $message = sprintf(
             "[%s] %s",
             get_class($exception),
             $exception->getMessage()
         );
-        if (method_exists($exception, 'getAttributes')) {
+        $debug = Configure::read('debug');
+
+        if ($debug && method_exists($exception, 'getAttributes')) {
             $attributes = $exception->getAttributes();
             if ($attributes) {
                 $message .= "\nException Attributes: " . var_export($exception->getAttributes(), true);
             }
         }
-        if (PHP_SAPI !== 'cli') {
+        if ((PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg')) {
             $request = Router::getRequest();
             if ($request) {
                 $message .= "\nRequest URL: " . $request->here();

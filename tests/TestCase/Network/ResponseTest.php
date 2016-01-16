@@ -315,6 +315,41 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Tests the send method and changing the content type
+     *
+     * @return void
+     */
+    public function testSendWithCallableBody()
+    {
+        $response = $this->getMock('Cake\Network\Response', ['_sendHeader']);
+        $response->body(function () {
+            echo 'the response body';
+        });
+
+        ob_start();
+        $response->send();
+        $this->assertEquals('the response body', ob_get_clean());
+    }
+
+    /**
+     * Tests that the returned a string from a body callable is also sent
+     * as the response body
+     *
+     * @return void
+     */
+    public function testSendWithCallableBodyWithReturn()
+    {
+        $response = $this->getMock('Cake\Network\Response', ['_sendHeader']);
+        $response->body(function () {
+            return 'the response body';
+        });
+
+        ob_start();
+        $response->send();
+        $this->assertEquals('the response body', ob_get_clean());
+    }
+
+    /**
      * Tests the disableCache method
      *
      * @return void
@@ -1078,11 +1113,14 @@ class ResponseTest extends TestCase
     {
         $fooRequest = new Request();
 
-        $secureRequest = $this->getMock('Cake\Network\Request', ['is']);
-        $secureRequest->expects($this->any())
-            ->method('is')
-            ->with('ssl')
-            ->will($this->returnValue(true));
+        $secureRequest = function () {
+            $secureRequest = $this->getMock('Cake\Network\Request', ['is']);
+            $secureRequest->expects($this->any())
+                ->method('is')
+                ->with('ssl')
+                ->will($this->returnValue(true));
+            return $secureRequest;
+        };
 
         return [
             [$fooRequest, null, '*', '', '', false, false],
@@ -1094,9 +1132,15 @@ class ResponseTest extends TestCase
             [$fooRequest, 'http://www.foo.com', 'https://*.foo.com', '', '', false, false],
             [$fooRequest, 'http://www.foo.com', ['*.bar.com', '*.foo.com'], '', '', 'http://www.foo.com', false],
 
-            [$secureRequest, 'https://www.bar.com', 'www.bar.com', '', '', 'https://www.bar.com', false],
-            [$secureRequest, 'https://www.bar.com', 'http://www.bar.com', '', '', false, false],
-            [$secureRequest, 'https://www.bar.com', '*.bar.com', '', '', 'https://www.bar.com', false],
+            [$fooRequest, 'http://not-foo.com', '*.foo.com', '', '', false, false],
+            [$fooRequest, 'http://bad.academy', '*.acad.my', '', '', false, false],
+            [$fooRequest, 'http://www.foo.com.at.bad.com', '*.foo.com', '', '', false, false],
+            [$fooRequest, 'https://www.foo.com', '*.foo.com', '', '', false, false],
+
+            [$secureRequest(), 'https://www.bar.com', 'www.bar.com', '', '', 'https://www.bar.com', false],
+            [$secureRequest(), 'https://www.bar.com', 'http://www.bar.com', '', '', false, false],
+            [$secureRequest(), 'https://www.bar.com', '*.bar.com', '', '', 'https://www.bar.com', false],
+            [$secureRequest(), 'http://www.bar.com', '*.bar.com', '', '', false, false],
 
             [$fooRequest, 'http://www.foo.com', '*', 'GET', '', '*', 'GET'],
             [$fooRequest, 'http://www.foo.com', '*.foo.com', 'GET', '', 'http://www.foo.com', 'GET'],
@@ -1121,15 +1165,55 @@ class ResponseTest extends TestCase
     }
 
     /**
-     * test file with ..
+     * test file with ../
      *
      * @expectedException \Cake\Network\Exception\NotFoundException
+     * @expectedExceptionMessage The requested file contains `..` and will not be read.
      * @return void
      */
-    public function testFileWithPathTraversal()
+    public function testFileWithForwardSlashPathTraversal()
     {
         $response = new Response();
         $response->file('my/../cat.gif');
+    }
+
+    /**
+     * test file with ..\
+     *
+     * @expectedException \Cake\Network\Exception\NotFoundException
+     * @expectedExceptionMessage The requested file contains `..` and will not be read.
+     * @return void
+     */
+    public function testFileWithBackwardSlashPathTraversal()
+    {
+        $response = new Response();
+        $response->file('my\..\cat.gif');
+    }
+
+    /**
+     * test file with ..
+     *
+     * @expectedException \Cake\Network\Exception\NotFoundException
+     * @expectedExceptionMessage my/ca..t.gif was not found or not readable
+     * @return void
+     */
+    public function testFileWithDotsInTheFilename()
+    {
+        $response = new Response();
+        $response->file('my/ca..t.gif');
+    }
+
+    /**
+     * test file with .. in a path fragment
+     *
+     * @expectedException \Cake\Network\Exception\NotFoundException
+     * @expectedExceptionMessage my/ca..t/image.gif was not found or not readable
+     * @return void
+     */
+    public function testFileWithDotsInAPathFragment()
+    {
+        $response = new Response();
+        $response->file('my/ca..t/image.gif');
     }
 
     /**

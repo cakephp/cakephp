@@ -89,11 +89,19 @@ class StringTemplateTest extends TestCase
     public function testFormat()
     {
         $templates = [
-            'link' => '<a href="{{url}}">{{text}}</a>'
+            'link' => '<a href="{{url}}">{{text}}</a>',
+            'text' => '{{text}}',
+            'custom' => '<custom {{standard}} v1="{{var1}}" v2="{{var2}}" />'
         ];
         $this->template->add($templates);
 
         $result = $this->template->format('not there', []);
+        $this->assertNull($result);
+
+        $result = $this->template->format('text', ['text' => '']);
+        $this->assertSame('', $result);
+
+        $result = $this->template->format('text', []);
         $this->assertSame('', $result);
 
         $result = $this->template->format('link', [
@@ -101,6 +109,37 @@ class StringTemplateTest extends TestCase
             'text' => 'example'
         ]);
         $this->assertEquals('<a href="/">example</a>', $result);
+
+        $result = $this->template->format('custom', [
+            'standard' => 'default',
+            'templateVars' => ['var1' => 'foo']
+        ]);
+        $this->assertEquals('<custom default v1="foo" v2="" />', $result);
+    }
+
+    /**
+     * Formatting array data should not trigger errors.
+     *
+     * @return void
+     */
+    public function testFormatArrayData()
+    {
+        $templates = [
+            'link' => '<a href="{{url}}">{{text}}</a>'
+        ];
+        $this->template->add($templates);
+
+        $result = $this->template->format('link', [
+            'url' => '/',
+            'text' => ['example', 'text']
+        ]);
+        $this->assertEquals('<a href="/">exampletext</a>', $result);
+
+        $result = $this->template->format('link', [
+            'url' => '/',
+            'text' => ['key' => 'example', 'text']
+        ]);
+        $this->assertEquals('<a href="/">exampletext</a>', $result);
     }
 
     /**
@@ -169,10 +208,10 @@ class StringTemplateTest extends TestCase
      */
     public function testFormatAttributes()
     {
-        $attrs = ['name' => 'bruce', 'data-hero' => '<batman>'];
+        $attrs = ['name' => 'bruce', 'data-hero' => '<batman>', 'spellcheck' => 'true'];
         $result = $this->template->formatAttributes($attrs);
         $this->assertEquals(
-            ' name="bruce" data-hero="&lt;batman&gt;"',
+            ' name="bruce" data-hero="&lt;batman&gt;" spellcheck="true"',
             $result
         );
 
@@ -184,6 +223,13 @@ class StringTemplateTest extends TestCase
         );
 
         $attrs = ['name' => 'bruce', 'data-hero' => '<batman>'];
+        $result = $this->template->formatAttributes($attrs, ['name']);
+        $this->assertEquals(
+            ' data-hero="&lt;batman&gt;"',
+            $result
+        );
+
+        $attrs = ['name' => 'bruce', 'data-hero' => '<batman>', 'templateVars' => ['foo' => 'bar']];
         $result = $this->template->formatAttributes($attrs, ['name']);
         $this->assertEquals(
             ' data-hero="&lt;batman&gt;"',

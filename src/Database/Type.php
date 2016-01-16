@@ -14,7 +14,6 @@
  */
 namespace Cake\Database;
 
-use Cake\Database\Driver;
 use InvalidArgumentException;
 use PDO;
 
@@ -35,12 +34,15 @@ class Type
     protected static $_types = [
         'biginteger' => 'Cake\Database\Type\IntegerType',
         'binary' => 'Cake\Database\Type\BinaryType',
+        'boolean' => 'Cake\Database\Type\BoolType',
         'date' => 'Cake\Database\Type\DateType',
-        'float' => 'Cake\Database\Type\FloatType',
-        'decimal' => 'Cake\Database\Type\FloatType',
-        'integer' => 'Cake\Database\Type\IntegerType',
-        'time' => 'Cake\Database\Type\TimeType',
         'datetime' => 'Cake\Database\Type\DateTimeType',
+        'decimal' => 'Cake\Database\Type\FloatType',
+        'float' => 'Cake\Database\Type\FloatType',
+        'integer' => 'Cake\Database\Type\IntegerType',
+        'string' => 'Cake\Database\Type\StringType',
+        'text' => 'Cake\Database\Type\StringType',
+        'time' => 'Cake\Database\Type\TimeType',
         'timestamp' => 'Cake\Database\Type\DateTimeType',
         'uuid' => 'Cake\Database\Type\UuidType',
     ];
@@ -50,6 +52,7 @@ class Type
      * for doing conversion on these
      *
      * @var array
+     * @deprecated 3.1 All types will now use a specific class
      */
     protected static $_basicTypes = [
         'string' => ['callback' => ['\Cake\Database\Type', 'strval']],
@@ -96,9 +99,6 @@ class Type
         if (isset(static::$_builtTypes[$name])) {
             return static::$_builtTypes[$name];
         }
-        if (isset(static::$_basicTypes[$name])) {
-            return static::$_builtTypes[$name] = new static($name);
-        }
         if (!isset(static::$_types[$name])) {
             throw new InvalidArgumentException(sprintf('Unknown type "%s"', $name));
         }
@@ -109,7 +109,7 @@ class Type
      * Returns a Type object capable of converting a type identified by $name
      *
      * @param string $name The type identifier you want to set.
-     * @param \Cake\Databse\Type $instance The type instance you want to set.
+     * @param \Cake\Database\Type $instance The type instance you want to set.
      * @return void
      */
     public static function set($name, Type $instance)
@@ -134,7 +134,7 @@ class Type
         }
         if (!is_string($type)) {
             self::$_types = $type;
-            return;
+            return null;
         }
         if ($className === null) {
             return isset(self::$_types[$type]) ? self::$_types[$type] : null;
@@ -159,6 +159,19 @@ class Type
      * @return string
      */
     public function getName()
+    {
+        return $this->_name;
+    }
+
+    /**
+     * Returns the base type name that this class is inheriting.
+     * This is useful when extending base type for adding extra functionality
+     * but still want the rest of the framework to use the same assumptions it would
+     * do about the base type it inherits from.
+     *
+     * @return string
+     */
+    public function getBaseType()
     {
         return $this->_name;
     }
@@ -193,6 +206,7 @@ class Type
      *
      * @param mixed $value value to be converted to PHP equivalent
      * @return mixed
+     * @deprecated 3.1 All types should now be a specific class
      */
     protected function _basicTypeCast($value)
     {
@@ -221,11 +235,6 @@ class Type
             return PDO::PARAM_NULL;
         }
 
-        if (!empty(self::$_basicTypes[$this->_name])) {
-            $typeInfo = self::$_basicTypes[$this->_name];
-            return isset($typeInfo['pdo']) ? $typeInfo['pdo'] : PDO::PARAM_STR;
-        }
-
         return PDO::PARAM_STR;
     }
 
@@ -236,6 +245,7 @@ class Type
      *
      * @param mixed $value The value to convert to a boolean.
      * @return bool
+     * @deprecated 3.1.8 This method is now unused.
      */
     public static function boolval($value)
     {
@@ -252,6 +262,7 @@ class Type
      *
      * @param mixed $value The value to convert to a string.
      * @return bool
+     * @deprecated 3.1.8 This method is now unused.
      */
     public static function strval($value)
     {

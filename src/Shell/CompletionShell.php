@@ -51,7 +51,7 @@ class CompletionShell extends Shell
     /**
      * list commands
      *
-     * @return void|int|bool Returns the number of bytes returned from writing to stdout.
+     * @return int|bool|null Returns the number of bytes returned from writing to stdout.
      */
     public function commands()
     {
@@ -62,15 +62,18 @@ class CompletionShell extends Shell
     /**
      * list options for the named command
      *
-     * @return void|int|bool Returns the number of bytes returned from writing to stdout.
+     * @return int|bool|null Returns the number of bytes returned from writing to stdout.
      */
     public function options()
     {
-        $commandName = '';
+        $commandName = $subCommandName = '';
         if (!empty($this->args[0])) {
             $commandName = $this->args[0];
         }
-        $options = $this->Command->options($commandName);
+        if (!empty($this->args[1])) {
+            $subCommandName = $this->args[1];
+        }
+        $options = $this->Command->options($commandName, $subCommandName);
 
         return $this->_output($options);
     }
@@ -78,7 +81,7 @@ class CompletionShell extends Shell
     /**
      * list subcommands for the named command
      *
-     * @return void|int|bool Returns the number of bytes returned from writing to stdout.
+     * @return int|bool|null Returns the number of bytes returned from writing to stdout.
      */
     public function subcommands()
     {
@@ -93,7 +96,7 @@ class CompletionShell extends Shell
     /**
      * Guess autocomplete from the whole argument string
      *
-     * @return void|int|bool Returns the number of bytes returned from writing to stdout.
+     * @return int|bool|null Returns the number of bytes returned from writing to stdout.
      */
     public function fuzzy()
     {
@@ -135,6 +138,10 @@ class CompletionShell extends Shell
                     'command' => [
                         'help' => 'The command name',
                         'required' => false,
+                    ],
+                    'subcommand' => [
+                        'help' => 'The subcommand name',
+                        'required' => false,
                     ]
                 ]
             ]
@@ -151,7 +158,7 @@ class CompletionShell extends Shell
      * Emit results as a string, space delimited
      *
      * @param array $options The options to output
-     * @return void|int|bool Returns the number of bytes returned from writing to stdout.
+     * @return int|bool|null Returns the number of bytes returned from writing to stdout.
      */
     protected function _output($options = [])
     {

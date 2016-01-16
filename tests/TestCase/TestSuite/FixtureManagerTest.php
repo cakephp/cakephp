@@ -15,8 +15,11 @@
 namespace Cake\Test\TestSuite;
 
 use Cake\Core\Plugin;
-use Cake\Database\ConnectionManager;
+use Cake\Datasource\ConnectionManager;
+use Cake\Log\Log;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\Fixture\FixtureManager;
+use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -36,6 +39,12 @@ class FixtureManagerTest extends TestCase
         $this->manager = new FixtureManager();
     }
 
+    public function tearDown()
+    {
+        parent::tearDown();
+        Log::reset();
+    }
+
     /**
      * Test loading core fixtures.
      *
@@ -50,6 +59,88 @@ class FixtureManagerTest extends TestCase
         $this->assertCount(1, $fixtures);
         $this->assertArrayHasKey('core.articles', $fixtures);
         $this->assertInstanceOf('Cake\Test\Fixture\ArticlesFixture', $fixtures['core.articles']);
+    }
+
+    /**
+     * Test logging depends on fixture manager debug.
+     *
+     * @return void
+     */
+    public function testLogSchemaWithDebug()
+    {
+        $db = ConnectionManager::get('test');
+        $restore = $db->logQueries();
+        $db->logQueries(true);
+
+        $this->manager->setDebug(true);
+        $buffer = new ConsoleOutput();
+        Log::config('testQueryLogger', [
+            'className' => 'Console',
+            'stream' => $buffer
+        ]);
+
+        $test = $this->getMock('Cake\TestSuite\TestCase');
+        $test->fixtures = ['core.articles'];
+        $this->manager->fixturize($test);
+        // Need to load/shutdown twice to ensure fixture is created.
+        $this->manager->load($test);
+        $this->manager->shutdown();
+        $this->manager->load($test);
+        $this->manager->shutdown();
+
+        $db->logQueries($restore);
+        $this->assertContains('CREATE TABLE', implode('', $buffer->messages()));
+    }
+
+    /**
+     * Test loading fixtures with constraints.
+     *
+     * @return void
+     */
+    public function testFixturizeCoreConstraint()
+    {
+        $test = $this->getMock('Cake\TestSuite\TestCase');
+        $test->fixtures = ['core.articles', 'core.articles_tags', 'core.tags'];
+        $this->manager->fixturize($test);
+        $this->manager->load($test);
+
+        $table = TableRegistry::get('ArticlesTags');
+        $schema = $table->schema();
+        $expectedConstraint = [
+            'type' => 'foreign',
+            'columns' => [
+                'tag_id'
+            ],
+            'references' => [
+                'tags',
+                'id'
+            ],
+            'update' => 'cascade',
+            'delete' => 'cascade',
+            'length' => []
+        ];
+        $this->assertEquals($expectedConstraint, $schema->constraint('tag_id_fk'));
+        $this->manager->unload($test);
+
+        $this->manager->load($test);
+        $table = TableRegistry::get('ArticlesTags');
+        $schema = $table->schema();
+        $expectedConstraint = [
+            'type' => 'foreign',
+            'columns' => [
+                'tag_id'
+            ],
+            'references' => [
+                'tags',
+                'id'
+            ],
+            'update' => 'cascade',
+            'delete' => 'cascade',
+            'length' => []
+        ];
+        $this->assertEquals($expectedConstraint, $schema->constraint('tag_id_fk'));
+
+        $this->manager->unload($test);
     }
 
     /**
@@ -103,5 +194,66 @@ class FixtureManagerTest extends TestCase
         $test = $this->getMock('Cake\TestSuite\TestCase');
         $test->fixtures = ['derp.derp'];
         $this->manager->fixturize($test);
+    }
+
+    /**
+     * Test loading fixtures using loadSingle()
+     *
+     * @return void
+     */
+    public function testLoadSingle()
+    {
+        $test = $this->getMock('Cake\TestSuite\TestCase');
+        $test->autoFixtures = false;
+        $test->fixtures = ['core.articles', 'core.articles_tags', 'core.tags'];
+        $this->manager->fixturize($test);
+        $this->manager->loadSingle('Articles');
+        $this->manager->loadSingle('Tags');
+        $this->manager->loadSingle('ArticlesTags');
+
+        $table = TableRegistry::get('ArticlesTags');
+        $results = $table->find('all')->toArray();
+        $schema = $table->schema();
+        $expectedConstraint = [
+            'type' => 'foreign',
+            'columns' => [
+                'tag_id'
+            ],
+            'references' => [
+                'tags',
+                'id'
+            ],
+            'update' => 'cascade',
+            'delete' => 'cascade',
+            'length' => []
+        ];
+        $this->assertEquals($expectedConstraint, $schema->constraint('tag_id_fk'));
+        $this->assertCount(4, $results);
+
+        $this->manager->unload($test);
+
+        $this->manager->loadSingle('Articles');
+        $this->manager->loadSingle('Tags');
+        $this->manager->loadSingle('ArticlesTags');
+
+        $table = TableRegistry::get('ArticlesTags');
+        $results = $table->find('all')->toArray();
+        $schema = $table->schema();
+        $expectedConstraint = [
+            'type' => 'foreign',
+            'columns' => [
+                'tag_id'
+            ],
+            'references' => [
+                'tags',
+                'id'
+            ],
+            'update' => 'cascade',
+            'delete' => 'cascade',
+            'length' => []
+        ];
+        $this->assertEquals($expectedConstraint, $schema->constraint('tag_id_fk'));
+        $this->assertCount(4, $results);
+        $this->manager->unload($test);
     }
 }

@@ -1,13 +1,13 @@
 <?php
 /**
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -23,7 +23,6 @@ use Cake\Network\Response;
 use Cake\Network\Session;
 use Cake\Routing\Dispatcher;
 use Cake\Routing\Filter\ControllerFactoryFilter;
-use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Inflector;
 
@@ -407,6 +406,54 @@ class DispatcherTest extends TestCase
             'TestPlugin\Controller\Admin\CommentsController',
             $this->dispatcher->controller
         );
+    }
+
+    /**
+     * test forbidden controller names.
+     *
+     * @expectedException \Cake\Routing\Exception\MissingControllerException
+     * @expectedExceptionMessage Controller class TestPlugin.Tests could not be found.
+     * @return void
+     */
+    public function testDispatchBadPluginName()
+    {
+        Plugin::load('TestPlugin');
+
+        $request = new Request([
+            'url' => 'TestPlugin.Tests/index',
+            'params' => [
+                'plugin' => '',
+                'controller' => 'TestPlugin.Tests',
+                'action' => 'index',
+                'pass' => [],
+                'return' => 1
+            ]
+        ]);
+        $response = $this->getMock('Cake\Network\Response');
+        $this->dispatcher->dispatch($request, $response);
+    }
+
+    /**
+     * test forbidden controller names.
+     *
+     * @expectedException \Cake\Routing\Exception\MissingControllerException
+     * @expectedExceptionMessage Controller class TestApp\Controller\PostsController could not be found.
+     * @return void
+     */
+    public function testDispatchBadName()
+    {
+        $request = new Request([
+            'url' => 'TestApp%5CController%5CPostsController/index',
+            'params' => [
+                'plugin' => '',
+                'controller' => 'TestApp\Controller\PostsController',
+                'action' => 'index',
+                'pass' => [],
+                'return' => 1
+            ]
+        ]);
+        $response = $this->getMock('Cake\Network\Response');
+        $this->dispatcher->dispatch($request, $response);
     }
 
     /**

@@ -10,6 +10,10 @@ CakePHP loves to welcome your contributions. There are several ways to help out:
 There are a few guidelines that we need contributors to follow so that we have a
 chance of keeping on top of things.
 
+## Code of Conduct
+
+Help us keep CakePHP open and inclusive. Please read and follow our [Code of Conduct](https://github.com/cakephp/code-of-conduct/blob/master/CODE_OF_CONDUCT.md).
+
 ## Getting Started
 
 * Make sure you have a [GitHub account](https://github.com/signup/free).
@@ -70,6 +74,10 @@ To run the sniffs for CakePHP coding standards:
 Check the [cakephp-codesniffer](https://github.com/cakephp/cakephp-codesniffer)
 repository to setup the CakePHP standard. The [README](https://github.com/cakephp/cakephp-codesniffer/blob/master/README.md) contains installation info
 for the sniff and phpcs.
+
+## Reporting a Security Issue
+
+If you've found a security related issue in CakePHP, please don't open an issue in github. Instead contact us at security@cakephp.org. For more information on how we handle security issues, [see the CakePHP Security Issue Process](http://book.cakephp.org/3.0/en/contributing/tickets.html#reporting-security-issues).
 
 # Additional Resources
 

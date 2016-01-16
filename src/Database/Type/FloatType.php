@@ -17,6 +17,7 @@ namespace Cake\Database\Type;
 use Cake\Database\Driver;
 use Cake\Database\Type;
 use PDO;
+use RuntimeException;
 
 /**
  * Float type converter.
@@ -132,7 +133,7 @@ class FloatType extends Type
             $this->_useLocaleParser = $enable;
             return $this;
         }
-        throw new \RuntimeException(
+        throw new RuntimeException(
             sprintf('Cannot use locale parsing with the %s class', static::$numberClass)
         );
     }

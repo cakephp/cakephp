@@ -17,6 +17,7 @@ namespace Cake\Routing\Filter;
 use Cake\Core\App;
 use Cake\Event\Event;
 use Cake\Routing\DispatcherFilter;
+use ReflectionClass;
 
 /**
  * A dispatcher filter that builds the controller to dispatch
@@ -50,11 +51,11 @@ class ControllerFactoryFilter extends DispatcherFilter
     }
 
     /**
-     * Get controller to use, either plugin controller or application controller
+     * Gets controller to use, either plugin or application controller.
      *
      * @param \Cake\Network\Request $request Request object
      * @param \Cake\Network\Response $response Response for the controller.
-     * @return mixed name of controller if not loaded, or object if loaded
+     * @return \Cake\Controller\Controller|false Object if loaded, boolean false otherwise.
      */
     protected function _getController($request, $response)
     {
@@ -73,6 +74,9 @@ class ControllerFactoryFilter extends DispatcherFilter
             );
             $namespace .= '/' . implode('/', $prefixes);
         }
+        if (strpos($controller, '\\') !== false || strpos($controller, '.') !== false) {
+            return false;
+        }
         $className = false;
         if ($pluginPath . $controller) {
             $className = App::classname($pluginPath . $controller, $namespace, 'Controller');
@@ -80,7 +84,7 @@ class ControllerFactoryFilter extends DispatcherFilter
         if (!$className) {
             return false;
         }
-        $reflection = new \ReflectionClass($className);
+        $reflection = new ReflectionClass($className);
         if ($reflection->isAbstract() || $reflection->isInterface()) {
             return false;
         }

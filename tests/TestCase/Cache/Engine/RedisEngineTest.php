@@ -104,6 +104,38 @@ class RedisEngineTest extends TestCase
     }
 
     /**
+     * testConfigDsn method
+     *
+     * @return void
+     */
+    public function testConfigDsn()
+    {
+        Cache::config('redis_dsn', [
+            'url' => 'redis://localhost:6379?database=1&prefix=redis_'
+        ]);
+
+        $config = Cache::engine('redis_dsn')->config();
+        $expecting = [
+            'prefix' => 'redis_',
+            'duration' => 3600,
+            'probability' => 100,
+            'groups' => [],
+            'server' => 'localhost',
+            'port' => 6379,
+            'timeout' => 0,
+            'persistent' => true,
+            'password' => false,
+            'database' => '1',
+            'unix_socket' => false,
+            'host' => 'localhost',
+            'scheme' => 'redis',
+        ];
+        $this->assertEquals($expecting, $config);
+
+        Cache::drop('redis_dsn');
+    }
+
+    /**
      * testConnect method
      *
      * @return void
@@ -409,5 +441,25 @@ class RedisEngineTest extends TestCase
         $this->assertTrue(Cache::write('test_groups', 'value2', 'redis_groups'));
         $this->assertTrue(Cache::clearGroup('group_b', 'redis_groups'));
         $this->assertFalse(Cache::read('test_groups', 'redis_groups'));
+    }
+
+    /**
+     * Test add
+     *
+     * @return void
+     */
+    public function testAdd()
+    {
+        Cache::delete('test_add_key', 'redis');
+
+        $result = Cache::add('test_add_key', 'test data', 'redis');
+        $this->assertTrue($result);
+
+        $expected = 'test data';
+        $result = Cache::read('test_add_key', 'redis');
+        $this->assertEquals($expected, $result);
+
+        $result = Cache::add('test_add_key', 'test data 2', 'redis');
+        $this->assertFalse($result);
     }
 }

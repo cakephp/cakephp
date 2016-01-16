@@ -15,6 +15,7 @@
 namespace Cake\Console;
 
 use Cake\Utility\Text;
+use SimpleXmlElement;
 
 /**
  * HelpFormatter formats help for console shells. Can format to either
@@ -43,9 +44,16 @@ class HelpFormatter
     protected $_maxOptions = 6;
 
     /**
+     * Option parser.
+     *
+     * @var \Cake\Console\ConsoleOptionParser
+     */
+    protected $_parser;
+
+    /**
      * Build the help formatter for an OptionParser
      *
-     * @param ConsoleOptionParser $parser The option parser help is being generated for.
+     * @param \Cake\Console\ConsoleOptionParser $parser The option parser help is being generated for.
      */
     public function __construct(ConsoleOptionParser $parser)
     {
@@ -181,7 +189,7 @@ class HelpFormatter
     public function xml($string = true)
     {
         $parser = $this->_parser;
-        $xml = new \SimpleXmlElement('<shell></shell>');
+        $xml = new SimpleXmlElement('<shell></shell>');
         $xml->addChild('command', $parser->command());
         $xml->addChild('description', $parser->description());
 

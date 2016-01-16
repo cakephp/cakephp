@@ -14,10 +14,8 @@
  */
 namespace Cake\Database;
 
-use Cake\Database\Query;
-use Cake\Database\QueryCompiler;
-use Cake\Database\ValueBinder;
 use InvalidArgumentException;
+use PDO;
 
 /**
  * Represents a database diver containing all specificities for
@@ -168,6 +166,14 @@ abstract class Driver
     abstract public function enableForeignKeySQL();
 
     /**
+     * Returns whether the driver supports adding or dropping constraints
+     * to already created tables.
+     *
+     * @return bool true if driver supports dynamic constraints
+     */
+    abstract public function supportsDynamicConstraints();
+
+    /**
      * Returns whether this driver supports save points for nested transactions
      *
      * @return bool true if save points are supported, false otherwise
@@ -251,11 +257,11 @@ abstract class Driver
         }
         if ((is_int($value) || $value === '0') || (
             is_numeric($value) && strpos($value, ',') === false &&
-            $value[0] != '0' && strpos($value, 'e') === false)
+            $value[0] !== '0' && strpos($value, 'e') === false)
         ) {
             return $value;
         }
-        return $this->_connection->quote($value, \PDO::PARAM_STR);
+        return $this->_connection->quote($value, PDO::PARAM_STR);
     }
 
     /**

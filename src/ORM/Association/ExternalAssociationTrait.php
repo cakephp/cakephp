@@ -14,8 +14,6 @@
  */
 namespace Cake\ORM\Association;
 
-use Cake\ORM\Association\SelectableAssociationTrait;
-
 /**
  * Represents a type of association that that needs to be recovered by performing
  * an extra query.

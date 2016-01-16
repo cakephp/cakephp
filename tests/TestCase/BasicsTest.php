@@ -2,7 +2,7 @@
 /**
  * BasicsTest file
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -10,7 +10,7 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -62,6 +62,11 @@ class BasicsTest extends TestCase
         $two = ['minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true];
         $result = array_diff_key($one, $two);
         $this->assertSame([], $result);
+
+        $one = ['minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true];
+        $two = [];
+        $result = array_diff_key($one, $two);
+        $this->assertSame($one, $result);
     }
 
     /**
@@ -296,7 +301,7 @@ EXPECTED;
 ###########################
 
 EXPECTED;
-        if (PHP_SAPI === 'cli') {
+        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) {
             $expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 18);
         } else {
             $expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);
@@ -321,7 +326,7 @@ EXPECTED;
 ###########################
 
 EXPECTED;
-        if (PHP_SAPI === 'cli') {
+        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) {
             $expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 18);
         } else {
             $expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);

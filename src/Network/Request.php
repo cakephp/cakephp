@@ -18,7 +18,6 @@ use ArrayAccess;
 use BadMethodCallException;
 use Cake\Core\Configure;
 use Cake\Network\Exception\MethodNotAllowedException;
-use Cake\Network\Session;
 use Cake\Utility\Hash;
 
 /**
@@ -333,7 +332,7 @@ class Request implements ArrayAccess
             } else {
                 $uri = substr($_SERVER['REQUEST_URI'], strlen(Configure::read('App.fullBaseUrl')));
             }
-        } elseif (isset($_SERVER['PHP_SELF']) && isset($_SERVER['SCRIPT_NAME'])) {
+        } elseif (isset($_SERVER['PHP_SELF'], $_SERVER['SCRIPT_NAME'])) {
             $uri = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['PHP_SELF']);
         } elseif (isset($_SERVER['HTTP_X_REWRITE_URL'])) {
             $uri = $_SERVER['HTTP_X_REWRITE_URL'];
@@ -829,7 +828,7 @@ class Request implements ArrayAccess
             static::$_detectors[$name] = $callable;
             return;
         }
-        if (isset(static::$_detectors[$name]) && isset($callable['options'])) {
+        if (isset(static::$_detectors[$name], $callable['options'])) {
             $callable = Hash::merge(static::$_detectors[$name], $callable);
         }
         static::$_detectors[$name] = $callable;
@@ -887,7 +886,7 @@ class Request implements ArrayAccess
      * Read an HTTP header from the Request information.
      *
      * @param string $name Name of the header you want.
-     * @return mixed Either null on no header being set or the value of the header.
+     * @return string|null Either null on no header being set or the value of the header.
      */
     public function header($name)
     {
@@ -1001,7 +1000,7 @@ class Request implements ArrayAccess
      * by the client.
      *
      * @param string|null $type The content type to check for. Leave null to get all types a client accepts.
-     * @return mixed Either an array of all the types the client accepts or a boolean if they accept the
+     * @return array|bool Either an array of all the types the client accepts or a boolean if they accept the
      *   provided type.
      */
     public function accepts($type = null)
@@ -1043,7 +1042,7 @@ class Request implements ArrayAccess
      * ``` \Cake\Network\Request::acceptLanguage('es-es'); ```
      *
      * @param string|null $language The language to test.
-     * @return mixed If a $language is provided, a boolean. Otherwise the array of accepted languages.
+     * @return array|bool If a $language is provided, a boolean. Otherwise the array of accepted languages.
      */
     public function acceptLanguage($language = null)
     {
@@ -1157,7 +1156,7 @@ class Request implements ArrayAccess
      * Safely access the values in $this->params.
      *
      * @param string $name The name of the parameter to get.
-     * @return mixed The value of the provided parameter. Will
+     * @return mixed|$this The value of the provided parameter. Will
      *   return false if the parameter doesn't exist or is falsey.
      */
     public function param($name)
@@ -1228,10 +1227,12 @@ class Request implements ArrayAccess
      *
      * @param string $key The key you want to read/write from/to.
      * @param string|null $value Value to set. Default null.
+     * @param string|null $default Default value when trying to retrieve an environment
+     *   variable's value that does not exist. The value parameter must be null.
      * @return $this|string|null This instance if used as setter,
      *   if used as getter either the environment value, or null if the value doesn't exist.
      */
-    public function env($key, $value = null)
+    public function env($key, $value = null, $default = null)
     {
         if ($value !== null) {
             $this->_environment[$key] = $value;
@@ -1243,7 +1244,7 @@ class Request implements ArrayAccess
         if (!array_key_exists($key, $this->_environment)) {
             $this->_environment[$key] = env($key);
         }
-        return $this->_environment[$key];
+        return $this->_environment[$key] !== null ? $this->_environment[$key] : $default;
     }
 
     /**

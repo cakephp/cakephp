@@ -1,6 +1,6 @@
 <?php
 /**
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -31,8 +31,8 @@ class ArticlesTable extends Table
     /**
      * Find published
      *
-     * @param Cake\ORM\Query $query The query
-     * @return Cake\ORM\Query
+     * @param \Cake\ORM\Query $query The query
+     * @return \Cake\ORM\Query
      */
     public function findPublished($query)
     {

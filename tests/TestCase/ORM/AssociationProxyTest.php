@@ -78,6 +78,22 @@ class AssociationProxyTest extends TestCase
     }
 
     /**
+     * Test that find() with empty conditions generates valid SQL
+     *
+     * @return void
+     */
+    public function testFindEmptyConditions()
+    {
+        $table = TableRegistry::get('Users');
+        $table->hasMany('Articles', [
+            'foreignKey' => 'author_id',
+            'conditions' => '',
+        ]);
+        $query = $table->Articles->find('list', ['limit' => 2]);
+        $this->assertCount(2, $query->all());
+    }
+
+    /**
      * Tests that the proxied updateAll will preserve conditions set for the association
      *
      * @return void

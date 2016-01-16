@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\ConsoleIo;
+use Cake\Core\Configure;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 
@@ -32,6 +33,7 @@ class ConsoleIoTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        Configure::write('App.namespace', 'TestApp');
 
         $this->out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
         $this->err = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
@@ -344,6 +346,36 @@ class ConsoleIoTest extends TestCase
     }
 
     /**
+     * Tests that setLoggers works properly with quiet
+     *
+     * @return void
+     */
+    public function testSetLoggersQuiet()
+    {
+        Log::drop('stdout');
+        Log::drop('stderr');
+        $this->io->setLoggers(ConsoleIo::QUIET);
+        $this->assertEmpty(Log::engine('stdout'));
+        $this->assertNotEmpty(Log::engine('stderr'));
+    }
+
+    /**
+     * Tests that setLoggers works properly with verbose
+     *
+     * @return void
+     */
+    public function testSetLoggersVerbose()
+    {
+        Log::drop('stdout');
+        Log::drop('stderr');
+        $this->io->setLoggers(ConsoleIo::VERBOSE);
+
+        $this->assertNotEmpty(Log::engine('stderr'));
+        $engine = Log::engine('stdout');
+        $this->assertEquals(['notice', 'info', 'debug'], $engine->config('levels'));
+    }
+
+    /**
      * Ensure that styles() just proxies to stdout.
      *
      * @return void
@@ -354,5 +386,20 @@ class ConsoleIoTest extends TestCase
             ->method('styles')
             ->with('name', 'props');
         $this->io->styles('name', 'props');
+    }
+
+    /**
+     * Test the helper method.
+     *
+     * @return void
+     */
+    public function testHelper()
+    {
+        $this->out->expects($this->once())
+            ->method('write')
+            ->with('It works!well ish');
+        $helper = $this->io->helper('simple');
+        $this->assertInstanceOf('Cake\Console\Helper', $helper);
+        $helper->output(['well', 'ish']);
     }
 }

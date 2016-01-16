@@ -16,6 +16,10 @@ namespace Cake\Utility;
 
 use Cake\Utility\Exception\XmlException;
 use DOMDocument;
+use DOMNode;
+use DOMText;
+use Exception;
+use SimpleXMLElement;
 
 /**
  * XML handling for CakePHP.
@@ -141,12 +145,12 @@ class Xml
         }
         try {
             if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
-                $xml = new \SimpleXMLElement($input, LIBXML_NOCDATA);
+                $xml = new SimpleXMLElement($input, LIBXML_NOCDATA);
             } else {
-                $xml = new \DOMDocument();
+                $xml = new DOMDocument();
                 $xml->loadXML($input);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $xml = null;
         }
         if ($hasDisable && !$options['loadEntities']) {
@@ -230,7 +234,7 @@ class Xml
 
         $options['return'] = strtolower($options['return']);
         if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
-            return new \SimpleXMLElement($dom->saveXML());
+            return new SimpleXMLElement($dom->saveXML());
         }
         return $dom;
     }
@@ -268,13 +272,12 @@ class Xml
                         continue;
                     }
                     if ($key[0] !== '@' && $format === 'tags') {
-                        $child = null;
                         if (!is_numeric($value)) {
                             // Escape special characters
                             // http://www.w3.org/TR/REC-xml/#syntax
                             // https://bugs.php.net/bug.php?id=36795
                             $child = $dom->createElement($key, '');
-                            $child->appendChild(new \DOMText($value));
+                            $child->appendChild(new DOMText($value));
                         } else {
                             $child = $dom->createElement($key, $value);
                         }
@@ -356,10 +359,10 @@ class Xml
      */
     public static function toArray($obj)
     {
-        if ($obj instanceof \DOMNode) {
+        if ($obj instanceof DOMNode) {
             $obj = simplexml_import_dom($obj);
         }
-        if (!($obj instanceof \SimpleXMLElement)) {
+        if (!($obj instanceof SimpleXMLElement)) {
             throw new XmlException('The input is not instance of SimpleXMLElement, DOMDocument or DOMNode.');
         }
         $result = [];

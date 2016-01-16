@@ -1,8 +1,6 @@
 <?php
 /**
- * ValidationTest file
- *
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -10,7 +8,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -124,17 +122,18 @@ class ValidationTest extends TestCase
      */
     public function testAlphaNumericPassedAsArray()
     {
-        $this->assertTrue(Validation::alphaNumeric(['check' => 'frferrf']));
-        $this->assertTrue(Validation::alphaNumeric(['check' => '12234']));
-        $this->assertTrue(Validation::alphaNumeric(['check' => '1w2e2r3t4y']));
-        $this->assertTrue(Validation::alphaNumeric(['check' => '0']));
-        $this->assertFalse(Validation::alphaNumeric(['check' => '12 234']));
-        $this->assertFalse(Validation::alphaNumeric(['check' => 'dfd 234']));
-        $this->assertFalse(Validation::alphaNumeric(['check' => "\n"]));
-        $this->assertFalse(Validation::alphaNumeric(['check' => "\t"]));
-        $this->assertFalse(Validation::alphaNumeric(['check' => "\r"]));
-        $this->assertFalse(Validation::alphaNumeric(['check' => ' ']));
-        $this->assertFalse(Validation::alphaNumeric(['check' => '']));
+        $this->assertTrue(Validation::alphaNumeric('frferrf'));
+        $this->assertTrue(Validation::alphaNumeric('12234'));
+        $this->assertTrue(Validation::alphaNumeric('1w2e2r3t4y'));
+        $this->assertTrue(Validation::alphaNumeric('0'));
+        $this->assertFalse(Validation::alphaNumeric('12 234'));
+        $this->assertFalse(Validation::alphaNumeric('dfd 234'));
+        $this->assertFalse(Validation::alphaNumeric("\n"));
+        $this->assertFalse(Validation::alphaNumeric("\t"));
+        $this->assertFalse(Validation::alphaNumeric("\r"));
+        $this->assertFalse(Validation::alphaNumeric(' '));
+        $this->assertFalse(Validation::alphaNumeric(''));
+        $this->assertFalse(Validation::alphaNumeric(['foo']));
     }
 
     /**
@@ -659,9 +658,8 @@ class ValidationTest extends TestCase
      */
     public function testCustomRegexForCc()
     {
-        $this->assertTrue(Validation::cc('12332105933743585', null, null, '/123321\\d{11}/'));
-        $this->assertFalse(Validation::cc('1233210593374358', null, null, '/123321\\d{11}/'));
-        $this->assertFalse(Validation::cc('12312305933743585', null, null, '/123321\\d{11}/'));
+        $this->assertTrue(Validation::cc('370482756063980', null, false, '/123321\\d{11}/'));
+        $this->assertFalse(Validation::cc('1233210593374358', null, false, '/123321\\d{11}/'));
     }
 
     /**
@@ -844,43 +842,26 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::comparison(7, '==', 6));
         $this->assertFalse(Validation::comparison(7, 'not equal', 7));
         $this->assertFalse(Validation::comparison(7, '!=', 7));
+
+        $this->assertTrue(Validation::comparison('6.5', '!=', 6));
+        $this->assertTrue(Validation::comparison('6.5', '<', 7));
     }
 
     /**
-     * testComparisonAsArray method
+     * Test comparison casting values before comparisons.
      *
      * @return void
      */
-    public function testComparisonAsArray()
+    public function testComparisonTypeChecks()
     {
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => 'is greater', 'check2' => 6]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => '>', 'check2' => 6]));
-        $this->assertTrue(Validation::comparison(['check1' => 6, 'operator' => 'is less', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 6, 'operator' => '<', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => 'greater or equal', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => '>=', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => 'greater or equal', 'check2' => 6]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => '>=', 'check2' => 6]));
-        $this->assertTrue(Validation::comparison(['check1' => 6, 'operator' => 'less or equal', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 6, 'operator' => '<=', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => 'equal to', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => '==', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => 'not equal', 'check2' => 6]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => '!=', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 6, 'operator' => 'is greater', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 6, 'operator' => '>', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => 'is less', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => '<', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 6, 'operator' => 'greater or equal', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 6, 'operator' => '>=', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 6, 'operator' => 'greater or equal', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 6, 'operator' => '>=', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => 'less or equal', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => '<=', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => 'equal to', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => '==', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => 'not equal', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => '!=', 'check2' => 7]));
+        $this->assertFalse(Validation::comparison('\x028', '>=', 1), 'hexish encoding fails');
+        $this->assertFalse(Validation::comparison('0b010', '>=', 1), 'binary string data fails');
+        $this->assertFalse(Validation::comparison('0x01', '>=', 1), 'hex string data fails');
+        $this->assertFalse(Validation::comparison('0x1', '>=', 1), 'hex string data fails');
+
+        $this->assertFalse(Validation::comparison('\x028', '>=', 1.5), 'hexish encoding fails');
+        $this->assertFalse(Validation::comparison('0b010', '>=', 1.5), 'binary string data fails');
+        $this->assertFalse(Validation::comparison('0x02', '>=', 1.5), 'hex string data fails');
     }
 
     /**
@@ -903,9 +884,9 @@ class ValidationTest extends TestCase
      */
     public function testCustomAsArray()
     {
-        $this->assertTrue(Validation::custom(['check' => '12345', 'regex' => '/(?<!\\S)\\d++(?!\\S)/']));
-        $this->assertFalse(Validation::custom(['check' => 'Text', 'regex' => '/(?<!\\S)\\d++(?!\\S)/']));
-        $this->assertFalse(Validation::custom(['check' => '123.45', 'regex' => '/(?<!\\S)\\d++(?!\\S)/']));
+        $this->assertTrue(Validation::custom('12345', '/(?<!\\S)\\d++(?!\\S)/'));
+        $this->assertFalse(Validation::custom('Text', '/(?<!\\S)\\d++(?!\\S)/'));
+        $this->assertFalse(Validation::custom('123.45', '/(?<!\\S)\\d++(?!\\S)/'));
     }
 
     /**
@@ -1450,6 +1431,17 @@ class ValidationTest extends TestCase
      */
     public function testDateTimeArray()
     {
+        $date = [
+            'year' => 2014,
+            'month' => '02',
+            'day' => '14',
+            'hour' => '12',
+            'minute' => '14',
+            'second' => '15',
+            'meridian' => 'pm'
+        ];
+        $this->assertTrue(Validation::datetime($date));
+
         $date = ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15];
         $this->assertTrue(Validation::datetime($date));
 
@@ -1533,6 +1525,25 @@ class ValidationTest extends TestCase
         $date = [];
         $this->assertFalse(Validation::time($date));
     }
+
+    /**
+     * Tests that it is possible to pass a median (AM, PM) to the dateTime validation
+     *
+     * @return void
+     */
+    public function testDateTimeWithMeriadian()
+    {
+        $this->assertTrue(Validation::dateTime('10/04/2007 1:50 AM', ['dmy']));
+        $this->assertTrue(Validation::dateTime('12/04/2017 1:38 PM', ['dmy']));
+        $this->assertTrue(Validation::dateTime('10/04/2007 1:50 am', ['dmy']));
+        $this->assertTrue(Validation::dateTime('12/04/2017 1:38 pm', ['dmy']));
+        $this->assertTrue(Validation::dateTime('12/04/2017 1:38pm', ['dmy']));
+        $this->assertTrue(Validation::dateTime('12/04/2017 1:38AM', ['dmy']));
+        $this->assertTrue(Validation::dateTime('12/04/2017, 1:38AM', ['dmy']));
+        $this->assertTrue(Validation::dateTime('28/10/2015, 3:21 PM', ['dmy']));
+        $this->assertFalse(Validation::dateTime('12/04/2017 58:38AM', ['dmy']));
+    }
+
 
     /**
      * testBoolean method
@@ -2058,6 +2069,23 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * Test range type checks
+     *
+     * @return void
+     */
+    public function testRangeTypeChecks()
+    {
+        $this->assertFalse(Validation::range('\x028', 1, 5), 'hexish encoding fails');
+        $this->assertFalse(Validation::range('0b010', 1, 5), 'binary string data fails');
+        $this->assertFalse(Validation::range('0x01', 1, 5), 'hex string data fails');
+        $this->assertFalse(Validation::range('0x1', 1, 5), 'hex string data fails');
+
+        $this->assertFalse(Validation::range('\x028', 1, 5), 'hexish encoding fails');
+        $this->assertFalse(Validation::range('0b010', 1, 5), 'binary string data fails');
+        $this->assertFalse(Validation::range('0x02', 1, 5), 'hex string data fails');
+    }
+
+    /**
      * testExtension method
      *
      * @return void
@@ -2076,12 +2104,19 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::extension('extension.jpg', ['GIF']));
         $this->assertTrue(Validation::extension(['extension.JPG', 'extension.gif', 'extension.png']));
         $this->assertTrue(Validation::extension(['file' => ['name' => 'file.jpg']]));
-        $this->assertTrue(Validation::extension(['file1' => ['name' => 'file.jpg'],
-                                                'file2' => ['name' => 'file.jpg'],
-                                                'file3' => ['name' => 'file.jpg']]));
-        $this->assertFalse(Validation::extension(['file1' => ['name' => 'file.jpg'],
-                                                'file2' => ['name' => 'file.jpg'],
-                                                'file3' => ['name' => 'file.jpg']], ['gif']));
+        $this->assertTrue(Validation::extension([
+            'file1' => ['name' => 'file.jpg'],
+            'file2' => ['name' => 'file.jpg'],
+            'file3' => ['name' => 'file.jpg']
+        ]));
+        $this->assertFalse(Validation::extension(
+            [
+                'file1' => ['name' => 'file.jpg'],
+                'file2' => ['name' => 'file.jpg'],
+                'file3' => ['name' => 'file.jpg']
+            ],
+            ['gif']
+        ));
 
         $this->assertFalse(Validation::extension(['noextension', 'extension.JPG', 'extension.gif', 'extension.png']));
         $this->assertFalse(Validation::extension(['extension.pdf', 'extension.JPG', 'extension.gif', 'extension.png']));
@@ -2239,7 +2274,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::datetime('27/12/2006 1:00pm', 'dmy'));
         $this->assertFalse(Validation::datetime('27/12/2006 9:00', 'dmy'));
 
-        $this->assertTrue(Validation::datetime('27 12 2006 1:00pm', 'dmy'));
+        $this->assertFalse(Validation::datetime('27 12 2006 1:00pm', 'dmy'));
         $this->assertFalse(Validation::datetime('27 12 2006 24:00', 'dmy'));
 
         $this->assertFalse(Validation::datetime('00-00-0000 1:00pm', 'dmy'));
@@ -2472,5 +2507,198 @@ class ValidationTest extends TestCase
 
         $context = [];
         $this->assertFalse(Validation::compareWith('a value', 'other', $context));
+    }
+
+    /**
+     * testContainsNonAlphaNumeric method
+     *
+     * @return void
+     */
+    public function testContainNonAlphaNumeric()
+    {
+        $this->assertFalse(Validation::containsNonAlphaNumeric('abcdefghijklmnopqrstuvwxyz'));
+        $this->assertFalse(Validation::containsNonAlphaNumeric('ABCDEFGHIJKLMNOPQRSTUVWXYZ'));
+        $this->assertFalse(Validation::containsNonAlphaNumeric('0123456789'));
+        $this->assertFalse(Validation::containsNonAlphaNumeric('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'));
+
+        $this->assertTrue(Validation::containsNonAlphaNumeric('#'));
+        $this->assertTrue(Validation::containsNonAlphaNumeric("0\n"));
+        $this->assertTrue(Validation::containsNonAlphaNumeric("\n"));
+        $this->assertTrue(Validation::containsNonAlphaNumeric("\t"));
+        $this->assertTrue(Validation::containsNonAlphaNumeric("\r"));
+        $this->assertTrue(Validation::containsNonAlphaNumeric(" "));
+
+        $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef'));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def'));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef#'));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('abc def'));
+        $this->assertTrue(Validation::containsNonAlphaNumeric("abcdef\n"));
+
+        $this->assertTrue(Validation::containsNonAlphaNumeric('##abcdef', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef##', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef#', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('#abc#def', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def#', 2));
+
+        $this->assertTrue(Validation::containsNonAlphaNumeric('#♥abcdef', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef#♥', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef♥', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('#abc♥def', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def♥', 2));
+
+        $this->assertTrue(Validation::containsNonAlphaNumeric('#♥abcdef', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef#♥', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef♥', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('#abc♥def', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def♥', 2));
+
+        $this->assertTrue(Validation::containsNonAlphaNumeric('###abcdef', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('abc###def', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef###', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('#abc#def#', 2));
+
+        $this->assertFalse(Validation::containsNonAlphaNumeric('##abcdef', 3));
+        $this->assertFalse(Validation::containsNonAlphaNumeric('abcdef##', 3));
+        $this->assertFalse(Validation::containsNonAlphaNumeric('abc##def', 3));
+        $this->assertFalse(Validation::containsNonAlphaNumeric('ab#cd#ef', 3));
+    }
+
+    /**
+     * Test the geoCoordinate method.
+     *
+     * @return void
+     */
+    public function testGeoCoordinate()
+    {
+        $this->assertTrue(Validation::geoCoordinate('51.165691, 10.451526'));
+        $this->assertTrue(Validation::geoCoordinate('-25.274398, 133.775136'));
+        $this->assertFalse(Validation::geoCoordinate('51.165691 10.451526'));
+        $this->assertFalse(Validation::geoCoordinate('-245.274398, -133.775136'));
+        $this->assertTrue(Validation::geoCoordinate('51.165691', ['format' => 'lat']));
+        $this->assertTrue(Validation::geoCoordinate('10.451526', ['format' => 'long']));
+    }
+
+    /**
+     * Test the geoCoordinate method.
+     *
+     * @return void
+     */
+    public function testLatitude()
+    {
+        $this->assertTrue(Validation::latitude('51.165691'));
+        $this->assertFalse(Validation::latitude('200.23552'));
+    }
+
+    /**
+     * Test the geoCoordinate method.
+     *
+     * @return void
+     */
+    public function testLongitude()
+    {
+        $this->assertTrue(Validation::longitude('10.451526'));
+        $this->assertFalse(Validation::longitude('-190.52236'));
+    }
+
+    /**
+     * Test isInteger
+     *
+     * @return void
+     */
+    public function testIsInteger()
+    {
+        $this->assertTrue(Validation::isInteger(-10));
+        $this->assertTrue(Validation::isInteger(0));
+        $this->assertTrue(Validation::isInteger(10));
+        $this->assertTrue(Validation::isInteger('-10'));
+        $this->assertTrue(Validation::isInteger('0'));
+        $this->assertTrue(Validation::isInteger('10'));
+
+        $this->assertFalse(Validation::isInteger('2.5'));
+        $this->assertFalse(Validation::isInteger([]));
+        $this->assertFalse(Validation::isInteger(new \StdClass));
+        $this->assertFalse(Validation::isInteger('2 bears'));
+    }
+
+    /**
+     * Test ascii
+     *
+     * @return void
+     */
+    public function testAscii()
+    {
+        $this->assertTrue(Validation::ascii('1 big blue bus.'));
+        $this->assertTrue(Validation::ascii(',.<>[]{;/?\)()'));
+
+        $this->assertFalse(Validation::ascii([]));
+        $this->assertFalse(Validation::ascii(1001));
+        $this->assertFalse(Validation::ascii(3.14));
+        $this->assertFalse(Validation::ascii(new \StdClass));
+
+        // Latin-1 supplement
+        $this->assertFalse(Validation::ascii('some' . "\xc2\x82" . 'value'));
+        $this->assertFalse(Validation::ascii('some' . "\xc3\xbf" . 'value'));
+
+        // End of BMP
+        $this->assertFalse(Validation::ascii('some' . "\xef\xbf\xbd" . 'value'));
+
+        // Start of supplementary multilingual plane
+        $this->assertFalse(Validation::ascii('some' . "\xf0\x90\x80\x80" . 'value'));
+    }
+
+    /**
+     * Test utf8 basic
+     *
+     * @return void
+     */
+    public function testUtf8Basic()
+    {
+        $this->assertFalse(Validation::utf8([]));
+        $this->assertFalse(Validation::utf8(1001));
+        $this->assertFalse(Validation::utf8(3.14));
+        $this->assertFalse(Validation::utf8(new \StdClass));
+        $this->assertTrue(Validation::utf8('1 big blue bus.'));
+        $this->assertTrue(Validation::utf8(',.<>[]{;/?\)()'));
+
+        // Latin-1 supplement
+        $this->assertTrue(Validation::utf8('some' . "\xc2\x82" . 'value'));
+        $this->assertTrue(Validation::utf8('some' . "\xc3\xbf" . 'value'));
+
+        // End of BMP
+        $this->assertTrue(Validation::utf8('some' . "\xef\xbf\xbd" . 'value'));
+
+        // Start of supplementary multilingual plane
+        $this->assertFalse(Validation::utf8('some' . "\xf0\x90\x80\x80" . 'value'));
+
+        // Grinning face
+        $this->assertFalse(Validation::utf8('some' . "\xf0\x9f\x98\x80" . 'value'));
+    }
+
+    /**
+     * Test utf8 extended
+     *
+     * @return void
+     */
+    public function testUtf8Extended()
+    {
+        $this->assertFalse(Validation::utf8([], ['extended' => true]));
+        $this->assertFalse(Validation::utf8(1001, ['extended' => true]));
+        $this->assertFalse(Validation::utf8(3.14, ['extended' => true]));
+        $this->assertFalse(Validation::utf8(new \StdClass, ['extended' => true]));
+        $this->assertTrue(Validation::utf8('1 big blue bus.', ['extended' => true]));
+        $this->assertTrue(Validation::utf8(',.<>[]{;/?\)()', ['extended' => true]));
+
+        // Latin-1 supplement
+        $this->assertTrue(Validation::utf8('some' . "\xc2\x82" . 'value', ['extended' => true]));
+        $this->assertTrue(Validation::utf8('some' . "\xc3\xbf" . 'value', ['extended' => true]));
+
+        // End of BMP
+        $this->assertTrue(Validation::utf8('some' . "\xef\xbf\xbd" . 'value', ['extended' => true]));
+
+        // Start of supplementary multilingual plane
+        $this->assertTrue(Validation::utf8('some' . "\xf0\x90\x80\x80" . 'value', ['extended' => true]));
+
+        // Grinning face
+        $this->assertTrue(Validation::utf8('some' . "\xf0\x9f\x98\x80" . 'value', ['extended' => true]));
     }
 }

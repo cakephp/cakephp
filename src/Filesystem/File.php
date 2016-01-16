@@ -134,10 +134,7 @@ class File
         }
 
         $this->handle = fopen($this->path, $mode);
-        if (is_resource($this->handle)) {
-            return true;
-        }
-        return false;
+        return is_resource($this->handle);
     }
 
     /**
@@ -146,7 +143,7 @@ class File
      * @param string|bool $bytes where to start
      * @param string $mode A `fread` compatible mode.
      * @param bool $force If true then the file will be re-opened even if its already opened, otherwise it won't
-     * @return mixed string on success, false on failure
+     * @return string|false string on success, false on failure
      */
     public function read($bytes = false, $mode = 'rb', $force = false)
     {
@@ -182,7 +179,7 @@ class File
      *
      * @param int|bool $offset The $offset in bytes to seek. If set to false then the current offset is returned.
      * @param int $seek PHP Constant SEEK_SET | SEEK_CUR | SEEK_END determining what the $offset is relative to
-     * @return mixed True on success, false on failure (set mode), false on failure or integer offset on success (get mode)
+     * @return int|bool True on success, false on failure (set mode), false on failure or integer offset on success (get mode)
      */
     public function offset($offset = false, $seek = SEEK_SET)
     {
@@ -316,7 +313,7 @@ class File
     /**
      * Returns the file extension.
      *
-     * @return string The file extension
+     * @return string|false The file extension, false if extension cannot be extracted.
      */
     public function ext()
     {
@@ -332,7 +329,7 @@ class File
     /**
      * Returns the file name without extension.
      *
-     * @return string The file name without extension.
+     * @return string|false The file name without extension, false if name cannot be extracted.
      */
     public function name()
     {

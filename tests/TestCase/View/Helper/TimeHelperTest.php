@@ -1,6 +1,6 @@
 <?php
 /**
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -8,7 +8,7 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -431,6 +431,37 @@ class TimeHelperTest extends TestCase
         $result = $this->Time->format('invalid date', null, 'Date invalid');
         $expected = 'Date invalid';
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test format() with a string.
+     *
+     * @return void
+     */
+    public function testFormatString()
+    {
+        $time = '2010-01-14 13:59:28';
+        $result = $this->Time->format($time);
+        $this->assertTimeFormat('1/14/10 1:59 PM', $result);
+
+        $result = $this->Time->format($time, 'HH:mm', null, 'America/New_York');
+        $this->assertTimeFormat('08:59', $result);
+    }
+
+    /**
+     * Test format() with a Time instance.
+     *
+     * @return void
+     */
+    public function testFormatTimeInstance()
+    {
+        $time = new Time('2010-01-14 13:59:28', 'America/New_York');
+        $result = $this->Time->format($time, 'HH:mm', null, 'America/New_York');
+        $this->assertTimeFormat('13:59', $result);
+
+        $time = new Time('2010-01-14 13:59:28', 'UTC');
+        $result = $this->Time->format($time, 'HH:mm', null, 'America/New_York');
+        $this->assertTimeFormat('08:59', $result);
     }
 
     /**

@@ -69,7 +69,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * will be returned. Otherwise the hidden properties will be set.
      *
      * @param null|array $properties Either an array of properties to hide or null to get properties
-     * @return array|\Cake\DataSource\EntityInterface
+     * @return array|\Cake\Datasource\EntityInterface
      */
     public function hiddenProperties($properties = null);
 
@@ -80,7 +80,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * will be returned. Otherwise the virtual properties will be set.
      *
      * @param null|array $properties Either an array of properties to treat as virtual or null to get properties
-     * @return array|\Cake\DataSource\EntityInterface
+     * @return array|\Cake\Datasource\EntityInterface
      */
     public function virtualProperties($properties = null);
 
@@ -139,12 +139,12 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * This method can return null in the case there is no prior information on
      * the status of this entity.
      *
-     * If called with a boolean it will set the known status of this instance,
-     * true means that the instance is not yet persisted in the database, false
+     * If called with a boolean, this method will set the status of this instance.
+     * Using `true` means that the instance has not been persisted in the database, `false`
      * that it already is.
      *
-     * @param bool $new true if it is known this instance was persisted
-     * @return bool if it is known whether the entity was already persisted
+     * @param bool|null $new Indicate whether or not this instance has been persisted.
+     * @return bool If it is known whether the entity was already persisted
      * null otherwise
      */
     public function isNew($new = null);

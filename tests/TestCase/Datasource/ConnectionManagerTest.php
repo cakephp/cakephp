@@ -5,7 +5,7 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -227,5 +227,57 @@ class ConnectionManagerTest extends TestCase
     {
         $this->assertNotContains('test_kaboom', ConnectionManager::configured());
         ConnectionManager::alias('test_kaboom', 'other_name');
+    }
+
+    /**
+     * Test parseDsn method.
+     *
+     * @return void
+     */
+    public function testParseDsn()
+    {
+        $result = ConnectionManager::parseDsn('mysql://root:secret@localhost:3306/database?log=1');
+        $expected = [
+            'scheme' => 'mysql',
+            'className' => 'Cake\Database\Connection',
+            'driver' => 'Cake\Database\Driver\Mysql',
+            'host' => 'localhost',
+            'username' => 'root',
+            'password' => 'secret',
+            'port' => 3306,
+            'database' => 'database',
+            'log' => '1'
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests that directly setting an instance in a config, will not return a different
+     * instance later on
+     *
+     * @return void
+     */
+    public function testConfigWithObject()
+    {
+        $connection = new FakeConnection;
+        ConnectionManager::config('test_variant', $connection);
+        $this->assertSame($connection, ConnectionManager::get('test_variant'));
+    }
+
+    /**
+     * Tests configuring an instance with a callable
+     *
+     * @return void
+     */
+    public function testConfigWithCallable()
+    {
+        $connection = new FakeConnection;
+        $callable = function ($alias) use ($connection) {
+            $this->assertEquals('test_variant', $alias);
+            return $connection;
+        };
+
+        ConnectionManager::config('test_variant', $callable);
+        $this->assertSame($connection, ConnectionManager::get('test_variant'));
     }
 }

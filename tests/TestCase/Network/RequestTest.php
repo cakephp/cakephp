@@ -500,6 +500,32 @@ class RequestTest extends TestCase
     }
 
     /**
+     * Tests the env() method returning a default value in case the requested environment variable is not set.
+     */
+    public function testDefaultEnvValue()
+    {
+        $_ENV['DOES_NOT_EXIST'] = null;
+        $request = new Request();
+        $this->assertNull($request->env('DOES_NOT_EXIST'));
+        $this->assertEquals('default', $request->env('DOES_NOT_EXIST', null, 'default'));
+
+        $_ENV['DOES_EXIST'] = 'some value';
+        $request = new Request();
+        $this->assertEquals('some value', $request->env('DOES_EXIST'));
+        $this->assertEquals('some value', $request->env('DOES_EXIST', null, 'default'));
+
+        $_ENV['EMPTY_VALUE'] = '';
+        $request = new Request();
+        $this->assertEquals('', $request->env('EMPTY_VALUE'));
+        $this->assertEquals('', $request->env('EMPTY_VALUE', null, 'default'));
+
+        $_ENV['ZERO'] = '0';
+        $request = new Request();
+        $this->assertEquals('0', $request->env('ZERO'));
+        $this->assertEquals('0', $request->env('ZERO', null, 'default'));
+    }
+
+    /**
      * Test the clientIp method.
      *
      * @return void
@@ -1932,11 +1958,14 @@ class RequestTest extends TestCase
     public function testQuery()
     {
         $request = new Request([
-            'query' => ['foo' => 'bar']
+            'query' => ['foo' => 'bar', 'zero' => '0']
         ]);
 
         $result = $request->query('foo');
-        $this->assertEquals('bar', $result);
+        $this->assertSame('bar', $result);
+
+        $result = $request->query('zero');
+        $this->assertSame('0', $result);
 
         $result = $request->query('imaginary');
         $this->assertNull($result);
@@ -1981,9 +2010,9 @@ class RequestTest extends TestCase
         ]);
         $this->assertFalse($request->param('not_set'));
         $this->assertTrue($request->param('admin'));
-        $this->assertEquals(1, $request->param('truthy'));
-        $this->assertEquals('posts', $request->param('controller'));
-        $this->assertEquals('0', $request->param('zero'));
+        $this->assertSame(1, $request->param('truthy'));
+        $this->assertSame('posts', $request->param('controller'));
+        $this->assertSame('0', $request->param('zero'));
     }
 
     /**

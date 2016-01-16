@@ -15,9 +15,9 @@
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
+use Cake\Datasource\QueryInterface;
+use Cake\Datasource\RepositoryInterface;
 use Cake\Network\Exception\NotFoundException;
-use Cake\ORM\Query;
-use Cake\ORM\Table;
 
 /**
  * This component is used to handle automatic model data pagination. The primary way to use this
@@ -115,6 +115,8 @@ class PaginatorComponent extends Component
      * ];
      * ```
      *
+     * Passing an empty array as whitelist disallows sorting altogether.
+     *
      * ### Paginating with custom finders
      *
      * You can paginate with any find type defined on your table using the `finder` option.
@@ -139,14 +141,14 @@ class PaginatorComponent extends Component
      * $results = $paginator->paginate($query);
      * ```
      *
-     * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Query $object The table or query to paginate.
+     * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface $object The table or query to paginate.
      * @param array $settings The settings/configuration used for pagination.
      * @return array Query results
      * @throws \Cake\Network\Exception\NotFoundException
      */
     public function paginate($object, array $settings = [])
     {
-        if ($object instanceof Query) {
+        if ($object instanceof QueryInterface) {
             $query = $object;
             $object = $query->repository();
         }
@@ -293,11 +295,11 @@ class PaginatorComponent extends Component
      * Any columns listed in the sort whitelist will be implicitly trusted. You can use this to sort
      * on synthetic columns, or columns added in custom find operations that may not exist in the schema.
      *
-     * @param Table $object The model being paginated.
+     * @param \Cake\Datasource\RepositoryInterface $object Repository object.
      * @param array $options The pagination options being used for this request.
      * @return array An array of options with sort + direction removed and replaced with order if possible.
      */
-    public function validateSort(Table $object, array $options)
+    public function validateSort(RepositoryInterface $object, array $options)
     {
         if (isset($options['sort'])) {
             $direction = null;
@@ -319,7 +321,7 @@ class PaginatorComponent extends Component
         }
 
         $inWhitelist = false;
-        if (!empty($options['sortWhitelist'])) {
+        if (isset($options['sortWhitelist'])) {
             $field = key($options['order']);
             $inWhitelist = in_array($field, $options['sortWhitelist'], true);
             if (!$inWhitelist) {
@@ -329,19 +331,18 @@ class PaginatorComponent extends Component
         }
 
         $options['order'] = $this->_prefix($object, $options['order'], $inWhitelist);
-
         return $options;
     }
 
     /**
      * Prefixes the field with the table alias if possible.
      *
-     * @param \Cake\ORM\Table $object Table object.
+     * @param \Cake\Datasource\RepositoryInterface $object Repository object.
      * @param array $order Order array.
      * @param bool $whitelisted Whether or not the field was whitelisted
      * @return array Final order array.
      */
-    protected function _prefix(Table $object, $order, $whitelisted = false)
+    protected function _prefix(RepositoryInterface $object, $order, $whitelisted = false)
     {
         $tableAlias = $object->alias();
         $tableOrder = [];

@@ -14,8 +14,6 @@
  */
 namespace Cake\Core;
 
-use Cake\Core\ClassLoader;
-use Cake\Core\Configure;
 use Cake\Core\Exception\MissingPluginException;
 use DirectoryIterator;
 
@@ -230,7 +228,7 @@ class Plugin
             $dir = new DirectoryIterator($path);
             foreach ($dir as $path) {
                 if ($path->isDir() && !$path->isDot()) {
-                    $plugins[] = $path->getBaseName();
+                    $plugins[] = $path->getBasename();
                 }
             }
         }
@@ -347,12 +345,12 @@ class Plugin
      * If plugin is null, it will return a list of all loaded plugins
      *
      * @param string $plugin Plugin name.
-     * @return mixed boolean true if $plugin is already loaded.
+     * @return bool|array Boolean true if $plugin is already loaded.
      *   If $plugin is null, returns a list of plugins that have been loaded
      */
     public static function loaded($plugin = null)
     {
-        if ($plugin) {
+        if ($plugin !== null) {
             return isset(static::$_plugins[$plugin]);
         }
         $return = array_keys(static::$_plugins);

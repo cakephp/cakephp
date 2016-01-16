@@ -15,6 +15,7 @@
 namespace Cake\Database\Log;
 
 use Cake\Database\Statement\StatementDecorator;
+use Exception;
 
 /**
  * Statement decorator used to
@@ -53,7 +54,7 @@ class LoggingStatement extends StatementDecorator
 
         try {
             $result = parent::execute($params);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $e->queryString = $this->queryString;
             $query->error = $e;
             $this->_log($query, $params, $t);

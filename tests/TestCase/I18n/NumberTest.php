@@ -2,7 +2,7 @@
 /**
  * NumberTest file
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -10,7 +10,7 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -537,5 +537,56 @@ class NumberTest extends TestCase
 
         $result = $this->Number->toReadableSize(512.05 * 1024 * 1024 * 1024);
         $this->assertEquals('512,05 GB', $result);
+    }
+
+    /**
+     * test config()
+     *
+     * @return void
+     */
+    public function testConfig()
+    {
+        $result = $this->Number->currency(15000, 'INR', ['locale' => 'en_IN']);
+        $this->assertEquals('₹ 15,000.00', $result);
+
+        Number::config('en_IN', \NumberFormatter::CURRENCY, [
+            'pattern' => '¤ #,##,##0'
+        ]);
+
+        $result = $this->Number->currency(15000, 'INR', ['locale' => 'en_IN']);
+        $this->assertEquals('₹ 15,000', $result);
+    }
+
+    /**
+     * test ordinal() with locales
+     *
+     * @return void
+     */
+    public function testOrdinal()
+    {
+        I18n::locale('en_US');
+        $result = $this->Number->ordinal(1);
+        $this->assertEquals('1st', $result);
+
+        $result = $this->Number->ordinal(2);
+        $this->assertEquals('2nd', $result);
+
+        $result = $this->Number->ordinal(2, [
+            'locale' => 'fr_FR'
+        ]);
+        $this->assertEquals('2e', $result);
+
+        $result = $this->Number->ordinal(3);
+        $this->assertEquals('3rd', $result);
+
+        $result = $this->Number->ordinal(4);
+        $this->assertEquals('4th', $result);
+
+        I18n::locale('fr_FR');
+        $result = $this->Number->ordinal(1);
+        $this->assertEquals('1er', $result);
+
+        $result = $this->Number->ordinal(2);
+        $this->assertEquals('2e', $result);
     }
 }

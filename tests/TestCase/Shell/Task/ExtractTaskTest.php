@@ -37,6 +37,9 @@ class ExtractTaskTest extends TestCase
     {
         parent::setUp();
         $this->io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
+        $progress = $this->getMock('Cake\Shell\Helper\ProgressHelper', [], [$this->io]);
+        $this->io->method('helper')
+            ->will($this->returnValue($progress));
 
         $this->Task = $this->getMock(
             'Cake\Shell\Task\ExtractTask',
@@ -69,11 +72,11 @@ class ExtractTaskTest extends TestCase
      */
     public function testExecute()
     {
-        $this->Task->interactive = false;
-
         $this->Task->params['paths'] = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Pages';
         $this->Task->params['output'] = $this->path . DS;
         $this->Task->params['extract-core'] = 'no';
+        $this->Task->params['merge'] = 'no';
+
         $this->Task->expects($this->never())->method('err');
         $this->Task->expects($this->any())->method('in')
             ->will($this->returnValue('y'));
@@ -133,6 +136,29 @@ class ExtractTaskTest extends TestCase
     }
 
     /**
+     * testExecute with merging on method
+     *
+     * @return void
+     */
+    public function testExecuteMerge()
+    {
+        $this->Task->params['paths'] = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Pages';
+        $this->Task->params['output'] = $this->path . DS;
+        $this->Task->params['extract-core'] = 'no';
+        $this->Task->params['merge'] = 'yes';
+
+        $this->Task->expects($this->never())->method('err');
+        $this->Task->expects($this->any())->method('in')
+            ->will($this->returnValue('y'));
+        $this->Task->expects($this->never())->method('_stop');
+
+        $this->Task->main();
+        $this->assertFileExists($this->path . DS . 'default.pot');
+        $this->assertFileNotExists($this->path . DS . 'cake.pot');
+        $this->assertFileNotExists($this->path . DS . 'domain.pot');
+    }
+
+    /**
      * test exclusions
      *
      * @return void
@@ -157,6 +183,31 @@ class ExtractTaskTest extends TestCase
         $this->assertNotRegExp($pattern, $result);
 
         $pattern = '/\#: .*default\.ctp:\d+\n/';
+        $this->assertNotRegExp($pattern, $result);
+    }
+    /**
+     * testExtractWithoutLocations method
+     *
+     * @return void
+     */
+    public function testExtractWithoutLocations()
+    {
+        $this->Task->params['paths'] = TEST_APP . 'TestApp/Template';
+        $this->Task->params['output'] = $this->path . DS;
+        $this->Task->params['exclude'] = 'Pages,Layout';
+        $this->Task->params['extract-core'] = 'no';
+        $this->Task->params['no-location'] = true;
+
+        $this->Task->expects($this->never())->method('err');
+        $this->Task->expects($this->any())->method('in')
+            ->will($this->returnValue('y'));
+
+        $this->Task->main();
+        $this->assertTrue(file_exists($this->path . DS . 'default.pot'));
+
+        $result = file_get_contents($this->path . DS . 'default.pot');
+
+        $pattern = '/\n\#: .*\n/';
         $this->assertNotRegExp($pattern, $result);
     }
 

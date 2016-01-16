@@ -74,7 +74,7 @@ class StreamTest extends TestCase
             ]);
 
         $options = [
-            'redirect' => 20
+            'redirect' => 20,
         ];
         $this->stream->send($request, $options);
         $result = $this->stream->contextOptions();
@@ -137,11 +137,37 @@ class StreamTest extends TestCase
         $expected = [
             'Connection: close',
             'User-Agent: CakePHP',
-            'Content-Type: multipart/form-data; boundary="',
+            'Content-Type: application/x-www-form-urlencoded',
         ];
         $this->assertStringStartsWith(implode("\r\n", $expected), $result['header']);
-        $this->assertContains('Content-Disposition: form-data; name="a"', $result['content']);
-        $this->assertContains('my value', $result['content']);
+        $this->assertContains('a=my+value', $result['content']);
+        $this->assertContains('my+value', $result['content']);
+    }
+
+    /**
+     * Test send() + context options with array content.
+     *
+     * @return void
+     */
+    public function testSendContextContentArrayFiles()
+    {
+        $request = new Request();
+        $request->url('http://localhost')
+            ->header([
+                'Content-Type' => 'application/json'
+            ])
+            ->body(['upload' => fopen(CORE_PATH . 'VERSION.txt', 'r')]);
+
+        $this->stream->send($request, []);
+        $result = $this->stream->contextOptions();
+        $expected = [
+            'Connection: close',
+            'User-Agent: CakePHP',
+            'Content-Type: multipart/form-data',
+        ];
+        $this->assertStringStartsWith(implode("\r\n", $expected), $result['header']);
+        $this->assertContains('name="upload"', $result['content']);
+        $this->assertContains('filename="VERSION.txt"', $result['content']);
     }
 
     /**
@@ -158,6 +184,9 @@ class StreamTest extends TestCase
             'ssl_verify_peer' => true,
             'ssl_verify_depth' => 9000,
             'ssl_allow_self_signed' => false,
+            'proxy' => [
+                'proxy' => '127.0.0.1:8080'
+            ]
         ];
 
         $this->stream->send($request, $options);
@@ -167,6 +196,7 @@ class StreamTest extends TestCase
             'verify_peer' => true,
             'verify_depth' => 9000,
             'allow_self_signed' => false,
+            'proxy' => '127.0.0.1:8080',
         ];
         foreach ($expected as $k => $v) {
             $this->assertEquals($v, $result[$k]);

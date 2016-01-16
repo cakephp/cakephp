@@ -14,9 +14,11 @@
  */
 namespace Cake\View;
 
+use BadMethodCallException;
 use Cake\Core\App;
 use Cake\Utility\Inflector;
-use Cake\View\View;
+use ReflectionException;
+use ReflectionMethod;
 
 /**
  * Provides cell() method for usage in Controller and View classes.
@@ -79,11 +81,11 @@ trait CellTrait
         }
 
         try {
-            $reflect = new \ReflectionMethod($cell, $action);
+            $reflect = new ReflectionMethod($cell, $action);
             $reflect->invokeArgs($cell, $data);
             return $cell;
-        } catch (\ReflectionException $e) {
-            throw new \BadMethodCallException(sprintf(
+        } catch (ReflectionException $e) {
+            throw new BadMethodCallException(sprintf(
                 'Class %s does not have a "%s" method.',
                 $className,
                 $action
@@ -104,16 +106,34 @@ trait CellTrait
     {
         $instance = new $className($this->request, $this->response, $this->eventManager(), $options);
         $instance->template = Inflector::underscore($action);
-        $instance->plugin = !empty($plugin) ? $plugin : null;
-        $instance->theme = !empty($this->theme) ? $this->theme : null;
+
+        $builder = $instance->viewBuilder();
+        if (!empty($plugin)) {
+            $builder->plugin($plugin);
+        }
         if (!empty($this->helpers)) {
+            $builder->helpers($this->helpers);
             $instance->helpers = $this->helpers;
         }
-        if (isset($this->viewClass)) {
-            $instance->viewClass = $this->viewClass;
-        }
+
         if ($this instanceof View) {
-            $instance->viewClass = get_class($this);
+            if (!empty($this->theme)) {
+                $builder->theme($this->theme);
+            }
+
+            $class = get_class($this);
+            $builder->className($class);
+            $instance->viewClass = $class;
+            return $instance;
+        }
+
+        if (method_exists($this, 'viewBuilder')) {
+            $builder->theme($this->viewBuilder()->theme());
+        }
+
+        if (isset($this->viewClass)) {
+            $builder->className($this->viewClass);
+            $instance->viewClass = $this->viewClass;
         }
         return $instance;
     }

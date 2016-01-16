@@ -155,6 +155,14 @@ class DateTimeTypeTest extends TestCase
             [
                 [
                     'year' => 2014, 'month' => 2, 'day' => 14,
+                    'hour' => 12, 'minute' => 04, 'second' => 15,
+                    'meridian' => 'pm'
+                ],
+                new Time('2014-02-14 12:04:15')
+            ],
+            [
+                [
+                    'year' => 2014, 'month' => 2, 'day' => 14,
                     'hour' => 1, 'minute' => 14, 'second' => 15,
                     'meridian' => 'pm'
                 ],
@@ -210,6 +218,23 @@ class DateTimeTypeTest extends TestCase
         } else {
             $this->assertSame($expected, $result);
         }
+    }
+
+    /**
+     * Test that useLocaleParser() can disable locale parsing.
+     *
+     * @return void
+     */
+    public function testLocaleParserDisable()
+    {
+        $expected = new Time('13-10-2013 23:28:00');
+        $this->type->useLocaleParser();
+        $result = $this->type->marshal('10/13/2013 11:28pm');
+        $this->assertEquals($expected, $result);
+
+        $this->type->useLocaleParser(false);
+        $result = $this->type->marshal('10/13/2013 11:28pm');
+        $this->assertNotEquals($expected, $result);
     }
 
     /**

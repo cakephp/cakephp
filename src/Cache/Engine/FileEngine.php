@@ -18,6 +18,10 @@ use Cake\Cache\CacheEngine;
 use Cake\Utility\Inflector;
 use Exception;
 use LogicException;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use SplFileInfo;
+use SplFileObject;
 
 /**
  * File Storage engine for cache. Filestorage is the slowest cache storage
@@ -264,10 +268,10 @@ class FileEngine extends CacheEngine
 
         $this->_clearDirectory($this->_config['path'], $now, $threshold);
 
-        $directory = new \RecursiveDirectoryIterator($this->_config['path']);
-        $contents = new \RecursiveIteratorIterator(
+        $directory = new RecursiveDirectoryIterator($this->_config['path']);
+        $contents = new RecursiveIteratorIterator(
             $directory,
-            \RecursiveIteratorIterator::SELF_FIRST
+            RecursiveIteratorIterator::SELF_FIRST
         );
         $cleared = [];
         foreach ($contents as $path) {
@@ -306,7 +310,7 @@ class FileEngine extends CacheEngine
             }
 
             try {
-                $file = new \SplFileObject($path . $entry, 'r');
+                $file = new SplFileObject($path . $entry, 'r');
             } catch (Exception $e) {
                 continue;
             }
@@ -349,7 +353,7 @@ class FileEngine extends CacheEngine
     /**
      * Not implemented
      *
-     * @param string $key The key to decrement
+     * @param string $key The key to increment
      * @param int $offset The number to offset
      * @return void
      * @throws \LogicException
@@ -378,12 +382,12 @@ class FileEngine extends CacheEngine
         if (!is_dir($dir)) {
             mkdir($dir, 0775, true);
         }
-        $path = new \SplFileInfo($dir . $key);
+        $path = new SplFileInfo($dir . $key);
 
         if (!$createKey && !$path->isFile()) {
             return false;
         }
-        if (empty($this->_File) || $this->_File->getBaseName() !== $key) {
+        if (empty($this->_File) || $this->_File->getBasename() !== $key) {
             $exists = file_exists($path->getPathname());
             try {
                 $this->_File = $path->openFile('c+');
@@ -411,7 +415,7 @@ class FileEngine extends CacheEngine
      */
     protected function _active()
     {
-        $dir = new \SplFileInfo($this->_config['path']);
+        $dir = new SplFileInfo($this->_config['path']);
         $path = $dir->getPathname();
         if (!is_dir($path)) {
             mkdir($path, 0775, true);
@@ -457,19 +461,19 @@ class FileEngine extends CacheEngine
     public function clearGroup($group)
     {
         $this->_File = null;
-        $directoryIterator = new \RecursiveDirectoryIterator($this->_config['path']);
-        $contents = new \RecursiveIteratorIterator(
+        $directoryIterator = new RecursiveDirectoryIterator($this->_config['path']);
+        $contents = new RecursiveIteratorIterator(
             $directoryIterator,
-            \RecursiveIteratorIterator::CHILD_FIRST
+            RecursiveIteratorIterator::CHILD_FIRST
         );
         foreach ($contents as $object) {
-            $containsGroup = strpos($object->getPathName(), DS . $group . DS) !== false;
+            $containsGroup = strpos($object->getPathname(), DS . $group . DS) !== false;
             $hasPrefix = true;
             if (strlen($this->_config['prefix']) !== 0) {
-                $hasPrefix = strpos($object->getBaseName(), $this->_config['prefix']) === 0;
+                $hasPrefix = strpos($object->getBasename(), $this->_config['prefix']) === 0;
             }
             if ($object->isFile() && $containsGroup && $hasPrefix) {
-                $path = $object->getPathName();
+                $path = $object->getPathname();
                 $object = null;
                 //@codingStandardsIgnoreStart
                 @unlink($path);

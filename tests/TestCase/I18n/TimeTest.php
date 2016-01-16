@@ -2,7 +2,7 @@
 /**
  * TimeTest file
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -10,7 +10,7 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -191,7 +191,7 @@ class TimeTest extends TestCase
         );
         $this->assertEquals('on 31-07-1990 13:33:00', $result);
     }
-     
+
     /**
      * test the end option for timeAgoInWords
      *
@@ -543,7 +543,31 @@ class TimeTest extends TestCase
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'es-ES');
         $expected = 'jueves, 14 de enero de 2010, 13:59:28 (GMT)';
-        $this->assertTimeFormat($expected, $result, 'DEfault locale should not be used');
+        $this->assertTimeFormat($expected, $result, 'Default locale should not be used');
+
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'fa-SA');
+        $expected = 'پنجشنبه ۱۴ ژانویهٔ ۲۰۱۰، ساعت ۱۳:۵۹:۲۸ (GMT)';
+        $this->assertTimeFormat($expected, $result, 'fa-SA locale should be used');
+
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-IR@calendar=persian');
+        $expected = 'Thursday, Dey 24, 1388 at 1:59:28 PM GMT';
+        $this->assertTimeFormat($expected, $result);
+
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'ps-IR@calendar=persian');
+        $expected = 'پنجشنبه د  ۱۳۸۸ د مرغومی ۲۴ ۱۳:۵۹:۲۸ (GMT)';
+        $this->assertTimeFormat($expected, $result);
+
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-KW@calendar=islamic');
+        $expected = 'Thursday, Muharram 29, 1431 at 1:59:28 PM GMT';
+        $this->assertTimeFormat($expected, $result);
+
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, 'Asia/Tokyo', 'ja-JP@calendar=japanese');
+        $expected = '平成22年1月14日木曜日 22時59分28秒 日本標準時';
+        $this->assertTimeFormat($expected, $result);
+
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, 'Asia/Tokyo', 'ja-JP@calendar=japanese');
+        $expected = '平成22年1月14日木曜日 22時59分28秒 日本標準時';
+        $this->assertTimeFormat($expected, $result);
     }
 
     /**
@@ -589,6 +613,19 @@ class TimeTest extends TestCase
         $return = Time::listTimezones('#^Asia/#');
         $this->assertTrue(isset($return['Asia']['Asia/Bangkok']));
         $this->assertFalse(isset($return['Pacific']));
+
+        $return = Time::listTimezones(null, null, ['abbr' => true]);
+        $this->assertTrue(isset($return['Asia']['Asia/Jakarta']));
+        $this->assertEquals('Jakarta - WIB', $return['Asia']['Asia/Jakarta']);
+        $this->assertEquals('Regina - CST', $return['America']['America/Regina']);
+
+        $return = Time::listTimezones(null, null, [
+            'abbr' => true,
+            'before' => ' (',
+            'after' => ')',
+        ]);
+        $this->assertEquals('Jayapura (WIT)', $return['Asia']['Asia/Jayapura']);
+        $this->assertEquals('Regina (CST)', $return['America']['America/Regina']);
 
         $return = Time::listTimezones('#^(America|Pacific)/#', null, false);
         $this->assertTrue(isset($return['America/Argentina/Buenos_Aires']));
@@ -688,6 +725,8 @@ class TimeTest extends TestCase
     {
         $time = new Time('2014-04-20 10:10:10');
         $this->assertEquals('"2014-04-20T10:10:10+0000"', json_encode($time));
+        Time::setJsonEncodeFormat('yyyy-MM-dd HH:mm:ss');
+        $this->assertEquals('"2014-04-20 10:10:10"', json_encode($time));
     }
 
     /**
@@ -789,6 +828,22 @@ class TimeTest extends TestCase
     }
 
     /**
+     * Tests the "from now" time calculation.
+     *
+     * @return void
+     */
+    public function testFromNow()
+    {
+        $date = clone $this->now;
+        $date->modify('-1 year');
+        $date->modify('-6 days');
+        $date->modify('-51 seconds');
+        $interval = Time::fromNow($date);
+        $result = $interval->format("%y %m %d %H %i %s");
+        $this->assertEquals($result, '1 0 6 00 0 51');
+    }
+
+    /**
      * Custom assert to allow for variation in the version of the intl library, where
      * some translations contain a few extra commas.
      *
@@ -796,11 +851,15 @@ class TimeTest extends TestCase
      * @param string $result
      * @return void
      */
-    public function assertTimeFormat($expected, $result)
+    public function assertTimeFormat($expected, $result, $message = "")
     {
-        return $this->assertEquals(
-            str_replace([',', '(', ')', ' at'], '', $expected),
-            str_replace([',', '(', ')', ' at'], '', $result)
-        );
+        $expected = str_replace([',', '(', ')', ' at', ' م.', ' ه‍.ش.', ' AP', ' AH', ' SAKA', 'à '], '', $expected);
+        $expected = str_replace(['  '], ' ', $expected);
+
+        $result = str_replace([',', '(', ')', ' at', ' م.', ' ه‍.ش.', ' AP', ' AH', ' SAKA', 'à '], '', $result);
+        $result = str_replace(['گرینویچ'], 'GMT', $result);
+        $result = str_replace(['  '], ' ', $result);
+
+        return $this->assertSame($expected, $result, $message);
     }
 }

@@ -14,8 +14,6 @@
  */
 namespace Cake\Database;
 
-use Cake\Database\TypeMap;
-
 /*
  * Represents a class that holds a TypeMap object
  */
@@ -36,7 +34,7 @@ trait TypeMapTrait
      */
     public function typeMap($typeMap = null)
     {
-        if (!$this->_typeMap) {
+        if ($this->_typeMap === null) {
             $this->_typeMap = new TypeMap();
         }
         if ($typeMap === null) {

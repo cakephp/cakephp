@@ -1,6 +1,6 @@
 <?php
 /**
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -13,18 +13,22 @@
  */
 namespace Cake\TestSuite\Fixture;
 
-use Cake\Core\Exception\Exception;
-use Cake\Database\Connection;
+use Cake\Core\Exception\Exception as CakeException;
+use Cake\Database\Driver\Sqlite;
 use Cake\Database\Schema\Table;
+use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\FixtureInterface;
 use Cake\Log\Log;
+use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use Exception;
 
 /**
  * Cake TestFixture is responsible for building and destroying tables to be used
  * during testing.
  */
-class TestFixture
+class TestFixture implements FixtureInterface
 {
 
     /**
@@ -42,13 +46,6 @@ class TestFixture
     public $table = null;
 
     /**
-     * List of datasources where this fixture has been created
-     *
-     * @var array
-     */
-    public $created = [];
-
-    /**
      * Fields / Schema for the fixture.
      *
      * This array should be compatible with Cake\Database\Schema\Table.
@@ -62,11 +59,11 @@ class TestFixture
     /**
      * Configuration for importing fixture schema
      *
-     * Accepts a `connection` and `table` key, to define
+     * Accepts a `connection` and `model` or `table` key, to define
      * which table and which connection contain the schema to be
      * imported.
      *
-     * @var array
+     * @var array|null
      */
     public $import = null;
 
@@ -85,6 +82,13 @@ class TestFixture
     protected $_schema;
 
     /**
+     * Fixture constraints to be created.
+     *
+     * @var array
+     */
+    protected $_constraints = [];
+
+    /**
      * Instantiate the fixture.
      *
      * @throws \Cake\Core\Exception\Exception on invalid datasource usage.
@@ -97,12 +101,28 @@ class TestFixture
                 $message = sprintf(
                     'Invalid datasource name "%s" for "%s" fixture. Fixture datasource names must begin with "test".',
                     $connection,
-                    $this->name
+                    $this->table
                 );
-                throw new Exception($message);
+                throw new CakeException($message);
             }
         }
         $this->init();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function connection()
+    {
+        return $this->connection;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function sourceName()
+    {
+        return $this->table;
     }
 
     /**
@@ -139,6 +159,7 @@ class TestFixture
      */
     protected function _schemaFromFields()
     {
+        $connection = ConnectionManager::get($this->connection());
         $this->_schema = new Table($this->table);
         foreach ($this->fields as $field => $data) {
             if ($field === '_constraints' || $field === '_indexes' || $field === '_options') {
@@ -148,7 +169,11 @@ class TestFixture
         }
         if (!empty($this->fields['_constraints'])) {
             foreach ($this->fields['_constraints'] as $name => $data) {
-                $this->_schema->addConstraint($name, $data);
+                if (!$connection->supportsDynamicConstraints() || $data['type'] !== Table::CONSTRAINT_FOREIGN) {
+                    $this->_schema->addConstraint($name, $data);
+                } else {
+                    $this->_constraints[$name] = $data;
+                }
             }
         }
         if (!empty($this->fields['_indexes'])) {
@@ -172,16 +197,20 @@ class TestFixture
         if (!is_array($this->import)) {
             return;
         }
-        $import = array_merge(
-            ['connection' => 'default', 'table' => null],
-            $this->import
-        );
+        $import = $this->import + ['connection' => 'default', 'table' => null, 'model' => null];
+
+        if (!empty($import['model'])) {
+            if (!empty($import['table'])) {
+                throw new CakeException('You cannot define both table and model.');
+            }
+            $import['table'] = TableRegistry::get($import['model'])->table();
+        }
 
         if (empty($import['table'])) {
-            throw new Exception('Cannot import from undefined table.');
-        } else {
-            $this->table = $import['table'];
+            throw new CakeException('Cannot import from undefined table.');
         }
+
+        $this->table = $import['table'];
 
         $db = ConnectionManager::get($import['connection'], false);
         $schemaCollection = $db->schemaCollection();
@@ -193,24 +222,21 @@ class TestFixture
      * Get/Set the Cake\Database\Schema\Table instance used by this fixture.
      *
      * @param \Cake\Database\Schema\Table $schema The table to set.
-     * @return void|\Cake\Database\Schema\Table
+     * @return \Cake\Database\Schema\Table|null
      */
     public function schema(Table $schema = null)
     {
         if ($schema) {
             $this->_schema = $schema;
-            return;
+            return null;
         }
         return $this->_schema;
     }
 
     /**
-     * Run before all tests execute, should return SQL statement to create table for this fixture could be executed successfully.
-     *
-     * @param Connection $db An instance of the database object used to create the fixture table
-     * @return bool True on success, false on failure
+     * {@inheritDoc}
      */
-    public function create(Connection $db)
+    public function create(ConnectionInterface $db)
     {
         if (empty($this->_schema)) {
             return false;
@@ -219,10 +245,11 @@ class TestFixture
         try {
             $queries = $this->_schema->createSql($db);
             foreach ($queries as $query) {
-                $db->execute($query)->closeCursor();
+                $stmt = $db->prepare($query);
+                $stmt->execute();
+                $stmt->closeCursor();
             }
-            $this->created[] = $db->configName();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $msg = sprintf(
                 'Fixture creation for "%s" failed "%s"',
                 $this->table,
@@ -236,12 +263,9 @@ class TestFixture
     }
 
     /**
-     * Run after all tests executed, should return SQL statement to drop table for this fixture.
-     *
-     * @param Connection $db An instance of the database object used to create the fixture table
-     * @return bool True on success, false on failure
+     * {@inheritDoc}
      */
-    public function drop(Connection $db)
+    public function drop(ConnectionInterface $db)
     {
         if (empty($this->_schema)) {
             return false;
@@ -251,21 +275,16 @@ class TestFixture
             foreach ($sql as $stmt) {
                 $db->execute($stmt)->closeCursor();
             }
-            $this->created = array_diff($this->created, [$db->configName()]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
         return true;
     }
 
     /**
-     * Run before each tests is executed, should return a set of SQL statements to insert records for the table
-     * of this fixture could be executed successfully.
-     *
-     * @param Connection $db An instance of the database into which the records will be inserted
-     * @return bool on success or if there are no records to insert, or false on failure
+     * {@inheritDoc}
      */
-    public function insert(Connection $db)
+    public function insert(ConnectionInterface $db)
     {
         if (isset($this->records) && !empty($this->records)) {
             list($fields, $values, $types) = $this->_getRecords();
@@ -281,6 +300,57 @@ class TestFixture
             return $statement;
         }
 
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function createConstraints(ConnectionInterface $db)
+    {
+        if (empty($this->_constraints)) {
+            return true;
+        }
+
+        foreach ($this->_constraints as $name => $data) {
+            $this->_schema->addConstraint($name, $data);
+        }
+
+        $sql = $this->_schema->addConstraintSql($db);
+
+        if (empty($sql)) {
+            return true;
+        }
+
+        foreach ($sql as $stmt) {
+            $db->execute($stmt)->closeCursor();
+        }
+
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function dropConstraints(ConnectionInterface $db)
+    {
+        if (empty($this->_constraints)) {
+            return true;
+        }
+
+        $sql = $this->_schema->dropConstraintSql($db);
+
+        if (empty($sql)) {
+            return true;
+        }
+
+        foreach ($sql as $stmt) {
+            $db->execute($stmt)->closeCursor();
+        }
+
+        foreach ($this->_constraints as $name => $data) {
+            $this->_schema->dropConstraint($name);
+        }
         return true;
     }
 
@@ -308,13 +378,9 @@ class TestFixture
     }
 
     /**
-     * Truncates the current fixture. Can be overwritten by classes extending
-     * CakeFixture to trigger other events before / after truncate.
-     *
-     * @param Connection $db A reference to a db instance
-     * @return bool
+     * {@inheritDoc}
      */
-    public function truncate(Connection $db)
+    public function truncate(ConnectionInterface $db)
     {
         $sql = $this->_schema->truncateSql($db);
         foreach ($sql as $stmt) {

@@ -1,6 +1,6 @@
 <?php
 /**
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -22,12 +22,13 @@ use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Exception;
+use PHPUnit_Framework_TestCase;
 
 /**
  * Cake TestCase class
  *
  */
-abstract class TestCase extends \PHPUnit_Framework_TestCase
+abstract class TestCase extends PHPUnit_Framework_TestCase
 {
 
     /**
@@ -101,7 +102,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         if (class_exists('Cake\Routing\Router', false)) {
             Router::reload();
         }
- 
+
         EventManager::instance(new EventManager());
     }
 
@@ -122,7 +123,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     /**
      * Chooses which fixtures to load for a given test
      *
-     * Each parameter is a model name that corresponds to a fixture, i.e. 'Post', 'Author', etc.
+     * Each parameter is a model name that corresponds to a fixture, i.e. 'Posts', 'Authors', etc.
      *
      * @return void
      * @see \Cake\TestSuite\TestCase::$autoFixtures
@@ -436,7 +437,11 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         foreach ($regex as $i => $assertion) {
             $matches = false;
             if (isset($assertion['attrs'])) {
-                $string = $this->_assertAttributes($assertion, $string);
+                $string = $this->_assertAttributes($assertion, $string, $fullDebug, $regex);
+                if ($fullDebug === true && $string === false) {
+                    debug($string, true);
+                    debug($regex, true);
+                }
                 continue;
             }
 
@@ -450,11 +455,11 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
                 }
             }
             if (!$matches) {
-                $this->assertRegExp($expression, $string, sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description));
-                if ($fullDebug) {
-                    debug($string, true);
-                    debug($regex, true);
+                if ($fullDebug === true) {
+                    debug($string);
+                    debug($regex);
                 }
+                $this->assertRegExp($expression, $string, sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description));
                 return false;
             }
         }
@@ -468,9 +473,11 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      *
      * @param array $assertions Assertions to run.
      * @param string $string The HTML string to check.
+     * @param bool $fullDebug Whether or not more verbose output should be used.
+     * @param array $regex Full regexp from `assertHtml`
      * @return string
      */
-    protected function _assertAttributes($assertions, $string)
+    protected function _assertAttributes($assertions, $string, $fullDebug = false, $regex = '')
     {
         $asserts = $assertions['attrs'];
         $explains = $assertions['explains'];
@@ -487,6 +494,10 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
                 }
             }
             if ($matches === false) {
+                if ($fullDebug === true) {
+                    debug($string);
+                    debug($regex);
+                }
                 $this->assertTrue(false, 'Attribute did not match. Was expecting ' . $explains[$j]);
             }
             $len = count($asserts);
@@ -578,7 +589,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      * @param mixed $methods The list of methods to mock
      * @param array $options The config data for the mock's constructor.
      * @throws \Cake\ORM\Exception\MissingTableClassException
-     * @return Model
+     * @return \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject
      */
     public function getMockForModel($alias, array $methods = [], array $options = [])
     {

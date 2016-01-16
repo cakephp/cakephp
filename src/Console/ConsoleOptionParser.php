@@ -41,7 +41,7 @@ use Cake\Utility\Inflector;
  *
  * `cake myshell command --connection default --name=something`
  *
- * Short options can be defined signally or in groups.
+ * Short options can be defined singly or in groups.
  *
  * `cake myshell command -cn`
  *
@@ -128,6 +128,13 @@ class ConsoleOptionParser
     protected $_command = '';
 
     /**
+     * Array of args (argv).
+     *
+     * @var array
+     */
+    protected $_tokens = [];
+
+    /**
      * Construct an OptionParser so you can define its behavior
      *
      * @param string|null $command The command name this parser is for. The command name is used for generating help.
@@ -162,7 +169,7 @@ class ConsoleOptionParser
      *
      * @param string|null $command The command name this parser is for. The command name is used for generating help.
      * @param bool $defaultOptions Whether you want the verbose and quiet options set.
-     * @return ConsoleOptionParser
+     * @return $this
      */
     public static function create($command, $defaultOptions = true)
     {
@@ -190,7 +197,7 @@ class ConsoleOptionParser
      *
      * @param array $spec The spec to build the OptionParser with.
      * @param bool $defaultOptions Whether you want the verbose and quiet options set.
-     * @return ConsoleOptionParser
+     * @return $this
      */
     public static function buildFromArray($spec, $defaultOptions = true)
     {
@@ -364,7 +371,7 @@ class ConsoleOptionParser
      * Remove an option from the option parser.
      *
      * @param string $name The option name to remove.
-     * @return ConsoleOptionParser this
+     * @return $this
      */
     public function removeOption($name)
     {

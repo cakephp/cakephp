@@ -14,7 +14,6 @@
  */
 namespace Cake\Database;
 
-use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
@@ -109,7 +108,7 @@ class IdentifierQuoter
             }
 
             $result = $this->_basicQuoter($contents);
-            if ($result) {
+            if (!empty($result)) {
                 $query->{$part}($result, true);
             }
         }

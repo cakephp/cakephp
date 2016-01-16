@@ -15,16 +15,17 @@
 namespace Cake\Collection;
 
 use ArrayIterator;
-use Cake\Collection\CollectionInterface;
-use Cake\Collection\CollectionTrait;
 use InvalidArgumentException;
 use IteratorIterator;
+use LogicException;
+use Serializable;
+use Traversable;
 
 /**
  * A collection is an immutable list of elements with a handful of functions to
  * iterate, group, transform and extract information from it.
  */
-class Collection extends IteratorIterator implements CollectionInterface
+class Collection extends IteratorIterator implements CollectionInterface, Serializable
 {
 
     use CollectionTrait;
@@ -41,12 +42,48 @@ class Collection extends IteratorIterator implements CollectionInterface
             $items = new ArrayIterator($items);
         }
 
-        if (!($items instanceof \Traversable)) {
+        if (!($items instanceof Traversable)) {
             $msg = 'Only an array or \Traversable is allowed for Collection';
             throw new InvalidArgumentException($msg);
         }
 
         parent::__construct($items);
+    }
+
+    /**
+     * Returns a string representation of this object that can be used
+     * to reconstruct it
+     *
+     * @return string
+     */
+    public function serialize()
+    {
+        return serialize($this->buffered());
+    }
+
+    /**
+     * Unserializes the passed string and rebuilds the Collection instance
+     *
+     * @param string $collection The serialized collection
+     * @return void
+     */
+    public function unserialize($collection)
+    {
+        $this->__construct(unserialize($collection));
+    }
+
+    /**
+     * Throws an exception.
+     *
+     * Issuing a count on a Collection can have many side effects, some making the
+     * Collection unusable after the count operation.
+     *
+     * @return void
+     * @throws \LogicException
+     */
+    public function count()
+    {
+        throw new LogicException('You cannot issue a count on a Collection.');
     }
 
     /**

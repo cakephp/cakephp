@@ -14,7 +14,6 @@
  */
 use Cake\Core\Plugin;
 use Cake\Core\Configure;
-use Cake\Utility\Inflector;
 
 $pluginDot = empty($plugin) ? null : $plugin . '.';
 $namespace = Configure::read('App.namespace');
@@ -22,9 +21,9 @@ $prefixNs = '';
 $prefixPath = '';
 
 if (!empty($prefix)) {
-    $prefix = Inflector::camelize($prefix);
-    $prefixNs = '\\' . $prefix;
-    $prefixPath = $prefix . DS;
+    $prefix = array_map('\Cake\Utility\Inflector::camelize', explode('/', $prefix));
+    $prefixNs = '\\' . implode('\\', $prefix);
+    $prefixPath = implode(DS, $prefix) . DS;
 }
 
 if (!empty($plugin)) {

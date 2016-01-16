@@ -26,6 +26,7 @@ use Cake\Routing\Router;
 use Cake\Utility\Exception\XmlException;
 use Cake\Utility\Inflector;
 use Cake\Utility\Xml;
+use RuntimeException;
 
 /**
  * Request object for handling alternative HTTP requests
@@ -74,35 +75,17 @@ class RequestHandlerComponent extends Component
      * These are merged with user-provided config when the component is used.
      *
      * - `checkHttpCache` - Whether to check for HTTP cache.
-     * - `viewClassMap` - Mapping between type and view class.
+     * - `viewClassMap` - Mapping between type and view classes. If undefined
+     *   json, xml, and ajax will be mapped. Defining any types will omit the defaults.
+     * - `inputTypeMap` - A mapping between types and deserializers for request bodies.
+     *   If undefined json & xml will be mapped. Defining any types will omit the defaults.
      *
      * @var array
      */
     protected $_defaultConfig = [
         'checkHttpCache' => true,
-        'viewClassMap' => '',
-    ];
-
-    /**
-     * A mapping between extensions and deserializers for request bodies of that type.
-     * By default only JSON and XML are mapped, use RequestHandlerComponent::addInputType()
-     *
-     * @var array
-     */
-    protected $_inputTypeMap = [
-        'json' => ['json_decode', true]
-    ];
-
-    /**
-     * A mapping between type and viewClass. By default only JSON, XML, and AJAX are mapped.
-     * Use RequestHandlerComponent::viewClassMap() to manipulate this map.
-     *
-     * @var array
-     */
-    protected $_viewClassMap = [
-        'json' => 'Json',
-        'xml' => 'Xml',
-        'ajax' => 'Ajax'
+        'viewClassMap' => [],
+        'inputTypeMap' => []
     ];
 
     /**
@@ -113,8 +96,18 @@ class RequestHandlerComponent extends Component
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
+        $config += [
+            'viewClassMap' => [
+                'json' => 'Json',
+                'xml' => 'Xml',
+                'ajax' => 'Ajax'
+            ],
+            'inputTypeMap' => [
+                'json' => ['json_decode', true],
+                'xml' => [[$this, 'convertXml']],
+            ]
+        ];
         parent::__construct($registry, $config);
-        $this->addInputType('xml', [[$this, 'convertXml']]);
     }
 
     /**
@@ -146,10 +139,6 @@ class RequestHandlerComponent extends Component
     {
         $controller = $this->_registry->getController();
         $this->response =& $controller->response;
-
-        if ($this->_config['viewClassMap']) {
-            $this->viewClassMap($this->_config['viewClassMap']);
-        }
     }
 
     /**
@@ -175,15 +164,17 @@ class RequestHandlerComponent extends Component
         }
 
         $accepts = $response->mapType($accept);
-        $preferedTypes = current($accepts);
-        if (array_intersect($preferedTypes, ['html', 'xhtml'])) {
+        $preferredTypes = current($accepts);
+        if (array_intersect($preferredTypes, ['html', 'xhtml'])) {
             return;
         }
 
-        $extensions = Router::extensions();
+        $extensions = array_unique(
+            array_merge(Router::extensions(), array_keys($this->config('viewClassMap')))
+        );
         foreach ($accepts as $types) {
             $ext = array_intersect($extensions, $types);
-            if ($ext) {
+            if (!empty($ext)) {
                 $this->ext = current($ext);
                 break;
             }
@@ -194,19 +185,8 @@ class RequestHandlerComponent extends Component
      * The startup method of the RequestHandler enables several automatic behaviors
      * related to the detection of certain properties of the HTTP request, including:
      *
-     * - If Router::extensions() is enabled, the layout and template type are
-     *   switched based on the parsed extension or Accept-Type header. For example, if `controller/action.xml`
-     *   is requested, the view path becomes `app/View/Controller/xml/action.ctp`. Also if
-     *   `controller/action` is requested with `Accept-Type: application/xml` in the headers
-     *   the view path will become `app/View/Controller/xml/action.ctp`. Layout and template
-     *   types will only switch to mime-types recognized by Cake\Network\Response. If you need to declare
-     *   additional mime-types, you can do so using Cake\Network\Response::type() in your controller's beforeFilter()
-     *   method.
-     * - If a helper with the same name as the extension exists, it is added to the controller.
-     * - If the extension is of a type that RequestHandler understands, it will set that
-     *   Content-type in the response header.
-     * - If the XML data is POSTed, the data is parsed into an XML object, which is assigned
-     *   to the $data property of the controller, which can then be saved to a model object.
+     * If the XML data is POSTed, the data is parsed into an XML object, which is assigned
+     * to the $data property of the controller, which can then be saved to a model object.
      *
      * @param Event $event The startup event that was fired.
      * @return void
@@ -227,18 +207,11 @@ class RequestHandlerComponent extends Component
         }
 
         $request->params['isAjax'] = $this->request->is('ajax');
-        $isRecognized = (
-            !in_array($this->ext, ['html', 'htm']) &&
-            $this->response->getMimeType($this->ext)
-        );
 
-        if (!empty($this->ext) && $isRecognized) {
-            $this->renderAs($controller, $this->ext);
-        } elseif (empty($this->ext) || in_array($this->ext, ['html', 'htm'])) {
-            $this->respondAs('html', ['charset' => Configure::read('App.encoding')]);
-        }
-
-        foreach ($this->_inputTypeMap as $type => $handler) {
+        foreach ($this->config('inputTypeMap') as $type => $handler) {
+            if (!is_callable($handler[0])) {
+                throw new RuntimeException(sprintf("Invalid callable for '%s' type.", $type));
+            }
             if ($this->requestedWith($type)) {
                 $input = call_user_func_array([$request, 'input'], $handler);
                 $request->data = (array)$input;
@@ -272,19 +245,24 @@ class RequestHandlerComponent extends Component
      * @param Event $event The Controller.beforeRedirect event.
      * @param string|array $url A string or array containing the redirect location
      * @param \Cake\Network\Response $response The response object.
-     * @return void|\Cake\Network\Response The response object if the redirect is caught.
+     * @return \Cake\Network\Response|null The response object if the redirect is caught.
      */
     public function beforeRedirect(Event $event, $url, Response $response)
     {
         $request = $this->request;
         if (!$request->is('ajax')) {
-            return;
+            return null;
         }
         if (empty($url)) {
-            return;
+            return null;
         }
         if (is_array($url)) {
             $url = Router::url($url + ['_base' => false]);
+        }
+        $query = [];
+        if (strpos($url, '?') !== false) {
+            list($url, $querystr) = explode('?', $url, 2);
+            parse_str($querystr, $query);
         }
         $controller = $event->subject();
         $response->body($controller->requestAction($url, [
@@ -292,7 +270,9 @@ class RequestHandlerComponent extends Component
             'bare' => false,
             'environment' => [
                 'REQUEST_METHOD' => 'GET'
-            ]
+            ],
+            'query' => $query,
+            'cookies' => $request->cookies
         ]));
         $response->statusCode(200);
         return $response;
@@ -304,14 +284,39 @@ class RequestHandlerComponent extends Component
      * render process is skipped. And the client will get a blank response with a
      * "304 Not Modified" header.
      *
+     * - If Router::extensions() is enabled, the layout and template type are
+     *   switched based on the parsed extension or Accept-Type header. For example,
+     *   if `controller/action.xml` is requested, the view path becomes
+     *   `app/View/Controller/xml/action.ctp`. Also if `controller/action` is
+     *   requested with `Accept-Type: application/xml` in the headers the view
+     *   path will become `app/View/Controller/xml/action.ctp`. Layout and template
+     *   types will only switch to mime-types recognized by Cake\Network\Response.
+     *   If you need to declare additional mime-types, you can do so using
+     *   Cake\Network\Response::type() in your controller's beforeFilter() method.
+     * - If a helper with the same name as the extension exists, it is added to
+     *   the controller.
+     * - If the extension is of a type that RequestHandler understands, it will
+     *   set that Content-type in the response header.
+     *
      * @param Event $event The Controller.beforeRender event.
      * @return bool false if the render process should be aborted
      */
     public function beforeRender(Event $event)
     {
-        $response = $this->response;
-        $request = $this->request;
-        if ($this->_config['checkHttpCache'] && $response->checkNotModified($request)) {
+        $isRecognized = (
+            !in_array($this->ext, ['html', 'htm']) &&
+            $this->response->getMimeType($this->ext)
+        );
+
+        if (!empty($this->ext) && $isRecognized) {
+            $this->renderAs($event->subject(), $this->ext);
+        } elseif (empty($this->ext) || in_array($this->ext, ['html', 'htm'])) {
+            $this->respondAs('html', ['charset' => Configure::read('App.encoding')]);
+        }
+
+        if ($this->_config['checkHttpCache'] &&
+            $this->response->checkNotModified($this->request)
+        ) {
             return false;
         }
     }
@@ -450,7 +455,7 @@ class RequestHandlerComponent extends Component
             list($contentType) = explode(';', $request->header('CONTENT_TYPE'));
         }
         $response = $this->response;
-        if (!$type) {
+        if ($type === null) {
             return $response->mapType($contentType);
         }
         if (is_string($type)) {
@@ -535,36 +540,41 @@ class RequestHandlerComponent extends Component
     public function renderAs(Controller $controller, $type, array $options = [])
     {
         $defaults = ['charset' => 'UTF-8'];
-        $view = null;
-        $viewClassMap = $this->viewClassMap();
+        $viewClassMap = $this->config('viewClassMap');
 
         if (Configure::read('App.encoding') !== null) {
             $defaults['charset'] = Configure::read('App.encoding');
         }
         $options += $defaults;
 
+        $builder = $controller->viewBuilder();
         if (array_key_exists($type, $viewClassMap)) {
             $view = $viewClassMap[$type];
         } else {
             $view = Inflector::classify($type);
         }
-        $viewClass = App::className($view, 'View', 'View');
+
+        $viewClass = null;
+        if ($builder->className() === null) {
+            $viewClass = App::className($view, 'View', 'View');
+        }
 
         if ($viewClass) {
             $controller->viewClass = $viewClass;
+            $builder->className($viewClass);
         } else {
             if (empty($this->_renderType)) {
-                $controller->viewPath .= DS . $type;
+                $builder->templatePath($builder->templatePath() . DS . $type);
             } else {
-                $controller->viewPath = preg_replace(
+                $builder->templatePath(preg_replace(
                     "/([\/\\\\]{$this->_renderType})$/",
                     DS . $type,
-                    $controller->viewPath
-                );
+                    $builder->templatePath()
+                ));
             }
 
             $this->_renderType = $type;
-            $controller->layoutPath = $type;
+            $builder->layoutPath($type);
         }
 
         $response = $this->response;
@@ -576,7 +586,7 @@ class RequestHandlerComponent extends Component
 
         if (!in_array($helper, $controller->helpers) && empty($controller->helpers[$helper])) {
             $helperClass = App::className($helper, 'View/Helper', 'Helper');
-            if ($helperClass) {
+            if ($helperClass !== false) {
                 $controller->helpers[] = $helper;
             }
         }
@@ -647,8 +657,9 @@ class RequestHandlerComponent extends Component
      * Maps a content type alias back to its mime-type(s)
      *
      * @param string|array $alias String alias to convert back into a content type. Or an array of aliases to map.
-     * @return string|null Null on an undefined alias. String value of the mapped alias type. If an
-     *   alias maps to more than one content type, the first one will be returned.
+     * @return string|null|array Null on an undefined alias. String value of the mapped alias type. If an
+     *   alias maps to more than one content type, the first one will be returned. If an array is provided
+     *   for $alias, an array of mapped types will be returned.
      */
     public function mapAlias($alias)
     {
@@ -676,13 +687,18 @@ class RequestHandlerComponent extends Component
      *    for the handler.
      * @return void
      * @throws \Cake\Core\Exception\Exception
+     * @deprecated 3.1.0 Use config('addInputType', ...) instead.
      */
     public function addInputType($type, $handler)
     {
+        trigger_error(
+            'RequestHandlerComponent::addInputType() is deprecated. Use config("inputTypeMap", ...) instead.',
+            E_USER_DEPRECATED
+        );
         if (!is_array($handler) || !isset($handler[0]) || !is_callable($handler[0])) {
             throw new Exception('You must give a handler callback.');
         }
-        $this->_inputTypeMap[$type] = $handler;
+        $this->config('inputTypeMap.' . $type, $handler);
     }
 
     /**
@@ -691,19 +707,22 @@ class RequestHandlerComponent extends Component
      * @param array|string|null $type The type string or array with format `['type' => 'viewClass']` to map one or more
      * @param array|null $viewClass The viewClass to be used for the type without `View` appended
      * @return array|string Returns viewClass when only string $type is set, else array with viewClassMap
+     * @deprecated 3.1.0 Use config('viewClassMap', ...) instead.
      */
     public function viewClassMap($type = null, $viewClass = null)
     {
-        if (!$viewClass && is_string($type) && isset($this->_viewClassMap[$type])) {
-            return $this->_viewClassMap[$type];
+        trigger_error(
+            'RequestHandlerComponent::viewClassMap() is deprecated. Use config("viewClassMap", ...) instead.',
+            E_USER_DEPRECATED
+        );
+        if (!$viewClass && is_string($type)) {
+            return $this->config('viewClassMap.' . $type);
         }
         if (is_string($type)) {
-            $this->_viewClassMap[$type] = $viewClass;
+            $this->config('viewClassMap.' . $type, $viewClass);
         } elseif (is_array($type)) {
-            foreach ($type as $key => $value) {
-                $this->viewClassMap($key, $value);
-            }
+            $this->config('viewClassMap', $type, true);
         }
-        return $this->_viewClassMap;
+        return $this->config('viewClassMap');
     }
 }

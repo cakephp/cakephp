@@ -14,9 +14,9 @@
  */
 namespace Cake\Database\Schema;
 
-use Cake\Database\Connection;
 use Cake\Database\Exception;
-use Cake\Database\Schema\Table;
+use Cake\Datasource\ConnectionInterface;
+use PDOException;
 
 /**
  * Represents a database schema collection
@@ -30,7 +30,7 @@ class Collection
     /**
      * Connection object
      *
-     * @var \Cake\Database\Connection
+     * @var \Cake\Datasource\ConnectionInterface
      */
     protected $_connection;
 
@@ -44,9 +44,9 @@ class Collection
     /**
      * Constructor.
      *
-     * @param \Cake\Database\Connection $connection The connection instance.
+     * @param \Cake\Datasource\ConnectionInterface $connection The connection instance.
      */
-    public function __construct(Connection $connection)
+    public function __construct(ConnectionInterface $connection)
     {
         $this->_connection = $connection;
         $this->_dialect = $connection->driver()->schemaDialect();
@@ -126,7 +126,7 @@ class Collection
         }
         try {
             $statement = $this->_connection->execute($sql, $params);
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             throw new Exception($e->getMessage(), 500, $e);
         }
         foreach ($statement->fetchAll('assoc') as $row) {

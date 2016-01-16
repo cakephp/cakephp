@@ -15,6 +15,7 @@
 namespace Cake\View\Helper;
 
 use Cake\View\Helper;
+use UnexpectedValueException;
 
 /**
  * FlashHelper class to render flash messages.
@@ -57,30 +58,38 @@ class FlashHelper extends Helper
      * ]);
      * ```
      *
+     * If you have several messages stored in the Session, each message will be rendered in its own
+     * element.
+     *
      * @param string $key The [Flash.]key you are rendering in the view.
      * @param array $options Additional options to use for the creation of this flash message.
      *    Supports the 'params', and 'element' keys that are used in the helper.
-     * @return string|void Rendered flash message or null if flash key does not exist
+     * @return string|null Rendered flash message or null if flash key does not exist
      *   in session.
      * @throws \UnexpectedValueException If value for flash settings key is not an array.
      */
     public function render($key = 'flash', array $options = [])
     {
         if (!$this->request->session()->check("Flash.$key")) {
-            return;
+            return null;
         }
 
         $flash = $this->request->session()->read("Flash.$key");
         if (!is_array($flash)) {
-            throw new \UnexpectedValueException(sprintf(
+            throw new UnexpectedValueException(sprintf(
                 'Value for flash setting key "%s" must be an array.',
                 $key
             ));
         }
-        $flash = $options + $flash;
         $this->request->session()->delete("Flash.$key");
 
-        return $this->_View->element($flash['element'], $flash);
+        $out = '';
+        foreach ($flash as $message) {
+            $message = $options + $message;
+            $out .= $this->_View->element($message['element'], $message);
+        }
+
+        return $out;
     }
 
     /**

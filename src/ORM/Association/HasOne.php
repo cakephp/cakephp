@@ -16,8 +16,6 @@ namespace Cake\ORM\Association;
 
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
-use Cake\ORM\Association\DependentDeleteTrait;
-use Cake\ORM\Association\SelectableAssociationTrait;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 
@@ -123,7 +121,7 @@ class HasOne extends Association
 
         $properties = array_combine(
             (array)$this->foreignKey(),
-            $entity->extract((array)$this->source()->primaryKey())
+            $entity->extract((array)$this->bindingKey())
         );
         $targetEntity->set($properties, ['guard' => false]);
 

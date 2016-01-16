@@ -181,11 +181,14 @@ trait SqlDialectTrait
                 if (!($condition instanceof Comparison)) {
                     return $condition;
                 }
+
                 $field = $condition->getField();
-                if (strpos($field, '.') !== false) {
-                    list(, $field) = explode('.', $field);
-                    $condition->setField($field);
+                if ($field instanceof ExpressionInterface || strpos($field, '.') === false) {
+                    return $condition;
                 }
+
+                list(, $field) = explode('.', $field);
+                $condition->setField($field);
                 return $condition;
             });
         }

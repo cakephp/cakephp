@@ -161,6 +161,28 @@ class ApcEngine extends CacheEngine
     }
 
     /**
+     * Write data for key into cache if it doesn't exist already.
+     * If it already exists, it fails and returns false.
+     *
+     * @param string $key Identifier for the data.
+     * @param mixed $value Data to be cached.
+     * @return bool True if the data was successfully cached, false on failure.
+     * @link http://php.net/manual/en/function.apc-add.php
+     */
+    public function add($key, $value)
+    {
+        $key = $this->_key($key);
+
+        $expires = 0;
+        $duration = $this->_config['duration'];
+        if ($duration) {
+            $expires = time() + $duration;
+        }
+        apc_add($key . '_expires', $expires, $duration);
+        return apc_add($key, $value, $duration);
+    }
+
+    /**
      * Returns the `group value` for each of the configured groups
      * If the group initial value was not found, then it initializes
      * the group accordingly.

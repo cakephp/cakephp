@@ -15,7 +15,6 @@
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
-use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\ValueBinder;
 
 /**
@@ -49,7 +48,7 @@ class OrderByExpression extends QueryExpression
         $order = [];
         foreach ($this->_conditions as $k => $direction) {
             if ($direction instanceof ExpressionInterface) {
-                $direction = sprintf('(%s)', $direction->sql($generator));
+                $direction = $direction->sql($generator);
             }
             $order[] = is_numeric($k) ? $direction : sprintf('%s %s', $k, $direction);
         }

@@ -1,6 +1,6 @@
 <?php
 /**
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -8,7 +8,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -1089,6 +1089,16 @@ class RouterTest extends TestCase
             '_ext' => 'json'
         ]);
         $expected = '/articles.json';
+        $this->assertEquals($expected, $result);
+
+        $result = Router::url([
+            'plugin' => null,
+            'controller' => 'articles',
+            'action' => 'index',
+            'id' => 'testing',
+            '_ext' => 'json'
+        ]);
+        $expected = '/articles.json?id=testing';
         $this->assertEquals($expected, $result);
     }
 
@@ -2791,6 +2801,7 @@ class RouterTest extends TestCase
             $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
             $this->assertEquals('/path', $routes->path());
             $this->assertEquals(['param' => 'value'], $routes->params());
+            $this->assertEquals('', $routes->namePrefix());
 
             $routes->connect('/articles', ['controller' => 'Articles']);
         });
@@ -2845,6 +2856,23 @@ class RouterTest extends TestCase
     }
 
     /**
+     * Test the scope() method
+     *
+     * @return void
+     */
+    public function testScopeNamePrefix()
+    {
+        Router::scope('/path', ['param' => 'value', '_namePrefix' => 'path:'], function ($routes) {
+            $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
+            $this->assertEquals('/path', $routes->path());
+            $this->assertEquals(['param' => 'value'], $routes->params());
+            $this->assertEquals('path:', $routes->namePrefix());
+
+            $routes->connect('/articles', ['controller' => 'Articles']);
+        });
+    }
+
+    /**
      * Test that prefix() creates a scope.
      *
      * @return void
@@ -2854,6 +2882,12 @@ class RouterTest extends TestCase
         Router::prefix('admin', function ($routes) {
             $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
             $this->assertEquals('/admin', $routes->path());
+            $this->assertEquals(['prefix' => 'admin'], $routes->params());
+        });
+
+        Router::prefix('admin', ['_namePrefix' => 'admin:'], function ($routes) {
+            $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
+            $this->assertEquals('admin:', $routes->namePrefix());
             $this->assertEquals(['prefix' => 'admin'], $routes->params());
         });
     }
@@ -2897,6 +2931,11 @@ class RouterTest extends TestCase
             $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
             $this->assertEquals('/debugger', $routes->path());
             $this->assertEquals(['plugin' => 'DebugKit'], $routes->params());
+        });
+
+        Router::plugin('Contacts', ['_namePrefix' => 'contacts:'], function ($routes) {
+            $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
+            $this->assertEquals('contacts:', $routes->namePrefix());
         });
     }
 

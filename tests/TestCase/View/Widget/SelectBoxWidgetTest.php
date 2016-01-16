@@ -353,6 +353,48 @@ class SelectBoxWidgetTest extends TestCase
     }
 
     /**
+     * test rendering with numeric option group keys
+     *
+     * @return void
+     */
+    public function testRenderOptionGroupsIntegerKeys()
+    {
+        $select = new SelectBoxWidget($this->templates);
+        $data = [
+            'name' => 'Year[key]',
+            'options' => [
+                2014 => [
+                    'key' => 'value'
+                ],
+                2013 => [
+                    'text' => '2013-text',
+                    'options' => [
+                        'key2' => 'value2'
+                    ]
+                ]
+            ]
+        ];
+        $result = $select->render($data, $this->context);
+        $expected = [
+            'select' => [
+                'name' => 'Year[key]',
+            ],
+            ['optgroup' => ['label' => '2014']],
+            ['option' => ['value' => 'key']],
+            'value',
+            '/option',
+            '/optgroup',
+            ['optgroup' => ['label' => '2013-text']],
+            ['option' => ['value' => 'key2']],
+            'value2',
+            '/option',
+            '/optgroup',
+            '/select'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * test rendering with option groups and escaping
      *
      * @return void
@@ -671,6 +713,17 @@ class SelectBoxWidgetTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
+        $data['empty'] = ['99' => '(choose one)'];
+        $result = $select->render($data, $this->context);
+        $expected = [
+            'select' => ['name' => 'Birds[name]', 'id' => 'BirdName'],
+            ['option' => ['value' => '99']], '(choose one)', '/option',
+            ['option' => ['value' => 'a']], 'Albatross', '/option',
+            ['option' => ['value' => 'b']], 'Budgie', '/option',
+            '/select'
+        ];
+        $this->assertHtml($expected, $result);
+
         $data['empty'] = 'empty';
         $data['val'] = '';
         $result = $select->render($data, $this->context);
@@ -776,6 +829,48 @@ class SelectBoxWidgetTest extends TestCase
         $expected = [
             'select' => ['name' => 'Birds[name]', 'id' => 'BirdName'],
             ['option' => ['value' => '']], 'empty', '/option',
+            '/select'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Ensure templateVars option is hooked up.
+     *
+     * @return void
+     */
+    public function testRenderTemplateVars()
+    {
+        $this->templates->add([
+            'select' => '<select custom="{{custom}}" name="{{name}}"{{attrs}}>{{content}}</select>',
+            'option' => '<option opt="{{opt}}" value="{{value}}"{{attrs}}>{{text}}</option>',
+        ]);
+
+        $input = new SelectBoxWidget($this->templates);
+        $data = [
+            'templateVars' => ['custom' => 'value', 'opt' => 'option'],
+            'name' => 'birds',
+            'options' => [
+                ['value' => 'a', 'text' => 'Albatross', 'templateVars' => ['opt' => 'opt-1']],
+                'b' => 'Budgie',
+                'c' => 'Canary',
+            ]
+        ];
+        $result = $input->render($data, $this->context);
+        $expected = [
+            'select' => [
+                'name' => 'birds',
+                'custom' => 'value',
+            ],
+            ['option' => ['value' => 'a', 'opt' => 'opt-1']],
+            'Albatross',
+            '/option',
+            ['option' => ['value' => 'b', 'opt' => 'option']],
+            'Budgie',
+            '/option',
+            ['option' => ['value' => 'c', 'opt' => 'option']],
+            'Canary',
+            '/option',
             '/select'
         ];
         $this->assertHtml($expected, $result);

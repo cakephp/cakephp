@@ -142,7 +142,7 @@ class Helper implements EventListenerInterface
      * Lazy loads helpers.
      *
      * @param string $name Name of the property being accessed.
-     * @return \Cake\View\Helper|void Helper instance if helper with provided name exists
+     * @return \Cake\View\Helper|null Helper instance if helper with provided name exists
      */
     public function __get($name)
     {
@@ -166,7 +166,9 @@ class Helper implements EventListenerInterface
     {
         $message = json_encode($message);
         $confirm = "if (confirm({$message})) { {$okCode} } {$cancelCode}";
-        if (isset($options['escape']) && $options['escape'] === false) {
+        // We cannot change the key here in 3.x, but the behavior is inverted in this case
+        $escape = isset($options['escape']) && $options['escape'] === false;
+        if ($escape) {
             $confirm = h($confirm);
         }
         return $confirm;

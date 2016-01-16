@@ -117,8 +117,6 @@ class AssetsTask extends Shell
     protected function _process($plugins, $copy = false)
     {
         foreach ($plugins as $plugin => $config) {
-            $path = Plugin::path($plugin) . 'webroot';
-
             $this->out();
             $this->out('For plugin: ' . $plugin);
             $this->hr();

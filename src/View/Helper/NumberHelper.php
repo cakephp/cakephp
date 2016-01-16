@@ -33,7 +33,7 @@ class NumberHelper extends Helper
     /**
      * Default config for this class
      *
-     * @var mixed
+     * @var array
      */
     protected $_defaultConfig = [
         'engine' => 'Cake\I18n\Number'
@@ -229,5 +229,17 @@ class NumberHelper extends Helper
     public function implementedEvents()
     {
         return [];
+    }
+
+    /**
+     * Formats a number into locale specific ordinal suffix.
+     *
+     * @param int|float $value An integer
+     * @param array $options An array with options.
+     * @return string formatted number
+     */
+    public function ordinal($value, array $options = [])
+    {
+        return $this->_engine->ordinal($value, $options);
     }
 }

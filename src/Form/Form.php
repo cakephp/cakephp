@@ -14,7 +14,6 @@
  */
 namespace Cake\Form;
 
-use Cake\Form\Schema;
 use Cake\Validation\Validator;
 
 /**

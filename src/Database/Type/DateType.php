@@ -15,7 +15,7 @@
 namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
-use Cake\Database\Type\DateTimeType;
+use DateTime;
 
 class DateType extends DateTimeType
 {
@@ -36,7 +36,7 @@ class DateType extends DateTimeType
     public function marshal($value)
     {
         $date = parent::marshal($value);
-        if ($date instanceof \DateTime) {
+        if ($date instanceof DateTime) {
             $date->setTime(0, 0, 0);
         }
         return $date;
@@ -52,7 +52,7 @@ class DateType extends DateTimeType
     public function toPHP($value, Driver $driver)
     {
         $date = parent::toPHP($value, $driver);
-        if ($date instanceof \DateTime) {
+        if ($date instanceof DateTime) {
             $date->setTime(0, 0, 0);
         }
         return $date;

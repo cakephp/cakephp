@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM\Behavior;
 
+use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\ORM\Association;
 use Cake\ORM\Behavior;
@@ -64,7 +65,7 @@ use Cake\ORM\Entity;
  * ```
  * [
  *     'Users' => [
- *         'posts_published' => function (Event $event, Entity $entity, Table $table) {
+ *         'posts_published' => function (Event $event, EntityInterface $entity, Table $table) {
  *             $query = $table->find('all')->where([
  *                 'published' => true,
  *                 'user_id' => $entity->get('user_id')
@@ -85,10 +86,10 @@ class CounterCacheBehavior extends Behavior
      * Makes sure to update counter cache when a new record is created or updated.
      *
      * @param \Cake\Event\Event $event The afterSave event that was fired.
-     * @param \Cake\ORM\Entity $entity The entity that was saved.
+     * @param \Cake\Datasource\EntityInterface $entity The entity that was saved.
      * @return void
      */
-    public function afterSave(Event $event, Entity $entity)
+    public function afterSave(Event $event, EntityInterface $entity)
     {
         $this->_processAssociations($event, $entity);
     }
@@ -99,10 +100,10 @@ class CounterCacheBehavior extends Behavior
      * Makes sure to update counter cache when a record is deleted.
      *
      * @param \Cake\Event\Event $event The afterDelete event that was fired.
-     * @param \Cake\ORM\Entity $entity The entity that was deleted.
+     * @param \Cake\Datasource\EntityInterface $entity The entity that was deleted.
      * @return void
      */
-    public function afterDelete(Event $event, Entity $entity)
+    public function afterDelete(Event $event, EntityInterface $entity)
     {
         $this->_processAssociations($event, $entity);
     }
@@ -111,10 +112,10 @@ class CounterCacheBehavior extends Behavior
      * Iterate all associations and update counter caches.
      *
      * @param \Cake\Event\Event $event Event instance.
-     * @param \Cake\ORM\Entity $entity Entity.
+     * @param \Cake\Datasource\EntityInterface $entity Entity.
      * @return void
      */
-    protected function _processAssociations(Event $event, Entity $entity)
+    protected function _processAssociations(Event $event, EntityInterface $entity)
     {
         foreach ($this->_config as $assoc => $settings) {
             $assoc = $this->_table->association($assoc);
@@ -126,19 +127,19 @@ class CounterCacheBehavior extends Behavior
      * Updates counter cache for a single association
      *
      * @param \Cake\Event\Event $event Event instance.
-     * @param \Cake\ORM\Entity $entity Entity
+     * @param \Cake\Datasource\EntityInterface $entity Entity
      * @param Association $assoc The association object
      * @param array $settings The settings for for counter cache for this association
      * @return void
      */
-    protected function _processAssociation(Event $event, Entity $entity, Association $assoc, array $settings)
+    protected function _processAssociation(Event $event, EntityInterface $entity, Association $assoc, array $settings)
     {
         $foreignKeys = (array)$assoc->foreignKey();
-        $primaryKeys = (array)$assoc->target()->primaryKey();
+        $primaryKeys = (array)$assoc->bindingKey();
         $countConditions = $entity->extract($foreignKeys);
         $updateConditions = array_combine($primaryKeys, $countConditions);
-
         $countOriginalConditions = $entity->extractOriginalChanged($foreignKeys);
+
         if ($countOriginalConditions !== []) {
             $updateOriginalConditions = array_combine($primaryKeys, $countOriginalConditions);
         }

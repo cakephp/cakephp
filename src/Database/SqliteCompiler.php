@@ -14,8 +14,6 @@
  */
 namespace Cake\Database;
 
-use Cake\Database\QueryCompiler;
-
 /**
  * Responsible for compiling a Query object into its SQL representation
  * for SQLite

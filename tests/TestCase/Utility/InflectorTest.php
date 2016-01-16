@@ -8,7 +8,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html
+ * @link          http://book.cakephp.org/3.0/en/development/testing.html
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -123,7 +123,7 @@ class InflectorTest extends TestCase
         $this->assertEquals('stimulus', Inflector::singularize('stimuli'));
         $this->assertEquals('syllabus', Inflector::singularize('syllabi'));
         $this->assertEquals('terminus', Inflector::singularize('termini'));
-        $this->assertEquals('virus', Inflector::singularize('viri'));
+        $this->assertEquals('virus', Inflector::singularize('viruses'));
         $this->assertEquals('person', Inflector::singularize('people'));
         $this->assertEquals('glove', Inflector::singularize('gloves'));
         $this->assertEquals('dove', Inflector::singularize('doves'));
@@ -246,7 +246,7 @@ class InflectorTest extends TestCase
         $this->assertEquals('stimuli', Inflector::pluralize('stimulus'));
         $this->assertEquals('syllabi', Inflector::pluralize('syllabus'));
         $this->assertEquals('termini', Inflector::pluralize('terminus'));
-        $this->assertEquals('viri', Inflector::pluralize('virus'));
+        $this->assertEquals('viruses', Inflector::pluralize('virus'));
         $this->assertEquals('people', Inflector::pluralize('person'));
         $this->assertEquals('people', Inflector::pluralize('people'));
         $this->assertEquals('gloves', Inflector::pluralize('glove'));
@@ -393,6 +393,10 @@ class InflectorTest extends TestCase
 
         $result = Inflector::slug("non\xc2\xa0breaking\xc2\xa0space");
         $this->assertEquals('non-breaking-space', $result);
+
+        $result = Inflector::slug('Foo Bar: Not just for breakfast any-more', '');
+        $expected = 'FooBarNotjustforbreakfastanymore';
+        $this->assertEquals($expected, $result);
     }
 
     /**

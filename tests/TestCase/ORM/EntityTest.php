@@ -122,6 +122,14 @@ class EntityTest extends TestCase
             'body' => 'no',
         ];
         $this->assertEquals($expected, $result);
+
+        $entity->set('null', 'not null');
+        $result = $entity->extractOriginalChanged(['id', 'title', 'body', 'null']);
+        $expected = [
+            'null' => null,
+            'body' => 'no',
+        ];
+        $this->assertEquals($expected, $result);
     }
 
     /**

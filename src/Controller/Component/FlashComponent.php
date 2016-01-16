@@ -18,11 +18,15 @@ use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Network\Exception\InternalErrorException;
 use Cake\Utility\Inflector;
+use Exception;
 
 /**
  * The CakePHP FlashComponent provides a way for you to write a flash variable
  * to the session from your controllers, to be rendered in a view with the
  * FlashHelper.
+ *
+ * @method void success(string $message, array $options = []) Set a message using "success" element
+ * @method void error(string $message, array $options = []) Set a message using "error" element
  */
 class FlashComponent extends Component
 {
@@ -42,7 +46,8 @@ class FlashComponent extends Component
     protected $_defaultConfig = [
         'key' => 'flash',
         'element' => 'default',
-        'params' => []
+        'params' => [],
+        'clear' => false
     ];
 
     /**
@@ -59,6 +64,8 @@ class FlashComponent extends Component
 
     /**
      * Used to set a session variable that can be used to output messages in the view.
+     * If you make consecutive calls to this method, the messages will stack (if they are
+     * set with the same flash key)
      *
      * In your controller: $this->Flash->set('This has been saved');
      *
@@ -67,6 +74,7 @@ class FlashComponent extends Component
      * - `key` The key to set under the session's Flash key
      * - `element` The element used to render the flash message. Default to 'default'.
      * - `params` An array of variables to make available when using an element
+     * - `clear` A bool stating if the current stack should be cleared to start a new one
      *
      * @param string|\Exception $message Message to be flashed. If an instance
      *   of \Exception the exception message will be used and code will be set
@@ -78,7 +86,7 @@ class FlashComponent extends Component
     {
         $options += $this->config();
 
-        if ($message instanceof \Exception) {
+        if ($message instanceof Exception) {
             $options['params'] += ['code' => $message->getCode()];
             $message = $message->getMessage();
         }
@@ -91,12 +99,19 @@ class FlashComponent extends Component
             $options['element'] = 'Flash/' . $element;
         }
 
-        $this->_session->write('Flash.' . $options['key'], [
+        $messages = [];
+        if ($options['clear'] === false) {
+            $messages = $this->_session->read('Flash.' . $options['key']);
+        }
+
+        $messages[] = [
             'message' => $message,
             'key' => $options['key'],
             'element' => $options['element'],
             'params' => $options['params']
-        ]);
+        ];
+
+        $this->_session->write('Flash.' . $options['key'], $messages);
     }
 
     /**
@@ -105,6 +120,9 @@ class FlashComponent extends Component
      * For example: $this->Flash->success('My message') would use the
      * success.ctp element under `src/Template/Element/Flash` for rendering the
      * flash message.
+     *
+     * If you make consecutive calls to this method, the messages will stack (if they are
+     * set with the same flash key)
      *
      * Note that the parameter `element` will be always overridden. In order to call a
      * specific element from a plugin, you should set the `plugin` option in $args.

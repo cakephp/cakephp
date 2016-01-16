@@ -37,6 +37,7 @@ class FloatTypeTest extends TestCase
         $this->type = Type::build('float');
         $this->driver = $this->getMock('Cake\Database\Driver');
         $this->locale = I18n::locale();
+        $this->numberClass = FloatType::$numberClass;
 
         I18n::locale($this->locale);
     }
@@ -50,6 +51,7 @@ class FloatTypeTest extends TestCase
     {
         parent::tearDown();
         I18n::locale($this->locale);
+        FloatType::$numberClass = $this->numberClass;
     }
 
     /**
@@ -81,6 +83,12 @@ class FloatTypeTest extends TestCase
      */
     public function testToDatabase()
     {
+        $result = $this->type->toDatabase('', $this->driver);
+        $this->assertNull($result);
+
+        $result = $this->type->toDatabase(null, $this->driver);
+        $this->assertNull($result);
+
         $result = $this->type->toDatabase('some data', $this->driver);
         $this->assertSame(0.0, $result);
 
@@ -141,6 +149,18 @@ class FloatTypeTest extends TestCase
         $expected = 5987123.231;
         $result = $this->type->marshal('5.987.123,231');
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test that exceptions are raised on invalid parsers.
+     *
+     * @expectedException RuntimeException
+     * @return void
+     */
+    public function testUseLocaleParsingInvalid()
+    {
+        FloatType::$numberClass = 'stdClass';
+        $this->type->useLocaleParser();
     }
 
     /**

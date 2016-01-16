@@ -16,6 +16,7 @@ namespace Cake\ORM\Rule;
 
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
+use RuntimeException;
 
 /**
  * Checks that the value provided in a field exists as the primary key of another
@@ -57,49 +58,77 @@ class ExistsIn
      * @param \Cake\Datasource\EntityInterface $entity The entity from where to extract the fields
      * @param array $options Options passed to the check,
      * where the `repository` key is required.
+     * @throws \RuntimeException When the rule refers to an undefined association.
      * @return bool
      */
     public function __invoke(EntityInterface $entity, array $options)
     {
         if (is_string($this->_repository)) {
-            $this->_repository = $options['repository']->association($this->_repository);
+            $alias = $this->_repository;
+            $this->_repository = $options['repository']->association($alias);
+
+            if (empty($this->_repository)) {
+                throw new RuntimeException(sprintf(
+                    "ExistsIn rule for '%s' is invalid. The '%s' association is not defined.",
+                    implode(', ', $this->_fields),
+                    $alias
+                ));
+            }
         }
 
-        if (!empty($options['_sourceTable'])) {
-            $source = $this->_repository instanceof Association ?
-                $this->_repository->target() :
-                $this->_repository;
-            if ($source === $options['_sourceTable']) {
-                return true;
-            }
+        $source = $target = $this->_repository;
+        if (!empty($options['repository'])) {
+            $source = $options['repository'];
+        }
+        if ($source instanceof Association) {
+            $source = $source->source();
+        }
+        if ($target instanceof Association) {
+            $bindingKey = (array)$target->bindingKey();
+            $target = $target->target();
+        } else {
+            $bindingKey = (array)$target->primaryKey();
+        }
+
+        if (!empty($options['_sourceTable']) && $target === $options['_sourceTable']) {
+            return true;
         }
 
         if (!$entity->extract($this->_fields, true)) {
             return true;
         }
 
-        $nulls = 0;
-        $schema = $this->_repository->schema();
-        foreach ($this->_fields as $field) {
-            if ($schema->isNullable($field) && $entity->get($field) === null) {
-                $nulls++;
-            }
-        }
-        if ($nulls === count($this->_fields)) {
+        if ($this->_fieldsAreNull($entity, $source)) {
             return true;
         }
 
-        $alias = $this->_repository->alias();
         $primary = array_map(
-            function ($key) use ($alias) {
-                return "$alias.$key";
-            },
-            (array)$this->_repository->primaryKey()
+            [$target, 'aliasField'],
+            $bindingKey
         );
         $conditions = array_combine(
             $primary,
             $entity->extract($this->_fields)
         );
-        return $this->_repository->exists($conditions);
+        return $target->exists($conditions);
+    }
+
+    /**
+     * Check whether or not the entity fields are nullable and null.
+     *
+     * @param \Cake\ORM\EntityInterface $entity The entity to check.
+     * @param \Cake\ORM\Table $source The table to use schema from.
+     * @return bool
+     */
+    protected function _fieldsAreNull($entity, $source)
+    {
+        $nulls = 0;
+        $schema = $source->schema();
+        foreach ($this->_fields as $field) {
+            if ($schema->column($field) && $schema->isNullable($field) && $entity->get($field) === null) {
+                $nulls++;
+            }
+        }
+        return $nulls === count($this->_fields);
     }
 }

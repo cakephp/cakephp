@@ -14,6 +14,8 @@
  */
 namespace Cake\Utility\Crypto;
 
+use LogicException;
+
 /**
  * OpenSSL implementation of crypto features for Cake\Utility\Security
  *
@@ -39,7 +41,7 @@ class OpenSsl
      */
     public static function rijndael($text, $key, $operation)
     {
-        throw new \LogicException('rijndael is not compatible with OpenSSL. Use mcrypt instead.');
+        throw new LogicException('rijndael is not compatible with OpenSSL. Use mcrypt instead.');
     }
 
     /**
@@ -61,7 +63,7 @@ class OpenSsl
         $ivSize = openssl_cipher_iv_length($method);
 
         $iv = openssl_random_pseudo_bytes($ivSize);
-        return $iv . openssl_encrypt($plain, $method, $key, true, $iv);
+        return $iv . openssl_encrypt($plain, $method, $key, OPENSSL_RAW_DATA, $iv);
     }
 
     /**
@@ -80,6 +82,6 @@ class OpenSsl
         $iv = mb_substr($cipher, 0, $ivSize, '8bit');
 
         $cipher = mb_substr($cipher, $ivSize, null, '8bit');
-        return openssl_decrypt($cipher, $method, $key, true, $iv);
+        return openssl_decrypt($cipher, $method, $key, OPENSSL_RAW_DATA, $iv);
     }
 }

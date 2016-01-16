@@ -15,7 +15,6 @@
 namespace Cake\Routing;
 
 use Cake\Core\App;
-use Cake\Routing\Dispatcher;
 use Cake\Routing\Exception\MissingDispatcherFilterException;
 
 /**

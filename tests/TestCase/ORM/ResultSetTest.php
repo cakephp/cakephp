@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -29,7 +30,7 @@ use Cake\TestSuite\TestCase;
 class ResultSetTest extends TestCase
 {
 
-    public $fixtures = ['core.articles', 'core.comments'];
+    public $fixtures = ['core.articles', 'core.authors', 'core.comments'];
 
     /**
      * setup
@@ -259,7 +260,6 @@ class ResultSetTest extends TestCase
         $query = $this->table->find('all');
         $results = $query->all();
         $expected = [
-            'query' => $query,
             'items' => $results->toArray()
         ];
         $this->assertSame($expected, $results->__debugInfo());
@@ -342,5 +342,47 @@ class ResultSetTest extends TestCase
 
         $result->valid();
         $data = $result->current();
+    }
+
+    /**
+     * Test that associations have source() correctly set.
+     *
+     * @return void
+     */
+    public function testSourceOnContainAssociations()
+    {
+        Plugin::load('TestPlugin');
+        $comments = TableRegistry::get('TestPlugin.Comments');
+        $comments->belongsTo('Authors', [
+            'className' => 'TestPlugin.Authors',
+            'foreignKey' => 'user_id'
+        ]);
+        $result = $comments->find()->contain(['Authors'])->first();
+        $this->assertEquals('TestPlugin.Comments', $result->source());
+        $this->assertEquals('TestPlugin.Authors', $result->author->source());
+
+        $result = $comments->find()->matching('Authors', function ($q) {
+            return $q->where(['Authors.id' => 1]);
+        })->first();
+        $this->assertEquals('TestPlugin.Comments', $result->source());
+        $this->assertEquals('TestPlugin.Authors', $result->_matchingData['Authors']->source());
+    }
+
+    /**
+     * Ensure that isEmpty() on a ResultSet doesn't result in loss
+     * of records. This behavior is provided by CollectionTrait.
+     *
+     * @return void
+     */
+    public function testIsEmptyDoesNotConsumeData()
+    {
+        $table = TableRegistry::get('Comments');
+        $query = $table->find()
+            ->formatResults(function ($results) {
+                return $results;
+            });
+        $res = $query->all();
+        $res->isEmpty();
+        $this->assertCount(6, $res->toArray());
     }
 }

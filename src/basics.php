@@ -73,7 +73,7 @@ HTML;
 
 TEXT;
         $template = $html;
-        if (PHP_SAPI === 'cli' || $showHtml === false) {
+        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') || $showHtml === false) {
             $template = $text;
             if ($showFrom) {
                 $lineInfo = sprintf('%s (line %s)', $file, $line);
@@ -142,4 +142,27 @@ if (!function_exists('json_last_error_msg')) {
         return array_key_exists($error, $errors) ? $errors[$error] : "Unknown error ({$error})";
     }
 
+}
+
+if (!function_exists('breakpoint')) {
+    /**
+     * Command to return the eval-able code to startup PsySH in interactive debugger
+     * Works the same way as eval(\Psy\sh());
+     * psy/psysh must be loaded in your project
+     * @link http://psysh.org/
+     * ```
+     * eval(breakpoint());
+     * ```
+     * @return string
+     */
+    function breakpoint()
+    {
+        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && class_exists('\Psy\Shell')) {
+            return 'extract(\Psy\Shell::debug(get_defined_vars(), isset($this) ? $this : null));';
+        }
+        trigger_error(
+            "psy/psysh must be installed and you must be in a CLI environment to use the breakpoint function",
+            E_USER_WARNING
+        );
+    }
 }

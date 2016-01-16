@@ -18,6 +18,7 @@ use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Collection\CollectionTrait;
 use MultipleIterator;
+use Serializable;
 
 /**
  * Creates an iterator that returns elements grouped in pairs
@@ -42,7 +43,7 @@ use MultipleIterator;
  * ```
  *
  */
-class ZipIterator extends MultipleIterator implements CollectionInterface
+class ZipIterator extends MultipleIterator implements CollectionInterface, Serializable
 {
 
     use CollectionTrait;
@@ -53,6 +54,13 @@ class ZipIterator extends MultipleIterator implements CollectionInterface
      * @var callable
      */
     protected $_callback;
+
+    /**
+     * Contains the original iterator objects that were attached
+     *
+     * @var array
+     */
+    protected $_iterators = [];
 
     /**
      * Creates the iterator to merge together the values by for all the passed
@@ -71,6 +79,7 @@ class ZipIterator extends MultipleIterator implements CollectionInterface
         parent::__construct(MultipleIterator::MIT_NEED_ALL | MultipleIterator::MIT_KEYS_NUMERIC);
 
         foreach ($sets as $set) {
+            $this->_iterators[] = $set;
             $this->attachIterator($set);
         }
     }
@@ -88,5 +97,31 @@ class ZipIterator extends MultipleIterator implements CollectionInterface
         }
 
         return call_user_func_array($this->_callback, parent::current());
+    }
+
+    /**
+     * Returns a string representation of this object that can be used
+     * to reconstruct it
+     *
+     * @return string
+     */
+    public function serialize()
+    {
+        return serialize($this->_iterators);
+    }
+
+    /**
+     * Unserializes the passed string and rebuilds the ZipIterator instance
+     *
+     * @param string $iterators The serialized iterators
+     * @return void
+     */
+    public function unserialize($iterators)
+    {
+        parent::__construct(MultipleIterator::MIT_NEED_ALL | MultipleIterator::MIT_KEYS_NUMERIC);
+        $this->_iterators = unserialize($iterators);
+        foreach ($this->_iterators as $it) {
+            $this->attachIterator($it);
+        }
     }
 }

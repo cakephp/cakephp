@@ -25,6 +25,10 @@ use PDO;
 class FooType extends \Cake\Database\Type
 {
 
+    public function getBaseType()
+    {
+        return 'text';
+    }
 }
 
 /**
@@ -74,6 +78,7 @@ class TypeTest extends TestCase
         $type = Type::build($name);
         $this->assertInstanceOf('Cake\Database\Type', $type);
         $this->assertEquals($name, $type->getName());
+        $this->assertEquals($name, $type->getBaseType());
     }
 
     /**
@@ -86,7 +91,6 @@ class TypeTest extends TestCase
         return [
             ['string'],
             ['text'],
-            ['boolean']
         ];
     }
 
@@ -133,6 +137,7 @@ class TypeTest extends TestCase
         $type = Type::build('foo');
         $this->assertInstanceOf($fooType, $type);
         $this->assertEquals('foo', $type->getName());
+        $this->assertEquals('text', $type->getBaseType());
     }
 
     /**
@@ -185,171 +190,6 @@ class TypeTest extends TestCase
         $integer = time() * time();
         $driver = $this->getMock('\Cake\Database\Driver');
         $this->assertEquals(PDO::PARAM_INT, $type->toStatement($integer, $driver));
-    }
-
-    /**
-     * Tests string from database are converted correctly to PHP
-     *
-     * @return void
-     */
-    public function testStringToPHP()
-    {
-        $type = Type::build('string');
-        $string = 'foo';
-        $driver = $this->getMock('\Cake\Database\Driver');
-        $this->assertEquals('foo', $type->toPHP($string, $driver));
-        $this->assertEquals('3', $type->toPHP(3, $driver));
-        $this->assertEquals('3.14159', $type->toPHP(3.14159, $driver));
-        $this->assertEquals('', $type->toPHP([3, 'elf'], $driver));
-    }
-
-    /**
-     * Tests integers from PHP are converted correctly to statement value
-     *
-     * @return void
-     */
-    public function testStringToStatement()
-    {
-        $type = Type::build('string');
-        $string = '3';
-        $driver = $this->getMock('\Cake\Database\Driver');
-        $this->assertEquals(PDO::PARAM_STR, $type->toStatement($string, $driver));
-    }
-
-    /**
-     * Tests integers from database are converted correctly to PHP
-     *
-     * @return void
-     */
-    public function testTextToPHP()
-    {
-        $type = Type::build('string');
-        $string = 'foo';
-        $driver = $this->getMock('\Cake\Database\Driver');
-        $this->assertEquals('foo', $type->toPHP($string, $driver));
-        $this->assertEquals('3', $type->toPHP(3, $driver));
-        $this->assertEquals('3.14159', $type->toPHP(3.14159, $driver));
-        $this->assertEquals('', $type->toPHP([2, 3], $driver));
-    }
-
-    /**
-     * Tests integers from PHP are converted correctly to statement value
-     *
-     * @return void
-     */
-    public function testTextToStatement()
-    {
-        $type = Type::build('string');
-        $string = '3';
-        $driver = $this->getMock('\Cake\Database\Driver');
-        $this->assertEquals(PDO::PARAM_STR, $type->toStatement($string, $driver));
-    }
-
-    /**
-     * Test convertring booleans to database types.
-     *
-     * @return void
-     */
-    public function testBooleanToDatabase()
-    {
-        $type = Type::build('boolean');
-        $driver = $this->getMock('\Cake\Database\Driver');
-
-        $this->assertTrue($type->toDatabase(true, $driver));
-        $this->assertFalse($type->toDatabase(false, $driver));
-        $this->assertTrue($type->toDatabase(1, $driver));
-        $this->assertFalse($type->toDatabase(0, $driver));
-        $this->assertTrue($type->toDatabase('1', $driver));
-        $this->assertFalse($type->toDatabase('0', $driver));
-        $this->assertTrue($type->toDatabase([1, 2], $driver));
-    }
-
-    /**
-     * Test convertring booleans to PDO types.
-     *
-     * @return void
-     */
-    public function testBooleanToStatement()
-    {
-        $type = Type::build('boolean');
-        $driver = $this->getMock('\Cake\Database\Driver');
-
-        $this->assertEquals(PDO::PARAM_BOOL, $type->toStatement(true, $driver));
-        $this->assertEquals(PDO::PARAM_BOOL, $type->toStatement(false, $driver));
-    }
-
-    /**
-     * Test convertring string booleans to PHP values.
-     *
-     * @return void
-     */
-    public function testBooleanToPHP()
-    {
-        $type = Type::build('boolean');
-        $driver = $this->getMock('\Cake\Database\Driver');
-
-        $this->assertTrue($type->toPHP(true, $driver));
-        $this->assertTrue($type->toPHP(1, $driver));
-        $this->assertTrue($type->toPHP('1', $driver));
-        $this->assertTrue($type->toPHP('TRUE', $driver));
-        $this->assertTrue($type->toPHP('true', $driver));
-
-        $this->assertFalse($type->toPHP(false, $driver));
-        $this->assertFalse($type->toPHP(0, $driver));
-        $this->assertFalse($type->toPHP('0', $driver));
-        $this->assertFalse($type->toPHP('FALSE', $driver));
-        $this->assertFalse($type->toPHP('false', $driver));
-        $this->assertTrue($type->toPHP(['2', '3'], $driver));
-    }
-
-    /**
-     * Test marshalling booleans
-     *
-     * @return void
-     */
-    public function testBooleanMarshal()
-    {
-        $type = Type::build('boolean');
-        $this->assertTrue($type->marshal(true));
-        $this->assertTrue($type->marshal(1));
-        $this->assertTrue($type->marshal('1'));
-        $this->assertTrue($type->marshal('true'));
-
-        $this->assertFalse($type->marshal('false'));
-        $this->assertFalse($type->marshal('0'));
-        $this->assertFalse($type->marshal(0));
-        $this->assertFalse($type->marshal(''));
-        $this->assertFalse($type->marshal('invalid'));
-        $this->assertTrue($type->marshal(['2', '3']));
-    }
-
-
-    /**
-     * Tests uuid from database are converted correctly to PHP
-     *
-     * @return void
-     */
-    public function testUuidToPHP()
-    {
-        $type = Type::build('uuid');
-        $string = 'abc123-de456-fg789';
-        $driver = $this->getMock('\Cake\Database\Driver');
-        $this->assertEquals($string, $type->toPHP($string, $driver));
-        $this->assertEquals('3', $type->toPHP(3, $driver));
-        $this->assertEquals('3.14159', $type->toPHP(3.14159, $driver));
-    }
-
-    /**
-     * Tests integers from PHP are converted correctly to statement value
-     *
-     * @return void
-     */
-    public function testUuidToStatement()
-    {
-        $type = Type::build('uuid');
-        $string = 'abc123-def456-ghi789';
-        $driver = $this->getMock('\Cake\Database\Driver');
-        $this->assertEquals(PDO::PARAM_STR, $type->toStatement($string, $driver));
     }
 
     /**

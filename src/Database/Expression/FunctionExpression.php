@@ -45,13 +45,13 @@ class FunctionExpression extends QueryExpression
      *
      * ### Examples:
      *
-     *  ``$f = new FunctionExpression('CONCAT', ['CakePHP', ' rules']);``
+     *  `$f = new FunctionExpression('CONCAT', ['CakePHP', ' rules']);`
      *
-     * Previous line will generate ``CONCAT('CakePHP', ' rules')``
+     * Previous line will generate `CONCAT('CakePHP', ' rules')`
      *
-     * ``$f = new FunctionExpression('CONCAT', ['name' => 'literal', ' rules']);``
+     * `$f = new FunctionExpression('CONCAT', ['name' => 'literal', ' rules']);`
      *
-     * Will produce ``CONCAT(name, ' rules')``
+     * Will produce `CONCAT(name, ' rules')`
      *
      * @param string $name the name of the function to be constructed
      * @param array $params list of arguments to be passed to the function
@@ -138,5 +138,16 @@ class FunctionExpression extends QueryExpression
             $this->_conjunction . ' ',
             $parts
         ));
+    }
+
+    /**
+     * The name of the function is in itself an expression to generate, thus
+     * always adding 1 to the amount of expressions stored in this object.
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return 1 + count($this->_conditions);
     }
 }

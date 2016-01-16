@@ -15,6 +15,7 @@
 namespace Cake\Database\Dialect;
 
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Schema\PostgresSchema;
 use Cake\Database\SqlDialectTrait;
 
 /**
@@ -129,6 +130,24 @@ trait PostgresDialectTrait
             case 'NOW':
                 $expression->name('LOCALTIMESTAMP')->add([' 0 ' => 'literal']);
                 break;
+            case 'DATE_ADD':
+                $expression
+                    ->name('')
+                    ->type(' + INTERVAL')
+                    ->iterateParts(function ($p, $key) {
+                        if ($key === 1) {
+                            $p = sprintf("'%s'", $p);
+                        }
+                        return $p;
+                    });
+                break;
+            case 'DAYOFWEEK':
+                $expression
+                    ->name('EXTRACT')
+                    ->type(' ')
+                    ->add(['DOW FROM' => 'literal'], [], true)
+                    ->add([') + (1' => 'literal']); // Postgres starts on index 0 but Sunday should be 1
+                break;
         }
     }
 
@@ -143,7 +162,7 @@ trait PostgresDialectTrait
     public function schemaDialect()
     {
         if (!$this->_schemaDialect) {
-            $this->_schemaDialect = new \Cake\Database\Schema\PostgresSchema($this);
+            $this->_schemaDialect = new PostgresSchema($this);
         }
         return $this->_schemaDialect;
     }

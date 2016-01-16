@@ -65,6 +65,12 @@ class UuidTypeTest extends TestCase
 
         $result = $this->type->toDatabase(2, $this->driver);
         $this->assertSame('2', $result);
+
+        $result = $this->type->toDatabase(null, $this->driver);
+        $this->assertNull($result);
+
+        $result = $this->type->toDatabase('', $this->driver);
+        $this->assertNull($result);
     }
 
     /**
@@ -90,5 +96,18 @@ class UuidTypeTest extends TestCase
         $this->assertNotEquals($one, $two, 'Should be different values');
         $this->assertRegExp('/^[a-f0-9-]+$/', $one, 'Should quack like a uuid');
         $this->assertRegExp('/^[a-f0-9-]+$/', $two, 'Should quack like a uuid');
+    }
+
+    /**
+     * Tests that marshalling an empty string results in null
+     *
+     * @return void
+     */
+    public function testMarshal()
+    {
+        $this->assertNull($this->type->marshal(''));
+        $this->assertSame('2', $this->type->marshal(2));
+        $this->assertSame('word', $this->type->marshal('word'));
+        $this->assertNull($this->type->marshal([1, 2]));
     }
 }

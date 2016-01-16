@@ -15,7 +15,6 @@
 namespace Cake\Database\Schema;
 
 use Cake\Database\Exception;
-use Cake\Database\Schema\Table;
 
 /**
  * Schema generation/reflection features for MySQL
@@ -222,8 +221,11 @@ class MysqlSchema extends BaseSchema
     {
         $sql = 'SELECT * FROM information_schema.key_column_usage AS kcu
             INNER JOIN information_schema.referential_constraints AS rc
-            ON (kcu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME)
-            WHERE kcu.TABLE_SCHEMA = ? AND kcu.TABLE_NAME = ? and rc.TABLE_NAME = ?';
+            ON (
+                kcu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME
+                AND kcu.CONSTRAINT_SCHEMA = rc.CONSTRAINT_SCHEMA
+            )
+            WHERE kcu.TABLE_SCHEMA = ? AND kcu.TABLE_NAME = ? AND rc.TABLE_NAME = ?';
 
         return [$sql, [$config['database'], $tableName, $tableName]];
     }
@@ -345,14 +347,16 @@ class MysqlSchema extends BaseSchema
             $out .= $data['type'] === 'timestamp' ? ' NULL' : ' DEFAULT NULL';
             unset($data['default']);
         }
-        if (isset($data['default']) && $data['type'] !== 'timestamp') {
+        if (isset($data['default']) && !in_array($data['type'], ['timestamp', 'datetime'])) {
             $out .= ' DEFAULT ' . $this->_driver->schemaValue($data['default']);
+            unset($data['default']);
         }
         if (isset($data['default']) &&
-            $data['type'] === 'timestamp' &&
+            in_array($data['type'], ['timestamp', 'datetime']) &&
             strtolower($data['default']) === 'current_timestamp'
         ) {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
+            unset($data['default']);
         }
         if (isset($data['comment']) && $data['comment'] !== '') {
             $out .= ' COMMENT ' . $this->_driver->schemaValue($data['comment']);
@@ -373,6 +377,8 @@ class MysqlSchema extends BaseSchema
             );
             return sprintf('PRIMARY KEY (%s)', implode(', ', $columns));
         }
+
+        $out = '';
         if ($data['type'] === Table::CONSTRAINT_UNIQUE) {
             $out = 'UNIQUE KEY ';
         }
@@ -381,6 +387,45 @@ class MysqlSchema extends BaseSchema
         }
         $out .= $this->_driver->quoteIdentifier($name);
         return $this->_keySql($out, $data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function addConstraintSql(Table $table)
+    {
+        $sqlPattern = 'ALTER TABLE %s ADD %s;';
+        $sql = [];
+
+        foreach ($table->constraints() as $name) {
+            $constraint = $table->constraint($name);
+            if ($constraint['type'] === Table::CONSTRAINT_FOREIGN) {
+                $tableName = $this->_driver->quoteIdentifier($table->name());
+                $sql[] = sprintf($sqlPattern, $tableName, $this->constraintSql($table, $name));
+            }
+        }
+
+        return $sql;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function dropConstraintSql(Table $table)
+    {
+        $sqlPattern = 'ALTER TABLE %s DROP FOREIGN KEY %s;';
+        $sql = [];
+
+        foreach ($table->constraints() as $name) {
+            $constraint = $table->constraint($name);
+            if ($constraint['type'] === Table::CONSTRAINT_FOREIGN) {
+                $tableName = $this->_driver->quoteIdentifier($table->name());
+                $constraintName = $this->_driver->quoteIdentifier($name);
+                $sql[] = sprintf($sqlPattern, $tableName, $constraintName);
+            }
+        }
+
+        return $sql;
     }
 
     /**

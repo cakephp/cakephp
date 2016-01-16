@@ -34,17 +34,17 @@ class QueryRegressionTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.users',
         'core.articles',
-        'core.comments',
-        'core.tags',
         'core.articles_tags',
         'core.authors',
-        'core.special_tags',
-        'core.translates',
         'core.authors_tags',
+        'core.comments',
         'core.featured_tags',
+        'core.special_tags',
+        'core.tags',
         'core.tags_translations',
+        'core.translates',
+        'core.users'
     ];
 
     /**
@@ -213,7 +213,7 @@ class QueryRegressionTest extends TestCase
      *
      * @return void
      */
-    public function testReciprocalBelongsToMany2()
+    public function testReciprocalBelongsToManyNoOverwrite()
     {
         $articles = TableRegistry::get('Articles');
         $tags = TableRegistry::get('Tags');
@@ -221,11 +221,11 @@ class QueryRegressionTest extends TestCase
         $articles->belongsToMany('Tags');
         $tags->belongsToMany('Articles');
 
-        $sub = $articles->Tags->find()->select(['id'])->matching('Articles', function ($q) {
+        $sub = $articles->Tags->find()->select(['Tags.id'])->matching('Articles', function ($q) {
             return $q->where(['Articles.id' => 1]);
         });
 
-        $query = $articles->Tags->find()->where(['id NOT IN' => $sub]);
+        $query = $articles->Tags->find()->where(['Tags.id NOT IN' => $sub]);
         $this->assertEquals(1, $query->count());
     }
 
@@ -880,6 +880,31 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
+     * Test that empty conditions in a matching clause don't cause errors.
+     *
+     * @return void
+     */
+    public function testMatchingEmptyQuery()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags');
+
+        $rows = $table->find()
+            ->matching('Tags', function ($q) {
+                return $q->where([]);
+            })
+            ->all();
+        $this->assertNotEmpty($rows);
+
+        $rows = $table->find()
+            ->matching('Tags', function ($q) {
+                return $q->where(null);
+            })
+            ->all();
+        $this->assertNotEmpty($rows);
+    }
+
+    /**
      * Tests that using a subquery as part of an expression will not make invalid SQL
      *
      * @return void
@@ -916,6 +941,27 @@ class QueryRegressionTest extends TestCase
         $table->deleteAll(['1 = 1']);
         $this->assertEquals(0, $table->find()->count());
         $this->assertNull($table->find()->last());
+    }
+
+    /**
+     * Tests calling contain in a nested closure
+     *
+     * @see https://github.com/cakephp/cakephp/issues/7591
+     * @return void
+     */
+    public function testContainInNestedClosure()
+    {
+        $table = TableRegistry::get('Comments');
+        $table->belongsTo('Articles');
+        $table->Articles->belongsTo('Authors');
+        $table->Articles->Authors->belongsToMany('Tags');
+
+        $query = $table->find()->where(['Comments.id' => 5])->contain(['Articles' => function ($q) {
+            return $q->contain(['Authors' => function ($q) {
+                return $q->contain('Tags');
+            }]);
+        }]);
+        $this->assertCount(2, $query->first()->article->author->tags);
     }
 
     /**
@@ -970,6 +1016,56 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
+     * Test that contain queries map types correctly.
+     *
+     * @return void
+     */
+    public function testComplexTypesInJoinedWhere()
+    {
+        $table = TableRegistry::get('Users');
+        $table->hasOne('Comments', [
+            'foreignKey' => 'user_id',
+        ]);
+        $query = $table->find()
+            ->contain('Comments')
+            ->where([
+                'Comments.updated >' => new \DateTime('2007-03-18 10:55:00')
+            ]);
+
+        $result = $query->first();
+        $this->assertNotEmpty($result);
+        $this->assertInstanceOf('Cake\I18n\Time', $result->comment->updated);
+    }
+
+    /**
+     * Test that nested contain queries map types correctly.
+     *
+     * @return void
+     */
+    public function testComplexNestedTypesInJoinedWhere()
+    {
+        $table = TableRegistry::get('Users');
+        $table->hasOne('Comments', [
+            'foreignKey' => 'user_id',
+        ]);
+        $table->Comments->belongsTo('Articles');
+        $table->Comments->Articles->belongsTo('Authors', [
+            'className' => 'Users',
+            'foreignKey' => 'author_id'
+        ]);
+
+        $query = $table->find()
+            ->contain('Comments.Articles.Authors')
+            ->where([
+                'Authors.created >' => new \DateTime('2007-03-17 01:16:00')
+            ]);
+
+        $result = $query->first();
+        $this->assertNotEmpty($result);
+        $this->assertInstanceOf('Cake\I18n\Time', $result->comment->article->author->updated);
+    }
+
+    /**
      * Tests that it is possible to use matching with dot notation
      * even when part of the part of the path in the dot notation is
      * shared for two different calls
@@ -996,5 +1092,124 @@ class QueryRegressionTest extends TestCase
             ->toArray();
 
         $this->assertEquals([['name' => 'nate', 'tag' => 'tag1']], $results);
+    }
+
+    /**
+     * Test expression based ordering with unions.
+     *
+     * @return void
+     */
+    public function testComplexOrderWithUnion()
+    {
+        $table = TableRegistry::get('Comments');
+        $query = $table->find();
+        $inner = $table->find()
+            ->select(['content' => 'comment'])
+            ->where(['id >' => 3]);
+        $inner2 = $table->find()
+            ->select(['content' => 'comment'])
+            ->where(['id <' => 3]);
+
+        $order = $query->func()->concat(['content' => 'literal', 'test']);
+
+        $query->select(['inside.content'])
+            ->from(['inside' => $inner->unionAll($inner2)])
+            ->orderAsc($order);
+
+        $results = $query->toArray();
+        $this->assertCount(5, $results);
+    }
+
+    /**
+     * Test that associations that are loaded with subqueries
+     * do not cause errors when the subquery has a limit & order clause.
+     *
+     * @return void
+     */
+    public function testEagerLoadOrderAndSubquery()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->hasMany('Comments', [
+            'strategy' => 'subquery'
+        ]);
+        $query = $table->find()
+            ->select(['score' => 100])
+            ->autoFields(true)
+            ->contain(['Comments'])
+            ->limit(5)
+            ->order(['score' => 'desc']);
+        $result = $query->all();
+        $this->assertCount(3, $result);
+    }
+
+    /**
+     * Tests that decorating the results does not result in a memory leak
+     *
+     * @return void
+     */
+    public function testFormatResultsMemory()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors');
+        $table->belongsToMany('Tags');
+        gc_collect_cycles();
+        $memory = memory_get_usage() / 1024 / 1024;
+        foreach (range(1, 3) as $time) {
+                $table->find()
+                ->contain(['Authors', 'Tags'])
+                ->formatResults(function ($results) {
+                    return $results;
+                })
+                ->all();
+        }
+        gc_collect_cycles();
+        $endMemory = memory_get_usage() / 1024 / 1024;
+        $this->assertWithinRange($endMemory, $memory, 1.25, 'Memory leak in ResultSet');
+    }
+
+    /**
+     * Tests that having bound placeholders in the order clause does not result
+     * in an error when trying to count a query.
+     *
+     * @return void
+     */
+    public function testCountWithComplexOrderBy()
+    {
+        $table = TableRegistry::get('Articles');
+        $query = $table->find();
+        $query->orderDesc($query->newExpr()->addCase(
+            [$query->newExpr()->add(['id' => 3])],
+            [1, 0]
+        ));
+        $query->order(['title' => 'desc']);
+        // Executing the normal query before getting the count
+        $query->all();
+        $this->assertEquals(3, $query->count());
+
+        $table = TableRegistry::get('Articles');
+        $query = $table->find();
+        $query->orderDesc($query->newExpr()->addCase(
+            [$query->newExpr()->add(['id' => 3])],
+            [1, 0]
+        ));
+        $query->orderDesc($query->newExpr()->add(['id' => 3]));
+        // Not executing the query first, just getting the count
+        $this->assertEquals(3, $query->count());
+    }
+
+    /**
+     * Tests that the now() function expression can be used in the
+     * where clause of a query
+     *
+     * @see https://github.com/cakephp/cakephp/issues/7943
+     * @return void
+     */
+    public function testFunctionInWhereClause()
+    {
+        $table = TableRegistry::get('Comments');
+        $table->updateAll(['updated' => Time::tomorrow()], ['id' => 6]);
+        $query = $table->find();
+        $result = $query->where(['updated >' => $query->func()->now('datetime')])->first();
+        $this->assertSame(6, $result->id);
     }
 }

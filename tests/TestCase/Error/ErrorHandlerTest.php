@@ -1,6 +1,6 @@
 <?php
 /**
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -8,7 +8,7 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -21,13 +21,16 @@ use Cake\Core\Plugin;
 use Cake\Error;
 use Cake\Error\ErrorHandler;
 use Cake\Error\ExceptionRenderer;
+use Cake\Error\PHP7ErrorException;
 use Cake\Log\Log;
 use Cake\Network\Exception\ForbiddenException;
 use Cake\Network\Exception\NotFoundException;
 use Cake\Network\Request;
 use Cake\Network\Response;
+use Cake\Routing\Exception\MissingControllerException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use ParseError;
 
 /**
  * Testing stub.
@@ -281,6 +284,45 @@ class ErrorHandlerTest extends TestCase
     }
 
     /**
+     * test logging attributes with/without debug
+     *
+     * @return void
+     */
+    public function testHandleExceptionLogAttributes()
+    {
+        $errorHandler = new TestErrorHandler([
+            'log' => true,
+            'trace' => true,
+        ]);
+
+        $error = new MissingControllerException(['class' => 'Derp']);
+
+        $this->_logger->expects($this->at(0))
+            ->method('log')
+            ->with('error', $this->logicalAnd(
+                $this->stringContains(
+                    '[Cake\Routing\Exception\MissingControllerException] ' .
+                    'Controller class Derp could not be found.'
+                ),
+                $this->stringContains('Exception Attributes:')
+            ));
+
+        $this->_logger->expects($this->at(1))
+            ->method('log')
+            ->with('error', $this->logicalAnd(
+                $this->stringContains(
+                    '[Cake\Routing\Exception\MissingControllerException] ' .
+                    'Controller class Derp could not be found.'
+                ),
+                $this->logicalNot($this->stringContains('Exception Attributes:'))
+            ));
+        $errorHandler->handleException($error);
+
+        Configure::write('debug', false);
+        $errorHandler->handleException($error);
+    }
+
+    /**
      * test handleException generating log.
      *
      * @return void
@@ -375,5 +417,20 @@ class ErrorHandlerTest extends TestCase
 
         $errorHandler = new TestErrorHandler(['log' => true]);
         $errorHandler->handleFatalError(E_ERROR, 'Something wrong', __FILE__, __LINE__);
+    }
+
+    /**
+     * Tests Handling a PHP7 error
+     *
+     * @return void
+     */
+    public function testHandlePHP7Error()
+    {
+        $this->skipIf(!class_exists('Error'), 'Requires PHP7');
+        $error = new PHP7ErrorException(new ParseError('Unexpected variable foo'));
+        $errorHandler = new TestErrorHandler();
+
+        $errorHandler->handleException($error);
+        $this->assertContains('Unexpected variable foo', $errorHandler->response->body(), 'message missing.');
     }
 }

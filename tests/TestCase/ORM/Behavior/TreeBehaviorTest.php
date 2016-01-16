@@ -33,8 +33,8 @@ class TreeBehaviorTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.number_trees',
-        'core.menu_link_trees'
+        'core.menu_link_trees',
+        'core.number_trees'
     ];
 
     public function setUp()
@@ -696,13 +696,6 @@ class TreeBehaviorTest extends TestCase
     {
         $table = TableRegistry::get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
-        $expected = $table->find()
-            ->where(['menu' => 'main-menu'])
-            ->order('lft')
-            ->hydrate(false)
-            ->toArray();
-
-
         $table->updateAll(['lft' => null, 'rght' => null], ['menu' => 'main-menu']);
         $table->recover();
 
@@ -731,6 +724,31 @@ class TreeBehaviorTest extends TestCase
             '__13:14 - 16:flash',
             '_16:17 - 17:cd',
             '_18:19 - 18:radios'
+        ];
+        $this->assertMpttValues($expected, $table);
+    }
+
+    /**
+     * Test recover function with a custom order clause
+     *
+     * @return void
+     */
+    public function testRecoverWithCustomOrder()
+    {
+        $table = TableRegistry::get('MenuLinkTrees');
+        $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu'], 'recoverOrder' => ['MenuLinkTrees.title' => 'desc']]);
+        $table->updateAll(['lft' => null, 'rght' => null], ['menu' => 'main-menu']);
+        $table->recover();
+
+        $expected = [
+            ' 1: 2 -  8:Link 8',
+            ' 3: 6 -  6:Link 6',
+            '_ 4: 5 -  7:Link 7',
+            ' 7:16 -  1:Link 1',
+            '_ 8:13 -  3:Link 3',
+            '__ 9:12 -  4:Link 4',
+            '___10:11 -  5:Link 5',
+            '_14:15 -  2:Link 2'
         ];
         $this->assertMpttValues($expected, $table);
     }
@@ -1340,6 +1358,11 @@ class TreeBehaviorTest extends TestCase
 
         $entity = $this->table->get(8);
         $this->assertEquals(2, $entity->depth);
+
+        $entity->parent_id = 6;
+        $this->table->save($entity);
+        $entity = $this->table->get(8);
+        $this->assertEquals(1, $entity->depth);
     }
 
     /**

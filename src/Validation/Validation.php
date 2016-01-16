@@ -15,6 +15,7 @@
 namespace Cake\Validation;
 
 use Cake\Utility\Text;
+use DateTime;
 use LogicException;
 use NumberFormatter;
 use RuntimeException;
@@ -29,12 +30,21 @@ class Validation
 {
 
     /**
+     * Default locale
+     *
+     * @var string
+     */
+    const DEFAULT_LOCALE = 'en_US';
+
+    /**
      * Some complex patterns needed in multiple places
      *
      * @var array
      */
     protected static $_pattern = [
-        'hostname' => '(?:[_\p{L}0-9][-_\p{L}0-9]*\.)*(?:[\p{L}0-9][-\p{L}0-9]{0,62})\.(?:(?:[a-z]{2}\.)?[a-z]{2,})'
+        'hostname' => '(?:[_\p{L}0-9][-_\p{L}0-9]*\.)*(?:[\p{L}0-9][-\p{L}0-9]{0,62})\.(?:(?:[a-z]{2}\.)?[a-z]{2,})',
+        'latitude' => '[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)',
+        'longitude' => '[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)',
     ];
 
     /**
@@ -72,11 +82,7 @@ class Validation
      */
     public static function notBlank($check)
     {
-        if (is_array($check)) {
-            extract(static::_defaults($check));
-        }
-
-        if (empty($check) && $check != '0') {
+        if (empty($check) && $check !== '0') {
             return false;
         }
         return static::_check($check, '/[^\s]+/m');
@@ -95,11 +101,7 @@ class Validation
      */
     public static function alphaNumeric($check)
     {
-        if (is_array($check)) {
-            extract(static::_defaults($check));
-        }
-
-        if (empty($check) && $check != '0') {
+        if (empty($check) && $check !== '0') {
             return false;
         }
         return self::_check($check, '/^[\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}]+$/Du');
@@ -117,6 +119,9 @@ class Validation
      */
     public static function lengthBetween($check, $min, $max)
     {
+        if (!is_string($check)) {
+            return false;
+        }
         $length = mb_strlen($check);
         return ($length >= $min && $length <= $max);
     }
@@ -135,9 +140,6 @@ class Validation
     public static function blank($check)
     {
         trigger_error('Validation::blank() is deprecated.', E_USER_DEPRECATED);
-        if (is_array($check)) {
-            extract(static::_defaults($check));
-        }
         return !static::_check($check, '/[^\\s]/');
     }
 
@@ -156,8 +158,8 @@ class Validation
      */
     public static function cc($check, $type = 'fast', $deep = false, $regex = null)
     {
-        if (is_array($check)) {
-            extract(static::_defaults($check));
+        if (!is_scalar($check)) {
+            return false;
         }
 
         $check = str_replace(['-', ' '], '', $check);
@@ -167,7 +169,7 @@ class Validation
 
         if ($regex !== null) {
             if (static::_check($check, $regex)) {
-                return static::luhn($check, $deep);
+                return !$deep || static::luhn($check);
             }
         }
         $cards = [
@@ -194,7 +196,7 @@ class Validation
                 $regex = $cards['all'][strtolower($value)];
 
                 if (static::_check($check, $regex)) {
-                    return static::luhn($check, $deep);
+                    return static::luhn($check);
                 }
             }
         } elseif ($type === 'all') {
@@ -202,14 +204,14 @@ class Validation
                 $regex = $value;
 
                 if (static::_check($check, $regex)) {
-                    return static::luhn($check, $deep);
+                    return static::luhn($check);
                 }
             }
         } else {
             $regex = $cards['fast'];
 
             if (static::_check($check, $regex)) {
-                return static::luhn($check, $deep);
+                return static::luhn($check);
             }
         }
         return false;
@@ -218,7 +220,7 @@ class Validation
     /**
      * Used to compare 2 numeric values.
      *
-     * @param string|array $check1 if string is passed for, a string must also be passed for $check2
+     * @param string $check1 if string is passed for, a string must also be passed for $check2
      *    used as an array it must be passed as ['check1' => value, 'operator' => 'value', 'check2' => value]
      * @param string $operator Can be either a word or operand
      *    is greater >, is less <, greater or equal >=
@@ -226,13 +228,13 @@ class Validation
      * @param int $check2 only needed if $check1 is a string
      * @return bool Success
      */
-    public static function comparison($check1, $operator = null, $check2 = null)
+    public static function comparison($check1, $operator, $check2)
     {
-        if (is_array($check1)) {
-            extract($check1, EXTR_OVERWRITE);
+        if ((float)$check1 != $check1) {
+            return false;
         }
-        $operator = str_replace([' ', "\t", "\n", "\r", "\0", "\x0B"], '', strtolower($operator));
 
+        $operator = str_replace([' ', "\t", "\n", "\r", "\0", "\x0B"], '', strtolower($operator));
         switch ($operator) {
             case 'isgreater':
             case '>':
@@ -295,6 +297,25 @@ class Validation
     }
 
     /**
+     * Checks if a string contains one or more non-alphanumeric characters.
+     *
+     * Returns true if string contains at least the specified number of non-alphanumeric characters
+     *
+     * @param string $check Value to check
+     * @param int $count Number of non-alphanumerics to check for
+     * @return bool Success
+     */
+    public static function containsNonAlphaNumeric($check, $count = 1)
+    {
+        if (!is_scalar($check)) {
+            return false;
+        }
+
+        $matches = preg_match_all('/[^a-zA-Z0-9]/', $check);
+        return $matches >= $count;
+    }
+
+    /**
      * Used when a custom regular expression is needed.
      *
      * @param string|array $check When used as a string, $regex must also be a valid regular expression.
@@ -304,9 +325,6 @@ class Validation
      */
     public static function custom($check, $regex = null)
     {
-        if (is_array($check)) {
-            extract(static::_defaults($check));
-        }
         if ($regex === null) {
             static::$errors[] = 'You must define a regular expression for Validation::custom()';
             return false;
@@ -340,7 +358,7 @@ class Validation
      */
     public static function date($check, $format = 'ymd', $regex = null)
     {
-        if ($check instanceof \DateTime) {
+        if ($check instanceof DateTime) {
             return true;
         }
 
@@ -405,7 +423,7 @@ class Validation
      */
     public static function datetime($check, $dateFormat = 'ymd', $regex = null)
     {
-        if ($check instanceof \DateTime) {
+        if ($check instanceof DateTime) {
             return true;
         }
         $valid = false;
@@ -415,8 +433,8 @@ class Validation
         }
         $parts = explode(' ', $check);
         if (!empty($parts) && count($parts) > 1) {
-            $time = array_pop($parts);
-            $date = implode(' ', $parts);
+            $date = rtrim(array_shift($parts), ',');
+            $time = implode(' ', $parts);
             $valid = static::date($date, $dateFormat, $regex) && static::time($time);
         }
         return $valid;
@@ -432,7 +450,7 @@ class Validation
      */
     public static function time($check)
     {
-        if ($check instanceof \DateTime) {
+        if ($check instanceof DateTime) {
             return true;
         }
         if (is_array($check)) {
@@ -492,7 +510,7 @@ class Validation
         }
 
         // account for localized floats.
-        $locale = ini_get('intl.default_locale') ?: 'en_US';
+        $locale = ini_get('intl.default_locale') ?: static::DEFAULT_LOCALE;
         $formatter = new NumberFormatter($locale, NumberFormatter::DECIMAL);
         $decimalPoint = $formatter->getSymbol(NumberFormatter::DECIMAL_SEPARATOR_SYMBOL);
         $groupingSep = $formatter->getSymbol(NumberFormatter::GROUPING_SEPARATOR_SYMBOL);
@@ -516,8 +534,8 @@ class Validation
      */
     public static function email($check, $deep = false, $regex = null)
     {
-        if (is_array($check)) {
-            extract(static::_defaults($check));
+        if (!is_string($check)) {
+            return false;
         }
 
         if ($regex === null) {
@@ -725,7 +743,10 @@ class Validation
         if (!is_numeric($check)) {
             return false;
         }
-        if (isset($lower) && isset($upper)) {
+        if ((float)$check != $check) {
+            return false;
+        }
+        if (isset($lower, $upper)) {
             return ($check >= $lower && $check <= $upper);
         }
         return is_finite($check);
@@ -819,53 +840,19 @@ class Validation
      */
     protected static function _check($check, $regex)
     {
-        if (is_string($regex) && preg_match($regex, $check)) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Get the values to use when value sent to validation method is
-     * an array.
-     *
-     * @param array $params Parameters sent to validation method
-     * @return array
-     */
-    protected static function _defaults($params)
-    {
-        static::_reset();
-        $defaults = [
-            'check' => null,
-            'regex' => null,
-            'country' => null,
-            'deep' => false,
-            'type' => null
-        ];
-        $params += $defaults;
-        if ($params['country'] !== null) {
-            $params['country'] = mb_strtolower($params['country']);
-        }
-        return $params;
+        return is_string($regex) && is_scalar($check) && preg_match($regex, $check);
     }
 
     /**
      * Luhn algorithm
      *
      * @param string|array $check Value to check.
-     * @param bool $deep If true performs deep check.
      * @return bool Success
      * @see http://en.wikipedia.org/wiki/Luhn_algorithm
      */
-    public static function luhn($check, $deep = false)
+    public static function luhn($check)
     {
-        if (is_array($check)) {
-            extract(static::_defaults($check));
-        }
-        if ($deep !== true) {
-            return true;
-        }
-        if ((int)$check === 0) {
+        if (!is_scalar($check) || (int)$check === 0) {
             return false;
         }
         $sum = 0;
@@ -1021,6 +1008,138 @@ class Validation
     }
 
     /**
+     * Validates a geographic coordinate.
+     *
+     * Supported formats:
+     *
+     * - `<latitude>, <longitude>` Example: `-25.274398, 133.775136`
+     *
+     * ### Options
+     *
+     * - `type` - A string of the coordinate format, right now only `latLong`.
+     * - `format` - By default `both`, can be `long` and `lat` as well to validate
+     *   only a part of the coordinate.
+     *
+     * @param string $value Geographic location as string
+     * @param array $options Options for the validation logic.
+     * @return bool
+     */
+    public static function geoCoordinate($value, array $options = [])
+    {
+        $options += [
+            'format' => 'both',
+            'type' => 'latLong'
+        ];
+        if ($options['type'] !== 'latLong') {
+            throw new RuntimeException(sprintf(
+                'Unsupported coordinate type "%s". Use "latLong" instead.',
+                $options['type']
+            ));
+        }
+        $pattern = '/^' . self::$_pattern['latitude'] . ',\s*' . self::$_pattern['longitude'] . '$/';
+        if ($options['format'] === 'long') {
+            $pattern = '/^' . self::$_pattern['longitude'] . '$/';
+        }
+        if ($options['format'] === 'lat') {
+            $pattern = '/^' . self::$_pattern['latitude'] . '$/';
+        }
+        return (bool)preg_match($pattern, $value);
+    }
+
+    /**
+     * Convenience method for latitude validation.
+     *
+     * @param string $value Latitude as string
+     * @param array $options Options for the validation logic.
+     * @return bool
+     * @link https://en.wikipedia.org/wiki/Latitude
+     * @see Validation::geoCoordinate()
+     */
+    public static function latitude($value, array $options = [])
+    {
+        $options['format'] = 'lat';
+        return self::geoCoordinate($value, $options);
+    }
+
+    /**
+     * Convenience method for longitude validation.
+     *
+     * @param string $value Latitude as string
+     * @param array $options Options for the validation logic.
+     * @return bool
+     * @link https://en.wikipedia.org/wiki/Longitude
+     * @see Validation::geoCoordinate()
+     */
+    public static function longitude($value, array $options = [])
+    {
+        $options['format'] = 'long';
+        return self::geoCoordinate($value, $options);
+    }
+
+    /**
+     * Check that the input value is within the ascii byte range.
+     *
+     * This method will reject all non-string values.
+     *
+     * @param string $value The value to check
+     * @return bool
+     */
+    public static function ascii($value)
+    {
+        if (!is_string($value)) {
+            return false;
+        }
+        return strlen($value) <= mb_strlen($value, 'utf-8');
+    }
+
+    /**
+     * Check that the input value is a utf8 string.
+     *
+     * This method will reject all non-string values.
+     *
+     * # Options
+     *
+     * - `extended` - Disallow bytes higher within the basic multilingual plane.
+     *   MySQL's older utf8 encoding type does not allow characters above
+     *   the basic multilingual plane. Defaults to false.
+     *
+     * @param string $value The value to check
+     * @param array $options An array of options. See above for the supported options.
+     * @return bool
+     */
+    public static function utf8($value, array $options = [])
+    {
+        if (!is_string($value)) {
+            return false;
+        }
+        $options += ['extended' => false];
+        if ($options['extended']) {
+            return true;
+        }
+        return preg_match('/[\x{10000}-\x{10FFFF}]/u', $value) === 0;
+    }
+
+    /**
+     * Check that the input value is an integer
+     *
+     * This method will accept strings that contain only integer data
+     * as well.
+     *
+     * @param string $value The value to check
+     * @return bool
+     */
+    public static function isInteger($value)
+    {
+        if (!is_scalar($value) || is_float($value)) {
+            return false;
+        }
+        if (is_int($value)) {
+            return true;
+        }
+        return (bool)preg_match('/^-?[0-9]+$/', $value);
+    }
+
+    /**
      * Converts an array representing a date or datetime into a ISO string.
      * The arrays are typically sent for validation from a form generated by
      * the CakePHP FormHelper.
@@ -1038,10 +1157,10 @@ class Validation
         }
 
         if (isset($value['hour'])) {
+            if (isset($value['meridian']) && (int)$value['hour'] === 12) {
+                $value['hour'] = 0;
+            }
             if (isset($value['meridian'])) {
-                if ($value['hour'] === 12) {
-                    $value['hour'] = 0;
-                }
                 $value['hour'] = strtolower($value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
             }
             $value += ['minute' => 0, 'second' => 0];

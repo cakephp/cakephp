@@ -15,7 +15,6 @@
 namespace Cake\Datasource;
 
 use Cake\Core\StaticConfigTrait;
-use Cake\Datasource\ConnectionRegistry;
 use Cake\Datasource\Exception\MissingDatasourceConfigException;
 
 /**
@@ -68,7 +67,7 @@ class ConnectionManager
      *
      * @param string|array $key The name of the connection config, or an array of multiple configs.
      * @param array $config An array of name => config data for adapter.
-     * @return mixed null when adding configuration and an array of configuration data when reading.
+     * @return array|null Null when adding configuration and an array of configuration data when reading.
      * @throws \Cake\Core\Exception\Exception When trying to modify an existing config.
      * @see \Cake\Core\StaticConfigTrait::config()
      */
@@ -100,9 +99,9 @@ class ConnectionManager
      * For all classes, the value of `scheme` is set as the value of both the `className` and `driver`
      * unless they have been otherwise specified.
      *
-     * Note that querystring arguments are also parsed and set as values in the returned configuration.
+     * Note that query-string arguments are also parsed and set as values in the returned configuration.
      *
-     * @param array $config An array with a `url` key mapping to a string DSN
+     * @param string|null $config The DSN string to convert to a configuration array
      * @return array The configuration array to be stored after parsing the DSN
      */
     public static function parseDsn($config = null)
@@ -126,7 +125,7 @@ class ConnectionManager
      * Set one or more connection aliases.
      *
      * Connection aliases allow you to rename active connections without overwriting
-     * the aliased connection. This is most useful in the testsuite for replacing
+     * the aliased connection. This is most useful in the test-suite for replacing
      * connections with their test variant.
      *
      * Defined aliases will take precedence over normal connection names. For example,
@@ -170,12 +169,12 @@ class ConnectionManager
      *
      * If the connection has not been constructed an instance will be added
      * to the registry. This method will use any aliases that have been
-     * defined. If you want the original unaliased connections pass `FALSE`
+     * defined. If you want the original unaliased connections pass `false`
      * as second parameter.
      *
      * @param string $name The connection name.
      * @param bool $useAliases Set to false to not use aliased connections.
-     * @return \Cake\Database\Connection A connection object.
+     * @return \Cake\Datasource\ConnectionInterface A connection object.
      * @throws \Cake\Datasource\Exception\MissingDatasourceConfigException When config
      * data is missing.
      */

@@ -14,8 +14,6 @@
  */
 namespace Cake\Core;
 
-use Cake\Core\App;
-use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
 
 /**

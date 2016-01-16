@@ -15,8 +15,8 @@
 namespace Cake\Routing;
 
 use Cake\Controller\Controller;
+use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
-use Cake\Event\EventManagerTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Exception\MissingControllerException;
@@ -31,7 +31,7 @@ use LogicException;
 class Dispatcher
 {
 
-    use EventManagerTrait;
+    use EventDispatcherTrait;
 
     /**
      * Connected filter objects
@@ -54,7 +54,7 @@ class Dispatcher
      *
      * @param \Cake\Network\Request $request Request object to dispatch.
      * @param \Cake\Network\Response $response Response object to put the results of the dispatch into.
-     * @return string|void if `$request['return']` is set then it returns response body, null otherwise
+     * @return string|null if `$request['return']` is set then it returns response body, null otherwise
      * @throws \Cake\Routing\Exception\MissingControllerException When the controller is missing.
      */
     public function dispatch(Request $request, Response $response)
@@ -67,7 +67,7 @@ class Dispatcher
                 return $beforeEvent->result->body();
             }
             $beforeEvent->result->send();
-            return;
+            return null;
         }
 
         $controller = false;

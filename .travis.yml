@@ -20,14 +20,19 @@ services:
   - memcached
   - redis-server
 
+cache:
+  directories:
+    - vendor
+    - $HOME/.composer/cache
+
 matrix:
   fast_finish: true
 
   include:
-    - php: 5.4
+    - php: 7.0
       env: COVERALLS=1 DEFAULT=0
 
-    - php: 5.4
+    - php: 7.0
       env: PHPCS=1 DEFAULT=0
 
     - php: hhvm
@@ -37,12 +42,14 @@ matrix:
       env: HHVM=1 DB=mysql db_dsn='mysql://travis@0.0.0.0/cakephp_test'
 
   allow_failures:
-    - php: 7.0
+    - env: COVERALLS=1 DEFAULT=0
 
     - php: hhvm
 
 before_script:
+  - sh -c "if [ '$HHVM' != '1' ]; then phpenv config-rm xdebug.ini; fi"
   - composer self-update
+  - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
   - composer install --prefer-dist --no-interaction
 
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
@@ -57,6 +64,8 @@ before_script:
   - sh -c "if [ '$COVERALLS' = '1' ]; then mkdir -p build/logs; fi"
 
   - sh -c "if [ '$HHVM' != '1' ]; then echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
+  - sh -c "if [ '$HHVM' != '1' ]; then echo 'extension = redis.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
+  - sh -c "if [ '$HHVM' != '1' ]; then echo 'extension = apc.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
   - sh -c "if [ '$HHVM' = '1' ]; then composer require lorenzo/multiple-iterator=~1.0; fi"
 
   - phpenv rehash
@@ -67,8 +76,8 @@ script:
 
   - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi"
 
-  - sh -c "if [ '$COVERALLS' = '1' ]; then phpunit --coverage-clover build/logs/clover.xml; fi"
-  - sh -c "if [ '$COVERALLS' = '1' ]; then vendor/bin/coveralls -c .coveralls.yml -v; fi"
+  - sh -c "if [ '$COVERALLS' = '1' ]; then phpdbg -qrr vendor/bin/phpunit --coverage-clover build/logs/clover.xml || true; fi"
+  - sh -c "if [ '$COVERALLS' = '1' ]; then vendor/bin/coveralls -v; fi"
 
 notifications:
   email: false

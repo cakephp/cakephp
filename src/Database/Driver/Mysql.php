@@ -15,11 +15,12 @@
 namespace Cake\Database\Driver;
 
 use Cake\Database\Dialect\MysqlDialectTrait;
+use Cake\Database\Driver;
 use Cake\Database\Query;
 use Cake\Database\Statement\MysqlStatement;
 use PDO;
 
-class Mysql extends \Cake\Database\Driver
+class Mysql extends Driver
 {
 
     use MysqlDialectTrait;
@@ -123,5 +124,13 @@ class Mysql extends \Cake\Database\Driver
             $result->bufferResults(false);
         }
         return $result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function supportsDynamicConstraints()
+    {
+        return true;
     }
 }

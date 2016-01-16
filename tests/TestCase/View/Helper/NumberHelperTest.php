@@ -2,7 +2,7 @@
 /**
  * NumberHelperTest file
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -10,7 +10,7 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -81,49 +81,46 @@ class NumberHelperTest extends TestCase
     }
 
     /**
-     * test CakeNumber class methods are called correctly
+     * Provider for method proxying.
+     *
+     * @return array
      */
-    public function testNumberHelperProxyMethodCalls()
+    public function methodProvider()
     {
-        $methods = [
-            'precision', 'toReadableSize',
+        return [
+            ['precision'],
+            ['toReadableSize'],
+            ['toPercentage'],
+            ['currency'],
+            ['format'],
+            ['addFormat'],
+            ['formatDelta'],
+            ['defaultCurrency'],
+            ['ordinal'],
         ];
-        $CakeNumber = $this->getMock(__NAMESPACE__ . '\NumberMock', $methods);
-        $Number = new NumberHelperTestObject($this->View, ['engine' => __NAMESPACE__ . '\NumberMock']);
-        $Number->attach($CakeNumber);
+    }
 
-        foreach ($methods as $method) {
-            $CakeNumber->expects($this->at(0))->method($method);
-            $Number->{$method}('who', 'what', 'when', 'where', 'how');
-        }
-
-        $CakeNumber = $this->getMock(__NAMESPACE__ . '\NumberMock', ['toPercentage']);
-        $Number = new NumberHelperTestObject($this->View, ['engine' => __NAMESPACE__ . '\NumberMock']);
-        $Number->attach($CakeNumber);
-        $CakeNumber->expects($this->at(0))->method('toPercentage');
-        $Number->toPercentage('who', 'what', ['when']);
-
-        $CakeNumber = $this->getMock(__NAMESPACE__ . '\NumberMock', ['currency']);
-        $Number = new NumberHelperTestObject($this->View, ['engine' => __NAMESPACE__ . '\NumberMock']);
-        $Number->attach($CakeNumber);
-        $CakeNumber->expects($this->at(0))->method('currency');
-        $Number->currency('who', 'what', ['when']);
-
-        $CakeNumber = $this->getMock(__NAMESPACE__ . '\NumberMock', ['format']);
-        $Number = new NumberHelperTestObject($this->View, ['engine' => __NAMESPACE__ . '\NumberMock']);
-        $Number->attach($CakeNumber);
-        $CakeNumber->expects($this->at(0))->method('format');
-        $Number->format('who', ['when']);
-
-        $CakeNumber = $this->getMock(__NAMESPACE__ . '\NumberMock', ['addFormat']);
-        $Number = new NumberHelperTestObject($this->View, ['engine' => __NAMESPACE__ . '\NumberMock']);
-        $Number->attach($CakeNumber);
-        $CakeNumber->expects($this->at(0))->method('addFormat');
-        $Number->addFormat('who', ['when']);
+    /**
+     * test CakeNumber class methods are called correctly
+     *
+     * @dataProvider methodProvider
+     * @return void
+     */
+    public function testNumberHelperProxyMethodCalls($method)
+    {
+        $number = $this->getMock(__NAMESPACE__ . '\NumberMock', [$method]);
+        $helper = new NumberHelperTestObject($this->View, ['engine' => __NAMESPACE__ . '\NumberMock']);
+        $helper->attach($number);
+        $number->expects($this->at(0))
+            ->method($method)
+            ->with(12.3);
+        $helper->{$method}(12.3, ['options']);
     }
 
     /**
      * test engine override
+     *
+     * @return void
      */
     public function testEngineOverride()
     {

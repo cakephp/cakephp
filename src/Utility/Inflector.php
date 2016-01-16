@@ -46,7 +46,7 @@ class Inflector
         '/(?<!u)(m)an$/i' => '\1en',
         '/(c)hild$/i' => '\1hildren',
         '/(buffal|tomat)o$/i' => '\1\2oes',
-        '/(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|vir)us$/i' => '\1i',
+        '/(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin)us$/i' => '\1i',
         '/us$/i' => 'uses',
         '/(alias)$/i' => '\1es',
         '/(ax|cris|test)is$/i' => '\1es',
@@ -181,11 +181,9 @@ class Inflector
         'Å' => 'A',
         'Ǻ' => 'A',
         'Ā' => 'A',
-        'Å' => 'A',
         'Ă' => 'A',
         'Ą' => 'A',
         'Ǎ' => 'A',
-        'Ä' => 'Ae',
         'à' => 'a',
         'á' => 'a',
         'â' => 'a',
@@ -222,7 +220,6 @@ class Inflector
         'Ė' => 'E',
         'Ę' => 'E',
         'Ě' => 'E',
-        'Ë' => 'E',
         'è' => 'e',
         'é' => 'e',
         'ê' => 'e',
@@ -304,7 +301,6 @@ class Inflector
         'Ơ' => 'O',
         'Ø' => 'O',
         'Ǿ' => 'O',
-        'Ö' => 'Oe',
         'ò' => 'o',
         'ó' => 'o',
         'ô' => 'o',
@@ -358,7 +354,6 @@ class Inflector
         'Ǘ' => 'U',
         'Ǚ' => 'U',
         'Ǜ' => 'U',
-        'Ü' => 'Ue',
         'ù' => 'u',
         'ú' => 'u',
         'û' => 'u',
@@ -592,7 +587,7 @@ class Inflector
 
         if ($result === false) {
             $result = str_replace(' ', '', static::humanize($string, $delimiter));
-            static::_cache(__FUNCTION__, $string, $result);
+            static::_cache($cacheKey, $string, $result);
         }
 
         return $result;

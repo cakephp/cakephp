@@ -16,6 +16,8 @@
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
+use Redis;
+use RedisException;
 
 /**
  * Redis storage engine for cache.
@@ -80,6 +82,10 @@ class RedisEngine extends CacheEngine
             return false;
         }
 
+        if (!empty($config['host'])) {
+            $config['server'] = $config['host'];
+        }
+
         parent::init($config);
         return $this->_connect();
     }
@@ -92,21 +98,16 @@ class RedisEngine extends CacheEngine
     protected function _connect()
     {
         try {
-            $server = $this->_config['host'];
-            if (empty($server) && !empty($this->_config['server'])) {
-                $server = $this->_config['server'];
-            }
-
-            $this->_Redis = new \Redis();
-            if (!empty($this->settings['unix_socket'])) {
-                $return = $this->_Redis->connect($this->settings['unix_socket']);
+            $this->_Redis = new Redis();
+            if (!empty($this->_config['unix_socket'])) {
+                $return = $this->_Redis->connect($this->_config['unix_socket']);
             } elseif (empty($this->_config['persistent'])) {
                 $return = $this->_Redis->connect($this->_config['server'], $this->_config['port'], $this->_config['timeout']);
             } else {
                 $persistentId = $this->_config['port'] . $this->_config['timeout'] . $this->_config['database'];
                 $return = $this->_Redis->pconnect($this->_config['server'], $this->_config['port'], $this->_config['timeout'], $persistentId);
             }
-        } catch (\RedisException $e) {
+        } catch (RedisException $e) {
             return false;
         }
         if ($return && $this->_config['password']) {
@@ -220,6 +221,31 @@ class RedisEngine extends CacheEngine
     }
 
     /**
+     * Write data for key into cache if it doesn't exist already.
+     * If it already exists, it fails and returns false.
+     *
+     * @param string $key Identifier for the data.
+     * @param mixed $value Data to be cached.
+     * @return bool True if the data was successfully cached, false on failure.
+     * @link https://github.com/phpredis/phpredis#setnx
+     */
+    public function add($key, $value)
+    {
+        $duration = $this->_config['duration'];
+        $key = $this->_key($key);
+
+        if (!is_int($value)) {
+            $value = serialize($value);
+        }
+
+        // setnx() doesn't have an expiry option, so overwrite the key with one
+        if ($this->_Redis->setnx($key, $value)) {
+            return $this->_Redis->setex($key, $duration, $value);
+        }
+        return false;
+    }
+
+    /**
      * Returns the `group value` for each of the configured groups
      * If the group initial value was not found, then it initializes
      * the group accordingly.
@@ -257,7 +283,7 @@ class RedisEngine extends CacheEngine
      */
     public function __destruct()
     {
-        if (empty($this->_config['persistent']) && $this->_Redis instanceof \Redis) {
+        if (empty($this->_config['persistent']) && $this->_Redis instanceof Redis) {
             $this->_Redis->close();
         }
     }

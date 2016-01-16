@@ -28,6 +28,7 @@ use Cake\TestSuite\Fixture\TestModel;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Hash;
+use TestApp\Controller\Admin\PostsController;
 use TestPlugin\Controller\TestPluginController;
 
 /**
@@ -66,6 +67,13 @@ class TestController extends ControllerTestAppController
 {
 
     /**
+     * Theme property
+     *
+     * @var string
+     */
+    public $theme = 'Foo';
+
+    /**
      * helpers property
      *
      * @var array
@@ -85,6 +93,16 @@ class TestController extends ControllerTestAppController
      * @var string
      */
     public $modelClass = 'Comments';
+
+    /**
+     * beforeFilter handler
+     *
+     * @param \Cake\Event\Event $event
+     * @retun void
+     */
+    public function beforeFilter(Event $event)
+    {
+    }
 
     /**
      * index method
@@ -221,8 +239,8 @@ class ControllerTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.posts',
-        'core.comments'
+        'core.comments',
+        'core.posts'
     ];
 
     /**
@@ -379,20 +397,17 @@ class ControllerTest extends TestCase
         $request->params['action'] = 'index';
 
         $Controller = new Controller($request, new Response());
-        $Controller->viewPath = 'Posts';
+        $Controller->viewBuilder()->templatePath('Posts');
 
         $result = $Controller->render('index');
         $this->assertRegExp('/posts index/', (string)$result);
 
-        $Controller->view = 'index';
-        $Controller->getView()->hasRendered = false;
+        $Controller->viewBuilder()->template('index');
         $result = $Controller->render();
         $this->assertRegExp('/posts index/', (string)$result);
 
-        $Controller->getView()->hasRendered = false;
         $result = $Controller->render('/Element/test_element');
         $this->assertRegExp('/this is the test element/', (string)$result);
-        $Controller->view = null;
     }
 
     /**
@@ -404,10 +419,10 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(new Request, new Response());
 
-        $Controller->eventManager()->attach(function ($event) {
+        $Controller->eventManager()->on('Controller.beforeRender', function ($event) {
             $controller = $event->subject();
             $controller->viewClass = 'Json';
-        }, 'Controller.beforeRender');
+        });
 
         $Controller->set([
             'test' => 'value',
@@ -642,7 +657,6 @@ class ControllerTest extends TestCase
         $expected = ['testId' => 1, 'test2Id' => 2];
         $this->assertSame($expected, $TestController->request->data);
         $this->assertSame('view', $TestController->request->params['action']);
-        $this->assertSame('view', $TestController->view);
     }
 
     /**
@@ -851,18 +865,33 @@ class ControllerTest extends TestCase
         ]);
         $response = $this->getMock('Cake\Network\Response');
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
-        $this->assertEquals('Admin' . DS . 'Posts', $Controller->viewPath);
+        $Controller->eventManager()->on('Controller.beforeRender', function (Event $e) {
+            return $e->subject()->response;
+        });
+        $Controller->render();
+        $this->assertEquals('Admin' . DS . 'Posts', $Controller->viewBuilder()->templatePath());
 
         $request->addParams([
             'prefix' => 'admin/super'
         ]);
         $response = $this->getMock('Cake\Network\Response');
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
-        $this->assertEquals('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewPath);
+        $Controller->eventManager()->on('Controller.beforeRender', function (Event $e) {
+            return $e->subject()->response;
+        });
+        $Controller->render();
+        $this->assertEquals('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewBuilder()->templatePath());
 
         $request = new Request('pages/home');
+        $request->addParams([
+            'prefix' => false
+        ]);
         $Controller = new \TestApp\Controller\PagesController($request, $response);
-        $this->assertEquals('Pages', $Controller->viewPath);
+        $Controller->eventManager()->on('Controller.beforeRender', function (Event $e) {
+            return $e->subject()->response;
+        });
+        $Controller->render();
+        $this->assertEquals('Pages', $Controller->viewBuilder()->templatePath());
     }
 
     /**
@@ -877,6 +906,24 @@ class ControllerTest extends TestCase
 
         $controller = new TestController($request, $response);
         $this->assertInstanceOf('Cake\Controller\ComponentRegistry', $controller->components());
+
+        $result = $controller->components();
+        $this->assertSame($result, $controller->components());
+    }
+
+    /**
+     * Test the components() method with the custom ObjectRegistry.
+     *
+     * @return void
+     */
+    public function testComponentsWithCustomRegistry()
+    {
+        $request = new Request('/');
+        $response = $this->getMock('Cake\Network\Response');
+        $componentRegistry = $this->getMock('Cake\Controller\ComponentRegistry', ['offsetGet']);
+
+        $controller = new TestController($request, $response, null, null, $componentRegistry);
+        $this->assertInstanceOf(get_class($componentRegistry), $controller->components());
 
         $result = $controller->components();
         $this->assertSame($result, $controller->components());
@@ -936,5 +983,41 @@ class ControllerTest extends TestCase
         $this->assertFalse($controller->isAction('redirect'));
         $this->assertFalse($controller->isAction('beforeFilter'));
         $this->assertTrue($controller->isAction('index'));
+    }
+
+    /**
+     * Test declared deprecated properties like $theme are properly passed to view.
+     *
+     * @return void
+     */
+    public function testDeclaredDeprecatedProperty()
+    {
+        $controller = new TestController(new Request(), new Response());
+        $theme = $controller->theme;
+
+        // @codingStandardsIgnoreStart
+        $this->assertEquals($theme, @$controller->createView()->theme);
+        // @codingStandardsIgnoreEnd
+    }
+
+    /**
+     * Test that view variables are being set after the beforeRender event gets dispatched
+     *
+     * @return void
+     */
+    public function testBeforeRenderViewVariables()
+    {
+        $controller = new PostsController();
+
+        $controller->eventManager()->on('Controller.beforeRender', function (Event $event) {
+            /* @var Controller $controller */
+            $controller = $event->subject();
+
+            $controller->set('testVariable', 'test');
+        });
+
+        $controller->render('index');
+
+        $this->assertArrayHasKey('testVariable', $controller->View->viewVars);
     }
 }

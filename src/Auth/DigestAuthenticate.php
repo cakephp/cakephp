@@ -14,7 +14,6 @@
  */
 namespace Cake\Auth;
 
-use Cake\Auth\BasicAuthenticate;
 use Cake\Controller\ComponentRegistry;
 use Cake\Network\Request;
 

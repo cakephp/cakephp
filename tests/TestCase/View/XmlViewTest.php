@@ -2,7 +2,7 @@
 /**
  * XmlViewTest file
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -10,7 +10,7 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @since         2.1.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -118,8 +118,8 @@ class XmlViewTest extends TestCase
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
         $data = [
-            '_serialize' => ['tags'],
-            '_xmlOptions' => ['format' => 'attributes'],
+            '_serialize' => ['tags', 'nope'],
+            '_xmlOptions' => ['format' => 'attributes', 'return' => 'domdocument'],
             'tags' => [
                     'tag' => [
                         [
@@ -138,7 +138,7 @@ class XmlViewTest extends TestCase
         $View = $Controller->createView();
         $result = $View->render();
 
-        $expected = Xml::build(['response' => ['tags' => $data['tags']]], $data['_xmlOptions'])->asXML();
+        $expected = Xml::build(['response' => ['tags' => $data['tags']]], $data['_xmlOptions'])->saveXML();
         $this->assertSame($expected, $result);
     }
 
@@ -244,6 +244,37 @@ class XmlViewTest extends TestCase
     }
 
     /**
+     * test rendering with _serialize true
+     *
+     * @return void
+     */
+    public function testRenderWithSerializeTrue()
+    {
+        $Request = new Request();
+        $Response = new Response();
+        $Controller = new Controller($Request, $Response);
+        $data = ['users' => ['user' => ['user1', 'user2']]];
+        $Controller->set(['users' => $data, '_serialize' => true]);
+        $Controller->viewClass = 'Xml';
+        $View = $Controller->createView();
+        $output = $View->render();
+
+        $this->assertSame(Xml::build($data)->asXML(), $output);
+        $this->assertSame('application/xml', $Response->type());
+
+        $data = ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']];
+        $Controller->viewVars = [];
+        $Controller->set($data);
+        $Controller->set('_serialize', true);
+        $View = $Controller->createView();
+        $output = $View->render();
+        $expected = [
+            'response' => $data
+        ];
+        $this->assertSame(Xml::build($expected)->asXML(), $output);
+    }
+
+    /**
      * testRenderWithView method
      *
      * @return void
@@ -254,7 +285,6 @@ class XmlViewTest extends TestCase
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
         $Controller->name = 'Posts';
-        $Controller->viewPath = 'Posts';
 
         $data = [
             [
@@ -271,6 +301,7 @@ class XmlViewTest extends TestCase
         $Controller->set('users', $data);
         $Controller->viewClass = 'Xml';
         $View = $Controller->createView();
+        $View->viewPath = 'Posts';
         $output = $View->render('index');
 
         $expected = [

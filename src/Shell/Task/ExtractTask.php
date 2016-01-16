@@ -106,6 +106,15 @@ class ExtractTask extends Shell
     protected $_extractCore = false;
 
     /**
+     * No welcome message.
+     *
+     * @return void
+     */
+    protected function _welcome()
+    {
+    }
+
+    /**
      * Method to interact with the User and get path selections.
      *
      * @return void
@@ -182,16 +191,12 @@ class ExtractTask extends Shell
 
         if ($this->_extractCore) {
             $this->_paths[] = CAKE;
-            $this->_exclude = array_merge($this->_exclude, [
-                CAKE . 'Test',
-                CAKE . 'Console' . DS . 'Templates'
-            ]);
         }
 
         if (isset($this->params['output'])) {
             $this->_output = $this->params['output'];
         } elseif (isset($this->params['plugin'])) {
-            $this->_output = $this->_paths[0] . DS . 'Locale';
+            $this->_output = $this->_paths[0] . 'Locale';
         } else {
             $message = "What is the path you would like to output?\n[Q]uit";
             while (true) {
@@ -337,6 +342,10 @@ class ExtractTask extends Shell
         ])->addOption('extract-core', [
             'help' => 'Extract messages from the CakePHP core libs.',
             'choices' => ['yes', 'no']
+        ])->addOption('no-location', [
+            'boolean' => true,
+            'default' => false,
+            'help' => 'Do not write file locations for each extracted message.',
         ]);
 
         return $parser;
@@ -349,9 +358,15 @@ class ExtractTask extends Shell
      */
     protected function _extractTokens()
     {
+        $progress = $this->helper('progress');
+        $progress->init(['total' => count($this->_files)]);
+        $isVerbose = $this->param('verbose');
+
         foreach ($this->_files as $file) {
             $this->_file = $file;
-            $this->out(sprintf('Processing %s...', $file), 1, Shell::VERBOSE);
+            if ($isVerbose) {
+                $this->out(sprintf('Processing %s...', $file), 1, Shell::VERBOSE);
+            }
 
             $code = file_get_contents($file);
             $allTokens = token_get_all($code);
@@ -372,6 +387,10 @@ class ExtractTask extends Shell
             $this->_parse('__dx', ['domain', 'context', 'singular']);
             $this->_parse('__dxn', ['domain', 'context', 'singular', 'plural']);
 
+            if (!$isVerbose) {
+                $progress->increment(1);
+                $progress->draw();
+            }
         }
     }
 
@@ -454,7 +473,10 @@ class ExtractTask extends Shell
                         $occurrences[] = $file . ':' . implode(';', $lines);
                     }
                     $occurrences = implode("\n#: ", $occurrences);
-                    $header = '#: ' . str_replace(DS, '/', str_replace($paths, '', $occurrences)) . "\n";
+                    $header = "";
+                    if (!$this->param('no-location')) {
+                        $header = '#: ' . str_replace(DS, '/', str_replace($paths, '', $occurrences)) . "\n";
+                    }
 
                     $sentence = '';
                     if ($context !== "") {
@@ -470,9 +492,10 @@ class ExtractTask extends Shell
                         $sentence .= "msgstr[1] \"\"\n\n";
                     }
 
-                    $this->_store($domain, $header, $sentence);
                     if ($domain !== 'default' && $this->_merge) {
                         $this->_store('default', $header, $sentence);
+                    } else {
+                        $this->_store($domain, $header, $sentence);
                     }
                 }
             }
@@ -704,6 +727,9 @@ class ExtractTask extends Shell
      */
     protected function _isPathUsable($path)
     {
+        if (!is_dir($path)) {
+            mkdir($path, 0770, true);
+        }
         return is_dir($path) && is_writable($path);
     }
 }

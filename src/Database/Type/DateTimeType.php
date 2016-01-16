@@ -16,6 +16,9 @@ namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
 use Cake\Database\Type;
+use DateTime;
+use Exception;
+use RuntimeException;
 
 /**
  * Datetime type converter.
@@ -99,7 +102,7 @@ class DateTimeType extends Type
      *
      * @param string $value The value to convert.
      * @param Driver $driver The driver instance to convert with.
-     * @return \Cake\I18n\Time|DateTime
+     * @return \Cake\I18n\Time|\DateTime
      */
     public function toPHP($value, Driver $driver)
     {
@@ -119,11 +122,11 @@ class DateTimeType extends Type
      * Convert request data into a datetime object.
      *
      * @param mixed $value Request data
-     * @return \Cake\I18n\Time|DateTime
+     * @return \Cake\I18n\Time|\DateTime
      */
     public function marshal($value)
     {
-        if ($value instanceof \DateTime) {
+        if ($value instanceof DateTime) {
             return $value;
         }
 
@@ -146,7 +149,7 @@ class DateTimeType extends Type
             if ($date) {
                 return $date;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $value;
         }
 
@@ -162,6 +165,9 @@ class DateTimeType extends Type
             $format .= sprintf('%d-%02d-%02d', $value['year'], $value['month'], $value['day']);
         }
 
+        if (isset($value['meridian']) && (int)$value['hour'] === 12) {
+            $value['hour'] = 0;
+        }
         if (isset($value['meridian'])) {
             $value['hour'] = strtolower($value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
         }
@@ -196,7 +202,7 @@ class DateTimeType extends Type
             $this->_useLocaleParser = $enable;
             return $this;
         }
-        throw new \RuntimeException(
+        throw new RuntimeException(
             sprintf('Cannot use locale parsing with the %s class', static::$dateTimeClass)
         );
     }

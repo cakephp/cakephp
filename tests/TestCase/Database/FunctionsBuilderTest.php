@@ -1,13 +1,13 @@
 <?php
 /**
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The Open Group Test Suite License
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -150,5 +150,49 @@ class FunctionsBuilderTest extends TestCase
         $function = $this->functions->now('time');
         $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
         $this->assertEquals("CURRENT_TIME()", $function->sql(new ValueBinder));
+    }
+
+    /**
+     * Tests generating a EXTRACT() function
+     *
+     * @return void
+     */
+    public function testExtract()
+    {
+        $function = $this->functions->extract('day', 'created');
+        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertEquals("EXTRACT(day FROM created)", $function->sql(new ValueBinder));
+
+        $function = $this->functions->datePart('year', 'modified');
+        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertEquals("EXTRACT(year FROM modified)", $function->sql(new ValueBinder));
+    }
+
+    /**
+     * Tests generating a DATE_ADD() function
+     *
+     * @return void
+     */
+    public function testDateAdd()
+    {
+        $function = $this->functions->dateAdd('created', -3, 'day');
+        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertEquals("DATE_ADD(created, INTERVAL -3 day)", $function->sql(new ValueBinder));
+    }
+
+    /**
+     * Tests generating a DAYOFWEEK() function
+     *
+     * @return void
+     */
+    public function testDayOfWeek()
+    {
+        $function = $this->functions->dayOfWeek('created');
+        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertEquals("DAYOFWEEK(created)", $function->sql(new ValueBinder));
+
+        $function = $this->functions->weekday('created');
+        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertEquals("DAYOFWEEK(created)", $function->sql(new ValueBinder));
     }
 }

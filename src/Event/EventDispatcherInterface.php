@@ -14,15 +14,13 @@
  */
 namespace Cake\Event;
 
-use Cake\Event\EventManager;
-
 /**
  * Objects implementing this interface can emit events.
  *
  * Objects with this interface can trigger events, and have
  * an event manager retrieved from them.
  *
- * The Cake\Event\EventManagerTrait lets you easily implement
+ * The Cake\Event\EventDispatcherTrait lets you easily implement
  * this interface.
  */
 interface EventDispatcherInterface

@@ -1,6 +1,6 @@
 <?php
 /**
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -8,7 +8,7 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -694,19 +694,20 @@ class ExceptionRendererTest extends TestCase
     }
 
     /**
-     * Test that missing subDir/layoutPath don't cause other fatal errors.
+     * Test that missing layoutPath don't cause other fatal errors.
      *
      * @return void
      */
-    public function testMissingSubdirRenderSafe()
+    public function testMissingLayoutPathRenderSafe()
     {
         $exception = new NotFoundException();
         $ExceptionRenderer = new ExceptionRenderer($exception);
 
         $ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', ['render']);
         $ExceptionRenderer->controller->helpers = ['Fail', 'Boom'];
-        $ExceptionRenderer->controller->layoutPath = 'boom';
-        $ExceptionRenderer->controller->subDir = 'boom';
+        $ExceptionRenderer->controller->eventManager()->on('Controller.beforeRender', function (Event $event) {
+            $event->subject()->viewBuilder()->layoutPath('boom');
+        });
         $ExceptionRenderer->controller->request = new Request;
 
         $ExceptionRenderer->controller->expects($this->once())
@@ -725,9 +726,8 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer->controller->response = $response;
 
         $ExceptionRenderer->render();
-        $this->assertEquals('', $ExceptionRenderer->controller->layoutPath);
-        $this->assertEquals('', $ExceptionRenderer->controller->subDir);
-        $this->assertEquals('Error', $ExceptionRenderer->controller->viewPath);
+        $this->assertEquals('', $ExceptionRenderer->controller->viewBuilder()->layoutPath());
+        $this->assertEquals('Error', $ExceptionRenderer->controller->viewBuilder()->templatePath());
     }
 
     /**

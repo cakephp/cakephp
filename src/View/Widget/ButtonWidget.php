@@ -15,7 +15,6 @@
 namespace Cake\View\Widget;
 
 use Cake\View\Form\ContextInterface;
-use Cake\View\Widget\BasicWidget;
 
 /**
  * Button input class
@@ -49,9 +48,11 @@ class ButtonWidget extends BasicWidget
             'text' => '',
             'type' => 'submit',
             'escape' => false,
+            'templateVars' => []
         ];
         return $this->_templates->format('button', [
             'text' => $data['escape'] ? h($data['text']) : $data['text'],
+            'templateVars' => $data['templateVars'],
             'attrs' => $this->_templates->formatAttributes($data, ['text']),
         ]);
     }

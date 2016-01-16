@@ -1,7 +1,5 @@
 <?php
 /**
- * CommandListShellTest file
- *
  * CakePHP :  Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -83,13 +81,34 @@ class CommandListShellTest extends TestCase
         $expected = "/\[.*TestPlugin.*\] example/";
         $this->assertRegExp($expected, $output);
 
-        $expected = "/\[.*TestPluginTwo.*\] example, welcome/";
+        $expected = "/\[.*TestPluginTwo.*\] example, unique, welcome/";
         $this->assertRegExp($expected, $output);
 
-        $expected = "/\[.*CORE.*\] i18n, orm_cache, plugin, server/";
+        $expected = "/\[.*CORE.*\] i18n, orm_cache, plugin, routes, server/";
         $this->assertRegExp($expected, $output);
 
-        $expected = "/\[.*app.*\] sample/";
+        $expected = "/\[.*app.*\] i18m, sample/";
+        $this->assertRegExp($expected, $output);
+    }
+
+    /**
+     * If there is an app shell with the same name as a core shell,
+     * tests that the app shell is the one displayed and the core one is hidden.
+     *
+     * @return void
+     */
+    public function testMainAppPriority()
+    {
+        rename(APP . 'Shell' . DS . 'I18mShell.php', APP . 'Shell' . DS . 'I18nShell.php');
+        $this->Shell->main();
+        $output = $this->out->messages();
+        $output = implode("\n", $output);
+        rename(APP . 'Shell' . DS . 'I18nShell.php', APP . 'Shell' . DS . 'I18mShell.php');
+
+        $expected = "/\[.*CORE.*\] orm_cache, plugin, routes, server/";
+        $this->assertRegExp($expected, $output);
+
+        $expected = "/\[.*app.*\] i18n, sample/";
         $this->assertRegExp($expected, $output);
     }
 

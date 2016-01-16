@@ -69,4 +69,31 @@ class FileWidgetTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
     }
+
+    /**
+     * Ensure templateVars option is hooked up.
+     *
+     * @return void
+     */
+    public function testRenderTemplateVars()
+    {
+        $this->templates->add([
+            'file' => '<input custom="{{custom}}" type="file" name="{{name}}"{{attrs}}>',
+        ]);
+
+        $input = new FileWidget($this->templates);
+        $data = [
+            'templateVars' => ['custom' => 'value'],
+            'name' => 'files',
+        ];
+        $result = $input->render($data, $this->context);
+        $expected = [
+            'input' => [
+                'type' => 'file',
+                'name' => 'files',
+                'custom' => 'value'
+            ],
+        ];
+        $this->assertHtml($expected, $result);
+    }
 }

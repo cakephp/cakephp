@@ -1,6 +1,6 @@
 <?php
 /**
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -8,7 +8,7 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @since         2.5.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -481,7 +481,7 @@ class MemcachedEngineTest extends TestCase
     {
         $Memcached = new TestMemcachedEngine();
         $result = $Memcached->parseServerString('unix:///path/to/memcachedd.sock');
-        $this->assertEquals(['unix:///path/to/memcachedd.sock', 0], $result);
+        $this->assertEquals(['/path/to/memcachedd.sock', 0], $result);
     }
 
     /**
@@ -915,5 +915,25 @@ class MemcachedEngineTest extends TestCase
         $this->assertTrue(Cache::write('test_groups', 'value2', 'memcached_groups'));
         $this->assertTrue(Cache::clearGroup('group_b', 'memcached_groups'));
         $this->assertFalse(Cache::read('test_groups', 'memcached_groups'));
+    }
+
+    /**
+     * Test add
+     *
+     * @return void
+     */
+    public function testAdd()
+    {
+        Cache::delete('test_add_key', 'memcached');
+
+        $result = Cache::add('test_add_key', 'test data', 'memcached');
+        $this->assertTrue($result);
+
+        $expected = 'test data';
+        $result = Cache::read('test_add_key', 'memcached');
+        $this->assertEquals($expected, $result);
+
+        $result = Cache::add('test_add_key', 'test data 2', 'memcached');
+        $this->assertFalse($result);
     }
 }

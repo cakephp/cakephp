@@ -17,6 +17,7 @@ namespace Cake\View\Helper;
 use Cake\I18n\Time;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
+use Exception;
 
 /**
  * Time Helper class for easy use of time data.
@@ -158,7 +159,7 @@ class TimeHelper extends Helper
      *
      * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param bool $range if true returns a range in Y-m-d format
-     * @return mixed 1, 2, 3, or 4 quarter of year or array if $range true
+     * @return int|array 1, 2, 3, or 4 quarter of year or array if $range true
      * @see \Cake\I18n\Time::toQuarter()
      */
     public function toQuarter($dateString, $range = false)
@@ -323,7 +324,7 @@ class TimeHelper extends Helper
      * @param bool|string $invalid Default value to display on invalid dates
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
      * @return string Formatted and translated date string
-     * @throws \InvalidArgumentException When the date cannot be parsed
+     * @throws \Exception When the date cannot be parsed
      * @see \Cake\I18n\Time::i18nFormat()
      */
     public function i18nFormat($date, $format = null, $invalid = false, $timezone = null)
@@ -333,9 +334,9 @@ class TimeHelper extends Helper
         }
 
         try {
-            $time = new Time($date, $timezone);
+            $time = new Time($date);
             return $time->i18nFormat($format, $timezone);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             if ($invalid === false) {
                 throw $e;
             }

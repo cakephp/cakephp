@@ -15,7 +15,6 @@
 namespace Cake\Database\Schema;
 
 use Cake\Database\Exception;
-use Cake\Database\Schema\Table;
 
 /**
  * Schema management/reflection features for Postgres.
@@ -38,17 +37,20 @@ class PostgresSchema extends BaseSchema
      */
     public function describeColumnSql($tableName, $config)
     {
-        $sql =
-        'SELECT DISTINCT table_schema AS schema, column_name AS name, data_type AS type,
+        $sql = 'SELECT DISTINCT table_schema AS schema,
+            column_name AS name,
+            data_type AS type,
             is_nullable AS null, column_default AS default,
             character_maximum_length AS char_length,
             d.description as comment,
-            ordinal_position
+            ordinal_position,
+            pg_get_serial_sequence(attr.attrelid::regclass::text, attr.attname) IS NOT NULL AS has_serial
         FROM information_schema.columns c
         INNER JOIN pg_catalog.pg_namespace ns ON (ns.nspname = table_schema)
         INNER JOIN pg_catalog.pg_class cl ON (cl.relnamespace = ns.oid AND cl.relname = table_name)
         LEFT JOIN pg_catalog.pg_index i ON (i.indrelid = cl.oid AND i.indkey[0] = c.ordinal_position)
         LEFT JOIN pg_catalog.pg_description d on (cl.oid = d.objoid AND d.objsubid = c.ordinal_position)
+        LEFT JOIN pg_catalog.pg_attribute attr ON (cl.oid = attr.attrelid AND column_name = attr.attname)
         WHERE table_name = ? AND table_schema = ? AND table_catalog = ?
         ORDER BY ordinal_position';
 
@@ -84,6 +86,9 @@ class PostgresSchema extends BaseSchema
         }
         if (strpos($col, 'timestamp') !== false) {
             return ['type' => 'timestamp', 'length' => null];
+        }
+        if (strpos($col, 'time') !== false) {
+            return ['type' => 'time', 'length' => null];
         }
         if ($col === 'serial' || $col === 'integer') {
             return ['type' => 'integer', 'length' => 10];
@@ -142,8 +147,7 @@ class PostgresSchema extends BaseSchema
                 $row['default'] = 0;
             }
         }
-        // Sniff out serial types.
-        if (in_array($field['type'], ['integer', 'biginteger']) && strpos($row['default'], 'nextval(') === 0) {
+        if (!empty($row['has_serial'])) {
             $field['autoIncrement'] = true;
         }
         $field += [
@@ -189,13 +193,13 @@ class PostgresSchema extends BaseSchema
     {
         $sql = 'SELECT
             c2.relname,
+            a.attname,
             i.indisprimary,
-            i.indisunique,
-            i.indisvalid,
-            pg_catalog.pg_get_indexdef(i.indexrelid, 0, true) AS statement
+            i.indisunique
         FROM pg_catalog.pg_class AS c,
             pg_catalog.pg_class AS c2,
-            pg_catalog.pg_index AS i
+            pg_catalog.pg_index AS i,
+            pg_catalog.pg_attribute AS a
         WHERE c.oid  = (
             SELECT c.oid
             FROM pg_catalog.pg_class c
@@ -204,8 +208,10 @@ class PostgresSchema extends BaseSchema
                 AND n.nspname = ?
         )
         AND c.oid = i.indrelid
+        AND c.oid = a.attrelid
+        AND a.attnum = ANY(i.indkey)
         AND i.indexrelid = c2.oid
-        ORDER BY i.indisprimary DESC, i.indisunique DESC, c2.relname';
+        ORDER BY i.indisprimary DESC, i.indisunique DESC, c2.relname, a.attnum';
 
         $schema = 'public';
         if (!empty($config['schema'])) {
@@ -227,46 +233,41 @@ class PostgresSchema extends BaseSchema
         if ($row['indisunique'] && $type === Table::INDEX_INDEX) {
             $type = Table::CONSTRAINT_UNIQUE;
         }
-        preg_match('/\(([^\)]+)\)/', $row['statement'], $matches);
-        $columns = $this->_convertColumnList($matches[1]);
         if ($type === Table::CONSTRAINT_PRIMARY || $type === Table::CONSTRAINT_UNIQUE) {
-            $table->addConstraint($name, [
-                'type' => $type,
-                'columns' => $columns
-            ]);
-
-            // If there is only one column in the primary key and it is integery,
-            // make it autoincrement.
-            $columnDef = $table->column($columns[0]);
-
-            if ($type === Table::CONSTRAINT_PRIMARY &&
-                count($columns) === 1 &&
-                in_array($columnDef['type'], ['integer', 'biginteger'])
-            ) {
-                $columnDef['autoIncrement'] = true;
-                $table->addColumn($columns[0], $columnDef);
-            }
+            $this->_convertConstraint($table, $name, $type, $row);
             return;
         }
-        $table->addIndex($name, [
-            'type' => $type,
-            'columns' => $columns
-        ]);
+        $index = $table->index($name);
+        if (!$index) {
+            $index = [
+                'type' => $type,
+                'columns' => []
+            ];
+        }
+        $index['columns'][] = $row['attname'];
+        $table->addIndex($name, $index);
     }
 
     /**
-     * Convert a column list into a clean array.
+     * Add/update a constraint into the schema object.
      *
-     * @param string $columns comma separated column list.
-     * @return array
+     * @param \Cake\Database\Schema\Table $table The table to update.
+     * @param string $name The index name.
+     * @param string $type The index type.
+     * @param array $row The metadata record to update with.
+     * @return void
      */
-    protected function _convertColumnList($columns)
+    protected function _convertConstraint($table, $name, $type, $row)
     {
-        $columns = explode(', ', $columns);
-        foreach ($columns as &$column) {
-            $column = trim($column, '"');
+        $constraint = $table->constraint($name);
+        if (!$constraint) {
+            $constraint = [
+                'type' => $type,
+                'columns' => []
+            ];
         }
-        return $columns;
+        $constraint['columns'][] = $row['attname'];
+        $table->addConstraint($name, $constraint);
     }
 
     /**
@@ -291,18 +292,21 @@ class PostgresSchema extends BaseSchema
                 ON tc.constraint_name = rc.constraint_name
                 AND tc.constraint_schema = rc.constraint_schema
                 AND tc.constraint_name = rc.constraint_name
+                AND tc.table_schema = rc.constraint_schema
 
             JOIN information_schema.key_column_usage kcu
                 ON kcu.constraint_name = rc.constraint_name
                 AND kcu.constraint_schema = rc.constraint_schema
                 AND kcu.constraint_name = rc.constraint_name
+                AND kcu.constraint_schema = rc.constraint_schema
 
             JOIN information_schema.key_column_usage kc
                 ON kc.ordinal_position = kcu.position_in_unique_constraint
                 AND kc.constraint_name = rc.unique_constraint_name
+                AND kc.constraint_schema = rc.constraint_schema
 
             WHERE kcu.table_name = ?
-              AND kc.table_schema = ?
+              AND rc.constraint_schema = ?
               AND tc.constraint_type = 'FOREIGN KEY'
 
             ORDER BY rc.constraint_name, kcu.ordinal_position";
@@ -413,6 +417,45 @@ class PostgresSchema extends BaseSchema
             $out .= ' DEFAULT ' . $this->_driver->schemaValue($defaultValue);
         }
         return $out;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function addConstraintSql(Table $table)
+    {
+        $sqlPattern = 'ALTER TABLE %s ADD %s;';
+        $sql = [];
+
+        foreach ($table->constraints() as $name) {
+            $constraint = $table->constraint($name);
+            if ($constraint['type'] === Table::CONSTRAINT_FOREIGN) {
+                $tableName = $this->_driver->quoteIdentifier($table->name());
+                $sql[] = sprintf($sqlPattern, $tableName, $this->constraintSql($table, $name));
+            }
+        }
+
+        return $sql;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function dropConstraintSql(Table $table)
+    {
+        $sqlPattern = 'ALTER TABLE %s DROP CONSTRAINT %s;';
+        $sql = [];
+
+        foreach ($table->constraints() as $name) {
+            $constraint = $table->constraint($name);
+            if ($constraint['type'] === Table::CONSTRAINT_FOREIGN) {
+                $tableName = $this->_driver->quoteIdentifier($table->name());
+                $constraintName = $this->_driver->quoteIdentifier($name);
+                $sql[] = sprintf($sqlPattern, $tableName, $constraintName);
+            }
+        }
+
+        return $sql;
     }
 
     /**
