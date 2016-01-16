@@ -102,7 +102,11 @@ class Type
         if (!isset(static::$_types[$name])) {
             throw new InvalidArgumentException(sprintf('Unknown type "%s"', $name));
         }
-        return static::$_builtTypes[$name] = new static::$_types[$name]($name);
+        if (is_string(static::$_types[$name])) {
+            return static::$_builtTypes[$name] = new static::$_types[$name]($name);
+        }
+        
+        return static::$_builtTypes[$name] = static::$_types[$name];
     }
 
     /**
@@ -122,7 +126,7 @@ class Type
      * If called with no arguments it will return current types map array
      * If $className is omitted it will return mapped class for $type
      *
-     * @param string|array|null $type if string name of type to map, if array list of arrays to be mapped
+     * @param string|array|\Cake\Database\Type|null $type if string name of type to map, if array list of arrays to be mapped
      * @param string|null $className The classname to register.
      * @return array|string|null if $type is null then array with current map, if $className is null string
      * configured class name for give $type, null otherwise
@@ -132,7 +136,7 @@ class Type
         if ($type === null) {
             return self::$_types;
         }
-        if (!is_string($type)) {
+        if (is_array($type)) {
             self::$_types = $type;
             return null;
         }
