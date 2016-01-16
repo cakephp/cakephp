@@ -275,7 +275,7 @@ trait EntityTrait
         }
 
         $value = null;
-        $method = $this->_accessor($property);
+        $method = $this->_accessor($property, 'get');
 
         if (isset($this->_properties[$property])) {
             $value =& $this->_properties[$property];
@@ -506,7 +506,7 @@ trait EntityTrait
      * @param string $type the accessor type ('get' or 'set')
      * @return string method name or empty string (no method available)
      */
-    protected function _accessor($property, $type = 'get')
+    protected function _accessor($property, $type)
     {
         if (!isset(static::$_accessors[$this->_className][$type][$property])) {
             /* first time for this class: build all fields */
