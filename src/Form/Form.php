@@ -69,7 +69,7 @@ class Form
      */
     public function schema(Schema $schema = null)
     {
-        if ($schema === null && empty($this->_schema)) {
+        if (func_num_args() === 0 && empty($this->_schema)) {
             $schema = $this->_buildSchema(new Schema());
         }
         if ($schema) {

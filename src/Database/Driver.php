@@ -287,6 +287,8 @@ abstract class Driver
     }
 
     /**
+     * Gets/Sets for auto quoting.
+     *
      * Returns whether or not this driver should automatically quote identifiers
      * in queries
      *
@@ -298,7 +300,7 @@ abstract class Driver
      */
     public function autoQuoting($enable = null)
     {
-        if ($enable === null) {
+        if (func_num_args() === 0) {
             return $this->_autoQuoting;
         }
         return $this->_autoQuoting = (bool)$enable;

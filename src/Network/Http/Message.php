@@ -193,14 +193,14 @@ class Message
     }
 
     /**
-     * Get/set the body for the message.
+     * Gets/Sets the body for the message.
      *
      * @param string|null $body The body for the request. Leave null for get
      * @return mixed Either $this or the body value.
      */
     public function body($body = null)
     {
-        if ($body === null) {
+        if (func_num_args() === 0) {
             return $this->_body;
         }
         $this->_body = $body;

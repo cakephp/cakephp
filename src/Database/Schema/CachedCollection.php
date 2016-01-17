@@ -82,6 +82,8 @@ class CachedCollection extends Collection
     }
 
     /**
+     * Gets/Sets for cache configuration name
+     *
      * Sets the cache config name to use for caching table metadata, or
      * disables it if false is passed.
      * If called with no arguments it returns the current configuration name.
@@ -91,7 +93,7 @@ class CachedCollection extends Collection
      */
     public function cacheMetadata($enable = null)
     {
-        if ($enable === null) {
+        if (func_num_args() === 0) {
             return $this->_cache;
         }
         if ($enable === true) {

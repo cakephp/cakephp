@@ -171,7 +171,7 @@ class EagerLoadable
     }
 
     /**
-     * Sets whether or not this level can be fetched using a join.
+     * Gets/Sets whether or not this level can be fetched using a join.
      *
      * If called with no arguments it returns the current value.
      *
@@ -180,14 +180,14 @@ class EagerLoadable
      */
     public function canBeJoined($possible = null)
     {
-        if ($possible === null) {
+        if (func_num_args() === 0) {
             return $this->_canBeJoined;
         }
         $this->_canBeJoined = $possible;
     }
 
     /**
-     * Sets the list of options to pass to the association object for loading
+     * Gets/Sets the list of options to pass to the association object for loading
      * the records.
      *
      * If called with no arguments it returns the current
@@ -198,7 +198,7 @@ class EagerLoadable
      */
     public function config(array $config = null)
     {
-        if ($config === null) {
+        if (func_num_args() === 0) {
             return $this->_config;
         }
         $this->_config = $config;

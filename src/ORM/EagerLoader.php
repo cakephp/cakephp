@@ -159,20 +159,22 @@ class EagerLoader
     }
 
     /**
-     * Set whether or not contained associations will load fields automatically.
+     * Gets/Sets whether or not contained associations will load fields automatically.
      *
      * @param bool $value The value to set.
      * @return bool The current value.
      */
     public function autoFields($value = null)
     {
-        if ($value !== null) {
+        if (func_num_args() === 1) {
             $this->_autoFields = (bool)$value;
         }
         return $this->_autoFields;
     }
 
     /**
+     * Gets/Sets matching association lists.
+     *
      * Adds a new association to the list that will be used to filter the results of
      * any given query based on the results of finding records for that association.
      * You can pass a dot separated path of associations to this method as its first
@@ -195,7 +197,7 @@ class EagerLoader
             $this->_matching = new self();
         }
 
-        if ($assoc === null) {
+        if (func_num_args() === 0) {
             return $this->_matching->contain();
         }
 

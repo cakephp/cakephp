@@ -51,6 +51,8 @@ class TypeMap
     }
 
     /**
+     * Gets/Sets configured map defaults.
+     *
      * Configures a map of default fields and their associated types to be
      * used as the default list of types for every function in this class
      * with a $types param. Useful to avoid repetition when calling the same
@@ -72,7 +74,7 @@ class TypeMap
      */
     public function defaults(array $defaults = null)
     {
-        if ($defaults === null) {
+        if (func_num_args() === 0) {
             return $this->_defaults;
         }
         $this->_defaults = $defaults;
@@ -93,6 +95,8 @@ class TypeMap
     }
 
     /**
+     * Gets/Sets configured types.
+     *
      * Sets a map of fields and their associated types for single-use.
      *
      * If called with no arguments it will return the currently configured types.
@@ -111,9 +115,10 @@ class TypeMap
      */
     public function types(array $types = null)
     {
-        if ($types === null) {
+        if (func_num_args() === 0) {
             return $this->_types;
         }
+
         $this->_types = $types;
         return $this;
     }

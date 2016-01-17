@@ -327,7 +327,7 @@ class TranslateBehavior extends Behavior
     }
 
     /**
-     * Sets all future finds for the bound table to also fetch translated fields for
+     * Gets/Sets all future finds for the bound table to also fetch translated fields for
      * the passed locale. If no value is passed, it returns the currently configured
      * locale
      *
@@ -336,7 +336,7 @@ class TranslateBehavior extends Behavior
      */
     public function locale($locale = null)
     {
-        if ($locale === null) {
+        if (func_num_args() === 0) {
             return $this->_locale ?: I18n::locale();
         }
         return $this->_locale = (string)$locale;

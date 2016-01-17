@@ -360,14 +360,14 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Get/set path for templates files.
+     * Gets/Sets path for templates files.
      *
      * @param string $path Path for template files. If null returns current path.
      * @return string|null
      */
     public function templatePath($path = null)
     {
-        if ($path === null) {
+        if (func_num_args() === 0) {
             return $this->templatePath;
         }
 
@@ -375,14 +375,14 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Get/set path for layout files.
+     * Gets/Sets path for layout files.
      *
      * @param string $path Path for layout files. If null returns current path.
      * @return string|null
      */
     public function layoutPath($path = null)
     {
-        if ($path === null) {
+        if (func_num_args() === 0) {
             return $this->layoutPath;
         }
 
@@ -390,7 +390,8 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Turns on or off CakePHP's conventional mode of applying layout files.
+     * Gets/Sets CakePHP's flag to enable/disable CakePHP's conventional mode of
+     * applying layout files.
      * On by default. Setting to off means that layouts will not be
      * automatically applied to rendered templates.
      *
@@ -399,7 +400,7 @@ class View implements EventDispatcherInterface
      */
     public function autoLayout($autoLayout = null)
     {
-        if ($autoLayout === null) {
+        if (func_num_args() === 0) {
             return $this->autoLayout;
         }
 
@@ -407,14 +408,14 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * The view theme to use.
+     * Gets/Sets the view theme to use.
      *
      * @param string $theme Theme name. If null returns current theme.
      * @return string|null
      */
     public function theme($theme = null)
     {
-        if ($theme === null) {
+        if (func_num_args() === 0) {
             return $this->theme;
         }
 
@@ -422,7 +423,7 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Get/set the name of the template file to render. The name specified is the
+     * Gets/Sets the name of the template file to render. The name specified is the
      * filename in /app/Template/<SubFolder> without the .ctp extension.
      *
      * @param string $name Template file name to set. If null returns current name.
@@ -430,7 +431,7 @@ class View implements EventDispatcherInterface
      */
     public function template($name = null)
     {
-        if ($name === null) {
+        if (func_num_args() === 0) {
             return $this->template;
         }
 
@@ -438,7 +439,7 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Get/set the name of the layout file to render the template inside of.
+     * Gets/Sets the name of the layout file to render the template inside of.
      * The name specified is the filename of the layout in /app/Template/Layout
      * without the .ctp extension.
      *
@@ -447,7 +448,7 @@ class View implements EventDispatcherInterface
      */
     public function layout($name = null)
     {
-        if ($name === null) {
+        if (func_num_args() === 0) {
             return $this->layout;
         }
 

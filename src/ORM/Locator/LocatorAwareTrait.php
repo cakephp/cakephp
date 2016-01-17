@@ -30,7 +30,7 @@ trait LocatorAwareTrait
     protected $_tableLocator;
 
     /**
-     * Sets the table locator.
+     * Gets/Sets the table locator.
      * If no parameters are passed, it will return the currently used locator.
      *
      * @param \Cake\ORM\Locator\LocatorInterface|null $tableLocator LocatorInterface instance.
@@ -38,7 +38,7 @@ trait LocatorAwareTrait
      */
     public function tableLocator(LocatorInterface $tableLocator = null)
     {
-        if ($tableLocator !== null) {
+        if (func_num_args() === 1) {
             $this->_tableLocator = $tableLocator;
         }
         if (!$this->_tableLocator) {

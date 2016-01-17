@@ -66,7 +66,7 @@ class MemoryStorage implements StorageInterface
      */
     public function redirectUrl($url = null)
     {
-        if ($url === null) {
+        if (func_num_args() === 0) {
             return $this->_redirectUrl;
         }
 

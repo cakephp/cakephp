@@ -48,7 +48,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     protected $_allowEmpty = false;
 
     /**
-     * Sets whether a field is required to be present in data array.
+     * Gets/Sets whether a field is required to be present in data array.
      *
      * If no argument is passed the currently set `validatePresent` value will be returned.
      *
@@ -57,14 +57,14 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      */
     public function isPresenceRequired($validatePresent = null)
     {
-        if ($validatePresent === null) {
+        if (func_num_args() === 0) {
             return $this->_validatePresent;
         }
         return $this->_validatePresent = $validatePresent;
     }
 
     /**
-     * Sets whether a field value is allowed to be empty
+     * Gets/Sets whether a field value is allowed to be empty
      *
      * If no argument is passed the currently set `allowEmpty` value will be returned.
      *
@@ -74,7 +74,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      */
     public function isEmptyAllowed($allowEmpty = null)
     {
-        if ($allowEmpty === null) {
+        if (func_num_args() === 0) {
             return $this->_allowEmpty;
         }
         return $this->_allowEmpty = $allowEmpty;

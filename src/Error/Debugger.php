@@ -591,7 +591,7 @@ class Debugger
     public static function outputAs($format = null)
     {
         $self = Debugger::getInstance();
-        if ($format === null) {
+        if (func_num_args() === 0) {
             return $self->_outputFormat;
         }
 

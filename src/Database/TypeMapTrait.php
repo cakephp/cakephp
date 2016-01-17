@@ -26,6 +26,8 @@ trait TypeMapTrait
     protected $_typeMap;
 
     /**
+     * Gets/Sets a TypeMap.
+     *
      * Creates a new TypeMap if $typeMap is an array, otherwise returns the existing type map
      * or exchanges it for the given one.
      *
@@ -37,7 +39,7 @@ trait TypeMapTrait
         if ($this->_typeMap === null) {
             $this->_typeMap = new TypeMap();
         }
-        if ($typeMap === null) {
+        if (func_num_args() === 0) {
             return $this->_typeMap;
         }
         $this->_typeMap = is_array($typeMap) ? new TypeMap($typeMap) : $typeMap;
@@ -45,6 +47,8 @@ trait TypeMapTrait
     }
 
     /**
+     * Gets/Sets default types.
+     * 
      * Allows setting default types when chaining query
      *
      * @param array $types The array of types to set.
@@ -52,9 +56,10 @@ trait TypeMapTrait
      */
     public function defaultTypes(array $types = null)
     {
-        if ($types === null) {
+        if (func_num_args() === 0) {
             return $this->typeMap()->defaults();
         }
+
         $this->typeMap()->defaults($types);
         return $this;
     }

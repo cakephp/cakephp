@@ -489,7 +489,7 @@ class Request implements ArrayAccess
     }
 
     /**
-     * Returns the instance of the Session object for this request
+     * Get/Set the instance of the Session object for this request.
      *
      * If a session object is passed as first argument it will be set as
      * the session to use for this request
@@ -499,7 +499,7 @@ class Request implements ArrayAccess
      */
     public function session(Session $session = null)
     {
-        if ($session === null) {
+        if (func_num_args() === 0) {
             return $this->_session;
         }
         return $this->_session = $session;
@@ -1116,8 +1116,8 @@ class Request implements ArrayAccess
     }
 
     /**
-     * Provides a read/write accessor for `$this->data`. Allows you
-     * to use a syntax similar to `Cake\Model\Datasource\Session` for reading post data.
+     * Gets/Sets `$this->data`. Allows you to use a syntax similar to
+     * `Cake\Model\Datasource\Session` for reading post data.
      *
      * ### Reading values.
      *
@@ -1142,11 +1142,11 @@ class Request implements ArrayAccess
     public function data($name = null)
     {
         $args = func_get_args();
-        if (count($args) === 2) {
+        if (func_num_args() === 2) {
             $this->data = Hash::insert($this->data, $name, $args[1]);
             return $this;
         }
-        if ($name !== null) {
+        if (func_num_args() === 1) {
             return Hash::get($this->data, $name);
         }
         return $this->data;
@@ -1222,7 +1222,7 @@ class Request implements ArrayAccess
     }
 
     /**
-     * Get/Set value from the request's environment data.
+     * Gets/Sets value from the request's environment data.
      * Fallback to using env() if key not set in $environment property.
      *
      * @param string $key The key you want to read/write from/to.
@@ -1234,7 +1234,7 @@ class Request implements ArrayAccess
      */
     public function env($key, $value = null, $default = null)
     {
-        if ($value !== null) {
+        if (func_num_args() === 1) {
             $this->_environment[$key] = $value;
             $this->clearDetectorCache();
             return $this;

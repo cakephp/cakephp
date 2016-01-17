@@ -109,14 +109,14 @@ class ConsoleIo
     }
 
     /**
-     * Get/set the current output level.
+     * Gets/Sets the current output level.
      *
      * @param null|int $level The current output level.
      * @return int The current output level.
      */
     public function level($level = null)
     {
-        if ($level !== null) {
+        if (func_num_args() === 1) {
             $this->_level = $level;
         }
         return $this->_level;

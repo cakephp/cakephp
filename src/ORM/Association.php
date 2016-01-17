@@ -231,7 +231,7 @@ abstract class Association
     }
 
     /**
-     * Sets the name for this association. If no argument is passed then the current
+     * Gets/Sets the name for this association. If no argument is passed then the current
      * configured name will be returned
      *
      * @param string|null $name Name to be assigned
@@ -239,14 +239,14 @@ abstract class Association
      */
     public function name($name = null)
     {
-        if ($name !== null) {
+        if (func_num_args() === 1) {
             $this->_name = $name;
         }
         return $this->_name;
     }
 
     /**
-     * Sets whether or not cascaded deletes should also fire callbacks. If no
+     * Gets/Sets whether or not cascaded deletes should also fire callbacks. If no
      * arguments are passed, the current configured value is returned
      *
      * @param bool|null $cascadeCallbacks cascade callbacks switch value
@@ -254,29 +254,29 @@ abstract class Association
      */
     public function cascadeCallbacks($cascadeCallbacks = null)
     {
-        if ($cascadeCallbacks !== null) {
+        if (func_num_args() === 1) {
             $this->_cascadeCallbacks = $cascadeCallbacks;
         }
         return $this->_cascadeCallbacks;
     }
 
     /**
-     * Sets the table instance for the source side of the association. If no arguments
-     * are passed, the current configured table instance is returned
+     * Gets/Sets the table instance for the source side of the association. If no arguments
+     * are passed, the current configured table instance is returned.
      *
      * @param \Cake\ORM\Table|null $table the instance to be assigned as source side
      * @return \Cake\ORM\Table
      */
     public function source(Table $table = null)
     {
-        if ($table === null) {
+        if (func_num_args() === 0) {
             return $this->_sourceTable;
         }
         return $this->_sourceTable = $table;
     }
 
     /**
-     * Sets the table instance for the target side of the association. If no arguments
+     * Gets/Sets the table instance for the target side of the association. If no arguments
      * are passed, the current configured table instance is returned
      *
      * @param \Cake\ORM\Table|null $table the instance to be assigned as target side
@@ -284,11 +284,11 @@ abstract class Association
      */
     public function target(Table $table = null)
     {
-        if ($table === null && $this->_targetTable) {
+        if (func_num_args() === 0 && $this->_targetTable) {
             return $this->_targetTable;
         }
 
-        if ($table !== null) {
+        if (func_num_args() === 1) {
             return $this->_targetTable = $table;
         }
 
@@ -311,7 +311,7 @@ abstract class Association
     }
 
     /**
-     * Sets a list of conditions to be always included when fetching records from
+     * Gets/Sets a list of conditions to be always included when fetching records from
      * the target association. If no parameters are passed the current list is returned
      *
      * @param array|null $conditions list of conditions to be used
@@ -320,24 +320,24 @@ abstract class Association
      */
     public function conditions($conditions = null)
     {
-        if ($conditions !== null) {
+        if (func_num_args() === 1) {
             $this->_conditions = $conditions;
         }
         return $this->_conditions;
     }
 
     /**
-     * Sets the name of the field representing the binding field with the target table.
+     * Gets/Sets the name of the field representing the binding field with the target table.
      * When not manually specified the primary key of the owning side table is used.
      *
-     * If no parameters are passed the current field is returned
+     * If no parameters are passed the current field is returned.
      *
      * @param string|null $key the table field to be used to link both tables together
      * @return string|array
      */
     public function bindingKey($key = null)
     {
-        if ($key !== null) {
+        if (func_num_args() === 1) {
             $this->_bindingKey = $key;
         }
 
@@ -351,7 +351,7 @@ abstract class Association
     }
 
     /**
-     * Sets the name of the field representing the foreign key to the target table.
+     * Gets/Sets the name of the field representing the foreign key to the target table.
      * If no parameters are passed the current field is returned
      *
      * @param string|null $key the key to be used to link both tables together
@@ -359,14 +359,14 @@ abstract class Association
      */
     public function foreignKey($key = null)
     {
-        if ($key !== null) {
+        if (func_num_args() === 1) {
             $this->_foreignKey = $key;
         }
         return $this->_foreignKey;
     }
 
     /**
-     * Sets whether the records on the target table are dependent on the source table.
+     * Gets/Sets whether the records on the target table are dependent on the source table.
      *
      * This is primarily used to indicate that records should be removed if the owning record in
      * the source table is deleted.
@@ -378,7 +378,7 @@ abstract class Association
      */
     public function dependent($dependent = null)
     {
-        if ($dependent !== null) {
+        if (func_num_args() === 1) {
             $this->_dependent = $dependent;
         }
         return $this->_dependent;
@@ -397,7 +397,7 @@ abstract class Association
     }
 
     /**
-     * Sets the type of join to be used when adding the association to a query.
+     * Gets/Sets the type of join to be used when adding the association to a query.
      * If no arguments are passed, the currently configured type is returned.
      *
      * @param string $type the join type to be used (e.g. INNER)
@@ -405,14 +405,14 @@ abstract class Association
      */
     public function joinType($type = null)
     {
-        if ($type === null) {
+        if (func_num_args() === 0) {
             return $this->_joinType;
         }
         return $this->_joinType = $type;
     }
 
     /**
-     * Sets the property name that should be filled with data from the target table
+     * Gets/Sets the property name that should be filled with data from the target table
      * in the source table record.
      * If no arguments are passed, the currently configured type is returned.
      *
@@ -421,10 +421,10 @@ abstract class Association
      */
     public function property($name = null)
     {
-        if ($name !== null) {
+        if (func_num_args() === 1) {
             $this->_propertyName = $name;
         }
-        if ($name === null && !$this->_propertyName) {
+        if (func_num_args() === 0 && !$this->_propertyName) {
             list(, $name) = pluginSplit($this->_name);
             $this->_propertyName = Inflector::underscore($name);
         }
@@ -432,7 +432,7 @@ abstract class Association
     }
 
     /**
-     * Sets the strategy name to be used to fetch associated records. Keep in mind
+     * Gets/Sets the strategy name to be used to fetch associated records. Keep in mind
      * that some association types might not implement but a default strategy,
      * rendering any changes to this setting void.
      * If no arguments are passed, the currently configured strategy is returned.
@@ -443,7 +443,7 @@ abstract class Association
      */
     public function strategy($name = null)
     {
-        if ($name !== null) {
+        if (func_num_args() === 1) {
             if (!in_array($name, $this->_validStrategies)) {
                 throw new InvalidArgumentException(
                     sprintf('Invalid strategy "%s" was provided', $name)
@@ -455,7 +455,7 @@ abstract class Association
     }
 
     /**
-     * Sets the default finder to use for fetching rows from the target table.
+     * Gets/Sets the default finder to use for fetching rows from the target table.
      * If no parameters are passed, it will return the currently configured
      * finder name.
      *
@@ -464,7 +464,7 @@ abstract class Association
      */
     public function finder($finder = null)
     {
-        if ($finder !== null) {
+        if (func_num_args() === 1) {
             $this->_finder = $finder;
         }
         return $this->_finder;

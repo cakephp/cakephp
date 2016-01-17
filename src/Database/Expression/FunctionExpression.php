@@ -66,6 +66,8 @@ class FunctionExpression extends QueryExpression
     }
 
     /**
+     * Gets/Sets for current name.
+     *
      * Sets the name of the SQL function to be invoke in this expression,
      * if no value is passed it will return current name
      *
@@ -74,9 +76,10 @@ class FunctionExpression extends QueryExpression
      */
     public function name($name = null)
     {
-        if ($name === null) {
+        if (func_num_args() === 0) {
             return $this->_name;
         }
+
         $this->_name = $name;
         return $this;
     }

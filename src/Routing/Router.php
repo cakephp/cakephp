@@ -158,14 +158,14 @@ class Router
     protected static $_defaultExtensions = [];
 
     /**
-     * Get or set default route class.
+     * Gets/Sets default route class.
      *
      * @param string|null $routeClass Class name.
      * @return string|null
      */
     public static function defaultRouteClass($routeClass = null)
     {
-        if ($routeClass === null) {
+        if (func_num_args() === 0) {
             return static::$_defaultRouteClass;
         }
         static::$_defaultRouteClass = $routeClass;
@@ -643,7 +643,7 @@ class Router
     }
 
     /**
-     * Sets the full base URL that will be used as a prefix for generating
+     * Gets/Sets the full base URL that will be used as a prefix for generating
      * fully qualified URLs for this application. If not parameters are passed,
      * the currently configured value is returned.
      *
@@ -659,7 +659,7 @@ class Router
      */
     public static function fullBaseUrl($base = null)
     {
-        if ($base !== null) {
+        if (func_num_args() === 1) {
             static::$_fullBaseUrl = $base;
             Configure::write('App.fullBaseUrl', $base);
         }
@@ -751,7 +751,7 @@ class Router
     }
 
     /**
-     * Get or set valid extensions for all routes connected later.
+     * Gets/Sets valid extensions for all routes connected later.
      *
      * Instructs the router to parse out file extensions
      * from the URL. For example, http://example.com/posts.rss would yield a file
@@ -773,7 +773,7 @@ class Router
     public static function extensions($extensions = null, $merge = true)
     {
         $collection = static::$_collection;
-        if ($extensions === null) {
+        if (func_num_args() === 0) {
             if (!static::$initialized) {
                 static::_loadRoutes();
             }

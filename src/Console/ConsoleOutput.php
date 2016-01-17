@@ -283,7 +283,7 @@ class ConsoleOutput
      */
     public function styles($style = null, $definition = null)
     {
-        if ($style === null && $definition === null) {
+        if (func_num_args() === 0) {
             return static::$_styles;
         }
         if (is_string($style) && $definition === null) {
@@ -305,7 +305,7 @@ class ConsoleOutput
      */
     public function outputAs($type = null)
     {
-        if ($type === null) {
+        if (func_num_args() === 0) {
             return $this->_outputAs;
         }
         $this->_outputAs = $type;

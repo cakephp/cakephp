@@ -86,7 +86,7 @@ class Exception extends RuntimeException
      */
     public function responseHeader($header = null, $value = null)
     {
-        if ($header === null) {
+        if (func_num_args() === 0) {
             return $this->_responseHeaders;
         }
         if (is_array($header)) {

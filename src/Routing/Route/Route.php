@@ -113,14 +113,14 @@ class Route
     }
 
     /**
-     * Get/Set the supported extensions for this route.
+     * Gets/Sets the supported extensions for this route.
      *
      * @param null|string|array $extensions The extensions to set. Use null to get.
      * @return array|null The extensions or null.
      */
     public function extensions($extensions = null)
     {
-        if ($extensions === null) {
+        if (func_num_args() === 0) {
             return $this->_extensions;
         }
         $this->_extensions = (array)$extensions;
