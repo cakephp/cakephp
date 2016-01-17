@@ -1201,7 +1201,7 @@ class Email implements JsonSerializable, Serializable
      *   an array of multiple transports to set.
      * @param array|AbstractTransport|null $config Either an array of configuration
      *   data, or a transport instance.
-     * @return mixed Either null when setting or an array of data when reading.
+     * @return array|null Either null when setting or an array of data when reading.
      * @throws \BadMethodCallException When modifying an existing configuration.
      */
     public static function configTransport($key, $config = null)
@@ -1213,7 +1213,7 @@ class Email implements JsonSerializable, Serializable
             foreach ($key as $name => $settings) {
                 static::configTransport($name, $settings);
             }
-            return;
+            return null;
         }
         if (isset(static::$_transportConfig[$key])) {
             throw new BadMethodCallException(sprintf('Cannot modify an existing config "%s"', $key));

@@ -115,6 +115,91 @@ class Time extends MutableDateTime implements JsonSerializable
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Returns a nicely formatted date string for this object.
+     *
+     * The format to be used is stored in the static property `Time::niceFormat`.
+     *
+     * @param string|\DateTimeZone|null $timezone Timezone string or DateTimeZone object
+     * in which the date will be displayed. The timezone stored for this object will not
+     * be changed.
+     * @param string|null $locale The locale name in which the date should be displayed (e.g. pt-BR)
+     * @return string Formatted date string
+     */
+    public function nice($timezone = null, $locale = null)
+    {
+        return $this->i18nFormat(static::$niceFormat, $timezone, $locale);
+    }
+
+    /**
+     * Returns true if this object represents a date within the current week
+     *
+     * @return bool
+     */
+    public function isThisWeek()
+    {
+        return static::now($this->getTimezone())->format('W o') == $this->format('W o');
+    }
+
+    /**
+     * Returns true if this object represents a date within the current month
+     *
+     * @return bool
+     */
+    public function isThisMonth()
+    {
+        return static::now($this->getTimezone())->format('m Y') == $this->format('m Y');
+    }
+
+    /**
+     * Returns true if this object represents a date within the current year
+     *
+     * @return bool
+     */
+    public function isThisYear()
+    {
+        return static::now($this->getTimezone())->format('Y') == $this->format('Y');
+    }
+
+    /**
+     * Returns the quarter
+     *
+     * @param bool $range Range.
+     * @return int|array 1, 2, 3, or 4 quarter of year, or array if $range true
+     */
+    public function toQuarter($range = false)
+    {
+        $quarter = ceil($this->format('m') / 3);
+        if ($range === false) {
+            return $quarter;
+        }
+
+        $year = $this->format('Y');
+        switch ($quarter) {
+            case 1:
+                return [$year . '-01-01', $year . '-03-31'];
+            case 2:
+                return [$year . '-04-01', $year . '-06-30'];
+            case 3:
+                return [$year . '-07-01', $year . '-09-30'];
+            case 4:
+                return [$year . '-10-01', $year . '-12-31'];
+        }
+    }
+
+    /**
+     * Returns a UNIX timestamp.
+     *
+     * @return string UNIX timestamp
+     */
+    public function toUnixString()
+    {
+        return $this->format('U');
+    }
+
+    /**
+>>>>>>> master
      * Returns either a relative or a formatted absolute date depending
      * on the difference between the current time and this object.
      *
@@ -131,8 +216,8 @@ class Time extends MutableDateTime implements JsonSerializable
      *    - minute => The format if minutes > 0 (default "minute")
      *    - second => The format if seconds > 0 (default "second")
      * - `end` => The end of relative time telling
-     * - `relativeString` => The printf compatible string when outputting relative time
-     * - `absoluteString` => The printf compatible string when outputting absolute time
+     * - `relativeString` => The `printf` compatible string when outputting relative time
+     * - `absoluteString` => The `printf` compatible string when outputting absolute time
      * - `timezone` => The user timezone the timestamp should be formatted in.
      *
      * Relative dates look something like this:

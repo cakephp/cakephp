@@ -2485,6 +2485,35 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test update with callable in set
+     *
+     * @return void
+     */
+    public function testUpdateSetCallable()
+    {
+        $query = new Query($this->connection);
+        $date = new \DateTime;
+        $query->update('comments')
+            ->set(function ($exp) use ($date) {
+                return $exp
+                    ->eq('comment', 'mark')
+                    ->eq('created', $date, 'date');
+            })
+            ->where(['id' => 1]);
+        $result = $query->sql();
+
+        $this->assertQuotedQuery(
+            'UPDATE <comments> SET <comment> = :c0 , <created> = :c1',
+            $result,
+            !$this->autoQuote
+        );
+
+        $this->assertQuotedQuery(' WHERE <id> = :c2$', $result, !$this->autoQuote);
+        $result = $query->execute();
+        $this->assertCount(1, $result);
+    }
+
+    /**
      * You cannot call values() before insert() it causes all sorts of pain.
      *
      * @expectedException \Cake\Database\Exception

@@ -610,7 +610,7 @@ class Connection implements ConnectionInterface
      *
      * @param mixed $value The value to quote.
      * @param string $type Type to be used for determining kind of quoting to perform
-     * @return mixed quoted value
+     * @return string Quoted value
      */
     public function quote($value, $type = null)
     {

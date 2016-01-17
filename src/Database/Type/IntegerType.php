@@ -78,7 +78,7 @@ class IntegerType extends Type
      * Marshalls request data into PHP floats.
      *
      * @param mixed $value The value to convert.
-     * @return mixed Converted value.
+     * @return int|null Converted value.
      */
     public function marshal($value)
     {

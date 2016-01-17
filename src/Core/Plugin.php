@@ -185,11 +185,13 @@ class Plugin
         if (Configure::check('plugins')) {
             return;
         }
-
         $vendorFile = dirname(dirname(dirname(dirname(__DIR__)))) . DS . 'cakephp-plugins.php';
         if (!file_exists($vendorFile)) {
-            Configure::write(['plugins' => []]);
-            return;
+            $vendorFile = dirname(dirname(__DIR__)) . DS . 'cakephp-plugins.php';
+            if (!file_exists($vendorFile)) {
+                Configure::write(['plugins' => []]);
+                return;
+            }
         }
 
         $config = require $vendorFile;
@@ -345,7 +347,7 @@ class Plugin
      * If plugin is null, it will return a list of all loaded plugins
      *
      * @param string $plugin Plugin name.
-     * @return mixed boolean true if $plugin is already loaded.
+     * @return bool|array Boolean true if $plugin is already loaded.
      *   If $plugin is null, returns a list of plugins that have been loaded
      */
     public static function loaded($plugin = null)

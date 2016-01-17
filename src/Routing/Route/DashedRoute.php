@@ -56,7 +56,7 @@ class DashedRoute extends Route
      * camelBacked form.
      *
      * @param string $url The URL to parse
-     * @return bool|array False on failure, or an array of request parameters
+     * @return array|false An array of request parameters, or false on failure.
      */
     public function parse($url)
     {
