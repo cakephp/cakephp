@@ -141,7 +141,7 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Get/Sets the driver instance. If a string is passed it will be treated
+     * Gets/Sets the driver instance. If a string is passed it will be treated
      * as a class name and will be instantiated.
      *
      * If no params are passed it will return the current driver instance.

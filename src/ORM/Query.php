@@ -181,7 +181,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * Get/Sets the instance of the eager loader class to use for loading associations
+     * Gets/Sets the instance of the eager loader class to use for loading associations
      * and storing containments. If called with no arguments, it will return the
      * currently configured instance.
      *
