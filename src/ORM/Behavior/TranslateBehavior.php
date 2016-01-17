@@ -234,10 +234,10 @@ class TranslateBehavior extends Behavior
             $name = $alias . '_' . $field . '_translation';
 
             $contain[$name]['queryBuilder'] = $conditions(
-            $field,
-            $locale,
-            $query,
-            $select
+                $field,
+                $locale,
+                $query,
+                $select
             );
 
             if ($changeFilter) {
