@@ -702,7 +702,7 @@ class RequestHandlerComponent extends Component
     }
 
     /**
-     * Getter/setter for viewClassMap
+     * Gets/Sets the viewClassMap.
      *
      * @param array|string|null $type The type string or array with format `['type' => 'viewClass']` to map one or more
      * @param array|null $viewClass The viewClass to be used for the type without `View` appended

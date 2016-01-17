@@ -659,7 +659,7 @@ class Table
     }
 
     /**
-     * Getter/setter for the options of a table.
+     * Gets/Sets the options of a table.
      *
      * Table options allow you to set platform specific table level options.
      * For example the engine type in MySQL.
@@ -677,7 +677,7 @@ class Table
     }
 
     /**
-     * Geter/Seter for whether the table is temporary in the database.
+     * Gets/Sets for whether the table is temporary in the database.
      *
      * @param bool|null $set whether or not the table is to be temporary
      * @return $this|bool Either the table instance, the current temporary setting

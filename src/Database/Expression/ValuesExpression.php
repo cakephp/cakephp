@@ -127,7 +127,7 @@ class ValuesExpression implements ExpressionInterface
     }
 
     /**
-     * Getter/setter for stored query.
+     * Gets/Sets the stored query.
      *
      * Sets the query object to be used as the values expression to be evaluated
      * to insert records in the table. If no params are passed, then it returns
