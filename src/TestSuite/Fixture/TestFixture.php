@@ -219,7 +219,7 @@ class TestFixture implements FixtureInterface
     }
 
     /**
-     * Get/Set the Cake\Database\Schema\Table instance used by this fixture.
+     * Gets/Sets the Cake\Database\Schema\Table instance used by this fixture.
      *
      * @param \Cake\Database\Schema\Table $schema The table to set.
      * @return \Cake\Database\Schema\Table|null

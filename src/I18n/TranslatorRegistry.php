@@ -146,7 +146,7 @@ class TranslatorRegistry extends TranslatorLocator
     }
 
     /**
-     * Get/Set the default Formatter.
+     * Gets/Sets the default Formatter.
      *
      * Sets the name of the default messages formatter to use for future
      * translator instances.

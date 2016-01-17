@@ -1707,7 +1707,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
-     * Get/set buffered results flag.
+     * Gets/Sets buffered results flag.
      *
      * When enabled the results returned by this Query will be
      * buffered. This enables you to iterate a result set multiple times, or

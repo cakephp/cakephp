@@ -581,7 +581,7 @@ class Debugger
     }
 
     /**
-     * Get/Set the output format for Debugger error rendering.
+     * Gets/Sets the output format for Debugger error rendering.
      *
      * @param string|null $format The format you want errors to be output as.
      *   Leave null to get the current format.

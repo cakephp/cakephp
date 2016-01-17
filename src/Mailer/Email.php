@@ -383,7 +383,7 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Get/set the sender.
+     * Gets/Sets the sender.
      *
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
@@ -400,7 +400,7 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Get/set reply-to
+     * Gets/Sets reply-to
      *
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
@@ -417,7 +417,7 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Get/Set read-receipt (Disposition-Notification-To header)
+     * Gets/Sets read-receipt (Disposition-Notification-To header)
      *
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
@@ -434,7 +434,7 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Get/set return-path
+     * Gets/Sets return-path
      *
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
@@ -451,7 +451,7 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Get/Set to
+     * Gets/Sets to
      *
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
@@ -480,7 +480,7 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Get/set Cc
+     * Gets/Sets Cc
      *
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)

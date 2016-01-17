@@ -58,7 +58,7 @@ class Form
     protected $_validator;
 
     /**
-     * Get/Set the schema for this form.
+     * Gets/Sets the schema for this form.
      *
      * This method will call `_buildSchema()` when the schema
      * is first built. This hook method lets you configure the
@@ -94,7 +94,7 @@ class Form
     }
 
     /**
-     * Get/Set the validator for this form.
+     * Gets/Sets the validator for this form.
      *
      * This method will call `_buildValidator()` when the validator
      * is first built. This hook method lets you configure the

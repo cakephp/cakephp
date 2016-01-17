@@ -622,7 +622,7 @@ trait EntityTrait
     }
 
     /**
-     * Get/Set instance new status.
+     * Gets/Sets instance new status.
      *
      * Returns whether or not this entity has already been persisted.
      * This method can return null in the case there is no prior information on

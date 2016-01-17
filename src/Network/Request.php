@@ -489,7 +489,7 @@ class Request implements ArrayAccess
     }
 
     /**
-     * Get/Set the instance of the Session object for this request.
+     * Gets/Sets the instance of the Session object for this request.
      *
      * If a session object is passed as first argument it will be set as
      * the session to use for this request

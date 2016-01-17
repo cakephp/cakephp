@@ -164,7 +164,7 @@ class Request extends Message
      * $request->cookie(['test' => 'value', 'split' => 'banana']);
      * ```
      *
-     * @param string $name The name of the cookie to get/set
+     * @param string $name The name of the cookie to Gets/Sets
      * @param string|null $value Either the value or null when getting values.
      * @return mixed Either $this or the cookie value.
      */
@@ -183,7 +183,7 @@ class Request extends Message
     }
 
     /**
-     * Get/Set HTTP version.
+     * Gets/Sets HTTP version.
      *
      * @param string|null $version The HTTP version.
      *

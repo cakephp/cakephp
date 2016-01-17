@@ -74,7 +74,7 @@ class Exception extends RuntimeException
     }
 
     /**
-     * Get/set the response header to be used
+     * Gets/Sets the response header to be used
      *
      * See also Cake\Network\Response::header()
      *
