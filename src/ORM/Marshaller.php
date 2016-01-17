@@ -124,6 +124,11 @@ class Marshaller
             }
         }
 
+		$marshallOptions = [];
+        if (isset($options['forceTargetSave'])) {
+            $marshallOptions['forceTargetSave'] = $options['forceTargetSave'];
+        }
+
         $errors = $this->_validate($data, $options, true);
         $properties = [];
         foreach ($data as $key => $value) {
@@ -133,7 +138,7 @@ class Marshaller
             $columnType = $schema->columnType($key);
             if (isset($propertyMap[$key])) {
                 $assoc = $propertyMap[$key]['association'];
-                $value = $this->_marshalAssociation($assoc, $value, $propertyMap[$key]);
+                $value = $this->_marshalAssociation($assoc, $value, $propertyMap[$key] + $marshallOptions);
             } elseif ($value === '' && in_array($key, $primaryKey, true)) {
                 // Skip marshalling '' for pk fields.
                 continue;
@@ -289,6 +294,7 @@ class Marshaller
     protected function _belongsToMany(Association $assoc, array $data, $options = [])
     {
         $associated = isset($options['associated']) ? $options['associated'] : [];
+		$forceTargetSave = isset($options['forceTargetSave']) ? $options['forceTargetSave'] : false;
 
         $data = array_values($data);
 
@@ -306,6 +312,9 @@ class Marshaller
                 if (count($keys) === $primaryCount) {
                     foreach ($keys as $key => $value) {
                         $conditions[][$target->aliasfield($key)] = $value;
+                    }
+					if ($forceTargetSave && !$target->exists($conditions)) {
+                        $records[$i] = $this->one($row, $options);
                     }
                 }
             } else {
