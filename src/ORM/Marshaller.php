@@ -294,7 +294,7 @@ class Marshaller
     protected function _belongsToMany(Association $assoc, array $data, $options = [])
     {
         $associated = isset($options['associated']) ? $options['associated'] : [];
-		$forceTargetSave = isset($options['forceTargetSave']) ? $options['forceTargetSave'] : false;
+        $forceTargetSave = isset($options['forceTargetSave']) ? $options['forceTargetSave'] : false;
 
         $data = array_values($data);
 
