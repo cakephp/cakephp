@@ -23,7 +23,6 @@ class NonExtending implements EntityInterface
             'guard' => false,
             'source' => null
         ];
-        $this->_className = get_class($this);
 
         if (!empty($properties)) {
             $this->set($properties, [

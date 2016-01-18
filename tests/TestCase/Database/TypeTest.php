@@ -138,6 +138,12 @@ class TypeTest extends TestCase
         $this->assertInstanceOf($fooType, $type);
         $this->assertEquals('foo', $type->getName());
         $this->assertEquals('text', $type->getBaseType());
+
+        $fooType = new FooType();
+        Type::map('foo2', $fooType);
+        $map = Type::map();
+        $this->assertSame($fooType, $map['foo2']);
+        $this->assertSame($fooType, Type::map('foo2'));
     }
 
     /**

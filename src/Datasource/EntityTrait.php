@@ -58,13 +58,6 @@ trait EntityTrait
     protected $_virtual = [];
 
     /**
-     * Holds the name of the class for the instance object
-     *
-     * @var string
-     */
-    protected $_className;
-
-    /**
      * Holds a list of the properties that were modified or added after this object
      * was originally created.
      *
@@ -73,7 +66,7 @@ trait EntityTrait
     protected $_dirty = [];
 
     /**
-     * Holds a cached list of methods that exist in the instanced class
+     * Holds a cached list of getters/setters per class
      *
      * @var array
      */
@@ -258,8 +251,8 @@ trait EntityTrait
                 continue;
             }
 
-            $setter = '_set' . Inflector::camelize($p);
-            if ($this->_methodExists($setter)) {
+            $setter = $this->_accessor($p, 'set');
+            if ($setter) {
                 $value = $this->{$setter}($value);
             }
             $this->_properties[$p] = $value;
@@ -282,13 +275,13 @@ trait EntityTrait
         }
 
         $value = null;
-        $method = '_get' . Inflector::camelize($property);
+        $method = $this->_accessor($property, 'get');
 
         if (isset($this->_properties[$property])) {
             $value =& $this->_properties[$property];
         }
 
-        if ($this->_methodExists($method)) {
+        if ($method) {
             $result = $this->{$method}($value);
             return $result;
         }
@@ -506,17 +499,42 @@ trait EntityTrait
     }
 
     /**
-     * Determines whether a method exists in this class
+     * Fetch accessor method name
+     * Accessor methods (available or not) are cached in $_accessors
      *
-     * @param string $method the method to check for existence
-     * @return bool true if method exists
+     * @param string $property the field name to derive getter name from
+     * @param string $type the accessor type ('get' or 'set')
+     * @return string method name or empty string (no method available)
      */
-    protected function _methodExists($method)
+    protected static function _accessor($property, $type)
     {
-        if (empty(static::$_accessors[$this->_className])) {
-            static::$_accessors[$this->_className] = array_flip(get_class_methods($this));
+        $class = static::class;
+        if (isset(static::$_accessors[$class][$type][$property])) {
+            return static::$_accessors[$class][$type][$property];
         }
-        return isset(static::$_accessors[$this->_className][$method]);
+
+        if (!empty(static::$_accessors[$class])) {
+            return static::$_accessors[$class][$type][$property] = '';
+        }
+
+        if ($class === 'Cake\ORM\Entity') {
+            return '';
+        }
+
+        foreach (get_class_methods($class) as $method) {
+            $prefix = substr($method, 1, 3);
+            if ($method[0] !== '_' || ($prefix !== 'get' && $prefix !== 'set')) {
+                continue;
+            }
+            $field = Inflector::underscore(substr($method, 4));
+            static::$_accessors[$class][$prefix][$field] = $method;
+        }
+
+        if (!isset(static::$_accessors[$class][$type][$property])) {
+            static::$_accessors[$class][$type][$property] = '';
+        }
+
+        return static::$_accessors[$class][$type][$property];
     }
 
     /**
