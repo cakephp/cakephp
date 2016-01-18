@@ -360,6 +360,19 @@ trait EntityTrait
     }
 
     /**
+     * Get the list of all properties.
+     *
+     * The list of all properties is all standard properties
+     * plus virtual properties plus hidden properties.
+     *
+     * @return array A list of properties all entity properties
+     */
+    public function allProperties(){
+        $properties = array_keys($this->_properties);
+        return array_merge($properties, $this->_virtual);
+    }
+
+    /**
      * Get/Set the hidden properties on this entity.
      *
      * If the properties argument is null, the currently hidden properties
@@ -406,9 +419,7 @@ trait EntityTrait
      */
     public function visibleProperties()
     {
-        $properties = array_keys($this->_properties);
-        $properties = array_merge($properties, $this->_virtual);
-        return array_diff($properties, $this->_hidden);
+        return array_diff($this->allProperties(), $this->_hidden);
     }
 
     /**
@@ -418,12 +429,17 @@ trait EntityTrait
      * This method will recursively transform entities assigned to properties
      * into arrays as well.
      *
-     * @param bool $includeHiddenProperties Include hidden properties in array
+     * ### Options
+     *
+     * * `includeHidden` Include hidden properties in array
+     *
+     * @param array $options List of options
      * @return array
      */
-    public function toArray($includeHiddenProperties = false)
+    public function toArray($options = [])
     {
-        $properties = $includeHiddenProperties ? array_merge($this->visibleProperties(), $this->hiddenProperties()): $this->visibleProperties();
+        $properties = !empty($options['includeHidden']) ? $this->allProperties() : $this->visibleProperties();
+
         $result = [];
         foreach ($properties as $property) {
             $value = $this->get($property);
@@ -431,13 +447,13 @@ trait EntityTrait
                 $result[$property] = [];
                 foreach ($value as $k => $entity) {
                     if ($entity instanceof EntityInterface) {
-                        $result[$property][$k] = $entity->toArray($includeHiddenProperties);
+                        $result[$property][$k] = $entity->toArray($options);
                     } else {
                         $result[$property][$k] = $entity;
                     }
                 }
             } elseif ($value instanceof EntityInterface) {
-                $result[$property] = $value->toArray($includeHiddenProperties);
+                $result[$property] = $value->toArray($options);
             } else {
                 $result[$property] = $value;
             }

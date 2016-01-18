@@ -95,10 +95,14 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Returns an array with all the properties that have been set
      * to this entity
      *
-     * @param bool $includeHiddenProperties Include hidden properties in array
+     * ### Options
+     *
+     * * `includeHidden` Include hidden properties in array
+     *
+     * @param array $options List of options
      * @return array
      */
-    public function toArray($includeHiddenProperties = false);
+    public function toArray($options = []);
 
     /**
      * Returns an array with the requested properties
