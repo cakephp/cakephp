@@ -919,7 +919,8 @@ class EntityTest extends TestCase
     /**
      * Test that allProperties includes standard properties, virtual properties and hidden properties
      */
-    public function testAllProperties(){
+    public function testAllProperties()
+    {
         $entity = $this->getMock('\Cake\ORM\Entity', ['_getName']);
         $entity->accessible('*', true);
 

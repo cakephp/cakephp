@@ -365,9 +365,10 @@ trait EntityTrait
      * The list of all properties is all standard properties
      * plus virtual properties plus hidden properties.
      *
-     * @return array A list of properties all entity properties
+     * @return array A list of all entity properties
      */
-    public function allProperties(){
+    public function allProperties()
+    {
         $properties = array_keys($this->_properties);
         return array_merge($properties, $this->_virtual);
     }
