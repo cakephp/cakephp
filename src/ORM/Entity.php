@@ -54,7 +54,6 @@ class Entity implements EntityInterface
             'guard' => false,
             'source' => null
         ];
-        $this->_className = get_class($this);
 
         if (!empty($options['source'])) {
             $this->source($options['source']);

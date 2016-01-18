@@ -58,13 +58,6 @@ trait EntityTrait
     protected $_virtual = [];
 
     /**
-     * Holds the name of the class for the instance object
-     *
-     * @var string
-     */
-    protected $_className;
-
-    /**
      * Holds a list of the properties that were modified or added after this object
      * was originally created.
      *
@@ -506,27 +499,35 @@ trait EntityTrait
      * @param string $type the accessor type ('get' or 'set')
      * @return string method name or empty string (no method available)
      */
-    protected function _accessor($property, $type)
+    protected static function _accessor($property, $type)
     {
-        if (!isset(static::$_accessors[$this->_className][$type][$property])) {
-            /* first time for this class: build all fields */
-            if (empty(static::$_accessors[$this->_className])) {
-                foreach (get_class_methods($this) as $m) {
-                    $t = substr($m, 1, 3);
-                    if ($m[0] !== '_' || !in_array($t, ['get', 'set'])) {
-                        continue;
-                    }
-                    $p = Inflector::underscore(substr($m, 4));
-                    static::$_accessors[$this->_className][$t][$p] = $m;
-                }
-            }
-            /* if still not set, remember that the method indeed is not present */
-            if (!isset(static::$_accessors[$this->_className][$type][$property])) {
-                static::$_accessors[$this->_className][$type][$property] = '';
-            }
-            // now static::$_accessors[$this->_className] is always set
+        $class = static::class;
+        if (isset(static::$_accessors[$class][$type][$property])) {
+            return static::$_accessors[$class][$type][$property];
         }
-        return static::$_accessors[$this->_className][$type][$property];
+
+        if (!empty(static::$_accessors[$class])) {
+            return static::$_accessors[$class][$type][$property] = '';
+        }
+
+        if ($class === 'Cake\ORM\Entity') {
+            return '';
+        }
+
+        foreach (get_class_methods($class) as $method) {
+            $prefix = substr($method, 1, 3);
+            if ($method[0] !== '_' || ($prefix !== 'get' && $prefix !== 'set')) {
+                continue;
+            }
+            $field = Inflector::underscore(substr($method, 4));
+            static::$_accessors[$class][$prefix][$field] = $method;
+        }
+
+        if (!isset(static::$_accessors[$class][$type][$property])) {
+            static::$_accessors[$class][$type][$property] = '';
+        }
+
+        return static::$_accessors[$class][$type][$property];
     }
 
     /**
