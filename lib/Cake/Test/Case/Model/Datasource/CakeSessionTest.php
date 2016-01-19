@@ -515,6 +515,22 @@ class CakeSessionTest extends CakeTestCase {
 	}
 
 /**
+ * Test te cacheLimiter settings.
+ *
+ * @return void
+ */
+	public function testCacheLimiter() {
+		Configure::write('Session.cacheLimiter', 'public');
+		TestCakeSession::start();
+		$this->assertSame('public', session_cache_limiter());
+
+		Configure::write('Session.cacheLimiter', 'private');
+		TestCakeSession::destroy();
+		TestCakeSession::start();
+		$this->assertSame('private', session_cache_limiter());
+	}
+
+/**
  * testCheckUserAgentFalse method
  *
  * @return void
