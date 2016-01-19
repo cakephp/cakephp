@@ -174,10 +174,10 @@ class CakeRequest implements ArrayAccess {
 			$this->data = stripslashes_deep($this->data);
 		}
 
-		$override = false;
+		$override = null;
 		if (env('HTTP_X_HTTP_METHOD_OVERRIDE')) {
 			$this->data['_method'] = env('HTTP_X_HTTP_METHOD_OVERRIDE');
-			$override = true;
+			$override = $this->data['_method'];
 		}
 
 		$isArray = is_array($this->data);
@@ -187,11 +187,11 @@ class CakeRequest implements ArrayAccess {
 			} else {
 				$_ENV['REQUEST_METHOD'] = $this->data['_method'];
 			}
+			$override = $this->data['_method'];
 			unset($this->data['_method']);
-			$override = true;
 		}
 
-		if ($override && !in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH', 'DELETE'])) {
+		if ($override && !in_array($override, array('POST', 'PUT', 'PATCH', 'DELETE'))) {
 			$this->data = array();
 		}
 
