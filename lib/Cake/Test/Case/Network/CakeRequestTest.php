@@ -2457,7 +2457,7 @@ XML;
 		$request = new CakeRequest('/posts/edit/1');
 		$this->assertEmpty($request->data);
 
-		$_POST= array('foo' => 'bar');
+		$_POST = array('foo' => 'bar');
 		$_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'] = 'GET';
 		$request = new CakeRequest('/posts/edit/1');
 		$this->assertEmpty($request->data);
