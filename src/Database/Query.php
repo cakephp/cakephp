@@ -814,7 +814,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * Will produce:
      *
-     * ``WHERE title = 'Hello World' AND author_id = 1``
+     * `WHERE title = 'Hello World' AND author_id = 1`
      *
      * ```
      * $query
