@@ -191,7 +191,7 @@ class CakeRequest implements ArrayAccess {
 			$override = true;
 		}
 
-		if ($override) {
+		if ($override && !in_array($_ENV['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH', 'DELETE'])) {
 			$this->data = array();
 		}
 
