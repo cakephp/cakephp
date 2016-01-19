@@ -2450,9 +2450,8 @@ XML;
  *
  * @return void
  */
-	public function testMethodOverrideEmptyData()
-	{
-		$_POST= array('_method' => 'GET', 'foo' => 'bar');
+	public function testMethodOverrideEmptyData() {
+		$_POST = array('_method' => 'GET', 'foo' => 'bar');
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
 		$request = new CakeRequest('/posts/edit/1');
 		$this->assertEmpty($request->data);
