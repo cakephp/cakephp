@@ -591,7 +591,7 @@ class CakeSession {
  * @return bool
  */
 	protected static function _hasSession() {
-		return static::started() || isset($_COOKIE[session_name()]) || (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg');
+		return static::started() || isset($_COOKIE[static::_cookieName()]) || (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg');
 	}
 
 /**
@@ -757,7 +757,7 @@ class CakeSession {
 		if (session_id() === '') {
 			return;
 		}
-		if (isset($_COOKIE[session_name()])) {
+		if (isset($_COOKIE[static::_cookieName()])) {
 			setcookie(Configure::read('Session.cookie'), '', time() - 42000, static::$path);
 		}
 		if (!headers_sent()) {
