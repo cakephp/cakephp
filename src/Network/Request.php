@@ -275,6 +275,8 @@ class Request implements ArrayAccess
     protected function _processPost($data)
     {
         $method = $this->env('REQUEST_METHOD');
+        $override = false;
+
         if (in_array($method, ['PUT', 'DELETE', 'PATCH']) &&
             strpos($this->contentType(), 'application/x-www-form-urlencoded') === 0
         ) {
@@ -283,12 +285,19 @@ class Request implements ArrayAccess
         }
         if ($this->env('HTTP_X_HTTP_METHOD_OVERRIDE')) {
             $data['_method'] = $this->env('HTTP_X_HTTP_METHOD_OVERRIDE');
+            $override = true;
         }
         $this->_environment['ORIGINAL_REQUEST_METHOD'] = $method;
         if (isset($data['_method'])) {
             $this->_environment['REQUEST_METHOD'] = $data['_method'];
             unset($data['_method']);
+            $override = true;
         }
+
+        if ($override && !in_array($this->_environment['REQUEST_METHOD'], ['PUT', 'POST', 'DELETE', 'PATCH'])) {
+            $data = [];
+        }
+
         return $data;
     }
 

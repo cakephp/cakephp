@@ -37,7 +37,7 @@ interface ConnectionInterface
     /**
      * Executes a callable function inside a transaction, if any exception occurs
      * while executing the passed callable, the transaction will be rolled back
-     * If the result of the callable function is ``false``, the transaction will
+     * If the result of the callable function is `false`, the transaction will
      * also be rolled back. Otherwise the transaction is committed after executing
      * the callback.
      *
