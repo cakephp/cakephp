@@ -92,8 +92,10 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     public function visibleProperties();
 
     /**
-     * Returns an array with all the properties that have been set
-     * to this entity
+     * Returns an array with all the visible properties set in this entity.
+     *
+     * *Note* hidden properties are not visible, and will not be output
+     * by toArray().
      *
      * @return array
      */
