@@ -294,8 +294,7 @@ class Request implements ArrayAccess
             $override = true;
         }
 
-        $method = $this->_environment['REQUEST_METHOD'];
-        if ($override && !in_array($method, ['PUT', 'POST', 'DELETE', 'PATCH'])) {
+        if ($override && !in_array($this->_environment['REQUEST_METHOD'], ['PUT', 'POST', 'DELETE', 'PATCH'])) {
             $data = [];
         }
 
