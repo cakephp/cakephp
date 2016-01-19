@@ -173,9 +173,13 @@ class CakeRequest implements ArrayAccess {
 		if (ini_get('magic_quotes_gpc') === '1') {
 			$this->data = stripslashes_deep($this->data);
 		}
+
+		$override = false;
 		if (env('HTTP_X_HTTP_METHOD_OVERRIDE')) {
 			$this->data['_method'] = env('HTTP_X_HTTP_METHOD_OVERRIDE');
+			$override = true;
 		}
+
 		$isArray = is_array($this->data);
 		if ($isArray && isset($this->data['_method'])) {
 			if (!empty($_SERVER)) {
@@ -184,7 +188,13 @@ class CakeRequest implements ArrayAccess {
 				$_ENV['REQUEST_METHOD'] = $this->data['_method'];
 			}
 			unset($this->data['_method']);
+			$override = true;
 		}
+
+		if ($override) {
+			$this->data = array();
+		}
+
 		if ($isArray && isset($this->data['data'])) {
 			$data = $this->data['data'];
 			if (count($this->data) <= 1) {
