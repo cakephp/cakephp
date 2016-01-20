@@ -43,6 +43,29 @@ class RedirectRouteTest extends TestCase
     }
 
     /**
+     * test match
+     *
+     * @return void
+     */
+    public function testMatch()
+    {
+        $route = new RedirectRoute('/home', ['controller' => 'posts']);
+        $this->assertFalse($route->match(['controller' => 'posts', 'action' => 'index']));
+    }
+
+    /**
+     * test parse failure
+     *
+     * @return void
+     */
+    public function testParseMiss()
+    {
+        $route = new RedirectRoute('/home', ['controller' => 'posts']);
+        $this->assertFalse($route->parse('/nope'));
+        $this->assertFalse($route->parse('/homes'));
+    }
+
+    /**
      * test the parsing of routes.
      *
      * @expectedException Cake\Routing\Exception\RedirectException
@@ -53,6 +76,20 @@ class RedirectRouteTest extends TestCase
     public function testParseSimple()
     {
         $route = new RedirectRoute('/home', ['controller' => 'posts']);
+        $route->parse('/home');
+    }
+
+    /**
+     * test the parsing of routes.
+     *
+     * @expectedException Cake\Routing\Exception\RedirectException
+     * @expectedExceptionMessage http://localhost/posts
+     * @expectedExceptionCode 301
+     * @return void
+     */
+    public function testParseRedirectOption()
+    {
+        $route = new RedirectRoute('/home', ['redirect' => ['controller' => 'posts']]);
         $route->parse('/home');
     }
 
