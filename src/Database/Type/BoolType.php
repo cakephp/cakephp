@@ -31,7 +31,7 @@ class BoolType extends Type
      * Convert bool data into the database format.
      *
      * @param mixed $value The value to convert.
-     * @param Driver $driver The driver instance to convert with.
+     * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return bool|null
      */
     public function toDatabase($value, Driver $driver)
@@ -51,7 +51,7 @@ class BoolType extends Type
      * Convert bool values to PHP booleans
      *
      * @param mixed $value The value to convert.
-     * @param Driver $driver The driver instance to convert with.
+     * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return bool|null
      */
     public function toPHP($value, Driver $driver)
@@ -69,7 +69,7 @@ class BoolType extends Type
      * Get the correct PDO binding type for bool data.
      *
      * @param mixed $value The value being bound.
-     * @param Driver $driver The driver.
+     * @param \Cake\Database\Driver $driver The driver.
      * @return int
      */
     public function toStatement($value, Driver $driver)

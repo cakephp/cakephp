@@ -99,7 +99,7 @@ class Dispatcher
      * is true. If a response object is returned by controller action that is returned
      * else controller's $response property is returned.
      *
-     * @param Controller $controller Controller to invoke
+     * @param \Cake\Controller\Controller $controller Controller to invoke
      * @return \Cake\Network\Response The resulting response object
      * @throws \LogicException If data returned by controller action is not an
      *   instance of Response

@@ -384,8 +384,8 @@ class HasMany extends Association
      * Skips deleting records present in $remainingEntities
      *
      * @param array $properties array of foreignKey properties
-     * @param EntityInterface $entity the entity which should have its associated entities unassigned
-     * @param Table $target The associated table
+     * @param \Cake\Datasource\EntityInterface $entity the entity which should have its associated entities unassigned
+     * @param \Cake\ORM\Table $target The associated table
      * @param array $remainingEntities Entities that should not be deleted
      * @param array $options list of options accepted by `Table::delete()`
      * @return bool success
@@ -425,7 +425,7 @@ class HasMany extends Association
      * The action which is taken depends on the dependency between source and targets and also on foreign key nullability
      *
      * @param array $foreignKey array of foreign key properties
-     * @param Table $target The associated table
+     * @param \Cake\ORM\Table $target The associated table
      * @param array $conditions The conditions that specifies what are the objects to be unlinked
      * @param array $options list of options accepted by `Table::delete()`
      * @return bool success
@@ -457,7 +457,7 @@ class HasMany extends Association
     /**
      * Checks the nullable flag of the foreign key
      *
-     * @param Table $table the table containing the foreign key
+     * @param \Cake\ORM\Table $table the table containing the foreign key
      * @param array $properties the list of fields that compose the foreign key
      * @return bool
      */

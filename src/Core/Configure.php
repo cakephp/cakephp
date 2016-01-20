@@ -220,7 +220,7 @@ class Configure
      *
      * @param string $name The name of the engine being configured. This alias is used later to
      *   read values from a specific engine.
-     * @param ConfigEngineInterface $engine The engine to append.
+     * @param \Cake\Core\Configure\ConfigEngineInterface $engine The engine to append.
      * @return void
      */
     public static function config($name, ConfigEngineInterface $engine)

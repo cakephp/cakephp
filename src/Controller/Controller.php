@@ -717,7 +717,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Called before the controller action. You can use this method to configure and customize components
      * or perform logic that needs to happen before each controller action.
      *
-     * @param Event $event An Event instance
+     * @param \Cake\Event\Event $event An Event instance
      * @return \Cake\Network\Response|null
      * @link http://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
@@ -730,7 +730,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Called after the controller action is run, but before the view is rendered. You can use this method
      * to perform logic or set view variables that are required on every request.
      *
-     * @param Event $event An Event instance
+     * @param \Cake\Event\Event $event An Event instance
      * @return \Cake\Network\Response|null
      * @link http://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
@@ -748,7 +748,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * You can set the event result to response instance or modify the redirect location
      * using controller's response instance.
      *
-     * @param Event $event An Event instance
+     * @param \Cake\Event\Event $event An Event instance
      * @param string|array $url A string or array-based URL pointing to another location within the app,
      *     or an absolute URL
      * @param \Cake\Network\Response $response The response object.
@@ -763,7 +763,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Called after the controller action is run and rendered.
      *
-     * @param Event $event An Event instance
+     * @param \Cake\Event\Event $event An Event instance
      * @return \Cake\Network\Response|null
      * @link http://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
