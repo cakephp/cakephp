@@ -15,6 +15,7 @@
 namespace Cake\Routing\Route;
 
 use Cake\Network\Response;
+use Cake\Routing\Exception\RedirectException;
 use Cake\Routing\Router;
 
 /**
@@ -91,12 +92,7 @@ class RedirectRoute extends Route
         if (isset($this->options['status']) && ($this->options['status'] >= 300 && $this->options['status'] < 400)) {
             $status = $this->options['status'];
         }
-        $this->response->header([
-            'Location' => Router::url($redirect, true)
-        ]);
-        $this->response->statusCode($status);
-        $this->response->send();
-        $this->response->stop();
+        throw new RedirectException(Router::url($redirect, true), $status);
     }
 
     /**
