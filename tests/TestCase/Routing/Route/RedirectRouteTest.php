@@ -36,82 +36,150 @@ class RedirectRouteTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Configure::write('Routing', ['admin' => null, 'prefixes' => []]);
         Router::reload();
+
+        Router::connect('/:controller', ['action' => 'index']);
+        Router::connect('/:controller/:action/*');
     }
 
     /**
      * test the parsing of routes.
      *
+     * @expectedException Cake\Routing\Exception\RedirectException
+     * @expectedExceptionMessage http://localhost/posts
+     * @expectedExceptionCode 301
      * @return void
      */
-    public function testParsing()
+    public function testParseSimple()
     {
-        Router::connect('/:controller', ['action' => 'index']);
-        Router::connect('/:controller/:action/*');
-
         $route = new RedirectRoute('/home', ['controller' => 'posts']);
-        $route->response = $this->getMock('Cake\Network\Response', ['_sendHeader', 'stop']);
-        $result = $route->parse('/home');
-        $header = $route->response->header();
-        $this->assertEquals(Router::url('/posts', true), $header['Location']);
+        $route->parse('/home');
+    }
 
+    /**
+     * test the parsing of routes.
+     *
+     * @expectedException Cake\Routing\Exception\RedirectException
+     * @expectedExceptionMessage http://localhost/posts
+     * @expectedExceptionCode 301
+     * @return void
+     */
+    public function testParseArray()
+    {
         $route = new RedirectRoute('/home', ['controller' => 'posts', 'action' => 'index']);
-        $route->response = $this->getMock('Cake\Network\Response', ['_sendHeader', 'stop']);
-        $result = $route->parse('/home');
-        $header = $route->response->header();
-        $this->assertEquals(Router::url('/posts', true), $header['Location']);
-        $this->assertEquals(301, $route->response->statusCode());
+        $route->parse('/home');
+    }
 
+    /**
+     * test redirecting to an external url
+     *
+     * @expectedException Cake\Routing\Exception\RedirectException
+     * @expectedExceptionMessage http://google.com
+     * @expectedExceptionCode 301
+     * @return void
+     */
+    public function testParseAbsolute()
+    {
         $route = new RedirectRoute('/google', 'http://google.com');
-        $route->response = $this->getMock('Cake\Network\Response', ['_sendHeader', 'stop']);
-        $result = $route->parse('/google');
-        $header = $route->response->header();
-        $this->assertEquals('http://google.com', $header['Location']);
+        $route->parse('/google');
+    }
 
+    /**
+     * test redirecting with a status code
+     *
+     * @expectedException Cake\Routing\Exception\RedirectException
+     * @expectedExceptionMessage http://localhost/posts/view
+     * @expectedExceptionCode 302
+     * @return void
+     */
+    public function testParseStatusCode()
+    {
         $route = new RedirectRoute('/posts/*', ['controller' => 'posts', 'action' => 'view'], ['status' => 302]);
-        $route->response = $this->getMock('Cake\Network\Response', ['_sendHeader', 'stop']);
-        $result = $route->parse('/posts/2');
-        $header = $route->response->header();
-        $this->assertEquals(Router::url('/posts/view', true), $header['Location']);
-        $this->assertEquals(302, $route->response->statusCode());
+        $route->parse('/posts/2');
+    }
 
+    /**
+     * test redirecting with the persist option
+     *
+     * @expectedException Cake\Routing\Exception\RedirectException
+     * @expectedExceptionMessage http://localhost/posts/view/2
+     * @expectedExceptionCode 301
+     * @return void
+     */
+    public function testParsePersist()
+    {
         $route = new RedirectRoute('/posts/*', ['controller' => 'posts', 'action' => 'view'], ['persist' => true]);
-        $route->response = $this->getMock('Cake\Network\Response', ['_sendHeader', 'stop']);
-        $result = $route->parse('/posts/2');
-        $header = $route->response->header();
-        $this->assertEquals(Router::url('/posts/view/2', true), $header['Location']);
+        $route->parse('/posts/2');
+    }
 
+    /**
+     * test redirecting with persist and string target URLs
+     *
+     * @expectedException Cake\Routing\Exception\RedirectException
+     * @expectedExceptionMessage http://localhost/test
+     * @expectedExceptionCode 301
+     * @return void
+     */
+    public function testParsePersistStringUrl()
+    {
         $route = new RedirectRoute('/posts/*', '/test', ['persist' => true]);
-        $route->response = $this->getMock('Cake\Network\Response', ['_sendHeader', 'stop']);
-        $result = $route->parse('/posts/2');
-        $header = $route->response->header();
-        $this->assertEquals(Router::url('/test', true), $header['Location']);
+        $route->parse('/posts/2');
+    }
 
+    /**
+     * test redirecting with persist and passed args
+     *
+     * @expectedException Cake\Routing\Exception\RedirectException
+     * @expectedExceptionMessage http://localhost/tags/add/passme
+     * @expectedExceptionCode 301
+     * @return void
+     */
+    public function testParsePersistPassedArgs()
+    {
         $route = new RedirectRoute('/my_controllers/:action/*', ['controller' => 'tags', 'action' => 'add'], ['persist' => true]);
-        $route->response = $this->getMock('Cake\Network\Response', ['_sendHeader', 'stop']);
-        $result = $route->parse('/my_controllers/do_something/passme');
-        $header = $route->response->header();
-        $this->assertEquals(Router::url('/tags/add/passme', true), $header['Location']);
+        $route->parse('/my_controllers/do_something/passme');
+    }
 
+    /**
+     * test redirecting without persist and passed args
+     *
+     * @expectedException Cake\Routing\Exception\RedirectException
+     * @expectedExceptionMessage http://localhost/tags/add
+     * @expectedExceptionCode 301
+     * @return void
+     */
+    public function testParseNoPersistPassedArgs()
+    {
         $route = new RedirectRoute('/my_controllers/:action/*', ['controller' => 'tags', 'action' => 'add']);
-        $route->response = $this->getMock('Cake\Network\Response', ['_sendHeader', 'stop']);
-        $result = $route->parse('/my_controllers/do_something/passme');
-        $header = $route->response->header();
-        $this->assertEquals(Router::url('/tags/add', true), $header['Location']);
+        $route->parse('/my_controllers/do_something/passme');
+    }
 
+    /**
+     * test redirecting with patterns
+     *
+     * @expectedException Cake\Routing\Exception\RedirectException
+     * @expectedExceptionMessage http://localhost/tags/add?lang=nl
+     * @expectedExceptionCode 301
+     * @return void
+     */
+    public function testParsePersistPatterns()
+    {
         $route = new RedirectRoute('/:lang/my_controllers', ['controller' => 'tags', 'action' => 'add'], ['lang' => '(nl|en)', 'persist' => ['lang']]);
-        $route->response = $this->getMock('Cake\Network\Response', ['_sendHeader', 'stop']);
-        $result = $route->parse('/nl/my_controllers/');
-        $header = $route->response->header();
-        $this->assertEquals(Router::url('/tags/add?lang=nl', true), $header['Location']);
+        $route->parse('/nl/my_controllers/');
+    }
 
-        Router::reload(); // reset default routes
+    /**
+     * test redirecting with patterns and a routed target
+     *
+     * @expectedException Cake\Routing\Exception\RedirectException
+     * @expectedExceptionMessage http://localhost/nl/preferred_controllers
+     * @expectedExceptionCode 301
+     * @return void
+     */
+    public function testParsePersistMatchesAnotherRoute()
+    {
         Router::connect('/:lang/preferred_controllers', ['controller' => 'tags', 'action' => 'add'], ['lang' => '(nl|en)', 'persist' => ['lang']]);
         $route = new RedirectRoute('/:lang/my_controllers', ['controller' => 'tags', 'action' => 'add'], ['lang' => '(nl|en)', 'persist' => ['lang']]);
-        $route->response = $this->getMock('Cake\Network\Response', ['_sendHeader', 'stop']);
-        $result = $route->parse('/nl/my_controllers/');
-        $header = $route->response->header();
-        $this->assertEquals(Router::url('/nl/preferred_controllers', true), $header['Location']);
+        $route->parse('/nl/my_controllers/');
     }
 }
