@@ -125,8 +125,8 @@ class Marshaller
         }
 
         $marshallOptions = [];
-        if (isset($options['forceTargetSave'])) {
-            $marshallOptions['forceTargetSave'] = $options['forceTargetSave'];
+        if (isset($options['forceTargetNew'])) {
+            $marshallOptions['forceTargetNew'] = $options['forceTargetNew'];
         }
 
         $errors = $this->_validate($data, $options, true);
@@ -294,7 +294,7 @@ class Marshaller
     protected function _belongsToMany(Association $assoc, array $data, $options = [])
     {
         $associated = isset($options['associated']) ? $options['associated'] : [];
-        $forceTargetSave = isset($options['forceTargetSave']) ? $options['forceTargetSave'] : false;
+        $forceTargetNew = isset($options['forceTargetNew']) ? $options['forceTargetNew'] : false;
 
         $data = array_values($data);
 
@@ -313,7 +313,7 @@ class Marshaller
                     foreach ($keys as $key => $value) {
                         $conditions[][$target->aliasfield($key)] = $value;
                     }
-                    if ($forceTargetSave && !$target->exists($conditions)) {
+                    if ($forceTargetNew && !$target->exists($conditions)) {
                         $records[$i] = $this->one($row, $options);
                     }
                 }
