@@ -31,6 +31,13 @@ App::uses('File', 'Utility');
 class Shell extends Object {
 
 /**
+ * Default error code
+ *
+ * @var int
+ */
+	const CODE_ERROR = 1;
+
+/**
  * Output constant making verbose shells.
  *
  * @var int
@@ -580,7 +587,8 @@ class Shell extends Object {
 		$result = $this->stdin->read();
 
 		if ($result === false) {
-			return $this->_stop(1);
+			$this->_stop(self::CODE_ERROR);
+			return self::CODE_ERROR;
 		}
 		$result = trim($result);
 
@@ -726,7 +734,8 @@ class Shell extends Object {
 		if (!empty($message)) {
 			$this->err($message);
 		}
-		return $this->_stop(1);
+		$this->_stop(self::CODE_ERROR);
+		return self::CODE_ERROR;
 	}
 
 /**
@@ -764,7 +773,8 @@ class Shell extends Object {
 
 			if (strtolower($key) === 'q') {
 				$this->out(__d('cake_console', '<error>Quitting</error>.'), 2);
-				return $this->_stop();
+				$this->_stop();
+				return true;
 			} elseif (strtolower($key) !== 'y') {
 				$this->out(__d('cake_console', 'Skip `%s`', $path), 2);
 				return false;
