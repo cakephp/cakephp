@@ -104,7 +104,7 @@ class SecurityComponent extends Component
         $this->_secureRequired($controller);
         $this->_authRequired($controller);
 
-        $isPost = $this->request->is(['post', 'put']);
+        $hasData = !empty($this->request->data);
         $isNotRequestAction = (
             !isset($controller->request->params['requested']) ||
             $controller->request->params['requested'] != 1
@@ -115,7 +115,7 @@ class SecurityComponent extends Component
         }
 
         if (!in_array($this->_action, (array)$this->_config['unlockedActions']) &&
-            $isPost && $isNotRequestAction
+            $hasData && $isNotRequestAction
         ) {
             if ($this->_config['validatePost'] &&
                 $this->_validatePost($controller) === false
@@ -124,7 +124,7 @@ class SecurityComponent extends Component
             }
         }
         $this->generateToken($controller->request);
-        if ($isPost && is_array($controller->request->data)) {
+        if ($hasData && is_array($controller->request->data)) {
             unset($controller->request->data['_Token']);
         }
     }
