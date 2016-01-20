@@ -128,7 +128,7 @@ class CounterCacheBehavior extends Behavior
      *
      * @param \Cake\Event\Event $event Event instance.
      * @param \Cake\Datasource\EntityInterface $entity Entity
-     * @param Association $assoc The association object
+     * @param \Cake\ORM\Association $assoc The association object
      * @param array $settings The settings for for counter cache for this association
      * @return void
      */

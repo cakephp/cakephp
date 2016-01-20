@@ -35,7 +35,7 @@ class TaskRegistry extends ObjectRegistry
     /**
      * Constructor
      *
-     * @param Shell $Shell Shell instance
+     * @param \Cake\Console\Shell $Shell Shell instance
      */
     public function __construct(Shell $Shell)
     {
