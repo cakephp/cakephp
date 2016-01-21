@@ -409,7 +409,7 @@ class SecurityComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->Controller->Security->startup($event);
 
-        $fields = '68730b0747d4889ec2766f9117405f9635f5fd5e%3AModel.valid';
+        $fields = 'an-invalid-token';
         $unlocked = '';
 
         $this->Controller->request->env('REQUEST_METHOD', 'GET');
@@ -418,7 +418,7 @@ class SecurityComponentTest extends TestCase
             '_Token' => compact('fields', 'unlocked')
         ];
         $this->Controller->Security->startup($event);
-        $this->assertFalse($this->Controller->failed);
+        $this->assertTrue($this->Controller->failed);
     }
 
     /**
