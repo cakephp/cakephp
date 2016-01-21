@@ -930,6 +930,19 @@ class Postgres extends DboSource {
 	}
 
 /**
+ * {@inheritDoc}
+ */
+	public function value($data, $column = null, $null = true) {
+		$value = parent::value($data, $column, $null);
+		if ($column == 'uuid' && is_scalar($data)) {
+			if ($data === '') {
+				return 'NULL';
+			}
+		}
+		return $value;
+	}
+
+/**
  * Overrides DboSource::renderStatement to handle schema generation with Postgres-style indexes
  *
  * @param string $type The query type.

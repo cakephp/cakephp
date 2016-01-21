@@ -59,7 +59,7 @@ abstract class BaseModelTest extends CakeTestCase {
 		'core.feature_set', 'core.exterior_type_category', 'core.document', 'core.device',
 		'core.document_directory', 'core.primary_model', 'core.secondary_model', 'core.something',
 		'core.something_else', 'core.join_thing', 'core.join_a', 'core.join_b', 'core.join_c',
-		'core.join_a_b', 'core.join_a_c', 'core.uuid', 'core.data_test', 'core.posts_tag',
+		'core.join_a_b', 'core.join_a_c', 'core.uuid', 'core.uuid_native', 'core.data_test', 'core.posts_tag',
 		'core.the_paper_monkies', 'core.person', 'core.underscore_field', 'core.node',
 		'core.dependency', 'core.story', 'core.stories_tag', 'core.cd', 'core.book', 'core.basket',
 		'core.overall_favorite', 'core.account', 'core.content', 'core.content_account',
@@ -71,6 +71,8 @@ abstract class BaseModelTest extends CakeTestCase {
 		'core.fruits_uuid_tag', 'core.uuid_tag', 'core.product_update_all', 'core.group_update_all',
 		'core.player', 'core.guild', 'core.guilds_player', 'core.armor', 'core.armors_player',
 		'core.bidding', 'core.bidding_message', 'core.site', 'core.domain', 'core.domains_site',
+		'core.uuidnativeitem', 'core.uuidnativeportfolio', 'core.uuidnativeitems_uuidnativeportfolio',
+		'core.uuidnativeitems_uuidnativeportfolio_numericid',
 	);
 
 /**
