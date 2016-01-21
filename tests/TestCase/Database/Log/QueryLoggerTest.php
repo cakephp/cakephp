@@ -62,7 +62,7 @@ class QueryLoggerTest extends TestCase
 
         $logger->expects($this->once())->method('_log')->with($query);
         $logger->log($query);
-        $expected = "SELECT a FROM b where a = 'string' AND b = 3 AND c = NULL AND d = 1 AND e = 0 AND f = 0";
+        $expected = "duration=0 rows=0 SELECT a FROM b where a = 'string' AND b = 3 AND c = NULL AND d = 1 AND e = 0 AND f = 0";
         $this->assertEquals($expected, (string)$query);
     }
 
@@ -80,7 +80,7 @@ class QueryLoggerTest extends TestCase
 
         $logger->expects($this->once())->method('_log')->with($query);
         $logger->log($query);
-        $expected = "SELECT a FROM b where a = 'string' AND b = '3' AND c = NULL AND d = 1 AND e = 0 AND f = 0";
+        $expected = "duration=0 rows=0 SELECT a FROM b where a = 'string' AND b = '3' AND c = NULL AND d = 1 AND e = 0 AND f = 0";
         $this->assertEquals($expected, (string)$query);
     }
 
@@ -98,7 +98,7 @@ class QueryLoggerTest extends TestCase
 
         $logger->expects($this->once())->method('_log')->with($query);
         $logger->log($query);
-        $expected = "SELECT a FROM b where a = 'string' AND b = 'string' AND c = 3 AND d = 3";
+        $expected = "duration=0 rows=0 SELECT a FROM b where a = 'string' AND b = 'string' AND c = 3 AND d = 3";
         $this->assertEquals($expected, (string)$query);
     }
 
@@ -116,7 +116,7 @@ class QueryLoggerTest extends TestCase
 
         $logger->expects($this->once())->method('_log')->with($query);
         $logger->log($query);
-        $expected = "SELECT a FROM b where a = 'string' AND b = 'test' AND c = 5 AND d = 3";
+        $expected = "duration=0 rows=0 SELECT a FROM b where a = 'string' AND b = 'test' AND c = 5 AND d = 3";
         $this->assertEquals($expected, (string)$query);
     }
 
