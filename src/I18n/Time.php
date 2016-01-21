@@ -115,8 +115,6 @@ class Time extends MutableDateTime implements JsonSerializable
     }
 
     /**
-<<<<<<< HEAD
-=======
      * Returns a nicely formatted date string for this object.
      *
      * The format to be used is stored in the static property `Time::niceFormat`.
@@ -199,7 +197,6 @@ class Time extends MutableDateTime implements JsonSerializable
     }
 
     /**
->>>>>>> master
      * Returns either a relative or a formatted absolute date depending
      * on the difference between the current time and this object.
      *
