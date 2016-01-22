@@ -17,6 +17,7 @@ namespace Cake\Error;
 use Cake\Core\Configure;
 use Cake\Error\PHP7ErrorException;
 use Cake\Log\Log;
+use Cake\Network\Request;
 use Cake\Routing\Router;
 use Error;
 use Exception;
@@ -296,6 +297,11 @@ abstract class BaseErrorHandler
             $request = Router::getRequest();
             if ($request) {
                 $message .= "\nRequest URL: " . $request->here();
+            }
+
+            $request = new Request();
+            if ($request->referer() !== '/') {
+                $message .= "\nReferer URL: " . $request->referer();
             }
         }
         if (!empty($config['trace'])) {
