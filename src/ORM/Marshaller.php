@@ -315,8 +315,8 @@ class Marshaller
                     foreach ($keys as $key => $value) {
                         $rowConditions[][$target->aliasfield($key)] = $value;
                     }
-                    $asd = $target->exists($rowConditions);
-                    if ($forceNew && !$asd) {
+                    
+                    if ($forceNew && !$target->exists($rowConditions)) {
                         $records[$i] = $this->one($row, $options);
                     }
 
