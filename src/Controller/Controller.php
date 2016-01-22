@@ -26,6 +26,7 @@ use Cake\Network\Response;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
+use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
 use Cake\View\ViewVarsTrait;
 use LogicException;
@@ -236,7 +237,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         if ($this->name === null && isset($request->params['controller'])) {
-            $this->name = $request->params['controller'];
+            $this->name = Inflector::camelize($request->params['controller']);
         }
 
         if ($this->name === null) {

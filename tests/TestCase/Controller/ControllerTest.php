@@ -359,6 +359,12 @@ class ControllerTest extends TestCase
         $this->assertEquals('Posts', $controller->modelClass);
         $this->assertInstanceOf('Cake\ORM\Table', $controller->Posts);
 
+        $request->params['controller'] = 'posts';
+        $controller = new \TestApp\Controller\PostsController($request, $response);
+        $this->assertEquals('Posts', $controller->modelClass);
+        $this->assertInstanceOf('Cake\ORM\Table', $controller->Posts);
+        unset($request->params['controller']);
+
         $controller = new \TestApp\Controller\Admin\PostsController($request, $response);
         $this->assertEquals('Posts', $controller->modelClass);
         $this->assertInstanceOf('Cake\ORM\Table', $controller->Posts);
