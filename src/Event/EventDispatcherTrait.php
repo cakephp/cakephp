@@ -37,7 +37,7 @@ trait EventDispatcherTrait
     protected $_eventClass = '\Cake\Event\Event';
 
     /**
-     * Returns the Cake\Event\EventManager manager instance for this object.
+     * Gets/Sets the Cake\Event\EventManager manager instance for this object.
      *
      * You can use this instance to register any new listeners or callbacks to the
      * object events, or create your own events and trigger them at will.
@@ -47,7 +47,7 @@ trait EventDispatcherTrait
      */
     public function eventManager(EventManager $eventManager = null)
     {
-        if ($eventManager !== null) {
+        if (func_num_args() === 1) {
             $this->_eventManager = $eventManager;
         } elseif (empty($this->_eventManager)) {
             $this->_eventManager = new EventManager();

@@ -63,7 +63,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     public function unsetProperty($property);
 
     /**
-     * Get/Set the hidden properties on this entity.
+     * Gets/Sets the hidden properties on this entity.
      *
      * If the properties argument is null, the currently hidden properties
      * will be returned. Otherwise the hidden properties will be set.
@@ -74,7 +74,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     public function hiddenProperties($properties = null);
 
     /**
-     * Get/Set the virtual properties on this entity.
+     * Gets/Sets the virtual properties on this entity.
      *
      * If the properties argument is null, the currently virtual properties
      * will be returned. Otherwise the virtual properties will be set.

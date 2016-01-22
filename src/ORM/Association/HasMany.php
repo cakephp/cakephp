@@ -93,7 +93,7 @@ class HasMany extends Association
     }
 
     /**
-     * Sets the strategy that should be used for saving. If called with no
+     * Gets/Sets the strategy that should be used for saving. If called with no
      * arguments, it will return the currently configured strategy
      *
      * @param string|null $strategy the strategy name to be used
@@ -102,7 +102,7 @@ class HasMany extends Association
      */
     public function saveStrategy($strategy = null)
     {
-        if ($strategy === null) {
+        if (func_num_args() === 0) {
             return $this->_saveStrategy;
         }
         if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE])) {

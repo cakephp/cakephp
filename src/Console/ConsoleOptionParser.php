@@ -268,14 +268,14 @@ class ConsoleOptionParser
     }
 
     /**
-     * Gets or sets the command name for shell/task.
+     * Gets/Sets the command name for shell/task.
      *
      * @param string|null $text The text to set, or null if you want to read
      * @return string|$this If reading, the value of the command. If setting $this will be returned.
      */
     public function command($text = null)
     {
-        if ($text !== null) {
+        if (func_num_args() === 1) {
             $this->_command = Inflector::underscore($text);
             return $this;
         }
@@ -283,7 +283,7 @@ class ConsoleOptionParser
     }
 
     /**
-     * Get or set the description text for shell/task.
+     * Gets/Sets the description text for shell/task.
      *
      * @param string|array|null $text The text to set, or null if you want to read. If an array the
      *   text will be imploded with "\n".
@@ -291,7 +291,7 @@ class ConsoleOptionParser
      */
     public function description($text = null)
     {
-        if ($text !== null) {
+        if (func_num_args() === 1) {
             if (is_array($text)) {
                 $text = implode("\n", $text);
             }
@@ -302,7 +302,7 @@ class ConsoleOptionParser
     }
 
     /**
-     * Get or set an epilog to the parser. The epilog is added to the end of
+     * Gets/Sets an epilog to the parser. The epilog is added to the end of
      * the options and arguments listing when help is generated.
      *
      * @param string|array|null $text Text when setting or null when reading. If an array the text will
@@ -311,7 +311,7 @@ class ConsoleOptionParser
      */
     public function epilog($text = null)
     {
-        if ($text !== null) {
+        if (func_num_args() === 1) {
             if (is_array($text)) {
                 $text = implode("\n", $text);
             }

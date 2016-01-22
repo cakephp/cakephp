@@ -366,7 +366,7 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * From
+     * Gets/Sets From
      *
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
@@ -376,14 +376,14 @@ class Email implements JsonSerializable, Serializable
      */
     public function from($email = null, $name = null)
     {
-        if ($email === null) {
+        if (func_num_args() === 0) {
             return $this->_from;
         }
         return $this->_setEmailSingle('_from', $email, $name, 'From requires only 1 email address.');
     }
 
     /**
-     * Sender
+     * Gets/Sets the sender.
      *
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
@@ -393,14 +393,14 @@ class Email implements JsonSerializable, Serializable
      */
     public function sender($email = null, $name = null)
     {
-        if ($email === null) {
+        if (func_num_args() === 0) {
             return $this->_sender;
         }
         return $this->_setEmailSingle('_sender', $email, $name, 'Sender requires only 1 email address.');
     }
 
     /**
-     * Reply-To
+     * Gets/Sets reply-to
      *
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
@@ -410,14 +410,14 @@ class Email implements JsonSerializable, Serializable
      */
     public function replyTo($email = null, $name = null)
     {
-        if ($email === null) {
+        if (func_num_args() === 0) {
             return $this->_replyTo;
         }
         return $this->_setEmailSingle('_replyTo', $email, $name, 'Reply-To requires only 1 email address.');
     }
 
     /**
-     * Read Receipt (Disposition-Notification-To header)
+     * Gets/Sets read-receipt (Disposition-Notification-To header)
      *
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
@@ -427,14 +427,14 @@ class Email implements JsonSerializable, Serializable
      */
     public function readReceipt($email = null, $name = null)
     {
-        if ($email === null) {
+        if (func_num_args() === 0) {
             return $this->_readReceipt;
         }
         return $this->_setEmailSingle('_readReceipt', $email, $name, 'Disposition-Notification-To requires only 1 email address.');
     }
 
     /**
-     * Return Path
+     * Gets/Sets return-path
      *
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
@@ -444,14 +444,14 @@ class Email implements JsonSerializable, Serializable
      */
     public function returnPath($email = null, $name = null)
     {
-        if ($email === null) {
+        if (func_num_args() === 0) {
             return $this->_returnPath;
         }
         return $this->_setEmailSingle('_returnPath', $email, $name, 'Return-Path requires only 1 email address.');
     }
 
     /**
-     * To
+     * Gets/Sets to
      *
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
@@ -460,7 +460,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function to($email = null, $name = null)
     {
-        if ($email === null) {
+        if (func_num_args() === 0) {
             return $this->_to;
         }
         return $this->_setEmail('_to', $email, $name);
@@ -480,7 +480,7 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Cc
+     * Gets/Sets Cc
      *
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
@@ -489,7 +489,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function cc($email = null, $name = null)
     {
-        if ($email === null) {
+        if (func_num_args() === 0) {
             return $this->_cc;
         }
         return $this->_setEmail('_cc', $email, $name);
@@ -509,7 +509,7 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Bcc
+     * Gets/Sets Bcc
      *
      * @param string|array|null $email Null to get, String with email,
      *   Array with email as key, name as value or email as value (without name)
@@ -518,7 +518,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function bcc($email = null, $name = null)
     {
-        if ($email === null) {
+        if (func_num_args() === 0) {
             return $this->_bcc;
         }
         return $this->_setEmail('_bcc', $email, $name);
@@ -538,14 +538,14 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Charset setter/getter
+     * Gets/Sets Charset
      *
      * @param string|null $charset Character set.
      * @return string this->charset
      */
     public function charset($charset = null)
     {
-        if ($charset === null) {
+        if (func_num_args() === 0) {
             return $this->charset;
         }
         $this->charset = $charset;
@@ -556,14 +556,14 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * HeaderCharset setter/getter
+     * Gets/Sets HeaderCharset
      *
      * @param string|null $charset Character set.
      * @return string this->charset
      */
     public function headerCharset($charset = null)
     {
-        if ($charset === null) {
+        if (func_num_args() === 0) {
             return $this->headerCharset;
         }
         return $this->headerCharset = $charset;
@@ -692,14 +692,14 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Get/Set Subject.
+     * Gets/Sets Subject.
      *
      * @param string|null $subject Subject string.
      * @return string|$this
      */
     public function subject($subject = null)
     {
-        if ($subject === null) {
+        if (func_num_args() === 0) {
             return $this->_subject;
         }
         $this->_subject = $this->_encode((string)$subject);
@@ -869,14 +869,14 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * View class for render
+     * Gets/Sets View class for rendering.
      *
      * @param string|null $viewClass View class name.
      * @return string|$this
      */
     public function viewRender($viewClass = null)
     {
-        if ($viewClass === null) {
+        if (func_num_args() === 0) {
             return $this->viewBuilder()->className();
         }
         $this->viewBuilder()->className($viewClass);
@@ -884,14 +884,14 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Variables to be set on render
+     * Gets/Sets Variables to be set on rendering.
      *
      * @param array|null $viewVars Variables to set for view.
      * @return array|$this
      */
     public function viewVars($viewVars = null)
     {
-        if ($viewVars === null) {
+        if (func_num_args() === 0) {
             return $this->viewVars;
         }
         $this->set((array)$viewVars);
@@ -899,14 +899,14 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Theme to use when rendering
+     * Gets/Sets Theme to use when rendering.
      *
      * @param string|null $theme Theme name.
      * @return string|$this
      */
     public function theme($theme = null)
     {
-        if ($theme === null) {
+        if (func_num_args() === 0) {
             return $this->viewBuilder()->theme();
         }
         $this->viewBuilder()->theme($theme);
@@ -914,14 +914,14 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Helpers to be used in render
+     * Gets/Sets Helpers to be used in rendering.
      *
      * @param array|null $helpers Helpers list.
      * @return array|$this
      */
     public function helpers($helpers = null)
     {
-        if ($helpers === null) {
+        if (func_num_args() === 0) {
             return $this->viewBuilder()->helpers();
         }
         $this->viewBuilder()->helpers((array)$helpers, false);
@@ -929,7 +929,7 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Email format
+     * Gets/Sets Email format.
      *
      * @param string|null $format Formatting string.
      * @return string|$this
@@ -937,7 +937,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function emailFormat($format = null)
     {
-        if ($format === null) {
+        if (func_num_args() === 0) {
             return $this->_emailFormat;
         }
         if (!in_array($format, $this->_emailFormatAvailable)) {
@@ -948,7 +948,7 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Get/set the transport.
+     * Gets/Sets the transport.
      *
      * When setting the transport you can either use the name
      * of a configured transport or supply a constructed transport.
@@ -961,7 +961,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function transport($name = null)
     {
-        if ($name === null) {
+        if (func_num_args() === 0) {
             return $this->_transport;
         }
 
@@ -1027,7 +1027,7 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Message-ID
+     * Gets/Sets the Message-ID
      *
      * @param bool|string|null $message True to generate a new Message-ID, False to ignore (not send in email), String to set as Message-ID
      * @return bool|string|$this
@@ -1035,7 +1035,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function messageId($message = null)
     {
-        if ($message === null) {
+        if (func_num_args() === 0) {
             return $this->_messageId;
         }
         if (is_bool($message)) {
@@ -1050,14 +1050,14 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Domain as top level (the part after @)
+     * Gets/Sets the top level domain, e.g. the part after the @.
      *
      * @param string|null $domain Manually set the domain for CLI mailing
      * @return string|$this
      */
     public function domain($domain = null)
     {
-        if ($domain === null) {
+        if (func_num_args() === 0) {
             return $this->_domain;
         }
         $this->_domain = $domain;
@@ -1065,6 +1065,8 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
+     * Gets/Sets attachments.
+     *
      * Add attachments to the email message
      *
      * Attachments can be defined in a few forms depending on how much control you need:
@@ -1115,7 +1117,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function attachments($attachments = null)
     {
-        if ($attachments === null) {
+        if (func_num_args() === 0) {
             return $this->_attachments;
         }
         $attach = [];
@@ -1254,7 +1256,7 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Get/Set the configuration profile to use for this instance.
+     * Gets/Sets the configuration profile to use for this instance.
      *
      * @param null|string|array $config String with configuration name, or
      *    an array with config or null to return current config.
@@ -1262,7 +1264,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function profile($config = null)
     {
-        if ($config === null) {
+        if (func_num_args() === 0) {
             return $this->_profile;
         }
         if (!is_array($config)) {

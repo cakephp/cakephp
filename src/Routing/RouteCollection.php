@@ -279,7 +279,7 @@ class RouteCollection
     }
 
     /**
-     * Get/set the extensions that the route collection could handle.
+     * Gets/Sets the extensions that the route collection could handle.
      *
      * @param null|string|array $extensions Either the list of extensions to set,
      *   or null to get.
@@ -289,7 +289,7 @@ class RouteCollection
      */
     public function extensions($extensions = null, $merge = true)
     {
-        if ($extensions === null) {
+        if (func_num_args() === 0) {
             return $this->_extensions;
         }
 

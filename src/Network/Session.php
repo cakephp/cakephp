@@ -224,7 +224,8 @@ class Session
     }
 
     /**
-     * Sets the session handler instance to use for this session.
+     * Gets/Sets the session handler instance to use for this session.
+     *
      * If a string is passed for the first argument, it will be treated as the
      * class name and the second argument will be passed as the first argument
      * in the constructor.
@@ -242,12 +243,12 @@ class Session
      */
     public function engine($class = null, array $options = [])
     {
-        if ($class instanceof SessionHandlerInterface) {
-            return $this->_engine = $class;
+        if (func_num_args() === 0) {
+            return $this->_engine;
         }
 
-        if ($class === null) {
-            return $this->_engine;
+        if ($class instanceof SessionHandlerInterface) {
+            return $this->_engine = $class;
         }
 
         $className = App::className($class, 'Network/Session');
@@ -377,7 +378,7 @@ class Session
      */
     public function read($name = null)
     {
-        if (empty($name) && $name !== null) {
+        if (empty($name) && func_num_args() === 1) {
             return null;
         }
 
@@ -446,7 +447,7 @@ class Session
     }
 
     /**
-     * Returns the session id.
+     * Gets/Sets the session id.
      * Calling this method will not auto start the session. You might have to manually
      * assert a started session.
      *
@@ -461,7 +462,7 @@ class Session
      */
     public function id($id = null)
     {
-        if ($id !== null) {
+        if (func_num_args() === 1) {
             session_id($id);
         }
 

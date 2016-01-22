@@ -40,7 +40,7 @@ class BelongsTo extends Association
     protected $_validStrategies = [self::STRATEGY_JOIN, self::STRATEGY_SELECT];
 
     /**
-     * Sets the name of the field representing the foreign key to the target table.
+     * Gets/Sets the name of the field representing the foreign key to the target table.
      * If no parameters are passed current field is returned
      *
      * @param string|null $key the key to be used to link both tables together
@@ -48,7 +48,7 @@ class BelongsTo extends Association
      */
     public function foreignKey($key = null)
     {
-        if ($key === null) {
+        if (func_num_args() === 0) {
             if ($this->_foreignKey === null) {
                 $this->_foreignKey = $this->_modelKey($this->target()->alias());
             }

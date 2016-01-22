@@ -283,7 +283,7 @@ class ConsoleOutput
      */
     public function styles($style = null, $definition = null)
     {
-        if ($style === null && $definition === null) {
+        if (func_num_args() === 0) {
             return static::$_styles;
         }
         if (is_string($style) && $definition === null) {
@@ -298,14 +298,14 @@ class ConsoleOutput
     }
 
     /**
-     * Get/Set the output type to use. The output type how formatting tags are treated.
+     * Gets/Sets the output type to use. The output type how formatting tags are treated.
      *
      * @param int|null $type The output type to use. Should be one of the class constants.
      * @return int|null  Either null or the value if getting.
      */
     public function outputAs($type = null)
     {
-        if ($type === null) {
+        if (func_num_args() === 0) {
             return $this->_outputAs;
         }
         $this->_outputAs = $type;

@@ -60,7 +60,7 @@ trait CollectionTrait
      */
     public function filter(callable $c = null)
     {
-        if ($c === null) {
+        if (func_num_args() === 0) {
             $c = function ($v) {
                 return (bool)$v;
             };
@@ -252,7 +252,7 @@ trait CollectionTrait
      */
     public function sumOf($matcher = null)
     {
-        if ($matcher === null) {
+        if (func_num_args() === 0) {
             return array_sum($this->toList());
         }
 
@@ -553,7 +553,7 @@ trait CollectionTrait
      */
     public function unfold(callable $transformer = null)
     {
-        if ($transformer === null) {
+        if (func_num_args() === 0) {
             $transformer = function ($item) {
                 return $item;
             };

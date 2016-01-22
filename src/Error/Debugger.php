@@ -581,7 +581,7 @@ class Debugger
     }
 
     /**
-     * Get/Set the output format for Debugger error rendering.
+     * Gets/Sets the output format for Debugger error rendering.
      *
      * @param string|null $format The format you want errors to be output as.
      *   Leave null to get the current format.
@@ -591,7 +591,7 @@ class Debugger
     public static function outputAs($format = null)
     {
         $self = Debugger::getInstance();
-        if ($format === null) {
+        if (func_num_args() === 0) {
             return $self->_outputFormat;
         }
 

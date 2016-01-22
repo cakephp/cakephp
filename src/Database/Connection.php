@@ -141,7 +141,7 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Sets the driver instance. If a string is passed it will be treated
+     * Gets/Sets the driver instance. If a string is passed it will be treated
      * as a class name and will be instantiated.
      *
      * If no params are passed it will return the current driver instance.
@@ -154,7 +154,7 @@ class Connection implements ConnectionInterface
      */
     public function driver($driver = null, $config = [])
     {
-        if ($driver === null) {
+        if (func_num_args() === 0) {
             return $this->_driver;
         }
         if (is_string($driver)) {
@@ -296,14 +296,14 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Gets or sets a Schema\Collection object for this connection.
+     * Gets/Sets a Schema\Collection object for this connection.
      *
      * @param \Cake\Database\Schema\Collection|null $collection The schema collection object
      * @return \Cake\Database\Schema\Collection
      */
     public function schemaCollection(SchemaCollection $collection = null)
     {
-        if ($collection !== null) {
+        if (func_num_args() === 1) {
             return $this->_schemaCollection = $collection;
         }
 
@@ -445,6 +445,8 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Gets/Sets savepoints.
+     * 
      * Returns whether this connection is using savepoints for nested transactions
      * If a boolean is passed as argument it will enable/disable the usage of savepoints
      * only if driver the allows it.
@@ -463,7 +465,7 @@ class Connection implements ConnectionInterface
      */
     public function useSavePoints($enable = null)
     {
-        if ($enable === null) {
+        if (func_num_args() === 0) {
             return $this->_useSavePoints;
         }
 
@@ -660,7 +662,7 @@ class Connection implements ConnectionInterface
      */
     public function logQueries($enable = null)
     {
-        if ($enable === null) {
+        if (func_num_args() === 0) {
             return $this->_logQueries;
         }
         $this->_logQueries = $enable;
@@ -671,7 +673,7 @@ class Connection implements ConnectionInterface
      */
     public function logger($instance = null)
     {
-        if ($instance === null) {
+        if (func_num_args() === 0) {
             if ($this->_logger === null) {
                 $this->_logger = new QueryLogger;
             }

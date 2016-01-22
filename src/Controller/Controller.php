@@ -280,7 +280,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     }
 
     /**
-     * Get the component registry for this controller.
+     * Gets/Sets the component registry for this controller.
      *
      * If called with the first parameter, it will be set as the controller $this->_components property
      *
@@ -290,10 +290,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function components($components = null)
     {
-        if ($components === null && $this->_components === null) {
+        if (func_num_args() === 0 && $this->_components === null) {
             $this->_components = new ComponentRegistry($this);
         }
-        if ($components !== null) {
+        if (func_num_args() === 1) {
             $components->setController($this);
             $this->_components = $components;
         }

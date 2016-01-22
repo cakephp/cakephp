@@ -29,7 +29,7 @@ trait StringTemplateTrait
     protected $_templater;
 
     /**
-     * Get/set templates to use.
+     * Gets/Sets templates to use.
      *
      * @param string|null|array $templates null or string allow reading templates. An array
      *   allows templates to be added.

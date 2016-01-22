@@ -56,7 +56,7 @@ class Request extends Message
     ];
 
     /**
-     * Get/Set the HTTP method.
+     * Gets/Sets the HTTP method.
      *
      * @param string|null $method The method for the request.
      * @return $this|string Either this or the current method.
@@ -64,7 +64,7 @@ class Request extends Message
      */
     public function method($method = null)
     {
-        if ($method === null) {
+        if (func_num_args() === 0) {
             return $this->_method;
         }
         $name = get_called_class() . '::METHOD_' . strtoupper($method);
@@ -76,14 +76,14 @@ class Request extends Message
     }
 
     /**
-     * Get/Set the url for the request.
+     * Gets/Sets the url for the request.
      *
      * @param string|null $url The url for the request. Leave null for get
      * @return $this|string Either $this or the url value.
      */
     public function url($url = null)
     {
-        if ($url === null) {
+        if (func_num_args() === 0) {
             return $this->_url;
         }
         $this->_url = $url;
@@ -91,15 +91,21 @@ class Request extends Message
     }
 
     /**
-     * Get/Set headers into the request.
+     * Gets/Sets headers into the request.
      *
      * You can get the value of a header, or set one/many headers.
      * Headers are set / fetched in a case insensitive way.
      *
-     * ### Getting headers
+     * ### Getting one header
      *
      * ```
      * $request->header('Content-Type');
+     * ```
+     *
+     * ### Getting all headers
+     *
+     * ```
+     * $request->header();
      * ```
      *
      * ### Setting one header
@@ -120,11 +126,14 @@ class Request extends Message
      */
     public function header($name = null, $value = null)
     {
-        if ($value === null && is_string($name)) {
+        if (func_num_args() === 0) {
+            return $this->_headers;
+        }
+        if (func_num_args() === 1 && is_string($name)) {
             $name = $this->_normalizeHeader($name);
             return isset($this->_headers[$name]) ? $this->_headers[$name] : null;
         }
-        if ($value !== null && !is_array($name)) {
+        if (func_num_args() === 2 && !is_array($name)) {
             $name = [$name => $value];
         }
         foreach ($name as $key => $val) {
@@ -135,7 +144,7 @@ class Request extends Message
     }
 
     /**
-     * Get/Set cookie values.
+     * Gets/Sets cookie values.
      *
      * ### Getting a cookie
      *
@@ -155,13 +164,13 @@ class Request extends Message
      * $request->cookie(['test' => 'value', 'split' => 'banana']);
      * ```
      *
-     * @param string $name The name of the cookie to get/set
+     * @param string $name The name of the cookie to Gets/Sets
      * @param string|null $value Either the value or null when getting values.
      * @return mixed Either $this or the cookie value.
      */
     public function cookie($name, $value = null)
     {
-        if ($value === null && is_string($name)) {
+        if (func_num_args() === 1 && is_string($name)) {
             return isset($this->_cookies[$name]) ? $this->_cookies[$name] : null;
         }
         if (is_string($name) && is_string($value)) {
@@ -174,7 +183,7 @@ class Request extends Message
     }
 
     /**
-     * Get/Set HTTP version.
+     * Gets/Sets HTTP version.
      *
      * @param string|null $version The HTTP version.
      *

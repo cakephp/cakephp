@@ -146,6 +146,8 @@ class TranslatorRegistry extends TranslatorLocator
     }
 
     /**
+     * Gets/Sets the default Formatter.
+     *
      * Sets the name of the default messages formatter to use for future
      * translator instances.
      *
@@ -156,7 +158,7 @@ class TranslatorRegistry extends TranslatorLocator
      */
     public function defaultFormatter($name = null)
     {
-        if ($name === null) {
+        if (func_num_args() === 0) {
             return $this->_defaultFormatter;
         }
         return $this->_defaultFormatter = $name;

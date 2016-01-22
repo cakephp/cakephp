@@ -113,14 +113,14 @@ class ViewBuilder implements JsonSerializable, Serializable
     protected $_helpers = [];
 
     /**
-     * Get/set path for template files.
+     * Gets/Sets path for template files.
      *
      * @param string|null $path Path for view files. If null returns current path.
      * @return string|$this
      */
     public function templatePath($path = null)
     {
-        if ($path === null) {
+        if (func_num_args() === 0) {
             return $this->_templatePath;
         }
 
@@ -129,14 +129,14 @@ class ViewBuilder implements JsonSerializable, Serializable
     }
 
     /**
-     * Get/set path for layout files.
+     * Gets/Sets path for layout files.
      *
      * @param string|null $path Path for layout files. If null returns current path.
      * @return string|$this
      */
     public function layoutPath($path = null)
     {
-        if ($path === null) {
+        if (func_num_args() === 0) {
             return $this->_layoutPath;
         }
 
@@ -145,7 +145,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     }
 
     /**
-     * Turns on or off CakePHP's conventional mode of applying layout files.
+     * Gets/Sets flat to turn on or off CakePHP's conventional mode of applying layout files.
      * On by default. Setting to off means that layouts will not be
      * automatically applied to rendered views.
      *
@@ -154,7 +154,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      */
     public function autoLayout($autoLayout = null)
     {
-        if ($autoLayout === null) {
+        if (func_num_args() === 0) {
             return $this->_autoLayout;
         }
 
@@ -163,7 +163,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     }
 
     /**
-     * The plugin name to use
+     * Gets/Sets the plugin name to use.
      *
      * @param string|null|false $name Plugin name. If null returns current plugin.
      *   Use false to remove the current plugin name.
@@ -171,7 +171,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      */
     public function plugin($name = null)
     {
-        if ($name === null) {
+        if (func_num_args() === 0) {
             return $this->_plugin;
         }
 
@@ -180,7 +180,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     }
 
     /**
-     * The helpers to use
+     * Gets/Sets helpers to use.
      *
      * @param array|null $helpers Helpers to use.
      * @param bool $merge Whether or not to merge existing data with the new data.
@@ -188,7 +188,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      */
     public function helpers(array $helpers = null, $merge = true)
     {
-        if ($helpers === null) {
+        if (func_num_args() === 0) {
             return $this->_helpers;
         }
         if ($merge) {
@@ -199,7 +199,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     }
 
     /**
-     * The view theme to use.
+     * Gets/Sets view theme to use.
      *
      * @param string|null|false $theme Theme name. If null returns current theme.
      *   Use false to remove the current theme.
@@ -207,7 +207,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      */
     public function theme($theme = null)
     {
-        if ($theme === null) {
+        if (func_num_args() === 0) {
             return $this->_theme;
         }
 
@@ -216,7 +216,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     }
 
     /**
-     * Get/set the name of the view file to render. The name specified is the
+     * Gets/Sets the name of the view file to render. The name specified is the
      * filename in /app/Template/<SubFolder> without the .ctp extension.
      *
      * @param string|null $name View file name to set. If null returns current name.
@@ -224,7 +224,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      */
     public function template($name = null)
     {
-        if ($name === null) {
+        if (func_num_args() === 0) {
             return $this->_template;
         }
 
@@ -233,7 +233,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     }
 
     /**
-     * Get/set the name of the layout file to render the view inside of.
+     * Gets/Sets the name of the layout file to render the view inside of.
      * The name specified is the filename of the layout in /app/Template/Layout
      * without the .ctp extension.
      *
@@ -242,7 +242,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      */
     public function layout($name = null)
     {
-        if ($name === null) {
+        if (func_num_args() === 0) {
             return $this->_layout;
         }
 
@@ -251,7 +251,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     }
 
     /**
-     * Set additional options for the view.
+     * Gets/Sets additional options for the view.
      *
      * This lets you provide custom constructor arguments to application/plugin view classes.
      *
@@ -261,7 +261,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      */
     public function options(array $options = null, $merge = true)
     {
-        if ($options === null) {
+        if (func_num_args() === 0) {
             return $this->_options;
         }
         if ($merge) {
@@ -272,14 +272,14 @@ class ViewBuilder implements JsonSerializable, Serializable
     }
 
     /**
-     * Get/set the view name
+     * Gets/Sets the view name.
      *
      * @param string|null $name The name of the view
      * @return array|$this
      */
     public function name($name = null)
     {
-        if ($name === null) {
+        if (func_num_args() === 0) {
             return $this->_name;
         }
         $this->_name = $name;
@@ -287,7 +287,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     }
 
     /**
-     * Get/set the view classname.
+     * Gets/Sets the view classname.
      *
      * Accepts either a short name (Ajax) a plugin name (MyPlugin.Ajax)
      * or a fully namespaced name (App\View\AppView).
@@ -299,7 +299,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      */
     public function className($name = null)
     {
-        if ($name === null) {
+        if (func_num_args() === 0) {
             return $this->_className;
         }
         $this->_className = $name;

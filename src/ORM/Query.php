@@ -181,7 +181,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * Sets the instance of the eager loader class to use for loading associations
+     * Gets/Sets the instance of the eager loader class to use for loading associations
      * and storing containments. If called with no arguments, it will return the
      * currently configured instance.
      *
@@ -191,7 +191,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function eagerLoader(EagerLoader $instance = null)
     {
-        if ($instance === null) {
+        if (func_num_args() === 0) {
             if ($this->_eagerLoader === null) {
                 $this->_eagerLoader = new EagerLoader;
             }
@@ -783,9 +783,9 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * Toggle hydrating entities.
+     * Gets/Sets hydrating entities flag.
      *
-     * If set to false array results will be returned
+     * If set to false array results will be returned.
      *
      * @param bool|null $enable Use a boolean to set the hydration mode.
      *   Null will fetch the current hydration mode.
@@ -793,7 +793,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function hydrate($enable = null)
     {
-        if ($enable === null) {
+        if (func_num_args() === 0) {
             return $this->_hydrate;
         }
 
@@ -1048,7 +1048,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * Get/Set whether or not the ORM should automatically append fields.
+     * Gets/Sets whether or not the ORM should automatically append fields.
      *
      * By default calling select() will disable auto-fields. You can re-enable
      * auto-fields with this method.
@@ -1058,7 +1058,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function autoFields($value = null)
     {
-        if ($value === null) {
+        if (func_num_args() === 0) {
             return $this->_autoFields;
         }
         $this->_autoFields = (bool)$value;

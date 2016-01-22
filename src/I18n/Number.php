@@ -231,7 +231,7 @@ class Number
     }
 
     /**
-     * Getter/setter for default currency
+     * Gets/Sets the default currency
      *
      * @param string|bool|null $currency Default currency string to be used by currency()
      * if $currency argument is not provided. If boolean false is passed, it will clear the

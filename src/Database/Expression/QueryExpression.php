@@ -72,6 +72,8 @@ class QueryExpression implements ExpressionInterface, Countable
     }
 
     /**
+     * Getter setter for configured type.
+     *
      * Changes the conjunction for the conditions at this level of the expression tree.
      * If called with no arguments it will return the currently configured value.
      *
@@ -81,7 +83,7 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function type($conjunction = null)
     {
-        if ($conjunction === null) {
+        if (func_num_args() === 0) {
             return $this->_conjunction;
         }
 

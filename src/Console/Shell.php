@@ -184,14 +184,14 @@ class Shell
     }
 
     /**
-     * Get/Set the io object for this shell.
+     * Gets/Sets the io object for this shell.
      *
      * @param \Cake\Console\ConsoleIo $io The ConsoleIo object to use.
      * @return \Cake\Console\ConsoleIo The current ConsoleIo object.
      */
     public function io(ConsoleIo $io = null)
     {
-        if ($io !== null) {
+        if (func_num_args() === 1) {
             $this->_io = $io;
         }
         return $this->_io;

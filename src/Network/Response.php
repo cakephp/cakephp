@@ -559,7 +559,8 @@ class Response
     }
 
     /**
-     * Buffers a header string to be sent
+     * Gets/Sets a buffered header string to be sent.
+     *
      * Returns the complete list of buffered headers
      *
      * ### Single header
@@ -601,7 +602,7 @@ class Response
      */
     public function header($header = null, $value = null)
     {
-        if ($header === null) {
+        if (func_num_args() === 0) {
             return $this->_headers;
         }
         $headers = is_array($header) ? $header : [$header => $value];
@@ -618,9 +619,9 @@ class Response
     }
 
     /**
-     * Accessor for the location header.
+     * Gets/Sets the Location header value.
      *
-     * Get/Set the Location header value.
+     * Accessor for the location header.
      *
      * @param null|string $url Either null to get the current location, or a string to set one.
      * @return string|null When setting the location null will be returned. When reading the location
@@ -628,7 +629,7 @@ class Response
      */
     public function location($url = null)
     {
-        if ($url === null) {
+        if (func_num_args() === 0) {
             $headers = $this->header();
             return isset($headers['Location']) ? $headers['Location'] : null;
         }
@@ -637,23 +638,25 @@ class Response
     }
 
     /**
-     * Buffers the response message to be sent
-     * if $content is null the current buffer is returned
+     * Gets/Sets the buffered response message to be sent.
+     *
+     * if $content is null the current buffer is returned.
      *
      * @param string|callable|null $content the string or callable message to be sent
      * @return string Current message buffer if $content param is passed as null
      */
     public function body($content = null)
     {
-        if ($content === null) {
+        if (func_num_args() === 0) {
             return $this->_body;
         }
         return $this->_body = $content;
     }
 
     /**
-     * Sets the HTTP status code to be sent
-     * if $code is null the current code is returned
+     * Gets/Sets the HTTP status code to be sent.
+     *
+     * If $code is null the current code is returned.
      *
      * @param int|null $code the HTTP status code
      * @return int Current status code
@@ -661,7 +664,7 @@ class Response
      */
     public function statusCode($code = null)
     {
-        if ($code === null) {
+        if (func_num_args() === 0) {
             return $this->_status;
         }
         if (!isset($this->_statusCodes[$code])) {
@@ -722,6 +725,8 @@ class Response
     }
 
     /**
+     * Gets/Sets the response content type.
+     *
      * Sets the response content type. It can be either a file extension
      * which will be mapped internally to a mime-type or a string representing a mime-type
      * if $contentType is null the current content type is returned
@@ -756,7 +761,7 @@ class Response
      */
     public function type($contentType = null)
     {
-        if ($contentType === null) {
+        if (func_num_args() === 0) {
             return $this->_contentType;
         }
         if (is_array($contentType)) {
@@ -814,15 +819,16 @@ class Response
     }
 
     /**
-     * Sets the response charset
-     * if $charset is null the current charset is returned
+     * Gets/Sets the response charset.
+     *
+     * If $charset is null the current charset is returned.
      *
      * @param string|null $charset Character set string.
      * @return string Current charset
      */
     public function charset($charset = null)
     {
-        if ($charset === null) {
+        if (func_num_args() === 0) {
             return $this->_charset;
         }
         return $this->_charset = $charset;
@@ -902,7 +908,7 @@ class Response
     }
 
     /**
-     * Sets the Cache-Control s-maxage directive.
+     * Gets/Sets the Cache-Control s-maxage directive.
      * The max-age is the number of seconds after which the response should no longer be considered
      * a good candidate to be fetched from a shared cache (like in a proxy server).
      * If called with no parameters, this function will return the current max-age value if any
@@ -912,7 +918,7 @@ class Response
      */
     public function sharedMaxAge($seconds = null)
     {
-        if ($seconds !== null) {
+        if (func_num_args() === 1) {
             $this->_cacheDirectives['s-maxage'] = $seconds;
             $this->_setCacheControl();
         }
@@ -923,7 +929,7 @@ class Response
     }
 
     /**
-     * Sets the Cache-Control max-age directive.
+     * Gets/Sets the Cache-Control max-age directive.
      * The max-age is the number of seconds after which the response should no longer be considered
      * a good candidate to be fetched from the local (client) cache.
      * If called with no parameters, this function will return the current max-age value if any
@@ -933,7 +939,7 @@ class Response
      */
     public function maxAge($seconds = null)
     {
-        if ($seconds !== null) {
+        if (func_num_args() === 1) {
             $this->_cacheDirectives['max-age'] = $seconds;
             $this->_setCacheControl();
         }
@@ -944,7 +950,7 @@ class Response
     }
 
     /**
-     * Sets the Cache-Control must-revalidate directive.
+     * Gets/Sets the Cache-Control must-revalidate directive.
      * must-revalidate indicates that the response should not be served
      * stale by a cache under any circumstance without first revalidating
      * with the origin.
@@ -956,7 +962,7 @@ class Response
      */
     public function mustRevalidate($enable = null)
     {
-        if ($enable !== null) {
+        if (func_num_args() === 1) {
             if ($enable) {
                 $this->_cacheDirectives['must-revalidate'] = true;
             } else {
@@ -985,7 +991,7 @@ class Response
     }
 
     /**
-     * Sets the Expires header for the response by taking an expiration time
+     * Gets/Sets the Expires header for the response by taking an expiration time
      * If called with no parameters it will return the current Expires value
      *
      * ### Examples:
@@ -999,7 +1005,7 @@ class Response
      */
     public function expires($time = null)
     {
-        if ($time !== null) {
+        if (func_num_args() === 1) {
             $date = $this->_getUTCDate($time);
             $this->_headers['Expires'] = $date->format('D, j M Y H:i:s') . ' GMT';
         }
@@ -1010,7 +1016,7 @@ class Response
     }
 
     /**
-     * Sets the Last-Modified header for the response by taking a modification time
+     * Gets/Sets the Last-Modified header for the response by taking a modification time
      * If called with no parameters it will return the current Last-Modified value
      *
      * ### Examples:
@@ -1024,7 +1030,7 @@ class Response
      */
     public function modified($time = null)
     {
-        if ($time !== null) {
+        if (func_num_args() === 1) {
             $date = $this->_getUTCDate($time);
             $this->_headers['Last-Modified'] = $date->format('D, j M Y H:i:s') . ' GMT';
         }
@@ -1060,7 +1066,7 @@ class Response
     }
 
     /**
-     * Sets the Vary header for the response, if an array is passed,
+     * Gets/Sets the Vary header for the response, if an array is passed,
      * values will be imploded into a comma separated string. If no
      * parameters are passed, then an array with the current Vary header
      * value is returned
@@ -1071,7 +1077,7 @@ class Response
      */
     public function vary($cacheVariances = null)
     {
-        if ($cacheVariances !== null) {
+        if (func_num_args() === 1) {
             $cacheVariances = (array)$cacheVariances;
             $this->_headers['Vary'] = implode(', ', $cacheVariances);
         }
@@ -1082,6 +1088,8 @@ class Response
     }
 
     /**
+     * Gets/Sets the response Etag header.
+     *
      * Sets the response Etag, Etags are a strong indicative that a response
      * can be cached by a HTTP client. A bad way of generating Etags is
      * creating a hash of the response output, instead generate a unique
@@ -1104,7 +1112,7 @@ class Response
      */
     public function etag($hash = null, $weak = false)
     {
-        if ($hash !== null) {
+        if (func_num_args() === 1) {
             $this->_headers['Etag'] = sprintf('%s"%s"', ($weak) ? 'W/' : null, $hash);
         }
         if (isset($this->_headers['Etag'])) {
@@ -1170,7 +1178,7 @@ class Response
     }
 
     /**
-     * Sets the protocol to be used when sending the response. Defaults to HTTP/1.1
+     * Gets/Sets the protocol to be used when sending the response. Defaults to HTTP/1.1
      * If called with no arguments, it will return the current configured protocol
      *
      * @param string|null $protocol Protocol to be used for sending response.
@@ -1178,22 +1186,22 @@ class Response
      */
     public function protocol($protocol = null)
     {
-        if ($protocol !== null) {
+        if (func_num_args() === 1) {
             $this->_protocol = $protocol;
         }
         return $this->_protocol;
     }
 
     /**
-     * Sets the Content-Length header for the response
-     * If called with no arguments returns the last Content-Length set
+     * Gets/Sets the Content-Length header for the response.
+     * If called with no arguments returns the last Content-Length set.
      *
      * @param int|null $bytes Number of bytes
      * @return int|null
      */
     public function length($bytes = null)
     {
-        if ($bytes !== null) {
+        if (func_num_args() === 1) {
             $this->_headers['Content-Length'] = $bytes;
         }
         if (isset($this->_headers['Content-Length'])) {
@@ -1252,7 +1260,7 @@ class Response
     }
 
     /**
-     * Getter/Setter for cookie configs
+     * Gets/Sets cookie config.
      *
      * This method acts as a setter/getter depending on the type of the argument.
      * If the method is called with no arguments, it returns all configurations.
@@ -1292,7 +1300,7 @@ class Response
      */
     public function cookie($options = null)
     {
-        if ($options === null) {
+        if (func_num_args() === 0) {
             return $this->_cookies;
         }
 

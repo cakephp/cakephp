@@ -235,7 +235,7 @@ class FormHelper extends Helper
     }
 
     /**
-     * Set the widget registry the helper will use.
+     * Sets/Gets the widget registry the helper uses.
      *
      * @param \Cake\View\Widget\WidgetRegistry $instance The registry instance to set.
      * @param array $widgets An array of widgets
@@ -573,7 +573,7 @@ class FormHelper extends Helper
     }
 
     /**
-     * Add to or get the list of fields that are currently unlocked.
+     * Gets/Adds to or get the list of fields that are currently unlocked.
      * Unlocked fields are not included in the field hash used by SecurityComponent
      * unlocking a field once its been added to the list of secured fields will remove
      * it from the list of fields.
@@ -584,7 +584,7 @@ class FormHelper extends Helper
      */
     public function unlockField($name = null)
     {
-        if ($name === null) {
+        if (func_num_args() === 0) {
             return $this->_unlockedFields;
         }
         if (!in_array($name, $this->_unlockedFields)) {

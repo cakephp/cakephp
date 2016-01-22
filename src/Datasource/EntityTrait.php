@@ -360,7 +360,7 @@ trait EntityTrait
     }
 
     /**
-     * Get/Set the hidden properties on this entity.
+     * Gets/Sets the hidden properties on this entity.
      *
      * If the properties argument is null, the currently hidden properties
      * will be returned. Otherwise the hidden properties will be set.
@@ -370,7 +370,7 @@ trait EntityTrait
      */
     public function hiddenProperties($properties = null)
     {
-        if ($properties === null) {
+        if (func_num_args() === 0) {
             return $this->_hidden;
         }
         $this->_hidden = $properties;
@@ -378,7 +378,7 @@ trait EntityTrait
     }
 
     /**
-     * Get/Set the virtual properties on this entity.
+     * Gets/Sets the virtual properties on this entity.
      *
      * If the properties argument is null, the currently virtual properties
      * will be returned. Otherwise the virtual properties will be set.
@@ -388,7 +388,7 @@ trait EntityTrait
      */
     public function virtualProperties($properties = null)
     {
-        if ($properties === null) {
+        if (func_num_args() === 0) {
             return $this->_virtual;
         }
         $this->_virtual = $properties;
@@ -573,6 +573,8 @@ trait EntityTrait
     }
 
     /**
+     * Gets/Sets the dirty status of a properties.
+     *
      * Sets the dirty status of a single property. If called with no second
      * argument, it will return whether the property was modified or not
      * after the object creation.
@@ -588,11 +590,11 @@ trait EntityTrait
      */
     public function dirty($property = null, $isDirty = null)
     {
-        if ($property === null) {
+        if (func_num_args() === 0) {
             return !empty($this->_dirty);
         }
 
-        if ($isDirty === null) {
+        if (func_num_args() === 1) {
             return isset($this->_dirty[$property]);
         }
 
@@ -620,6 +622,8 @@ trait EntityTrait
     }
 
     /**
+     * Gets/Sets instance new status.
+     *
      * Returns whether or not this entity has already been persisted.
      * This method can return null in the case there is no prior information on
      * the status of this entity.
@@ -633,7 +637,7 @@ trait EntityTrait
      */
     public function isNew($new = null)
     {
-        if ($new === null) {
+        if (func_num_args() === 0) {
             return $this->_new;
         }
 
@@ -649,6 +653,8 @@ trait EntityTrait
     }
 
     /**
+     * Gets/Sets validation errors.
+     *
      * Sets the error messages for a field or a list of fields. When called
      * without the second argument it returns the validation
      * errors for the specified fields. If called with no arguments it returns
@@ -681,7 +687,7 @@ trait EntityTrait
      */
     public function errors($field = null, $errors = null, $overwrite = false)
     {
-        if ($field === null) {
+        if (func_num_args() === 0) {
             $diff = array_diff_key($this->_properties, $this->_errors);
             return $this->_errors + (new Collection($diff))
                 ->filter(function ($value) {
@@ -694,7 +700,7 @@ trait EntityTrait
                 ->toArray();
         }
 
-        if (is_string($field) && $errors === null) {
+        if (is_string($field) && func_num_args() === 1) {
             $errors = isset($this->_errors[$field]) ? $this->_errors[$field] : [];
             if ($errors) {
                 return $errors;
@@ -840,6 +846,8 @@ trait EntityTrait
     }
 
     /**
+     * Gets/Sets the repository source alias name.
+     *
      * Returns the alias of the repository from which this entity came from.
      *
      * If called with no arguments, it returns the alias of the repository
@@ -850,7 +858,7 @@ trait EntityTrait
      */
     public function source($alias = null)
     {
-        if ($alias === null) {
+        if (func_num_args() === 0) {
             return $this->_registryAlias;
         }
         $this->_registryAlias = $alias;

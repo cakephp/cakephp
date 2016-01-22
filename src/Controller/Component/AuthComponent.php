@@ -819,7 +819,7 @@ class AuthComponent extends Component
     }
 
     /**
-     * Get/set user record storage object.
+     * Gets/Sets user record storage object.
      *
      * @param \Cake\Auth\Storage\StorageInterface|null $storage Sets provided
      *   object as storage or if null returns configured storage object.
@@ -827,7 +827,7 @@ class AuthComponent extends Component
      */
     public function storage(StorageInterface $storage = null)
     {
-        if ($storage !== null) {
+        if (func_num_args() === 1) {
             $this->_storage = $storage;
             return null;
         }

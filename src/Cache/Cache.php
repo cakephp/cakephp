@@ -480,7 +480,7 @@ class Cache
         foreach (array_keys(static::$_config) as $config) {
             static::engine($config);
         }
-        if ($group === null) {
+        if (func_num_args() === 0) {
             return static::$_groups;
         }
 

@@ -150,8 +150,8 @@ class BelongsToMany extends Association
     protected $_junctionConditions;
 
     /**
-     * Sets the name of the field representing the foreign key to the target table.
-     * If no parameters are passed current field is returned
+     * Gets/Sets the name of the field representing the foreign key to the target table.
+     * If no parameters are passed current field is returned.
      *
      * @param string|null $key the key to be used to link both tables together
      * @return string
@@ -168,7 +168,7 @@ class BelongsToMany extends Association
     }
 
     /**
-     * Sets the table instance for the junction relation. If no arguments
+     * Gets/Sets the table instance for the junction relation. If no arguments
      * are passed, the current configured table instance is returned
      *
      * @param string|\Cake\ORM\Table|null $table Name or instance for the join table
@@ -486,8 +486,8 @@ class BelongsToMany extends Association
     }
 
     /**
-     * Sets the strategy that should be used for saving. If called with no
-     * arguments, it will return the currently configured strategy
+     * Gets/Sets the strategy that should be used for saving. If called with no
+     * arguments, it will return the currently configured strategy.
      *
      * @param string|null $strategy the strategy name to be used
      * @throws \InvalidArgumentException if an invalid strategy name is passed
@@ -794,6 +794,8 @@ class BelongsToMany extends Association
 
     /**
      * {@inheritDoc}
+     *
+     * Gets/Sets conditions.
      */
     public function conditions($conditions = null)
     {
@@ -1256,7 +1258,7 @@ class BelongsToMany extends Association
     }
 
     /**
-     * Sets the name of the junction table.
+     * Gets/Sets the name of the junction table.
      * If no arguments are passed the current configured name is returned. A default
      * name based of the associated tables will be generated if none found.
      *

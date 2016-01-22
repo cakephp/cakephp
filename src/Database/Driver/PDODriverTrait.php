@@ -51,16 +51,16 @@ trait PDODriverTrait
     }
 
     /**
-     * Returns correct connection resource or object that is internally used
+     * Gets the correct connection resource or object that is internally used
      * If first argument is passed, it will set internal connection object or
-     * result to the value passed
+     * result to the value passed.
      *
      * @param null|\PDO $connection The PDO connection instance.
      * @return \PDO connection object used internally
      */
     public function connection($connection = null)
     {
-        if ($connection !== null) {
+        if (func_num_args() === 1) {
             $this->_connection = $connection;
         }
         return $this->_connection;

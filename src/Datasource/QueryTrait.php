@@ -82,6 +82,8 @@ trait QueryTrait
     protected $_eagerLoaded = false;
 
     /**
+     * Gets/Sets default table object.
+     *
      * Returns the default table object that will be used by this query,
      * that is, the table that will appear in the from clause.
      *
@@ -93,7 +95,7 @@ trait QueryTrait
      */
     public function repository(RepositoryInterface $table = null)
     {
-        if ($table === null) {
+        if (func_num_args() === 0) {
             return $this->_repository;
         }
         $this->_repository = $table;
@@ -178,6 +180,7 @@ trait QueryTrait
     }
 
     /**
+     * Gets/Sets the eager loading flag.
      * Sets the query instance to be an eager loaded query. If no argument is
      * passed, the current configured query `_eagerLoaded` value is returned.
      *
@@ -186,7 +189,7 @@ trait QueryTrait
      */
     public function eagerLoaded($value = null)
     {
-        if ($value === null) {
+        if (func_num_args() === 0) {
             return $this->_eagerLoaded;
         }
         $this->_eagerLoaded = $value;
@@ -289,6 +292,8 @@ trait QueryTrait
     }
 
     /**
+     * Gets/Sets MapReduce callable routines.
+     *
      * Register a new MapReduce routine to be executed on top of the database results
      * Both the mapper and caller callable should be invokable objects.
      *
@@ -312,7 +317,7 @@ trait QueryTrait
         if ($overwrite) {
             $this->_mapReduce = [];
         }
-        if ($mapper === null) {
+        if (func_num_args() === 0) {
             return $this->_mapReduce;
         }
         $this->_mapReduce[] = compact('mapper', 'reducer');

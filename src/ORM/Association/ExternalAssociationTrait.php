@@ -45,7 +45,7 @@ trait ExternalAssociationTrait
     }
 
     /**
-     * Sets the name of the field representing the foreign key to the source table.
+     * Gets/Sets the name of the field representing the foreign key to the source table.
      * If no parameters are passed current field is returned
      *
      * @param string|null $key the key to be used to link both tables together
@@ -53,7 +53,7 @@ trait ExternalAssociationTrait
      */
     public function foreignKey($key = null)
     {
-        if ($key === null) {
+        if (func_num_args() === 0) {
             if ($this->_foreignKey === null) {
                 $this->_foreignKey = $this->_modelKey($this->source()->table());
             }
@@ -63,15 +63,15 @@ trait ExternalAssociationTrait
     }
 
     /**
-     * Sets the sort order in which target records should be returned.
-     * If no arguments are passed the currently configured value is returned
+     * Gets/Sets the sort order in which target records should be returned.
+     * If no arguments are passed the currently configured value is returned.
      *
      * @param mixed $sort A find() compatible order clause
      * @return mixed
      */
     public function sort($sort = null)
     {
-        if ($sort !== null) {
+        if (func_num_args() === 1) {
             $this->_sort = $sort;
         }
         return $this->_sort;

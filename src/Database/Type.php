@@ -122,6 +122,8 @@ class Type
     }
 
     /**
+     * Gets/Ses the types map.
+     * 
      * Registers a new type identifier and maps it to a fully namespaced classname,
      * If called with no arguments it will return current types map array
      * If $className is omitted it will return mapped class for $type
@@ -133,7 +135,7 @@ class Type
      */
     public static function map($type = null, $className = null)
     {
-        if ($type === null) {
+        if (func_num_args() === 0) {
             return self::$_types;
         }
         if (is_array($type)) {

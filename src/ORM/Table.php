@@ -321,17 +321,17 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Returns the database table name or sets a new one
+     * Gets/Sets the database table name.
      *
      * @param string|null $table the new table name
      * @return string
      */
     public function table($table = null)
     {
-        if ($table !== null) {
+        if (func_num_args() === 1) {
             $this->_table = $table;
         }
-        if ($this->_table === null) {
+        if (func_num_args() === 0) {
             $table = namespaceSplit(get_class($this));
             $table = substr(end($table), 0, -5);
             if (empty($table)) {
@@ -344,13 +344,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
     /**
      * {@inheritDoc}
+     *
+     * Gets/Sets the database table.
      */
     public function alias($alias = null)
     {
-        if ($alias !== null) {
+        if (func_num_args() === 1) {
             $this->_alias = $alias;
         }
-        if ($this->_alias === null) {
+        if (func_num_args() === 0) {
             $alias = namespaceSplit(get_class($this));
             $alias = substr(end($alias), 0, -5) ?: $this->_table;
             $this->_alias = $alias;
@@ -370,14 +372,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Returns the table registry key used to create this table instance
+     * Gets/Sets the table registry key used to create this table instance.
      *
      * @param string|null $registryAlias the key used to access this object
      * @return string
      */
     public function registryAlias($registryAlias = null)
     {
-        if ($registryAlias !== null) {
+        if (func_num_args() === 1) {
             $this->_registryAlias = $registryAlias;
         }
         if ($this->_registryAlias === null) {
@@ -387,14 +389,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Returns the connection instance or sets a new one
+     * Gets/Sets the connection instance.
      *
      * @param \Cake\Datasource\ConnectionInterface|null $conn The new connection instance
      * @return \Cake\Datasource\ConnectionInterface
      */
     public function connection(ConnectionInterface $conn = null)
     {
-        if ($conn === null) {
+        if (func_num_args() === 0) {
             return $this->_connection;
         }
 
@@ -402,7 +404,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Returns the schema table object describing this table's properties.
+     * Gets/Sets schema table object describing this table's properties.
      *
      * If an \Cake\Database\Schema\Table is passed, it will be used for this table
      * instead of the default one.
@@ -415,7 +417,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function schema($schema = null)
     {
-        if ($schema === null) {
+        if (func_num_args() === 0) {
             if ($this->_schema === null) {
                 $this->_schema = $this->_initializeSchema(
                     $this->connection()
@@ -485,14 +487,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Returns the primary key field name or sets a new one
+     * Gets/Sets the primary key field name.
      *
      * @param string|array|null $key sets a new name to be used as primary key
      * @return string|array
      */
     public function primaryKey($key = null)
     {
-        if ($key !== null) {
+        if (func_num_args() === 1) {
             $this->_primaryKey = $key;
         }
         if ($this->_primaryKey === null) {
@@ -506,14 +508,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Returns the display field or sets a new one
+     * Gets/Sets the display field.
      *
      * @param string|null $key sets a new name to be used as display field
      * @return string
      */
     public function displayField($key = null)
     {
-        if ($key !== null) {
+        if (func_num_args() === 1) {
             $this->_displayField = $key;
         }
         if ($this->_displayField === null) {
@@ -531,8 +533,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Returns the class used to hydrate rows for this table or sets
-     * a new one
+     * Gets/Sets the class used to hydrate rows for this table.
      *
      * @param string|null $name the name of the class to use
      * @throws \Cake\ORM\Exception\MissingEntityException when the entity class cannot be found
@@ -540,7 +541,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function entityClass($name = null)
     {
-        if ($name === null && !$this->_entityClass) {
+        if (func_num_args() === 0 && !$this->_entityClass) {
             $default = '\Cake\ORM\Entity';
             $self = get_called_class();
             $parts = explode('\\', $self);
@@ -556,7 +557,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         }
 
-        if ($name !== null) {
+        if (func_num_args() === 1) {
             $class = App::className($name, 'Model/Entity');
             $this->_entityClass = $class;
         }

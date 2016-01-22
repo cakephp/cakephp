@@ -143,7 +143,7 @@ trait ViewVarsTrait
     }
 
     /**
-     * Get/Set valid view options in the object's _validViewOptions property. The property is
+     * Gets/Sets the valid view options in the object's _validViewOptions property. The property is
      * created as an empty array if it is not set. If called without any parameters it will
      * return the current list of valid view options. See `createView()`.
      *
@@ -158,7 +158,7 @@ trait ViewVarsTrait
             $this->_validViewOptions = [];
         }
 
-        if ($options === null) {
+        if (func_num_args() === 0) {
             return $this->_validViewOptions;
         }
 

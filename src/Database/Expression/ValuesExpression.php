@@ -91,6 +91,8 @@ class ValuesExpression implements ExpressionInterface
     }
 
     /**
+     * Gets/Sets for stored columns
+     *
      * Sets the columns to be inserted. If no params are passed, then it returns
      * the currently stored columns
      *
@@ -99,7 +101,7 @@ class ValuesExpression implements ExpressionInterface
      */
     public function columns($cols = null)
     {
-        if ($cols === null) {
+        if (func_num_args() === 0) {
             return $this->_columns;
         }
         $this->_columns = $cols;
@@ -107,6 +109,8 @@ class ValuesExpression implements ExpressionInterface
     }
 
     /**
+     * Gets/Sets for stored values.
+     *
      * Sets the values to be inserted. If no params are passed, then it returns
      * the currently stored values
      *
@@ -115,7 +119,7 @@ class ValuesExpression implements ExpressionInterface
      */
     public function values($values = null)
     {
-        if ($values === null) {
+        if (func_num_args() === 0) {
             return $this->_values;
         }
         $this->_values = $values;
@@ -123,6 +127,8 @@ class ValuesExpression implements ExpressionInterface
     }
 
     /**
+     * Gets/Sets the stored query.
+     *
      * Sets the query object to be used as the values expression to be evaluated
      * to insert records in the table. If no params are passed, then it returns
      * the currently stored query
@@ -132,7 +138,7 @@ class ValuesExpression implements ExpressionInterface
      */
     public function query(Query $query = null)
     {
-        if ($query === null) {
+        if (func_num_args() === 0) {
             return $this->_query;
         }
         $this->_query = $query;

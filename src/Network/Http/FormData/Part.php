@@ -87,7 +87,7 @@ class Part
     }
 
     /**
-     * Get/set the disposition type
+     * Gets/Sets the disposition type.
      *
      * By passing in `false` you can disable the disposition
      * header from being added.
@@ -97,28 +97,28 @@ class Part
      */
     public function disposition($disposition = null)
     {
-        if ($disposition === null) {
+        if (func_num_args() === 0) {
             return $this->_disposition;
         }
         $this->_disposition = $disposition;
     }
 
     /**
-     * Get/set the contentId for a part.
+     * Gets/Sets the contentId for a part.
      *
      * @param null|string $id The content id.
      * @return string|null
      */
     public function contentId($id = null)
     {
-        if ($id === null) {
+        if (func_num_args() === 0) {
             return $this->_contentId;
         }
         $this->_contentId = $id;
     }
 
     /**
-     * Get/set the filename.
+     * Gets/Sets the filename.
      *
      * Setting the filename to `false` will exclude it from the
      * generated output.
@@ -128,28 +128,28 @@ class Part
      */
     public function filename($filename = null)
     {
-        if ($filename === null) {
+        if (func_num_args() === 0) {
             return $this->_filename;
         }
         $this->_filename = $filename;
     }
 
     /**
-     * Get/set the content type.
+     * Gets/Sets the content type.
      *
      * @param null|string $type Use null to get/string to set.
      * @return string|null
      */
     public function type($type)
     {
-        if ($type === null) {
+        if (func_num_args() === 0) {
             return $this->_type;
         }
         $this->_type = $type;
     }
 
     /**
-     * Set the transfer-encoding for multipart.
+     * Gets/Sets the transfer-encoding for multipart.
      *
      * Useful when content bodies are in encodings like base64.
      *
@@ -158,7 +158,7 @@ class Part
      */
     public function transferEncoding($type)
     {
-        if ($type === null) {
+        if (func_num_args() === 0) {
             return $this->_transferEncoding;
         }
         $this->_transferEncoding = $type;

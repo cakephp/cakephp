@@ -131,7 +131,7 @@ trait ModelAwareTrait
     }
 
     /**
-     * Set or get the model type to be used by this class
+     * Sets/Gets the model type to be used by this class.
      *
      * @param string|null $modelType The model type or null to retrieve the current
      *
@@ -139,7 +139,7 @@ trait ModelAwareTrait
      */
     public function modelType($modelType = null)
     {
-        if ($modelType === null) {
+        if (func_num_args() === 0) {
             return $this->_modelType;
         }
 

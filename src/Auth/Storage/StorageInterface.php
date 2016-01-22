@@ -43,7 +43,7 @@ interface StorageInterface
     public function delete();
 
     /**
-     * Get/set redirect URL.
+     * Gets/Sets redirect URL.
      *
      * @param mixed $url Redirect URL. If `null` returns current URL. If `false`
      *   deletes currently set URL.

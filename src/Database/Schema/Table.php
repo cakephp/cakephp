@@ -335,7 +335,7 @@ class Table
     }
 
     /**
-     * Sets the type of a column, or returns its current type
+     * Gets/Sets the type of a column, e.g. returns its current type
      * if none is passed.
      *
      * @param string $name The column to get the type of.
@@ -347,7 +347,7 @@ class Table
         if (!isset($this->_columns[$name])) {
             return null;
         }
-        if ($type !== null) {
+        if (func_num_args() === 2) {
             $this->_columns[$name]['type'] = $type;
             $this->_typeMap[$name] = $type;
         }
@@ -659,7 +659,7 @@ class Table
     }
 
     /**
-     * Get/set the options for a table.
+     * Gets/Sets the options of a table.
      *
      * Table options allow you to set platform specific table level options.
      * For example the engine type in MySQL.
@@ -669,7 +669,7 @@ class Table
      */
     public function options($options = null)
     {
-        if ($options === null) {
+        if (func_num_args() === 0) {
             return $this->_options;
         }
         $this->_options = array_merge($this->_options, $options);
@@ -677,14 +677,14 @@ class Table
     }
 
     /**
-     * Get/Set whether the table is temporary in the database
+     * Gets/Sets for whether the table is temporary in the database.
      *
      * @param bool|null $set whether or not the table is to be temporary
      * @return $this|bool Either the table instance, the current temporary setting
      */
     public function temporary($set = null)
     {
-        if ($set === null) {
+        if (func_num_args() === 0) {
             return $this->_temporary;
         }
         $this->_temporary = (bool)$set;

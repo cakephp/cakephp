@@ -129,21 +129,21 @@ class RouteBuilder
     }
 
     /**
-     * Get or set default route class.
+     * Gets/Sets the default route class.
      *
      * @param string|null $routeClass Class name.
      * @return string|null
      */
     public function routeClass($routeClass = null)
     {
-        if ($routeClass === null) {
+        if (func_num_args() === 0) {
             return $this->_routeClass;
         }
         $this->_routeClass = $routeClass;
     }
 
     /**
-     * Get or set the extensions in this route builder's scope.
+     * Gets/Sets the extensions in this route builder's scope.
      *
      * Future routes connected in through this builder will have the connected
      * extensions applied. However, setting extensions does not modify existing routes.
@@ -153,7 +153,7 @@ class RouteBuilder
      */
     public function extensions($extensions = null)
     {
-        if ($extensions === null) {
+        if (func_num_args() === 0) {
             return $this->_extensions;
         }
         $this->_extensions = (array)$extensions;
@@ -196,7 +196,7 @@ class RouteBuilder
     }
 
     /**
-     * Get/set the name prefix for this scope.
+     * Gets/Sets the name prefix for this scope.
      *
      * Modifying the name prefix will only change the prefix
      * used for routes connected after the prefix is changed.
@@ -206,7 +206,7 @@ class RouteBuilder
      */
     public function namePrefix($value = null)
     {
-        if ($value !== null) {
+        if (func_num_args() === 1) {
             $this->_namePrefix = $value;
         }
         return $this->_namePrefix;

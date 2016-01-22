@@ -105,6 +105,8 @@ class LoggingStatement extends StatementDecorator
     }
 
     /**
+     * Gets/Sets for logger instance.
+     *
      * Sets the logger object instance. When called with no arguments
      * it returns the currently setup logger instance
      *
@@ -113,7 +115,7 @@ class LoggingStatement extends StatementDecorator
      */
     public function logger($instance = null)
     {
-        if ($instance === null) {
+        if (func_num_args() === 0) {
             return $this->_logger;
         }
         return $this->_logger = $instance;

@@ -251,7 +251,7 @@ class Security
     }
 
     /**
-     * Gets or sets the HMAC salt to be used for encryption/decryption
+     * Gets/Sets the HMAC salt to be used for encryption/decryption
      * routines.
      *
      * @param string|null $salt The salt to use for encryption routines. If null returns current salt.
@@ -259,7 +259,7 @@ class Security
      */
     public static function salt($salt = null)
     {
-        if ($salt === null) {
+        if (func_num_args() === 0) {
             return static::$_salt;
         }
         return static::$_salt = (string)$salt;

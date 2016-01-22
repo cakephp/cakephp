@@ -133,6 +133,8 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
+     * Gets/Sets the connection instance.
+     *
      * Sets the connection instance to be used for executing and transforming this query
      * When called with a null argument, it will return the current connection instance.
      *
@@ -141,7 +143,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function connection($connection = null)
     {
-        if ($connection === null) {
+        if (func_num_args() === 0) {
             return $this->_connection;
         }
         $this->_dirty();
@@ -419,6 +421,8 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
+     * Gets/Sets join clauses.
+     *
      * Adds a single or multiple tables to be used as JOIN clauses to this query.
      * Tables can be passed as an array of strings, an array describing the
      * join parts, an array with multiple join descriptions, or a single string.
@@ -506,7 +510,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function join($tables = null, $types = [], $overwrite = false)
     {
-        if ($tables === null) {
+        if (func_num_args() === 0) {
             return $this->_parts['join'];
         }
 
@@ -1679,7 +1683,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
-     * Returns the currently used ValueBinder instance. If a value is passed,
+     * Gets/Sets the currently used ValueBinder instance. If a value is passed,
      * it will be set as the new instance to be used.
      *
      * A ValueBinder is responsible for generating query placeholders and temporarily
@@ -1692,7 +1696,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function valueBinder($binder = null)
     {
-        if ($binder === null) {
+        if (func_num_args() === 0) {
             if ($this->_valueBinder === null) {
                 $this->_valueBinder = new ValueBinder;
             }
@@ -1703,7 +1707,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
-     * Enable/Disable buffered results.
+     * Gets/Sets buffered results flag.
      *
      * When enabled the results returned by this Query will be
      * buffered. This enables you to iterate a result set multiple times, or
@@ -1720,7 +1724,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function bufferResults($enable = null)
     {
-        if ($enable === null) {
+        if (func_num_args() === 0) {
             return $this->_useBufferedResults;
         }
 
