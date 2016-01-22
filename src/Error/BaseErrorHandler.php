@@ -296,6 +296,11 @@ abstract class BaseErrorHandler
             $request = Router::getRequest();
             if ($request) {
                 $message .= "\nRequest URL: " . $request->here();
+
+                $referer = $request->env('HTTP_REFERER');
+                if ($referer) {
+                    $message .= "\nReferer URL: " . $referer;
+                }
             }
         }
         if (!empty($config['trace'])) {
