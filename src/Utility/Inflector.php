@@ -720,7 +720,7 @@ class Inflector
         if ($result === false) {
             $camelized = static::camelize(static::underscore($string));
             $replace = strtolower(substr($camelized, 0, 1));
-            $result = preg_replace('/\\w/', $replace, $camelized, 1);
+            $result = $replace . substr($camelized, 1);
             static::_cache(__FUNCTION__, $string, $result);
         }
 
