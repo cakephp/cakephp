@@ -125,8 +125,8 @@ class Marshaller
         }
 
         $marshallOptions = [];
-        if (isset($options['forceTargetNew'])) {
-            $marshallOptions['forceTargetNew'] = $options['forceTargetNew'];
+        if (isset($options['forceNew'])) {
+            $marshallOptions['forceNew'] = $options['forceNew'];
         }
 
         $errors = $this->_validate($data, $options, true);
@@ -294,7 +294,7 @@ class Marshaller
     protected function _belongsToMany(Association $assoc, array $data, $options = [])
     {
         $associated = isset($options['associated']) ? $options['associated'] : [];
-        $forceTargetNew = isset($options['forceTargetNew']) ? $options['forceTargetNew'] : false;
+        $forceNew = isset($options['forceNew']) ? $options['forceNew'] : false;
 
         $data = array_values($data);
 
@@ -302,6 +302,7 @@ class Marshaller
         $primaryKey = array_flip($target->schema()->primaryKey());
         $records = $conditions = [];
         $primaryCount = count($primaryKey);
+        $conditions = [];
 
         foreach ($data as $i => $row) {
             if (!is_array($row)) {
@@ -310,12 +311,16 @@ class Marshaller
             if (array_intersect_key($primaryKey, $row) === $primaryKey) {
                 $keys = array_intersect_key($row, $primaryKey);
                 if (count($keys) === $primaryCount) {
+                    $rowConditions = [];
                     foreach ($keys as $key => $value) {
-                        $conditions[][$target->aliasfield($key)] = $value;
+                        $rowConditions[][$target->aliasfield($key)] = $value;
                     }
-                    if ($forceTargetNew && !$target->exists($conditions)) {
+                    $asd = $target->exists($rowConditions);
+                    if ($forceNew && !$asd) {
                         $records[$i] = $this->one($row, $options);
                     }
+
+                    $conditions = array_merge($conditions, $rowConditions);
                 }
             } else {
                 $records[$i] = $this->one($row, $options);
