@@ -217,7 +217,7 @@ class ViewBuilder implements JsonSerializable, Serializable
 
     /**
      * Get/set the name of the view file to render. The name specified is the
-     * filename in /app/Template/<SubFolder> without the .ctp extension.
+     * filename in /src/Template/<SubFolder> without the .ctp extension.
      *
      * @param string|null $name View file name to set. If null returns current name.
      * @return string|$this
@@ -234,7 +234,7 @@ class ViewBuilder implements JsonSerializable, Serializable
 
     /**
      * Get/set the name of the layout file to render the view inside of.
-     * The name specified is the filename of the layout in /app/Template/Layout
+     * The name specified is the filename of the layout in /src/Template/Layout
      * without the .ctp extension.
      *
      * @param string|null $name Layout file name to set. If null returns current name.
