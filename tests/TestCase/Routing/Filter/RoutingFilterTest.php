@@ -60,7 +60,7 @@ class RoutingFilterTest extends TestCase
         $event = new Event(__CLASS__, $this, compact('request'));
         $filter->beforeDispatch($event);
 
-        $this->assertSame($request->params['controller'], 'testcontroller');
+        $this->assertSame($request->params['controller'], 'Testcontroller');
         $this->assertSame($request->params['action'], 'testaction');
         $this->assertSame($request->params['pass'][0], 'params1');
         $this->assertSame($request->params['pass'][1], 'params2');
@@ -89,7 +89,7 @@ class RoutingFilterTest extends TestCase
         $event = new Event(__CLASS__, $this, compact('request'));
         $filter->beforeDispatch($event);
 
-        $this->assertRegExp('/posts/', $request['controller']);
+        $this->assertRegExp('/Posts/', $request['controller']);
         $this->assertRegExp('/home/', $request['action']);
         $this->assertTrue(isset($request['url']['sleep']));
         $this->assertTrue(isset($request['url']['coffee']));
@@ -99,7 +99,7 @@ class RoutingFilterTest extends TestCase
         $event = new Event(__CLASS__, $this, compact('request'));
         $filter->beforeDispatch($event);
 
-        $this->assertRegExp('/pages/', $request['controller']);
+        $this->assertRegExp('/Pages/', $request['controller']);
         $this->assertRegExp('/display/', $request['action']);
         $this->assertTrue(isset($request['url']['sleep']));
         $this->assertTrue(isset($request['url']['coffee']));

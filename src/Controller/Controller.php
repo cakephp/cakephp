@@ -237,7 +237,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         if ($this->name === null && isset($request->params['controller'])) {
-            $this->name = Inflector::camelize($request->params['controller']);
+            $this->name = $request->params['controller'];
         }
 
         if ($this->name === null) {
