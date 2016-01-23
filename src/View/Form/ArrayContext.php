@@ -57,15 +57,8 @@ use Cake\Utility\Hash;
  *  ];
  *  ```
  */
-class ArrayContext implements ContextInterface
+class ArrayContext extends AbstractContext
 {
-
-    /**
-     * The request object.
-     *
-     * @var \Cake\Network\Request
-     */
-    protected $_request;
 
     /**
      * Context data for this object.
@@ -79,10 +72,11 @@ class ArrayContext implements ContextInterface
      *
      * @param \Cake\Network\Request $request The request object.
      * @param array $context Context info.
+     * @param string $requestType The type of request used by the form this context is attached to.
      */
-    public function __construct(Request $request, array $context)
+    public function __construct(Request $request, array $context, $requestType)
     {
-        $this->_request = $request;
+        parent::__construct($request, $requestType);
         $context += [
             'schema' => [],
             'required' => [],
@@ -153,7 +147,7 @@ class ArrayContext implements ContextInterface
      */
     public function val($field)
     {
-        $val = $this->_request->data($field);
+        $val = parent::val($field);
         if ($val !== null) {
             return $val;
         }

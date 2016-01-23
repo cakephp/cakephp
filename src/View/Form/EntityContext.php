@@ -42,15 +42,8 @@ use Traversable;
  *   Defaults to 'default'. Can be an array of table alias=>validators when
  *   dealing with associated forms.
  */
-class EntityContext implements ContextInterface
+class EntityContext extends AbstractContext
 {
-
-    /**
-     * The request object.
-     *
-     * @var \Cake\Network\Request
-     */
-    protected $_request;
 
     /**
      * Context data for this object.
@@ -86,10 +79,11 @@ class EntityContext implements ContextInterface
      *
      * @param \Cake\Network\Request $request The request object.
      * @param array $context Context info.
+     * @param string $requestType The type of request used by the form this context is attached to.
      */
-    public function __construct(Request $request, array $context)
+    public function __construct(Request $request, array $context, $requestType)
     {
-        $this->_request = $request;
+        parent::__construct($request, $requestType);
         $context += [
             'entity' => null,
             'table' => null,
@@ -205,7 +199,7 @@ class EntityContext implements ContextInterface
      */
     public function val($field)
     {
-        $val = $this->_request->data($field);
+        $val = parent::val($field);
         if ($val !== null) {
             return $val;
         }

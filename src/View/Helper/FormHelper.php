@@ -258,30 +258,30 @@ class FormHelper extends Helper
      */
     protected function _addDefaultContextProviders()
     {
-        $this->addContextProvider('orm', function ($request, $data) {
+        $this->addContextProvider('orm', function ($request, $data, $requestType) {
             if (is_array($data['entity']) || $data['entity'] instanceof Traversable) {
                 $pass = (new Collection($data['entity']))->first() !== null;
                 if ($pass) {
-                    return new EntityContext($request, $data);
+                    return new EntityContext($request, $data, $requestType);
                 }
             }
             if ($data['entity'] instanceof EntityInterface) {
-                return new EntityContext($request, $data);
+                return new EntityContext($request, $data, $requestType);
             }
             if (is_array($data['entity']) && empty($data['entity']['schema'])) {
-                return new EntityContext($request, $data);
+                return new EntityContext($request, $data, $requestType);
             }
         });
 
-        $this->addContextProvider('form', function ($request, $data) {
+        $this->addContextProvider('form', function ($request, $data, $requestType) {
             if ($data['entity'] instanceof Form) {
-                return new FormContext($request, $data);
+                return new FormContext($request, $data, $requestType);
             }
         });
 
-        $this->addContextProvider('array', function ($request, $data) {
+        $this->addContextProvider('array', function ($request, $data, $requestType) {
             if (is_array($data['entity']) && isset($data['entity']['schema'])) {
-                return new ArrayContext($request, $data['entity']);
+                return new ArrayContext($request, $data['entity'], $requestType);
             }
         });
     }
@@ -341,9 +341,9 @@ class FormHelper extends Helper
             $options['context'] = [];
         }
         $options['context']['entity'] = $model;
-        $context = $this->_getContext($options['context']);
+        $type = isset($options['type']) ? $options['type'] : null;
+        $context = $this->_getContext($options['context'], $type);
         unset($options['context']);
-
         $isCreate = $context->isCreate();
 
         $options += [
@@ -2488,11 +2488,12 @@ class FormHelper extends Helper
      * If no type can be matched a NullContext will be returned.
      *
      * @param mixed $data The data to get a context provider for.
+     * @param string $requestType The type of request used by this form.
      * @return mixed Context provider.
      * @throws \RuntimeException when the context class does not implement the
      *   ContextInterface.
      */
-    protected function _getContext($data = [])
+    protected function _getContext($data = [], $requestType = null)
     {
         if (isset($this->_context) && empty($data)) {
             return $this->_context;
@@ -2501,13 +2502,13 @@ class FormHelper extends Helper
 
         foreach ($this->_contextProviders as $provider) {
             $check = $provider['callable'];
-            $context = $check($this->request, $data);
+            $context = $check($this->request, $data, $requestType);
             if ($context) {
                 break;
             }
         }
         if (!isset($context)) {
-            $context = new NullContext($this->request, $data);
+            $context = new NullContext($this->request, $data, $requestType);
         }
         if (!($context instanceof ContextInterface)) {
             throw new RuntimeException(
