@@ -89,7 +89,7 @@ class DateTimeType extends Type
      * Convert DateTime instance into strings.
      *
      * @param string|int|\DateTime $value The value to convert.
-     * @param Driver $driver The driver instance to convert with.
+     * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string
      */
     public function toDatabase($value, Driver $driver)
@@ -108,7 +108,7 @@ class DateTimeType extends Type
      * Convert strings into DateTime instances.
      *
      * @param string $value The value to convert.
-     * @param Driver $driver The driver instance to convert with.
+     * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return \Cake\I18n\Time|\DateTime
      */
     public function toPHP($value, Driver $driver)

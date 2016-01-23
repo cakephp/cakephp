@@ -65,6 +65,6 @@ class LoggedQuery
      */
     public function __toString()
     {
-        return $this->query;
+        return "duration={$this->took} rows={$this->numRows} {$this->query}";
     }
 }

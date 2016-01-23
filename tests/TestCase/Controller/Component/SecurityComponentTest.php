@@ -350,6 +350,8 @@ class SecurityComponentTest extends TestCase
     public function testRequireAuthSucceed()
     {
         $_SERVER['REQUEST_METHOD'] = 'AUTH';
+        $this->Controller->Security->config('validatePost', false);
+
         $event = new Event('Controller.startup', $this->Controller);
         $this->Controller->request['action'] = 'posted';
         $this->Controller->Security->requireAuth('posted');
@@ -357,13 +359,16 @@ class SecurityComponentTest extends TestCase
         $this->assertFalse($this->Controller->failed);
 
         $this->Controller->Security->session->write('_Token', [
-            'allowedControllers' => ['SecurityTest'], 'allowedActions' => ['posted']
+            'allowedControllers' => ['SecurityTest'],
+            'allowedActions' => ['posted'],
         ]);
         $this->Controller->request['controller'] = 'SecurityTest';
         $this->Controller->request['action'] = 'posted';
 
         $this->Controller->request->data = [
-            'username' => 'willy', 'password' => 'somePass', '_Token' => ''
+            'username' => 'willy',
+            'password' => 'somePass',
+            '_Token' => ''
         ];
         $this->Controller->action = 'posted';
         $this->Controller->Security->requireAuth('posted');
@@ -390,6 +395,30 @@ class SecurityComponentTest extends TestCase
             '_Token' => compact('fields', 'unlocked')
         ];
         $this->assertTrue($this->Controller->Security->validatePost($this->Controller));
+    }
+
+    /**
+     * Test that validatePost fires on GET with request data.
+     * This could happen when method overriding is used.
+     *
+     * @return void
+     * @triggers Controller.startup $this->Controller
+     */
+    public function testValidatePostOnGetWithData()
+    {
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->Controller->Security->startup($event);
+
+        $fields = 'an-invalid-token';
+        $unlocked = '';
+
+        $this->Controller->request->env('REQUEST_METHOD', 'GET');
+        $this->Controller->request->data = [
+            'Model' => ['username' => 'nate', 'password' => 'foo', 'valid' => '0'],
+            '_Token' => compact('fields', 'unlocked')
+        ];
+        $this->Controller->Security->startup($event);
+        $this->assertTrue($this->Controller->failed);
     }
 
     /**

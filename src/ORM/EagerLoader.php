@@ -403,7 +403,7 @@ class EagerLoader
      * Auxiliary function responsible for fully normalizing deep associations defined
      * using `contain()`
      *
-     * @param Table $parent owning side of the association
+     * @param \Cake\ORM\Table $parent owning side of the association
      * @param string $alias name of the association to be loaded
      * @param array $options list of extra options to use for this association
      * @param array $paths An array with two values, the first one is a list of dot
@@ -665,7 +665,7 @@ class EagerLoader
      *
      * @param array $external the list of external associations to be loaded
      * @param \Cake\ORM\Query $query The query from which the results where generated
-     * @param BufferedStatement $statement The statement to work on
+     * @param \Cake\Database\Statement\BufferedStatement $statement The statement to work on
      * @return array
      */
     protected function _collectKeys($external, $query, $statement)

@@ -649,12 +649,12 @@ class Router
      *
      * ### Note:
      *
-     * If you change the configuration value ``App.fullBaseUrl`` during runtime
+     * If you change the configuration value `App.fullBaseUrl` during runtime
      * and expect the router to produce links using the new setting, you are
      * required to call this method passing such value again.
      *
      * @param string|null $base the prefix for URLs generated containing the domain.
-     * For example: ``http://example.com``
+     * For example: `http://example.com`
      * @return string
      */
     public static function fullBaseUrl($base = null)

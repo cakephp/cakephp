@@ -285,7 +285,7 @@ class Marshaller
      * Builds the related entities and handles the special casing
      * for junction table entities.
      *
-     * @param Association $assoc The association to marshal.
+     * @param \Cake\ORM\Association $assoc The association to marshal.
      * @param array $data The data to convert into entities.
      * @param array $options List of options.
      * @return array An array of built entities.
@@ -366,7 +366,7 @@ class Marshaller
     /**
      * Loads a list of belongs to many from ids.
      *
-     * @param Association $assoc The association class for the belongsToMany association.
+     * @param \Cake\ORM\Association $assoc The association class for the belongsToMany association.
      * @param array $ids The list of ids to load.
      * @return array An array of entities.
      */
@@ -398,7 +398,7 @@ class Marshaller
     /**
      * Loads a list of belongs to many from ids.
      *
-     * @param Association $assoc The association class for the belongsToMany association.
+     * @param \Cake\ORM\Association $assoc The association class for the belongsToMany association.
      * @param array $ids The list of ids to load.
      * @return array An array of entities.
      * @deprecated Use _loadAssociatedByIds()

@@ -198,7 +198,7 @@ class Type
      * Casts given value from a PHP type to one acceptable by database
      *
      * @param mixed $value value to be converted to database equivalent
-     * @param Driver $driver object from which database preferences and configuration will be extracted
+     * @param \Cake\Database\Driver $driver object from which database preferences and configuration will be extracted
      * @return mixed
      */
     public function toDatabase($value, Driver $driver)
@@ -210,7 +210,7 @@ class Type
      * Casts given value from a database type to PHP equivalent
      *
      * @param mixed $value value to be converted to PHP equivalent
-     * @param Driver $driver object from which database preferences and configuration will be extracted
+     * @param \Cake\Database\Driver $driver object from which database preferences and configuration will be extracted
      * @return mixed
      */
     public function toPHP($value, Driver $driver)
@@ -244,7 +244,7 @@ class Type
      * Casts give value to Statement equivalent
      *
      * @param mixed $value value to be converted to PHP equivalent
-     * @param Driver $driver object from which database preferences and configuration will be extracted
+     * @param \Cake\Database\Driver $driver object from which database preferences and configuration will be extracted
      * @return mixed
      */
     public function toStatement($value, Driver $driver)

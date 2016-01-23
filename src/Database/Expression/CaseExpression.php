@@ -164,7 +164,7 @@ class CaseExpression implements ExpressionInterface
      * Compiles the relevant parts into sql
      *
      * @param array|string|\Cake\Database\ExpressionInterface $part The part to compile
-     * @param ValueBinder $generator Sql generator
+     * @param \Cake\Database\ValueBinder $generator Sql generator
      *
      * @return string
      */

@@ -204,7 +204,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * values when the query is executed, hence it is most suitable to use with
      * prepared statements.
      *
-     * @param ValueBinder $generator A placeholder object that will hold
+     * @param \Cake\Database\ValueBinder $generator A placeholder object that will hold
      * associated values for expressions
      * @return string
      */
@@ -829,7 +829,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * Will produce:
      *
-     * ``WHERE title = 'Hello World' AND author_id = 1``
+     * `WHERE title = 'Hello World' AND author_id = 1`
      *
      * ```
      * $query

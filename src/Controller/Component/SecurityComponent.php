@@ -93,7 +93,7 @@ class SecurityComponent extends Component
     /**
      * Component startup. All security checking happens here.
      *
-     * @param Event $event An Event instance
+     * @param \Cake\Event\Event $event An Event instance
      * @return mixed
      */
     public function startup(Event $event)
@@ -104,7 +104,7 @@ class SecurityComponent extends Component
         $this->_secureRequired($controller);
         $this->_authRequired($controller);
 
-        $isPost = $this->request->is(['post', 'put']);
+        $hasData = !empty($this->request->data);
         $isNotRequestAction = (
             !isset($controller->request->params['requested']) ||
             $controller->request->params['requested'] != 1
@@ -115,7 +115,7 @@ class SecurityComponent extends Component
         }
 
         if (!in_array($this->_action, (array)$this->_config['unlockedActions']) &&
-            $isPost && $isNotRequestAction
+            $hasData && $isNotRequestAction
         ) {
             if ($this->_config['validatePost'] &&
                 $this->_validatePost($controller) === false
@@ -124,7 +124,7 @@ class SecurityComponent extends Component
             }
         }
         $this->generateToken($controller->request);
-        if ($isPost && is_array($controller->request->data)) {
+        if ($hasData && is_array($controller->request->data)) {
             unset($controller->request->data['_Token']);
         }
     }
@@ -171,7 +171,7 @@ class SecurityComponent extends Component
      * Black-hole an invalid request with a 400 error or custom callback. If SecurityComponent::$blackHoleCallback
      * is specified, it will use this callback by executing the method indicated in $error
      *
-     * @param Controller $controller Instantiating controller
+     * @param \Cake\Controller\Controller $controller Instantiating controller
      * @param string $error Error method
      * @return mixed If specified, controller blackHoleCallback's response, or no return otherwise
      * @see SecurityComponent::$blackHoleCallback
@@ -204,7 +204,7 @@ class SecurityComponent extends Component
     /**
      * Check if access requires secure connection
      *
-     * @param Controller $controller Instantiating controller
+     * @param \Cake\Controller\Controller $controller Instantiating controller
      * @return bool true if secure connection required
      */
     protected function _secureRequired(Controller $controller)
@@ -228,7 +228,7 @@ class SecurityComponent extends Component
     /**
      * Check if authentication is required
      *
-     * @param Controller $controller Instantiating controller
+     * @param \Cake\Controller\Controller $controller Instantiating controller
      * @return bool true if authentication required
      */
     protected function _authRequired(Controller $controller)
@@ -271,7 +271,7 @@ class SecurityComponent extends Component
     /**
      * Validate submitted form
      *
-     * @param Controller $controller Instantiating controller
+     * @param \Cake\Controller\Controller $controller Instantiating controller
      * @return bool true if submitted form is valid
      */
     protected function _validatePost(Controller $controller)
@@ -389,7 +389,7 @@ class SecurityComponent extends Component
     /**
      * Calls a controller callback method
      *
-     * @param Controller $controller Controller to run callback on
+     * @param \Cake\Controller\Controller $controller Controller to run callback on
      * @param string $method Method to execute
      * @param array $params Parameters to send to method
      * @return mixed Controller callback method's response

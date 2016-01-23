@@ -1314,7 +1314,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Returns false if any validation for the passed rule set should be stopped
      * due to the field missing in the data array
      *
-     * @param ValidationSet $field The set of rules for a field.
+     * @param \Cake\Validation\ValidationSet $field The set of rules for a field.
      * @param array $context A key value list of data containing the validation context.
      * @return bool
      */
@@ -1340,7 +1340,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Returns whether the field can be left blank according to `allowEmpty`
      *
-     * @param ValidationSet $field the set of rules for a field
+     * @param \Cake\Validation\ValidationSet $field the set of rules for a field
      * @param array $context a key value list of data containing the validation context.
      * @return bool
      */
@@ -1390,7 +1390,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * from executing them
      *
      * @param string $field The name of the field that is being processed
-     * @param ValidationSet $rules the list of rules for a field
+     * @param \Cake\Validation\ValidationSet $rules the list of rules for a field
      * @param array $data the full data passed to the validator
      * @param bool $newRecord whether is it a new record or an existing one
      * @return array

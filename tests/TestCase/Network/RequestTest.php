@@ -2463,6 +2463,32 @@ XML;
     }
 
     /**
+     * Tests that overriding the method to GET will clean all request
+     * data, to better simulate a GET request.
+     *
+     * @return void
+     */
+    public function testMethodOverrideEmptyData()
+    {
+        $post = ['_method' => 'GET', 'foo' => 'bar'];
+        $request = new Request([
+            'post' => $post,
+            'environment' => ['REQUEST_METHOD' => 'POST']
+        ]);
+        $this->assertEmpty($request->data);
+
+        $post = ['_method' => 'GET', 'foo' => 'bar'];
+        $request = new Request([
+            'post' => ['foo' => 'bar'],
+            'environment' => [
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_X_HTTP_METHOD_OVERRIDE' => 'GET'
+            ]
+        ]);
+        $this->assertEmpty($request->data);
+    }
+
+    /**
      * loadEnvironment method
      *
      * @param array $env

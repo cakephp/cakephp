@@ -65,11 +65,7 @@ class DashedRoute extends Route
             return false;
         }
         if (!empty($params['controller'])) {
-            $params['controller'] = Inflector::camelize(str_replace(
-                '-',
-                '_',
-                $params['controller']
-            ));
+            $params['controller'] = Inflector::camelize($params['controller'], '-');
         }
         if (!empty($params['plugin'])) {
             $params['plugin'] = $this->_camelizePlugin($params['plugin']);

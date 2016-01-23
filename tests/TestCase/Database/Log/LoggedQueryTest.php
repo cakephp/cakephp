@@ -33,6 +33,6 @@ class LoggedQueryTest extends TestCase
     {
         $logged = new LoggedQuery;
         $logged->query = 'SELECT foo FROM bar';
-        $this->assertEquals('SELECT foo FROM bar', (string)$logged);
+        $this->assertEquals('duration=0 rows=0 SELECT foo FROM bar', (string)$logged);
     }
 }

@@ -29,7 +29,7 @@ class UuidType extends StringType
      * Casts given value from a PHP type to one acceptable by database
      *
      * @param mixed $value value to be converted to database equivalent
-     * @param Driver $driver object from which database preferences and configuration will be extracted
+     * @param \Cake\Database\Driver $driver object from which database preferences and configuration will be extracted
      * @return string|null
      */
     public function toDatabase($value, Driver $driver)

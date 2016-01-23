@@ -31,7 +31,7 @@ class StringType extends Type implements OptionalConvertInterface
      * Convert string data into the database format.
      *
      * @param mixed $value The value to convert.
-     * @param Driver $driver The driver instance to convert with.
+     * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|null
      */
     public function toDatabase($value, Driver $driver)
@@ -55,7 +55,7 @@ class StringType extends Type implements OptionalConvertInterface
      * Convert string values to PHP strings.
      *
      * @param mixed $value The value to convert.
-     * @param Driver $driver The driver instance to convert with.
+     * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|null
      */
     public function toPHP($value, Driver $driver)
@@ -70,7 +70,7 @@ class StringType extends Type implements OptionalConvertInterface
      * Get the correct PDO binding type for string data.
      *
      * @param mixed $value The value being bound.
-     * @param Driver $driver The driver.
+     * @param \Cake\Database\Driver $driver The driver.
      * @return int
      */
     public function toStatement($value, Driver $driver)

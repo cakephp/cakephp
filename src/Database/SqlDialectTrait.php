@@ -122,8 +122,8 @@ trait SqlDialectTrait
     /**
      * Apply translation steps to select queries.
      *
-     * @param Query $query The query to translate
-     * @return Query The modified query
+     * @param \Cake\Database\Query $query The query to translate
+     * @return \Cake\Database\Query The modified query
      */
     protected function _selectQueryTranslator($query)
     {
@@ -134,8 +134,8 @@ trait SqlDialectTrait
      * Returns the passed query after rewriting the DISTINCT clause, so that drivers
      * that do not support the "ON" part can provide the actual way it should be done
      *
-     * @param Query $query The query to be transformed
-     * @return Query
+     * @param \Cake\Database\Query $query The query to be transformed
+     * @return \Cake\Database\Query
      */
     protected function _transformDistinct($query)
     {
@@ -155,8 +155,8 @@ trait SqlDialectTrait
      *
      * We are intentionally not supporting deletes with joins as they have even poorer support.
      *
-     * @param Query $query The query to translate
-     * @return Query The modified query
+     * @param \Cake\Database\Query $query The query to translate
+     * @return \Cake\Database\Query The modified query
      */
     protected function _deleteQueryTranslator($query)
     {
@@ -199,8 +199,8 @@ trait SqlDialectTrait
     /**
      * Apply translation steps to update queries.
      *
-     * @param Query $query The query to translate
-     * @return Query The modified query
+     * @param \Cake\Database\Query $query The query to translate
+     * @return \Cake\Database\Query The modified query
      */
     protected function _updateQueryTranslator($query)
     {
@@ -210,8 +210,8 @@ trait SqlDialectTrait
     /**
      * Apply translation steps to insert queries.
      *
-     * @param Query $query The query to translate
-     * @return Query The modified query
+     * @param \Cake\Database\Query $query The query to translate
+     * @return \Cake\Database\Query The modified query
      */
     protected function _insertQueryTranslator($query)
     {

@@ -91,7 +91,7 @@ class RequestHandlerComponent extends Component
     /**
      * Constructor. Parses the accepted content types accepted by the client using HTTP_ACCEPT
      *
-     * @param ComponentRegistry $registry ComponentRegistry object.
+     * @param \Cake\Controller\ComponentRegistry $registry ComponentRegistry object.
      * @param array $config Array of config.
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
@@ -188,7 +188,7 @@ class RequestHandlerComponent extends Component
      * If the XML data is POSTed, the data is parsed into an XML object, which is assigned
      * to the $data property of the controller, which can then be saved to a model object.
      *
-     * @param Event $event The startup event that was fired.
+     * @param \Cake\Event\Event $event The startup event that was fired.
      * @return void
      */
     public function startup(Event $event)
@@ -242,7 +242,7 @@ class RequestHandlerComponent extends Component
     /**
      * Handles (fakes) redirects for AJAX requests using requestAction()
      *
-     * @param Event $event The Controller.beforeRedirect event.
+     * @param \Cake\Event\Event $event The Controller.beforeRedirect event.
      * @param string|array $url A string or array containing the redirect location
      * @param \Cake\Network\Response $response The response object.
      * @return \Cake\Network\Response|null The response object if the redirect is caught.
@@ -298,7 +298,7 @@ class RequestHandlerComponent extends Component
      * - If the extension is of a type that RequestHandler understands, it will
      *   set that Content-type in the response header.
      *
-     * @param Event $event The Controller.beforeRender event.
+     * @param \Cake\Event\Event $event The Controller.beforeRender event.
      * @return bool false if the render process should be aborted
      */
     public function beforeRender(Event $event)
@@ -531,7 +531,7 @@ class RequestHandlerComponent extends Component
      * $this->RequestHandler->renderAs($this, 'xml', ['attachment' => 'myfile.xml'];
      * ```
      *
-     * @param Controller $controller A reference to a controller object
+     * @param \Cake\Controller\Controller $controller A reference to a controller object
      * @param string $type Type of response to send (e.g: 'ajax')
      * @param array $options Array of options to use
      * @return void

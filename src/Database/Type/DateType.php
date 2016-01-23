@@ -78,7 +78,7 @@ class DateType extends DateTimeType
      * Convert strings into Date instances.
      *
      * @param string $value The value to convert.
-     * @param Driver $driver The driver instance to convert with.
+     * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return \Carbon\Carbon
      */
     public function toPHP($value, Driver $driver)
