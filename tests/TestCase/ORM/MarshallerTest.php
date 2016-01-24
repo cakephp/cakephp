@@ -115,7 +115,9 @@ class MarshallerTest extends TestCase
     {
         parent::setUp();
         $articles = TableRegistry::get('Articles');
-        $articles->belongsTo('Users');
+        $articles->belongsTo('Users', [
+            'foreignKey' => 'author_id'
+        ]);
         $articles->hasMany('Comments');
         $articles->belongsToMany('Tags');
 
@@ -652,7 +654,7 @@ class MarshallerTest extends TestCase
      *
      * @return void
      */
-    public function testBelongsToManyWithMixedJoinData()
+    public function testOneBelongsToManyWithMixedJoinData()
     {
         $data = [
             'title' => 'My title',
@@ -681,6 +683,46 @@ class MarshallerTest extends TestCase
         $this->assertEquals($data['tags'][1]['name'], $result->tags[1]->name);
         $this->assertEquals(0, $result->tags[0]->_joinData->active);
         $this->assertEquals(1, $result->tags[1]->_joinData->active);
+    }
+
+    public function testOneBelongsToManyWithNestedAssociations()
+    {
+        $this->tags->belongsToMany('Articles');
+        $data = [
+            'name' => 'new tag',
+            'articles' => [
+                // This nested article exists, and we want to update it.
+                [
+                    'id' => 1,
+                    'title' => 'New tagged article',
+                    'body' => 'New tagged article',
+                    'user' => [
+                        'id' => 1,
+                        'username' => 'newuser'
+                    ],
+                    'comments' => [
+                        ['comment' => 'New comment', 'user_id' => 1],
+                        ['comment' => 'Second comment', 'user_id' => 1],
+                    ]
+                ]
+            ]
+        ];
+        $marshaller = new Marshaller($this->tags);
+        $tag = $marshaller->one($data, ['associated' => ['Articles.Users', 'Articles.Comments']]);
+
+        $this->assertNotEmpty($tag->articles);
+        $this->assertCount(1, $tag->articles);
+        $this->assertInstanceOf('Cake\ORM\Entity', $tag->articles[0]);
+        $this->assertSame('New tagged article', $tag->articles[0]->title);
+
+        $this->assertNotEmpty($tag->articles[0]->user);
+        $this->assertInstanceOf('Cake\ORM\Entity', $tag->articles[0]->user);
+        $this->assertSame('newuser', $tag->articles[0]->user->username);
+
+        $this->assertNotEmpty($tag->articles[0]->comments);
+        $this->assertCount(2, $tag->articles[0]->comments);
+        $this->assertInstanceOf('Cake\ORM\Entity', $tag->articles[0]->comments[0]);
+        $this->assertInstanceOf('Cake\ORM\Entity', $tag->articles[0]->comments[1]);
     }
 
     /**
