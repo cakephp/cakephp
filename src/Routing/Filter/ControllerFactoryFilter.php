@@ -70,7 +70,11 @@ class ControllerFactoryFilter extends DispatcherFilter
         if (!empty($request->params['prefix'])) {
             $namespace .= '/' . $request->params['prefix'];
         }
-        if (strpos($controller, '\\') !== false || strpos($controller, '.') !== false) {
+        $firstChar = substr($controller, 0, 1);
+        if (strpos($controller, '\\') !== false ||
+            strpos($controller, '.') !== false ||
+            $firstChar === strtolower($firstChar)
+        ) {
             return false;
         }
         $className = false;
