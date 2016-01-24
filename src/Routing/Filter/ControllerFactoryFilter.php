@@ -74,7 +74,12 @@ class ControllerFactoryFilter extends DispatcherFilter
             );
             $namespace .= '/' . implode('/', $prefixes);
         }
-        if (strpos($controller, '\\') !== false || strpos($controller, '.') !== false) {
+        $firstChar = substr($controller, 0, 1);
+        if (
+            strpos($controller, '\\') !== false ||
+            strpos($controller, '.') !== false ||
+            $firstChar === strtolower($firstChar)
+        ) {
             return false;
         }
         $className = false;
