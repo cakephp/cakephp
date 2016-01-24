@@ -714,15 +714,18 @@ class MarshallerTest extends TestCase
         $this->assertCount(1, $tag->articles);
         $this->assertInstanceOf('Cake\ORM\Entity', $tag->articles[0]);
         $this->assertSame('New tagged article', $tag->articles[0]->title);
+        $this->assertFalse($tag->articles[0]->isNew());
 
         $this->assertNotEmpty($tag->articles[0]->user);
         $this->assertInstanceOf('Cake\ORM\Entity', $tag->articles[0]->user);
         $this->assertSame('newuser', $tag->articles[0]->user->username);
+        $this->assertTrue($tag->articles[0]->user->isNew());
 
         $this->assertNotEmpty($tag->articles[0]->comments);
         $this->assertCount(2, $tag->articles[0]->comments);
         $this->assertInstanceOf('Cake\ORM\Entity', $tag->articles[0]->comments[0]);
-        $this->assertInstanceOf('Cake\ORM\Entity', $tag->articles[0]->comments[1]);
+        $this->assertTrue($tag->articles[0]->comments[0]->isNew());
+        $this->assertTrue($tag->articles[0]->comments[1]->isNew());
     }
 
     /**
