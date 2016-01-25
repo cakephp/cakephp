@@ -981,6 +981,27 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Tests that fetching belongsToMany association will retain autoFields(true) if it was used.
+     *
+     * @see https://github.com/cakephp/cakephp/issues/8052
+     * @return void
+     */
+    public function testEagerLoadingBelongsToManyLimitedFieldsWithAutoFields()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags');
+        $result = $table
+            ->find()
+            ->contain(['Tags' => function ($q) {
+                return $q->select(['two' => '1 + 1'])->autoFields(true);
+            }])
+            ->first();
+
+        $this->assertNotEmpty($result->tags[0]->two, 'Should have computed field');
+        $this->assertNotEmpty($result->tags[0]->name, 'Should have standard field');
+    }
+
+    /**
      * Test that association proxy find() applies joins when conditions are involved.
      *
      * @return void
