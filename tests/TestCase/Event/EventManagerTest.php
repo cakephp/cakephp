@@ -152,6 +152,67 @@ class EventManagerTest extends TestCase
     }
 
     /**
+     * Tests attached event listeners for matching key pattern
+     *
+     * @return void
+     */
+    public function testMatchingListeners()
+    {
+        $manager = new EventManager();
+        $manager->attach('fakeFunction1', 'fake.event');
+        $manager->attach('fakeFunction2', 'real.event');
+        $manager->attach('fakeFunction3', 'test.event');
+        $manager->attach('fakeFunction4', 'event.test');
+
+        $this->assertArrayHasKey('fake.event', $manager->matchingListeners('fake'));
+        $this->assertArrayHasKey('real.event', $manager->matchingListeners('real'));
+        $this->assertArrayHasKey('test.event', $manager->matchingListeners('test'));
+        $this->assertArrayHasKey('event.test', $manager->matchingListeners('test'));
+        $this->assertArrayHasKey('test.event', $manager->matchingListeners('^test'));
+        $this->assertArrayHasKey('event.test', $manager->matchingListeners('test$'));
+
+        $expected = ['fake.event', 'real.event', 'test.event', 'event.test'];
+        $result =  $manager->matchingListeners('event');
+        $this->assertNotEmpty($result);
+        $this->assertSame($expected, array_keys($result));
+
+        $expected = ['fake.event', 'real.event', 'test.event'];
+        $result = $manager->matchingListeners('.event');
+        $this->assertNotEmpty($result);
+        $this->assertSame($expected, array_keys($result));
+
+        $expected = ['test.event', 'event.test'];
+        $result = $manager->matchingListeners('test');
+        $this->assertNotEmpty($result);
+        $this->assertSame($expected, array_keys($result));
+
+        $expected = ['test.event'];
+        $result = $manager->matchingListeners('test.');
+        $this->assertNotEmpty($result);
+        $this->assertSame($expected, array_keys($result));
+
+        $expected = ['test.event'];
+        $result = $manager->matchingListeners('^test');
+        $this->assertNotEmpty($result);
+        $this->assertSame($expected, array_keys($result));
+
+        $expected = ['event.test'];
+        $result = $manager->matchingListeners('^event');
+        $this->assertNotEmpty($result);
+        $this->assertSame($expected, array_keys($result));
+
+        $expected = ['event.test'];
+        $result = $manager->matchingListeners('test$');
+        $this->assertNotEmpty($result);
+        $this->assertSame($expected, array_keys($result));
+
+        $expected = [];
+        $result = $manager->matchingListeners('foo');
+        $this->assertEmpty($manager->matchingListeners('foo'));
+        $this->assertSame($expected, array_keys($result));
+    }
+
+    /**
      * Test the on() method for basic callable types.
      *
      * @return void
