@@ -752,6 +752,10 @@ class TimeTest extends TestCase
      */
     public function testParseDateTime()
     {
+        $time = Time::parseDateTime('01/01/1970 00:00am');
+        $this->assertNotNull($time);
+        $this->assertEquals('1970-01-01 00:00', $time->format('Y-m-d H:i'));
+
         $time = Time::parseDateTime('10/13/2013 12:54am');
         $this->assertNotNull($time);
         $this->assertEquals('2013-10-13 00:54', $time->format('Y-m-d H:i'));
