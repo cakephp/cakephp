@@ -788,7 +788,7 @@ class Time extends Carbon implements JsonSerializable
             $pattern
         );
         $time = $formatter->parse($time);
-        if ($time) {
+        if ($time !== false) {
             $result = new static('@' . $time);
             $result->setTimezone(date_default_timezone_get());
             return $result;
