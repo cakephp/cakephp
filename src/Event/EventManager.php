@@ -449,7 +449,7 @@ class EventManager
      */
     public function matchingListeners($eventKeyPattern)
     {
-        $matchPattern = '/' . $eventKeyPattern . '/';
+        $matchPattern = '/' . preg_quote($eventKeyPattern, "/") . '/';
         $matches = array_intersect_key(
             $this->_listeners,
             array_flip(

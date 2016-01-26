@@ -168,11 +168,21 @@ class EventManagerTest extends TestCase
         $this->assertArrayHasKey('real.event', $manager->matchingListeners('real'));
         $this->assertArrayHasKey('test.event', $manager->matchingListeners('test'));
         $this->assertArrayHasKey('event.test', $manager->matchingListeners('test'));
-        $this->assertArrayHasKey('test.event', $manager->matchingListeners('^test'));
-        $this->assertArrayHasKey('event.test', $manager->matchingListeners('test$'));
+
+        $this->assertArrayNotHasKey('test.event', $manager->matchingListeners('/test'));
+        $this->assertEmpty($manager->matchingListeners('/test'));
+
+        $this->assertArrayNotHasKey('event.test', $manager->matchingListeners('test$'));
+        $this->assertEmpty($manager->matchingListeners('test$'));
+
+        $this->assertArrayNotHasKey('event.test', $manager->matchingListeners('ev.nt'));
+        $this->assertEmpty($manager->matchingListeners('ev.nt'));
+
+        $this->assertArrayNotHasKey('test.event', $manager->matchingListeners('^test'));
+        $this->assertEmpty($manager->matchingListeners('^test'));
 
         $expected = ['fake.event', 'real.event', 'test.event', 'event.test'];
-        $result = $manager->matchingListeners('event');
+        $result =  $manager->matchingListeners('event');
         $this->assertNotEmpty($result);
         $this->assertSame($expected, array_keys($result));
 
@@ -193,18 +203,18 @@ class EventManagerTest extends TestCase
 
         $expected = ['test.event'];
         $result = $manager->matchingListeners('^test');
-        $this->assertNotEmpty($result);
-        $this->assertSame($expected, array_keys($result));
+        $this->assertEmpty($result);
+        $this->assertNotSame($expected, array_keys($result));
 
         $expected = ['event.test'];
         $result = $manager->matchingListeners('^event');
-        $this->assertNotEmpty($result);
-        $this->assertSame($expected, array_keys($result));
+        $this->assertEmpty($result);
+        $this->assertNotSame($expected, array_keys($result));
 
         $expected = ['event.test'];
         $result = $manager->matchingListeners('test$');
-        $this->assertNotEmpty($result);
-        $this->assertSame($expected, array_keys($result));
+        $this->assertEmpty($result);
+        $this->assertNotSame($expected, array_keys($result));
 
         $expected = [];
         $result = $manager->matchingListeners('foo');
