@@ -330,19 +330,23 @@ class SecurityComponentTest extends CakeTestCase {
  */
 	public function testRequireAuthSucceed() {
 		$_SERVER['REQUEST_METHOD'] = 'AUTH';
+		$this->Controller->Security->unlockedActions = array('posted');
 		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requireAuth('posted');
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 
 		$this->Controller->Security->Session->write('_Token', array(
-			'allowedControllers' => array('SecurityTest'), 'allowedActions' => array('posted')
+			'allowedControllers' => array('SecurityTest'),
+			'allowedActions' => array('posted')
 		));
 		$this->Controller->request['controller'] = 'SecurityTest';
 		$this->Controller->request['action'] = 'posted';
 
 		$this->Controller->request->data = array(
-			'username' => 'willy', 'password' => 'somePass', '_Token' => ''
+			'username' => 'willy',
+			'password' => 'somePass',
+			'_Token' => ''
 		);
 		$this->Controller->action = 'posted';
 		$this->Controller->Security->requireAuth('posted');
@@ -478,6 +482,29 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->requireDelete('deleted');
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
+	}
+
+/**
+ * Test that validatePost fires on GET with request data.
+ * This could happen when method overriding is used.
+ *
+ * @return void
+ * @triggers Controller.startup $this->Controller
+ */
+	public function testValidatePostOnGetWithData() {
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$this->Controller->Security->startup($this->Controller);
+
+		$fields = 'an-invalid-token';
+		$unlocked = '';
+
+		$this->Controller->request->data = [
+			'Model' => array('username' => 'nate', 'password' => 'foo', 'valid' => '0'),
+			'_Token' => compact('fields', 'unlocked')
+		];
+		$this->assertFalse($this->Controller->failed, 'Should not be failed yet');
+		$this->Controller->Security->startup($this->Controller);
+		$this->assertTrue($this->Controller->failed, 'Should fail because of validatePost.');
 	}
 
 /**
@@ -1230,11 +1257,6 @@ class SecurityComponentTest extends CakeTestCase {
 
 		$this->Security->Session->write('_Token.csrfTokens', array('nonce1' => strtotime('+10 minutes')));
 
-		$this->Controller->request = $this->getMock('CakeRequest', array('is'));
-		$this->Controller->request->expects($this->once())->method('is')
-			->with(array('post', 'put'))
-			->will($this->returnValue(true));
-
 		$this->Controller->request->params['action'] = 'index';
 		$this->Controller->request->data = array(
 			'_Token' => array(
@@ -1299,11 +1321,6 @@ class SecurityComponentTest extends CakeTestCase {
 
 		$this->Security->Session->write('_Token.csrfTokens', array('nonce1' => strtotime('+10 minutes')));
 
-		$this->Controller->request = $this->getMock('CakeRequest', array('is'));
-		$this->Controller->request->expects($this->once())->method('is')
-			->with(array('post', 'put'))
-			->will($this->returnValue(true));
-
 		$this->Controller->request->params['action'] = 'index';
 		$this->Controller->request->data = array(
 			'_Token' => array(
@@ -1328,11 +1345,6 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Security->csrfExpires = '+10 minutes';
 
 		$this->Security->Session->write('_Token.csrfTokens', array('nonce1' => strtotime('-5 minutes')));
-
-		$this->Controller->request = $this->getMock('CakeRequest', array('is'));
-		$this->Controller->request->expects($this->once())->method('is')
-			->with(array('post', 'put'))
-			->will($this->returnValue(true));
 
 		$this->Controller->request->params['action'] = 'index';
 		$this->Controller->request->data = array(
@@ -1386,10 +1398,6 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Security->Session->write('_Token.csrfTokens', array('nonce1' => strtotime('+10 minutes')));
 
 		$this->Controller->request = $this->getMock('CakeRequest', array('is'));
-		$this->Controller->request->expects($this->once())->method('is')
-			->with(array('post', 'put'))
-			->will($this->returnValue(true));
-
 		$this->Controller->request->params['action'] = 'index';
 		$this->Controller->request->data = array(
 			'_Token' => array(
