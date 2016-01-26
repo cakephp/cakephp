@@ -1608,8 +1608,12 @@ class FormHelper extends Helper
      * Creates an HTML link, but access the URL using the method you specify
      * (defaults to POST). Requires javascript to be enabled in browser.
      *
-     * This method creates a `<form>` element. So do not use this method inside an
-     * existing form. Instead you should add a submit button using FormHelper::submit()
+     * This method creates a `<form>` element. If you want to use this method inside of an
+     * existing form, you must use the `block` option so that the new form is being set to
+     * a view block that can be rendered outside of the main form.
+     *
+     * If all you are looking for is a button to submit your form, then you should use
+     * `FormHelper::submit()` instead.
      *
      * ### Options:
      *
