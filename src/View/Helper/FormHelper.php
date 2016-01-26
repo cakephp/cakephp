@@ -1613,7 +1613,7 @@ class FormHelper extends Helper
      * a view block that can be rendered outside of the main form.
      *
      * If all you are looking for is a button to submit your form, then you should use
-     * `FormHelper::submit()` instead.
+     * `FormHelper::button()` or `FormHelper::submit()` instead.
      *
      * ### Options:
      *
