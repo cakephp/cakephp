@@ -1215,7 +1215,6 @@ class BelongsToMany extends Association
             ->where($this->junctionConditions())
             ->select($query->aliasFields((array)$assoc->foreignKey(), $name));
 
-
         $assoc->attachTo($query);
         return $query;
     }
