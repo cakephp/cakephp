@@ -182,7 +182,7 @@ class EventManagerTest extends TestCase
         $this->assertEmpty($manager->matchingListeners('^test'));
 
         $expected = ['fake.event', 'real.event', 'test.event', 'event.test'];
-        $result =  $manager->matchingListeners('event');
+        $result = $manager->matchingListeners('event');
         $this->assertNotEmpty($result);
         $this->assertSame($expected, array_keys($result));
 
