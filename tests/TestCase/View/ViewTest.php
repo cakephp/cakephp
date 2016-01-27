@@ -1267,7 +1267,7 @@ class ViewTest extends TestCase
         $View->templatePath($this->PostsController->name);
         $result = $View->render('index');
 
-        $this->assertRegExp("/<meta charset=utf-8\"\/>\s*<title>/", $result);
+        $this->assertRegExp("/<meta charset=\"utf-8\"\/>\s*<title>/", $result);
         $this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
         $this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
 
@@ -1286,7 +1286,7 @@ class ViewTest extends TestCase
         $View->templatePath($this->PostsController->name);
         $result = $View->render('index');
 
-        $this->assertRegExp("/<meta charset=utf-8\"\/>\s*<title>/", $result);
+        $this->assertRegExp("/<meta charset=\"utf-8\"\/>\s*<title>/", $result);
         $this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
     }
 
