@@ -74,7 +74,7 @@ class HtmlHelper extends Helper
             'parastart' => '<p{{attrs}}>',
             'css' => '<link rel="{{rel}}" href="{{url}}"{{attrs}}/>',
             'style' => '<style{{attrs}}>{{content}}</style>',
-            'charset' => '<meta http-equiv="Content-Type" content="text/html; charset={{charset}}"/>',
+            'charset' => '<meta charset={{charset}}"/>',
             'ul' => '<ul{{attrs}}>{{content}}</ul>',
             'ol' => '<ol{{attrs}}>{{content}}</ol>',
             'li' => '<li{{attrs}}>{{content}}</li>',
