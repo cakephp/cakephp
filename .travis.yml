@@ -30,7 +30,7 @@ matrix:
 
   include:
     - php: 7.0
-      env: COVERALLS=1 DEFAULT=0
+      env: CODECOVERAGE=1 DEFAULT=0
 
     - php: 7.0
       env: PHPCS=1 DEFAULT=0
@@ -42,7 +42,7 @@ matrix:
       env: HHVM=1 DB=mysql db_dsn='mysql://travis@0.0.0.0/cakephp_test'
 
   allow_failures:
-    - env: COVERALLS=1 DEFAULT=0
+    - env: CODECOVERAGE=1 DEFAULT=0
 
     - php: hhvm
 
@@ -60,9 +60,6 @@ before_script:
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi"
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi"
 
-  - sh -c "if [ '$COVERALLS' = '1' ]; then composer require --dev satooshi/php-coveralls:dev-master; fi"
-  - sh -c "if [ '$COVERALLS' = '1' ]; then mkdir -p build/logs; fi"
-
   - sh -c "if [ '$HHVM' != '1' ]; then echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
   - sh -c "if [ '$HHVM' != '1' ]; then echo 'extension = redis.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
   - sh -c "if [ '$HHVM' != '1' ]; then echo 'extension = apc.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
@@ -76,8 +73,9 @@ script:
 
   - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi"
 
-  - sh -c "if [ '$COVERALLS' = '1' ]; then phpdbg -qrr vendor/bin/phpunit --coverage-clover build/logs/clover.xml || true; fi"
-  - sh -c "if [ '$COVERALLS' = '1' ]; then vendor/bin/coveralls -v; fi"
+  - sh -c "if [ '$CODECOVERAGE' = '1' ]; then phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml || true; fi"
+  - sh -c "if [ '$CODECOVERAGE' = '1' ]; then wget -O codecov.sh https://codecov.io/bash; fi"
+  - sh -c "if [ '$CODECOVERAGE' = '1' ]; then bash codecov.sh; fi"
 
 notifications:
   email: false
