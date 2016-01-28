@@ -102,7 +102,7 @@ class CakeEvent {
 /**
  * Returns the subject of this event
  *
- * @return string
+ * @return object
  */
 	public function subject() {
 		return $this->_subject;

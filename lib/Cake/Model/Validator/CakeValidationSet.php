@@ -32,7 +32,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
 /**
  * Holds the CakeValidationRule objects
  *
- * @var array
+ * @var CakeValidationRule[]
  */
 	protected $_rules = array();
 
@@ -172,7 +172,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
 /**
  * Returns all rules for this validation set
  *
- * @return array
+ * @return CakeValidationRule[]
  */
 	public function getRules() {
 		return $this->_rules;
@@ -191,7 +191,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  *
  * @param string $name The name under which the rule should be set
  * @param CakeValidationRule|array $rule The validation rule to be set
- * @return $this
+ * @return self
  */
 	public function setRule($name, $rule) {
 		if (!($rule instanceof CakeValidationRule)) {
@@ -213,7 +213,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  * ```
  *
  * @param string $name The name under which the rule should be unset
- * @return $this
+ * @return self
  */
 	public function removeRule($name) {
 		unset($this->_rules[$name]);
@@ -234,7 +234,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  *
  * @param array $rules The rules to be set
  * @param bool $mergeVars [optional] If true, merges vars instead of replace. Defaults to true.
- * @return $this
+ * @return self
  */
 	public function setRules($rules = array(), $mergeVars = true) {
 		if ($mergeVars === false) {
