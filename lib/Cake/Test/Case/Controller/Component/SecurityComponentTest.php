@@ -501,7 +501,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->request->data = array(
 			'Model' => array('username' => 'nate', 'password' => 'foo', 'valid' => '0'),
 			'_Token' => compact('fields', 'unlocked')
-        );
+		);
 		$this->assertFalse($this->Controller->failed, 'Should not be failed yet');
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed, 'Should fail because of validatePost.');
