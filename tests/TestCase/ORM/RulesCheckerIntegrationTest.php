@@ -800,7 +800,7 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Test adding rules with no errorField do not accept strings
+     * Test adding rules with no errorField will be placed in the "_rules" field.
      *
      * @group save
      * @return void
@@ -818,7 +818,7 @@ class RulesCheckerIntegrationTest extends TestCase
         });
 
         $this->assertFalse($table->save($entity));
-        $this->assertEmpty($entity->errors());
+        $this->assertEquals(['So much nope'], $entity->errors('_rules'));
     }
 
     /**

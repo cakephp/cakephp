@@ -199,4 +199,42 @@ class RulesCheckerTest extends TestCase
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
         $this->assertEmpty($entity->errors());
     }
+    
+    /**
+     * Test that messages with no errorField are stored in the virtual
+     * '_rules' field.
+     */
+    public function testMessageWithNoField()
+    {
+        $entity = new Entity([
+            'name' => 'larry'
+        ]);
+
+        $rules = new RulesChecker();
+        $rules->add(function () {
+            return false;
+        }, ['message' => 'that is bad']);
+
+        $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
+        $this->assertEquals(['that is bad'], $entity->errors('_rules'));
+    }
+    
+    /**
+     * Test that failed rules with no message are not stored in the
+     * '_rules' field.
+     */
+    public function testMessageWithNoFieldAndNoMessage()
+    {
+        $entity = new Entity([
+            'name' => 'larry'
+        ]);
+
+        $rules = new RulesChecker();
+        $rules->add(function () {
+            return false;
+        });
+
+        $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
+        $this->assertEmpty($entity->errors());
+    }
 }
