@@ -50,11 +50,14 @@ class I18nShellTest extends TestCase
 
         $deDir = $this->localeDir . 'de_DE' . DS;
 
-        unlink($this->localeDir . 'default.pot');
-        unlink($this->localeDir . 'cake.pot');
-
-        unlink($deDir . 'default.po');
-        unlink($deDir . 'cake.po');
+        if (file_exists($this->localeDir . 'default.pot')) {
+            unlink($this->localeDir . 'default.pot');
+            unlink($this->localeDir . 'cake.pot');
+        }
+        if (file_exists($deDir . 'default.po')) {
+            unlink($deDir . 'default.po');
+            unlink($deDir . 'cake.po');
+        }
     }
 
     /**
@@ -89,5 +92,18 @@ class I18nShellTest extends TestCase
 
         $this->assertFileExists($deDir . 'default.po');
         $this->assertFileExists($deDir . 'cake.po');
+    }
+
+    /**
+     * Test that the option parser is shaped right.
+     *
+     * @return void
+     */
+    public function testGetOptionParser()
+    {
+        $this->shell->loadTasks();
+        $parser = $this->shell->getOptionParser();
+        $this->assertArrayHasKey('init', $parser->subcommands());
+        $this->assertArrayHasKey('extract', $parser->subcommands());
     }
 }
