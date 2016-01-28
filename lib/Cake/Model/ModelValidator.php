@@ -36,7 +36,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 /**
  * Holds the CakeValidationSet objects array
  *
- * @var array
+ * @var CakeValidationSet[]
  */
 	protected $_fields = array();
 
@@ -386,7 +386,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * Processes the passed fieldList and returns the list of fields to be validated
  *
  * @param array $fieldList list of fields to be used for validation
- * @return array List of validation rules to be applied
+ * @return CakeValidationSet[] List of validation rules to be applied
  */
 	protected function _validationList($fieldList = array()) {
 		if (empty($fieldList) || Hash::dimensions($fieldList) > 1) {

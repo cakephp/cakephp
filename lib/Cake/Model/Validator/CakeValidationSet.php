@@ -32,7 +32,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
 /**
  * Holds the CakeValidationRule objects
  *
- * @var array
+ * @var CakeValidationRule[]
  */
 	protected $_rules = array();
 
@@ -172,7 +172,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
 /**
  * Returns all rules for this validation set
  *
- * @return array
+ * @return CakeValidationRule[]
  */
 	public function getRules() {
 		return $this->_rules;

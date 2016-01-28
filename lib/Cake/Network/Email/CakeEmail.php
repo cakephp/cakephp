@@ -339,7 +339,7 @@ class CakeEmail {
 /**
  * An instance of the EmailConfig class can be set here
  *
- * @var string
+ * @var EmailConfig
  */
 	protected $_configInstance;
 
@@ -1204,6 +1204,7 @@ class CakeEmail {
  */
 	public static function deliver($to = null, $subject = null, $message = null, $transportConfig = 'fast', $send = true) {
 		$class = __CLASS__;
+		/** @var CakeEmail $instance */
 		$instance = new $class($transportConfig);
 		if ($to !== null) {
 			$instance->to($to);
@@ -1673,6 +1674,7 @@ class CakeEmail {
 			App::uses($viewClass, $plugin . 'View');
 		}
 
+		/** @var View $View */
 		$View = new $viewClass(null);
 		$View->viewVars = $this->_viewVars;
 		$View->helpers = $this->_helpers;
