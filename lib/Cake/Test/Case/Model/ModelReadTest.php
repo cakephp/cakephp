@@ -87,6 +87,112 @@ class ModelReadTest extends BaseModelTest {
 	}
 
 /**
+ * Test IN operator
+ *
+ * @return void
+ */
+	public function testInOperator() {
+		$this->loadFixtures('Product');
+		$Product = new Product();
+		$expected = array(
+			array(
+				'Product' => array(
+					'id' => 1,
+					'name' => "Park's Great Hits",
+					'type' => 'Music',
+					'price' => 19
+				)
+			)
+		);
+
+		$result = $Product->find('all', array('conditions' => array('Product.id IN' => array(1))));
+		$this->assertEquals($expected, $result);
+
+		$expected = array(
+			array(
+				'Product' => array(
+					'id' => 2,
+					'name' => "Silly Puddy",
+					'type' => 'Toy',
+					'price' => 3
+				)
+			),
+			array(
+				'Product' => array(
+					'id' => 3,
+					'name' => "Playstation",
+					'type' => 'Toy',
+					'price' => 89
+				)
+			),
+			array(
+				'Product' => array(
+					'id' => 4,
+					'name' => "Men's T-Shirt",
+					'type' => 'Clothing',
+					'price' => 32
+				)
+			),
+			array(
+				'Product' => array(
+					'id' => 5,
+					'name' => "Blouse",
+					'type' => 'Clothing',
+					'price' => 34
+				)
+			),
+			array(
+				'Product' => array(
+					'id' => 6,
+					'name' => "Electronica 2002",
+					'type' => 'Music',
+					'price' => 4
+				)
+			),
+			array(
+				'Product' => array(
+					'id' => 7,
+					'name' => "Country Tunes",
+					'type' => 'Music',
+					'price' => 21
+				)
+			),
+			array(
+				'Product' => array(
+					'id' => 8,
+					'name' => "Watermelon",
+					'type' => 'Food',
+					'price' => 9
+				)
+			)
+		);
+		$result = $Product->find('all', array('conditions' => array('Product.id NOT IN' => array(1))));
+		$this->assertEquals($expected, $result);
+
+		$expected = array(
+			array(
+				'Product' => array(
+					'id' => 1,
+					'name' => "Park's Great Hits",
+					'type' => 'Music',
+					'price' => 19
+				)
+			),
+			array(
+				'Product' => array(
+					'id' => 2,
+					'name' => "Silly Puddy",
+					'type' => 'Toy',
+					'price' => 3
+				)
+			),
+		);
+
+		$result = $Product->find('all', array('conditions' => array('Product.id IN' => array(1,2))));
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * testGroupBy method
  *
  * These tests will never pass with Postgres or Oracle as all fields in a select must be
@@ -8079,8 +8185,8 @@ class ModelReadTest extends BaseModelTest {
 
 /**
  * test after find callback on related model
- * 
- * @return void 
+ *
+ * @return void
  */
 	public function testRelatedAfterFindCallback() {
 		$this->loadFixtures('Something', 'SomethingElse', 'JoinThing');
