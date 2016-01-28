@@ -270,7 +270,6 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals(36, strlen($result['Uuid']['id']));
 	}
 
-
 /**
  * testAutoSaveUuidNative method
  *
@@ -290,7 +289,6 @@ class ModelWriteTest extends BaseModelTest {
 		);
 		$this->assertEquals(36, strlen($result['UuidNative']['id']));
 	}
-
 
 /**
  * Ensure that if the id key is null but present the save doesn't fail (with an
@@ -323,8 +321,8 @@ class ModelWriteTest extends BaseModelTest {
 	public function testSaveUuidNullNative() {
 		$this->skipIf(!($this->db instanceof Postgres), 'This test is compatible with Postgres only.');
 
-	$this->loadFixtures('UuidNative');
-	$TestModel = new UuidNative();
+		$this->loadFixtures('UuidNative');
+		$TestModel = new UuidNative();
 
 		$TestModel->save(array('title' => 'Test record', 'id' => null));
 		$result = $TestModel->findByTitle('Test record');
