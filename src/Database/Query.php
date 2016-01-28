@@ -390,8 +390,8 @@ class Query implements ExpressionInterface, IteratorAggregate
      * ```
      *  $query->from(['p' => 'posts']); // Produces FROM posts p
      *  $query->from('authors'); // Appends authors: FROM posts p, authors
-     *  $query->select(['products'], true); // Resets the list: FROM products
-     *  $query->select(['sub' => $countQuery]); // FROM (SELECT ...) sub
+     *  $query->from(['products'], true); // Resets the list: FROM products
+     *  $query->from(['sub' => $countQuery]); // FROM (SELECT ...) sub
      * ```
      *
      * @param array|ExpressionInterface|string $tables tables to be added to the list
