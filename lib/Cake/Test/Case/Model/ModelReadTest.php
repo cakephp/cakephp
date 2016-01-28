@@ -188,7 +188,7 @@ class ModelReadTest extends BaseModelTest {
 			),
 		);
 
-		$result = $Product->find('all', array('conditions' => array('Product.id IN' => array(1,2))));
+		$result = $Product->find('all', array('conditions' => array('Product.id IN' => array(1, 2))));
 		$this->assertEquals($expected, $result);
 	}
 
