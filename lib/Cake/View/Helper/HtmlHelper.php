@@ -175,7 +175,7 @@ class HtmlHelper extends AppHelper {
  * @param string $name Text for link
  * @param string $link URL for link (if empty it won't be a link)
  * @param string|array $options Link attributes e.g. array('id' => 'selected')
- * @return $this
+ * @return self
  * @see HtmlHelper::link() for details on $options that can be used.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
  */

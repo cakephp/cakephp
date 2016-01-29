@@ -285,7 +285,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
  * Create javascript selector for a CSS rule
  *
  * @param string $selector The selector that is targeted
- * @return JsBaseEngineHelper instance of $this. Allows chained methods.
+ * @return self instance of $this. Allows chained methods.
  */
 	abstract public function get($selector);
 

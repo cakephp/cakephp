@@ -118,7 +118,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * Create javascript selector for a CSS rule
  *
  * @param string $selector The selector that is targeted
- * @return $this
+ * @return self
  */
 	public function get($selector) {
 		$this->_multipleSelection = false;

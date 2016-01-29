@@ -218,7 +218,7 @@ class ConsoleOptionParser {
  * Get or set the command name for shell/task.
  *
  * @param string $text The text to set, or null if you want to read
- * @return string|$this If reading, the value of the command. If setting $this will be returned.
+ * @return string|self If reading, the value of the command. If setting $this will be returned.
  */
 	public function command($text = null) {
 		if ($text !== null) {
@@ -233,7 +233,7 @@ class ConsoleOptionParser {
  *
  * @param string|array $text The text to set, or null if you want to read. If an array the
  *   text will be imploded with "\n"
- * @return string|$this If reading, the value of the description. If setting $this will be returned.
+ * @return string|self If reading, the value of the description. If setting $this will be returned.
  */
 	public function description($text = null) {
 		if ($text !== null) {
@@ -251,7 +251,7 @@ class ConsoleOptionParser {
  * the options and arguments listing when help is generated.
  *
  * @param string|array $text Text when setting or null when reading. If an array the text will be imploded with "\n"
- * @return string|$this If reading, the value of the epilog. If setting $this will be returned.
+ * @return string|self If reading, the value of the epilog. If setting $this will be returned.
  */
 	public function epilog($text = null) {
 		if ($text !== null) {
@@ -284,7 +284,7 @@ class ConsoleOptionParser {
  * @param ConsoleInputOption|string $name The long name you want to the value to be parsed out as when options are parsed.
  *   Will also accept an instance of ConsoleInputOption
  * @param array $options An array of parameters that define the behavior of the option
- * @return $this
+ * @return self
  */
 	public function addOption($name, $options = array()) {
 		if (is_object($name) && $name instanceof ConsoleInputOption) {
@@ -324,7 +324,7 @@ class ConsoleOptionParser {
  *
  * @param ConsoleInputArgument|string $name The name of the argument. Will also accept an instance of ConsoleInputArgument
  * @param array $params Parameters for the argument, see above.
- * @return $this
+ * @return self
  */
 	public function addArgument($name, $params = array()) {
 		if (is_object($name) && $name instanceof ConsoleInputArgument) {
@@ -354,7 +354,7 @@ class ConsoleOptionParser {
  *
  * @param array $args Array of arguments to add.
  * @see ConsoleOptionParser::addArgument()
- * @return $this
+ * @return self
  */
 	public function addArguments(array $args) {
 		foreach ($args as $name => $params) {
@@ -369,7 +369,7 @@ class ConsoleOptionParser {
  *
  * @param array $options Array of options to add.
  * @see ConsoleOptionParser::addOption()
- * @return $this
+ * @return self
  */
 	public function addOptions(array $options) {
 		foreach ($options as $name => $params) {
@@ -391,7 +391,7 @@ class ConsoleOptionParser {
  *
  * @param ConsoleInputSubcommand|string $name Name of the subcommand. Will also accept an instance of ConsoleInputSubcommand
  * @param array $options Array of params, see above.
- * @return $this
+ * @return self
  */
 	public function addSubcommand($name, $options = array()) {
 		if (is_object($name) && $name instanceof ConsoleInputSubcommand) {
@@ -414,7 +414,7 @@ class ConsoleOptionParser {
  * Remove a subcommand from the option parser.
  *
  * @param string $name The subcommand name to remove.
- * @return $this
+ * @return self
  */
 	public function removeSubcommand($name) {
 		unset($this->_subcommands[$name]);
@@ -425,7 +425,7 @@ class ConsoleOptionParser {
  * Add multiple subcommands at once.
  *
  * @param array $commands Array of subcommands.
- * @return $this
+ * @return self
  */
 	public function addSubcommands(array $commands) {
 		foreach ($commands as $name => $params) {
@@ -469,7 +469,7 @@ class ConsoleOptionParser {
  * @param array $argv Array of args (argv) to parse.
  * @param string $command The subcommand to use. If this parameter is a subcommand, that has a parser,
  *    That parser will be used to parse $argv instead.
- * @return Array array($params, $args)
+ * @return array array($params, $args)
  * @throws ConsoleException When an invalid parameter is encountered.
  */
 	public function parse($argv, $command = null) {
