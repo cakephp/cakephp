@@ -2727,8 +2727,7 @@ class DboSource extends DataSource {
 				} elseif (is_array($value) && !empty($value) && !$valueInsert) {
 					$keys = array_keys($value);
 					if ($keys === array_values($keys)) {
-						$count = count($value);
-						if ($count === 1 && !preg_match('/\s+(?:NOT|IN|\!=)$/', $key)) {
+						if (count($value) === 1 && !preg_match('/\s+(?:NOT|IN|\!=)$/', $key)) {
 							$data = $this->_quoteFields($key) . ' = (';
 							if ($quoteValues) {
 								if ($Model !== null) {
