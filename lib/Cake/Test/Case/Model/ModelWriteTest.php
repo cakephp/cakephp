@@ -276,7 +276,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testAutoSaveUuidNative() {
-		 $this->skipIf(!($this->db instanceof Postgres), 'This test is compatible with Postgres only.');
+		$this->skipIf(!($this->db instanceof Postgres), 'This test is compatible with Postgres only.');
 
 		$this->loadFixtures('UuidNative');
 		$TestModel = new UuidNative();
