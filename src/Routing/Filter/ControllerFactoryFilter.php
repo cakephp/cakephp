@@ -17,6 +17,7 @@ namespace Cake\Routing\Filter;
 use Cake\Core\App;
 use Cake\Event\Event;
 use Cake\Routing\DispatcherFilter;
+use Cake\Utility\Inflector;
 use ReflectionClass;
 
 /**
@@ -68,7 +69,15 @@ class ControllerFactoryFilter extends DispatcherFilter
             $controller = $request->params['controller'];
         }
         if (!empty($request->params['prefix'])) {
-            $namespace .= '/' . $request->params['prefix'];
+            if (strpos('/', $request->params['prefix']) === false) {
+                $namespace .= '/' . Inflector::camelize($request->params['prefix']);
+            } else {
+                $prefixes = array_map(
+                    'Cake\Utility\Inflector::camelize',
+                    explode('/', $request->params['prefix'])
+                );
+                $namespace .= '/' . implode('/', $prefixes);
+            }
         }
         $firstChar = substr($controller, 0, 1);
         if (strpos($controller, '\\') !== false ||
