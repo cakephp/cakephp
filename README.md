@@ -22,7 +22,7 @@ recommend using the [app skeleton](https://github.com/cakephp/app) as
 a starting point. For existing applications you can run the following:
 
 ``` bash
-$ composer require cakephp/cakephp:"~3.1"
+$ composer require cakephp/cakephp:"~3.2"
 ```
 
 ## Running Tests

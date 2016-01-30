@@ -136,4 +136,14 @@ class TypeMap
         }
         return null;
     }
+
+    /**
+     * Returns an array of all types mapped types
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->_types + $this->_defaults;
+    }
 }

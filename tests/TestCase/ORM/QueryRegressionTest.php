@@ -984,10 +984,27 @@ class QueryRegressionTest extends TestCase
         ]);
         $result = $query->all()->first();
         $this->assertSame(
-            '-1',
+            -1,
             $result['coalesced'],
-            'Output values for functions are not cast yet.'
+            'Output values for functions should be casted'
         );
+    }
+
+    /**
+     * Test that the typemaps used in function expressions
+     * create the correct results.
+     *
+     * @return void
+     */
+    public function testTypemapInFunctions2()
+    {
+        $table = TableRegistry::get('Comments');
+        $query = $table->find();
+        $query->select([
+            'max' => $query->func()->max('created', ['datetime'])
+        ]);
+        $result = $query->all()->first();
+        $this->assertEquals(new Time('2007-03-18 10:55:23'), $result['max']);
     }
 
     /**

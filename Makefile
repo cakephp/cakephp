@@ -164,7 +164,7 @@ component-%:
 	- (git branch -D $* 2> /dev/null)
 	git checkout -b $*
 	git filter-branch --prune-empty --subdirectory-filter src/$(shell php -r "echo ucfirst('$*');") -f $*
-	git push $* $*:$(CURRENT_BRANCH)
+	git push -f $* $*:$(CURRENT_BRANCH)
 	git checkout $(CURRENT_BRANCH) > /dev/null
 
 tag-component-%: component-% guard-VERSION guard-GITHUB_USER

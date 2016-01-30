@@ -83,12 +83,14 @@ class CsrfComponentTest extends TestCase
     /**
      * Data provider for HTTP method tests.
      *
+     * HEAD and GET do not populate $_POST or request->data.
+     *
      * @return void
      */
     public static function safeHttpMethodProvider()
     {
         return [
-            ['GET'], ['OPTIONS'], ['HEAD']
+            ['GET', 'HEAD']
         ];
     }
 
@@ -116,14 +118,14 @@ class CsrfComponentTest extends TestCase
     }
 
     /**
-     * Data provider for HTTP method tests.
+     * Data provider for HTTP methods that can contain request bodies.
      *
      * @return void
      */
     public static function httpMethodProvider()
     {
         return [
-            ['PATCH'], ['PUT'], ['POST'], ['DELETE'], ['PURGE'], ['INVALIDMETHOD']
+            ['OPTIONS'], ['PATCH'], ['PUT'], ['POST'], ['DELETE'], ['PURGE'], ['INVALIDMETHOD']
         ];
     }
 
@@ -142,6 +144,7 @@ class CsrfComponentTest extends TestCase
                 'REQUEST_METHOD' => $method,
                 'HTTP_X_CSRF_TOKEN' => 'testing123',
             ],
+            'post' => ['a' => 'b'],
             'cookies' => ['csrfToken' => 'testing123']
         ]);
         $controller->response = new Response();
@@ -167,6 +170,7 @@ class CsrfComponentTest extends TestCase
                 'REQUEST_METHOD' => $method,
                 'HTTP_X_CSRF_TOKEN' => 'nope',
             ],
+            'post' => ['a' => 'b'],
             'cookies' => ['csrfToken' => 'testing123']
         ]);
         $controller->response = new Response();

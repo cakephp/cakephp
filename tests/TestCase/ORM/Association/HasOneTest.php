@@ -64,6 +64,9 @@ class HasOneTest extends TestCase
             'first_name' => 'string',
             'Profiles.user_id' => 'integer',
             'user_id' => 'integer',
+            'Profiles__first_name' => 'string',
+            'Profiles__user_id' => 'integer',
+            'Profiles__id' => 'integer',
         ]);
     }
 

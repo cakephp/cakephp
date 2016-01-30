@@ -154,10 +154,10 @@ trait SqlserverDialectTrait
             ->select(function ($q) use ($distinct, $order) {
                 $over = $q->newExpr('ROW_NUMBER() OVER')
                     ->add('(PARTITION BY')
-                    ->add($q->newExpr()->add($distinct)->type(','))
+                    ->add($q->newExpr()->add($distinct)->tieWith(','))
                     ->add($order)
                     ->add(')')
-                    ->type(' ');
+                    ->tieWith(' ');
                 return [
                     '_cake_distinct_pivot_' => $over
                 ];
@@ -210,7 +210,7 @@ trait SqlserverDialectTrait
         switch ($expression->name()) {
             case 'CONCAT':
                 // CONCAT function is expressed as exp1 + exp2
-                $expression->name('')->type(' +');
+                $expression->name('')->tieWith(' +');
                 break;
             case 'DATEDIFF':
                 $hasDay = false;
@@ -238,7 +238,7 @@ trait SqlserverDialectTrait
                 $expression->name('GETUTCDATE');
                 break;
             case 'EXTRACT':
-                $expression->name('DATEPART')->type(' ,');
+                $expression->name('DATEPART')->tieWith(' ,');
                 break;
             case 'DATE_ADD':
                 $params = [];
@@ -258,7 +258,7 @@ trait SqlserverDialectTrait
 
                 $expression
                     ->name('DATEADD')
-                    ->type(',')
+                    ->tieWith(',')
                     ->iterateParts($visitor)
                     ->iterateParts($manipulator)
                     ->add([$params[2] => 'literal']);
@@ -266,7 +266,7 @@ trait SqlserverDialectTrait
             case 'DAYOFWEEK':
                 $expression
                     ->name('DATEPART')
-                    ->type(' ')
+                    ->tieWith(' ')
                     ->add(['weekday, ' => 'literal'], [], true);
                 break;
         }

@@ -149,6 +149,32 @@ class ShellDispatcherTest extends TestCase
     }
 
     /**
+     * Verify dispatch handling stop errors
+     *
+     * @return void
+     */
+    public function testDispatchShellWithAbort()
+    {
+        $io = $this->getMock('Cake\Console\ConsoleIo');
+        $shell = $this->getMock('Cake\Console\Shell', ['main'], [$io]);
+        $shell->expects($this->once())
+            ->method('main')
+            ->will($this->returnCallback(function () use ($shell) {
+                $shell->abort('Bad things', 99);
+            }));
+
+        $dispatcher = $this->getMock('Cake\Console\ShellDispatcher', ['findShell']);
+        $dispatcher->expects($this->any())
+            ->method('findShell')
+            ->with('aborter')
+            ->will($this->returnValue($shell));
+
+        $dispatcher->args = ['aborter'];
+        $result = $dispatcher->dispatch();
+        $this->assertSame(99, $result, 'Should return the exception error code.');
+    }
+
+    /**
      * Verify correct dispatch of Shell subclasses with a main method
      *
      * @return void

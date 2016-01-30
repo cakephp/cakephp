@@ -316,6 +316,48 @@ class ShellTest extends TestCase
     }
 
     /**
+     * testInfo method
+     *
+     * @return void
+     */
+    public function testInfo()
+    {
+        $this->io->expects($this->once())
+            ->method('out')
+            ->with('<info>Just a test</info>', 1);
+
+        $this->Shell->info('Just a test');
+    }
+
+    /**
+     * testWarn method
+     *
+     * @return void
+     */
+    public function testWarn()
+    {
+        $this->io->expects($this->once())
+            ->method('err')
+            ->with('<warning>Just a test</warning>', 1);
+
+        $this->Shell->warn('Just a test');
+    }
+
+    /**
+     * testSuccess method
+     *
+     * @return void
+     */
+    public function testSuccess()
+    {
+        $this->io->expects($this->once())
+            ->method('out')
+            ->with('<success>Just a test</success>', 1);
+
+        $this->Shell->success('Just a test');
+    }
+
+    /**
      * testNl
      *
      * @return void

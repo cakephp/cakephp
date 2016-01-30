@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Database\Type;
 
-use Cake\Database\Type;
 use Cake\Database\Type\DateTimeType;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
@@ -40,21 +39,8 @@ class DateTimeTypeTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->type = Type::build('datetime');
+        $this->type = new DateTimeType();
         $this->driver = $this->getMock('Cake\Database\Driver');
-        $this->_originalMap = Type::map();
-    }
-
-    /**
-     * Restores Type class state
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-
-        Type::map($this->_originalMap);
     }
 
     /**
@@ -263,5 +249,21 @@ class DateTimeTypeTest extends TestCase
         $expected = new Time('13-10-2013 13:54:00');
         $result = $this->type->marshal('13 Oct, 2013 01:54pm');
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test that toImmutable changes all the methods to create frozen time instances.
+     *
+     * @return void
+     */
+    public function testToImmutableAndToMutable()
+    {
+        $this->type->useImmutable();
+        $this->assertInstanceOf('DateTimeImmutable', $this->type->marshal('2015-11-01 11:23:00'));
+        $this->assertInstanceOf('DateTimeImmutable', $this->type->toPhp('2015-11-01 11:23:00', $this->driver));
+
+        $this->type->useMutable();
+        $this->assertInstanceOf('DateTime', $this->type->marshal('2015-11-01 11:23:00'));
+        $this->assertInstanceOf('DateTime', $this->type->toPhp('2015-11-01 11:23:00', $this->driver));
     }
 }

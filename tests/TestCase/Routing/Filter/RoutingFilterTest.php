@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Routing\Filter;
 
 use Cake\Event\Event;
 use Cake\Network\Request;
+use Cake\Network\Response;
 use Cake\Routing\Filter\RoutingFilter;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -66,6 +67,27 @@ class RoutingFilterTest extends TestCase
         $this->assertSame($request->params['pass'][1], 'params2');
         $this->assertSame($request->params['pass'][2], 'params3');
         $this->assertFalse(!empty($request['form']));
+    }
+
+    /**
+     * test setting parameters in beforeDispatch method
+     *
+     * @return void
+     * @triggers __CLASS__ $this, compact(request)
+     */
+    public function testBeforeDispatchRedirectRoute()
+    {
+        Router::redirect('/home', ['controller' => 'articles']);
+        Router::connect('/:controller/:action/*');
+        $filter = new RoutingFilter();
+
+        $request = new Request("/home");
+        $response = new Response();
+        $event = new Event(__CLASS__, $this, compact('request', 'response'));
+        $response = $filter->beforeDispatch($event);
+        $this->assertInstanceOf('Cake\Network\Response', $response);
+        $this->assertSame('http://localhost/articles/index', $response->header()['Location']);
+        $this->assertSame(301, $response->statusCode());
     }
 
     /**

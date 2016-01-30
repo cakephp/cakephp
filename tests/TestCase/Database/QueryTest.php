@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Database;
 use Cake\Core\Configure;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Query;
+use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
@@ -132,28 +133,29 @@ class QueryTest extends TestCase
     public function testSelectAliasedFieldsFromTable()
     {
         $query = new Query($this->connection);
-        $result = $query->select(['text' => 'body', 'author_id'])->from('articles')->execute();
-        $this->assertEquals(['text' => 'First Article Body', 'author_id' => 1], $result->fetch('assoc'));
-        $this->assertEquals(['text' => 'Second Article Body', 'author_id' => 3], $result->fetch('assoc'));
+        $result = $query->select(['text' => 'comment', 'article_id'])->from('comments')->execute();
+        $this->assertEquals(['text' => 'First Comment for First Article', 'article_id' => 1], $result->fetch('assoc'));
+        $this->assertEquals(['text' => 'Second Comment for First Article', 'article_id' => 1], $result->fetch('assoc'));
 
         $query = new Query($this->connection);
-        $result = $query->select(['text' => 'body', 'author' => 'author_id'])->from('articles')->execute();
-        $this->assertEquals(['text' => 'First Article Body', 'author' => 1], $result->fetch('assoc'));
-        $this->assertEquals(['text' => 'Second Article Body', 'author' => 3], $result->fetch('assoc'));
+        $result = $query->select(['text' => 'comment', 'article' => 'article_id'])->from('comments')->execute();
+        $this->assertEquals(['text' => 'First Comment for First Article', 'article' => 1], $result->fetch('assoc'));
+        $this->assertEquals(['text' => 'Second Comment for First Article', 'article' => 1], $result->fetch('assoc'));
 
         $query = new Query($this->connection);
-        $query->select(['text' => 'body'])->select(['author_id', 'foo' => 'body']);
-        $result = $query->from('articles')->execute();
-        $this->assertEquals(['foo' => 'First Article Body', 'text' => 'First Article Body', 'author_id' => 1], $result->fetch('assoc'));
-        $this->assertEquals(['foo' => 'Second Article Body', 'text' => 'Second Article Body', 'author_id' => 3], $result->fetch('assoc'));
+        $query->select(['text' => 'comment'])->select(['article_id', 'foo' => 'comment']);
+        $result = $query->from('comments')->execute();
+        $this->assertEquals(
+            ['foo' => 'First Comment for First Article', 'text' => 'First Comment for First Article', 'article_id' => 1],
+            $result->fetch('assoc')
+        );
 
         $query = new Query($this->connection);
         $exp = $query->newExpr('1 + 1');
-        $comp = $query->newExpr(['author_id +' => 2]);
-        $result = $query->select(['text' => 'body', 'two' => $exp, 'three' => $comp])
-            ->from('articles')->execute();
-        $this->assertEquals(['text' => 'First Article Body', 'two' => 2, 'three' => 3], $result->fetch('assoc'));
-        $this->assertEquals(['text' => 'Second Article Body', 'two' => 2, 'three' => 5], $result->fetch('assoc'));
+        $comp = $query->newExpr(['article_id +' => 2]);
+        $result = $query->select(['text' => 'comment', 'two' => $exp, 'three' => $comp])
+            ->from('comments')->execute();
+        $this->assertEquals(['text' => 'First Comment for First Article', 'two' => 2, 'three' => 3], $result->fetch('assoc'));
     }
 
     /**
@@ -3515,6 +3517,45 @@ class QueryTest extends TestCase
 
         $query->order(['Articles.title' => 'ASC']);
         $this->assertNotEquals($query->clause('order'), $dupe->clause('order'));
+
+        $this->assertNotSame(
+            $query->selectTypeMap(),
+            $dupe->selectTypeMap()
+        );
+    }
+
+    /**
+     * Tests the selectTypeMap method
+     *
+     * @return void
+     */
+    public function testSelectTypeMap()
+    {
+        $query = new Query($this->connection);
+        $typeMap = $query->selectTypeMap();
+        $this->assertInstanceOf(TypeMap::class, $typeMap);
+        $another = clone $typeMap;
+        $query->selectTypeMap($another);
+        $this->assertSame($another, $query->selectTypeMap());
+    }
+
+    /**
+     * Tests the automatic type conversion for the fields in the result
+     *
+     * @return void
+     */
+    public function testSelectTypeConversion()
+    {
+        $query = new Query($this->connection);
+        $time = new \DateTime('2007-03-18 10:50:00');
+        $query
+            ->select(['id', 'comment', 'the_date' => 'created'])
+            ->from('comments')
+            ->limit(1)
+            ->selectTypeMap()->types(['id' => 'integer', 'the_date' => 'datetime']);
+        $result = $query->execute()->fetchAll('assoc');
+        $this->assertInternalType('integer', $result[0]['id']);
+        $this->assertInstanceOf('DateTime', $result[0]['the_date']);
     }
 
     /**
@@ -3535,6 +3576,26 @@ class QueryTest extends TestCase
 
         $this->assertSame($query, $query->removeJoin('authors'));
         $this->assertArrayNotHasKey('authors', $query->join());
+    }
+
+    /**
+     * Tests that types in the type map are used in the
+     * specific comparison functions when using a callable
+     *
+     * @return void
+     */
+    public function testBetweenExpressionAndTypeMap()
+    {
+        $query = new Query($this->connection);
+        $query->select('id')
+            ->from('comments')
+            ->defaultTypes(['created' => 'datetime'])
+            ->where(function ($expr) {
+                $from = new \DateTime('2007-03-18 10:45:00');
+                $to = new \DateTime('2007-03-18 10:48:00');
+                return $expr->between('created', $from, $to);
+            });
+        $this->assertCount(2, $query->execute()->fetchAll());
     }
 
     /**

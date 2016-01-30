@@ -83,25 +83,35 @@ class TableTest extends TestCase
         $this->usersTypeMap = new TypeMap([
             'Users.id' => 'integer',
             'id' => 'integer',
+            'Users__id' => 'integer',
             'Users.username' => 'string',
+            'Users__username' => 'string',
             'username' => 'string',
             'Users.password' => 'string',
+            'Users__password' => 'string',
             'password' => 'string',
             'Users.created' => 'timestamp',
+            'Users__created' => 'timestamp',
             'created' => 'timestamp',
             'Users.updated' => 'timestamp',
+            'Users__updated' => 'timestamp',
             'updated' => 'timestamp',
         ]);
         $this->articlesTypeMap = new TypeMap([
             'Articles.id' => 'integer',
+            'Articles__id' => 'integer',
             'id' => 'integer',
             'Articles.title' => 'string',
+            'Articles__title' => 'string',
             'title' => 'string',
             'Articles.author_id' => 'integer',
+            'Articles__author_id' => 'integer',
             'author_id' => 'integer',
             'Articles.body' => 'text',
+            'Articles__body' => 'text',
             'body' => 'text',
             'Articles.published' => 'string',
+            'Articles__published' => 'string',
             'published' => 'string',
         ]);
     }
@@ -1757,7 +1767,7 @@ class TableTest extends TestCase
                 'entityClass' => 'Cake\ORM\Entity',
             ]
         );
-        
+
         $authors->hasMany('Articles', ['saveStrategy' => 'replace']);
 
         $entity = $authors->newEntity([
@@ -1776,9 +1786,9 @@ class TableTest extends TestCase
         $articleId = $entity->articles[0]->id;
         unset($entity->articles[0]);
         $entity->dirty('articles', true);
-        
+
         $authors->save($entity, ['associated' => ['Articles']]);
-        
+
         $this->assertEquals($sizeArticles - 1, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
         $this->assertTrue($authors->Articles->exists(['id' => $articleId]));
     }
@@ -1799,7 +1809,7 @@ class TableTest extends TestCase
                 'entityClass' => 'Cake\ORM\Entity',
             ]
         );
-        
+
         $authors->hasMany('Articles', ['saveStrategy' => 'replace']);
 
         $entity = $authors->newEntity([
@@ -1816,9 +1826,9 @@ class TableTest extends TestCase
         $this->assertCount($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']]));
 
         $entity->set('articles', []);
-        
+
         $entity = $authors->save($entity, ['associated' => ['Articles']]);
-        
+
         $this->assertCount(0, $authors->Articles->find('all')->where(['author_id' => $entity['id']]));
     }
 
@@ -1853,13 +1863,13 @@ class TableTest extends TestCase
         $sizeArticles = count($entity->articles);
 
         $this->assertEquals($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
-        
+
         $articleId = $entity->articles[0]->id;
         unset($entity->articles[0]);
         $entity->dirty('articles', true);
-        
+
         $authors->save($entity, ['associated' => ['Articles']]);
-        
+
         $this->assertEquals($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
         $this->assertTrue($authors->Articles->exists(['id' => $articleId]));
     }
@@ -1917,9 +1927,9 @@ class TableTest extends TestCase
         $articleId = $entity->articles[0]->id;
         unset($entity->articles[0]);
         $entity->dirty('articles', true);
-        
+
         $authors->save($entity, ['associated' => ['Articles']]);
-        
+
         $this->assertEquals($sizeArticles - 1, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
         $this->assertFalse($authors->Articles->exists(['id' => $articleId]));
     }
@@ -1963,7 +1973,7 @@ class TableTest extends TestCase
 
         $this->assertEquals($sizeComments, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
         $this->assertTrue($articles->Comments->exists(['id' => $commentId]));
-        
+
         unset($article->comments[0]);
         $article->dirty('comments', true);
         $article = $articles->save($article, ['associated' => ['Comments']]);
@@ -2012,7 +2022,7 @@ class TableTest extends TestCase
 
         $this->assertEquals($sizeComments, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
         $this->assertTrue($articles->Comments->exists(['id' => $commentId]));
-        
+
         unset($article->comments[0]);
         $article->comments[] = $articles->Comments->newEntity([
             'user_id' => 1,
@@ -3352,18 +3362,7 @@ class TableTest extends TestCase
         $this->assertInstanceOf('Cake\ORM\Query', $result);
         $this->assertNull($result->clause('limit'));
         $expected = new QueryExpression();
-        $expected->typeMap()->defaults([
-            'Users.id' => 'integer',
-            'id' => 'integer',
-            'Users.username' => 'string',
-            'username' => 'string',
-            'Users.password' => 'string',
-            'password' => 'string',
-            'Users.created' => 'timestamp',
-            'created' => 'timestamp',
-            'Users.updated' => 'timestamp',
-            'updated' => 'timestamp',
-        ]);
+        $expected->typeMap()->defaults($this->usersTypeMap->toArray());
         $expected->add(
             ['or' => ['Users.author_id' => 1, 'Users.published' => 'Y']]
         );

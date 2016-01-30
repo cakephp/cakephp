@@ -317,7 +317,7 @@ class FormHelper extends Helper
      * - `type` Form method defaults to autodetecting based on the form context. If
      *   the form context's isCreate() method returns false, a PUT request will be done.
      * - `action` The controller action the form submits to, (optional). Use this option if you
-     *   don't need to change the controller from the current request's controller.
+     *   don't need to change the controller from the current request's controller. Deprecated since 3.2, use `url`.
      * - `url` The URL the form submits to. Can be a string or a URL array. If you use 'url'
      *    you should leave 'action' undefined.
      * - `encoding` Set the accept-charset encoding for the form. Defaults to `Configure::read('App.encoding')`
@@ -356,6 +356,10 @@ class FormHelper extends Helper
             'templates' => null,
             'idPrefix' => null,
         ];
+
+        if (isset($options['action'])) {
+            trigger_error('Using key `action` is deprecated, use `url` directly instead.', E_USER_DEPRECATED);
+        }
 
         if ($options['idPrefix'] !== null) {
             $this->_idPrefix = $options['idPrefix'];

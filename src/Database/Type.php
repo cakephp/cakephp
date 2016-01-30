@@ -110,6 +110,20 @@ class Type
     }
 
     /**
+     * Returns an arrays with all the mapped type objects, indexed by name
+     *
+     * @return array
+     */
+    public static function buildAll()
+    {
+        $result = [];
+        foreach (self::$_types as $name => $type) {
+            $result[$name] = isset(static::$_builtTypes[$name]) ? static::$_builtTypes[$name] : static::build($name);
+        }
+        return $result;
+    }
+
+    /**
      * Returns a Type object capable of converting a type identified by $name
      *
      * @param string $name The type identifier you want to set.

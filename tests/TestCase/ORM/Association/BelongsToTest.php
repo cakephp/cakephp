@@ -70,6 +70,8 @@ class BelongsToTest extends TestCase
             'id' => 'integer',
             'Companies.company_name' => 'string',
             'company_name' => 'string',
+            'Companies__id' => 'integer',
+            'Companies__company_name' => 'string'
         ]);
     }
 

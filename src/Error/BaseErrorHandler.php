@@ -72,6 +72,13 @@ abstract class BaseErrorHandler
             if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) {
                 return;
             }
+            $megabytes = Configure::read('Error.extraFatalErrorMemory');
+            if ($megabytes === null) {
+                $megabytes = 4;
+            }
+            if ($megabytes > 0) {
+                $this->increaseMemoryLimit($megabytes * 1024);
+            }
             $error = error_get_last();
             if (!is_array($error)) {
                 return;
@@ -210,6 +217,36 @@ abstract class BaseErrorHandler
 
         $this->handleException(new FatalErrorException($description, 500, $file, $line));
         return true;
+    }
+
+    /**
+     * Increases the PHP "memory_limit" ini setting by the specified amount
+     * in kilobytes
+     *
+     * @param string $additionalKb Number in kilobytes
+     * @return void
+     */
+    public function increaseMemoryLimit($additionalKb)
+    {
+        $limit = ini_get('memory_limit');
+        if (!strlen($limit) || $limit === '-1') {
+            return;
+        }
+        $limit = trim($limit);
+        $units = strtoupper(substr($limit, -1));
+        $current = substr($limit, 0, strlen($limit) - 1);
+        if ($units === 'M') {
+            $current = $current * 1024;
+            $units = 'K';
+        }
+        if ($units === 'G') {
+            $current = $current * 1024 * 1024;
+            $units = 'K';
+        }
+
+        if ($units === 'K') {
+            ini_set('memory_limit', ceil($current + $additionalKb) . 'K');
+        }
     }
 
     /**

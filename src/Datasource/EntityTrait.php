@@ -58,13 +58,6 @@ trait EntityTrait
     protected $_virtual = [];
 
     /**
-     * Holds the name of the class for the instance object
-     *
-     * @var string
-     */
-    protected $_className;
-
-    /**
      * Holds a list of the properties that were modified or added after this object
      * was originally created.
      *
@@ -73,7 +66,7 @@ trait EntityTrait
     protected $_dirty = [];
 
     /**
-     * Holds a cached list of methods that exist in the instanced class
+     * Holds a cached list of getters/setters per class
      *
      * @var array
      */
@@ -94,6 +87,13 @@ trait EntityTrait
      * @var array
      */
     protected $_errors = [];
+
+    /**
+     * List of invalid fields and their data for errors upon validation/patching
+     *
+     * @var array
+     */
+    protected $_invalid = [];
 
     /**
      * Map of properties in this entity that can be safely assigned, each
@@ -251,8 +251,8 @@ trait EntityTrait
                 continue;
             }
 
-            $setter = '_set' . Inflector::camelize($p);
-            if ($this->_methodExists($setter)) {
+            $setter = $this->_accessor($p, 'set');
+            if ($setter) {
                 $value = $this->{$setter}($value);
             }
             $this->_properties[$p] = $value;
@@ -275,13 +275,13 @@ trait EntityTrait
         }
 
         $value = null;
-        $method = '_get' . Inflector::camelize($property);
+        $method = $this->_accessor($property, 'get');
 
         if (isset($this->_properties[$property])) {
             $value =& $this->_properties[$property];
         }
 
-        if ($this->_methodExists($method)) {
+        if ($method) {
             $result = $this->{$method}($value);
             return $result;
         }
@@ -499,17 +499,42 @@ trait EntityTrait
     }
 
     /**
-     * Determines whether a method exists in this class
+     * Fetch accessor method name
+     * Accessor methods (available or not) are cached in $_accessors
      *
-     * @param string $method the method to check for existence
-     * @return bool true if method exists
+     * @param string $property the field name to derive getter name from
+     * @param string $type the accessor type ('get' or 'set')
+     * @return string method name or empty string (no method available)
      */
-    protected function _methodExists($method)
+    protected static function _accessor($property, $type)
     {
-        if (empty(static::$_accessors[$this->_className])) {
-            static::$_accessors[$this->_className] = array_flip(get_class_methods($this));
+        $class = static::class;
+        if (isset(static::$_accessors[$class][$type][$property])) {
+            return static::$_accessors[$class][$type][$property];
         }
-        return isset(static::$_accessors[$this->_className][$method]);
+
+        if (!empty(static::$_accessors[$class])) {
+            return static::$_accessors[$class][$type][$property] = '';
+        }
+
+        if ($class === 'Cake\ORM\Entity') {
+            return '';
+        }
+
+        foreach (get_class_methods($class) as $method) {
+            $prefix = substr($method, 1, 3);
+            if ($method[0] !== '_' || ($prefix !== 'get' && $prefix !== 'set')) {
+                continue;
+            }
+            $field = Inflector::underscore(substr($method, 4));
+            static::$_accessors[$class][$prefix][$field] = $method;
+        }
+
+        if (!isset(static::$_accessors[$class][$type][$property])) {
+            static::$_accessors[$class][$type][$property] = '';
+        }
+
+        return static::$_accessors[$class][$type][$property];
     }
 
     /**
@@ -602,7 +627,7 @@ trait EntityTrait
         }
 
         $this->_dirty[$property] = true;
-        unset($this->_errors[$property]);
+        unset($this->_errors[$property], $this->_invalid[$property]);
         return true;
     }
 
@@ -617,6 +642,7 @@ trait EntityTrait
     {
         $this->_dirty = [];
         $this->_errors = [];
+        $this->_invalid = [];
     }
 
     /**
@@ -782,6 +808,44 @@ trait EntityTrait
     }
 
     /**
+     * Sets a field as invalid and not patchable into the entity.
+     *
+     * This is useful for batch operations when one needs to get the original value for an error message after patching.
+     * This value could not be patched into the entity and is simply copied into the _invalid property for debugging purposes
+     * or to be able to log it away.
+     *
+     * @param string|array|null $field The field to get invalid value for, or the value to set.
+     * @param mixed|null $value The invalid value to be set for $field.
+     * @param bool $overwrite Whether or not to overwrite pre-existing values for $field.
+     * @return $this|mixed
+     */
+    public function invalid($field = null, $value = null, $overwrite = false)
+    {
+        if ($field === null) {
+            return $this->_invalid;
+        }
+
+        if (is_string($field) && $value === null) {
+            $value = isset($this->_invalid[$field]) ? $this->_invalid[$field] : null;
+            return $value;
+        }
+
+        if (!is_array($field)) {
+            $field = [$field => $value];
+        }
+
+        foreach ($field as $f => $value) {
+            if ($overwrite) {
+                $this->_invalid[$f] = $value;
+                continue;
+            }
+            $this->_invalid += [$f => $value];
+        }
+
+        return $this;
+    }
+
+    /**
      * Stores whether or not a property value can be changed or set in this entity.
      * The special property `*` can also be marked as accessible or protected, meaning
      * that any other property specified before will take its value. For example
@@ -883,6 +947,7 @@ trait EntityTrait
             '[original]' => $this->_original,
             '[virtual]' => $this->_virtual,
             '[errors]' => $this->_errors,
+            '[invalid]' => $this->_invalid,
             '[repository]' => $this->_registryAlias
         ];
     }

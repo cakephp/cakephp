@@ -65,7 +65,7 @@ class QueryExpression implements ExpressionInterface, Countable
     public function __construct($conditions = [], $types = [], $conjunction = 'AND')
     {
         $this->typeMap($types);
-        $this->type(strtoupper($conjunction));
+        $this->tieWith(strtoupper($conjunction));
         if (!empty($conditions)) {
             $this->add($conditions, $this->typeMap()->types());
         }
@@ -75,11 +75,11 @@ class QueryExpression implements ExpressionInterface, Countable
      * Changes the conjunction for the conditions at this level of the expression tree.
      * If called with no arguments it will return the currently configured value.
      *
-     * @param string $conjunction value to be used for joining conditions. If null it
+     * @param string|null $conjunction value to be used for joining conditions. If null it
      * will not set any value, but return the currently stored one
      * @return string|$this
      */
-    public function type($conjunction = null)
+    public function tieWith($conjunction = null)
     {
         if ($conjunction === null) {
             return $this->_conjunction;
@@ -87,6 +87,19 @@ class QueryExpression implements ExpressionInterface, Countable
 
         $this->_conjunction = strtoupper($conjunction);
         return $this;
+    }
+
+    /**
+     * Backwards compatible wrapper for tieWith()
+     *
+     * @param string|null $conjunction value to be used for joining conditions. If null it
+     * will not set any value, but return the currently stored one
+     * @return string|$this
+     * @deprecated 3.2.0 Use tieWith() instead
+     */
+    public function type($conjunction = null)
+    {
+        return $this->tieWith($conjunction);
     }
 
     /**
@@ -137,6 +150,9 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function eq($field, $value, $type = null)
     {
+        if ($type === null) {
+            $type = $this->_calculateType($field);
+        }
         return $this->add(new Comparison($field, $value, $type, '='));
     }
 
@@ -152,6 +168,9 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function notEq($field, $value, $type = null)
     {
+        if ($type === null) {
+            $type = $this->_calculateType($field);
+        }
         return $this->add(new Comparison($field, $value, $type, '!='));
     }
 
@@ -165,6 +184,9 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function gt($field, $value, $type = null)
     {
+        if ($type === null) {
+            $type = $this->_calculateType($field);
+        }
         return $this->add(new Comparison($field, $value, $type, '>'));
     }
 
@@ -178,6 +200,9 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function lt($field, $value, $type = null)
     {
+        if ($type === null) {
+            $type = $this->_calculateType($field);
+        }
         return $this->add(new Comparison($field, $value, $type, '<'));
     }
 
@@ -191,6 +216,9 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function gte($field, $value, $type = null)
     {
+        if ($type === null) {
+            $type = $this->_calculateType($field);
+        }
         return $this->add(new Comparison($field, $value, $type, '>='));
     }
 
@@ -204,6 +232,9 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function lte($field, $value, $type = null)
     {
+        if ($type === null) {
+            $type = $this->_calculateType($field);
+        }
         return $this->add(new Comparison($field, $value, $type, '<='));
     }
 
@@ -247,6 +278,9 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function like($field, $value, $type = null)
     {
+        if ($type === null) {
+            $type = $this->_calculateType($field);
+        }
         return $this->add(new Comparison($field, $value, $type, 'LIKE'));
     }
 
@@ -260,6 +294,9 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function notLike($field, $value, $type = null)
     {
+        if ($type === null) {
+            $type = $this->_calculateType($field);
+        }
         return $this->add(new Comparison($field, $value, $type, 'NOT LIKE'));
     }
 
@@ -274,6 +311,9 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function in($field, $values, $type = null)
     {
+        if ($type === null) {
+            $type = $this->_calculateType($field);
+        }
         $type = $type ?: 'string';
         $type .= '[]';
         $values = $values instanceof ExpressionInterface ? $values : (array)$values;
@@ -307,6 +347,9 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function notIn($field, $values, $type = null)
     {
+        if ($type === null) {
+            $type = $this->_calculateType($field);
+        }
         $type = $type ?: 'string';
         $type .= '[]';
         $values = $values instanceof ExpressionInterface ? $values : (array)$values;
@@ -325,6 +368,9 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function between($field, $from, $to, $type = null)
     {
+        if ($type === null) {
+            $type = $this->_calculateType($field);
+        }
         return $this->add(new BetweenExpression($field, $from, $to, $type));
     }
 
@@ -648,6 +694,21 @@ class QueryExpression implements ExpressionInterface, Countable
         }
 
         return new Comparison($expression, $value, $type, $operator);
+    }
+
+    /**
+     * Returns the type name for the passed field if it was stored in the typeMap
+     *
+     * @param string|Cake\Database\Expression\QueryExpression $field The field name to get a type for.
+     * @return string|null The computed type or null, if the type is unknown.
+     */
+    protected function _calculateType($field)
+    {
+        $field = $field instanceof IdentifierExpression ? $field->getIdentifier() : $field;
+        if (is_string($field)) {
+            return $this->typeMap()->type($field);
+        }
+        return null;
     }
 
     /**

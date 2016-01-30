@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Database\Type;
 
-use Cake\Database\Type;
 use Cake\Database\Type\TimeType;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
@@ -33,7 +32,7 @@ class TimeTypeTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->type = Type::build('time');
+        $this->type = new TimeType();
         $this->driver = $this->getMock('Cake\Database\Driver');
     }
 
@@ -166,6 +165,7 @@ class TimeTypeTest extends TestCase
         $result = $this->type->marshal($value);
         if (is_object($expected)) {
             $this->assertEquals($expected, $result);
+            $this->assertInstanceOf('DateTime', $result);
         } else {
             $this->assertSame($expected, $result);
         }
@@ -184,5 +184,21 @@ class TimeTypeTest extends TestCase
         $this->assertEquals($expected->format('H:i'), $result->format('H:i'));
 
         $this->assertNull($this->type->marshal('derp:23'));
+    }
+
+    /**
+     * Test that toImmutable changes all the methods to create frozen time instances.
+     *
+     * @return void
+     */
+    public function testToImmutableAndToMutable()
+    {
+        $this->type->useImmutable();
+        $this->assertInstanceOf('DateTimeImmutable', $this->type->marshal('11:23:12'));
+        $this->assertInstanceOf('DateTimeImmutable', $this->type->toPhp('11:23:12', $this->driver));
+
+        $this->type->useMutable();
+        $this->assertInstanceOf('DateTime', $this->type->marshal('11:23:12'));
+        $this->assertInstanceOf('DateTime', $this->type->toPhp('11:23:12', $this->driver));
     }
 }

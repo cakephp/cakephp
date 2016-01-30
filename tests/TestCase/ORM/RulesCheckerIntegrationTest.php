@@ -116,6 +116,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $this->assertNull($entity->article->get('author_id'));
         $this->assertFalse($entity->article->dirty('author_id'));
         $this->assertNotEmpty($entity->article->errors('title'));
+        $this->assertSame('A Title', $entity->article->invalid('title'));
     }
 
     /**

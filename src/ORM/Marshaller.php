@@ -19,6 +19,7 @@ use Cake\Collection\Collection;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\InvalidPropertyInterface;
 use RuntimeException;
 
 /**
@@ -128,6 +129,9 @@ class Marshaller
         $properties = [];
         foreach ($data as $key => $value) {
             if (!empty($errors[$key])) {
+                if ($entity instanceof InvalidPropertyInterface) {
+                    $entity->invalid($key, $value);
+                }
                 continue;
             }
             $columnType = $schema->columnType($key);
@@ -464,6 +468,9 @@ class Marshaller
         $properties = $marshalledAssocs = [];
         foreach ($data as $key => $value) {
             if (!empty($errors[$key])) {
+                if ($entity instanceof InvalidPropertyInterface) {
+                    $entity->invalid($key, $value);
+                }
                 continue;
             }
 

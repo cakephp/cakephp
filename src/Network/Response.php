@@ -1347,55 +1347,33 @@ class Response
      * cors($request, ['http://www.cakephp.org', '*.google.com', 'https://myproject.github.io']);
      * ```
      *
+     * *Note* The `$allowedDomains`, `$allowedMethods`, `$allowedHeaders` parameters are deprectated.
+     * Instead the builder object should be used.
+     *
      * @param \Cake\Network\Request $request Request object
      * @param string|array $allowedDomains List of allowed domains, see method description for more details
      * @param string|array $allowedMethods List of HTTP verbs allowed
      * @param string|array $allowedHeaders List of HTTP headers allowed
-     * @return void
+     * @return \Cake\Network\CorsBuilder A builder object the provides a fluent interface for defining
+     *   additional CORS headers.
      */
-    public function cors(Request $request, $allowedDomains, $allowedMethods = [], $allowedHeaders = [])
+    public function cors(Request $request, $allowedDomains = [], $allowedMethods = [], $allowedHeaders = [])
     {
         $origin = $request->header('Origin');
+        $ssl = $request->is('ssl');
+        $builder = new CorsBuilder($this, $origin, $ssl);
         if (!$origin) {
-            return;
+            return $builder;
+        }
+        if (empty($allowedDomains) && empty($allowedMethods) && empty($allowedHeaders)) {
+            return $builder;
         }
 
-        $allowedDomains = $this->_normalizeCorsDomains((array)$allowedDomains, $request->is('ssl'));
-        foreach ($allowedDomains as $domain) {
-            if (!preg_match($domain['preg'], $origin)) {
-                continue;
-            }
-            $this->header('Access-Control-Allow-Origin', $domain['original'] === '*' ? '*' : $origin);
-            $allowedMethods && $this->header('Access-Control-Allow-Methods', implode(', ', (array)$allowedMethods));
-            $allowedHeaders && $this->header('Access-Control-Allow-Headers', implode(', ', (array)$allowedHeaders));
-            break;
-        }
-    }
-
-    /**
-     * Normalize the origin to regular expressions and put in an array format
-     *
-     * @param array $domains Domain names to normalize.
-     * @param bool $requestIsSSL Whether it's a SSL request.
-     * @return array
-     */
-    protected function _normalizeCorsDomains($domains, $requestIsSSL = false)
-    {
-        $result = [];
-        foreach ($domains as $domain) {
-            if ($domain === '*') {
-                $result[] = ['preg' => '@.@', 'original' => '*'];
-                continue;
-            }
-
-            $original = $preg = $domain;
-            if (strpos($domain, '://') === false) {
-                $domain = ($requestIsSSL ? 'https://' : 'http://') . $domain;
-            }
-            $preg = '@^' . str_replace('\*', '.*', preg_quote($domain, '@')) . '$@';
-            $result[] = compact('original', 'preg');
-        }
-        return $result;
+        $builder->allowOrigin($allowedDomains)
+            ->allowMethods((array)$allowedMethods)
+            ->allowHeaders((array)$allowedHeaders)
+            ->build();
+        return $builder;
     }
 
     /**

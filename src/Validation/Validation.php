@@ -130,9 +130,6 @@ class Validation
      * Returns true if field is left blank -OR- only whitespace characters are present in its value
      * Whitespace characters include Space, Tab, Carriage Return, Newline
      *
-     * $check can be passed as an array:
-     * ['check' => 'valueToCheck'];
-     *
      * @param string|array $check Value to check
      * @return bool Success
      * @deprecated 3.0.2
