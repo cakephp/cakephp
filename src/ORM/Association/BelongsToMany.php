@@ -1204,11 +1204,15 @@ class BelongsToMany extends Association
         }
 
         $query = $this->_appendJunctionJoin($query, []);
+
+        if ($query->autoFields() === null) {
+            $query->autoFields($query->clause('select') === []);
+        }
+
         // Ensure that association conditions are applied
         // and that the required keys are in the selected columns.
         $query
             ->where($this->junctionConditions())
-            ->autoFields($query->clause('select') === [])
             ->select($query->aliasFields((array)$assoc->foreignKey(), $name));
 
         $assoc->attachTo($query);

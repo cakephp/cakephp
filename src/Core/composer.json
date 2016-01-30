@@ -16,6 +16,5 @@
             "Cake\\Core\\": "."
         },
         "files": ["functions.php"]
-    },
-    "minimum-stability": "dev"
+    }
 }

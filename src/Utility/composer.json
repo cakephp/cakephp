@@ -13,6 +13,5 @@
             "Cake\\Utility\\": "."
         },
         "files": ["bootstrap.php"]
-    },
-    "minimum-stability": "beta"
+    }
 }

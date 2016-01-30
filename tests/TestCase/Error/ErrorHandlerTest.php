@@ -86,6 +86,8 @@ class ErrorHandlerTest extends TestCase
 
         $request = new Request();
         $request->base = '';
+        $request->env('HTTP_REFERER', '/referer');
+
         Router::setRequestInfo($request);
         Configure::write('debug', true);
 
@@ -304,7 +306,9 @@ class ErrorHandlerTest extends TestCase
                     '[Cake\Routing\Exception\MissingControllerException] ' .
                     'Controller class Derp could not be found.'
                 ),
-                $this->stringContains('Exception Attributes:')
+                $this->stringContains('Exception Attributes:'),
+                $this->stringContains('Request URL:'),
+                $this->stringContains('Referer URL:')
             ));
 
         $this->_logger->expects($this->at(1))

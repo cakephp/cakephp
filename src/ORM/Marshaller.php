@@ -322,9 +322,7 @@ class Marshaller
             $query->andWhere(function ($exp) use ($conditions) {
                 return $exp->or_($conditions);
             });
-        }
 
-        if (isset($query)) {
             $keyFields = array_keys($primaryKey);
 
             $existing = [];
@@ -341,8 +339,10 @@ class Marshaller
                     }
                 }
                 $key = implode(';', $key);
+
+                // Update existing record and child associations
                 if (isset($existing[$key])) {
-                    $records[$i] = $existing[$key];
+                    $records[$i] = $this->merge($existing[$key], $data[$i], $options);
                 }
             }
         }
@@ -355,6 +355,7 @@ class Marshaller
         }
 
         foreach ($records as $i => $record) {
+            // Update junction table data in _joinData.
             if (isset($data[$i]['_joinData'])) {
                 $joinData = $jointMarshaller->one($data[$i]['_joinData'], $nested);
                 $record->set('_joinData', $joinData);

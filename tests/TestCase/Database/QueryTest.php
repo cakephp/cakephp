@@ -261,7 +261,7 @@ class QueryTest extends TestCase
      */
     public function testSelectAliasedJoins()
     {
-        $this->skipIf(version_compare(PHP_VERSION, '5.6.0', '<'), 'This test fails on travis for older PHP.');
+        $this->markTestSkipped('This test fails on travis for older PHP.');
         $query = new Query($this->connection);
         $result = $query
             ->select(['title', 'name'])

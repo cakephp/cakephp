@@ -1209,16 +1209,16 @@ class HtmlHelperTest extends TestCase
     {
         Configure::write('App.encoding', null);
         $result = $this->Html->charset();
-        $expected = ['meta' => ['http-equiv' => 'Content-Type', 'content' => 'text/html; charset=utf-8']];
+        $expected = ['meta' => ['charset' => 'utf-8']];
         $this->assertHtml($expected, $result);
 
         Configure::write('App.encoding', 'ISO-8859-1');
         $result = $this->Html->charset();
-        $expected = ['meta' => ['http-equiv' => 'Content-Type', 'content' => 'text/html; charset=iso-8859-1']];
+        $expected = ['meta' => ['charset' => 'iso-8859-1']];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->charset('UTF-7');
-        $expected = ['meta' => ['http-equiv' => 'Content-Type', 'content' => 'text/html; charset=UTF-7']];
+        $expected = ['meta' => ['charset' => 'UTF-7']];
         $this->assertHtml($expected, $result);
     }
 
