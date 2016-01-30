@@ -41,19 +41,19 @@ class PluginShell extends Shell
     public function getOptionParser()
     {
         $parser = parent::getOptionParser();
-        
+
         $parser->description('Plugin Shell perform various tasks related to plugin.')
-                ->addSubcommand('assets', [
-                    'help' => 'Symlink / copy plugin assets to app\'s webroot',
-                    'parser' => $this->Assets->getOptionParser()
-                ])->addSubcommand('load', [
-                    'help' => 'Loads a plugin',
-                    'parser' => $this->Load->getOptionParser(),
-                ])
-                ->addSubcommand('unload', [
-                    'help' => 'Unloads a plugin',
-                    'parser' => $this->Unload->getOptionParser(),
-                ]);
+            ->addSubcommand('assets', [
+                'help' => 'Symlink / copy plugin assets to app\'s webroot',
+                'parser' => $this->Assets->getOptionParser()
+            ])->addSubcommand('load', [
+                'help' => 'Loads a plugin',
+                'parser' => $this->Load->getOptionParser(),
+            ])
+            ->addSubcommand('unload', [
+                'help' => 'Unloads a plugin',
+                'parser' => $this->Unload->getOptionParser(),
+            ]);
 
         return $parser;
     }
