@@ -69,7 +69,7 @@ class ControllerFactoryFilter extends DispatcherFilter
             $controller = $request->params['controller'];
         }
         if (!empty($request->params['prefix'])) {
-            if (strpos('/', $request->params['prefix']) === false) {
+            if (strpos($request->params['prefix'], '/') === false) {
                 $namespace .= '/' . Inflector::camelize($request->params['prefix']);
             } else {
                 $prefixes = array_map(
