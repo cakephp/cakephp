@@ -272,7 +272,7 @@ trait DateFormatTrait
             $pattern
         );
         $time = $formatter->parse($time);
-        if ($time) {
+        if ($time !== false) {
             $result = new static('@' . $time);
             return $result->setTimezone(date_default_timezone_get());
         }
