@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\View\Helper;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\I18n\I18n;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\TimeHelper;
@@ -42,6 +43,19 @@ class TimeHelperTest extends TestCase
         $this->View = new View();
         $this->Time = new TimeHelper($this->View);
         Time::$defaultLocale = 'en_US';
+        $this->locale = I18n::locale();
+    }
+
+    /**
+     * tearDown method
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        Time::$defaultLocale = 'en_US';
+        I18n::locale($this->locale);
     }
 
     /**
@@ -432,14 +446,12 @@ class TimeHelperTest extends TestCase
         $expected = 'Date invalid';
         $this->assertEquals($expected, $result);
 
-        \Cake\I18n\I18n::locale('fr-FR');
-        Time::$defaultLocale = 'fr-FR';
+        I18n::locale('fr_FR');
+        Time::$defaultLocale = 'fr_FR';
         $time = new \Cake\I18n\FrozenTime('Thu Jan 14 13:59:28 2010');
         $result = $this->Time->format($time);
-        $expected = '14/01/2010 13:59';
+        $expected = '14/01/10 13:59';
         $this->assertTimeFormat($expected, $result);
-        \Cake\I18n\I18n::locale('en-US');
-
     }
 
     /**
