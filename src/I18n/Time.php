@@ -103,10 +103,7 @@ class Time extends MutableDateTime implements JsonSerializable
      */
     public function __construct($time = null, $tz = null)
     {
-        if ($time instanceof DateTimeImmutable) {
-            $time = $time->toMutable();
-        }
-        if ($time instanceof DateTime) {
+        if ($time instanceof DateTime || $time instanceof DateTimeImmutable) {
             $tz = $time->getTimeZone();
             $time = $time->format('Y-m-d H:i:s');
         }
