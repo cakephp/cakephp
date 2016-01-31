@@ -449,8 +449,8 @@ class TimeHelperTest extends TestCase
         I18n::locale('fr_FR');
         Time::$defaultLocale = 'fr_FR';
         $time = new \Cake\I18n\FrozenTime('Thu Jan 14 13:59:28 2010');
-        $result = $this->Time->format($time);
-        $expected = '14/01/10 13:59';
+        $result = $this->Time->format($time, \IntlDateFormatter::FULL);
+        $expected = 'jeudi 14 janvier 2010 13:59:28 UTC';
         $this->assertTimeFormat($expected, $result);
     }
 
@@ -496,8 +496,8 @@ class TimeHelperTest extends TestCase
     public function assertTimeFormat($expected, $result)
     {
         return $this->assertEquals(
-            str_replace([',', '(', ')', ' at'], '', $expected),
-            str_replace([',', '(', ')', ' at'], '', $result)
+            str_replace([',', '(', ')', ' at', ' à'], '', $expected),
+            str_replace([',', '(', ')', ' at', ' à'], '', $result)
         );
     }
 
