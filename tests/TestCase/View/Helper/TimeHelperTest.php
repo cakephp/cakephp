@@ -431,6 +431,15 @@ class TimeHelperTest extends TestCase
         $result = $this->Time->format('invalid date', null, 'Date invalid');
         $expected = 'Date invalid';
         $this->assertEquals($expected, $result);
+
+        \Cake\I18n\I18n::locale('fr-FR');
+        Time::$defaultLocale = 'fr-FR';
+        $time = new \Cake\I18n\FrozenTime('Thu Jan 14 13:59:28 2010');
+        $result = $this->Time->format($time);
+        $expected = '14/01/2010 13:59';
+        $this->assertTimeFormat($expected, $result);
+        \Cake\I18n\I18n::locale('en-US');
+
     }
 
     /**
