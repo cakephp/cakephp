@@ -18,6 +18,7 @@ use Cake\Event\EventManager;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Core\Configure;
+use RuntimeException;
 
 /**
  * Parent class for view classes generating serialized outputs like JsonView and XmlView.
@@ -97,7 +98,7 @@ class SerializedView extends View
                         return $result;
                     }
                 }
-                trigger_error('Serialization of View data failed.');
+                throw new RuntimeException('Serialization of View data failed.');
             }
             return (string)$result;
         }

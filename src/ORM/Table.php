@@ -1020,7 +1020,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (isset($options['idField'])) {
             $options['keyField'] = $options['idField'];
             unset($options['idField']);
-            trigger_error('Option "idField" is deprecated, use "keyField" instead.', E_USER_WARNING);
+            trigger_error('Option "idField" is deprecated, use "keyField" instead.', E_USER_DEPRECATED);
         }
 
         if (!$query->clause('select') &&
@@ -1086,7 +1086,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (isset($options['idField'])) {
             $options['keyField'] = $options['idField'];
             unset($options['idField']);
-            trigger_error('Option "idField" is deprecated, use "keyField" instead.', E_USER_WARNING);
+            trigger_error('Option "idField" is deprecated, use "keyField" instead.', E_USER_DEPRECATED);
         }
 
         $options = $this->_setFieldMatchers($options, ['keyField', 'parentField']);
