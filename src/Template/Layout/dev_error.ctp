@@ -206,7 +206,7 @@ use Cake\Error\Debugger;
         </h1>
         <div class="header-help">
             <a target="_blank" href="http://book.cakephp.org/3.0/">Documentation</a>
-            <a target="_blank" href="http://api.cakephp.org/3.0/">API</a>
+            <a target="_blank" href="http://api.cakephp.org/">API</a>
         </div>
     </header>
 
