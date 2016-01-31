@@ -333,10 +333,6 @@ class TimeHelper extends Helper
             return $invalid;
         }
 
-        if ($date instanceof \DateTimeImmutable) {
-            $date = $date->toMutable();
-        }
-
         try {
             $time = new Time($date);
             return $time->i18nFormat($format, $timezone);
