@@ -68,7 +68,11 @@ class ControllerFactoryFilter extends DispatcherFilter
             $controller = $request->params['controller'];
         }
         if (!empty($request->params['prefix'])) {
-            $namespace .= '/' . $request->params['prefix'];
+            $prefixes = array_map(
+                'Cake\Utility\Inflector::camelize',
+                explode('/', $request->params['prefix'])
+            );
+            $namespace .= '/' . implode('/', $prefixes);
         }
         $firstChar = substr($controller, 0, 1);
         if (strpos($controller, '\\') !== false ||
