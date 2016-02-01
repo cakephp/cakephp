@@ -66,5 +66,4 @@ class PluginShellTest extends TestCase
 
         $this->shell->loaded();
     }
-
 }
