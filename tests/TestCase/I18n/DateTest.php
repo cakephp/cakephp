@@ -65,6 +65,24 @@ class DateTest extends TestCase
     }
 
     /**
+     * Ensure that instances can be built from other objects.
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testConstructFromAnotherInstance($class)
+    {
+        $time = '2015-01-22';
+        $frozen = new FrozenDate($time, 'America/Chicago');
+        $subject = new $class($frozen);
+        $this->assertEquals($time, $subject->format('Y-m-d'), 'frozen date construction');
+
+        $mut = new Date($time, 'America/Chicago');
+        $subject = new $class($mut);
+        $this->assertEquals($time, $subject->format('Y-m-d'), 'mutable date construction');
+    }
+
+    /**
      * test formatting dates taking in account preferred i18n locale file
      *
      * @dataProvider classNameProvider
