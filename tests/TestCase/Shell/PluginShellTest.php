@@ -14,8 +14,7 @@
  */
 namespace Cake\Test\TestCase\Shell;
 
-use Cake\Cache\Cache;
-use Cake\Datasource\ConnectionManager;
+use Cake\Core\Plugin;
 use Cake\Shell\PluginShell;
 use Cake\TestSuite\TestCase;
 
@@ -50,5 +49,21 @@ class PluginShellTest extends TestCase
         $this->assertArrayHasKey('unload', $commands);
         $this->assertArrayHasKey('load', $commands);
         $this->assertArrayHasKey('assets', $commands);
+    }
+
+    /**
+     * Tests that list of loaded plugins is shown with loaded command.
+     *
+     * @return void
+     */
+    public function testLoaded()
+    {
+        $array = Plugin::loaded();
+
+        $this->io->expects($this->at(0))
+            ->method('out')
+            ->with($array);
+
+        $this->shell->loaded();
     }
 }
