@@ -35,6 +35,8 @@ class PluginShell extends Shell
     ];
 
     /**
+     * Displays all currently loaded plugins.
+     *
      * @return void
      */
     public function loaded()
