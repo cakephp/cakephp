@@ -182,6 +182,26 @@ class EventManagerTest extends TestCase
     }
 
     /**
+     * Test the on() method when its options contain conditions.
+     */
+    public function testOnWithConditions()
+    {
+        $manager = new EventManager();
+
+        $manager->on('my.event', ['if' => 'condition'], 'myfunc');
+        $listeners = $manager->listeners('my.event');
+
+        $this->assertCount(1, $listeners);
+        $this->assertInstanceOf('\Cake\Event\ConditionalCallable', $listeners[0]['callable']);
+
+        $manager->on('my.event', ['unless' => 'condition'], 'otherfunc');
+        $listeners = $manager->listeners('my.event');
+
+        $this->assertCount(2, $listeners);
+        $this->assertInstanceOf('\Cake\Event\ConditionalCallable', $listeners[1]['callable']);
+    }
+
+    /**
      * Tests off'ing an event from a event key queue
      *
      * @return void
