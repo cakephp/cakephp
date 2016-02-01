@@ -95,8 +95,6 @@ class QueryTest extends TestCase
         $orders->hasOne('stuff');
         $stuff->belongsTo('stuffTypes');
         $companies->belongsTo('categories');
-
-        $this->fooTypeMap = new TypeMap(['foo.id' => 'integer', 'id' => 'integer']);
     }
 
     /**
@@ -680,13 +678,35 @@ class QueryTest extends TestCase
                         'user_id' => 4,
                         'comment' => 'Second Comment for First Article',
                         'published' => 'Y',
-                        'created' => '2007-03-18 10:47:23',
-                        'updated' => '2007-03-18 10:49:31',
+                        'created' => new Time('2007-03-18 10:47:23'),
+                        'updated' => new Time('2007-03-18 10:49:31'),
                     ]
                 ]
             ]
         ];
         $this->assertEquals($expected, $results);
+    }
+
+    /**
+     * Tests that tables results can be filtered by the result of a HasMany
+     *
+     * @return void
+     */
+    public function testFilteringByHasManyHydration()
+    {
+        $table = TableRegistry::get('Articles');
+        $query = new Query($this->connection, $table);
+        $table->hasMany('Comments');
+
+        $result = $query->repository($table)
+            ->matching('Comments', function ($q) {
+                return $q->where(['Comments.user_id' => 4]);
+            })
+            ->first();
+        $this->assertInstanceOf('Cake\ORM\Entity', $result);
+        $this->assertInstanceOf('Cake\ORM\Entity', $result->_matchingData['Comments']);
+        $this->assertInternalType('integer', $result->_matchingData['Comments']->id);
+        $this->assertInstanceOf('Cake\I18n\Time', $result->_matchingData['Comments']->created);
     }
 
     /**
@@ -2389,6 +2409,20 @@ class QueryTest extends TestCase
                 'authors__name' => 'string',
                 'authors.name' => 'string',
                 'name' => 'string',
+                'articles__id' => 'integer',
+                'articles.id' => 'integer',
+                'articles__author_id' => 'integer',
+                'articles.author_id' => 'integer',
+                'author_id' => 'integer',
+                'articles__title' => 'string',
+                'articles.title' => 'string',
+                'title' => 'string',
+                'articles__body' => 'text',
+                'articles.body' => 'text',
+                'body' => 'text',
+                'articles__published' => 'string',
+                'articles.published' => 'string',
+                'published' => 'string',
             ],
             'decorators' => 0,
             'executed' => false,
@@ -3200,6 +3234,6 @@ class QueryTest extends TestCase
                 ]
             ]
         ];
-        $this->assertEquals($expected, $results->first());
+        $this->assertSame($expected, $results->first());
     }
 }

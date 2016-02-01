@@ -125,6 +125,12 @@ class HasOneTest extends TestCase
             'Profiles__user_id' => 'Profiles.user_id'
         ]);
         $association->attachTo($query);
+
+        $this->assertEquals(
+            'string',
+            $query->typeMap()->type('Profiles__first_name'),
+            'Associations should map types.'
+        );
     }
 
     /**
