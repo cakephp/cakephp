@@ -10,7 +10,7 @@ cache:
 branches:
   only:
     - master
-    - 3.2
+    - 3.next
 environment:
   global:
     PHP: "C:/PHP"
