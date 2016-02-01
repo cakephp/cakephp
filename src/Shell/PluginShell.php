@@ -37,7 +37,8 @@ class PluginShell extends Shell
     /**
      * @return void
      */
-    public function loaded() {
+    public function loaded()
+    {
         $loaded = Plugin::loaded();
         $this->out($loaded);
     }
