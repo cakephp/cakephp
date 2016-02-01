@@ -15,6 +15,7 @@
 namespace Cake\Shell;
 
 use Cake\Console\Shell;
+use Cake\Core\Plugin;
 
 /**
  * Shell for tasks related to plugins.
@@ -34,6 +35,14 @@ class PluginShell extends Shell
     ];
 
     /**
+     * @return void
+     */
+    public function loaded() {
+        $loaded = Plugin::loaded();
+        $this->out($loaded);
+    }
+
+    /**
      * Gets the option parser instance and configures it.
      *
      * @return \Cake\Console\ConsoleOptionParser
@@ -46,7 +55,12 @@ class PluginShell extends Shell
             ->addSubcommand('assets', [
                 'help' => 'Symlink / copy plugin assets to app\'s webroot',
                 'parser' => $this->Assets->getOptionParser()
-            ])->addSubcommand('load', [
+            ])
+            ->addSubcommand('loaded', [
+                'help' => 'Lists all loaded plugins',
+                'parser' => $parser,
+            ])
+            ->addSubcommand('load', [
                 'help' => 'Loads a plugin',
                 'parser' => $this->Load->getOptionParser(),
             ])
