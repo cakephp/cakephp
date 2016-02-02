@@ -28,7 +28,7 @@ class ConsoleErrorHandler extends BaseErrorHandler
     /**
      * Standard error stream.
      *
-     * @var ConsoleOutput
+     * @var \Cake\Console\ConsoleOutput
      */
     protected $_stderr;
 

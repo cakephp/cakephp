@@ -44,7 +44,7 @@ class ConsoleInputSubcommand
     /**
      * The ConsoleOptionParser for this subcommand.
      *
-     * @var ConsoleOptionParser
+     * @var \Cake\Console\ConsoleOptionParser
      */
     protected $_parser;
 

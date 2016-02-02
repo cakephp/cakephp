@@ -22,6 +22,7 @@ use Cake\Core\Plugin;
  */
 trait FileConfigTrait
 {
+
     /**
      * The path this engine finds files on.
      *

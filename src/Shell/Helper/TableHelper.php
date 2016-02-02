@@ -21,6 +21,7 @@ use Cake\Console\Helper;
  */
 class TableHelper extends Helper
 {
+
     /**
      * Default config for this helper.
      *

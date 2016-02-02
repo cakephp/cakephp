@@ -30,6 +30,7 @@ use Cake\Network\Response;
  */
 class CorsBuilder
 {
+
     /**
      * The response object this builder is attached to.
      *

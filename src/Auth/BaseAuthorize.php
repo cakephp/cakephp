@@ -31,7 +31,7 @@ abstract class BaseAuthorize
     /**
      * ComponentRegistry instance for getting more components.
      *
-     * @var ComponentRegistry
+     * @var \Cake\Controller\ComponentRegistry
      */
     protected $_registry;
 

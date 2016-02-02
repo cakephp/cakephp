@@ -54,7 +54,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * expression objects. Optionally, you can set the conjunction keyword to be used
      * for joining each part of this level of the expression tree.
      *
-     * @param string|array|QueryExpression $conditions tree-like array structure containing all the conditions
+     * @param string|array|\Cake\Database\Expression\QueryExpression $conditions tree-like array structure containing all the conditions
      * to be added or nested inside this expression object.
      * @param array|\Cake\Database\TypeMap $types associative array of types to be associated with the values
      * passed in $conditions.
@@ -323,9 +323,9 @@ class QueryExpression implements ExpressionInterface, Countable
     /**
      * Adds a new case expression to the expression object
      *
-     * @param array|ExpressionInterface $conditions The conditions to test. Must be a ExpressionInterface
+     * @param array|\Cake\Database\ExpressionInterface $conditions The conditions to test. Must be a ExpressionInterface
      * instance, or an array of ExpressionInterface instances.
-     * @param array|ExpressionInterface $values associative array of values to be associated with the conditions
+     * @param array|\Cake\Database\ExpressionInterface $values associative array of values to be associated with the conditions
      * passed in $conditions. If there are more $values than $conditions, the last $value is used as the `ELSE` value
      * @param array $types associative array of types to be associated with the values
      * passed in $values
@@ -416,7 +416,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * "NOT ( (condition1) AND (conditions2) )" conjunction depends on the one
      * currently configured for this object.
      *
-     * @param string|array|QueryExpression $conditions to be added and negated
+     * @param string|array|\Cake\Database\Expression\QueryExpression $conditions to be added and negated
      * @param array $types associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @return $this

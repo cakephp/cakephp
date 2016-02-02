@@ -551,7 +551,7 @@ class EagerLoader
      * @param \Cake\ORM\Query $query The query for which to eager load external
      * associations
      * @param \Cake\Database\StatementInterface $statement The statement created after executing the $query
-     * @return CallbackStatement statement modified statement with extra loaders
+     * @return \Cake\Database\Statement\CallbackStatement statement modified statement with extra loaders
      */
     public function loadExternal($query, $statement)
     {

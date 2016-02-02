@@ -346,7 +346,7 @@ class Configure
      * Will create new PhpConfig for default if not configured yet.
      *
      * @param string $config The name of the configured adapter
-     * @return ConfigEngineInterface|false Engine instance or false
+     * @return \Cake\Core\Configure\ConfigEngineInterface|false Engine instance or false
      */
     protected static function _getEngine($config)
     {

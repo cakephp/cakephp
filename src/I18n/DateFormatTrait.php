@@ -24,6 +24,7 @@ use IntlDateFormatter;
  */
 trait DateFormatTrait
 {
+
     /**
      * The default locale to be used for displaying formatted date strings.
      *

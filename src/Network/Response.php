@@ -347,7 +347,7 @@ class Response
     /**
      * File object for file to be read out as response
      *
-     * @var File
+     * @var \Cake\Filesystem\File
      */
     protected $_file = null;
 

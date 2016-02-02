@@ -33,7 +33,7 @@ class QueryCacher
      * Constructor.
      *
      * @param string|\Closure $key The key or function to generate a key.
-     * @param string|CacheEngine $config The cache config name or cache engine instance.
+     * @param string|\Cake\Cache\CacheEngine $config The cache config name or cache engine instance.
      * @throws \RuntimeException
      */
     public function __construct($key, $config)

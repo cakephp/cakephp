@@ -153,7 +153,7 @@ abstract class BaseErrorHandler
      * then, it wraps the passed object inside another Exception object
      * for backwards compatibility purposes.
      *
-     * @param Exception|Error $exception The exception to handle
+     * @param \Exception|\Error $exception The exception to handle
      * @return void
      */
     public function wrapAndHandleException($exception)

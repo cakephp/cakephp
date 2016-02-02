@@ -38,7 +38,7 @@ class TreeIterator extends RecursiveIteratorIterator
     /**
      * Constructor
      *
-     * @param RecursiveIterator $items The iterator to flatten.
+     * @param \RecursiveIterator $items The iterator to flatten.
      * @param int $mode Iterator mode.
      * @param int $flags Iterator flags.
      */
