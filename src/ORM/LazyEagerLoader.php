@@ -93,7 +93,6 @@ class LazyEagerLoader
             })
             ->contain($contain);
 
-
         foreach ($query->eagerLoader()->attachableAssociations($source) as $loadable) {
             $config = $loadable->config();
             $config['includeFields'] = true;

@@ -39,7 +39,7 @@ class Session
     /**
      * The Session handler instance used as an engine for persisting the session data.
      *
-     * @var SessionHandlerInterface
+     * @var \SessionHandlerInterface
      */
     protected $_engine;
 

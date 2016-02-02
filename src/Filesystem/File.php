@@ -26,7 +26,7 @@ class File
     /**
      * Folder object of the file
      *
-     * @var Folder
+     * @var \Cake\Filesystem\Folder
      * @link http://book.cakephp.org/3.0/en/core-libraries/file-folder.html
      */
     public $Folder = null;

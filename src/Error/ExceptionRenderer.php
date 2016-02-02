@@ -54,7 +54,7 @@ class ExceptionRenderer
     /**
      * Controller instance.
      *
-     * @var Controller
+     * @var \Cake\Controller\Controller
      */
     public $controller = null;
 
@@ -84,7 +84,7 @@ class ExceptionRenderer
      * If the error is a Cake\Core\Exception\Exception it will be converted to either a 400 or a 500
      * code error depending on the code used to construct the error.
      *
-     * @param Exception $exception Exception.
+     * @param \Exception $exception Exception.
      */
     public function __construct(Exception $exception)
     {
@@ -198,7 +198,7 @@ class ExceptionRenderer
      * Render a custom error method/template.
      *
      * @param string $method The method name to invoke.
-     * @param Exception $exception The exception to render.
+     * @param \Exception $exception The exception to render.
      * @return \Cake\Network\Response The response to send.
      */
     protected function _customMethod($method, $exception)
@@ -214,7 +214,7 @@ class ExceptionRenderer
     /**
      * Get method name
      *
-     * @param Exception $exception Exception instance.
+     * @param \Exception $exception Exception instance.
      * @return string
      */
     protected function _method(Exception $exception)
@@ -233,7 +233,7 @@ class ExceptionRenderer
     /**
      * Get error message.
      *
-     * @param Exception $exception Exception.
+     * @param \Exception $exception Exception.
      * @param int $code Error code.
      * @return string Error message
      */

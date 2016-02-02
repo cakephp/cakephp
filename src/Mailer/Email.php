@@ -953,7 +953,7 @@ class Email implements JsonSerializable, Serializable
      * When setting the transport you can either use the name
      * of a configured transport or supply a constructed transport.
      *
-     * @param string|AbstractTransport|null $name Either the name of a configured
+     * @param string|\Cake\Mailer\AbstractTransport|null $name Either the name of a configured
      *   transport, or a transport instance.
      * @return \Cake\Mailer\AbstractTransport|$this
      * @throws \LogicException When the chosen transport lacks a send method.
@@ -1199,7 +1199,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @param string|array $key The configuration name to read/write. Or
      *   an array of multiple transports to set.
-     * @param array|AbstractTransport|null $config Either an array of configuration
+     * @param array|\Cake\Mailer\AbstractTransport|null $config Either an array of configuration
      *   data, or a transport instance.
      * @return array|null Either null when setting or an array of data when reading.
      * @throws \BadMethodCallException When modifying an existing configuration.

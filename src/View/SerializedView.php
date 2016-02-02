@@ -23,6 +23,7 @@ use Cake\Network\Response;
  */
 class SerializedView extends View
 {
+
     /**
      * Response type.
      *

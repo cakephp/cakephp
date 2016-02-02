@@ -37,7 +37,7 @@ class ResultSet implements ResultSetInterface
     /**
      * Original query from where results were generated
      *
-     * @var Query
+     * @var \Cake\ORM\Query
      * @deprecated 3.1.6 Due to a memory leak, this property cannot be used anymore
      */
     protected $_query;

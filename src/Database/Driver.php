@@ -52,7 +52,7 @@ abstract class Driver
      * Constructor
      *
      * @param array $config The configuration for the driver.
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function __construct($config = [])
     {

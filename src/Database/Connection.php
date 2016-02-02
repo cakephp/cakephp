@@ -80,7 +80,7 @@ class Connection implements ConnectionInterface
     /**
      * Logger object instance.
      *
-     * @var QueryLogger
+     * @var \Cake\Database\Log\QueryLogger
      */
     protected $_logger = null;
 

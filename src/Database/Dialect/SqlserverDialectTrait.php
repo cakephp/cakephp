@@ -136,8 +136,8 @@ trait SqlserverDialectTrait
      * Returns the passed query after rewriting the DISTINCT clause, so that drivers
      * that do not support the "ON" part can provide the actual way it should be done
      *
-     * @param Query $original The query to be transformed
-     * @return Query
+     * @param \Cake\Database\Query $original The query to be transformed
+     * @return \Cake\Database\Query
      */
     protected function _transformDistinct($original)
     {

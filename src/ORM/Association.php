@@ -504,7 +504,7 @@ abstract class Association
      * - negateMatch: Will append a condition to the passed query for excluding matches.
      *   with this association.
      *
-     * @param Query $query the query to be altered to include the target table data
+     * @param \Cake\ORM\Query $query the query to be altered to include the target table data
      * @param array $options Any extra options or overrides to be taken in account
      * @return void
      * @throws \RuntimeException if the query builder passed does not return a query

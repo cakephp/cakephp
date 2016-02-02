@@ -137,7 +137,7 @@ class Shell
     /**
      * Task Collection for the command, used to create Tasks.
      *
-     * @var TaskRegistry
+     * @var \Cake\Console\TaskRegistry
      */
     public $Tasks;
 

@@ -135,7 +135,7 @@ class WidgetRegistry
      * the `_default` widget is undefined.
      *
      * @param string $name The widget name to get.
-     * @return WidgetInterface widget interface class.
+     * @return \Cake\View\Widget\WidgetInterface widget interface class.
      * @throws \RuntimeException when widget is undefined.
      */
     public function get($name)
@@ -164,7 +164,7 @@ class WidgetRegistry
      * Resolves a widget spec into an instance.
      *
      * @param mixed $widget The widget to get
-     * @return WidgetInterface
+     * @return \Cake\View\Widget\WidgetInterface
      * @throws \RuntimeException when class cannot be loaded or does not
      *   implement WidgetInterface.
      */

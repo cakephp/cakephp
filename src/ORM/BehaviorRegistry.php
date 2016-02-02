@@ -122,7 +122,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * @param string $class The classname that is missing.
      * @param string $alias The alias of the object.
      * @param array $config An array of config to use for the behavior.
-     * @return Behavior The constructed behavior class.
+     * @return \Cake\ORM\Behavior The constructed behavior class.
      */
     protected function _create($class, $alias, $config)
     {

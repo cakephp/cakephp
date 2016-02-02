@@ -19,6 +19,7 @@ use DateTime;
 
 class DateType extends DateTimeType
 {
+
     /**
      * The class to use for representing date objects
      *

@@ -58,14 +58,14 @@ abstract class BaseAuthenticate implements EventListenerInterface
     /**
      * A Component registry, used to get more components.
      *
-     * @var ComponentRegistry
+     * @var \Cake\Controller\ComponentRegistry
      */
     protected $_registry;
 
     /**
      * Password hasher instance.
      *
-     * @var AbstractPasswordHasher
+     * @var \Cake\Auth\AbstractPasswordHasher
      */
     protected $_passwordHasher;
 
@@ -152,7 +152,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
     /**
      * Return password hasher object
      *
-     * @return AbstractPasswordHasher Password hasher instance
+     * @return \Cake\Auth\AbstractPasswordHasher Password hasher instance
      * @throws \RuntimeException If password hasher class not found or
      *   it does not extend AbstractPasswordHasher
      */
