@@ -236,8 +236,8 @@ class Query implements ExpressionInterface, IteratorAggregate
      *  }, ['select', 'from']);
      * ```
      *
-     * @param callable $visitor a function or callable to be executed for each part
-     * @param array $parts the query clauses to traverse
+     * @param callable $visitor A function or callable to be executed for each part
+     * @param array $parts The query clauses to traverse
      * @return $this
      */
     public function traverse(callable $visitor, array $parts = [])
@@ -789,7 +789,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * If you use string conditions make sure that your values are correctly quoted.
      * The safest thing you can do is to never use string conditions.
      *
-     * @param string|array|\Cake\Database\ExpressionInterface|callback|null $conditions The conditions to filter on.
+     * @param string|array|\Cake\Database\ExpressionInterface|callable|null $conditions The conditions to filter on.
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset conditions with passed list or not
      * @see \Cake\Database\Type
@@ -855,7 +855,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * `WHERE (title = 'Foo') AND (author_id = 1 OR author_id = 2)`
      *
-     * @param string|array|\Cake\Database\ExpressionInterface|callback $conditions The conditions to add with AND.
+     * @param string|array|\Cake\Database\ExpressionInterface|callable $conditions The conditions to add with AND.
      * @param array $types associative array of type names used to bind values to query
      * @see \Cake\Database\Query::where()
      * @see \Cake\Database\Type
@@ -917,7 +917,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * `WHERE (title = 'Foo') OR (author_id = 1 OR author_id = 2)`
      *
-     * @param string|array|\Cake\Database\ExpressionInterface|callback $conditions The conditions to add with OR.
+     * @param string|array|\Cake\Database\ExpressionInterface|callable $conditions The conditions to add with OR.
      * @param array $types associative array of type names used to bind values to query
      * @see \Cake\Database\Query::where()
      * @see \Cake\Database\Type
@@ -1088,7 +1088,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * does. Please refer to its documentation for an insight on how to using each
      * parameter.
      *
-     * @param string|array|\Cake\Database\ExpressionInterface|callback $conditions The having conditions.
+     * @param string|array|\Cake\Database\ExpressionInterface|callable $conditions The having conditions.
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset conditions with passed list or not
      * @see \Cake\Database\Query::where()
@@ -1109,7 +1109,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * the same way as the method `andWhere()` does. Please refer to its
      * documentation for an insight on how to using each parameter.
      *
-     * @param string|array|\Cake\Database\ExpressionInterface|callback $conditions The AND conditions for HAVING.
+     * @param string|array|\Cake\Database\ExpressionInterface|callable $conditions The AND conditions for HAVING.
      * @param array $types associative array of type names used to bind values to query
      * @see \Cake\Database\Query::andWhere()
      * @return $this
@@ -1126,7 +1126,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * the same way as the method `orWhere()` does. Please refer to its
      * documentation for an insight on how to using each parameter.
      *
-     * @param string|array|\Cake\Database\ExpressionInterface|callback $conditions The OR conditions for HAVING.
+     * @param string|array|\Cake\Database\ExpressionInterface|callable $conditions The OR conditions for HAVING.
      * @param array $types associative array of type names used to bind values to query.
      * @see \Cake\Database\Query::orWhere()
      * @return $this
@@ -1622,7 +1622,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * });
      * ```
      *
-     * @param null|callable $callback The callback to invoke when results are fetched.
+     * @param callable|null $callback The callback to invoke when results are fetched.
      * @param bool $overwrite Whether or not this should append or replace all existing decorators.
      * @return $this
      */
@@ -1786,7 +1786,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Helper function used to build conditions by composing QueryExpression objects.
      *
      * @param string $part Name of the query part to append the new part to
-     * @param string|null|array|\Cake\Database\ExpressionInterface|callback $append Expression or builder function to append.
+     * @param string|null|array|\Cake\Database\ExpressionInterface|callable $append Expression or builder function to append.
      * @param string $conjunction type of conjunction to be used to operate part
      * @param array $types associative array of type names used to bind values to query
      * @return void

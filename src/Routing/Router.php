@@ -421,7 +421,7 @@ class Router
      * Get the current request object, or the first one.
      *
      * @param bool $current True to get the current request, or false to get the first one.
-     * @return \Cake\Network\Request|null.
+     * @return \Cake\Network\Request|null
      */
     public static function getRequest($current = false)
     {

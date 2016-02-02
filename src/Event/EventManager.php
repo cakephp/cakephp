@@ -205,7 +205,7 @@ class EventManager
      *
      * @param array $function the array taken from a handler definition for an event
      * @param \Cake\Event\EventListenerInterface $object The handler object
-     * @return callback
+     * @return callable
      */
     protected function _extractCallable($function, $object)
     {
@@ -221,7 +221,7 @@ class EventManager
     /**
      * Removes a listener from the active listeners.
      *
-     * @param callback|\Cake\Event\EventListenerInterface $callable any valid PHP callback type or an instance of EventListenerInterface
+     * @param callable|\Cake\Event\EventListenerInterface $callable any valid PHP callback type or an instance of EventListenerInterface
      * @param string|null $eventKey The event unique identifier name with which the callback has been associated
      * @return void
      * @deprecated 3.0.0 Use off() instead.
@@ -264,7 +264,7 @@ class EventManager
      *
      * @param string|\Cake\Event\EventListenerInterface $eventKey The event unique identifier name
      *   with which the callback has been associated, or the $listener you want to remove.
-     * @param callback $callable The callback you want to detach.
+     * @param callable $callable The callback you want to detach.
      * @return void
      */
     public function off($eventKey, $callable = null)

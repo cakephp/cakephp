@@ -26,14 +26,14 @@ class PHP7ErrorException extends Exception
     /**
      * The wrapped error object
      *
-     * @var Error
+     * @var \Error
      */
     protected $_error;
 
     /**
      * Wraps the passed Error class
      *
-     * @param Error $error the Error object
+     * @param \Error $error the Error object
      */
     public function __construct($error)
     {
@@ -46,7 +46,7 @@ class PHP7ErrorException extends Exception
     /**
      * Returns the wrapped error object
      *
-     * @return Error
+     * @return \Error
      */
     public function getError()
     {

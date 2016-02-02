@@ -366,7 +366,7 @@ interface QueryInterface
      * If you use string conditions make sure that your values are correctly quoted.
      * The safest thing you can do is to never use string conditions.
      *
-     * @param string|array|callback|null $conditions The conditions to filter on.
+     * @param string|array|callable|null $conditions The conditions to filter on.
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset conditions with passed list or not
      * @return $this
