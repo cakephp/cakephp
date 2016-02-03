@@ -277,7 +277,7 @@ class FixtureManager
                         try {
                             $fixture->dropConstraints($db);
                         } catch (PDOException $e) {
-                            $msg = sprintf('Unable to drop constraints for fixture "%s" for "%s" test case: ' . "\n" . '%s', get_class($fixture), get_class($test), $e->getMessage());
+                            $msg = sprintf('Unable to drop constraints for fixture "%s" in "%s" test case: ' . "\n" . '%s', get_class($fixture), get_class($test), $e->getMessage());
                             throw new Exception($msg);
                         }
                     }
@@ -295,7 +295,7 @@ class FixtureManager
                     try {
                         $fixture->createConstraints($db);
                     } catch (PDOException $e) {
-                        $msg = sprintf('Unable to create constriants for fixture "%s" for "%s" test case: ' . "\n" . '%s', get_class($fixture), get_class($test), $e->getMessage());
+                        $msg = sprintf('Unable to create constraints for fixture "%s" in "%s" test case: ' . "\n" . '%s', get_class($fixture), get_class($test), $e->getMessage());
                         throw new Exception($msg);
                     }
                 }
@@ -308,7 +308,7 @@ class FixtureManager
                     try {
                         $fixture->insert($db);
                     } catch (PDOException $e) {
-                        $msg = sprintf('Unable to insert fixture "%s" for "%s" test case: ' . "\n" . '%s', get_class($fixture), get_class($test), $e->getMessage());
+                        $msg = sprintf('Unable to insert fixture "%s" in "%s" test case: ' . "\n" . '%s', get_class($fixture), get_class($test), $e->getMessage());
                         throw new Exception($msg);
                     }
                 }
