@@ -130,6 +130,13 @@ class Query implements ExpressionInterface, IteratorAggregate
     protected $_selectTypeMap;
 
     /**
+     * Tracking flag to ensure only one type caster is appended.
+     *
+     * @var bool
+     */
+    protected $_typeCastAttached = false;
+
+    /**
      * Constructor.
      *
      * @param \Cake\Datasource\ConnectionInterface $connection The connection
@@ -183,8 +190,9 @@ class Query implements ExpressionInterface, IteratorAggregate
         $driver = $this->_connection->driver();
         $typeMap = $this->selectTypeMap();
 
-        if ($typeMap->toArray()) {
+        if ($typeMap->toArray() && $this->_typeCastAttached === false) {
             $this->decorateResults(new FieldTypeConverter($typeMap, $driver));
+            $this->_typeCastAttached = true;
         }
 
         $this->_iterator = $this->_decorateStatement($statement);
@@ -1630,6 +1638,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     {
         if ($overwrite) {
             $this->_resultDecorators = [];
+            $this->_typeCastAttached = false;
         }
 
         if ($callback !== null) {

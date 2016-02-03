@@ -3547,7 +3547,6 @@ class QueryTest extends TestCase
     public function testSelectTypeConversion()
     {
         $query = new Query($this->connection);
-        $time = new \DateTime('2007-03-18 10:50:00');
         $query
             ->select(['id', 'comment', 'the_date' => 'created'])
             ->from('comments')
