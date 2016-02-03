@@ -719,8 +719,8 @@ abstract class Association
 
         if (!empty($fields)) {
             $query->select($query->aliasFields($fields, $target->alias()));
-            $query->addDefaultTypes($target);
         }
+        $query->addDefaultTypes($target);
     }
 
     /**

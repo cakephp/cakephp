@@ -170,7 +170,7 @@ class EagerLoaderTest extends TestCase
                 'type' => 'LEFT',
                 'conditions' => new QueryExpression([
                     ['clients.id' => new IdentifierExpression('foo.client_id')],
-                ], $this->clientsTypeMap)
+                ], new TypeMap($this->clientsTypeMap->defaults()))
             ]])
             ->will($this->returnValue($query));
 
