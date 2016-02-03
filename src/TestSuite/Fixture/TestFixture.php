@@ -244,7 +244,7 @@ class TestFixture implements FixtureInterface
             );
         }
 
-        $this->_schema = $schema = $db->schemaCollection()->describe($this->table);
+        $this->_schema = $schemaCollection->describe($this->table);
     }
 
     /**
@@ -269,6 +269,10 @@ class TestFixture implements FixtureInterface
     {
         if (empty($this->_schema)) {
             return false;
+        }
+
+        if (empty($this->import) && empty($this->fields)) {
+            return true;
         }
 
         try {
@@ -299,6 +303,11 @@ class TestFixture implements FixtureInterface
         if (empty($this->_schema)) {
             return false;
         }
+
+        if (empty($this->import) && empty($this->fields)) {
+            return true;
+        }
+
         try {
             $sql = $this->_schema->dropSql($db);
             foreach ($sql as $stmt) {
