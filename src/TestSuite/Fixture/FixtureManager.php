@@ -274,7 +274,12 @@ class FixtureManager
 
                 foreach ($fixtures as $name => $fixture) {
                     if (in_array($fixture->table, $tables)) {
-                        $fixture->dropConstraints($db);
+                        try {
+                            $fixture->dropConstraints($db);
+                        } catch (PDOException $e) {
+                            $msg = sprintf('Unable to drop constraints for fixture "%s" for "%s" test case: ' . "\n" . '%s', get_class($fixture), get_class($test), $e->getMessage());
+                            throw new Exception($msg);
+                        }
                     }
                 }
 
@@ -287,15 +292,25 @@ class FixtureManager
                 }
 
                 foreach ($fixtures as $name => $fixture) {
-                    $fixture->createConstraints($db);
+                    try {
+                        $fixture->createConstraints($db);
+                    } catch (PDOException $e) {
+                        $msg = sprintf('Unable to create constriants for fixture "%s" for "%s" test case: ' . "\n" . '%s', get_class($fixture), get_class($test), $e->getMessage());
+                        throw new Exception($msg);
+                    }
                 }
             };
             $this->_runOperation($fixtures, $createTables);
 
             // Use a separate transaction because of postgres.
-            $insert = function ($db, $fixtures) {
+            $insert = function ($db, $fixtures) use ($test) {
                 foreach ($fixtures as $fixture) {
-                    $fixture->insert($db);
+                    try {
+                        $fixture->insert($db);
+                    } catch (PDOException $e) {
+                        $msg = sprintf('Unable to insert fixture "%s" for "%s" test case: ' . "\n" . '%s', get_class($fixture), get_class($test), $e->getMessage());
+                        throw new Exception($msg);
+                    }
                 }
             };
             $this->_runOperation($fixtures, $insert);
