@@ -14,6 +14,8 @@
  */
 namespace Cake\Test\TestCase\TestSuite;
 
+use Cake\Database\Schema\Table;
+use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\TestSuite\Fixture\TestFixture;
 use Cake\TestSuite\TestCase;
@@ -119,6 +121,26 @@ class ImportsFixture extends TestFixture
      */
     public $records = [
         ['title' => 'Hello!', 'body' => 'Hello world!']
+    ];
+}
+
+/**
+ * This class allows testing the fixture data insertion when the properties
+ * $fields and $import are not set
+ *
+ */
+class LettersFixture extends TestFixture
+{
+
+    /**
+     * records property
+     *
+     * @var array
+     */
+    public $records = [
+        ['letter' => 'a'],
+        ['letter' => 'b'],
+        ['letter' => 'c']
     ];
 }
 
@@ -235,6 +257,48 @@ class TestFixtureTest extends TestCase
             'published',
         ];
         $this->assertEquals($expected, $fixture->schema()->columns());
+    }
+
+    /**
+     * test schema reflection without $import or $fields and without the table existing
+     * it will throw an exception
+     *
+     * @expectedException \Cake\Core\Exception\Exception
+     * @expectedExceptionMessage Cannot describe schema for table `letters` for fixture `Cake\Test\TestCase\TestSuite\LettersFixture` : the table does not exist.
+     * @return void
+     */
+    public function testInitNoImportNoFieldsException()
+    {
+        $fixture = new LettersFixture();
+        $fixture->init();
+    }
+
+    /**
+     * test schema reflection without $import or $fields will reflect the schema
+     *.
+     * @return void
+     */
+    public function testInitNoImportNoFields()
+    {
+        $db = ConnectionManager::get('test');
+        $collection = $db->schemaCollection();
+        if (!in_array('letters', $collection->listTables())) {
+            $table = new Table('letters', [
+                'id' => ['type' => 'integer'],
+                'letters' => ['type' => 'integer', 'null' => true]
+            ]);
+            $table->addConstraint('primary', ['type' => 'primary', 'columns' => ['id']]);
+            $sql = $table->createSql($db);
+
+            foreach ($sql as $stmt) {
+                $db->execute($stmt);
+            }
+        }
+
+        $fixture = new LettersFixture();
+        $fixture->init();
+
+        $this->assertEquals(['id', 'letters'], $fixture->schema()->columns());
     }
 
     /**
