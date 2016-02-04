@@ -52,6 +52,22 @@ class ArticlesCell extends \Cake\View\Cell
     }
 
     /**
+     * Renders articles in teaser view mode.
+     *
+     * @return void
+     */
+    public function customTemplate()
+    {
+        $this->template = 'alternate_teaser_list';
+        $this->set('articles', [
+            ['title' => 'Lorem ipsum', 'body' => 'dolorem sit amet'],
+            ['title' => 'Usectetur adipiscing eli', 'body' => 'tortor, in tincidunt sem dictum vel'],
+            ['title' => 'Topis semper blandit eu non', 'body' => 'alvinar diam convallis non. Nullam pu'],
+            ['title' => 'Suspendisse gravida neque', 'body' => 'pellentesque sed scelerisque libero'],
+        ]);
+    }
+
+    /**
      * Simple echo.
      *
      * @param string $msg1

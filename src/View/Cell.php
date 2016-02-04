@@ -176,6 +176,17 @@ abstract class Cell
         }
 
         $render = function () use ($template) {
+            try {
+                $reflect = new ReflectionMethod($this, $this->action);
+                $reflect->invokeArgs($this, $this->args);
+            } catch (ReflectionException $e) {
+                throw new BadMethodCallException(sprintf(
+                    'Class %s does not have a "%s" method.',
+                    get_class($this),
+                    $this->action
+                ));
+            }
+
             if ($template !== null &&
                 strpos($template, '/') === false &&
                 strpos($template, '.') === false
@@ -193,17 +204,6 @@ abstract class Cell
             $className = substr(strrchr(get_class($this), "\\"), 1);
             $name = substr($className, 0, -4);
             $builder->templatePath('Cell' . DS . $name);
-
-            try {
-                $reflect = new ReflectionMethod($this, $this->action);
-                $reflect->invokeArgs($this, $this->args);
-            } catch (ReflectionException $e) {
-                throw new BadMethodCallException(sprintf(
-                    'Class %s does not have a "%s" method.',
-                    get_class($this),
-                    $this->action
-                ));
-            }
 
             $this->View = $this->createView();
             try {
