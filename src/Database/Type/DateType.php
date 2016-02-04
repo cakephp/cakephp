@@ -80,7 +80,7 @@ class DateType extends DateTimeType
      *
      * @param string $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
-     * @return \Carbon\Carbon
+     * @return \Cake\I18n\Date|\DateTime
      */
     public function toPHP($value, Driver $driver)
     {
