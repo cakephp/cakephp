@@ -699,13 +699,13 @@ abstract class Association
      */
     protected function _appendFields($query, $surrogate, $options)
     {
-        $fields = $surrogate->clause('select') ?: $options['fields'];
-        $target = $this->_targetTable;
-        $autoFields = $surrogate->autoFields();
-
         if ($query->eagerLoader()->autoFields() === false) {
             return;
         }
+
+        $fields = $surrogate->clause('select') ?: $options['fields'];
+        $target = $this->_targetTable;
+        $autoFields = $surrogate->autoFields();
 
         if (empty($fields) && !$autoFields) {
             if ($options['includeFields'] && ($fields === null || $fields !== false)) {
@@ -720,6 +720,7 @@ abstract class Association
         if (!empty($fields)) {
             $query->select($query->aliasFields($fields, $target->alias()));
         }
+        $query->addDefaultTypes($target);
     }
 
     /**

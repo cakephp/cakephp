@@ -20,6 +20,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
+use Cake\I18n\Time;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
@@ -94,8 +95,6 @@ class QueryTest extends TestCase
         $orders->hasOne('stuff');
         $stuff->belongsTo('stuffTypes');
         $companies->belongsTo('categories');
-
-        $this->fooTypeMap = new TypeMap(['foo.id' => 'integer', 'id' => 'integer']);
     }
 
     /**
@@ -655,33 +654,59 @@ class QueryTest extends TestCase
     public function testFilteringByHasManyNoHydration()
     {
         $query = new Query($this->connection, $this->table);
-        $table = TableRegistry::get('authors');
-        TableRegistry::get('articles');
-        $table->hasMany('articles');
+        $table = TableRegistry::get('Articles');
+        $table->hasMany('Comments');
 
         $results = $query->repository($table)
             ->select()
             ->hydrate(false)
-            ->matching('articles', function ($q) {
-                return $q->where(['articles.id' => 2]);
+            ->matching('Comments', function ($q) {
+                return $q->where(['Comments.user_id' => 4]);
             })
             ->toArray();
         $expected = [
             [
-                'id' => 3,
-                'name' => 'larry',
+                'id' => 1,
+                'title' => 'First Article',
+                'body' => 'First Article Body',
+                'author_id' => 1,
+                'published' => 'Y',
                 '_matchingData' => [
-                    'articles' => [
+                    'Comments' => [
                         'id' => 2,
-                        'title' => 'Second Article',
-                        'body' => 'Second Article Body',
-                        'author_id' => 3,
+                        'article_id' => 1,
+                        'user_id' => 4,
+                        'comment' => 'Second Comment for First Article',
                         'published' => 'Y',
+                        'created' => new Time('2007-03-18 10:47:23'),
+                        'updated' => new Time('2007-03-18 10:49:31'),
                     ]
                 ]
             ]
         ];
         $this->assertEquals($expected, $results);
+    }
+
+    /**
+     * Tests that tables results can be filtered by the result of a HasMany
+     *
+     * @return void
+     */
+    public function testFilteringByHasManyHydration()
+    {
+        $table = TableRegistry::get('Articles');
+        $query = new Query($this->connection, $table);
+        $table->hasMany('Comments');
+
+        $result = $query->repository($table)
+            ->matching('Comments', function ($q) {
+                return $q->where(['Comments.user_id' => 4]);
+            })
+            ->first();
+        $this->assertInstanceOf('Cake\ORM\Entity', $result);
+        $this->assertInstanceOf('Cake\ORM\Entity', $result->_matchingData['Comments']);
+        $this->assertInternalType('integer', $result->_matchingData['Comments']->id);
+        $this->assertInstanceOf('Cake\I18n\Time', $result->_matchingData['Comments']->created);
     }
 
     /**
@@ -2384,6 +2409,20 @@ class QueryTest extends TestCase
                 'authors__name' => 'string',
                 'authors.name' => 'string',
                 'name' => 'string',
+                'articles__id' => 'integer',
+                'articles.id' => 'integer',
+                'articles__author_id' => 'integer',
+                'articles.author_id' => 'integer',
+                'author_id' => 'integer',
+                'articles__title' => 'string',
+                'articles.title' => 'string',
+                'title' => 'string',
+                'articles__body' => 'text',
+                'articles.body' => 'text',
+                'body' => 'text',
+                'articles__published' => 'string',
+                'articles.published' => 'string',
+                'published' => 'string',
             ],
             'decorators' => 0,
             'executed' => false,
@@ -3195,7 +3234,7 @@ class QueryTest extends TestCase
                 ]
             ]
         ];
-        $this->assertEquals($expected, $results->first());
+        $this->assertSame($expected, $results->first());
     }
 
     /**
