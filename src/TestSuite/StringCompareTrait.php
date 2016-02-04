@@ -52,7 +52,9 @@ trait StringCompareTrait
      */
     public function assertSameAsFile($path, $result)
     {
-        $path = $this->_compareBasePath . $path;
+        if (!file_exists($path)) {
+            $path = $this->_compareBasePath . $path;
+        }
 
         if ($this->_updateComparisons === null) {
             $this->_updateComparisons = env('UPDATE_TEST_COMPARISON_FILES');
