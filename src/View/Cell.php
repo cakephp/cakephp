@@ -194,7 +194,7 @@ abstract class Cell
                 $template = Inflector::underscore($template);
             }
             if ($template === null) {
-                $template = $this->template;
+                $template = $this->viewBuilder()->template() ?: $this->template;
             }
 
             $builder = $this->viewBuilder();

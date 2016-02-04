@@ -133,7 +133,7 @@ class CellTest extends TestCase
     }
 
     /**
-     * Tests that cell action setting the template renders the correct template
+     * Tests that cell action setting the template using the property renders the correct template
      *
      * @return void
      */
@@ -143,11 +143,31 @@ class CellTest extends TestCase
 
         $this->assertContains('This is the alternate template', "{$appCell}");
         $this->assertEquals('alternate_teaser_list', $appCell->template);
+        $this->assertEquals('alternate_teaser_list', $appCell->viewBuilder()->template());
 
         $appCell = $this->View->cell('Articles::customTemplate');
 
         $this->assertContains('This is the alternate template', $appCell->render());
         $this->assertEquals('alternate_teaser_list', $appCell->template);
+        $this->assertEquals('alternate_teaser_list', $appCell->viewBuilder()->template());
+    }
+
+    /**
+     * Tests that cell action setting the template using the ViewBuilder renders the correct template
+     *
+     * @return void
+     */
+    public function testSettingCellTemplateFromActionViewBuilder()
+    {
+        $appCell = $this->View->cell('Articles::customTemplateViewBuilder');
+
+        $this->assertContains('This is the alternate template', "{$appCell}");
+        $this->assertEquals('alternate_teaser_list', $appCell->viewBuilder()->template());
+
+        $appCell = $this->View->cell('Articles::customTemplateViewBuilder');
+
+        $this->assertContains('This is the alternate template', $appCell->render());
+        $this->assertEquals('alternate_teaser_list', $appCell->viewBuilder()->template());
     }
 
     /**
@@ -398,6 +418,30 @@ class CellTest extends TestCase
         Cache::config('default', $mock);
 
         $cell = $this->View->cell('Articles::customTemplate', [], ['cache' => true]);
+        $result = $cell->render();
+        $this->assertContains('This is the alternate template', $result);
+
+        Cache::drop('default');
+    }
+
+    /**
+     * Test cached render.
+     *
+     * @return void
+     */
+    public function testCachedRenderSimpleCustomTemplateViewBuilder()
+    {
+        $mock = $this->getMock('Cake\Cache\CacheEngine');
+        $mock->method('init')
+            ->will($this->returnValue(true));
+        $mock->method('read')
+            ->will($this->returnValue(false));
+        $mock->expects($this->once())
+            ->method('write')
+            ->with('cell_test_app_view_cell_articles_cell_customTemplateViewBuilder', "<h1>This is the alternate template</h1>\n");
+        Cache::config('default', $mock);
+
+        $cell = $this->View->cell('Articles::customTemplateViewBuilder', [], ['cache' => true]);
         $result = $cell->render();
         $this->assertContains('This is the alternate template', $result);
 

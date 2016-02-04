@@ -52,19 +52,26 @@ class ArticlesCell extends \Cake\View\Cell
     }
 
     /**
-     * Renders articles in teaser view mode.
+     * Renders a view using a different template than the action name
+     * The template is set using the ``Cell::$template`` property
      *
      * @return void
      */
     public function customTemplate()
     {
         $this->template = 'alternate_teaser_list';
-        $this->set('articles', [
-            ['title' => 'Lorem ipsum', 'body' => 'dolorem sit amet'],
-            ['title' => 'Usectetur adipiscing eli', 'body' => 'tortor, in tincidunt sem dictum vel'],
-            ['title' => 'Topis semper blandit eu non', 'body' => 'alvinar diam convallis non. Nullam pu'],
-            ['title' => 'Suspendisse gravida neque', 'body' => 'pellentesque sed scelerisque libero'],
-        ]);
+    }
+
+    /**
+     * Renders a view using a different template than the action name
+     * The template is set using the ViewBuilder bound to the Cell
+     *
+     * @return void
+     */
+    public function customTemplateViewBuilder()
+    {
+        $this->template = 'derp';
+        $this->viewBuilder()->template('alternate_teaser_list');
     }
 
     /**
