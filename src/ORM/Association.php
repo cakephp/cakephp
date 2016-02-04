@@ -634,9 +634,9 @@ abstract class Association
     {
         $type = $type ?: $this->finder();
         list($type, $opts) = $this->_extractFinder($type);
+        $options['conditions'] = $this->conditions();
         return $this->target()
-            ->find($type, $options + $opts)
-            ->where($this->conditions());
+            ->find($type, $options + $opts);
     }
 
     /**
