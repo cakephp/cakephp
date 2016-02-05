@@ -72,7 +72,7 @@ CakePHP fork on GitHub for automated test builds.
 
 To run the sniffs for CakePHP coding standards:
 
-    vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-code-sniffer/CakePHP ./src
+    vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src
 
 Check the [cakephp-codesniffer](https://github.com/cakephp/cakephp-codesniffer)
 repository to setup the CakePHP standard. The [README](https://github.com/cakephp/cakephp-codesniffer/blob/master/README.md) contains installation info
