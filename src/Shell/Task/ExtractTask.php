@@ -462,6 +462,11 @@ class ExtractTask extends Shell
     {
         $paths = $this->_paths;
         $paths[] = realpath(APP) . DS;
+
+        usort($paths, function ($a, $b) {
+            return strlen($a) - strlen($b);
+        });
+
         foreach ($this->_translations as $domain => $translations) {
             foreach ($translations as $msgid => $contexts) {
                 foreach ($contexts as $context => $details) {
@@ -694,18 +699,16 @@ class ExtractTask extends Shell
             $pattern = '/' . implode('|', $exclude) . '/';
         }
         foreach ($this->_paths as $path) {
+            $path = realpath($path) . DS;
             $Folder = new Folder($path);
             $files = $Folder->findRecursive('.*\.(php|ctp|thtml|inc|tpl)', true);
             if (!empty($pattern)) {
-                foreach ($files as $i => $file) {
-                    if (preg_match($pattern, $file)) {
-                        unset($files[$i]);
-                    }
-                }
+                $files = preg_grep($pattern, $files, PREG_GREP_INVERT);
                 $files = array_values($files);
             }
             $this->_files = array_merge($this->_files, $files);
         }
+        $this->_files = array_unique($this->_files);
     }
 
     /**
