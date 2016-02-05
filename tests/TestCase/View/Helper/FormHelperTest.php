@@ -1746,7 +1746,11 @@ class FormHelperTest extends TestCase
         $this->Form->select('select_box', [1, 2], [
             'name' => 'Option[General.select_role]',
         ]);
-        $expected = ['Option.General.default_role', 'Option.General.select_role'];
+        $expected[] = 'Option.General.select_role';
+        $this->assertEquals($expected, $this->Form->fields);
+
+        $this->Form->text('other.things[]');
+        $expected[] = 'other.things';
         $this->assertEquals($expected, $this->Form->fields);
     }
 
