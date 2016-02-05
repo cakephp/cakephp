@@ -15,14 +15,9 @@
 namespace Cake\Test\TestCase\View;
 
 use Cake\Cache\Cache;
-use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Event\EventManager;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use Cake\View\Cell;
-use Cake\View\CellTrait;
 use TestApp\View\CustomJsonView;
 
 /**
