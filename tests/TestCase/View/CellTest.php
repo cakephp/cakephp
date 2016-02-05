@@ -19,6 +19,7 @@ use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\EventManager;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\View\Cell;
 use Cake\View\CellTrait;
@@ -144,12 +145,6 @@ class CellTest extends TestCase
         $this->assertContains('This is the alternate template', "{$appCell}");
         $this->assertEquals('alternate_teaser_list', $appCell->template);
         $this->assertEquals('alternate_teaser_list', $appCell->viewBuilder()->template());
-
-        $appCell = $this->View->cell('Articles::customTemplate');
-
-        $this->assertContains('This is the alternate template', $appCell->render());
-        $this->assertEquals('alternate_teaser_list', $appCell->template);
-        $this->assertEquals('alternate_teaser_list', $appCell->viewBuilder()->template());
     }
 
     /**
@@ -162,11 +157,6 @@ class CellTest extends TestCase
         $appCell = $this->View->cell('Articles::customTemplateViewBuilder');
 
         $this->assertContains('This is the alternate template', "{$appCell}");
-        $this->assertEquals('alternate_teaser_list', $appCell->viewBuilder()->template());
-
-        $appCell = $this->View->cell('Articles::customTemplateViewBuilder');
-
-        $this->assertContains('This is the alternate template', $appCell->render());
         $this->assertEquals('alternate_teaser_list', $appCell->viewBuilder()->template());
     }
 
@@ -401,7 +391,7 @@ class CellTest extends TestCase
     }
 
     /**
-     * Test cached render.
+     * Test cached render when using an action changing the template used
      *
      * @return void
      */
@@ -425,26 +415,24 @@ class CellTest extends TestCase
     }
 
     /**
-     * Test cached render.
+     * Test that when the cell cache is enabled, the cell action is only invoke the first
+     * time the cell is rendered
      *
      * @return void
      */
     public function testCachedRenderSimpleCustomTemplateViewBuilder()
     {
-        $mock = $this->getMock('Cake\Cache\CacheEngine');
-        $mock->method('init')
-            ->will($this->returnValue(true));
-        $mock->method('read')
-            ->will($this->returnValue(false));
-        $mock->expects($this->once())
-            ->method('write')
-            ->with('cell_test_app_view_cell_articles_cell_customTemplateViewBuilder', "<h1>This is the alternate template</h1>\n");
-        Cache::config('default', $mock);
-
-        $cell = $this->View->cell('Articles::customTemplateViewBuilder', [], ['cache' => true]);
+        Cache::config('default', [
+            'className' => 'File',
+            'path' => CACHE,
+        ]);
+        $cell = $this->View->cell('Articles::customTemplateViewBuilder', [], ['cache' => ['key' => 'celltest']]);
         $result = $cell->render();
+        $this->assertEquals(1, $cell->counter);
+        $cell->render();
+        $this->assertEquals(1, $cell->counter);
         $this->assertContains('This is the alternate template', $result);
-
+        Cache::delete('celltest');
         Cache::drop('default');
     }
 }
