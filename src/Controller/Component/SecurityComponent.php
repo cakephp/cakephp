@@ -42,7 +42,7 @@ class SecurityComponent extends Component
      * - `blackHoleCallback` - The controller method that will be called if this
      *   request is black-hole'd.
      * - `requireSecure` - List of actions that require an SSL-secured connection.
-     * - `requireAuth` - List of actions that require a valid authentication key.
+     * - `requireAuth` - List of actions that require a valid authentication key. Deprecated as of 3.2.2
      * - `allowedControllers` - Controllers from which actions of the current
      *   controller are allowed to receive requests.
      * - `allowedActions` - Actions from which actions of the current controller
@@ -161,6 +161,7 @@ class SecurityComponent extends Component
      *
      * @param string|array $actions Actions list
      * @return void
+     * @deprecated 3.2.2 This feature is confusing and not useful.
      */
     public function requireAuth($actions)
     {
@@ -230,6 +231,7 @@ class SecurityComponent extends Component
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
      * @return bool true if authentication required
+     * @deprecated 3.2.2 This feature is confusing and not useful.
      */
     protected function _authRequired(Controller $controller)
     {
