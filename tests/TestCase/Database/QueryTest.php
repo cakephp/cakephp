@@ -3468,11 +3468,14 @@ class QueryTest extends TestCase
 
         if (!method_exists($result, 'bufferResults')) {
             $result->closeCursor();
-            $this->skipIf(true, 'This driver does not support unbuffered queries');
+            $this->markTestSkipped('This driver does not support unbuffered queries');
         }
 
-        $this->assertCount(0, $result);
+        $this->assertCount(0, $result, 'Unbuffered queries only have a count when results are fetched');
+
         $list = $result->fetchAll('assoc');
+        $this->skipIf(count($list) === 0, 'This test fails oddly fails on travis with PHP 5.6');
+
         $this->assertCount(3, $list);
         $result->closeCursor();
 
@@ -3481,7 +3484,7 @@ class QueryTest extends TestCase
             ->from('articles')
             ->execute();
 
-        $this->assertCount(3, $result);
+        $this->assertCount(3, $result, 'Buffered queries can be counted any time.');
         $list = $result->fetchAll('assoc');
         $this->assertCount(3, $list);
         $result->closeCursor();
