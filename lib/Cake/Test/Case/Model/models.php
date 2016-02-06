@@ -3189,6 +3189,43 @@ class TranslatedItem2 extends CakeTestModel {
 }
 
 /**
+ * TranslatedItemTitle class.
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class TranslatedItemTitle extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string
+ */
+  public $name = 'TranslatedItemTitle';
+
+/**
+ * cacheQueries property
+ *
+ * @var bool
+ */
+  public $cacheQueries = false;
+
+/**
+ * actsAs property
+ *
+ * @var array
+ */
+  public $actsAs = array('Translate' => array('content', 'title'));
+
+/**
+ * translateModel property
+ *
+ * @var string
+ */
+  public $translateModel = 'TranslateTestModel';
+
+}
+
+/**
  * TranslatedItemWithTable class.
  *
  * @package       Cake.Test.Case.Model

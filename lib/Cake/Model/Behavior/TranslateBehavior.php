@@ -334,6 +334,7 @@ class TranslateBehavior extends ModelBehavior {
 	public function beforeValidate(Model $Model, $options = array()) {
 		unset($this->runtime[$Model->alias]['beforeSave']);
 		$this->_setRuntimeData($Model);
+		$this->_cleanSaveData($Model);
 		return true;
 	}
 
@@ -353,10 +354,34 @@ class TranslateBehavior extends ModelBehavior {
 			unset($this->runtime[$Model->alias]['beforeSave']);
 		}
 		if (isset($this->runtime[$Model->alias]['beforeSave'])) {
+			$this->_cleanSaveData($Model);
 			return true;
 		}
 		$this->_setRuntimeData($Model);
+		$this->_cleanSaveData($Model);
 		return true;
+	}
+	
+/**
+ * Clean save data
+ *
+ * Prevents Model data from being saved if not in the 'base' language
+ * as defined by Config.language 
+ *
+ * @param Model $Model Model using this behavior.
+ * @return void
+ */
+	protected function _cleanSaveData(Model $Model) {
+		$locale = $this->_getLocale($Model);
+		if (empty($locale)) {
+			return true;
+		}
+		$fields = array_merge($this->settings[$Model->alias], $this->runtime[$Model->alias]['fields']);
+		if ($locale !== Configure::read('Config.language')) {
+			foreach ($fields as $field) {
+				unset($Model->data[$Model->alias][$field]);
+			}
+		}
 	}
 
 /**
