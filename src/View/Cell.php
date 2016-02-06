@@ -176,24 +176,6 @@ abstract class Cell
         }
 
         $render = function () use ($template) {
-            if ($template !== null &&
-                strpos($template, '/') === false &&
-                strpos($template, '.') === false
-            ) {
-                $template = Inflector::underscore($template);
-            }
-            if ($template === null) {
-                $template = $this->template;
-            }
-
-            $builder = $this->viewBuilder();
-            $builder->layout(false);
-            $builder->template($template);
-
-            $className = substr(strrchr(get_class($this), "\\"), 1);
-            $name = substr($className, 0, -4);
-            $builder->templatePath('Cell' . DS . $name);
-
             try {
                 $reflect = new ReflectionMethod($this, $this->action);
                 $reflect->invokeArgs($this, $this->args);
@@ -204,6 +186,24 @@ abstract class Cell
                     $this->action
                 ));
             }
+
+            if ($template !== null &&
+                strpos($template, '/') === false &&
+                strpos($template, '.') === false
+            ) {
+                $template = Inflector::underscore($template);
+            }
+            if ($template === null) {
+                $template = $this->viewBuilder()->template() ?: $this->template;
+            }
+
+            $builder = $this->viewBuilder();
+            $builder->layout(false);
+            $builder->template($template);
+
+            $className = substr(strrchr(get_class($this), "\\"), 1);
+            $name = substr($className, 0, -4);
+            $builder->templatePath('Cell' . DS . $name);
 
             $this->View = $this->createView();
             try {
