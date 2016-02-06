@@ -2435,7 +2435,7 @@ class FormHelper extends Helper
         $parts = array_map(function ($el) {
             return trim($el, ']');
         }, $parts);
-        return $parts;
+        return array_filter($parts, 'strlen');
     }
 
     /**
