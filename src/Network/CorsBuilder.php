@@ -76,7 +76,7 @@ class CorsBuilder
     /**
      * Apply the queued headers to the response.
      *
-     * If the builer has no Origin, or if there are no allowed domains,
+     * If the builder has no Origin, or if there are no allowed domains,
      * or if the allowed domains do not match the Origin header no headers will be applied.
      *
      * @return \Cake\Network\Response
