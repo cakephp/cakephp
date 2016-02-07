@@ -347,12 +347,13 @@ class CakeSession {
  * @return bool
  */
 	protected static function _validAgentAndTime() {
-		$config = static::read('Config');
+		$userAgent = static::read('Config.userAgent');
+		$time = static::read('Config.time');
 		$validAgent = (
 			Configure::read('Session.checkAgent') === false ||
-			isset($config['userAgent']) && static::$_userAgent === $config['userAgent']
+			isset($userAgent) && static::$_userAgent === $userAgent
 		);
-		return ($validAgent && static::$time <= $config['time']);
+		return ($validAgent && static::$time <= $time);
 	}
 
 /**
@@ -541,6 +542,10 @@ class CakeSession {
 		if (!isset($sessionConfig['ini']['session.cookie_httponly'])) {
 			$sessionConfig['ini']['session.cookie_httponly'] = 1;
 		}
+		// For IE<=8
+		if (!isset($sessionConfig['cacheLimiter'])) {
+			$sessionConfig['cacheLimiter'] = 'must-revalidate';
+		}
 
 		if (empty($_SESSION)) {
 			if (!empty($sessionConfig['ini']) && is_array($sessionConfig['ini'])) {
@@ -696,8 +701,10 @@ class CakeSession {
 				$_SESSION = array();
 			}
 		} else {
-			// For IE<=8
-			session_cache_limiter("must-revalidate");
+			$limit = Configure::read('Session.cacheLimiter');
+			if (!empty($limit)) {
+				session_cache_limiter($limit);
+			}
 			session_start();
 		}
 		return true;

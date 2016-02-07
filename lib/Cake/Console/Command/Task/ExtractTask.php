@@ -151,7 +151,7 @@ class ExtractTask extends AppShell {
  */
 	public function execute() {
 		if (!empty($this->params['exclude'])) {
-			$this->_exclude = explode(',', $this->params['exclude']);
+			$this->_exclude = explode(',', str_replace('/', DS, $this->params['exclude']));
 		}
 		if (isset($this->params['files']) && !is_array($this->params['files'])) {
 			$this->_files = explode(',', $this->params['files']);
@@ -571,6 +571,11 @@ class ExtractTask extends AppShell {
 	protected function _buildFiles() {
 		$paths = $this->_paths;
 		$paths[] = realpath(APP) . DS;
+
+		usort($paths, function ($a, $b) {
+			return strlen($b) - strlen($a);
+		});
+
 		foreach ($this->_translations as $category => $domains) {
 			foreach ($domains as $domain => $translations) {
 				foreach ($translations as $msgid => $contexts) {
@@ -806,19 +811,17 @@ class ExtractTask extends AppShell {
 			}
 			$pattern = '/' . implode('|', $exclude) . '/';
 		}
-		foreach ($this->_paths as $path) {
-			$Folder = new Folder($path);
+		foreach ($this->_paths as $i => $path) {
+			$this->_paths[$i] = realpath($path) . DS;
+			$Folder = new Folder($this->_paths[$i]);
 			$files = $Folder->findRecursive('.*\.(php|ctp|thtml|inc|tpl)', true);
 			if (!empty($pattern)) {
-				foreach ($files as $i => $file) {
-					if (preg_match($pattern, $file)) {
-						unset($files[$i]);
-					}
-				}
+				$files = preg_grep($pattern, $files, PREG_GREP_INVERT);
 				$files = array_values($files);
 			}
 			$this->_files = array_merge($this->_files, $files);
 		}
+		$this->_files = array_unique($this->_files);
 	}
 
 /**
