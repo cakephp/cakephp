@@ -106,6 +106,12 @@ use RuntimeException;
  * - `afterSave(Event $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired after an entity is saved.
  *
+ * - `afterSaveCommit(Event $event, EntityInterface $entity, ArrayObject $options)`
+ *   Fired after the transaction in which the save operation is wrapped has been committed.
+ *   It’s also triggered for non atomic saves where database operations are implicitly committed.
+ *   The event is triggered only for the primary table on which save() is directly called.
+ *   The event is not triggered if a transaction is started before calling save.
+ *
  * - `beforeDelete(Event $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired before an entity is deleted. By stopping this event you will abort
  *   the delete operation.
