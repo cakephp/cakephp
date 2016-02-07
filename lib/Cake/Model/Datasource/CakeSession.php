@@ -541,6 +541,10 @@ class CakeSession {
 		if (!isset($sessionConfig['ini']['session.cookie_httponly'])) {
 			$sessionConfig['ini']['session.cookie_httponly'] = 1;
 		}
+		// For IE<=8
+		if (!isset($sessionConfig['cacheLimiter'])) {
+			$sessionConfig['cacheLimiter'] = 'must-revalidate';
+		}
 
 		if (empty($_SESSION)) {
 			if (!empty($sessionConfig['ini']) && is_array($sessionConfig['ini'])) {
@@ -696,8 +700,10 @@ class CakeSession {
 				$_SESSION = array();
 			}
 		} else {
-			// For IE<=8
-			session_cache_limiter("must-revalidate");
+			$limit = Configure::read('Session.cacheLimiter');
+			if (!empty($limit)) {
+				session_cache_limiter($limit);
+			}
 			session_start();
 		}
 		return true;
