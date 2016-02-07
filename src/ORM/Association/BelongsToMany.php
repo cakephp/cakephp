@@ -684,7 +684,7 @@ class BelongsToMany extends Association
      * ### Example:
      *
      * ```
-     * $newTags = $tags->find('relevant')->execute();
+     * $newTags = $tags->find('relevant')->toArray();
      * $articles->association('tags')->link($article, $newTags);
      * ```
      *
