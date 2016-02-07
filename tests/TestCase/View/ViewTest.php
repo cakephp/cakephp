@@ -1520,7 +1520,6 @@ class ViewTest extends TestCase
      * Test setting a block's content to null
      *
      * @return void
-     * @link https://cakephp.lighthouseapp.com/projects/42648/tickets/3938-this-redirectthis-auth-redirecturl-broken
      */
     public function testBlockSetNull()
     {

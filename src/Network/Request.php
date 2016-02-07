@@ -378,7 +378,6 @@ class Request implements ArrayAccess
      * the unnecessary part from $base to prevent issue #3318.
      *
      * @return array Base URL, webroot dir ending in /
-     * @link https://cakephp.lighthouseapp.com/projects/42648-cakephp/tickets/3318
      */
     protected static function _base()
     {
