@@ -198,7 +198,7 @@ class HasMany extends Association
      *
      * ```
      * $user = $users->get(1);
-     * $allArticles = $articles->find('all')->execute();
+     * $allArticles = $articles->find('all')->toArray();
      * $users->Articles->link($user, $allArticles);
      * ```
      *
