@@ -65,7 +65,7 @@ class PhpReader implements ConfigReaderInterface {
 		}
 
 		$file = $this->_getFilePath($key);
-		if (!is_file($file)) {
+		if (!is_file(realpath($file))) {
 			throw new ConfigureException(__d('cake_dev', 'Could not load configuration file: %s', $file));
 		}
 

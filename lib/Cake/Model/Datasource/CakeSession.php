@@ -347,12 +347,13 @@ class CakeSession {
  * @return bool
  */
 	protected static function _validAgentAndTime() {
-		$config = static::read('Config');
+		$userAgent = static::read('Config.userAgent');
+		$time = static::read('Config.time');
 		$validAgent = (
 			Configure::read('Session.checkAgent') === false ||
-			isset($config['userAgent']) && static::$_userAgent === $config['userAgent']
+			isset($userAgent) && static::$_userAgent === $userAgent
 		);
-		return ($validAgent && static::$time <= $config['time']);
+		return ($validAgent && static::$time <= $time);
 	}
 
 /**
