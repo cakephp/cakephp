@@ -69,6 +69,8 @@ class ProgressHelper extends Helper
         $this->init($args);
 
         $callback = $args['callback'];
+
+        $this->_io->out('', 0);
         while ($this->_progress < $this->_total) {
             $callback($this);
             $this->draw();

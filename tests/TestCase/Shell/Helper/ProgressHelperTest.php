@@ -61,6 +61,7 @@ class ProgressHelperTest extends TestCase
         }]);
         $expected = [
             '',
+            '',
             '==============>                                                              20%',
             '',
             '=============================>                                               40%',
@@ -90,6 +91,7 @@ class ProgressHelperTest extends TestCase
             }
         ]);
         $expected = [
+            '',
             '',
             '==>              20%',
             '',
