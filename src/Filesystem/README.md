@@ -1,3 +1,6 @@
+[![Total Downloads](https://img.shields.io/packagist/dt/cakephp/filesystem.svg?style=flat-square)](https://packagist.org/packages/cakephp/filesystem)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE.txt)
+
 # CakePHP Filesystem Library
 
 The Folder and File utilities are convenience classes to help you read from and write/append to files; list files within a folder and other common directory related tasks.
