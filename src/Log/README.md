@@ -1,3 +1,6 @@
+[![Total Downloads](https://img.shields.io/packagist/dt/cakephp/log.svg?style=flat-square)](https://packagist.org/packages/cakephp/log)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE.txt)
+
 # CakePHP Logging Library
 
 The Log library provides a `Log` service locator for interfacing with
