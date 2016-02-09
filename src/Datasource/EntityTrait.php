@@ -58,6 +58,15 @@ trait EntityTrait
     protected $_virtual = [];
 
     /**
+     * Holds the name of the class for the instance object
+     *
+     * @var string
+     *
+     * @deprecated 3.2 This field is no longer being used
+     */
+    protected $_className;
+
+    /**
      * Holds a list of the properties that were modified or added after this object
      * was originally created.
      *
