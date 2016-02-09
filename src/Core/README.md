@@ -1,3 +1,6 @@
+[![Total Downloads](https://img.shields.io/packagist/dt/cakephp/core.svg?style=flat-square)](https://packagist.org/packages/cakephp/core)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE.txt)
+
 # CakePHP Core Classes
 
 A set of classes used for configuration files reading and storing.
