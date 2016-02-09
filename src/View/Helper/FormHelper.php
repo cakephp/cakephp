@@ -2338,6 +2338,7 @@ class FormHelper extends Helper
      * - `default` - mixed - The value to use if there is no value in the form's context.
      * - `disabled` - mixed - Either a boolean indicating disabled state, or the string in
      *   a numerically indexed value.
+     * - `id` - mixed - If `true` it will be auto generated based on field name.
      *
      * This method will convert a numerically indexed 'disabled' into an associative
      * array value. FormHelper's internals expect associative options.
@@ -2355,6 +2356,10 @@ class FormHelper extends Helper
             $options['secure'] = !empty($this->request->params['_Token']);
         }
         $context = $this->_getContext();
+
+        if (isset($options['id']) && $options['id'] === true) {
+            $options['id'] = $this->_domId($field);
+        }
 
         $disabledIndex = array_search('disabled', $options, true);
         if (is_int($disabledIndex)) {
