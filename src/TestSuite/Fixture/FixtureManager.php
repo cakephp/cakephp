@@ -227,14 +227,15 @@ class FixtureManager
     protected function _setupTable($fixture, $db, array $sources, $drop = true)
     {
         $configName = $db->configName();
-        if ($this->isFixtureSetup($configName, $fixture)) {
+        $isFixtureSetup = $this->isFixtureSetup($configName, $fixture);
+        if ($isFixtureSetup) {
             return;
         }
 
         $table = $fixture->sourceName();
         $exists = in_array($table, $sources);
 
-        if ($drop && $exists) {
+        if (($drop && $exists) || ($exists && !$isFixtureSetup)) {
             $fixture->drop($db);
             $fixture->create($db);
         } elseif (!$exists) {
