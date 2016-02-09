@@ -1,3 +1,6 @@
+[![Total Downloads](https://img.shields.io/packagist/dt/cakephp/database.svg?style=flat-square)](https://packagist.org/packages/cakephp/database)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE.txt)
+
 # A flexible and lightweight Database Library for PHP
 
 This library abstracts and provides help with most aspects of dealing with relational
