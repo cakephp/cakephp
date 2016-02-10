@@ -699,7 +699,7 @@ class QueryExpression implements ExpressionInterface, Countable
     /**
      * Returns the type name for the passed field if it was stored in the typeMap
      *
-     * @param string|Cake\Database\Expression\QueryExpression $field The field name to get a type for.
+     * @param string|\Cake\Database\Expression\QueryExpression $field The field name to get a type for.
      * @return string|null The computed type or null, if the type is unknown.
      */
     protected function _calculateType($field)
