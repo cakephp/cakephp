@@ -870,7 +870,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * array URLs into their correct string ones, and adds base => false so
  * the correct URLs are generated.
  *
- * @link https://cakephp.lighthouseapp.com/projects/42648-cakephp-1x/tickets/276
  * @return void
  */
 	public function testBeforeRedirectCallbackWithArrayUrl() {
