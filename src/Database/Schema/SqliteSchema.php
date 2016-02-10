@@ -14,9 +14,7 @@
  */
 namespace Cake\Database\Schema;
 
-use Cake\Core\Configure;
 use Cake\Database\Exception;
-use RuntimeException;
 
 /**
  * Schema management/reflection features for Sqlite

@@ -14,11 +14,8 @@
  */
 namespace Cake\View;
 
-use BadMethodCallException;
 use Cake\Core\App;
 use Cake\Utility\Inflector;
-use ReflectionException;
-use ReflectionMethod;
 
 /**
  * Provides cell() method for usage in Controller and View classes.

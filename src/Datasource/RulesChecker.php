@@ -14,7 +14,6 @@
  */
 namespace Cake\Datasource;
 
-use Cake\Datasource\InvalidPropertyInterface;
 use InvalidArgumentException;
 
 /**

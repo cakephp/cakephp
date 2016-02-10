@@ -14,7 +14,6 @@
  */
 namespace Cake\I18n;
 
-use DateTime;
 use IntlDateFormatter;
 
 /**

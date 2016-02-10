@@ -19,7 +19,6 @@ use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\ValuesExpression;
 use Cake\Database\Statement\CallbackStatement;
-use Cake\Database\TypeMap;
 use IteratorAggregate;
 use RuntimeException;
 
