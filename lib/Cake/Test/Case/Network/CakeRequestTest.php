@@ -1362,7 +1362,6 @@ class CakeRequestTest extends CakeTestCase {
  * - index.php/apples/
  * - index.php/bananas/eat/tasty_banana
  *
- * @link https://cakephp.lighthouseapp.com/projects/42648-cakephp/tickets/3318
  * @return void
  */
 	public function testBaseUrlWithModRewriteAndIndexPhp() {

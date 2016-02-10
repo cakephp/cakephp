@@ -288,7 +288,6 @@ class CakeRequest implements ArrayAccess {
  * the unnecessary part from $base to prevent issue #3318.
  *
  * @return string Base URL
- * @link https://cakephp.lighthouseapp.com/projects/42648-cakephp/tickets/3318
  */
 	protected function _base() {
 		$dir = $webroot = null;

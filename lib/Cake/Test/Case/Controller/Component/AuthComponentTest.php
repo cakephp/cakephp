@@ -1621,8 +1621,6 @@ class AuthComponentTest extends CakeTestCase {
 /**
  * test that the returned URL doesn't contain the base URL.
  *
- * @see https://cakephp.lighthouseapp.com/projects/42648/tickets/3922-authcomponentredirecturl-prepends-appbaseurl
- *
  * @return void This test method doesn't return anything.
  */
 	public function testRedirectUrlWithBaseSet() {
