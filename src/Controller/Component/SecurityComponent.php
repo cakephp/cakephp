@@ -16,6 +16,7 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\Controller;
+use Cake\Controller\Exception\SecurityException;
 use Cake\Event\Event;
 use Cake\Network\Exception\BadRequestException;
 use Cake\Network\Request;
@@ -117,10 +118,12 @@ class SecurityComponent extends Component
         if (!in_array($this->_action, (array)$this->_config['unlockedActions']) &&
             $hasData && $isNotRequestAction
         ) {
-            if ($this->_config['validatePost'] &&
-                $this->_validatePost($controller) === false
-            ) {
-                return $this->blackHole($controller, 'auth');
+            if ($this->_config['validatePost']) {
+                try {
+                    $this->_validatePost($controller);
+                } catch (SecurityException $ex) {
+                    return $this->blackHole($controller, 'auth', $ex);
+                }
             }
         }
         $this->generateToken($controller->request);
@@ -179,12 +182,15 @@ class SecurityComponent extends Component
      * @link http://book.cakephp.org/3.0/en/controllers/components/security.html#handling-blackhole-callbacks
      * @throws \Cake\Network\Exception\BadRequestException
      */
-    public function blackHole(Controller $controller, $error = '')
+    public function blackHole(Controller $controller, $error = '', SecurityException $exception = null)
     {
         if (!$this->_config['blackHoleCallback']) {
+            if ($exception !== null) {
+                throw $exception;
+            }
             throw new BadRequestException('The request has been black-holed');
         }
-        return $this->_callback($controller, $this->_config['blackHoleCallback'], [$error]);
+        return $this->_callback($controller, $this->_config['blackHoleCallback'], [$error, $exception]);
     }
 
     /**
@@ -283,11 +289,15 @@ class SecurityComponent extends Component
         }
         $check = $controller->request->data;
 
-        if (!isset($check['_Token']) ||
-            !isset($check['_Token']['fields']) ||
-            !isset($check['_Token']['unlocked'])
-        ) {
-            return false;
+        $message = '%s was not found in request data.';
+        if (!isset($check['_Token'])) {
+            throw new SecurityException(sprintf($message, '_Token'));
+        }
+        if (!isset($check['_Token']['fields'])) {
+            throw new SecurityException(sprintf($message, '_Token.fields'));
+        }
+        if (!isset($check['_Token']['unlocked'])) {
+            throw new SecurityException(sprintf($message, '_Token.unlocked'));
         }
 
         $locked = '';
@@ -347,7 +357,7 @@ class SecurityComponent extends Component
         sort($unlocked, SORT_STRING);
         sort($fieldList, SORT_STRING);
         ksort($lockedFields, SORT_STRING);
-
+        $fieldKeys = $fieldList;
         $fieldList += $lockedFields;
         $unlocked = implode('|', $unlocked);
         $hashParts = [
@@ -356,8 +366,17 @@ class SecurityComponent extends Component
             $unlocked,
             Security::salt()
         ];
+
         $check = Security::hash(implode('', $hashParts), 'sha1');
-        return ($token === $check);
+        if ($token !== $check) {
+            throw new SecurityException(sprintf(
+                'Security hash check was not valid for url: "%s", fields: "%s", secured fields: "%s", unlocked fields: "%s"',
+                $controller->request->here(),
+                implode(', ', (array)$fieldKeys),
+                implode(', ', array_keys((array)$lockedFields)),
+                implode(', ', (array)$unlocked)));
+        }
+        return true;
     }
 
     /**
