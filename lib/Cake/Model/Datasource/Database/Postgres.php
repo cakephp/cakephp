@@ -934,10 +934,8 @@ class Postgres extends DboSource {
  */
 	public function value($data, $column = null, $null = true) {
 		$value = parent::value($data, $column, $null);
-		if ($column === 'uuid' && is_scalar($data)) {
-			if ($data === '') {
-				return 'NULL';
-			}
+		if ($column === 'uuid' && is_scalar($data) && $data === '') {
+			return 'NULL';
 		}
 		return $value;
 	}
