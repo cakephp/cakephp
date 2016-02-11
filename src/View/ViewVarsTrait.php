@@ -13,7 +13,6 @@
  */
 namespace Cake\View;
 
-use Cake\Core\App;
 use Cake\Event\EventDispatcherInterface;
 
 /**

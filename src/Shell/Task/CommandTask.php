@@ -14,7 +14,6 @@
  */
 namespace Cake\Shell\Task;
 
-use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Plugin;
