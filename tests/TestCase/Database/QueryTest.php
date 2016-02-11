@@ -194,7 +194,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['title', 'name'])
             ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
             ->order(['title' => 'asc'])
             ->execute();
 
@@ -206,7 +206,7 @@ class QueryTest extends TestCase
         $this->assertCount(12, $result, 'Cross join results in 12 records');
 
         $result = $query->join([
-            ['table' => 'authors', 'type' => 'INNER', 'conditions' => 'author_id = authors.id']
+            ['table' => 'authors', 'type' => 'INNER', 'conditions' => $query->newExpr()->equalFields('author_id', 'authors.id')]
         ], [], true)->execute();
         $this->assertCount(3, $result);
         $this->assertEquals(['title' => 'First Article', 'name' => 'mariano'], $result->fetch('assoc'));
@@ -224,14 +224,14 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['title', 'name'])
             ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => ['author_id = a.id']])
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => [$query->newExpr()->equalFields('author_id ', 'a.id')]])
             ->order(['title' => 'asc'])
             ->execute();
         $this->assertEquals(['title' => 'First Article', 'name' => 'mariano'], $result->fetch('assoc'));
         $this->assertEquals(['title' => 'Second Article', 'name' => 'larry'], $result->fetch('assoc'));
 
         $query = new Query($this->connection);
-        $conditions = $query->newExpr('author_id = a.id');
+        $conditions = $query->newExpr()->equalFields('author_id', 'a.id');
         $result = $query
             ->select(['title', 'name'])
             ->from('articles')
@@ -1294,7 +1294,7 @@ class QueryTest extends TestCase
             ->select(['id'])
             ->from('comments')
             ->where(function ($exp, $q) {
-                $field = $q->newExpr('COALESCE(id, 1)');
+                $field = $q->func()->coalesce([new IdentifierExpression('id'), 1 => 'literal']);
                 return $exp->between($field, 5, 6, 'integer');
             })
             ->execute();
@@ -1558,7 +1558,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->orderAsc($query->func()->concat(['id' => 'literal', '3']));
+            ->orderAsc($query->func()->concat(['id' => 'identifier', '3']));
 
         $result = $query->execute()->fetchAll('assoc');
         $expected = [
@@ -1597,7 +1597,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->orderDesc($query->func()->concat(['id' => 'literal', '3']));
+            ->orderDesc($query->func()->concat(['id' => 'identifier', '3']));
 
         $result = $query->execute()->fetchAll('assoc');
         $expected = [
@@ -1765,7 +1765,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['total' => 'count(author_id)', 'author_id'])
             ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
             ->group('author_id')
             ->having(['count(author_id) <' => 2], ['count(author_id)' => 'integer'])
             ->execute();
@@ -1797,7 +1797,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['total' => 'count(author_id)', 'author_id'])
             ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
             ->group('author_id')
             ->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
             ->orHaving(['count(author_id) <' => 2], ['count(author_id)' => 'integer'])
@@ -1809,7 +1809,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['total' => 'count(author_id)', 'author_id'])
             ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
             ->group('author_id')
             ->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
             ->orHaving(['count(author_id) <=' => 2], ['count(author_id)' => 'integer'])
@@ -1821,7 +1821,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['total' => 'count(author_id)', 'author_id'])
             ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
             ->group('author_id')
             ->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
             ->orHaving(function ($e) {
@@ -1844,7 +1844,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['total' => 'count(author_id)', 'author_id'])
             ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
             ->group('author_id')
             ->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
             ->andHaving(['count(author_id) <' => 2], ['count(author_id)' => 'integer'])
@@ -1855,7 +1855,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['total' => 'count(author_id)', 'author_id'])
             ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
             ->group('author_id')
             ->having(['count(author_id)' => 2], ['count(author_id)' => 'integer'])
             ->andHaving(['count(author_id) >' => 1], ['count(author_id)' => 'integer'])
@@ -1867,7 +1867,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['total' => 'count(author_id)', 'author_id'])
             ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
             ->group('author_id')
             ->andHaving(function ($e) {
                 return $e->add('count(author_id) = 2 - 1');
@@ -2003,7 +2003,7 @@ class QueryTest extends TestCase
         $subquery = (new Query($this->connection))
             ->select('name')
             ->from(['b' => 'authors'])
-            ->where(['b.id = a.id']);
+            ->where([$query->newExpr()->equalFields('b.id', 'a.id')]);
         $result = $query
             ->select(['id', 'name' => $subquery])
             ->from(['a' => 'comments'])->execute();
@@ -2111,7 +2111,7 @@ class QueryTest extends TestCase
      *
      * @return void
      */
-    public function testSubqueyInJoin()
+    public function testSubqueryInJoin()
     {
         $subquery = (new Query($this->connection))->select('*')->from('authors');
 
@@ -2127,7 +2127,7 @@ class QueryTest extends TestCase
         $result = $query->execute();
         $this->assertCount(3, $result);
 
-        $query->join(['b' => ['table' => $subquery, 'conditions' => ['b.id = articles.id']]], [], true);
+        $query->join(['b' => ['table' => $subquery, 'conditions' => [$query->newExpr()->equalFields('b.id', 'articles.id')]]], [], true);
         $result = $query->execute();
         $this->assertCount(1, $result);
     }
@@ -2435,7 +2435,7 @@ class QueryTest extends TestCase
     {
         $query = new Query($this->connection);
 
-        $expr = $query->newExpr('title = author_id');
+        $expr = $query->newExpr()->equalFields('title', 'author_id');
 
         $query->update('articles')
             ->set($expr)
@@ -2443,7 +2443,7 @@ class QueryTest extends TestCase
         $result = $query->sql();
 
         $this->assertQuotedQuery(
-            'UPDATE <articles> SET title = author_id WHERE <id> = :',
+            'UPDATE <articles> SET <title> = \(<author_id>\) WHERE <id> = :',
             $result,
             !$this->autoQuote
         );
@@ -2621,7 +2621,7 @@ class QueryTest extends TestCase
                 'published' => 'N',
             ]
         ];
-        $this->assertTable('articles', 1, $expected, ['id >= 4']);
+        $this->assertTable('articles', 1, $expected, ['id >=' => 4]);
     }
 
     /**

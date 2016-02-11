@@ -35,13 +35,13 @@ class QueryRegressionTest extends TestCase
      */
     public $fixtures = [
         'core.articles',
+        'core.tags',
         'core.articles_tags',
         'core.authors',
         'core.authors_tags',
         'core.comments',
         'core.featured_tags',
         'core.special_tags',
-        'core.tags',
         'core.tags_translations',
         'core.translates',
         'core.users'
@@ -978,7 +978,7 @@ class QueryRegressionTest extends TestCase
         $query->select([
             'id',
             'coalesced' => $query->func()->coalesce(
-                ['published' => 'literal', -1],
+                ['published' => 'identifier', -1],
                 ['integer']
             )
         ]);

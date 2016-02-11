@@ -102,6 +102,11 @@ class FunctionExpression extends QueryExpression
                 continue;
             }
 
+            if ($p === 'identifier') {
+                $put($this->_conditions, new IdentifierExpression($k));
+                continue;
+            }
+
             if ($p instanceof ExpressionInterface) {
                 $put($this->_conditions, $p);
                 continue;
