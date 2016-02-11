@@ -113,12 +113,12 @@ class DateTest extends TestCase
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'es-ES');
         $this->assertContains('14 de enero de 2010', $result, 'Default locale should not be used');
 
-        $class->setToStringTimezone('Europe/Brussels');
+        $time->setToStringTimezone('Europe/Brussels');
         $result = $time->i18nFormat('HH:mm:ss');
         $expected = '14:59:28';
         $this->assertEquals($expected, $result);
 
-        $class->setToStringTimezone('+02:00');
+        $time->setToStringTimezone('+02:00');
         $result = $time->i18nFormat('HH:mm:ss');
         $expected = '15:59:28';
         $this->assertEquals($expected, $result);

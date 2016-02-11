@@ -226,7 +226,7 @@ trait DateFormatTrait
     }
 
     /**
-     * Sets the default timezone used when type converting instances ot this type to string
+     * Sets the default timezone used when type converting instances to this type to string
      *
      * @param string $timezone
      * @return void
