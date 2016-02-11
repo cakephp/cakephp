@@ -1553,7 +1553,7 @@ class QueryTest extends TestCase
         $query = $table->find();
         $query->select([
             'title' => $query->func()->concat(
-                ['title' => 'literal', 'test'],
+                ['title' => 'identifier', 'test'],
                 ['string']
             ),
         ]);
@@ -2214,7 +2214,7 @@ class QueryTest extends TestCase
      *
      * @return void
      */
-    public function testFormatDeepAssocationRecords()
+    public function testFormatDeepAssociationRecords()
     {
         $table = TableRegistry::get('ArticlesTags');
         $table->belongsTo('Articles');
@@ -2479,12 +2479,13 @@ class QueryTest extends TestCase
     public function testColumnsFromJoin()
     {
         $table = TableRegistry::get('articles');
-        $results = $table->find()
+        $query = $table->find();
+        $results = $query
             ->select(['title', 'person.name'])
             ->join([
                 'person' => [
                     'table' => 'authors',
-                    'conditions' => ['person.id = articles.author_id']
+                    'conditions' => [$query->newExpr()->equalFields('person.id', 'articles.author_id')]
                 ]
             ])
             ->order(['articles.id' => 'ASC'])
