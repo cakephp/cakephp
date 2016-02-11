@@ -88,16 +88,6 @@ class SerializedView extends View
         if ($serialize !== false) {
             $result = $this->_serialize($serialize);
             if ($result === false) {
-                if (Configure::read('debug') && in_array('trace', $serialize)) {
-                    $keys = array_keys($serialize, 'trace');
-                    foreach ($keys as $key) {
-                        unset($serialize[$key]);
-                    }
-                    $result = $this->_serialize($serialize);
-                    if ($result !== false) {
-                        return $result;
-                    }
-                }
                 throw new RuntimeException('Serialization of View data failed.');
             }
             return (string)$result;

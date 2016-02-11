@@ -184,7 +184,6 @@ class ExceptionRenderer
                 'format' => 'array',
                 'args' => false
             ]);
-            $viewVars['_serialize'][] = 'trace';
         }
         $this->controller->set($viewVars);
 
