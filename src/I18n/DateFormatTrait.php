@@ -55,6 +55,13 @@ trait DateFormatTrait
     protected static $_jsonEncodeFormat = "yyyy-MM-dd'T'HH:mm:ssZ";
 
     /**
+     * The default timezone to be used for displaying formatted date strings.
+     *
+     * @var string
+     */
+    protected static $_toStringTimezone = 'UTC';
+
+    /**
      * Returns a nicely formatted date string for this object.
      *
      * The format to be used is stored in the static property `Time::niceFormat`.
@@ -124,12 +131,13 @@ trait DateFormatTrait
      */
     public function i18nFormat($format = null, $timezone = null, $locale = null)
     {
-        $time = $this;
+        // Handle the immutable and mutable object cases.
+        $time = clone $this;
 
         if ($timezone) {
-            // Handle the immutable and mutable object cases.
-            $time = clone $this;
             $time = $time->timezone($timezone);
+        } else {
+            $time = $time->timezone(self::$_toStringTimezone);
         }
 
         $format = $format !== null ? $format : static::$_toStringFormat;
@@ -215,6 +223,17 @@ trait DateFormatTrait
     public static function setToStringFormat($format)
     {
         static::$_toStringFormat = $format;
+    }
+
+    /**
+     * Sets the default timezone used when type converting instances ot this type to string
+     *
+     * @param string $timezone
+     * @return void
+     */
+    public static function setToStringTimezone($timezone)
+    {
+        static::$_toStringTimezone = $timezone;
     }
 
     /**
