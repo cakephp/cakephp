@@ -19,4 +19,17 @@ use Cake\Network\Exception\BadRequestException;
  */
 class SecurityException extends BadRequestException
 {
+    /**
+     * Security Exception type
+     * @var string
+     */
+    protected $_type = 'secure';
+
+    /**
+     * Getter for type
+     * @return string
+     */
+    public function getType() {
+        return $this->_type;
+    }
 }
