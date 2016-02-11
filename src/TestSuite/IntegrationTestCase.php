@@ -550,7 +550,7 @@ abstract class IntegrationTestCase extends TestCase
      */
     public function assertResponseError()
     {
-        $this->_assertStatus(400, 417, 'Status code is not between 400 and 417');
+        $this->_assertStatus(400, 429, 'Status code is not between 400 and 429');
     }
 
     /**

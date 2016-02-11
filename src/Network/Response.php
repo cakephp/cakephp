@@ -71,6 +71,7 @@ class Response
         415 => 'Unsupported Media Type',
         416 => 'Requested range not satisfiable',
         417 => 'Expectation Failed',
+        422 => 'Unprocessable Entity',
         429 => 'Too Many Requests',
         500 => 'Internal Server Error',
         501 => 'Not Implemented',
