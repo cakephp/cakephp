@@ -130,6 +130,10 @@ class CaseExpression implements ExpressionInterface
                 $value = $keyValues[$k];
                 array_push($this->_values, $value);
                 continue;
+            } elseif ($value === 'identifier') {
+                $value = new IdentifierExpression($keyValues[$k]);
+                array_push($this->_values, $value);
+                continue;
             } elseif ($value instanceof ExpressionInterface) {
                 array_push($this->_values, $value);
                 continue;

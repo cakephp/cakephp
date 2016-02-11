@@ -393,6 +393,18 @@ class QueryExpression implements ExpressionInterface, Countable
     }
 
     /**
+     * Build join condition with identifier wrapping.
+     *
+     * @param string $left Left join condition field name.
+     * @param string $right Right join condition field name.
+     * @return $this
+     */
+    public function equalFields($left, $right)
+    {
+        return $this->eq(new IdentifierExpression($left), new IdentifierExpression($right));
+    }
+
+    /**
      * Returns the string representation of this object so that it can be used in a
      * SQL query. Note that values condition values are not included in the string,
      * in their place placeholders are put and can be replaced by the quoted values
