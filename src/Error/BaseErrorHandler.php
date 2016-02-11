@@ -15,6 +15,7 @@
 namespace Cake\Error;
 
 use Cake\Core\Configure;
+use Cake\Error\PHP7ErrorException;
 use Cake\Log\Log;
 use Cake\Routing\Router;
 use Error;
