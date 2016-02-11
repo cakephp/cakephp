@@ -939,9 +939,10 @@ class Hash
         // the sorted value path.
         $missingData = count($sortValues) < $dataCount;
         if ($missingData && $numeric) {
+            // Get the path without the leading '{n}.'
+            $itemPath = substr($path, 4);
             foreach ($data as $key => $value) {
-                // Get the value without the leading '{n}'.
-                $sortValues[$key] = static::get($value, substr($path, 4));
+                $sortValues[$key] = static::get($value, $itemPath);
             }
         } elseif ($missingData) {
             $sortValues = array_pad($sortValues, $dataCount, null);
