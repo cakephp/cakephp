@@ -1775,6 +1775,59 @@ class HashTest extends TestCase
     }
 
     /**
+     * Test sorting on a nested key that is sometimes undefined.
+     *
+     * @return void
+     */
+    public function testSortSparse()
+    {
+        $data = [
+            [
+                'id' => 1,
+                'title' => 'element 1',
+                'extra' => 1,
+            ],
+            [
+                'id' => 2,
+                'title' => 'element 2',
+                'extra' => 2,
+            ],
+            [
+                'id' => 3,
+                'title' => 'element 3',
+            ],
+            [
+                'id' => 4,
+                'title' => 'element 4',
+                'extra' => 4,
+            ]
+        ];
+        $result = Hash::sort($data, '{n}.extra', 'desc', 'natural');
+        $expected = [
+            [
+                'id' => 4,
+                'title' => 'element 4',
+                'extra' => 4,
+            ],
+            [
+                'id' => 2,
+                'title' => 'element 2',
+                'extra' => 2,
+            ],
+            [
+                'id' => 1,
+                'title' => 'element 1',
+                'extra' => 1,
+            ],
+            [
+                'id' => 3,
+                'title' => 'element 3',
+            ],
+        ];
+        $this->assertSame($expected, $result);
+    }
+
+    /**
      * Test insert()
      *
      * @return void

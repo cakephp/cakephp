@@ -933,12 +933,18 @@ class Hash
             $data = array_values($data);
         }
         $sortValues = static::extract($data, $path);
-        $sortCount = count($sortValues);
         $dataCount = count($data);
 
         // Make sortValues match the data length, as some keys could be missing
         // the sorted value path.
-        if ($sortCount < $dataCount) {
+        $missingData = count($sortValues) < $dataCount;
+        if ($missingData && $numeric) {
+            // Get the path without the leading '{n}.'
+            $itemPath = substr($path, 4);
+            foreach ($data as $key => $value) {
+                $sortValues[$key] = static::get($value, $itemPath);
+            }
+        } elseif ($missingData) {
             $sortValues = array_pad($sortValues, $dataCount, null);
         }
         $result = static::_squash($sortValues);
