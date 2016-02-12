@@ -911,7 +911,8 @@ class TreeBehavior extends Behavior
 
         if (is_array($config['scope'])) {
             return $query->where($config['scope']);
-        } elseif (is_callable($config['scope'])) {
+        }
+        if (is_callable($config['scope'])) {
             return $config['scope']($query);
         }
 

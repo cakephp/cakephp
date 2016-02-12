@@ -86,7 +86,8 @@ class SerializedView extends View
 
         if ($serialize !== false) {
             return $this->_serialize($serialize);
-        } elseif ($view !== false && $this->_getViewFileName($view)) {
+        }
+        if ($view !== false && $this->_getViewFileName($view)) {
             return parent::render($view, false);
         }
     }

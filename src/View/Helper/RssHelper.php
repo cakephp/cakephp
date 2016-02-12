@@ -218,7 +218,8 @@ class RssHelper extends Helper
                         }
                         $elements[$key] = implode('', $categories);
                         continue 2;
-                    } elseif (is_array($val) && isset($val['domain'])) {
+                    }
+                    if (is_array($val) && isset($val['domain'])) {
                         $attrib['domain'] = $val['domain'];
                     }
                     break;

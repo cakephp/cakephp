@@ -604,10 +604,10 @@ class Text
 
                     $truncate .= mb_substr($tag[3], 0, $left + $entitiesLength);
                     break;
-                } else {
-                    $truncate .= $tag[3];
-                    $totalLength += $contentLength;
                 }
+
+                $truncate .= $tag[3];
+                $totalLength += $contentLength;
                 if ($totalLength >= $length) {
                     break;
                 }
