@@ -17,6 +17,7 @@ namespace Cake\Controller\Component;
 use Cake\Controller\Component;
 use Cake\Controller\Controller;
 use Cake\Controller\Exception\SecurityException;
+use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Network\Exception\BadRequestException;
 use Cake\Network\Request;
@@ -185,7 +186,7 @@ class SecurityComponent extends Component
     public function blackHole(Controller $controller, $error = '', SecurityException $exception = null)
     {
         if (!$this->_config['blackHoleCallback']) {
-            if ($exception !== null) {
+            if (Configure::read('debug') && $exception !== null) {
                 throw $exception;
             }
             throw new BadRequestException('The request has been black-holed');
@@ -287,6 +288,31 @@ class SecurityComponent extends Component
         if (empty($controller->request->data)) {
             return true;
         }
+        $token = $this->_validToken($controller);
+        $hashParts = $this->_hashParts($controller);
+        $check = Security::hash(implode('', $hashParts), 'sha1');
+
+        if ($token === $check) {
+            return true;
+        }
+
+        if (Configure::read('debug')) {
+            $msg = $this->_debugPostTokenNotMatching($controller, $hashParts);
+            throw new SecurityException($msg);
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if token is valid
+     *
+     * @param Controller $controller
+     * @throws SecurityException
+     * @return string fields token
+     */
+    protected function _validToken(Controller $controller)
+    {
         $check = $controller->request->data;
 
         $message = '%s was not found in request data.';
@@ -299,10 +325,42 @@ class SecurityComponent extends Component
         if (!isset($check['_Token']['unlocked'])) {
             throw new SecurityException(sprintf($message, '_Token.unlocked'));
         }
+        if (Configure::read('debug') && !isset($check['_Token']['debug'])) {
+            throw new SecurityException(sprintf($message, '_Token.debug'));
+        }
 
+        return $check['_Token']['fields'];
+    }
+
+    /**
+     * Return hash parts for the Token generation
+     *
+     * @param Controller $controller
+     * @return array
+     */
+    protected function _hashParts(Controller $controller)
+    {
+        $fieldList = $this->_fieldsList($controller->request->data);
+        $unlocked = $this->_unlocked($controller->request->data);
+        return [
+            $controller->request->here(),
+            serialize($fieldList),
+            $unlocked,
+            Security::salt()
+        ];
+    }
+
+    /**
+     * Return the fields list for the hash calculation
+     *
+     * @param array $check data array
+     * @return array
+     */
+    protected function _fieldsList(array $check)
+    {
         $locked = '';
         $token = urldecode($check['_Token']['fields']);
-        $unlocked = urldecode($check['_Token']['unlocked']);
+        $unlocked = $this->_unlocked($check);
 
         if (strpos($token, ':')) {
             list($token, $locked) = explode(':', $token, 2);
@@ -354,29 +412,61 @@ class SecurityComponent extends Component
                 }
             }
         }
-        sort($unlocked, SORT_STRING);
         sort($fieldList, SORT_STRING);
         ksort($lockedFields, SORT_STRING);
-        $fieldKeys = $fieldList;
         $fieldList += $lockedFields;
-        $unlocked = implode('|', $unlocked);
-        $hashParts = [
-            $controller->request->here(),
-            serialize($fieldList),
-            $unlocked,
-            Security::salt()
-        ];
+        return $fieldList;
+    }
 
-        $check = Security::hash(implode('', $hashParts), 'sha1');
-        if ($token !== $check) {
-            throw new SecurityException(sprintf(
-                'Security hash check was not valid for url: "%s", fields: "%s", secured fields: "%s", unlocked fields: "%s"',
-                $controller->request->here(),
-                implode(', ', (array)$fieldKeys),
-                implode(', ', array_keys((array)$lockedFields)),
-                implode(', ', (array)$unlocked)));
+    /**
+     * Get the unlocked string
+     *
+     * @param array $check data array
+     * @return string
+     */
+    protected function _unlocked(array $check)
+    {
+        return urldecode($check['_Token']['unlocked']);
+    }
+
+    /**
+     * Create a message for humans to understand why Security token is not matching
+     *
+     * @param $controller
+     * @return string message to explain why token is not matching
+     */
+    protected function _debugPostTokenNotMatching($controller, $hashParts)
+    {
+        $messages = [];
+        $expectedParts = json_decode(urldecode($controller->request->data['_Token']['debug']), true);
+        //@todo check array and counts for expected and data parts
+        if ($hashParts[0] !== $expectedParts[0]) {
+            $messages[] = sprintf('Url not matching, \'%s\' was expected, but \'%s\' was sent in post data.', $expectedParts[0], $hashParts[0]);
         }
-        return true;
+        $expectedFields = $expectedParts[1];
+        $dataFields = unserialize($hashParts[1]);
+        //@todo: refactor this vvvv
+        foreach ($dataFields as $key => $value) {
+            if (is_int($key)) {
+                $foundKey = array_search($value, $expectedFields);
+                if ($foundKey === false) {
+                    $messages[] = sprintf('On request data field \'%s\', was injected and not expected', $value);
+                } else {
+                    unset($expectedFields[$foundKey]);
+                }
+            } elseif (is_string($key)) {
+                if ($value !== $expectedFields[$key]) {
+                    $messages[] = sprintf('On request data field \'%s\', expected value was \'%s\', not matching with post data value \'%s\'', $key, $expectedFields[$key], $value);
+                }
+                unset($expectedFields[$key]);
+            }
+        }
+
+        if (count($expectedFields) > 0) {
+            $messages[] = sprintf('On request data there were missing expected fields: \'%s\'', implode(', ', $expectedFields));
+        }
+        //@todo check for unlocked fields check imploded value is equal to expected
+        return implode(', ', $messages);
     }
 
     /**

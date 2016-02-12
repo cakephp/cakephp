@@ -572,6 +572,16 @@ class FormHelper extends Helper
             'value' => $tokenData['unlocked'],
         ]);
         $out .= $this->hidden('_Token.unlocked', $tokenUnlocked);
+        if (Configure::read('debug')) {
+            $tokenDebug = array_merge($secureAttributes, [
+                'value' => urlencode(json_encode([
+                    $this->_lastAction,
+                    $fields,
+                    $this->_unlockedFields
+                ])),
+            ]);
+            $out .= $this->hidden('_Token.debug', $tokenDebug);
+        }
         return $this->formatTemplate('hiddenBlock', ['content' => $out]);
     }
 
