@@ -447,7 +447,13 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function equalFields($left, $right)
     {
-        return $this->eq(new IdentifierExpression($left), new IdentifierExpression($right));
+        $wrapIdentifier = function($field) {
+            if ($field instanceof ExpressionInterface) {
+                return $field;
+            }
+            return new IdentifierExpression($field);
+        };
+        return $this->eq($wrapIdentifier($left), $wrapIdentifier($right));
     }
 
     /**
