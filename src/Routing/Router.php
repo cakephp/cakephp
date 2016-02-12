@@ -571,7 +571,8 @@ class Router
                 $output = static::fullBaseUrl() . $output;
             }
             return $output;
-        } elseif (is_array($url)) {
+        }
+        if (is_array($url)) {
             if (isset($url['_full']) && $url['_full'] === true) {
                 $full = true;
                 unset($url['_full']);

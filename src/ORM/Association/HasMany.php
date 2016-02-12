@@ -442,16 +442,15 @@ class HasMany extends Association
                     $ok = $ok && $target->delete($assoc, $options);
                 }
                 return $ok;
-            } else {
-                $target->deleteAll($conditions);
-                return true;
             }
-        } else {
-            $updateFields = array_fill_keys($foreignKey, null);
-            $target->updateAll($updateFields, $conditions);
-            return true;
 
+            $target->deleteAll($conditions);
+            return true;
         }
+
+        $updateFields = array_fill_keys($foreignKey, null);
+        $target->updateAll($updateFields, $conditions);
+        return true;
     }
 
     /**

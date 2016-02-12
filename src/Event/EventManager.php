@@ -312,7 +312,8 @@ class EventManager
         $events = (array)$subscriber->implementedEvents();
         if (!empty($eventKey) && empty($events[$eventKey])) {
             return;
-        } elseif (!empty($eventKey)) {
+        }
+        if (!empty($eventKey)) {
             $events = [$eventKey => $events[$eventKey]];
         }
         foreach ($events as $key => $function) {
