@@ -16,6 +16,7 @@ namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
+use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
 use Cake\Utility\Inflector;
 use PDOException;
@@ -227,14 +228,17 @@ class FixtureManager
     protected function _setupTable($fixture, $db, array $sources, $drop = true)
     {
         $configName = $db->configName();
-        if ($this->isFixtureSetup($configName, $fixture)) {
+        $isFixtureSetup = $this->isFixtureSetup($configName, $fixture);
+        if ($isFixtureSetup) {
             return;
         }
 
         $table = $fixture->sourceName();
         $exists = in_array($table, $sources);
 
-        if ($drop && $exists) {
+        if (($drop && $exists) ||
+            ($exists && !$isFixtureSetup && $fixture->schema() instanceof Table)
+        ) {
             $fixture->drop($db);
             $fixture->create($db);
         } elseif (!$exists) {
