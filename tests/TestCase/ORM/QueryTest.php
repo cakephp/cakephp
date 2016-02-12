@@ -552,7 +552,10 @@ class QueryTest extends TestCase
         TableRegistry::get('ArticlesTags', [
             'table' => 'articles_tags'
         ]);
-        $table->belongsToMany('Tags', ['strategy' => $strategy]);
+        $table->belongsToMany('Tags', [
+            'strategy' => $strategy,
+            'sort' => 'tag_id'
+        ]);
         $query = new Query($this->connection, $table);
 
         $results = $query->select()->contain('Tags')->hydrate(false)->toArray();
@@ -3112,6 +3115,7 @@ class QueryTest extends TestCase
         $results = $table->find()
             ->hydrate(false)
             ->notMatching('articles')
+            ->order(['authors.id'])
             ->toArray();
 
         $expected = [
@@ -3125,6 +3129,7 @@ class QueryTest extends TestCase
             ->notMatching('articles', function ($q) {
                 return $q->where(['articles.author_id' => 1]);
             })
+            ->order(['authors.id'])
             ->toArray();
         $expected = [
             ['id' => 2, 'name' => 'nate'],
