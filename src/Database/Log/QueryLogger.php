@@ -63,7 +63,8 @@ class QueryLogger
         $params = array_map(function ($p) {
             if ($p === null) {
                 return 'NULL';
-            } elseif (is_bool($p)) {
+            }
+            if (is_bool($p)) {
                 return $p ? '1' : '0';
             }
             return is_string($p) ? "'$p'" : $p;

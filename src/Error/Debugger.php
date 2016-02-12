@@ -323,9 +323,11 @@ class Debugger
 
         if (strpos($path, APP) === 0) {
             return str_replace(APP, 'APP/', $path);
-        } elseif (strpos($path, CAKE_CORE_INCLUDE_PATH) === 0) {
+        }
+        if (strpos($path, CAKE_CORE_INCLUDE_PATH) === 0) {
             return str_replace(CAKE_CORE_INCLUDE_PATH, 'CORE', $path);
-        } elseif (strpos($path, ROOT) === 0) {
+        }
+        if (strpos($path, ROOT) === 0) {
             return str_replace(ROOT, 'ROOT', $path);
         }
 

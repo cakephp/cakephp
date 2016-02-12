@@ -332,7 +332,8 @@ class Request implements ArrayAccess
     {
         if (!empty($_SERVER['PATH_INFO'])) {
             return $_SERVER['PATH_INFO'];
-        } elseif (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], '://') === false) {
+        }
+        if (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], '://') === false) {
             $uri = $_SERVER['REQUEST_URI'];
         } elseif (isset($_SERVER['REQUEST_URI'])) {
             $qPosition = strpos($_SERVER['REQUEST_URI'], '?');
@@ -559,7 +560,8 @@ class Request implements ArrayAccess
                     $ref = '/' . $ref;
                 }
                 return $ref;
-            } elseif (!$local) {
+            }
+            if (!$local) {
                 return $ref;
             }
         }

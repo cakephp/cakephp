@@ -74,6 +74,91 @@ class App
     }
 
     /**
+     * Returns the plugin split name of a class
+     *
+     * Examples:
+     *
+     * ```
+     * App::shortName(
+     *     'SomeVendor\SomePlugin\Controller\Component\TestComponent',
+     *     'Controller/Component',
+     *     'Component'
+     * )
+     * ```
+     *
+     * Returns: SomeVendor/SomePlugin.Test
+     *
+     * ```
+     * App::shortName(
+     *     'SomeVendor\SomePlugin\Controller\Component\Subfolder\TestComponent',
+     *     'Controller/Component',
+     *     'Component'
+     * )
+     * ```
+     *
+     * Returns: SomeVendor/SomePlugin.Subfolder/Test
+     *
+     * ```
+     * App::shortName(
+     *     'Cake\Controller\Component\AuthComponent',
+     *     'Controller/Component',
+     *     'Component'
+     * )
+     * ```
+     *
+     * Returns: Auth
+     *
+     * @param string $class Class name
+     * @param string $type Type of class
+     * @param string $suffix Class name suffix
+     * @return string Plugin split name of class
+     */
+    public static function shortName($class, $type = '', $suffix = '')
+    {
+        // Split class in namespace parts
+        $namespaceParts = explode('\\', $class);
+        $typeParts = explode('/', $type);
+        $typeOffset = null;
+        $namespacePartCount = count($namespaceParts);
+        $typePartCount = count($typeParts);
+
+        // Determine offset of the type
+        for ($index = 0; $index < $namespacePartCount; $index++) {
+            // Continue if the current slice is not of the type
+            if (array_slice($namespaceParts, $index, $typePartCount) !== $typeParts) {
+                continue;
+            }
+
+            $typeOffset = $index;
+        }
+
+        // Get plugin namespace from the namespace part before the type
+        $pluginNamespace = implode('\\', array_slice($namespaceParts, 0, $typeOffset));
+
+        // Get name from the namespace part after the type
+        $name = implode('/', array_slice($namespaceParts, $typeOffset + $typePartCount));
+        // Remove the suffix if it has been set
+        if ($suffix) {
+            $name = substr($name, 0, 0 - strlen($suffix));
+        }
+
+        // Ignore CakePHP and app namespaces
+        $ignoredNamespaces = [
+            'Cake',
+            Configure::read('App.namespace')
+        ];
+        if (in_array($pluginNamespace, $ignoredNamespaces)) {
+            $pluginNamespace = '';
+        }
+
+        // Convert plugin namespace to plugin name
+        $pluginName = implode('/', explode('\\', $pluginNamespace));
+
+        // Return plugin split formatted name with plugin name and class name
+        return implode('.', array_filter(pluginSplit($name, true, $pluginName)));
+    }
+
+    /**
      * _classExistsInBase
      *
      * Test isolation wrapper

@@ -69,6 +69,24 @@ class AppTest extends TestCase
     }
 
     /**
+     * testShortName
+     *
+     * @param string $class Class name
+     * @param string $type Class type
+     * @param string $suffix Class suffix
+     * @param mixed $expected Expected value.
+     * @return void
+     * @dataProvider shortNameProvider
+     */
+    public function testShortName($class, $type, $suffix = '', $expected = false)
+    {
+        Configure::write('App.namespace', 'TestApp');
+
+        $return = TestApp::shortName($class, $type, $suffix);
+        $this->assertSame($expected, $return);
+    }
+
+    /**
      * classnameProvider
      *
      * Return test permutations for testClassname method. Format:
@@ -121,6 +139,54 @@ class AppTest extends TestCase
             ['Command', 'Shell/Task', 'Task', false, 'Cake\Shell\Task\CommandTask'],
             ['Upgrade/Locations', 'Shell/Task', 'Task', false, 'Cake\Shell\Task\Upgrade\LocationsTask'],
             ['Pages', 'Controller', 'Controller', true, 'TestApp\Controller\PagesController'],
+        ];
+    }
+
+    /**
+     * pluginSplitNameProvider
+     *
+     * Return test permutations for testClassname method. Format:
+     *  classname
+     *  type
+     *  suffix
+     *  expected return value
+     *
+     * @return void
+     */
+    public function shortNameProvider()
+    {
+        return [
+            ['TestApp\In\ExistsApp', 'In', 'App', 'Exists'],
+            ['TestApp\In\Also\ExistsApp', 'In', 'App', 'Also/Exists'],
+            ['TestApp\Exists\In\AlsoApp', 'Exists/In', 'App', 'Also'],
+            ['TestApp\Exists\In\Subfolder\AlsoApp', 'Exists/In/Subfolder', 'App', 'Also'],
+            ['TestApp\Suffix\No', 'Suffix', '', 'No'],
+
+            ['MyPlugin\In\ExistsSuffix', 'In', 'Suffix', 'MyPlugin.Exists'],
+            ['MyPlugin\In\Also\ExistsSuffix', 'In', 'Suffix', 'MyPlugin.Also/Exists'],
+            ['MyPlugin\Exists\In\AlsoSuffix', 'Exists/In', 'Suffix', 'MyPlugin.Also'],
+            ['MyPlugin\Exists\In\Subfolder\AlsoSuffix', 'Exists/In/Subfolder', 'Suffix', 'MyPlugin.Also'],
+            ['MyPlugin\Suffix\No', 'Suffix', '', 'MyPlugin.No'],
+
+            ['Vend\MPlugin\In\ExistsSuffix', 'In', 'Suffix', 'Vend/MPlugin.Exists'],
+            ['Vend\MPlugin\In\Also\ExistsSuffix', 'In', 'Suffix', 'Vend/MPlugin.Also/Exists'],
+            ['Vend\MPlugin\Exists\In\AlsoSuffix', 'Exists/In', 'Suffix', 'Vend/MPlugin.Also'],
+            ['Vend\MPlugin\Exists\In\Subfolder\AlsoSuffix', 'Exists/In/Subfolder', 'Suffix', 'Vend/MPlugin.Also'],
+            ['Vend\MPlugin\Suffix\No', 'Suffix', '', 'Vend/MPlugin.No'],
+
+            ['Cake\In\ExistsCake', 'In', 'Cake', 'Exists'],
+            ['Cake\In\Also\ExistsCake', 'In', 'Cake', 'Also/Exists'],
+            ['Cake\Exists\In\AlsoCake', 'Exists/In', 'Cake', 'Also'],
+            ['Cake\Exists\In\Subfolder\AlsoCake', 'Exists/In/Subfolder', 'Cake', 'Also'],
+            ['Cake\Suffix\No', 'Suffix', '', 'No'],
+
+            // Real examples returning classnames
+            ['Cake\Core\App', 'Core', '', 'App'],
+            ['Cake\Controller\Component\AuthComponent', 'Controller/Component', 'Component', 'Auth'],
+            ['Cake\Cache\Engine\FileEngine', 'Cache/Engine', 'Engine', 'File'],
+            ['Cake\Shell\Task\CommandTask', 'Shell/Task', 'Task', 'Command'],
+            ['Cake\Shell\Task\Upgrade\LocationsTask', 'Shell/Task', 'Task', 'Upgrade/Locations'],
+            ['TestApp\Controller\PagesController', 'Controller', 'Controller', 'Pages'],
         ];
     }
 

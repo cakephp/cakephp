@@ -133,10 +133,12 @@ class ExtractTask extends Shell
                 $this->err('Extract Aborted');
                 $this->_stop();
                 return;
-            } elseif (strtoupper($response) === 'D' && count($this->_paths)) {
+            }
+            if (strtoupper($response) === 'D' && count($this->_paths)) {
                 $this->out();
                 return;
-            } elseif (strtoupper($response) === 'D') {
+            }
+            if (strtoupper($response) === 'D') {
                 $this->err('<warning>No directories selected.</warning> Please choose a directory.');
             } elseif (is_dir($response)) {
                 $this->_paths[] = $response;
@@ -205,16 +207,17 @@ class ExtractTask extends Shell
                     $this->err('Extract Aborted');
                     $this->_stop();
                     return;
-                } elseif ($this->_isPathUsable($response)) {
+                }
+                if ($this->_isPathUsable($response)) {
                     $this->_output = $response . DS;
                     break;
-                } else {
-                    $this->err('');
-                    $this->err(
-                        '<error>The directory path you supplied was ' .
-                        'not found. Please try again.</error>'
-                    );
                 }
+
+                $this->err('');
+                $this->err(
+                    '<error>The directory path you supplied was ' .
+                    'not found. Please try again.</error>'
+                );
                 $this->out();
             }
         }
