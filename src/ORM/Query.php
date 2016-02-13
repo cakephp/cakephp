@@ -16,6 +16,7 @@ namespace Cake\ORM;
 
 use ArrayObject;
 use Cake\Collection\CollectionInterface;
+use Cake\Database\ConnectionInterface;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query as DatabaseQuery;
 use Cake\Database\TypedResultInterface;
@@ -157,10 +158,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * Constructor
      *
-     * @param \Cake\Database\Connection $connection The connection object
+     * @param \Cake\Database\ConnectionInterface $connection The connection object
      * @param \Cake\ORM\Table $table The table this query is starting on
      */
-    public function __construct($connection, $table)
+    public function __construct(ConnectionInterface $connection, $table)
     {
         parent::__construct($connection);
         $this->repository($table);

@@ -58,11 +58,11 @@ class HasManyTest extends TestCase
                 ]
             ]
         ]);
-        $connection = ConnectionManager::get('test');
+        $this->connection = ConnectionManager::get('test');
         $this->article = $this->getMock(
             'Cake\ORM\Table',
             ['find', 'deleteAll', 'delete'],
-            [['alias' => 'Articles', 'table' => 'articles', 'connection' => $connection]]
+            [['alias' => 'Articles', 'table' => 'articles', 'connection' => $this->connection]]
         );
         $this->article->schema([
             'id' => ['type' => 'integer'],
@@ -84,7 +84,7 @@ class HasManyTest extends TestCase
             'Articles__title' => 'string',
             'Articles__author_id' => 'integer',
         ]);
-        $this->autoQuote = $connection->driver()->autoQuoting();
+        $this->autoQuote = $this->connection->driver()->autoQuoting();
     }
 
     /**
@@ -390,7 +390,7 @@ class HasManyTest extends TestCase
         $this->author->primaryKey(['id', 'site_id']);
         $association = new HasMany('Articles', $config);
         $keys = [[1, 10], [2, 20], [3, 30], [4, 40]];
-        $query = $this->getMock('Cake\ORM\Query', ['all', 'andWhere'], [null, null]);
+        $query = $this->getMock('Cake\ORM\Query', ['all', 'andWhere'], [$this->connection, null]);
         $this->article->method('find')
             ->with('all')
             ->will($this->returnValue($query));

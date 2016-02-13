@@ -17,9 +17,9 @@ namespace Cake\ORM;
 use ArrayObject;
 use BadMethodCallException;
 use Cake\Core\App;
+use Cake\Database\ConnectionInterface;
 use Cake\Database\Schema\Table as Schema;
 use Cake\Database\Type;
-use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\RepositoryInterface;
@@ -161,7 +161,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Connection instance
      *
-     * @var \Cake\Datasource\ConnectionInterface
+     * @var \Cake\Database\ConnectionInterface
      */
     protected $_connection;
 
@@ -389,8 +389,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the connection instance or sets a new one
      *
-     * @param \Cake\Datasource\ConnectionInterface|null $conn The new connection instance
-     * @return \Cake\Datasource\ConnectionInterface
+     * @param \Cake\Database\ConnectionInterface|null $conn The new connection instance
+     * @return \Cake\Database\ConnectionInterface
      */
     public function connection(ConnectionInterface $conn = null)
     {

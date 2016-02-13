@@ -14,9 +14,9 @@
  */
 namespace Cake\Database\Schema;
 
+use Cake\Database\ConnectionInterface;
 use Cake\Database\Exception;
 use Cake\Database\Type;
-use Cake\Datasource\ConnectionInterface;
 
 /**
  * Represents a single table in a database schema.
@@ -697,7 +697,7 @@ class Table
      * Uses the connection to access the schema dialect
      * to generate platform specific SQL.
      *
-     * @param \Cake\Datasource\ConnectionInterface $connection The connection to generate SQL for
+     * @param \Cake\Database\ConnectionInterface $connection The connection to generate SQL for
      * @return array List of SQL statements to create the table and the
      *    required indexes.
      */
@@ -723,7 +723,7 @@ class Table
      * Uses the connection to access the schema dialect to generate platform
      * specific SQL.
      *
-     * @param \Cake\Datasource\ConnectionInterface $connection The connection to generate SQL for.
+     * @param \Cake\Database\ConnectionInterface $connection The connection to generate SQL for.
      * @return array SQL to drop a table.
      */
     public function dropSql(ConnectionInterface $connection)
@@ -735,7 +735,7 @@ class Table
     /**
      * Generate the SQL statements to truncate a table
      *
-     * @param \Cake\Datasource\ConnectionInterface $connection The connection to generate SQL for.
+     * @param \Cake\Database\ConnectionInterface $connection The connection to generate SQL for.
      * @return array SQL to truncate a table.
      */
     public function truncateSql(ConnectionInterface $connection)
@@ -747,7 +747,7 @@ class Table
     /**
      * Generate the SQL statements to add the constraints to the table
      *
-     * @param \Cake\Datasource\ConnectionInterface $connection The connection to generate SQL for.
+     * @param \Cake\Database\ConnectionInterface $connection The connection to generate SQL for.
      * @return array SQL to drop a table.
      */
     public function addConstraintSql(ConnectionInterface $connection)
@@ -759,7 +759,7 @@ class Table
     /**
      * Generate the SQL statements to drop the constraints to the table
      *
-     * @param \Cake\Datasource\ConnectionInterface $connection The connection to generate SQL for.
+     * @param \Cake\Database\ConnectionInterface $connection The connection to generate SQL for.
      * @return array SQL to drop a table.
      */
     public function dropConstraintSql(ConnectionInterface $connection)
