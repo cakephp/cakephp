@@ -2004,6 +2004,36 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Tests that merging belongsToMany association doesn't erase _joinData
+     * on existing objects.
+     *
+     * @return void
+     */
+    public function testMergeBelongsToManyIdsRetainJoinData()
+    {
+        $this->articles->belongsToMany('Tags');
+        $entity = $this->articles->get(1, ['contain' => ['Tags']]);
+        $entity->accessible('*', true);
+        $original = $entity->tags[0]->_joinData;
+
+        $this->assertInstanceOf('Cake\ORM\Entity', $entity->tags[0]->_joinData);
+
+        $data = [
+            'title' => 'Haz moar tags',
+            'tags' => [
+                ['id' => 1],
+            ]
+        ];
+        $marshall = new Marshaller($this->articles);
+        $result = $marshall->merge($entity, $data, ['associated' => ['Tags']]);
+
+        $this->assertCount(1, $result->tags);
+        $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]);
+        $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]->_joinData);
+        $this->assertSame($original, $result->tags[0]->_joinData, 'Should be same object');
+    }
+
+    /**
      * Test mergeMany() with a simple set of data.
      *
      * @return void
