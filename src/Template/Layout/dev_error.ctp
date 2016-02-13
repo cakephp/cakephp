@@ -137,6 +137,7 @@ use Cake\Error\Debugger;
     }
     .stack-file {
         font-size: 0.9em;
+        word-wrap: break-word;
     }
 
     .stack-details {
