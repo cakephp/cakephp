@@ -341,7 +341,7 @@ class Response
     /**
      * Buffer string or callable for response message
      *
-     * @var string
+     * @var string|callable
      */
     protected $_body = null;
 
