@@ -418,6 +418,7 @@ class QueryTest extends TestCase
             ->where(['id' => 1, 'title' => 'First Article'])
             ->execute();
         $this->assertCount(1, $result);
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -426,6 +427,7 @@ class QueryTest extends TestCase
             ->where(['id' => 100], ['id' => 'integer'])
             ->execute();
         $this->assertCount(0, $result);
+        $result->closeCursor();
     }
 
     /**
@@ -437,12 +439,13 @@ class QueryTest extends TestCase
     {
         $query = new Query($this->connection);
         $result = $query
-            ->select(['title'])
-            ->from('articles')
-            ->where(['id >' => 1])
+            ->select(['comment'])
+            ->from('comments')
+            ->where(['id >' => 4])
             ->execute();
         $this->assertCount(2, $result);
-        $this->assertEquals(['title' => 'Second Article'], $result->fetch('assoc'));
+        $this->assertEquals(['comment' => 'First Comment for Second Article'], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -452,6 +455,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(1, $result);
         $this->assertEquals(['title' => 'First Article'], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -460,6 +464,7 @@ class QueryTest extends TestCase
             ->where(['id <=' => 2])
             ->execute();
         $this->assertCount(2, $result);
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -468,6 +473,7 @@ class QueryTest extends TestCase
             ->where(['id >=' => 1])
             ->execute();
         $this->assertCount(3, $result);
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -476,6 +482,7 @@ class QueryTest extends TestCase
             ->where(['id <=' => 1])
             ->execute();
         $this->assertCount(1, $result);
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -485,6 +492,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(2, $result);
         $this->assertEquals(['title' => 'First Article'], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -494,6 +502,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(1, $result);
         $this->assertEquals(['title' => 'First Article'], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -502,6 +511,7 @@ class QueryTest extends TestCase
             ->where(['title like' => '%Article%'])
             ->execute();
         $this->assertCount(3, $result);
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -510,6 +520,7 @@ class QueryTest extends TestCase
             ->where(['title not like' => '%Article%'])
             ->execute();
         $this->assertCount(0, $result);
+        $result->closeCursor();
     }
 
     /**
