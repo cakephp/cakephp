@@ -116,6 +116,8 @@ class TableLocator implements LocatorInterface
      * If no `table` option is passed, the table name will be the underscored version
      * of the provided $alias.
      *
+     * If no `connection` option is passed and passed `connectionName` string then it's used as original name to instantiate connection.
+     *
      * If no `connection` option is passed the table's defaultConnectionName() method
      * will be called to get the default connection name to use.
      *
@@ -161,7 +163,11 @@ class TableLocator implements LocatorInterface
         }
 
         if (empty($options['connection'])) {
-            $connectionName = $options['className']::defaultConnectionName();
+            if (!empty($options['connectionName'])) {
+                $connectionName = $options['connectionName'];
+            } else {
+                $connectionName = $options['className']::defaultConnectionName();
+            }
             $options['connection'] = ConnectionManager::get($connectionName);
         }
 
