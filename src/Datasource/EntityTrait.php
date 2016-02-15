@@ -535,7 +535,9 @@ trait EntityTrait
             if ($method[0] !== '_' || ($prefix !== 'get' && $prefix !== 'set')) {
                 continue;
             }
-            $field = Inflector::underscore(substr($method, 4));
+            $field = lcfirst(substr($method, 4));
+            $snakeField = Inflector::underscore($field);
+            static::$_accessors[$class][$prefix][$snakeField] = $method;
             static::$_accessors[$class][$prefix][$field] = $method;
         }
 
