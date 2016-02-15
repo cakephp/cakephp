@@ -25,9 +25,8 @@ class SqlserverWithTriggerCompiler extends SqlserverCompiler
     /**
      * Generates the INSERT part of a SQL query
      *
-     * To better handle concurrency and low transaction isolation levels,
-     * we also include an OUTPUT clause so we can ensure we get the inserted
-     * row's data back.
+     * SQL Server with enalbed triggers does not allow the OUTPUT clause 
+     * so that the INSERT is generated with a temporary variable.
      *
      * @param array $parts The parts to build
      * @param \Cake\Database\Query $query The query that is being compiled
