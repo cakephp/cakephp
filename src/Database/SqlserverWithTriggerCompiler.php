@@ -25,7 +25,7 @@ class SqlserverWithTriggerCompiler extends SqlserverCompiler
     /**
      * Generates the INSERT part of a SQL query
      *
-     * SQL Server with enalbed triggers does not allow the OUTPUT clause 
+     * SQL Server with enalbed triggers does not allow the OUTPUT clause
      * so that the INSERT is generated with a temporary variable.
      *
      * @param array $parts The parts to build
@@ -38,7 +38,7 @@ class SqlserverWithTriggerCompiler extends SqlserverCompiler
         $table = $parts[0];
         $talbeParts = explode('.', $table);
         if (count($talbeParts) > 1) {
-            list(,$tableWithoutSchema) = $talbeParts;
+            list(, $tableWithoutSchema) = $talbeParts;
         } else {
             $tableWithoutSchema = $parts[0];
         }
@@ -59,7 +59,7 @@ class SqlserverWithTriggerCompiler extends SqlserverCompiler
         }
         $sqlCreateColumns = [];
         $primaryKeyColumnsForSql = [];
-        foreach($description->columns() as $columnName) {
+        foreach ($description->columns() as $columnName) {
             if (in_array($columnName, $primaryKeyColumns)) {
                 $descriptionOfSingleColumn = $description->column($columnName);
                 if (isset($descriptionOfSingleColumn['autoIncrement']) && $descriptionOfSingleColumn['autoIncrement']) {
