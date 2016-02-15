@@ -156,15 +156,27 @@ class TestFixture implements FixtureInterface
      */
     protected function _tableFromClass()
     {
+        $model = $this->_modelFromClass();
+
+        return Inflector::tableize($model);
+    }
+
+    /**
+     * Returns the model name using the fixture class
+     *
+     * @return string
+     */
+    protected function _modelFromClass()
+    {
         list(, $class) = namespaceSplit(get_class($this));
         preg_match('/^(.*)Fixture$/', $class, $matches);
-        $table = $class;
+        $model = $class;
 
         if (isset($matches[1])) {
-            $table = $matches[1];
+            $model = $matches[1];
         }
 
-        return Inflector::tableize($table);
+        return $model;
     }
 
     /**
