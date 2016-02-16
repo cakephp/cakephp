@@ -153,11 +153,11 @@ class CakeRequestTest extends CakeTestCase {
  */
         public function testContentType() {
             $_SERVER['HTTP_CONTENT_TYPE'] = 'application/json';
-            $request = Request::createFromGlobals();
+            $request = new CakeRequest('/', false);
             $this->assertEquals('application/json', $request->contentType());
 
             $_SERVER['CONTENT_TYPE'] = 'application/xml';
-            $request = Request::createFromGlobals();
+            $request = new CakeRequest('/', false);
             $this->assertEquals('application/xml', $request->contentType(), 'prefer non http header.');
         }
 
