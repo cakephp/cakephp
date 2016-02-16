@@ -274,14 +274,15 @@ class TestFixtureTest extends TestCase
     }
 
     /**
-     * test schema reflection without $import or $fields will reflect the schema
+     * create the letters table
      *
      * @return void
      */
-    public function testInitNoImportNoFields()
+    protected function _createLettersTable()
     {
         $db = ConnectionManager::get('test');
         $collection = $db->schemaCollection();
+
         if (!in_array('letters', $collection->listTables())) {
             $table = new Table('letters', [
                 'id' => ['type' => 'integer'],
@@ -294,9 +295,20 @@ class TestFixtureTest extends TestCase
                 $db->execute($stmt);
             }
         }
+    }
 
+    /**
+     * test schema reflection without $import or $fields will reflect the schema
+     *
+     * @return void
+     */
+    public function testInitNoImportNoFields()
+    {
+        $this->_createLettersTable();
         $fixture = new LettersFixture();
+
         $fixture->init();
+
         $this->assertEquals(['id', 'letter'], $fixture->schema()->columns());
 
         $db = $this->getMock('Cake\Database\Connection', ['prepare', 'execute'], [], '', false);
