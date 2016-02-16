@@ -87,6 +87,25 @@ class AppTest extends TestCase
     }
 
     /**
+     * testShortNameWithNestedAppNamespace
+     *
+     * @return void
+     */
+    public function testShortNameWithNestedAppNamespace()
+    {
+        Configure::write('App.namespace', 'TestApp/Nested');
+
+        $return = TestApp::shortName(
+            'TestApp/Nested/Controller/PagesController',
+            'Controller',
+            'Controller'
+        );
+        $this->assertSame('Pages', $return);
+
+        Configure::write('App.namespace', 'TestApp');
+    }
+
+    /**
      * classnameProvider
      *
      * Return test permutations for testClassname method. Format:
@@ -179,6 +198,8 @@ class AppTest extends TestCase
             ['Cake\Exists\In\AlsoCake', 'Exists/In', 'Cake', 'Also'],
             ['Cake\Exists\In\Subfolder\AlsoCake', 'Exists/In/Subfolder', 'Cake', 'Also'],
             ['Cake\Suffix\No', 'Suffix', '', 'No'],
+
+            ['Muffin\Webservice\Webservice\EndpointWebservice', 'Webservice', 'Webservice', 'Muffin/Webservice.Endpoint'],
 
             // Real examples returning classnames
             ['Cake\Core\App', 'Core', '', 'App'],
