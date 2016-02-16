@@ -393,19 +393,19 @@ class CakeRequest implements ArrayAccess {
 			}
 		}
 	}
-        
+
 /**
  * Get the content type used in this request.
  * 
  * @return string
  */
-        public function contentType() {
-            $type = env('CONTENT_TYPE');
-            if ($type) {
-                return $type;
-            }
-            return env('HTTP_CONTENT_TYPE');
-        }
+	public function contentType() {
+		$type = env('CONTENT_TYPE');
+		if ($type) {
+			return $type;
+		}
+		return env('HTTP_CONTENT_TYPE');
+	}
 
 /**
  * Get the IP the client is using, or says they are using.

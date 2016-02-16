@@ -145,21 +145,21 @@ class CakeRequestTest extends CakeTestCase {
 		$request = new CakeRequest(null, false);
 		$this->assertFalse(isset($request->query['one']));
 	}
-        
+
 /**
  * Test the content type method.
  * 
  * @return void
  */
-        public function testContentType() {
-            $_SERVER['HTTP_CONTENT_TYPE'] = 'application/json';
-            $request = new CakeRequest('/', false);
-            $this->assertEquals('application/json', $request->contentType());
+	public function testContentType() {
+		$_SERVER['HTTP_CONTENT_TYPE'] = 'application/json';
+		$request = new CakeRequest('/', false);
+		$this->assertEquals('application/json', $request->contentType());
 
-            $_SERVER['CONTENT_TYPE'] = 'application/xml';
-            $request = new CakeRequest('/', false);
-            $this->assertEquals('application/xml', $request->contentType(), 'prefer non http header.');
-        }
+		$_SERVER['CONTENT_TYPE'] = 'application/xml';
+		$request = new CakeRequest('/', false);
+		$this->assertEquals('application/xml', $request->contentType(), 'prefer non http header.');
+	}
 
 /**
  * Test construction
