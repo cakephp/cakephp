@@ -165,7 +165,7 @@ class CakeRequest implements ArrayAccess {
 		if ($_POST) {
 			$this->data = $_POST;
 		} elseif (($this->is('put') || $this->is('delete')) &&
-			strpos(env('CONTENT_TYPE'), 'application/x-www-form-urlencoded') === 0
+			strpos($this->contentType(), 'application/x-www-form-urlencoded') === 0
 		) {
 				$data = $this->_readInput();
 				parse_str($data, $this->data);
@@ -392,6 +392,19 @@ class CakeRequest implements ArrayAccess {
 				$this->data = Hash::insert($this->data, $newPath, $fields);
 			}
 		}
+	}
+
+/**
+ * Get the content type used in this request.
+ * 
+ * @return string
+ */
+	public function contentType() {
+		$type = env('CONTENT_TYPE');
+		if ($type) {
+			return $type;
+		}
+		return env('HTTP_CONTENT_TYPE');
 	}
 
 /**
