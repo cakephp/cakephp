@@ -143,6 +143,20 @@ class CellTest extends TestCase
     }
 
     /**
+     * Tests that cell action setting the templatePath
+     *
+     * @return void
+     */
+    public function testSettingCellTemplatePathFromAction()
+    {
+        $appCell = $this->View->cell('Articles::customTemplatePath');
+
+        $this->assertContains('Articles subdir custom_template_path template', "{$appCell}");
+        $this->assertEquals('custom_template_path', $appCell->template);
+        $this->assertEquals('Cell/Articles/Subdir', $appCell->viewBuilder()->templatePath());
+    }
+
+    /**
      * Tests that cell action setting the template using the ViewBuilder renders the correct template
      *
      * @return void
