@@ -2121,6 +2121,21 @@ class Uuid extends CakeTestModel {
 }
 
 /**
+ * UuidNative class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class UuidNative extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string
+ */
+	public $name = 'UuidNative';
+}
+
+/**
  * DataTest class
  *
  * @package       Cake.Test.Case.Model
@@ -3053,6 +3068,84 @@ class UuiditemsUuidportfolioNumericid extends CakeTestModel {
  * @var string
  */
 	public $name = 'UuiditemsUuidportfolioNumericid';
+}
+
+/**
+ * Uuidnativeportfolio class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class Uuidnativeportfolio extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string
+ */
+	public $name = 'Uuidnativeportfolio';
+
+/**
+ * hasAndBelongsToMany property
+ *
+ * @var array
+ */
+	public $hasAndBelongsToMany = array('Uuidnativeitem');
+}
+
+/**
+ * Uuidnativeitem class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class Uuidnativeitem extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string
+ */
+	public $name = 'Uuidnativeitem';
+
+/**
+ * hasAndBelongsToMany property
+ *
+ * @var array
+ */
+	public $hasAndBelongsToMany = array(
+		'Uuidnativeportfolio' => array(
+			'with' => 'UuidnativeitemsUuidnativeportfolioNumericid'
+	));
+
+}
+
+/**
+ * UuidnativeitemsUuidnativeportfolio class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class UuidnativeitemsUuidnativeportfolio extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string
+ */
+	public $name = 'UuidnativeitemsUuidnativeportfolio';
+}
+
+/**
+ * UuidnativeitemsPortfolioNumericid class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class UuidnativeitemsUuidnativeportfolioNumericid extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string
+ */
+	public $name = 'UuidnativeitemsUuidnativeportfolioNumericid';
 }
 
 /**

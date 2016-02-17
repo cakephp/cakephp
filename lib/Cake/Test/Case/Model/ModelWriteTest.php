@@ -271,6 +271,26 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * testAutoSaveUuidNative method
+ *
+ * @return void
+ */
+	public function testAutoSaveUuidNative() {
+		$this->skipIf(!($this->db instanceof Postgres), 'This test is compatible with Postgres only.');
+
+		$this->loadFixtures('UuidNative');
+		$TestModel = new UuidNative();
+
+		$TestModel->save(array('title' => 'Test record'));
+		$result = $TestModel->findByTitle('Test record');
+		$this->assertEquals(
+			array('id', 'title', 'count', 'created', 'updated'),
+			array_keys($result['UuidNative'])
+		);
+		$this->assertEquals(36, strlen($result['UuidNative']['id']));
+	}
+
+/**
  * Ensure that if the id key is null but present the save doesn't fail (with an
  * x sql error: "Column id specified twice")
  *
@@ -290,6 +310,27 @@ class ModelWriteTest extends BaseModelTest {
 			array_keys($result['Uuid'])
 		);
 		$this->assertEquals(36, strlen($result['Uuid']['id']));
+	}
+
+/**
+ * Ensure that if the id key is null but present the save doesn't fail (with an
+ * x sql error: "Column id specified twice")
+ *
+ * @return void
+ */
+	public function testSaveUuidNullNative() {
+		$this->skipIf(!($this->db instanceof Postgres), 'This test is compatible with Postgres only.');
+
+		$this->loadFixtures('UuidNative');
+		$TestModel = new UuidNative();
+
+		$TestModel->save(array('title' => 'Test record', 'id' => null));
+		$result = $TestModel->findByTitle('Test record');
+		$this->assertEquals(
+			array('id', 'title', 'count', 'created', 'updated'),
+			array_keys($result['UuidNative'])
+		);
+		$this->assertEquals(36, strlen($result['UuidNative']['id']));
 	}
 
 /**
@@ -2939,6 +2980,26 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * testHabtmUuidWithUuidId method
+ *
+ * @return void
+ */
+	public function testHabtmUuidWithUuidIdNative() {
+		$this->skipIf(!($this->db instanceof Postgres), 'This test is compatible with Postgres only.');
+		$this->loadFixtures('Uuidnativeportfolio', 'Uuidnativeitem', 'UuidnativeitemsUuidnativeportfolio', 'UuidnativeitemsUuidnativeportfolioNumericid');
+		$TestModel = new Uuidnativeportfolio();
+
+		$data = array('Uuidnativeportfolio' => array('name' => 'Portfolio 3'));
+		$data['Uuidnativeitem']['Uuidnativeitem'] = array('483798c8-c7cc-430e-8cf9-4fcc40cf8569');
+		$TestModel->create($data);
+		$TestModel->save();
+		$id = $TestModel->id;
+		$result = $TestModel->read(null, $id);
+		$this->assertEquals(1, count($result['Uuidnativeitem']));
+		$this->assertEquals(36, strlen($result['Uuidnativeitem'][0]['UuidnativeitemsUuidnativeportfolio']['id']));
+	}
+
+/**
  * test HABTM saving when join table has no primary key and only 2 columns.
  *
  * @return void
@@ -3005,6 +3066,25 @@ class ModelWriteTest extends BaseModelTest {
 		$id = $TestModel->id;
 		$result = $TestModel->read(null, $id);
 		$this->assertEquals(1, count($result['Uuidportfolio']));
+	}
+
+/**
+ * testHabtmUuidWithNumericId method
+ *
+ * @return void
+ */
+	public function testHabtmUuidWithNumericIdNative() {
+		$this->skipIf(!($this->db instanceof Postgres), 'This test is compatible with Postgres only.');
+		$this->loadFixtures('Uuidnativeportfolio', 'Uuidnativeitem', 'UuidnativeitemsUuidnativeportfolioNumericid');
+		$TestModel = new Uuidnativeitem();
+
+		$data = array('Uuidnativeitem' => array('name' => 'Item 7', 'published' => 0));
+		$data['Uuidnativeportfolio']['Uuidnativeportfolio'] = array('480af662-eb8c-47d3-886b-230540cf8569');
+		$TestModel->create($data);
+		$TestModel->save();
+		$id = $TestModel->id;
+		$result = $TestModel->read(null, $id);
+		$this->assertEquals(1, count($result['Uuidnativeportfolio']));
 	}
 
 /**
