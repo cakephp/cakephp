@@ -14,6 +14,8 @@
  */
 namespace Cake\I18n;
 
+use Cake\Chronos\Date as ChronosDate;
+use Cake\Chronos\MutableDate;
 use IntlDateFormatter;
 
 /**
@@ -53,6 +55,13 @@ trait DateFormatTrait
      * @see \Cake\I18n\Time::i18nFormat()
      */
     protected static $_jsonEncodeFormat = "yyyy-MM-dd'T'HH:mm:ssZ";
+
+    /**
+     * Caches whether or not this class is a subclass of a Date or MutableDate
+     *
+     * @var boolean
+     */
+    protected static $_isDateInstance;
 
     /**
      * Returns a nicely formatted date string for this object.
@@ -263,18 +272,25 @@ trait DateFormatTrait
             $dateFormat = null;
         }
 
+        if (static::$_isDateInstance === null) {
+            static::$_isDateInstance =
+                is_subclass_of(static::class, ChronosDate::class) ||
+                is_subclass_of(static::class, MutableDate::class);
+        }
+
+        $defaultTimezone = static::$_isDateInstance ? 'UTC' : date_default_timezone_get();
         $formatter = datefmt_create(
             static::$defaultLocale,
             $dateFormat,
             $timeFormat,
-            date_default_timezone_get(),
+            $defaultTimezone,
             null,
             $pattern
         );
         $time = $formatter->parse($time);
         if ($time !== false) {
             $result = new static('@' . $time);
-            return $result->setTimezone(date_default_timezone_get());
+            return static::$_isDateInstance ? $result : $result->setTimezone($defaultTimezone);
         }
         return null;
     }
