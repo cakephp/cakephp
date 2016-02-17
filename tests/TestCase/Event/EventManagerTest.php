@@ -164,22 +164,35 @@ class EventManagerTest extends TestCase
         $manager->attach('fakeFunction3', 'test.event');
         $manager->attach('fakeFunction4', 'event.test');
 
+        $this->assertArrayHasKey('fake.event', $manager->matchingListeners('fake.event'));
+        $this->assertArrayHasKey('real.event', $manager->matchingListeners('real.event'));
+        $this->assertArrayHasKey('test.event', $manager->matchingListeners('test.event'));
+        $this->assertArrayHasKey('event.test', $manager->matchingListeners('event.test'));
+
         $this->assertArrayHasKey('fake.event', $manager->matchingListeners('fake'));
         $this->assertArrayHasKey('real.event', $manager->matchingListeners('real'));
         $this->assertArrayHasKey('test.event', $manager->matchingListeners('test'));
         $this->assertArrayHasKey('event.test', $manager->matchingListeners('test'));
+        $this->assertArrayHasKey('fake.event', $manager->matchingListeners('event'));
+        $this->assertArrayHasKey('real.event', $manager->matchingListeners('event'));
+        $this->assertArrayHasKey('test.event', $manager->matchingListeners('event'));
+        $this->assertArrayHasKey('event.test', $manager->matchingListeners('event'));
+        $this->assertArrayHasKey('fake.event', $manager->matchingListeners('.event'));
+        $this->assertArrayHasKey('real.event', $manager->matchingListeners('.event'));
+        $this->assertArrayHasKey('test.event', $manager->matchingListeners('.event'));
+        $this->assertArrayHasKey('test.event', $manager->matchingListeners('test.'));
+        $this->assertArrayHasKey('event.test', $manager->matchingListeners('.test'));
 
-        $this->assertArrayNotHasKey('test.event', $manager->matchingListeners('/test'));
         $this->assertEmpty($manager->matchingListeners('/test'));
-
-        $this->assertArrayNotHasKey('event.test', $manager->matchingListeners('test$'));
+        $this->assertEmpty($manager->matchingListeners('test/'));
+        $this->assertEmpty($manager->matchingListeners('/test/'));
         $this->assertEmpty($manager->matchingListeners('test$'));
-
-        $this->assertArrayNotHasKey('event.test', $manager->matchingListeners('ev.nt'));
         $this->assertEmpty($manager->matchingListeners('ev.nt'));
-
-        $this->assertArrayNotHasKey('test.event', $manager->matchingListeners('^test'));
         $this->assertEmpty($manager->matchingListeners('^test'));
+        $this->assertEmpty($manager->matchingListeners('^event'));
+        $this->assertEmpty($manager->matchingListeners('*event'));
+        $this->assertEmpty($manager->matchingListeners('event*'));
+        $this->assertEmpty($manager->matchingListeners('foo'));
 
         $expected = ['fake.event', 'real.event', 'test.event', 'event.test'];
         $result = $manager->matchingListeners('event');
@@ -201,24 +214,9 @@ class EventManagerTest extends TestCase
         $this->assertNotEmpty($result);
         $this->assertSame($expected, array_keys($result));
 
-        $expected = ['test.event'];
-        $result = $manager->matchingListeners('^test');
-        $this->assertEmpty($result);
-        $this->assertNotSame($expected, array_keys($result));
-
         $expected = ['event.test'];
-        $result = $manager->matchingListeners('^event');
-        $this->assertEmpty($result);
-        $this->assertNotSame($expected, array_keys($result));
-
-        $expected = ['event.test'];
-        $result = $manager->matchingListeners('test$');
-        $this->assertEmpty($result);
-        $this->assertNotSame($expected, array_keys($result));
-
-        $expected = [];
-        $result = $manager->matchingListeners('foo');
-        $this->assertEmpty($manager->matchingListeners('foo'));
+        $result = $manager->matchingListeners('.test');
+        $this->assertNotEmpty($result);
         $this->assertSame($expected, array_keys($result));
     }
 
