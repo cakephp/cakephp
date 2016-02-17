@@ -57,7 +57,7 @@ trait DateFormatTrait
     protected static $_jsonEncodeFormat = "yyyy-MM-dd'T'HH:mm:ssZ";
 
     /**
-     * Caches whehter or not this class is a subclass of a Date or MutableDate
+     * Caches whether or not this class is a subclass of a Date or MutableDate
      *
      * @var boolean
      */
@@ -278,7 +278,7 @@ trait DateFormatTrait
                 is_subclass_of(static::class, MutableDate::class);
         }
 
-        $defaultTimezone =  static::$_isDateInstance ? 'UTC' : date_default_timezone_get();
+        $defaultTimezone = static::$_isDateInstance ? 'UTC' : date_default_timezone_get();
         $formatter = datefmt_create(
             static::$defaultLocale,
             $dateFormat,
