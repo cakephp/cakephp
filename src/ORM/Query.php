@@ -33,39 +33,39 @@ use Traversable;
  * into a specific iterator that will be responsible for hydrating results if
  * required.
  *
- * @see CollectionInterface For a full description of the collection methods supported by this class
- * @method CollectionInterface each(callable $c) Passes each of the query results to the callable
- * @method CollectionInterface filter(callable $c = null) Keeps the results using passing the callable test
- * @method CollectionInterface reject(callable $c) Removes the results passing the callable test
+ * @see \Cake\Collection\CollectionInterface For a full description of the collection methods supported by this class
+ * @method \Cake\Collection\CollectionInterface each(callable $c) Passes each of the query results to the callable
+ * @method \Cake\Collection\CollectionInterface filter(callable $c = null) Keeps the results using passing the callable test
+ * @method \Cake\Collection\CollectionInterface reject(callable $c) Removes the results passing the callable test
  * @method bool every(callable $c) Returns true if all the results pass the callable test
  * @method bool some(callable $c) Returns true if at least one of the results pass the callable test
- * @method CollectionInterface map(callable $c) Modifies each of the results using the callable
+ * @method \Cake\Collection\CollectionInterface map(callable $c) Modifies each of the results using the callable
  * @method mixed reduce(callable $c, $zero = null) Folds all the results into a single value using the callable.
- * @method CollectionInterface extract($field) Extracts a single column from each row
+ * @method \Cake\Collection\CollectionInterface extract($field) Extracts a single column from each row
  * @method mixed max($field, $type = SORT_NUMERIC) Returns the maximum value for a single column in all the results.
  * @method mixed min($field, $type = SORT_NUMERIC) Returns the minimum value for a single column in all the results.
- * @method CollectionInterface groupBy(string|callable $field) In-memory group all results by the value of a column.
- * @method CollectionInterface indexBy(string|callable $field) Returns the results indexed by the value of a column.
+ * @method \Cake\Collection\CollectionInterface groupBy(string|callable $field) In-memory group all results by the value of a column.
+ * @method \Cake\Collection\CollectionInterface indexBy(string|callable $field) Returns the results indexed by the value of a column.
  * @method int countBy(string|callable $field) Returns the number of unique values for a column
  * @method float sumOf(string|callable $field) Returns the sum of all values for a single column
- * @method CollectionInterface shuffle() In-memory randomize the order the results are returned
- * @method CollectionInterface sample($size = 10) In-memory shuffle the results and return a subset of them.
- * @method CollectionInterface take($size = 1, $from = 0) In-memory limit and offset for the query results.
- * @method CollectionInterface skip(int $howMany) Skips some rows from the start of the query result.
+ * @method \Cake\Collection\CollectionInterface shuffle() In-memory randomize the order the results are returned
+ * @method \Cake\Collection\CollectionInterface sample($size = 10) In-memory shuffle the results and return a subset of them.
+ * @method \Cake\Collection\CollectionInterface take($size = 1, $from = 0) In-memory limit and offset for the query results.
+ * @method \Cake\Collection\CollectionInterface skip(int $howMany) Skips some rows from the start of the query result.
  * @method mixed last() Return the last row of the query result
- * @method CollectionInterface append(array|Traversable $items) Appends more rows to the result of the query.
- * @method CollectionInterface combine($k, $v, $g = null) Returns the values of the column $v index by column $k,
+ * @method \Cake\Collection\CollectionInterface append(array|Traversable $items) Appends more rows to the result of the query.
+ * @method \Cake\Collection\CollectionInterface combine($k, $v, $g = null) Returns the values of the column $v index by column $k,
  *   and grouped by $g.
- * @method CollectionInterface nest($k, $p) Creates a tree structure by nesting the values of column $p into that
+ * @method \Cake\Collection\CollectionInterface nest($k, $p) Creates a tree structure by nesting the values of column $p into that
  *   with the same value for $k.
  * @method array toArray() Returns a key-value array with the results of this query.
  * @method array toList() Returns a numerically indexed array with the results of this query.
- * @method CollectionInterface stopWhen(callable $c) Returns each row until the callable returns true.
- * @method CollectionInterface zip(array|Traversable $c) Returns the first result of both the query and $c in an array,
+ * @method \Cake\Collection\CollectionInterface stopWhen(callable $c) Returns each row until the callable returns true.
+ * @method \Cake\Collection\CollectionInterface zip(array|\Traversable $c) Returns the first result of both the query and $c in an array,
  *   then the second results and so on.
- * @method CollectionInterface zipWith(...$collections, callable $c) Returns each of the results out of calling $c
+ * @method \Cake\Collection\CollectionInterface zipWith(...$collections, callable $c) Returns each of the results out of calling $c
  *   with the first rows of the query and each of the items, then the second rows and so on.
- * @method CollectionInterface chunk($size) Groups the results in arrays of $size rows each.
+ * @method \Cake\Collection\CollectionInterface chunk($size) Groups the results in arrays of $size rows each.
  * @method bool isEmpty($size) Returns true if this query found no results.
  */
 class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
