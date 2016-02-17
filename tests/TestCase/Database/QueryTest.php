@@ -261,7 +261,6 @@ class QueryTest extends TestCase
      */
     public function testSelectAliasedJoins()
     {
-        $this->markTestSkipped('This test fails on travis for older PHP.');
         $query = new Query($this->connection);
         $result = $query
             ->select(['title', 'name'])
@@ -3512,8 +3511,6 @@ class QueryTest extends TestCase
         $this->assertCount(0, $result, 'Unbuffered queries only have a count when results are fetched');
 
         $list = $result->fetchAll('assoc');
-        $this->skipIf(count($list) === 0, 'This test fails oddly on travis with PHP 5.6');
-
         $this->assertCount(3, $list);
         $result->closeCursor();
 
