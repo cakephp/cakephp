@@ -428,7 +428,7 @@ class FormHelper extends Helper
         }
 
         $actionAttr = $templater->formatAttributes(['action' => $action, 'escape' => false]);
-        return $templater->format('formStart', [
+        return $this->formatTemplate('formStart', [
             'attrs' => $templater->formatAttributes($htmlAttributes) . $actionAttr
         ]) . $append;
     }
@@ -529,10 +529,9 @@ class FormHelper extends Helper
             $out .= $this->secure($this->fields, $secureAttributes);
             $this->fields = [];
         }
-        $templater = $this->templater();
-        $out .= $templater->format('formEnd', []);
+        $out .= $this->formatTemplate('formEnd', []);
 
-        $templater->pop();
+        $this->templater()->pop();
         $this->requestType = null;
         $this->_context = null;
         $this->_idPrefix = $this->config('idPrefix');
@@ -1057,7 +1056,7 @@ class FormHelper extends Helper
         if (!$this->templater()->get($groupTemplate)) {
             $groupTemplate = 'formGroup';
         }
-        return $this->templater()->format($groupTemplate, [
+        return $this->formatTemplate($groupTemplate, [
             'input' => $options['input'],
             'label' => $options['label'],
             'error' => $options['error'],
@@ -1078,7 +1077,7 @@ class FormHelper extends Helper
             $inputContainerTemplate = 'inputContainer' . $options['errorSuffix'];
         }
 
-        return $this->templater()->format($inputContainerTemplate, [
+        return $this->formatTemplate($inputContainerTemplate, [
             'content' => $options['content'],
             'error' => $options['error'],
             'required' => $options['options']['required'] ? ' required' : '',
@@ -1668,7 +1667,7 @@ class FormHelper extends Helper
             'escape' => false
         ]);
 
-        $out = $templater->format('formStart', [
+        $out = $this->formatTemplate('formStart', [
             'attrs' => $templater->formatAttributes($formOptions) . $action
         ]);
         $out .= $this->hidden('_method', ['value' => $requestMethod]);
@@ -1683,7 +1682,7 @@ class FormHelper extends Helper
             unset($options['data']);
         }
         $out .= $this->secure($fields);
-        $out .= $templater->format('formEnd', []);
+        $out .= $this->formatTemplate('formEnd', []);
 
         if ($options['block']) {
             if ($options['block'] === true) {
