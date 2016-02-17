@@ -2448,7 +2448,7 @@ class QueryTest extends TestCase
     {
         $query = new Query($this->connection);
 
-        $expr = $query->newExpr()->equalFields('article_id', 'author_id');
+        $expr = $query->newExpr()->equalFields('article_id', 'user_id');
 
         $query->update('comments')
             ->set($expr)
@@ -2456,7 +2456,7 @@ class QueryTest extends TestCase
         $result = $query->sql();
 
         $this->assertQuotedQuery(
-            'UPDATE <comments> SET <article_id> = \(<author_id>\) WHERE <id> = :',
+            'UPDATE <comments> SET <article_id> = \(<user_id>\) WHERE <id> = :',
             $result,
             !$this->autoQuote
         );
