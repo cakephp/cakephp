@@ -82,7 +82,7 @@ class Security
      *
      * @param string $hash Method to use (sha1/sha256/md5 etc.)
      * @return void
-     * @see Security::hash()
+     * @see \Cake\Utility\Security::hash()
      */
     public static function setHash($hash)
     {

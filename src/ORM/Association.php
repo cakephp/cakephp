@@ -964,7 +964,7 @@ abstract class Association
      * @param array|\ArrayObject $options The options for saving associated data.
      * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
      * the saved entity
-     * @see Table::save()
+     * @see \Cake\ORM\Table::save()
      */
     abstract public function saveAssociated(EntityInterface $entity, array $options = []);
 }

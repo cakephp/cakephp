@@ -214,7 +214,7 @@ class View implements EventDispatcherInterface
      * per element.
      *
      * @var string
-     * @see View::element()
+     * @see \Cake\View\View::element()
      */
     public $elementCache = 'default';
 
@@ -665,7 +665,7 @@ class View implements EventDispatcherInterface
      * Get the names of all the existing blocks.
      *
      * @return array An array containing the blocks.
-     * @see ViewBlock::keys()
+     * @see \Cake\View\ViewBlock::keys()
      */
     public function blocks()
     {
@@ -694,7 +694,7 @@ class View implements EventDispatcherInterface
      *
      * @param string $name The name of the block to capture for.
      * @return void
-     * @see ViewBlock::start()
+     * @see \Cake\View\ViewBlock::start()
      */
     public function start($name)
     {
@@ -709,7 +709,7 @@ class View implements EventDispatcherInterface
      * @param string $name Name of the block
      * @param mixed $value The content for the block.
      * @return void
-     * @see ViewBlock::concat()
+     * @see \Cake\View\ViewBlock::concat()
      */
     public function append($name, $value = null)
     {
@@ -724,7 +724,7 @@ class View implements EventDispatcherInterface
      * @param string $name Name of the block
      * @param mixed $value The content for the block.
      * @return void
-     * @see ViewBlock::concat()
+     * @see \Cake\View\ViewBlock::concat()
      */
     public function prepend($name, $value)
     {
@@ -738,7 +738,7 @@ class View implements EventDispatcherInterface
      * @param string $name Name of the block
      * @param mixed $value The content for the block.
      * @return void
-     * @see ViewBlock::set()
+     * @see \Cake\View\ViewBlock::set()
      */
     public function assign($name, $value)
     {
@@ -751,7 +751,7 @@ class View implements EventDispatcherInterface
      *
      * @param string $name Name of the block
      * @return void
-     * @see ViewBlock::set()
+     * @see \Cake\View\ViewBlock::set()
      */
     public function reset($name)
     {
@@ -765,7 +765,7 @@ class View implements EventDispatcherInterface
      * @param string $name Name of the block
      * @param string $default Default text
      * @return string default The block content or $default if the block does not exist.
-     * @see ViewBlock::get()
+     * @see \Cake\View\ViewBlock::get()
      */
     public function fetch($name, $default = '')
     {
@@ -776,7 +776,7 @@ class View implements EventDispatcherInterface
      * End a capturing block. The compliment to View::start()
      *
      * @return void
-     * @see ViewBlock::end()
+     * @see \Cake\View\ViewBlock::end()
      */
     public function end()
     {
@@ -1014,7 +1014,7 @@ class View implements EventDispatcherInterface
      * @param string $name Name of the helper to load.
      * @param array $config Settings for the helper
      * @return \Cake\View\Helper a constructed helper object.
-     * @see HelperRegistry::load()
+     * @see \Cake\View\HelperRegistry::load()
      */
     public function loadHelper($name, array $config = [])
     {

@@ -95,7 +95,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      * @param array $types associative array of types to be associated with the
      * passed arguments
      * @param bool $prepend Whether to prepend or append to the list of arguments
-     * @see FunctionExpression::__construct() for more details.
+     * @see \Cake\Database\Expression\FunctionExpression::__construct() for more details.
      * @return $this
      */
     public function add($params, $types = [], $prepend = false)

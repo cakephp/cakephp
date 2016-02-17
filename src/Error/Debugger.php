@@ -174,7 +174,7 @@ class Debugger
      * @param mixed $var The variable to dump.
      * @param int $depth The depth to output to. Defaults to 3.
      * @return void
-     * @see Debugger::exportVar()
+     * @see \Cake\Error\Debugger::exportVar()
      * @link http://book.cakephp.org/3.0/en/development/debugging.html#outputting-values
      */
     public static function dump($var, $depth = 3)
@@ -528,7 +528,7 @@ class Debugger
      * @param int $depth The current depth, used for tracking recursion.
      * @param int $indent The current indentation level.
      * @return string
-     * @see Debugger::exportVar()
+     * @see \Cake\Error\Debugger::exportVar()
      */
     protected static function _object($var, $depth, $indent)
     {

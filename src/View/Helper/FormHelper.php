@@ -168,8 +168,8 @@ class FormHelper extends Helper
      * An array of field names that have been excluded from
      * the Token hash used by SecurityComponent's validatePost method
      *
-     * @see FormHelper::_secure()
-     * @see SecurityComponent::validatePost()
+     * @see \Cake\View\Helper\FormHelper::_secure()
+     * @see \Cake\Controller\Component\SecurityComponent::validatePost()
      * @var array
      */
     protected $_unlockedFields = [];
@@ -192,7 +192,7 @@ class FormHelper extends Helper
      * Context provider methods.
      *
      * @var array
-     * @see addContextProvider
+     * @see \Cake\View\Helper\FormHelper::addContextProvider()
      */
     protected $_contextProviders = [];
 

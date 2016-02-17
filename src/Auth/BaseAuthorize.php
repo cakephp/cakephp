@@ -21,7 +21,7 @@ use Cake\Network\Request;
 /**
  * Abstract base authorization adapter for AuthComponent.
  *
- * @see AuthComponent::$authenticate
+ * @see \Cake\Controller\Component\AuthComponent::$authenticate
  */
 abstract class BaseAuthorize
 {

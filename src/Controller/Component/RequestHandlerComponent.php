@@ -58,7 +58,7 @@ class RequestHandlerComponent extends Component
      * Contains the file extension parsed out by the Router
      *
      * @var string
-     * @see Router::extensions()
+     * @see \Cake\Routing\Router::extensions()
      */
     public $ext = null;
 
@@ -133,7 +133,7 @@ class RequestHandlerComponent extends Component
      *
      * @param array $config The config data.
      * @return void
-     * @see Router::extensions()
+     * @see \Cake\Routing\Router::extensions()
      */
     public function initialize(array $config)
     {
@@ -535,7 +535,7 @@ class RequestHandlerComponent extends Component
      * @param string $type Type of response to send (e.g: 'ajax')
      * @param array $options Array of options to use
      * @return void
-     * @see RequestHandlerComponent::respondAs()
+     * @see \Cake\Controller\Component\RequestHandlerComponent::respondAs()
      */
     public function renderAs(Controller $controller, $type, array $options = [])
     {

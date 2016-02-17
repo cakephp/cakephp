@@ -22,7 +22,7 @@ use Cake\Collection\Collection;
  * results.
  *
  * @internal
- * @see Collection::stopWhen()
+ * @see \Cake\Collection\Collection::stopWhen()
  */
 class StoppableIterator extends Collection
 {
