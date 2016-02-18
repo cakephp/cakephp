@@ -301,7 +301,7 @@ class Plugin
      *
      * @param string $plugin name of the plugin
      * @return mixed
-     * @see Plugin::load() for examples of bootstrap configuration
+     * @see \Cake\Core\Plugin::load() for examples of bootstrap configuration
      */
     public static function bootstrap($plugin)
     {

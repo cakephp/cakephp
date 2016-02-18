@@ -56,7 +56,7 @@ class AssetsTask extends Shell
     /**
      * Get list of plugins to process. Plugins without a webroot directory are skipped.
      *
-     * @param string|string $name Name of plugin for which to symlink assets.
+     * @param string|null $name Name of plugin for which to symlink assets.
      *   If null all plugins will be processed.
      * @return array List of plugins with meta data.
      */

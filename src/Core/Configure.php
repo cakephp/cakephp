@@ -46,7 +46,7 @@ class Configure
      * Configured engine classes, used to load config files from resources
      *
      * @var array
-     * @see Configure::load()
+     * @see \Cake\Core\Configure::load()
      */
     protected static $_engines = [];
 

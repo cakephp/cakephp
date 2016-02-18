@@ -61,7 +61,7 @@ class Validation
      * @param string|array $check Value to check.
      * @return bool Success.
      * @deprecated 3.0.2 Use Validation::notBlank() instead.
-     * @see Validation::notBlank()
+     * @see \Cake\Validation\Validation::notBlank()
      */
     public static function notEmpty($check)
     {
@@ -151,7 +151,7 @@ class Validation
      * @param bool $deep set to true this will check the Luhn algorithm of the credit card.
      * @param string|null $regex A custom regex can also be passed, this will be used instead of the defined regex values
      * @return bool Success
-     * @see Validation::luhn()
+     * @see \Cake\Validation\Validation::luhn()
      */
     public static function cc($check, $type = 'fast', $deep = false, $regex = null)
     {
@@ -412,11 +412,11 @@ class Validation
      * All values matching the "date" core validation rule, and the "time" one will be valid
      *
      * @param string|\DateTime $check Value to check
-     * @param string|array $dateFormat Format of the date part. See Validation::date for more information.
+     * @param string|array $dateFormat Format of the date part. See Validation::date() for more information.
      * @param string|null $regex Regex for the date part. If a custom regular expression is used this is the only validation that will occur.
      * @return bool True if the value is valid, false otherwise
-     * @see Validation::date
-     * @see Validation::time
+     * @see \Cake\Validation\Validation::date()
+     * @see \Cake\Validation\Validation::time()
      */
     public static function datetime($check, $dateFormat = 'ymd', $regex = null)
     {
@@ -1050,7 +1050,7 @@ class Validation
      * @param array $options Options for the validation logic.
      * @return bool
      * @link https://en.wikipedia.org/wiki/Latitude
-     * @see Validation::geoCoordinate()
+     * @see \Cake\Validation\Validation::geoCoordinate()
      */
     public static function latitude($value, array $options = [])
     {
@@ -1065,7 +1065,7 @@ class Validation
      * @param array $options Options for the validation logic.
      * @return bool
      * @link https://en.wikipedia.org/wiki/Longitude
-     * @see Validation::geoCoordinate()
+     * @see \Cake\Validation\Validation::geoCoordinate()
      */
     public static function longitude($value, array $options = [])
     {

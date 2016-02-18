@@ -70,7 +70,7 @@ interface RepositoryInterface
      * @throws \Cake\Datasource\Exception\RecordNotFoundException if the record with such id
      * could not be found
      * @return \Cake\Datasource\EntityInterface
-     * @see RepositoryInterface::find()
+     * @see \Cake\Datasource\RepositoryInterface::find()
      */
     public function get($primaryKey, $options = []);
 
@@ -110,7 +110,7 @@ interface RepositoryInterface
      * @param mixed $conditions Conditions to be used, accepts anything Query::where()
      * can take.
      * @return int Count Returns the affected rows.
-     * @see RepositoryInterface::delete()
+     * @see \Cake\Datasource\RepositoryInterface::delete()
      */
     public function deleteAll($conditions);
 

@@ -24,7 +24,7 @@ namespace Cake\Network;
  *
  * It is most convenient to get this object via `Request::cors()`.
  *
- * @see Cake\Network\Response::cors()
+ * @see \Cake\Network\Response::cors()
  */
 class CorsBuilder
 {
