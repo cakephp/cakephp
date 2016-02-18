@@ -113,6 +113,7 @@ class Hash
      * - `{n}.User[id]` Get the name of every user with an id key.
      * - `{n}.User[id>=2]` Get the name of every user with an id key greater than or equal to 2.
      * - `{n}.User[username=/^paul/]` Get User elements with username matching `^paul`.
+     * - `{n}.User[id=1].name` Get the Users name with id matching `1`.
      *
      * @param array|\ArrayAccess $data The data to extract from.
      * @param string $path The path to extract.
