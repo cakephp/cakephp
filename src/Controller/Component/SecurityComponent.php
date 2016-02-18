@@ -16,6 +16,7 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\Controller;
+use Cake\Controller\Exception\AuthSecurityException;
 use Cake\Controller\Exception\SecurityException;
 use Cake\Core\Configure;
 use Cake\Event\Event;
@@ -103,8 +104,17 @@ class SecurityComponent extends Component
         $controller = $event->subject();
         $this->session = $this->request->session();
         $this->_action = $this->request->params['action'];
-        $this->_secureRequired($controller);
-        $this->_authRequired($controller);
+        try {
+            $this->_secureRequired($controller);
+        } catch (SecurityException $se) {
+            $this->blackHole($controller, $se->getType(), $se);
+        }
+        try {
+            $this->_authRequired($controller);
+        } catch (AuthSecurityException $ase) {
+            $this->blackHole($controller, $ase->getType(), $ase);
+        }
+
 
         $hasData = !empty($this->request->data);
         $isNotRequestAction = (
@@ -122,8 +132,8 @@ class SecurityComponent extends Component
             if ($this->_config['validatePost']) {
                 try {
                     $this->_validatePost($controller);
-                } catch (SecurityException $ex) {
-                    return $this->blackHole($controller, 'auth', $ex);
+                } catch (SecurityException $se) {
+                    return $this->blackHole($controller, $se->getType(), $se);
                 }
             }
         }
@@ -224,9 +234,9 @@ class SecurityComponent extends Component
 
             if (in_array($this->_action, $requireSecure) || $requireSecure === ['*']) {
                 if (!$this->request->is('ssl')) {
-                    if (!$this->blackHole($controller, 'secure')) {
-                        return null;
-                    }
+                    throw new SecurityException(
+                        'Request is not SSL and the action is required to be secure'
+                    );
                 }
             }
         }
@@ -250,27 +260,33 @@ class SecurityComponent extends Component
 
             if (in_array($this->request->params['action'], $requireAuth) || $requireAuth == ['*']) {
                 if (!isset($controller->request->data['_Token'])) {
-                    if (!$this->blackHole($controller, 'auth')) {
-                        return false;
-                    }
+                    throw new AuthSecurityException(sprintf('%s was not found in request data.', '_Token'));
                 }
 
                 if ($this->session->check('_Token')) {
                     $tData = $this->session->read('_Token');
 
                     if (!empty($tData['allowedControllers']) &&
-                        !in_array($this->request->params['controller'], $tData['allowedControllers']) ||
-                        !empty($tData['allowedActions']) &&
+                        !in_array($this->request->params['controller'], $tData['allowedControllers'])) {
+                        throw new AuthSecurityException(
+                            sprintf('Controller %s was not found in allowed controllers: %s.',
+                                $this->request->params['controller'],
+                                implode(', ', (array)$tData['allowedControllers'])
+                            )
+                        );
+                    }
+                    if (!empty($tData['allowedActions']) &&
                         !in_array($this->request->params['action'], $tData['allowedActions'])
                     ) {
-                        if (!$this->blackHole($controller, 'auth')) {
-                            return false;
-                        }
+                        throw new AuthSecurityException(
+                            sprintf('Controller %s was not found in allowed controllers: %s.',
+                                $this->request->params['action'],
+                                implode(', ', (array)$tData['allowedActions'])
+                            )
+                        );
                     }
                 } else {
-                    if (!$this->blackHole($controller, 'auth')) {
-                        return false;
-                    }
+                    throw new AuthSecurityException(sprintf('%s was not found in session.', '_Token'));
                 }
             }
         }
@@ -317,13 +333,13 @@ class SecurityComponent extends Component
 
         $message = '%s was not found in request data.';
         if (!isset($check['_Token'])) {
-            throw new SecurityException(sprintf($message, '_Token'));
+            throw new AuthSecurityException(sprintf($message, '_Token'));
         }
         if (!isset($check['_Token']['fields'])) {
-            throw new SecurityException(sprintf($message, '_Token.fields'));
+            throw new AuthSecurityException(sprintf($message, '_Token.fields'));
         }
         if (!isset($check['_Token']['unlocked'])) {
-            throw new SecurityException(sprintf($message, '_Token.unlocked'));
+            throw new AuthSecurityException(sprintf($message, '_Token.unlocked'));
         }
         if (Configure::read('debug') && !isset($check['_Token']['debug'])) {
             throw new SecurityException(sprintf($message, '_Token.debug'));
@@ -418,6 +434,7 @@ class SecurityComponent extends Component
         return $fieldList;
     }
 
+
     /**
      * Get the unlocked string
      *
@@ -433,7 +450,7 @@ class SecurityComponent extends Component
      * Create a message for humans to understand why Security token is not matching
      *
      * @param $controller
-     * @return string message to explain why token is not matching
+     * @return array messages to explain why token is not matching
      */
     protected function _debugPostTokenNotMatching($controller, $hashParts)
     {
@@ -445,28 +462,61 @@ class SecurityComponent extends Component
         }
         $expectedFields = $expectedParts[1];
         $dataFields = unserialize($hashParts[1]);
-        //@todo: refactor this vvvv
+        $fieldsMessages = $this->_debugCheckFields(
+            $dataFields,
+            $expectedFields,
+            'On request data field \'%s\', was injected and not expected',
+            'On request data field \'%s\', expected value was \'%s\', not matching with post data value \'%s\'',
+            'On request data there were missing expected fields: \'%s\''
+        );
+        $expectedUnlockedFields = Hash::get($expectedParts, 2);
+        $dataUnlockedFields = Hash::get($hashParts, 2) ?: [];
+        if (!empty($dataUnlockedFields)) {
+            $dataUnlockedFields = explode('|', $dataUnlockedFields);
+        }
+        $unlockFieldsMessages = $this->_debugCheckFields(
+            $dataUnlockedFields,
+            $expectedUnlockedFields,
+            'On request data field \'%s\', was not expected as unlocked',
+            null,
+            'On request data there were missing expected unlocked fields: \'%s\''
+        );
+
+        $messages = array_merge($fieldsMessages, $unlockFieldsMessages);
+        return implode(', ', $messages);
+    }
+
+    /**
+     * Iterates data array to check against expected
+     * @param $dataFields
+     * @param $expectedFields
+     * @param $intKeyMessage
+     * @param $stringKeyMessage
+     * @param $missingMessage
+     * @return array Messages
+     */
+    protected function _debugCheckFields($dataFields, $expectedFields, $intKeyMessage = '', $stringKeyMessage = '', $missingMessage = '')
+    {
+        $messages = [];
         foreach ($dataFields as $key => $value) {
             if (is_int($key)) {
                 $foundKey = array_search($value, $expectedFields);
                 if ($foundKey === false) {
-                    $messages[] = sprintf('On request data field \'%s\', was injected and not expected', $value);
+                    $messages[] = sprintf($intKeyMessage, $value);
                 } else {
                     unset($expectedFields[$foundKey]);
                 }
             } elseif (is_string($key)) {
                 if ($value !== $expectedFields[$key]) {
-                    $messages[] = sprintf('On request data field \'%s\', expected value was \'%s\', not matching with post data value \'%s\'', $key, $expectedFields[$key], $value);
+                    $messages[] = sprintf($stringKeyMessage, $key, $expectedFields[$key], $value);
                 }
                 unset($expectedFields[$key]);
             }
         }
-
         if (count($expectedFields) > 0) {
-            $messages[] = sprintf('On request data there were missing expected fields: \'%s\'', implode(', ', $expectedFields));
+            $messages[] = sprintf($missingMessage, implode('\', \'', $expectedFields));
         }
-        //@todo check for unlocked fields check imploded value is equal to expected
-        return implode(', ', $messages);
+        return $messages;
     }
 
     /**

@@ -12,24 +12,10 @@
  */
 namespace Cake\Controller\Exception;
 
-use Cake\Network\Exception\BadRequestException;
-
 /**
- * Security exception - used when SecurityComponent detects any issue with the current request
+ * Auth Security exception - used when SecurityComponent detects any issue with the current request
  */
-class SecurityException extends BadRequestException
+class AuthSecurityException extends SecurityException
 {
-    /**
-     * Security Exception type
-     * @var string
-     */
-    protected $_type = 'secure';
-
-    /**
-     * Getter for type
-     * @return string
-     */
-    public function getType() {
-        return $this->_type;
-    }
+    public $type = 'auth';
 }
