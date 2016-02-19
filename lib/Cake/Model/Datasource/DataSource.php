@@ -368,7 +368,7 @@ class DataSource extends Object {
 				} else {
 					$found = false;
 					foreach (array_reverse($stack) as $assocData) {
-						if (isset($data[$assocData]) && isset($data[$assocData][$insertKey])) {
+						if (is_string($assocData) && isset($data[$assocData]) && isset($data[$assocData][$insertKey])) {
 							$val = $data[$assocData][$insertKey];
 							$found = true;
 							break;
