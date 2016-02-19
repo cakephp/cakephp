@@ -129,7 +129,6 @@ class Permission extends AppModel {
 			$perms = Hash::extract($perms, '{n}.' . $this->alias);
 			foreach ($perms as $perm) {
 				if ($action === '*') {
-
 					foreach ($permKeys as $key) {
 						if (!empty($perm)) {
 							if ($perm[$key] == -1) {
