@@ -517,6 +517,7 @@ trait EntityTrait
      */
     protected static function _accessor($property, $type)
     {
+        $property = Inflector::underscore($property);
         $class = static::class;
         if (isset(static::$_accessors[$class][$type][$property])) {
             return static::$_accessors[$class][$type][$property];
