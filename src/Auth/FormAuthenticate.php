@@ -25,7 +25,7 @@ use Cake\Network\Response;
  * ```
  *  $this->Auth->authenticate = [
  *      'Form' => [
- *          'scope' => ['Users.active' => 1]
+ *          'finder' => ['auth' => ['some_finder_option' => 'some_value']]
  *      ]
  *  ]
  * ```
