@@ -1249,7 +1249,7 @@ class View implements EventDispatcherInterface
             $themePaths = App::path('Template', Inflector::camelize($this->theme));
 
             if ($plugin) {
-                for ($i = 0, $count = count($templatePaths); $i < $count; $i++) {
+                for ($i = 0, $count = count($themePaths); $i < $count; $i++) {
                     array_unshift($themePaths, $themePaths[$i] . 'Plugin' . DS . $plugin . DS);
                 }
             }
