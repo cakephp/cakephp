@@ -16,6 +16,7 @@ namespace Cake\Utility;
 
 use Cake\Utility\Crypto\Mcrypt;
 use Cake\Utility\Crypto\OpenSsl;
+use Cake\Utility\Text;
 use InvalidArgumentException;
 
 /**
@@ -87,6 +88,32 @@ class Security
     public static function setHash($hash)
     {
         static::$hashType = $hash;
+    }
+
+    /**
+     * Get random bytes from a secure source.
+     *
+     * This method will fall back to an insecure source an trigger a warning
+     * if it cannot find a secure source of random data.
+     *
+     * @param int $length The number of bytes you want.
+     * @return string Random bytes in binary.
+     */
+    public static function randomBytes($length)
+    {
+        if (function_exists('random_bytes')) {
+            return random_bytes($length);
+        }
+        if (function_exists('openssl_random_pseudo_bytes')) {
+            return openssl_random_pseudo_bytes($length);
+        }
+        trigger_error(
+            'You do not have a safe source of random data available. ' .
+            'Install either the openssl extension, or paragonie/random_compat. ' .
+            'Falling back to an insecure random source.',
+            E_USER_WARNING
+        );
+        return static::hash(Text::uuid() . uniqid(mt_rand(), true), 'sha512', true);
     }
 
     /**
