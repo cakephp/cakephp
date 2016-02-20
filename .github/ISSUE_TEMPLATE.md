@@ -1,15 +1,18 @@
-Remember, an issue is not the place to ask questions. You can use [Stack Overflow](http://stackoverflow.com/questions/tagged/cakephp) for that.
+#### Preamble
+This is a (multiple allowed):
+* [x] bug
+* [ ] enhancement
+* [ ] feature-discussion (RFC)
 
-Before you open an issue, please check if a similar issue already exists or has been closed before.
+## DESCRIPTIVE TITLE HERE
+CakePHP Version: EXACT RELEASE VERSION OR COMMIT HASH, HERE.
+Platform and Target: YOUR WEB-SERVER, DATABASE AND OTHER RELEVANT INFO AND HOW THE REQUEST IS BEING MADE, HERE.
 
-### When reporting a bug, please be sure to include the following:
-- [ ] A descriptive title
-- [ ] What version of CakePHP you're using, and the platform(s) you're running it on
-- [ ] The behavior you expect to see, and the actual behavior
-- [ ] An *isolated* way to reproduce the behavior
+### What you did
+EXPLAIN WHAT YOU DID, PREFERABLY WITH CODE EXAMPLES, HERE.
 
-### When you open an issue for a feature request, please add as much detail as possible:
-- [ ] A descriptive title
-- [ ] A description of the problem you're trying to solve, including *why* you think this is a problem
-- [ ] An overview of the suggested solution
-- [ ] If the feature changes current behavior, reasons why your solution is better
+### Expected Behavior
+EXPLAIN WHAT IS TO BE EXPECTED, HERE.
+
+### Actual Behavior
+EXPLAIN WHAT IS ACTUALLY HAPPENING, HERE.
