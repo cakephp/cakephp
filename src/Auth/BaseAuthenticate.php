@@ -144,7 +144,13 @@ abstract class BaseAuthenticate implements EventListenerInterface
             $options['contain'] = $config['contain'];
         }
 
-        $query = $table->find($config['finder'], $options);
+        $finder = $config['finder'];
+        if (is_array($finder)) {
+            $options += current($finder);
+            $finder = key($finder);
+        }
+
+        $query = $table->find($finder, $options);
 
         return $query;
     }
