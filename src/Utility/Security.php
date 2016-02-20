@@ -113,7 +113,11 @@ class Security
             'Falling back to an insecure random source.',
             E_USER_WARNING
         );
-        return static::hash(Text::uuid() . uniqid(mt_rand(), true), 'sha512', true);
+        $bytes = '';
+        while ($bytes < $length) {
+            $bytes .= static::hash(Text::uuid() . uniqid(mt_rand(), true), 'sha512', true);
+        }
+        return substr($bytes, 0, $length);
     }
 
     /**
