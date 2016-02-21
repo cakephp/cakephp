@@ -98,9 +98,14 @@ class PaginatorHelper extends Helper
     {
         parent::__construct($View, $config);
 
+        $query = $this->request->query;
+        if (isset($query['page']) && $query['page'] == 1) {
+            unset($query['page']);
+        }
+
         $this->config(
             'options.url',
-            array_merge($this->request->params['pass'], $this->request->query)
+            array_merge($this->request->params['pass'], ['?' => $query])
         );
     }
 
