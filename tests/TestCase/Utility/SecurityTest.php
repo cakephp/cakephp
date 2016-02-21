@@ -292,4 +292,18 @@ class SecurityTest extends TestCase
         Security::salt('foobarbaz');
         $this->assertEquals('foobarbaz', Security::salt());
     }
+
+    /**
+     * Test the random method.
+     *
+     * @return void
+     */
+    public function testRandomBytes()
+    {
+        $value = Security::randomBytes(16);
+        $this->assertSame(16, strlen($value));
+
+        $value = Security::randomBytes(64);
+        $this->assertSame(64, strlen($value));
+    }
 }
