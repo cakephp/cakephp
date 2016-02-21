@@ -1255,11 +1255,14 @@ class View implements EventDispatcherInterface
             }
         }
 
+        $class = new \ReflectionClass('\Cake\View\View');
+        $cake = dirname(dirname($class->getFilename()));
+
         $paths = array_merge(
             $themePaths,
             $pluginPaths,
             $templatePaths,
-            [dirname(__DIR__) . DS . 'Template' . DS]
+            [$cake . DIRECTORY_SEPARATOR . 'Template' . DIRECTORY_SEPARATOR]
         );
 
         if ($plugin !== null) {
