@@ -442,7 +442,7 @@ class Route
             $hostOptions['_base'] = $context['_base'];
         }
 
-        $query = !empty($url['?']) ? array_filter((array)$url['?'], 'strlen') : [];
+        $query = !empty($url['?']) ? (array)$url['?'] : [];
         unset($url['_host'], $url['_scheme'], $url['_port'], $url['_base'], $url['?']);
 
         // Move extension into the hostOptions so its not part of
@@ -616,7 +616,7 @@ class Route
             $out .= '.' . $params['_ext'];
         }
         if (!empty($query)) {
-            $out .= '?' . http_build_query($query);
+            $out .= rtrim('?' . http_build_query($query), '?');
         }
         return $out;
     }

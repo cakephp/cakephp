@@ -799,7 +799,7 @@ class PaginatorHelperTest extends TestCase
         ];
 
         $this->Paginator->request->params['pass'] = [2];
-        $this->Paginator->request->query = ['page' => 1, 'foo' => 'bar', 'x' => 'y', 'num' => 0, 'empty' => ''];
+        $this->Paginator->request->query = ['page' => 1, 'foo' => 'bar', 'x' => 'y', 'num' => 0];
         $this->View->request = $this->Paginator->request;
         $this->Paginator = new PaginatorHelper($this->View);
 
