@@ -58,7 +58,7 @@ class RequestHandlerComponent extends Component
      * Contains the file extension parsed out by the Router
      *
      * @var string
-     * @see Router::extensions()
+     * @see \Cake\Routing\Router::extensions()
      */
     public $ext = null;
 
@@ -133,7 +133,7 @@ class RequestHandlerComponent extends Component
      *
      * @param array $config The config data.
      * @return void
-     * @see Router::extensions()
+     * @see \Cake\Routing\Router::extensions()
      */
     public function initialize(array $config)
     {
@@ -285,10 +285,10 @@ class RequestHandlerComponent extends Component
      * "304 Not Modified" header.
      *
      * - If Router::extensions() is enabled, the layout and template type are
-     *   switched based on the parsed extension or Accept-Type header. For example,
+     *   switched based on the parsed extension or `Accept` header. For example,
      *   if `controller/action.xml` is requested, the view path becomes
      *   `app/View/Controller/xml/action.ctp`. Also if `controller/action` is
-     *   requested with `Accept-Type: application/xml` in the headers the view
+     *   requested with `Accept: application/xml` in the headers the view
      *   path will become `app/View/Controller/xml/action.ctp`. Layout and template
      *   types will only switch to mime-types recognized by Cake\Network\Response.
      *   If you need to declare additional mime-types, you can do so using
@@ -535,7 +535,7 @@ class RequestHandlerComponent extends Component
      * @param string $type Type of response to send (e.g: 'ajax')
      * @param array $options Array of options to use
      * @return void
-     * @see RequestHandlerComponent::respondAs()
+     * @see \Cake\Controller\Component\RequestHandlerComponent::respondAs()
      */
     public function renderAs(Controller $controller, $type, array $options = [])
     {
@@ -564,11 +564,11 @@ class RequestHandlerComponent extends Component
             $builder->className($viewClass);
         } else {
             if (empty($this->_renderType)) {
-                $builder->templatePath($builder->templatePath() . DS . $type);
+                $builder->templatePath($builder->templatePath() . DIRECTORY_SEPARATOR . $type);
             } else {
                 $builder->templatePath(preg_replace(
                     "/([\/\\\\]{$this->_renderType})$/",
-                    DS . $type,
+                    DIRECTORY_SEPARATOR . $type,
                     $builder->templatePath()
                 ));
             }

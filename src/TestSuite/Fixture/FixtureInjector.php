@@ -89,7 +89,7 @@ class FixtureInjector implements PHPUnit_Framework_TestListener
      * Not Implemented
      *
      * @param \PHPUnit_Framework_Test $test The test to add errors from.
-     * @param Exception $e The exception
+     * @param \Exception $e The exception
      * @param float $time current time
      * @return void
      */

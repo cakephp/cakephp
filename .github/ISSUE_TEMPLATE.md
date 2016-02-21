@@ -1,0 +1,18 @@
+#### Preamble
+This is a (multiple allowed):
+* [x] bug
+* [ ] enhancement
+* [ ] feature-discussion (RFC)
+
+## DESCRIPTIVE TITLE HERE
+CakePHP Version: EXACT RELEASE VERSION OR COMMIT HASH, HERE.
+Platform and Target: YOUR WEB-SERVER, DATABASE AND OTHER RELEVANT INFO AND HOW THE REQUEST IS BEING MADE, HERE.
+
+### What you did
+EXPLAIN WHAT YOU DID, PREFERABLY WITH CODE EXAMPLES, HERE.
+
+### Expected Behavior
+EXPLAIN WHAT IS TO BE EXPECTED, HERE.
+
+### Actual Behavior
+EXPLAIN WHAT IS ACTUALLY HAPPENING, HERE.

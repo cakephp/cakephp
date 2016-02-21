@@ -71,6 +71,7 @@ class Response
         415 => 'Unsupported Media Type',
         416 => 'Requested range not satisfiable',
         417 => 'Expectation Failed',
+        422 => 'Unprocessable Entity',
         429 => 'Too Many Requests',
         500 => 'Internal Server Error',
         501 => 'Not Implemented',
@@ -341,14 +342,14 @@ class Response
     /**
      * Buffer string or callable for response message
      *
-     * @var string
+     * @var string|callable
      */
     protected $_body = null;
 
     /**
      * File object for file to be read out as response
      *
-     * @var File
+     * @var \Cake\Filesystem\File
      */
     protected $_file = null;
 

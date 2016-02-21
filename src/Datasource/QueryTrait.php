@@ -39,7 +39,7 @@ trait QueryTrait
      * When set, query execution will be bypassed.
      *
      * @var \Cake\Datasource\ResultSetInterface
-     * @see setResult()
+     * @see \Cake\Datasource\QueryTrait::setResult()
      */
     protected $_results;
 

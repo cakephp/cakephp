@@ -92,7 +92,7 @@ class Type
      *
      * @param string $name type identifier
      * @throws \InvalidArgumentException If type identifier is unknown
-     * @return Type
+     * @return \Cake\Database\Type
      */
     public static function build($name)
     {
@@ -105,7 +105,7 @@ class Type
         if (is_string(static::$_types[$name])) {
             return static::$_builtTypes[$name] = new static::$_types[$name]($name);
         }
-        
+
         return static::$_builtTypes[$name] = static::$_types[$name];
     }
 

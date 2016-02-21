@@ -43,7 +43,7 @@ class RoutingFilter extends DispatcherFilter
      * If Routes have not been loaded they will be loaded, and config/routes.php will be run.
      *
      * @param \Cake\Event\Event $event containing the request, response and additional params
-     * @return void|Cake\Network\Response A response will be returned when a redirect route is encountered.
+     * @return \Cake\Network\Response|null A response will be returned when a redirect route is encountered.
      */
     public function beforeDispatch(Event $event)
     {

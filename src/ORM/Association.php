@@ -504,7 +504,7 @@ abstract class Association
      * - negateMatch: Will append a condition to the passed query for excluding matches.
      *   with this association.
      *
-     * @param Query $query the query to be altered to include the target table data
+     * @param \Cake\ORM\Query $query the query to be altered to include the target table data
      * @param array $options Any extra options or overrides to be taken in account
      * @return void
      * @throws \RuntimeException if the query builder passed does not return a query
@@ -699,13 +699,13 @@ abstract class Association
      */
     protected function _appendFields($query, $surrogate, $options)
     {
-        $fields = $surrogate->clause('select') ?: $options['fields'];
-        $target = $this->_targetTable;
-        $autoFields = $surrogate->autoFields();
-
         if ($query->eagerLoader()->autoFields() === false) {
             return;
         }
+
+        $fields = $surrogate->clause('select') ?: $options['fields'];
+        $target = $this->_targetTable;
+        $autoFields = $surrogate->autoFields();
 
         if (empty($fields) && !$autoFields) {
             if ($options['includeFields'] && ($fields === null || $fields !== false)) {
@@ -720,6 +720,7 @@ abstract class Association
         if (!empty($fields)) {
             $query->select($query->aliasFields($fields, $target->alias()));
         }
+        $query->addDefaultTypes($target);
     }
 
     /**
@@ -963,7 +964,7 @@ abstract class Association
      * @param array|\ArrayObject $options The options for saving associated data.
      * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
      * the saved entity
-     * @see Table::save()
+     * @see \Cake\ORM\Table::save()
      */
     abstract public function saveAssociated(EntityInterface $entity, array $options = []);
 }

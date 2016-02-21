@@ -26,7 +26,7 @@ class File
     /**
      * Folder object of the file
      *
-     * @var Folder
+     * @var \Cake\Filesystem\Folder
      * @link http://book.cakephp.org/3.0/en/core-libraries/file-folder.html
      */
     public $Folder = null;
@@ -338,7 +338,8 @@ class File
         }
         if (isset($this->info['extension'])) {
             return basename($this->name, '.' . $this->info['extension']);
-        } elseif ($this->name) {
+        }
+        if ($this->name) {
             return $this->name;
         }
         return false;

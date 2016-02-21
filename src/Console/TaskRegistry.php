@@ -28,7 +28,7 @@ class TaskRegistry extends ObjectRegistry
     /**
      * Shell to use to set params to tasks.
      *
-     * @var Shell
+     * @var \Cake\Console\Shell
      */
     protected $_Shell;
 

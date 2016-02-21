@@ -104,7 +104,8 @@ class FloatType extends Type
         }
         if (is_numeric($value)) {
             return (float)$value;
-        } elseif (is_string($value) && $this->_useLocaleParser) {
+        }
+        if (is_string($value) && $this->_useLocaleParser) {
             return $this->_parseValue($value);
         }
         if (is_array($value)) {

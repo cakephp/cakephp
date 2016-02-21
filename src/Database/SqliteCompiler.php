@@ -22,6 +22,7 @@ namespace Cake\Database;
  */
 class SqliteCompiler extends QueryCompiler
 {
+
     /**
      * SQLite does not support ORDER BY in UNION queries.
      *

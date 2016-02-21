@@ -19,6 +19,7 @@ use DateTime;
 
 class DateType extends DateTimeType
 {
+
     /**
      * The class to use for representing date objects
      *
@@ -79,7 +80,7 @@ class DateType extends DateTimeType
      *
      * @param string $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
-     * @return \Carbon\Carbon
+     * @return \Cake\I18n\Date|\DateTime
      */
     public function toPHP($value, Driver $driver)
     {
@@ -97,21 +98,5 @@ class DateType extends DateTimeType
     {
         $class = $this->_className;
         return $class::parseDate($value, $this->_localeFormat);
-    }
-
-    /**
-     * Test that toImmutable changes all the methods to create frozen time instances.
-     *
-     * @return void
-     */
-    public function testToImmutableAndToMutable()
-    {
-        $this->type->useImmutable();
-        $this->assertInstanceOf('DateTimeImmutable', $this->type->marshal('2015-11-01'));
-        $this->assertInstanceOf('DateTimeImmutable', $this->type->toPhp('2015-11-01', $this->driver));
-
-        $this->type->useMutable();
-        $this->assertInstanceOf('DateTime', $this->type->marshal('2015-11-01'));
-        $this->assertInstanceOf('DateTime', $this->type->toPhp('2015-11-01', $this->driver));
     }
 }

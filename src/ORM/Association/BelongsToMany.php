@@ -321,7 +321,7 @@ class BelongsToMany extends Association
      * - fields: a list of fields in the target table to include in the result
      * - type: The type of join to be used (e.g. INNER)
      *
-     * @param Query $query the query to be altered to include the target table data
+     * @param \Cake\ORM\Query $query the query to be altered to include the target table data
      * @param array $options Any extra options or overrides to be taken in account
      * @return void
      */
@@ -527,8 +527,8 @@ class BelongsToMany extends Association
      * in the parent entity cannot be traversed
      * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
      * the saved entity
-     * @see Table::save()
-     * @see BelongsToMany::replaceLinks()
+     * @see \Cake\ORM\Table::save()
+     * @see \Cake\ORM\Association\BelongsToMany::replaceLinks()
      */
     public function saveAssociated(EntityInterface $entity, array $options = [])
     {
@@ -684,7 +684,7 @@ class BelongsToMany extends Association
      * ### Example:
      *
      * ```
-     * $newTags = $tags->find('relevant')->execute();
+     * $newTags = $tags->find('relevant')->toArray();
      * $articles->association('tags')->link($article, $newTags);
      * ```
      *

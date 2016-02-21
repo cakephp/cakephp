@@ -446,6 +446,19 @@ class IntegrationTestCaseTest extends IntegrationTestCase
 
         $this->assertHeader('Etag', 'abc123');
     }
+    
+    /**
+     * Test the header contains assertion.
+     *
+     * @return void
+     */
+    public function testAssertHeaderContains()
+    {
+        $this->_response = new Response();
+        $this->_response->header('Etag', 'abc123');
+
+        $this->assertHeaderContains('Etag', 'abc');
+    }
 
     /**
      * Test the content type assertion.

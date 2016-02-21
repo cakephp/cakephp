@@ -14,9 +14,6 @@
  */
 namespace Cake\Auth\Storage;
 
-use Cake\Core\InstanceConfigTrait;
-use Cake\Network\Request;
-
 /**
  * Memory based non-persistent storage for authenticated user record.
  */

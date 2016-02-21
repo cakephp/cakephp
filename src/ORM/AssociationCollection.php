@@ -298,7 +298,7 @@ class AssociationCollection implements IteratorAggregate
     /**
      * Allow looping through the associations
      *
-     * @return ArrayIterator
+     * @return \ArrayIterator
      */
     public function getIterator()
     {

@@ -846,10 +846,10 @@ class TreeBehavior extends Behavior
     protected function _getMax()
     {
         $field = $this->_config['right'];
-        $leftField = $this->_config['leftField'];
+        $rightField = $this->_config['rightField'];
         $edge = $this->_scope($this->_table->find())
             ->select([$field])
-            ->orderDesc($leftField)
+            ->orderDesc($rightField)
             ->first();
 
         if (empty($edge->{$field})) {
@@ -911,7 +911,8 @@ class TreeBehavior extends Behavior
 
         if (is_array($config['scope'])) {
             return $query->where($config['scope']);
-        } elseif (is_callable($config['scope'])) {
+        }
+        if (is_callable($config['scope'])) {
             return $config['scope']($query);
         }
 

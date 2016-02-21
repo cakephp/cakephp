@@ -80,7 +80,7 @@ use Exception;
  *
  * Would enable handling for all non Notice errors.
  *
- * @see ExceptionRenderer for more information on how to customize exception rendering.
+ * @see \Cake\Error\ExceptionRenderer for more information on how to customize exception rendering.
  */
 class ErrorHandler extends BaseErrorHandler
 {

@@ -110,7 +110,7 @@ class HasOne extends Association
      * the target table
      * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
      * the saved entity
-     * @see Table::save()
+     * @see \Cake\ORM\Table::save()
      */
     public function saveAssociated(EntityInterface $entity, array $options = [])
     {

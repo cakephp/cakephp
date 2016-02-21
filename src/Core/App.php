@@ -74,6 +74,70 @@ class App
     }
 
     /**
+     * Returns the plugin split name of a class
+     *
+     * Examples:
+     *
+     * ```
+     * App::shortName(
+     *     'SomeVendor\SomePlugin\Controller\Component\TestComponent',
+     *     'Controller/Component',
+     *     'Component'
+     * )
+     * ```
+     *
+     * Returns: SomeVendor/SomePlugin.Test
+     *
+     * ```
+     * App::shortName(
+     *     'SomeVendor\SomePlugin\Controller\Component\Subfolder\TestComponent',
+     *     'Controller/Component',
+     *     'Component'
+     * )
+     * ```
+     *
+     * Returns: SomeVendor/SomePlugin.Subfolder/Test
+     *
+     * ```
+     * App::shortName(
+     *     'Cake\Controller\Component\AuthComponent',
+     *     'Controller/Component',
+     *     'Component'
+     * )
+     * ```
+     *
+     * Returns: Auth
+     *
+     * @param string $class Class name
+     * @param string $type Type of class
+     * @param string $suffix Class name suffix
+     * @return string Plugin split name of class
+     */
+    public static function shortName($class, $type, $suffix = '')
+    {
+        $class = str_replace('\\', '/', $class);
+        $type = '/' . $type . '/';
+
+        $pos = strrpos($class, $type);
+        $pluginName = substr($class, 0, $pos);
+        $name = substr($class, $pos + strlen($type));
+
+        if ($suffix) {
+            $name = substr($name, 0, -strlen($suffix));
+        }
+
+        $nonPluginNamespaces = [
+            'Cake',
+            str_replace('\\', '/', Configure::read('App.namespace'))
+        ];
+        if (in_array($pluginName, $nonPluginNamespaces)) {
+            return $name;
+        }
+
+        return $pluginName . '.' . $name;
+    }
+
+    /**
      * _classExistsInBase
      *
      * Test isolation wrapper
@@ -122,9 +186,9 @@ class App
             return (array)Configure::read('App.paths.templates');
         }
         if (!empty($plugin)) {
-            return [Plugin::classPath($plugin) . $type . DS];
+            return [Plugin::classPath($plugin) . $type . DIRECTORY_SEPARATOR];
         }
-        return [APP . $type . DS];
+        return [APP . $type . DIRECTORY_SEPARATOR];
     }
 
     /**
@@ -143,6 +207,6 @@ class App
      */
     public static function core($type)
     {
-        return [CAKE . str_replace('/', DS, $type) . DS];
+        return [CAKE . str_replace('/', DIRECTORY_SEPARATOR, $type) . DIRECTORY_SEPARATOR];
     }
 }

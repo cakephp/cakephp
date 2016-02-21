@@ -39,7 +39,7 @@ class Session
     /**
      * The Session handler instance used as an engine for persisting the session data.
      *
-     * @var SessionHandlerInterface
+     * @var \SessionHandlerInterface
      */
     protected $_engine;
 
@@ -89,7 +89,7 @@ class Session
      *
      * @param array $sessionConfig Session config.
      * @return \Cake\Network\Session
-     * @see Session::__construct()
+     * @see \Cake\Network\Session::__construct()
      */
     public static function create($sessionConfig = [])
     {

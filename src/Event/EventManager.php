@@ -205,7 +205,7 @@ class EventManager
      *
      * @param array $function the array taken from a handler definition for an event
      * @param \Cake\Event\EventListenerInterface $object The handler object
-     * @return callback
+     * @return callable
      */
     protected function _extractCallable($function, $object)
     {
@@ -221,7 +221,7 @@ class EventManager
     /**
      * Removes a listener from the active listeners.
      *
-     * @param callback|\Cake\Event\EventListenerInterface $callable any valid PHP callback type or an instance of EventListenerInterface
+     * @param callable|\Cake\Event\EventListenerInterface $callable any valid PHP callback type or an instance of EventListenerInterface
      * @param string|null $eventKey The event unique identifier name with which the callback has been associated
      * @return void
      * @deprecated 3.0.0 Use off() instead.
@@ -264,7 +264,7 @@ class EventManager
      *
      * @param string|\Cake\Event\EventListenerInterface $eventKey The event unique identifier name
      *   with which the callback has been associated, or the $listener you want to remove.
-     * @param callback $callable The callback you want to detach.
+     * @param callable $callable The callback you want to detach.
      * @return void
      */
     public function off($eventKey, $callable = null)
@@ -312,7 +312,8 @@ class EventManager
         $events = (array)$subscriber->implementedEvents();
         if (!empty($eventKey) && empty($events[$eventKey])) {
             return;
-        } elseif (!empty($eventKey)) {
+        }
+        if (!empty($eventKey)) {
             $events = [$eventKey => $events[$eventKey]];
         }
         foreach ($events as $key => $function) {
@@ -439,6 +440,24 @@ class EventManager
             return [];
         }
         return $this->_listeners[$eventKey];
+    }
+
+    /**
+     * Returns the listeners matching a specified pattern
+     *
+     * @param string $eventKeyPattern Pattern to match.
+     * @return array
+     */
+    public function matchingListeners($eventKeyPattern)
+    {
+        $matchPattern = '/' . preg_quote($eventKeyPattern, "/") . '/';
+        $matches = array_intersect_key(
+            $this->_listeners,
+            array_flip(
+                preg_grep($matchPattern, array_keys($this->_listeners), 0)
+            )
+        );
+        return $matches;
     }
 
     /**

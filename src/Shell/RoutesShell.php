@@ -15,7 +15,6 @@
 namespace Cake\Shell;
 
 use Cake\Console\Shell;
-use Cake\Core\Configure;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
 

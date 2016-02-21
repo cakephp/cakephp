@@ -137,6 +137,7 @@ use Cake\Error\Debugger;
     }
     .stack-file {
         font-size: 0.9em;
+        word-wrap: break-word;
     }
 
     .stack-details {
@@ -206,7 +207,7 @@ use Cake\Error\Debugger;
         </h1>
         <div class="header-help">
             <a target="_blank" href="http://book.cakephp.org/3.0/">Documentation</a>
-            <a target="_blank" href="http://api.cakephp.org/3.0/">API</a>
+            <a target="_blank" href="http://api.cakephp.org/">API</a>
         </div>
     </header>
 
@@ -226,7 +227,7 @@ use Cake\Error\Debugger;
         <?php if ($this->fetch('templateName')): ?>
         <p class="customize">
             If you want to customize this error message, create
-            <em><?= APP_DIR . DS . 'Template' . DS . 'Error' . DS . $this->fetch('templateName') ?></em>
+            <em><?= APP_DIR . DIRECTORY_SEPARATOR . 'Template' . DIRECTORY_SEPARATOR . 'Error' . DIRECTORY_SEPARATOR . $this->fetch('templateName') ?></em>
         </p>
         <?php endif; ?>
     </div>

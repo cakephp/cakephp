@@ -14,9 +14,9 @@
  */
 namespace Cake\I18n;
 
-use Cake\Chronos\ChronosInterface;
 use Cake\Chronos\MutableDateTime;
 use DateTime;
+use DateTimeInterface;
 use DateTimeZone;
 use IntlDateFormatter;
 use JsonSerializable;
@@ -102,7 +102,7 @@ class Time extends MutableDateTime implements JsonSerializable
      */
     public function __construct($time = null, $tz = null)
     {
-        if ($time instanceof DateTime) {
+        if ($time instanceof DateTimeInterface) {
             $tz = $time->getTimeZone();
             $time = $time->format('Y-m-d H:i:s');
         }
@@ -110,7 +110,6 @@ class Time extends MutableDateTime implements JsonSerializable
         if (is_numeric($time)) {
             $time = '@' . $time;
         }
-
         parent::__construct($time, $tz);
     }
 

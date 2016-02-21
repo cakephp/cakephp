@@ -307,6 +307,18 @@ class FormAuthenticateTest extends TestCase
             'username' => 'mariano',
         ];
         $this->assertEquals($expected, $result, 'Result should not contain "created" and "modified" fields');
+
+        $this->auth->config([
+            'finder' => ['auth' => ['return_created' => true]]
+        ]);
+
+        $result = $this->auth->authenticate($request, $this->response);
+        $expected = [
+            'id' => 1,
+            'username' => 'mariano',
+            'created' => new Time('2007-03-17 01:16:23'),
+        ];
+        $this->assertEquals($expected, $result);
     }
 
     /**

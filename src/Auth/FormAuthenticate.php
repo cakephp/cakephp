@@ -25,7 +25,7 @@ use Cake\Network\Response;
  * ```
  *  $this->Auth->authenticate = [
  *      'Form' => [
- *          'scope' => ['Users.active' => 1]
+ *          'finder' => ['auth' => ['some_finder_option' => 'some_value']]
  *      ]
  *  ]
  * ```
@@ -33,7 +33,7 @@ use Cake\Network\Response;
  * When configuring FormAuthenticate you can pass in config to which fields, model and additional conditions
  * are used. See FormAuthenticate::$_config for more information.
  *
- * @see AuthComponent::$authenticate
+ * @see \Cake\Controller\Component\AuthComponent::$authenticate
  */
 class FormAuthenticate extends BaseAuthenticate
 {

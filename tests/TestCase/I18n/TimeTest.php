@@ -78,6 +78,24 @@ class TimeTest extends TestCase
     }
 
     /**
+     * Ensure that instances can be built from other objects.
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testConstructFromAnotherInstance($class)
+    {
+        $time = '2015-01-22 10:33:44';
+        $frozen = new FrozenTime($time, 'America/Chicago');
+        $subject = new $class($frozen);
+        $this->assertEquals($time, $subject->format('Y-m-d H:i:s'), 'frozen time construction');
+
+        $mut = new Time($time, 'America/Chicago');
+        $subject = new $class($mut);
+        $this->assertEquals($time, $subject->format('Y-m-d H:i:s'), 'mutable time construction');
+    }
+
+    /**
      * provider for timeAgoInWords() tests
      *
      * @return array

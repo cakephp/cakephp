@@ -89,9 +89,9 @@ class I18nShell extends Shell
             $this->_paths = [Plugin::classPath($plugin)];
         }
 
-        $response = $this->in('What folder?', null, rtrim($this->_paths[0], DS) . DS . 'Locale');
-        $sourceFolder = rtrim($response, DS) . DS;
-        $targetFolder = $sourceFolder . $language . DS;
+        $response = $this->in('What folder?', null, rtrim($this->_paths[0], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'Locale');
+        $sourceFolder = rtrim($response, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        $targetFolder = $sourceFolder . $language . DIRECTORY_SEPARATOR;
         if (!is_dir($targetFolder)) {
             mkdir($targetFolder, 0775, true);
         }

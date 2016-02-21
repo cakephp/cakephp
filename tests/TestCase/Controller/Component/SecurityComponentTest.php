@@ -1139,7 +1139,6 @@ class SecurityComponentTest extends TestCase
      * test that blackhole doesn't delete the _Token session key so repeat data submissions
      * stay blackholed.
      *
-     * @link https://cakephp.lighthouseapp.com/projects/42648/tickets/214
      * @return void
      * @triggers Controller.startup $this->Controller
      */

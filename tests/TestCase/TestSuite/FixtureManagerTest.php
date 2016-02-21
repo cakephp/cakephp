@@ -15,6 +15,7 @@
 namespace Cake\Test\TestSuite;
 
 use Cake\Core\Plugin;
+use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\ORM\TableRegistry;
@@ -90,6 +91,44 @@ class FixtureManagerTest extends TestCase
 
         $db->logQueries($restore);
         $this->assertContains('CREATE TABLE', implode('', $buffer->messages()));
+    }
+
+    /**
+     * Test that if a table already exists in the test database, it will dropped
+     * before being recreated
+     *
+     * @return void
+     */
+    public function testResetDbIfTableExists()
+    {
+        $db = ConnectionManager::get('test');
+        $restore = $db->logQueries();
+        $db->logQueries(true);
+
+        $this->manager->setDebug(true);
+        $buffer = new ConsoleOutput();
+        Log::config('testQueryLogger', [
+            'className' => 'Console',
+            'stream' => $buffer
+        ]);
+
+        $table = new Table('articles', [
+            'id' => ['type' => 'integer', 'unsigned' => true],
+            'title' => ['type' => 'string', 'length' => 255],
+        ]);
+        $table->addConstraint('primary', ['type' => 'primary', 'columns' => ['id']]);
+        $sql = $table->createSql($db);
+        foreach ($sql as $stmt) {
+            $db->execute($stmt);
+        }
+
+        $test = $this->getMock('Cake\TestSuite\TestCase');
+        $test->fixtures = ['core.articles'];
+        $this->manager->fixturize($test);
+        $this->manager->load($test);
+
+        $db->logQueries($restore);
+        $this->assertContains('DROP TABLE', implode('', $buffer->messages()));
     }
 
     /**

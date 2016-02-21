@@ -448,7 +448,7 @@ class ResponseTest extends TestCase
     {
         $response = new Response();
         $result = $response->httpCodes();
-        $this->assertEquals(41, count($result));
+        $this->assertEquals(42, count($result));
 
         $result = $response->httpCodes(100);
         $expected = [100 => 'Continue'];
@@ -461,7 +461,7 @@ class ResponseTest extends TestCase
 
         $result = $response->httpCodes($codes);
         $this->assertTrue($result);
-        $this->assertEquals(43, count($response->httpCodes()));
+        $this->assertEquals(44, count($response->httpCodes()));
 
         $result = $response->httpCodes(381);
         $expected = [381 => 'Unicorn Moved'];
@@ -470,7 +470,7 @@ class ResponseTest extends TestCase
         $codes = [404 => 'Sorry Bro'];
         $result = $response->httpCodes($codes);
         $this->assertTrue($result);
-        $this->assertEquals(43, count($response->httpCodes()));
+        $this->assertEquals(44, count($response->httpCodes()));
 
         $result = $response->httpCodes(404);
         $expected = [404 => 'Sorry Bro'];

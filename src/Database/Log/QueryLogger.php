@@ -28,7 +28,7 @@ class QueryLogger
     /**
      * Writes a LoggedQuery into a log
      *
-     * @param LoggedQuery $query to be written in log
+     * @param \Cake\Database\Log\LoggedQuery $query to be written in log
      * @return void
      */
     public function log(LoggedQuery $query)
@@ -43,7 +43,7 @@ class QueryLogger
      * Wrapper function for the logger object, useful for unit testing
      * or for overriding in subclasses.
      *
-     * @param LoggedQuery $query to be written in log
+     * @param \Cake\Database\Log\LoggedQuery $query to be written in log
      * @return void
      */
     protected function _log($query)
@@ -55,7 +55,7 @@ class QueryLogger
      * Helper function used to replace query placeholders by the real
      * params used to execute the query
      *
-     * @param LoggedQuery $query The query to log
+     * @param \Cake\Database\Log\LoggedQuery $query The query to log
      * @return string
      */
     protected function _interpolate($query)
@@ -63,7 +63,8 @@ class QueryLogger
         $params = array_map(function ($p) {
             if ($p === null) {
                 return 'NULL';
-            } elseif (is_bool($p)) {
+            }
+            if (is_bool($p)) {
                 return $p ? '1' : '0';
             }
             return is_string($p) ? "'$p'" : $p;

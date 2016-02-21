@@ -100,6 +100,8 @@ class TableRegistry
     /**
      * Get a table instance from the registry.
      *
+     * See options specification in {@link TableLocator::get()}.
+     *
      * @param string $alias The alias name you want to get.
      * @param array $options The options you want to build the table with.
      * @return \Cake\ORM\Table

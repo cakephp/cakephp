@@ -20,6 +20,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
+use Cake\I18n\Time;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
@@ -94,8 +95,6 @@ class QueryTest extends TestCase
         $orders->hasOne('stuff');
         $stuff->belongsTo('stuffTypes');
         $companies->belongsTo('categories');
-
-        $this->fooTypeMap = new TypeMap(['foo.id' => 'integer', 'id' => 'integer']);
     }
 
     /**
@@ -553,7 +552,10 @@ class QueryTest extends TestCase
         TableRegistry::get('ArticlesTags', [
             'table' => 'articles_tags'
         ]);
-        $table->belongsToMany('Tags', ['strategy' => $strategy]);
+        $table->belongsToMany('Tags', [
+            'strategy' => $strategy,
+            'sort' => 'tag_id'
+        ]);
         $query = new Query($this->connection, $table);
 
         $results = $query->select()->contain('Tags')->hydrate(false)->toArray();
@@ -655,33 +657,59 @@ class QueryTest extends TestCase
     public function testFilteringByHasManyNoHydration()
     {
         $query = new Query($this->connection, $this->table);
-        $table = TableRegistry::get('authors');
-        TableRegistry::get('articles');
-        $table->hasMany('articles');
+        $table = TableRegistry::get('Articles');
+        $table->hasMany('Comments');
 
         $results = $query->repository($table)
             ->select()
             ->hydrate(false)
-            ->matching('articles', function ($q) {
-                return $q->where(['articles.id' => 2]);
+            ->matching('Comments', function ($q) {
+                return $q->where(['Comments.user_id' => 4]);
             })
             ->toArray();
         $expected = [
             [
-                'id' => 3,
-                'name' => 'larry',
+                'id' => 1,
+                'title' => 'First Article',
+                'body' => 'First Article Body',
+                'author_id' => 1,
+                'published' => 'Y',
                 '_matchingData' => [
-                    'articles' => [
+                    'Comments' => [
                         'id' => 2,
-                        'title' => 'Second Article',
-                        'body' => 'Second Article Body',
-                        'author_id' => 3,
+                        'article_id' => 1,
+                        'user_id' => 4,
+                        'comment' => 'Second Comment for First Article',
                         'published' => 'Y',
+                        'created' => new Time('2007-03-18 10:47:23'),
+                        'updated' => new Time('2007-03-18 10:49:31'),
                     ]
                 ]
             ]
         ];
         $this->assertEquals($expected, $results);
+    }
+
+    /**
+     * Tests that tables results can be filtered by the result of a HasMany
+     *
+     * @return void
+     */
+    public function testFilteringByHasManyHydration()
+    {
+        $table = TableRegistry::get('Articles');
+        $query = new Query($this->connection, $table);
+        $table->hasMany('Comments');
+
+        $result = $query->repository($table)
+            ->matching('Comments', function ($q) {
+                return $q->where(['Comments.user_id' => 4]);
+            })
+            ->first();
+        $this->assertInstanceOf('Cake\ORM\Entity', $result);
+        $this->assertInstanceOf('Cake\ORM\Entity', $result->_matchingData['Comments']);
+        $this->assertInternalType('integer', $result->_matchingData['Comments']->id);
+        $this->assertInstanceOf('Cake\I18n\Time', $result->_matchingData['Comments']->created);
     }
 
     /**
@@ -1528,7 +1556,7 @@ class QueryTest extends TestCase
         $query = $table->find();
         $query->select([
             'title' => $query->func()->concat(
-                ['title' => 'literal', 'test'],
+                ['title' => 'identifier', 'test'],
                 ['string']
             ),
         ]);
@@ -2189,7 +2217,7 @@ class QueryTest extends TestCase
      *
      * @return void
      */
-    public function testFormatDeepAssocationRecords()
+    public function testFormatDeepAssociationRecords()
     {
         $table = TableRegistry::get('ArticlesTags');
         $table->belongsTo('Articles');
@@ -2384,6 +2412,20 @@ class QueryTest extends TestCase
                 'authors__name' => 'string',
                 'authors.name' => 'string',
                 'name' => 'string',
+                'articles__id' => 'integer',
+                'articles.id' => 'integer',
+                'articles__author_id' => 'integer',
+                'articles.author_id' => 'integer',
+                'author_id' => 'integer',
+                'articles__title' => 'string',
+                'articles.title' => 'string',
+                'title' => 'string',
+                'articles__body' => 'text',
+                'articles.body' => 'text',
+                'body' => 'text',
+                'articles__published' => 'string',
+                'articles.published' => 'string',
+                'published' => 'string',
             ],
             'decorators' => 0,
             'executed' => false,
@@ -2440,12 +2482,13 @@ class QueryTest extends TestCase
     public function testColumnsFromJoin()
     {
         $table = TableRegistry::get('articles');
-        $results = $table->find()
+        $query = $table->find();
+        $results = $query
             ->select(['title', 'person.name'])
             ->join([
                 'person' => [
                     'table' => 'authors',
-                    'conditions' => ['person.id = articles.author_id']
+                    'conditions' => [$query->newExpr()->equalFields('person.id', 'articles.author_id')]
                 ]
             ])
             ->order(['articles.id' => 'ASC'])
@@ -3072,6 +3115,7 @@ class QueryTest extends TestCase
         $results = $table->find()
             ->hydrate(false)
             ->notMatching('articles')
+            ->order(['authors.id'])
             ->toArray();
 
         $expected = [
@@ -3085,6 +3129,7 @@ class QueryTest extends TestCase
             ->notMatching('articles', function ($q) {
                 return $q->where(['articles.author_id' => 1]);
             })
+            ->order(['authors.id'])
             ->toArray();
         $expected = [
             ['id' => 2, 'name' => 'nate'],
@@ -3195,6 +3240,27 @@ class QueryTest extends TestCase
                 ]
             ]
         ];
-        $this->assertEquals($expected, $results->first());
+        $this->assertSame($expected, $results->first());
+    }
+
+    /**
+     * Test that type conversion is only applied once.
+     *
+     * @return void
+     */
+    public function testAllNoDuplicateTypeCasting()
+    {
+        $table = TableRegistry::get('Comments');
+        $query = $table->find()
+            ->select(['id', 'comment', 'created']);
+
+        // Convert to an array and make the query dirty again.
+        $result = $query->all()->toArray();
+        $query->limit(99);
+
+        // Get results a second time.
+        $result2 = $query->all()->toArray();
+
+        $this->assertEquals(1, $query->__debugInfo()['decorators'], 'Only one typecaster should exist');
     }
 }

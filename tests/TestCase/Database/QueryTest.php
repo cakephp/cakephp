@@ -196,7 +196,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['title', 'name'])
             ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
             ->order(['title' => 'asc'])
             ->execute();
 
@@ -208,7 +208,7 @@ class QueryTest extends TestCase
         $this->assertCount(12, $result, 'Cross join results in 12 records');
 
         $result = $query->join([
-            ['table' => 'authors', 'type' => 'INNER', 'conditions' => 'author_id = authors.id']
+            ['table' => 'authors', 'type' => 'INNER', 'conditions' => $query->newExpr()->equalFields('author_id', 'authors.id')]
         ], [], true)->execute();
         $this->assertCount(3, $result);
         $this->assertEquals(['title' => 'First Article', 'name' => 'mariano'], $result->fetch('assoc'));
@@ -226,14 +226,14 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['title', 'name'])
             ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => ['author_id = a.id']])
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => [$query->newExpr()->equalFields('author_id ', 'a.id')]])
             ->order(['title' => 'asc'])
             ->execute();
         $this->assertEquals(['title' => 'First Article', 'name' => 'mariano'], $result->fetch('assoc'));
         $this->assertEquals(['title' => 'Second Article', 'name' => 'larry'], $result->fetch('assoc'));
 
         $query = new Query($this->connection);
-        $conditions = $query->newExpr('author_id = a.id');
+        $conditions = $query->newExpr()->equalFields('author_id', 'a.id');
         $result = $query
             ->select(['title', 'name'])
             ->from('articles')
@@ -261,7 +261,6 @@ class QueryTest extends TestCase
      */
     public function testSelectAliasedJoins()
     {
-        $this->markTestSkipped('This test fails on travis for older PHP.');
         $query = new Query($this->connection);
         $result = $query
             ->select(['title', 'name'])
@@ -418,6 +417,7 @@ class QueryTest extends TestCase
             ->where(['id' => 1, 'title' => 'First Article'])
             ->execute();
         $this->assertCount(1, $result);
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -426,6 +426,7 @@ class QueryTest extends TestCase
             ->where(['id' => 100], ['id' => 'integer'])
             ->execute();
         $this->assertCount(0, $result);
+        $result->closeCursor();
     }
 
     /**
@@ -437,12 +438,13 @@ class QueryTest extends TestCase
     {
         $query = new Query($this->connection);
         $result = $query
-            ->select(['title'])
-            ->from('articles')
-            ->where(['id >' => 1])
+            ->select(['comment'])
+            ->from('comments')
+            ->where(['id >' => 4])
             ->execute();
         $this->assertCount(2, $result);
-        $this->assertEquals(['title' => 'Second Article'], $result->fetch('assoc'));
+        $this->assertEquals(['comment' => 'First Comment for Second Article'], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -452,6 +454,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(1, $result);
         $this->assertEquals(['title' => 'First Article'], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -460,6 +463,7 @@ class QueryTest extends TestCase
             ->where(['id <=' => 2])
             ->execute();
         $this->assertCount(2, $result);
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -468,6 +472,7 @@ class QueryTest extends TestCase
             ->where(['id >=' => 1])
             ->execute();
         $this->assertCount(3, $result);
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -476,6 +481,7 @@ class QueryTest extends TestCase
             ->where(['id <=' => 1])
             ->execute();
         $this->assertCount(1, $result);
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -485,6 +491,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(2, $result);
         $this->assertEquals(['title' => 'First Article'], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -494,6 +501,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(1, $result);
         $this->assertEquals(['title' => 'First Article'], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -502,6 +510,7 @@ class QueryTest extends TestCase
             ->where(['title like' => '%Article%'])
             ->execute();
         $this->assertCount(3, $result);
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -510,6 +519,7 @@ class QueryTest extends TestCase
             ->where(['title not like' => '%Article%'])
             ->execute();
         $this->assertCount(0, $result);
+        $result->closeCursor();
     }
 
     /**
@@ -1134,6 +1144,7 @@ class QueryTest extends TestCase
         $this->assertEquals(['id' => 3], $result->fetch('assoc'));
         $this->assertEquals(['id' => 4], $result->fetch('assoc'));
         $this->assertEquals(['id' => 5], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -1149,6 +1160,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(1, $result);
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -1163,6 +1175,7 @@ class QueryTest extends TestCase
             })
             ->execute();
         $this->assertCount(5, $result);
+        $result->closeCursor();
     }
 
     /**
@@ -1180,6 +1193,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(1, $result);
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -1188,6 +1202,7 @@ class QueryTest extends TestCase
             ->where(['created NOT IN' => '2007-03-18 10:45:23'])
             ->execute();
         $this->assertCount(5, $result);
+        $result->closeCursor();
     }
 
     /**
@@ -1254,6 +1269,7 @@ class QueryTest extends TestCase
 
         $second = $result->fetch('assoc');
         $this->assertEquals(6, $second['id']);
+        $result->closeCursor();
     }
 
     /**
@@ -1281,6 +1297,7 @@ class QueryTest extends TestCase
 
         $second = $result->fetch('assoc');
         $this->assertEquals(5, $second['id']);
+        $result->closeCursor();
     }
 
     /**
@@ -1296,7 +1313,7 @@ class QueryTest extends TestCase
             ->select(['id'])
             ->from('comments')
             ->where(function ($exp, $q) {
-                $field = $q->newExpr('COALESCE(id, 1)');
+                $field = $q->func()->coalesce([new IdentifierExpression('id'), 1 => 'literal']);
                 return $exp->between($field, 5, 6, 'integer');
             })
             ->execute();
@@ -1307,6 +1324,7 @@ class QueryTest extends TestCase
 
         $second = $result->fetch('assoc');
         $this->assertEquals(6, $second['id']);
+        $result->closeCursor();
     }
 
     /**
@@ -1560,7 +1578,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->orderAsc($query->func()->concat(['id' => 'literal', '3']));
+            ->orderAsc($query->func()->concat(['id' => 'identifier', '3']));
 
         $result = $query->execute()->fetchAll('assoc');
         $expected = [
@@ -1599,7 +1617,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->orderDesc($query->func()->concat(['id' => 'literal', '3']));
+            ->orderDesc($query->func()->concat(['id' => 'identifier', '3']));
 
         $result = $query->execute()->fetchAll('assoc');
         $expected = [
@@ -1767,7 +1785,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['total' => 'count(author_id)', 'author_id'])
             ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
             ->group('author_id')
             ->having(['count(author_id) <' => 2], ['count(author_id)' => 'integer'])
             ->execute();
@@ -1799,7 +1817,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['total' => 'count(author_id)', 'author_id'])
             ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
             ->group('author_id')
             ->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
             ->orHaving(['count(author_id) <' => 2], ['count(author_id)' => 'integer'])
@@ -1811,7 +1829,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['total' => 'count(author_id)', 'author_id'])
             ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
             ->group('author_id')
             ->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
             ->orHaving(['count(author_id) <=' => 2], ['count(author_id)' => 'integer'])
@@ -1823,7 +1841,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['total' => 'count(author_id)', 'author_id'])
             ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
             ->group('author_id')
             ->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
             ->orHaving(function ($e) {
@@ -1846,7 +1864,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['total' => 'count(author_id)', 'author_id'])
             ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
             ->group('author_id')
             ->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
             ->andHaving(['count(author_id) <' => 2], ['count(author_id)' => 'integer'])
@@ -1857,7 +1875,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['total' => 'count(author_id)', 'author_id'])
             ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
             ->group('author_id')
             ->having(['count(author_id)' => 2], ['count(author_id)' => 'integer'])
             ->andHaving(['count(author_id) >' => 1], ['count(author_id)' => 'integer'])
@@ -1869,7 +1887,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['total' => 'count(author_id)', 'author_id'])
             ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
             ->group('author_id')
             ->andHaving(function ($e) {
                 return $e->add('count(author_id) = 2 - 1');
@@ -2005,7 +2023,7 @@ class QueryTest extends TestCase
         $subquery = (new Query($this->connection))
             ->select('name')
             ->from(['b' => 'authors'])
-            ->where(['b.id = a.id']);
+            ->where([$query->newExpr()->equalFields('b.id', 'a.id')]);
         $result = $query
             ->select(['id', 'name' => $subquery])
             ->from(['a' => 'comments'])->execute();
@@ -2090,6 +2108,7 @@ class QueryTest extends TestCase
             ['name' => 'garrett'],
         ];
         $this->assertEquals($expected, $result->fetchAll('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $subquery = (new Query($this->connection))
@@ -2106,6 +2125,7 @@ class QueryTest extends TestCase
             ['name' => 'mariano'],
         ];
         $this->assertEquals($expected, $result->fetchAll('assoc'));
+        $result->closeCursor();
     }
 
     /**
@@ -2113,7 +2133,7 @@ class QueryTest extends TestCase
      *
      * @return void
      */
-    public function testSubqueyInJoin()
+    public function testSubqueryInJoin()
     {
         $subquery = (new Query($this->connection))->select('*')->from('authors');
 
@@ -2124,14 +2144,17 @@ class QueryTest extends TestCase
             ->join(['b' => $subquery])
             ->execute();
         $this->assertCount(self::ARTICLE_COUNT * self::AUTHOR_COUNT, $result, 'Cross join causes multiplication');
+        $result->closeCursor();
 
         $subquery->where(['id' => 1]);
         $result = $query->execute();
         $this->assertCount(3, $result);
+        $result->closeCursor();
 
-        $query->join(['b' => ['table' => $subquery, 'conditions' => ['b.id = articles.id']]], [], true);
+        $query->join(['b' => ['table' => $subquery, 'conditions' => [$query->newExpr()->equalFields('b.id', 'articles.id')]]], [], true);
         $result = $query->execute();
         $this->assertCount(1, $result);
+        $result->closeCursor();
     }
 
     /**
@@ -2149,6 +2172,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(self::COMMENT_COUNT + self::ARTICLE_COUNT, $result);
         $rows = $result->fetchAll();
+        $result->closeCursor();
 
         $union->select(['foo' => 'id', 'bar' => 'title']);
         $union = (new Query($this->connection))
@@ -2161,6 +2185,7 @@ class QueryTest extends TestCase
         $result = $query->execute();
         $this->assertCount(self::COMMENT_COUNT + self::AUTHOR_COUNT, $result);
         $this->assertNotEquals($rows, $result->fetchAll());
+        $result->closeCursor();
 
         $union = (new Query($this->connection))
             ->select(['id', 'title'])
@@ -2169,6 +2194,7 @@ class QueryTest extends TestCase
         $result = $query->execute();
         $this->assertCount(self::COMMENT_COUNT + self::ARTICLE_COUNT, $result);
         $this->assertEquals($rows, $result->fetchAll());
+        $result->closeCursor();
     }
 
     /**
@@ -2215,6 +2241,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(self::ARTICLE_COUNT + self::COMMENT_COUNT, $result);
         $rows = $result->fetchAll();
+        $result->closeCursor();
 
         $union->select(['foo' => 'id', 'bar' => 'title']);
         $union = (new Query($this->connection))
@@ -2227,6 +2254,7 @@ class QueryTest extends TestCase
         $result = $query->execute();
         $this->assertCount(1 + self::COMMENT_COUNT + self::ARTICLE_COUNT, $result);
         $this->assertNotEquals($rows, $result->fetchAll());
+        $result->closeCursor();
     }
 
     /**
@@ -2259,6 +2287,7 @@ class QueryTest extends TestCase
         while ($row = $result->fetch('assoc')) {
             $this->assertEquals($row['id'], $row['modified_id']);
         }
+        $result->closeCursor();
 
         $result = $query
             ->decorateResults(function ($row) {
@@ -2277,6 +2306,7 @@ class QueryTest extends TestCase
             $this->assertArrayNotHasKey('foo', $row);
             $this->assertArrayNotHasKey('modified_id', $row);
         }
+        $results->closeCursor();
     }
 
     /**
@@ -2298,6 +2328,7 @@ class QueryTest extends TestCase
         $result = $query->execute();
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
         $this->assertCount(self::AUTHOR_COUNT, $result);
+        $result->closeCursor();
     }
 
     /**
@@ -2319,6 +2350,7 @@ class QueryTest extends TestCase
         $result = $query->execute();
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
         $this->assertCount(self::AUTHOR_COUNT, $result);
+        $result->closeCursor();
     }
 
     /**
@@ -2339,6 +2371,7 @@ class QueryTest extends TestCase
         $result = $query->execute();
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
         $this->assertCount(self::AUTHOR_COUNT, $result);
+        $result->closeCursor();
     }
 
     /**
@@ -2374,6 +2407,7 @@ class QueryTest extends TestCase
 
         $result = $query->execute();
         $this->assertCount(1, $result);
+        $result->closeCursor();
     }
 
     /**
@@ -2399,6 +2433,7 @@ class QueryTest extends TestCase
         $this->assertQuotedQuery(' WHERE <id> = :c2$', $result, !$this->autoQuote);
         $result = $query->execute();
         $this->assertCount(1, $result);
+        $result->closeCursor();
     }
 
     /**
@@ -2426,6 +2461,7 @@ class QueryTest extends TestCase
 
         $result = $query->execute();
         $this->assertCount(1, $result);
+        $result->closeCursor();
     }
 
     /**
@@ -2437,21 +2473,22 @@ class QueryTest extends TestCase
     {
         $query = new Query($this->connection);
 
-        $expr = $query->newExpr('title = author_id');
+        $expr = $query->newExpr()->equalFields('article_id', 'user_id');
 
-        $query->update('articles')
+        $query->update('comments')
             ->set($expr)
             ->where(['id' => 1]);
         $result = $query->sql();
 
         $this->assertQuotedQuery(
-            'UPDATE <articles> SET title = author_id WHERE <id> = :',
+            'UPDATE <comments> SET <article_id> = \(<user_id>\) WHERE <id> = :',
             $result,
             !$this->autoQuote
         );
 
         $result = $query->execute();
         $this->assertCount(1, $result);
+        $result->closeCursor();
     }
 
     /**
@@ -2623,7 +2660,7 @@ class QueryTest extends TestCase
                 'published' => 'N',
             ]
         ];
-        $this->assertTable('articles', 1, $expected, ['id >= 4']);
+        $this->assertTable('articles', 1, $expected, ['id >=' => 4]);
     }
 
     /**
@@ -3468,10 +3505,11 @@ class QueryTest extends TestCase
 
         if (!method_exists($result, 'bufferResults')) {
             $result->closeCursor();
-            $this->skipIf(true, 'This driver does not support unbuffered queries');
+            $this->markTestSkipped('This driver does not support unbuffered queries');
         }
 
-        $this->assertCount(0, $result);
+        $this->assertCount(0, $result, 'Unbuffered queries only have a count when results are fetched');
+
         $list = $result->fetchAll('assoc');
         $this->assertCount(3, $list);
         $result->closeCursor();
@@ -3481,7 +3519,7 @@ class QueryTest extends TestCase
             ->from('articles')
             ->execute();
 
-        $this->assertCount(3, $result);
+        $this->assertCount(3, $result, 'Buffered queries can be counted any time.');
         $list = $result->fetchAll('assoc');
         $this->assertCount(3, $list);
         $result->closeCursor();
@@ -3547,7 +3585,6 @@ class QueryTest extends TestCase
     public function testSelectTypeConversion()
     {
         $query = new Query($this->connection);
-        $time = new \DateTime('2007-03-18 10:50:00');
         $query
             ->select(['id', 'comment', 'the_date' => 'created'])
             ->from('comments')
@@ -3615,6 +3652,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount($count, $result, 'Row count is incorrect');
         $this->assertEquals($rows, $result->fetchAll('assoc'));
+        $result->closeCursor();
     }
 
     /**

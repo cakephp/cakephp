@@ -704,19 +704,27 @@ class Marshaller
         }
 
         $options['accessibleFields'] = ['_joinData' => true];
+
         $records = $this->mergeMany($original, $value, $options);
         foreach ($records as $record) {
             $hash = spl_object_hash($record);
             $value = $record->get('_joinData');
 
+            // Already an entity, no further marshalling required.
+            if ($value instanceof EntityInterface) {
+                continue;
+            }
+
+            // Scalar data can't be handled
             if (!is_array($value)) {
                 $record->unsetProperty('_joinData');
                 continue;
             }
 
+            // Marshal data into the old object, or make a new joinData object.
             if (isset($extra[$hash])) {
                 $record->set('_joinData', $marshaller->merge($extra[$hash], $value, $nested));
-            } else {
+            } elseif (is_array($value)) {
                 $joinData = $marshaller->one($value, $nested);
                 $record->set('_joinData', $joinData);
             }

@@ -32,7 +32,7 @@ class FunctionsBuilder
      * @param array $params list of params to be passed to the function
      * @param array $types list of types for each function param
      * @param string $return The return type of the function expression
-     * @return FunctionExpression
+     * @return \Cake\Database\Expression\FunctionExpression
      */
     protected function _build($name, $params = [], $types = [], $return = 'string')
     {
@@ -47,7 +47,7 @@ class FunctionsBuilder
      * @param mixed $expression the function argument
      * @param array $types list of types to bind to the arguments
      * @param string $return The return type for the function
-     * @return FunctionExpression
+     * @return \Cake\Database\Expression\FunctionExpression
      */
     protected function _literalArgumentFunction($name, $expression, $types = [], $return = 'string')
     {
@@ -64,7 +64,7 @@ class FunctionsBuilder
      *
      * @param mixed $expression the function argument
      * @param array $types list of types to bind to the arguments
-     * @return FunctionExpression
+     * @return \Cake\Database\Expression\FunctionExpression
      */
     public function sum($expression, $types = [])
     {
@@ -80,7 +80,7 @@ class FunctionsBuilder
      *
      * @param mixed $expression the function argument
      * @param array $types list of types to bind to the arguments
-     * @return FunctionExpression
+     * @return \Cake\Database\Expression\FunctionExpression
      */
     public function avg($expression, $types = [])
     {
@@ -92,7 +92,7 @@ class FunctionsBuilder
      *
      * @param mixed $expression the function argument
      * @param array $types list of types to bind to the arguments
-     * @return FunctionExpression
+     * @return \Cake\Database\Expression\FunctionExpression
      */
     public function max($expression, $types = [])
     {
@@ -104,7 +104,7 @@ class FunctionsBuilder
      *
      * @param mixed $expression the function argument
      * @param array $types list of types to bind to the arguments
-     * @return FunctionExpression
+     * @return \Cake\Database\Expression\FunctionExpression
      */
     public function min($expression, $types = [])
     {
@@ -116,7 +116,7 @@ class FunctionsBuilder
      *
      * @param mixed $expression the function argument
      * @param array $types list of types to bind to the arguments
-     * @return FunctionExpression
+     * @return \Cake\Database\Expression\FunctionExpression
      */
     public function count($expression, $types = [])
     {
@@ -128,7 +128,7 @@ class FunctionsBuilder
      *
      * @param array $args List of strings or expressions to concatenate
      * @param array $types list of types to bind to the arguments
-     * @return FunctionExpression
+     * @return \Cake\Database\Expression\FunctionExpression
      */
     public function concat($args, $types = [])
     {
@@ -140,7 +140,7 @@ class FunctionsBuilder
      *
      * @param array $args List of expressions to evaluate as function parameters
      * @param array $types list of types to bind to the arguments
-     * @return FunctionExpression
+     * @return \Cake\Database\Expression\FunctionExpression
      */
     public function coalesce($args, $types = [])
     {
@@ -153,7 +153,7 @@ class FunctionsBuilder
      *
      * @param array $args List of expressions to obtain the difference in days.
      * @param array $types list of types to bind to the arguments
-     * @return FunctionExpression
+     * @return \Cake\Database\Expression\FunctionExpression
      */
     public function dateDiff($args, $types = [])
     {

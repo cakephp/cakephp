@@ -15,8 +15,8 @@
 namespace Cake\I18n;
 
 use Cake\Chronos\Chronos;
-use Cake\Chronos\ChronosInterface;
 use DateTime;
+use DateTimeInterface;
 use DateTimeZone;
 use IntlDateFormatter;
 use JsonSerializable;
@@ -103,7 +103,7 @@ class FrozenTime extends Chronos implements JsonSerializable
      */
     public function __construct($time = null, $tz = null)
     {
-        if ($time instanceof DateTime) {
+        if ($time instanceof DateTimeInterface) {
             $tz = $time->getTimeZone();
             $time = $time->format('Y-m-d H:i:s');
         }

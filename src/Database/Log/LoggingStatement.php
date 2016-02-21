@@ -28,7 +28,7 @@ class LoggingStatement extends StatementDecorator
     /**
      * Logger instance responsible for actually doing the logging task
      *
-     * @var QueryLogger
+     * @var \Cake\Database\Log\QueryLogger
      */
     protected $_logger;
 

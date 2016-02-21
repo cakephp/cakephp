@@ -69,7 +69,7 @@ class TableLocator implements LocatorInterface
      * @param string|null $alias Name of the alias
      * @param array|null $options list of options for the alias
      * @return array The config data.
-     * @throws RuntimeException When you attempt to configure an existing table instance.
+     * @throws \RuntimeException When you attempt to configure an existing table instance.
      */
     public function config($alias = null, $options = null)
     {
@@ -99,25 +99,27 @@ class TableLocator implements LocatorInterface
      * This is important because table associations are resolved at runtime
      * and cyclic references need to be handled correctly.
      *
-     * The options that can be passed are the same as in `Table::__construct()`, but the
-     * key `className` is also recognized.
+     * The options that can be passed are the same as in Cake\ORM\Table::__construct(), but the
+     * `className` key is also recognized.
      *
-     * If $options does not contain `className` CakePHP will attempt to construct the
-     * class name based on the alias. For example 'Users' would result in
-     * `App\Model\Table\UsersTable` being attempted. If this class does not exist,
-     * then the default `Cake\ORM\Table` class will be used. By setting the `className`
-     * option you can define the specific class to use. This className can
-     * use a plugin short class reference.
+     * ### Options
      *
-     * If you use a `$name` that uses plugin syntax only the name part will be used as
+     * - `className` Define the specific class name to use. If undefined, CakePHP will generate the
+     *   class name based on the alias. For example 'Users' would result in
+     *   `App\Model\Table\UsersTable` being used. If this class does not exist,
+     *   then the default `Cake\ORM\Table` class will be used. By setting the `className`
+     *   option you can define the specific class to use. The className option supports
+     *   plugin short class references {@link Cake\Core\App::shortName()}.
+     * - `table` Define the table name to use. If undefined, this option will default to the underscored
+     *   version of the alias name.
+     * - `connection` Inject the specific connection object to use. If this option and `connectionName` are undefined,
+     *   The table class' `defaultConnectionName()` method will be invoked to fetch the connection name.
+     * - `connectionName` Define the connection name to use. The named connection will be fetched from
+     *   Cake\Datasource\ConnectionManager.
+     *
+     * *Note* If your `$alias` uses plugin syntax only the name part will be used as
      * key in the registry. This means that if two plugins, or a plugin and app provide
      * the same alias, the registry will only store the first instance.
-     *
-     * If no `table` option is passed, the table name will be the underscored version
-     * of the provided $alias.
-     *
-     * If no `connection` option is passed the table's defaultConnectionName() method
-     * will be called to get the default connection name to use.
      *
      * @param string $alias The alias name you want to get.
      * @param array $options The options you want to build the table with.
@@ -161,7 +163,11 @@ class TableLocator implements LocatorInterface
         }
 
         if (empty($options['connection'])) {
-            $connectionName = $options['className']::defaultConnectionName();
+            if (!empty($options['connectionName'])) {
+                $connectionName = $options['connectionName'];
+            } else {
+                $connectionName = $options['className']::defaultConnectionName();
+            }
             $options['connection'] = ConnectionManager::get($connectionName);
         }
 

@@ -1,3 +1,6 @@
+[![Total Downloads](https://img.shields.io/packagist/dt/cakephp/orm.svg?style=flat-square)](https://packagist.org/packages/cakephp/orm)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE.txt)
+
 # CakePHP ORM
 
 The CakePHP ORM provides a powerful and flexible way to work with relational
@@ -34,7 +37,7 @@ mappers if no explicit connection is defined.
 
 ## Creating Associations
 
-In your table classes you can define the relations between your tables. CakePHP's ORM 
+In your table classes you can define the relations between your tables. CakePHP's ORM
 supports 4 association types out of the box:
 
 * belongsTo - E.g. Many articles belong to a user.
