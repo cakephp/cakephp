@@ -56,21 +56,21 @@ class QueryCompiler
      *
      * @var array
      */
-    protected $_updateParts = ['update', 'set', 'where', 'epilog'];
+    protected $_updateParts = ['update', 'modifier', 'set', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating a DELETE statement
      *
      * @var array
      */
-    protected $_deleteParts = ['delete', 'from', 'where', 'epilog'];
+    protected $_deleteParts = ['delete', 'modifier', 'from', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating an INSERT statement
      *
      * @var array
      */
-    protected $_insertParts = ['insert', 'values', 'epilog'];
+    protected $_insertParts = ['insert', 'modifier', 'values', 'epilog'];
 
     /**
      * Indicate whether or not this query dialect supports ordered unions.
@@ -145,7 +145,7 @@ class QueryCompiler
             $select = '(SELECT %s%s%s';
         }
         $distinct = $query->clause('distinct');
-        $modifiers = $query->clause('modifier') ?: null;
+        $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $generator);
 
         $normalized = [];
         $parts = $this->_stringifyExpressions($parts, $generator);
@@ -160,13 +160,13 @@ class QueryCompiler
             $distinct = 'DISTINCT ';
         }
 
+        if ($modifiers !== null) {
+            $modifiers .= ' ';
+        }
+
         if (is_array($distinct)) {
             $distinct = $this->_stringifyExpressions($distinct, $generator);
             $distinct = sprintf('DISTINCT ON (%s) ', implode(', ', $distinct));
-        }
-        if ($modifiers !== null) {
-            $modifiers = $this->_stringifyExpressions($modifiers, $generator);
-            $modifiers = implode(' ', $modifiers) . ' ';
         }
 
         return sprintf($select, $distinct, $modifiers, implode(', ', $normalized));
@@ -287,7 +287,9 @@ class QueryCompiler
     {
         $table = $parts[0];
         $columns = $this->_stringifyExpressions($parts[1], $generator);
-        return sprintf('INSERT INTO %s (%s)', $table, implode(', ', $columns));
+        $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $generator);
+
+        return sprintf('INSERT %sINTO %s (%s)', $modifiers, $table, implode(', ', $columns));
     }
 
     /**
@@ -301,6 +303,14 @@ class QueryCompiler
     protected function _buildValuesPart($parts, $query, $generator)
     {
         return implode('', $this->_stringifyExpressions($parts, $generator));
+    }
+
+    protected function _buildModifierPart($parts, $query, $generator)
+    {
+        if ($parts === []) {
+            return null;
+        }
+        return implode(' ', $this->_stringifyExpressions($parts, $generator));
     }
 
     /**
