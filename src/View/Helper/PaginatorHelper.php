@@ -102,7 +102,6 @@ class PaginatorHelper extends Helper
         if (isset($query['page']) && $query['page'] == 1) {
             unset($query['page']);
         }
-
         $this->config(
             'options.url',
             array_merge($this->request->params['pass'], ['?' => $query])

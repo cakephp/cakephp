@@ -2984,6 +2984,10 @@ class RouterTest extends TestCase
         $query = ['controller' => 'Foo', 'action' => 'bar', 'id' => 100];
         $result = Router::url(['controller' => 'posts', 'action' => 'view', 'id' => 1, '?' => $query]);
         $this->assertEquals('/posts/view/1?controller=Foo&action=bar&id=100', $result);
+
+        $query = ['_host' => 'foo.bar' , '_ssl' => 0, '_scheme' => 'ftp://', '_base' => 'baz', '_port' => '15'];
+        $result = Router::url(['controller' => 'posts', 'action' => 'view', 'id' => 1, '?' => $query]);
+        $this->assertEquals('/posts/view/1?_host=foo.bar&_ssl=0&_scheme=ftp%3A%2F%2F&_base=baz&_port=15', $result);
     }
 
     /**
