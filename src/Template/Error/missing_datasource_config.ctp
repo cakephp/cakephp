@@ -22,7 +22,7 @@ $this->start('subheading');
 ?>
     <strong>Error: </strong>
     <?php if (isset($name)): ?>
-        The datasource configuration <em><?= h($name) ?></em> was not found in config<?= DS . 'app.php' ?>.
+        The datasource configuration <em><?= h($name) ?></em> was not found in config<?= DIRECTORY_SEPARATOR . 'app.php' ?>.
     <?php else: ?>
         <?= h($message) ?>
     <?php endif; ?>

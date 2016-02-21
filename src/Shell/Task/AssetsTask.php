@@ -93,7 +93,7 @@ class AssetsTask extends Shell
                 $namespaced = true;
                 $parts = explode('/', $link);
                 $link = array_pop($parts);
-                $dir = WWW_ROOT . implode(DS, $parts) . DS;
+                $dir = WWW_ROOT . implode(DIRECTORY_SEPARATOR, $parts) . DIRECTORY_SEPARATOR;
             }
 
             $plugins[$plugin] = [

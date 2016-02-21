@@ -56,8 +56,8 @@ class CommandListShell extends Shell
         if (empty($this->params['xml'])) {
             $this->out("<info>Current Paths:</info>", 2);
             $this->out("* app:  " . APP_DIR);
-            $this->out("* root: " . rtrim(ROOT, DS));
-            $this->out("* core: " . rtrim(CORE_PATH, DS));
+            $this->out("* root: " . rtrim(ROOT, DIRECTORY_SEPARATOR));
+            $this->out("* core: " . rtrim(CORE_PATH, DIRECTORY_SEPARATOR));
             $this->out("");
 
             $this->out("<info>Available Shells:</info>", 2);

@@ -204,7 +204,7 @@ abstract class Cell
             $className = substr(strrchr(get_class($this), "\\"), 1);
             $name = substr($className, 0, -4);
             if (!$builder->templatePath()) {
-                $builder->templatePath('Cell' . DS . $name);
+                $builder->templatePath('Cell' . DIRECTORY_SEPARATOR . $name);
             }
 
             $this->View = $this->createView();
