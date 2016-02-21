@@ -251,7 +251,7 @@ abstract class CacheEngine
             $prefix = vsprintf($this->_groupPrefix, $this->groups());
         }
 
-        $key = preg_replace('/[\s]+/', '_', strtolower(trim(str_replace([DS, '/', '.'], '_', strval($key)))));
+        $key = preg_replace('/[\s]+/', '_', strtolower(trim(str_replace([DIRECTORY_SEPARATOR, '/', '.'], '_', strval($key)))));
         return $prefix . $key;
     }
 

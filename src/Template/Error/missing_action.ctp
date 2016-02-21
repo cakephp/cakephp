@@ -24,12 +24,12 @@ $prefixNs = '';
 if (!empty($prefix)) {
     $prefix = Inflector::camelize($prefix);
     $prefixNs = '\\' . $prefix;
-    $prefix .= DS;
+    $prefix .= DIRECTORY_SEPARATOR;
 }
 if (empty($plugin)) {
-    $path = APP_DIR . DS . 'Controller' . DS . $prefix . h($controller) . '.php' ;
+    $path = APP_DIR . DIRECTORY_SEPARATOR . 'Controller' . DIRECTORY_SEPARATOR . $prefix . h($controller) . '.php' ;
 } else {
-    $path = Plugin::classPath($plugin) . 'Controller' . DS . $prefix . h($controller) . '.php';
+    $path = Plugin::classPath($plugin) . 'Controller' . DIRECTORY_SEPARATOR . $prefix . h($controller) . '.php';
 }
 
 $this->layout = 'dev_error';

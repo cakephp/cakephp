@@ -762,7 +762,7 @@ class Shell
     public function clear()
     {
         if (empty($this->params['noclear'])) {
-            if (DS === '/') {
+            if (DIRECTORY_SEPARATOR === '/') {
                 passthru('clear');
             } else {
                 passthru('cls');
@@ -780,7 +780,7 @@ class Shell
      */
     public function createFile($path, $contents)
     {
-        $path = str_replace(DS . DS, DS, $path);
+        $path = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $path);
 
         $this->_io->out();
 
@@ -826,9 +826,9 @@ class Shell
     public function shortPath($file)
     {
         $shortPath = str_replace(ROOT, null, $file);
-        $shortPath = str_replace('..' . DS, '', $shortPath);
-        $shortPath = str_replace(DS, '/', $shortPath);
-        return str_replace('//', DS, $shortPath);
+        $shortPath = str_replace('..' . DIRECTORY_SEPARATOR, '', $shortPath);
+        $shortPath = str_replace(DIRECTORY_SEPARATOR, '/', $shortPath);
+        return str_replace('//', DIRECTORY_SEPARATOR, $shortPath);
     }
 
     /**

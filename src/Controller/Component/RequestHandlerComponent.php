@@ -564,11 +564,11 @@ class RequestHandlerComponent extends Component
             $builder->className($viewClass);
         } else {
             if (empty($this->_renderType)) {
-                $builder->templatePath($builder->templatePath() . DS . $type);
+                $builder->templatePath($builder->templatePath() . DIRECTORY_SEPARATOR . $type);
             } else {
                 $builder->templatePath(preg_replace(
                     "/([\/\\\\]{$this->_renderType})$/",
-                    DS . $type,
+                    DIRECTORY_SEPARATOR . $type,
                     $builder->templatePath()
                 ));
             }

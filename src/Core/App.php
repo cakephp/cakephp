@@ -186,9 +186,9 @@ class App
             return (array)Configure::read('App.paths.templates');
         }
         if (!empty($plugin)) {
-            return [Plugin::classPath($plugin) . $type . DS];
+            return [Plugin::classPath($plugin) . $type . DIRECTORY_SEPARATOR];
         }
-        return [APP . $type . DS];
+        return [APP . $type . DIRECTORY_SEPARATOR];
     }
 
     /**
@@ -207,6 +207,6 @@ class App
      */
     public static function core($type)
     {
-        return [CAKE . str_replace('/', DS, $type) . DS];
+        return [CAKE . str_replace('/', DIRECTORY_SEPARATOR, $type) . DIRECTORY_SEPARATOR];
     }
 }

@@ -20,7 +20,7 @@ Now you can loop through the files and read from or write/append to the contents
 
 ```php
 foreach ($files as $file) {
-    $file = new File($dir->pwd() . DS . $file);
+    $file = new File($dir->pwd() . DIRECTORY_SEPARATOR . $file);
     $contents = $file->read();
     // $file->write('I am overwriting the contents of this file');
     // $file->append('I am adding to the bottom of this file.');

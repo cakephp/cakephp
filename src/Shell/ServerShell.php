@@ -95,7 +95,7 @@ class ServerShell extends Shell
         }
 
         // For Windows
-        if (substr($this->_documentRoot, -1, 1) === DS) {
+        if (substr($this->_documentRoot, -1, 1) === DIRECTORY_SEPARATOR) {
             $this->_documentRoot = substr($this->_documentRoot, 0, strlen($this->_documentRoot) - 1);
         }
         if (preg_match("/^([a-z]:)[\\\]+(.+)$/i", $this->_documentRoot, $m)) {
