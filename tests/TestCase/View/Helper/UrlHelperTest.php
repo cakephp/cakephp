@@ -97,7 +97,7 @@ class UrlHelperTest extends TestCase
             'controller' => 'posts', 'action' => 'index', 'page' => '1',
             '?' => ['one' => 'value', 'two' => 'value', 'three' => 'purple']
         ]);
-        $this->assertEquals("/posts/index?page=1&amp;one=value&amp;two=value&amp;three=purple", $result);
+        $this->assertEquals("/posts/index?one=value&amp;two=value&amp;three=purple&amp;page=1", $result);
     }
 
     /**

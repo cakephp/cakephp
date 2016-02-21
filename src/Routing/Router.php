@@ -576,12 +576,6 @@ class Router
                 $full = true;
                 unset($url['_full']);
             }
-            // Compatibility for older versions.
-            if (isset($url['?'])) {
-                $q = $url['?'];
-                unset($url['?']);
-                $url = array_merge($url, $q);
-            }
             if (isset($url['#'])) {
                 $frag = '#' . $url['#'];
                 unset($url['#']);
