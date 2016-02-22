@@ -2937,7 +2937,7 @@ class Model extends Object implements CakeEventListener {
  *   'conditions' => array('name' => 'Thomas Anderson'),
  *   'fields' => array('name', 'email'),
  *   'order' => 'field3 DESC',
- *   'recursive' => 2,
+ *   'recursive' => 1,
  *   'group' => 'type',
  *   'callbacks' => false,
  * ));
