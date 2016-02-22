@@ -70,7 +70,7 @@ class QueryCompiler
      *
      * @var array
      */
-    protected $_insertParts = ['insert', 'modifier', 'values', 'epilog'];
+    protected $_insertParts = ['insert', 'values', 'epilog'];
 
     /**
      * Indicate whether or not this query dialect supports ordered unions.
@@ -288,6 +288,10 @@ class QueryCompiler
         $table = $parts[0];
         $columns = $this->_stringifyExpressions($parts[1], $generator);
         $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $generator);
+
+        if ($modifiers !== null) {
+            $modifiers .= ' ';
+        }
 
         return sprintf('INSERT %sINTO %s (%s)', $modifiers, $table, implode(', ', $columns));
     }

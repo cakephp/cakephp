@@ -3636,6 +3636,40 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test use of modifiers in a INSERT query
+     *
+     * Testing the generated SQL since the modifiers are usually different per driver
+     *
+     * @return void
+     */
+    public function testInsertModifiers()
+    {
+        $query = new Query($this->connection);
+        $result = $query
+            ->insert(['title'])
+            ->into('articles')
+            ->values(['title' => 'foo'])
+            ->modifier('IGNORE');
+        $this->assertQuotedQuery(
+            'INSERT IGNORE INTO <articles> \(<title>\) VALUES \(:c0\)',
+            $result->sql(),
+            !$this->autoQuote
+        );
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->insert(['title'])
+            ->into('articles')
+            ->values(['title' => 'foo'])
+            ->modifier(['IGNORE', 'LOW_PRIORITY']);
+        $this->assertQuotedQuery(
+            'INSERT IGNORE LOW_PRIORITY INTO <articles> \(<title>\) VALUES \(:c0\)',
+            $result->sql(),
+            !$this->autoQuote
+        );
+    }
+
+    /**
      * Assertion for comparing a table's contents with what is in it.
      *
      * @param string $table
