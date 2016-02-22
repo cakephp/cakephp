@@ -16,7 +16,6 @@ namespace Cake\Utility;
 
 use Cake\Utility\Crypto\Mcrypt;
 use Cake\Utility\Crypto\OpenSsl;
-use Cake\Utility\Text;
 use InvalidArgumentException;
 
 /**

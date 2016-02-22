@@ -23,7 +23,6 @@ use Cake\Filesystem\Folder;
 use Cake\Network\Request;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\ClassRegistry;
 use Cake\View\Helper\FormHelper;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\View;
