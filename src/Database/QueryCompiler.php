@@ -139,9 +139,9 @@ class QueryCompiler
     protected function _buildSelectPart($parts, $query, $generator)
     {
         $driver = $query->connection()->driver();
-        $select = 'SELECT %s%s%s';
+        $select = 'SELECT%s %s%s';
         if ($this->_orderedUnion && $query->clause('union')) {
-            $select = '(SELECT %s%s%s';
+            $select = '(SELECT%s %s%s';
         }
         $distinct = $query->clause('distinct');
         $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $generator);
@@ -159,16 +159,12 @@ class QueryCompiler
             $distinct = 'DISTINCT ';
         }
 
-        if ($modifiers !== null) {
-            $modifiers .= ' ';
-        }
-
         if (is_array($distinct)) {
             $distinct = $this->_stringifyExpressions($distinct, $generator);
             $distinct = sprintf('DISTINCT ON (%s) ', implode(', ', $distinct));
         }
 
-        return sprintf($select, $distinct, $modifiers, implode(', ', $normalized));
+        return sprintf($select, $modifiers, $distinct, implode(', ', $normalized));
     }
 
     /**
@@ -288,11 +284,7 @@ class QueryCompiler
         $columns = $this->_stringifyExpressions($parts[1], $generator);
         $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $generator);
 
-        if ($modifiers !== null) {
-            $modifiers .= ' ';
-        }
-
-        return sprintf('INSERT %sINTO %s (%s)', $modifiers, $table, implode(', ', $columns));
+        return sprintf('INSERT%s INTO %s (%s)', $modifiers, $table, implode(', ', $columns));
     }
 
     /**
@@ -321,11 +313,7 @@ class QueryCompiler
         $table = $this->_stringifyExpressions($parts, $generator);
         $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $generator);
 
-        if ($modifiers !== null) {
-            $modifiers .= ' ';
-        }
-
-        return sprintf('UPDATE %s%s', $modifiers, implode(',', $table));
+        return sprintf('UPDATE%s %s', $modifiers, implode(',', $table));
     }
 
     /**
@@ -341,7 +329,7 @@ class QueryCompiler
         if ($parts === []) {
             return null;
         }
-        return implode(' ', $this->_stringifyExpressions($parts, $generator, false));
+        return ' ' . implode(' ', $this->_stringifyExpressions($parts, $generator, false));
     }
 
     /**

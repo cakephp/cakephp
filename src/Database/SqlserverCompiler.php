@@ -73,7 +73,7 @@ class SqlserverCompiler extends QueryCompiler
             $modifiers .= ' ';
         }
 
-        return sprintf('INSERT %sINTO %s (%s) OUTPUT INSERTED.*',
+        return sprintf('INSERT%s INTO %s (%s) OUTPUT INSERTED.*',
             $modifiers,
             $table,
             implode(', ', $columns)

@@ -3713,6 +3713,38 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test use of modifiers in a DELETE query
+     *
+     * Testing the generated SQL since the modifiers are usually different per driver
+     *
+     * @return void
+     */
+    public function testDeleteModifiers()
+    {
+        $query = new Query($this->connection);
+        $result = $query->delete()
+            ->from('authors')
+            ->where('1 = 1')
+            ->modifier('IGNORE');
+        $this->assertQuotedQuery(
+            'DELETE IGNORE FROM <authors> WHERE 1 = 1',
+            $result->sql(),
+            !$this->autoQuote
+        );
+
+        $query = new Query($this->connection);
+        $result = $query->delete()
+            ->from('authors')
+            ->where('1 = 1')
+            ->modifier(['IGNORE', 'QUICK']);
+        $this->assertQuotedQuery(
+            'DELETE IGNORE QUICK FROM <authors> WHERE 1 = 1',
+            $result->sql(),
+            !$this->autoQuote
+        );
+    }
+
+    /**
      * Assertion for comparing a table's contents with what is in it.
      *
      * @param string $table
