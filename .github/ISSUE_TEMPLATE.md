@@ -1,10 +1,8 @@
-#### Preamble
 This is a (multiple allowed):
 * [x] bug
 * [ ] enhancement
 * [ ] feature-discussion (RFC)
 
-## DESCRIPTIVE TITLE HERE
 * CakePHP Version: EXACT RELEASE VERSION OR COMMIT HASH, HERE.
 * Platform and Target: YOUR WEB-SERVER, DATABASE AND OTHER RELEVANT INFO AND HOW THE REQUEST IS BEING MADE, HERE.
 
