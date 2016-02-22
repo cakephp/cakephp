@@ -107,10 +107,10 @@ class Permission extends AppModel {
 			return false;
 		}
 
-		$inherited = array();
 		$acoIDs = Hash::extract($acoPath, '{n}.' . $this->Aco->alias . '.id');
 
 		$count = count($aroPath);
+		$inherited = array();
 		for ($i = 0; $i < $count; $i++) {
 			$permAlias = $this->alias;
 
@@ -129,13 +129,12 @@ class Permission extends AppModel {
 			$perms = Hash::extract($perms, '{n}.' . $this->alias);
 			foreach ($perms as $perm) {
 				if ($action === '*') {
-
 					foreach ($permKeys as $key) {
 						if (!empty($perm)) {
 							if ($perm[$key] == -1) {
 								return false;
-							} elseif ($perm[$key] == 1) {
-								$inherited[$key] = 1;
+							} elseif ($perm[$key] == 1 || $perm[$key] == 0) {
+								$inherited[$key] = $perm[$key];
 							}
 						}
 					}

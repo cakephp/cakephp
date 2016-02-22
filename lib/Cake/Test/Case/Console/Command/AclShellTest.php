@@ -253,7 +253,7 @@ class AclShellTest extends CakeTestCase {
 		$this->Task->args = array('AuthUser.2', 'ROOT/Controller1', 'create');
 		$this->Task->check();
 
-		$this->Task->args = array('AuthUser.2', 'ROOT/Controller1', '*');
+		$this->Task->args = array('AuthUser.2', 'ROOT/Controller1', 'delete');
 		$this->Task->check();
 	}
 

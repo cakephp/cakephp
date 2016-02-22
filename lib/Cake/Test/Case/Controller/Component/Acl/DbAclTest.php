@@ -429,15 +429,42 @@ class DbAclTest extends CakeTestCase {
  * @return void
  */
 	public function testInherit() {
-		//parent doesn't have access inherit should still deny
+		// parent doesn't have access inherit should still deny
 		$this->assertFalse($this->Acl->check('Milton', 'smash', 'delete'));
 		$this->Acl->inherit('Milton', 'smash', 'delete');
 		$this->assertFalse($this->Acl->check('Milton', 'smash', 'delete'));
 
-		//inherit parent
+		// inherit parent
 		$this->assertFalse($this->Acl->check('Milton', 'smash', 'read'));
 		$this->Acl->inherit('Milton', 'smash', 'read');
 		$this->assertTrue($this->Acl->check('Milton', 'smash', 'read'));
+	}
+
+/**
+ * test inherit from deny method
+ *
+ * @return void
+ */
+	public function testInheritParentDeny() {
+		$this->Acl->Aco->create(array('parent_id' => null, 'alias' => 'world'));
+		$this->Acl->Aco->save();
+
+		$this->Acl->Aco->create(array('parent_id' => $this->Acl->Aco->id, 'alias' => 'town'));
+		$this->Acl->Aco->save();
+
+		$this->Acl->Aro->create(array('parent_id' => null, 'alias' => 'Jane'));
+		$this->Acl->Aro->save();
+
+		// Setup deny on create for parent
+		$this->Acl->allow('Jane', 'world', '*');
+		$this->Acl->deny('Jane', 'world', 'create');
+
+		// Setup inherit and specify allow for create on child.
+		$this->Acl->inherit('Jane', 'town', '*');
+		$this->Acl->allow('Jane', 'town', 'create');
+
+		$this->assertTrue($this->Acl->check('Jane', 'town', 'create'), 'Should have access due to override');
+		$this->assertTrue($this->Acl->check('Jane', 'town', '*'), 'Should have access due to inherit');
 	}
 
 /**
