@@ -3670,6 +3670,49 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test use of modifiers in a UPDATE query
+     *
+     * Testing the generated SQL since the modifiers are usually different per driver
+     *
+     * @return void
+     */
+    public function testUpdateModifiers()
+    {
+        $query = new Query($this->connection);
+        $result = $query
+            ->update('authors')
+            ->set('name', 'mark')
+            ->modifier('TOP 10 PERCENT');
+        $this->assertQuotedQuery(
+            'UPDATE TOP 10 PERCENT <authors> SET <name> = :c0',
+            $result->sql(),
+            !$this->autoQuote
+        );
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->update('authors')
+            ->set('name', 'mark')
+            ->modifier(['TOP 10 PERCENT', 'FOO']);
+        $this->assertQuotedQuery(
+            'UPDATE TOP 10 PERCENT FOO <authors> SET <name> = :c0',
+            $result->sql(),
+            !$this->autoQuote
+        );
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->update('authors')
+            ->set('name', 'mark')
+            ->modifier([$query->newExpr('TOP 10 PERCENT')]);
+        $this->assertQuotedQuery(
+            'UPDATE TOP 10 PERCENT <authors> SET <name> = :c0',
+            $result->sql(),
+            !$this->autoQuote
+        );
+    }
+
+    /**
      * Assertion for comparing a table's contents with what is in it.
      *
      * @param string $table

@@ -35,7 +35,6 @@ class SqlserverCompiler extends QueryCompiler
      */
     protected $_templates = [
         'delete' => 'DELETE',
-        'update' => 'UPDATE %s',
         'where' => ' WHERE %s',
         'group' => ' GROUP BY %s ',
         'having' => ' HAVING %s ',
@@ -69,6 +68,10 @@ class SqlserverCompiler extends QueryCompiler
         $table = $parts[0];
         $columns = $this->_stringifyExpressions($parts[1], $generator);
         $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $generator);
+
+        if ($modifiers !== null) {
+            $modifiers .= ' ';
+        }
 
         return sprintf('INSERT %sINTO %s (%s) OUTPUT INSERTED.*',
             $modifiers,

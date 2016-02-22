@@ -31,7 +31,6 @@ class QueryCompiler
      */
     protected $_templates = [
         'delete' => 'DELETE',
-        'update' => 'UPDATE %s',
         'where' => ' WHERE %s',
         'group' => ' GROUP BY %s ',
         'having' => ' HAVING %s ',
@@ -56,7 +55,7 @@ class QueryCompiler
      *
      * @var array
      */
-    protected $_updateParts = ['update', 'modifier', 'set', 'where', 'epilog'];
+    protected $_updateParts = ['update', 'set', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating a DELETE statement
@@ -309,12 +308,40 @@ class QueryCompiler
         return implode('', $this->_stringifyExpressions($parts, $generator));
     }
 
+    /**
+     * Builds the SQL fragment for UPDATE.
+     *
+     * @param array $parts The update parts.
+     * @param \Cake\Database\Query $query The query that is being compiled
+     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+     * @return string SQL fragment.
+     */
+    protected function _buildUpdatePart($parts, $query, $generator)
+    {
+        $table = $this->_stringifyExpressions($parts, $generator);
+        $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $generator);
+
+        if ($modifiers !== null) {
+            $modifiers .= ' ';
+        }
+
+        return sprintf('UPDATE %s%s', $modifiers, implode(',', $table));
+    }
+
+    /**
+     * Builds the SQL modifier fragment
+     *
+     * @param array $parts The query modifier parts
+     * @param \Cake\Database\Query $query The query that is being compiled
+     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+     * @return string SQL fragment.
+     */
     protected function _buildModifierPart($parts, $query, $generator)
     {
         if ($parts === []) {
             return null;
         }
-        return implode(' ', $this->_stringifyExpressions($parts, $generator));
+        return implode(' ', $this->_stringifyExpressions($parts, $generator, false));
     }
 
     /**
@@ -323,15 +350,16 @@ class QueryCompiler
      *
      * @param array $expressions list of strings and ExpressionInterface objects
      * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+     * @param bool $wrap Whether to wrap each expression object with parenthesis
      * @return array
      */
-    protected function _stringifyExpressions($expressions, $generator)
+    protected function _stringifyExpressions($expressions, $generator, $wrap = true)
     {
         $result = [];
         foreach ($expressions as $k => $expression) {
             if ($expression instanceof ExpressionInterface) {
                 $value = $expression->sql($generator);
-                $expression = '(' . $value . ')';
+                $expression = $wrap ? '(' . $value . ')' : $value;
             }
             $result[$k] = $expression;
         }
