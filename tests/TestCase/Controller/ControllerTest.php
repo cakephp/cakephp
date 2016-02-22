@@ -481,7 +481,7 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(null, new Response());
 
-        $response = $Controller->redirect('http://cakephp.org', (int)$code, false);
+        $response = $Controller->redirect('http://cakephp.org', (int)$code);
         $this->assertEquals($code, $response->statusCode());
         $this->assertEquals('http://cakephp.org', $response->header()['Location']);
         $this->assertFalse($Controller->autoRender);
@@ -519,7 +519,7 @@ class ControllerTest extends TestCase
             $response->statusCode(302);
         }, 'Controller.beforeRedirect');
 
-        $response = $Controller->redirect('http://cakephp.org', 301, false);
+        $response = $Controller->redirect('http://cakephp.org', 301);
 
         $this->assertEquals('http://cakephp.org', $response->header()['Location']);
         $this->assertEquals(302, $response->statusCode());

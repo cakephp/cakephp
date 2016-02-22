@@ -880,15 +880,15 @@ class TreeBehavior extends Behavior
             $exp = $query->newExpr();
 
             $movement = clone $exp;
-            $movement ->add($field)->add("$shift")->type($dir);
+            $movement ->add($field)->add("$shift")->tieWith($dir);
 
             $inverse = clone $exp;
             $movement = $mark ?
-                $inverse->add($movement)->type('*')->add('-1'):
+                $inverse->add($movement)->tieWith('*')->add('-1'):
                 $movement;
 
             $where = clone $exp;
-            $where->add($field)->add($conditions)->type('');
+            $where->add($field)->add($conditions)->tieWith('');
 
             $query->update()
                 ->set($exp->eq($field, $movement))
