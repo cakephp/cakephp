@@ -534,7 +534,7 @@ class SecurityComponent extends Component {
 			}
 			return false;
 		}
-		$authKey = Security::generateAuthKey();
+		$authKey = hash('sha512', Security::randomBytes(16), false);
 		$token = array(
 			'key' => $authKey,
 			'allowedControllers' => $this->allowedControllers,

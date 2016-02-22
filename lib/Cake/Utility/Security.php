@@ -167,6 +167,35 @@ class Security {
 	}
 
 /**
+ * Get random bytes from a secure source.
+ *
+ * This method will fall back to an insecure source an trigger a warning
+ * if it cannot find a secure source of random data.
+ *
+ * @param int $length The number of bytes you want.
+ * @return string Random bytes in binary.
+ */
+	public static function randomBytes($length) {
+		if (function_exists('random_bytes')) {
+			return random_bytes($length);
+		}
+		if (function_exists('openssl_random_pseudo_bytes')) {
+			return openssl_random_pseudo_bytes($length);
+		}
+		trigger_error(
+			'You do not have a safe source of random data available. ' .
+			'Install either the openssl extension, or paragonie/random_compat. ' .
+			'Falling back to an insecure random source.',
+			E_USER_WARNING
+		);
+		$bytes = '';
+		while ($bytes < $length) {
+			$bytes .= static::hash(CakeText::uuid() . uniqid(mt_rand(), true), 'sha512', true);
+		}
+		return substr($bytes, 0, $length);
+	}
+
+/**
  * Runs $text through a XOR cipher.
  *
  * *Note* This is not a cryptographically strong method and should not be used
