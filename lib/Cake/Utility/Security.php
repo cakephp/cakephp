@@ -61,6 +61,7 @@ class Security {
  * Generate authorization hash.
  *
  * @return string Hash
+ * @deprecated 2.8.1 This method was removed in 3.0.0
  */
 	public static function generateAuthKey() {
 		return Security::hash(CakeText::uuid());
@@ -71,6 +72,7 @@ class Security {
  *
  * @param string $authKey Authorization hash
  * @return bool Success
+ * @deprecated 2.8.1 This method was removed in 3.0.0
  */
 	public static function validateAuthKey($authKey) {
 		return true;
@@ -92,7 +94,7 @@ class Security {
  * Creating a blowfish/bcrypt hash:
  *
  * ```
- * 	$hash = Security::hash($password, 'blowfish');
+ * $hash = Security::hash($password, 'blowfish');
  * ```
  *
  * @param string $string String to hash
