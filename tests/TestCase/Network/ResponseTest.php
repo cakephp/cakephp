@@ -1537,6 +1537,23 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * test getFile method
+     *
+     * @return void
+     */
+    public function testGetFile()
+    {
+        ob_start();
+        $response = new Response();
+        $this->assertNull($response->getFile(), 'No file to get');
+
+        $response->file(TEST_APP . 'vendor/css/test_asset.css');
+        $file = $response->getFile();
+        $this->assertInstanceOf('Cake\Filesystem\File', $file, 'Should get a file');
+        $this->assertSame(TEST_APP . 'vendor/css/test_asset.css', $file->path, 'Path should match');
+    }
+
+    /**
      * testConnectionAbortedOnBuffering method
      *
      * @return void
