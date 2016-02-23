@@ -3651,7 +3651,7 @@ class QueryTest extends TestCase
             ->values(['title' => 'foo'])
             ->modifier('IGNORE');
         $this->assertQuotedQuery(
-            'INSERT IGNORE INTO <articles> \(<title>\) VALUES \(:c0\)( OUTPUT INSERTED\.\*)?',
+            'INSERT IGNORE INTO <articles> \(<title>\) (OUTPUT INSERTED\.\* )?',
             $result->sql(),
             !$this->autoQuote
         );
@@ -3663,7 +3663,7 @@ class QueryTest extends TestCase
             ->values(['title' => 'foo'])
             ->modifier(['IGNORE', 'LOW_PRIORITY']);
         $this->assertQuotedQuery(
-            'INSERT IGNORE LOW_PRIORITY INTO <articles> \(<title>\) VALUES \(:c0\)( OUTPUT INSERTED\.\*)?',
+            'INSERT IGNORE LOW_PRIORITY INTO <articles> \(<title>\) (OUTPUT INSERTED\.\* )?',
             $result->sql(),
             !$this->autoQuote
         );
