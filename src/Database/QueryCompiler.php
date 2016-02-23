@@ -327,7 +327,7 @@ class QueryCompiler
     protected function _buildModifierPart($parts, $query, $generator)
     {
         if ($parts === []) {
-            return null;
+            return '';
         }
         return ' ' . implode(' ', $this->_stringifyExpressions($parts, $generator, false));
     }
