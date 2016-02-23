@@ -69,7 +69,8 @@ class SqlserverCompiler extends QueryCompiler
         $columns = $this->_stringifyExpressions($parts[1], $generator);
         $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $generator);
 
-        return sprintf('INSERT%s INTO %s (%s) OUTPUT INSERTED.*',
+        return sprintf(
+            'INSERT%s INTO %s (%s) OUTPUT INSERTED.*',
             $modifiers,
             $table,
             implode(', ', $columns)
