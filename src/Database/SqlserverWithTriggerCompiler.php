@@ -25,7 +25,7 @@ class SqlserverWithTriggerCompiler extends SqlserverCompiler
     /**
      * Generates the INSERT part of a SQL query
      *
-     * SQL Server with enalbed triggers does not allow the OUTPUT clause
+     * SQL Server with enabled triggers does not allow the OUTPUT clause
      * so that the INSERT is generated with a temporary variable.
      *
      * @param array $parts The parts to build
@@ -36,9 +36,9 @@ class SqlserverWithTriggerCompiler extends SqlserverCompiler
     protected function _buildInsertPart($parts, $query, $generator)
     {
         $table = $parts[0];
-        $talbeParts = explode('.', $table);
-        if (count($talbeParts) > 1) {
-            list(, $tableWithoutSchema) = $talbeParts;
+        $tableParts = explode('.', $table);
+        if (count($tableParts) > 1) {
+            list(, $tableWithoutSchema) = $tableParts;
         } else {
             $tableWithoutSchema = $parts[0];
         }
@@ -71,7 +71,16 @@ class SqlserverWithTriggerCompiler extends SqlserverCompiler
             }
         }
         $columns = $this->_stringifyExpressions($parts[1], $generator);
-        return sprintf('DECLARE @var TABLE (%s);INSERT INTO %s (%s) OUTPUT INSERTED.%s INTO @var', implode(', ', $sqlCreateColumns), $table, implode(', ', $columns), implode(' , INSERTED.', $primaryKeyColumnsForSql));
+		$sqlForTempTableColumns = implode(', ', $sqlCreateColumns);
+		$sqlForInsertColumns = implode(', ', $columns);
+		$sqlForOutputInserted = implode(' , INSERTED.', $primaryKeyColumnsForSql);
+        return sprintf(
+            'DECLARE @var TABLE (%s);INSERT INTO %s (%s) OUTPUT INSERTED.%s INTO @var',
+			$sqlForTempTableColumns,
+			$table,
+			$sqlForInsertColumns,
+			$sqlForOutputInserted
+        );
     }
 
     /**
