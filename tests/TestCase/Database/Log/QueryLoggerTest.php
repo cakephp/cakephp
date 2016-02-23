@@ -134,10 +134,10 @@ class QueryLoggerTest extends TestCase
         $query->params = ['string', '3', null];
 
         $engine = $this->getMock('\Cake\Log\Engine\BaseLog', ['log'], ['scopes' => ['queriesLog']]);
-        Log::engine('queryLoggerTest', $engine);
+        Log::engine('queryLoggerTest');
 
         $engine2 = $this->getMock('\Cake\Log\Engine\BaseLog', ['log'], ['scopes' => ['foo']]);
-        Log::engine('queryLoggerTest2', $engine2);
+        Log::engine('queryLoggerTest2');
 
         $engine2->expects($this->never())->method('log');
         $logger->log($query);

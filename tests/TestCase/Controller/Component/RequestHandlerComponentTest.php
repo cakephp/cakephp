@@ -1144,7 +1144,7 @@ class RequestHandlerComponentTest extends TestCase
         $RequestHandler = new RequestHandlerComponent($this->Controller->components());
         $RequestHandler->response = $this->getMock('Cake\Network\Response', ['notModified', 'stop']);
         $RequestHandler->response->expects($this->never())->method('notModified');
-        $this->assertNull($RequestHandler->beforeRender($event, '', $RequestHandler->response));
+        $this->assertNull($RequestHandler->beforeRender($event));
     }
 
     /**
