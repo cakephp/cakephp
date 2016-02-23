@@ -21,7 +21,6 @@ use Cake\Network\Exception\InvalidCsrfTokenException;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Security;
-use Cake\Utility\Text;
 
 /**
  * Provides CSRF protection & validation.

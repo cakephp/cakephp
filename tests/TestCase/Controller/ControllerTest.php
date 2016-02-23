@@ -26,7 +26,6 @@ use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\TestSuite\Fixture\TestModel;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\ClassRegistry;
 use Cake\Utility\Hash;
 use TestApp\Controller\Admin\PostsController;
 use TestPlugin\Controller\TestPluginController;
