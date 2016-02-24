@@ -26,7 +26,6 @@ use Cake\Network\Response;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
-use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
 use Cake\View\ViewVarsTrait;
 use LogicException;
@@ -712,6 +711,188 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         return $method->isPublic();
+    }
+
+    /**
+     * Adds a function that will be called before the controller action. The function can
+     * perform logic that needs to happen before more controller actions.
+     *
+     * You can configure the function to only execute before some of the controller actions:
+     * ```
+     * $this->addBeforeAction(function () { ... }, ['only' => 'index']);
+     * $this->addBeforeAction(function () { ... }, ['only' => ['index', 'view']]);
+     * ```
+     *
+     * Or you can exclude some controller actions from executing the function:
+     * ```
+     * $this->addBeforeAction(function () { ... }, ['except' => 'index']);
+     * ```
+     *
+     * Options may also contain conditions and the function only executes if they all pass:
+     * ```
+     * $this->addBeforeAction(function () { ... }, [
+     *     'if' => function () {
+     *         return !is_null($this->currentUser);
+     *     }
+     * ]);
+     *
+     * $this->addBeforeAction(function () { ... }, [
+     *     'unless' => function () {
+     *         return is_null($this->currentUser);
+     *     }
+     * ]);
+     *
+     * $this->addBeforeAction(function () { ... }, [
+     *     'if' => [
+     *          function () { ... },
+     *          function () { ... },
+     *     ]
+     * ]);
+     * ```
+     *
+     * Accepts simplified representation of callables:
+     * ```
+     * // assuming that 'init' and 'condition' are methods on current controller
+     * // you can write
+     * $this->addBeforeAction('init', ['if' => 'condition'])
+     * // instead of
+     * $this->addBeforeAction([$this, 'init'], ['if' => [$this, 'condition']])
+     * ```
+     *
+     * @param callable|string $callable Callable to be invoked as before action (before filter)
+     * @param array $options Array of options
+     */
+    public function addBeforeAction($callable, $options = [])
+    {
+        $this->on('Controller.startup', $callable, $options);
+    }
+
+    /**
+     * Adds a function that will be called after the controller action is run and rendered.
+     *
+     * You can configure the function to only execute after some of the controller actions:
+     * ```
+     * $this->addAfterAction(function () { ... }, ['only' => 'index']);
+     * $this->addAfterAction(function () { ... }, ['only' => ['index', 'view']]);
+     * ```
+     *
+     * Or you can exclude some controller actions from executing the function:
+     * ```
+     * $this->addAfterAction(function () { ... }, ['except' => 'index']);
+     * ```
+     *
+     * Options may also contain conditions and the function only executes if they all pass:
+     * ```
+     * $this->addAfterAction(function () { ... }, [
+     *     'if' => function () {
+     *         return !is_null($this->currentUser);
+     *     }
+     * ]);
+     *
+     * $this->addAfterAction(function () { ... }, [
+     *     'unless' => function () {
+     *         return is_null($this->currentUser);
+     *     }
+     * ]);
+     *
+     * $this->addAfterAction(function () { ... }, [
+     *     'if' => [
+     *          function () { ... },
+     *          function () { ... },
+     *     ]
+     * ]);
+     * ```
+     *
+     * Accepts simplified representation of callables:
+     * ```
+     * // assuming that 'init' and 'condition' are methods on current controller
+     * // you can write
+     * $this->addAfterAction('init', ['if' => 'condition'])
+     * // instead of
+     * $this->addAfterAction([$this, 'init'], ['if' => [$this, 'condition']])
+     * ```
+     *
+     * @param callable|string $callable Callable to be invoked as after action (after filter)
+     * @param array $options Array of options
+     */
+    public function addAfterAction($callable, $options = [])
+    {
+        $this->on('Controller.shutdown', $callable, $options);
+    }
+
+    /**
+     * Shortcut for binding events on controller's event manager.
+     * See usage of addBeforeAction or addAfterAction methods.
+     *
+     * @param string $event Event name
+     * @param callable|string $callable Callable to be used as an event handler
+     * @param array $options Array of options
+     */
+    private function on($event, $callable, $options = [])
+    {
+        if (isset($options['if'])) {
+            $options['if'] = $this->toCallables($options['if']);
+        }
+
+        if (isset($options['unless'])) {
+            $options['unless'] = $this->toCallables($options['unless']);
+        }
+
+        if (isset($options['only'])) {
+            $options['if'][] = function () use ($options) {
+                return in_array($this->request->param('action'), (array) $options['only']);
+            };
+        }
+
+        if (isset($options['except'])) {
+            $options['if'][] = function () use ($options) {
+                return !in_array($this->request->param('action'), (array) $options['except']);
+            };
+        }
+
+        if (is_string($callable) && !is_callable($callable)) {
+            $callable = [$this, $callable];
+        }
+
+        $this->eventManager()->on($event, $options, $callable);
+    }
+
+    /**
+     * Converts simplified representation of callables to an array of valid PHP callables.
+     *
+     * Mainly does two things:
+     * 1. converts strings to callables (in case they are not callables already) assuming
+     * they are referencig a method in current controller:
+     * ```
+     * ['isValid', 'isActive'] => [[$this, 'isValid'], [$this, 'isActive']]
+     * ['time'] => ['time'] // time is already valid callable
+     * ```
+     *
+     * 2. converts single callable to an array:
+     * ```
+     * 'time' => ['time']
+     * function () { ... } => [function () { ... }]
+     * [$object, 'method'] => [[$object, 'method']]
+     * ```
+     *
+     * @param mixed $callables Simplified representation of callables
+     * @return callable[] Array of valid PHP callables
+     */
+    private function toCallables($callables)
+    {
+        if (is_callable($callables)) {
+            $result = [$callables];
+        } else {
+            $result = (array) $callables;
+        }
+
+        foreach ($result as &$callable) {
+            if (is_string($callable) && !is_callable($callable)) {
+                $callable = [$this, $callable];
+            }
+        }
+
+        return $callables;
     }
 
     /**
