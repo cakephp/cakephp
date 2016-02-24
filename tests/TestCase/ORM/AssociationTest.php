@@ -109,6 +109,38 @@ class AssociationTest extends TestCase
     }
 
     /**
+     * Tests that className() returns the correct association className
+     *
+     * @return void
+     */
+    public function testClassName()
+    {
+        $this->assertEquals('\Cake\Test\TestCase\ORM\TestTable', $this->association->className());
+    }
+
+    /**
+     * Tests that className() returns the correct (unnormalized) className
+     *
+     * @return void
+     */
+    public function testClassNameUnnormalized()
+    {
+        $config = [
+            'className' => 'Test',
+        ];
+        $this->association = $this->getMock(
+            '\Cake\ORM\Association',
+            [
+                '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
+                'saveAssociated', 'eagerLoader', 'type'
+            ],
+            ['Foo', $config]
+        );
+
+        $this->assertEquals('Test', $this->association->className());
+    }
+
+    /**
      * Tests that cascadeCallbacks() returns the correct configured value
      *
      * @return void
