@@ -47,38 +47,28 @@ class ConditionalCallable
 	 */
 	public function __invoke()
 	{
-		if (!$this->isIfTrue() || $this->isUnlessTrue()) {
+		$args = func_get_args();
+
+		if (!$this->isIfTrue($args) || $this->isUnlessTrue($args)) {
 			return null;
 		}
 
-		$callable = $this->callable;
-
-		switch (func_num_args()) {
-			case 0:
-				return $callable();
-			case 1:
-				return $callable(func_get_arg(0));
-			case 2:
-				return $callable(func_get_arg(0), func_get_arg(1));
-			case 3:
-				return $callable(func_get_arg(0), func_get_arg(1), func_get_arg(2));
-			default:
-				return call_user_func_array($callable, func_get_args());
-		}
+		return $this->call($this->callable, $args);
 	}
 
 	/**
 	 * Evaluates if conditions.
 	 *
+	 * @param array $args Arguments to be passed to conditions
 	 * @return bool
 	 */
-	private function isIfTrue()
+	private function isIfTrue($args)
 	{
 		if (!isset($this->options['if'])) {
 			return true;
 		} else {
-			return $this->getConditions('if')->every(function ($callable) {
-				return $callable();
+			return $this->getConditions('if')->every(function ($callable) use ($args) {
+				return $this->call($callable, $args);
 			});
 		}
 	}
@@ -86,15 +76,16 @@ class ConditionalCallable
 	/**
 	 * Evaluates unless conditions.
 	 *
+	 * @param array $args Arguments to be passed to conditions
 	 * @return bool
 	 */
-	private function isUnlessTrue()
+	private function isUnlessTrue($args)
 	{
 		if (!isset($this->options['unless'])) {
 			return false;
 		} else {
-			return $this->getConditions('unless')->every(function ($callable) {
-				return $callable();
+			return $this->getConditions('unless')->every(function ($callable) use ($args) {
+				return $this->call($callable, $args);
 			});
 		}
 	}
@@ -110,10 +101,31 @@ class ConditionalCallable
 		$conditions = (array) $this->options[$type];
 
 		// in case that callable is given in form [$this, 'method']
-		if (count($conditions) == 2 && is_object($conditions[0]) && is_string($conditions[1])) {
+		if (is_callable($conditions)) {
 			$conditions = [$conditions];
 		}
 
 		return collection($conditions);
+	}
+
+	/**
+	 * @param callable $callable Callable to be executed
+	 * @param array $args Arguments to be passed to the callable
+	 * @return mixed Return value from the callable
+	 */
+	public function call($callable, $args)
+	{
+		switch (count($args)) {
+			case 0:
+				return $callable();
+			case 1:
+				return $callable($args[0]);
+			case 2:
+				return $callable($args[0], $args[1]);
+			case 3:
+				return $callable($args[0], $args[1], $args[2]);
+			default:
+				return call_user_func_array($callable, $args);
+		}
 	}
 }

@@ -168,6 +168,33 @@ class ConditionalCallableTest extends TestCase
 		$this->assertNotCalled();
 	}
 
+	public function testArguments()
+	{
+		$c = new ConditionalCallable(
+			function ($arg1, $arg2) {
+				$this->assertEquals(5, $arg1);
+				$this->assertEquals('text', $arg2);
+				$this->wasCalled = true;
+			},
+			[
+				'if' => function ($arg1, $arg2) {
+					$this->assertEquals(5, $arg1);
+					$this->assertEquals('text', $arg2);
+					return true;
+				},
+				'unless' => function ($arg1, $arg2) {
+					$this->assertEquals(5, $arg1);
+					$this->assertEquals('text', $arg2);
+					return false;
+				}
+			]
+		);
+
+		$c(5, 'text');
+
+		$this->assertWasCalled();
+	}
+
 	public function aCallable()
 	{
 		$this->wasCalled = true;
