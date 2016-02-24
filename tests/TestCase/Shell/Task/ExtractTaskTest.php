@@ -89,18 +89,18 @@ class ExtractTaskTest extends TestCase
         $this->assertFalse(file_exists($this->path . DS . 'cake.pot'));
 
         // extract.ctp
-        $pattern = '/\#: (\\\\|\/)extract\.ctp:\d+;\d+\n';
+        $pattern = '/\#: Template[\/\\\\]Pages[\/\\\\]extract\.ctp:\d+;\d+\n';
         $pattern .= 'msgid "You have %d new message."\nmsgid_plural "You have %d new messages."/';
         $this->assertRegExp($pattern, $result);
 
         $pattern = '/msgid "You have %d new message."\nmsgstr ""/';
         $this->assertNotRegExp($pattern, $result, 'No duplicate msgid');
 
-        $pattern = '/\#: (\\\\|\/)extract\.ctp:\d+\n';
+        $pattern = '/\#: Template[\/\\\\]Pages[\/\\\\]extract\.ctp:\d+\n';
         $pattern .= 'msgid "You deleted %d message."\nmsgid_plural "You deleted %d messages."/';
         $this->assertRegExp($pattern, $result);
 
-        $pattern = '/\#: (\\\\|\/)extract\.ctp:\d+\nmsgid "';
+        $pattern = '/\#: Template[\/\\\\]Pages[\/\\\\]extract\.ctp:\d+\nmsgid "';
         $pattern .= 'Hot features!';
         $pattern .= '\\\n - No Configuration: Set-up the database and let the magic begin';
         $pattern .= '\\\n - Extremely Simple: Just look at the name...It\'s Cake';
@@ -111,12 +111,12 @@ class ExtractTaskTest extends TestCase
         $this->assertContains('msgid "double \\"quoted\\""', $result, 'Strings with quotes not handled correctly');
         $this->assertContains("msgid \"single 'quoted'\"", $result, 'Strings with quotes not handled correctly');
 
-        $pattern = '/\#: (\\\\|\/)extract\.ctp:\d+\n';
+        $pattern = '/\#: Template[\/\\\\]Pages[\/\\\\]extract\.ctp:\d+\n';
         $pattern .= 'msgctxt "mail"\n';
         $pattern .= 'msgid "letter"/';
         $this->assertRegExp($pattern, $result);
 
-        $pattern = '/\#: (\\\\|\/)extract\.ctp:\d+\n';
+        $pattern = '/\#: Template[\/\\\\]Pages[\/\\\\]extract\.ctp:\d+\n';
         $pattern .= 'msgctxt "alphabet"\n';
         $pattern .= 'msgid "letter"/';
         $this->assertRegExp($pattern, $result);

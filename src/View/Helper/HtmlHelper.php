@@ -151,7 +151,7 @@ class HtmlHelper extends Helper
      * @param string|null $link URL for link (if empty it won't be a link)
      * @param string|array $options Link attributes e.g. ['id' => 'selected']
      * @return $this
-     * @see HtmlHelper::link() for details on $options that can be used.
+     * @see \Cake\View\Helper\HtmlHelper::link() for details on $options that can be used.
      * @link http://book.cakephp.org/3.0/en/views/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
      */
     public function addCrumb($name, $link = null, array $options = [])
@@ -1182,7 +1182,7 @@ class HtmlHelper extends Helper
      * @param array $options Additional HTML attributes of the list (ol/ul) tag.
      * @param array $itemOptions Options and additional HTML attributes of the list item (LI) tag.
      * @return string The nested list element
-     * @see HtmlHelper::nestedList()
+     * @see \Cake\View\Helper\HtmlHelper::nestedList()
      */
     protected function _nestedListItem($items, $options, $itemOptions)
     {

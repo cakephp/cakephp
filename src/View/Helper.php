@@ -124,7 +124,7 @@ class Helper implements EventListenerInterface
         if (!empty($this->helpers)) {
             $this->_helperMap = $View->helpers()->normalizeArray($this->helpers);
         }
-        
+
         $this->initialize($config);
     }
 

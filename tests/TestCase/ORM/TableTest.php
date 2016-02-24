@@ -53,6 +53,7 @@ class TableTest extends TestCase
 
     public $fixtures = [
         'core.articles',
+        'core.tags',
         'core.articles_tags',
         'core.authors',
         'core.categories',
@@ -62,7 +63,6 @@ class TableTest extends TestCase
         'core.members',
         'core.polymorphic_tagged',
         'core.site_articles',
-        'core.tags',
         'core.users'
     ];
 

@@ -1746,7 +1746,11 @@ class FormHelperTest extends TestCase
         $this->Form->select('select_box', [1, 2], [
             'name' => 'Option[General.select_role]',
         ]);
-        $expected = ['Option.General.default_role', 'Option.General.select_role'];
+        $expected[] = 'Option.General.select_role';
+        $this->assertEquals($expected, $this->Form->fields);
+
+        $this->Form->text('other.things[]');
+        $expected[] = 'other.things';
         $this->assertEquals($expected, $this->Form->fields);
     }
 
@@ -7437,5 +7441,64 @@ class FormHelperTest extends TestCase
         $mock = $this->getMock('Cake\View\Form\ContextInterface');
         $this->assertSame($mock, $this->Form->context($mock));
         $this->assertSame($mock, $this->Form->context());
+    }
+
+    /**
+     * testAutoDomId
+     *
+     * @return void
+     */
+    public function testAutoDomId()
+    {
+        $result = $this->Form->text('field', ['id' => true]);
+        $expected = [
+            'input' => ['type' => 'text', 'name' => 'field', 'id' => 'field'],
+        ];
+        $this->assertHtml($expected, $result);
+
+        // Ensure id => doesn't cause problem when multiple inputs are generated.
+        $result = $this->Form->radio('field', ['option A', 'option B'], ['id' => true]);
+        $expected = [
+            'input' => ['type' => 'hidden', 'name' => 'field', 'value' => ''],
+            ['label' => ['for' => 'field-0']],
+            ['input' => ['type' => 'radio', 'name' => 'field', 'value' => '0', 'id' => 'field-0']],
+            'option A',
+            '/label',
+            ['label' => ['for' => 'field-1']],
+            ['input' => ['type' => 'radio', 'name' => 'field', 'value' => '1', 'id' => 'field-1']],
+            'option B',
+            '/label',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->select(
+            'multi_field',
+            ['first', 'second'],
+            ['multiple' => 'checkbox', 'id' => true]
+        );
+        $expected = [
+            'input' => [
+                'type' => 'hidden', 'name' => 'multi_field', 'value' => ''
+            ],
+            ['div' => ['class' => 'checkbox']],
+                ['label' => ['for' => 'multi-field-0']],
+                    ['input' => [
+                        'type' => 'checkbox', 'name' => 'multi_field[]',
+                        'value' => '0', 'id' => 'multi-field-0'
+                    ]],
+                    'first',
+                '/label',
+            '/div',
+            ['div' => ['class' => 'checkbox']],
+                ['label' => ['for' => 'multi-field-1']],
+                    ['input' => [
+                        'type' => 'checkbox', 'name' => 'multi_field[]',
+                        'value' => '1', 'id' => 'multi-field-1'
+                    ]],
+                    'second',
+                '/label',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
     }
 }

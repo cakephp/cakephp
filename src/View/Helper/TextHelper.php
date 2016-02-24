@@ -117,7 +117,6 @@ class TextHelper extends Helper
         $this->_placeholders = [];
         $options += ['escape' => true];
 
-
         $pattern = '#(?<!href="|src="|">)((?:https?|ftp|nntp)://[\p{L}0-9.\-_:]+' .
             '(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+' .
             '(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))#i';
@@ -177,7 +176,7 @@ class TextHelper extends Helper
      * @param string $text The text to operate on
      * @param array $options An array of options to use for the HTML.
      * @return string
-     * @see TextHelper::autoLinkEmails()
+     * @see \Cake\View\Helper\TextHelper::autoLinkEmails()
      */
     protected function _linkEmails($text, $options)
     {

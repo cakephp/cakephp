@@ -15,7 +15,6 @@
 namespace Cake\Error;
 
 use Cake\Core\Configure;
-use Cake\Error\PHP7ErrorException;
 use Cake\Log\Log;
 use Cake\Routing\Router;
 use Error;
@@ -153,7 +152,7 @@ abstract class BaseErrorHandler
      * then, it wraps the passed object inside another Exception object
      * for backwards compatibility purposes.
      *
-     * @param Exception|Error $exception The exception to handle
+     * @param \Exception|\Error $exception The exception to handle
      * @return void
      */
     public function wrapAndHandleException($exception)

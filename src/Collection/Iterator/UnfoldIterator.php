@@ -22,7 +22,7 @@ use RecursiveIterator;
  * of items by applying an function to each of the elements in this iterator.
  *
  * @internal
- * @see Collection::unfold()
+ * @see \Cake\Collection\Collection::unfold()
  */
 class UnfoldIterator extends IteratorIterator implements RecursiveIterator
 {

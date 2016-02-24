@@ -109,7 +109,7 @@ class Socket
      * Constructor.
      *
      * @param array $config Socket configuration, which will be merged with the base configuration
-     * @see Socket::$_baseConfig
+     * @see \Cake\Network\Socket::$_baseConfig
      */
     public function __construct(array $config = [])
     {

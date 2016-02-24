@@ -332,7 +332,8 @@ class Request implements ArrayAccess
     {
         if (!empty($_SERVER['PATH_INFO'])) {
             return $_SERVER['PATH_INFO'];
-        } elseif (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], '://') === false) {
+        }
+        if (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], '://') === false) {
             $uri = $_SERVER['REQUEST_URI'];
         } elseif (isset($_SERVER['REQUEST_URI'])) {
             $qPosition = strpos($_SERVER['REQUEST_URI'], '?');
@@ -378,7 +379,6 @@ class Request implements ArrayAccess
      * the unnecessary part from $base to prevent issue #3318.
      *
      * @return array Base URL, webroot dir ending in /
-     * @link https://cakephp.lighthouseapp.com/projects/42648-cakephp/tickets/3318
      */
     protected static function _base()
     {
@@ -403,7 +403,7 @@ class Request implements ArrayAccess
                 $base = dirname($base);
             }
 
-            if ($base === DS || $base === '.') {
+            if ($base === DIRECTORY_SEPARATOR || $base === '.') {
                 $base = '';
             }
             $base = implode('/', array_map('rawurlencode', explode('/', $base)));
@@ -413,7 +413,7 @@ class Request implements ArrayAccess
         $file = '/' . basename($baseUrl);
         $base = dirname($baseUrl);
 
-        if ($base === DS || $base === '.') {
+        if ($base === DIRECTORY_SEPARATOR || $base === '.') {
             $base = '';
         }
         $webrootDir = $base . '/';
@@ -560,7 +560,8 @@ class Request implements ArrayAccess
                     $ref = '/' . $ref;
                 }
                 return $ref;
-            } elseif (!$local) {
+            }
+            if (!$local) {
                 return $ref;
             }
         }

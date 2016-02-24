@@ -138,6 +138,35 @@ class TranslateBehaviorTest extends TestCase
     }
 
     /**
+     * Test that iterating in a formatResults() does not drop data.
+     *
+     * @return void
+     */
+    public function testFindTranslationsFormatResultsIteration()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $table->locale('eng');
+        $results = $table->find('translations')
+            ->limit(1)
+            ->formatResults(function ($results) {
+                foreach ($results as $res) {
+                    $res->first = 'val';
+                }
+                foreach ($results as $res) {
+                    $res->second = 'loop';
+                }
+                return $results;
+            })
+            ->toArray();
+        $this->assertCount(1, $results);
+        $this->assertSame('Title #1', $results[0]->title);
+        $this->assertSame('val', $results[0]->first);
+        $this->assertSame('loop', $results[0]->second);
+        $this->assertNotEmpty($results[0]->_translations);
+    }
+
+    /**
      * Tests that fields from a translated model use the I18n class locale
      * and that it propogates to associated models
      *

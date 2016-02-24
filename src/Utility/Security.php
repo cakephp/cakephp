@@ -82,11 +82,41 @@ class Security
      *
      * @param string $hash Method to use (sha1/sha256/md5 etc.)
      * @return void
-     * @see Security::hash()
+     * @see \Cake\Utility\Security::hash()
      */
     public static function setHash($hash)
     {
         static::$hashType = $hash;
+    }
+
+    /**
+     * Get random bytes from a secure source.
+     *
+     * This method will fall back to an insecure source an trigger a warning
+     * if it cannot find a secure source of random data.
+     *
+     * @param int $length The number of bytes you want.
+     * @return string Random bytes in binary.
+     */
+    public static function randomBytes($length)
+    {
+        if (function_exists('random_bytes')) {
+            return random_bytes($length);
+        }
+        if (function_exists('openssl_random_pseudo_bytes')) {
+            return openssl_random_pseudo_bytes($length);
+        }
+        trigger_error(
+            'You do not have a safe source of random data available. ' .
+            'Install either the openssl extension, or paragonie/random_compat. ' .
+            'Falling back to an insecure random source.',
+            E_USER_WARNING
+        );
+        $bytes = '';
+        while ($bytes < $length) {
+            $bytes .= static::hash(Text::uuid() . uniqid(mt_rand(), true), 'sha512', true);
+        }
+        return substr($bytes, 0, $length);
     }
 
     /**
@@ -196,7 +226,7 @@ class Security
      * @param string $key The 256 bit/32 byte key to use as a cipher key.
      * @param string|null $hmacSalt The salt to use for the HMAC process. Leave null to use Security.salt.
      * @return string Decrypted data. Any trailing null bytes will be removed.
-     * @throws InvalidArgumentException On invalid data or key.
+     * @throws \InvalidArgumentException On invalid data or key.
      */
     public static function decrypt($cipher, $key, $hmacSalt = null)
     {

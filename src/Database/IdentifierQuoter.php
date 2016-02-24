@@ -191,7 +191,7 @@ class IdentifierQuoter
     protected function _quoteUpdate($query)
     {
         $table = $query->clause('update')[0];
-        
+
         if (is_string($table)) {
             $query->update($this->_driver->quoteIdentifier($table));
         }

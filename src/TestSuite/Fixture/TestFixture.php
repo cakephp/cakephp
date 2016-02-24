@@ -14,7 +14,6 @@
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Exception\Exception as CakeException;
-use Cake\Database\Driver\Sqlite;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
@@ -134,13 +133,7 @@ class TestFixture implements FixtureInterface
     public function init()
     {
         if ($this->table === null) {
-            list(, $class) = namespaceSplit(get_class($this));
-            preg_match('/^(.*)Fixture$/', $class, $matches);
-            $table = $class;
-            if (isset($matches[1])) {
-                $table = $matches[1];
-            }
-            $this->table = Inflector::tableize($table);
+            $this->table = $this->_tableFromClass();
         }
 
         if (empty($this->import) && !empty($this->fields)) {
@@ -150,6 +143,28 @@ class TestFixture implements FixtureInterface
         if (!empty($this->import)) {
             $this->_schemaFromImport();
         }
+
+        if (empty($this->import) && empty($this->fields)) {
+            $this->_schemaFromReflection();
+        }
+    }
+
+    /**
+     * Returns the table name using the fixture class
+     *
+     * @return string
+     */
+    protected function _tableFromClass()
+    {
+        list(, $class) = namespaceSplit(get_class($this));
+        preg_match('/^(.*)Fixture$/', $class, $matches);
+        $table = $class;
+
+        if (isset($matches[1])) {
+            $table = $matches[1];
+        }
+
+        return Inflector::tableize($table);
     }
 
     /**
@@ -219,6 +234,31 @@ class TestFixture implements FixtureInterface
     }
 
     /**
+     * Build fixture schema directly from the datasource
+     *
+     * @return void
+     * @throws \Cake\Core\Exception\Exception when trying to reflect a table that does not exist
+     */
+    protected function _schemaFromReflection()
+    {
+        $db = ConnectionManager::get($this->connection());
+        $schemaCollection = $db->schemaCollection();
+        $tables = $schemaCollection->listTables();
+
+        if (!in_array($this->table, $tables)) {
+            throw new CakeException(
+                sprintf(
+                    'Cannot describe schema for table `%s` for fixture `%s` : the table does not exist.',
+                    $this->table,
+                    get_class($this)
+                )
+            );
+        }
+
+        $this->_schema = $schemaCollection->describe($this->table);
+    }
+
+    /**
      * Get/Set the Cake\Database\Schema\Table instance used by this fixture.
      *
      * @param \Cake\Database\Schema\Table $schema The table to set.
@@ -240,6 +280,10 @@ class TestFixture implements FixtureInterface
     {
         if (empty($this->_schema)) {
             return false;
+        }
+
+        if (empty($this->import) && empty($this->fields)) {
+            return true;
         }
 
         try {
@@ -270,6 +314,11 @@ class TestFixture implements FixtureInterface
         if (empty($this->_schema)) {
             return false;
         }
+
+        if (empty($this->import) && empty($this->fields)) {
+            return true;
+        }
+
         try {
             $sql = $this->_schema->dropSql($db);
             foreach ($sql as $stmt) {

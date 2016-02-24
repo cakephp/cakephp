@@ -14,8 +14,6 @@
  */
 namespace Cake\Network;
 
-use Cake\Network\Response;
-
 /**
  * A builder object that assists in defining Cross Origin Request related
  * headers.
@@ -26,10 +24,11 @@ use Cake\Network\Response;
  *
  * It is most convenient to get this object via `Request::cors()`.
  *
- * @see Cake\Network\Response::cors()
+ * @see \Cake\Network\Response::cors()
  */
 class CorsBuilder
 {
+
     /**
      * The response object this builder is attached to.
      *
@@ -75,7 +74,7 @@ class CorsBuilder
     /**
      * Apply the queued headers to the response.
      *
-     * If the builer has no Origin, or if there are no allowed domains,
+     * If the builder has no Origin, or if there are no allowed domains,
      * or if the allowed domains do not match the Origin header no headers will be applied.
      *
      * @return \Cake\Network\Response

@@ -441,7 +441,9 @@ class Route
         if (!isset($hostOptions['_base']) && isset($context['_base'])) {
             $hostOptions['_base'] = $context['_base'];
         }
-        unset($url['_host'], $url['_scheme'], $url['_port'], $url['_base']);
+
+        $query = !empty($url['?']) ? (array)$url['?'] : [];
+        unset($url['_host'], $url['_scheme'], $url['_port'], $url['_base'], $url['?']);
 
         // Move extension into the hostOptions so its not part of
         // reverse matches.
@@ -484,8 +486,6 @@ class Route
         }
 
         $pass = [];
-        $query = [];
-
         foreach ($url as $key => $value) {
             // keys that exist in the defaults and have different values is a match failure.
             $defaultExists = array_key_exists($key, $defaults);
@@ -499,7 +499,8 @@ class Route
             $numeric = is_numeric($key);
             if ($numeric && isset($defaults[$key]) && $defaults[$key] == $value) {
                 continue;
-            } elseif ($numeric) {
+            }
+            if ($numeric) {
                 $pass[] = $value;
                 unset($url[$key]);
                 continue;
@@ -615,7 +616,7 @@ class Route
             $out .= '.' . $params['_ext'];
         }
         if (!empty($query)) {
-            $out .= '?' . http_build_query($query);
+            $out .= rtrim('?' . http_build_query($query), '?');
         }
         return $out;
     }

@@ -313,6 +313,23 @@ class EntityTest extends TestCase
     }
 
     /**
+     * Test getting camelcased virtual fields.
+     *
+     * @return void
+     */
+    public function testGetCamelCasedProperties()
+    {
+        $entity = $this->getMock('\Cake\ORM\Entity', ['_getListIdName']);
+        $entity->expects($this->any())->method('_getListIdName')
+            ->will($this->returnCallback(function ($name) {
+                return 'A name';
+            }));
+        $entity->virtualProperties(['ListIdName']);
+        $this->assertSame('A name', $entity->list_id_name, 'underscored virtual field should be accessible');
+        $this->assertSame('A name', $entity->listIdName, 'Camelbacked virtual field should be accessible');
+    }
+
+    /**
      * Test magic property setting with no custom setter
      *
      * @return void

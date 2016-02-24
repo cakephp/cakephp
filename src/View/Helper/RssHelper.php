@@ -218,7 +218,8 @@ class RssHelper extends Helper
                         }
                         $elements[$key] = implode('', $categories);
                         continue 2;
-                    } elseif (is_array($val) && isset($val['domain'])) {
+                    }
+                    if (is_array($val) && isset($val['domain'])) {
                         $attrib['domain'] = $val['domain'];
                     }
                     break;
@@ -273,7 +274,7 @@ class RssHelper extends Helper
      *
      * @param int|string|\DateTime $time UNIX timestamp or valid time string or DateTime object.
      * @return string An RSS-formatted timestamp
-     * @see TimeHelper::toRSS
+     * @see \Cake\View\Helper\TimeHelper::toRSS
      */
     public function time($time)
     {

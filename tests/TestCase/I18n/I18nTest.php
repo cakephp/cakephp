@@ -251,12 +251,18 @@ class I18nTest extends TestCase
             $package = new Package('default');
             $package->setMessages([
                 'Cow' => 'Le moo',
-                'The {0} is tasty' => 'The {0} is delicious'
+                'The {0} is tasty' => 'The {0} is delicious',
+                'Average price {0}' => 'Price Average {0}',
             ]);
             return $package;
         });
+        $this->assertEquals('Le moo', __d('custom', 'Cow'));
+
         $result = __d('custom', 'The {0} is tasty', ['fruit']);
         $this->assertEquals('The fruit is delicious', $result);
+
+        $result = __d('custom', 'Average price {0}', ['9.99']);
+        $this->assertEquals('Price Average 9.99', $result);
     }
 
     /**

@@ -22,14 +22,12 @@ use Cake\Form\Form;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
-use Cake\Utility\Security;
 use Cake\View\Form\ArrayContext;
 use Cake\View\Form\ContextInterface;
 use Cake\View\Form\EntityContext;
 use Cake\View\Form\FormContext;
 use Cake\View\Form\NullContext;
 use Cake\View\Helper;
-use Cake\View\Helper\SecureFieldTokenTrait;
 use Cake\View\StringTemplateTrait;
 use Cake\View\View;
 use Cake\View\Widget\WidgetRegistry;
@@ -130,17 +128,17 @@ class FormHelper extends Helper
      * @var array
      */
     protected $_defaultWidgets = [
-        'button' => ['Cake\View\Widget\ButtonWidget'],
-        'checkbox' => ['Cake\View\Widget\CheckboxWidget'],
-        'file' => ['Cake\View\Widget\FileWidget'],
-        'label' => ['Cake\View\Widget\LabelWidget'],
-        'nestingLabel' => ['Cake\View\Widget\NestingLabelWidget'],
-        'multicheckbox' => ['Cake\View\Widget\MultiCheckboxWidget', 'nestingLabel'],
-        'radio' => ['Cake\View\Widget\RadioWidget', 'nestingLabel'],
-        'select' => ['Cake\View\Widget\SelectBoxWidget'],
-        'textarea' => ['Cake\View\Widget\TextareaWidget'],
-        'datetime' => ['Cake\View\Widget\DateTimeWidget', 'select'],
-        '_default' => ['Cake\View\Widget\BasicWidget'],
+        'button' => ['Button'],
+        'checkbox' => ['Checkbox'],
+        'file' => ['File'],
+        'label' => ['Label'],
+        'nestingLabel' => ['NestingLabel'],
+        'multicheckbox' => ['MultiCheckbox', 'nestingLabel'],
+        'radio' => ['Radio', 'nestingLabel'],
+        'select' => ['SelectBox'],
+        'textarea' => ['Textarea'],
+        'datetime' => ['DateTime', 'select'],
+        '_default' => ['Basic'],
     ];
 
     /**
@@ -169,8 +167,8 @@ class FormHelper extends Helper
      * An array of field names that have been excluded from
      * the Token hash used by SecurityComponent's validatePost method
      *
-     * @see FormHelper::_secure()
-     * @see SecurityComponent::validatePost()
+     * @see \Cake\View\Helper\FormHelper::_secure()
+     * @see \Cake\Controller\Component\SecurityComponent::validatePost()
      * @var array
      */
     protected $_unlockedFields = [];
@@ -193,7 +191,7 @@ class FormHelper extends Helper
      * Context provider methods.
      *
      * @var array
-     * @see addContextProvider
+     * @see \Cake\View\Helper\FormHelper::addContextProvider()
      */
     protected $_contextProviders = [];
 
@@ -429,7 +427,7 @@ class FormHelper extends Helper
         }
 
         $actionAttr = $templater->formatAttributes(['action' => $action, 'escape' => false]);
-        return $templater->format('formStart', [
+        return $this->formatTemplate('formStart', [
             'attrs' => $templater->formatAttributes($htmlAttributes) . $actionAttr
         ]) . $append;
     }
@@ -530,10 +528,9 @@ class FormHelper extends Helper
             $out .= $this->secure($this->fields, $secureAttributes);
             $this->fields = [];
         }
-        $templater = $this->templater();
-        $out .= $templater->format('formEnd', []);
+        $out .= $this->formatTemplate('formEnd', []);
 
-        $templater->pop();
+        $this->templater()->pop();
         $this->requestType = null;
         $this->_context = null;
         $this->_idPrefix = $this->config('idPrefix');
@@ -636,7 +633,8 @@ class FormHelper extends Helper
             if (!in_array($field, $this->fields)) {
                 if ($value !== null) {
                     return $this->fields[$field] = $value;
-                } elseif (isset($this->fields[$field]) && $value === null) {
+                }
+                if (isset($this->fields[$field]) && $value === null) {
                     unset($this->fields[$field]);
                 }
                 $this->fields[] = $field;
@@ -1057,7 +1055,7 @@ class FormHelper extends Helper
         if (!$this->templater()->get($groupTemplate)) {
             $groupTemplate = 'formGroup';
         }
-        return $this->templater()->format($groupTemplate, [
+        return $this->formatTemplate($groupTemplate, [
             'input' => $options['input'],
             'label' => $options['label'],
             'error' => $options['error'],
@@ -1078,7 +1076,7 @@ class FormHelper extends Helper
             $inputContainerTemplate = 'inputContainer' . $options['errorSuffix'];
         }
 
-        return $this->templater()->format($inputContainerTemplate, [
+        return $this->formatTemplate($inputContainerTemplate, [
             'content' => $options['content'],
             'error' => $options['error'],
             'required' => $options['options']['required'] ? ' required' : '',
@@ -1668,7 +1666,7 @@ class FormHelper extends Helper
             'escape' => false
         ]);
 
-        $out = $templater->format('formStart', [
+        $out = $this->formatTemplate('formStart', [
             'attrs' => $templater->formatAttributes($formOptions) . $action
         ]);
         $out .= $this->hidden('_method', ['value' => $requestMethod]);
@@ -1683,7 +1681,7 @@ class FormHelper extends Helper
             unset($options['data']);
         }
         $out .= $this->secure($fields);
-        $out .= $templater->format('formEnd', []);
+        $out .= $this->formatTemplate('formEnd', []);
 
         if ($options['block']) {
             if ($options['block'] === true) {
@@ -2277,7 +2275,7 @@ class FormHelper extends Helper
      * @param string $fieldName Prefix name for the SELECT element
      * @param array $options Array of Options
      * @return string Generated set of select boxes for time formats chosen.
-     * @see Cake\View\Helper\FormHelper::dateTime() for templating options.
+     * @see \Cake\View\Helper\FormHelper::dateTime() for templating options.
      */
     public function time($fieldName, array $options = [])
     {
@@ -2306,7 +2304,7 @@ class FormHelper extends Helper
      * @param string $fieldName Prefix name for the SELECT element
      * @param array $options Array of Options
      * @return string Generated set of select boxes for time formats chosen.
-     * @see Cake\View\Helper\FormHelper::dateTime() for templating options.
+     * @see \Cake\View\Helper\FormHelper::dateTime() for templating options.
      */
     public function date($fieldName, array $options = [])
     {
@@ -2338,6 +2336,7 @@ class FormHelper extends Helper
      * - `default` - mixed - The value to use if there is no value in the form's context.
      * - `disabled` - mixed - Either a boolean indicating disabled state, or the string in
      *   a numerically indexed value.
+     * - `id` - mixed - If `true` it will be auto generated based on field name.
      *
      * This method will convert a numerically indexed 'disabled' into an associative
      * array value. FormHelper's internals expect associative options.
@@ -2355,6 +2354,10 @@ class FormHelper extends Helper
             $options['secure'] = !empty($this->request->params['_Token']);
         }
         $context = $this->_getContext();
+
+        if (isset($options['id']) && $options['id'] === true) {
+            $options['id'] = $this->_domId($field);
+        }
 
         $disabledIndex = array_search('disabled', $options, true);
         if (is_int($disabledIndex)) {
@@ -2435,7 +2438,7 @@ class FormHelper extends Helper
         $parts = array_map(function ($el) {
             return trim($el, ']');
         }, $parts);
-        return $parts;
+        return array_filter($parts, 'strlen');
     }
 
     /**

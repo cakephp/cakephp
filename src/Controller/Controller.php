@@ -625,7 +625,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
                 'Cake\Utility\Inflector::camelize',
                 explode('/', $this->request->params['prefix'])
             );
-            $viewPath = implode(DS, $prefixes) . DS . $viewPath;
+            $viewPath = implode(DIRECTORY_SEPARATOR, $prefixes) . DIRECTORY_SEPARATOR . $viewPath;
         }
         return $viewPath;
     }
@@ -661,7 +661,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param \Cake\ORM\Table|string|\Cake\ORM\Query|null $object Table to paginate
      * (e.g: Table instance, 'TableName' or a Query object)
      * @return \Cake\ORM\ResultSet Query results
-     * @link http://book.cakephp.org/3.0/en/controllers.html#Controller::paginate
+     * @link http://book.cakephp.org/3.0/en/controllers.html#paginating-a-model
      * @throws \RuntimeException When no compatible table object can be found.
      */
     public function paginate($object = null)

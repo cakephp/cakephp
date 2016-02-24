@@ -119,7 +119,7 @@ class UrlHelper extends Helper
                 '',
                 urldecode($path)
             );
-            $webrootPath = WWW_ROOT . str_replace('/', DS, $filepath);
+            $webrootPath = WWW_ROOT . str_replace('/', DIRECTORY_SEPARATOR, $filepath);
             if (file_exists($webrootPath)) {
                 //@codingStandardsIgnoreStart
                 return $path . '?' . @filemtime($webrootPath);
@@ -129,7 +129,7 @@ class UrlHelper extends Helper
             $plugin = Inflector::camelize($segments[0]);
             if (Plugin::loaded($plugin)) {
                 unset($segments[0]);
-                $pluginPath = Plugin::path($plugin) . 'webroot' . DS . implode(DS, $segments);
+                $pluginPath = Plugin::path($plugin) . 'webroot' . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $segments);
                 //@codingStandardsIgnoreStart
                 return $path . '?' . @filemtime($pluginPath);
                 //@codingStandardsIgnoreEnd
@@ -155,7 +155,7 @@ class UrlHelper extends Helper
             $file = trim($file, '/');
             $theme = $this->_inflectThemeName($this->theme) . '/';
 
-            if (DS === '\\') {
+            if (DIRECTORY_SEPARATOR === '\\') {
                 $file = str_replace('/', '\\', $file);
             }
 

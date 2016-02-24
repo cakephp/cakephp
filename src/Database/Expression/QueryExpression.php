@@ -54,13 +54,13 @@ class QueryExpression implements ExpressionInterface, Countable
      * expression objects. Optionally, you can set the conjunction keyword to be used
      * for joining each part of this level of the expression tree.
      *
-     * @param string|array|QueryExpression $conditions tree-like array structure containing all the conditions
+     * @param string|array|\Cake\Database\Expression\QueryExpression $conditions tree-like array structure containing all the conditions
      * to be added or nested inside this expression object.
      * @param array|\Cake\Database\TypeMap $types associative array of types to be associated with the values
      * passed in $conditions.
      * @param string $conjunction the glue that will join all the string conditions at this
      * level of the expression tree. For example "AND", "OR", "XOR"...
-     * @see QueryExpression::add() for more details on $conditions and $types
+     * @see \Cake\Database\Expression\QueryExpression::add() for more details on $conditions and $types
      */
     public function __construct($conditions = [], $types = [], $conjunction = 'AND')
     {
@@ -323,9 +323,9 @@ class QueryExpression implements ExpressionInterface, Countable
     /**
      * Adds a new case expression to the expression object
      *
-     * @param array|ExpressionInterface $conditions The conditions to test. Must be a ExpressionInterface
+     * @param array|\Cake\Database\ExpressionInterface $conditions The conditions to test. Must be a ExpressionInterface
      * instance, or an array of ExpressionInterface instances.
-     * @param array|ExpressionInterface $values associative array of values to be associated with the conditions
+     * @param array|\Cake\Database\ExpressionInterface $values associative array of values to be associated with the conditions
      * passed in $conditions. If there are more $values than $conditions, the last $value is used as the `ELSE` value
      * @param array $types associative array of types to be associated with the values
      * passed in $values
@@ -416,7 +416,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * "NOT ( (condition1) AND (conditions2) )" conjunction depends on the one
      * currently configured for this object.
      *
-     * @param string|array|QueryExpression $conditions to be added and negated
+     * @param string|array|\Cake\Database\Expression\QueryExpression $conditions to be added and negated
      * @param array $types associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @return $this
@@ -436,6 +436,24 @@ class QueryExpression implements ExpressionInterface, Countable
     public function count()
     {
         return count($this->_conditions);
+    }
+
+    /**
+     * Builds equal condition or assignment with identifier wrapping.
+     *
+     * @param string $left Left join condition field name.
+     * @param string $right Right join condition field name.
+     * @return $this
+     */
+    public function equalFields($left, $right)
+    {
+        $wrapIdentifier = function ($field) {
+            if ($field instanceof ExpressionInterface) {
+                return $field;
+            }
+            return new IdentifierExpression($field);
+        };
+        return $this->eq($wrapIdentifier($left), $wrapIdentifier($right));
     }
 
     /**
@@ -699,7 +717,7 @@ class QueryExpression implements ExpressionInterface, Countable
     /**
      * Returns the type name for the passed field if it was stored in the typeMap
      *
-     * @param string|Cake\Database\Expression\QueryExpression $field The field name to get a type for.
+     * @param string|\Cake\Database\Expression\QueryExpression $field The field name to get a type for.
      * @return string|null The computed type or null, if the type is unknown.
      */
     protected function _calculateType($field)

@@ -253,7 +253,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string|null $key Encryption key used. Defaults
      *   to Security.salt.
      * @return void
-     * @see CookieCryptTrait::_encrypt
+     * @see \Cake\Utility\CookieCryptTrait::_encrypt()
      */
     public function cookieEncrypted($name, $value, $encrypt = 'aes', $key = null)
     {
@@ -550,7 +550,7 @@ abstract class IntegrationTestCase extends TestCase
      */
     public function assertResponseError()
     {
-        $this->_assertStatus(400, 417, 'Status code is not between 400 and 417');
+        $this->_assertStatus(400, 429, 'Status code is not between 400 and 429');
     }
 
     /**
@@ -681,6 +681,26 @@ abstract class IntegrationTestCase extends TestCase
             $this->fail("The '$header' header is not set. " . $message);
         }
         $this->assertEquals($headers[$header], $content, $message);
+    }
+
+    /**
+     * Asserts response header contains a string
+     *
+     * @param string $header The header to check
+     * @param string $content The content to check for.
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertHeaderContains($header, $content, $message = '')
+    {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert headers. ' . $message);
+        }
+        $headers = $this->_response->header();
+        if (!isset($headers[$header])) {
+            $this->fail("The '$header' header is not set. " . $message);
+        }
+        $this->assertContains($content, $headers[$header], $message);
     }
 
     /**
@@ -853,7 +873,7 @@ abstract class IntegrationTestCase extends TestCase
      *   to Security.salt.
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
-     * @see CookieCryptTrait::_encrypt
+     * @see \Cake\Utility\CookieCryptTrait::_encrypt()
      */
     public function assertCookieEncrypted($expected, $name, $encrypt = 'aes', $key = null, $message = '')
     {

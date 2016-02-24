@@ -15,8 +15,6 @@
 namespace Cake\I18n;
 
 use Cake\Chronos\Chronos;
-use Cake\Chronos\ChronosInterface;
-use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
 use IntlDateFormatter;

@@ -1037,7 +1037,6 @@ class RequestHandlerComponentTest extends TestCase
      * array URLs into their correct string ones, and adds base => false so
      * the correct URLs are generated.
      *
-     * @link https://cakephp.lighthouseapp.com/projects/42648-cakephp-1x/tickets/276
      * @return void
      * @triggers Controller.beforeRender $this->Controller
      */
@@ -1145,7 +1144,7 @@ class RequestHandlerComponentTest extends TestCase
         $RequestHandler = new RequestHandlerComponent($this->Controller->components());
         $RequestHandler->response = $this->getMock('Cake\Network\Response', ['notModified', 'stop']);
         $RequestHandler->response->expects($this->never())->method('notModified');
-        $this->assertNull($RequestHandler->beforeRender($event, '', $RequestHandler->response));
+        $this->assertNull($RequestHandler->beforeRender($event));
     }
 
     /**

@@ -48,11 +48,19 @@ class DateTimeTypeTest extends TestCase
      *
      * @return void
      */
-    public function testToPHP()
+    public function testToPHPEmpty()
     {
         $this->assertNull($this->type->toPHP(null, $this->driver));
         $this->assertNull($this->type->toPHP('0000-00-00 00:00:00', $this->driver));
+    }
 
+    /**
+     * Test toPHP
+     *
+     * @return void
+     */
+    public function testToPHPString()
+    {
         $result = $this->type->toPHP('2001-01-04 12:13:14', $this->driver);
         $this->assertInstanceOf('Cake\I18n\Time', $result);
         $this->assertEquals('2001', $result->format('Y'));
@@ -260,10 +268,10 @@ class DateTimeTypeTest extends TestCase
     {
         $this->type->useImmutable();
         $this->assertInstanceOf('DateTimeImmutable', $this->type->marshal('2015-11-01 11:23:00'));
-        $this->assertInstanceOf('DateTimeImmutable', $this->type->toPhp('2015-11-01 11:23:00', $this->driver));
+        $this->assertInstanceOf('DateTimeImmutable', $this->type->toPHP('2015-11-01 11:23:00', $this->driver));
 
         $this->type->useMutable();
         $this->assertInstanceOf('DateTime', $this->type->marshal('2015-11-01 11:23:00'));
-        $this->assertInstanceOf('DateTime', $this->type->toPhp('2015-11-01 11:23:00', $this->driver));
+        $this->assertInstanceOf('DateTime', $this->type->toPHP('2015-11-01 11:23:00', $this->driver));
     }
 }

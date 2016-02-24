@@ -203,9 +203,8 @@ class SortIteratorTest extends TestCase
         $items = new ArrayObject([
             new \DateTime('2014-07-21'),
             new \DateTime('2015-06-30'),
-            new \DateTime('2013-08-12')
+            new \DateTimeImmutable('2013-08-12')
         ]);
-        $a = new \DateTime();
 
         $callback = function ($a) {
             return $a->add(new \DateInterval('P1Y'));
@@ -214,7 +213,7 @@ class SortIteratorTest extends TestCase
         $expected = [
             new \DateTime('2016-06-30'),
             new \DateTime('2015-07-21'),
-            new \DateTime('2014-08-12')
+            new \DateTimeImmutable('2013-08-12')
 
         ];
         $this->assertEquals($expected, $sorted->toList());
@@ -222,12 +221,12 @@ class SortIteratorTest extends TestCase
         $items = new ArrayObject([
             new \DateTime('2014-07-21'),
             new \DateTime('2015-06-30'),
-            new \DateTime('2013-08-12')
+            new \DateTimeImmutable('2013-08-12')
         ]);
 
         $sorted = new SortIterator($items, $callback, SORT_ASC);
         $expected = [
-            new \DateTime('2014-08-12'),
+            new \DateTimeImmutable('2013-08-12'),
             new \DateTime('2015-07-21'),
             new \DateTime('2016-06-30'),
         ];

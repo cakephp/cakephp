@@ -14,7 +14,6 @@
  */
 namespace Cake\Routing\Route;
 
-use Cake\Network\Response;
 use Cake\Routing\Exception\RedirectException;
 use Cake\Routing\Router;
 

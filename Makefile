@@ -179,4 +179,4 @@ tag-component-%: component-% guard-VERSION guard-GITHUB_USER
 	git remote rm $*
 
 # Top level alias for doing a release.
-release: guard-VERSION guard-GITHUB_USER tag-release package publish components-tag
+release: guard-VERSION guard-GITHUB_USER tag-release components-tag package publish
