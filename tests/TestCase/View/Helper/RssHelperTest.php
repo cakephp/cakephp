@@ -188,8 +188,8 @@ class RssHelperTest extends TestCase
                     'rel' => 'self',
                     'type' => 'application/rss+xml']
             ],
-            'media:content' =>[
-                'attrib'=>[
+            'media:content' => [
+                'attrib'=> [
                     'media'=>"video/mp4",
                 ]
             ]
@@ -213,7 +213,7 @@ class RssHelperTest extends TestCase
                     'rel' => "self",
                     'type' => "application/rss+xml"
                 ],
-                'media:content'=>[
+                'media:content'=> [
                     'media'=>"video/mp4",
                 ],
             'content-here',
