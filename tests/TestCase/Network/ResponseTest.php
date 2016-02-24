@@ -1550,7 +1550,7 @@ class ResponseTest extends TestCase
         $response->file(TEST_APP . 'vendor/css/test_asset.css');
         $file = $response->getFile();
         $this->assertInstanceOf('Cake\Filesystem\File', $file, 'Should get a file');
-        $this->assertSame(TEST_APP . 'vendor/css/test_asset.css', $file->path, 'Path should match');
+        $this->assertPathEquals(TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css', $file->path);
     }
 
     /**
