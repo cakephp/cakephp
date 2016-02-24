@@ -825,6 +825,26 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
+     * Add a localized time, date or datetime format validation rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string $type Parser type, one out of 'date', 'time', and 'datetime'
+     * @param string|int $format any format accepted by IntlDateFormatter
+     * @param string $message The error message when the rule fails.
+     * @param string|callable $when Either 'create' or 'update' or a callable that returns
+     *   true when the valdiation rule should be applied.
+     * @see \Cake\Validation\Validation::localizedTime()
+     * @return $this
+     */
+    public function localizedTime($field, $type = 'datetime', $format = null, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+        return $this->add($field, $type, $extra + [
+            'rule' => ['localizedTime', $type, $format]
+        ]);
+    }
+
+    /**
      * Add a boolean validation rule to a field.
      *
      * @param string $field The field you want to apply the rule to.
