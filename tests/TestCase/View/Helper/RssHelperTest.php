@@ -186,11 +186,12 @@ class RssHelperTest extends TestCase
                 'attrib' => [
                     'href' => 'http://www.example.com/rss.xml',
                     'rel' => 'self',
-                    'type' => 'application/rss+xml']
+                    'type' => 'application/rss+xml'
+                ]
             ],
             'media:content' => [
                 'attrib' => [
-                    'media' => "video/mp4",
+                    'media' => 'video/mp4'
                 ]
             ]
         ];
@@ -213,8 +214,9 @@ class RssHelperTest extends TestCase
                     'rel' => "self",
                     'type' => "application/rss+xml"
                 ],
-                'media:content'=> [
-                    'media'=>"video/mp4",
+                'media:content' => [
+                    'xmlns:media' => 'http://search.yahoo.com/mrss/',
+                    'media' => "video/mp4",
                 ],
             'content-here',
             '/channel',

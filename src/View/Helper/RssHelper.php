@@ -327,8 +327,8 @@ class RssHelper extends Helper
                 case 'atom':
                     $xml .= ' xmlns:atom="http://www.w3.org/2005/Atom"';
                     break;
-                default:
-                    $bareName = $name;
+                case 'media':
+                    $xml .= ' xmlns:media="http://search.yahoo.com/mrss/"';
                     break;
             }
         }
