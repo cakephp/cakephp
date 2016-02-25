@@ -2559,7 +2559,6 @@ class DboSource extends DataSource {
 					continue;
 				}
 
-				$fields[$i] = preg_replace('/\t/', '', $fields[$i]);
 				$fields[$i] = str_replace(array("\r", "\n"), '', $fields[$i]);
 				if (is_object($fields[$i]) && isset($fields[$i]->type) && $fields[$i]->type === 'expression') {
 					$fields[$i] = $fields[$i]->value;
