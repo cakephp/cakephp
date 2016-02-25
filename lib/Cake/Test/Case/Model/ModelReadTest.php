@@ -8531,4 +8531,27 @@ class ModelReadTest extends BaseModelTest {
 		);
 		$this->assertEquals($expected, $results, 'Model related with belongsTo afterFind callback fails');
 	}
+
+/**
+ * test distinct with break lines
+ *
+ * @return void
+ */
+	public function testDistinctWithBreakLines() {
+		$this->loadFixtures('Article');
+		$Article = new Article();
+		$Article->recursive = -1;
+		$firstArticle = $Article->find('first', array(
+			'fields' => array(
+				'Article.body', 'COUNT(
+					DISTINCT (CASE
+						WHEN Article.published = \'Y\'
+							THEN Article.body
+					END))'
+			)
+		));
+		$expected = 'First Article Body';
+		$result = Hash::get($firstArticle, 'Article.body');
+		$this->assertEquals($expected, $result);
+	}
 }

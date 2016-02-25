@@ -2550,14 +2550,17 @@ class DboSource extends DataSource {
 			}
 			return $fields;
 		}
-		$count = count($fields);
 
+		$count = count($fields);
 		if ($count >= 1 && !in_array($fields[0], array('*', 'COUNT(*)'))) {
 			for ($i = 0; $i < $count; $i++) {
 				if (is_string($fields[$i]) && in_array($fields[$i], $virtual)) {
 					unset($fields[$i]);
 					continue;
 				}
+
+				$fields[$i] = preg_replace('/\t/', '', $fields[$i]);
+				$fields[$i] = str_replace(array("\r", "\n"), '', $fields[$i]);
 				if (is_object($fields[$i]) && isset($fields[$i]->type) && $fields[$i]->type === 'expression') {
 					$fields[$i] = $fields[$i]->value;
 				} elseif (preg_match('/^\(.*\)\s' . $this->alias . '.*/i', $fields[$i])) {
