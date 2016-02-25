@@ -900,6 +900,11 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::date($dateTime));
         $this->assertTrue(Validation::time($dateTime));
         $this->assertTrue(Validation::dateTime($dateTime));
+
+        $dateTime = new \DateTimeImmutable();
+        $this->assertTrue(Validation::date($dateTime));
+        $this->assertTrue(Validation::time($dateTime));
+        $this->assertTrue(Validation::dateTime($dateTime));
     }
 
     /**

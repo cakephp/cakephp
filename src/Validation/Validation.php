@@ -15,7 +15,7 @@
 namespace Cake\Validation;
 
 use Cake\Utility\Text;
-use DateTime;
+use DateTimeInterface;
 use LogicException;
 use NumberFormatter;
 use RuntimeException;
@@ -347,7 +347,7 @@ class Validation
      * - `ym` 2006/12 or 06/12 separators can be a space, period, dash, forward slash
      * - `y` 2006 just the year without any separators
      *
-     * @param string|\DateTime $check a valid date string/object
+     * @param string|\DateTimeInterface $check a valid date string/object
      * @param string|array $format Use a string or an array of the keys above.
      *    Arrays should be passed as ['dmy', 'mdy', etc]
      * @param string|null $regex If a custom regular expression is used this is the only validation that will occur.
@@ -355,7 +355,7 @@ class Validation
      */
     public static function date($check, $format = 'ymd', $regex = null)
     {
-        if ($check instanceof DateTime) {
+        if ($check instanceof DateTimeInterface) {
             return true;
         }
 
@@ -411,7 +411,7 @@ class Validation
      *
      * All values matching the "date" core validation rule, and the "time" one will be valid
      *
-     * @param string|\DateTime $check Value to check
+     * @param string|\DateTimeInterface $check Value to check
      * @param string|array $dateFormat Format of the date part. See Validation::date() for more information.
      * @param string|null $regex Regex for the date part. If a custom regular expression is used this is the only validation that will occur.
      * @return bool True if the value is valid, false otherwise
@@ -420,7 +420,7 @@ class Validation
      */
     public static function datetime($check, $dateFormat = 'ymd', $regex = null)
     {
-        if ($check instanceof DateTime) {
+        if ($check instanceof DateTimeInterface) {
             return true;
         }
         $valid = false;
@@ -442,12 +442,12 @@ class Validation
      * Validates time as 24hr (HH:MM) or am/pm ([H]H:MM[a|p]m)
      * Does not allow/validate seconds.
      *
-     * @param string|\DateTime $check a valid time string/object
+     * @param string|\DateTimeInterface $check a valid time string/object
      * @return bool Success
      */
     public static function time($check)
     {
-        if ($check instanceof DateTime) {
+        if ($check instanceof DateTimeInterface) {
             return true;
         }
         if (is_array($check)) {
