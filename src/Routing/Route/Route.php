@@ -201,7 +201,7 @@ class Route
         }
         krsort($routeParams);
         $parsed = str_replace(array_keys($routeParams), array_values($routeParams), $parsed);
-        $this->_compiledRoute = '#^' . $parsed . '[/]*$#';
+        $this->_compiledRoute = '#^' . $parsed . '[/]*$#u';
         $this->keys = $names;
 
         // Remove defaults that are also keys. They can cause match failures
