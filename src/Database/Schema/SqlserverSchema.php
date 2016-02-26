@@ -496,8 +496,8 @@ class SqlserverSchema extends BaseSchema
             $column = $table->column($pk[0]);
             if (in_array($column['type'], ['integer', 'biginteger'])) {
                 $queries[] = sprintf(
-                    'DBCC CHECKIDENT(%s, RESEED, 0)',
-                    $name
+                    "DBCC CHECKIDENT('%s', RESEED, 0)",
+                    $table->name()
                 );
             }
         }
