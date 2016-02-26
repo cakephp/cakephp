@@ -757,9 +757,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * - foreignKey: The name of the field to use as foreign key, if false none
      *   will be used
      * - dependent: Set to true if you want CakePHP to cascade deletes to the
-     *   associated table when an entity is removed on this table. Set to false
-     *   if you don't want CakePHP to remove associated data, for when you are using
-     *   database constraints.
+     *   associated table when an entity is removed on this table. The delete operation
+     *   on the associated table will not cascade further. To get recursive cascades enable
+     *   `cascadeCallbacks` as well. Set to false if you don't want CakePHP to remove
+     *   associated data, or when you are using database constraints.
      * - cascadeCallbacks: Set to true if you want CakePHP to fire callbacks on
      *   cascaded deletes. If false the ORM will use deleteAll() to remove data.
      *   When true records will be loaded and then deleted.
@@ -799,9 +800,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * - foreignKey: The name of the field to use as foreign key, if false none
      *   will be used
      * - dependent: Set to true if you want CakePHP to cascade deletes to the
-     *   associated table when an entity is removed on this table. Set to false
-     *   if you don't want CakePHP to remove associated data, for when you are using
-     *   database constraints.
+     *   associated table when an entity is removed on this table. The delete operation
+     *   on the associated table will not cascade further. To get recursive cascades enable
+     *   `cascadeCallbacks` as well. Set to false if you don't want CakePHP to remove
+     *   associated data, or when you are using database constraints.
      * - cascadeCallbacks: Set to true if you want CakePHP to fire callbacks on
      *   cascaded deletes. If false the ORM will use deleteAll() to remove data.
      *   When true records will be loaded and then deleted.
@@ -850,6 +852,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * - through: If you choose to use an already instantiated link table, set this
      *   key to a configured Table instance containing associations to both the source
      *   and target tables in this association.
+     * - dependent: Set to false, if you do not want junction table records removed
+     *   when an owning record is removed.
      * - cascadeCallbacks: Set to true if you want CakePHP to fire callbacks on
      *   cascaded deletes. If false the ORM will use deleteAll() to remove data.
      *   When true join/junction table records will be loaded and then deleted.
