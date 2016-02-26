@@ -346,6 +346,7 @@ class MemcachedEngineTest extends CakeTestCase {
  * @return void
  */
 	public function testSaslAuthException() {
+		$this->skipIf(version_compare(PHP_VERSION, '7.0.0', '>='));
 		$Memcached = new TestMemcachedEngine();
 		$settings = array(
 			'engine' => 'Memcached',
