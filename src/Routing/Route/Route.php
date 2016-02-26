@@ -199,9 +199,13 @@ class Route
             $parsed = preg_replace('#/\\\\\*$#', '(?:/(?P<_args_>.*))?', $parsed);
             $this->_greedy = true;
         }
+        $mode = '';
+        if (!empty($this->options['multibytePattern'])) {
+            $mode = 'u';
+        }
         krsort($routeParams);
         $parsed = str_replace(array_keys($routeParams), array_values($routeParams), $parsed);
-        $this->_compiledRoute = '#^' . $parsed . '[/]*$#u';
+        $this->_compiledRoute = '#^' . $parsed . '[/]*$#' . $mode;
         $this->keys = $names;
 
         // Remove defaults that are also keys. They can cause match failures

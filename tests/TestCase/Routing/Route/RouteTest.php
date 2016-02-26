@@ -212,12 +212,18 @@ class RouteTest extends TestCase
         $route = new Route(
             '/test/:slug',
             ['controller' => 'Pages', 'action' => 'display'],
-            ['pass' => ['slug'], 'slug' => '[A-zА-я\-\ ]+']
+            ['pass' => ['slug'], 'multibytePattern' => false, 'slug' => '[A-zА-я\-\ ]+']
         );
         $result = $route->compile();
-        $this->assertRegExp($result, '/test/abcDEF');
+        $this->assertNotRegExp($result, '/test/bla-blan-тест');
+
+        $route = new Route(
+            '/test/:slug',
+            ['controller' => 'Pages', 'action' => 'display'],
+            ['pass' => ['slug'], 'multibytePattern' => true, 'slug' => '[A-zА-я\-\ ]+']
+        );
+        $result = $route->compile();
         $this->assertRegExp($result, '/test/bla-blan-тест');
-        $this->assertNotRegExp($result, '/test/9999');
     }
 
     /**
