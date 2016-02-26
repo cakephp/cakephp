@@ -71,15 +71,15 @@ class SqlserverWithTriggerCompiler extends SqlserverCompiler
             }
         }
         $columns = $this->_stringifyExpressions($parts[1], $generator);
-		$sqlForTempTableColumns = implode(', ', $sqlCreateColumns);
-		$sqlForInsertColumns = implode(', ', $columns);
-		$sqlForOutputInserted = implode(' , INSERTED.', $primaryKeyColumnsForSql);
+        $sqlForTempTableColumns = implode(', ', $sqlCreateColumns);
+        $sqlForInsertColumns = implode(', ', $columns);
+        $sqlForOutputInserted = implode(' , INSERTED.', $primaryKeyColumnsForSql);
         return sprintf(
             'DECLARE @var TABLE (%s);INSERT INTO %s (%s) OUTPUT INSERTED.%s INTO @var',
-			$sqlForTempTableColumns,
-			$table,
-			$sqlForInsertColumns,
-			$sqlForOutputInserted
+            $sqlForTempTableColumns,
+            $table,
+            $sqlForInsertColumns,
+            $sqlForOutputInserted
         );
     }
 
