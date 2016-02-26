@@ -448,7 +448,7 @@ class CakeRequest implements ArrayAccess {
 		if (!empty($ref) && !empty($base)) {
 			if ($local && strpos($ref, $base) === 0) {
 				$ref = substr($ref, strlen($base));
-				if ($ref[0] !== '/') {
+				if (isset($ref[0]) && $ref[0] !== '/') {
 					$ref = '/' . $ref;
 				}
 				return $ref;
