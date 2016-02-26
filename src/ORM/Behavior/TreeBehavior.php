@@ -19,9 +19,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
-use Cake\ORM\Entity;
 use Cake\ORM\Query;
-use Cake\ORM\Table;
 use InvalidArgumentException;
 use RuntimeException;
 

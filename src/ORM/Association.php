@@ -261,6 +261,16 @@ abstract class Association
     }
 
     /**
+     * The class name of the target table object
+     *
+     * @return string
+     */
+    public function className()
+    {
+        return $this->_className;
+    }
+
+    /**
      * Sets the table instance for the source side of the association. If no arguments
      * are passed, the current configured table instance is returned
      *

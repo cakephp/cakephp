@@ -1250,43 +1250,6 @@ class TableTest extends TestCase
     }
 
     /**
-     * Test that find('list') also works as it used to in 2.x.
-     *
-     * @return void
-     */
-    public function testFindListAutoSelectedFields()
-    {
-        $Users = new Table([
-            'table' => 'users',
-            'alias' => 'Users',
-            'connection' => $this->connection,
-        ]);
-        $Users->displayField('username');
-
-        $query = $Users->find('list', ['fields' => ['id', 'created']]);
-        $expected = ['id', 'created'];
-        $this->assertSame($expected, $query->clause('select'));
-
-        $query = $Users->find('list', ['fields' => ['id']]);
-        $expected = ['id'];
-        $this->assertSame($expected, $query->clause('select'));
-        $expected = [
-            1 => 1,
-            2 => 2,
-            3 => 3,
-            4 => 4
-        ];
-        $this->assertSame($expected, $query->toArray());
-
-        $query = $Users->find('list', ['fields' => ['Users.id', 'Users.created']]);
-        $expected = ['Users.id', 'Users.created'];
-        $this->assertSame($expected, $query->clause('select'));
-
-        $results = $query->toArray();
-        $this->assertInstanceOf('Cake\I18n\Time', array_shift($results));
-    }
-
-    /**
      * test that find('list') does not auto add fields to select if using virtual properties
      *
      * @return void

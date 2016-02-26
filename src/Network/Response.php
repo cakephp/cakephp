@@ -1459,6 +1459,16 @@ class Response
     }
 
     /**
+     * Get the current file if one exists.
+     *
+     * @return \Cake\Filesystem\File|null The file to use in the response or null
+     */
+    public function getFile()
+    {
+        return $this->_file;
+    }
+
+    /**
      * Apply a file range to a file and set the end offset.
      *
      * If an invalid range is requested a 416 Status code will be used
