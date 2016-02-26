@@ -27,6 +27,7 @@ use RuntimeException;
  * An Association is a relationship established between two tables and is used
  * to configure and customize the way interconnected records are retrieved.
  *
+ * @mixin \Cake\ORM\Table
  */
 abstract class Association
 {
