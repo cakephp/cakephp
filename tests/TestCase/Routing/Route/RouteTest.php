@@ -207,6 +207,25 @@ class RouteTest extends TestCase
         $this->assertEquals(['url_title', 'id'], $route->keys);
     }
 
+    public function testRouteCompilingWithUnicodePatterns()
+    {
+        $route = new Route(
+            '/test/:slug',
+            ['controller' => 'Pages', 'action' => 'display'],
+            ['pass' => ['slug'], 'multibytePattern' => false, 'slug' => '[A-zА-я\-\ ]+']
+        );
+        $result = $route->compile();
+        $this->assertNotRegExp($result, '/test/bla-blan-тест');
+
+        $route = new Route(
+            '/test/:slug',
+            ['controller' => 'Pages', 'action' => 'display'],
+            ['pass' => ['slug'], 'multibytePattern' => true, 'slug' => '[A-zА-я\-\ ]+']
+        );
+        $result = $route->compile();
+        $this->assertRegExp($result, '/test/bla-blan-тест');
+    }
+
     /**
      * test more complex route compiling & parsing with mid route greedy stars
      * and optional routing parameters
