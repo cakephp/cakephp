@@ -40,6 +40,21 @@ class UrlHelper extends Helper
         return h(Router::url($url, $full));
     }
 
+    public function imageUrl($path, array $options = [])
+    {
+        return $this->assetUrl($path, $options + ['pathPrefix' => Configure::read('App.imageBaseUrl')]);
+    }
+
+    public function cssUrl($path, array $options = [])
+    {
+        return $this->assetUrl($path, $options + ['pathPrefix' => Configure::read('App.cssBaseUrl'), 'ext' => '.css']);
+    }
+
+    public function scriptUrl($path, array $options = [])
+    {
+        return $this->assetUrl($url, $options + ['pathPrefix' => Configure::read('App.jsBaseUrl'), 'ext' => '.js']);
+    }
+
     /**
      * Generate URL for given asset file. Depending on options passed provides full URL with domain name.
      * Also calls Helper::assetTimestamp() to add timestamp to local files
