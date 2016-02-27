@@ -547,7 +547,13 @@ class ExtractTask extends Shell
                 $output .= $header . $sentence;
             }
 
-            $filename = $domain . '.pot';
+            // Remove vendor prefix if present.
+            $slashPosition = strpos($domain, '/');
+            if ($slashPosition !== false) {
+                $domain = substr($domain, $slashPosition + 1);
+            }
+
+            $filename = str_replace('/', '_', $domain) . '.pot';
             $File = new File($this->_output . $filename);
             $response = '';
             while ($overwriteAll === false && $File->exists() && strtoupper($response) !== 'Y') {
