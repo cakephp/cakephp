@@ -40,19 +40,60 @@ class UrlHelper extends Helper
         return h(Router::url($url, $full));
     }
 
+    /**
+     * Generate URL for given image file. Depending on options passed provides full URL
+     * with domain name. Also calls Helper::assetTimestamp() to add timestamp to local files
+     *
+     * @param string|array $path Path string or URL array
+     * @param array $options Options array. Possible keys:
+     *   `fullBase` Return full URL with domain name
+     *   `pathPrefix` Path prefix for relative URLs
+     *   `ext` Asset extension to append
+     *   `plugin` False value will prevent parsing path as a plugin
+     * @return string Generated URL
+     */
     public function imageUrl($path, array $options = [])
     {
-        return $this->assetUrl($path, $options + ['pathPrefix' => Configure::read('App.imageBaseUrl')]);
+        $pathPrefix = Configure::read('App.imageBaseUrl');
+        return $this->assetUrl($path, $options + compact('pathPrefix'));
     }
 
+    /**
+     * Generate URL for given CSS file. Depending on options passed provides full URL
+     * with domain name. Also calls Helper::assetTimestamp() to add timestamp to local files
+     *
+     * @param string|array $path Path string or URL array
+     * @param array $options Options array. Possible keys:
+     *   `fullBase` Return full URL with domain name
+     *   `pathPrefix` Path prefix for relative URLs
+     *   `ext` Asset extension to append
+     *   `plugin` False value will prevent parsing path as a plugin
+     * @return string Generated URL
+     */
     public function cssUrl($path, array $options = [])
     {
-        return $this->assetUrl($path, $options + ['pathPrefix' => Configure::read('App.cssBaseUrl'), 'ext' => '.css']);
+        $pathPrefix = Configure::read('App.cssBaseUrl');
+        $ext = '.css';
+        return $this->assetUrl($path, $options + compact('pathPrefix', 'ext'));
     }
 
+    /**
+     * Generate URL for given javascript file. Depending on options passed provides full
+     * URL with domain name. Also calls Helper::assetTimestamp() to add timestamp to local files
+     *
+     * @param string|array $path Path string or URL array
+     * @param array $options Options array. Possible keys:
+     *   `fullBase` Return full URL with domain name
+     *   `pathPrefix` Path prefix for relative URLs
+     *   `ext` Asset extension to append
+     *   `plugin` False value will prevent parsing path as a plugin
+     * @return string Generated URL
+     */
     public function scriptUrl($path, array $options = [])
     {
-        return $this->assetUrl($url, $options + ['pathPrefix' => Configure::read('App.jsBaseUrl'), 'ext' => '.js']);
+        $pathPrefix = Configure::read('App.jsBaseUrl');
+        $ext = '.js';
+        return $this->assetUrl($path, $options + compact('pathPrefix', 'ext'));
     }
 
     /**
