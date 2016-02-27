@@ -977,7 +977,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     protected function _addDefaultSelectTypes()
     {
         $typeMap = $this->typeMap()->defaults();
-        $selectTypeMap = $this->selectTypeMap();
         $select = $this->clause('select');
         $types = [];
 

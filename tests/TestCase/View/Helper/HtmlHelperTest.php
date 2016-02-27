@@ -58,7 +58,6 @@ class HtmlHelperTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
         $this->View = $this->getMock('Cake\View\View', ['append']);
         $this->Html = new HtmlHelper($this->View);
         $this->Html->request = new Request();

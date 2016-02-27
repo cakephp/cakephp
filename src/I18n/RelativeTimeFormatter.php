@@ -303,7 +303,7 @@ class RelativeTimeFormatter
         }
 
         $diffData = $this->_diffData($futureTime, $pastTime, $backwards, $options);
-        list($fNum, $fWord, $years, $months, $weeks, $days, $hours, $minutes, $seconds) = array_values($diffData);
+        list($fNum, $fWord, $years, $months, $weeks, $days) = array_values($diffData);
 
         $relativeDate = [];
         if ($fNum >= 1 && $years > 0) {
