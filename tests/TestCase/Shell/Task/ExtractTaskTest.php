@@ -263,7 +263,7 @@ class ExtractTaskTest extends TestCase
     }
 
     /**
-     * Test that is possible to extract messages form a single plugin
+     * Test that is possible to extract messages from a single plugin
      *
      * @return void
      */
@@ -285,6 +285,31 @@ class ExtractTaskTest extends TestCase
         $this->assertNotRegExp('#Pages#', $result);
         $this->assertRegExp('/translate\.ctp:\d+/', $result);
         $this->assertContains('This is a translatable string', $result);
+    }
+
+    /**
+     * Test that is possible to extract messages from a vendored plugin.
+     *
+     * @return void
+     */
+    public function testExtractVendoredPlugin()
+    {
+        Configure::write('App.namespace', 'TestApp');
+
+        $this->Task = $this->getMock(
+            'Cake\Shell\Task\ExtractTask',
+            ['_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'],
+            [$this->io]
+        );
+
+        $this->Task->params['output'] = $this->path . DS;
+        $this->Task->params['plugin'] = 'Company/TestPluginThree';
+
+        $this->Task->main();
+        $result = file_get_contents($this->path . DS . 'test_plugin_three.pot');
+        $this->assertNotRegExp('#Pages#', $result);
+        $this->assertRegExp('/default\.ctp:\d+/', $result);
+        $this->assertContains('A vendor message', $result);
     }
 
     /**
