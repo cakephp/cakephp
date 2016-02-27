@@ -138,7 +138,7 @@ class RouteCollectionTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/', []);
 
         $routes->resources('Articles');
-        $routes->connect('/:controller', ['action' => 'index'], [], ['routeClass' => 'InflectedRoute']);
+        $routes->connect('/:controller', ['action' => 'index'], ['routeClass' => 'InflectedRoute']);
         $routes->connect('/:controller/:action', [], ['routeClass' => 'InflectedRoute']);
 
         $result = $this->collection->parse('/articles/add');
