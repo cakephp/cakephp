@@ -330,6 +330,48 @@ class AssociationTest extends TestCase
     }
 
     /**
+     * Test that warning is shown if property name clashes with table field.
+     *
+     * @return void
+     * @expectedException PHPUnit_Framework_Error_Warning
+     */
+    public function testPropertyNameClash()
+    {
+        $this->source->schema(['foo' => ['type' => 'string']]);
+        $this->assertEquals('foo', $this->association->property());
+    }
+
+    /**
+     * Test that warning is not shown if "propertyName" option is explicitly specified.
+     *
+     * @return void
+     */
+    public function testPropertyNameExplicitySet()
+    {
+        $this->source->schema(['foo' => ['type' => 'string']]);
+
+        $config = [
+            'className' => '\Cake\Test\TestCase\ORM\TestTable',
+            'foreignKey' => 'a_key',
+            'conditions' => ['field' => 'value'],
+            'dependent' => true,
+            'sourceTable' => $this->source,
+            'joinType' => 'INNER',
+            'propertyName' => 'foo'
+        ];
+        $association = $this->getMock(
+            '\Cake\ORM\Association',
+            [
+                '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
+                'saveAssociated', 'eagerLoader', 'type'
+            ],
+            ['Foo', $config]
+        );
+
+        $this->assertEquals('foo', $association->property());
+    }
+
+    /**
      * Tests strategy method
      *
      * @return void
