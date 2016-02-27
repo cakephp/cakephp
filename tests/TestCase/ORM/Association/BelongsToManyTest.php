@@ -700,10 +700,12 @@ class BelongsToManyTest extends TestCase
      */
     public function testSaveAssociatedEmptySetSuccess($value)
     {
+        $table = $this->getMock('Cake\ORM\Table', ['table'], [[]]);
+        $table->schema([]);
         $assoc = $this->getMock(
             '\Cake\ORM\Association\BelongsToMany',
             ['_saveTarget', 'replaceLinks'],
-            ['tags']
+            ['tags', ['sourceTable' => $table]]
         );
         $entity = new Entity([
             'id' => 1,
@@ -726,10 +728,12 @@ class BelongsToManyTest extends TestCase
      */
     public function testSaveAssociatedEmptySetUpdateSuccess($value)
     {
+        $table = $this->getMock('Cake\ORM\Table', ['table'], [[]]);
+        $table->schema([]);
         $assoc = $this->getMock(
             '\Cake\ORM\Association\BelongsToMany',
             ['_saveTarget', 'replaceLinks'],
-            ['tags']
+            ['tags', ['sourceTable' => $table]]
         );
         $entity = new Entity([
             'id' => 1,
@@ -755,10 +759,12 @@ class BelongsToManyTest extends TestCase
      */
     public function testSaveAssociatedWithReplace()
     {
+        $table = $this->getMock('Cake\ORM\Table', ['table'], [[]]);
+        $table->schema([]);
         $assoc = $this->getMock(
             '\Cake\ORM\Association\BelongsToMany',
             ['replaceLinks'],
-            ['tags']
+            ['tags', ['sourceTable' => $table]]
         );
         $entity = new Entity([
             'id' => 1,
@@ -782,10 +788,12 @@ class BelongsToManyTest extends TestCase
      */
     public function testSaveAssociatedWithReplaceReturnFalse()
     {
+        $table = $this->getMock('Cake\ORM\Table', ['table'], [[]]);
+        $table->schema([]);
         $assoc = $this->getMock(
             '\Cake\ORM\Association\BelongsToMany',
             ['replaceLinks'],
-            ['tags']
+            ['tags', ['sourceTable' => $table]]
         );
         $entity = new Entity([
             'id' => 1,

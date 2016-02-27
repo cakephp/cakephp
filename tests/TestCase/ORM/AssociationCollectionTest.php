@@ -284,7 +284,8 @@ class AssociationCollectionTest extends TestCase
      */
     public function testSaveChildrenFiltered()
     {
-        $table = $this->getMock('Cake\ORM\Table', [], [[]]);
+        $table = $this->getMock('Cake\ORM\Table', ['table'], [[]]);
+        $table->schema([]);
         $mockOne = $this->getMock(
             'Cake\ORM\Association\HasMany',
             ['saveAssociated'],
