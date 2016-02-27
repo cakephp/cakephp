@@ -21,7 +21,6 @@ use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use TestApp\Controller\ComponentTestController;
 use TestApp\Controller\Component\AppleComponent;
-use TestApp\Controller\Component\OrangeComponent;
 
 /**
  * ComponentTest class

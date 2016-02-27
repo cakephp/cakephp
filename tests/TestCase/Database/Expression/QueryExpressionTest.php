@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Database\Expression;
 
-use Cake\Database\Expression\CaseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;

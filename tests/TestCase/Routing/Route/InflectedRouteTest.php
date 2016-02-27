@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Routing\Route;
 
-use Cake\Core\App;
 use Cake\Routing\Router;
 use Cake\Routing\Route\InflectedRoute;
 use Cake\TestSuite\TestCase;

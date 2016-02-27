@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\Controller;
 
 use Cake\Controller\Component;
 use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
@@ -26,7 +25,6 @@ use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\TestSuite\Fixture\TestModel;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Hash;
 use TestApp\Controller\Admin\PostsController;
 use TestPlugin\Controller\TestPluginController;
 

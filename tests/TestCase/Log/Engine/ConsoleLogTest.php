@@ -15,7 +15,6 @@ namespace Cake\Test\TestCase\Log\Engine;
 
 use Cake\Console\ConsoleOutput;
 use Cake\Log\Engine\ConsoleLog;
-use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 
 /**

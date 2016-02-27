@@ -13,7 +13,6 @@
  */
 namespace Cake\Test\TestCase\Core;
 
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;

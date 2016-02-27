@@ -15,7 +15,6 @@ namespace Cake\Test\TestCase\View;
 
 use Cake\Controller\Controller;
 use Cake\TestSuite\TestCase;
-use Cake\View\ViewVarsTrait;
 
 /**
  * ViewVarsTrait test case

@@ -14,17 +14,14 @@
 namespace Cake\Test\TestCase\Routing;
 
 use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Network\Session;
 use Cake\Routing\Dispatcher;
 use Cake\Routing\Filter\ControllerFactoryFilter;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Inflector;
 
 /**
  * A testing stub that doesn't send headers.

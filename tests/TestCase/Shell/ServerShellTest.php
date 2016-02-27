@@ -14,8 +14,6 @@
  */
 namespace Cake\Test\TestCase\Shell;
 
-use Cake\Cache\Cache;
-use Cake\Datasource\ConnectionManager;
 use Cake\Shell\ServerShell;
 use Cake\TestSuite\TestCase;
 

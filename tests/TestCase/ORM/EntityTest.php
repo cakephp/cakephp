@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
-use Cake\Validation\Validator;
 use TestApp\Model\Entity\Extending;
 use TestApp\Model\Entity\NonExtending;
 

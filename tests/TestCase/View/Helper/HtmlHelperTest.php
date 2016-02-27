@@ -14,18 +14,13 @@
  */
 namespace Cake\Test\TestCase\View\Helper;
 
-use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\File;
-use Cake\Filesystem\Folder;
 use Cake\Network\Request;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
-use Cake\View\Helper\FormHelper;
 use Cake\View\Helper\HtmlHelper;
-use Cake\View\View;
 
 /**
  * HtmlHelperTest class

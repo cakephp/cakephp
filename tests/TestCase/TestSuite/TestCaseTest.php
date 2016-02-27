@@ -14,8 +14,6 @@
  */
 namespace Cake\Test\TestCase\TestSuite;
 
-use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
