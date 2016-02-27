@@ -436,8 +436,7 @@ abstract class Association
             $this->_propertyName = $name;
         }
         if ($name === null && !$this->_propertyName) {
-            list(, $name) = pluginSplit($this->_name);
-            $this->_propertyName = Inflector::underscore($name);
+            $this->_propertyName = $this->_propertyName();
             if (in_array($this->_propertyName, $this->_sourceTable->schema()->columns())) {
                 $msg = 'Association property name "%s" clashes with field of same name of table "%s".' .
                     "\n" . 'You should explicitly specify the "propertyName" option.';
@@ -448,6 +447,17 @@ abstract class Association
             }
         }
         return $this->_propertyName;
+    }
+
+    /**
+     * Returns default property name based on association name.
+     *
+     * @return string
+     */
+    protected function _propertyName()
+    {
+        list(, $name) = pluginSplit($this->_name);
+        return Inflector::underscore($name);
     }
 
     /**

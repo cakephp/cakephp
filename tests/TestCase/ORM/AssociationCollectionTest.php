@@ -91,7 +91,11 @@ class AssociationCollectionTest extends TestCase
      */
     public function testGetByProperty()
     {
-        $belongsTo = new BelongsTo('Users', []);
+        $table = $this->getMock('Cake\ORM\Table', ['table'], [[]]);
+        $table->schema([]);
+        $belongsTo = new BelongsTo('Users', [
+            'sourceTable' => $table
+        ]);
         $this->assertEquals('user', $belongsTo->property());
         $this->associations->add('Users', $belongsTo);
         $this->assertNull($this->associations->get('user'));
@@ -186,7 +190,8 @@ class AssociationCollectionTest extends TestCase
      */
     public function testSaveParents()
     {
-        $table = $this->getMock('Cake\ORM\Table', [], [[]]);
+        $table = $this->getMock('Cake\ORM\Table', ['table'], [[]]);
+        $table->schema([]);
         $mockOne = $this->getMock(
             'Cake\ORM\Association\BelongsTo',
             ['saveAssociated'],
@@ -235,7 +240,8 @@ class AssociationCollectionTest extends TestCase
      */
     public function testSaveParentsFiltered()
     {
-        $table = $this->getMock('Cake\ORM\Table', [], [[]]);
+        $table = $this->getMock('Cake\ORM\Table', ['table'], [[]]);
+        $table->schema([]);
         $mockOne = $this->getMock(
             'Cake\ORM\Association\BelongsTo',
             ['saveAssociated'],
