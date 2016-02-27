@@ -481,7 +481,6 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     {
         $asserts = $assertions['attrs'];
         $explains = $assertions['explains'];
-        $len = count($asserts);
         do {
             $matches = false;
             foreach ($asserts as $j => $assert) {

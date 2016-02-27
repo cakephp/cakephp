@@ -17,13 +17,10 @@ namespace Cake\Test\TestCase\Console;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
-use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Hash;
 use TestApp\Shell\TestingDispatchShell;
 
 /**
