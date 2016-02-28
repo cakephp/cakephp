@@ -1040,7 +1040,7 @@ SQL;
         $mock->expects($this->any())
             ->method('quote')
             ->will($this->returnCallback(function ($value) {
-                return '\'' . $value . '\'';
+                return  "'$value'";
             }));
         $mock->expects($this->any())
             ->method('quoteIdentifier')
