@@ -334,6 +334,7 @@ class AssociationTest extends TestCase
      *
      * @return void
      * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedExceptionMessageRegExp /^Association property name "foo" clashes with field of same name of table "test"/
      */
     public function testPropertyNameClash()
     {
