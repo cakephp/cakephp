@@ -615,7 +615,7 @@ SQL;
             [
                 'role',
                 ['type' => 'string', 'length' => 10, 'null' => false, 'default' => 'admin'],
-                '"role" VARCHAR(10) NOT NULL DEFAULT "admin"'
+                '"role" VARCHAR(10) NOT NULL DEFAULT \'admin\''
             ],
             [
                 'title',
@@ -987,7 +987,7 @@ SQL;
             $result[1]
         );
         $this->assertEquals(
-            'COMMENT ON COLUMN "schema_articles"."title" IS "This is the title"',
+            'COMMENT ON COLUMN "schema_articles"."title" IS \'This is the title\'',
             $result[2]
         );
     }
@@ -1129,7 +1129,7 @@ SQL;
         $mock->expects($this->any())
             ->method('quote')
             ->will($this->returnCallback(function ($value) {
-                return '"' . $value . '"';
+                return '\'' . $value . '\'';
             }));
         $mock->expects($this->any())
             ->method('quoteIdentifier')

@@ -448,7 +448,7 @@ SQL;
             [
                 'role',
                 ['type' => 'string', 'length' => 10, 'null' => false, 'default' => 'admin'],
-                '`role` VARCHAR(10) NOT NULL DEFAULT "admin"'
+                '`role` VARCHAR(10) NOT NULL DEFAULT \'admin\''
             ],
             [
                 'title',
@@ -544,7 +544,7 @@ SQL;
             [
                 'created',
                 ['type' => 'datetime', 'comment' => 'Created timestamp'],
-                '`created` DATETIME COMMENT "Created timestamp"'
+                '`created` DATETIME COMMENT \'Created timestamp\''
             ],
             // Date & Time
             [
@@ -884,7 +884,7 @@ SQL;
         $expected = <<<SQL
 CREATE TABLE `posts` (
 `id` INTEGER NOT NULL AUTO_INCREMENT,
-`title` VARCHAR(255) NOT NULL COMMENT "The title",
+`title` VARCHAR(255) NOT NULL COMMENT 'The title',
 `body` TEXT,
 `created` DATETIME,
 PRIMARY KEY (`id`)
@@ -1040,7 +1040,7 @@ SQL;
         $mock->expects($this->any())
             ->method('quote')
             ->will($this->returnCallback(function ($value) {
-                return '"' . $value . '"';
+                return '\'' . $value . '\'';
             }));
         $mock->expects($this->any())
             ->method('quoteIdentifier')
