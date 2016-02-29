@@ -85,4 +85,5 @@ test_script:
   - sqlcmd -S ".\SQL2012SP1" -U sa -P Password12! -Q "create database cakephp;"
   - cd C:\projects\cakephp
   - vendor\bin\phpunit.bat
-  - db_dsn="sqlserver://sa:Password12!@.\SQL2012SP1/cakephp?MultipleActiveResultSets=false&compiler=Cake\DatabaseSqlserverWithTrigger" vendor\bin\phpunit.bat --testsuite "Database Test Suite"
+  - $env:db_dsn = "sqlserver://sa:Password12!@.\SQL2012SP1/cakephp?MultipleActiveResultSets=false&compiler=Cake\DatabaseSqlserverWithTrigger"
+  - vendor\bin\phpunit.bat --testsuite "Database Test Suite"
