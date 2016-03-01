@@ -1006,7 +1006,7 @@ class Controller extends Object implements CakeEventListener {
  * @param string $layout Layout you want to use, defaults to 'flash'
  * @return void
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::flash
- * @deprecated 3.0.0 Will be removed in 3.0. Use Session::setFlash().
+ * @deprecated 3.0.0 Will be removed in 3.0. Use Flash::set() with version 2.7+ or Session::setFlash() prior to 2.7.
  */
 	public function flash($message, $url, $pause = 1, $layout = 'flash') {
 		$this->autoRender = false;
