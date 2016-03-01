@@ -534,7 +534,7 @@ class Controller extends Object implements CakeEventListener {
  */
 	protected function _getScaffold(CakeRequest $request) {
 		return new Scaffold($this, $request);
-	}f
+	}
 
 /**
  * Merge components, helpers, and uses vars from
