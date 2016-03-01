@@ -310,6 +310,10 @@ class TimeTest extends TestCase
         ]);
         $expected = 'in about a day';
         $this->assertEquals($expected, $result);
+
+        $time = new $class('+20 days');
+        $result = $time->timeAgoInWords(['accuracy' => 'month']);
+        $this->assertEquals('in about a month', $result);
     }
 
     /**
@@ -390,6 +394,10 @@ class TimeTest extends TestCase
         $time = new $class('-23 hours');
         $result = $time->timeAgoInWords(['accuracy' => 'day']);
         $this->assertEquals('about a day ago', $result);
+
+        $time = new $class('-20 days');
+        $result = $time->timeAgoInWords(['accuracy' => 'month']);
+        $this->assertEquals('about a month ago', $result);
     }
 
     /**
