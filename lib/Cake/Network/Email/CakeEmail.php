@@ -1184,7 +1184,7 @@ class CakeEmail {
 			}
 			CakeLog::write(
 				$config['level'],
-				PHP_EOL . $contents['headers'] . PHP_EOL . $contents['message'],
+				PHP_EOL . $contents['headers'] . PHP_EOL . PHP_EOL . $contents['message'],
 				$config['scope']
 			);
 		}
