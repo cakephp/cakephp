@@ -41,8 +41,10 @@ class UrlHelper extends Helper
     }
 
     /**
-     * Generate URL for given image file. Depending on options passed provides full URL
-     * with domain name. Also calls Helper::assetTimestamp() to add timestamp to local files
+     * Generates URL for given image file.
+     *
+     * Depending on options passed provides full URL with domain name. Also calls
+     * `Helper::assetTimestamp()` to add timestamp to local files.
      *
      * @param string|array $path Path string or URL array
      * @param array $options Options array. Possible keys:
@@ -59,8 +61,10 @@ class UrlHelper extends Helper
     }
 
     /**
-     * Generate URL for given CSS file. Depending on options passed provides full URL
-     * with domain name. Also calls Helper::assetTimestamp() to add timestamp to local files
+     * Generates URL for given CSS file.
+     *
+     * Depending on options passed provides full URL with domain name. Also calls
+     * `Helper::assetTimestamp()` to add timestamp to local files.
      *
      * @param string|array $path Path string or URL array
      * @param array $options Options array. Possible keys:
@@ -78,8 +82,10 @@ class UrlHelper extends Helper
     }
 
     /**
-     * Generate URL for given javascript file. Depending on options passed provides full
-     * URL with domain name. Also calls Helper::assetTimestamp() to add timestamp to local files
+     * Generates URL for given javascript file.
+     *
+     * Depending on options passed provides full URL with domain name. Also calls
+     * `Helper::assetTimestamp()` to add timestamp to local files.
      *
      * @param string|array $path Path string or URL array
      * @param array $options Options array. Possible keys:
@@ -97,8 +103,10 @@ class UrlHelper extends Helper
     }
 
     /**
-     * Generate URL for given asset file. Depending on options passed provides full URL with domain name.
-     * Also calls Helper::assetTimestamp() to add timestamp to local files
+     * Generates URL for given asset file.
+     *
+     * Depending on options passed provides full URL with domain name. Also calls
+     * `Helper::assetTimestamp()` to add timestamp to local files.
      *
      * @param string|array $path Path string or URL array
      * @param array $options Options array. Possible keys:
