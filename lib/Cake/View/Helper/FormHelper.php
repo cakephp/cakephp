@@ -611,11 +611,13 @@ class FormHelper extends AppHelper {
 		$tokenFields = array_merge($secureAttributes, array(
 			'value' => urlencode($fields . ':' . $locked),
 			'id' => 'TokenFields' . mt_rand(),
+			'secure' => static::SECURE_SKIP,
 		));
 		$out = $this->hidden('_Token.fields', $tokenFields);
 		$tokenUnlocked = array_merge($secureAttributes, array(
 			'value' => urlencode($unlocked),
 			'id' => 'TokenUnlocked' . mt_rand(),
+			'secure' => static::SECURE_SKIP,
 		));
 		$out .= $this->hidden('_Token.unlocked', $tokenUnlocked);
 		return $this->Html->useTag('hiddenblock', $out);
@@ -1868,6 +1870,7 @@ class FormHelper extends AppHelper {
 			unset($options['target']);
 		}
 
+		$previousLastAction = $this->_lastAction;
 		$this->_lastAction($url);
 
 		$out = $this->Html->useTag('form', $formUrl, $formOptions);
@@ -1890,6 +1893,8 @@ class FormHelper extends AppHelper {
 		if ($options['block']) {
 			$this->_View->append($options['block'], $out);
 			$out = '';
+			// Reset security-relevant fields for outer form
+			$this->_lastAction = $previousLastAction;
 		}
 		unset($options['block']);
 
