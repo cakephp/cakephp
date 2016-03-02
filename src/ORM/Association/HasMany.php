@@ -397,7 +397,7 @@ class HasMany extends Association
             function ($ent) use ($target) {
                 $fields = $ent->extract((array)$target->primaryKey());
                 foreach ($fields as $field => $value) {
-                    $fields[$table->aliasField($field)] = $value;
+                    $fields[$target->aliasField($field)] = $value;
                     unset($fields[$field]);
                 }
                 return $fields;
