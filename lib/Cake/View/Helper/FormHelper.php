@@ -1883,7 +1883,7 @@ class FormHelper extends AppHelper {
 		if (isset($options['data']) && is_array($options['data'])) {
 			foreach (Hash::flatten($options['data']) as $key => $value) {
 				$fields[$key] = $value;
-				$out .= $this->hidden($key, array('value' => $value, 'id' => false));
+				$out .= $this->hidden($key, array('value' => $value, 'id' => false, 'secure' => static::SECURE_SKIP));
 			}
 			unset($options['data']);
 		}
