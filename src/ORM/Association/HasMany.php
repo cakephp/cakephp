@@ -392,11 +392,15 @@ class HasMany extends Association
      */
     protected function _unlinkAssociated(array $properties, EntityInterface $entity, Table $target, array $remainingEntities = [], array $options = [])
     {
-        $primaryKey = (array)$target->primaryKey();
         $exclusions = new Collection($remainingEntities);
         $exclusions = $exclusions->map(
-            function ($ent) use ($primaryKey) {
-                return $ent->extract($primaryKey);
+            function ($ent) use ($target) {
+                $fields = $ent->extract((array)$target->primaryKey());
+                foreach ($fields as $field => $value) {
+                    $fields[$table->aliasField($field)] = $value;
+                    unset($fields[$field]);
+                }
+                return $fields;
             }
         )
         ->filter(
