@@ -742,6 +742,10 @@ class CakeRequestTest extends CakeTestCase {
 		$result = $request->referer();
 		$this->assertSame($result, '/');
 
+		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseUrl') . '/';
+		$result = $request->referer(true);
+		$this->assertSame($result, '/');
+
 		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseUrl') . '/some/path';
 		$result = $request->referer(true);
 		$this->assertSame($result, '/some/path');
