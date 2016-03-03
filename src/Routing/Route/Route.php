@@ -146,7 +146,7 @@ class Route
      */
     public function compile()
     {
-        if (!empty($this->compiledRoute)) {
+        if (!empty($this->_compiledRoute)) {
             return $this->_compiledRoute;
         }
         $this->_writeRoute();
