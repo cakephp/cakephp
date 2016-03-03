@@ -16,6 +16,8 @@
 namespace Cake\ORM\Association;
 
 use Cake\Collection\Collection;
+use Cake\Database\Expression\FieldInterface;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
@@ -436,6 +438,12 @@ class HasMany extends Association
 
         if ($mustBeDependent) {
             if ($this->_cascadeCallbacks) {
+                $conditions = new QueryExpression($conditions);
+                $conditions->traverse(function ($entry) use ($target) {
+                    if ($entry instanceof FieldInterface) {
+                        $entry->setField($target->aliasField($entry->getField()));
+                    }
+                });
                 $query = $this->find('all')->where($conditions);
                 $ok = true;
                 foreach ($query as $assoc) {
