@@ -1012,7 +1012,7 @@ class Email implements JsonSerializable, Serializable
             $className = App::className($config['className'], 'Network/Email', 'Transport');
             trigger_error(
                 'Transports in "Network/Email" are deprecated, use "Mailer/Transport" instead.',
-                E_USER_WARNING
+                E_USER_DEPRECATED
             );
         }
 
