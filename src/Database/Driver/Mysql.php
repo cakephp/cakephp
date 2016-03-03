@@ -129,6 +129,14 @@ class Mysql extends Driver
     /**
      * {@inheritDoc}
      */
+    public function schema()
+    {
+        return $this->_config['database'];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function supportsDynamicConstraints()
     {
         return true;

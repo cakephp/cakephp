@@ -3636,6 +3636,115 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test use of modifiers in a INSERT query
+     *
+     * Testing the generated SQL since the modifiers are usually different per driver
+     *
+     * @return void
+     */
+    public function testInsertModifiers()
+    {
+        $query = new Query($this->connection);
+        $result = $query
+            ->insert(['title'])
+            ->into('articles')
+            ->values(['title' => 'foo'])
+            ->modifier('IGNORE');
+        $this->assertQuotedQuery(
+            'INSERT IGNORE INTO <articles> \(<title>\) (OUTPUT INSERTED\.\* )?',
+            $result->sql(),
+            !$this->autoQuote
+        );
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->insert(['title'])
+            ->into('articles')
+            ->values(['title' => 'foo'])
+            ->modifier(['IGNORE', 'LOW_PRIORITY']);
+        $this->assertQuotedQuery(
+            'INSERT IGNORE LOW_PRIORITY INTO <articles> \(<title>\) (OUTPUT INSERTED\.\* )?',
+            $result->sql(),
+            !$this->autoQuote
+        );
+    }
+
+    /**
+     * Test use of modifiers in a UPDATE query
+     *
+     * Testing the generated SQL since the modifiers are usually different per driver
+     *
+     * @return void
+     */
+    public function testUpdateModifiers()
+    {
+        $query = new Query($this->connection);
+        $result = $query
+            ->update('authors')
+            ->set('name', 'mark')
+            ->modifier('TOP 10 PERCENT');
+        $this->assertQuotedQuery(
+            'UPDATE TOP 10 PERCENT <authors> SET <name> = :c0',
+            $result->sql(),
+            !$this->autoQuote
+        );
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->update('authors')
+            ->set('name', 'mark')
+            ->modifier(['TOP 10 PERCENT', 'FOO']);
+        $this->assertQuotedQuery(
+            'UPDATE TOP 10 PERCENT FOO <authors> SET <name> = :c0',
+            $result->sql(),
+            !$this->autoQuote
+        );
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->update('authors')
+            ->set('name', 'mark')
+            ->modifier([$query->newExpr('TOP 10 PERCENT')]);
+        $this->assertQuotedQuery(
+            'UPDATE TOP 10 PERCENT <authors> SET <name> = :c0',
+            $result->sql(),
+            !$this->autoQuote
+        );
+    }
+
+    /**
+     * Test use of modifiers in a DELETE query
+     *
+     * Testing the generated SQL since the modifiers are usually different per driver
+     *
+     * @return void
+     */
+    public function testDeleteModifiers()
+    {
+        $query = new Query($this->connection);
+        $result = $query->delete()
+            ->from('authors')
+            ->where('1 = 1')
+            ->modifier('IGNORE');
+        $this->assertQuotedQuery(
+            'DELETE IGNORE FROM <authors> WHERE 1 = 1',
+            $result->sql(),
+            !$this->autoQuote
+        );
+
+        $query = new Query($this->connection);
+        $result = $query->delete()
+            ->from('authors')
+            ->where('1 = 1')
+            ->modifier(['IGNORE', 'QUICK']);
+        $this->assertQuotedQuery(
+            'DELETE IGNORE QUICK FROM <authors> WHERE 1 = 1',
+            $result->sql(),
+            !$this->autoQuote
+        );
+    }
+
+    /**
      * Assertion for comparing a table's contents with what is in it.
      *
      * @param string $table
