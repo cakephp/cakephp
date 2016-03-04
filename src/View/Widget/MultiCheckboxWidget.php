@@ -50,6 +50,8 @@ class MultiCheckboxWidget implements WidgetInterface
      * - `checkboxWrapper` Renders the containing div/element for
      *   a checkbox and its label. Accepts the `input`, and `label`
      *   variables.
+     * - `fieldset` Renders the fieldset for grouped inputs.
+     * - `legend` Renders the legend element for grouped inputs.
      *
      * @param \Cake\View\StringTemplate $templates Templates list.
      * @param \Cake\View\Widget\LabelWidget $label Label widget instance.
@@ -113,10 +115,26 @@ class MultiCheckboxWidget implements WidgetInterface
             'idPrefix' => null,
             'templateVars' => []
         ];
-        $out = [];
         $this->_idPrefix = $data['idPrefix'];
         $this->_clearIds();
+        return implode('', $this->_renderInputs($data, $context));
+    }
+
+    protected function _renderInputs($data, $context)
+    {
+        $out = [];
         foreach ($data['options'] as $key => $val) {
+            // Grouped inputs in a fieldset.
+            if (is_string($key) && is_array($val) && !isset($val['text'], $val['value'])) {
+                $inputs = $this->_renderInputs(['options' => $val] + $data, $context);
+                $legend = $this->_templates->format('legend', ['text' => $key]);
+                $out[] = $this->_templates->format('fieldset', [
+                    'content' => $legend . implode('', $inputs)
+                ]);
+                continue;
+            }
+
+            // Standard inputs.
             $checkbox = [
                 'value' => $key,
                 'text' => $val,
@@ -142,10 +160,9 @@ class MultiCheckboxWidget implements WidgetInterface
             if (empty($checkbox['id'])) {
                 $checkbox['id'] = $this->_id($checkbox['name'], $checkbox['value']);
             }
-
             $out[] = $this->_renderInput($checkbox, $context);
         }
-        return implode('', $out);
+        return $out;
     }
 
     /**
