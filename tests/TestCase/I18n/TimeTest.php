@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\I18n;
 
 use Cake\I18n\FrozenTime;
+use Cake\I18n\I18n;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
 
@@ -55,6 +56,7 @@ class TimeTest extends TestCase
         FrozenTime::$defaultLocale = $this->locale;
         FrozenTime::resetToStringFormat();
         date_default_timezone_set('UTC');
+        I18n::locale(I18n::DEFAULT_LOCALE);
     }
 
     /**
@@ -805,6 +807,20 @@ class TimeTest extends TestCase
 
         $time = $class::parseTime('31c2:54');
         $this->assertNull($time);
+    }
+
+    /**
+     * Tests that timeAgoInWords when using a russian locale does not break things
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testRussianTimeAgoInWords($class)
+    {
+        I18n::locale('ru_RU');
+        $time = new $class('5 days ago');
+        $result = $time->timeAgoInWords();
+        $this->assertEquals('5 days ago', $result);
     }
 
     /**
