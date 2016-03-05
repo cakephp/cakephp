@@ -27,6 +27,7 @@ use Cake\Utility\Text;
 use Cake\View\Helper\SecureFieldTokenTrait;
 use Exception;
 use PHPUnit_Exception;
+use PHPUnit_Framework_Constraint_IsEqual;
 
 /**
  * A test case class intended to make integration tests of
@@ -878,11 +879,31 @@ abstract class IntegrationTestCase extends TestCase
     public function assertCookieEncrypted($expected, $name, $encrypt = 'aes', $key = null, $message = '')
     {
         if (empty($this->_response)) {
-            $this->fail('Not response set, cannot assert cookies.');
+            $this->fail('No response set, cannot assert cookies.');
         }
         $result = $this->_response->cookie($name);
         $this->_cookieEncriptionKey = $key;
         $result['value'] = $this->_decrypt($result['value'], $encrypt);
         $this->assertEquals($expected, $result['value'], 'Cookie data differs. ' . $message);
+    }
+
+    /**
+     * Asserts that a file with the fiven name was sent in the response
+     *
+     * @param string $expected The file name that should be sent in the response
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertFileResponse($expected, $message = '')
+    {
+        if ($this->_response === null) {
+            $this->fail('No response set, cannot assert file.');
+        }
+        $actual = isset($this->_response->getFile()->path) ? $this->_response->getFile()->path : null;
+
+        if ($actual === null) {
+            $this->fail('No file was sent in this response');
+        }
+        $this->assertEquals($expected, $actual, $message);
     }
 }
