@@ -888,7 +888,7 @@ abstract class IntegrationTestCase extends TestCase
     }
 
     /**
-     * Asserts that a file with the fiven name was sent in the response
+     * Asserts that a file with the given name was sent in the response
      *
      * @param string $expected The file name that should be sent in the response
      * @param string $message The failure message that will be appended to the generated message.
