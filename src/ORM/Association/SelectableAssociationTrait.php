@@ -82,8 +82,11 @@ trait SelectableAssociationTrait
 
         $finder = isset($options['finder']) ? $options['finder'] : $this->finder();
         list($finder, $opts) = $this->_extractFinder($finder);
+        $options += ['fields' => []];
+
         $fetchQuery = $this
             ->find($finder, $opts)
+            ->select($options['fields'])
             ->where($options['conditions'])
             ->eagerLoaded(true)
             ->hydrate($options['query']->hydrate());
@@ -93,16 +96,6 @@ trait SelectableAssociationTrait
             $fetchQuery = $this->_addFilteringJoin($fetchQuery, $key, $filter);
         } else {
             $fetchQuery = $this->_addFilteringCondition($fetchQuery, $key, $filter);
-        }
-
-        if (!empty($options['fields'])) {
-            $fields = $fetchQuery->aliasFields($options['fields'], $alias);
-            if (!in_array($key, $fields)) {
-                throw new InvalidArgumentException(
-                    sprintf('You are required to select the "%s" field', $key)
-                );
-            }
-            $fetchQuery->select($fields);
         }
 
         if (!empty($options['sort'])) {
@@ -115,6 +108,17 @@ trait SelectableAssociationTrait
 
         if (!empty($options['queryBuilder'])) {
             $fetchQuery = $options['queryBuilder']($fetchQuery);
+        }
+
+        $select = $fetchQuery->clause('select');
+        if (!empty($select)) {
+            $select = $fetchQuery->aliasFields($select);
+            if (array_diff((array)$key, $select) !== []) {
+                throw new InvalidArgumentException(
+                    sprintf('You are required to select the "%s" field(s)',
+                    implode(', ', (array)$key)
+                ));
+            }
         }
 
         return $fetchQuery;
