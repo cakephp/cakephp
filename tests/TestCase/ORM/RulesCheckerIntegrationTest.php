@@ -15,7 +15,6 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\ORM\Entity;
-use Cake\ORM\RulesChecker;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 

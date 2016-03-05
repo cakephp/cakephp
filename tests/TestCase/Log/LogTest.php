@@ -13,7 +13,6 @@
  */
 namespace Cake\Test\TestCase\Log;
 
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Log\Engine\FileLog;

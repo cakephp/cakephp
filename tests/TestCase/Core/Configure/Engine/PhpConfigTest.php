@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Core\Configure\Engine;
 
-use Cake\Core\App;
 use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;

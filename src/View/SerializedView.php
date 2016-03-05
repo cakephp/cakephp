@@ -17,6 +17,7 @@ namespace Cake\View;
 use Cake\Event\EventManager;
 use Cake\Network\Request;
 use Cake\Network\Response;
+use RuntimeException;
 
 /**
  * Parent class for view classes generating serialized outputs like JsonView and XmlView.
@@ -85,7 +86,11 @@ class SerializedView extends View
         }
 
         if ($serialize !== false) {
-            return $this->_serialize($serialize);
+            $result = $this->_serialize($serialize);
+            if ($result === false) {
+                throw new RuntimeException('Serialization of View data failed.');
+            }
+            return (string)$result;
         }
         if ($view !== false && $this->_getViewFileName($view)) {
             return parent::render($view, false);

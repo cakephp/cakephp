@@ -14,8 +14,6 @@
  */
 namespace Cake\Test\TestCase\Shell;
 
-use Cake\Console\ConsoleIo;
-use Cake\Console\ConsoleOutput;
 use Cake\Routing\Router;
 use Cake\Shell\RoutesShell;
 use Cake\TestSuite\TestCase;

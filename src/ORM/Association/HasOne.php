@@ -57,23 +57,14 @@ class HasOne extends Association
     }
 
     /**
-     * Sets the property name that should be filled with data from the target table
-     * in the source table record.
-     * If no arguments are passed, currently configured type is returned.
+     * Returns default property name based on association name.
      *
-     * @param string|null $name The name of the property. Pass null to read the current value.
      * @return string
      */
-    public function property($name = null)
+    protected function _propertyName()
     {
-        if ($name !== null) {
-            return parent::property($name);
-        }
-        if ($name === null && !$this->_propertyName) {
-            list(, $name) = pluginSplit($this->_name);
-            $this->_propertyName = Inflector::underscore(Inflector::singularize($name));
-        }
-        return $this->_propertyName;
+        list(, $name) = pluginSplit($this->_name);
+        return Inflector::underscore(Inflector::singularize($name));
     }
 
     /**

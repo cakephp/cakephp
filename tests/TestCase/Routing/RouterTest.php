@@ -14,15 +14,12 @@
  */
 namespace Cake\Test\TestCase\Routing;
 
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Network\Request;
-use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
-use TestPlugin\Routing\Route\TestRoute;
 
 /**
  * RouterTest class

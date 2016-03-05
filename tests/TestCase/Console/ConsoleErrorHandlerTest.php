@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Console;
 
-use Cake\Console\ConsoleErrorHandler;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\Exception\Exception;
 use Cake\Log\Log;

@@ -23,7 +23,6 @@ use Cake\Network\Exception\NotFoundException;
 use Cake\Network\Request;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Hash;
 
 /**
  * PaginatorTestController class

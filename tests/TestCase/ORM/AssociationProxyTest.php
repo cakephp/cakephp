@@ -15,7 +15,6 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\ORM\Association;
-use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 

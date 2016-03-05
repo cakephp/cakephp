@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\Collection\Iterator;
 
 use ArrayObject;
 use Cake\Collection\Iterator\SortIterator;
-use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
 
 /**

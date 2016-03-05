@@ -15,10 +15,7 @@
 namespace Cake\Test\TestCase\Shell;
 
 use Cake\Console\ConsoleIo;
-use Cake\Core\App;
 use Cake\Core\Plugin;
-use Cake\Shell\CommandListShell;
-use Cake\Shell\Task\CommandTask;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 

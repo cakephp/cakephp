@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\ORM\Locator\LocatorInterface;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
