@@ -680,7 +680,7 @@ abstract class Association
 
     /**
      * Proxies the operation to the target table's exists method after
-     * appending the default conditions for thisassociation
+     * appending the default conditions for this association
      *
      * @param array|callable|ExpressionInterface $conditions The conditions to use
      * for checking if any record matches.
