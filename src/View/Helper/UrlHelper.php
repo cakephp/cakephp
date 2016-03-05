@@ -50,11 +50,10 @@ class UrlHelper extends Helper
      * @param array $options Options array. Possible keys:
      *   `fullBase` Return full URL with domain name
      *   `pathPrefix` Path prefix for relative URLs
-     *   `ext` Asset extension to append
      *   `plugin` False value will prevent parsing path as a plugin
      * @return string Generated URL
      */
-    public function imageUrl($path, array $options = [])
+    public function image($path, array $options = [])
     {
         $pathPrefix = Configure::read('App.imageBaseUrl');
         return $this->assetUrl($path, $options + compact('pathPrefix'));
@@ -74,7 +73,7 @@ class UrlHelper extends Helper
      *   `plugin` False value will prevent parsing path as a plugin
      * @return string Generated URL
      */
-    public function cssUrl($path, array $options = [])
+    public function css($path, array $options = [])
     {
         $pathPrefix = Configure::read('App.cssBaseUrl');
         $ext = '.css';
@@ -95,7 +94,7 @@ class UrlHelper extends Helper
      *   `plugin` False value will prevent parsing path as a plugin
      * @return string Generated URL
      */
-    public function scriptUrl($path, array $options = [])
+    public function script($path, array $options = [])
     {
         $pathPrefix = Configure::read('App.jsBaseUrl');
         $ext = '.js';

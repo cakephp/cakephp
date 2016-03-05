@@ -437,7 +437,7 @@ class HtmlHelper extends Helper
         if (strpos($path, '//') !== false) {
             $url = $path;
         } else {
-            $url = $this->Url->cssUrl($path, $options);
+            $url = $this->Url->css($path, $options);
             $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
         }
 
@@ -528,7 +528,7 @@ class HtmlHelper extends Helper
         }
 
         if (strpos($url, '//') === false) {
-            $url = $this->Url->scriptUrl($url, $options);
+            $url = $this->Url->script($url, $options);
             $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
         }
         if ($options['once'] && isset($this->_includedAssets[__METHOD__][$url])) {
@@ -808,7 +808,7 @@ class HtmlHelper extends Helper
      */
     public function image($path, array $options = [])
     {
-        $path = $this->Url->imageUrl($path, $options);
+        $path = $this->Url->image($path, $options);
         $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
 
         if (!isset($options['alt'])) {
