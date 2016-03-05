@@ -679,6 +679,25 @@ abstract class Association
     }
 
     /**
+     * Proxies the operation to the target table's exists method after
+     * appending the default conditions for thisassociation
+     *
+     * @param array|callable|ExpressionInterface $conditions The conditions to use
+     * for checking if any record matches.
+     * @see \Cake\ORM\Table::exists()
+     * @return bool
+     */
+    public function exists($conditions)
+    {
+        if (!empty($this->_conditions)) {
+            $conditions = $this
+                ->find('all', ['conditions' => $conditions])
+                ->clause('where');
+        }
+        return $this->target()->exists($conditions);
+    }
+
+    /**
      * Proxies the update operation to the target table's updateAll method
      *
      * @param array $fields A hash of field => new value.
