@@ -446,7 +446,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
 
         $this->assertHeader('Etag', 'abc123');
     }
-    
+
     /**
      * Test the header contains assertion.
      *
@@ -536,5 +536,41 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     public function testEventManagerReset2($prevEventManager)
     {
         $this->assertNotSame($prevEventManager, EventManager::instance());
+    }
+
+    /**
+     * Test sending file in requests.
+     *
+     * @return void
+     */
+    public function testSendFile()
+    {
+        $this->get('/posts/file');
+        $this->assertFileResponse(TEST_APP . 'TestApp' . DS . 'Controller' . DS . 'PostsController.php');
+    }
+
+    /**
+     * Test that assertFile requires a response
+     *
+     * @expectedException PHPUnit_Framework_AssertionFailedError
+     * @expectedExceptionMessage No response set, cannot assert file
+     * @return void
+     */
+    public function testAssertFileNoReponse()
+    {
+        $this->assertFileResponse('foo');
+    }
+
+    /**
+     * Test that assertFile requires a file
+     *
+     * @expectedException PHPUnit_Framework_AssertionFailedError
+     * @expectedExceptionMessage No file was sent in this response
+     * @return void
+     */
+    public function testAssertFileNoFile()
+    {
+        $this->get('/posts/get');
+        $this->assertFileResponse('foo');
     }
 }

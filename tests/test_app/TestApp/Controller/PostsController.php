@@ -81,4 +81,10 @@ class PostsController extends AppController
         $this->response->body('Request was accepted');
         return $this->response;
     }
+
+    public function file()
+    {
+        $this->response->file(__FILE__);
+        return $this->response;
+    }
 }

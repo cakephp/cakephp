@@ -1453,7 +1453,6 @@ class Response
             $this->header('Content-Length', $fileSize);
         }
 
-        $this->_clearBuffer();
         $this->_file = $file;
     }
 
@@ -1520,6 +1519,8 @@ class Response
     protected function _sendFile($file, $range)
     {
         $compress = $this->outputCompressed();
+        ob_implicit_flush(true);
+
         $file->open('rb');
 
         $end = $start = false;
@@ -1546,9 +1547,6 @@ class Response
                 $bufferSize = $end - $offset + 1;
             }
             echo fread($file->handle, $bufferSize);
-            if (!$compress) {
-                $this->_flushBuffer();
-            }
         }
         $file->close();
         return true;
@@ -1568,6 +1566,7 @@ class Response
      * Clears the contents of the topmost output buffer and discards them
      *
      * @return bool
+     * @deprecated 3.2.4 This function is not needed anymore
      */
     protected function _clearBuffer()
     {
@@ -1580,6 +1579,7 @@ class Response
      * Flushes the contents of the output buffer
      *
      * @return void
+     * @deprecated 3.2.4 This function is not needed anymore
      */
     protected function _flushBuffer()
     {

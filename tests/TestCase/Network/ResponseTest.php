@@ -1228,8 +1228,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->exactly(1))
@@ -1240,9 +1238,6 @@ class ResponseTest extends TestCase
         $response->expects($this->at(1))
             ->method('header')
             ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->once())->method('_clearBuffer');
-        $response->expects($this->once())->method('_flushBuffer');
 
         $response->expects($this->exactly(1))
             ->method('_isActive')
@@ -1271,8 +1266,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->exactly(1))
@@ -1291,9 +1284,6 @@ class ResponseTest extends TestCase
         $response->expects($this->at(3))
             ->method('header')
             ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->once())->method('_clearBuffer');
-        $response->expects($this->once())->method('_flushBuffer');
 
         $response->expects($this->exactly(1))
             ->method('_isActive')
@@ -1331,8 +1321,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->exactly(1))
@@ -1351,9 +1339,6 @@ class ResponseTest extends TestCase
         $response->expects($this->at(3))
             ->method('header')
             ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->once())->method('_clearBuffer');
-        $response->expects($this->once())->method('_flushBuffer');
 
         $response->expects($this->exactly(1))
             ->method('_isActive')
@@ -1388,8 +1373,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->at(0))
@@ -1414,8 +1397,6 @@ class ResponseTest extends TestCase
             ->method('header')
             ->with('Accept-Ranges', 'bytes');
 
-        $response->expects($this->once())->method('_clearBuffer');
-        $response->expects($this->once())->method('_flushBuffer');
         $response->expects($this->exactly(1))
             ->method('_isActive')
             ->will($this->returnValue(true));
@@ -1449,8 +1430,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->at(0))
@@ -1475,8 +1454,6 @@ class ResponseTest extends TestCase
             ->method('header')
             ->with('Accept-Ranges', 'bytes');
 
-        $response->expects($this->once())->method('_clearBuffer');
-        $response->expects($this->once())->method('_flushBuffer');
         $response->expects($this->exactly(1))
             ->method('_isActive')
             ->will($this->returnValue(true));
@@ -1511,8 +1488,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->exactly(1))
@@ -1567,8 +1542,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->any())
@@ -1579,9 +1552,6 @@ class ResponseTest extends TestCase
         $response->expects($this->at(0))
             ->method('_isActive')
             ->will($this->returnValue(false));
-
-        $response->expects($this->once())->method('_clearBuffer');
-        $response->expects($this->never())->method('_flushBuffer');
 
         $response->file(TEST_APP . 'vendor/css/test_asset.css');
 
@@ -1603,8 +1573,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->any())
@@ -1633,8 +1601,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->any())
@@ -1688,8 +1654,6 @@ class ResponseTest extends TestCase
             'type',
             '_sendHeader',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->at(1))
@@ -1739,8 +1703,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->exactly(1))
@@ -1766,8 +1728,6 @@ class ResponseTest extends TestCase
                 'Content-Length' => 18,
                 'Content-Range' => 'bytes 8-25/38',
             ]);
-
-        $response->expects($this->once())->method('_clearBuffer');
 
         $response->expects($this->any())
             ->method('_isActive')
@@ -1800,8 +1760,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->at(1))
@@ -1845,8 +1803,6 @@ class ResponseTest extends TestCase
             'type',
             '_sendHeader',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->at(1))
@@ -1888,8 +1844,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->exactly(1))
@@ -1907,8 +1861,6 @@ class ResponseTest extends TestCase
                 'Content-Length' => 18,
                 'Content-Range' => 'bytes 8-25/38',
             ]);
-
-        $response->expects($this->once())->method('_clearBuffer');
 
         $response->expects($this->any())
             ->method('_isActive')
@@ -1941,8 +1893,6 @@ class ResponseTest extends TestCase
             '_sendHeader',
             '_setContentType',
             '_isActive',
-            '_clearBuffer',
-            '_flushBuffer'
         ]);
 
         $response->expects($this->at(1))
