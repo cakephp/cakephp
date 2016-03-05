@@ -306,7 +306,8 @@ class HasMany extends Association
 
         $this->_unlink($foreignKey, $target, $conditions, $options);
 
-        if ($options['cleanProperty']) {
+        $result = $sourceEntity->get($property);
+        if ($options['cleanProperty'] && $result !== null) {
             $sourceEntity->set(
                 $property,
                 (new Collection($sourceEntity->get($property)))
