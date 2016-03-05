@@ -323,11 +323,12 @@ class Router
     /**
      * Parses given URL string. Returns 'routing' parameters for that URL.
      *
-     * @param string $url URL to be parsed
-     * @return array Parsed elements from URL
+     * @param string $url URL to be parsed.
+     * @param string $method The HTTP method being used.
+     * @return array Parsed elements from URL.
      * @throws \Cake\Routing\Exception\MissingRouteException When a route cannot be handled
      */
-    public static function parse($url)
+    public static function parse($url, $method = '')
     {
         if (!static::$initialized) {
             static::_loadRoutes();
@@ -335,7 +336,7 @@ class Router
         if (strpos($url, '/') !== 0) {
             $url = '/' . $url;
         }
-        return static::$_collection->parse($url);
+        return static::$_collection->parse($url, $method);
     }
 
     /**

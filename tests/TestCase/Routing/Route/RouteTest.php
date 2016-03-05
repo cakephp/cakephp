@@ -104,20 +104,20 @@ class RouteTest extends TestCase
             ['_ext' => ['json', 'xml']]
         );
 
-        $result = $route->parse('/posts/index');
+        $result = $route->parse('/posts/index', 'GET');
         $this->assertFalse(isset($result['_ext']));
 
-        $result = $route->parse('/posts/index.pdf');
+        $result = $route->parse('/posts/index.pdf', 'GET');
         $this->assertFalse(isset($result['_ext']));
 
         $route->extensions(['pdf', 'json', 'xml']);
-        $result = $route->parse('/posts/index.pdf');
+        $result = $route->parse('/posts/index.pdf', 'GET');
         $this->assertEquals('pdf', $result['_ext']);
 
-        $result = $route->parse('/posts/index.json');
+        $result = $route->parse('/posts/index.json', 'GET');
         $this->assertEquals('json', $result['_ext']);
 
-        $result = $route->parse('/posts/index.xml');
+        $result = $route->parse('/posts/index.xml', 'GET');
         $this->assertEquals('xml', $result['_ext']);
     }
 
@@ -222,7 +222,7 @@ class RouteTest extends TestCase
         );
         $result = $route->compile();
         $this->assertRegExp($result, '/posts/08/01/2007/title-of-post');
-        $result = $route->parse('/posts/08/01/2007/title-of-post');
+        $result = $route->parse('/posts/08/01/2007/title-of-post', 'GET');
 
         $this->assertEquals(count($result), 6);
         $this->assertEquals($result['controller'], 'posts');
@@ -257,7 +257,7 @@ class RouteTest extends TestCase
                 'action' => 'branches|history|branch|logs|view|start|add|edit|modify'
             ]
         );
-        $this->assertFalse($route->parse('/chaw_test/wiki'));
+        $this->assertFalse($route->parse('/chaw_test/wiki', 'GET'));
 
         $result = $route->compile();
         $this->assertNotRegExp($result, '/some_project/source');
@@ -694,7 +694,7 @@ class RouteTest extends TestCase
             ['id' => Router::ID]
         );
         $route->compile();
-        $result = $route->parse('/posts/view/1');
+        $result = $route->parse('/posts/view/1', 'GET');
         $this->assertEquals('posts', $result['controller']);
         $this->assertEquals('view', $result['action']);
         $this->assertEquals('1', $result['id']);
@@ -704,10 +704,10 @@ class RouteTest extends TestCase
             ['prefix' => 'admin', 'admin' => 1, 'action' => 'index']
         );
         $route->compile();
-        $result = $route->parse('/admin/');
+        $result = $route->parse('/admin/', 'GET');
         $this->assertFalse($result);
 
-        $result = $route->parse('/admin/posts');
+        $result = $route->parse('/admin/posts', 'GET');
         $this->assertEquals('posts', $result['controller']);
         $this->assertEquals('index', $result['action']);
 
@@ -715,12 +715,12 @@ class RouteTest extends TestCase
             '/media/search/*',
             ['controller' => 'Media', 'action' => 'search']
         );
-        $result = $route->parse('/media/search');
+        $result = $route->parse('/media/search', 'GET');
         $this->assertEquals('Media', $result['controller']);
         $this->assertEquals('search', $result['action']);
         $this->assertEquals([], $result['pass']);
 
-        $result = $route->parse('/media/search/tv/shows');
+        $result = $route->parse('/media/search/tv/shows', 'GET');
         $this->assertEquals('Media', $result['controller']);
         $this->assertEquals('search', $result['action']);
         $this->assertEquals(['tv', 'shows'], $result['pass']);
@@ -738,12 +738,12 @@ class RouteTest extends TestCase
             ['action' => 'view']
         );
         $route->compile();
-        $result = $route->parse('/posts/%E2%88%82%E2%88%82');
+        $result = $route->parse('/posts/%E2%88%82%E2%88%82', 'GET');
         $this->assertEquals('posts', $result['controller']);
         $this->assertEquals('view', $result['action']);
         $this->assertEquals('∂∂', $result['slug']);
 
-        $result = $route->parse('/posts/∂∂');
+        $result = $route->parse('/posts/∂∂', 'GET');
         $this->assertEquals('posts', $result['controller']);
         $this->assertEquals('view', $result['action']);
         $this->assertEquals('∂∂', $result['slug']);
@@ -757,7 +757,7 @@ class RouteTest extends TestCase
     public function testParseWithPassDefaults()
     {
         $route = new Route('/:controller', ['action' => 'display', 'home']);
-        $result = $route->parse('/posts');
+        $result = $route->parse('/posts', 'GET');
         $expected = [
             'controller' => 'posts',
             'action' => 'display',
@@ -773,18 +773,16 @@ class RouteTest extends TestCase
      */
     public function testParseWithHttpHeaderConditions()
     {
-        $_SERVER['REQUEST_METHOD'] = 'GET';
         $route = new Route('/sample', ['controller' => 'posts', 'action' => 'index', '_method' => 'POST']);
-        $this->assertFalse($route->parse('/sample'));
+        $this->assertFalse($route->parse('/sample', 'GET'));
 
-        $_SERVER['REQUEST_METHOD'] = 'POST';
         $expected = [
             'controller' => 'posts',
             'action' => 'index',
             'pass' => [],
             '_method' => 'POST',
         ];
-        $this->assertEquals($expected, $route->parse('/sample'));
+        $this->assertEquals($expected, $route->parse('/sample', 'POST'));
     }
 
     /**
@@ -794,14 +792,14 @@ class RouteTest extends TestCase
      */
     public function testParseWithMultipleHttpMethodConditions()
     {
-        $_SERVER['REQUEST_METHOD'] = 'GET';
         $route = new Route('/sample', [
             'controller' => 'posts',
             'action' => 'index',
             '_method' => ['PUT', 'POST']
         ]);
-        $this->assertFalse($route->parse('/sample'));
+        $this->assertFalse($route->parse('/sample', 'GET'));
 
+        // Test for deprecated behavior
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $expected = [
             'controller' => 'posts',
@@ -898,11 +896,11 @@ class RouteTest extends TestCase
         $result = $route->match(['controller' => 'blog_posts', 'action' => 'actions']);
         $this->assertNotEmpty($result);
 
-        $result = $route->parse('/blog/other');
+        $result = $route->parse('/blog/other', 'GET');
         $expected = ['controller' => 'blog_posts', 'action' => 'other', 'pass' => []];
         $this->assertEquals($expected, $result);
 
-        $result = $route->parse('/blog/foobar');
+        $result = $route->parse('/blog/foobar', 'GET');
         $this->assertFalse($result);
     }
 
@@ -914,7 +912,7 @@ class RouteTest extends TestCase
     public function testParsePassedArgument()
     {
         $route = new Route('/:controller/:action/*');
-        $result = $route->parse('/posts/edit/1/2/0');
+        $result = $route->parse('/posts/edit/1/2/0', 'GET');
         $expected = [
             'controller' => 'posts',
             'action' => 'edit',
@@ -970,7 +968,7 @@ class RouteTest extends TestCase
         $route = new Route('/:controller/:action/:slug', [], [
             'pass' => ['slug']
         ]);
-        $result = $route->parse('/posts/view/my-title');
+        $result = $route->parse('/posts/view/my-title', 'GET');
         $expected = [
             'controller' => 'posts',
             'action' => 'view',
@@ -988,7 +986,7 @@ class RouteTest extends TestCase
     public function testParseTrailing()
     {
         $route = new Route('/:controller/:action/**');
-        $result = $route->parse('/posts/index/1/2/3/foo:bar');
+        $result = $route->parse('/posts/index/1/2/3/foo:bar', 'GET');
         $expected = [
             'controller' => 'posts',
             'action' => 'index',
@@ -996,7 +994,7 @@ class RouteTest extends TestCase
         ];
         $this->assertEquals($expected, $result);
 
-        $result = $route->parse('/posts/index/http://example.com');
+        $result = $route->parse('/posts/index/http://example.com', 'GET');
         $expected = [
             'controller' => 'posts',
             'action' => 'index',
@@ -1013,7 +1011,7 @@ class RouteTest extends TestCase
     public function testParseTrailingUTF8()
     {
         $route = new Route('/category/**', ['controller' => 'categories', 'action' => 'index']);
-        $result = $route->parse('/category/%D9%85%D9%88%D8%A8%D8%A7%DB%8C%D9%84');
+        $result = $route->parse('/category/%D9%85%D9%88%D8%A8%D8%A7%DB%8C%D9%84', 'GET');
         $expected = [
             'controller' => 'categories',
             'action' => 'index',
@@ -1119,11 +1117,11 @@ class RouteTest extends TestCase
             ]
         );
 
-        $result = $route->parse('/%D8%A2%D9%85%D9%88%D8%B2%D8%B4');
+        $result = $route->parse('/%D8%A2%D9%85%D9%88%D8%B2%D8%B4', 'GET');
         $expected = ['section' => 'آموزش', 'plugin' => 'blogs', 'controller' => 'posts', 'action' => 'index', 'pass' => []];
         $this->assertEquals($expected, $result);
 
-        $result = $route->parse('/weblog');
+        $result = $route->parse('/weblog', 'GET');
         $expected = ['section' => 'weblog', 'plugin' => 'blogs', 'controller' => 'posts', 'action' => 'index', 'pass' => []];
         $this->assertEquals($expected, $result);
     }
@@ -1174,6 +1172,6 @@ class RouteTest extends TestCase
         $this->assertSame('/', $route->match(['controller' => 'pages', 'action' => 'display', 'home']));
         $this->assertFalse($route->match(['controller' => 'pages', 'action' => 'display', 'about']));
         $expected = ['controller' => 'pages', 'action' => 'display', 'pass' => ['home']];
-        $this->assertEquals($expected, $route->parse('/'));
+        $this->assertEquals($expected, $route->parse('/', 'GET'));
     }
 }
