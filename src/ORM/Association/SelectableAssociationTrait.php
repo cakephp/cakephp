@@ -119,7 +119,7 @@ trait SelectableAssociationTrait
      * has the foreignKey fields selected.
      * If the required fields are missing, throws an exception.
      *
-     * @param \Cake\ORM\Query The association fetching query
+     * @param \Cake\ORM\Query $fetchQuery The association fetching query
      * @param array $key The foreign key fields to check
      * @return void
      * @throws InvalidArgumentException
@@ -140,9 +140,11 @@ trait SelectableAssociationTrait
 
         if ($missingFields) {
             throw new InvalidArgumentException(
-                sprintf('You are required to select the "%s" field(s)',
-                implode(', ', (array)$key)
-            ));
+                sprintf(
+                    'You are required to select the "%s" field(s)',
+                    implode(', ', (array)$key)
+                )
+            );
         }
     }
 
