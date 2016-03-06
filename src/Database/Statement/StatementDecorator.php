@@ -56,6 +56,13 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
     protected $_hasExecuted = false;
 
     /**
+     * Default fetch mode for this statement
+     *
+     * @var string Default is 'num' for compatibility reasons
+     */
+    protected $_fetchMode = 'num';
+
+    /**
      * Constructor
      *
      * @param \Cake\Database\StatementInterface|null $statement Statement implementation such as PDOStatement
@@ -188,7 +195,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * @return array|false Result array containing columns and values or false if no results
      * are left
      */
-    public function fetch($type = 'num')
+    public function fetch($type = null)
     {
         return $this->_statement->fetch($type);
     }
@@ -207,7 +214,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * @param string $type num for fetching columns as positional keys or assoc for column names as keys
      * @return array List of all results from database for this statement
      */
-    public function fetchAll($type = 'num')
+    public function fetchAll($type = null)
     {
         return $this->_statement->fetchAll($type);
     }
@@ -318,5 +325,27 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
     public function getInnerStatement()
     {
         return $this->_statement;
+    }
+
+    /**
+     * Set the default fetch mode for this statement
+     *
+     * @param string $mode The fetch mode as string 'num' or 'assoc'
+     * @return bool true on success, false otherwise
+     */
+    public function setFetchMode($mode)
+    {
+        $this->_fetchMode = $mode;
+    }
+
+    /**
+     * Returns the requested fetch mode or default fetch mode
+     *
+     * @param string $type [optional] 'num' or 'assoc'
+     * @return string|int
+     */
+    public function getFetchMode($type = null)
+    {
+        return $type !== null ? $type : $this->_fetchMode;
     }
 }

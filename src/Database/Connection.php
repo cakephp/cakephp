@@ -219,6 +219,11 @@ class Connection implements ConnectionInterface
             $statement = $this->_newLogger($statement);
         }
 
+        // Default fetch mode for all statements
+        if (!empty($this->_config['fetchMode'])) {
+            $statement->setFetchMode($this->_config['fetchMode']);
+        }
+
         return $statement;
     }
 
@@ -691,38 +696,6 @@ class Connection implements ConnectionInterface
         $query = new LoggedQuery;
         $query->query = $sql;
         $this->logger()->log($query);
-    }
-
-    /**
-     * Check if cross talk is supported between two connections
-     *
-     * @param ConnectionInterface $target Connection to check cross talk with
-     *
-     * @return bool
-     */
-    public function supportsCrossWith(ConnectionInterface $target)
-    {
-        $sourceConfig = $this->config();
-        $targetConfig = $target->config();
-
-        // No need to do report cross support in case the same connection is being used
-        if ($sourceConfig['name'] === $targetConfig['name']) {
-            return false;
-        }
-
-        $configToCheck = [
-            'driver',
-            'host',
-            'port'
-        ];
-
-        foreach ($configToCheck as $config) {
-            if ((isset($sourceConfig[$config])) && ($sourceConfig[$config] !== $targetConfig[$config])) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     /**
