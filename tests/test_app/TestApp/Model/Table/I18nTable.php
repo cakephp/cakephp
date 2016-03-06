@@ -24,9 +24,4 @@ class I18nTable extends Table
     {
         $this->table('custom_i18n_table');
     }
-
-    public static function defaultConnectionName()
-    {
-        return 'custom_i18n_datasource';
-    }
 }
