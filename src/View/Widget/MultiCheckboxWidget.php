@@ -120,6 +120,13 @@ class MultiCheckboxWidget implements WidgetInterface
         return implode('', $this->_renderInputs($data, $context));
     }
 
+    /**
+     * Render the checkbox inputs.
+     *
+     * @param array $data The data array defining the checkboxes.
+     * @param \Cake\View\Form\ContextInterface $context The current form context.
+     * @return array An array of rendered inputs.
+     */
     protected function _renderInputs($data, $context)
     {
         $out = [];
