@@ -126,7 +126,7 @@ trait SelectableAssociationTrait
      */
     protected function _assertFieldsPresent($fetchQuery, $key)
     {
-        $select = $fetchQuery->clause('select');
+        $select = $fetchQuery->aliasFields($fetchQuery->clause('select'));
         if (empty($select)) {
             return;
         }
@@ -134,8 +134,8 @@ trait SelectableAssociationTrait
 
         if ($missingFields) {
             $driver = $fetchQuery->connection()->driver();
-            $key = array_map([$driver, 'quoteIdentifier'], $key);
-            $missingFields = array_diff($key, $select) !== [];
+            $quoted = array_map([$driver, 'quoteIdentifier'], $key);
+            $missingFields = array_diff($quoted, $select) !== [];
         }
 
         if ($missingFields) {
