@@ -110,18 +110,40 @@ trait SelectableAssociationTrait
             $fetchQuery = $options['queryBuilder']($fetchQuery);
         }
 
+        $this->_assertFieldsPresent($fetchQuery, (array)$key);
+        return $fetchQuery;
+    }
+
+    /**
+     * Checks that the fetching query either has auto fields on or
+     * has the foreignKey fields selected.
+     * If the required fields are missing, throws an exception.
+     *
+     * @param \Cake\ORM\Query The association fetching query
+     * @param array $key The foreign key fields to check
+     * @return void
+     * @throws InvalidArgumentException
+     */
+    protected function _assertFieldsPresent($fetchQuery, $key)
+    {
         $select = $fetchQuery->clause('select');
-        if (!empty($select)) {
-            $select = $fetchQuery->aliasFields($select);
-            if (array_diff((array)$key, $select) !== []) {
-                throw new InvalidArgumentException(
-                    sprintf('You are required to select the "%s" field(s)',
-                    implode(', ', (array)$key)
-                ));
-            }
+        if (empty($select)) {
+            return;
+        }
+        $missingFields = array_diff($key, $select) !== [];
+
+        if ($missingFields) {
+            $driver = $fetchQuery->connection()->driver();
+            $key = array_map([$driver, 'quoteIdentifier'], $key);
+            $missingFields = array_diff($key, $select) !== [];
         }
 
-        return $fetchQuery;
+        if ($missingFields) {
+            throw new InvalidArgumentException(
+                sprintf('You are required to select the "%s" field(s)',
+                implode(', ', (array)$key)
+            ));
+        }
     }
 
     /**
