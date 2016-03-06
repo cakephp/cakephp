@@ -134,20 +134,20 @@ class ConnectionManager
      *
      * You can remove aliases with ConnectionManager::dropAlias().
      *
-     * @param string $from The connection to add an alias to.
-     * @param string $to The alias to create. $from should return when loaded with get().
+     * @param string $original The connection to add an alias to.
+     * @param string $target The alias to create. Fetching $original will return $target when loaded with get().
      * @return void
      * @throws \Cake\Datasource\Exception\MissingDatasourceConfigException When aliasing a
      * connection that does not exist.
      */
-    public static function alias($from, $to)
+    public static function alias($original, $target)
     {
-        if (empty(static::$_config[$to]) && empty(static::$_config[$from])) {
+        if (empty(static::$_config[$target]) && empty(static::$_config[$original])) {
             throw new MissingDatasourceConfigException(
-                sprintf('Cannot create alias of "%s" as it does not exist.', $from)
+                sprintf('Cannot create alias of "%s" as it does not exist.', $original)
             );
         }
-        static::$_aliasMap[$to] = $from;
+        static::$_aliasMap[$target] = $original;
     }
 
     /**
