@@ -139,7 +139,7 @@ class FixtureManager
             }
         }
         foreach ($map as $alias => $connection) {
-            ConnectionManager::alias($connection, $alias);
+            ConnectionManager::alias($alias, $connection);
         }
     }
 
