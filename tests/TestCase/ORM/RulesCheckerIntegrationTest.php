@@ -860,4 +860,28 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $this->assertSame($entity, $table->save($entity));
     }
+
+    /**
+     * Tests the existsIn domain rule respects the conditions set for the associations
+     *
+     * @group save
+     * @return void
+     */
+    public function testExistsInDomainRuleWithAssociationConditions()
+    {
+        $entity = new Entity([
+            'title' => 'An Article',
+            'author_id' => 1
+        ]);
+
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors', [
+            'conditions' => ['Authors.name !=' => 'mariano']
+        ]);
+        $rules = $table->rulesChecker();
+        $rules->add($rules->existsIn('author_id', 'Authors'));
+
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals(['_existsIn' => 'This value does not exist'], $entity->errors('author_id'));
+    }
 }
