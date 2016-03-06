@@ -111,6 +111,8 @@ class FormHelper extends Helper
             'label' => '<label{{attrs}}>{{text}}</label>',
             'nestingLabel' => '{{hidden}}<label{{attrs}}>{{input}}{{text}}</label>',
             'legend' => '<legend>{{text}}</legend>',
+            'multicheckboxTitle' => '<legend>{{text}}</legend>',
+            'multicheckboxWrapper' => '<fieldset{{attrs}}>{{content}}</fieldset>',
             'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
             'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
             'select' => '<select name="{{name}}"{{attrs}}>{{content}}</select>',
