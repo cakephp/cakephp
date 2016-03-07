@@ -138,8 +138,8 @@ class FixtureManager
                 $map['test_' . $connection] = $connection;
             }
         }
-        foreach ($map as $alias => $connection) {
-            ConnectionManager::alias($connection, $alias);
+        foreach ($map as $testConnection => $normal) {
+            ConnectionManager::alias($testConnection, $normal);
         }
     }
 
