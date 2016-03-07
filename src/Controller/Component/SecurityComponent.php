@@ -345,7 +345,11 @@ class SecurityComponent extends Component
             throw new SecurityException(sprintf($message, '_Token.debug'));
         }
 
-        return $check['_Token']['fields'];
+        $token = urldecode($check['_Token']['fields']);
+        if (strpos($token, ':')) {
+            list($token, $locked) = explode(':', $token, 2);
+        }
+        return $token;
     }
 
     /**
