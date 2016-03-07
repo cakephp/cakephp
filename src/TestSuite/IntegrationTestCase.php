@@ -861,6 +861,22 @@ abstract class IntegrationTestCase extends TestCase
     }
 
     /**
+     * Asserts a cookie has not been set in the response
+     *
+     * @param string $cookie The cookie name to check
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertCookieNotSet($cookie, $message = '')
+    {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert cookies. ' . $message);
+        }
+
+        $this->assertCookie(null, $cookie, "Cookie '{$cookie}' has been set."  . $message);
+    }
+
+    /**
      * Asserts cookie values which are encrypted by the
      * CookieComponent.
      *

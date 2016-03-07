@@ -224,6 +224,34 @@ class IntegrationTestCaseTest extends IntegrationTestCase
 
         $this->assertSession('An error message', 'Flash.flash.0.message');
         $this->assertCookie(1, 'remember_me');
+        $this->assertCookieNotSet('user_id');
+    }
+
+    /**
+     * Tests the failure message for assertCookieNotSet
+     *
+     * @expectedException PHPUnit_Framework_AssertionFailedError
+     * @expectedExceptionMessage Cookie 'remember_me' has been set
+     * @return void
+     */
+    public function testCookieNotSetFailure()
+    {
+        $this->post('/posts/index');
+        $this->assertCookieNotSet('remember_me');
+    }
+
+
+    /**
+     * Tests the failure message for assertCookieNotSet when no
+     * response whas generated
+     *
+     * @expectedException PHPUnit_Framework_AssertionFailedError
+     * @expectedExceptionMessage No response set, cannot assert cookies.
+     * @return void
+     */
+    public function testCookieNotSetFailureNoResponse()
+    {
+        $this->assertCookieNotSet('remember_me');
     }
 
     /**
