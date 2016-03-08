@@ -52,7 +52,8 @@ class ValueBinder
     {
         if(is_array($value)) {
             foreach($value as $k => $val) {
-                $this->_bindings[$param . '_' . $k] = compact('value', 'type') + [
+                $this->_bindings[$param . '_' . $k] = compact('type') + [
+                    'value' => $val,
                     'placeholder' => is_int($param) ? $param . '_' . $k : substr($param . '_' . $k, 1)
                 ];
             }
