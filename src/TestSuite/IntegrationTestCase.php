@@ -873,7 +873,7 @@ abstract class IntegrationTestCase extends TestCase
             $this->fail('No response set, cannot assert cookies. ' . $message);
         }
 
-        $this->assertCookie(null, $cookie, "Cookie '{$cookie}' has been set."  . $message);
+        $this->assertCookie(null, $cookie, "Cookie '{$cookie}' has been set. " . $message);
     }
 
     /**
