@@ -1800,8 +1800,10 @@ class FormHelperTest extends TestCase
         $expected = [
             'input' => [
                 'type' => 'hidden',
-                'name' => 'stuff',
-            ]];
+                'name' => 'stuff'
+            ]
+        ];
+
         $this->assertHtml($expected, $result);
 
         $result = $this->Form->hidden('hidden', ['value' => '0']);
@@ -1847,10 +1849,10 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->secure($this->Form->fields);
         $tokenDebug = urlencode(json_encode([
-                '/articles/add',
-                $expectedFields,
-                []
-            ]));
+            '/articles/add',
+            $expectedFields,
+            []
+        ]));
 
         $expected = [
             'div' => ['style' => 'display:none;'],
@@ -7706,17 +7708,17 @@ class FormHelperTest extends TestCase
                         'value' => '0', 'id' => 'multi-field-0'
                     ]],
                     'first',
-                '/label',
-            '/div',
-            ['div' => ['class' => 'checkbox']],
-                ['label' => ['for' => 'multi-field-1']],
+                    '/label',
+                    '/div',
+                    ['div' => ['class' => 'checkbox']],
+                    ['label' => ['for' => 'multi-field-1']],
                     ['input' => [
                         'type' => 'checkbox', 'name' => 'multi_field[]',
                         'value' => '1', 'id' => 'multi-field-1'
                     ]],
                     'second',
-                '/label',
-            '/div',
+                    '/label',
+                    '/div',
         ];
         $this->assertHtml($expected, $result);
     }
