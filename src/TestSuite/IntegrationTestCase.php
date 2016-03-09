@@ -472,6 +472,7 @@ abstract class IntegrationTestCase extends TestCase
             }, array_keys(Hash::flatten($data)));
             $tokenData = $this->_buildFieldToken($url, array_unique($keys));
             $data['_Token'] = $tokenData;
+            $data['_Token']['debug'] = 'SecurityComponent debug data would be added here';
         }
 
         if ($this->_csrfToken === true) {
