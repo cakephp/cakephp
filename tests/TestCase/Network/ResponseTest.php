@@ -1631,11 +1631,18 @@ class ResponseTest extends TestCase
             [
                 'bytes=0-', 38, 'bytes 0-37/38'
             ],
+
             [
                 'bytes=10-', 28, 'bytes 10-37/38'
             ],
+
             [
                 'bytes=10-20', 11, 'bytes 10-20/38'
+            ],
+
+            // Spaced out
+            [
+                'bytes = 10 - 20', 11, 'bytes 10-20/38'
             ],
         ];
     }
@@ -1747,11 +1754,60 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Provider for invalid range header values.
+     *
+     * @return array
+     */
+    public function invalidFileRangeProvider()
+    {
+        return [
+            // malformed range
+            [
+                'bytes=0,38'
+            ],
+
+            // malformed punctuation
+            [
+                'bytes: 0 - 38'
+            ],
+        ];
+    }
+
+    /**
      * Test invalid file ranges.
+     *
+     * @dataProvider invalidFileRangeProvider
+     * @return void
+     */
+    public function testFileRangeInvalid($range)
+    {
+        $_SERVER['HTTP_RANGE'] = $range;
+        $response = $this->getMock('Cake\Network\Response', [
+            '_sendHeader',
+            '_isActive',
+        ]);
+
+        $response->file(
+            TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+            ['download' => true]
+        );
+
+        $expected = [
+            'Content-Disposition' => 'attachment; filename="test_asset.css"',
+            'Content-Transfer-Encoding' => 'binary',
+            'Accept-Ranges' => 'bytes',
+            'Content-Range' => 'bytes 0-37/38',
+            'Content-Length' => 38,
+        ];
+        $this->assertEquals($expected, $response->header());
+    }
+
+    /**
+     * Test reversed file ranges.
      *
      * @return void
      */
-    public function testFileRangeInvalid()
+    public function testFileRangeReversed()
     {
         $_SERVER['HTTP_RANGE'] = 'bytes=30-2';
         $response = $this->getMock('Cake\Network\Response', [
