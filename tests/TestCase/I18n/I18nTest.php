@@ -326,6 +326,12 @@ class I18nTest extends TestCase
             $package->setMessages([
                 'letter' => [
                     '_context' => [
+                        'character' => 'The letter {0}',
+                        'communication' => 'She wrote a letter to {0}',
+                    ]
+                ],
+                'letters' => [
+                    '_context' => [
                         'character' => [
                             'The letter {0}',
                             'The letters {0} and {1}'
@@ -390,6 +396,12 @@ class I18nTest extends TestCase
             $package = new Package('default');
             $package->setMessages([
                 'letter' => [
+                    '_context' => [
+                        'character' => 'The letter {0}',
+                        'communication' => 'She wrote a letter to {0}',
+                    ]
+                ],
+                'letters' => [
                     '_context' => [
                         'character' => [
                             'The letter {0}',
