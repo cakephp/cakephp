@@ -297,6 +297,7 @@ class SecurityComponent extends Component
      * Validate submitted form
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
+     * @throws SecurityException
      * @return bool true if submitted form is valid
      */
     protected function _validatePost(Controller $controller)
@@ -462,16 +463,16 @@ class SecurityComponent extends Component
         $expectedParts = json_decode(urldecode($controller->request->data['_Token']['debug']), true);
         //@todo check array and counts for expected and data parts
         if ($hashParts[0] !== $expectedParts[0]) {
-            $messages[] = sprintf('Url not matching, \'%s\' was expected, but \'%s\' was sent in post data.', $expectedParts[0], $hashParts[0]);
+            $messages[] = sprintf('URL mismatch in POST data (expected \'%s\' but found \'%s\')', $expectedParts[0], $hashParts[0]);
         }
         $expectedFields = $expectedParts[1];
         $dataFields = unserialize($hashParts[1]);
         $fieldsMessages = $this->_debugCheckFields(
             $dataFields,
             $expectedFields,
-            'On request data field \'%s\', was injected and not expected',
-            'On request data field \'%s\', expected value was \'%s\', not matching with post data value \'%s\'',
-            'On request data there were missing expected fields: \'%s\''
+            'Unexpected field \'%s\' in POST data',
+            'Tampered field \'%s\' in POST data (expected value \'%s\' but found \'%s\')',
+            'Missing field \'%s\' in POST data'
         );
         $expectedUnlockedFields = Hash::get($expectedParts, 2);
         $dataUnlockedFields = Hash::get($hashParts, 2) ?: [];
@@ -492,26 +493,26 @@ class SecurityComponent extends Component
 
     /**
      * Iterates data array to check against expected
-     * @param $dataFields
-     * @param $expectedFields
+     * @param array $dataFields
+     * @param array $expectedFields
      * @param $intKeyMessage
      * @param $stringKeyMessage
      * @param $missingMessage
      * @return array Messages
      */
-    protected function _debugCheckFields($dataFields, $expectedFields, $intKeyMessage = '', $stringKeyMessage = '', $missingMessage = '')
+    protected function _debugCheckFields($dataFields, $expectedFields = array(), $intKeyMessage = '', $stringKeyMessage = '', $missingMessage = '')
     {
         $messages = [];
         foreach ($dataFields as $key => $value) {
             if (is_int($key)) {
-                $foundKey = array_search($value, $expectedFields);
+                $foundKey = array_search($value, (array)$expectedFields);
                 if ($foundKey === false) {
                     $messages[] = sprintf($intKeyMessage, $value);
                 } else {
                     unset($expectedFields[$foundKey]);
                 }
             } elseif (is_string($key)) {
-                if ($value !== $expectedFields[$key]) {
+                if (isset($expectedFields[$key]) && $value !== $expectedFields[$key]) {
                     $messages[] = sprintf($stringKeyMessage, $key, $expectedFields[$key], $value);
                 }
                 unset($expectedFields[$key]);
