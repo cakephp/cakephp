@@ -191,27 +191,25 @@ class PostgresSchema extends BaseSchema
      */
     public function describeIndexSql($tableName, $config)
     {
-        $sql = 'SELECT
-            c2.relname,
-            a.attname,
-            i.indisprimary,
-            i.indisunique
-        FROM pg_catalog.pg_class AS c,
-            pg_catalog.pg_class AS c2,
-            pg_catalog.pg_index AS i,
-            pg_catalog.pg_attribute AS a
-        WHERE c.oid  = (
-            SELECT c.oid
-            FROM pg_catalog.pg_class c
-            LEFT JOIN pg_catalog.pg_namespace AS n ON n.oid = c.relnamespace
-            WHERE c.relname = ?
-                AND n.nspname = ?
-        )
-        AND c.oid = i.indrelid
-        AND c.oid = a.attrelid
-        AND a.attnum = ANY(i.indkey)
-        AND i.indexrelid = c2.oid
-        ORDER BY i.indisprimary DESC, i.indisunique DESC, c2.relname, a.attnum';
+        $sql = "SELECT
+            c.conname AS name,
+            c.contype AS type,
+            a.attname AS column_name,
+            c.confmatchtype AS match_type,
+            c.confupdtype AS on_update,
+            c.confdeltype AS on_delete,
+            c.confrelid::regclass AS references_table,
+            ab.attname AS references_field
+        FROM pg_catalog.pg_namespace n
+        INNER JOIN pg_catalog.pg_constraint c ON (n.oid = c.connamespace)
+        INNER JOIN pg_catalog.pg_class cl ON (cl.oid = c.conrelid)
+        INNER JOIN pg_catalog.pg_attribute a ON (a.attrelid = cl.oid AND c.conrelid::regclass = a.attrelid::regclass)
+        INNER JOIN pg_catalog.pg_attribute ab ON (ab.attrelid = cl.oid AND a.attrelid = ab.attrelid AND a.attnum = ab.attnum)
+        WHERE n.nspname = ?
+        AND a.attnum = any(c.conkey)
+        AND c.conrelid = ?::regclass
+        AND c.contype='f'
+        ORDER BY c.conname, a.attnum";
 
         $schema = 'public';
         if (!empty($config['schema'])) {
@@ -276,40 +274,27 @@ class PostgresSchema extends BaseSchema
     public function describeForeignKeySql($tableName, $config)
     {
         $sql = "SELECT
-            rc.constraint_name AS name,
-            tc.constraint_type AS type,
-            kcu.column_name,
-            rc.match_option AS match_type,
-            rc.update_rule AS on_update,
-            rc.delete_rule AS on_delete,
-
-            kc.table_name AS references_table,
-            kc.column_name AS references_field
-
-            FROM information_schema.referential_constraints rc
-
-            JOIN information_schema.table_constraints tc
-                ON tc.constraint_name = rc.constraint_name
-                AND tc.constraint_schema = rc.constraint_schema
-                AND tc.constraint_name = rc.constraint_name
-                AND tc.table_schema = rc.constraint_schema
-
-            JOIN information_schema.key_column_usage kcu
-                ON kcu.constraint_name = rc.constraint_name
-                AND kcu.constraint_schema = rc.constraint_schema
-                AND kcu.constraint_name = rc.constraint_name
-                AND kcu.constraint_schema = rc.constraint_schema
-
-            JOIN information_schema.key_column_usage kc
-                ON kc.ordinal_position = kcu.position_in_unique_constraint
-                AND kc.constraint_name = rc.unique_constraint_name
-                AND kc.constraint_schema = rc.constraint_schema
-
-            WHERE kcu.table_name = ?
-              AND rc.constraint_schema = ?
-              AND tc.constraint_type = 'FOREIGN KEY'
-
-            ORDER BY rc.constraint_name, kcu.ordinal_position";
+            c.conname AS name,
+            c.contype AS type,
+            a.attname AS column_name,
+            c.confmatchtype AS match_type,
+            c.confupdtype AS on_update,
+            c.confdeltype AS on_delete,
+            c.confrelid::regclass AS references_table,
+            ab.attname AS references_field
+            FROM pg_catalog.pg_namespace n, pg_catalog.pg_class cl, pg_catalog.pg_constraint c, pg_catalog.pg_attribute a, pg_catalog.pg_attribute ab
+            WHERE n.oid = c.connamespace
+            AND cl.oid  = c.conrelid
+            AND c.conrelid::regclass = a.attrelid::regclass
+            AND c.conkey[1] = a.attnum
+            AND a.attrelid = cl.oid
+            AND ab.attrelid = cl.oid
+            AND a.attrelid = ab.attrelid
+            AND a.attnum = ab.attnum
+            AND c.conrelid = ?::regclass
+            AND c.contype='f'
+            AND n.nspname = ?
+            ORDER BY c.conname, a.attnum";
 
         $schema = empty($config['schema']) ? 'public' : $config['schema'];
         return [$sql, [$tableName, $schema]];
@@ -335,13 +320,13 @@ class PostgresSchema extends BaseSchema
      */
     protected function _convertOnClause($clause)
     {
-        if ($clause === 'RESTRICT') {
+        if ($clause === 'r') {
             return Table::ACTION_RESTRICT;
         }
-        if ($clause === 'NO ACTION') {
+        if ($clause === 'a') {
             return Table::ACTION_NO_ACTION;
         }
-        if ($clause === 'CASCADE') {
+        if ($clause === 'c') {
             return Table::ACTION_CASCADE;
         }
         return Table::ACTION_SET_NULL;
