@@ -327,7 +327,7 @@ class I18nTest extends TestCase
                 'letter' => [
                     '_context' => [
                         'character' => 'The letter {0}',
-                        'communication' => 'The letters {0} and {1}',
+                        'communication' => 'She wrote a letter to {0}',
                     ]
                 ],
                 'letters' => [
@@ -398,7 +398,7 @@ class I18nTest extends TestCase
                 'letter' => [
                     '_context' => [
                         'character' => 'The letter {0}',
-                        'communication' => 'The letters {0} and {1}',
+                        'communication' => 'She wrote a letter to {0}',
                     ]
                 ],
                 'letters' => [
