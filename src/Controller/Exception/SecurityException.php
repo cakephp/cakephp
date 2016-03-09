@@ -27,9 +27,11 @@ class SecurityException extends BadRequestException
 
     /**
      * Getter for type
+     *
      * @return string
      */
-    public function getType() {
+    public function getType()
+    {
         return $this->_type;
     }
 }

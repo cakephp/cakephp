@@ -17,5 +17,9 @@ namespace Cake\Controller\Exception;
  */
 class AuthSecurityException extends SecurityException
 {
+    /**
+     * Security Exception type
+     * @var string
+     */
     public $type = 'auth';
 }

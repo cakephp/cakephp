@@ -188,6 +188,7 @@ class SecurityComponent extends Component
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
      * @param string $error Error method
+     * @param \Cake\Controller\Exception\SecurityException $exception Additional debug info describing the cause
      * @return mixed If specified, controller blackHoleCallback's response, or no return otherwise
      * @see SecurityComponent::$blackHoleCallback
      * @link http://book.cakephp.org/3.0/en/controllers/components/security.html#handling-blackhole-callbacks
@@ -260,7 +261,7 @@ class SecurityComponent extends Component
 
             if (in_array($this->request->params['action'], $requireAuth) || $requireAuth == ['*']) {
                 if (!isset($controller->request->data['_Token'])) {
-                    throw new AuthSecurityException(sprintf('%s was not found in request data.', '_Token'));
+                    throw new AuthSecurityException(sprintf('\'%s\' was not found in request data.', '_Token'));
                 }
 
                 if ($this->session->check('_Token')) {
@@ -269,7 +270,8 @@ class SecurityComponent extends Component
                     if (!empty($tData['allowedControllers']) &&
                         !in_array($this->request->params['controller'], $tData['allowedControllers'])) {
                         throw new AuthSecurityException(
-                            sprintf('Controller %s was not found in allowed controllers: %s.',
+                            sprintf(
+                                'Controller \'%s\' was not found in allowed controllers: \'%s\'.',
                                 $this->request->params['controller'],
                                 implode(', ', (array)$tData['allowedControllers'])
                             )
@@ -279,14 +281,16 @@ class SecurityComponent extends Component
                         !in_array($this->request->params['action'], $tData['allowedActions'])
                     ) {
                         throw new AuthSecurityException(
-                            sprintf('Controller %s was not found in allowed controllers: %s.',
+                            sprintf(
+                                'Action \'%s::%s\' was not found in allowed actions: \'%s\'.',
+                                $this->request->params['controller'],
                                 $this->request->params['action'],
                                 implode(', ', (array)$tData['allowedActions'])
                             )
                         );
                     }
                 } else {
-                    throw new AuthSecurityException(sprintf('%s was not found in session.', '_Token'));
+                    throw new AuthSecurityException(sprintf('\'%s\' was not found in session.', '_Token'));
                 }
             }
         }
@@ -297,6 +301,7 @@ class SecurityComponent extends Component
      * Validate submitted form
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
+     * @throws \Cake\Controller\Exception\SecurityException
      * @return bool true if submitted form is valid
      */
     protected function _validatePost(Controller $controller)
@@ -323,15 +328,15 @@ class SecurityComponent extends Component
     /**
      * Check if token is valid
      *
-     * @param Controller $controller
-     * @throws SecurityException
-     * @return string fields token
+     * @param \Cake\Controller\Controller $controller Instantiating controller
+     * @throws \Cake\Controller\Exception\SecurityException
+     * @return String fields token
      */
     protected function _validToken(Controller $controller)
     {
         $check = $controller->request->data;
 
-        $message = '%s was not found in request data.';
+        $message = '\'%s\' was not found in request data.';
         if (!isset($check['_Token'])) {
             throw new AuthSecurityException(sprintf($message, '_Token'));
         }
@@ -355,7 +360,7 @@ class SecurityComponent extends Component
     /**
      * Return hash parts for the Token generation
      *
-     * @param Controller $controller
+     * @param \Cake\Controller\Controller $controller Instantiating controller
      * @return array
      */
     protected function _hashParts(Controller $controller)
@@ -373,7 +378,7 @@ class SecurityComponent extends Component
     /**
      * Return the fields list for the hash calculation
      *
-     * @param array $check data array
+     * @param array $check Data array
      * @return array
      */
     protected function _fieldsList(array $check)
@@ -442,7 +447,7 @@ class SecurityComponent extends Component
     /**
      * Get the unlocked string
      *
-     * @param array $check data array
+     * @param array $check Data array
      * @return string
      */
     protected function _unlocked(array $check)
@@ -453,25 +458,28 @@ class SecurityComponent extends Component
     /**
      * Create a message for humans to understand why Security token is not matching
      *
-     * @param $controller
-     * @return array messages to explain why token is not matching
+     * @param \Cake\Controller\Controller $controller Instantiating controller
+     * @param array $hashParts Elements used to generate the Token hash
+     * @return array Messages to explain why token is not matching
      */
-    protected function _debugPostTokenNotMatching($controller, $hashParts)
+    protected function _debugPostTokenNotMatching(Controller $controller, $hashParts)
     {
         $messages = [];
         $expectedParts = json_decode(urldecode($controller->request->data['_Token']['debug']), true);
-        //@todo check array and counts for expected and data parts
+        if (!is_array($expectedParts) || count($expectedParts) !== 3) {
+            return 'Invalid security debug token.';
+        }
         if ($hashParts[0] !== $expectedParts[0]) {
-            $messages[] = sprintf('Url not matching, \'%s\' was expected, but \'%s\' was sent in post data.', $expectedParts[0], $hashParts[0]);
+            $messages[] = sprintf('URL mismatch in POST data (expected \'%s\' but found \'%s\')', $expectedParts[0], $hashParts[0]);
         }
         $expectedFields = $expectedParts[1];
         $dataFields = unserialize($hashParts[1]);
         $fieldsMessages = $this->_debugCheckFields(
             $dataFields,
             $expectedFields,
-            'On request data field \'%s\', was injected and not expected',
-            'On request data field \'%s\', expected value was \'%s\', not matching with post data value \'%s\'',
-            'On request data there were missing expected fields: \'%s\''
+            'Unexpected field \'%s\' in POST data',
+            'Tampered field \'%s\' in POST data (expected value \'%s\' but found \'%s\')',
+            'Missing field \'%s\' in POST data'
         );
         $expectedUnlockedFields = Hash::get($expectedParts, 2);
         $dataUnlockedFields = Hash::get($hashParts, 2) ?: [];
@@ -481,44 +489,45 @@ class SecurityComponent extends Component
         $unlockFieldsMessages = $this->_debugCheckFields(
             $dataUnlockedFields,
             $expectedUnlockedFields,
-            'On request data field \'%s\', was not expected as unlocked',
+            'Unexpected unlocked field \'%s\' in POST data',
             null,
-            'On request data there were missing expected unlocked fields: \'%s\''
+            'Missing unlocked field: \'%s\''
         );
 
-        $messages = array_merge($fieldsMessages, $unlockFieldsMessages);
+        $messages = array_merge($messages, $fieldsMessages, $unlockFieldsMessages);
         return implode(', ', $messages);
     }
 
     /**
      * Iterates data array to check against expected
-     * @param $dataFields
-     * @param $expectedFields
-     * @param $intKeyMessage
-     * @param $stringKeyMessage
-     * @param $missingMessage
+     *
+     * @param array $dataFields Fields array, containing the POST data fields
+     * @param array $expectedFields Fields array, containing the expected fields we should have in POST
+     * @param string $intKeyMessage Message string if unexpected found in data fields indexed by int (not protected)
+     * @param string $stringKeyMessage Message string if tampered found in data fields indexed by string (protected)
+     * @param string $missingMessage Message string if missing field
      * @return array Messages
      */
-    protected function _debugCheckFields($dataFields, $expectedFields, $intKeyMessage = '', $stringKeyMessage = '', $missingMessage = '')
+    protected function _debugCheckFields($dataFields, $expectedFields = [], $intKeyMessage = '', $stringKeyMessage = '', $missingMessage = '')
     {
         $messages = [];
         foreach ($dataFields as $key => $value) {
             if (is_int($key)) {
-                $foundKey = array_search($value, $expectedFields);
+                $foundKey = array_search($value, (array)$expectedFields);
                 if ($foundKey === false) {
                     $messages[] = sprintf($intKeyMessage, $value);
                 } else {
                     unset($expectedFields[$foundKey]);
                 }
             } elseif (is_string($key)) {
-                if ($value !== $expectedFields[$key]) {
+                if (isset($expectedFields[$key]) && $value !== $expectedFields[$key]) {
                     $messages[] = sprintf($stringKeyMessage, $key, $expectedFields[$key], $value);
                 }
                 unset($expectedFields[$key]);
             }
         }
         if (count($expectedFields) > 0) {
-            $messages[] = sprintf($missingMessage, implode('\', \'', $expectedFields));
+            $messages[] = sprintf($missingMessage, implode(', ', $expectedFields));
         }
         return $messages;
     }
@@ -554,7 +563,7 @@ class SecurityComponent extends Component
     /**
      * Calls a controller callback method
      *
-     * @param \Cake\Controller\Controller $controller Controller to run callback on
+     * @param \Cake\Controller\Controller $controller Instantiating controller
      * @param string $method Method to execute
      * @param array $params Parameters to send to method
      * @return mixed Controller callback method's response
