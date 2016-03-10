@@ -18,6 +18,8 @@ environment:
   matrix:
       - db: 2012
         db_dsn: 'sqlserver://sa:Password12!@.\SQL2012SP1/cakephp?MultipleActiveResultSets=false'
+      - db: 2012
+        db_dsn: 'sqlserver://sa:Password12!@.\SQL2012SP1/cakephp?MultipleActiveResultSets=false&compiler=Cake\Database\SqlserverWithTrigger'
 
 services:
   - mssql2012sp1
@@ -52,9 +54,7 @@ before_test:
 # and is follow by http://help.appveyor.com/discussions/suggestions/264-database-mssqlsystemresource-is-being-recovered-waiting-for-sql-server-to-start
 - ps: >-
     $tries = 5;
-
     $pause = 10; # Seconds to wait between tries
-
     While ($tries -gt 0) {
       try {
         $ServerConnectionString = "Data Source=(local)\SQL2012SP1;Initial Catalog=master;User Id=sa;PWD=Password12!";
@@ -80,10 +80,7 @@ before_test:
       }
       $tries = $tries -1;
     }
-
 test_script:
   - sqlcmd -S ".\SQL2012SP1" -U sa -P Password12! -Q "create database cakephp;"
   - cd C:\projects\cakephp
   - vendor\bin\phpunit.bat
-  - $env:db_dsn = "sqlserver://sa:Password12!@.\SQL2012SP1/cakephp?MultipleActiveResultSets=false&compiler=Cake\DatabaseSqlserverWithTrigger"
-  - vendor\bin\phpunit.bat --testsuite "Database Test Suite"
