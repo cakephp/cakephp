@@ -187,6 +187,8 @@ abstract class Cell
                 ));
             }
 
+            $builder = $this->viewBuilder();
+
             if ($template !== null &&
                 strpos($template, '/') === false &&
                 strpos($template, '.') === false
@@ -194,16 +196,16 @@ abstract class Cell
                 $template = Inflector::underscore($template);
             }
             if ($template === null) {
-                $template = $this->viewBuilder()->template() ?: $this->template;
+                $template = $builder->template() ?: $this->template;
             }
-
-            $builder = $this->viewBuilder();
-            $builder->layout(false);
-            $builder->template($template);
+            $builder->layout(false)
+                ->template($template);
 
             $className = substr(strrchr(get_class($this), "\\"), 1);
             $name = substr($className, 0, -4);
-            $builder->templatePath('Cell' . DS . $name);
+            if (!$builder->templatePath()) {
+                $builder->templatePath('Cell' . DIRECTORY_SEPARATOR . $name);
+            }
 
             $this->View = $this->createView();
             try {

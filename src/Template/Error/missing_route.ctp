@@ -31,7 +31,7 @@ $this->start('subheading');
 
 <?php $this->start('file') ?>
 <p>None of the currently connected routes match the given URL or parameters.
-Add a matching route to <?= 'config' . DS . 'routes.php' ?></p>
+Add a matching route to <?= 'config' . DIRECTORY_SEPARATOR . 'routes.php' ?></p>
 
 <?php if (!empty($attributes['context'])): ?>
 <p>The passed context was:</p>

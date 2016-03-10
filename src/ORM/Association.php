@@ -27,6 +27,7 @@ use RuntimeException;
  * An Association is a relationship established between two tables and is used
  * to configure and customize the way interconnected records are retrieved.
  *
+ * @mixin \Cake\ORM\Table
  */
 abstract class Association
 {
@@ -261,6 +262,16 @@ abstract class Association
     }
 
     /**
+     * The class name of the target table object
+     *
+     * @return string
+     */
+    public function className()
+    {
+        return $this->_className;
+    }
+
+    /**
      * Sets the table instance for the source side of the association. If no arguments
      * are passed, the current configured table instance is returned
      *
@@ -425,10 +436,28 @@ abstract class Association
             $this->_propertyName = $name;
         }
         if ($name === null && !$this->_propertyName) {
-            list(, $name) = pluginSplit($this->_name);
-            $this->_propertyName = Inflector::underscore($name);
+            $this->_propertyName = $this->_propertyName();
+            if (in_array($this->_propertyName, $this->_sourceTable->schema()->columns())) {
+                $msg = 'Association property name "%s" clashes with field of same name of table "%s".' .
+                    ' You should explicitly specify the "propertyName" option.';
+                trigger_error(
+                    sprintf($msg, $this->_propertyName, $this->_sourceTable->table()),
+                    E_USER_WARNING
+                );
+            }
         }
         return $this->_propertyName;
+    }
+
+    /**
+     * Returns default property name based on association name.
+     *
+     * @return string
+     */
+    protected function _propertyName()
+    {
+        list(, $name) = pluginSplit($this->_name);
+        return Inflector::underscore($name);
     }
 
     /**
@@ -964,7 +993,7 @@ abstract class Association
      * @param array|\ArrayObject $options The options for saving associated data.
      * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
      * the saved entity
-     * @see Table::save()
+     * @see \Cake\ORM\Table::save()
      */
     abstract public function saveAssociated(EntityInterface $entity, array $options = []);
 }

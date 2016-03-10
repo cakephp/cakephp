@@ -190,7 +190,7 @@ class AuthComponent extends Component
      * Controller actions for which user validation is not required.
      *
      * @var array
-     * @see AuthComponent::allow()
+     * @see \Cake\Controller\Component\AuthComponent::allow()
      */
     public $allowedActions = [];
 
@@ -598,7 +598,7 @@ class AuthComponent extends Component
      *
      * @param string|array $actions Controller action name or array of actions
      * @return void
-     * @see AuthComponent::allow()
+     * @see \Cake\Controller\Component\AuthComponent::allow()
      * @link http://book.cakephp.org/3.0/en/controllers/components/authentication.html#making-actions-require-authorization
      */
     public function deny($actions = null)

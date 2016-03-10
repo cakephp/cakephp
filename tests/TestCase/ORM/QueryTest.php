@@ -23,7 +23,6 @@ use Cake\Datasource\ConnectionManager;
 use Cake\I18n\Time;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
-use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
@@ -552,7 +551,10 @@ class QueryTest extends TestCase
         TableRegistry::get('ArticlesTags', [
             'table' => 'articles_tags'
         ]);
-        $table->belongsToMany('Tags', ['strategy' => $strategy]);
+        $table->belongsToMany('Tags', [
+            'strategy' => $strategy,
+            'sort' => 'tag_id'
+        ]);
         $query = new Query($this->connection, $table);
 
         $results = $query->select()->contain('Tags')->hydrate(false)->toArray();
@@ -1553,7 +1555,7 @@ class QueryTest extends TestCase
         $query = $table->find();
         $query->select([
             'title' => $query->func()->concat(
-                ['title' => 'literal', 'test'],
+                ['title' => 'identifier', 'test'],
                 ['string']
             ),
         ]);
@@ -2214,7 +2216,7 @@ class QueryTest extends TestCase
      *
      * @return void
      */
-    public function testFormatDeepAssocationRecords()
+    public function testFormatDeepAssociationRecords()
     {
         $table = TableRegistry::get('ArticlesTags');
         $table->belongsTo('Articles');
@@ -2479,12 +2481,13 @@ class QueryTest extends TestCase
     public function testColumnsFromJoin()
     {
         $table = TableRegistry::get('articles');
-        $results = $table->find()
+        $query = $table->find();
+        $results = $query
             ->select(['title', 'person.name'])
             ->join([
                 'person' => [
                     'table' => 'authors',
-                    'conditions' => ['person.id = articles.author_id']
+                    'conditions' => [$query->newExpr()->equalFields('person.id', 'articles.author_id')]
                 ]
             ])
             ->order(['articles.id' => 'ASC'])
@@ -3111,6 +3114,7 @@ class QueryTest extends TestCase
         $results = $table->find()
             ->hydrate(false)
             ->notMatching('articles')
+            ->order(['authors.id'])
             ->toArray();
 
         $expected = [
@@ -3124,6 +3128,7 @@ class QueryTest extends TestCase
             ->notMatching('articles', function ($q) {
                 return $q->where(['articles.author_id' => 1]);
             })
+            ->order(['authors.id'])
             ->toArray();
         $expected = [
             ['id' => 2, 'name' => 'nate'],

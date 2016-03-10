@@ -32,6 +32,9 @@ class AuthUsersTable extends Table
     public function findAuth(Query $query, array $options)
     {
         $query->select(['id', 'username', 'password']);
+        if (!empty($options['return_created'])) {
+            $query->select(['created']);
+        }
 
         return $query;
     }

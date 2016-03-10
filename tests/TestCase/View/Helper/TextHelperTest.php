@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\View\Helper;
 
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;

@@ -14,9 +14,6 @@
  */
 namespace Cake\Test\TestCase\ORM\Behavior;
 
-use Cake\Collection\Collection;
-use Cake\Event\Event;
-use Cake\ORM\Behavior\TranslateBehavior;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;

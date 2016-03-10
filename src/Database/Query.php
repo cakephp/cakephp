@@ -1430,11 +1430,11 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function set($key, $value = null, $types = [])
     {
         if (empty($this->_parts['set'])) {
-            $this->_parts['set'] = $this->newExpr()->type(',');
+            $this->_parts['set'] = $this->newExpr()->tieWith(',');
         }
 
         if ($this->_parts['set']->isCallable($key)) {
-            $exp = $this->newExpr()->type(',');
+            $exp = $this->newExpr()->tieWith(',');
             $this->_parts['set']->add($key($exp));
             return $this;
         }
@@ -1811,11 +1811,11 @@ class Query implements ExpressionInterface, IteratorAggregate
             $append = $append($this->newExpr(), $this);
         }
 
-        if ($expression->type() === $conjunction) {
+        if ($expression->tieWith() === $conjunction) {
             $expression->add($append, $types);
         } else {
             $expression = $this->newExpr()
-                ->type($conjunction)
+                ->tieWith($conjunction)
                 ->add([$append, $expression], $types);
         }
 

@@ -199,9 +199,13 @@ class Route
             $parsed = preg_replace('#/\\\\\*$#', '(?:/(?P<_args_>.*))?', $parsed);
             $this->_greedy = true;
         }
+        $mode = '';
+        if (!empty($this->options['multibytePattern'])) {
+            $mode = 'u';
+        }
         krsort($routeParams);
         $parsed = str_replace(array_keys($routeParams), array_values($routeParams), $parsed);
-        $this->_compiledRoute = '#^' . $parsed . '[/]*$#';
+        $this->_compiledRoute = '#^' . $parsed . '[/]*$#' . $mode;
         $this->keys = $names;
 
         // Remove defaults that are also keys. They can cause match failures
@@ -441,7 +445,9 @@ class Route
         if (!isset($hostOptions['_base']) && isset($context['_base'])) {
             $hostOptions['_base'] = $context['_base'];
         }
-        unset($url['_host'], $url['_scheme'], $url['_port'], $url['_base']);
+
+        $query = !empty($url['?']) ? (array)$url['?'] : [];
+        unset($url['_host'], $url['_scheme'], $url['_port'], $url['_base'], $url['?']);
 
         // Move extension into the hostOptions so its not part of
         // reverse matches.
@@ -484,8 +490,6 @@ class Route
         }
 
         $pass = [];
-        $query = [];
-
         foreach ($url as $key => $value) {
             // keys that exist in the defaults and have different values is a match failure.
             $defaultExists = array_key_exists($key, $defaults);
@@ -616,7 +620,7 @@ class Route
             $out .= '.' . $params['_ext'];
         }
         if (!empty($query)) {
-            $out .= '?' . http_build_query($query);
+            $out .= rtrim('?' . http_build_query($query), '?');
         }
         return $out;
     }

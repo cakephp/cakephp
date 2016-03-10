@@ -135,10 +135,10 @@ class Plugin
 
         if (empty($config['path'])) {
             $paths = App::path('Plugin');
-            $pluginPath = str_replace('/', DS, $plugin);
+            $pluginPath = str_replace('/', DIRECTORY_SEPARATOR, $plugin);
             foreach ($paths as $path) {
                 if (is_dir($path . $pluginPath)) {
-                    $config['path'] = $path . $pluginPath . DS;
+                    $config['path'] = $path . $pluginPath . DIRECTORY_SEPARATOR;
                     break;
                 }
             }
@@ -148,9 +148,9 @@ class Plugin
             throw new MissingPluginException(['plugin' => $plugin]);
         }
 
-        $config['classPath'] = $config['path'] . $config['classBase'] . DS;
+        $config['classPath'] = $config['path'] . $config['classBase'] . DIRECTORY_SEPARATOR;
         if (!isset($config['configPath'])) {
-            $config['configPath'] = $config['path'] . 'config' . DS;
+            $config['configPath'] = $config['path'] . 'config' . DIRECTORY_SEPARATOR;
         }
 
         static::$_plugins[$plugin] = $config;
@@ -162,11 +162,11 @@ class Plugin
             }
             static::$_loader->addNamespace(
                 str_replace('/', '\\', $plugin),
-                $config['path'] . $config['classBase'] . DS
+                $config['path'] . $config['classBase'] . DIRECTORY_SEPARATOR
             );
             static::$_loader->addNamespace(
                 str_replace('/', '\\', $plugin) . '\Test',
-                $config['path'] . 'tests' . DS
+                $config['path'] . 'tests' . DIRECTORY_SEPARATOR
             );
         }
 
@@ -185,9 +185,9 @@ class Plugin
         if (Configure::check('plugins')) {
             return;
         }
-        $vendorFile = dirname(dirname(__DIR__)) . DS . 'cakephp-plugins.php';
+        $vendorFile = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
         if (!file_exists($vendorFile)) {
-            $vendorFile = dirname(dirname(dirname(dirname(__DIR__)))) . DS . 'cakephp-plugins.php';
+            $vendorFile = dirname(dirname(dirname(dirname(__DIR__)))) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
             if (!file_exists($vendorFile)) {
                 Configure::write(['plugins' => []]);
                 return;
@@ -301,7 +301,7 @@ class Plugin
      *
      * @param string $plugin name of the plugin
      * @return mixed
-     * @see Plugin::load() for examples of bootstrap configuration
+     * @see \Cake\Core\Plugin::load() for examples of bootstrap configuration
      */
     public static function bootstrap($plugin)
     {

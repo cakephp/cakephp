@@ -253,7 +253,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string|null $key Encryption key used. Defaults
      *   to Security.salt.
      * @return void
-     * @see CookieCryptTrait::_encrypt
+     * @see \Cake\Utility\CookieCryptTrait::_encrypt()
      */
     public function cookieEncrypted($name, $value, $encrypt = 'aes', $key = null)
     {
@@ -682,7 +682,7 @@ abstract class IntegrationTestCase extends TestCase
         }
         $this->assertEquals($headers[$header], $content, $message);
     }
-    
+
     /**
      * Asserts response header contains a string
      *
@@ -873,7 +873,7 @@ abstract class IntegrationTestCase extends TestCase
      *   to Security.salt.
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
-     * @see CookieCryptTrait::_encrypt
+     * @see \Cake\Utility\CookieCryptTrait::_encrypt()
      */
     public function assertCookieEncrypted($expected, $name, $encrypt = 'aes', $key = null, $message = '')
     {

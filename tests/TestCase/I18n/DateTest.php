@@ -52,6 +52,7 @@ class DateTest extends TestCase
         parent::tearDown();
         Date::$defaultLocale = $this->locale;
         FrozenDate::$defaultLocale = $this->locale;
+        date_default_timezone_set('UTC');
     }
 
     /**
@@ -488,5 +489,19 @@ class DateTest extends TestCase
         $date = new $class('-23 hours');
         $result = $date->timeAgoInWords(['accuracy' => 'day']);
         $this->assertEquals('today', $result);
+    }
+
+    /**
+     * Tests that parsing a date in a timezone other than UTC
+     * will not alter the date
+     *
+     * @dataProvider classNameProvider
+     * @return void
+     */
+    public function testParseDateDifferentTimezone($class)
+    {
+        date_default_timezone_set('Europe/Paris');
+        $result = $class::parseDate('25-02-2016', 'd-M-y');
+        $this->assertEquals('25-02-2016', $result->format('d-m-Y'));
     }
 }

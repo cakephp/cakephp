@@ -22,7 +22,6 @@ use Cake\Form\Form;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
-use Cake\Utility\Security;
 use Cake\View\Form\ArrayContext;
 use Cake\View\Form\ContextInterface;
 use Cake\View\Form\EntityContext;
@@ -168,8 +167,8 @@ class FormHelper extends Helper
      * An array of field names that have been excluded from
      * the Token hash used by SecurityComponent's validatePost method
      *
-     * @see FormHelper::_secure()
-     * @see SecurityComponent::validatePost()
+     * @see \Cake\View\Helper\FormHelper::_secure()
+     * @see \Cake\Controller\Component\SecurityComponent::validatePost()
      * @var array
      */
     protected $_unlockedFields = [];
@@ -192,7 +191,7 @@ class FormHelper extends Helper
      * Context provider methods.
      *
      * @var array
-     * @see addContextProvider
+     * @see \Cake\View\Helper\FormHelper::addContextProvider()
      */
     protected $_contextProviders = [];
 
@@ -428,7 +427,7 @@ class FormHelper extends Helper
         }
 
         $actionAttr = $templater->formatAttributes(['action' => $action, 'escape' => false]);
-        return $templater->format('formStart', [
+        return $this->formatTemplate('formStart', [
             'attrs' => $templater->formatAttributes($htmlAttributes) . $actionAttr
         ]) . $append;
     }
@@ -529,10 +528,9 @@ class FormHelper extends Helper
             $out .= $this->secure($this->fields, $secureAttributes);
             $this->fields = [];
         }
-        $templater = $this->templater();
-        $out .= $templater->format('formEnd', []);
+        $out .= $this->formatTemplate('formEnd', []);
 
-        $templater->pop();
+        $this->templater()->pop();
         $this->requestType = null;
         $this->_context = null;
         $this->_idPrefix = $this->config('idPrefix');
@@ -1057,7 +1055,7 @@ class FormHelper extends Helper
         if (!$this->templater()->get($groupTemplate)) {
             $groupTemplate = 'formGroup';
         }
-        return $this->templater()->format($groupTemplate, [
+        return $this->formatTemplate($groupTemplate, [
             'input' => $options['input'],
             'label' => $options['label'],
             'error' => $options['error'],
@@ -1078,7 +1076,7 @@ class FormHelper extends Helper
             $inputContainerTemplate = 'inputContainer' . $options['errorSuffix'];
         }
 
-        return $this->templater()->format($inputContainerTemplate, [
+        return $this->formatTemplate($inputContainerTemplate, [
             'content' => $options['content'],
             'error' => $options['error'],
             'required' => $options['options']['required'] ? ' required' : '',
@@ -1668,7 +1666,7 @@ class FormHelper extends Helper
             'escape' => false
         ]);
 
-        $out = $templater->format('formStart', [
+        $out = $this->formatTemplate('formStart', [
             'attrs' => $templater->formatAttributes($formOptions) . $action
         ]);
         $out .= $this->hidden('_method', ['value' => $requestMethod]);
@@ -1683,7 +1681,7 @@ class FormHelper extends Helper
             unset($options['data']);
         }
         $out .= $this->secure($fields);
-        $out .= $templater->format('formEnd', []);
+        $out .= $this->formatTemplate('formEnd', []);
 
         if ($options['block']) {
             if ($options['block'] === true) {
@@ -2277,7 +2275,7 @@ class FormHelper extends Helper
      * @param string $fieldName Prefix name for the SELECT element
      * @param array $options Array of Options
      * @return string Generated set of select boxes for time formats chosen.
-     * @see Cake\View\Helper\FormHelper::dateTime() for templating options.
+     * @see \Cake\View\Helper\FormHelper::dateTime() for templating options.
      */
     public function time($fieldName, array $options = [])
     {
@@ -2306,7 +2304,7 @@ class FormHelper extends Helper
      * @param string $fieldName Prefix name for the SELECT element
      * @param array $options Array of Options
      * @return string Generated set of select boxes for time formats chosen.
-     * @see Cake\View\Helper\FormHelper::dateTime() for templating options.
+     * @see \Cake\View\Helper\FormHelper::dateTime() for templating options.
      */
     public function date($fieldName, array $options = [])
     {

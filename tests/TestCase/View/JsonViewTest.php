@@ -17,12 +17,10 @@
 namespace Cake\Test\TestCase\View;
 
 use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
-use Cake\View\JsonView;
 
 /**
  * JsonViewTest

@@ -403,7 +403,7 @@ class Request implements ArrayAccess
                 $base = dirname($base);
             }
 
-            if ($base === DS || $base === '.') {
+            if ($base === DIRECTORY_SEPARATOR || $base === '.') {
                 $base = '';
             }
             $base = implode('/', array_map('rawurlencode', explode('/', $base)));
@@ -413,7 +413,7 @@ class Request implements ArrayAccess
         $file = '/' . basename($baseUrl);
         $base = dirname($baseUrl);
 
-        if ($base === DS || $base === '.') {
+        if ($base === DIRECTORY_SEPARATOR || $base === '.') {
             $base = '';
         }
         $webrootDir = $base . '/';

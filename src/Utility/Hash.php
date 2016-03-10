@@ -113,6 +113,7 @@ class Hash
      * - `{n}.User[id]` Get the name of every user with an id key.
      * - `{n}.User[id>=2]` Get the name of every user with an id key greater than or equal to 2.
      * - `{n}.User[username=/^paul/]` Get User elements with username matching `^paul`.
+     * - `{n}.User[id=1].name` Get the Users name with id matching `1`.
      *
      * @param array|\ArrayAccess $data The data to extract from.
      * @param string $path The path to extract.
@@ -513,7 +514,7 @@ class Hash
      * @return array|null An array of strings extracted from `$path` and formatted with `$format`
      * @link http://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::format
      * @see sprintf()
-     * @see Hash::extract()
+     * @see \Cake\Utility\Hash::extract()
      */
     public static function format(array $data, array $paths, $format)
     {
@@ -592,7 +593,7 @@ class Hash
      * @param array $data The data to check.
      * @param string $path The path to check for.
      * @return bool Existence of path.
-     * @see Hash::extract()
+     * @see \Cake\Utility\Hash::extract()
      * @link http://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::check
      */
     public static function check(array $data, $path)
@@ -1130,7 +1131,7 @@ class Hash
      * @param array $data The data to nest.
      * @param array $options Options are:
      * @return array of results, nested
-     * @see Hash::extract()
+     * @see \Cake\Utility\Hash::extract()
      * @throws \InvalidArgumentException When providing invalid data.
      * @link http://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::nest
      */

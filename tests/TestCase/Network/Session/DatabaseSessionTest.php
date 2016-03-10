@@ -21,7 +21,6 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Network\Session;
 use Cake\Network\Session\DatabaseSession;
 use Cake\ORM\Entity;
-use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 

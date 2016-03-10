@@ -175,7 +175,7 @@ class Router
      * Gets the named route patterns for use in config/routes.php
      *
      * @return array Named route elements
-     * @see Router::$_namedExpressions
+     * @see \Cake\Routing\Router::$_namedExpressions
      */
     public static function getNamedExpressions()
     {
@@ -403,8 +403,8 @@ class Router
      * Pops a request off of the request stack.  Used when doing requestAction
      *
      * @return \Cake\Network\Request The request removed from the stack.
-     * @see Router::pushRequest()
-     * @see Object::requestAction()
+     * @see \Cake\Routing\Router::pushRequest()
+     * @see \Cake\Routing\RequestActionTrait::requestAction()
      */
     public static function popRequest()
     {
@@ -491,8 +491,8 @@ class Router
      *
      * @param array $url The URL array being modified.
      * @return array The modified URL.
-     * @see Router::url()
-     * @see Router::addUrlFilter()
+     * @see \Cake\Routing\Router::url()
+     * @see \Cake\Routing\Router::addUrlFilter()
      */
     protected static function _applyUrlFilters($url)
     {
@@ -576,12 +576,6 @@ class Router
             if (isset($url['_full']) && $url['_full'] === true) {
                 $full = true;
                 unset($url['_full']);
-            }
-            // Compatibility for older versions.
-            if (isset($url['?'])) {
-                $q = $url['?'];
-                unset($url['?']);
-                $url = array_merge($url, $q);
             }
             if (isset($url['#'])) {
                 $frag = '#' . $url['#'];

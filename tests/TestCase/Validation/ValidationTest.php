@@ -604,51 +604,51 @@ class ValidationTest extends TestCase
     public function testLuhn()
     {
         //American Express
-        $this->assertTrue(Validation::luhn('370482756063980', true));
+        $this->assertTrue(Validation::luhn('370482756063980'));
         //BankCard
-        $this->assertTrue(Validation::luhn('5610745867413420', true));
+        $this->assertTrue(Validation::luhn('5610745867413420'));
         //Diners Club 14
-        $this->assertTrue(Validation::luhn('30155483651028', true));
+        $this->assertTrue(Validation::luhn('30155483651028'));
         //2004 MasterCard/Diners Club Alliance International 14
-        $this->assertTrue(Validation::luhn('36747701998969', true));
+        $this->assertTrue(Validation::luhn('36747701998969'));
         //2004 MasterCard/Diners Club Alliance US & Canada 16
-        $this->assertTrue(Validation::luhn('5597511346169950', true));
+        $this->assertTrue(Validation::luhn('5597511346169950'));
         //Discover
-        $this->assertTrue(Validation::luhn('6011802876467237', true));
+        $this->assertTrue(Validation::luhn('6011802876467237'));
         //enRoute
-        $this->assertTrue(Validation::luhn('201496944158937', true));
+        $this->assertTrue(Validation::luhn('201496944158937'));
         //JCB 15 digit
-        $this->assertTrue(Validation::luhn('210034762247893', true));
+        $this->assertTrue(Validation::luhn('210034762247893'));
         //JCB 16 digit
-        $this->assertTrue(Validation::luhn('3096806857839939', true));
+        $this->assertTrue(Validation::luhn('3096806857839939'));
         //Maestro (debit card)
-        $this->assertTrue(Validation::luhn('5020147409985219', true));
+        $this->assertTrue(Validation::luhn('5020147409985219'));
         //Mastercard
-        $this->assertTrue(Validation::luhn('5580424361774366', true));
+        $this->assertTrue(Validation::luhn('5580424361774366'));
         //Solo 16
-        $this->assertTrue(Validation::luhn('6767432107064987', true));
+        $this->assertTrue(Validation::luhn('6767432107064987'));
         //Solo 18
-        $this->assertTrue(Validation::luhn('676714834398858593', true));
+        $this->assertTrue(Validation::luhn('676714834398858593'));
         //Solo 19
-        $this->assertTrue(Validation::luhn('6767838565218340113', true));
+        $this->assertTrue(Validation::luhn('6767838565218340113'));
         //Switch 16
-        $this->assertTrue(Validation::luhn('5641829171515733', true));
+        $this->assertTrue(Validation::luhn('5641829171515733'));
         //Switch 18
-        $this->assertTrue(Validation::luhn('493622764224625174', true));
+        $this->assertTrue(Validation::luhn('493622764224625174'));
         //Switch 19
-        $this->assertTrue(Validation::luhn('6759603460617628716', true));
+        $this->assertTrue(Validation::luhn('6759603460617628716'));
         //VISA 13 digit
-        $this->assertTrue(Validation::luhn('4024007174754', true));
+        $this->assertTrue(Validation::luhn('4024007174754'));
         //VISA 16 digit
-        $this->assertTrue(Validation::luhn('4916375389940009', true));
+        $this->assertTrue(Validation::luhn('4916375389940009'));
         //Visa Electron
-        $this->assertTrue(Validation::luhn('4175003346287100', true));
+        $this->assertTrue(Validation::luhn('4175003346287100'));
         //Voyager
-        $this->assertTrue(Validation::luhn('869940697287073', true));
+        $this->assertTrue(Validation::luhn('869940697287073'));
 
-        $this->assertFalse(Validation::luhn('0000000000000000', true));
+        $this->assertFalse(Validation::luhn('0000000000000000'));
 
-        $this->assertFalse(Validation::luhn('869940697287173', true));
+        $this->assertFalse(Validation::luhn('869940697287173'));
     }
 
     /**
@@ -897,6 +897,11 @@ class ValidationTest extends TestCase
     public function testDateTimeObject()
     {
         $dateTime = new \DateTime();
+        $this->assertTrue(Validation::date($dateTime));
+        $this->assertTrue(Validation::time($dateTime));
+        $this->assertTrue(Validation::dateTime($dateTime));
+
+        $dateTime = new \DateTimeImmutable();
         $this->assertTrue(Validation::date($dateTime));
         $this->assertTrue(Validation::time($dateTime));
         $this->assertTrue(Validation::dateTime($dateTime));

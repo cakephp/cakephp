@@ -893,6 +893,21 @@ class HashTest extends TestCase
     }
 
     /**
+     * Test the extraction of a single value filtered by another field.
+     *
+     * @dataProvider articleDataSets
+     * @return void
+     */
+    public function testExtractSingleValueWithFilteringByAnotherField($data)
+    {
+        $result = Hash::extract($data, '{*}.Article[id=1].title');
+        $this->assertEquals([0 => 'First Article'], $result);
+
+        $result = Hash::extract($data, '{*}.Article[id=2].title');
+        $this->assertEquals([0 => 'Second Article'], $result);
+    }
+
+    /**
      * Test simple paths.
      *
      * @dataProvider articleDataSets

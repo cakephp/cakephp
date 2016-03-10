@@ -116,12 +116,21 @@ class App
     public static function shortName($class, $type, $suffix = '')
     {
         $class = str_replace('\\', '/', $class);
-        list($pluginName, $name) = explode('/' . $type . '/', $class);
+        $type = '/' . $type . '/';
+
+        $pos = strrpos($class, $type);
+        $pluginName = substr($class, 0, $pos);
+        $name = substr($class, $pos + strlen($type));
 
         if ($suffix) {
             $name = substr($name, 0, -strlen($suffix));
         }
-        if (in_array($pluginName, ['Cake', Configure::read('App.namespace')])) {
+
+        $nonPluginNamespaces = [
+            'Cake',
+            str_replace('\\', '/', Configure::read('App.namespace'))
+        ];
+        if (in_array($pluginName, $nonPluginNamespaces)) {
             return $name;
         }
 
@@ -177,9 +186,9 @@ class App
             return (array)Configure::read('App.paths.templates');
         }
         if (!empty($plugin)) {
-            return [Plugin::classPath($plugin) . $type . DS];
+            return [Plugin::classPath($plugin) . $type . DIRECTORY_SEPARATOR];
         }
-        return [APP . $type . DS];
+        return [APP . $type . DIRECTORY_SEPARATOR];
     }
 
     /**
@@ -198,6 +207,6 @@ class App
      */
     public static function core($type)
     {
-        return [CAKE . str_replace('/', DS, $type) . DS];
+        return [CAKE . str_replace('/', DIRECTORY_SEPARATOR, $type) . DIRECTORY_SEPARATOR];
     }
 }

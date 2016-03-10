@@ -481,7 +481,6 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     {
         $asserts = $assertions['attrs'];
         $explains = $assertions['explains'];
-        $len = count($asserts);
         do {
             $matches = false;
             foreach ($asserts as $j => $assert) {
@@ -509,11 +508,11 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
      * Normalize a path for comparison.
      *
      * @param string $path Path separated by "/" slash.
-     * @return string Normalized path separated by DS.
+     * @return string Normalized path separated by DIRECTORY_SEPARATOR.
      */
     protected function _normalizePath($path)
     {
-        return str_replace('/', DS, $path);
+        return str_replace('/', DIRECTORY_SEPARATOR, $path);
     }
 
 // @codingStandardsIgnoreStart
@@ -560,8 +559,8 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
      */
     protected static function assertPathEquals($expected, $result, $message = '')
     {
-        $expected = str_replace(DS, '/', $expected);
-        $result = str_replace(DS, '/', $result);
+        $expected = str_replace(DIRECTORY_SEPARATOR, '/', $expected);
+        $result = str_replace(DIRECTORY_SEPARATOR, '/', $result);
         static::assertEquals($expected, $result, $message);
     }
 

@@ -39,7 +39,7 @@ class UnloadTask extends Shell
      */
     public function main($plugin = null)
     {
-        $this->bootstrap = ROOT . DS . 'config' . DS . 'bootstrap.php';
+        $this->bootstrap = ROOT . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
         if (empty($plugin)) {
             $this->err('<error>You must provide a plugin name in CamelCase format.</error>');

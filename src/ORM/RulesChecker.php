@@ -23,7 +23,7 @@ use Cake\ORM\Rule\IsUnique;
  *
  * Adds ORM related features to the RulesChecker class.
  *
- * @see Cake\Datasource\RulesChecker
+ * @see \Cake\Datasource\RulesChecker
  */
 class RulesChecker extends BaseRulesChecker
 {

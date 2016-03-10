@@ -18,7 +18,6 @@ use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\ORM\Behavior;
-use Cake\ORM\Entity;
 use DateTime;
 use UnexpectedValueException;
 

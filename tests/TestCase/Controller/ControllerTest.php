@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\Controller;
 
 use Cake\Controller\Component;
 use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
@@ -26,8 +25,6 @@ use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\TestSuite\Fixture\TestModel;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\ClassRegistry;
-use Cake\Utility\Hash;
 use TestApp\Controller\Admin\PostsController;
 use TestPlugin\Controller\TestPluginController;
 
@@ -481,7 +478,7 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(null, new Response());
 
-        $response = $Controller->redirect('http://cakephp.org', (int)$code, false);
+        $response = $Controller->redirect('http://cakephp.org', (int)$code);
         $this->assertEquals($code, $response->statusCode());
         $this->assertEquals('http://cakephp.org', $response->header()['Location']);
         $this->assertFalse($Controller->autoRender);
@@ -519,7 +516,7 @@ class ControllerTest extends TestCase
             $response->statusCode(302);
         }, 'Controller.beforeRedirect');
 
-        $response = $Controller->redirect('http://cakephp.org', 301, false);
+        $response = $Controller->redirect('http://cakephp.org', 301);
 
         $this->assertEquals('http://cakephp.org', $response->header()['Location']);
         $this->assertEquals(302, $response->statusCode());

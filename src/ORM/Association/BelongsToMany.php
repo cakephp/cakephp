@@ -527,8 +527,8 @@ class BelongsToMany extends Association
      * in the parent entity cannot be traversed
      * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
      * the saved entity
-     * @see Table::save()
-     * @see BelongsToMany::replaceLinks()
+     * @see \Cake\ORM\Table::save()
+     * @see \Cake\ORM\Association\BelongsToMany::replaceLinks()
      */
     public function saveAssociated(EntityInterface $entity, array $options = [])
     {

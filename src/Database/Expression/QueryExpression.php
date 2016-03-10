@@ -60,7 +60,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * passed in $conditions.
      * @param string $conjunction the glue that will join all the string conditions at this
      * level of the expression tree. For example "AND", "OR", "XOR"...
-     * @see QueryExpression::add() for more details on $conditions and $types
+     * @see \Cake\Database\Expression\QueryExpression::add() for more details on $conditions and $types
      */
     public function __construct($conditions = [], $types = [], $conjunction = 'AND')
     {
@@ -436,6 +436,24 @@ class QueryExpression implements ExpressionInterface, Countable
     public function count()
     {
         return count($this->_conditions);
+    }
+
+    /**
+     * Builds equal condition or assignment with identifier wrapping.
+     *
+     * @param string $left Left join condition field name.
+     * @param string $right Right join condition field name.
+     * @return $this
+     */
+    public function equalFields($left, $right)
+    {
+        $wrapIdentifier = function ($field) {
+            if ($field instanceof ExpressionInterface) {
+                return $field;
+            }
+            return new IdentifierExpression($field);
+        };
+        return $this->eq($wrapIdentifier($left), $wrapIdentifier($right));
     }
 
     /**
