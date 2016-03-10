@@ -192,30 +192,25 @@ class PostgresSchema extends BaseSchema
     public function describeIndexSql($tableName, $config)
     {
         $sql = "SELECT
-            c.conname AS name,
-            c.contype AS type,
-            a.attname AS column_name,
-            c.confmatchtype AS match_type,
-            c.confupdtype AS on_update,
-            c.confdeltype AS on_delete,
-            c.confrelid::regclass AS references_table,
-            ab.attname AS references_field
+        c2.relname,
+        a.attname,
+        i.indisprimary,
+        i.indisunique
         FROM pg_catalog.pg_namespace n
-        INNER JOIN pg_catalog.pg_constraint c ON (n.oid = c.connamespace)
-        INNER JOIN pg_catalog.pg_class cl ON (cl.oid = c.conrelid)
-        INNER JOIN pg_catalog.pg_attribute a ON (a.attrelid = cl.oid AND c.conrelid::regclass = a.attrelid::regclass)
-        INNER JOIN pg_catalog.pg_attribute ab ON (ab.attrelid = cl.oid AND a.attrelid = ab.attrelid AND a.attnum = ab.attnum)
+        INNER JOIN pg_catalog.pg_class c ON (n.oid = c.relnamespace)
+        INNER JOIN pg_catalog.pg_index i ON (c.oid = i.indrelid)
+        INNER JOIN pg_catalog.pg_class c2 ON (c2.oid = i.indexrelid)
+        INNER JOIN pg_catalog.pg_attribute a ON (a.attrelid = c.oid AND i.indrelid::regclass = a.attrelid::regclass)
         WHERE n.nspname = ?
-        AND a.attnum = any(c.conkey)
-        AND c.conrelid = ?::regclass
-        AND c.contype='f'
-        ORDER BY c.conname, a.attnum";
+        AND a.attnum = ANY(i.indkey)
+        AND c.relname = ?
+        ORDER BY i.indisprimary DESC, i.indisunique DESC, c.relname, a.attnum";
 
         $schema = 'public';
         if (!empty($config['schema'])) {
             $schema = $config['schema'];
         }
-        return [$sql, [$tableName, $schema]];
+        return [$sql, [$schema, $tableName]];
     }
 
     /**
@@ -274,30 +269,25 @@ class PostgresSchema extends BaseSchema
     public function describeForeignKeySql($tableName, $config)
     {
         $sql = "SELECT
-            c.conname AS name,
-            c.contype AS type,
-            a.attname AS column_name,
-            c.confmatchtype AS match_type,
-            c.confupdtype AS on_update,
-            c.confdeltype AS on_delete,
-            c.confrelid::regclass AS references_table,
-            ab.attname AS references_field
-            FROM pg_catalog.pg_namespace n, pg_catalog.pg_class cl, pg_catalog.pg_constraint c, pg_catalog.pg_attribute a, pg_catalog.pg_attribute ab
-            WHERE n.oid = c.connamespace
-            AND cl.oid  = c.conrelid
-            AND c.conrelid::regclass = a.attrelid::regclass
-            AND c.conkey[1] = a.attnum
-            AND a.attrelid = cl.oid
-            AND ab.attrelid = cl.oid
-            AND a.attrelid = ab.attrelid
-            AND a.attnum = ab.attnum
-            AND c.conrelid = ?::regclass
-            AND c.contype='f'
-            AND n.nspname = ?
-            ORDER BY c.conname, a.attnum";
+        c.conname AS name,
+        c.contype AS type,
+        a.attname AS column_name,
+        c.confmatchtype AS match_type,
+        c.confupdtype AS on_update,
+        c.confdeltype AS on_delete,
+        c.confrelid::regclass AS references_table,
+        ab.attname AS references_field
+        FROM pg_catalog.pg_namespace n
+        INNER JOIN pg_catalog.pg_class cl ON (n.oid = cl.relnamespace)
+        INNER JOIN pg_catalog.pg_constraint c ON (n.oid = c.connamespace)
+        INNER JOIN pg_catalog.pg_attribute a ON (a.attrelid = cl.oid AND c.conrelid = a.attrelid AND a.attnum = ANY(c.conkey))
+        INNER JOIN pg_catalog.pg_attribute ab ON (a.attrelid = cl.oid AND c.confrelid = ab.attrelid AND ab.attnum = ANY(c.confkey))
+        WHERE n.nspname = ?
+        AND c.conrelid = ?::regclass
+        ORDER BY name, a.attnum, ab.attnum DESC";
 
         $schema = empty($config['schema']) ? 'public' : $config['schema'];
-        return [$sql, [$tableName, $schema]];
+        return [$sql, [$schema, $tableName]];
     }
 
     /**
