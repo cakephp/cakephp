@@ -184,7 +184,7 @@ class MysqlSchemaTest extends TestCase
     /**
      * Helper method for testing methods.
      *
-     * @param \Cake\Datasource\ConnectionInterface $connection
+     * @param \Cake\Database\ConnectionInterface $connection
      * @return void
      */
     protected function _createTables($connection)

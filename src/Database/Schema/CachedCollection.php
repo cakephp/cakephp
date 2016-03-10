@@ -15,7 +15,7 @@
 namespace Cake\Database\Schema;
 
 use Cake\Cache\Cache;
-use Cake\Datasource\ConnectionInterface;
+use Cake\Database\ConnectionInterface;
 
 /**
  * Extends the schema collection class to provide caching
@@ -35,7 +35,7 @@ class CachedCollection extends Collection
     /**
      * Constructor.
      *
-     * @param \Cake\Datasource\ConnectionInterface $connection The connection instance.
+     * @param \Cake\Database\ConnectionInterface $connection The connection instance.
      * @param string|bool $cacheKey The cache key or boolean false to disable caching.
      */
     public function __construct(ConnectionInterface $connection, $cacheKey = true)

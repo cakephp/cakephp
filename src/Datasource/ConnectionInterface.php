@@ -35,6 +35,27 @@ interface ConnectionInterface
     public function config();
 
     /**
+     * Connects the datasource.
+     *
+     * @return bool true on success or false if already connected.
+     */
+    public function connect();
+
+    /**
+     * Disconnects the datasource
+     *
+     * @return void
+     */
+    public function disconnect();
+
+    /**
+     * Returns whether the datasource connection was already established.
+     *
+     * @return bool
+     */
+    public function isConnected();
+
+    /**
      * Executes a callable function inside a transaction, if any exception occurs
      * while executing the passed callable, the transaction will be rolled back
      * If the result of the callable function is `false`, the transaction will

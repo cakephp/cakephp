@@ -591,7 +591,7 @@ class CompositeKeyTest extends TestCase
         $query = $this->getMock(
             '\Cake\ORM\Query',
             ['_addDefaultFields', 'execute'],
-            [null, $table]
+            [$this->connection, $table]
         );
 
         $items = new \Cake\Datasource\ResultSetDecorator([

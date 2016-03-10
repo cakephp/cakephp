@@ -14,6 +14,7 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\ConnectionInterface;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
@@ -36,7 +37,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * Connection instance to be used to execute this query.
      *
-     * @var \Cake\Datasource\ConnectionInterface
+     * @var \Cake\Database\ConnectionInterface
      */
     protected $_connection;
 
@@ -138,10 +139,10 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * Constructor.
      *
-     * @param \Cake\Datasource\ConnectionInterface $connection The connection
+     * @param \Cake\Database\ConnectionInterface $connection The connection
      * object to be used for transforming and executing this query
      */
-    public function __construct($connection)
+    public function __construct(ConnectionInterface $connection)
     {
         $this->connection($connection);
     }
@@ -150,10 +151,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Sets the connection instance to be used for executing and transforming this query
      * When called with a null argument, it will return the current connection instance.
      *
-     * @param \Cake\Datasource\ConnectionInterface $connection instance
-     * @return $this|\Cake\Datasource\ConnectionInterface
+     * @param \Cake\Database\ConnectionInterface $connection instance
+     * @return $this|\Cake\Database\ConnectionInterface
      */
-    public function connection($connection = null)
+    public function connection(ConnectionInterface $connection = null)
     {
         if ($connection === null) {
             return $this->_connection;

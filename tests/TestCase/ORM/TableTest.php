@@ -2308,7 +2308,7 @@ class TableTest extends TestCase
         $query = $this->getMock(
             '\Cake\ORM\Query',
             ['execute', 'addDefaultTypes'],
-            [null, $table]
+            [$this->connection, $table]
         );
         $statement = $this->getMock('\Cake\Database\Statement\StatementDecorator');
         $data = new \Cake\ORM\Entity([
@@ -2455,7 +2455,7 @@ class TableTest extends TestCase
         $query = $this->getMock(
             '\Cake\ORM\Query',
             ['execute', 'addDefaultTypes'],
-            [null, $table]
+            [$this->connection, $table]
         );
         $table->expects($this->any())->method('connection')
             ->will($this->returnValue($connection));
@@ -2498,7 +2498,7 @@ class TableTest extends TestCase
         $query = $this->getMock(
             '\Cake\ORM\Query',
             ['execute', 'addDefaultTypes'],
-            [null, $table]
+            [$this->connection, $table]
         );
 
         $table->expects($this->any())->method('connection')
@@ -2685,7 +2685,7 @@ class TableTest extends TestCase
         $query = $this->getMock(
             '\Cake\ORM\Query',
             ['execute', 'addDefaultTypes', 'set'],
-            [null, $table]
+            [$this->connection, $table]
         );
 
         $table->expects($this->once())->method('query')

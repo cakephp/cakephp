@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Datasource\ConnectionManager;
 use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
@@ -293,7 +294,8 @@ class BehaviorRegistryTest extends TestCase
             ->getMock();
         $this->Behaviors->set('Sluggable', $mockedBehavior);
 
-        $query = $this->getMock('Cake\ORM\Query', [], [null, null]);
+        $connection = ConnectionManager::get('test');
+        $query = $this->getMock('Cake\ORM\Query', [], [$connection, null]);
         $mockedBehavior
             ->expects($this->once())
             ->method('findNoSlug')
