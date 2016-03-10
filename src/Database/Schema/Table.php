@@ -566,15 +566,15 @@ class Table
             $attrs = $this->_checkForeignKey($attrs);
 
             if (isset($this->_constraints[$name])) {
-                $this->_constraints[$name]['columns'] = array_merge(
+                $this->_constraints[$name]['columns'] = array_unique(array_merge(
                     $this->_constraints[$name]['columns'],
                     $attrs['columns']
-                );
+                ));
 
-                $this->_constraints[$name]['references'][1] = array_merge(
+                $this->_constraints[$name]['references'][1] = array_unique(array_merge(
                     (array)$this->_constraints[$name]['references'][1],
                     [$attrs['references'][1]]
-                );
+                ));
                 return $this;
             }
         } else {

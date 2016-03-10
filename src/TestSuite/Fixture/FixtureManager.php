@@ -133,13 +133,13 @@ class FixtureManager
                 continue;
             }
             if (strpos($connection, 'test_') === 0) {
-                $map[substr($connection, 5)] = $connection;
+                $map[$connection] = substr($connection, 5);
             } else {
                 $map['test_' . $connection] = $connection;
             }
         }
-        foreach ($map as $alias => $connection) {
-            ConnectionManager::alias($connection, $alias);
+        foreach ($map as $testConnection => $normal) {
+            ConnectionManager::alias($testConnection, $normal);
         }
     }
 

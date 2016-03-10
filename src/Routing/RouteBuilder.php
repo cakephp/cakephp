@@ -270,6 +270,14 @@ class RouteBuilder
      * By default the path segment will match the key name. You can use the 'path' key inside the resource
      * definition to customize the path name.
      *
+     * You can use the `inflect` option to change how path segments are generated:
+     *
+     * ```
+     * $routes->resources('PaymentTypes', ['inflect' => 'dasherize']);
+     * ```
+     *
+     * Will generate routes like `/payment-types` instead of `/payment_types`
+     *
      * ### Options:
      *
      * - 'id' - The regular expression fragment to use when matching IDs. By default, matches

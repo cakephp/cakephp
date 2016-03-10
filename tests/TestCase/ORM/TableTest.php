@@ -4126,6 +4126,24 @@ class TableTest extends TestCase
         $this->assertFalse($author->dirty('articles'));
     }
 
+    /**
+     * Integration test for unlinking entities with HasMany.
+     * Checking that no error happens when the hasMany property is originally
+     * null
+     *
+     * @return void
+     */
+    public function testUnlinkHasManyEmpty()
+    {
+        $authors = TableRegistry::get('Authors');
+        $articles = TableRegistry::get('Articles');
+        $authors->hasMany('Articles');
+        $author = $authors->get(1);
+        $article = $authors->Articles->get(1);
+
+        $authors->Articles->unlink($author, [$article]);
+    }
+
 
     /**
      * Integration test for replacing entities which depend on their source entity with HasMany and failing transaction. False should be returned when

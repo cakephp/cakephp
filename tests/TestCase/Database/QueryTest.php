@@ -3784,4 +3784,31 @@ class QueryTest extends TestCase
         $pattern = str_replace('>', '[`"\]]' . $optional, $pattern);
         $this->assertRegExp('#' . $pattern . '#', $query);
     }
+
+    /**
+     * Tests that fetch returns an anonymous object when the string 'obj'
+     * is passed as an argument
+     *
+     * @return void
+     */
+    public function testSelectWithObjFetchType()
+    {
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['id'])
+            ->from('comments')
+            ->where(['id' => '1'])
+            ->execute();
+        $obj = (object)['id' => 1];
+        $this->assertEquals($obj, $result->fetch('obj'));
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['id'])
+            ->from('comments')
+            ->where(['id' => '1'])
+            ->execute();
+        $rows = $result->fetchAll('obj');
+        $this->assertEquals($obj, $rows[0]);
+    }
 }
