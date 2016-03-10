@@ -279,6 +279,11 @@ abstract class BaseErrorHandler
 				if ($referer) {
 					$message .= "\nReferer URL: " . $referer;
 				}
+			
+				$clientIp = $request->clientIp();
+				if	($clientIp && $clientIp !== '::1') {
+					$message .= "\nClient IP: " . $clientIp;
+				}
 			}
 			
             $message .= "\nTrace:\n" . $trace . "\n";
@@ -348,6 +353,11 @@ abstract class BaseErrorHandler
             if ($referer) {
                 $message .= "\nReferer URL: " . $referer;
             }
+			
+			$clientIp = $request->clientIp();
+			if	($clientIp && $clientIp !== '::1') {
+				$message .= "\nClient IP: " . $clientIp;
+			}
         }
 
         if (!empty($config['trace'])) {
