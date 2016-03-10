@@ -497,7 +497,7 @@ trait EntityTrait
     }
 
     /**
-     * Implements unset($result[$offset);
+     * Implements unset($result[$offset]);
      *
      * @param mixed $offset The offset to remove.
      * @return void
