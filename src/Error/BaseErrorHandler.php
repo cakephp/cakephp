@@ -270,6 +270,17 @@ abstract class BaseErrorHandler
                 'start' => 1,
                 'format' => 'log'
             ]);
+			
+			$request = Router::getRequest();
+			if ($request) {
+				$message .= "\nRequest URL: " . $request->here();
+
+				$referer = $request->env('HTTP_REFERER');
+				if ($referer) {
+					$message .= "\nReferer URL: " . $referer;
+				}
+			}
+			
             $message .= "\nTrace:\n" . $trace . "\n";
         }
         $message .= "\n\n";
