@@ -75,7 +75,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      * Sets the name of the SQL function to be invoke in this expression,
      * if no value is passed it will return current name
      *
-     * @param string $name The name of the function
+     * @param string|null $name The name of the function
      * @return string|$this
      */
     public function name($name = null)

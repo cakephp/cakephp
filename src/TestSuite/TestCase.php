@@ -474,7 +474,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
      * @param array $assertions Assertions to run.
      * @param string $string The HTML string to check.
      * @param bool $fullDebug Whether or not more verbose output should be used.
-     * @param array $regex Full regexp from `assertHtml`
+     * @param array|string $regex Full regexp from `assertHtml`
      * @return string
      */
     protected function _assertAttributes($assertions, $string, $fullDebug = false, $regex = '')

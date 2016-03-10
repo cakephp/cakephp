@@ -478,7 +478,7 @@ class Validation
      * - 1..N => Exactly that many number of decimal places. The '.' is required.
      *
      * @param float $check The value the test for decimal.
-     * @param int $places Decimal places.
+     * @param int|null $places Decimal places.
      * @param string|null $regex If a custom regular expression is used, this is the only validation that will occur.
      * @return bool Success
      */
@@ -526,7 +526,7 @@ class Validation
      *
      * @param string $check Value to check
      * @param bool $deep Perform a deeper validation (if true), by also checking availability of host
-     * @param string $regex Regex to use (if none it will use built in regex)
+     * @param string|null $regex Regex to use (if none it will use built in regex)
      * @return bool Success
      */
     public static function email($check, $deep = false, $regex = null)

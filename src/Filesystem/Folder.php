@@ -517,7 +517,7 @@ class Folder
      * @param string $pathname The directory structure to create. Either an absolute or relative
      *   path. If the path is relative and exists in the process' cwd it will not be created.
      *   Otherwise relative paths will be prefixed with the current pwd().
-     * @param int $mode octal value 0755
+     * @param int|bool $mode octal value 0755
      * @return bool Returns TRUE on success, FALSE on failure
      */
     public function create($pathname, $mode = false)

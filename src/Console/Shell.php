@@ -158,7 +158,7 @@ class Shell
     /**
      * Constructs this Shell instance.
      *
-     * @param \Cake\Console\ConsoleIo $io An io instance.
+     * @param \Cake\Console\ConsoleIo|null $io An io instance.
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Shell
      */
     public function __construct(ConsoleIo $io = null)
@@ -187,7 +187,7 @@ class Shell
     /**
      * Get/Set the io object for this shell.
      *
-     * @param \Cake\Console\ConsoleIo $io The ConsoleIo object to use.
+     * @param \Cake\Console\ConsoleIo|null $io The ConsoleIo object to use.
      * @return \Cake\Console\ConsoleIo The current ConsoleIo object.
      */
     public function io(ConsoleIo $io = null)
