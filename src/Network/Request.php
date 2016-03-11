@@ -523,21 +523,12 @@ class Request implements ArrayAccess
     {
         if ($this->trustProxy && $this->env('HTTP_X_FORWARDED_FOR')) {
             $ipaddr = preg_replace('/(?:,.*)/', '', $this->env('HTTP_X_FORWARDED_FOR'));
+        } elseif ($this->trustProxy && $this->env('HTTP_CLIENT_IP')) {
+            $ipaddr = $this->env('HTTP_CLIENT_IP');
         } else {
-            if ($this->env('HTTP_CLIENT_IP')) {
-                $ipaddr = $this->env('HTTP_CLIENT_IP');
-            } else {
-                $ipaddr = $this->env('REMOTE_ADDR');
-            }
+            $ipaddr = $this->env('REMOTE_ADDR');
         }
 
-        if ($this->env('HTTP_CLIENTADDRESS')) {
-            $tmpipaddr = $this->env('HTTP_CLIENTADDRESS');
-
-            if (!empty($tmpipaddr)) {
-                $ipaddr = preg_replace('/(?:,.*)/', '', $tmpipaddr);
-            }
-        }
         return trim($ipaddr);
     }
 
