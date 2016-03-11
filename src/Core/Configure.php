@@ -340,6 +340,40 @@ class Configure
         }
         return (bool)$engine->dump($key, $values);
     }
+    
+
+    /**
+     * Write new or overwrite existing values into the specified configuration file.
+     *
+     * ### Usage
+     *
+     * ```
+     * Configure::append('my_config', 'default', ['Key.key' => 'value'])
+     * ```
+     *
+     * The third parameter ($append) follows the same syntax as Configure::write()
+     * but as an array of values to be created or updated.
+     *
+     *
+     * @param $key Identifier of the config adapter to be appended.
+     * @param string $config  The name of the configured adapter to dump data with.
+     * @param array $append Values to add or delete (added by default, deleted if $append is false)
+     */
+    public static function append($key, $config = 'default', $append = [])
+    {
+        $current = static::$_values;
+        static::clear();
+
+        static::load($key, $config);
+        foreach ($append as $str => $value) {
+            static::write($str, $value);
+        }
+
+        $newConfig = static::read();
+        static::dump($key, $config, array_keys($newConfig));
+
+        return (bool)static::write($current);
+    }
 
     /**
      * Get the configured engine. Internally used by `Configure::load()` and `Configure::dump()`
