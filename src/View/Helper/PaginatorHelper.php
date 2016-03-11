@@ -463,9 +463,14 @@ class PaginatorHelper extends Helper
             'sort' => $paging['sort'],
             'direction' => $paging['direction'],
         ];
-
-        if (!empty($this->_config['options']['url'])) {
-            $url = array_merge($url, $this->_config['options']['url']);
+        if (empty($paging['prefix'])) {
+            if (!empty($this->_config['options']['url'])) {
+                $url = array_merge($url, $this->_config['options']['url']);
+            }
+        } else {
+            if (!empty($this->_config['options']['url'][$paging['prefix']])) {
+                $url = array_merge($url, $this->_config['options']['url'][$paging['prefix']]);
+            }
         }
 
         $url = array_filter($url, function ($value) {
@@ -481,6 +486,12 @@ class PaginatorHelper extends Helper
             $url['direction'] === $paging['directionDefault']
         ) {
             $url['sort'] = $url['direction'] = null;
+        }
+        if (!empty($paging['prefix'])) {
+            $url = [$paging['prefix'] => $url] + $this->_config['options']['url'];
+            if (empty($url[$paging['prefix']]['page'])) {
+                unset($url[$paging['prefix']]['page']);
+            }
         }
         return $this->Url->build($url, $full);
     }
