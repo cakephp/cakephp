@@ -106,37 +106,29 @@ class SecurityComponent extends Component
         $this->_action = $this->request->params['action'];
         try {
             $this->_secureRequired($controller);
+            $this->_authRequired($controller);
+
+            $hasData = !empty($this->request->data);
+            $isNotRequestAction = (
+                !isset($controller->request->params['requested']) ||
+                $controller->request->params['requested'] != 1
+            );
+
+            if ($this->_action === $this->_config['blackHoleCallback']) {
+                throw new AuthSecurityException(sprintf('Action %s is defined as the blackhole callback.', $this->_action));
+            }
+
+            if (!in_array($this->_action, (array)$this->_config['unlockedActions']) &&
+                $hasData && $isNotRequestAction
+            ) {
+                if ($this->_config['validatePost']) {
+                    $this->_validatePost($controller);
+                }
+            }
         } catch (SecurityException $se) {
             $this->blackHole($controller, $se->getType(), $se);
         }
-        try {
-            $this->_authRequired($controller);
-        } catch (AuthSecurityException $ase) {
-            $this->blackHole($controller, $ase->getType(), $ase);
-        }
 
-
-        $hasData = !empty($this->request->data);
-        $isNotRequestAction = (
-            !isset($controller->request->params['requested']) ||
-            $controller->request->params['requested'] != 1
-        );
-
-        if ($this->_action === $this->_config['blackHoleCallback']) {
-            return $this->blackHole($controller, 'auth');
-        }
-
-        if (!in_array($this->_action, (array)$this->_config['unlockedActions']) &&
-            $hasData && $isNotRequestAction
-        ) {
-            if ($this->_config['validatePost']) {
-                try {
-                    $this->_validatePost($controller);
-                } catch (SecurityException $se) {
-                    return $this->blackHole($controller, $se->getType(), $se);
-                }
-            }
-        }
         $this->generateToken($controller->request);
         if ($hasData && is_array($controller->request->data)) {
             unset($controller->request->data['_Token']);
@@ -188,6 +180,7 @@ class SecurityComponent extends Component
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
      * @param string $error Error method
+     * @param SecurityException $exception thrown by validate methods, passed only in debug mode
      * @return mixed If specified, controller blackHoleCallback's response, or no return otherwise
      * @see SecurityComponent::$blackHoleCallback
      * @link http://book.cakephp.org/3.0/en/controllers/components/security.html#handling-blackhole-callbacks
