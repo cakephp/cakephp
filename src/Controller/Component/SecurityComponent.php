@@ -180,8 +180,7 @@ class SecurityComponent extends Component
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
      * @param string $error Error method
-     * @param \Cake\Controller\Exception\SecurityException $exception Additional debug info describing the cause,
-     * debug mode only
+     * @param \Cake\Controller\Exception\SecurityException $exception Additional debug info describing the cause
      * @return mixed If specified, controller blackHoleCallback's response, or no return otherwise
      * @see \Cake\Controller\Component\SecurityComponent::$blackHoleCallback
      * @link http://book.cakephp.org/3.0/en/controllers/components/security.html#handling-blackhole-callbacks
@@ -190,12 +189,28 @@ class SecurityComponent extends Component
     public function blackHole(Controller $controller, $error = '', SecurityException $exception = null)
     {
         if (!$this->_config['blackHoleCallback']) {
-            if (Configure::read('debug') && $exception !== null) {
-                throw $exception;
-            }
-            throw new BadRequestException('The request has been black-holed');
+            $this->_throwException($exception);
         }
         return $this->_callback($controller, $this->_config['blackHoleCallback'], [$error, $exception]);
+    }
+
+    /**
+     * Check debug status and throw an Exception based on the existing one
+     *
+     * @param \Cake\Controller\Exception\SecurityException $exception Additional debug info describing the cause
+     * @throws \Cake\Network\Exception\BadRequestException
+     */
+    protected function _throwException($exception = null)
+    {
+        $defaultMessage = 'The request has been black-holed';
+        if ($exception !== null) {
+            if (!Configure::read('debug')) {
+                $exception->setReason($exception->getMessage());
+                $exception->setMessage($defaultMessage);
+            }
+            throw $exception;
+        }
+        throw new BadRequestException($defaultMessage);
     }
 
     /**
@@ -323,7 +338,7 @@ class SecurityComponent extends Component
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
      * @throws \Cake\Controller\Exception\SecurityException
-     * @return String fields token
+     * @return string fields token
      */
     protected function _validToken(Controller $controller)
     {

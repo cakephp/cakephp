@@ -1431,11 +1431,13 @@ class SecurityComponentTest extends TestCase
         Configure::write('debug', false);
         try {
             $this->Security->blackHole($this->Controller, 'auth', new SecurityException('error description'));
-        } catch (BadRequestException $ex) {
+        } catch (SecurityException $ex) {
             $message = $ex->getMessage();
+            $reason = $ex->getReason();
         }
         Configure::write('debug', $debug);
         $this->assertEquals('The request has been black-holed', $message);
+        $this->assertEquals('error description', $reason);
     }
 
     /**
