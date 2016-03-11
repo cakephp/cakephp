@@ -166,6 +166,12 @@ class PaginatorHelper extends Helper
             unset($options[$model]);
         }
         $this->_config['options'] = array_filter($options + $this->_config['options']);
+        if (empty($this->_config['options']['url'])) {
+            $this->_config['options']['url'] = [];
+        }
+        if (!empty($this->_config['options']['model'])) {
+            $this->defaultModel($this->_config['options']['model']);
+        }
     }
 
     /**
@@ -566,12 +572,16 @@ class PaginatorHelper extends Helper
     }
 
     /**
-     * Gets the default model of the paged sets
+     * Gets or sets the default model of the paged sets
      *
+     * @param string $model Model name to set
      * @return string|null Model name or null if the pagination isn't initialized.
      */
-    public function defaultModel()
+    public function defaultModel($model = null)
     {
+        if ($model !== null) {
+            $this->_defaultModel = $model;
+        }
         if ($this->_defaultModel) {
             return $this->_defaultModel;
         }
