@@ -1482,8 +1482,6 @@ class SecurityComponentTest extends TestCase
         $this->Controller->Security->config('requireAuth', ['protected']);
         $this->Controller->request->params['action'] = 'protected';
         $this->Controller->request->data = 'notEmpty';
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->Controller->Security->startup($event);
         $this->Controller->Security->authRequired($this->Controller);
     }
 
@@ -1500,8 +1498,6 @@ class SecurityComponentTest extends TestCase
         $this->Controller->Security->config('requireAuth', ['protected']);
         $this->Controller->request->params['action'] = 'protected';
         $this->Controller->request->data = ['_Token' => 'not empty'];
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->Controller->Security->startup($event);
         $this->Controller->Security->authRequired($this->Controller);
     }
 
@@ -1522,8 +1518,6 @@ class SecurityComponentTest extends TestCase
         $this->Controller->request->session()->write('_Token', [
             'allowedControllers' => ['Allowed', 'AnotherAllowed']
         ]);
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->Controller->Security->startup($event);
         $this->Controller->Security->authRequired($this->Controller);
     }
 
@@ -1544,8 +1538,6 @@ class SecurityComponentTest extends TestCase
         $this->Controller->request->session()->write('_Token', [
             'allowedActions' => ['index', 'view']
         ]);
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->Controller->Security->startup($event);
         $this->Controller->Security->authRequired($this->Controller);
     }
 
@@ -1565,8 +1557,6 @@ class SecurityComponentTest extends TestCase
             'allowedActions' => ['protected'],
             'allowedControllers' => ['Allowed'],
         ]);
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->Controller->Security->startup($event);
         $this->assertTrue($this->Controller->Security->authRequired($this->Controller));
     }
 }
