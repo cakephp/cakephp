@@ -1765,7 +1765,6 @@ class FormHelperTest extends TestCase
             '/div'
         ];
         $this->assertHtml($expected, $result);
-
     }
 
     /**
