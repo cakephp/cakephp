@@ -267,8 +267,8 @@ abstract class Driver
     /**
      * Returns last id generated for a table or sequence in database
      *
-     * @param string $table table name or sequence to get last insert value from
-     * @param string $column the name of the column representing the primary key
+     * @param string|null $table table name or sequence to get last insert value from
+     * @param string|null $column the name of the column representing the primary key
      * @return string|int
      */
     public function lastInsertId($table = null, $column = null)
@@ -293,7 +293,7 @@ abstract class Driver
      * If called with a boolean argument, it will toggle the auto quoting setting
      * to the passed value
      *
-     * @param bool $enable whether to enable auto quoting
+     * @param bool|null $enable whether to enable auto quoting
      * @return bool
      */
     public function autoQuoting($enable = null)

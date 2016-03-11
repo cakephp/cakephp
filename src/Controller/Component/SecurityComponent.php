@@ -144,7 +144,7 @@ class SecurityComponent extends Component
     /**
      * Sets the actions that require a request that is SSL-secured, or empty for all actions
      *
-     * @param string|array $actions Actions list
+     * @param string|array|null $actions Actions list
      * @return void
      */
     public function requireSecure($actions = null)

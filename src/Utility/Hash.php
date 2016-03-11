@@ -609,7 +609,7 @@ class Hash
      * Recursively filters a data set.
      *
      * @param array $data Either an array to filter, or value when in callback
-     * @param callable $callback A function to filter the data with. Defaults to
+     * @param callable|array $callback A function to filter the data with. Defaults to
      *   `static::_filter()` Which strips out all non-zero empty values.
      * @return array Filtered array
      * @link http://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::filter

@@ -34,7 +34,7 @@ class LoadTask extends Shell
     /**
      * Execution method always used for tasks.
      *
-     * @param string $plugin The plugin name.
+     * @param string|null $plugin The plugin name.
      * @return bool
      */
     public function main($plugin = null)
