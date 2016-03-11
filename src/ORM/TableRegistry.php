@@ -68,7 +68,7 @@ class TableRegistry
     /**
      * Sets and returns a singleton instance of LocatorInterface implementation.
      *
-     * @param \Cake\ORM\Locator\LocatorInterface $locator Instance of a locator to use.
+     * @param \Cake\ORM\Locator\LocatorInterface|null $locator Instance of a locator to use.
      * @return \Cake\ORM\Locator\LocatorInterface
      */
     public static function locator(LocatorInterface $locator = null)
@@ -99,6 +99,8 @@ class TableRegistry
 
     /**
      * Get a table instance from the registry.
+     *
+     * See options specification in {@link TableLocator::get()}.
      *
      * @param string $alias The alias name you want to get.
      * @param array $options The options you want to build the table with.

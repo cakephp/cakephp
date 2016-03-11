@@ -16,6 +16,8 @@
 namespace Cake\ORM\Association;
 
 use Cake\Collection\Collection;
+use Cake\Database\Expression\FieldInterface;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
@@ -123,7 +125,7 @@ class HasMany extends Association
      * the target table
      * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
      * the saved entity
-     * @see Table::save()
+     * @see \Cake\ORM\Table::save()
      * @throws \InvalidArgumentException when the association data cannot be traversed.
      */
     public function saveAssociated(EntityInterface $entity, array $options = [])
@@ -304,7 +306,8 @@ class HasMany extends Association
 
         $this->_unlink($foreignKey, $target, $conditions, $options);
 
-        if ($options['cleanProperty']) {
+        $result = $sourceEntity->get($property);
+        if ($options['cleanProperty'] && $result !== null) {
             $sourceEntity->set(
                 $property,
                 (new Collection($sourceEntity->get($property)))
@@ -436,22 +439,27 @@ class HasMany extends Association
 
         if ($mustBeDependent) {
             if ($this->_cascadeCallbacks) {
+                $conditions = new QueryExpression($conditions);
+                $conditions->traverse(function ($entry) use ($target) {
+                    if ($entry instanceof FieldInterface) {
+                        $entry->setField($target->aliasField($entry->getField()));
+                    }
+                });
                 $query = $this->find('all')->where($conditions);
                 $ok = true;
                 foreach ($query as $assoc) {
                     $ok = $ok && $target->delete($assoc, $options);
                 }
                 return $ok;
-            } else {
-                $target->deleteAll($conditions);
-                return true;
             }
-        } else {
-            $updateFields = array_fill_keys($foreignKey, null);
-            $target->updateAll($updateFields, $conditions);
-            return true;
 
+            $target->deleteAll($conditions);
+            return true;
         }
+
+        $updateFields = array_fill_keys($foreignKey, null);
+        $target->updateAll($updateFields, $conditions);
+        return true;
     }
 
     /**

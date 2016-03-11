@@ -97,7 +97,7 @@ class UrlHelperTest extends TestCase
             'controller' => 'posts', 'action' => 'index', 'page' => '1',
             '?' => ['one' => 'value', 'two' => 'value', 'three' => 'purple']
         ]);
-        $this->assertEquals("/posts/index?page=1&amp;one=value&amp;two=value&amp;three=purple", $result);
+        $this->assertEquals("/posts/index?one=value&amp;two=value&amp;three=purple&amp;page=1", $result);
     }
 
     /**
@@ -249,6 +249,61 @@ class UrlHelperTest extends TestCase
 
         $result = $this->Helper->assetTimestamp('/test_theme/js/non_existant.js');
         $this->assertRegExp('#/test_theme/js/non_existant.js\?$#', $result, 'No error on missing file');
+    }
+
+    /**
+     * test script()
+     *
+     * @return void
+     */
+    public function testScript()
+    {
+        Router::connect('/:controller/:action/*');
+
+        $this->Helper->webroot = '';
+        $result = $this->Helper->script(
+            [
+                'controller' => 'js',
+                'action' => 'post',
+                '_ext' => 'js'
+            ],
+            ['fullBase' => true]
+        );
+        $this->assertEquals(Router::fullBaseUrl() . '/js/post.js', $result);
+    }
+
+    /**
+     * test image()
+     *
+     * @return void
+     */
+    public function testImage()
+    {
+        $result = $this->Helper->image('foo.jpg');
+        $this->assertEquals('img/foo.jpg', $result);
+
+        $result = $this->Helper->image('foo.jpg', ['fullBase' => true]);
+        $this->assertEquals(Router::fullBaseUrl() . '/img/foo.jpg', $result);
+
+        $result = $this->Helper->image('dir/sub dir/my image.jpg');
+        $this->assertEquals('img/dir/sub%20dir/my%20image.jpg', $result);
+
+        $result = $this->Helper->image('foo.jpg?one=two&three=four');
+        $this->assertEquals('img/foo.jpg?one=two&amp;three=four', $result);
+
+        $result = $this->Helper->image('dir/big+tall/image.jpg');
+        $this->assertEquals('img/dir/big%2Btall/image.jpg', $result);
+    }
+
+    /**
+     * test css
+     *
+     * @return void
+     */
+    public function testCss()
+    {
+        $result = $this->Helper->css('style');
+        $this->assertEquals('css/style.css', $result);
     }
 
     /**

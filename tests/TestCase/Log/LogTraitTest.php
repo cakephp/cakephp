@@ -15,7 +15,6 @@ namespace Cake\Test\TestCase\Log;
 
 use Cake\Log\Log;
 use Cake\Log\LogInterface;
-use Cake\Log\LogTrait;
 use Cake\TestSuite\TestCase;
 
 /**

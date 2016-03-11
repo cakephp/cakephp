@@ -66,7 +66,7 @@ class TypeMap
      *
      * This method will replace all the existing type maps with the ones provided.
      *
-     * @param array $defaults associative array where keys are field names and values
+     * @param array|null $defaults associative array where keys are field names and values
      * are the correspondent type.
      * @return $this|array
      */
@@ -105,7 +105,7 @@ class TypeMap
      *
      * This method will replace all the existing type maps with the ones provided.
      *
-     * @param array $types associative array where keys are field names and values
+     * @param array|null $types associative array where keys are field names and values
      * are the correspondent type.
      * @return $this|array
      */

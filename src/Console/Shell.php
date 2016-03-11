@@ -158,7 +158,7 @@ class Shell
     /**
      * Constructs this Shell instance.
      *
-     * @param \Cake\Console\ConsoleIo $io An io instance.
+     * @param \Cake\Console\ConsoleIo|null $io An io instance.
      * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Shell
      */
     public function __construct(ConsoleIo $io = null)
@@ -187,7 +187,7 @@ class Shell
     /**
      * Get/Set the io object for this shell.
      *
-     * @param \Cake\Console\ConsoleIo $io The ConsoleIo object to use.
+     * @param \Cake\Console\ConsoleIo|null $io The ConsoleIo object to use.
      * @return \Cake\Console\ConsoleIo The current ConsoleIo object.
      */
     public function io(ConsoleIo $io = null)
@@ -762,7 +762,7 @@ class Shell
     public function clear()
     {
         if (empty($this->params['noclear'])) {
-            if (DS === '/') {
+            if (DIRECTORY_SEPARATOR === '/') {
                 passthru('clear');
             } else {
                 passthru('cls');
@@ -780,7 +780,7 @@ class Shell
      */
     public function createFile($path, $contents)
     {
-        $path = str_replace(DS . DS, DS, $path);
+        $path = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $path);
 
         $this->_io->out();
 
@@ -826,9 +826,9 @@ class Shell
     public function shortPath($file)
     {
         $shortPath = str_replace(ROOT, null, $file);
-        $shortPath = str_replace('..' . DS, '', $shortPath);
-        $shortPath = str_replace(DS, '/', $shortPath);
-        return str_replace('//', DS, $shortPath);
+        $shortPath = str_replace('..' . DIRECTORY_SEPARATOR, '', $shortPath);
+        $shortPath = str_replace(DIRECTORY_SEPARATOR, '/', $shortPath);
+        return str_replace('//', DIRECTORY_SEPARATOR, $shortPath);
     }
 
     /**

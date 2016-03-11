@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
-use Cake\Validation\Validator;
 use TestApp\Model\Entity\Extending;
 use TestApp\Model\Entity\NonExtending;
 
@@ -310,6 +309,23 @@ class EntityTest extends TestCase
 
         $entity->unsetProperty('name');
         $this->assertEquals('Dr. ', $entity->get('name'));
+    }
+
+    /**
+     * Test getting camelcased virtual fields.
+     *
+     * @return void
+     */
+    public function testGetCamelCasedProperties()
+    {
+        $entity = $this->getMock('\Cake\ORM\Entity', ['_getListIdName']);
+        $entity->expects($this->any())->method('_getListIdName')
+            ->will($this->returnCallback(function ($name) {
+                return 'A name';
+            }));
+        $entity->virtualProperties(['ListIdName']);
+        $this->assertSame('A name', $entity->list_id_name, 'underscored virtual field should be accessible');
+        $this->assertSame('A name', $entity->listIdName, 'Camelbacked virtual field should be accessible');
     }
 
     /**

@@ -83,6 +83,17 @@ class ArticlesCell extends \Cake\View\Cell
     }
 
     /**
+     * Renders a template in a custom templatePath
+     * The template is set using the ViewBuilder bound to the Cell
+     *
+     * @return void
+     */
+    public function customTemplatePath()
+    {
+        $this->viewBuilder()->templatePath('Cell/Articles/Subdir');
+    }
+
+    /**
      * Simple echo.
      *
      * @param string $msg1

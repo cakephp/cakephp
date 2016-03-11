@@ -136,7 +136,7 @@ trait ConventionsTrait
         if (Plugin::loaded($pluginName)) {
             return Plugin::path($pluginName);
         }
-        return current(App::path('Plugin')) . $pluginName . DS;
+        return current(App::path('Plugin')) . $pluginName . DIRECTORY_SEPARATOR;
     }
 
     /**

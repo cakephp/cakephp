@@ -14,6 +14,8 @@
  */
 namespace Cake\Test\TestCase\I18n\Parser;
 
+use Aura\Intl\Package;
+use Cake\I18n\I18n;
 use Cake\I18n\Parser\PoFileParser;
 use Cake\TestSuite\TestCase;
 
@@ -89,5 +91,29 @@ class PoFileParserTest extends TestCase
         $messages = $parser->parse($file);
 
         $this->assertTextEquals('this is a "quoted string" (translated)', $messages['this is a "quoted string"']);
+    }
+
+    /**
+     * Test parsing a file with message context on some msgid values.
+     *
+     * This behavior is not ideal, but more thorough solutions
+     * would break compatibility. Perhaps this is something we can
+     * reconsider in 4.x
+     *
+     * @return void
+     */
+    public function testParseContextOnSomeMessages()
+    {
+        $parser = new PoFileParser();
+        $file = APP . 'Locale' . DS . 'en' . DS . 'context.po';
+        $messages = $parser->parse($file);
+
+        I18n::translator('default', 'en_US', function () use ($messages) {
+            $package = new Package('default');
+            $package->setMessages($messages);
+            return $package;
+        });
+        $this->assertTextEquals('En cours', $messages['Pending']);
+        $this->assertTextEquals('En resolved', $messages['Resolved']);
     }
 }

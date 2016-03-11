@@ -39,7 +39,13 @@ class FooType extends Type
 class TableTest extends TestCase
 {
 
-    public $fixtures = ['core.articles_tags', 'core.orders', 'core.products', 'core.tags'];
+    public $fixtures = [
+        'core.articles',
+        'core.tags',
+        'core.articles_tags',
+        'core.orders',
+        'core.products'
+    ];
 
     protected $_map;
 
@@ -521,7 +527,6 @@ class TableTest extends TestCase
             'delete' => 'cascade',
             'length' => []
         ];
-
         $this->assertEquals($expected, $compositeConstraint);
 
         $expectedSubstring = 'CONSTRAINT <product_category_fk> FOREIGN KEY \(<product_category>, <product_id>\)' .

@@ -15,10 +15,7 @@
 namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Collection\Collection;
-use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\Form\Form;
 use Cake\Network\Request;
 use Cake\ORM\Entity;
@@ -28,7 +25,6 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use Cake\View\Helper\FormHelper;
-use Cake\View\Helper\HtmlHelper;
 use Cake\View\View;
 
 /**

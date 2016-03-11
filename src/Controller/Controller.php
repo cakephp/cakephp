@@ -574,8 +574,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Instantiates the correct view class, hands it its data, and uses it to render the view output.
      *
-     * @param string $view View to use for rendering
-     * @param string $layout Layout to use
+     * @param string|null $view View to use for rendering
+     * @param string|null $layout Layout to use
      * @return \Cake\Network\Response A response object containing the rendered view.
      * @link http://book.cakephp.org/3.0/en/controllers.html#rendering-a-view
      */
@@ -625,7 +625,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
                 'Cake\Utility\Inflector::camelize',
                 explode('/', $this->request->params['prefix'])
             );
-            $viewPath = implode(DS, $prefixes) . DS . $viewPath;
+            $viewPath = implode(DIRECTORY_SEPARATOR, $prefixes) . DIRECTORY_SEPARATOR . $viewPath;
         }
         return $viewPath;
     }

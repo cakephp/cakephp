@@ -19,7 +19,6 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception as CakeException;
 use Cake\Core\Exception\MissingPluginException;
-use Cake\Error\PHP7ErrorException;
 use Cake\Event\Event;
 use Cake\Network\Exception\HttpException;
 use Cake\Network\Request;
@@ -184,7 +183,6 @@ class ExceptionRenderer
                 'format' => 'array',
                 'args' => false
             ]);
-            $viewVars['_serialize'][] = 'trace';
         }
         $this->controller->set($viewVars);
 

@@ -18,7 +18,6 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\AuthComponent;
 use Cake\Controller\Component\CookieComponent;
 use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\Network\Request;
 use Cake\Network\Response;

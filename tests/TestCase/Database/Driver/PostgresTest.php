@@ -15,10 +15,6 @@
 namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Core\Configure;
-use Cake\Database\Connection;
-use Cake\Database\Driver\Postgres;
-use Cake\Database\Query;
-use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use \PDO;
 

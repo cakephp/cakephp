@@ -13,10 +13,8 @@
  */
 namespace Cake\Test\TestCase\Network\Http\Adapter;
 
-use Cake\Network\Exception\SocketException;
 use Cake\Network\Http\Adapter\Stream;
 use Cake\Network\Http\Request;
-use Cake\Network\Http\Response;
 use Cake\TestSuite\TestCase;
 
 /**

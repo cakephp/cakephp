@@ -36,7 +36,7 @@ class LazyEagerLoader
      *
      * @param \Cake\Datasource\EntityInterface|array $entities a single entity or list of entities
      * @param array $contain A `contain()` compatible array.
-     * @see Cake\ORM\Query\contain()
+     * @see \Cake\ORM\Query\contain()
      * @param \Cake\ORM\Table $source The table to use for fetching the top level entities
      * @return \Cake\Datasource\EntityInterface|array
      */
@@ -61,7 +61,7 @@ class LazyEagerLoader
      * Builds a query for loading the passed list of entity objects along with the
      * associations specified in $contain.
      *
-     * @param \Cake\Collection\CollectionInterface $objects The original entitites
+     * @param \Cake\Collection\CollectionInterface $objects The original entities
      * @param array $contain The associations to be loaded
      * @param \Cake\ORM\Table $source The table to use for fetching the top level entities
      * @return \Cake\ORM\Query

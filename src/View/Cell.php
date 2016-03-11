@@ -133,9 +133,9 @@ abstract class Cell
     /**
      * Constructor.
      *
-     * @param \Cake\Network\Request $request The request to use in the cell.
-     * @param \Cake\Network\Response $response The response to use in the cell.
-     * @param \Cake\Event\EventManager $eventManager The eventManager to bind events to.
+     * @param \Cake\Network\Request|null $request The request to use in the cell.
+     * @param \Cake\Network\Response|null $response The response to use in the cell.
+     * @param \Cake\Event\EventManager|null $eventManager The eventManager to bind events to.
      * @param array $cellOptions Cell options to apply.
      */
     public function __construct(
@@ -187,6 +187,8 @@ abstract class Cell
                 ));
             }
 
+            $builder = $this->viewBuilder();
+
             if ($template !== null &&
                 strpos($template, '/') === false &&
                 strpos($template, '.') === false
@@ -194,16 +196,16 @@ abstract class Cell
                 $template = Inflector::underscore($template);
             }
             if ($template === null) {
-                $template = $this->viewBuilder()->template() ?: $this->template;
+                $template = $builder->template() ?: $this->template;
             }
-
-            $builder = $this->viewBuilder();
-            $builder->layout(false);
-            $builder->template($template);
+            $builder->layout(false)
+                ->template($template);
 
             $className = substr(strrchr(get_class($this), "\\"), 1);
             $name = substr($className, 0, -4);
-            $builder->templatePath('Cell' . DS . $name);
+            if (!$builder->templatePath()) {
+                $builder->templatePath('Cell' . DIRECTORY_SEPARATOR . $name);
+            }
 
             $this->View = $this->createView();
             try {

@@ -23,7 +23,7 @@ use Cake\ORM\Rule\IsUnique;
  *
  * Adds ORM related features to the RulesChecker class.
  *
- * @see Cake\Datasource\RulesChecker
+ * @see \Cake\Datasource\RulesChecker
  */
 class RulesChecker extends BaseRulesChecker
 {
@@ -39,7 +39,7 @@ class RulesChecker extends BaseRulesChecker
      * ```
      *
      * @param array $fields The list of fields to check for uniqueness.
-     * @param string $message The error message to show in case the rule does not pass.
+     * @param string|null $message The error message to show in case the rule does not pass.
      * @return callable
      */
     public function isUnique(array $fields, $message = null)
@@ -73,7 +73,7 @@ class RulesChecker extends BaseRulesChecker
      * @param string|array $field The field or list of fields to check for existence by
      * primary key lookup in the other table.
      * @param object|string $table The table name where the fields existence will be checked.
-     * @param string $message The error message to show in case the rule does not pass.
+     * @param string|null $message The error message to show in case the rule does not pass.
      * @return callable
      */
     public function existsIn($field, $table, $message = null)

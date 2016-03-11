@@ -15,7 +15,6 @@
 namespace Cake\I18n;
 
 use Cake\Chronos\Chronos;
-use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
 use IntlDateFormatter;
@@ -160,9 +159,9 @@ class FrozenTime extends Chronos implements JsonSerializable
     /**
      * Get list of timezone identifiers
      *
-     * @param int|string $filter A regex to filter identifier
+     * @param int|string|null $filter A regex to filter identifier
      *   Or one of DateTimeZone class constants
-     * @param string $country A two-letter ISO 3166-1 compatible country code.
+     * @param string|null $country A two-letter ISO 3166-1 compatible country code.
      *   This option is only used when $filter is set to DateTimeZone::PER_COUNTRY
      * @param bool|array $options If true (default value) groups the identifiers list by primary region.
      *   Otherwise, an array containing `group`, `abbr`, `before`, and `after`

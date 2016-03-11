@@ -893,6 +893,21 @@ class HashTest extends TestCase
     }
 
     /**
+     * Test the extraction of a single value filtered by another field.
+     *
+     * @dataProvider articleDataSets
+     * @return void
+     */
+    public function testExtractSingleValueWithFilteringByAnotherField($data)
+    {
+        $result = Hash::extract($data, '{*}.Article[id=1].title');
+        $this->assertEquals([0 => 'First Article'], $result);
+
+        $result = Hash::extract($data, '{*}.Article[id=2].title');
+        $this->assertEquals([0 => 'Second Article'], $result);
+    }
+
+    /**
      * Test simple paths.
      *
      * @dataProvider articleDataSets
@@ -1772,6 +1787,59 @@ class HashTest extends TestCase
             ['Item' => ['name' => 'Baz']],
         ];
         $this->assertEquals($expected, $sorted);
+    }
+
+    /**
+     * Test sorting on a nested key that is sometimes undefined.
+     *
+     * @return void
+     */
+    public function testSortSparse()
+    {
+        $data = [
+            [
+                'id' => 1,
+                'title' => 'element 1',
+                'extra' => 1,
+            ],
+            [
+                'id' => 2,
+                'title' => 'element 2',
+                'extra' => 2,
+            ],
+            [
+                'id' => 3,
+                'title' => 'element 3',
+            ],
+            [
+                'id' => 4,
+                'title' => 'element 4',
+                'extra' => 4,
+            ]
+        ];
+        $result = Hash::sort($data, '{n}.extra', 'desc', 'natural');
+        $expected = [
+            [
+                'id' => 4,
+                'title' => 'element 4',
+                'extra' => 4,
+            ],
+            [
+                'id' => 2,
+                'title' => 'element 2',
+                'extra' => 2,
+            ],
+            [
+                'id' => 1,
+                'title' => 'element 1',
+                'extra' => 1,
+            ],
+            [
+                'id' => 3,
+                'title' => 'element 3',
+            ],
+        ];
+        $this->assertSame($expected, $result);
     }
 
     /**

@@ -89,7 +89,7 @@ class Session
      *
      * @param array $sessionConfig Session config.
      * @return \Cake\Network\Session
-     * @see Session::__construct()
+     * @see \Cake\Network\Session::__construct()
      */
     public static function create($sessionConfig = [])
     {

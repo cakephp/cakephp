@@ -21,7 +21,6 @@ use Cake\Network\Exception\InvalidCsrfTokenException;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Security;
-use Cake\Utility\Text;
 
 /**
  * Provides CSRF protection & validation.
@@ -125,7 +124,7 @@ class CsrfComponent extends Component
     protected function _setCookie(Request $request, Response $response)
     {
         $expiry = new Time($this->_config['expiry']);
-        $value = Security::hash(Text::uuid(), 'sha1', true);
+        $value = hash('sha512', Security::randomBytes(16), false);
 
         $request->params['_csrfToken'] = $value;
         $response->cookie([

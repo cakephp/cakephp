@@ -527,8 +527,8 @@ class BelongsToMany extends Association
      * in the parent entity cannot be traversed
      * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
      * the saved entity
-     * @see Table::save()
-     * @see BelongsToMany::replaceLinks()
+     * @see \Cake\ORM\Table::save()
+     * @see \Cake\ORM\Association\BelongsToMany::replaceLinks()
      */
     public function saveAssociated(EntityInterface $entity, array $options = [])
     {
@@ -868,7 +868,7 @@ class BelongsToMany extends Association
      * If your association includes conditions, the junction table will be
      * included in the query's contained associations.
      *
-     * @param string|array $type the type of query to perform, if an array is passed,
+     * @param string|array|null $type the type of query to perform, if an array is passed,
      *   it will be interpreted as the `$options` parameter
      * @param array $options The options to for the find
      * @see \Cake\ORM\Table::find()

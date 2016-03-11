@@ -52,7 +52,7 @@ class DatabaseSuite extends TestSuite
      * @param \PHPUnit_Framework_TestResult $result
      * @return \PHPUnit_Framework_TestResult
      */
-    public function run(PHPUnit_Framework_TestResult $result = null, $filter = false, array $groups = [], array $excludeGroups = [], $processIsolation = false)
+    public function run(PHPUnit_Framework_TestResult $result = null)
     {
         $permutations = [
             'Identifier Quoting' => function () {
@@ -65,7 +65,7 @@ class DatabaseSuite extends TestSuite
 
         foreach ($permutations as $permutation) {
             $permutation();
-            $result = parent::run($result, $filter, $groups, $excludeGroups, $processIsolation);
+            $result = parent::run($result);
         }
         return $result;
     }

@@ -46,7 +46,7 @@ class Configure
      * Configured engine classes, used to load config files from resources
      *
      * @var array
-     * @see Configure::load()
+     * @see \Cake\Core\Configure::load()
      */
     protected static $_engines = [];
 
@@ -112,7 +112,7 @@ class Configure
      * Configure::read('Name.key'); will return only the value of Configure::Name[key]
      * ```
      *
-     * @param string $var Variable to obtain. Use '.' to access array elements.
+     * @param string|null $var Variable to obtain. Use '.' to access array elements.
      * @return mixed Value stored in configure, or null.
      * @link http://book.cakephp.org/3.0/en/development/configuration.html#reading-configuration-data
      */
@@ -385,7 +385,7 @@ class Configure
      *
      * @param string $name The storage name for the saved configuration.
      * @param string $cacheConfig The cache configuration to save into. Defaults to 'default'
-     * @param array $data Either an array of data to store, or leave empty to store all values.
+     * @param array|null $data Either an array of data to store, or leave empty to store all values.
      * @return bool Success
      */
     public static function store($name, $cacheConfig = 'default', $data = null)

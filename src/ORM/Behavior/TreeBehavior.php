@@ -19,9 +19,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
-use Cake\ORM\Entity;
 use Cake\ORM\Query;
-use Cake\ORM\Table;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -846,10 +844,10 @@ class TreeBehavior extends Behavior
     protected function _getMax()
     {
         $field = $this->_config['right'];
-        $leftField = $this->_config['leftField'];
+        $rightField = $this->_config['rightField'];
         $edge = $this->_scope($this->_table->find())
             ->select([$field])
-            ->orderDesc($leftField)
+            ->orderDesc($rightField)
             ->first();
 
         if (empty($edge->{$field})) {
@@ -880,15 +878,15 @@ class TreeBehavior extends Behavior
             $exp = $query->newExpr();
 
             $movement = clone $exp;
-            $movement ->add($field)->add("$shift")->type($dir);
+            $movement ->add($field)->add("$shift")->tieWith($dir);
 
             $inverse = clone $exp;
             $movement = $mark ?
-                $inverse->add($movement)->type('*')->add('-1'):
+                $inverse->add($movement)->tieWith('*')->add('-1'):
                 $movement;
 
             $where = clone $exp;
-            $where->add($field)->add($conditions)->type('');
+            $where->add($field)->add($conditions)->tieWith('');
 
             $query->update()
                 ->set($exp->eq($field, $movement))
@@ -911,7 +909,8 @@ class TreeBehavior extends Behavior
 
         if (is_array($config['scope'])) {
             return $query->where($config['scope']);
-        } elseif (is_callable($config['scope'])) {
+        }
+        if (is_callable($config['scope'])) {
             return $config['scope']($query);
         }
 

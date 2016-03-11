@@ -53,6 +53,7 @@ class TableTest extends TestCase
 
     public $fixtures = [
         'core.articles',
+        'core.tags',
         'core.articles_tags',
         'core.authors',
         'core.categories',
@@ -62,7 +63,6 @@ class TableTest extends TestCase
         'core.members',
         'core.polymorphic_tagged',
         'core.site_articles',
-        'core.tags',
         'core.users'
     ];
 
@@ -4124,6 +4124,24 @@ class TableTest extends TestCase
         $this->assertCount($sizeArticles - count($articlesToUnlink), $authors->Articles->findAllByAuthorId($author->id));
         $this->assertCount($sizeArticles, $author->articles);
         $this->assertFalse($author->dirty('articles'));
+    }
+
+    /**
+     * Integration test for unlinking entities with HasMany.
+     * Checking that no error happens when the hasMany property is originally
+     * null
+     *
+     * @return void
+     */
+    public function testUnlinkHasManyEmpty()
+    {
+        $authors = TableRegistry::get('Authors');
+        $articles = TableRegistry::get('Articles');
+        $authors->hasMany('Articles');
+        $author = $authors->get(1);
+        $article = $authors->Articles->get(1);
+
+        $authors->Articles->unlink($author, [$article]);
     }
 
 

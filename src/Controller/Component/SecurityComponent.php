@@ -150,7 +150,7 @@ class SecurityComponent extends Component
     /**
      * Sets the actions that require a request that is SSL-secured, or empty for all actions
      *
-     * @param string|array $actions Actions list
+     * @param string|array|null $actions Actions list
      * @return void
      */
     public function requireSecure($actions = null)
@@ -183,7 +183,7 @@ class SecurityComponent extends Component
      * @param \Cake\Controller\Exception\SecurityException $exception Additional debug info describing the cause,
      * debug mode only
      * @return mixed If specified, controller blackHoleCallback's response, or no return otherwise
-     * @see SecurityComponent::$blackHoleCallback
+     * @see \Cake\Controller\Component\SecurityComponent::$blackHoleCallback
      * @link http://book.cakephp.org/3.0/en/controllers/components/security.html#handling-blackhole-callbacks
      * @throws \Cake\Network\Exception\BadRequestException
      */

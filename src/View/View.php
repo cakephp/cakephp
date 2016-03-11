@@ -214,7 +214,7 @@ class View implements EventDispatcherInterface
      * per element.
      *
      * @var string
-     * @see View::element()
+     * @see \Cake\View\View::element()
      */
     public $elementCache = 'default';
 
@@ -362,7 +362,7 @@ class View implements EventDispatcherInterface
     /**
      * Get/set path for templates files.
      *
-     * @param string $path Path for template files. If null returns current path.
+     * @param string|null $path Path for template files. If null returns current path.
      * @return string|null
      */
     public function templatePath($path = null)
@@ -377,7 +377,7 @@ class View implements EventDispatcherInterface
     /**
      * Get/set path for layout files.
      *
-     * @param string $path Path for layout files. If null returns current path.
+     * @param string|null $path Path for layout files. If null returns current path.
      * @return string|null
      */
     public function layoutPath($path = null)
@@ -394,7 +394,7 @@ class View implements EventDispatcherInterface
      * On by default. Setting to off means that layouts will not be
      * automatically applied to rendered templates.
      *
-     * @param bool $autoLayout Boolean to turn on/off. If null returns current value.
+     * @param bool|null $autoLayout Boolean to turn on/off. If null returns current value.
      * @return bool|null
      */
     public function autoLayout($autoLayout = null)
@@ -409,7 +409,7 @@ class View implements EventDispatcherInterface
     /**
      * The view theme to use.
      *
-     * @param string $theme Theme name. If null returns current theme.
+     * @param string|null $theme Theme name. If null returns current theme.
      * @return string|null
      */
     public function theme($theme = null)
@@ -425,7 +425,7 @@ class View implements EventDispatcherInterface
      * Get/set the name of the template file to render. The name specified is the
      * filename in /src/Template/<SubFolder> without the .ctp extension.
      *
-     * @param string $name Template file name to set. If null returns current name.
+     * @param string|null $name Template file name to set. If null returns current name.
      * @return string|null
      */
     public function template($name = null)
@@ -442,7 +442,7 @@ class View implements EventDispatcherInterface
      * The name specified is the filename of the layout in /src/Template/Layout
      * without the .ctp extension.
      *
-     * @param string $name Layout file name to set. If null returns current name.
+     * @param string|null $name Layout file name to set. If null returns current name.
      * @return string|null
      */
     public function layout($name = null)
@@ -495,8 +495,8 @@ class View implements EventDispatcherInterface
 
         if (empty($options['ignoreMissing'])) {
             list ($plugin, $name) = pluginSplit($name, true);
-            $name = str_replace('/', DS, $name);
-            $file = $plugin . 'Element' . DS . $name . $this->_ext;
+            $name = str_replace('/', DIRECTORY_SEPARATOR, $name);
+            $file = $plugin . 'Element' . DIRECTORY_SEPARATOR . $name . $this->_ext;
             throw new Exception\MissingElementException($file);
         }
     }
@@ -665,7 +665,7 @@ class View implements EventDispatcherInterface
      * Get the names of all the existing blocks.
      *
      * @return array An array containing the blocks.
-     * @see ViewBlock::keys()
+     * @see \Cake\View\ViewBlock::keys()
      */
     public function blocks()
     {
@@ -694,7 +694,7 @@ class View implements EventDispatcherInterface
      *
      * @param string $name The name of the block to capture for.
      * @return void
-     * @see ViewBlock::start()
+     * @see \Cake\View\ViewBlock::start()
      */
     public function start($name)
     {
@@ -709,7 +709,7 @@ class View implements EventDispatcherInterface
      * @param string $name Name of the block
      * @param mixed $value The content for the block.
      * @return void
-     * @see ViewBlock::concat()
+     * @see \Cake\View\ViewBlock::concat()
      */
     public function append($name, $value = null)
     {
@@ -724,7 +724,7 @@ class View implements EventDispatcherInterface
      * @param string $name Name of the block
      * @param mixed $value The content for the block.
      * @return void
-     * @see ViewBlock::concat()
+     * @see \Cake\View\ViewBlock::concat()
      */
     public function prepend($name, $value)
     {
@@ -738,7 +738,7 @@ class View implements EventDispatcherInterface
      * @param string $name Name of the block
      * @param mixed $value The content for the block.
      * @return void
-     * @see ViewBlock::set()
+     * @see \Cake\View\ViewBlock::set()
      */
     public function assign($name, $value)
     {
@@ -751,7 +751,7 @@ class View implements EventDispatcherInterface
      *
      * @param string $name Name of the block
      * @return void
-     * @see ViewBlock::set()
+     * @see \Cake\View\ViewBlock::set()
      */
     public function reset($name)
     {
@@ -765,7 +765,7 @@ class View implements EventDispatcherInterface
      * @param string $name Name of the block
      * @param string $default Default text
      * @return string default The block content or $default if the block does not exist.
-     * @see ViewBlock::get()
+     * @see \Cake\View\ViewBlock::get()
      */
     public function fetch($name, $default = '')
     {
@@ -776,7 +776,7 @@ class View implements EventDispatcherInterface
      * End a capturing block. The compliment to View::start()
      *
      * @return void
-     * @see ViewBlock::end()
+     * @see \Cake\View\ViewBlock::end()
      */
     public function end()
     {
@@ -815,7 +815,7 @@ class View implements EventDispatcherInterface
                     if (!$parent) {
                         list($plugin, $name) = $this->pluginSplit($name);
                         $paths = $this->_paths($plugin);
-                        $defaultPath = $paths[0] . 'Element' . DS;
+                        $defaultPath = $paths[0] . 'Element' . DIRECTORY_SEPARATOR;
                         throw new LogicException(sprintf(
                             'You cannot extend an element which does not exist (%s).',
                             $defaultPath . $name . $this->_ext
@@ -1014,7 +1014,7 @@ class View implements EventDispatcherInterface
      * @param string $name Name of the helper to load.
      * @param array $config Settings for the helper
      * @return \Cake\View\Helper a constructed helper object.
-     * @see HelperRegistry::load()
+     * @see \Cake\View\HelperRegistry::load()
      */
     public function loadHelper($name, array $config = [])
     {
@@ -1039,10 +1039,10 @@ class View implements EventDispatcherInterface
         $templatePath = $subDir = '';
 
         if ($this->subDir !== null) {
-            $subDir = $this->subDir . DS;
+            $subDir = $this->subDir . DIRECTORY_SEPARATOR;
         }
         if ($this->templatePath) {
-            $templatePath = $this->templatePath . DS;
+            $templatePath = $this->templatePath . DIRECTORY_SEPARATOR;
         }
 
         if ($name === null) {
@@ -1050,17 +1050,17 @@ class View implements EventDispatcherInterface
         }
 
         list($plugin, $name) = $this->pluginSplit($name);
-        $name = str_replace('/', DS, $name);
+        $name = str_replace('/', DIRECTORY_SEPARATOR, $name);
 
-        if (strpos($name, DS) === false && $name[0] !== '.') {
+        if (strpos($name, DIRECTORY_SEPARATOR) === false && $name[0] !== '.') {
             $name = $templatePath . $subDir . $this->_inflectViewFileName($name);
-        } elseif (strpos($name, DS) !== false) {
-            if ($name[0] === DS || $name[1] === ':') {
-                $name = trim($name, DS);
+        } elseif (strpos($name, DIRECTORY_SEPARATOR) !== false) {
+            if ($name[0] === DIRECTORY_SEPARATOR || $name[1] === ':') {
+                $name = trim($name, DIRECTORY_SEPARATOR);
             } elseif (!$plugin || $this->templatePath !== $this->name) {
                 $name = $templatePath . $subDir . $name;
             } else {
-                $name = DS . $subDir . $name;
+                $name = DIRECTORY_SEPARATOR . $subDir . $name;
             }
         }
 
@@ -1147,11 +1147,11 @@ class View implements EventDispatcherInterface
         $subDir = null;
 
         if ($this->layoutPath) {
-            $subDir = $this->layoutPath . DS;
+            $subDir = $this->layoutPath . DIRECTORY_SEPARATOR;
         }
         list($plugin, $name) = $this->pluginSplit($name);
 
-        $layoutPaths = $this->_getSubPaths('Layout' . DS . $subDir);
+        $layoutPaths = $this->_getSubPaths('Layout' . DIRECTORY_SEPARATOR . $subDir);
 
         foreach ($this->_paths($plugin) as $path) {
             foreach ($layoutPaths as $layoutPath) {
@@ -1181,8 +1181,8 @@ class View implements EventDispatcherInterface
 
         foreach ($paths as $path) {
             foreach ($elementPaths as $elementPath) {
-                if (file_exists($path . $elementPath . DS . $name . $this->_ext)) {
-                    return $path . $elementPath . DS . $name . $this->_ext;
+                if (file_exists($path . $elementPath . DIRECTORY_SEPARATOR . $name . $this->_ext)) {
+                    return $path . $elementPath . DIRECTORY_SEPARATOR . $name . $this->_ext;
                 }
             }
         }
@@ -1207,7 +1207,7 @@ class View implements EventDispatcherInterface
             $prefixPath = explode('/', $this->request->params['prefix']);
             $path = '';
             foreach ($prefixPath as $prefixPart) {
-                $path .= Inflector::camelize($prefixPart) . DS;
+                $path .= Inflector::camelize($prefixPart) . DIRECTORY_SEPARATOR;
 
                 array_unshift(
                     $paths,
@@ -1240,7 +1240,7 @@ class View implements EventDispatcherInterface
         $pluginPaths = $themePaths = [];
         if (!empty($plugin)) {
             for ($i = 0, $count = count($templatePaths); $i < $count; $i++) {
-                $pluginPaths[] = $templatePaths[$i] . 'Plugin' . DS . $plugin . DS;
+                $pluginPaths[] = $templatePaths[$i] . 'Plugin' . DIRECTORY_SEPARATOR . $plugin . DIRECTORY_SEPARATOR;
             }
             $pluginPaths = array_merge($pluginPaths, App::path('Template', $plugin));
         }
@@ -1249,8 +1249,8 @@ class View implements EventDispatcherInterface
             $themePaths = App::path('Template', Inflector::camelize($this->theme));
 
             if ($plugin) {
-                for ($i = 0, $count = count($templatePaths); $i < $count; $i++) {
-                    array_unshift($themePaths, $themePaths[$i] . 'Plugin' . DS . $plugin . DS);
+                for ($i = 0, $count = count($themePaths); $i < $count; $i++) {
+                    array_unshift($themePaths, $themePaths[$i] . 'Plugin' . DIRECTORY_SEPARATOR . $plugin . DIRECTORY_SEPARATOR);
                 }
             }
         }
@@ -1259,7 +1259,7 @@ class View implements EventDispatcherInterface
             $themePaths,
             $pluginPaths,
             $templatePaths,
-            [dirname(__DIR__) . DS . 'Template' . DS]
+            [dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Template' . DIRECTORY_SEPARATOR]
         );
 
         if ($plugin !== null) {

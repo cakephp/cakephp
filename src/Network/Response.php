@@ -71,6 +71,7 @@ class Response
         415 => 'Unsupported Media Type',
         416 => 'Requested range not satisfiable',
         417 => 'Expectation Failed',
+        422 => 'Unprocessable Entity',
         429 => 'Too Many Requests',
         500 => 'Internal Server Error',
         501 => 'Not Implemented',
@@ -340,7 +341,7 @@ class Response
     /**
      * Buffer string or callable for response message
      *
-     * @var string
+     * @var string|callable
      */
     protected $_body = null;
 
@@ -1347,7 +1348,7 @@ class Response
      * cors($request, ['http://www.cakephp.org', '*.google.com', 'https://myproject.github.io']);
      * ```
      *
-     * *Note* The `$allowedDomains`, `$allowedMethods`, `$allowedHeaders` parameters are deprectated.
+     * *Note* The `$allowedDomains`, `$allowedMethods`, `$allowedHeaders` parameters are deprecated.
      * Instead the builder object should be used.
      *
      * @param \Cake\Network\Request $request Request object
@@ -1452,8 +1453,17 @@ class Response
             $this->header('Content-Length', $fileSize);
         }
 
-        $this->_clearBuffer();
         $this->_file = $file;
+    }
+
+    /**
+     * Get the current file if one exists.
+     *
+     * @return \Cake\Filesystem\File|null The file to use in the response or null
+     */
+    public function getFile()
+    {
+        return $this->_file;
     }
 
     /**
@@ -1468,11 +1478,16 @@ class Response
      */
     protected function _fileRange($file, $httpRange)
     {
-        list(, $range) = explode('=', $httpRange);
-        list($start, $end) = explode('-', $range);
-
         $fileSize = $file->size();
         $lastByte = $fileSize - 1;
+        $start = 0;
+        $end = $lastByte;
+
+        preg_match('/^bytes\s*=\s*(\d+)?\s*-\s*(\d+)?$/', $httpRange, $matches);
+        if ($matches) {
+            $start = $matches[1];
+            $end = isset($matches[2]) ? $matches[2] : '';
+        }
 
         if ($start === '') {
             $start = $fileSize - $end;
@@ -1509,6 +1524,8 @@ class Response
     protected function _sendFile($file, $range)
     {
         $compress = $this->outputCompressed();
+        ob_implicit_flush(true);
+
         $file->open('rb');
 
         $end = $start = false;
@@ -1535,9 +1552,6 @@ class Response
                 $bufferSize = $end - $offset + 1;
             }
             echo fread($file->handle, $bufferSize);
-            if (!$compress) {
-                $this->_flushBuffer();
-            }
         }
         $file->close();
         return true;
@@ -1557,6 +1571,7 @@ class Response
      * Clears the contents of the topmost output buffer and discards them
      *
      * @return bool
+     * @deprecated 3.2.4 This function is not needed anymore
      */
     protected function _clearBuffer()
     {
@@ -1569,6 +1584,7 @@ class Response
      * Flushes the contents of the output buffer
      *
      * @return void
+     * @deprecated 3.2.4 This function is not needed anymore
      */
     protected function _flushBuffer()
     {

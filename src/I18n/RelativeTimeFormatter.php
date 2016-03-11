@@ -31,7 +31,7 @@ class RelativeTimeFormatter
      * @param \Cake\Chronos\ChronosInterface|null $other The datetime to compare against.
      * @param bool $absolute removes time difference modifiers ago, after, etc
      * @return string The difference between the two days in a human readable format
-     * @see Cake\Chronos\ChronosInterface::diffForHumans
+     * @see \Cake\Chronos\ChronosInterface::diffForHumans
      */
     public function diffForHumans(ChronosInterface $date, ChronosInterface $other = null, $absolute = false)
     {
@@ -88,7 +88,7 @@ class RelativeTimeFormatter
      * @param \DateTimeInterface $time The time instance to format.
      * @param array $options Array of options.
      * @return string Relative time string.
-     * @see Cake\I18n\Time::timeAgoInWords()
+     * @see \Cake\I18n\Time::timeAgoInWords()
      */
     public function timeAgoInWords(DatetimeInterface $time, array $options = [])
     {
@@ -152,6 +152,7 @@ class RelativeTimeFormatter
                 'hour' => __d('cake', 'about an hour ago'),
                 'day' => __d('cake', 'about a day ago'),
                 'week' => __d('cake', 'about a week ago'),
+                'month' => __d('cake', 'about a month ago'),
                 'year' => __d('cake', 'about a year ago')
             ];
             return $relativeDate ? sprintf($options['relativeString'], $relativeDate) : $aboutAgo[$fWord];
@@ -167,6 +168,7 @@ class RelativeTimeFormatter
             'hour' => __d('cake', 'in about an hour'),
             'day' => __d('cake', 'in about a day'),
             'week' => __d('cake', 'in about a week'),
+            'month' => __d('cake', 'in about a month'),
             'year' => __d('cake', 'in about a year')
         ];
         return $aboutIn[$fWord];
@@ -273,7 +275,7 @@ class RelativeTimeFormatter
      * @param \DatetimeInterface $date The date to format.
      * @param array $options Array of options.
      * @return string Relative date string.
-     * @see Cake\I18n\Date::timeAgoInWords()
+     * @see \Cake\I18n\Date::timeAgoInWords()
      */
     public function dateAgoInWords(DatetimeInterface $date, array $options = [])
     {
@@ -303,7 +305,7 @@ class RelativeTimeFormatter
         }
 
         $diffData = $this->_diffData($futureTime, $pastTime, $backwards, $options);
-        list($fNum, $fWord, $years, $months, $weeks, $days, $hours, $minutes, $seconds) = array_values($diffData);
+        list($fNum, $fWord, $years, $months, $weeks, $days) = array_values($diffData);
 
         $relativeDate = [];
         if ($fNum >= 1 && $years > 0) {

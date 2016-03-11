@@ -398,27 +398,27 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
                         $attrs[] = $matches[1];
                         $explanations[] = sprintf('Regex "%s" matches', $matches[1]);
                         continue;
-                    } else {
-                        $quotes = '["\']';
-                        if (is_numeric($attr)) {
-                            $attr = $val;
-                            $val = '.+?';
-                            $explanations[] = sprintf('Attribute "%s" present', $attr);
-                        } elseif (!empty($val) && preg_match('/^preg\:\/(.+)\/$/i', $val, $matches)) {
-                            $val = str_replace(
-                                ['.*', '.+'],
-                                ['.*?', '.+?'],
-                                $matches[1]
-                            );
-                            $quotes = $val !== $matches[1] ? '["\']' : '["\']?';
-
-                            $explanations[] = sprintf('Attribute "%s" matches "%s"', $attr, $val);
-                        } else {
-                            $explanations[] = sprintf('Attribute "%s" == "%s"', $attr, $val);
-                            $val = preg_quote($val, '/');
-                        }
-                        $attrs[] = '[\s]+' . preg_quote($attr, '/') . '=' . $quotes . $val . $quotes;
                     }
+
+                    $quotes = '["\']';
+                    if (is_numeric($attr)) {
+                        $attr = $val;
+                        $val = '.+?';
+                        $explanations[] = sprintf('Attribute "%s" present', $attr);
+                    } elseif (!empty($val) && preg_match('/^preg\:\/(.+)\/$/i', $val, $matches)) {
+                        $val = str_replace(
+                            ['.*', '.+'],
+                            ['.*?', '.+?'],
+                            $matches[1]
+                        );
+                        $quotes = $val !== $matches[1] ? '["\']' : '["\']?';
+
+                        $explanations[] = sprintf('Attribute "%s" matches "%s"', $attr, $val);
+                    } else {
+                        $explanations[] = sprintf('Attribute "%s" == "%s"', $attr, $val);
+                        $val = preg_quote($val, '/');
+                    }
+                    $attrs[] = '[\s]+' . preg_quote($attr, '/') . '=' . $quotes . $val . $quotes;
                     $i++;
                 }
                 if ($attrs) {
@@ -474,14 +474,13 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
      * @param array $assertions Assertions to run.
      * @param string $string The HTML string to check.
      * @param bool $fullDebug Whether or not more verbose output should be used.
-     * @param array $regex Full regexp from `assertHtml`
+     * @param array|string $regex Full regexp from `assertHtml`
      * @return string
      */
     protected function _assertAttributes($assertions, $string, $fullDebug = false, $regex = '')
     {
         $asserts = $assertions['attrs'];
         $explains = $assertions['explains'];
-        $len = count($asserts);
         do {
             $matches = false;
             foreach ($asserts as $j => $assert) {
@@ -509,11 +508,11 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
      * Normalize a path for comparison.
      *
      * @param string $path Path separated by "/" slash.
-     * @return string Normalized path separated by DS.
+     * @return string Normalized path separated by DIRECTORY_SEPARATOR.
      */
     protected function _normalizePath($path)
     {
-        return str_replace('/', DS, $path);
+        return str_replace('/', DIRECTORY_SEPARATOR, $path);
     }
 
 // @codingStandardsIgnoreStart
@@ -560,8 +559,8 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
      */
     protected static function assertPathEquals($expected, $result, $message = '')
     {
-        $expected = str_replace(DS, '/', $expected);
-        $result = str_replace(DS, '/', $result);
+        $expected = str_replace(DIRECTORY_SEPARATOR, '/', $expected);
+        $result = str_replace(DIRECTORY_SEPARATOR, '/', $result);
         static::assertEquals($expected, $result, $message);
     }
 

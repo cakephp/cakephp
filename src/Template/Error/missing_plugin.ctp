@@ -42,7 +42,7 @@ PHP;
 
 <p class="notice">
     <strong>Loading all plugins: </strong>
-    <?= sprintf('If you wish to load all plugins at once, use the following line in your %s file', 'config' . DS . 'bootstrap.php'); ?>
+    <?= sprintf('If you wish to load all plugins at once, use the following line in your %s file', 'config' . DIRECTORY_SEPARATOR . 'bootstrap.php'); ?>
 </p>
 
 <?php

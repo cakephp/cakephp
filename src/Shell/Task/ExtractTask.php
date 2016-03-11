@@ -133,10 +133,12 @@ class ExtractTask extends Shell
                 $this->err('Extract Aborted');
                 $this->_stop();
                 return;
-            } elseif (strtoupper($response) === 'D' && count($this->_paths)) {
+            }
+            if (strtoupper($response) === 'D' && count($this->_paths)) {
                 $this->out();
                 return;
-            } elseif (strtoupper($response) === 'D') {
+            }
+            if (strtoupper($response) === 'D') {
                 $this->err('<warning>No directories selected.</warning> Please choose a directory.');
             } elseif (is_dir($response)) {
                 $this->_paths[] = $response;
@@ -200,21 +202,22 @@ class ExtractTask extends Shell
         } else {
             $message = "What is the path you would like to output?\n[Q]uit";
             while (true) {
-                $response = $this->in($message, null, rtrim($this->_paths[0], DS) . DS . 'Locale');
+                $response = $this->in($message, null, rtrim($this->_paths[0], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'Locale');
                 if (strtoupper($response) === 'Q') {
                     $this->err('Extract Aborted');
                     $this->_stop();
                     return;
-                } elseif ($this->_isPathUsable($response)) {
-                    $this->_output = $response . DS;
-                    break;
-                } else {
-                    $this->err('');
-                    $this->err(
-                        '<error>The directory path you supplied was ' .
-                        'not found. Please try again.</error>'
-                    );
                 }
+                if ($this->_isPathUsable($response)) {
+                    $this->_output = $response . DIRECTORY_SEPARATOR;
+                    break;
+                }
+
+                $this->err('');
+                $this->err(
+                    '<error>The directory path you supplied was ' .
+                    'not found. Please try again.</error>'
+                );
                 $this->out();
             }
         }
@@ -231,7 +234,7 @@ class ExtractTask extends Shell
             $this->_searchFiles();
         }
 
-        $this->_output = rtrim($this->_output, DS) . DS;
+        $this->_output = rtrim($this->_output, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         if (!$this->_isPathUsable($this->_output)) {
             $this->err(sprintf('The output directory %s was not found or writable.', $this->_output));
             $this->_stop();
@@ -461,7 +464,7 @@ class ExtractTask extends Shell
     protected function _buildFiles()
     {
         $paths = $this->_paths;
-        $paths[] = realpath(APP) . DS;
+        $paths[] = realpath(APP) . DIRECTORY_SEPARATOR;
 
         usort($paths, function ($a, $b) {
             return strlen($a) - strlen($b);
@@ -480,7 +483,7 @@ class ExtractTask extends Shell
                     $occurrences = implode("\n#: ", $occurrences);
                     $header = "";
                     if (!$this->param('no-location')) {
-                        $header = '#: ' . str_replace(DS, '/', str_replace($paths, '', $occurrences)) . "\n";
+                        $header = '#: ' . str_replace(DIRECTORY_SEPARATOR, '/', str_replace($paths, '', $occurrences)) . "\n";
                     }
 
                     $sentence = '';
@@ -544,7 +547,13 @@ class ExtractTask extends Shell
                 $output .= $header . $sentence;
             }
 
-            $filename = $domain . '.pot';
+            // Remove vendor prefix if present.
+            $slashPosition = strpos($domain, '/');
+            if ($slashPosition !== false) {
+                $domain = substr($domain, $slashPosition + 1);
+            }
+
+            $filename = str_replace('/', '_', $domain) . '.pot';
             $File = new File($this->_output . $filename);
             $response = '';
             while ($overwriteAll === false && $File->exists() && strtoupper($response) !== 'Y') {
@@ -691,15 +700,15 @@ class ExtractTask extends Shell
         if (!empty($this->_exclude)) {
             $exclude = [];
             foreach ($this->_exclude as $e) {
-                if (DS !== '\\' && $e[0] !== DS) {
-                    $e = DS . $e;
+                if (DIRECTORY_SEPARATOR !== '\\' && $e[0] !== DIRECTORY_SEPARATOR) {
+                    $e = DIRECTORY_SEPARATOR . $e;
                 }
                 $exclude[] = preg_quote($e, '/');
             }
             $pattern = '/' . implode('|', $exclude) . '/';
         }
         foreach ($this->_paths as $path) {
-            $path = realpath($path) . DS;
+            $path = realpath($path) . DIRECTORY_SEPARATOR;
             $Folder = new Folder($path);
             $files = $Folder->findRecursive('.*\.(php|ctp|thtml|inc|tpl)', true);
             if (!empty($pattern)) {

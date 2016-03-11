@@ -39,7 +39,7 @@ trait QueryTrait
      * When set, query execution will be bypassed.
      *
      * @var \Cake\Datasource\ResultSetInterface
-     * @see setResult()
+     * @see \Cake\Datasource\QueryTrait::setResult()
      */
     protected $_results;
 
@@ -202,7 +202,7 @@ trait QueryTrait
      * If no $alias is passed, the default table for this query will be used.
      *
      * @param string $field The field to alias
-     * @param string $alias the alias used to prefix the field
+     * @param string|null $alias the alias used to prefix the field
      * @return array
      */
     public function aliasField($field, $alias = null)

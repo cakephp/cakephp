@@ -16,6 +16,7 @@ namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
+use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
 use Cake\Utility\Inflector;
 use PDOException;
@@ -132,13 +133,13 @@ class FixtureManager
                 continue;
             }
             if (strpos($connection, 'test_') === 0) {
-                $map[substr($connection, 5)] = $connection;
+                $map[$connection] = substr($connection, 5);
             } else {
                 $map['test_' . $connection] = $connection;
             }
         }
-        foreach ($map as $alias => $connection) {
-            ConnectionManager::alias($connection, $alias);
+        foreach ($map as $testConnection => $normal) {
+            ConnectionManager::alias($testConnection, $normal);
         }
     }
 
@@ -227,14 +228,17 @@ class FixtureManager
     protected function _setupTable($fixture, $db, array $sources, $drop = true)
     {
         $configName = $db->configName();
-        if ($this->isFixtureSetup($configName, $fixture)) {
+        $isFixtureSetup = $this->isFixtureSetup($configName, $fixture);
+        if ($isFixtureSetup) {
             return;
         }
 
         $table = $fixture->sourceName();
         $exists = in_array($table, $sources);
 
-        if ($drop && $exists) {
+        if (($drop && $exists) ||
+            ($exists && !$isFixtureSetup && $fixture->schema() instanceof Table)
+        ) {
             $fixture->drop($db);
             $fixture->create($db);
         } elseif (!$exists) {
@@ -417,7 +421,7 @@ class FixtureManager
      * Creates a single fixture table and loads data into it.
      *
      * @param string $name of the fixture
-     * @param \Cake\Datasource\ConnectionInterface $db Connection instance or leave null to get a Connection from the fixture
+     * @param \Cake\Datasource\ConnectionInterface|null $db Connection instance or leave null to get a Connection from the fixture
      * @param bool $dropTables Whether or not tables should be dropped and re-created.
      * @return void
      * @throws \UnexpectedValueException if $name is not a previously loaded class

@@ -130,7 +130,13 @@ class CaseExpression implements ExpressionInterface
                 $value = $keyValues[$k];
                 array_push($this->_values, $value);
                 continue;
-            } elseif ($value instanceof ExpressionInterface) {
+            }
+            if ($value === 'identifier') {
+                $value = new IdentifierExpression($keyValues[$k]);
+                array_push($this->_values, $value);
+                continue;
+            }
+            if ($value instanceof ExpressionInterface) {
                 array_push($this->_values, $value);
                 continue;
             }
@@ -144,7 +150,7 @@ class CaseExpression implements ExpressionInterface
      * Sets the default value
      *
      * @param \Cake\Database\ExpressionInterface|string|array|null $value Value to set
-     * @param string $type Type of value
+     * @param string|null $type Type of value
      *
      * @return void
      */

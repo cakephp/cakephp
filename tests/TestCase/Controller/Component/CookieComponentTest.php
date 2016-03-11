@@ -16,8 +16,6 @@ namespace Cake\Test\TestCase\Controller\Component;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\CookieComponent;
-use Cake\Controller\Controller;
-use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\Network\Request;
 use Cake\Network\Response;

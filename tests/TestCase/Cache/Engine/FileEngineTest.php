@@ -250,8 +250,8 @@ class FileEngineTest extends TestCase
         ]);
 
         $dataOne = $dataTwo = $expected = 'content to cache';
-        $FileOne->write('prefix_one_key_one', $dataOne, DAY);
-        $FileTwo->write('prefix_two_key_two', $dataTwo, DAY);
+        $FileOne->write('prefix_one_key_one', $dataOne);
+        $FileTwo->write('prefix_two_key_two', $dataTwo);
 
         $this->assertEquals($expected, $FileOne->read('prefix_one_key_one'));
         $this->assertEquals($expected, $FileTwo->read('prefix_two_key_two'));
@@ -275,7 +275,7 @@ class FileEngineTest extends TestCase
             'groups' => ['short', 'round']
         ]);
         $key = 'cake_test_test_key';
-        $engine->write($key, 'it works', DAY);
+        $engine->write($key, 'it works');
         $engine->clear(false);
         $this->assertFalse($engine->read($key), 'Key should have been removed');
     }

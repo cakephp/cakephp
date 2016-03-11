@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\Routing;
 
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
-use Cake\Routing\Router;
 use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
 
@@ -139,7 +138,7 @@ class RouteCollectionTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/', []);
 
         $routes->resources('Articles');
-        $routes->connect('/:controller', ['action' => 'index'], [], ['routeClass' => 'InflectedRoute']);
+        $routes->connect('/:controller', ['action' => 'index'], ['routeClass' => 'InflectedRoute']);
         $routes->connect('/:controller/:action', [], ['routeClass' => 'InflectedRoute']);
 
         $result = $this->collection->parse('/articles/add');

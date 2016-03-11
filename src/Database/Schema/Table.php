@@ -339,7 +339,7 @@ class Table
      * if none is passed.
      *
      * @param string $name The column to get the type of.
-     * @param string $type The type to set the column to.
+     * @param string|null $type The type to set the column to.
      * @return string|null Either the column type or null.
      */
     public function columnType($name, $type = null)
@@ -566,15 +566,15 @@ class Table
             $attrs = $this->_checkForeignKey($attrs);
 
             if (isset($this->_constraints[$name])) {
-                $this->_constraints[$name]['columns'] = array_merge(
+                $this->_constraints[$name]['columns'] = array_unique(array_merge(
                     $this->_constraints[$name]['columns'],
                     $attrs['columns']
-                );
+                ));
 
-                $this->_constraints[$name]['references'][1] = array_merge(
+                $this->_constraints[$name]['references'][1] = array_unique(array_merge(
                     (array)$this->_constraints[$name]['references'][1],
                     [$attrs['references'][1]]
-                );
+                ));
                 return $this;
             }
         } else {

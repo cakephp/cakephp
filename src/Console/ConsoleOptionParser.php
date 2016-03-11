@@ -76,7 +76,7 @@ class ConsoleOptionParser
     /**
      * Description text - displays before options when help is generated
      *
-     * @see ConsoleOptionParser::description()
+     * @see \Cake\Console\ConsoleOptionParser::description()
      * @var string
      */
     protected $_description = null;
@@ -84,7 +84,7 @@ class ConsoleOptionParser
     /**
      * Epilog text - displays after options when help is generated
      *
-     * @see ConsoleOptionParser::epilog()
+     * @see \Cake\Console\ConsoleOptionParser::epilog()
      * @var string
      */
     protected $_epilog = null;
@@ -92,7 +92,7 @@ class ConsoleOptionParser
     /**
      * Option definitions.
      *
-     * @see ConsoleOptionParser::addOption()
+     * @see \Cake\Console\ConsoleOptionParser::addOption()
      * @var array
      */
     protected $_options = [];
@@ -107,7 +107,7 @@ class ConsoleOptionParser
     /**
      * Positional argument definitions.
      *
-     * @see ConsoleOptionParser::addArgument()
+     * @see \Cake\Console\ConsoleOptionParser::addArgument()
      * @var array
      */
     protected $_args = [];
@@ -115,7 +115,7 @@ class ConsoleOptionParser
     /**
      * Subcommands for this Shell.
      *
-     * @see ConsoleOptionParser::addSubcommand()
+     * @see \Cake\Console\ConsoleOptionParser::addSubcommand()
      * @var array
      */
     protected $_subcommands = [];
@@ -430,7 +430,7 @@ class ConsoleOptionParser
      * The keys are used as the argument names, and the values as params for the argument.
      *
      * @param array $args Array of arguments to add.
-     * @see ConsoleOptionParser::addArgument()
+     * @see \Cake\Console\ConsoleOptionParser::addArgument()
      * @return $this
      */
     public function addArguments(array $args)
@@ -450,7 +450,7 @@ class ConsoleOptionParser
      * The keys are used as option names, and the values as params for the option.
      *
      * @param array $options Array of options to add.
-     * @see ConsoleOptionParser::addOption()
+     * @see \Cake\Console\ConsoleOptionParser::addOption()
      * @return $this
      */
     public function addOptions(array $options)
@@ -581,7 +581,8 @@ class ConsoleOptionParser
         while (($token = array_shift($this->_tokens)) !== null) {
             if (isset($this->_subcommands[$token])) {
                 continue;
-            } elseif (substr($token, 0, 2) === '--') {
+            }
+            if (substr($token, 0, 2) === '--') {
                 $params = $this->_parseLongOption($token, $params);
             } elseif (substr($token, 0, 1) === '-') {
                 $params = $this->_parseShortOption($token, $params);
@@ -616,7 +617,7 @@ class ConsoleOptionParser
      * Generates help text based on the description, options, arguments, subcommands and epilog
      * in the parser.
      *
-     * @param string $subcommand If present and a valid subcommand that has a linked parser.
+     * @param string|null $subcommand If present and a valid subcommand that has a linked parser.
      *    That subcommands help will be shown instead.
      * @param string $format Define the output format, can be text or xml
      * @param int $width The width to format user content to. Defaults to 72

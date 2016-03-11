@@ -15,7 +15,6 @@
 namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Core\Configure;
-use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlite;
 use Cake\Testsuite\TestCase;
 use \PDO;

@@ -222,6 +222,21 @@ class TableLocatorTest extends TestCase
     }
 
     /**
+     * Test that get() uses config data set with config()
+     *
+     * @return void
+     */
+    public function testGetWithConnectionName()
+    {
+        ConnectionManager::alias('test', 'testing');
+        $result = $this->_locator->get('Articles', [
+            'connectionName' => 'testing'
+        ]);
+        $this->assertEquals('articles', $result->table());
+        $this->assertEquals('test', $result->connection()->configName());
+    }
+
+    /**
      * Test that get() uses config data `className` set with config()
      *
      * @return void
