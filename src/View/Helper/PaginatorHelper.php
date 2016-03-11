@@ -18,6 +18,7 @@ use Cake\Utility\Inflector;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
 use Cake\View\View;
+use Cake\Utility\Hash;
 
 /**
  * Pagination Helper class for easy generation of pagination links.
@@ -410,12 +411,22 @@ class PaginatorHelper extends Helper
         $locked = isset($options['lock']) ? $options['lock'] : false;
         unset($options['lock']);
 
-        $sortKey = $this->sortKey($options['model']);
         $defaultModel = $this->defaultModel();
+        $incomingKey = $key;
+        $model = Hash::get($options, 'model', $defaultModel);
+        list($table, $field) = explode('.', $key . '.');
+        if (empty($field)) {
+            $field = $table;
+            $table = $model;
+        }
+
+        $incomingKey = $table . '.' . $field;
+
+        $sortKey = $this->sortKey($options['model']);
         $isSorted = (
-            $sortKey === $key ||
+            $sortKey === $incomingKey ||
             $sortKey === $defaultModel . '.' . $key ||
-            $key === $defaultModel . '.' . $sortKey
+            $incomingKey === $defaultModel . '.' . $sortKey
         );
 
         $template = 'sort';
