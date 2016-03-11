@@ -476,7 +476,7 @@ class SecurityComponent extends Component
         );
         $expectedUnlockedFields = Hash::get($expectedParts, 2);
         $dataUnlockedFields = Hash::get($hashParts, 2) ?: [];
-        if (!empty($dataUnlockedFields)) {
+        if ($dataUnlockedFields) {
             $dataUnlockedFields = explode('|', $dataUnlockedFields);
         }
         $unlockFieldsMessages = $this->_debugCheckFields(
