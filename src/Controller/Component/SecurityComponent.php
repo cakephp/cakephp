@@ -301,7 +301,11 @@ class SecurityComponent extends Component
      * Validate submitted form
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
+<<<<<<< HEAD
      * @throws \Cake\Controller\Exception\SecurityException
+=======
+     * @throws SecurityException
+>>>>>>> e73f064c716f82b627e39b5ad3730282202f6670
      * @return bool true if submitted form is valid
      */
     protected function _validatePost(Controller $controller)
