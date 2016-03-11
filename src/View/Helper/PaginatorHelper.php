@@ -421,7 +421,7 @@ class PaginatorHelper extends Helper
         $incomingKey = $key;
         $model = Hash::get($options, 'model', $defaultModel);
         list($table, $field) = explode('.', $key . '.');
-        if (empty($field)) {
+        if (!$field) {
             $field = $table;
             $table = $model;
         }
@@ -574,7 +574,7 @@ class PaginatorHelper extends Helper
     /**
      * Gets or sets the default model of the paged sets
      *
-     * @param string $model Model name to set
+     * @param string|null $model Model name to set
      * @return string|null Model name or null if the pagination isn't initialized.
      */
     public function defaultModel($model = null)
