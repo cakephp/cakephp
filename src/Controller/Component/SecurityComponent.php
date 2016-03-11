@@ -199,6 +199,7 @@ class SecurityComponent extends Component
      *
      * @param \Cake\Controller\Exception\SecurityException $exception Additional debug info describing the cause
      * @throws \Cake\Network\Exception\BadRequestException
+     * @return void
      */
     protected function _throwException($exception = null)
     {
