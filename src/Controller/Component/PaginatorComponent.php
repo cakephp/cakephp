@@ -203,7 +203,8 @@ class PaginatorComponent extends Component
             'direction' => current($order),
             'limit' => $defaults['limit'] != $limit ? $limit : null,
             'sortDefault' => $sortDefault,
-            'directionDefault' => $directionDefault
+            'directionDefault' => $directionDefault,
+            'prefix' => Hash::get($options, 'prefix', null),
         ];
 
         if (!isset($request['paging'])) {
