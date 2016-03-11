@@ -559,8 +559,11 @@ class FormHelper extends Helper
         if (empty($this->request['_Token'])) {
             return null;
         }
-        $debugSecurity = Hash::get($secureAttributes, 'debugSecurity') ?: Configure::read('debug');
-        unset($secureAttributes['debugSecurity']);
+        $debugSecurity = Configure::read('debug');
+        if (isset($secureAttributes['debugSecurity'])) {
+            $debugSecurity = $secureAttributes['debugSecurity'];
+            unset($secureAttributes['debugSecurity']);
+        }
 
         $tokenData = $this->_buildFieldToken(
             $this->_lastAction,
