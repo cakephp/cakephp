@@ -405,20 +405,10 @@ class CakeRequest implements ArrayAccess {
 	public function clientIp($safe = true) {
 		if (!$safe && env('HTTP_X_FORWARDED_FOR')) {
 			$ipaddr = preg_replace('/(?:,.*)/', '', env('HTTP_X_FORWARDED_FOR'));
+		} elseif (!$safe && env('HTTP_CLIENT_IP')) {
+			$ipaddr = env('HTTP_CLIENT_IP');
 		} else {
-			if (env('HTTP_CLIENT_IP')) {
-				$ipaddr = env('HTTP_CLIENT_IP');
-			} else {
-				$ipaddr = env('REMOTE_ADDR');
-			}
-		}
-
-		if (env('HTTP_CLIENTADDRESS')) {
-			$tmpipaddr = env('HTTP_CLIENTADDRESS');
-
-			if (!empty($tmpipaddr)) {
-				$ipaddr = preg_replace('/(?:,.*)/', '', $tmpipaddr);
-			}
+			$ipaddr = env('REMOTE_ADDR');
 		}
 		return trim($ipaddr);
 	}
