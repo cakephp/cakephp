@@ -129,18 +129,17 @@ class Permission extends AppModel {
 			$perms = Hash::extract($perms, '{n}.' . $this->alias);
 			foreach ($perms as $perm) {
 				if ($action === '*') {
-					foreach ($permKeys as $key) {
-						if (!empty($perm)) {
-							if ($perm[$key] == -1) {
-								return false;
-							} elseif ($perm[$key] == 1 || $perm[$key] == 0) {
-								$inherited[$key] = $perm[$key];
-							}
-						}
+					if (empty($perm)) {
+						continue;
 					}
-
-					if (count($inherited) === count($permKeys)) {
-						return true;
+					foreach ($permKeys as $key) {
+						if ($perm[$key] == -1 && !(isset($inherited[$key]) && $inherited[$key] == 1)) {
+							// Deny, but only if a child node didnt't explicitly allow
+							return false;
+						} elseif ($perm[$key] == 1) {
+							// Allow & inherit from parent nodes
+							$inherited[$key] = $perm[$key];
+						}
 					}
 				} else {
 					switch ($perm['_' . $action]) {
@@ -152,6 +151,10 @@ class Permission extends AppModel {
 							return true;
 					}
 				}
+			}
+
+			if ($action === '*' && count($inherited) === count($permKeys)) {
+				return true;
 			}
 		}
 		return false;

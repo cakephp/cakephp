@@ -452,6 +452,12 @@ class DbAclTest extends CakeTestCase {
 		$this->Acl->Aco->create(array('parent_id' => $this->Acl->Aco->id, 'alias' => 'town'));
 		$this->Acl->Aco->save();
 
+		$this->Acl->Aco->create(array('parent_id' => null, 'alias' => 'bizzaro_world'));
+		$this->Acl->Aco->save();
+
+		$this->Acl->Aco->create(array('parent_id' => $this->Acl->Aco->id, 'alias' => 'bizzaro_town'));
+		$this->Acl->Aco->save();
+
 		$this->Acl->Aro->create(array('parent_id' => null, 'alias' => 'Jane'));
 		$this->Acl->Aro->save();
 
@@ -463,8 +469,18 @@ class DbAclTest extends CakeTestCase {
 		$this->Acl->inherit('Jane', 'town', '*');
 		$this->Acl->allow('Jane', 'town', 'create');
 
+		// Setup deny on create for parent
+		$this->Acl->deny('Jane', 'bizzaro_world', '*');
+		$this->Acl->allow('Jane', 'bizzaro_world', 'create');
+
+		// Setup inherit.
+		$this->Acl->inherit('Jane', 'bizzaro_town', '*');
+
 		$this->assertTrue($this->Acl->check('Jane', 'town', 'create'), 'Should have access due to override');
 		$this->assertTrue($this->Acl->check('Jane', 'town', '*'), 'Should have access due to inherit');
+
+		$this->assertTrue($this->Acl->check('Jane', 'bizzaro_town', 'create'), 'Should have access due explicit allow');
+		$this->assertFalse($this->Acl->check('Jane', 'bizzaro_town', '*'), 'Should not have access due to inherit');
 	}
 
 /**
