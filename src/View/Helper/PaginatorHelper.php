@@ -420,7 +420,7 @@ class PaginatorHelper extends Helper
         $sortKey = $this->sortKey($options['model']);
         $defaultModel = $this->defaultModel();
         $model = Hash::get($options, 'model', $defaultModel);
-        list($table, $field) = explode('.', $key . '.', 2);
+        list($table, $field) = explode('.', $key . '.');
         if (!$field) {
             $field = $table;
             $table = $model;
