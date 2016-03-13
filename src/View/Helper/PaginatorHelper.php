@@ -480,14 +480,10 @@ class PaginatorHelper extends Helper
             'sort' => $paging['sort'],
             'direction' => $paging['direction'],
         ];
-        if (empty($paging['prefix'])) {
-            if (!empty($this->_config['options']['url'])) {
-                $url = array_merge($url, $this->_config['options']['url']);
-            }
-        } else {
-            if (!empty($this->_config['options']['url'][$paging['prefix']])) {
-                $url = array_merge($url, $this->_config['options']['url'][$paging['prefix']]);
-            }
+
+        if (!empty($this->_config['options']['url'])) {
+            $key = implode('.', array_filter(['options.url', $paging['prefix']]));
+            $url = array_merge($url, Hash::get($this->_config, $key, []));
         }
 
         $url = array_filter($url, function ($value) {
