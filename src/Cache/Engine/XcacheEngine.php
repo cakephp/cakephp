@@ -77,10 +77,14 @@ class XcacheEngine extends CacheEngine
     {
         $key = $this->_key($key);
 
+        if (!is_numeric($value)) {
+            $value = serialize($value);
+        }
+
         $duration = $this->_config['duration'];
         $expires = time() + $duration;
         xcache_set($key . '_expires', $expires, $duration);
-        return xcache_set($key, serialize($value), $duration);
+        return xcache_set($key, $value, $duration);
     }
 
     /**
@@ -100,7 +104,12 @@ class XcacheEngine extends CacheEngine
             if ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime) {
                 return false;
             }
-            return unserialize(xcache_get($key));
+
+            $value = xcache_get($key);
+            if (is_string($value) && !is_numeric($value)) {
+                $value = unserialize($value);
+            }
+            return $value;
         }
         return false;
     }

@@ -102,6 +102,7 @@ class XcacheEngineTest extends TestCase
         $expecting = '';
         $this->assertEquals($expecting, $result);
 
+        // String
         $data = 'this is a test of the emergency broadcasting system';
         $result = Cache::write('test', $data, 'xcache');
         $this->assertTrue($result);
@@ -109,6 +110,23 @@ class XcacheEngineTest extends TestCase
         $result = Cache::read('test', 'xcache');
         $expecting = $data;
         $this->assertEquals($expecting, $result);
+
+        // Integer
+        $data = 100;
+        $result = Cache::write('test', 100, 'xcache');
+        $this->assertTrue($result);
+
+        $result = Cache::read('test', 'xcache');
+        $this->assertSame(100, $result);
+
+        // Object
+        $data = (object)['value' => 'an object'];
+        $result = Cache::write('test', $data, 'xcache');
+        $this->assertTrue($result);
+
+        $result = Cache::read('test', 'xcache');
+        $this->assertInstanceOf('stdClass', $result);
+        $this->assertEquals('an object', $result->value);
 
         Cache::delete('test', 'xcache');
     }
