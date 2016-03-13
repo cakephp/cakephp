@@ -417,8 +417,8 @@ class PaginatorHelper extends Helper
         $locked = isset($options['lock']) ? $options['lock'] : false;
         unset($options['lock']);
 
+        $sortKey = $this->sortKey($options['model']);
         $defaultModel = $this->defaultModel();
-        $incomingKey = $key;
         $model = Hash::get($options, 'model', $defaultModel);
         list($table, $field) = explode('.', $key . '.', 2);
         if (!$field) {
@@ -426,13 +426,10 @@ class PaginatorHelper extends Helper
             $table = $model;
         }
 
-        $incomingKey = $table . '.' . $field;
-
-        $sortKey = $this->sortKey($options['model']);
         $isSorted = (
-            $sortKey === $incomingKey ||
+            $sortKey === $table . '.' . $field ||
             $sortKey === $defaultModel . '.' . $key ||
-            $incomingKey === $defaultModel . '.' . $sortKey
+            $table . '.' . $field === $defaultModel . '.' . $sortKey
         );
 
         $template = 'sort';
