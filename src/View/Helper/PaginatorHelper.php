@@ -14,11 +14,11 @@
  */
 namespace Cake\View\Helper;
 
+use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
 use Cake\View\View;
-use Cake\Utility\Hash;
 
 /**
  * Pagination Helper class for easy generation of pagination links.
