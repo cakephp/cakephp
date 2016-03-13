@@ -82,6 +82,7 @@ class XcacheEngineTest extends TestCase
             'prefix' => 'cake_',
             'duration' => 3600,
             'probability' => 100,
+            'groups' => [],
         ];
         $this->assertTrue(isset($config['PHP_AUTH_USER']));
         $this->assertTrue(isset($config['PHP_AUTH_PW']));
@@ -164,6 +165,9 @@ class XcacheEngineTest extends TestCase
      */
     public function testClearCache()
     {
+        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) {
+            $this->markTestSkipped('Xcache administration functions are not available for the CLI.');
+        }
         $data = 'this is a test of the emergency broadcasting system';
         $result = Cache::write('clear_test_1', $data, 'xcache');
         $this->assertTrue($result);
@@ -171,7 +175,7 @@ class XcacheEngineTest extends TestCase
         $result = Cache::write('clear_test_2', $data, 'xcache');
         $this->assertTrue($result);
 
-        $result = Cache::clear();
+        $result = Cache::clear(false, 'xcache');
         $this->assertTrue($result);
     }
 
@@ -185,7 +189,7 @@ class XcacheEngineTest extends TestCase
         $result = Cache::write('test_decrement', 5, 'xcache');
         $this->assertTrue($result);
 
-        $result = Cache::decrement('test_decrement', 'xcache');
+        $result = Cache::decrement('test_decrement', 1, 'xcache');
         $this->assertEquals(4, $result);
 
         $result = Cache::read('test_decrement', 'xcache');
@@ -208,7 +212,7 @@ class XcacheEngineTest extends TestCase
         $result = Cache::write('test_increment', 5, 'xcache');
         $this->assertTrue($result);
 
-        $result = Cache::increment('test_increment', 'xcache');
+        $result = Cache::increment('test_increment', 1, 'xcache');
         $this->assertEquals(6, $result);
 
         $result = Cache::read('test_increment', 'xcache');
