@@ -1605,6 +1605,10 @@ podeís adquirirla.</span></p>
                 'Foo+Bar+Not+just+for+breakfast+any+more'
             ],
             [
+                'A æ Übérmensch på høyeste nivå! И я люблю PHP! ﬁ', [],
+                'A-ae-Ubermensch-pa-hoyeste-niva-I-a-lublu-PHP-fi'
+            ],
+            [
                 'Äpfel Über Öl grün ärgert groß öko', [],
                 'Aepfel-Ueber-Oel-gruen-aergert-gross-oeko'
             ],

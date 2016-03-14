@@ -875,15 +875,16 @@ class Text
             'transliteratorId' => static::$defaultTransliteratorId
         ];
 
+        $string = transliterator_transliterate($options['transliteratorId'], $string);
+
         $quotedReplacement = preg_quote($options['replacement'], '/');
         $map = [
-            '/[^\s\p{Zs}\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}]/mu' => ' ',
-            '/[\s\p{Zs}]+/mu' => $options['replacement'],
+            '/[^\sa-zA-Z0-9]/mu' => ' ',
+            '/[\s]+/mu' => $options['replacement'],
             sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
         ];
-
         $string = preg_replace(array_keys($map), array_values($map), $string);
 
-        return transliterator_transliterate($options['transliteratorId'], $string);
+        return $string;
     }
 }
