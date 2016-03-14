@@ -28,7 +28,7 @@ class Text
      *
      * @param string $defaultTransliteratorId Transliterator identifer string.
      */
-    public static $defaultTransliteratorId = 'Any-Latin; Latin-ASCII';
+    public static $defaultTransliteratorId = 'Latin-ASCII';
 
     /**
      * Generate a random UUID version 4
@@ -879,7 +879,7 @@ class Text
 
         $quotedReplacement = preg_quote($options['replacement'], '/');
         $map = [
-            '/[^\sa-zA-Z0-9]/mu' => ' ',
+            '/[^\s\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}]/mu' => ' ',
             '/[\s]+/mu' => $options['replacement'],
             sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
         ];
