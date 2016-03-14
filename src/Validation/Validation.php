@@ -470,7 +470,7 @@ class Validation
      */
     public static function localizedTime($check, $type = 'datetime', $format = null)
     {
-        if ($check instanceof DateTime) {
+        if ($check instanceof DateTimeInterface) {
             return true;
         }
         static $methods = [
