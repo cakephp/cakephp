@@ -92,6 +92,7 @@ class SecurityComponent extends Component {
  *
  * @var array
  * @see SecurityComponent::requireAuth()
+ * @deprecated 2.8.1 This feature is confusing and not useful.
  */
 	public $requireAuth = array();
 
@@ -400,6 +401,7 @@ class SecurityComponent extends Component {
  *
  * @param Controller $controller Instantiating controller
  * @return bool|null True if authentication required
+ * @deprecated 2.8.1 This feature is confusing and not useful.
  */
 	protected function _authRequired(Controller $controller) {
 		if (is_array($this->requireAuth) && !empty($this->requireAuth) && !empty($this->request->data)) {
@@ -532,7 +534,7 @@ class SecurityComponent extends Component {
 			}
 			return false;
 		}
-		$authKey = Security::generateAuthKey();
+		$authKey = hash('sha512', Security::randomBytes(16), false);
 		$token = array(
 			'key' => $authKey,
 			'allowedControllers' => $this->allowedControllers,

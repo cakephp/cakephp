@@ -1982,7 +1982,7 @@ class Model extends Object implements CakeEventListener {
  */
 	protected function _isUUIDField($field) {
 		$field = $this->schema($field);
-		return $field['length'] == 36 && in_array($field['type'], array('string', 'binary'));
+		return $field['length'] == 36 && in_array($field['type'], array('string', 'binary', 'uuid'));
 	}
 
 /**
@@ -2937,7 +2937,7 @@ class Model extends Object implements CakeEventListener {
  *   'conditions' => array('name' => 'Thomas Anderson'),
  *   'fields' => array('name', 'email'),
  *   'order' => 'field3 DESC',
- *   'recursive' => 2,
+ *   'recursive' => 1,
  *   'group' => 'type',
  *   'callbacks' => false,
  * ));
@@ -3011,15 +3011,15 @@ class Model extends Object implements CakeEventListener {
  *
  * ```
  * protected function _readDataSource($type, $query) {
- * 		$cacheName = md5(json_encode($query));
- * 		$cache = Cache::read($cacheName, 'cache-config-name');
- * 		if ($cache !== false) {
- * 			return $cache;
- * 		}
+ *     $cacheName = md5(json_encode($query) . json_encode($this->hasOne) . json_encode($this->belongsTo));
+ *     $cache = Cache::read($cacheName, 'cache-config-name');
+ *     if ($cache !== false) {
+ *         return $cache;
+ *     }
  *
- * 		$results = parent::_readDataSource($type, $query);
- * 		Cache::write($cacheName, $results, 'cache-config-name');
- * 		return $results;
+ *     $results = parent::_readDataSource($type, $query);
+ *     Cache::write($cacheName, $results, 'cache-config-name');
+ *     return $results;
  * }
  * ```
  *

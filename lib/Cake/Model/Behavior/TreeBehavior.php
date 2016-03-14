@@ -568,7 +568,7 @@ class TreeBehavior extends ModelBehavior {
  * @return array Options array
  */
 	protected function _getOptions($arg) {
-		return count(array_filter(array_keys($arg), 'is_string') > 0) ?
+		return count(array_filter(array_keys($arg), 'is_string')) > 0 ?
 			$arg :
 			array();
 	}
@@ -577,9 +577,9 @@ class TreeBehavior extends ModelBehavior {
  * Get the path to the given node
  *
  * @param Model $Model Model using this behavior
- * @param int|string $id The ID of the record to read
- * @param string|array $fields Either a single string of a field name, or an array of field names
- * @param int $recursive The number of levels deep to fetch associated records
+ * @param int|string|null $id The ID of the record to read
+ * @param string|array|null $fields Either a single string of a field name, or an array of field names
+ * @param int|null $recursive The number of levels deep to fetch associated records
  * @return array Array of nodes from top most parent to current node
  * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::getPath
  */
@@ -639,7 +639,7 @@ class TreeBehavior extends ModelBehavior {
  * If the node is the last child, or is a top level node with no subsequent node this method will return false
  *
  * @param Model $Model Model using this behavior
- * @param int|string $id The ID of the record to move
+ * @param int|string|null $id The ID of the record to move
  * @param int|bool $number how many places to move the node or true to move to last position
  * @return bool true on success, false on failure
  * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::moveDown
@@ -693,7 +693,7 @@ class TreeBehavior extends ModelBehavior {
  * If the node is the first child, or is a top level node with no previous node this method will return false
  *
  * @param Model $Model Model using this behavior
- * @param int|string $id The ID of the record to move
+ * @param int|string|null $id The ID of the record to move
  * @param int|bool $number how many places to move the node, or true to move to first position
  * @return bool true on success, false on failure
  * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::moveUp
@@ -751,7 +751,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * @param Model $Model Model using this behavior
  * @param string $mode parent or tree
- * @param string|int $missingParentAction 'return' to do nothing and return, 'delete' to
+ * @param string|int|null $missingParentAction 'return' to do nothing and return, 'delete' to
  * delete, or the id of the parent to set as the parent_id
  * @return bool true on success, false on failure
  * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::recover
@@ -811,7 +811,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * @param Model $Model Model instance.
  * @param int $counter Counter
- * @param mixed $parentId Parent record Id
+ * @param int|string|null $parentId Parent record Id
  * @return int counter
  */
 	protected function _recoverByParentId(Model $Model, $counter = 1, $parentId = null) {
@@ -929,7 +929,7 @@ class TreeBehavior extends ModelBehavior {
  * after the children are reparented.
  *
  * @param Model $Model Model using this behavior
- * @param int|string $id The ID of the record to remove
+ * @param int|string|null $id The ID of the record to remove
  * @param bool $delete whether to delete the node after reparenting children (if any)
  * @return bool true on success, false on failure
  * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::removeFromTree
@@ -1064,7 +1064,7 @@ class TreeBehavior extends ModelBehavior {
  * Returns the depth level of a node in the tree.
  *
  * @param Model $Model Model using this behavior
- * @param int|string $id The primary key for record to get the level of.
+ * @param int|string|null $id The primary key for record to get the level of.
  * @return int|bool Integer of the level or false if the node does not exist.
  */
 	public function getLevel(Model $Model, $id = null) {
@@ -1103,7 +1103,7 @@ class TreeBehavior extends ModelBehavior {
  * method could be private, since calling save with parent_id set also calls setParent
  *
  * @param Model $Model Model using this behavior
- * @param int|string $parentId Parent record Id
+ * @param int|string|null $parentId Parent record Id
  * @param bool $created True if newly created record else false.
  * @return bool true on success, false on failure
  */

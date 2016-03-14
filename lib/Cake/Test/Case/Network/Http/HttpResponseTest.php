@@ -267,10 +267,19 @@ class HttpResponseTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $r);
 
-		$header = "Multi-Line: I am a \r\nmulti line\t\r\nfield value.\r\nSingle-Line: I am not\r\n";
+		$header = "Date:Sat, 07 Apr 2007 10:10:25 GMT\r\nLink: \r\nX-Total-Count: 19\r\n";
 		$r = $this->HttpResponse->parseHeader($header);
 		$expected = array(
-			'Multi-Line' => "I am a\r\nmulti line\r\nfield value.",
+			'Date' => 'Sat, 07 Apr 2007 10:10:25 GMT',
+			'Link' => '',
+			'X-Total-Count' => '19',
+		);
+		$this->assertEquals($expected, $r);
+
+		$header = "Multi-Line: I am a\r\n multi line \r\n\tfield value.\r\nSingle-Line: I am not\r\n";
+		$r = $this->HttpResponse->parseHeader($header);
+		$expected = array(
+			'Multi-Line' => "I am a multi line field value.",
 			'Single-Line' => 'I am not'
 		);
 		$this->assertEquals($expected, $r);

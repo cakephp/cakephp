@@ -37,6 +37,13 @@ class RedisEngineTest extends CakeTestCase {
 
 		$this->_cacheDisable = Configure::read('Cache.disable');
 		Configure::write('Cache.disable', false);
+
+		// @codingStandardsIgnoreStart
+		$socket = @fsockopen('127.0.0.1', 6379, $errno, $errstr, 1);
+		// @codingStandardsIgnoreEnd
+		$this->skipIf(!$socket, 'Redis is not running.');
+		fclose($socket);
+
 		Cache::config('redis', array(
 			'engine' => 'Redis',
 			'prefix' => 'cake_',
@@ -135,6 +142,22 @@ class RedisEngineTest extends CakeTestCase {
 
 		Cache::drop('redisdb0');
 		Cache::drop('redisdb1');
+	}
+
+/**
+ * test write numbers method
+ *
+ * @return void
+ */
+	public function testWriteNumbers() {
+		$result = Cache::write('test-counter', 1, 'redis');
+		$this->assertSame(1, Cache::read('test-counter', 'redis'));
+
+		$result = Cache::write('test-counter', 0, 'redis');
+		$this->assertSame(0, Cache::read('test-counter', 'redis'));
+
+		$result = Cache::write('test-counter', -1, 'redis');
+		$this->assertSame(-1, Cache::read('test-counter', 'redis'));
 	}
 
 /**

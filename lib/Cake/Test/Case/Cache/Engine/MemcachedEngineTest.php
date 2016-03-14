@@ -64,6 +64,12 @@ class MemcachedEngineTest extends CakeTestCase {
 		parent::setUp();
 		$this->skipIf(!class_exists('Memcached'), 'Memcached is not installed or configured properly.');
 
+		// @codingStandardsIgnoreStart
+		$socket = @fsockopen('127.0.0.1', 11211, $errno, $errstr, 1);
+		// @codingStandardsIgnoreEnd
+		$this->skipIf(!$socket, 'Memcached is not running.');
+		fclose($socket);
+
 		Cache::config('memcached', array(
 			'engine' => 'Memcached',
 			'prefix' => 'cake_',
@@ -340,6 +346,7 @@ class MemcachedEngineTest extends CakeTestCase {
  * @return void
  */
 	public function testSaslAuthException() {
+		$this->skipIf(version_compare(PHP_VERSION, '7.0.0', '>='));
 		$Memcached = new TestMemcachedEngine();
 		$settings = array(
 			'engine' => 'Memcached',

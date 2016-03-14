@@ -2505,4 +2505,20 @@ class ValidationTest extends CakeTestCase {
 		);
 		$this->assertFalse(Validation::uploadedFile($file, $options), 'File is required.');
 	}
+/**
+ * Test uploaded file validation.
+ *
+ * @return void
+ */
+	public function testUploadedFileWithDifferentFileParametersOrder() {
+		$file = array(
+			'name' => 'cake.power.gif',
+			'error' => UPLOAD_ERR_OK,
+			'tmp_name' => CORE_PATH . 'Cake' . DS . 'Test' . DS . 'test_app' . DS . 'webroot/img/cake.power.gif',
+			'type' => 'text/plain',
+			'size' => 201
+		);
+		$options = array();
+		$this->assertTrue(Validation::uploadedFile($file, $options), 'Wrong order');
+	}
 }

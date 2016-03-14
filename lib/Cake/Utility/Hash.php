@@ -824,7 +824,7 @@ class Hash {
 	}
 
 /**
- * Sorts an array by any value, determined by a Set-compatible path
+ * Sorts an array by any value, determined by a Hash-compatible path
  *
  * ### Sort directions
  *
@@ -849,7 +849,7 @@ class Hash {
  * defaults to `false`.
  *
  * @param array $data An array of data to sort
- * @param string $path A Set-compatible path to the array value
+ * @param string $path A Hash-compatible path to the array value
  * @param string $dir See directions above. Defaults to 'asc'.
  * @param array|string $type See direction types above. Defaults to 'regular'.
  * @return array Sorted array of data
