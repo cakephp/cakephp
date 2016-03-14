@@ -1012,7 +1012,7 @@ class Email implements JsonSerializable, Serializable
             $className = App::className($config['className'], 'Network/Email', 'Transport');
             trigger_error(
                 'Transports in "Network/Email" are deprecated, use "Mailer/Transport" instead.',
-                E_USER_WARNING
+                E_USER_DEPRECATED
             );
         }
 
@@ -1336,9 +1336,9 @@ class Email implements JsonSerializable, Serializable
     /**
      * Static method to fast create an instance of \Cake\Mailer\Email
      *
-     * @param string|array $to Address to send (see Cake\Mailer\Email::to()). If null, will try to use 'to' from transport config
-     * @param string $subject String of subject or null to use 'subject' from transport config
-     * @param string|array $message String with message or array with variables to be used in render
+     * @param string|array|null $to Address to send (see Cake\Mailer\Email::to()). If null, will try to use 'to' from transport config
+     * @param string|null $subject String of subject or null to use 'subject' from transport config
+     * @param string|array|null $message String with message or array with variables to be used in render
      * @param string|array $transportConfig String to use config from EmailConfig or array with configs
      * @param bool $send Send the email or just return the instance pre-configured
      * @return \Cake\Mailer\Email Instance of Cake\Mailer\Email

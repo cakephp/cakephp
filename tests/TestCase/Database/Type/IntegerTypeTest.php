@@ -15,7 +15,6 @@
 namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Database\Type;
-use Cake\Database\Type\IntegerType;
 use Cake\TestSuite\TestCase;
 use \PDO;
 

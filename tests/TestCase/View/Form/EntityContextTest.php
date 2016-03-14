@@ -19,7 +19,6 @@ use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Network\Request;
 use Cake\ORM\Entity;
-use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;

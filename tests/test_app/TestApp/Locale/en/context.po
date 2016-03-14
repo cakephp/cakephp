@@ -1,0 +1,15 @@
+#: Bare message first
+msgid "Pending"
+msgstr "En cours"
+
+msgctxt "Pay status"
+msgid "Pending"
+msgstr "En cours - context"
+
+#: Context message first
+msgctxt "Pay status"
+msgid "Resolved"
+msgstr "En resolved - context"
+
+msgid "Resolved"
+msgstr "En resolved"

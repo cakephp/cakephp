@@ -133,9 +133,9 @@ abstract class Cell
     /**
      * Constructor.
      *
-     * @param \Cake\Network\Request $request The request to use in the cell.
-     * @param \Cake\Network\Response $response The response to use in the cell.
-     * @param \Cake\Event\EventManager $eventManager The eventManager to bind events to.
+     * @param \Cake\Network\Request|null $request The request to use in the cell.
+     * @param \Cake\Network\Response|null $response The response to use in the cell.
+     * @param \Cake\Event\EventManager|null $eventManager The eventManager to bind events to.
      * @param array $cellOptions Cell options to apply.
      */
     public function __construct(

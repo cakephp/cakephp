@@ -86,7 +86,7 @@ class CachedCollection extends Collection
      * disables it if false is passed.
      * If called with no arguments it returns the current configuration name.
      *
-     * @param bool $enable whether or not to enable caching
+     * @param bool|null $enable whether or not to enable caching
      * @return string|bool
      */
     public function cacheMetadata($enable = null)

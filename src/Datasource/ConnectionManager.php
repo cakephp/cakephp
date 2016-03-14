@@ -66,7 +66,7 @@ class ConnectionManager
      * The connection will not be constructed until it is first used.
      *
      * @param string|array $key The name of the connection config, or an array of multiple configs.
-     * @param array $config An array of name => config data for adapter.
+     * @param array|null $config An array of name => config data for adapter.
      * @return array|null Null when adding configuration and an array of configuration data when reading.
      * @throws \Cake\Core\Exception\Exception When trying to modify an existing config.
      * @see \Cake\Core\StaticConfigTrait::config()
@@ -134,20 +134,27 @@ class ConnectionManager
      *
      * You can remove aliases with ConnectionManager::dropAlias().
      *
-     * @param string $from The connection to add an alias to.
-     * @param string $to The alias to create. $from should return when loaded with get().
+     * ### Usage
+     *
+     * ```
+     * // Make 'things' resolve to 'test_things' connection
+     * ConnectionManager::alias('test_things', 'things');
+     * ```
+     *
+     * @param string $alias The alias to add. Fetching $source will return $alias when loaded with get.
+     * @param string $source The connection to add an alias to.
      * @return void
      * @throws \Cake\Datasource\Exception\MissingDatasourceConfigException When aliasing a
      * connection that does not exist.
      */
-    public static function alias($from, $to)
+    public static function alias($alias, $source)
     {
-        if (empty(static::$_config[$to]) && empty(static::$_config[$from])) {
+        if (empty(static::$_config[$source]) && empty(static::$_config[$alias])) {
             throw new MissingDatasourceConfigException(
-                sprintf('Cannot create alias of "%s" as it does not exist.', $from)
+                sprintf('Cannot create alias of "%s" as it does not exist.', $alias)
             );
         }
-        static::$_aliasMap[$to] = $from;
+        static::$_aliasMap[$source] = $alias;
     }
 
     /**

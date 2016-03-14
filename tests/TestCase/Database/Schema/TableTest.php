@@ -527,7 +527,6 @@ class TableTest extends TestCase
             'delete' => 'cascade',
             'length' => []
         ];
-
         $this->assertEquals($expected, $compositeConstraint);
 
         $expectedSubstring = 'CONSTRAINT <product_category_fk> FOREIGN KEY \(<product_category>, <product_id>\)' .

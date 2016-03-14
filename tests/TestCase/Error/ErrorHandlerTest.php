@@ -14,19 +14,15 @@
  */
 namespace Cake\Test\TestCase\Error;
 
-use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Error;
 use Cake\Error\ErrorHandler;
-use Cake\Error\ExceptionRenderer;
 use Cake\Error\PHP7ErrorException;
 use Cake\Log\Log;
 use Cake\Network\Exception\ForbiddenException;
 use Cake\Network\Exception\NotFoundException;
 use Cake\Network\Request;
-use Cake\Network\Response;
 use Cake\Routing\Exception\MissingControllerException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;

@@ -127,7 +127,7 @@ class RulesChecker
      *
      * @param callable $rule A callable function or object that will return whether
      * the entity is valid or not.
-     * @param string $name The alias for a rule.
+     * @param string|null $name The alias for a rule.
      * @param array $options List of extra options to pass to the rule callable as
      * second argument.
      * @return $this
@@ -151,7 +151,7 @@ class RulesChecker
      *
      * @param callable $rule A callable function or object that will return whether
      * the entity is valid or not.
-     * @param string $name The alias for a rule.
+     * @param string|null $name The alias for a rule.
      * @param array $options List of extra options to pass to the rule callable as
      * second argument.
      * @return $this
@@ -175,7 +175,7 @@ class RulesChecker
      *
      * @param callable $rule A callable function or object that will return whether
      * the entity is valid or not.
-     * @param string $name The alias for a rule.
+     * @param string|null $name The alias for a rule.
      * @param array $options List of extra options to pass to the rule callable as
      * second argument.
      * @return $this
@@ -199,7 +199,7 @@ class RulesChecker
      *
      * @param callable $rule A callable function or object that will return whether
      * the entity is valid or not.
-     * @param string $name The alias for a rule.
+     * @param string|null $name The alias for a rule.
      * @param array $options List of extra options to pass to the rule callable as
      * second argument.
      * @return $this

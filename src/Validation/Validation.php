@@ -16,7 +16,7 @@ namespace Cake\Validation;
 
 use Cake\I18n\Time;
 use Cake\Utility\Text;
-use DateTime;
+use DateTimeInterface;
 use LogicException;
 use NumberFormatter;
 use RuntimeException;
@@ -348,7 +348,7 @@ class Validation
      * - `ym` 2006/12 or 06/12 separators can be a space, period, dash, forward slash
      * - `y` 2006 just the year without any separators
      *
-     * @param string|\DateTime $check a valid date string/object
+     * @param string|\DateTimeInterface $check a valid date string/object
      * @param string|array $format Use a string or an array of the keys above.
      *    Arrays should be passed as ['dmy', 'mdy', etc]
      * @param string|null $regex If a custom regular expression is used this is the only validation that will occur.
@@ -356,7 +356,7 @@ class Validation
      */
     public static function date($check, $format = 'ymd', $regex = null)
     {
-        if ($check instanceof DateTime) {
+        if ($check instanceof DateTimeInterface) {
             return true;
         }
 
@@ -412,7 +412,7 @@ class Validation
      *
      * All values matching the "date" core validation rule, and the "time" one will be valid
      *
-     * @param string|\DateTime $check Value to check
+     * @param string|\DateTimeInterface $check Value to check
      * @param string|array $dateFormat Format of the date part. See Validation::date() for more information.
      * @param string|null $regex Regex for the date part. If a custom regular expression is used this is the only validation that will occur.
      * @return bool True if the value is valid, false otherwise
@@ -421,7 +421,7 @@ class Validation
      */
     public static function datetime($check, $dateFormat = 'ymd', $regex = null)
     {
-        if ($check instanceof DateTime) {
+        if ($check instanceof DateTimeInterface) {
             return true;
         }
         $valid = false;
@@ -443,12 +443,12 @@ class Validation
      * Validates time as 24hr (HH:MM) or am/pm ([H]H:MM[a|p]m)
      * Does not allow/validate seconds.
      *
-     * @param string|\DateTime $check a valid time string/object
+     * @param string|\DateTimeInterface $check a valid time string/object
      * @return bool Success
      */
     public static function time($check)
     {
-        if ($check instanceof DateTime) {
+        if ($check instanceof DateTimeInterface) {
             return true;
         }
         if (is_array($check)) {
@@ -506,7 +506,7 @@ class Validation
      * - 1..N => Exactly that many number of decimal places. The '.' is required.
      *
      * @param float $check The value the test for decimal.
-     * @param int $places Decimal places.
+     * @param int|null $places Decimal places.
      * @param string|null $regex If a custom regular expression is used, this is the only validation that will occur.
      * @return bool Success
      */
@@ -554,7 +554,7 @@ class Validation
      *
      * @param string $check Value to check
      * @param bool $deep Perform a deeper validation (if true), by also checking availability of host
-     * @param string $regex Regex to use (if none it will use built in regex)
+     * @param string|null $regex Regex to use (if none it will use built in regex)
      * @return bool Success
      */
     public static function email($check, $deep = false, $regex = null)

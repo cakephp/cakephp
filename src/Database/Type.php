@@ -80,7 +80,7 @@ class Type
     /**
      * Constructor
      *
-     * @param string $name The name identifying this type
+     * @param string|null $name The name identifying this type
      */
     public function __construct($name = null)
     {

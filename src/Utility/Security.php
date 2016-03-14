@@ -124,7 +124,7 @@ class Security
      *
      * You can use this method to forcibly decide between mcrypt/openssl/custom implementations.
      *
-     * @param object $instance The crypto instance to use.
+     * @param object|null $instance The crypto instance to use.
      * @return object Crypto instance.
      * @throws \InvalidArgumentException When no compatible crypto extension is available.
      */

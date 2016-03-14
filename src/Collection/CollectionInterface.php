@@ -462,7 +462,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * // Total: 6
      * ```
      *
-     * @param string|callable $matcher The property name to sum or a function
+     * @param string|callable|null $matcher The property name to sum or a function
      * If no value is passed, an identity function will be used.
      * that will return the value of the property to sum.
      * @return float|int
@@ -840,7 +840,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * });
      * ```
      *
-     * @param callable $transformer A callable function that will receive each of
+     * @param callable|null $transformer A callable function that will receive each of
      * the items in the collection and should return an array or Traversable object
      * @return \Cake\Collection\CollectionInterface
      */

@@ -314,9 +314,9 @@ class ViewBuilder implements JsonSerializable, Serializable
      * If that class does not exist, then Cake\View\View will be used.
      *
      * @param array $vars The view variables/context to use.
-     * @param \Cake\Network\Request $request The request to use.
-     * @param \Cake\Network\Response $response The response to use.
-     * @param \Cake\Event\EventManager $events The event manager to use.
+     * @param \Cake\Network\Request|null $request The request to use.
+     * @param \Cake\Network\Response|null $response The response to use.
+     * @param \Cake\Event\EventManager|null $events The event manager to use.
      * @return \Cake\View\View
      * @throws \Cake\View\Exception\MissingViewException
      */

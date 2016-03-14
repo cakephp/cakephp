@@ -617,7 +617,7 @@ class ConsoleOptionParser
      * Generates help text based on the description, options, arguments, subcommands and epilog
      * in the parser.
      *
-     * @param string $subcommand If present and a valid subcommand that has a linked parser.
+     * @param string|null $subcommand If present and a valid subcommand that has a linked parser.
      *    That subcommands help will be shown instead.
      * @param string $format Define the output format, can be text or xml
      * @param int $width The width to format user content to. Defaults to 72

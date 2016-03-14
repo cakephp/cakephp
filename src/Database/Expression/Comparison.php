@@ -226,7 +226,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      *
      * @param array|\Traversable $value the value to flatten
      * @param \Cake\Database\ValueBinder $generator The value binder to use
-     * @param string|array $type the type to cast values to
+     * @param string|array|null $type the type to cast values to
      * @return string
      */
     protected function _flattenValue($value, $generator, $type = null)

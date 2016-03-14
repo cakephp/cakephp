@@ -15,7 +15,6 @@
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\TaskRegistry;
-use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 

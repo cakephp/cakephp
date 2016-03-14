@@ -609,7 +609,7 @@ class Hash
      * Recursively filters a data set.
      *
      * @param array $data Either an array to filter, or value when in callback
-     * @param callable $callback A function to filter the data with. Defaults to
+     * @param callable|array $callback A function to filter the data with. Defaults to
      *   `static::_filter()` Which strips out all non-zero empty values.
      * @return array Filtered array
      * @link http://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::filter
@@ -782,7 +782,7 @@ class Hash
      * Counts the dimensions of an array.
      * Only considers the dimension of the first element in the array.
      *
-     * If you have an un-even or heterogenous array, consider using Hash::maxDimensions()
+     * If you have an un-even or heterogeneous array, consider using Hash::maxDimensions()
      * to get the dimensions of the array.
      *
      * @param array $data Array to count dimensions on

@@ -841,7 +841,7 @@ SQL;
         $result = $table->truncateSql($connection);
         $this->assertCount(2, $result);
         $this->assertEquals('DELETE FROM [schema_articles]', $result[0]);
-        $this->assertEquals('DBCC CHECKIDENT([schema_articles], RESEED, 0)', $result[1]);
+        $this->assertEquals("DBCC CHECKIDENT('schema_articles', RESEED, 0)", $result[1]);
     }
 
     /**

@@ -868,7 +868,7 @@ class BelongsToMany extends Association
      * If your association includes conditions, the junction table will be
      * included in the query's contained associations.
      *
-     * @param string|array $type the type of query to perform, if an array is passed,
+     * @param string|array|null $type the type of query to perform, if an array is passed,
      *   it will be interpreted as the `$options` parameter
      * @param array $options The options to for the find
      * @see \Cake\ORM\Table::find()

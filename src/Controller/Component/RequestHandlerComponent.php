@@ -392,7 +392,7 @@ class RequestHandlerComponent extends Component
      *
      * Returns true if the client accepts xml.
      *
-     * @param string|array $type Can be null (or no parameter), a string type name, or an
+     * @param string|array|null $type Can be null (or no parameter), a string type name, or an
      *   array of types
      * @return mixed If null or no parameter is passed, returns an array of content
      *   types the client accepts. If a string is passed, returns true
@@ -426,7 +426,7 @@ class RequestHandlerComponent extends Component
     /**
      * Determines the content type of the data the client has sent (i.e. in a POST request)
      *
-     * @param string|array $type Can be null (or no parameter), a string type name, or an array of types
+     * @param string|array|null $type Can be null (or no parameter), a string type name, or an array of types
      * @return mixed If a single type is supplied a boolean will be returned. If no type is provided
      *   The mapped value of CONTENT_TYPE will be returned. If an array is supplied the first type
      *   in the request content type will be returned.
@@ -471,7 +471,7 @@ class RequestHandlerComponent extends Component
      * if provided, and secondarily by the list of content-types provided in
      * HTTP_ACCEPT.
      *
-     * @param string|array $type An optional array of 'friendly' content-type names, i.e.
+     * @param string|array|null $type An optional array of 'friendly' content-type names, i.e.
      *   'html', 'xml', 'js', etc.
      * @return mixed If $type is null or not provided, the first content-type in the
      *    list, based on preference, is returned. If a single type is provided

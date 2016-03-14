@@ -13,12 +13,10 @@
  */
 namespace Cake\Test\TestCase\Routing\Filter;
 
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Network\Request;
-use Cake\Network\Response;
 use Cake\Routing\Filter\AssetFilter;
 use Cake\TestSuite\TestCase;
 

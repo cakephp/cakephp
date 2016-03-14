@@ -14,14 +14,10 @@
  */
 namespace Cake\Test\TestCase\ORM\Association;
 
-use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
-use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Entity;
-use Cake\ORM\Query;
-use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
@@ -700,10 +696,12 @@ class BelongsToManyTest extends TestCase
      */
     public function testSaveAssociatedEmptySetSuccess($value)
     {
+        $table = $this->getMock('Cake\ORM\Table', ['table'], [[]]);
+        $table->schema([]);
         $assoc = $this->getMock(
             '\Cake\ORM\Association\BelongsToMany',
             ['_saveTarget', 'replaceLinks'],
-            ['tags']
+            ['tags', ['sourceTable' => $table]]
         );
         $entity = new Entity([
             'id' => 1,
@@ -726,10 +724,12 @@ class BelongsToManyTest extends TestCase
      */
     public function testSaveAssociatedEmptySetUpdateSuccess($value)
     {
+        $table = $this->getMock('Cake\ORM\Table', ['table'], [[]]);
+        $table->schema([]);
         $assoc = $this->getMock(
             '\Cake\ORM\Association\BelongsToMany',
             ['_saveTarget', 'replaceLinks'],
-            ['tags']
+            ['tags', ['sourceTable' => $table]]
         );
         $entity = new Entity([
             'id' => 1,
@@ -755,10 +755,12 @@ class BelongsToManyTest extends TestCase
      */
     public function testSaveAssociatedWithReplace()
     {
+        $table = $this->getMock('Cake\ORM\Table', ['table'], [[]]);
+        $table->schema([]);
         $assoc = $this->getMock(
             '\Cake\ORM\Association\BelongsToMany',
             ['replaceLinks'],
-            ['tags']
+            ['tags', ['sourceTable' => $table]]
         );
         $entity = new Entity([
             'id' => 1,
@@ -782,10 +784,12 @@ class BelongsToManyTest extends TestCase
      */
     public function testSaveAssociatedWithReplaceReturnFalse()
     {
+        $table = $this->getMock('Cake\ORM\Table', ['table'], [[]]);
+        $table->schema([]);
         $assoc = $this->getMock(
             '\Cake\ORM\Association\BelongsToMany',
             ['replaceLinks'],
-            ['tags']
+            ['tags', ['sourceTable' => $table]]
         );
         $entity = new Entity([
             'id' => 1,
