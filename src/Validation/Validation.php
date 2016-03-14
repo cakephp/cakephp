@@ -463,7 +463,7 @@ class Validation
      *
      * @param string|\DateTime $check a date string or object (will always pass)
      * @param string $type Parser type, one out of 'date', 'time', and 'datetime'
-     * @param string|int $format any format accepted by IntlDateFormatter
+     * @param string|int|null $format any format accepted by IntlDateFormatter
      * @return bool Success
      * @throws \InvalidArgumentException when unsupported $type given
      * @see \Cake\I18N\Time::parseDate(), \Cake\I18N\Time::parseTime(), \Cake\I18N\Time::parseDateTime()
@@ -481,7 +481,7 @@ class Validation
         if (empty($methods[$type])) {
             throw new \InvalidArgumentException('Unsupported parser type given.');
         }
-        return (!is_null(Time::{$methods[$type]}($check, $format)));
+        return (Time::{$methods[$type]}($check, $format) !== null);
     }
 
     /**
