@@ -40,6 +40,11 @@ class SecurityComponent extends Component
 {
 
     /**
+     * Default message used for exceptions thrown
+     */
+    const DEFAULT_EXCEPTION_MESSAGE = 'The request has been black-holed';
+
+    /**
      * Default config
      *
      * - `blackHoleCallback` - The controller method that will be called if this
@@ -119,11 +124,10 @@ class SecurityComponent extends Component
             }
 
             if (!in_array($this->_action, (array)$this->_config['unlockedActions']) &&
-                $hasData && $isNotRequestAction
-            ) {
-                if ($this->_config['validatePost']) {
+                $hasData &&
+                $isNotRequestAction &&
+                $this->_config['validatePost']) {
                     $this->_validatePost($controller);
-                }
             }
         } catch (SecurityException $se) {
             $this->blackHole($controller, $se->getType(), $se);
@@ -203,15 +207,14 @@ class SecurityComponent extends Component
      */
     protected function _throwException($exception = null)
     {
-        $defaultMessage = 'The request has been black-holed';
         if ($exception !== null) {
-            if (!Configure::read('debug')) {
+            if (!Configure::read('debug') && $exception instanceof SecurityException) {
                 $exception->setReason($exception->getMessage());
-                $exception->setMessage($defaultMessage);
+                $exception->setMessage(self::DEFAULT_EXCEPTION_MESSAGE);
             }
             throw $exception;
         }
-        throw new BadRequestException($defaultMessage);
+        throw new BadRequestException(self::DEFAULT_EXCEPTION_MESSAGE);
     }
 
     /**
@@ -270,7 +273,7 @@ class SecurityComponent extends Component
 
             if (in_array($this->request->params['action'], $requireAuth) || $requireAuth == ['*']) {
                 if (!isset($controller->request->data['_Token'])) {
-                    throw new AuthSecurityException(sprintf('\'%s\' was not found in request data.', '_Token'));
+                    throw new AuthSecurityException('\'_Token\' was not found in request data.');
                 }
 
                 if ($this->session->check('_Token')) {
@@ -299,7 +302,7 @@ class SecurityComponent extends Component
                         );
                     }
                 } else {
-                    throw new AuthSecurityException(sprintf('\'%s\' was not found in session.', '_Token'));
+                    throw new AuthSecurityException('\'_Token\' was not found in session.');
                 }
             }
         }
@@ -326,12 +329,12 @@ class SecurityComponent extends Component
             return true;
         }
 
+        $msg = self::DEFAULT_EXCEPTION_MESSAGE;
         if (Configure::read('debug')) {
             $msg = $this->_debugPostTokenNotMatching($controller, $hashParts);
-            throw new SecurityException($msg);
         }
 
-        return false;
+        throw new SecurityException($msg);
     }
 
     /**
@@ -358,10 +361,13 @@ class SecurityComponent extends Component
         if (Configure::read('debug') && !isset($check['_Token']['debug'])) {
             throw new SecurityException(sprintf($message, '_Token.debug'));
         }
+        if (!Configure::read('debug') && isset($check['_Token']['debug'])) {
+            throw new SecurityException('Unexpected \'_Token.debug\' found in request data');
+        }
 
         $token = urldecode($check['_Token']['fields']);
         if (strpos($token, ':')) {
-            list($token, $locked) = explode(':', $token, 2);
+            list($token, ) = explode(':', $token, 2);
         }
         return $token;
     }
@@ -375,7 +381,8 @@ class SecurityComponent extends Component
     protected function _hashParts(Controller $controller)
     {
         $fieldList = $this->_fieldsList($controller->request->data);
-        $unlocked = $this->_unlocked($controller->request->data);
+        $unlocked = $this->_sortedUnlocked($controller->request->data);
+
         return [
             $controller->request->here(),
             serialize($fieldList),
@@ -456,12 +463,26 @@ class SecurityComponent extends Component
     /**
      * Get the unlocked string
      *
-     * @param array $check Data array
+     * @param array $data Data array
      * @return string
      */
-    protected function _unlocked(array $check)
+    protected function _unlocked(array $data)
     {
-        return urldecode($check['_Token']['unlocked']);
+        return urldecode($data['_Token']['unlocked']);
+    }
+
+    /**
+     * Get the sorted unlocked string
+     *
+     * @param array $data Data array
+     * @return string
+     */
+    protected function _sortedUnlocked($data)
+    {
+        $unlocked = $this->_unlocked($data);
+        $unlocked = explode('|', $unlocked);
+        sort($unlocked, SORT_STRING);
+        return implode('|', $unlocked);
     }
 
     /**
@@ -469,7 +490,7 @@ class SecurityComponent extends Component
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
      * @param array $hashParts Elements used to generate the Token hash
-     * @return array Messages to explain why token is not matching
+     * @return string Message explaining why the tokens are not matching
      */
     protected function _debugPostTokenNotMatching(Controller $controller, $hashParts)
     {
@@ -478,11 +499,16 @@ class SecurityComponent extends Component
         if (!is_array($expectedParts) || count($expectedParts) !== 3) {
             return 'Invalid security debug token.';
         }
-        if ($hashParts[0] !== $expectedParts[0]) {
-            $messages[] = sprintf('URL mismatch in POST data (expected \'%s\' but found \'%s\')', $expectedParts[0], $hashParts[0]);
+        $expectedUrl = Hash::get($expectedParts, 0);
+        $url = Hash::get($hashParts, 0);
+        if ($expectedUrl !== $url) {
+            $messages[] = sprintf('URL mismatch in POST data (expected \'%s\' but found \'%s\')', $expectedUrl, $url);
         }
-        $expectedFields = $expectedParts[1];
-        $dataFields = unserialize($hashParts[1]);
+        $expectedFields = Hash::get($expectedParts, 1);
+        $dataFields = Hash::get($hashParts, 1);
+        if ($dataFields) {
+            $dataFields = unserialize($dataFields);
+        }
         $fieldsMessages = $this->_debugCheckFields(
             $dataFields,
             $expectedFields,
@@ -519,24 +545,10 @@ class SecurityComponent extends Component
      */
     protected function _debugCheckFields($dataFields, $expectedFields = [], $intKeyMessage = '', $stringKeyMessage = '', $missingMessage = '')
     {
-        $messages = [];
-        foreach ($dataFields as $key => $value) {
-            if (is_int($key)) {
-                $foundKey = array_search($value, (array)$expectedFields);
-                if ($foundKey === false) {
-                    $messages[] = sprintf($intKeyMessage, $value);
-                } else {
-                    unset($expectedFields[$foundKey]);
-                }
-            } elseif (is_string($key)) {
-                if (isset($expectedFields[$key]) && $value !== $expectedFields[$key]) {
-                    $messages[] = sprintf($stringKeyMessage, $key, $expectedFields[$key], $value);
-                }
-                unset($expectedFields[$key]);
-            }
-        }
-        if (count($expectedFields) > 0) {
-            $messages[] = sprintf($missingMessage, implode(', ', $expectedFields));
+        $messages = $this->_matchExistingFields($dataFields, $expectedFields, $intKeyMessage, $stringKeyMessage);
+        $expectedFieldsMessage = $this->_debugExpectedFields($expectedFields, $missingMessage);
+        if ($expectedFieldsMessage !== null) {
+            $messages[] = $expectedFieldsMessage;
         }
         return $messages;
     }
@@ -584,5 +596,61 @@ class SecurityComponent extends Component
             throw new BadRequestException('The request has been black-holed');
         }
         return call_user_func_array([&$controller, $method], empty($params) ? null : $params);
+    }
+
+    /**
+     * Generate array of messages for the existing fields in POST data, matching dataFields in $expectedFields
+     * will be unset
+     *
+     * @param array $dataFields Fields array, containing the POST data fields
+     * @param array $expectedFields Fields array, containing the expected fields we should have in POST
+     * @param string $intKeyMessage Message string if unexpected found in data fields indexed by int (not protected)
+     * @param string $stringKeyMessage Message string if tampered found in data fields indexed by string (protected)
+     * @return array Error messages
+     */
+    protected function _matchExistingFields($dataFields, &$expectedFields, $intKeyMessage, $stringKeyMessage)
+    {
+        $messages = [];
+        foreach ((array)$dataFields as $key => $value) {
+            if (is_int($key)) {
+                $foundKey = array_search($value, (array)$expectedFields);
+                if ($foundKey === false) {
+                    $messages[] = sprintf($intKeyMessage, $value);
+                } else {
+                    unset($expectedFields[$foundKey]);
+                }
+            } elseif (is_string($key)) {
+                if (isset($expectedFields[$key]) && $value !== $expectedFields[$key]) {
+                    $messages[] = sprintf($stringKeyMessage, $key, $expectedFields[$key], $value);
+                }
+                unset($expectedFields[$key]);
+            }
+        }
+
+        return $messages;
+    }
+
+    /**
+     * Generate debug message for the expected fields
+     *
+     * @param array $expectedFields Expected fields
+     * @param string $missingMessage Message template
+     * @return string Error message about expected fields
+     */
+    protected function _debugExpectedFields($expectedFields = [], $missingMessage = '')
+    {
+        if (count($expectedFields) === 0) {
+            return null;
+        }
+
+        $expectedFieldNames = [];
+        foreach ((array)$expectedFields as $key => $expectedField) {
+            if (is_int($key)) {
+                $expectedFieldNames[] = $expectedField;
+            } else {
+                $expectedFieldNames[] = $key;
+            }
+        }
+        return sprintf($missingMessage, implode(', ', $expectedFieldNames));
     }
 }

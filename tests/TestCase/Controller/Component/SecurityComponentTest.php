@@ -959,11 +959,8 @@ class SecurityComponentTest extends TestCase
             ],
             '_Token' => compact('fields', 'unlocked')
         ];
-        $debug = Configure::read('debug');
         Configure::write('debug', false);
-        $result = $this->validatePost();
-        $this->assertFalse($result);
-        Configure::write('debug', $debug);
+        $result = $this->validatePost('SecurityException', 'The request has been black-holed');
     }
 
     /**
@@ -1425,7 +1422,6 @@ class SecurityComponentTest extends TestCase
     public function testBlackholeThrowsBadRequest()
     {
         $this->Security->config('blackHoleCallback', '');
-        $debug = Configure::read('debug');
         $message = '';
 
         Configure::write('debug', false);
@@ -1435,7 +1431,6 @@ class SecurityComponentTest extends TestCase
             $message = $ex->getMessage();
             $reason = $ex->getReason();
         }
-        Configure::write('debug', $debug);
         $this->assertEquals('The request has been black-holed', $message);
         $this->assertEquals('error description', $reason);
     }
@@ -1468,6 +1463,37 @@ class SecurityComponentTest extends TestCase
         ];
 
         $result = $this->validatePost('SecurityException', 'Tampered field \'Model.hidden\' in POST data (expected value \'value\' but found \'tampered\')');
+        $this->assertFalse($result);
+    }
+
+    /**
+     * Test that validatePost fails with tampered fields and explanation
+     *
+     * @return void
+     * @triggers Controller.startup $this->Controller
+     */
+    public function testValidatePostFailTamperingMutatedIntoArray()
+    {
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->Controller->Security->startup($event);
+        $unlocked = '';
+        $fields = ['Model.hidden' => 'value', 'Model.id' => '1'];
+        $debug = urlencode(json_encode([
+            '/articles/index',
+            $fields,
+            []
+        ]));
+        $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::salt()));
+        $fields .= urlencode(':Model.hidden|Model.id');
+        $this->Controller->request->data = [
+            'Model' => [
+                'hidden' => ['some-key' => 'some-value'],
+                'id' => '1',
+            ],
+            '_Token' => compact('fields', 'unlocked', 'debug')
+        ];
+
+        $result = $this->validatePost('SecurityException', 'Unexpected field \'Model.hidden.some-key\' in POST data, Missing field \'Model.hidden\' in POST data');
         $this->assertFalse($result);
     }
 
