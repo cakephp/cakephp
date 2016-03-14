@@ -1242,6 +1242,18 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the localizedTime proxy method
+     *
+     * @return void
+     */
+    public function testLocalizedTime()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'localizedTime', 'date', ['date']);
+        $this->assertNotEmpty($validator->errors(['username' => 'not a date']));
+    }
+
+    /**
      * Tests the boolean proxy method
      *
      * @return void
