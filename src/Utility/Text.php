@@ -24,6 +24,13 @@ class Text
 {
 
     /**
+     * Default transliteration id.
+     *
+     * @param string $defaultTransliteratorId Transliterator identifer string.
+     */
+    public static $defaultTransliteratorId = 'Any-Latin; Latin-ASCII';
+
+    /**
      * Generate a random UUID version 4
      *
      * Warning: This method should not be used as a random seed for any cryptographic operations.
@@ -865,7 +872,7 @@ class Text
     {
         $options += [
             'replacement' => '-',
-            'transliteratorId' => 'Any-Latin; Latin-ASCII'
+            'transliteratorId' => static::$defaultTransliteratorId
         ];
 
         $quotedReplacement = preg_quote($options['replacement'], '/');
