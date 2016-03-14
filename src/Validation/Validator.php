@@ -829,10 +829,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The field you want to apply the rule to.
      * @param string $type Parser type, one out of 'date', 'time', and 'datetime'
-     * @param string|int $format any format accepted by IntlDateFormatter
-     * @param string $message The error message when the rule fails.
-     * @param string|callable $when Either 'create' or 'update' or a callable that returns
-     *   true when the valdiation rule should be applied.
+     * @param string|int|null $format any format accepted by IntlDateFormatter
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::localizedTime()
      * @return $this
      */
