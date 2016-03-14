@@ -852,4 +852,31 @@ class Text
         }
         throw new InvalidArgumentException('No unit type.');
     }
+
+    /**
+     * Returns a string with all spaces converted to dashes (by default), accented
+     * characters converted to non-accented characters, and non word characters removed.
+     *
+     * @param string $string the string you want to slug
+     * @param array $options Options
+     * @return string
+     */
+    public static function slug($string, $options = [])
+    {
+        $options += [
+            'replacement' => '-',
+            'transliteratorId' => 'Any-Latin; Latin-ASCII'
+        ];
+
+        $quotedReplacement = preg_quote($options['replacement'], '/');
+        $map = [
+            '/[^\s\p{Zs}\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}]/mu' => ' ',
+            '/[\s\p{Zs}]+/mu' => $options['replacement'],
+            sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
+        ];
+
+        $string = preg_replace(array_keys($map), array_values($map), $string);
+
+        return transliterator_transliterate($options['transliteratorId'], $string);
+    }
 }

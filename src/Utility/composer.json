@@ -4,10 +4,13 @@
     "license": "MIT",
     "authors": [
         {
-        "name": "CakePHP Community",
-        "homepage": "http://cakephp.org"
-    }
+            "name": "CakePHP Community",
+            "homepage": "http://cakephp.org"
+        }
     ],
+    "suggest": {
+      "ext-intl": "To use Text::slug()."
+    },
     "autoload": {
         "psr-4": {
             "Cake\\Utility\\": "."

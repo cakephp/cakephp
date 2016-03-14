@@ -1588,4 +1588,85 @@ podeís adquirirla.</span></p>
             [['size' => '2VB', 'default' => 'Unknown type'], 'Unknown type']
         ];
     }
+
+    public function slugInputProvider()
+    {
+        return [
+            [
+                'Foo Bar: Not just for breakfast any-more', [],
+                'Foo-Bar-Not-just-for-breakfast-any-more'
+            ],
+            [
+                'Foo Bar: Not just for breakfast any-more', ['replacement' => '_'],
+                'Foo_Bar_Not_just_for_breakfast_any_more'
+            ],
+            [
+                'Foo Bar: Not just for breakfast any-more', ['replacement' => '+'],
+                'Foo+Bar+Not+just+for+breakfast+any+more'
+            ],
+            [
+                'Äpfel Über Öl grün ärgert groß öko', [],
+                'Aepfel-Ueber-Oel-gruen-aergert-gross-oeko'
+            ],
+            [
+                'The truth - and- more- news', [],
+                'The-truth-and-more-news'
+            ],
+            [
+                'The truth: and more news', [],
+                'The-truth-and-more-news'
+            ],
+            [
+                'La langue française est un attribut de souveraineté en France', [],
+                'La-langue-francaise-est-un-attribut-de-souverainete-en-France'
+            ],
+            [
+                '!@$#exciting stuff! - what !@-# was that?', [],
+                'exciting-stuff-what-was-that'
+            ],
+            [
+                '20% of profits went to me!', [],
+                '20-of-profits-went-to-me'
+            ],
+            [
+                '#this melts your face1#2#3', [],
+                'this-melts-your-face1-2-3'
+            ],
+            [
+                'controller/action/りんご/1', [],
+                'controller-action-りんご-1'
+            ],
+            [
+                'の話が出たので大丈夫かなあと', [],
+                'の話が出たので大丈夫かなあと'
+            ],
+            [
+                'posts/view/한국어/page:1/sort:asc', [],
+                'posts-view-한국어-page-1-sort-asc'
+            ],
+            [
+                "non\xc2\xa0breaking\xc2\xa0space", [],
+                'non-breaking-space'
+            ],
+            [
+                'Foo Bar: Not just for breakfast any-more', ['replacement' => ''],
+                'FooBarNotjustforbreakfastanymore'
+            ],
+        ];
+    }
+
+    /**
+     * testSlug method
+     *
+     * @param string $string String
+     * @param array $options Options
+     * @param String $expected Exepected string
+     * @return void
+     * @dataProvider slugInputProvider
+     */
+    public function testSlug($string, $options, $expected)
+    {
+        $result = Text::slug($string, $options);
+        $this->assertEquals($expected, $result);
+    }
 }
