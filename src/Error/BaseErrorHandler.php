@@ -270,22 +270,22 @@ abstract class BaseErrorHandler
                 'start' => 1,
                 'format' => 'log'
             ]);
-			
-			$request = Router::getRequest();
-			if ($request) {
-				$message .= "\nRequest URL: " . $request->here();
-
-				$referer = $request->env('HTTP_REFERER');
-				if ($referer) {
-					$message .= "\nReferer URL: " . $referer;
-				}
-			
-				$clientIp = $request->clientIp();
-				if	($clientIp && $clientIp !== '::1') {
-					$message .= "\nClient IP: " . $clientIp;
-				}
-			}
-			
+            
+            $request = Router::getRequest();
+            if ($request) {
+                $message .= "\nRequest URL: " . $request->here();
+                
+                $referer = $request->env('HTTP_REFERER');
+                if ($referer) {
+                    $message .= "\nReferer URL: " . $referer;
+                }
+                
+                $clientIp = $request->clientIp();
+                if ($clientIp && $clientIp !== '::1') {
+                    $message .= "\nClient IP: " . $clientIp;
+                }
+            }
+            
             $message .= "\nTrace:\n" . $trace . "\n";
         }
         $message .= "\n\n";
@@ -348,16 +348,16 @@ abstract class BaseErrorHandler
         $request = Router::getRequest();
         if ($request) {
             $message .= "\nRequest URL: " . $request->here();
-
+            
             $referer = $request->env('HTTP_REFERER');
             if ($referer) {
                 $message .= "\nReferer URL: " . $referer;
             }
-			
-			$clientIp = $request->clientIp();
-			if	($clientIp && $clientIp !== '::1') {
-				$message .= "\nClient IP: " . $clientIp;
-			}
+            
+            $clientIp = $request->clientIp();
+            if ($clientIp && $clientIp !== '::1') {
+                $message .= "\nClient IP: " . $clientIp;
+            }
         }
 
         if (!empty($config['trace'])) {
