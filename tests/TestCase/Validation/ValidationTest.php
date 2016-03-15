@@ -901,11 +901,13 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::date($dateTime));
         $this->assertTrue(Validation::time($dateTime));
         $this->assertTrue(Validation::dateTime($dateTime));
+        $this->assertTrue(Validation::localizedTime($dateTime));
 
         $dateTime = new \DateTimeImmutable();
         $this->assertTrue(Validation::date($dateTime));
         $this->assertTrue(Validation::time($dateTime));
         $this->assertTrue(Validation::dateTime($dateTime));
+        $this->assertTrue(Validation::localizedTime($dateTime));
     }
 
     /**
