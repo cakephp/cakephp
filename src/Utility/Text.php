@@ -861,6 +861,20 @@ class Text
     }
 
     /**
+     * Transliterate string.
+     *
+     * @param string $string String to transliterate.
+     * @param string|null $transliteratorId Transliterator identifer. If null
+     *   Text::$defaultTransliteratorId will be used.
+     * @return string
+     */
+    public static function transliterate($string, $transliteratorId = null)
+    {
+        $transliteratorId = $transliteratorId ?: static::$defaultTransliteratorId;
+        return transliterator_transliterate($transliteratorId, $string);
+    }
+
+    /**
      * Returns a string with all spaces converted to dashes (by default), accented
      * characters converted to non-accented characters, and non word characters removed.
      *
@@ -872,10 +886,10 @@ class Text
     {
         $options += [
             'replacement' => '-',
-            'transliteratorId' => static::$defaultTransliteratorId
+            'transliteratorId' => null
         ];
 
-        $string = transliterator_transliterate($options['transliteratorId'], $string);
+        $string = static::transliterate($string, $options['transliteratorId']);
 
         $quotedReplacement = preg_quote($options['replacement'], '/');
         $map = [

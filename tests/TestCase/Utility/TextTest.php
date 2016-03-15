@@ -1589,6 +1589,68 @@ podeís adquirirla.</span></p>
         ];
     }
 
+    /**
+     * Data provider for testTransliterate()
+     *
+     * @return array
+     */
+    public function transliterateInputProvider()
+    {
+        return [
+            [
+                'Foo Bar: Not just for breakfast any-more', null,
+                'Foo Bar: Not just for breakfast any-more'
+            ],
+            [
+                'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ ¦', null,
+                'A ae Ubermensch pa hoyeste niva! И я люблю PHP! есть. fi ¦'
+            ],
+            [
+                'Äpfel Über Öl grün ärgert groß öko', null,
+                'Aepfel Ueber Oel gruen aergert gross oeko'
+            ],
+            [
+                'La langue française est un attribut de souveraineté en France', null,
+                'La langue francaise est un attribut de souverainete en France'
+            ],
+            [
+                '!@$#exciting stuff! - what !@-# was that?', null,
+                '!@$#exciting stuff! - what !@-# was that?'
+            ],
+            [
+                'controller/action/りんご/1', null,
+                'controller/action/りんご/1'
+            ],
+            [
+                'の話が出たので大丈夫かなあと', null,
+                'の話が出たので大丈夫かなあと'
+            ],
+            [
+                'posts/view/한국어/page:1/sort:asc', null,
+                'posts/view/한국어/page:1/sort:asc'
+            ],
+            [
+                "non\xc2\xa0breaking\xc2\xa0space", null,
+                'non breaking space'
+            ]
+        ];
+    }
+
+    /**
+     * testTransliterate method
+     *
+     * @param string $string String
+     * @param string $transliteratorId Transliterator Id
+     * @param String $expected Exepected string
+     * @return void
+     * @dataProvider transliterateInputProvider
+     */
+    public function testTransliterate($string, $transliteratorId, $expected)
+    {
+        $result = Text::transliterate($string, $transliteratorId);
+        $this->assertEquals($expected, $result);
+    }
+
     public function slugInputProvider()
     {
         return [
