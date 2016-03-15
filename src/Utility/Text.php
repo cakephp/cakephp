@@ -138,7 +138,7 @@ class Text
      * corresponds to a variable placeholder name in $str.
      * Example:
      * ```
-     * Text::insert(':name is :age years old.', ['name' => 'Bob', '65']);
+     * Text::insert(':name is :age years old.', ['name' => 'Bob', 'age' => '65']);
      * ```
      * Returns: Bob is 65 years old.
      *
