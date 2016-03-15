@@ -28,7 +28,7 @@ class Text
      *
      * @param string $defaultTransliteratorId Transliterator identifer string.
      */
-    public static $defaultTransliteratorId = 'Latin-ASCII';
+    public static $defaultTransliteratorId = 'Any-Latin; Latin-ASCII';
 
     /**
      * Generate a random UUID version 4
@@ -889,7 +889,9 @@ class Text
             'transliteratorId' => null
         ];
 
-        $string = static::transliterate($string, $options['transliteratorId']);
+        if ($options['transliteratorId'] !== false) {
+            $string = static::transliterate($string, $options['transliteratorId']);
+        }
 
         $quotedReplacement = preg_quote($options['replacement'], '/');
         $map = [

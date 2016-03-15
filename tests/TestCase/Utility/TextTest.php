@@ -1603,11 +1603,11 @@ podeís adquirirla.</span></p>
             ],
             [
                 'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ ¦', null,
-                'A ae Ubermensch pa hoyeste niva! И я люблю PHP! есть. fi ¦'
+                'A ae Ubermensch pa hoyeste niva! I a lublu PHP! estʹ. fi ¦'
             ],
             [
                 'Äpfel Über Öl grün ärgert groß öko', null,
-                'Aepfel Ueber Oel gruen aergert gross oeko'
+                'Apfel Uber Ol grun argert gross oko'
             ],
             [
                 'La langue française est un attribut de souveraineté en France', null,
@@ -1619,15 +1619,15 @@ podeís adquirirla.</span></p>
             ],
             [
                 'controller/action/りんご/1', null,
-                'controller/action/りんご/1'
+                'controller/action/ringo/1'
             ],
             [
                 'の話が出たので大丈夫かなあと', null,
-                'の話が出たので大丈夫かなあと'
+                'no huaga chutanode da zhang fukanaato'
             ],
             [
                 'posts/view/한국어/page:1/sort:asc', null,
-                'posts/view/한국어/page:1/sort:asc'
+                'posts/view/hangug-eo/page:1/sort:asc'
             ],
             [
                 "non\xc2\xa0breaking\xc2\xa0space", null,
@@ -1668,11 +1668,11 @@ podeís adquirirla.</span></p>
             ],
             [
                 'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ ¦', [],
-                'A-ae-Ubermensch-pa-hoyeste-niva-И-я-люблю-PHP-есть-fi'
+                'A-ae-Ubermensch-pa-hoyeste-niva-I-a-lublu-PHP-estʹ-fi'
             ],
             [
                 'Äpfel Über Öl grün ärgert groß öko', [],
-                'Aepfel-Ueber-Oel-gruen-aergert-gross-oeko'
+                'Apfel-Uber-Ol-grun-argert-gross-oko'
             ],
             [
                 'The truth - and- more- news', [],
@@ -1699,15 +1699,15 @@ podeís adquirirla.</span></p>
                 'this-melts-your-face1-2-3'
             ],
             [
-                'controller/action/りんご/1', [],
+                'controller/action/りんご/1', ['transliteratorId' => false],
                 'controller-action-りんご-1'
             ],
             [
-                'の話が出たので大丈夫かなあと', [],
+                'の話が出たので大丈夫かなあと', ['transliteratorId' => false],
                 'の話が出たので大丈夫かなあと'
             ],
             [
-                'posts/view/한국어/page:1/sort:asc', [],
+                'posts/view/한국어/page:1/sort:asc', ['transliteratorId' => false],
                 'posts-view-한국어-page-1-sort-asc'
             ],
             [
