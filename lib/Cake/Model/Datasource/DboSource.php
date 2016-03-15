@@ -1353,27 +1353,38 @@ class DboSource extends DataSource {
 		$modelAlias = $model->alias;
 		$modelPK = $model->primaryKey;
 		$modelFK = $model->hasMany[$association]['foreignKey'];
+
+		// Make one pass through children and collect by parent key
+		// Make second pass through parents and associate children
+		$mergedByFK = array();
+		foreach ($merge as $data) {
+			$fk = $data[$association][$modelFK];
+			if (! array_key_exists($fk, $mergedByFK)) {
+				$mergedByFK[$fk] = array();
+			}
+			if (count($data) > 1) {
+				$data = array_merge($data[$association], $data);
+				unset($data[$association]);
+				foreach ($data as $key => $name) {
+					if (is_numeric($key)) {
+						$data[$association][] = $name;
+						unset($data[$key]);
+					}
+				}
+				$mergedByFK[$fk][] = $data;
+			} else {
+				$mergedByFK[$fk][] = $data[$association];
+			}
+		}
+
 		foreach ($resultSet as &$result) {
 			if (!isset($result[$modelAlias])) {
 				continue;
 			}
 			$merged = array();
-			foreach ($merge as $data) {
-				if ($result[$modelAlias][$modelPK] === $data[$association][$modelFK]) {
-					if (count($data) > 1) {
-						$data = array_merge($data[$association], $data);
-						unset($data[$association]);
-						foreach ($data as $key => $name) {
-							if (is_numeric($key)) {
-								$data[$association][] = $name;
-								unset($data[$key]);
-							}
-						}
-						$merged[] = $data;
-					} else {
-						$merged[] = $data[$association];
-					}
-				}
+			$pk = $result[$modelAlias][$modelPK];
+			if (isset($mergedByFK[$pk])) {
+				$merged = $mergedByFK[$pk];
 			}
 			$result = Hash::mergeDiff($result, array($association => $merged));
 		}
