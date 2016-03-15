@@ -21,10 +21,10 @@
 App::uses('LogEngineCollection', 'Log');
 
 /**
- * Logs messages to configured Log adapters. One or more adapters
- * can be configured using CakeLogs's methods. If you don't
- * configure any adapters, and write to the logs a default
- * FileLog will be autoconfigured for you.
+ * Logs messages to configured Log adapters.
+ * 
+ * One or more adapters
+ * can be configured using CakeLogs's methods.
  *
  * ### Configuring Log adapters
  *
