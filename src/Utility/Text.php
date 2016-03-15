@@ -28,7 +28,7 @@ class Text
      *
      * @param string $defaultTransliteratorId Transliterator identifer string.
      */
-    public static $defaultTransliteratorId = 'Any-Latin; Latin-ASCII';
+    public static $defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
 
     /**
      * Generate a random UUID version 4

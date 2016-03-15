@@ -1603,7 +1603,7 @@ podeís adquirirla.</span></p>
             ],
             [
                 'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ ¦', null,
-                'A ae Ubermensch pa hoyeste niva! I a lublu PHP! estʹ. fi ¦'
+                'A ae Ubermensch pa hoyeste niva! I a lublu PHP! est. fi '
             ],
             [
                 'Äpfel Über Öl grün ärgert groß öko', null,
@@ -1668,7 +1668,7 @@ podeís adquirirla.</span></p>
             ],
             [
                 'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ ¦', [],
-                'A-ae-Ubermensch-pa-hoyeste-niva-I-a-lublu-PHP-estʹ-fi'
+                'A-ae-Ubermensch-pa-hoyeste-niva-I-a-lublu-PHP-est-fi'
             ],
             [
                 'Äpfel Über Öl grün ärgert groß öko', [],
