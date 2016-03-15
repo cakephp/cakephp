@@ -1571,7 +1571,6 @@ class ValidationTest extends TestCase
 
         $this->assertFalse(Validation::localizedTime('31. Dezember 2006', 'date')); // non-US format
         $this->assertFalse(Validation::localizedTime('18:40', 'time')); // non-US format
-        $this->assertFalse(Validation::localizedTime('12.90am', 'time')); // not a valid time
 
         /* German */
         I18N::locale('de_DE');
