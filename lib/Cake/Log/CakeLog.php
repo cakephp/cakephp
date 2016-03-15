@@ -84,6 +84,9 @@ class CakeLog {
 /**
  * Default log levels as detailed in RFC 5424
  * http://tools.ietf.org/html/rfc5424
+ * 
+ * Windows has fewer levels, thus notice, info and debug are the same.
+ * https://bugs.php.net/bug.php?id=18090
  *
  * @var array
  */
