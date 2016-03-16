@@ -1142,7 +1142,6 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecurityFieldsNoDebugMode()
     {
-        $debug = Configure::read('debug');
         Configure::write('debug', false);
         $fields = ['Model.password', 'Model.username', 'Model.valid' => '0'];
 
@@ -1167,7 +1166,6 @@ class FormHelperTest extends TestCase
             '/div'
         ];
         $this->assertHtml($expected, $result);
-        Configure::write('debug', $debug);
     }
 
     /**
@@ -1722,10 +1720,7 @@ class FormHelperTest extends TestCase
             'Addresses.city', 'Addresses.phone'
         ];
         $this->assertEquals($expected, $result);
-        $debug = Configure::read('debug');
-        Configure::write('debug', false);
         $result = $this->Form->secure($expected, ['data-foo' => 'bar', 'debugSecurity' => true]);
-        Configure::write('debug', $debug);
 
         $hash = 'a303becbdd99cb42ca14a1cf7e63dfd48696a3c5%3AAddresses.id';
         $tokenDebug = urlencode(json_encode([
@@ -1770,6 +1765,58 @@ class FormHelperTest extends TestCase
     /**
      * testFormSecurityInputUnlockedFieldsDebugSecurityFalse method
      *
+     * Debug is false, debugSecurity is true -> no debug
+     *
+     * @return void
+     */
+    public function testFormSecurityInputUnlockedFieldsDebugSecurityDebugFalse()
+    {
+        $this->Form->request['_Token'] = [
+            'unlockedFields' => ['first_name', 'address']
+        ];
+        $this->Form->create();
+        $this->assertEquals($this->Form->request['_Token']['unlockedFields'], $this->Form->unlockField());
+
+        $this->Form->hidden('Addresses.id', ['value' => '123456']);
+        $this->Form->text('Addresses.title');
+        $this->Form->text('Addresses.first_name');
+        $this->Form->text('Addresses.last_name');
+        $this->Form->text('Addresses.address');
+        $this->Form->text('Addresses.city');
+        $this->Form->text('Addresses.phone');
+
+        $result = $this->Form->fields;
+        $expected = [
+            'Addresses.id' => '123456', 'Addresses.title', 'Addresses.last_name',
+            'Addresses.city', 'Addresses.phone'
+        ];
+        $this->assertEquals($expected, $result);
+        Configure::write('debug', false);
+        $result = $this->Form->secure($expected, ['data-foo' => 'bar', 'debugSecurity' => true]);
+
+        $hash = 'a303becbdd99cb42ca14a1cf7e63dfd48696a3c5%3AAddresses.id';
+        $expected = [
+            'div' => ['style' => 'display:none;'],
+            ['input' => [
+                'type' => 'hidden',
+                'name' => '_Token[fields]',
+                'value' => $hash,
+                'data-foo' => 'bar',
+            ]],
+            ['input' => [
+                'type' => 'hidden',
+                'name' => '_Token[unlocked]',
+                'value' => 'address%7Cfirst_name',
+                'data-foo' => 'bar',
+            ]],
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * testFormSecurityInputUnlockedFieldsDebugSecurityFalse method
+     *
      * Test single record form with debugSecurity param.
      *
      * @return void
@@ -1797,10 +1844,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertEquals($expected, $result);
 
-        $debug = Configure::read('debug');
-        Configure::write('debug', true);
         $result = $this->Form->secure($expected, ['data-foo' => 'bar', 'debugSecurity' => false]);
-        Configure::write('debug', $debug);
 
         $hash = 'a303becbdd99cb42ca14a1cf7e63dfd48696a3c5%3AAddresses.id';
 
@@ -6941,7 +6985,6 @@ class FormHelperTest extends TestCase
      */
     public function testPostLinkSecurityHashNoDebugMode()
     {
-        $debug = Configure::read('debug');
         Configure::write('debug', false);
         $hash = Security::hash(
             '/posts/delete/1' .
@@ -6974,7 +7017,6 @@ class FormHelperTest extends TestCase
             '/a'
         ];
         $this->assertHtml($expected, $result);
-        Configure::write('debug', $debug);
     }
 
     /**

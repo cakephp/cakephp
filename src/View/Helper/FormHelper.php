@@ -561,7 +561,7 @@ class FormHelper extends Helper
         }
         $debugSecurity = Configure::read('debug');
         if (isset($secureAttributes['debugSecurity'])) {
-            $debugSecurity = $secureAttributes['debugSecurity'];
+            $debugSecurity = $debugSecurity && $secureAttributes['debugSecurity'];
             unset($secureAttributes['debugSecurity']);
         }
 

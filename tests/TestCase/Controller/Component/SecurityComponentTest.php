@@ -1498,6 +1498,37 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * Test that debug token should not be sent if debug is disabled
+     *
+     * @return void
+     * @triggers Controller.startup $this->Controller
+     */
+    public function testValidatePostUnexpectedDebugToken()
+    {
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->Controller->Security->startup($event);
+        $unlocked = '';
+        $fields = ['Model.hidden' => 'value', 'Model.id' => '1'];
+        $debug = urlencode(json_encode([
+            '/articles/index',
+            $fields,
+            []
+        ]));
+        $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::salt()));
+        $fields .= urlencode(':Model.hidden|Model.id');
+        $this->Controller->request->data = [
+            'Model' => [
+                'hidden' => ['some-key' => 'some-value'],
+                'id' => '1',
+            ],
+            '_Token' => compact('fields', 'unlocked', 'debug')
+        ];
+        Configure::write('debug', false);
+        $result = $this->validatePost('SecurityException', 'Unexpected \'_Token.debug\' found in request data');
+        $this->assertFalse($result);
+    }
+
+    /**
      * Auth required throws exception token not found
      *
      * @return void
