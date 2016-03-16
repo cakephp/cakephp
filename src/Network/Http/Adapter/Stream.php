@@ -225,6 +225,7 @@ class Stream
     {
         $sslOptions = [
             'ssl_verify_peer',
+            'ssl_verify_peer_name',
             'ssl_verify_depth',
             'ssl_allow_self_signed',
             'ssl_cafile',
