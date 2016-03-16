@@ -806,7 +806,12 @@ class TableTest extends TestCase
             'hasOne' => ['profiles'],
             'hasMany' => ['authors'],
             'belongsToMany' => [
-                'tags' => ['joinTable' => 'things_tags']
+                'tags' => [
+                    'joinTable' => 'things_tags',
+                    'conditions' => [
+                        'Tags.starred' => true
+                    ]
+                ]
             ]
         ];
 
@@ -834,6 +839,7 @@ class TableTest extends TestCase
         $this->assertInstanceOf('Cake\ORM\Association\BelongsToMany', $belongsToMany);
         $this->assertEquals('tags', $belongsToMany->name());
         $this->assertSame('things_tags', $belongsToMany->junction()->table());
+        $this->assertSame(['Tags.starred' => true], $belongsToMany->conditions());
     }
 
     /**
