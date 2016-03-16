@@ -1564,7 +1564,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::localizedTime('', 'date'));
         $this->assertFalse(Validation::localizedTime('invalid', 'date'));
 
-        /* English (US) */
+        // English (US)
         I18N::locale('en_US');
         $this->assertTrue(Validation::localizedTime('12/31/2006', 'date'));
         $this->assertTrue(Validation::localizedTime('6.40pm', 'time'));
@@ -1574,7 +1574,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::localizedTime('31. Dezember 2006', 'date')); // non-US format
         $this->assertFalse(Validation::localizedTime('18:40', 'time')); // non-US format
 
-        /* German */
+        // German
         I18N::locale('de_DE');
         $this->assertTrue(Validation::localizedTime('31.12.2006', 'date'));
         $this->assertTrue(Validation::localizedTime('31. Dezember 2006', 'date'));
@@ -1582,7 +1582,7 @@ class ValidationTest extends TestCase
 
         $this->assertFalse(Validation::localizedTime('December 31, 2006', 'date')); // non-German format
 
-        /* Russian */
+        // Russian
         I18N::locale('ru_RU');
         $this->assertTrue(Validation::localizedTime('31 декабря 2006', 'date'));
 
