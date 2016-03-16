@@ -4845,6 +4845,50 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testSelect boolean method
+ *
+ * @return void
+ */
+	public function testSelectBoolean() {
+		$result = $this->Form->select(
+			'Model.field',
+			array(0 => 'No', 1 => 'Yes'),
+			array('value' => false, 'empty' => false)
+		);
+		$expected = array(
+			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			array('option' => array('value' => '0', 'selected' => 'selected')),
+			'No',
+			'/option',
+			array('option' => array('value' => '1')),
+			'Yes',
+			'/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->select(
+			'Model.field',
+			array(0 => 'No', 1 => 'Yes', 2 => 'Yes again'),
+			array('value' => [false, 2], 'empty' => false)
+		);
+		$expected = array(
+			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			array('option' => array('value' => '0', 'selected' => 'selected')),
+			'No',
+			'/option',
+			array('option' => array('value' => '1')),
+			'Yes',
+			'/option',
+			array('option' => array('value' => '2', 'selected' => 'selected')),
+			'Yes again',
+			'/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test that select() with optiongroups listens to the escape param.
  *
  * @return void
