@@ -64,7 +64,7 @@ class Form
      * is first built. This hook method lets you configure the
      * schema or load a pre-defined one.
      *
-     * @param \Cake\Form\Schema $schema The schema to set, or null.
+     * @param \Cake\Form\Schema|null $schema The schema to set, or null.
      * @return \Cake\Form\Schema the schema instance.
      */
     public function schema(Schema $schema = null)
@@ -100,7 +100,7 @@ class Form
      * is first built. This hook method lets you configure the
      * validator or load a pre-defined one.
      *
-     * @param \Cake\Validation\Validator $validator The validator to set, or null.
+     * @param \Cake\Validation\Validator|null $validator The validator to set, or null.
      * @return \Cake\Validation\Validator the validator instance.
      */
     public function validator(Validator $validator = null)

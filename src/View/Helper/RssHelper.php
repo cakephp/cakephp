@@ -286,7 +286,7 @@ class RssHelper extends Helper
      *
      * @param string $name The name of the XML element
      * @param array $attrib The attributes of the XML element
-     * @param string|array $content XML element content
+     * @param string|array|null $content XML element content
      * @param bool $endTag Whether the end tag of the element should be printed
      * @return string XML
      */

@@ -222,7 +222,9 @@ class ErrorHandlerTest extends TestCase
                 $this->logicalAnd(
                     $this->stringContains('Notice (8): Undefined variable: out in '),
                     $this->stringContains('Trace:'),
-                    $this->stringContains(__NAMESPACE__ . '\ErrorHandlerTest::testHandleErrorLoggingTrace()')
+                    $this->stringContains(__NAMESPACE__ . '\ErrorHandlerTest::testHandleErrorLoggingTrace()'),
+                    $this->stringContains('Request URL:'),
+                    $this->stringContains('Referer URL:')
                 )
             );
 

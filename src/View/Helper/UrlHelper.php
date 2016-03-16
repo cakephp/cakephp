@@ -29,7 +29,7 @@ class UrlHelper extends Helper
     /**
      * Returns a URL based on provided parameters.
      *
-     * @param string|array $url Either a relative string url like `/products/view/23` or
+     * @param string|array|null $url Either a relative string url like `/products/view/23` or
      *    an array of URL parameters. Using an array for URLs will allow you to leverage
      *    the reverse routing features of CakePHP.
      * @param bool $full If true, the full base URL will be prepended to the result

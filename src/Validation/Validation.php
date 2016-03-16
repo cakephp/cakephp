@@ -14,6 +14,7 @@
  */
 namespace Cake\Validation;
 
+use Cake\I18n\Time;
 use Cake\Utility\Text;
 use DateTimeInterface;
 use LogicException;
@@ -457,6 +458,33 @@ class Validation
     }
 
     /**
+     * Date and/or time string validation.
+     * Uses `I18n::Time` to parse the date. This means parsing is locale dependent.
+     *
+     * @param string|\DateTime $check a date string or object (will always pass)
+     * @param string $type Parser type, one out of 'date', 'time', and 'datetime'
+     * @param string|int|null $format any format accepted by IntlDateFormatter
+     * @return bool Success
+     * @throws \InvalidArgumentException when unsupported $type given
+     * @see \Cake\I18N\Time::parseDate(), \Cake\I18N\Time::parseTime(), \Cake\I18N\Time::parseDateTime()
+     */
+    public static function localizedTime($check, $type = 'datetime', $format = null)
+    {
+        if ($check instanceof DateTimeInterface) {
+            return true;
+        }
+        static $methods = [
+            'date' => 'parseDate',
+            'time' => 'parseTime',
+            'datetime' => 'parseDateTime',
+        ];
+        if (empty($methods[$type])) {
+            throw new \InvalidArgumentException('Unsupported parser type given.');
+        }
+        return (Time::{$methods[$type]}($check, $format) !== null);
+    }
+
+    /**
      * Boolean validation, determines if value passed is a boolean integer or true/false.
      *
      * @param string $check a valid boolean
@@ -478,7 +506,7 @@ class Validation
      * - 1..N => Exactly that many number of decimal places. The '.' is required.
      *
      * @param float $check The value the test for decimal.
-     * @param int $places Decimal places.
+     * @param int|null $places Decimal places.
      * @param string|null $regex If a custom regular expression is used, this is the only validation that will occur.
      * @return bool Success
      */
@@ -526,7 +554,7 @@ class Validation
      *
      * @param string $check Value to check
      * @param bool $deep Perform a deeper validation (if true), by also checking availability of host
-     * @param string $regex Regex to use (if none it will use built in regex)
+     * @param string|null $regex Regex to use (if none it will use built in regex)
      * @return bool Success
      */
     public static function email($check, $deep = false, $regex = null)

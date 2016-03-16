@@ -73,7 +73,7 @@ trait StaticConfigTrait
      * ```
      *
      * @param string|array $key The name of the configuration, or an array of multiple configs.
-     * @param array $config An array of name => configuration data for adapter.
+     * @param array|null $config An array of name => configuration data for adapter.
      * @return array|null Null when adding configuration or an array of configuration data when reading.
      * @throws \BadMethodCallException When trying to modify an existing config.
      */

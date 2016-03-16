@@ -339,7 +339,7 @@ class Table
      * if none is passed.
      *
      * @param string $name The column to get the type of.
-     * @param string $type The type to set the column to.
+     * @param string|null $type The type to set the column to.
      * @return string|null Either the column type or null.
      */
     public function columnType($name, $type = null)

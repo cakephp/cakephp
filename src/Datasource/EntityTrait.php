@@ -616,7 +616,7 @@ trait EntityTrait
      * When called with no arguments it will return whether or not there are any
      * dirty property in the entity
      *
-     * @param string $property the field to set or check status for
+     * @param string|null $property the field to set or check status for
      * @param null|bool $isDirty true means the property was changed, false means
      * it was not changed and null will make the function return current state
      * for that property
@@ -799,7 +799,7 @@ trait EntityTrait
      * Read the error(s) from one or many objects.
      *
      * @param array|\Cake\Datasource\EntityTrait $object The object to read errors from.
-     * @param string $path The field name for errors.
+     * @param string|null $path The field name for errors.
      * @return array
      */
     protected function _readError($object, $path = null)
@@ -885,7 +885,7 @@ trait EntityTrait
      * ```
      *
      * @param string|array $property single or list of properties to change its accessibility
-     * @param bool $set true marks the property as accessible, false will
+     * @param bool|null $set true marks the property as accessible, false will
      * mark it as protected.
      * @return $this|bool
      */
@@ -920,7 +920,7 @@ trait EntityTrait
      * If called with no arguments, it returns the alias of the repository
      * this entity came from if it is known.
      *
-     * @param string $alias the alias of the repository
+     * @param string|null $alias the alias of the repository
      * @return string|$this
      */
     public function source($alias = null)

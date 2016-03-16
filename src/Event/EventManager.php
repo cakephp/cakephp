@@ -61,7 +61,7 @@ class EventManager
      *
      * If called with the first parameter, it will be set as the globally available instance
      *
-     * @param \Cake\Event\EventManager $manager Event manager instance.
+     * @param \Cake\Event\EventManager|null $manager Event manager instance.
      * @return \Cake\Event\EventManager the global event manager
      */
     public static function instance($manager = null)
@@ -85,7 +85,7 @@ class EventManager
      * method will be called on the object to register the declared events individually as methods to be managed by this class.
      * It is possible to define multiple event handlers per event name.
      *
-     * @param string $eventKey The event unique identifier name with which the callback will be associated. If $callable
+     * @param string|null $eventKey The event unique identifier name with which the callback will be associated. If $callable
      * is an instance of Cake\Event\EventListenerInterface this argument will be ignored
      *
      * @param array $options used to set the `priority` flag to the listener. In the future more options may be added.
@@ -133,7 +133,7 @@ class EventManager
      * $eventManager->on('Model.beforeSave', ['priority' => 90], $callable);
      * ```
      *
-     * @param string|\Cake\Event\EventListenerInterface $eventKey The event unique identifier name
+     * @param string|\Cake\Event\EventListenerInterface|null $eventKey The event unique identifier name
      * with which the callback will be associated. If $eventKey is an instance of
      * Cake\Event\EventListenerInterface its events will be bound using the `implementedEvents` methods.
      *
@@ -142,7 +142,7 @@ class EventManager
      * Priorities are treated as queues. Lower values are called before higher ones, and multiple attachments
      * added to the same priority queue will be treated in the order of insertion.
      *
-     * @param callable $callable The callable function you want invoked.
+     * @param callable|null $callable The callable function you want invoked.
      *
      * @return void
      * @throws \InvalidArgumentException When event key is missing or callable is not an
@@ -264,7 +264,7 @@ class EventManager
      *
      * @param string|\Cake\Event\EventListenerInterface $eventKey The event unique identifier name
      *   with which the callback has been associated, or the $listener you want to remove.
-     * @param callable $callable The callback you want to detach.
+     * @param callable|null $callable The callback you want to detach.
      * @return void
      */
     public function off($eventKey, $callable = null)

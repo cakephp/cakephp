@@ -390,7 +390,7 @@ class Socket
     /**
      * Resets the state of this Socket instance to it's initial state (before Object::__construct got executed)
      *
-     * @param array $state Array with key and values to reset
+     * @param array|null $state Array with key and values to reset
      * @return bool True on success
      */
     public function reset($state = null)

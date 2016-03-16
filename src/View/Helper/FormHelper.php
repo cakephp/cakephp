@@ -237,7 +237,7 @@ class FormHelper extends Helper
     /**
      * Set the widget registry the helper will use.
      *
-     * @param \Cake\View\Widget\WidgetRegistry $instance The registry instance to set.
+     * @param \Cake\View\Widget\WidgetRegistry|null $instance The registry instance to set.
      * @param array $widgets An array of widgets
      * @return \Cake\View\Widget\WidgetRegistry
      */
@@ -669,7 +669,7 @@ class FormHelper extends Helper
      * - `escape` boolean - Whether or not to html escape the contents of the error.
      *
      * @param string $field A field name, like "modelname.fieldname"
-     * @param string|array $text Error message as string or array of messages. If an array,
+     * @param string|array|null $text Error message as string or array of messages. If an array,
      *   it should be a hash of key names => messages.
      * @param array $options See above.
      * @return string Formatted errors or ''.
@@ -774,7 +774,7 @@ class FormHelper extends Helper
      * If you want to nest inputs in the labels, you will need to modify the default templates.
      *
      * @param string $fieldName This should be "modelname.fieldname"
-     * @param string $text Text that will appear in the label field. If
+     * @param string|null $text Text that will appear in the label field. If
      *   $text is left undefined the text will be inflected from the
      *   fieldName.
      * @param array $options An array of HTML attributes.
@@ -1631,7 +1631,7 @@ class FormHelper extends Helper
      * - The option `onclick` will be replaced.
      *
      * @param string $title The content to be wrapped by <a> tags.
-     * @param string|array $url Cake-relative URL or array of URL parameters, or
+     * @param string|array|null $url Cake-relative URL or array of URL parameters, or
      *   external URL (starts with http://)
      * @param array $options Array of HTML attributes.
      * @return string An `<a />` element.
@@ -1718,7 +1718,7 @@ class FormHelper extends Helper
      * - `templateVars` - Additional template variables for the input element and its container.
      * - Other attributes will be assigned to the input element.
      *
-     * @param string $caption The label appearing on the button OR if string contains :// or the
+     * @param string|null $caption The label appearing on the button OR if string contains :// or the
      *  extension .jpg, .jpe, .jpeg, .gif, .png use an image if the extension
      *  exists, AND the first character is /, image is relative to webroot,
      *  OR if the first character is not /, image is relative to webroot/img.
@@ -1967,7 +1967,7 @@ class FormHelper extends Helper
      *   that string is displayed as the empty element.
      * - `value` The selected value of the input.
      *
-     * @param string $fieldName Prefix name for the SELECT element
+     * @param string|null $fieldName Prefix name for the SELECT element
      * @param array $options Options & HTML attributes for the select element
      * @return string A generated day select box.
      * @link http://book.cakephp.org/3.0/en/views/helpers/form.html#creating-day-inputs

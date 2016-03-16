@@ -412,7 +412,7 @@ abstract class Association
      * Sets the type of join to be used when adding the association to a query.
      * If no arguments are passed, the currently configured type is returned.
      *
-     * @param string $type the join type to be used (e.g. INNER)
+     * @param string|null $type the join type to be used (e.g. INNER)
      * @return string
      */
     public function joinType($type = null)
@@ -663,7 +663,7 @@ abstract class Association
      * and modifies the query accordingly based of this association
      * configuration
      *
-     * @param string|array $type the type of query to perform, if an array is passed,
+     * @param string|array|null $type the type of query to perform, if an array is passed,
      *   it will be interpreted as the `$options` parameter
      * @param array $options The options to for the find
      * @see \Cake\ORM\Table::find()

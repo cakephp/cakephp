@@ -161,7 +161,7 @@ class EagerLoader
     /**
      * Set whether or not contained associations will load fields automatically.
      *
-     * @param bool $value The value to set.
+     * @param bool|null $value The value to set.
      * @return bool The current value.
      */
     public function autoFields($value = null)

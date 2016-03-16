@@ -35,9 +35,9 @@ class SerializedView extends View
     /**
      * Constructor
      *
-     * @param \Cake\Network\Request $request Request instance.
-     * @param \Cake\Network\Response $response Response instance.
-     * @param \Cake\Event\EventManager $eventManager EventManager instance.
+     * @param \Cake\Network\Request|null $request Request instance.
+     * @param \Cake\Network\Response|null $response Response instance.
+     * @param \Cake\Event\EventManager|null $eventManager EventManager instance.
      * @param array $viewOptions An array of view options
      */
     public function __construct(

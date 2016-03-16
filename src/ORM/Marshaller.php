@@ -380,9 +380,7 @@ class Marshaller
         $target = $assoc->target();
         $primaryKey = (array)$target->primaryKey();
         $multi = count($primaryKey) > 1;
-        $primaryKey = array_map(function ($key) use ($target) {
-            return $target->alias() . '.' . $key;
-        }, $primaryKey);
+        $primaryKey = array_map([$target, 'aliasField'], $primaryKey);
 
         if ($multi) {
             if (count(current($ids)) !== count($primaryKey)) {
@@ -591,7 +589,8 @@ class Marshaller
                 return count(array_filter($keys, 'strlen')) === count($primary);
             })
             ->reduce(function ($query, $keys) use ($primary) {
-                return $query->orWhere($query->newExpr()->and_(array_combine($primary, $keys)));
+                $fields = array_map([$this->_table, 'aliasField'], $primary);
+                return $query->orWhere($query->newExpr()->and_(array_combine($fields, $keys)));
             }, $this->_table->find());
 
         if (!empty($indexed) && count($maybeExistentQuery->clause('where'))) {

@@ -533,7 +533,7 @@ class Router
      * - `_name` - Name of route. If you have setup named routes you can use this key
      *   to specify it.
      *
-     * @param string|array $url An array specifying any of the following:
+     * @param string|array|null $url An array specifying any of the following:
      *   'controller', 'action', 'plugin' additionally, you can provide routed
      *   elements or query string parameters. If string it can be name any valid url
      *   string.
@@ -761,7 +761,7 @@ class Router
      * A string or an array of valid extensions can be passed to this method.
      * If called without any parameters it will return current list of set extensions.
      *
-     * @param array|string $extensions List of extensions to be added.
+     * @param array|string|null $extensions List of extensions to be added.
      * @param bool $merge Whether to merge with or override existing extensions.
      *   Defaults to `true`.
      * @return array Array of extensions Router is configured to parse.
@@ -897,7 +897,7 @@ class Router
      * @param string $name The prefix name to use.
      * @param array|callable $params An array of routing defaults to add to each connected route.
      *   If you have no parameters, this argument can be a callable.
-     * @param callable $callback The callback to invoke that builds the prefixed routes.
+     * @param callable|null $callback The callback to invoke that builds the prefixed routes.
      * @return void
      */
     public static function prefix($name, $params = [], $callback = null)
