@@ -4870,7 +4870,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->select(
 			'Model.field',
 			array(0 => 'No', 1 => 'Yes', 2 => 'Yes again'),
-			array('value' => [false, 2], 'empty' => false)
+			array('value' => array(false, 2), 'empty' => false)
 		);
 		$expected = array(
 			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
