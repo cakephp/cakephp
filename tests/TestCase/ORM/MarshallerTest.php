@@ -850,7 +850,7 @@ class MarshallerTest extends TestCase
     }
 
 	/**
-     * Test belongsToMany association with the ForceNewTarget to force saving
+	 * Test belongsToMany association with the ForceNewTarget to force saving
 	 * new records on the target tables with BTM relationships when the primaryKey(s)
 	 * of the target table is specified.
      * 
@@ -864,19 +864,23 @@ class MarshallerTest extends TestCase
             'author_id' => 1,
             'tags' => [
                 [
+                    'id'    => 3
+                ],
+                [
                     'id'	=> 4,
                     'name'	=> 'tag4'
                 ]
             ]
         ];
 
-		$marshaller = new Marshaller($this->articles);
-		$article = $marshaller->one($data, [
-			'associated' => ['Tags'],
-			'forceNew' => true
-		]);
+        $marshaller = new Marshaller($this->articles);
+            $article = $marshaller->one($data, [
+            'associated' => ['Tags'],
+            'forceNew' => true
+        ]);
 
-        $this->assertTrue($article->tags[0]->isNew(), 'The tag should be new');
+        $this->assertFalse($article->tags[0]->isNew(), 'The tag should not be new');
+        $this->assertTrue($article->tags[1]->isNew(), 'The tag should be new');
 	}
 	
     /**
