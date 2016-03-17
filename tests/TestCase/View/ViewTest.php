@@ -1935,7 +1935,7 @@ TEXT;
             $View->element('test_element');
         }
         $end = memory_get_usage();
-        $this->assertLessThanOrEqual($start + 15000, $end);
+        $this->assertLessThanOrEqual($start + 25000, $end);
     }
 
     /**
