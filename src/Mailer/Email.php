@@ -695,12 +695,13 @@ class Email implements JsonSerializable, Serializable
      * Get/Set Subject.
      *
      * @param string|null $subject Subject string.
+     * @param bool $decode Whether to decode the subject.
      * @return string|$this
      */
-    public function subject($subject = null)
+    public function subject($subject = null, $decode = false)
     {
         if ($subject === null) {
-            return $this->_subject;
+            return ($decode) ? $this->_decode($this->_subject) : $this->_subject;
         }
         $this->_subject = $this->_encode((string)$subject);
         return $this;
@@ -1479,6 +1480,21 @@ class Email implements JsonSerializable, Serializable
             $this->headerCharset = $this->charset;
         }
         $return = mb_encode_mimeheader($text, $this->headerCharset, 'B');
+        mb_internal_encoding($restore);
+        return $return;
+    }
+
+    /**
+     * Decode the specified string
+     *
+     * @param string $text String to decode
+     * @return string Decoded string
+     */
+    protected function _decode($text)
+    {
+        $restore = mb_internal_encoding();
+        mb_internal_encoding($this->_appCharset);
+        $return = mb_decode_mimeheader($text);
         mb_internal_encoding($restore);
         return $return;
     }
