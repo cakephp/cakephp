@@ -347,18 +347,17 @@ class Configure
      * ### Usage
      *
      * ```
-     * Configure::updateDump(['Key.key' => 'value'], 'my_config', 'default')
+     * Configure::updateDump('my_config', 'default', ['Key.key' => 'value'])
      * ```
      *
-     * The first parameter ($values) follows the same syntax as Configure::write()
+     * The third parameter ($values) follows the same syntax as Configure::write()
      * but as an array of values to be created or updated.
      *
-     *
-     * @param array $values Values to add or overwrite
      * @param string $key Identifier of the config file to be updated.
      * @param string $config  The name of the configured adapter to dump data with.
+     * @param array $values Values to add or overwrite
      */
-    public static function updateDump(array $values, $key, $config = 'default')
+    public static function updateDump($key, $config = 'default', array $values)
     {
         $engine = static::_getEngine($config);
         if (!$engine) {
