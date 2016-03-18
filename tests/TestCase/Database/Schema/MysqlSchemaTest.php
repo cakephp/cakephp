@@ -1036,16 +1036,11 @@ SQL;
     protected function _getMockedDriver()
     {
         $driver = new \Cake\Database\Driver\Mysql();
-        $mock = $this->getMock('FakePdo', ['quote', 'quoteIdentifier']);
+        $mock = $this->getMock('FakePdo', ['quote']);
         $mock->expects($this->any())
             ->method('quote')
             ->will($this->returnCallback(function ($value) {
                 return "'$value'";
-            }));
-        $mock->expects($this->any())
-            ->method('quoteIdentifier')
-            ->will($this->returnCallback(function ($value) {
-                return '`' . $value . '`';
             }));
         $driver->connection($mock);
         return $driver;

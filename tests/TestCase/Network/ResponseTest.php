@@ -1518,7 +1518,6 @@ class ResponseTest extends TestCase
      */
     public function testGetFile()
     {
-        ob_start();
         $response = new Response();
         $this->assertNull($response->getFile(), 'No file to get');
 

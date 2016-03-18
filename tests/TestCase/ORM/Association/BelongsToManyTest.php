@@ -1025,6 +1025,29 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Test that association proxy find() applies complex conditions
+     *
+     * @return void
+     */
+    public function testAssociationProxyFindWithComplexConditions()
+    {
+        $table = TableRegistry::get('Articles');
+        $table->belongsToMany('Tags', [
+            'foreignKey' => 'article_id',
+            'associationForeignKey' => 'tag_id',
+            'conditions' => [
+                'OR' => [
+                    'SpecialTags.highlighted' => true,
+                ]
+            ],
+            'through' => 'SpecialTags'
+        ]);
+        $query = $table->Tags->find();
+        $result = $query->toArray();
+        $this->assertCount(1, $result);
+    }
+
+    /**
      * Test that matching() works on belongsToMany associations.
      *
      * @return void

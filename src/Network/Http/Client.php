@@ -104,6 +104,7 @@ class Client
         'scheme' => 'http',
         'timeout' => 30,
         'ssl_verify_peer' => true,
+        'ssl_verify_peer_name' => true,
         'ssl_verify_depth' => 5,
         'ssl_verify_host' => true,
         'redirect' => false,
@@ -139,6 +140,8 @@ class Client
      * - scheme - The default scheme/protocol to use. Defaults to http.
      * - timeout - The timeout in seconds. Defaults to 30
      * - ssl_verify_peer - Whether or not SSL certificates should be validated.
+     *   Defaults to true.
+     * - ssl_verify_peer_name - Whether or not peer names should be validated.
      *   Defaults to true.
      * - ssl_verify_depth - The maximum certificate chain depth to travers.
      *   Defaults to 5.

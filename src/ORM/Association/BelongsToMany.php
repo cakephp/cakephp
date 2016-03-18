@@ -853,7 +853,13 @@ class BelongsToMany extends Association
         }
         $alias = $this->_junctionAssociationName() . '.';
         foreach ($conditions as $field => $value) {
-            if (is_string($field) && strpos($field, $alias) === 0) {
+            $isString = is_string($field);
+            if ($isString && strpos($field, $alias) === 0) {
+                $matching[$field] = $value;
+            }
+            // Assume that operators contain junction conditions.
+            // Trying to munge complex conditions could result in incorrect queries.
+            if ($isString && in_array(strtoupper($field), ['OR', 'NOT', 'AND', 'XOR'])) {
                 $matching[$field] = $value;
             }
         }

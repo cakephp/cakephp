@@ -2151,6 +2151,30 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test mergeMany() with forced contain to ensure aliases are used in queries.
+     *
+     * @return void
+     */
+    public function testMergeManyExistingQueryAliases()
+    {
+        $entities = [
+            new OpenEntity(['id' => 1, 'comment' => 'First post', 'user_id' => 2], ['markClean' => true]),
+        ];
+
+        $data = [
+            ['id' => 1, 'comment' => 'Changed 1', 'user_id' => 1],
+            ['id' => 2, 'comment' => 'Changed 2', 'user_id' => 2],
+        ];
+        $this->comments->eventManager()->on('Model.beforeFind', function ($event, $query) {
+            return $query->contain(['Articles']);
+        });
+        $marshall = new Marshaller($this->comments);
+        $result = $marshall->mergeMany($entities, $data);
+
+        $this->assertSame($entities[0], $result[0]);
+    }
+
+    /**
      * Test mergeMany() when the exist check returns nothing.
      *
      * @return void

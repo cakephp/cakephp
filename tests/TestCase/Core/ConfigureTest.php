@@ -549,6 +549,27 @@ class ConfigureTest extends TestCase
     }
 
     /**
+     * test updateDump integrated with the PhpConfig.
+     *
+     * @return void
+     */
+    public function testUpdateDump()
+    {
+        Configure::config('test_Engine', new PhpConfig(TMP));
+        Configure::dump('config_test', 'test_Engine');
+
+        $uniqueKeyName = 'UniqueKeyName';
+        $result = Configure::updateDump('config_test', 'test_Engine', [$uniqueKeyName . '.testKey' => 'testValue']);
+        $this->assertTrue($result > 0);
+
+        $fileContents = file_get_contents(TMP . 'config_test.php');
+        $this->assertContains($uniqueKeyName, $fileContents);
+        if (file_exists(TMP . 'config_test.php')) {
+            unlink(TMP . 'config_test.php');
+        }
+    }
+
+    /**
      * Test the consume method.
      *
      * @return void
