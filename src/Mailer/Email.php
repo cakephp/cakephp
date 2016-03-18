@@ -695,16 +695,25 @@ class Email implements JsonSerializable, Serializable
      * Get/Set Subject.
      *
      * @param string|null $subject Subject string.
-     * @param bool $decode Whether to decode the subject.
      * @return string|$this
      */
-    public function subject($subject = null, $decode = false)
+    public function subject($subject = null)
     {
         if ($subject === null) {
-            return ($decode) ? $this->_decode($this->_subject) : $this->_subject;
+            return $this->_subject;
         }
         $this->_subject = $this->_encode((string)$subject);
         return $this;
+    }
+
+    /**
+     * Get original subject without encoding
+     *
+     * @return string Original subject
+     */
+    public function getOriginalSubject()
+    {
+        return $this->_decode($this->_subject);
     }
 
     /**

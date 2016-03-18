@@ -577,7 +577,7 @@ class EmailTest extends TestCase
         $this->CakeEmail->subject($input);
         $expected = '=?UTF-8?B?2YfYsNmHINix2LPYp9mE2Kkg2KjYudmG2YjYp9mGINi32YjZitmEINmF2LE=?=' . "\r\n" . ' =?UTF-8?B?2LPZhCDZhNmE2YXYs9iq2YTZhQ==?=';
         $this->assertSame($expected, $this->CakeEmail->subject());
-        $this->assertSame($input, $this->CakeEmail->subject(null, true));
+        $this->assertSame($input, $this->CakeEmail->getOriginalSubject());
     }
 
     /**
