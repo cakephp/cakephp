@@ -97,6 +97,13 @@ class QueryCompiler
             $this->_sqlCompiler($sql, $query, $generator),
             $this->{'_' . $type . 'Parts'}
         );
+
+        // Propagate bound parameters from sub-queries
+        if ($query->valueBinder() !== $generator) {
+            foreach ($query->valueBinder()->bindings() as $binding) {
+                $generator->bind(':' . $binding['placeholder'], $binding['value'], $binding['type']);
+            }
+        }
         return $sql;
     }
 
