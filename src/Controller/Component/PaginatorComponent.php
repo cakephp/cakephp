@@ -18,6 +18,7 @@ use Cake\Controller\Component;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Network\Exception\NotFoundException;
+use Cake\Utility\Hash;
 
 /**
  * This component is used to handle automatic model data pagination. The primary way to use this
@@ -202,7 +203,8 @@ class PaginatorComponent extends Component
             'direction' => current($order),
             'limit' => $defaults['limit'] != $limit ? $limit : null,
             'sortDefault' => $sortDefault,
-            'directionDefault' => $directionDefault
+            'directionDefault' => $directionDefault,
+            'prefix' => Hash::get($options, 'prefix', null),
         ];
 
         if (!isset($request['paging'])) {
@@ -257,7 +259,12 @@ class PaginatorComponent extends Component
     {
         $defaults = $this->getDefaults($alias, $settings);
         $request = $this->_registry->getController()->request;
-        $request = array_intersect_key($request->query, array_flip($this->_config['whitelist']));
+        $prefix = Hash::get($settings, 'prefix', null);
+        $query = $request->query;
+        if ($prefix) {
+            $query = Hash::get($request->query, $prefix, []);
+        }
+        $request = array_intersect_key($query, array_flip($this->_config['whitelist']));
         return array_merge($defaults, $request);
     }
 

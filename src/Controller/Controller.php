@@ -671,11 +671,12 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param \Cake\ORM\Table|string|\Cake\ORM\Query|null $object Table to paginate
      * (e.g: Table instance, 'TableName' or a Query object)
+     * @param array $settings The settings/configuration used for pagination.
      * @return \Cake\ORM\ResultSet Query results
      * @link http://book.cakephp.org/3.0/en/controllers.html#paginating-a-model
      * @throws \RuntimeException When no compatible table object can be found.
      */
-    public function paginate($object = null)
+    public function paginate($object = null, array $settings = [])
     {
         if (is_object($object)) {
             $table = $object;
@@ -696,7 +697,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if (empty($table)) {
             throw new RuntimeException('Unable to locate an object compatible with paginate.');
         }
-        return $this->Paginator->paginate($table, $this->paginate);
+        $settings = $settings + $this->paginate;
+        return $this->Paginator->paginate($table, $settings);
     }
 
     /**

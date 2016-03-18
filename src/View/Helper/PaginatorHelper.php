@@ -14,6 +14,7 @@
  */
 namespace Cake\View\Helper;
 
+use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
@@ -165,6 +166,12 @@ class PaginatorHelper extends Helper
             unset($options[$model]);
         }
         $this->_config['options'] = array_filter($options + $this->_config['options']);
+        if (empty($this->_config['options']['url'])) {
+            $this->_config['options']['url'] = [];
+        }
+        if (!empty($this->_config['options']['model'])) {
+            $this->defaultModel($this->_config['options']['model']);
+        }
     }
 
     /**
@@ -412,10 +419,16 @@ class PaginatorHelper extends Helper
 
         $sortKey = $this->sortKey($options['model']);
         $defaultModel = $this->defaultModel();
+        $model = Hash::get($options, 'model', $defaultModel);
+        list($table, $field) = explode('.', $key . '.');
+        if (!$field) {
+            $field = $table;
+            $table = $model;
+        }
         $isSorted = (
-            $sortKey === $key ||
+            $sortKey === $table . '.' . $field ||
             $sortKey === $defaultModel . '.' . $key ||
-            $key === $defaultModel . '.' . $sortKey
+            $table . '.' . $field === $defaultModel . '.' . $sortKey
         );
 
         $template = 'sort';
@@ -465,7 +478,8 @@ class PaginatorHelper extends Helper
         ];
 
         if (!empty($this->_config['options']['url'])) {
-            $url = array_merge($url, $this->_config['options']['url']);
+            $key = implode('.', array_filter(['options.url', Hash::get($paging, 'prefix', null)]));
+            $url = array_merge($url, Hash::get($this->_config, $key, []));
         }
 
         $url = array_filter($url, function ($value) {
@@ -481,6 +495,12 @@ class PaginatorHelper extends Helper
             $url['direction'] === $paging['directionDefault']
         ) {
             $url['sort'] = $url['direction'] = null;
+        }
+        if (!empty($paging['prefix'])) {
+            $url = [$paging['prefix'] => $url] + $this->_config['options']['url'];
+            if (empty($url[$paging['prefix']]['page'])) {
+                unset($url[$paging['prefix']]['page']);
+            }
         }
         return $this->Url->build($url, $full);
     }
@@ -544,12 +564,16 @@ class PaginatorHelper extends Helper
     }
 
     /**
-     * Gets the default model of the paged sets
+     * Gets or sets the default model of the paged sets
      *
+     * @param string|null $model Model name to set
      * @return string|null Model name or null if the pagination isn't initialized.
      */
-    public function defaultModel()
+    public function defaultModel($model = null)
     {
+        if ($model !== null) {
+            $this->_defaultModel = $model;
+        }
         if ($this->_defaultModel) {
             return $this->_defaultModel;
         }
