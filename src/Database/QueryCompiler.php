@@ -98,10 +98,14 @@ class QueryCompiler
             $this->{'_' . $type . 'Parts'}
         );
 
-        // Propagate bound parameters from sub-queries
+        // Propagate bound parameters from sub-queries if the
+        // placeholders can be found in the SQL statement.
         if ($query->valueBinder() !== $generator) {
             foreach ($query->valueBinder()->bindings() as $binding) {
-                $generator->bind(':' . $binding['placeholder'], $binding['value'], $binding['type']);
+                $placeholder = ':' . $binding['placeholder'];
+                if (strpos($sql, $placeholder) !== false) {
+                    $generator->bind($placeholder, $binding['value'], $binding['type']);
+                }
             }
         }
         return $sql;
