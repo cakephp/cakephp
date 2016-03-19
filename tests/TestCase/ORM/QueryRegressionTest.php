@@ -593,7 +593,7 @@ class QueryRegressionTest extends TestCase
             ->find()
             ->select(['title', 'id'])
             ->where("title LIKE :val")
-            ->group('id')
+            ->group(['id', 'title'])
             ->bind(':val', '%Second%');
         $count = $query->count();
         $this->assertEquals(1, $count);
