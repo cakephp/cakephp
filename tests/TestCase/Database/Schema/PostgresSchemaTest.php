@@ -200,6 +200,10 @@ SQL;
                 'DOUBLE PRECISION',
                 ['type' => 'float', 'length' => null]
             ],
+            [
+                'JSON',
+                ['type' => 'json', 'length' => null]
+            ],
         ];
     }
 
