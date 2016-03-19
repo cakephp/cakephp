@@ -289,6 +289,7 @@ class Router
             $prefix = $pluginUrl = false;
             if (!empty($options['prefix'])) {
                 $prefix = $options['prefix'];
+                unset($options['prefix']);
             }
             if ($plugin) {
                 $pluginUrl = Inflector::underscore($plugin);
