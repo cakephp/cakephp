@@ -24,6 +24,9 @@ cache:
     - vendor
     - $HOME/.composer/cache
 
+addons:
+  postgresql: "9.4.1"
+
 matrix:
   fast_finish: true
 
