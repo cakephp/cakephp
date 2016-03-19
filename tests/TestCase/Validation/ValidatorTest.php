@@ -1527,6 +1527,35 @@ class ValidatorTest extends TestCase
         $this->assertNotEmpty($validator->errors(['username' => 'not integer']));
     }
 
+    /**
+     * Tests the money proxy method
+     *
+     * @return void
+     */
+    public function testMoney()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'money', 'left', ['left']);
+        $this->assertNotEmpty($validator->errors(['username' => 'not money']));
+    }
+
+    /**
+     * Tests the multiple proxy method
+     *
+     * @return void
+     */
+    public function testMultiple()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod(
+            $validator,
+            'multiple',
+            ['min' => 1, 'caseInsensitive' => true],
+            [['min' => 1], false]
+        );
+        $this->assertNotEmpty($validator->errors(['username' => '']));
+    }
+
     protected function assertProxyMethod($validator, $method, $extra = null, $pass = [], $name = null)
     {
         $name = $name ?: $method;
