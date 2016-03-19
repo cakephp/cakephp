@@ -3595,6 +3595,37 @@ class QueryTest extends TestCase
         $this->assertInstanceOf('DateTime', $result[0]['the_date']);
     }
 
+
+    /**
+     * Tests that the json type can save and get data symetrically
+     *
+     * @return void
+     */
+    public function testSymetricJsonType()
+    {
+        $query = new Query($this->connection);
+        $id = $query
+            ->insert(['comment', 'article_id', 'user_id'], ['comment' => 'json'])
+            ->into('comments')
+            ->values([
+                'comment' => ['a' => 'b', 'c' => true],
+                'article_id' => 1,
+                'user_id' => 1
+            ])
+            ->execute()
+            ->lastInsertId('id');
+
+        $query = new Query($this->connection);
+        $query
+            ->select(['comment'])
+            ->from('comments')
+            ->where(['id' => $id])
+            ->selectTypeMap()->types(['comment' => 'json']);
+
+        $result = $query->execute()->fetchAll('assoc')[0]['comment'];
+        $this->assertSame(['a' => 'b', 'c' => true], $result);
+    }
+
     /**
      * Test removeJoin().
      *
@@ -3745,6 +3776,33 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests that fetch returns an anonymous object when the string 'obj'
+     * is passed as an argument
+     *
+     * @return void
+     */
+    public function testSelectWithObjFetchType()
+    {
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['id'])
+            ->from('comments')
+            ->where(['id' => '1'])
+            ->execute();
+        $obj = (object)['id' => 1];
+        $this->assertEquals($obj, $result->fetch('obj'));
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['id'])
+            ->from('comments')
+            ->where(['id' => '1'])
+            ->execute();
+        $rows = $result->fetchAll('obj');
+        $this->assertEquals($obj, $rows[0]);
+    }
+
+    /**
      * Assertion for comparing a table's contents with what is in it.
      *
      * @param string $table
@@ -3783,32 +3841,5 @@ class QueryTest extends TestCase
         $pattern = str_replace('<', '[`"\[]' . $optional, $pattern);
         $pattern = str_replace('>', '[`"\]]' . $optional, $pattern);
         $this->assertRegExp('#' . $pattern . '#', $query);
-    }
-
-    /**
-     * Tests that fetch returns an anonymous object when the string 'obj'
-     * is passed as an argument
-     *
-     * @return void
-     */
-    public function testSelectWithObjFetchType()
-    {
-        $query = new Query($this->connection);
-        $result = $query
-            ->select(['id'])
-            ->from('comments')
-            ->where(['id' => '1'])
-            ->execute();
-        $obj = (object)['id' => 1];
-        $this->assertEquals($obj, $result->fetch('obj'));
-
-        $query = new Query($this->connection);
-        $result = $query
-            ->select(['id'])
-            ->from('comments')
-            ->where(['id' => '1'])
-            ->execute();
-        $rows = $result->fetchAll('obj');
-        $this->assertEquals($obj, $rows[0]);
     }
 }
