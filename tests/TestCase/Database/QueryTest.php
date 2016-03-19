@@ -3604,7 +3604,7 @@ class QueryTest extends TestCase
     public function testSymetricJsonType()
     {
         $query = new Query($this->connection);
-        $id = $query
+        $insert = $query
             ->insert(['comment', 'article_id', 'user_id'], ['comment' => 'json'])
             ->into('comments')
             ->values([
@@ -3612,8 +3612,10 @@ class QueryTest extends TestCase
                 'article_id' => 1,
                 'user_id' => 1
             ])
-            ->execute()
-            ->lastInsertId('id');
+            ->execute();
+
+        $id = $insert->lastInsertId('comments', 'id');
+        $insert->closeCursor();
 
         $query = new Query($this->connection);
         $query
@@ -3622,8 +3624,10 @@ class QueryTest extends TestCase
             ->where(['id' => $id])
             ->selectTypeMap()->types(['comment' => 'json']);
 
-        $result = $query->execute()->fetchAll('assoc')[0]['comment'];
-        $this->assertSame(['a' => 'b', 'c' => true], $result);
+        $result = $query->execute();
+        $comment = $result->fetchAll('assoc')[0]['comment'];
+        $result->closeCursor();
+        $this->assertSame(['a' => 'b', 'c' => true], $comment);
     }
 
     /**
