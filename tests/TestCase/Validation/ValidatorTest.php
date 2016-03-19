@@ -1549,9 +1549,10 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
         $this->assertProxyMethod(
             $validator,
-            'multiple',
+            'multipleOptions',
             ['min' => 1, 'caseInsensitive' => true],
-            [['min' => 1], false]
+            [['min' => 1], false],
+            'multiple'
         );
         $this->assertNotEmpty($validator->errors(['username' => '']));
     }
@@ -1566,6 +1567,7 @@ class ValidatorTest extends TestCase
         }
 
         $rule = $validator->field('username')->rule($method);
+        $this->assertNotEmpty($rule, "Rule was not found for $method");
         $this->assertNull($rule->get('message'), 'Message is present when it should not be');
         $this->assertNull($rule->get('on'), 'On clause is present when it should not be');
         $this->assertEquals($name, $rule->get('rule'), 'Rule name does not match');

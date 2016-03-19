@@ -1328,12 +1328,12 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @see \Cake\Validation\Validation::multiple()
      * @return $this
      */
-    public function multiple($field, array $options = [], $message = null, $when = null)
+    public function multipleOptions($field, array $options = [], $message = null, $when = null)
     {
         $extra = array_filter(['on' => $when, 'message' => $message]);
         $caseInsensitive = isset($options['caseInsenstive']) ? $options['caseInsensitive'] : false;
         unset($options['caseInsensitive']);
-        return $this->add($field, 'multiple', $extra + [
+        return $this->add($field, 'multipleOptions', $extra + [
             'rule' => ['multiple', $options, $caseInsensitive]
         ]);
     }
