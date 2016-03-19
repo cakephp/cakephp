@@ -872,6 +872,11 @@ SQL;
         $connection->expects($this->any())->method('driver')
             ->will($this->returnValue($driver));
 
+        $driver->connection()
+            ->expects($this->any())
+            ->method('getAttribute')
+            ->will($this->returnValue('5.6.0'));
+
         $table = (new Table('posts'))->addColumn('id', [
                 'type' => 'integer',
                 'null' => false
@@ -884,6 +889,9 @@ SQL;
             ->addColumn('body', [
                 'type' => 'text',
                 'comment' => ''
+            ])
+            ->addColumn('data', [
+                'type' => 'json'
             ])
             ->addColumn('created', 'datetime')
             ->addConstraint('primary', [
@@ -901,7 +909,55 @@ CREATE TABLE `posts` (
 `id` INTEGER NOT NULL AUTO_INCREMENT,
 `title` VARCHAR(255) NOT NULL COMMENT 'The title',
 `body` TEXT,
+`data` LONGTEXT,
 `created` DATETIME,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci
+SQL;
+        $result = $table->createSql($connection);
+        $this->assertCount(1, $result);
+        $this->assertTextEquals($expected, $result[0]);
+    }
+
+    /**
+     * Integration test for converting a Schema\Table with native JSON
+     *
+     * @return void
+     */
+    public function testCreateSqlJson()
+    {
+        $driver = $this->_getMockedDriver();
+        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+        $connection->expects($this->any())
+            ->method('driver')
+            ->will($this->returnValue($driver));
+
+        $driver->connection()
+            ->expects($this->any())
+            ->method('getAttribute')
+            ->will($this->returnValue('5.7.0'));
+
+        $table = (new Table('posts'))->addColumn('id', [
+                'type' => 'integer',
+                'null' => false
+            ])
+            ->addColumn('data', [
+                'type' => 'json'
+            ])
+            ->addConstraint('primary', [
+                'type' => 'primary',
+                'columns' => ['id']
+            ])
+            ->options([
+                'engine' => 'InnoDB',
+                'charset' => 'utf8',
+                'collate' => 'utf8_general_ci',
+            ]);
+
+        $expected = <<<SQL
+CREATE TABLE `posts` (
+`id` INTEGER NOT NULL AUTO_INCREMENT,
+`data` JSON,
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci
 SQL;
