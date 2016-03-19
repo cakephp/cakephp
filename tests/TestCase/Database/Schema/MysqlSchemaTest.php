@@ -146,6 +146,10 @@ class MysqlSchemaTest extends TestCase
                 'DOUBLE(10,4) UNSIGNED',
                 ['type' => 'float', 'length' => 10, 'precision' => 4, 'unsigned' => true]
             ],
+            [
+                'JSON',
+                ['type' => 'json', 'length' => null]
+            ],
         ];
     }
 

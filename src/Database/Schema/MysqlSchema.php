@@ -137,6 +137,11 @@ class MysqlSchema extends BaseSchema
                 'unsigned' => $unsigned
             ];
         }
+
+        if (strpos($col, 'json') !== false) {
+            return ['type' => 'json', 'length' => null];
+        }
+
         return ['type' => 'text', 'length' => null];
     }
 
