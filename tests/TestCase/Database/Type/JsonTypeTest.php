@@ -97,4 +97,3 @@ class JsonTypeTest extends TestCase
         $this->assertEquals(PDO::PARAM_STR, $this->type->toStatement('', $this->driver));
     }
 }
-
