@@ -280,7 +280,9 @@ abstract class ControllerTestCase extends CakeTestCase {
 		$this->result = $Dispatch->dispatch($request, $Dispatch->response, $params);
 
 		// Clear out any stored requests.
-		Router::reload();
+		while (Router::getRequest()) {
+			Router::popRequest();
+		}
 
 		$this->controller = $Dispatch->testController;
 		$this->vars = $this->controller->viewVars;
