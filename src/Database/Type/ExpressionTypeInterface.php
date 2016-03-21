@@ -28,7 +28,8 @@ interface ExpressionTypeInterface
      * Returns an ExpressionInterface object for the given value that can
      * be used in queries.
      *
+     * @param mixed $value The value to be converted to an expression
      * @return \Cake\Database\ExpressionInterface
      */
-    public function toExpression($value, Driver $driver);
+    public function toExpression($value);
 }

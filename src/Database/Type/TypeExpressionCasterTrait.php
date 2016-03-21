@@ -26,14 +26,14 @@ trait TypeExpressionCasterTrait
 
     protected function _castToExpression($value, $type)
     {
-        return $value;
         $baseType = str_replace('[]', '', $type);
-        $multi = $type !== $baseType;
         $converter = Type::build($baseType);
 
         if (!$converter instanceof ExpressionTypeInterface) {
             return $value;
         }
+
+        $multi = $type !== $baseType;
 
         if ($multi) {
             $result = [];

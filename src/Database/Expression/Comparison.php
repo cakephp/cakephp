@@ -53,6 +53,10 @@ class Comparison implements ExpressionInterface, FieldInterface
      */
     protected $_operator;
 
+    protected $_isMultiple = false;
+
+    protected $_valueExpressions = [];
+
     /**
      * Constructor
      *
@@ -80,10 +84,18 @@ class Comparison implements ExpressionInterface, FieldInterface
      */
     public function setValue($value)
     {
-        if (isset($this->_type)) {
+        $hasType = isset($this->_type);
+        $isMultiple = $hasType && strpos($this->_type, '[]') !== false;
+
+        if ($hasType) {
             $value = $this->_castToExpression($value, $this->_type);
         }
 
+        if ($isMultiple) {
+            $this->_valueExpressions = $this->_collectExpressions($value);
+        }
+
+        $this->_isMultiple = $isMultiple;
         $this->_value = $value;
     }
 
@@ -157,6 +169,13 @@ class Comparison implements ExpressionInterface, FieldInterface
             $callable($this->_value);
             $this->_value->traverse($callable);
         }
+
+        if (!empty($this->_valueExpressions)) {
+            foreach ($this->_valueExpressions as $v) {
+                $callable($v);
+                $v->traverse($callable);
+            }
+        }
     }
 
     /**
@@ -190,7 +209,7 @@ class Comparison implements ExpressionInterface, FieldInterface
             $template = '(%s) ';
         }
 
-        if (strpos($this->_type, '[]') !== false) {
+        if ($this->_isMultiple) {
             $template .= '%s (%s)';
             $type = str_replace('[]', '', $this->_type);
             $value = $this->_flattenValue($this->_value, $generator, $type);
@@ -239,9 +258,25 @@ class Comparison implements ExpressionInterface, FieldInterface
     {
         $parts = [];
         foreach ($value as $k => $v) {
+            if (isset($this->_valueExpressions[$k])) {
+                $parts[] = $this->_valueExpressions[$k]->sql($generator);
+                continue;
+            }
             $parts[] = $this->_bindValue($v, $generator, $type);
         }
 
         return implode(',', $parts);
+    }
+
+    protected function _collectExpressions($values)
+    {
+        $result = [];
+        foreach ($values as $k => $v) {
+            if ($v instanceof ExpressionInterface) {
+                $result[$k] = $v;
+            }
+        }
+
+        return $result;
     }
 }
