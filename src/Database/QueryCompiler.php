@@ -103,7 +103,7 @@ class QueryCompiler
         if ($query->valueBinder() !== $generator) {
             foreach ($query->valueBinder()->bindings() as $binding) {
                 $placeholder = ':' . $binding['placeholder'];
-                if (strpos($sql, $placeholder) !== false) {
+                if (preg_match('/' . $placeholder . '(?:\W|$)/', $sql) > 0) {
                     $generator->bind($placeholder, $binding['value'], $binding['type']);
                 }
             }
