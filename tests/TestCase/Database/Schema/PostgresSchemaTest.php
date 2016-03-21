@@ -73,6 +73,7 @@ author_id INTEGER NOT NULL,
 published BOOLEAN DEFAULT false,
 views SMALLINT DEFAULT 0,
 readingtime TIME,
+data JSON,
 created TIMESTAMP,
 CONSTRAINT "content_idx" UNIQUE ("title", "body"),
 CONSTRAINT "author_idx" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
@@ -199,6 +200,10 @@ SQL;
             [
                 'DOUBLE PRECISION',
                 ['type' => 'float', 'length' => null]
+            ],
+            [
+                'JSON',
+                ['type' => 'json', 'length' => null]
             ],
         ];
     }
@@ -337,6 +342,14 @@ SQL;
             ],
             'readingtime' => [
                 'type' => 'time',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+            ],
+            'data' => [
+                'type' => 'json',
                 'null' => true,
                 'default' => null,
                 'length' => null,
@@ -959,6 +972,7 @@ SQL;
                 'comment' => 'This is the title',
             ])
             ->addColumn('body', ['type' => 'text'])
+            ->addColumn('data', ['type' => 'json'])
             ->addColumn('created', 'datetime')
             ->addConstraint('primary', [
                 'type' => 'primary',
@@ -974,6 +988,7 @@ CREATE TABLE "schema_articles" (
 "id" SERIAL,
 "title" VARCHAR NOT NULL,
 "body" TEXT,
+"data" JSON,
 "created" TIMESTAMP,
 PRIMARY KEY ("id")
 )

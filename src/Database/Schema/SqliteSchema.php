@@ -257,6 +257,7 @@ class SqliteSchema extends BaseSchema
             'time' => ' TIME',
             'datetime' => ' DATETIME',
             'timestamp' => ' TIMESTAMP',
+            'json' => ' TEXT'
         ];
         if (!isset($typeMap[$data['type']])) {
             throw new Exception(sprintf('Unknown column type for "%s"', $name));

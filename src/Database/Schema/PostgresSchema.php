@@ -129,6 +129,11 @@ class PostgresSchema extends BaseSchema
         ) {
             return ['type' => 'decimal', 'length' => null];
         }
+
+        if (strpos($col, 'json') !== false) {
+            return ['type' => 'json', 'length' => null];
+        }
+
         return ['type' => 'text', 'length' => null];
     }
 
@@ -340,6 +345,7 @@ class PostgresSchema extends BaseSchema
             'datetime' => ' TIMESTAMP',
             'timestamp' => ' TIMESTAMP',
             'uuid' => ' UUID',
+            'json' => ' JSON'
         ];
 
         if (isset($typeMap[$data['type']])) {

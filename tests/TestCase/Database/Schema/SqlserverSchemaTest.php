@@ -773,6 +773,7 @@ SQL;
                 'null' => false,
             ])
             ->addColumn('body', ['type' => 'text'])
+            ->addColumn('data', ['type' => 'json'])
             ->addColumn('created', 'datetime')
             ->addConstraint('primary', [
                 'type' => 'primary',
@@ -788,6 +789,7 @@ CREATE TABLE [schema_articles] (
 [id] INTEGER IDENTITY(1, 1),
 [title] NVARCHAR(255) NOT NULL,
 [body] NVARCHAR(MAX),
+[data] NVARCHAR(MAX),
 [created] DATETIME,
 PRIMARY KEY ([id])
 )

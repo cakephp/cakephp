@@ -137,6 +137,11 @@ class MysqlSchema extends BaseSchema
                 'unsigned' => $unsigned
             ];
         }
+
+        if (strpos($col, 'json') !== false) {
+            return ['type' => 'json', 'length' => null];
+        }
+
         return ['type' => 'text', 'length' => null];
     }
 
@@ -282,6 +287,8 @@ class MysqlSchema extends BaseSchema
     {
         $data = $table->column($name);
         $out = $this->_driver->quoteIdentifier($name);
+        $nativeJson = $this->_driver->supportsNativeJson();
+
         $typeMap = [
             'integer' => ' INTEGER',
             'biginteger' => ' BIGINT',
@@ -295,6 +302,7 @@ class MysqlSchema extends BaseSchema
             'datetime' => ' DATETIME',
             'timestamp' => ' TIMESTAMP',
             'uuid' => ' CHAR(36)',
+            'json' => $nativeJson ? ' JSON' : ' LONGTEXT'
         ];
         $specialMap = [
             'string' => true,

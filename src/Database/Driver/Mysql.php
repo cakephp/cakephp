@@ -45,6 +45,20 @@ class Mysql extends Driver
     ];
 
     /**
+     * The server version
+     *
+     * @var string
+     */
+    protected $_version;
+
+    /**
+     * Whether or not the server supports native JSON
+     *
+     * @var bool
+     */
+    protected $_supportsNativeJson;
+
+    /**
      * Establishes a connection to the database server
      *
      * @return bool true on success
@@ -140,5 +154,23 @@ class Mysql extends Driver
     public function supportsDynamicConstraints()
     {
         return true;
+    }
+
+    /**
+     * Returns true if the server supports native JSON columns
+     *
+     * @return bool
+     */
+    public function supportsNativeJson()
+    {
+        if ($this->_supportsNativeJson !== null) {
+            return $this->_supportsNativeJson;
+        }
+
+        if ($this->_version === null) {
+            $this->_version = $this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
+        }
+
+        return $this->_supportsNativeJson = version_compare($this->_version, '5.7.0', '>=');
     }
 }
