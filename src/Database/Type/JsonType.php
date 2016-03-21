@@ -29,7 +29,7 @@ class JsonType extends Type
 {
 
     /**
-     * Convert a value data into a json string
+     * Convert a value data into a JSON string
      *
      * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
@@ -45,7 +45,7 @@ class JsonType extends Type
     }
 
     /**
-     * Convert string values to PHP strings.
+     * Convert string values to PHP arrays.
      *
      * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
@@ -69,7 +69,7 @@ class JsonType extends Type
     }
 
     /**
-     * Marshalls request data into PHP strings.
+     * Marshalls request data into a JSON compatible structure.
      *
      * @param mixed $value The value to convert.
      * @return mixed Converted value.
