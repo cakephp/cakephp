@@ -1124,7 +1124,7 @@ SQL;
         $this->assertEquals(
             $expected,
             $result->column('data'),
-            'Field definition does not match for'
+            'Field definition does not match for data'
         );
     }
 
