@@ -136,12 +136,18 @@ class CaseExpression implements ExpressionInterface
                 array_push($this->_values, $value);
                 continue;
             }
+
+            $type = isset($types[$k]) ? $types[$k] : null;
+
+            if ($type !== null && !$value instanceof ExpressionInterface) {
+                $value = $this->_castToExpression($value, $type);
+            }
+
             if ($value instanceof ExpressionInterface) {
                 array_push($this->_values, $value);
                 continue;
             }
 
-            $type = isset($types[$k]) ? $types[$k] : null;
             array_push($this->_values, ['value' => $value, 'type' => $type]);
         }
     }

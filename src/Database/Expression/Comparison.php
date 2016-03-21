@@ -16,6 +16,7 @@ namespace Cake\Database\Expression;
 
 use Cake\Database\Exception as DatabaseException;
 use Cake\Database\ExpressionInterface;
+use Cake\Database\Type\TypeExpressionCasterTrait;
 use Cake\Database\ValueBinder;
 
 /**
@@ -29,6 +30,7 @@ class Comparison implements ExpressionInterface, FieldInterface
 {
 
     use FieldTrait;
+    use TypeExpressionCasterTrait;
 
     /**
      * The value to be used in the right hand side of the operation
@@ -61,13 +63,13 @@ class Comparison implements ExpressionInterface, FieldInterface
      */
     public function __construct($field, $value, $type, $operator)
     {
-        $this->setField($field);
-        $this->setValue($value);
-        $this->_operator = $operator;
-
         if (is_string($type)) {
             $this->_type = $type;
         }
+
+        $this->setField($field);
+        $this->setValue($value);
+        $this->_operator = $operator;
     }
 
     /**
@@ -78,6 +80,10 @@ class Comparison implements ExpressionInterface, FieldInterface
      */
     public function setValue($value)
     {
+        if (isset($this->_type)) {
+            $value = $this->_castToExpression($value, $this->_type);
+        }
+
         $this->_value = $value;
     }
 
