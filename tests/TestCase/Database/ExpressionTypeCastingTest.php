@@ -35,7 +35,7 @@ class TestType extends StringType implements ExpressionTypeInterface
  * using the type classes
  *
  */
-class FunctionsBuilderTest extends TestCase
+class ExpressionTypeCastingTest extends TestCase
 {
 
     /**

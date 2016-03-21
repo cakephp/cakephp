@@ -84,7 +84,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      */
     public function setValue($value)
     {
-        $hasType = isset($this->_type);
+        $hasType = isset($this->_type) && is_string($this->_type);
         $isMultiple = $hasType && strpos($this->_type, '[]') !== false;
 
         if ($hasType) {
@@ -170,11 +170,9 @@ class Comparison implements ExpressionInterface, FieldInterface
             $this->_value->traverse($callable);
         }
 
-        if (!empty($this->_valueExpressions)) {
-            foreach ($this->_valueExpressions as $v) {
-                $callable($v);
-                $v->traverse($callable);
-            }
+        foreach ($this->_valueExpressions as $v) {
+            $callable($v);
+            $v->traverse($callable);
         }
     }
 
@@ -254,15 +252,19 @@ class Comparison implements ExpressionInterface, FieldInterface
      * @param string|array|null $type the type to cast values to
      * @return string
      */
-    protected function _flattenValue($value, $generator, $type = null)
+    protected function _flattenValue($value, $generator, $type = 'string')
     {
-        $parts = [];
-        foreach ($value as $k => $v) {
-            if (isset($this->_valueExpressions[$k])) {
-                $parts[] = $this->_valueExpressions[$k]->sql($generator);
-                continue;
-            }
-            $parts[] = $this->_bindValue($v, $generator, $type);
+        $expressions = [];
+
+        foreach ($this->_valueExpressions as $k => $v) {
+            $expressions[$k] = $v->sql($generator);
+            unset($value[$k]);
+        }
+
+        $parts = $expressions;
+
+        if (!empty($value)) {
+            $parts += $generator->generateManyNamed($value, $type);
         }
 
         return implode(',', $parts);

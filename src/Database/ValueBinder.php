@@ -73,6 +73,23 @@ class ValueBinder
         return $token;
     }
 
+    public function generateManyNamed($values, $type = 'string')
+    {
+        $placeholders = [];
+        foreach ($values as $k => $value) {
+            $param = ":c" . $this->_bindingsCount;
+            $this->_bindings[$param] = [
+                'value' => $value,
+                'type' => $type,
+                'placeholder' => $param
+            ];
+            $placeholders[$k] = $param;
+            $this->_bindingsCount++;
+        }
+
+        return $placeholders;
+    }
+
     /**
      * Returns all values bound to this expression object at this nesting level.
      * Subexpression bound values will not be returned with this function.
@@ -119,9 +136,7 @@ class ValueBinder
         }
         $params = $types = [];
         foreach ($bindings as $b) {
-            $params[$b['placeholder']] = $b['value'];
-            $types[$b['placeholder']] = $b['type'];
+            $statement->bindValue($b['placeholder'], $b['value'], $b['type']);
         }
-        $statement->bind($params, $types);
     }
 }
