@@ -317,7 +317,7 @@ trait EntityTrait
 
     /**
      * Returns whether this entity contains a property named $property
-     * regardless of if it is empty.
+     * that contains a non-null value.
      *
      * ### Example:
      *
@@ -327,6 +327,14 @@ trait EntityTrait
      * $entity->has('name'); // false
      * $entity->has('last_name'); // false
      * ```
+     *
+     * You can check multiple properties by passing an array:
+     *
+     * ```
+     * $entity->has(['name', 'last_name']);
+     * ```
+     *
+     * All properties must not be null to get a truthy result.
      *
      * When checking multiple properties. All properties must not be null
      * in order for true to be returned.
