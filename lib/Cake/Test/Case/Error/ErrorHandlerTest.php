@@ -203,7 +203,7 @@ class ErrorHandlerTest extends CakeTestCase {
 			$result[0]
 		);
 		$this->assertRegExp('/^Trace:/', $result[1]);
-		$this->assertRegExp('/^ErrorHandlerTest\:\:testHandleErrorLoggingTrace\(\)/', $result[2]);
+		$this->assertRegExp('/^ErrorHandlerTest\:\:testHandleErrorLoggingTrace\(\)/', $result[3]);
 		if (file_exists(LOGS . 'debug.log')) {
 			unlink(LOGS . 'debug.log');
 		}

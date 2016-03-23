@@ -207,7 +207,6 @@ class ErrorHandler {
 		if (error_reporting() === 0) {
 			return false;
 		}
-		$errorConfig = Configure::read('Error');
 		list($error, $log) = static::mapErrorCode($code);
 		if ($log === LOG_ERR) {
 			return static::handleFatalError($code, $description, $file, $line);
@@ -228,21 +227,7 @@ class ErrorHandler {
 			);
 			return Debugger::getInstance()->outputError($data);
 		}
-		$message = $error . ' (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']';
-		if (!empty($errorConfig['trace'])) {
-			// https://bugs.php.net/bug.php?id=65322
-			if (version_compare(PHP_VERSION, '5.4.21', '<')) {
-				if (!class_exists('Debugger')) {
-					App::load('Debugger');
-				}
-				if (!class_exists('CakeText')) {
-					App::uses('CakeText', 'Utility');
-					App::load('CakeText');
-				}
-			}
-			$trace = Debugger::trace(array('start' => 1, 'format' => 'log'));
-			$message .= "\nTrace:\n" . $trace . "\n";
-		}
+		$message = static::_getErrorMessage($error, $code, $description, $file, $line);
 		return CakeLog::write($log, $message);
 	}
 
@@ -328,4 +313,33 @@ class ErrorHandler {
 		return array($error, $log);
 	}
 
+/**
+ * Generate the string to use to describe the error.
+ *
+ * @param string $error The error type (e.g. "Warning")
+ * @param int $code Code of error
+ * @param string $description Error description
+ * @param string $file File on which error occurred
+ * @param int $line Line that triggered the error
+ * @return string
+ */
+	protected static function _getErrorMessage($error, $code, $description, $file, $line) {
+		$errorConfig = Configure::read('Error');
+		$message = $error . ' (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']';
+		if (!empty($errorConfig['trace'])) {
+			// https://bugs.php.net/bug.php?id=65322
+			if (version_compare(PHP_VERSION, '5.4.21', '<')) {
+				if (!class_exists('Debugger')) {
+					App::load('Debugger');
+				}
+				if (!class_exists('CakeText')) {
+					App::uses('CakeText', 'Utility');
+					App::load('CakeText');
+				}
+			}
+			$trace = Debugger::trace(array('start' => 1, 'format' => 'log'));
+			$message .= "\nTrace:\n" . $trace . "\n";
+		}
+		return $message;
+	}
 }
