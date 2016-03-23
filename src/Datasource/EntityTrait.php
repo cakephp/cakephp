@@ -526,6 +526,7 @@ trait EntityTrait
     protected static function _accessor($property, $type)
     {
         $class = static::class;
+
         if (isset(static::$_accessors[$class][$type][$property])) {
             return static::$_accessors[$class][$type][$property];
         }
@@ -545,8 +546,10 @@ trait EntityTrait
             }
             $field = lcfirst(substr($method, 4));
             $snakeField = Inflector::underscore($field);
+            $titleField = ucfirst($field);
             static::$_accessors[$class][$prefix][$snakeField] = $method;
             static::$_accessors[$class][$prefix][$field] = $method;
+            static::$_accessors[$class][$prefix][$titleField] = $method;
         }
 
         if (!isset(static::$_accessors[$class][$type][$property])) {
