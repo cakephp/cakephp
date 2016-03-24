@@ -265,7 +265,14 @@ class CakeResponse {
 		'xbm' => 'image/x-xbitmap',
 		'xpm' => 'image/x-xpixmap',
 		'xwd' => 'image/x-xwindowdump',
-		'psd' => ['application/photoshop', 'application/psd', 'image/psd', 'image/x-photoshop', 'image/photoshop', 'zz-application/zz-winassoc-psd'],
+		'psd' => array(
+			'application/photoshop',
+			'application/psd',
+			'image/psd',
+			'image/x-photoshop',
+			'image/photoshop',
+			'zz-application/zz-winassoc-psd'
+		),
 		'ice' => 'x-conference/x-cooltalk',
 		'iges' => 'model/iges',
 		'igs' => 'model/iges',
