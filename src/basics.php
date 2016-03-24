@@ -28,7 +28,8 @@ use Cake\Error\Debugger;
 
 if (!function_exists('debug')) {
     /**
-     * Prints out debug information about given variable.
+     * Prints out debug information about given variable and returns the
+     * variable that was passed.
      *
      * Only runs if debug level is greater than zero.
      *
@@ -38,13 +39,15 @@ if (!function_exists('debug')) {
      * @return void
      * @link http://book.cakephp.org/3.0/en/development/debugging.html#basic-debugging
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#debug
+     * @return mixed The same $var that was passed
      */
     function debug($var, $showHtml = null, $showFrom = true)
     {
         if (!Configure::read('debug')) {
-            return;
+            return $var;
         }
 
+        $originalVar = $var;
         $file = '';
         $line = '';
         $lineInfo = '';
@@ -91,6 +94,7 @@ TEXT;
             }
         }
         printf($template, $lineInfo, $var);
+        return $originalVar;
     }
 
 }
@@ -118,28 +122,6 @@ if (!function_exists('stackTrace')) {
         $options += ['start' => 0];
         $options['start']++;
         echo Debugger::trace($options);
-    }
-
-}
-
-if (!function_exists('json_last_error_msg')) {
-    /**
-     * Provides the fallback implementation of json_last_error_msg() available in PHP 5.5 and above.
-     *
-     * @return string Error message.
-     */
-    function json_last_error_msg()
-    {
-        static $errors = [
-            JSON_ERROR_NONE => '',
-            JSON_ERROR_DEPTH => 'Maximum stack depth exceeded',
-            JSON_ERROR_STATE_MISMATCH => 'Invalid or malformed JSON',
-            JSON_ERROR_CTRL_CHAR => 'Control character error, possibly incorrectly encoded',
-            JSON_ERROR_SYNTAX => 'Syntax error',
-            JSON_ERROR_UTF8 => 'Malformed UTF-8 characters, possibly incorrectly encoded'
-        ];
-        $error = json_last_error();
-        return array_key_exists($error, $errors) ? $errors[$error] : "Unknown error ({$error})";
     }
 
 }
