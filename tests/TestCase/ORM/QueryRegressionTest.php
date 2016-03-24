@@ -1204,8 +1204,9 @@ class QueryRegressionTest extends TestCase
      *
      * @return void
      */
-    public function testFormatResultsMemory()
+    public function testFormatResultsMemoryLeak()
     {
+        $this->skipIf(env('CODECOVERAGE') == 1, 'Running coverage this causes this tests to fail sometimes.');
         $table = TableRegistry::get('Articles');
         $table->belongsTo('Authors');
         $table->belongsToMany('Tags');
@@ -1221,7 +1222,7 @@ class QueryRegressionTest extends TestCase
         }
         gc_collect_cycles();
         $endMemory = memory_get_usage() / 1024 / 1024;
-        $this->assertWithinRange($endMemory, $memory, 1.50, 'Memory leak in ResultSet');
+        $this->assertWithinRange($endMemory, $memory, 1.25, 'Memory leak in ResultSet');
     }
 
     /**
