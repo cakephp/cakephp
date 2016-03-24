@@ -9,7 +9,7 @@
         }
     ],
     "suggest": {
-      "ext-intl": "To use Text::slug()."
+      "ext-intl": "To use Text::transliterate() or Text::slug()"
     },
     "autoload": {
         "psr-4": {
