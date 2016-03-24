@@ -158,7 +158,7 @@ class ConnectionTest extends TestCase
         $sql = 'SELECT 1 + ?';
         $statement = $this->connection->execute($sql, [1], ['integer']);
         $this->assertCount(1, $statement);
-        $result = $statement->fetch();
+        $result = $statement->fetch('num');
         $this->assertEquals([2], $result);
         $statement->closeCursor();
 
@@ -186,7 +186,7 @@ class ConnectionTest extends TestCase
     {
         $sql = "SELECT '2012-01-01' = ?";
         $statement = $this->connection->execute($sql, [new \DateTime('2012-01-01')], ['date']);
-        $result = $statement->fetch();
+        $result = $statement->fetch('num');
         $statement->closeCursor();
         $this->assertTrue((bool)$result[0]);
     }
@@ -212,7 +212,7 @@ class ConnectionTest extends TestCase
     {
         $sql = 'SELECT 1';
         $statement = $this->connection->execute($sql);
-        $result = $statement->fetch();
+        $result = $statement->fetch('num');
         $this->assertCount(1, $result);
         $this->assertEquals([1], $result);
         $statement->closeCursor();
