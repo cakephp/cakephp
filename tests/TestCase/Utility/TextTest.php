@@ -1671,6 +1671,10 @@ podeís adquirirla.</span></p>
                 'A-ae-Ubermensch-pa-hoyeste-niva-I-a-lublu-PHP-est-fi'
             ],
             [
+                'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ ¦', ['transliteratorId' => 'Latin-ASCII'],
+                'A-ae-Ubermensch-pa-hoyeste-niva-И-я-люблю-PHP-есть-fi'
+            ],
+            [
                 'Äpfel Über Öl grün ärgert groß öko', [],
                 'Apfel-Uber-Ol-grun-argert-gross-oko'
             ],
