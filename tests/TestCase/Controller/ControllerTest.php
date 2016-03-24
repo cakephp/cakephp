@@ -527,12 +527,13 @@ class ControllerTest extends TestCase
         $Response = $this->getMock('Cake\Network\Response', ['stop', 'header', 'statusCode']);
         $Controller = new Controller(null, $Response);
 
-        $Controller->eventManager()->on('Controller.beforeRedirect', function ($event, $url, $response) {
-            return new Response;
+        $newResponse = new Response;
+        $Controller->eventManager()->on('Controller.beforeRedirect', function ($event, $url, $response) use ($newResponse) {
+            return $newResponse;
         });
 
         $result = $Controller->redirect('http://cakephp.org');
-        $this->assertInstanceOf(Response::class, $result);
+        $this->assertSame($newResponse, $result);
     }
 
     /**
