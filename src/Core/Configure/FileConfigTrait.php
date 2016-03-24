@@ -57,7 +57,7 @@ trait FileConfigTrait
         $file .= $this->_extension;
 
         if (!$checkExists || is_file($file)) {
-            return $file
+            return $file;
         }
 
         if (is_file(realpath($file))) {
