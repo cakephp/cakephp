@@ -82,6 +82,7 @@ trait SqlserverDialectTrait
      */
     public function _version()
     {
+        $this->connect();
         return $this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
     }
 
