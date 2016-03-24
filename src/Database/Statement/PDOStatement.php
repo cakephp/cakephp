@@ -91,7 +91,7 @@ class PDOStatement extends StatementDecorator
      */
     public function fetch($type = null)
     {
-        $type = $this->getFetchMode($type);
+        $type = $type ? : $this->getFetchMode();
         if ($type === 'num') {
             return $this->_statement->fetch(PDO::FETCH_NUM);
         }
@@ -117,7 +117,7 @@ class PDOStatement extends StatementDecorator
      */
     public function fetchAll($type = null)
     {
-        $type = $this->getFetchMode($type);
+        $type = $type ? : $this->getFetchMode();
         if ($type === 'num') {
             return $this->_statement->fetchAll(PDO::FETCH_NUM);
         }

@@ -331,7 +331,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * Set the default fetch mode for this statement
      *
      * @param string $mode The fetch mode as string 'num' or 'assoc'
-     * @return bool true on success, false otherwise
+     * @return void
      */
     public function setFetchMode($mode)
     {
@@ -341,11 +341,10 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
     /**
      * Returns the requested fetch mode or default fetch mode
      *
-     * @param string $type [optional] 'num' or 'assoc'
-     * @return string|int
+     * @return string
      */
-    public function getFetchMode($type = null)
+    public function getFetchMode()
     {
-        return $type !== null ? $type : $this->_fetchMode;
+        return $this->_fetchMode;
     }
 }
