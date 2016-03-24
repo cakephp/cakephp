@@ -18,12 +18,22 @@ use Cake\Database\Type;
 use Cake\Database\Type\ExpressionTypeInterface;
 
 /**
+ * Offers a method to convert values to ExpressionInterface objects
+ * if the type they should be converted to implements ExpressionTypeInterface
  *
- * @internal
  */
 trait TypeExpressionCasterTrait
 {
 
+    /**
+     * Conditionally converts the passed value to an ExpressionInterface object
+     * if the type class implementes the ExpressionTypeInterface. Otherwise,
+     * returns the value unmodified.
+     *
+     * @param mixed $value The value to converto to ExpressionInterface
+     * @param string $type The type name
+     * @return mixed
+     */
     protected function _castToExpression($value, $type)
     {
         if (empty($type)) {

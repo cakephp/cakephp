@@ -53,8 +53,19 @@ class Comparison implements ExpressionInterface, FieldInterface
      */
     protected $_operator;
 
+    /**
+     * Whether or not the value in this expressions is a traversable
+     *
+     * @var bool
+     */
     protected $_isMultiple = false;
 
+    /**
+     * A cached list of ExpressionInterface objects that were
+     * found in the value for this expression.
+     *
+     * @var array
+     */
     protected $_valueExpressions = [];
 
     /**
@@ -92,7 +103,7 @@ class Comparison implements ExpressionInterface, FieldInterface
         }
 
         if ($isMultiple) {
-            $this->_valueExpressions = $this->_collectExpressions($value);
+            list($value, $this->_valueExpressions) = $this->_collectExpressions($value);
         }
 
         $this->_isMultiple = $isMultiple;
@@ -255,7 +266,6 @@ class Comparison implements ExpressionInterface, FieldInterface
     protected function _flattenValue($value, $generator, $type = 'string')
     {
         $expressions = [];
-
         foreach ($this->_valueExpressions as $k => $v) {
             $expressions[$k] = $v->sql($generator);
             unset($value[$k]);
@@ -270,15 +280,37 @@ class Comparison implements ExpressionInterface, FieldInterface
         return implode(',', $parts);
     }
 
+    /**
+     * Returns an array with the original $values in the first poisition
+     * and all ExpressionInterface objects that could be found in the second
+     * position.
+     *
+     * @param array|Traversable $values
+     * @return array
+     */
     protected function _collectExpressions($values)
     {
-        $result = [];
+        if ($values instanceof ExpressionInterface) {
+            return [$values, []];
+        }
+
+        $expressions = $result = [];
+        $isArray = is_array($values);
+
+        if ($isArray) {
+            $result = $values;
+        }
+
         foreach ($values as $k => $v) {
             if ($v instanceof ExpressionInterface) {
+                $expressions[$k] = $v;
+            }
+
+            if ($isArray) {
                 $result[$k] = $v;
             }
         }
 
-        return $result;
+        return [$result, $expressions];
     }
 }

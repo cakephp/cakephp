@@ -73,6 +73,14 @@ class ValueBinder
         return $token;
     }
 
+    /**
+     * Creates unique named placeholders for each of the passed values
+     * and binds them with the specifed type.
+     *
+     * @param array|Traversable $values The list of values to be bound
+     * @param string $type The type with wich all values will be bound
+     * @return array with the placeholders to put in the query
+     */
     public function generateManyNamed($values, $type = 'string')
     {
         $placeholders = [];
