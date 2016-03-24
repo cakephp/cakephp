@@ -818,7 +818,7 @@ class EntityTest extends TestCase
     public function testConstructorWithMarkNew()
     {
         $entity = $this->getMockBuilder('\Cake\ORM\Entity')
-            ->setMethods(['isNew'])
+            ->setMethods(['isNew', 'clean'])
             ->disableOriginalConstructor()
             ->getMock();
         $entity->expects($this->never())->method('clean');

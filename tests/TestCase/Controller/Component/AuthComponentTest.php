@@ -1450,6 +1450,7 @@ class AuthComponentTest extends TestCase
      */
     public function testStatelessFollowedByStatefulAuth()
     {
+        $this->Auth->response = $this->getMock('Cake\Network\Response', ['stop', 'statusCode', 'send']);
         $event = new Event('Controller.startup', $this->Controller);
         $this->Auth->authenticate = ['Basic', 'Form'];
         $this->Controller->request['action'] = 'add';
