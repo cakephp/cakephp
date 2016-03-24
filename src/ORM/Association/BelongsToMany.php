@@ -988,7 +988,7 @@ class BelongsToMany extends Association
 
         return $this->junction()->connection()->transactional(
             function () use ($sourceEntity, $targetEntities, $primaryValue, $options) {
-                $foreignKey = (array)$this->foreignKey();
+                $foreignKey = array_map([$this->_junctionTable, 'aliasField'], (array)$this->foreignKey());
                 $hasMany = $this->source()->association($this->_junctionTable->alias());
                 $existing = $hasMany->find('all')
                     ->where(array_combine($foreignKey, $primaryValue));
