@@ -1722,6 +1722,10 @@ podeís adquirirla.</span></p>
                 'Foo Bar: Not just for breakfast any-more', ['replacement' => ''],
                 'FooBarNotjustforbreakfastanymore'
             ],
+            [
+                'clean!_me.tar.gz', ['preserve' => '.'],
+                'clean-me.tar.gz'
+            ]
         ];
     }
 

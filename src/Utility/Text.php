@@ -882,29 +882,36 @@ class Text
      * @param string $string the string you want to slug
      * @param array $options Valid options:
      *   - `replacement`: Replacement string. Default '-'.
-     *   - `transliteratorId`: A valid tranliteratorId string.
+     *   - `transliteratorId`: A valid tranliterator id string.
      *     If default `null` Text::$defaultTransliteratorId to be used.
      *     If `false` no transliteration will be done, only non words will be removed.
+     *   - `preserve`: Specific non-word character to preserve. Default `null`.
+     *     For e.g. this option can be set to '.' to generate clean file names.
      * @return string
      */
     public static function slug($string, $options = [])
     {
         $options += [
             'replacement' => '-',
-            'transliteratorId' => null
+            'transliteratorId' => null,
+            'preserve' => null
         ];
 
         if ($options['transliteratorId'] !== false) {
             $string = static::transliterate($string, $options['transliteratorId']);
         }
 
+        $regex = '^\s\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}';
+        if ($options['preserve']) {
+            $regex .= '(' . preg_quote($options['preserve'], '/') . ')';
+        }
         $quotedReplacement = preg_quote($options['replacement'], '/');
         $map = [
-            '/[^\s\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}]/mu' => ' ',
+            '/[' . $regex . ']/mu' => ' ',
             '/[\s]+/mu' => $options['replacement'],
             sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
         ];
-        $string = preg_replace(array_keys($map), array_values($map), $string);
+        $string = preg_replace(array_keys($map), $map, $string);
 
         return $string;
     }
