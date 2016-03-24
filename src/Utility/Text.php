@@ -24,7 +24,7 @@ class Text
 {
 
     /**
-     * Default transliteration id.
+     * Default transliterator id string.
      *
      * @param string $defaultTransliteratorId Transliterator identifer string.
      */
@@ -867,6 +867,7 @@ class Text
      * @param string|null $transliteratorId Transliterator identifer. If null
      *   Text::$defaultTransliteratorId will be used.
      * @return string
+     * @see http://php.net/manual/en/transliterator.transliterate.php
      */
     public static function transliterate($string, $transliteratorId = null)
     {
@@ -875,11 +876,15 @@ class Text
     }
 
     /**
-     * Returns a string with all spaces converted to dashes (by default), accented
-     * characters converted to non-accented characters, and non word characters removed.
+     * Returns a string with all spaces converted to dashes (by default),
+     * characters transliterated to ASCII characters, and non word characters removed.
      *
      * @param string $string the string you want to slug
-     * @param array $options Options
+     * @param array $options Valid options:
+     *   - `replacement`: Replacement string. Default '-'.
+     *   - `transliteratorId`: A valid tranliteratorId string.
+     *     If default `null` Text::$defaultTransliteratorId to be used.
+     *     If `false` no transliteration will be done, only non words will be removed.
      * @return string
      */
     public static function slug($string, $options = [])
