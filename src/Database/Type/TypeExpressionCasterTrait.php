@@ -26,6 +26,10 @@ trait TypeExpressionCasterTrait
 
     protected function _castToExpression($value, $type)
     {
+        if (empty($type)) {
+            return $value;
+        }
+
         $baseType = str_replace('[]', '', $type);
         $converter = Type::build($baseType);
 

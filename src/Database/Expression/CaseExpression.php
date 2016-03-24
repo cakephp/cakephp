@@ -116,17 +116,19 @@ class CaseExpression implements ExpressionInterface
     {
         $rawValues = array_values($values);
         $keyValues = array_keys($values);
+
         foreach ($conditions as $k => $c) {
             $numericKey = is_numeric($k);
 
             if ($numericKey && empty($c)) {
                 continue;
             }
+
             if (!$c instanceof ExpressionInterface) {
                 continue;
             }
-            array_push($this->_conditions, $c);
 
+            array_push($this->_conditions, $c);
             $value = isset($rawValues[$k]) ? $rawValues[$k] : 1;
 
             if ($value === 'literal') {
@@ -134,6 +136,7 @@ class CaseExpression implements ExpressionInterface
                 array_push($this->_values, $value);
                 continue;
             }
+
             if ($value === 'identifier') {
                 $value = new IdentifierExpression($keyValues[$k]);
                 array_push($this->_values, $value);
@@ -168,7 +171,13 @@ class CaseExpression implements ExpressionInterface
         if (is_array($value)) {
             end($value);
             $value = key($value);
-        } elseif ($value !== null && !$value instanceof ExpressionInterface) {
+        }
+
+        if ($value !== null && !$value instanceof ExpressionInterface) {
+            $value = $this->_castToExpression($value, $type);
+        }
+
+        if (!$value instanceof ExpressionInterface) {
             $value = ['value' => $value, 'type' => $type];
         }
 
