@@ -76,7 +76,7 @@ class AssetFilterTest extends TestCase
         $this->assertEquals(200, $response->statusCode());
         $this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->modified());
 
-        $response = $this->getMock('Cake\Network\Response', ['_sendHeader', 'checkNotModified']);
+        $response = $this->getMock('Cake\Network\Response', ['_sendHeader', 'checkNotModified', 'send']);
         $request = new Request('test_theme/img/cake.power.gif');
 
         $response->expects($this->once())->method('checkNotModified')
