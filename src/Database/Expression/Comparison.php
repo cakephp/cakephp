@@ -54,7 +54,7 @@ class Comparison implements ExpressionInterface, FieldInterface
     protected $_operator;
 
     /**
-     * Whether or not the value in this expressions is a traversable
+     * Whether or not the value in this expression is a traversable
      *
      * @var bool
      */
@@ -281,7 +281,7 @@ class Comparison implements ExpressionInterface, FieldInterface
     }
 
     /**
-     * Returns an array with the original $values in the first poisition
+     * Returns an array with the original $values in the first position
      * and all ExpressionInterface objects that could be found in the second
      * position.
      *

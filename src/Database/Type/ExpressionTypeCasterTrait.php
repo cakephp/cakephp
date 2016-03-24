@@ -27,7 +27,7 @@ trait ExpressionTypeCasterTrait
 
     /**
      * Conditionally converts the passed value to an ExpressionInterface object
-     * if the type class implementes the ExpressionTypeInterface. Otherwise,
+     * if the type class implements the ExpressionTypeInterface. Otherwise,
      * returns the value unmodified.
      *
      * @param mixed $value The value to converto to ExpressionInterface
