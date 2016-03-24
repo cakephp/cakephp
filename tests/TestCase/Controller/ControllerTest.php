@@ -522,29 +522,18 @@ class ControllerTest extends TestCase
         $this->assertEquals(302, $response->statusCode());
     }
 
-    /**
-     * test that beforeRedirect callback returning false in controller
-     *
-     * @return void
-     */
-    public function testRedirectBeforeRedirectListenerReturnFalse()
+    public function testRedirectBeforeRedirectListenerReturnResponse()
     {
-        $Response = $this->getMock('Cake\Network\Response', ['stop', 'header']);
+        $Response = $this->getMock('Cake\Network\Response', ['stop', 'header', 'statusCode']);
         $Controller = new Controller(null, $Response);
 
-        $Controller->eventManager()->attach(function ($event, $url, $response) {
-            return false;
-        }, 'Controller.beforeRedirect');
-
-        $Controller->response->expects($this->never())
-            ->method('stop');
-        $Controller->response->expects($this->never())
-            ->method('header');
-        $Controller->response->expects($this->never())
-            ->method('statusCode');
+        $newResponse = new Response;
+        $Controller->eventManager()->on('Controller.beforeRedirect', function ($event, $url, $response) use ($newResponse) {
+            return $newResponse;
+        });
 
         $result = $Controller->redirect('http://cakephp.org');
-        $this->assertNull($result);
+        $this->assertSame($newResponse, $result);
     }
 
     /**

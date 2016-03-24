@@ -56,7 +56,7 @@ trait FileConfigTrait
 
         $file .= $this->_extension;
 
-        if ($checkExists && !is_file(realpath($file))) {
+        if ($checkExists && !is_file($file) && !is_file(realpath($file))) {
             throw new Exception(sprintf('Could not load configuration file: %s', $file));
         }
 

@@ -180,6 +180,7 @@ class StreamTest extends TestCase
         $options = [
             'ssl_verify_host' => true,
             'ssl_verify_peer' => true,
+            'ssl_verify_peer_name' => true,
             'ssl_verify_depth' => 9000,
             'ssl_allow_self_signed' => false,
             'proxy' => [
@@ -192,6 +193,43 @@ class StreamTest extends TestCase
         $expected = [
             'peer_name' => 'localhost.com',
             'verify_peer' => true,
+            'verify_peer_name' => true,
+            'verify_depth' => 9000,
+            'allow_self_signed' => false,
+            'proxy' => '127.0.0.1:8080',
+        ];
+        foreach ($expected as $k => $v) {
+            $this->assertEquals($v, $result[$k]);
+        }
+        $this->assertTrue(is_readable($result['cafile']));
+    }
+
+    /**
+     * Test send() + context options for SSL.
+     *
+     * @return void
+     */
+    public function testSendContextSslNoVerifyPeerName()
+    {
+        $request = new Request();
+        $request->url('https://localhost.com/test.html');
+        $options = [
+            'ssl_verify_host' => true,
+            'ssl_verify_peer' => true,
+            'ssl_verify_peer_name' => false,
+            'ssl_verify_depth' => 9000,
+            'ssl_allow_self_signed' => false,
+            'proxy' => [
+                'proxy' => '127.0.0.1:8080'
+            ]
+        ];
+
+        $this->stream->send($request, $options);
+        $result = $this->stream->contextOptions();
+        $expected = [
+            'peer_name' => 'localhost.com',
+            'verify_peer' => true,
+            'verify_peer_name' => false,
             'verify_depth' => 9000,
             'allow_self_signed' => false,
             'proxy' => '127.0.0.1:8080',

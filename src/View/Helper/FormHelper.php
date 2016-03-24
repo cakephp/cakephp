@@ -524,6 +524,7 @@ class FormHelper extends Helper
     public function end(array $secureAttributes = [])
     {
         $out = '';
+
         if ($this->requestType !== 'get' &&
             !empty($this->request['_Token'])
         ) {
@@ -558,6 +559,11 @@ class FormHelper extends Helper
         if (empty($this->request['_Token'])) {
             return null;
         }
+        $debugSecurity = Configure::read('debug');
+        if (isset($secureAttributes['debugSecurity'])) {
+            $debugSecurity = $debugSecurity && $secureAttributes['debugSecurity'];
+            unset($secureAttributes['debugSecurity']);
+        }
 
         $tokenData = $this->_buildFieldToken(
             $this->_lastAction,
@@ -572,6 +578,16 @@ class FormHelper extends Helper
             'value' => $tokenData['unlocked'],
         ]);
         $out .= $this->hidden('_Token.unlocked', $tokenUnlocked);
+        if ($debugSecurity) {
+            $tokenDebug = array_merge($secureAttributes, [
+                'value' => urlencode(json_encode([
+                    $this->_lastAction,
+                    $fields,
+                    $this->_unlockedFields
+                ])),
+            ]);
+            $out .= $this->hidden('_Token.debug', $tokenDebug);
+        }
         return $this->formatTemplate('hiddenBlock', ['content' => $out]);
     }
 

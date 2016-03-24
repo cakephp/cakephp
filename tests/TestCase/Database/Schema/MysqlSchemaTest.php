@@ -1142,11 +1142,6 @@ SQL;
             ->will($this->returnCallback(function ($value) {
                 return "'$value'";
             }));
-        $mock->expects($this->any())
-            ->method('quoteIdentifier')
-            ->will($this->returnCallback(function ($value) {
-                return '`' . $value . '`';
-            }));
         $driver->connection($mock);
         return $driver;
     }
