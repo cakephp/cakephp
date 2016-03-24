@@ -729,13 +729,13 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * {@inheritDoc}
      *
-     * Returns the COUNT(*) for the query. If the query has not been
-     * modified, and the count has already been performed the cached
-     * value is returned
+     * Returns the COUNT(*) for the query. A cached value from a previous count
+     * is returned if no counter function is set and the query has not been
+     * modified.
      */
     public function count()
     {
-        if ($this->_resultsCount === null) {
+        if ($this->_resultsCount === null || $this->_counter) {
             $this->_resultsCount = $this->_performCount();
         }
 
