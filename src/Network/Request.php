@@ -787,9 +787,9 @@ class Request implements ArrayAccess
         
         if (empty($controller)) {
             return $action;
-        } else {
-            return $action && $this->isController($controller);
         }
+        
+        return $action && $this->isController($controller);
     }
     
     /**
@@ -802,9 +802,9 @@ class Request implements ArrayAccess
     {
         if (is_array($controller)) {
             return in_array($this->param('controller'), $controller);
-        } else {
-            return $this->param('controller') === $controller;
         }
+        
+        return $this->param('controller') === $controller;
     }
     
     /**
@@ -831,9 +831,9 @@ class Request implements ArrayAccess
     {
         if (is_array($prefix)) {
             return in_array($this->param('prefix'), $prefix);
-        } else {
-            return $this->param('prefix') === $prefix;
         }
+        
+        return $this->param('prefix') === $prefix;
     }
 
     /**
