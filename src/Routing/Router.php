@@ -219,9 +219,14 @@ class Router
      *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
      * @return void
      * @see \Cake\Routing\RouteBuilder::redirect()
+     * @deprected 3.3.0 Use Router::scope() and RouteBuilder::redirect() instead.
      */
     public static function redirect($route, $url, $options = [])
     {
+        trigger_error(
+            'Router::redirect() is deprecated. Use Router::scope() and $routes->redirect() instead.',
+            E_USER_DEPRECATED
+        );
         $options['routeClass'] = 'Cake\Routing\Route\RedirectRoute';
         if (is_string($url)) {
             $url = ['redirect' => $url];
@@ -279,10 +284,15 @@ class Router
      * @param string|array $controller A controller name or array of controller names (i.e. "Posts" or "ListItems")
      * @param array $options Options to use when generating REST routes
      * @see \Cake\Routing\RouteBuilder::resources()
+     * @deprecated 3.3.0 Use Router::scope() and RouteBuilder::resources() instead.
      * @return void
      */
     public static function mapResources($controller, $options = [])
     {
+        trigger_error(
+            'Router::mapResources() is deprecated. Use Router::scope() and $routes->resources() instead.',
+            E_USER_DEPRECATED
+        );
         foreach ((array)$controller as $name) {
             list($plugin, $name) = pluginSplit($name);
 
@@ -798,9 +808,14 @@ class Router
      * @param \Cake\Network\Request $request The request object to modify.
      * @param array $options The array of options.
      * @return \Cake\Network\Request The modified request
+     * @deprecated 3.3.0 Named parameter backwards compatibility will be removed in 4.0.
      */
     public static function parseNamedParams(Request $request, array $options = [])
     {
+        trigger_error(
+            'Router::parseNamedParams() is deprecated and will be removed in 4.0.',
+            E_USER_DEPRECATED
+        );
         $options += ['separator' => ':'];
         if (empty($request->params['pass'])) {
             $request->params['named'] = [];
