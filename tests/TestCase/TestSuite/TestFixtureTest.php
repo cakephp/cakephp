@@ -281,18 +281,15 @@ class TestFixtureTest extends TestCase
     public function testInitNoImportNoFields()
     {
         $db = ConnectionManager::get('test');
-        $collection = $db->schemaCollection();
-        if (!in_array('letters', $collection->listTables())) {
-            $table = new Table('letters', [
-                'id' => ['type' => 'integer'],
-                'letter' => ['type' => 'string', 'length' => 1]
-            ]);
-            $table->addConstraint('primary', ['type' => 'primary', 'columns' => ['id']]);
-            $sql = $table->createSql($db);
+        $table = new Table('letters', [
+            'id' => ['type' => 'integer'],
+            'letter' => ['type' => 'string', 'length' => 1]
+        ]);
+        $table->addConstraint('primary', ['type' => 'primary', 'columns' => ['id']]);
+        $sql = $table->createSql($db);
 
-            foreach ($sql as $stmt) {
-                $db->execute($stmt);
-            }
+        foreach ($sql as $stmt) {
+            $db->execute($stmt);
         }
 
         $fixture = new LettersFixture();
@@ -306,6 +303,10 @@ class TestFixtureTest extends TestCase
             ->method('execute');
         $this->assertTrue($fixture->create($db));
         $this->assertTrue($fixture->drop($db));
+
+        // Cleanup.
+        $db = ConnectionManager::get('test');
+        $db->execute('DROP TABLE letters');
     }
 
     /**
