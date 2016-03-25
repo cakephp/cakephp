@@ -22,6 +22,7 @@ use Cake\Database\Type;
 use Cake\Database\Expression\Comparison;
 use Cake\Database\Expression\BetweenExpression;
 use Cake\Database\Expression\CaseExpression;
+use Cake\Database\Expression\ValuesExpression;
 
 class TestType extends StringType implements ExpressionTypeInterface
 {
@@ -167,5 +168,34 @@ class ExpressionTypeCastingTest extends TestCase
 
         $result = array_sum($expressions);
         $this->assertEquals(1, $result, 'Missing expressions in the tree');
+    }
+
+    /**
+     * Tests that values in ValuesExpression are converted to expressions correctly
+     *
+     * @return void
+     */
+    public function testValuesExpression()
+    {
+        $values = new ValuesExpression(['title'], ['title' => 'test']);
+        $values->add(['title' => 'foo']);
+        $values->add(['title' => 'bar']);
+
+        $binder = new ValueBinder;
+        $sql = $values->sql($binder);
+        $this->assertEquals(
+            ' VALUES ((CONCAT(:c0, :c1))), ((CONCAT(:c2, :c3)))',
+            $sql
+        );
+        $this->assertEquals('foo', $binder->bindings()[':c0']['value']);
+        $this->assertEquals('bar', $binder->bindings()[':c2']['value']);
+
+        $expressions = [];
+        $values->traverse(function ($exp) use (&$expressions) {
+            $expressions[] = $exp instanceof FunctionExpression ? 1 : 0;
+        });
+
+        $result = array_sum($expressions);
+        $this->assertEquals(2, $result, 'Missing expressions in the tree');
     }
 }

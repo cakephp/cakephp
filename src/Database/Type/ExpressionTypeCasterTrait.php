@@ -55,4 +55,25 @@ trait ExpressionTypeCasterTrait
 
         return $converter->toExpression($value);
     }
+
+    /**
+     * Returns an array with the types that require values to
+     * be casted to expressions, out of the list of type names
+     * passed as parameter.
+     *
+     * @param array $types List of type names
+     * @return array
+     */
+    protected function _requiresToExpressionCasting($types)
+    {
+        $result  = [];
+        $types = array_filter($types);
+        foreach ($types as $k => $type) {
+            $object = Type::build($type);
+            if ($object instanceof ExpressionTypeInterface) {
+                $result[$k] = $object;
+            }
+        }
+        return $result;
+    }
 }
