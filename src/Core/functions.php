@@ -130,10 +130,9 @@ if (!function_exists('pr')) {
      * This function returns the same variable that was passed.
      *
      * @param mixed $var Variable to print out.
-     * @return void
-     * @see debug()
-     * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pr
      * @return mixed the same $var that was passed to this function
+     * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pr
+     * @see debug()
      */
     function pr($var)
     {
@@ -158,10 +157,9 @@ if (!function_exists('pj')) {
      * This function returns the same variable that was passed.
      *
      * @param mixed $var Variable to print out.
-     * @return void
+     * @return mixed the same $var that was passed to this function
      * @see pr()
      * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pj
-     * @return mixed the same $var that was passed to this function
      */
     function pj($var)
     {
