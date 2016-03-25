@@ -134,6 +134,7 @@ class RouterTest extends TestCase
      */
     public function testMapResources()
     {
+        $restore = error_reporting(E_ALL ^ E_USER_DEPRECATED);
         Router::mapResources('Posts');
 
         $expected = [
@@ -224,6 +225,7 @@ class RouterTest extends TestCase
         ];
         $result = Router::parse('/posts/name', 'PUT');
         $this->assertEquals($expected, $result);
+        error_reporting($restore);
     }
 
     /**
@@ -233,6 +235,7 @@ class RouterTest extends TestCase
      */
     public function testPluginMapResources()
     {
+        $restore = error_reporting(E_ALL ^ E_USER_DEPRECATED);
         Router::mapResources('TestPlugin.TestPlugin');
 
         $result = Router::parse('/test_plugin/test_plugin', 'GET');
@@ -255,6 +258,7 @@ class RouterTest extends TestCase
             '_method' => 'GET',
         ];
         $this->assertEquals($expected, $result);
+        error_reporting($restore);
     }
 
     /**
@@ -264,6 +268,7 @@ class RouterTest extends TestCase
      */
     public function testMapResourcesWithPrefix()
     {
+        $restore = error_reporting(E_ALL ^ E_USER_DEPRECATED);
         Router::mapResources('Posts', ['prefix' => 'api']);
 
         $result = Router::parse('/api/posts', 'GET');
@@ -277,6 +282,7 @@ class RouterTest extends TestCase
             '_method' => 'GET',
         ];
         $this->assertEquals($expected, $result);
+        error_reporting($restore);
     }
 
     /**
@@ -286,6 +292,7 @@ class RouterTest extends TestCase
      */
     public function testMapResourcesWithExtension()
     {
+        $restore = error_reporting(E_ALL ^ E_USER_DEPRECATED);
         Router::extensions(['json', 'xml'], false);
         Router::mapResources('Posts', ['_ext' => 'json']);
 
@@ -306,6 +313,7 @@ class RouterTest extends TestCase
 
         $result = Router::parse('/posts.xml', 'GET');
         $this->assertArrayNotHasKey('_method', $result, 'Not an extension/resource route.');
+        error_reporting($restore);
     }
 
     /**
@@ -313,6 +321,7 @@ class RouterTest extends TestCase
      */
     public function testMapResourcesConnectOptions()
     {
+        $restore = error_reporting(E_ALL ^ E_USER_DEPRECATED);
         Plugin::load('TestPlugin');
         Router::mapResources('Posts', [
             'connectOptions' => [
@@ -324,6 +333,7 @@ class RouterTest extends TestCase
         $route = $routes[0];
         $this->assertInstanceOf('TestPlugin\Routing\Route\TestRoute', $route);
         $this->assertEquals('^(bar)$', $route->options['foo']);
+        error_reporting($restore);
     }
 
     /**
@@ -333,6 +343,7 @@ class RouterTest extends TestCase
      */
     public function testPluginMapResourcesWithPrefix()
     {
+        $restore = error_reporting(E_ALL ^ E_USER_DEPRECATED);
         Router::mapResources('TestPlugin.TestPlugin', ['prefix' => 'api']);
 
         $result = Router::parse('/api/test_plugin/test_plugin', 'GET');
@@ -358,6 +369,7 @@ class RouterTest extends TestCase
             'prefix' => 'api',
         ];
         $this->assertEquals($expected, $result);
+        error_reporting($restore);
     }
 
     /**
@@ -397,6 +409,7 @@ class RouterTest extends TestCase
      */
     public function testGenerateUrlResourceRoute()
     {
+        $restore = error_reporting(E_ALL ^ E_USER_DEPRECATED);
         Router::mapResources('Posts');
 
         $result = Router::url([
@@ -431,6 +444,7 @@ class RouterTest extends TestCase
         $result = Router::url(['controller' => 'Posts', 'action' => 'edit', '_method' => 'PATCH', 'id' => 10]);
         $expected = '/posts/10';
         $this->assertEquals($expected, $result);
+        error_reporting($restore);
     }
 
     /**
@@ -2739,10 +2753,12 @@ class RouterTest extends TestCase
      */
     public function testRedirect()
     {
+        $restore = error_reporting(E_ALL ^ E_USER_DEPRECATED);
         Router::redirect('/mobile', '/', ['status' => 301]);
         $routes = Router::routes();
         $route = $routes[0];
         $this->assertInstanceOf('Cake\Routing\Route\RedirectRoute', $route);
+        error_reporting($restore);
     }
 
     /**
@@ -2752,6 +2768,8 @@ class RouterTest extends TestCase
      */
     public function testParseNamedParameters()
     {
+        $restore = error_reporting(E_ALL ^ E_USER_DEPRECATED);
+
         $request = new Request();
         $request->addParams([
             'controller' => 'posts',
@@ -2782,6 +2800,7 @@ class RouterTest extends TestCase
             ]
         ];
         $this->assertEquals($expected, $request->params);
+        error_reporting($restore);
     }
 
     /**
