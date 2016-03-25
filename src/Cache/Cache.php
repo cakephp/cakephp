@@ -445,6 +445,25 @@ class Cache
         $engine = static::engine($config);
         return $engine->clear($check);
     }
+    
+    /**
+     * Delete all keys from the cache from all configurations.
+     *
+     * @param bool $check if true will check expiration, otherwise delete all
+     * @return bool True if the cache of all configurations was successfully cleared, false otherwise
+     */
+    public static function clearAll($check = false)
+    {
+        $success = true;
+        
+        foreach (self::configured() as $config) {
+            if (!self::clear($check, $config)) {
+                $success = false;
+            }
+        }
+        
+        return $success;
+    }
 
     /**
      * Delete all keys from the cache belonging to the same group.
