@@ -16,7 +16,7 @@ namespace Cake\Database\Expression;
 
 use Cake\Database\Exception as DatabaseException;
 use Cake\Database\ExpressionInterface;
-use Cake\Database\Type\TypeExpressionCasterTrait;
+use Cake\Database\Type\ExpressionTypeCasterTrait;
 use Cake\Database\ValueBinder;
 
 /**
@@ -30,7 +30,7 @@ class Comparison implements ExpressionInterface, FieldInterface
 {
 
     use FieldTrait;
-    use TypeExpressionCasterTrait;
+    use ExpressionTypeCasterTrait;
 
     /**
      * The value to be used in the right hand side of the operation

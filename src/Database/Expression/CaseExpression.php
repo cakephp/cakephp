@@ -15,7 +15,7 @@
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
-use Cake\Database\Type\TypeExpressionCasterTrait;
+use Cake\Database\Type\ExpressionTypeCasterTrait;
 use Cake\Database\ValueBinder;
 
 /**
@@ -26,7 +26,7 @@ use Cake\Database\ValueBinder;
 class CaseExpression implements ExpressionInterface
 {
 
-    use TypeExpressionCasterTrait;
+    use ExpressionTypeCasterTrait;
 
     /**
      * A list of strings or other expression objects that represent the conditions of

@@ -15,7 +15,7 @@
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
-use Cake\Database\Type\TypeExpressionCasterTrait;
+use Cake\Database\Type\ExpressionTypeCasterTrait;
 use Cake\Database\TypedResultInterface;
 use Cake\Database\TypedResultTrait;
 use Cake\Database\ValueBinder;
@@ -32,7 +32,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
 {
 
     use TypedResultTrait;
-    use TypeExpressionCasterTrait;
+    use ExpressionTypeCasterTrait;
 
     /**
      * The name of the function to be constructed when generating the SQL string

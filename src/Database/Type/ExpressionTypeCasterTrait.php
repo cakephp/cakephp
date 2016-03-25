@@ -22,7 +22,7 @@ use Cake\Database\Type\ExpressionTypeInterface;
  * if the type they should be converted to implements ExpressionTypeInterface
  *
  */
-trait TypeExpressionCasterTrait
+trait ExpressionTypeCasterTrait
 {
 
     /**
@@ -50,11 +50,7 @@ trait TypeExpressionCasterTrait
         $multi = $type !== $baseType;
 
         if ($multi) {
-            $result = [];
-            foreach ($value as $k => $v) {
-                $result[$k] = $converter->toExpression($v);
-            }
-            return $result;
+            return array_map([$converter, 'toExpression'], $value);
         }
 
         return $converter->toExpression($value);

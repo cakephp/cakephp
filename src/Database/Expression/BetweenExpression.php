@@ -15,7 +15,7 @@
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
-use Cake\Database\Type\TypeExpressionCasterTrait;
+use Cake\Database\Type\ExpressionTypeCasterTrait;
 use Cake\Database\ValueBinder;
 
 /**
@@ -27,7 +27,7 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
 {
 
     use FieldTrait;
-    use TypeExpressionCasterTrait;
+    use ExpressionTypeCasterTrait;
 
     /**
      * The first value in the expression
