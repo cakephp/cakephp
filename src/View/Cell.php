@@ -16,6 +16,7 @@ namespace Cake\View;
 
 use BadMethodCallException;
 use Cake\Cache\Cache;
+use Cake\Core\Configure;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
@@ -201,10 +202,12 @@ abstract class Cell
             $builder->layout(false)
                 ->template($template);
 
-            $className = substr(strrchr(get_class($this), "\\"), 1);
-            $name = substr($className, 0, -4);
+            $className = get_class($this);
+            $namePrefix = '\View\Cell\\';
+            $name = substr($className, strpos($className, $namePrefix) + strlen($namePrefix));
+            $name = substr($name, 0, -4);
             if (!$builder->templatePath()) {
-                $builder->templatePath('Cell' . DIRECTORY_SEPARATOR . $name);
+                $builder->templatePath('Cell' . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $name));
             }
 
             $this->View = $this->createView();
