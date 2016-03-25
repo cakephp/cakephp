@@ -18,6 +18,7 @@ use ArrayAccess;
 use BadMethodCallException;
 use Cake\Core\Configure;
 use Cake\Network\Exception\MethodNotAllowedException;
+use Cake\Routing\Router;
 use Cake\Utility\Hash;
 
 /**
@@ -766,6 +767,73 @@ class Request implements ArrayAccess
     {
         $result = array_filter(array_map([$this, 'is'], $types));
         return count($result) === count($types);
+    }
+    
+    /**
+     * Check if the specified action matches the current action.
+     * Optionally, you can also check if the matches controller the current controller.
+     *
+     * @param string|array $action Action to check.
+     * @param string|array|null $controller Controller to check.
+     * @return bool Success.
+     */
+    public function isAction($action, $controller = null)
+    {
+        if (is_array($action)) {
+            $action = in_array($this->param('action'), $action);
+        } else {
+            $action = $this->param('action') === $action;
+        }
+        
+        if (empty($controller)) {
+            return $action;
+        } else {
+            return $action && $this->isController($controller);
+        }
+    }
+    
+    /**
+     * Check if the specified controller matches the current controller.
+     *
+     * @param string|array $controller Controller to check.
+     * @return bool Success.
+     */
+    public function isController($controller)
+    {
+        if (is_array($controller)) {
+            return in_array($this->param('controller'), $controller);
+        } else {
+            return $this->param('controller') === $controller;
+        }
+    }
+    
+    /**
+     * Check if the specified url matches the full address to the current request.
+     *
+     * @param string|array|null $url An array specifying any of the following:
+     *   'controller', 'action', 'plugin' additionally, you can provide routed
+     *   elements or query string parameters. If string it can be name any valid url
+     *   string.
+     * @return bool Success.
+     */
+    public function isHere($url)
+    {
+        return Router::url($url) === $this->here;
+    }
+    
+    /**
+     * Check if the specified prefix matches the current prefix.
+     *
+     * @param string|array $prefix Prefix to check.
+     * @return bool Success.
+     */
+    public function isPrefix($prefix)
+    {
+        if (is_array($prefix)) {
+            return in_array($this->param('prefix'), $prefix);
+        } else {
+            return $this->param('prefix') === $prefix;
+        }
     }
 
     /**
