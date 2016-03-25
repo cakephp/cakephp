@@ -569,12 +569,14 @@ class QueryTest extends TestCase
                     [
                         'id' => 1,
                         'name' => 'tag1',
-                        '_joinData' => ['article_id' => 1, 'tag_id' => 1]
+                        '_joinData' => ['article_id' => 1, 'tag_id' => 1],
+                        'description' => 'A big description'
                     ],
                     [
                         'id' => 2,
                         'name' => 'tag2',
-                        '_joinData' => ['article_id' => 1, 'tag_id' => 2]
+                        '_joinData' => ['article_id' => 1, 'tag_id' => 2],
+                        'description' => 'Another big description'
                     ]
                 ]
             ],
@@ -588,12 +590,14 @@ class QueryTest extends TestCase
                     [
                         'id' => 1,
                         'name' => 'tag1',
-                        '_joinData' => ['article_id' => 2, 'tag_id' => 1]
+                        '_joinData' => ['article_id' => 2, 'tag_id' => 1],
+                        'description' => 'A big description'
                     ],
                     [
                         'id' => 3,
                         'name' => 'tag3',
-                        '_joinData' => ['article_id' => 2, 'tag_id' => 3]
+                        '_joinData' => ['article_id' => 2, 'tag_id' => 3],
+                        'description' => 'Yet another one'
                     ]
                 ]
             ],
@@ -631,7 +635,8 @@ class QueryTest extends TestCase
                     [
                         'id' => 3,
                         'name' => 'tag3',
-                        '_joinData' => ['article_id' => 2, 'tag_id' => 3]
+                        '_joinData' => ['article_id' => 2, 'tag_id' => 3],
+                        'description' => 'Yet another one'
                     ]
                 ]
             ],
@@ -745,6 +750,7 @@ class QueryTest extends TestCase
                     'Tags' => [
                         'id' => 3,
                         'name' => 'tag3',
+                        'description' => 'Yet another one',
                     ],
                     'ArticlesTags' => ['article_id' => 2, 'tag_id' => 3]
                 ]
@@ -770,6 +776,7 @@ class QueryTest extends TestCase
                     'Tags' => [
                         'id' => 2,
                         'name' => 'tag2',
+                        'description' => 'Another big description',
                     ],
                     'ArticlesTags' => ['article_id' => 1, 'tag_id' => 2]
                 ]
@@ -806,6 +813,7 @@ class QueryTest extends TestCase
                     'tags' => [
                         'id' => 2,
                         'name' => 'tag2',
+                        'description' => 'Another big description',
                     ],
                     'articles' => [
                         'id' => 1,
@@ -815,9 +823,9 @@ class QueryTest extends TestCase
                         'published' => 'Y'
                     ],
                     'ArticlesTags' => [
-                            'article_id' => 1,
-                            'tag_id' => 2
-                        ]
+                        'article_id' => 1,
+                        'tag_id' => 2
+                    ]
                 ]
             ]
         ];
@@ -1259,14 +1267,16 @@ class QueryTest extends TestCase
         $expected = [
             'id' => 1,
             'name' => 'tag1',
-            '_joinData' => ['article_id' => 1, 'tag_id' => 1]
+            '_joinData' => ['article_id' => 1, 'tag_id' => 1],
+            'description' => 'A big description',
         ];
         $this->assertEquals($expected, $first->tags[0]->toArray());
 
         $expected = [
             'id' => 2,
             'name' => 'tag2',
-            '_joinData' => ['article_id' => 1, 'tag_id' => 2]
+            '_joinData' => ['article_id' => 1, 'tag_id' => 2],
+            'description' => 'Another big description'
         ];
         $this->assertEquals($expected, $first->tags[1]->toArray());
     }
@@ -1310,14 +1320,16 @@ class QueryTest extends TestCase
         $expected = [
             'id' => 1,
             'name' => 'tag1',
-            '_joinData' => ['article_id' => 1, 'tag_id' => 1]
+            '_joinData' => ['article_id' => 1, 'tag_id' => 1],
+            'description' => 'A big description',
         ];
         $this->assertEquals($expected, $first->tags[0]->toArray());
 
         $expected = [
             'id' => 2,
             'name' => 'tag2',
-            '_joinData' => ['article_id' => 1, 'tag_id' => 2]
+            '_joinData' => ['article_id' => 1, 'tag_id' => 2],
+            'description' => 'Another big description'
         ];
         $this->assertEquals($expected, $first->tags[1]->toArray());
     }

@@ -3869,7 +3869,8 @@ class TableTest extends TestCase
         ], $options);
 
         $newTag = new \TestApp\Model\Entity\Tag([
-            'name' => 'Foo'
+            'name' => 'Foo',
+            'description' => 'Foo desc'
         ], $source);
         $tags[] = new \TestApp\Model\Entity\Tag([
             'id' => 3
