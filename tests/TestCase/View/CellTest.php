@@ -243,6 +243,28 @@ class CellTest extends TestCase
     }
 
     /**
+     * Tests that using namespaced cells works.
+     *
+     * @return void
+     */
+    public function testNamespacedCell()
+    {
+        $cell = $this->View->cell('Admin/Menu');
+        $this->assertContains('Admin Menu Cell', $cell->render());
+    }
+
+    /**
+     * Tests that using namespaced cells in plugins works
+     *
+     * @return void
+     */
+    public function testPluginNamespacedCell()
+    {
+        $cell = $this->View->cell('TestPlugin.Admin/Menu');
+        $this->assertContains('Test Plugin Admin Menu Cell', $cell->render());
+    }
+
+    /**
      * Test that plugin cells can render other view templates.
      *
      * @return void
