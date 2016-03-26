@@ -16,7 +16,6 @@ namespace Cake\View;
 
 use BadMethodCallException;
 use Cake\Cache\Cache;
-use Cake\Core\Configure;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
