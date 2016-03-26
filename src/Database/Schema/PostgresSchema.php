@@ -345,7 +345,7 @@ class PostgresSchema extends BaseSchema
             'datetime' => ' TIMESTAMP',
             'timestamp' => ' TIMESTAMP',
             'uuid' => ' UUID',
-            'json' => ' JSON'
+            'json' => ' JSONB'
         ];
 
         if (isset($typeMap[$data['type']])) {
