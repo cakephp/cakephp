@@ -17,7 +17,7 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Class BinaryUuiditemFixture
+ * Class OrderedUuiditemFixture
  *
  */
 class OrderedUuidItemsFixture extends TestFixture
