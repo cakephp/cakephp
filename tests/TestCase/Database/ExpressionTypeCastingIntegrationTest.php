@@ -22,6 +22,9 @@ use Cake\Database\Type\ExpressionTypeInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
+/**
+ * Value object for testing mappings.
+ */
 class UuidValue
 {
     public $value;
@@ -32,6 +35,9 @@ class UuidValue
     }
 }
 
+/**
+ * Custom type class that maps between value objects, and SQL expressions.
+ */
 class OrderedUuidType extends Type implements ExpressionTypeInterface
 {
 
@@ -42,10 +48,10 @@ class OrderedUuidType extends Type implements ExpressionTypeInterface
 
     public function toExpression($value)
     {
-        $substr = function ($start, $lenght = null) use ($value) {
+        $substr = function ($start, $length = null) use ($value) {
             return new FunctionExpression(
                 'SUBSTR',
-                $lenght === null ? [$value, $start] : [$value, $start, $lenght],
+                $length === null ? [$value, $start] : [$value, $start, $length],
                 ['string', 'integer', 'integer']
             );
         };
