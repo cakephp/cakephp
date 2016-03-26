@@ -128,6 +128,9 @@ class ValuesExpression implements ExpressionInterface
     public function values($values = null)
     {
         if ($values === null) {
+            if (!$this->_castedExpressions) {
+                $this->_processExpressions();
+            }
             return $this->_values;
         }
         $this->_values = $values;
