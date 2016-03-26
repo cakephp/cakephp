@@ -223,10 +223,6 @@ class Router
      */
     public static function redirect($route, $url, $options = [])
     {
-        trigger_error(
-            'Router::redirect() is deprecated. Use Router::scope() and $routes->redirect() instead.',
-            E_USER_DEPRECATED
-        );
         $options['routeClass'] = 'Cake\Routing\Route\RedirectRoute';
         if (is_string($url)) {
             $url = ['redirect' => $url];
@@ -289,10 +285,6 @@ class Router
      */
     public static function mapResources($controller, $options = [])
     {
-        trigger_error(
-            'Router::mapResources() is deprecated. Use Router::scope() and $routes->resources() instead.',
-            E_USER_DEPRECATED
-        );
         foreach ((array)$controller as $name) {
             list($plugin, $name) = pluginSplit($name);
 
@@ -812,10 +804,6 @@ class Router
      */
     public static function parseNamedParams(Request $request, array $options = [])
     {
-        trigger_error(
-            'Router::parseNamedParams() is deprecated and will be removed in 4.0.',
-            E_USER_DEPRECATED
-        );
         $options += ['separator' => ':'];
         if (empty($request->params['pass'])) {
             $request->params['named'] = [];
