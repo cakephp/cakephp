@@ -219,6 +219,11 @@ class Connection implements ConnectionInterface
             $statement = $this->_newLogger($statement);
         }
 
+        // Default fetch mode for all statements
+        if (!empty($this->_config['fetchMode'])) {
+            $statement->setFetchMode($this->_config['fetchMode']);
+        }
+
         return $statement;
     }
 

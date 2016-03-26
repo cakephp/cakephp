@@ -89,8 +89,9 @@ class PDOStatement extends StatementDecorator
      * @return mixed Result array containing columns and values or false if no results
      * are left
      */
-    public function fetch($type = 'num')
+    public function fetch($type = null)
     {
+        $type = $type ? : $this->getFetchMode();
         if ($type === 'num') {
             return $this->_statement->fetch(PDO::FETCH_NUM);
         }
@@ -117,8 +118,9 @@ class PDOStatement extends StatementDecorator
      * @param string $type num for fetching columns as positional keys or assoc for column names as keys
      * @return array list of all results from database for this statement
      */
-    public function fetchAll($type = 'num')
+    public function fetchAll($type = null)
     {
+        $type = $type ? : $this->getFetchMode();
         if ($type === 'num') {
             return $this->_statement->fetchAll(PDO::FETCH_NUM);
         }

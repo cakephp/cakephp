@@ -80,8 +80,9 @@ class BufferedStatement extends StatementDecorator
      * @param string $type The type to fetch.
      * @return array|false
      */
-    public function fetch($type = 'num')
+    public function fetch($type = null)
     {
+        $type = $type ? : $this->getFetchMode();
         if ($this->_allFetched) {
             $row = ($this->_counter < $this->_count) ? $this->_records[$this->_counter++] : false;
             $row = ($row && $type === 'num') ? array_values($row) : $row;
@@ -108,7 +109,7 @@ class BufferedStatement extends StatementDecorator
      * @param string $type The type to fetch.
      * @return array
      */
-    public function fetchAll($type = 'num')
+    public function fetchAll($type = null)
     {
         if ($this->_allFetched) {
             return $this->_records;

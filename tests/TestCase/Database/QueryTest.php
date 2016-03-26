@@ -72,16 +72,16 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $result = $query->select('1 + 1')->execute();
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
-        $this->assertEquals([2], $result->fetch());
+        $this->assertEquals([2], $result->fetch('num'));
 
         //This new field should be appended
         $result = $query->select(['1 + 3'])->execute();
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
-        $this->assertEquals([2, 4], $result->fetch());
+        $this->assertEquals([2, 4], $result->fetch('num'));
 
         //This should now overwrite all previous fields
         $result = $query->select(['1 + 2', '1 + 5'], true)->execute();
-        $this->assertEquals([3, 6], $result->fetch());
+        $this->assertEquals([3, 6], $result->fetch('num'));
     }
 
     /**
@@ -97,7 +97,7 @@ class QueryTest extends TestCase
             $this->assertSame($query, $q);
             return ['1 + 2', '1 + 5'];
         })->execute();
-        $this->assertEquals([3, 6], $result->fetch());
+        $this->assertEquals([3, 6], $result->fetch('num'));
     }
 
     /**
@@ -120,8 +120,8 @@ class QueryTest extends TestCase
 
         // Overwrite tables and only fetch from authors
         $result = $query->select('name', true)->from('authors', true)->order(['name' => 'desc'], true)->execute();
-        $this->assertEquals(['nate'], $result->fetch());
-        $this->assertEquals(['mariano'], $result->fetch());
+        $this->assertEquals(['nate'], $result->fetch('num'));
+        $this->assertEquals(['mariano'], $result->fetch('num'));
         $this->assertCount(4, $result);
     }
 
@@ -337,7 +337,7 @@ class QueryTest extends TestCase
             ->from('articles')
             ->innerJoin(['c' => 'comments'], ['created <' => $time], $types)
             ->execute();
-        $this->assertCount(0, $result->fetchAll());
+        $this->assertCount(0, $result->fetchAll('num'));
     }
 
     /**
@@ -384,7 +384,7 @@ class QueryTest extends TestCase
                 return $exp;
             })
             ->execute();
-        $this->assertCount(0, $result->fetchAll());
+        $this->assertCount(0, $result->fetchAll('num'));
 
         $query = new Query($this->connection);
         $types = ['created' => 'datetime'];
@@ -2188,7 +2188,7 @@ class QueryTest extends TestCase
             ->union($union)
             ->execute();
         $this->assertCount(self::COMMENT_COUNT + self::ARTICLE_COUNT, $result);
-        $rows = $result->fetchAll();
+        $rows = $result->fetchAll('num');
         $result->closeCursor();
 
         $union->select(['foo' => 'id', 'bar' => 'title']);
@@ -2201,7 +2201,7 @@ class QueryTest extends TestCase
         $query->select(['foo' => 'id', 'bar' => 'comment'])->union($union);
         $result = $query->execute();
         $this->assertCount(self::COMMENT_COUNT + self::AUTHOR_COUNT, $result);
-        $this->assertNotEquals($rows, $result->fetchAll());
+        $this->assertNotEquals($rows, $result->fetchAll('num'));
         $result->closeCursor();
 
         $union = (new Query($this->connection))
@@ -2210,7 +2210,7 @@ class QueryTest extends TestCase
         $query->select(['id', 'comment'], true)->union($union, true);
         $result = $query->execute();
         $this->assertCount(self::COMMENT_COUNT + self::ARTICLE_COUNT, $result);
-        $this->assertEquals($rows, $result->fetchAll());
+        $this->assertEquals($rows, $result->fetchAll('num'));
         $result->closeCursor();
     }
 
@@ -2239,7 +2239,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(self::COMMENT_COUNT + self::ARTICLE_COUNT, $result);
 
-        $rows = $result->fetchAll();
+        $rows = $result->fetchAll('num');
         $this->assertCount(self::COMMENT_COUNT + self::ARTICLE_COUNT, $result);
     }
 
@@ -2257,7 +2257,7 @@ class QueryTest extends TestCase
             ->union($union)
             ->execute();
         $this->assertCount(self::ARTICLE_COUNT + self::COMMENT_COUNT, $result);
-        $rows = $result->fetchAll();
+        $rows = $result->fetchAll('num');
         $result->closeCursor();
 
         $union->select(['foo' => 'id', 'bar' => 'title']);
@@ -2270,7 +2270,7 @@ class QueryTest extends TestCase
         $query->select(['foo' => 'id', 'bar' => 'comment'])->unionAll($union);
         $result = $query->execute();
         $this->assertCount(1 + self::COMMENT_COUNT + self::ARTICLE_COUNT, $result);
-        $this->assertNotEquals($rows, $result->fetchAll());
+        $this->assertNotEquals($rows, $result->fetchAll('num'));
         $result->closeCursor();
     }
 
@@ -3684,7 +3684,7 @@ class QueryTest extends TestCase
                 $to = new \DateTime('2007-03-18 10:48:00');
                 return $expr->between('created', $from, $to);
             });
-        $this->assertCount(2, $query->execute()->fetchAll());
+        $this->assertCount(2, $query->execute()->fetchAll('num'));
     }
 
     /**
