@@ -411,6 +411,7 @@ class QueryTest extends TestCase
             })
             ->execute();
         $this->assertCount(0, $result->fetchAll());
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $types = ['created' => 'datetime'];
@@ -427,6 +428,7 @@ class QueryTest extends TestCase
             ['title' => 'First Article', 'name' => 'Second Comment for First Article'],
             $result->fetch('assoc')
         );
+        $result->closeCursor();
     }
 
     /**
@@ -586,6 +588,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(1, $result);
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -596,6 +599,7 @@ class QueryTest extends TestCase
         $this->assertCount(5, $result);
         $this->assertEquals(['id' => 2], $result->fetch('assoc'));
         $this->assertEquals(['id' => 3], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -611,6 +615,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(1, $result);
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -626,6 +631,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(1, $result);
         $this->assertEquals(['id' => 3], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -641,6 +647,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(1, $result);
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+        $result->closeCursor();
     }
 
     /**
@@ -660,6 +667,7 @@ class QueryTest extends TestCase
         $this->assertCount(2, $result);
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
         $this->assertEquals(['id' => 3], $result->fetch('assoc'));
+        $result->closeCursor();
     }
 
     /**
@@ -715,6 +723,7 @@ class QueryTest extends TestCase
         $this->assertCount(2, $result);
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
         $this->assertEquals(['id' => 2], $result->fetch('assoc'));
+        $result->closeCursor();
     }
 
     /**
@@ -733,6 +742,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(1, $result);
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -742,6 +752,7 @@ class QueryTest extends TestCase
             ->andWhere(['id' => 2])
             ->execute();
         $this->assertCount(0, $result);
+        $result->closeCursor();
     }
 
     /**
@@ -763,6 +774,7 @@ class QueryTest extends TestCase
         $this->assertCount(2, $result);
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
         $this->assertEquals(['id' => 2], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -777,6 +789,7 @@ class QueryTest extends TestCase
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
         $this->assertEquals(['id' => 2], $result->fetch('assoc'));
         $this->assertEquals(['id' => 3], $result->fetch('assoc'));
+        $result->closeCursor();
     }
 
     /**
@@ -796,6 +809,7 @@ class QueryTest extends TestCase
         $this->assertCount(2, $result);
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
         $this->assertEquals(['id' => 2], $result->fetch('assoc'));
+        $result->closeCursor();
     }
 
     /**
@@ -814,6 +828,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(1, $result);
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+        $result->closeCursor();
     }
 
     /**
@@ -834,6 +849,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(1, $result);
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -847,6 +863,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(1, $result);
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -859,6 +876,7 @@ class QueryTest extends TestCase
             })
             ->execute();
         $this->assertCount(0, $result);
+        $result->closeCursor();
     }
 
     /**
@@ -907,6 +925,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(1, $result);
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -918,6 +937,7 @@ class QueryTest extends TestCase
             })
             ->execute();
         $this->assertCount(0, $result);
+        $result->closeCursor();
     }
 
     /**
@@ -940,6 +960,7 @@ class QueryTest extends TestCase
         $this->assertCount(2, $result);
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
         $this->assertEquals(['id' => 2], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -954,6 +975,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(1, $result);
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+        $result->closeCursor();
     }
 
     /**
@@ -976,6 +998,7 @@ class QueryTest extends TestCase
             })
             ->execute();
         $this->assertCount(0, $result);
+        $result->closeCursor();
     }
 
     /**
@@ -995,6 +1018,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(2, $result);
         $this->assertEquals(['title' => 'Second Article'], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query->select(['title'])
@@ -1005,6 +1029,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(1, $result);
         $this->assertEquals(['title' => 'First Article'], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query->select(['title'])
@@ -1014,6 +1039,7 @@ class QueryTest extends TestCase
             })
             ->execute();
         $this->assertCount(2, $result);
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -1024,6 +1050,7 @@ class QueryTest extends TestCase
             })
             ->execute();
         $this->assertCount(3, $result);
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -1034,6 +1061,7 @@ class QueryTest extends TestCase
             })
             ->execute();
         $this->assertCount(1, $result);
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -1045,6 +1073,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(2, $result);
         $this->assertEquals(['title' => 'First Article'], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -1056,6 +1085,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(1, $result);
         $this->assertEquals(['title' => 'First Article'], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -1066,6 +1096,7 @@ class QueryTest extends TestCase
             })
             ->execute();
         $this->assertCount(3, $result);
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -1076,6 +1107,7 @@ class QueryTest extends TestCase
             })
             ->execute();
         $this->assertCount(0, $result);
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -1086,6 +1118,7 @@ class QueryTest extends TestCase
             })
             ->execute();
         $this->assertCount(0, $result);
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -1096,6 +1129,7 @@ class QueryTest extends TestCase
             })
             ->execute();
         $this->assertCount(6, $result);
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -1106,6 +1140,7 @@ class QueryTest extends TestCase
             })
             ->execute();
         $this->assertCount(6, $result);
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -1122,6 +1157,7 @@ class QueryTest extends TestCase
         $this->assertCount(2, $result);
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
         $this->assertEquals(['id' => 2], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
@@ -1137,6 +1173,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(4, $result);
         $this->assertEquals(['id' => 3], $result->fetch('assoc'));
+        $result->closeCursor();
     }
 
     /**
@@ -1156,6 +1193,7 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(1, $result);
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+        $result->closeCursor();
 
         $query = new Query($this->connection);
         $result = $query
