@@ -13,13 +13,14 @@
  */
 namespace Cake\Test\TestCase\Database;
 
+use Cake\Database\Driver;
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Type;
 use Cake\Database\Type\BinaryType;
-use Cake\TestSuite\TestCase;
-use Cake\Datasource\ConnectionManager;
-use Cake\Database\Driver;
 use Cake\Database\Type\ExpressionTypeInterface;
+use Cake\Datasource\ConnectionManager;
+use Cake\TestSuite\TestCase;
 
 class UuidValue
 {
@@ -69,6 +70,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
+        $this->skipIf($this->connection->driver() instanceof Sqlserver, 'This tests uses functions specific to other drivers');
         Type::map('ordered_uuid', OrderedUuidType::class);
     }
 
