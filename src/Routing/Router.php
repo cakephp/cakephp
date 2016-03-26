@@ -219,6 +219,7 @@ class Router
      *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
      * @return void
      * @see \Cake\Routing\RouteBuilder::redirect()
+     * @deprecated 3.3.0 Use Router::scope() and RouteBuilder::redirect() instead.
      */
     public static function redirect($route, $url, $options = [])
     {
@@ -279,6 +280,7 @@ class Router
      * @param string|array $controller A controller name or array of controller names (i.e. "Posts" or "ListItems")
      * @param array $options Options to use when generating REST routes
      * @see \Cake\Routing\RouteBuilder::resources()
+     * @deprecated 3.3.0 Use Router::scope() and RouteBuilder::resources() instead.
      * @return void
      */
     public static function mapResources($controller, $options = [])
@@ -798,6 +800,7 @@ class Router
      * @param \Cake\Network\Request $request The request object to modify.
      * @param array $options The array of options.
      * @return \Cake\Network\Request The modified request
+     * @deprecated 3.3.0 Named parameter backwards compatibility will be removed in 4.0.
      */
     public static function parseNamedParams(Request $request, array $options = [])
     {
