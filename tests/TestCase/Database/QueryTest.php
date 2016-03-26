@@ -1541,7 +1541,16 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(6, $result);
         $result->closeCursor();
+    }
 
+    /**
+     * Tests that conditions can be nested with an unary operator using the array notation
+     * and the not() method
+     *
+     * @return void
+     */
+    public function testSelectWhereNot2()
+    {
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
