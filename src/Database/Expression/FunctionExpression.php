@@ -31,8 +31,8 @@ use Cake\Database\ValueBinder;
 class FunctionExpression extends QueryExpression implements TypedResultInterface
 {
 
-    use TypedResultTrait;
     use ExpressionTypeCasterTrait;
+    use TypedResultTrait;
 
     /**
      * The name of the function to be constructed when generating the SQL string

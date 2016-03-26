@@ -43,4 +43,3 @@ class OrderedUuidItemsFixture extends TestFixture
     public $records = [
     ];
 }
-

@@ -43,7 +43,7 @@ class OrderedUuidType extends Type implements ExpressionTypeInterface
     public function toExpression($value)
     {
         $substr = function ($start, $lenght = null) use ($value) {
-            return  new FunctionExpression(
+            return new FunctionExpression(
                 'SUBSTR',
                 $lenght === null ? [$value, $start] : [$value, $start, $lenght],
                 ['string', 'integer', 'integer']
@@ -194,7 +194,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
             ->select('id')
             ->from('ordered_uuid_items')
             ->where(function ($exp, $q) {
-               return $exp->eq(
+                return $exp->eq(
                     'id',
                     $q->func()->concat(['48298a29-81c0-4c26-a7fb', '-413140cf8569'], []),
                     'ordered_uuid'

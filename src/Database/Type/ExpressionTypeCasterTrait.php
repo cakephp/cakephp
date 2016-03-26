@@ -66,7 +66,7 @@ trait ExpressionTypeCasterTrait
      */
     protected function _requiresToExpressionCasting($types)
     {
-        $result  = [];
+        $result = [];
         $types = array_filter($types);
         foreach ($types as $k => $type) {
             $object = Type::build($type);

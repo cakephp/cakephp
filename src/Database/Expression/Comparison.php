@@ -29,8 +29,8 @@ use Cake\Database\ValueBinder;
 class Comparison implements ExpressionInterface, FieldInterface
 {
 
-    use FieldTrait;
     use ExpressionTypeCasterTrait;
+    use FieldTrait;
 
     /**
      * The value to be used in the right hand side of the operation
@@ -283,7 +283,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      * and all ExpressionInterface objects that could be found in the second
      * position.
      *
-     * @param array|Traversable $values
+     * @param array|Traversable $values The rows to insert
      * @return array
      */
     protected function _collectExpressions($values)

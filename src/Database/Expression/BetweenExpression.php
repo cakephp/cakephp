@@ -26,8 +26,8 @@ use Cake\Database\ValueBinder;
 class BetweenExpression implements ExpressionInterface, FieldInterface
 {
 
-    use FieldTrait;
     use ExpressionTypeCasterTrait;
+    use FieldTrait;
 
     /**
      * The first value in the expression

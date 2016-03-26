@@ -32,8 +32,8 @@ use Cake\Database\ValueBinder;
 class ValuesExpression implements ExpressionInterface
 {
 
-    use TypeMapTrait;
     use ExpressionTypeCasterTrait;
+    use TypeMapTrait;
 
     /**
      * Array of values to insert.
