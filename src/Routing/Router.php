@@ -219,7 +219,7 @@ class Router
      *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
      * @return void
      * @see \Cake\Routing\RouteBuilder::redirect()
-     * @deprected 3.3.0 Use Router::scope() and RouteBuilder::redirect() instead.
+     * @deprecated 3.3.0 Use Router::scope() and RouteBuilder::redirect() instead.
      */
     public static function redirect($route, $url, $options = [])
     {
