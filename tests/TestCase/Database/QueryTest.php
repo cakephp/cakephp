@@ -412,7 +412,15 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(0, $result->fetchAll());
         $result->closeCursor();
+    }
 
+    /**
+     * Tests that it is possible to pass a callable as conditions for a join
+     *
+     * @return void
+     */
+    public function testSelectJoinWithCallback2()
+    {
         $query = new Query($this->connection);
         $types = ['created' => 'datetime'];
         $result = $query
