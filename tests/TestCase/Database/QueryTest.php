@@ -416,8 +416,8 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $types = ['created' => 'datetime'];
         $result = $query
-            ->select(['title', 'name' => 'comments.comment'])
-            ->from('articles')
+            ->select(['name', 'commentary' => 'comments.comment'])
+            ->from('authors')
             ->innerJoin('comments', function ($exp, $q) use ($query, $types) {
                 $this->assertSame($q, $query);
                 $exp->add(['created >' => new \DateTime('2007-03-18 10:45:23')], $types);
@@ -425,7 +425,7 @@ class QueryTest extends TestCase
             })
             ->execute();
         $this->assertEquals(
-            ['title' => 'First Article', 'name' => 'Second Comment for First Article'],
+            ['name' => 'mariano', 'commentary' => 'Second Comment for First Article'],
             $result->fetch('assoc')
         );
         $result->closeCursor();
