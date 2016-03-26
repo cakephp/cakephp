@@ -146,6 +146,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
                 ['id' => ['48298a29-81c0-4c26-a7fb-413140cf8569', '482b7756-8da0-419a-b21f-27da40cf8569']],
                 ['id' => 'ordered_uuid[]']
             )
+            ->order('id')
             ->execute()
             ->fetchAll('assoc');
 
