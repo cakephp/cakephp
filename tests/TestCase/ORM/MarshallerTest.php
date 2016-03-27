@@ -919,7 +919,7 @@ class MarshallerTest extends TestCase
         ];
 
         $marshaller = new Marshaller($this->articles);
-            $article = $marshaller->one($data, [
+        $article = $marshaller->one($data, [
             'associated' => ['Tags'],
             'forceNew' => true
         ]);
