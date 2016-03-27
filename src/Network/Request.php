@@ -652,6 +652,7 @@ class Request implements ArrayAccess
      *
      * @param string|array $type The type of request you want to check. If an array
      *   this method will return true if the request matches any type.
+     * @param array $args Array of custom detector arguments.
      * @return bool Whether or not the request is the type you are checking.
      */
     protected function _is($type, $args)
