@@ -849,11 +849,11 @@ class MarshallerTest extends TestCase
         $this->assertEquals($tagCount + 2, $tags->find()->count());
     }
 
-	/**
-	 * Test belongsToMany association with the ForceNewTarget to force saving
-	 * new records on the target tables with BTM relationships when the primaryKey(s)
-	 * of the target table is specified.
-     * 
+    /**
+     * Test belongsToMany association with the ForceNewTarget to force saving
+     * new records on the target tables with BTM relationships when the primaryKey(s)
+     * of the target table is specified.
+     *
      * @return void
      */
     public function testBelongsToManyWithForceNew()
@@ -864,11 +864,11 @@ class MarshallerTest extends TestCase
             'author_id' => 1,
             'tags' => [
                 [
-                    'id'    => 3
+                    'id' => 3
                 ],
                 [
-                    'id'	=> 4,
-                    'name'	=> 'tag4'
+                    'id' => 4,
+                    'name' => 'tag4'
                 ]
             ]
         ];
@@ -881,8 +881,9 @@ class MarshallerTest extends TestCase
 
         $this->assertFalse($article->tags[0]->isNew(), 'The tag should not be new');
         $this->assertTrue($article->tags[1]->isNew(), 'The tag should be new');
-	}
-	
+        $this->assertSame('tag4', $article->tags[1]->name, 'Property should match request data.');
+    }
+
     /**
      * Test HasMany association with _ids attribute
      *

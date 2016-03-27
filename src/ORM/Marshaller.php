@@ -86,10 +86,15 @@ class Marshaller
      *
      * ### Options:
      *
-     * * associated: Associations listed here will be marshalled as well.
-     * * fieldList: A whitelist of fields to be assigned to the entity. If not present,
-     *   the accessible fields list in the entity will be used.
-     * * accessibleFields: A list of fields to allow or deny in entity accessible fields.
+     * - validate: Set to false to disable validation. Can also be a string of the validator ruleset to be applied.
+     *   Defaults to true/default.
+     * - associated: Associations listed here will be marshalled as well. Defaults to null.
+     * - fieldList: A whitelist of fields to be assigned to the entity. If not present,
+     *   the accessible fields list in the entity will be used. Defaults to null.
+     * - accessibleFields: A list of fields to allow or deny in entity accessible fields. Defaults to null
+     * - forceNew: When enabled, belongsToMany associations will have 'new' entities created
+     *   when primary key values are set, and a record does not already exist. Normally primary key
+     *   on missing entities would be ignored. Defaults to false.
      *
      * The above options can be used in each nested `associated` array. In addition to the above
      * options you can also use the `onlyIds` option for HasMany and BelongsToMany associations.
@@ -258,10 +263,15 @@ class Marshaller
      *
      * ### Options:
      *
-     * * associated: Associations listed here will be marshalled as well.
-     * * fieldList: A whitelist of fields to be assigned to the entity. If not present,
-     *   the accessible fields list in the entity will be used.
-     * * accessibleFields: A list of fields to allow or deny in entity accessible fields.
+     * - validate: Set to false to disable validation. Can also be a string of the validator ruleset to be applied.
+     *   Defaults to true/default.
+     * - associated: Associations listed here will be marshalled as well. Defaults to null.
+     * - fieldList: A whitelist of fields to be assigned to the entity. If not present,
+     *   the accessible fields list in the entity will be used. Defaults to null.
+     * - accessibleFields: A list of fields to allow or deny in entity accessible fields. Defaults to null
+     * - forceNew: When enabled, belongsToMany associations will have 'new' entities created
+     *   when primary key values are set, and a record does not already exist. Normally primary key
+     *   on missing entities would be ignored. Defaults to false.
      *
      * @param array $data The data to hydrate.
      * @param array $options List of options
@@ -315,7 +325,7 @@ class Marshaller
                     foreach ($keys as $key => $value) {
                         $rowConditions[][$target->aliasfield($key)] = $value;
                     }
-                    
+
                     if ($forceNew && !$target->exists($rowConditions)) {
                         $records[$i] = $this->one($row, $options);
                     }
@@ -431,12 +441,12 @@ class Marshaller
      *
      * ### Options:
      *
-     * * associated: Associations listed here will be marshalled as well.
-     * * validate: Whether or not to validate data before hydrating the entities. Can
+     * - associated: Associations listed here will be marshalled as well.
+     * - validate: Whether or not to validate data before hydrating the entities. Can
      *   also be set to a string to use a specific validator. Defaults to true/default.
-     * * fieldList: A whitelist of fields to be assigned to the entity. If not present
+     * - fieldList: A whitelist of fields to be assigned to the entity. If not present
      *   the accessible fields list in the entity will be used.
-     * * accessibleFields: A list of fields to allow or deny in entity accessible fields.
+     * - accessibleFields: A list of fields to allow or deny in entity accessible fields.
      *
      * The above options can be used in each nested `associated` array. In addition to the above
      * options you can also use the `onlyIds` option for HasMany and BelongsToMany associations.
@@ -543,6 +553,8 @@ class Marshaller
      *
      * ### Options:
      *
+     * - validate: Whether or not to validate data before hydrating the entities. Can
+     *   also be set to a string to use a specific validator. Defaults to true/default.
      * - associated: Associations listed here will be marshalled as well.
      * - fieldList: A whitelist of fields to be assigned to the entity. If not present,
      *   the accessible fields list in the entity will be used.
