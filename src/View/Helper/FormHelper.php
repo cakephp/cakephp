@@ -706,7 +706,7 @@ class FormHelper extends Helper
 
         if ($lock === self::SECURE_OPTIONAL) {
             $this->optionalField($field, $value);
-        } else if ($lock) {
+        } elseif ($lock) {
             if (!in_array($field, $this->fields)) {
                 if ($value !== null) {
                     $this->fields[$field] = $value;
