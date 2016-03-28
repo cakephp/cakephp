@@ -497,20 +497,10 @@ class SecurityComponent extends Component
      */
     protected function _optional(array $data)
     {
-        if (!empty($data['_Token']['optional'])) {
-            $optional = urldecode($data['_Token']['optional']);
-            $optionalFields = [];
-            if (!empty($optional)) {
-                $optional = explode('|', $optional);
-                foreach ($optional as $field) {
-                    list($name, $hash) = explode('=', $field);
-                    $optionalFields[$name] = $hash;
-                }
-            }
-            return $optionalFields;
-        } else {
+        if (empty($data['_Token']['optional'])) {
             return [];
         }
+        return json_decode(urldecode($data['_Token']['optional']), true);
     }
 
     /**
@@ -541,7 +531,7 @@ class SecurityComponent extends Component
         $optional = $this->_optional($controller->request->data);
         foreach ($optional as $name => $hash) {
             if (array_key_exists($name, $fields)) {
-                if ($hash !== Security::hash($name . $fields[$name] . Security::salt() . $token)) {
+                if ($hash !== Security::hash($name . $fields[$name] . $token, 'sha1')) {
                     return false;
                 }
             }
