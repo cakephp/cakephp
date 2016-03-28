@@ -30,9 +30,11 @@ trait SecureFieldTokenTrait
      *    generating the hash.
      * @param array $unlockedFields The list of fields that are excluded from
      *    field validation.
+     * @param array $optionalFields The list of fields that are not required
+     *    but must retain their value if they are present.
      * @return array The token data.
      */
-    protected function _buildFieldToken($url, $fields, $unlockedFields = [])
+    protected function _buildFieldToken($url, $fields, $unlockedFields = [], $optionalFields = [])
     {
         $locked = [];
         foreach ($fields as $key => $value) {
@@ -46,23 +48,34 @@ trait SecureFieldTokenTrait
         }
 
         sort($unlockedFields, SORT_STRING);
+        ksort($optionalFields, SORT_STRING);
         sort($fields, SORT_STRING);
         ksort($locked, SORT_STRING);
         $fields += $locked;
 
         $locked = implode('|', array_keys($locked));
         $unlocked = implode('|', $unlockedFields);
+        $optional = implode('|', array_keys($optionalFields));
         $hashParts = [
             $url,
             serialize($fields),
             $unlocked,
+            $optional,
             Security::salt()
         ];
         $fields = Security::hash(implode('', $hashParts), 'sha1');
 
+        $optional = [];
+        foreach ($optionalFields as $name => $value) {
+            // Include more than just the value and salt in the string we hash,
+            // because that would be easily subject to replay attacks.
+            $optional[] = $name . '=' . Security::hash($name . $value . Security::salt() . $fields);
+        }
+
         return [
             'fields' => urlencode($fields . ':' . $locked),
             'unlocked' => urlencode($unlocked),
+            'optional' => urlencode(implode('|', $optional)),
         ];
     }
 }
