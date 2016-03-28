@@ -1112,6 +1112,7 @@ class FormHelperTest extends TestCase
         $tokenDebug = urlencode(json_encode([
             '',
             $fields,
+            [],
             []
         ]));
         $expected = [
@@ -1303,6 +1304,7 @@ class FormHelperTest extends TestCase
         $tokenDebug = urlencode(json_encode([
             '',
             $fields,
+            [],
             []
         ]));
 
@@ -1363,7 +1365,8 @@ class FormHelperTest extends TestCase
                 'Address.title',
                 'Address.first_name',
             ],
-            ['save', 'cancel']
+            ['save', 'cancel'],
+            []
         ]));
 
         $expected = [
@@ -1512,6 +1515,7 @@ class FormHelperTest extends TestCase
                 'Addresses.1.phone',
                 'Addresses.1.primary',
             ],
+            [],
             []
         ]));
         $expected = [
@@ -1600,7 +1604,8 @@ class FormHelperTest extends TestCase
                 [
                     'first_name',
                     'address'
-                ]
+                ],
+                []
             ]));
 
         $expected = [
@@ -1669,7 +1674,8 @@ class FormHelperTest extends TestCase
                 [
                     'first_name',
                     'address'
-                ]
+                ],
+                []
             ]));
 
         $expected = [
@@ -1740,7 +1746,8 @@ class FormHelperTest extends TestCase
             [
                 'first_name',
                 'address'
-            ]
+            ],
+            []
         ]));
 
         $expected = [
@@ -1865,6 +1872,290 @@ class FormHelperTest extends TestCase
                 'type' => 'hidden',
                 'name' => '_Token[unlocked]',
                 'value' => 'address%7Cfirst_name',
+                'data-foo' => 'bar',
+            ]],
+            '/div'
+        ];
+
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * testFormSecurityInputOptionalFields method
+     *
+     * Test single record form with optional fields.
+     *
+     * @return void
+     */
+    public function testFormSecurityInputOptionalFields()
+    {
+        $this->Form->request['_Token'] = [
+            'unlockedFields' => []
+        ];
+        $this->Form->create();
+
+        $this->Form->hidden('Addresses.id', ['value' => '123456']);
+        $this->Form->text('Addresses.title');
+        $this->Form->text('Addresses.first_name', ['value' => 'Joe', 'secure' => 'optional']);
+        $this->Form->text('Addresses.last_name');
+        $this->Form->text('Addresses.address', ['value' => '123 Main St.', 'secure' => 'optional']);
+        $this->Form->text('Addresses.city');
+        $this->Form->text('Addresses.phone');
+
+        $result = $this->Form->fields;
+        $expected = [
+            'Addresses.id' => '123456', 'Addresses.title', 'Addresses.last_name',
+            'Addresses.city', 'Addresses.phone'
+        ];
+        $this->assertEquals($expected, $result);
+
+        $this->assertEquals(['Addresses.first_name' => 'Joe', 'Addresses.address' => '123 Main St.'], $this->Form->optionalField());
+
+        $result = $this->Form->secure($expected, ['data-foo' => 'bar']);
+
+        $hash = 'ca190bcba192221dc9d4befc874105c5dc5319d1%3AAddresses.id';
+        $optional = 'Addresses.address%3D759ef7a328f4a53ad15353d2bd3e1ddc48c84e71%7CAddresses.first_name%3Dbd6ae13e0fdef625b67348a51c38723679a42ea7';
+        $tokenDebug = urlencode(json_encode([
+                '/articles/add',
+                [
+                    'Addresses.id' => '123456',
+                    'Addresses.title',
+                    'Addresses.last_name',
+                    'Addresses.city',
+                    'Addresses.phone'
+                ],
+                [],
+                [
+                    'Addresses.first_name' => 'Joe',
+                    'Addresses.address' => '123 Main St.'
+                ]
+            ]));
+
+        $expected = [
+            'div' => ['style' => 'display:none;'],
+            ['input' => [
+                'type' => 'hidden',
+                'name' => '_Token[fields]',
+                'value' => $hash,
+                'data-foo' => 'bar',
+            ]],
+            ['input' => [
+                'type' => 'hidden',
+                'name' => '_Token[unlocked]',
+                'value' => '',
+                'data-foo' => 'bar',
+            ]],
+            ['input' => [
+                'type' => 'hidden',
+                'name' => '_Token[optional]',
+                'value' => $optional,
+                'data-foo' => 'bar',
+            ]],
+            ['input' => [
+                'type' => 'hidden', 'name' => '_Token[debug]',
+                'value' => $tokenDebug,
+                'data-foo' => 'bar'
+            ]],
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * testFormSecurityInputOptionalFieldsDebugSecurityTrue method
+     *
+     * Test single record form with debugSecurity param.
+     *
+     * @return void
+     */
+    public function testFormSecurityInputOptionalFieldsDebugSecurityTrue()
+    {
+        $this->Form->request['_Token'] = [
+            'unlockedFields' => []
+        ];
+        $this->Form->create();
+
+        $this->Form->hidden('Addresses.id', ['value' => '123456']);
+        $this->Form->text('Addresses.title');
+        $this->Form->text('Addresses.first_name', ['value' => 'Joe', 'secure' => 'optional']);
+        $this->Form->text('Addresses.last_name');
+        $this->Form->text('Addresses.address', ['value' => '123 Main St.', 'secure' => 'optional']);
+        $this->Form->text('Addresses.city');
+        $this->Form->text('Addresses.phone');
+
+        $result = $this->Form->fields;
+        $expected = [
+            'Addresses.id' => '123456', 'Addresses.title', 'Addresses.last_name',
+            'Addresses.city', 'Addresses.phone'
+        ];
+        $this->assertEquals($expected, $result);
+
+        $this->assertEquals(['Addresses.first_name' => 'Joe', 'Addresses.address' => '123 Main St.'], $this->Form->optionalField());
+
+        $result = $this->Form->secure($expected, ['data-foo' => 'bar', 'debugSecurity' => true]);
+
+        $hash = 'ca190bcba192221dc9d4befc874105c5dc5319d1%3AAddresses.id';
+        $optional = 'Addresses.address%3D759ef7a328f4a53ad15353d2bd3e1ddc48c84e71%7CAddresses.first_name%3Dbd6ae13e0fdef625b67348a51c38723679a42ea7';
+        $tokenDebug = urlencode(json_encode([
+            '/articles/add',
+            [
+                'Addresses.id' => '123456',
+                'Addresses.title',
+                'Addresses.last_name',
+                'Addresses.city',
+                'Addresses.phone'
+            ],
+            [],
+            [
+                'Addresses.first_name' => 'Joe',
+                'Addresses.address' => '123 Main St.'
+            ]
+        ]));
+
+        $expected = [
+            'div' => ['style' => 'display:none;'],
+            ['input' => [
+                'type' => 'hidden',
+                'name' => '_Token[fields]',
+                'value' => $hash,
+                'data-foo' => 'bar',
+            ]],
+            ['input' => [
+                'type' => 'hidden',
+                'name' => '_Token[unlocked]',
+                'value' => '',
+                'data-foo' => 'bar',
+            ]],
+            ['input' => [
+                'type' => 'hidden',
+                'name' => '_Token[optional]',
+                'value' => $optional,
+                'data-foo' => 'bar',
+            ]],
+            ['input' => [
+                'type' => 'hidden', 'name' => '_Token[debug]',
+                'value' => $tokenDebug,
+                'data-foo' => 'bar'
+            ]],
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * testFormSecurityInputOptionalFieldsDebugSecurityDebugFalse method
+     *
+     * Debug is false, debugSecurity is true -> no debug
+     *
+     * @return void
+     */
+    public function testFormSecurityInputOptionalFieldsDebugSecurityDebugFalse()
+    {
+        $this->Form->request['_Token'] = [
+            'unlockedFields' => []
+        ];
+        $this->Form->create();
+
+        $this->Form->hidden('Addresses.id', ['value' => '123456']);
+        $this->Form->text('Addresses.title');
+        $this->Form->text('Addresses.first_name', ['value' => 'Joe', 'secure' => 'optional']);
+        $this->Form->text('Addresses.last_name');
+        $this->Form->text('Addresses.address', ['value' => '123 Main St.', 'secure' => 'optional']);
+        $this->Form->text('Addresses.city');
+        $this->Form->text('Addresses.phone');
+
+        $result = $this->Form->fields;
+        $expected = [
+            'Addresses.id' => '123456', 'Addresses.title', 'Addresses.last_name',
+            'Addresses.city', 'Addresses.phone'
+        ];
+        $this->assertEquals($expected, $result);
+
+        $this->assertEquals(['Addresses.first_name' => 'Joe', 'Addresses.address' => '123 Main St.'], $this->Form->optionalField());
+
+        Configure::write('debug', false);
+        $result = $this->Form->secure($expected, ['data-foo' => 'bar', 'debugSecurity' => true]);
+
+        $hash = 'ca190bcba192221dc9d4befc874105c5dc5319d1%3AAddresses.id';
+        $optional = 'Addresses.address%3D759ef7a328f4a53ad15353d2bd3e1ddc48c84e71%7CAddresses.first_name%3Dbd6ae13e0fdef625b67348a51c38723679a42ea7';
+        $expected = [
+            'div' => ['style' => 'display:none;'],
+            ['input' => [
+                'type' => 'hidden',
+                'name' => '_Token[fields]',
+                'value' => $hash,
+                'data-foo' => 'bar',
+            ]],
+            ['input' => [
+                'type' => 'hidden',
+                'name' => '_Token[unlocked]',
+                'value' => '',
+                'data-foo' => 'bar',
+            ]],
+            ['input' => [
+                'type' => 'hidden',
+                'name' => '_Token[optional]',
+                'value' => $optional,
+                'data-foo' => 'bar',
+            ]],
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * testFormSecurityInputOptionalFieldsDebugSecurityFalse method
+     *
+     * Test single record form with debugSecurity param.
+     *
+     * @return void
+     */
+    public function testFormSecurityInputOptionalFieldsDebugSecurityFalse()
+    {
+        $this->Form->request['_Token'] = [
+            'unlockedFields' => []
+        ];
+        $this->Form->create();
+
+        $this->Form->hidden('Addresses.id', ['value' => '123456']);
+        $this->Form->text('Addresses.title');
+        $this->Form->text('Addresses.first_name', ['value' => 'Joe', 'secure' => 'optional']);
+        $this->Form->text('Addresses.last_name');
+        $this->Form->text('Addresses.address', ['value' => '123 Main St.', 'secure' => 'optional']);
+        $this->Form->text('Addresses.city');
+        $this->Form->text('Addresses.phone');
+
+        $result = $this->Form->fields;
+        $expected = [
+            'Addresses.id' => '123456', 'Addresses.title', 'Addresses.last_name',
+            'Addresses.city', 'Addresses.phone'
+        ];
+        $this->assertEquals($expected, $result);
+
+        $this->assertEquals(['Addresses.first_name' => 'Joe', 'Addresses.address' => '123 Main St.'], $this->Form->optionalField());
+
+        $result = $this->Form->secure($expected, ['data-foo' => 'bar', 'debugSecurity' => false]);
+
+        $hash = 'ca190bcba192221dc9d4befc874105c5dc5319d1%3AAddresses.id';
+        $optional = 'Addresses.address%3D759ef7a328f4a53ad15353d2bd3e1ddc48c84e71%7CAddresses.first_name%3Dbd6ae13e0fdef625b67348a51c38723679a42ea7';
+        $expected = [
+            'div' => ['style' => 'display:none;'],
+            ['input' => [
+                'type' => 'hidden',
+                'name' => '_Token[fields]',
+                'value' => $hash,
+                'data-foo' => 'bar',
+            ]],
+            ['input' => [
+                'type' => 'hidden',
+                'name' => '_Token[unlocked]',
+                'value' => '',
+                'data-foo' => 'bar',
+            ]],
+            ['input' => [
+                'type' => 'hidden',
+                'name' => '_Token[optional]',
+                'value' => $optional,
                 'data-foo' => 'bar',
             ]],
             '/div'
@@ -2027,6 +2318,7 @@ class FormHelperTest extends TestCase
         $tokenDebug = urlencode(json_encode([
             '/articles/add',
             $expectedFields,
+            [],
             []
         ]));
 
@@ -6873,6 +7165,7 @@ class FormHelperTest extends TestCase
         $tokenDebug = urlencode(json_encode([
                 '/posts/delete/1',
                 [],
+                [],
                 []
             ]));
 
@@ -7066,6 +7359,7 @@ class FormHelperTest extends TestCase
             [
                 'id' => 1
             ],
+            [],
             []
         ]));
         $expected = [
@@ -7197,6 +7491,7 @@ class FormHelperTest extends TestCase
         $result = $this->Form->postLink('Delete', '/posts/delete/1');
         $tokenDebug = urlencode(json_encode([
             '/posts/delete/1',
+            [],
             [],
             []
         ]));
