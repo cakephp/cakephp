@@ -65,17 +65,16 @@ trait SecureFieldTokenTrait
         ];
         $fields = Security::hash(implode('', $hashParts), 'sha1');
 
-        $optional = [];
         foreach ($optionalFields as $name => $value) {
             // Include more than just the value and salt in the string we hash,
             // because that would be easily subject to replay attacks.
-            $optional[] = $name . '=' . Security::hash($name . $value . Security::salt() . $fields);
+            $optionalFields[$name] = Security::hash($name . $value . $fields, 'sha1');
         }
 
         return [
             'fields' => urlencode($fields . ':' . $locked),
             'unlocked' => urlencode($unlocked),
-            'optional' => urlencode(implode('|', $optional)),
+            'optional' => empty($optionalFields) ? '' : urlencode(json_encode($optionalFields)),
         ];
     }
 }

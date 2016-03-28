@@ -1914,7 +1914,7 @@ class FormHelperTest extends TestCase
         $result = $this->Form->secure($expected, ['data-foo' => 'bar']);
 
         $hash = 'ca190bcba192221dc9d4befc874105c5dc5319d1%3AAddresses.id';
-        $optional = 'Addresses.address%3D759ef7a328f4a53ad15353d2bd3e1ddc48c84e71%7CAddresses.first_name%3Dbd6ae13e0fdef625b67348a51c38723679a42ea7';
+        $optional = '%7B%22Addresses.address%22%3A%224f9f6d392ea3e416e6449bfd972e1b9f7f6efbe5%22%2C%22Addresses.first_name%22%3A%22c0281d0280013fbd93ab8adbfd8660dbe09193d2%22%7D';
         $tokenDebug = urlencode(json_encode([
                 '/articles/add',
                 [
@@ -1995,7 +1995,7 @@ class FormHelperTest extends TestCase
         $result = $this->Form->secure($expected, ['data-foo' => 'bar', 'debugSecurity' => true]);
 
         $hash = 'ca190bcba192221dc9d4befc874105c5dc5319d1%3AAddresses.id';
-        $optional = 'Addresses.address%3D759ef7a328f4a53ad15353d2bd3e1ddc48c84e71%7CAddresses.first_name%3Dbd6ae13e0fdef625b67348a51c38723679a42ea7';
+        $optional = '%7B%22Addresses.address%22%3A%224f9f6d392ea3e416e6449bfd972e1b9f7f6efbe5%22%2C%22Addresses.first_name%22%3A%22c0281d0280013fbd93ab8adbfd8660dbe09193d2%22%7D';
         $tokenDebug = urlencode(json_encode([
             '/articles/add',
             [
@@ -2077,7 +2077,7 @@ class FormHelperTest extends TestCase
         $result = $this->Form->secure($expected, ['data-foo' => 'bar', 'debugSecurity' => true]);
 
         $hash = 'ca190bcba192221dc9d4befc874105c5dc5319d1%3AAddresses.id';
-        $optional = 'Addresses.address%3D759ef7a328f4a53ad15353d2bd3e1ddc48c84e71%7CAddresses.first_name%3Dbd6ae13e0fdef625b67348a51c38723679a42ea7';
+        $optional = '%7B%22Addresses.address%22%3A%224f9f6d392ea3e416e6449bfd972e1b9f7f6efbe5%22%2C%22Addresses.first_name%22%3A%22c0281d0280013fbd93ab8adbfd8660dbe09193d2%22%7D';
         $expected = [
             'div' => ['style' => 'display:none;'],
             ['input' => [
@@ -2137,7 +2137,7 @@ class FormHelperTest extends TestCase
         $result = $this->Form->secure($expected, ['data-foo' => 'bar', 'debugSecurity' => false]);
 
         $hash = 'ca190bcba192221dc9d4befc874105c5dc5319d1%3AAddresses.id';
-        $optional = 'Addresses.address%3D759ef7a328f4a53ad15353d2bd3e1ddc48c84e71%7CAddresses.first_name%3Dbd6ae13e0fdef625b67348a51c38723679a42ea7';
+        $optional = '%7B%22Addresses.address%22%3A%224f9f6d392ea3e416e6449bfd972e1b9f7f6efbe5%22%2C%22Addresses.first_name%22%3A%22c0281d0280013fbd93ab8adbfd8660dbe09193d2%22%7D';
         $expected = [
             'div' => ['style' => 'display:none;'],
             ['input' => [

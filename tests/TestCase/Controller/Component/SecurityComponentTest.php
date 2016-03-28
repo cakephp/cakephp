@@ -1597,11 +1597,10 @@ class SecurityComponentTest extends TestCase
         $hash = Security::hash('/articles/index' . serialize([]) . $unlocked . implode(array_keys($optionalFields), '|') . Security::salt());
         $fields = urlencode($hash . ':');
 
-        $optional = [];
         foreach ($optionalFields as $name => $value) {
-            $optional[] = $name . '=' . Security::hash($name . $value . Security::salt() . $hash);
+            $optionalFields[$name] = Security::hash($name . $value . $hash, 'sha1');
         }
-        $optional = implode('|', $optional);
+        $optional = urlencode(json_encode($optionalFields));
 
         $this->Controller->request->data = [
             'Model' => [
@@ -1638,11 +1637,10 @@ class SecurityComponentTest extends TestCase
         $hash = Security::hash('/articles/index' . serialize([]) . $unlocked . implode(array_keys($optionalFields), '|') . Security::salt());
         $fields = urlencode($hash . ':');
 
-        $optional = [];
         foreach ($optionalFields as $name => $value) {
-            $optional[] = $name . '=' . Security::hash($name . $value . Security::salt() . $hash);
+            $optionalFields[$name] = Security::hash($name . $value . $hash, 'sha1');
         }
-        $optional = implode('|', $optional);
+        $optional = urlencode(json_encode($optionalFields));
 
         $this->Controller->request->data = [
             'Model' => [
