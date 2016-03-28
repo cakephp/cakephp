@@ -40,7 +40,7 @@ tests for CakePHP by doing the following:
 
 [CakePHP](http://www.cakephp.org) - The rapid development PHP framework.
 
-[CookBook](http://book.cakephp.org) - THE CakePHP user documentation; start learning here!
+[CookBook](http://book.cakephp.org) - The CakePHP user documentation; start learning here!
 
 [API](http://api.cakephp.org) - A reference to CakePHP's classes.
 
