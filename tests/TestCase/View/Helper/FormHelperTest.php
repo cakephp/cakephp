@@ -1534,6 +1534,8 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testFormSecurityArrayFields method
+     *
      * Test form security with Model.field.0 style inputs
      *
      * @return void
@@ -1623,9 +1625,9 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * testFormSecurityInputDisabledFields method
+     * testFormSecurityInputUnlockedFields method
      *
-     * Test single record form with disabled fields.
+     * Test single record form with unlocked fields.
      *
      * @return void
      */
@@ -1766,7 +1768,7 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * testFormSecurityInputUnlockedFieldsDebugSecurityFalse method
+     * testFormSecurityInputUnlockedFieldsDebugSecurityDebugFalse method
      *
      * Debug is false, debugSecurity is true -> no debug
      *

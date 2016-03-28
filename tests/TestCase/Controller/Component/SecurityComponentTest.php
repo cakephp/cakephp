@@ -196,6 +196,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testBlackholeWithBrokenCallback method
+     *
      * Test that requests are still blackholed when controller has incorrect
      * visibility keyword in the blackhole callback
      *
@@ -222,6 +224,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testExceptionWhenActionIsBlackholeCallback method
+     *
      * Ensure that directly requesting the blackholeCallback as the controller
      * action results in an exception.
      *
@@ -241,6 +245,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testConstructorSettingProperties method
+     *
      * test that initialize can set properties.
      *
      * @return void
@@ -405,6 +411,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePost method
+     *
      * Simple hash validation test
      *
      * @return void
@@ -427,6 +435,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostOnGetWithData method
+     *
      * Test that validatePost fires on GET with request data.
      * This could happen when method overriding is used.
      *
@@ -456,6 +466,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostNoSession method
+     *
      * Test that validatePost fails if you are missing the session information.
      *
      * @return void
@@ -483,6 +495,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostNoUnlockedInRequestData method
+     *
      * Test that validatePost fails if you are missing unlocked in request data.
      *
      * @return void
@@ -504,6 +518,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostFormHacking method
+     *
      * test that validatePost fails if any of its required fields are missing.
      *
      * @return void
@@ -524,6 +540,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostObjectDeserialize method
+     *
      * Test that objects can't be passed into the serialized string. This was a vector for RFI and LFI
      * attacks. Thanks to Felix Wilhelm
      *
@@ -555,6 +573,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostIgnoresCsrfToken method
+     *
      * Tests validation post data ignores `_csrfToken`.
      *
      * @return void
@@ -578,6 +598,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostArray method
+     *
      * Tests validation of checkbox arrays
      *
      * @return void
@@ -610,6 +632,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidateIntFieldName method
+     *
      * Tests validation of integer field names.
      *
      * @return void
@@ -683,6 +707,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostComplex method
+     *
      * Tests hash validation for multiple records, including locked fields
      *
      * @return void
@@ -715,6 +741,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostMultipleSelect method
+     *
      * test ValidatePost with multiple select elements.
      *
      * @return void
@@ -859,6 +887,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostDisabledFieldsInData method
+     *
      * test validating post data with posted unlocked fields.
      *
      * @return void
@@ -887,6 +917,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostFailNoDisabled method
+     *
      * test that missing 'unlocked' input causes failure
      *
      * @return void
@@ -913,6 +945,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostFailNoDebug method
+     *
      * test that missing 'debug' input causes failure
      *
      * @return void
@@ -940,6 +974,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostFailNoDebugMode method
+     *
      * test that missing 'debug' input is not the problem when debug mode disabled
      *
      * @return void
@@ -966,6 +1002,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostFailDisabledFieldTampering method
+     *
      * Test that validatePost fails when unlocked fields are changed.
      *
      * @return void
@@ -1103,6 +1141,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidateNestedNumericSets method
+     *
      * Test that values like Foo.0.1
      *
      * @return void
@@ -1129,7 +1169,7 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * testValidateHasManyRecords method
+     * testValidateHasManyRecordsFail method
      *
      * validatePost should fail, hidden fields have been changed.
      *
@@ -1234,6 +1274,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostRadio method
+     *
      * test validatePost with radio buttons
      *
      * @return void
@@ -1280,6 +1322,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostUrlAsHashInput method
+     *
      * test validatePost uses here() as a hash input.
      *
      * @return void
@@ -1322,6 +1366,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testBlackHoleNotDeletingSessionInformation method
+     *
      * test that blackhole doesn't delete the _Token session key so repeat data submissions
      * stay blackholed.
      *
@@ -1338,6 +1384,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testGenerateToken method
+     *
      * Test generateToken()
      *
      * @return void
@@ -1352,6 +1400,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testUnlockedActions method
+     *
      * Test unlocked actions
      *
      * @return void
@@ -1369,6 +1419,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostDebugFormat method
+     *
      * Test that debug token format is right
      *
      * @return void
@@ -1406,6 +1458,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testBlackholeThrowsException method
+     *
      * test blackhole will now throw passed exception if debug enabled
      *
      * @expectedException Cake\Controller\Exception\SecurityException
@@ -1419,6 +1473,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testBlackholeThrowsBadRequest method
+     *
      * test blackhole will throw BadRequest if debug disabled
      *
      * @return void
@@ -1440,6 +1496,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostFailTampering method
+     *
      * Test that validatePost fails with tampered fields and explanation
      *
      * @return void
@@ -1471,6 +1529,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostFailTamperingMutatedIntoArray method
+     *
      * Test that validatePost fails with tampered fields and explanation
      *
      * @return void
@@ -1502,6 +1562,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testValidatePostUnexpectedDebugToken method
+     *
      * Test that debug token should not be sent if debug is disabled
      *
      * @return void
@@ -1533,6 +1595,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testAuthRequiredThrowsExceptionTokenNotFoundPost method
+     *
      * Auth required throws exception token not found
      *
      * @return void
@@ -1549,6 +1613,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testAuthRequiredThrowsExceptionTokenNotFoundSession method
+     *
      * Auth required throws exception token not found in Session
      *
      * @return void
@@ -1565,6 +1631,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testAuthRequiredThrowsExceptionControllerNotAllowed method
+     *
      * Auth required throws exception controller not allowed
      *
      * @return void
@@ -1585,6 +1653,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testAuthRequiredThrowsExceptionActionNotAllowed method
+     *
      * Auth required throws exception controller not allowed
      *
      * @return void
@@ -1605,6 +1675,8 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
+     * testAuthRequired method
+     *
      * Auth required throws exception controller not allowed
      *
      * @return void
