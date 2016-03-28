@@ -16,7 +16,6 @@ namespace Cake\View;
 
 use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\Core\InstanceConfigTrait;
-use RuntimeException;
 
 /**
  * Provides an interface for registering and inserting
@@ -225,9 +224,12 @@ class StringTemplate
     public function format($name, array $data)
     {
         if (!isset($this->_compiled[$name])) {
-            throw new RuntimeException("Cannot find template named '$name'.");
+            return null;
         }
         list($template, $placeholders) = $this->_compiled[$name];
+        if ($template === null) {
+            return null;
+        }
 
         if (isset($data['templateVars'])) {
             $data += $data['templateVars'];
