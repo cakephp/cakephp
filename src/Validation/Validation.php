@@ -1004,7 +1004,7 @@ class Validation
         if (isset($options['types']) && !static::mimeType($file, $options['types'])) {
             return false;
         }
-        return true;
+        return is_uploaded_file($file['tmp_name']);
     }
 
     /**
