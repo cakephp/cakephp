@@ -22,6 +22,8 @@ use Cake\TestSuite\TestCase;
 use Cake\Validation\Validation;
 use Locale;
 
+require_once __DIR__ . '/stubs.php';
+
 /**
  * Test Case for Validation Class
  *
