@@ -861,10 +861,10 @@ class Text
     }
 
     /**
-     * Get/set defautl transliterator identifer string.
+     * Get/set default transliterator identifer string.
      *
-     * @param string $transliteratorId Transliterator identifer.
-     * @return string|null
+     * @param string|null $transliteratorId Transliterator identifer.
+     * @return string|void
      */
     public static function defaultTransliteratorId($transliteratorId = null)
     {
