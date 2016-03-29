@@ -1036,7 +1036,17 @@ class Validation {
 		if (isset($options['types']) && !static::mimeType($file, $options['types'])) {
 			return false;
 		}
-		return true;
+		return static::_isUploadedFile($file['tmp_name']);
+	}
+
+/**
+ * Helper method that can be stubbed in testing.
+ *
+ * @param string $path The path to check.
+ * @return bool Whether or not the file is an uploaded file.
+ */
+	protected static function _isUploadedFile($path) {
+		return is_uploaded_file($path);
 	}
 
 /**

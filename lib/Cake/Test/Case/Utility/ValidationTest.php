@@ -89,6 +89,25 @@ class TestDeValidation {
 }
 
 /**
+ * ValidationStub
+ *
+ * @package       Cake.Test.Case.Utility
+ */
+class ValidationStub extends Validation {
+
+/**
+ * Stub out is_uploaded_file check
+ *
+ * @param string $path
+ * @return void
+ */
+	protected static function _isUploadedFile($path) {
+		return file_exists($path);
+	}
+
+}
+
+/**
  * Test Case for Validation Class
  *
  * @package       Cake.Test.Case.Utility
@@ -2405,11 +2424,11 @@ class ValidationTest extends CakeTestCase {
  * @return void
  */
 	public function testUploadedFileErrorCode() {
-		$this->assertFalse(Validation::uploadedFile('derp'));
+		$this->assertFalse(ValidationStub::uploadedFile('derp'));
 		$invalid = array(
 			'name' => 'testing'
 		);
-		$this->assertFalse(Validation::uploadedFile($invalid));
+		$this->assertFalse(ValidationStub::uploadedFile($invalid));
 		$file = array(
 			'name' => 'cake.power.gif',
 			'tmp_name' => CORE_PATH . 'Cake' . DS . 'Test' . DS . 'test_app' . DS . 'webroot/img/cake.power.gif',
@@ -2417,9 +2436,9 @@ class ValidationTest extends CakeTestCase {
 			'type' => 'image/gif',
 			'size' => 201
 		);
-		$this->assertTrue(Validation::uploadedFile($file));
+		$this->assertTrue(ValidationStub::uploadedFile($file));
 		$file['error'] = UPLOAD_ERR_NO_FILE;
-		$this->assertFalse(Validation::uploadedFile($file), 'Error upload should fail.');
+		$this->assertFalse(ValidationStub::uploadedFile($file), 'Error upload should fail.');
 	}
 
 /**
@@ -2438,11 +2457,11 @@ class ValidationTest extends CakeTestCase {
 		$options = array(
 			'types' => array('text/plain')
 		);
-		$this->assertFalse(Validation::uploadedFile($file, $options), 'Incorrect mimetype.');
+		$this->assertFalse(ValidationStub::uploadedFile($file, $options), 'Incorrect mimetype.');
 		$options = array(
 			'types' => array('image/gif', 'image/png')
 		);
-		$this->assertTrue(Validation::uploadedFile($file, $options));
+		$this->assertTrue(ValidationStub::uploadedFile($file, $options));
 	}
 
 /**
@@ -2461,24 +2480,24 @@ class ValidationTest extends CakeTestCase {
 		$options = array(
 			'minSize' => 500
 		);
-		$this->assertFalse(Validation::uploadedFile($file, $options), 'Too small');
+		$this->assertFalse(ValidationStub::uploadedFile($file, $options), 'Too small');
 		$options = array(
 			'maxSize' => 100
 		);
-		$this->assertFalse(Validation::uploadedFile($file, $options), 'Too big');
+		$this->assertFalse(ValidationStub::uploadedFile($file, $options), 'Too big');
 		$options = array(
 			'minSize' => 100,
 		);
-		$this->assertTrue(Validation::uploadedFile($file, $options));
+		$this->assertTrue(ValidationStub::uploadedFile($file, $options));
 		$options = array(
 			'maxSize' => 500,
 		);
-		$this->assertTrue(Validation::uploadedFile($file, $options));
+		$this->assertTrue(ValidationStub::uploadedFile($file, $options));
 		$options = array(
 			'minSize' => 100,
 			'maxSize' => 500
 		);
-		$this->assertTrue(Validation::uploadedFile($file, $options));
+		$this->assertTrue(ValidationStub::uploadedFile($file, $options));
 	}
 
 /**
@@ -2519,6 +2538,6 @@ class ValidationTest extends CakeTestCase {
 			'size' => 201
 		);
 		$options = array();
-		$this->assertTrue(Validation::uploadedFile($file, $options), 'Wrong order');
+		$this->assertTrue(ValidationStub::uploadedFile($file, $options), 'Wrong order');
 	}
 }
