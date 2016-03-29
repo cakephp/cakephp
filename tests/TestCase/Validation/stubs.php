@@ -13,6 +13,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Validation {
+
     /**
      * Use namespace injection to overwrite is_uploaded_file()
      * during tests.
@@ -25,4 +26,3 @@ namespace Cake\Validation {
         return file_exists($filename);
     }
 }
-
