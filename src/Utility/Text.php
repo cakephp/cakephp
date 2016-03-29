@@ -26,9 +26,9 @@ class Text
     /**
      * Default transliterator id string.
      *
-     * @param string $defaultTransliteratorId Transliterator identifer string.
+     * @param string $_defaultTransliteratorId Transliterator identifer string.
      */
-    public static $defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
+    protected static $_defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
 
     /**
      * Generate a random UUID version 4
@@ -861,17 +861,32 @@ class Text
     }
 
     /**
+     * Get/set defautl transliterator identifer string.
+     *
+     * @param string $transliteratorId Transliterator identifer.
+     * @return string|null
+     */
+    public static function defaultTransliteratorId($transliteratorId = null)
+    {
+        if ($transliteratorId === null) {
+            return static::$_defaultTransliteratorId;
+        }
+
+        static::$_defaultTransliteratorId = $transliteratorId;
+    }
+
+    /**
      * Transliterate string.
      *
      * @param string $string String to transliterate.
      * @param string|null $transliteratorId Transliterator identifer. If null
-     *   Text::$defaultTransliteratorId will be used.
+     *   Text::$_defaultTransliteratorId will be used.
      * @return string
      * @see http://php.net/manual/en/transliterator.transliterate.php
      */
     public static function transliterate($string, $transliteratorId = null)
     {
-        $transliteratorId = $transliteratorId ?: static::$defaultTransliteratorId;
+        $transliteratorId = $transliteratorId ?: static::$_defaultTransliteratorId;
         return transliterator_transliterate($transliteratorId, $string);
     }
 
@@ -883,7 +898,7 @@ class Text
      * @param array $options Valid options:
      *   - `replacement`: Replacement string. Default '-'.
      *   - `transliteratorId`: A valid tranliterator id string.
-     *     If default `null` Text::$defaultTransliteratorId to be used.
+     *     If default `null` Text::$_defaultTransliteratorId to be used.
      *     If `false` no transliteration will be done, only non words will be removed.
      *   - `preserve`: Specific non-word character to preserve. Default `null`.
      *     For e.g. this option can be set to '.' to generate clean file names.

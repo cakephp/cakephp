@@ -1589,6 +1589,18 @@ podeís adquirirla.</span></p>
         ];
     }
 
+    public function testDefaultTransliteratorId()
+    {
+        $expected = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
+        $this->assertEquals($expected, Text::defaultTransliteratorId());
+
+        $expected = 'Latin-ASCII; [\u0080-\u7fff] remove';
+        Text::defaultTransliteratorId($expected);
+        $this->assertEquals($expected, Text::defaultTransliteratorId());
+
+        Text::defaultTransliteratorId('Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove');
+    }
+
     /**
      * Data provider for testTransliterate()
      *
