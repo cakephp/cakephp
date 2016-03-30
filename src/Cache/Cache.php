@@ -450,19 +450,17 @@ class Cache
      * Delete all keys from the cache from all configurations.
      *
      * @param bool $check if true will check expiration, otherwise delete all
-     * @return bool True if the cache of all configurations was successfully cleared, false otherwise
+     * @return array Status code. For each configuration, it reports the status of the operation
      */
     public static function clearAll($check = false)
     {
-        $success = true;
+        $status = [];
         
         foreach (self::configured() as $config) {
-            if (!self::clear($check, $config)) {
-                $success = false;
-            }
+            $status[$config] = self::clear($check, $config);
         }
         
-        return $success;
+        return $status;
     }
 
     /**
