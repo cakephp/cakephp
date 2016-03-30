@@ -861,17 +861,23 @@ class Text
     }
 
     /**
-     * Get/set default transliterator identifer string.
+     * Get default transliterator identifer string.
      *
-     * @param string|null $transliteratorId Transliterator identifer.
-     * @return string|void
+     * @return string Transliterator identifer.
      */
-    public static function defaultTransliteratorId($transliteratorId = null)
+    public static function getTransliteratorId()
     {
-        if ($transliteratorId === null) {
-            return static::$_defaultTransliteratorId;
-        }
+        return static::$_defaultTransliteratorId;
+    }
 
+    /**
+     * Set default transliterator identifer string.
+     *
+     * @param string $transliteratorId Transliterator identifer.
+     * @return void
+     */
+    public static function setTransliteratorId($transliteratorId)
+    {
         static::$_defaultTransliteratorId = $transliteratorId;
     }
 
