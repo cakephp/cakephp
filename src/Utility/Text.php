@@ -26,7 +26,7 @@ class Text
     /**
      * Default transliterator id string.
      *
-     * @param string $_defaultTransliteratorId Transliterator identifer string.
+     * @param string $_defaultTransliteratorId Transliterator identifier string.
      */
     protected static $_defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
 
@@ -861,9 +861,9 @@ class Text
     }
 
     /**
-     * Get default transliterator identifer string.
+     * Get default transliterator identifier string.
      *
-     * @return string Transliterator identifer.
+     * @return string Transliterator identifier.
      */
     public static function getTransliteratorId()
     {
@@ -871,9 +871,9 @@ class Text
     }
 
     /**
-     * Set default transliterator identifer string.
+     * Set default transliterator identifier string.
      *
-     * @param string $transliteratorId Transliterator identifer.
+     * @param string $transliteratorId Transliterator identifier.
      * @return void
      */
     public static function setTransliteratorId($transliteratorId)
@@ -885,7 +885,7 @@ class Text
      * Transliterate string.
      *
      * @param string $string String to transliterate.
-     * @param string|null $transliteratorId Transliterator identifer. If null
+     * @param string|null $transliteratorId Transliterator identifier. If null
      *   Text::$_defaultTransliteratorId will be used.
      * @return string
      * @see http://php.net/manual/en/transliterator.transliterate.php
