@@ -237,52 +237,52 @@ class ValidatorTest extends TestCase
         $this->assertTrue($validator->isPresenceRequired('title', false));
         $this->assertFalse($validator->isPresenceRequired('title', true));
     }
-	
-	/**
+
+    /**
      * Tests the autoRequire method
      *
      * @return void
      */
     public function testAutoRequire()
     {
-		$validator = new Validator;
-		$validator->autoRequire(true);
-		$validator->notBlank('title');
-		$this->assertTrue($validator->isPresenceRequired('title', true));
-		
-		$validator->add('comment', [
-			'notBlank' => [
-				'rule' => 'notBlank',
-				'message' => 'This field cannot be blank'
-			],
-			'_requirePresence' => [
-				'message' => 'This is test requirement'
-			]
-		]);
-		$data = [
-			'title' => 'Silly title'
-		];
-		$errors = $validator->errors($data);
-		$expected = [
+        $validator = new Validator;
+        $validator->autoRequire(true);
+        $validator->notBlank('title');
+        $this->assertTrue($validator->isPresenceRequired('title', true));
+
+        $validator->add('comment', [
+            'notBlank' => [
+                'rule' => 'notBlank',
+                'message' => 'This field cannot be blank'
+            ],
+            '_requirePresence' => [
+                'message' => 'This is test requirement'
+            ]
+        ]);
+        $data = [
+            'title' => 'Silly title'
+        ];
+        $errors = $validator->errors($data);
+        $expected = [
             'comment' => ['_required' => 'This is test requirement']
         ];
         $this->assertEquals($expected, $errors);
-		
-		$validator->autoRequire(false);
-		$validator->notBlank('username');
-		$this->assertFalse($validator->isPresenceRequired('username', true));
-		
-		$validator->notBlank('job_desc', 'This field cannot be blank');
-		$data = [
-			'job_desc' => 'Silly description'
-		];
-		$errors = $validator->errors($data);
-		$expected = [
-			'comment' => ['_required' => 'This is test requirement'],
-			'title' => ['_required' => 'This field is required'],
-		];
+
+        $validator->autoRequire(false);
+        $validator->notBlank('username');
+        $this->assertFalse($validator->isPresenceRequired('username', true));
+
+        $validator->notBlank('job_desc', 'This field cannot be blank');
+        $data = [
+            'job_desc' => 'Silly description'
+        ];
+        $errors = $validator->errors($data);
+        $expected = [
+            'comment' => ['_required' => 'This is test requirement'],
+            'title' => ['_required' => 'This field is required'],
+        ];
         $this->assertEquals($expected, $errors);
-	}
+    }
 
     /**
      * Tests errors generated when a field presence is required

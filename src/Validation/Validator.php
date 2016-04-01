@@ -344,6 +344,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
     /**
      * Adds automaticly requirePresence on each field added through add method
+     *
+     * @param bool $require whether auto require is on or off
+     * @return $this|object|string|null
      */
     public function autoRequire($require)
     {
