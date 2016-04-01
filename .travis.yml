@@ -66,7 +66,7 @@ before_install:
   - if [[ $TRAVIS_PHP_VERSION != 'hhvm' ]] ; then echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
   - if [[ $TRAVIS_PHP_VERSION =~ 5.[56] ]] ; then echo yes | pecl install apcu-4.0.10; fi
   - if [[ $TRAVIS_PHP_VERSION = 7.* ]] ; then echo yes | pecl install apcu; fi
-  - if [[ $TRAVIS_PHP_VERSION = 7.* ]] ; then echo yes | pecl install apcu_bc; fi
+  - if [[ $TRAVIS_PHP_VERSION = 7.* ]] ; then pecl config-set preferred_state beta; echo yes | pecl install apcu_bc; fi
   - if [[ $TRAVIS_PHP_VERSION != 'hhvm' ]] ; then composer require lorenzo/multiple-iterator=~1.0; fi
 
   - phpenv rehash
