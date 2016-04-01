@@ -34,22 +34,21 @@ matrix:
     - php: 7.0
       env: PHPCS=1 DEFAULT=0
 
-    # - php: hhvm
-    #   env: HHVM=1 DB=sqlite db_dsn='sqlite:///:memory:'
+    - php: hhvm
+      env: HHVM=1 DB=sqlite db_dsn='sqlite:///:memory:'
 
-    # - php: hhvm
-    #   env: HHVM=1 DB=mysql db_dsn='mysql://travis@0.0.0.0/cakephp_test'
+    - php: hhvm
+      env: HHVM=1 DB=mysql db_dsn='mysql://travis@0.0.0.0/cakephp_test'
 
   allow_failures:
     - env: CODECOVERAGE=1 DEFAULT=0
 
-    # - php: hhvm
+    - php: hhvm
 
 before_install:
   - sh -c "if [ '$HHVM' != '1' ]; then phpenv config-rm xdebug.ini; fi"
   - composer self-update
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
-  # - composer install --prefer-dist --no-interaction
 
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test2;'; fi"
