@@ -64,7 +64,8 @@ before_script:
   - if [[ $TRAVIS_PHP_VERSION != 'hhvm' ]] ; then echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
   - if [[ $TRAVIS_PHP_VERSION != 'hhvm' ]] ; then echo 'extension = redis.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
   - if [[ $TRAVIS_PHP_VERSION != 'hhvm' ]] ; then echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
-  - if [[ $TRAVIS_PHP_VERSION != 'hhvm' ]] ; then echo yes | pecl install apcu; fi
+  - if [[ $TRAVIS_PHP_VERSION =~ 5.[56] ]] ; then echo yes | pecl install apcu-4.0.10; fi
+  - if [[ $TRAVIS_PHP_VERSION = 7.* ]] ; then echo yes | pecl install apcu; fi
   - if [[ $TRAVIS_PHP_VERSION != 'hhvm' ]] ; then composer require lorenzo/multiple-iterator=~1.0; fi
 
   - phpenv rehash
