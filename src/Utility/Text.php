@@ -900,18 +900,25 @@ class Text
      * Returns a string with all spaces converted to dashes (by default),
      * characters transliterated to ASCII characters, and non word characters removed.
      *
+     * ### Options:
+     *
+     * - `replacement`: Replacement string. Default '-'.
+     * - `transliteratorId`: A valid tranliterator id string.
+     *   If default `null` Text::$_defaultTransliteratorId to be used.
+     *   If `false` no transliteration will be done, only non words will be removed.
+     * - `preserve`: Specific non-word character to preserve. Default `null`.
+     *   For e.g. this option can be set to '.' to generate clean file names.
+     *
      * @param string $string the string you want to slug
-     * @param array $options Valid options:
-     *   - `replacement`: Replacement string. Default '-'.
-     *   - `transliteratorId`: A valid tranliterator id string.
-     *     If default `null` Text::$_defaultTransliteratorId to be used.
-     *     If `false` no transliteration will be done, only non words will be removed.
-     *   - `preserve`: Specific non-word character to preserve. Default `null`.
-     *     For e.g. this option can be set to '.' to generate clean file names.
+     * @param array $options If string it will be use as replacement character
+     *   or an array of options.
      * @return string
      */
     public static function slug($string, $options = [])
     {
+        if (is_string($options)) {
+            $options = ['replacement' => $options];
+        }
         $options += [
             'replacement' => '-',
             'transliteratorId' => null,
