@@ -48,6 +48,9 @@ class OrderedUuidType extends Type implements ExpressionTypeInterface
 
     public function toExpression($value)
     {
+        if ($value instanceof UuidValue) {
+            $value = $value->value;
+        }
         $substr = function ($start, $length = null) use ($value) {
             return new FunctionExpression(
                 'SUBSTR',
@@ -132,6 +135,26 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
             ->select('id')
             ->from('ordered_uuid_items')
             ->where(['id' => '48298a29-81c0-4c26-a7fb-413140cf8569'], ['id' => 'ordered_uuid'])
+            ->execute()
+            ->fetchAll('assoc');
+
+        $this->assertCount(1, $result);
+        $this->assertEquals('4c2681c048298a29a7fb413140cf8569', $result[0]['id']);
+    }
+
+
+    /**
+     * Tests Select using value object in conditions
+     *
+     * @return void
+     */
+    public function testSelectWithConditionsValueObject()
+    {
+        $this->_insert();
+        $result = $this->connection->newQuery()
+            ->select('id')
+            ->from('ordered_uuid_items')
+            ->where(['id' => new UuidValue('48298a29-81c0-4c26-a7fb-413140cf8569')], ['id' => 'ordered_uuid'])
             ->execute()
             ->fetchAll('assoc');
 
