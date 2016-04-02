@@ -14,6 +14,7 @@
  */
 namespace Cake\Database;
 
+use Cake\Core\App;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\MissingDriverException;
 use Cake\Database\Exception\MissingExtensionException;
@@ -158,10 +159,11 @@ class Connection implements ConnectionInterface
             return $this->_driver;
         }
         if (is_string($driver)) {
-            if (!class_exists($driver)) {
+            $className = App::className($driver, 'Database/Driver');
+            if (!$className || !class_exists($className)) {
                 throw new MissingDriverException(['driver' => $driver]);
             }
-            $driver = new $driver($config);
+            $driver = new $className($config);
         }
         if (!$driver->enabled()) {
             throw new MissingExtensionException(['driver' => get_class($driver)]);
