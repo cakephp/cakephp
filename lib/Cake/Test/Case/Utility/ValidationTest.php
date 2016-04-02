@@ -2161,9 +2161,6 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::phone('1-(511)-999-9999'));
 		$this->assertFalse(Validation::phone('1-(555)-999-9999'));
 
-		// invalid exhange
-		$this->assertFalse(Validation::phone('1-(222)-511-9999'));
-
 		// invalid phone number
 		$this->assertFalse(Validation::phone('1-(222)-555-0199'));
 		$this->assertFalse(Validation::phone('1-(222)-555-0122'));
@@ -2186,6 +2183,7 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::phone('1.(333).333-4444'));
 		$this->assertTrue(Validation::phone('1.(333).333.4444'));
 		$this->assertTrue(Validation::phone('1-333-333-4444'));
+		$this->assertTrue(Validation::phone('1-800-211-4511'));
 	}
 
 /**
