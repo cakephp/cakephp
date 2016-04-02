@@ -477,7 +477,7 @@ class SecurityComponentTest extends TestCase
             'Model' => ['username' => 'nate', 'password' => 'foo', 'valid' => '0'],
             '_Token' => compact('fields', 'unlocked', 'debug')
         ];
-        $this->assertFalse($this->validatePost('SecurityException', 'Unexpected field \'Model.password\' in POST data, Unexpected field \'Model.username\' in POST data'));
+        $this->assertFalse($this->validatePost('AuthSecurityException', 'Unexpected field \'Model.password\' in POST data, Unexpected field \'Model.username\' in POST data'));
     }
 
     /**
@@ -498,7 +498,7 @@ class SecurityComponentTest extends TestCase
             'Model' => ['username' => 'nate', 'password' => 'foo', 'valid' => '0'],
             '_Token' => compact('fields')
         ];
-        $this->assertFalse($this->validatePost('SecurityException', '\'_Token.unlocked\' was not found in request data.'));
+        $this->assertFalse($this->validatePost('AuthSecurityException', '\'_Token.unlocked\' was not found in request data.'));
     }
 
     /**
@@ -517,7 +517,7 @@ class SecurityComponentTest extends TestCase
             'Model' => ['username' => 'nate', 'password' => 'foo', 'valid' => '0'],
             '_Token' => compact('unlocked')
         ];
-        $result = $this->validatePost('SecurityException', '\'_Token.fields\' was not found in request data.');
+        $result = $this->validatePost('AuthSecurityException', '\'_Token.fields\' was not found in request data.');
         $this->assertFalse($result, 'validatePost passed when fields were missing. %s');
     }
 

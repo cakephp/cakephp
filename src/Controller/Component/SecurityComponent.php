@@ -313,7 +313,7 @@ class SecurityComponent extends Component
      * Validate submitted form
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
-     * @throws \Cake\Controller\Exception\SecurityException
+     * @throws \Cake\Controller\Exception\AuthSecurityException
      * @return bool true if submitted form is valid
      */
     protected function _validatePost(Controller $controller)
@@ -334,7 +334,7 @@ class SecurityComponent extends Component
             $msg = $this->_debugPostTokenNotMatching($controller, $hashParts);
         }
 
-        throw new SecurityException($msg);
+        throw new AuthSecurityException($msg);
     }
 
     /**

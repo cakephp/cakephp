@@ -316,13 +316,6 @@ class Email implements JsonSerializable, Serializable
     protected $_emailPattern = self::EMAIL_PATTERN;
 
     /**
-     * The class name used for email configuration.
-     *
-     * @var string
-     */
-    protected $_configClass = 'EmailConfig';
-
-    /**
      * Constructor
      *
      * @param array|string|null $config Array of configs, or string to load configs from email.php

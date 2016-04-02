@@ -28,7 +28,8 @@ ConnectionManager::config('default', [
 	'driver' => 'Cake\Database\Driver\Mysql',
 	'database' => 'test',
 	'username' => 'root',
-	'password' => 'secret'
+	'password' => 'secret',
+	'cacheMetaData' => false // If set to `true` you need to install the optional "cakephp/cache" package.
 ]);
 ```
 
