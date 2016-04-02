@@ -122,7 +122,7 @@ if (!function_exists('__x')) {
      * @param string $singular Text to translate.
      * @param mixed $args Array with arguments or multiple arguments in function.
      * @return string|null Translated string.
-     * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__
+     * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__x
      */
     function __x($context, $singular, $args = null)
     {
