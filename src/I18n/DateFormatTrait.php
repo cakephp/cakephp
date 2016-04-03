@@ -34,12 +34,12 @@ trait DateFormatTrait
     public static $defaultLocale;
 
     /**
-     * The default PHP \DateTimeZone or string representative.
+     * The default PHP \DateTimeZone or string representative for output formatting.
      * See http://php.net/manual/en/timezones.php.
      *
      * @var string|\DateTimeZone
      */
-    public static $defaultTimezone;
+    public static $defaultTimezoneFormat;
 
     /**
      * In-memory cache of date formatters
@@ -148,7 +148,7 @@ trait DateFormatTrait
     {
         $time = $this;
 
-        $timezone = $timezone ?: static::$defaultTimezone;
+        $timezone = $timezone ?: static::$defaultTimezoneFormat;
         if ($timezone) {
             // Handle the immutable and mutable object cases.
             $time = clone $this;
@@ -292,7 +292,7 @@ trait DateFormatTrait
                 is_subclass_of(static::class, MutableDate::class);
         }
 
-        $defaultTimezone = static::$_isDateInstance ? 'UTC' : date_default_timezone_get();
+        $defaultTimezone = static::$_isDateInstance ? 'UTC' : self::$defaultTimezoneFormat;
         $formatter = datefmt_create(
             static::$defaultLocale,
             $dateFormat,
