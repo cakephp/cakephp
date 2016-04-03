@@ -84,6 +84,7 @@ trait DateFormatTrait
      */
     public function nice($timezone = null, $locale = null)
     {
+        $timezone = $timezone ?: static::$defaultTimezoneFormat;
         return $this->i18nFormat(static::$niceFormat, $timezone, $locale);
     }
 
@@ -273,7 +274,7 @@ trait DateFormatTrait
      * @param string|array|null $format Any format accepted by IntlDateFormatter.
      * @return static|null
      */
-    public static function parseDateTime($time, $format = null)
+    public static function parseDateTime($time, $format = null, $timezone = null)
     {
         $dateFormat = $format ?: static::$_toStringFormat;
         $timeFormat = $pattern = null;
@@ -292,19 +293,20 @@ trait DateFormatTrait
                 is_subclass_of(static::class, MutableDate::class);
         }
 
-        $defaultTimezone = static::$_isDateInstance ? 'UTC' : self::$defaultTimezoneFormat;
+        $timezone = $timezone ?: static::$defaultTimezoneFormat;
+        $timezone = static::$_isDateInstance ? date_default_timezone_get() : $timezone;
         $formatter = datefmt_create(
             static::$defaultLocale,
             $dateFormat,
             $timeFormat,
-            $defaultTimezone,
+            $timezone,
             null,
             $pattern
         );
         $time = $formatter->parse($time);
         if ($time !== false) {
             $result = new static('@' . $time);
-            return static::$_isDateInstance ? $result : $result->setTimezone($defaultTimezone);
+            return static::$_isDateInstance ? $result : $result->setTimezone($timezone);
         }
         return null;
     }
