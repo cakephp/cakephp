@@ -48,6 +48,23 @@ class TimeHelper extends Helper
     public $defaultOutputTimezone = null;
 
     /**
+     * Construct the TimeHelper
+     *
+     * @param \Cake\View\View $View The View this helper is being attached to.
+     * @param array $config Configuration settings for the helper.
+     */
+    public function __construct(View $View, array $config = [])
+    {
+        parent::__construct($View, $config);
+        if (isset($config['defaultFormat'])) {
+            $this->defaultFormat = $config['defaultFormat'];
+        }
+        if (isset($config['defaultOutputTimezone'])) {
+            $this->defaultFormat = $config['defaultOutputTimezone'];
+        }
+    }
+
+    /**
      * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
      *
      * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
