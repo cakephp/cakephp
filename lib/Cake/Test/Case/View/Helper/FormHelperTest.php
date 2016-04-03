@@ -8135,9 +8135,9 @@ class FormHelperTest extends CakeTestCase {
 		$hash .= '%3A';
 		$this->Form->request->params['_Token']['key'] = 'test';
 
-		$this->Form->create('Post', ['url' => ['action' => 'add']]);
+		$this->Form->create('Post', array('url' => array('action' => 'add')));
 		$this->Form->input('title');
-		$this->Form->postLink('Delete', '/posts/delete/1', ['inline' => false]);
+		$this->Form->postLink('Delete', '/posts/delete/1', array('inline' => false));
 		$result = $this->View->fetch('postLink');
 
 		$this->assertEquals(array('Post.title'), $this->Form->fields);
