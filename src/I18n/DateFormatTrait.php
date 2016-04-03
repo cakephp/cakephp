@@ -34,6 +34,14 @@ trait DateFormatTrait
     public static $defaultLocale;
 
     /**
+     * The default PHP \DateTimeZone or string representative.
+     * See http://php.net/manual/en/timezones.php.
+     *
+     * @var string|\DateTimeZone
+     */
+    public static $defaultTimezone;
+
+    /**
      * In-memory cache of date formatters
      *
      * @var array
@@ -52,7 +60,7 @@ trait DateFormatTrait
      * will be used to format the time part.
      *
      * @var string|array|int
-     * @see \Cake\I18n\Time::i18nFormat()
+     * @see self::i18nFormat()
      */
     protected static $_jsonEncodeFormat = "yyyy-MM-dd'T'HH:mm:ssZ";
 
@@ -66,7 +74,7 @@ trait DateFormatTrait
     /**
      * Returns a nicely formatted date string for this object.
      *
-     * The format to be used is stored in the static property `Time::niceFormat`.
+     * The format to be used is stored in the static property `self::niceFormat`.
      *
      * @param string|\DateTimeZone|null $timezone Timezone string or DateTimeZone object
      * in which the date will be displayed. The timezone stored for this object will not
@@ -99,7 +107,7 @@ trait DateFormatTrait
      * ```
      *
      * If you wish to control the default format to be used for this method, you can alter
-     * the value of the static `Time::$defaultLocale` variable and set it to one of the
+     * the value of the static `self::$defaultLocale` variable and set it to one of the
      * possible formats accepted by this function.
      *
      * You can read about the available IntlDateFormatter constants at
@@ -118,11 +126,16 @@ trait DateFormatTrait
      * $time = new Time('2014-04-20 22:10');
      * $time->i18nFormat(null, null, 'de-DE');
      * $time->i18nFormat(\IntlDateFormatter::FULL, 'Europe/Berlin', 'de-DE');
+     * $time->i18nFormat(null, new \DateTimeZone('Australia/Sydney'));
      * ```
      *
-     * You can control the default locale to be used by setting the static variable
-     * `Time::$defaultLocale` to a  valid locale string. If empty, the default will be
-     * taken from the `intl.default_locale` ini config.
+     * You can control the default locale to be used by setting`static::$defaultLocale` to a
+     * valid locale string. If empty, the default will be taken from the `intl.default_locale`
+     * ini config, see config/bootstrap.php.
+     *
+     * You can control the default timezone to be used by setting `static::$defaultLocale`
+     * to a valid locale string or \DateTimeZone object. If empty, the default will be taken from
+     * `date_default_timezone_set()`, see config/bootstrap.php.
      *
      * @param string|int|null $format Format string.
      * @param string|\DateTimeZone|null $timezone Timezone string or DateTimeZone object
@@ -135,6 +148,7 @@ trait DateFormatTrait
     {
         $time = $this;
 
+        $timezone = $timezone ?: static::$defaultTimezone;
         if ($timezone) {
             // Handle the immutable and mutable object cases.
             $time = clone $this;

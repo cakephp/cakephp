@@ -33,6 +33,21 @@ class TimeHelper extends Helper
     use StringTemplateTrait;
 
     /**
+     * The default format to be used for displaying formatted date strings.
+     *
+     * @var string
+     */
+    public $defaultFormat = null;
+
+    /**
+     * The default PHP \DateTimeZone or string representative.
+     * See http://php.net/manual/en/timezones.php.
+     *
+     * @var string|\DateTimeZone
+     */
+    public $defaultTimezone = null;
+
+    /**
      * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
      *
      * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
@@ -41,6 +56,7 @@ class TimeHelper extends Helper
      */
     public function fromString($dateString, $timezone = null)
     {
+        $timezone = $timezone ?: $this->defaultTimezone;
         return (new Time($dateString))->timezone($timezone);
     }
 
@@ -54,6 +70,7 @@ class TimeHelper extends Helper
      */
     public function nice($dateString = null, $timezone = null, $locale = null)
     {
+        $timezone = $timezone ?: $this->defaultTimezone;
         return (new Time($dateString))->nice($timezone, $locale);
     }
 
@@ -66,6 +83,7 @@ class TimeHelper extends Helper
      */
     public function isToday($dateString, $timezone = null)
     {
+        $timezone = $timezone ?: $this->defaultTimezone;
         return (new Time($dateString, $timezone))->isToday();
     }
 
@@ -78,6 +96,7 @@ class TimeHelper extends Helper
      */
     public function isFuture($dateString, $timezone = null)
     {
+        $timezone = $timezone ?: $this->defaultTimezone;
         return (new Time($dateString, $timezone))->isFuture();
     }
 
@@ -90,6 +109,7 @@ class TimeHelper extends Helper
      */
     public function isPast($dateString, $timezone = null)
     {
+        $timezone = $timezone ?: $this->defaultTimezone;
         return (new Time($dateString, $timezone))->isPast();
     }
 
@@ -102,6 +122,7 @@ class TimeHelper extends Helper
      */
     public function isThisWeek($dateString, $timezone = null)
     {
+        $timezone = $timezone ?: $this->defaultTimezone;
         return (new Time($dateString, $timezone))->isThisWeek();
     }
 
@@ -114,6 +135,7 @@ class TimeHelper extends Helper
      */
     public function isThisMonth($dateString, $timezone = null)
     {
+        $timezone = $timezone ?: $this->defaultTimezone;
         return (new Time($dateString, $timezone))->isThisMonth();
     }
 
@@ -126,6 +148,7 @@ class TimeHelper extends Helper
      */
     public function isThisYear($dateString, $timezone = null)
     {
+        $timezone = $timezone ?: $this->defaultTimezone;
         return (new Time($dateString, $timezone))->isThisYear();
     }
 
@@ -139,6 +162,7 @@ class TimeHelper extends Helper
      */
     public function wasYesterday($dateString, $timezone = null)
     {
+        $timezone = $timezone ?: $this->defaultTimezone;
         return (new Time($dateString, $timezone))->isYesterday();
     }
 
@@ -151,6 +175,7 @@ class TimeHelper extends Helper
      */
     public function isTomorrow($dateString, $timezone = null)
     {
+        $timezone = $timezone ?: $this->defaultTimezone;
         return (new Time($dateString, $timezone))->isTomorrow();
     }
 
@@ -190,7 +215,7 @@ class TimeHelper extends Helper
      */
     public function toAtom($dateString, $timezone = null)
     {
-        $timezone = $timezone ?: date_default_timezone_get();
+        $timezone = $timezone ?: $this->defaultTimezone;
         return (new Time($dateString))->timezone($timezone)->toAtomString();
     }
 
@@ -203,7 +228,7 @@ class TimeHelper extends Helper
      */
     public function toRss($dateString, $timezone = null)
     {
-        $timezone = $timezone ?: date_default_timezone_get();
+        $timezone = $timezone ?: $this->defaultTimezone;
         return (new Time($dateString))->timezone($timezone)->toRssString();
     }
 
@@ -267,6 +292,7 @@ class TimeHelper extends Helper
      */
     public function wasWithinLast($timeInterval, $dateString, $timezone = null)
     {
+        $timezone = $timezone ?: $this->defaultTimezone;
         return (new Time($dateString, $timezone))->wasWithinLast($timeInterval);
     }
 
@@ -282,6 +308,7 @@ class TimeHelper extends Helper
      */
     public function isWithinNext($timeInterval, $dateString, $timezone = null)
     {
+        $timezone = $timezone ?: $this->defaultTimezone;
         return (new Time($dateString, $timezone))->isWithinNext($timeInterval);
     }
 
@@ -312,6 +339,8 @@ class TimeHelper extends Helper
      */
     public function format($date, $format = null, $invalid = false, $timezone = null)
     {
+        $timezone = $timezone ?: $this->defaultTimezone;
+        $format = $format ?: $this->defaultFormat;
         return $this->i18nFormat($date, $format, $invalid, $timezone);
     }
 
@@ -329,6 +358,8 @@ class TimeHelper extends Helper
      */
     public function i18nFormat($date, $format = null, $invalid = false, $timezone = null)
     {
+        $timezone = $timezone ?: $this->defaultTimezone;
+        $format = $format ?: $this->defaultFormat;
         if (!isset($date)) {
             return $invalid;
         }
