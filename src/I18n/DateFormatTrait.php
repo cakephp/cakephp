@@ -294,8 +294,7 @@ trait DateFormatTrait
                 is_subclass_of(static::class, MutableDate::class);
         }
 
-        $timezone = $timezone ?: static::$defaultOutputTimezone;
-        $timezone = static::$_isDateInstance ? date_default_timezone_get() : $timezone;
+        $timezone = static::$_isDateInstance ? $timezone : date_default_timezone_get();
         $formatter = datefmt_create(
             static::$defaultLocale,
             $dateFormat,
