@@ -35,7 +35,7 @@ class TimeHelper extends Helper
     /**
      * The default format to be used for displaying formatted date strings.
      *
-     * @var string
+     * @var string|null
      */
     public $defaultFormat = null;
 
@@ -43,7 +43,7 @@ class TimeHelper extends Helper
      * The default PHP \DateTimeZone or string representative.
      * See http://php.net/manual/en/timezones.php.
      *
-     * @var string|\DateTimeZone
+     * @var string|\DateTimeZone|null
      */
     public $defaultTimezone = null;
 
