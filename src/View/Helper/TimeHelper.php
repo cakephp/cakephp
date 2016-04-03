@@ -232,7 +232,7 @@ class TimeHelper extends Helper
      */
     public function toAtom($dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->defaultOutputTimezone;
+        $timezone = $timezone ?: date_default_timezone_get();
         return (new Time($dateString))->timezone($timezone)->toAtomString();
     }
 
@@ -245,7 +245,7 @@ class TimeHelper extends Helper
      */
     public function toRss($dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->defaultOutputTimezone;
+        $timezone = $timezone ?: date_default_timezone_get();
         return (new Time($dateString))->timezone($timezone)->toRssString();
     }
 
