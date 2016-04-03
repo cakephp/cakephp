@@ -23,6 +23,13 @@ endif
 
 DASH_VERSION=$(shell echo $(VERSION) | sed -e s/\\./-/g)
 
+# Used when building packages for older 3.x packages.
+# The build scripts clone cakephp/app, and this var selects the
+# correct tag in that repo.
+# For 3.1.x use 3.1.2
+# For 3.0.x use 3.0.5
+APP_VERSION:=master
+
 ALL: help
 .PHONY: help install test need-version bump-version tag-version
 
@@ -104,9 +111,12 @@ build:
 
 build/app: build
 	git clone git@github.com:$(OWNER)/app.git build/app/
+	cd build/app && git checkout $(APP_VERSION)
 
 build/cakephp: build
+	git checkout $(VERSION)
 	git checkout-index -a -f --prefix=build/cakephp/
+	git checkout -
 
 dist/cakephp-$(DASH_VERSION).zip: build/app build/cakephp composer.phar
 	mkdir -p dist
