@@ -60,7 +60,7 @@ class TimeHelper extends Helper
             $this->defaultFormat = $config['defaultFormat'];
         }
         if (isset($config['defaultOutputTimezone'])) {
-            $this->defaultFormat = $config['defaultOutputTimezone'];
+            $this->defaultOutputTimezone = $config['defaultOutputTimezone'];
         }
     }
 
