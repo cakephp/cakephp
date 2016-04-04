@@ -38,9 +38,9 @@ trait DateFormatTrait
      * The default PHP \DateTimeZone or string representative for output.
      * See http://php.net/manual/en/timezones.php.
      *
-     * @var string|\DateTimeZone
+     * @var \DateTimeZone|null
      */
-    protected static $_defaultOutputTimezone = 'UTC';
+    protected static $_defaultOutputTimezone = null;
 
     /**
      * In-memory cache of date formatters
