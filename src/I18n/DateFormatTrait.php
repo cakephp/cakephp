@@ -35,7 +35,7 @@ trait DateFormatTrait
     public static $defaultLocale = null;
 
     /**
-     * The default PHP \DateTimeZone or string representative for output.
+     * The \DateTimeZone default output timezone.
      * See http://php.net/manual/en/timezones.php.
      *
      * @var \DateTimeZone|null

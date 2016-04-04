@@ -49,7 +49,7 @@ class TimeHelper extends Helper
     protected $_defaultFormat = null;
 
     /**
-     * The default PHP \DateTimeZone or string representative.
+     * The \DateTimeZone default output timezone.
      * See http://php.net/manual/en/timezones.php.
      *
      * @var \DateTimeZone|null
