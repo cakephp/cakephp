@@ -65,6 +65,9 @@ class TimeHelper extends Helper
     public function __construct(View $View, array $config = [])
     {
         parent::__construct($View, $config);
+        if (isset($config['defaultLocale'])) {
+            $this->_defaultFormat = $config['defaultLocale'];
+        }
         if (isset($config['defaultFormat'])) {
             $this->_defaultFormat = $config['defaultFormat'];
         }
@@ -92,6 +95,9 @@ class TimeHelper extends Helper
      */
     public function setDefaultOutputTimezone($timezone)
     {
+        if ($timezone === null) {
+            $timezone = new \DateTimeZone(date_default_timezone_get());
+        }
         if (is_string($timezone)) {
             $timezone = new \DateTimeZone($timezone);
         }
@@ -437,7 +443,7 @@ class TimeHelper extends Helper
     public function format($date, $format = null, $invalid = false, $timezone = null)
     {
         $timezone = $timezone ?: $this->getDefaultOutputTimezone();
-        $format = $format ?: $this->getDefaultFormat();
+        $format = $format !== null ? $format : $this->getDefaultFormat();
         return $this->i18nFormat($date, $format, $invalid, $timezone);
     }
 
@@ -456,7 +462,8 @@ class TimeHelper extends Helper
     public function i18nFormat($date, $format = null, $invalid = false, $timezone = null)
     {
         $timezone = $timezone ?: $this->getDefaultOutputTimezone();
-        $format = $format ?: $this->getDefaultFormat();
+        $format = $format !== null ? $format : $this->getDefaultFormat();
+
         if (!isset($date)) {
             return $invalid;
         }

@@ -91,7 +91,9 @@ trait DateFormatTrait
      */
     public static function setDefaultOutputTimezone($timezone)
     {
-        if (is_string($timezone)) {
+        if ($timezone === null) {
+            $timezone = new \DateTimeZone(date_default_timezone_get());
+        } else if (is_string($timezone)) {
             $timezone = new \DateTimeZone($timezone);
         }
         static::$_defaultOutputTimezone = $timezone;
@@ -336,7 +338,13 @@ trait DateFormatTrait
                 is_subclass_of(static::class, MutableDate::class);
         }
 
-        $timezone = static::$_isDateInstance ? $timezone : date_default_timezone_get();
+        if ($timezone === null) {
+            $timezone = new \DateTimeZone('UTC');
+        } else if (is_string($timezone)) {
+            $timezone = new \DateTimeZone($timezone);
+        }
+
+        $timezone = static::$_isDateInstance ? $timezone->getName() : date_default_timezone_get();
         $formatter = datefmt_create(
             static::getDefaultLocale(),
             $dateFormat,
