@@ -52,7 +52,7 @@ class TimeHelper extends Helper
      * The default PHP \DateTimeZone or string representative.
      * See http://php.net/manual/en/timezones.php.
      *
-     * @var string|\DateTimeZone|null
+     * @var \DateTimeZone|null
      */
     protected $_defaultOutputTimezone = null;
 
