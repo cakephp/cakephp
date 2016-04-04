@@ -14,8 +14,8 @@
  */
 namespace Cake\Test\TestCase\Http;
 
-use Cake\TestSuite\TestCase;
 use Cake\Http\MiddlewareStack;
+use Cake\TestSuite\TestCase;
 use TestApp\Middleware\SampleMiddleware;
 
 /**
