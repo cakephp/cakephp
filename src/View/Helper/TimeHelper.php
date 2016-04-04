@@ -97,8 +97,7 @@ class TimeHelper extends Helper
     {
         if ($timezone === null) {
             $timezone = new \DateTimeZone(date_default_timezone_get());
-        }
-        if (is_string($timezone)) {
+        } elseif (is_string($timezone)) {
             $timezone = new \DateTimeZone($timezone);
         }
         $this->_defaultOutputTimezone = $timezone;

@@ -93,7 +93,7 @@ trait DateFormatTrait
     {
         if ($timezone === null) {
             $timezone = new \DateTimeZone(date_default_timezone_get());
-        } else if (is_string($timezone)) {
+        } elseif (is_string($timezone)) {
             $timezone = new \DateTimeZone($timezone);
         }
         static::$_defaultOutputTimezone = $timezone;
@@ -340,7 +340,7 @@ trait DateFormatTrait
 
         if ($timezone === null) {
             $timezone = new \DateTimeZone('UTC');
-        } else if (is_string($timezone)) {
+        } elseif (is_string($timezone)) {
             $timezone = new \DateTimeZone($timezone);
         }
 
