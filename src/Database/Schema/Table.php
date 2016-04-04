@@ -102,12 +102,16 @@ class Table
      */
     const LENGTH_LONG = 4294967295;
 
+    /**
+     * Valid column length that can be used with text type columns
+     *
+     * @var array
+     */
     public static $columnLengths = [
         'tiny' => self::LENGTH_TINY,
         'medium' => self::LENGTH_MEDIUM,
         'long' => self::LENGTH_LONG
     ];
-
 
     /**
      * The valid keys that can be used in a column
