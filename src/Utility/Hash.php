@@ -177,7 +177,6 @@ class Hash
                 $next = $filter;
             }
             $context = [$_key => $next];
-
         }
         return $context[$_key];
     }
@@ -277,7 +276,6 @@ class Hash
             ) {
                 return false;
             }
-
         }
         return true;
     }
