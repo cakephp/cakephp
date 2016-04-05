@@ -30,7 +30,8 @@ trait DateFormatTrait
      * The default locale to be used for displaying formatted date strings.
      *
      * @var string
-     * @deprecated Use self::setDefaultLocale($locale) and self::getDefaultLocale() instead.
+     * @deprecated Public direct access deprecated.
+     *  use self::setDefaultLocale($locale) and self::getDefaultLocale() instead.
      */
     public static $defaultLocale = null;
 

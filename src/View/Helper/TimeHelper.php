@@ -34,119 +34,15 @@ class TimeHelper extends Helper
     use StringTemplateTrait;
 
     /**
-     * The default locale to be used for displaying formatted date strings.
+     * Default config for this class
      *
-     * @var string
-     * @deprecated Use self::setDefaultLocale() and self::getDefaultLocale() instead.
+     * @var array
      */
-    protected $_defaultLocale = null;
-
-    /**
-     * The default format to be used for displaying formatted date strings.
-     *
-     * @var string|null
-     */
-    protected $_defaultFormat = null;
-
-    /**
-     * The \DateTimeZone default output timezone.
-     * See http://php.net/manual/en/timezones.php.
-     *
-     * @var \DateTimeZone|null
-     */
-    protected $_defaultOutputTimezone = null;
-
-    /**
-     * Construct the TimeHelper
-     *
-     * @param \Cake\View\View $View The View this helper is being attached to
-     * @param array $config Configuration settings for the helper
-     */
-    public function __construct(View $View, array $config = [])
-    {
-        parent::__construct($View, $config);
-        if (isset($config['defaultLocale'])) {
-            $this->_defaultLocale = $config['defaultLocale'];
-        }
-        if (isset($config['defaultFormat'])) {
-            $this->_defaultFormat = $config['defaultFormat'];
-        }
-        if (isset($config['defaultOutputTimezone'])) {
-            $this->_defaultOutputTimezone = $config['defaultOutputTimezone'];
-        }
-    }
-
-    /**
-     * Gets the default output timezone
-     *
-     * @return \DateTimeZone|null DateTimeZone object in which the date will be displayed or null
-     */
-    public function getDefaultOutputTimezone()
-    {
-        return $this->_defaultOutputTimezone;
-    }
-
-    /**
-     * Sets the default output timezone.
-     *
-     * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
-     *  in which the date will be displayed
-     * @return $this
-     */
-    public function setDefaultOutputTimezone($timezone)
-    {
-        if ($timezone === null) {
-            $timezone = new \DateTimeZone(date_default_timezone_get());
-        } elseif (is_string($timezone)) {
-            $timezone = new \DateTimeZone($timezone);
-        }
-        $this->_defaultOutputTimezone = $timezone;
-        return $this;
-    }
-
-    /**
-     * Gets the default format.
-     *
-     * @return string|null The default format string to be used or null
-     */
-    public function getDefaultFormat()
-    {
-        return $this->_defaultFormat;
-    }
-
-    /**
-     * Sets the default format.
-     *
-     * @param string|null $format The default format string to be used or null
-     * @return $this
-     */
-    public function setDefaultFormat($format = null)
-    {
-        $this->_defaultFormat = $format;
-        return $this;
-    }
-
-    /**
-     * Gets the default locale.
-     *
-     * @return string|null The default locale string to be used or null
-     */
-    public function getDefaultLocale()
-    {
-        return $this->_defaultLocale;
-    }
-
-    /**
-     * Sets the default locale.
-     *
-     * @param string|null $locale The default locale string to be used or null
-     * @return $this
-     */
-    public function setDefaultLocale($locale = null)
-    {
-        $this->_defaultLocale = $locale;
-        return $this;
-    }
+    protected $_defaultConfig = [
+        'defaultLocale' => null,
+        'defaultFormat' => null,
+        'defaultOutputTimezone' => null,
+    ];
 
     /**
      * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
@@ -157,7 +53,7 @@ class TimeHelper extends Helper
      */
     public function fromString($dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->getDefaultOutputTimezone();
+        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString))->timezone($timezone);
     }
 
@@ -171,8 +67,8 @@ class TimeHelper extends Helper
      */
     public function nice($dateString = null, $timezone = null, $locale = null)
     {
-        $timezone = $timezone ?: $this->getDefaultOutputTimezone();
-        $locale = $locale ?: $this->getDefaultLocale();
+        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
+        $locale = $locale ?: $this->config('defaultLocale');
         return (new Time($dateString))->nice($timezone, $locale);
     }
 
@@ -185,7 +81,7 @@ class TimeHelper extends Helper
      */
     public function isToday($dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->getDefaultOutputTimezone();
+        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString, $timezone))->isToday();
     }
 
@@ -198,7 +94,7 @@ class TimeHelper extends Helper
      */
     public function isFuture($dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->getDefaultOutputTimezone();
+        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString, $timezone))->isFuture();
     }
 
@@ -211,7 +107,7 @@ class TimeHelper extends Helper
      */
     public function isPast($dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->getDefaultOutputTimezone();
+        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString, $timezone))->isPast();
     }
 
@@ -224,7 +120,7 @@ class TimeHelper extends Helper
      */
     public function isThisWeek($dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->getDefaultOutputTimezone();
+        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString, $timezone))->isThisWeek();
     }
 
@@ -237,7 +133,7 @@ class TimeHelper extends Helper
      */
     public function isThisMonth($dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->getDefaultOutputTimezone();
+        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString, $timezone))->isThisMonth();
     }
 
@@ -250,7 +146,7 @@ class TimeHelper extends Helper
      */
     public function isThisYear($dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->getDefaultOutputTimezone();
+        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString, $timezone))->isThisYear();
     }
 
@@ -264,7 +160,7 @@ class TimeHelper extends Helper
      */
     public function wasYesterday($dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->getDefaultOutputTimezone();
+        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString, $timezone))->isYesterday();
     }
 
@@ -277,7 +173,7 @@ class TimeHelper extends Helper
      */
     public function isTomorrow($dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->getDefaultOutputTimezone();
+        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString, $timezone))->isTomorrow();
     }
 
@@ -292,7 +188,7 @@ class TimeHelper extends Helper
      */
     public function toQuarter($dateString, $range = false, $timezone = null)
     {
-        $timezone = $timezone ?: $this->getDefaultOutputTimezone();
+        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString, $timezone))->toQuarter($range);
     }
 
@@ -306,7 +202,7 @@ class TimeHelper extends Helper
      */
     public function toUnix($dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->getDefaultOutputTimezone();
+        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString, $timezone))->toUnixString();
     }
 
@@ -372,7 +268,7 @@ class TimeHelper extends Helper
             }
             unset($options['element']);
         }
-        $timezone = $timezone ?: $this->getDefaultOutputTimezone();
+        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         $relativeDate = (new Time($dateTime, $timezone))->timeAgoInWords($options);
 
         if ($element) {
@@ -399,7 +295,7 @@ class TimeHelper extends Helper
      */
     public function wasWithinLast($timeInterval, $dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->getDefaultOutputTimezone();
+        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString, $timezone))->wasWithinLast($timeInterval);
     }
 
@@ -415,7 +311,7 @@ class TimeHelper extends Helper
      */
     public function isWithinNext($timeInterval, $dateString, $timezone = null)
     {
-        $timezone = $timezone ?: $this->getDefaultOutputTimezone();
+        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return (new Time($dateString, $timezone))->isWithinNext($timeInterval);
     }
 
@@ -428,7 +324,7 @@ class TimeHelper extends Helper
      */
     public function gmt($string = null)
     {
-        return (new Time($string, 'UTC'))->toUnixString();
+        return (new Time($string))->toUnixString();
     }
 
     /**
@@ -446,8 +342,8 @@ class TimeHelper extends Helper
      */
     public function format($date, $format = null, $invalid = false, $timezone = null)
     {
-        $format = $format !== null ? $format : $this->getDefaultFormat();
-        $timezone = $timezone ?: $this->getDefaultOutputTimezone();
+        $format = $format !== null ? $format : $this->config('defaultFormat');
+        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
         return $this->i18nFormat($date, $format, $invalid, $timezone);
     }
 
@@ -465,8 +361,8 @@ class TimeHelper extends Helper
      */
     public function i18nFormat($date, $format = null, $invalid = false, $timezone = null)
     {
-        $format = $format !== null ? $format : $this->getDefaultFormat();
-        $timezone = $timezone ?: $this->getDefaultOutputTimezone();
+        $format = $format !== null ? $format : $this->config('defaultFormat');
+        $timezone = $timezone ?: $this->config('defaultOutputTimezone');
 
         if (!isset($date)) {
             return $invalid;
