@@ -59,8 +59,8 @@ class TimeHelper extends Helper
     /**
      * Construct the TimeHelper
      *
-     * @param \Cake\View\View $View The View this helper is being attached to.
-     * @param array $config Configuration settings for the helper.
+     * @param \Cake\View\View $View The View this helper is being attached to
+     * @param array $config Configuration settings for the helper
      */
     public function __construct(View $View, array $config = [])
     {
@@ -77,9 +77,9 @@ class TimeHelper extends Helper
     }
 
     /**
-     * Gets the default output timezone.
+     * Gets the default output timezone
      *
-     * @return \DateTimeZone|null DateTimeZone object in which the date will be displayed or null.
+     * @return \DateTimeZone|null DateTimeZone object in which the date will be displayed or null
      */
     public function getDefaultOutputTimezone()
     {
@@ -90,7 +90,7 @@ class TimeHelper extends Helper
      * Sets the default output timezone.
      *
      * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
-     * in which the date will be displayed.
+     *  in which the date will be displayed
      * @return $this
      */
     public function setDefaultOutputTimezone($timezone)
@@ -107,7 +107,7 @@ class TimeHelper extends Helper
     /**
      * Gets the default format.
      *
-     * @return string|null The default format string to be used or null.
+     * @return string|null The default format string to be used or null
      */
     public function getDefaultFormat()
     {
@@ -117,7 +117,7 @@ class TimeHelper extends Helper
     /**
      * Sets the default format.
      *
-     * @param string|null $format The default format string to be used or null.
+     * @param string|null $format The default format string to be used or null
      * @return $this
      */
     public function setDefaultFormat($format = null)
@@ -129,7 +129,7 @@ class TimeHelper extends Helper
     /**
      * Gets the default locale.
      *
-     * @return string|null The default locale string to be used or null.
+     * @return string|null The default locale string to be used or null
      */
     public function getDefaultLocale()
     {
@@ -139,7 +139,7 @@ class TimeHelper extends Helper
     /**
      * Sets the default locale.
      *
-     * @param string|null $locale The default locale string to be used or null.
+     * @param string|null $locale The default locale string to be used or null
      * @return $this
      */
     public function setDefaultLocale($locale = null)
@@ -166,7 +166,7 @@ class TimeHelper extends Helper
      *
      * @param int|string|\DateTime|null $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
-     * @param string|null $locale Locale string.
+     * @param string|null $locale Locale string
      * @return string Formatted date string
      */
     public function nice($dateString = null, $timezone = null, $locale = null)
@@ -286,12 +286,14 @@ class TimeHelper extends Helper
      *
      * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param bool $range if true returns a range in Y-m-d format
+     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
      * @return int|array 1, 2, 3, or 4 quarter of year or array if $range true
      * @see \Cake\I18n\Time::toQuarter()
      */
-    public function toQuarter($dateString, $range = false)
+    public function toQuarter($dateString, $range = false, $timezone = null)
     {
-        return (new Time($dateString))->toQuarter($range);
+        $timezone = $timezone ?: $this->getDefaultOutputTimezone();
+        return (new Time($dateString, $timezone))->toQuarter($range);
     }
 
     /**
@@ -304,6 +306,7 @@ class TimeHelper extends Helper
      */
     public function toUnix($dateString, $timezone = null)
     {
+        $timezone = $timezone ?: $this->getDefaultOutputTimezone();
         return (new Time($dateString, $timezone))->toUnixString();
     }
 
@@ -347,10 +350,11 @@ class TimeHelper extends Helper
      *
      * @param int|string|\DateTime $dateTime UNIX timestamp, strtotime() valid string or DateTime object
      * @param array $options Default format if timestamp is used in $dateString
+     * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
      * @return string Relative time string.
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
-    public function timeAgoInWords($dateTime, array $options = [])
+    public function timeAgoInWords($dateTime, array $options = [], $timezone = null)
     {
         $element = null;
 
@@ -368,7 +372,8 @@ class TimeHelper extends Helper
             }
             unset($options['element']);
         }
-        $relativeDate = (new Time($dateTime))->timeAgoInWords($options);
+        $timezone = $timezone ?: $this->getDefaultOutputTimezone();
+        $relativeDate = (new Time($dateTime, $timezone))->timeAgoInWords($options);
 
         if ($element) {
             $relativeDate = sprintf(
@@ -423,7 +428,7 @@ class TimeHelper extends Helper
      */
     public function gmt($string = null)
     {
-        return (new Time($string))->toUnixString();
+        return (new Time($string, 'UTC'))->toUnixString();
     }
 
     /**
@@ -441,8 +446,8 @@ class TimeHelper extends Helper
      */
     public function format($date, $format = null, $invalid = false, $timezone = null)
     {
-        $timezone = $timezone ?: $this->getDefaultOutputTimezone();
         $format = $format !== null ? $format : $this->getDefaultFormat();
+        $timezone = $timezone ?: $this->getDefaultOutputTimezone();
         return $this->i18nFormat($date, $format, $invalid, $timezone);
     }
 
@@ -451,7 +456,7 @@ class TimeHelper extends Helper
      * UNIX timestamp or a valid strtotime() date string.
      *
      * @param int|string|\DateTime $date UNIX timestamp, strtotime() valid string or DateTime object
-     * @param string|null $format Intl compatible format string.
+     * @param string|null $format Intl compatible format string
      * @param bool|string $invalid Default value to display on invalid dates
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
      * @return string Formatted and translated date string
@@ -460,8 +465,8 @@ class TimeHelper extends Helper
      */
     public function i18nFormat($date, $format = null, $invalid = false, $timezone = null)
     {
-        $timezone = $timezone ?: $this->getDefaultOutputTimezone();
         $format = $format !== null ? $format : $this->getDefaultFormat();
+        $timezone = $timezone ?: $this->getDefaultOutputTimezone();
 
         if (!isset($date)) {
             return $invalid;
