@@ -66,7 +66,7 @@ class TimeHelper extends Helper
     {
         parent::__construct($View, $config);
         if (isset($config['defaultLocale'])) {
-            $this->_defaultFormat = $config['defaultLocale'];
+            $this->_defaultLocale = $config['defaultLocale'];
         }
         if (isset($config['defaultFormat'])) {
             $this->_defaultFormat = $config['defaultFormat'];
