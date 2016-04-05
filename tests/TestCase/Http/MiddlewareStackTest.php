@@ -24,6 +24,22 @@ use TestApp\Middleware\SampleMiddleware;
 class MiddlewareStackTest extends TestCase
 {
     /**
+     * Test get()
+     *
+     * @return void
+     */
+    public function testGet()
+    {
+        $stack = new MiddlewareStack();
+        $cb = function () {
+        };
+        $stack->push($cb);
+        $this->assertSame($cb, $stack->get(0));
+        $this->assertNull($stack->get(1));
+    }
+
+
+    /**
      * Test the return value of push()
      *
      * @return void
