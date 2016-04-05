@@ -6988,24 +6988,24 @@ class FormHelperTest extends TestCase
      */
     public function testPostLinkSecurityHashBlockMode()
     {
-         $hash = Security::hash(
-             '/posts/delete/1' .
-             serialize([]) .
-             '' .
+        $hash = Security::hash(
+            '/posts/delete/1' .
+            serialize([]) .
+            '' .
             Security::salt()
-         );
-         $hash .= '%3A';
-         $this->Form->request->params['_Token']['key'] = 'test';
+        );
+        $hash .= '%3A';
+        $this->Form->request->params['_Token']['key'] = 'test';
 
-         $this->Form->create('Post', ['url' => ['action' => 'add']]);
-         $this->Form->input('title');
-         $this->Form->postLink('Delete', '/posts/delete/1', ['block' => true]);
-         $result = $this->View->fetch('postLink');
+        $this->Form->create('Post', ['url' => ['action' => 'add']]);
+        $this->Form->input('title');
+        $this->Form->postLink('Delete', '/posts/delete/1', ['block' => true]);
+        $result = $this->View->fetch('postLink');
 
-         $this->assertEquals(['title'], $this->Form->fields);
-         $this->assertContains($hash, $result, 'Should contain the correct hash.');
-         $this->assertAttributeEquals('/articles/add', '_lastAction', $this->Form, 'lastAction was should be restored.');
-     }
+        $this->assertEquals(['title'], $this->Form->fields);
+        $this->assertContains($hash, $result, 'Should contain the correct hash.');
+        $this->assertAttributeEquals('/articles/add', '_lastAction', $this->Form, 'lastAction was should be restored.');
+    }
 
     /**
      * Test that security does not include debug token if debug is false.
