@@ -100,15 +100,15 @@ class MysqlSchemaTest extends TestCase
             ],
             [
                 'TINYTEXT',
-                ['type' => 'text', 'length' => 255]
+                ['type' => 'text', 'length' => Table::LENGTH_TINY]
             ],
             [
                 'MEDIUMTEXT',
-                ['type' => 'text', 'length' => 16777215]
+                ['type' => 'text', 'length' => Table::LENGTH_MEDIUM]
             ],
             [
                 'LONGTEXT',
-                ['type' => 'text', 'length' => 4294967295]
+                ['type' => 'text', 'length' => Table::LENGTH_LONG]
             ],
             [
                 'BLOB',

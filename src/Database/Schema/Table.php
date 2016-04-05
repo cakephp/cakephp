@@ -82,21 +82,21 @@ class Table
     protected $_temporary = false;
 
     /**
-     * Column length when using a `tiny` text column type
+     * Column length when using a `tiny` column type
      *
      * @var int
      */
     const LENGTH_TINY = 255;
 
     /**
-     * Column length when using a `medium` text column type
+     * Column length when using a `medium` column type
      *
      * @var int
      */
     const LENGTH_MEDIUM = 16777215;
 
     /**
-     * Column length when using a `long` text column type
+     * Column length when using a `long` column type
      *
      * @var int
      */
