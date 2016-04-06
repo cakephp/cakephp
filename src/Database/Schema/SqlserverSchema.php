@@ -305,7 +305,6 @@ class SqlserverSchema extends BaseSchema
             'binary' => ' VARBINARY(MAX)',
             'float' => ' FLOAT',
             'decimal' => ' DECIMAL',
-            'text' => ' NVARCHAR(MAX)',
             'date' => ' DATE',
             'time' => ' TIME',
             'datetime' => ' DATETIME',
@@ -324,7 +323,11 @@ class SqlserverSchema extends BaseSchema
             }
         }
 
-        if ($data['type'] === 'string') {
+        if ($data['type'] === 'text' && $data['length'] !== Table::LENGTH_TINY) {
+            $out .= ' NVARCHAR(MAX)';
+        }
+
+        if ($data['type'] === 'string' || ($data['type'] === 'text' && $data['length'] === Table::LENGTH_TINY)) {
             $type = ' NVARCHAR';
 
             if (!empty($data['fixed'])) {
