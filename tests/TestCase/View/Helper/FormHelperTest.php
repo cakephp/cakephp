@@ -6979,6 +6979,35 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test that postLink doesn't modify the fields in the containing form.
+     *
+     * postLink() calls inside open forms should not modify the field list
+     * for the form.
+     *
+     * @return void
+     */
+    public function testPostLinkSecurityHashBlockMode()
+    {
+        $hash = Security::hash(
+            '/posts/delete/1' .
+            serialize([]) .
+            '' .
+            Security::salt()
+        );
+        $hash .= '%3A';
+        $this->Form->request->params['_Token']['key'] = 'test';
+
+        $this->Form->create('Post', ['url' => ['action' => 'add']]);
+        $this->Form->input('title');
+        $this->Form->postLink('Delete', '/posts/delete/1', ['block' => true]);
+        $result = $this->View->fetch('postLink');
+
+        $this->assertEquals(['title'], $this->Form->fields);
+        $this->assertContains($hash, $result, 'Should contain the correct hash.');
+        $this->assertAttributeEquals('/articles/add', '_lastAction', $this->Form, 'lastAction was should be restored.');
+    }
+
+    /**
      * Test that security does not include debug token if debug is false.
      *
      * @return void
