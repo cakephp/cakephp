@@ -99,6 +99,10 @@ class MysqlSchemaTest extends TestCase
                 ['type' => 'uuid', 'length' => null]
             ],
             [
+                'TEXT',
+                ['type' => 'text', 'length' => null]
+            ],
+            [
                 'TINYTEXT',
                 ['type' => 'text', 'length' => Table::LENGTH_TINY]
             ],
@@ -111,12 +115,20 @@ class MysqlSchemaTest extends TestCase
                 ['type' => 'text', 'length' => Table::LENGTH_LONG]
             ],
             [
+                'TINYBLOB',
+                ['type' => 'binary', 'length' => Table::LENGTH_TINY]
+            ],
+            [
                 'BLOB',
                 ['type' => 'binary', 'length' => null]
             ],
             [
                 'MEDIUMBLOB',
-                ['type' => 'binary', 'length' => null]
+                ['type' => 'binary', 'length' => Table::LENGTH_MEDIUM]
+            ],
+            [
+                'LONGBLOB',
+                ['type' => 'binary', 'length' => Table::LENGTH_LONG]
             ],
             [
                 'FLOAT',
@@ -488,6 +500,27 @@ SQL;
                 'body',
                 ['type' => 'text', 'length' => Table::LENGTH_LONG, 'null' => false],
                 '`body` LONGTEXT NOT NULL'
+            ],
+            // Blob / binary
+            [
+                'body',
+                ['type' => 'binary', 'null' => false],
+                '`body` BLOB NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'binary', 'length' => Table::LENGTH_TINY, 'null' => false],
+                '`body` TINYBLOB NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'binary', 'length' => Table::LENGTH_MEDIUM, 'null' => false],
+                '`body` MEDIUMBLOB NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'binary', 'length' => Table::LENGTH_LONG, 'null' => false],
+                '`body` LONGBLOB NOT NULL'
             ],
             // Integers
             [
