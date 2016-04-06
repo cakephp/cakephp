@@ -422,7 +422,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Sets whether a field is required to be present in data array.
+     * Sets whether a field is required to be present in data array. You can also pass array.
+     * Using an array will let you provide the following keys:
+     *
+     * - `mode` individual mode for field
+     * - `message` individual error message for field
+     *
+     * You can also set mode and message for all passed fields, the individual settings
+     * takes precedence over group setting.
      *
      * @param string|array $field the name of the field
      * @param bool|string|callable $mode Valid values are true, false, 'create', 'update'.
