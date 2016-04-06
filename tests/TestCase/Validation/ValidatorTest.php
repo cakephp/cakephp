@@ -192,6 +192,32 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the requirePresence method
+     *
+     * @return void
+     */
+    public function testRequirePresenceAsArray()
+    {
+        $validator = new Validator;
+        $validator->requirePresence(['title', 'created']);
+        $this->assertTrue($validator->field('title')->isPresenceRequired());
+        $this->assertTrue($validator->field('created')->isPresenceRequired());
+
+        $validator->requirePresence([
+            'title' => [
+                'mode' => false
+            ],
+            'content' => [
+                'mode' => 'update'
+            ],
+            'subject'
+        ], true);
+        $this->assertFalse($validator->field('title')->isPresenceRequired());
+        $this->assertEquals('update', $validator->field('content')->isPresenceRequired());
+        $this->assertTrue($validator->field('subject')->isPresenceRequired());
+    }
+
+    /**
      * Tests the requirePresence method when passing a callback
      *
      * @return void
@@ -380,6 +406,36 @@ class ValidatorTest extends TestCase
         $validator->requirePresence('title', true, 'Custom message');
         $errors = $validator->errors(['foo' => 'something']);
         $expected = ['title' => ['_required' => 'Custom message']];
+        $this->assertEquals($expected, $errors);
+    }
+
+    /**
+     * Tests custom error messages generated when a field presence is required
+     *
+     * @return void
+     */
+    public function testCustomErrorsWithPresenceRequiredAsArray()
+    {
+        $validator = new Validator;
+        $validator->requirePresence(['title', 'content'], true, 'Custom message');
+        $errors = $validator->errors(['foo' => 'something']);
+        $expected = [
+            'title' => ['_required' => 'Custom message'],
+            'content' => ['_required' => 'Custom message']
+        ];
+        $this->assertEquals($expected, $errors);
+
+        $validator->requirePresence([
+            'title' => [
+                'message' => 'Test message'
+            ],
+            'content'
+        ], true, 'Custom message');
+        $errors = $validator->errors(['foo' => 'something']);
+        $expected = [
+            'title' => ['_required' => 'Test message'],
+            'content' => ['_required' => 'Custom message']
+        ];
         $this->assertEquals($expected, $errors);
     }
 
@@ -1380,6 +1436,7 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
         $validator->range('username', [1]);
     }
+
     /**
      * Tests the url proxy method
      *
