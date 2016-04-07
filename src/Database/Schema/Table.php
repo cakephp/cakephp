@@ -82,6 +82,38 @@ class Table
     protected $_temporary = false;
 
     /**
+     * Column length when using a `tiny` column type
+     *
+     * @var int
+     */
+    const LENGTH_TINY = 255;
+
+    /**
+     * Column length when using a `medium` column type
+     *
+     * @var int
+     */
+    const LENGTH_MEDIUM = 16777215;
+
+    /**
+     * Column length when using a `long` column type
+     *
+     * @var int
+     */
+    const LENGTH_LONG = 4294967295;
+
+    /**
+     * Valid column length that can be used with text type columns
+     *
+     * @var array
+     */
+    public static $columnLengths = [
+        'tiny' => self::LENGTH_TINY,
+        'medium' => self::LENGTH_MEDIUM,
+        'long' => self::LENGTH_LONG
+    ];
+
+    /**
      * The valid keys that can be used in a column
      * definition.
      *

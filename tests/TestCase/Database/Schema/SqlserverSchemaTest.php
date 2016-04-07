@@ -487,6 +487,21 @@ SQL;
                 ['type' => 'text', 'null' => false],
                 '[body] NVARCHAR(MAX) NOT NULL'
             ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_TINY, 'null' => false],
+                '[body] NVARCHAR(' . Table::LENGTH_TINY . ') NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_MEDIUM, 'null' => false],
+                '[body] NVARCHAR(MAX) NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_LONG, 'null' => false],
+                '[body] NVARCHAR(MAX) NOT NULL'
+            ],
             // Integers
             [
                 'post_id',

@@ -100,7 +100,15 @@ class MysqlSchemaTest extends TestCase
             ],
             [
                 'TINYTEXT',
-                ['type' => 'text', 'length' => null]
+                ['type' => 'text', 'length' => Table::LENGTH_TINY]
+            ],
+            [
+                'MEDIUMTEXT',
+                ['type' => 'text', 'length' => Table::LENGTH_MEDIUM]
+            ],
+            [
+                'LONGTEXT',
+                ['type' => 'text', 'length' => Table::LENGTH_LONG]
             ],
             [
                 'BLOB',
@@ -154,7 +162,7 @@ class MysqlSchemaTest extends TestCase
     }
 
     /**
-     * Test parsing MySQL column types form field description.
+     * Test parsing MySQL column types from field description.
      *
      * @dataProvider convertColumnProvider
      * @return void
@@ -480,6 +488,21 @@ SQL;
                 'body',
                 ['type' => 'text', 'null' => false],
                 '`body` TEXT NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_TINY, 'null' => false],
+                '`body` TINYTEXT NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_MEDIUM, 'null' => false],
+                '`body` MEDIUMTEXT NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_LONG, 'null' => false],
+                '`body` LONGTEXT NOT NULL'
             ],
             // Integers
             [

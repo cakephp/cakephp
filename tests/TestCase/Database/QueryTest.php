@@ -470,7 +470,7 @@ class QueryTest extends TestCase
      *
      * @return void
      */
-    public function testSelectWhereOperators()
+    public function testSelectWhereOperatorMoreThan()
     {
         $query = new Query($this->connection);
         $result = $query
@@ -481,7 +481,15 @@ class QueryTest extends TestCase
         $this->assertCount(2, $result);
         $this->assertEquals(['comment' => 'First Comment for Second Article'], $result->fetch('assoc'));
         $result->closeCursor();
+    }
 
+    /**
+     * Tests using where conditions with operators and scalar values works
+     *
+     * @return void
+     */
+    public function testSelectWhereOperatorLessThan()
+    {
         $query = new Query($this->connection);
         $result = $query
             ->select(['title'])
@@ -491,7 +499,15 @@ class QueryTest extends TestCase
         $this->assertCount(1, $result);
         $this->assertEquals(['title' => 'First Article'], $result->fetch('assoc'));
         $result->closeCursor();
+    }
 
+    /**
+     * Tests using where conditions with operators and scalar values works
+     *
+     * @return void
+     */
+    public function testSelectWhereOperatorLessThanEqual()
+    {
         $query = new Query($this->connection);
         $result = $query
             ->select(['title'])
@@ -500,7 +516,15 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(2, $result);
         $result->closeCursor();
+    }
 
+    /**
+     * Tests using where conditions with operators and scalar values works
+     *
+     * @return void
+     */
+    public function testSelectWhereOperatorMoreThanEqual()
+    {
         $query = new Query($this->connection);
         $result = $query
             ->select(['title'])
@@ -509,16 +533,15 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(3, $result);
         $result->closeCursor();
+    }
 
-        $query = new Query($this->connection);
-        $result = $query
-            ->select(['title'])
-            ->from('articles')
-            ->where(['id <=' => 1])
-            ->execute();
-        $this->assertCount(1, $result);
-        $result->closeCursor();
-
+    /**
+     * Tests using where conditions with operators and scalar values works
+     *
+     * @return void
+     */
+    public function testSelectWhereOperatorNotEqual()
+    {
         $query = new Query($this->connection);
         $result = $query
             ->select(['title'])
@@ -528,7 +551,15 @@ class QueryTest extends TestCase
         $this->assertCount(2, $result);
         $this->assertEquals(['title' => 'First Article'], $result->fetch('assoc'));
         $result->closeCursor();
+    }
 
+    /**
+     * Tests using where conditions with operators and scalar values works
+     *
+     * @return void
+     */
+    public function testSelectWhereOperatorLike()
+    {
         $query = new Query($this->connection);
         $result = $query
             ->select(['title'])
@@ -538,7 +569,15 @@ class QueryTest extends TestCase
         $this->assertCount(1, $result);
         $this->assertEquals(['title' => 'First Article'], $result->fetch('assoc'));
         $result->closeCursor();
+    }
 
+    /**
+     * Tests using where conditions with operators and scalar values works
+     *
+     * @return void
+     */
+    public function testSelectWhereOperatorLikeExpansion()
+    {
         $query = new Query($this->connection);
         $result = $query
             ->select(['title'])
@@ -547,7 +586,15 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(3, $result);
         $result->closeCursor();
+    }
 
+    /**
+     * Tests using where conditions with operators and scalar values works
+     *
+     * @return void
+     */
+    public function testSelectWhereOperatorNotLike()
+    {
         $query = new Query($this->connection);
         $result = $query
             ->select(['title'])
