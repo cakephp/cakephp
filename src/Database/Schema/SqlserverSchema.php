@@ -302,7 +302,6 @@ class SqlserverSchema extends BaseSchema
             'integer' => ' INTEGER',
             'biginteger' => ' BIGINT',
             'boolean' => ' BIT',
-            'binary' => ' VARBINARY(MAX)',
             'float' => ' FLOAT',
             'decimal' => ' DECIMAL',
             'date' => ' DATE',
@@ -326,6 +325,16 @@ class SqlserverSchema extends BaseSchema
 
         if ($data['type'] === 'text' && $data['length'] !== Table::LENGTH_TINY) {
             $out .= ' NVARCHAR(MAX)';
+        }
+
+        if ($data['type'] === 'binary') {
+            $out .= ' VARBINARY';
+
+            if ($data['length'] !== Table::LENGTH_TINY) {
+                $out .= '(MAX)';
+            } else {
+                $out .= sprintf('(%s)', Table::LENGTH_TINY);
+            }
         }
 
         if ($data['type'] === 'string' || ($data['type'] === 'text' && $data['length'] === Table::LENGTH_TINY)) {

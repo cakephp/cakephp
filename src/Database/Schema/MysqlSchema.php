@@ -121,6 +121,8 @@ class MysqlSchema extends BaseSchema
             return ['type' => 'text', 'length' => $length];
         }
         if (strpos($col, 'blob') !== false || $col === 'binary') {
+            $lengthName = substr($col, 0, -4);
+            $length = isset(Table::$columnLengths[$lengthName]) ? Table::$columnLengths[$lengthName] : null;
             return ['type' => 'binary', 'length' => $length];
         }
         if (strpos($col, 'float') !== false || strpos($col, 'double') !== false) {
@@ -295,7 +297,6 @@ class MysqlSchema extends BaseSchema
             'integer' => ' INTEGER',
             'biginteger' => ' BIGINT',
             'boolean' => ' BOOLEAN',
-            'binary' => ' LONGBLOB',
             'float' => ' FLOAT',
             'decimal' => ' DECIMAL',
             'date' => ' DATE',
@@ -308,6 +309,7 @@ class MysqlSchema extends BaseSchema
         $specialMap = [
             'string' => true,
             'text' => true,
+            'binary' => true,
         ];
         if (isset($typeMap[$data['type']])) {
             $out .= $typeMap[$data['type']];
@@ -330,6 +332,19 @@ class MysqlSchema extends BaseSchema
                     if ($isKnownLength) {
                         $length = array_search($data['length'], Table::$columnLengths);
                         $out .= ' ' . strtoupper($length) . 'TEXT';
+                    }
+
+                    break;
+                case 'binary':
+                    $isKnownLength = in_array($data['length'], Table::$columnLengths);
+                    if (empty($data['length']) || !$isKnownLength) {
+                        $out .= ' BLOB';
+                        break;
+                    }
+
+                    if ($isKnownLength) {
+                        $length = array_search($data['length'], Table::$columnLengths);
+                        $out .= ' ' . strtoupper($length) . 'BLOB';
                     }
 
                     break;

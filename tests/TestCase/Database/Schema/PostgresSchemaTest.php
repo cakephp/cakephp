@@ -649,7 +649,7 @@ SQL;
             [
                 'body',
                 ['type' => 'text', 'length' => Table::LENGTH_TINY, 'null' => false],
-                '"body" VARCHAR(' . Table::LENGTH_TINY . ') NOT NULL'
+                sprintf('"body" VARCHAR(%s) NOT NULL', Table::LENGTH_TINY)
             ],
             [
                 'body',

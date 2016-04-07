@@ -490,7 +490,7 @@ SQL;
             [
                 'body',
                 ['type' => 'text', 'length' => Table::LENGTH_TINY, 'null' => false],
-                '[body] NVARCHAR(' . Table::LENGTH_TINY . ') NOT NULL'
+                sprintf('[body] NVARCHAR(%s) NOT NULL', Table::LENGTH_TINY)
             ],
             [
                 'body',
@@ -543,7 +543,22 @@ SQL;
             // Binary
             [
                 'img',
-                ['type' => 'binary'],
+                ['type' => 'binary', 'length' => null],
+                '[img] VARBINARY(MAX)'
+            ],
+            [
+                'img',
+                ['type' => 'binary', 'length' => Table::LENGTH_TINY],
+                sprintf('[img] VARBINARY(%s)', Table::LENGTH_TINY)
+            ],
+            [
+                'img',
+                ['type' => 'binary', 'length' => Table::LENGTH_MEDIUM],
+                '[img] VARBINARY(MAX)'
+            ],
+            [
+                'img',
+                ['type' => 'binary', 'length' => Table::LENGTH_LONG],
                 '[img] VARBINARY(MAX)'
             ],
             // Boolean
