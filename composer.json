@@ -23,10 +23,11 @@
         "ext-mbstring": "*",
         "cakephp/chronos": "*",
         "aura/intl": "1.1.*",
-        "psr/log": "1.0"
+        "psr/log": "1.0",
+        "zendframework/zend-diactoros": "~1.0"
     },
     "suggest": {
-      "ext-openssl": "To use Security::encrypt() or have secure CSRF token generation."
+        "ext-openssl": "To use Security::encrypt() or have secure CSRF token generation."
     },
     "require-dev": {
         "phpunit/phpunit": "*",
