@@ -308,7 +308,7 @@ abstract class ObjectCollection {
  * Adds or overwrites an instantiated object to the collection
  *
  * @param string $name Name of the object
- * @param Object $object The object to use
+ * @param CakeObject $object The object to use
  * @return array Loaded objects
  */
 	public function set($name = null, $object = null) {

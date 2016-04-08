@@ -20,14 +20,14 @@ App::uses('Router', 'Routing');
 App::uses('Set', 'Utility');
 
 /**
- * Object class provides a few generic methods used in several subclasses.
+ * CakeObject class provides a few generic methods used in several subclasses.
  *
  * Also includes methods for logging and the special method RequestAction,
  * to call other Controllers' Actions from anywhere.
  *
  * @package       Cake.Core
  */
-class Object {
+class CakeObject {
 
 /**
  * Constructor, no-op
@@ -36,7 +36,7 @@ class Object {
 	}
 
 /**
- * Object-to-string conversion.
+ * CakeObject-to-string conversion.
  * Each class can override this method as necessary.
  *
  * @return string The name of this class

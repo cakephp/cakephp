@@ -545,7 +545,7 @@ class CakeTimeTest extends CakeTestCase {
 		$expected = date('l jS \of F Y h:i:s A', $time);
 		$this->assertEquals($expected, $result);
 
-		$this->assertFalse($this->Time->toServer(time(), new Object()));
+		$this->assertFalse($this->Time->toServer(time(), new CakeObject()));
 
 		date_default_timezone_set('UTC');
 

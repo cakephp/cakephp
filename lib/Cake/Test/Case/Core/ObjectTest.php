@@ -16,7 +16,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-App::uses('Object', 'Core');
+App::uses('CakeObject', 'Core');
 App::uses('Router', 'Routing');
 App::uses('Controller', 'Controller');
 App::uses('Model', 'Model');
@@ -128,11 +128,11 @@ class RequestActionController extends Controller {
 }
 
 /**
- * TestObject class
+ * TestCakeObject class
  *
  * @package       Cake.Test.Case.Core
  */
-class TestObject extends Object {
+class TestCakeObject extends CakeObject {
 
 /**
  * firstName property
@@ -274,7 +274,7 @@ class ObjectTestModel extends CakeTestModel {
 }
 
 /**
- * Object Test class
+ * CakeObject Test class
  *
  * @package       Cake.Test.Case.Core
  */
@@ -294,7 +294,7 @@ class ObjectTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->object = new TestObject();
+		$this->object = new TestCakeObject();
 	}
 
 /**
@@ -394,7 +394,7 @@ class ObjectTest extends CakeTestCase {
 		$expected[] = array('crazyMethod' => array(1, 2, 3, 4, 5, 6, 7));
 		$this->assertSame($expected, $this->object->methodCalls);
 
-		$this->object = new TestObject();
+		$this->object = new TestCakeObject();
 		$this->assertSame($this->object->methodCalls, array());
 
 		$this->object->dispatchMethod('emptyMethod');

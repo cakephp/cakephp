@@ -24,7 +24,7 @@
  * @link          http://book.cakephp.org/2.0/en/models/datasources.html#basic-api-for-datasources
  * @package       Cake.Model.Datasource
  */
-class DataSource extends Object {
+class DataSource extends CakeObject {
 
 /**
  * Are we connected to the DataSource?
