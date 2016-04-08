@@ -108,7 +108,17 @@ class Xml
             'readFile' => true
         ];
         $options += $defaults;
-
+        
+        if (!filter_var($input, FILTER_VALIDATE_URL) === false) {
+            $http = new Client();
+            $response = $http->get($input);
+            $input = $response->body();
+        }
+        
+        if (is_json($input)) {
+            $input = json_decode($input, TRUE);
+        }
+        
         if (is_array($input) || is_object($input)) {
             return static::fromArray($input, $options);
         }
