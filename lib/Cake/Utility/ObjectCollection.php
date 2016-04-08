@@ -56,7 +56,7 @@ abstract class ObjectCollection {
  *
  * @param string $name Name of object to load.
  * @param array $options Array of configuration options for the object to be constructed.
- * @return object the constructed object
+ * @return CakeObject the constructed object
  */
 	abstract public function load($name, $options = array());
 

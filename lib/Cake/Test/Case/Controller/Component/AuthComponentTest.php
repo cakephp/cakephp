@@ -86,7 +86,7 @@ class TestAuthComponent extends AuthComponent {
  * Helper method to add/set an authenticate object instance
  *
  * @param int $index The index at which to add/set the object
- * @param object $object The object to add/set
+ * @param CakeObject $object The object to add/set
  * @return void
  */
 	public function setAuthenticateObject($index, $object) {
@@ -97,7 +97,7 @@ class TestAuthComponent extends AuthComponent {
  * Helper method to get an authenticate object instance
  *
  * @param int $index The index at which to get the object
- * @return object $object
+ * @return CakeObject $object
  */
 	public function getAuthenticateObject($index) {
 		$this->constructAuthenticate();
@@ -108,7 +108,7 @@ class TestAuthComponent extends AuthComponent {
  * Helper method to add/set an authorize object instance
  *
  * @param int $index The index at which to add/set the object
- * @param object $object The object to add/set
+ * @param CakeObject $object The object to add/set
  * @return void
  */
 	public function setAuthorizeObject($index, $object) {
@@ -118,6 +118,7 @@ class TestAuthComponent extends AuthComponent {
 /**
  * stop method
  *
+ * @param int $status
  * @return void
  */
 	protected function _stop($status = 0) {
