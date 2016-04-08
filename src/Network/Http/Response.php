@@ -388,7 +388,7 @@ class Response extends Message
             return $this->_json;
         }
         $data = json_decode($this->_body, true);
-        if ($data) {
+        if (is_array($data)) {
             $this->_json = $data;
             return $this->_json;
         }
