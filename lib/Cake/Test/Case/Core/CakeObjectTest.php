@@ -365,7 +365,7 @@ class ObjectTest extends CakeTestCase {
  */
 	public function testToString() {
 		$result = strtolower($this->object->toString());
-		$this->assertEquals('testobject', $result);
+		$this->assertEquals('testcakeobject', $result);
 	}
 
 /**
