@@ -428,8 +428,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * - `mode` individual mode for field
      * - `message` individual error message for field
      *
-     * You can also set mode and message for all passed fields, the individual settings
-     * takes precedence over group setting.
+     * You can also set mode and message for all passed fields, the individual setting
+     * takes precedence over group settings.
      *
      * @param string|array $field the name of the field
      * @param bool|string|callable $mode Valid values are true, false, 'create', 'update'.
@@ -450,9 +450,12 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         foreach ($field as $fieldName => $setting) {
-            if (is_string($setting)) {
+            if (is_string($setting) && is_int($fieldName)) {
                 $fieldName = $setting;
                 $setting = [];
+            }
+            if (!is_array($setting)) {
+                throw new InvalidArgumentException(sprintf('Invalid field "%s" setting, must be an array.', $fieldName));
             }
             $setting += [
                 'mode' => $mode,

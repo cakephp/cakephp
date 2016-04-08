@@ -218,6 +218,18 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the requirePresence failure case
+     *
+     * @expectedException InvalidArgumentException
+     * @return void
+     */
+    public function testRequirePresenceAsArrayFailure()
+    {
+        $validator = new Validator();
+        $validator->requirePresence(['title' => 'derp', 'created' => false]);
+    }
+
+    /**
      * Tests the requirePresence method when passing a callback
      *
      * @return void
