@@ -380,19 +380,14 @@ class Response extends Message
     /**
      * Get the response body as JSON decoded data.
      *
-     * @return null|array
+     * @return mixed
      */
     protected function _getJson()
     {
         if (!empty($this->_json)) {
             return $this->_json;
         }
-        $data = json_decode($this->_body, true);
-        if ($data) {
-            $this->_json = $data;
-            return $this->_json;
-        }
-        return null;
+        return $this->_json = json_decode($this->_body, true);
     }
 
     /**
