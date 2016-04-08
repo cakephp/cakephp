@@ -53,6 +53,7 @@ class IsUnique
             return true;
         }
 
+        $checkNull = isset($options['checkNull']) ? true : false;
         $alias = $options['repository']->alias();
         $conditions = $this->_alias($alias, $entity->extract($this->_fields));
         if ($entity->isNew() === false) {
@@ -60,6 +61,16 @@ class IsUnique
             $keys = $this->_alias($alias, $entity->extract($keys));
             if (array_filter($keys, 'strlen')) {
                 $conditions['NOT'] = $keys;
+            }
+        }
+
+        if($checkNull) {
+            // Thanks to ndm
+            foreach ($conditions as $key => $value) {
+                if ($value === null) {
+                    $conditions[$key . ' IS'] = $value;
+                    unset($conditions[$key]);
+                }
             }
         }
 
