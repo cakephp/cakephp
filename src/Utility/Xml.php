@@ -14,6 +14,7 @@
  */
 namespace Cake\Utility;
 
+use Cake\Network\Http\Client;
 use Cake\Utility\Exception\XmlException;
 use DOMDocument;
 use DOMNode;
