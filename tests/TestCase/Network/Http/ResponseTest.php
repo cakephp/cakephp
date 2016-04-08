@@ -101,6 +101,10 @@ class ResponseTest extends TestCase
         $data = '';
         $response = new Response([], $data);
         $this->assertFalse(isset($response->json));
+
+        $data = json_encode([]);
+        $response = new Response([], $data);
+        $this->assertEquals([], $response->json);
     }
 
     /**
