@@ -367,7 +367,7 @@ class TestTask extends BakeTask {
  * Generate the list of fixtures that will be required to run this test based on
  * loaded models.
  *
- * @param object $subject The object you want to generate fixtures for.
+ * @param CakeObject $subject The object you want to generate fixtures for.
  * @return array Array of fixtures to be included in the test.
  */
 	public function generateFixtureList($subject) {

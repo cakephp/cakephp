@@ -38,7 +38,7 @@ class SmtpTestTransport extends SmtpTransport {
 /**
  * Helper to change the CakeEmail
  *
- * @param object $cakeEmail An email object.
+ * @param CakeEmail $cakeEmail An email object.
  * @return void
  */
 	public function setCakeEmail($cakeEmail) {
