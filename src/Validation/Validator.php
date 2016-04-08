@@ -450,7 +450,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         foreach ($field as $fieldName => $setting) {
-            if (is_string($setting) && is_int($fieldName)) {
+            if (is_string($setting)) {
                 $fieldName = $setting;
                 $setting = [];
             }
