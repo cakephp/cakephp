@@ -7,7 +7,7 @@ The CakePHP ORM provides a powerful and flexible way to work with relational
 databases. Using a datamapper pattern the ORM allows you to manipulate data as
 entities allowing you to create expressive domain layers in your applications.
 
-## Connecting to the Database
+## Database engines supported
 
 The CakePHP ORM is compatible with:
 
@@ -15,6 +15,9 @@ The CakePHP ORM is compatible with:
 * Postgres 8+
 * SQLite3
 * SQLServer 2008+
+* Oracle (through a [community plugin](https://github.com/CakeDC/cakephp-oracle-driver))
+
+## Connecting to the Database
 
 The first thing you need to do when using this library is register a connection
 object.  Before performing any operations with the connection, you need to
