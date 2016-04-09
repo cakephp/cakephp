@@ -65,7 +65,6 @@ class IsUnique
         }
 
         if($checkNull) {
-            // Thanks to ndm
             foreach ($conditions as $key => $value) {
                 if ($value === null) {
                     $conditions[$key . ' IS'] = $value;
