@@ -53,7 +53,6 @@ class RulesChecker extends BaseRulesChecker
         }
 
         $errorField = current($fields);
-
         return $this->_addError(new IsUnique($fields), '_isUnique', compact('errorField', 'message'));
     }
 
