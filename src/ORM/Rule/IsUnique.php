@@ -64,7 +64,7 @@ class IsUnique
             }
         }
 
-        if($checkNull) {
+        if ($checkNull) {
             foreach ($conditions as $key => $value) {
                 if ($value === null) {
                     $conditions[$key . ' IS'] = $value;

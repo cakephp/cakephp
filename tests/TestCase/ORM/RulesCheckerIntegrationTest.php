@@ -378,13 +378,12 @@ class RulesCheckerIntegrationTest extends TestCase
     public function testIsUniqueCheckNull()
     {
         $entity = new Entity([
-            'log_id' => NULL
+            'log_id' => null
         ]);
 
         $table = TableRegistry::get('Logs');
         $rules = $table->rulesChecker();
-        $rules->add($rules->isUnique(['log_id']),
-            ['checkNull' => true]);
+        $rules->add($rules->isUnique(['log_id']), ['checkNull' => true]);
 
         $this->assertFalse($table->save($entity));
         $this->assertEquals(['_isUnique' => 'This value is already in use'], $entity->errors('log_id'));
@@ -407,13 +406,12 @@ class RulesCheckerIntegrationTest extends TestCase
     {
         $entity = new Entity([
             'log_id' => 3,
-            'type' => NULL
+            'type' => null
         ]);
 
         $table = TableRegistry::get('Logs');
         $rules = $table->rulesChecker();
-        $rules->add($rules->isUnique(['log_id', 'type'], 'Nope'),
-            ['checkNull' => true]);
+        $rules->add($rules->isUnique(['log_id', 'type'], 'Nope'), ['checkNull' => true]);
 
         $this->assertFalse($table->save($entity));
         $this->assertEquals(['log_id' => ['_isUnique' => 'Nope']], $entity->errors());
@@ -422,7 +420,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $entity->type = 'Access';
         $this->assertSame($entity, $table->save($entity));
     }
-    
+
     /**
      * Tests the existsIn domain rule
      *
