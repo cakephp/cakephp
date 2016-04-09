@@ -52,7 +52,7 @@ class RulesChecker extends BaseRulesChecker
             }
         }
 
-        $errorField = isset($fields['errorField']) ? $fields['errorField'] : false;
+        $errorField = current($fields);
 
         return $this->_addError(new IsUnique($fields), '_isUnique', compact('errorField', 'message'));
     }

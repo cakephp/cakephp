@@ -29,7 +29,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.articles', 'core.articles_tags', 'core.authors', 'core.tags'];
+    public $fixtures = ['core.articles', 'core.articles_tags', 'core.authors', 'core.tags', 'core.logs'];
 
     /**
      * Tear down
@@ -378,22 +378,22 @@ class RulesCheckerIntegrationTest extends TestCase
     public function testIsUniqueCheckNull()
     {
         $entity = new Entity([
-            'name' => NULL
+            'log_id' => NULL
         ]);
 
-        $table = TableRegistry::get('Authors');
+        $table = TableRegistry::get('Logs');
         $rules = $table->rulesChecker();
-        $rules->add($rules->isUnique(['name']),
+        $rules->add($rules->isUnique(['log_id']),
             ['checkNull' => true]);
 
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['_isUnique' => 'This value is already in use'], $entity->errors('name'));
+        $this->assertEquals(['_isUnique' => 'This value is already in use'], $entity->errors('log_id'));
 
-        $entity->name = 'jose';
+        $entity->log_id = 4;
         $this->assertSame($entity, $table->save($entity));
 
         $entity = $table->get(1);
-        $entity->dirty('name', true);
+        $entity->dirty('log_id', true);
         $this->assertSame($entity, $table->save($entity));
     }
 
@@ -406,20 +406,20 @@ class RulesCheckerIntegrationTest extends TestCase
     public function testIsUniqueMultipleFieldsCheckNull()
     {
         $entity = new Entity([
-            'author_id' => 1,
-            'title' => NULL
+            'log_id' => 3,
+            'type' => NULL
         ]);
 
-        $table = TableRegistry::get('Articles');
+        $table = TableRegistry::get('Logs');
         $rules = $table->rulesChecker();
-        $rules->add($rules->isUnique(['title', 'author_id'], 'Nope'),
+        $rules->add($rules->isUnique(['log_id', 'type'], 'Nope'),
             ['checkNull' => true]);
 
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['title' => ['_isUnique' => 'Nope']], $entity->errors());
+        $this->assertEquals(['log_id' => ['_isUnique' => 'Nope']], $entity->errors());
 
         $entity->clean();
-        $entity->author_id = 2;
+        $entity->type = 'Access';
         $this->assertSame($entity, $table->save($entity));
     }
     /**
