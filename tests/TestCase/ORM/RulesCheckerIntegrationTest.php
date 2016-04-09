@@ -370,6 +370,59 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
+     * Tests isUnique with checkNull
+     *
+     * @group save
+     * @return void
+     */
+    public function testIsUniqueCheckNull()
+    {
+        $entity = new Entity([
+            'name' => NULL
+        ]);
+
+        $table = TableRegistry::get('Authors');
+        $rules = $table->rulesChecker();
+        $rules->add($rules->isUnique(['name']),
+            ['checkNull' => true]);
+
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals(['_isUnique' => 'This value is already in use'], $entity->errors('name'));
+
+        $entity->name = 'jose';
+        $this->assertSame($entity, $table->save($entity));
+
+        $entity = $table->get(1);
+        $entity->dirty('name', true);
+        $this->assertSame($entity, $table->save($entity));
+    }
+
+    /**
+     * Tests isUnique with multiple fields and checkNull
+     *
+     * @group save
+     * @return void
+     */
+    public function testIsUniqueMultipleFieldsCheckNull()
+    {
+        $entity = new Entity([
+            'author_id' => 1,
+            'title' => NULL
+        ]);
+
+        $table = TableRegistry::get('Articles');
+        $rules = $table->rulesChecker();
+        $rules->add($rules->isUnique(['title', 'author_id'], 'Nope'),
+            ['checkNull' => true]);
+
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals(['title' => ['_isUnique' => 'Nope']], $entity->errors());
+
+        $entity->clean();
+        $entity->author_id = 2;
+        $this->assertSame($entity, $table->save($entity));
+    }
+    /**
      * Tests the existsIn domain rule
      *
      * @group save
