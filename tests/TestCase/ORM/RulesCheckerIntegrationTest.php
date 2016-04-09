@@ -422,6 +422,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $entity->type = 'Access';
         $this->assertSame($entity, $table->save($entity));
     }
+    
     /**
      * Tests the existsIn domain rule
      *
