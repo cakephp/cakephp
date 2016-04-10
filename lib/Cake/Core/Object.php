@@ -16,15 +16,3 @@
 
 App::uses('CakeObject', 'Core');
 class_alias('CakeObject', 'Object');
-
-/**
- * Object class provides a few generic methods used in several subclasses.
- *
- * Also includes methods for logging and the special method RequestAction,
- * to call other Controllers' Actions from anywhere.
- *
- * @package       Cake.Core
- * @deprecated Use CakeObject instead.
- */
-class Object extends CakeObject {
-}
