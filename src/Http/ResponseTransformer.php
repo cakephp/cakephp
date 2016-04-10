@@ -16,8 +16,8 @@ namespace Cake\Http;
 
 use Cake\Network\Response as CakeResponse;
 use Psr\Http\Message\ResponseInterface as PsrResponse;
-use Zend\Diactoros\Response as DiactorosResponse;
 use Zend\Diactoros\CallbackStream;
+use Zend\Diactoros\Response as DiactorosResponse;
 use Zend\Diactoros\Stream;
 
 /**
