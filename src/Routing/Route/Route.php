@@ -265,8 +265,6 @@ class Route
      */
     public function parse($url)
     {
-        $request = Router::getRequest(true) ?: Request::createFromGlobals();
-
         if (empty($this->_compiledRoute)) {
             $this->compile();
         }
@@ -277,6 +275,7 @@ class Route
         }
 
         if (isset($this->defaults['_method'])) {
+            $request = Router::getRequest(true) ?: Request::createFromGlobals();
             $method = $request->env('REQUEST_METHOD');
             if (!in_array($method, (array)$this->defaults['_method'], true)) {
                 return false;

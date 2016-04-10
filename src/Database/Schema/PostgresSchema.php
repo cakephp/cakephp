@@ -283,7 +283,7 @@ class PostgresSchema extends BaseSchema
         INNER JOIN pg_catalog.pg_attribute a ON (a.attrelid = cl.oid AND c.conrelid = a.attrelid AND a.attnum = ANY(c.conkey))
         INNER JOIN pg_catalog.pg_attribute ab ON (a.attrelid = cl.oid AND c.confrelid = ab.attrelid AND ab.attnum = ANY(c.confkey))
         WHERE n.nspname = ?
-        AND c.conrelid = ?::regclass
+        AND cl.relname = ?
         ORDER BY name, a.attnum, ab.attnum DESC";
 
         $schema = empty($config['schema']) ? 'public' : $config['schema'];
@@ -334,7 +334,6 @@ class PostgresSchema extends BaseSchema
             'binary' => ' BYTEA',
             'float' => ' FLOAT',
             'decimal' => ' DECIMAL',
-            'text' => ' TEXT',
             'date' => ' DATE',
             'time' => ' TIME',
             'datetime' => ' TIMESTAMP',
@@ -355,7 +354,11 @@ class PostgresSchema extends BaseSchema
             $out .= $type;
         }
 
-        if ($data['type'] === 'string') {
+        if ($data['type'] === 'text' && $data['length'] !== Table::LENGTH_TINY) {
+            $out .= ' TEXT';
+        }
+
+        if ($data['type'] === 'string' || ($data['type'] === 'text' && $data['length'] === Table::LENGTH_TINY)) {
             $isFixed = !empty($data['fixed']);
             $type = ' VARCHAR';
             if ($isFixed) {

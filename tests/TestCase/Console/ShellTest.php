@@ -962,7 +962,11 @@ TEXT;
      */
     public function testRunCommandBaseclassMethod()
     {
-        $shell = $this->getMock('Cake\Console\Shell', ['startup', 'getOptionParser', 'out'], [], '', false);
+        $shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->setMethods(['startup', 'getOptionParser', 'out', 'hr'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $shell->io($this->getMock('Cake\Console\ConsoleIo'));
         $parser = $this->getMock('Cake\Console\ConsoleOptionParser', [], [], '', false);
 
@@ -982,7 +986,10 @@ TEXT;
      */
     public function testRunCommandMissingMethod()
     {
-        $shell = $this->getMock('Cake\Console\Shell', ['startup', 'getOptionParser', 'out'], [], '', false);
+        $shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->setMethods(['startup', 'getOptionParser', 'out', 'hr'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $shell->io($this->getMock('Cake\Console\ConsoleIo'));
         $parser = $this->getMock('Cake\Console\ConsoleOptionParser', [], [], '', false);
 

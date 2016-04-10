@@ -63,7 +63,6 @@ class Oauth
 
             default:
                 throw new Exception(sprintf('Unknown Oauth signature method %s', $credentials['method']));
-
         }
         $request->header('Authorization', $value);
     }

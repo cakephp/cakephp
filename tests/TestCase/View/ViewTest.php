@@ -1921,6 +1921,7 @@ TEXT;
      */
     public function testMemoryLeakInPaths()
     {
+        $this->skipIf(env('CODECOVERAGE') == 1, 'Running coverage this causes this tests to fail sometimes.');
         $this->ThemeController->plugin = null;
         $this->ThemeController->name = 'Posts';
 
@@ -1935,7 +1936,7 @@ TEXT;
             $View->element('test_element');
         }
         $end = memory_get_usage();
-        $this->assertLessThanOrEqual($start + 25000, $end);
+        $this->assertLessThanOrEqual($start + 15000, $end);
     }
 
     /**

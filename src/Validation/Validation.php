@@ -520,13 +520,11 @@ class Validation
 
             if ($places === null) {
                 $regex = "/^{$sign}(?:{$lnum}|{$dnum}){$exp}$/";
-
             } elseif ($places === true) {
                 if (is_float($check) && floor($check) === $check) {
                     $check = sprintf("%.1f", $check);
                 }
                 $regex = "/^{$sign}{$dnum}{$exp}$/";
-
             } elseif (is_numeric($places)) {
                 $places = '[0-9]{' . $places . '}';
                 $dnum = "(?:[0-9]*[\.]{$places}|{$lnum}[\.]{$places})";
@@ -1029,7 +1027,7 @@ class Validation
         if (isset($options['types']) && !static::mimeType($file, $options['types'])) {
             return false;
         }
-        return true;
+        return is_uploaded_file($file['tmp_name']);
     }
 
     /**

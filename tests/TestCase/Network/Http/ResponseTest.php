@@ -100,7 +100,23 @@ class ResponseTest extends TestCase
 
         $data = '';
         $response = new Response([], $data);
-        $this->assertFalse(isset($response->json));
+        $this->assertNull($response->json);
+
+        $data = json_encode([]);
+        $response = new Response([], $data);
+        $this->assertTrue(is_array($response->json));
+
+        $data = json_encode(null);
+        $response = new Response([], $data);
+        $this->assertNull($response->json);
+
+        $data = json_encode(false);
+        $response = new Response([], $data);
+        $this->assertFalse($response->json);
+
+        $data = json_encode('');
+        $response = new Response([], $data);
+        $this->assertSame('', $response->json);
     }
 
     /**

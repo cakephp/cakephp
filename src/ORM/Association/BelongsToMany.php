@@ -673,8 +673,8 @@ class BelongsToMany extends Association
     /**
      * Associates the source entity to each of the target entities provided by
      * creating links in the junction table. Both the source entity and each of
-     * the target entities are assumed to be already persisted, if the are marked
-     * as new or their status is unknown, an exception will be thrown.
+     * the target entities are assumed to be already persisted, if they are marked
+     * as new or their status is unknown then an exception will be thrown.
      *
      * When using this method, all entities in `$targetEntities` will be appended to
      * the source entity's property corresponding to this association object.
@@ -988,7 +988,7 @@ class BelongsToMany extends Association
 
         return $this->junction()->connection()->transactional(
             function () use ($sourceEntity, $targetEntities, $primaryValue, $options) {
-                $foreignKey = (array)$this->foreignKey();
+                $foreignKey = array_map([$this->_junctionTable, 'aliasField'], (array)$this->foreignKey());
                 $hasMany = $this->source()->association($this->_junctionTable->alias());
                 $existing = $hasMany->find('all')
                     ->where(array_combine($foreignKey, $primaryValue));

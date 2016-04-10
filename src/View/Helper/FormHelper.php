@@ -524,6 +524,7 @@ class FormHelper extends Helper
     public function end(array $secureAttributes = [])
     {
         $out = '';
+
         if ($this->requestType !== 'get' &&
             !empty($this->request['_Token'])
         ) {
@@ -551,13 +552,20 @@ class FormHelper extends Helper
      *    generating the hash, else $this->fields is being used.
      * @param array $secureAttributes will be passed as HTML attributes into the hidden
      *    input elements generated for the Security Component.
-     * @return string|null A hidden input field with a security hash
+     * @return string A hidden input field with a security hash, or empty string when
+     *   secured forms are not in use.
      */
     public function secure(array $fields = [], array $secureAttributes = [])
     {
         if (empty($this->request['_Token'])) {
-            return null;
+            return '';
         }
+        $debugSecurity = Configure::read('debug');
+        if (isset($secureAttributes['debugSecurity'])) {
+            $debugSecurity = $debugSecurity && $secureAttributes['debugSecurity'];
+            unset($secureAttributes['debugSecurity']);
+        }
+        $secureAttributes['secure'] = static::SECURE_SKIP;
 
         $tokenData = $this->_buildFieldToken(
             $this->_lastAction,
@@ -572,6 +580,16 @@ class FormHelper extends Helper
             'value' => $tokenData['unlocked'],
         ]);
         $out .= $this->hidden('_Token.unlocked', $tokenUnlocked);
+        if ($debugSecurity) {
+            $tokenDebug = array_merge($secureAttributes, [
+                'value' => urlencode(json_encode([
+                    $this->_lastAction,
+                    $fields,
+                    $this->_unlockedFields
+                ])),
+            ]);
+            $out .= $this->hidden('_Token.debug', $tokenDebug);
+        }
         return $this->formatTemplate('hiddenBlock', ['content' => $out]);
     }
 
@@ -1662,7 +1680,9 @@ class FormHelper extends Helper
         }
         $templater = $this->templater();
 
+        $restoreAction = $this->_lastAction;
         $this->_lastAction($url);
+
         $action = $templater->formatAttributes([
             'action' => $this->Url->build($url),
             'escape' => false
@@ -1671,19 +1691,23 @@ class FormHelper extends Helper
         $out = $this->formatTemplate('formStart', [
             'attrs' => $templater->formatAttributes($formOptions) . $action
         ]);
-        $out .= $this->hidden('_method', ['value' => $requestMethod]);
+        $out .= $this->hidden('_method', [
+            'value' => $requestMethod,
+            'secure' => static::SECURE_SKIP
+        ]);
         $out .= $this->_csrfField();
 
         $fields = [];
         if (isset($options['data']) && is_array($options['data'])) {
             foreach (Hash::flatten($options['data']) as $key => $value) {
                 $fields[$key] = $value;
-                $out .= $this->hidden($key, ['value' => $value]);
+                $out .= $this->hidden($key, ['value' => $value, 'secure' => static::SECURE_SKIP]);
             }
             unset($options['data']);
         }
         $out .= $this->secure($fields);
         $out .= $this->formatTemplate('formEnd', []);
+        $this->_lastAction = $restoreAction;
 
         if ($options['block']) {
             if ($options['block'] === true) {

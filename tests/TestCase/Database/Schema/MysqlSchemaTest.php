@@ -99,8 +99,24 @@ class MysqlSchemaTest extends TestCase
                 ['type' => 'uuid', 'length' => null]
             ],
             [
-                'TINYTEXT',
+                'TEXT',
                 ['type' => 'text', 'length' => null]
+            ],
+            [
+                'TINYTEXT',
+                ['type' => 'text', 'length' => Table::LENGTH_TINY]
+            ],
+            [
+                'MEDIUMTEXT',
+                ['type' => 'text', 'length' => Table::LENGTH_MEDIUM]
+            ],
+            [
+                'LONGTEXT',
+                ['type' => 'text', 'length' => Table::LENGTH_LONG]
+            ],
+            [
+                'TINYBLOB',
+                ['type' => 'binary', 'length' => Table::LENGTH_TINY]
             ],
             [
                 'BLOB',
@@ -108,7 +124,11 @@ class MysqlSchemaTest extends TestCase
             ],
             [
                 'MEDIUMBLOB',
-                ['type' => 'binary', 'length' => null]
+                ['type' => 'binary', 'length' => Table::LENGTH_MEDIUM]
+            ],
+            [
+                'LONGBLOB',
+                ['type' => 'binary', 'length' => Table::LENGTH_LONG]
             ],
             [
                 'FLOAT',
@@ -150,7 +170,7 @@ class MysqlSchemaTest extends TestCase
     }
 
     /**
-     * Test parsing MySQL column types form field description.
+     * Test parsing MySQL column types from field description.
      *
      * @dataProvider convertColumnProvider
      * @return void
@@ -465,6 +485,42 @@ SQL;
                 'body',
                 ['type' => 'text', 'null' => false],
                 '`body` TEXT NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_TINY, 'null' => false],
+                '`body` TINYTEXT NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_MEDIUM, 'null' => false],
+                '`body` MEDIUMTEXT NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_LONG, 'null' => false],
+                '`body` LONGTEXT NOT NULL'
+            ],
+            // Blob / binary
+            [
+                'body',
+                ['type' => 'binary', 'null' => false],
+                '`body` BLOB NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'binary', 'length' => Table::LENGTH_TINY, 'null' => false],
+                '`body` TINYBLOB NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'binary', 'length' => Table::LENGTH_MEDIUM, 'null' => false],
+                '`body` MEDIUMBLOB NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'binary', 'length' => Table::LENGTH_LONG, 'null' => false],
+                '`body` LONGBLOB NOT NULL'
             ],
             // Integers
             [

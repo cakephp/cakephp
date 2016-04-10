@@ -245,22 +245,16 @@ class SqliteSchema extends BaseSchema
         $data = $table->column($name);
         $typeMap = [
             'uuid' => ' CHAR(36)',
-            'string' => ' VARCHAR',
-            'integer' => ' INTEGER',
             'biginteger' => ' BIGINT',
             'boolean' => ' BOOLEAN',
             'binary' => ' BLOB',
             'float' => ' FLOAT',
             'decimal' => ' DECIMAL',
-            'text' => ' TEXT',
             'date' => ' DATE',
             'time' => ' TIME',
             'datetime' => ' DATETIME',
             'timestamp' => ' TIMESTAMP',
         ];
-        if (!isset($typeMap[$data['type']])) {
-            throw new Exception(sprintf('Unknown column type for "%s"', $name));
-        }
 
         $out = $this->_driver->quoteIdentifier($name);
         $hasUnsigned = ['biginteger', 'integer', 'float', 'decimal'];
@@ -272,14 +266,30 @@ class SqliteSchema extends BaseSchema
                 $out .= ' UNSIGNED';
             }
         }
-        $out .= $typeMap[$data['type']];
 
-        $hasLength = ['integer', 'string'];
-        if (in_array($data['type'], $hasLength, true) && isset($data['length'])) {
-            if ($data['type'] !== 'integer' || [$name] !== (array)$table->primaryKey()) {
+        if (isset($typeMap[$data['type']])) {
+            $out .= $typeMap[$data['type']];
+        }
+
+        if ($data['type'] === 'text' && $data['length'] !== Table::LENGTH_TINY) {
+            $out .= ' TEXT';
+        }
+
+        if ($data['type'] === 'string' || ($data['type'] === 'text' && $data['length'] === Table::LENGTH_TINY)) {
+            $out .= ' VARCHAR';
+
+            if (isset($data['length'])) {
                 $out .= '(' . (int)$data['length'] . ')';
             }
         }
+
+        if ($data['type'] === 'integer') {
+            $out .= ' INTEGER';
+            if (isset($data['length']) && [$name] !== (array)$table->primaryKey()) {
+                $out .= '(' . (int)$data['length'] . ')';
+            }
+        }
+
         $hasPrecision = ['float', 'decimal'];
         if (in_array($data['type'], $hasPrecision, true) &&
             (isset($data['length']) || isset($data['precision']))

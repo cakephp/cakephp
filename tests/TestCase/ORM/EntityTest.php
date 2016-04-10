@@ -361,6 +361,26 @@ class EntityTest extends TestCase
     }
 
     /**
+     * Tests magic set with custom setter function using a Title cased property
+     *
+     * @return void
+     */
+    public function testMagicSetWithSetterTitleCase()
+    {
+        $entity = $this->getMock('\Cake\ORM\Entity', ['_setName']);
+        $entity->expects($this->once())
+            ->method('_setName')
+            ->with('Jones')
+            ->will($this->returnCallback(function ($name) {
+                $this->assertEquals('Jones', $name);
+
+                return 'Dr. ' . $name;
+            }));
+        $entity->Name = 'Jones';
+        $this->assertEquals('Dr. Jones', $entity->Name);
+    }
+
+    /**
      * Tests the magic getter with a custom getter function
      *
      * @return void
@@ -376,6 +396,26 @@ class EntityTest extends TestCase
             }));
         $entity->set('name', 'Jones');
         $this->assertEquals('Dr. Jones', $entity->name);
+    }
+
+    /**
+     * Tests magic get with custom getter function using a Title cased property
+     *
+     * @return void
+     */
+    public function testMagicGetWithGetterTitleCase()
+    {
+        $entity = $this->getMock('\Cake\ORM\Entity', ['_getName']);
+        $entity->expects($this->once())
+            ->method('_getName')
+            ->with('Jones')
+            ->will($this->returnCallback(function ($name) {
+                $this->assertEquals('Jones', $name);
+
+                return 'Dr. ' . $name;
+            }));
+        $entity->set('Name', 'Jones');
+        $this->assertEquals('Dr. Jones', $entity->Name);
     }
 
     /**
@@ -778,7 +818,7 @@ class EntityTest extends TestCase
     public function testConstructorWithMarkNew()
     {
         $entity = $this->getMockBuilder('\Cake\ORM\Entity')
-            ->setMethods(['isNew'])
+            ->setMethods(['isNew', 'clean'])
             ->disableOriginalConstructor()
             ->getMock();
         $entity->expects($this->never())->method('clean');

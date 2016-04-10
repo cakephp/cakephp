@@ -287,7 +287,7 @@ class BelongsToTest extends TestCase
      */
     public function testSaveAssociatedOnlyEntities()
     {
-        $mock = $this->getMock('Cake\ORM\Table', [], [], '', false);
+        $mock = $this->getMock('Cake\ORM\Table', ['saveAssociated'], [], '', false);
         $config = [
             'sourceTable' => $this->client,
             'targetTable' => $mock,

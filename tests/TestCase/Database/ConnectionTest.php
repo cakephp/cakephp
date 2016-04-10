@@ -29,8 +29,9 @@ class ConnectionTest extends TestCase
 
     public function setUp()
     {
-        $this->connection = ConnectionManager::get('test');
         parent::setUp();
+        $this->connection = ConnectionManager::get('test');
+        Configure::write('App.namespace', 'TestApp');
     }
 
     public function tearDown()
@@ -113,6 +114,24 @@ class ConnectionTest extends TestCase
     {
         $mock = $this->getMock('\Cake\Database\Connection\Driver', ['enabled'], [], 'DriverMock');
         $connection = new Connection(['driver' => $mock]);
+    }
+
+    /**
+     * Tests that the `driver` option supports the short classname/plugin syntax.
+     *
+     * @return void
+     */
+    public function testDriverOptionClassNameSupport()
+    {
+        $connection = new Connection(['driver' => 'TestDriver']);
+        $this->assertInstanceOf('\TestApp\Database\Driver\TestDriver', $connection->driver());
+
+        $connection = new Connection(['driver' => 'TestPlugin.TestDriver']);
+        $this->assertInstanceOf('\TestPlugin\Database\Driver\TestDriver', $connection->driver());
+
+        list(, $name) = namespaceSplit(get_class($this->connection->driver()));
+        $connection = new Connection(['driver' => $name]);
+        $this->assertInstanceOf(get_class($this->connection->driver()), $connection->driver());
     }
 
     /**

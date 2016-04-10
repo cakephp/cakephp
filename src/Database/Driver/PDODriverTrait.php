@@ -139,12 +139,13 @@ trait PDODriverTrait
     }
 
     /**
-     * Rollsback a transaction
+     * Rollback a transaction
      *
      * @return bool true on success, false otherwise
      */
     public function rollbackTransaction()
     {
+        $this->connect();
         if (!$this->_connection->inTransaction()) {
             return false;
         }

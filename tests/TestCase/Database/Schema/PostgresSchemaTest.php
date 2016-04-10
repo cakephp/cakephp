@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Core\Configure;
 use Cake\Database\Schema\Collection as SchemaCollection;
+use Cake\Database\Schema\MysqlSchema;
 use Cake\Database\Schema\PostgresSchema;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
@@ -626,6 +627,21 @@ SQL;
             [
                 'body',
                 ['type' => 'text', 'null' => false],
+                '"body" TEXT NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_TINY, 'null' => false],
+                sprintf('"body" VARCHAR(%s) NOT NULL', Table::LENGTH_TINY)
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_MEDIUM, 'null' => false],
+                '"body" TEXT NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => Table::LENGTH_LONG, 'null' => false],
                 '"body" TEXT NOT NULL'
             ],
             // Integers
