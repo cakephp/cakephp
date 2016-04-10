@@ -79,7 +79,7 @@ abstract class ServerRequestFactory extends BaseFactory
      *
      * This code is a copy/paste from Cake\Network\Request::_base()
      *
-     * @param \Psr\Http\Message\ServerRequestInterface
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @return array An array containing the [baseDir, webroot]
      */
     protected static function getBase($request)
