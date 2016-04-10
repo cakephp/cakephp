@@ -15,6 +15,7 @@
  */
 
 App::uses('CakeObject', 'Core');
+class_alias('CakeObject', 'Object');
 
 /**
  * Object class provides a few generic methods used in several subclasses.
